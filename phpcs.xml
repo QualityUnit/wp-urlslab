@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<ruleset name="Quality Unit">
+  <description>Quality Unit Coding Standards</description>
+
+  <!-- Scan all files in directory -->
+  <file>.</file>
+
+  <!-- Scan only PHP files -->
+  <arg name="extensions" value="php"/>
+
+  <!-- Ignore WordPress and Composer dependencies -->
+  <exclude-pattern>vendor</exclude-pattern>
+  <exclude-pattern>build</exclude-pattern>
+  <exclude-pattern>node_modules</exclude-pattern>
+  <exclude-pattern>/assets/dist</exclude-pattern>
+
+  <!-- Show colors in console -->
+  <arg value="-colors"/>
+
+  <!-- Show sniff codes in all reports -->
+  <arg value="ns"/>
+
+  <!-- Use those sets as a base -->
+  <rule ref="WordPress-Core"/>
+  <rule ref="WordPress-VIP-Go"/>
+</ruleset>

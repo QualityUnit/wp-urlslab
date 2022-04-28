@@ -1,0 +1,29 @@
+{
+	"name": "qu-enhanced-faq",
+	"version": "1.0.0",
+	"description": "Quality Unit Enhanced FAQ plugin",
+	"author": "Jozef Remen, Quality Unit",
+	"license": "GPL-2.0-or-later",
+	"main": "build/index.js",
+	"scripts": {
+		"build": "wp-scripts build",
+		"format": "wp-scripts format",
+		"lint:css": "wp-scripts lint-style",
+		"stylelint": "wp-scripts lint-style",
+		"lint:js": "wp-scripts lint-js",
+		"eslint": "eslint",
+		"start": "wp-scripts start",
+		"packages-update": "wp-scripts packages-update"
+	},
+	"devDependencies": {
+		"@wordpress/base-styles": "^4",
+		"@wordpress/block-editor": "^8",
+		"@wordpress/block-library": "^6",
+		"@wordpress/components": "^19",
+		"@wordpress/eslint-plugin": "^10",
+		"@wordpress/format-library": "^3",
+		"@wordpress/media-utils": "^3",
+		"@wordpress/scripts": "^20",
+		"@wordpress/stylelint-config": "^20"
+	}
+}

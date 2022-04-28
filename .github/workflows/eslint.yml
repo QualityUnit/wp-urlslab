@@ -1,0 +1,24 @@
+name: ESLint
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node_version: [ '14', '16', '17' ]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node_version }}
+
+      - name: Install Yarn dependencies
+        run: yarn
+
+      - name: Run tests
+        run: yarn eslint

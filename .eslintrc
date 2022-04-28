@@ -1,0 +1,9 @@
+{
+	"parser": "@babel/eslint-parser",
+	"parserOptions": {
+		"requireConfigFile": false
+	},
+	"extends": [
+		"plugin:@wordpress/eslint-plugin/recommended-with-formatting"
+	]
+}

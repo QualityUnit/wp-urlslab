@@ -1,0 +1,59 @@
+.qu-enhancedFAQ {
+	display: block;
+
+	&__title {
+		font-size: 2rem;
+		line-height: 1.5;
+		margin-top: 1em;
+	}
+
+	&__item {
+		border: 1px solid $light-gray;
+		border-radius: 0.5rem;
+		padding: 0 2rem;
+		margin-bottom: 1.15em;
+
+		&--question[class*="question"] {
+
+			display: flex;
+			align-items: center;
+			font-size: 0.875rem;
+			line-height: 1.714;
+			margin: 0 -2rem 0;
+			padding: 1rem 2rem;
+			background-color: $light-gray;
+		}
+
+		&--answer[class*="answer"] {
+			font-size: 0.875rem;
+			padding-top: 1rem;
+
+			*:not(h2,h3,h4,h5) {
+				font-size: inherit;
+			}
+
+			p {
+				font-size: 0.875rem;
+
+				&:empty {
+					display: none;
+				}
+			}
+
+			ul {
+				list-style: disc;
+
+				> li {
+					font-size: 0.875rem !important;
+				}
+			}
+
+		}
+
+		&--arrow {
+			margin-left: auto;
+			transform: scaleY(-1);
+			transition: transform 0.2s;
+		}
+	}
+}
