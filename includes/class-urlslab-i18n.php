@@ -24,7 +24,7 @@
  * @subpackage Plugin_Name/includes
  * @author     Your Name <email@example.com>
  */
-class Urlslab_Screenshot_I18n {
+class Urlslab_I18n {
 
 
 	/**

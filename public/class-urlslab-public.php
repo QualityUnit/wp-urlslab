@@ -19,7 +19,7 @@
  * @package    Urlslab_Screenshot_Public
  * @subpackage Urlslab_Screenshot_Public/public
  */
-class Urlslab_Screenshot_Public {
+class Urlslab_Public {
 
 	/**
 	 * The ID of this plugin.
@@ -28,7 +28,7 @@ class Urlslab_Screenshot_Public {
 	 * @access   private
 	 * @var      string    $plugin_name    The ID of this plugin.
 	 */
-	private $urlslab_screenshot;
+	private $urlslab;
 
 	/**
 	 * The version of this plugin.
@@ -42,13 +42,13 @@ class Urlslab_Screenshot_Public {
 	/**
 	 * Initialize the class and set its properties.
 	 *
-	 * @since    1.0.0
-	 * @param      string    $urlslab_screenshot       The name of the plugin.
+	 * @param      string    $urlslab       The name of the plugin.
 	 * @param      string    $version    The version of this plugin.
+	 *@since    1.0.0
 	 */
-	public function __construct( $urlslab_screenshot, $version ) {
+	public function __construct( $urlslab, $version ) {
 
-		$this->urlslab_screenshot = $urlslab_screenshot;
+		$this->urlslab = $urlslab;
 		$this->version = $version;
 
 	}
@@ -72,7 +72,7 @@ class Urlslab_Screenshot_Public {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->urlslab_screenshot, plugin_dir_url( __FILE__ ) . 'css/urlslab-screenshot-public.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->urlslab, plugin_dir_url( __FILE__ ) . 'css/urlslab-public.css', array(), $this->version, 'all' );
 
 	}
 
@@ -95,7 +95,7 @@ class Urlslab_Screenshot_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->urlslab_screenshot, plugin_dir_url( __FILE__ ) . 'js/urlslab-screenshot-public.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->urlslab, plugin_dir_url( __FILE__ ) . 'js/urlslab-public.js', array( 'jquery' ), $this->version, false );
 
 	}
 
