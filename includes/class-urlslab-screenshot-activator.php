@@ -18,7 +18,6 @@
  * @since      1.0.0
  * @package    Urlslab_Screenshot
  * @subpackage Urlslab_Screenshot/includes
- * @author     Your Name <email@example.com>
  */
 class Urlslab_Screenshot_Activator {
 

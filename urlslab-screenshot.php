@@ -21,7 +21,7 @@
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            URLSLAB
- * Author URI:        https://author.example.com/
+ * Author URI:        https://urlslab.com
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  */
