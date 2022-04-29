@@ -19,7 +19,7 @@
  * @package    Urlslab_Screenshot
  * @subpackage Urlslab_Screenshot/includes
  */
-class Urlslab_Screenshot_Activator {
+class Urlslab_Activator {
 
 	/**
 	 * Short Description. (use period)

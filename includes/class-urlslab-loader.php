@@ -21,7 +21,7 @@
  * @subpackage Plugin_Name/includes
  * @author     Your Name <email@example.com>
  */
-class Urlslab_Screenshot_Loader {
+class Urlslab_Loader {
 
 	/**
 	 * The array of actions registered with WordPress.
@@ -102,7 +102,7 @@ class Urlslab_Screenshot_Loader {
 			'component'     => $component,
 			'callback'      => $callback,
 			'priority'      => $priority,
-			'accepted_args' => $accepted_args
+			'accepted_args' => $accepted_args,
 		);
 
 		return $hooks;

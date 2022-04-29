@@ -20,7 +20,7 @@
  * @subpackage Urlslab_Screenshot/includes
  * @author     Your Name <email@example.com>
  */
-class Urlslab_Screenshot_Deactivator {
+class Urlslab_Deactivator {
 
 	/**
 	 * Short Description. (use period)
