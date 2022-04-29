@@ -19,7 +19,7 @@
  * @package    urlslab_screenshot
  * @subpackage urlslab_screenshot/admin
  */
-class Urlslab_screenshot_Admin {
+class Urlslab_Screenshot_Admin {
 
 	/**
 	 * The ID of this plugin.

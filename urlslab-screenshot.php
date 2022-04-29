@@ -28,7 +28,7 @@
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
-    die;
+	die;
 }
 
 /**
@@ -43,8 +43,8 @@ define( 'PLUGIN_NAME_VERSION', '1.0.0' );
  * This action is documented in includes/class-plugin-name-activator.php
  */
 function activate_urlslab_screenshot() {
-    require_once plugin_dir_path( __FILE__ ) . 'includes/class-urlslab-screenshot-activator.php';
-    Urlslab_Screenshot_Activator::activate();
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-urlslab-screenshot-activator.php';
+	Urlslab_Screenshot_Activator::activate();
 }
 
 /**
@@ -52,8 +52,8 @@ function activate_urlslab_screenshot() {
  * This action is documented in includes/class-plugin-name-deactivator.php
  */
 function deactivate_urlslab_screenshot() {
-    require_once plugin_dir_path( __FILE__ ) . 'includes/class-urlslab-screenshot-deactivator.php';
-    Urlslab_Screenshot_Deactivator::deactivate();
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-urlslab-screenshot-deactivator.php';
+	Urlslab_Screenshot_Deactivator::deactivate();
 }
 
 register_activation_hook( __FILE__, 'activate_urlslab_screenshot' );
@@ -74,10 +74,10 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-urlslab-screenshot.php';
  *
  * @since    1.0.0
  */
-function run_urlslab_screenshot() {
-
-    $plugin = new Urlslab_Screenshot();
-    $plugin->run();
+function run_urlslab_screenshot() { 
+	$plugin = new Urlslab_Screenshot();
+	$plugin->run();
 
 }
+
 run_urlslab_screenshot();
