@@ -1,7 +1,7 @@
-version: '3.3'
+version: "3.9"
 services:
   db:
-    image: mysql:5.7
+    image: mariadb:10.7
     volumes:
       - db_data:/var/lib/mysql
     restart: always
@@ -10,6 +10,8 @@ services:
       MYSQL_DATABASE: wordpress
       MYSQL_USER: wordpress
       MYSQL_PASSWORD: wordpress
+    ports:
+      - "3306:3306"
   wordpress:
     depends_on:
       - db
@@ -18,7 +20,7 @@ services:
       - "8000:80"
     restart: always
     volumes:
-      - ../../:/var/www/html/wp-content/plugins/urlslabScreenshot
+      - ../../:/var/www/html/wp-content/plugins/urlslab
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: wordpress

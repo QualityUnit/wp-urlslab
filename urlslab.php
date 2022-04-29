@@ -39,6 +39,13 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'PLUGIN_NAME_VERSION', '1.0.0' );
 
 /**
+ * Fetching the plugin name based on the plugin absolute path.
+ */
+define( 'URLSLAB_PLUGIN', __FILE__ );
+
+define( 'URLLSAB_PLUGIN_BASENAME', plugin_basename( URLSLAB_PLUGIN ));
+
+/**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-plugin-name-activator.php
  */
