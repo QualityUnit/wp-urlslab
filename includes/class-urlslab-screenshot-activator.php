@@ -16,11 +16,11 @@
  * This class defines all code necessary to run during the plugin's activation.
  *
  * @since      1.0.0
- * @package    Plugin_Name
- * @subpackage Plugin_Name/includes
+ * @package    Urlslab_Screenshot
+ * @subpackage Urlslab_Screenshot/includes
  * @author     Your Name <email@example.com>
  */
-class Plugin_Name_Activator {
+class Urlslab_Screenshot_Activator {
 
 	/**
 	 * Short Description. (use period)

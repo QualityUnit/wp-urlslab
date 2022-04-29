@@ -9,8 +9,8 @@
  * @link       http://example.com
  * @since      1.0.0
  *
- * @package    Plugin_Name
- * @subpackage Plugin_Name/includes
+ * @package    Urlslab_Screenshot
+ * @subpackage Urlslab_Screenshot/includes
  */
 
 /**
@@ -24,7 +24,7 @@
  * @subpackage Plugin_Name/includes
  * @author     Your Name <email@example.com>
  */
-class Plugin_Name_i18n {
+class Urlslab_Screenshot_i18n {
 
 
 	/**
