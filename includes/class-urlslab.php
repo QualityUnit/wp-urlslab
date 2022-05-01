@@ -152,6 +152,7 @@ class Urlslab {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'urlslab_admin_menu', 9, 0 );
 
 	}
 
@@ -181,27 +182,16 @@ class Urlslab {
 	/**
 	 * Upgrades option data when necessary.
 	 */
-	private function urlslab_upgrade() {
-		$old_ver = get_option( 'version', '0' );
+	public function urlslab_upgrade() {
+		$old_ver = $this->loader->get_option( 'version', '0' );
 		$new_ver = WPCF7_VERSION;
 
 		if ( $old_ver == $new_ver ) {
 			return;
 		}
+		// Any Upgrade hook should be done here. For now no Upgrade migration is available
 
-		$this::update_option( 'version', $new_ver );
-	}
-
-
-	/**
-	 *
-	 * updates wp_option for URLSLAB plugin
-	 */
-	private function update_option( $name, $value ) {
-		$option = get_option( 'urlslab' );
-		$option = ( false === $option ) ? array() : (array) $option;
-		$option = array_merge( $option, array( $name => $value ) );
-		update_option( 'urlslab', $option );
+		$this->loader->update_option( 'version', $new_ver );
 	}
 
 	/**

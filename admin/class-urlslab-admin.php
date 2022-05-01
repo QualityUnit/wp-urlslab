@@ -26,27 +26,28 @@ class Urlslab_Admin {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $urlslab    The ID of this plugin.
+	 * @var      string $urlslab The ID of this plugin.
 	 */
-	private $urlslab;
+	private string $urlslab;
 
 	/**
 	 * The version of this plugin.
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
+	 * @var      string $version The current version of this plugin.
 	 */
-	private $version;
+	private string $version;
 
 	/**
 	 * Initialize the class and set its properties.
 	 *
+	 * @param string $urlslab The name of this plugin.
+	 * @param string $version The version of this plugin.
+	 *
 	 * @since    1.0.0
-	 * @param      string    $urlslab       The name of this plugin.
-	 * @param      string    $version    The version of this plugin.
 	 */
-	public function __construct( $urlslab, $version ) {
+	public function __construct( string $urlslab, string $version ) {
 
 		$this->urlslab = $urlslab;
 		$this->version = $version;
@@ -97,6 +98,29 @@ class Urlslab_Admin {
 
 		wp_enqueue_script( $this->urlslab, plugin_dir_url( __FILE__ ) . 'js/urlslab-admin.js', array( 'jquery' ), $this->version, false );
 
+	}
+
+	public function urlslab_admin_menu() {
+		do_action( 'urlslab_admin_menu' );
+
+		add_menu_page(
+			'Urlslab Plugin',
+			'Urlslab',
+			'manage_options',
+			plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
+			null,
+			plugin_dir_url( __FILE__ ) . 'assets/urlslab-logo.png',
+			30
+		);
+
+		add_submenu_page(
+			plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
+			'Urlslab Screenshots',
+			'Screenshots',
+			'manage_options',
+			plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-screenshot-display.php',
+			null
+		);
 	}
 
 }
