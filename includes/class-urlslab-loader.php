@@ -54,13 +54,43 @@ class Urlslab_Loader {
 	}
 
 	/**
+	 *
+	 * gets wp_option for URLSLAB plugin
+	 */
+	public function get_option( $name, $default = false ) {
+		$option = get_option( 'urlslab' );
+
+		if ( false === $option ) {
+			return $default;
+		}
+
+		if ( isset( $option[ $name ] ) ) {
+			return $option[ $name ];
+		} else {
+			return $default;
+		}
+	}
+
+	/**
+	 *
+	 * updates wp_option for URLSLAB plugin
+	 */
+	public function update_option( $name, $value ) {
+		$option = get_option( 'urlslab' );
+		$option = ( false === $option ) ? array() : (array) $option;
+		$option = array_merge( $option, array( $name => $value ) );
+		update_option( 'urlslab', $option );
+	}
+
+
+	/**
 	 * Add a new action to the collection to be registered with WordPress.
 	 *
 	 * @since    1.0.0
-	 * @param    string               $hook             The name of the WordPress action that is being registered.
-	 * @param    object               $component        A reference to the instance of the object on which the action is defined.
-	 * @param    string               $callback         The name of the function definition on the $component.
-	 * @param    int                  $priority         Optional. The priority at which the function should be fired. Default is 10.
+	 * @param string $hook The name of the WordPress action that is being registered.
+	 * @param object $component A reference to the instance of the object on which the action is defined.
+	 * @param string $callback The name of the function definition on the $component.
+	 * @param int $priority Optional. The priority at which the function should be fired. Default is 10.
 	 * @param    int                  $accepted_args    Optional. The number of arguments that should be passed to the $callback. Default is 1.
 	 */
 	public function add_action( $hook, $component, $callback, $priority = 10, $accepted_args = 1 ) {

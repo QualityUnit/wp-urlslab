@@ -99,4 +99,26 @@ class Urlslab_Admin {
 
 	}
 
+	public function urlslab_admin_menu() {
+		do_action( "urlslab_admin_menu" );
+
+		add_menu_page(
+			'Urlslab Plugin',
+			'Urlslab',
+			'manage_options',
+			plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
+			null,
+			plugin_dir_url( __FILE__ ) . 'assets/urlslab-logo.png',
+			30
+		);
+
+		add_submenu_page( plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
+			'Urlslab Screenshots',
+			'Screenshots',
+			'manage_options',
+			plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-screenshot-display.php',
+			null
+		);
+	}
+
 }
