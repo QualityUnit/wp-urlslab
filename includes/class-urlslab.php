@@ -34,7 +34,7 @@ class Urlslab {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      Urlslab_Loader    $loader    Maintains and registers all hooks for the plugin.
+	 * @var      Urlslab_Loader $loader Maintains and registers all hooks for the plugin.
 	 */
 	protected $loader;
 
@@ -43,7 +43,7 @@ class Urlslab {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      string    $urlslab    The string used to uniquely identify this plugin.
+	 * @var      string $urlslab The string used to uniquely identify this plugin.
 	 */
 	protected $urlslab;
 
@@ -52,7 +52,7 @@ class Urlslab {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      string    $version    The current version of the plugin.
+	 * @var      string $version The current version of the plugin.
 	 */
 	protected $version;
 
@@ -66,17 +66,14 @@ class Urlslab {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
-		if ( defined( 'urlslab_VERSION' ) ) {
-			$this->version = urlslab_VERSION;
-		} else {
-			$this->version = '1.0.0';
-		}
-		$this->urlslab = 'urlslab';
+		$this->version = URLSLAB_VERSION;
+		$this->urlslab = 'URLSLAB';
 
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+		$this->define_backend_hooks();
 
 	}
 
@@ -174,6 +171,39 @@ class Urlslab {
 
 	}
 
+	private function define_backend_hooks() {
+		//defining Upgrade hook
+		$this->loader->add_action( 'admin_init', $this, 'urlslab_upgrade', 10, 0 );
+
+
+	}
+
+	/**
+	 * Upgrades option data when necessary.
+	 */
+	private function urlslab_upgrade() {
+		$old_ver = get_option( 'version', '0' );
+		$new_ver = WPCF7_VERSION;
+
+		if ( $old_ver == $new_ver ) {
+			return;
+		}
+
+		$this::update_option( 'version', $new_ver );
+	}
+
+
+	/**
+	 *
+	 * updates wp_option for URLSLAB plugin
+	 */
+	private function update_option( $name, $value ) {
+		$option = get_option( 'urlslab' );
+		$option = ( false === $option ) ? array() : (array) $option;
+		$option = array_merge( $option, array( $name => $value ) );
+		update_option( 'urlslab', $option );
+	}
+
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.
 	 *
@@ -187,8 +217,8 @@ class Urlslab {
 	 * The name of the plugin used to uniquely identify it within the context of
 	 * WordPress and to define internationalization functionality.
 	 *
-	 * @since     1.0.0
 	 * @return    string    The name of the plugin.
+	 * @since     1.0.0
 	 */
 	public function get_urlslab() {
 		return $this->urlslab;
@@ -198,7 +228,7 @@ class Urlslab {
 	 * The reference to the class that orchestrates the hooks with the plugin.
 	 *
 	 * @return    Urlslab_Loader    Orchestrates the hooks of the plugin.
-	 *@since     1.0.0
+	 * @since     1.0.0
 	 */
 	public function get_loader() {
 		return $this->loader;
@@ -207,8 +237,8 @@ class Urlslab {
 	/**
 	 * Retrieve the version number of the plugin.
 	 *
-	 * @since     1.0.0
 	 * @return    string    The version number of the plugin.
+	 * @since     1.0.0
 	 */
 	public function get_version() {
 		return $this->version;
