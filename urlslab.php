@@ -46,7 +46,8 @@ const URLSLAB_PLUGIN = __FILE__;
 /**
  * URLSLAB Plugin Base DIR path
  */
-define( 'URLSLAB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+
+const URLSLAB_PLUGIN_DIR = ABSPATH . 'wp-content/plugins/urlslab';
 
 define( 'URLSLAB_PLUGIN_BASENAME', plugin_basename( URLSLAB_PLUGIN ) );
 

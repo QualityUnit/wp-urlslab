@@ -1,6 +1,6 @@
 <?php
 
-require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-integration.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-widget.php';
 
 /**
  * The admin-specific functionality of the plugin.
@@ -115,8 +115,9 @@ class Urlslab_Admin {
 			30
 		);
 
-		$integration = Urlslab_Integration::get_instance();
-		if ( $integration->service_exists( 'screenshot' ) ) {
+
+		$integration = Urlslab_Widget::get_instance();
+		if ( $integration->widget_exists( 'screenshot' ) ) {
 			add_submenu_page(
 				plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
 				'Urlslab Screenshots',

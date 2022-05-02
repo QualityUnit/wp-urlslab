@@ -1,6 +1,6 @@
 <?php
 
-class Urlslab_Integration {
+class Urlslab_Widget {
 
 	private static $instance;
 
@@ -10,7 +10,7 @@ class Urlslab_Integration {
 	/**
 	 * Returns the singleton instance of this class.
 	 *
-	 * @return Urlslab_Integration The instance.
+	 * @return Urlslab_Widget The instance.
 	 */
 	public static function get_instance() {
 		if ( empty( self::$instance ) ) {
@@ -23,7 +23,7 @@ class Urlslab_Integration {
 	/**
 	 * Adds a service to the services list.
 	 */
-	public function add_service( $name, Urlslab_Service $service ) {
+	public function add_widget( $name, Urlslab_Service $service ) {
 		$name = sanitize_key( $name );
 
 		if ( empty( $name )
@@ -39,7 +39,7 @@ class Urlslab_Integration {
 	 *
 	 * @param string $name The name of service to search.
 	 */
-	public function service_exists( string $name = '' ): bool {
+	public function widget_exists( string $name = '' ): bool {
 		if ( '' == $name ) {
 			return (bool) count( $this->services );
 		} else {
@@ -56,7 +56,7 @@ class Urlslab_Integration {
 	 *                            false otherwise.
 	 */
 	public function get_service( string $name ) {
-		if ( $this->service_exists( $name ) ) {
+		if ( $this->widget_exists( $name ) ) {
 			return $this->services[ $name ];
 		} else {
 			return false;
