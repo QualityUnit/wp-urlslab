@@ -43,7 +43,12 @@ const URLSLAB_VERSION = '1.0.0';
  */
 const URLSLAB_PLUGIN = __FILE__;
 
-define( 'URLLSAB_PLUGIN_BASENAME', plugin_basename( URLSLAB_PLUGIN ) );
+/**
+ * URLSLAB Plugin Base DIR path
+ */
+define( 'URLSLAB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+
+define( 'URLSLAB_PLUGIN_BASENAME', plugin_basename( URLSLAB_PLUGIN ) );
 
 /**
  * The code that runs during plugin activation.
