@@ -52,17 +52,20 @@ class Urlslab_Available_Widgets {
 	 */
 	public static function list_widgets() {
 		foreach ( self::$available_widgets as $i => $available_widget ) {
-			$get_widget_slug = $available_widget->get_widget_slug();
+			$widget_slug = $available_widget->get_widget_slug();
 			$widget_title = $available_widget->get_widget_title();
 			$widget_desc = $available_widget->get_widget_description();
-			$is_widget_active = Urlslab_User_Widget::get_instance()->is_widget_added( $get_widget_slug );
+			$is_widget_active = Urlslab_User_Widget::get_instance()->is_widget_added( $widget_slug );
 			?>
-<div class="card<?php echo $is_widget_active ? ' active' : ''; ?>" id="<?php echo esc_attr( $get_widget_slug ); ?>">
+<div class="card<?php echo $is_widget_active ? ' active' : ''; ?>" id="<?php echo esc_attr( $widget_slug ); ?>">
 	<h2 class="title"><?php echo esc_html( $widget_title ); ?></h2>
 	<div class="infobox">
 			<?php echo esc_html( $widget_desc ); ?>
 	</div>
 	<br class="clear" />
+	<a class="button">info</a>
+	<button class="button" id="widget-integration-<?php echo esc_attr( $widget_slug ); ?>">
+		Setup Integration</button>
 </div>
 			<?php
 
