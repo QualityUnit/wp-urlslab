@@ -1,7 +1,5 @@
 <?php
 
-require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-widget.php';
-
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -116,17 +114,14 @@ class Urlslab_Admin {
 		);
 
 
-		$integration = Urlslab_Widget::get_instance();
-		if ( $integration->widget_exists( 'screenshot' ) ) {
-			add_submenu_page(
-				plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
-				'Urlslab Screenshots',
-				'Screenshots',
-				'manage_options',
-				plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-screenshot-display.php',
-				null
-			);
-		}
+		add_submenu_page(
+			plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
+			'Urlslab Screenshots',
+			'Screenshots',
+			'manage_options',
+			plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-screenshot-display.php',
+			null
+		);
 	}
 
 }

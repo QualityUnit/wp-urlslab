@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Register all actions and filters for the plugin
  *
@@ -30,7 +31,7 @@ class Urlslab_Loader {
 	 * @access   protected
 	 * @var      array    $actions    The actions registered with WordPress to fire when the plugin loads.
 	 */
-	protected $actions;
+	protected array $actions;
 
 	/**
 	 * The array of filters registered with WordPress.
@@ -39,7 +40,8 @@ class Urlslab_Loader {
 	 * @access   protected
 	 * @var      array    $filters    The filters registered with WordPress to fire when the plugin loads.
 	 */
-	protected $filters;
+	protected array $filters;
+
 
 	/**
 	 * Initialize the collections used to maintain the actions and filters.

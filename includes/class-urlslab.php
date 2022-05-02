@@ -1,5 +1,7 @@
 <?php
 
+require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
+
 /**
  * The file that defines the core plugin class
  *
@@ -74,7 +76,12 @@ class Urlslab {
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		$this->define_backend_hooks();
+		$this->define_urlslab_widgets();
+	}
 
+
+	public static function define_urlslab_widgets() {
+		Urlslab_Available_Widgets::get_instance();
 	}
 
 	/**
