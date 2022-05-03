@@ -7,7 +7,24 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php
 
 	<h1>
 	<?php
-		echo esc_html( 'URLSLAB Widgets' ); 
+
+	function urlslab_load_add_widgets_page() {
+		$current_action = '';
+		if ( isset( $_REQUEST['action'] ) and -1 != $_REQUEST['action'] ) {
+			$current_action = $_REQUEST['action'];
+		}
+
+		$available_widgets = Urlslab_Available_Widgets::get_instance();
+
+		if ( isset( $_REQUEST['widget'] )
+			 and $available_widgets->widget_exists( $_REQUEST['widget'] ) ) {
+			$widget = $available_widgets->get_widget( $_REQUEST['widget'] );
+			$widget->widget_configuration_response( $current_action );
+		}
+	}
+
+	urlslab_load_add_widgets_page();
+	echo esc_html( 'URLSLAB Widgets' );
 	?>
 		</h1>
 
@@ -19,7 +36,25 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php
 
 	<?php
 
-	Urlslab_Available_Widgets::list_widgets();
+	$available_widgets = Urlslab_Available_Widgets::get_instance();
+	$current_action = '';
+	if ( isset( $_REQUEST['action'] ) and -1 != $_REQUEST['action'] ) {
+		$current_action = $_REQUEST['action'];
+	}
+
+	$widget = isset( $_REQUEST['widget'] )
+		? $available_widgets->get_widget( $_REQUEST['widget'] )
+		: null;
+
+
+	if ( $widget ) {
+		$message = isset( $_REQUEST['message'] ) ? $_REQUEST['message'] : '';
+		$widget->admin_notice( $message );
+
+		$available_widgets->list_widgets( $current_action, $widget );
+	} else {
+		$available_widgets->list_widgets( $current_action );
+	}
 
 	?>
 </div>

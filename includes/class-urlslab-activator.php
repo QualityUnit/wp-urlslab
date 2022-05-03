@@ -44,11 +44,12 @@ class Urlslab_Activator {
 		urlId bigint NOT NULL,
 		urlName text NOT NULL,
 		status ENUM('AVAILABLE', 'PENDING', 'NOT_SCHEDULED') NOT NULL,
-		urlScreenshot text,
+		urlPath text,
         screenshotDate DATETIME,
     	urlTitle	  text, 
     	urlSummary	  text,
-		PRIMARY KEY  (domainId, urlId)
+		PRIMARY KEY  (domainId, urlId), 
+    	INDEX (urlName, status)
 	) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

@@ -38,7 +38,7 @@ class Urlslab {
 	 * @access   protected
 	 * @var      Urlslab_Loader $loader Maintains and registers all hooks for the plugin.
 	 */
-	protected $loader;
+	protected Urlslab_Loader $loader;
 
 	/**
 	 * The unique identifier of this plugin.
@@ -47,7 +47,7 @@ class Urlslab {
 	 * @access   protected
 	 * @var      string $urlslab The string used to uniquely identify this plugin.
 	 */
-	protected $urlslab;
+	protected string $urlslab;
 
 	/**
 	 * The current version of the plugin.
@@ -56,7 +56,7 @@ class Urlslab {
 	 * @access   protected
 	 * @var      string $version The current version of the plugin.
 	 */
-	protected $version;
+	protected string $version;
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -76,12 +76,47 @@ class Urlslab {
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		$this->define_backend_hooks();
-		$this->define_urlslab_widgets();
+		$this->init_urlslab_user();
+	}
+
+	/**
+	 *
+	 * gets wp_option for URLSLAB plugin
+	 */
+	public static function get_option( $name, $default = false ) {
+		$option = get_option( 'urlslab' );
+
+		if ( false === $option ) {
+			return $default;
+		}
+
+		if ( isset( $option[ $name ] ) ) {
+			return $option[ $name ];
+		} else {
+			return $default;
+		}
+	}
+
+	/**
+	 *
+	 * updates wp_option for URLSLAB plugin
+	 */
+	public static function update_option( $name, $value ) {
+		$option = get_option( 'urlslab' );
+		$option = ( false === $option ) ? array() : (array) $option;
+		$option = array_merge( $option, array( $name => $value ) );
+		update_option( 'urlslab', $option );
 	}
 
 
-	public static function define_urlslab_widgets() {
-		Urlslab_Available_Widgets::get_instance();
+	public function init_urlslab_user() {
+		$api_key = $this->get_option( 'api-key' );
+
+		if ( ! empty( $api_key ) ) {
+			Urlslab_User_Widget::get_instance()->add_api_key(
+				new Urlslab_Api_Key( $api_key )
+			);
+		}
 	}
 
 	/**
@@ -190,15 +225,15 @@ class Urlslab {
 	 * Upgrades option data when necessary.
 	 */
 	public function urlslab_upgrade() {
-		$old_ver = $this->loader->get_option( 'version', '0' );
-		$new_ver = WPCF7_VERSION;
+		$old_ver = $this->get_option( 'version', '0' );
+		$new_ver = URLSLAB_VERSION;
 
 		if ( $old_ver == $new_ver ) {
 			return;
 		}
 		// Any Upgrade hook should be done here. For now no Upgrade migration is available
 
-		$this->loader->update_option( 'version', $new_ver );
+		$this->update_option( 'version', $new_ver );
 	}
 
 	/**
@@ -217,7 +252,7 @@ class Urlslab {
 	 * @return    string    The name of the plugin.
 	 * @since     1.0.0
 	 */
-	public function get_urlslab() {
+	public function get_urlslab(): string {
 		return $this->urlslab;
 	}
 
@@ -227,7 +262,7 @@ class Urlslab {
 	 * @return    Urlslab_Loader    Orchestrates the hooks of the plugin.
 	 * @since     1.0.0
 	 */
-	public function get_loader() {
+	public function get_loader(): Urlslab_Loader {
 		return $this->loader;
 	}
 
@@ -237,7 +272,7 @@ class Urlslab {
 	 * @return    string    The version number of the plugin.
 	 * @since     1.0.0
 	 */
-	public function get_version() {
+	public function get_version(): string {
 		return $this->version;
 	}
 

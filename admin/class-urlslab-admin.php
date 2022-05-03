@@ -1,5 +1,8 @@
 <?php
 
+require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/urlslab-widget.php';
+
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -103,7 +106,7 @@ class Urlslab_Admin {
 	public function urlslab_admin_menu() {
 		do_action( 'urlslab_admin_menu' );
 
-		add_menu_page(
+		$main_menu = add_menu_page(
 			'Urlslab Plugin',
 			'Urlslab',
 			'manage_options',
@@ -113,15 +116,19 @@ class Urlslab_Admin {
 			30
 		);
 
+		add_action( 'load-' . $main_menu, 'urlslab_load_add_widgets_page', 10, 0 );
 
-		add_submenu_page(
-			plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
-			'Urlslab Screenshots',
-			'Screenshots',
-			'manage_options',
-			plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-screenshot-display.php',
-			null
-		);
+
+		foreach ( Urlslab_Available_Widgets::get_instance()->get_available_widgets() as $widget ) {
+			add_submenu_page(
+				plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
+				$widget->get_admin_menu_page_title(),
+				$widget->get_admin_menu_title(),
+				'manage_options',
+				$widget->get_admin_menu_page_slug(),
+				null
+			);
+		}
 	}
 
 }

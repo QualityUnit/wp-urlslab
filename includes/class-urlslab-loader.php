@@ -56,36 +56,6 @@ class Urlslab_Loader {
 	}
 
 	/**
-	 *
-	 * gets wp_option for URLSLAB plugin
-	 */
-	public function get_option( $name, $default = false ) {
-		$option = get_option( 'urlslab' );
-
-		if ( false === $option ) {
-			return $default;
-		}
-
-		if ( isset( $option[ $name ] ) ) {
-			return $option[ $name ];
-		} else {
-			return $default;
-		}
-	}
-
-	/**
-	 *
-	 * updates wp_option for URLSLAB plugin
-	 */
-	public function update_option( $name, $value ) {
-		$option = get_option( 'urlslab' );
-		$option = ( false === $option ) ? array() : (array) $option;
-		$option = array_merge( $option, array( $name => $value ) );
-		update_option( 'urlslab', $option );
-	}
-
-
-	/**
 	 * Add a new action to the collection to be registered with WordPress.
 	 *
 	 * @since    1.0.0
