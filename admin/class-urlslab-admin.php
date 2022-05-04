@@ -1,7 +1,7 @@
 <?php
 
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/urlslab-widget.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
 
 /**
  * The admin-specific functionality of the plugin.
@@ -103,6 +103,10 @@ class Urlslab_Admin {
 
 	}
 
+	public function get_urlslab_admin_menu_hook_suffix(): string {
+		return 'toplevel_page_urlslab/admin/partials/urlslab-admin-display';
+	}
+
 	public function urlslab_admin_menu() {
 		do_action( 'urlslab_admin_menu' );
 
@@ -116,9 +120,6 @@ class Urlslab_Admin {
 			30
 		);
 
-		add_action( 'load-' . $main_menu, 'urlslab_load_add_widgets_page', 10, 0 );
-
-
 		foreach ( Urlslab_Available_Widgets::get_instance()->get_available_widgets() as $widget ) {
 			add_submenu_page(
 				plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
@@ -128,6 +129,21 @@ class Urlslab_Admin {
 				$widget->get_admin_menu_page_slug(),
 				null
 			);
+		}
+	}
+
+	function urlslab_load_add_widgets_page() {
+		$current_action = '';
+		if ( isset( $_REQUEST['action'] ) and -1 != $_REQUEST['action'] ) {
+			$current_action = $_REQUEST['action'];
+		}
+
+		$available_widgets = Urlslab_Available_Widgets::get_instance();
+
+		if ( isset( $_REQUEST['widget'] )
+			 and $available_widgets->widget_exists( $_REQUEST['widget'] ) ) {
+			$widget = $available_widgets->get_widget( $_REQUEST['widget'] );
+			$widget->widget_configuration_response( $current_action );
 		}
 	}
 

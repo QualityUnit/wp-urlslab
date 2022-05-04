@@ -1,6 +1,6 @@
 <?php
 
-require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/urlslab-widget.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
 
 class Urlslab_Screenshot_Widget extends Urlslab_Widget {
@@ -72,7 +72,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_admin_menu_page_url(): string {
-		return $this->menu_page_url( $this->get_admin_menu_page_slug() );
+		return $this->menu_page_url( URLSLAB_PLUGIN_DIR . '/admin/partials/urlslab-admin-screenshot-display.php' );
 	}
 
 	/**
@@ -90,14 +90,14 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	}
 
 	/**
-	 * @param $action array the action type to take
+	 * @param $args array the action type to take
 	 *
 	 * @return string url in the integration of wordpress process
 	 */
-	public function get_integration_page_url( $action = '' ): string {
+	public function get_integration_page_url( $args = '' ): string {
 		$main_menu_slug = URLSLAB_PLUGIN_DIR . '/admin/partials/urlslab-admin-display.php';
-		$args = wp_parse_args( $action, array() );
-		$url = $this->menu_page_url( $action );
+		$args = wp_parse_args( $args, array() );
+		$url = $this->menu_page_url( $main_menu_slug );
 		$url = add_query_arg( array( 'widget' => $this->widget_slug ), $url );
 
 		if ( ! empty( $args ) ) {
@@ -129,7 +129,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 					<td>
 						<?php
 						if ( $user_widget->is_widget_active( $this->widget_slug ) ) {
-							echo esc_html( wpcf7_mask_password( $api_key, 4, 8 ) );
+							echo esc_html( $api_key_text );
 							echo sprintf(
 								'<input type="hidden" value="%s" id="api_key" name="api_key" />',
 								esc_attr( $api_key_text )
@@ -147,7 +147,8 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			</table>
 			<?php
 			if ( $user_widget->is_widget_active( $this->widget_slug ) ) {
-				submit_button( 'Remove key', 'small', 'reset' );
+				submit_button( 'Remove key', 'small', 'reset-api-key' );
+				submit_button( 'Deactivate', 'small', 'deactivate-widget' );
 			} else {
 				submit_button( 'Save changes' );
 			}
@@ -161,9 +162,22 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			 'setup' == $action and 'POST' == $_SERVER['REQUEST_METHOD'] ) {
 			check_admin_referer( 'urlslab-screenshot-setup' );
 
-			if ( ! empty( $_POST['reset'] ) ) {
+			if ( ! empty( $_POST['reset-api-key'] ) ) {
 				$this->reset_data();
-				$redirect_to = $this->menu_page_url( 'action=setup' );
+				$redirect_to = $this->get_integration_page_url(
+					array(
+						'action' => 'setup',
+						'message' => 'success',
+					)
+				);
+			} elseif ( ! empty( $_POST['deactivate-widget'] ) ) {
+				Urlslab_User_Widget::get_instance()->remove_widget( $this );
+				$redirect_to = $this->get_integration_page_url(
+					array(
+						'action' => 'setup',
+						'message' => 'success',
+					)
+				);
 			} else {
 				$api_key = isset( $_POST['api_key'] )
 					? trim( $_POST['api_key'] )
@@ -172,7 +186,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 				$confirmed = $this->confirm_key();
 
 				if ( true === $confirmed ) {
-					$redirect_to = $this->menu_page_url(
+					$redirect_to = $this->get_integration_page_url(
 						array(
 							'message' => 'success',
 						)
@@ -180,14 +194,14 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 
 					$this->save_data( $api_key );
 				} elseif ( false === $confirmed ) {
-					$redirect_to = $this->menu_page_url(
+					$redirect_to = $this->get_integration_page_url(
 						array(
 							'action' => 'setup',
 							'message' => 'unauthorized',
 						) 
 					);
 				} else {
-					$redirect_to = $this->menu_page_url(
+					$redirect_to = $this->get_integration_page_url(
 						array(
 							'action' => 'setup',
 							'message' => 'invalid',
@@ -245,7 +259,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		Urlslab::update_option( 'api-key', '' );
 		$user_widget = Urlslab_User_Widget::get_instance();
 		$user_widget->remove_api_key();
-		$user_widget->remove_widget( $this );
+		$user_widget->remove_all_widgets();
 	}
 
 }

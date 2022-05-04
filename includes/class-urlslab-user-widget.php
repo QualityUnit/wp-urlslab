@@ -54,41 +54,72 @@ class Urlslab_User_Widget {
 	public function add_widget( Urlslab_Widget $widget ) {
 
 
-//		if ( empty( $widget->get_widget_slug() )
-//			 or isset( $this->user_widgets[ $widget->get_widget_slug() ] )
-//			 or ! Urlslab_Available_Widgets::get_instance()->widget_exists( $widget->get_widget_slug() ) ) {
-//			return false;
-//		}
+		if ( empty( $widget->get_widget_slug() )
+			 or isset( $this->user_widgets[ $widget->get_widget_slug() ] )
+			 or ! Urlslab_Available_Widgets::get_instance()->widget_exists( $widget->get_widget_slug() ) ) {
+			return false;
+		}
 
-		$this->user_widgets[ $widget->get_widget_slug() ] = $widget;
+		array_push( $this->user_widgets, $widget->get_widget_slug() );
+		$this->user_widgets = array_unique( $this->user_widgets );
+		Urlslab::update_option( 'user-widgets', $this->user_widgets );
+	}
+
+	/**
+	 * Adds a widget to the widgets list.
+	 */
+	public function add_widget_bulk( array $widgets ): bool {
+		foreach ( $widgets as $i => $widget ) {
+			if ( empty( $widget->get_widget_slug() )
+				 or isset( $this->user_widgets[ $widget->get_widget_slug() ] )
+				 or ! Urlslab_Available_Widgets::get_instance()->widget_exists( $widget->get_widget_slug() ) ) {
+				return false;
+			}
+			array_push( $this->user_widgets, $widget->get_widget_slug() );
+		}
+		$this->user_widgets = array_unique( $this->user_widgets );
+		return true;
 	}
 
 	/**
 	 * Removes a widget from the widgets list.
 	 */
-	public function remove_widget( Urlslab_Widget $widget ) {
+	public function remove_widget( Urlslab_Widget $widget ): bool {
 		if ( empty( $widget->get_widget_slug() )
-			 or ! isset( $this->user_widgets[ $widget->get_widget_slug() ] )
+			 or isset( $this->user_widgets[ $widget->get_widget_slug() ] )
 			 or ! Urlslab_Available_Widgets::get_instance()->widget_exists( $widget->get_widget_slug() ) ) {
 			return false;
 		}
 
-		unset( $this->user_widgets[ $widget->get_widget_slug() ] );
+		$key = array_search( $widget->get_widget_slug(), $this->user_widgets );
+		if ( false !== $key ) {
+			unset( $this->user_widgets[ $key ] );
+			Urlslab::update_option( 'user-widgets', $this->user_widgets );
+		}
+		return true;
 	}
+
+	/**
+	 * Removes a widget from the widgets list.
+	 */
+	public function remove_all_widgets(): bool {
+		$this->user_widgets = array();
+		Urlslab::update_option( 'user-widgets', $this->user_widgets );
+		return true;
+	}
+
 
 
 	/**
 	 * Returns true if a service with the name exists in the services list.
 	 *
-	 * @param string $name The name of service to search.
+	 * @param string $widget_slug The name of service to search.
 	 */
-	public function is_widget_active( string $name = '' ): bool {
-		do_action( 'qm/debug', $this->user_widgets );
-		do_action( 'qm/debug', $this->user_api_key );
-		if ( '' == $name ) {
+	public function is_widget_active( string $widget_slug = '' ): bool {
+		if ( '' == $widget_slug ) {
 			return (bool) count( $this->user_widgets );
 		} else {
-			return isset( $this->user_widgets[ $name ] );
+			return in_array( $widget_slug, $this->user_widgets );
 		}
 	}
 

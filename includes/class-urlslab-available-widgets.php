@@ -61,6 +61,13 @@ class Urlslab_Available_Widgets {
 		}
 	}
 
+	/**
+	 * @return array returns all widgets
+	 */
+	public function get_all_widgets(): array {
+		return $this->available_widgets;
+	}
+
 
 	/**
 	 * Prints HTML representation of all the widgets available to the user
@@ -75,7 +82,6 @@ class Urlslab_Available_Widgets {
 			$widget_submenu_link      = $available_widget->get_admin_menu_page_url();
 			$user_urlslab     = Urlslab_User_Widget::get_instance();
 			$is_widget_active = $user_urlslab->is_widget_active( $widget_slug );
-			do_action( 'qm/debug', $is_widget_active );
 			?>
 		<div class="card<?php echo $is_widget_active ? ' active' : ''; ?>" id="<?php echo esc_attr( $widget_slug ); ?>">
 			<h2 class="title"><?php echo esc_html( $widget_title ); ?></h2>

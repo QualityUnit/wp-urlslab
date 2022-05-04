@@ -19,38 +19,20 @@ class Urlslab_Api_Key {
 	 *
 	 * @return string Text of masked password.
 	 */
-	private function masked( $text, int $right = 0, $left = 0 ): string {
-		$length = strlen( $text );
-
-		$right = absint( $right );
-		$left = absint( $left );
-
-		if ( $length < $right + $left ) {
-			$right = 0;
-			$left = 0;
+	private function masked( string $text ): string {
+		$masked_text = '';
+		for ( $x = 0; $x <= strlen( $text ) - 4; $x++ ) {
+			$masked_text = $masked_text . '*';
 		}
 
-		if ( $length <= 48 ) {
-			$masked = str_repeat( '*', $length - ( $right + $left ) );
-		} elseif ( $right + $left < 48 ) {
-			$masked = str_repeat( '*', 48 - ( $right + $left ) );
-		} else {
-			$masked = '****';
-		}
-
-		$left_unmasked = $left ? substr( $text, 0, $left ) : '';
-		$right_unmasked = $right ? substr( $text, -1 * $right ) : '';
-
-		$text = $left_unmasked . $masked . $right_unmasked;
-
-		return $text;
+		return $masked_text . substr( $text, -5, -1 );
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_api_key_masked(): string {
-		return $this->masked( $this->api_key, 4, 8 );
+		return $this->masked( $this->api_key );
 	}
 
 	public function save_api_key() {

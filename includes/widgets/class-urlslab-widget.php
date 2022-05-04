@@ -53,11 +53,11 @@ abstract class Urlslab_Widget {
 
 
 	/**
-	 * @param $action array the action type to take
+	 * @param $args array the action type to take
 	 *
 	 * @return string url in the integration of wordpress process
 	 */
-	public abstract function get_integration_page_url( $action = '' ): string;
+	public abstract function get_integration_page_url( $args = '' ): string;
 
 	/**
 	 * @param mixed $api_key
