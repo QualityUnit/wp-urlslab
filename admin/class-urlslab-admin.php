@@ -1,5 +1,8 @@
 <?php
 
+require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
+
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -26,27 +29,28 @@ class Urlslab_Admin {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $urlslab    The ID of this plugin.
+	 * @var      string $urlslab The ID of this plugin.
 	 */
-	private $urlslab;
+	private string $urlslab;
 
 	/**
 	 * The version of this plugin.
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
+	 * @var      string $version The current version of this plugin.
 	 */
-	private $version;
+	private string $version;
 
 	/**
 	 * Initialize the class and set its properties.
 	 *
+	 * @param string $urlslab The name of this plugin.
+	 * @param string $version The version of this plugin.
+	 *
 	 * @since    1.0.0
-	 * @param      string    $urlslab       The name of this plugin.
-	 * @param      string    $version    The version of this plugin.
 	 */
-	public function __construct( $urlslab, $version ) {
+	public function __construct( string $urlslab, string $version ) {
 
 		$this->urlslab = $urlslab;
 		$this->version = $version;
@@ -97,6 +101,50 @@ class Urlslab_Admin {
 
 		wp_enqueue_script( $this->urlslab, plugin_dir_url( __FILE__ ) . 'js/urlslab-admin.js', array( 'jquery' ), $this->version, false );
 
+	}
+
+	public function get_urlslab_admin_menu_hook_suffix(): string {
+		return 'toplevel_page_urlslab/admin/partials/urlslab-admin-display';
+	}
+
+	public function urlslab_admin_menu() {
+		do_action( 'urlslab_admin_menu' );
+
+		$main_menu = add_menu_page(
+			'Urlslab Plugin',
+			'Urlslab',
+			'manage_options',
+			plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
+			null,
+			plugin_dir_url( __FILE__ ) . 'assets/urlslab-logo.png',
+			30
+		);
+
+		foreach ( Urlslab_Available_Widgets::get_instance()->get_available_widgets() as $widget ) {
+			add_submenu_page(
+				plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
+				$widget->get_admin_menu_page_title(),
+				$widget->get_admin_menu_title(),
+				'manage_options',
+				$widget->get_admin_menu_page_slug(),
+				null
+			);
+		}
+	}
+
+	function urlslab_load_add_widgets_page() {
+		$current_action = '';
+		if ( isset( $_REQUEST['action'] ) and -1 != $_REQUEST['action'] ) {
+			$current_action = $_REQUEST['action'];
+		}
+
+		$available_widgets = Urlslab_Available_Widgets::get_instance();
+
+		if ( isset( $_REQUEST['widget'] )
+			 and $available_widgets->widget_exists( $_REQUEST['widget'] ) ) {
+			$widget = $available_widgets->get_widget( $_REQUEST['widget'] );
+			$widget->widget_configuration_response( $current_action );
+		}
 	}
 
 }

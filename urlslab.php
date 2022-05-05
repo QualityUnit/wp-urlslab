@@ -36,7 +36,20 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'PLUGIN_NAME_VERSION', '1.0.0' );
+const URLSLAB_VERSION = '1.0.0';
+
+/**
+ * Fetching the plugin name based on the plugin absolute path.
+ */
+const URLSLAB_PLUGIN = __FILE__;
+
+/**
+ * URLSLAB Plugin Base DIR path
+ */
+
+const URLSLAB_PLUGIN_DIR = ABSPATH . 'wp-content/plugins/urlslab';
+
+define( 'URLSLAB_PLUGIN_BASENAME', plugin_basename( URLSLAB_PLUGIN ) );
 
 /**
  * The code that runs during plugin activation.

@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Register all actions and filters for the plugin
  *
@@ -30,7 +31,7 @@ class Urlslab_Loader {
 	 * @access   protected
 	 * @var      array    $actions    The actions registered with WordPress to fire when the plugin loads.
 	 */
-	protected $actions;
+	protected array $actions;
 
 	/**
 	 * The array of filters registered with WordPress.
@@ -39,7 +40,8 @@ class Urlslab_Loader {
 	 * @access   protected
 	 * @var      array    $filters    The filters registered with WordPress to fire when the plugin loads.
 	 */
-	protected $filters;
+	protected array $filters;
+
 
 	/**
 	 * Initialize the collections used to maintain the actions and filters.
@@ -57,10 +59,10 @@ class Urlslab_Loader {
 	 * Add a new action to the collection to be registered with WordPress.
 	 *
 	 * @since    1.0.0
-	 * @param    string               $hook             The name of the WordPress action that is being registered.
-	 * @param    object               $component        A reference to the instance of the object on which the action is defined.
-	 * @param    string               $callback         The name of the function definition on the $component.
-	 * @param    int                  $priority         Optional. The priority at which the function should be fired. Default is 10.
+	 * @param string $hook The name of the WordPress action that is being registered.
+	 * @param object $component A reference to the instance of the object on which the action is defined.
+	 * @param string $callback The name of the function definition on the $component.
+	 * @param int $priority Optional. The priority at which the function should be fired. Default is 10.
 	 * @param    int                  $accepted_args    Optional. The number of arguments that should be passed to the $callback. Default is 1.
 	 */
 	public function add_action( $hook, $component, $callback, $priority = 10, $accepted_args = 1 ) {

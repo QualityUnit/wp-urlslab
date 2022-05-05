@@ -1,5 +1,7 @@
 <?php
 
+require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
+
 /**
  * The file that defines the core plugin class
  *
@@ -34,27 +36,27 @@ class Urlslab {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      Urlslab_Loader    $loader    Maintains and registers all hooks for the plugin.
+	 * @var      Urlslab_Loader $loader Maintains and registers all hooks for the plugin.
 	 */
-	protected $loader;
+	protected Urlslab_Loader $loader;
 
 	/**
 	 * The unique identifier of this plugin.
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      string    $urlslab    The string used to uniquely identify this plugin.
+	 * @var      string $urlslab The string used to uniquely identify this plugin.
 	 */
-	protected $urlslab;
+	protected string $urlslab;
 
 	/**
 	 * The current version of the plugin.
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      string    $version    The current version of the plugin.
+	 * @var      string $version The current version of the plugin.
 	 */
-	protected $version;
+	protected string $version;
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -66,18 +68,64 @@ class Urlslab {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
-		if ( defined( 'urlslab_VERSION' ) ) {
-			$this->version = urlslab_VERSION;
-		} else {
-			$this->version = '1.0.0';
-		}
-		$this->urlslab = 'urlslab';
+		$this->version = URLSLAB_VERSION;
+		$this->urlslab = 'URLSLAB';
 
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+		$this->define_backend_hooks();
+		$this->init_urlslab_user();
+	}
 
+	/**
+	 *
+	 * gets wp_option for URLSLAB plugin
+	 */
+	public static function get_option( $name, $default = false ) {
+		$option = get_option( 'urlslab' );
+
+		if ( false === $option ) {
+			return $default;
+		}
+
+		if ( isset( $option[ $name ] ) ) {
+			return $option[ $name ];
+		} else {
+			return $default;
+		}
+	}
+
+	/**
+	 *
+	 * updates wp_option for URLSLAB plugin
+	 */
+	public static function update_option( $name, $value ) {
+		$option = get_option( 'urlslab' );
+		$option = ( false === $option ) ? array() : (array) $option;
+		$option = array_merge( $option, array( $name => $value ) );
+		update_option( 'urlslab', $option );
+	}
+
+
+	public function init_urlslab_user() {
+		$api_key = $this->get_option( 'api-key' );
+		$user_widgets = $this->get_option( 'user-widgets' );
+		$urlslab_user_widget = Urlslab_User_Widget::get_instance();
+		$available_widgets = Urlslab_Available_Widgets::get_instance();
+
+		if ( ! empty( $api_key ) ) {
+			$urlslab_user_widget->add_api_key(
+				new Urlslab_Api_Key( $api_key )
+			);
+		}
+
+		if ( ! empty( $user_widgets ) ) {
+			$urlslab_user_widget->add_widget_bulk(
+				$available_widgets->get_all_widgets()
+			);
+		}
 	}
 
 	/**
@@ -155,6 +203,14 @@ class Urlslab {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'urlslab_admin_menu', 9, 0 );
+		$this->loader->add_action(
+			'wp_loaded',
+			$plugin_admin,
+			'urlslab_load_add_widgets_page',
+			10,
+			0 
+		);
 
 	}
 
@@ -174,6 +230,28 @@ class Urlslab {
 
 	}
 
+	private function define_backend_hooks() {
+		//defining Upgrade hook
+		$this->loader->add_action( 'admin_init', $this, 'urlslab_upgrade', 10, 0 );
+
+
+	}
+
+	/**
+	 * Upgrades option data when necessary.
+	 */
+	public function urlslab_upgrade() {
+		$old_ver = $this->get_option( 'version', '0' );
+		$new_ver = URLSLAB_VERSION;
+
+		if ( $old_ver == $new_ver ) {
+			return;
+		}
+		// Any Upgrade hook should be done here. For now no Upgrade migration is available
+
+		$this->update_option( 'version', $new_ver );
+	}
+
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.
 	 *
@@ -187,10 +265,10 @@ class Urlslab {
 	 * The name of the plugin used to uniquely identify it within the context of
 	 * WordPress and to define internationalization functionality.
 	 *
-	 * @since     1.0.0
 	 * @return    string    The name of the plugin.
+	 * @since     1.0.0
 	 */
-	public function get_urlslab() {
+	public function get_urlslab(): string {
 		return $this->urlslab;
 	}
 
@@ -198,19 +276,19 @@ class Urlslab {
 	 * The reference to the class that orchestrates the hooks with the plugin.
 	 *
 	 * @return    Urlslab_Loader    Orchestrates the hooks of the plugin.
-	 *@since     1.0.0
+	 * @since     1.0.0
 	 */
-	public function get_loader() {
+	public function get_loader(): Urlslab_Loader {
 		return $this->loader;
 	}
 
 	/**
 	 * Retrieve the version number of the plugin.
 	 *
-	 * @since     1.0.0
 	 * @return    string    The version number of the plugin.
+	 * @since     1.0.0
 	 */
-	public function get_version() {
+	public function get_version(): string {
 		return $this->version;
 	}
 
