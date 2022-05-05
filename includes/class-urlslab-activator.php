@@ -42,7 +42,7 @@ class Urlslab_Activator {
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
     	urlMd5 varchar(32) NOT NULL, 
 		urlName varchar(2048) NOT NULL,
-		status char(1) NOT NULL, -- U: update, P: pending, A: Available, N: Not scheduled
+		status char(1) NOT NULL, -- U: update, P: pending, A: Available, N: Not scheduled, B: Broken Link
 		domainId char(16),
     	urlId char(16),
         screenshotDate bigint,

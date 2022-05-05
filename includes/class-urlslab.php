@@ -85,6 +85,7 @@ class Urlslab {
 	public static string $link_status_available = 'A';
 	public static string $link_status_waiting_for_screenshot = 'P';
 	public static string $link_status_not_scheduled = 'N';
+	public static string $link_broken = 'B';
 
 	/**
 	 *

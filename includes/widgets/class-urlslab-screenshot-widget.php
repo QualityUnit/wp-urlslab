@@ -152,7 +152,6 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 
 				case Urlslab::$link_status_not_scheduled:
 				case Urlslab::$link_status_waiting_for_screenshot:
-				default:
 					//default url
 					return $this->render_shortcode(
 						$urlslab_atts['default-image-url'],
@@ -160,6 +159,10 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 						$urlslab_atts['width'],
 						$urlslab_atts['height']
 					);
+
+				case Urlslab::$link_broken:
+				default:
+					return '';
 
 
 			}
