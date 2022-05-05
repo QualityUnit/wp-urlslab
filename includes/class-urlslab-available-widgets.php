@@ -103,11 +103,11 @@ class Urlslab_Available_Widgets {
 				$available_widget->render_form( $api_key );
 			} else {
 				?>
-				<a class="button" href="<?php echo esc_url( $widget_submenu_link ); ?>">info</a>
+				<a class="button" href="<?php echo esc_url( $widget_submenu_link ); ?>"><?= esc_html( __( 'Info', 'urlslab' ) ); ?></a>
 				<a class="button"
 				   href="<?php echo esc_url( $available_widget->get_integration_page_url( 'action=setup-widget' ) ); ?>"
 				   id="widget-integration-<?php echo esc_attr( $widget_slug ); ?>">
-					Setup Widget</a>
+					<?= esc_html( __( 'Setup Widget', 'urlslab' ) ); ?></a>
 				</div>
 				<?php
 			}

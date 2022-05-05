@@ -35,7 +35,7 @@ class Urlslab_Activator {
 	private static function init_tables() {
 		global $wpdb;
 
-		$table_name = 'common_wp_' . 'urlslab_screenshot';
+		$table_name = $wpdb->prefix . 'urlslab_screenshot';
 
 		$charset_collate = $wpdb->get_charset_collate();
 
