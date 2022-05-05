@@ -138,12 +138,10 @@ class Urlslab_Admin {
 			$current_action = $_REQUEST['action'];
 		}
 
-		$available_widgets = Urlslab_Available_Widgets::get_instance();
-
-		if ( isset( $_REQUEST['widget'] )
-			 and $available_widgets->widget_exists( $_REQUEST['widget'] ) ) {
-			$widget = $available_widgets->get_widget( $_REQUEST['widget'] );
-			$widget->widget_configuration_response( $current_action );
+		if ( isset( $_REQUEST['component'] ) ) {
+			if ( 'api-key' == $_REQUEST['component'] ) {
+				Urlslab_User_Widget::get_instance()->api_setup_response( $current_action );
+			}
 		}
 	}
 

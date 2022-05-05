@@ -116,19 +116,11 @@ class Urlslab {
 
 	public function init_urlslab_user() {
 		$api_key = $this->get_option( 'api-key' );
-		$user_widgets = $this->get_option( 'user-widgets' );
 		$urlslab_user_widget = Urlslab_User_Widget::get_instance();
-		$available_widgets = Urlslab_Available_Widgets::get_instance();
 
 		if ( ! empty( $api_key ) ) {
 			$urlslab_user_widget->add_api_key(
 				new Urlslab_Api_Key( $api_key )
-			);
-		}
-
-		if ( ! empty( $user_widgets ) ) {
-			$urlslab_user_widget->add_widget_bulk(
-				$available_widgets->get_all_widgets()
 			);
 		}
 	}

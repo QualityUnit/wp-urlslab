@@ -1,10 +1,9 @@
 <?php
 
 require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-api-key.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/helpers/urlslab-helpers.php';
 
 class Urlslab_User_Widget {
-
-	private array $user_widgets = array();
 
 	private $user_api_key;
 
@@ -49,78 +48,154 @@ class Urlslab_User_Widget {
 	}
 
 	/**
-	 * Adds a widget to the widgets list.
-	 */
-	public function add_widget( Urlslab_Widget $widget ) {
-
-
-		if ( empty( $widget->get_widget_slug() )
-			 or isset( $this->user_widgets[ $widget->get_widget_slug() ] )
-			 or ! Urlslab_Available_Widgets::get_instance()->widget_exists( $widget->get_widget_slug() ) ) {
-			return false;
-		}
-
-		array_push( $this->user_widgets, $widget->get_widget_slug() );
-		$this->user_widgets = array_unique( $this->user_widgets );
-		Urlslab::update_option( 'user-widgets', $this->user_widgets );
-	}
-
-	/**
-	 * Adds a widget to the widgets list.
-	 */
-	public function add_widget_bulk( array $widgets ): bool {
-		foreach ( $widgets as $i => $widget ) {
-			if ( empty( $widget->get_widget_slug() )
-				 or isset( $this->user_widgets[ $widget->get_widget_slug() ] )
-				 or ! Urlslab_Available_Widgets::get_instance()->widget_exists( $widget->get_widget_slug() ) ) {
-				return false;
-			}
-			array_push( $this->user_widgets, $widget->get_widget_slug() );
-		}
-		$this->user_widgets = array_unique( $this->user_widgets );
-		return true;
-	}
-
-	/**
-	 * Removes a widget from the widgets list.
-	 */
-	public function remove_widget( Urlslab_Widget $widget ): bool {
-		if ( empty( $widget->get_widget_slug() )
-			 or isset( $this->user_widgets[ $widget->get_widget_slug() ] )
-			 or ! Urlslab_Available_Widgets::get_instance()->widget_exists( $widget->get_widget_slug() ) ) {
-			return false;
-		}
-
-		$key = array_search( $widget->get_widget_slug(), $this->user_widgets );
-		if ( false !== $key ) {
-			unset( $this->user_widgets[ $key ] );
-			Urlslab::update_option( 'user-widgets', $this->user_widgets );
-		}
-		return true;
-	}
-
-	/**
-	 * Removes a widget from the widgets list.
-	 */
-	public function remove_all_widgets(): bool {
-		$this->user_widgets = array();
-		Urlslab::update_option( 'user-widgets', $this->user_widgets );
-		return true;
-	}
-
-
-
-	/**
-	 * Returns true if a service with the name exists in the services list.
+	 * @param $args array the action type to take
 	 *
-	 * @param string $widget_slug The name of service to search.
+	 * @return string url in the integration of wordpress process
 	 */
-	public function is_widget_active( string $widget_slug = '' ): bool {
-		if ( '' == $widget_slug ) {
-			return (bool) count( $this->user_widgets );
-		} else {
-			return in_array( $widget_slug, $this->user_widgets );
+	public function get_api_conf_page_url( $args = '' ): string {
+		$main_menu_slug = URLSLAB_PLUGIN_DIR . '/admin/partials/urlslab-admin-display.php';
+		$args = wp_parse_args( $args, array() );
+		$url = urlslab_admin_menu_page_url( $main_menu_slug );
+		$url = add_query_arg( array( 'component' => 'api-key' ), $url );
+
+		if ( ! empty( $args ) ) {
+			$url = add_query_arg( $args, $url );
 		}
+
+		return $url;
+	}
+
+	/**
+	 * @return void
+	 */
+	public function render_form() {
+		?>
+		<form method="post" action="<?php echo esc_url( $this->get_api_conf_page_url( 'action=setup' ) ); ?>">
+			<?php wp_nonce_field( 'api-key-setup' ); ?>
+			<table class="form-table">
+				<tbody>
+				<tr>
+					<th scope="row"><label
+							for="publishable"><?php echo esc_html( 'API key' ); ?></label></th>
+					<td>
+						<?php
+						if ( ! empty( $this->user_api_key ) ) {
+							echo esc_html( $this->user_api_key->get_api_key_masked() );
+							echo sprintf(
+								'<input type="hidden" value="%s" id="api_key" name="api_key" />',
+								esc_html( $this->user_api_key->get_api_key() )
+							);
+						} else {
+							echo '<input type="text" aria-required="true" id="api_key" name="api_key" class="regular-text code" />';
+						}
+						?>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+			<?php
+			if ( ! empty( $this->user_api_key ) ) {
+				submit_button( 'Remove key', 'small', 'reset-api-key' );
+			} else {
+				submit_button( 'Save changes' );
+			}
+			?>
+		</form>
+		<?php
+	}
+
+
+	public function api_setup_response( $action = '' ) {
+		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
+			 'setup' == $action and 'POST' == $_SERVER['REQUEST_METHOD'] ) {
+			check_admin_referer( 'api-key-setup' );
+
+			if ( ! empty( $_POST['reset-api-key'] ) ) {
+				$this->reset_data();
+				$redirect_to = $this->get_api_conf_page_url(
+					array(
+						'action' => 'setup',
+						'message' => 'success',
+					)
+				);
+			} else {
+				$api_key = isset( $_POST['api_key'] )
+					? trim( $_POST['api_key'] )
+					: '';
+
+				$confirmed = $this->confirm_key();
+
+				if ( true === $confirmed ) {
+					$redirect_to = $this->get_api_conf_page_url(
+						array(
+							'message' => 'success',
+						)
+					);
+
+					$this->save_data( $api_key );
+				} elseif ( false === $confirmed ) {
+					$redirect_to = $this->get_api_conf_page_url(
+						array(
+							'action' => 'setup',
+							'message' => 'unauthorized',
+						)
+					);
+				} else {
+					$redirect_to = $this->get_api_conf_page_url(
+						array(
+							'action' => 'setup',
+							'message' => 'invalid',
+						)
+					);
+				}
+			}
+
+			wp_safe_redirect( $redirect_to );
+			exit();
+		}
+	}
+
+	public function admin_notice( string $message = '' ) {
+		if ( 'unauthorized' == $message ) {
+			echo sprintf(
+				'<div class="notice notice-error"><p><strong>%1$s</strong>: %2$s</p></div>',
+				esc_html( 'Error' ),
+				esc_html( 'You have not been authenticated. Make sure the provided API key is correct.' )
+			);
+		}
+
+		if ( 'invalid' == $message ) {
+			echo sprintf(
+				'<div class="notice notice-error"><p><strong>%1$s</strong>: %2$s</p></div>',
+				esc_html( 'Error' ),
+				esc_html( 'Invalid key values.' )
+			);
+		}
+
+		if ( 'success' == $message ) {
+			echo sprintf(
+				'<div class="notice notice-success"><p>%s</p></div>',
+				esc_html( 'Settings saved.' )
+			);
+		}
+	}
+
+
+	private function confirm_key(): bool {
+		//TODO - confirm the key given in the body. connect to API
+		return true;
+	}
+
+	private function save_data( $api_key ) {
+		Urlslab::update_option( 'api-key', $api_key );
+		$this->add_api_key(
+			new Urlslab_Api_Key( $api_key )
+		);
+	}
+
+	private function reset_data() {
+		Urlslab::update_option( 'api-key', '' );
+		$this->remove_api_key();
 	}
 
 }
