@@ -2,6 +2,7 @@
 
 require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
 
 class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 
@@ -262,6 +263,126 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		$user_widget = Urlslab_User_Widget::get_instance();
 		$user_widget->remove_api_key();
 		$user_widget->remove_all_widgets();
+	}
+
+	function get_screenshot_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
+		// normalize attribute keys, lowercase
+		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'urlslab_screenshot';
+
+		// override default attributes with user attributes
+		$urlslab_atts = shortcode_atts(
+			array(
+				'width' => '100%',
+				'height' => '100%',
+				'alt' => 'URLSLAB Screenshot',
+				'default-image-url' => 'https://img.com/jpg.jpg',
+				'url' => 'https://urlslab.com',
+				'screenshot-type' => 'carousel',
+			),
+			$atts,
+			$tag
+		);
+
+
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT * FROM $table_name WHERE urlMd5 = %s", // phpcs:ignore
+				( new Urlslab_Url( $urlslab_atts['url'] ) )->get_url_id(),
+			),
+			ARRAY_A
+		);
+
+
+		if ( null !== $row ) {
+			switch ( $row['status'] ) {
+				case Urlslab::$link_status_waiting_for_update:
+				case Urlslab::$link_status_available:
+					return $this->render_shortcode(
+						$this->create_url_path( $row, $urlslab_atts['screenshot-type'] ),
+						$urlslab_atts['alt'],
+						$urlslab_atts['width'],
+						$urlslab_atts['height']
+					);
+
+				case Urlslab::$link_status_not_scheduled:
+				case Urlslab::$link_status_waiting_for_screenshot:
+				default:
+					//default url
+					return $this->render_shortcode(
+						$urlslab_atts['default-image-url'],
+						$urlslab_atts['alt'],
+						$urlslab_atts['width'],
+						$urlslab_atts['height']
+					);
+
+
+			}
+		} else {
+			// no link found, insert
+			//default url
+			$urlslab_url = new Urlslab_Url( $urlslab_atts['url'] );
+			$wpdb->query(
+				$wpdb->prepare(
+					'
+                        INSERT INTO ' . $table_name . // phpcs:ignore
+					' 
+                            (urlMd5, urlName, status, updateStatusDate)
+                        VALUES (%s, %s, %s, %s);
+                    ',
+					$urlslab_url->get_url_id(),
+					$urlslab_url->get_url(),
+					Urlslab::$link_status_not_scheduled,
+					gmdate( 'Y-m-d H:i:s' )
+				)
+			);
+			return $this->render_shortcode(
+				$urlslab_atts['default-image-url'],
+				$urlslab_atts['alt'],
+				$urlslab_atts['width'],
+				$urlslab_atts['height']
+			);
+		}
+	}
+
+	private function render_shortcode( string $src, string $alt, string $width, string $height ): string {
+		return sprintf(
+			'<img src="%s" alt="%s" width="%s" height="%s">',
+			esc_url( $src ),
+			esc_attr( $alt ),
+			esc_attr( $width ),
+			esc_attr( $height )
+		);
+	}
+
+	private function create_url_path( $row, $screenshot_type = 'carousel' ): string {
+		switch ( $screenshot_type ) {
+			case 'thumbnail':
+				return sprintf(
+					'https://urlslab.com/public/thumbnail/%s/%s/%s.jpg',
+					$row['domainId'],
+					$row['urlId'],
+					$row['screenshotDate']
+				);
+			case 'full-page':
+				return sprintf(
+					'https://urlslab.com/public/image/%s/%s/%s.png',
+					$row['domainId'],
+					$row['urlId'],
+					$row['screenshotDate']
+				);
+
+			case 'carousel':
+			default:
+				return sprintf(
+					'https://urlslab.com/public/carousel/%s/%s/%s',
+					$row['domainId'],
+					$row['urlId'],
+					$row['screenshotDate']
+				);
+		}
 	}
 
 }

@@ -117,7 +117,7 @@ class Urlslab_Admin {
 			plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
 			null,
 			plugin_dir_url( __FILE__ ) . 'assets/urlslab-logo.png',
-			30
+			80
 		);
 
 		foreach ( Urlslab_Available_Widgets::get_instance()->get_available_widgets() as $widget ) {

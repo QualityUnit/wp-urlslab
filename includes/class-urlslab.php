@@ -79,6 +79,11 @@ class Urlslab {
 		$this->init_urlslab_user();
 	}
 
+	public static string $link_status_waiting_for_update = 'U';
+	public static string $link_status_available = 'A';
+	public static string $link_status_waiting_for_screenshot = 'P';
+	public static string $link_status_not_scheduled = 'N';
+
 	/**
 	 *
 	 * gets wp_option for URLSLAB plugin
@@ -233,8 +238,16 @@ class Urlslab {
 	private function define_backend_hooks() {
 		//defining Upgrade hook
 		$this->loader->add_action( 'admin_init', $this, 'urlslab_upgrade', 10, 0 );
+		$this->loader->add_action( 'init', $this, 'urlslab_shortcodes_init', 10, 0 );
 
 
+	}
+
+
+
+	public function urlslab_shortcodes_init() {
+		$widget = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-screenshot' );
+		add_shortcode( 'urlslab_screenshot', array( $widget, 'get_screenshot_shortcode_content' ) );
 	}
 
 	/**
