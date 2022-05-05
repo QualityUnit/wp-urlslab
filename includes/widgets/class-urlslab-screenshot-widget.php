@@ -113,9 +113,11 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	 * @return void
 	 */
 	public function render_form( $api_key = '' ) {
-		$api_key_text = '';
+		$api_key_masked = '';
+		$raw_api_key = '';
 		if ( ! empty( $api_key ) ) {
-			$api_key_text = $api_key->get_api_key_masked();
+			$api_key_masked = $api_key->get_api_key_masked();
+			$raw_api_key = $api_key->get_api_key();
 		}
 		$user_widget = Urlslab_User_Widget::get_instance();
 		?>
@@ -129,15 +131,15 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 					<td>
 						<?php
 						if ( $user_widget->is_widget_active( $this->widget_slug ) ) {
-							echo esc_html( $api_key_text );
+							echo esc_html( $api_key_masked );
 							echo sprintf(
 								'<input type="hidden" value="%s" id="api_key" name="api_key" />',
-								esc_attr( $api_key_text )
+								esc_attr( $api_key_masked )
 							);
 						} else {
 							echo sprintf(
 								'<input type="text" aria-required="true" value="%s" id="api_key" name="api_key" class="regular-text code" />',
-								esc_attr( $api_key_text )
+								esc_attr( $raw_api_key )
 							);
 						}
 						?>

@@ -35,6 +35,13 @@ class Urlslab_Api_Key {
 		return $this->masked( $this->api_key );
 	}
 
+	/**
+	 * @return string
+	 */
+	public function get_api_key(): string {
+		return $this->api_key;
+	}
+
 	public function save_api_key() {
 		Urlslab::update_option( 'api-key', $this->api_key );
 	}
