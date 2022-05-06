@@ -117,7 +117,7 @@ class Urlslab_Admin {
 			plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
 			null,
 			plugin_dir_url( __FILE__ ) . 'assets/urlslab-logo.png',
-			30
+			80
 		);
 
 		foreach ( Urlslab_Available_Widgets::get_instance()->get_available_widgets() as $widget ) {
@@ -138,12 +138,10 @@ class Urlslab_Admin {
 			$current_action = $_REQUEST['action'];
 		}
 
-		$available_widgets = Urlslab_Available_Widgets::get_instance();
-
-		if ( isset( $_REQUEST['widget'] )
-			 and $available_widgets->widget_exists( $_REQUEST['widget'] ) ) {
-			$widget = $available_widgets->get_widget( $_REQUEST['widget'] );
-			$widget->widget_configuration_response( $current_action );
+		if ( isset( $_REQUEST['component'] ) ) {
+			if ( 'api-key' == $_REQUEST['component'] ) {
+				Urlslab_User_Widget::get_instance()->api_setup_response( $current_action );
+			}
 		}
 	}
 

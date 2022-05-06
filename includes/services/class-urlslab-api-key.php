@@ -14,8 +14,7 @@ class Urlslab_Api_Key {
 	/**
 	 * Masks a password with asterisks (*).
 	 *
-	 * @param int $right Length of right-hand unmasked text. Default 0.
-	 * @param int $left Length of left-hand unmasked text. Default 0.
+	 * @param string $text
 	 *
 	 * @return string Text of masked password.
 	 */

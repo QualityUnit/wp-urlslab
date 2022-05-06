@@ -79,6 +79,11 @@ class Urlslab {
 		$this->init_urlslab_user();
 	}
 
+	public static string $link_status_waiting_for_update = 'U';
+	public static string $link_status_available = 'A';
+	public static string $link_status_waiting_for_screenshot = 'P';
+	public static string $link_status_not_scheduled = 'N';
+
 	/**
 	 *
 	 * gets wp_option for URLSLAB plugin
@@ -111,19 +116,11 @@ class Urlslab {
 
 	public function init_urlslab_user() {
 		$api_key = $this->get_option( 'api-key' );
-		$user_widgets = $this->get_option( 'user-widgets' );
 		$urlslab_user_widget = Urlslab_User_Widget::get_instance();
-		$available_widgets = Urlslab_Available_Widgets::get_instance();
 
 		if ( ! empty( $api_key ) ) {
 			$urlslab_user_widget->add_api_key(
 				new Urlslab_Api_Key( $api_key )
-			);
-		}
-
-		if ( ! empty( $user_widgets ) ) {
-			$urlslab_user_widget->add_widget_bulk(
-				$available_widgets->get_all_widgets()
 			);
 		}
 	}
@@ -233,8 +230,17 @@ class Urlslab {
 	private function define_backend_hooks() {
 		//defining Upgrade hook
 		$this->loader->add_action( 'admin_init', $this, 'urlslab_upgrade', 10, 0 );
+		$this->loader->add_action( 'init', $this, 'urlslab_shortcodes_init', 10, 0 );
 
 
+	}
+
+
+
+	public function urlslab_shortcodes_init() {
+		foreach ( Urlslab_Available_Widgets::get_instance()->get_all_widgets() as $i => $widget ) {
+			add_shortcode( $widget->get_widget_slug(), array( $widget, 'get_screenshot_shortcode_content' ) );
+		}
 	}
 
 	/**

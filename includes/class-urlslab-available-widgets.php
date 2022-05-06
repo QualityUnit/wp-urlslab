@@ -68,52 +68,5 @@ class Urlslab_Available_Widgets {
 		return $this->available_widgets;
 	}
 
-
-	/**
-	 * Prints HTML representation of all the widgets available to the user
-	 * @return void
-	 */
-	public function list_widgets( $action = '', $active_widget = '' ) {
-		foreach ( $this->available_widgets as $i => $available_widget ) {
-			$widget_slug              = $available_widget->get_widget_slug();
-			$widget_title             = $available_widget->get_widget_title();
-			$widget_desc              = $available_widget->get_widget_description();
-			$widget_landing_page_link = $available_widget->get_landing_page_link();
-			$widget_submenu_link      = $available_widget->get_admin_menu_page_url();
-			$user_urlslab     = Urlslab_User_Widget::get_instance();
-			$is_widget_active = $user_urlslab->is_widget_active( $widget_slug );
-			?>
-		<div class="card<?php echo $is_widget_active ? ' active' : ''; ?>" id="<?php echo esc_attr( $widget_slug ); ?>">
-			<h2 class="title"><?php echo esc_html( $widget_title ); ?></h2>
-			<div class="infobox">
-				<?php echo $is_widget_active ? 'Widget is active' : esc_html( $widget_desc ); ?>.
-				for more details see <a href="<?php echo esc_url( $widget_landing_page_link ); ?>" target="_blank">
-					<?php echo esc_html( $widget_title ); ?>
-				</a>
-			</div>
-			<br class="clear"/>
-			<?php
-			if ( 'setup-widget' == $action and
-				 '' != $active_widget and
-				 $active_widget->get_widget_slug() == $widget_slug ) {
-				$api_key = '';
-				if ( $user_urlslab->has_api_key() ) {
-					$api_key = $user_urlslab->get_api_key();
-				}
-				$available_widget->render_form( $api_key );
-			} else {
-				?>
-				<a class="button" href="<?php echo esc_url( $widget_submenu_link ); ?>"><?= esc_html( __( 'Info', 'urlslab' ) ); ?></a>
-				<a class="button"
-				   href="<?php echo esc_url( $available_widget->get_integration_page_url( 'action=setup-widget' ) ); ?>"
-				   id="widget-integration-<?php echo esc_attr( $widget_slug ); ?>">
-					<?= esc_html( __( 'Setup Widget', 'urlslab' ) ); ?></a>
-				</div>
-				<?php
-			}
-		}
-	}
-
-
 }
 

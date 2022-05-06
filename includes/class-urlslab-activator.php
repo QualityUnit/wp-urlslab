@@ -40,16 +40,16 @@ class Urlslab_Activator {
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
-        domainId  bigint NOT NULL,
-		urlId bigint NOT NULL,
-		urlName text NOT NULL,
-		status ENUM('AVAILABLE', 'PENDING', 'NOT_SCHEDULED') NOT NULL,
-		urlPath text,
-        screenshotDate DATETIME,
+    	urlMd5 varchar(32) NOT NULL, 
+		urlName varchar(2048) NOT NULL,
+		status char(1) NOT NULL, -- U: update, P: pending, A: Available, N: Not scheduled
+		domainId char(16),
+    	urlId char(16),
+        screenshotDate bigint,
+    	updateStatusDate DATETIME,
     	urlTitle	  text, 
-    	urlSummary	  text,
-		PRIMARY KEY  (domainId, urlId), 
-    	INDEX (urlName, status)
+		PRIMARY KEY  (urlMd5),
+    	INDEX (updateStatusDate, status)
 	) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
