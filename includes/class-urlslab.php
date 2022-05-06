@@ -1,6 +1,7 @@
 <?php
 
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
 
 /**
  * The file that defines the core plugin class
@@ -76,6 +77,7 @@ class Urlslab {
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		$this->define_backend_hooks();
+		$this->define_wp_cron();
 		$this->init_urlslab_user();
 	}
 
@@ -83,6 +85,7 @@ class Urlslab {
 	public static string $link_status_available = 'A';
 	public static string $link_status_waiting_for_screenshot = 'P';
 	public static string $link_status_not_scheduled = 'N';
+	public static string $link_status_broken = 'B';
 
 	/**
 	 *
@@ -232,6 +235,16 @@ class Urlslab {
 		$this->loader->add_action( 'admin_init', $this, 'urlslab_upgrade', 10, 0 );
 		$this->loader->add_action( 'init', $this, 'urlslab_shortcodes_init', 10, 0 );
 
+
+	}
+
+	private function define_wp_cron() {
+		$urlslab_screenshot_cron = new Urlslab_Screenshot_cron();
+
+		$this->loader->add_action( 'urlslab_cron_hook', $urlslab_screenshot_cron, 'urlslab_cron_exec', 10, 0 );
+		if ( ! wp_next_scheduled( 'urlslab_cron_hook' ) ) {
+			wp_schedule_event( time(), 'hourly', 'urlslab_cron_hook' );
+		}
 
 	}
 
