@@ -1,6 +1,7 @@
 <?php
 
 require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-api-key.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-user-management-api.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/helpers/urlslab-helpers.php';
 
 class Urlslab_User_Widget {
@@ -123,7 +124,8 @@ class Urlslab_User_Widget {
 					? trim( $_POST['api_key'] )
 					: '';
 
-				$confirmed = $this->confirm_key();
+
+				$confirmed = $this->confirm_key( new Urlslab_Api_Key( $api_key ) );
 
 				if ( true === $confirmed ) {
 					$redirect_to = $this->get_api_conf_page_url(
@@ -181,9 +183,9 @@ class Urlslab_User_Widget {
 	}
 
 
-	private function confirm_key(): bool {
-		//TODO - confirm the key given in the body. connect to API
-		return true;
+	private function confirm_key( $api_key ): bool {
+		$screenshot_api = new Urlslab_User_Management_Api( $api_key );
+		return $screenshot_api->confirm_api_key();
 	}
 
 	private function save_data( $api_key ) {

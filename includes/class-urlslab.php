@@ -120,12 +120,14 @@ class Urlslab {
 	public function init_urlslab_user() {
 		$api_key = $this->get_option( 'api-key' );
 		$urlslab_user_widget = Urlslab_User_Widget::get_instance();
+		$urlslab_available_widgets = Urlslab_Available_Widgets::get_instance();
 
 		if ( ! empty( $api_key ) ) {
 			$urlslab_user_widget->add_api_key(
 				new Urlslab_Api_Key( $api_key )
 			);
 		}
+		$urlslab_available_widgets->init_widgets( $api_key );
 	}
 
 	/**

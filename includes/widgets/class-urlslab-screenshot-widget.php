@@ -14,24 +14,26 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 
 	private string $landing_page_link;
 
-	// TODO - add services
-	private Urlslab_Service $service;
+	private Urlslab_Screenshot_Api $urlslab_screenshot_api;
 
 	/**
 	 * @param string $widget_slug
 	 * @param string $widget_title
 	 * @param string $widget_description
 	 * @param string $landing_page_link
+	 * @param Urlslab_Screenshot_Api $urlslab_screenshot_api
 	 */
 	public function __construct(
 		string $widget_slug,
 		string $widget_title,
 		string $widget_description,
-		string $landing_page_link ) {
+		string $landing_page_link,
+		Urlslab_Screenshot_Api $urlslab_screenshot_api ) {
 		$this->widget_slug = $widget_slug;
 		$this->widget_title       = $widget_title;
 		$this->widget_description = $widget_description;
 		$this->landing_page_link = $landing_page_link;
+		$this->urlslab_screenshot_api = $urlslab_screenshot_api;
 	}
 
 	/**
