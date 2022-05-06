@@ -160,7 +160,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 						$urlslab_atts['height']
 					);
 
-				case Urlslab::$link_broken:
+				case Urlslab::$link_status_broken:
 				default:
 					return '';
 
