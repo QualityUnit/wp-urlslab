@@ -17,7 +17,7 @@
 	},
 	"devDependencies": {
 		"@wordpress/base-styles": "^4",
-		"@wordpress/block-editor": "^8",
+		"@wordpress/block-editor": "^9",
 		"@wordpress/block-library": "^6",
 		"@wordpress/components": "^19",
 		"@wordpress/eslint-plugin": "^12",
