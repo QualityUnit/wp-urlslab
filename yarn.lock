@@ -3019,9 +3019,9 @@
     lodash "^4.17.21"
 
 "@wordpress/stylelint-config@^20", "@wordpress/stylelint-config@^20.0.0":
-  version "20.0.1"
-  resolved "https://registry.yarnpkg.com/@wordpress/stylelint-config/-/stylelint-config-20.0.1.tgz#ddeb1a99e0de5acb6e06364f28fab2813dc883b6"
-  integrity sha512-f+aydCTrfFcEvx0eOS4N1VRV8MSl/zZTIPJcPkh2oV1yLNq0pL4zQ5OYMlSg5vaj0yZJdRLyGVa+VSjy+D81Ag==
+  version "20.0.2"
+  resolved "https://registry.yarnpkg.com/@wordpress/stylelint-config/-/stylelint-config-20.0.2.tgz#343c351606ba9167736b42479fa66047cb3507e7"
+  integrity sha512-guP0Cwc4PysbRJroxWcBxViYaqaTlxrkcZ/dfsoB0ZLO+RrZ8YFktt02mt6q6MASLTBEWIBHVQ5nKLVFPWAWJg==
   dependencies:
     stylelint-config-recommended "^6.0.0"
     stylelint-config-recommended-scss "^5.0.2"
