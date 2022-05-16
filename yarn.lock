@@ -2558,12 +2558,7 @@
     browserslist "^4.17.6"
     core-js "^3.19.1"
 
-"@wordpress/base-styles@^4":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@wordpress/base-styles/-/base-styles-4.2.0.tgz#c999152d3aa0c87aced04bc9725309795f41c835"
-  integrity sha512-WFB3Op5wMelmC6+Xbt1pDXLVSHdYsS6qMrYfv4riOBKRUUG/rWZqhmAHkbiEm/QabqpuUoqL4s0HJ1UaSM71AA==
-
-"@wordpress/base-styles@^4.4.0":
+"@wordpress/base-styles@^4", "@wordpress/base-styles@^4.4.0":
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/@wordpress/base-styles/-/base-styles-4.4.0.tgz#2e7e3e3651a502773e2fc7656b5af9a15835ecfc"
   integrity sha512-9ugtTev/eH4RNIpu9nSNygJM8ONJ2cVAmvYDzOG0b7E4ut2RTph5okTSunOx0ny/nsxWLrj6GqVsS6+liTB6GQ==
@@ -3293,14 +3288,6 @@
     lodash "^4.17.21"
 
 "@wordpress/url@^3.4.0", "@wordpress/url@^3.5.0", "@wordpress/url@^3.9.0":
-  version "3.9.0"
-  resolved "https://registry.yarnpkg.com/@wordpress/url/-/url-3.9.0.tgz#d9888026bd04de784acef0f93ffa8a9ddc0621ed"
-  integrity sha512-fiPvb9xB8g/xwSprq+mEI1MyH/H9xCfpqKcnG10JdAWRFahQky6QU0cAOPTYNuU96l0++Ha/SkHSylVyftzFAw==
-  dependencies:
-    "@babel/runtime" "^7.16.0"
-    lodash "^4.17.21"
-
-"@wordpress/url@^3.9.0":
   version "3.9.0"
   resolved "https://registry.yarnpkg.com/@wordpress/url/-/url-3.9.0.tgz#d9888026bd04de784acef0f93ffa8a9ddc0621ed"
   integrity sha512-fiPvb9xB8g/xwSprq+mEI1MyH/H9xCfpqKcnG10JdAWRFahQky6QU0cAOPTYNuU96l0++Ha/SkHSylVyftzFAw==
