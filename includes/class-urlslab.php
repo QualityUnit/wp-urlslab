@@ -77,7 +77,6 @@ class Urlslab {
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		$this->define_backend_hooks();
-		$this->define_wp_cron();
 		$this->init_urlslab_user();
 	}
 
@@ -127,7 +126,7 @@ class Urlslab {
 				new Urlslab_Api_Key( $api_key )
 			);
 		}
-		$urlslab_available_widgets->init_widgets( $api_key );
+		$urlslab_available_widgets->init_widgets( new Urlslab_Api_Key( $api_key ) );
 	}
 
 	/**
@@ -236,20 +235,7 @@ class Urlslab {
 		//defining Upgrade hook
 		$this->loader->add_action( 'admin_init', $this, 'urlslab_upgrade', 10, 0 );
 		$this->loader->add_action( 'init', $this, 'urlslab_shortcodes_init', 10, 0 );
-
-
 	}
-
-	private function define_wp_cron() {
-		$urlslab_screenshot_cron = new Urlslab_Screenshot_cron();
-
-		$this->loader->add_action( 'urlslab_cron_hook', $urlslab_screenshot_cron, 'urlslab_cron_exec', 10, 0 );
-		if ( ! wp_next_scheduled( 'urlslab_cron_hook' ) ) {
-			wp_schedule_event( time(), 'hourly', 'urlslab_cron_hook' );
-		}
-
-	}
-
 
 
 	public function urlslab_shortcodes_init() {

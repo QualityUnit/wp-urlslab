@@ -110,6 +110,13 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		return $url;
 	}
 
+	public function schedule_batch_urls( $urls ) {
+		if ( $this->urlslab_screenshot_api->has_api_key() ) {
+			return $this->urlslab_screenshot_api->schedule_batch( $urls );
+		}
+		return false;
+	}
+
 	function get_screenshot_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
 		// normalize attribute keys, lowercase
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );

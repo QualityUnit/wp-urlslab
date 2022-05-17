@@ -51,6 +51,16 @@ const URLSLAB_PLUGIN_DIR = ABSPATH . 'wp-content/plugins/urlslab';
 
 define( 'URLSLAB_PLUGIN_BASENAME', plugin_basename( URLSLAB_PLUGIN ) );
 
+add_filter( 'cron_schedules', 'urlslab_add_cron_interval' );
+function urlslab_add_cron_interval( $schedules ) {
+	$my_schedule['every_minute'] = array(
+		'interval' => 60,
+		'display'  => esc_html__( 'Every Minute' ),
+	);
+	return array_merge( $my_schedule, $schedules );
+}
+
+
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-plugin-name-activator.php

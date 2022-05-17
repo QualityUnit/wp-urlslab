@@ -10,15 +10,13 @@ class Urlslab_Screenshot_Response {
 	private $screenshot_status;
 
 	/**
-	 * @param string $url_name
 	 * @param $domain_id
 	 * @param $url_id
 	 * @param $screenshot_date
 	 * @param $url_title
 	 * @param $screenshot_status
 	 */
-	public function __construct( string $url_name, $domain_id, $url_id, $screenshot_date, $url_title, $screenshot_status ) {
-		$this->url_name          = $url_name;
+	public function __construct( $domain_id, $url_id, $screenshot_date, $url_title, $screenshot_status ) {
 		$this->domain_id         = $domain_id;
 		$this->url_id            = $url_id;
 		$this->screenshot_date   = $screenshot_date;
@@ -26,20 +24,6 @@ class Urlslab_Screenshot_Response {
 		$this->screenshot_status = $screenshot_status;
 	}
 
-
-	/**
-	 * @return string
-	 */
-	public function get_url_name(): string {
-		return $this->url_name;
-	}
-
-	/**
-	 * @param string $url_name
-	 */
-	public function set_url_name( string $url_name ): void {
-		$this->url_name = $url_name;
-	}
 
 	/**
 	 * @return mixed
