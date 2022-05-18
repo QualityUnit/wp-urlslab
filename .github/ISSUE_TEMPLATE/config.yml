@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Use "web-issues" repository
+    url: https://github.com/QualityUnit/web-issues/issues/new/choose
+    about: We don't use issues in each repository. We have one common repository for that.

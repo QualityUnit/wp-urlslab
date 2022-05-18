@@ -1,10 +1,15 @@
-**What was changed?**
-Sum up your changes
+**Changes proposed in this Pull Request**
+Describe what was changed in the Pull Request
+
+**Testing instructions**
+Describe how and what should be tested by a Tester
 
 **Checklist**
-- [ ] My code follows the style guidelines of this project (Stylelint, Eslint, PHP CS)
-- [ ] My changes generate no new warnings or errors
+- [ ] My code follows the style guidelines of this project
+- [ ] My commits follow the style guidelines of this project
 - [ ] I have performed a self-review of my code
-- [ ] My code passed through automated tests
+- [ ] My changes generate no new warnings
+- [ ] I have added tests that prove my fix is effective or that my feature works
+- [ ] New and existing unit tests pass locally with my changes
 
-Close #[ISSUE_NUMBER]
+Close [ISSUE_NUMBER]
