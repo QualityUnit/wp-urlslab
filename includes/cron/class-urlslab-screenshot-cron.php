@@ -1,7 +1,6 @@
 <?php
 
 class Urlslab_Screenshot_Cron {
-
 	public function urlslab_cron_exec() {
 		global $wpdb;
 
@@ -23,19 +22,28 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 				'ARRAY_A'
 			);
 
-
 			if ( $schedules ) {
 				$this->handle_schedules( $schedules );
 			}
 
 			if ( count( $schedules ) < 100 ) {
 				break;
-			}       
+			}
 		}
 	}
 
 	private function handle_schedules( $schedules ) {
-		//TODO - complete when the Urlslab_service is implemented completely
+		$urlslab_screenshot = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-screenshot' );
+		$request_body = array();
+		foreach ( $schedules as $schedule ) {
+			array_push( $request_body, $schedule['urlName'] );
+		}
+		$rsp = $urlslab_screenshot->schedule_batch_urls( $request_body );
+		if ( ! empty( $rsp ) ) {
+			foreach ( $schedules as $i => $schedule ) {
+				$this->save_new_schedule_status( $rsp[ $i ], md5( $schedule['urlName'] ) );
+			}
+		}
 	}
 
 	private function save_new_schedule_status( $urlslab_screenshot, $url_md5_hash ) {
@@ -45,10 +53,11 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 		$wpdb->query(
 			$wpdb->prepare(
 				'UPDATE ' . $table . // phpcs:ignore
-				' SET status = %s, updateStatusDate = %s, domainId = %d, urlId = %d, urlTitle = %s 
+				' SET status = %s, updateStatusDate = %s, screenshotDate = %d, domainId = %s, urlId = %s, urlTitle = %s 
 				WHERE urlMd5 = %d',
-				$urlslab_screenshot->get_status(),
+				$urlslab_screenshot->get_screenshot_status(),
 				gmdate( 'Y-m-d H:i:s' ),
+				$urlslab_screenshot->get_screenshot_date(),
 				$urlslab_screenshot->get_domain_id(),
 				$urlslab_screenshot->get_url_id(),
 				$urlslab_screenshot->get_url_title(),

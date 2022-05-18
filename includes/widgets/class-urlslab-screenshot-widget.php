@@ -14,24 +14,26 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 
 	private string $landing_page_link;
 
-	// TODO - add services
-	private Urlslab_Service $service;
+	private Urlslab_Screenshot_Api $urlslab_screenshot_api;
 
 	/**
 	 * @param string $widget_slug
 	 * @param string $widget_title
 	 * @param string $widget_description
 	 * @param string $landing_page_link
+	 * @param Urlslab_Screenshot_Api $urlslab_screenshot_api
 	 */
 	public function __construct(
 		string $widget_slug,
 		string $widget_title,
 		string $widget_description,
-		string $landing_page_link ) {
+		string $landing_page_link,
+		Urlslab_Screenshot_Api $urlslab_screenshot_api ) {
 		$this->widget_slug = $widget_slug;
 		$this->widget_title       = $widget_title;
 		$this->widget_description = $widget_description;
 		$this->landing_page_link = $landing_page_link;
+		$this->urlslab_screenshot_api = $urlslab_screenshot_api;
 	}
 
 	/**
@@ -108,6 +110,13 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		return $url;
 	}
 
+	public function schedule_batch_urls( $urls ) {
+		if ( $this->urlslab_screenshot_api->has_api_key() ) {
+			return $this->urlslab_screenshot_api->schedule_batch( $urls );
+		}
+		return false;
+	}
+
 	function get_screenshot_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
 		// normalize attribute keys, lowercase
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
@@ -120,8 +129,9 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			array(
 				'width' => '100%',
 				'height' => '100%',
-				'alt' => 'URLSLAB Screenshot',
-				'default-image-url' => 'https://img.com/jpg.jpg',
+				'alt' => 'Screenshot taken by URLSLAB.com',
+				'title' => 'Screenshot taken by URLSLAB.com',
+				'default-image' => '',
 				'url' => 'https://urlslab.com',
 				'screenshot-type' => 'carousel',
 			),
@@ -147,17 +157,19 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 						$this->create_url_path( $row, $urlslab_atts['screenshot-type'] ),
 						$urlslab_atts['alt'],
 						$urlslab_atts['width'],
-						$urlslab_atts['height']
+						$urlslab_atts['height'],
+						$urlslab_atts['title'],
 					);
 
 				case Urlslab::$link_status_not_scheduled:
 				case Urlslab::$link_status_waiting_for_screenshot:
 					//default url
 					return $this->render_shortcode(
-						$urlslab_atts['default-image-url'],
+						$urlslab_atts['default-image'],
 						$urlslab_atts['alt'],
 						$urlslab_atts['width'],
-						$urlslab_atts['height']
+						$urlslab_atts['height'],
+						$urlslab_atts['title'],
 					);
 
 				case Urlslab::$link_status_broken:
@@ -185,21 +197,26 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 				)
 			);
 			return $this->render_shortcode(
-				$urlslab_atts['default-image-url'],
+				$urlslab_atts['default-image'],
 				$urlslab_atts['alt'],
 				$urlslab_atts['width'],
-				$urlslab_atts['height']
+				$urlslab_atts['height'],
+				$urlslab_atts['title']
 			);
 		}
 	}
 
-	private function render_shortcode( string $src, string $alt, string $width, string $height ): string {
+	private function render_shortcode( string $src, string $alt, string $width, string $height, string $title ): string {
+		if ( empty( $src ) ) {
+			return '';
+		}
 		return sprintf(
-			'<img src="%s" alt="%s" width="%s" height="%s">',
+			'<img src="%s" alt="%s" width="%s" height="%s" title="%s">',
 			esc_url( $src ),
 			esc_attr( $alt ),
 			esc_attr( $width ),
-			esc_attr( $height )
+			esc_attr( $height ),
+			esc_attr( $title )
 		);
 	}
 

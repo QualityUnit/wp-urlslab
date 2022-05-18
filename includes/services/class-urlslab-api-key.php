@@ -45,4 +45,9 @@ class Urlslab_Api_Key {
 		Urlslab::update_option( 'api-key', $this->api_key );
 	}
 
+	public function add_key_to_header( array $header ): array {
+		$header['x-Api-Key'] = $this->api_key;
+		return $header;
+	}
+
 }
