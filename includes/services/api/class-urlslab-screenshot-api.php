@@ -26,11 +26,11 @@ class Urlslab_Screenshot_Api extends Urlslab_Api {
 			$returning_obj = array();
 			foreach ( json_decode( $response[1] ) as $result_obj ) {
 				$returning_obj[] = new Urlslab_Screenshot_Response(
-					$result_obj->domainId,
-					$result_obj->urlId,
-					$result_obj->screenshotDate,
-					$result_obj->urlTitle,
-					$result_obj->screenshotStatus
+					$result_obj->domainId, // phpcs:ignore
+					$result_obj->urlId, // phpcs:ignore
+					$result_obj->screenshotDate, // phpcs:ignore
+					$result_obj->urlTitle, // phpcs:ignore
+					$result_obj->screenshotStatus // phpcs:ignore
 				);
 			}
 

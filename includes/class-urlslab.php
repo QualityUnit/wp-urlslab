@@ -233,8 +233,15 @@ class Urlslab {
 
 	private function define_backend_hooks() {
 		//defining Upgrade hook
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
+		$cron_job = new Urlslab_Screenshot_Cron();
+
 		$this->loader->add_action( 'admin_init', $this, 'urlslab_upgrade', 10, 0 );
 		$this->loader->add_action( 'init', $this, 'urlslab_shortcodes_init', 10, 0 );
+		$this->loader->add_action( 'urlslab_cron_hook', $cron_job, 'urlslab_cron_exec', 10, 0 );
+		if ( ! wp_next_scheduled( 'urlslab_cron_hook' ) ) {
+			wp_schedule_event( time(), 'every_five_minutes', 'urlslab_cron_hook' );
+		}
 	}
 
 

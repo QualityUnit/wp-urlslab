@@ -53,9 +53,9 @@ define( 'URLSLAB_PLUGIN_BASENAME', plugin_basename( URLSLAB_PLUGIN ) );
 
 add_filter( 'cron_schedules', 'urlslab_add_cron_interval' );
 function urlslab_add_cron_interval( $schedules ) {
-	$my_schedule['every_minute'] = array(
-		'interval' => 60,
-		'display'  => esc_html__( 'Every Minute' ),
+	$my_schedule['every_five_minutes'] = array(
+		'interval' => 300,
+		'display'  => esc_html__( 'Every 5 Minutes' ),
 	);
 	return array_merge( $my_schedule, $schedules );
 }

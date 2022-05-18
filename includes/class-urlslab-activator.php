@@ -30,7 +30,6 @@ class Urlslab_Activator {
 	 */
 	public static function activate() {
 		Urlslab_Activator::init_tables();
-		Urlslab_Activator::init_cron();
 	}
 
 	private static function init_tables() {
@@ -56,14 +55,4 @@ class Urlslab_Activator {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 	}
-
-	private static function init_cron() {
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
-		add_action( 'urlslab_cron_hook', 'urlslab_cron_exec', 10, 0 );
-		if ( ! wp_next_scheduled( 'urlslab_cron_hook' ) ) {
-			do_action( 'qm/debug', 'activate' );
-			wp_schedule_event( time(), 'every_minute', 'urlslab_cron_hook' );
-		}
-	}
-
 }
