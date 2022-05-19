@@ -132,7 +132,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 				'alt' => 'Screenshot taken by URLSLAB.com',
 				'title' => 'Screenshot taken by URLSLAB.com',
 				'default-image' => '',
-				'url' => 'https://urlslab.com',
+				'url' => 'https://www.urlslab.com',
 				'screenshot-type' => 'carousel',
 			),
 			$atts,
@@ -224,14 +224,14 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		switch ( $screenshot_type ) {
 			case 'thumbnail':
 				return sprintf(
-					'https://urlslab.com/public/thumbnail/%s/%s/%s.jpg',
+					'https://www.urlslab.com/public/thumbnail/%s/%s/%s.jpg',
 					$row['domainId'],
 					$row['urlId'],
 					$row['screenshotDate']
 				);
 			case 'full-page':
 				return sprintf(
-					'https://urlslab.com/public/image/%s/%s/%s.png',
+					'https://www.urlslab.com/public/image/%s/%s/%s.png',
 					$row['domainId'],
 					$row['urlId'],
 					$row['screenshotDate']
@@ -240,7 +240,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			case 'carousel':
 			default:
 				return sprintf(
-					'https://urlslab.com/public/carousel/%s/%s/%s',
+					'https://www.urlslab.com/public/carousel/%s/%s/%s',
 					$row['domainId'],
 					$row['urlId'],
 					$row['screenshotDate']
