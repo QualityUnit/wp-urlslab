@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   build-and-release:
@@ -17,7 +17,7 @@ jobs:
       - name: Setup PHP 7.4
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: "7.4"
 
       - name: Install Composer dependencies
         run: composer install
@@ -28,7 +28,7 @@ jobs:
       - name: Setup Node.js 16.x
         uses: actions/setup-node@v2
         with:
-          node-version: '16.x'
+          node-version: "16.x"
 
       - name: Install Yarn dependencies
         run: yarn
@@ -40,7 +40,7 @@ jobs:
         run: yarn build
 
       - name: Remove unnecessary files
-        run: rm -rf .git .idea .github *.md *.lock .editorconfig .eslintignore .eslintrc .gitignore .stylelintrc vendor composer.json *.lock package.json phpcs.xml node_modules webpack.config.js
+        run: rm -rf .git .idea .github .husky *.md *.lock .editorconfig .eslintignore .eslintrc .gitignore .stylelintrc vendor composer.json *.lock package.json phpcs.xml node_modules webpack.config.js commitlint.config.js
 
       - name: Version
         id: version
