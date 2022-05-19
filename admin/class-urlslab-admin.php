@@ -120,6 +120,9 @@ class Urlslab_Admin {
 			80
 		);
 
+		$t = new Urlslab_Screenshot_Cron();
+		$t->urlslab_cron_exec();
+
 		foreach ( Urlslab_Available_Widgets::get_instance()->get_available_widgets() as $widget ) {
 			add_submenu_page(
 				plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
