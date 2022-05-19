@@ -157,6 +157,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 				case Urlslab::$link_status_waiting_for_update:
 				case Urlslab::$link_status_available:
 					return $this->render_shortcode(
+						$urlslab_atts['url'],
 						$this->create_url_path( $row, $urlslab_atts['screenshot-type'] ),
 						$urlslab_atts['alt'],
 						$urlslab_atts['width'],
@@ -167,6 +168,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 				case Urlslab::$link_status_waiting_for_screenshot:
 					//default url
 					return $this->render_shortcode(
+						$urlslab_atts['url'],
 						$urlslab_atts['default-image'],
 						$urlslab_atts['alt'],
 						$urlslab_atts['width'],
@@ -198,6 +200,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 				)
 			);
 			return $this->render_shortcode(
+				$urlslab_atts['url'],
 				$urlslab_atts['default-image'],
 				$urlslab_atts['alt'],
 				$urlslab_atts['width'],
@@ -206,9 +209,9 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		}
 	}
 
-	private function render_shortcode( string $src, string $alt, string $width, string $height ): string {
+	private function render_shortcode( string $url, string $src, string $alt, string $width, string $height ): string {
 		if ( empty( $src ) ) {
-			return '';
+			return ' <!-- Urlslab image still not created for ' . $url . ' -->';
 		}
 		return sprintf(
 			'<div class="urlslab-screenshot-container"><img src="%s" alt="%s" width="%s" height="%s"></div>',
