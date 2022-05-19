@@ -130,7 +130,6 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 				'width' => '100%',
 				'height' => '100%',
 				'alt' => 'Screenshot taken by URLSLAB.com',
-				'title' => 'Screenshot taken by URLSLAB.com',
 				'default-image' => '',
 				'url' => 'https://www.urlslab.com',
 				'screenshot-type' => 'carousel',
@@ -158,7 +157,6 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 						$urlslab_atts['alt'],
 						$urlslab_atts['width'],
 						$urlslab_atts['height'],
-						$urlslab_atts['title'],
 					);
 
 				case Urlslab::$link_status_not_scheduled:
@@ -169,7 +167,6 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 						$urlslab_atts['alt'],
 						$urlslab_atts['width'],
 						$urlslab_atts['height'],
-						$urlslab_atts['title'],
 					);
 
 				case Urlslab::$link_status_broken:
@@ -201,22 +198,20 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 				$urlslab_atts['alt'],
 				$urlslab_atts['width'],
 				$urlslab_atts['height'],
-				$urlslab_atts['title']
 			);
 		}
 	}
 
-	private function render_shortcode( string $src, string $alt, string $width, string $height, string $title ): string {
+	private function render_shortcode( string $src, string $alt, string $width, string $height ): string {
 		if ( empty( $src ) ) {
 			return '';
 		}
 		return sprintf(
-			'<img src="%s" alt="%s" width="%s" height="%s" title="%s">',
+			'<img src="%s" alt="%s" width="%s" height="%s">',
 			esc_url( $src ),
 			esc_attr( $alt ),
 			esc_attr( $width ),
 			esc_attr( $height ),
-			esc_attr( $title )
 		);
 	}
 
