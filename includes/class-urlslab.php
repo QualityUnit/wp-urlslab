@@ -240,7 +240,7 @@ class Urlslab {
 		$this->loader->add_action( 'init', $this, 'urlslab_shortcodes_init', 10, 0 );
 		$this->loader->add_action( 'urlslab_cron_hook', $cron_job, 'urlslab_cron_exec', 10, 0 );
 		if ( ! wp_next_scheduled( 'urlslab_cron_hook' ) ) {
-			wp_schedule_event( time(), 'every_five_minutes', 'urlslab_cron_hook' );
+			wp_schedule_event( time(), 'every_minute', 'urlslab_cron_hook' );
 		}
 	}
 

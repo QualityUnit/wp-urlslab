@@ -125,14 +125,14 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		$table_name = $wpdb->prefix . 'urlslab_screenshot';
 
 		// override default attributes with user attributes
+		$default_alt = 'Screenshot taken by URLSLAB.com';
 		$urlslab_atts = shortcode_atts(
 			array(
 				'width' => '100%',
 				'height' => '100%',
-				'alt' => 'Screenshot taken by URLSLAB.com',
-				'title' => 'Screenshot taken by URLSLAB.com',
+				'alt' => $default_alt,
 				'default-image' => '',
-				'url' => 'https://urlslab.com',
+				'url' => 'https://www.urlslab.com',
 				'screenshot-type' => 'carousel',
 			),
 			$atts,
@@ -148,28 +148,31 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			ARRAY_A
 		);
 
-
 		if ( null !== $row ) {
+			if ( ! empty( $row['urlTitle'] ) && $urlslab_atts['alt'] == $default_alt ) {
+				$urlslab_atts['alt'] = $row['urlTitle'];
+			}
+
 			switch ( $row['status'] ) {
 				case Urlslab::$link_status_waiting_for_update:
 				case Urlslab::$link_status_available:
 					return $this->render_shortcode(
+						$urlslab_atts['url'],
 						$this->create_url_path( $row, $urlslab_atts['screenshot-type'] ),
 						$urlslab_atts['alt'],
 						$urlslab_atts['width'],
 						$urlslab_atts['height'],
-						$urlslab_atts['title'],
 					);
 
 				case Urlslab::$link_status_not_scheduled:
 				case Urlslab::$link_status_waiting_for_screenshot:
 					//default url
 					return $this->render_shortcode(
+						$urlslab_atts['url'],
 						$urlslab_atts['default-image'],
 						$urlslab_atts['alt'],
 						$urlslab_atts['width'],
 						$urlslab_atts['height'],
-						$urlslab_atts['title'],
 					);
 
 				case Urlslab::$link_status_broken:
@@ -197,26 +200,25 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 				)
 			);
 			return $this->render_shortcode(
+				$urlslab_atts['url'],
 				$urlslab_atts['default-image'],
 				$urlslab_atts['alt'],
 				$urlslab_atts['width'],
 				$urlslab_atts['height'],
-				$urlslab_atts['title']
 			);
 		}
 	}
 
-	private function render_shortcode( string $src, string $alt, string $width, string $height, string $title ): string {
+	private function render_shortcode( string $url, string $src, string $alt, string $width, string $height ): string {
 		if ( empty( $src ) ) {
-			return '';
+			return ' <!-- URLSLAB image still not created for ' . $url . ' -->';
 		}
 		return sprintf(
-			'<img src="%s" alt="%s" width="%s" height="%s" title="%s">',
+			'<div class="urlslab-screenshot-container"><img src="%s" alt="%s" width="%s" height="%s"></div>',
 			esc_url( $src ),
 			esc_attr( $alt ),
 			esc_attr( $width ),
 			esc_attr( $height ),
-			esc_attr( $title )
 		);
 	}
 
@@ -224,14 +226,14 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		switch ( $screenshot_type ) {
 			case 'thumbnail':
 				return sprintf(
-					'https://urlslab.com/public/thumbnail/%s/%s/%s.jpg',
+					'https://www.urlslab.com/public/thumbnail/%s/%s/%s.jpg',
 					$row['domainId'],
 					$row['urlId'],
 					$row['screenshotDate']
 				);
 			case 'full-page':
 				return sprintf(
-					'https://urlslab.com/public/image/%s/%s/%s.png',
+					'https://www.urlslab.com/public/image/%s/%s/%s.png',
 					$row['domainId'],
 					$row['urlId'],
 					$row['screenshotDate']
@@ -240,7 +242,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			case 'carousel':
 			default:
 				return sprintf(
-					'https://urlslab.com/public/carousel/%s/%s/%s',
+					'https://www.urlslab.com/public/carousel/%s/%s/%s',
 					$row['domainId'],
 					$row['urlId'],
 					$row['screenshotDate']

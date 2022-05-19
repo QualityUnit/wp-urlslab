@@ -54,7 +54,7 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 			$wpdb->prepare(
 				'UPDATE ' . $table . // phpcs:ignore
 				' SET status = %s, updateStatusDate = %s, screenshotDate = %d, domainId = %s, urlId = %s, urlTitle = %s 
-				WHERE urlMd5 = %d',
+				WHERE urlMd5 = %s',
 				$urlslab_screenshot->get_screenshot_status(),
 				gmdate( 'Y-m-d H:i:s' ),
 				$urlslab_screenshot->get_screenshot_date(),
