@@ -125,11 +125,12 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		$table_name = $wpdb->prefix . 'urlslab_screenshot';
 
 		// override default attributes with user attributes
+		$default_alt = 'Screenshot taken by URLSLAB.com';
 		$urlslab_atts = shortcode_atts(
 			array(
 				'width' => '100%',
 				'height' => '100%',
-				'alt' => 'Screenshot taken by URLSLAB.com',
+				'alt' => $default_alt,
 				'default-image' => '',
 				'url' => 'https://www.urlslab.com',
 				'screenshot-type' => 'carousel',
@@ -147,8 +148,11 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			ARRAY_A
 		);
 
-
 		if ( null !== $row ) {
+			if ( ! empty( $row['urlTitle'] ) && $urlslab_atts['alt'] == $default_alt ) {
+				$urlslab_atts['alt'] = $row['urlTitle'];
+			}
+
 			switch ( $row['status'] ) {
 				case Urlslab::$link_status_waiting_for_update:
 				case Urlslab::$link_status_available:
@@ -207,7 +211,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			return '';
 		}
 		return sprintf(
-			'<img src="%s" alt="%s" width="%s" height="%s">',
+			'<div class="urlslab-screenshot-container"><img src="%s" alt="%s" width="%s" height="%s"></div>',
 			esc_url( $src ),
 			esc_attr( $alt ),
 			esc_attr( $width ),
