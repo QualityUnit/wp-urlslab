@@ -211,7 +211,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 
 	private function render_shortcode( string $url, string $src, string $alt, string $width, string $height ): string {
 		if ( empty( $src ) ) {
-			return ' <!-- Urlslab image still not created for ' . $url . ' -->';
+			return ' <!-- URLSLAB image still not created for ' . $url . ' -->';
 		}
 		return sprintf(
 			'<div class="urlslab-screenshot-container"><img src="%s" alt="%s" width="%s" height="%s"></div>',
