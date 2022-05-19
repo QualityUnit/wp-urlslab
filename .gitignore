@@ -3,6 +3,7 @@ package-lock.json
 vendor
 build
 .idea/
+.husky
 # Numerous always-ignore extensions
 *.diff
 *.err
