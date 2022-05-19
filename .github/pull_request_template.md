@@ -12,4 +12,4 @@ Describe how and what should be tested by a Tester
 - [ ] I have added tests that prove my fix is effective or that my feature works
 - [ ] New and existing unit tests pass locally with my changes
 
-Close [ISSUE_NUMBER]
+Close web-issues/issues/[ISSUE_NUMBER]
