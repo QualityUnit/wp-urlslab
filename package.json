@@ -22,7 +22,7 @@
 		"@wordpress/components": "^19",
 		"@wordpress/eslint-plugin": "^12",
 		"@wordpress/format-library": "^3",
-		"@wordpress/media-utils": "^3",
+		"@wordpress/media-utils": "^4",
 		"@wordpress/scripts": "^22",
 		"@wordpress/stylelint-config": "^20"
 	}
