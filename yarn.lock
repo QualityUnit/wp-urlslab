@@ -2532,16 +2532,7 @@
     "@wordpress/dom-ready" "^3.9.0"
     "@wordpress/i18n" "^4.9.0"
 
-"@wordpress/api-fetch@^6.0.1", "@wordpress/api-fetch@^6.4.0", "@wordpress/api-fetch@^6.5.0":
-  version "6.5.0"
-  resolved "https://registry.yarnpkg.com/@wordpress/api-fetch/-/api-fetch-6.5.0.tgz#72760fe343589c73454f8d116ca3760f9d72e2ff"
-  integrity sha512-ri3Ha/mgo4lHH5akTSAetd0LLNcuqR/lOBC0hb7tgFUpUXJLWCyZnPNRVFruSgcnXzv5DmeoEnY+F3hPWCZBmA==
-  dependencies:
-    "@babel/runtime" "^7.16.0"
-    "@wordpress/i18n" "^4.8.0"
-    "@wordpress/url" "^3.9.0"
-
-"@wordpress/api-fetch@^6.6.0":
+"@wordpress/api-fetch@^6.0.1", "@wordpress/api-fetch@^6.4.0", "@wordpress/api-fetch@^6.5.0", "@wordpress/api-fetch@^6.6.0":
   version "6.6.0"
   resolved "https://registry.yarnpkg.com/@wordpress/api-fetch/-/api-fetch-6.6.0.tgz#57e92896b518e06aa7e1c04271219e81b631f135"
   integrity sha512-FUevGOB/LpP2SmHNLeUV/E2zXUQUHrAQPQBtv9JU/MrKS8/ThgXMsUjFfEbDFxSCaENpLIkM0AB7X0+1EeWz0w==
@@ -2592,14 +2583,7 @@
   resolved "https://registry.yarnpkg.com/@wordpress/base-styles/-/base-styles-4.5.0.tgz#24dfb83a7c129db61ebfa011b9620c3200fcff5c"
   integrity sha512-iz2bDZSDWEgBNOXx3072avn/+zsI+9akhTF2DA/wDdRX0TpS4SSs/vrfhvWfruq5PPLRjJ7ogLKHMnN9VvB9yg==
 
-"@wordpress/blob@^3.3.1", "@wordpress/blob@^3.7.0", "@wordpress/blob@^3.8.0":
-  version "3.8.0"
-  resolved "https://registry.yarnpkg.com/@wordpress/blob/-/blob-3.8.0.tgz#66e4ce61d408e92998f607b940b2b749ced1e221"
-  integrity sha512-Hwc9xYNgUxrjBY8B3HSZ1EYUtIS5XHOas+eIAZ9HL/7zATsjp7HCbyvDbw26GFwfQm0cV1GXdS+uju45NM4aGg==
-  dependencies:
-    "@babel/runtime" "^7.16.0"
-
-"@wordpress/blob@^3.9.0":
+"@wordpress/blob@^3.3.1", "@wordpress/blob@^3.7.0", "@wordpress/blob@^3.8.0", "@wordpress/blob@^3.9.0":
   version "3.9.0"
   resolved "https://registry.yarnpkg.com/@wordpress/blob/-/blob-3.9.0.tgz#ce47a01c84d8d06cdcf0c3aa76f2c74e50988921"
   integrity sha512-li/aVdkppVoEwpsZ5L/Xnv9xuFPeEE2Zj6WLVfST0VBlSwK0mKXRinGJywlr7ov1uLskWiVVZEzviu4fW+WYZQ==
@@ -3205,16 +3189,16 @@
     "@wordpress/i18n" "^4.9.0"
     lodash "^4.17.21"
 
-"@wordpress/media-utils@^3":
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/@wordpress/media-utils/-/media-utils-3.6.0.tgz#8685542c2fb93bbfeb656b09365d59e67f2539af"
-  integrity sha512-+Y7oIBVm6yJHBL++tEMxG0yhc06OdhWCuxEY3JOo/B14BIteXNQ4I9kpLydXCwvYBbPJqNiz9IH4uydhjql0Xg==
+"@wordpress/media-utils@^4":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@wordpress/media-utils/-/media-utils-4.0.0.tgz#e3860a62469c016e7549df445c0a8549e1007443"
+  integrity sha512-Tk1J+DN/MWyM30GfT1GritvdfiP4FfyG58sEF/I0B+Q7pzLUsW4EaEm4aEw8alHvZrDRh0zNsD4BGv26r3zZ7w==
   dependencies:
     "@babel/runtime" "^7.16.0"
-    "@wordpress/api-fetch" "^6.5.0"
-    "@wordpress/blob" "^3.8.0"
-    "@wordpress/element" "^4.6.0"
-    "@wordpress/i18n" "^4.8.0"
+    "@wordpress/api-fetch" "^6.6.0"
+    "@wordpress/blob" "^3.9.0"
+    "@wordpress/element" "^4.7.0"
+    "@wordpress/i18n" "^4.9.0"
     lodash "^4.17.21"
 
 "@wordpress/notices@^3.3.2", "@wordpress/notices@^3.7.0", "@wordpress/notices@^3.8.0":
