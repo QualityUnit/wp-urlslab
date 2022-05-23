@@ -31,7 +31,7 @@ class Urlslab_Screenshot_Api extends Urlslab_Api {
 					$result_obj->screenshotDate, // phpcs:ignore
 					$result_obj->urlTitle, // phpcs:ignore
 					$result_obj->urlMetaDescription, // phpcs:ignore
-					$result_obj->screenshotStatus // phpcs:ignore
+					$this->convert_status_to_char( $result_obj->screenshotStatus ) // phpcs:ignore
 				);
 			}
 
@@ -44,6 +44,25 @@ class Urlslab_Screenshot_Api extends Urlslab_Api {
 		}
 
 		return '';
+	}
+
+	private function convert_status_to_char( string $status ): string {
+		switch ( $status ) {
+			case 'AWAITING_PENDING':
+				return Urlslab::$link_status_waiting_for_screenshot;
+
+			case 'AVAILABLE':
+				return Urlslab::$link_status_available;
+
+			case 'BROKEN_URL':
+				return Urlslab::$link_status_broken;
+
+			case 'AWAITING_UPDATE':
+				return Urlslab::$link_status_waiting_for_update;
+
+			default:
+				return Urlslab::$link_status_not_scheduled;
+		}
 	}
 
 }
