@@ -152,7 +152,9 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			);
 
 			if ( null !== $row ) {
-				if ( ! empty( $row['urlTitle'] ) && $urlslab_atts['alt'] == $default_alt ) {
+				if ( ! empty( $row['urlMetaDescription'] ) && $urlslab_atts['alt'] == $default_alt ) {
+					$urlslab_atts['alt'] = $row['urlMetaDescription'];
+				} else if ( ! empty( $row['urlTitle'] ) && $urlslab_atts['alt'] == $default_alt ) {
 					$urlslab_atts['alt'] = $row['urlTitle'];
 				}
 
