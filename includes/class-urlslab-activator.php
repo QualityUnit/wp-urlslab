@@ -48,6 +48,8 @@ class Urlslab_Activator {
         screenshotDate bigint,
     	updateStatusDate DATETIME,
     	urlTitle	  text, 
+    	urlMetaDescription text,
+    	urlSummary			text,
 		PRIMARY KEY  (urlMd5),
     	INDEX (updateStatusDate, status)
 	) $charset_collate;";

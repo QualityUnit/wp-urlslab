@@ -28,11 +28,12 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		string $widget_title,
 		string $widget_description,
 		string $landing_page_link,
-		Urlslab_Screenshot_Api $urlslab_screenshot_api ) {
-		$this->widget_slug = $widget_slug;
-		$this->widget_title       = $widget_title;
-		$this->widget_description = $widget_description;
-		$this->landing_page_link = $landing_page_link;
+		Urlslab_Screenshot_Api $urlslab_screenshot_api
+	) {
+		$this->widget_slug            = $widget_slug;
+		$this->widget_title           = $widget_title;
+		$this->widget_description     = $widget_description;
+		$this->landing_page_link      = $landing_page_link;
 		$this->urlslab_screenshot_api = $urlslab_screenshot_api;
 	}
 
@@ -99,9 +100,9 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	 */
 	public function get_conf_page_url( $args = '' ): string {
 		$main_menu_slug = URLSLAB_PLUGIN_DIR . '/admin/partials/urlslab-admin-display.php';
-		$args = wp_parse_args( $args, array() );
-		$url = $this->menu_page_url( $main_menu_slug );
-		$url = add_query_arg( array( 'component' => $this->widget_slug ), $url );
+		$args           = wp_parse_args( $args, array() );
+		$url            = $this->menu_page_url( $main_menu_slug );
+		$url            = add_query_arg( array( 'component' => $this->widget_slug ), $url );
 
 		if ( ! empty( $args ) ) {
 			$url = add_query_arg( $args, $url );
@@ -114,6 +115,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		if ( $this->urlslab_screenshot_api->has_api_key() ) {
 			return $this->urlslab_screenshot_api->schedule_batch( $urls );
 		}
+
 		return false;
 	}
 
@@ -125,14 +127,14 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		$table_name = $wpdb->prefix . 'urlslab_screenshot';
 
 		// override default attributes with user attributes
-		$default_alt = 'Screenshot taken by URLSLAB.com';
+		$default_alt  = 'Screenshot taken by URLSLAB.com';
 		$urlslab_atts = shortcode_atts(
 			array(
-				'width' => '100%',
-				'height' => '100%',
-				'alt' => $default_alt,
-				'default-image' => '',
-				'url' => 'https://www.urlslab.com',
+				'width'           => '100%',
+				'height'          => '100%',
+				'alt'             => $default_alt,
+				'default-image'   => '',
+				'url'             => 'https://www.urlslab.com',
 				'screenshot-type' => 'carousel',
 			),
 			$atts,
@@ -140,79 +142,84 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		);
 
 
-		$row = $wpdb->get_row(
-			$wpdb->prepare(
-				"SELECT * FROM $table_name WHERE urlMd5 = %s", // phpcs:ignore
-				( new Urlslab_Url( $urlslab_atts['url'] ) )->get_url_id(),
-			),
-			ARRAY_A
-		);
-
-		if ( null !== $row ) {
-			if ( ! empty( $row['urlTitle'] ) && $urlslab_atts['alt'] == $default_alt ) {
-				$urlslab_atts['alt'] = $row['urlTitle'];
-			}
-
-			switch ( $row['status'] ) {
-				case Urlslab::$link_status_waiting_for_update:
-				case Urlslab::$link_status_available:
-					return $this->render_shortcode(
-						$urlslab_atts['url'],
-						$this->create_url_path( $row, $urlslab_atts['screenshot-type'] ),
-						$urlslab_atts['alt'],
-						$urlslab_atts['width'],
-						$urlslab_atts['height'],
-					);
-
-				case Urlslab::$link_status_not_scheduled:
-				case Urlslab::$link_status_waiting_for_screenshot:
-					//default url
-					return $this->render_shortcode(
-						$urlslab_atts['url'],
-						$urlslab_atts['default-image'],
-						$urlslab_atts['alt'],
-						$urlslab_atts['width'],
-						$urlslab_atts['height'],
-					);
-
-				case Urlslab::$link_status_broken:
-				default:
-					return '';
-
-
-			}
-		} else {
-			// no link found, insert
-			//default url
-			$urlslab_url = new Urlslab_Url( $urlslab_atts['url'] );
-			$wpdb->query(
+		if ( ! empty( $urlslab_atts['url'] ) ) {
+			$row = $wpdb->get_row(
 				$wpdb->prepare(
-					'
+					"SELECT * FROM $table_name WHERE urlMd5 = %s", // phpcs:ignore
+					( new Urlslab_Url( $urlslab_atts['url'] ) )->get_url_id(),
+				),
+				ARRAY_A
+			);
+
+			if ( null !== $row ) {
+				if ( ! empty( $row['urlTitle'] ) && $urlslab_atts['alt'] == $default_alt ) {
+					$urlslab_atts['alt'] = $row['urlTitle'];
+				}
+
+				switch ( $row['status'] ) {
+					case Urlslab::$link_status_waiting_for_update:
+					case Urlslab::$link_status_available:
+						return $this->render_shortcode(
+							$urlslab_atts['url'],
+							$this->create_url_path( $row, $urlslab_atts['screenshot-type'] ),
+							$urlslab_atts['alt'],
+							$urlslab_atts['width'],
+							$urlslab_atts['height'],
+						);
+
+					case Urlslab::$link_status_not_scheduled:
+					case Urlslab::$link_status_waiting_for_screenshot:
+						//default url
+						return $this->render_shortcode(
+							$urlslab_atts['url'],
+							$urlslab_atts['default-image'],
+							$urlslab_atts['alt'],
+							$urlslab_atts['width'],
+							$urlslab_atts['height'],
+						);
+
+					case Urlslab::$link_status_broken:
+					default:
+						return '';
+
+
+				}
+			} else {
+				// no link found, insert
+				//default url
+				$urlslab_url = new Urlslab_Url( $urlslab_atts['url'] );
+				$wpdb->query(
+					$wpdb->prepare(
+						'
                         INSERT INTO ' . $table_name . // phpcs:ignore
-					' 
+						' 
                             (urlMd5, urlName, status, updateStatusDate)
                         VALUES (%s, %s, %s, %s);
                     ',
-					$urlslab_url->get_url_id(),
-					$urlslab_url->get_url(),
-					Urlslab::$link_status_not_scheduled,
-					gmdate( 'Y-m-d H:i:s' )
-				)
-			);
-			return $this->render_shortcode(
-				$urlslab_atts['url'],
-				$urlslab_atts['default-image'],
-				$urlslab_atts['alt'],
-				$urlslab_atts['width'],
-				$urlslab_atts['height'],
-			);
+						$urlslab_url->get_url_id(),
+						$urlslab_url->get_url(),
+						Urlslab::$link_status_not_scheduled,
+						gmdate( 'Y-m-d H:i:s' )
+					)
+				);
+			}
 		}
+
+		return $this->render_shortcode(
+			$urlslab_atts['url'],
+			$urlslab_atts['default-image'],
+			$urlslab_atts['alt'],
+			$urlslab_atts['width'],
+			$urlslab_atts['height'],
+		);
+
 	}
 
 	private function render_shortcode( string $url, string $src, string $alt, string $width, string $height ): string {
 		if ( empty( $src ) ) {
 			return ' <!-- URLSLAB image still not created for ' . $url . ' -->';
 		}
+
 		return sprintf(
 			'<div class="urlslab-screenshot-container"><img src="%s" alt="%s" width="%s" height="%s"></div>',
 			esc_url( $src ),
