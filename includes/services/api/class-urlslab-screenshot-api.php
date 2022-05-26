@@ -41,6 +41,8 @@ class Urlslab_Screenshot_Api extends Urlslab_Api {
 				$response[1]['errorType'],
 				$response[1]['errorMsg']
 			);
+		} else if ( 429 == $response[0] ) {
+			throw new Exception( 'Rate limit reached' );
 		}
 
 		return '';

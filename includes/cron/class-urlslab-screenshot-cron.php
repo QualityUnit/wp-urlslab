@@ -6,6 +6,7 @@ class Urlslab_Screenshot_Cron {
 
 		$table = $wpdb->prefix . 'urlslab_screenshot';
 
+		$start_time = time();
 		while ( true ) {
 			$schedules = $wpdb->get_results(
 				$wpdb->prepare(
@@ -22,11 +23,16 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 				'ARRAY_A'
 			);
 
-			if ( $schedules ) {
-				$this->handle_schedules( $schedules );
+			try {
+				if ( $schedules ) {
+					$this->handle_schedules( $schedules );
+				}           
+			} catch ( Exception $e ) {
+				break;
 			}
 
-			if ( count( $schedules ) < 100 ) {
+
+			if ( count( $schedules ) < 100 or ( time() - $start_time > 30 ) ) {
 				break;
 			}
 		}
