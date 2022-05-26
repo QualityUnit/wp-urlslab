@@ -23,9 +23,14 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 				'ARRAY_A'
 			);
 
-			if ( $schedules ) {
-				$this->handle_schedules( $schedules );
+			try {
+				if ( $schedules ) {
+					$this->handle_schedules( $schedules );
+				}           
+			} catch ( Exception $e ) {
+				break;
 			}
+
 
 			if ( count( $schedules ) < 100 or ( time() - $start_time > 30 ) ) {
 				break;
