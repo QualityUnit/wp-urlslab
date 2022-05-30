@@ -114,16 +114,21 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	public function theContentHook($content)
 	{
 		$dom = new DOMDocument();
-		$dom->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-		$elements = $dom->getElementsByTagName('a');
+		$dom->strictErrorChecking = false;
+		try {
+			$dom->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+			$elements = $dom->getElementsByTagName('a');
 
-		if($elements instanceof DOMNodeList) {
-			foreach ($elements as $domElement) {
-				if (!strlen($domElement->getAttribute('title')) && strlen($domElement->getAttribute('href'))) {
-					$domElement->setAttribute('title', 'new title');
+			if ($elements instanceof DOMNodeList) {
+				foreach ($elements as $domElement) {
+					if (!strlen($domElement->getAttribute('title')) && strlen($domElement->getAttribute('href'))) {
+						$domElement->setAttribute('title', 'new title');
+					}
 				}
 			}
+			return $dom->saveHTML();
+		} catch (Exception $e) {
+			return $content . "\n" . "<!---\n Error:" . str_replace(">", ' ', $e->getMessage()) . "\n--->";
 		}
-		return $dom->saveHTML();
 	}
 }

@@ -14,7 +14,10 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	private string $landing_page_link;
 
 	private $cntPageLinkReplacements = 0;
+	private $cntPageLinks = 0;
 	private $cntParagraphLinkReplacements = 0;
+	private $linkCounts = array();
+	private $kwPageReplacementCounts = array();
 
 
 	/**
@@ -113,9 +116,9 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		return $url;
 	}
 
-	function replaceKeywordWithLinks(DOMText $node, DOMDocument $document, array $keywords) {
+	private function replaceKeywordWithLinks(DOMText $node, DOMDocument $document, array $keywords) {
 		//TODO implement limit number of max links per page and per text paragraph
-		if ($this->cntPageLinkReplacements > 10 || $this->cntParagraphLinkReplacements > 3) {
+		if ($this->cntPageLinks > 500 || $this->cntPageLinkReplacements > 100 || $this->cntParagraphLinkReplacements > 1) {
 			return;
 		}
 
@@ -123,25 +126,40 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			return;
 		}
 
-
 		foreach ($keywords as $kw => $url) {
 			if (($pos = strpos(strtolower($node->nodeValue), strtolower($kw))) !== false) {
 				$this->cntPageLinkReplacements++;
 				$this->cntParagraphLinkReplacements++;
+				if (isset($this->kwPageReplacementCounts[$kw])) {
+					$this->kwPageReplacementCounts[$kw]++;
+				} else {
+					$this->kwPageReplacementCounts[$kw] = 1;
+				}
+
+				//TODO implement setting of max replacement of same keyword on one page
+				if ($this->kwPageReplacementCounts[$kw] > 3) {
+					unset($keywords[$kw]);
+					return;
+				}
 
 				if ($pos > 0) {
 					$domTextStart = $document->createTextNode(substr($node->nodeValue, 0, $pos));
 					$node->parentNode->insertBefore($domTextStart, $node);
+				} else {
+					$domTextStart = null;
 				}
 
 				$linkDom = $document->createElement('a',
-					substr($node->nodeValue, $pos, strlen($kw)) . ' LX');
-				$linkDom->setAttribute('href', $url);
+					substr($node->nodeValue, $pos, strlen($kw)));
+				$linkDom->setAttribute('href', $url[0]);
+				$linkDom->setAttribute('title', $url[1]);
 				$node->parentNode->insertBefore($linkDom, $node);
 
 				if ($pos+strlen($kw) < strlen($node->nodeValue)) {
 					$domTextEnd = $document->createTextNode(substr($node->nodeValue, $pos + strlen($kw)));
 					$node->parentNode->insertBefore($domTextEnd, $node);
+				} else {
+					$domTextEnd = null;
 				}
 
 				if (is_object($domTextStart)) {
@@ -157,21 +175,38 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		}
 	}
 
-	function findTextDOMElements(DOMNode $dom, DOMDocument $document) {
+	private function getKeywords() {
+		//TODO: load real list of keywords from DB, cache it to memory,
+		// so it will be loaded just once from DB for all calls
+		return array(
+			'help desk software' => array('/help-desk-software', 'Title about help desk software'),
+			'help desk' => array('/desk', 'Title about help desk'),
+			'software' => array('/', 'Title about any software'),
+			'customers' => array('/customers-software', 'Title about customers'),
+			'customer' => array('/customer', 'Title about customer'),
+			'ticketing system' => array('/ticketing-system', 'Title about ticketing system'),
+		);
+	}
+
+	private function findTextDOMElements(DOMNode $dom, DOMDocument $document) {
 		if (!empty($dom->childNodes)) {
 			foreach ($dom->childNodes as $node) {
+				
+				//TODO implement attribute for skipping replacements
+				// (e.g. in breadcrumbs or similar elements we don't want it) ...
+				// designer can add this special attribute and we will not replace the keywords with links there
+				// attribute name can be e.g. urlslab-no-keyword-links
+
 				if ($node instanceof DOMText && strlen(trim($node->nodeValue)) > 1)	{
-					$this->cntParagraphLinkReplacements = 0;
-					//TODO: load real list of keywords
-					$keywords = array(
-						'help desk software' => '/help-desk-software',
-						'help desk' => '/desk',
-						'software' => '/',
-						'customers' => '/customer-software'
-					);
-					$this->replaceKeywordWithLinks($node, $document, $keywords);
+					$this->replaceKeywordWithLinks($node, $document, $this->getKeywords());
 				} else {
-					if (!in_array(strtolower($node->nodeName), array('h1', 'h2', 'h3', 'h4', 'a', 'button', 'input'))) {
+					if (count($this->linkCounts) > 0 && preg_match('/^[hH][0-9]$/', $node->nodeName)) {
+						$this->cntParagraphLinkReplacements = array_shift($this->linkCounts);
+					}
+
+					//skip processing some types of HTML elements
+					if (!in_array(strtolower($node->nodeName), array('a', 'button', 'input')) &&
+						!preg_match('/^[hH][0-9]$/', $node->nodeName)) {
 						$this->findTextDOMElements($node, $document);
 					}
 				}
@@ -182,9 +217,45 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	public function theContentHook($content)
 	{
 		$document = new DOMDocument();
-		$document->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+		$document->strictErrorChecking = false;
+		try {
+			$document->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+			$this->initLinkCounts($document);
+			$this->findTextDOMElements($document, $document);
+			return $document->saveHTML();
+		} catch (Exception $e) {
+			return $content . "\n" . "<!---\n Error:" . str_replace(">", ' ', $e->getMessage()) . "\n--->";
+		}
+	}
+
+	private function initLinkCounts(DOMDocument $document) {
 		$this->cntPageLinkReplacements = 0;
-		$this->findTextDOMElements($document, $document);
-		return $document->saveHTML();
+		$this->cntPageLinks = 0;
+		$this->kwPageReplacementCounts = array();
+		$this->linkCounts = array();
+		$cnt = 0;
+		$xpath = new DOMXPath($document);
+		$table_data =$xpath->query("//a|//*[starts-with(name(),'h')]");
+		$hasLinksBeforeH1 = false;
+		$hadHAlready = false;
+		foreach ($table_data as $element) {
+			if ($element->nodeName == 'a') {
+				if (!$hadHAlready) {
+					$hasLinksBeforeH1 = true;
+				}
+				$this->cntPageLinks++;
+				$cnt++;
+			}
+			if (substr($element->nodeName, 0, 1) == 'h') {
+				$hadHAlready = true;
+				$this->linkCounts[] = $cnt;
+				$cnt = 0;
+			}
+		}
+		$this->linkCounts[] = $cnt;
+
+		if ($hasLinksBeforeH1) {
+			$this->cntParagraphLinkReplacements = array_shift($this->linkCounts);
+		}
 	}
 }
