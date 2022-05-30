@@ -19,6 +19,11 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	private $linkCounts = array();
 	private $kwPageReplacementCounts = array();
 
+	const MAX_REPLACEMENTS_PER_KEYWORD = 2;
+	const MAX_LINKS_ON_PAGE = 200;
+	const MAX_REPLACEMENTS_PER_PAGE = 30;
+	const MAX_REPLACEMENTS_PER_PARAGRAPH = 3;
+
 
 	/**
 	 * @param string $widget_slug
@@ -117,31 +122,35 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	private function replaceKeywordWithLinks(DOMText $node, DOMDocument $document, array $keywords) {
-		//TODO implement limit number of max links per page and per text paragraph
-		if ($this->cntPageLinks > 500 || $this->cntPageLinkReplacements > 100 || $this->cntParagraphLinkReplacements > 1) {
+		//TODO load all limits from widget settings and not from constants
+		if ($this->cntPageLinks > self::MAX_LINKS_ON_PAGE ||
+			$this->cntPageLinkReplacements > self::MAX_REPLACEMENTS_PER_PAGE ||
+			$this->cntParagraphLinkReplacements > self::MAX_REPLACEMENTS_PER_PARAGRAPH) {
 			return;
 		}
 
-		if (strlen(trim($node->nodeValue)) < 2) {
-			return;
+		if (strlen(trim($node->nodeValue))) {
+			return; //empty node
 		}
 
 		foreach ($keywords as $kw => $url) {
 			if (($pos = strpos(strtolower($node->nodeValue), strtolower($kw))) !== false) {
+				$this->cntPageLinks++;
 				$this->cntPageLinkReplacements++;
 				$this->cntParagraphLinkReplacements++;
 				if (isset($this->kwPageReplacementCounts[$kw])) {
 					$this->kwPageReplacementCounts[$kw]++;
 				} else {
-					$this->kwPageReplacementCounts[$kw] = 1;
+					$this->kwPageReplacementCounts[$kw] = self::MAX_REPLACEMENTS_PER_KEYWORD;
 				}
 
-				//TODO implement setting of max replacement of same keyword on one page
-				if ($this->kwPageReplacementCounts[$kw] > 3) {
+				//if we reached maximum number of replacements with this kw, skip next processing
+				if ($this->kwPageReplacementCounts[$kw] > self::MAX_REPLACEMENTS_PER_KEYWORD) {
 					unset($keywords[$kw]);
 					return;
 				}
 
+				//add text before keyword
 				if ($pos > 0) {
 					$domTextStart = $document->createTextNode(substr($node->nodeValue, 0, $pos));
 					$node->parentNode->insertBefore($domTextStart, $node);
@@ -149,12 +158,14 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 					$domTextStart = null;
 				}
 
+				//add keyword as link
 				$linkDom = $document->createElement('a',
 					substr($node->nodeValue, $pos, strlen($kw)));
 				$linkDom->setAttribute('href', $url[0]);
 				$linkDom->setAttribute('title', $url[1]);
 				$node->parentNode->insertBefore($linkDom, $node);
 
+				//add text after keyword
 				if ($pos+strlen($kw) < strlen($node->nodeValue)) {
 					$domTextEnd = $document->createTextNode(substr($node->nodeValue, $pos + strlen($kw)));
 					$node->parentNode->insertBefore($domTextEnd, $node);
@@ -162,12 +173,15 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 					$domTextEnd = null;
 				}
 
+				//process other keywords in text
 				if (is_object($domTextStart)) {
 					$this->replaceKeywordWithLinks($domTextStart, $document, $keywords);
 				}
 				if (is_object($domTextEnd)) {
 					$this->replaceKeywordWithLinks($domTextEnd, $document, $keywords);
 				}
+
+				//remove processed node
 				$node->parentNode->removeChild($node);
 				return;
 			}
@@ -178,7 +192,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	private function getKeywords() {
 		//TODO: load real list of keywords from DB, cache it to memory,
 		// so it will be loaded just once from DB for all calls
-		return array(
+		$keywords = array(
 			'help desk software' => array('/help-desk-software', 'Title about help desk software'),
 			'help desk' => array('/desk', 'Title about help desk'),
 			'software' => array('/', 'Title about any software'),
@@ -186,12 +200,21 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			'customer' => array('/customer', 'Title about customer'),
 			'ticketing system' => array('/ticketing-system', 'Title about ticketing system'),
 		);
+
+		//don't return keywords, where we reached limit of replacements - optimisation
+		foreach ($this->kwPageReplacementCounts as $kw => $cnt) {
+			if ($cnt > MAX_REPLACEMENTS_PER_KEYWORD) {
+				unset($keywords[$kw]);
+			}
+		}
+
+		return $keywords;
 	}
 
 	private function findTextDOMElements(DOMNode $dom, DOMDocument $document) {
 		if (!empty($dom->childNodes)) {
 			foreach ($dom->childNodes as $node) {
-				
+
 				//TODO implement attribute for skipping replacements
 				// (e.g. in breadcrumbs or similar elements we don't want it) ...
 				// designer can add this special attribute and we will not replace the keywords with links there
