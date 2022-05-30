@@ -19,8 +19,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	private $linkCounts = array();
 	private $kwPageReplacementCounts = array();
 
-	const MAX_REPLACEMENTS_PER_KEYWORD = 2;
-	const MAX_LINKS_ON_PAGE = 200;
+	const MAX_REPLACEMENTS_PER_KEYWORD = 3;
+	const MAX_LINKS_ON_PAGE = 500;
 	const MAX_REPLACEMENTS_PER_PAGE = 30;
 	const MAX_REPLACEMENTS_PER_PARAGRAPH = 3;
 
@@ -129,7 +129,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			return;
 		}
 
-		if (strlen(trim($node->nodeValue))) {
+		if (strlen(trim($node->nodeValue)) == 0) {
 			return; //empty node
 		}
 
@@ -141,7 +141,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				if (isset($this->kwPageReplacementCounts[$kw])) {
 					$this->kwPageReplacementCounts[$kw]++;
 				} else {
-					$this->kwPageReplacementCounts[$kw] = self::MAX_REPLACEMENTS_PER_KEYWORD;
+					$this->kwPageReplacementCounts[$kw] = 1;
 				}
 
 				//if we reached maximum number of replacements with this kw, skip next processing
@@ -203,7 +203,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 		//don't return keywords, where we reached limit of replacements - optimisation
 		foreach ($this->kwPageReplacementCounts as $kw => $cnt) {
-			if ($cnt > MAX_REPLACEMENTS_PER_KEYWORD) {
+			if ($cnt > self::MAX_REPLACEMENTS_PER_KEYWORD) {
 				unset($keywords[$kw]);
 			}
 		}
