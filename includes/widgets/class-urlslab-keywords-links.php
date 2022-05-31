@@ -19,8 +19,12 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	private $linkCounts = array();
 	private $kwPageReplacementCounts = array();
 
-	const MAX_REPLACEMENTS_PER_KEYWORD = 3;
-	const MAX_LINKS_ON_PAGE = 500;
+	//TODO: use these constants as defaults,
+	// real values should be loaded from settings defined by user
+	const MAX_REPLACEMENTS_PER_KEYWORD = 1;
+
+	//if page contains more links than this limit, don't try to add next links to page
+	const MAX_LINKS_ON_PAGE = 100;
 	const MAX_REPLACEMENTS_PER_PAGE = 30;
 	const MAX_REPLACEMENTS_PER_PARAGRAPH = 3;
 
@@ -122,7 +126,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	private function replaceKeywordWithLinks(DOMText $node, DOMDocument $document, array $keywords) {
-		//TODO load all limits from widget settings and not from constants
+		//TODO: load all limits from widget settings and not from constants, use constants later just like default value of settings
 		if ($this->cntPageLinks > self::MAX_LINKS_ON_PAGE ||
 			$this->cntPageLinkReplacements > self::MAX_REPLACEMENTS_PER_PAGE ||
 			$this->cntParagraphLinkReplacements > self::MAX_REPLACEMENTS_PER_PARAGRAPH) {
@@ -163,6 +167,12 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 					substr($node->nodeValue, $pos, strlen($kw)));
 				$linkDom->setAttribute('href', $url[0]);
 				$linkDom->setAttribute('title', $url[1]);
+
+				//if relative url or url from same domain, don't add target attribute
+				if (!$this->isSameDomainUrl($url[0])) {
+					$linkDom->setAttribute('target', '_blank');
+				}
+
 				$node->parentNode->insertBefore($linkDom, $node);
 
 				//add text after keyword
@@ -196,10 +206,12 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			'help desk software' => array('/help-desk-software', 'Title about help desk software'),
 			'help desk' => array('/desk', 'Title about help desk'),
 			'software' => array('/', 'Title about any software'),
-			'customers' => array('/customers-software', 'Title about customers'),
-			'customer' => array('/customer', 'Title about customer'),
+			'customers' => array('http://liveagent.local/customers-software', 'Title about customers'),
+			'customer' => array('http://support.qualityunit.com/customer', 'Title about customer'),
 			'ticketing system' => array('/ticketing-system', 'Title about ticketing system'),
 		);
+
+		//TODO: filter just keywords related to specific language, so we will not send user eg from EN site to FR site
 
 		//don't return keywords, where we reached limit of replacements - optimisation
 		foreach ($this->kwPageReplacementCounts as $kw => $cnt) {
@@ -212,13 +224,13 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	private function findTextDOMElements(DOMNode $dom, DOMDocument $document) {
+		//skip processing if HTML tag contains attribute "urlslab-skip"
+		if ($dom->hasAttributes() && $dom->hasAttribute('urlslab-skip')) {
+			return;
+		}
+
 		if (!empty($dom->childNodes)) {
 			foreach ($dom->childNodes as $node) {
-
-				//TODO implement attribute for skipping replacements
-				// (e.g. in breadcrumbs or similar elements we don't want it) ...
-				// designer can add this special attribute and we will not replace the keywords with links there
-				// attribute name can be e.g. urlslab-no-keyword-links
 
 				if ($node instanceof DOMText && strlen(trim($node->nodeValue)) > 1)	{
 					$this->replaceKeywordWithLinks($node, $document, $this->getKeywords());
@@ -239,11 +251,23 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 	public function theContentHook($content)
 	{
+		if (!strlen(trim($content))) {
+			return $content;	//nothing to process
+		}
+
 		$document = new DOMDocument();
 		$document->strictErrorChecking = false;
+		$libxml_previous_state = libxml_use_internal_errors(true);
 		try {
 			$document->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+			libxml_clear_errors();
+			libxml_use_internal_errors($libxml_previous_state);
+
 			$this->initLinkCounts($document);
+			if ($this->cntPageLinks > self::MAX_LINKS_ON_PAGE) {
+				return $content;
+			}
+
 			$this->findTextDOMElements($document, $document);
 			return $document->saveHTML();
 		} catch (Exception $e) {
@@ -280,5 +304,18 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		if ($hasLinksBeforeH1) {
 			$this->cntParagraphLinkReplacements = array_shift($this->linkCounts);
 		}
+	}
+
+	/**
+	 * @param $url input URL
+	 * @return bool true if input url has same host name as current site
+	 */
+	private function isSameDomainUrl($url)
+	{
+		$urlHostname = strtolower(parse_url($url, PHP_URL_HOST));
+		if (!strlen($urlHostname)) {
+			return true;
+		}
+		return $urlHostname == strtolower(parse_url(get_site_url(), PHP_URL_HOST));
 	}
 }

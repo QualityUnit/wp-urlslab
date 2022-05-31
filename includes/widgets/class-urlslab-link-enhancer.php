@@ -113,20 +113,33 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 	public function theContentHook($content)
 	{
-		$dom = new DOMDocument();
-		$dom->strictErrorChecking = false;
+		if (!strlen(trim($content))) {
+			return $content;	//nothing to process
+		}
+
+		$document = new DOMDocument();
+		$document->strictErrorChecking = false;
+		$libxml_previous_state = libxml_use_internal_errors(true);
 		try {
-			$dom->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-			$elements = $dom->getElementsByTagName('a');
+			$document->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+			libxml_clear_errors();
+			libxml_use_internal_errors($libxml_previous_state);
+
+			$elements = $document->getElementsByTagName('a');
 
 			if ($elements instanceof DOMNodeList) {
 				foreach ($elements as $domElement) {
+					//skip processing if A tag contains attribute "urlslab-skip"
+					if ($domElement->hasAttribute('urlslab-skip')) {
+						continue;
+					}
+
 					if (!strlen($domElement->getAttribute('title')) && strlen($domElement->getAttribute('href'))) {
 						$domElement->setAttribute('title', 'new title');
 					}
 				}
 			}
-			return $dom->saveHTML();
+			return $document->saveHTML();
 		} catch (Exception $e) {
 			return $content . "\n" . "<!---\n Error:" . str_replace(">", ' ', $e->getMessage()) . "\n--->";
 		}
