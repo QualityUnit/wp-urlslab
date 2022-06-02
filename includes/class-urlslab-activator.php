@@ -33,12 +33,16 @@ class Urlslab_Activator {
 	}
 
 	private static function init_tables() {
+		self::init_screenshot_widget_tables();
+		self::init_keyword_widget_tables();
+
+
+	}
+
+	private static function init_screenshot_widget_tables() {
 		global $wpdb;
-
 		$table_name = $wpdb->prefix . 'urlslab_screenshot';
-
 		$charset_collate = $wpdb->get_charset_collate();
-
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
     	urlMd5 varchar(32) NOT NULL, 
 		urlName varchar(2048) NOT NULL,
@@ -57,4 +61,20 @@ class Urlslab_Activator {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 	}
+
+	private static function init_keyword_widget_tables() {
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'urlslab_keyword_widget';
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+    	keyword varchar(250) NOT NULL,
+    	lang varchar(10) NOT NULL,
+    	urlMd5 varchar(32) NOT NULL,
+		PRIMARY KEY  (lang, keyword)
+	) $charset_collate;";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
 }

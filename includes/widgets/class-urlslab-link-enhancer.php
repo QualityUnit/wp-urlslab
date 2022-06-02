@@ -13,6 +13,8 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 	private string $landing_page_link;
 
+	private int $max_url_enhance_cnt = 100;
+
 
 	/**
 	 * @param string $widget_slug
@@ -111,37 +113,76 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 
-	public function theContentHook($content)
-	{
-		if (!strlen(trim($content))) {
-			return $content;	//nothing to process
+	public function theContentHook( $content ) {
+		if ( ! strlen( trim( $content ) ) ) {
+			return $content;    //nothing to process
 		}
 
 		$document = new DOMDocument();
 		$document->strictErrorChecking = false;
-		$libxml_previous_state = libxml_use_internal_errors(true);
+		$libxml_previous_state = libxml_use_internal_errors( true );
 		try {
-			$document->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+			$document->loadHTML( $content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
 			libxml_clear_errors();
-			libxml_use_internal_errors($libxml_previous_state);
+			libxml_use_internal_errors( $libxml_previous_state );
 
-			$elements = $document->getElementsByTagName('a');
+			$elements = $document->getElementsByTagName( 'a' );
 
-			if ($elements instanceof DOMNodeList) {
-				foreach ($elements as $domElement) {
+
+			$elements_to_enhance = array();
+			if ( $elements instanceof DOMNodeList ) {
+				foreach ( $elements as $dom_element ) {
 					//skip processing if A tag contains attribute "urlslab-skip"
-					if ($domElement->hasAttribute('urlslab-skip')) {
+					if ( $dom_element->hasAttribute( 'urlslab-skip' ) ) {
 						continue;
 					}
 
-					if (!strlen($domElement->getAttribute('title')) && strlen($domElement->getAttribute('href'))) {
-						$domElement->setAttribute('title', 'new title');
+					if ( ! strlen( $dom_element->getAttribute( 'title' ) ) && strlen( $dom_element->getAttribute( 'href' ) ) ) {
+						$elements_to_enhance[] = $dom_element;
 					}
 				}
 			}
+
+
+			if ( ! empty( $elements_to_enhance ) ) {
+
+				$values = array();
+				$insert_place_holders = array();
+				$select_url_md5_array = array();
+				$update_time = time();
+				for ( $i = 0; $i <= min( $this->max_url_enhance_cnt, count( $elements_to_enhance ) ); $i++ ) {
+					$url = new Urlslab_Url( $elements_to_enhance[ $i ]->hasAttribute( 'href' ) );
+					array_push( $values, $url->get_url_id(), $url->get_url(), Urlslab::$link_status_not_scheduled, $update_time );
+					$insert_place_holders[] = '(%s, %s, %s, %s)';
+					$select_url_md5_array[] = $url->get_url_id();
+
+				}
+
+				global $wpdb;
+				$screenshot_table = $wpdb->prefix . 'urlslab_screenshot';
+				$select_placeholders = implode( ', ', array_fill( 0, count( $values ), '%s' ) );
+				$insert_sql = 'INSERT IGNORE INTO ' . $screenshot_table .
+							  ' (urlMd5, urlName, status, updateStatusDate) VALUES';
+				$insert_sql .= implode( ', ', $insert_place_holders );
+				$wpdb->query( $wpdb->prepare( "$insert_sql ", $values ) ); // phpcs:ignore
+
+
+				//# selecting the urls found in page
+				$select_sql = "SELECT urlMd5, urlMetaDescription, urlTitle, urlName FROM $screenshot_table
+								WHERE status = 'A' AND urlMd5 IN ($select_placeholders)";
+				$result = $wpdb->query( $wpdb->prepare( "$select_sql ",  $select_url_md5_array) ); // phpcs:ignore
+
+				foreach ( $result as $row ) {
+					$elements_to_enhance[ $row['urlMd5'] ]->setAttribute(
+						'title',
+						urlslab_get_url_description( $row['urlMetaDescription'], $row['urlTitle'], $row['urlName'] ),
+					);
+				}
+			}
+
 			return $document->saveHTML();
-		} catch (Exception $e) {
-			return $content . "\n" . "<!---\n Error:" . str_replace(">", ' ', $e->getMessage()) . "\n--->";
+		} catch ( Exception $e ) {
+			return $content . "\n" . "<!---\n Error:" . str_replace( '>', ' ', $e->getMessage() ) . "\n--->";
 		}
 	}
 }
