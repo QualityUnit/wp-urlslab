@@ -164,7 +164,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 				}
 
 				global $wpdb;
-				$urls_table = $wpdb->prefix . 'urlslab_url';
+				$urls_table = $wpdb->prefix . 'urlslab_urls';
 				$insert_sql = 'INSERT IGNORE INTO ' . $urls_table .
 							  ' (urlMd5, urlName, status, updateStatusDate) VALUES';
 				$insert_sql .= implode( ', ', $insert_place_holders );
