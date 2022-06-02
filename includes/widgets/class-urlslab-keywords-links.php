@@ -21,7 +21,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 	//TODO: use these constants as defaults,
 	// real values should be loaded from settings defined by user
-	const MAX_REPLACEMENTS_PER_KEYWORD = 1;
+	const MAX_REPLACEMENTS_PER_KEYWORD = 5;
 
 	//if page contains more links than this limit, don't try to add next links to page
 	const MAX_LINKS_ON_PAGE = 100;
@@ -219,7 +219,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
        urlTitle,
        urlMetaDescription FROM ' . $base_table . // phpcs:ignore
 				' AS keywords_table INNER JOIN ' . $url_table . // phpcs:ignore
-				' AS url_table ON keywords_table.urlMd5 = url_table.urlMd5 WHERE lang = ? LIMIT 100',
+				' AS url_table ON keywords_table.urlMd5 = url_table.urlMd5 WHERE (lang = %s OR lang IS NULL) LIMIT 100',
 				get_locale()
 			),
 			'ARRAY_A'
@@ -228,7 +228,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$keywords = array();
 		foreach ( $results as $row ) {
 			$keywords[ $row['keyword'] ] = array(
-				$row['urlName'],
+				'http://' . $row['urlName'],
 				urlslab_get_url_description( $row['urlMetaDescription'], $row['urlTitle'], $row['urlName'] ),
 			);
 		}

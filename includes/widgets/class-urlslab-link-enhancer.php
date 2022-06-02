@@ -13,7 +13,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 	private string $landing_page_link;
 
-	private int $max_url_enhance_cnt = 100;
+	const MAX_URLS_TO_ENHANCE = 100;
 
 
 	/**
@@ -138,7 +138,8 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 					}
 
 					if ( ! strlen( $dom_element->getAttribute( 'title' ) ) && strlen( $dom_element->getAttribute( 'href' ) ) ) {
-						$elements_to_enhance[] = $dom_element;
+						$url = new Urlslab_Url( $dom_element->getAttribute( 'href' ) );
+						$elements_to_enhance[] = array($dom_element, $url->get_url(), $url->get_url_id());
 					}
 				}
 			}
@@ -150,33 +151,41 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 				$insert_place_holders = array();
 				$select_url_md5_array = array();
 				$update_time = time();
-				for ( $i = 0; $i <= min( $this->max_url_enhance_cnt, count( $elements_to_enhance ) ); $i++ ) {
-					$url = new Urlslab_Url( $elements_to_enhance[ $i ]->hasAttribute( 'href' ) );
-					array_push( $values, $url->get_url_id(), $url->get_url(), Urlslab::$link_status_not_scheduled, $update_time );
-					$insert_place_holders[] = '(%s, %s, %s, %s)';
-					$select_url_md5_array[] = $url->get_url_id();
+				foreach ($elements_to_enhance as $arrElement) {
+					if (!isset($insert_place_holders[$arrElement[2]])) {
+						array_push( $values, $arrElement[2], $arrElement[1], Urlslab::$link_status_not_scheduled, $update_time );
+						$insert_place_holders[$arrElement[2]] = '(%s, %s, %s, %s)';
+						$select_url_md5_array[$arrElement[2]] = $arrElement[2];
+					}
 
+					if (count($select_url_md5_array) > self::MAX_URLS_TO_ENHANCE) {
+						break;
+					}
 				}
 
 				global $wpdb;
-				$screenshot_table = $wpdb->prefix . 'urlslab_screenshot';
-				$select_placeholders = implode( ', ', array_fill( 0, count( $values ), '%s' ) );
-				$insert_sql = 'INSERT IGNORE INTO ' . $screenshot_table .
+				$urls_table = $wpdb->prefix . 'urlslab_screenshot';
+				$insert_sql = 'INSERT IGNORE INTO ' . $urls_table .
 							  ' (urlMd5, urlName, status, updateStatusDate) VALUES';
 				$insert_sql .= implode( ', ', $insert_place_holders );
 				$wpdb->query( $wpdb->prepare( "$insert_sql ", $values ) ); // phpcs:ignore
 
 
 				//# selecting the urls found in page
-				$select_sql = "SELECT urlMd5, urlMetaDescription, urlTitle, urlName FROM $screenshot_table
+				$select_placeholders = implode( ', ', array_fill( 0, count( $select_url_md5_array ), '%s' ) );
+				$select_sql = "SELECT urlMd5, urlMetaDescription, urlTitle, urlName FROM $urls_table
 								WHERE status = 'A' AND urlMd5 IN ($select_placeholders)";
-				$result = $wpdb->query( $wpdb->prepare( "$select_sql ",  $select_url_md5_array) ); // phpcs:ignore
+				$result = $wpdb->get_results( $wpdb->prepare( "$select_sql",  $select_url_md5_array), OBJECT_K); // phpcs:ignore
 
-				foreach ( $result as $row ) {
-					$elements_to_enhance[ $row['urlMd5'] ]->setAttribute(
-						'title',
-						urlslab_get_url_description( $row['urlMetaDescription'], $row['urlTitle'], $row['urlName'] ),
-					);
+				if (!empty($result)) {
+					foreach ($elements_to_enhance as $arrAlement) {
+						if (isset($result[$arrAlement[2]])) {
+							($arrAlement[0])->setAttribute(
+								'title',
+								urlslab_get_url_description($result[$arrAlement[2]]->urlMetaDescription, $result[$arrAlement[2]]->urlTitle, $result[$arrAlement[2]]->urlName),
+							);
+						}
+					}
 				}
 			}
 
