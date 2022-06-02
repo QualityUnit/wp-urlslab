@@ -124,7 +124,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'urlslab_screenshot';
+		$table_name = $wpdb->prefix . 'urlslab_url';
 
 		// override default attributes with user attributes
 		$default_alt  = 'Screenshot taken by URLSLAB.com';
