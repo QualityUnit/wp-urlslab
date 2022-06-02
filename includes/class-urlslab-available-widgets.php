@@ -45,13 +45,15 @@ class Urlslab_Available_Widgets {
 				'Link Enhancer',
 				'Urlslab Link Enhancer to add title attribute to all links',
 				'https://www.urlslab.com',
-				$api),
+				$api
+			),
 			'urlslab-keywords-links' => new Urlslab_Keywords_Links(
 				'urlslab-keywords-links',
 				'Keywords Links',
 				'Urlslab Keywords to Links - automatic linkbuilding from specific keywords',
 				'https://www.urlslab.com',
-				$api),
+				$api
+			),
 		);
 	}
 

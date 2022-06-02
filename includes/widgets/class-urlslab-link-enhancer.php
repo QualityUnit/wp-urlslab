@@ -119,7 +119,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		}
 
 		$document = new DOMDocument();
-		$document->strictErrorChecking = false;
+		$document->strictErrorChecking = false; // phpcs:ignore
 		$libxml_previous_state = libxml_use_internal_errors( true );
 		try {
 			$document->loadHTML( $content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
@@ -139,7 +139,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 					if ( ! strlen( $dom_element->getAttribute( 'title' ) ) && strlen( $dom_element->getAttribute( 'href' ) ) ) {
 						$url = new Urlslab_Url( $dom_element->getAttribute( 'href' ) );
-						$elements_to_enhance[] = array($dom_element, $url->get_url(), $url->get_url_id());
+						$elements_to_enhance[] = array( $dom_element, $url->get_url(), $url->get_url_id() );
 					}
 				}
 			}
@@ -151,14 +151,14 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 				$insert_place_holders = array();
 				$select_url_md5_array = array();
 				$update_time = time();
-				foreach ($elements_to_enhance as $arrElement) {
-					if (!isset($insert_place_holders[$arrElement[2]])) {
-						array_push( $values, $arrElement[2], $arrElement[1], Urlslab::$link_status_not_scheduled, $update_time );
-						$insert_place_holders[$arrElement[2]] = '(%s, %s, %s, %s)';
-						$select_url_md5_array[$arrElement[2]] = $arrElement[2];
+				foreach ( $elements_to_enhance as $arr_element ) {
+					if ( ! isset( $insert_place_holders[ $arr_element[2] ] ) ) {
+						array_push( $values, $arr_element[2], $arr_element[1], Urlslab::$link_status_not_scheduled, $update_time );
+						$insert_place_holders[ $arr_element[2] ] = '(%s, %s, %s, %s)';
+						$select_url_md5_array[ $arr_element[2] ] = $arr_element[2];
 					}
 
-					if (count($select_url_md5_array) > self::MAX_URLS_TO_ENHANCE) {
+					if ( count( $select_url_md5_array ) > self::MAX_URLS_TO_ENHANCE ) {
 						break;
 					}
 				}
@@ -177,12 +177,12 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 								WHERE status = 'A' AND urlMd5 IN ($select_placeholders)";
 				$result = $wpdb->get_results( $wpdb->prepare( "$select_sql",  $select_url_md5_array), OBJECT_K); // phpcs:ignore
 
-				if (!empty($result)) {
-					foreach ($elements_to_enhance as $arrAlement) {
-						if (isset($result[$arrAlement[2]])) {
-							($arrAlement[0])->setAttribute(
+				if ( ! empty( $result ) ) {
+					foreach ( $elements_to_enhance as $arr_element ) {
+						if ( isset( $result[ $arr_element[2] ] ) ) {
+							( $arr_element[0] )->setAttribute(
 								'title',
-								urlslab_get_url_description($result[$arrAlement[2]]->urlMetaDescription, $result[$arrAlement[2]]->urlTitle, $result[$arrAlement[2]]->urlName),
+								urlslab_get_url_description( $result[ $arr_element[2] ]->urlMetaDescription, $result[ $arr_element[2] ]->urlTitle, $result[ $arr_element[2] ]->urlName ),
 							);
 						}
 					}

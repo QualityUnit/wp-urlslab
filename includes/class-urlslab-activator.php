@@ -41,7 +41,7 @@ class Urlslab_Activator {
 
 	private static function init_screenshot_widget_tables() {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'urlslab_screenshot';
+		$table_name = $wpdb->prefix . 'urlslab_urls';
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
     	urlMd5 varchar(32) NOT NULL, 
@@ -69,7 +69,7 @@ class Urlslab_Activator {
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
     	keyword varchar(250) NOT NULL,
     	lang varchar(10) NOT NULL,
-    	urlMd5 varchar(32) NOT NULL,
+    	urlLink text NOT NULL,
 		PRIMARY KEY  (lang, keyword)
 	) $charset_collate;";
 

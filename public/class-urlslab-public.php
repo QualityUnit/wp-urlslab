@@ -71,11 +71,11 @@ class Urlslab_Public {
 		wp_enqueue_script( $this->urlslab, plugin_dir_url( __FILE__ ) . 'js/urlslab-public.js', array( 'jquery' ), $this->version, false );
 	}
 
-	public function the_content($content) {
-		$link_enhancer = Urlslab_Available_Widgets::get_instance()->get_widget('urlslab-link-enhancer');
-		$keywords_links = Urlslab_Available_Widgets::get_instance()->get_widget('urlslab-keywords-links');
+	public function the_content( $content ) {
+		$keywords_links = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-keywords-links' );
+		$link_enhancer = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-link-enhancer' );
 		return $keywords_links->theContentHook(
-			$link_enhancer->theContentHook($content)
+			$link_enhancer->theContentHook( $content )
 		);
 	}
 

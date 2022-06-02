@@ -1,5 +1,6 @@
 <?php
 
+// phpcs:disable WordPress
 require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
@@ -141,7 +142,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		}
 
 		foreach ( $keywords as $kw => $url ) {
-			if ( ( $pos = strpos( strtolower( $node->nodeValue ), strtolower( $kw ) ) ) !== false ) {
+			$pos = strpos( strtolower( $node->nodeValue ), strtolower( $kw ) );
+			if ( $pos !== false ) {
 				$this->cnt_page_links ++;
 				$this->cnt_page_link_replacements ++;
 				$this->cnt_paragraph_link_replacements ++;
@@ -160,7 +162,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 				//add text before keyword
 				if ( $pos > 0 ) {
-					$domTextStart = $document->createTextNode( substr( $node->nodeValue, 0, $pos ) );
+					$domTextStart = $document->createTextNode( substr( $node->nodeValue, 0, $pos ) ); // phpcs:ignore
 					$node->parentNode->insertBefore( $domTextStart, $node );
 				} else {
 					$domTextStart = null;
@@ -171,11 +173,10 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 					'a',
 					substr( $node->nodeValue, $pos, strlen( $kw ) )
 				);
-				$linkDom->setAttribute( 'href', $url[0] );
-				$linkDom->setAttribute( 'title', $url[1] );
+				$linkDom->setAttribute( 'href', $url );
 
 				//if relative url or url from same domain, don't add target attribute
-				if ( ! $this->isSameDomainUrl( $url[0] ) ) {
+				if ( ! $this->isSameDomainUrl( $url ) ) {
 					$linkDom->setAttribute( 'target', '_blank' );
 				}
 
@@ -209,17 +210,13 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	private function getKeywords() {
 		global $wpdb;
 
-		$base_table = $wpdb->prefix . 'urlslab_keyword_widget';
-		$url_table  = $wpdb->prefix . 'urlslab_screenshot';
+		$keyword_table = $wpdb->prefix . 'urlslab_keyword_widget';
 
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT keyword,
-       urlName,
-       urlTitle,
-       urlMetaDescription FROM ' . $base_table . // phpcs:ignore
-				' AS keywords_table INNER JOIN ' . $url_table . // phpcs:ignore
-				' AS url_table ON keywords_table.urlMd5 = url_table.urlMd5 WHERE (lang = %s OR lang IS NULL) LIMIT 100',
+				'SELECT keyword, urlLink
+				FROM ' . $keyword_table . // phpcs:ignore
+				' WHERE (lang = %s OR lang IS NULL) LIMIT 100',
 				get_locale()
 			),
 			'ARRAY_A'
@@ -227,10 +224,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 		$keywords = array();
 		foreach ( $results as $row ) {
-			$keywords[ $row['keyword'] ] = array(
-				'http://' . $row['urlName'],
-				urlslab_get_url_description( $row['urlMetaDescription'], $row['urlTitle'], $row['urlName'] ),
-			);
+			$keywords[ $row['keyword'] ] = $row['urlLink'];
 		}
 
 		//don't return keywords, where we reached limit of replacements - optimisation
