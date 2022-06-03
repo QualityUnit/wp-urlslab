@@ -3,6 +3,7 @@
 require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-screenshot-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-link-enhancer.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-keywords-links.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-image-enhancer.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-screenshot-api.php';
 
@@ -51,6 +52,13 @@ class Urlslab_Available_Widgets {
 				'urlslab-keywords-links',
 				'Keywords Links',
 				'Urlslab Keywords to Links - automatic linkbuilding from specific keywords',
+				'https://www.urlslab.com',
+				$api
+			),
+			'urlslab-image-alt-attribute' => new Urlslab_Image_Enhancer(
+				'urlslab-image-alt-attribute',
+				'Image Alt Attributes',
+				'Urlslab Image Alt Attributes - automatic enhancing of image alt atribute with name of heading, where is image included',
 				'https://www.urlslab.com',
 				$api
 			),

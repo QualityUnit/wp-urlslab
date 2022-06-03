@@ -72,9 +72,12 @@ class Urlslab_Public {
 	}
 
 	public function the_content( $content ) {
+		$image_alt_attributes = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-image-alt-attribute' );
 		$keywords_links = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-keywords-links' );
 		$link_enhancer = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-link-enhancer' );
-		return $link_enhancer->theContentHook( $keywords_links->theContentHook( $content ) );
+		return $image_alt_attributes->theContentHook(
+			$link_enhancer->theContentHook(
+				$keywords_links->theContentHook( $content ) ) );
 	}
 
 }
