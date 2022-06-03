@@ -92,7 +92,7 @@ class Urlslab_Image_Enhancer extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_admin_menu_title(): string {
-		return 'Link Enhancer';
+		return 'Image Alt Attributes';
 	}
 
 	/**
