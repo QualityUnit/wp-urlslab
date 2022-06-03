@@ -20,15 +20,16 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	private array $link_counts = array();
 	private array $kw_page_replacement_counts = array();
 
+	private array $keywords_cache = array();
+
 	//TODO: use these constants as defaults,
 	// real values should be loaded from settings defined by user
-	const MAX_REPLACEMENTS_PER_KEYWORD = 5;
+	const MAX_REPLACEMENTS_PER_KEYWORD = 1;
 
 	//if page contains more links than this limit, don't try to add next links to page
 	const MAX_LINKS_ON_PAGE = 100;
 	const MAX_REPLACEMENTS_PER_PAGE = 30;
-	const MAX_REPLACEMENTS_PER_PARAGRAPH = 3;
-
+	const MAX_REPLACEMENTS_PER_PARAGRAPH = 2;
 
 	private Urlslab_Screenshot_Api $urlslab_screenshot_api;
 
@@ -142,8 +143,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		}
 
 		foreach ( $keywords as $kw => $url ) {
-			$pos = strpos( strtolower( $node->nodeValue ), strtolower( $kw ) );
-			if ( $pos !== false ) {
+			if (preg_match('/\b(' . preg_quote(strtolower( $kw ), '/') . ')\b/', strtolower( $node->nodeValue ), $matches, PREG_OFFSET_CAPTURE)) {
+				$pos = $matches[1][1];
 				$this->cnt_page_links ++;
 				$this->cnt_page_link_replacements ++;
 				$this->cnt_paragraph_link_replacements ++;
@@ -207,30 +208,32 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		}
 	}
 
-	private function getKeywords() {
-		global $wpdb;
+	private function get_keywords() {
+		if (empty($this->keywords_cache)) {
+			global $wpdb;
 
-		$keyword_table = $wpdb->prefix . 'urlslab_keyword_widget';
+			$keyword_table = $wpdb->prefix . 'urlslab_keyword_widget';
 
-		$results = $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT keyword, urlLink
+			$results = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT keyword, urlLink
 				FROM ' . $keyword_table . // phpcs:ignore
-				" WHERE (lang = %s OR lang = 'all') LIMIT 100",
-				get_locale()
-			),
-			'ARRAY_A'
-		);
+					" WHERE (lang = %s OR lang = 'all') LIMIT 100",
+					urlslab_get_language()
+				),
+				'ARRAY_A'
+			);
 
-		$keywords = array();
-		foreach ( $results as $row ) {
-			$keywords[ $row['keyword'] ] = $row['urlLink'];
+			$this->keywords_cache = array();
+			foreach ($results as $row) {
+				$this->keywords_cache[$row['keyword']] = $row['urlLink'];
+			}
 		}
 
-		//don't return keywords, where we reached limit of replacements - optimisation
-		foreach ( $this->kw_page_replacement_counts as $kw => $cnt ) {
-			if ( $cnt > self::MAX_REPLACEMENTS_PER_KEYWORD ) {
-				unset( $keywords[ $kw ] );
+		$keywords = array();
+		foreach ($this->keywords_cache as $kw => $lnk) {
+			if (!isset($this->kw_page_replacement_counts[$kw]) || $this->kw_page_replacement_counts[$kw] < self::MAX_REPLACEMENTS_PER_KEYWORD) {
+				$keywords[$kw] = $lnk;
 			}
 		}
 
@@ -247,7 +250,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			foreach ( $dom->childNodes as $node ) {
 
 				if ( $node instanceof DOMText && strlen( trim( $node->nodeValue ) ) > 1 ) {
-					$this->replaceKeywordWithLinks( $node, $document, $this->getKeywords() );
+					$this->replaceKeywordWithLinks( $node, $document, $this->get_keywords() );
 				} else {
 					if ( count( $this->link_counts ) > 0 && preg_match( '/^[hH][0-9]$/', $node->nodeName ) ) {
 						$this->cnt_paragraph_link_replacements = array_shift( $this->link_counts );

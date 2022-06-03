@@ -128,7 +128,6 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 			$elements = $document->getElementsByTagName( 'a' );
 
-
 			$elements_to_enhance = array();
 			if ( $elements instanceof DOMNodeList ) {
 				foreach ( $elements as $dom_element ) {
@@ -173,7 +172,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 				//# selecting the urls found in page
 				$select_placeholders = implode( ', ', array_fill( 0, count( $select_url_md5_array ), '%s' ) );
-				$select_sql = "SELECT urlMd5, urlMetaDescription, urlTitle, urlName FROM $urls_table
+				$select_sql = "SELECT urlMd5, urlMetaDescription, urlSummary, urlTitle, urlName FROM $urls_table
 								WHERE status = 'A' AND urlMd5 IN ($select_placeholders)";
 				$result = $wpdb->get_results( $wpdb->prepare( "$select_sql",  $select_url_md5_array), OBJECT_K); // phpcs:ignore
 
@@ -182,7 +181,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 						if ( isset( $result[ $arr_element[2] ] ) ) {
 							( $arr_element[0] )->setAttribute(
 								'title',
-								urlslab_get_url_description( $result[ $arr_element[2] ]->urlMetaDescription, $result[ $arr_element[2] ]->urlTitle, $result[ $arr_element[2] ]->urlName ),
+								urlslab_get_url_description( $result[ $arr_element[2] ]->urlSummary, $result[ $arr_element[2] ]->urlMetaDescription, $result[ $arr_element[2] ]->urlTitle, $result[ $arr_element[2] ]->urlName ),
 							);
 						}
 					}

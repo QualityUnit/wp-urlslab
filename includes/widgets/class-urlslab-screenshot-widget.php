@@ -152,11 +152,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			);
 
 			if ( null !== $row ) {
-				if ( ! empty( $row['urlMetaDescription'] ) && $urlslab_atts['alt'] == $default_alt ) {
-					$urlslab_atts['alt'] = $row['urlMetaDescription'];
-				} else if ( ! empty( $row['urlTitle'] ) && $urlslab_atts['alt'] == $default_alt ) {
-					$urlslab_atts['alt'] = $row['urlTitle'];
-				}
+				$urlslab_atts['alt'] = urlslab_get_url_description($row['urlSummary'], $row['urlMetaDescription'], $row['urlTitle'], $row['urlName']);
 
 				switch ( $row['status'] ) {
 					case Urlslab::$link_status_waiting_for_update:
@@ -194,7 +190,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 					$wpdb->prepare(
 						'
                         INSERT INTO ' . $table_name . // phpcs:ignore
-						' 
+						'
                             (urlMd5, urlName, status, updateStatusDate)
                         VALUES (%s, %s, %s, %s);
                     ',
