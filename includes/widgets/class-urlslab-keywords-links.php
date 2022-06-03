@@ -95,6 +95,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_admin_menu_page_url(): string {
+		//TODO - implement for the admin page of plugin
 		return $this->menu_page_url( URLSLAB_PLUGIN_DIR . '/admin/partials/urlslab-admin-screenshot-display.php' );
 	}
 
