@@ -74,9 +74,7 @@ class Urlslab_Public {
 	public function the_content( $content ) {
 		$keywords_links = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-keywords-links' );
 		$link_enhancer = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-link-enhancer' );
-		return $keywords_links->theContentHook(
-			$link_enhancer->theContentHook( $content )
-		);
+		return $link_enhancer->theContentHook( $keywords_links->theContentHook( $content ) );
 	}
 
 }

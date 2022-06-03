@@ -216,7 +216,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			$wpdb->prepare(
 				'SELECT keyword, urlLink
 				FROM ' . $keyword_table . // phpcs:ignore
-				' WHERE (lang = %s OR lang IS NULL) LIMIT 100',
+				" WHERE (lang = %s OR lang = 'all') LIMIT 100",
 				get_locale()
 			),
 			'ARRAY_A'
