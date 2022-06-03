@@ -144,7 +144,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		}
 
 		foreach ( $keywords as $kw => $url ) {
-			if (preg_match('/\b(' . preg_quote(strtolower( $kw ), '/') . ')\b/', strtolower( $node->nodeValue ), $matches, PREG_OFFSET_CAPTURE)) {
+			if (preg_match( '/\b(' . preg_quote( strtolower( $kw ), '/' ) . ')\b/', strtolower( $node->nodeValue ), $matches, PREG_OFFSET_CAPTURE )) {
 				$pos = $matches[1][1];
 				$this->cnt_page_links ++;
 				$this->cnt_page_link_replacements ++;
@@ -210,7 +210,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	private function get_keywords() {
-		if (empty($this->keywords_cache)) {
+		if (empty( $this->keywords_cache )) {
 			global $wpdb;
 
 			$keyword_table = $wpdb->prefix . 'urlslab_keyword_widget';
@@ -233,7 +233,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 		$keywords = array();
 		foreach ($this->keywords_cache as $kw => $lnk) {
-			if (!isset($this->kw_page_replacement_counts[$kw]) || $this->kw_page_replacement_counts[$kw] < self::MAX_REPLACEMENTS_PER_KEYWORD) {
+			if (!isset( $this->kw_page_replacement_counts[$kw] ) || $this->kw_page_replacement_counts[$kw] < self::MAX_REPLACEMENTS_PER_KEYWORD) {
 				$keywords[$kw] = $lnk;
 			}
 		}

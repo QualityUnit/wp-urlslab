@@ -152,7 +152,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			);
 
 			if ( null !== $row ) {
-				$urlslab_atts['alt'] = urlslab_get_url_description($row['urlSummary'], $row['urlMetaDescription'], $row['urlTitle'], $row['urlName']);
+				$urlslab_atts['alt'] = urlslab_get_url_description( $row['urlSummary'], $row['urlMetaDescription'], $row['urlTitle'], $row['urlName'] );
 
 				switch ( $row['status'] ) {
 					case Urlslab::$link_status_waiting_for_update:
