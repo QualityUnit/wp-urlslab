@@ -135,7 +135,6 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 						WHERE r.srcUrlMd5 = %s AND u.status='A'
 						LIMIT %d";
 
-
 		$result = $wpdb->get_results( $wpdb->prepare( "$select_sql",  $this->get_url_md5($urlslab_atts['url']), $urlslab_atts['related-count']), OBJECT_K); // phpcs:ignore
 
 		if ( ! empty( $result ) ) {
