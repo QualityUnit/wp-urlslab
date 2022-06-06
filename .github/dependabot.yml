@@ -8,6 +8,10 @@ updates:
       timezone: Europe/Bratislava
     open-pull-requests-limit: 10
     versioning-strategy: increase
+    rebase-strategy: "disabled"
+    labels:
+      - "type:dependencies"
+      - "composer"
     assignees:
       - "mvstepanek"
     reviewers:
@@ -21,6 +25,10 @@ updates:
       timezone: Europe/Bratislava
     open-pull-requests-limit: 10
     versioning-strategy: increase
+    rebase-strategy: "disabled"
+    labels:
+      - "type:dependencies"
+      - "npm"
     assignees:
       - "mvstepanek"
     reviewers:
