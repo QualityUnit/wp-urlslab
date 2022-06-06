@@ -1,9 +1,10 @@
 <?php
 
 require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-screenshot-widget.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-related-resources-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-link-enhancer.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-keywords-links.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-image-enhancer.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-image-alt-text.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-screenshot-api.php';
 
@@ -41,6 +42,13 @@ class Urlslab_Available_Widgets {
 				'https://www.urlslab.com',
 				$api
 			),
+			'urlslab-related-resources' => new Urlslab_Related_Resources_Widget(
+				'urlslab-related-resources',
+				'Related Resources',
+				'Urlslab Widget Related Resources - show contextually related pages',
+				'https://www.urlslab.com',
+				$api
+			),
 			'urlslab-link-enhancer' => new Urlslab_Link_Enhancer(
 				'urlslab-link-enhancer',
 				'Link Enhancer',
@@ -55,7 +63,7 @@ class Urlslab_Available_Widgets {
 				'https://www.urlslab.com',
 				$api
 			),
-			'urlslab-image-alt-attribute' => new Urlslab_Image_Enhancer(
+			'urlslab-image-alt-attribute' => new Urlslab_Image_Alt_Text(
 				'urlslab-image-alt-attribute',
 				'Image Alt Attributes',
 				'Urlslab Image Alt Attributes - automatic enhancing of image alt atribute with name of heading, where is image included',

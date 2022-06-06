@@ -178,7 +178,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				$linkDom->setAttribute( 'href', $url );
 
 				//if relative url or url from same domain, don't add target attribute
-				if ( ! $this->isSameDomainUrl( $url ) ) {
+				if ( ! urlslab_is_same_domain_url( $url ) ) {
 					$linkDom->setAttribute( 'target', '_blank' );
 				}
 
@@ -289,7 +289,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 			return $document->saveHTML();
 		} catch ( Exception $e ) {
-			return $content . "\n" . "<!---\n Error:" . str_replace( '>', ' ', $e->getMessage() ) . "\n--->";
+			return $content . "\n" . "<!---\n Error:" . esc_html($e->getMessage()) . "\n--->";
 		}
 	}
 
@@ -324,17 +324,13 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		}
 	}
 
-	/**
-	 * @param $url input URL
-	 *
-	 * @return bool true if input url has same host name as current site
-	 */
-	private function isSameDomainUrl( $url ) {
-		$urlHostname = strtolower( parse_url( $url, PHP_URL_HOST ) );
-		if ( ! strlen( $urlHostname ) ) {
-			return true;
-		}
+	public function get_shortcode_content($atts = array(), $content = null, $tag = ''): string
+	{
+		return '';
+	}
 
-		return $urlHostname == strtolower( parse_url( get_site_url(), PHP_URL_HOST ) );
+	public function has_shortcode(): bool
+	{
+		return false;
 	}
 }

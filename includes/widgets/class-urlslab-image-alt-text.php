@@ -4,7 +4,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
 
-class Urlslab_Image_Enhancer extends Urlslab_Widget {
+class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	private string $widget_slug;
 
 	private string $widget_title;
@@ -148,7 +148,17 @@ class Urlslab_Image_Enhancer extends Urlslab_Widget {
 			}
 			return $document->saveHTML();
 		} catch ( Exception $e ) {
-			return $content . "\n" . "<!---\n Error:" . str_replace( '>', ' ', $e->getMessage() ) . "\n--->";
+			return $content . "\n" . "<!---\n Error:" . esc_html( $e->getMessage() ) . "\n--->";
 		}
+	}
+
+	public function get_shortcode_content($atts = array(), $content = null, $tag = ''): string
+	{
+		return '';
+	}
+
+	public function has_shortcode(): bool
+	{
+		return false;
 	}
 }

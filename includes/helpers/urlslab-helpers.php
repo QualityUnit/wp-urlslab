@@ -24,6 +24,23 @@ function urlslab_get_url_description( $summary, $meta_description, $title, $url 
 	return trim( str_replace( '/', ' ', parse_url( $url, PHP_URL_PATH ) ) );
 }
 
+function urlslab_is_same_domain_url( $url ) {
+	$urlHostname = strtolower( parse_url( $url, PHP_URL_HOST ) );
+	if ( ! strlen( $urlHostname ) ) {
+		return true;
+	}
+
+	return $urlHostname == strtolower( parse_url( get_site_url(), PHP_URL_HOST ) );
+}
+
+function urlslab_get_current_page_protocol() {
+	$protocol = parse_url( get_site_url(), PHP_URL_SCHEME );
+	if (empty($protocol)) {
+		return 'http://';
+	}
+	return $protocol . '://';
+}
+
 function urlslab_get_language() {
 	global $sitepress, $polylang;
 

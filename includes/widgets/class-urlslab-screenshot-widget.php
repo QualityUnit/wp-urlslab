@@ -119,7 +119,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		return false;
 	}
 
-	function get_screenshot_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
+	function get_shortcode_content($atts = array(), $content = null, $tag = '' ): string {
 		// normalize attribute keys, lowercase
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
@@ -255,4 +255,8 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		}
 	}
 
+	public function has_shortcode(): bool
+	{
+		return true;
+	}
 }

@@ -194,4 +194,14 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			return $content . "\n" . "<!---\n Error:" . str_replace( '>', ' ', $e->getMessage() ) . "\n--->";
 		}
 	}
+
+	public function get_shortcode_content($atts = array(), $content = null, $tag = ''): string
+	{
+		return '';
+	}
+
+	public function has_shortcode(): bool
+	{
+		return false;
+	}
 }

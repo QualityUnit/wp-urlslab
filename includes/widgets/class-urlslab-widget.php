@@ -49,4 +49,9 @@ abstract class Urlslab_Widget {
 	 */
 	public abstract function get_conf_page_url( $args = '' ): string;
 
+
+	public abstract function get_shortcode_content($atts = array(), $content = null, $tag = '' ): string;
+
+	public abstract function has_shortcode(): bool;
+
 }

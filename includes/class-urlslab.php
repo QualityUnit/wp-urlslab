@@ -247,7 +247,7 @@ class Urlslab {
 
 	public function urlslab_shortcodes_init() {
 		foreach ( Urlslab_Available_Widgets::get_instance()->get_all_widgets() as $i => $widget ) {
-			add_shortcode( $widget->get_widget_slug(), array( $widget, 'get_screenshot_shortcode_content' ) );
+			add_shortcode( $widget->get_widget_slug(), array( $widget, 'get_shortcode_content' ) );
 		}
 	}
 
