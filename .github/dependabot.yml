@@ -3,15 +3,12 @@ updates:
   - package-ecosystem: composer
     directory: "/"
     schedule:
-      interval: daily
-      time: "06:00"
-      timezone: Europe/Bratislava
-    open-pull-requests-limit: 10
+      interval: weekly
+      day: saturday
+    open-pull-requests-limit: 25
     versioning-strategy: increase
-    rebase-strategy: "disabled"
     labels:
       - "type:dependencies"
-      - "composer"
     assignees:
       - "mvstepanek"
     reviewers:
@@ -20,15 +17,26 @@ updates:
   - package-ecosystem: npm
     directory: "/"
     schedule:
-      interval: daily
-      time: "05:00"
-      timezone: Europe/Bratislava
-    open-pull-requests-limit: 10
+      interval: weekly
+      day: saturday
+    open-pull-requests-limit: 25
     versioning-strategy: increase
-    rebase-strategy: "disabled"
     labels:
       - "type:dependencies"
-      - "npm"
+    assignees:
+      - "mvstepanek"
+    reviewers:
+      - "mvstepanek"
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: saturday
+    open-pull-requests-limit: 25
+    versioning-strategy: increase
+    labels:
+      - "type:dependencies"
     assignees:
       - "mvstepanek"
     reviewers:
