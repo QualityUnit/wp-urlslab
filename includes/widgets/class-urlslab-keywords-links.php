@@ -6,13 +6,13 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
 
 class Urlslab_Keywords_Links extends Urlslab_Widget {
-	private string $widget_slug;
+	private string $widget_slug = 'urlslab-keywords-links';
 
-	private string $widget_title;
+	private string $widget_title = 'Keywords Links';
 
-	private string $widget_description;
+	private string $widget_description = 'Urlslab Keywords to Links - automatic linkbuilding from specific keywords';
 
-	private string $landing_page_link;
+	private string $landing_page_link = 'https://www.urlslab.com';
 
 	private int $cnt_page_link_replacements = 0;
 	private int $cnt_page_links = 0;
@@ -35,23 +35,9 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 
 	/**
-	 * @param string $widget_slug
-	 * @param string $widget_title
-	 * @param string $widget_description
-	 * @param string $landing_page_link
 	 * @param Urlslab_Screenshot_Api $urlslab_screenshot_api
 	 */
-	public function __construct(
-		string $widget_slug,
-		string $widget_title,
-		string $widget_description,
-		string $landing_page_link,
-		Urlslab_Screenshot_Api $urlslab_screenshot_api
-	) {
-		$this->widget_slug            = $widget_slug;
-		$this->widget_title           = $widget_title;
-		$this->widget_description     = $widget_description;
-		$this->landing_page_link      = $landing_page_link;
+	public function __construct( Urlslab_Screenshot_Api $urlslab_screenshot_api ) {
 		$this->urlslab_screenshot_api = $urlslab_screenshot_api;
 	}
 
@@ -94,14 +80,6 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	/**
 	 * @return string
 	 */
-	public function get_admin_menu_page_url(): string {
-		//TODO - implement for the admin page of plugin
-		return $this->menu_page_url( URLSLAB_PLUGIN_DIR . '/admin/partials/urlslab-admin-screenshot-display.php' );
-	}
-
-	/**
-	 * @return string
-	 */
 	public function get_admin_menu_page_title(): string {
 		return 'Urlslab Widget | Keywords Links';
 	}
@@ -111,24 +89,6 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	 */
 	public function get_admin_menu_title(): string {
 		return 'Keywords Links';
-	}
-
-	/**
-	 * @param $args array the action type to take
-	 *
-	 * @return string url in the integration of wordpress process
-	 */
-	public function get_conf_page_url( $args = '' ): string {
-		$main_menu_slug = URLSLAB_PLUGIN_DIR . '/admin/partials/urlslab-admin-display.php';
-		$args           = wp_parse_args( $args, array() );
-		$url            = $this->menu_page_url( $main_menu_slug );
-		$url            = add_query_arg( array( 'component' => $this->widget_slug ), $url );
-
-		if ( ! empty( $args ) ) {
-			$url = add_query_arg( $args, $url );
-		}
-
-		return $url;
 	}
 
 	private function replaceKeywordWithLinks( DOMText $node, DOMDocument $document, array $keywords ) {
@@ -289,7 +249,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 			return $document->saveHTML();
 		} catch ( Exception $e ) {
-			return $content . "\n" . "<!---\n Error:" . esc_html($e->getMessage()) . "\n--->";
+			return $content . "\n" . "<!---\n Error:" . esc_html( $e->getMessage() ) . "\n--->";
 		}
 	}
 
@@ -324,13 +284,11 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		}
 	}
 
-	public function get_shortcode_content($atts = array(), $content = null, $tag = ''): string
-	{
+	public function get_shortcode_content( $atts = array(), $content = null, $tag = ''): string {
 		return '';
 	}
 
-	public function has_shortcode(): bool
-	{
+	public function has_shortcode(): bool {
 		return false;
 	}
 }

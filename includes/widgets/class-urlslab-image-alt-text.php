@@ -1,39 +1,26 @@
 <?php
 
+// phpcs:disable WordPress
 require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
 
 class Urlslab_Image_Alt_Text extends Urlslab_Widget {
-	private string $widget_slug;
+	private string $widget_slug = 'urlslab-image-alt-attribute';
 
-	private string $widget_title;
+	private string $widget_title = 'Image Alt Attributes';
 
-	private string $widget_description;
+	private string $widget_description = 'Urlslab Image Alt Attributes - automatic enhancing of image alt atribute with name of heading, where is image included';
 
-	private string $landing_page_link;
+	private string $landing_page_link = 'https://www.urlslab.com';
 
 	const MAX_URLS_TO_ENHANCE = 100;
 
 
 	/**
-	 * @param string $widget_slug
-	 * @param string $widget_title
-	 * @param string $widget_description
-	 * @param string $landing_page_link
 	 * @param Urlslab_Screenshot_Api $urlslab_screenshot_api
 	 */
-	public function __construct(
-		string $widget_slug,
-		string $widget_title,
-		string $widget_description,
-		string $landing_page_link,
-		Urlslab_Screenshot_Api $urlslab_screenshot_api
-	) {
-		$this->widget_slug            = $widget_slug;
-		$this->widget_title           = $widget_title;
-		$this->widget_description     = $widget_description;
-		$this->landing_page_link      = $landing_page_link;
+	public function __construct( Urlslab_Screenshot_Api $urlslab_screenshot_api ) {
 		$this->urlslab_screenshot_api = $urlslab_screenshot_api;
 	}
 
@@ -95,25 +82,6 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 		return 'Image Alt Attributes';
 	}
 
-	/**
-	 * @param $args array the action type to take
-	 *
-	 * @return string url in the integration of wordpress process
-	 */
-	public function get_conf_page_url( $args = '' ): string {
-		$main_menu_slug = URLSLAB_PLUGIN_DIR . '/admin/partials/urlslab-admin-display.php';
-		$args           = wp_parse_args( $args, array() );
-		$url            = $this->menu_page_url( $main_menu_slug );
-		$url            = add_query_arg( array( 'component' => $this->widget_slug ), $url );
-
-		if ( ! empty( $args ) ) {
-			$url = add_query_arg( $args, $url );
-		}
-
-		return $url;
-	}
-
-
 	public function theContentHook( $content ) {
 		if ( ! strlen( trim( $content ) ) ) {
 			return $content;    //nothing to process
@@ -131,15 +99,15 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 			$table_data                       = $xpath->query( "//img[not(@alt) or @alt='']|//*[starts-with(name(),'h')]" );
 			$title = '';
 
-			if (!empty($table_data)) {
-				foreach ($table_data as $element) {
-					if (substr($element->nodeName, 0, 1) == 'h') {
+			if ( ! empty( $table_data ) ) {
+				foreach ( $table_data as $element ) {
+					if ( substr( $element->nodeName, 0, 1 ) == 'h' ) {
 						$title = $element->nodeValue;
-					} elseif ($element->nodeName == 'img') {
-						if (isset($element->parentNode) && $element->parentNode->nodeName == 'a' && $element->parentNode->hasAttribute('title')) {
-							$element->setAttribute('alt', $title . ' - ' . $element->parentNode->getAttribute('title'));
-						} elseif (strlen($title)) {
-							$element->setAttribute('alt', $title);
+					} elseif ( 'img' == $element->nodeName ) {
+						if ( isset( $element->parentNode ) && $element->parentNode->nodeName == 'a' && $element->parentNode->hasAttribute( 'title' ) ) {
+							$element->setAttribute( 'alt', $title . ' - ' . $element->parentNode->getAttribute( 'title' ) );
+						} elseif ( strlen( $title ) ) {
+							$element->setAttribute( 'alt', $title );
 						}
 					}
 				}
@@ -152,13 +120,11 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 		}
 	}
 
-	public function get_shortcode_content($atts = array(), $content = null, $tag = ''): string
-	{
+	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
 		return '';
 	}
 
-	public function has_shortcode(): bool
-	{
+	public function has_shortcode(): bool {
 		return false;
 	}
 }

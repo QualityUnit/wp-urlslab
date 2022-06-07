@@ -28,7 +28,7 @@ class Urlslab_Public {
 	 * @access   private
 	 * @var      string    $plugin_name    The ID of this plugin.
 	 */
-	private $urlslab;
+	private string $urlslab;
 
 	/**
 	 * The version of this plugin.
@@ -37,7 +37,7 @@ class Urlslab_Public {
 	 * @access   private
 	 * @var      string    $version    The current version of this plugin.
 	 */
-	private $version;
+	private string $version;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -77,7 +77,9 @@ class Urlslab_Public {
 		$link_enhancer = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-link-enhancer' );
 		return $image_alt_attributes->theContentHook(
 			$link_enhancer->theContentHook(
-				$keywords_links->theContentHook( $content ) ) );
+				$keywords_links->theContentHook( $content ) 
+			) 
+		);
 	}
 
 }

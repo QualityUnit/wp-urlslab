@@ -52,7 +52,7 @@ define( 'URLSLAB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'URLSLAB_PLUGIN_BASENAME', plugin_basename( URLSLAB_PLUGIN ) );
 
 add_filter( 'cron_schedules', 'urlslab_add_cron_interval' );
-function urlslab_add_cron_interval( $schedules ) {
+function urlslab_add_cron_interval( $schedules ): array {
 	$my_schedule['every_minute'] = array(
 		'interval' => 60,
 		'display'  => esc_html__( 'Every Minute' ),

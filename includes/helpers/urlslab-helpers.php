@@ -24,18 +24,18 @@ function urlslab_get_url_description( $summary, $meta_description, $title, $url 
 	return trim( str_replace( '/', ' ', parse_url( $url, PHP_URL_PATH ) ) );
 }
 
-function urlslab_is_same_domain_url( $url ) {
-	$urlHostname = strtolower( parse_url( $url, PHP_URL_HOST ) );
-	if ( ! strlen( $urlHostname ) ) {
+function urlslab_is_same_domain_url( $url ): bool {
+	$url_host_name = strtolower( parse_url( $url, PHP_URL_HOST ) );
+	if ( ! strlen( $url_host_name ) ) {
 		return true;
 	}
 
-	return $urlHostname == strtolower( parse_url( get_site_url(), PHP_URL_HOST ) );
+	return strtolower( parse_url( get_site_url(), PHP_URL_HOST ) ) == $url_host_name;
 }
 
-function urlslab_get_current_page_protocol() {
+function urlslab_get_current_page_protocol(): string {
 	$protocol = parse_url( get_site_url(), PHP_URL_SCHEME );
-	if (empty($protocol)) {
+	if ( empty( $protocol ) ) {
 		return 'http://';
 	}
 	return $protocol . '://';
