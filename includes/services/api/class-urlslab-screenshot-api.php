@@ -31,6 +31,7 @@ class Urlslab_Screenshot_Api extends Urlslab_Api {
 					$result_obj->screenshotDate, // phpcs:ignore
 					$result_obj->urlTitle, // phpcs:ignore
 					$result_obj->urlMetaDescription, // phpcs:ignore
+					$result_obj->urlSummary, // phpcs:ignore
 					$this->convert_status_to_char( $result_obj->screenshotStatus ) // phpcs:ignore
 				);
 			}
