@@ -34,7 +34,6 @@ updates:
       interval: weekly
       day: saturday
     open-pull-requests-limit: 25
-    versioning-strategy: increase
     labels:
       - "type:dependencies"
     assignees:
