@@ -210,7 +210,7 @@ class Urlslab {
 			$plugin_admin,
 			'urlslab_load_add_widgets_page',
 			10,
-			0 
+			0
 		);
 
 	}
@@ -228,7 +228,7 @@ class Urlslab {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-
+		$this->loader->add_filter( 'the_content', $plugin_public, 'the_content' );
 	}
 
 	private function define_backend_hooks() {
@@ -247,7 +247,7 @@ class Urlslab {
 
 	public function urlslab_shortcodes_init() {
 		foreach ( Urlslab_Available_Widgets::get_instance()->get_all_widgets() as $i => $widget ) {
-			add_shortcode( $widget->get_widget_slug(), array( $widget, 'get_screenshot_shortcode_content' ) );
+			add_shortcode( $widget->get_widget_slug(), array( $widget, 'get_shortcode_content' ) );
 		}
 	}
 

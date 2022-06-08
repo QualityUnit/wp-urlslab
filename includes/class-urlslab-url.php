@@ -24,10 +24,14 @@ class Urlslab_Url {
 		}
 
 		$parsed_url = parse_url( $url );
+
 		if ( ! empty( $parsed_url['query'] ) ) {
-			$this->url = strtolower( $parsed_url['host'] . $parsed_url['path'] . '?' . $parsed_url['query'] );
+			$this->url = ( $parsed_url['host'] ?? parse_url( get_site_url(), PHP_URL_HOST ) ) .
+						 ( $parsed_url['path'] ?? '' ) .
+						 '?' . $parsed_url['query'];
 		} else {
-			$this->url = strtolower( $parsed_url['host'] . $parsed_url['path'] );
+			$this->url = ( $parsed_url['host'] ?? parse_url( get_site_url(), PHP_URL_HOST ) ) .
+						 ( $parsed_url['path'] ?? '' );
 		}
 	}
 

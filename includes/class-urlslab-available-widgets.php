@@ -1,6 +1,10 @@
 <?php
 
 require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-screenshot-widget.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-related-resources-widget.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-link-enhancer.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-keywords-links.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-image-alt-text.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-screenshot-api.php';
 
@@ -29,14 +33,20 @@ class Urlslab_Available_Widgets {
 	 * @return void
 	 */
 	public function init_widgets( $api_key ) {
+		$api = new Urlslab_Screenshot_Api( $api_key );
+		$urlslab_screenshot = new Urlslab_Screenshot_Widget( $api );
+		$urlslab_related_resources = new Urlslab_Related_Resources_Widget( $api );
+		$urlslab_link_enhancer = new Urlslab_Link_Enhancer( $api );
+		$urlslab_keyword_links = new Urlslab_Keywords_Links( $api );
+		$urlslab_image_alt_text = new Urlslab_Keywords_Links( $api );
+
+
 		$this->available_widgets = array(
-			'urlslab-screenshot' => new Urlslab_Screenshot_Widget(
-				'urlslab-screenshot',
-				'Screenshot',
-				'Urlslab Widget to integrate any screenshot of other websites on your website',
-				'https://www.urlslab.com',
-				new Urlslab_Screenshot_Api( $api_key )
-			),
+			$urlslab_screenshot->get_widget_slug() => $urlslab_screenshot,
+			$urlslab_related_resources->get_widget_slug() => $urlslab_related_resources,
+			$urlslab_link_enhancer->get_widget_slug() => $urlslab_link_enhancer,
+			$urlslab_keyword_links->get_widget_slug() => $urlslab_keyword_links,
+			$urlslab_image_alt_text->get_widget_slug() => $urlslab_image_alt_text,
 		);
 	}
 

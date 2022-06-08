@@ -4,7 +4,7 @@ class Urlslab_Screenshot_Cron {
 	public function urlslab_cron_exec() {
 		global $wpdb;
 
-		$table = $wpdb->prefix . 'urlslab_screenshot';
+		$table = $wpdb->prefix . 'urlslab_urls';
 
 		$start_time = time();
 		while ( true ) {
@@ -55,7 +55,7 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 	private function save_new_schedule_status( $urlslab_screenshot, $url_md5_hash ) {
 		global $wpdb;
 
-		$table = $wpdb->prefix . 'urlslab_screenshot';
+		$table = $wpdb->prefix . 'urlslab_urls';
 		$wpdb->query(
 			$wpdb->prepare(
 				'UPDATE ' . $table . // phpcs:ignore

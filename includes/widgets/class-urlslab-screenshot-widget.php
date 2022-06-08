@@ -6,34 +6,20 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
 
 class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 
-	private string $widget_slug;
+	private string $widget_slug = 'urlslab-screenshot';
 
-	private string $widget_title;
+	private string $widget_title = 'Screenshot';
 
-	private string $widget_description;
+	private string $widget_description = 'Urlslab Widget to integrate any screenshot of other websites on your website';
 
-	private string $landing_page_link;
+	private string $landing_page_link = 'https://www.urlslab.com';
 
 	private Urlslab_Screenshot_Api $urlslab_screenshot_api;
 
 	/**
-	 * @param string $widget_slug
-	 * @param string $widget_title
-	 * @param string $widget_description
-	 * @param string $landing_page_link
 	 * @param Urlslab_Screenshot_Api $urlslab_screenshot_api
 	 */
-	public function __construct(
-		string $widget_slug,
-		string $widget_title,
-		string $widget_description,
-		string $landing_page_link,
-		Urlslab_Screenshot_Api $urlslab_screenshot_api
-	) {
-		$this->widget_slug            = $widget_slug;
-		$this->widget_title           = $widget_title;
-		$this->widget_description     = $widget_description;
-		$this->landing_page_link      = $landing_page_link;
+	public function __construct( Urlslab_Screenshot_Api $urlslab_screenshot_api ) {
 		$this->urlslab_screenshot_api = $urlslab_screenshot_api;
 	}
 
@@ -75,13 +61,6 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	/**
 	 * @return string
 	 */
-	public function get_admin_menu_page_url(): string {
-		return $this->menu_page_url( URLSLAB_PLUGIN_DIR . '/admin/partials/urlslab-admin-screenshot-display.php' );
-	}
-
-	/**
-	 * @return string
-	 */
 	public function get_admin_menu_page_title(): string {
 		return 'Urlslab Widget | Screenshot';
 	}
@@ -93,24 +72,6 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		return 'Screenshots';
 	}
 
-	/**
-	 * @param $args array the action type to take
-	 *
-	 * @return string url in the integration of wordpress process
-	 */
-	public function get_conf_page_url( $args = '' ): string {
-		$main_menu_slug = URLSLAB_PLUGIN_DIR . '/admin/partials/urlslab-admin-display.php';
-		$args           = wp_parse_args( $args, array() );
-		$url            = $this->menu_page_url( $main_menu_slug );
-		$url            = add_query_arg( array( 'component' => $this->widget_slug ), $url );
-
-		if ( ! empty( $args ) ) {
-			$url = add_query_arg( $args, $url );
-		}
-
-		return $url;
-	}
-
 	public function schedule_batch_urls( $urls ) {
 		if ( $this->urlslab_screenshot_api->has_api_key() ) {
 			return $this->urlslab_screenshot_api->schedule_batch( $urls );
@@ -119,12 +80,12 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		return false;
 	}
 
-	function get_screenshot_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
+	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
 		// normalize attribute keys, lowercase
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'urlslab_screenshot';
+		$table_name = $wpdb->prefix . 'urlslab_urls';
 
 		// override default attributes with user attributes
 		$default_alt  = 'Screenshot taken by URLSLAB.com';
@@ -152,11 +113,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			);
 
 			if ( null !== $row ) {
-				if ( ! empty( $row['urlMetaDescription'] ) && $urlslab_atts['alt'] == $default_alt ) {
-					$urlslab_atts['alt'] = $row['urlMetaDescription'];
-				} else if ( ! empty( $row['urlTitle'] ) && $urlslab_atts['alt'] == $default_alt ) {
-					$urlslab_atts['alt'] = $row['urlTitle'];
-				}
+				$urlslab_atts['alt'] = urlslab_get_url_description( $row['urlSummary'], $row['urlMetaDescription'], $row['urlTitle'], $row['urlName'] );
 
 				switch ( $row['status'] ) {
 					case Urlslab::$link_status_waiting_for_update:
@@ -194,7 +151,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 					$wpdb->prepare(
 						'
                         INSERT INTO ' . $table_name . // phpcs:ignore
-						' 
+						'
                             (urlMd5, urlName, status, updateStatusDate)
                         VALUES (%s, %s, %s, %s);
                     ',
@@ -259,4 +216,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		}
 	}
 
+	public function has_shortcode(): bool {
+		return true;
+	}
 }
