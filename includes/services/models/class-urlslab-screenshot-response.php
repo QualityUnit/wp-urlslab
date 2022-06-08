@@ -8,6 +8,7 @@ class Urlslab_Screenshot_Response {
 	private $screenshot_date;
 	private $url_title;
 	private $url_meta_description;
+	private $url_summary;
 	private $screenshot_status;
 
 	/**
@@ -15,14 +16,25 @@ class Urlslab_Screenshot_Response {
 	 * @param $url_id
 	 * @param $screenshot_date
 	 * @param $url_title
+	 * @param $url_meta_description
+	 * @param $url_summary
 	 * @param $screenshot_status
 	 */
-	public function __construct( $domain_id, $url_id, $screenshot_date, $url_title, $url_meta_description, $screenshot_status ) {
+	public function __construct(
+		$domain_id,
+		$url_id,
+		$screenshot_date,
+		$url_title,
+		$url_meta_description,
+		$url_summary,
+		$screenshot_status
+	) {
 		$this->domain_id            = $domain_id;
 		$this->url_id               = $url_id;
 		$this->screenshot_date      = $screenshot_date;
 		$this->url_title            = $url_title;
 		$this->url_meta_description = $url_meta_description;
+		$this->url_summary          = $url_summary;
 		$this->screenshot_status    = $screenshot_status;
 	}
 
@@ -111,6 +123,19 @@ class Urlslab_Screenshot_Response {
 		$this->screenshot_status = $screenshot_status;
 	}
 
+	/**
+	 * @return mixed
+	 */
+	public function get_url_summary() {
+		return $this->url_summary;
+	}
+
+	/**
+	 * @param mixed $url_summary
+	 */
+	public function set_url_summary( $url_summary ): void {
+		$this->url_summary = $url_summary;
+	}
 
 
 }
