@@ -100,7 +100,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 					if ( ! strlen( $dom_element->getAttribute( 'title' ) ) && strlen( $dom_element->getAttribute( 'href' ) ) ) {
 						$url = new Urlslab_Url( $dom_element->getAttribute( 'href' ) );
-						$elements_to_enhance[] = array( $dom_element, $url->get_url(), $url->get_url_id() );
+						$elements_to_enhance[] = array( $dom_element, $url );
 					}
 				}
 			}
@@ -108,14 +108,18 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 			if ( ! empty( $elements_to_enhance ) ) {
 
-				$result = $this->urlslab_url_data_fetcher->fetch_schedule_urls_batch( $elements_to_enhance );
+
+
+				$result = $this->urlslab_url_data_fetcher->fetch_schedule_urls_batch(
+					array_map( fn( $elem): Urlslab_Url => $elem[1], $elements_to_enhance )
+				);
 
 				if ( ! empty( $result ) ) {
 					foreach ( $elements_to_enhance as $arr_element ) {
-						if ( isset( $result[ $arr_element[2] ] ) ) {
+						if ( isset( $result[ $arr_element[1]->get_url_id() ] ) ) {
 							( $arr_element[0] )->setAttribute(
 								'title',
-								$result[ $arr_element[2] ]->get_url_replacement_text(),
+								$result[ $arr_element[1] ]->get_url_replacement_text(),
 							);
 						}
 					}

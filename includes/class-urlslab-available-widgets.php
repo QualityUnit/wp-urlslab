@@ -32,13 +32,12 @@ class Urlslab_Available_Widgets {
 	 *
 	 * @return void
 	 */
-	public function init_widgets( $api_key ) {
-		$api = new Urlslab_Screenshot_Api( $api_key );
-		$urlslab_screenshot = new Urlslab_Screenshot_Widget( $api );
-		$urlslab_related_resources = new Urlslab_Related_Resources_Widget( $api );
-		$urlslab_link_enhancer = new Urlslab_Link_Enhancer( $api );
-		$urlslab_keyword_links = new Urlslab_Keywords_Links( $api );
-		$urlslab_image_alt_text = new Urlslab_Keywords_Links( $api );
+	public function init_widgets( Urlslab_Url_Data_Fetcher $url_fetcher ) {
+		$urlslab_screenshot = new Urlslab_Screenshot_Widget( $url_fetcher );
+		$urlslab_related_resources = new Urlslab_Related_Resources_Widget( $url_fetcher );
+		$urlslab_link_enhancer = new Urlslab_Link_Enhancer( $url_fetcher );
+		$urlslab_keyword_links = new Urlslab_Keywords_Links();
+		$urlslab_image_alt_text = new Urlslab_Image_Alt_Text();
 
 
 		$this->available_widgets = array(
