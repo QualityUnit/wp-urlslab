@@ -6,10 +6,10 @@ class Urlslab_Url_Data {
 
 	private Urlslab_Url $url;
 	private $screenshot_date;
-	private string $url_title;
-	private string $url_meta_description;
-	private string $url_summary;
-	private string $screenshot_status;
+	private ?string $url_title;
+	private ?string $url_meta_description;
+	private ?string $url_summary;
+	private ?string $screenshot_status;
 
 	/**
 	 * @param Urlslab_Url $url
