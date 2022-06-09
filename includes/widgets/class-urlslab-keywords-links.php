@@ -31,17 +31,6 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	const MAX_REPLACEMENTS_PER_PAGE = 30;
 	const MAX_REPLACEMENTS_PER_PARAGRAPH = 2;
 
-	private Urlslab_Screenshot_Api $urlslab_screenshot_api;
-
-
-	/**
-	 * @param Urlslab_Screenshot_Api $urlslab_screenshot_api
-	 */
-	public function __construct( Urlslab_Screenshot_Api $urlslab_screenshot_api ) {
-		$this->urlslab_screenshot_api = $urlslab_screenshot_api;
-	}
-
-
 	/**
 	 * @return string
 	 */

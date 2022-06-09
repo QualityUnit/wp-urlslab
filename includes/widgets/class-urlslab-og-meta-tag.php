@@ -14,13 +14,13 @@ class Urlslab_Og_Meta_Tag extends Urlslab_Widget {
 
 	private string $landing_page_link = 'https://www.urlslab.com';
 
-	private Urlslab_Screenshot_Api $urlslab_screenshot_api;
+	private Urlslab_Url_Data_Fetcher $url_data_fetcher;
 
 	/**
-	 * @param Urlslab_Screenshot_Api $urlslab_screenshot_api
+	 * @param Urlslab_Url_Data_Fetcher $url_data_fetcher
 	 */
-	public function __construct( Urlslab_Screenshot_Api $urlslab_screenshot_api ) {
-		$this->urlslab_screenshot_api = $urlslab_screenshot_api;
+	public function __construct( Urlslab_Url_Data_Fetcher $url_data_fetcher ) {
+		$this->url_data_fetcher = $url_data_fetcher;
 	}
 
 
@@ -71,7 +71,7 @@ class Urlslab_Og_Meta_Tag extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_admin_menu_page_title(): string {
-		return 'Urlslab Widget | Og Meta Tag';
+		return 'Urlslab Widget | og Meta Tag';
 	}
 
 	/**
@@ -87,7 +87,7 @@ class Urlslab_Og_Meta_Tag extends Urlslab_Widget {
 		}
 
 		$document = new DOMDocument();
-		$document->strictErrorChecking = false; // phpcs:ignore
+		$document->strictErrorChecking = false;
 		$libxml_previous_state = libxml_use_internal_errors( true );
 		try {
 			$document->loadHTML( $content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
@@ -95,27 +95,73 @@ class Urlslab_Og_Meta_Tag extends Urlslab_Widget {
 			libxml_use_internal_errors( $libxml_previous_state );
 
 			$xpath                            = new DOMXPath( $document );
-			$table_data                       = $xpath->query( "//img[not(@alt) or @alt='']|//*[starts-with(name(),'h')]" );
-			$title = '';
+			$meta_description = $xpath->query( "//meta[@name='description']" );
+			$meta_og_title = $xpath->query( "//meta[@property='og:title']" );
+			$meta_og_image = $xpath->query( "//meta[@property='og:image']" );
+			$meta_og_description = $xpath->query( "//meta[@property='og:description']" );
 
-			if ( ! empty( $table_data ) ) {
-				foreach ( $table_data as $element ) {
-					if ( substr( $element->nodeName, 0, 1 ) == 'h' ) {
-						$title = $element->nodeValue;
-					} elseif ( 'img' == $element->nodeName ) {
-						if ( isset( $element->parentNode ) && $element->parentNode->nodeName == 'a' && $element->parentNode->hasAttribute( 'title' ) ) {
-							$element->setAttribute( 'alt', $title . ' - ' . $element->parentNode->getAttribute( 'title' ) );
-						} elseif ( strlen( $title ) ) {
-							$element->setAttribute( 'alt', $title );
-						}
-					}
-				}
-			} else {
-				return $content;
+			$url_data = null;
+			$head_node = $document->getElementsByTagName( 'head' );
+			if (empty( $meta_description ) ||
+				empty( $meta_og_title ) ||
+				empty( $meta_og_image ) ||
+				empty( $meta_og_description )) {
+
+				$url_data = $this->url_data_fetcher->fetch_schedule_url(
+					get_current_page_url()
+				);
 			}
+
+			// meta description generation
+			if (empty( $meta_description ) &&
+				!is_null( $url_data ) &&
+				!empty( $head_node )) {
+				$node = $document->createElement( 'meta' );
+				$node->setAttribute( 'name', 'description' );
+				$node->setAttribute( 'content', $url_data->get_url_replacement_text() );
+				$head_node[0]->nodeValue->appendChild( $node );
+			}
+			// meta description generation
+
+			// meta og title generation
+			if (empty( $meta_og_title ) &&
+				!is_null( $url_data ) &&
+				!empty( $head_node )) {
+				$node = $document->createElement( 'meta' );
+				$node->setAttribute( 'property', 'og:title' );
+				$node->setAttribute( 'content', $url_data->get_url_replacement_text() );
+				$head_node[0]->nodeValue->appendChild( $node );
+			}
+			// meta og title generation
+
+			// meta og description generation
+			if (empty( $meta_og_description ) &&
+				!is_null( $url_data ) &&
+				!empty( $head_node )) {
+				$node = $document->createElement( 'meta' );
+				$node->setAttribute( 'property', 'og:description' );
+				$node->setAttribute( 'content', $url_data->get_url_replacement_text() );
+				$head_node[0]->nodeValue->appendChild( $node );
+			}
+			// meta og description generation
+
+			// meta og image generation
+			if (empty( $meta_og_image ) &&
+				!is_null( $url_data ) &&
+				$url_data->screenshot_exists() &&
+				!empty( $head_node )) {
+				$node = $document->createElement( 'meta' );
+				$node->setAttribute( 'property', 'og:image' );
+				$node->setAttribute( 'content', $url_data->render_screenshot_path() );
+				$head_node[0]->nodeValue->appendChild( $node );
+			}
+			// meta og image generation
+
+
 			return $document->saveHTML();
+
 		} catch ( Exception $e ) {
-			return $content . "\n" . "<!---\n Error:" . esc_html( $e->getMessage() ) . "\n--->";
+			return $content . "\n" . "<!---\n Error:" . str_replace( '>', ' ', $e->getMessage() ) . "\n--->";
 		}
 	}
 

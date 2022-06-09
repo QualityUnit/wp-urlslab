@@ -39,4 +39,8 @@ class Urlslab_Url {
 		return md5( $this->url );
 	}
 
+	public function get_url_path(): string {
+		return parse_url( $this->url, PHP_URL_PATH );
+	}
+
 }
