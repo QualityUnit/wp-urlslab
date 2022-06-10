@@ -36,7 +36,7 @@ class Urlslab_Url_Data_Fetcher {
 	/**
 	 * @return array|stdClass[]
 	 */
-	public function fetch_scheduling_urls() {
+	public function fetch_scheduling_urls(): array {
 		global $wpdb;
 		$table = $wpdb->prefix . $this->url_table_postfix;
 

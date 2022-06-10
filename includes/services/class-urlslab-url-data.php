@@ -101,6 +101,15 @@ class Urlslab_Url_Data {
 		return 'A' == $this->screenshot_status;
 	}
 
+	public function is_empty(): bool {
+		return (
+			! $this->screenshot_exists() &&
+			is_null( $this->url_summary ) &&
+			is_null( $this->url_meta_description ) &&
+			is_null( $this->url_title )
+		);
+	}
+
 	/**
 	 * @param $screenshot_type
 	 *

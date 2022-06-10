@@ -97,7 +97,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 				new Urlslab_Url( $urlslab_atts['url'] )
 			);
 
-			if ( null !== $url_data ) {
+			if ( ! empty( $url_data ) && ! $url_data->is_empty() ) {
 				$urlslab_atts['alt'] = $url_data->get_url_summary_text();
 
 				switch ( $url_data->get_screenshot_status() ) {
