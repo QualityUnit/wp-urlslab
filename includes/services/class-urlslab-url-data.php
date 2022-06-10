@@ -137,7 +137,7 @@ class Urlslab_Url_Data {
 	/**
 	 * @return string
 	 */
-	public function get_url_replacement_text(): string {
+	public function get_url_summary_text(): string {
 		if ( strlen( trim( $this->url_summary ) ) ) {
 			return $this->url_summary;
 		} elseif ( strlen( trim( $this->url_meta_description ) ) ) {

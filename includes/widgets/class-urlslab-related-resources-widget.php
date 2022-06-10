@@ -118,7 +118,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	private function render_shortcode_item( Urlslab_Url_Data $url, array $urlslab_atts ): string {
 		return '<li urlslab-skip="true">' .
 			'<a href="' . esc_url( urlslab_get_current_page_protocol() . $url->get_url()->get_url() ) . '"' .
-			' title="' . esc_attr( $url->get_url_replacement_text() ) . '"' .
+			' title="' . esc_attr( $url->get_url_summary_text() ) . '"' .
 			( urlslab_is_same_domain_url( $url->get_url()->get_url() ) ? '' : ' target="_blank"' ) .
 			'urlslab-skip="true">' .
 			$this->render_screenshot( $url, $urlslab_atts ) .
@@ -131,7 +131,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		if ( ( $urlslab_atts['show-image'] === true || $urlslab_atts['show-image'] == 'true' )
 			 && $url->screenshot_exists() ) {
 			return '<img alt="' .
-				esc_attr( $url->get_url_replacement_text() ) .
+				esc_attr( $url->get_url_summary_text() ) .
 				'" src="' . $url->render_screenshot_path( 'thumbnail' ) . '">';
 		}
 		return '';

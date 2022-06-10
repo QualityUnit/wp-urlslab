@@ -119,7 +119,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 						if ( isset( $result[ $arr_element[1]->get_url_id() ] ) ) {
 							( $arr_element[0] )->setAttribute(
 								'title',
-								$result[ $arr_element[1] ]->get_url_replacement_text(),
+								$result[ $arr_element[1] ]->get_url_summary_text(),
 							);
 						}
 					}

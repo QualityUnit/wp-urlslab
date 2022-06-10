@@ -118,7 +118,7 @@ class Urlslab_Og_Meta_Tag extends Urlslab_Widget {
 				!empty( $head_node )) {
 				$node = $document->createElement( 'meta' );
 				$node->setAttribute( 'name', 'description' );
-				$node->setAttribute( 'content', $url_data->get_url_replacement_text() );
+				$node->setAttribute( 'content', $url_data->get_url_summary_text() );
 				$head_node[0]->nodeValue->appendChild( $node );
 			}
 			// meta description generation
@@ -129,7 +129,7 @@ class Urlslab_Og_Meta_Tag extends Urlslab_Widget {
 				!empty( $head_node )) {
 				$node = $document->createElement( 'meta' );
 				$node->setAttribute( 'property', 'og:title' );
-				$node->setAttribute( 'content', $url_data->get_url_replacement_text() );
+				$node->setAttribute( 'content', $url_data->get_url_summary_text() );
 				$head_node[0]->nodeValue->appendChild( $node );
 			}
 			// meta og title generation
@@ -140,7 +140,7 @@ class Urlslab_Og_Meta_Tag extends Urlslab_Widget {
 				!empty( $head_node )) {
 				$node = $document->createElement( 'meta' );
 				$node->setAttribute( 'property', 'og:description' );
-				$node->setAttribute( 'content', $url_data->get_url_replacement_text() );
+				$node->setAttribute( 'content', $url_data->get_url_summary_text() );
 				$head_node[0]->nodeValue->appendChild( $node );
 			}
 			// meta og description generation
