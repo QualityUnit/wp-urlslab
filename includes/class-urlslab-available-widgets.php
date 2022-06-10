@@ -5,6 +5,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-related-resou
 require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-link-enhancer.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-keywords-links.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-image-alt-text.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-og-meta-tag.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-screenshot-api.php';
 
@@ -28,7 +29,7 @@ class Urlslab_Available_Widgets {
 	}
 
 	/**
-	 * @param $api_key
+	 * @param Urlslab_Url_Data_Fetcher $url_fetcher
 	 *
 	 * @return void
 	 */
@@ -38,6 +39,7 @@ class Urlslab_Available_Widgets {
 		$urlslab_link_enhancer = new Urlslab_Link_Enhancer( $url_fetcher );
 		$urlslab_keyword_links = new Urlslab_Keywords_Links();
 		$urlslab_image_alt_text = new Urlslab_Image_Alt_Text();
+		$urlslab_og_meta_tag = new Urlslab_Og_Meta_Tag( $url_fetcher );
 
 
 		$this->available_widgets = array(
@@ -46,6 +48,7 @@ class Urlslab_Available_Widgets {
 			$urlslab_link_enhancer->get_widget_slug() => $urlslab_link_enhancer,
 			$urlslab_keyword_links->get_widget_slug() => $urlslab_keyword_links,
 			$urlslab_image_alt_text->get_widget_slug() => $urlslab_image_alt_text,
+			$urlslab_og_meta_tag->get_widget_slug() => $urlslab_og_meta_tag,
 		);
 	}
 

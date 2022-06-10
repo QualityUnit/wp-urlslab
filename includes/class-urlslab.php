@@ -78,9 +78,9 @@ class Urlslab {
 		$this->version = URLSLAB_VERSION;
 		$this->urlslab = 'URLSLAB';
 
-		$this->init_urlslab_user();
 		$this->load_dependencies();
 		$this->set_locale();
+		$this->init_urlslab_user();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		$this->define_backend_hooks();
@@ -212,6 +212,7 @@ class Urlslab {
 
 		$plugin_admin = new Urlslab_Admin( $this->get_urlslab(), $this->get_version() );
 
+		$this->loader->add_action( 'admin_init', $this, 'urlslab_upgrade', 10, 0 );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'urlslab_admin_menu', 9, 0 );
@@ -238,7 +239,21 @@ class Urlslab {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-		$this->loader->add_filter( 'the_content', $plugin_public, 'the_content' );
+		$this->add_public_content_filters( $plugin_public );
+	}
+
+	private function add_public_content_filters( Urlslab_Public $plugin_public ) {
+		//TODO - this should activate the widgets according to user settings Urlslab_User_Widget
+		//# The order of adding add_filter is important, since no priority is used in filters
+		//# Order Group 1
+		$this->loader->add_filter( 'the_content', $plugin_public, 'the_content_keywords_links' );
+		$this->loader->add_filter( 'the_content', $plugin_public, 'the_content_link_enhancer' );
+		$this->loader->add_filter( 'the_content', $plugin_public, 'the_content_image_alt_attribute' );
+		//# Order Group 1
+
+		//# Order Group 2
+		$this->loader->add_action( 'wp_head', $plugin_public, 'the_content_og_meta_tag' );
+		//# Order Group 2
 	}
 
 	private function define_backend_hooks() {
@@ -246,7 +261,6 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
 		$cron_job = new Urlslab_Screenshot_Cron( $this->url_data_fetcher );
 
-		$this->loader->add_action( 'admin_init', $this, 'urlslab_upgrade', 10, 0 );
 		$this->loader->add_action( 'init', $this, 'urlslab_shortcodes_init', 10, 0 );
 		$this->loader->add_action( 'urlslab_cron_hook', $cron_job, 'urlslab_cron_exec', 10, 0 );
 		if ( ! wp_next_scheduled( 'urlslab_cron_hook' ) ) {
