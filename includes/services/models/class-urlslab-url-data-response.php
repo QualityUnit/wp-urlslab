@@ -37,9 +37,9 @@ class Urlslab_Url_Data_Response {
 		$this->screenshot_status    = $screenshot_status;
 	}
 
-	public function to_url_data( string $url ): Urlslab_Url_Data {
+	public function to_url_data( Urlslab_Url $url ): Urlslab_Url_Data {
 		return new Urlslab_Url_Data(
-			new Urlslab_Url( $url ),
+			$url,
 			$this->domain_id,
 			$this->url_id,
 			$this->screenshot_date,
