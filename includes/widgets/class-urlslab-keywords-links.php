@@ -19,12 +19,14 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	private int $cnt_paragraph_link_replacements = 0;
 	private array $link_counts = array();
 	private array $kw_page_replacement_counts = array();
+	private array $url_page_replacement_counts = array();
 
 	private array $keywords_cache = array();
 
 	//TODO: use these constants as defaults,
 	// real values should be loaded from settings defined by user
 	const MAX_REPLACEMENTS_PER_KEYWORD = 1;
+	const MAX_REPLACEMENTS_PER_URL = 2;
 
 	//if page contains more links than this limit, don't try to add next links to page
 	const MAX_LINKS_ON_PAGE = 100;
@@ -103,11 +105,25 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				} else {
 					$this->kw_page_replacement_counts[ $kw ] = 1;
 				}
+				if ( isset( $this->url_page_replacement_counts[ $url ] ) ) {
+					$this->url_page_replacement_counts[ $url ] ++;
+				} else {
+					$this->url_page_replacement_counts[ $url ] = 1;
+				}
 
 				//if we reached maximum number of replacements with this kw, skip next processing
 				if ( $this->kw_page_replacement_counts[ $kw ] > self::MAX_REPLACEMENTS_PER_KEYWORD ) {
 					unset( $keywords[ $kw ] );
+					return;
+				}
 
+				//if we reached maximum number of replacements with this url, skip next processing and remove all keywords pointing to this url
+				if ( $this->url_page_replacement_counts[ $url ] > self::MAX_REPLACEMENTS_PER_URL ) {
+					foreach ($keywords as $k => $u) {
+						if ($u == $url) {
+							unset( $keywords[ $k ] );
+						}
+					}
 					return;
 				}
 
@@ -182,7 +198,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 		$keywords = array();
 		foreach ($this->keywords_cache as $kw => $lnk) {
-			if (!isset( $this->kw_page_replacement_counts[$kw] ) || $this->kw_page_replacement_counts[$kw] < self::MAX_REPLACEMENTS_PER_KEYWORD) {
+			if ((!isset( $this->kw_page_replacement_counts[$kw] ) || $this->kw_page_replacement_counts[$kw] < self::MAX_REPLACEMENTS_PER_KEYWORD) &&
+				(!isset( $this->url_page_replacement_counts[$lnk] ) || $this->url_page_replacement_counts[$lnk] < self::MAX_REPLACEMENTS_PER_URL)) {
 				$keywords[$kw] = $lnk;
 			}
 		}
@@ -246,6 +263,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$this->cnt_page_link_replacements = 0;
 		$this->cnt_page_links             = 0;
 		$this->kw_page_replacement_counts = array();
+		$this->url_page_replacement_counts = array();
 		$this->link_counts                = array();
 		$cnt                              = 0;
 		$xpath                            = new DOMXPath( $document );
