@@ -198,8 +198,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 		$keywords = array();
 		foreach ($this->keywords_cache as $kw => $lnk) {
-			if ( (!isset( $this->kw_page_replacement_counts[$kw] ) || $this->kw_page_replacement_counts[$kw] < self::MAX_REPLACEMENTS_PER_KEYWORD ) &&
-				(!isset( $this->url_page_replacement_counts[$lnk] ) || $this->url_page_replacement_counts[$lnk] < self::MAX_REPLACEMENTS_PER_URL ) ) {
+			if ( ( !isset( $this->kw_page_replacement_counts[$kw] ) || $this->kw_page_replacement_counts[$kw] < self::MAX_REPLACEMENTS_PER_KEYWORD ) &&
+				( !isset( $this->url_page_replacement_counts[$lnk] ) || $this->url_page_replacement_counts[$lnk] < self::MAX_REPLACEMENTS_PER_URL ) ) {
 				$keywords[$kw] = $lnk;
 			}
 		}
