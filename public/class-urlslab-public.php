@@ -71,15 +71,31 @@ class Urlslab_Public {
 		wp_enqueue_script( $this->urlslab, plugin_dir_url( __FILE__ ) . 'js/urlslab-public.js', array( 'jquery' ), $this->version, false );
 	}
 
-	public function the_content( $content ) {
+	public function the_content_image_alt_attribute( $content ) {
 		$image_alt_attributes = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-image-alt-attribute' );
-		$keywords_links = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-keywords-links' );
+		return $image_alt_attributes->theContentHook( $content );
+	}
+
+	public function the_content_link_enhancer( $content ) {
 		$link_enhancer = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-link-enhancer' );
-		return $image_alt_attributes->theContentHook(
-			$link_enhancer->theContentHook(
-				$keywords_links->theContentHook( $content ) 
-			) 
-		);
+		return $link_enhancer->theContentHook( $content );
+	}
+
+	public function the_content_keywords_links( $content ) {
+		$keywords_links = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-keywords-links' );
+		return $keywords_links->theContentHook( $content );
+	}
+
+	public function the_content_og_meta_tag() {
+		remove_action( 'wp_head', array( $this, 'the_content_og_meta_tag' ) );
+		ob_start();
+		do_action( 'wp_head' );
+		remove_all_actions( 'wp_head' );
+		$content = ob_get_contents();
+		ob_end_clean();
+
+		$og_meta_tag = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-og-meta-tag' );
+		echo $og_meta_tag->theContentHook( $content ); // phpcs:ignore
 	}
 
 }

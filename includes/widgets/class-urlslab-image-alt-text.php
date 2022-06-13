@@ -18,14 +18,6 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 
 
 	/**
-	 * @param Urlslab_Screenshot_Api $urlslab_screenshot_api
-	 */
-	public function __construct( Urlslab_Screenshot_Api $urlslab_screenshot_api ) {
-		$this->urlslab_screenshot_api = $urlslab_screenshot_api;
-	}
-
-
-	/**
 	 * @return string
 	 */
 	public function get_widget_slug(): string {

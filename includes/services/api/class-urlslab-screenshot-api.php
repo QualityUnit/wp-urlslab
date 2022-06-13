@@ -3,7 +3,7 @@
 require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-api.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/urlslab-api-model.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-batch-request.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-response.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-url-data-response.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-error-response.php';
 
 /**
@@ -25,7 +25,7 @@ class Urlslab_Screenshot_Api extends Urlslab_Api {
 		if ( 200 == $response[0] ) {
 			$returning_obj = array();
 			foreach ( json_decode( $response[1] ) as $result_obj ) {
-				$returning_obj[] = new Urlslab_Screenshot_Response(
+				$returning_obj[] = new Urlslab_Url_Data_Response(
 					$result_obj->domainId, // phpcs:ignore
 					$result_obj->urlId, // phpcs:ignore
 					$result_obj->screenshotDate, // phpcs:ignore

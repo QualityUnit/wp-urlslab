@@ -1,5 +1,6 @@
 <?php
 
+// phpcs:disable WordPress
 require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
@@ -13,16 +14,15 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 	private string $landing_page_link = 'https://www.urlslab.com';
 
-	private Urlslab_Screenshot_Api $urlslab_screenshot_api;
-
 	const MAX_URLS_TO_ENHANCE = 100;
+	private Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher;
 
 
 	/**
-	 * @param Urlslab_Screenshot_Api $urlslab_screenshot_api
+	 * @param Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher
 	 */
-	public function __construct( Urlslab_Screenshot_Api $urlslab_screenshot_api ) {
-		$this->urlslab_screenshot_api = $urlslab_screenshot_api;
+	public function __construct( Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher ) {
+		$this->urlslab_url_data_fetcher = $urlslab_url_data_fetcher;
 	}
 
 
@@ -81,7 +81,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		}
 
 		$document = new DOMDocument();
-		$document->strictErrorChecking = false; // phpcs:ignore
+		$document->strictErrorChecking = false;
 		$libxml_previous_state = libxml_use_internal_errors( true );
 		try {
 			$document->loadHTML( $content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
@@ -100,7 +100,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 					if ( ! strlen( $dom_element->getAttribute( 'title' ) ) && strlen( $dom_element->getAttribute( 'href' ) ) ) {
 						$url = new Urlslab_Url( $dom_element->getAttribute( 'href' ) );
-						$elements_to_enhance[] = array( $dom_element, $url->get_url(), $url->get_url_id() );
+						$elements_to_enhance[] = array( $dom_element, $url );
 					}
 				}
 			}
@@ -108,42 +108,19 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 			if ( ! empty( $elements_to_enhance ) ) {
 
-				$values = array();
-				$insert_place_holders = array();
-				$select_url_md5_array = array();
-				$update_time = time();
-				foreach ( $elements_to_enhance as $arr_element ) {
-					if ( ! isset( $insert_place_holders[ $arr_element[2] ] ) ) {
-						array_push( $values, $arr_element[2], $arr_element[1], Urlslab::$link_status_not_scheduled, $update_time );
-						$insert_place_holders[ $arr_element[2] ] = '(%s, %s, %s, %s)';
-						$select_url_md5_array[ $arr_element[2] ] = $arr_element[2];
-					}
-
-					if ( count( $select_url_md5_array ) > self::MAX_URLS_TO_ENHANCE ) {
-						break;
-					}
-				}
-
-				global $wpdb;
-				$urls_table = $wpdb->prefix . 'urlslab_urls';
-				$insert_sql = 'INSERT IGNORE INTO ' . $urls_table .
-							  ' (urlMd5, urlName, status, updateStatusDate) VALUES';
-				$insert_sql .= implode( ', ', $insert_place_holders );
-				$wpdb->query( $wpdb->prepare( "$insert_sql ", $values ) ); // phpcs:ignore
 
 
-				//# selecting the urls found in page
-				$select_placeholders = implode( ', ', array_fill( 0, count( $select_url_md5_array ), '%s' ) );
-				$select_sql = "SELECT urlMd5, urlMetaDescription, urlSummary, urlTitle, urlName FROM $urls_table
-								WHERE status = 'A' AND urlMd5 IN ($select_placeholders)";
-				$result = $wpdb->get_results( $wpdb->prepare( "$select_sql",  $select_url_md5_array), OBJECT_K); // phpcs:ignore
+				$result = $this->urlslab_url_data_fetcher->fetch_schedule_urls_batch(
+					array_map( fn( $elem): Urlslab_Url => $elem[1], $elements_to_enhance )
+				);
 
 				if ( ! empty( $result ) ) {
 					foreach ( $elements_to_enhance as $arr_element ) {
-						if ( isset( $result[ $arr_element[2] ] ) ) {
+						if ( isset( $result[ $arr_element[1]->get_url_id() ] ) &&
+							 !empty( $result[ $arr_element[1]->get_url_id() ] ) ) {
 							( $arr_element[0] )->setAttribute(
 								'title',
-								urlslab_get_url_description( $result[ $arr_element[2] ]->urlSummary, $result[ $arr_element[2] ]->urlMetaDescription, $result[ $arr_element[2] ]->urlTitle, $result[ $arr_element[2] ]->urlName ),
+								$result[ $arr_element[1]->get_url_id() ]->get_url_summary_text(),
 							);
 						}
 					}
