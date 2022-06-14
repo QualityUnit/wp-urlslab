@@ -1,6 +1,7 @@
 <?php
 
 class Urlslab_Url_Data {
+
 	private $domain_id;
 	private $url_id;
 
@@ -23,22 +24,22 @@ class Urlslab_Url_Data {
 	 */
 	public function __construct(
 		Urlslab_Url $url,
-		$domain_id,
-		$url_id,
-		$screenshot_date,
-		$url_title,
-		$url_meta_description,
-		$url_summary,
-		$screenshot_status
+					$domain_id,
+					$url_id,
+					$screenshot_date,
+					$url_title,
+					$url_meta_description,
+					$url_summary,
+					$screenshot_status
 	) {
-		$this->url                  = $url;
-		$this->domain_id            = $domain_id;
-		$this->url_id               = $url_id;
-		$this->screenshot_date      = $screenshot_date;
-		$this->url_title            = $url_title;
+		 $this->url = $url;
+		$this->domain_id = $domain_id;
+		$this->url_id = $url_id;
+		$this->screenshot_date = $screenshot_date;
+		$this->url_title = $url_title;
 		$this->url_meta_description = $url_meta_description;
-		$this->url_summary          = $url_summary;
-		$this->screenshot_status    = $screenshot_status;
+		$this->url_summary = $url_summary;
+		$this->screenshot_status = $screenshot_status;
 	}
 
 	/**
@@ -66,7 +67,7 @@ class Urlslab_Url_Data {
 	 * @return mixed
 	 */
 	public function get_screenshot_date() {
-		return $this->screenshot_date;
+		 return $this->screenshot_date;
 	}
 
 	/**
@@ -111,11 +112,11 @@ class Urlslab_Url_Data {
 	}
 
 	/**
-	 * @param $screenshot_type
+	 * @param string $screenshot_type
 	 *
 	 * @return string
 	 */
-	public function render_screenshot_path( $screenshot_type = 'carousel' ): string {
+	public function render_screenshot_path( string $screenshot_type = 'carousel' ): string {
 		switch ( $screenshot_type ) {
 			case 'thumbnail':
 				return sprintf(
@@ -147,22 +148,36 @@ class Urlslab_Url_Data {
 	 * @return string
 	 */
 	public function get_url_summary_text(): string {
-		if ( strlen( trim( $this->url_summary ) ) ) {
+		if ( trim( $this->url_summary ) !== '' ) {
 			return $this->url_summary;
-		} elseif ( strlen( trim( $this->url_meta_description ) ) ) {
+		}
+
+		if ( trim( $this->url_meta_description ) !== '' ) {
 			return $this->url_meta_description;
-		} elseif ( strlen( trim( $this->url_title ) ) ) {
+		}
+
+		if ( trim( $this->url_title ) !== '' ) {
 			return $this->url_title;
 		}
 
-		return trim(
-			str_replace(
-				'/',
-				' ',
-				$this->url->get_url_path() 
-			) 
+		return ucwords(
+			trim(
+				trim(
+					trim(
+						str_replace(
+							'/',
+							' - ',
+							str_replace(
+								array( '-', '_', '+' ),
+								' ',
+								$this->url->get_url_path()
+							)
+						)
+					),
+					'-'
+				)
+			)
 		);
 	}
-
 
 }
