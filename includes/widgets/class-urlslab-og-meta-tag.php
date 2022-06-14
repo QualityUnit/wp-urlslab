@@ -6,6 +6,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
 
 class Urlslab_Og_Meta_Tag extends Urlslab_Widget {
+
 	private string $widget_slug = 'urlslab-og-meta-tag';
 
 	private string $widget_title = 'OG Meta Tag';
@@ -19,7 +20,7 @@ class Urlslab_Og_Meta_Tag extends Urlslab_Widget {
 	/**
 	 * @param Urlslab_Url_Data_Fetcher $url_data_fetcher
 	 */
-	public function __construct( Urlslab_Url_Data_Fetcher $url_data_fetcher ) {
+	public function __construct( Urlslab_Url_Data_Fetcher $url_data_fetcher) {
 		$this->url_data_fetcher = $url_data_fetcher;
 	}
 
@@ -81,20 +82,21 @@ class Urlslab_Og_Meta_Tag extends Urlslab_Widget {
 		return 'Og Meta tag';
 	}
 
-	public function theContentHook( $content ) {
-		if ( ! strlen( trim( $content ) ) ) {
+	public function theContentHook( $content) {
+		if (!strlen( trim( $content ) )) {
 			return $content;    //nothing to process
 		}
 
 		$document = new DOMDocument();
+		$document->encoding = get_bloginfo( 'charset' );
 		$document->strictErrorChecking = false;
 		$libxml_previous_state = libxml_use_internal_errors( true );
 		try {
-			$document->loadHTML( $content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
+			$document->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', 'UTF-8' ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
 			libxml_clear_errors();
 			libxml_use_internal_errors( $libxml_previous_state );
 
-			$xpath                            = new DOMXPath( $document );
+			$xpath = new DOMXPath( $document );
 			$meta_description = $xpath->query( "//meta[@name='description']" );
 			$meta_og_title = $xpath->query( "//meta[@property='og:title']" );
 			$meta_og_image = $xpath->query( "//meta[@property='og:image']" );
@@ -179,12 +181,12 @@ class Urlslab_Og_Meta_Tag extends Urlslab_Widget {
 
 			return $content;
 
-		} catch ( Exception $e ) {
+		} catch (Exception $e) {
 			return $content . "\n" . "<!---\n Error:" . str_replace( '>', ' ', $e->getMessage() ) . "\n--->";
 		}
 	}
 
-	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
+	public function get_shortcode_content( $atts = array(), $content = null, $tag = ''): string {
 		return '';
 	}
 

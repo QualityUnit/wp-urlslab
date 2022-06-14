@@ -32,6 +32,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.
  */
 class Urlslab {
 
+
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
 	 * the plugin.
@@ -75,7 +76,7 @@ class Urlslab {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
-		$this->version = URLSLAB_VERSION;
+		 $this->version = URLSLAB_VERSION;
 		$this->urlslab = 'URLSLAB';
 
 		$this->load_dependencies();
@@ -155,8 +156,7 @@ class Urlslab {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function load_dependencies() {
-
+	private function load_dependencies() { 
 		/**
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
@@ -193,8 +193,7 @@ class Urlslab {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function set_locale() {
-
+	private function set_locale() { 
 		$plugin_i18n = new Urlslab_I18n();
 
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
@@ -208,8 +207,7 @@ class Urlslab {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function define_admin_hooks() {
-
+	private function define_admin_hooks() { 
 		$plugin_admin = new Urlslab_Admin( $this->get_urlslab(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_init', $this, 'urlslab_upgrade', 10, 0 );
@@ -233,8 +231,7 @@ class Urlslab {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function define_public_hooks() {
-
+	private function define_public_hooks() { 
 		$plugin_public = new Urlslab_Public( $this->get_urlslab(), $this->get_version() );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
@@ -279,7 +276,7 @@ class Urlslab {
 	 * Upgrades option data when necessary.
 	 */
 	public function urlslab_upgrade() {
-		$old_ver = $this->get_option( 'version', '0' );
+		 $old_ver = $this->get_option( 'version', '0' );
 		$new_ver = URLSLAB_VERSION;
 
 		if ( $old_ver == $new_ver ) {
@@ -296,7 +293,7 @@ class Urlslab {
 	 * @since    1.0.0
 	 */
 	public function run() {
-		$this->loader->run();
+		 $this->loader->run();
 	}
 
 	/**
