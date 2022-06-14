@@ -155,13 +155,20 @@ class Urlslab_Url_Data {
 			return $this->url_title;
 		}
 
-		return ucwords(trim(trim(trim(
-			str_replace(
-				'/',
-				' - ',
-				str_replace(['-', '_', '+'], ' ', $this->url->get_url_path())
+		return ucwords(
+			trim(
+				trim(
+					trim(
+						str_replace('/',' - ',
+							str_replace(['-', '_', '+'], ' ',
+								$this->url->get_url_path()
+							)
+						)
+					),
+					'-'
+				)
 			)
-		), '-')));
+		);
 	}
 
 
