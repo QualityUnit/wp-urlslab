@@ -1,7 +1,7 @@
 <?php
 
-class Urlslab_Url_Data
-{
+class Urlslab_Url_Data {
+
 	private $domain_id;
 	private $url_id;
 
@@ -31,9 +31,8 @@ class Urlslab_Url_Data
 					$url_meta_description,
 					$url_summary,
 					$screenshot_status
-	)
-	{
-		$this->url = $url;
+	) {
+		 $this->url = $url;
 		$this->domain_id = $domain_id;
 		$this->url_id = $url_id;
 		$this->screenshot_date = $screenshot_date;
@@ -46,79 +45,69 @@ class Urlslab_Url_Data
 	/**
 	 * @return mixed
 	 */
-	public function get_domain_id()
-	{
+	public function get_domain_id() {
 		return $this->domain_id;
 	}
 
 	/**
 	 * @return mixed
 	 */
-	public function get_url_id()
-	{
+	public function get_url_id() {
 		return $this->url_id;
 	}
 
 	/**
 	 * @return Urlslab_Url
 	 */
-	public function get_url(): Urlslab_Url
-	{
+	public function get_url(): Urlslab_Url {
 		return $this->url;
 	}
 
 	/**
 	 * @return mixed
 	 */
-	public function get_screenshot_date()
-	{
-		return $this->screenshot_date;
+	public function get_screenshot_date() {
+		 return $this->screenshot_date;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function get_url_title(): string
-	{
+	public function get_url_title(): string {
 		return $this->url_title;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function get_url_meta_description(): string
-	{
+	public function get_url_meta_description(): string {
 		return $this->url_meta_description;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function get_url_summary(): string
-	{
+	public function get_url_summary(): string {
 		return $this->url_summary;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function get_screenshot_status(): string
-	{
+	public function get_screenshot_status(): string {
 		return $this->screenshot_status;
 	}
 
-	public function screenshot_exists(): bool
-	{
+	public function screenshot_exists(): bool {
 		return 'A' == $this->screenshot_status;
 	}
 
-	public function is_empty(): bool
-	{
+	public function is_empty(): bool {
 		return (
-			!$this->screenshot_exists() &&
-			is_null($this->url_summary) &&
-			is_null($this->url_meta_description) &&
-			is_null($this->url_title)
+			! $this->screenshot_exists() &&
+			is_null( $this->url_summary ) &&
+			is_null( $this->url_meta_description ) &&
+			is_null( $this->url_title )
 		);
 	}
 
@@ -127,9 +116,8 @@ class Urlslab_Url_Data
 	 *
 	 * @return string
 	 */
-	public function render_screenshot_path(string $screenshot_type = 'carousel'): string
-	{
-		switch ($screenshot_type) {
+	public function render_screenshot_path( string $screenshot_type = 'carousel' ): string {
+		switch ( $screenshot_type ) {
 			case 'thumbnail':
 				return sprintf(
 					'https://www.urlslab.com/public/thumbnail/%s/%s/%s.jpg',
@@ -159,17 +147,16 @@ class Urlslab_Url_Data
 	/**
 	 * @return string
 	 */
-	public function get_url_summary_text(): string
-	{
-		if (trim($this->url_summary) !== '') {
+	public function get_url_summary_text(): string {
+		if ( trim( $this->url_summary ) !== '' ) {
 			return $this->url_summary;
 		}
 
-		if (trim($this->url_meta_description) !== '') {
+		if ( trim( $this->url_meta_description ) !== '' ) {
 			return $this->url_meta_description;
 		}
 
-		if (trim($this->url_title) !== '') {
+		if ( trim( $this->url_title ) !== '' ) {
 			return $this->url_title;
 		}
 
@@ -177,8 +164,12 @@ class Urlslab_Url_Data
 			trim(
 				trim(
 					trim(
-						str_replace('/', ' - ',
-							str_replace(['-', '_', '+'], ' ',
+						str_replace(
+							'/',
+							' - ',
+							str_replace(
+								array( '-', '_', '+' ),
+								' ',
 								$this->url->get_url_path()
 							)
 						)
