@@ -30,8 +30,8 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.
  * @package    urlslab
  * @subpackage urlslab/includes
  */
-class Urlslab
-{
+class Urlslab {
+
 
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
@@ -75,9 +75,8 @@ class Urlslab
 	 *
 	 * @since    1.0.0
 	 */
-	public function __construct()
-	{
-		$this->version = URLSLAB_VERSION;
+	public function __construct() {
+		 $this->version = URLSLAB_VERSION;
 		$this->urlslab = 'URLSLAB';
 
 		$this->load_dependencies();
@@ -98,16 +97,15 @@ class Urlslab
 	 *
 	 * gets wp_option for URLSLAB plugin
 	 */
-	public static function get_option($name, $default = false)
-	{
-		$option = get_option('urlslab');
+	public static function get_option( $name, $default = false ) {
+		$option = get_option( 'urlslab' );
 
-		if (false === $option) {
+		if ( false === $option ) {
 			return $default;
 		}
 
-		if (isset($option[$name])) {
-			return $option[$name];
+		if ( isset( $option[ $name ] ) ) {
+			return $option[ $name ];
 		} else {
 			return $default;
 		}
@@ -117,31 +115,29 @@ class Urlslab
 	 *
 	 * updates wp_option for URLSLAB plugin
 	 */
-	public static function update_option($name, $value)
-	{
-		$option = get_option('urlslab');
-		$option = (false === $option) ? array() : (array)$option;
-		$option = array_merge($option, array($name => $value));
-		update_option('urlslab', $option);
+	public static function update_option( $name, $value ) {
+		$option = get_option( 'urlslab' );
+		$option = ( false === $option ) ? array() : (array) $option;
+		$option = array_merge( $option, array( $name => $value ) );
+		update_option( 'urlslab', $option );
 	}
 
 
-	public function init_urlslab_user()
-	{
-		$api_key = $this->get_option('api-key');
+	public function init_urlslab_user() {
+		$api_key = $this->get_option( 'api-key' );
 		$urlslab_user_widget = Urlslab_User_Widget::get_instance();
 		$urlslab_available_widgets = Urlslab_Available_Widgets::get_instance();
 
-		if (!empty($api_key)) {
+		if ( ! empty( $api_key ) ) {
 			$urlslab_user_widget->add_api_key(
-				new Urlslab_Api_Key($api_key)
+				new Urlslab_Api_Key( $api_key )
 			);
 		}
-		$urlslab_api = new Urlslab_Api_Key($api_key);
+		$urlslab_api = new Urlslab_Api_Key( $api_key );
 		$this->url_data_fetcher = new Urlslab_Url_Data_Fetcher(
-			new Urlslab_Screenshot_Api($urlslab_api)
+			new Urlslab_Screenshot_Api( $urlslab_api )
 		);
-		$urlslab_available_widgets->init_widgets($this->url_data_fetcher);
+		$urlslab_available_widgets->init_widgets( $this->url_data_fetcher );
 	}
 
 	/**
@@ -160,31 +156,29 @@ class Urlslab
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function load_dependencies()
-	{
-
+	private function load_dependencies() { 
 		/**
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-urlslab-loader.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-urlslab-loader.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-urlslab-i18n.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-urlslab-i18n.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-urlslab-admin.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-urlslab-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path(dirname(__FILE__)) . 'public/class-urlslab-public.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-urlslab-public.php';
 
 		$this->loader = new Urlslab_Loader();
 
@@ -199,12 +193,10 @@ class Urlslab
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function set_locale()
-	{
-
+	private function set_locale() { 
 		$plugin_i18n = new Urlslab_I18n();
 
-		$this->loader->add_action('plugins_loaded', $plugin_i18n, 'load_plugin_textdomain');
+		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
 
 	}
 
@@ -215,15 +207,13 @@ class Urlslab
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function define_admin_hooks()
-	{
+	private function define_admin_hooks() { 
+		$plugin_admin = new Urlslab_Admin( $this->get_urlslab(), $this->get_version() );
 
-		$plugin_admin = new Urlslab_Admin($this->get_urlslab(), $this->get_version());
-
-		$this->loader->add_action('admin_init', $this, 'urlslab_upgrade', 10, 0);
-		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
-		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
-		$this->loader->add_action('admin_menu', $plugin_admin, 'urlslab_admin_menu', 9, 0);
+		$this->loader->add_action( 'admin_init', $this, 'urlslab_upgrade', 10, 0 );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'urlslab_admin_menu', 9, 0 );
 		$this->loader->add_action(
 			'wp_loaded',
 			$plugin_admin,
@@ -241,66 +231,60 @@ class Urlslab
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function define_public_hooks()
-	{
+	private function define_public_hooks() { 
+		$plugin_public = new Urlslab_Public( $this->get_urlslab(), $this->get_version() );
 
-		$plugin_public = new Urlslab_Public($this->get_urlslab(), $this->get_version());
-
-		$this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
-		$this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
-		$this->add_public_content_filters($plugin_public);
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		$this->add_public_content_filters( $plugin_public );
 	}
 
-	private function add_public_content_filters(Urlslab_Public $plugin_public)
-	{
+	private function add_public_content_filters( Urlslab_Public $plugin_public ) {
 		//TODO - this should activate the widgets according to user settings Urlslab_User_Widget
 		//# The order of adding add_filter is important, since no priority is used in filters
 		//# Order Group 1
-		$this->loader->add_filter('the_content', $plugin_public, 'the_content_keywords_links');
-		$this->loader->add_filter('the_content', $plugin_public, 'the_content_link_enhancer');
-		$this->loader->add_filter('the_content', $plugin_public, 'the_content_image_alt_attribute');
+		$this->loader->add_filter( 'the_content', $plugin_public, 'the_content_keywords_links' );
+		$this->loader->add_filter( 'the_content', $plugin_public, 'the_content_link_enhancer' );
+		$this->loader->add_filter( 'the_content', $plugin_public, 'the_content_image_alt_attribute' );
 		//# Order Group 1
 
 		//# Order Group 2
-		$this->loader->add_action('wp_head', $plugin_public, 'the_content_og_meta_tag');
+		$this->loader->add_action( 'wp_head', $plugin_public, 'the_content_og_meta_tag' );
 		//# Order Group 2
 	}
 
-	private function define_backend_hooks()
-	{
+	private function define_backend_hooks() {
 		//defining Upgrade hook
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
-		$cron_job = new Urlslab_Screenshot_Cron($this->url_data_fetcher);
+		$cron_job = new Urlslab_Screenshot_Cron( $this->url_data_fetcher );
 
-		$this->loader->add_action('init', $this, 'urlslab_shortcodes_init', 10, 0);
-		$this->loader->add_action('urlslab_cron_hook', $cron_job, 'urlslab_cron_exec', 10, 0);
-		if (!wp_next_scheduled('urlslab_cron_hook')) {
-			wp_schedule_event(time(), 'every_minute', 'urlslab_cron_hook');
+		$this->loader->add_action( 'init', $this, 'urlslab_shortcodes_init', 10, 0 );
+		$this->loader->add_action( 'urlslab_cron_hook', $cron_job, 'urlslab_cron_exec', 10, 0 );
+		if ( ! wp_next_scheduled( 'urlslab_cron_hook' ) ) {
+			wp_schedule_event( time(), 'every_minute', 'urlslab_cron_hook' );
 		}
 	}
 
 
-	public function urlslab_shortcodes_init()
-	{
-		foreach (Urlslab_Available_Widgets::get_instance()->get_all_widgets() as $i => $widget) {
-			add_shortcode($widget->get_widget_slug(), array($widget, 'get_shortcode_content'));
+	public function urlslab_shortcodes_init() {
+		foreach ( Urlslab_Available_Widgets::get_instance()->get_all_widgets() as $i => $widget ) {
+			add_shortcode( $widget->get_widget_slug(), array( $widget, 'get_shortcode_content' ) );
 		}
 	}
 
 	/**
 	 * Upgrades option data when necessary.
 	 */
-	public function urlslab_upgrade()
-	{
-		$old_ver = $this->get_option('version', '0');
+	public function urlslab_upgrade() {
+		 $old_ver = $this->get_option( 'version', '0' );
 		$new_ver = URLSLAB_VERSION;
 
-		if ($old_ver == $new_ver) {
+		if ( $old_ver == $new_ver ) {
 			return;
 		}
 		// Any Upgrade hook should be done here. For now no Upgrade migration is available
 
-		$this->update_option('version', $new_ver);
+		$this->update_option( 'version', $new_ver );
 	}
 
 	/**
@@ -308,9 +292,8 @@ class Urlslab
 	 *
 	 * @since    1.0.0
 	 */
-	public function run()
-	{
-		$this->loader->run();
+	public function run() {
+		 $this->loader->run();
 	}
 
 	/**
@@ -320,8 +303,7 @@ class Urlslab
 	 * @return    string    The name of the plugin.
 	 * @since     1.0.0
 	 */
-	public function get_urlslab(): string
-	{
+	public function get_urlslab(): string {
 		return $this->urlslab;
 	}
 
@@ -331,8 +313,7 @@ class Urlslab
 	 * @return    Urlslab_Loader    Orchestrates the hooks of the plugin.
 	 * @since     1.0.0
 	 */
-	public function get_loader(): Urlslab_Loader
-	{
+	public function get_loader(): Urlslab_Loader {
 		return $this->loader;
 	}
 
@@ -342,8 +323,7 @@ class Urlslab
 	 * @return    string    The version number of the plugin.
 	 * @since     1.0.0
 	 */
-	public function get_version(): string
-	{
+	public function get_version(): string {
 		return $this->version;
 	}
 
