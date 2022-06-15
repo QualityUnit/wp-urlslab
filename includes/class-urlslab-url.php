@@ -9,7 +9,6 @@ class Urlslab_Url {
 	 */
 	public function __construct( string $url ) {
 		$this->urlslab_url_init( $url );
-		return ! empty( $this->parsed_url );
 	}
 
 
@@ -22,24 +21,25 @@ class Urlslab_Url {
 
 	private function urlslab_url_init( string $input_url ): void {
 		if ( empty( $input_url ) ) {
+			$this->url_components = array();
+			$this->urlslab_parsed_url = '';
 			return;
 		}
 
-		if ( ! isset( parse_url( $input_url )['scheme'] ) ) {
-			$scheme = parse_url( get_site_url(), PHP_URL_SCHEME ) ?? 'http';
-			$host = parse_url( get_site_url(), PHP_URL_HOST );
-			if ( str_starts_with( $input_url, '/' ) ) { //# Relative path
-				$this->url_components = parse_url( $scheme . '://' . $host . $input_url );
-			} else {
-				$this->url_components = parse_url( $scheme . '://' . $input_url );
-			}
-		} else {
-			$this->url_components = parse_url( $input_url );
+		$this->url_components = parse_url($input_url);
+		if (!is_array($this->url_components)) {
+			$this->url_components = array();
 		}
 
-		$url = '';
-		$url .= $this->url_components['host'] ?? parse_url( get_site_url(), PHP_URL_HOST );
-		$url .= $this->url_components['path'] ?? '';
+		if (!isset($this->url_components['scheme'])) {
+			$this->url_components['scheme'] = parse_url( get_site_url(), PHP_URL_SCHEME ) ?? 'http';
+		}
+
+		if (!isset($this->url_components['host'])) {
+			$this->url_components['host'] = parse_url( get_site_url(), PHP_URL_HOST );
+		}
+
+		$url = $this->url_components['host'] . ( $this->url_components['path'] ?? '' );
 		if ( isset( $this->url_components['query'] ) ) {
 			$url .= '?' . $this->url_components['query'];
 		}
