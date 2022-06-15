@@ -7,6 +7,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
 
 class Urlslab_Keywords_Links extends Urlslab_Widget {
 
+
 	private string $widget_slug = 'urlslab-keywords-links';
 
 	private string $widget_title = 'Keywords Links';
@@ -192,8 +193,12 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			);
 
 			$this->keywords_cache = array();
+			$current_page = get_current_page_url();
 			foreach ($results as $row) {
-				$this->keywords_cache[$row['keyword']] = $row['urlLink'];
+				$kwUrl = new Urlslab_Url( $row['urlLink'] );
+				if ($current_page->get_url_id() != $kwUrl->get_url_id()) {
+					$this->keywords_cache[$row['keyword']] = $row['urlLink'];
+				}
 			}
 		}
 
