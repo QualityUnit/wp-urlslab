@@ -180,13 +180,15 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		if (empty( $this->keywords_cache )) {
 			global $wpdb;
 
-			$keyword_table = $wpdb->prefix . 'urlslab_keyword_widget';
+			$keyword_table = $wpdb->prefix . 'urlslab_keywords';
 
 			$results = $wpdb->get_results(
 				$wpdb->prepare(
 					'SELECT keyword, urlLink
 				FROM ' . $keyword_table . // phpcs:ignore
-					" WHERE (lang = %s OR lang = 'all') LIMIT 100",
+					" WHERE (lang = %s OR lang = 'all')
+					ORDER BY kw_priority ASC, kw_length DESC 
+					LIMIT 100",
 					urlslab_get_language()
 				),
 				'ARRAY_A'
