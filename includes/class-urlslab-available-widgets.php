@@ -81,12 +81,5 @@ class Urlslab_Available_Widgets {
 		}
 	}
 
-	/**
-	 * @return array returns all widgets
-	 */
-	public function get_all_widgets(): array {
-		return $this->available_widgets;
-	}
-
 }
 

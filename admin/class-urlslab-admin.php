@@ -120,7 +120,7 @@ class Urlslab_Admin {
 			80
 		);
 
-		foreach ( Urlslab_Available_Widgets::get_instance()->get_available_widgets() as $widget ) {
+		foreach ( Urlslab_User_Widget::get_instance()->get_activated_widget() as $widget ) {
 			add_submenu_page(
 				plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
 				$widget->get_admin_menu_page_title(),
@@ -139,8 +139,16 @@ class Urlslab_Admin {
 		}
 
 		if ( isset( $_REQUEST['component'] ) ) {
-			if ( 'api-key' == $_REQUEST['component'] ) {
+			if ( 'api-key' == $_REQUEST['component'] && ( 'setup' == $current_action ) ) {
 				Urlslab_User_Widget::get_instance()->api_setup_response( $current_action );
+			}
+
+			if ( 'activation' == $current_action ) {
+				foreach ( Urlslab_Available_Widgets::get_instance()->get_available_widgets() as $widget ) {
+					if ( $widget->get_widget_slug() == $_REQUEST['component'] ) {
+						$widget->widget_management_response( $current_action );
+					}
+				}
 			}
 		}
 	}
