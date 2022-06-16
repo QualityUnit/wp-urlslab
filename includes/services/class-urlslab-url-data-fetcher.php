@@ -5,13 +5,15 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-data.php
 /**
  * Manages all operation about URL Details
  */
-class Urlslab_Url_Data_Fetcher {
+class Urlslab_Url_Data_Fetcher
+{
 	private string $url_table_postfix = 'urlslab_urls';
 	private string $rel_table_postfix = 'urlslab_related_urls';
 
 	private Urlslab_Screenshot_Api $urlslab_screenshot_api;
 
-	public function __construct( Urlslab_Screenshot_Api $urlslab_screenshot_api ) {
+	public function __construct(Urlslab_Screenshot_Api $urlslab_screenshot_api)
+	{
 		$this->urlslab_screenshot_api = $urlslab_screenshot_api;
 	}
 
@@ -20,9 +22,10 @@ class Urlslab_Url_Data_Fetcher {
 	 *
 	 * @return Urlslab_Url_Data
 	 */
-	private function transform( array $row ): Urlslab_Url_Data {
+	private function transform(array $row): Urlslab_Url_Data
+	{
 		return new Urlslab_Url_Data(
-			new Urlslab_Url( parse_url(get_site_url(), PHP_URL_SCHEME) . '://' . $row['urlName'] ) ,
+			new Urlslab_Url(parse_url( get_site_url(), PHP_URL_SCHEME ) . '://' . $row['urlName'] ),
 			$row['domainId'],
 			$row['urlId'],
 			$row['screenshotDate'],
@@ -36,7 +39,8 @@ class Urlslab_Url_Data_Fetcher {
 	/**
 	 * @return array|stdClass[]
 	 */
-	public function fetch_scheduling_urls(): array {
+	public function fetch_scheduling_urls(): array
+	{
 		global $wpdb;
 		$table = $wpdb->prefix . $this->url_table_postfix;
 
@@ -56,8 +60,8 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 		);
 
 		$res = array();
-		foreach ( $schedules as $schedule ) {
-			$res[] = $this->transform( $schedule );
+		foreach ($schedules as $schedule) {
+			$res[] = $this->transform($schedule);
 		}
 
 		return $res;
@@ -69,8 +73,9 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 	 * @return void
 	 * @throws Exception
 	 */
-	public function schedule_url( string $url ) {
-		$this->schedule_urls_batch( array( $url ) );
+	public function schedule_url(string $url)
+	{
+		$this->schedule_urls_batch(array($url));
 	}
 
 	/**
@@ -79,9 +84,10 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 	 * @return array|false|string|Urlslab_Screenshot_Error_Response
 	 * @throws Exception
 	 */
-	public function schedule_urls_batch( array $urls ) {
-		if ( $this->urlslab_screenshot_api->has_api_key() ) {
-			return $this->urlslab_screenshot_api->schedule_batch( $urls );
+	public function schedule_urls_batch(array $urls)
+	{
+		if ($this->urlslab_screenshot_api->has_api_key()) {
+			return $this->urlslab_screenshot_api->schedule_batch($urls);
 		}
 
 		return false;
@@ -92,8 +98,9 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 	 *
 	 * @return void
 	 */
-	public function save_url( Urlslab_Url_Data_Response $url ) {
-		$this->save_urls_batch( array( $url ) );
+	public function save_url(Urlslab_Url_Data_Response $url)
+	{
+		$this->save_urls_batch(array($url));
 	}
 
 	/**
@@ -101,13 +108,14 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 	 *
 	 * @return void
 	 */
-	public function save_urls_batch( array $urls ) {
+	public function save_urls_batch(array $urls)
+	{
 		global $wpdb;
 		$table = $wpdb->prefix . $this->url_table_postfix;
 
 		$values = array();
 		$placeholder = array();
-		foreach ( $urls as $url ) {
+		foreach ($urls as $url) {
 			array_push(
 				$values,
 				$url->get_url()->get_url_id(),
@@ -116,7 +124,7 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 				$url->get_domain_id(),
 				$url->get_url_id(),
 				$url->get_screenshot_date(),
-				gmdate( 'Y-m-d H:i:s' ),
+				gmdate('Y-m-d H:i:s'),
 				$url->get_url_title(),
 				$url->get_url_meta_description(),
 				$url->get_url_summary(),
@@ -124,7 +132,7 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 			$placeholder[] = '(%s, %s, %s, %s, %s, %d, %s, %s, %s, %s)';
 		}
 
-		$placeholder_string = implode( ', ', $placeholder );
+		$placeholder_string = implode(', ', $placeholder);
 		$update_query = "INSERT INTO $table (
                    urlMd5,
                    urlName,
@@ -162,9 +170,10 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 	 *
 	 * @return mixed
 	 */
-	public function fetch_schedule_url( Urlslab_Url $url ) {
-		$array = $this->fetch_schedule_urls_batch( array( $url ) );
-		return reset( $array );
+	public function fetch_schedule_url(Urlslab_Url $url)
+	{
+		$array = $this->fetch_schedule_urls_batch(array($url));
+		return reset($array);
 	}
 
 	/**
@@ -172,15 +181,16 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 	 *
 	 * @return array
 	 */
-	public function fetch_schedule_urls_batch( array $urls ): ?array {
-		if ( empty( $urls ) ) {
+	public function fetch_schedule_urls_batch(array $urls): ?array
+	{
+		if (empty($urls)) {
 			return null;
 		}
 		global $wpdb;
 		$table = $wpdb->prefix . $this->url_table_postfix;
-		$placeholders = implode( ', ', array_fill( 0, count( $urls ), '%s' ) );
+		$placeholders = implode(', ', array_fill(0, count($urls), '%s'));
 		$url_hashes = array();
-		foreach ( $urls as $url ) {
+		foreach ($urls as $url) {
 			$url_hashes[] = $url->get_url_id();
 		}
 
@@ -193,31 +203,31 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 		);
 
 		$results = array();
-		if ( ! empty( $query_results ) ) {
-			foreach ( $query_results as $res ) {
-				$results[ $res['urlMd5'] ] = $this->transform( $res );
+		if (!empty($query_results)) {
+			foreach ($query_results as $res) {
+				$results[$res['urlMd5']] = $this->transform($res);
 			}
 		}
 
 
 		$insert_placeholders = array();
 		$insert_values = array();
-		foreach ( $urls as $url ) {
-			if ( ! isset( $results[ $url->get_url_id() ] ) ) {
+		foreach ($urls as $url) {
+			if (!isset($results[$url->get_url_id()])) {
 				array_push(
 					$insert_values,
 					$url->get_url_id(),
 					$url->get_url(),
 					Urlslab::$link_status_not_scheduled,
-					gmdate( 'Y-m-d H:i:s' )
+					gmdate('Y-m-d H:i:s')
 				);
 				$insert_placeholders[] = '(%s, %s, %s, %s)';
 			}
 		}
 
-		if ( ! empty( $insert_values ) ) {
+		if (!empty($insert_values)) {
 			$insert_query = "INSERT IGNORE INTO $table (urlMd5, urlName, status, updateStatusDate) VALUES";
-			$insert_query .= implode( ', ', $insert_placeholders );
+			$insert_query .= implode(', ', $insert_placeholders);
 
 			$wpdb->query(
 				$wpdb->prepare(
@@ -231,7 +241,8 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 	}
 
 
-	public function fetch_related_urls_to( Urlslab_Url $url, int $limit ): array {
+	public function fetch_related_urls_to(Urlslab_Url $url, int $limit): array
+	{
 		global $wpdb;
 		$urls_table = $wpdb->prefix . $this->url_table_postfix;
 		$related_urls_table = $wpdb->prefix . $this->rel_table_postfix;
@@ -259,8 +270,8 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 		);
 
 		$result = array();
-		foreach ( $query_res as $res ) {
-			$result[] = $this->transform( $res );
+		foreach ($query_res as $res) {
+			$result[] = $this->transform($res);
 		}
 
 		return $result;
