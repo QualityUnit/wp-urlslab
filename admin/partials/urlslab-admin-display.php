@@ -46,7 +46,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php
 		?>
 				<a class="button"
 				   href="<?php echo esc_url( $user->get_api_conf_page_url( 'action=setup' ) ); ?>">
-			<?= esc_html( __( 'Setup Widget', 'urlslab' ) ); ?></a>
+			<?= $user->has_api_key() ? esc_html( __( 'Change API Settings', 'urlslab' ) ) : esc_html( __( 'Setup Widget', 'urlslab' ) ); ?></a>
 
 				<?php
 	}

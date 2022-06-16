@@ -97,16 +97,19 @@ class Urlslab_User_Widget {
 			<?php
 			if ( ! empty( $this->user_api_key ) ) {
 				submit_button( 'Remove key', 'small', 'reset-api-key' );
+				submit_button( 'Revalidate key', 'small', 'revalidate-api-key' );
 			} else {
 				submit_button( 'Save changes' );
 			}
 			?>
+			<a href="<?php echo esc_url( urlslab_admin_menu_page_url( URLSLAB_PLUGIN_DIR . '/admin/partials/urlslab-admin-display.php' ) ); ?>" class="button">Cancel</a>
 		</form>
 		<?php
 	}
 
 
 	public function api_setup_response( $action = '' ) {
+		//# Validating the API Key and adding it to WP user table
 		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
 			 'setup' == $action and 'POST' == $_SERVER['REQUEST_METHOD'] ) {
 			check_admin_referer( 'api-key-setup' );
@@ -155,6 +158,51 @@ class Urlslab_User_Widget {
 			wp_safe_redirect( $redirect_to );
 			exit();
 		}
+
+		//# Just Validate the API Key and give back response
+		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
+			 'setup' == $action and 'POST' == $_SERVER['REQUEST_METHOD'] and
+									! empty( $_POST['revalidate-api-key'] ) ) {
+			check_admin_referer( 'api-key-setup' );
+
+			if ( ! empty( trim( $this->user_api_key ) ) ) {
+				$confirmed = $this->confirm_key( new Urlslab_Api_Key( $this->user_api_key ) );
+
+				if ( true === $confirmed ) {
+					$redirect_to = $this->get_api_conf_page_url(
+						array(
+							'message' => 'success',
+						)
+					);
+				} elseif ( false === $confirmed ) {
+					$redirect_to = $this->get_api_conf_page_url(
+						array(
+							'action' => 'setup',
+							'message' => 'unauthorized',
+						)
+					);
+				} else {
+					$redirect_to = $this->get_api_conf_page_url(
+						array(
+							'action' => 'setup',
+							'message' => 'invalid',
+						)
+					);
+				}
+			} else {
+				$redirect_to = $this->get_api_conf_page_url(
+					array(
+						'action' => 'setup',
+						'message' => 'invalid',
+					)
+				);
+			}
+
+
+			wp_safe_redirect( $redirect_to );
+			exit();
+		}
+
 	}
 
 	public function admin_notice( string $message = '' ) {
@@ -162,7 +210,7 @@ class Urlslab_User_Widget {
 			echo sprintf(
 				'<div class="notice notice-error"><p><strong>%1$s</strong>: %2$s</p></div>',
 				esc_html( 'Error' ),
-				esc_html( 'You have not been authenticated. Make sure the provided API key is correct.' )
+				esc_html( 'Invalid or Empty API Key has been inserted' )
 			);
 		}
 
@@ -177,7 +225,7 @@ class Urlslab_User_Widget {
 		if ( 'success' == $message ) {
 			echo sprintf(
 				'<div class="notice notice-success"><p>%s</p></div>',
-				esc_html( 'Settings saved.' )
+				esc_html( 'Process successful' )
 			);
 		}
 	}
