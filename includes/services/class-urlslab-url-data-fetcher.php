@@ -6,6 +6,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-data.php
  * Manages all operation about URL Details
  */
 class Urlslab_Url_Data_Fetcher {
+
 	private string $url_table_postfix = 'urlslab_urls';
 	private string $rel_table_postfix = 'urlslab_related_urls';
 
@@ -22,7 +23,7 @@ class Urlslab_Url_Data_Fetcher {
 	 */
 	private function transform( array $row ): Urlslab_Url_Data {
 		return new Urlslab_Url_Data(
-			new Urlslab_Url( $row['urlName'] ),
+			new Urlslab_Url( parse_url( get_site_url(), PHP_URL_SCHEME ) . '://' . $row['urlName'] ),
 			$row['domainId'],
 			$row['urlId'],
 			$row['screenshotDate'],
@@ -43,7 +44,7 @@ class Urlslab_Url_Data_Fetcher {
 		$schedules = $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT * FROM ' . $table . // phpcs:ignore
-				' WHERE (status = %s) or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s) 
+				' WHERE (status = %s) or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 				ORDER BY updateStatusDate ASC LIMIT 100',
 				Urlslab::$link_status_not_scheduled,
@@ -129,13 +130,13 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
                    urlMd5,
                    urlName,
                    status,
-                   domainId, 
+                   domainId,
                    urlId,
-                   screenshotDate, 
+                   screenshotDate,
                    updateStatusDate,
                    urlTitle,
                    urlMetaDescription,
-                   urlSummary) VALUES 
+                   urlSummary) VALUES
                    $placeholder_string
                    AS new ON DUPLICATE KEY UPDATE
                    urlName = new.urlName,
