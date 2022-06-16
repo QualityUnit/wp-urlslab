@@ -24,7 +24,7 @@ class Urlslab_User_Widget {
 			$available_widgets = Urlslab_Available_Widgets::get_instance();
 			foreach ( $widgets as $widget ) {
 				$widget_detail = $available_widgets->get_widget( $widget );
-				if ( $widget_detail !== false ) {
+				if ( false !== $widget_detail ) {
 					self::$instance->activated_widgets[ $widget_detail->get_widget_slug() ] = $widget_detail;
 				}
 			}
