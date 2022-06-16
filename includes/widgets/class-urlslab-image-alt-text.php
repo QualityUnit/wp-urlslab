@@ -46,19 +46,12 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 		return $this->landing_page_link;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function get_admin_menu_page_slug(): string {
-		return URLSLAB_PLUGIN_DIR . '/admin/partials/urlslab-admin-screenshot-display.php';
+	public function load_widget_page() {
+		//Nothing to show
 	}
 
-	/**
-	 * @return string
-	 */
-	public function get_admin_menu_page_url(): string {
-		//TODO - implement for the admin page of plugin
-		return $this->menu_page_url( URLSLAB_PLUGIN_DIR . '/admin/partials/urlslab-admin-screenshot-display.php' );
+	public function screen_option() {
+		//Nothing to show
 	}
 
 	/**

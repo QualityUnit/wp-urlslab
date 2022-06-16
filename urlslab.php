@@ -51,6 +51,13 @@ define( 'URLSLAB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 
 define( 'URLSLAB_PLUGIN_BASENAME', plugin_basename( URLSLAB_PLUGIN ) );
 
+
+global $wpdb;
+define( 'URLSLAB_URLS_TABLE', $wpdb->prefix . 'urlslab_urls' );
+define( 'URLSLAB_KEYWORDS_TABLE', $wpdb->prefix . 'urlslab_keywords' );
+define( 'URLSLAB_RELATED_RESOURCE_TABLE', $wpdb->prefix . 'urlslab_related_urls' );
+
+
 add_filter( 'cron_schedules', 'urlslab_add_cron_interval' );
 function urlslab_add_cron_interval( $schedules ): array {
 	$my_schedule['every_minute'] = array(

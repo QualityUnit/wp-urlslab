@@ -6,9 +6,6 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-data.php
  * Manages all operation about URL Details
  */
 class Urlslab_Url_Data_Fetcher {
-	private string $url_table_postfix = 'urlslab_urls';
-	private string $rel_table_postfix = 'urlslab_related_urls';
-
 	private Urlslab_Screenshot_Api $urlslab_screenshot_api;
 
 	public function __construct( Urlslab_Screenshot_Api $urlslab_screenshot_api ) {
@@ -26,6 +23,7 @@ class Urlslab_Url_Data_Fetcher {
 			$row['domainId'],
 			$row['urlId'],
 			$row['screenshotDate'],
+			$row['updateStatusDate'],
 			$row['urlTitle'],
 			$row['urlMetaDescription'],
 			$row['urlSummary'],
@@ -38,7 +36,7 @@ class Urlslab_Url_Data_Fetcher {
 	 */
 	public function fetch_scheduling_urls(): array {
 		global $wpdb;
-		$table = $wpdb->prefix . $this->url_table_postfix;
+		$table = URLSLAB_URLS_TABLE;
 
 		$schedules = $wpdb->get_results(
 			$wpdb->prepare(
@@ -103,7 +101,7 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 	 */
 	public function save_urls_batch( array $urls ) {
 		global $wpdb;
-		$table = $wpdb->prefix . $this->url_table_postfix;
+		$table = URLSLAB_URLS_TABLE;
 
 		$values = array();
 		$placeholder = array();
@@ -177,7 +175,7 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 			return null;
 		}
 		global $wpdb;
-		$table = $wpdb->prefix . $this->url_table_postfix;
+		$table = URLSLAB_URLS_TABLE;
 		$placeholders = implode( ', ', array_fill( 0, count( $urls ), '%s' ) );
 		$url_hashes = array();
 		foreach ( $urls as $url ) {
@@ -233,8 +231,8 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 
 	public function fetch_related_urls_to( Urlslab_Url $url, int $limit ): array {
 		global $wpdb;
-		$urls_table = $wpdb->prefix . $this->url_table_postfix;
-		$related_urls_table = $wpdb->prefix . $this->rel_table_postfix;
+		$urls_table = URLSLAB_URLS_TABLE;
+		$related_urls_table = URLSLAB_RELATED_RESOURCE_TABLE;
 		$q = "SELECT u.urlName AS urlName,
        				 u.status AS status,
        				 u.domainId AS domainId,

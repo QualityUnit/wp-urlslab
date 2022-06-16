@@ -23,9 +23,11 @@ abstract class Urlslab_Widget {
 	public abstract function get_landing_page_link(): string;
 
 	/**
-	 * @return string Wordpress submenu widget URL
+	 * @return mixed Callback when widget menu is clicked
 	 */
-	public abstract function get_admin_menu_page_slug(): string;
+	public abstract function load_widget_page();
+
+	public abstract function screen_option();
 
 	/**
 	 * @return string Wordpress submenu widget page title

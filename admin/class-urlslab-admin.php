@@ -121,14 +121,15 @@ class Urlslab_Admin {
 		);
 
 		foreach ( Urlslab_User_Widget::get_instance()->get_activated_widget() as $widget ) {
-			add_submenu_page(
+			$hook = add_submenu_page(
 				plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
 				$widget->get_admin_menu_page_title(),
 				$widget->get_admin_menu_title(),
 				'manage_options',
-				$widget->get_admin_menu_page_slug(),
-				null
+				$widget->get_widget_slug(),
+				array( $widget, 'load_widget_page' )
 			);
+			add_action( "load-$hook", array( $widget, 'screen_option' ) );
 		}
 	}
 

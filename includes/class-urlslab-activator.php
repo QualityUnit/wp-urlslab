@@ -40,7 +40,7 @@ class Urlslab_Activator {
 
 	private static function init_screenshot_widget_tables() {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'urlslab_urls';
+		$table_name = URLSLAB_URLS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
 			urlMd5 varchar(32) NOT NULL,
@@ -63,7 +63,7 @@ class Urlslab_Activator {
 
 	private static function init_keyword_widget_tables() {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'urlslab_keywords';
+		$table_name = URLSLAB_KEYWORDS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
 			keyword varchar(250) NOT NULL,
@@ -81,7 +81,7 @@ class Urlslab_Activator {
 
 	private static function init_related_resources_widget_tables() {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'urlslab_related_urls';
+		$table_name = URLSLAB_RELATED_RESOURCE_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
 			srcUrlMd5 varchar(32) NOT NULL,

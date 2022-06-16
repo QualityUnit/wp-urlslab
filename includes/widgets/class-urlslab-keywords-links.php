@@ -63,12 +63,14 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		return $this->landing_page_link;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function get_admin_menu_page_slug(): string {
-		return URLSLAB_PLUGIN_DIR . '/admin/partials/urlslab-admin-screenshot-display.php';
+	public function load_widget_page() {
+		//Nothing to show
 	}
+
+	public function screen_option() {
+		//Nothing to show
+	}
+
 
 	/**
 	 * @return string
@@ -180,7 +182,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		if (empty( $this->keywords_cache )) {
 			global $wpdb;
 
-			$keyword_table = $wpdb->prefix . 'urlslab_keywords';
+			$keyword_table = URLSLAB_KEYWORDS_TABLE;
 
 			$results = $wpdb->get_results(
 				$wpdb->prepare(

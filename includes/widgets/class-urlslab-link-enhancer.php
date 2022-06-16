@@ -55,11 +55,12 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		return $this->landing_page_link;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function get_admin_menu_page_slug(): string {
-		return URLSLAB_PLUGIN_DIR . '/admin/partials/urlslab-admin-screenshot-display.php';
+	public function load_widget_page() {
+		//Nothing to show
+	}
+
+	public function screen_option() {
+		//Nothing to show
 	}
 
 	/**

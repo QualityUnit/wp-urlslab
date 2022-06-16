@@ -45,18 +45,19 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		return $this->widget_description;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function get_landing_page_link(): string {
-		return $this->landing_page_link;
+	public function load_widget_page() {
+		//Nothing to show
+	}
+
+	public function screen_option() {
+		//Nothing to show
 	}
 
 	/**
 	 * @return string
 	 */
-	public function get_admin_menu_page_slug(): string {
-		return URLSLAB_PLUGIN_DIR . '/admin/partials/urlslab-admin-screenshot-display.php';
+	public function get_landing_page_link(): string {
+		return $this->landing_page_link;
 	}
 
 	/**

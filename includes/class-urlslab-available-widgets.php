@@ -8,6 +8,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-image-alt-tex
 require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-og-meta-tag.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-screenshot-api.php';
+require_once URLSLAB_PLUGIN_DIR . '/admin/partials/tables/class-urlslab-screenshot-table.php';
 
 class Urlslab_Available_Widgets {
 

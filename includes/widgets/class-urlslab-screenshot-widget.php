@@ -16,6 +16,8 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 
 	private Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher;
 
+	private Urlslab_Screenshot_Table $screenshot_table;
+
 	/**
 	 * @param Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher
 	 */
@@ -51,11 +53,30 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		return $this->landing_page_link;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function get_admin_menu_page_slug(): string {
-		return URLSLAB_PLUGIN_DIR . '/admin/partials/urlslab-admin-screenshot-display.php';
+	public function load_widget_page() {
+		?>
+		<div class="wrap">
+			<h2>Screenshots</h2>
+			<?php
+			$this->screenshot_table->prepare_items();
+			$this->screenshot_table->display();
+			?>
+
+		</div>
+		<?php
+	}
+
+	public function screen_option() {
+		$option = 'per_page';
+		$args = array(
+			'label' => 'Urls',
+			'default' => 5,
+			'option' => 'users_per_page',
+		);
+
+		add_screen_option( $option, $args );
+
+		$this->screenshot_table = new Urlslab_Screenshot_Table();
 	}
 
 	/**

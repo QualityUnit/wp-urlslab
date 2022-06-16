@@ -53,7 +53,12 @@ class Urlslab_User_Widget {
 		}
 	}
 
-	public function get_activated_widget( string $widget_slug = '' ) {
+	/**
+	 * @param string $widget_slug
+	 *
+	 * @return Urlslab_Widget[]|Urlslab_Widget
+	 */
+	public function get_activated_widget( string $widget_slug = '' ): array {
 		if ( empty( $widget_slug ) ) {
 			return array_values( $this->activated_widgets );
 		}
