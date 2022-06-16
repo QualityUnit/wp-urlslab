@@ -3,35 +3,42 @@
  * included in this file.
  */
 .col_url_summary {
-    width: 450px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+	width: 450px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
+
 .col_url_meta_description {
-    width: 450px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+	width: 450px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
+
 .status-circle {
-    width: 10px;
-    height: 10px;
-    margin: 0 auto;
-    border-radius: 50%;
+	width: 10px;
+	height: 10px;
+	margin: 0 auto;
+	border-radius: 50%;
 }
+
 .status-available {
-    background-color: green;
+	background-color: #0ff0;
 }
+
 .status-pending {
-    background-color: orange;
+	background-color: #ffa500ff;
 }
+
 .status-not-scheduled {
-    background-color: red;
+	background-color: #ff00;
 }
+
 .status-broken {
-    background-color: gray;
+	background-color: #808080ff;
 }
+
 .status-updating {
-    background-color: blue;
+	background-color: #00ff;
 }
