@@ -134,11 +134,11 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 
 	private function priority_ui_convert( int $priority ): string {
 		if ( $priority < 10 ) {
-			return '<span class="color-success"> . ' . $priority . '</span>';
-		} else if ( 10 <= $priority && $priority <= 20 ) {
-			return '<span class="color-warning"> . ' . $priority . '</span>';
+			return '<span class="color-success"> ' . $priority . '</span>';
+		} else if ( $priority <= 20 ) {
+			return '<span class="color-warning"> ' . $priority . '</span>';
 		} else {
-			return '<span class="color-danger"> . ' . $priority . '</span>';
+			return '<span class="color-danger"> ' . $priority . '</span>';
 		}
 	}
 

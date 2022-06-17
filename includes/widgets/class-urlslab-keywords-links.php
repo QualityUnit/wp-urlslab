@@ -110,7 +110,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			 'POST' == $_SERVER['REQUEST_METHOD'] and
 			 isset( $_REQUEST['action'] ) and
 			 -1 != $_REQUEST['action'] and
-			 'import_export' == $_REQUEST['action']) {
+			 'import' == $_REQUEST['action']) {
 			// Import/Export option
 			check_admin_referer( 'keyword-widget-import' );
 			if (isset( $_POST['submit'] )) {
@@ -141,8 +141,6 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 							)
 						);
 					}
-				} else if ('Export' == $_POST['submit']) {
-					//# export the given csv
 				} else {
 					$redirect_to = $this->admin_widget_menu_page(
 						array(
@@ -162,6 +160,25 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 			wp_safe_redirect( $redirect_to );
 			exit();
+		} else if (isset( $_SERVER['REQUEST_METHOD'] ) and
+				  'GET' == $_SERVER['REQUEST_METHOD'] and
+				  isset( $_REQUEST['action'] ) and
+				  -1 != $_REQUEST['action'] and
+				  'export' == $_REQUEST['action']) {
+			header( 'Content-Type: text/csv; charset=utf-8' );
+			header( 'Content-Disposition: attachment; filename=keywords.csv' );
+			$output = fopen( 'php://output', 'w' );
+			fputcsv( $output, array('Keyword', 'Priority', 'URL', 'Lang') );
+			global $wpdb;
+			$table = URLSLAB_KEYWORDS_TABLE;
+
+			$query = "SELECT keyword, kw_priority, urlLink, lang FROM $table ORDER BY kw_priority ASC";
+			$result = $wpdb->get_results( $query, ARRAY_N );
+			foreach ($result as $row) {
+				fputcsv( $output, $row );
+			}
+			fclose( $output );
+			die();
 		} else {
 			$option = 'per_page';
 			$args = array(
@@ -184,18 +201,18 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				The CSV file should contain headers. the CSV file should include following headers:
 				<ul>
 					<li class="color-danger">Keyword (required)</li>
-					<li class="color-danger">urlLink (required)</li>
+					<li class="color-danger">URL (required)</li>
 					<li class="color-danger">lang (required)</li>
 					<li class="color-warning">priority (optional-defaults to 10)</li>
 				</ul>
 			</div>
-			<form action="<?php echo esc_url( $this->admin_widget_menu_page( 'action=import_export' ) ); ?>" method="post" enctype="multipart/form-data">
+			<form action="<?php echo esc_url( $this->admin_widget_menu_page( 'action=import' ) ); ?>" method="post" enctype="multipart/form-data">
 				<?php wp_nonce_field( 'keyword-widget-import' ); ?>
 				<input type="file" name="csv_file">
 				<br class="clear"/>
 				<br class="clear"/>
 				<input type="submit" name="submit" id="submit" class="button import_keyword_csv" value="Import">
-				<input type="submit" name="submit" id="submit" class="button export_keyword_csv" value="Export">
+				<a href="<?php echo esc_url( $this->admin_widget_menu_page( 'action=export' ) ); ?>" target="_blank" class="button export_keyword_csv">Export</a>
 			</form>
 		</div>
 		<?php
