@@ -53,3 +53,20 @@ function urlslab_get_language() {
 
 	return substr( get_locale(), 0, 2 );
 }
+
+function urlslab_status_ui_convert( string $status_char ): string {
+	switch ( $status_char ) {
+		case Urlslab::$link_status_available:
+			return '<div class="status-circle background-success" title="available"></div>';
+		case Urlslab::$link_status_waiting_for_screenshot:
+			return '<div class="status-circle background-warning" title="pending"></div>';
+		case Urlslab::$link_status_not_scheduled:
+			return '<div class="status-circle background-secondary" title="not-scheduled"></div>';
+		case Urlslab::$link_status_broken:
+			return '<div class="status-circle background-danger" title="broken"></div>';
+		case Urlslab::$link_status_waiting_for_update:
+			return '<div class="status-circle background-primary" title="updating"></div>';
+		default:
+			return $status_char;
+	}
+}

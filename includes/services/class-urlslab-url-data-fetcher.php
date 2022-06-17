@@ -198,6 +198,19 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 		}
 
 
+		$this->prepare_url_batch_for_scheduling( $urls );
+		return $results;
+	}
+
+	/**
+	 * @param Urlslab_Url[] $urls
+	 *
+	 * @return void
+	 */
+	public function prepare_url_batch_for_scheduling( array $urls ): bool {
+		global $wpdb;
+		$table = URLSLAB_URLS_TABLE;
+
 		$insert_placeholders = array();
 		$insert_values = array();
 		foreach ( $urls as $url ) {
@@ -213,19 +226,17 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 			}
 		}
 
-		if ( ! empty( $insert_values ) ) {
-			$insert_query = "INSERT IGNORE INTO $table (urlMd5, urlName, status, updateStatusDate) VALUES";
-			$insert_query .= implode( ', ', $insert_placeholders );
+		$insert_query = "INSERT IGNORE INTO $table (urlMd5, urlName, status, updateStatusDate) VALUES";
+		$insert_query .= implode( ', ', $insert_placeholders );
 
+		return is_numeric(
 			$wpdb->query(
 				$wpdb->prepare(
-					$insert_query, // phpcs:ignore
+				$insert_query, // phpcs:ignore
 					$insert_values
 				),
-			);
-		}
-
-		return $results;
+			)
+		);
 	}
 
 

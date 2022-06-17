@@ -91,11 +91,11 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 				if ( $item->screenshot_exists() ) {
 					return '<img src="' . $item->render_screenshot_path() . '" width="150px">';
 				}
-				return '';
+				return '<em>Not available!</em>';
 			case 'col_url_name':
 				return $item->get_url()->get_url();
 			case 'col_status':
-				return $this->status_ui_convert( $item->get_screenshot_status() );
+				return urlslab_status_ui_convert( $item->get_screenshot_status() );
 			case 'col_screenshot_date':
 				if ( $item->get_screenshot_date() == 0 ) {
 					return '<em>Not available!</em>';
@@ -152,23 +152,6 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 
 	public function no_items() {
 		echo 'No Schedules available';
-	}
-
-	private function status_ui_convert( string $status_char ): string {
-		switch ( $status_char ) {
-			case Urlslab::$link_status_available:
-				return '<div class="status-circle background-success" title="available"></div>';
-			case Urlslab::$link_status_waiting_for_screenshot:
-				return '<div class="status-circle background-warning" title="pending"></div>';
-			case Urlslab::$link_status_not_scheduled:
-				return '<div class="status-circle background-secondary" title="not-scheduled"></div>';
-			case Urlslab::$link_status_broken:
-				return '<div class="status-circle background-danger" title="broken"></div>';
-			case Urlslab::$link_status_waiting_for_update:
-				return '<div class="status-circle background-primary" title="updating"></div>';
-			default:
-				return $status_char;
-		}
 	}
 
 }
