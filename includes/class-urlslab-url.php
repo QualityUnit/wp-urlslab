@@ -21,13 +21,15 @@ class Urlslab_Url {
 	}
 
 	private function urlslab_url_init( string $input_url ): void {
-		$this->url_components = parse_url( $input_url );
+		$parsed_url = parse_url( $input_url );
 
-		if ( ! is_array( $this->url_components ) ) {
+		if ( ! is_array( $parsed_url ) ) {
 			$this->url_components = array();
 			$this->urlslab_parsed_url = '';
 			return;
 		}
+
+		$this->url_components = $parsed_url;
 
 
 		if ( ! isset( $this->url_components['scheme'] ) ) {
