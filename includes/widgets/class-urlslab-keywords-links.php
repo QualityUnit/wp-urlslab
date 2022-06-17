@@ -4,6 +4,7 @@
 require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
+require_once URLSLAB_PLUGIN_DIR . '/admin/partials/tables/class-urlslab-keyword-link-table.php';
 
 class Urlslab_Keywords_Links extends Urlslab_Widget {
 
@@ -15,6 +16,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	private string $widget_description = 'Urlslab Keywords to Links - automatic linkbuilding from specific keywords';
 
 	private string $landing_page_link = 'https://www.urlslab.com';
+
+	private Urlslab_Keyword_Link_Table $keyword_table;
 
 	private int $cnt_page_link_replacements = 0;
 	private int $cnt_page_links = 0;
@@ -64,11 +67,29 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	public function load_widget_page() {
-		//Nothing to show
+		?>
+		<div class="wrap">
+			<h2>Keywords</h2>
+			<?php
+			$this->keyword_table->prepare_items();
+			$this->keyword_table->display();
+			?>
+
+		</div>
+		<?php
 	}
 
 	public function screen_option() {
-		//Nothing to show
+		$option = 'per_page';
+		$args = array(
+			'label' => 'Keywords',
+			'default' => 5,
+			'option' => 'users_per_page',
+		);
+
+		add_screen_option( $option, $args );
+
+		$this->keyword_table = new Urlslab_Keyword_Link_Table();
 	}
 
 
