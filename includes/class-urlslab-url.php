@@ -38,6 +38,9 @@ class Urlslab_Url {
 
 		if ( ! isset( $this->url_components['host'] ) ) {
 			$this->url_components['host'] = parse_url( get_site_url(), PHP_URL_HOST );
+			if ( substr( $this->url_components['path'], 0, 1 ) != '/' ) {
+				$this->url_components['path'] = '/' . $this->url_components['path'];
+			}
 		}
 
 		$url = $this->url_components['host'] . ( $this->url_components['path'] ?? '' );

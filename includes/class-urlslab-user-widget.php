@@ -67,8 +67,7 @@ class Urlslab_User_Widget {
 	}
 
 	public function is_widget_activated( string $widget_slug ): bool {
-		$widget = $this->activated_widgets[ $widget_slug ];
-		return ! empty( $widget );
+		return array_key_exists( $widget_slug, $this->activated_widgets );
 	}
 
 	public function add_api_key( Urlslab_Api_Key $api_key ): bool {

@@ -104,7 +104,7 @@ class Urlslab_Og_Meta_Tag extends Urlslab_Widget {
 					get_current_page_url()
 				);
 
-				if (!is_null( $url_data )) {
+				if (is_object( $url_data )) {
 					// meta description generation
 					if ($meta_description->count() == 0) {
 						$node = $document->createElement( 'meta' );
