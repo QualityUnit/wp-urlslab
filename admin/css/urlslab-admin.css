@@ -44,21 +44,29 @@
 }
 
 .color-success {
-	background-color: #0f0;
+	color: #0f0;
 }
 
 .color-warning {
-	background-color: #ffa500ff;
+	color: #ffa500ff;
 }
 
 .color-danger {
-	background-color: #f00;
+	color: #f00;
 }
 
 .color-secondary {
-	background-color: #808080ff;
+	color: #808080ff;
 }
 
 .color-primary {
-	background-color: #00ff;
+	color: #00ff;
+}
+
+.float-left {
+	float: left;
+}
+
+.mar-left-1 {
+	margin-left: 1em;
 }

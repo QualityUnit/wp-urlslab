@@ -3,19 +3,19 @@
 class Urlslab_Url_Keyword_Data {
 
 	private string $keyword;
-	private string $keyword_priority;
+	private int $keyword_priority;
 	private int $keyword_length;
-	private int $keyword_url_lang;
+	private string $keyword_url_lang;
 	private string $keyword_url_link;
 
 	/**
 	 * @param string $keyword
-	 * @param string $keyword_priority
+	 * @param int $keyword_priority
 	 * @param int $keyword_length
-	 * @param int $keyword_url_lang
+	 * @param string $keyword_url_lang
 	 * @param string $keyword_url_link
 	 */
-	public function __construct( string $keyword, string $keyword_priority, int $keyword_length, int $keyword_url_lang, string $keyword_url_link ) {
+	public function __construct( string $keyword, int $keyword_priority, int $keyword_length, string $keyword_url_lang, string $keyword_url_link ) {
 		$this->keyword          = $keyword;
 		$this->keyword_priority = $keyword_priority;
 		$this->keyword_length   = $keyword_length;
@@ -31,9 +31,9 @@ class Urlslab_Url_Keyword_Data {
 	}
 
 	/**
-	 * @return string
+	 * @return int
 	 */
-	public function get_keyword_priority(): string {
+	public function get_keyword_priority(): int {
 		return $this->keyword_priority;
 	}
 
@@ -45,9 +45,9 @@ class Urlslab_Url_Keyword_Data {
 	}
 
 	/**
-	 * @return int
+	 * @return string
 	 */
-	public function get_keyword_url_lang(): int {
+	public function get_keyword_url_lang(): string {
 		return $this->keyword_url_lang;
 	}
 

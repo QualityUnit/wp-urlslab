@@ -50,7 +50,7 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 		//Nothing to show
 	}
 
-	public function screen_option() {
+	public function widget_admin_load() {
 		//Nothing to show
 	}
 

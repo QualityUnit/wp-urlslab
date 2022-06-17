@@ -49,7 +49,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		//Nothing to show
 	}
 
-	public function screen_option() {
+	public function widget_admin_load() {
 		//Nothing to show
 	}
 
