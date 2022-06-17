@@ -3,7 +3,7 @@
 class Urlslab_Url {
 
 	private string $urlslab_parsed_url;
-	private array $url_components;
+	private array $url_components = array();
 
 	/**
 	 * @param string $url
@@ -21,16 +21,14 @@ class Urlslab_Url {
 	}
 
 	private function urlslab_url_init( string $input_url ): void {
-		if ( empty( $input_url ) ) {
+		$this->url_components = parse_url( $input_url );
+
+		if ( ! is_array( $this->url_components ) ) {
 			$this->url_components = array();
 			$this->urlslab_parsed_url = '';
 			return;
 		}
 
-		$this->url_components = parse_url( $input_url );
-		if ( ! is_array( $this->url_components ) ) {
-			$this->url_components = array();
-		}
 
 		if ( ! isset( $this->url_components['scheme'] ) ) {
 			$this->url_components['scheme'] = parse_url( get_site_url(), PHP_URL_SCHEME ) ?? 'http';
