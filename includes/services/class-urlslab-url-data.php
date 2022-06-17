@@ -7,6 +7,7 @@ class Urlslab_Url_Data {
 
 	private Urlslab_Url $url;
 	private $screenshot_date;
+	private $last_status_change_date;
 	private ?string $url_title;
 	private ?string $url_meta_description;
 	private ?string $url_summary;
@@ -17,6 +18,7 @@ class Urlslab_Url_Data {
 	 * @param $domain_id
 	 * @param $url_id
 	 * @param $screenshot_date
+	 * @param $last_status_change_date
 	 * @param $url_title
 	 * @param $url_meta_description
 	 * @param $url_summary
@@ -27,19 +29,28 @@ class Urlslab_Url_Data {
 					$domain_id,
 					$url_id,
 					$screenshot_date,
+					$last_status_change_date,
 					$url_title,
 					$url_meta_description,
 					$url_summary,
 					$screenshot_status
 	) {
-		 $this->url = $url;
+		$this->url = $url;
 		$this->domain_id = $domain_id;
 		$this->url_id = $url_id;
 		$this->screenshot_date = $screenshot_date;
+		$this->last_status_change_date = $last_status_change_date;
 		$this->url_title = $url_title;
 		$this->url_meta_description = $url_meta_description;
 		$this->url_summary = $url_summary;
 		$this->screenshot_status = $screenshot_status;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function get_last_status_change_date() {
+		return $this->last_status_change_date;
 	}
 
 	/**
@@ -74,21 +85,21 @@ class Urlslab_Url_Data {
 	 * @return string
 	 */
 	public function get_url_title(): string {
-		return $this->url_title;
+		return $this->url_title ?? '';
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_url_meta_description(): string {
-		return $this->url_meta_description;
+		return $this->url_meta_description ?? '';
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_url_summary(): string {
-		return $this->url_summary;
+		return $this->url_summary ?? '';
 	}
 
 	/**

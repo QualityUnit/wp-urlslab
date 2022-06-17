@@ -2,3 +2,43 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
+.col_url_summary {
+	width: 450px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.col_url_meta_description {
+	width: 450px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.status-circle {
+	width: 10px;
+	height: 10px;
+	margin: 0 auto;
+	border-radius: 50%;
+}
+
+.status-available {
+	background-color: #0f0;
+}
+
+.status-pending {
+	background-color: #ffa500ff;
+}
+
+.status-not-scheduled {
+	background-color: #ff00;
+}
+
+.status-broken {
+	background-color: #808080ff;
+}
+
+.status-updating {
+	background-color: #00ff;
+}

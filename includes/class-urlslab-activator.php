@@ -40,7 +40,7 @@ class Urlslab_Activator {
 
 	private static function init_screenshot_widget_tables() {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'urlslab_urls';
+		$table_name = URLSLAB_URLS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
 			urlMd5 varchar(32) NOT NULL,
@@ -63,13 +63,16 @@ class Urlslab_Activator {
 
 	private static function init_keyword_widget_tables() {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'urlslab_keyword_widget';
+		$table_name = URLSLAB_KEYWORDS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
 			keyword varchar(250) NOT NULL,
+			kw_priority TINYINT UNSIGNED NOT NULL DEFAULT 10,
+			kw_length TINYINT UNSIGNED NOT NULL,
 			lang varchar(10) NOT NULL,
 			urlLink text NOT NULL,
-			PRIMARY KEY  (lang, keyword)
+			PRIMARY KEY  (lang, keyword), 
+			INDEX idx_sorting (kw_priority, kw_length)
 		) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -78,7 +81,7 @@ class Urlslab_Activator {
 
 	private static function init_related_resources_widget_tables() {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'urlslab_related_urls';
+		$table_name = URLSLAB_RELATED_RESOURCE_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
 			srcUrlMd5 varchar(32) NOT NULL,

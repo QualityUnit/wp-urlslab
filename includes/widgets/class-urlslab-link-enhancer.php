@@ -55,11 +55,12 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		return $this->landing_page_link;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function get_admin_menu_page_slug(): string {
-		return URLSLAB_PLUGIN_DIR . '/admin/partials/urlslab-admin-screenshot-display.php';
+	public function load_widget_page() {
+		//Nothing to show
+	}
+
+	public function screen_option() {
+		//Nothing to show
 	}
 
 	/**
@@ -100,7 +101,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 						continue;
 					}
 
-					if ($dom_element->getAttribute( 'title' ) == '' && $dom_element->getAttribute( 'href' ) != '') {
+					if (empty( $dom_element->getAttribute( 'title' ) ) && ! empty( trim( $dom_element->getAttribute( 'href' ) ) )) {
 						$url = new Urlslab_Url( $dom_element->getAttribute( 'href' ) );
 						$elements_to_enhance[] = array($dom_element, $url);
 					}
@@ -117,9 +118,13 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 					foreach ($elements_to_enhance as $arr_element) {
 						if (isset( $result[$arr_element[1]->get_url_id()] ) &&
 							!empty( $result[$arr_element[1]->get_url_id()] )) {
-							( $arr_element[0] )->setAttribute(
+							$arr_element[0]->setAttribute(
 								'title',
 								$result[$arr_element[1]->get_url_id()]->get_url_summary_text(),
+							);
+							$arr_element[0]->setAttribute(
+								'urlslab-enhanced',
+								'Y',
 							);
 						}
 					}

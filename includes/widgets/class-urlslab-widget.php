@@ -23,14 +23,71 @@ abstract class Urlslab_Widget {
 	public abstract function get_landing_page_link(): string;
 
 	/**
-	 * @return string Wordpress submenu widget URL
+	 * @return mixed Callback when widget menu is clicked
 	 */
-	public abstract function get_admin_menu_page_slug(): string;
+	public abstract function load_widget_page();
+
+	public abstract function screen_option();
 
 	/**
 	 * @return string Wordpress submenu widget page title
 	 */
 	public abstract function get_admin_menu_page_title(): string;
+
+	/**
+	 * @param $args mixed the query args to be executed on the widget
+	 *
+	 * @return string the url string of the page
+	 */
+	public function get_conf_page_url( $args = '' ): string {
+		$main_menu_slug = URLSLAB_PLUGIN_DIR . '/admin/partials/urlslab-admin-display.php';
+		$args = wp_parse_args( $args, array() );
+		$url = urlslab_admin_menu_page_url( $main_menu_slug );
+		$url = add_query_arg( array( 'component' => $this->get_widget_slug() ), $url );
+
+		if ( ! empty( $args ) ) {
+			$url = add_query_arg( $args, $url );
+		}
+
+		return $url;
+	}
+
+	/**
+	 * @param $action string action to be applied to url
+	 *
+	 */
+	public function widget_management_response( string $action = '' ) {
+		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
+			 'activation' == $action and 'POST' == $_SERVER['REQUEST_METHOD'] ) {
+			check_admin_referer( 'widget-activation-' . $this->get_widget_slug() );
+
+			if ( ! empty( $_POST['activate'] ) ) {
+				Urlslab_User_Widget::get_instance()->activate_widget( $this );
+				$redirect_to = $this->get_conf_page_url(
+					array(
+						'message' => 'success',
+					)
+				);
+			} else if ( ! empty( $_POST['deactivate'] ) ) {
+				Urlslab_User_Widget::get_instance()->deactivate_widget( $this );
+				$redirect_to = $this->get_conf_page_url(
+					array(
+						'message' => 'success',
+					)
+				);
+			} else {
+				$redirect_to = $this->get_conf_page_url(
+					array(
+						'action' => 'activation',
+						'message' => 'invalid',
+					)
+				);
+			}
+
+			wp_safe_redirect( $redirect_to );
+			exit();
+		}
+	}
 
 	/**
 	 * @return string Wordpress submenu widget title

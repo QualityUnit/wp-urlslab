@@ -125,19 +125,19 @@ class Urlslab {
 
 	public function init_urlslab_user() {
 		$api_key = $this->get_option( 'api-key' );
-		$urlslab_user_widget = Urlslab_User_Widget::get_instance();
 		$urlslab_available_widgets = Urlslab_Available_Widgets::get_instance();
+		$urlslab_api = new Urlslab_Api_Key( $api_key );
+		$this->url_data_fetcher = new Urlslab_Url_Data_Fetcher(
+			new Urlslab_Screenshot_Api( $urlslab_api )
+		);
+		$urlslab_available_widgets->init_widgets( $this->url_data_fetcher );
+		$urlslab_user_widget = Urlslab_User_Widget::get_instance();
 
 		if ( ! empty( $api_key ) ) {
 			$urlslab_user_widget->add_api_key(
 				new Urlslab_Api_Key( $api_key )
 			);
 		}
-		$urlslab_api = new Urlslab_Api_Key( $api_key );
-		$this->url_data_fetcher = new Urlslab_Url_Data_Fetcher(
-			new Urlslab_Screenshot_Api( $urlslab_api )
-		);
-		$urlslab_available_widgets->init_widgets( $this->url_data_fetcher );
 	}
 
 	/**
@@ -267,7 +267,7 @@ class Urlslab {
 
 
 	public function urlslab_shortcodes_init() {
-		foreach ( Urlslab_Available_Widgets::get_instance()->get_all_widgets() as $i => $widget ) {
+		foreach ( Urlslab_Available_Widgets::get_instance()->get_available_widgets() as $i => $widget ) {
 			add_shortcode( $widget->get_widget_slug(), array( $widget, 'get_shortcode_content' ) );
 		}
 	}

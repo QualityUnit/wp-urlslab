@@ -46,12 +46,47 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php
 		?>
 				<a class="button"
 				   href="<?php echo esc_url( $user->get_api_conf_page_url( 'action=setup' ) ); ?>">
-			<?= esc_html( __( 'Setup Widget', 'urlslab' ) ); ?></a>
+			<?= $user->has_api_key() ? esc_html( __( 'Change API Settings', 'urlslab' ) ) : esc_html( __( 'Setup Widget', 'urlslab' ) ); ?></a>
 
 				<?php
 	}
 	?>
 	</div>
+
+	<?php 
+	if ( 'setup' != $current_action ) {
+
+		foreach ( $available_widgets->get_available_widgets() as $widget ) {
+			?>
+	<div class="card<?php echo $user->is_widget_activated( $widget->get_widget_slug() ) ? ' active' : ''; ?>">
+		<h2 class="title"><?php echo esc_html( $widget->get_widget_title() ); ?></h2>
+		<div class="infobox">
+			<?php echo esc_html( $widget->get_widget_description() ); ?>
+			<?php echo $user->has_api_key() ? 'Widget already activated' : esc_html( 'To start, activate widget' ); ?>.
+			for more details see <a href="<?php echo esc_url( $widget->get_landing_page_link() ); ?>" target="_blank">
+				Urlslab
+			</a>
+		</div>
+		<form method="post" action="<?php echo esc_url( $widget->get_conf_page_url( 'action="activation"' ) ); ?>">
+			<?php wp_nonce_field( 'widget-activation-' . $widget->get_widget_slug() ); ?>
+			<?php
+			if ( $user->is_widget_activated( $widget->get_widget_slug() ) ) {
+				submit_button( 'Deactivate', 'small', 'deactivate' );
+			} else {
+				submit_button( 'Activate', 'small', 'activate' );
+			}
+			?>
+		</form>
+	</div>
+
+			<?php
+		}
+
+		?>
+
+
+
+	<?php } ?>
 
 
 <?php
