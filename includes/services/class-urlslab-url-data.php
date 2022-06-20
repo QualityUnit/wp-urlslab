@@ -85,6 +85,12 @@ class Urlslab_Url_Data {
 	 * @return string
 	 */
 	public function get_url_title(): string {
+		if (empty($this->url_title)) {
+			$postId = url_to_postid(urlslab_get_current_page_protocol() . $this->get_url()->get_url());
+			if ($postId != 0) {
+				$this->url_title = get_the_title($postId);
+			}
+		}
 		return $this->url_title ?? '';
 	}
 

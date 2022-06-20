@@ -128,22 +128,21 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				   -1 != $_REQUEST['action'] and
 				   'export' == $_REQUEST['action']) {
 			header( 'Content-Type: text/csv; charset=utf-8' );
-			header( 'Content-Disposition: attachment; filename=related-resources.csv' );
+			header( 'Content-Disposition: attachment; filename=urlslab-related-resources.csv' );
 			$output = fopen( 'php://output', 'w' );
-			fputcsv( $output, array('Src URL', 'Src Status', 'Dest URL', 'Dest Status') );
+			fputcsv( $output, array('Src URL', 'Dest URL') );
 			global $wpdb;
 			$related_resource_table = URLSLAB_RELATED_RESOURCE_TABLE;
 			$urls_table = URLSLAB_URLS_TABLE;
 
 			$query = "SELECT u.urlName AS srcUrlName,
-				       u.status AS srcStatus,
-				       v.urlName AS destUrlName,
-				       v.status AS destStatus
+				       v.urlName AS destUrlName
 				FROM $related_resource_table r
 				         INNER JOIN $urls_table as u
 				                    ON r.srcUrlMd5 = u.urlMd5
 				         INNER JOIN $urls_table as v
-				                    ON r.destUrlMd5 = v.urlMd5";
+				                    ON r.destUrlMd5 = v.urlMd5
+			    WHERE r.srcUrlMd5 <> r.destUrlMd5";
 			$result = $wpdb->get_results( $query, ARRAY_N );
 			foreach ($result as $row) {
 				fputcsv( $output, $row );
@@ -286,7 +285,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		$placeholder_string = implode( ', ', $placeholder );
 		$update_query = "INSERT IGNORE INTO $table (
                    srcUrlMd5,
-                   destUrlMd5) VALUES 
+                   destUrlMd5) VALUES
                    $placeholder_string";
 
 		$result = $wpdb->query(
@@ -344,7 +343,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 		$urlslab_atts = shortcode_atts(
 			array(
-				'url'           => get_current_page_url()->get_url(),
+				'url'           => urlslab_get_current_page_protocol() . get_current_page_url()->get_url(),
 				'related-count'           => 8,
 				'show-image'          => false,
 				'default-image'   => '',
@@ -354,8 +353,8 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		);
 
 		$result = $this->url_data_fetcher->fetch_related_urls_to(
-			$urlslab_atts['url'],
-			$urlslab_atts['related-count']
+				new Urlslab_Url($urlslab_atts['url']),
+				$urlslab_atts['related-count']
 		);
 
 		if ( ! empty( $result ) ) {
@@ -381,13 +380,18 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	private function render_shortcode_item( Urlslab_Url_Data $url, array $urlslab_atts ): string {
+		$title = $url->get_url_title();
+		if (empty($title)) {
+			return '';
+		}
+
 		return '<li urlslab-skip="true">' .
 			'<a href="' . esc_url( urlslab_get_current_page_protocol() . $url->get_url()->get_url() ) . '"' .
 			' title="' . esc_attr( $url->get_url_summary_text() ) . '"' .
 			( urlslab_is_same_domain_url( $url->get_url()->get_url() ) ? '' : ' target="_blank"' ) .
 			'urlslab-skip="true">' .
 			$this->render_screenshot( $url, $urlslab_atts ) .
-			esc_html( $url->get_url_title() ) .
+			esc_html( $title ) .
 			'</a>' .
 			'</li>';
 	}
