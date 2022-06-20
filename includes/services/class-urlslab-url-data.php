@@ -167,8 +167,8 @@ class Urlslab_Url_Data {
 			return $this->url_meta_description;
 		}
 
-		if ( trim( $this->url_title ) !== '' ) {
-			return $this->url_title;
+		if ( trim( $this->get_url_title() ) !== '' ) {
+			return $this->get_url_title();
 		}
 
 		return ucwords(

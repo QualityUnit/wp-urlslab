@@ -298,7 +298,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		}
 
 		$placeholder_string = implode( ', ', $placeholder );
-		$update_query = "INSERT IGNORE INTO $table (
+		$update_query = "INSERT INTO $table (
                    keyword,
                    kw_priority,
                    kw_length,
