@@ -11,7 +11,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 	 *
 	 * @return Urlslab_Url_Data
 	 */
-	private function transform_data_to_data( array $row ): Urlslab_Url_Data {
+	private function transform( array $row ): Urlslab_Url_Data {
 		return new Urlslab_Url_Data(
 			new Urlslab_Url( parse_url( get_site_url(), PHP_URL_SCHEME ) . '://' . $row['urlName'] ),
 			$row['domainId'],
@@ -49,7 +49,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		$res = $wpdb->get_results( $query, ARRAY_A ); // phpcs:ignore
 		$query_res = array();
 		foreach ( $res as $row ) {
-			$query_res[] = $this->transform_data_to_data( $row );
+			$query_res[] = $this->transform( $row );
 		}
 		return $query_res;
 	}
@@ -157,15 +157,15 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 	private function status_ui_convert( string $status_char ): string {
 		switch ( $status_char ) {
 			case Urlslab::$link_status_available:
-				return '<div class="status-circle status-available" title="available"></div>';
+				return '<div class="status-circle background-success" title="available"></div>';
 			case Urlslab::$link_status_waiting_for_screenshot:
-				return '<div class="status-circle status-pending" title="pending"></div>';
+				return '<div class="status-circle background-warning" title="pending"></div>';
 			case Urlslab::$link_status_not_scheduled:
-				return '<div class="status-circle status-not-scheduled" title="not-scheduled"></div>';
+				return '<div class="status-circle background-secondary" title="not-scheduled"></div>';
 			case Urlslab::$link_status_broken:
-				return '<div class="status-circle status-broken" title="broken"></div>';
+				return '<div class="status-circle background-danger" title="broken"></div>';
 			case Urlslab::$link_status_waiting_for_update:
-				return '<div class="status-circle status-updating" title="updating"></div>';
+				return '<div class="status-circle background-primary" title="updating"></div>';
 			default:
 				return $status_char;
 		}

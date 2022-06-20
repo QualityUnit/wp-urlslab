@@ -58,7 +58,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php
 
 		foreach ( $available_widgets->get_available_widgets() as $widget ) {
 			?>
-	<div class="card<?php echo $user->is_widget_activated( $widget->get_widget_slug() ) ? ' active' : ''; ?>">
+	<div class="card float-left mar-left-1<?php echo $user->is_widget_activated( $widget->get_widget_slug() ) ? ' active' : ''; ?>">
 		<h2 class="title"><?php echo esc_html( $widget->get_widget_title() ); ?></h2>
 		<div class="infobox">
 			<?php echo esc_html( $widget->get_widget_description() ); ?>

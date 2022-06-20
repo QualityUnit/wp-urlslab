@@ -66,7 +66,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		<?php
 	}
 
-	public function screen_option() {
+	public function widget_admin_load() {
 		$option = 'per_page';
 		$args = array(
 			'label' => 'Urls',

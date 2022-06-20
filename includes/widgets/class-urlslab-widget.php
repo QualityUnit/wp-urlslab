@@ -27,7 +27,18 @@ abstract class Urlslab_Widget {
 	 */
 	public abstract function load_widget_page();
 
-	public abstract function screen_option();
+	public abstract function widget_admin_load();
+
+	public function admin_widget_menu_page( $args = '' ): string {
+		$args = wp_parse_args( $args, array() );
+		$url = urlslab_admin_menu_page_url( $this->get_widget_slug() );
+
+		if ( ! empty( $args ) ) {
+			$url = add_query_arg( $args, $url );
+		}
+
+		return $url;
+	}
 
 	/**
 	 * @return string Wordpress submenu widget page title

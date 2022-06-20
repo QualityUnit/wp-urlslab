@@ -23,22 +23,50 @@
 	border-radius: 50%;
 }
 
-.status-available {
+.background-success {
 	background-color: #0f0;
 }
 
-.status-pending {
+.background-warning {
 	background-color: #ffa500ff;
 }
 
-.status-not-scheduled {
-	background-color: #ff00;
+.background-danger {
+	background-color: #f00;
 }
 
-.status-broken {
+.background-secondary {
 	background-color: #808080ff;
 }
 
-.status-updating {
+.background-primary {
 	background-color: #00ff;
+}
+
+.color-success {
+	color: #0f0;
+}
+
+.color-warning {
+	color: #ffa500ff;
+}
+
+.color-danger {
+	color: #f00;
+}
+
+.color-secondary {
+	color: #808080ff;
+}
+
+.color-primary {
+	color: #00ff;
+}
+
+.float-left {
+	float: left;
+}
+
+.mar-left-1 {
+	margin-left: 1em;
 }

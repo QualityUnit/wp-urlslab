@@ -129,7 +129,7 @@ class Urlslab_Admin {
 				$widget->get_widget_slug(),
 				array( $widget, 'load_widget_page' )
 			);
-			add_action( "load-$hook", array( $widget, 'screen_option' ) );
+			add_action( "load-$hook", array( $widget, 'widget_admin_load' ) );
 		}
 	}
 
