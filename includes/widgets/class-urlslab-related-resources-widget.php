@@ -4,6 +4,7 @@
 require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
+require_once URLSLAB_PLUGIN_DIR . '/admin/partials/tables/class-urlslab-related-resources-widget-table.php';
 
 class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
@@ -14,6 +15,8 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	private string $widget_description = 'Urlslab Widget Related Resources - show contextually related pages';
 
 	private string $landing_page_link = 'https://www.urlslab.com';
+
+	private Urlslab_Related_Resources_Widget_Table $related_resources_widget_table;
 
 	private Urlslab_Url_Data_Fetcher $url_data_fetcher;
 
@@ -46,12 +49,273 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	public function load_widget_page() {
-		//Nothing to show
+		?>
+		<div class="wrap">
+			<h2>Related Resources</h2>
+			<?php
+			if (isset( $_REQUEST['status'] )) {
+				$message = $_REQUEST['message'] ?? '';
+				$status = $_REQUEST['status'] ?? '';
+				$this->admin_notice( $status, $message );
+			}
+			$this->import_export_option();
+			$this->related_resources_widget_table->prepare_items();
+			$this->related_resources_widget_table->display();
+			?>
+
+		</div>
+		<?php
 	}
 
 	public function widget_admin_load() {
-		//Nothing to show
+		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
+			 'POST' == $_SERVER['REQUEST_METHOD'] and
+			 isset( $_REQUEST['action'] ) and
+			 -1 != $_REQUEST['action'] and
+			 'import' == $_REQUEST['action']) {
+			// Import/Export option
+			check_admin_referer( 'related-resource-widget-import' );
+			if (isset( $_POST['submit'] )) {
+				if ('Import' == $_POST['submit']) {
+					//# Import the given csv
+					if (!empty( $_FILES['csv_file'] ) and $_FILES['csv_file']['size'] > 0) {
+						$res = $this->save_csv_to_db( $_FILES['csv_file']['tmp_name'] );
+						if ($res) {
+							$redirect_to = $this->admin_widget_menu_page(
+								array(
+									'status' => 'success',
+									'message' => 'Insert Succeeded'
+								)
+							);
+						} else {
+							$redirect_to = $this->admin_widget_menu_page(
+								array(
+									'status' => 'failure',
+									'message' => 'Failure in parsing CSV'
+								)
+							);
+						}
+					} else {
+						$redirect_to = $this->admin_widget_menu_page(
+							array(
+								'status' => 'failure',
+								'message' => 'Empty CSV File provided'
+							)
+						);
+					}
+				} else {
+					$redirect_to = $this->admin_widget_menu_page(
+						array(
+							'status' => 'failure',
+							'message' => 'Wrong Action'
+						)
+					);
+				}
+			} else {
+				$redirect_to = $this->admin_widget_menu_page(
+					array(
+						'status' => 'failure',
+						'message' => 'Not a valid request'
+					)
+				);
+			}
+
+			wp_safe_redirect( $redirect_to );
+			exit();
+		} else if (isset( $_SERVER['REQUEST_METHOD'] ) and
+				   'GET' == $_SERVER['REQUEST_METHOD'] and
+				   isset( $_REQUEST['action'] ) and
+				   -1 != $_REQUEST['action'] and
+				   'export' == $_REQUEST['action']) {
+			header( 'Content-Type: text/csv; charset=utf-8' );
+			header( 'Content-Disposition: attachment; filename=related-resources.csv' );
+			$output = fopen( 'php://output', 'w' );
+			fputcsv( $output, array('Src URL', 'Src Status', 'Dest URL', 'Dest Status') );
+			global $wpdb;
+			$related_resource_table = URLSLAB_RELATED_RESOURCE_TABLE;
+			$urls_table = URLSLAB_URLS_TABLE;
+
+			$query = "SELECT u.urlName AS srcUrlName,
+				       u.status AS srcStatus,
+				       v.urlName AS destUrlName,
+				       v.status AS destStatus
+				FROM $related_resource_table r
+				         INNER JOIN $urls_table as u
+				                    ON r.srcUrlMd5 = u.urlMd5
+				         INNER JOIN $urls_table as v
+				                    ON r.destUrlMd5 = v.urlMd5";
+			$result = $wpdb->get_results( $query, ARRAY_N );
+			foreach ($result as $row) {
+				fputcsv( $output, $row );
+			}
+			fclose( $output );
+			die();
+		} else {
+			$option = 'per_page';
+			$args = array(
+				'label' => 'Relations',
+				'default' => 5,
+				'option' => 'users_per_page',
+			);
+
+			add_screen_option( $option, $args );
+
+			$this->related_resources_widget_table = new Urlslab_Related_Resources_Widget_Table();
+		}
 	}
+
+	private function import_export_option() {
+		?>
+		<div class="card float-left">
+			<h2>Import/Export Related Resources CSV</h2>
+			<div class="info-box">
+				The CSV file should contain headers. the CSV file should include following headers:
+				<ul>
+					<li class="color-danger">src URL (required)</li>
+					<li class="color-danger">dest URL (required)</li>
+				</ul>
+			</div>
+			<form action="<?php echo esc_url( $this->admin_widget_menu_page( 'action=import' ) ); ?>" method="post" enctype="multipart/form-data">
+				<?php wp_nonce_field( 'related-resource-widget-import' ); ?>
+				<input type="file" name="csv_file">
+				<br class="clear"/>
+				<br class="clear"/>
+				<input type="submit" name="submit" id="submit" class="button import_related_resource_csv" value="Import">
+				<a href="<?php echo esc_url( $this->admin_widget_menu_page( 'action=export' ) ); ?>" target="_blank" class="button export_keyword_csv">Export</a>
+			</form>
+		</div>
+		<?php
+	}
+
+	private function admin_notice( string $status, string $message = '' ) {
+		if ( 'success' == $status ) {
+			echo sprintf(
+				'<div class="notice notice-success"><p>%s</p></div>',
+				esc_html( $message ),
+			);
+		}
+
+		if ( 'failure' == $status ) {
+			echo sprintf(
+				'<div class="notice notice-error"><p><strong>%1$s</strong>: %2$s</p></div>',
+				esc_html( 'Error' ),
+				esc_html( $message )
+			);
+		}
+	}
+
+	private function save_csv_to_db( $file ): bool {
+		//# Reading/Parsing CSV File
+		$row = 1;
+		$wrong_rows = 0;
+		$cols = array();
+		$saving_items = array();
+		$scheduling_items = array();
+		$handle = fopen( $file, 'r' );
+		if ( false !== ( $handle ) ) {
+			while (( $data = fgetcsv( $handle ) ) !== false) {
+
+				//# processing CSV Header
+				if ($row == 1) {
+					if (count( $data ) != 2) {
+						//# Wrong number of cols in csv
+						return false;
+					} else {
+						$idx = 0;
+						foreach ($data as $col) {
+							if (is_string( $col )) {
+								if (is_string( $this->map_to_db_col( $col ) )) {
+									if (isset( $cols[$this->map_to_db_col( $col )] )) {
+										return false;
+									} else {
+										$cols[$this->map_to_db_col( $col )] = $idx;
+										$idx++;
+									}
+								} else {
+									return false;
+								}
+							} else {
+								//# wrong type in header
+								return false;
+							}
+						}
+					}
+					$row++;
+					continue;
+				}
+
+				$src_url = new Urlslab_Url( $data[$cols['srcUrl']] );
+				$dest_url = new Urlslab_Url( $data[$cols['destUrl']] );
+
+
+
+				if (empty( $src_url ) or empty( $dest_url ) ) {
+					$wrong_rows++;
+					continue;
+				} else {
+					array_push( $scheduling_items, $src_url, $dest_url );
+					$saving_items[] = array(
+						$src_url,
+						$dest_url,
+					);
+				}
+				$row++;
+			}
+			fclose( $handle );
+		}
+
+		//# Scheduling Src and Dest URLs
+		if (!$this->url_data_fetcher->prepare_url_batch_for_scheduling( $scheduling_items )) {
+			return false;
+		}
+		//# Scheduling Src and Dest URLs
+
+		global $wpdb;
+		$table = URLSLAB_RELATED_RESOURCE_TABLE;
+		$values = array();
+		$placeholder = array();
+		foreach ( $saving_items as $item ) {
+			array_push(
+				$values,
+				$item[0]->get_url_id(),
+				$item[1]->get_url_id(),
+			);
+			$placeholder[] = '(%s, %s)';
+		}
+
+		$placeholder_string = implode( ', ', $placeholder );
+		$update_query = "INSERT IGNORE INTO $table (
+                   srcUrlMd5,
+                   destUrlMd5) VALUES 
+                   $placeholder_string";
+
+		$result = $wpdb->query(
+			$wpdb->prepare(
+				$update_query, // phpcs:ignore
+				$values
+			)
+		);
+
+		return is_numeric( $result );
+
+	}
+
+	/**
+	 * @param string $col_name
+	 *
+	 * @return false|string
+	 */
+	private function map_to_db_col( string $col_name ) {
+		switch (strtolower( trim( $col_name ) )) {
+			case 'src url':
+				return 'srcUrl';
+			case 'dest url':
+				return 'destUrl';
+			default:
+				return false;
+		}
+	}
+
 
 	/**
 	 * @return string
