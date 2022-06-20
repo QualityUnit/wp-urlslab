@@ -196,7 +196,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	private function import_export_option() {
 		?>
 		<div class="card float-left">
-			<h2>Import/Export Keyword CSV</h2>
+			<h2>Import Keyword CSV</h2>
 			<div class="info-box">
 				The CSV file should contain headers. the CSV file should include following headers:
 				<ul>
