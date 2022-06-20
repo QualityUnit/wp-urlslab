@@ -353,8 +353,8 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		);
 
 		$result = $this->url_data_fetcher->fetch_related_urls_to(
-				new Urlslab_Url($urlslab_atts['url']),
-				$urlslab_atts['related-count']
+			new Urlslab_Url( $urlslab_atts['url'] ),
+			$urlslab_atts['related-count']
 		);
 
 		if ( ! empty( $result ) ) {
@@ -381,7 +381,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 	private function render_shortcode_item( Urlslab_Url_Data $url, array $urlslab_atts ): string {
 		$title = $url->get_url_title();
-		if (empty($title)) {
+		if ( empty( $title ) ) {
 			return '';
 		}
 
