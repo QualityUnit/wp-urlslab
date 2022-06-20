@@ -12,6 +12,7 @@ class Urlslab_Url_Data {
 	private ?string $url_meta_description;
 	private ?string $url_summary;
 	private ?string $screenshot_status;
+	private $wp_pageid = 0;
 
 	/**
 	 * @param Urlslab_Url $url
@@ -86,9 +87,11 @@ class Urlslab_Url_Data {
 	 */
 	public function get_url_title(): string {
 		if (empty($this->url_title)) {
-			$postId = url_to_postid(urlslab_get_current_page_protocol() . $this->get_url()->get_url());
-			if ($postId != 0) {
-				$this->url_title = get_the_title($postId);
+			if (empty($this->wp_pageid)) {
+				$this->wp_pageid = url_to_postid(urlslab_get_current_page_protocol() . $this->get_url()->get_url());
+			}
+			if (!empty($this->wp_pageid)) {
+				$this->url_title = get_the_title($this->wp_pageid);
 			}
 		}
 		return $this->url_title ?? '';
@@ -98,6 +101,17 @@ class Urlslab_Url_Data {
 	 * @return string
 	 */
 	public function get_url_meta_description(): string {
+		if (empty($this->url_meta_description)) {
+			if (empty($this->wp_pageid)) {
+				$this->wp_pageid = url_to_postid(urlslab_get_current_page_protocol() . $this->get_url()->get_url());
+			}
+			if (!empty($this->wp_pageid)) {
+				$desc = get_post_meta($this->wp_pageid);
+				if (isset($desc['_yoast_wpseo_metadesc'][0])) {
+					$this->url_meta_description = $desc['_yoast_wpseo_metadesc'][0];
+				}
+			}
+		}
 		return $this->url_meta_description ?? '';
 	}
 
@@ -169,12 +183,12 @@ class Urlslab_Url_Data {
 			return $this->url_summary;
 		}
 
-		if ( trim( $this->url_meta_description ) !== '' ) {
-			return $this->url_meta_description;
+		if ( trim( $this->get_url_meta_description() ) !== '' ) {
+			return $this->get_url_meta_description();
 		}
 
-		if ( trim( $this->url_title ) !== '' ) {
-			return $this->url_title;
+		if ( trim( $this->get_url_title() ) !== '' ) {
+			return $this->get_url_title();
 		}
 
 		return ucwords(
