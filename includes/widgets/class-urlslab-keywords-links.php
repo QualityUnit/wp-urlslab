@@ -172,7 +172,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			global $wpdb;
 			$table = URLSLAB_KEYWORDS_TABLE;
 
-			$query = "SELECT keyword, kw_priority, urlLink, lang FROM $table ORDER BY kw_priority ASC";
+			$query = "SELECT keyword, kw_priority, urlLink, lang FROM $table ORDER BY kw_priority ASC, kw_length DESC";
 			$result = $wpdb->get_results( $query, ARRAY_N );
 			foreach ($result as $row) {
 				fputcsv( $output, $row );
@@ -298,19 +298,18 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		}
 
 		$placeholder_string = implode( ', ', $placeholder );
-		$update_query = "INSERT INTO $table (
+		$update_query = "INSERT IGNORE INTO $table (
                    keyword,
                    kw_priority,
                    kw_length,
-                   lang, 
-                   urlLink) VALUES 
+                   lang,
+                   urlLink) VALUES
                    $placeholder_string
-                   AS new ON DUPLICATE KEY UPDATE
-                   keyword = new.keyword,
-                   kw_priority = new.kw_priority,
-                   kw_length = new.kw_length,
-                   lang = new.lang,
-                   urlLink = new.urlLink";
+                   ON DUPLICATE KEY UPDATE
+                   kw_priority = VALUES(kw_priority),
+                   kw_length = VALUES(kw_length),
+                   lang = VALUES(lang),
+                   urlLink = VALUES(urlLink)";
 
 		$result = $wpdb->query(
 			$wpdb->prepare(
@@ -460,7 +459,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 					'SELECT keyword, urlLink
 				FROM ' . $keyword_table . // phpcs:ignore
 					" WHERE (lang = %s OR lang = 'all')
-					ORDER BY kw_priority ASC, kw_length DESC 
+					ORDER BY kw_priority ASC, kw_length DESC
 					LIMIT 100",
 					urlslab_get_language()
 				),
