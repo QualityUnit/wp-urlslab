@@ -135,17 +135,17 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
                    urlMetaDescription,
                    urlSummary) VALUES
                    $placeholder_string
-                   AS new ON DUPLICATE KEY UPDATE
-                   urlName = new.urlName,
-                   status = new.status,
-                   domainId = new.domainId,
-                   urlId = new.urlId,
-                   domainId = new.domainId,
-                   screenshotDate = new.screenshotDate,
-                   updateStatusDate = new.updateStatusDate,
-                   urlTitle = new.urlTitle,
-                   urlMetaDescription = new.urlMetaDescription,
-                   urlSummary = new.urlSummary";
+                   ON DUPLICATE KEY UPDATE
+                   urlName = VALUES(urlName),
+                   status = VALUES(status),
+                   domainId = VALUES(domainId),
+                   urlId = VALUES(urlId),
+                   domainId = VALUES(domainId),
+                   screenshotDate = VALUES(screenshotDate),
+                   updateStatusDate = VALUES(updateStatusDate),
+                   urlTitle = VALUES(urlTitle),
+                   urlMetaDescription = VALUES(urlMetaDescription),
+                   urlSummary = VALUES(urlSummary)";
 
 		$wpdb->query(
 			$wpdb->prepare(
@@ -215,18 +215,21 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 		$insert_values = array();
 		foreach ( $urls as $url ) {
 			if ( ! isset( $results[ $url->get_url_id() ] ) ) {
+				$url_data = Urlslab_Url_Data::empty( $url );
 				array_push(
 					$insert_values,
 					$url->get_url_id(),
 					$url->get_url(),
+					$url_data->get_url_title(),
+					$url_data->get_url_meta_description(),
 					Urlslab::$link_status_not_scheduled,
 					gmdate( 'Y-m-d H:i:s' )
 				);
-				$insert_placeholders[] = '(%s, %s, %s, %s)';
+				$insert_placeholders[] = '(%s, %s, %s, %s, %s, %s)';
 			}
 		}
 
-		$insert_query = "INSERT IGNORE INTO $table (urlMd5, urlName, status, updateStatusDate) VALUES";
+		$insert_query = "INSERT IGNORE INTO $table (urlMd5, urlName, urlTitle, urlMetaDescription, status, updateStatusDate) VALUES";
 		$insert_query .= implode( ', ', $insert_placeholders );
 
 		return is_numeric(

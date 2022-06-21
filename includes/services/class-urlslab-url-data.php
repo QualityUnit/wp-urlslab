@@ -12,7 +12,7 @@ class Urlslab_Url_Data {
 	private ?string $url_meta_description;
 	private ?string $url_summary;
 	private ?string $screenshot_status;
-	private $wp_pageid = 0;
+	private int $wp_pageid = -1;
 
 	/**
 	 * @param Urlslab_Url $url
@@ -36,15 +36,29 @@ class Urlslab_Url_Data {
 					$url_summary,
 					$screenshot_status
 	) {
-		$this->url = $url;
-		$this->domain_id = $domain_id;
-		$this->url_id = $url_id;
-		$this->screenshot_date = $screenshot_date;
+		$this->url                     = $url;
+		$this->domain_id               = $domain_id;
+		$this->url_id                  = $url_id;
+		$this->screenshot_date         = $screenshot_date;
 		$this->last_status_change_date = $last_status_change_date;
-		$this->url_title = $url_title;
-		$this->url_meta_description = $url_meta_description;
-		$this->url_summary = $url_summary;
-		$this->screenshot_status = $screenshot_status;
+		$this->url_title               = $url_title;
+		$this->url_meta_description    = $url_meta_description;
+		$this->url_summary             = $url_summary;
+		$this->screenshot_status       = $screenshot_status;
+	}
+
+	static function empty( Urlslab_Url $url ): Urlslab_Url_Data {
+		return new Urlslab_Url_Data(
+			$url,
+			'',
+			$url->get_url_id(),
+			null,
+			null,
+			null,
+			null,
+			null,
+			Urlslab::$link_status_not_scheduled
+		);
 	}
 
 	/**
@@ -87,10 +101,8 @@ class Urlslab_Url_Data {
 	 */
 	public function get_url_title(): string {
 		if ( empty( $this->url_title ) ) {
-			if ( empty( $this->wp_pageid ) ) {
-				$this->wp_pageid = url_to_postid( urlslab_get_current_page_protocol() . $this->get_url()->get_url() );
-			}
-			if ( ! empty( $this->wp_pageid ) ) {
+			$this->init_wp_page_id();
+			if ( $this->wp_pageid > 0 ) {
 				$this->url_title = get_the_title( $this->wp_pageid );
 			}
 		}
@@ -98,15 +110,19 @@ class Urlslab_Url_Data {
 		return $this->url_title ?? '';
 	}
 
+	private function init_wp_page_id() {
+		if ( $this->wp_pageid < 0 ) {
+			$this->wp_pageid = url_to_postid( urlslab_get_current_page_protocol() . $this->get_url()->get_url() );
+		}
+	}
+
 	/**
 	 * @return string
 	 */
 	public function get_url_meta_description(): string {
 		if ( empty( $this->url_meta_description ) ) {
-			if ( empty( $this->wp_pageid ) ) {
-				$this->wp_pageid = url_to_postid( urlslab_get_current_page_protocol() . $this->get_url()->get_url() );
-			}
-			if ( ! empty( $this->wp_pageid ) ) {
+			$this->init_wp_page_id();
+			if ( $this->wp_pageid > 0 ) {
 				$desc = get_post_meta( $this->wp_pageid );
 				if ( isset( $desc['_yoast_wpseo_metadesc'][0] ) ) {
 					$this->url_meta_description = $desc['_yoast_wpseo_metadesc'][0];
