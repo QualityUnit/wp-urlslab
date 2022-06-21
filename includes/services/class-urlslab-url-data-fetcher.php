@@ -135,17 +135,17 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
                    urlMetaDescription,
                    urlSummary) VALUES
                    $placeholder_string
-                   AS new ON DUPLICATE KEY UPDATE
-                   urlName = new.urlName,
-                   status = new.status,
-                   domainId = new.domainId,
-                   urlId = new.urlId,
-                   domainId = new.domainId,
-                   screenshotDate = new.screenshotDate,
-                   updateStatusDate = new.updateStatusDate,
-                   urlTitle = new.urlTitle,
-                   urlMetaDescription = new.urlMetaDescription,
-                   urlSummary = new.urlSummary";
+                   ON DUPLICATE KEY UPDATE
+                   urlName = VALUES(urlName),
+                   status = VALUES(status),
+                   domainId = VALUES(domainId),
+                   urlId = VALUES(urlId),
+                   domainId = VALUES(domainId),
+                   screenshotDate = VALUES(screenshotDate),
+                   updateStatusDate = VALUES(updateStatusDate),
+                   urlTitle = VALUES(urlTitle),
+                   urlMetaDescription = VALUES(urlMetaDescription),
+                   urlSummary = VALUES(urlSummary)";
 
 		$wpdb->query(
 			$wpdb->prepare(
