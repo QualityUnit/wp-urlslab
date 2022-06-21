@@ -12,7 +12,7 @@ class Urlslab_Url_Data {
 	private ?string $url_meta_description;
 	private ?string $url_summary;
 	private ?string $screenshot_status;
-	private $wp_pageid = 0;
+	private int $wp_pageid = -1;
 
 	/**
 	 * @param Urlslab_Url $url
@@ -87,10 +87,8 @@ class Urlslab_Url_Data {
 	 */
 	public function get_url_title(): string {
 		if ( empty( $this->url_title ) ) {
-			if ( empty( $this->wp_pageid ) ) {
-				$this->wp_pageid = url_to_postid( urlslab_get_current_page_protocol() . $this->get_url()->get_url() );
-			}
-			if ( ! empty( $this->wp_pageid ) ) {
+			$this->init_wp_page_id();
+			if ( $this->wp_pageid > 0 ) {
 				$this->url_title = get_the_title( $this->wp_pageid );
 			}
 		}
@@ -98,15 +96,19 @@ class Urlslab_Url_Data {
 		return $this->url_title ?? '';
 	}
 
+	private function init_wp_page_id() {
+		if ( $this->wp_pageid === -1 ) {
+			$this->wp_pageid = url_to_postid( urlslab_get_current_page_protocol() . $this->get_url()->get_url() );
+		}
+	}
+
 	/**
 	 * @return string
 	 */
 	public function get_url_meta_description(): string {
 		if ( empty( $this->url_meta_description ) ) {
-			if ( empty( $this->wp_pageid ) ) {
-				$this->wp_pageid = url_to_postid( urlslab_get_current_page_protocol() . $this->get_url()->get_url() );
-			}
-			if ( ! empty( $this->wp_pageid ) ) {
+			$this->init_wp_page_id();
+			if ( $this->wp_pageid > 0 ) {
 				$desc = get_post_meta( $this->wp_pageid );
 				if ( isset( $desc['_yoast_wpseo_metadesc'][0] ) ) {
 					$this->url_meta_description = $desc['_yoast_wpseo_metadesc'][0];
