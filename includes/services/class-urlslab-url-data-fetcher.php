@@ -41,7 +41,7 @@ class Urlslab_Url_Data_Fetcher {
 		$schedules = $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT * FROM ' . $table . // phpcs:ignore
-				' WHERE (status = %s) or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s) 
+				' WHERE (status = %s) or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 				ORDER BY updateStatusDate ASC LIMIT 100',
 				Urlslab::$link_status_not_scheduled,
@@ -127,13 +127,13 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
                    urlMd5,
                    urlName,
                    status,
-                   domainId, 
+                   domainId,
                    urlId,
-                   screenshotDate, 
+                   screenshotDate,
                    updateStatusDate,
                    urlTitle,
                    urlMetaDescription,
-                   urlSummary) VALUES 
+                   urlSummary) VALUES
                    $placeholder_string
                    AS new ON DUPLICATE KEY UPDATE
                    urlName = new.urlName,
@@ -255,7 +255,7 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
        				 u.urlSummary AS urlSummary
 				FROM $related_urls_table r
                 INNER JOIN $urls_table as u ON r.destUrlMd5 = u.urlMd5
-				WHERE r.srcUrlMd5 = %s AND u.status='A'
+				WHERE r.srcUrlMd5 = %s
 				LIMIT %d";
 
 		$query_res = $wpdb->get_results(

@@ -24,13 +24,16 @@ class Urlslab_Url {
 		$parsed_url = parse_url( $input_url );
 
 		if ( ! is_array( $parsed_url ) ) {
-			$this->url_components = array();
+			$this->url_components     = array( 'path' => '' );
 			$this->urlslab_parsed_url = '';
 			return;
 		}
 
 		$this->url_components = $parsed_url;
 
+		if ( ! isset( $this->url_components['path'] ) ) {
+			$this->url_components['path'] = '';
+		}
 
 		if ( ! isset( $this->url_components['scheme'] ) ) {
 			$this->url_components['scheme'] = parse_url( get_site_url(), PHP_URL_SCHEME ) ?? 'http';
