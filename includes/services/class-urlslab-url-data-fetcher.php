@@ -215,7 +215,7 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 		$insert_values = array();
 		foreach ( $urls as $url ) {
 			if ( ! isset( $results[ $url->get_url_id() ] ) ) {
-				$url_data = new Urlslab_Url_Data( $url, '', $url->get_url_id(), null, null, null, null, null, Urlslab::$link_status_not_scheduled );
+				$url_data = Urlslab_Url_Data::empty( $url );
 				array_push(
 					$insert_values,
 					$url->get_url_id(),

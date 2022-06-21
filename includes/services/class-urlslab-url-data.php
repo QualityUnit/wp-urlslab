@@ -36,15 +36,29 @@ class Urlslab_Url_Data {
 					$url_summary,
 					$screenshot_status
 	) {
-		$this->url = $url;
-		$this->domain_id = $domain_id;
-		$this->url_id = $url_id;
-		$this->screenshot_date = $screenshot_date;
+		$this->url                     = $url;
+		$this->domain_id               = $domain_id;
+		$this->url_id                  = $url_id;
+		$this->screenshot_date         = $screenshot_date;
 		$this->last_status_change_date = $last_status_change_date;
-		$this->url_title = $url_title;
-		$this->url_meta_description = $url_meta_description;
-		$this->url_summary = $url_summary;
-		$this->screenshot_status = $screenshot_status;
+		$this->url_title               = $url_title;
+		$this->url_meta_description    = $url_meta_description;
+		$this->url_summary             = $url_summary;
+		$this->screenshot_status       = $screenshot_status;
+	}
+
+	static function empty( Urlslab_Url $url ): Urlslab_Url_Data {
+		return new Urlslab_Url_Data(
+			$url,
+			'',
+			$url->get_url_id(),
+			null,
+			null,
+			null,
+			null,
+			null,
+			Urlslab::$link_status_not_scheduled
+		);
 	}
 
 	/**
