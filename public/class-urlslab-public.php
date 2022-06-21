@@ -86,14 +86,13 @@ class Urlslab_Public {
 		return $keywords_links->theContentHook( $content );
 	}
 
-	public function the_content_og_meta_tag() {
-		remove_action( 'wp_head', array( $this, 'the_content_og_meta_tag' ) );
+	public function the_content_og_meta_tag_start() {
 		ob_start();
-		do_action( 'wp_head' );
-		remove_all_actions( 'wp_head' );
+	}
+
+	public function the_content_og_meta_tag_end() {
 		$content = ob_get_contents();
 		ob_end_clean();
-
 		$og_meta_tag = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-og-meta-tag' );
 		echo $og_meta_tag->theContentHook( $content ); // phpcs:ignore
 	}

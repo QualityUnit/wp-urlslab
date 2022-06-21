@@ -156,7 +156,7 @@ class Urlslab {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function load_dependencies() { 
+	private function load_dependencies() {
 		/**
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
@@ -193,7 +193,7 @@ class Urlslab {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function set_locale() { 
+	private function set_locale() {
 		$plugin_i18n = new Urlslab_I18n();
 
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
@@ -207,7 +207,7 @@ class Urlslab {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function define_admin_hooks() { 
+	private function define_admin_hooks() {
 		$plugin_admin = new Urlslab_Admin( $this->get_urlslab(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_init', $this, 'urlslab_upgrade', 10, 0 );
@@ -231,7 +231,7 @@ class Urlslab {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function define_public_hooks() { 
+	private function define_public_hooks() {
 		$plugin_public = new Urlslab_Public( $this->get_urlslab(), $this->get_version() );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
@@ -249,7 +249,8 @@ class Urlslab {
 		//# Order Group 1
 
 		//# Order Group 2
-		$this->loader->add_action( 'wp_head', $plugin_public, 'the_content_og_meta_tag' );
+		$this->loader->add_action( 'wp_head', $plugin_public, 'the_content_og_meta_tag_start', -10000 );
+		$this->loader->add_action( 'wp_head', $plugin_public, 'the_content_og_meta_tag_end', 10000 );
 		//# Order Group 2
 	}
 
