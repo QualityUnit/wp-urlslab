@@ -215,18 +215,21 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 		$insert_values = array();
 		foreach ( $urls as $url ) {
 			if ( ! isset( $results[ $url->get_url_id() ] ) ) {
+				$url_data = new Urlslab_Url_Data( $url, '', $url->get_url_id(), null, null, null, null, null, Urlslab::$link_status_not_scheduled );
 				array_push(
 					$insert_values,
 					$url->get_url_id(),
 					$url->get_url(),
+					$url_data->get_url_title(),
+					$url_data->get_url_meta_description(),
 					Urlslab::$link_status_not_scheduled,
 					gmdate( 'Y-m-d H:i:s' )
 				);
-				$insert_placeholders[] = '(%s, %s, %s, %s)';
+				$insert_placeholders[] = '(%s, %s, %s, %s, %s, %s)';
 			}
 		}
 
-		$insert_query = "INSERT IGNORE INTO $table (urlMd5, urlName, status, updateStatusDate) VALUES";
+		$insert_query = "INSERT IGNORE INTO $table (urlMd5, urlName, urlTitle, urlMetaDescription, status, updateStatusDate) VALUES";
 		$insert_query .= implode( ', ', $insert_placeholders );
 
 		return is_numeric(
