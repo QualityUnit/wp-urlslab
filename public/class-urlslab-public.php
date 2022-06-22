@@ -78,7 +78,7 @@ class Urlslab_Public {
 	public function the_content_og_meta_tag_end() {
 		$content = ob_get_contents();
 		ob_end_clean();
-		$og_meta_tag = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-og-meta-tag' );
+		$og_meta_tag = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-meta-tag' );
 		echo $og_meta_tag->theContentHook( $content ); // phpcs:ignore
 	}
 

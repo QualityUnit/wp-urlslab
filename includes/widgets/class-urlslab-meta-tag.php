@@ -7,7 +7,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
 
 class Urlslab_Meta_Tag extends Urlslab_Widget {
 
-	private string $widget_slug = 'urlslab-og-meta-tag';
+	private string $widget_slug = 'urlslab-meta-tag';
 
 	private string $widget_title = 'Meta Tag';
 
@@ -36,7 +36,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	public function hook_callback_widget_end() {
 		$content = ob_get_contents();
 		ob_end_clean();
-		$og_meta_tag = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-og-meta-tag' );
+		$og_meta_tag = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-meta-tag' );
 		echo $og_meta_tag->theContentHook( $content ); // phpcs:ignore
 	}
 
@@ -80,14 +80,14 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_admin_menu_page_title(): string {
-		return 'Urlslab Widget | og Meta Tag';
+		return 'Urlslab Widget | Meta Tag';
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_admin_menu_title(): string {
-		return 'Og Meta tag';
+		return 'Meta tag';
 	}
 
 	public function theContentHook( $content) {
