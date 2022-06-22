@@ -236,7 +236,7 @@ class Urlslab {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-		$this->init_activated_widgets( $plugin_public );
+		$this->init_activated_widgets();
 	}
 
 	private function init_activated_widgets() {
