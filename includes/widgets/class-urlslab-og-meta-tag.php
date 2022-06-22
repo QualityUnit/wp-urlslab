@@ -80,12 +80,17 @@ class Urlslab_Og_Meta_Tag extends Urlslab_Widget {
 			return $content;    //nothing to process
 		}
 
-		$document = new DOMDocument();
+		$document = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
 		$document->encoding = get_bloginfo( 'charset' );
 		$document->strictErrorChecking = false;
 		$libxml_previous_state = libxml_use_internal_errors( true );
 		try {
-			$document->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', 'UTF-8' ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
+			$document->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', get_bloginfo( 'charset' ) ) );
+			$head_tag = $document->getElementsByTagName( 'head' )[0];
+			if (empty( $head_tag ) || !is_object( $head_tag )) {
+				return $content;
+			}
+
 			libxml_clear_errors();
 			libxml_use_internal_errors( $libxml_previous_state );
 
@@ -110,7 +115,7 @@ class Urlslab_Og_Meta_Tag extends Urlslab_Widget {
 						$node = $document->createElement( 'meta' );
 						$node->setAttribute( 'name', 'description' );
 						$node->setAttribute( 'content', $url_data->get_url_summary_text() );
-						$document->appendChild( $node );
+						$head_tag->appendChild( $node );
 					} else {
 						foreach ($meta_description as $node) {
 							if (strlen( trim( $node->getAttribute( 'content' ) ) ) < 3) {
@@ -127,7 +132,7 @@ class Urlslab_Og_Meta_Tag extends Urlslab_Widget {
 						$node = $document->createElement( 'meta' );
 						$node->setAttribute( 'property', 'og:title' );
 						$node->setAttribute( 'content', $url_data->get_url_summary_text() );
-						$document->appendChild( $node );
+						$head_tag->appendChild( $node );
 					} else {
 						foreach ($meta_og_title as $node) {
 							if (strlen( trim( $node->getAttribute( 'content' ) ) ) < 3) {
@@ -142,7 +147,7 @@ class Urlslab_Og_Meta_Tag extends Urlslab_Widget {
 						$node = $document->createElement( 'meta' );
 						$node->setAttribute( 'property', 'og:description' );
 						$node->setAttribute( 'content', $url_data->get_url_summary_text() );
-						$document->appendChild( $node );
+						$head_tag->appendChild( $node );
 					} else {
 						foreach ($meta_og_description as $node) {
 							if (strlen( trim( $node->getAttribute( 'content' ) ) ) < 3) {
@@ -158,7 +163,7 @@ class Urlslab_Og_Meta_Tag extends Urlslab_Widget {
 						$node = $document->createElement( 'meta' );
 						$node->setAttribute( 'property', 'og:image' );
 						$node->setAttribute( 'content', $url_data->render_screenshot_path() );
-						$document->appendChild( $node );
+						//$document->appendChild( $node );
 					} else {
 						foreach ($meta_og_image as $node) {
 							if (strlen( trim( $node->getAttribute( 'content' ) ) ) < 3) {
@@ -167,7 +172,6 @@ class Urlslab_Og_Meta_Tag extends Urlslab_Widget {
 						}
 					}
 					// meta og image generation
-
 					return $document->saveHTML();
 				}
 			}

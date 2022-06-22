@@ -250,7 +250,8 @@ class Urlslab {
 
 		//# Order Group 2
 		$this->loader->add_action( 'wp_head', $plugin_public, 'the_content_og_meta_tag_start', -10000 );
-		$this->loader->add_action( 'wp_head', $plugin_public, 'the_content_og_meta_tag_end', 10000 );
+		$this->loader->add_action( 'wp_head', $plugin_public, 'the_content_og_meta_tag_end', 100000 );
+//		$this->loader->add_action( 'wp_head', $plugin_public, 'the_content_og_meta_tag' );
 		//# Order Group 2
 	}
 
