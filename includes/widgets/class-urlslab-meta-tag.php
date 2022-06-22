@@ -24,6 +24,21 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 		$this->url_data_fetcher = $url_data_fetcher;
 	}
 
+	public function init_widget( Urlslab_Loader $loader ) {
+		$loader->add_action( 'wp_head', $this, 'hook_callback_widget_start', -10000 );
+		$loader->add_action( 'wp_head', $this, 'hook_callback_widget_end', 100000 );
+	}
+
+	public function hook_callback_widget_start() {
+		ob_start();
+	}
+
+	public function hook_callback_widget_end() {
+		$content = ob_get_contents();
+		ob_end_clean();
+		$og_meta_tag = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-og-meta-tag' );
+		echo $og_meta_tag->theContentHook( $content ); // phpcs:ignore
+	}
 
 	/**
 	 * @return string

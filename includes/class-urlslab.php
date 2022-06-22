@@ -236,23 +236,14 @@ class Urlslab {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-		$this->add_public_content_filters( $plugin_public );
+		$this->init_activated_widgets( $plugin_public );
 	}
 
-	private function add_public_content_filters( Urlslab_Public $plugin_public ) {
-		//TODO - this should activate the widgets according to user settings Urlslab_User_Widget
-		//# The order of adding add_filter is important, since no priority is used in filters
-		//# Order Group 1
-		$this->loader->add_filter( 'the_content', $plugin_public, 'the_content_keywords_links' );
-		$this->loader->add_filter( 'the_content', $plugin_public, 'the_content_link_enhancer' );
-		$this->loader->add_filter( 'the_content', $plugin_public, 'the_content_image_alt_attribute' );
-		//# Order Group 1
-
-		//# Order Group 2
-		$this->loader->add_action( 'wp_head', $plugin_public, 'the_content_og_meta_tag_start', -10000 );
-		$this->loader->add_action( 'wp_head', $plugin_public, 'the_content_og_meta_tag_end', 100000 );
-//		$this->loader->add_action( 'wp_head', $plugin_public, 'the_content_og_meta_tag' );
-		//# Order Group 2
+	private function init_activated_widgets() {
+		$active_widgets = Urlslab_User_Widget::get_instance()->get_activated_widget();
+		foreach ( $active_widgets as $active_widget ) {
+			$active_widget->init_widget( $this->loader );
+		}
 	}
 
 	private function define_backend_hooks() {
@@ -260,17 +251,9 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
 		$cron_job = new Urlslab_Screenshot_Cron( $this->url_data_fetcher );
 
-		$this->loader->add_action( 'init', $this, 'urlslab_shortcodes_init', 10, 0 );
 		$this->loader->add_action( 'urlslab_cron_hook', $cron_job, 'urlslab_cron_exec', 10, 0 );
 		if ( ! wp_next_scheduled( 'urlslab_cron_hook' ) ) {
 			wp_schedule_event( time(), 'every_minute', 'urlslab_cron_hook' );
-		}
-	}
-
-
-	public function urlslab_shortcodes_init() {
-		foreach ( Urlslab_Available_Widgets::get_instance()->get_available_widgets() as $i => $widget ) {
-			add_shortcode( $widget->get_widget_slug(), array( $widget, 'get_shortcode_content' ) );
 		}
 	}
 

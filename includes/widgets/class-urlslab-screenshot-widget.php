@@ -25,6 +25,15 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		$this->urlslab_url_data_fetcher = $urlslab_url_data_fetcher;
 	}
 
+	public function init_widget( Urlslab_Loader $loader ) {
+		$loader->add_action( 'init', $this, 'hook_callback', 10, 0 );
+	}
+
+	public function hook_callback() {
+		add_shortcode( $this->widget_slug, array( $this, 'get_shortcode_content' ) );
+	}
+
+
 	/**
 	 * @return string
 	 */
