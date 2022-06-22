@@ -5,13 +5,13 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
 
-class Urlslab_Og_Meta_Tag extends Urlslab_Widget {
+class Urlslab_Meta_Tag extends Urlslab_Widget {
 
 	private string $widget_slug = 'urlslab-og-meta-tag';
 
-	private string $widget_title = 'OG Meta Tag';
+	private string $widget_title = 'Meta Tag';
 
-	private string $widget_description = 'Urlslab OG Meta tag - Generate screenshot of current page and display as og meta tag';
+	private string $widget_description = 'Urlslab Meta tag - Generate screenshot of current page and display as og meta tag';
 
 	private string $landing_page_link = 'https://www.urlslab.com';
 
