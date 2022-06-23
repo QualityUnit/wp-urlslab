@@ -40,6 +40,14 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	const MAX_REPLACEMENTS_PER_PAGE = 30;
 	const MAX_REPLACEMENTS_PER_PARAGRAPH = 2;
 
+	public function init_widget( Urlslab_Loader $loader ) {
+		$loader->add_filter( 'the_content', $this, 'hook_callback', 11 );
+	}
+
+	public function hook_callback( $content ) {
+		return $this->theContentHook( $content );
+	}
+
 	/**
 	 * @return string
 	 */

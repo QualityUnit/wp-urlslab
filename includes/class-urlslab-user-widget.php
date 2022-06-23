@@ -20,14 +20,20 @@ class Urlslab_User_Widget {
 	public static function get_instance(): Urlslab_User_Widget {
 		if ( empty( self::$instance ) ) {
 			self::$instance = new self;
-			$widgets = (array) Urlslab::get_option( 'user_widgets' );
+			$widgets = Urlslab::get_option( 'user_widgets' );
 			$available_widgets = Urlslab_Available_Widgets::get_instance();
-			foreach ( $widgets as $widget ) {
-				$widget_detail = $available_widgets->get_widget( $widget );
-				if ( false !== $widget_detail ) {
-					self::$instance->activated_widgets[ $widget_detail->get_widget_slug() ] = $widget_detail;
+
+			if ( is_bool( $widgets ) && ! $widgets ) {
+				//# First Time user initiated plugin
+				self::$instance->activate_widgets( $available_widgets->get_available_widgets() );
+			} else {
+				foreach ( $widgets as $widget ) {
+					$widget_detail = $available_widgets->get_widget( $widget );
+					if ( false !== $widget_detail ) {
+						self::$instance->activated_widgets[ $widget_detail->get_widget_slug() ] = $widget_detail;
+					}
 				}
-			}
+			}       
 		}
 
 		return self::$instance;
@@ -47,6 +53,11 @@ class Urlslab_User_Widget {
 		}
 	}
 
+	/**
+	 * @param Urlslab_Widget[] $urlslab_widget
+	 *
+	 * @return void
+	 */
 	public function activate_widgets( array $urlslab_widget ) {
 		foreach ( $urlslab_widget as $widget ) {
 			$this->activate_widget( $widget );

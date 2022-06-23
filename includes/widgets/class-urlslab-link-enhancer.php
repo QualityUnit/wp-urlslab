@@ -26,6 +26,13 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		$this->urlslab_url_data_fetcher = $urlslab_url_data_fetcher;
 	}
 
+	public function init_widget( Urlslab_Loader $loader ) {
+		$loader->add_filter( 'the_content', $this, 'hook_callback', 12 );
+	}
+
+	public function hook_callback( $content ) {
+		return $this->theContentHook( $content );
+	}
 
 	/**
 	 * @return string

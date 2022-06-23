@@ -17,6 +17,13 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 
 	const MAX_URLS_TO_ENHANCE = 100;
 
+	public function init_widget( Urlslab_Loader $loader ) {
+		$loader->add_filter( 'the_content', $this, 'hook_callback', 13 );
+	}
+
+	public function hook_callback( $content ) {
+		return $this->theContentHook( $content );
+	}
 
 	/**
 	 * @return string

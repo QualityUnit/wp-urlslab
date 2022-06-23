@@ -3,6 +3,13 @@
 abstract class Urlslab_Widget {
 
 	/**
+	 * @param Urlslab_Loader $loader
+	 *
+	 * @return mixed
+	 */
+	public abstract function init_widget( Urlslab_Loader $loader);
+
+	/**
 	 * @return string Widget slug for identifying the widget
 	 */
 	public abstract function get_widget_slug(): string;
