@@ -4,6 +4,7 @@ class Urlslab_Url {
 
 	private string $urlslab_parsed_url;
 	private array $url_components = array();
+	private const SKIP_QUERY_PARAMS_REGEXP = '/^(utm_[a-zA-Z0-9]*|_gl|_ga.*|gclid|fbclid|fb_[a-zA-Z0-9]*|msclkid|zenid|lons1|appns|lpcid|mm_src|muid|phpsessid|jsessionid|aspsessionid|doing_wp_cron|sid|pk_vid|source)$/';
 
 	/**
 	 * @param string $url
@@ -48,7 +49,22 @@ class Urlslab_Url {
 
 		$url = $this->url_components['host'] . ( $this->url_components['path'] ?? '' );
 		if ( isset( $this->url_components['query'] ) ) {
-			$url .= '?' . $this->url_components['query'];
+			parse_str($this->url_components['query'], $query_params);
+			if ( is_array( $query_params ) ) {
+				foreach ( $query_params as $param_name => $param_value ) {
+					if ( preg_match( self::SKIP_QUERY_PARAMS_REGEXP, $param_name ) ) {
+						unset( $query_params[ $param_name ] );
+					}
+				}
+				if ( ! empty( $query_params ) ) {
+					$this->url_components['query'] = http_build_query( $query_params );
+				} else {
+					unset( $this->url_components['query'] );
+				}
+			}
+			if ( isset( $this->url_components['query'] ) ) {
+				$url .= '?' . $this->url_components['query'];
+			}
 		}
 		$this->urlslab_parsed_url = $url;
 	}
