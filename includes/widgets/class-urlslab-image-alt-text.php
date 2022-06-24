@@ -91,7 +91,7 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 
 			$xpath = new DOMXPath( $document );
 			$table_data = $xpath->query( "//img[not(@alt) or @alt='']|//*[starts-with(name(),'h')]" );
-			$title = '';
+			$title = get_the_title();
 
 			if (!empty( $table_data )) {
 				foreach ($table_data as $element) {
