@@ -49,7 +49,7 @@ class Urlslab_Url {
 
 		$url = $this->url_components['host'] . ( $this->url_components['path'] ?? '' );
 		if ( isset( $this->url_components['query'] ) ) {
-			parse_str($this->url_components['query'], $query_params);
+			parse_str( $this->url_components['query'], $query_params );
 			if ( is_array( $query_params ) ) {
 				foreach ( $query_params as $param_name => $param_value ) {
 					if ( preg_match( self::SKIP_QUERY_PARAMS_REGEXP, $param_name ) ) {
