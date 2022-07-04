@@ -2769,9 +2769,9 @@
     core-js "^3.19.1"
 
 "@wordpress/base-styles@^4", "@wordpress/base-styles@^4.4.0":
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/@wordpress/base-styles/-/base-styles-4.5.0.tgz#24dfb83a7c129db61ebfa011b9620c3200fcff5c"
-  integrity sha512-iz2bDZSDWEgBNOXx3072avn/+zsI+9akhTF2DA/wDdRX0TpS4SSs/vrfhvWfruq5PPLRjJ7ogLKHMnN9VvB9yg==
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/@wordpress/base-styles/-/base-styles-4.6.0.tgz#18863dda5ab282dd5650fc65258d36d76a2b5b8b"
+  integrity sha512-7VS1exIBjQ7Clkr22FnrBDSfTrpLQ+cSYi3hgOxi9XngpNbr7uBqti07bgfjfWnUE01jAjMtXoAdNXb9ZMcP2g==
 
 "@wordpress/blob@^3.11.0", "@wordpress/blob@^3.12.0", "@wordpress/blob@^3.3.1", "@wordpress/blob@^3.7.0":
   version "3.12.0"
