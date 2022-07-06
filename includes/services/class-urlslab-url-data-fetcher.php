@@ -32,7 +32,7 @@ class Urlslab_Url_Data_Fetcher {
 	}
 
 	/**
-	 * @return array|stdClass[]
+	 * @return Urlslab_Url_Data[]
 	 */
 	public function fetch_scheduling_urls(): array {
 		global $wpdb;
@@ -60,6 +60,47 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 
 		return $res;
 	}
+
+	/**
+	 * @param Urlslab_Url[] $urls
+	 *
+	 * @return bool
+	 */
+	public function mark_as_broken_batch( array $urls ): bool {
+		if ( empty( $urls ) ) {
+			return true;
+		}
+
+		global $wpdb;
+		$table = URLSLAB_URLS_TABLE;
+
+		$values = array();
+		$placeholder = array();
+		foreach ( $urls as $url ) {
+			array_push(
+				$values,
+				$url->get_url_id(),
+				$url->get_url(),
+				Urlslab::$link_status_broken,
+			);
+			$placeholder[] = '(%s, %s, %s)';
+		}
+
+		$placeholder_string = implode( ', ', $placeholder );
+		$update_query = "INSERT IGNORE INTO $table (
+                   urlMd5,
+                   urlName,
+                   status) VALUES
+                   $placeholder_string";
+
+		return $wpdb->query(
+			$wpdb->prepare(
+				$update_query, // phpcs:ignore
+				$values
+			)
+		);
+	}
+
 
 	/**
 	 * @param string $url
@@ -166,29 +207,42 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 	}
 
 	/**
-	 * @param array $urls
+	 * @param Urlslab_Url[] $urls
 	 *
 	 * @return array
 	 */
-	public function fetch_schedule_urls_batch( array $urls ): ?array {
+	public function fetch_schedule_urls_batch( $urls ): ?array {
 		if ( empty( $urls ) ) {
 			return null;
 		}
+
+		$valid_urls = array();
+		$broken_urls = array();
+		foreach ( $urls as $url ) {
+			if ( $url->is_url_valid() ) {
+				$valid_urls[] = $url;
+			} else {
+				$broken_urls[] = $url;
+			}
+		}
+
 		global $wpdb;
 		$table = URLSLAB_URLS_TABLE;
-		$placeholders = implode( ', ', array_fill( 0, count( $urls ), '%s' ) );
+		$placeholders = implode( ', ', array_fill( 0, count( $valid_urls ), '%s' ) );
 		$url_hashes = array();
-		foreach ( $urls as $url ) {
+		foreach ( $valid_urls as $url ) {
 			$url_hashes[] = $url->get_url_id();
 		}
 
-		$query_results = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * FROM $table WHERE urlMd5 IN ($placeholders)", // phpcs:ignore
-				$url_hashes,
-			),
-			ARRAY_A
-		);
+		if ( ! empty( $valid_urls ) ) {
+			$query_results = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT * FROM $table WHERE urlMd5 IN ($placeholders)", // phpcs:ignore
+					$url_hashes,
+				),
+				ARRAY_A
+			);
+		}
 
 		$results = array();
 		if ( ! empty( $query_results ) ) {
@@ -198,7 +252,8 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 		}
 
 
-		$this->prepare_url_batch_for_scheduling( $urls );
+		$this->prepare_url_batch_for_scheduling( $valid_urls );
+		$this->mark_as_broken_batch( $broken_urls );
 		return $results;
 	}
 
@@ -208,6 +263,9 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 	 * @return void
 	 */
 	public function prepare_url_batch_for_scheduling( array $urls ): bool {
+		if ( empty( $urls ) ) {
+			return true;
+		}
 		global $wpdb;
 		$table = URLSLAB_URLS_TABLE;
 

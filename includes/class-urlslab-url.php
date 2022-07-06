@@ -4,6 +4,13 @@ class Urlslab_Url {
 
 	private string $urlslab_parsed_url;
 	private array $url_components = array();
+	private array $domain_blacklists = array(
+		'google.com',
+		'facebook.com',
+		'instagram.com',
+		'twitter.com',
+		'localhost',
+	);
 	private const SKIP_QUERY_PARAMS_REGEXP = '/^(utm_[a-zA-Z0-9]*|_gl|_ga.*|gclid|fbclid|fb_[a-zA-Z0-9]*|msclkid|zenid|lons1|appns|lpcid|mm_src|muid|phpsessid|jsessionid|aspsessionid|doing_wp_cron|sid|pk_vid|source)$/';
 
 	/**
@@ -13,6 +20,21 @@ class Urlslab_Url {
 		$this->urlslab_url_init( $url );
 	}
 
+	/**
+	 * @return bool
+	 */
+	public function is_url_valid(): bool {
+		if ( empty( $this->urlslab_parsed_url ) ) {
+			return false;
+		}
+
+		foreach ( $this->domain_blacklists as $domain_blacklist ) {
+			if ( str_contains( $this->url_components['host'], $domain_blacklist ) ) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	/**
 	 * @return string
