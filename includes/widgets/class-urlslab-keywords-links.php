@@ -531,7 +531,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$document->strictErrorChecking = false;
 		$libxml_previous_state = libxml_use_internal_errors( true );
 		try {
-			$document->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', 'UTF-8' ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
+			$document->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', 'UTF-8' ) );
 			libxml_clear_errors();
 			libxml_use_internal_errors( $libxml_previous_state );
 
