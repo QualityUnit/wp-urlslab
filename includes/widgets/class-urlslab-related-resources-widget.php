@@ -153,7 +153,13 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			    WHERE r.srcUrlMd5 <> r.destUrlMd5";
 			$result = $wpdb->get_results( $query, ARRAY_N );
 			foreach ($result as $row) {
-				fputcsv( $output, $row );
+				fputcsv(
+					$output,
+					array(
+						urlslab_get_current_page_protocol() . $row[0],
+						urlslab_get_current_page_protocol() . $row[1]
+					) 
+				);
 			}
 			fclose( $output );
 			die();
