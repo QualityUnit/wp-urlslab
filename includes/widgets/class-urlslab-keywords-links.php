@@ -89,9 +89,13 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			$this->user_overall_option();
 			?>
 				<div>
-					<form method="post">
+					<form method="get" class="float-left">
 						<?php
 						$this->keyword_table->prepare_items();
+						?>
+						<input type="hidden" name="page" value="<?php echo esc_attr( $this->widget_slug ); ?>">
+						<?php
+						$this->keyword_table->search_box( 'Search', 'urlslab-keyword-input' );
 						$this->keyword_table->display();
 						?>
 					</form>

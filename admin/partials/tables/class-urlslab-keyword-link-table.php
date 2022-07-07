@@ -5,6 +5,10 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 }
 
 class Urlslab_Keyword_Link_Table extends WP_List_Table {
+	/**
+	 * @var mixed
+	 */
+	public $user_list_table;
 
 	/**
 	 * @param array $row
@@ -26,12 +30,20 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	 * Getting URL Keywords
 	 * @return array|stdClass[]
 	 */
-	private function get_keywords( int $limit, int $offset ): array {
+	private function get_keywords( string $keyword_search, int $limit, int $offset ): array {
 		global $wpdb;
 		$table = URLSLAB_KEYWORDS_TABLE;
+		$values = array();
 
 		/* -- Preparing your query -- */
 		$query = "SELECT * FROM $table";
+
+		/* -- Preparing the condition -- */
+		if ( ! empty( $keyword_search ) ) {
+			$query .= ' WHERE keyword LIKE %s';
+			$values[] = '%' . $keyword_search . '%';
+		}
+
 
 		/* -- Ordering parameters -- */
 		//Parameters that are going to be used to order the result
@@ -42,7 +54,13 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 
 		/* -- Pagination parameters -- */
 		$query .= ' LIMIT ' . $limit . ' OFFSET ' . $offset;
-		$res = $wpdb->get_results( $query, ARRAY_A ); // phpcs:ignore
+		$res = $wpdb->get_results(
+			$wpdb->prepare(
+				$query, // phpcs:ignore
+				$values
+			),
+			ARRAY_A
+		);
 		$query_res = array();
 		foreach ( $res as $row ) {
 			$query_res[] = $this->transform( $row );
@@ -188,21 +206,35 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	public function process_bulk_action() {
 		//Detect when a bulk action is being triggered...
 		if ( 'delete' === $this->current_action() &&
-		isset( $_GET['keyword'] ) ) {
+		isset( $_GET['keyword'] ) &&
+		isset( $_REQUEST['_wpnonce'] ) ) {
 
 			// In our file that handles the request, verify the nonce.
-			check_admin_referer( 'urlslab_delete_keyword' );
+			$nonce = wp_unslash( $_REQUEST['_wpnonce'] );
+			/*
+			 * Note: the nonce field is set by the parent class
+			 * wp_nonce_field( 'bulk-' . $this->_args['plural'] );
+			 */
+			if ( ! wp_verify_nonce( $nonce, 'urlslab_delete_keyword' ) ) { // verify the nonce.
+				wp_redirect(
+					add_query_arg(
+						'status=failure',
+						'message=this link is expired'
+					)
+				);
+				exit();
+			}
 
 			$this->delete_keyword( $_GET['keyword'] );
 		}
 
 
 		// Bulk Delete triggered
-		if ( ( isset( $_POST['action'] ) && 'bulk-delete' == $_POST['action'] )
-			 || ( isset( $_POST['action2'] ) && 'bulk-delete' == $_POST['action2'] ) ) {
+		if ( ( isset( $_GET['action'] ) && 'bulk-delete' == $_GET['action'] )
+			 || ( isset( $_GET['action2'] ) && 'bulk-delete' == $_GET['action2'] ) ) {
 
-			if ( isset( $_POST['bulk-delete'] ) ) {
-				$delete_ids = esc_sql( $_POST['bulk-delete'] );
+			if ( isset( $_GET['bulk-delete'] ) ) {
+				$delete_ids = esc_sql( $_GET['bulk-delete'] );
 				// loop over the array of record IDs and delete them
 				$this->delete_keywords( $delete_ids );
 			}       
@@ -227,13 +259,20 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	 * pagination, columns and table elements
 	 */
 	function prepare_items() {
+
+		$keyword_search_key = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
+
 		$this->process_bulk_action();
 
 
 		$table_page = $this->get_pagenum();
 		$items_per_page = $this->get_items_per_page( 'users_per_page' );
 
-		$query_results = $this->get_keywords( $items_per_page, ( $table_page - 1 ) * $items_per_page );
+		$query_results = $this->get_keywords(
+			$keyword_search_key,
+			$items_per_page,
+			( $table_page - 1 ) * $items_per_page 
+		);
 		$total_count = $this->count_keywords();
 
 
