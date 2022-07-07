@@ -30,12 +30,20 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 	 * Getting url screenshot
 	 * @return array|stdClass[]
 	 */
-	private function get_url_screenshots( int $limit, int $offset ): array {
+	private function get_url_screenshots( string $url_search_key, int $limit, int $offset ): array {
 		global $wpdb;
 		$table = URLSLAB_URLS_TABLE;
+		$values = array();
 
 		/* -- Preparing your query -- */
 		$query = "SELECT * FROM $table";
+
+		/* -- Preparing the condition -- */
+		if ( ! empty( $url_search_key ) ) {
+			$query .= ' WHERE urlName LIKE %s';
+			$values[] = '%' . $url_search_key . '%';
+		}
+
 
 		/* -- Ordering parameters -- */
 		//Parameters that are going to be used to order the result
@@ -46,7 +54,14 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 
 		/* -- Pagination parameters -- */
 		$query .= ' LIMIT ' . $limit . ' OFFSET ' . $offset;
-		$res = $wpdb->get_results( $query, ARRAY_A ); // phpcs:ignore
+		$res = $wpdb->get_results(
+			$wpdb->prepare(
+				$query, // phpcs:ignore
+				$values
+			),
+			ARRAY_A
+		);
+
 		$query_res = array();
 		foreach ( $res as $row ) {
 			$query_res[] = $this->transform( $row );
@@ -131,10 +146,15 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 	 * pagination, columns and table elements
 	 */
 	function prepare_items() {
+		$url_search_key = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
 		$table_page = $this->get_pagenum();
 		$items_per_page = $this->get_items_per_page( 'users_per_page' );
 
-		$query_results = $this->get_url_screenshots( $items_per_page, ( $table_page - 1 ) * $items_per_page );
+		$query_results = $this->get_url_screenshots(
+			$url_search_key,
+			$items_per_page,
+			( $table_page - 1 ) * $items_per_page
+		);
 		$total_count = $this->count_url_screenshots();
 
 
