@@ -124,6 +124,36 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Method for name column
+	 *
+	 * @param Urlslab_Url_Keyword_Data $item an array of DB data
+	 *
+	 * @return string
+	 */
+	function column_col_keyword( $item ): string {
+
+		// create a nonce
+		$delete_nonce = wp_create_nonce( 'urlslab_delete_keyword' );
+
+		$title = '<strong>' . $item->get_keyword() . '</strong>';
+
+		$actions = array();
+		if ( isset( $_REQUEST['page'] ) ) {
+			$actions = array(
+				'delete' => sprintf(
+					'<a href="?page=%s&action=%s&keyword=%s&_wpnonce=%s">Delete</a>',
+					esc_attr( $_REQUEST['page'] ),
+					'delete',
+					esc_attr( $item->get_keyword() ),
+					$delete_nonce
+				),
+			);
+		}
+
+		return $title . $this->row_actions( $actions );
+	}
+
+	/**
 	 * Render a column when no column specific method exists.
 	 *
 	 * @param Urlslab_Url_Keyword_Data $item
@@ -133,8 +163,6 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	 */
 	public function column_default( $item, $column_name ) {
 		switch ( $column_name ) {
-			case 'col_keyword':
-				return $item->get_keyword();
 			case 'col_kw_priority':
 				return $this->priority_ui_convert( $item->get_keyword_priority() );
 			case 'col_url_link':
@@ -160,21 +188,12 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	public function process_bulk_action() {
 		//Detect when a bulk action is being triggered...
 		if ( 'delete' === $this->current_action() &&
-		isset( $_REQUEST['_nonce'] ) &&
 		isset( $_GET['keyword'] ) ) {
 
 			// In our file that handles the request, verify the nonce.
-			$nonce = esc_attr( $_REQUEST['_nonce'] );
+			check_admin_referer( 'urlslab_delete_keyword' );
 
-			if ( ! wp_verify_nonce( $nonce, 'sp_delete_customer' ) ) {
-				wp_redirect( esc_url( add_query_arg() ) );
-				exit;
-			} else {
-				$this->delete_keyword( absint( $_GET['keyword'] ) );
-
-				wp_redirect( esc_url( add_query_arg() ) );
-				exit;
-			}       
+			$this->delete_keyword( $_GET['keyword'] );
 		}
 
 
@@ -186,10 +205,9 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 				$delete_ids = esc_sql( $_POST['bulk-delete'] );
 				// loop over the array of record IDs and delete them
 				$this->delete_keywords( $delete_ids );
-			}
-
-			$this->graceful_exit();
+			}       
 		}
+		$this->graceful_exit();
 	}
 
 	/**
