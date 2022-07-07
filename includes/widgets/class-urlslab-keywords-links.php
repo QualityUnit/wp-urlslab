@@ -87,9 +87,15 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				$this->admin_notice( $status, $message );
 			}
 			$this->import_export_option();
-			$this->keyword_table->prepare_items();
-			$this->keyword_table->display();
 			?>
+				<div>
+					<form method="post">
+						<?php
+						$this->keyword_table->prepare_items();
+						$this->keyword_table->display();
+						?>
+					</form>
+				</div>
 
 		</div>
 		<?php
@@ -203,7 +209,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 	private function import_export_option() {
 		?>
-		<div class="card float-left">
+		<div class="card float-left mar-bottom-2">
 			<h2>Import Keyword CSV</h2>
 			<div class="info-box">
 				The CSV file should contain headers. the CSV file should include following headers:

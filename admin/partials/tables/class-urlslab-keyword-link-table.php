@@ -50,6 +50,45 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 		return $query_res;
 	}
 
+	/**
+	 * @param string[] $delete_ids
+	 *
+	 * @return void
+	 */
+	private function delete_keywords( array $delete_ids ) {
+		global $wpdb;
+		$table = URLSLAB_KEYWORDS_TABLE;
+		$placeholder = array();
+		foreach ( $delete_ids as $id ) {
+			$placeholder[] = '(%s)';
+		}
+		$placeholder_string = implode( ', ', $placeholder );
+		$delete_query = "DELETE FROM $table WHERE keyword IN ($placeholder_string)";
+		$wpdb->query(
+			$wpdb->prepare(
+				$delete_query, // phpcs:ignore
+				$delete_ids
+			)
+		);
+	}
+
+	/**
+	 * @param string $keyword
+	 *
+	 * @return void
+	 */
+	private function delete_keyword( string $keyword ) {
+		global $wpdb;
+		$table = URLSLAB_KEYWORDS_TABLE;
+		$delete_query = "DELETE FROM $table WHERE keyword = %s";
+		$wpdb->query(
+			$wpdb->prepare(
+				$delete_query, // phpcs:ignore
+				$keyword
+			)
+		);
+	}
+
 	private function count_keywords(): ?string {
 		global $wpdb;
 		$table = URLSLAB_KEYWORDS_TABLE;
@@ -62,10 +101,25 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	 */
 	function get_columns(): array {
 		return array(
+			'cb' => '<input type="checkbox" />',
 			'col_keyword' => 'Keyword',
 			'col_kw_priority' => 'Priority',
 			'col_url_link' => 'URL',
 			'col_lang' => 'Lang',
+		);
+	}
+
+	/**
+	 * Render the bulk edit checkbox
+	 *
+	 * @param Urlslab_Url_Keyword_Data $item
+	 *
+	 * @return string
+	 */
+	function column_cb( $item ): string {
+		return sprintf(
+			'<input type="checkbox" name="bulk-delete[]" value="%s" />',
+			$item->get_keyword()
 		);
 	}
 
@@ -93,6 +147,52 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Returns an associative array containing the bulk action
+	 *
+	 * @return array
+	 */
+	public function get_bulk_actions(): array {
+		return array(
+			'bulk-delete' => 'Delete',
+		);
+	}
+
+	public function process_bulk_action() {
+		//Detect when a bulk action is being triggered...
+		if ( 'delete' === $this->current_action() &&
+		isset( $_REQUEST['_nonce'] ) &&
+		isset( $_GET['keyword'] ) ) {
+
+			// In our file that handles the request, verify the nonce.
+			$nonce = esc_attr( $_REQUEST['_nonce'] );
+
+			if ( ! wp_verify_nonce( $nonce, 'sp_delete_customer' ) ) {
+				wp_redirect( esc_url( add_query_arg() ) );
+				exit;
+			} else {
+				$this->delete_keyword( absint( $_GET['keyword'] ) );
+
+				wp_redirect( esc_url( add_query_arg() ) );
+				exit;
+			}       
+		}
+
+
+		// Bulk Delete triggered
+		if ( ( isset( $_POST['action'] ) && 'bulk-delete' == $_POST['action'] )
+			 || ( isset( $_POST['action2'] ) && 'bulk-delete' == $_POST['action2'] ) ) {
+
+			if ( isset( $_POST['bulk-delete'] ) ) {
+				$delete_ids = esc_sql( $_POST['bulk-delete'] );
+				// loop over the array of record IDs and delete them
+				$this->delete_keywords( $delete_ids );
+			}
+
+			$this->graceful_exit();
+		}
+	}
+
+	/**
 	 * Decide which columns to activate the sorting functionality on
 	 * @return array $sortable, the array of columns that can be sorted by the user
 	 */
@@ -109,6 +209,9 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	 * pagination, columns and table elements
 	 */
 	function prepare_items() {
+		$this->process_bulk_action();
+
+
 		$table_page = $this->get_pagenum();
 		$items_per_page = $this->get_items_per_page( 'users_per_page' );
 
