@@ -28,16 +28,47 @@ class Urlslab_Screenshot_Cron {
 		}
 	}
 
+	/**
+	 * @param Urlslab_Url_Data[] $schedules
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
 	private function handle_schedules( array $schedules ) {
 		$request_body = array();
+		$valid_schedules = array();
+		$broken_urls = array();
 		foreach ( $schedules as $schedule ) {
-			$request_body[] = $schedule->get_url()->get_url();
+			if ( $schedule->get_url()->is_url_valid() ) {
+				$request_body[] = $schedule->get_url()->get_url();
+				$valid_schedules[] = $schedule;
+			} else {
+				$broken_urls[] = $schedule->get_url();
+			}
 		}
 		$rsp = $this->url_data_fetcher->schedule_urls_batch( $request_body );
+
+
+
 		if ( ! empty( $rsp ) ) {
 			$new_status_urls = array();
-			foreach ( $schedules as $i => $schedule ) {
-				$new_status_urls[] = $rsp[ $i ]->to_url_data( $schedule->get_url() );
+			foreach ( $valid_schedules as $i => $valid_schedule ) {
+				$new_status_urls[] = $rsp[ $i ]->to_url_data( $valid_schedule->get_url() );
+			}
+			if ( ! empty( $broken_urls ) ) {
+				foreach ( $broken_urls as $broken_url ) {
+					$new_status_urls[] = new Urlslab_Url_Data(
+						$broken_url,
+						null,
+						null,
+						null,
+						time(),
+						null,
+						null,
+						null,
+						Urlslab::$link_status_broken
+					);
+				}
 			}
 			$this->url_data_fetcher->save_urls_batch( $new_status_urls );
 		}
