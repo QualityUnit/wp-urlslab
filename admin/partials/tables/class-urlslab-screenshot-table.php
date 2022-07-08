@@ -299,8 +299,6 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 					return '<img src="' . $item->render_screenshot_path() . '" width="150px">';
 				}
 				return '<em>Not available!</em>';
-			case 'col_url_name':
-				return $item->get_url()->get_url();
 			case 'col_status':
 				return urlslab_status_ui_convert( $item->get_screenshot_status() );
 			case 'col_screenshot_date':
@@ -316,7 +314,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 			case 'col_url_meta_description':
 				return $item->get_url_meta_description() ?? '';
 			case 'col_url_summary':
-				return $item->get_url_summary() ?? '';
+				return esc_attr( $item->get_url_summary() ) ?? '';
 			default:
 				return print_r( $item, true ); //Show the whole array for troubleshooting purposes
 		}
@@ -334,7 +332,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		// create a nonce
 		$delete_nonce = wp_create_nonce( 'urlslab_delete_screenshot' );
 
-		$title = '<strong>' . $item->get_url()->get_url() . '</strong>';
+		$title = '<strong>' . esc_url( $item->get_url()->get_url() ) . '</strong>';
 
 		$actions = array();
 		if ( isset( $_REQUEST['page'] ) ) {
