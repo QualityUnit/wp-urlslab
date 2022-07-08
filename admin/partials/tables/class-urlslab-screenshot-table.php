@@ -77,6 +77,40 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		return $query_res;
 	}
 
+	/**
+	 * @param string[] $url_ids
+	 *
+	 * @return void
+	 */
+	private function delete_url_screenshots( array $url_ids ) {
+		global $wpdb;
+		$table = URLSLAB_URLS_TABLE;
+		$placeholder = array();
+		foreach ( $url_ids as $id ) {
+			$placeholder[] = '(%s)';
+		}
+		$placeholder_string = implode( ', ', $placeholder );
+		$delete_query = "DELETE FROM $table WHERE urlMd5 IN ($placeholder_string)";
+		$wpdb->query(
+			$wpdb->prepare(
+				$delete_query, // phpcs:ignore
+				$url_ids
+			)
+		);
+	}
+
+	private function delete_url_screenshot( string $url_md5 ) {
+		global $wpdb;
+		$table = URLSLAB_URLS_TABLE;
+		$delete_query = "DELETE FROM $table WHERE urlMd5 = %s";
+		$wpdb->query(
+			$wpdb->prepare(
+				$delete_query, // phpcs:ignore
+				$url_md5
+			)
+		);
+	}
+
 	private function count_url_screenshots( string $url_status_filter = '', $url_search_key = '' ): ?string {
 		global $wpdb;
 		$table = URLSLAB_URLS_TABLE;
@@ -114,6 +148,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 	 */
 	function get_columns(): array {
 		return array(
+			'cb' => '<input type="checkbox" />',
 			'col_url_image' => 'Image',
 			'col_url_name' => 'URL',
 			'col_status' => 'Status',
@@ -168,6 +203,70 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Render the bulk edit checkbox
+	 *
+	 * @param Urlslab_Url_Data $item
+	 *
+	 * @return string
+	 */
+	function column_cb( $item ): string {
+		return sprintf(
+			'<input type="checkbox" name="bulk-delete[]" value="%s" />',
+			$item->get_url()->get_url_id()
+		);
+	}
+
+	/**
+	 * Returns an associative array containing the bulk action
+	 *
+	 * @return array
+	 */
+	public function get_bulk_actions(): array {
+		return array(
+			'bulk-delete' => 'Delete',
+		);
+	}
+
+	public function process_bulk_action() {
+		//Detect when a bulk action is being triggered...
+		if ( 'delete' === $this->current_action() &&
+			 isset( $_GET['screenshot'] ) &&
+			 isset( $_REQUEST['_wpnonce'] ) ) {
+
+			// In our file that handles the request, verify the nonce.
+			$nonce = wp_unslash( $_REQUEST['_wpnonce'] );
+			/*
+			 * Note: the nonce field is set by the parent class
+			 * wp_nonce_field( 'bulk-' . $this->_args['plural'] );
+			 */
+			if ( ! wp_verify_nonce( $nonce, 'urlslab_delete_screenshot' ) ) { // verify the nonce.
+				wp_redirect(
+					add_query_arg(
+						'status=failure',
+						'message=this link is expired'
+					)
+				);
+				exit();
+			}
+
+			$this->delete_url_screenshot( $_GET['screenshot'] );
+		}
+
+
+		// Bulk Delete triggered
+		if ( ( isset( $_GET['action'] ) && 'bulk-delete' == $_GET['action'] )
+			 || ( isset( $_GET['action2'] ) && 'bulk-delete' == $_GET['action2'] ) ) {
+
+			if ( isset( $_GET['bulk-delete'] ) ) {
+				$delete_ids = esc_sql( $_GET['bulk-delete'] );
+				// loop over the array of record IDs and delete them
+				$this->delete_url_screenshots( $delete_ids );
+			}
+		}
+		$this->graceful_exit();
+	}
+
+	/**
 	 * Render a column when no column specific method exists.
 	 *
 	 * @param Urlslab_Url_Data $item
@@ -206,6 +305,36 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Method for name column
+	 *
+	 * @param Urlslab_Url_Data $item an array of DB data
+	 *
+	 * @return string
+	 */
+	function column_col_url_name( $item ): string {
+
+		// create a nonce
+		$delete_nonce = wp_create_nonce( 'urlslab_delete_screenshot' );
+
+		$title = '<strong>' . $item->get_url()->get_url() . '</strong>';
+
+		$actions = array();
+		if ( isset( $_REQUEST['page'] ) ) {
+			$actions = array(
+				'delete' => sprintf(
+					'<a href="?page=%s&action=%s&screenshot=%s&_wpnonce=%s">Delete</a>',
+					esc_attr( $_REQUEST['page'] ),
+					'delete',
+					esc_attr( $item->get_url()->get_url_id() ),
+					$delete_nonce
+				),
+			);
+		}
+
+		return $title . $this->row_actions( $actions );
+	}
+
+	/**
 	 * Decide which columns to activate the sorting functionality on
 	 * @return array $sortable, the array of columns that can be sorted by the user
 	 */
@@ -223,6 +352,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 	function prepare_items() {
 		$url_search_key = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
 		$url_status_filter = isset( $_REQUEST['filter'] ) ? wp_unslash( trim( $_REQUEST['filter'] ) ) : '';
+		$this->process_bulk_action();
 		$table_page = $this->get_pagenum();
 		$items_per_page = $this->get_items_per_page( 'users_per_page' );
 
