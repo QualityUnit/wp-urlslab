@@ -30,7 +30,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 	 * Getting url screenshot
 	 * @return array|stdClass[]
 	 */
-	private function get_url_screenshots( string $url_search_key, int $limit, int $offset ): array {
+	private function get_url_screenshots( string $url_status_filter, string $url_search_key, int $limit, int $offset ): array {
 		global $wpdb;
 		$table = URLSLAB_URLS_TABLE;
 		$values = array();
@@ -39,7 +39,15 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		$query = "SELECT * FROM $table";
 
 		/* -- Preparing the condition -- */
-		if ( ! empty( $url_search_key ) ) {
+		if ( ! empty( $url_status_filter ) ) {
+			$query .= ' WHERE status = %s';
+			$values[] = $url_status_filter;
+		}
+
+		if ( ! empty( $url_search_key ) && ! empty( $url_status_filter ) ) {
+			$query .= ' AND urlName LIKE %s';
+			$values[] = '%' . $url_search_key . '%';
+		} else if ( ! empty( $url_search_key ) && empty( $url_status_filter ) ) {
 			$query .= ' WHERE urlName LIKE %s';
 			$values[] = '%' . $url_search_key . '%';
 		}
@@ -69,10 +77,35 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		return $query_res;
 	}
 
-	private function count_url_screenshots(): ?string {
+	private function count_url_screenshots( string $url_status_filter = '', $url_search_key = '' ): ?string {
 		global $wpdb;
 		$table = URLSLAB_URLS_TABLE;
-		return $wpdb->get_row( "SELECT COUNT(*) AS cnt FROM $table", ARRAY_A )['cnt']; // phpcs:ignore
+		$values = array();
+
+		/* -- Preparing your query -- */
+		$query = "SELECT COUNT(*) AS cnt FROM $table";
+
+		/* -- Preparing the condition -- */
+		if ( ! empty( $url_status_filter ) ) {
+			$query .= ' WHERE status = %s';
+			$values[] = $url_status_filter;
+		}
+
+		if ( ! empty( $url_search_key ) && ! empty( $url_status_filter ) ) {
+			$query .= ' AND urlName LIKE %s';
+			$values[] = '%' . $url_search_key . '%';
+		} else if ( ! empty( $url_search_key ) && empty( $url_status_filter ) ) {
+			$query .= ' WHERE urlName LIKE %s';
+			$values[] = '%' . $url_search_key . '%';
+		}
+
+		return $wpdb->get_row(
+			$wpdb->prepare(
+				$query, // phpcs:ignore
+				$values
+			),
+			ARRAY_A
+		)['cnt'];
 	}
 
 	/**
@@ -90,6 +123,48 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 			'col_url_meta_description' => 'Url Meta Description',
 			'col_url_summary' => 'Url Summary',
 		);
+	}
+
+	protected function get_views(): array {
+		$views = array();
+		$current = ( ! empty( $_REQUEST['filter'] ) ? $_REQUEST['filter'] : 'all' );
+
+		//# All case
+		$class = ( 'all' == $current ? ' class="current"' : '' );
+		$all_url = remove_query_arg( 'filter' );
+		$all_count = $this->count_url_screenshots();
+		$views['all'] = "<a href='$all_url' $class>All <span class='count'>($all_count)</span></a>";
+		//# All case
+
+		//# Unscheduled case
+		$class = ( Urlslab::$link_status_not_scheduled == $current ? ' class="current"' : '' );
+		$unscheduled_url = add_query_arg( 'filter', Urlslab::$link_status_not_scheduled );
+		$unscheduled_count = $this->count_url_screenshots( Urlslab::$link_status_not_scheduled );
+		$views['unscheduled'] = "<a href='$unscheduled_url' $class>Unscheduled <span class='count'>($unscheduled_count)</span></a>";
+		//# Unscheduled case
+
+		//# Active case
+		$class = ( Urlslab::$link_status_available == $current ? ' class="current"' : '' );
+		$active_url = add_query_arg( 'filter', Urlslab::$link_status_available );
+		$active_count = $this->count_url_screenshots( Urlslab::$link_status_available );
+		$views['active'] = "<a href='$active_url' $class>Available <span class='count'>($active_count)</span></a>";
+		//# Active case
+
+		//# Pending case
+		$class = ( Urlslab::$link_status_waiting_for_screenshot == $current ? ' class="current"' : '' );
+		$pending_url = add_query_arg( 'filter', Urlslab::$link_status_waiting_for_screenshot );
+		$pending_count = $this->count_url_screenshots( Urlslab::$link_status_waiting_for_screenshot );
+		$views['pending'] = "<a href='$pending_url' $class>Pending <span class='count'>($pending_count)</span></a>";
+		//# Pending case
+
+		//# Broken url case
+		$class = ( Urlslab::$link_status_broken == $current ? ' class="current"' : '' );
+		$broken_url = add_query_arg( 'filter', Urlslab::$link_status_broken );
+		$broken_count = $this->count_url_screenshots( Urlslab::$link_status_broken );
+		$views['broken'] = "<a href='$broken_url' $class>Broken <span class='count'>($broken_count)</span></a>";
+		//# Broken url case
+
+		return $views;
 	}
 
 	/**
@@ -147,15 +222,20 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 	 */
 	function prepare_items() {
 		$url_search_key = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
+		$url_status_filter = isset( $_REQUEST['filter'] ) ? wp_unslash( trim( $_REQUEST['filter'] ) ) : '';
 		$table_page = $this->get_pagenum();
 		$items_per_page = $this->get_items_per_page( 'users_per_page' );
 
 		$query_results = $this->get_url_screenshots(
+			$url_status_filter,
 			$url_search_key,
 			$items_per_page,
 			( $table_page - 1 ) * $items_per_page
 		);
-		$total_count = $this->count_url_screenshots();
+		$total_count = $this->count_url_screenshots(
+			$url_status_filter,
+			$url_search_key,
+		);
 
 
 		// set the pagination arguments
