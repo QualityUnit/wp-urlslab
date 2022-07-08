@@ -310,9 +310,9 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 			case 'col_update_status_date':
 				return $item->get_last_status_change_date();
 			case 'col_url_title':
-				return $item->get_url_title();
+				return esc_attr( $item->get_url_title() );
 			case 'col_url_meta_description':
-				return $item->get_url_meta_description() ?? '';
+				return esc_attr( $item->get_url_meta_description() ) ?? '';
 			case 'col_url_summary':
 				return esc_attr( $item->get_url_summary() ) ?? '';
 			default:
