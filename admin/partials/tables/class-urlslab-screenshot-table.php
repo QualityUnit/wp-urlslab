@@ -62,13 +62,21 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 
 		/* -- Pagination parameters -- */
 		$query .= ' LIMIT ' . $limit . ' OFFSET ' . $offset;
-		$res = $wpdb->get_results(
-			$wpdb->prepare(
+		$res = array();
+		if ( empty( $values ) ) {
+			$res = $wpdb->get_results(
 				$query, // phpcs:ignore
-				$values
-			),
-			ARRAY_A
-		);
+				ARRAY_A
+			);
+		} else {
+			$res = $wpdb->get_results(
+				$wpdb->prepare(
+					$query, // phpcs:ignore
+					$values
+				),
+				ARRAY_A
+			);
+		}
 
 		$query_res = array();
 		foreach ( $res as $row ) {
@@ -83,6 +91,9 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 	 * @return void
 	 */
 	private function delete_url_screenshots( array $url_ids ) {
+		if ( count( $url_ids ) <= 0 ) {
+			return;
+		}
 		global $wpdb;
 		$table = URLSLAB_URLS_TABLE;
 		$placeholder = array();
@@ -133,13 +144,20 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 			$values[] = '%' . $url_search_key . '%';
 		}
 
-		return $wpdb->get_row(
-			$wpdb->prepare(
-				$query, // phpcs:ignore
-				$values
-			),
-			ARRAY_A
-		)['cnt'];
+		if ( empty( $values ) ) {
+			return $wpdb->get_row(
+					$query, // phpcs:ignore
+				ARRAY_A
+			)['cnt'];
+		} else {
+			return $wpdb->get_row(
+				$wpdb->prepare(
+					$query, // phpcs:ignore
+					$values
+				),
+				ARRAY_A
+			)['cnt'];
+		}
 	}
 
 	/**

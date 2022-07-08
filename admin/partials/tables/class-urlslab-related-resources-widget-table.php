@@ -80,13 +80,21 @@ class Urlslab_Related_Resources_Widget_Table extends WP_List_Table {
 
 		/* -- Pagination parameters -- */
 		$query .= ' LIMIT ' . $limit . ' OFFSET ' . $offset;
-		$res = $wpdb->get_results(
-			$wpdb->prepare(
-				$query, // phpcs:ignore
-				$values
-			),
-			ARRAY_A 
-		);
+		$res = array();
+		if ( empty( $values ) ) {
+			$res = $wpdb->get_results(
+					$query, // phpcs:ignore
+				ARRAY_A
+			);
+		} else {
+			$res = $wpdb->get_results(
+				$wpdb->prepare(
+					$query, // phpcs:ignore
+					$values
+				),
+				ARRAY_A
+			);
+		}
 		$query_res = array();
 		foreach ( $res as $row ) {
 			$query_res[] = $this->transform( $row );
