@@ -25,22 +25,8 @@ jobs:
       - name: Run tests
         run: composer test
 
-      - name: Setup Node.js 16.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: "16.x"
-
-      - name: Install Yarn dependencies
-        run: yarn
-
-      - name: Run test
-        run: yarn eslint && yarn stylelint
-
-      - name: Build CSS and JS
-        run: yarn build
-
       - name: Remove unnecessary files
-        run: rm -rf .git .idea .github .husky *.md *.lock .editorconfig .eslintignore .eslintrc .gitignore .stylelintrc vendor composer.json *.lock package.json phpcs.xml node_modules webpack.config.js commitlint.config.js
+        run: rm -rf .git .idea .github *.md *.lock .editorconfig .eslintignore .eslintrc .gitignore .stylelintrc vendor composer.json *.lock package.json phpcs.xml webpack.config.js commitlint.config.js
 
       - name: Version
         id: version
@@ -50,7 +36,7 @@ jobs:
           regex: ".*/([^/]+)$"
 
       - name: Create a zip file
-        run: zip -r enhanced-faq_${{ steps.version.outputs.group1 }}.zip .
+        run: zip -r urlslab-plugin_${{ steps.version.outputs.group1 }}.zip .
 
       - name: Create Release
         id: create_release
@@ -70,6 +56,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./enhanced-faq_${{ steps.version.outputs.group1 }}.zip
-          asset_name: enhanced-faq_${{ steps.version.outputs.group1 }}.zip
+          asset_path: ./urlslab-plugin_${{ steps.version.outputs.group1 }}.zip
+          asset_name: urlslab-plugin_${{ steps.version.outputs.group1 }}.zip
           asset_content_type: application/zip
