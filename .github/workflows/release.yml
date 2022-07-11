@@ -30,9 +30,6 @@ jobs:
         with:
           node-version: "16.x"
 
-      - name: Build CSS and JS
-        run: yarn build
-
       - name: Remove unnecessary files
         run: rm -rf .git .idea .github .husky *.md *.lock .editorconfig .eslintignore .eslintrc .gitignore .stylelintrc vendor composer.json *.lock package.json phpcs.xml node_modules webpack.config.js commitlint.config.js
 
