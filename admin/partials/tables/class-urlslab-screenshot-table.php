@@ -1,4 +1,5 @@
 <?php
+require_once URLSLAB_PLUGIN_DIR . '/includes/helpers/class-urlslab-status.php';
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
@@ -190,30 +191,30 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		//# All case
 
 		//# Unscheduled case
-		$class = ( Urlslab::$link_status_not_scheduled == $current ? ' class="current"' : '' );
-		$unscheduled_url = add_query_arg( 'filter', Urlslab::$link_status_not_scheduled );
-		$unscheduled_count = $this->count_url_screenshots( Urlslab::$link_status_not_scheduled );
+		$class = ( Urlslab_Status::$not_scheduled == $current ? ' class="current"' : '' );
+		$unscheduled_url = add_query_arg( 'filter', Urlslab_Status::$not_scheduled );
+		$unscheduled_count = $this->count_url_screenshots( Urlslab_Status::$not_scheduled );
 		$views['unscheduled'] = "<a href='$unscheduled_url' $class>Unscheduled <span class='count'>($unscheduled_count)</span></a>";
 		//# Unscheduled case
 
 		//# Active case
-		$class = ( Urlslab::$link_status_available == $current ? ' class="current"' : '' );
-		$active_url = add_query_arg( 'filter', Urlslab::$link_status_available );
-		$active_count = $this->count_url_screenshots( Urlslab::$link_status_available );
+		$class = ( Urlslab_Status::$available == $current ? ' class="current"' : '' );
+		$active_url = add_query_arg( 'filter', Urlslab_Status::$available );
+		$active_count = $this->count_url_screenshots( Urlslab_Status::$available );
 		$views['active'] = "<a href='$active_url' $class>Available <span class='count'>($active_count)</span></a>";
 		//# Active case
 
 		//# Pending case
-		$class = ( Urlslab::$link_status_waiting_for_screenshot == $current ? ' class="current"' : '' );
-		$pending_url = add_query_arg( 'filter', Urlslab::$link_status_waiting_for_screenshot );
-		$pending_count = $this->count_url_screenshots( Urlslab::$link_status_waiting_for_screenshot );
+		$class = ( Urlslab_Status::$pending == $current ? ' class="current"' : '' );
+		$pending_url = add_query_arg( 'filter', Urlslab_Status::$pending );
+		$pending_count = $this->count_url_screenshots( Urlslab_Status::$pending );
 		$views['pending'] = "<a href='$pending_url' $class>Pending <span class='count'>($pending_count)</span></a>";
 		//# Pending case
 
 		//# Broken url case
-		$class = ( Urlslab::$link_status_broken == $current ? ' class="current"' : '' );
-		$broken_url = add_query_arg( 'filter', Urlslab::$link_status_broken );
-		$broken_count = $this->count_url_screenshots( Urlslab::$link_status_broken );
+		$class = ( Urlslab_Status::$blocked == $current ? ' class="current"' : '' );
+		$broken_url = add_query_arg( 'filter', Urlslab_Status::$broken );
+		$broken_count = $this->count_url_screenshots( Urlslab_Status::$broken );
 		$views['broken'] = "<a href='$broken_url' $class>Broken <span class='count'>($broken_count)</span></a>";
 		//# Broken url case
 

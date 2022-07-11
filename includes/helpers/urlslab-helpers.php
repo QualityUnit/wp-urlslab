@@ -56,15 +56,15 @@ function urlslab_get_language() {
 
 function urlslab_status_ui_convert( string $status_char ): string {
 	switch ( $status_char ) {
-		case Urlslab::$link_status_available:
+		case Urlslab_Status::$available:
 			return '<div class="status-circle background-success" title="available"></div>';
-		case Urlslab::$link_status_waiting_for_screenshot:
+		case Urlslab_Status::$pending:
 			return '<div class="status-circle background-warning" title="pending"></div>';
-		case Urlslab::$link_status_not_scheduled:
+		case Urlslab_Status::$not_scheduled:
 			return '<div class="status-circle background-secondary" title="not-scheduled"></div>';
-		case Urlslab::$link_status_broken:
+		case Urlslab_Status::$broken:
 			return '<div class="status-circle background-danger" title="broken"></div>';
-		case Urlslab::$link_status_waiting_for_update:
+		case Urlslab_Status::$recurring_update:
 			return '<div class="status-circle background-primary" title="updating"></div>';
 		default:
 			return $status_char;

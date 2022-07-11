@@ -52,19 +52,22 @@ class Urlslab_Screenshot_Api extends Urlslab_Api {
 	private function convert_status_to_char( string $status ): string {
 		switch ( $status ) {
 			case 'AWAITING_PENDING':
-				return Urlslab::$link_status_waiting_for_screenshot;
+				return Urlslab_Status::$pending;
 
 			case 'AVAILABLE':
-				return Urlslab::$link_status_available;
+				return Urlslab_Status::$available;
 
 			case 'BROKEN_URL':
-				return Urlslab::$link_status_broken;
+				return Urlslab_Status::$broken;
 
 			case 'AWAITING_UPDATE':
-				return Urlslab::$link_status_waiting_for_update;
+				return Urlslab_Status::$recurring_update;
+
+			case 'BLOCKED':
+				return Urlslab_Status::$blocked;
 
 			default:
-				return Urlslab::$link_status_not_scheduled;
+				return Urlslab_Status::$not_scheduled;
 		}
 	}
 

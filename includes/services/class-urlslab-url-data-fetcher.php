@@ -32,7 +32,7 @@ class Urlslab_Url_Data_Fetcher {
 	}
 
 	/**
-	 * @return Urlslab_Url_Data[]
+	 * @return Urlslab_Url[]
 	 */
 	public function fetch_scheduling_urls(): array {
 		global $wpdb;
@@ -44,18 +44,18 @@ class Urlslab_Url_Data_Fetcher {
 				' WHERE (status = %s) or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 				ORDER BY updateStatusDate ASC LIMIT 100',
-				Urlslab::$link_status_not_scheduled,
+				Urlslab_Status::$not_scheduled,
 				time(),
-				Urlslab::$link_status_waiting_for_screenshot,
+				Urlslab_Status::$pending,
 				time(),
-				Urlslab::$link_status_waiting_for_update
+				Urlslab_Status::$recurring_update
 			),
 			ARRAY_A
 		);
 
 		$res = array();
 		foreach ( $schedules as $schedule ) {
-			$res[] = $this->transform( $schedule );
+			$res[] = $this->transform( $schedule )->get_url();
 		}
 
 		return $res;
@@ -81,7 +81,7 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 				$values,
 				$url->get_url_id(),
 				$url->get_url(),
-				Urlslab::$link_status_broken,
+				Urlslab_Status::$broken,
 			);
 			$placeholder[] = '(%s, %s, %s)';
 		}
@@ -103,27 +103,91 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 
 
 	/**
-	 * @param string $url
+	 * @param Urlslab_Url $url
 	 *
 	 * @return void
 	 * @throws Exception
 	 */
-	public function schedule_url( string $url ) {
+	public function schedule_url( Urlslab_Url $url ) {
 		$this->schedule_urls_batch( array( $url ) );
 	}
 
 	/**
-	 * @param array $urls
+	 * @param Urlslab_Url[] $urls
 	 *
-	 * @return array|false|string|Urlslab_Screenshot_Error_Response
+	 * @return Urlslab_Url_Data[]
 	 * @throws Exception
 	 */
-	public function schedule_urls_batch( array $urls ) {
+	public function schedule_urls_batch( array $urls ): array {
+		$grouped_urls = $this->filter_schedules_batch( $urls );
+		$scheduled = array();
 		if ( $this->urlslab_screenshot_api->has_api_key() ) {
-			return $this->urlslab_screenshot_api->schedule_batch( $urls );
+			$scheduling_urls = array_merge(
+				$grouped_urls['main_page_urls'],
+				$grouped_urls['possibly_blocked'],
+			);
+		} else {
+			//# Getting main page url schedules
+			$scheduling_urls = $grouped_urls['main_page_urls'];
+			foreach ( $grouped_urls['possibly_blocked'] as $possibly_blocked ) {
+				$scheduled[ $possibly_blocked->get_url_id() ] = Urlslab_Url_Data::empty(
+					$possibly_blocked,
+					Urlslab_Status::$blocked
+				);
+			}
+		}
+		$schedule_response = $this->urlslab_screenshot_api->schedule_batch( $scheduling_urls );
+		foreach ( $scheduling_urls as $i => $schedule ) {
+			$scheduled[ $schedule->get_url_id() ] = $schedule_response[ $i ]->to_url_data( $schedule );
+		}
+		foreach ( $grouped_urls['broken_urls'] as $broken_url ) {
+			$scheduled[ $broken_url->get_url_id() ] = Urlslab_Url_Data::empty(
+				$broken_url,
+				Urlslab_Status::$broken
+			);
+		}
+		$returning_data = array();
+		foreach ( $urls as $url ) {
+			$returning_data[] = $scheduled[ $url->get_url_id() ];
 		}
 
-		return false;
+		return $returning_data;
+	}
+
+	/**
+	 * @param Urlslab_Url[] $urls
+	 *
+	 * @return array
+	 */
+	private function filter_schedules_batch( array $urls ) {
+		$broken_urls = array();
+		$main_page_urls = array();
+		$blocked_urls = array();
+		$possibly_blocked_urls = array();
+		foreach ( $urls as $url ) {
+			if ( $url->is_url_valid() ) {
+				$broken_urls[] = $url;
+				continue;
+			}
+
+			if ( $url->is_url_blacklisted() ) {
+				$blocked_urls[] = $url;
+				continue;
+			}
+
+			if ( $url->is_main_page() ) {
+				$main_page_urls[] = $url;
+				continue;
+			}
+
+			$possibly_blocked_urls[] = $url;
+		}
+		return array(
+			'broken_urls' => $broken_urls,
+			'main_page_urls' => $main_page_urls,
+			'blocked_urls' => $blocked_urls,
+			'possibly_blocked_urls' => $possibly_blocked_urls,
+		);
 	}
 
 	/**
@@ -273,14 +337,14 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 		$insert_values = array();
 		foreach ( $urls as $url ) {
 			if ( ! isset( $results[ $url->get_url_id() ] ) ) {
-				$url_data = Urlslab_Url_Data::empty( $url );
+				$url_data = Urlslab_Url_Data::empty( $url, Urlslab_Status::$broken );
 				array_push(
 					$insert_values,
 					$url->get_url_id(),
 					$url->get_url(),
 					$url_data->get_url_title(),
 					$url_data->get_url_meta_description(),
-					Urlslab::$link_status_not_scheduled,
+					Urlslab_Status::$not_scheduled,
 					gmdate( 'Y-m-d H:i:s' )
 				);
 				$insert_placeholders[] = '(%s, %s, %s, %s, %s, %s)';

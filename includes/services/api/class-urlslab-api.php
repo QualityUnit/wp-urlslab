@@ -50,6 +50,7 @@ abstract class Urlslab_Api {
 	}
 
 	protected function urlslab_post_response( $url, $body ): array {
+		$request_args = array();
 		if ( ! empty( $this->api_key ) ) {
 			$request_args = array(
 				'body' => $body,
@@ -60,15 +61,22 @@ abstract class Urlslab_Api {
 				),
 			);
 
-			$request = wp_remote_post( $url, $request_args );
-
-			return array(
-				wp_remote_retrieve_response_code( $request ),
-				wp_remote_retrieve_body( $request ),
+		} else {
+			$request_args = array(
+				'body' => $body,
+				'headers' => array(
+					'Content-Type' => 'application/json',
+				),
 			);
 		}
 
-		return array();
+		$request = wp_remote_post( $url, $request_args );
+
+		return array(
+			wp_remote_retrieve_response_code( $request ),
+			wp_remote_retrieve_body( $request ),
+		);
+
 	}
 
 

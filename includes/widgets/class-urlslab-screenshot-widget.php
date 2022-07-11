@@ -138,8 +138,8 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 				$urlslab_atts['alt'] = $url_data->get_url_summary_text();
 
 				switch ( $url_data->get_screenshot_status() ) {
-					case Urlslab::$link_status_waiting_for_update:
-					case Urlslab::$link_status_available:
+					case Urlslab_Status::$recurring_update:
+					case Urlslab_Status::$available:
 						return $this->render_shortcode(
 							$urlslab_atts['url'],
 							$url_data->render_screenshot_path( $urlslab_atts['screenshot-type'] ),
@@ -148,8 +148,8 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 							$urlslab_atts['height'],
 						);
 
-					case Urlslab::$link_status_not_scheduled:
-					case Urlslab::$link_status_waiting_for_screenshot:
+					case Urlslab_Status::$not_scheduled:
+					case Urlslab_Status::$pending:
 						//default url
 						return $this->render_shortcode(
 							$urlslab_atts['url'],
@@ -159,7 +159,8 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 							$urlslab_atts['height'],
 						);
 
-					case Urlslab::$link_status_broken:
+					case Urlslab_Status::$broken:
+					case Urlslab_Status::$blocked:
 					default:
 						return '';
 				}

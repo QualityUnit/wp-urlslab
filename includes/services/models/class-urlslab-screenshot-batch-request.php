@@ -2,18 +2,20 @@
 
 class Urlslab_Screenshot_Batch_Request implements Urlslab_Api_Model {
 
-	private array $url_request_batch;
+	private array $url_request_batch = array();
 
 	/**
-	 * @param array $url_request_batch
+	 * @param Urlslab_Url[] $url_request_batch
 	 */
 	public function __construct( array $url_request_batch = array() ) {
-		$this->url_request_batch = $url_request_batch;
+		foreach ( $url_request_batch as $url_request ) {
+			$this->url_request_batch[] = $url_request;
+		}
 	}
 
 	public function add_url( $url ) {
-		array_push( $this->url_request_batch, $url );
-		$this->url_request_batch = array_unique( $this->url_request_batch );
+		$this->url_request_batch[] = $url;
+		$this->url_request_batch   = array_unique( $this->url_request_batch );
 	}
 
 
