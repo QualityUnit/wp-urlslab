@@ -25,13 +25,8 @@ jobs:
       - name: Run tests
         run: composer test
 
-      - name: Setup Node.js 16.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: "16.x"
-
       - name: Remove unnecessary files
-        run: rm -rf .git .idea .github .husky *.md *.lock .editorconfig .eslintignore .eslintrc .gitignore .stylelintrc vendor composer.json *.lock package.json phpcs.xml node_modules webpack.config.js commitlint.config.js
+        run: rm -rf .git .idea .github *.md *.lock .editorconfig .eslintignore .eslintrc .gitignore .stylelintrc vendor composer.json *.lock package.json phpcs.xml webpack.config.js commitlint.config.js
 
       - name: Version
         id: version
