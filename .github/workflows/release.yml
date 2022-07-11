@@ -30,12 +30,6 @@ jobs:
         with:
           node-version: "16.x"
 
-      - name: Install Yarn dependencies
-        run: yarn
-
-      - name: Run test
-        run: yarn eslint && yarn stylelint
-
       - name: Build CSS and JS
         run: yarn build
 
@@ -50,7 +44,7 @@ jobs:
           regex: ".*/([^/]+)$"
 
       - name: Create a zip file
-        run: zip -r enhanced-faq_${{ steps.version.outputs.group1 }}.zip .
+        run: zip -r urlslab-plugin_${{ steps.version.outputs.group1 }}.zip .
 
       - name: Create Release
         id: create_release
@@ -70,6 +64,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./enhanced-faq_${{ steps.version.outputs.group1 }}.zip
-          asset_name: enhanced-faq_${{ steps.version.outputs.group1 }}.zip
+          asset_path: ./urlslab-plugin_${{ steps.version.outputs.group1 }}.zip
+          asset_name: urlslab-plugin_${{ steps.version.outputs.group1 }}.zip
           asset_content_type: application/zip
