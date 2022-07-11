@@ -43,10 +43,11 @@ class Urlslab_Related_Resources_Widget_Table extends WP_List_Table {
 	 * Getting URL Keywords
 	 * @return array|stdClass[]
 	 */
-	private function get_related_resources( int $limit, int $offset ): array {
+	private function get_related_resources( string $search_term, int $limit, int $offset ): array {
 		global $wpdb;
 		$related_resource_table = URLSLAB_RELATED_RESOURCE_TABLE;
 		$urls_table = URLSLAB_URLS_TABLE;
+		$values = array();
 
 		/* -- Preparing your query -- */
 		$query = "SELECT u.urlName AS srcUrlName,
@@ -65,18 +66,83 @@ class Urlslab_Related_Resources_Widget_Table extends WP_List_Table {
 				         INNER JOIN $urls_table as v
 				                    ON r.destUrlMd5 = v.urlMd5";
 
+		/* -- Preparing the condition -- */
+		if ( ! empty( $search_term ) ) {
+			$query .= ' WHERE u.urlName LIKE %s OR v.urlName LIKE %s';
+			$values[] = '%' . $search_term . '%';
+			$values[] = '%' . $search_term . '%';
+		}
+
+
 		/* -- Ordering parameters -- */
 		//Parameters that are going to be used to order the result
 		$query .= ' ORDER BY srcUrlMd5 ASC';
 
 		/* -- Pagination parameters -- */
 		$query .= ' LIMIT ' . $limit . ' OFFSET ' . $offset;
-		$res = $wpdb->get_results( $query, ARRAY_A ); // phpcs:ignore
+		$res = array();
+		if ( empty( $values ) ) {
+			$res = $wpdb->get_results(
+					$query, // phpcs:ignore
+				ARRAY_A
+			);
+		} else {
+			$res = $wpdb->get_results(
+				$wpdb->prepare(
+					$query, // phpcs:ignore
+					$values
+				),
+				ARRAY_A
+			);
+		}
 		$query_res = array();
 		foreach ( $res as $row ) {
 			$query_res[] = $this->transform( $row );
 		}
 		return $query_res;
+	}
+
+	private function delete_url_relation( string $src_url, string $dest_url ) {
+		global $wpdb;
+		$table = URLSLAB_RELATED_RESOURCE_TABLE;
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM $table WHERE srcUrlMd5 = %s AND destUrlMd5 = %s", // phpcs:ignore
+				$src_url,
+				$dest_url
+			)
+		);
+	}
+
+
+	/**
+	 * @param string[] $src_urls
+	 * @param string[] $dest_urls
+	 *
+	 * @return void
+	 */
+	private function delete_url_relations( array $src_urls, array $dest_urls ) {
+		if ( count( $src_urls ) != count( $dest_urls ) ) {
+			return;
+		}
+
+		global $wpdb;
+		$table = URLSLAB_RELATED_RESOURCE_TABLE;
+		$placeholder = array();
+		$values = array();
+		foreach ( $src_urls as $i => $id ) {
+			$placeholder[] = '(%s, %s)';
+			array_push( $values, $id, $dest_urls[ $i ] );
+		}
+		$placeholder_string = implode( ', ', $placeholder );
+		$delete_query = "DELETE FROM $table WHERE (srcUrlMd5, destUrlMd5) IN ($placeholder_string)";
+		$wpdb->query(
+			$wpdb->prepare(
+				$delete_query, // phpcs:ignore
+				$values
+			)
+		);
+
 	}
 
 	private function count_relations(): ?string {
@@ -86,17 +152,88 @@ class Urlslab_Related_Resources_Widget_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Returns an associative array containing the bulk action
+	 *
+	 * @return array
+	 */
+	public function get_bulk_actions(): array {
+		return array(
+			'bulk-delete' => 'Delete',
+		);
+	}
+
+	public function process_bulk_action() {
+		//Detect when a bulk action is being triggered...
+		if ( 'delete' === $this->current_action() &&
+			 isset( $_GET['url_src'] ) &&
+			 isset( $_GET['url_dest'] ) &&
+			 isset( $_REQUEST['_wpnonce'] ) ) {
+
+			// In our file that handles the request, verify the nonce.
+			$nonce = wp_unslash( $_REQUEST['_wpnonce'] );
+			/*
+			 * Note: the nonce field is set by the parent class
+			 * wp_nonce_field( 'bulk-' . $this->_args['plural'] );
+			 */
+			if ( ! wp_verify_nonce( $nonce, 'urlslab_delete_relation' ) ) { // verify the nonce.
+				wp_redirect(
+					add_query_arg(
+						'status=failure',
+						'message=this link is expired'
+					)
+				);
+				exit();
+			}
+
+			$this->delete_url_relation( $_GET['url_src'], $_GET['url_dest'] );
+		}
+
+
+		// Bulk Delete triggered
+		if ( ( isset( $_GET['action'] ) && 'bulk-delete' == $_GET['action'] )
+			 || ( isset( $_GET['action2'] ) && 'bulk-delete' == $_GET['action2'] ) ) {
+
+			if ( isset( $_GET['bulk-delete'] ) ) {
+				$delete_ids = esc_sql( $_GET['bulk-delete'] );
+				$delete_src = array();
+				$delete_dest = array();
+				foreach ( $delete_ids as $str ) {
+					$s = explode( ';', $str );
+					$delete_src[] = $s[0];
+					$delete_dest[] = $s[1];
+				}
+				// loop over the array of record IDs and delete them
+				$this->delete_url_relations( $delete_src, $delete_dest );
+			}
+		}
+		$this->graceful_exit();
+	}
+
+	/**
 	 * Define the columns that are going to be used in the table
 	 * @return array $columns, the array of columns to use with the table
 	 */
 	function get_columns(): array {
 		return array(
-			'col_src_image' => 'Src Image',
+			'cb' => '<input type="checkbox" />',
 			'col_src_url_name' => 'Src URL',
 			'col_src_status' => 'Src Status',
-			'col_dest_image' => 'Dest Image',
 			'col_dest_url_name' => 'Dest URL',
 			'col_dest_status' => 'Dest Status',
+		);
+	}
+
+	/**
+	 * Render the bulk edit checkbox
+	 *
+	 * @param Urlslab_Url_Data[] $item
+	 *
+	 * @return string
+	 */
+	function column_cb( $item ): string {
+		return sprintf(
+			'<input type="checkbox" name="bulk-delete[]" value="%s" />',
+			$item[0]->get_url()->get_url_id() . ';' . $item[1]->get_url()->get_url_id(),
 		);
 	}
 
@@ -110,20 +247,10 @@ class Urlslab_Related_Resources_Widget_Table extends WP_List_Table {
 	 */
 	public function column_default( $item, $column_name ) {
 		switch ( $column_name ) {
-			case 'col_src_image':
-				if ( $item[0]->screenshot_exists() ) {
-					return '<img src="' . $item[0]->render_screenshot_path() . '" width="150px">';
-				}
-				return '<em>Not available!</em>';
 			case 'col_src_url_name':
 				return $item[0]->get_url()->get_url();
 			case 'col_src_status':
 				return urlslab_status_ui_convert( $item[0]->get_screenshot_status() );
-			case 'col_dest_image':
-				if ( $item[1]->screenshot_exists() ) {
-					return '<img src="' . $item[1]->render_screenshot_path() . '" width="150px">';
-				}
-				return '<em>Not available!</em>';
 			case 'col_dest_url_name':
 				return $item[1]->get_url()->get_url();
 			case 'col_dest_status':
@@ -138,10 +265,16 @@ class Urlslab_Related_Resources_Widget_Table extends WP_List_Table {
 	 * pagination, columns and table elements
 	 */
 	function prepare_items() {
+		$search_key = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
+		$this->process_bulk_action();
 		$table_page = $this->get_pagenum();
 		$items_per_page = $this->get_items_per_page( 'users_per_page' );
 
-		$query_results = $this->get_related_resources( $items_per_page, ( $table_page - 1 ) * $items_per_page );
+		$query_results = $this->get_related_resources(
+			$search_key,
+			$items_per_page,
+			( $table_page - 1 ) * $items_per_page
+		);
 		$total_count = $this->count_relations();
 
 

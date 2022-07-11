@@ -66,10 +66,17 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		?>
 		<div class="wrap">
 			<h2>Screenshots</h2>
+			<form method="get">
 			<?php
+			$this->screenshot_table->views();
 			$this->screenshot_table->prepare_items();
-			$this->screenshot_table->display();
 			?>
+				<input type="hidden" name="page" value="<?php echo esc_attr( $this->widget_slug ); ?>">
+				<?php
+				$this->screenshot_table->search_box( 'Search', 'urlslab-screenshot-input' );
+				$this->screenshot_table->display();
+				?>
+			</form>
 
 		</div>
 		<?php

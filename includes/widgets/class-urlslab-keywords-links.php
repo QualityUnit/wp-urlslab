@@ -86,10 +86,20 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				$status = $_REQUEST['status'] ?? '';
 				$this->admin_notice( $status, $message );
 			}
-			$this->import_export_option();
-			$this->keyword_table->prepare_items();
-			$this->keyword_table->display();
+			$this->user_overall_option();
 			?>
+				<div>
+					<form method="get" class="float-left">
+						<?php
+						$this->keyword_table->prepare_items();
+						?>
+						<input type="hidden" name="page" value="<?php echo esc_attr( $this->widget_slug ); ?>">
+						<?php
+						$this->keyword_table->search_box( 'Search', 'urlslab-keyword-input' );
+						$this->keyword_table->display();
+						?>
+					</form>
+				</div>
 
 		</div>
 		<?php
@@ -187,6 +197,26 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			}
 			fclose( $output );
 			die();
+		} else if (isset( $_SERVER['REQUEST_METHOD'] ) and
+				   'GET' == $_SERVER['REQUEST_METHOD'] and
+				   isset( $_REQUEST['action'] ) and
+				   -1 != $_REQUEST['action'] and
+				   'clear' == $_REQUEST['action']) {
+			global $wpdb;
+			$table = URLSLAB_KEYWORDS_TABLE;
+
+			$query = "TRUNCATE $table";
+			$wpdb->query($query); // phpcs:ignore
+			wp_safe_redirect(
+				$this->admin_widget_menu_page(
+					array(
+					'status' => 'success',
+					'message' => 'All Data deleted'
+					)
+				) 
+			);
+			exit();
+
 		} else {
 			$option = 'per_page';
 			$args = array(
@@ -201,9 +231,9 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		}
 	}
 
-	private function import_export_option() {
+	private function user_overall_option() {
 		?>
-		<div class="card float-left">
+		<div class="card float-left mar-bottom-2">
 			<h2>Import Keyword CSV</h2>
 			<div class="info-box">
 				The CSV file should contain headers. the CSV file should include following headers:
@@ -221,6 +251,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				<br class="clear"/>
 				<input type="submit" name="submit" id="submit" class="button import_keyword_csv" value="Import">
 				<a href="<?php echo esc_url( $this->admin_widget_menu_page( 'action=export' ) ); ?>" target="_blank" class="button export_keyword_csv">Export</a>
+				<a href="<?php echo esc_url( $this->admin_widget_menu_page( 'action=clear' ) ); ?>" class="button export_keyword_csv">Delete all</a>
 			</form>
 		</div>
 		<?php

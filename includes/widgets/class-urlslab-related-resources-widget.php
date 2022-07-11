@@ -66,10 +66,20 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				$status = $_REQUEST['status'] ?? '';
 				$this->admin_notice( $status, $message );
 			}
-			$this->import_export_option();
-			$this->related_resources_widget_table->prepare_items();
-			$this->related_resources_widget_table->display();
+			$this->user_overall_option();
 			?>
+			<div>
+				<form method="get" class="float-left">
+					<?php
+					$this->related_resources_widget_table->prepare_items();
+					?>
+					<input type="hidden" name="page" value="<?php echo esc_attr( $this->widget_slug ); ?>">
+					<?php
+					$this->related_resources_widget_table->search_box( 'Search', 'urlslab-keyword-input' );
+					$this->related_resources_widget_table->display();
+					?>
+				</form>
+			</div>
 
 		</div>
 		<?php
@@ -177,7 +187,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		}
 	}
 
-	private function import_export_option() {
+	private function user_overall_option() {
 		?>
 		<div class="card float-left">
 			<h2>Import/Export Related Resources CSV</h2>
