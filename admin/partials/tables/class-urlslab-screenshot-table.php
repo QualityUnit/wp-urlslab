@@ -212,10 +212,10 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		//# Pending case
 
 		//# Broken url case
-		$class = ( Urlslab_Status::$broken == $current ? ' class="current"' : '' );
-		$broken_url = add_query_arg( 'filter', Urlslab_Status::$broken );
-		$broken_count = $this->count_url_screenshots( Urlslab_Status::$broken );
-		$views['broken'] = "<a href='$broken_url' $class>Broken <span class='count'>($broken_count)</span></a>";
+		$class = ( Urlslab_Status::$not_crawling == $current ? ' class="current"' : '' );
+		$not_crawling_url = add_query_arg( 'filter', Urlslab_Status::$not_crawling );
+		$not_crawling_count = $this->count_url_screenshots( Urlslab_Status::$not_crawling );
+		$views['not_crawling'] = "<a href='$not_crawling_url' $class>Not crawling <span class='count'>($not_crawling_count)</span></a>";
 		//# Broken url case
 
 		//# Blocked url case

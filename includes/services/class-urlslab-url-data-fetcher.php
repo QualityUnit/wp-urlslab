@@ -99,7 +99,7 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 				$values,
 				$url->get_url_id(),
 				$url->get_url(),
-				Urlslab_Status::$broken,
+				Urlslab_Status::$not_crawling,
 			);
 			$placeholder[] = '(%s, %s, %s)';
 		}
@@ -164,10 +164,10 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 				Urlslab_Status::$blocked
 			);
 		}
-		foreach ( $grouped_urls['broken_urls'] as $broken_url ) {
+		foreach ( $grouped_urls['not_crawling_urls'] as $broken_url ) {
 			$scheduled[ $broken_url->get_url_id() ] = Urlslab_Url_Data::empty(
 				$broken_url,
-				Urlslab_Status::$broken
+				Urlslab_Status::$not_crawling
 			);
 		}
 		$returning_data = array();
@@ -184,18 +184,13 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 	 * @return array
 	 */
 	private function filter_schedules_batch( array $urls ) {
-		$broken_urls = array();
+		$not_crawling_urls = array();
 		$main_page_urls = array();
 		$blocked_urls = array();
 		$possibly_blocked_urls = array();
 		foreach ( $urls as $url ) {
-			if ( ! $url->is_url_valid() ) {
-				$broken_urls[] = $url;
-				continue;
-			}
-
-			if ( $url->is_url_blacklisted() ) {
-				$blocked_urls[] = $url;
+			if ( ! $url->is_url_valid() || $url->is_url_blacklisted() ) {
+				$not_crawling_urls[] = $url;
 				continue;
 			}
 
@@ -207,7 +202,7 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 			$possibly_blocked_urls[] = $url;
 		}
 		return array(
-			'broken_urls' => $broken_urls,
+			'not_crawling_urls' => $not_crawling_urls,
 			'main_page_urls' => $main_page_urls,
 			'blocked_urls' => $blocked_urls,
 			'possibly_blocked_urls' => $possibly_blocked_urls,
@@ -361,7 +356,7 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 		$insert_values = array();
 		foreach ( $urls as $url ) {
 			if ( ! isset( $results[ $url->get_url_id() ] ) ) {
-				$url_data = Urlslab_Url_Data::empty( $url, Urlslab_Status::$broken );
+				$url_data = Urlslab_Url_Data::empty( $url, Urlslab_Status::$not_crawling );
 				array_push(
 					$insert_values,
 					$url->get_url_id(),

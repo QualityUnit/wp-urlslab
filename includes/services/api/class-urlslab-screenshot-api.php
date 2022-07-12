@@ -57,8 +57,8 @@ class Urlslab_Screenshot_Api extends Urlslab_Api {
 			case 'AVAILABLE':
 				return Urlslab_Status::$available;
 
-			case 'BROKEN_URL':
-				return Urlslab_Status::$broken;
+			case 'NOT_CRAWLING_URL':
+				return Urlslab_Status::$not_crawling;
 
 			case 'AWAITING_UPDATE':
 				return Urlslab_Status::$recurring_update;
