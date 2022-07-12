@@ -87,12 +87,6 @@ class Urlslab {
 		$this->define_backend_hooks();
 	}
 
-	public static string $link_status_waiting_for_update = 'U';
-	public static string $link_status_available = 'A';
-	public static string $link_status_waiting_for_screenshot = 'P';
-	public static string $link_status_not_scheduled = 'N';
-	public static string $link_status_broken = 'B';
-
 	/**
 	 *
 	 * gets wp_option for URLSLAB plugin
@@ -251,7 +245,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
 		$cron_job = new Urlslab_Screenshot_Cron( $this->url_data_fetcher );
 
-		$this->loader->add_action( 'urlslab_cron_hook', $cron_job, 'urlslab_cron_exec', 10, 0 );
+		$this->loader->add_action( 'admin_init', $cron_job, 'urlslab_cron_exec', 10, 0 );
 		if ( ! wp_next_scheduled( 'urlslab_cron_hook' ) ) {
 			wp_schedule_event( time(), 'every_minute', 'urlslab_cron_hook' );
 		}

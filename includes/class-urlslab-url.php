@@ -28,12 +28,16 @@ class Urlslab_Url {
 			return false;
 		}
 
+		return true;
+	}
+
+	public function is_url_blacklisted(): bool {
 		foreach ( $this->domain_blacklists as $domain_blacklist ) {
 			if ( str_contains( $this->url_components['host'], $domain_blacklist ) ) {
-				return false;
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	/**
@@ -101,6 +105,12 @@ class Urlslab_Url {
 
 	public function get_url_path(): string {
 		return $this->url_components['path'] ?? '';
+	}
+
+	public function is_main_page(): bool {
+		return empty( $this->url_components['path'] ) &&
+			   empty( $this->url_components['query'] ) &&
+			   ! empty( $this->url_components['host'] );
 	}
 
 }

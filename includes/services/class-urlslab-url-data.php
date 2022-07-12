@@ -47,7 +47,7 @@ class Urlslab_Url_Data {
 		$this->screenshot_status       = $screenshot_status;
 	}
 
-	static function empty( Urlslab_Url $url ): Urlslab_Url_Data {
+	static function empty( Urlslab_Url $url, string $urlslab_status ): Urlslab_Url_Data {
 		return new Urlslab_Url_Data(
 			$url,
 			'',
@@ -57,7 +57,7 @@ class Urlslab_Url_Data {
 			null,
 			null,
 			null,
-			Urlslab::$link_status_not_scheduled
+			$urlslab_status
 		);
 	}
 
