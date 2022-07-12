@@ -28,7 +28,7 @@ abstract class Urlslab_Api {
 	 * @return bool
 	 */
 	public function has_api_key(): bool {
-		return ! empty( $this->api_key );
+		return ! $this->api_key->is_empty();
 	}
 
 	protected function urlslab_get_response( $url, $body ): array {

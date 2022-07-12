@@ -38,20 +38,38 @@ class Urlslab_Url_Data_Fetcher {
 		global $wpdb;
 		$table = URLSLAB_URLS_TABLE;
 
-		$schedules = $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT * FROM ' . $table . // phpcs:ignore
-				' WHERE (status = %s) or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
+		if ( $this->urlslab_screenshot_api->has_api_key() ) {
+			$schedules = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT * FROM ' . $table . // phpcs:ignore
+					' WHERE (status = %s) or (status = %s) or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 				ORDER BY updateStatusDate ASC LIMIT 100',
-				Urlslab_Status::$not_scheduled,
-				time(),
-				Urlslab_Status::$pending,
-				time(),
-				Urlslab_Status::$recurring_update
-			),
-			ARRAY_A
-		);
+					Urlslab_Status::$not_scheduled,
+					Urlslab_Status::$blocked,
+					time(),
+					Urlslab_Status::$pending,
+					time(),
+					Urlslab_Status::$recurring_update
+				),
+				ARRAY_A
+			);
+		} else {
+			$schedules = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT * FROM ' . $table . // phpcs:ignore
+					' WHERE (status = %s) or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
+or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
+				ORDER BY updateStatusDate ASC LIMIT 100',
+					Urlslab_Status::$not_scheduled,
+					time(),
+					Urlslab_Status::$pending,
+					time(),
+					Urlslab_Status::$recurring_update
+				),
+				ARRAY_A
+			);
+		}
 
 		$res = array();
 		foreach ( $schedules as $schedule ) {

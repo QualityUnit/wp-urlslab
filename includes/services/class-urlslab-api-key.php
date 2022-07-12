@@ -34,6 +34,10 @@ class Urlslab_Api_Key {
 		return $this->masked( $this->api_key );
 	}
 
+	public function is_empty(): bool {
+		return empty( $this->api_key );
+	}
+
 	/**
 	 * @return string
 	 */
