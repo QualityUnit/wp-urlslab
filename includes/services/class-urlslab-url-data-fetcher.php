@@ -39,17 +39,19 @@ class Urlslab_Url_Data_Fetcher {
 		$table = URLSLAB_URLS_TABLE;
 
 		if ( $this->urlslab_screenshot_api->has_api_key() ) {
+
 			$schedules = $wpdb->get_results(
 				$wpdb->prepare(
 					'SELECT * FROM ' . $table . // phpcs:ignore
-					' WHERE (status = %s) or (status = %s) or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
-or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
+					' WHERE (status = %s) or (updateStatusDate < %d AND status = %s) or (updateStatusDate < %d AND status = %s)
+or (updateStatusDate < %d AND status = %s)
 				ORDER BY updateStatusDate ASC LIMIT 100',
 					Urlslab_Status::$not_scheduled,
+					gmdate( 'Y-m-d H:i:s', strtotime( '-1 hour' ) ),
 					Urlslab_Status::$blocked,
-					time(),
+					gmdate( 'Y-m-d H:i:s', strtotime( '-1 hour' ) ),
 					Urlslab_Status::$pending,
-					time(),
+					gmdate( 'Y-m-d H:i:s', strtotime( '-1 hour' ) ),
 					Urlslab_Status::$recurring_update
 				),
 				ARRAY_A
@@ -58,23 +60,49 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 			$schedules = $wpdb->get_results(
 				$wpdb->prepare(
 					'SELECT * FROM ' . $table . // phpcs:ignore
-					' WHERE (status = %s) or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
-or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
+					' WHERE (status = %s) or (updateStatusDate < %d AND status = %s)
+or (updateStatusDate < %d AND status = %s)
 				ORDER BY updateStatusDate ASC LIMIT 100',
 					Urlslab_Status::$not_scheduled,
-					time(),
+					gmdate( 'Y-m-d H:i:s', strtotime( '-1 hour' ) ),
 					Urlslab_Status::$pending,
-					time(),
+					gmdate( 'Y-m-d H:i:s', strtotime( '-1 hour' ) ),
 					Urlslab_Status::$recurring_update
 				),
 				ARRAY_A
 			);
 		}
 
+		//# updating the date
+		$values = array();
+		$placeholder = array();
 		$res = array();
 		foreach ( $schedules as $schedule ) {
 			$res[] = $this->transform( $schedule )->get_url();
+			array_push(
+				$values,
+				$schedule['urlMd5'],
+				strtotime( gmdate( 'Y-m-d H:i:s' ) ),
+			);
+			$placeholder[] = '(%s, %d)';
 		}
+
+		$placeholder_string = implode( ', ', $placeholder );
+		$update_query = "INSERT INTO $table (
+                   urlMd5,
+                   updateStatusDate
+                   ) VALUES
+                   $placeholder_string
+                   ON DUPLICATE KEY UPDATE
+                   updateStatusDate = VALUES(updateStatusDate)";
+
+		$wpdb->query(
+			$wpdb->prepare(
+				$update_query, // phpcs:ignore
+				$values
+			)
+		);
+		//# updating the date
 
 		return $res;
 	}

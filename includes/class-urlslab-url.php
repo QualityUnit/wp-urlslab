@@ -73,10 +73,6 @@ class Urlslab_Url {
 			}
 		}
 
-		if ( substr( $this->url_components['path'], -1, 1 ) == '/' ) {
-			$this->url_components['path'] = substr( $this->url_components['path'], 0, -1 );
-		}
-
 		$url = $this->url_components['host'] . ( $this->url_components['path'] ?? '' );
 		if ( isset( $this->url_components['query'] ) ) {
 			parse_str( $this->url_components['query'], $query_params );
