@@ -9,7 +9,7 @@ class Urlslab_Screenshot_Batch_Request implements Urlslab_Api_Model {
 	 */
 	public function __construct( array $url_request_batch = array() ) {
 		foreach ( $url_request_batch as $url_request ) {
-			$this->url_request_batch[] = $url_request;
+			$this->url_request_batch[] = $url_request->get_url();
 		}
 	}
 

@@ -64,6 +64,8 @@ function urlslab_status_ui_convert( string $status_char ): string {
 			return '<div class="status-circle background-secondary" title="not-scheduled"></div>';
 		case Urlslab_Status::$broken:
 			return '<div class="status-circle background-danger" title="broken"></div>';
+		case Urlslab_Status::$blocked:
+			return '<div class="status-circle background-danger" title="blocked"></div>';
 		case Urlslab_Status::$recurring_update:
 			return '<div class="status-circle background-primary" title="updating"></div>';
 		default:

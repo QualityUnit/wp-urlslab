@@ -124,12 +124,12 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 		if ( $this->urlslab_screenshot_api->has_api_key() ) {
 			$scheduling_urls = array_merge(
 				$grouped_urls['main_page_urls'],
-				$grouped_urls['possibly_blocked'],
+				$grouped_urls['possibly_blocked_urls'],
 			);
 		} else {
 			//# Getting main page url schedules
 			$scheduling_urls = $grouped_urls['main_page_urls'];
-			foreach ( $grouped_urls['possibly_blocked'] as $possibly_blocked ) {
+			foreach ( $grouped_urls['possibly_blocked_urls'] as $possibly_blocked ) {
 				$scheduled[ $possibly_blocked->get_url_id() ] = Urlslab_Url_Data::empty(
 					$possibly_blocked,
 					Urlslab_Status::$blocked
@@ -139,6 +139,12 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 		$schedule_response = $this->urlslab_screenshot_api->schedule_batch( $scheduling_urls );
 		foreach ( $scheduling_urls as $i => $schedule ) {
 			$scheduled[ $schedule->get_url_id() ] = $schedule_response[ $i ]->to_url_data( $schedule );
+		}
+		foreach ( $grouped_urls['blocked_urls'] as $blocked_url ) {
+			$scheduled[ $blocked_url->get_url_id() ] = Urlslab_Url_Data::empty(
+				$blocked_url,
+				Urlslab_Status::$blocked
+			);
 		}
 		foreach ( $grouped_urls['broken_urls'] as $broken_url ) {
 			$scheduled[ $broken_url->get_url_id() ] = Urlslab_Url_Data::empty(
@@ -165,7 +171,7 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 		$blocked_urls = array();
 		$possibly_blocked_urls = array();
 		foreach ( $urls as $url ) {
-			if ( $url->is_url_valid() ) {
+			if ( ! $url->is_url_valid() ) {
 				$broken_urls[] = $url;
 				continue;
 			}
