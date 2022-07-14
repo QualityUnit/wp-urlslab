@@ -39,17 +39,19 @@ class Urlslab_Url_Data_Fetcher {
 		$table = URLSLAB_URLS_TABLE;
 
 		if ( $this->urlslab_screenshot_api->has_api_key() ) {
+
 			$schedules = $wpdb->get_results(
 				$wpdb->prepare(
 					'SELECT * FROM ' . $table . // phpcs:ignore
-					' WHERE (status = %s) or (status = %s) or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
-or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
+					' WHERE (status = %s) or (updateStatusDate < %d AND status = %s) or (updateStatusDate < %d AND status = %s)
+or (updateStatusDate < %d AND status = %s)
 				ORDER BY updateStatusDate ASC LIMIT 100',
 					Urlslab_Status::$not_scheduled,
+					gmdate( 'Y-m-d H:i:s', strtotime( '-1 hour' ) ),
 					Urlslab_Status::$blocked,
-					time(),
+					gmdate( 'Y-m-d H:i:s', strtotime( '-1 hour' ) ),
 					Urlslab_Status::$pending,
-					time(),
+					gmdate( 'Y-m-d H:i:s', strtotime( '-1 hour' ) ),
 					Urlslab_Status::$recurring_update
 				),
 				ARRAY_A
@@ -58,23 +60,51 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 			$schedules = $wpdb->get_results(
 				$wpdb->prepare(
 					'SELECT * FROM ' . $table . // phpcs:ignore
-					' WHERE (status = %s) or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
-or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
+					' WHERE (status = %s) or (updateStatusDate < %d AND status = %s)
+or (updateStatusDate < %d AND status = %s)
 				ORDER BY updateStatusDate ASC LIMIT 100',
 					Urlslab_Status::$not_scheduled,
-					time(),
+					gmdate( 'Y-m-d H:i:s', strtotime( '-1 hour' ) ),
 					Urlslab_Status::$pending,
-					time(),
+					gmdate( 'Y-m-d H:i:s', strtotime( '-1 hour' ) ),
 					Urlslab_Status::$recurring_update
 				),
 				ARRAY_A
 			);
 		}
 
+		//# updating the date
 		$res = array();
-		foreach ( $schedules as $schedule ) {
-			$res[] = $this->transform( $schedule )->get_url();
+		if ( is_array( $schedules ) && count( $schedules ) > 0 ) {
+			$values = array();
+			$placeholder = array();
+			foreach ( $schedules as $schedule ) {
+				$res[] = $this->transform( $schedule )->get_url();
+				array_push(
+					$values,
+					$schedule['urlMd5'],
+					strtotime( gmdate( 'Y-m-d H:i:s' ) ),
+				);
+				$placeholder[] = '(%s, %d)';
+			}
+
+			$placeholder_string = implode( ', ', $placeholder );
+			$update_query = "INSERT INTO $table (
+                   urlMd5,
+                   updateStatusDate
+                   ) VALUES
+                   $placeholder_string
+                   ON DUPLICATE KEY UPDATE
+                   updateStatusDate = VALUES(updateStatusDate)";
+
+			$wpdb->query(
+				$wpdb->prepare(
+					$update_query, // phpcs:ignore
+					$values
+				)
+			);
 		}
+		//# updating the date
 
 		return $res;
 	}
@@ -99,7 +129,7 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 				$values,
 				$url->get_url_id(),
 				$url->get_url(),
-				Urlslab_Status::$broken,
+				Urlslab_Status::$not_crawling,
 			);
 			$placeholder[] = '(%s, %s, %s)';
 		}
@@ -155,8 +185,12 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 			}
 		}
 		$schedule_response = $this->urlslab_screenshot_api->schedule_batch( $scheduling_urls );
-		foreach ( $scheduling_urls as $i => $schedule ) {
-			$scheduled[ $schedule->get_url_id() ] = $schedule_response[ $i ]->to_url_data( $schedule );
+		try {
+			foreach ( $scheduling_urls as $i => $schedule ) {
+				$scheduled[ $schedule->get_url_id() ] = $schedule_response[ $i ]->to_url_data( $schedule );
+			}
+		} catch ( Exception $e ) {
+			urlslab_debug_log( $e );
 		}
 		foreach ( $grouped_urls['blocked_urls'] as $blocked_url ) {
 			$scheduled[ $blocked_url->get_url_id() ] = Urlslab_Url_Data::empty(
@@ -164,10 +198,10 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 				Urlslab_Status::$blocked
 			);
 		}
-		foreach ( $grouped_urls['broken_urls'] as $broken_url ) {
+		foreach ( $grouped_urls['not_crawling_urls'] as $broken_url ) {
 			$scheduled[ $broken_url->get_url_id() ] = Urlslab_Url_Data::empty(
 				$broken_url,
-				Urlslab_Status::$broken
+				Urlslab_Status::$not_crawling
 			);
 		}
 		$returning_data = array();
@@ -184,18 +218,13 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 	 * @return array
 	 */
 	private function filter_schedules_batch( array $urls ) {
-		$broken_urls = array();
+		$not_crawling_urls = array();
 		$main_page_urls = array();
 		$blocked_urls = array();
 		$possibly_blocked_urls = array();
 		foreach ( $urls as $url ) {
-			if ( ! $url->is_url_valid() ) {
-				$broken_urls[] = $url;
-				continue;
-			}
-
-			if ( $url->is_url_blacklisted() ) {
-				$blocked_urls[] = $url;
+			if ( ! $url->is_url_valid() || $url->is_url_blacklisted() ) {
+				$not_crawling_urls[] = $url;
 				continue;
 			}
 
@@ -207,7 +236,7 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 			$possibly_blocked_urls[] = $url;
 		}
 		return array(
-			'broken_urls' => $broken_urls,
+			'not_crawling_urls' => $not_crawling_urls,
 			'main_page_urls' => $main_page_urls,
 			'blocked_urls' => $blocked_urls,
 			'possibly_blocked_urls' => $possibly_blocked_urls,
@@ -361,7 +390,7 @@ or (UNIX_TIMESTAMP(updateStatusDate) + 3600 < %d AND status = %s)
 		$insert_values = array();
 		foreach ( $urls as $url ) {
 			if ( ! isset( $results[ $url->get_url_id() ] ) ) {
-				$url_data = Urlslab_Url_Data::empty( $url, Urlslab_Status::$broken );
+				$url_data = Urlslab_Url_Data::empty( $url, Urlslab_Status::$not_crawling );
 				array_push(
 					$insert_values,
 					$url->get_url_id(),

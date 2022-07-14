@@ -444,6 +444,25 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			if ( ( $kw === false || $row['kw'] == $kw ) && ( $url === false || $row[ 'url' ] == $url ) ) {
 				unset( $keywords[ $id ] );
 			}
+
+		}
+		return $keywords;
+	}
+
+	/**
+	 * @param $keywords
+	 * @param boolean|string $kw if false, remove all entries with given url
+	 * @param boolean|string $url if false, remove all entries with given keyword
+	 * @return array
+	 */
+	private function removeKeywordUrl( array $keywords, $kw, $url):array {
+		if ($kw === false && $url === false) {
+			return $keywords;	//this should never happen
+		}
+		foreach ($keywords as $id => $row) {
+			if ( ( $kw === false || $row['kw'] == $kw ) && ( $url === false || $row[ 'url' ] == $url ) ) {
+				unset( $keywords[ $id ] );
+			}
 		}
 		return $keywords;
 	}
