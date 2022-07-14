@@ -245,7 +245,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
 		$cron_job = new Urlslab_Screenshot_Cron( $this->url_data_fetcher );
 
-		$this->loader->add_action( 'admin_init', $cron_job, 'urlslab_cron_exec', 10, 0 );
+		$this->loader->add_action( 'urlslab_cron_hook', $cron_job, 'urlslab_cron_exec', 10, 0 );
 		if ( ! wp_next_scheduled( 'urlslab_cron_hook' ) ) {
 			wp_schedule_event( time(), 'every_minute', 'urlslab_cron_hook' );
 		}

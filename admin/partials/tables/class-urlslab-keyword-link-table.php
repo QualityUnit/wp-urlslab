@@ -21,7 +21,8 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 			$row['kw_priority'],
 			$row['kw_length'],
 			$row['lang'],
-			$row['urlLink']
+			$row['urlLink'],
+			$row['urlFilter']
 		);
 	}
 
@@ -129,9 +130,10 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 		return array(
 			'cb' => '<input type="checkbox" />',
 			'col_keyword' => 'Keyword',
+			'col_url_link' => 'Destination URL',
 			'col_kw_priority' => 'Priority',
-			'col_url_link' => 'URL',
 			'col_lang' => 'Lang',
+			'col_url_filter' => 'Url Filter [Regexp]',
 		);
 	}
 
@@ -193,6 +195,8 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 				return $this->priority_ui_convert( $item->get_keyword_priority() );
 			case 'col_url_link':
 				return $item->get_keyword_url_link();
+			case 'col_url_filter':
+				return $item->get_keyword_url_filter();
 			case 'col_lang':
 				return $item->get_keyword_url_lang();
 			default:
@@ -245,7 +249,7 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 				$delete_ids = esc_sql( $_GET['bulk-delete'] );
 				// loop over the array of record IDs and delete them
 				$this->delete_keywords( $delete_ids );
-			}       
+			}
 		}
 		$this->graceful_exit();
 	}
@@ -279,7 +283,7 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 		$query_results = $this->get_keywords(
 			$keyword_search_key,
 			$items_per_page,
-			( $table_page - 1 ) * $items_per_page 
+			( $table_page - 1 ) * $items_per_page
 		);
 		$total_count = $this->count_keywords();
 

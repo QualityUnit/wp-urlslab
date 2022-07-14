@@ -67,11 +67,12 @@ class Urlslab_Activator {
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
 			keyword varchar(250) NOT NULL,
+			urlLink varchar(500) NOT NULL,
 			kw_priority TINYINT UNSIGNED NOT NULL DEFAULT 10,
 			kw_length TINYINT UNSIGNED NOT NULL,
-			lang varchar(10) NOT NULL,
-			urlLink text NOT NULL,
-			PRIMARY KEY  (lang, keyword), 
+			lang varchar(10) NOT NULL DEFAULT 'all',
+			urlFilter varchar(250) NOT NULL DEFAULT '.*',
+			PRIMARY KEY  (keyword, lang, urlLink),
 			INDEX idx_sorting (kw_priority, kw_length)
 		) $charset_collate;";
 
