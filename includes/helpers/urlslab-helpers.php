@@ -54,6 +54,14 @@ function urlslab_get_language() {
 	return substr( get_locale(), 0, 2 );
 }
 
+function urlslab_debug_log( Exception $e ) {
+	if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
+		// phpcs:disable WordPress.PHP.DevelopmentFunctions
+		error_log( $e->getTraceAsString(), 3, URLSLAB_PLUGIN_LOG );
+		// phpcs:enable
+	}
+}
+
 function urlslab_status_ui_convert( string $status_char ): string {
 	switch ( $status_char ) {
 		case Urlslab_Status::$available:

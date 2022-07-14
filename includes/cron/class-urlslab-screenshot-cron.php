@@ -19,11 +19,7 @@ class Urlslab_Screenshot_Cron {
 					$this->handle_schedules( $schedules );
 				}           
 			} catch ( Exception $e ) {
-				$err = $e->getTraceAsString();
-				$table = URLSLAB_ERROR_LOG_TABLE;
-				$wpdb->query(
-					"INSERT INTO $table (errorLog) VALUES ($err)" // phpcs:ignore
-				);
+				urlslab_debug_log( $e );
 				break;
 			}
 

@@ -74,21 +74,22 @@ or (updateStatusDate < %d AND status = %s)
 		}
 
 		//# updating the date
-		$values = array();
-		$placeholder = array();
 		$res = array();
-		foreach ( $schedules as $schedule ) {
-			$res[] = $this->transform( $schedule )->get_url();
-			array_push(
-				$values,
-				$schedule['urlMd5'],
-				strtotime( gmdate( 'Y-m-d H:i:s' ) ),
-			);
-			$placeholder[] = '(%s, %d)';
-		}
+		if ( is_array( $schedules ) && count( $schedules ) > 0 ) {
+			$values = array();
+			$placeholder = array();
+			foreach ( $schedules as $schedule ) {
+				$res[] = $this->transform( $schedule )->get_url();
+				array_push(
+					$values,
+					$schedule['urlMd5'],
+					strtotime( gmdate( 'Y-m-d H:i:s' ) ),
+				);
+				$placeholder[] = '(%s, %d)';
+			}
 
-		$placeholder_string = implode( ', ', $placeholder );
-		$update_query = "INSERT INTO $table (
+			$placeholder_string = implode( ', ', $placeholder );
+			$update_query = "INSERT INTO $table (
                    urlMd5,
                    updateStatusDate
                    ) VALUES
@@ -96,12 +97,13 @@ or (updateStatusDate < %d AND status = %s)
                    ON DUPLICATE KEY UPDATE
                    updateStatusDate = VALUES(updateStatusDate)";
 
-		$wpdb->query(
-			$wpdb->prepare(
-				$update_query, // phpcs:ignore
-				$values
-			)
-		);
+			$wpdb->query(
+				$wpdb->prepare(
+					$update_query, // phpcs:ignore
+					$values
+				)
+			);
+		}
 		//# updating the date
 
 		return $res;
@@ -183,8 +185,12 @@ or (updateStatusDate < %d AND status = %s)
 			}
 		}
 		$schedule_response = $this->urlslab_screenshot_api->schedule_batch( $scheduling_urls );
-		foreach ( $scheduling_urls as $i => $schedule ) {
-			$scheduled[ $schedule->get_url_id() ] = $schedule_response[ $i ]->to_url_data( $schedule );
+		try {
+			foreach ( $scheduling_urls as $i => $schedule ) {
+				$scheduled[ $schedule->get_url_id() ] = $schedule_response[ $i ]->to_url_data( $schedule );
+			}
+		} catch ( Exception $e ) {
+			urlslab_debug_log( $e );
 		}
 		foreach ( $grouped_urls['blocked_urls'] as $blocked_url ) {
 			$scheduled[ $blocked_url->get_url_id() ] = Urlslab_Url_Data::empty(

@@ -44,9 +44,10 @@ class Urlslab_Screenshot_Api extends Urlslab_Api {
 			);
 		} else if ( 429 == $response[0] ) {
 			throw new Exception( 'Rate limit reached' );
+		} else {
+			throw new Exception( 'Server Error' );
 		}
 
-		return '';
 	}
 
 	private function convert_status_to_char( string $status ): string {
