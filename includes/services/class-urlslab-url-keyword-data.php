@@ -15,8 +15,9 @@ class Urlslab_Url_Keyword_Data {
 	 * @param int $keyword_length
 	 * @param string $keyword_url_lang
 	 * @param string $keyword_url_link
+	 * @param string $keyword_url_filter
 	 */
-	public function __construct( string $keyword, int $keyword_priority, int $keyword_length, string $keyword_url_lang, string $keyword_url_link, string $keyword_url_filter) {
+	public function __construct( string $keyword, int $keyword_priority, int $keyword_length, string $keyword_url_lang, string $keyword_url_link, string $keyword_url_filter ) {
 		$this->keyword          = $keyword;
 		$this->keyword_priority = $keyword_priority;
 		$this->keyword_length   = $keyword_length;
