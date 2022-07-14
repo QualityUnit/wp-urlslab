@@ -44,9 +44,10 @@ class Urlslab_Screenshot_Api extends Urlslab_Api {
 			);
 		} else if ( 429 == $response[0] ) {
 			throw new Exception( 'Rate limit reached' );
+		} else {
+			throw new Exception( 'Server Error' );
 		}
 
-		return '';
 	}
 
 	private function convert_status_to_char( string $status ): string {
@@ -57,8 +58,8 @@ class Urlslab_Screenshot_Api extends Urlslab_Api {
 			case 'AVAILABLE':
 				return Urlslab_Status::$available;
 
-			case 'BROKEN_URL':
-				return Urlslab_Status::$broken;
+			case 'NOT_CRAWLING_URL':
+				return Urlslab_Status::$not_crawling;
 
 			case 'AWAITING_UPDATE':
 				return Urlslab_Status::$recurring_update;

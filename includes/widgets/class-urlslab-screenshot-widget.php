@@ -159,7 +159,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 							$urlslab_atts['height'],
 						);
 
-					case Urlslab_Status::$broken:
+					case Urlslab_Status::$not_crawling:
 					case Urlslab_Status::$blocked:
 					default:
 						return '';

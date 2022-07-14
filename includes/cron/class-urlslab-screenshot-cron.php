@@ -9,6 +9,7 @@ class Urlslab_Screenshot_Cron {
 	}
 
 	public function urlslab_cron_exec() {
+		global $wpdb;
 		$start_time = time();
 		while ( true ) {
 			$schedules = $this->url_data_fetcher->fetch_scheduling_urls();
@@ -18,6 +19,7 @@ class Urlslab_Screenshot_Cron {
 					$this->handle_schedules( $schedules );
 				}           
 			} catch ( Exception $e ) {
+				urlslab_debug_log( $e );
 				break;
 			}
 

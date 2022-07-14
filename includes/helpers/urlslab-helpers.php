@@ -54,6 +54,14 @@ function urlslab_get_language() {
 	return substr( get_locale(), 0, 2 );
 }
 
+function urlslab_debug_log( Exception $e ) {
+	if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
+		// phpcs:disable WordPress.PHP.DevelopmentFunctions
+		error_log( $e->getTraceAsString(), 3, URLSLAB_PLUGIN_LOG );
+		// phpcs:enable
+	}
+}
+
 function urlslab_status_ui_convert( string $status_char ): string {
 	switch ( $status_char ) {
 		case Urlslab_Status::$available:
@@ -62,7 +70,7 @@ function urlslab_status_ui_convert( string $status_char ): string {
 			return '<div class="status-circle background-warning" title="pending"></div>';
 		case Urlslab_Status::$not_scheduled:
 			return '<div class="status-circle background-secondary" title="not-scheduled"></div>';
-		case Urlslab_Status::$broken:
+		case Urlslab_Status::$not_crawling:
 			return '<div class="status-circle background-danger" title="broken"></div>';
 		case Urlslab_Status::$blocked:
 			return '<div class="status-circle background-danger" title="blocked"></div>';
