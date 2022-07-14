@@ -15,8 +15,6 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 
 	private string $landing_page_link = 'https://www.urlslab.com';
 
-	const MAX_URLS_TO_ENHANCE = 100;
-
 	public function init_widget( Urlslab_Loader $loader ) {
 		$loader->add_filter( 'the_content', $this, 'hook_callback', 13 );
 	}

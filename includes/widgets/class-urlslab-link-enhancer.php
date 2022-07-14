@@ -15,7 +15,6 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 	private string $landing_page_link = 'https://www.urlslab.com';
 
-	const MAX_URLS_TO_ENHANCE = 100;
 	private Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher;
 
 
