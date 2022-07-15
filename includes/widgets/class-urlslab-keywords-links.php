@@ -241,7 +241,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 					continue;
 				}
 				//Keyword, URL, Priority, Lang, Filter
-				$dataRow = new Urlslab_Url_Keyword_Data( $data[ 0 ], isset( $data[ 2 ] ) && is_numeric( $data[ 2 ] ) ? (int)$data[ 2 ] : 10, strlen( $data[ 0 ] ), isset( $data[ 3 ] ) && strlen( $data[ 3 ] ) > 0 ? $data[ 3 ] : 'all', $data[ 1 ], isset( $data[ 4 ] ) ? $data[ 4 ] : '.*' );
+				$dataRow = new Urlslab_Url_Keyword_Data( $data[ 0 ], isset( $data[ 2 ] ) && is_numeric( $data[ 2 ] ) ? (int) $data[ 2 ] : 10, strlen( $data[ 0 ] ), isset( $data[ 3 ] ) && strlen( $data[ 3 ] ) > 0 ? $data[ 3 ] : 'all', $data[ 1 ], isset( $data[ 4 ] ) ? $data[ 4 ] : '.*' );
 
 				$this->createRow( $dataRow );
 			}
@@ -379,8 +379,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 			$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kwMd5, keyword, urlLink, urlFilter
 				FROM ' . $keyword_table . // phpcs:ignore
-					" WHERE (lang = %s OR lang = 'all')
-					ORDER BY kw_priority ASC, kw_length DESC", urlslab_get_language() ), 'ARRAY_A' );
+					" WHERE (lang = %s OR lang = 'all') ORDER BY kw_priority ASC, kw_length DESC",
+					urlslab_get_language() ), 'ARRAY_A' );
 
 			$this->keywords_cache = array();
 			$current_page = get_current_page_url();

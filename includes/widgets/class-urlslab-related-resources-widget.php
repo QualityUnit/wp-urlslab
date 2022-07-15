@@ -472,8 +472,8 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		$sample_urls = array_unique( $sample_urls );
 		sort( $sample_urls, SORT_STRING | SORT_FLAG_CASE | SORT_NATURAL );
 
-		foreach ($sample_urls as $id => $url) {
-			$sample_urls[$id] = new Urlslab_Url( $url);
+		foreach ( $sample_urls as $id => $url ) {
+			$sample_urls[ $id ] = new Urlslab_Url( $url );
 		}
 
 		if ( !$this->url_data_fetcher->prepare_url_batch_for_scheduling( $sample_urls ) ) {
@@ -488,7 +488,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 		$max = count( $sample_urls );
 		for ( $i = 0; $i < $max; $i++ ) {
-			for ($j = $i+1; $j < $max && $j < ($i + 10); $j ++) {
+			for ( $j = $i + 1; $j < $max && $j < ( $i + 10 ); $j++ ) {
 				array_push(
 						$values,
 						$sample_urls[ $i ]->get_url_id(),
