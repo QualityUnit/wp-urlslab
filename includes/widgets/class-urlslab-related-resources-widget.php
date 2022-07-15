@@ -168,7 +168,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 					array(
 						urlslab_get_current_page_protocol() . $row[0],
 						urlslab_get_current_page_protocol() . $row[1],
-					) 
+					)
 				);
 			}
 			fclose( $output );
@@ -177,7 +177,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			$option = 'per_page';
 			$args = array(
 				'label' => 'Relations',
-				'default' => 5,
+				'default' => 50,
 				'option' => 'users_per_page',
 			);
 

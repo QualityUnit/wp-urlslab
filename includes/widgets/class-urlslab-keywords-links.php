@@ -242,7 +242,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget
 			$option = 'per_page';
 			$args = array(
 					'label' => 'Keywords',
-					'default' => 5,
+					'default' => 50,
 					'option' => 'users_per_page',
 			);
 
