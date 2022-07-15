@@ -509,17 +509,15 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 		//try to load all titles with less than 4 words
 		$posts = get_posts( array(
-				'numberposts' => 500,
+				'numberposts' => 1000,
 				'orderby' => 'date',
 				'order' => 'DESC',
-				'include' => array(),
-				'exclude' => array(),
 				'suppress_filters' => true
 		) );
 
 		foreach ( $posts as $post ) {
 			if ( $post->post_status == 'publish' && substr_count( $post->post_title, ' ' ) < 3 ) {
-				$sample_data[ $post->post_title ] = get_permalink( $post->ID );
+				$sample_data[ strtolower( $post->post_title ) ] = get_permalink( $post->ID );
 			}
 		}
 
