@@ -96,18 +96,18 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	}
 
 	/**
-	 * @param string $kwMd5
+	 * @param string $kw_md5
 	 *
 	 * @return void
 	 */
-	private function delete_keyword( string $kwMd5 ) {
+	private function delete_keyword( string $kw_md5 ) {
 		global $wpdb;
 		$table = URLSLAB_KEYWORDS_TABLE;
 		$delete_query = "DELETE FROM $table WHERE kwMd5 = %s";
 		$wpdb->query(
 			$wpdb->prepare(
 				$delete_query, // phpcs:ignore
-				$kwMd5
+				$kw_md5
 			)
 		);
 	}

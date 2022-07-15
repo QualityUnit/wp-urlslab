@@ -374,7 +374,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget
 			return; //empty node
 		}
 
-		foreach ( $keywords as $kwMd5 => $kwRow ) {
+		foreach ( $keywords as $kw_md5 => $kwRow ) {
 			if ( preg_match( '/\b(' . preg_quote( strtolower( $kwRow[ 'kw' ] ), '/' ) . ')\b/', strtolower( $node->nodeValue ), $matches, PREG_OFFSET_CAPTURE ) ) {
 				$pos = $matches[ 1 ][ 1 ];
 				$this->cnt_page_links++;
@@ -390,10 +390,10 @@ class Urlslab_Keywords_Links extends Urlslab_Widget
 				} else {
 					$this->url_page_replacement_counts[ $kwRow[ 'url' ] ] = 1;
 				}
-				if ( isset( $this->url_page_replacement_counts[ $kwMd5 ] ) ) {
-					$this->urlandkw_page_replacement_counts[ $kwMd5 ]++;
+				if ( isset( $this->url_page_replacement_counts[ $kw_md5 ] ) ) {
+					$this->urlandkw_page_replacement_counts[ $kw_md5 ]++;
 				} else {
-					$this->urlandkw_page_replacement_counts[ $kwMd5 ] = 1;
+					$this->urlandkw_page_replacement_counts[ $kw_md5 ] = 1;
 				}
 
 				//if we reached maximum number of replacements with this kw, skip next processing
@@ -468,9 +468,9 @@ class Urlslab_Keywords_Links extends Urlslab_Widget
 		if ( $kw === false && $url === false ) {
 			return $keywords;    //this should never happen
 		}
-		foreach ( $keywords as $kwMd5 => $row ) {
+		foreach ( $keywords as $kw_md5 => $row ) {
 			if ( ( $kw === false || $row[ 'kw' ] == $kw ) && ( $url === false || $row[ 'url' ] == $url ) ) {
-				unset( $keywords[ $kwMd5 ] );
+				unset( $keywords[ $kw_md5 ] );
 			}
 		}
 		return $keywords;
@@ -505,16 +505,16 @@ class Urlslab_Keywords_Links extends Urlslab_Widget
 		}
 
 		$keywords = array();
-		foreach ( $this->keywords_cache as $kwMd5 => $row ) {
+		foreach ( $this->keywords_cache as $kw_md5 => $row ) {
 			if (
 					( !isset( $this->kw_page_replacement_counts[ $row[ 'kw' ] ] ) ||
 							$this->kw_page_replacement_counts[ $row[ 'kw' ] ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD, self::MAX_REPLACEMENTS_PER_KEYWORD_DEFAULT ) ) &&
 					( !isset( $this->url_page_replacement_counts[ $row[ 'url' ] ] ) ||
 							$this->url_page_replacement_counts[ $row[ 'url' ] ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_URL, self::MAX_REPLACEMENTS_PER_URL_DEFAULT ) ) &&
-					( !isset( $this->urlandkw_page_replacement_counts[ $kwMd5 ] ) ||
-							$this->urlandkw_page_replacement_counts[ $kwMd5 ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORDURL, self::MAX_REPLACEMENTS_PER_KEYWORDURL_DEFAULT ) )
+					( !isset( $this->urlandkw_page_replacement_counts[ $kw_md5 ] ) ||
+							$this->urlandkw_page_replacement_counts[ $kw_md5 ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORDURL, self::MAX_REPLACEMENTS_PER_KEYWORDURL_DEFAULT ) )
 			) {
-				$keywords[ $kwMd5 ] = $row;
+				$keywords[ $kw_md5 ] = $row;
 			}
 		}
 
