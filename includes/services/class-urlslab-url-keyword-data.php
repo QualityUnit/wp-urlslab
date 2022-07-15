@@ -29,7 +29,7 @@ class Urlslab_Url_Keyword_Data {
 	/**
 	 * @return string
 	 */
-	public function get_kwMd5(): string {
+	public function get_kw_md5(): string {
 		return md5($this->get_keyword() . '|' . $this->get_keyword_url_link() . '|' . $this->get_keyword_url_lang());
 	}
 

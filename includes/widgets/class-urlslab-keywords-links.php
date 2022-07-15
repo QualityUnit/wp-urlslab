@@ -330,7 +330,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget
 						$wpdb->prepare(
 								$update_query, // phpcs:ignore
 								array(
-										$dataRow->get_kwMd5(),
+										$dataRow->get_kw_md5(),
 										$dataRow->get_keyword(),
 										$dataRow->get_keyword_priority(),
 										$dataRow->get_keyword_length(),

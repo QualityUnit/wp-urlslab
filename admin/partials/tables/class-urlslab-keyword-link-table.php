@@ -125,7 +125,6 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	function get_columns(): array {
 		return array(
 			'cb' => '<input type="checkbox" />',
-			//'col_kwMd5' => 'Id',
 			'col_keyword' => 'Keyword',
 			'col_url_link' => 'Destination URL',
 			'col_kw_priority' => 'Priority',
@@ -144,7 +143,7 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	function column_cb( $item ): string {
 		return sprintf(
 			'<input type="checkbox" name="bulk-delete[]" value="%s" />',
-			$item->get_kwMd5()
+			$item->get_kw_md5()
 		);
 	}
 
@@ -166,10 +165,10 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 		if ( isset( $_REQUEST['page'] ) ) {
 			$actions = array(
 				'delete' => sprintf(
-					'<a href="?page=%s&action=%s&kwMd5=%s&_wpnonce=%s">Delete</a>',
+					'<a href="?page=%s&action=%s&kw_md5=%s&_wpnonce=%s">Delete</a>',
 					esc_attr( $_REQUEST['page'] ),
 					'delete',
-					esc_attr( $item->get_kwMd5() ),
+					esc_attr( $item->get_kw_md5() ),
 					$delete_nonce
 				),
 			);
@@ -196,8 +195,8 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 				return $item->get_keyword_url_filter();
 			case 'col_lang':
 				return $item->get_keyword_url_lang();
-			case 'col_kwMd5':
-				return $item->get_kwMd5();
+			case 'col_kw_md5':
+				return $item->get_kw_md5();
 			default:
 				return print_r( $item, true );
 		}
@@ -217,7 +216,7 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	public function process_bulk_action() {
 		//Detect when a bulk action is being triggered...
 		if ( 'delete' === $this->current_action() &&
-		isset( $_GET['kwMd5'] ) &&
+		isset( $_GET['kw_md5'] ) &&
 		isset( $_REQUEST['_wpnonce'] ) ) {
 
 			// In our file that handles the request, verify the nonce.
@@ -236,7 +235,7 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 				exit();
 			}
 
-			$this->delete_keyword( $_GET['kwMd5'] );
+			$this->delete_keyword( $_GET['kw_md5'] );
 		}
 
 
