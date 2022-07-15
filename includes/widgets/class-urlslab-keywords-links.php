@@ -354,9 +354,10 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	/**
-	 * @param $keywords
+	 * @param array $keywords
 	 * @param boolean|string $kw if false, remove all entries with given url
 	 * @param boolean|string $url if false, remove all entries with given keyword
+	 *
 	 * @return array
 	 */
 	private function removeKeywordUrl( array $keywords, $kw, $url ): array {
@@ -377,10 +378,15 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 			$keyword_table = URLSLAB_KEYWORDS_TABLE;
 
-			$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kwMd5, keyword, urlLink, urlFilter
+			$results = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT kwMd5, keyword, urlLink, urlFilter
 				FROM ' . $keyword_table . // phpcs:ignore
 					" WHERE (lang = %s OR lang = 'all') ORDER BY kw_priority ASC, kw_length DESC",
-					urlslab_get_language() ), 'ARRAY_A' );
+					urlslab_get_language() 
+				),
+				'ARRAY_A' 
+			);
 
 			$this->keywords_cache = array();
 			$current_page = get_current_page_url();
@@ -510,12 +516,13 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				'affiliate marketing' => 'https://www.postaffiliatepro.com/affiliate-marketing-software/' );
 
 		//try to load all titles with less than 4 words
-		$posts = get_posts( array(
+		$posts = get_posts(
+			array(
 				'numberposts' => 1000,
-				'orderby' => 'date',
-				'order' => 'DESC',
-				'suppress_filters' => true
-		) );
+				'orderby'     => 'date',
+				'order'       => 'DESC'
+			)
+		);
 
 		foreach ( $posts as $post ) {
 			if ( $post->post_status == 'publish' && substr_count( $post->post_title, ' ' ) < 3 ) {
@@ -535,7 +542,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	 */
 	private function createRow( Urlslab_Url_Keyword_Data $dataRow ) {
 		global $wpdb;
-		$update_query = "INSERT INTO " . URLSLAB_KEYWORDS_TABLE . " (
+		$update_query = 'INSERT INTO ' . URLSLAB_KEYWORDS_TABLE . ' (
                    kwMd5,
                    keyword,
                    kw_priority,
@@ -548,11 +555,21 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
                    kw_length = VALUES(kw_length),
                    lang = VALUES(lang),
                    urlLink = VALUES(urlLink),
-                   urlFilter = VALUES(urlFilter)";
+                   urlFilter = VALUES(urlFilter)';
 
-		$result = $wpdb->query( $wpdb->prepare( $update_query, // phpcs:ignore
-				array( $dataRow->get_kw_md5(), $dataRow->get_keyword(), $dataRow->get_keyword_priority(), $dataRow->get_keyword_length(), $dataRow->get_keyword_url_lang(), $dataRow->get_keyword_url_link(), $dataRow->get_keyword_url_filter() ) ) );
-		return $result;
+		return $wpdb->query(
+			$wpdb->prepare( $update_query, // phpcs:ignore
+				array(
+					$dataRow->get_kw_md5(),
+					$dataRow->get_keyword(),
+					$dataRow->get_keyword_priority(),
+					$dataRow->get_keyword_length(),
+					$dataRow->get_keyword_url_lang(),
+					$dataRow->get_keyword_url_link(),
+					$dataRow->get_keyword_url_filter()
+				)
+			)
+		);
 	}
 
 }

@@ -45,7 +45,7 @@ class Urlslab_Activator {
 		$version = get_option( URLSLAB_VERSION_SETTING, '1.0.0' );
 
 		if ( version_compare( $version, '1.2.0', '<' ) ) {
-			$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS ' . URLSLAB_KEYWORDS_TABLE ) );
+			$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS ' . URLSLAB_KEYWORDS_TABLE ) ); // phpcs:ignore
 			//create table again
 			self::init_keyword_widget_tables();
 			update_option( URLSLAB_VERSION_SETTING, '1.2.0' );

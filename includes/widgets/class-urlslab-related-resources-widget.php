@@ -100,14 +100,14 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 						$res = $this->import_csv( $_FILES[ 'csv_file' ][ 'tmp_name' ] );
 						if ( $res ) {
 							$redirect_to = $this->admin_widget_menu_page(
-									array(
+								array(
 											'status' => 'success',
 											'message' => 'Insert Succeeded'
 									)
 							);
 						} else {
 							$redirect_to = $this->admin_widget_menu_page(
-									array(
+								array(
 											'status' => 'failure',
 											'message' => 'Failure in parsing CSV'
 									)
@@ -115,7 +115,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 						}
 					} else {
 						$redirect_to = $this->admin_widget_menu_page(
-								array(
+							array(
 										'status' => 'failure',
 										'message' => 'Empty CSV File provided'
 								)
@@ -123,7 +123,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 					}
 				} else {
 					$redirect_to = $this->admin_widget_menu_page(
-							array(
+						array(
 									'status' => 'failure',
 									'message' => 'Wrong Action'
 							)
@@ -131,7 +131,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				}
 			} else {
 				$redirect_to = $this->admin_widget_menu_page(
-						array(
+					array(
 								'status' => 'failure',
 								'message' => 'Not a valid request'
 						)
@@ -164,8 +164,8 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			$result = $wpdb->get_results( $query, ARRAY_N );
 			foreach ( $result as $row ) {
 				fputcsv(
-						$output,
-						array(
+					$output,
+					array(
 								urlslab_get_current_page_protocol() . $row[ 0 ],
 								urlslab_get_current_page_protocol() . $row[ 1 ],
 						)
@@ -193,11 +193,14 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			exit();
 		} else {
 
-			add_screen_option( 'per_page', array(
+			add_screen_option(
+				'per_page',
+				array(
 					'label' => 'Relations',
 					'default' => 50,
 					'option' => 'users_per_page',
-			) );
+				) 
+			);
 
 			$this->related_resources_widget_table = new Urlslab_Related_Resources_Widget_Table();
 		}
@@ -236,16 +239,16 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	private function admin_notice( string $status, string $message = '' ) {
 		if ( 'success' == $status ) {
 			echo sprintf(
-					'<div class="notice notice-success"><p>%s</p></div>',
-					esc_html( $message ),
+				'<div class="notice notice-success"><p>%s</p></div>',
+				esc_html( $message ),
 			);
 		}
 
 		if ( 'failure' == $status ) {
 			echo sprintf(
-					'<div class="notice notice-error"><p><strong>%1$s</strong>: %2$s</p></div>',
-					esc_html( 'Error' ),
-					esc_html( $message )
+				'<div class="notice notice-error"><p><strong>%1$s</strong>: %2$s</p></div>',
+				esc_html( 'Error' ),
+				esc_html( $message )
 			);
 		}
 	}
@@ -321,9 +324,9 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		$placeholder = array();
 		foreach ( $saving_items as $item ) {
 			array_push(
-					$values,
-					$item[ 0 ]->get_url_id(),
-					$item[ 1 ]->get_url_id(),
+				$values,
+				$item[ 0 ]->get_url_id(),
+				$item[ 1 ]->get_url_id(),
 			);
 			$placeholder[] = '(%s, %s)';
 		}
@@ -335,10 +338,10 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
                    $placeholder_string";
 
 		$result = $wpdb->query(
-				$wpdb->prepare(
+			$wpdb->prepare(
 						$update_query, // phpcs:ignore
-						$values
-				)
+				$values
+			)
 		);
 
 		return is_numeric( $result );
@@ -384,23 +387,23 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
-		$atts = array_change_key_case( (array)$atts, CASE_LOWER );
+		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 		global $wpdb;
 
 		$urlslab_atts = shortcode_atts(
-				array(
+			array(
 						'url' => urlslab_get_current_page_protocol() . get_current_page_url()->get_url(),
 						'related-count' => 8,
 						'show-image' => false,
 						'default-image' => '',
 				),
-				$atts,
-				$tag
+			$atts,
+			$tag
 		);
 
 		$result = $this->url_data_fetcher->fetch_related_urls_to(
-				new Urlslab_Url( $urlslab_atts[ 'url' ] ),
-				$urlslab_atts[ 'related-count' ]
+			new Urlslab_Url( $urlslab_atts[ 'url' ] ),
+			$urlslab_atts[ 'related-count' ]
 		);
 
 		if ( !empty( $result ) ) {
@@ -457,12 +460,13 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		$sample_urls = array();
 
 		//try to load all titles with less than 4 words
-		$posts = get_posts( array(
+		$posts = get_posts(
+			array(
 				'numberposts' => 1000,
 				'orderby' => 'date',
-				'order' => 'DESC',
-				'suppress_filters' => true
-		) );
+				'order' => 'DESC'
+			)
+		);
 
 		foreach ( $posts as $post ) {
 			if ( $post->post_status == 'publish' ) {
@@ -490,9 +494,9 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		for ( $i = 0; $i < $max; $i++ ) {
 			for ( $j = $i + 1; $j < $max && $j < ( $i + 10 ); $j++ ) {
 				array_push(
-						$values,
-						$sample_urls[ $i ]->get_url_id(),
-						$sample_urls[ $j ]->get_url_id(),
+					$values,
+					$sample_urls[ $i ]->get_url_id(),
+					$sample_urls[ $j ]->get_url_id(),
 				);
 				$placeholder[] = '(%s, %s)';
 			}
@@ -505,10 +509,10 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
                    $placeholder_string";
 
 		$result = $wpdb->query(
-				$wpdb->prepare(
+			$wpdb->prepare(
 						$update_query, // phpcs:ignore
-						$values
-				)
+				$values
+			)
 		);
 
 		return is_numeric( $result );
