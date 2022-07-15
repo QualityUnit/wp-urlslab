@@ -498,7 +498,9 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	private function init_sample_data() {
 		//in case installation is empty, use some static mappings
 		$sample_data = array(
+				'screenshot' => 'https://www.urlslab.com',
 				'google' => 'https://www.google.com',
+				'support' => 'https://www.liveagent.com/',
 				'help desk' => 'https://www.liveagent.com/help-desk-software/',
 				'helpdesk' => 'https://www.liveagent.com/help-desk-software/',
 				'chat' => 'https://www.liveagent.com/live-chat-software/',
