@@ -167,16 +167,25 @@ class Urlslab_Url_Data {
 	 */
 	public function render_screenshot_path( string $screenshot_type = 'carousel' ): string {
 		switch ( $screenshot_type ) {
-			case 'thumbnail':
+			case 'full-page-thumbnail':
 				return sprintf(
-					'https://www.urlslab.com/public/thumbnail/%s/%s/%s.jpg',
+					'https://www.urlslab.com/public/thumbnail/fullpage/%s/%s/%s',
 					$this->domain_id,
 					$this->url_id,
 					$this->screenshot_date
 				);
+
+			case 'carousel-thumbnail':
+				return sprintf(
+					'https://www.urlslab.com/public/thumbnail/carousel/%s/%s/%s',
+					$this->domain_id,
+					$this->url_id,
+					$this->screenshot_date
+				);
+
 			case 'full-page':
 				return sprintf(
-					'https://www.urlslab.com/public/image/%s/%s/%s.png',
+					'https://www.urlslab.com/public/image/%s/%s/%s',
 					$this->domain_id,
 					$this->url_id,
 					$this->screenshot_date
