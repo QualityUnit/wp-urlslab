@@ -7,8 +7,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-keyword-data.php';
 require_once URLSLAB_PLUGIN_DIR . '/admin/partials/tables/class-urlslab-keyword-link-table.php';
 
-class Urlslab_Keywords_Links extends Urlslab_Widget
-{
+class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 
 	private string $widget_slug = 'urlslab-keywords-links';
@@ -52,50 +51,43 @@ class Urlslab_Keywords_Links extends Urlslab_Widget
 	const SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH = 'urlslab_max_repl_paragraph';
 	const MAX_REPLACEMENTS_PER_PARAGRAPH_DEFAULT = 2;
 
-	public function init_widget( Urlslab_Loader $loader )
-	{
+	public function init_widget( Urlslab_Loader $loader ) {
 		$loader->add_filter( 'the_content', $this, 'hook_callback', 11 );
 	}
 
-	public function hook_callback( $content )
-	{
+	public function hook_callback( $content ) {
 		return $this->theContentHook( $content );
 	}
 
 	/**
 	 * @return string
 	 */
-	public function get_widget_slug(): string
-	{
+	public function get_widget_slug(): string {
 		return $this->widget_slug;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function get_widget_title(): string
-	{
+	public function get_widget_title(): string {
 		return 'Urlslab ' . $this->widget_title;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function get_widget_description(): string
-	{
+	public function get_widget_description(): string {
 		return $this->widget_description;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function get_landing_page_link(): string
-	{
+	public function get_landing_page_link(): string {
 		return $this->landing_page_link;
 	}
 
-	public function load_widget_page()
-	{
+	public function load_widget_page() {
 		?>
 		<div class="wrap">
 			<h2>Keywords</h2>
@@ -124,86 +116,44 @@ class Urlslab_Keywords_Links extends Urlslab_Widget
 		<?php
 	}
 
-	private function admin_notice( string $status, string $message = '' )
-	{
+	private function admin_notice( string $status, string $message = '' ) {
 		if ( 'success' === $status ) {
-			echo sprintf(
-					'<div class="notice notice-success"><p>%s</p></div>',
-					esc_html( $message ),
-			);
+			echo sprintf( '<div class="notice notice-success"><p>%s</p></div>', esc_html( $message ), );
 		}
 
 		if ( 'failure' === $status ) {
-			echo sprintf(
-					'<div class="notice notice-error"><p><strong>%1$s</strong>: %2$s</p></div>',
-					esc_html( 'Error' ),
-					esc_html( $message )
-			);
+			echo sprintf( '<div class="notice notice-error"><p><strong>%1$s</strong>: %2$s</p></div>', esc_html( 'Error' ), esc_html( $message ) );
 		}
 	}
 
 
-	public function widget_admin_load()
-	{
-		if ( isset( $_SERVER[ 'REQUEST_METHOD' ] ) and
-				'POST' === $_SERVER[ 'REQUEST_METHOD' ] and
-				isset( $_REQUEST[ 'action' ] ) and
-				-1 != $_REQUEST[ 'action' ] and
-				'import' === $_REQUEST[ 'action' ] ) {
+	public function widget_admin_load() {
+		if ( isset( $_SERVER[ 'REQUEST_METHOD' ] ) and 'POST' === $_SERVER[ 'REQUEST_METHOD' ] and isset( $_REQUEST[ 'action' ] ) and -1 != $_REQUEST[ 'action' ] and 'import' === $_REQUEST[ 'action' ] ) {
 			// Import/Export option
 			check_admin_referer( 'keyword-widget-import' );
 			if ( isset( $_POST[ 'submit' ] ) ) {
 				if ( 'Import' === $_POST[ 'submit' ] ) {
 					//# Import the given csv
 					if ( !empty( $_FILES[ 'csv_file' ] ) and $_FILES[ 'csv_file' ][ 'size' ] > 0 ) {
-						$res = $this->save_csv_to_db( $_FILES[ 'csv_file' ][ 'tmp_name' ] );
+						$res = $this->import_csv( $_FILES[ 'csv_file' ][ 'tmp_name' ] );
 						if ( $res ) {
-							$redirect_to = $this->admin_widget_menu_page(
-									array(
-											'status' => 'success',
-											'message' => 'Insert Succeeded'
-									)
-							);
+							$redirect_to = $this->admin_widget_menu_page( array( 'status' => 'success', 'message' => 'Insert Succeeded' ) );
 						} else {
-							$redirect_to = $this->admin_widget_menu_page(
-									array(
-											'status' => 'failure',
-											'message' => 'Failure in parsing CSV'
-									)
-							);
+							$redirect_to = $this->admin_widget_menu_page( array( 'status' => 'failure', 'message' => 'Failure in parsing CSV' ) );
 						}
 					} else {
-						$redirect_to = $this->admin_widget_menu_page(
-								array(
-										'status' => 'failure',
-										'message' => 'Empty CSV File provided'
-								)
-						);
+						$redirect_to = $this->admin_widget_menu_page( array( 'status' => 'failure', 'message' => 'Empty CSV File provided' ) );
 					}
 				} else {
-					$redirect_to = $this->admin_widget_menu_page(
-							array(
-									'status' => 'failure',
-									'message' => 'Wrong Action'
-							)
-					);
+					$redirect_to = $this->admin_widget_menu_page( array( 'status' => 'failure', 'message' => 'Wrong Action' ) );
 				}
 			} else {
-				$redirect_to = $this->admin_widget_menu_page(
-						array(
-								'status' => 'failure',
-								'message' => 'Not a valid request'
-						)
-				);
+				$redirect_to = $this->admin_widget_menu_page( array( 'status' => 'failure', 'message' => 'Not a valid request' ) );
 			}
 
 			wp_safe_redirect( $redirect_to );
 			exit();
-		} else if ( isset( $_SERVER[ 'REQUEST_METHOD' ] ) and
-				'GET' === $_SERVER[ 'REQUEST_METHOD' ] and
-				isset( $_REQUEST[ 'action' ] ) and
-				-1 != $_REQUEST[ 'action' ] and
-				'export' == $_REQUEST[ 'action' ] ) {
+		} else if ( isset( $_SERVER[ 'REQUEST_METHOD' ] ) and 'GET' === $_SERVER[ 'REQUEST_METHOD' ] and isset( $_REQUEST[ 'action' ] ) and -1 != $_REQUEST[ 'action' ] and 'export' == $_REQUEST[ 'action' ] ) {
 			header( 'Content-Type: text/csv; charset=utf-8' );
 			header( 'Content-Disposition: attachment; filename=keywords.csv' );
 			$output = fopen( 'php://output', 'w' );
@@ -218,33 +168,25 @@ class Urlslab_Keywords_Links extends Urlslab_Widget
 			}
 			fclose( $output );
 			die();
-		} else if ( isset( $_SERVER[ 'REQUEST_METHOD' ] ) and
-				'GET' == $_SERVER[ 'REQUEST_METHOD' ] and
-				isset( $_REQUEST[ 'action' ] ) and
-				-1 != $_REQUEST[ 'action' ] and
-				'clear' == $_REQUEST[ 'action' ] ) {
+		} else if ( isset( $_SERVER[ 'REQUEST_METHOD' ] ) and 'GET' == $_SERVER[ 'REQUEST_METHOD' ] and isset( $_REQUEST[ 'action' ] ) and -1 != $_REQUEST[ 'action' ] and 'clear' == $_REQUEST[ 'action' ] ) {
 			global $wpdb;
 			$table = URLSLAB_KEYWORDS_TABLE;
 
 			$query = "TRUNCATE $table";
 			$wpdb->query( $query ); // phpcs:ignore
-			wp_safe_redirect(
-					$this->admin_widget_menu_page(
-							array(
-									'status' => 'success',
-									'message' => 'All Data deleted'
-							)
-					)
-			);
+			wp_safe_redirect( $this->admin_widget_menu_page( array( 'status' => 'success', 'message' => 'All Data deleted' ) ) );
+			exit();
+
+		} else if ( isset( $_SERVER[ 'REQUEST_METHOD' ] ) and 'GET' == $_SERVER[ 'REQUEST_METHOD' ] and isset( $_REQUEST[ 'action' ] ) and -1 != $_REQUEST[ 'action' ] and 'generate_sample_data' == $_REQUEST[ 'action' ] ) {
+
+			$this->init_sample_data();
+
+			wp_safe_redirect( $this->admin_widget_menu_page( array( 'status' => 'success', 'message' => 'Sample keywords created' ) ) );
 			exit();
 
 		} else {
 			$option = 'per_page';
-			$args = array(
-					'label' => 'Keywords',
-					'default' => 50,
-					'option' => 'users_per_page',
-			);
+			$args = array( 'label' => 'Keywords', 'default' => 50, 'option' => 'users_per_page', );
 
 			add_screen_option( $option, $args );
 
@@ -252,8 +194,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget
 		}
 	}
 
-	private function user_overall_option()
-	{
+	private function user_overall_option() {
 		?>
 		<div class="card float-left mar-bottom-2">
 			<h2>Import Keyword CSV</h2>
@@ -278,16 +219,14 @@ class Urlslab_Keywords_Links extends Urlslab_Widget
 				   class="button export_keyword_csv">Export</a>
 				<a href="<?php echo esc_url( $this->admin_widget_menu_page( 'action=clear' ) ); ?>"
 				   class="button export_keyword_csv">Delete all</a>
+				<a href="<?php echo esc_url( $this->admin_widget_menu_page( 'action=generate_sample_data' ) ); ?>"
+				   class="button export_keyword_csv">Generate Sample Data</a>
 			</form>
 		</div>
 		<?php
 	}
 
-	private function save_csv_to_db( $file ): bool
-	{
-		global $wpdb;
-		$table = URLSLAB_KEYWORDS_TABLE;
-
+	private function import_csv( $file ): bool {
 		//# Reading/Parsing CSV File
 		$row = 0;
 		$handle = fopen( $file, 'r' );
@@ -302,44 +241,9 @@ class Urlslab_Keywords_Links extends Urlslab_Widget
 					continue;
 				}
 				//Keyword, URL, Priority, Lang, Filter
-				$dataRow = new Urlslab_Url_Keyword_Data(
-						$data[ 0 ],
-						isset( $data[ 2 ] ) && is_numeric( $data[ 2 ] ) ? (int)$data[ 2 ] : 10,
-						strlen( $data[ 0 ] ),
-						isset( $data[ 3 ] ) && strlen( $data[ 3 ] ) > 0 ? $data[ 3 ] : 'all',
-						$data[ 1 ],
-						isset( $data[ 4 ] ) ? $data[ 4 ] : '.*'
-				);
+				$dataRow = new Urlslab_Url_Keyword_Data( $data[ 0 ], isset( $data[ 2 ] ) && is_numeric( $data[ 2 ] ) ? (int)$data[ 2 ] : 10, strlen( $data[ 0 ] ), isset( $data[ 3 ] ) && strlen( $data[ 3 ] ) > 0 ? $data[ 3 ] : 'all', $data[ 1 ], isset( $data[ 4 ] ) ? $data[ 4 ] : '.*' );
 
-				$update_query = "INSERT INTO $table (
-                   kwMd5,
-                   keyword,
-                   kw_priority,
-                   kw_length,
-                   lang,
-                   urlLink,
-                   urlFilter) VALUES (%s, %s, %d, %d, %s, %s, %s)
-                   ON DUPLICATE KEY UPDATE
-                   kw_priority = VALUES(kw_priority),
-                   kw_length = VALUES(kw_length),
-                   lang = VALUES(lang),
-                   urlLink = VALUES(urlLink),
-                   urlFilter = VALUES(urlFilter)";
-
-				$wpdb->query(
-						$wpdb->prepare(
-								$update_query, // phpcs:ignore
-								array(
-										$dataRow->get_kw_md5(),
-										$dataRow->get_keyword(),
-										$dataRow->get_keyword_priority(),
-										$dataRow->get_keyword_length(),
-										$dataRow->get_keyword_url_lang(),
-										$dataRow->get_keyword_url_link(),
-										$dataRow->get_keyword_url_filter()
-								)
-						)
-				);
+				$this->createRow( $dataRow );
 			}
 			fclose( $handle );
 		}
@@ -349,24 +253,19 @@ class Urlslab_Keywords_Links extends Urlslab_Widget
 	/**
 	 * @return string
 	 */
-	public function get_admin_menu_page_title(): string
-	{
+	public function get_admin_menu_page_title(): string {
 		return 'Urlslab Widget | Keywords Links';
 	}
 
 	/**
 	 * @return string
 	 */
-	public function get_admin_menu_title(): string
-	{
+	public function get_admin_menu_title(): string {
 		return 'Keywords Links';
 	}
 
-	private function replaceKeywordWithLinks( DOMText $node, DOMDocument $document, array $keywords )
-	{
-		if ( $this->cnt_page_links > get_option( self::SETTING_NAME_MAX_LINKS_ON_PAGE, self::MAX_LINKS_ON_PAGE_DEFAULT ) ||
-				$this->cnt_page_link_replacements > get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE, self::MAX_REPLACEMENTS_PER_PAGE_DEFAULT ) ||
-				$this->cnt_paragraph_link_replacements > get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH, self::MAX_REPLACEMENTS_PER_PARAGRAPH_DEFAULT ) ) {
+	private function replaceKeywordWithLinks( DOMText $node, DOMDocument $document, array $keywords ) {
+		if ( $this->cnt_page_links > get_option( self::SETTING_NAME_MAX_LINKS_ON_PAGE, self::MAX_LINKS_ON_PAGE_DEFAULT ) || $this->cnt_page_link_replacements > get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE, self::MAX_REPLACEMENTS_PER_PAGE_DEFAULT ) || $this->cnt_paragraph_link_replacements > get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH, self::MAX_REPLACEMENTS_PER_PARAGRAPH_DEFAULT ) ) {
 			return;
 		}
 
@@ -417,10 +316,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget
 				}
 
 				//add keyword as link
-				$linkDom = $document->createElement(
-						'a',
-						substr( $node->nodeValue, $pos, strlen( $kwRow[ 'kw' ] ) )
-				);
+				$linkDom = $document->createElement( 'a', substr( $node->nodeValue, $pos, strlen( $kwRow[ 'kw' ] ) ) );
 				$linkDom->setAttribute( 'href', $kwRow[ 'url' ] );
 
 				//if relative url or url from same domain, don't add target attribute
@@ -463,8 +359,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget
 	 * @param boolean|string $url if false, remove all entries with given keyword
 	 * @return array
 	 */
-	private function removeKeywordUrl( array $keywords, $kw, $url ): array
-	{
+	private function removeKeywordUrl( array $keywords, $kw, $url ): array {
 		if ( $kw === false && $url === false ) {
 			return $keywords;    //this should never happen
 		}
@@ -476,23 +371,16 @@ class Urlslab_Keywords_Links extends Urlslab_Widget
 		return $keywords;
 	}
 
-	private function get_keywords()
-	{
+	private function get_keywords() {
 		if ( empty( $this->keywords_cache ) ) {
 			global $wpdb;
 
 			$keyword_table = URLSLAB_KEYWORDS_TABLE;
 
-			$results = $wpdb->get_results(
-					$wpdb->prepare(
-							'SELECT kwMd5, keyword, urlLink, urlFilter
+			$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kwMd5, keyword, urlLink, urlFilter
 				FROM ' . $keyword_table . // phpcs:ignore
-							" WHERE (lang = %s OR lang = 'all')
-					ORDER BY kw_priority ASC, kw_length DESC",
-							urlslab_get_language()
-					),
-					'ARRAY_A'
-			);
+					" WHERE (lang = %s OR lang = 'all')
+					ORDER BY kw_priority ASC, kw_length DESC", urlslab_get_language() ), 'ARRAY_A' );
 
 			$this->keywords_cache = array();
 			$current_page = get_current_page_url();
@@ -506,14 +394,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget
 
 		$keywords = array();
 		foreach ( $this->keywords_cache as $kw_md5 => $row ) {
-			if (
-					( !isset( $this->kw_page_replacement_counts[ $row[ 'kw' ] ] ) ||
-							$this->kw_page_replacement_counts[ $row[ 'kw' ] ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD, self::MAX_REPLACEMENTS_PER_KEYWORD_DEFAULT ) ) &&
-					( !isset( $this->url_page_replacement_counts[ $row[ 'url' ] ] ) ||
-							$this->url_page_replacement_counts[ $row[ 'url' ] ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_URL, self::MAX_REPLACEMENTS_PER_URL_DEFAULT ) ) &&
-					( !isset( $this->urlandkw_page_replacement_counts[ $kw_md5 ] ) ||
-							$this->urlandkw_page_replacement_counts[ $kw_md5 ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORDURL, self::MAX_REPLACEMENTS_PER_KEYWORDURL_DEFAULT ) )
-			) {
+			if ( ( !isset( $this->kw_page_replacement_counts[ $row[ 'kw' ] ] ) || $this->kw_page_replacement_counts[ $row[ 'kw' ] ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD, self::MAX_REPLACEMENTS_PER_KEYWORD_DEFAULT ) ) && ( !isset( $this->url_page_replacement_counts[ $row[ 'url' ] ] ) || $this->url_page_replacement_counts[ $row[ 'url' ] ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_URL, self::MAX_REPLACEMENTS_PER_URL_DEFAULT ) ) && ( !isset( $this->urlandkw_page_replacement_counts[ $kw_md5 ] ) || $this->urlandkw_page_replacement_counts[ $kw_md5 ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORDURL, self::MAX_REPLACEMENTS_PER_KEYWORDURL_DEFAULT ) ) ) {
 				$keywords[ $kw_md5 ] = $row;
 			}
 		}
@@ -521,8 +402,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget
 		return $keywords;
 	}
 
-	private function findTextDOMElements( DOMNode $dom, DOMDocument $document )
-	{
+	private function findTextDOMElements( DOMNode $dom, DOMDocument $document ) {
 		//skip processing if HTML tag contains attribute "urlslab-skip"
 		if ( $dom->hasAttributes() && $dom->hasAttribute( 'urlslab-skip' ) ) {
 			return;
@@ -539,8 +419,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget
 					}
 
 					//skip processing some types of HTML elements
-					if ( !in_array( strtolower( $node->nodeName ), array( 'a', 'button', 'input' ) ) &&
-							!preg_match( '/^[hH][0-9]$/', $node->nodeName ) ) {
+					if ( !in_array( strtolower( $node->nodeName ), array( 'a', 'button', 'input' ) ) && !preg_match( '/^[hH][0-9]$/', $node->nodeName ) ) {
 						$this->findTextDOMElements( $node, $document );
 					}
 				}
@@ -548,8 +427,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget
 		}
 	}
 
-	public function theContentHook( $content )
-	{
+	public function theContentHook( $content ) {
 		if ( !strlen( trim( $content ) ) ) {
 			return $content;    //nothing to process
 		}
@@ -576,8 +454,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget
 		}
 	}
 
-	private function initLinkCounts( DOMDocument $document )
-	{
+	private function initLinkCounts( DOMDocument $document ) {
 		$this->cnt_page_link_replacements = 0;
 		$this->cnt_page_links = 0;
 		$this->kw_page_replacement_counts = array();
@@ -610,13 +487,72 @@ class Urlslab_Keywords_Links extends Urlslab_Widget
 		}
 	}
 
-	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string
-	{
+	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
 		return '';
 	}
 
-	public function has_shortcode(): bool
-	{
+	public function has_shortcode(): bool {
 		return false;
 	}
+
+	private function init_sample_data() {
+		//in case installation is empty, use some static mappings
+		$sample_data = array(
+				'google' => 'https://www.google.com',
+				'help desk' => 'https://www.liveagent.com/help-desk-software/',
+				'helpdesk' => 'https://www.liveagent.com/help-desk-software/',
+				'chat' => 'https://www.liveagent.com/live-chat-software/',
+				'call' => 'https://www.liveagent.com/call-center-software/',
+				'call center' => 'https://www.liveagent.com/call-center-software/',
+				'affiliate' => 'https://www.postaffiliatepro.com/affiliate-marketing-glossary/affiliate/',
+				'affiliate marketing' => 'https://www.postaffiliatepro.com/affiliate-marketing-software/' );
+
+		//try to load all titles with less than 4 words
+		$posts = get_posts( array(
+				'numberposts' => 500,
+				'orderby' => 'date',
+				'order' => 'DESC',
+				'include' => array(),
+				'exclude' => array(),
+				'suppress_filters' => true
+		) );
+
+		foreach ( $posts as $post ) {
+			if ( $post->post_status == 'publish' && substr_count( $post->post_title, ' ' ) < 3 ) {
+				$sample_data[ $post->post_title ] = get_permalink( $post->ID );
+			}
+		}
+
+		foreach ( $sample_data as $kw => $url ) {
+			$dataRow = new Urlslab_Url_Keyword_Data( $kw, 100, strlen( $kw ), 'all', $url, '.*' );
+			$this->createRow( $dataRow );
+		}
+	}
+
+	/**
+	 * @param Urlslab_Url_Keyword_Data $dataRow
+	 * @return int|bool
+	 */
+	private function createRow( Urlslab_Url_Keyword_Data $dataRow ) {
+		global $wpdb;
+		$update_query = "INSERT INTO " . URLSLAB_KEYWORDS_TABLE . " (
+                   kwMd5,
+                   keyword,
+                   kw_priority,
+                   kw_length,
+                   lang,
+                   urlLink,
+                   urlFilter) VALUES (%s, %s, %d, %d, %s, %s, %s)
+                   ON DUPLICATE KEY UPDATE
+                   kw_priority = VALUES(kw_priority),
+                   kw_length = VALUES(kw_length),
+                   lang = VALUES(lang),
+                   urlLink = VALUES(urlLink),
+                   urlFilter = VALUES(urlFilter)";
+
+		$result = $wpdb->query( $wpdb->prepare( $update_query, // phpcs:ignore
+				array( $dataRow->get_kw_md5(), $dataRow->get_keyword(), $dataRow->get_keyword_priority(), $dataRow->get_keyword_length(), $dataRow->get_keyword_url_lang(), $dataRow->get_keyword_url_link(), $dataRow->get_keyword_url_filter() ) ) );
+		return $result;
+	}
+
 }

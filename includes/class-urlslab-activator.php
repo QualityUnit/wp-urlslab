@@ -19,8 +19,7 @@
  * @package    Urlslab_Screenshot
  * @subpackage Urlslab_Screenshot/includes
  */
-class Urlslab_Activator
-{
+class Urlslab_Activator {
 
 	/**
 	 * Short Description. (use period)
@@ -29,22 +28,19 @@ class Urlslab_Activator
 	 *
 	 * @since    1.0.0
 	 */
-	public static function activate()
-	{
+	public static function activate() {
 		Urlslab_Activator::install_tables();
 		Urlslab_Activator::upgrade_steps();
 	}
 
-	private static function install_tables()
-	{
+	private static function install_tables() {
 		self::init_screenshot_widget_tables();
 		self::init_keyword_widget_tables();
 		self::init_related_resources_widget_tables();
 		self::init_urlslab_error_log();
 	}
 
-	private static function upgrade_steps()
-	{
+	private static function upgrade_steps() {
 		global $wpdb;
 		$version = get_option( URLSLAB_VERSION_SETTING, '1.0.0' );
 
@@ -52,15 +48,14 @@ class Urlslab_Activator
 			$wpdb->query( "DROP TABLE IF EXISTS " . URLSLAB_KEYWORDS_TABLE );
 			//create table again
 			self::init_keyword_widget_tables();
-			update_option(URLSLAB_VERSION_SETTING, '1.2.0');
+			update_option( URLSLAB_VERSION_SETTING, '1.2.0' );
 		}
 
 		//all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
 
-	private static function init_screenshot_widget_tables()
-	{
+	private static function init_screenshot_widget_tables() {
 		global $wpdb;
 		$table_name = URLSLAB_URLS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
@@ -83,8 +78,7 @@ class Urlslab_Activator
 		dbDelta( $sql );
 	}
 
-	private static function init_keyword_widget_tables()
-	{
+	private static function init_keyword_widget_tables() {
 		global $wpdb;
 		$table_name = URLSLAB_KEYWORDS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
@@ -105,8 +99,7 @@ class Urlslab_Activator
 		dbDelta( $sql );
 	}
 
-	private static function init_related_resources_widget_tables()
-	{
+	private static function init_related_resources_widget_tables() {
 		global $wpdb;
 		$table_name = URLSLAB_RELATED_RESOURCE_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
@@ -120,8 +113,7 @@ class Urlslab_Activator
 		dbDelta( $sql );
 	}
 
-	private static function init_urlslab_error_log()
-	{
+	private static function init_urlslab_error_log() {
 		global $wpdb;
 		$table_name = URLSLAB_ERROR_LOG_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
