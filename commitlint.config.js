@@ -48,7 +48,7 @@ module.exports = {
 					return [true]
 				},
 			},
-		},
+	},
 	],
 	rules: {
 		'body-max-line-length': [0],
