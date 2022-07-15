@@ -1,9 +1,9 @@
 module.exports = {
-	extends: ['@commitlint/config-conventional'],
+	extends: [ '@commitlint/config-conventional' ],
 	plugins: [
 		{
 			rules: {
-				'header-max-length-deps': (parsed) => {
+				'header-max-length-deps': ( parsed ) => {
 					const config = {
 						maxLength: 100,
 						dependencyCommit: {
@@ -11,49 +11,49 @@ module.exports = {
 							scope: /^(peer-)?deps?$/,
 							maxLength: 200,
 						},
-					}
+					};
 
-					const length = parsed.header.length
+					const length = parsed.header.length;
 					const isDepsCommit =
-							config.dependencyCommit.type.test( parsed.type ) &&
-							config.dependencyCommit.scope.test( parsed.scope )
+                        config.dependencyCommit.type.test( parsed.type ) &&
+                        config.dependencyCommit.scope.test( parsed.scope );
 
-					if (length <= config.maxLength) {
-						return [true]
+					if ( length <= config.maxLength ) {
+						return [ true ];
 					}
 
 					if ( ! isDepsCommit && length > config.maxLength ) {
 						return [
 							false,
 							[
-								`header must not be longer than ${config.maxLength}`,
-								`characters, current length is ${length}`,
+								`header must not be longer than ${ config.maxLength }`,
+								`characters, current length is ${ length }`,
 							].join( ' ' ),
-						]
+						];
 					}
 
-					if (isDepsCommit && length > config.dependencyCommit.maxLength) {
+					if ( isDepsCommit && length > config.dependencyCommit.maxLength ) {
 						return [
 							false,
 							[
 								// @codingStandardsIgnoreStart
 								`header for dependency commits must not be longer than`,
-								`${config.dependencyCommit.maxLength} characters, current`,
-								`length is ${length}`,
+								`${ config.dependencyCommit.maxLength } characters, current`,
+								`length is ${ length }`,
 								// @codingStandardsIgnoreEnd
 							].join( ' ' ),
-						]
+						];
 					}
 
-					return [true]
+					return [ true ];
 				},
 			},
-	},
+		},
 	],
 	rules: {
-		'body-max-line-length': [0],
-		'footer-max-line-length': [0],
-		'header-max-length': [0],
-		'header-max-length-deps': [2, 'always'],
+		'body-max-line-length': [ 0 ],
+		'footer-max-line-length': [ 0 ],
+		'header-max-length': [ 0 ],
+		'header-max-length-deps': [ 2, 'always' ],
 	},
-}
+};
