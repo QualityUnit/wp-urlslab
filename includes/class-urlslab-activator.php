@@ -21,6 +21,7 @@
  */
 class Urlslab_Activator {
 
+
 	/**
 	 * Short Description. (use period)
 	 *
@@ -29,7 +30,7 @@ class Urlslab_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-		Urlslab_Activator::install_tables();
+		 Urlslab_Activator::install_tables();
 		Urlslab_Activator::upgrade_steps();
 	}
 
@@ -45,7 +46,7 @@ class Urlslab_Activator {
 		$version = get_option( URLSLAB_VERSION_SETTING, '1.0.0' );
 
 		if ( version_compare( $version, '1.2.0', '<' ) ) {
-			$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS ' . URLSLAB_KEYWORDS_TABLE ) ); // phpcs:ignore
+			$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_KEYWORDS_TABLE ); // phpcs:ignore
 			//create table again
 			self::init_keyword_widget_tables();
 			update_option( URLSLAB_VERSION_SETTING, '1.2.0' );
