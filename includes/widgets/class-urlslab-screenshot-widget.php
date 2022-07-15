@@ -86,7 +86,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		$option = 'per_page';
 		$args = array(
 			'label' => 'Urls',
-			'default' => 5,
+			'default' => 50,
 			'option' => 'users_per_page',
 		);
 

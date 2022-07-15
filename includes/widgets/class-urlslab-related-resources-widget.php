@@ -61,9 +61,9 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		<div class="wrap">
 			<h2>Related Resources</h2>
 			<?php
-			if (isset( $_REQUEST['status'] )) {
-				$message = $_REQUEST['message'] ?? '';
-				$status = $_REQUEST['status'] ?? '';
+			if ( isset( $_REQUEST[ 'status' ] ) ) {
+				$message = $_REQUEST[ 'message' ] ?? '';
+				$status = $_REQUEST[ 'status' ] ?? '';
 				$this->admin_notice( $status, $message );
 			}
 			$this->user_overall_option();
@@ -86,69 +86,69 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	public function widget_admin_load() {
-		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
-			 'POST' == $_SERVER['REQUEST_METHOD'] and
-			 isset( $_REQUEST['action'] ) and
-			 -1 != $_REQUEST['action'] and
-			 'import' == $_REQUEST['action']) {
+		if ( isset( $_SERVER[ 'REQUEST_METHOD' ] ) and
+				'POST' == $_SERVER[ 'REQUEST_METHOD' ] and
+				isset( $_REQUEST[ 'action' ] ) and
+				-1 != $_REQUEST[ 'action' ] and
+				'import' == $_REQUEST[ 'action' ] ) {
 			// Import/Export option
 			check_admin_referer( 'related-resource-widget-import' );
-			if (isset( $_POST['submit'] )) {
-				if ('Import' == $_POST['submit']) {
+			if ( isset( $_POST[ 'submit' ] ) ) {
+				if ( 'Import' == $_POST[ 'submit' ] ) {
 					//# Import the given csv
-					if (!empty( $_FILES['csv_file'] ) and $_FILES['csv_file']['size'] > 0) {
-						$res = $this->save_csv_to_db( $_FILES['csv_file']['tmp_name'] );
-						if ($res) {
+					if ( !empty( $_FILES[ 'csv_file' ] ) and $_FILES[ 'csv_file' ][ 'size' ] > 0 ) {
+						$res = $this->import_csv( $_FILES[ 'csv_file' ][ 'tmp_name' ] );
+						if ( $res ) {
 							$redirect_to = $this->admin_widget_menu_page(
 								array(
-									'status' => 'success',
-									'message' => 'Insert Succeeded'
-								)
+											'status' => 'success',
+											'message' => 'Insert Succeeded'
+									)
 							);
 						} else {
 							$redirect_to = $this->admin_widget_menu_page(
 								array(
-									'status' => 'failure',
-									'message' => 'Failure in parsing CSV'
-								)
+											'status' => 'failure',
+											'message' => 'Failure in parsing CSV'
+									)
 							);
 						}
 					} else {
 						$redirect_to = $this->admin_widget_menu_page(
 							array(
-								'status' => 'failure',
-								'message' => 'Empty CSV File provided'
-							)
+										'status' => 'failure',
+										'message' => 'Empty CSV File provided'
+								)
 						);
 					}
 				} else {
 					$redirect_to = $this->admin_widget_menu_page(
 						array(
-							'status' => 'failure',
-							'message' => 'Wrong Action'
-						)
+									'status' => 'failure',
+									'message' => 'Wrong Action'
+							)
 					);
 				}
 			} else {
 				$redirect_to = $this->admin_widget_menu_page(
 					array(
-						'status' => 'failure',
-						'message' => 'Not a valid request'
-					)
+								'status' => 'failure',
+								'message' => 'Not a valid request'
+						)
 				);
 			}
 
 			wp_safe_redirect( $redirect_to );
 			exit();
-		} else if (isset( $_SERVER['REQUEST_METHOD'] ) and
-				   'GET' == $_SERVER['REQUEST_METHOD'] and
-				   isset( $_REQUEST['action'] ) and
-				   -1 != $_REQUEST['action'] and
-				   'export' == $_REQUEST['action']) {
+		} else if ( isset( $_SERVER[ 'REQUEST_METHOD' ] ) and
+				'GET' == $_SERVER[ 'REQUEST_METHOD' ] and
+				isset( $_REQUEST[ 'action' ] ) and
+				-1 != $_REQUEST[ 'action' ] and
+				'export' == $_REQUEST[ 'action' ] ) {
 			header( 'Content-Type: text/csv; charset=utf-8' );
 			header( 'Content-Disposition: attachment; filename=urlslab-related-resources.csv' );
 			$output = fopen( 'php://output', 'w' );
-			fputcsv( $output, array('Src URL', 'Dest URL') );
+			fputcsv( $output, array( 'Src URL', 'Dest URL' ) );
 			global $wpdb;
 			$related_resource_table = URLSLAB_RELATED_RESOURCE_TABLE;
 			$urls_table = URLSLAB_URLS_TABLE;
@@ -162,26 +162,45 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				                    ON r.destUrlMd5 = v.urlMd5
 			    WHERE r.srcUrlMd5 <> r.destUrlMd5";
 			$result = $wpdb->get_results( $query, ARRAY_N );
-			foreach ($result as $row) {
+			foreach ( $result as $row ) {
 				fputcsv(
 					$output,
 					array(
-						urlslab_get_current_page_protocol() . $row[0],
-						urlslab_get_current_page_protocol() . $row[1],
-					) 
+								urlslab_get_current_page_protocol() . $row[ 0 ],
+								urlslab_get_current_page_protocol() . $row[ 1 ],
+						)
 				);
 			}
 			fclose( $output );
 			die();
-		} else {
-			$option = 'per_page';
-			$args = array(
-				'label' => 'Relations',
-				'default' => 5,
-				'option' => 'users_per_page',
-			);
+		} else if ( isset( $_SERVER[ 'REQUEST_METHOD' ] ) and
+				'GET' == $_SERVER[ 'REQUEST_METHOD' ] and
+				isset( $_REQUEST[ 'action' ] ) and
+				-1 != $_REQUEST[ 'action' ] and
+				'generate_sample_data' == $_REQUEST[ 'action' ] ) {
 
-			add_screen_option( $option, $args );
+			$this->init_sample_data();
+
+			wp_safe_redirect( $this->admin_widget_menu_page( array( 'status' => 'success', 'message' => 'Sample url mappings created' ) ) );
+			exit();
+		} else if ( isset( $_SERVER[ 'REQUEST_METHOD' ] ) and 'GET' == $_SERVER[ 'REQUEST_METHOD' ] and isset( $_REQUEST[ 'action' ] ) and -1 != $_REQUEST[ 'action' ] and 'clear' == $_REQUEST[ 'action' ] ) {
+			global $wpdb;
+			$table = URLSLAB_RELATED_RESOURCE_TABLE;
+
+			$query = "TRUNCATE $table";
+			$wpdb->query( $query ); // phpcs:ignore
+			wp_safe_redirect( $this->admin_widget_menu_page( array( 'status' => 'success', 'message' => 'All Data deleted' ) ) );
+			exit();
+		} else {
+
+			add_screen_option(
+				'per_page',
+				array(
+					'label' => 'Relations',
+					'default' => 50,
+					'option' => 'users_per_page',
+				) 
+			);
 
 			$this->related_resources_widget_table = new Urlslab_Related_Resources_Widget_Table();
 		}
@@ -198,13 +217,20 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 					<li class="color-danger">dest URL (required)</li>
 				</ul>
 			</div>
-			<form action="<?php echo esc_url( $this->admin_widget_menu_page( 'action=import' ) ); ?>" method="post" enctype="multipart/form-data">
+			<form action="<?php echo esc_url( $this->admin_widget_menu_page( 'action=import' ) ); ?>" method="post"
+				  enctype="multipart/form-data">
 				<?php wp_nonce_field( 'related-resource-widget-import' ); ?>
 				<input type="file" name="csv_file">
 				<br class="clear"/>
 				<br class="clear"/>
-				<input type="submit" name="submit" id="submit" class="button import_related_resource_csv" value="Import">
-				<a href="<?php echo esc_url( $this->admin_widget_menu_page( 'action=export' ) ); ?>" target="_blank" class="button export_keyword_csv">Export</a>
+				<input type="submit" name="submit" id="submit" class="button import_related_resource_csv"
+					   value="Import">
+				<a href="<?php echo esc_url( $this->admin_widget_menu_page( 'action=export' ) ); ?>" target="_blank"
+				   class="button export_keyword_csv">Export</a>
+				<a href="<?php echo esc_url( $this->admin_widget_menu_page( 'action=generate_sample_data' ) ); ?>"
+				   class="button">Generate Sample Data</a>
+				<a href="<?php echo esc_url( $this->admin_widget_menu_page( 'action=clear' ) ); ?>"
+				   class="button">Delete all</a>
 			</form>
 		</div>
 		<?php
@@ -227,7 +253,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		}
 	}
 
-	private function save_csv_to_db( $file ): bool {
+	private function import_csv( $file ): bool {
 		//# Reading/Parsing CSV File
 		$row = 1;
 		$wrong_rows = 0;
@@ -236,22 +262,22 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		$scheduling_items = array();
 		$handle = fopen( $file, 'r' );
 		if ( false !== ( $handle ) ) {
-			while (( $data = fgetcsv( $handle ) ) !== false) {
+			while ( ( $data = fgetcsv( $handle ) ) !== false ) {
 
 				//# processing CSV Header
-				if ($row == 1) {
-					if (count( $data ) != 2) {
+				if ( $row == 1 ) {
+					if ( count( $data ) != 2 ) {
 						//# Wrong number of cols in csv
 						return false;
 					} else {
 						$idx = 0;
-						foreach ($data as $col) {
-							if (is_string( $col )) {
-								if (is_string( $this->map_to_db_col( $col ) )) {
-									if (isset( $cols[$this->map_to_db_col( $col )] )) {
+						foreach ( $data as $col ) {
+							if ( is_string( $col ) ) {
+								if ( is_string( $this->map_to_db_col( $col ) ) ) {
+									if ( isset( $cols[ $this->map_to_db_col( $col ) ] ) ) {
 										return false;
 									} else {
-										$cols[$this->map_to_db_col( $col )] = $idx;
+										$cols[ $this->map_to_db_col( $col ) ] = $idx;
 										$idx++;
 									}
 								} else {
@@ -267,19 +293,18 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 					continue;
 				}
 
-				$src_url = new Urlslab_Url( $data[$cols['srcUrl']] );
-				$dest_url = new Urlslab_Url( $data[$cols['destUrl']] );
+				$src_url = new Urlslab_Url( $data[ $cols[ 'srcUrl' ] ] );
+				$dest_url = new Urlslab_Url( $data[ $cols[ 'destUrl' ] ] );
 
 
-
-				if (empty( $src_url ) or empty( $dest_url ) ) {
+				if ( empty( $src_url ) or empty( $dest_url ) ) {
 					$wrong_rows++;
 					continue;
 				} else {
 					array_push( $scheduling_items, $src_url, $dest_url );
 					$saving_items[] = array(
-						$src_url,
-						$dest_url,
+							$src_url,
+							$dest_url,
 					);
 				}
 				$row++;
@@ -288,7 +313,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		}
 
 		//# Scheduling Src and Dest URLs
-		if (!$this->url_data_fetcher->prepare_url_batch_for_scheduling( $scheduling_items )) {
+		if ( !$this->url_data_fetcher->prepare_url_batch_for_scheduling( $scheduling_items ) ) {
 			return false;
 		}
 		//# Scheduling Src and Dest URLs
@@ -300,8 +325,8 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		foreach ( $saving_items as $item ) {
 			array_push(
 				$values,
-				$item[0]->get_url_id(),
-				$item[1]->get_url_id(),
+				$item[ 0 ]->get_url_id(),
+				$item[ 1 ]->get_url_id(),
 			);
 			$placeholder[] = '(%s, %s)';
 		}
@@ -314,7 +339,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 		$result = $wpdb->query(
 			$wpdb->prepare(
-				$update_query, // phpcs:ignore
+						$update_query, // phpcs:ignore
 				$values
 			)
 		);
@@ -329,7 +354,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	 * @return false|string
 	 */
 	private function map_to_db_col( string $col_name ) {
-		switch (strtolower( trim( $col_name ) )) {
+		switch ( strtolower( trim( $col_name ) ) ) {
 			case 'src url':
 				return 'srcUrl';
 			case 'dest url':
@@ -367,21 +392,21 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 		$urlslab_atts = shortcode_atts(
 			array(
-				'url'           => urlslab_get_current_page_protocol() . get_current_page_url()->get_url(),
-				'related-count'           => 8,
-				'show-image'          => false,
-				'default-image'   => '',
-			),
+						'url' => urlslab_get_current_page_protocol() . get_current_page_url()->get_url(),
+						'related-count' => 8,
+						'show-image' => false,
+						'default-image' => '',
+				),
 			$atts,
 			$tag
 		);
 
 		$result = $this->url_data_fetcher->fetch_related_urls_to(
-			new Urlslab_Url( $urlslab_atts['url'] ),
-			$urlslab_atts['related-count']
+			new Urlslab_Url( $urlslab_atts[ 'url' ] ),
+			$urlslab_atts[ 'related-count' ]
 		);
 
-		if ( ! empty( $result ) ) {
+		if ( !empty( $result ) ) {
 			$content = $this->render_shortcode_header();
 			foreach ( $result as $url ) {
 				$content .= $this->render_shortcode_item( $url, $urlslab_atts );
@@ -410,24 +435,87 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		}
 
 		return '<li urlslab-skip="true">' .
-			'<a href="' . esc_url( urlslab_get_current_page_protocol() . $url->get_url()->get_url() ) . '"' .
-			' title="' . esc_attr( $url->get_url_summary_text() ) . '"' .
-			( urlslab_is_same_domain_url( $url->get_url()->get_url() ) ? '' : ' target="_blank"' ) .
-			'urlslab-skip="true">' .
-			$this->render_screenshot( $url, $urlslab_atts ) .
-			esc_html( $title ) .
-			'</a>' .
-			'</li>';
+				'<a href="' . esc_url( urlslab_get_current_page_protocol() . $url->get_url()->get_url() ) . '"' .
+				' title="' . esc_attr( $url->get_url_summary_text() ) . '"' .
+				( urlslab_is_same_domain_url( $url->get_url()->get_url() ) ? '' : ' target="_blank"' ) .
+				'urlslab-skip="true">' .
+				$this->render_screenshot( $url, $urlslab_atts ) .
+				esc_html( $title ) .
+				'</a>' .
+				'</li>';
 	}
 
 	private function render_screenshot( Urlslab_Url_Data $url, array $urlslab_atts ): string {
-		if ( ( $urlslab_atts['show-image'] === true || $urlslab_atts['show-image'] == 'true' )
-			 && $url->screenshot_exists() ) {
+		if ( ( $urlslab_atts[ 'show-image' ] === true || $urlslab_atts[ 'show-image' ] == 'true' )
+				&& $url->screenshot_exists() ) {
 			return '<img alt="' .
-				esc_attr( $url->get_url_summary_text() ) .
-				'" src="' . $url->render_screenshot_path( 'thumbnail' ) . '">';
+					esc_attr( $url->get_url_summary_text() ) .
+					'" src="' . $url->render_screenshot_path( 'thumbnail' ) . '">';
 		}
 		return '';
+	}
+
+
+	private function init_sample_data() {
+		$sample_urls = array();
+
+		//try to load all titles with less than 4 words
+		$posts = get_posts(
+			array(
+				'numberposts' => 1000,
+				'orderby' => 'date',
+				'order' => 'DESC'
+			)
+		);
+
+		foreach ( $posts as $post ) {
+			if ( $post->post_status == 'publish' ) {
+				$sample_urls[] = get_permalink( $post->ID );
+			}
+		}
+		$sample_urls = array_unique( $sample_urls );
+		sort( $sample_urls, SORT_STRING | SORT_FLAG_CASE | SORT_NATURAL );
+
+		foreach ( $sample_urls as $id => $url ) {
+			$sample_urls[ $id ] = new Urlslab_Url( $url );
+		}
+
+		if ( !$this->url_data_fetcher->prepare_url_batch_for_scheduling( $sample_urls ) ) {
+			return false;
+		}
+
+
+		global $wpdb;
+		$table = URLSLAB_RELATED_RESOURCE_TABLE;
+		$values = array();
+		$placeholder = array();
+
+		$max = count( $sample_urls );
+		for ( $i = 0; $i < $max; $i++ ) {
+			for ( $j = $i + 1; $j < $max && $j < ( $i + 10 ); $j++ ) {
+				array_push(
+					$values,
+					$sample_urls[ $i ]->get_url_id(),
+					$sample_urls[ $j ]->get_url_id(),
+				);
+				$placeholder[] = '(%s, %s)';
+			}
+		}
+
+		$placeholder_string = implode( ', ', $placeholder );
+		$update_query = "INSERT IGNORE INTO $table (
+                   srcUrlMd5,
+                   destUrlMd5) VALUES
+                   $placeholder_string";
+
+		$result = $wpdb->query(
+			$wpdb->prepare(
+						$update_query, // phpcs:ignore
+				$values
+			)
+		);
+
+		return is_numeric( $result );
 	}
 
 }
