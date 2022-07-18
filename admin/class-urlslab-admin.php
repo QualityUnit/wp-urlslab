@@ -120,17 +120,26 @@ class Urlslab_Admin {
 			80
 		);
 
-		foreach ( Urlslab_User_Widget::get_instance()->get_activated_widget() as $widget ) {
-			$hook = add_submenu_page(
-				plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
-				$widget->get_admin_menu_page_title(),
-				$widget->get_admin_menu_title(),
-				'manage_options',
-				$widget->get_widget_slug(),
-				array( $widget, 'load_widget_page' )
-			);
-			add_action( "load-$hook", array( $widget, 'widget_admin_load' ) );
-		}
+		$hook = add_submenu_page(
+			plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
+			'',
+			$widget->get_admin_menu_title(),
+			'manage_options',
+			$widget->get_widget_slug(),
+			array( $widget, 'load_widget_page' )
+		);
+
+//		foreach ( Urlslab_User_Widget::get_instance()->get_activated_widget() as $widget ) {
+//			$hook = add_submenu_page(
+//				plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
+//				$widget->get_admin_menu_page_title(),
+//				$widget->get_admin_menu_title(),
+//				'manage_options',
+//				$widget->get_widget_slug(),
+//				array( $widget, 'load_widget_page' )
+//			);
+//			add_action( "load-$hook", array( $widget, 'widget_admin_load' ) );
+//		}
 	}
 
 	function urlslab_load_add_widgets_page() {
