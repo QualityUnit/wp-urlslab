@@ -3,9 +3,11 @@
 class Urlslab_General_Settings_Page implements Urlslab_Admin_Page {
 
 	private string $menu_slug;
+	private string $page_title;
 
 	public function __construct() {
 		$this->menu_slug = 'urlslab-general-settings';
+		$this->page_title = 'General Settings';
 	}
 
 	public function on_menu_load() {
@@ -26,6 +28,10 @@ class Urlslab_General_Settings_Page implements Urlslab_Admin_Page {
 
 	public function get_menu_slug(): string {
 		return $this->menu_slug;
+	}
+
+	public function get_page_title(): string {
+		return $this->page_title;
 	}
 
 	public function load_page() {

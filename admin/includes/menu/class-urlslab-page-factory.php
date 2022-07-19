@@ -52,6 +52,18 @@ class Urlslab_Page_Factory {
 	}
 
 	/**
+	 * @param string $page_slug
+	 *
+	 * @return Urlslab_Admin_Page|null
+	 */
+	public function get_page( string $page_slug ): ?Urlslab_Admin_Page {
+		if ( ! isset( $this->menus[ $page_slug ] ) ) {
+			return null;
+		}
+		return $this->menus[ $page_slug ];
+	}
+
+	/**
 	 * @return string
 	 */
 	public function main_menu_slug(): string {

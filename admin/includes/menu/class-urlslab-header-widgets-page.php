@@ -3,9 +3,11 @@
 class Urlslab_Header_Widgets_Page implements Urlslab_Admin_Page {
 
 	private string $menu_slug;
+	private string $page_title;
 
 	public function __construct() {
 		$this->menu_slug = 'urlslab-header-widgets';
+		$this->page_title = 'Header Widgets';
 	}
 
 	public function on_menu_load() {
@@ -27,6 +29,10 @@ class Urlslab_Header_Widgets_Page implements Urlslab_Admin_Page {
 
 	public function get_menu_slug(): string {
 		return $this->menu_slug;
+	}
+
+	public function get_page_title(): string {
+		return $this->page_title;
 	}
 
 	public function load_page() {

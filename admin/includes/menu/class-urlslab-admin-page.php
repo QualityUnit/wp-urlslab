@@ -20,6 +20,11 @@ interface Urlslab_Admin_Page {
 	public function get_menu_slug(): string;
 
 	/**
+	 * @return string
+	 */
+	public function get_page_title(): string;
+
+	/**
 	 * @return mixed
 	 */
 	public function load_page();
