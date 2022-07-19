@@ -2,6 +2,7 @@
 
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
+require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-page-factory.php';
 
 /**
  * The admin-specific functionality of the plugin.
@@ -43,6 +44,15 @@ class Urlslab_Admin {
 	private string $version;
 
 	/**
+	 * The menu factory to create different menus
+	 *
+	 * @since    1.1.0
+	 * @access   private
+	 * @var Urlslab_Page_Factory
+	 */
+	private Urlslab_Page_Factory $urlslab_menu_factory;
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @param string $urlslab The name of this plugin.
@@ -54,6 +64,7 @@ class Urlslab_Admin {
 
 		$this->urlslab = $urlslab;
 		$this->version = $version;
+		$this->urlslab_menu_factory = new Urlslab_Page_Factory();
 
 	}
 
@@ -110,36 +121,17 @@ class Urlslab_Admin {
 	public function urlslab_admin_menu() {
 		do_action( 'urlslab_admin_menu' );
 
-		$main_menu = add_menu_page(
+		add_menu_page(
 			'Urlslab Plugin',
 			'Urlslab',
 			'manage_options',
-			plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
+			$this->urlslab_menu_factory->main_menu_slug(),
 			null,
 			plugin_dir_url( __FILE__ ) . 'assets/urlslab-logo.png',
 			80
 		);
 
-		$hook = add_submenu_page(
-			plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
-			'',
-			$widget->get_admin_menu_title(),
-			'manage_options',
-			$widget->get_widget_slug(),
-			array( $widget, 'load_widget_page' )
-		);
-
-//		foreach ( Urlslab_User_Widget::get_instance()->get_activated_widget() as $widget ) {
-//			$hook = add_submenu_page(
-//				plugin_dir_path( __FILE__ ) . 'partials/urlslab-admin-display.php',
-//				$widget->get_admin_menu_page_title(),
-//				$widget->get_admin_menu_title(),
-//				'manage_options',
-//				$widget->get_widget_slug(),
-//				array( $widget, 'load_widget_page' )
-//			);
-//			add_action( "load-$hook", array( $widget, 'widget_admin_load' ) );
-//		}
+		$this->urlslab_menu_factory->init_admin_menus();
 	}
 
 	function urlslab_load_add_widgets_page() {

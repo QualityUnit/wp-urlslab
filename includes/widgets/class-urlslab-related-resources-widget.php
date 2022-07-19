@@ -4,7 +4,7 @@
 require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
-require_once URLSLAB_PLUGIN_DIR . '/admin/partials/tables/class-urlslab-related-resources-widget-table.php';
+require_once URLSLAB_PLUGIN_DIR . '/admin/includes/tables/class-urlslab-related-resources-widget-table.php';
 
 class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
