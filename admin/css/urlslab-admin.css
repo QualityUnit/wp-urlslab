@@ -113,7 +113,7 @@ figure {
 
 .urlslab-header-content-container {
 	display: flex;
-	justify-content: flex-start;
+	justify-content: space-between;
 	align-content: center;
 	width: 75%;
 }
@@ -121,6 +121,7 @@ figure {
 .urlslab-header-content-container > figure {
 	display: flex;
 	align-content: center;
+	width: 150px;
 }
 
 .urlslab-header-content-container > div {
@@ -134,9 +135,9 @@ figure {
 	border-radius: 10px;
 	padding: 0 13px;
 	color: #0aa8a7;
-	line-height: 45px;
+	line-height: 50px;
 	font-weight: 400;
-	font-size: 20px;
+	font-size: 16px;
 }
 
 /** Urlslab Header **/
