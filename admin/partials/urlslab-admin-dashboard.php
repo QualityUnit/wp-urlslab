@@ -50,7 +50,6 @@
 
 				<a class="button button-primary" href="#">Manage</a>
 			</div>
-
 		</div>
 		<?php
 			$user_widgets = Urlslab_User_Widget::get_instance();

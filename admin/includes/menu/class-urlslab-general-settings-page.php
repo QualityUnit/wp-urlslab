@@ -35,6 +35,6 @@ class Urlslab_General_Settings_Page implements Urlslab_Admin_Page {
 	}
 
 	public function load_page() {
-		// TODO: Implement load_page() method.
+		require URLSLAB_PLUGIN_DIR . 'admin/partials/urlslab-admin-general-settings.php';
 	}
 }

@@ -16,7 +16,7 @@ if ( isset( $_GET['page'] ) ) {
 			<img src="<?php echo esc_url( $logo_url ); ?>" width="100%" alt="URLsLab Logo">
 		</figure>
 		<div>
-			<h1>Dashboard</h1>
+			<h1><?php echo esc_html( $urlslab_page_title ); ?></h1>
 		</div>
 	</div>
 </nav>
@@ -28,8 +28,8 @@ if ( isset( $_GET['page'] ) ) {
 		<div class="urlslab-error-notification">
 			<h2>No API Key Added</h2>
 			<p>
-				Without API key you are only able to retrieve data only for main page urls of any domain.
-				You will see urls that are not main page urls will get blocked. to unlock them you need to input API Key.
+				Without API key you are only able to retrieve data for homepage of any domain.
+				to unlocking all urls you need to input API Key.
 			</p>
 			<button class="button button-primary">Generate API Key</button>
 		</div>
