@@ -14,7 +14,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 	private string $widget_title = 'Keywords Links';
 
-	private string $widget_description = 'Urlslab Keywords to Links - automatic linkbuilding from specific keywords';
+	private string $widget_description = 'Build automatic links from your keywords that appear in website content';
 
 	private string $landing_page_link = 'https://www.urlslab.com';
 
@@ -70,7 +70,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return 'Urlslab ' . $this->widget_title;
+		return $this->widget_title . ' Widget';
 	}
 
 	/**
@@ -572,4 +572,11 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		);
 	}
 
+	public function render_widget_overview() {
+		// TODO: Implement render_widget_overview() method.
+	}
+
+	public function get_thumbnail_demo_url(): string {
+		return plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/demo/link-enhancer-demo.png' ) . 'link-enhancer-demo.png';
+	}
 }

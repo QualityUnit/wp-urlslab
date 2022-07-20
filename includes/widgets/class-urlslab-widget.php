@@ -126,4 +126,14 @@ abstract class Urlslab_Widget {
 	 */
 	public abstract function has_shortcode(): bool;
 
+	/**
+	 * @return mixed
+	 */
+	public abstract function render_widget_overview();
+
+	/**
+	 * @return string
+	 */
+	public abstract function get_thumbnail_demo_url(): string;
+
 }

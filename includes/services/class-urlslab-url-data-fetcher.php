@@ -8,8 +8,10 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-data.php
 class Urlslab_Url_Data_Fetcher {
 	private Urlslab_Screenshot_Api $urlslab_screenshot_api;
 
-	public function __construct( Urlslab_Screenshot_Api $urlslab_screenshot_api ) {
-		$this->urlslab_screenshot_api = $urlslab_screenshot_api;
+	public function __construct( ?Urlslab_Screenshot_Api $urlslab_screenshot_api ) {
+		if ( isset( $urlslab_screenshot_api ) ) {
+			$this->urlslab_screenshot_api = $urlslab_screenshot_api;
+		}
 	}
 
 	/**
@@ -451,6 +453,31 @@ or (updateStatusDate < %d AND status = %s)
 		}
 
 		return $result;
+	}
+
+	public function count_urls_with_status( string $status = '' ) {
+		global $wpdb;
+		$table = URLSLAB_URLS_TABLE;
+		$query = "SELECT COUNT(*) AS cnt FROM $table";
+		if ( ! empty( $status ) ) {
+			$query .= ' WHERE status = %s';
+			return $wpdb->get_row(
+				$wpdb->prepare(
+					$query, // phpcs:ignore
+					$status
+				),
+				ARRAY_A 
+			)['cnt'];
+		} else {
+			return $wpdb->get_row( "SELECT COUNT(*) AS cnt FROM $table", ARRAY_A )['cnt']; // phpcs:ignore
+		}
+	}
+
+	public function count_generated_summaries() {
+		global $wpdb;
+		$table = URLSLAB_URLS_TABLE;
+		$query = "SELECT COUNT(*) AS cnt FROM $table WHERE urlSummary IS NOT NULL";
+		return $wpdb->get_row( $query, ARRAY_A )['cnt']; // phpcs:ignore
 	}
 
 }

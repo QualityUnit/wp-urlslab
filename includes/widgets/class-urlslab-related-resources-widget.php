@@ -12,7 +12,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 	private string $widget_title = 'Related Resources';
 
-	private string $widget_description = 'Urlslab Widget Related Resources - show contextually related pages';
+	private string $widget_description = 'Configure widget to show contextually similar pages to any of your pages to build internal link building';
 
 	private string $landing_page_link = 'https://www.urlslab.com';
 
@@ -46,7 +46,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return 'Urlslab ' . $this->widget_title;
+		return $this->widget_title . ' Widget';
 	}
 
 	/**
@@ -518,4 +518,11 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		return is_numeric( $result );
 	}
 
+	public function render_widget_overview() {
+		// TODO: Implement render_widget_overview() method.
+	}
+
+	public function get_thumbnail_demo_url(): string {
+		return plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/demo/related-resource-widget-demo.png' ) . 'related-resource-widget-demo.png';
+	}
 }

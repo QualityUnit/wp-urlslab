@@ -11,7 +11,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 	private string $widget_title = 'Link Enhancer';
 
-	private string $widget_description = 'Urlslab Link Enhancer to add title attribute to all links';
+	private string $widget_description = 'Enhance all external and internal links in your pages using link enhancer widget. add title to your link automatically';
 
 	private string $landing_page_link = 'https://www.urlslab.com';
 
@@ -44,7 +44,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return 'Urlslab ' . $this->widget_title;
+		return $this->widget_title . ' Widget';
 	}
 
 	/**
@@ -149,5 +149,13 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 	public function has_shortcode(): bool {
 		return false;
+	}
+
+	public function render_widget_overview() {
+		// TODO: Implement render_widget_overview() method.
+	}
+
+	public function get_thumbnail_demo_url(): string {
+		return plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/demo/link-enhancer-demo.png' ) . 'link-enhancer-demo.png';
 	}
 }

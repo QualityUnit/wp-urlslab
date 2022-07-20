@@ -34,7 +34,7 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return 'Urlslab ' . $this->widget_title;
+		return $this->widget_title . ' Widget';
 	}
 
 	/**
@@ -118,5 +118,13 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 
 	public function has_shortcode(): bool {
 		return false;
+	}
+
+	public function render_widget_overview() {
+		// TODO: Implement render_widget_overview() method.
+	}
+
+	public function get_thumbnail_demo_url(): string {
+		return plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/demo/image-alt-text-demo.png' ) . 'image-alt-text-demo.png';
 	}
 }

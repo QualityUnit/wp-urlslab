@@ -23,6 +23,7 @@ figure {
 }
 
 .status-circle {
+	display: inline-block;
 	width: 10px;
 	height: 10px;
 	margin: 0 auto;
@@ -77,6 +78,10 @@ figure {
 	margin-left: 1em;
 }
 
+.mar-bottom-1 {
+	margin-bottom: 1em;
+}
+
 .mar-bottom-2 {
 	margin-bottom: 2em;
 }
@@ -90,7 +95,7 @@ figure {
 }
 
 .col-6 {
-	width: 50%;
+	width: 48%;
 }
 
 .col-3 {
@@ -101,12 +106,11 @@ figure {
 
 /** Urlslab Header **/
 .urlslab-wrap {
-	width: 100%;
 	margin: 80px auto;
 	width: 80%;
 	display: flex;
+	column-gap: 10px;
 	flex-direction: column;
-	border: 1px solid red;
 }
 
 .urlslab-header {
@@ -123,6 +127,7 @@ figure {
 /** Tablet Mode */
 
 @media only screen and (max-width: 960px) {
+
 	.urlslab-header {
 		width: calc(100% - 36px);
 		left: 36px;
@@ -134,6 +139,7 @@ figure {
 /** Mobile Mode */
 
 @media screen and (max-width: 782px) {
+
 	.urlslab-header {
 		width: 100%;
 		left: 0;
@@ -174,10 +180,43 @@ figure {
 
 .urlslab-error-notification {
 	margin-top: 10px;
-	background-color: white;
-	border-left: 3px solid red;
+	background-color: #fff;
+	border-left: 3px solid #f00;
 	border-radius: 10px;
 	padding: 1em;
 }
 
 /** Urlslab Header **/
+
+/** Urlslab Content **/
+
+.urlslab-content-container {
+	display: flex;
+	margin-top: 30px;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	gap: 20px;
+}
+
+.urlslab-card-container {
+	background-color: #fff;
+	border-radius: 10px;
+}
+
+.urlslab-card-header {
+	display: flex;
+	justify-content: space-between;
+	padding: 0.2em 1em;
+	border-bottom: 1px solid #c2c2c2;
+}
+
+.urlslab-card-content {
+	padding: 15px;
+}
+
+.urlslab-card-content-thumbnail {
+	display: flex;
+	justify-content: flex-start;
+}
+
+/** Urlslab Content **/
