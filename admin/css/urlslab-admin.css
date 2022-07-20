@@ -100,6 +100,15 @@ figure {
 /** General styles **/
 
 /** Urlslab Header **/
+.urlslab-wrap {
+	width: 100%;
+	margin: 80px auto;
+	width: 80%;
+	display: flex;
+	flex-direction: column;
+	border: 1px solid red;
+}
+
 .urlslab-header {
 	position: fixed;
 	left: 160px;
@@ -110,6 +119,29 @@ figure {
 	width: calc(100% - 160px);
 	height: 80px;
 }
+
+/** Tablet Mode */
+
+@media only screen and (max-width: 960px) {
+	.urlslab-header {
+		width: calc(100% - 36px);
+		left: 36px;
+	}
+}
+
+/** Tablet Mode */
+
+/** Mobile Mode */
+
+@media screen and (max-width: 782px) {
+	.urlslab-header {
+		width: 100%;
+		left: 0;
+		top: 46px;
+	}
+}
+
+/** Mobile Mode */
 
 .urlslab-header-content-container {
 	display: flex;
@@ -138,6 +170,14 @@ figure {
 	line-height: 50px;
 	font-weight: 400;
 	font-size: 16px;
+}
+
+.urlslab-error-notification {
+	margin-top: 10px;
+	background-color: white;
+	border-left: 3px solid red;
+	border-radius: 10px;
+	padding: 1em;
 }
 
 /** Urlslab Header **/

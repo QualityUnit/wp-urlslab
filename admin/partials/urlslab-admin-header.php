@@ -9,7 +9,7 @@ if ( isset( $_GET['page'] ) ) {
 }
 
 ?>
-<header class="urlslab-header">
+<nav class="urlslab-header">
 	<div class="urlslab-header-content-container">
 		<figure>
 			<?php $logo_url = plugin_dir_url( URLSLAB_PLUGIN ) . 'admin/assets/logo.svg'; ?>
@@ -19,18 +19,19 @@ if ( isset( $_GET['page'] ) ) {
 			<h1>Dashboard</h1>
 		</div>
 	</div>
-</header>
+</nav>
 <section>
 	<?php
 	$urlslab_user = Urlslab_User_Widget::get_instance();
 	if ( ! $urlslab_user->has_api_key() ) {
 		?>
-		<div>
+		<div class="urlslab-error-notification">
 			<h2>No API Key Added</h2>
 			<p>
 				Without API key you are only able to retrieve data only for main page urls of any domain.
 				You will see urls that are not main page urls will get blocked. to unlock them you need to input API Key.
 			</p>
+			<button class="button button-primary">Generate API Key</button>
 		</div>
 	<?php } ?>
 </section>
