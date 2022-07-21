@@ -10,7 +10,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 
 	private string $widget_title = 'Screenshot';
 
-	private string $widget_description = 'Urlslab Widget to integrate any screenshot of other websites on your website';
+	private string $widget_description = 'Embed any screenshot of URL in your pages using wordpress shortcodes.';
 
 	private string $landing_page_link = 'https://www.urlslab.com';
 
@@ -45,7 +45,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return 'Urlslab ' . $this->widget_title;
+		return $this->widget_title . ' Widget';
 	}
 
 	/**
@@ -193,5 +193,13 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 
 	public function has_shortcode(): bool {
 		return true;
+	}
+
+	public function render_widget_overview() {
+		// TODO: Implement render_widget_overview() method.
+	}
+
+	public function get_thumbnail_demo_url(): string {
+		return plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/demo/screenshot-widget-demo.png' ) . 'screenshot-widget-demo.png';
 	}
 }

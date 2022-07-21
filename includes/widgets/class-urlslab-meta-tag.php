@@ -11,7 +11,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 
 	private string $widget_title = 'Meta Tag';
 
-	private string $widget_description = 'Urlslab Meta tag - Generate screenshot of current page and display as og meta tag';
+	private string $widget_description = 'Generate meta tags automatically if there is no meta tag for your pages based on the content. generate og meta tags automatically from the data from URLSLAB';
 
 	private string $landing_page_link = 'https://www.urlslab.com';
 
@@ -51,7 +51,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return 'Urlslab ' . $this->widget_title;
+		return $this->widget_title . ' Widget';
 	}
 
 	/**
@@ -204,5 +204,13 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 
 	public function has_shortcode(): bool {
 		return false;
+	}
+
+	public function render_widget_overview() {
+		// TODO: Implement render_widget_overview() method.
+	}
+
+	public function get_thumbnail_demo_url(): string {
+		return plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/demo/meta-tag-demo.png' ) . 'meta-tag-demo.png';
 	}
 }
