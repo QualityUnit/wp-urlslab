@@ -9,20 +9,18 @@
 			</div>
 			<div class="urlslab-card-content">
 				<?php
+				$page_data = new Urlslab_General_Settings_Page();
 				$user = Urlslab_User_Widget::get_instance();
 				if ( ! $user->has_api_key() ) {
-
 					?>
 					<p>input your API Key here!</p>
 					<?php
+				} else {
+					?>
+					<p>There is already an API Key</p>
+					<?php
 				}
-
-				$available_widgets = Urlslab_Available_Widgets::get_instance();
-				$current_action = '';
-				if ( isset( $_REQUEST['action'] ) and -1 != $_REQUEST['action'] ) {
-					$current_action = $_REQUEST['action'];
-				}
-				$user->render_form();
+				$page_data->render_apikey_form();
 				?>
 			</div>
 		</div>

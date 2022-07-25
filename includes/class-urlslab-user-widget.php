@@ -97,7 +97,7 @@ class Urlslab_User_Widget {
 		return true;
 	}
 
-	public function get_api_key(): Urlslab_Api_Key {
+	public function get_api_key(): ?Urlslab_Api_Key {
 		return $this->user_api_key;
 	}
 

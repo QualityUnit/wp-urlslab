@@ -15,6 +15,14 @@ function urlslab_admin_menu_page_url( $menu_slug = '' ): string {
 	return admin_url() . 'admin.php?page=' . urlencode( $menu_slug );
 }
 
+function urlslab_get_action(): string {
+	$current_action = '';
+	if ( isset( $_REQUEST['action'] ) and -1 != $_REQUEST['action'] ) {
+		$current_action = $_REQUEST['action'];
+	}
+	return $current_action;
+}
+
 function urlslab_is_same_domain_url( $url ): bool {
 	$url_host_name = strtolower( parse_url( $url, PHP_URL_HOST ) );
 	if ( ! strlen( $url_host_name ) ) {
