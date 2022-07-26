@@ -106,6 +106,18 @@ class Urlslab {
 	}
 
 	/**
+	 * @return int
+	 */
+	public static function get_installation_id() {
+		$installation_id = self::get_option( 'installation_id' );
+		if ( is_bool( $installation_id ) && ! $installation_id ) {
+			$installation_id = rand();
+			self::update_option( 'installation_id', $installation_id );
+		}
+		return $installation_id;
+	}
+
+	/**
 	 *
 	 * updates wp_option for URLSLAB plugin
 	 */

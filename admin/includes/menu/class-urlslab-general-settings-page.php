@@ -70,10 +70,6 @@ class Urlslab_General_Settings_Page implements Urlslab_Admin_Page {
 			$user_api_key = Urlslab_User_Widget::get_instance()->get_api_key();
 			if ( ! empty( $user_api_key ) ) {
 				echo esc_html( $user_api_key->get_api_key_masked() );
-				echo sprintf(
-					'<input type="hidden" value="%s" id="api_key" name="api_key" />',
-					esc_html( $user_api_key->get_api_key() )
-				);
 			} else {
 				echo '<input type="text" aria-required="true" id="api_key" name="api_key" class="regular-text code" />';
 			}
@@ -83,10 +79,12 @@ class Urlslab_General_Settings_Page implements Urlslab_Admin_Page {
 				submit_button( 'Remove key', 'small', 'reset-api-key' );
 				submit_button( 'Revalidate key', 'small', 'revalidate-api-key' );
 			} else {
-				submit_button( 'Save changes' );
+				submit_button( 'Save changes', 'small', 'save-api-key' );
+				?>
+				<a href="<?php echo esc_url( $this->menu_page() ); ?>" class="button">Cancel</a>
+				<?php
 			}
 			?>
-			<a href="<?php echo esc_url( $this->menu_page() ); ?>" class="button">Cancel</a>
 		</form>
 		<?php
 	}
@@ -109,7 +107,6 @@ class Urlslab_General_Settings_Page implements Urlslab_Admin_Page {
 	private function revalidate_apikey(): string {
 		$user_api_key = Urlslab_User_Widget::get_instance()->get_api_key();
 		$redirect_to = '';
-
 		if ( ! $user_api_key->is_empty() ) {
 			$confirmed = $this->confirm_key( $user_api_key );
 			if ( $confirmed ) {
@@ -153,7 +150,8 @@ class Urlslab_General_Settings_Page implements Urlslab_Admin_Page {
 					'status' => 'success',
 				)
 			);
-		} else {
+		}
+		if ( ! empty( $_POST['save-api-key'] ) ) {
 			$api_key = isset( $_POST['api_key'] )
 				? trim( $_POST['api_key'] )
 				: '';
@@ -205,7 +203,10 @@ class Urlslab_General_Settings_Page implements Urlslab_Admin_Page {
 	 * @return bool
 	 */
 	private function confirm_key( $api_key ): bool {
-		$screenshot_api = new Urlslab_User_Management_Api( $api_key );
+		$screenshot_api = new Urlslab_User_Management_Api(
+			$api_key,
+			Urlslab::get_installation_id()
+		);
 		return $screenshot_api->confirm_api_key();
 	}
 
