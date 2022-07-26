@@ -11,10 +11,12 @@ class Urlslab_General_Settings_Page implements Urlslab_Admin_Page {
 	}
 
 	/**
-	 * @return void triggered on menu load
+	 * @param string $action
+	 * @param string $component
+	 *
+	 * @return void
 	 */
-	public function on_menu_load() {
-		$action = urlslab_get_action();
+	public function on_page_load( string $action, string $component ) {
 		$redirect_to = '';
 
 		//# Setup process of API Key
@@ -47,7 +49,7 @@ class Urlslab_General_Settings_Page implements Urlslab_Admin_Page {
 	 * @return void creates the submenu and loading action of page
 	 */
 	public function register_submenu( string $parent_slug ) {
-		$hook = add_submenu_page(
+		add_submenu_page(
 			$parent_slug,
 			'Urlslab General Settings',
 			'General Settings',
@@ -55,7 +57,6 @@ class Urlslab_General_Settings_Page implements Urlslab_Admin_Page {
 			$this->menu_slug,
 			array( $this, 'load_page' )
 		);
-		add_action( "load-$hook", array( $this, 'on_menu_load' ) );
 	}
 
 	/**
@@ -116,7 +117,6 @@ class Urlslab_General_Settings_Page implements Urlslab_Admin_Page {
 					'api-key',
 					array(
 						'status' => 'success',
-						'message' => 'API Key has been saved successfully',
 					)
 				);
 			} else {
@@ -124,7 +124,6 @@ class Urlslab_General_Settings_Page implements Urlslab_Admin_Page {
 					'api-key',
 					array(
 						'status' => 'unauthorized',
-						'message' => 'Wrong API Key',
 					)
 				);
 			}
@@ -133,7 +132,6 @@ class Urlslab_General_Settings_Page implements Urlslab_Admin_Page {
 				'api-key',
 				array(
 					'status' => 'unauthorized',
-					'message' => 'Wrong API Key',
 				)
 			);
 		}
@@ -153,7 +151,6 @@ class Urlslab_General_Settings_Page implements Urlslab_Admin_Page {
 				'api-key',
 				array(
 					'status' => 'success',
-					'message' => 'API Key was removed successfully',
 				)
 			);
 		} else {
@@ -167,7 +164,6 @@ class Urlslab_General_Settings_Page implements Urlslab_Admin_Page {
 					'api-key',
 					array(
 						'status' => 'success',
-						'message' => 'API Key was saved successfully',
 					)
 				);
 
@@ -177,7 +173,6 @@ class Urlslab_General_Settings_Page implements Urlslab_Admin_Page {
 					'api-key',
 					array(
 						'status' => 'unauthorized',
-						'message' => 'Wrong API Key',
 					)
 				);
 			}

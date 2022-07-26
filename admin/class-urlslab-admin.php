@@ -135,24 +135,29 @@ class Urlslab_Admin {
 	}
 
 	function urlslab_load_add_widgets_page() {
-		$current_action = '';
+		$action = '';
+		$page_slug = '';
+		$component = '';
+
+		//# action initialization
 		if ( isset( $_REQUEST['action'] ) and -1 != $_REQUEST['action'] ) {
-			$current_action = $_REQUEST['action'];
+			$action = $_REQUEST['action'];
 		}
+		//# action initialization
 
-		if ( isset( $_REQUEST['component'] ) ) {
-			if ( 'api-key' == $_REQUEST['component'] && ( 'setup' == $current_action ) ) {
-				Urlslab_User_Widget::get_instance()->api_setup_response( $current_action );
-			}
-
-			if ( 'activation' == $current_action ) {
-				foreach ( Urlslab_Available_Widgets::get_instance()->get_available_widgets() as $widget ) {
-					if ( $widget->get_widget_slug() == $_REQUEST['component'] ) {
-						$widget->widget_management_response( $current_action );
-					}
-				}
-			}
+		//# slug initialization
+		if ( isset( $_REQUEST['page'] ) and -1 != $_REQUEST['page'] ) {
+			$page_slug = $_REQUEST['page'];
 		}
+		//# slug initialization
+
+		//# component initialization
+		if ( isset( $_REQUEST['component'] ) and -1 != $_REQUEST['component'] ) {
+			$component = $_REQUEST['component'];
+		}
+		//# component initialization
+
+		$this->urlslab_menu_factory->init_on_page_loads( $page_slug, $action, $component );
 	}
 
 }

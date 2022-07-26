@@ -10,7 +10,7 @@ class Urlslab_Image_Seo_Widgets_Page implements Urlslab_Admin_Page {
 		$this->page_title = 'Image SEO Widgets';
 	}
 
-	public function on_menu_load() {
+	public function on_page_load( string $action, string $component ) {
 		// TODO: Implement on_menu_load() method.
 	}
 
@@ -23,7 +23,7 @@ class Urlslab_Image_Seo_Widgets_Page implements Urlslab_Admin_Page {
 			$this->menu_slug,
 			array( $this, 'load_page' )
 		);
-		add_action( "load-$hook", array( $this, 'on_menu_load' ) );
+		add_action( "load-$hook", array( $this, 'on_page_load' ) );
 
 	}
 

@@ -51,6 +51,15 @@ class Urlslab_Page_Factory {
 		}
 	}
 
+	public function init_on_page_loads(
+		string $page_slug,
+		string $action,
+		string $component ) {
+		if ( isset( $this->menus[ $page_slug ] ) ) {
+			$this->menus[ $page_slug ]->on_page_load( $action, $component );
+		}
+	}
+
 	/**
 	 * @param string $page_slug
 	 *

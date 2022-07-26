@@ -9,6 +9,14 @@ if ( isset( $_GET['page'] ) ) {
 }
 
 ?>
+<?php
+//# notifications
+if ( isset( $_REQUEST['status'] ) ) {
+	echo urlslab_admin_notice( $_REQUEST['status'] ); // phpcs:ignore
+}
+//# notifications
+?>
+
 <nav class="urlslab-header">
 	<div class="urlslab-header-content-container">
 		<figure>

@@ -11,12 +11,12 @@ class Urlslab_Dashboard_Page implements Urlslab_Admin_Page {
 	}
 
 
-	public function on_menu_load() {
+	public function on_page_load( string $action, string $component ) {
 		// TODO: Implement on_menu_load() method.
 	}
 
 	public function register_submenu( string $parent_slug ) {
-		$hook = add_submenu_page(
+		add_submenu_page(
 			$parent_slug,
 			'Urlslab Dashboard',
 			'Dashboard',
@@ -24,7 +24,6 @@ class Urlslab_Dashboard_Page implements Urlslab_Admin_Page {
 			$this->menu_slug,
 			array( $this, 'load_page' )
 		);
-		add_action( "load-$hook", array( $this, 'on_menu_load' ) );
 	}
 
 	public function get_menu_slug(): string {

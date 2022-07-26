@@ -5,7 +5,7 @@ interface Urlslab_Admin_Page {
 	/**
 	 * @return void
 	 */
-	public function on_menu_load();
+	public function on_page_load( string $action, string $component);
 
 	/**
 	 * @param string $parent_slug

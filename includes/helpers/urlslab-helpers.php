@@ -23,6 +23,23 @@ function urlslab_get_action(): string {
 	return $current_action;
 }
 
+function urlslab_admin_notice( string $status ) {
+	if ( 'unauthorized' == $status or 'invalid' == $status ) {
+		return sprintf(
+			'<div class="notice notice-error"><p><strong>%1$s</strong>: %2$s</p></div>',
+			esc_html( 'Error' ),
+			esc_html( 'Invalid operation' )
+		);
+	}
+
+	if ( 'success' == $status ) {
+		return sprintf(
+			'<div class="notice notice-success"><p>%s</p></div>',
+			esc_html( 'Operation successful' )
+		);
+	}
+}
+
 function urlslab_is_same_domain_url( $url ): bool {
 	$url_host_name = strtolower( parse_url( $url, PHP_URL_HOST ) );
 	if ( ! strlen( $url_host_name ) ) {
