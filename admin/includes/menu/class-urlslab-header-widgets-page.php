@@ -35,15 +35,22 @@ class Urlslab_Header_Widgets_Page extends Urlslab_Admin_Page {
 	}
 
 	public function load_page() {
-		// TODO: Implement load_page() method.
+		require URLSLAB_PLUGIN_DIR . 'admin/partials/urlslab-admin-header-widgets.php';
 	}
 
 	public function get_page_tabs(): array {
-		return array();
+		return array(
+			'meta-description' => 'Meta Description',
+			'meta-og' => 'Meta OG Tag',
+		);
 	}
 
 	public function get_active_page_tab(): string {
-		return '';
+		$active_tab = 'meta-description';
+		if ( isset( $_GET['tab'] ) ) {
+			$active_tab = $_GET['tab'];
+		}
+		return $active_tab;
 	}
 
 	public function on_screen_load() {
