@@ -70,6 +70,24 @@ figure {
 	color: #00ff;
 }
 
+.urlslab-btn-success {
+	text-decoration: none;
+	height: 100%;
+	padding: 10px;
+	background-color: #0e500e;
+	border-radius: 5px;
+	color: #fff;
+}
+
+.urlslab-btn-error {
+	text-decoration: none;
+	background-color: #5b1414;
+	height: 100%;
+	padding: 10px;
+	border-radius: 5px;
+	color: #fff;
+}
+
 .float-left {
 	float: left;
 }

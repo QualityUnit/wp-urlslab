@@ -6,8 +6,8 @@ class Urlslab_Image_Seo_Widgets_Page extends Urlslab_Admin_Page {
 	private string $page_title;
 
 	public function __construct() {
-		$this->menu_slug = 'urlslab-image-seo-widgets';
-		$this->page_title = 'Image SEO Widgets';
+		$this->menu_slug = 'urlslab-image-seo';
+		$this->page_title = 'Image SEO';
 	}
 
 	public function on_page_load( string $action, string $component ) {
@@ -18,7 +18,7 @@ class Urlslab_Image_Seo_Widgets_Page extends Urlslab_Admin_Page {
 		$hook = add_submenu_page(
 			$parent_slug,
 			'Urlslab Image SEO Widgets',
-			'Image SEO Widgets',
+			'Image SEO',
 			'manage_options',
 			$this->menu_slug,
 			array( $this, 'load_page' )
@@ -39,11 +39,17 @@ class Urlslab_Image_Seo_Widgets_Page extends Urlslab_Admin_Page {
 	}
 
 	public function get_page_tabs(): array {
-		return array();
+		return array(
+			'image-alt-text' => 'Image Alt Text',
+		);
 	}
 
 	public function get_active_page_tab(): string {
-		return '';
+		$active_tab = 'image-alt-text';
+		if ( isset( $_GET['tab'] ) ) {
+			$active_tab = $_GET['tab'];
+		}
+		return $active_tab;
 	}
 
 	public function on_screen_load() {

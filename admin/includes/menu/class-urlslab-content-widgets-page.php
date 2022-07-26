@@ -6,8 +6,8 @@ class Urlslab_Content_Widgets_Page extends Urlslab_Admin_Page {
 	private string $page_title;
 
 	public function __construct() {
-		$this->menu_slug = 'urlslab-content-widget';
-		$this->page_title = 'Content Widgets';
+		$this->menu_slug = 'urlslab-content-seo';
+		$this->page_title = 'Content SEO';
 	}
 
 	public function on_page_load( string $action, string $component ) {
@@ -18,7 +18,7 @@ class Urlslab_Content_Widgets_Page extends Urlslab_Admin_Page {
 		$hook = add_submenu_page(
 			$parent_slug,
 			'Urlslab Content Widgets',
-			'Content Widgets',
+			'Content SEO',
 			'manage_options',
 			$this->menu_slug,
 			array( $this, 'load_page' )
@@ -39,11 +39,18 @@ class Urlslab_Content_Widgets_Page extends Urlslab_Admin_Page {
 	}
 
 	public function get_page_tabs(): array {
-		return array();
+		return array(
+			'keyword' => 'Keyword',
+			'related-resource' => 'Related Resource',
+		);
 	}
 
 	public function get_active_page_tab(): string {
-		return '';
+		$active_tab = 'keyword';
+		if ( isset( $_GET['tab'] ) ) {
+			$active_tab = $_GET['tab'];
+		}
+		return $active_tab;
 	}
 
 	public function on_screen_load() {

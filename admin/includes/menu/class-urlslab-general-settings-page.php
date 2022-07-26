@@ -239,24 +239,6 @@ class Urlslab_General_Settings_Page extends Urlslab_Admin_Page {
 	}
 
 	/**
-	 * @param string $component
-	 * @param $args
-	 *
-	 * @return string
-	 */
-	private function menu_page( string $component = 'api-key', $args = '' ): string {
-		$args = wp_parse_args( $args, array() );
-		$url  = urlslab_admin_menu_page_url( $this->menu_slug );
-		$url  = add_query_arg( array( 'component' => $component ), $url );
-
-		if ( ! empty( $args ) ) {
-			$url = add_query_arg( $args, $url );
-		}
-
-		return $url;
-	}
-
-	/**
 	 * @param $api_key
 	 *
 	 * @return bool

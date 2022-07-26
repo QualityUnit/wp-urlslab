@@ -6,19 +6,19 @@ class Urlslab_Header_Widgets_Page extends Urlslab_Admin_Page {
 	private string $page_title;
 
 	public function __construct() {
-		$this->menu_slug = 'urlslab-header-widgets';
-		$this->page_title = 'Header Widgets';
+		$this->menu_slug = 'urlslab-header-seo';
+		$this->page_title = 'Header SEO';
 	}
 
 	public function on_page_load( string $action, string $component ) {
-		// TODO: Implement on_menu_load() method.
+
 	}
 
 	public function register_submenu( string $parent_slug ) {
 		$hook = add_submenu_page(
 			$parent_slug,
-			'Urlslab Header Widgets',
-			'Header Widgets',
+			'Urlslab Header SEO',
+			'Header SEO',
 			'manage_options',
 			$this->menu_slug,
 			array( $this, 'load_page' )
@@ -40,13 +40,30 @@ class Urlslab_Header_Widgets_Page extends Urlslab_Admin_Page {
 
 	public function get_page_tabs(): array {
 		return array(
-			'meta-description' => 'Meta Description',
-			'meta-og' => 'Meta OG Tag',
+			'meta-tags' => 'Meta Tags',
 		);
 	}
 
+	public function render_widget_form() {
+		?>
+		<form method="post" action="<?php echo esc_url( $this->menu_slug( 'meta-tags', 'action=activation' ) ); ?>">
+			<input type="checkbox" name="meta-opt" value="meta-description">
+			Meta Description Generation <br>
+			<input type="checkbox" name="meta-opt" value="meta-og-image">
+			Meta OG Image Generation <br>
+			<input type="checkbox" name="meta-opt" value="meta-og-desc">
+			Meta OG Description Generation <br>
+			<input type="checkbox" name="meta-opt" value="meta-og-title">
+			Meta OG Title Generation
+			<?php
+			submit_button( 'Save changes', 'small', 'save-meta-tags' );
+			?>
+		</form>
+		<?php
+	}
+
 	public function get_active_page_tab(): string {
-		$active_tab = 'meta-description';
+		$active_tab = 'meta-tags';
 		if ( isset( $_GET['tab'] ) ) {
 			$active_tab = $_GET['tab'];
 		}

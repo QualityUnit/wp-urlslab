@@ -57,4 +57,22 @@ abstract class Urlslab_Admin_Page {
 		return $url;
 	}
 
+	/**
+	 * @param string $component
+	 * @param $args
+	 *
+	 * @return string
+	 */
+	protected function menu_page( string $component, $args = '' ): string {
+		$args = wp_parse_args( $args, array() );
+		$url  = urlslab_admin_menu_page_url( $this->get_menu_slug() );
+		$url  = add_query_arg( array( 'component' => $component ), $url );
+
+		if ( ! empty( $args ) ) {
+			$url = add_query_arg( $args, $url );
+		}
+
+		return $url;
+	}
+
 }
