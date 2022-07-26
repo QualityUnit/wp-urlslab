@@ -1,6 +1,6 @@
 <?php
 
-class Urlslab_Header_Widgets_Page implements Urlslab_Admin_Page {
+class Urlslab_Header_Widgets_Page extends Urlslab_Admin_Page {
 
 	private string $menu_slug;
 	private string $page_title;
@@ -15,7 +15,7 @@ class Urlslab_Header_Widgets_Page implements Urlslab_Admin_Page {
 	}
 
 	public function register_submenu( string $parent_slug ) {
-		add_submenu_page(
+		$hook = add_submenu_page(
 			$parent_slug,
 			'Urlslab Header Widgets',
 			'Header Widgets',
@@ -23,6 +23,7 @@ class Urlslab_Header_Widgets_Page implements Urlslab_Admin_Page {
 			$this->menu_slug,
 			array( $this, 'load_page' )
 		);
+		add_action( "load-$hook", array( $this, 'on_screen_load' ) );
 	}
 
 	public function get_menu_slug(): string {
@@ -35,5 +36,17 @@ class Urlslab_Header_Widgets_Page implements Urlslab_Admin_Page {
 
 	public function load_page() {
 		// TODO: Implement load_page() method.
+	}
+
+	public function get_page_tabs(): array {
+		return array();
+	}
+
+	public function get_active_page_tab(): string {
+		return '';
+	}
+
+	public function on_screen_load() {
+		// TODO: Implement on_screen_load() method.
 	}
 }

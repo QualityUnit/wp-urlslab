@@ -64,7 +64,7 @@ class Urlslab_Admin {
 
 		$this->urlslab = $urlslab;
 		$this->version = $version;
-		$this->urlslab_menu_factory = new Urlslab_Page_Factory();
+		$this->urlslab_menu_factory = Urlslab_Page_Factory::get_instance();
 
 	}
 

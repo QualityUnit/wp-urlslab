@@ -13,40 +13,46 @@ class Urlslab_Page_Factory {
 	 * @since 1.2.0
 	 * @var Urlslab_Admin_page[]
 	 */
-	private array $menus;
+	private static array $menus;
+
+	private static Urlslab_Page_Factory $instance;
 
 	/**
 	 * @since 1.2.0
 	 * @var Urlslab_Admin_Page
 	 */
-	private Urlslab_Admin_Page $admin_plugin_main_page;
+	private static Urlslab_Admin_Page $admin_plugin_main_page;
 
-	public function __construct() {
-		$dashboard = new Urlslab_Dashboard_Page();
-		$general_settings = new Urlslab_General_Settings_Page();
-		$header_widgets = new Urlslab_Header_Widgets_Page();
-		$content_widgets = new Urlslab_Content_Widgets_Page();
-		$image_seo = new Urlslab_Image_Seo_Widgets_Page();
-		$feature_manager = new Urlslab_Feature_Manager_Page();
+	public static function get_instance(): Urlslab_Page_Factory {
+		if ( empty( self::$instance ) ) {
+			$dashboard = new Urlslab_Dashboard_Page();
+			$general_settings = new Urlslab_General_Settings_Page();
+			$header_widgets = new Urlslab_Header_Widgets_Page();
+			$content_widgets = new Urlslab_Content_Widgets_Page();
+			$image_seo = new Urlslab_Image_Seo_Widgets_Page();
+			$feature_manager = new Urlslab_Feature_Manager_Page();
 
-		$this->menus = array(
-			$dashboard->get_menu_slug() => $dashboard,
-			$general_settings->get_menu_slug() => $general_settings,
-			$header_widgets->get_menu_slug() => $header_widgets,
-			$content_widgets->get_menu_slug() => $content_widgets,
-			$image_seo->get_menu_slug() => $image_seo,
-			$feature_manager->get_menu_slug() => $feature_manager,
-		);
-		$this->admin_plugin_main_page = $dashboard;
+			self::$menus = array(
+				$dashboard->get_menu_slug() => $dashboard,
+				$general_settings->get_menu_slug() => $general_settings,
+				$header_widgets->get_menu_slug() => $header_widgets,
+				$content_widgets->get_menu_slug() => $content_widgets,
+				$image_seo->get_menu_slug() => $image_seo,
+				$feature_manager->get_menu_slug() => $feature_manager,
+			);
+			self::$admin_plugin_main_page = $dashboard;
+			self::$instance = new self;
+		}
+		return self::$instance;
 	}
 
 	/**
 	 * @return void
 	 */
 	public function init_admin_menus() {
-		foreach ( $this->menus as $menu ) {
+		foreach ( self::$menus as $menu ) {
 			$menu->register_submenu(
-				$this->admin_plugin_main_page->get_menu_slug()
+				self::$admin_plugin_main_page->get_menu_slug()
 			);
 		}
 	}
@@ -55,8 +61,8 @@ class Urlslab_Page_Factory {
 		string $page_slug,
 		string $action,
 		string $component ) {
-		if ( isset( $this->menus[ $page_slug ] ) ) {
-			$this->menus[ $page_slug ]->on_page_load( $action, $component );
+		if ( isset( self::$menus[ $page_slug ] ) ) {
+			self::$menus[ $page_slug ]->on_page_load( $action, $component );
 		}
 	}
 
@@ -66,17 +72,17 @@ class Urlslab_Page_Factory {
 	 * @return Urlslab_Admin_Page|null
 	 */
 	public function get_page( string $page_slug ): ?Urlslab_Admin_Page {
-		if ( ! isset( $this->menus[ $page_slug ] ) ) {
+		if ( ! isset( self::$menus[ $page_slug ] ) ) {
 			return null;
 		}
-		return $this->menus[ $page_slug ];
+		return self::$menus[ $page_slug ];
 	}
 
 	/**
 	 * @return string
 	 */
 	public function main_menu_slug(): string {
-		return $this->admin_plugin_main_page->get_menu_slug();
+		return self::$admin_plugin_main_page->get_menu_slug();
 	}
 
 

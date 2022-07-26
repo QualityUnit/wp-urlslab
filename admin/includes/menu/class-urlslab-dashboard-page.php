@@ -1,6 +1,6 @@
 <?php
 
-class Urlslab_Dashboard_Page implements Urlslab_Admin_Page {
+class Urlslab_Dashboard_Page extends Urlslab_Admin_Page {
 
 	private string $menu_slug;
 	private string $page_title;
@@ -16,7 +16,7 @@ class Urlslab_Dashboard_Page implements Urlslab_Admin_Page {
 	}
 
 	public function register_submenu( string $parent_slug ) {
-		add_submenu_page(
+		$hook = add_submenu_page(
 			$parent_slug,
 			'Urlslab Dashboard',
 			'Dashboard',
@@ -24,6 +24,7 @@ class Urlslab_Dashboard_Page implements Urlslab_Admin_Page {
 			$this->menu_slug,
 			array( $this, 'load_page' )
 		);
+		add_action( "load-$hook", array( $this, 'on_screen_load' ) );
 	}
 
 	public function get_menu_slug(): string {
@@ -36,5 +37,17 @@ class Urlslab_Dashboard_Page implements Urlslab_Admin_Page {
 
 	public function load_page() {
 		require URLSLAB_PLUGIN_DIR . 'admin/partials/urlslab-admin-dashboard.php';
+	}
+
+	public function get_page_tabs(): array {
+		return array();
+	}
+
+	public function get_active_page_tab(): string {
+		return '';
+	}
+
+	public function on_screen_load() {
+		// TODO: Implement on_screen_load() method.
 	}
 }
