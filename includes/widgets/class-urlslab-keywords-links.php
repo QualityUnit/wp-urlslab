@@ -384,15 +384,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 		$keyword_table = URLSLAB_KEYWORDS_TABLE;
 
-		$results = $wpdb->get_results(
-				$wpdb->prepare(
-						'SELECT kwMd5, keyword, urlLink, urlFilter
-				FROM ' . $keyword_table . // phpcs:ignore
-						" WHERE (lang = %s OR lang = 'all') ORDER BY kw_priority ASC, kw_length DESC",
-						urlslab_get_language()
-				),
-				'ARRAY_A'
-		);
+		$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kwMd5, keyword, urlLink, urlFilter FROM ' . $keyword_table . " WHERE (lang = %s OR lang = 'all') ORDER BY kw_priority ASC, kw_length DESC", urlslab_get_language() ), 'ARRAY_A' );
 
 		$this->keywords_cache = array();
 		$current_page = get_current_page_url();
@@ -543,11 +535,11 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 		//try to load all titles with less than 4 words
 		$posts = get_posts(
-				array(
-						'numberposts' => 1000,
-						'orderby' => 'date',
-						'order' => 'DESC'
-				)
+			array(
+				'numberposts' => 1000,
+				'orderby' => 'date',
+				'order' => 'DESC'
+			)
 		);
 
 		foreach ( $posts as $post ) {
@@ -584,17 +576,17 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
                    urlFilter = VALUES(urlFilter)';
 
 		return $wpdb->query(
-				$wpdb->prepare( $update_query, // phpcs:ignore
-						array(
-								$dataRow->get_kw_md5(),
-								$dataRow->get_keyword(),
-								$dataRow->get_keyword_priority(),
-								$dataRow->get_keyword_length(),
-								$dataRow->get_keyword_url_lang(),
-								$dataRow->get_keyword_url_link(),
-								$dataRow->get_keyword_url_filter()
-						)
+			$wpdb->prepare( $update_query, // phpcs:ignore
+				array(
+						$dataRow->get_kw_md5(),
+						$dataRow->get_keyword(),
+						$dataRow->get_keyword_priority(),
+						$dataRow->get_keyword_length(),
+						$dataRow->get_keyword_url_lang(),
+						$dataRow->get_keyword_url_link(),
+						$dataRow->get_keyword_url_filter()
 				)
+			)
 		);
 	}
 
