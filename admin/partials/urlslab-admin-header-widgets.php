@@ -5,7 +5,7 @@
 	<section class="urlslab-content-container">
 		<?php
 		//# meta description tab
-		$page_data = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-header-widgets' );
+		$page_data = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-header-seo' );
 		$user = Urlslab_User_Widget::get_instance();
 		if ( ! isset( $_GET['tab'] ) or ( 'meta-tags' == $_GET['tab'] ) ) {
 			?>

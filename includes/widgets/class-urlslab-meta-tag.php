@@ -15,6 +15,8 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 
 	private string $landing_page_link = 'https://www.urlslab.com';
 
+	private array $activated_sub_widgets;
+
 	private Urlslab_Url_Data_Fetcher $url_data_fetcher;
 
 	/**
@@ -22,6 +24,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	 */
 	public function __construct( Urlslab_Url_Data_Fetcher $url_data_fetcher) {
 		$this->url_data_fetcher = $url_data_fetcher;
+		$this->activated_sub_widgets = Urlslab::get_option( 'header-seo', array() );
 	}
 
 	public function init_widget( Urlslab_Loader $loader ) {
@@ -125,64 +128,70 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 				);
 
 				if (is_object( $url_data )) {
-					// meta description generation
-					if ($meta_description->count() == 0) {
-						$node = $document->createElement( 'meta' );
-						$node->setAttribute( 'name', 'description' );
-						$node->setAttribute( 'content', $url_data->get_url_summary_text() );
-						$head_tag->appendChild( $node );
-					} else {
-						foreach ($meta_description as $node) {
-							if (strlen( trim( $node->getAttribute( 'content' ) ) ) < 3) {
-								$node->setAttribute( 'content', $url_data->get_url_summary_text() );
+					if (in_array( 'meta-description', $this->activated_sub_widgets )) {
+						// meta description generation
+						if ($meta_description->count() == 0) {
+							$node = $document->createElement( 'meta' );
+							$node->setAttribute( 'name', 'description' );
+							$node->setAttribute( 'content', $url_data->get_url_summary_text() );
+							$head_tag->appendChild( $node );
+						} else {
+							foreach ($meta_description as $node) {
+								if (strlen( trim( $node->getAttribute( 'content' ) ) ) < 3) {
+									$node->setAttribute( 'content', $url_data->get_url_summary_text() );
+								}
 							}
 						}
+						// meta description generation
 					}
 
-
-					// meta description generation
-
 					// meta og title generation
-					if ($meta_og_title->count() == 0) {
-						$node = $document->createElement( 'meta' );
-						$node->setAttribute( 'property', 'og:title' );
-						$node->setAttribute( 'content', $url_data->get_url_summary_text() );
-						$head_tag->appendChild( $node );
-					} else {
-						foreach ($meta_og_title as $node) {
-							if (strlen( trim( $node->getAttribute( 'content' ) ) ) < 3) {
-								$node->setAttribute( 'content', $url_data->get_url_summary_text() );
+					if (in_array( 'meta-og-title', $this->activated_sub_widgets )) {
+						if ( $meta_og_title->count() == 0 ) {
+							$node = $document->createElement( 'meta' );
+							$node->setAttribute( 'property', 'og:title' );
+							$node->setAttribute( 'content', $url_data->get_url_summary_text() );
+							$head_tag->appendChild( $node );
+						} else {
+							foreach ( $meta_og_title as $node ) {
+								if ( strlen( trim( $node->getAttribute( 'content' ) ) ) < 3 ) {
+									$node->setAttribute( 'content', $url_data->get_url_summary_text() );
+								}
 							}
 						}
 					}
 					// meta og title generation
 
 					// meta og description generation
-					if ($meta_og_description->count() == 0) {
-						$node = $document->createElement( 'meta' );
-						$node->setAttribute( 'property', 'og:description' );
-						$node->setAttribute( 'content', $url_data->get_url_summary_text() );
-						$head_tag->appendChild( $node );
-					} else {
-						foreach ($meta_og_description as $node) {
-							if (strlen( trim( $node->getAttribute( 'content' ) ) ) < 3) {
-								$node->setAttribute( 'content', $url_data->get_url_summary_text() );
+					if (in_array( 'meta-og-desc', $this->activated_sub_widgets )) {
+						if ( $meta_og_description->count() == 0 ) {
+							$node = $document->createElement( 'meta' );
+							$node->setAttribute( 'property', 'og:description' );
+							$node->setAttribute( 'content', $url_data->get_url_summary_text() );
+							$head_tag->appendChild( $node );
+						} else {
+							foreach ( $meta_og_description as $node ) {
+								if ( strlen( trim( $node->getAttribute( 'content' ) ) ) < 3 ) {
+									$node->setAttribute( 'content', $url_data->get_url_summary_text() );
+								}
 							}
 						}
 					}
 					// meta og description generation
 
 					// meta og image generation
-					if ($meta_og_image->count() == 0 &&
-						$url_data->screenshot_exists()) {
-						$node = $document->createElement( 'meta' );
-						$node->setAttribute( 'property', 'og:image' );
-						$node->setAttribute( 'content', $url_data->render_screenshot_path() );
-						//$document->appendChild( $node );
-					} else {
-						foreach ($meta_og_image as $node) {
-							if (strlen( trim( $node->getAttribute( 'content' ) ) ) < 3) {
-								$node->setAttribute( 'content', $url_data->render_screenshot_path() );
+					if (in_array( 'meta-og-image', $this->activated_sub_widgets )) {
+						if ( $meta_og_image->count() == 0 &&
+							 $url_data->screenshot_exists() ) {
+							$node = $document->createElement( 'meta' );
+							$node->setAttribute( 'property', 'og:image' );
+							$node->setAttribute( 'content', $url_data->render_screenshot_path() );
+							//$document->appendChild( $node );
+						} else {
+							foreach ( $meta_og_image as $node ) {
+								if ( strlen( trim( $node->getAttribute( 'content' ) ) ) < 3 ) {
+									$node->setAttribute( 'content', $url_data->render_screenshot_path() );
+								}
 							}
 						}
 					}

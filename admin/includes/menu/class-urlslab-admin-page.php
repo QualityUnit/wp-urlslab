@@ -58,15 +58,15 @@ abstract class Urlslab_Admin_Page {
 	}
 
 	/**
-	 * @param string $component
+	 * @param string $tab
 	 * @param $args
 	 *
 	 * @return string
 	 */
-	protected function menu_page( string $component, $args = '' ): string {
+	protected function menu_page( string $tab, $args = '' ): string {
 		$args = wp_parse_args( $args, array() );
 		$url  = urlslab_admin_menu_page_url( $this->get_menu_slug() );
-		$url  = add_query_arg( array( 'component' => $component ), $url );
+		$url  = add_query_arg( array( 'tab' => $tab ), $url );
 
 		if ( ! empty( $args ) ) {
 			$url = add_query_arg( $args, $url );
