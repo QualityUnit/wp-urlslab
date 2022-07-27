@@ -49,4 +49,8 @@ class Urlslab_Feature_Manager_Page extends Urlslab_Admin_Page {
 	public function on_screen_load() {
 		// TODO: Implement on_screen_load() method.
 	}
+
+	public function render_subpage() {
+		// TODO: Implement render_subpage() method.
+	}
 }

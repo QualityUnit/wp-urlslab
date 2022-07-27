@@ -1,14 +1,5 @@
 <?php
 
-require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-screenshot-widget.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-related-resources-widget.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-link-enhancer.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-keywords-links.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-image-alt-text.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-meta-tag.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-screenshot-api.php';
-require_once URLSLAB_PLUGIN_DIR . '/admin/includes/tables/class-urlslab-screenshot-table.php';
 
 class Urlslab_Available_Widgets {
 

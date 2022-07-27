@@ -1,9 +1,6 @@
 <?php
 
 // phpcs:disable WordPress
-require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
 
 class Urlslab_Meta_Tag extends Urlslab_Widget {
 

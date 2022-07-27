@@ -133,6 +133,7 @@ figure {
 
 .urlslab-header {
 	position: fixed;
+	z-index: -1000;
 	left: 160px;
 	top: 32px;
 	display: flex;
@@ -266,6 +267,12 @@ figure {
 .urlslab-card-content-thumbnail {
 	display: flex;
 	justify-content: flex-start;
+}
+
+.urlslab-action-container {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
 }
 
 /** Urlslab Content **/

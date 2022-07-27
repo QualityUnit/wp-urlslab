@@ -1,11 +1,5 @@
 <?php
 
-require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-api.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/urlslab-api-model.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-batch-request.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-url-data-response.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-error-response.php';
-
 /**
  * Urlslab Service Interface
  *

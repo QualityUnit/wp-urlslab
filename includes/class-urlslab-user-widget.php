@@ -1,9 +1,5 @@
 <?php
 
-require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-api-key.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-user-management-api.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/helpers/urlslab-helpers.php';
-
 class Urlslab_User_Widget {
 
 	private $user_api_key;

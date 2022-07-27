@@ -1,7 +1,5 @@
 <?php
 
-require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-api.php';
-
 class Urlslab_User_Management_Api extends Urlslab_Api {
 
 	private int $installation_id;

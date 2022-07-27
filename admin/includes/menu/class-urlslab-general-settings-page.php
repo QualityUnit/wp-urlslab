@@ -121,9 +121,6 @@ class Urlslab_General_Settings_Page extends Urlslab_Admin_Page {
 				submit_button( 'Revalidate key', 'small', 'revalidate-api-key' );
 			} else {
 				submit_button( 'Save changes', 'small', 'save-api-key' );
-				?>
-				<a href="<?php echo esc_url( $this->menu_page() ); ?>" class="button">Cancel</a>
-				<?php
 			}
 			?>
 		</form>
@@ -271,5 +268,9 @@ class Urlslab_General_Settings_Page extends Urlslab_Admin_Page {
 		$user = new Urlslab_User_Widget();
 		$user->remove_api_key();
 		Urlslab::update_option( 'api-key', '' );
+	}
+
+	public function render_subpage() {
+		// TODO: Implement render_subpage() method.
 	}
 }

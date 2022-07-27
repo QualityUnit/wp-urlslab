@@ -1,8 +1,5 @@
 <?php
 
-require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
 
 class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 

@@ -10,11 +10,6 @@ class Urlslab_Dashboard_Page extends Urlslab_Admin_Page {
 		$this->page_title = 'Dashboard';
 	}
 
-
-	public function on_page_load( string $action, string $component ) {
-		// TODO: Implement on_menu_load() method.
-	}
-
 	public function register_submenu( string $parent_slug ) {
 		$hook = add_submenu_page(
 			$parent_slug,
@@ -47,7 +42,9 @@ class Urlslab_Dashboard_Page extends Urlslab_Admin_Page {
 		return '';
 	}
 
-	public function on_screen_load() {
-		// TODO: Implement on_screen_load() method.
-	}
+	public function on_page_load( string $action, string $component ) {}
+
+	public function on_screen_load() {}
+
+	public function render_subpage() {}
 }

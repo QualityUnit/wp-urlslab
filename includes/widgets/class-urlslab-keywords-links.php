@@ -1,11 +1,6 @@
 <?php
 
 // phpcs:disable WordPress
-require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-keyword-data.php';
-require_once URLSLAB_PLUGIN_DIR . '/admin/includes/tables/class-urlslab-keyword-link-table.php';
 
 class Urlslab_Keywords_Links extends Urlslab_Widget {
 

@@ -45,6 +45,11 @@ abstract class Urlslab_Admin_Page {
 	abstract public function get_active_page_tab(): string;
 
 	/**
+	 * @return void renders subpages related to a specific page
+	 */
+	abstract public function render_subpage();
+
+	/**
 	 * @param string $tab_slug
 	 *
 	 * @return string
@@ -63,7 +68,7 @@ abstract class Urlslab_Admin_Page {
 	 *
 	 * @return string
 	 */
-	protected function menu_page( string $tab, $args = '' ): string {
+	public function menu_page( string $tab, $args = '' ): string {
 		$args = wp_parse_args( $args, array() );
 		$url  = urlslab_admin_menu_page_url( $this->get_menu_slug() );
 		$url  = add_query_arg( array( 'tab' => $tab ), $url );

@@ -1,11 +1,4 @@
 <?php
-require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-admin-page.php';
-require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-dashboard-page.php';
-require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-feature-manager-page.php';
-require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-general-settings-page.php';
-require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-header-widgets-page.php';
-require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-image-seo-widgets-page.php';
-require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-content-widgets-page.php';
 
 class Urlslab_Page_Factory {
 

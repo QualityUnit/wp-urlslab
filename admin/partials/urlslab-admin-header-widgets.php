@@ -4,25 +4,40 @@
 	<?php require plugin_dir_path( __FILE__ ) . 'urlslab-admin-header.php'; ?>
 	<section class="urlslab-content-container">
 		<?php
-		//# meta description tab
 		$page_data = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-header-seo' );
 		$user = Urlslab_User_Widget::get_instance();
-		if ( ! isset( $_GET['tab'] ) or ( 'meta-tags' == $_GET['tab'] ) ) {
-			?>
+		//# meta OG tab
+		?>
+		<div class="urlslab-card-container col-12">
+			<div class="urlslab-card-header">
+				<h3>Settings</h3>
+				<?php
+				if ( $user->is_widget_activated( 'urlslab-meta-tag' ) ) {
+					?>
+					<a class="urlslab-btn-error" href="#">Deactivate</a>
+					<?php
+				} else {
+					?>
+					<a class="urlslab-btn-success" href="#">Activate</a>
+					<?php
+				}
+				?>
+
+			</div>
+			<div class="urlslab-card-content">
+				<?php $page_data->render_widget_form(); ?>
+			</div>
+		</div>
+		<?php
+		//# meta OG tab
+		?>
+<?php
+		//# meta description tab
+if ( ! isset( $_GET['tab'] ) or ( 'meta-tags' == $_GET['tab'] ) ) {
+	?>
 			<div class="urlslab-card-container col-12">
 				<div class="urlslab-card-header">
 					<h3>Explanation</h3>
-					<?php
-					if ( $user->is_widget_activated( 'urlslab-meta-tag' ) ) {
-						?>
-						<a class="urlslab-btn-error" href="#">Deactivate</a>
-						<?php
-					} else {
-						?>
-						<a class="urlslab-btn-success" href="#">Activate</a>
-						<?php
-					}
-					?>
 				</div>
 				<div class="urlslab-card-content">
 					<div class="mar-bottom-1">
@@ -36,22 +51,10 @@
 				</div>
 			</div>
 			<?php
-		}
+}
 		//# meta description tab
 
-		//# meta OG tab
-		?>
-			<div class="urlslab-card-container col-12">
-				<div class="urlslab-card-header">
-					<h3>Settings</h3>
-				</div>
-				<div class="urlslab-card-content">
-					<?php $page_data->render_widget_form(); ?>
-				</div>
-			</div>
-			<?php
-			//# meta OG tab
-			?>
+?>
 	</section>
 </div>
 

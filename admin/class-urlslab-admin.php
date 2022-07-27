@@ -1,9 +1,5 @@
 <?php
 
-require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
-require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-page-factory.php';
-
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -87,6 +83,8 @@ class Urlslab_Admin {
 		 * class.
 		 */
 
+		wp_enqueue_style( $this->urlslab . '-jquery-modal', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css' );
+
 		wp_enqueue_style( $this->urlslab, plugin_dir_url( __FILE__ ) . 'css/urlslab-admin.css', array(), $this->version, 'all' );
 
 	}
@@ -109,6 +107,9 @@ class Urlslab_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
+
+		wp_enqueue_script( $this->urlslab . '-jquery-modal', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js' );
+
 
 		wp_enqueue_script( $this->urlslab, plugin_dir_url( __FILE__ ) . 'js/urlslab-admin.js', array( 'jquery' ), $this->version, false );
 

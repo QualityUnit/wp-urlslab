@@ -109,4 +109,6 @@ class Urlslab_Header_Widgets_Page extends Urlslab_Admin_Page {
 			$this->sub_widgets = $all_sub_widgets;
 		}
 	}
+
+	public function render_subpage() {}
 }
