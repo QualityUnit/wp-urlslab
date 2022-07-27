@@ -266,7 +266,8 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 			<?php
 			$this->keyword_table->prepare_items();
 			?>
-			<input type="hidden" name="page" value="<?php echo esc_attr( $this->parent_page->menu_page( 'internal-linking' ) ); ?>">
+			<input type="hidden" name="page" value="<?php echo esc_attr( $this->parent_page->get_menu_slug() ); ?>">
+			<input type="hidden" name="tab" value="<?php echo esc_attr( $this->subpage_slug ); ?>">
 			<?php
 			$this->keyword_table->search_box( 'Search', 'urlslab-keyword-input' );
 			$this->keyword_table->display();
