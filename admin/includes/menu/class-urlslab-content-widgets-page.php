@@ -4,7 +4,6 @@ class Urlslab_Content_Widgets_Page extends Urlslab_Admin_Page {
 
 	private string $menu_slug;
 	private string $page_title;
-	private Urlslab_Keyword_Link_Table $keyword_table;
 	private Urlslab_Content_Link_Building_Subpage $link_building_subpage;
 
 	public function __construct() {
@@ -14,7 +13,14 @@ class Urlslab_Content_Widgets_Page extends Urlslab_Admin_Page {
 	}
 
 	public function on_page_load( string $action, string $component ) {
-		// TODO: Implement on_menu_load() method.
+
+		//# Handle request for link building tab
+		if ( isset( $_REQUEST['tab'] ) and
+			 'link-building' == $_REQUEST['tab'] ) {
+			$this->link_building_subpage->handle_action();
+		}
+		//# Handle request for link building tab
+
 	}
 
 	public function register_submenu( string $parent_slug ) {

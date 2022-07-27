@@ -133,7 +133,7 @@ figure {
 
 .urlslab-header {
 	position: fixed;
-	z-index: -1000;
+	z-index: -1;
 	left: 160px;
 	top: 32px;
 	display: flex;

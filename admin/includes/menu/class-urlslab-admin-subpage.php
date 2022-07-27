@@ -22,4 +22,9 @@ abstract class Urlslab_Admin_Subpage {
 	 */
 	abstract public function set_table_screen_options();
 
+	/**
+	 * @return void used for handling actions related to sub page
+	 */
+	abstract public function handle_action();
+
 }
