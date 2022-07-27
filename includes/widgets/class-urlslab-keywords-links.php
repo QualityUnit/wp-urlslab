@@ -19,7 +19,6 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	private string $landing_page_link = 'https://www.urlslab.com';
 
 	private Urlslab_Keyword_Link_Table $keyword_table;
-	private array $keyword_table_col_names;
 
 	private int $cnt_page_link_replacements = 0;
 	private int $cnt_page_links = 0;
@@ -383,9 +382,9 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 					'SELECT kwMd5, keyword, urlLink, urlFilter
 				FROM ' . $keyword_table . // phpcs:ignore
 					" WHERE (lang = %s OR lang = 'all') ORDER BY kw_priority ASC, kw_length DESC",
-					urlslab_get_language() 
+					urlslab_get_language()
 				),
-				'ARRAY_A' 
+				'ARRAY_A'
 			);
 
 			$this->keywords_cache = array();
