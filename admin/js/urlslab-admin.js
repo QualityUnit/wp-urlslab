@@ -39,7 +39,7 @@
 	 * @param  keywordLang
 	 * @param  keywordFilter
 	 */
-	function createPopupHtml(
+	function createPopupHtmlEdit(
 		keywordHash,
 		keyword,
 		keywordLink,
@@ -78,7 +78,7 @@
 		` );
 	}
 
-	function createPopupHtml() {
+	function createPopupHtmlAdd() {
 		return $( `
 		<div>
 		<h2>Add Keyword</h2>
@@ -123,7 +123,7 @@
 				const keywordPrio = $( this ).data( 'prio' );
 				const keywordLang = $( this ).data( 'lang' );
 				const keywordFilter = $( this ).data( 'url-filter' );
-				createPopupHtml( keywordHash, keyword, keywordLink, keywordPrio, keywordLang, keywordFilter )
+				createPopupHtmlEdit( keywordHash, keyword, keywordLink, keywordPrio, keywordLang, keywordFilter )
 					.appendTo( 'body' ).modal();
 			} );
 		} );
@@ -131,7 +131,7 @@
 		$( '#add-keyword-btn' ).on( 'click', function( event ) {
 			event.preventDefault();
 			this.blur();
-			createPopupHtml().appendTo( 'body' ).modal();
+			createPopupHtmlAdd().appendTo( 'body' ).modal();
 		} );
 		//# Modal - Keyword Modals
 	} );
