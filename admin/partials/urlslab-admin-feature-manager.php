@@ -27,7 +27,8 @@
 					<div class="urlslab-card-content-thumbnail">
 						<div class="col-6">
 							<p><?php echo esc_html( $widget->get_widget_description() ); ?></p>
-						</div>
+                            <a class="button button-primary" href="#">Manage</a>
+                        </div>
 						<figure class="col-6">
 							<img width="100%" src="<?php echo esc_url( $widget->get_thumbnail_demo_url() ); ?>" alt="screenshot demo">
 						</figure>
