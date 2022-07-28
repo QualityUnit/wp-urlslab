@@ -35,7 +35,7 @@ class Urlslab_Feature_Manager_Page extends Urlslab_Admin_Page {
 	}
 
 	public function load_page() {
-		// TODO: Implement load_page() method.
+		require URLSLAB_PLUGIN_DIR . 'admin/partials/urlslab-admin-feature-manager.php';
 	}
 
 	public function get_page_tabs(): array {
