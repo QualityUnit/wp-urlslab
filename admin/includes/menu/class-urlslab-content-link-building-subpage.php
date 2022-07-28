@@ -13,7 +13,6 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 
 
 	public function handle_action() {
-		//# Import Functionality
 		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
 		     'POST' === $_SERVER['REQUEST_METHOD'] and
 		     isset( $_REQUEST['action'] ) and
@@ -23,16 +22,36 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 			if ( isset( $_POST['submit'] ) &&
 			     'Import' === $_POST['submit'] ) {
 				$this->import_csv_keywords();
-			} else {
-				$this->parent_page->menu_page(
-					$this->subpage_slug,
-					array(
-						'status' => 'failure',
+			}
+			//# Import Functionality
+
+            //# Edit Functionality
+			if ( isset( $_POST['submit'] ) &&
+			     'Edit Keyword' === $_POST['submit'] ) {
+				$this->edit_keyword(
+					$_POST['keywordHash'],
+                    new Urlslab_Url_Keyword_Data(
+	                    $_POST['keyword'],
+	                    $_POST['keyword-prio'],
+	                    strlen( $_POST['keyword'] ),
+	                    $_POST['keyword-lang'],
+	                    $_POST['keyword-link'],
+	                    $_POST['keyword-url-filter'],
+                    )
+                );
+				wp_safe_redirect(
+					$this->parent_page->menu_page(
+						$this->subpage_slug,
+						array(
+							'status' => 'success',
+						)
 					)
 				);
+				exit;
 			}
+			//# Edit Functionality
+
 		}
-		//# Import Functionality
 
 		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
 		     'GET' === $_SERVER['REQUEST_METHOD'] and
@@ -136,6 +155,49 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 	    }
 	    fclose( $output );
 	    die();
+    }
+
+    private function edit_keyword(
+            string $old_keyword_hash,
+            Urlslab_Url_Keyword_Data $keyword) {
+        global $wpdb;
+
+        //# Deletion of keyword
+        $wpdb->delete(
+                URLSLAB_KEYWORDS_TABLE,
+            array(
+                    'kwMd5' => $old_keyword_hash
+            ),
+            array(
+                    '%s'
+            )
+        );
+	    //# Deletion of keyword
+
+        //# Add Keyword
+	    $query = 'INSERT INTO ' . URLSLAB_KEYWORDS_TABLE . ' (
+                   kwMd5,
+                   keyword,
+                   kw_priority,
+                   kw_length,
+                   lang,
+                   urlLink,
+                   urlFilter) VALUES (%s, %s, %d, %d, %s, %s, %s)';
+
+	    $wpdb->query(
+		    $wpdb->prepare( $query, // phpcs:ignore
+			    array(
+				    $keyword->get_kw_md5(),
+				    $keyword->get_keyword(),
+				    $keyword->get_keyword_priority(),
+				    $keyword->get_keyword_length(),
+				    $keyword->get_keyword_url_lang(),
+				    $keyword->get_keyword_url_link(),
+				    $keyword->get_keyword_url_filter()
+			    )
+		    )
+	    );
+        //# Add Keyword
     }
 
 	/**

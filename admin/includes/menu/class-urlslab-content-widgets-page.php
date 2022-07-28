@@ -15,8 +15,7 @@ class Urlslab_Content_Widgets_Page extends Urlslab_Admin_Page {
 	public function on_page_load( string $action, string $component ) {
 
 		//# Handle request for link building tab
-		if ( isset( $_REQUEST['tab'] ) and
-			 'link-building' == $_REQUEST['tab'] ) {
+		if ( ( ! isset( $_REQUEST['tab'] ) ) or ( 'link-building' == $_REQUEST['tab'] ) ) {
 			$this->link_building_subpage->handle_action();
 		}
 		//# Handle request for link building tab

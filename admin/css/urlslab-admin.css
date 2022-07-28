@@ -47,7 +47,7 @@ figure {
 }
 
 .background-primary {
-	background-color: #00ff;
+	background-color: #2271b1;
 }
 
 .color-success {
@@ -67,7 +67,7 @@ figure {
 }
 
 .color-primary {
-	color: #00ff;
+	color: #2271b1;
 }
 
 .urlslab-btn-success {
@@ -273,6 +273,10 @@ figure {
 	width: 100%;
 	display: flex;
 	justify-content: space-between;
+}
+
+.keyword-edit {
+	cursor: pointer;
 }
 
 /** Urlslab Content **/
