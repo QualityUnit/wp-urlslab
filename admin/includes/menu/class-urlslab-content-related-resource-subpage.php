@@ -28,6 +28,54 @@ class Urlslab_Content_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 			}
 			//# Import Functionality
 
+			//# Edit Functionality
+			if ( isset( $_POST['submit'] ) &&
+				 isset( $_POST['srcUrlHash'] ) &&
+				 isset( $_POST['destUrlHash'] ) &&
+				 isset( $_POST['srcUrl'] ) &&
+				 isset( $_POST['destUrl'] ) &&
+				 'Edit Url Relation' === $_POST['submit'] ) {
+				$this->edit_url_relation(
+					$_POST['srcUrlHash'],
+					$_POST['destUrlHash'],
+					new Urlslab_Url( $_POST['srcUrl'] ),
+					new Urlslab_Url( $_POST['destUrl'] ),
+				);
+				wp_safe_redirect(
+					$this->parent_page->menu_page(
+						$this->subpage_slug,
+						array(
+							'status' => 'success',
+							'urlslab-message' => 'keyword was edited successfully',
+						)
+					)
+				);
+				exit;
+			}
+			//# Edit Functionality
+
+			# Add Functionality
+			if ( isset( $_POST['submit'] ) &&
+				 isset( $_POST['srcUrl'] ) &&
+				 isset( $_POST['destUrl'] ) &&
+				 'Add Url Relation' === $_POST['submit'] ) {
+				$this->add_url_relation(
+					new Urlslab_Url( $_POST['srcUrl'] ),
+					new Urlslab_Url( $_POST['destUrl'] ),
+				);
+				wp_safe_redirect(
+					$this->parent_page->menu_page(
+						$this->subpage_slug,
+						array(
+							'status'          => 'success',
+							'urlslab-message' => 'Keyword was added successfully',
+						)
+					)
+				);
+				exit;
+			}
+			# Add Functionality
+
 		}
 
 		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
@@ -80,8 +128,8 @@ class Urlslab_Content_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		?>
 		<div class="urlslab-action-container">
 			<div>
-				<button id="add--url-relation-btn" class="button button-primary">
-					Add Keyword
+				<button id="add-url-relation-btn" class="button button-primary">
+					Add Url Relation
 				</button>
 				<a href="#ex1" rel="modal:open" class="button button-primary">
 					Import
@@ -352,7 +400,7 @@ class Urlslab_Content_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		);
 
 		foreach ( $posts as $post ) {
-			if ( $post->post_status == 'publish' ) {
+			if ( 'publish' == $post->post_status ) {
 				$sample_urls[] = get_permalink( $post->ID );
 			}
 		}
@@ -400,4 +448,80 @@ class Urlslab_Content_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 
 		return is_numeric( $result );
 	}
+
+	private function edit_url_relation(
+		string $old_src_url,
+		string $old_dest_url,
+		Urlslab_Url $src_url,
+		Urlslab_Url $dest_url ): void {
+
+		global $wpdb;
+
+		//# Deletion of Relation
+		$wpdb->delete(
+			URLSLAB_RELATED_RESOURCE_TABLE,
+			array(
+				'srcUrlMd5' => $old_src_url,
+				'destUrlMd5' => $old_dest_url,
+			),
+			array(
+				'%s',
+				'%s',
+			)
+		);
+		//# Deletion of Relation
+
+		//# Scheduling Src and Dest URLs
+		if ( ! $this->url_data_fetcher->prepare_url_batch_for_scheduling( array( $src_url, $dest_url ) ) ) {
+			return;
+		}
+		//# Scheduling Src and Dest URLs
+
+		//# Add Relation
+		$query = 'INSERT INTO ' . URLSLAB_RELATED_RESOURCE_TABLE . ' (
+                   srcUrlMd5,
+                   destUrlMd5
+        ) VALUES (%s, %s)';
+
+		$wpdb->query(
+			$wpdb->prepare( $query, // phpcs:ignore
+				array(
+					$src_url->get_url_id(),
+					$dest_url->get_url_id(),
+				)
+			)
+		);
+		//# Add Relation
+	}
+
+	private function add_url_relation(
+		Urlslab_Url $src_url,
+		Urlslab_Url $dest_url ): void {
+
+		global $wpdb;
+
+		//# Scheduling Src and Dest URLs
+		if ( ! $this->url_data_fetcher->prepare_url_batch_for_scheduling( array( $src_url, $dest_url ) ) ) {
+			return;
+		}
+		//# Scheduling Src and Dest URLs
+
+		//# Add Relation
+		$query = 'INSERT INTO ' . URLSLAB_RELATED_RESOURCE_TABLE . ' (
+                   srcUrlMd5,
+                   destUrlMd5
+        ) VALUES (%s, %s)';
+
+		$wpdb->query(
+			$wpdb->prepare( $query, // phpcs:ignore
+				array(
+					$src_url->get_url_id(),
+					$dest_url->get_url_id(),
+				)
+			)
+		);
+		//# Add Relation
+	}
+
+
 }

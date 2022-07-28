@@ -39,16 +39,16 @@
 	 * @param  keywordLang
 	 * @param  keywordFilter
 	 */
-	function createPopupHtmlEdit(
-		keywordHash,
-		keyword,
-		keywordLink,
-		keywordPrio,
-		keywordLang,
-		keywordFilter ) {
+	function createHTMLPopupKeyword(
+		keywordHash = '',
+		keyword = '',
+		keywordLink = '',
+		keywordPrio = '',
+		keywordLang = '',
+		keywordFilter = '' ) {
 		return $( `
 		<div>
-		<h2>Edit ${ keyword }</h2>
+		<h2>${ keyword != '' ? `Edit ${ keyword }` : 'Add Keyword' }</h2>
 			<form method="post">
 				<input type="hidden" name="action" value="keyword-edit">
 				<input type="hidden" name="keywordHash" value="${ keywordHash }">
@@ -72,39 +72,33 @@
 				<input id="keyword-url-filter" name="keyword-url-filter" type="text" value="${ keywordFilter }" placeholder="Keyword Url Filter...">
 				<br class="clear"/>
 				<br class="clear"/>
-				<input type="submit" name="submit" class="button" value="Edit Keyword">
+				<input type="submit" name="submit" class="button" value="${ keyword != '' ? 'Edit Keyword' : 'Add Keyword' }">
 			</form>
 		</div>
 		` );
 	}
 
-	function createPopupHtmlAdd() {
+	function createHTMLPopupUrlRelation(
+		srcUrlHash = '',
+		srcUrl = '',
+		destUrlHash = '',
+		destUrl = '' ) {
 		return $( `
 		<div>
-		<h2>Add Keyword</h2>
+			<h2>${ srcUrlHash != '' ? 'Edit Url Relation' : 'Add Url Relation' }</h2>
 			<form method="post">
-				<input type="hidden" name="action" value="keyword-add">
-				<label for="keyword">Keyword: </label>
-				<input id="keyword" name="keyword" type="text" placeholder="Keyword...">
+				<input type="hidden" name="action" value="url-relation-edit">
+				<input type="hidden" name="srcUrlHash" value="${ srcUrlHash }">
+				<input type="hidden" name="destUrlHash" value="${ destUrlHash }">
+				<label for="src-url">Src URL: </label>
+				<input id="src-url" name="srcUrl" type="text" value="${ srcUrl }" placeholder="Src URL...">
 				<br class="clear"/>
 				<br class="clear"/>
-				<label for="keyword-link">Keyword Link: </label>
-				<input id="keyword-link" name="keyword-link" type="text" placeholder="Keyword Link...">
+				<label for="dest-url">Dest URL: </label>
+				<input id="dest-url" name="destUrl" type="text" value="${ destUrl }" placeholder="Dest URL...">
 				<br class="clear"/>
 				<br class="clear"/>
-				<label for="keyword-prio">Keyword Priority: </label>
-				<input id="keyword-prio" name="keyword-prio" type="text" placeholder="Keyword Prio...">
-				<br class="clear"/>
-				<br class="clear"/>
-				<label for="keyword-lang">Keyword Lang: </label>
-				<input id="keyword-lang" name="keyword-lang" type="text" placeholder="Keyword Lang...">
-				<br class="clear"/>
-				<br class="clear"/>
-				<label for="keyword-url-filter">Keyword Url Filter: </label>
-				<input id="keyword-url-filter" name="keyword-url-filter" type="text" placeholder="Keyword Url Filter...">
-				<br class="clear"/>
-				<br class="clear"/>
-				<input type="submit" name="submit" class="button" value="Add Keyword">
+				<input type="submit" name="submit" class="button" value="${ srcUrlHash != '' ? 'Edit Url Relation' : 'Add Url Relation' }">
 			</form>
 		</div>
 		` );
@@ -123,7 +117,7 @@
 				const keywordPrio = $( this ).data( 'prio' );
 				const keywordLang = $( this ).data( 'lang' );
 				const keywordFilter = $( this ).data( 'url-filter' );
-				createPopupHtmlEdit( keywordHash, keyword, keywordLink, keywordPrio, keywordLang, keywordFilter )
+				createHTMLPopupKeyword( keywordHash, keyword, keywordLink, keywordPrio, keywordLang, keywordFilter )
 					.appendTo( 'body' ).modal();
 			} );
 		} );
@@ -131,8 +125,29 @@
 		$( '#add-keyword-btn' ).on( 'click', function( event ) {
 			event.preventDefault();
 			this.blur();
-			createPopupHtmlAdd().appendTo( 'body' ).modal();
+			createHTMLPopupKeyword().appendTo( 'body' ).modal();
 		} );
 		//# Modal - Keyword Modals
+
+		//# Modal - Related Resource Modals
+		$( '.url-relation-edit' ).each( function() {
+			$( this ).on( 'click', function( event ) {
+				event.preventDefault();
+				this.blur();
+				const urlSrcHash = $( this ).data( 'src-url-hash' );
+				const urlSrc = $( this ).data( 'src-url' );
+				const urlDestHash = $( this ).data( 'dest-url-hash' );
+				const urlDest = $( this ).data( 'dest-url' );
+				createHTMLPopupUrlRelation( urlSrcHash, urlSrc, urlDestHash, urlDest )
+					.appendTo( 'body' ).modal();
+			} );
+		} );
+
+		$( '#add-url-relation-btn' ).on( 'click', function( event ) {
+			event.preventDefault();
+			this.blur();
+			createHTMLPopupUrlRelation().appendTo( 'body' ).modal();
+		} );
+		//# Modal - Related Resource Modals
 	} );
 }( jQuery ) );
