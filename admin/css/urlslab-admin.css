@@ -275,7 +275,8 @@ figure {
 	justify-content: space-between;
 }
 
-.keyword-edit, .url-relation-edit {
+.keyword-edit,
+.url-relation-edit {
 	cursor: pointer;
 }
 
