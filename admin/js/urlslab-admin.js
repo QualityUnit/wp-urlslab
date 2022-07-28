@@ -77,6 +77,38 @@
 		</div>
 		` );
 	}
+
+	function createPopupHtml() {
+		return $( `
+		<div>
+		<h2>Add Keyword</h2>
+			<form method="post">
+				<input type="hidden" name="action" value="keyword-add">
+				<label for="keyword">Keyword: </label>
+				<input id="keyword" name="keyword" type="text" placeholder="Keyword...">
+				<br class="clear"/>
+				<br class="clear"/>
+				<label for="keyword-link">Keyword Link: </label>
+				<input id="keyword-link" name="keyword-link" type="text" placeholder="Keyword Link...">
+				<br class="clear"/>
+				<br class="clear"/>
+				<label for="keyword-prio">Keyword Priority: </label>
+				<input id="keyword-prio" name="keyword-prio" type="text" placeholder="Keyword Prio...">
+				<br class="clear"/>
+				<br class="clear"/>
+				<label for="keyword-lang">Keyword Lang: </label>
+				<input id="keyword-lang" name="keyword-lang" type="text" placeholder="Keyword Lang...">
+				<br class="clear"/>
+				<br class="clear"/>
+				<label for="keyword-url-filter">Keyword Url Filter: </label>
+				<input id="keyword-url-filter" name="keyword-url-filter" type="text" placeholder="Keyword Url Filter...">
+				<br class="clear"/>
+				<br class="clear"/>
+				<input type="submit" name="submit" class="button" value="Add Keyword">
+			</form>
+		</div>
+		` );
+	}
 	/** Functions */
 
 	$( document ).ready( function() {
@@ -94,6 +126,12 @@
 				createPopupHtml( keywordHash, keyword, keywordLink, keywordPrio, keywordLang, keywordFilter )
 					.appendTo( 'body' ).modal();
 			} );
+		} );
+
+		$( '#add-keyword-btn' ).on( 'click', function( event ) {
+			event.preventDefault();
+			this.blur();
+			createPopupHtml().appendTo( 'body' ).modal();
 		} );
 		//# Modal - Keyword Modals
 	} );
