@@ -5,11 +5,16 @@ class Urlslab_Content_Widgets_Page extends Urlslab_Admin_Page {
 	private string $menu_slug;
 	private string $page_title;
 	private Urlslab_Content_Link_Building_Subpage $link_building_subpage;
+	private Urlslab_Content_Related_Resource_Subpage $related_resource_subpage;
 
 	public function __construct() {
 		$this->menu_slug = 'urlslab-content-seo';
 		$this->page_title = 'Content SEO';
 		$this->link_building_subpage = new Urlslab_Content_Link_Building_Subpage( $this );
+		$this->related_resource_subpage = new Urlslab_Content_Related_Resource_Subpage(
+			$this,
+			new Urlslab_Url_Data_Fetcher( null )
+		);
 	}
 
 	public function on_page_load( string $action, string $component ) {
@@ -19,6 +24,12 @@ class Urlslab_Content_Widgets_Page extends Urlslab_Admin_Page {
 			$this->link_building_subpage->handle_action();
 		}
 		//# Handle request for link building tab
+
+		//# Handle request for related resource tab
+		if ( isset( $_REQUEST['tab'] ) and 'related-resource' == $_REQUEST['tab'] ) {
+			$this->related_resource_subpage->handle_action();
+		}
+		//# Handle request for related resource tab
 
 	}
 
@@ -66,6 +77,10 @@ class Urlslab_Content_Widgets_Page extends Urlslab_Admin_Page {
 		if ( 'link-building' == $active_tab ) {
 			$this->link_building_subpage->set_table_screen_options();
 		}
+
+		if ( 'related-resource' == $active_tab ) {
+			$this->related_resource_subpage->set_table_screen_options();
+		}
 	}
 
 	public function render_subpage() {
@@ -74,6 +89,12 @@ class Urlslab_Content_Widgets_Page extends Urlslab_Admin_Page {
 			$this->link_building_subpage->render_manage_buttons();
 			$this->link_building_subpage->render_tables();
 			$this->link_building_subpage->render_modals();
+		}
+
+		if ( 'related-resource' == $active_tab ) {
+			$this->related_resource_subpage->render_manage_buttons();
+			$this->related_resource_subpage->render_tables();
+			$this->related_resource_subpage->render_modals();
 		}
 	}
 }

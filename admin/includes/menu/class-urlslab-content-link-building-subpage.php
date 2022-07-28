@@ -44,6 +44,7 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 						$this->subpage_slug,
 						array(
 							'status' => 'success',
+							'urlslab-message' => 'keyword was edited successfully',
 						)
 					)
 				);
@@ -69,6 +70,7 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 						$this->subpage_slug,
 						array(
 							'status' => 'success',
+							'urlslab-message' => 'Keyword was added successfully',
 						)
 					)
 				);
@@ -86,12 +88,23 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 			//# Export Functionality
 			if ( 'export' == $_REQUEST['action'] ) {
 				$this->export_csv_keywords();
+				die();
 			}
 			//# Export Functionality
 
 			//# Clear Functionality
 			if ( 'clear' == $_REQUEST['action'] ) {
 				$this->clear_keywords();
+				wp_safe_redirect(
+					$this->parent_page->menu_page(
+						$this->subpage_slug,
+						array(
+							'status'  => 'success',
+							'urlslab-message' => 'All Data deleted successfully',
+						)
+					)
+				);
+				exit;
 			}
 			//# Clear Functionality
 
@@ -103,6 +116,7 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 						$this->subpage_slug,
 						array(
 							'status' => 'success',
+							'urlslab-message' => 'Sample Data generated successfully',
 						)
 					)
 				);
@@ -153,16 +167,6 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 
 		$query = "TRUNCATE $table";
 		$wpdb->query( $query ); // phpcs:ignore
-		wp_safe_redirect(
-			$this->parent_page->menu_page(
-				$this->subpage_slug,
-				array(
-					'status'  => 'success',
-					'message' => 'All Data deleted',
-				)
-			)
-		);
-		exit;
 	}
 
     private function export_csv_keywords() {
@@ -179,7 +183,6 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 		    fputcsv( $output, $row );
 	    }
 	    fclose( $output );
-	    die();
     }
 
     private function add_keyword( Urlslab_Url_Keyword_Data $keyword ) {
@@ -265,6 +268,7 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
                         $this->subpage_slug,
 					array(
 						'status' => 'success',
+                        'urlslab-message' => 'CSV File was added successfully'
 					)
 				);
 			} else {
@@ -272,6 +276,7 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 					$this->subpage_slug,
 					array(
 						'status' => 'failure',
+						'urlslab-message' => 'There was a problem in parsing the CSV'
 					)
 				);
 			}
@@ -280,6 +285,7 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 				$this->subpage_slug,
 				array(
 					'status' => 'failure',
+					'urlslab-message' => file_upload_code_to_message( $_FILES['csv_file']['error'] ),
 				)
 			);
 		}
@@ -366,11 +372,11 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
             </div>
             <div>
                 <a href="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=export' ) ); ?>" target="_blank"
-                   class="button export_keyword_csv">Export</a>
+                   class="button">Export</a>
                 <a href="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=clear' ) ); ?>"
-                   class="button export_keyword_csv">Delete all</a>
+                   class="button">Delete all</a>
                 <a href="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=generate_sample_data' ) ); ?>"
-                   class="button export_keyword_csv">Generate Sample Data</a>
+                   class="button">Generate Sample Data</a>
             </div>
         </div>
 		<?php

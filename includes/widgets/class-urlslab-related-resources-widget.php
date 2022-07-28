@@ -93,7 +93,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				if ( 'Import' == $_POST[ 'submit' ] ) {
 					//# Import the given csv
 					if ( !empty( $_FILES[ 'csv_file' ] ) and $_FILES[ 'csv_file' ][ 'size' ] > 0 ) {
-						$res = $this->import_csv( $_FILES[ 'csv_file' ][ 'tmp_name' ] );
+						$res = true;
 						if ( $res ) {
 							$redirect_to = $this->admin_widget_menu_page(
 								array(
@@ -248,118 +248,6 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			);
 		}
 	}
-
-	private function import_csv( $file ): bool {
-		//# Reading/Parsing CSV File
-		$row = 1;
-		$wrong_rows = 0;
-		$cols = array();
-		$saving_items = array();
-		$scheduling_items = array();
-		$handle = fopen( $file, 'r' );
-		if ( false !== ( $handle ) ) {
-			while ( ( $data = fgetcsv( $handle ) ) !== false ) {
-
-				//# processing CSV Header
-				if ( $row == 1 ) {
-					if ( count( $data ) != 2 ) {
-						//# Wrong number of cols in csv
-						return false;
-					} else {
-						$idx = 0;
-						foreach ( $data as $col ) {
-							if ( is_string( $col ) ) {
-								if ( is_string( $this->map_to_db_col( $col ) ) ) {
-									if ( isset( $cols[ $this->map_to_db_col( $col ) ] ) ) {
-										return false;
-									} else {
-										$cols[ $this->map_to_db_col( $col ) ] = $idx;
-										$idx++;
-									}
-								} else {
-									return false;
-								}
-							} else {
-								//# wrong type in header
-								return false;
-							}
-						}
-					}
-					$row++;
-					continue;
-				}
-
-				$src_url = new Urlslab_Url( $data[ $cols[ 'srcUrl' ] ] );
-				$dest_url = new Urlslab_Url( $data[ $cols[ 'destUrl' ] ] );
-
-
-				if ( empty( $src_url ) or empty( $dest_url ) ) {
-					$wrong_rows++;
-					continue;
-				} else {
-					array_push( $scheduling_items, $src_url, $dest_url );
-					$saving_items[] = array(
-							$src_url,
-							$dest_url,
-					);
-				}
-				$row++;
-			}
-			fclose( $handle );
-		}
-
-		//# Scheduling Src and Dest URLs
-		if ( !$this->url_data_fetcher->prepare_url_batch_for_scheduling( $scheduling_items ) ) {
-			return false;
-		}
-		//# Scheduling Src and Dest URLs
-
-		global $wpdb;
-		$table = URLSLAB_RELATED_RESOURCE_TABLE;
-		$values = array();
-		$placeholder = array();
-		foreach ( $saving_items as $item ) {
-			array_push(
-				$values,
-				$item[ 0 ]->get_url_id(),
-				$item[ 1 ]->get_url_id(),
-			);
-			$placeholder[] = '(%s, %s)';
-		}
-
-		$placeholder_string = implode( ', ', $placeholder );
-		$update_query = "INSERT IGNORE INTO $table (
-                   srcUrlMd5,
-                   destUrlMd5) VALUES
-                   $placeholder_string";
-
-		$result = $wpdb->query(
-			$wpdb->prepare(
-						$update_query, // phpcs:ignore
-				$values
-			)
-		);
-
-		return is_numeric( $result );
-
-	}
-
-	/**
-	 * @param string $col_name
-	 *
-	 * @return false|string
-	 */
-	private function map_to_db_col( string $col_name ) {
-		switch ( strtolower( trim( $col_name ) ) ) {
-			case 'src url':
-				return 'srcUrl';
-			case 'dest url':
-				return 'destUrl';
-			default:
-				return false;
-		}
-	}
-
 
 	/**
 	 * @return string
