@@ -15,6 +15,7 @@ class Urlslab_Content_Widgets_Page extends Urlslab_Admin_Page {
 			$this,
 			new Urlslab_Url_Data_Fetcher( null )
 		);
+
 	}
 
 	public function on_page_load( string $action, string $component ) {

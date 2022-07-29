@@ -4,13 +4,21 @@
 
 class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 
-	private string $widget_slug = 'urlslab-image-alt-attribute';
+	private string $widget_slug;
+	private string $widget_title;
+	private string $widget_description;
+	private string $landing_page_link;
+	private Urlslab_Admin_Page $parent_page;
 
-	private string $widget_title = 'Image Alt Attributes';
-
-	private string $widget_description = 'Urlslab Image Alt Attributes - automatic enhancing of image alt atribute with name of heading, where is image included';
-
-	private string $landing_page_link = 'https://www.urlslab.com';
+	/**
+	 */
+	public function __construct() {
+		$this->widget_slug        = 'urlslab-image-alt-attribute';
+		$this->widget_title       = 'Image Alt Attributes';
+		$this->widget_description = 'Urlslab Image Alt Attributes - automatic enhancing of image alt atribute with name of heading, where is image included';
+		$this->landing_page_link  = 'https://www.urlslab.com';
+		$this->parent_page        = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-image-seo' );
+	}
 
 	public function init_widget( Urlslab_Loader $loader ) {
 		$loader->add_filter( 'the_content', $this, 'hook_callback', 13 );
@@ -46,28 +54,6 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	 */
 	public function get_landing_page_link(): string {
 		return $this->landing_page_link;
-	}
-
-	public function load_widget_page() {
-		//Nothing to show
-	}
-
-	public function widget_admin_load() {
-		//Nothing to show
-	}
-
-	/**
-	 * @return string
-	 */
-	public function get_admin_menu_page_title(): string {
-		return 'Urlslab Widget | Image Alt Attributes';
-	}
-
-	/**
-	 * @return string
-	 */
-	public function get_admin_menu_title(): string {
-		return 'Image Alt Attributes';
 	}
 
 	public function theContentHook( $content) {
@@ -123,5 +109,13 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 
 	public function get_thumbnail_demo_url(): string {
 		return plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/demo/image-alt-text-demo.png' ) . 'image-alt-text-demo.png';
+	}
+
+	public function get_parent_page(): Urlslab_Admin_Page {
+		return $this->parent_page;
+	}
+
+	public function get_widget_tab(): string {
+		return 'image-alt-text';
 	}
 }

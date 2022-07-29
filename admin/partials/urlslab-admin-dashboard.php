@@ -48,7 +48,10 @@
 					</div>
 				</div>
 
-				<a class="button button-primary" href="#">Manage</a>
+				<?php
+				$general_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-general' );
+				?>
+				<a class="button button-primary" href="<?php echo esc_url( $general_page->menu_page( 'overall-data' ) ); ?>">Manage</a>
 			</div>
 		</div>
 		<?php
@@ -63,7 +66,7 @@
 					<div class="urlslab-card-content-thumbnail">
 						<div class="col-6">
 							<p><?php echo esc_html( $widget->get_widget_description() ); ?></p>
-							<a class="button button-primary" href="#">Manage</a>
+							<a class="button button-primary" href="<?php echo esc_url( $widget->admin_widget_page() ); ?>">Manage</a>
 						</div>
 						<figure class="col-6">
 							<img width="100%" src="<?php echo esc_url( $widget->get_thumbnail_demo_url() ); ?>" alt="screenshot demo">

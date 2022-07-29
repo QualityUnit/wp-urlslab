@@ -50,28 +50,17 @@ abstract class Urlslab_Admin_Page {
 	abstract public function render_subpage();
 
 	/**
-	 * @param string $tab_slug
-	 *
-	 * @return string
-	 */
-	public function get_tab_link( string $tab_slug ): string {
-		$url = urlslab_admin_menu_page_url( $this->get_menu_slug() );
-		if ( ! empty( $tab_slug ) ) {
-				$url = add_query_arg( array( 'tab' => $tab_slug ), $url );
-		}
-		return $url;
-	}
-
-	/**
 	 * @param string $tab
 	 * @param $args
 	 *
 	 * @return string
 	 */
-	public function menu_page( string $tab, $args = '' ): string {
+	public function menu_page( string $tab = '', $args = '' ): string {
 		$args = wp_parse_args( $args, array() );
 		$url  = urlslab_admin_menu_page_url( $this->get_menu_slug() );
-		$url  = add_query_arg( array( 'tab' => $tab ), $url );
+		if ( ! empty( $tab ) ) {
+			$url  = add_query_arg( array( 'tab' => $tab ), $url );
+		}
 
 		if ( ! empty( $args ) ) {
 			$url = add_query_arg( $args, $url );
