@@ -6,10 +6,13 @@ if ( isset( $_GET['tab'] ) and 'link-enhancer' == $_GET['tab'] ) {
 
 	?>
 	<div class="urlslab-card-container col-12">
-		<?php
-		$widget = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-link-enhancer' );
-		require plugin_dir_path( __FILE__ ) . 'urlslab-admin-activation-card-header.php';
-		?>
+		<div class="urlslab-card-header">
+			<h3>Settings</h3>
+			<?php
+			$widget = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-link-enhancer' );
+			require plugin_dir_path( __FILE__ ) . 'urlslab-admin-activation-card-header.php';
+			?>
+		</div>
 		<div class="urlslab-card-content">
 			<div class="mar-bottom-1">
 				Enhance all your links in your pages with Link Enhancer widget with one click:

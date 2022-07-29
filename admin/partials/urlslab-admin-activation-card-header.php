@@ -1,7 +1,5 @@
 <?php
 ?>
-<div class="urlslab-card-header">
-	<h3>Settings</h3>
 	<?php
 	$user = Urlslab_User_Widget::get_instance();
 	$feature_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-feature-manager' );
@@ -15,5 +13,3 @@
 		<?php
 	}
 	?>
-</div>
-

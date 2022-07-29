@@ -14,15 +14,7 @@
 				<div class="urlslab-card-header">
 					<h3><?php echo esc_html( $widget->get_widget_title() ); ?></h3>
 					<?php
-					if ( $user->is_widget_activated( $widget->get_widget_slug() ) ) {
-						?>
-						<a class="urlslab-btn-error" href="<?php echo esc_url( $feature_page->menu_page( '', 'action=deactivate&widget=' . $widget->get_widget_slug() ) ); ?>">Deactivate</a>
-						<?php
-					} else {
-						?>
-						<a class="urlslab-btn-success" href="<?php echo esc_url( $feature_page->menu_page( '', 'action=activate&widget=' . $widget->get_widget_slug() ) ); ?>">Activate</a>
-						<?php
-					}
+					require plugin_dir_path( __FILE__ ) . 'urlslab-admin-activation-card-header.php';
 					?>
 				</div>
 				<div class="urlslab-card-content">
