@@ -5,166 +5,166 @@
 
 /** General styles **/
 figure {
-    margin: 0;
+	margin: 0;
 }
 
 .col_url_summary {
-    width: 450px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+	width: 450px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .col_url_meta_description {
-    width: 450px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+	width: 450px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .status-circle {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    margin: 0 auto;
-    border-radius: 50%;
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	margin: 0 auto;
+	border-radius: 50%;
 }
 
 .background-success {
-    background-color: #0f0;
+	background-color: #0f0;
 }
 
 .background-warning {
-    background-color: #ffa500ff;
+	background-color: #ffa500ff;
 }
 
 .background-danger {
-    background-color: #f00;
+	background-color: #f00;
 }
 
 .background-secondary {
-    background-color: #808080ff;
+	background-color: #808080ff;
 }
 
 .background-primary {
-    background-color: #2271b1;
+	background-color: #2271b1;
 }
 
 .color-success {
-    color: #0f0;
+	color: #0f0;
 }
 
 .color-warning {
-    color: #ffa500ff;
+	color: #ffa500ff;
 }
 
 .color-danger {
-    color: #f00;
+	color: #f00;
 }
 
 .color-secondary {
-    color: #808080ff;
+	color: #808080ff;
 }
 
 .color-primary {
-    color: #2271b1;
+	color: #2271b1;
 }
 
 .urlslab-btn-success {
-    text-decoration: none;
-    height: 100%;
-    padding: 10px;
-    background-color: #28a745;
-    border-radius: 5px;
-    color: #fff;
+	text-decoration: none;
+	height: 100%;
+	padding: 10px;
+	background-color: #28a745;
+	border-radius: 5px;
+	color: #fff;
 }
 
 .urlslab-btn-success:hover {
-    background-color: #19692c;
-    color: #fff;
+	background-color: #19692c;
+	color: #fff;
 }
 
 .urlslab-btn-error {
-    text-decoration: none;
-    background-color: #dc3545;
-    height: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    color: #fff;
+	text-decoration: none;
+	background-color: #dc3545;
+	height: 100%;
+	padding: 10px;
+	border-radius: 5px;
+	color: #fff;
 }
 
 .urlslab-btn-error:hover {
-    background-color: #a71d2a;
-    color: #fff;
+	background-color: #a71d2a;
+	color: #fff;
 }
 
 .float-left {
-    float: left;
+	float: left;
 }
 
 .mar-left-1 {
-    margin-left: 1em;
+	margin-left: 1em;
 }
 
 .mar-top-1 {
-    margin-top: 1em;
+	margin-top: 1em;
 }
 
 .mar-bottom-1 {
-    margin-bottom: 1em;
+	margin-bottom: 1em;
 }
 
 .mar-bottom-2 {
-    margin-bottom: 2em;
+	margin-bottom: 2em;
 }
 
 .col-12 {
-    width: 100%;
+	width: 100%;
 }
 
 .col-8 {
-    width: 66%;
+	width: 66%;
 }
 
 .col-6 {
-    width: 48%;
+	width: 48%;
 }
 
 .col-3 {
-    width: 33%;
+	width: 33%;
 }
 
 /** General styles **/
 
 /** Urlslab Header **/
 .urlslab-wrap {
-    margin: 80px auto;
-    width: 80%;
-    display: flex;
-    column-gap: 10px;
-    flex-direction: column;
+	margin: 80px auto;
+	width: 80%;
+	display: flex;
+	column-gap: 10px;
+	flex-direction: column;
 }
 
 .urlslab-header {
-    position: fixed;
-    z-index: -1;
-    left: 160px;
-    top: 32px;
-    display: flex;
-    justify-content: center;
-    background-color: #fff;
-    width: calc(100% - 160px);
-    height: 80px;
+	position: fixed;
+	z-index: -1;
+	left: 160px;
+	top: 32px;
+	display: flex;
+	justify-content: center;
+	background-color: #fff;
+	width: calc(100% - 160px);
+	height: 80px;
 }
 
 /** Tablet Mode */
 
 @media only screen and (max-width: 960px) {
 
-    .urlslab-header {
-        width: calc(100% - 36px);
-        left: 36px;
-    }
+	.urlslab-header {
+		width: calc(100% - 36px);
+		left: 36px;
+	}
 }
 
 /** Tablet Mode */
@@ -173,79 +173,79 @@ figure {
 
 @media screen and (max-width: 782px) {
 
-    .urlslab-header {
-        width: 100%;
-        left: 0;
-        top: 46px;
-    }
+	.urlslab-header {
+		width: 100%;
+		left: 0;
+		top: 46px;
+	}
 }
 
 /** Mobile Mode */
 
 .urlslab-header-content-container {
-    display: flex;
-    justify-content: space-between;
-    align-content: center;
-    width: 75%;
+	display: flex;
+	justify-content: space-between;
+	align-content: center;
+	width: 75%;
 }
 
 .urlslab-header-content-container > figure {
-    display: flex;
-    align-content: center;
-    width: 150px;
+	display: flex;
+	align-content: center;
+	width: 150px;
 }
 
 .urlslab-header-content-container > div {
-    display: flex;
-    align-content: center;
-    margin-left: 2em;
+	display: flex;
+	align-content: center;
+	margin-left: 2em;
 }
 
 .urlslab-header-content-container h1 {
-    border: 3px solid #0aa8a7;
-    border-radius: 10px;
-    padding: 0 13px;
-    color: #0aa8a7;
-    line-height: 50px;
-    font-weight: 400;
-    font-size: 16px;
+	border: 3px solid #0aa8a7;
+	border-radius: 10px;
+	padding: 0 13px;
+	color: #0aa8a7;
+	line-height: 50px;
+	font-weight: 400;
+	font-size: 16px;
 }
 
 .urlslab-error-notification {
-    margin-top: 10px;
-    background-color: #fff;
-    border-left: 3px solid #f00;
-    border-radius: 10px;
-    padding: 1em;
+	margin-top: 10px;
+	background-color: #fff;
+	border-left: 3px solid #f00;
+	border-radius: 10px;
+	padding: 1em;
 }
 
 /** Urlslab tab **/
 
 .urlslab-tab-container {
-    display: flex;
-    justify-content: flex-start;
-    column-gap: 20px;
+	display: flex;
+	justify-content: flex-start;
+	column-gap: 20px;
 }
 
 .urlslab-tab-container .active {
-    border: 3px solid #f00;
+	border: 3px solid #f00;
 }
 
 .urlslab-tab-item > a {
-    display: block;
-    text-decoration: none;
-    color: #000;
+	display: block;
+	text-decoration: none;
+	color: #000;
 }
 
 .urlslab-tab-container .active > a {
-    color: #f00;
+	color: #f00;
 }
 
 .urlslab-tab-item {
-    font-size: 18px;
-    padding: 10px;
-    border: 3px solid #1f1f1f;
-    height: 100%;
+	font-size: 18px;
+	padding: 10px;
+	border: 3px solid #1f1f1f;
+	height: 100%;
 }
 
 /** Urlslab tab **/
@@ -255,44 +255,44 @@ figure {
 /** Urlslab Content **/
 
 .urlslab-content-container {
-    display: flex;
-    margin-top: 30px;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    gap: 20px;
+	display: flex;
+	margin-top: 30px;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	gap: 20px;
 }
 
 .urlslab-card-container {
-    background-color: #fff;
-    border-radius: 10px;
+	background-color: #fff;
+	border-radius: 10px;
 }
 
 .urlslab-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.2em 1em;
-    border-bottom: 1px solid #c2c2c2;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.2em 1em;
+	border-bottom: 1px solid #c2c2c2;
 }
 
 .urlslab-card-content {
-    padding: 15px;
+	padding: 15px;
 }
 
 .urlslab-card-content-thumbnail {
-    display: flex;
-    justify-content: flex-start;
+	display: flex;
+	justify-content: flex-start;
 }
 
 .urlslab-action-container {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
 }
 
 .keyword-edit,
 .url-relation-edit {
-    cursor: pointer;
+	cursor: pointer;
 }
 
 /** Urlslab Content **/
