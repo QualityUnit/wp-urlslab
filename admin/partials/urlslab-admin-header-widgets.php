@@ -10,7 +10,7 @@
 		?>
 		<div class="urlslab-card-container col-12">
 			<div class="urlslab-card-header">
-                <h3>Settings</h3>
+				<h3>Settings</h3>
 				<?php
 				$widget = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-meta-tag' );
 				require plugin_dir_path( __FILE__ ) . 'urlslab-admin-activation-card-header.php';
