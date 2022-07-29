@@ -62,6 +62,7 @@ class Urlslab_Content_Widgets_Page extends Urlslab_Admin_Page {
 		return array(
 			'link-building' => 'Link Building',
 			'related-resource' => 'Related Resource',
+			'link-enhancer' => 'Link Enhancer',
 		);
 	}
 

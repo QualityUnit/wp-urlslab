@@ -141,6 +141,6 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	public function get_widget_tab(): string {
-		return '';
+		return 'link-enhancer';
 	}
 }
