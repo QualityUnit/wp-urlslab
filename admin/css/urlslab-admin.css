@@ -222,13 +222,27 @@ figure {
 /** Urlslab tab **/
 
 .urlslab-tab-container {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	border-bottom: 3px solid #e8e8eB;
+	height: 65px;
 	display: flex;
 	justify-content: flex-start;
-	column-gap: 20px;
+	column-gap: 3em;
 }
 
 .urlslab-tab-container .active {
-	border: 3px solid #f00;
+	border-bottom: 3px solid #0aa8a7;
+}
+
+.urlslab-tab-item {
+	font-size: 17px;
+	font-weight: bold;
+	padding: 10px 1.5em;
+	display: flex;
+	align-items: center;
+	margin-bottom: 0 !important;
 }
 
 .urlslab-tab-item > a {
@@ -238,14 +252,7 @@ figure {
 }
 
 .urlslab-tab-container .active > a {
-	color: #f00;
-}
-
-.urlslab-tab-item {
-	font-size: 18px;
-	padding: 10px;
-	border: 3px solid #1f1f1f;
-	height: 100%;
+	color: #0aa8a7;
 }
 
 /** Urlslab tab **/
