@@ -1,6 +1,11 @@
 <?php
 
 // phpcs:disable WordPress
+require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-keyword-data.php';
+require_once URLSLAB_PLUGIN_DIR . '/admin/partials/tables/class-urlslab-keyword-link-table.php';
 
 class Urlslab_Keywords_Links extends Urlslab_Widget {
 
@@ -22,25 +27,30 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 	private array $keywords_cache = array();
 
-	const SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD = 'urlslab_max_repl_kw';
-	const MAX_REPLACEMENTS_PER_KEYWORD_DEFAULT = 2;
+	//address all specific keywords
+	private array $keywords_cache_md5 = array();
+	//address all urls
+	private array $urls_cache_md5 = array();
 
-	const SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORDURL = 'urlslab_max_repl_kwurl';
-	const MAX_REPLACEMENTS_PER_KEYWORDURL_DEFAULT = 1;
+	public const SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD = 'urlslab_max_repl_kw';
+	public const MAX_REPLACEMENTS_PER_KEYWORD_DEFAULT = 2;
+
+	public const SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORDURL = 'urlslab_max_repl_kwurl';
+	public const MAX_REPLACEMENTS_PER_KEYWORDURL_DEFAULT = 1;
 
 
-	const SETTING_NAME_MAX_REPLACEMENTS_PER_URL = 'urlslab_max_repl_url';
-	const MAX_REPLACEMENTS_PER_URL_DEFAULT = 2;
+	public const SETTING_NAME_MAX_REPLACEMENTS_PER_URL = 'urlslab_max_repl_url';
+	public const MAX_REPLACEMENTS_PER_URL_DEFAULT = 2;
 
 	//if page contains more links than this limit, don't try to add next links to page
-	const SETTING_NAME_MAX_LINKS_ON_PAGE = 'urlslab_max_links_page';
-	const MAX_LINKS_ON_PAGE_DEFAULT = 100;
+	public const SETTING_NAME_MAX_LINKS_ON_PAGE = 'urlslab_max_links_page';
+	public const MAX_LINKS_ON_PAGE_DEFAULT = 100;
 
-	const SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE = 'urlslab_max_repl_page';
-	const MAX_REPLACEMENTS_PER_PAGE_DEFAULT = 30;
+	public const SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE = 'urlslab_max_repl_page';
+	public const MAX_REPLACEMENTS_PER_PAGE_DEFAULT = 30;
 
-	const SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH = 'urlslab_max_repl_paragraph';
-	const MAX_REPLACEMENTS_PER_PARAGRAPH_DEFAULT = 2;
+	public const SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH = 'urlslab_max_repl_paragraph';
+	public const MAX_REPLACEMENTS_PER_PARAGRAPH_DEFAULT = 2;
 
 	public function __construct() {
 		$this->widget_slug = 'urlslab-keywords-links';
@@ -155,7 +165,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				} else {
 					$domTextEnd = null;
 				}
-				$keywords = $this->removeKeywordUrl( $keywords, $kwRow[ 'kw' ], $kwRow[ 'url' ] );
+				unset( $keywords[ $kw_md5 ] );
 
 				//process other keywords in text
 				if ( is_object( $domTextStart ) ) {
@@ -167,11 +177,11 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 				//remove processed node
 				$node->parentNode->removeChild( $node );
-
 				return;
+			} else {
+				$keywords = $this->removeKeywordUrl( $keywords, $kwRow[ 'kw' ], false );
 			}
-
-			$keywords = $this->removeKeywordUrl( $keywords, $kwRow[ 'kw' ], $kwRow[ 'url' ] );
+			unset( $keywords[ $kw_md5 ] );
 		}
 	}
 
@@ -183,47 +193,56 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	 * @return array
 	 */
 	private function removeKeywordUrl( array $keywords, $kw, $url ): array {
-		if ( $kw === false && $url === false ) {
-			return $keywords;    //this should never happen
+		if ( $kw !== false ) {
+			foreach ( $this->keywords_cache_md5[ $kw ] as $md5 ) {
+				unset( $keywords[ $md5 ] );
+			}
 		}
-		foreach ( $keywords as $kw_md5 => $row ) {
-			if ( ( $kw === false || $row[ 'kw' ] == $kw ) && ( $url === false || $row[ 'url' ] == $url ) ) {
-				unset( $keywords[ $kw_md5 ] );
+		if ( $url !== false ) {
+			foreach ( $this->urls_cache_md5[ $url ] as $md5 ) {
+				unset( $keywords[ $md5 ] );
 			}
 		}
 		return $keywords;
 	}
 
-	private function get_keywords() {
-		if ( empty( $this->keywords_cache ) ) {
-			global $wpdb;
+	private function init_keywords_cache( $input_text ) {
+		global $wpdb;
 
-			$keyword_table = URLSLAB_KEYWORDS_TABLE;
+		$keyword_table = URLSLAB_KEYWORDS_TABLE;
 
-			$results = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT kwMd5, keyword, urlLink, urlFilter
-				FROM ' . $keyword_table . // phpcs:ignore
-					" WHERE (lang = %s OR lang = 'all') ORDER BY kw_priority ASC, kw_length DESC",
-					urlslab_get_language() 
-				),
-				'ARRAY_A' 
-			);
+		$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kwMd5, keyword, urlLink, urlFilter FROM ' . $keyword_table . " WHERE (lang = %s OR lang = 'all') ORDER BY kw_priority ASC, kw_length DESC", urlslab_get_language() ), 'ARRAY_A' );
 
-			$this->keywords_cache = array();
-			$current_page = get_current_page_url();
-			foreach ( $results as $row ) {
-				$kwUrl = new Urlslab_Url( $row[ 'urlLink' ] );
-				if ( $current_page->get_url_id() != $kwUrl->get_url_id() && preg_match( '/' . str_replace( '/', '\\/', $row[ 'urlFilter' ] ) . '/', $current_page->get_url() ) ) {
-					$this->keywords_cache[ $row[ 'kwMd5' ] ] = array( 'kw' => $row[ 'keyword' ], 'url' => $row[ 'urlLink' ] );
-				}
+		$this->keywords_cache = array();
+		$current_page = get_current_page_url();
+		foreach ( $results as $row ) {
+			$kwUrl = new Urlslab_Url( $row[ 'urlLink' ] );
+			if (
+					$current_page->get_url_id() != $kwUrl->get_url_id() &&
+					preg_match( '/' . str_replace( '/', '\\/', $row[ 'urlFilter' ] ) . '/', $current_page->get_url() ) &&
+					strpos( $input_text, strtolower( $row[ 'keyword' ] ) ) !== false
+			) {
+				$this->keywords_cache[ $row[ 'kwMd5' ] ] = array( 'kw' => $row[ 'keyword' ], 'url' => $row[ 'urlLink' ] );
+				//addressing cache
+				$this->keywords_cache_md5[ $row[ 'keyword' ] ][] = $row[ 'kwMd5' ];
+				$this->urls_cache_md5[ $row[ 'urlLink' ] ][] = $row[ 'kwMd5' ];
 			}
 		}
 
+	}
+
+	private function get_keywords( $inputText ) {
 		$keywords = array();
 		foreach ( $this->keywords_cache as $kw_md5 => $row ) {
-			if ( ( !isset( $this->kw_page_replacement_counts[ $row[ 'kw' ] ] ) || $this->kw_page_replacement_counts[ $row[ 'kw' ] ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD, self::MAX_REPLACEMENTS_PER_KEYWORD_DEFAULT ) ) && ( !isset( $this->url_page_replacement_counts[ $row[ 'url' ] ] ) || $this->url_page_replacement_counts[ $row[ 'url' ] ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_URL, self::MAX_REPLACEMENTS_PER_URL_DEFAULT ) ) && ( !isset( $this->urlandkw_page_replacement_counts[ $kw_md5 ] ) || $this->urlandkw_page_replacement_counts[ $kw_md5 ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORDURL, self::MAX_REPLACEMENTS_PER_KEYWORDURL_DEFAULT ) ) ) {
+			if (
+					( !isset( $this->kw_page_replacement_counts[ $row[ 'kw' ] ] ) || $this->kw_page_replacement_counts[ $row[ 'kw' ] ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD, self::MAX_REPLACEMENTS_PER_KEYWORD_DEFAULT ) ) &&
+					( !isset( $this->url_page_replacement_counts[ $row[ 'url' ] ] ) || $this->url_page_replacement_counts[ $row[ 'url' ] ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_URL, self::MAX_REPLACEMENTS_PER_URL_DEFAULT ) ) &&
+					( !isset( $this->urlandkw_page_replacement_counts[ $kw_md5 ] ) || $this->urlandkw_page_replacement_counts[ $kw_md5 ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORDURL, self::MAX_REPLACEMENTS_PER_KEYWORDURL_DEFAULT ) ) &&
+					strpos( $inputText, strtolower( $row[ 'kw' ] ) ) !== false
+			) {
 				$keywords[ $kw_md5 ] = $row;
+			} else {
+				unset( $this->keywords_cache[ $kw_md5 ] );
 			}
 		}
 
@@ -240,7 +259,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			foreach ( $dom->childNodes as $node ) {
 
 				if ( $node instanceof DOMText && strlen( trim( $node->nodeValue ) ) > 1 ) {
-					$this->replaceKeywordWithLinks( $node, $document, $this->get_keywords() );
+					$this->replaceKeywordWithLinks( $node, $document, $this->get_keywords( strtolower( $node->nodeValue ) ) );
 				} else {
 					if ( count( $this->link_counts ) > 0 && preg_match( '/^[hH][0-9]$/', $node->nodeName ) ) {
 						$this->cnt_paragraph_link_replacements = array_shift( $this->link_counts );
@@ -260,6 +279,11 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			return $content;    //nothing to process
 		}
 
+		$this->init_keywords_cache( strtolower( $content ) );
+		if ( count( $this->keywords_cache ) == 0 ) {
+			return $content;
+		}
+
 		$document = new DOMDocument();
 		$document->encoding = get_bloginfo( 'charset' );
 		$document->strictErrorChecking = false;
@@ -269,7 +293,6 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			libxml_clear_errors();
 			libxml_use_internal_errors( $libxml_previous_state );
 
-			$this->initLinkCounts( $document );
 			if ( $this->cnt_page_links > get_option( self::SETTING_NAME_MAX_LINKS_ON_PAGE, self::MAX_LINKS_ON_PAGE_DEFAULT ) ) {
 				return $content;
 			}
