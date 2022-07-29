@@ -118,4 +118,8 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	public function get_widget_tab(): string {
 		return 'image-alt-text';
 	}
+
+	public function get_widget_settings(): array {
+		return array();
+	}
 }

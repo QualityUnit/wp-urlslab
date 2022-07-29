@@ -143,4 +143,8 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	public function get_widget_tab(): string {
 		return 'related-resource';
 	}
+
+	public function get_widget_settings(): array {
+		return array();
+	}
 }

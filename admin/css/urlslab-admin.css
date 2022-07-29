@@ -300,4 +300,8 @@ figure {
 	cursor: pointer;
 }
 
+.urlslab-form-container {
+	border: 1px solid red;
+}
+
 /** Urlslab Content **/

@@ -157,4 +157,8 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	public function get_widget_tab(): string {
 		return 'screenshot-widget';
 	}
+
+	public function get_widget_settings(): array {
+		return array();
+	}
 }
