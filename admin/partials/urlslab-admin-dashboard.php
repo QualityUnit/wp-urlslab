@@ -21,36 +21,35 @@
 				$not_crawling_screenshot_count = $urlslab_data_fetcher->count_urls_with_status( Urlslab_Status::$not_crawling );
 				$blocked_screenshot_count = $urlslab_data_fetcher->count_urls_with_status( Urlslab_Status::$blocked );
 				$generated_summaries_count = $urlslab_data_fetcher->count_generated_summaries();
+				$general_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-general' );
 				?>
 				<div class="mar-bottom-1">
 					<div class="mar-bottom-1">
 						<?php echo urlslab_status_ui_convert( Urlslab_Status::$available ); // phpcs:ignore?>
-						<a class="mar-left-1" href="#">Available Urls (<?php echo esc_html( $active_screenshot_count ); ?>)</a>
+						<a class="mar-left-1" href="<?php echo esc_url( $general_page->menu_page( 'overall-data', 'filter=' . Urlslab_Status::$available ) ); ?>">
+							Available Urls (<?php echo esc_html( $active_screenshot_count ); ?>)
+						</a>
 					</div>
 					<div class="mar-bottom-1">
 						<?php echo urlslab_status_ui_convert( Urlslab_Status::$blocked ); // phpcs:ignore?>
-						<a class="mar-left-1" href="#">Blocked Urls (<?php echo esc_html( $blocked_screenshot_count ); ?>)</a>
+						<a class="mar-left-1" href="<?php echo esc_url( $general_page->menu_page( 'overall-data', 'filter=' . Urlslab_Status::$blocked ) ); ?>">Blocked Urls (<?php echo esc_html( $blocked_screenshot_count ); ?>)</a>
 					</div>
 					<div class="mar-bottom-1">
 						<?php echo urlslab_status_ui_convert( Urlslab_Status::$not_crawling ); // phpcs:ignore?>
-						<a class="mar-left-1" href="#">Not Crawling Urls (<?php echo esc_html( $not_crawling_screenshot_count ); ?>)</a>
+						<a class="mar-left-1" href="<?php echo esc_url( $general_page->menu_page( 'overall-data', 'filter=' . Urlslab_Status::$not_crawling ) ); ?>">Not Crawling Urls (<?php echo esc_html( $not_crawling_screenshot_count ); ?>)</a>
 					</div>
 					<div class="mar-bottom-1">
 						<?php echo urlslab_status_ui_convert( Urlslab_Status::$not_scheduled ); // phpcs:ignore?>
-						<a class="mar-left-1" href="#">Not scheduled Urls (<?php echo esc_html( $not_scheduled_screenshot_count ); ?>)</a>
+						<a class="mar-left-1" href="<?php echo esc_url( $general_page->menu_page( 'overall-data', 'filter=' . Urlslab_Status::$not_scheduled ) ); ?>">Not scheduled Urls (<?php echo esc_html( $not_scheduled_screenshot_count ); ?>)</a>
 					</div>
 					<div class="mar-bottom-1">
 						<?php echo urlslab_status_ui_convert( Urlslab_Status::$pending ); // phpcs:ignore?>
-						<a class="mar-left-1" href="#">Pending Urls (<?php echo esc_html( $pending_screenshot_count ); ?>)</a>
+						<a class="mar-left-1" href="<?php echo esc_url( $general_page->menu_page( 'overall-data', 'filter=' . Urlslab_Status::$pending ) ); ?>">Pending Urls (<?php echo esc_html( $pending_screenshot_count ); ?>)</a>
 					</div>
 					<div>
 						<?php echo esc_html( $generated_summaries_count ); ?> summaries generated
 					</div>
 				</div>
-
-				<?php
-				$general_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-general' );
-				?>
 				<a class="button button-primary" href="<?php echo esc_url( $general_page->menu_page( 'overall-data' ) ); ?>">Manage</a>
 			</div>
 		</div>
