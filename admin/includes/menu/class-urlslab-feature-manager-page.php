@@ -11,7 +11,67 @@ class Urlslab_Feature_Manager_Page extends Urlslab_Admin_Page {
 	}
 
 	public function on_page_load( string $action, string $component ) {
-		// TODO: Implement on_menu_load() method.
+		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
+			 'GET' == $_SERVER['REQUEST_METHOD'] and
+			 ( 'activate' == $action or 'deactivate' == $action ) and
+			 isset( $_GET['widget'] ) ) {
+
+			$redirect_to = $this->menu_page(
+				'',
+				array(
+					'status' => 'failure',
+					'urlslab-message' => 'Invalid request',
+				)
+			);
+
+			if ( 'activate' == $action ) {
+				$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $_GET['widget'] );
+				if ( is_bool( $widget ) && ! $widget ) {
+					$redirect_to = $this->menu_page(
+						'',
+						array(
+							'status' => 'failure',
+							'urlslab-message' => 'Invalid Widget',
+						)
+					);
+				} else {
+					Urlslab_User_Widget::get_instance()->activate_widget( $widget );
+					$redirect_to = $this->menu_page(
+						'',
+						array(
+							'status' => 'success',
+							'urlslab-message' => 'Widget ' . $widget->get_widget_title() . ' was activated successfully',
+						)
+					);
+				}
+			}
+
+			if ( 'deactivate' == $action ) {
+				$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $_GET['widget'] );
+				if ( is_bool( $widget ) && ! $widget ) {
+					$redirect_to = $this->menu_page(
+						'',
+						array(
+							'status' => 'failure',
+							'urlslab-message' => 'Invalid Widget',
+						)
+					);
+				} else {
+					Urlslab_User_Widget::get_instance()->deactivate_widget( $widget );
+					$redirect_to = $this->menu_page(
+						'',
+						array(
+							'status' => 'success',
+							'urlslab-message' => 'Widget ' . $widget->get_widget_title() . ' was deactivated successfully',
+						)
+					);
+				}
+			}
+
+			wp_safe_redirect( $redirect_to );
+			exit();
+		}
+
 	}
 
 	public function register_submenu( string $parent_slug ) {

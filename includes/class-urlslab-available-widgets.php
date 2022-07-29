@@ -63,7 +63,7 @@ class Urlslab_Available_Widgets {
 	/**
 	 * @param string $widget_slug
 	 *
-	 * @return false|mixed
+	 * @return false|Urlslab_Widget
 	 */
 	public function get_widget( string $widget_slug ) {
 		if ( $this->widget_exists( $widget_slug ) ) {

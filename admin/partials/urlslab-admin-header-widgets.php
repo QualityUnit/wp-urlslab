@@ -9,21 +9,10 @@
 		//# meta OG tab
 		?>
 		<div class="urlslab-card-container col-12">
-			<div class="urlslab-card-header">
-				<h3>Settings</h3>
 				<?php
-				if ( $user->is_widget_activated( 'urlslab-meta-tag' ) ) {
-					?>
-					<a class="urlslab-btn-error" href="#">Deactivate</a>
-					<?php
-				} else {
-					?>
-					<a class="urlslab-btn-success" href="#">Activate</a>
-					<?php
-				}
+				$widget = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-meta-tag' );
+				require plugin_dir_path( __FILE__ ) . 'urlslab-admin-activation-card-header.php';
 				?>
-
-			</div>
 			<div class="urlslab-card-content">
 				<?php $page_data->render_widget_form(); ?>
 			</div>

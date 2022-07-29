@@ -6,20 +6,10 @@ if ( isset( $_GET['tab'] ) and 'screenshot-widget' == $_GET['tab'] ) {
 
 	?>
 	<div class="urlslab-card-container col-12">
-		<div class="urlslab-card-header">
-			<h3>Settings</h3>
-			<?php
-			if ( $user->is_widget_activated( 'urlslab-keywords-links' ) ) {
-				?>
-				<a class="urlslab-btn-error" href="#">Deactivate</a>
-				<?php
-			} else {
-				?>
-				<a class="urlslab-btn-success" href="#">Activate</a>
-				<?php
-			}
-			?>
-		</div>
+		<?php
+		$widget = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-screenshot' );
+		require plugin_dir_path( __FILE__ ) . 'urlslab-admin-activation-card-header.php';
+		?>
 		<div class="urlslab-card-content">
 			<div class="mar-bottom-1">
 				Embed a screenshot of any website into your own website and enhance your UI/UX
