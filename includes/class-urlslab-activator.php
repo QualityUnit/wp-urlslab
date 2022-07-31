@@ -30,8 +30,11 @@ class Urlslab_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-		 Urlslab_Activator::install_tables();
+		Urlslab_Activator::install_tables();
 		Urlslab_Activator::upgrade_steps();
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-cron.php';
+		add_option( Urlslab_Offload_Cron::SETTING_NAME_SCHEDULER_POINTER, -1, '', false );
 	}
 
 	private static function install_tables() {
@@ -39,6 +42,8 @@ class Urlslab_Activator {
 		self::init_keyword_widget_tables();
 		self::init_related_resources_widget_tables();
 		self::init_urlslab_error_log();
+		self::init_urlslab_files();
+		self::init_urlslab_file_contents();
 	}
 
 	private static function upgrade_steps() {
@@ -122,6 +127,43 @@ class Urlslab_Activator {
     		id int NOT NULL AUTO_INCREMENT,
 			errorLog text NOT NULL,
 			PRIMARY KEY  (id)
+		) $charset_collate;";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_urlslab_files() {
+		global $wpdb;
+		$table_name = URLSLAB_FILES_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+    		  fileid char(32) NOT NULL,
+			  url varchar(1024) NOT NULL,
+			  local_file varchar(1024),
+			  filename varchar(750),
+			  filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
+			  filetype varchar(100),
+			  width mediumint(8) UNSIGNED ZEROFILL DEFAULT NULL,
+			  height mediumint(8) UNSIGNED ZEROFILL DEFAULT NULL,
+			  filestatus char(1) NOT NULL,
+			  driver char(1) NOT NULL,
+			  PRIMARY KEY (fileid)
+		) $charset_collate;";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_urlslab_file_contents() {
+		global $wpdb;
+		$table_name = URLSLAB_FILE_CONTENTS_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+    		  fileid char(32) NOT NULL,
+			  contentid SMALLINT UNSIGNED NOT NULL,
+			  content longblob DEFAULT NULL,
+			  PRIMARY KEY (fileid,contentid)
 		) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

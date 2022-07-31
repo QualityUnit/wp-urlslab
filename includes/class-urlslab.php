@@ -76,7 +76,7 @@ class Urlslab {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
-		 $this->version = URLSLAB_VERSION;
+		$this->version = URLSLAB_VERSION;
 		$this->urlslab = 'URLSLAB';
 
 		$this->load_dependencies();
@@ -230,7 +230,9 @@ class Urlslab {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		$this->loader->add_action( 'template_redirect', $plugin_public, 'downoad_offloaded_file' );
 		$this->init_activated_widgets();
+
 	}
 
 	private function init_activated_widgets() {
@@ -249,13 +251,26 @@ class Urlslab {
 		if ( ! wp_next_scheduled( 'urlslab_cron_hook' ) ) {
 			wp_schedule_event( time(), 'every_minute', 'urlslab_cron_hook' );
 		}
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-cron.php';
+		$cron_job_offload = new Urlslab_Offload_Cron();
+
+		$this->loader->add_action( 'urlslab_cron_hook', $cron_job_offload, 'urlslab_cron_exec', 10, 0 );
+
+		//TODO remove before merge of PR
+		$this->loader->add_action( 'admin_init', $cron_job_offload, 'urlslab_cron_exec', 10, 0 );
+
+		if ( ! wp_next_scheduled( 'urlslab_offload_cron_hook' ) ) {
+			wp_schedule_event( time(), 'every_minute', 'urlslab_offload_cron_hook' );
+		}
+
 	}
 
 	/**
 	 * Upgrades option data when necessary.
 	 */
 	public function urlslab_upgrade() {
-		 $old_ver = $this->get_option( 'version', '0' );
+		$old_ver = $this->get_option( 'version', '0' );
 		$new_ver = URLSLAB_VERSION;
 
 		if ( $old_ver == $new_ver ) {
@@ -272,7 +287,7 @@ class Urlslab {
 	 * @since    1.0.0
 	 */
 	public function run() {
-		 $this->loader->run();
+		$this->loader->run();
 	}
 
 	/**

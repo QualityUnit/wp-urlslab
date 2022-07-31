@@ -58,6 +58,8 @@ define( 'URLSLAB_URLS_TABLE', $wpdb->prefix . 'urlslab_urls' );
 define( 'URLSLAB_ERROR_LOG_TABLE', $wpdb->prefix . 'urlslab_error_log' );
 define( 'URLSLAB_KEYWORDS_TABLE', $wpdb->prefix . 'urlslab_keywords' );
 define( 'URLSLAB_RELATED_RESOURCE_TABLE', $wpdb->prefix . 'urlslab_related_urls' );
+define( 'URLSLAB_FILES_TABLE', $wpdb->prefix . 'urlslab_files' );
+define( 'URLSLAB_FILE_CONTENTS_TABLE', $wpdb->prefix . 'urlslab_file_contents' );
 
 define( 'URLSLAB_PLUGIN_LOG', plugin_dir_path( __FILE__ ) . 'debug.log' );
 

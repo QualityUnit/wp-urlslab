@@ -2,6 +2,14 @@
 
 require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/driver/class-urlslab-driver.php';
+
+require_once URLSLAB_PLUGIN_DIR . '/includes/driver/class-urlslab-driver-file.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/driver/class-urlslab-driver-s3.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/driver/class-urlslab-driver-db.php';
+
+require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-file-data.php';
+
 
 class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
@@ -13,10 +21,26 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	private string $landing_page_link = 'https://www.urlslab.com';
 
-	public function init_widget( Urlslab_Loader $loader ) {
-		$loader->add_filter( 'wp_handle_upload_prefilter', $this, 'handle_upload_prefilter', 10, 1 );
-	}
+	private $urls_cache = array();
 
+	//offload also external media to our storage
+	public const SETTING_NAME_SAVE_EXTERNAL = 'urlslab_save_ext';
+	public const SETTING_DEFAULT_SAVE_EXTERNAL = 1;
+
+	public const SETTING_NAME_SAVE_MISSING = 'urlslab_save_missing';
+	public const SETTING_DEFAULT_SAVE_MISSING = 1;
+
+	public const SETTING_NAME_NEW_FILE_DRIVER = 'urlslab_new_file_driver';
+	public const SETTING_DEFAULT_NEW_FILE_DRIVER = Urlslab_Driver::DRIVER_LOCAL_FILE;
+
+	public const SETTING_NAME_TRANSFER_DB_TO_S3 = 'urlslab_transf_db_2_s3';
+	public const SETTING_DEFAULT_TRANSFER_DB_TO_S3 = 0;
+
+
+	public function init_widget( Urlslab_Loader $loader ) {
+		$loader->add_action( 'wp_handle_upload', $this, 'wp_handle_upload', 10, 1 );
+		$loader->add_filter( 'the_content', $this, 'the_content' );
+	}
 
 	/**
 	 * @return string
@@ -77,7 +101,45 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		return false;
 	}
 
-	public function handle_upload_prefilter( $file ) {
+	public function wp_handle_upload( &$file, $overrides = false, $time = null ) {
+		global $wpdb;
+		$file_obj = new Urlslab_File_Data(
+				array(
+						'url' => $file[ 'url' ],
+						'local_file' => $file[ 'file' ],
+						'filetype' => $file[ 'type' ],
+						'filename' => basename( $file[ 'file' ] ),
+						'filesize' => filesize( $file[ 'file' ] ),
+						'filestatus' => Urlslab_Driver::STATUS_NEW,
+						'driver' => get_option( self::SETTING_NAME_NEW_FILE_DRIVER, self::SETTING_DEFAULT_NEW_FILE_DRIVER )
+				)
+		);
+
+		$data = array(
+				'fileid' => $file_obj->get_fileid(),
+				'url' => $file_obj->get_url(),
+				'local_file' => $file_obj->get_local_file(),
+				'filename' => $file_obj->get_filename(),
+				'filesize' => $file_obj->get_filesize(),
+				'filetype' => $file_obj->get_filetype(),
+				'filestatus' => $file_obj->get_filestatus(),
+				'driver' => $file_obj->get_driver()
+		);
+
+		$result = $wpdb->query(
+				$wpdb->prepare(
+						'INSERT IGNORE INTO ' . URLSLAB_FILES_TABLE .
+						' (' . implode( ',', array_keys( $data ) ) .
+						') VALUES (%s, %s, %s, %s, %d, %s, %s, %s)',
+						array_values( $data )
+				)
+		);
+
+		if ( is_numeric( $result ) && $result == 1 ) {
+			$driver = Urlslab_Driver::get_driver( $file_obj );
+			$driver->upload_content( $file_obj );
+		}
+
 		return $file;
 	}
 
@@ -85,4 +147,149 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		return '';
 	}
 
+	public function the_content( $content ) {
+		if ( empty( $content ) ) {
+			return $content;    //nothing to process
+		}
+
+		$document = new DOMDocument();
+		$document->encoding = get_bloginfo( 'charset' );
+		$document->strictErrorChecking = false; // phpcs:ignore
+		$libxml_previous_state = libxml_use_internal_errors( true );
+		$urls = array();
+
+		try {
+			$document->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', 'UTF-8' ) );
+			libxml_clear_errors();
+			libxml_use_internal_errors( $libxml_previous_state );
+
+			//TODO: we need to iterate also other types of elements (e.g. script, style, etc.)
+			$iterate_elements = array(
+					'img' => array( 'src', 'data-src', 'data-full-url' ),
+					'video' => array( 'src', 'data-src' ),
+			);
+
+			foreach ( $iterate_elements as $tag_name => $tag_attributes ) {
+				$dom_images = $document->getElementsByTagName( $tag_name );
+
+				if ( empty( $dom_images ) ) {
+					return $content;
+				}
+				foreach ( $dom_images as $dom_img_element ) {
+					//TODO we should allow to skip also any predefined pattern or regexp of urls (defined as setting)
+					if ( $dom_img_element->hasAttribute( 'urlslab-skip' ) ) {
+						continue;
+					}
+					foreach ( $tag_attributes as $attr ) {
+						if ( strlen( $dom_img_element->getAttribute( $attr ) ) ) {
+							$file_obj = new Urlslab_File_Data( array(
+									'url' => $dom_img_element->getAttribute( $attr )
+							) );
+							$urls[ $file_obj->get_fileid() ][ $attr ][] = $dom_img_element;
+						}
+					}
+				}
+			}
+
+			$new_urls = $this->get_new_urls( array_keys( $urls ) );
+
+			foreach ( $new_urls as $fileid => $file_obj ) {
+				if ( $file_obj->get_filestatus() == Urlslab_Driver::STATUS_ACTIVE ) {
+					//set new url to all elements with this url
+					$new_url = Urlslab_Driver::get_driver( $file_obj )->get_url( $file_obj );
+					foreach ( $urls[ $fileid ] as $attribute_name => $elements ) {
+						foreach ( $elements as $element ) {
+							$element->setAttribute( $attribute_name, $new_url );
+						}
+					}
+				}
+				unset( $urls[ $fileid ] );//remove processed urls, so we will have at the end in this array just urls not in database
+			}
+
+			$this->schedule_missing_images( $urls );
+			if ( count( $new_urls ) > 0 ) {
+				return $document->saveHTML();
+			}
+
+			//nothing replaced, return the same content
+			return $content;
+		} catch ( Exception $e ) {
+			return $content . "\n" . "<!---\n Error:" . esc_html( $e->getMessage() ) . "\n--->";
+		}
+	}
+
+	private function get_new_urls( array $old_url_ids ) {
+		global $wpdb;
+		$new_urls = [];
+		$results = $wpdb->get_results( $wpdb->prepare(
+				'SELECT * FROM ' . URLSLAB_FILES_TABLE .
+				" WHERE fileid in (" . trim( str_repeat( "%s,", count( $old_url_ids ) ), ',' ) .
+				")", $old_url_ids ), 'ARRAY_A'
+		);
+		foreach ( $results as $file_array ) {
+			$file_obj = new Urlslab_File_Data( $file_array );
+			$new_urls[ $file_obj->get_fileid() ] = $file_obj;
+		}
+		return $new_urls;
+	}
+
+	private function schedule_missing_images( array $urls ) {
+		if ( !get_option( self::SETTING_NAME_SAVE_MISSING, self::SETTING_DEFAULT_SAVE_MISSING ) ) {
+			return;
+		}
+
+		$placeholders = array();
+		$values = array();
+
+		foreach ( $urls as $fileid => $attr_elements ) {
+			foreach ( $attr_elements as $attr => $elements ) {
+				if ( urlslab_is_same_domain_url( $elements[ 0 ]->getAttribute( $attr ) ) || get_option( self::SETTING_NAME_SAVE_EXTERNAL, self::SETTING_DEFAULT_SAVE_EXTERNAL ) ) {
+					$placeholders[] = '(%s, %s, %s, %s)';
+					array_push( $values, $fileid, $elements[ 0 ]->getAttribute( $attr ), Urlslab_Driver::STATUS_NEW, get_option( self::SETTING_NAME_NEW_FILE_DRIVER, self::SETTING_DEFAULT_NEW_FILE_DRIVER ) );
+				}
+			}
+		}
+		if ( !empty( $placeholders ) ) {
+			global $wpdb;
+			$query = "INSERT IGNORE INTO " . URLSLAB_FILES_TABLE . " (
+                   fileid,
+                   url,
+                   filestatus,
+                   driver) VALUES " . implode( ', ', $placeholders );
+
+			$wpdb->query( $wpdb->prepare( $query, $values ) );
+		}
+	}
+
+
+	public function output_content() {
+		global $_SERVER;
+		$path = pathinfo( $_SERVER[ 'REQUEST_URI' ] );
+		$dirs = explode( '/', $path[ 'dirname' ] );
+		$fileid = array_pop( $dirs );
+		global $wpdb;
+
+		$row = $wpdb->get_row( $wpdb->prepare( "SELECT * from " . URLSLAB_FILES_TABLE . " WHERE fileid=%s", $fileid ), ARRAY_A );
+		if ( empty( $row ) ) {
+			status_header( 404 );
+			exit( 'File not found' );
+		}
+
+		@set_time_limit( 0 );
+		$file = new Urlslab_File_Data( $row );
+		status_header( 200 );
+		header( 'Content-Type: ' . $file->get_filetype() );
+		header( "Content-Disposition: inline; filename=\"" . $file->get_filename() . "\"" );
+		header( 'Content-Transfer-Encoding: binary' );
+		header( 'Pragma: public' );
+
+		//TODO define how long should be files cached (maybe each mime type should have own settings)
+		$expires_offset = 9000;
+		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
+		header( "Cache-Control: public, max-age=$expires_offset" );
+		header( "Content-length: " . $file->get_filesize() );
+
+		$driver = Urlslab_Driver::get_driver( $file );
+		$driver->output_file_content( $file );
+	}
 }
