@@ -78,6 +78,35 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 			}
 			//# Add Functionality
 
+            //# Edit settings
+			if ( isset( $_POST['submit'] ) &&
+			     'Save Changes' === $_POST['submit'] &&
+                 'update-settings' == $_POST['action']) {
+
+                $saving_opt = array();
+                foreach ($_POST as $key => $val) {
+                    if (str_starts_with($key, 'urlslab_')) {
+                        $saving_opt[$key] = $val;
+                    }
+                }
+
+				update_option(
+                        'urlslab-keywords-links',
+                    $saving_opt
+                );
+				wp_safe_redirect(
+					$this->parent_page->menu_page(
+						$this->subpage_slug,
+						array(
+							'status' => 'success',
+							'urlslab-message' => 'Keyword settings was saved successfully',
+						)
+					)
+				);
+				exit;
+			}
+			//# Edit settings
+
 		}
 
 		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
@@ -435,5 +464,31 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 		add_screen_option( $option, $args );
 
 		$this->keyword_table = new Urlslab_Keyword_Link_Table();
+	}
+
+	public function render_settings() {
+		$keyword_settings = Urlslab_Available_Widgets::get_instance()->get_widget('urlslab-keywords-links')->get_widget_settings();
+        ?>
+        <div class="col-8 mar-top-1">
+            <form method="post">
+		        <?php foreach ($keyword_settings as $keyword_setting => $keyword_val) { ?>
+			        <?php wp_nonce_field( 'keyword-update-settings' ); ?>
+                    <input type="hidden" name="action" value="update-settings">
+                    <div class="col-3 float-left">
+                        <label for="<?php echo esc_attr($keyword_setting)?>">
+                            <?php echo esc_html(implode(' ', explode('_', str_replace('urlslab_', '', $keyword_setting))))?>:
+                        </label>
+                    </div>
+                    <div class="col-3 float-left">
+                        <input id="<?php echo esc_attr($keyword_setting)?>" name="<?php echo esc_attr($keyword_setting)?>" value="<?php echo esc_attr($keyword_val)?>" type="number">
+                    </div>
+                    <br class="clear"/>
+                    <br class="clear"/>
+		        <?php } ?>
+                <input class="button button-primary" type="submit" name="submit" value="Save Changes">
+            </form>
+        </div>
+        <?php
+
 	}
 }

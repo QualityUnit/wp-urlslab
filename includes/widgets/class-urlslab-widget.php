@@ -56,43 +56,6 @@ abstract class Urlslab_Widget {
 	}
 
 	/**
-	 * @param $action string action to be applied to url
-	 *
-	 */
-	public function widget_management_response( string $action = '' ) {
-		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
-			 'activation' == $action and 'POST' == $_SERVER['REQUEST_METHOD'] ) {
-			check_admin_referer( 'widget-activation-' . $this->get_widget_slug() );
-
-			if ( ! empty( $_POST['activate'] ) ) {
-				Urlslab_User_Widget::get_instance()->activate_widget( $this );
-				$redirect_to = $this->get_conf_page_url(
-					array(
-						'message' => 'success',
-					)
-				);
-			} else if ( ! empty( $_POST['deactivate'] ) ) {
-				Urlslab_User_Widget::get_instance()->deactivate_widget( $this );
-				$redirect_to = $this->get_conf_page_url(
-					array(
-						'message' => 'success',
-					)
-				);
-			} else {
-				$redirect_to = $this->get_conf_page_url(
-					array(
-						'action' => 'activation',
-						'message' => 'invalid',
-					)
-				);
-			}
-
-			wp_safe_redirect( $redirect_to );
-			exit();
-		}
-	}
-
-	/**
 	 * @param $atts array attributes of the shortcode
 	 * @param $content string the content of the shortcode
 	 * @param $tag string the tag related to shortcode
@@ -115,5 +78,10 @@ abstract class Urlslab_Widget {
 	 * @return string
 	 */
 	public abstract function get_thumbnail_demo_url(): string;
+
+	/**
+	 * @return array returns a widget array
+	 */
+	public abstract function get_widget_settings(): array;
 
 }

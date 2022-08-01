@@ -15,6 +15,7 @@ if ( ! isset( $_GET['tab'] ) or ( 'link-building' == $_GET['tab'] ) ) {
 		<div class="urlslab-card-content">
 			<div class="mar-bottom-1">
 				Generate Internal links automatically based on the keywords you provide in here
+                <?php $this->link_building_subpage->render_settings(); ?>
 			</div>
 		</div>
 	</div>

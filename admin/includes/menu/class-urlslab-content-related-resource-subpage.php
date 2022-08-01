@@ -524,4 +524,5 @@ class Urlslab_Content_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 	}
 
 
+	public function render_settings() {}
 }
