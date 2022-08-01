@@ -1,28 +1,25 @@
 <?php
 
-require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
 
 class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 
-	private string $widget_slug = 'urlslab-screenshot';
-
-	private string $widget_title = 'Screenshot';
-
-	private string $widget_description = 'Urlslab Widget to integrate any screenshot of other websites on your website';
-
-	private string $landing_page_link = 'https://www.urlslab.com';
-
+	private string $widget_slug;
+	private string $widget_title;
+	private string $widget_description;
+	private string $landing_page_link;
 	private Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher;
-
-	private Urlslab_Screenshot_Table $screenshot_table;
+	private Urlslab_Admin_Page $parent_page;
 
 	/**
 	 * @param Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher
 	 */
 	public function __construct( Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher ) {
+		$this->widget_slug = 'urlslab-screenshot';
+		$this->widget_title = 'Screenshot';
+		$this->widget_description = 'Embed any screenshot of URL in your pages using wordpress shortcodes.';
+		$this->landing_page_link = 'https://www.urlslab.com';
 		$this->urlslab_url_data_fetcher = $urlslab_url_data_fetcher;
+		$this->parent_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-content-seo' );
 	}
 
 	public function init_widget( Urlslab_Loader $loader ) {
@@ -45,7 +42,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return 'Urlslab ' . $this->widget_title;
+		return $this->widget_title . ' Widget';
 	}
 
 	/**
@@ -53,60 +50,6 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	 */
 	public function get_widget_description(): string {
 		return $this->widget_description;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function get_landing_page_link(): string {
-		return $this->landing_page_link;
-	}
-
-	public function load_widget_page() {
-		?>
-		<div class="wrap">
-			<h2>Screenshots</h2>
-			<form method="get">
-			<?php
-			$this->screenshot_table->views();
-			$this->screenshot_table->prepare_items();
-			?>
-				<input type="hidden" name="page" value="<?php echo esc_attr( $this->widget_slug ); ?>">
-				<?php
-				$this->screenshot_table->search_box( 'Search', 'urlslab-screenshot-input' );
-				$this->screenshot_table->display();
-				?>
-			</form>
-
-		</div>
-		<?php
-	}
-
-	public function widget_admin_load() {
-		$option = 'per_page';
-		$args = array(
-			'label' => 'Urls',
-			'default' => 50,
-			'option' => 'users_per_page',
-		);
-
-		add_screen_option( $option, $args );
-
-		$this->screenshot_table = new Urlslab_Screenshot_Table();
-	}
-
-	/**
-	 * @return string
-	 */
-	public function get_admin_menu_page_title(): string {
-		return 'Urlslab Widget | Screenshot';
-	}
-
-	/**
-	 * @return string
-	 */
-	public function get_admin_menu_title(): string {
-		return 'Screenshots';
 	}
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
@@ -193,5 +136,25 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 
 	public function has_shortcode(): bool {
 		return true;
+	}
+
+	public function render_widget_overview() {
+		// TODO: Implement render_widget_overview() method.
+	}
+
+	public function get_thumbnail_demo_url(): string {
+		return plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/demo/screenshot-widget-demo.png' ) . 'screenshot-widget-demo.png';
+	}
+
+	public function get_landing_page_link(): string {
+		return $this->landing_page_link;
+	}
+
+	public function get_parent_page(): Urlslab_Admin_Page {
+		return $this->parent_page;
+	}
+
+	public function get_widget_tab(): string {
+		return 'screenshot-widget';
 	}
 }

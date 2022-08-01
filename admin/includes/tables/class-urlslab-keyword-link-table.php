@@ -171,6 +171,16 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 					esc_attr( $item->get_kw_md5() ),
 					$delete_nonce
 				),
+				'edit' => sprintf(
+					'<span class="%s" rel="modal:open" data-keyword-hash="%s" data-keyword="%s" data-dest-url="%s" data-prio="%s" data-lang="%s" data-url-filter="%s">Edit</span>',
+					'keyword-edit color-primary',
+					esc_attr( $item->get_kw_md5() ),
+					esc_attr( $item->get_keyword() ),
+					esc_attr( $item->get_keyword_url_link() ),
+					esc_attr( $item->get_keyword_priority() ),
+					esc_attr( $item->get_keyword_url_lang() ),
+					esc_attr( $item->get_keyword_url_filter() ),
+				),
 			);
 		}
 

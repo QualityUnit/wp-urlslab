@@ -179,7 +179,7 @@ class Urlslab_Related_Resources_Widget_Table extends WP_List_Table {
 				wp_redirect(
 					add_query_arg(
 						'status=failure',
-						'message=this link is expired'
+						'urlslab-message=this link is expired'
 					)
 				);
 				exit();
@@ -235,6 +235,46 @@ class Urlslab_Related_Resources_Widget_Table extends WP_List_Table {
 			'<input type="checkbox" name="bulk-delete[]" value="%s" />',
 			$item[0]->get_url()->get_url_id() . ';' . $item[1]->get_url()->get_url_id(),
 		);
+	}
+
+	/**
+	 * Method for name column
+	 *
+	 * @param Urlslab_Url_Data[] $item an array of DB data
+	 *
+	 * @return string
+	 */
+	function column_col_src_url_name( $item ): string {
+
+		// create a nonce
+		$delete_nonce = wp_create_nonce( 'urlslab_delete_relation' );
+
+		$title = '<strong>' . $item[0]->get_url()->get_url() . '</strong>';
+
+		$actions = array();
+		if ( isset( $_REQUEST['page'] ) ) {
+			$actions = array(
+				'delete' => sprintf(
+					'<a href="?page=%s%s&action=%s&url_src=%s&url_dest=%s&_wpnonce=%s">Delete</a>',
+					esc_attr( $_REQUEST['page'] ),
+					isset( $_REQUEST['tab'] ) ? '&tab=' . esc_attr( $_REQUEST['tab'] ) : '',
+					'delete',
+					esc_attr( $item[0]->get_url()->get_url_id() ),
+					esc_attr( $item[1]->get_url()->get_url_id() ),
+					$delete_nonce
+				),
+				'edit' => sprintf(
+					'<span class="%s" rel="modal:open" data-src-url-hash="%s" data-src-url="%s" data-dest-url-hash="%s" data-dest-url="%s">Edit</span>',
+					'url-relation-edit color-primary',
+					esc_attr( $item[0]->get_url()->get_url_id() ),
+					'http://' . esc_attr( $item[0]->get_url()->get_url() ),
+					esc_attr( $item[1]->get_url()->get_url_id() ),
+					'http://' . esc_attr( $item[1]->get_url()->get_url() ),
+				),
+			);
+		}
+
+		return $title . $this->row_actions( $actions );
 	}
 
 	/**

@@ -1,5 +1,4 @@
 <?php
-require_once URLSLAB_PLUGIN_DIR . '/includes/helpers/class-urlslab-status.php';
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
