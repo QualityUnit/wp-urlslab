@@ -2752,7 +2752,7 @@
     "@wordpress/dom-ready" "^3.14.0"
     "@wordpress/i18n" "^4.14.0"
 
-"@wordpress/api-fetch@^6.0.1", "@wordpress/api-fetch@^6.10.0", "@wordpress/api-fetch@^6.11.0", "@wordpress/api-fetch@^6.4.0", "@wordpress/api-fetch@^6.5.0":
+"@wordpress/api-fetch@^6.0.1", "@wordpress/api-fetch@^6.11.0", "@wordpress/api-fetch@^6.4.0", "@wordpress/api-fetch@^6.5.0":
   version "6.11.0"
   resolved "https://registry.yarnpkg.com/@wordpress/api-fetch/-/api-fetch-6.11.0.tgz#f033b08c5968ae9f0c15724020192892a5e69907"
   integrity sha512-C1HTWdJQ7ikhJ4mT+rONTODquJ/Xq5HteKak/VN+vf1VmLVfRX18wJ84kCAAZ83UNOIsE8EgjJrjJy//R+HWzg==
@@ -2803,7 +2803,7 @@
   resolved "https://registry.yarnpkg.com/@wordpress/base-styles/-/base-styles-4.7.0.tgz#89447b746aa5ea601e056c0b42581122110ea646"
   integrity sha512-Mu/dMrf5DiiC8DJh0AYeBsyP5bgtsfm19Jh+reXmlDJhbkpFSsOcFvw4A6ZO5ueDzQcOpK3YRAoaFUVddofalg==
 
-"@wordpress/blob@^3.13.0", "@wordpress/blob@^3.14.0", "@wordpress/blob@^3.3.1", "@wordpress/blob@^3.7.0":
+"@wordpress/blob@^3.14.0", "@wordpress/blob@^3.3.1", "@wordpress/blob@^3.7.0":
   version "3.14.0"
   resolved "https://registry.yarnpkg.com/@wordpress/blob/-/blob-3.14.0.tgz#2b8b0244442ee846bf803320c0454bfc0b04cbdd"
   integrity sha512-mCkH94I8g8XY3+yaeVCOdcyl4lBkOmVNJ7mmAjaHKwWLVkPzLoZr7deE6d3OGeBuff1HeSNOA4gKou3ninSOPw==
@@ -3314,15 +3314,15 @@
     lodash "^4.17.21"
 
 "@wordpress/media-utils@^4":
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/@wordpress/media-utils/-/media-utils-4.4.0.tgz#9c59f0563bb6d17f478da3169ca818a003fbc8dc"
-  integrity sha512-O7DEkT/p7qof7JSXiYc7cpn01KaGCA9Q3bt0nJT082koHxv6tqxJjKLGJm4Pjpp0/+rP/8/2jbIS0SZdNYiXkg==
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/@wordpress/media-utils/-/media-utils-4.5.0.tgz#6ef0fbf29dc0afaba7a5bb38c509962bb8de2cf9"
+  integrity sha512-tgqc48RfWWXxwfv2bqNHtZFKKwxkVkesQ2BJ+tyFhhQHlzSObE0vjBtN3F5zibrOBXeQgtyo+VKPl9brQYUEhA==
   dependencies:
     "@babel/runtime" "^7.16.0"
-    "@wordpress/api-fetch" "^6.10.0"
-    "@wordpress/blob" "^3.13.0"
-    "@wordpress/element" "^4.11.0"
-    "@wordpress/i18n" "^4.13.0"
+    "@wordpress/api-fetch" "^6.11.0"
+    "@wordpress/blob" "^3.14.0"
+    "@wordpress/element" "^4.12.0"
+    "@wordpress/i18n" "^4.14.0"
 
 "@wordpress/notices@^3.14.0", "@wordpress/notices@^3.3.2", "@wordpress/notices@^3.7.0", "@wordpress/notices@^3.8.0":
   version "3.14.0"
