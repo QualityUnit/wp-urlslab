@@ -300,4 +300,34 @@ figure {
 	cursor: pointer;
 }
 
+/** Urlslab Accordion **/
+
+.accordion {
+	background-color: #fff;
+	border-radius: 5px;
+	padding: 10px;
+}
+
+.urlslab-accordion-header {
+	box-sizing: border-box;
+	padding: 5px 10px;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: background-color 0.5s;
+	-webkit-transition: background-color 0.5s;
+	-moz-transition: background-color 0.5s;
+}
+
+.urlslab-accordion-header:hover {
+	background-color: #F0F0F1;
+}
+
+.urlslab-accordion-header > div {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+/** Urlslab Accordion **/
+
 /** Urlslab Content **/
