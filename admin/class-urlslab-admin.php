@@ -85,7 +85,13 @@ class Urlslab_Admin {
 
 		wp_enqueue_style( $this->urlslab . '-jquery-modal', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css' );
 
-		wp_enqueue_style( $this->urlslab, plugin_dir_url( __FILE__ ) . 'css/urlslab-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style(
+			$this->urlslab,
+			plugin_dir_url( __FILE__ ) . 'css/urlslab-admin.css',
+			array(),
+			$this->version,
+			'all'
+		);
 
 	}
 
@@ -111,7 +117,13 @@ class Urlslab_Admin {
 		wp_enqueue_script( $this->urlslab . '-jquery-modal', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js' );
 
 
-		wp_enqueue_script( $this->urlslab, plugin_dir_url( __FILE__ ) . 'js/urlslab-admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script(
+			$this->urlslab,
+			plugin_dir_url( __FILE__ ) . 'js/urlslab-admin.js',
+			array( 'jquery', 'jquery-ui-accordion' ),
+			$this->version,
+			false
+		);
 
 	}
 
