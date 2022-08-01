@@ -186,8 +186,8 @@ or (updateStatusDate < %d AND status = %s)
 				);
 			}
 		}
-		$schedule_response = $this->urlslab_screenshot_api->schedule_batch( $scheduling_urls );
 		try {
+			$schedule_response = $this->urlslab_screenshot_api->schedule_batch( $scheduling_urls );
 			foreach ( $scheduling_urls as $i => $schedule ) {
 				$scheduled[ $schedule->get_url_id() ] = $schedule_response[ $i ]->to_url_data( $schedule );
 			}
