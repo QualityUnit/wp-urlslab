@@ -23,6 +23,7 @@ class Urlslab_Page_Factory {
 			$header_widgets = new Urlslab_Header_Widgets_Page();
 			$content_widgets = new Urlslab_Content_Widgets_Page();
 			$image_seo = new Urlslab_Image_Seo_Widgets_Page();
+			$ui_elements = new Urlslab_UI_Elements_Page();
 			$feature_manager = new Urlslab_Feature_Manager_Page();
 
 			self::$menus = array(
@@ -31,6 +32,7 @@ class Urlslab_Page_Factory {
 				$header_widgets->get_menu_slug() => $header_widgets,
 				$content_widgets->get_menu_slug() => $content_widgets,
 				$image_seo->get_menu_slug() => $image_seo,
+				$ui_elements->get_menu_slug() => $ui_elements,
 				$feature_manager->get_menu_slug() => $feature_manager,
 			);
 			self::$admin_plugin_main_page = $dashboard;

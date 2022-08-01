@@ -2,7 +2,7 @@
 ?>
 <?php
 $user = Urlslab_User_Widget::get_instance();
-if ( isset( $_GET['tab'] ) and 'screenshot-widget' == $_GET['tab'] ) {
+if ( ! isset( $_GET['tab'] ) or ( 'screenshot-widget' == $_GET['tab'] ) ) {
 
 	?>
 
