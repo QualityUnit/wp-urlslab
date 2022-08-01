@@ -257,9 +257,6 @@ class Urlslab {
 
 		$this->loader->add_action( 'urlslab_cron_hook', $cron_job_offload, 'urlslab_cron_exec', 10, 0 );
 
-		//TODO remove before merge of PR
-		$this->loader->add_action( 'admin_init', $cron_job_offload, 'urlslab_cron_exec', 10, 0 );
-
 		if ( ! wp_next_scheduled( 'urlslab_offload_cron_hook' ) ) {
 			wp_schedule_event( time(), 'every_minute', 'urlslab_offload_cron_hook' );
 		}
