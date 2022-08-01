@@ -74,18 +74,21 @@ class Urlslab_Offload_Cron {
 			array_push( $values, $file->get_fileid(), $file->get_url(), $file->get_filename(), $file->get_filesize(), $file->get_filetype(), $file->get_width(), $file->get_height(), $file->get_filestatus(), $file->get_local_file(), $file->get_driver() );
 		}
 
-		update_option( self::SETTING_NAME_SCHEDULER_POINTER, $last_post_id );
-		$result = $wpdb->query(
-			$wpdb->prepare(
-		'INSERT IGNORE INTO ' . URLSLAB_FILES_TABLE . ' (fileid, url, filename, filesize, filetype, width, height, filestatus, local_file, driver) VALUES ' . // phpcs:ignore
-				implode( ', ', $placeholders ), // phpcs:ignore
-				$values
-			)
-		);
-		if ( ! is_numeric( $result ) ) {
-			return 0;
+		if ( count( $placeholders ) ) {
+			update_option( self::SETTING_NAME_SCHEDULER_POINTER, $last_post_id );
+			$result = $wpdb->query(
+				$wpdb->prepare(
+					'INSERT IGNORE INTO ' . URLSLAB_FILES_TABLE . ' (fileid, url, filename, filesize, filetype, width, height, filestatus, local_file, driver) VALUES ' . // phpcs:ignore
+					implode( ', ', $placeholders ), // phpcs:ignore
+					$values
+				)
+			);
+			if ( ! is_numeric( $result ) ) {
+				return 0;
+			}
+			return $result;
 		}
-		return $result;
+		return 0;
 	}
 
 	private function offload_next_file() {
@@ -97,6 +100,10 @@ class Urlslab_Offload_Cron {
 
 		$file = new Urlslab_File_Data( $file_row );
 		if ( $file->get_filestatus() != Urlslab_Driver::STATUS_NEW ) {
+			return false;
+		}
+
+		if ( ! Urlslab_Driver::get_driver( $file )->is_connected() ) {
 			return false;
 		}
 

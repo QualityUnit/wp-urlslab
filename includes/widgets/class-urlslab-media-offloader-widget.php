@@ -31,11 +31,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public const SETTING_DEFAULT_SAVE_MISSING = 1;
 
 	public const SETTING_NAME_NEW_FILE_DRIVER = 'urlslab_new_file_driver';
-	public const SETTING_DEFAULT_NEW_FILE_DRIVER = Urlslab_Driver::DRIVER_LOCAL_FILE;
+	public const SETTING_DEFAULT_NEW_FILE_DRIVER = Urlslab_Driver::DRIVER_S3;
 
 	public const SETTING_NAME_TRANSFER_DB_TO_S3 = 'urlslab_transf_db_2_s3';
 	public const SETTING_DEFAULT_TRANSFER_DB_TO_S3 = 0;
-	private $schedule_missing_images;
 
 
 	public function init_widget( Urlslab_Loader $loader ) {
@@ -138,7 +137,9 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 		if ( is_numeric( $result ) && 1 == $result ) {
 			$driver = Urlslab_Driver::get_driver( $file_obj );
-			$driver->upload_content( $file_obj );
+			if ( $driver->is_connected() ) {
+				$driver->upload_content( $file_obj );
+			}
 		}
 
 		return $file;
@@ -159,7 +160,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		$libxml_previous_state = libxml_use_internal_errors( true );
 		$urls = array();
 
-		$this->schedule_missing_images = $this->schedule_missing_images( $urls );
 		try {
 			$document->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', 'UTF-8' ) );
 			libxml_clear_errors();
@@ -210,7 +210,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				unset( $urls[ $fileid ] );//remove processed urls, so we will have at the end in this array just urls not in database
 			}
 
-			$this->schedule_missing_images;
+			$this->schedule_missing_images( $urls );
 			if ( count( $new_urls ) > 0 ) {
 				return $document->saveHTML();
 			}

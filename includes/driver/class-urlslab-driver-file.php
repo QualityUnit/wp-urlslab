@@ -2,7 +2,6 @@
 require_once URLSLAB_PLUGIN_DIR . '/includes/driver/class-urlslab-driver.php';
 
 class Urlslab_Driver_File extends Urlslab_Driver {
-	const URLSLAB_DIR = '/urlslab/';
 
 	function get_file_content( Urlslab_File_Data $file_obj ) {
 		if ( ! file_exists( $file_obj->get_local_file() ) ) {
@@ -19,10 +18,10 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 	}
 
 	private function get_file_dir( Urlslab_File_Data $file ) {
-		return self::URLSLAB_DIR . substr( $file->get_fileid(), 0, 2 ) . '/';
+		return '/' . self::URLSLAB_DIR . substr( $file->get_fileid(), 0, 2 ) . '/';
 	}
 
-	function save_to_storage( Urlslab_File_Data $file_obj, string $local_file_name ) {
+	function save_file_to_storage( Urlslab_File_Data $file_obj, string $local_file_name ):bool {
 		$dir = wp_upload_dir()['basedir'] . $this->get_file_dir( $file_obj );
 		if ( ! file_exists( $dir ) ) {
 			wp_mkdir_p( $dir );
@@ -68,5 +67,9 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 
 	public function get_url( Urlslab_File_Data $file ) {
 		return wp_get_upload_dir()['baseurl'] . $this->get_file_dir( $file ) . $file->get_filename();
+	}
+
+	function is_connected() {
+		return true;
 	}
 }

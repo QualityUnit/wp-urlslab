@@ -1,5 +1,5 @@
 <?php
-
+require_once URLSLAB_PLUGIN_DIR . '/vendor/autoload.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-data-fetcher.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';

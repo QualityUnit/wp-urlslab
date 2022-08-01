@@ -4,7 +4,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/driver/class-urlslab-driver.php';
 class Urlslab_Driver_Db extends Urlslab_Driver {
 	const MAX_DB_CHUNK_SIZE = 500000;
 
-	public function save_to_storage( Urlslab_File_Data $file, $local_file_name ) {
+	public function save_file_to_storage( Urlslab_File_Data $file, $local_file_name ):bool {
 		if ( ! file_exists( $local_file_name ) || ! filesize( $local_file_name ) ) {
 			return false;
 		}
@@ -76,5 +76,9 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 
 	public function get_url( Urlslab_File_Data $file ) {
 		return site_url( self::DOWNLOAD_URL_PATH . urlencode( $file->get_fileid() ) . '/' . urlencode( $file->get_filename() ) );
+	}
+
+	function is_connected() {
+		return true;
 	}
 }
