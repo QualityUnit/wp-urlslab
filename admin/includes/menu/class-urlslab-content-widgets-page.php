@@ -63,7 +63,6 @@ class Urlslab_Content_Widgets_Page extends Urlslab_Admin_Page {
 			'link-building' => 'Link Building',
 			'related-resource' => 'Related Resource',
 			'link-enhancer' => 'Link Enhancer',
-			'screenshot-widget' => 'Screenshot',
 		);
 	}
 
