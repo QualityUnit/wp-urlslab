@@ -77,19 +77,11 @@ class Urlslab_Offload_Cron {
 		update_option( self::SETTING_NAME_SCHEDULER_POINTER, $last_post_id );
 		$result = $wpdb->query(
 			$wpdb->prepare(
-				'INSERT IGNORE INTO %s (
-					   fileid,
-					   url,
-					   filename,
-					   filesize,
-					   filetype,
-					   width,
-					   height,
-					   filestatus,
-					   local_file,
-					   driver) VALUES ' .
-				implode( ', ', $placeholders ),
-				array_merge(URLSLAB_FILES_TABLE, $values ) ) );
+		'INSERT IGNORE INTO ' . URLSLAB_FILES_TABLE . ' (fileid, url, filename, filesize, filetype, width, height, filestatus, local_file, driver) VALUES ' . // phpcs:ignore
+				implode( ', ', $placeholders ), // phpcs:ignore
+				$values
+			)
+		);
 		if ( ! is_numeric( $result ) ) {
 			return 0;
 		}
@@ -98,7 +90,7 @@ class Urlslab_Offload_Cron {
 
 	private function offload_next_file() {
 		global $wpdb;
-		$file_row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %s WHERE filestatus = %s LIMIT 1', URLSLAB_FILES_TABLE, Urlslab_Driver::STATUS_NEW ), ARRAY_A );
+		$file_row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_FILES_TABLE . ' WHERE filestatus = %s LIMIT 1', Urlslab_Driver::STATUS_NEW ), ARRAY_A ); // phpcs:ignore
 		if ( empty( $file_row ) ) {
 			return false;
 		}
@@ -109,14 +101,41 @@ class Urlslab_Offload_Cron {
 		}
 
 		//update status to pending
-		$wpdb->update( URLSLAB_FILES_TABLE, array( 'filestatus' => Urlslab_Driver::STATUS_PENDING ), array( 'fileid' => $file->get_fileid(), 'filestatus' => Urlslab_Driver::STATUS_NEW ) );
+		$wpdb->update(
+			URLSLAB_FILES_TABLE,
+			array(
+				'filestatus' => Urlslab_Driver::STATUS_PENDING,
+			),
+			array(
+				'fileid' => $file->get_fileid(),
+				'filestatus' => Urlslab_Driver::STATUS_NEW,
+			)
+		);
 
 		if ( Urlslab_Driver::get_driver( $file )->upload_content( $file ) ) {
 			//update status to active
-			$wpdb->update( URLSLAB_FILES_TABLE, array( 'filestatus' => Urlslab_Driver::STATUS_ACTIVE ), array( 'fileid' => $file->get_fileid(), 'filestatus' => Urlslab_Driver::STATUS_PENDING ) );
+			$wpdb->update(
+				URLSLAB_FILES_TABLE,
+				array(
+					'filestatus' => Urlslab_Driver::STATUS_ACTIVE,
+				),
+				array(
+					'fileid' => $file->get_fileid(),
+					'filestatus' => Urlslab_Driver::STATUS_PENDING,
+				)
+			);
 		} else {
 			//something went wrong, set status error
-			$wpdb->update( URLSLAB_FILES_TABLE, array( 'filestatus' => Urlslab_Driver::STATUS_ERROR ), array( 'fileid' => $file->get_fileid(), 'filestatus' => Urlslab_Driver::STATUS_PENDING ) );
+			$wpdb->update(
+				URLSLAB_FILES_TABLE,
+				array(
+					'filestatus' => Urlslab_Driver::STATUS_ERROR,
+				),
+				array(
+					'fileid' => $file->get_fileid(),
+					'filestatus' => Urlslab_Driver::STATUS_PENDING,
+				)
+			);
 		}
 		return true;
 	}

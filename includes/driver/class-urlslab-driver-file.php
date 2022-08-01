@@ -56,7 +56,7 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 
 		while ( ! feof( $handle ) ) {
 			$buffer = @fread( $handle, 1024 * 8 );
-			echo $buffer;
+			echo $buffer; // phpcs:ignore
 			ob_flush();
 			flush();
 			if ( connection_status() != 0 ) {

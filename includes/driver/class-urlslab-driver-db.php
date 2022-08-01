@@ -45,14 +45,17 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 	function output_file_content( Urlslab_File_Data $file_obj ) {
 		global $wpdb;
 		if ( is_object( $wpdb->dbh ) && $wpdb->use_mysqli ) {
-			$records = $wpdb->dbh->query( $wpdb->prepare( 'select content from %s WHERE fileid=%s ORDER BY contentid', URLSLAB_FILE_CONTENTS_TABLE, $file_obj->get_fileid() ) );
+			$records = $wpdb->dbh->query( $wpdb->prepare( 'select content from ' . URLSLAB_FILE_CONTENTS_TABLE . ' WHERE fileid=%s ORDER BY contentid', $file_obj->get_fileid() ) ); // phpcs:ignore
+			if ( false === $records ) {
+				return; //no content???
+			}
 			while ( $data = $records->fetch_assoc() ) {
-				echo $data['content'];
+				echo $data['content']; // phpcs:ignore
 				ob_flush();
 				flush();
 			}
 		} else {
-			echo $this->get_file_content( $file_obj );
+			echo $this->get_file_content( $file_obj ); // phpcs:ignore
 			ob_flush();
 			flush();
 		}
@@ -60,7 +63,7 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 
 	function get_file_content( Urlslab_File_Data $file_obj ) {
 		global $wpdb;
-		$results = $wpdb->get_results( $wpdb->prepare( 'select content from %s WHERE fileid=%s ORDER BY contentid', URLSLAB_FILE_CONTENTS_TABLE, $file_obj->get_fileid() ), ARRAY_A );
+		$results = $wpdb->get_results( $wpdb->prepare( 'select content from ' . URLSLAB_FILE_CONTENTS_TABLE . ' WHERE fileid=%s ORDER BY contentid', $file_obj->get_fileid() ), ARRAY_A ); // phpcs:ignore
 		if ( empty( $results ) ) {
 			return false;
 		}
