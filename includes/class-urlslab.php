@@ -160,12 +160,12 @@ class Urlslab {
 	 * @access   private
 	 */
 	private function load_dependencies() {
-    require_once URLSLAB_PLUGIN_DIR . '/vendor/autoload.php';
+		require_once URLSLAB_PLUGIN_DIR . '/vendor/autoload.php';
 
-/**
-		 * The class responsible for orchestrating the actions and filters of the
-		 * core plugin.
-		 */
+		/**
+				 * The class responsible for orchestrating the actions and filters of the
+				 * core plugin.
+				 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-urlslab-loader.php';
 
 		/**
@@ -204,7 +204,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-screenshot-widget.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-related-resources-widget.php';
-    require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-media-offloader-widget.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-media-offloader-widget.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-link-enhancer.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-keywords-links.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-image-alt-text.php';
@@ -244,9 +244,9 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
-    require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
-    require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-data-fetcher.php';
-    require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-data-fetcher.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
 
 
 		$this->loader = new Urlslab_Loader();

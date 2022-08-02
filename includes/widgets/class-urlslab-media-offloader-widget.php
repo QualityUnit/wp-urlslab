@@ -40,7 +40,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	 * @param string $widget_description
 	 * @param string $landing_page_link
 	 */
-	public function __construct( ) {
+	public function __construct() {
 		$this->widget_slug = 'urlslab-media-offloader';
 		$this->widget_title = 'Media Offloader';
 		$this->widget_description = 'Offload media files from local directory to database or S3';
@@ -177,7 +177,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			libxml_clear_errors();
 			libxml_use_internal_errors( $libxml_previous_state );
 
-			//TODO: we need to iterate also other types of elements (e.g. script, style, etc.)
 			$iterate_elements = array(
 				'img' => array( 'src', 'data-src', 'data-full-url' ),
 				'video' => array( 'src', 'data-src' ),
@@ -329,11 +328,11 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	public function get_parent_page(): Urlslab_Admin_Page {
-		// TODO: Implement get_parent_page() method.
+		return Urlslab_Page_Factory::get_instance()->get_page( 'media-offloader' );
 	}
 
 	public function get_widget_tab(): string {
-		// TODO: Implement get_widget_tab() method.
+		return '';
 	}
 
 	public function render_widget_overview() {
@@ -341,10 +340,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	public function get_thumbnail_demo_url(): string {
-		// TODO: Implement get_thumbnail_demo_url() method.
+		return '';
 	}
 
 	public function get_widget_settings(): array {
-		// TODO: Implement get_widget_settings() method.
+		return array();
 	}
 }
