@@ -81,4 +81,20 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 	function is_connected() {
 		return true;
 	}
+
+	public function save_to_file( Urlslab_File_Data $file, $file_name ): bool {
+		$fhandle = fopen($file_name, 'wb');
+
+		global $wpdb;
+		$results = $wpdb->get_results( $wpdb->prepare( 'select content from ' . URLSLAB_FILE_CONTENTS_TABLE . ' WHERE fileid=%s ORDER BY contentid', $file->get_fileid() ), ARRAY_A ); // phpcs:ignore
+		if ( ! empty( $results ) ) {
+			foreach ( $results as $row ) {
+				fwrite($fhandle, $row['content']);
+			}
+		} else {
+			return false;
+		}
+		fclose($fhandle);
+		return true;
+	}
 }

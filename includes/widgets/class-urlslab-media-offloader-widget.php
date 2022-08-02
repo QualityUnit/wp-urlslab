@@ -22,7 +22,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	private string $landing_page_link;
 
 	public const SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND = 'urlslab_imp_posts_bg';
-
+	public const SETTING_DEFAULT_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND = 0;
 
 	//automatically offload external images found in every page content (starting with damain name different as current page)
 	public const SETTING_NAME_SAVE_EXTERNAL = 'urlslab_save_ext';
@@ -30,10 +30,19 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	//automatically offload internal images found in every page content (starting with damain name same as current page)
 	public const SETTING_NAME_SAVE_INTERNAL = 'urlslab_save_int';
-	public const SETTING_DEFAULT_SAVE_INTERNAL = 1;
+	public const SETTING_DEFAULT_SAVE_INTERNAL = 0;
 
 	public const SETTING_NAME_NEW_FILE_DRIVER = 'urlslab_new_file_driver';
-	public const SETTING_DEFAULT_NEW_FILE_DRIVER = Urlslab_Driver::DRIVER_S3;
+	public const SETTING_DEFAULT_NEW_FILE_DRIVER = Urlslab_Driver::DRIVER_DB;
+
+	//TRANSFER SETTINGS
+	public const SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES = 'urlslab_transfer_' . Urlslab_Driver::DRIVER_LOCAL_FILE;
+	public const SETTING_NAME_TRANSFER_FROM_DRIVER_S3 = 'urlslab_transfer_' . Urlslab_Driver::DRIVER_S3;
+	public const SETTING_NAME_TRANSFER_FROM_DRIVER_DB = 'urlslab_transfer_' . Urlslab_Driver::DRIVER_DB;
+	public const SETTING_DEFAULT_TRANSFER_FROM_DRIVER_LOCAL_FILES = 0;
+	public const SETTING_DEFAULT_TRANSFER_FROM_DRIVER_S3 = 0;
+	public const SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB = 0;
+
 
 	/**
 	 * @param string $widget_slug
