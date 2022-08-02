@@ -260,7 +260,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		if (
 			!
 				(
-					get_option( self::SETTING_NAME_SAVE_EXTERNAL, self::SETTING_DEFAULT_SAVE_EXTERNAL )  ||
+					get_option( self::SETTING_NAME_SAVE_EXTERNAL, self::SETTING_DEFAULT_SAVE_EXTERNAL ) ||
 					get_option( self::SETTING_NAME_SAVE_INTERNAL, self::SETTING_DEFAULT_SAVE_INTERNAL )
 				)
 		) {
