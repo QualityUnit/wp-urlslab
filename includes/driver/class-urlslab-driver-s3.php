@@ -85,7 +85,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 				// in case CDN is configured with custom url prefix to load static files from S3 directly
 				return get_option( self::SETTING_NAME_S3_URL_PREFIX ) . $this->get_file_dir( $file ) . $file->get_filename();
 			}
-			
+
 			//we will proxy content of file
 			return site_url( self::DOWNLOAD_URL_PATH . urlencode( $file->get_fileid() ) . '/' . urlencode( $file->get_filename() ) );
 		}

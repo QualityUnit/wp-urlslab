@@ -13,15 +13,16 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-file-data.ph
 
 class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
-	private string $widget_slug = 'urlslab-media-offloader';
+	private string $widget_slug;
 
-	private string $widget_title = 'Media Offloader';
+	private string $widget_title;
 
-	private string $widget_description = 'Offload media files from local directory to database or S3';
+	private string $widget_description;
 
-	private string $landing_page_link = 'https://www.urlslab.com';
+	private string $landing_page_link;
 
-	private $urls_cache = array();
+	public const SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND = 'urlslab_imp_posts_bg';
+
 
 	//offload also external media to our storage
 	public const SETTING_NAME_SAVE_EXTERNAL = 'urlslab_save_ext';
@@ -33,8 +34,18 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public const SETTING_NAME_NEW_FILE_DRIVER = 'urlslab_new_file_driver';
 	public const SETTING_DEFAULT_NEW_FILE_DRIVER = Urlslab_Driver::DRIVER_S3;
 
-	public const SETTING_NAME_TRANSFER_DB_TO_S3 = 'urlslab_transf_db_2_s3';
-	public const SETTING_DEFAULT_TRANSFER_DB_TO_S3 = 0;
+	/**
+	 * @param string $widget_slug
+	 * @param string $widget_title
+	 * @param string $widget_description
+	 * @param string $landing_page_link
+	 */
+	public function __construct( ) {
+		$this->widget_slug = 'urlslab-media-offloader';
+		$this->widget_title = 'Media Offloader';
+		$this->widget_description = 'Offload media files from local directory to database or S3';
+		$this->landing_page_link = 'https://www.urlslab.com';
+	}
 
 
 	public function init_widget( Urlslab_Loader $loader ) {
@@ -315,5 +326,25 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			array_unshift( $found_urls, gmdate( 'Y-m-d H:i:s' ) );
 			$wpdb->query( $wpdb->prepare( $query, $found_urls ) ); // phpcs:ignore
 		}
+	}
+
+	public function get_parent_page(): Urlslab_Admin_Page {
+		// TODO: Implement get_parent_page() method.
+	}
+
+	public function get_widget_tab(): string {
+		// TODO: Implement get_widget_tab() method.
+	}
+
+	public function render_widget_overview() {
+		// TODO: Implement render_widget_overview() method.
+	}
+
+	public function get_thumbnail_demo_url(): string {
+		// TODO: Implement get_thumbnail_demo_url() method.
+	}
+
+	public function get_widget_settings(): array {
+		// TODO: Implement get_widget_settings() method.
 	}
 }

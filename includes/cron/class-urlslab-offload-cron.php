@@ -13,7 +13,9 @@ class Urlslab_Offload_Cron {
 	public function urlslab_cron_exec() {
 		$this->start_time = time();
 		$this->offload_files_from_queue();
-		$this->schedule_post_attachments();
+		if ( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND, false ) ) {
+			$this->schedule_post_attachments();
+		}
 	}
 
 	public function schedule_post_attachments() {
