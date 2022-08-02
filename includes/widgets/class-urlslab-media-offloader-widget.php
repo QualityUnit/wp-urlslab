@@ -159,6 +159,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		$document->strictErrorChecking = false; // phpcs:ignore
 		$libxml_previous_state = libxml_use_internal_errors( true );
 		$urls = array();
+		$found_urls = array();
 
 		try {
 			$document->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', 'UTF-8' ) );
@@ -205,10 +206,13 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 						foreach ( $elements as $element ) {
 							$element->setAttribute( $attribute_name, $new_url );
 						}
+						$found_urls[] = $fileid;
 					}
 				}
 				unset( $urls[ $fileid ] );//remove processed urls, so we will have at the end in this array just urls not in database
 			}
+
+			$this->update_last_seen_date( $found_urls );
 
 			$this->schedule_missing_images( $urls );
 			if ( count( $new_urls ) > 0 ) {
@@ -300,5 +304,14 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 		$driver = Urlslab_Driver::get_driver( $file );
 		$driver->output_file_content( $file );
+	}
+
+	private function update_last_seen_date( array $found_urls ) {
+		if ( ! empty( $found_urls ) ) {
+			global $wpdb;
+			$query = 'UPDATE ' . URLSLAB_FILES_TABLE . ' SET last_seen = %s WHERE fileid IN (' . implode(',', array_fill(0, count($found_urls),'%s')) . ')'; // phpcs:ignore
+			array_unshift( $found_urls, date( 'Y-m-d H:i:s' ) );
+			$wpdb->query( $wpdb->prepare( $query, $found_urls ) ); // phpcs:ignore
+		}
 	}
 }

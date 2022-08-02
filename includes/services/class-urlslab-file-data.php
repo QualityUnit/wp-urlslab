@@ -12,6 +12,7 @@ class Urlslab_File_Data {
 	private $filestatus;
 	private $local_file;
 	private $driver;
+	private $last_seen;
 
 	static $mime_types = array(
 		'txt' => 'text/plain',
@@ -230,6 +231,7 @@ class Urlslab_File_Data {
 		$this->filestatus = $file['filestatus'] ?? '';
 		$this->local_file = $file['local_file'] ?? '';
 		$this->driver = $file['driver'] ?? '';
+		$this->last_seen = $file['last_seen'] ?? null;
 	}
 
 	public function get_fileid() {
@@ -326,4 +328,5 @@ class Urlslab_File_Data {
 
 		return 'application/octet-stream';
 	}
+
 }

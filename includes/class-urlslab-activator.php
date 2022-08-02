@@ -48,7 +48,7 @@ class Urlslab_Activator {
 
 	private static function upgrade_steps() {
 		global $wpdb;
-		$version = get_option( URLSLAB_VERSION_SETTING, '1.0.0' );
+		$version = get_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 
 		if ( version_compare( $version, '1.2.0', '<' ) ) {
 			$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_KEYWORDS_TABLE ); // phpcs:ignore
@@ -57,6 +57,9 @@ class Urlslab_Activator {
 			update_option( URLSLAB_VERSION_SETTING, '1.2.0' );
 		}
 
+		if ( version_compare( $version, '1.3.0', '<' ) ) {
+			$wpdb->query('ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD COLUMN last_seen DATETIME NULL;'); // phpcs:ignore
+		}
 		//all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -148,6 +151,7 @@ class Urlslab_Activator {
 			  height mediumint(8) UNSIGNED ZEROFILL DEFAULT NULL,
 			  filestatus char(1) NOT NULL,
 			  driver char(1) NOT NULL,
+    		  last_seen datetime NULL,
 			  PRIMARY KEY (fileid)
 		) $charset_collate;";
 
