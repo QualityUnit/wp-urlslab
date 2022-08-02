@@ -24,9 +24,13 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public const SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND = 'urlslab_imp_posts_bg';
 
 
-	//offload also external media to our storage
+	//automatically offload external images found in every page content (starting with damain name different as current page)
 	public const SETTING_NAME_SAVE_EXTERNAL = 'urlslab_save_ext';
-	public const SETTING_DEFAULT_SAVE_EXTERNAL = 1;
+	public const SETTING_DEFAULT_SAVE_EXTERNAL = 0;
+
+	//automatically offload internal images found in every page content (starting with damain name same as current page)
+	public const SETTING_NAME_SAVE_INTERNAL = 'urlslab_save_int';
+	public const SETTING_DEFAULT_SAVE_INTERNAL = 1;
 
 	public const SETTING_NAME_SAVE_MISSING = 'urlslab_save_missing';
 	public const SETTING_DEFAULT_SAVE_MISSING = 1;
@@ -265,7 +269,14 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 		foreach ( $urls as $fileid => $attr_elements ) {
 			foreach ( $attr_elements as $attr => $elements ) {
-				if ( urlslab_is_same_domain_url( $elements[0]->getAttribute( $attr ) ) || get_option( self::SETTING_NAME_SAVE_EXTERNAL, self::SETTING_DEFAULT_SAVE_EXTERNAL ) ) {
+				if (
+						(
+							urlslab_is_same_domain_url( $elements[0]->getAttribute( $attr ) ) &&
+							get_option( self::SETTING_NAME_SAVE_INTERNAL, self::SETTING_DEFAULT_SAVE_INTERNAL )
+						)
+						||
+						get_option( self::SETTING_NAME_SAVE_EXTERNAL, self::SETTING_DEFAULT_SAVE_EXTERNAL )
+				) {
 					$placeholders[] = '(%s, %s, %s, %s)';
 					array_push( $values, $fileid, $elements[0]->getAttribute( $attr ), Urlslab_Driver::STATUS_NEW, get_option( self::SETTING_NAME_NEW_FILE_DRIVER, self::SETTING_DEFAULT_NEW_FILE_DRIVER ) );
 				}
