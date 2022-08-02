@@ -12,22 +12,22 @@ class Urlslab_Offload_Cron {
 
 	public function urlslab_cron_exec() {
 		$this->start_time = time();
-		$this->transfer_files_between_storages();
 		$this->offload_files_from_queue();
-		if ( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ) ) {
-			$this->schedule_post_attachments();
-		}
+		$this->schedule_post_attachments();
+		$this->transfer_files_between_storages();
 	}
 
 	public function schedule_post_attachments() {
-		while ( time() - $this->start_time < self::MAX_RUN_TIME ) {
-			try {
-				$processed = $this->schedule_post_attachments_batch();
-				if ( 0 == $processed ) {
+		if ( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ) ) {
+			while ( time() - $this->start_time < self::MAX_RUN_TIME ) {
+				try {
+					$processed = $this->schedule_post_attachments_batch();
+					if ( 0 == $processed ) {
+						break;
+					}
+				} catch ( Exception $e ) {
 					break;
 				}
-			} catch ( Exception $e ) {
-				break;
 			}
 		}
 	}
