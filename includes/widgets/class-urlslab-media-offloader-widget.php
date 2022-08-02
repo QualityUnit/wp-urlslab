@@ -32,9 +32,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public const SETTING_NAME_SAVE_INTERNAL = 'urlslab_save_int';
 	public const SETTING_DEFAULT_SAVE_INTERNAL = 1;
 
-	public const SETTING_NAME_SAVE_MISSING = 'urlslab_save_missing';
-	public const SETTING_DEFAULT_SAVE_MISSING = 1;
-
 	public const SETTING_NAME_NEW_FILE_DRIVER = 'urlslab_new_file_driver';
 	public const SETTING_DEFAULT_NEW_FILE_DRIVER = Urlslab_Driver::DRIVER_S3;
 
@@ -260,7 +257,13 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	private function schedule_missing_images( array $urls ) {
-		if ( ! get_option( self::SETTING_NAME_SAVE_MISSING, self::SETTING_DEFAULT_SAVE_MISSING ) ) {
+		if (
+			!
+				(
+					get_option( self::SETTING_NAME_SAVE_EXTERNAL, self::SETTING_DEFAULT_SAVE_EXTERNAL )  ||
+					get_option( self::SETTING_NAME_SAVE_INTERNAL, self::SETTING_DEFAULT_SAVE_INTERNAL )
+				)
+		) {
 			return;
 		}
 
