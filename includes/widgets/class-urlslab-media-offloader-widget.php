@@ -162,7 +162,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		ob_start(
 			array(
 				$this,
-				'the_content'
+				'the_content',
 			)
 		);
 	}
@@ -193,11 +193,11 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 					'src',
 					'data-src',
 					'data-full-url',
-					'srcset'
+					'srcset',
 				),
 				'video' => array(
 					'src',
-					'data-src'
+					'data-src',
 				),
 				'source' => array( 'srcset' ),
 			);
@@ -225,7 +225,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 								);
 								$urls[ $file_obj->get_fileid() ][ $attr ][] = array(
 									'element' => $dom_img_element,
-									'url' => $url_val[0]
+									'url' => $url_val[0],
 								);
 							}
 						}
@@ -275,7 +275,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			$wpdb->prepare(
 				'SELECT * FROM ' . URLSLAB_FILES_TABLE . ' WHERE fileid in (' . trim( str_repeat( '%s,', count( $old_url_ids ) ), ',' ) . ')', // phpcs:ignore
 				$old_url_ids
-			), 'ARRAY_A'
+			),
+            'ARRAY_A'
 		);
 		foreach ( $results as $file_array ) {
 			$file_obj = new Urlslab_File_Data( $file_array );
