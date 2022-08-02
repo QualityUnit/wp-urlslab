@@ -72,11 +72,6 @@ class Urlslab_Offload_Cron {
 
 			$placeholders[] = '(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)';
 			array_push( $values, $file->get_fileid(), $file->get_url(), $file->get_filename(), $file->get_filesize(), $file->get_filetype(), $file->get_width(), $file->get_height(), $file->get_filestatus(), $file->get_local_file(), $file->get_driver() );
-
-			if (wp_attachment_is_image( $post_id )) {
-				//TODO load all thumbnails/sizes of given file
-
-			}
 		}
 
 		if ( count( $placeholders ) ) {

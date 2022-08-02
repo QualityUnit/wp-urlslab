@@ -15,6 +15,9 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 	private $client;
 
 	function get_file_content( Urlslab_File_Data $file_obj ) {
+		if ( ! $this->is_configured() ) {
+			return false;
+		}
 		$result = $this->getClient()->getObject(
 			array(
 				'Bucket' => $this->get_bucket_name(),
@@ -31,6 +34,10 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 	}
 
 	function output_file_content( Urlslab_File_Data $file_obj ) {
+		if ( ! $this->is_configured() ) {
+			return;
+		}
+
 		$result = $this->getClient()->getObject(
 			array(
 				'Bucket' => $this->get_bucket_name(),
@@ -47,6 +54,9 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 	}
 
 	function save_file_to_storage( Urlslab_File_Data $file_obj, string $local_file_name ):bool {
+		if ( ! $this->is_configured() ) {
+			return false;
+		}
 		// Prepare the upload parameters.
 		$uploader = new MultipartUploader(
 			$this->getClient(),
@@ -70,21 +80,20 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 	}
 
 	public function get_url( Urlslab_File_Data $file ) {
-		//TODO we can use also php proxy to access files in S3 or custom CDN url
-		return site_url( self::DOWNLOAD_URL_PATH . urlencode( $file->get_fileid() ) . '/' . urlencode( $file->get_filename() ) );
-
-		return get_option( self::SETTING_NAME_S3_URL_PREFIX, 'https://cdn.s3.liveagent.com' ) . $this->get_file_dir( $file ) . $file->get_filename();
+		if ( $this->is_configured() ) {
+			if ( get_option( self::SETTING_NAME_S3_URL_PREFIX ) ) {
+				// in case CDN is configured with custom url prefix to load static files from S3 directly
+				return get_option( self::SETTING_NAME_S3_URL_PREFIX ) . $this->get_file_dir( $file ) . $file->get_filename();
+			}
+			
+			//we will proxy content of file
+			return site_url( self::DOWNLOAD_URL_PATH . urlencode( $file->get_fileid() ) . '/' . urlencode( $file->get_filename() ) );
+		}
+		return false;
 	}
 
 	function is_connected() {
-		if (
-			! $this->get_bucket_name() ||
-			! $this->get_access_key() ||
-			! $this->get_secret()
-		) {
-			return false;
-		}
-		return $this->getClient()->doesBucketExist( $this->get_bucket_name() );
+		return $this->is_configured() && $this->getClient()->doesBucketExist( $this->get_bucket_name() );
 	}
 
 	private function getClient(): S3Client {
@@ -118,7 +127,6 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 	 * @return false|mixed|void
 	 */
 	private function get_access_key() {
-		//TODO remove default value
 		return get_option( self::SETTING_NAME_S3_ACCESS_KEY );
 	}
 
@@ -126,8 +134,10 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 	 * @return false|mixed|void
 	 */
 	private function get_secret() {
-		//TODO remove default value
 		return get_option( self::SETTING_NAME_S3_SECRET );
 	}
 
+	private function is_configured() {
+		return $this->get_region() && $this->get_access_key() && $this->get_bucket_name() && $this->get_secret();
+	}
 }

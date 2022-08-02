@@ -202,11 +202,13 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				if ( $file_obj->get_filestatus() == Urlslab_Driver::STATUS_ACTIVE ) {
 					//set new url to all elements with this url
 					$new_url = Urlslab_Driver::get_driver( $file_obj )->get_url( $file_obj );
-					foreach ( $urls[ $fileid ] as $attribute_name => $elements ) {
-						foreach ( $elements as $element ) {
-							$element->setAttribute( $attribute_name, $new_url );
+					if ( $new_url ) {
+						foreach ( $urls[ $fileid ] as $attribute_name => $elements ) {
+							foreach ( $elements as $element ) {
+								$element->setAttribute( $attribute_name, $new_url );
+							}
+							$found_urls[] = $fileid;
 						}
-						$found_urls[] = $fileid;
 					}
 				}
 				unset( $urls[ $fileid ] );//remove processed urls, so we will have at the end in this array just urls not in database
@@ -310,7 +312,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		if ( ! empty( $found_urls ) ) {
 			global $wpdb;
 			$query = 'UPDATE ' . URLSLAB_FILES_TABLE . ' SET last_seen = %s WHERE fileid IN (' . implode(',', array_fill(0, count($found_urls),'%s')) . ')'; // phpcs:ignore
-			array_unshift( $found_urls, date( 'Y-m-d H:i:s' ) );
+			array_unshift( $found_urls, gmdate( 'Y-m-d H:i:s' ) );
 			$wpdb->query( $wpdb->prepare( $query, $found_urls ) ); // phpcs:ignore
 		}
 	}
