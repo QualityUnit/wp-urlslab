@@ -198,8 +198,8 @@ class Urlslab_Offload_Cron {
 		if (
 			Urlslab_Driver::get_driver( $file )->save_to_file( $file, $tmp_name ) &&
 			(
-				filesize( $tmp_name) == $file->get_filesize() ||
-				( 0 == $file->get_filesize() && 0 < filesize( $tmp_name) )
+				filesize( $tmp_name ) == $file->get_filesize() ||
+				( 0 == $file->get_filesize() && 0 < filesize( $tmp_name ) )
 			)
 		) {
 			//set new driver of storage
