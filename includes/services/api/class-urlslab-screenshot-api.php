@@ -1,11 +1,5 @@
 <?php
 
-require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-api.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/urlslab-api-model.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-batch-request.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-url-data-response.php';
-require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-error-response.php';
-
 /**
  * Urlslab Service Interface
  *
@@ -37,11 +31,6 @@ class Urlslab_Screenshot_Api extends Urlslab_Api {
 			}
 
 			return $returning_obj;
-		} else if ( 400 == $response[0] ) {
-			return new Urlslab_Screenshot_Error_Response(
-				$response[1]['errorType'],
-				$response[1]['errorMsg']
-			);
 		} else if ( 429 == $response[0] ) {
 			throw new Exception( 'Rate limit reached' );
 		} else {

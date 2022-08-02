@@ -1,6 +1,5 @@
 <?php
 
-require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
 ?>
 
 <div class="wrap">

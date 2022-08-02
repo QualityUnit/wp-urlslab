@@ -24,7 +24,7 @@ class Urlslab_Api_Key {
 			$masked_text = $masked_text . '*';
 		}
 
-		return $masked_text . substr( $text, -5, -1 );
+		return $masked_text . substr( $text, -5 );
 	}
 
 	/**
@@ -52,6 +52,10 @@ class Urlslab_Api_Key {
 	public function add_key_to_header( array $header ): array {
 		$header['x-Api-Key'] = $this->api_key;
 		return $header;
+	}
+
+	public function get_api_key_hash(): string {
+		return md5( $this->api_key );
 	}
 
 }
