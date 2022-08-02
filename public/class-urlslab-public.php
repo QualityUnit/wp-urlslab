@@ -26,7 +26,7 @@ class Urlslab_Public {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
+	 * @var      string $plugin_name The ID of this plugin.
 	 */
 	private string $urlslab;
 
@@ -35,16 +35,16 @@ class Urlslab_Public {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
+	 * @var      string $version The current version of this plugin.
 	 */
 	private string $version;
 
 	/**
 	 * Initialize the class and set its properties.
 	 *
-	 * @param      string    $urlslab       The name of the plugin.
-	 * @param      string    $version    The version of this plugin.
-	 *@since    1.0.0
+	 * @param string $urlslab The name of the plugin.
+	 * @param string $version The version of this plugin.
+	 * @since    1.0.0
 	 */
 	public function __construct( $urlslab, $version ) {
 
@@ -80,6 +80,13 @@ class Urlslab_Public {
 		ob_end_clean();
 		$og_meta_tag = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-meta-tag' );
 		echo $og_meta_tag->theContentHook( $content ); // phpcs:ignore
+	}
+
+	public function downoad_offloaded_file() {
+		if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], Urlslab_Driver::DOWNLOAD_URL_PATH ) !== false ) {
+			Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-media-offloader' )->output_content();
+			exit();
+		}
 	}
 
 }

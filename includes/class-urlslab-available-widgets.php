@@ -1,6 +1,5 @@
 <?php
 
-
 class Urlslab_Available_Widgets {
 
 	private array $available_widgets;
@@ -32,7 +31,7 @@ class Urlslab_Available_Widgets {
 		$urlslab_keyword_links = new Urlslab_Keywords_Links();
 		$urlslab_image_alt_text = new Urlslab_Image_Alt_Text();
 		$urlslab_og_meta_tag = new Urlslab_Meta_Tag( $url_fetcher );
-
+		$urlslab_media_offloader = new Urlslab_Media_Offloader_Widget();
 
 		$this->available_widgets = array(
 			$urlslab_screenshot->get_widget_slug() => $urlslab_screenshot,
@@ -41,6 +40,7 @@ class Urlslab_Available_Widgets {
 			$urlslab_keyword_links->get_widget_slug() => $urlslab_keyword_links,
 			$urlslab_image_alt_text->get_widget_slug() => $urlslab_image_alt_text,
 			$urlslab_og_meta_tag->get_widget_slug() => $urlslab_og_meta_tag,
+			$urlslab_media_offloader->get_widget_slug() => $urlslab_media_offloader,
 		);
 	}
 

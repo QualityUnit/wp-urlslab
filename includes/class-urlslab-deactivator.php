@@ -32,6 +32,9 @@ class Urlslab_Deactivator {
 	public static function deactivate() {
 		$timestamp = wp_next_scheduled( 'urlslab_cron_hook' );
 		wp_unschedule_event( $timestamp, 'urlslab_cron_hook' );
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-cron.php';
+		delete_option( Urlslab_Offload_Cron::SETTING_NAME_SCHEDULER_POINTER );
 	}
 
 }

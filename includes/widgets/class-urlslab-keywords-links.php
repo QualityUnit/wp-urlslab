@@ -203,6 +203,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	private function init_keywords_cache( $input_text ) {
 		global $wpdb;
 
+
 		$keyword_table = URLSLAB_KEYWORDS_TABLE;
 
 		$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kwMd5, keyword, urlLink, urlFilter FROM ' . $keyword_table . " WHERE (lang = %s OR lang = 'all') ORDER BY kw_priority ASC, kw_length DESC", urlslab_get_language() ), 'ARRAY_A' );
