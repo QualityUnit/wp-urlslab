@@ -32,7 +32,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public const SETTING_DEFAULT_SAVE_MISSING = 1;
 
 	public const SETTING_NAME_NEW_FILE_DRIVER = 'urlslab_new_file_driver';
-	public const SETTING_DEFAULT_NEW_FILE_DRIVER = Urlslab_Driver::DRIVER_S3;
+	public const SETTING_DEFAULT_NEW_FILE_DRIVER = Urlslab_Driver::DRIVER_DB;
 
 	/**
 	 * @param string $widget_slug
@@ -50,7 +50,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	public function init_widget( Urlslab_Loader $loader ) {
 		$loader->add_action( 'wp_handle_upload', $this, 'wp_handle_upload', 10, 1 );
-		$loader->add_filter( 'the_content', $this, 'the_content' );
+		//$loader->add_filter( 'the_content', $this, 'the_content' );
+
+        $loader->add_action('wp_body_open', $this, 'buffer_start');
+        $loader->add_action('wp_footer', $this, 'buffer_end', 99);
 	}
 
 	/**
@@ -160,6 +163,14 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		return '';
 	}
 
+    function buffer_start() {
+        ob_start( array( $this, 'the_content' ) );
+    }
+
+    function buffer_end() {
+        ob_end_flush();
+    }
+
 	public function the_content( $content ) {
 		if ( empty( $content ) ) {
 			return $content;    //nothing to process
@@ -178,8 +189,9 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			libxml_use_internal_errors( $libxml_previous_state );
 
 			$iterate_elements = array(
-				'img' => array( 'src', 'data-src', 'data-full-url' ),
+				'img' => array( 'src', 'data-src', 'data-full-url', 'srcset' ),
 				'video' => array( 'src', 'data-src' ),
+                'source' => array( 'srcset'),
 			);
 
 			foreach ( $iterate_elements as $tag_name => $tag_attributes ) {
@@ -195,17 +207,24 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 					}
 					foreach ( $tag_attributes as $attr ) {
 						if ( strlen( $dom_img_element->getAttribute( $attr ) ) ) {
-							$file_obj = new Urlslab_File_Data(
-								array(
-									'url' => $dom_img_element->getAttribute( $attr ),
-								)
-							);
-							$urls[ $file_obj->get_fileid() ][ $attr ][] = $dom_img_element;
+                            $urlvalues = explode(',', $dom_img_element->getAttribute( $attr ));
+                            foreach ( $urlvalues as $url_value ) {
+                                $url_val = explode(' ', trim( $url_value ) );
+                                $file_obj = new Urlslab_File_Data(
+                                    array(
+                                        'url' => $url_val[0],
+                                    )
+                                );
+                                $urls[ $file_obj->get_fileid() ][ $attr ][] = array( 'element' => $dom_img_element, 'url' => $url_val[0] );
+                            }
 						}
 					}
 				}
 			}
 
+            if ( empty( $urls ) ) {
+                return $content;
+            }
 			$new_urls = $this->get_new_urls( array_keys( $urls ) );
 
 			foreach ( $new_urls as $fileid => $file_obj ) {
@@ -215,7 +234,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 					if ( $new_url ) {
 						foreach ( $urls[ $fileid ] as $attribute_name => $elements ) {
 							foreach ( $elements as $element ) {
-								$element->setAttribute( $attribute_name, $new_url );
+                                $element['element']->setAttribute( $attribute_name, str_replace( $element['url'], $new_url, $element['element']->getAttribute( $attribute_name ) ) );
 							}
 							$found_urls[] = $fileid;
 						}
@@ -265,9 +284,9 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 		foreach ( $urls as $fileid => $attr_elements ) {
 			foreach ( $attr_elements as $attr => $elements ) {
-				if ( urlslab_is_same_domain_url( $elements[0]->getAttribute( $attr ) ) || get_option( self::SETTING_NAME_SAVE_EXTERNAL, self::SETTING_DEFAULT_SAVE_EXTERNAL ) ) {
+				if ( urlslab_is_same_domain_url( $elements[0]['url'] ) || get_option( self::SETTING_NAME_SAVE_EXTERNAL, self::SETTING_DEFAULT_SAVE_EXTERNAL ) ) {
 					$placeholders[] = '(%s, %s, %s, %s)';
-					array_push( $values, $fileid, $elements[0]->getAttribute( $attr ), Urlslab_Driver::STATUS_NEW, get_option( self::SETTING_NAME_NEW_FILE_DRIVER, self::SETTING_DEFAULT_NEW_FILE_DRIVER ) );
+					array_push( $values, $fileid, $elements[0]['url'], Urlslab_Driver::STATUS_NEW, get_option( self::SETTING_NAME_NEW_FILE_DRIVER, self::SETTING_DEFAULT_NEW_FILE_DRIVER ) );
 				}
 			}
 		}
