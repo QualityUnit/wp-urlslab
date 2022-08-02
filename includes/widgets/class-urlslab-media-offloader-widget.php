@@ -52,8 +52,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		$loader->add_action( 'wp_handle_upload', $this, 'wp_handle_upload', 10, 1 );
 		//$loader->add_filter( 'the_content', $this, 'the_content' );
 
-        $loader->add_action('wp_body_open', $this, 'buffer_start');
-        $loader->add_action('wp_footer', $this, 'buffer_end', 99);
+		$loader->add_action( 'wp_body_open', $this, 'buffer_start' );
+		$loader->add_action( 'wp_footer', $this, 'buffer_end', 99 );
 	}
 
 	/**
@@ -85,16 +85,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	public function load_widget_page() {
-		?>
-		<div class="wrap">
-			<h2>Media offloader</h2>
-
-		</div>
-		<?php
+		?><div class="wrap"><h2>Media offloader</h2></div><?php
 	}
 
 	public function widget_admin_load() {
-
 	}
 
 	/**
@@ -117,37 +111,17 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	public function wp_handle_upload( &$file, $overrides = false, $time = null ) {
 		global $wpdb;
-		$file_obj = new Urlslab_File_Data(
-			array(
-				'url' => $file['url'],
-				'local_file' => $file['file'],
-				'filetype' => $file['type'],
-				'filename' => basename( $file['file'] ),
-				'filesize' => filesize( $file['file'] ),
-				'filestatus' => Urlslab_Driver::STATUS_NEW,
-				'driver' => get_option( self::SETTING_NAME_NEW_FILE_DRIVER, self::SETTING_DEFAULT_NEW_FILE_DRIVER ),
-			)
-		);
+		$file_obj = new Urlslab_File_Data( array(
+											   'url' => $file['url'], 'local_file' => $file['file'], 'filetype' => $file['type'], 'filename' => basename( $file['file'] ), 'filesize' => filesize( $file['file'] ), 'filestatus' => Urlslab_Driver::STATUS_NEW, 'driver' => get_option( self::SETTING_NAME_NEW_FILE_DRIVER, self::SETTING_DEFAULT_NEW_FILE_DRIVER ),
+										   ) );
 
 		$data = array(
-			'fileid' => $file_obj->get_fileid(),
-			'url' => $file_obj->get_url(),
-			'local_file' => $file_obj->get_local_file(),
-			'filename' => $file_obj->get_filename(),
-			'filesize' => $file_obj->get_filesize(),
-			'filetype' => $file_obj->get_filetype(),
-			'filestatus' => $file_obj->get_filestatus(),
-			'driver' => $file_obj->get_driver(),
+			'fileid' => $file_obj->get_fileid(), 'url' => $file_obj->get_url(), 'local_file' => $file_obj->get_local_file(), 'filename' => $file_obj->get_filename(), 'filesize' => $file_obj->get_filesize(), 'filetype' => $file_obj->get_filetype(), 'filestatus' => $file_obj->get_filestatus(), 'driver' => $file_obj->get_driver(),
 		);
 
-		$result = $wpdb->query(
-			$wpdb->prepare(
-				'INSERT IGNORE INTO ' . URLSLAB_FILES_TABLE . // phpcs:ignore
-				' (' . implode( ',', array_keys( $data ) ) . // phpcs:ignore
-				') VALUES (%s, %s, %s, %s, %d, %s, %s, %s)',
-				array_values( $data )
-			)
-		);
+		$result = $wpdb->query( $wpdb->prepare( 'INSERT IGNORE INTO ' . URLSLAB_FILES_TABLE . // phpcs:ignore
+												' (' . implode( ',', array_keys( $data ) ) . // phpcs:ignore
+												') VALUES (%s, %s, %s, %s, %d, %s, %s, %s)', array_values( $data ) ) );
 
 		if ( is_numeric( $result ) && 1 == $result ) {
 			$driver = Urlslab_Driver::get_driver( $file_obj );
@@ -163,13 +137,13 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		return '';
 	}
 
-    function buffer_start() {
-        ob_start( array( $this, 'the_content' ) );
-    }
+	function buffer_start() {
+		ob_start( array( $this, 'the_content' ) );
+	}
 
-    function buffer_end() {
-        ob_end_flush();
-    }
+	function buffer_end() {
+		ob_end_flush();
+	}
 
 	public function the_content( $content ) {
 		if ( empty( $content ) ) {
@@ -189,9 +163,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			libxml_use_internal_errors( $libxml_previous_state );
 
 			$iterate_elements = array(
-				'img' => array( 'src', 'data-src', 'data-full-url', 'srcset' ),
-				'video' => array( 'src', 'data-src' ),
-                'source' => array( 'srcset'),
+				'img' => array( 'src', 'data-src', 'data-full-url', 'srcset' ), 'video' => array( 'src', 'data-src' ), 'source' => array( 'srcset' ),
 			);
 
 			foreach ( $iterate_elements as $tag_name => $tag_attributes ) {
@@ -207,24 +179,22 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 					}
 					foreach ( $tag_attributes as $attr ) {
 						if ( strlen( $dom_img_element->getAttribute( $attr ) ) ) {
-                            $urlvalues = explode(',', $dom_img_element->getAttribute( $attr ));
-                            foreach ( $urlvalues as $url_value ) {
-                                $url_val = explode(' ', trim( $url_value ) );
-                                $file_obj = new Urlslab_File_Data(
-                                    array(
-                                        'url' => $url_val[0],
-                                    )
-                                );
-                                $urls[ $file_obj->get_fileid() ][ $attr ][] = array( 'element' => $dom_img_element, 'url' => $url_val[0] );
-                            }
+							$urlvalues = explode( ',', $dom_img_element->getAttribute( $attr ) );
+							foreach ( $urlvalues as $url_value ) {
+								$url_val = explode( ' ', trim( $url_value ) );
+								$file_obj = new Urlslab_File_Data( array(
+																	   'url' => $url_val[0],
+																   ) );
+								$urls[ $file_obj->get_fileid() ][ $attr ][] = array( 'element' => $dom_img_element, 'url' => $url_val[0] );
+							}
 						}
 					}
 				}
 			}
 
-            if ( empty( $urls ) ) {
-                return $content;
-            }
+			if ( empty( $urls ) ) {
+				return $content;
+			}
 			$new_urls = $this->get_new_urls( array_keys( $urls ) );
 
 			foreach ( $new_urls as $fileid => $file_obj ) {
@@ -234,7 +204,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 					if ( $new_url ) {
 						foreach ( $urls[ $fileid ] as $attribute_name => $elements ) {
 							foreach ( $elements as $element ) {
-                                $element['element']->setAttribute( $attribute_name, str_replace( $element['url'], $new_url, $element['element']->getAttribute( $attribute_name ) ) );
+								$element['element']->setAttribute( $attribute_name, str_replace( $element['url'], $new_url, $element['element']->getAttribute( $attribute_name ) ) );
 							}
 							$found_urls[] = $fileid;
 						}
@@ -260,13 +230,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	private function get_new_urls( array $old_url_ids ) {
 		global $wpdb;
 		$new_urls = array();
-		$results = $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_FILES_TABLE . ' WHERE fileid in (' . trim( str_repeat( '%s,', count( $old_url_ids ) ), ',' ) . ')', // phpcs:ignore
-				$old_url_ids
-			),
-			'ARRAY_A'
-		);
+		$results = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_FILES_TABLE . ' WHERE fileid in (' . trim( str_repeat( '%s,', count( $old_url_ids ) ), ',' ) . ')', // phpcs:ignore
+													   $old_url_ids ), 'ARRAY_A' );
 		foreach ( $results as $file_array ) {
 			$file_obj = new Urlslab_File_Data( $file_array );
 			$new_urls[ $file_obj->get_fileid() ] = $file_obj;
@@ -340,7 +305,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	private function update_last_seen_date( array $found_urls ) {
 		if ( ! empty( $found_urls ) ) {
 			global $wpdb;
-			$query = 'UPDATE ' . URLSLAB_FILES_TABLE . ' SET last_seen = %s WHERE fileid IN (' . implode(',', array_fill(0, count($found_urls),'%s')) . ')'; // phpcs:ignore
+			$query = 'UPDATE ' . URLSLAB_FILES_TABLE . ' SET last_seen = %s WHERE fileid IN (' . implode( ',', array_fill( 0, count( $found_urls ), '%s' ) ) . ')'; // phpcs:ignore
 			array_unshift( $found_urls, gmdate( 'Y-m-d H:i:s' ) );
 			$wpdb->query( $wpdb->prepare( $query, $found_urls ) ); // phpcs:ignore
 		}
