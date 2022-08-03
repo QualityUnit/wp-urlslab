@@ -86,7 +86,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	public function load_widget_page() {
 		?>
-        <div class="wrap"><h2>Media offloader</h2></div>
+		<div class="wrap"><h2>Media offloader</h2></div>
 		<?php
 	}
 
@@ -140,7 +140,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			$wpdb->prepare(
 				'INSERT IGNORE INTO ' . URLSLAB_FILES_TABLE . // phpcs:ignore
 				' (' . implode( ',', array_keys( $data ) ) . // phpcs:ignore
-				') VALUES (%s, %s, %s, %s, %d, %s, %s, %s)', array_values( $data )
+				') VALUES (%s, %s, %s, %s, %d, %s, %s, %s)',
+				array_values( $data )
 			)
 		);
 
@@ -276,7 +277,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				'SELECT * FROM ' . URLSLAB_FILES_TABLE . ' WHERE fileid in (' . trim( str_repeat( '%s,', count( $old_url_ids ) ), ',' ) . ')', // phpcs:ignore
 				$old_url_ids
 			),
-            'ARRAY_A'
+			'ARRAY_A'
 		);
 		foreach ( $results as $file_array ) {
 			$file_obj = new Urlslab_File_Data( $file_array );
