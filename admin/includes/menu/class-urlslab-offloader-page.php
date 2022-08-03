@@ -2,6 +2,14 @@
 
 class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 
+	private string $menu_slug;
+	private string $page_title;
+
+	public function __construct() {
+		$this->menu_slug = 'urlslab-media-offloader';
+		$this->page_title = 'Media Offloader';
+	}
+
 	public function on_page_load( string $action, string $component ) {
 		// TODO: Implement on_page_load() method.
 	}
@@ -11,32 +19,38 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 	}
 
 	public function register_submenu( string $parent_slug ) {
-		// TODO: Implement register_submenu() method.
+		$hook = add_submenu_page(
+			$parent_slug,
+			'Urlslab Media Offloader',
+			'Media Offloader',
+			'manage_options',
+			$this->menu_slug,
+			array( $this, 'load_page' )
+		);
+		add_action( "load-$hook", array( $this, 'on_screen_load' ) );
 	}
 
 	public function get_menu_slug(): string {
-		// TODO: Implement get_menu_slug() method.
-		return '';
+		return $this->menu_slug;
 	}
 
 	public function get_page_tabs(): array {
-		// TODO: Implement get_page_tabs() method.
-		return array();
+		return array(
+			'media-offloader' => 'Media Offloader',
+		);
 	}
 
 	public function get_page_title(): string {
-		// TODO: Implement get_page_title() method.
-		return '';
+		return $this->page_title;
 
 	}
 
 	public function load_page() {
-		// TODO: Implement load_page() method.
+		require URLSLAB_PLUGIN_DIR . 'admin/partials/urlslab-admin-feature-manager.php';
 	}
 
 	public function get_active_page_tab(): string {
-		// TODO: Implement get_active_page_tab() method.
-		return '';
+		return 'media-offloader';
 	}
 
 	public function render_subpage() {
