@@ -72,4 +72,8 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 	function is_connected() {
 		return true;
 	}
+
+	public function save_to_file( Urlslab_File_Data $file, $file_name ): bool {
+		return copy( $file->get_local_file(), $file_name );
+	}
 }

@@ -140,4 +140,24 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 	private function is_configured() {
 		return $this->get_region() && $this->get_access_key() && $this->get_bucket_name() && $this->get_secret();
 	}
+
+	public function save_to_file( Urlslab_File_Data $file, $file_name ): bool {
+		if ( ! $this->is_configured() ) {
+			return false;
+		}
+		$result = $this->getClient()->getObject(
+			array(
+				'Bucket' => $this->get_bucket_name(),
+				'Key'    => $this->get_file_dir( $file ) . $file->get_filename(),
+			)
+		);
+
+		$fhandle = fopen( $file_name, 'wb' );
+		$result['Body']->rewind();
+		while ( $data = $result['Body']->read( 8 * 1024 ) ) {
+			fwrite( $data );
+		}
+		fclose( $fhandle );
+		return true;
+	}
 }

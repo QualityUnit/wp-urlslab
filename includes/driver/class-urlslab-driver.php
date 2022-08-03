@@ -39,6 +39,8 @@ abstract class Urlslab_Driver {
 
 	abstract function is_connected();
 
+	abstract public function save_to_file( Urlslab_File_Data $file, $file_name ): bool;
+
 	public function upload_content( Urlslab_File_Data $file ) {
 		$result = false;
 		$update_data = array();
@@ -92,5 +94,6 @@ abstract class Urlslab_Driver {
 		}
 		return self::$driver_cache[ $file->get_driver() ];
 	}
+
 
 }

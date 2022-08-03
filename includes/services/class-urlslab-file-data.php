@@ -234,6 +234,7 @@ class Urlslab_File_Data {
 		$this->last_seen = $file['last_seen'] ?? null;
 	}
 
+
 	public function get_fileid() {
 		if ( ! empty( $this->fileid ) ) {
 			return $this->fileid;
@@ -274,11 +275,11 @@ class Urlslab_File_Data {
 	}
 
 	public function get_width() {
-		return $this->width;
+		return $this->width ?? 0;
 	}
 
 	public function get_height() {
-		return $this->height;
+		return $this->height ?? 0;
 	}
 
 	public function get_url() {
@@ -327,6 +328,14 @@ class Urlslab_File_Data {
 		}
 
 		return 'application/octet-stream';
+	}
+
+	public function get_last_seen() {
+		return $this->last_seen;
+	}
+
+	public function set_driver( $driver ) {
+		$this->driver = $driver;
 	}
 
 }
