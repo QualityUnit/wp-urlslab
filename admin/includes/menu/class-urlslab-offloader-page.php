@@ -46,7 +46,7 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 	}
 
 	public function load_page() {
-		require URLSLAB_PLUGIN_DIR . 'admin/partials/urlslab-admin-feature-manager.php';
+		require URLSLAB_PLUGIN_DIR . 'admin/partials/urlslab-admin-media-offloader.php';
 	}
 
 	public function get_active_page_tab(): string {

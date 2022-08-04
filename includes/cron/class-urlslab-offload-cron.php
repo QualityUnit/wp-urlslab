@@ -12,16 +12,19 @@ class Urlslab_Offload_Cron {
 
 	public function urlslab_cron_exec() {
 		$this->start_time = time();
+		$widget_settings = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-media-offloader' )->get_widget_settings();
 		$this->offload_files_from_queue();
-		$this->schedule_post_attachments();
-		$this->transfer_files_between_storages();
+		$this->schedule_post_attachments( $widget_settings );
+		$this->transfer_files_between_storages( $widget_settings );
 	}
 
-	public function schedule_post_attachments() {
-		if ( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ) ) {
+	public function schedule_post_attachments( array $widget_settings ) {
+		if ( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ] ) {
 			while ( time() - $this->start_time < self::MAX_RUN_TIME ) {
 				try {
-					$processed = $this->schedule_post_attachments_batch();
+					$processed = $this->schedule_post_attachments_batch(
+						$widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ]
+					);
 					if ( 0 == $processed ) {
 						break;
 					}
@@ -38,12 +41,11 @@ class Urlslab_Offload_Cron {
 	}
 
 	/**
-	 * @param Urlslab_Url[] $schedules
+	 * @param string $latest_file_driver
 	 *
-	 * @return void
-	 * @throws Exception
+	 * @return float|int|string
 	 */
-	private function schedule_post_attachments_batch() {
+	private function schedule_post_attachments_batch( string $latest_file_driver ) {
 		global $wpdb;
 		$last_post_id = get_option( self::SETTING_NAME_SCHEDULER_POINTER, -1 );
 
@@ -69,7 +71,7 @@ class Urlslab_Offload_Cron {
 					'filetype' => $type,
 					'filestatus' => Urlslab_Driver::STATUS_NEW,
 					'local_file' => $file_path,
-					'driver' => get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_NEW_FILE_DRIVER ),
+					'driver' => $latest_file_driver,
 				)
 			);
 
@@ -151,27 +153,27 @@ class Urlslab_Offload_Cron {
 	}
 
 
-	private function transfer_files_between_storages() {
-		while ( time() - $this->start_time < self::MAX_RUN_TIME && $this->transfer_next_file() ) {
+	private function transfer_files_between_storages( array $widget_settings ) {
+		while ( time() - $this->start_time < self::MAX_RUN_TIME && $this->transfer_next_file( $widget_settings ) ) {
 		}
 	}
 
-	private function transfer_next_file() {
+	private function transfer_next_file( array $widget_settings ) {
 		$data = array(
 			Urlslab_Driver::STATUS_ACTIVE,
-			get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_NEW_FILE_DRIVER ),
+			$widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ],
 		);
 		$placeholders = array();
 
-		if ( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_DB, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB ) ) {
+		if ( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ] ) {
 			$data[] = Urlslab_Driver::DRIVER_DB;
 			$placeholders[] = '%s';
 		}
-		if ( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_S3, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_S3 ) ) {
+		if ( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ] ) {
 			$data[] = Urlslab_Driver::DRIVER_S3;
 			$placeholders[] = '%s';
 		}
-		if ( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_LOCAL_FILES ) ) {
+		if ( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ] ) {
 			$data[] = Urlslab_Driver::DRIVER_LOCAL_FILE;
 			$placeholders[] = '%s';
 		}
@@ -203,7 +205,7 @@ class Urlslab_Offload_Cron {
 			)
 		) {
 			//set new driver of storage
-			$file->set_driver( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_NEW_FILE_DRIVER ) );
+			$file->set_driver( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ] );
 			//save file to new storage
 			if ( Urlslab_Driver::get_driver( $file )->save_file_to_storage( $file, $tmp_name ) ) {
 				//change driver of file in db

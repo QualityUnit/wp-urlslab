@@ -118,6 +118,18 @@ function urlslab_debug_log( Exception $e ) {
 	}
 }
 
+function urlslab_update_widget_settings( array $option, string $setting_name, $setting_default_value ): array {
+	if ( ! isset( $option[ $setting_name ] ) ) {
+		$option = array_merge(
+			$option,
+			array(
+				$setting_name => $setting_default_value,
+			)
+		);
+	}
+	return $option;
+}
+
 function urlslab_status_ui_convert( string $status_char ): string {
 	switch ( $status_char ) {
 		case Urlslab_Status::$available:
