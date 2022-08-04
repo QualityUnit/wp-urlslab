@@ -56,4 +56,68 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 	public function render_subpage() {
 		// TODO: Implement render_subpage() method.
 	}
+
+	public function render_settings() {
+		$widget_settings = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-media-offloader' )->get_widget_settings();
+		switch ( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ] ) {
+			case Urlslab_Driver::DRIVER_DB:
+				unset( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ] );
+                break;
+
+		}
+		?>
+		<div class="col-8 mar-top-1">
+			<form method="post">
+				<input type="hidden" name="action" value="update-settings">
+				<?php foreach ( $widget_settings as $setting => $setting_val ) { ?>
+					<?php wp_nonce_field( 'offloader-update-settings' ); ?>
+					<div class="col-3 float-left">
+						<label for="<?php echo esc_attr( $setting ); ?>">
+							<?php echo esc_html( implode( ' ', explode( '_', str_replace( 'urlslab_', '', $setting ) ) ) ); ?>:
+						</label>
+					</div>
+					<?php if ( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER == $setting ) { ?>
+						<div class="col-3 float-left">
+								<select id="<?php echo esc_attr( $setting ); ?>">
+									<?php $db_driver_selected = Urlslab_Driver::DRIVER_DB == $setting_val; ?>
+									<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_DB ); ?> <?php
+									if ( $db_driver_selected ) {
+										echo 'selected';}
+									?>
+									">Database Driver</option>
+									<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_DB ); ?> <?php
+									$local_file_selected = Urlslab_Driver::DRIVER_LOCAL_FILE == $setting_val;
+									if ( $local_file_selected ) {
+										echo 'selected';}
+									?>
+									">Local File Driver</option>
+									<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_DB ); ?> <?php
+									$s3_selected = Urlslab_Driver::DRIVER_S3 == $setting_val;
+									if ( $s3_selected ) {
+										echo 'selected';}
+									?>
+									">S3 Driver</option>
+								</select>
+						</div>
+					<?php } else { ?>
+						<div class="col-3 float-left">
+							<input id="<?php echo esc_attr( $setting ); ?>"
+								   name="<?php echo esc_attr( $setting_val ); ?>"
+								   value="<?php echo esc_attr( $setting_val ); ?>"
+								   type="checkbox"
+								   <?php 
+									if ( 1 == $setting_val ) {
+										echo 'checked'; }
+									?>
+							>
+						</div>
+				<?php } ?>
+					<br class="clear"/>
+					<br class="clear"/>
+				<?php } ?>
+				<input class="button button-primary" type="submit" name="submit" value="Save Changes">
+			</form>
+		</div>
+		<?php
+	}
 }

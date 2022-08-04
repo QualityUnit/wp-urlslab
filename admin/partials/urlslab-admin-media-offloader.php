@@ -23,6 +23,7 @@
 				</div>
 				<div class="urlslab-card-container">
 					<div class="urlslab-card-content">
+						<?php $this->render_settings(); ?>
 					</div>
 				</div>
 
