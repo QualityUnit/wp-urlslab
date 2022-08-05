@@ -1,5 +1,0 @@
-version: 1
-labels:
-  - label: "action:needs-review"
-    files:
-      - "/.*"
