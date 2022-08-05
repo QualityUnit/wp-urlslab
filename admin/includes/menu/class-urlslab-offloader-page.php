@@ -11,7 +11,42 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 	}
 
 	public function on_page_load( string $action, string $component ) {
-		// TODO: Implement on_page_load() method.
+		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
+			 'POST' === $_SERVER['REQUEST_METHOD'] and
+			 isset( $_REQUEST['action'] ) and
+			 - 1 != $_REQUEST['action'] ) {
+			check_admin_referer( 'offloader-update' );
+			//# Edit settings
+			if ( isset( $_POST['submit'] ) &&
+				 'Save Changes' === $_POST['submit'] &&
+				 isset( $_POST['action'] ) &&
+				 'update-settings' == $_POST['action'] ) {
+
+				$saving_opt = array();
+				foreach ( $_POST as $key => $val ) {
+					if ( str_starts_with( $key, 'urlslab_' ) ) {
+						$saving_opt[ $key ] = trim( $val );
+					}
+				}
+
+				Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-media-offloader' )
+										 ->update_widget_settings( $saving_opt );
+
+				wp_safe_redirect(
+					$this->menu_page(
+						'media-offloader',
+						array(
+							'status' => 'success',
+							'urlslab-message' => 'Keyword settings was saved successfully',
+						)
+					)
+				);
+				exit;
+			}
+			//# Edit settings
+
+
+		}
 	}
 
 	public function on_screen_load() {
@@ -62,15 +97,22 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 		switch ( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ] ) {
 			case Urlslab_Driver::DRIVER_DB:
 				unset( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ] );
-                break;
+				break;
 
+			case Urlslab_Driver::DRIVER_S3:
+				unset( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ] );
+				break;
+
+			case Urlslab_Driver::DRIVER_LOCAL_FILE:
+				unset( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ] );
+				break;
 		}
 		?>
 		<div class="col-8 mar-top-1">
 			<form method="post">
 				<input type="hidden" name="action" value="update-settings">
 				<?php foreach ( $widget_settings as $setting => $setting_val ) { ?>
-					<?php wp_nonce_field( 'offloader-update-settings' ); ?>
+					<?php wp_nonce_field( 'offloader-update' ); ?>
 					<div class="col-3 float-left">
 						<label for="<?php echo esc_attr( $setting ); ?>">
 							<?php echo esc_html( implode( ' ', explode( '_', str_replace( 'urlslab_', '', $setting ) ) ) ); ?>:
@@ -78,32 +120,37 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 					</div>
 					<?php if ( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER == $setting ) { ?>
 						<div class="col-3 float-left">
-								<select id="<?php echo esc_attr( $setting ); ?>">
+								<select name="<?php echo esc_attr( $setting ); ?>" id="<?php echo esc_attr( $setting ); ?>">
 									<?php $db_driver_selected = Urlslab_Driver::DRIVER_DB == $setting_val; ?>
-									<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_DB ); ?> <?php
+									<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_DB ); ?>"
+									<?php
 									if ( $db_driver_selected ) {
-										echo 'selected';}
+										echo ' selected';}
 									?>
-									">Database Driver</option>
-									<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_DB ); ?> <?php
-									$local_file_selected = Urlslab_Driver::DRIVER_LOCAL_FILE == $setting_val;
-									if ( $local_file_selected ) {
-										echo 'selected';}
-									?>
-									">Local File Driver</option>
-									<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_DB ); ?> <?php
-									$s3_selected = Urlslab_Driver::DRIVER_S3 == $setting_val;
-									if ( $s3_selected ) {
-										echo 'selected';}
-									?>
-									">S3 Driver</option>
+									>Database Driver</option>
+									<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_LOCAL_FILE ); ?>"
+										<?php
+										$local_file_selected = Urlslab_Driver::DRIVER_LOCAL_FILE == $setting_val;
+										if ( $local_file_selected ) {
+											echo ' selected';
+										}
+										?>
+									>Local File Driver</option>
+									<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_S3 ); ?>"
+										<?php
+										$s3_selected = Urlslab_Driver::DRIVER_S3 == $setting_val;
+										if ( $s3_selected ) {
+											echo ' selected';
+										}
+										?>
+									>S3 Driver</option>
 								</select>
 						</div>
 					<?php } else { ?>
 						<div class="col-3 float-left">
 							<input id="<?php echo esc_attr( $setting ); ?>"
-								   name="<?php echo esc_attr( $setting_val ); ?>"
-								   value="<?php echo esc_attr( $setting_val ); ?>"
+								   name="<?php echo esc_attr( $setting ); ?>"
+								   value="1"
 								   type="checkbox"
 								   <?php 
 									if ( 1 == $setting_val ) {
