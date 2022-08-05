@@ -14,14 +14,16 @@
 			<div class="urlslab-accordion-header col-12">
 				<div>
 					<h3>Settings</h3>
-					<?php
-					$widget = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-meta-tag' );
-					require plugin_dir_path( __FILE__ ) . 'urlslab-admin-activation-card-header.php';
-					?>
 				</div>
 			</div>
 			<div class="urlslab-card-container">
 				<div class="urlslab-card-content">
+					<?php
+					$widget = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-meta-tag' );
+					require plugin_dir_path( __FILE__ ) . 'urlslab-admin-activation-card-header.php';
+					?>
+					<br class="clear">
+					<br class="clear">
 					<?php $page_data->render_widget_form(); ?>
 				</div>
 			</div>

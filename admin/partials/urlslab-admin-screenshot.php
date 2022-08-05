@@ -13,10 +13,6 @@ if ( ! isset( $_GET['tab'] ) or ( 'screenshot-widget' == $_GET['tab'] ) ) {
 		<div class="urlslab-accordion-header col-12">
 			<div>
 				<h3>Explanation</h3>
-				<?php
-				$widget = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-link-enhancer' );
-				require plugin_dir_path( __FILE__ ) . 'urlslab-admin-activation-card-header.php';
-				?>
 			</div>
 		</div>
 		<div class="urlslab-card-container">
@@ -33,6 +29,12 @@ if ( ! isset( $_GET['tab'] ) or ( 'screenshot-widget' == $_GET['tab'] ) ) {
 		</div>
 		<div class="urlslab-card-container">
 			<div class="mar-bottom-1">
+				<?php
+				$widget = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-link-enhancer' );
+				require plugin_dir_path( __FILE__ ) . 'urlslab-admin-activation-card-header.php';
+				?>
+				<br class="clear">
+				<br class="clear">
 				<div>
 					Use one of the following shortcodes to generate the screenshot automatically.
 				</div>
