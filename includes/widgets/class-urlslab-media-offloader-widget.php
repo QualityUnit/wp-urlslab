@@ -346,7 +346,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	public function get_parent_page(): Urlslab_Admin_Page {
-		return Urlslab_Page_Factory::get_instance()->get_page( 'media-offloader' );
+		return Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-media-offloader' );
 	}
 
 	public function get_widget_tab(): string {
