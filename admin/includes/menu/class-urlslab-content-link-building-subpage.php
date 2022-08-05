@@ -90,8 +90,10 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
                     }
                 }
 
-				Urlslab_Available_Widgets::get_instance()->get_widget('urlslab-keywords-links')
-                    ->update_widget_settings($saving_opt);
+				update_option(
+					'urlslab-keywords-links',
+					$saving_opt
+				);
 
 				wp_safe_redirect(
 					$this->parent_page->menu_page(

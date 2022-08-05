@@ -29,8 +29,19 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 					}
 				}
 
-				Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-media-offloader' )
-										 ->update_widget_settings( $saving_opt );
+				$all_widget_settings = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-media-offloader' )
+										 ->get_widget_settings();
+				foreach ( $all_widget_settings as $widget_setting => $widget_setting_val ) {
+					if ( ! isset( $saving_opt[ $widget_setting ] ) ) {
+						$saving_opt[ $widget_setting ] = 0;
+					}
+				}
+
+				update_option(
+					'urlslab-media-offloader',
+					$saving_opt
+				);
+
 
 				wp_safe_redirect(
 					$this->menu_page(

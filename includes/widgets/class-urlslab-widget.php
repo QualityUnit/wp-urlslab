@@ -84,15 +84,4 @@ abstract class Urlslab_Widget {
 	 */
 	public abstract function get_widget_settings(): array;
 
-	/**
-	 * @param array $new_settings
-	 *
-	 * @return void
-	 */
-	public function update_widget_settings( array $new_settings ) {
-		$widget_old_settings = $this->get_widget_settings();
-		$merged_settings = array_merge( $widget_old_settings, $new_settings );
-		update_option( $this->get_widget_slug(), $merged_settings );
-	}
-
 }
