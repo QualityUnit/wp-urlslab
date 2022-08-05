@@ -10,7 +10,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/driver/class-urlslab-driver-db.php'
 
 require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-file-data.php';
 
-// phpcs:disable WordPress
+// phpcs:disable WordPress.NamingConventions
 class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	private string $widget_slug;
@@ -124,7 +124,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			$wpdb->prepare(
 				'INSERT IGNORE INTO ' . URLSLAB_FILES_TABLE . // phpcs:ignore
 				' (' . implode( ',', array_keys( $data ) ) . // phpcs:ignore
-				') VALUES (%s, %s, %s, %s, %d, %s, %s, %s)',
+					') VALUES (%s, %s, %s, %s, %d, %s, %s, %s)',
 				array_values( $data )
 			)
 		);
@@ -415,13 +415,13 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			$this->SETTING_TRANSFER_FROM_DRIVER_DB
 		);
 
-		$this->SETTING_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND = $option[self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND];
-		$this->SETTING_SAVE_EXTERNAL = $option[self::SETTING_NAME_SAVE_EXTERNAL];
-		$this->SETTING_SAVE_INTERNAL = $option[self::SETTING_NAME_SAVE_INTERNAL];
-		$this->SETTING_NEW_FILE_DRIVER = $option[self::SETTING_NAME_NEW_FILE_DRIVER];
-		$this->SETTING_TRANSFER_FROM_DRIVER_LOCAL_FILES = $option[self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES];
-		$this->SETTING_TRANSFER_FROM_DRIVER_S3 = $option[self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3];
-		$this->SETTING_TRANSFER_FROM_DRIVER_DB = $option[self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB];
+		$this->SETTING_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND = $option[ self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ];
+		$this->SETTING_SAVE_EXTERNAL = $option[ self::SETTING_NAME_SAVE_EXTERNAL ];
+		$this->SETTING_SAVE_INTERNAL = $option[ self::SETTING_NAME_SAVE_INTERNAL ];
+		$this->SETTING_NEW_FILE_DRIVER = $option[ self::SETTING_NAME_NEW_FILE_DRIVER ];
+		$this->SETTING_TRANSFER_FROM_DRIVER_LOCAL_FILES = $option[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ];
+		$this->SETTING_TRANSFER_FROM_DRIVER_S3 = $option[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ];
+		$this->SETTING_TRANSFER_FROM_DRIVER_DB = $option[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ];
 
 		update_option( $option_name, $option );
 	}
