@@ -19,6 +19,8 @@ abstract class Urlslab_Driver {
 
 	abstract public function get_url( Urlslab_File_Data $file );
 
+	abstract public static function get_driver_settings(): array;
+
 	/**
 	 * return content of file
 	 *

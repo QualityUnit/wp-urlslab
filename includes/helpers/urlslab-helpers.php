@@ -148,3 +148,23 @@ function urlslab_status_ui_convert( string $status_char ): string {
 			return $status_char;
 	}
 }
+
+/**
+ * Masks a password with asterisks (*).
+ *
+ * @param string $text
+ *
+ * @return string Text of masked password.
+ */
+function urlslab_masked_info( string $text ): string {
+	if ( empty( $text ) ) {
+		return '';
+	}
+	$masked_text = '';
+	for ( $x = 0; $x <= strlen( $text ) - 4; $x++ ) {
+		$masked_text = $masked_text . '*';
+	}
+
+	return $masked_text . substr( $text, -5 );
+}
+

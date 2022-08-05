@@ -56,6 +56,10 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 			}
 			//# Edit settings
 
+			//# Edit AWS settings
+
+			//# Edit AWS settings
+
 
 		}
 	}
@@ -175,6 +179,34 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 				<?php } ?>
 				<input class="button button-primary" type="submit" name="submit" value="Save Changes">
 			</form>
+			<?php
+			if ( Urlslab_Driver::DRIVER_S3 == $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ] ) {
+				$s3_settings = Urlslab_Driver_S3::get_driver_settings();
+				?>
+				<form method="post">
+					<input type="hidden" name="action" value="update-s3-settings">
+					<?php wp_nonce_field( 's3-update' ); ?>
+					<?php foreach ( $s3_settings as $setting => $setting_val ) { ?>
+						<div class="col-3 float-left">
+							<label for="<?php echo esc_attr( $setting ); ?>">
+								<?php echo esc_html( implode( ' ', explode( '_', str_replace( 'urlslab_', '', $setting ) ) ) ); ?>:
+							</label>
+						</div>
+						<div class="col-3 float-left">
+							<input id="<?php echo esc_attr( $setting ); ?>"
+								   name="<?php echo esc_attr( $setting ); ?>"
+								   value="<?php echo esc_attr( urlslab_masked_info( $setting_val ?? '' ) ); ?>"
+								   type="text"
+							>
+						</div>
+					<?php } ?>
+					<?php if ( empty( $s3_settings[ Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY ] ) ) { ?>
+						<input class="button button-primary" type="submit" name="submit" value="Save Changes">
+					<?php } else { ?>
+						<input class="urlslab-btn-error" type="submit" name="submit" value="Remove Credentials">
+					<?php } ?>
+				</form>
+			<?php } ?>
 		</div>
 		<?php
 	}

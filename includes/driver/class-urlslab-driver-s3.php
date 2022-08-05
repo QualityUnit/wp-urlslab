@@ -6,11 +6,11 @@ use Aws\Credentials\Credentials;
 use Aws\S3\MultipartUploader;
 
 class Urlslab_Driver_S3 extends Urlslab_Driver {
-	const SETTING_NAME_S3_BUCKET = 'urlslab_awss3_bucket';
-	const SETTING_NAME_S3_REGION = 'urlslab_awss3_region';
-	const SETTING_NAME_S3_ACCESS_KEY = 'urlslab_awss3_acckey';
-	const SETTING_NAME_S3_SECRET = 'urlslab_awss3_secret';
-	const SETTING_NAME_S3_URL_PREFIX = 'urlslab_awss3_url_prefix';
+	const SETTING_NAME_S3_BUCKET = 'urlslab_AWS_S3_bucket';
+	const SETTING_NAME_S3_REGION = 'urlslab_AWS_S3_region';
+	const SETTING_NAME_S3_ACCESS_KEY = 'urlslab_AWS_S3_access_key';
+	const SETTING_NAME_S3_SECRET = 'urlslab_AWS_S3_secret';
+	const SETTING_NAME_S3_URL_PREFIX = 'urlslab_AWS_S3_url_prefix';
 
 	private $client;
 
@@ -159,5 +159,28 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 		}
 		fclose( $fhandle );
 		return true;
+	}
+
+	public static function get_driver_settings(): array {
+		$option = get_option( 'urlslab_s3driver_configuration' );
+		if (
+			! is_array( $option ) ||
+			count( $option ) != 5 ||
+			! isset( $option[ self::SETTING_NAME_S3_ACCESS_KEY ] ) ||
+			! isset( $option[ self::SETTING_NAME_S3_BUCKET ] ) ||
+			! isset( $option[ self::SETTING_NAME_S3_REGION ] ) ||
+			! isset( $option[ self::SETTING_NAME_S3_SECRET ] ) ||
+			! isset( $option[ self::SETTING_NAME_S3_URL_PREFIX ] )
+		) {
+			return array(
+				self::SETTING_NAME_S3_ACCESS_KEY => '',
+				self::SETTING_NAME_S3_BUCKET => '',
+				self::SETTING_NAME_S3_REGION => '',
+				self::SETTING_NAME_S3_SECRET => '',
+				self::SETTING_NAME_S3_URL_PREFIX => '',
+			);
+		}
+
+		return $option;
 	}
 }

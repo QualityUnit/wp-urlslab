@@ -12,26 +12,10 @@ class Urlslab_Api_Key {
 	}
 
 	/**
-	 * Masks a password with asterisks (*).
-	 *
-	 * @param string $text
-	 *
-	 * @return string Text of masked password.
-	 */
-	private function masked( string $text ): string {
-		$masked_text = '';
-		for ( $x = 0; $x <= strlen( $text ) - 4; $x++ ) {
-			$masked_text = $masked_text . '*';
-		}
-
-		return $masked_text . substr( $text, -5 );
-	}
-
-	/**
 	 * @return string
 	 */
 	public function get_api_key_masked(): string {
-		return $this->masked( $this->api_key );
+		return urlslab_masked_info( $this->api_key );
 	}
 
 	public function is_empty(): bool {

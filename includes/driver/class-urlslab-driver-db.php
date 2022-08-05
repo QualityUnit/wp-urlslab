@@ -97,4 +97,8 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 		fclose( $fhandle );
 		return true;
 	}
+
+	public static function get_driver_settings(): array {
+		return array();
+	}
 }
