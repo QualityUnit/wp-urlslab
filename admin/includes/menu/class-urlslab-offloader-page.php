@@ -15,12 +15,12 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 			 'POST' === $_SERVER['REQUEST_METHOD'] and
 			 isset( $_REQUEST['action'] ) and
 			 - 1 != $_REQUEST['action'] ) {
-			check_admin_referer( 'offloader-update' );
 			//# Edit settings
 			if ( isset( $_POST['submit'] ) &&
 				 'Save Changes' === $_POST['submit'] &&
 				 isset( $_POST['action'] ) &&
 				 'update-settings' == $_POST['action'] ) {
+				check_admin_referer( 'offloader-update' );
 
 				$saving_opt = array();
 				foreach ( $_POST as $key => $val ) {
@@ -57,7 +57,44 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 			//# Edit settings
 
 			//# Edit AWS settings
+			if ( isset( $_POST['submit'] ) &&
+				 'Save Changes' === $_POST['submit'] &&
+				 isset( $_POST['action'] ) &&
+				 'update-s3-settings' == $_POST['action'] ) {
+				check_admin_referer( 's3-update' );
 
+				$saving_opt = array();
+				if (
+						isset( $_POST[ Urlslab_Driver_S3::SETTING_NAME_S3_BUCKET ] ) &&
+						isset( $_POST[ Urlslab_Driver_S3::SETTING_NAME_S3_REGION ] ) &&
+						isset( $_POST[ Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY ] ) &&
+						isset( $_POST[ Urlslab_Driver_S3::SETTING_NAME_S3_SECRET ] ) &&
+						isset( $_POST[ Urlslab_Driver_S3::SETTING_NAME_S3_URL_PREFIX ] )
+				) {
+					$saving_opt[ Urlslab_Driver_S3::SETTING_NAME_S3_BUCKET ] = $_POST[ Urlslab_Driver_S3::SETTING_NAME_S3_BUCKET ];
+					$saving_opt[ Urlslab_Driver_S3::SETTING_NAME_S3_REGION ] = $_POST[ Urlslab_Driver_S3::SETTING_NAME_S3_REGION ];
+					$saving_opt[ Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY ] = $_POST[ Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY ];
+					$saving_opt[ Urlslab_Driver_S3::SETTING_NAME_S3_SECRET ] = $_POST[ Urlslab_Driver_S3::SETTING_NAME_S3_SECRET ];
+					$saving_opt[ Urlslab_Driver_S3::SETTING_NAME_S3_URL_PREFIX ] = $_POST[ Urlslab_Driver_S3::SETTING_NAME_S3_URL_PREFIX ];
+				}
+
+				update_option(
+					'urlslab_s3driver_configuration',
+					$saving_opt
+				);
+
+
+				wp_safe_redirect(
+					$this->menu_page(
+						'media-offloader',
+						array(
+							'status' => 'success',
+							'urlslab-message' => 'AWS S3 settings was saved successfully',
+						)
+					)
+				);
+				exit;
+			}
 			//# Edit AWS settings
 
 
@@ -203,7 +240,8 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 					<?php if ( empty( $s3_settings[ Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY ] ) ) { ?>
 						<input class="button button-primary" type="submit" name="submit" value="Save Changes">
 					<?php } else { ?>
-						<input class="urlslab-btn-error" type="submit" name="submit" value="Remove Credentials">
+                        <input class="button button-primary" type="submit" name="submit" value="Save Changes">
+                        <input class="urlslab-btn-error" type="submit" name="submit" value="Remove Credentials">
 					<?php } ?>
 				</form>
 			<?php } ?>
