@@ -240,8 +240,8 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 					<?php if ( empty( $s3_settings[ Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY ] ) ) { ?>
 						<input class="button button-primary" type="submit" name="submit" value="Save Changes">
 					<?php } else { ?>
-                        <input class="button button-primary" type="submit" name="submit" value="Save Changes">
-                        <input class="urlslab-btn-error" type="submit" name="submit" value="Remove Credentials">
+						<input class="button button-primary" type="submit" name="submit" value="Save Changes">
+						<input class="urlslab-btn-error" type="submit" name="submit" value="Remove Credentials">
 					<?php } ?>
 				</form>
 			<?php } ?>
