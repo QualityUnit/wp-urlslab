@@ -12,12 +12,19 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 
 	/**
 	 * @param string $search_key the searching key to search for
+	 * @param string $status_filter the filter of files for status
+	 * @param string $driver_filter the filter for file drivers
 	 * @param int $limit the limit of the results
 	 * @param int $offset the offset of results for pagination
 	 *
 	 * @return array
 	 */
-	private function get_offloading_files( string $search_key, int $limit, int $offset ): array {
+	private function get_offloading_files(
+		string $search_key,
+		string $status_filter,
+		string $driver_filter,
+		int $limit,
+		int $offset ): array {
 		global $wpdb;
 		$table = URLSLAB_FILES_TABLE;
 		$values = array();
@@ -26,10 +33,32 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 		$query = "SELECT * FROM $table";
 
 		/* -- Preparing the condition -- */
+		if (
+			! empty( $search_key ) ||
+			! empty( $status_filter ) ||
+			! empty( $driver_filter ) ) {
+			$query .= ' WHERE ';
+		}
 		if ( ! empty( $search_key ) ) {
-			$query .= ' WHERE filename LIKE %s OR url LIKE %s';
+			$query .= 'filename LIKE %s OR url LIKE %s';
 			$values[] = '%' . $search_key . '%';
 			$values[] = '%' . $search_key . '%';
+		}
+
+		if ( ! empty( $status_filter ) ) {
+			if ( ! empty( $search_key ) ) {
+				$query .= ' AND ';
+			}
+			$query .= 'filestatus=%s';
+			$values[] = $status_filter;
+		}
+
+		if ( ! empty( $driver_filter ) ) {
+			if ( ! empty( $search_key ) || ! empty( $status_filter ) ) {
+				$query .= ' AND ';
+			}
+			$query .= 'driver=%s';
+			$values[] = $driver_filter;
 		}
 
 
@@ -67,10 +96,35 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 	/**
 	 * @return mixed count for pagination
 	 */
-	private function count_offloading_files() {
+	private function count_offloading_files( string $driver_filter = '', string $status = '' ) {
 		global $wpdb;
 		$table = URLSLAB_FILES_TABLE;
-		return $wpdb->get_row( "SELECT COUNT(*) AS cnt FROM $table", ARRAY_A )['cnt']; // phpcs:ignore
+
+		if ( empty( $driver_filter ) && empty( $status ) ) {
+			return $wpdb->get_row( "SELECT COUNT(*) AS cnt FROM $table", ARRAY_A )['cnt']; // phpcs:ignore
+		} else {
+			$query = "SELECT COUNT(*) AS cnt FROM $table WHERE ";
+			$values = array();
+			if ( ! empty( $driver_filter ) ) {
+				$query .= 'driver=%s';
+				$values[] = $driver_filter;
+			}
+
+			if ( ! empty( $driver_filter ) && ! empty( $status ) ) {
+				$query .= ' AND ';
+			}
+
+			if ( ! empty( $status ) ) {
+				$query .= 'filestatus=%s';
+				$values[] = $status;
+			}
+
+			return $wpdb->get_row(
+				$wpdb->prepare( $query, $values ), // phpcs:ignore
+				ARRAY_A
+			)['cnt'];
+		}
+
 	}
 
 	/**
@@ -151,6 +205,71 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 		);
 	}
 
+	protected function get_views() {
+		$views = array();
+		$current_status = ( ! empty( $_REQUEST['status_filter'] ) ? $_REQUEST['status_filter'] : '' );
+		$current_driver = ( ! empty( $_REQUEST['driver_filter'] ) ? $_REQUEST['driver_filter'] : '' );
+
+		//# All case
+		$class = ( '' == $current_status && '' == $current_driver ? ' class="current"' : '' );
+		$all_url = remove_query_arg( 'status_filter' );
+		$all_url = remove_query_arg( 'driver_filter', $all_url );
+		$all_count = $this->count_offloading_files();
+		$views['all'] = "<a href='$all_url' $class>All <span class='count'>($all_count)</span></a>";
+		//# All case
+
+		//# driver s3 case
+		$class = ( Urlslab_Driver::DRIVER_S3 == $current_driver ? ' class="current"' : $current_status );
+		$s3_driver_url = add_query_arg( 'driver_filter', Urlslab_Driver::DRIVER_S3 );
+		$s3_driver_count = $this->count_offloading_files( Urlslab_Driver::DRIVER_S3, '' );
+		$views['s3_driver'] = "<a href='$s3_driver_url' $class>S3 <span class='count'>($s3_driver_count)</span></a>";
+		//# driver s3 case
+
+		//# driver db case
+		$class = ( Urlslab_Driver::DRIVER_DB == $current_driver ? ' class="current"' : '' );
+		$db_driver_url = add_query_arg( 'driver_filter', Urlslab_Driver::DRIVER_DB );
+		$db_driver_count = $this->count_offloading_files( Urlslab_Driver::DRIVER_DB, '' );
+		$views['db_driver'] = "<a href='$db_driver_url' $class>Database <span class='count'>($db_driver_count)</span></a>";
+		//# driver db case
+
+		//# driver local file case
+		$class = ( Urlslab_Driver::DRIVER_LOCAL_FILE == $current_driver ? ' class="current"' : '' );
+		$local_driver_url = add_query_arg( 'driver_filter', Urlslab_Driver::DRIVER_LOCAL_FILE );
+		$local_driver_count = $this->count_offloading_files( Urlslab_Driver::DRIVER_LOCAL_FILE, '' );
+		$views['local_driver'] = "<a href='$local_driver_url' $class>Local File <span class='count'>($local_driver_count)</span></a>";
+		//# driver local file case
+
+		//# status pending case
+		$class = ( Urlslab_Driver::STATUS_PENDING == $current_status ? ' class="current"' : '' );
+		$pending_status_url = add_query_arg( 'status_filter', Urlslab_Driver::STATUS_PENDING );
+		$pending_status_count = $this->count_offloading_files( '', Urlslab_Driver::STATUS_PENDING );
+		$views['pending_status'] = "<a href='$pending_status_url' $class>Pending <span class='count'>($pending_status_count)</span></a>";
+		//# status pending case
+
+		//# status error case
+		$class = ( Urlslab_Driver::STATUS_ERROR == $current_status ? ' class="current"' : '' );
+		$error_status_url = add_query_arg( 'status_filter', Urlslab_Driver::STATUS_ERROR );
+		$error_status_count = $this->count_offloading_files( '', Urlslab_Driver::STATUS_ERROR );
+		$views['error_status'] = "<a href='$error_status_url' $class>Error <span class='count'>($error_status_count)</span></a>";
+		//# status error case
+
+		//# status active case
+		$class = ( Urlslab_Driver::STATUS_ACTIVE == $current_status ? ' class="current"' : '' );
+		$active_status_url = add_query_arg( 'status_filter', Urlslab_Driver::STATUS_ACTIVE );
+		$active_status_count = $this->count_offloading_files( '', Urlslab_Driver::STATUS_ACTIVE );
+		$views['active_status'] = "<a href='$active_status_url' $class>Active <span class='count'>($active_status_count)</span></a>";
+		//# status active case
+
+		//# status new case
+		$class = ( Urlslab_Driver::STATUS_NEW == $current_status ? ' class="current"' : '' );
+		$new_status_url = add_query_arg( 'status_filter', Urlslab_Driver::STATUS_NEW );
+		$new_status_count = $this->count_offloading_files( '', Urlslab_Driver::STATUS_NEW );
+		$views['new_status'] = "<a href='$new_status_url' $class>New <span class='count'>($new_status_count)</span></a>";
+		//# status new case
+
+		return $views;
+	}
+
 	/**
 	 * Prepare the table with different parameters,
 	 * pagination, columns and table elements
@@ -158,6 +277,8 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 	function prepare_items() {
 
 		$offloading_search_key = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
+		$file_status_filter = isset( $_REQUEST['status_filter'] ) ? wp_unslash( trim( $_REQUEST['status_filter'] ) ) : '';
+		$file_driver_filter = isset( $_REQUEST['driver_filter'] ) ? wp_unslash( trim( $_REQUEST['driver_filter'] ) ) : '';
 		$this->process_bulk_action();
 
 		$table_page = $this->get_pagenum();
@@ -165,10 +286,12 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 
 		$query_results = $this->get_offloading_files(
 			$offloading_search_key,
+			$file_status_filter,
+			$file_driver_filter,
 			$items_per_page,
 			( $table_page - 1 ) * $items_per_page
 		);
-		$total_count = $this->count_offloading_files();
+		$total_count = $this->count_offloading_files( $file_driver_filter, $file_status_filter );
 
 
 		// set the pagination arguments

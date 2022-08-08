@@ -175,6 +175,7 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 		?>
 		<form method="get" class="float-left">
 			<?php
+			$this->offloader_table->views();
 			$this->offloader_table->prepare_items();
 			?>
 			<input type="hidden" name="page" value="<?php echo esc_attr( $this->get_menu_slug() ); ?>">
