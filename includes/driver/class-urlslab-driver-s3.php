@@ -183,4 +183,12 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 
 		return $option;
 	}
+
+	public static function update_options( array $new_options ) {
+		$option = get_option( 'urlslab_s3driver_configuration' );
+		update_option(
+			'urlslab_s3driver_configuration',
+			array_merge( $option, $new_options )
+		);
+	}
 }

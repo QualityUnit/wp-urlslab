@@ -64,24 +64,13 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 				check_admin_referer( 's3-update' );
 
 				$saving_opt = array();
-				if (
-						isset( $_POST[ Urlslab_Driver_S3::SETTING_NAME_S3_BUCKET ] ) &&
-						isset( $_POST[ Urlslab_Driver_S3::SETTING_NAME_S3_REGION ] ) &&
-						isset( $_POST[ Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY ] ) &&
-						isset( $_POST[ Urlslab_Driver_S3::SETTING_NAME_S3_SECRET ] ) &&
-						isset( $_POST[ Urlslab_Driver_S3::SETTING_NAME_S3_URL_PREFIX ] )
-				) {
-					$saving_opt[ Urlslab_Driver_S3::SETTING_NAME_S3_BUCKET ] = $_POST[ Urlslab_Driver_S3::SETTING_NAME_S3_BUCKET ];
-					$saving_opt[ Urlslab_Driver_S3::SETTING_NAME_S3_REGION ] = $_POST[ Urlslab_Driver_S3::SETTING_NAME_S3_REGION ];
-					$saving_opt[ Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY ] = $_POST[ Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY ];
-					$saving_opt[ Urlslab_Driver_S3::SETTING_NAME_S3_SECRET ] = $_POST[ Urlslab_Driver_S3::SETTING_NAME_S3_SECRET ];
-					$saving_opt[ Urlslab_Driver_S3::SETTING_NAME_S3_URL_PREFIX ] = $_POST[ Urlslab_Driver_S3::SETTING_NAME_S3_URL_PREFIX ];
+				foreach ( array_keys( Urlslab_Driver_S3::get_driver_settings() ) as $setting_name ) {
+					if ( isset( $_POST[ $setting_name ] ) ) {
+						$saving_opt[ $setting_name ] = $_POST[ $setting_name ];
+					}
 				}
 
-				update_option(
-					'urlslab_s3driver_configuration',
-					$saving_opt
-				);
+				Urlslab_Driver_S3::update_options( $saving_opt );
 
 
 				wp_safe_redirect(
@@ -225,16 +214,44 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 					<?php wp_nonce_field( 's3-update' ); ?>
 					<?php foreach ( $s3_settings as $setting => $setting_val ) { ?>
 						<div class="col-3 float-left">
-							<label for="<?php echo esc_attr( $setting ); ?>">
-								<?php echo esc_html( implode( ' ', explode( '_', str_replace( 'urlslab_', '', $setting ) ) ) ); ?>:
-							</label>
+							<?php
+							if (
+								( Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY != $setting || empty( $setting_val ) ) &&
+								( Urlslab_Driver_S3::SETTING_NAME_S3_SECRET != $setting || empty( $setting_val ) )
+							) {
+								?>
+								<label for="<?php echo esc_attr( $setting ); ?>">
+									<?php echo esc_html( implode( ' ', explode( '_', str_replace( 'urlslab_', '', $setting ) ) ) ); ?>:
+								</label>
+								<?php
+							}
+							?>
 						</div>
 						<div class="col-3 float-left">
-							<input id="<?php echo esc_attr( $setting ); ?>"
-								   name="<?php echo esc_attr( $setting ); ?>"
-								   value="<?php echo esc_attr( urlslab_masked_info( $setting_val ?? '' ) ); ?>"
-								   type="text"
-							>
+							<?php
+							$value = $setting_val ?? '';
+							if (
+								( Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY == $setting && ! empty( $setting_val ) ) ||
+								( Urlslab_Driver_S3::SETTING_NAME_S3_SECRET == $setting && ! empty( $setting_val ) )
+							) {
+								$value = urlslab_masked_info( $value );
+								?>
+
+								<span id="<?php echo esc_attr( $setting ); ?>">
+									<?php echo esc_html( implode( ' ', explode( '_', str_replace( 'urlslab_', '', $setting ) ) ) ); ?>:
+									<?php echo esc_html( $value ); ?>
+								</span>
+								<?php
+							} else {
+								?>
+								<input id="<?php echo esc_attr( $setting ); ?>"
+									   name="<?php echo esc_attr( $setting ); ?>"
+									   value="<?php echo esc_attr( $value ); ?>"
+									   type="text"
+								>
+								<?php
+							}
+							?>
 						</div>
 					<?php } ?>
 					<?php if ( empty( $s3_settings[ Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY ] ) ) { ?>
