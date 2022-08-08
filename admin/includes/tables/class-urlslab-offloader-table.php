@@ -260,7 +260,7 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 						'transfer-to-s3' => sprintf(
 							'<a href="?page=%s&action=%s&file=%s&_wpnonce=%s">Transfer to S3</a>',
 							esc_attr( $_REQUEST['page'] ),
-							'transfer-to-db',
+							'transfer-to-s3',
 							esc_attr( $item->get_fileid() ),
 							$transfer_nonce
 						),

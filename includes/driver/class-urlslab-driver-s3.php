@@ -25,16 +25,17 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 		$option = get_option( 'urlslab_s3driver_configuration' );
 		if ( is_array( $option ) ||
 			 count( $option ) == 5 ||
-			 isset( $option[ self::SETTING_NAME_S3_ACCESS_KEY ] ) ||
-			 isset( $option[ self::SETTING_NAME_S3_BUCKET ] ) ||
-			 isset( $option[ self::SETTING_NAME_S3_REGION ] ) ||
-			 isset( $option[ self::SETTING_NAME_S3_SECRET ] ) ||
-			 isset( $option[ self::SETTING_NAME_S3_URL_PREFIX ] ) ) {
-			$this->aws_s3_bucket = $option[ self::SETTING_NAME_S3_BUCKET ];
-			$this->aws_s3_region = $option[ self::SETTING_NAME_S3_REGION ];
-			$this->aws_s3_access_key = $option[ self::SETTING_NAME_S3_ACCESS_KEY ];
-			$this->aws_s3_secret = $option[ self::SETTING_NAME_S3_SECRET ];
-			$this->aws_s3_url_prefix = $option[ self::SETTING_NAME_S3_URL_PREFIX ];
+			 ( isset( $option[ self::SETTING_NAME_S3_ACCESS_KEY ] ) && ! empty( $option[ self::SETTING_NAME_S3_ACCESS_KEY ] ) ) ||
+			 ( isset( $option[ self::SETTING_NAME_S3_BUCKET ] ) && ! empty( $option[ self::SETTING_NAME_S3_BUCKET ] ) ) ||
+			 ( isset( $option[ self::SETTING_NAME_S3_REGION ] ) && ! empty( $option[ self::SETTING_NAME_S3_REGION ] ) ) ||
+			 ( isset( $option[ self::SETTING_NAME_S3_SECRET ] ) && ! empty( $option[ self::SETTING_NAME_S3_SECRET ] ) ) ||
+			 ( isset( $option[ self::SETTING_NAME_S3_URL_PREFIX ] ) && ! empty( $option[ self::SETTING_NAME_S3_URL_PREFIX ] ) )
+		) {
+			$this->aws_s3_bucket = $option[ self::SETTING_NAME_S3_BUCKET ] ?? '';
+			$this->aws_s3_region = $option[ self::SETTING_NAME_S3_REGION ] ?? '';
+			$this->aws_s3_access_key = $option[ self::SETTING_NAME_S3_ACCESS_KEY ] ?? '';
+			$this->aws_s3_secret = $option[ self::SETTING_NAME_S3_SECRET ] ?? '';
+			$this->aws_s3_url_prefix = $option[ self::SETTING_NAME_S3_URL_PREFIX ] ?? '';
 		}
 	}
 

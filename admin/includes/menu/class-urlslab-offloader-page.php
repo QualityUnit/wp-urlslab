@@ -232,31 +232,49 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 
 		if ( ! empty( $destination_driver ) ) {
 			$file = $this->get_file_data( $_GET['file'] );
-			if ( Urlslab_Driver::get_driver( $file )->is_connected() ) {
-				$result = Urlslab_Driver::transfer_file_to_storage(
-					$this->get_file_data( $_GET['file'] ),
-					$destination_driver
-				);
+			$dummy_obj = clone $file;
+			$dummy_obj->set_driver( $destination_driver );
+			try {
+				if (
+					Urlslab_Driver::get_driver( $file )->is_connected() &&
+					Urlslab_Driver::get_driver( $dummy_obj )->is_connected()
+				) {
+					$result = Urlslab_Driver::transfer_file_to_storage(
+						$this->get_file_data( $_GET['file'] ),
+						$destination_driver
+					);
 
-				if ( ! $result ) {
+					if ( ! $result ) {
+						wp_safe_redirect(
+							$this->menu_page(
+								'',
+								array(
+									'status' => 'failure',
+									'urlslab-message' => 'Oops something went wrong in transferring files, try again later',
+								)
+							)
+						);
+						exit();
+					}
+				} else {
 					wp_safe_redirect(
 						$this->menu_page(
 							'',
 							array(
 								'status' => 'failure',
-								'urlslab-message' => 'Oops something went wrong in transferring files, try again later',
+								'urlslab-message' => 'credentials not authenticated for driver',
 							)
 						)
 					);
 					exit();
 				}
-			} else {
+			} catch ( Exception $e ) {
 				wp_safe_redirect(
 					$this->menu_page(
 						'',
 						array(
 							'status' => 'failure',
-							'urlslab-message' => 'credentials not authenticated for driver',
+							'urlslab-message' => 'credentials not authenticated for driver - ' . $e->getMessage(),
 						)
 					)
 				);
