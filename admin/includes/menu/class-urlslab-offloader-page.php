@@ -58,31 +58,59 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 
 			//# Edit AWS settings
 			if ( isset( $_POST['submit'] ) &&
-				 'Save Changes' === $_POST['submit'] &&
 				 isset( $_POST['action'] ) &&
 				 'update-s3-settings' == $_POST['action'] ) {
 				check_admin_referer( 's3-update' );
 
-				$saving_opt = array();
-				foreach ( array_keys( Urlslab_Driver_S3::get_driver_settings() ) as $setting_name ) {
-					if ( isset( $_POST[ $setting_name ] ) ) {
-						$saving_opt[ $setting_name ] = $_POST[ $setting_name ];
+				//# Saving/updating the credentials
+				if ( 'Save Changes' === $_POST['submit'] ) {
+					$saving_opt = array();
+					foreach ( array_keys( Urlslab_Driver_S3::get_driver_settings() ) as $setting_name ) {
+						if ( isset( $_POST[ $setting_name ] ) ) {
+							$saving_opt[ $setting_name ] = $_POST[ $setting_name ];
+						}
 					}
-				}
 
-				Urlslab_Driver_S3::update_options( $saving_opt );
+					Urlslab_Driver_S3::update_options( $saving_opt );
 
 
-				wp_safe_redirect(
-					$this->menu_page(
-						'media-offloader',
-						array(
-							'status' => 'success',
-							'urlslab-message' => 'AWS S3 settings was saved successfully',
+					wp_safe_redirect(
+						$this->menu_page(
+							'media-offloader',
+							array(
+								'status' => 'success',
+								'urlslab-message' => 'AWS S3 settings was saved successfully',
+							)
 						)
-					)
-				);
-				exit;
+					);
+					exit;
+				}
+				//# Saving/updating the credentials
+
+				//# Deleting the credentials
+				if ( 'Remove Credentials' === $_POST['submit'] ) {
+					$saving_opt = array();
+					foreach ( array_keys( Urlslab_Driver_S3::get_driver_settings() ) as $setting_name ) {
+						if ( isset( $_POST[ $setting_name ] ) ) {
+							$saving_opt[ $setting_name ] = $_POST[ $setting_name ];
+						}
+					}
+
+					Urlslab_Driver_S3::remove_options();
+
+
+					wp_safe_redirect(
+						$this->menu_page(
+							'media-offloader',
+							array(
+								'status' => 'success',
+								'urlslab-message' => 'AWS S3 settings was removed successfully',
+							)
+						)
+					);
+					exit;
+				}
+				//# Deleting the credentials
 			}
 			//# Edit AWS settings
 
