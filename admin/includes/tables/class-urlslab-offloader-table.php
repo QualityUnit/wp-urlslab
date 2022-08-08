@@ -160,14 +160,10 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 				return sprintf(
 					'<a target="_blank" href="%s">%s</a>',
 					esc_url( $item->get_url() ),
-					substr( $item->get_url(), 0, 70 )
+					esc_url( $item->get_url() )
 				);
 			case 'col_local_file':
-				return sprintf(
-					'<span title="%s">%s</span>',
-					esc_attr( $item->get_local_file() ),
-					substr( $item->get_local_file(), 0, 70 )
-				);
+				return $this->local_file_to_html( $item->get_local_file(), $item->get_driver() );
 			case 'col_filename':
 				return sprintf(
 					'<span title="%s">%s</span>',
@@ -193,7 +189,89 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 		}
 	}
 
-	public function process_bulk_action() {}
+	/**
+	 * Method for name column
+	 *
+	 * @param Urlslab_File_Data $item an array of DB data
+	 *
+	 * @return string
+	 */
+	function column_col_driver( $item ): string {
+
+		// create a nonce
+		$transfer_nonce = wp_create_nonce( 'urlslab_transfer_file' );
+
+		$title = $this->driver_to_html( $item->get_driver() );
+
+		$actions = array();
+		if ( isset( $_REQUEST['page'] ) ) {
+			$actions = array();
+			$current_driver = $item->get_driver();
+
+
+			switch ( $current_driver ) {
+				case Urlslab_Driver::DRIVER_LOCAL_FILE:
+					$actions = array(
+						'transfer-to-s3' => sprintf(
+							'<a href="?page=%s&action=%s&file=%s&_wpnonce=%s">Transfer to S3</a>',
+							esc_attr( $_REQUEST['page'] ),
+							'transfer-to-s3',
+							esc_attr( $item->get_fileid() ),
+							$transfer_nonce
+						),
+						'transfer-to-db' => sprintf(
+							'<a href="?page=%s&action=%s&file=%s&_wpnonce=%s">Transfer to DB</a>',
+							esc_attr( $_REQUEST['page'] ),
+							'transfer-to-db',
+							esc_attr( $item->get_fileid() ),
+							$transfer_nonce
+						),
+					);
+					break;
+
+				case Urlslab_Driver::DRIVER_S3:
+					$actions = array(
+						'transfer-to-localfile' => sprintf(
+							'<a href="?page=%s&action=%s&file=%s&_wpnonce=%s">Transfer to Local file</a>',
+							esc_attr( $_REQUEST['page'] ),
+							'transfer-to-localfile',
+							esc_attr( $item->get_fileid() ),
+							$transfer_nonce
+						),
+						'transfer-to-db' => sprintf(
+							'<a href="?page=%s&action=%s&file=%s&_wpnonce=%s">Transfer to DB</a>',
+							esc_attr( $_REQUEST['page'] ),
+							'transfer-to-db',
+							esc_attr( $item->get_fileid() ),
+							$transfer_nonce
+						),
+					);
+					break;
+
+				case Urlslab_Driver::DRIVER_DB:
+					$actions = array(
+						'transfer-to-localfile' => sprintf(
+							'<a href="?page=%s&action=%s&file=%s&_wpnonce=%s">Transfer to Local file</a>',
+							esc_attr( $_REQUEST['page'] ),
+							'transfer-to-localfile',
+							esc_attr( $item->get_fileid() ),
+							$transfer_nonce
+						),
+						'transfer-to-s3' => sprintf(
+							'<a href="?page=%s&action=%s&file=%s&_wpnonce=%s">Transfer to S3</a>',
+							esc_attr( $_REQUEST['page'] ),
+							'transfer-to-db',
+							esc_attr( $item->get_fileid() ),
+							$transfer_nonce
+						),
+					);
+					break;
+
+			}
+		}
+
+		return $title . $this->row_actions( $actions );
+	}
 
 	/**
 	 * Decide which columns to activate the sorting functionality on
@@ -279,7 +357,6 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 		$offloading_search_key = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
 		$file_status_filter = isset( $_REQUEST['status_filter'] ) ? wp_unslash( trim( $_REQUEST['status_filter'] ) ) : '';
 		$file_driver_filter = isset( $_REQUEST['driver_filter'] ) ? wp_unslash( trim( $_REQUEST['driver_filter'] ) ) : '';
-		$this->process_bulk_action();
 
 		$table_page = $this->get_pagenum();
 		$items_per_page = $this->get_items_per_page( 'users_per_page' );
@@ -357,6 +434,25 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 
 			default:
 				return $driver;
+		}
+	}
+
+	private function local_file_to_html( string $local_file, string $driver ) {
+		switch ( $driver ) {
+			case Urlslab_Driver::DRIVER_DB:
+			case Urlslab_Driver::DRIVER_S3:
+				return sprintf(
+					'<span title="%s">%s</span>',
+					esc_attr( $local_file ),
+					empty( $local_file ) ? 'asset not downloaded in file server' : 'asset downloaded in file server but not used'
+				);
+
+			case Urlslab_Driver::DRIVER_LOCAL_FILE:
+				return sprintf(
+					'<span title="%s">%s</span>',
+					esc_attr( $local_file ),
+					substr( $local_file, 0, 70 )
+				);
 		}
 	}
 

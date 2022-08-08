@@ -115,9 +115,168 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 			}
 			//# Edit AWS settings
 
-
 		}
+
+		//# Transfer single file
+		if (
+			isset( $_GET['action'] ) &&
+			(
+				'transfer-to-localfile' === $_GET['action'] ||
+				'transfer-to-s3' === $_GET['action'] ||
+				'transfer-to-db' === $_GET['action']
+			) &&
+			isset( $_GET['file'] ) &&
+			isset( $_REQUEST['_wpnonce'] ) ) {
+			$this->process_file_transfer();
+		}
+		//# Transfer single file
 	}
+
+	private function get_file_data( string $fileid ): Urlslab_File_Data {
+		global $wpdb;
+		$table = URLSLAB_FILES_TABLE;
+
+		return new Urlslab_File_Data(
+			$wpdb->get_row(
+				$wpdb->prepare(
+					"SELECT * FROM $table WHERE fileid=%s", // phpcs:ignore
+					$fileid
+				),
+				ARRAY_A
+			)
+		);
+	}
+
+	public function process_file_transfer() {
+
+		$destination_driver = '';
+		//# Single transfers
+		if ( isset( $_GET['action'] ) &&
+			 'transfer-to-localfile' === $_GET['action'] &&
+			 isset( $_GET['file'] ) &&
+			 isset( $_REQUEST['_wpnonce'] ) ) {
+
+			// In our file that handles the request, verify the nonce.
+			$nonce = wp_unslash( $_REQUEST['_wpnonce'] );
+			/*
+			 * Note: the nonce field is set by the parent class
+			 * wp_nonce_field( 'bulk-' . $this->_args['plural'] );
+			 */
+			if ( ! wp_verify_nonce( $nonce, 'urlslab_transfer_file' ) ) { // verify the nonce.
+				wp_redirect(
+					$this->menu_page(
+						'',
+						array(
+							'status' => 'failure',
+							'urlslab-message' => 'this link is expired',
+						)
+					)
+				);
+				exit();
+			}
+			$destination_driver = Urlslab_Driver::DRIVER_LOCAL_FILE;
+		}
+
+		if ( isset( $_GET['action'] ) &&
+			 'transfer-to-s3' === $_GET['action'] &&
+			 isset( $_GET['file'] ) &&
+			 isset( $_REQUEST['_wpnonce'] ) ) {
+
+			// In our file that handles the request, verify the nonce.
+			$nonce = wp_unslash( $_REQUEST['_wpnonce'] );
+			/*
+			 * Note: the nonce field is set by the parent class
+			 * wp_nonce_field( 'bulk-' . $this->_args['plural'] );
+			 */
+			if ( ! wp_verify_nonce( $nonce, 'urlslab_transfer_file' ) ) { // verify the nonce.
+				wp_redirect(
+					$this->menu_page(
+						'',
+						array(
+							'status' => 'failure',
+							'urlslab-message' => 'this link is expired',
+						)
+					)
+				);
+				exit();
+			}
+			$destination_driver = Urlslab_Driver::DRIVER_S3;
+		}
+
+		if ( isset( $_GET['action'] ) &&
+			 'transfer-to-db' === $_GET['action'] &&
+			 isset( $_GET['file'] ) &&
+			 isset( $_REQUEST['_wpnonce'] ) ) {
+
+			// In our file that handles the request, verify the nonce.
+			$nonce = wp_unslash( $_REQUEST['_wpnonce'] );
+			/*
+			 * Note: the nonce field is set by the parent class
+			 * wp_nonce_field( 'bulk-' . $this->_args['plural'] );
+			 */
+			if ( ! wp_verify_nonce( $nonce, 'urlslab_transfer_file' ) ) { // verify the nonce.
+				wp_redirect(
+					$this->menu_page(
+						'',
+						array(
+							'status' => 'failure',
+							'urlslab-message' => 'this link is expired',
+						)
+					)
+				);
+				exit();
+			}
+			$destination_driver = Urlslab_Driver::DRIVER_DB;
+		}
+
+
+		if ( ! empty( $destination_driver ) ) {
+			$file = $this->get_file_data( $_GET['file'] );
+			if ( Urlslab_Driver::get_driver( $file )->is_connected() ) {
+				$result = Urlslab_Driver::transfer_file_to_storage(
+					$this->get_file_data( $_GET['file'] ),
+					$destination_driver
+				);
+
+				if ( ! $result ) {
+					wp_safe_redirect(
+						$this->menu_page(
+							'',
+							array(
+								'status' => 'failure',
+								'urlslab-message' => 'Oops something went wrong in transferring files, try again later',
+							)
+						)
+					);
+					exit();
+				}
+			} else {
+				wp_safe_redirect(
+					$this->menu_page(
+						'',
+						array(
+							'status' => 'failure',
+							'urlslab-message' => 'credentials not authenticated for driver',
+						)
+					)
+				);
+				exit();
+			}
+
+			wp_safe_redirect(
+				$this->menu_page(
+					'',
+					array(
+						'status' => 'success',
+						'urlslab-message' => 'transfer was done successfully',
+					)
+				)
+			);
+			exit();
+		}
+		//# Single transfers
+	}
+
 
 	public function on_screen_load() {
 		$option = 'per_page';

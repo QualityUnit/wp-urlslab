@@ -194,35 +194,9 @@ class Urlslab_Offload_Cron {
 			return false;
 		}
 
-		$file = new Urlslab_File_Data( $file_row );
-		$result = false;
-		$tmp_name = wp_tempnam();
-		if (
-			Urlslab_Driver::get_driver( $file )->save_to_file( $file, $tmp_name ) &&
-			(
-				filesize( $tmp_name ) == $file->get_filesize() ||
-				( 0 == $file->get_filesize() && 0 < filesize( $tmp_name ) )
-			)
-		) {
-			//set new driver of storage
-			$file->set_driver( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ] );
-			//save file to new storage
-			if ( Urlslab_Driver::get_driver( $file )->save_file_to_storage( $file, $tmp_name ) ) {
-				//change driver of file in db
-				$wpdb->update(
-					URLSLAB_FILES_TABLE,
-					array(
-						'driver' => $file->get_driver(),
-						'filesize' => filesize( $tmp_name ),
-					),
-					array(
-						'fileid' => $file->get_fileid(),
-					)
-				);
-				$result = true;
-			}
-		}
-		unlink( $tmp_name );
-		return $result;
+		return Urlslab_Driver::transfer_file_to_storage(
+			new Urlslab_File_Data( $file_row ),
+			$widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ]
+		);
 	}
 }
