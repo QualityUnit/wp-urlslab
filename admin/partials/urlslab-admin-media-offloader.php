@@ -6,7 +6,7 @@
 		<?php
 		$user = Urlslab_User_Widget::get_instance();
 		$widgets = Urlslab_Available_Widgets::get_instance();
-		$feature_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-media-offloader' );
+		$offloader_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-media-offloader' );
 		if ( ! isset( $_GET['tab'] ) or ( 'media-offloader' == $_GET['tab'] ) ) {
 			?>
 
@@ -54,6 +54,7 @@
 				</div>
 			</div>
 			<?php
+			$offloader_page->render_subpage();
 		}
 
 		?>

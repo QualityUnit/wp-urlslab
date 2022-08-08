@@ -4,6 +4,7 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 
 	private string $menu_slug;
 	private string $page_title;
+	private Urlslab_Offloader_Table $offloader_table;
 
 	public function __construct() {
 		$this->menu_slug = 'urlslab-media-offloader';
@@ -119,7 +120,16 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 	}
 
 	public function on_screen_load() {
-		// TODO: Implement on_screen_load() method.
+		$option = 'per_page';
+		$args = array(
+			'label' => 'Assets',
+			'default' => 50,
+			'option' => 'users_per_page',
+		);
+
+		add_screen_option( $option, $args );
+
+		$this->offloader_table = new Urlslab_Offloader_Table();
 	}
 
 	public function register_submenu( string $parent_slug ) {
@@ -158,7 +168,22 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 	}
 
 	public function render_subpage() {
-		// TODO: Implement render_subpage() method.
+		$this->render_tables();
+	}
+
+	private function render_tables() {
+		?>
+		<form method="get" class="float-left">
+			<?php
+			$this->offloader_table->prepare_items();
+			?>
+			<input type="hidden" name="page" value="<?php echo esc_attr( $this->get_menu_slug() ); ?>">
+			<?php
+			$this->offloader_table->search_box( 'Search', 'urlslab-offloader-input' );
+			$this->offloader_table->display();
+			?>
+		</form>
+		<?php
 	}
 
 	public function render_settings() {
