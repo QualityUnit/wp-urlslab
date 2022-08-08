@@ -10,7 +10,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/driver/class-urlslab-driver-db.php'
 
 require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-file-data.php';
 
-
+// phpcs:disable WordPress.NamingConventions
 class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	private string $widget_slug;
@@ -21,24 +21,30 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	private string $landing_page_link;
 
-	public const SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND = 'urlslab_imp_posts_bg';
+	public const SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND = 'urlslab_import_post_attachements';
+	private int $SETTING_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND = 0;
 
+	//automatically offload external images found in every page content (starting with damain name different as current page)
+	public const SETTING_NAME_SAVE_EXTERNAL = 'urlslab_save_external_resources';
+	private int $SETTING_SAVE_EXTERNAL = 0;
 
-	//offload also external media to our storage
-	public const SETTING_NAME_SAVE_EXTERNAL = 'urlslab_save_ext';
-	public const SETTING_DEFAULT_SAVE_EXTERNAL = 1;
+	//automatically offload internal images found in every page content (starting with damain name same as current page)
+	public const SETTING_NAME_SAVE_INTERNAL = 'urlslab_save_internal_resources';
+	private int $SETTING_SAVE_INTERNAL = 0;
 
-	public const SETTING_NAME_SAVE_MISSING = 'urlslab_save_missing';
-	public const SETTING_DEFAULT_SAVE_MISSING = 1;
+	public const SETTING_NAME_NEW_FILE_DRIVER = 'urlslab_file_driver';
+	private string $SETTING_NEW_FILE_DRIVER = Urlslab_Driver::DRIVER_DB;
 
-	public const SETTING_NAME_NEW_FILE_DRIVER = 'urlslab_new_file_driver';
-	public const SETTING_DEFAULT_NEW_FILE_DRIVER = Urlslab_Driver::DRIVER_DB;
+	//TRANSFER SETTINGS
+	public const SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES = 'urlslab_transfer_all_data_from_local_files';
+	public const SETTING_NAME_TRANSFER_FROM_DRIVER_S3 = 'urlslab_transfer_all_data_from_s3';
+	public const SETTING_NAME_TRANSFER_FROM_DRIVER_DB = 'urlslab_transfer_all_data_from_database';
+	private int $SETTING_TRANSFER_FROM_DRIVER_LOCAL_FILES = 0;
+	private int $SETTING_TRANSFER_FROM_DRIVER_S3 = 0;
+	private int $SETTING_TRANSFER_FROM_DRIVER_DB = 0;
+
 
 	/**
-	 * @param string $widget_slug
-	 * @param string $widget_title
-	 * @param string $widget_description
-	 * @param string $landing_page_link
 	 */
 	public function __construct() {
 		$this->widget_slug = 'urlslab-media-offloader';
@@ -49,6 +55,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 
 	public function init_widget( Urlslab_Loader $loader ) {
+		$this->init_settings();
 		$loader->add_action( 'wp_handle_upload', $this, 'wp_handle_upload', 10, 1 );
 		//$loader->add_filter( 'the_content', $this, 'the_content' );
 
@@ -84,29 +91,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		return $this->landing_page_link;
 	}
 
-	public function load_widget_page() {
-		?>
-		<div class="wrap"><h2>Media offloader</h2></div>
-		<?php
-	}
-
-	public function widget_admin_load() {
-	}
-
-	/**
-	 * @return string
-	 */
-	public function get_admin_menu_page_title(): string {
-		return 'Urlslab Widget | Media Offloader';
-	}
-
-	/**
-	 * @return string
-	 */
-	public function get_admin_menu_title(): string {
-		return 'Media Offloader';
-	}
-
 	public function has_shortcode(): bool {
 		return false;
 	}
@@ -121,7 +105,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				'filename' => basename( $file['file'] ),
 				'filesize' => filesize( $file['file'] ),
 				'filestatus' => Urlslab_Driver::STATUS_NEW,
-				'driver' => get_option( self::SETTING_NAME_NEW_FILE_DRIVER, self::SETTING_DEFAULT_NEW_FILE_DRIVER ),
+				'driver' => $this->SETTING_NEW_FILE_DRIVER,
 			)
 		);
 
@@ -140,7 +124,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			$wpdb->prepare(
 				'INSERT IGNORE INTO ' . URLSLAB_FILES_TABLE . // phpcs:ignore
 				' (' . implode( ',', array_keys( $data ) ) . // phpcs:ignore
-				') VALUES (%s, %s, %s, %s, %d, %s, %s, %s)',
+					') VALUES (%s, %s, %s, %s, %d, %s, %s, %s)',
 				array_values( $data )
 			)
 		);
@@ -287,7 +271,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	private function schedule_missing_images( array $urls ) {
-		if ( ! get_option( self::SETTING_NAME_SAVE_MISSING, self::SETTING_DEFAULT_SAVE_MISSING ) ) {
+		if ( ! ( $this->SETTING_SAVE_EXTERNAL || $this->SETTING_SAVE_INTERNAL ) ) {
 			return;
 		}
 
@@ -296,9 +280,12 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 		foreach ( $urls as $fileid => $attr_elements ) {
 			foreach ( $attr_elements as $attr => $elements ) {
-				if ( urlslab_is_same_domain_url( $elements[0]['url'] ) || get_option( self::SETTING_NAME_SAVE_EXTERNAL, self::SETTING_DEFAULT_SAVE_EXTERNAL ) ) {
+				if (
+					( urlslab_is_same_domain_url( $elements[0]['url'] ) && $this->SETTING_SAVE_INTERNAL ) ||
+					$this->SETTING_SAVE_EXTERNAL
+				) {
 					$placeholders[] = '(%s, %s, %s, %s)';
-					array_push( $values, $fileid, $elements[0]['url'], Urlslab_Driver::STATUS_NEW, get_option( self::SETTING_NAME_NEW_FILE_DRIVER, self::SETTING_DEFAULT_NEW_FILE_DRIVER ) );
+					array_push( $values, $fileid, $elements[0]['url'], Urlslab_Driver::STATUS_NEW, $this->SETTING_NEW_FILE_DRIVER );
 				}
 			}
 		}
@@ -359,7 +346,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	public function get_parent_page(): Urlslab_Admin_Page {
-		return Urlslab_Page_Factory::get_instance()->get_page( 'media-offloader' );
+		return Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-media-offloader' );
 	}
 
 	public function get_widget_tab(): string {
@@ -375,6 +362,68 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	public function get_widget_settings(): array {
-		return array();
+		return array(
+			self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND => $this->SETTING_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND,
+			self::SETTING_NAME_SAVE_EXTERNAL => $this->SETTING_SAVE_EXTERNAL,
+			self::SETTING_NAME_SAVE_INTERNAL => $this->SETTING_SAVE_INTERNAL,
+			self::SETTING_NAME_NEW_FILE_DRIVER => $this->SETTING_NEW_FILE_DRIVER,
+			self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES => $this->SETTING_TRANSFER_FROM_DRIVER_LOCAL_FILES,
+			self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 => $this->SETTING_TRANSFER_FROM_DRIVER_S3,
+			self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB => $this->SETTING_TRANSFER_FROM_DRIVER_DB,
+		);
 	}
+
+	private function init_settings() {
+		$option_name = $this->widget_slug;
+		$option = get_option( $option_name );
+		if ( false === $option ) {
+			$option = array();
+		}
+		$option = urlslab_update_widget_settings(
+			$option,
+			self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND,
+			$this->SETTING_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND
+		);
+		$option = urlslab_update_widget_settings(
+			$option,
+			self::SETTING_NAME_SAVE_EXTERNAL,
+			$this->SETTING_SAVE_EXTERNAL
+		);
+		$option = urlslab_update_widget_settings(
+			$option,
+			self::SETTING_NAME_SAVE_INTERNAL,
+			$this->SETTING_SAVE_INTERNAL
+		);
+		$option = urlslab_update_widget_settings(
+			$option,
+			self::SETTING_NAME_NEW_FILE_DRIVER,
+			$this->SETTING_NEW_FILE_DRIVER
+		);
+		$option = urlslab_update_widget_settings(
+			$option,
+			self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES,
+			$this->SETTING_TRANSFER_FROM_DRIVER_LOCAL_FILES
+		);
+		$option = urlslab_update_widget_settings(
+			$option,
+			self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3,
+			$this->SETTING_TRANSFER_FROM_DRIVER_S3
+		);
+		$option = urlslab_update_widget_settings(
+			$option,
+			self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB,
+			$this->SETTING_TRANSFER_FROM_DRIVER_DB
+		);
+
+		$this->SETTING_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND = $option[ self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ];
+		$this->SETTING_SAVE_EXTERNAL = $option[ self::SETTING_NAME_SAVE_EXTERNAL ];
+		$this->SETTING_SAVE_INTERNAL = $option[ self::SETTING_NAME_SAVE_INTERNAL ];
+		$this->SETTING_NEW_FILE_DRIVER = $option[ self::SETTING_NAME_NEW_FILE_DRIVER ];
+		$this->SETTING_TRANSFER_FROM_DRIVER_LOCAL_FILES = $option[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ];
+		$this->SETTING_TRANSFER_FROM_DRIVER_S3 = $option[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ];
+		$this->SETTING_TRANSFER_FROM_DRIVER_DB = $option[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ];
+
+		update_option( $option_name, $option );
+	}
+
 }

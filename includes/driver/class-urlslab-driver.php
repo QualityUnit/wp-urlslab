@@ -19,6 +19,8 @@ abstract class Urlslab_Driver {
 
 	abstract public function get_url( Urlslab_File_Data $file );
 
+	abstract public static function get_driver_settings(): array;
+
 	/**
 	 * return content of file
 	 *
@@ -38,6 +40,8 @@ abstract class Urlslab_Driver {
 	abstract function save_file_to_storage( Urlslab_File_Data $file_obj, string $local_file_name ):bool;
 
 	abstract function is_connected();
+
+	abstract public function save_to_file( Urlslab_File_Data $file, $file_name ): bool;
 
 	public function upload_content( Urlslab_File_Data $file ) {
 		$result = false;
@@ -92,5 +96,6 @@ abstract class Urlslab_Driver {
 		}
 		return self::$driver_cache[ $file->get_driver() ];
 	}
+
 
 }
