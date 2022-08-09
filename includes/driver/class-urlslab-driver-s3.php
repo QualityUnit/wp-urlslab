@@ -156,7 +156,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 		$fhandle = fopen( $file_name, 'wb' );
 		$result['Body']->rewind();
 		while ( $data = $result['Body']->read( 8 * 1024 ) ) {
-			fwrite( $data );
+			fwrite( $fhandle, $data );
 		}
 		fclose( $fhandle );
 		return true;
