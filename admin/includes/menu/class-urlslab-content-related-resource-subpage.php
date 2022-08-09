@@ -248,23 +248,51 @@ class Urlslab_Content_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		$handle = fopen( $file, 'r' );
 		if ( false !== ( $handle ) ) {
 			while ( ( $data = fgetcsv( $handle ) ) !== false ) {
-				$row++;
+
 				//# processing CSV Header
 				if ( 1 == $row ) {
+					if ( count( $data ) != 2 ) {
+						//# Wrong number of cols in csv
+						return false;
+					} else {
+						$idx = 0;
+						foreach ( $data as $col ) {
+							if ( is_string( $col ) ) {
+								if ( is_string( $this->map_to_db_col( $col ) ) ) {
+									if ( isset( $cols[ $this->map_to_db_col( $col ) ] ) ) {
+										return false;
+									} else {
+										$cols[ $this->map_to_db_col( $col ) ] = $idx;
+										$idx++;
+									}
+								} else {
+									return false;
+								}
+							} else {
+								//# wrong type in header
+								return false;
+							}
+						}
+					}
+					$row++;
 					continue;
 				}
-				if ( ! isset( $data[0] ) ||
-					 strlen( $data[0] ) == 0 ||
-					 ! isset( $data[1] ) ||
-					 strlen( $data[1] ) == 0 ) {
-					continue;
-				}
-				//Keyword, URL, Priority, Lang, Filter
-				$data_row = new Urlslab_Url_Keyword_Data(
-                        $data[0],
-                        isset( $data[2] ) && is_numeric( $data[2] ) ? (int) $data[2] : 10, strlen( $data[0] ), isset( $data[3] ) && strlen( $data[3] ) > 0 ? $data[3] : 'all', $data[1], isset( $data[4] ) ? $data[4] : '.*' );
 
-				$this->createRow( $dataRow );
+				$src_url = new Urlslab_Url( $data[ $cols['srcUrl'] ] );
+				$dest_url = new Urlslab_Url( $data[ $cols['destUrl'] ] );
+
+
+				if ( empty( $src_url ) or empty( $dest_url ) ) {
+					$wrong_rows++;
+					continue;
+				} else {
+					array_push( $scheduling_items, $src_url, $dest_url );
+					$saving_items[] = array(
+						$src_url,
+						$dest_url,
+					);
+				}
+				$row++;
 			}
 			fclose( $handle );
 		}
