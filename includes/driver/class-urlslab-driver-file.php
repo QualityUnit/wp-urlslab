@@ -27,8 +27,11 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 			wp_mkdir_p( $dir );
 		}
 
+		global $wpdb;
 		$new_file = $dir . $file_obj->get_filename();
 		if ( file_exists( $new_file ) ) {
+			//# synchronising DB with file data
+			$wpdb->update( URLSLAB_FILES_TABLE, array( 'local_file' => $new_file ), array( 'fileid' => $file_obj->get_fileid() ) );
 			return true;
 		}
 
@@ -37,9 +40,7 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 		}
 
 		//set new local file name
-		global $wpdb;
 		$wpdb->update( URLSLAB_FILES_TABLE, array( 'local_file' => $new_file ), array( 'fileid' => $file_obj->get_fileid() ) );
-
 		return true;
 	}
 

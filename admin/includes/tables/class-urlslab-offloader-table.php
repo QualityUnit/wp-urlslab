@@ -6,56 +6,65 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 
 class Urlslab_Offloader_Table extends WP_List_Table {
 
-	/**
-	 * @param array $row
-	 *
-	 * @return Urlslab_Url_Data
-	 */
-	private function transform( array $row ): Urlslab_Url_Data {
-		return new Urlslab_Url_Data(
-			new Urlslab_Url( parse_url( get_site_url(), PHP_URL_SCHEME ) . '://' . $row['urlName'] ),
-			$row['domainId'],
-			$row['urlId'],
-			$row['screenshotDate'],
-			$row['updateStatusDate'],
-			$row['urlTitle'],
-			$row['urlMetaDescription'],
-			$row['urlSummary'],
-			$row['status'],
-		);
+	private function transform( array $row ): Urlslab_File_Data {
+		return new Urlslab_File_Data( $row );
 	}
 
-
 	/**
-	 * Getting url screenshot
-	 * @return array|stdClass[]
+	 * @param string $search_key the searching key to search for
+	 * @param string $status_filter the filter of files for status
+	 * @param string $driver_filter the filter for file drivers
+	 * @param int $limit the limit of the results
+	 * @param int $offset the offset of results for pagination
+	 *
+	 * @return array
 	 */
-	private function get_url_screenshots( string $url_status_filter, string $url_search_key, int $limit, int $offset ): array {
+	private function get_offloading_files(
+		string $search_key,
+		string $status_filter,
+		string $driver_filter,
+		int $limit,
+		int $offset ): array {
 		global $wpdb;
-		$table = URLSLAB_URLS_TABLE;
+		$table = URLSLAB_FILES_TABLE;
 		$values = array();
 
 		/* -- Preparing your query -- */
 		$query = "SELECT * FROM $table";
 
 		/* -- Preparing the condition -- */
-		if ( ! empty( $url_status_filter ) ) {
-			$query .= ' WHERE status = %s';
-			$values[] = $url_status_filter;
+		if (
+			! empty( $search_key ) ||
+			! empty( $status_filter ) ||
+			! empty( $driver_filter ) ) {
+			$query .= ' WHERE ';
+		}
+		if ( ! empty( $search_key ) ) {
+			$query .= 'filename LIKE %s OR url LIKE %s';
+			$values[] = '%' . $search_key . '%';
+			$values[] = '%' . $search_key . '%';
 		}
 
-		if ( ! empty( $url_search_key ) && ! empty( $url_status_filter ) ) {
-			$query .= ' AND urlName LIKE %s';
-			$values[] = '%' . $url_search_key . '%';
-		} else if ( ! empty( $url_search_key ) && empty( $url_status_filter ) ) {
-			$query .= ' WHERE urlName LIKE %s';
-			$values[] = '%' . $url_search_key . '%';
+		if ( ! empty( $status_filter ) ) {
+			if ( ! empty( $search_key ) ) {
+				$query .= ' AND ';
+			}
+			$query .= 'filestatus=%s';
+			$values[] = $status_filter;
+		}
+
+		if ( ! empty( $driver_filter ) ) {
+			if ( ! empty( $search_key ) || ! empty( $status_filter ) ) {
+				$query .= ' AND ';
+			}
+			$query .= 'driver=%s';
+			$values[] = $driver_filter;
 		}
 
 
 		/* -- Ordering parameters -- */
 		//Parameters that are going to be used to order the result
-		$orderby = ( isset( $_GET['orderby'] ) ) ? esc_sql( $_GET['orderby'] ) : 'updateStatusDate';
+		$orderby = ( isset( $_GET['orderby'] ) ) ? esc_sql( $_GET['orderby'] ) : 'fileid';
 		$order = ( isset( $_GET['order'] ) ) ? esc_sql( $_GET['order'] ) : 'ASC';
 		if ( ! empty( $orderby ) && ! empty( $order ) ) {
 			$query .= ' ORDER BY ' . $orderby . ' ' . $order; }
@@ -77,7 +86,6 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 				ARRAY_A
 			);
 		}
-
 		$query_res = array();
 		foreach ( $res as $row ) {
 			$query_res[] = $this->transform( $row );
@@ -86,78 +94,37 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 	}
 
 	/**
-	 * @param string[] $url_ids
-	 *
-	 * @return void
+	 * @return mixed count for pagination
 	 */
-	private function delete_url_screenshots( array $url_ids ) {
-		if ( count( $url_ids ) <= 0 ) {
-			return;
-		}
+	private function count_offloading_files( string $driver_filter = '', string $status = '' ) {
 		global $wpdb;
-		$table = URLSLAB_URLS_TABLE;
-		$placeholder = array();
-		foreach ( $url_ids as $id ) {
-			$placeholder[] = '(%s)';
-		}
-		$placeholder_string = implode( ', ', $placeholder );
-		$delete_query = "DELETE FROM $table WHERE urlMd5 IN ($placeholder_string)";
-		$wpdb->query(
-			$wpdb->prepare(
-				$delete_query, // phpcs:ignore
-				$url_ids
-			)
-		);
-	}
+		$table = URLSLAB_FILES_TABLE;
 
-	private function delete_url_screenshot( string $url_md5 ) {
-		global $wpdb;
-		$table = URLSLAB_URLS_TABLE;
-		$delete_query = "DELETE FROM $table WHERE urlMd5 = %s";
-		$wpdb->query(
-			$wpdb->prepare(
-				$delete_query, // phpcs:ignore
-				$url_md5
-			)
-		);
-	}
-
-	private function count_url_screenshots( string $url_status_filter = '', $url_search_key = '' ): ?string {
-		global $wpdb;
-		$table = URLSLAB_URLS_TABLE;
-		$values = array();
-
-		/* -- Preparing your query -- */
-		$query = "SELECT COUNT(*) AS cnt FROM $table";
-
-		/* -- Preparing the condition -- */
-		if ( ! empty( $url_status_filter ) ) {
-			$query .= ' WHERE status = %s';
-			$values[] = $url_status_filter;
-		}
-
-		if ( ! empty( $url_search_key ) && ! empty( $url_status_filter ) ) {
-			$query .= ' AND urlName LIKE %s';
-			$values[] = '%' . $url_search_key . '%';
-		} else if ( ! empty( $url_search_key ) && empty( $url_status_filter ) ) {
-			$query .= ' WHERE urlName LIKE %s';
-			$values[] = '%' . $url_search_key . '%';
-		}
-
-		if ( empty( $values ) ) {
-			return $wpdb->get_row(
-					$query, // phpcs:ignore
-				ARRAY_A
-			)['cnt'];
+		if ( empty( $driver_filter ) && empty( $status ) ) {
+			return $wpdb->get_row( "SELECT COUNT(*) AS cnt FROM $table", ARRAY_A )['cnt']; // phpcs:ignore
 		} else {
+			$query = "SELECT COUNT(*) AS cnt FROM $table WHERE ";
+			$values = array();
+			if ( ! empty( $driver_filter ) ) {
+				$query .= 'driver=%s';
+				$values[] = $driver_filter;
+			}
+
+			if ( ! empty( $driver_filter ) && ! empty( $status ) ) {
+				$query .= ' AND ';
+			}
+
+			if ( ! empty( $status ) ) {
+				$query .= 'filestatus=%s';
+				$values[] = $status;
+			}
+
 			return $wpdb->get_row(
-				$wpdb->prepare(
-					$query, // phpcs:ignore
-					$values
-				),
+				$wpdb->prepare( $query, $values ), // phpcs:ignore
 				ARRAY_A
 			)['cnt'];
 		}
+
 	}
 
 	/**
@@ -166,10 +133,9 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 	 */
 	function get_columns(): array {
 		return array(
-			'cb' => '<input type="checkbox" />',
 			'col_url' => 'Url',
 			'col_local_file' => 'Local File',
-			'col_file_name' => 'File Name',
+			'col_filename' => 'File Name',
 			'col_file_size' => 'File Size',
 			'col_file_type' => 'File Type',
 			'col_width' => 'Width',
@@ -180,180 +146,128 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 		);
 	}
 
-	protected function get_views(): array {
-		$views = array();
-		$current = ( ! empty( $_REQUEST['filter'] ) ? $_REQUEST['filter'] : 'all' );
-
-		//# All case
-		$class = ( 'all' == $current ? ' class="current"' : '' );
-		$all_url = remove_query_arg( 'filter' );
-		$all_count = $this->count_url_screenshots();
-		$views['all'] = "<a href='$all_url' $class>All <span class='count'>($all_count)</span></a>";
-		//# All case
-
-		//# Unscheduled case
-		$class = ( Urlslab_Status::$not_scheduled == $current ? ' class="current"' : '' );
-		$unscheduled_url = add_query_arg( 'filter', Urlslab_Status::$not_scheduled );
-		$unscheduled_count = $this->count_url_screenshots( Urlslab_Status::$not_scheduled );
-		$views['unscheduled'] = "<a href='$unscheduled_url' $class>Unscheduled <span class='count'>($unscheduled_count)</span></a>";
-		//# Unscheduled case
-
-		//# Active case
-		$class = ( Urlslab_Status::$available == $current ? ' class="current"' : '' );
-		$active_url = add_query_arg( 'filter', Urlslab_Status::$available );
-		$active_count = $this->count_url_screenshots( Urlslab_Status::$available );
-		$views['active'] = "<a href='$active_url' $class>Available <span class='count'>($active_count)</span></a>";
-		//# Active case
-
-		//# Pending case
-		$class = ( Urlslab_Status::$pending == $current ? ' class="current"' : '' );
-		$pending_url = add_query_arg( 'filter', Urlslab_Status::$pending );
-		$pending_count = $this->count_url_screenshots( Urlslab_Status::$pending );
-		$views['pending'] = "<a href='$pending_url' $class>Pending <span class='count'>($pending_count)</span></a>";
-		//# Pending case
-
-		//# Broken url case
-		$class = ( Urlslab_Status::$not_crawling == $current ? ' class="current"' : '' );
-		$not_crawling_url = add_query_arg( 'filter', Urlslab_Status::$not_crawling );
-		$not_crawling_count = $this->count_url_screenshots( Urlslab_Status::$not_crawling );
-		$views['not_crawling'] = "<a href='$not_crawling_url' $class>Not crawling <span class='count'>($not_crawling_count)</span></a>";
-		//# Broken url case
-
-		//# Blocked url case
-		$class = ( Urlslab_Status::$blocked == $current ? ' class="current"' : '' );
-		$blocked_url = add_query_arg( 'filter', Urlslab_Status::$blocked );
-		$blocked_count = $this->count_url_screenshots( Urlslab_Status::$blocked );
-		$views['blocked'] = "<a href='$blocked_url' $class>Blocked <span class='count'>($blocked_count)</span></a>";
-		//# Blocked url case
-
-		return $views;
-	}
-
-	/**
-	 * Render the bulk edit checkbox
-	 *
-	 * @param Urlslab_Url_Data $item
-	 *
-	 * @return string
-	 */
-	function column_cb( $item ): string {
-		return sprintf(
-			'<input type="checkbox" name="bulk-delete[]" value="%s" />',
-			$item->get_url()->get_url_id()
-		);
-	}
-
-	/**
-	 * Returns an associative array containing the bulk action
-	 *
-	 * @return array
-	 */
-	public function get_bulk_actions(): array {
-		return array(
-			'bulk-delete' => 'Delete',
-		);
-	}
-
-	public function process_bulk_action() {
-		//Detect when a bulk action is being triggered...
-		if ( 'delete' === $this->current_action() &&
-			 isset( $_GET['screenshot'] ) &&
-			 isset( $_REQUEST['_wpnonce'] ) ) {
-
-			// In our file that handles the request, verify the nonce.
-			$nonce = wp_unslash( $_REQUEST['_wpnonce'] );
-			/*
-			 * Note: the nonce field is set by the parent class
-			 * wp_nonce_field( 'bulk-' . $this->_args['plural'] );
-			 */
-			if ( ! wp_verify_nonce( $nonce, 'urlslab_delete_screenshot' ) ) { // verify the nonce.
-				wp_redirect(
-					add_query_arg(
-						'status=failure',
-						'message=this link is expired'
-					)
-				);
-				exit();
-			}
-
-			$this->delete_url_screenshot( $_GET['screenshot'] );
-		}
-
-
-		// Bulk Delete triggered
-		if ( ( isset( $_GET['action'] ) && 'bulk-delete' == $_GET['action'] )
-			 || ( isset( $_GET['action2'] ) && 'bulk-delete' == $_GET['action2'] ) ) {
-
-			if ( isset( $_GET['bulk-delete'] ) ) {
-				$delete_ids = esc_sql( $_GET['bulk-delete'] );
-				// loop over the array of record IDs and delete them
-				$this->delete_url_screenshots( $delete_ids );
-			}
-		}
-		$this->graceful_exit();
-	}
-
 	/**
 	 * Render a column when no column specific method exists.
 	 *
-	 * @param Urlslab_Url_Data $item
+	 * @param Urlslab_File_Data $item
 	 * @param string $column_name
 	 *
-	 * @return mixed
+	 * @return bool|int|string
 	 */
 	public function column_default( $item, $column_name ) {
 		switch ( $column_name ) {
-			case 'col_url_image':
-				if ( $item->screenshot_exists() ) {
-					return '<img src="' . $item->render_screenshot_path() . '" width="150px">';
-				}
-				return '<em>Not available!</em>';
-			case 'col_status':
-				return urlslab_status_ui_convert( $item->get_screenshot_status() );
-			case 'col_screenshot_date':
-				if ( $item->get_screenshot_date() == 0 ) {
-					return '<em>Not available!</em>';
-				} else {
-					return gmdate( 'Y-m-d', $item->get_screenshot_date() );
-				}
-			case 'col_update_status_date':
-				return $item->get_last_status_change_date();
-			case 'col_url_title':
-				return esc_attr( $item->get_url_title() );
-			case 'col_url_meta_description':
-				return esc_attr( $item->get_url_meta_description() ) ?? '';
-			case 'col_url_summary':
-				return esc_attr( $item->get_url_summary() ) ?? '';
+			case 'col_url':
+				return sprintf(
+					'<a target="_blank" href="%s">%s</a>',
+					esc_url( $item->get_url() ),
+					esc_url( $item->get_url() )
+				);
+			case 'col_local_file':
+				return $this->local_file_to_html( $item->get_local_file(), $item->get_driver() );
+			case 'col_filename':
+				return sprintf(
+					'<span title="%s">%s</span>',
+					esc_attr( $item->get_filename() ),
+					substr( $item->get_filename(), 0, 70 )
+				);
+			case 'col_file_size':
+				return (int) $item->get_filesize() / 1000 . ' KB';
+			case 'col_file_type':
+				return $item->get_filetype();
+			case 'col_width':
+				return $item->get_width();
+			case 'col_height':
+				return $item->get_height();
+			case 'col_file_status':
+				return $this->status_to_html( $item->get_filestatus() );
+			case 'col_driver':
+				return $this->driver_to_html( $item->get_driver() );
+			case 'col_last_seen':
+				return $item->get_last_seen();
 			default:
-				return print_r( $item, true ); //Show the whole array for troubleshooting purposes
+				return print_r( $item, true );
 		}
 	}
 
 	/**
 	 * Method for name column
 	 *
-	 * @param Urlslab_Url_Data $item an array of DB data
+	 * @param Urlslab_File_Data $item an array of DB data
 	 *
 	 * @return string
 	 */
-	function column_col_url_name( $item ): string {
+	function column_col_driver( $item ): string {
 
 		// create a nonce
-		$delete_nonce = wp_create_nonce( 'urlslab_delete_screenshot' );
+		$transfer_nonce = wp_create_nonce( 'urlslab_transfer_file' );
 
-		$title = '<strong>' . esc_url( $item->get_url()->get_url() ) . '</strong>';
+		$title = $this->driver_to_html( $item->get_driver() );
 
 		$actions = array();
 		if ( isset( $_REQUEST['page'] ) ) {
-			$actions = array(
-				'delete' => sprintf(
-					'<a href="?page=%s&action=%s&screenshot=%s&_wpnonce=%s">Delete</a>',
-					esc_attr( $_REQUEST['page'] ),
-					'delete',
-					esc_attr( $item->get_url()->get_url_id() ),
-					$delete_nonce
-				),
-			);
+			$actions = array();
+			$current_driver = $item->get_driver();
+
+
+			switch ( $current_driver ) {
+				case Urlslab_Driver::DRIVER_LOCAL_FILE:
+					$actions = array(
+						'transfer-to-s3' => sprintf(
+							'<a href="?page=%s&action=%s&file=%s&_wpnonce=%s">Transfer to S3</a>',
+							esc_attr( $_REQUEST['page'] ),
+							'transfer-to-s3',
+							esc_attr( $item->get_fileid() ),
+							$transfer_nonce
+						),
+						'transfer-to-db' => sprintf(
+							'<a href="?page=%s&action=%s&file=%s&_wpnonce=%s">Transfer to DB</a>',
+							esc_attr( $_REQUEST['page'] ),
+							'transfer-to-db',
+							esc_attr( $item->get_fileid() ),
+							$transfer_nonce
+						),
+					);
+					break;
+
+				case Urlslab_Driver::DRIVER_S3:
+					$actions = array(
+						'transfer-to-localfile' => sprintf(
+							'<a href="?page=%s&action=%s&file=%s&_wpnonce=%s">Transfer to Local file</a>',
+							esc_attr( $_REQUEST['page'] ),
+							'transfer-to-localfile',
+							esc_attr( $item->get_fileid() ),
+							$transfer_nonce
+						),
+						'transfer-to-db' => sprintf(
+							'<a href="?page=%s&action=%s&file=%s&_wpnonce=%s">Transfer to DB</a>',
+							esc_attr( $_REQUEST['page'] ),
+							'transfer-to-db',
+							esc_attr( $item->get_fileid() ),
+							$transfer_nonce
+						),
+					);
+					break;
+
+				case Urlslab_Driver::DRIVER_DB:
+					$actions = array(
+						'transfer-to-localfile' => sprintf(
+							'<a href="?page=%s&action=%s&file=%s&_wpnonce=%s">Transfer to Local file</a>',
+							esc_attr( $_REQUEST['page'] ),
+							'transfer-to-localfile',
+							esc_attr( $item->get_fileid() ),
+							$transfer_nonce
+						),
+						'transfer-to-s3' => sprintf(
+							'<a href="?page=%s&action=%s&file=%s&_wpnonce=%s">Transfer to S3</a>',
+							esc_attr( $_REQUEST['page'] ),
+							'transfer-to-s3',
+							esc_attr( $item->get_fileid() ),
+							$transfer_nonce
+						),
+					);
+					break;
+
+			}
 		}
 
 		return $title . $this->row_actions( $actions );
@@ -365,9 +279,73 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 	 */
 	public function get_sortable_columns(): array {
 		return array(
-			'col_url_name' => 'urlName',
-			'col_update_status_date' => 'updateStatusDate',
+			'col_file_size' => 'filesize',
 		);
+	}
+
+	protected function get_views() {
+		$views = array();
+		$current_status = ( ! empty( $_REQUEST['status_filter'] ) ? $_REQUEST['status_filter'] : '' );
+		$current_driver = ( ! empty( $_REQUEST['driver_filter'] ) ? $_REQUEST['driver_filter'] : '' );
+
+		//# All case
+		$class = ( '' == $current_status && '' == $current_driver ? ' class="current"' : '' );
+		$all_url = remove_query_arg( 'status_filter' );
+		$all_url = remove_query_arg( 'driver_filter', $all_url );
+		$all_count = $this->count_offloading_files();
+		$views['all'] = "<a href='$all_url' $class>All <span class='count'>($all_count)</span></a>";
+		//# All case
+
+		//# driver s3 case
+		$class = ( Urlslab_Driver::DRIVER_S3 == $current_driver ? ' class="current"' : $current_status );
+		$s3_driver_url = add_query_arg( 'driver_filter', Urlslab_Driver::DRIVER_S3 );
+		$s3_driver_count = $this->count_offloading_files( Urlslab_Driver::DRIVER_S3, '' );
+		$views['s3_driver'] = "<a href='$s3_driver_url' $class>S3 <span class='count'>($s3_driver_count)</span></a>";
+		//# driver s3 case
+
+		//# driver db case
+		$class = ( Urlslab_Driver::DRIVER_DB == $current_driver ? ' class="current"' : '' );
+		$db_driver_url = add_query_arg( 'driver_filter', Urlslab_Driver::DRIVER_DB );
+		$db_driver_count = $this->count_offloading_files( Urlslab_Driver::DRIVER_DB, '' );
+		$views['db_driver'] = "<a href='$db_driver_url' $class>Database <span class='count'>($db_driver_count)</span></a>";
+		//# driver db case
+
+		//# driver local file case
+		$class = ( Urlslab_Driver::DRIVER_LOCAL_FILE == $current_driver ? ' class="current"' : '' );
+		$local_driver_url = add_query_arg( 'driver_filter', Urlslab_Driver::DRIVER_LOCAL_FILE );
+		$local_driver_count = $this->count_offloading_files( Urlslab_Driver::DRIVER_LOCAL_FILE, '' );
+		$views['local_driver'] = "<a href='$local_driver_url' $class>Local File <span class='count'>($local_driver_count)</span></a>";
+		//# driver local file case
+
+		//# status pending case
+		$class = ( Urlslab_Driver::STATUS_PENDING == $current_status ? ' class="current"' : '' );
+		$pending_status_url = add_query_arg( 'status_filter', Urlslab_Driver::STATUS_PENDING );
+		$pending_status_count = $this->count_offloading_files( '', Urlslab_Driver::STATUS_PENDING );
+		$views['pending_status'] = "<a href='$pending_status_url' $class>Pending <span class='count'>($pending_status_count)</span></a>";
+		//# status pending case
+
+		//# status error case
+		$class = ( Urlslab_Driver::STATUS_ERROR == $current_status ? ' class="current"' : '' );
+		$error_status_url = add_query_arg( 'status_filter', Urlslab_Driver::STATUS_ERROR );
+		$error_status_count = $this->count_offloading_files( '', Urlslab_Driver::STATUS_ERROR );
+		$views['error_status'] = "<a href='$error_status_url' $class>Error <span class='count'>($error_status_count)</span></a>";
+		//# status error case
+
+		//# status active case
+		$class = ( Urlslab_Driver::STATUS_ACTIVE == $current_status ? ' class="current"' : '' );
+		$active_status_url = add_query_arg( 'status_filter', Urlslab_Driver::STATUS_ACTIVE );
+		$active_status_count = $this->count_offloading_files( '', Urlslab_Driver::STATUS_ACTIVE );
+		$views['active_status'] = "<a href='$active_status_url' $class>Active <span class='count'>($active_status_count)</span></a>";
+		//# status active case
+
+		//# status new case
+		$class = ( Urlslab_Driver::STATUS_NEW == $current_status ? ' class="current"' : '' );
+		$new_status_url = add_query_arg( 'status_filter', Urlslab_Driver::STATUS_NEW );
+		$new_status_count = $this->count_offloading_files( '', Urlslab_Driver::STATUS_NEW );
+		$views['new_status'] = "<a href='$new_status_url' $class>New <span class='count'>($new_status_count)</span></a>";
+		//# status new case
+
+		return $views;
 	}
 
 	/**
@@ -375,22 +353,22 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 	 * pagination, columns and table elements
 	 */
 	function prepare_items() {
-		$url_search_key = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
-		$url_status_filter = isset( $_REQUEST['filter'] ) ? wp_unslash( trim( $_REQUEST['filter'] ) ) : '';
-		$this->process_bulk_action();
+
+		$offloading_search_key = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
+		$file_status_filter = isset( $_REQUEST['status_filter'] ) ? wp_unslash( trim( $_REQUEST['status_filter'] ) ) : '';
+		$file_driver_filter = isset( $_REQUEST['driver_filter'] ) ? wp_unslash( trim( $_REQUEST['driver_filter'] ) ) : '';
+
 		$table_page = $this->get_pagenum();
 		$items_per_page = $this->get_items_per_page( 'users_per_page' );
 
-		$query_results = $this->get_url_screenshots(
-			$url_status_filter,
-			$url_search_key,
+		$query_results = $this->get_offloading_files(
+			$offloading_search_key,
+			$file_status_filter,
+			$file_driver_filter,
 			$items_per_page,
 			( $table_page - 1 ) * $items_per_page
 		);
-		$total_count = $this->count_url_screenshots(
-			$url_status_filter,
-			$url_search_key,
-		);
+		$total_count = $this->count_offloading_files( $file_driver_filter, $file_status_filter );
 
 
 		// set the pagination arguments
@@ -399,14 +377,83 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 				'total_items' => $total_count,
 				'per_page'    => $items_per_page,
 				'total_pages' => ceil( $total_count / $items_per_page ),
-			) 
+			)
 		);
 
 		$this->items = $query_results;
 	}
 
 	public function no_items() {
-		echo 'No Schedules available';
+		echo 'No Media offloading available';
+	}
+
+	private function status_to_html( string $file_status ): string {
+		switch ( $file_status ) {
+			case Urlslab_Driver::STATUS_ACTIVE:
+				return '<div class="status-circle background-success" title="available"></div>';
+
+			case Urlslab_Driver::STATUS_NEW:
+				return '<div class="status-circle background-secondary" title="not-scheduled"></div>';
+
+			case Urlslab_Driver::STATUS_PENDING:
+				return '<div class="status-circle background-warning" title="pending"></div>';
+
+			case Urlslab_Driver::STATUS_ERROR:
+				return '<div class="status-circle background-danger" title="blocked"></div>';
+
+			default:
+				return $file_status;
+		}
+	}
+
+	private function driver_to_html( string $driver ): string {
+		switch ( $driver ) {
+			case Urlslab_Driver::DRIVER_LOCAL_FILE:
+				return sprintf(
+					'<img src="%s" title="%s" alt="%s" width="30px" height="30px">',
+					plugin_dir_url( URLSLAB_PLUGIN_DIR . 'admin/assets/cloud.png' ) . 'folder-outline.png',
+					'Local File Driver',
+					'Local File Driver',
+				);
+
+			case Urlslab_Driver::DRIVER_DB:
+				return sprintf(
+					'<img src="%s" title="%s" alt="%s" width="30px" height="30px">',
+					plugin_dir_url( URLSLAB_PLUGIN_DIR . 'admin/assets/cloud.png' ) . 'database.png',
+					'Database Driver',
+					'Database Driver',
+				);
+
+			case Urlslab_Driver::DRIVER_S3:
+				return sprintf(
+					'<img src="%s" title="%s" alt="%s" width="30px" height="30px">',
+					plugin_dir_url( URLSLAB_PLUGIN_DIR . 'admin/assets/cloud.png' ) . 'cloud.png',
+					'AWS S3 Driver',
+					'AWS S3 Driver',
+				);
+
+			default:
+				return $driver;
+		}
+	}
+
+	private function local_file_to_html( string $local_file, string $driver ) {
+		switch ( $driver ) {
+			case Urlslab_Driver::DRIVER_DB:
+			case Urlslab_Driver::DRIVER_S3:
+				return sprintf(
+					'<span title="%s">%s</span>',
+					esc_attr( $local_file ),
+					empty( $local_file ) ? 'asset not downloaded in file server' : 'asset downloaded in file server but not used'
+				);
+
+			case Urlslab_Driver::DRIVER_LOCAL_FILE:
+				return sprintf(
+					'<span title="%s">%s</span>',
+					esc_attr( $local_file ),
+					substr( $local_file, 0, 70 )
+				);
+		}
 	}
 
 }

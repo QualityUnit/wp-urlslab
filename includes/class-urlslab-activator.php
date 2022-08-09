@@ -152,7 +152,9 @@ class Urlslab_Activator {
 			  filestatus char(1) NOT NULL,
 			  driver char(1) NOT NULL,
     		  last_seen datetime NULL,
-			  PRIMARY KEY (fileid)
+			  PRIMARY KEY (fileid),
+			  INDEX idx_file_filter (driver, filestatus),
+			  INDEX idx_file_sort (filesize)
 		) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

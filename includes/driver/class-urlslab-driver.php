@@ -97,5 +97,41 @@ abstract class Urlslab_Driver {
 		return self::$driver_cache[ $file->get_driver() ];
 	}
 
+	public static function transfer_file_to_storage(
+		Urlslab_File_Data $file,
+		string $dest_driver ): bool {
+		global $wpdb;
+
+		$result = false;
+		$tmp_name = wp_tempnam();
+		if (
+			Urlslab_Driver::get_driver( $file )->save_to_file( $file, $tmp_name ) &&
+			(
+				filesize( $tmp_name ) == $file->get_filesize() ||
+				( 0 == $file->get_filesize() && 0 < filesize( $tmp_name ) )
+			)
+		) {
+			//set new driver of storage
+			$file->set_driver( $dest_driver );
+			//save file to new storage
+			if ( Urlslab_Driver::get_driver( $file )->save_file_to_storage( $file, $tmp_name ) ) {
+				//change driver of file in db
+				$wpdb->update(
+					URLSLAB_FILES_TABLE,
+					array(
+						'driver' => $file->get_driver(),
+						'filesize' => filesize( $tmp_name ),
+					),
+					array(
+						'fileid' => $file->get_fileid(),
+					)
+				);
+				$result = true;
+			}
+		}
+		unlink( $tmp_name );
+		return $result;
+	}
+
 
 }

@@ -177,14 +177,19 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				'img' => array(
 					'src',
 					'data-src',
+					'data-lasrc', //# for LA custom solution - needs to be changed or added to settings
 					'data-full-url',
 					'srcset',
 				),
 				'video' => array(
 					'src',
+					'data-lasrc', //# for LA custom solution - needs to be changed or added to settings
 					'data-src',
 				),
-				'source' => array( 'srcset' ),
+				'source' => array(
+					'data-lasrc', //# for LA custom solution - needs to be changed or added to settings
+					'srcset',
+				),
 			);
 
 			foreach ( $iterate_elements as $tag_name => $tag_attributes ) {
