@@ -7,15 +7,15 @@ use Aws\S3\MultipartUploader;
 
 class Urlslab_Driver_S3 extends Urlslab_Driver {
 	const SETTING_NAME_S3_BUCKET = 'urlslab_AWS_S3_bucket';
-	private string $aws_s3_bucket;
+	private string $aws_s3_bucket = '';
 	const SETTING_NAME_S3_REGION = 'urlslab_AWS_S3_region';
-	private string $aws_s3_region;
+	private string $aws_s3_region = '';
 	const SETTING_NAME_S3_ACCESS_KEY = 'urlslab_AWS_S3_access_key';
-	private string $aws_s3_access_key;
+	private string $aws_s3_access_key = '';
 	const SETTING_NAME_S3_SECRET = 'urlslab_AWS_S3_secret';
-	private string $aws_s3_secret;
+	private string $aws_s3_secret = '';
 	const SETTING_NAME_S3_URL_PREFIX = 'urlslab_AWS_S3_url_prefix';
-	private string $aws_s3_url_prefix;
+	private string $aws_s3_url_prefix = '';
 
 	private $client;
 
@@ -23,19 +23,19 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 	 */
 	public function __construct() {
 		$option = get_option( 'urlslab_s3driver_configuration' );
-		if ( is_array( $option ) ||
-			 count( $option ) == 5 ||
-			 ( isset( $option[ self::SETTING_NAME_S3_ACCESS_KEY ] ) && ! empty( $option[ self::SETTING_NAME_S3_ACCESS_KEY ] ) ) ||
-			 ( isset( $option[ self::SETTING_NAME_S3_BUCKET ] ) && ! empty( $option[ self::SETTING_NAME_S3_BUCKET ] ) ) ||
-			 ( isset( $option[ self::SETTING_NAME_S3_REGION ] ) && ! empty( $option[ self::SETTING_NAME_S3_REGION ] ) ) ||
-			 ( isset( $option[ self::SETTING_NAME_S3_SECRET ] ) && ! empty( $option[ self::SETTING_NAME_S3_SECRET ] ) ) ||
+		if ( is_array( $option ) &&
+			 count( $option ) == 5 &&
+			 ( isset( $option[ self::SETTING_NAME_S3_ACCESS_KEY ] ) && ! empty( $option[ self::SETTING_NAME_S3_ACCESS_KEY ] ) ) &&
+			 ( isset( $option[ self::SETTING_NAME_S3_BUCKET ] ) && ! empty( $option[ self::SETTING_NAME_S3_BUCKET ] ) ) &&
+			 ( isset( $option[ self::SETTING_NAME_S3_REGION ] ) && ! empty( $option[ self::SETTING_NAME_S3_REGION ] ) ) &&
+			 ( isset( $option[ self::SETTING_NAME_S3_SECRET ] ) && ! empty( $option[ self::SETTING_NAME_S3_SECRET ] ) ) &&
 			 ( isset( $option[ self::SETTING_NAME_S3_URL_PREFIX ] ) && ! empty( $option[ self::SETTING_NAME_S3_URL_PREFIX ] ) )
 		) {
-			$this->aws_s3_bucket = $option[ self::SETTING_NAME_S3_BUCKET ] ?? '';
-			$this->aws_s3_region = $option[ self::SETTING_NAME_S3_REGION ] ?? '';
-			$this->aws_s3_access_key = $option[ self::SETTING_NAME_S3_ACCESS_KEY ] ?? '';
-			$this->aws_s3_secret = $option[ self::SETTING_NAME_S3_SECRET ] ?? '';
-			$this->aws_s3_url_prefix = $option[ self::SETTING_NAME_S3_URL_PREFIX ] ?? '';
+			$this->aws_s3_bucket = $option[ self::SETTING_NAME_S3_BUCKET ];
+			$this->aws_s3_region = $option[ self::SETTING_NAME_S3_REGION ];
+			$this->aws_s3_access_key = $option[ self::SETTING_NAME_S3_ACCESS_KEY ];
+			$this->aws_s3_secret = $option[ self::SETTING_NAME_S3_SECRET ];
+			$this->aws_s3_url_prefix = $option[ self::SETTING_NAME_S3_URL_PREFIX ];
 		}
 	}
 
