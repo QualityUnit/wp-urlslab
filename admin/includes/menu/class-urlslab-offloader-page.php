@@ -418,7 +418,15 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 									>S3 Driver</option>
 								</select>
 						</div>
-					<?php } else { ?>
+					<?php } elseif ( Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY == $setting ) { ?>
+				<div class="col-3 float-left">
+					<input id="<?php echo esc_attr( $setting ); ?>"
+						   name="<?php echo esc_attr( $setting ); ?>"
+						   value="<?php echo esc_attr( $setting_val ); ?>"
+						   type="number"
+					>
+				</div>
+				<?php } else { ?>
 						<div class="col-3 float-left">
 							<input id="<?php echo esc_attr( $setting ); ?>"
 								   name="<?php echo esc_attr( $setting ); ?>"
