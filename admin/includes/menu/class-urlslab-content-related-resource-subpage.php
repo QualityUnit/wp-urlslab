@@ -30,49 +30,73 @@ class Urlslab_Content_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 
 			//# Edit Functionality
 			if ( isset( $_POST['submit'] ) &&
-				 isset( $_POST['srcUrlHash'] ) &&
-				 isset( $_POST['destUrlHash'] ) &&
-				 isset( $_POST['srcUrl'] ) &&
-				 isset( $_POST['destUrl'] ) &&
 				 'Edit Url Relation' === $_POST['submit'] ) {
-				$this->edit_url_relation(
-					$_POST['srcUrlHash'],
-					$_POST['destUrlHash'],
-					new Urlslab_Url( $_POST['srcUrl'] ),
-					new Urlslab_Url( $_POST['destUrl'] ),
-				);
-				wp_safe_redirect(
-					$this->parent_page->menu_page(
-						$this->subpage_slug,
-						array(
-							'status' => 'success',
-							'urlslab-message' => 'keyword was edited successfully',
+				if ( isset( $_POST['srcUrlHash'] ) && ! empty( $_POST['srcUrlHash'] ) &&
+					isset( $_POST['destUrlHash'] ) && ! empty( $_POST['destUrlHash'] ) &&
+					isset( $_POST['srcUrl'] ) && ! empty( $_POST['srcUrl'] ) &&
+					isset( $_POST['destUrl'] ) && ! empty( $_POST['destUrl'] ) ) {
+					$this->edit_url_relation(
+						$_POST['srcUrlHash'],
+						$_POST['destUrlHash'],
+						new Urlslab_Url( $_POST['srcUrl'] ),
+						new Urlslab_Url( $_POST['destUrl'] ),
+					);
+					wp_safe_redirect(
+						$this->parent_page->menu_page(
+							$this->subpage_slug,
+							array(
+								'status' => 'success',
+								'urlslab-message' => 'keyword was edited successfully',
+							)
 						)
-					)
-				);
-				exit;
+					);
+					exit;
+				} else {
+					wp_safe_redirect(
+						$this->parent_page->menu_page(
+							$this->subpage_slug,
+							array(
+								'status' => 'failure',
+								'urlslab-message' => 'entered relation detail was not valid',
+							)
+						)
+					);
+					exit;
+				}
 			}
 			//# Edit Functionality
 
 			# Add Functionality
 			if ( isset( $_POST['submit'] ) &&
-				 isset( $_POST['srcUrl'] ) &&
-				 isset( $_POST['destUrl'] ) &&
 				 'Add Url Relation' === $_POST['submit'] ) {
-				$this->add_url_relation(
-					new Urlslab_Url( $_POST['srcUrl'] ),
-					new Urlslab_Url( $_POST['destUrl'] ),
-				);
-				wp_safe_redirect(
-					$this->parent_page->menu_page(
-						$this->subpage_slug,
-						array(
-							'status'          => 'success',
-							'urlslab-message' => 'Keyword was added successfully',
+				if ( isset( $_POST['srcUrl'] ) && ! empty( $_POST['srcUrl'] ) &&
+					isset( $_POST['destUrl'] ) && ! empty( $_POST['destUrl'] ) ) {
+					$this->add_url_relation(
+						new Urlslab_Url( $_POST['srcUrl'] ),
+						new Urlslab_Url( $_POST['destUrl'] ),
+					);
+					wp_safe_redirect(
+						$this->parent_page->menu_page(
+							$this->subpage_slug,
+							array(
+								'status'          => 'success',
+								'urlslab-message' => 'Keyword was added successfully',
+							)
 						)
-					)
-				);
-				exit;
+					);
+					exit;
+				} else {
+					wp_safe_redirect(
+						$this->parent_page->menu_page(
+							$this->subpage_slug,
+							array(
+								'status' => 'failure',
+								'urlslab-message' => 'entered relation detail was not valid',
+							)
+						)
+					);
+					exit;
+				}
 			}
 			# Add Functionality
 
@@ -199,43 +223,54 @@ class Urlslab_Content_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		$this->related_resource_table = new Urlslab_Related_Resources_Widget_Table();
 	}
 
-	private function import_csv_url_relations() {
-		if ( isset( $_FILES['csv_file']['error'] ) and
-			 UPLOAD_ERR_OK == $_FILES['csv_file']['error'] and
-			 isset( $_FILES['csv_file'] ) and
-			 isset( $_FILES['csv_file']['size'] ) and
-			 isset( $_FILES['csv_file']['tmp_name'] ) and
-			 ! empty( $_FILES['csv_file'] ) and
-			 $_FILES['csv_file']['size'] > 0 ) {
-			$res = $this->import_csv( $_FILES['csv_file']['tmp_name'] );
-			if ( $res > 0 ) {
-				$redirect_to = $this->parent_page->menu_page(
-					$this->subpage_slug,
-					array(
-						'status' => 'success',
-						'urlslab-message' => 'Processed ' . $res . ' rows of CSV successfully',
-					)
-				);
+	private function import_csv_url_relations(): void {
+		try {
+			if ( isset( $_FILES['csv_file']['error'] ) and
+				 UPLOAD_ERR_OK == $_FILES['csv_file']['error'] and
+				 isset( $_FILES['csv_file'] ) and
+				 isset( $_FILES['csv_file']['size'] ) and
+				 isset( $_FILES['csv_file']['tmp_name'] ) and
+				 ! empty( $_FILES['csv_file'] ) and
+				 $_FILES['csv_file']['size'] > 0 ) {
+				$res = $this->import_csv( $_FILES['csv_file']['tmp_name'] );
+				if ( $res > 0 ) {
+					$redirect_to = $this->parent_page->menu_page(
+						$this->subpage_slug,
+						array(
+							'status' => 'success',
+							'urlslab-message' => 'Processed ' . $res . ' rows of CSV successfully',
+						)
+					);
+				} else {
+					$redirect_to = $this->parent_page->menu_page(
+						$this->subpage_slug,
+						array(
+							'status' => 'failure',
+							'urlslab-message' => 'Didnt process any rows of CSV',
+						)
+					);
+				}
 			} else {
 				$redirect_to = $this->parent_page->menu_page(
 					$this->subpage_slug,
 					array(
 						'status' => 'failure',
-						'urlslab-message' => 'Didnt process any rows of CSV',
+						'urlslab-message' => urlslab_file_upload_code_to_message( $_FILES['csv_file']['error'] ),
 					)
 				);
 			}
-		} else {
+		} catch ( Exception $e ) {
 			$redirect_to = $this->parent_page->menu_page(
 				$this->subpage_slug,
 				array(
 					'status' => 'failure',
-					'urlslab-message' => file_upload_code_to_message( $_FILES['csv_file']['error'] ),
+					'urlslab-message' => 'Error in processing CSV: ' . $e->getMessage(),
 				)
 			);
+		} finally {
+			wp_safe_redirect( $redirect_to );
+			exit();
 		}
-		wp_safe_redirect( $redirect_to );
-		exit();
 	}
 
 	private function import_csv( $file ): int {

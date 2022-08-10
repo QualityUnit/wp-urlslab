@@ -321,9 +321,9 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 	}
 
 	/**
-	 * @return string
+	 * @return void
 	 */
-	private function import_csv_keywords(): string {
+	private function import_csv_keywords(): void {
 		try {
 			if ( ! empty( $_FILES['csv_file'] ) and $_FILES['csv_file']['size'] > 0 ) {
 				$res = $this->process_csv( $_FILES['csv_file']['tmp_name'] );
@@ -361,9 +361,10 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 					'urlslab-message' => 'Error in processing CSV: ' . $e->getMessage(),
 				)
 			);
+		} finally {
+			wp_safe_redirect( $redirect_to );
+			exit();
 		}
-		wp_safe_redirect( $redirect_to );
-		exit();
     }
 
 	/**
