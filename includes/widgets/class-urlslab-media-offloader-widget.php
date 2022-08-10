@@ -57,9 +57,9 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public function init_widget( Urlslab_Loader $loader ) {
 		$this->init_settings();
 		$loader->add_action( 'wp_handle_upload', $this, 'wp_handle_upload', 10, 1 );
-		//$loader->add_filter( 'the_content', $this, 'the_content' );
+//		$loader->add_filter( 'the_content', $this, 'the_content' );
 
-		$loader->add_action( 'wp_body_open', $this, 'buffer_start' );
+		$loader->add_action( 'wp_head', $this, 'buffer_start' );
 		$loader->add_action( 'wp_footer', $this, 'buffer_end', 99 );
 	}
 
@@ -169,7 +169,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		$found_urls = array();
 
 		try {
-			$document->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', 'UTF-8' ) );
+			$document->loadHTML(
+				mb_convert_encoding( $content, 'HTML-ENTITIES', 'UTF-8' ),
+				LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+			);
 			libxml_clear_errors();
 			libxml_use_internal_errors( $libxml_previous_state );
 
@@ -235,7 +238,14 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 					if ( $new_url ) {
 						foreach ( $urls[ $fileid ] as $attribute_name => $elements ) {
 							foreach ( $elements as $element ) {
-								$element['element']->setAttribute( $attribute_name, str_replace( $element['url'], $new_url, $element['element']->getAttribute( $attribute_name ) ) );
+								$element['element']->setAttribute(
+									$attribute_name,
+									str_replace(
+										$element['url'],
+										$new_url,
+										$element['element']->getAttribute( $attribute_name )
+									)
+								);
 							}
 							$found_urls[] = $fileid;
 						}

@@ -79,7 +79,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 		$document->strictErrorChecking = false;
 		$libxml_previous_state = libxml_use_internal_errors( true );
 		try {
-			$document->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', get_bloginfo( 'charset' ) ) );
+			$document->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', get_bloginfo( 'charset' ) ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
 			$head_tag = $document->getElementsByTagName( 'head' )[0];
 			if (empty( $head_tag ) || !is_object( $head_tag )) {
 				return $content;

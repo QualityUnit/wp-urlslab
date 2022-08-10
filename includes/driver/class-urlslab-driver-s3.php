@@ -28,14 +28,13 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 			 ( isset( $option[ self::SETTING_NAME_S3_ACCESS_KEY ] ) && ! empty( $option[ self::SETTING_NAME_S3_ACCESS_KEY ] ) ) &&
 			 ( isset( $option[ self::SETTING_NAME_S3_BUCKET ] ) && ! empty( $option[ self::SETTING_NAME_S3_BUCKET ] ) ) &&
 			 ( isset( $option[ self::SETTING_NAME_S3_REGION ] ) && ! empty( $option[ self::SETTING_NAME_S3_REGION ] ) ) &&
-			 ( isset( $option[ self::SETTING_NAME_S3_SECRET ] ) && ! empty( $option[ self::SETTING_NAME_S3_SECRET ] ) ) &&
-			 ( isset( $option[ self::SETTING_NAME_S3_URL_PREFIX ] ) && ! empty( $option[ self::SETTING_NAME_S3_URL_PREFIX ] ) )
+			 ( isset( $option[ self::SETTING_NAME_S3_SECRET ] ) && ! empty( $option[ self::SETTING_NAME_S3_SECRET ] ) )
 		) {
 			$this->aws_s3_bucket = $option[ self::SETTING_NAME_S3_BUCKET ];
 			$this->aws_s3_region = $option[ self::SETTING_NAME_S3_REGION ];
 			$this->aws_s3_access_key = $option[ self::SETTING_NAME_S3_ACCESS_KEY ];
 			$this->aws_s3_secret = $option[ self::SETTING_NAME_S3_SECRET ];
-			$this->aws_s3_url_prefix = $option[ self::SETTING_NAME_S3_URL_PREFIX ];
+			$this->aws_s3_url_prefix = $option[ self::SETTING_NAME_S3_URL_PREFIX ] ?? '';
 		}
 	}
 
@@ -107,9 +106,9 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 
 	public function get_url( Urlslab_File_Data $file ) {
 		if ( $this->is_configured() ) {
-			if ( $this->aws_s3_url_prefix ) {
+			if ( ! empty( $this->aws_s3_url_prefix ) ) {
 				// in case CDN is configured with custom url prefix to load static files from S3 directly
-				return $this->aws_s3_url_prefix . $this->get_file_dir( $file ) . $file->get_filename();
+				return site_url( $this->aws_s3_url_prefix . $this->get_file_dir( $file ) . $file->get_filename() );
 			}
 
 			//we will proxy content of file
@@ -170,8 +169,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 			! isset( $option[ self::SETTING_NAME_S3_ACCESS_KEY ] ) ||
 			! isset( $option[ self::SETTING_NAME_S3_BUCKET ] ) ||
 			! isset( $option[ self::SETTING_NAME_S3_REGION ] ) ||
-			! isset( $option[ self::SETTING_NAME_S3_SECRET ] ) ||
-			! isset( $option[ self::SETTING_NAME_S3_URL_PREFIX ] )
+			! isset( $option[ self::SETTING_NAME_S3_SECRET ] )
 		) {
 			return array(
 				self::SETTING_NAME_S3_ACCESS_KEY => '',
