@@ -8,7 +8,7 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 
 	public function __construct( $parent_page ) {
 		$this->parent_page = $parent_page;
-		$this->subpage_slug = 'link-building';
+		$this->subpage_slug = 'keyword-linking';
 	}
 
 
