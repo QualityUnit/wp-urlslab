@@ -266,20 +266,22 @@ or (updateStatusDate < %d AND status = %s)
 		$values = array();
 		$placeholder = array();
 		foreach ( $urls as $url ) {
-			array_push(
-				$values,
-				$url->get_url()->get_url_id(),
-				$url->get_url()->get_url(),
-				$url->get_screenshot_status(),
-				$url->get_domain_id(),
-				$url->get_url_id(),
-				$url->get_screenshot_date(),
-				gmdate( 'Y-m-d H:i:s' ),
-				$url->get_url_title(),
-				$url->get_url_meta_description(),
-				$url->get_url_summary(),
-			);
-			$placeholder[] = '(%s, %s, %s, %s, %s, %d, %s, %s, %s, %s)';
+			if ( ! is_null( $url ) ) {
+				array_push(
+					$values,
+					$url->get_url()->get_url_id(),
+					$url->get_url()->get_url(),
+					$url->get_screenshot_status(),
+					$url->get_domain_id(),
+					$url->get_url_id(),
+					$url->get_screenshot_date(),
+					gmdate( 'Y-m-d H:i:s' ),
+					$url->get_url_title(),
+					$url->get_url_meta_description(),
+					$url->get_url_summary(),
+				);
+				$placeholder[] = '(%s, %s, %s, %s, %s, %d, %s, %s, %s, %s)';
+			}
 		}
 
 		$placeholder_string = implode( ', ', $placeholder );
