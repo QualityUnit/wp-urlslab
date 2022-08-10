@@ -208,7 +208,9 @@ or (updateStatusDate < %d AND status = %s)
 		}
 		$returning_data = array();
 		foreach ( $urls as $url ) {
-			$returning_data[] = $scheduled[ $url->get_url_id() ];
+			if ( isset( $scheduled[ $url->get_url_id() ] ) ) {
+				$returning_data[] = $scheduled[ $url->get_url_id() ];
+			}
 		}
 
 		return $returning_data;
