@@ -35,6 +35,9 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public const SETTING_NAME_NEW_FILE_DRIVER = 'urlslab_file_driver';
 	private string $SETTING_NEW_FILE_DRIVER = Urlslab_Driver::DRIVER_DB;
 
+	public const SETTING_NAME_MANIPULATION_PRIORITY = 'urlslab_manipulation_priority';
+	private int $SETTING_MANIPULATION_PRIORITY = 1000;
+
 	//TRANSFER SETTINGS
 	public const SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES = 'urlslab_transfer_all_data_from_local_files';
 	public const SETTING_NAME_TRANSFER_FROM_DRIVER_S3 = 'urlslab_transfer_all_data_from_s3';
@@ -57,10 +60,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public function init_widget( Urlslab_Loader $loader ) {
 		$this->init_settings();
 		$loader->add_action( 'wp_handle_upload', $this, 'wp_handle_upload', 10, 1 );
-//		$loader->add_filter( 'the_content', $this, 'the_content' );
+		$loader->add_filter( 'the_content', $this, 'the_content', $this->SETTING_MANIPULATION_PRIORITY );
 
-		$loader->add_action( 'wp_head', $this, 'buffer_start' );
-		$loader->add_action( 'wp_footer', $this, 'buffer_end', 99 );
+		//      $loader->add_action( 'wp_head', $this, 'buffer_start' );
+		//      $loader->add_action( 'wp_footer', $this, 'buffer_end', 99 );
 	}
 
 	/**
@@ -379,6 +382,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public function get_widget_settings(): array {
 		return array(
 			self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND => $this->SETTING_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND,
+			self::SETTING_NAME_MANIPULATION_PRIORITY => $this->SETTING_MANIPULATION_PRIORITY,
 			self::SETTING_NAME_SAVE_EXTERNAL => $this->SETTING_SAVE_EXTERNAL,
 			self::SETTING_NAME_SAVE_INTERNAL => $this->SETTING_SAVE_INTERNAL,
 			self::SETTING_NAME_NEW_FILE_DRIVER => $this->SETTING_NEW_FILE_DRIVER,
@@ -398,6 +402,11 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			$option,
 			self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND,
 			$this->SETTING_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND
+		);
+		$option = urlslab_update_widget_settings(
+			$option,
+			self::SETTING_NAME_MANIPULATION_PRIORITY,
+			$this->SETTING_MANIPULATION_PRIORITY
 		);
 		$option = urlslab_update_widget_settings(
 			$option,
@@ -431,6 +440,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		);
 
 		$this->SETTING_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND = $option[ self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ];
+		$this->SETTING_MANIPULATION_PRIORITY = $option[ self::SETTING_NAME_MANIPULATION_PRIORITY ];
 		$this->SETTING_SAVE_EXTERNAL = $option[ self::SETTING_NAME_SAVE_EXTERNAL ];
 		$this->SETTING_SAVE_INTERNAL = $option[ self::SETTING_NAME_SAVE_INTERNAL ];
 		$this->SETTING_NEW_FILE_DRIVER = $option[ self::SETTING_NAME_NEW_FILE_DRIVER ];
