@@ -333,6 +333,7 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 		$row = 0;
 		$handle = fopen( $file, 'r' );
 		if ( false !== ( $handle ) ) {
+			wp_raise_memory_limit( 'admin' );
 			while ( ( $data = fgetcsv( $handle ) ) !== false ) {
 				$row++;
 				//# processing CSV Header

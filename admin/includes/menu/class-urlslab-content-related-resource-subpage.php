@@ -208,12 +208,12 @@ class Urlslab_Content_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 			 ! empty( $_FILES['csv_file'] ) and
 			 $_FILES['csv_file']['size'] > 0 ) {
 			$res = $this->import_csv( $_FILES['csv_file']['tmp_name'] );
-			if ( $res ) {
+			if ( $res > 0 ) {
 				$redirect_to = $this->parent_page->menu_page(
 					$this->subpage_slug,
 					array(
 						'status' => 'success',
-						'urlslab-message' => 'CSV File was added successfully',
+						'urlslab-message' => 'Processed ' . $res . ' rows of CSV successfully',
 					)
 				);
 			} else {
@@ -221,7 +221,7 @@ class Urlslab_Content_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 					$this->subpage_slug,
 					array(
 						'status' => 'failure',
-						'urlslab-message' => 'There was a problem in parsing the CSV',
+						'urlslab-message' => 'Didnt process any rows of CSV',
 					)
 				);
 			}
@@ -238,99 +238,71 @@ class Urlslab_Content_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		exit();
 	}
 
-	private function import_csv( $file ): bool {
+	private function import_csv( $file ): int {
 		//# Reading/Parsing CSV File
 		$row = 1;
-		$wrong_rows = 0;
-		$cols = array();
-		$saving_items = array();
-		$scheduling_items = array();
+		$processed_rows = 0;
 		$handle = fopen( $file, 'r' );
 		if ( false !== ( $handle ) ) {
+			wp_raise_memory_limit( 'admin' );
 			while ( ( $data = fgetcsv( $handle ) ) !== false ) {
-
+				$row++;
 				//# processing CSV Header
 				if ( 1 == $row ) {
-					if ( count( $data ) != 2 ) {
-						//# Wrong number of cols in csv
-						return false;
-					} else {
-						$idx = 0;
-						foreach ( $data as $col ) {
-							if ( is_string( $col ) ) {
-								if ( is_string( $this->map_to_db_col( $col ) ) ) {
-									if ( isset( $cols[ $this->map_to_db_col( $col ) ] ) ) {
-										return false;
-									} else {
-										$cols[ $this->map_to_db_col( $col ) ] = $idx;
-										$idx++;
-									}
-								} else {
-									return false;
-								}
-							} else {
-								//# wrong type in header
-								return false;
-							}
-						}
-					}
-					$row++;
 					continue;
 				}
-
-				$src_url = new Urlslab_Url( $data[ $cols['srcUrl'] ] );
-				$dest_url = new Urlslab_Url( $data[ $cols['destUrl'] ] );
-
-
-				if ( empty( $src_url ) or empty( $dest_url ) ) {
-					$wrong_rows++;
+				if ( ! isset( $data[0] ) || strlen( $data[0] ) == 0 ||
+					 ! isset( $data[1] ) || strlen( $data[1] ) == 0 ) {
 					continue;
-				} else {
-					array_push( $scheduling_items, $src_url, $dest_url );
-					$saving_items[] = array(
-						$src_url,
-						$dest_url,
-					);
 				}
-				$row++;
+				//SrcUrl, DestUrl
+				$data_row = array(
+					new Urlslab_Url( $data[0] ),
+					new Urlslab_Url( $data[1] ),
+				);
+
+				$res = $this->create_row( $data_row );
+				if ( $res ) {
+					$processed_rows++;
+				}
 			}
 			fclose( $handle );
 		}
 
+		return $processed_rows;
+	}
+
+	/**
+	 * @param Urlslab_Url[] $data srcUrl and destUrl
+	 *
+	 * @return bool
+	 */
+	private function create_row( array $data ): bool {
 		//# Scheduling Src and Dest URLs
-		if ( ! $this->url_data_fetcher->prepare_url_batch_for_scheduling( $scheduling_items ) ) {
+		if ( ! $this->url_data_fetcher->prepare_url_batch_for_scheduling( $data ) ) {
 			return false;
 		}
 		//# Scheduling Src and Dest URLs
 
 		global $wpdb;
 		$table = URLSLAB_RELATED_RESOURCE_TABLE;
-		$values = array();
-		$placeholder = array();
-		foreach ( $saving_items as $item ) {
-			array_push(
-				$values,
-				$item[0]->get_url_id(),
-				$item[1]->get_url_id(),
-			);
-			$placeholder[] = '(%s, %s)';
-		}
 
-		$placeholder_string = implode( ', ', $placeholder );
 		$update_query = "INSERT IGNORE INTO $table (
                    srcUrlMd5,
                    destUrlMd5) VALUES
-                   $placeholder_string";
+                   (%s, %s)";
 
 		$result = $wpdb->query(
 			$wpdb->prepare(
 				$update_query, // phpcs:ignore
-				$values
+				array(
+					$data[0]->get_url_id(),
+					$data[1]->get_url_id(),
+				)
 			)
 		);
 
 		return is_numeric( $result );
-
 	}
 
 	private function export_csv_url_relations() {
