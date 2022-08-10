@@ -105,7 +105,7 @@ class Urlslab_General_Settings_Page extends Urlslab_Admin_Page {
 	 */
 	public function render_apikey_form() {
 		?>
-		<form method="post" action="<?php echo esc_url( $this->menu_page( 'api-key', 'action=setup' ) ); ?>">
+		<form method="post" action="<?php echo esc_url( $this->menu_page( 'general-settings', 'action=setup' ) ); ?>">
 			<?php wp_nonce_field( 'api-key-setup' ); ?>
 			<?php
 			$user_api_key = Urlslab_User_Widget::get_instance()->get_api_key();
@@ -167,24 +167,27 @@ class Urlslab_General_Settings_Page extends Urlslab_Admin_Page {
 			$confirmed = $this->confirm_key( $user_api_key );
 			if ( $confirmed ) {
 				$redirect_to = $this->menu_page(
-					'api-key',
+					'',
 					array(
 						'status' => 'success',
+						'urlslab-message' => 'API Key is valid!',
 					)
 				);
 			} else {
 				$redirect_to = $this->menu_page(
-					'api-key',
+					'',
 					array(
 						'status' => 'unauthorized',
+						'urlslab-message' => 'API Key is invalid!',
 					)
 				);
 			}
 		} else {
 			$redirect_to = $this->menu_page(
-				'api-key',
+				'',
 				array(
 					'status' => 'unauthorized',
+					'urlslab-message' => 'API Key not entered!',
 				)
 			);
 		}
@@ -201,9 +204,10 @@ class Urlslab_General_Settings_Page extends Urlslab_Admin_Page {
 		if ( ! empty( $_POST['reset-api-key'] ) ) {
 			$this->reset_api_key();
 			$redirect_to = $this->menu_page(
-				'api-key',
+				'',
 				array(
 					'status' => 'success',
+					'urlslab-message' => 'API Key is valid!',
 				)
 			);
 		}
@@ -215,18 +219,20 @@ class Urlslab_General_Settings_Page extends Urlslab_Admin_Page {
 			$confirmed = $this->confirm_key( new Urlslab_Api_Key( $api_key ) );
 			if ( $confirmed ) {
 				$redirect_to = $this->menu_page(
-					'api-key',
+					'',
 					array(
 						'status' => 'success',
+						'urlslab-message' => 'API Key is valid!',
 					)
 				);
 
 				$this->save_api_key( $api_key );
 			} else {
 				$redirect_to = $this->menu_page(
-					'api-key',
+					'',
 					array(
 						'status' => 'unauthorized',
+						'urlslab-message' => 'API Key is invalid!',
 					)
 				);
 			}
