@@ -28,26 +28,38 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
             //# Edit Functionality
 			if ( isset( $_POST['submit'] ) &&
 			     'Edit Keyword' === $_POST['submit'] ) {
-				$this->edit_keyword(
-					$_POST['keywordHash'],
-                    new Urlslab_Url_Keyword_Data(
-	                    $_POST['keyword'],
-	                    $_POST['keyword-prio'],
-	                    strlen( $_POST['keyword'] ),
-	                    $_POST['keyword-lang'],
-	                    $_POST['keyword-link'],
-	                    $_POST['keyword-url-filter'],
-                    )
-                );
-				wp_safe_redirect(
-					$this->parent_page->menu_page(
-						$this->subpage_slug,
-						array(
-							'status' => 'success',
-							'urlslab-message' => 'keyword was edited successfully',
-						)
-					)
-				);
+                if ($this->is_request_valid()) {
+	                $this->edit_keyword(
+		                $_POST['keywordHash'],
+		                new Urlslab_Url_Keyword_Data(
+			                $_POST['keyword'],
+			                $_POST['keyword-prio'],
+			                strlen( $_POST['keyword'] ),
+			                $_POST['keyword-lang'],
+			                $_POST['keyword-link'],
+			                $_POST['keyword-url-filter'],
+		                )
+	                );
+	                wp_safe_redirect(
+		                $this->parent_page->menu_page(
+			                $this->subpage_slug,
+			                array(
+				                'status' => 'success',
+				                'urlslab-message' => 'keyword was edited successfully',
+			                )
+		                )
+	                );
+                } else {
+	                wp_safe_redirect(
+		                $this->parent_page->menu_page(
+			                $this->subpage_slug,
+			                array(
+				                'status' => 'failure',
+				                'urlslab-message' => 'entered keyword detail was not valid',
+			                )
+		                )
+	                );
+                }
 				exit;
 			}
 			//# Edit Functionality
@@ -55,25 +67,37 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
             //# Add Functionality
 			if ( isset( $_POST['submit'] ) &&
 			     'Add Keyword' === $_POST['submit'] ) {
-				$this->add_keyword(
-					new Urlslab_Url_Keyword_Data(
-						$_POST['keyword'],
-						$_POST['keyword-prio'],
-						strlen( $_POST['keyword'] ),
-						$_POST['keyword-lang'],
-						$_POST['keyword-link'],
-						$_POST['keyword-url-filter'],
-					)
-				);
-				wp_safe_redirect(
-					$this->parent_page->menu_page(
-						$this->subpage_slug,
-						array(
-							'status' => 'success',
-							'urlslab-message' => 'Keyword was added successfully',
+				if ($this->is_request_valid()) {
+					$this->add_keyword(
+						new Urlslab_Url_Keyword_Data(
+							$_POST['keyword'],
+							$_POST['keyword-prio'],
+							strlen( $_POST['keyword'] ),
+							$_POST['keyword-lang'],
+							$_POST['keyword-link'],
+							$_POST['keyword-url-filter'],
 						)
-					)
-				);
+					);
+					wp_safe_redirect(
+						$this->parent_page->menu_page(
+							$this->subpage_slug,
+							array(
+								'status' => 'success',
+								'urlslab-message' => 'Keyword was added successfully',
+							)
+						)
+					);
+				} else {
+					wp_safe_redirect(
+						$this->parent_page->menu_page(
+							$this->subpage_slug,
+							array(
+								'status' => 'failure',
+								'urlslab-message' => 'entered keyword detail was not valid',
+							)
+						)
+					);
+				}
 				exit;
 			}
 			//# Add Functionality
@@ -155,6 +179,15 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 			//# Sample Data Generation
 		}
 	}
+
+    private function is_request_valid(): bool {
+        return isset( $_POST['keywordHash'] ) && !empty( $_POST['keywordHash'] ) &&
+               isset( $_POST['keyword-prio'] ) && !empty( $_POST['keyword-prio'] ) &&
+               isset( $_POST['keyword'] ) && !empty( $_POST['keyword'] ) &&
+               isset( $_POST['keyword-lang'] ) && !empty( $_POST['keyword-lang'] ) &&
+               isset( $_POST['keyword-link'] ) && !empty( $_POST['keyword-link'] ) &&
+               isset( $_POST['keyword-url-filter'] ) && !empty( $_POST['keyword-url-filter'] );
+    }
 
 	private function init_sample_data() {
 		//in case installation is empty, use some static mappings
@@ -291,31 +324,41 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 	 * @return string
 	 */
 	private function import_csv_keywords(): string {
-		if ( ! empty( $_FILES['csv_file'] ) and $_FILES['csv_file']['size'] > 0 ) {
-			$res = $this->process_csv( $_FILES['csv_file']['tmp_name'] );
-			if ( $res ) {
-				$redirect_to = $this->parent_page->menu_page(
-                        $this->subpage_slug,
-					array(
-						'status' => 'success',
-                        'urlslab-message' => 'CSV File was added successfully'
-					)
-				);
+		try {
+			if ( ! empty( $_FILES['csv_file'] ) and $_FILES['csv_file']['size'] > 0 ) {
+				$res = $this->process_csv( $_FILES['csv_file']['tmp_name'] );
+				if ( $res > 0 ) {
+					$redirect_to = $this->parent_page->menu_page(
+						$this->subpage_slug,
+						array(
+							'status' => 'success',
+							'urlslab-message' => 'CSV File was added successfully'
+						)
+					);
+				} else {
+					$redirect_to = $this->parent_page->menu_page(
+						$this->subpage_slug,
+						array(
+							'status' => 'failure',
+							'urlslab-message' => 'There was a problem in parsing the CSV'
+						)
+					);
+				}
 			} else {
 				$redirect_to = $this->parent_page->menu_page(
 					$this->subpage_slug,
 					array(
 						'status' => 'failure',
-						'urlslab-message' => 'There was a problem in parsing the CSV'
+						'urlslab-message' => urlslab_file_upload_code_to_message( $_FILES['csv_file']['error'] ),
 					)
 				);
 			}
-		} else {
+        } catch (Exception $e) {
 			$redirect_to = $this->parent_page->menu_page(
 				$this->subpage_slug,
 				array(
 					'status' => 'failure',
-					'urlslab-message' => file_upload_code_to_message( $_FILES['csv_file']['error'] ),
+					'urlslab-message' => 'Error in processing CSV: ' . $e->getMessage(),
 				)
 			);
 		}
@@ -326,11 +369,12 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 	/**
 	 * @param $file
 	 *
-	 * @return bool
+	 * @return int
 	 */
-	private function process_csv( $file ): bool {
+	private function process_csv( $file ): int {
 		//# Reading/Parsing CSV File
 		$row = 0;
+		$processed_rows = 0;
 		$handle = fopen( $file, 'r' );
 		if ( false !== ( $handle ) ) {
 			wp_raise_memory_limit( 'admin' );
@@ -346,19 +390,22 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 				//Keyword, URL, Priority, Lang, Filter
 				$dataRow = new Urlslab_Url_Keyword_Data( $data[ 0 ], isset( $data[ 2 ] ) && is_numeric( $data[ 2 ] ) ? (int) $data[ 2 ] : 10, strlen( $data[ 0 ] ), isset( $data[ 3 ] ) && strlen( $data[ 3 ] ) > 0 ? $data[ 3 ] : 'all', $data[ 1 ], isset( $data[ 4 ] ) ? $data[ 4 ] : '.*' );
 
-				$this->createRow( $dataRow );
+				$result = $this->createRow( $dataRow );
+                if ($result) {
+	                $processed_rows++;
+                }
 			}
 			fclose( $handle );
 		}
-		return true;
+		return $processed_rows;
 	}
 
 	/**
 	 * @param Urlslab_Url_Keyword_Data $dataRow
 	 *
-	 * @return void
+	 * @return bool
 	 */
-	private function createRow( Urlslab_Url_Keyword_Data $dataRow ): void {
+	private function createRow( Urlslab_Url_Keyword_Data $dataRow ): bool {
 		global $wpdb;
 		$update_query = 'INSERT INTO ' . URLSLAB_KEYWORDS_TABLE . ' (
                    kwMd5,
@@ -375,7 +422,7 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
                    urlLink = VALUES(urlLink),
                    urlFilter = VALUES(urlFilter)';
 
-		$wpdb->query(
+		$result = $wpdb->query(
 			$wpdb->prepare( $update_query, // phpcs:ignore
 				array(
 					$dataRow->get_kw_md5(),
@@ -388,6 +435,8 @@ class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 				)
 			)
 		);
+
+        return is_numeric( $result );
 	}
 
 	public function render_manage_buttons() {
