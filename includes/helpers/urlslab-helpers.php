@@ -154,7 +154,7 @@ function urlslab_visibility_ui_convert( string $status_char ): string {
 		case Urlslab_Url_Data::VISIBILITY_VISIBLE:
 			return '<div class="status-circle background-success" title="visible"></div>';
 		case Urlslab_Url_Data::VISIBILITY_HIDDEN:
-			return '<div class="status-circle background-warning" title="hidden"></div>';
+			return '<div class="status-circle background-danger" title="hidden"></div>';
 		default:
 			return $status_char;
 	}

@@ -123,6 +123,21 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		);
 	}
 
+	private function change_url_visibility( string $url_md5, string $visibility ) {
+		global $wpdb;
+		$table = URLSLAB_URLS_TABLE;
+		$update_query = "UPDATE $table SET visibility = %s WHERE urlMd5 = %s";
+		$wpdb->query(
+			$wpdb->prepare(
+				$update_query, // phpcs:ignore
+				array(
+					$visibility,
+					$url_md5,
+				)
+			)
+		);
+	}
+
 	private function count_url_screenshots( string $url_status_filter = '', $url_search_key = '' ): ?string {
 		global $wpdb;
 		$table = URLSLAB_URLS_TABLE;
@@ -243,7 +258,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 	 */
 	function column_cb( $item ): string {
 		return sprintf(
-			'<input type="checkbox" name="bulk-delete[]" value="%s" />',
+			'<input type="checkbox" name="bulk-item[]" value="%s" />',
 			$item->get_url()->get_url_id()
 		);
 	}
@@ -256,6 +271,8 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 	public function get_bulk_actions(): array {
 		return array(
 			'bulk-delete' => 'Delete',
+			'bulk-hide' => 'Mark as hidden',
+			'bulk-visible' => 'Mark as visible',
 		);
 	}
 
@@ -284,17 +301,99 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 			$this->delete_url_screenshot( $_GET['screenshot'] );
 		}
 
-
 		// Bulk Delete triggered
 		if ( ( isset( $_GET['action'] ) && 'bulk-delete' == $_GET['action'] )
 			 || ( isset( $_GET['action2'] ) && 'bulk-delete' == $_GET['action2'] ) ) {
 
-			if ( isset( $_GET['bulk-delete'] ) ) {
-				$delete_ids = esc_sql( $_GET['bulk-delete'] );
+			if ( isset( $_GET['bulk-item'] ) ) {
+				$changing_ids = esc_sql( $_GET['bulk-item'] );
 				// loop over the array of record IDs and delete them
-				$this->delete_url_screenshots( $delete_ids );
+				$this->delete_url_screenshots( $changing_ids );
 			}
 		}
+
+		//# Changing url visibility
+		if ( isset( $_GET['action'] ) &&
+			 'hide' == $_GET['action'] &&
+			 isset( $_GET['screenshot'] ) &&
+			 isset( $_REQUEST['_wpnonce'] ) ) {
+
+			// In our file that handles the request, verify the nonce.
+			$nonce = wp_unslash( $_REQUEST['_wpnonce'] );
+			/*
+			 * Note: the nonce field is set by the parent class
+			 * wp_nonce_field( 'bulk-' . $this->_args['plural'] );
+			 */
+			if ( ! wp_verify_nonce( $nonce, 'urlslab_url_visibility' ) ) { // verify the nonce.
+				wp_redirect(
+					add_query_arg(
+						'status=failure',
+						'message=this link is expired'
+					)
+				);
+				exit();
+			}
+
+			$this->change_url_visibility(
+				$_GET['screenshot'],
+				Urlslab_Url_Data::VISIBILITY_HIDDEN
+			);
+		}
+
+		if ( isset( $_GET['action'] ) &&
+			 'visible' == $_GET['action'] &&
+			 isset( $_GET['screenshot'] ) &&
+			 isset( $_REQUEST['_wpnonce'] ) ) {
+
+			// In our file that handles the request, verify the nonce.
+			$nonce = wp_unslash( $_REQUEST['_wpnonce'] );
+			/*
+			 * Note: the nonce field is set by the parent class
+			 * wp_nonce_field( 'bulk-' . $this->_args['plural'] );
+			 */
+			if ( ! wp_verify_nonce( $nonce, 'urlslab_url_visibility' ) ) { // verify the nonce.
+				wp_redirect(
+					add_query_arg(
+						'status=failure',
+						'message=this link is expired'
+					)
+				);
+				exit();
+			}
+
+			$this->change_url_visibility(
+				$_GET['screenshot'],
+				Urlslab_Url_Data::VISIBILITY_VISIBLE
+			);
+		}
+
+		//# Bulk actions
+		if ( ( isset( $_GET['action'] ) && 'bulk-hide' == $_GET['action'] )
+			 || ( isset( $_GET['action2'] ) && 'bulk-hide' == $_GET['action2'] ) ) {
+
+			if ( isset( $_GET['bulk-item'] ) ) {
+				$changing_ids = esc_sql( $_GET['bulk-item'] );
+				// loop over the array of record IDs and delete them
+				foreach ( $changing_ids as $id ) {
+					$this->change_url_visibility( $id, Urlslab_Url_Data::VISIBILITY_HIDDEN );
+				}
+			}
+		}
+
+		if ( ( isset( $_GET['action'] ) && 'bulk-visible' == $_GET['action'] )
+			 || ( isset( $_GET['action2'] ) && 'bulk-visible' == $_GET['action2'] ) ) {
+
+			if ( isset( $_GET['bulk-item'] ) ) {
+				$changing_ids = esc_sql( $_GET['bulk-item'] );
+				// loop over the array of record IDs and delete them
+				foreach ( $changing_ids as $id ) {
+					$this->change_url_visibility( $id, Urlslab_Url_Data::VISIBILITY_VISIBLE );
+				}
+			}
+		}
+
+		//# Changing url visibility
+
 		$this->graceful_exit();
 	}
 
@@ -364,6 +463,52 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		}
 
 		return $title . $this->row_actions( $actions );
+	}
+
+	/**
+	 * Method for visibility column
+	 *
+	 * @param Urlslab_Url_Data $item an array of DB data
+	 *
+	 * @return string
+	 */
+	function column_col_visibility( $item ): string {
+
+		// create a nonce
+		$visibility_nonce = wp_create_nonce( 'urlslab_url_visibility' );
+
+		$visibility_status = urlslab_visibility_ui_convert( $item->get_visibility() );
+
+		$actions = array();
+		if ( isset( $_REQUEST['page'] ) ) {
+			switch ( $item->get_visibility() ) {
+				case Urlslab_Url_Data::VISIBILITY_VISIBLE:
+					$actions = array(
+						'delete' => sprintf(
+							'<a href="?page=%s&action=%s&screenshot=%s&_wpnonce=%s">Hide</a>',
+							esc_attr( $_REQUEST['page'] ),
+							'hide',
+							esc_attr( $item->get_url()->get_url_id() ),
+							$visibility_nonce
+						),
+					);
+					break;
+
+				case Urlslab_Url_Data::VISIBILITY_HIDDEN:
+					$actions = array(
+						'visible' => sprintf(
+							'<a href="?page=%s&action=%s&screenshot=%s&_wpnonce=%s">Visible</a>',
+							esc_attr( $_REQUEST['page'] ),
+							'visible',
+							esc_attr( $item->get_url()->get_url_id() ),
+							$visibility_nonce
+						),
+					);
+					break;
+			}
+		}
+
+		return $visibility_status . $this->row_actions( $actions );
 	}
 
 	/**
