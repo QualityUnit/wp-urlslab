@@ -1,6 +1,6 @@
 <?php
 
-// phpcs:disable WordPress
+// phpcs:disable WordPress.NamingConventions
 
 class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
@@ -18,7 +18,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	/**
 	 * @param Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher
 	 */
-	public function __construct( Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher) {
+	public function __construct( Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher ) {
 		$this->urlslab_url_data_fetcher = $urlslab_url_data_fetcher;
 		$this->widget_slug = 'urlslab-link-enhancer';
 		$this->widget_title = 'Link Enhancer';
@@ -63,8 +63,8 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		return $this->landing_page_link;
 	}
 
-	public function theContentHook( $content) {
-		if (trim( $content ) === '') {
+	public function theContentHook( $content ) {
+		if ( trim( $content ) === '' ) {
 			return $content;    //nothing to process
 		}
 
@@ -83,36 +83,36 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			$elements = $document->getElementsByTagName( 'a' );
 
 			$link_elements = array();
-			if ($elements instanceof DOMNodeList) {
-				foreach ($elements as $dom_element) {
+			if ( $elements instanceof DOMNodeList ) {
+				foreach ( $elements as $dom_element ) {
 					//skip processing if A tag contains attribute "urlslab-skip"
-					if ($dom_element->hasAttribute( 'urlslab-skip' )) {
+					if ( $dom_element->hasAttribute( 'urlslab-skip' ) ) {
 						continue;
 					}
 
-					if ( ! empty( trim( $dom_element->getAttribute( 'href' ) ) )) {
+					if ( ! empty( trim( $dom_element->getAttribute( 'href' ) ) ) ) {
 						$url = new Urlslab_Url( $dom_element->getAttribute( 'href' ) );
-						$link_elements[] = array($dom_element, $url);
+						$link_elements[] = array( $dom_element, $url );
 					}
 				}
 			}
 
-			if (!empty( $link_elements )) {
+			if ( ! empty( $link_elements ) ) {
 
 				$result = $this->urlslab_url_data_fetcher->fetch_schedule_urls_batch(
 					array_map( fn( $elem): Urlslab_Url => $elem[1], $link_elements )
 				);
 
-				if (!empty( $result )) {
+				if ( ! empty( $result ) ) {
 
 					$this->update_urls_map( array_keys( $result ) );
 
-					foreach ($link_elements as $arr_element) {
-						if (isset( $result[$arr_element[1]->get_url_id()] ) &&
-							!empty( $result[$arr_element[1]->get_url_id()] )) {
+					foreach ( $link_elements as $arr_element ) {
+						if ( isset( $result[ $arr_element[1]->get_url_id() ] ) &&
+							! empty( $result[ $arr_element[1]->get_url_id() ] ) ) {
 							$arr_element[0]->setAttribute(
 								'title',
-								$result[$arr_element[1]->get_url_id()]->get_url_summary_text(),
+								$result[ $arr_element[1]->get_url_id() ]->get_url_summary_text(),
 							);
 							$arr_element[0]->setAttribute(
 								'urlslab-enhanced',
@@ -124,12 +124,12 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			}
 
 			return $document->saveHTML();
-		} catch (Exception $e) {
+		} catch ( Exception $e ) {
 			return $content . "\n" . "<!---\n Error:" . str_replace( '>', ' ', $e->getMessage() ) . "\n--->";
 		}
 	}
 
-	public function get_shortcode_content( $atts = array(), $content = null, $tag = ''): string {
+	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
 		return '';
 	}
 
@@ -162,14 +162,15 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			return;
 		}
 
-		$current_page = Urlslab_Url_Data::empty( get_current_page_url(), Urlslab_Status::$pending );
+
+		$srcUrlId = get_current_page_url()->get_url_id();
 
 		$values = array();
 		$placeholder = array();
 		foreach ( $url_ids as $url_id ) {
 			array_push(
 				$values,
-				$current_page->get_url_id(),
+				$srcUrlId,
 				$url_id,
 				gmdate( 'Y-m-d H:i:s' ),
 				gmdate( 'Y-m-d H:i:s' ),
