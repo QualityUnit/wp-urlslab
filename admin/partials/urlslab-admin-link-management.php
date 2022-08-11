@@ -1,12 +1,11 @@
 <?php
 ?>
 <?php
+$page_data = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-link-building' );
 $user = Urlslab_User_Widget::get_instance();
-if ( isset( $_GET['tab'] ) and 'link-enhancer' == $_GET['tab'] ) {
+if ( isset( $_GET['tab'] ) and 'link-management' == $_GET['tab'] ) {
 
 	?>
-
-
 	<div id="urlslab-active-accordion" class="accordion col-12">
 
 		<!-- Section 1 -->
@@ -39,7 +38,9 @@ if ( isset( $_GET['tab'] ) and 'link-enhancer' == $_GET['tab'] ) {
 		<div class="urlslab-accordion-header col-12">
 			<h3>Settings</h3>
 		</div>
-		<div class="urlslab-card-container"></div>
+		<div class="urlslab-card-container">
+			<?php $this->link_management_subpage->render_settings(); ?>
+		</div>
 
 	</div>
 <?php } ?>

@@ -200,6 +200,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-offloader-page.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-related-resource-subpage.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-keyword-linking-subpage.php';
+		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-link-management-subpage.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-ui-elements-page.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/helpers/class-urlslab-status.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
