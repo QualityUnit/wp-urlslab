@@ -30,49 +30,73 @@ class Urlslab_Content_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 
 			//# Edit Functionality
 			if ( isset( $_POST['submit'] ) &&
-				 isset( $_POST['srcUrlHash'] ) &&
-				 isset( $_POST['destUrlHash'] ) &&
-				 isset( $_POST['srcUrl'] ) &&
-				 isset( $_POST['destUrl'] ) &&
 				 'Edit Url Relation' === $_POST['submit'] ) {
-				$this->edit_url_relation(
-					$_POST['srcUrlHash'],
-					$_POST['destUrlHash'],
-					new Urlslab_Url( $_POST['srcUrl'] ),
-					new Urlslab_Url( $_POST['destUrl'] ),
-				);
-				wp_safe_redirect(
-					$this->parent_page->menu_page(
-						$this->subpage_slug,
-						array(
-							'status' => 'success',
-							'urlslab-message' => 'keyword was edited successfully',
+				if ( isset( $_POST['srcUrlHash'] ) && ! empty( $_POST['srcUrlHash'] ) &&
+					isset( $_POST['destUrlHash'] ) && ! empty( $_POST['destUrlHash'] ) &&
+					isset( $_POST['srcUrl'] ) && ! empty( $_POST['srcUrl'] ) &&
+					isset( $_POST['destUrl'] ) && ! empty( $_POST['destUrl'] ) ) {
+					$this->edit_url_relation(
+						$_POST['srcUrlHash'],
+						$_POST['destUrlHash'],
+						new Urlslab_Url( $_POST['srcUrl'] ),
+						new Urlslab_Url( $_POST['destUrl'] ),
+					);
+					wp_safe_redirect(
+						$this->parent_page->menu_page(
+							$this->subpage_slug,
+							array(
+								'status' => 'success',
+								'urlslab-message' => 'keyword was edited successfully',
+							)
 						)
-					)
-				);
-				exit;
+					);
+					exit;
+				} else {
+					wp_safe_redirect(
+						$this->parent_page->menu_page(
+							$this->subpage_slug,
+							array(
+								'status' => 'failure',
+								'urlslab-message' => 'entered relation detail was not valid',
+							)
+						)
+					);
+					exit;
+				}
 			}
 			//# Edit Functionality
 
 			# Add Functionality
 			if ( isset( $_POST['submit'] ) &&
-				 isset( $_POST['srcUrl'] ) &&
-				 isset( $_POST['destUrl'] ) &&
 				 'Add Url Relation' === $_POST['submit'] ) {
-				$this->add_url_relation(
-					new Urlslab_Url( $_POST['srcUrl'] ),
-					new Urlslab_Url( $_POST['destUrl'] ),
-				);
-				wp_safe_redirect(
-					$this->parent_page->menu_page(
-						$this->subpage_slug,
-						array(
-							'status'          => 'success',
-							'urlslab-message' => 'Keyword was added successfully',
+				if ( isset( $_POST['srcUrl'] ) && ! empty( $_POST['srcUrl'] ) &&
+					isset( $_POST['destUrl'] ) && ! empty( $_POST['destUrl'] ) ) {
+					$this->add_url_relation(
+						new Urlslab_Url( $_POST['srcUrl'] ),
+						new Urlslab_Url( $_POST['destUrl'] ),
+					);
+					wp_safe_redirect(
+						$this->parent_page->menu_page(
+							$this->subpage_slug,
+							array(
+								'status'          => 'success',
+								'urlslab-message' => 'Keyword was added successfully',
+							)
 						)
-					)
-				);
-				exit;
+					);
+					exit;
+				} else {
+					wp_safe_redirect(
+						$this->parent_page->menu_page(
+							$this->subpage_slug,
+							array(
+								'status' => 'failure',
+								'urlslab-message' => 'entered relation detail was not valid',
+							)
+						)
+					);
+					exit;
+				}
 			}
 			# Add Functionality
 
@@ -199,138 +223,121 @@ class Urlslab_Content_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		$this->related_resource_table = new Urlslab_Related_Resources_Widget_Table();
 	}
 
-	private function import_csv_url_relations() {
-		if ( isset( $_FILES['csv_file']['error'] ) and
-			 UPLOAD_ERR_OK == $_FILES['csv_file']['error'] and
-			 isset( $_FILES['csv_file'] ) and
-			 isset( $_FILES['csv_file']['size'] ) and
-			 isset( $_FILES['csv_file']['tmp_name'] ) and
-			 ! empty( $_FILES['csv_file'] ) and
-			 $_FILES['csv_file']['size'] > 0 ) {
-			$res = $this->import_csv( $_FILES['csv_file']['tmp_name'] );
-			if ( $res ) {
-				$redirect_to = $this->parent_page->menu_page(
-					$this->subpage_slug,
-					array(
-						'status' => 'success',
-						'urlslab-message' => 'CSV File was added successfully',
-					)
-				);
+	private function import_csv_url_relations(): void {
+		try {
+			if ( isset( $_FILES['csv_file']['error'] ) and
+				 UPLOAD_ERR_OK == $_FILES['csv_file']['error'] and
+				 isset( $_FILES['csv_file'] ) and
+				 isset( $_FILES['csv_file']['size'] ) and
+				 isset( $_FILES['csv_file']['tmp_name'] ) and
+				 ! empty( $_FILES['csv_file'] ) and
+				 $_FILES['csv_file']['size'] > 0 ) {
+				$res = $this->import_csv( $_FILES['csv_file']['tmp_name'] );
+				if ( $res > 0 ) {
+					$redirect_to = $this->parent_page->menu_page(
+						$this->subpage_slug,
+						array(
+							'status' => 'success',
+							'urlslab-message' => 'Processed ' . $res . ' rows of CSV successfully',
+						)
+					);
+				} else {
+					$redirect_to = $this->parent_page->menu_page(
+						$this->subpage_slug,
+						array(
+							'status' => 'failure',
+							'urlslab-message' => 'Didnt process any rows of CSV',
+						)
+					);
+				}
 			} else {
 				$redirect_to = $this->parent_page->menu_page(
 					$this->subpage_slug,
 					array(
 						'status' => 'failure',
-						'urlslab-message' => 'There was a problem in parsing the CSV',
+						'urlslab-message' => urlslab_file_upload_code_to_message( $_FILES['csv_file']['error'] ),
 					)
 				);
 			}
-		} else {
+		} catch ( Exception $e ) {
 			$redirect_to = $this->parent_page->menu_page(
 				$this->subpage_slug,
 				array(
 					'status' => 'failure',
-					'urlslab-message' => file_upload_code_to_message( $_FILES['csv_file']['error'] ),
+					'urlslab-message' => 'Error in processing CSV: ' . $e->getMessage(),
 				)
 			);
+		} finally {
+			wp_safe_redirect( $redirect_to );
+			exit();
 		}
-		wp_safe_redirect( $redirect_to );
-		exit();
 	}
 
-	private function import_csv( $file ): bool {
+	private function import_csv( $file ): int {
 		//# Reading/Parsing CSV File
 		$row = 1;
-		$wrong_rows = 0;
-		$cols = array();
-		$saving_items = array();
-		$scheduling_items = array();
+		$processed_rows = 0;
 		$handle = fopen( $file, 'r' );
 		if ( false !== ( $handle ) ) {
+			wp_raise_memory_limit( 'admin' );
 			while ( ( $data = fgetcsv( $handle ) ) !== false ) {
-
+				$row++;
 				//# processing CSV Header
 				if ( 1 == $row ) {
-					if ( count( $data ) != 2 ) {
-						//# Wrong number of cols in csv
-						return false;
-					} else {
-						$idx = 0;
-						foreach ( $data as $col ) {
-							if ( is_string( $col ) ) {
-								if ( is_string( $this->map_to_db_col( $col ) ) ) {
-									if ( isset( $cols[ $this->map_to_db_col( $col ) ] ) ) {
-										return false;
-									} else {
-										$cols[ $this->map_to_db_col( $col ) ] = $idx;
-										$idx++;
-									}
-								} else {
-									return false;
-								}
-							} else {
-								//# wrong type in header
-								return false;
-							}
-						}
-					}
-					$row++;
 					continue;
 				}
-
-				$src_url = new Urlslab_Url( $data[ $cols['srcUrl'] ] );
-				$dest_url = new Urlslab_Url( $data[ $cols['destUrl'] ] );
-
-
-				if ( empty( $src_url ) or empty( $dest_url ) ) {
-					$wrong_rows++;
+				if ( ! isset( $data[0] ) || strlen( $data[0] ) == 0 ||
+					 ! isset( $data[1] ) || strlen( $data[1] ) == 0 ) {
 					continue;
-				} else {
-					array_push( $scheduling_items, $src_url, $dest_url );
-					$saving_items[] = array(
-						$src_url,
-						$dest_url,
-					);
 				}
-				$row++;
+				//SrcUrl, DestUrl
+				$data_row = array(
+					new Urlslab_Url( $data[0] ),
+					new Urlslab_Url( $data[1] ),
+				);
+
+				$res = $this->create_row( $data_row );
+				if ( $res ) {
+					$processed_rows++;
+				}
 			}
 			fclose( $handle );
 		}
 
+		return $processed_rows;
+	}
+
+	/**
+	 * @param Urlslab_Url[] $data srcUrl and destUrl
+	 *
+	 * @return bool
+	 */
+	private function create_row( array $data ): bool {
 		//# Scheduling Src and Dest URLs
-		if ( ! $this->url_data_fetcher->prepare_url_batch_for_scheduling( $scheduling_items ) ) {
+		if ( ! $this->url_data_fetcher->prepare_url_batch_for_scheduling( $data ) ) {
 			return false;
 		}
 		//# Scheduling Src and Dest URLs
 
 		global $wpdb;
 		$table = URLSLAB_RELATED_RESOURCE_TABLE;
-		$values = array();
-		$placeholder = array();
-		foreach ( $saving_items as $item ) {
-			array_push(
-				$values,
-				$item[0]->get_url_id(),
-				$item[1]->get_url_id(),
-			);
-			$placeholder[] = '(%s, %s)';
-		}
 
-		$placeholder_string = implode( ', ', $placeholder );
 		$update_query = "INSERT IGNORE INTO $table (
                    srcUrlMd5,
                    destUrlMd5) VALUES
-                   $placeholder_string";
+                   (%s, %s)";
 
 		$result = $wpdb->query(
 			$wpdb->prepare(
 				$update_query, // phpcs:ignore
-				$values
+				array(
+					$data[0]->get_url_id(),
+					$data[1]->get_url_id(),
+				)
 			)
 		);
 
 		return is_numeric( $result );
-
 	}
 
 	private function export_csv_url_relations() {

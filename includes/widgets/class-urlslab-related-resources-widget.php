@@ -19,7 +19,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		$this->widget_title = 'Related Resources';
 		$this->widget_description = 'Configure widget to show contextually similar pages to any of your pages to build internal link building';
 		$this->landing_page_link = 'https://www.urlslab.com';
-		$this->parent_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-content-seo' );
+		$this->parent_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-link-building' );
 		$this->url_data_fetcher = $url_data_fetcher;
 	}
 

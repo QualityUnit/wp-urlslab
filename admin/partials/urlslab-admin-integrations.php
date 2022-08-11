@@ -1,12 +1,13 @@
 <?php
 ?>
+
 <div class="urlslab-wrap">
 	<?php require plugin_dir_path( __FILE__ ) . 'urlslab-admin-header.php'; ?>
 	<section class="urlslab-content-container">
 		<?php
 		//# General settings tab
-		$page_data = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-general' );
-		if ( ! isset( $_GET['tab'] ) or ( 'general-settings' == $_GET['tab'] ) ) {
+		$page_data = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-integrations' );
+		if ( ! isset( $_GET['tab'] ) or ( 'api-key' == $_GET['tab'] ) ) {
 			?>
 			<div class="urlslab-card-container col-12">
 				<div class="urlslab-card-header">
@@ -32,10 +33,6 @@
 		}
 		//# General settings tab
 		?>
-		<?php
-		if ( isset( $_GET['tab'] ) && 'overall-data' == $_GET['tab'] ) {
-			$page_data->render_screenshot_table();
-		}
-		?>
 	</section>
 </div>
+

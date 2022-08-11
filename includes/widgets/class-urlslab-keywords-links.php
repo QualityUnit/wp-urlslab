@@ -50,7 +50,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$this->widget_title = 'Keywords Links';
 		$this->widget_description = 'Build automatic links from your keywords that appear in website content';
 		$this->landing_page_link = 'https://www.urlslab.com';
-		$this->parent_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-content-seo' );
+		$this->parent_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-link-building' );
 	}
 
 	public function init_widget( Urlslab_Loader $loader ) {
@@ -357,7 +357,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	public function get_widget_tab(): string {
-		return 'link-building';
+		return 'keyword-linking';
 	}
 
 	private function init_settings() {

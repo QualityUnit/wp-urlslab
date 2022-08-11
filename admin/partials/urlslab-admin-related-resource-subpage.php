@@ -1,6 +1,6 @@
 <?php
 //# Internal Linking tab
-$page_data = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-content-seo' );
+$page_data = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-link-building' );
 $user = Urlslab_User_Widget::get_instance();
 if ( isset( $_GET['tab'] ) and 'related-resource' == $_GET['tab'] ) {
 	?>

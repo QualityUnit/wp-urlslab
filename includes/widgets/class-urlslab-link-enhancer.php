@@ -21,7 +21,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		$this->widget_title = 'Link Enhancer';
 		$this->widget_description = 'Enhance all external and internal links in your pages using link enhancer widget. add title to your link automatically';
 		$this->landing_page_link = 'https://www.urlslab.com';
-		$this->parent_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-content-seo' );
+		$this->parent_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-link-building' );
 	}
 
 	public function init_widget( Urlslab_Loader $loader ) {

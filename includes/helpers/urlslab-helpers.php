@@ -23,7 +23,7 @@ function urlslab_get_action(): string {
 	return $current_action;
 }
 
-function file_upload_code_to_message( int $code ) {
+function urlslab_file_upload_code_to_message( int $code ): string {
 	switch ( $code ) {
 		case UPLOAD_ERR_INI_SIZE:
 			$message = 'The uploaded file exceeds the upload_max_filesize directive in php.ini';

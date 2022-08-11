@@ -21,61 +21,65 @@
 				$not_crawling_screenshot_count = $urlslab_data_fetcher->count_urls_with_status( Urlslab_Status::$not_crawling );
 				$blocked_screenshot_count = $urlslab_data_fetcher->count_urls_with_status( Urlslab_Status::$blocked );
 				$generated_summaries_count = $urlslab_data_fetcher->count_generated_summaries();
-				$general_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-general' );
+				$urls_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-urls' );
 				?>
 				<div class="mar-bottom-1">
 					<div class="mar-bottom-1">
 						<?php echo urlslab_status_ui_convert( Urlslab_Status::$available ); // phpcs:ignore?>
-						<a class="mar-left-1" href="<?php echo esc_url( $general_page->menu_page( 'overall-data', 'filter=' . Urlslab_Status::$available ) ); ?>">
+						<a class="mar-left-1" href="<?php echo esc_url( $urls_page->menu_page( 'overall-data', 'filter=' . Urlslab_Status::$available ) ); ?>">
 							Available Urls (<?php echo esc_html( $active_screenshot_count ); ?>)
 						</a>
 					</div>
 					<div class="mar-bottom-1">
 						<?php echo urlslab_status_ui_convert( Urlslab_Status::$blocked ); // phpcs:ignore?>
-						<a class="mar-left-1" href="<?php echo esc_url( $general_page->menu_page( 'overall-data', 'filter=' . Urlslab_Status::$blocked ) ); ?>">Blocked Urls (<?php echo esc_html( $blocked_screenshot_count ); ?>)</a>
+						<a class="mar-left-1" href="<?php echo esc_url( $urls_page->menu_page( '', 'filter=' . Urlslab_Status::$blocked ) ); ?>">Blocked Urls (<?php echo esc_html( $blocked_screenshot_count ); ?>)</a>
 					</div>
 					<div class="mar-bottom-1">
 						<?php echo urlslab_status_ui_convert( Urlslab_Status::$not_crawling ); // phpcs:ignore?>
-						<a class="mar-left-1" href="<?php echo esc_url( $general_page->menu_page( 'overall-data', 'filter=' . Urlslab_Status::$not_crawling ) ); ?>">Not Crawling Urls (<?php echo esc_html( $not_crawling_screenshot_count ); ?>)</a>
+						<a class="mar-left-1" href="<?php echo esc_url( $urls_page->menu_page( '', 'filter=' . Urlslab_Status::$not_crawling ) ); ?>">Not Crawling Urls (<?php echo esc_html( $not_crawling_screenshot_count ); ?>)</a>
 					</div>
 					<div class="mar-bottom-1">
 						<?php echo urlslab_status_ui_convert( Urlslab_Status::$not_scheduled ); // phpcs:ignore?>
-						<a class="mar-left-1" href="<?php echo esc_url( $general_page->menu_page( 'overall-data', 'filter=' . Urlslab_Status::$not_scheduled ) ); ?>">Not scheduled Urls (<?php echo esc_html( $not_scheduled_screenshot_count ); ?>)</a>
+						<a class="mar-left-1" href="<?php echo esc_url( $urls_page->menu_page( '', 'filter=' . Urlslab_Status::$not_scheduled ) ); ?>">Not scheduled Urls (<?php echo esc_html( $not_scheduled_screenshot_count ); ?>)</a>
 					</div>
 					<div class="mar-bottom-1">
 						<?php echo urlslab_status_ui_convert( Urlslab_Status::$pending ); // phpcs:ignore?>
-						<a class="mar-left-1" href="<?php echo esc_url( $general_page->menu_page( 'overall-data', 'filter=' . Urlslab_Status::$pending ) ); ?>">Pending Urls (<?php echo esc_html( $pending_screenshot_count ); ?>)</a>
+						<a class="mar-left-1" href="<?php echo esc_url( $urls_page->menu_page( '', 'filter=' . Urlslab_Status::$pending ) ); ?>">Pending Urls (<?php echo esc_html( $pending_screenshot_count ); ?>)</a>
 					</div>
 					<div>
 						<?php echo esc_html( $generated_summaries_count ); ?> summaries generated
 					</div>
 				</div>
-				<a class="button button-primary" href="<?php echo esc_url( $general_page->menu_page( 'overall-data' ) ); ?>">Manage</a>
+				<a class="button button-primary" href="<?php echo esc_url( $urls_page->menu_page( '' ) ); ?>">Manage</a>
 			</div>
 		</div>
 		<?php
-			$user_widgets = Urlslab_User_Widget::get_instance();
-		foreach ( $user_widgets->get_activated_widget() as $widget ) {
+			$user = Urlslab_User_Widget::get_instance();
+			$widgets = Urlslab_Available_Widgets::get_instance();
+		foreach ( $widgets->get_available_widgets() as $widget ) {
 			?>
-			<div class="urlslab-card-container col-6">
-				<div class="urlslab-card-header">
-					<h3><?php echo esc_html( $widget->get_widget_title() ); ?></h3>
-				</div>
-				<div class="urlslab-card-content">
-					<div class="urlslab-card-content-thumbnail">
-						<div class="col-6">
-							<p><?php echo esc_html( $widget->get_widget_description() ); ?></p>
-							<a class="button button-primary" href="<?php echo esc_url( $widget->admin_widget_page() ); ?>">Manage</a>
-						</div>
-						<figure class="col-6">
-							<img width="100%" src="<?php echo esc_url( $widget->get_thumbnail_demo_url() ); ?>" alt="screenshot demo">
-						</figure>
+		<div class="urlslab-card-container col-6">
+			<div class="urlslab-card-header">
+				<h3><?php echo esc_html( $widget->get_widget_title() ); ?></h3>
+				<?php
+				require plugin_dir_path( __FILE__ ) . 'urlslab-admin-activation-card-header.php';
+				?>
+			</div>
+			<div class="urlslab-card-content">
+				<div class="urlslab-card-content-thumbnail">
+					<div class="col-6">
+						<p><?php echo esc_html( $widget->get_widget_description() ); ?></p>
+						<a class="button button-primary" href="<?php echo esc_url( $widget->admin_widget_page() ); ?>">Manage</a>
 					</div>
+					<figure class="col-6">
+						<img width="100%" src="<?php echo esc_url( $widget->get_thumbnail_demo_url() ); ?>" alt="screenshot demo">
+					</figure>
 				</div>
-
 			</div>
 
-				<?php
+		</div>
+
+			<?php
 		}
 		?>
 	</section>
