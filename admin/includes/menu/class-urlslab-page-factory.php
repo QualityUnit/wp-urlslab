@@ -19,23 +19,23 @@ class Urlslab_Page_Factory {
 	public static function get_instance(): Urlslab_Page_Factory {
 		if ( empty( self::$instance ) ) {
 			$dashboard = new Urlslab_Dashboard_Page();
-			$general_settings = new Urlslab_General_Settings_Page();
+			$urls_page = new Urlslab_Urls_Page();
 			$header_widgets = new Urlslab_Header_Widgets_Page();
-			$content_widgets = new Urlslab_Content_Widgets_Page();
+			$link_building_page = new Urlslab_Link_Building_Page();
 			$image_seo = new Urlslab_Image_Seo_Widgets_Page();
 			$offloader_page = new Urlslab_Offloader_Page();
 			$ui_elements = new Urlslab_UI_Elements_Page();
-			$feature_manager = new Urlslab_Feature_Manager_Page();
+			$integrations_page = new Urlslab_Integrations_Page();
 
 			self::$menus = array(
 				$dashboard->get_menu_slug() => $dashboard,
-				$general_settings->get_menu_slug() => $general_settings,
+				$urls_page->get_menu_slug() => $urls_page,
 				$header_widgets->get_menu_slug() => $header_widgets,
-				$content_widgets->get_menu_slug() => $content_widgets,
+				$link_building_page->get_menu_slug() => $link_building_page,
 				$image_seo->get_menu_slug() => $image_seo,
 				$offloader_page->get_menu_slug() => $offloader_page,
 				$ui_elements->get_menu_slug() => $ui_elements,
-				$feature_manager->get_menu_slug() => $feature_manager,
+				$integrations_page->get_menu_slug() => $integrations_page,
 			);
 			self::$admin_plugin_main_page = $dashboard;
 			self::$instance = new self;

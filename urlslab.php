@@ -36,7 +36,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-const URLSLAB_VERSION = '1.4.0';
+const URLSLAB_VERSION = '1.5.0';
 const URLSLAB_VERSION_SETTING = 'urlslab_ver';
 
 /**
@@ -55,6 +55,7 @@ define( 'URLSLAB_PLUGIN_BASENAME', plugin_basename( URLSLAB_PLUGIN ) );
 
 global $wpdb;
 define( 'URLSLAB_URLS_TABLE', $wpdb->prefix . 'urlslab_urls' );
+define( 'URLSLAB_URLS_MAP_TABLE', $wpdb->prefix . 'urlslab_urls_map' );
 define( 'URLSLAB_ERROR_LOG_TABLE', $wpdb->prefix . 'urlslab_error_log' );
 define( 'URLSLAB_KEYWORDS_TABLE', $wpdb->prefix . 'urlslab_keywords' );
 define( 'URLSLAB_RELATED_RESOURCE_TABLE', $wpdb->prefix . 'urlslab_related_urls' );
