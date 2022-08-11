@@ -133,5 +133,18 @@ abstract class Urlslab_Driver {
 		return $result;
 	}
 
+	public static function get_driver_name( string $driver_initials ) {
+		switch ( $driver_initials ) {
+			case Urlslab_Driver::DRIVER_S3:
+				return 's3';
+			case Urlslab_Driver::DRIVER_DB:
+				return 'database';
+			case Urlslab_Driver::DRIVER_LOCAL_FILE:
+				return 'local file';
+			default:
+				return 'Unknown Driver';
+		}
+	}
+
 
 }

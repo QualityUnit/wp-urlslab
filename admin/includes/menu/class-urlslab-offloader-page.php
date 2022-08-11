@@ -382,66 +382,163 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 		?>
 		<div class="col-8 mar-top-1">
 			<form method="post">
+				<?php wp_nonce_field( 'offloader-update' ); ?>
 				<input type="hidden" name="action" value="update-settings">
-				<?php foreach ( $widget_settings as $setting => $setting_val ) { ?>
-					<?php wp_nonce_field( 'offloader-update' ); ?>
-					<div class="col-3 float-left">
-						<label for="<?php echo esc_attr( $setting ); ?>">
-							<?php echo esc_html( implode( ' ', explode( '_', str_replace( 'urlslab_', '', $setting ) ) ) ); ?>:
-						</label>
-					</div>
-					<?php if ( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER == $setting ) { ?>
-						<div class="col-3 float-left">
-								<select name="<?php echo esc_attr( $setting ); ?>" id="<?php echo esc_attr( $setting ); ?>">
-									<?php $db_driver_selected = Urlslab_Driver::DRIVER_DB == $setting_val; ?>
-									<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_DB ); ?>"
-									<?php
-									if ( $db_driver_selected ) {
-										echo ' selected';}
-									?>
-									>Database Driver</option>
-									<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_LOCAL_FILE ); ?>"
-										<?php
-										$local_file_selected = Urlslab_Driver::DRIVER_LOCAL_FILE == $setting_val;
-										if ( $local_file_selected ) {
-											echo ' selected';
-										}
-										?>
-									>Local File Driver</option>
-									<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_S3 ); ?>"
-										<?php
-										$s3_selected = Urlslab_Driver::DRIVER_S3 == $setting_val;
-										if ( $s3_selected ) {
-											echo ' selected';
-										}
-										?>
-									>S3 Driver</option>
-								</select>
-						</div>
-					<?php } elseif ( Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY == $setting ) { ?>
 				<div class="col-3 float-left">
-					<input id="<?php echo esc_attr( $setting ); ?>"
-						   name="<?php echo esc_attr( $setting ); ?>"
-						   value="<?php echo esc_attr( $setting_val ); ?>"
+					<label for="attachment-import">
+						Offload WordPress media on background
+					</label>
+				</div>
+				<div class="col-3 float-left">
+					<input id="attachment-import"
+						   name="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ); ?>"
+						   value="1"
+						   type="checkbox"
+						<?php
+						if ( 1 == $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ] ) {
+							echo 'checked'; }
+						?>
+					>
+				</div>
+				<br class="clear"/>
+				<br class="clear"/>
+				<div class="col-3 float-left">
+					<label for="external-resources">
+						Offload External media found in page
+					</label>
+				</div>
+				<div class="col-3 float-left">
+					<input id="external-resources"
+						   name="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_SAVE_EXTERNAL ); ?>"
+						   value="1"
+						   type="checkbox"
+						<?php
+						if ( 1 == $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_SAVE_EXTERNAL ] ) {
+							echo 'checked'; }
+						?>
+					>
+				</div>
+				<br class="clear"/>
+				<br class="clear"/>
+				<div class="col-3 float-left">
+					<label for="internal-resources">
+						Offload Internal media found in page
+					</label>
+				</div>
+				<div class="col-3 float-left">
+					<input id="internal-resources"
+						   name="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_SAVE_INTERNAL ); ?>"
+						   value="1"
+						   type="checkbox"
+						<?php
+						if ( 1 == $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_SAVE_INTERNAL ] ) {
+							echo 'checked'; }
+						?>
+					>
+				</div>
+				<br class="clear"/>
+				<br class="clear"/>
+				<div class="col-3 float-left">
+					<label for="default-file-driver">
+						Default Driver
+					</label>
+				</div>
+				<div class="col-3 float-left">
+					<?php $current_default_driver = $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ]; ?>
+					<select name="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ); ?>" id="default-file-driver">
+						<?php $db_driver_selected = Urlslab_Driver::DRIVER_DB == $current_default_driver; ?>
+						<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_DB ); ?>"
+							<?php
+							if ( $db_driver_selected ) {
+								echo ' selected';}
+							?>
+						>Database Driver</option>
+						<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_LOCAL_FILE ); ?>"
+							<?php
+							$local_file_selected = Urlslab_Driver::DRIVER_LOCAL_FILE == $current_default_driver;
+							if ( $local_file_selected ) {
+								echo ' selected';
+							}
+							?>
+						>Local File Driver</option>
+						<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_S3 ); ?>"
+							<?php
+							$s3_selected = Urlslab_Driver::DRIVER_S3 == $current_default_driver;
+							if ( $s3_selected ) {
+								echo ' selected';
+							}
+							?>
+						>S3 Driver</option>
+					</select>
+				</div>
+				<br class="clear"/>
+				<br class="clear"/>
+				<div class="col-3 float-left">
+					<label for="transfer-s3">
+						Transfer media from S3 to default driver on background
+					</label>
+				</div>
+				<div class="col-3 float-left">
+					<input id="transfer-s3"
+						   name="<?php echo esc_attr( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ] ); ?>"
+						   value="1"
+						   type="checkbox"
+						<?php
+						if ( 1 == $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ] ) {
+							echo 'checked'; }
+						?>
+					>
+				</div>
+				<br class="clear"/>
+				<br class="clear"/>
+				<div class="col-3 float-left">
+					<label for="transfer-db">
+                        Transfer media from database to default driver on background
+					</label>
+				</div>
+				<div class="col-3 float-left">
+					<input id="transfer-db"
+						   name="<?php echo esc_attr( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ] ); ?>"
+						   value="1"
+						   type="checkbox"
+						<?php
+						if ( 1 == $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ] ) {
+							echo 'checked'; }
+						?>
+					>
+				</div>
+				<br class="clear"/>
+				<br class="clear"/>
+				<div class="col-3 float-left">
+					<label for="transfer-local-file">
+                        Transfer media from local file system to default driver on background
+					</label>
+				</div>
+				<div class="col-3 float-left">
+					<input id="transfer-local-file"
+						   name="<?php echo esc_attr( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ] ); ?>"
+						   value="1"
+						   type="checkbox"
+						<?php
+						if ( 1 == $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ] ) {
+							echo 'checked'; }
+						?>
+					>
+				</div>
+				<br class="clear"/>
+				<br class="clear"/>
+				<div class="col-3 float-left">
+					<label for="prio">
+						content hook priority
+					</label>
+				</div>
+				<div class="col-3 float-left">
+					<input id="prio"
+						   name="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ); ?>"
+						   value="<?php echo esc_attr( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ] ); ?>"
 						   type="number"
 					>
 				</div>
-				<?php } else { ?>
-						<div class="col-3 float-left">
-							<input id="<?php echo esc_attr( $setting ); ?>"
-								   name="<?php echo esc_attr( $setting ); ?>"
-								   value="1"
-								   type="checkbox"
-								   <?php 
-									if ( 1 == $setting_val ) {
-										echo 'checked'; }
-									?>
-							>
-						</div>
-				<?php } ?>
-					<br class="clear"/>
-					<br class="clear"/>
-				<?php } ?>
 				<input class="button button-primary" type="submit" name="submit" value="Save Changes">
 			</form>
 			<?php
