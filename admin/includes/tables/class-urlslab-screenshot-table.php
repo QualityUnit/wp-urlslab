@@ -197,10 +197,10 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		//# All case
 
 		//# Unscheduled case
-		$class = ( Urlslab_Status::$not_scheduled == $current ? ' class="current"' : '' );
-		$unscheduled_url = add_query_arg( 'filter', Urlslab_Status::$not_scheduled );
-		$unscheduled_count = $this->count_url_screenshots( Urlslab_Status::$not_scheduled );
-		$views['unscheduled'] = "<a href='$unscheduled_url' $class>Unscheduled <span class='count'>($unscheduled_count)</span></a>";
+		$class = ( Urlslab_Status::$new == $current ? ' class="current"' : '' );
+		$unscheduled_url = add_query_arg( 'filter', Urlslab_Status::$new );
+		$unscheduled_count = $this->count_url_screenshots( Urlslab_Status::$new );
+		$views['unscheduled'] = "<a href='$unscheduled_url' $class>New <span class='count'>($unscheduled_count)</span></a>";
 		//# Unscheduled case
 
 		//# Active case

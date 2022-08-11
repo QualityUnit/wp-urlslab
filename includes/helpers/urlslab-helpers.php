@@ -136,8 +136,8 @@ function urlslab_status_ui_convert( string $status_char ): string {
 			return '<div class="status-circle background-success" title="available"></div>';
 		case Urlslab_Status::$pending:
 			return '<div class="status-circle background-warning" title="pending"></div>';
-		case Urlslab_Status::$not_scheduled:
-			return '<div class="status-circle background-secondary" title="not-scheduled"></div>';
+		case Urlslab_Status::$new:
+			return '<div class="status-circle background-secondary" title="new"></div>';
 		case Urlslab_Status::$not_crawling:
 			return '<div class="status-circle background-danger" title="broken"></div>';
 		case Urlslab_Status::$blocked:

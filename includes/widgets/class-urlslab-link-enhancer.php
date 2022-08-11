@@ -138,7 +138,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 	public function visibility_active_in_table(): bool {
 		return Urlslab_User_Widget::get_instance()->is_widget_activated( $this->widget_slug ) &&
-		       get_option(self::SETTING_NAME_REMOVE_LINKS, self::SETTING_DEFAULT_REMOVE_LINKS);
+			   get_option( self::SETTING_NAME_REMOVE_LINKS, self::SETTING_DEFAULT_REMOVE_LINKS );
 	}
 
 	public function render_widget_overview() {

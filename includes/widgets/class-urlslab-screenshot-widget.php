@@ -91,7 +91,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 							$urlslab_atts['height'],
 						);
 
-					case Urlslab_Status::$not_scheduled:
+					case Urlslab_Status::$new:
 					case Urlslab_Status::$pending:
 						//default url
 						return $this->render_shortcode(
