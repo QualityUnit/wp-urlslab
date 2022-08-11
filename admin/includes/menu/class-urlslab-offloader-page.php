@@ -493,7 +493,7 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 				<br class="clear"/>
 				<div class="col-3 float-left">
 					<label for="transfer-db">
-                        Transfer media from database to default driver on background
+						Transfer media from database to default driver on background
 					</label>
 				</div>
 				<div class="col-3 float-left">
@@ -511,7 +511,7 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 				<br class="clear"/>
 				<div class="col-3 float-left">
 					<label for="transfer-local-file">
-                        Transfer media from local file system to default driver on background
+						Transfer media from local file system to default driver on background
 					</label>
 				</div>
 				<div class="col-3 float-left">
