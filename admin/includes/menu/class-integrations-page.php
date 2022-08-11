@@ -1,14 +1,14 @@
 <?php
 
-class Urlslab_General_Settings_Page extends Urlslab_Admin_Page {
+class Urlslab_Integrations_Page extends Urlslab_Admin_Page {
 
 	private string $menu_slug;
 	private string $page_title;
 	private Urlslab_Screenshot_Table $screenshot_table;
 
 	public function __construct() {
-		$this->menu_slug  = 'urlslab-general';
-		$this->page_title = 'General';
+		$this->menu_slug  = 'urlslab-integrations';
+		$this->page_title = 'Integrations';
 	}
 
 	/**
@@ -46,42 +46,7 @@ class Urlslab_General_Settings_Page extends Urlslab_Admin_Page {
 	/**
 	 * @return void after rendering of menu and fetch of user options
 	 */
-	public function on_screen_load() {
-		//# Table configuration of the URLs
-		$option = 'per_page';
-		$args = array(
-			'label' => 'Urls',
-			'default' => 50,
-			'option' => 'users_per_page',
-		);
-
-		add_screen_option( $option, $args );
-
-		$this->screenshot_table = new Urlslab_Screenshot_Table();
-		//# Table configuration of the URLs
-	}
-
-	/**
-	 * @return void render screenshot table
-	 */
-	public function render_screenshot_table() {
-		?>
-		<div class="wrap">
-			<h2>Screenshots</h2>
-			<form method="get">
-				<?php
-				$this->screenshot_table->views();
-				$this->screenshot_table->prepare_items();
-				?>
-				<input type="hidden" name="page" value="<?php echo esc_attr( $this->menu_slug ); ?>">
-				<?php
-				$this->screenshot_table->search_box( 'Search', 'urlslab-screenshot-input' );
-				$this->screenshot_table->display();
-				?>
-			</form>
-		</div>
-		<?php
-	}
+	public function on_screen_load() {}
 
 	/**
 	 * @param string $parent_slug
@@ -91,8 +56,8 @@ class Urlslab_General_Settings_Page extends Urlslab_Admin_Page {
 	public function register_submenu( string $parent_slug ) {
 		$hook = add_submenu_page(
 			$parent_slug,
-			'Urlslab General',
-			'General',
+			'Urlslab Integrations',
+			'Integrations',
 			'manage_options',
 			$this->menu_slug,
 			array( $this, 'load_page' )
@@ -129,8 +94,7 @@ class Urlslab_General_Settings_Page extends Urlslab_Admin_Page {
 
 	public function get_page_tabs(): array {
 		return array(
-			'general-settings' => 'General Settings',
-			'overall-data' => 'Overall Data',
+			'api-key' => 'Urlslab API',
 		);
 	}
 
@@ -138,7 +102,7 @@ class Urlslab_General_Settings_Page extends Urlslab_Admin_Page {
 	 * @return string
 	 */
 	public function get_active_page_tab(): string {
-		$active_tab = 'general-settings';
+		$active_tab = 'api-key';
 		if ( isset( $_GET['tab'] ) ) {
 			$active_tab = $_GET['tab'];
 		}
@@ -154,7 +118,7 @@ class Urlslab_General_Settings_Page extends Urlslab_Admin_Page {
 	}
 
 	public function load_page() {
-		require URLSLAB_PLUGIN_DIR . 'admin/partials/urlslab-admin-general-settings.php';
+		require URLSLAB_PLUGIN_DIR . 'admin/partials/urlslab-admin-integrations.php';
 	}
 
 	/**

@@ -192,7 +192,8 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-admin-page.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-admin-subpage.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-dashboard-page.php';
-		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-general-settings-page.php';
+		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-urls-page.php';
+		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-integrations-page.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-header-widgets-page.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-image-seo-widgets-page.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-link-building-page.php';

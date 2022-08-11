@@ -62,7 +62,7 @@ class Urlslab_Link_Building_Page extends Urlslab_Admin_Page {
 		return array(
 			'keyword-linking' => 'Keyword Linking',
 			'related-resource' => 'Related Resource',
-			'link-enhancer' => 'Link Enhancer',
+			'link-enhancer' => 'Link Management',
 		);
 	}
 
