@@ -121,12 +121,13 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 								//link should not be visible, remove it from content
 								if ( $dom_elem->childNodes->length > 0) {
 									$fragment = $document->createDocumentFragment();
-									while( $dom_elem->childNodes->length > 0 )
+									while ( $dom_elem->childNodes->length > 0 ) {
 										$fragment->appendChild( $dom_elem->childNodes->item( 0 ) );
+									}
 									$dom_elem->parentNode->replaceChild( $fragment, $dom_elem );
 								} else {
 									//co ak to je iba obycajny text?
-									$txt_element = $document->createTextNode($dom_elem->domValue);
+									$txt_element = $document->createTextNode( $dom_elem->domValue );
 									$dom_elem->parentNode->replaceChild( $txt_element, $dom_elem );
 								}
 							}
