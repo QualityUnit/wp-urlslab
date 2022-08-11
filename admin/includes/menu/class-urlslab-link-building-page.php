@@ -4,13 +4,13 @@ class Urlslab_Link_Building_Page extends Urlslab_Admin_Page {
 
 	private string $menu_slug;
 	private string $page_title;
-	private Urlslab_Content_Link_Building_Subpage $link_building_subpage;
+	private Urlslab_Keyword_Linking_Subpage $link_building_subpage;
 	private Urlslab_Content_Related_Resource_Subpage $related_resource_subpage;
 
 	public function __construct() {
 		$this->menu_slug = 'urlslab-link-building';
 		$this->page_title = 'Content SEO';
-		$this->link_building_subpage = new Urlslab_Content_Link_Building_Subpage( $this );
+		$this->link_building_subpage = new Urlslab_Keyword_Linking_Subpage( $this );
 		$this->related_resource_subpage = new Urlslab_Content_Related_Resource_Subpage(
 			$this,
 			new Urlslab_Url_Data_Fetcher( null )
