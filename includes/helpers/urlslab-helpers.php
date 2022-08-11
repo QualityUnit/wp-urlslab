@@ -150,11 +150,6 @@ function urlslab_status_ui_convert( string $status_char ): string {
 }
 
 function urlslab_visibility_ui_convert( string $status_char ): string {
-	$is_active = Urlslab_User_Widget::get_instance()->is_widget_activated( 'urlslab-link-enhancer' );
-	if ( ! $is_active ) {
-		return '<div class="status-circle background-success" title="visible - Link enhancer not active"></div>';
-	}
-
 	switch ( $status_char ) {
 		case Urlslab_Url_Data::VISIBILITY_VISIBLE:
 			return '<div class="status-circle background-success" title="visible"></div>';
