@@ -4,6 +4,9 @@
 
 class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
+	const SETTING_NAME_URLS_MAP = 'urlslab_urls_map';
+	const SETTING_DEFAULT_URLS_MAP = true;
+
 	private string $widget_slug;
 	private string $widget_title;
 	private string $widget_description;
@@ -69,6 +72,9 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		$document->encoding = get_bloginfo( 'charset' );
 		$document->strictErrorChecking = false;
 		$libxml_previous_state = libxml_use_internal_errors( true );
+
+
+
 		try {
 			$document->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', 'UTF-8' ) );
 			libxml_clear_errors();
@@ -76,7 +82,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 			$elements = $document->getElementsByTagName( 'a' );
 
-			$elements_to_enhance = array();
+			$link_elements = array();
 			if ($elements instanceof DOMNodeList) {
 				foreach ($elements as $dom_element) {
 					//skip processing if A tag contains attribute "urlslab-skip"
@@ -84,21 +90,24 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 						continue;
 					}
 
-					if (empty( $dom_element->getAttribute( 'title' ) ) && ! empty( trim( $dom_element->getAttribute( 'href' ) ) )) {
+					if ( ! empty( trim( $dom_element->getAttribute( 'href' ) ) )) {
 						$url = new Urlslab_Url( $dom_element->getAttribute( 'href' ) );
-						$elements_to_enhance[] = array($dom_element, $url);
+						$link_elements[] = array($dom_element, $url);
 					}
 				}
 			}
 
-			if (!empty( $elements_to_enhance )) {
+			if (!empty( $link_elements )) {
 
 				$result = $this->urlslab_url_data_fetcher->fetch_schedule_urls_batch(
-					array_map( fn( $elem): Urlslab_Url => $elem[1], $elements_to_enhance )
+					array_map( fn( $elem): Urlslab_Url => $elem[1], $link_elements )
 				);
 
 				if (!empty( $result )) {
-					foreach ($elements_to_enhance as $arr_element) {
+
+					$this->update_urls_map( array_keys( $result ) );
+
+					foreach ($link_elements as $arr_element) {
 						if (isset( $result[$arr_element[1]->get_url_id()] ) &&
 							!empty( $result[$arr_element[1]->get_url_id()] )) {
 							$arr_element[0]->setAttribute(
@@ -146,5 +155,46 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 	public function get_widget_settings(): array {
 		return array();
+	}
+
+	private function update_urls_map( array $url_ids ) {
+		if ( ! get_option( self::SETTING_NAME_URLS_MAP, self::SETTING_DEFAULT_URLS_MAP ) ) {
+			return;
+		}
+
+		$current_page = Urlslab_Url_Data::empty( get_current_page_url(), Urlslab_Status::$pending);
+
+		$values = array();
+		$placeholder = array();
+		foreach ( $url_ids as $url_id ) {
+			array_push(
+				$values,
+				$current_page->get_url_id(),
+				$url_id,
+				gmdate( 'Y-m-d H:i:s' ),
+				gmdate( 'Y-m-d H:i:s' ),
+			);
+			$placeholder[] = '(%s, %s, %s, %s)';
+		}
+
+		$table = URLSLAB_URLS_MAP_TABLE;
+		$placeholder_string = implode( ', ', $placeholder );
+		$insert_update_query = "INSERT INTO $table (
+                   srcUrlMd5,
+                   destUrlMd5,
+                   firstSeen,
+                   lastSeen
+                   ) VALUES
+                   $placeholder_string
+                   ON DUPLICATE KEY UPDATE
+                   lastSeen = VALUES(lastSeen)";
+
+		global $wpdb;
+		$wpdb->query(
+			$wpdb->prepare(
+				$insert_update_query, // phpcs:ignore
+				$values
+			)
+		);
 	}
 }
