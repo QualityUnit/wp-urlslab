@@ -1,6 +1,6 @@
 <?php
 
-class Urlslab_Content_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
+class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 
 	private Urlslab_Admin_Page $parent_page;
 	private Urlslab_Related_Resources_Widget_Table $related_resource_table;

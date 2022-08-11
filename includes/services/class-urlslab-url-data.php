@@ -4,6 +4,11 @@ class Urlslab_Url_Data {
 
 	public const VISIBILITY_VISIBLE = 'V';
 	public const VISIBILITY_HIDDEN = 'H';
+	const DESC_TEXT_URL = 'U';
+	const DESC_TEXT_TITLE = 'T';
+	const DESC_TEXT_METADESCRIPTION = 'M';
+	const DESC_TEXT_SUMMARY = 'S';
+	const SETTING_NAME_DESC_TEXT_ALG = 'urlslab_desc_text_alg';
 
 	private $domain_id;
 	private $url_id;
@@ -217,36 +222,44 @@ class Urlslab_Url_Data {
 	 * @return string
 	 */
 	public function get_url_summary_text(): string {
-		if ( trim( $this->url_summary ) !== '' ) {
-			return $this->url_summary;
-		}
 
-		if ( trim( $this->get_url_meta_description() ) !== '' ) {
-			return $this->get_url_meta_description();
-		}
+		switch ( get_option( self::SETTING_NAME_DESC_TEXT_ALG, self::DESC_TEXT_SUMMARY ) ) {
 
-		if ( trim( $this->get_url_title() ) !== '' ) {
-			return $this->get_url_title();
-		}
-
-		return ucwords(
-			trim(
-				trim(
+			case self::DESC_TEXT_SUMMARY: //# phpcs:ignore
+				if ( trim( $this->url_summary ) !== '' ) {
+					return $this->url_summary;
+				}
+			case self::DESC_TEXT_METADESCRIPTION: //# phpcs:ignore
+				if ( trim( $this->get_url_meta_description() ) !== '' ) {
+					return $this->get_url_meta_description();
+				}
+			case self::DESC_TEXT_TITLE: //# phpcs:ignore
+				if ( trim( $this->get_url_title() ) !== '' ) {
+					return $this->get_url_title();
+				}
+			case self::DESC_TEXT_URL:
+			default:
+				return ucwords(
 					trim(
-						str_replace(
-							'/',
-							' - ',
-							str_replace(
-								array( '-', '_', '+' ),
-								' ',
-								$this->url->get_url_path()
-							)
+						trim(
+							trim(
+								str_replace(
+									'/',
+									' - ',
+									str_replace(
+										array( '-', '_', '+' ),
+										' ',
+										$this->url->get_url_path()
+									)
+								)
+							),
+							'-'
 						)
-					),
-					'-'
-				)
-			)
-		);
+					)
+				);
+		}
+
+
 	}
 
 	public function get_visibility() {

@@ -1,6 +1,6 @@
 <?php
 
-class Urlslab_Content_Link_Building_Subpage extends Urlslab_Admin_Subpage {
+class Urlslab_Link_Building_Subpage extends Urlslab_Admin_Subpage {
 
 	private Urlslab_Admin_Page $parent_page;
 	private Urlslab_Keyword_Link_Table $keyword_table;

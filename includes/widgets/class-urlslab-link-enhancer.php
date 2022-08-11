@@ -12,7 +12,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	private Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher;
 
 	public const SETTING_NAME_REMOVE_LINKS = 'urlslab_remove_links';
-	public int $SETTING_REMOVE_LINKS = 1;
+	public const SETTING_DEFAULT_REMOVE_LINKS = true;
 
 
 	/**
@@ -106,8 +106,19 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 						if (isset( $result[$url_obj->get_url_id()] ) &&
 							!empty( $result[$url_obj->get_url_id()] )) {
 
-							if ($result[ $url_obj->get_url_id() ]->is_visible()) {
-
+							if ( get_option( self::SETTING_NAME_REMOVE_LINKS, self::SETTING_DEFAULT_REMOVE_LINKS ) && ! $result[ $url_obj->get_url_id() ]->is_visible() ) {
+								//link should not be visible, remove it from content
+								if ( $dom_elem->childNodes->length > 0 ) {
+									$fragment = $document->createDocumentFragment();
+									while ( $dom_elem->childNodes->length > 0 ) {
+										$fragment->appendChild( $dom_elem->childNodes->item( 0 ) );
+									}
+									$dom_elem->parentNode->replaceChild( $fragment, $dom_elem );
+								} else {
+									$txt_element = $document->createTextNode( $dom_elem->domValue );
+									$dom_elem->parentNode->replaceChild( $txt_element, $dom_elem );
+								}
+							} else {
 								//enhance title if url is visible
 								if ( empty( $dom_elem->getAttribute( 'title' ) ) ) {
 									$dom_elem->setAttribute(
@@ -119,21 +130,8 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 										'Y',
 									);
 								}
-
-							} else {
-								//link should not be visible, remove it from content
-								if ( $dom_elem->childNodes->length > 0) {
-									$fragment = $document->createDocumentFragment();
-									while ( $dom_elem->childNodes->length > 0 ) {
-										$fragment->appendChild( $dom_elem->childNodes->item( 0 ) );
-									}
-									$dom_elem->parentNode->replaceChild( $fragment, $dom_elem );
-								} else {
-									//co ak to je iba obycajny text?
-									$txt_element = $document->createTextNode( $dom_elem->domValue );
-									$dom_elem->parentNode->replaceChild( $txt_element, $dom_elem );
-								}
 							}
+
 						}
 					}
 				}
@@ -154,8 +152,8 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	public function visibility_active_in_table(): bool {
-		$is_widget_active = Urlslab_User_Widget::get_instance()->is_widget_activated( $this->widget_slug );
-		return $this->SETTING_REMOVE_LINKS && $is_widget_active;
+		return Urlslab_User_Widget::get_instance()->is_widget_activated( $this->widget_slug ) &&
+		       get_option(self::SETTING_NAME_REMOVE_LINKS, self::SETTING_DEFAULT_REMOVE_LINKS);
 	}
 
 	public function render_widget_overview() {
