@@ -11,6 +11,9 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	private Urlslab_Admin_Page $parent_page;
 	private Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher;
 
+	public const SETTING_NAME_REMOVE_LINKS = 'urlslab_remove_links';
+	public int $SETTING_REMOVE_LINKS = 1;
+
 
 	/**
 	 * @param Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher
@@ -148,6 +151,11 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 	public function has_shortcode(): bool {
 		return false;
+	}
+
+	public function visibility_active_in_table(): bool {
+		$is_widget_active = Urlslab_User_Widget::get_instance()->is_widget_activated( $this->widget_slug );
+		return $this->SETTING_REMOVE_LINKS && $is_widget_active;
 	}
 
 	public function render_widget_overview() {

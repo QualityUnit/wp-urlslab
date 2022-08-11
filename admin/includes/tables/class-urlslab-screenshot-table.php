@@ -166,7 +166,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 	 * @return array $columns, the array of columns to use with the table
 	 */
 	function get_columns(): array {
-		return array(
+		$cols = array(
 			'cb' => '<input type="checkbox" />',
 			'col_url_image' => 'Image',
 			'col_url_name' => 'URL',
@@ -176,8 +176,13 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 			'col_url_title' => 'Url Title',
 			'col_url_meta_description' => 'Url Meta Description',
 			'col_url_summary' => 'Url Summary',
-			'col_visibility' => 'Visibility',
 		);
+
+		if ( Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-link-enhancer' )->visibility_active_in_table() ) {
+			$cols['col_visibility'] = 'Visibility';
+		}
+
+		return $cols;
 	}
 
 	protected function get_views(): array {
