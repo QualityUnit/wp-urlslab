@@ -162,7 +162,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			return;
 		}
 
-		$current_page = Urlslab_Url_Data::empty( get_current_page_url(), Urlslab_Status::$pending);
+		$current_page = Urlslab_Url_Data::empty( get_current_page_url(), Urlslab_Status::$pending );
 
 		$values = array();
 		$placeholder = array();
