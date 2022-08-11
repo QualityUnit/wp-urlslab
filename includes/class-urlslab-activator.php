@@ -58,7 +58,7 @@ class Urlslab_Activator {
 		}
 
 		if ( version_compare( $version, '1.3.0', '<' ) ) {
-			$wpdb->query('ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD COLUMN last_seen DATETIME NULL;'); // phpcs:ignore
+			$wpdb->query('ALTER TABLE ' . URLSLAB_FILES_TABLE . ' ADD COLUMN last_seen DATETIME NULL;'); // phpcs:ignore
 		}
 		//all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
