@@ -30,6 +30,7 @@ class Urlslab_Url_Data_Fetcher {
 			$row['urlMetaDescription'],
 			$row['urlSummary'],
 			$row['status'],
+			$row['visibility'],
 		);
 	}
 
@@ -437,13 +438,14 @@ or (updateStatusDate < %d AND status = %s)
        				 u.urlSummary AS urlSummary
 				FROM $related_urls_table r
                 INNER JOIN $urls_table as u ON r.destUrlMd5 = u.urlMd5
-				WHERE r.srcUrlMd5 = %s
+				WHERE r.srcUrlMd5 = %s AND u.visibility = '%s'
 				LIMIT %d";
 
 		$query_res = $wpdb->get_results(
 			$wpdb->prepare(
 				$q, // phpcs:ignore
 				$url->get_url_id(),
+				Urlslab_Url_Data::VISIBILITY_VISIBLE,
 				$limit
 			),
 			ARRAY_A
@@ -468,7 +470,7 @@ or (updateStatusDate < %d AND status = %s)
 					$query, // phpcs:ignore
 					$status
 				),
-				ARRAY_A 
+				ARRAY_A
 			)['cnt'];
 		} else {
 			return $wpdb->get_row( "SELECT COUNT(*) AS cnt FROM $table", ARRAY_A )['cnt']; // phpcs:ignore

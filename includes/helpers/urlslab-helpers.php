@@ -149,6 +149,17 @@ function urlslab_status_ui_convert( string $status_char ): string {
 	}
 }
 
+function urlslab_visibility_ui_convert( string $status_char ): string {
+	switch ( $status_char ) {
+		case Urlslab_Url_Data::VISIBILITY_VISIBLE:
+			return '<div class="status-circle background-success" title="visible"></div>';
+		case Urlslab_Url_Data::VISIBILITY_HIDDEN:
+			return '<div class="status-circle background-warning" title="hidden"></div>';
+		default:
+			return $status_char;
+	}
+}
+
 /**
  * Masks a password with asterisks (*).
  *

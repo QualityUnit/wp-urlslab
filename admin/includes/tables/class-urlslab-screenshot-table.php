@@ -22,6 +22,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 			$row['urlMetaDescription'],
 			$row['urlSummary'],
 			$row['status'],
+			$row['visibility'],
 		);
 	}
 
@@ -175,6 +176,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 			'col_url_title' => 'Url Title',
 			'col_url_meta_description' => 'Url Meta Description',
 			'col_url_summary' => 'Url Summary',
+			'col_visibility' => 'Visibility',
 		);
 	}
 
@@ -308,6 +310,8 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 				return '<em>Not available!</em>';
 			case 'col_status':
 				return urlslab_status_ui_convert( $item->get_screenshot_status() );
+			case 'col_visibility':
+				return urlslab_visibility_ui_convert( $item->get_visibility() );
 			case 'col_screenshot_date':
 				if ( $item->get_screenshot_date() == 0 ) {
 					return '<em>Not available!</em>';
@@ -397,7 +401,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 				'total_items' => $total_count,
 				'per_page'    => $items_per_page,
 				'total_pages' => ceil( $total_count / $items_per_page ),
-			) 
+			)
 		);
 
 		$this->items = $query_results;

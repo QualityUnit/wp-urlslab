@@ -84,7 +84,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 						continue;
 					}
 
-					if (empty( $dom_element->getAttribute( 'title' ) ) && ! empty( trim( $dom_element->getAttribute( 'href' ) ) )) {
+					if ( ! empty( trim( $dom_element->getAttribute( 'href' ) ) ) ) {
 						$url = new Urlslab_Url( $dom_element->getAttribute( 'href' ) );
 						$elements_to_enhance[] = array($dom_element, $url);
 					}
@@ -99,16 +99,37 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 				if (!empty( $result )) {
 					foreach ($elements_to_enhance as $arr_element) {
-						if (isset( $result[$arr_element[1]->get_url_id()] ) &&
-							!empty( $result[$arr_element[1]->get_url_id()] )) {
-							$arr_element[0]->setAttribute(
-								'title',
-								$result[$arr_element[1]->get_url_id()]->get_url_summary_text(),
-							);
-							$arr_element[0]->setAttribute(
-								'urlslab-enhanced',
-								'Y',
-							);
+						list($dom_elem, $url_obj) = $arr_element;
+						if (isset( $result[$url_obj->get_url_id()] ) &&
+							!empty( $result[$url_obj->get_url_id()] )) {
+
+							if ($result[ $url_obj->get_url_id() ]->is_visible()) {
+
+								//enhance title if url is visible
+								if ( empty( $dom_elem->getAttribute( 'title' ) ) ) {
+									$dom_elem->setAttribute(
+										'title',
+										$result[ $url_obj->get_url_id() ]->get_url_summary_text(),
+									);
+									$dom_elem->setAttribute(
+										'urlslab-enhanced',
+										'Y',
+									);
+								}
+
+							} else {
+								//link should not be visible, remove it from content
+								if ( $dom_elem->childNodes->length > 0) {
+									$fragment = $document->createDocumentFragment();
+									while( $dom_elem->childNodes->length > 0 )
+										$fragment->appendChild( $dom_elem->childNodes->item( 0 ) );
+									$dom_elem->parentNode->replaceChild( $fragment, $dom_elem );
+								} else {
+									//co ak to je iba obycajny text?
+									$txt_element = $document->createTextNode($dom_elem->domValue);
+									$dom_elem->parentNode->replaceChild( $txt_element, $dom_elem );
+								}
+							}
 						}
 					}
 				}
