@@ -19,7 +19,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		$this->widget_description = 'Embed any screenshot of URL in your pages using wordpress shortcodes.';
 		$this->landing_page_link = 'https://www.urlslab.com';
 		$this->urlslab_url_data_fetcher = $urlslab_url_data_fetcher;
-		$this->parent_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-link-building' );
+		$this->parent_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-ui-elements' );
 	}
 
 	public function init_widget( Urlslab_Loader $loader ) {
@@ -91,7 +91,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 							$urlslab_atts['height'],
 						);
 
-					case Urlslab_Status::$not_scheduled:
+					case Urlslab_Status::$new:
 					case Urlslab_Status::$pending:
 						//default url
 						return $this->render_shortcode(

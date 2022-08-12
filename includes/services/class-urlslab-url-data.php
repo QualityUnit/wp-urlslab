@@ -2,6 +2,9 @@
 
 class Urlslab_Url_Data {
 
+	public const VISIBILITY_VISIBLE = 'V';
+	public const VISIBILITY_HIDDEN = 'H';
+
 	private $domain_id;
 	private $url_id;
 
@@ -13,6 +16,7 @@ class Urlslab_Url_Data {
 	private ?string $url_summary;
 	private ?string $screenshot_status;
 	private int $wp_pageid = -1;
+	private ?string $visibility = self::VISIBILITY_VISIBLE;
 
 	/**
 	 * @param Urlslab_Url $url
@@ -34,7 +38,8 @@ class Urlslab_Url_Data {
 					$url_title,
 					$url_meta_description,
 					$url_summary,
-					$screenshot_status
+					$screenshot_status,
+					$visibility = self::VISIBILITY_VISIBLE
 	) {
 		$this->url                     = $url;
 		$this->domain_id               = $domain_id;
@@ -45,6 +50,7 @@ class Urlslab_Url_Data {
 		$this->url_meta_description    = $url_meta_description;
 		$this->url_summary             = $url_summary;
 		$this->screenshot_status       = $screenshot_status;
+		$this->visibility       = $visibility;
 	}
 
 	static function empty( Urlslab_Url $url, string $urlslab_status ): Urlslab_Url_Data {
@@ -57,7 +63,8 @@ class Urlslab_Url_Data {
 			null,
 			null,
 			null,
-			$urlslab_status
+			$urlslab_status,
+			self::VISIBILITY_VISIBLE
 		);
 	}
 
@@ -160,6 +167,10 @@ class Urlslab_Url_Data {
 		);
 	}
 
+	public function is_visible() {
+		return self::VISIBILITY_VISIBLE === $this->visibility;
+	}
+
 	/**
 	 * @param string $screenshot_type
 	 *
@@ -206,36 +217,48 @@ class Urlslab_Url_Data {
 	 * @return string
 	 */
 	public function get_url_summary_text(): string {
-		if ( trim( $this->url_summary ) !== '' ) {
-			return $this->url_summary;
-		}
 
-		if ( trim( $this->get_url_meta_description() ) !== '' ) {
-			return $this->get_url_meta_description();
-		}
+		switch ( get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY ) ) {
 
-		if ( trim( $this->get_url_title() ) !== '' ) {
-			return $this->get_url_title();
-		}
-
-		return ucwords(
-			trim(
-				trim(
+			case Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY: //# phpcs:ignore
+				if ( trim( $this->url_summary ) !== '' ) {
+					return $this->url_summary;
+				}
+			case Urlslab_Link_Enhancer::DESC_TEXT_META_DESCRIPTION: //# phpcs:ignore
+				if ( trim( $this->get_url_meta_description() ) !== '' ) {
+					return $this->get_url_meta_description();
+				}
+			case Urlslab_Link_Enhancer::DESC_TEXT_TITLE: //# phpcs:ignore
+				if ( trim( $this->get_url_title() ) !== '' ) {
+					return $this->get_url_title();
+				}
+			case Urlslab_Link_Enhancer::DESC_TEXT_URL:
+			default:
+				return ucwords(
 					trim(
-						str_replace(
-							'/',
-							' - ',
-							str_replace(
-								array( '-', '_', '+' ),
-								' ',
-								$this->url->get_url_path()
-							)
+						trim(
+							trim(
+								str_replace(
+									'/',
+									' - ',
+									str_replace(
+										array( '-', '_', '+' ),
+										' ',
+										$this->url->get_url_path()
+									)
+								)
+							),
+							'-'
 						)
-					),
-					'-'
-				)
-			)
-		);
+					)
+				);
+		}
+
+
+	}
+
+	public function get_visibility() {
+		return $this->visibility;
 	}
 
 }

@@ -5,16 +5,18 @@ class Urlslab_Link_Building_Page extends Urlslab_Admin_Page {
 	private string $menu_slug;
 	private string $page_title;
 	private Urlslab_Keyword_Linking_Subpage $link_building_subpage;
-	private Urlslab_Content_Related_Resource_Subpage $related_resource_subpage;
+	private Urlslab_Related_Resource_Subpage $related_resource_subpage;
+	private Urlslab_Link_Management_Subpage $link_management_subpage;
 
 	public function __construct() {
 		$this->menu_slug = 'urlslab-link-building';
 		$this->page_title = 'Content SEO';
 		$this->link_building_subpage = new Urlslab_Keyword_Linking_Subpage( $this );
-		$this->related_resource_subpage = new Urlslab_Content_Related_Resource_Subpage(
+		$this->related_resource_subpage = new Urlslab_Related_Resource_Subpage(
 			$this,
 			new Urlslab_Url_Data_Fetcher( null )
 		);
+		$this->link_management_subpage = new Urlslab_Link_Management_Subpage( $this );
 
 	}
 
@@ -31,6 +33,12 @@ class Urlslab_Link_Building_Page extends Urlslab_Admin_Page {
 			$this->related_resource_subpage->handle_action();
 		}
 		//# Handle request for related resource tab
+
+		//# Handle request for link management tab
+		if ( isset( $_REQUEST['tab'] ) and 'link-management' == $_REQUEST['tab'] ) {
+			$this->link_management_subpage->handle_action();
+		}
+		//# Handle request for link management tab
 
 	}
 
@@ -62,7 +70,7 @@ class Urlslab_Link_Building_Page extends Urlslab_Admin_Page {
 		return array(
 			'keyword-linking' => 'Keyword Linking',
 			'related-resource' => 'Related Resource',
-			'link-enhancer' => 'Link Management',
+			'link-management' => 'Link Management',
 		);
 	}
 

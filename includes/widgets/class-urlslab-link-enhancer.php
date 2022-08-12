@@ -4,9 +4,11 @@
 
 class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
-	const SETTING_NAME_URLS_MAP = 'urlslab_urls_map';
-	const SETTING_DEFAULT_URLS_MAP = true;
-
+	public const DESC_TEXT_SUMMARY = 'S';
+	public const SETTING_NAME_DESC_REPLACEMENT_STRATEGY = 'urlslab_desc_replacement_strategy';
+	public const DESC_TEXT_URL = 'U';
+	public const DESC_TEXT_TITLE = 'T';
+	public const DESC_TEXT_META_DESCRIPTION = 'M';
 	private string $widget_slug;
 	private string $widget_title;
 	private string $widget_description;
@@ -14,6 +16,11 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	private Urlslab_Admin_Page $parent_page;
 	private Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher;
 
+	const SETTING_NAME_REMOVE_LINKS = 'urlslab_remove_links';
+	const SETTING_DEFAULT_REMOVE_LINKS = 1;
+
+	const SETTING_NAME_URLS_MAP = 'urlslab_urls_map';
+	const SETTING_DEFAULT_URLS_MAP = 1;
 
 	/**
 	 * @param Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher
@@ -21,7 +28,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	public function __construct( Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher ) {
 		$this->urlslab_url_data_fetcher = $urlslab_url_data_fetcher;
 		$this->widget_slug = 'urlslab-link-enhancer';
-		$this->widget_title = 'Link Enhancer';
+		$this->widget_title = 'Link Management';
 		$this->widget_description = 'Enhance all external and internal links in your pages using link enhancer widget. add title to your link automatically';
 		$this->landing_page_link = 'https://www.urlslab.com';
 		$this->parent_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-link-building' );
@@ -72,9 +79,6 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		$document->encoding = get_bloginfo( 'charset' );
 		$document->strictErrorChecking = false;
 		$libxml_previous_state = libxml_use_internal_errors( true );
-
-
-
 		try {
 			$document->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', 'UTF-8' ) );
 			libxml_clear_errors();
@@ -137,6 +141,11 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		return false;
 	}
 
+	public function visibility_active_in_table(): bool {
+		return Urlslab_User_Widget::get_instance()->is_widget_activated( $this->widget_slug ) &&
+			   get_option( self::SETTING_NAME_REMOVE_LINKS, self::SETTING_DEFAULT_REMOVE_LINKS ) == 1;
+	}
+
 	public function render_widget_overview() {
 		// TODO: Implement render_widget_overview() method.
 	}
@@ -150,15 +159,19 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	public function get_widget_tab(): string {
-		return 'link-enhancer';
+		return 'link-management';
 	}
 
 	public function get_widget_settings(): array {
-		return array();
+		return array(
+			self::SETTING_NAME_REMOVE_LINKS => get_option( self::SETTING_NAME_REMOVE_LINKS, self::SETTING_DEFAULT_REMOVE_LINKS ),
+			self::SETTING_NAME_URLS_MAP => get_option( self::SETTING_NAME_URLS_MAP, self::SETTING_DEFAULT_URLS_MAP ),
+			self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY => get_option( self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, self::DESC_TEXT_SUMMARY ),
+		);
 	}
 
 	private function update_urls_map( array $url_ids ) {
-		if ( ! get_option( self::SETTING_NAME_URLS_MAP, self::SETTING_DEFAULT_URLS_MAP ) ) {
+		if ( get_option( self::SETTING_NAME_URLS_MAP, self::SETTING_DEFAULT_URLS_MAP ) == 0 ) {
 			return;
 		}
 

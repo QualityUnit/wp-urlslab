@@ -17,7 +17,7 @@
 				$urlslab_data_fetcher = new Urlslab_Url_Data_Fetcher( null );
 				$active_screenshot_count = $urlslab_data_fetcher->count_urls_with_status( Urlslab_Status::$available );
 				$pending_screenshot_count = $urlslab_data_fetcher->count_urls_with_status( Urlslab_Status::$pending );
-				$not_scheduled_screenshot_count = $urlslab_data_fetcher->count_urls_with_status( Urlslab_Status::$not_scheduled );
+				$not_scheduled_screenshot_count = $urlslab_data_fetcher->count_urls_with_status( Urlslab_Status::$new );
 				$not_crawling_screenshot_count = $urlslab_data_fetcher->count_urls_with_status( Urlslab_Status::$not_crawling );
 				$blocked_screenshot_count = $urlslab_data_fetcher->count_urls_with_status( Urlslab_Status::$blocked );
 				$generated_summaries_count = $urlslab_data_fetcher->count_generated_summaries();
@@ -39,8 +39,8 @@
 						<a class="mar-left-1" href="<?php echo esc_url( $urls_page->menu_page( '', 'filter=' . Urlslab_Status::$not_crawling ) ); ?>">Not Crawling Urls (<?php echo esc_html( $not_crawling_screenshot_count ); ?>)</a>
 					</div>
 					<div class="mar-bottom-1">
-						<?php echo urlslab_status_ui_convert( Urlslab_Status::$not_scheduled ); // phpcs:ignore?>
-						<a class="mar-left-1" href="<?php echo esc_url( $urls_page->menu_page( '', 'filter=' . Urlslab_Status::$not_scheduled ) ); ?>">Not scheduled Urls (<?php echo esc_html( $not_scheduled_screenshot_count ); ?>)</a>
+						<?php echo urlslab_status_ui_convert( Urlslab_Status::$new ); // phpcs:ignore?>
+						<a class="mar-left-1" href="<?php echo esc_url( $urls_page->menu_page( '', 'filter=' . Urlslab_Status::$new ) ); ?>">Not scheduled Urls (<?php echo esc_html( $not_scheduled_screenshot_count ); ?>)</a>
 					</div>
 					<div class="mar-bottom-1">
 						<?php echo urlslab_status_ui_convert( Urlslab_Status::$pending ); // phpcs:ignore?>

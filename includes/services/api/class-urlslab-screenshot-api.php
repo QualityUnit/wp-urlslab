@@ -57,7 +57,7 @@ class Urlslab_Screenshot_Api extends Urlslab_Api {
 				return Urlslab_Status::$blocked;
 
 			default:
-				return Urlslab_Status::$not_scheduled;
+				return Urlslab_Status::$new;
 		}
 	}
 

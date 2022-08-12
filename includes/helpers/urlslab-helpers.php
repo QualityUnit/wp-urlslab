@@ -136,14 +136,25 @@ function urlslab_status_ui_convert( string $status_char ): string {
 			return '<div class="status-circle background-success" title="available"></div>';
 		case Urlslab_Status::$pending:
 			return '<div class="status-circle background-warning" title="pending"></div>';
-		case Urlslab_Status::$not_scheduled:
-			return '<div class="status-circle background-secondary" title="not-scheduled"></div>';
+		case Urlslab_Status::$new:
+			return '<div class="status-circle background-secondary" title="new"></div>';
 		case Urlslab_Status::$not_crawling:
 			return '<div class="status-circle background-danger" title="broken"></div>';
 		case Urlslab_Status::$blocked:
 			return '<div class="status-circle background-danger" title="blocked"></div>';
 		case Urlslab_Status::$recurring_update:
 			return '<div class="status-circle background-primary" title="updating"></div>';
+		default:
+			return $status_char;
+	}
+}
+
+function urlslab_visibility_ui_convert( string $status_char ): string {
+	switch ( $status_char ) {
+		case Urlslab_Url_Data::VISIBILITY_VISIBLE:
+			return '<div class="status-circle background-success" title="visible"></div>';
+		case Urlslab_Url_Data::VISIBILITY_HIDDEN:
+			return '<div class="status-circle background-danger" title="hidden"></div>';
 		default:
 			return $status_char;
 	}
