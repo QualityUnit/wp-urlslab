@@ -213,15 +213,17 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 				case Urlslab_Driver::DRIVER_LOCAL_FILE:
 					$actions = array(
 						'transfer-to-s3' => sprintf(
-							'<a href="?page=%s&action=%s&file=%s&_wpnonce=%s">Transfer to S3</a>',
+							'<a href="?page=%s&s=%s&action=%s&file=%s&_wpnonce=%s">Transfer to S3</a>',
 							esc_attr( $_REQUEST['page'] ),
+							esc_html( $_REQUEST['s'] ?? '' ),
 							'transfer-to-s3',
 							esc_attr( $item->get_fileid() ),
 							$transfer_nonce
 						),
 						'transfer-to-db' => sprintf(
-							'<a href="?page=%s&action=%s&file=%s&_wpnonce=%s">Transfer to DB</a>',
+							'<a href="?page=%s&s=%s&action=%s&file=%s&_wpnonce=%s">Transfer to DB</a>',
 							esc_attr( $_REQUEST['page'] ),
+							esc_html( $_REQUEST['s'] ?? '' ),
 							'transfer-to-db',
 							esc_attr( $item->get_fileid() ),
 							$transfer_nonce
@@ -232,15 +234,17 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 				case Urlslab_Driver::DRIVER_S3:
 					$actions = array(
 						'transfer-to-localfile' => sprintf(
-							'<a href="?page=%s&action=%s&file=%s&_wpnonce=%s">Transfer to Local file</a>',
+							'<a href="?page=%s&s=%s&action=%s&file=%s&_wpnonce=%s">Transfer to Local file</a>',
 							esc_attr( $_REQUEST['page'] ),
+							esc_html( $_REQUEST['s'] ?? '' ),
 							'transfer-to-localfile',
 							esc_attr( $item->get_fileid() ),
 							$transfer_nonce
 						),
 						'transfer-to-db' => sprintf(
-							'<a href="?page=%s&action=%s&file=%s&_wpnonce=%s">Transfer to DB</a>',
+							'<a href="?page=%s&s=%s&action=%s&file=%s&_wpnonce=%s">Transfer to DB</a>',
 							esc_attr( $_REQUEST['page'] ),
+							esc_html( $_REQUEST['s'] ?? '' ),
 							'transfer-to-db',
 							esc_attr( $item->get_fileid() ),
 							$transfer_nonce
@@ -251,15 +255,17 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 				case Urlslab_Driver::DRIVER_DB:
 					$actions = array(
 						'transfer-to-localfile' => sprintf(
-							'<a href="?page=%s&action=%s&file=%s&_wpnonce=%s">Transfer to Local file</a>',
+							'<a href="?page=%s&s=%s&action=%s&file=%s&_wpnonce=%s">Transfer to Local file</a>',
 							esc_attr( $_REQUEST['page'] ),
+							esc_html( $_REQUEST['s'] ?? '' ),
 							'transfer-to-localfile',
 							esc_attr( $item->get_fileid() ),
 							$transfer_nonce
 						),
 						'transfer-to-s3' => sprintf(
-							'<a href="?page=%s&action=%s&file=%s&_wpnonce=%s">Transfer to S3</a>',
+							'<a href="?page=%s&s=%s&action=%s&file=%s&_wpnonce=%s">Transfer to S3</a>',
 							esc_attr( $_REQUEST['page'] ),
+							esc_html( $_REQUEST['s'] ?? '' ),
 							'transfer-to-s3',
 							esc_attr( $item->get_fileid() ),
 							$transfer_nonce

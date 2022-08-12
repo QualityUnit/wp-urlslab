@@ -282,11 +282,14 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 			}
 
 			wp_safe_redirect(
-				$this->menu_page(
-					'',
+				remove_query_arg(
 					array(
-						'status' => 'success',
-						'urlslab-message' => 'transfer was done successfully',
+						'action',
+						'file',
+					),
+					add_query_arg(
+						'status=success',
+						'urlslab-message=AWS S3 settings was saved successfully',
 					)
 				)
 			);
