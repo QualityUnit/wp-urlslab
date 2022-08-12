@@ -116,20 +116,10 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 						if ( isset( $result[ $url_obj->get_url_id() ] ) &&
 							! empty( $result[ $url_obj->get_url_id() ] ) ) {
 
-							if ( $result[ $url_obj->get_url_id() ]->is_visible() ) {
-
-								//enhance title if url is visible
-								if ( empty( $dom_elem->getAttribute( 'title' ) ) ) {
-									$dom_elem->setAttribute(
-										'title',
-										$result[ $url_obj->get_url_id() ]->get_url_summary_text(),
-									);
-									$dom_elem->setAttribute(
-										'urlslab-enhanced',
-										'Y',
-									);
-								}
-							} else {
+							if (
+								get_option( self::SETTING_NAME_REMOVE_LINKS, self::SETTING_DEFAULT_REMOVE_LINKS ) &&
+								! $result[ $url_obj->get_url_id() ]->is_visible()
+							) {
 								//link should not be visible, remove it from content
 								if ( $dom_elem->childNodes->length > 0 ) {
 									$fragment = $document->createDocumentFragment();
@@ -141,6 +131,18 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 									//co ak to je iba obycajny text?
 									$txt_element = $document->createTextNode( $dom_elem->domValue );
 									$dom_elem->parentNode->replaceChild( $txt_element, $dom_elem );
+								}
+							} else {
+								//enhance title if url has no title
+								if ( empty( $dom_elem->getAttribute( 'title' ) ) ) {
+									$dom_elem->setAttribute(
+										'title',
+										$result[ $url_obj->get_url_id() ]->get_url_summary_text(),
+									);
+									$dom_elem->setAttribute(
+										'urlslab-enhanced',
+										'Y',
+									);
 								}
 							}
 						}
