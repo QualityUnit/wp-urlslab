@@ -66,6 +66,10 @@ class Urlslab_Activator {
 			$wpdb->query('ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN visibility char(1) NOT NULL DEFAULT 'V';"); // phpcs:ignore
 		}
 
+		if ( version_compare( $version, '1.6.0', '<' ) ) {
+			$wpdb->query('ALTER TABLE ' . URLSLAB_FILES_TABLE . " ADD COLUMN webp_fileid char(32), ADD COLUMN use_webp char(1) NOT NULL DEFAULT 'Y', ADD INDEX idx_webp_fileid (webp_fileid, filetype);"); // phpcs:ignore
+		}
+
 		//all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -167,20 +171,23 @@ class Urlslab_Activator {
 		$table_name = URLSLAB_FILES_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
-    		  fileid char(32) NOT NULL,
-			  url varchar(1024) NOT NULL,
-			  local_file varchar(1024),
-			  filename varchar(750),
-			  filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
-			  filetype varchar(100),
-			  width mediumint(8) UNSIGNED ZEROFILL DEFAULT NULL,
-			  height mediumint(8) UNSIGNED ZEROFILL DEFAULT NULL,
-			  filestatus char(1) NOT NULL,
-			  driver char(1) NOT NULL,
-    		  last_seen datetime NULL,
-			  PRIMARY KEY (fileid),
-			  INDEX idx_file_filter (driver, filestatus),
-			  INDEX idx_file_sort (filesize)
+			fileid char(32) NOT NULL,
+			url varchar(1024) NOT NULL,
+			local_file varchar(1024),
+			filename varchar(750),
+			filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
+			filetype varchar(100),
+			width mediumint(8) UNSIGNED ZEROFILL DEFAULT NULL,
+			height mediumint(8) UNSIGNED ZEROFILL DEFAULT NULL,
+			filestatus char(1) NOT NULL,
+			driver char(1) NOT NULL,
+			last_seen datetime NULL,
+			webp_fileid char(32) NULL,
+    		use_webp char(1) NOT NULL DEFAULT 'Y'
+			PRIMARY KEY (fileid),
+			INDEX idx_file_filter (driver, filestatus),
+			INDEX idx_file_sort (filesize)
+			INDEX idx_webp_fileid (webp_fileid, filetype)
 		) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

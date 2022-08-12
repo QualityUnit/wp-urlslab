@@ -13,6 +13,12 @@ class Urlslab_File_Data {
 	private $local_file;
 	private $driver;
 	private $last_seen;
+	private $webp_fileid;
+	private $use_webp;
+
+	const USE_WEBP_YES = 'Y';
+	const USE_WEBP_PROCESSING = 'P';
+	const USE_WEBP_NO = 'N';
 
 	static $mime_types = array(
 		'txt' => 'text/plain',
@@ -232,8 +238,27 @@ class Urlslab_File_Data {
 		$this->local_file = $file['local_file'] ?? '';
 		$this->driver = $file['driver'] ?? '';
 		$this->last_seen = $file['last_seen'] ?? null;
+		$this->use_webp = $file['use_webp'] ?? self::USE_WEBP_YES;
+		$this->webp_fileid = $file['webp_fileid'] ?? null;
 	}
 
+	public function as_array() {
+		return array(
+			'url' => $this->get_url(),
+			'fileid' => $this->get_fileid(),
+			'filename' => $this->get_filename(),
+			'filesize' => $this->get_filesize(),
+			'filetype' => $this->get_filetype(),
+			'width' => $this->get_width(),
+			'height' => $this->get_height(),
+			'filestatus' => $this->get_filestatus(),
+			'local_file' => $this->get_local_file(),
+			'driver' => $this->get_driver(),
+			'last_seen' => $this->get_last_seen(),
+			'use_webp' => $this->use_webp,
+			'webp_fileid' => $this->get_webp_fileid(),
+		);
+	}
 
 	public function get_fileid() {
 		if ( ! empty( $this->fileid ) ) {
@@ -282,7 +307,7 @@ class Urlslab_File_Data {
 		return $this->height ?? 0;
 	}
 
-	public function get_url() {
+	public function get_url($append_file_name = '') {
 		$parsed_url = parse_url( $this->url );
 		$scheme = isset( $parsed_url['scheme'] ) ? $parsed_url['scheme'] . '://' : parse_url( get_site_url(), PHP_URL_SCHEME ) . '://';
 		$host = isset( $parsed_url['host'] ) ? $parsed_url['host'] : parse_url( get_site_url(), PHP_URL_HOST );
@@ -292,7 +317,7 @@ class Urlslab_File_Data {
 		$pass = ( $user || $pass ) ? "$pass@" : '';
 		$path = isset( $parsed_url['path'] ) ? $parsed_url['path'] : '';
 		$query = isset( $parsed_url['query'] ) ? '?' . $parsed_url['query'] : '';
-		return "$scheme$user$pass$host$port$path$query";
+		return "$scheme$user$pass$host$port$path$append_file_name$query";
 	}
 
 	private function get_url_no_protocol() {
@@ -336,6 +361,14 @@ class Urlslab_File_Data {
 
 	public function set_driver( $driver ) {
 		$this->driver = $driver;
+	}
+
+	public function has_webp_alternative() {
+		return get_option(Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, true) && $this->use_webp == self::USE_WEBP_YES && ! 32 == strlen( $this->webp_fileid );
+	}
+
+	public function get_webp_fileid() {
+		return $this->webp_fileid;
 	}
 
 }
