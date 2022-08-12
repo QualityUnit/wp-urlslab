@@ -10,7 +10,7 @@ class Urlslab_Link_Building_Page extends Urlslab_Admin_Page {
 
 	public function __construct() {
 		$this->menu_slug = 'urlslab-link-building';
-		$this->page_title = 'Content SEO';
+		$this->page_title = 'Link Building';
 		$this->link_building_subpage = new Urlslab_Keyword_Linking_Subpage( $this );
 		$this->related_resource_subpage = new Urlslab_Related_Resource_Subpage(
 			$this,

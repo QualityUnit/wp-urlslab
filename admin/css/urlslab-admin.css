@@ -141,7 +141,7 @@ figure {
 /** Urlslab Header **/
 .urlslab-wrap {
 	margin: 80px auto;
-	width: 80%;
+	max-width: 80rem;
 	display: flex;
 	column-gap: 10px;
 	flex-direction: column;
@@ -149,7 +149,7 @@ figure {
 
 .urlslab-header {
 	position: fixed;
-	z-index: -1;
+	z-index: 100;
 	left: 160px;
 	top: 32px;
 	display: flex;
@@ -188,7 +188,7 @@ figure {
 	display: flex;
 	justify-content: flex-start;
 	align-content: center;
-	width: 75%;
+	width: 80rem;
 }
 
 .urlslab-header-content-container > figure {
@@ -271,6 +271,9 @@ figure {
 
 .urlslab-card-container {
 	background-color: #fff;
+	box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+	-webkit-box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+	-moz-box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 	border-radius: 10px;
 }
 
