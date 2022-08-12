@@ -21,6 +21,7 @@ class Urlslab_Header_Widgets_Page extends Urlslab_Admin_Page {
 					'meta-tags',
 					array(
 						'status' => 'success',
+						'urlslab-message' => 'Meta tag settings saved successfully',
 					)
 				)
 			);

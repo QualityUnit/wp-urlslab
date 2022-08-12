@@ -150,15 +150,8 @@
 		} );
 		//# Modal - Related Resource Modals
 
-		//# Accordion - init
-		$( '#urlslab-collapsed-accordion' ).accordion( {
-			collapsible: true,
-			active: false,
-			header: 'div.urlslab-accordion-header',
-		} );
-		$( '#urlslab-active-accordion' ).accordion( {
-			header: 'div.urlslab-accordion-header',
-		} );
-		//# Accordion - init
+		//# Vertical tab
+		$( '#urlslab-vertical-tabs' ).tabs();
+		//# Vertical tab
 	} );
 }( jQuery ) );

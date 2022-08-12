@@ -251,11 +251,69 @@ figure {
 	color: #000;
 }
 
+/** Urlslab tab **/
+
+/** Urlslab Vertical tab **/
+
+.urlslab-ui-tabs-vertical {
+	background-color: #fff;
+	border-radius: 10px;
+	width: 100%;
+	display: flex;
+	justify-content: flex-start;
+}
+
+.urlslab-ui-tabs-vertical > .urlslab-tab-topic {
+	border-right: 3px solid #f0f0f1;
+	width: 20%;
+}
+
+.urlslab-tab-topic > li {
+	margin-right: -3px;
+}
+
+.urlslab-tab-topic > li:hover {
+	border-right: 3px solid #0aa8a7;
+}
+
+.urlslab-tab-topic > li > a {
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	display: block;
+	width: 100%;
+	padding: 20px;
+	text-decoration: none;
+	font-size: 14px;
+	font-weight: 500;
+	color: #000;
+}
+
 .urlslab-tab-container .active > a {
 	color: #0aa8a7;
 }
 
-/** Urlslab tab **/
+.urlslab-tab-topic > li > a:hover {
+	color: #0aa8a7;
+}
+
+.ui-state-active {
+	color: #0aa8a7;
+	border-right: 3px solid #0aa8a7;
+	background-color: rgba(10, 168, 167, 0.15);
+}
+
+.urlslab-ui-tabs-vertical > div {
+	width: 80%;
+	padding: 1rem 2rem;
+}
+
+.urlslab-tab-content-heading {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+/** Urlslab Vertical tab **/
 
 /** Urlslab Header **/
 
@@ -269,11 +327,14 @@ figure {
 	gap: 20px;
 }
 
+.urlslab-container-shadow {
+	box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;
+	-webkit-box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;
+	-moz-box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;
+}
+
 .urlslab-card-container {
 	background-color: #fff;
-	box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-	-webkit-box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-	-moz-box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 	border-radius: 10px;
 }
 
