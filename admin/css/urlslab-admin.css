@@ -50,6 +50,12 @@ figure {
 	background-color: #2271b1;
 }
 
+.urlslab-info {
+	font-size: 12px;
+	font-style: italic;
+	color: #545454;
+}
+
 .color-success {
 	color: #0f0;
 }
@@ -68,6 +74,23 @@ figure {
 
 .color-primary {
 	color: #2271b1;
+}
+
+.urlslab-btn-primary {
+	text-decoration: none;
+	height: 100%;
+	padding: 10px;
+	background-color: #0aa8a7;
+	transition: background-color 0.5s;
+	-webkit-transition: background-color 0.5s;
+	border-radius: 5px;
+	border: none;
+	cursor: pointer;
+	color: #fff;
+}
+
+.urlslab-btn-primary:hover {
+	background-color: #07605f;
 }
 
 .urlslab-btn-success {
@@ -315,6 +338,26 @@ figure {
 
 /** Urlslab Vertical tab **/
 
+/** Urlslab setting items **/
+
+.urlslab-setting-item {
+	padding: 4px;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	border-bottom: 1px solid #e8e8eb;
+}
+
+.urlslab-setting-item > div:first-child {
+	width: 30%;
+}
+
+.urlslab-setting-item > div:last-child {
+	width: 70%;
+}
+
+/** Urlslab setting items **/
+
 /** Urlslab Header **/
 
 /** Urlslab Content **/
@@ -365,35 +408,5 @@ figure {
 .url-relation-edit {
 	cursor: pointer;
 }
-
-/** Urlslab Accordion **/
-
-.accordion {
-	background-color: #fff;
-	border-radius: 5px;
-	padding: 10px;
-}
-
-.urlslab-accordion-header {
-	box-sizing: border-box;
-	padding: 5px 10px;
-	border-radius: 5px;
-	cursor: pointer;
-	transition: background-color 0.5s;
-	-webkit-transition: background-color 0.5s;
-	-moz-transition: background-color 0.5s;
-}
-
-.urlslab-accordion-header:hover {
-	background-color: #f0f0f1;
-}
-
-.urlslab-accordion-header > div {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
-
-/** Urlslab Accordion **/
 
 /** Urlslab Content **/

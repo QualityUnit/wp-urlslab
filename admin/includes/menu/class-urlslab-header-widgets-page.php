@@ -62,22 +62,84 @@ class Urlslab_Header_Widgets_Page extends Urlslab_Admin_Page {
 	public function render_widget_form() {
 		?>
 		<form method="post" action="<?php echo esc_url( $this->menu_page( 'meta-tags', 'action=activation' ) ); ?>">
+			<h3>Meta Tags settings</h3>
 			<?php wp_nonce_field( 'sub-widget-activation' ); ?>
-			<input type="checkbox" id="meta-desc" name="meta-opt[]" value="meta-description"
-				<?php echo $this->sub_widgets['meta-description'] ? 'checked' : ''; ?>>
-			<label for="meta-desc">Meta Description Generation</label> <br>
-			<input type="checkbox" id="meta-og-image" name="meta-opt[]" value="meta-og-image"
-				<?php echo $this->sub_widgets['meta-og-image'] ? 'checked' : ''; ?>>
-			<label for="meta-og-image">Meta OG Image Generation</label> <br>
-			<input type="checkbox" id="meta-og-desc" name="meta-opt[]" value="meta-og-desc"
-				<?php echo $this->sub_widgets['meta-og-desc'] ? 'checked' : ''; ?>>
-			<label for="meta-og-desc">Meta OG Description Generation</label> <br>
-			<input type="checkbox" name="meta-opt[]" value="meta-og-title"
-				<?php echo $this->sub_widgets['meta-og-title'] ? 'checked' : ''; ?>>
-			<label for="meta-og-title">Meta OG Title Generation</label> <br>
-			<?php
-			submit_button( 'Save changes', 'small', 'save-sub-widget' );
-			?>
+			<div class="urlslab-setting-item">
+				<div>
+					<label for="meta-desc"><h4>Meta Description Generation</h4></label>
+				</div>
+				<div>
+					<p>
+						<input type="checkbox" id="meta-desc" name="meta-opt[]" value="meta-description"
+							<?php echo $this->sub_widgets['meta-description'] ? 'checked' : ''; ?>>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+						width="10px">
+						Generate Meta description tag automatically from the content of webpage
+					</span>
+				</div>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<label for="meta-og-image"><h4>Meta OG Image Generation</h4></label>
+				</div>
+				<div>
+					<p>
+						<input type="checkbox" id="meta-og-image" name="meta-opt[]" value="meta-og-image"
+							<?php echo $this->sub_widgets['meta-og-image'] ? 'checked' : ''; ?>>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						Generate Meta og image tag automatically from the screenshot of the webpage
+					</span>
+				</div>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<label for="meta-og-desc"><h4>Meta OG Description Generation</h4></label>
+				</div>
+				<div>
+					<p>
+						<input type="checkbox" id="meta-og-desc" name="meta-opt[]" value="meta-og-desc"
+							<?php echo $this->sub_widgets['meta-og-desc'] ? 'checked' : ''; ?>>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						Generate Meta og description tag automatically from the content summary of the webpage
+					</span>
+				</div>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<label for="meta-og-title"><h4>Meta OG Title Generation</h4></label>
+				</div>
+				<div>
+					<p>
+						<input type="checkbox" name="meta-opt[]" value="meta-og-title"
+							<?php echo $this->sub_widgets['meta-og-title'] ? 'checked' : ''; ?>>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						Generate Meta og title tag automatically from the url title of the webpage
+					</span>
+				</div>
+			</div>
+			<p>
+				<input
+						type="submit"
+						name="save-sub-widget"
+						id="save-sub-widget"
+						class="urlslab-btn-primary"
+						value="Save changes">
+			</p>
 		</form>
 		<?php
 	}
