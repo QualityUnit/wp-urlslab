@@ -24,24 +24,19 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 				check_admin_referer( 'offloader-update' );
 
 				$saving_opt = array();
-				foreach ( $_POST as $key => $val ) {
-					if ( str_starts_with( $key, 'urlslab_' ) ) {
-						$saving_opt[ $key ] = trim( $val );
+				if ( isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ] ) &&
+					 ! empty( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ] ) ) {
+					$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ] =
+						$_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ];
+				}
+
+				if ( isset( $_POST['offload-opt[]'] ) ) {
+					foreach ( $_POST['offload-opt[]'] as $offload_opt ) {
+						$saving_opt[ $offload_opt ] = true;
 					}
 				}
 
-				$all_widget_settings = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-media-offloader' )
-										 ->get_widget_settings();
-				foreach ( $all_widget_settings as $widget_setting => $widget_setting_val ) {
-					if ( ! isset( $saving_opt[ $widget_setting ] ) ) {
-						$saving_opt[ $widget_setting ] = 0;
-					}
-				}
-
-				update_option(
-					'urlslab-media-offloader',
-					$saving_opt
-				);
+				Urlslab_Media_Offloader_Widget::update_settings( $saving_opt );
 
 
 				wp_safe_redirect(
@@ -368,217 +363,260 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 	}
 
 	public function render_settings() {
-		$widget_settings = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-media-offloader' )->get_widget_settings();
-		switch ( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ] ) {
-			case Urlslab_Driver::DRIVER_DB:
-				unset( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ] );
-				break;
-
-			case Urlslab_Driver::DRIVER_S3:
-				unset( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ] );
-				break;
-
-			case Urlslab_Driver::DRIVER_LOCAL_FILE:
-				unset( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ] );
-				break;
-		}
 		?>
-		<div class="col-8 mar-top-1">
-			<form method="post">
-				<?php wp_nonce_field( 'offloader-update' ); ?>
-				<input type="hidden" name="action" value="update-settings">
-				<div class="col-3 float-left">
-					<label for="attachment-import">
-						Offload WordPress media on background
-					</label>
+		<form method="post">
+			<?php wp_nonce_field( 'offloader-update' ); ?>
+			<input type="hidden" name="action" value="update-settings">
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Offload WordPress media on background</h4>
 				</div>
-				<div class="col-3 float-left">
-					<input id="attachment-import"
-						   name="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ); ?>"
-						   value="1"
-						   type="checkbox"
-						<?php
-						if ( 1 == $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ] ) {
-							echo 'checked'; }
-						?>
-					>
+				<div>
+					<p>
+					<div class="urlslab-switch">
+						<input class="urlslab-switch-input"
+							   type="checkbox"
+							   id="attachment-import"
+							   name="offload-opt[]"
+							   value="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ); ?>"
+							<?php echo $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ] ? 'checked' : ''; ?>>
+						<label for="attachment-import" class="urlslab-switch-label">switch</label>
+					</div>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						Enable/Disable offloading of WordPress media attachments in the back-end
+						</span>
 				</div>
-				<br class="clear"/>
-				<br class="clear"/>
-				<div class="col-3 float-left">
-					<label for="external-resources">
-						Offload External media found in page
-					</label>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Offload External media found in page</h4>
 				</div>
-				<div class="col-3 float-left">
-					<input id="external-resources"
-						   name="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_SAVE_EXTERNAL ); ?>"
-						   value="1"
-						   type="checkbox"
-						<?php
-						if ( 1 == $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_SAVE_EXTERNAL ] ) {
-							echo 'checked'; }
-						?>
-					>
+				<div>
+					<p>
+					<div class="urlslab-switch">
+						<input class="urlslab-switch-input"
+							   type="checkbox"
+							   id="external-resources"
+							   name="offload-opt[]"
+							   value="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_SAVE_EXTERNAL ); ?>"
+							<?php echo $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_SAVE_EXTERNAL ] ? 'checked' : ''; ?>>
+						<label for="external-resources" class="urlslab-switch-label">switch</label>
+					</div>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						Offload media from external urls, found on pages of your domain with the current driver
+						</span>
 				</div>
-				<br class="clear"/>
-				<br class="clear"/>
-				<div class="col-3 float-left">
-					<label for="internal-resources">
-						Offload Internal media found in page
-					</label>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Offload Internal media found in page</h4>
 				</div>
-				<div class="col-3 float-left">
-					<input id="internal-resources"
-						   name="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_SAVE_INTERNAL ); ?>"
-						   value="1"
-						   type="checkbox"
-						<?php
-						if ( 1 == $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_SAVE_INTERNAL ] ) {
-							echo 'checked'; }
-						?>
-					>
+				<div>
+					<p>
+					<div class="urlslab-switch">
+						<input class="urlslab-switch-input"
+							   type="checkbox"
+							   id="internal-resources"
+							   name="offload-opt[]"
+							   value="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_SAVE_INTERNAL ); ?>"
+							<?php echo $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_SAVE_INTERNAL ] ? 'checked' : ''; ?>>
+						<label for="internal-resources" class="urlslab-switch-label">switch</label>
+					</div>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						Offload media from internal urls, found on pages of your domain with the current driver
+						</span>
 				</div>
-				<br class="clear"/>
-				<br class="clear"/>
-				<div class="col-3 float-left">
-					<label for="default-file-driver">
-						Default Driver
-					</label>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Default Driver</h4>
 				</div>
-				<div class="col-3 float-left">
-					<?php $current_default_driver = $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ]; ?>
-					<select name="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ); ?>" id="default-file-driver">
-						<?php $db_driver_selected = Urlslab_Driver::DRIVER_DB == $current_default_driver; ?>
-						<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_DB ); ?>"
-							<?php
-							if ( $db_driver_selected ) {
-								echo ' selected';}
-							?>
-						>Database Driver</option>
-						<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_LOCAL_FILE ); ?>"
-							<?php
-							$local_file_selected = Urlslab_Driver::DRIVER_LOCAL_FILE == $current_default_driver;
-							if ( $local_file_selected ) {
-								echo ' selected';
-							}
-							?>
-						>Local File Driver</option>
-						<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_S3 ); ?>"
-							<?php
-							$s3_selected = Urlslab_Driver::DRIVER_S3 == $current_default_driver;
-							if ( $s3_selected ) {
-								echo ' selected';
-							}
-							?>
-						>S3 Driver</option>
-					</select>
-				</div>
-				<br class="clear"/>
-				<br class="clear"/>
-				<div class="col-3 float-left">
-					<label for="transfer-s3">
-						Transfer media from S3 to default driver on background
-					</label>
-				</div>
-				<div class="col-3 float-left">
-					<input id="transfer-s3"
-						   name="<?php echo esc_attr( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ] ); ?>"
-						   value="1"
-						   type="checkbox"
-						<?php
-						if ( 1 == $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ] ) {
-							echo 'checked'; }
-						?>
-					>
-				</div>
-				<br class="clear"/>
-				<br class="clear"/>
-				<div class="col-3 float-left">
-					<label for="transfer-db">
-						Transfer media from database to default driver on background
-					</label>
-				</div>
-				<div class="col-3 float-left">
-					<input id="transfer-db"
-						   name="<?php echo esc_attr( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ] ); ?>"
-						   value="1"
-						   type="checkbox"
-						<?php
-						if ( 1 == $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ] ) {
-							echo 'checked'; }
-						?>
-					>
-				</div>
-				<br class="clear"/>
-				<br class="clear"/>
-				<div class="col-3 float-left">
-					<label for="transfer-local-file">
-						Transfer media from local file system to default driver on background
-					</label>
-				</div>
-				<div class="col-3 float-left">
-					<input id="transfer-local-file"
-						   name="<?php echo esc_attr( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ] ); ?>"
-						   value="1"
-						   type="checkbox"
-						<?php
-						if ( 1 == $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ] ) {
-							echo 'checked'; }
-						?>
-					>
-				</div>
-				<br class="clear"/>
-				<br class="clear"/>
-				<div class="col-3 float-left">
-					<label for="prio">
-						content hook priority
-					</label>
-				</div>
-				<div class="col-3 float-left">
-					<input id="prio"
-						   name="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ); ?>"
-						   value="<?php echo esc_attr( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ] ); ?>"
-						   type="number"
-					>
-				</div>
-				<input class="button button-primary" type="submit" name="submit" value="Save Changes">
-			</form>
-			<?php
-			if ( Urlslab_Driver::DRIVER_S3 == $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ] ) {
-				$s3_settings = Urlslab_Driver_S3::get_driver_settings();
-				?>
-				<form method="post">
-					<input type="hidden" name="action" value="update-s3-settings">
-					<?php wp_nonce_field( 's3-update' ); ?>
-					<?php foreach ( $s3_settings as $setting => $setting_val ) { ?>
-						<div class="col-3 float-left">
-							<?php
-							if (
-								( Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY != $setting || empty( $setting_val ) ) &&
-								( Urlslab_Driver_S3::SETTING_NAME_S3_SECRET != $setting || empty( $setting_val ) )
-							) {
-								?>
-								<label for="<?php echo esc_attr( $setting ); ?>">
-									<?php echo esc_html( implode( ' ', explode( '_', str_replace( 'urlslab_', '', $setting ) ) ) ); ?>:
-								</label>
+				<div>
+					<p>
+						<?php $current_default_driver = $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ]; ?>
+						<select name="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ); ?>"
+								id="default-file-driver">
+							<?php $db_driver_selected = Urlslab_Driver::DRIVER_DB == $current_default_driver; ?>
+							<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_DB ); ?>"
 								<?php
-							}
-							?>
-						</div>
-						<div class="col-3 float-left">
+								if ( $db_driver_selected ) {
+									echo ' selected';
+								}
+								?>
+							>Database Driver
+							</option>
+							<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_LOCAL_FILE ); ?>"
+								<?php
+								$local_file_selected = Urlslab_Driver::DRIVER_LOCAL_FILE == $current_default_driver;
+								if ( $local_file_selected ) {
+									echo ' selected';
+								}
+								?>
+							>Local File Driver
+							</option>
+							<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_S3 ); ?>"
+								<?php
+								$s3_selected = Urlslab_Driver::DRIVER_S3 == $current_default_driver;
+								if ( $s3_selected ) {
+									echo ' selected';
+								}
+								?>
+							>S3 Driver
+							</option>
+						</select>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						Current default driver to use for offloading the media
+						</span>
+				</div>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Transfer media from S3 to default driver on background</h4>
+				</div>
+				<div>
+					<p>
+					<div class="urlslab-switch">
+						<input class="urlslab-switch-input"
+							   type="checkbox"
+							   id="transfer-s3"
+							   name="offload-opt[]"
+							   value="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ); ?>"
+							<?php echo $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ] ? 'checked' : ''; ?>>
+						<label for="transfer-s3" class="urlslab-switch-label">switch</label>
+					</div>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						Transfer all Media stored in S3 object storage to current default driver
+						</span>
+				</div>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Transfer media from database to default driver on background</h4>
+				</div>
+				<div>
+					<p>
+					<div class="urlslab-switch">
+						<input class="urlslab-switch-input"
+							   type="checkbox"
+							   id="transfer-db"
+							   name="offload-opt[]"
+							   value="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ); ?>"
+							<?php echo $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ] ? 'checked' : ''; ?>>
+						<label for="transfer-db" class="urlslab-switch-label">switch</label>
+					</div>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						Transfer all Media stored in database to current default driver
+						</span>
+				</div>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Transfer media from local file system to default driver on background</h4>
+				</div>
+				<div>
+					<p>
+					<div class="urlslab-switch">
+						<input class="urlslab-switch-input"
+							   type="checkbox"
+							   id="transfer-local-file"
+							   name="offload-opt[]"
+							   value="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ); ?>"
+							<?php echo $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ] ? 'checked' : ''; ?>>
+						<label for="transfer-local-file" class="urlslab-switch-label">switch</label>
+					</div>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						Transfer all Media stored in Local File Storage to current default driver
+						</span>
+				</div>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>content hook priority</h4>
+				</div>
+				<div>
+					<p>
+						<input id="prio"
+							   name="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ); ?>"
+							   value="<?php echo esc_attr( $widget_settings[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ] ); ?>"
+							   type="number"
+						>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						The priority which specifies in which order the widget should work. the higher, the priority more Media would be saved.
+						</span>
+				</div>
+			</div>
+			<p>
+				<input
+						type="submit"
+						name="submit"
+						id="save-sub-widget"
+						class="urlslab-btn-primary"
+						value="Save changes">
+			</p>
+		</form>
+		<?php
+	}
+
+	public function render_driver_settings() {
+		$s3_settings = Urlslab_Driver_S3::get_driver_settings();
+		?>
+		<form method="post">
+			<?php wp_nonce_field( 's3-update' ); ?>
+			<input type="hidden" name="action" value="update-s3-settings">
+			<h3>S3 Driver Settings</h3>
+			<?php
+			foreach ( $s3_settings as $setting => $setting_val ) {
+				?>
+				<div class="urlslab-setting-item">
+					<div>
+						<h4>
+							<?php echo esc_html( implode( ' ', explode( '_', str_replace( 'urlslab_', '', $setting ) ) ) ); ?>
+						</h4>
+					</div>
+					<div>
+						<p>
 							<?php
 							$value = $setting_val ?? '';
 							if (
-								( Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY == $setting && ! empty( $setting_val ) ) ||
-								( Urlslab_Driver_S3::SETTING_NAME_S3_SECRET == $setting && ! empty( $setting_val ) )
+								( Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY == $setting && ! empty( $value ) ) ||
+								( Urlslab_Driver_S3::SETTING_NAME_S3_SECRET == $setting && ! empty( $value ) )
 							) {
 								$value = urlslab_masked_info( $value );
 								?>
-
 								<span id="<?php echo esc_attr( $setting ); ?>">
-									<?php echo esc_html( implode( ' ', explode( '_', str_replace( 'urlslab_', '', $setting ) ) ) ); ?>:
-									<?php echo esc_html( $value ); ?>
+								<?php echo esc_html( $value ); ?>
 								</span>
 								<?php
 							} else {
@@ -591,17 +629,37 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 								<?php
 							}
 							?>
-						</div>
-					<?php } ?>
-					<?php if ( empty( $s3_settings[ Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY ] ) ) { ?>
-						<input class="button button-primary" type="submit" name="submit" value="Save Changes">
-					<?php } else { ?>
-						<input class="button button-primary" type="submit" name="submit" value="Save Changes">
-						<input class="urlslab-btn-error" type="submit" name="submit" value="Remove Credentials">
-					<?php } ?>
-				</form>
+						</p>
+					</div>
+				</div>
 			<?php } ?>
-		</div>
+			<?php if ( empty( $s3_settings[ Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY ] ) ) { ?>
+				<p>
+					<input
+							type="submit"
+							name="submit"
+							id="save-sub-widget"
+							class="urlslab-btn-primary"
+							value="Save changes">
+				</p>
+			<?php } else { ?>
+				<p>
+					<input
+							type="submit"
+							name="submit"
+							id="save-sub-widget"
+							class="urlslab-btn-primary"
+							value="Save changes">
+
+					<input
+							type="submit"
+							name="submit"
+							id="save-sub-widget"
+							class="urlslab-btn-error"
+							value="Remove Credentials">
+				</p>
+			<?php } ?>
+		</form>
 		<?php
 	}
 }

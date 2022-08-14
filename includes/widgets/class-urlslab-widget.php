@@ -80,8 +80,9 @@ abstract class Urlslab_Widget {
 	public abstract function get_thumbnail_demo_url(): string;
 
 	/**
-	 * @return array returns a widget array
+	 * @param array $new_settings
+	 *
+	 * @return void
 	 */
-	public abstract function get_widget_settings(): array;
-
+	public abstract static function update_settings( array $new_settings );
 }

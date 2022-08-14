@@ -120,20 +120,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				 isset( $_POST['action'] ) &&
 				 'update-settings' == $_POST['action'] ) {
 
-				$widget_prev_settings = Urlslab_Available_Widgets::get_instance()
-																 ->get_widget( 'urlslab-keywords-links' )
-																 ->get_widget_settings();
-				foreach ( $_POST as $key => $val ) {
-					if (
-							str_starts_with( $key, 'urlslab_' ) &&
-							in_array( $key, array_keys( $widget_prev_settings ) )
-					) {
-						update_option(
-							$key,
-							$val
-						);
-					}
-				}
+				Urlslab_Keywords_Links::update_settings( $_POST );
 
 				wp_safe_redirect(
 					$this->parent_page->menu_page(
@@ -540,7 +527,6 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 	}
 
 	public function render_settings() {
-		$keyword_settings = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-keywords-links' )->get_widget_settings();
 		?>
 		<form method="post">
 			<input type="hidden" name="action" value="update-settings">
@@ -554,7 +540,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					<div class="col-3">
 						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD ); ?>"
 							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD ); ?>"
-							   value="<?php echo esc_attr( $keyword_settings[ Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD ] ); ?>"
+							   value="<?php echo esc_attr( get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD, Urlslab_Keywords_Links::MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD ) ); ?>"
 							   type="number">
 					</div>
 					</p>
@@ -573,9 +559,9 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				<div>
 					<p>
 					<div class="col-3">
-						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORDURL ); ?>"
-							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORDURL ); ?>"
-							   value="<?php echo esc_attr( $keyword_settings[ Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORDURL ] ); ?>"
+						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL ); ?>"
+							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL ); ?>"
+							   value="<?php echo esc_attr( get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL, Urlslab_Keywords_Links::MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD_URL ) ); ?>"
 							   type="number">
 					</div>
 					</p>
@@ -596,7 +582,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					<div class="col-3">
 						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ); ?>"
 							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ); ?>"
-							   value="<?php echo esc_attr( $keyword_settings[ Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ] ); ?>"
+							   value="<?php echo esc_attr( get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL, Urlslab_Keywords_Links::MAX_DEFAULT_REPLACEMENTS_PER_URL ) ); ?>"
 							   type="number">
 					</div>
 					</p>
@@ -617,7 +603,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					<div class="col-3">
 						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ); ?>"
 							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ); ?>"
-							   value="<?php echo esc_attr( $keyword_settings[ Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ] ); ?>"
+							   value="<?php echo esc_attr( get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL, Urlslab_Keywords_Links::MAX_DEFAULT_REPLACEMENTS_PER_URL ) ); ?>"
 							   type="number">
 					</div>
 					</p>
@@ -638,7 +624,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					<div class="col-3">
 						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE ); ?>"
 							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE ); ?>"
-							   value="<?php echo esc_attr( $keyword_settings[ Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE ] ); ?>"
+							   value="<?php echo esc_attr( get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE, Urlslab_Keywords_Links::MAX_DEFAULT_REPLACEMENTS_PER_PAGE ) ); ?>"
 							   type="number">
 					</div>
 					</p>
@@ -659,7 +645,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					<div class="col-3">
 						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH ); ?>"
 							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH ); ?>"
-							   value="<?php echo esc_attr( $keyword_settings[ Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH ] ); ?>"
+							   value="<?php echo esc_attr( get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH, Urlslab_Keywords_Links::MAX_DEFAULT_REPLACEMENTS_PER_PARAGRAPH ) ); ?>"
 							   type="number">
 					</div>
 					</p>

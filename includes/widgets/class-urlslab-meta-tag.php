@@ -207,7 +207,5 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 		return 'meta-tags';
 	}
 
-	public function get_widget_settings(): array {
-		return array();
-	}
+	public static function update_settings( array $new_settings ) {}
 }

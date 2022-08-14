@@ -28,7 +28,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	public const SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD = 'urlslab_max_replacements_for_each_keyword';
 	public const MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD = 2;
 
-	public const SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORDURL = 'urlslab_max_replacements_per_keyword_url';
+	public const SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL = 'urlslab_max_replacements_per_keyword_url';
 	public const MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD_URL = 1;
 
 
@@ -236,7 +236,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			if (
 				( ! isset( $this->kw_page_replacement_counts[ $row['kw'] ] ) || $this->kw_page_replacement_counts[ $row['kw'] ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD, self::MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD ) ) &&
 				( ! isset( $this->url_page_replacement_counts[ $row['url'] ] ) || $this->url_page_replacement_counts[ $row['url'] ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_URL, self::MAX_DEFAULT_REPLACEMENTS_PER_URL ) ) &&
-				( ! isset( $this->urlandkw_page_replacement_counts[ $kw_md5 ] ) || $this->urlandkw_page_replacement_counts[ $kw_md5 ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORDURL, self::MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD_URL ) ) &&
+				( ! isset( $this->urlandkw_page_replacement_counts[ $kw_md5 ] ) || $this->urlandkw_page_replacement_counts[ $kw_md5 ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL, self::MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD_URL ) ) &&
 					strpos( $inputText, strtolower( $row['kw'] ) ) !== false
 			) {
 				$keywords[ $kw_md5 ] = $row;
@@ -361,14 +361,54 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		return 'keyword-linking';
 	}
 
-	public function get_widget_settings(): array {
-		return array(
-			self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD => get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD, self::MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD ),
-			self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORDURL => get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORDURL, self::MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD_URL ),
-			self::SETTING_NAME_MAX_REPLACEMENTS_PER_URL => get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_URL, self::MAX_DEFAULT_REPLACEMENTS_PER_URL ),
-			self::SETTING_NAME_MAX_LINKS_ON_PAGE => get_option( self::SETTING_NAME_MAX_LINKS_ON_PAGE, self::MAX_DEFAULT_LINKS_ON_PAGE ),
-			self::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE => get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE, self::MAX_DEFAULT_REPLACEMENTS_PER_PAGE ),
-			self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH => get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH, self::MAX_DEFAULT_REPLACEMENTS_PER_PARAGRAPH ),
-		);
+	public static function update_settings( array $new_settings ) {
+		if ( isset( $new_settings[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD ] ) &&
+			 ! empty( $new_settings[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD ] ) ) {
+			update_option(
+				self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD,
+				$new_settings[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD ]
+			);
+		}
+
+		if ( isset( $new_settings[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL ] ) &&
+			 ! empty( $new_settings[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL ] ) ) {
+			update_option(
+				self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL,
+				$new_settings[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL ]
+			);
+		}
+
+		if ( isset( $new_settings[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ] ) &&
+			 ! empty( $new_settings[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ] ) ) {
+			update_option(
+				self::SETTING_NAME_MAX_REPLACEMENTS_PER_URL,
+				$new_settings[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ]
+			);
+		}
+
+		if ( isset( $new_settings[ self::SETTING_NAME_MAX_LINKS_ON_PAGE ] ) &&
+			 ! empty( $new_settings[ self::SETTING_NAME_MAX_LINKS_ON_PAGE ] ) ) {
+			update_option(
+				self::SETTING_NAME_MAX_LINKS_ON_PAGE,
+				$new_settings[ self::SETTING_NAME_MAX_LINKS_ON_PAGE ]
+			);
+		}
+
+		if ( isset( $new_settings[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE ] ) &&
+			 ! empty( $new_settings[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE ] ) ) {
+			update_option(
+				self::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE,
+				$new_settings[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE ]
+			);
+		}
+
+		if ( isset( $new_settings[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH ] ) &&
+			 ! empty( $new_settings[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH ] ) ) {
+			update_option(
+				self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH,
+				$new_settings[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH ]
+			);
+		}
+
 	}
 }

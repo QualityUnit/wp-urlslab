@@ -21,22 +21,20 @@ class Urlslab_Link_Management_Subpage extends Urlslab_Admin_Subpage {
 				'Save Changes' === $_POST['submit'] ) {
 				check_admin_referer( 'link-management-settings' );
 
+				$saving_opt = array();
 				if ( isset( $_POST[ Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ] ) &&
 				! empty( $_POST[ Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ] ) ) {
-					update_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, $_POST[ Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ] );
+					$saving_opt[ Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ] =
+						$_POST[ Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ];
 				}
 
-				if ( ! isset( $_POST['link-management'] ) ) {
-					update_option( Urlslab_Link_Enhancer::SETTING_NAME_URLS_MAP, 0 );
-					update_option( Urlslab_Link_Enhancer::SETTING_NAME_REMOVE_LINKS, 0 );
-				} else {
-					$link_enhancer = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-link-enhancer' );
-					$widgets = $link_enhancer->get_widget_settings();
-					unset( $widgets[ Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ] );
-					foreach ( $widgets as $setting => $setting_val ) {
-						update_option( $setting, in_array( $setting, $_POST['link-management'] ) ? 1 : 0 );
+				if ( isset( $_POST['link-management'] ) ) {
+					foreach ( $_POST['link-management'] as $setting_widget ) {
+						$saving_opt[ $setting_widget ] = true;
 					}
-				}           
+				}
+
+				Urlslab_Link_Enhancer::update_settings( $saving_opt );
 			}
 			//# Widget Settings
 
@@ -50,8 +48,6 @@ class Urlslab_Link_Management_Subpage extends Urlslab_Admin_Subpage {
 	public function render_modals() {}
 
 	public function render_settings() {
-		$widget_settings = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-link-enhancer' )
-																	->get_widget_settings();
 		?>
 		<div>
 			<form method="post">
@@ -67,7 +63,10 @@ class Urlslab_Link_Management_Subpage extends Urlslab_Admin_Subpage {
 							<input class="urlslab-switch-input" type="checkbox" id="remove-links" name="link-management[]"
 								   value="<?php echo esc_attr( Urlslab_Link_Enhancer::SETTING_NAME_REMOVE_LINKS ); ?>"
 								<?php
-								if ( 1 == $widget_settings[ Urlslab_Link_Enhancer::SETTING_NAME_REMOVE_LINKS ] ) {
+								if ( get_option(
+									Urlslab_Link_Enhancer::SETTING_NAME_REMOVE_LINKS,
+									Urlslab_Link_Enhancer::SETTING_DEFAULT_REMOVE_LINKS
+								) ) {
 									echo 'checked';
 								}
 								?>
@@ -93,7 +92,10 @@ class Urlslab_Link_Management_Subpage extends Urlslab_Admin_Subpage {
 							<input class="urlslab-switch-input" type="checkbox" id="url-map" name="link-management[]"
 								   value="<?php echo esc_attr( Urlslab_Link_Enhancer::SETTING_NAME_URLS_MAP ); ?>"
 								<?php
-								if ( 1 == $widget_settings[ Urlslab_Link_Enhancer::SETTING_NAME_URLS_MAP ] ) {
+								if ( get_option(
+									Urlslab_Link_Enhancer::SETTING_NAME_URLS_MAP,
+									Urlslab_Link_Enhancer::SETTING_DEFAULT_URLS_MAP
+								) ) {
 									echo 'checked';
 								}
 								?>
@@ -116,7 +118,7 @@ class Urlslab_Link_Management_Subpage extends Urlslab_Admin_Subpage {
 					<div>
 						<p>
 						<div>
-							<?php $current_replacement_strategy = $widget_settings[ Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ]; ?>
+							<?php $current_replacement_strategy = get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY ); ?>
 							<select name="<?php echo esc_attr( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ); ?>" id="desc-replacement">
 								<option value="<?php echo esc_attr( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY ); ?>"
 									<?php
