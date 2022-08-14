@@ -6,41 +6,33 @@ $user = Urlslab_User_Widget::get_instance();
 if ( isset( $_GET['tab'] ) and 'link-management' == $_GET['tab'] ) {
 
 	?>
-	<div id="urlslab-active-accordion" class="accordion col-12">
-
-		<!-- Section 1 -->
-		<div class="urlslab-accordion-header col-12">
-			<div>
-				<h3>Explanation</h3>
+	<div id="urlslab-vertical-tabs" class="urlslab-container-shadow urlslab-ui-tabs-vertical">
+		<ul class="urlslab-tab-topic">
+			<li><a href="#fragment-1"><span>Overview</span></a></li>
+			<li>
+				<a href="#fragment-2">
+					<span>Settings</span>
+				</a>
+			</li>
+		</ul>
+		<div id="fragment-1">
+			<div class="urlslab-tab-content-heading">
+				<h3>How it Works?</h3>
+				<?php
+				$widget = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-link-enhancer' );
+				require plugin_dir_path( __FILE__ ) . 'urlslab-admin-activation-card-header.php';
+				?>
 			</div>
+			Enhance all your links in your pages with Link Enhancer widget with one click:
+			<ul>
+				<li>
+					Add title attribute to all your links in the pages automatically based on the destination
+					url that the link is point to.
+				</li>
+			</ul>
 		</div>
-		<div class="urlslab-card-container">
-			<div class="urlslab-card-content">
-				<div class="mar-bottom-1">
-					<?php
-					$widget = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-link-enhancer' );
-					require plugin_dir_path( __FILE__ ) . 'urlslab-admin-activation-card-header.php';
-					?>
-					<br class="clear">
-					<br class="clear">
-					Enhance all your links in your pages with Link Enhancer widget with one click:
-					<ul>
-						<li>
-							Add title attribute to all your links in the pages automatically based on the destination
-							url that the link is point to.
-						</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-
-		<!-- Section 2 -->
-		<div class="urlslab-accordion-header col-12">
-			<h3>Settings</h3>
-		</div>
-		<div class="urlslab-card-container">
+		<div id="fragment-2">
 			<?php $this->link_management_subpage->render_settings(); ?>
 		</div>
-
 	</div>
 <?php } ?>

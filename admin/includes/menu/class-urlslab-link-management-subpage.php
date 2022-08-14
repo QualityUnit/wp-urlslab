@@ -57,6 +57,32 @@ class Urlslab_Link_Management_Subpage extends Urlslab_Admin_Subpage {
 			<form method="post">
 				<?php wp_nonce_field( 'link-management-settings' ); ?>
 				<input type="hidden" name="action" value="update-settings">
+				<div class="urlslab-setting-item">
+					<div>
+						<h4>Hide Links</h4>
+					</div>
+					<div>
+						<p>
+						<div class="urlslab-switch">
+							<input class="urlslab-switch-input" type="checkbox" id="meta-desc" name="link-management[]"
+								   value="<?php echo esc_attr( Urlslab_Link_Enhancer::SETTING_NAME_REMOVE_LINKS ); ?>"
+								<?php
+								if ( 1 == $widget_settings[ Urlslab_Link_Enhancer::SETTING_NAME_REMOVE_LINKS ] ) {
+									echo 'checked';
+								}
+								?>
+							>
+							<label for="meta-desc" class="urlslab-switch-label">switch</label>
+						</div>
+						</p>
+						<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						Hide the links you want
+					</span>
+					</div>
+				</div>
 				<div class="col-3 float-left">
 					<label for="remove-links">
 						Hide Links
