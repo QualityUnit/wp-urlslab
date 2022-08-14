@@ -52,9 +52,6 @@ abstract class Urlslab_Driver {
 			if ( $file_size && ( empty( $file->get_filesize() ) || $file->get_filesize() != $file_size ) ) {
 				$update_data['filesize'] = $file_size;
 			}
-			if ( 0 == $file->get_width() || 0 == $file->get_height() ) {
-				$size = getimagesize($file->get_local_file());
-			}
 			$result = $this->save_file_to_storage( $file, $file->get_local_file() );
 		} elseif ( strlen( $file->get_url() ) ) {
 			$local_tmp_file = download_url( $file->get_url() );
@@ -65,10 +62,6 @@ abstract class Urlslab_Driver {
 			if ( $file_size && ( empty( $file->get_filesize() ) || $file->get_filesize() != $file_size ) ) {
 				$update_data['filesize'] = $file_size;
 			}
-			if ( 0 == $file->get_width() || 0 == $file->get_height() ) {
-				$size = getimagesize($local_tmp_file);
-			}
-
 			$result = $this->save_file_to_storage( $file, $local_tmp_file );
 			unlink( $local_tmp_file );
 		}

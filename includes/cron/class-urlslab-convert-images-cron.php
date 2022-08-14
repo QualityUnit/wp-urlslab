@@ -31,7 +31,7 @@ class Urlslab_Convert_Images_Cron {
 		array_unshift( $values, Urlslab_Driver::STATUS_ACTIVE, Urlslab_File_Data::USE_WEBP_YES );
 
 		$file_row = $wpdb->get_row(
-			$wpdb->prepare( 'SELECT * FROM ' . URLSLAB_FILES_TABLE . ' WHERE filestatus = %s AND use_webp = %s AND webp_fileid IS NULL AND filetype IN (' . $placeholders . ') LIMIT 1', $values ),
+			$wpdb->prepare( 'SELECT * FROM ' . URLSLAB_FILES_TABLE . ' WHERE filestatus = %s AND use_webp = %s AND webp_fileid IS NULL AND filetype IN (' . $placeholders . ') LIMIT 1', $values ), // phpcs:ignore
 			ARRAY_A
 		);
 
