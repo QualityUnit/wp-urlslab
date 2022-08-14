@@ -325,6 +325,10 @@ figure {
 	background-color: rgba(10, 168, 167, 0.15);
 }
 
+.ui-state-active > a > span {
+	color: #0aa8a7;
+}
+
 .urlslab-ui-tabs-vertical > div {
 	width: 80%;
 	padding: 1rem 2rem;

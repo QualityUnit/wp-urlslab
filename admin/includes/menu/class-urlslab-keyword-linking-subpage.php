@@ -120,17 +120,20 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				 isset( $_POST['action'] ) &&
 				 'update-settings' == $_POST['action'] ) {
 
-				$saving_opt = array();
+				$widget_prev_settings = Urlslab_Available_Widgets::get_instance()
+																 ->get_widget( 'urlslab-keywords-links' )
+																 ->get_widget_settings();
 				foreach ( $_POST as $key => $val ) {
-					if ( str_starts_with( $key, 'urlslab_' ) ) {
-						$saving_opt[ $key ] = $val;
+					if (
+							str_starts_with( $key, 'urlslab_' ) &&
+							in_array( $key, array_keys( $widget_prev_settings ) )
+					) {
+						update_option(
+							$key,
+							$val
+						);
 					}
 				}
-
-				update_option(
-					'urlslab-keywords-links',
-					$saving_opt
-				);
 
 				wp_safe_redirect(
 					$this->parent_page->menu_page(
