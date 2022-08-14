@@ -542,25 +542,143 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 	public function render_settings() {
 		$keyword_settings = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-keywords-links' )->get_widget_settings();
 		?>
-		<div class="col-8 mar-top-1">
-			<form method="post">
-				<?php foreach ( $keyword_settings as $keyword_setting => $keyword_val ) { ?>
-					<?php wp_nonce_field( 'keyword-update-settings' ); ?>
-					<input type="hidden" name="action" value="update-settings">
-					<div class="col-3 float-left">
-						<label for="<?php echo esc_attr( $keyword_setting ); ?>">
-							<?php echo esc_html( implode( ' ', explode( '_', str_replace( 'urlslab_', '', $keyword_setting ) ) ) ); ?>:
-						</label>
+		<form method="post">
+			<?php wp_nonce_field( 'keyword-update-settings' ); ?>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Max Replacement Per Keyword</h4>
+				</div>
+				<div>
+					<p>
+					<div class="col-3">
+						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD ); ?>"
+							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD ); ?>"
+							   value="<?php echo esc_attr( $keyword_settings[ Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD ] ); ?>"
+							   type="number">
 					</div>
-					<div class="col-3 float-left">
-						<input id="<?php echo esc_attr( $keyword_setting ); ?>" name="<?php echo esc_attr( $keyword_setting ); ?>" value="<?php echo esc_attr( $keyword_val ); ?>" type="number">
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						Maximum number of times, that each keyword should be replaced in a page
+					</span>
+				</div>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Max Replacement Per Keyword-Url pair</h4>
+				</div>
+				<div>
+					<p>
+					<div class="col-3">
+						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORDURL ); ?>"
+							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORDURL ); ?>"
+							   value="<?php echo esc_attr( $keyword_settings[ Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORDURL ] ); ?>"
+							   type="number">
 					</div>
-					<br class="clear"/>
-					<br class="clear"/>
-				<?php } ?>
-				<input class="button button-primary" type="submit" name="submit" value="Save Changes">
-			</form>
-		</div>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						Maximum number of times, that each keyword-url pair should be replaced in a page
+					</span>
+				</div>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Max Replacement Per Url</h4>
+				</div>
+				<div>
+					<p>
+					<div class="col-3">
+						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ); ?>"
+							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ); ?>"
+							   value="<?php echo esc_attr( $keyword_settings[ Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ] ); ?>"
+							   type="number">
+					</div>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						Maximum number of times, that a keyword link should be generated for a single outbound url
+					</span>
+				</div>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Max Links in page (manual and auto links)</h4>
+				</div>
+				<div>
+					<p>
+					<div class="col-3">
+						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ); ?>"
+							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ); ?>"
+							   value="<?php echo esc_attr( $keyword_settings[ Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ] ); ?>"
+							   type="number">
+					</div>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						the maximum number of links that exists in a page for both auto and manual links
+					</span>
+				</div>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Max Auto links in page</h4>
+				</div>
+				<div>
+					<p>
+					<div class="col-3">
+						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE ); ?>"
+							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE ); ?>"
+							   value="<?php echo esc_attr( $keyword_settings[ Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE ] ); ?>"
+							   type="number">
+					</div>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						the maximum number of auto links to be generated
+					</span>
+				</div>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Max auto links per paragraph</h4>
+				</div>
+				<div>
+					<p>
+					<div class="col-3">
+						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH ); ?>"
+							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH ); ?>"
+							   value="<?php echo esc_attr( $keyword_settings[ Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH ] ); ?>"
+							   type="number">
+					</div>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						the maximum number of auto links to be created for each paragraph
+					</span>
+				</div>
+			</div>
+			<p>
+				<input
+						type="submit"
+						name="save-sub-widget"
+						id="save-sub-widget"
+						class="urlslab-btn-primary"
+						value="Save changes">
+			</p>
+		</form>
 		<?php
 
 	}
