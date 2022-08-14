@@ -130,6 +130,7 @@ class Urlslab_Offload_Cron {
 				URLSLAB_FILES_TABLE,
 				array(
 					'filestatus' => Urlslab_Driver::STATUS_ACTIVE,
+					'filetype' => $file->get_filetype(),
 				),
 				array(
 					'fileid' => $file->get_fileid(),

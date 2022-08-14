@@ -307,7 +307,7 @@ class Urlslab_File_Data {
 		return $this->height ?? 0;
 	}
 
-	public function get_url($append_file_name = '') {
+	public function get_url( $append_file_name = '' ) {
 		$parsed_url = parse_url( $this->url );
 		$scheme = isset( $parsed_url['scheme'] ) ? $parsed_url['scheme'] . '://' : parse_url( get_site_url(), PHP_URL_SCHEME ) . '://';
 		$host = isset( $parsed_url['host'] ) ? $parsed_url['host'] : parse_url( get_site_url(), PHP_URL_HOST );
@@ -364,7 +364,9 @@ class Urlslab_File_Data {
 	}
 
 	public function has_webp_alternative() {
-		return get_option(Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, true) && $this->use_webp == self::USE_WEBP_YES && ! 32 == strlen( $this->webp_fileid );
+		return true === get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, true ) &&
+			self::USE_WEBP_YES === $this->use_webp &&
+			32 === strlen( $this->webp_fileid );
 	}
 
 	public function get_webp_fileid() {

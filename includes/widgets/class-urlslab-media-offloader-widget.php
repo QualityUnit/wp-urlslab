@@ -52,7 +52,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public const SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT = array( 'image/png', 'image/jpeg' );
 
 	public const SETTING_NAME_WEPB_QUALITY = 'urlslab_webp_quality';
-	public const SETTING_DEFAULT_WEPB_QUALITY = 100;
+	public const SETTING_DEFAULT_WEPB_QUALITY = 80;
 
 	/**
 	 */
@@ -501,7 +501,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public function handle_webp_alternative( DOMElement $element, Urlslab_File_Data $file_obj, array $files, DOMDocument $document ) {
 		if ( 'img' === $element->tagName && $file_obj->has_webp_alternative() && isset( $files[ $file_obj->get_webp_fileid() ] ) ) {
 			$webp_file_obj = $files[ $file_obj->get_webp_fileid() ];
-			if ( $webp_file_obj->get_filestatus() == Urlslab_Driver::STATUS_ACTIVE ) {
+			if ( $webp_file_obj->get_filestatus() == Urlslab_Driver::STATUS_ACTIVE && $webp_file_obj->get_filesize() < $file_obj->get_filesize() ) {
 				$source_url = Urlslab_Driver::get_driver( $webp_file_obj )->get_url( $webp_file_obj );
 				if ( $source_url ) {
 					if ( 'picture' === $element->parentNode->tagName ) {
@@ -519,7 +519,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 						$source_element->setAttribute( 'srcset', $source_url );
 						$source_element->setAttribute( 'type', $webp_file_obj->get_filetype() );
 						$picture_element->appendChild( $source_element );
-						$picture_element->appendChild( $element );
+						$picture_element->appendChild( clone $element );
 						$element->parentNode->replaceChild( $picture_element, $element );
 					}
 				}
