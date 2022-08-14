@@ -24,7 +24,7 @@
     "ext-json": "*",
     "ext-libxml": "*",
     "ext-dom": "*",
-    "aws/aws-sdk-php": "^3.231",
+    "aws/aws-sdk-php": "^3.233",
     "ext-gd": "*"
   },
   "require-dev": {
