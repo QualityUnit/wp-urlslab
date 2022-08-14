@@ -543,8 +543,8 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		$keyword_settings = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-keywords-links' )->get_widget_settings();
 		?>
 		<form method="post">
-            <input type="hidden" name="action" value="update-settings">
-            <?php wp_nonce_field( 'keyword-update-settings' ); ?>
+			<input type="hidden" name="action" value="update-settings">
+			<?php wp_nonce_field( 'keyword-update-settings' ); ?>
 			<div class="urlslab-setting-item">
 				<div>
 					<h4>Max Replacement Per Keyword</h4>

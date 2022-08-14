@@ -419,9 +419,11 @@ figure {
 	position: relative;
 	display: inline-block;
 }
+
 .urlslab-switch-input {
 	display: none !important;
 }
+
 .urlslab-switch-label {
 	display: block;
 	width: 36px;
@@ -431,6 +433,7 @@ figure {
 	color: transparent;
 	user-select: none;
 }
+
 .urlslab-switch-label::before,
 .urlslab-switch-label::after {
 	content: "";
@@ -438,6 +441,7 @@ figure {
 	position: absolute;
 	cursor: pointer;
 }
+
 .urlslab-switch-label::before {
 	width: 100%;
 	height: 100%;
@@ -446,6 +450,7 @@ figure {
 	-webkit-transition: background-color 0.25s ease;
 	transition: background-color 0.25s ease;
 }
+
 .urlslab-switch-label::after {
 	top: 0;
 	left: 0;
@@ -457,9 +462,11 @@ figure {
 	-webkit-transition: left 0.25s ease;
 	transition: left 0.25s ease;
 }
+
 .urlslab-switch-input:checked + .urlslab-switch-label::before {
 	background-color: #0aa8a7;
 }
+
 .urlslab-switch-input:checked + .urlslab-switch-label::after {
 	left: 18px;
 }
