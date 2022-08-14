@@ -324,21 +324,20 @@ class Urlslab {
 		//defining Upgrade hook
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
 		$cron_job = new Urlslab_Screenshot_Cron( $this->url_data_fetcher );
-
 		$this->loader->add_action( 'urlslab_cron_hook', $cron_job, 'urlslab_cron_exec', 10, 0 );
+
 		if ( ! wp_next_scheduled( 'urlslab_cron_hook' ) ) {
 			wp_schedule_event( time(), 'every_minute', 'urlslab_cron_hook' );
 		}
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-cron.php';
 		$cron_job_offload = new Urlslab_Offload_Cron();
-
 		$this->loader->add_action( 'urlslab_cron_hook', $cron_job_offload, 'urlslab_cron_exec', 10, 0 );
 
-		if ( ! wp_next_scheduled( 'urlslab_offload_cron_hook' ) ) {
-			wp_schedule_event( time(), 'every_minute', 'urlslab_offload_cron_hook' );
-		}
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-convert-images-cron.php';
+		$cron_job_convert = new Urlslab_Convert_Images_Cron();
 
+		$this->loader->add_action( 'urlslab_cron_hook', $cron_job_convert, 'urlslab_cron_exec', 10, 0 );
 	}
 
 	/**
