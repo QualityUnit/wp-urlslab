@@ -35,6 +35,10 @@ class Urlslab_Activator {
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-cron.php';
 		add_option( Urlslab_Offload_Cron::SETTING_NAME_SCHEDULER_POINTER, -1, '', false );
+		Urlslab_Keywords_Links::add_option();
+		Urlslab_Link_Enhancer::add_option();
+		Urlslab_Media_Offloader_Widget::add_option();
+		Urlslab_Meta_Tag::add_option();
 	}
 
 	private static function install_tables() {

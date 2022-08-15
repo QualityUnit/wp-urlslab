@@ -13,18 +13,36 @@ class Urlslab_Header_Widgets_Page extends Urlslab_Admin_Page {
 	}
 
 	public function on_page_load( string $action, string $component ) {
-		if ( isset( $_POST['meta-opt'] ) ) {
+		if ( isset( $_GET['action'] ) &&
+			 'activation' == $_GET['action'] ) {
 			check_admin_referer( 'sub-widget-activation' );
-			Urlslab::update_option( 'header-seo', $_POST['meta-opt'] );
-			wp_safe_redirect(
-				$this->menu_page(
-					'meta-tags',
-					array(
-						'status' => 'success',
+			if ( isset( $_POST['meta-opt'] ) ) {
+				Urlslab_Meta_Tag::update_settings( $_POST['meta-opt'] );
+				wp_safe_redirect(
+					$this->menu_page(
+						'meta-tags',
+						array(
+							'status' => 'success',
+							'urlslab-message' => 'Meta tag settings saved successfully',
+						),
+						$_GET['sub-tab'] ?? ''
 					)
-				)
-			);
-			exit;
+				);
+				exit;
+			} else {
+				Urlslab_Meta_Tag::update_settings( array() );
+				wp_safe_redirect(
+					$this->menu_page(
+						'meta-tags',
+						array(
+							'status' => 'success',
+							'urlslab-message' => 'Meta tag settings saved successfully',
+						),
+						$_GET['sub-tab'] ?? ''
+					)
+				);
+				exit;
+			}
 		}
 	}
 
@@ -60,23 +78,97 @@ class Urlslab_Header_Widgets_Page extends Urlslab_Admin_Page {
 
 	public function render_widget_form() {
 		?>
-		<form method="post" action="<?php echo esc_url( $this->menu_page( 'meta-tags', 'action=activation' ) ); ?>">
+		<form method="post" action="<?php echo esc_url( $this->menu_page( 'meta-tags', 'action=activation', 1 ) ); ?>">
+			<h3>Meta Tags settings</h3>
 			<?php wp_nonce_field( 'sub-widget-activation' ); ?>
-			<input type="checkbox" id="meta-desc" name="meta-opt[]" value="meta-description"
-				<?php echo $this->sub_widgets['meta-description'] ? 'checked' : ''; ?>>
-			<label for="meta-desc">Meta Description Generation</label> <br>
-			<input type="checkbox" id="meta-og-image" name="meta-opt[]" value="meta-og-image"
-				<?php echo $this->sub_widgets['meta-og-image'] ? 'checked' : ''; ?>>
-			<label for="meta-og-image">Meta OG Image Generation</label> <br>
-			<input type="checkbox" id="meta-og-desc" name="meta-opt[]" value="meta-og-desc"
-				<?php echo $this->sub_widgets['meta-og-desc'] ? 'checked' : ''; ?>>
-			<label for="meta-og-desc">Meta OG Description Generation</label> <br>
-			<input type="checkbox" name="meta-opt[]" value="meta-og-title"
-				<?php echo $this->sub_widgets['meta-og-title'] ? 'checked' : ''; ?>>
-			<label for="meta-og-title">Meta OG Title Generation</label> <br>
-			<?php
-			submit_button( 'Save changes', 'small', 'save-sub-widget' );
-			?>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Meta Description Generation</h4>
+				</div>
+				<div>
+					<p>
+					<div class="urlslab-switch">
+						<input class="urlslab-switch-input" type="checkbox" id="meta-desc" name="meta-opt[]" value="<?php echo esc_attr( Urlslab_Meta_Tag::SETTING_NAME_META_DESCRIPTION_GENERATION ); ?>"
+							<?php echo get_option( Urlslab_Meta_Tag::SETTING_NAME_META_DESCRIPTION_GENERATION, Urlslab_Meta_Tag::DEFAULT_META_DESCRIPTION_GENERATION ) ? 'checked' : ''; ?>>
+						<label for="meta-desc" class="urlslab-switch-label">switch</label>
+					</div>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+						width="10px">
+						Generate Meta description tag automatically from the content of webpage
+					</span>
+				</div>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Meta OG Image Generation</h4>
+				</div>
+				<div>
+					<p>
+						<div class="urlslab-switch">
+							<input class="urlslab-switch-input" type="checkbox" id="meta-og-image" name="meta-opt[]" value="<?php echo esc_attr( Urlslab_Meta_Tag::SETTING_NAME_META_OG_IMAGE_GENERATION ); ?>"
+								<?php echo get_option( Urlslab_Meta_Tag::SETTING_NAME_META_OG_IMAGE_GENERATION, Urlslab_Meta_Tag::DEFAULT_META_OG_IMAGE_GENERATION ) ? 'checked' : ''; ?>>
+							<label for="meta-og-image" class="urlslab-switch-label">switch</label>
+						</div>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						Generate Meta og image tag automatically from the screenshot of the webpage
+					</span>
+				</div>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Meta OG Description Generation</h4>
+				</div>
+				<div>
+					<p>
+					<div class="urlslab-switch">
+						<input class="urlslab-switch-input" type="checkbox" id="meta-og-desc" name="meta-opt[]" value="<?php echo esc_attr( Urlslab_Meta_Tag::SETTING_NAME_META_OG_DESC_GENERATION ); ?>"
+							<?php echo get_option( Urlslab_Meta_Tag::SETTING_NAME_META_OG_DESC_GENERATION, Urlslab_Meta_Tag::DEFAULT_META_OG_DESC_GENERATION ) ? 'checked' : ''; ?>>
+						<label for="meta-og-desc" class="urlslab-switch-label">switch</label>
+					</div>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						Generate Meta og description tag automatically from the content summary of the webpage
+					</span>
+				</div>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Meta OG Title Generation</h4>
+				</div>
+				<div>
+					<p>
+					<div class="urlslab-switch">
+						<input class="urlslab-switch-input" id="meta-og-title" type="checkbox" name="meta-opt[]" value="<?php echo esc_attr( Urlslab_Meta_Tag::SETTING_NAME_META_OG_TITLE_GENERATION ); ?>"
+							<?php echo get_option( Urlslab_Meta_Tag::SETTING_NAME_META_OG_TITLE_GENERATION, Urlslab_Meta_Tag::DEFAULT_META_OG_TITLE_GENERATION ) ? 'checked' : ''; ?>>
+						<label for="meta-og-title" class="urlslab-switch-label">switch</label>
+					</div>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						Generate Meta og title tag automatically from the url title of the webpage
+					</span>
+				</div>
+			</div>
+			<p>
+				<input
+						type="submit"
+						name="save-sub-widget"
+						id="save-sub-widget"
+						class="urlslab-btn-primary"
+						value="Save changes">
+			</p>
 		</form>
 		<?php
 	}

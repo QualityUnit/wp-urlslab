@@ -17,10 +17,10 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	private Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher;
 
 	const SETTING_NAME_REMOVE_LINKS = 'urlslab_remove_links';
-	const SETTING_DEFAULT_REMOVE_LINKS = 1;
+	const SETTING_DEFAULT_REMOVE_LINKS = true;
 
 	const SETTING_NAME_URLS_MAP = 'urlslab_urls_map';
-	const SETTING_DEFAULT_URLS_MAP = 1;
+	const SETTING_DEFAULT_URLS_MAP = true;
 
 	/**
 	 * @param Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher
@@ -185,14 +185,6 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		return 'link-management';
 	}
 
-	public function get_widget_settings(): array {
-		return array(
-			self::SETTING_NAME_REMOVE_LINKS => get_option( self::SETTING_NAME_REMOVE_LINKS, self::SETTING_DEFAULT_REMOVE_LINKS ),
-			self::SETTING_NAME_URLS_MAP => get_option( self::SETTING_NAME_URLS_MAP, self::SETTING_DEFAULT_URLS_MAP ),
-			self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY => get_option( self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, self::DESC_TEXT_SUMMARY ),
-		);
-	}
-
 	private function update_urls_map( array $url_ids ) {
 		if ( get_option( self::SETTING_NAME_URLS_MAP, self::SETTING_DEFAULT_URLS_MAP ) == 0 ) {
 			return;
@@ -233,5 +225,47 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 				$values
 			)
 		);
+	}
+
+	public static function add_option() {
+		add_option( self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, self::DESC_TEXT_SUMMARY, '', true );
+		add_option( self::SETTING_NAME_REMOVE_LINKS, self::SETTING_DEFAULT_REMOVE_LINKS, '', true );
+		add_option( self::SETTING_NAME_URLS_MAP, self::SETTING_DEFAULT_URLS_MAP, '', true );
+	}
+
+	public static function update_settings( array $new_settings ) {
+		if ( isset( $new_settings[ self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ] ) ) {
+			update_option(
+				self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY,
+				$new_settings[ self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ]
+			);
+		}
+
+		if ( isset( $new_settings[ self::SETTING_NAME_REMOVE_LINKS ] ) &&
+			 ! empty( $new_settings[ self::SETTING_NAME_REMOVE_LINKS ] ) ) {
+			update_option(
+				self::SETTING_NAME_REMOVE_LINKS,
+				$new_settings[ self::SETTING_NAME_REMOVE_LINKS ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_REMOVE_LINKS,
+				false
+			);
+		}
+
+		if ( isset( $new_settings[ self::SETTING_NAME_URLS_MAP ] ) &&
+			 ! empty( $new_settings[ self::SETTING_NAME_URLS_MAP ] ) ) {
+			update_option(
+				self::SETTING_NAME_URLS_MAP,
+				$new_settings[ self::SETTING_NAME_URLS_MAP ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_URLS_MAP,
+				false
+			);
+		}
 	}
 }

@@ -31,7 +31,7 @@ figure {
 }
 
 .background-success {
-	background-color: #0f0;
+	background-color: #0aa8a7;
 }
 
 .background-warning {
@@ -50,8 +50,14 @@ figure {
 	background-color: #2271b1;
 }
 
+.urlslab-info {
+	font-size: 12px;
+	font-style: italic;
+	color: #545454;
+}
+
 .color-success {
-	color: #0f0;
+	color: #0aa8a7;
 }
 
 .color-warning {
@@ -70,17 +76,34 @@ figure {
 	color: #2271b1;
 }
 
+.urlslab-btn-primary {
+	text-decoration: none;
+	height: 100%;
+	padding: 10px;
+	background-color: #0aa8a7;
+	transition: background-color 0.5s;
+	-webkit-transition: background-color 0.5s;
+	border-radius: 5px;
+	border: none;
+	cursor: pointer;
+	color: #fff;
+}
+
+.urlslab-btn-primary:hover {
+	background-color: #07605f;
+}
+
 .urlslab-btn-success {
 	text-decoration: none;
 	height: 100%;
 	padding: 10px;
-	background-color: #28a745;
+	background-color: #0aa8a7;
 	border-radius: 5px;
 	color: #fff;
 }
 
 .urlslab-btn-success:hover {
-	background-color: #19692c;
+	background-color: #07605f;
 	color: #fff;
 }
 
@@ -141,7 +164,7 @@ figure {
 /** Urlslab Header **/
 .urlslab-wrap {
 	margin: 80px auto;
-	width: 80%;
+	max-width: 80rem;
 	display: flex;
 	column-gap: 10px;
 	flex-direction: column;
@@ -149,7 +172,7 @@ figure {
 
 .urlslab-header {
 	position: fixed;
-	z-index: -1;
+	z-index: 100;
 	left: 160px;
 	top: 32px;
 	display: flex;
@@ -188,7 +211,7 @@ figure {
 	display: flex;
 	justify-content: flex-start;
 	align-content: center;
-	width: 75%;
+	width: 80rem;
 }
 
 .urlslab-header-content-container > figure {
@@ -251,11 +274,93 @@ figure {
 	color: #000;
 }
 
+/** Urlslab tab **/
+
+/** Urlslab Vertical tab **/
+
+.urlslab-ui-tabs-vertical {
+	background-color: #fff;
+	border-radius: 10px;
+	width: 100%;
+	display: flex;
+	justify-content: flex-start;
+}
+
+.urlslab-ui-tabs-vertical > .urlslab-tab-topic {
+	border-right: 3px solid #f0f0f1;
+	width: 20%;
+}
+
+.urlslab-tab-topic > li {
+	margin-right: -3px;
+}
+
+.urlslab-tab-topic > li:hover {
+	border-right: 3px solid #0aa8a7;
+}
+
+.urlslab-tab-topic > li > a {
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	display: block;
+	width: 100%;
+	padding: 20px;
+	text-decoration: none;
+	font-size: 14px;
+	font-weight: 500;
+	color: #000;
+}
+
 .urlslab-tab-container .active > a {
 	color: #0aa8a7;
 }
 
-/** Urlslab tab **/
+.urlslab-tab-topic > li > a:hover {
+	color: #0aa8a7;
+}
+
+.ui-state-active {
+	color: #0aa8a7;
+	border-right: 3px solid #0aa8a7;
+	background-color: rgba(10, 168, 167, 0.15);
+}
+
+.ui-state-active > a > span {
+	color: #0aa8a7;
+}
+
+.urlslab-ui-tabs-vertical > div {
+	width: 80%;
+	padding: 1rem 2rem;
+}
+
+.urlslab-tab-content-heading {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+/** Urlslab Vertical tab **/
+
+/** Urlslab setting items **/
+
+.urlslab-setting-item {
+	padding: 4px;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	border-bottom: 1px solid #e8e8eb;
+}
+
+.urlslab-setting-item > div:first-child {
+	width: 30%;
+}
+
+.urlslab-setting-item > div:last-child {
+	width: 70%;
+}
+
+/** Urlslab setting items **/
 
 /** Urlslab Header **/
 
@@ -267,6 +372,12 @@ figure {
 	flex-wrap: wrap;
 	justify-content: space-around;
 	gap: 20px;
+}
+
+.urlslab-container-shadow {
+	box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;
+	-webkit-box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;
+	-moz-box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;
 }
 
 .urlslab-card-container {
@@ -302,34 +413,64 @@ figure {
 	cursor: pointer;
 }
 
-/** Urlslab Accordion **/
+/** Urlslab switch **/
 
-.accordion {
-	background-color: #fff;
-	border-radius: 5px;
-	padding: 10px;
+.urlslab-switch {
+	position: relative;
+	display: inline-block;
 }
 
-.urlslab-accordion-header {
-	box-sizing: border-box;
-	padding: 5px 10px;
-	border-radius: 5px;
+.urlslab-switch-input {
+	display: none !important;
+}
+
+.urlslab-switch-label {
+	display: block;
+	width: 36px;
+	height: 18px;
+	text-indent: -150%;
+	clip: rect(0 0 0 0);
+	color: transparent;
+	user-select: none;
+}
+
+.urlslab-switch-label::before,
+.urlslab-switch-label::after {
+	content: "";
+	display: block;
+	position: absolute;
 	cursor: pointer;
-	transition: background-color 0.5s;
-	-webkit-transition: background-color 0.5s;
-	-moz-transition: background-color 0.5s;
 }
 
-.urlslab-accordion-header:hover {
-	background-color: #f0f0f1;
+.urlslab-switch-label::before {
+	width: 100%;
+	height: 100%;
+	background-color: #dedede;
+	border-radius: 9999em;
+	-webkit-transition: background-color 0.25s ease;
+	transition: background-color 0.25s ease;
 }
 
-.urlslab-accordion-header > div {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
+.urlslab-switch-label::after {
+	top: 0;
+	left: 0;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background-color: #fff;
+	box-shadow: 0 0 2px rgba(0, 0, 0, 0.45);
+	-webkit-transition: left 0.25s ease;
+	transition: left 0.25s ease;
 }
 
-/** Urlslab Accordion **/
+.urlslab-switch-input:checked + .urlslab-switch-label::before {
+	background-color: #0aa8a7;
+}
+
+.urlslab-switch-input:checked + .urlslab-switch-label::after {
+	left: 18px;
+}
+
+/** Urlslab switch **/
 
 /** Urlslab Content **/

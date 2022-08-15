@@ -165,8 +165,9 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 		if ( isset( $_REQUEST['page'] ) ) {
 			$actions = array(
 				'delete' => sprintf(
-					'<a href="?page=%s&action=%s&kw_md5=%s&_wpnonce=%s">Delete</a>',
+					'<a href="?page=%s&s=%s&action=%s&kw_md5=%s&_wpnonce=%s">Delete</a>',
 					esc_attr( $_REQUEST['page'] ),
+					esc_html( $_REQUEST['s'] ?? '' ),
 					'delete',
 					esc_attr( $item->get_kw_md5() ),
 					$delete_nonce

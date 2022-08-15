@@ -71,20 +71,33 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 				 'Add Url Relation' === $_POST['submit'] ) {
 				if ( isset( $_POST['srcUrl'] ) && ! empty( $_POST['srcUrl'] ) &&
 					isset( $_POST['destUrl'] ) && ! empty( $_POST['destUrl'] ) ) {
-					$this->add_url_relation(
-						new Urlslab_Url( $_POST['srcUrl'] ),
-						new Urlslab_Url( $_POST['destUrl'] ),
-					);
-					wp_safe_redirect(
-						$this->parent_page->menu_page(
-							$this->subpage_slug,
-							array(
-								'status'          => 'success',
-								'urlslab-message' => 'Keyword was added successfully',
+					try {
+						$this->add_url_relation(
+							new Urlslab_Url( $_POST['srcUrl'] ),
+							new Urlslab_Url( $_POST['destUrl'] ),
+						);
+						wp_safe_redirect(
+							$this->parent_page->menu_page(
+								$this->subpage_slug,
+								array(
+									'status'          => 'success',
+									'urlslab-message' => 'Relation was added successfully',
+								)
 							)
-						)
-					);
-					exit;
+						);
+						exit;
+					} catch ( Exception $e ) {
+						wp_safe_redirect(
+							$this->parent_page->menu_page(
+								$this->subpage_slug,
+								array(
+									'status'          => 'failure',
+									'urlslab-message' => $e->getMessage(),
+								)
+							)
+						);
+						exit;
+					}
 				} else {
 					wp_safe_redirect(
 						$this->parent_page->menu_page(
@@ -291,14 +304,18 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 					continue;
 				}
 				//SrcUrl, DestUrl
-				$data_row = array(
-					new Urlslab_Url( $data[0] ),
-					new Urlslab_Url( $data[1] ),
-				);
+				try {
+					$data_row = array(
+						new Urlslab_Url( $data[0] ),
+						new Urlslab_Url( $data[1] ),
+					);
 
-				$res = $this->create_row( $data_row );
-				if ( $res ) {
-					$processed_rows++;
+					$res = $this->create_row( $data_row );
+					if ( $res ) {
+						$processed_rows++;
+					}
+				} catch ( Exception $e ) {
+					//# handling the failure of a single row
 				}
 			}
 			fclose( $handle );
