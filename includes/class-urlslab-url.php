@@ -47,8 +47,14 @@ class Urlslab_Url {
 		return $this->urlslab_parsed_url;
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	private function urlslab_url_init( string $input_url ): void {
 		$parsed_url = parse_url( $input_url );
+		if ( ! $parsed_url ) {
+			throw new Exception( 'url not valid' );
+		}
 
 		if ( ! is_array( $parsed_url ) ) {
 			$this->url_components     = array( 'path' => '' );

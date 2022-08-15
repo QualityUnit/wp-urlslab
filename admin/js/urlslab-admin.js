@@ -33,6 +33,7 @@
 	 * Functions
 	 *
 	 * @param  pageParam
+	 * @param  tabParam
 	 * @param  keywordHash
 	 * @param  keyword
 	 * @param  keywordLink
@@ -42,6 +43,7 @@
 	 */
 	function createHTMLPopupKeyword(
 		pageParam,
+		tabParam,
 		keywordHash = '',
 		keyword = '',
 		keywordLink = '',
@@ -51,7 +53,7 @@
 		return $( `
 		<div>
 		<h2>${ keyword != '' ? `Edit ${ keyword }` : 'Add Keyword' }</h2>
-			<form method="post" action="?page=${ pageParam }&action=keyword-edit">
+			<form method="post" action="?page=${ pageParam }&tab=${ tabParam }&action=keyword-edit">
 				<input type="hidden" name="keywordHash" value="${ keywordHash }">
 				<label for="keyword">Keyword: </label>
 				<input id="keyword" name="keyword" type="text" value="${ keyword }" placeholder="Keyword...">
@@ -81,6 +83,7 @@
 
 	function createHTMLPopupUrlRelation(
 		pageParam,
+		tabParam,
 		srcUrlHash = '',
 		srcUrl = '',
 		destUrlHash = '',
@@ -88,7 +91,7 @@
 		return $( `
 		<div>
 			<h2>${ srcUrlHash != '' ? 'Edit Url Relation' : 'Add Url Relation' }</h2>
-			<form method="post" action="?page=${ pageParam }&action=url-relation-edit">
+			<form method="post" action="?page=${ pageParam }&tab=${ tabParam }&action=url-relation-edit">
 				<input type="hidden" name="srcUrlHash" value="${ srcUrlHash }">
 				<input type="hidden" name="destUrlHash" value="${ destUrlHash }">
 				<label for="src-url">Src URL: </label>
@@ -121,6 +124,7 @@
 				const keywordFilter = $( this ).data( 'url-filter' );
 				createHTMLPopupKeyword(
 					urlParams.get( 'page' ),
+					urlParams.get( 'tab' ),
 					keywordHash,
 					keyword,
 					keywordLink,
@@ -135,7 +139,7 @@
 			event.preventDefault();
 			this.blur();
 			const urlParams = new URLSearchParams( window.location.search );
-			createHTMLPopupKeyword( urlParams.get( 'page' ) ).appendTo( 'body' ).modal();
+			createHTMLPopupKeyword( urlParams.get( 'page' ), urlParams.get( 'tab' ) ).appendTo( 'body' ).modal();
 		} );
 		//# Modal - Keyword Modals
 
@@ -149,7 +153,7 @@
 				const urlDestHash = $( this ).data( 'dest-url-hash' );
 				const urlDest = $( this ).data( 'dest-url' );
 				const urlParams = new URLSearchParams( window.location.search );
-				createHTMLPopupUrlRelation( urlParams.get( 'page' ), urlSrcHash, urlSrc, urlDestHash, urlDest )
+				createHTMLPopupUrlRelation( urlParams.get( 'page' ), urlParams.get( 'tab' ), urlSrcHash, urlSrc, urlDestHash, urlDest )
 					.appendTo( 'body' ).modal();
 			} );
 		} );
@@ -157,7 +161,7 @@
 		$( '#add-url-relation-btn' ).on( 'click', function( event ) {
 			event.preventDefault();
 			this.blur();
-			createHTMLPopupUrlRelation( urlParams.get( 'page' ) ).appendTo( 'body' ).modal();
+			createHTMLPopupUrlRelation( urlParams.get( 'page' ), urlParams.get( 'tab' ) ).appendTo( 'body' ).modal();
 		} );
 		//# Modal - Related Resource Modals
 
