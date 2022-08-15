@@ -227,6 +227,12 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		);
 	}
 
+	public static function add_option() {
+		add_option( self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, self::DESC_TEXT_SUMMARY, '', true );
+		add_option( self::SETTING_NAME_REMOVE_LINKS, self::SETTING_DEFAULT_REMOVE_LINKS, '', true );
+		add_option( self::SETTING_NAME_URLS_MAP, self::SETTING_DEFAULT_URLS_MAP, '', true );
+	}
+
 	public static function update_settings( array $new_settings ) {
 		if ( isset( $new_settings[ self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ] ) &&
 			! empty( $new_settings[ self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ] ) ) {

@@ -361,6 +361,15 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		return 'keyword-linking';
 	}
 
+	public static function add_option() {
+		add_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD, self::MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD, '', true );
+		add_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL, self::MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD_URL, '', true );
+		add_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_URL, self::MAX_DEFAULT_REPLACEMENTS_PER_URL, '', true );
+		add_option( self::SETTING_NAME_MAX_LINKS_ON_PAGE, self::MAX_DEFAULT_LINKS_ON_PAGE, '', true );
+		add_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE, self::MAX_DEFAULT_REPLACEMENTS_PER_PAGE, '', true );
+		add_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH, self::MAX_DEFAULT_REPLACEMENTS_PER_PARAGRAPH, '', true );
+	}
+
 	public static function update_settings( array $new_settings ) {
 		if ( isset( $new_settings[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD ] ) &&
 			 ! empty( $new_settings[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD ] ) ) {

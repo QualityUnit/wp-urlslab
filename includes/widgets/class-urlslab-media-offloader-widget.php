@@ -409,6 +409,17 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		return '';
 	}
 
+	public static function add_option() {
+		add_option( self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND, self::SETTING_DEFAULT_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND, '', true );
+		add_option( self::SETTING_NAME_SAVE_EXTERNAL, self::SETTING_DEFAULT_SAVE_EXTERNAL, '', true );
+		add_option( self::SETTING_NAME_SAVE_INTERNAL, self::SETTING_DEFAULT_SAVE_INTERNAL, '', true );
+		add_option( self::SETTING_NAME_NEW_FILE_DRIVER, self::SETTING_DEFAULT_NEW_FILE_DRIVER, '', true );
+		add_option( self::SETTING_NAME_MANIPULATION_PRIORITY, self::SETTING_DEFAULT_MANIPULATION_PRIORITY, '', true );
+		add_option( self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES, self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_LOCAL_FILES, '', true );
+		add_option( self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3, self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_S3, '', true );
+		add_option( self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB, self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB, '', true );
+	}
+
 	public static function update_settings( array $new_settings ) {
 		if ( isset( $new_settings[ self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ] ) &&
 			! empty( $new_settings[ self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ] ) ) {

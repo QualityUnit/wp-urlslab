@@ -208,4 +208,9 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	}
 
 	public static function update_settings( array $new_settings ) {}
+
+	public static function add_option() {
+		add_option( 'header-seo', array(), '', true );
+
+	}
 }
