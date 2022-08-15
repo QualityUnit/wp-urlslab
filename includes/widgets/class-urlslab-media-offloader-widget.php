@@ -452,15 +452,15 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			);
 		}
 
-		if ( isset( $new_settings[ self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB ] ) &&
-			 ! empty( $new_settings[ self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB ] ) ) {
+		if ( isset( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ] ) &&
+			 ! empty( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ] ) ) {
 			update_option(
-				self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB,
-				$new_settings[ self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB ]
+				self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB,
+				$new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ]
 			);
 		} else {
 			update_option(
-				self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB,
+				self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB,
 				false
 			);
 		}
