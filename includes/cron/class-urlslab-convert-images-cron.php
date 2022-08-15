@@ -82,19 +82,19 @@ class Urlslab_Convert_Images_Cron {
 
 			unlink( $original_image_filename );
 
-			if ( $this->process_webp_file( $file, $im ) || $this->process_avif_file( $file, $im ) ) {
-				//processing of file done
+			$this->process_webp_file( $file, $im );
+			$this->process_avif_file( $file, $im );
 
-				$wpdb->update(
-					URLSLAB_FILES_TABLE,
-					array(
-						'use_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_AVAILABLE,
-					),
-					array(
-						'fileid' => $file->get_fileid(),
-					)
-				);
-			}
+			//processing of file done
+			$wpdb->update(
+				URLSLAB_FILES_TABLE,
+				array(
+					'use_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_AVAILABLE,
+				),
+				array(
+					'fileid' => $file->get_fileid(),
+				)
+			);
 		}
 		return true;
 	}

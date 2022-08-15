@@ -199,6 +199,11 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 					'data-lasrc', //# for LA custom solution - needs to be changed or added to settings
 					'data-src',
 				),
+				'audio' => array(
+					'src',
+					'data-lasrc', //# for LA custom solution - needs to be changed or added to settings
+					'data-src',
+				),
 				'source' => array(
 					'data-lasrc', //# for LA custom solution - needs to be changed or added to settings
 					'srcset',
@@ -258,7 +263,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 									)
 								);
 
-								$this->handle_webp_alternative( $element['element'], $file_obj, $files, $document );
+								$this->handle_alternatives( $element['element'], $file_obj, $files, $document );
 							}
 							$found_urls[] = $fileid;
 						}
@@ -301,27 +306,27 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			'ARRAY_A'
 		);
 
-		$arr_webp_alternatives = array();
+		$arr_file_with_alternatives = array();
 
 		foreach ( $results as $file_array ) {
 			$file_obj = new Urlslab_File_Data( $file_array );
 			$new_urls[ $file_obj->get_fileid() ] = $file_obj;
 			if ( $file_obj->has_file_alternative() ) {
-				$arr_webp_alternatives[] = $file_obj->get_webp_fileid();
+				$arr_file_with_alternatives[] = $file_obj->get_fileid();
 			}
 		}
 
-		if ( ! empty( $arr_webp_alternatives ) ) {
+		if ( ! empty( $arr_file_with_alternatives ) ) {
 			$results = $wpdb->get_results(
 				$wpdb->prepare(
-					'SELECT f.* FROM ' . URLSLAB_FILES_TABLE . ' as f INNER JOIN ' . URLSLAB_FILE_ALTERNATIVES_TABLE . ' as a ON (f.fileid = a.alternative_fileid) WHERE a.fileid in (' . trim( str_repeat( '%s,', count( $arr_webp_alternatives ) ), ',' ) . ')', // phpcs:ignore
-					$arr_webp_alternatives
+					'SELECT f.*, a.fileid as parent_fileid FROM ' . URLSLAB_FILES_TABLE . ' as f INNER JOIN ' . URLSLAB_FILE_ALTERNATIVES_TABLE . ' as a ON (f.fileid = a.alternative_fileid) WHERE a.fileid in (' . trim( str_repeat( '%s,', count( $arr_file_with_alternatives ) ), ',' ) . ') ORDER BY f.filesize ASC', // phpcs:ignore
+					$arr_file_with_alternatives
 				),
 				'ARRAY_A'
 			);
 			foreach ( $results as $file_array ) {
 				$file_obj = new Urlslab_File_Data( $file_array );
-				$new_urls[ $file_obj->get_fileid() ] = $file_obj;
+				$new_urls[ $file_array['parent_fileid'] ]->add_alternative( $file_obj );
 			}
 		}
 		return $new_urls;
@@ -345,7 +350,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 					$save_external
 				) {
 					$placeholders[] = '(%s, %s, %s, %s)';
-					array_push( $values, $fileid, $elements[0]['url'], Urlslab_Driver::STATUS_NEW, $this->SETTING_NEW_FILE_DRIVER );
+					array_push( $values, $fileid, $elements[0]['url'], Urlslab_Driver::STATUS_NEW, get_option( self::SETTING_NAME_NEW_FILE_DRIVER, self::SETTING_DEFAULT_NEW_FILE_DRIVER ) );
 				}
 			}
 		}
@@ -538,29 +543,30 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	 * @return array
 	 * @throws DOMException
 	 */
-	public function handle_webp_alternative( DOMElement $element, Urlslab_File_Data $file_obj, array $files, DOMDocument $document ) {
-		if ( 'img' === $element->tagName && $file_obj->has_file_alternative() && isset( $files[ $file_obj->get_webp_fileid() ] ) ) {
-			$webp_file_obj = $files[ $file_obj->get_webp_fileid() ];
-			if ( $webp_file_obj->get_filestatus() == Urlslab_Driver::STATUS_ACTIVE && $webp_file_obj->get_filesize() < $file_obj->get_filesize() ) {
-				$source_url = Urlslab_Driver::get_driver( $webp_file_obj )->get_url( $webp_file_obj );
-				if ( $source_url ) {
-					if ( 'picture' === $element->parentNode->tagName ) {
-						//parent is picture tag, check if one of sources is webp
-						if ( ! $this->has_picture_webp_source( $element->parentNode ) ) {
+	public function handle_alternatives( DOMElement $element, Urlslab_File_Data $file_obj, array $files, DOMDocument $document ) {
+		if ( 'img' === $element->tagName && $file_obj->has_file_alternative() && count( $file_obj->get_alternatives() ) ) {
+			foreach ($file_obj->get_alternatives() as $alternative_fileid => $alternative_file_obj) {
+				if ( $alternative_file_obj->get_filestatus() == Urlslab_Driver::STATUS_ACTIVE && $alternative_file_obj->get_filesize() < $file_obj->get_filesize() ) {
+					$source_url = Urlslab_Driver::get_driver( $alternative_file_obj )->get_url( $alternative_file_obj );
+					if ( $source_url ) {
+						if ( 'picture' === $element->parentNode->tagName ) {
+							//parent is picture tag, check if one of sources is webp
+							if ( ! $this->has_picture_webp_source( $element->parentNode ) ) {
+								$source_element = $document->createElement( 'source' );
+								$source_element->setAttribute( 'srcset', $source_url );
+								$source_element->setAttribute( 'type', $alternative_file_obj->get_filetype() );
+								$element->parentNode->appendChild( $source_element );
+							}
+						} else {
+							//encapsulate img into picture element and add source tag for webp
+							$picture_element = $document->createElement( 'picture' );
 							$source_element = $document->createElement( 'source' );
 							$source_element->setAttribute( 'srcset', $source_url );
-							$source_element->setAttribute( 'type', $webp_file_obj->get_filetype() );
-							$element->parentNode->appendChild( $source_element );
+							$source_element->setAttribute( 'type', $alternative_file_obj->get_filetype() );
+							$picture_element->appendChild( $source_element );
+							$picture_element->appendChild( clone $element );
+							$element->parentNode->replaceChild( $picture_element, $element );
 						}
-					} else {
-						//encapsulate img into picture element and add source tag for webp
-						$picture_element = $document->createElement( 'picture' );
-						$source_element = $document->createElement( 'source' );
-						$source_element->setAttribute( 'srcset', $source_url );
-						$source_element->setAttribute( 'type', $webp_file_obj->get_filetype() );
-						$picture_element->appendChild( $source_element );
-						$picture_element->appendChild( clone $element );
-						$element->parentNode->replaceChild( $picture_element, $element );
 					}
 				}
 			}

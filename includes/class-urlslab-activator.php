@@ -189,7 +189,7 @@ class Urlslab_Activator {
 			filestatus char(1) NOT NULL,
 			driver char(1) NOT NULL,
 			last_seen datetime NULL,
-    		use_alternative char(1) NOT NULL DEFAULT 'N'
+    		use_alternative char(1) NOT NULL DEFAULT 'N',
 			PRIMARY KEY (fileid),
 			INDEX idx_file_filter (driver, filestatus),
 			INDEX idx_file_sort (filesize)

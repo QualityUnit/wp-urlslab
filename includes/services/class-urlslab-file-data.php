@@ -19,6 +19,7 @@ class Urlslab_File_Data {
 	private $driver;
 	private $last_seen;
 	private $use_alternative;
+	private $alternatives = array();
 
 	static $mime_types = array(
 		'txt' => 'text/plain',
@@ -371,5 +372,13 @@ class Urlslab_File_Data {
 
 	public function get_use_alternative() {
 		return $this->use_alternative;
+	}
+
+	public function add_alternative(Urlslab_File_Data $alternative_file) {
+		$this->alternatives[$alternative_file->get_fileid()] = $alternative_file;
+	}
+
+	public function get_alternatives() {
+		return $this->alternatives;
 	}
 }
