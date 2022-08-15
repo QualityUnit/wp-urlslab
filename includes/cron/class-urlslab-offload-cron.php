@@ -2,7 +2,7 @@
 
 class Urlslab_Offload_Cron {
 	private $start_time;
-	const MAX_RUN_TIME = 20;
+	const MAX_RUN_TIME = 10;
 
 	public const SETTING_NAME_SCHEDULER_POINTER = 'urlslab_sched_pointer';
 
@@ -129,6 +129,7 @@ class Urlslab_Offload_Cron {
 				URLSLAB_FILES_TABLE,
 				array(
 					'filestatus' => Urlslab_Driver::STATUS_ACTIVE,
+					'filetype' => $file->get_filetype(),
 				),
 				array(
 					'fileid' => $file->get_fileid(),

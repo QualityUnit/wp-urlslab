@@ -17,14 +17,14 @@ class Urlslab_Screenshot_Cron {
 			try {
 				if ( $schedules ) {
 					$this->handle_schedules( $schedules );
-				}           
+				}
 			} catch ( Exception $e ) {
 				urlslab_debug_log( $e );
 				break;
 			}
 
 
-			if ( count( $schedules ) < 100 or ( time() - $start_time > 30 ) ) {
+			if ( count( $schedules ) < 100 or ( time() - $start_time > 10 ) ) {
 				break;
 			}
 		}

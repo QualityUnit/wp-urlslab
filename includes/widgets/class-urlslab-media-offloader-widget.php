@@ -46,6 +46,13 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public const SETTING_DEFAULT_TRANSFER_FROM_DRIVER_S3 = false;
 	public const SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB = false;
 
+	public const SETTING_NAME_USE_WEBP_ALTERNATIVE = 'urlslab_use_webp';
+
+	public const SETTING_NAME_WEBP_TYPES_TO_CONVERT = 'urlslab_webp_types';
+	public const SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT = array( 'image/png', 'image/jpeg' );
+
+	public const SETTING_NAME_WEPB_QUALITY = 'urlslab_webp_quality';
+	public const SETTING_DEFAULT_WEPB_QUALITY = 80;
 
 	/**
 	 */
@@ -220,13 +227,14 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			if ( empty( $urls ) ) {
 				return $content;
 			}
-			$new_urls = $this->get_new_urls( array_keys( $urls ) );
+			$files = $this->get_files_for_urls( array_keys( $urls ) );
 
-			foreach ( $new_urls as $fileid => $file_obj ) {
+			foreach ( $files as $fileid => $file_obj ) {
+
 				if ( $file_obj->get_filestatus() == Urlslab_Driver::STATUS_ACTIVE ) {
-					//set new url to all elements with this url
 					$new_url = Urlslab_Driver::get_driver( $file_obj )->get_url( $file_obj );
-					if ( $new_url ) {
+					if ( ! empty( $new_url ) ) {
+						//set new url to all elements with this url
 						foreach ( $urls[ $fileid ] as $attribute_name => $elements ) {
 							foreach ( $elements as $element ) {
 								$element['element']->setAttribute(
@@ -237,6 +245,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 										$element['element']->getAttribute( $attribute_name )
 									)
 								);
+
+								$this->handle_webp_alternative( $element['element'], $file_obj, $files, $document );
 							}
 							$found_urls[] = $fileid;
 						}
@@ -248,7 +258,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			$this->update_last_seen_date( $found_urls );
 
 			$this->schedule_missing_images( $urls );
-			if ( count( $new_urls ) > 0 ) {
+			if ( count( $files ) > 0 ) {
 				return $document->saveHTML();
 			}
 
@@ -259,7 +269,16 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		}
 	}
 
-	private function get_new_urls( array $old_url_ids ) {
+	private function has_picture_webp_source( DOMElement $element ) {
+		foreach ( $element->childNodes as $child_node ) {
+			if ( 'source' == $child_node->tagName && 'image/webp' === $child_node->getAttribute( 'type' ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private function get_files_for_urls( array $old_url_ids ) {
 		global $wpdb;
 		$new_urls = array();
 		$results = $wpdb->get_results(
@@ -269,9 +288,29 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			),
 			'ARRAY_A'
 		);
+
+		$arr_webp_alternatives = array();
+
 		foreach ( $results as $file_array ) {
 			$file_obj = new Urlslab_File_Data( $file_array );
 			$new_urls[ $file_obj->get_fileid() ] = $file_obj;
+			if ( $file_obj->has_webp_alternative() ) {
+				$arr_webp_alternatives[] = $file_obj->get_webp_fileid();
+			}
+		}
+
+		if ( ! empty( $arr_webp_alternatives ) ) {
+			$results = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT * FROM ' . URLSLAB_FILES_TABLE . ' WHERE fileid in (' . trim( str_repeat( '%s,', count( $arr_webp_alternatives ) ), ',' ) . ')', // phpcs:ignore
+					$arr_webp_alternatives
+				),
+				'ARRAY_A'
+			);
+			foreach ( $results as $file_array ) {
+				$file_obj = new Urlslab_File_Data( $file_array );
+				$new_urls[ $file_obj->get_fileid() ] = $file_obj;
+			}
 		}
 		return $new_urls;
 	}
@@ -467,4 +506,42 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 
 	}
+
+	/**
+	 * @param $element
+	 * @param $file_obj
+	 * @param array $files
+	 * @param DOMDocument $document
+	 * @return array
+	 * @throws DOMException
+	 */
+	public function handle_webp_alternative( DOMElement $element, Urlslab_File_Data $file_obj, array $files, DOMDocument $document ) {
+		if ( 'img' === $element->tagName && $file_obj->has_webp_alternative() && isset( $files[ $file_obj->get_webp_fileid() ] ) ) {
+			$webp_file_obj = $files[ $file_obj->get_webp_fileid() ];
+			if ( $webp_file_obj->get_filestatus() == Urlslab_Driver::STATUS_ACTIVE && $webp_file_obj->get_filesize() < $file_obj->get_filesize() ) {
+				$source_url = Urlslab_Driver::get_driver( $webp_file_obj )->get_url( $webp_file_obj );
+				if ( $source_url ) {
+					if ( 'picture' === $element->parentNode->tagName ) {
+						//parent is picture tag, check if one of sources is webp
+						if ( ! $this->has_picture_webp_source( $element->parentNode ) ) {
+							$source_element = $document->createElement( 'source' );
+							$source_element->setAttribute( 'srcset', $source_url );
+							$source_element->setAttribute( 'type', $webp_file_obj->get_filetype() );
+							$element->parentNode->appendChild( $source_element );
+						}
+					} else {
+						//encapsulate img into picture element and add source tag for webp
+						$picture_element = $document->createElement( 'picture' );
+						$source_element = $document->createElement( 'source' );
+						$source_element->setAttribute( 'srcset', $source_url );
+						$source_element->setAttribute( 'type', $webp_file_obj->get_filetype() );
+						$picture_element->appendChild( $source_element );
+						$picture_element->appendChild( clone $element );
+						$element->parentNode->replaceChild( $picture_element, $element );
+					}
+				}
+			}
+		}
+	}
+
 }
