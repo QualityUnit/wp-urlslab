@@ -47,12 +47,23 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	private int $SETTING_TRANSFER_FROM_DRIVER_DB = 0;
 
 	public const SETTING_NAME_USE_WEBP_ALTERNATIVE = 'urlslab_use_webp';
-
 	public const SETTING_NAME_WEBP_TYPES_TO_CONVERT = 'urlslab_webp_types';
-	public const SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT = array( 'image/png', 'image/jpeg' );
-
+	public const SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT = array( 'image/png', 'image/jpeg', 'image/bmp' );
 	public const SETTING_NAME_WEPB_QUALITY = 'urlslab_webp_quality';
 	public const SETTING_DEFAULT_WEPB_QUALITY = 80;
+
+	public const SETTING_NAME_USE_AVIF_ALTERNATIVE = 'urlslab_use_avif';
+	public const SETTING_NAME_AVIF_TYPES_TO_CONVERT = 'urlslab_avif_types';
+	public const SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT = array( 'image/png', 'image/jpeg', 'image/bmp', 'image/gif' );
+	public const SETTING_NAME_AVIF_QUALITY = 'urlslab_avif_quality';
+
+	// quality: The accepted values are 0 (worst quality) through 100 (highest quality). Any integers out of this range are clamped to the 0-100 range.
+	public const SETTING_DEFAULT_AVIF_QUALITY = 80;
+	public const SETTING_NAME_AVIF_SPEED = 'urlslab_avif_quality';
+
+	// speed: Default value 6. Accepted values are int the range of 0 (slowest) through 10 (fastest). Integers outside the 0-10 range are clamped.
+	public const SETTING_DEFAULT_AVIF_SPEED = 5;
+
 
 	/**
 	 */
@@ -68,9 +79,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		$this->init_settings();
 		$loader->add_action( 'wp_handle_upload', $this, 'wp_handle_upload', 10, 1 );
 		$loader->add_filter( 'the_content', $this, 'the_content', $this->SETTING_MANIPULATION_PRIORITY );
-
-		//      $loader->add_action( 'wp_head', $this, 'buffer_start' );
-		//      $loader->add_action( 'wp_footer', $this, 'buffer_end', 99 );
 	}
 
 	/**
@@ -151,19 +159,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
 		return '';
-	}
-
-	function buffer_start() {
-		ob_start(
-			array(
-				$this,
-				'the_content',
-			)
-		);
-	}
-
-	function buffer_end() {
-		ob_end_flush();
 	}
 
 	public function the_content( $content ) {
@@ -306,7 +301,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		foreach ( $results as $file_array ) {
 			$file_obj = new Urlslab_File_Data( $file_array );
 			$new_urls[ $file_obj->get_fileid() ] = $file_obj;
-			if ( $file_obj->has_webp_alternative() ) {
+			if ( $file_obj->has_file_alternative() ) {
 				$arr_webp_alternatives[] = $file_obj->get_webp_fileid();
 			}
 		}
@@ -314,7 +309,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		if ( ! empty( $arr_webp_alternatives ) ) {
 			$results = $wpdb->get_results(
 				$wpdb->prepare(
-					'SELECT * FROM ' . URLSLAB_FILES_TABLE . ' WHERE fileid in (' . trim( str_repeat( '%s,', count( $arr_webp_alternatives ) ), ',' ) . ')', // phpcs:ignore
+					'SELECT f.* FROM ' . URLSLAB_FILES_TABLE . ' as f INNER JOIN ' . URLSLAB_FILE_ALTERNATIVES_TABLE . ' as a ON (f.fileid = a.alternative_fileid) WHERE a.fileid in (' . trim( str_repeat( '%s,', count( $arr_webp_alternatives ) ), ',' ) . ')', // phpcs:ignore
 					$arr_webp_alternatives
 				),
 				'ARRAY_A'
@@ -499,7 +494,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	 * @throws DOMException
 	 */
 	public function handle_webp_alternative( DOMElement $element, Urlslab_File_Data $file_obj, array $files, DOMDocument $document ) {
-		if ( 'img' === $element->tagName && $file_obj->has_webp_alternative() && isset( $files[ $file_obj->get_webp_fileid() ] ) ) {
+		if ( 'img' === $element->tagName && $file_obj->has_file_alternative() && isset( $files[ $file_obj->get_webp_fileid() ] ) ) {
 			$webp_file_obj = $files[ $file_obj->get_webp_fileid() ];
 			if ( $webp_file_obj->get_filestatus() == Urlslab_Driver::STATUS_ACTIVE && $webp_file_obj->get_filesize() < $file_obj->get_filesize() ) {
 				$source_url = Urlslab_Driver::get_driver( $webp_file_obj )->get_url( $webp_file_obj );
