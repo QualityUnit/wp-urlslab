@@ -15,8 +15,8 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 	public function handle_action() {
 		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
 			 'POST' === $_SERVER['REQUEST_METHOD'] and
-			 isset( $_REQUEST['action'] ) and
-			 - 1 != $_REQUEST['action'] ) {
+			 isset( $_GET['action'] ) and
+			 - 1 != $_GET['action'] ) {
 
 			//# Import Functionality
 			if ( isset( $_POST['submit'] ) &&
@@ -117,8 +117,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			//# Edit settings
 			if ( isset( $_POST['submit'] ) &&
 				 'Save Changes' === $_POST['submit'] &&
-				 isset( $_POST['action'] ) &&
-				 'update-settings' == $_POST['action'] ) {
+				 'update-settings' == $_GET['action'] ) {
 
 				Urlslab_Keywords_Links::update_settings( $_POST );
 
@@ -128,7 +127,8 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 						array(
 							'status' => 'success',
 							'urlslab-message' => 'Keyword settings was saved successfully',
-						)
+						),
+						$_GET['sub-tab'] ?? ''
 					)
 				);
 				exit;
@@ -528,8 +528,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 
 	public function render_settings() {
 		?>
-		<form method="post">
-			<input type="hidden" name="action" value="update-settings">
+		<form method="post" action="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=update-settings', 1 ) ); ?>">
 			<?php wp_nonce_field( 'keyword-update-settings' ); ?>
 			<div class="urlslab-setting-item">
 				<div>
@@ -601,9 +600,9 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				<div>
 					<p>
 					<div class="col-3">
-						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ); ?>"
-							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ); ?>"
-							   value="<?php echo esc_attr( get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL, Urlslab_Keywords_Links::MAX_DEFAULT_REPLACEMENTS_PER_URL ) ); ?>"
+						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_LINKS_ON_PAGE ); ?>"
+							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_LINKS_ON_PAGE ); ?>"
+							   value="<?php echo esc_attr( get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_LINKS_ON_PAGE, Urlslab_Keywords_Links::MAX_DEFAULT_REPLACEMENTS_PER_URL ) ); ?>"
 							   type="number">
 					</div>
 					</p>

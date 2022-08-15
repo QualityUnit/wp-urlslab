@@ -24,7 +24,8 @@ class Urlslab_Header_Widgets_Page extends Urlslab_Admin_Page {
 						array(
 							'status' => 'success',
 							'urlslab-message' => 'Meta tag settings saved successfully',
-						)
+						),
+						$_GET['sub-tab'] ?? ''
 					)
 				);
 				exit;
@@ -36,7 +37,8 @@ class Urlslab_Header_Widgets_Page extends Urlslab_Admin_Page {
 						array(
 							'status' => 'success',
 							'urlslab-message' => 'Meta tag settings saved successfully',
-						)
+						),
+						$_GET['sub-tab'] ?? ''
 					)
 				);
 				exit;
@@ -76,7 +78,7 @@ class Urlslab_Header_Widgets_Page extends Urlslab_Admin_Page {
 
 	public function render_widget_form() {
 		?>
-		<form method="post" action="<?php echo esc_url( $this->menu_page( 'meta-tags', 'action=activation' ) ); ?>">
+		<form method="post" action="<?php echo esc_url( $this->menu_page( 'meta-tags', 'action=activation', 1 ) ); ?>">
 			<h3>Meta Tags settings</h3>
 			<?php wp_nonce_field( 'sub-widget-activation' ); ?>
 			<div class="urlslab-setting-item">

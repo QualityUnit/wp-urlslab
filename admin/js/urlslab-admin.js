@@ -151,7 +151,14 @@
 		//# Modal - Related Resource Modals
 
 		//# Vertical tab
-		$( '#urlslab-vertical-tabs' ).tabs();
+		const urlParams = new URLSearchParams( window.location.search );
+		let activeTab = 0;
+		if ( urlParams.has( 'sub-tab' ) ) {
+			activeTab = urlParams.get( 'sub-tab' );
+		}
+		$( '#urlslab-vertical-tabs' ).tabs( {
+			active: activeTab,
+		} );
 		//# Vertical tab
 	} );
 }( jQuery ) );
