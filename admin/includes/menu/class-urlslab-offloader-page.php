@@ -687,7 +687,7 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 						<input id="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_URL_PREFIX ); ?>"
 							   name="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_URL_PREFIX ); ?>"
 							   value="<?php echo esc_attr( get_option( Urlslab_Driver_S3::SETTING_NAME_S3_URL_PREFIX, '' ) ); ?>"
-							   placeholder="prefix-example/"
+							   placeholder="https://cdn.yourdomain.com/"
 							   type="text"
 						>
 					</p>
@@ -695,7 +695,7 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
 							 alt="info"
 							 width="10px">
-						The prefix for offloaded media, so that it can be used with CDN
+						URL prefix for offloaded media, so that it can be used with CDN. Leave empty if CDN is not configured.
 					</span>
 				</div>
 			</div>
