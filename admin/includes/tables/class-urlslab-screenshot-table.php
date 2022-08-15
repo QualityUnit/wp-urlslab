@@ -409,7 +409,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		switch ( $column_name ) {
 			case 'col_url_image':
 				if ( $item->screenshot_exists() ) {
-					return '<img src="' . $item->render_screenshot_path() . '" width="150px">';
+					return '<figure><img src="' . $item->render_screenshot_path() . '" width="100%"></figure>';
 				}
 				return '<em>Not available!</em>';
 			case 'col_status':

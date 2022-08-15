@@ -30,6 +30,12 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 						$_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ];
 				}
 
+				if ( isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ] ) &&
+					 ! empty( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ] ) ) {
+					$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ] =
+						$_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ];
+				}
+
 				if ( isset( $_POST['offload-opt'] ) ) {
 					foreach ( $_POST['offload-opt'] as $offload_opt ) {
 						$saving_opt[ $offload_opt ] = true;
