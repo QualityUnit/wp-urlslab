@@ -255,9 +255,10 @@ class Urlslab_Related_Resources_Widget_Table extends WP_List_Table {
 		if ( isset( $_REQUEST['page'] ) ) {
 			$actions = array(
 				'delete' => sprintf(
-					'<a href="?page=%s%s&action=%s&url_src=%s&url_dest=%s&_wpnonce=%s">Delete</a>',
+					'<a href="?page=%s%s&s=%s&action=%s&url_src=%s&url_dest=%s&_wpnonce=%s">Delete</a>',
 					esc_attr( $_REQUEST['page'] ),
 					isset( $_REQUEST['tab'] ) ? '&tab=' . esc_attr( $_REQUEST['tab'] ) : '',
+					esc_html( $_REQUEST['s'] ?? '' ),
 					'delete',
 					esc_attr( $item[0]->get_url()->get_url_id() ),
 					esc_attr( $item[1]->get_url()->get_url_id() ),

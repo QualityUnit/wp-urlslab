@@ -81,7 +81,11 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 
 		$query_res = array();
 		foreach ( $res as $row ) {
-			$query_res[] = $this->transform( $row );
+			try {
+				$query_res[] = $this->transform( $row );
+			} catch ( Exception $e ) {
+				//# Wrong URL
+			}
 		}
 		return $query_res;
 	}
@@ -409,7 +413,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		switch ( $column_name ) {
 			case 'col_url_image':
 				if ( $item->screenshot_exists() ) {
-					return '<img src="' . $item->render_screenshot_path() . '" width="150px">';
+					return '<figure><img src="' . $item->render_screenshot_path() . '" width="100%"></figure>';
 				}
 				return '<em>Not available!</em>';
 			case 'col_status':
@@ -453,8 +457,10 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		if ( isset( $_REQUEST['page'] ) ) {
 			$actions = array(
 				'delete' => sprintf(
-					'<a href="?page=%s&action=%s&screenshot=%s&_wpnonce=%s">Delete</a>',
+					'<a href="?page=%s&filter=%s&s=%s&action=%s&screenshot=%s&_wpnonce=%s">Delete</a>',
 					esc_attr( $_REQUEST['page'] ),
+					esc_html( $_REQUEST['filter'] ?? '' ),
+					esc_html( $_REQUEST['s'] ?? '' ),
 					'delete',
 					esc_attr( $item->get_url()->get_url_id() ),
 					$delete_nonce
@@ -485,8 +491,10 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 				case Urlslab_Url_Data::VISIBILITY_VISIBLE:
 					$actions = array(
 						'delete' => sprintf(
-							'<a href="?page=%s&action=%s&screenshot=%s&_wpnonce=%s">Hide</a>',
+							'<a href="?page=%s&filter=%s&s=%s&action=%s&screenshot=%s&_wpnonce=%s">Mark as Hidden</a>',
 							esc_attr( $_REQUEST['page'] ),
+							esc_html( $_REQUEST['filter'] ?? '' ),
+							esc_html( $_REQUEST['s'] ?? '' ),
 							'hide',
 							esc_attr( $item->get_url()->get_url_id() ),
 							$visibility_nonce
@@ -497,8 +505,10 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 				case Urlslab_Url_Data::VISIBILITY_HIDDEN:
 					$actions = array(
 						'visible' => sprintf(
-							'<a href="?page=%s&action=%s&screenshot=%s&_wpnonce=%s">Visible</a>',
+							'<a href="?page=%s&filter=%s&s=%s&action=%s&screenshot=%s&_wpnonce=%s">Mark as Visible</a>',
 							esc_attr( $_REQUEST['page'] ),
+							esc_html( $_REQUEST['filter'] ?? '' ),
+							esc_html( $_REQUEST['s'] ?? '' ),
 							'visible',
 							esc_attr( $item->get_url()->get_url_id() ),
 							$visibility_nonce

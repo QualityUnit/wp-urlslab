@@ -15,8 +15,8 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 	public function handle_action() {
 		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
 			 'POST' === $_SERVER['REQUEST_METHOD'] and
-			 isset( $_REQUEST['action'] ) and
-			 - 1 != $_REQUEST['action'] ) {
+			 isset( $_GET['action'] ) and
+			 - 1 != $_GET['action'] ) {
 
 			//# Import Functionality
 			if ( isset( $_POST['submit'] ) &&
@@ -35,27 +35,40 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					 isset( $_POST['keyword-lang'] ) && ! empty( $_POST['keyword-lang'] ) &&
 					 isset( $_POST['keyword-link'] ) && ! empty( $_POST['keyword-link'] ) &&
 					 isset( $_POST['keyword-url-filter'] ) && ! empty( $_POST['keyword-url-filter'] ) ) {
-					$this->edit_keyword(
-						$_POST['keywordHash'],
-						new Urlslab_Url_Keyword_Data(
-							$_POST['keyword'],
-							$_POST['keyword-prio'],
-							strlen( $_POST['keyword'] ),
-							$_POST['keyword-lang'],
-							$_POST['keyword-link'],
-							$_POST['keyword-url-filter'],
-						)
-					);
-					wp_safe_redirect(
-						$this->parent_page->menu_page(
-							$this->subpage_slug,
-							array(
-								'status' => 'success',
-								'urlslab-message' => 'keyword was edited successfully',
+					try {
+						$this->edit_keyword(
+							$_POST['keywordHash'],
+							new Urlslab_Url_Keyword_Data(
+								$_POST['keyword'],
+								$_POST['keyword-prio'],
+								strlen( $_POST['keyword'] ),
+								$_POST['keyword-lang'],
+								$_POST['keyword-link'],
+								$_POST['keyword-url-filter'],
 							)
-						)
-					);
-					exit;
+						);
+						wp_safe_redirect(
+							$this->parent_page->menu_page(
+								$this->subpage_slug,
+								array(
+									'status' => 'success',
+									'urlslab-message' => 'keyword was edited successfully',
+								)
+							)
+						);
+						exit;
+					} catch ( Exception $e ) {
+						wp_safe_redirect(
+							$this->parent_page->menu_page(
+								$this->subpage_slug,
+								array(
+									'status' => 'failure',
+									'urlslab-message' => $e->getMessage(),
+								)
+							)
+						);
+						exit;
+					}
 				} else {
 					wp_safe_redirect(
 						$this->parent_page->menu_page(
@@ -79,26 +92,39 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					 isset( $_POST['keyword-lang'] ) && ! empty( $_POST['keyword-lang'] ) &&
 					 isset( $_POST['keyword-link'] ) && ! empty( $_POST['keyword-link'] ) &&
 					 isset( $_POST['keyword-url-filter'] ) && ! empty( $_POST['keyword-url-filter'] ) ) {
-					$this->add_keyword(
-						new Urlslab_Url_Keyword_Data(
-							$_POST['keyword'],
-							$_POST['keyword-prio'],
-							strlen( $_POST['keyword'] ),
-							$_POST['keyword-lang'],
-							$_POST['keyword-link'],
-							$_POST['keyword-url-filter'],
-						)
-					);
-					wp_safe_redirect(
-						$this->parent_page->menu_page(
-							$this->subpage_slug,
-							array(
-								'status' => 'success',
-								'urlslab-message' => 'Keyword was added successfully',
+					try {
+						$this->add_keyword(
+							new Urlslab_Url_Keyword_Data(
+								$_POST['keyword'],
+								$_POST['keyword-prio'],
+								strlen( $_POST['keyword'] ),
+								$_POST['keyword-lang'],
+								$_POST['keyword-link'],
+								$_POST['keyword-url-filter'],
 							)
-						)
-					);
-					exit;
+						);
+						wp_safe_redirect(
+							$this->parent_page->menu_page(
+								$this->subpage_slug,
+								array(
+									'status' => 'success',
+									'urlslab-message' => 'Keyword was added successfully',
+								)
+							)
+						);
+						exit;
+					} catch ( Exception $e ) {
+						wp_safe_redirect(
+							$this->parent_page->menu_page(
+								$this->subpage_slug,
+								array(
+									'status' => 'failure',
+									'urlslab-message' => $e->getMessage(),
+								)
+							)
+						);
+						exit;
+					}
 				} else {
 					wp_safe_redirect(
 						$this->parent_page->menu_page(
@@ -117,20 +143,9 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			//# Edit settings
 			if ( isset( $_POST['submit'] ) &&
 				 'Save Changes' === $_POST['submit'] &&
-				 isset( $_POST['action'] ) &&
-				 'update-settings' == $_POST['action'] ) {
+				 'update-settings' == $_GET['action'] ) {
 
-				$saving_opt = array();
-				foreach ( $_POST as $key => $val ) {
-					if ( str_starts_with( $key, 'urlslab_' ) ) {
-						$saving_opt[ $key ] = $val;
-					}
-				}
-
-				update_option(
-					'urlslab-keywords-links',
-					$saving_opt
-				);
+				Urlslab_Keywords_Links::update_settings( $_POST );
 
 				wp_safe_redirect(
 					$this->parent_page->menu_page(
@@ -138,7 +153,8 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 						array(
 							'status' => 'success',
 							'urlslab-message' => 'Keyword settings was saved successfully',
-						)
+						),
+						$_GET['sub-tab'] ?? ''
 					)
 				);
 				exit;
@@ -407,11 +423,15 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					continue;
 				}
 				//Keyword, URL, Priority, Lang, Filter
-				$data_row = new Urlslab_Url_Keyword_Data( $data[0], isset( $data[2] ) && is_numeric( $data[2] ) ? (int) $data[2] : 10, strlen( $data[0] ), isset( $data[3] ) && strlen( $data[3] ) > 0 ? $data[3] : 'all', $data[1], isset( $data[4] ) ? $data[4] : '.*' );
+				try {
+					$data_row = new Urlslab_Url_Keyword_Data( $data[0], isset( $data[2] ) && is_numeric( $data[2] ) ? (int) $data[2] : 10, strlen( $data[0] ), isset( $data[3] ) && strlen( $data[3] ) > 0 ? $data[3] : 'all', $data[1], isset( $data[4] ) ? $data[4] : '.*' );
 
-				$result = $this->create_row( $data_row );
-				if ( $result ) {
-					$processed_rows++;
+					$result = $this->create_row( $data_row );
+					if ( $result ) {
+						$processed_rows++;
+					}
+				} catch ( Exception $e ) {
+					//# row not inserted
 				}
 			}
 			fclose( $handle );
@@ -511,7 +531,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					<li class="color-warning">filter (optional - defaults to regular expression '.*')</li>
 				</ul>
 			</div>
-			<form action="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=import' ) ); ?>" method="post"
+			<form action="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=import&s=' . $_REQUEST['s'] ?? '' ) ); ?>" method="post"
 				  enctype="multipart/form-data">
 				<?php wp_nonce_field( 'keyword-widget-import' ); ?>
 				<input type="file" name="csv_file">
@@ -537,27 +557,144 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 	}
 
 	public function render_settings() {
-		$keyword_settings = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-keywords-links' )->get_widget_settings();
 		?>
-		<div class="col-8 mar-top-1">
-			<form method="post">
-				<?php foreach ( $keyword_settings as $keyword_setting => $keyword_val ) { ?>
-					<?php wp_nonce_field( 'keyword-update-settings' ); ?>
-					<input type="hidden" name="action" value="update-settings">
-					<div class="col-3 float-left">
-						<label for="<?php echo esc_attr( $keyword_setting ); ?>">
-							<?php echo esc_html( implode( ' ', explode( '_', str_replace( 'urlslab_', '', $keyword_setting ) ) ) ); ?>:
-						</label>
+		<form method="post" action="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=update-settings', 1 ) ); ?>">
+			<?php wp_nonce_field( 'keyword-update-settings' ); ?>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Max Replacement Per Keyword</h4>
+				</div>
+				<div>
+					<p>
+					<div class="col-3">
+						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD ); ?>"
+							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD ); ?>"
+							   value="<?php echo esc_attr( get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD, Urlslab_Keywords_Links::MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD ) ); ?>"
+							   type="number">
 					</div>
-					<div class="col-3 float-left">
-						<input id="<?php echo esc_attr( $keyword_setting ); ?>" name="<?php echo esc_attr( $keyword_setting ); ?>" value="<?php echo esc_attr( $keyword_val ); ?>" type="number">
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						Maximum number of times, that each keyword should be replaced in a page
+					</span>
+				</div>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Max Replacement Per Keyword-Url pair</h4>
+				</div>
+				<div>
+					<p>
+					<div class="col-3">
+						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL ); ?>"
+							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL ); ?>"
+							   value="<?php echo esc_attr( get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL, Urlslab_Keywords_Links::MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD_URL ) ); ?>"
+							   type="number">
 					</div>
-					<br class="clear"/>
-					<br class="clear"/>
-				<?php } ?>
-				<input class="button button-primary" type="submit" name="submit" value="Save Changes">
-			</form>
-		</div>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						Maximum number of times, that each keyword-url pair should be replaced in a page
+					</span>
+				</div>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Max Replacement Per Url</h4>
+				</div>
+				<div>
+					<p>
+					<div class="col-3">
+						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ); ?>"
+							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ); ?>"
+							   value="<?php echo esc_attr( get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL, Urlslab_Keywords_Links::MAX_DEFAULT_REPLACEMENTS_PER_URL ) ); ?>"
+							   type="number">
+					</div>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						Maximum number of times, that a keyword link should be generated for a single outbound url
+					</span>
+				</div>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Max Links in page (manual and auto links)</h4>
+				</div>
+				<div>
+					<p>
+					<div class="col-3">
+						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_LINKS_ON_PAGE ); ?>"
+							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_LINKS_ON_PAGE ); ?>"
+							   value="<?php echo esc_attr( get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_LINKS_ON_PAGE, Urlslab_Keywords_Links::MAX_DEFAULT_REPLACEMENTS_PER_URL ) ); ?>"
+							   type="number">
+					</div>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						the maximum number of links that exists in a page for both auto and manual links
+					</span>
+				</div>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Max Auto links in page</h4>
+				</div>
+				<div>
+					<p>
+					<div class="col-3">
+						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE ); ?>"
+							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE ); ?>"
+							   value="<?php echo esc_attr( get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE, Urlslab_Keywords_Links::MAX_DEFAULT_REPLACEMENTS_PER_PAGE ) ); ?>"
+							   type="number">
+					</div>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						the maximum number of auto links to be generated
+					</span>
+				</div>
+			</div>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>Max auto links per paragraph</h4>
+				</div>
+				<div>
+					<p>
+					<div class="col-3">
+						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH ); ?>"
+							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH ); ?>"
+							   value="<?php echo esc_attr( get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH, Urlslab_Keywords_Links::MAX_DEFAULT_REPLACEMENTS_PER_PARAGRAPH ) ); ?>"
+							   type="number">
+					</div>
+					</p>
+					<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						the maximum number of auto links to be created for each paragraph
+					</span>
+				</div>
+			</div>
+			<p>
+				<input
+						type="submit"
+						name="submit"
+						id="save-sub-widget"
+						class="urlslab-btn-primary"
+						value="Save Changes">
+			</p>
+		</form>
 		<?php
 
 	}

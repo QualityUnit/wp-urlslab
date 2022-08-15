@@ -5,36 +5,27 @@ $user = Urlslab_User_Widget::get_instance();
 if ( ! isset( $_GET['tab'] ) or ( 'keyword-linking' == $_GET['tab'] ) ) {
 	?>
 
-	<div id="urlslab-collapsed-accordion" class="accordion col-12">
-
-		<!-- Section 1 -->
-		<div class="urlslab-accordion-header col-12">
-			<div>
-				<h3>Settings</h3>
-			</div>
-		</div>
-		<div class="urlslab-card-container">
-			<div class="urlslab-card-content">
+	<div id="urlslab-vertical-tabs" class="urlslab-container-shadow urlslab-ui-tabs-vertical">
+		<ul class="urlslab-tab-topic">
+			<li><a href="#fragment-1"><span>Overview</span></a></li>
+			<li>
+				<a href="#fragment-2">
+					<span>Settings</span>
+				</a>
+			</li>
+		</ul>
+		<div id="fragment-1">
+			<div class="urlslab-tab-content-heading">
+				<h3>How it Works?</h3>
 				<?php
 				$widget = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-keywords-links' );
 				require plugin_dir_path( __FILE__ ) . 'urlslab-admin-activation-card-header.php';
 				?>
-				<br class="clear">
-				<br class="clear">
-				<?php $this->link_building_subpage->render_settings(); ?>
 			</div>
+			<p>Generate Internal links automatically based on the keywords you provide in here.</p>
 		</div>
-
-		<!-- Section 2 -->
-		<div class="urlslab-accordion-header col-12">
-			<h3>Explanation</h3>
-		</div>
-		<div class="urlslab-card-container">
-			<div class="urlslab-card-content">
-				<div class="mar-bottom-1">
-					Generate Internal links automatically based on the keywords you provide in here
-				</div>
-			</div>
+		<div id="fragment-2">
+			<?php $this->link_building_subpage->render_settings(); ?>
 		</div>
 	</div>
 	<?php

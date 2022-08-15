@@ -4,7 +4,7 @@
 <div class="urlslab-wrap">
 	<?php require plugin_dir_path( __FILE__ ) . 'urlslab-admin-header.php'; ?>
 	<section class="urlslab-content-container">
-		<div class="urlslab-card-container col-12">
+		<div class="urlslab-card-container urlslab-container-shadow col-12">
 			<div class="urlslab-card-header">
 				<h3>Overall Data</h3>
 			</div>
@@ -58,7 +58,7 @@
 			$widgets = Urlslab_Available_Widgets::get_instance();
 		foreach ( $widgets->get_available_widgets() as $widget ) {
 			?>
-		<div class="urlslab-card-container col-6">
+		<div class="urlslab-card-container urlslab-container-shadow col-6">
 			<div class="urlslab-card-header">
 				<h3><?php echo esc_html( $widget->get_widget_title() ); ?></h3>
 				<?php
