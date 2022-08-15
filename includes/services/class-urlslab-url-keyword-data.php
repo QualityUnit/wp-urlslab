@@ -16,8 +16,31 @@ class Urlslab_Url_Keyword_Data {
 	 * @param string $keyword_url_lang
 	 * @param string $keyword_url_link
 	 * @param string $keyword_url_filter
+	 *
+	 * @throws Exception
 	 */
-	public function __construct( string $keyword, int $keyword_priority, int $keyword_length, string $keyword_url_lang, string $keyword_url_link, string $keyword_url_filter ) {
+	public function __construct( $keyword, $keyword_priority, $keyword_length, $keyword_url_lang, $keyword_url_link, $keyword_url_filter ) {
+		if ( empty( $keyword ) && ! is_string( $keyword ) ) {
+			throw new Exception( 'Keyword is empty' );}
+		if ( ! is_numeric( $keyword_priority ) ) {
+			throw new Exception( 'Keyword Priority is not a number' );
+		} else if ( $keyword_priority < 10 || $keyword_priority > 100 ) {
+			throw new Exception( 'Keyword Priority should be a number between 10 and 100' );
+		}
+		if ( ! is_numeric( $keyword_length ) ) {
+			throw new Exception( 'Keyword length is not a number' );
+		}
+
+		if ( empty( $keyword_url_lang ) ) {
+			throw new Exception( 'Keyword language is empty' );
+		}
+		if ( empty( $keyword_url_link ) ) {
+			throw new Exception( 'keyword link is empty' );
+		}
+		if ( empty( $keyword_url_filter ) ) {
+			throw new Exception( 'keyword Url Filter is empty' );
+		}
+
 		$this->keyword = $keyword;
 		$this->keyword_priority = $keyword_priority;
 		$this->keyword_length = $keyword_length;

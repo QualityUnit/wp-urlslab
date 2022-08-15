@@ -35,6 +35,17 @@ class Urlslab_Link_Management_Subpage extends Urlslab_Admin_Subpage {
 				}
 
 				Urlslab_Link_Enhancer::update_settings( $saving_opt );
+				wp_safe_redirect(
+					$this->parent_page->menu_page(
+						$this->subpage_slug,
+						array(
+							'status' => 'success',
+							'urlslab-message' => 'Link management setting saved successfully',
+						),
+						$_GET['sub-tab'] ?? ''
+					)
+				);
+				exit;
 			}
 			//# Widget Settings
 
@@ -50,9 +61,8 @@ class Urlslab_Link_Management_Subpage extends Urlslab_Admin_Subpage {
 	public function render_settings() {
 		?>
 		<div>
-			<form method="post">
+			<form method="post" action="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=update-settings', 1 ) ); ?>">
 				<?php wp_nonce_field( 'link-management-settings' ); ?>
-				<input type="hidden" name="action" value="update-settings">
 				<div class="urlslab-setting-item">
 					<div>
 						<h4>Hide Links</h4>

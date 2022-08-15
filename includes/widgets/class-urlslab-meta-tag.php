@@ -8,9 +8,20 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	private string $widget_title;
 	private string $widget_description;
 	private string $landing_page_link;
-	private array $activated_sub_widgets;
 	private Urlslab_Admin_Page $parent_page;
 	private Urlslab_Url_Data_Fetcher $url_data_fetcher;
+
+	const SETTING_NAME_META_DESCRIPTION_GENERATION = 'urlslab_meta_description_generation';
+	const DEFAULT_META_DESCRIPTION_GENERATION = false;
+
+	const SETTING_NAME_META_OG_IMAGE_GENERATION = 'urlslab_og_image_generation';
+	const DEFAULT_META_OG_IMAGE_GENERATION = false;
+
+	const SETTING_NAME_META_OG_TITLE_GENERATION = 'urlslab_og_title_generation';
+	const DEFAULT_META_OG_TITLE_GENERATION = false;
+
+	const SETTING_NAME_META_OG_DESC_GENERATION = 'urlslab_og_desc_generation';
+	const DEFAULT_META_OG_DESC_GENERATION = false;
 
 	/**
 	 * @param Urlslab_Url_Data_Fetcher $url_data_fetcher
@@ -22,7 +33,6 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 		$this->landing_page_link = 'https://www.urlslab.com';
 		$this->parent_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-header-seo' );
 		$this->url_data_fetcher = $url_data_fetcher;
-		$this->activated_sub_widgets = Urlslab::get_option( 'header-seo', array() );
 	}
 
 	public function init_widget( Urlslab_Loader $loader ) {
@@ -207,10 +217,57 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 		return 'meta-tags';
 	}
 
-	public static function update_settings( array $new_settings ) {}
+	public static function update_settings( array $new_settings ) {
+		if (in_array( self::SETTING_NAME_META_DESCRIPTION_GENERATION, $new_settings )) {
+			update_option(
+				self::SETTING_NAME_META_DESCRIPTION_GENERATION,
+				true
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_META_DESCRIPTION_GENERATION,
+				false
+			);
+		}
+
+		if (in_array( self::SETTING_NAME_META_OG_DESC_GENERATION, $new_settings )) {
+			update_option(
+				self::SETTING_NAME_META_OG_DESC_GENERATION,
+				true
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_META_OG_DESC_GENERATION,
+				false
+			);
+		}
+
+		if (in_array( self::SETTING_NAME_META_OG_IMAGE_GENERATION, $new_settings )) {
+			update_option(
+				self::SETTING_NAME_META_OG_IMAGE_GENERATION,
+				true
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_META_OG_IMAGE_GENERATION,
+				false
+			);
+		}
+
+		if (in_array( self::SETTING_NAME_META_OG_TITLE_GENERATION, $new_settings )) {
+			update_option(
+				self::SETTING_NAME_META_OG_TITLE_GENERATION,
+				true
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_META_OG_TITLE_GENERATION,
+				false
+			);
+		}
+	}
 
 	public static function add_option() {
 		add_option( 'header-seo', array(), '', true );
-
 	}
 }

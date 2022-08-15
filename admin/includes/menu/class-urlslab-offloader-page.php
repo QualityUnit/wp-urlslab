@@ -19,8 +19,8 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 			//# Edit settings
 			if ( isset( $_POST['submit'] ) &&
 				 'Save Changes' === $_POST['submit'] &&
-				 isset( $_POST['action'] ) &&
-				 'update-settings' == $_POST['action'] ) {
+				 isset( $_GET['action'] ) &&
+				 'update-settings' == $_GET['action'] ) {
 				check_admin_referer( 'offloader-update' );
 
 				$saving_opt = array();
@@ -28,6 +28,12 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 					 ! empty( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ] ) ) {
 					$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ] =
 						$_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ];
+				}
+
+				if ( isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ] ) &&
+					 ! empty( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ] ) ) {
+					$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ] =
+						$_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ];
 				}
 
 				if ( isset( $_POST['offload-opt'] ) ) {
@@ -45,7 +51,8 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 						array(
 							'status' => 'success',
 							'urlslab-message' => 'Keyword settings was saved successfully',
-						)
+						),
+						$_GET['sub-tab'] ?? ''
 					)
 				);
 				exit;
@@ -54,8 +61,8 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 
 			//# Edit AWS settings
 			if ( isset( $_POST['submit'] ) &&
-				 isset( $_POST['action'] ) &&
-				 'update-s3-settings' == $_POST['action'] ) {
+				 isset( $_GET['action'] ) &&
+				 'update-s3-settings' == $_GET['action'] ) {
 				check_admin_referer( 's3-update' );
 
 				//# Saving/updating the credentials
@@ -69,7 +76,8 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 							array(
 								'status' => 'success',
 								'urlslab-message' => 'AWS S3 settings was saved successfully',
-							)
+							),
+							$_GET['sub-tab'] ?? ''
 						)
 					);
 					exit;
@@ -86,7 +94,8 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 							array(
 								'status' => 'success',
 								'urlslab-message' => 'AWS S3 settings was removed successfully',
-							)
+							),
+							$_GET['sub-tab'] ?? ''
 						)
 					);
 					exit;
@@ -349,9 +358,8 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 
 	public function render_settings() {
 		?>
-		<form method="post">
+		<form method="post" action="<?php echo esc_url( $this->menu_page( 'media-offloader', 'action=update-settings', 1 ) ); ?>">
 			<?php wp_nonce_field( 'offloader-update' ); ?>
-			<input type="hidden" name="action" value="update-settings">
 			<div class="urlslab-setting-item">
 				<div>
 					<h4>Offload WordPress media on background</h4>
@@ -576,9 +584,8 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 
 	public function render_driver_settings() {
 		?>
-		<form method="post">
+		<form method="post" action="<?php echo esc_url( $this->menu_page( 'media-offloader', 'action=update-s3-settings', 2 ) ); ?>">
 			<?php wp_nonce_field( 's3-update' ); ?>
-			<input type="hidden" name="action" value="update-s3-settings">
 			<h3>S3 Driver Settings</h3>
 			<div class="urlslab-setting-item">
 				<div>

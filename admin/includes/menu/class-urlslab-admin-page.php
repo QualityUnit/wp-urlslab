@@ -55,11 +55,23 @@ abstract class Urlslab_Admin_Page {
 	 *
 	 * @return string
 	 */
-	public function menu_page( string $tab = '', $args = '' ): string {
+	public function menu_page( string $tab = '', $args = '', $sub_tab = '' ): string {
 		$args = wp_parse_args( $args, array() );
 		$url  = urlslab_admin_menu_page_url( $this->get_menu_slug() );
+		$url = remove_query_arg(
+			array(
+				'urlslab-message',
+				'status',
+			),
+			$url
+		);
+
 		if ( ! empty( $tab ) ) {
 			$url  = add_query_arg( array( 'tab' => $tab ), $url );
+		}
+
+		if ( ! empty( $sub_tab ) ) {
+			$url = add_query_arg( array( 'sub-tab' => $sub_tab ), $url );
 		}
 
 		if ( ! empty( $args ) ) {

@@ -50,6 +50,7 @@ if ( isset( $_GET['tab'] ) and 'related-resource' == $_GET['tab'] ) {
 		</div>
 	</div>
 	<?php
+	$page_data->render_subpage();
 }
 //# Internal Linking tab
 ?>

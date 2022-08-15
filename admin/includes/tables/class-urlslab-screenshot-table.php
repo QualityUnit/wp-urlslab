@@ -81,7 +81,11 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 
 		$query_res = array();
 		foreach ( $res as $row ) {
-			$query_res[] = $this->transform( $row );
+			try {
+				$query_res[] = $this->transform( $row );
+			} catch ( Exception $e ) {
+				//# Wrong URL
+			}
 		}
 		return $query_res;
 	}
@@ -409,7 +413,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		switch ( $column_name ) {
 			case 'col_url_image':
 				if ( $item->screenshot_exists() ) {
-					return '<img src="' . $item->render_screenshot_path() . '" width="150px">';
+					return '<figure><img src="' . $item->render_screenshot_path() . '" width="100%"></figure>';
 				}
 				return '<em>Not available!</em>';
 			case 'col_status':

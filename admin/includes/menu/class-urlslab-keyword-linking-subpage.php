@@ -15,8 +15,8 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 	public function handle_action() {
 		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
 			 'POST' === $_SERVER['REQUEST_METHOD'] and
-			 isset( $_REQUEST['action'] ) and
-			 - 1 != $_REQUEST['action'] ) {
+			 isset( $_GET['action'] ) and
+			 - 1 != $_GET['action'] ) {
 
 			//# Import Functionality
 			if ( isset( $_POST['submit'] ) &&
@@ -35,27 +35,40 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					 isset( $_POST['keyword-lang'] ) && ! empty( $_POST['keyword-lang'] ) &&
 					 isset( $_POST['keyword-link'] ) && ! empty( $_POST['keyword-link'] ) &&
 					 isset( $_POST['keyword-url-filter'] ) && ! empty( $_POST['keyword-url-filter'] ) ) {
-					$this->edit_keyword(
-						$_POST['keywordHash'],
-						new Urlslab_Url_Keyword_Data(
-							$_POST['keyword'],
-							$_POST['keyword-prio'],
-							strlen( $_POST['keyword'] ),
-							$_POST['keyword-lang'],
-							$_POST['keyword-link'],
-							$_POST['keyword-url-filter'],
-						)
-					);
-					wp_safe_redirect(
-						$this->parent_page->menu_page(
-							$this->subpage_slug,
-							array(
-								'status' => 'success',
-								'urlslab-message' => 'keyword was edited successfully',
+					try {
+						$this->edit_keyword(
+							$_POST['keywordHash'],
+							new Urlslab_Url_Keyword_Data(
+								$_POST['keyword'],
+								$_POST['keyword-prio'],
+								strlen( $_POST['keyword'] ),
+								$_POST['keyword-lang'],
+								$_POST['keyword-link'],
+								$_POST['keyword-url-filter'],
 							)
-						)
-					);
-					exit;
+						);
+						wp_safe_redirect(
+							$this->parent_page->menu_page(
+								$this->subpage_slug,
+								array(
+									'status' => 'success',
+									'urlslab-message' => 'keyword was edited successfully',
+								)
+							)
+						);
+						exit;
+					} catch ( Exception $e ) {
+						wp_safe_redirect(
+							$this->parent_page->menu_page(
+								$this->subpage_slug,
+								array(
+									'status' => 'failure',
+									'urlslab-message' => $e->getMessage(),
+								)
+							)
+						);
+						exit;
+					}
 				} else {
 					wp_safe_redirect(
 						$this->parent_page->menu_page(
@@ -79,26 +92,39 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					 isset( $_POST['keyword-lang'] ) && ! empty( $_POST['keyword-lang'] ) &&
 					 isset( $_POST['keyword-link'] ) && ! empty( $_POST['keyword-link'] ) &&
 					 isset( $_POST['keyword-url-filter'] ) && ! empty( $_POST['keyword-url-filter'] ) ) {
-					$this->add_keyword(
-						new Urlslab_Url_Keyword_Data(
-							$_POST['keyword'],
-							$_POST['keyword-prio'],
-							strlen( $_POST['keyword'] ),
-							$_POST['keyword-lang'],
-							$_POST['keyword-link'],
-							$_POST['keyword-url-filter'],
-						)
-					);
-					wp_safe_redirect(
-						$this->parent_page->menu_page(
-							$this->subpage_slug,
-							array(
-								'status' => 'success',
-								'urlslab-message' => 'Keyword was added successfully',
+					try {
+						$this->add_keyword(
+							new Urlslab_Url_Keyword_Data(
+								$_POST['keyword'],
+								$_POST['keyword-prio'],
+								strlen( $_POST['keyword'] ),
+								$_POST['keyword-lang'],
+								$_POST['keyword-link'],
+								$_POST['keyword-url-filter'],
 							)
-						)
-					);
-					exit;
+						);
+						wp_safe_redirect(
+							$this->parent_page->menu_page(
+								$this->subpage_slug,
+								array(
+									'status' => 'success',
+									'urlslab-message' => 'Keyword was added successfully',
+								)
+							)
+						);
+						exit;
+					} catch ( Exception $e ) {
+						wp_safe_redirect(
+							$this->parent_page->menu_page(
+								$this->subpage_slug,
+								array(
+									'status' => 'failure',
+									'urlslab-message' => $e->getMessage(),
+								)
+							)
+						);
+						exit;
+					}
 				} else {
 					wp_safe_redirect(
 						$this->parent_page->menu_page(
@@ -117,8 +143,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			//# Edit settings
 			if ( isset( $_POST['submit'] ) &&
 				 'Save Changes' === $_POST['submit'] &&
-				 isset( $_POST['action'] ) &&
-				 'update-settings' == $_POST['action'] ) {
+				 'update-settings' == $_GET['action'] ) {
 
 				Urlslab_Keywords_Links::update_settings( $_POST );
 
@@ -128,7 +153,8 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 						array(
 							'status' => 'success',
 							'urlslab-message' => 'Keyword settings was saved successfully',
-						)
+						),
+						$_GET['sub-tab'] ?? ''
 					)
 				);
 				exit;
@@ -397,11 +423,15 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					continue;
 				}
 				//Keyword, URL, Priority, Lang, Filter
-				$data_row = new Urlslab_Url_Keyword_Data( $data[0], isset( $data[2] ) && is_numeric( $data[2] ) ? (int) $data[2] : 10, strlen( $data[0] ), isset( $data[3] ) && strlen( $data[3] ) > 0 ? $data[3] : 'all', $data[1], isset( $data[4] ) ? $data[4] : '.*' );
+				try {
+					$data_row = new Urlslab_Url_Keyword_Data( $data[0], isset( $data[2] ) && is_numeric( $data[2] ) ? (int) $data[2] : 10, strlen( $data[0] ), isset( $data[3] ) && strlen( $data[3] ) > 0 ? $data[3] : 'all', $data[1], isset( $data[4] ) ? $data[4] : '.*' );
 
-				$result = $this->create_row( $data_row );
-				if ( $result ) {
-					$processed_rows++;
+					$result = $this->create_row( $data_row );
+					if ( $result ) {
+						$processed_rows++;
+					}
+				} catch ( Exception $e ) {
+					//# row not inserted
 				}
 			}
 			fclose( $handle );
@@ -528,8 +558,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 
 	public function render_settings() {
 		?>
-		<form method="post">
-			<input type="hidden" name="action" value="update-settings">
+		<form method="post" action="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=update-settings', 1 ) ); ?>">
 			<?php wp_nonce_field( 'keyword-update-settings' ); ?>
 			<div class="urlslab-setting-item">
 				<div>
@@ -601,9 +630,9 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				<div>
 					<p>
 					<div class="col-3">
-						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ); ?>"
-							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ); ?>"
-							   value="<?php echo esc_attr( get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL, Urlslab_Keywords_Links::MAX_DEFAULT_REPLACEMENTS_PER_URL ) ); ?>"
+						<input id="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_LINKS_ON_PAGE ); ?>"
+							   name="<?php echo esc_attr( Urlslab_Keywords_Links::SETTING_NAME_MAX_LINKS_ON_PAGE ); ?>"
+							   value="<?php echo esc_attr( get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_LINKS_ON_PAGE, Urlslab_Keywords_Links::MAX_DEFAULT_REPLACEMENTS_PER_URL ) ); ?>"
 							   type="number">
 					</div>
 					</p>

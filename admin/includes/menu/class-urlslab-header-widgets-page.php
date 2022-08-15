@@ -17,26 +17,28 @@ class Urlslab_Header_Widgets_Page extends Urlslab_Admin_Page {
 			 'activation' == $_GET['action'] ) {
 			check_admin_referer( 'sub-widget-activation' );
 			if ( isset( $_POST['meta-opt'] ) ) {
-				Urlslab::update_option( 'header-seo', $_POST['meta-opt'] );
+				Urlslab_Meta_Tag::update_settings( $_POST['meta-opt'] );
 				wp_safe_redirect(
 					$this->menu_page(
 						'meta-tags',
 						array(
 							'status' => 'success',
 							'urlslab-message' => 'Meta tag settings saved successfully',
-						)
+						),
+						$_GET['sub-tab'] ?? ''
 					)
 				);
 				exit;
 			} else {
-				Urlslab::update_option( 'header-seo', array() );
+				Urlslab_Meta_Tag::update_settings( array() );
 				wp_safe_redirect(
 					$this->menu_page(
 						'meta-tags',
 						array(
 							'status' => 'success',
 							'urlslab-message' => 'Meta tag settings saved successfully',
-						)
+						),
+						$_GET['sub-tab'] ?? ''
 					)
 				);
 				exit;
@@ -76,7 +78,7 @@ class Urlslab_Header_Widgets_Page extends Urlslab_Admin_Page {
 
 	public function render_widget_form() {
 		?>
-		<form method="post" action="<?php echo esc_url( $this->menu_page( 'meta-tags', 'action=activation' ) ); ?>">
+		<form method="post" action="<?php echo esc_url( $this->menu_page( 'meta-tags', 'action=activation', 1 ) ); ?>">
 			<h3>Meta Tags settings</h3>
 			<?php wp_nonce_field( 'sub-widget-activation' ); ?>
 			<div class="urlslab-setting-item">
@@ -86,8 +88,8 @@ class Urlslab_Header_Widgets_Page extends Urlslab_Admin_Page {
 				<div>
 					<p>
 					<div class="urlslab-switch">
-						<input class="urlslab-switch-input" type="checkbox" id="meta-desc" name="meta-opt[]" value="meta-description"
-							<?php echo $this->sub_widgets['meta-description'] ? 'checked' : ''; ?>>
+						<input class="urlslab-switch-input" type="checkbox" id="meta-desc" name="meta-opt[]" value="<?php echo esc_attr( Urlslab_Meta_Tag::SETTING_NAME_META_DESCRIPTION_GENERATION ); ?>"
+							<?php echo get_option( Urlslab_Meta_Tag::SETTING_NAME_META_DESCRIPTION_GENERATION, Urlslab_Meta_Tag::DEFAULT_META_DESCRIPTION_GENERATION ) ? 'checked' : ''; ?>>
 						<label for="meta-desc" class="urlslab-switch-label">switch</label>
 					</div>
 					</p>
@@ -106,8 +108,8 @@ class Urlslab_Header_Widgets_Page extends Urlslab_Admin_Page {
 				<div>
 					<p>
 						<div class="urlslab-switch">
-							<input class="urlslab-switch-input" type="checkbox" id="meta-og-image" name="meta-opt[]" value="meta-og-image"
-								<?php echo $this->sub_widgets['meta-og-image'] ? 'checked' : ''; ?>>
+							<input class="urlslab-switch-input" type="checkbox" id="meta-og-image" name="meta-opt[]" value="<?php echo esc_attr( Urlslab_Meta_Tag::SETTING_NAME_META_OG_IMAGE_GENERATION ); ?>"
+								<?php echo get_option( Urlslab_Meta_Tag::SETTING_NAME_META_OG_IMAGE_GENERATION, Urlslab_Meta_Tag::DEFAULT_META_OG_IMAGE_GENERATION ) ? 'checked' : ''; ?>>
 							<label for="meta-og-image" class="urlslab-switch-label">switch</label>
 						</div>
 					</p>
@@ -126,8 +128,8 @@ class Urlslab_Header_Widgets_Page extends Urlslab_Admin_Page {
 				<div>
 					<p>
 					<div class="urlslab-switch">
-						<input class="urlslab-switch-input" type="checkbox" id="meta-og-desc" name="meta-opt[]" value="meta-og-desc"
-							<?php echo $this->sub_widgets['meta-og-desc'] ? 'checked' : ''; ?>>
+						<input class="urlslab-switch-input" type="checkbox" id="meta-og-desc" name="meta-opt[]" value="<?php echo esc_attr( Urlslab_Meta_Tag::SETTING_NAME_META_OG_DESC_GENERATION ); ?>"
+							<?php echo get_option( Urlslab_Meta_Tag::SETTING_NAME_META_OG_DESC_GENERATION, Urlslab_Meta_Tag::DEFAULT_META_OG_DESC_GENERATION ) ? 'checked' : ''; ?>>
 						<label for="meta-og-desc" class="urlslab-switch-label">switch</label>
 					</div>
 					</p>
@@ -146,8 +148,8 @@ class Urlslab_Header_Widgets_Page extends Urlslab_Admin_Page {
 				<div>
 					<p>
 					<div class="urlslab-switch">
-						<input class="urlslab-switch-input" id="meta-og-title" type="checkbox" name="meta-opt[]" value="meta-og-title"
-							<?php echo $this->sub_widgets['meta-og-title'] ? 'checked' : ''; ?>>
+						<input class="urlslab-switch-input" id="meta-og-title" type="checkbox" name="meta-opt[]" value="<?php echo esc_attr( Urlslab_Meta_Tag::SETTING_NAME_META_OG_TITLE_GENERATION ); ?>"
+							<?php echo get_option( Urlslab_Meta_Tag::SETTING_NAME_META_OG_TITLE_GENERATION, Urlslab_Meta_Tag::DEFAULT_META_OG_TITLE_GENERATION ) ? 'checked' : ''; ?>>
 						<label for="meta-og-title" class="urlslab-switch-label">switch</label>
 					</div>
 					</p>
