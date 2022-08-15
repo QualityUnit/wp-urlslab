@@ -32,6 +32,7 @@
 	/**
 	 * Functions
 	 *
+	 * @param  pageParam
 	 * @param  keywordHash
 	 * @param  keyword
 	 * @param  keywordLink
@@ -40,6 +41,7 @@
 	 * @param  keywordFilter
 	 */
 	function createHTMLPopupKeyword(
+		pageParam,
 		keywordHash = '',
 		keyword = '',
 		keywordLink = '',
@@ -49,8 +51,7 @@
 		return $( `
 		<div>
 		<h2>${ keyword != '' ? `Edit ${ keyword }` : 'Add Keyword' }</h2>
-			<form method="post">
-				<input type="hidden" name="action" value="keyword-edit">
+			<form method="post" action="?page=${ pageParam }&action=keyword-edit">
 				<input type="hidden" name="keywordHash" value="${ keywordHash }">
 				<label for="keyword">Keyword: </label>
 				<input id="keyword" name="keyword" type="text" value="${ keyword }" placeholder="Keyword...">
@@ -79,6 +80,7 @@
 	}
 
 	function createHTMLPopupUrlRelation(
+		pageParam,
 		srcUrlHash = '',
 		srcUrl = '',
 		destUrlHash = '',
@@ -86,8 +88,7 @@
 		return $( `
 		<div>
 			<h2>${ srcUrlHash != '' ? 'Edit Url Relation' : 'Add Url Relation' }</h2>
-			<form method="post">
-				<input type="hidden" name="action" value="url-relation-edit">
+			<form method="post" action="?page=${ pageParam }&action=url-relation-edit">
 				<input type="hidden" name="srcUrlHash" value="${ srcUrlHash }">
 				<input type="hidden" name="destUrlHash" value="${ destUrlHash }">
 				<label for="src-url">Src URL: </label>
@@ -110,6 +111,7 @@
 		$( '.keyword-edit' ).each( function() {
 			$( this ).on( 'click', function( event ) {
 				event.preventDefault();
+				const urlParams = new URLSearchParams( window.location.search );
 				this.blur();
 				const keywordHash = $( this ).data( 'keyword-hash' );
 				const keyword = $( this ).data( 'keyword' );
@@ -117,15 +119,23 @@
 				const keywordPrio = $( this ).data( 'prio' );
 				const keywordLang = $( this ).data( 'lang' );
 				const keywordFilter = $( this ).data( 'url-filter' );
-				createHTMLPopupKeyword( keywordHash, keyword, keywordLink, keywordPrio, keywordLang, keywordFilter )
-					.appendTo( 'body' ).modal();
+				createHTMLPopupKeyword(
+					urlParams.get( 'page' ),
+					keywordHash,
+					keyword,
+					keywordLink,
+					keywordPrio,
+					keywordLang,
+					keywordFilter
+				).appendTo( 'body' ).modal();
 			} );
 		} );
 
 		$( '#add-keyword-btn' ).on( 'click', function( event ) {
 			event.preventDefault();
 			this.blur();
-			createHTMLPopupKeyword().appendTo( 'body' ).modal();
+			const urlParams = new URLSearchParams( window.location.search );
+			createHTMLPopupKeyword( urlParams.get( 'page' ) ).appendTo( 'body' ).modal();
 		} );
 		//# Modal - Keyword Modals
 
@@ -138,7 +148,8 @@
 				const urlSrc = $( this ).data( 'src-url' );
 				const urlDestHash = $( this ).data( 'dest-url-hash' );
 				const urlDest = $( this ).data( 'dest-url' );
-				createHTMLPopupUrlRelation( urlSrcHash, urlSrc, urlDestHash, urlDest )
+				const urlParams = new URLSearchParams( window.location.search );
+				createHTMLPopupUrlRelation( urlParams.get( 'page' ), urlSrcHash, urlSrc, urlDestHash, urlDest )
 					.appendTo( 'body' ).modal();
 			} );
 		} );
@@ -146,7 +157,7 @@
 		$( '#add-url-relation-btn' ).on( 'click', function( event ) {
 			event.preventDefault();
 			this.blur();
-			createHTMLPopupUrlRelation().appendTo( 'body' ).modal();
+			createHTMLPopupUrlRelation( urlParams.get( 'page' ) ).appendTo( 'body' ).modal();
 		} );
 		//# Modal - Related Resource Modals
 
