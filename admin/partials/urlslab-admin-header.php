@@ -56,7 +56,7 @@ if ( isset( $_REQUEST['status'] ) ) {
 <section>
 	<?php
 	$urlslab_user = Urlslab_User_Widget::get_instance();
-	$general_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-general' );
+	$integration_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-integrations' );
 	if ( ! $urlslab_user->has_api_key() ) {
 		?>
 		<div class="urlslab-error-notification">
@@ -65,7 +65,7 @@ if ( isset( $_REQUEST['status'] ) ) {
 				Without API key you are only able to retrieve data for homepage of any domain.
 				to unlocking all urls you need to input API Key.
 			</p>
-			<a href="<?php echo esc_url( $general_page->menu_page() ); ?>" class="button button-primary">Generate API Key</a>
+			<a href="<?php echo esc_url( $integration_page->menu_page() ); ?>" class="button button-primary">Generate API Key</a>
 		</div>
 	<?php } ?>
 </section>
