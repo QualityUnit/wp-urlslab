@@ -753,7 +753,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	private function picture_has_source_for_type( DOMElement $picture_element, $filetype, $media = false ): bool {
 		foreach ( $picture_element->childNodes as $node ) {
-			if ( $node->tagName == 'source' && $node->getAttribute( 'type' ) == $filetype && ( false === $media || $node->getAttribute( 'media' ) === $media ) ) {
+			if ( 'source' == $node->tagName && $node->getAttribute( 'type' ) == $filetype && ( false === $media || $node->getAttribute( 'media' ) === $media ) ) {
 				return true;
 			}
 		}

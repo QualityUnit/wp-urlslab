@@ -374,8 +374,8 @@ class Urlslab_File_Data {
 		return $this->use_alternative;
 	}
 
-	public function add_alternative(Urlslab_File_Data $alternative_file) {
-		$this->alternatives[$alternative_file->get_fileid()] = $alternative_file;
+	public function add_alternative( Urlslab_File_Data $alternative_file ) {
+		$this->alternatives[ $alternative_file->get_fileid() ] = $alternative_file;
 	}
 
 	public function get_alternatives() {
