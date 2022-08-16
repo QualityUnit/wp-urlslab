@@ -306,7 +306,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			if ( $dom_element->parentNode->tagName == $tag_name ) {
 				return true;
 			}
-			return $this->has_parent_node( $dom_element->parentNode, $tag_name );
+			return 'DOMElement' == get_class($dom_element->parentNode) && $this->has_parent_node( $dom_element->parentNode, $tag_name );
 		}
 		return false;
 	}
