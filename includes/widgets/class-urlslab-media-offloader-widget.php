@@ -295,9 +295,25 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		}
 	}
 
+	/**
+	 * this is workaround of parsing bug in php DOMDocument which doesn't understand the source as single tag
+	 * @param DOMElement $dom_element
+	 * @param $tag_name
+	 * @return bool
+	 */
+	private function has_parent_node( DOMElement $dom_element, $tag_name ): bool {
+		if ( $dom_element->parentNode ) {
+			if ( $dom_element->parentNode->tagName == $tag_name ) {
+				return true;
+			}
+			return $this->has_parent_node( $dom_element->parentNode, $tag_name );
+		}
+		return false;
+	}
+
 	private function process_source_tag( DOMElement $dom_element, DOMDocument $document ) {
 		$found_urls = array();
-		if ( 'picture' === $dom_element->parentNode->tagName && ! $dom_element->hasAttribute( 'type' ) ) {
+		if ( ! $dom_element->hasAttribute( 'type' ) && $this->has_parent_node( $dom_element, 'picture' ) ) {
 			$files_in_srcset = array();
 			$strValue = $dom_element->getAttribute( 'srcset' );
 			if ( empty( $strValue ) ) {
@@ -361,7 +377,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	 */
 	private function process_img_tag( $dom_element, DOMDocument $document ): array {
 		$found_urls = array();
-		if ( 'picture' === $dom_element->parentNode->tagName ) {
+		if ( $this->has_parent_node( $dom_element, 'picture' ) ) {
 
 			$lazy_loading = false;
 			if ( empty( $dom_element->getAttribute( 'src' ) ) && ! empty( $dom_element->getAttribute( 'data-src' ) ) ) {
