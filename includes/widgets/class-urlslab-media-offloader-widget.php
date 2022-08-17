@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection SlowArrayOperationsInLoopInspection */
 
 require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
@@ -47,12 +47,46 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public const SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB = false;
 
 	public const SETTING_NAME_USE_WEBP_ALTERNATIVE = 'urlslab_use_webp';
-
 	public const SETTING_NAME_WEBP_TYPES_TO_CONVERT = 'urlslab_webp_types';
-	public const SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT = array( 'image/png', 'image/jpeg' );
-
+	public const SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT = array( 'image/png', 'image/jpeg', 'image/bmp' );
 	public const SETTING_NAME_WEPB_QUALITY = 'urlslab_webp_quality';
 	public const SETTING_DEFAULT_WEPB_QUALITY = 80;
+
+	public const SETTING_NAME_USE_AVIF_ALTERNATIVE = 'urlslab_use_avif';
+	public const SETTING_NAME_AVIF_TYPES_TO_CONVERT = 'urlslab_avif_types';
+	public const SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT = array( 'image/png', 'image/jpeg', 'image/bmp', 'image/gif' );
+	public const SETTING_NAME_AVIF_QUALITY = 'urlslab_avif_quality';
+
+	// quality: The accepted values are 0 (worst quality) through 100 (highest quality). Any integers out of this range are clamped to the 0-100 range.
+	public const SETTING_DEFAULT_AVIF_QUALITY = 80;
+	public const SETTING_NAME_AVIF_SPEED = 'urlslab_avif_quality';
+
+	// speed: Default value 6. Accepted values are int the range of 0 (slowest) through 10 (fastest). Integers outside the 0-10 range are clamped.
+	public const SETTING_DEFAULT_AVIF_SPEED = 5;
+
+	private $files = array();
+
+
+	private $tags_attributes = array(
+		'img' => array(
+			'src',
+			'data-src',
+			'data-full-url',
+			'srcset',
+		),
+		'video' => array(
+			'src',
+			'data-src',
+		),
+		'audio' => array(
+			'src',
+			'data-src',
+		),
+		'source' => array(
+			'srcset',
+			'data-srcset',
+		),
+	);
 
 	/**
 	 */
@@ -66,6 +100,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	public function init_widget( Urlslab_Loader $loader ) {
 		$loader->add_action( 'wp_handle_upload', $this, 'wp_handle_upload', 10, 1 );
+
 		$loader->add_filter(
 			'the_content',
 			$this,
@@ -163,8 +198,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		$document->encoding = get_bloginfo( 'charset' );
 		$document->strictErrorChecking = false; // phpcs:ignore
 		$libxml_previous_state = libxml_use_internal_errors( true );
-		$urls = array();
-		$found_urls = array();
 
 		try {
 			$document->loadHTML(
@@ -174,91 +207,84 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			libxml_clear_errors();
 			libxml_use_internal_errors( $libxml_previous_state );
 
-			$iterate_elements = array(
-				'img' => array(
-					'src',
-					'data-src',
-					'data-lasrc', //# for LA custom solution - needs to be changed or added to settings
-					'data-full-url',
-					'srcset',
-				),
-				'video' => array(
-					'src',
-					'data-lasrc', //# for LA custom solution - needs to be changed or added to settings
-					'data-src',
-				),
-				'source' => array(
-					'data-lasrc', //# for LA custom solution - needs to be changed or added to settings
-					'srcset',
-				),
-			);
 
-			foreach ( $iterate_elements as $tag_name => $tag_attributes ) {
-				$dom_images = $document->getElementsByTagName( $tag_name );
+			$found_urls = array();
+			$url_fileids = array();
+			$elements_to_process = array();
+			$element_ids_cnt = 0;
 
-				if ( empty( $dom_images ) ) {
-					return $content;
+			//*********************************
+			//find all elements to process
+			//*********************************
+			foreach ( $this->tags_attributes as $tag_name => $tag_attributes ) {
+				$dom_elements = $document->getElementsByTagName( $tag_name );
+
+				if ( empty( $dom_elements ) ) {
+					continue;
 				}
-				foreach ( $dom_images as $dom_img_element ) {
+				foreach ( $dom_elements as $dom_element ) {
 					//TODO we should allow to skip also any predefined pattern or regexp of urls (defined as setting)
-					if ( $dom_img_element->hasAttribute( 'urlslab-skip' ) ) {
+					if ( $dom_element->hasAttribute( 'urlslab-skip' ) ) {
 						continue;
 					}
-					foreach ( $tag_attributes as $attr ) {
-						if ( strlen( $dom_img_element->getAttribute( $attr ) ) ) {
-							$urlvalues = explode( ',', $dom_img_element->getAttribute( $attr ) );
+					foreach ( $tag_attributes as $attribute ) {
+						if ( strlen( $dom_element->getAttribute( $attribute ) ) ) {
+							$urlvalues = explode( ',', $dom_element->getAttribute( $attribute ) );
 							foreach ( $urlvalues as $url_value ) {
 								$url_val = explode( ' ', trim( $url_value ) );
-								$file_obj = new Urlslab_File_Data(
-									array(
-										'url' => $url_val[0],
-									)
-								);
-								$urls[ $file_obj->get_fileid() ][ $attr ][] = array(
-									'element' => $dom_img_element,
-									'url' => $url_val[0],
-								);
+								$file_obj = new Urlslab_File_Data( array( 'url' => $url_val[0] ) );
+
+								if ( ! $dom_element->hasAttribute( 'urlslab-id' ) ) {
+									$dom_element->setAttribute( 'urlslab-id', $element_ids_cnt++ );
+								}
+								$url_fileids[ $file_obj->get_fileid() ] = $url_val[0];
+								$elements_to_process[ $tag_name ][ $dom_element->getAttribute( 'urlslab-id' ) ] = $dom_element;
 							}
 						}
 					}
 				}
 			}
 
-			if ( empty( $urls ) ) {
+			if ( empty( $url_fileids ) ) {
 				return $content;
 			}
-			$files = $this->get_files_for_urls( array_keys( $urls ) );
 
-			foreach ( $files as $fileid => $file_obj ) {
+			//*********************************
+			//find files for elements
+			//*********************************
+			$this->files = $this->get_files_for_urls( array_keys( $url_fileids ) );
 
-				if ( $file_obj->get_filestatus() == Urlslab_Driver::STATUS_ACTIVE ) {
-					$new_url = Urlslab_Driver::get_driver( $file_obj )->get_url( $file_obj );
-					if ( ! empty( $new_url ) ) {
-						//set new url to all elements with this url
-						foreach ( $urls[ $fileid ] as $attribute_name => $elements ) {
-							foreach ( $elements as $element ) {
-								$element['element']->setAttribute(
-									$attribute_name,
-									str_replace(
-										$element['url'],
-										$new_url,
-										$element['element']->getAttribute( $attribute_name )
-									)
-								);
 
-								$this->handle_webp_alternative( $element['element'], $file_obj, $files, $document );
-							}
-							$found_urls[] = $fileid;
-						}
+			//*********************************
+			//process elements from page
+			//*********************************
+
+			foreach ( $elements_to_process as $tag_name => $tag_elements ) {
+				foreach ( $tag_elements as $element_id => $dom_element ) {
+					switch ( $tag_name ) {
+						case 'img':
+							$found_urls = array_merge( $this->process_img_tag( $dom_element, $document ), $found_urls );
+							break;
+						case 'source':
+							$found_urls = array_merge( $this->process_source_tag( $dom_element, $document ), $found_urls );
+							break;
+
+						case 'audio': //for now we don't have alternatives for audio files
+						case 'video': //for now we don't have alternatives for video files
+						default:
+							$found_urls = array_merge( $this->replace_attributes( $dom_element ), $found_urls );
 					}
 				}
-				unset( $urls[ $fileid ] );//remove processed urls, so we will have at the end in this array just urls not in database
 			}
 
-			$this->update_last_seen_date( $found_urls );
+			//remove files we know already from the list of missing files
+			foreach ( $this->files as $fileid => $file_obj ) {
+				unset( $url_fileids[ $fileid ] );
+			}
+			$this->schedule_missing_images( $url_fileids );
 
-			$this->schedule_missing_images( $urls );
-			if ( count( $files ) > 0 ) {
+			if ( count( $found_urls ) > 0 ) {
+				$this->update_last_seen_date( array_keys( $found_urls ) );
 				return $document->saveHTML();
 			}
 
@@ -269,14 +295,175 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		}
 	}
 
-	private function has_picture_webp_source( DOMElement $element ) {
-		foreach ( $element->childNodes as $child_node ) {
-			if ( 'source' == $child_node->tagName && 'image/webp' === $child_node->getAttribute( 'type' ) ) {
+	/**
+	 * this is workaround of parsing bug in php DOMDocument which doesn't understand the source as single tag
+	 * @param DOMElement $dom_element
+	 * @param $tag_name
+	 * @return bool
+	 */
+	private function has_parent_node( DOMElement $dom_element, $tag_name ): bool {
+		if ( $dom_element->parentNode ) {
+			if ( $dom_element->parentNode->tagName == $tag_name ) {
 				return true;
 			}
+			return 'DOMElement' == get_class( $dom_element->parentNode ) && $this->has_parent_node( $dom_element->parentNode, $tag_name );
 		}
 		return false;
 	}
+
+	private function process_source_tag( DOMElement $dom_element, DOMDocument $document ) {
+		$found_urls = array();
+		if ( ! $dom_element->hasAttribute( 'type' ) && $this->has_parent_node( $dom_element, 'picture' ) ) {
+			$files_in_srcset = array();
+			$strValue = $dom_element->getAttribute( 'srcset' );
+			if ( empty( $strValue ) ) {
+				$strValue = $dom_element->getAttribute( 'data-srcset' );
+			}
+			$urlvalues = explode( ',', $strValue );
+			foreach ( $urlvalues as $url_value ) {
+				$url_val = explode( ' ', trim( $url_value ) );
+				$old_file_obj = new Urlslab_File_Data( array( 'url' => $url_val[0] ) );
+				if ( isset( $this->files[ $old_file_obj->get_fileid() ] ) ) {
+					$found_urls[ $old_file_obj->get_fileid() ] = 1;
+					if ( Urlslab_Driver::STATUS_ACTIVE === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() && $this->files[ $old_file_obj->get_fileid() ]->has_file_alternative() ) {
+						foreach ( $this->files[ $old_file_obj->get_fileid() ]->get_alternatives() as $alternative_file_obj ) {
+							$files_in_srcset[ $alternative_file_obj->get_filetype() ][] = array(
+								'old_url' => $url_val[0],
+								'new_url' => Urlslab_Driver::get_driver( $alternative_file_obj )->get_url( $alternative_file_obj ),
+							);
+						}
+					}
+				}
+			}
+			foreach ( $files_in_srcset as $type => $url_alternatives ) {
+				if ( count( $url_alternatives ) == count( $urlvalues ) && ! $this->picture_has_source_for_type( $dom_element->parentNode, $type, $dom_element->hasAttribute( 'media' ) ? $dom_element->getAttribute( 'media' ) : false ) ) {
+					//generate source element for this type - we have all alternatives
+					$source_element = $document->createElement( 'source' );
+					if ( $dom_element->hasAttribute( 'srcset' ) ) {
+						$source_element->setAttribute( 'srcset', $dom_element->getAttribute( 'srcset' ) );
+						foreach ( $url_alternatives as $arr_alternative ) {
+							$source_element->setAttribute( 'srcset', str_replace( $arr_alternative['old_url'], $arr_alternative['new_url'], $source_element->getAttribute( 'srcset' ) ) );
+						}
+					}
+					if ( $dom_element->hasAttribute( 'data-srcset' ) ) {
+						$source_element->setAttribute( 'data-srcset', $dom_element->getAttribute( 'data-srcset' ) );
+						foreach ( $url_alternatives as $arr_alternative ) {
+							$source_element->setAttribute( 'data-srcset', str_replace( $arr_alternative['old_url'], $arr_alternative['new_url'], $source_element->getAttribute( 'data-srcset' ) ) );
+						}
+					}
+					if ( $dom_element->hasAttribute( 'media' ) ) {
+						$source_element->setAttribute( 'media', $dom_element->getAttribute( 'media' ) );
+					}
+					if ( $dom_element->hasAttribute( 'sizes' ) ) {
+						$source_element->setAttribute( 'sizes', $dom_element->getAttribute( 'sizes' ) );
+					}
+					$source_element->setAttribute( 'type', $type );
+					$dom_element->parentNode->insertBefore( $source_element, $dom_element );
+				}
+			}
+			$found_urls = array_merge( $this->replace_attributes( $dom_element ), $found_urls );
+			return $found_urls;
+		}
+		return array_merge( $this->replace_attributes( $dom_element ), $found_urls );
+	}
+
+	/**
+	 * @param $dom_element
+	 * @param $attributes
+	 * @param $found_urls
+	 * @param DOMDocument $document
+	 * @return array
+	 * @throws DOMException
+	 */
+	private function process_img_tag( $dom_element, DOMDocument $document ): array {
+		$found_urls = array();
+		if ( $this->has_parent_node( $dom_element, 'picture' ) ) {
+
+			$lazy_loading = false;
+			if ( empty( $dom_element->getAttribute( 'src' ) ) && ! empty( $dom_element->getAttribute( 'data-src' ) ) ) {
+				$lazy_loading = true;
+				$img_url_object = new Urlslab_File_Data( array( 'url' => $dom_element->getAttribute( 'data-src' ) ) );
+			} else {
+				$img_url_object = new Urlslab_File_Data( array( 'url' => $dom_element->getAttribute( 'src' ) ) );
+			}
+
+			if ( isset( $this->files[ $img_url_object->get_fileid() ] ) && $this->files[ $img_url_object->get_fileid() ]->has_file_alternative() ) {
+				foreach ( $this->files[ $img_url_object->get_fileid() ]->get_alternatives() as $alternative_file_obj ) {
+					if ( ! $this->picture_has_source_for_type( $dom_element->parentNode, $alternative_file_obj->get_filetype() ) ) {
+						$source_element = $document->createElement( 'source' );
+						$source_url = Urlslab_Driver::get_driver( $alternative_file_obj )->get_url( $alternative_file_obj );
+						if ( $lazy_loading ) {
+							$source_element->setAttribute( 'data-srcset', $source_url );
+						} else {
+							$source_element->setAttribute( 'srcset', $source_url );
+						}
+						$source_element->setAttribute( 'type', $alternative_file_obj->get_filetype() );
+						$dom_element->parentNode->insertBefore( $source_element, $dom_element );
+					}
+				}
+			}
+
+			$found_urls = array_merge( $this->replace_attributes( $dom_element ), $found_urls );
+		} else {
+			//this is simple img tag
+			$lazy_loading = false;
+			if ( empty( $dom_element->getAttribute( 'src' ) ) && ! empty( $dom_element->getAttribute( 'data-src' ) ) ) {
+				$lazy_loading = true;
+				$img_url_object = new Urlslab_File_Data( array( 'url' => $dom_element->getAttribute( 'data-src' ) ) );
+			} else {
+				$img_url_object = new Urlslab_File_Data( array( 'url' => $dom_element->getAttribute( 'src' ) ) );
+			}
+
+			if ( isset( $this->files[ $img_url_object->get_fileid() ] ) && $this->files[ $img_url_object->get_fileid() ]->has_file_alternative() && count( $this->files[ $img_url_object->get_fileid() ]->get_alternatives() ) > 0 ) {
+				//encapsulate img into picture element and add source tag for alternatives
+				$picture_element = $document->createElement( 'picture' );
+
+				$new_img_element = clone $dom_element;
+
+				if ( $new_img_element->hasAttribute( 'srcset' ) ) {
+					//create basic source with type from original img
+					$source_element = $document->createElement( 'source' );
+					if ( $lazy_loading ) {
+						$source_element->setAttribute( 'data-srcset', $new_img_element->getAttribute( 'srcset' ) );
+					} else {
+						$source_element->setAttribute( 'srcset', $new_img_element->getAttribute( 'srcset' ) );
+					}
+					$new_img_element->removeAttribute( 'srcset' );
+
+					if ( $new_img_element->hasAttribute( 'sizes' ) ) {
+						$source_element->setAttribute( 'sizes', $new_img_element->getAttribute( 'sizes' ) );
+						$new_img_element->removeAttribute( 'sizes' );
+					}
+
+					$picture_element->appendChild( $source_element );
+					//process this source tag as other source elements
+					$found_urls = array_merge( $this->process_source_tag( $source_element, $document ), $found_urls );
+				}
+
+				//add simple alternatives to src url
+				foreach ( $this->files[ $img_url_object->get_fileid() ]->get_alternatives() as $alternative_file ) {
+					$source_element = $document->createElement( 'source' );
+					$source_url = Urlslab_Driver::get_driver( $alternative_file )->get_url( $alternative_file );
+					if ( $lazy_loading ) {
+						$source_element->setAttribute( 'data-srcset', $source_url );
+					} else {
+						$source_element->setAttribute( 'srcset', $source_url );
+					}
+					$source_element->setAttribute( 'type', $alternative_file->get_filetype() );
+					$picture_element->appendChild( $source_element );
+				}
+				$picture_element->appendChild( $new_img_element );
+
+				$dom_element->parentNode->replaceChild( $picture_element, $dom_element );
+
+				$found_urls = array_merge( $this->replace_attributes( $new_img_element ), $found_urls );
+			} else {
+				$found_urls = array_merge( $this->replace_attributes( $dom_element ), $found_urls );
+			}
+		}
+		return $found_urls;
+	}
+
 
 	private function get_files_for_urls( array $old_url_ids ) {
 		global $wpdb;
@@ -289,27 +476,27 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			'ARRAY_A'
 		);
 
-		$arr_webp_alternatives = array();
+		$arr_file_with_alternatives = array();
 
 		foreach ( $results as $file_array ) {
 			$file_obj = new Urlslab_File_Data( $file_array );
 			$new_urls[ $file_obj->get_fileid() ] = $file_obj;
-			if ( $file_obj->has_webp_alternative() ) {
-				$arr_webp_alternatives[] = $file_obj->get_webp_fileid();
+			if ( $file_obj->has_file_alternative() ) {
+				$arr_file_with_alternatives[] = $file_obj->get_fileid();
 			}
 		}
 
-		if ( ! empty( $arr_webp_alternatives ) ) {
+		if ( ! empty( $arr_file_with_alternatives ) ) {
 			$results = $wpdb->get_results(
 				$wpdb->prepare(
-					'SELECT * FROM ' . URLSLAB_FILES_TABLE . ' WHERE fileid in (' . trim( str_repeat( '%s,', count( $arr_webp_alternatives ) ), ',' ) . ')', // phpcs:ignore
-					$arr_webp_alternatives
+					'SELECT f.*, a.fileid as parent_fileid FROM ' . URLSLAB_FILES_TABLE . ' as f INNER JOIN ' . URLSLAB_FILE_ALTERNATIVES_TABLE . ' as a ON (f.fileid = a.alternative_fileid) WHERE a.fileid in (' . trim( str_repeat( '%s,', count( $arr_file_with_alternatives ) ), ',' ) . ')', // phpcs:ignore
+					$arr_file_with_alternatives
 				),
 				'ARRAY_A'
 			);
 			foreach ( $results as $file_array ) {
 				$file_obj = new Urlslab_File_Data( $file_array );
-				$new_urls[ $file_obj->get_fileid() ] = $file_obj;
+				$new_urls[ $file_array['parent_fileid'] ]->add_alternative( $file_obj );
 			}
 		}
 		return $new_urls;
@@ -318,6 +505,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	private function schedule_missing_images( array $urls ) {
 		$save_internal = get_option( self::SETTING_NAME_SAVE_INTERNAL, self::SETTING_DEFAULT_SAVE_INTERNAL );
 		$save_external = get_option( self::SETTING_NAME_SAVE_EXTERNAL, self::SETTING_DEFAULT_SAVE_EXTERNAL );
+		$default_driver = get_option( self::SETTING_NAME_NEW_FILE_DRIVER, self::SETTING_DEFAULT_NEW_FILE_DRIVER );
 		if (
 			! ( $save_internal || $save_external ) ) {
 			return;
@@ -326,15 +514,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		$placeholders = array();
 		$values = array();
 
-		foreach ( $urls as $fileid => $attr_elements ) {
-			foreach ( $attr_elements as $attr => $elements ) {
-				if (
-					( urlslab_is_same_domain_url( $elements[0]['url'] ) && $save_internal ) ||
-					$save_external
-				) {
-					$placeholders[] = '(%s, %s, %s, %s)';
-					array_push( $values, $fileid, $elements[0]['url'], Urlslab_Driver::STATUS_NEW, $this->SETTING_NEW_FILE_DRIVER );
-				}
+		foreach ( $urls as $fileid => $url ) {
+			if ( ( urlslab_is_same_domain_url( $url ) && $save_internal ) || $save_external ) {
+				$placeholders[] = '(%s, %s, %s, %s)';
+				array_push( $values, $fileid, $url, Urlslab_Driver::STATUS_NEW, $default_driver );
 			}
 		}
 		if ( ! empty( $placeholders ) ) {
@@ -519,40 +702,61 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	/**
-	 * @param $element
-	 * @param $file_obj
-	 * @param array $files
-	 * @param DOMDocument $document
-	 * @return array
-	 * @throws DOMException
+	 * @param $attributes
+	 * @param $dom_element
+	 * @param array $found_urls
+	 * @param array $url_fileids
 	 */
-	public function handle_webp_alternative( DOMElement $element, Urlslab_File_Data $file_obj, array $files, DOMDocument $document ) {
-		if ( 'img' === $element->tagName && $file_obj->has_webp_alternative() && isset( $files[ $file_obj->get_webp_fileid() ] ) ) {
-			$webp_file_obj = $files[ $file_obj->get_webp_fileid() ];
-			if ( $webp_file_obj->get_filestatus() == Urlslab_Driver::STATUS_ACTIVE && $webp_file_obj->get_filesize() < $file_obj->get_filesize() ) {
-				$source_url = Urlslab_Driver::get_driver( $webp_file_obj )->get_url( $webp_file_obj );
-				if ( $source_url ) {
-					if ( 'picture' === $element->parentNode->tagName ) {
-						//parent is picture tag, check if one of sources is webp
-						if ( ! $this->has_picture_webp_source( $element->parentNode ) ) {
-							$source_element = $document->createElement( 'source' );
-							$source_element->setAttribute( 'srcset', $source_url );
-							$source_element->setAttribute( 'type', $webp_file_obj->get_filetype() );
-							$element->parentNode->appendChild( $source_element );
-						}
-					} else {
-						//encapsulate img into picture element and add source tag for webp
-						$picture_element = $document->createElement( 'picture' );
-						$source_element = $document->createElement( 'source' );
-						$source_element->setAttribute( 'srcset', $source_url );
-						$source_element->setAttribute( 'type', $webp_file_obj->get_filetype() );
-						$picture_element->appendChild( $source_element );
-						$picture_element->appendChild( clone $element );
-						$element->parentNode->replaceChild( $picture_element, $element );
-					}
-				}
-			}
+	private function replace_attributes( $dom_element ): array {
+		$found_urls = array();
+		foreach ( $this->tags_attributes[ $dom_element->tagName ] as $attribute ) {
+			/** @noinspection SlowArrayOperationsInLoopInspection */
+			$found_urls = array_merge_recursive( $this->replace_attribute( $dom_element, $attribute ), $found_urls );
 		}
+		return $found_urls;
 	}
 
+	/**
+	 * @param $dom_element
+	 * @param $attribute
+	 * @param array $found_urls
+	 * @return array
+	 */
+	private function replace_attribute( $dom_element, $attribute ): array {
+		$found_urls = array();
+		if ( $dom_element->hasAttribute( $attribute ) && strlen( $dom_element->getAttribute( $attribute ) ) > 0 ) {
+			switch ( $attribute ) {
+				case 'srcset':
+					$urlvalues = explode( ',', $dom_element->getAttribute( $attribute ) );
+					foreach ( $urlvalues as $url_value ) {
+						$url_val = explode( ' ', trim( $url_value ) );
+						$old_file_obj = new Urlslab_File_Data( array( 'url' => $url_val[0] ) );
+						if ( isset( $this->files[ $old_file_obj->get_fileid() ] ) && Urlslab_Driver::STATUS_ACTIVE === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() ) {
+							$source_url = Urlslab_Driver::get_driver( $this->files[ $old_file_obj->get_fileid() ] )->get_url( $this->files[ $old_file_obj->get_fileid() ] );
+							$dom_element->setAttribute( $attribute, str_replace( $url_val[0], $source_url, $dom_element->getAttribute( $attribute ) ) );
+							$found_urls[ $old_file_obj->get_fileid() ] = 1;
+						}
+					}
+					break;
+				default:
+					$url = $dom_element->getAttribute( $attribute );
+					$old_file_obj = new Urlslab_File_Data( array( 'url' => $url ) );
+					if ( isset( $this->files[ $old_file_obj->get_fileid() ] ) && Urlslab_Driver::STATUS_ACTIVE === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() ) {
+						$source_url = Urlslab_Driver::get_driver( $this->files[ $old_file_obj->get_fileid() ] )->get_url( $this->files[ $old_file_obj->get_fileid() ] );
+						$dom_element->setAttribute( $attribute, $source_url );
+						$found_urls[ $old_file_obj->get_fileid() ] = 1;
+					}
+			}
+		}
+		return $found_urls;
+	}
+
+	private function picture_has_source_for_type( DOMElement $picture_element, $filetype, $media = false ): bool {
+		foreach ( $picture_element->childNodes as $node ) {
+			if ( 'source' == $node->tagName && $node->getAttribute( 'type' ) == $filetype && ( false === $media || $node->getAttribute( 'media' ) === $media ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

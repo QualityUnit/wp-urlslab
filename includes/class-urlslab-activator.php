@@ -48,6 +48,7 @@ class Urlslab_Activator {
 		self::init_related_resources_widget_tables();
 		self::init_urlslab_error_log();
 		self::init_urlslab_files();
+		self::init_urlslab_file_alternatives();
 		self::init_urlslab_file_contents();
 	}
 
@@ -70,8 +71,10 @@ class Urlslab_Activator {
 			$wpdb->query('ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN visibility char(1) NOT NULL DEFAULT 'V';"); // phpcs:ignore
 		}
 
-		if ( version_compare( $version, '1.6.0', '<' ) ) {
-			$wpdb->query('ALTER TABLE ' . URLSLAB_FILES_TABLE . " ADD COLUMN webp_fileid char(32), ADD COLUMN use_webp char(1) NOT NULL DEFAULT 'Y', ADD INDEX idx_webp_fileid (webp_fileid, filetype);"); // phpcs:ignore
+		if ( version_compare( $version, '1.7.0', '<' ) ) {
+			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILES_TABLE . ';'); // phpcs:ignore
+			self::init_urlslab_files();
+			self::init_urlslab_file_alternatives();
 		}
 
 		//all update steps done, set the current version
@@ -186,17 +189,31 @@ class Urlslab_Activator {
 			filestatus char(1) NOT NULL,
 			driver char(1) NOT NULL,
 			last_seen datetime NULL,
-			webp_fileid char(32) NULL,
-    		use_webp char(1) NOT NULL DEFAULT 'Y'
+    		use_alternative char(1) NOT NULL DEFAULT 'N',
 			PRIMARY KEY (fileid),
 			INDEX idx_file_filter (driver, filestatus),
 			INDEX idx_file_sort (filesize)
-			INDEX idx_webp_fileid (webp_fileid, filetype)
 		) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 	}
+
+	private static function init_urlslab_file_alternatives() {
+		global $wpdb;
+		$table_name = URLSLAB_FILE_ALTERNATIVES_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+			fileid char(32) NOT NULL,
+			alternative_fileid char(32),
+			PRIMARY KEY (fileid, alternative_fileid),
+    		INDEX idx_alternative_fileid (alternative_fileid)
+		) $charset_collate;";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
 
 	private static function init_urlslab_file_contents() {
 		global $wpdb;

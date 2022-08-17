@@ -2,6 +2,11 @@
 
 class Urlslab_File_Data {
 
+	const FILE_ALTERNATIVE_NOT_PROCESSED = 'N';
+	const FILE_ALTERNATIVE_AVAILABLE = 'A';
+	const FILE_ALTERNATIVE_PROCESSING = 'P';
+	const FILE_ALTERNATIVE_DISABLED = 'D';
+
 	private $fileid;
 	private $url;
 	private $filename;
@@ -13,12 +18,8 @@ class Urlslab_File_Data {
 	private $local_file;
 	private $driver;
 	private $last_seen;
-	private $webp_fileid;
-	private $use_webp;
-
-	const USE_WEBP_YES = 'Y';
-	const USE_WEBP_PROCESSING = 'P';
-	const USE_WEBP_NO = 'N';
+	private $use_alternative;
+	private $alternatives = array();
 
 	static $mime_types = array(
 		'txt' => 'text/plain',
@@ -238,8 +239,7 @@ class Urlslab_File_Data {
 		$this->local_file = $file['local_file'] ?? '';
 		$this->driver = $file['driver'] ?? '';
 		$this->last_seen = $file['last_seen'] ?? null;
-		$this->use_webp = $file['use_webp'] ?? self::USE_WEBP_YES;
-		$this->webp_fileid = $file['webp_fileid'] ?? null;
+		$this->use_alternative = $file['use_alternative'] ?? self::FILE_ALTERNATIVE_NOT_PROCESSED;
 	}
 
 	public function as_array() {
@@ -255,8 +255,7 @@ class Urlslab_File_Data {
 			'local_file' => $this->get_local_file(),
 			'driver' => $this->get_driver(),
 			'last_seen' => $this->get_last_seen(),
-			'use_webp' => $this->use_webp,
-			'webp_fileid' => $this->get_webp_fileid(),
+			'use_alternative' => $this->use_alternative,
 		);
 	}
 
@@ -363,14 +362,23 @@ class Urlslab_File_Data {
 		$this->driver = $driver;
 	}
 
-	public function has_webp_alternative() {
-		return true === get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, true ) &&
-			self::USE_WEBP_YES === $this->use_webp &&
-			32 === strlen( $this->webp_fileid );
+	public function has_file_alternative() {
+		return (
+			true === get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, true ) ||
+			true === get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE, true )
+			) &&
+			self::FILE_ALTERNATIVE_AVAILABLE === $this->use_alternative;
 	}
 
-	public function get_webp_fileid() {
-		return $this->webp_fileid;
+	public function get_use_alternative() {
+		return $this->use_alternative;
 	}
 
+	public function add_alternative( Urlslab_File_Data $alternative_file ) {
+		$this->alternatives[ $alternative_file->get_fileid() ] = $alternative_file;
+	}
+
+	public function get_alternatives() {
+		return $this->alternatives;
+	}
 }
