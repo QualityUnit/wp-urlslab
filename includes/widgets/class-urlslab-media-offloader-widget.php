@@ -297,7 +297,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			}
 
 
-			$this->process_lazy_loading($document);
+			$this->process_lazy_loading( $document );
 
 			return $document->saveHTML();
 		} catch ( Exception $e ) {

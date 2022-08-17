@@ -602,7 +602,7 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 							   id="use-webp"
 							   name="img-opt[]"
 							   value="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE ); ?>"
-								<?php echo get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, false) ? 'checked' : ''; ?>>
+								<?php echo get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, false ) ? 'checked' : ''; ?>>
 						<label for="use-webp" class="urlslab-switch-label">switch</label>
 					</div>
 					</p>
