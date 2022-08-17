@@ -46,12 +46,14 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public const SETTING_DEFAULT_TRANSFER_FROM_DRIVER_S3 = false;
 	public const SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB = false;
 
+	//WEBP CONVERSION SETTINGS
 	public const SETTING_NAME_USE_WEBP_ALTERNATIVE = 'urlslab_use_webp';
 	public const SETTING_NAME_WEBP_TYPES_TO_CONVERT = 'urlslab_webp_types';
 	public const SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT = array( 'image/png', 'image/jpeg', 'image/bmp' );
 	public const SETTING_NAME_WEPB_QUALITY = 'urlslab_webp_quality';
 	public const SETTING_DEFAULT_WEPB_QUALITY = 80;
 
+	// AVIF CONVERSION SETTINGS
 	public const SETTING_NAME_USE_AVIF_ALTERNATIVE = 'urlslab_use_avif';
 	public const SETTING_NAME_AVIF_TYPES_TO_CONVERT = 'urlslab_avif_types';
 	public const SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT = array( 'image/png', 'image/jpeg', 'image/bmp', 'image/gif' );
@@ -64,10 +66,16 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	// speed: Default value 6. Accepted values are int the range of 0 (slowest) through 10 (fastest). Integers outside the 0-10 range are clamped.
 	public const SETTING_DEFAULT_AVIF_SPEED = 5;
 
+
+	//LAZY LOADING SETTINGS
+	public const SETTING_NAME_IMG_LAZY_LOADING = 'urlslab_img_lazy';
+	public const SETTING_NAME_VIDEO_LAZY_LOADING = 'urlslab_video_lazy';
+	public const SETTING_NAME_YOUTUBE_LAZY_LOADING = 'urlslab_youtube_lazy';
+
 	private $files = array();
 
 
-	private $tags_attributes = array(
+	private $media_tags_attributes = array(
 		'img' => array(
 			'src',
 			'data-src',
@@ -107,6 +115,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			'the_content',
 			get_option( self::SETTING_NAME_MANIPULATION_PRIORITY, self::SETTING_DEFAULT_MANIPULATION_PRIORITY )
 		);
+
 	}
 
 	/**
@@ -216,7 +225,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			//*********************************
 			//find all elements to process
 			//*********************************
-			foreach ( $this->tags_attributes as $tag_name => $tag_attributes ) {
+			foreach ( $this->media_tags_attributes as $tag_name => $tag_attributes ) {
 				$dom_elements = $document->getElementsByTagName( $tag_name );
 
 				if ( empty( $dom_elements ) ) {
@@ -245,10 +254,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				}
 			}
 
-			if ( empty( $url_fileids ) ) {
-				return $content;
-			}
-
 			//*********************************
 			//find files for elements
 			//*********************************
@@ -270,7 +275,11 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 							break;
 
 						case 'audio': //for now we don't have alternatives for audio files
+							$found_urls = array_merge( $this->replace_attributes( $dom_element ), $found_urls );
+							break;
 						case 'video': //for now we don't have alternatives for video files
+							$found_urls = array_merge( $this->replace_attributes( $dom_element ), $found_urls );
+							break;
 						default:
 							$found_urls = array_merge( $this->replace_attributes( $dom_element ), $found_urls );
 					}
@@ -285,11 +294,12 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 			if ( count( $found_urls ) > 0 ) {
 				$this->update_last_seen_date( array_keys( $found_urls ) );
-				return $document->saveHTML();
 			}
 
-			//nothing replaced, return the same content
-			return $content;
+
+			$this->process_lazy_loading($document);
+
+			return $document->saveHTML();
 		} catch ( Exception $e ) {
 			return $content . "\n" . "<!---\n Error:" . esc_html( $e->getMessage() ) . "\n--->";
 		}
@@ -465,7 +475,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 
-	private function get_files_for_urls( array $old_url_ids ) {
+	private function get_files_for_urls( array $old_url_ids ) :array {
+		if ( empty( $old_url_ids ) ) {
+			return array();
+		}
 		global $wpdb;
 		$new_urls = array();
 		$results = $wpdb->get_results(
@@ -709,7 +722,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	 */
 	private function replace_attributes( $dom_element ): array {
 		$found_urls = array();
-		foreach ( $this->tags_attributes[ $dom_element->tagName ] as $attribute ) {
+		foreach ( $this->media_tags_attributes[ $dom_element->tagName ] as $attribute ) {
 			/** @noinspection SlowArrayOperationsInLoopInspection */
 			$found_urls = array_merge_recursive( $this->replace_attribute( $dom_element, $attribute ), $found_urls );
 		}
@@ -758,5 +771,91 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			}
 		}
 		return false;
+	}
+
+	private function add_img_lazy_loading( DOMElement $dom_element ) {
+		if ( $dom_element->hasAttribute( 'src' ) ) {
+			$dom_element->setAttribute( 'data-urlslabsrc', $dom_element->getAttribute( 'src' ) );
+			$dom_element->removeAttribute( 'src' );
+		}
+
+		if ( $dom_element->hasAttribute( 'data-src' ) ) {
+			$dom_element->setAttribute( 'data-urlslabsrc', $dom_element->getAttribute( 'data-src' ) );
+			$dom_element->removeAttribute( 'data-src' );
+		}
+
+		if ( $dom_element->hasAttribute( 'srcset' ) ) {
+			$dom_element->setAttribute( 'data-urlslabsrcset', $dom_element->getAttribute( 'srcset' ) );
+			$dom_element->removeAttribute( 'srcset' );
+		}
+
+		if ( $dom_element->hasAttribute( 'data-full-url' ) ) {
+			$dom_element->setAttribute( 'data-ursllabfull-url', $dom_element->getAttribute( 'data-full-url' ) );
+			$dom_element->removeAttribute( 'data-full-url' );
+		}
+
+		if ( $dom_element->hasAttribute( 'style' ) ) {
+			$dom_element->setAttribute( 'data-urlslabstyle', $dom_element->getAttribute( 'style' ) );
+		}
+		$dom_element->setAttribute( 'style', 'opacity: 0; transition: opacity .5s;' );
+
+		if ( ! $dom_element->hasAttribute( 'loading' ) ) {
+			$dom_element->setAttribute( 'loading', 'lazy' );
+		}
+		$dom_element->setAttribute( 'urlslab-lazy', 'yes' );
+	}
+
+	private function add_source_lazy_loading( DOMElement $dom_element ) {
+		if ( $this->has_parent_node( $dom_element, 'picture' ) ) {
+			if ( $dom_element->hasAttribute( 'srcset' ) ) {
+				$dom_element->setAttribute( 'data-urlslabsrcset', $dom_element->getAttribute( 'srcset' ) );
+				$dom_element->removeAttribute( 'srcset' );
+			}
+
+			if ( $dom_element->hasAttribute( 'data-srcset' ) ) {
+				$dom_element->setAttribute( 'data-urlslabsrcset', $dom_element->getAttribute( 'data-srcset' ) );
+				$dom_element->removeAttribute( 'data-srcset' );
+			}
+			$dom_element->setAttribute( 'urlslab-lazy', 'yes' );
+		}
+	}
+
+	private function add_video_lazy_loading( DOMElement $dom_element ) {
+
+		if ( $dom_element->hasAttribute( 'style' ) ) {
+			$dom_element->setAttribute( 'data-urlslabstyle', $dom_element->getAttribute( 'style' ) );
+		}
+		$dom_element->setAttribute( 'style', 'opacity: 0;' );
+
+		if ( $dom_element->hasAttribute( 'data-src' ) ) {
+			$dom_element->setAttribute( 'data-urlslabsrc', $dom_element->getAttribute( 'data-src' ) );
+			$dom_element->removeAttribute( 'data-src' );
+		}
+
+		if ( $dom_element->hasAttribute( 'src' ) ) {
+			$dom_element->setAttribute( 'data-urlslabsrc', $dom_element->getAttribute( 'src' ) );
+			$dom_element->removeAttribute( 'src' );
+		}
+
+		$dom_element->setAttribute( 'urlslab-lazy', 'yes' );
+	}
+
+	private function process_lazy_loading( DOMDocument $document ) {
+		if ( get_option( self::SETTING_NAME_IMG_LAZY_LOADING, false ) ) {
+			$dom_elements = $document->getElementsByTagName( 'img' );
+			foreach ( $dom_elements as $element ) {
+				$this->add_img_lazy_loading( $element );
+			}
+			$dom_elements = $document->getElementsByTagName( 'source' );
+			foreach ( $dom_elements as $element ) {
+				$this->add_source_lazy_loading( $element );
+			}
+		}
+		if ( get_option( self::SETTING_NAME_VIDEO_LAZY_LOADING, false ) ) {
+			$dom_elements = $document->getElementsByTagName( 'video' );
+			foreach ( $dom_elements as $element ) {
+				$this->add_video_lazy_loading( $element );
+			}
+		}
 	}
 }

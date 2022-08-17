@@ -24,8 +24,8 @@ class Urlslab_Url_Keyword_Data {
 			throw new Exception( 'Keyword is empty' );}
 		if ( ! is_numeric( $keyword_priority ) ) {
 			throw new Exception( 'Keyword Priority is not a number' );
-		} else if ( $keyword_priority < 10 || $keyword_priority > 100 ) {
-			throw new Exception( 'Keyword Priority should be a number between 10 and 100' );
+		} else if ( $keyword_priority < 0 ) {
+			throw new Exception( 'Keyword Priority should be a number higher as 0' );
 		}
 		if ( ! is_numeric( $keyword_length ) ) {
 			throw new Exception( 'Keyword length is not a number' );

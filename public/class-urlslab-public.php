@@ -69,6 +69,13 @@ class Urlslab_Public {
 	 */
 	public function enqueue_scripts() {
 		wp_enqueue_script( $this->urlslab, plugin_dir_url( __FILE__ ) . 'js/urlslab-public.js', array( 'jquery' ), $this->version, false );
+		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( 'urlslab-media-offloader' ) ) {
+			add_action(
+				'wp_footer',
+				function () {
+					wp_enqueue_script( 'urlslab', plugin_dir_url( __FILE__ ) . 'js/urlslab-lazyload.js', array( 'jquery' ), URLSLAB_VERSION, false );}
+			);
+		}
 	}
 
 	public function the_content_og_meta_tag_start() {

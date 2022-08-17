@@ -582,6 +582,50 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 		<?php
 	}
 
+	public function render_image_optimisation_settings() {
+
+		?>
+		<form method="post" action="<?php echo esc_url( $this->menu_page( 'media-offloader', 'action=update-image-optimisation-settings', 0 ) ); ?>">
+			<?php wp_nonce_field( 's4-update' ); ?>
+			<h3>Image Conversion</h3>
+			<div class="urlslab-setting-item">
+				<div>
+					<h4>
+						Generate Webp images
+					</h4>
+				</div>
+				<div>
+					<p>
+					<div class="urlslab-switch">
+						<input class="urlslab-switch-input"
+							   type="checkbox"
+							   id="use-webp"
+							   name="img-opt[]"
+							   value="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE ); ?>"
+								<?php echo get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, false) ? 'checked' : ''; ?>>
+						<label for="use-webp" class="urlslab-switch-label">switch</label>
+					</div>
+					</p>
+				</div>
+			</div>
+			<p>
+				<input
+						type="submit"
+						name="submit"
+						id="save-sub-widget"
+						class="urlslab-btn-primary"
+						value="Save Changes">
+			</p>
+		</form>
+		<?php
+
+
+	}
+
+	public function render_lazy_loading_settings() {
+
+	}
+
 	public function render_driver_settings() {
 		?>
 		<form method="post" action="<?php echo esc_url( $this->menu_page( 'media-offloader', 'action=update-s3-settings', 2 ) ); ?>">

@@ -13,15 +13,25 @@
 
 			<div id="urlslab-vertical-tabs" class="urlslab-container-shadow urlslab-ui-tabs-vertical">
 				<ul class="urlslab-tab-topic">
-					<li><a href="#fragment-1"><span>Overview</span></a></li>
+					<li><a href="#fragment-1"><span>How it works?</span></a></li>
 					<li>
 						<a href="#fragment-2">
-							<span>General Settings</span>
+							<span>Media offloading</span>
 						</a>
 					</li>
 					<li>
 						<a href="#fragment-3">
-							<span>Driver Settings</span>
+							<span>Storage Drivers</span>
+						</a>
+					</li>
+					<li>
+						<a href="#fragment-4">
+							<span>Image Optimisation</span>
+						</a>
+					</li>
+					<li>
+						<a href="#fragment-5">
+							<span>Lazy Loading</span>
 						</a>
 					</li>
 				</ul>
@@ -52,6 +62,12 @@
 				</div>
 				<div id="fragment-3">
 					<?php $this->render_driver_settings(); ?>
+				</div>
+				<div id="fragment-4">
+					<?php $this->render_image_optimisation_settings(); ?>
+				</div>
+				<div id="fragment-5">
+					<?php $this->render_lazy_loading_settings(); ?>
 				</div>
 			</div>
 			<?php
