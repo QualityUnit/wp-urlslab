@@ -298,8 +298,81 @@ class Urlslab {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		$this->loader->add_action( 'template_redirect', $plugin_public, 'downoad_offloaded_file' );
-		$this->init_activated_widgets();
 
+		//head content
+		//TODO we need to debug why parsing of head HTML is not working
+		//$this->loader->add_action( 'wp_head', $this, 'buffer_head_start', -100000 );
+		//$this->loader->add_action( 'wp_head', $this, 'buffer_end', 100000 );
+
+		//body content
+		$this->loader->add_action( 'wp_body_open', $this, 'buffer_content_start' );
+		$this->loader->add_action( 'wp_footer', $this, 'buffer_end' );
+
+		$this->init_activated_widgets();
+	}
+
+	public function buffer_head_start() {
+		ob_start( array( $this, 'urlslab_head_content' ), 0, PHP_OUTPUT_HANDLER_FLUSHABLE | PHP_OUTPUT_HANDLER_REMOVABLE );
+	}
+
+	public function buffer_content_start() {
+		ob_start( array( $this, 'urlslab_content' ), 0, PHP_OUTPUT_HANDLER_FLUSHABLE | PHP_OUTPUT_HANDLER_REMOVABLE );
+	}
+
+	public function buffer_end() {
+		ob_end_flush();
+	}
+
+	public function urlslab_head_content( $content ) {
+		if ( empty( $content ) ) {
+			return $content;    //nothing to process
+		}
+
+		$document = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
+		$document->encoding = get_bloginfo( 'charset' );
+		$document->strictErrorChecking = false; // phpcs:ignore
+		$libxml_previous_state = libxml_use_internal_errors( true );
+
+		try {
+			$document->loadHTML(
+				mb_convert_encoding( $content, 'HTML-ENTITIES', get_bloginfo( 'charset' ) ),
+				LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE
+			);
+			libxml_clear_errors();
+			libxml_use_internal_errors( $libxml_previous_state );
+
+			do_action( 'urlslab_head_content', $document );
+
+			return $document->saveHTML();
+		} catch ( Exception $e ) {
+			return $content;
+		}
+	}
+
+	public function urlslab_content( $content ) {
+		if ( empty( $content ) ) {
+			return $content;    //nothing to process
+		}
+
+		$document = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
+		$document->encoding = get_bloginfo( 'charset' );
+		$document->strictErrorChecking = false; // phpcs:ignore
+		$libxml_previous_state = libxml_use_internal_errors( true );
+
+		try {
+			$document->loadHTML(
+				mb_convert_encoding( $content, 'HTML-ENTITIES', get_bloginfo( 'charset' ) ),
+				LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE
+			);
+			libxml_clear_errors();
+			libxml_use_internal_errors( $libxml_previous_state );
+
+			do_action( 'urlslab_content', $document );
+
+			return $document->saveHTML();
+		} catch ( Exception $e ) {
+			return $content;
+		}
 	}
 
 	private function init_activated_widgets() {

@@ -54,11 +54,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	public function init_widget( Urlslab_Loader $loader ) {
-		$loader->add_filter( 'the_content', $this, 'hook_callback', 11 );
-	}
-
-	public function hook_callback( $content ) {
-		return $this->theContentHook( $content );
+		$loader->add_action( 'urlslab_content', $this, 'theContentHook', 11 );
 	}
 
 	/**
@@ -273,34 +269,17 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		}
 	}
 
-	public function theContentHook( $content ) {
-		if ( ! strlen( trim( $content ) ) ) {
-			return $content;    //nothing to process
-		}
-
-		$this->init_keywords_cache( strtolower( $content ) );
+	public function theContentHook( DOMDocument $document ) {
+		$this->init_keywords_cache( strtolower( $document->saveHTML() ) );
 		if ( count( $this->keywords_cache ) == 0 ) {
-			return $content;
+			return;
 		}
-
-		$document = new DOMDocument();
-		$document->encoding = get_bloginfo( 'charset' );
-		$document->strictErrorChecking = false;
-		$libxml_previous_state = libxml_use_internal_errors( true );
 		try {
-			$document->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', 'UTF-8' ) );
-			libxml_clear_errors();
-			libxml_use_internal_errors( $libxml_previous_state );
-
 			if ( $this->cnt_page_links > get_option( self::SETTING_NAME_MAX_LINKS_ON_PAGE, self::MAX_DEFAULT_LINKS_ON_PAGE ) ) {
-				return $content;
+				return;
 			}
-
 			$this->findTextDOMElements( $document, $document );
-
-			return $document->saveHTML();
 		} catch ( Exception $e ) {
-			return $content . "\n" . "<!---\n Error:" . esc_html( $e->getMessage() ) . "\n--->";
 		}
 	}
 
