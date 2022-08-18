@@ -308,8 +308,8 @@ class Urlslab {
 
 		//head content
 		//# TODO - parsing of header should be added and the meta tag widget should not depend on <head></head>
-//		$this->loader->add_action( 'get_template_part_templates/head', $this, 'buffer_head_start', -100000 );
-//		$this->loader->add_action( 'get_template_part_lib/pagesources', $this, 'buffer_end', 100000 );
+		//      $this->loader->add_action( 'get_template_part_templates/head', $this, 'buffer_head_start', -100000 );
+		//      $this->loader->add_action( 'get_template_part_lib/pagesources', $this, 'buffer_end', 100000 );
 
 		//body content
 		$this->loader->add_action( 'wp_body_open', $this, 'buffer_content_start' );
