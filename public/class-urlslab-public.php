@@ -78,17 +78,6 @@ class Urlslab_Public {
 		}
 	}
 
-	public function the_content_og_meta_tag_start() {
-		ob_start();
-	}
-
-	public function the_content_og_meta_tag_end() {
-		$content = ob_get_contents();
-		ob_end_clean();
-		$og_meta_tag = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-meta-tag' );
-		echo $og_meta_tag->theContentHook( $content ); // phpcs:ignore
-	}
-
 	public function downoad_offloaded_file() {
 		if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], Urlslab_Driver::DOWNLOAD_URL_PATH ) !== false ) {
 			Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-media-offloader' )->output_content();

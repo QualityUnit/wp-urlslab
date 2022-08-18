@@ -109,12 +109,14 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public function init_widget( Urlslab_Loader $loader ) {
 		$loader->add_action( 'wp_handle_upload', $this, 'wp_handle_upload', 10, 1 );
 
-		$loader->add_filter(
-			'the_content',
-			$this,
-			'the_content',
-			get_option( self::SETTING_NAME_MANIPULATION_PRIORITY, self::SETTING_DEFAULT_MANIPULATION_PRIORITY )
-		);
+		$loader->add_action( 'wp_body_open', $this, 'buffer_start', PHP_INT_MIN );
+		$loader->add_action( 'wp_footer', $this, 'buffer_end', PHP_INT_MIN );
+		//      $loader->add_filter(
+		//          'the_content',
+		//          $this,
+		//          'the_content',
+		//          get_option( self::SETTING_NAME_MANIPULATION_PRIORITY, self::SETTING_DEFAULT_MANIPULATION_PRIORITY )
+		//      );
 
 	}
 
@@ -148,6 +150,14 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	public function has_shortcode(): bool {
 		return false;
+	}
+
+	function buffer_start() {
+		ob_start( array( $this, 'the_content' ), 0, PHP_OUTPUT_HANDLER_FLUSHABLE | PHP_OUTPUT_HANDLER_REMOVABLE );
+	}
+
+	function buffer_end() {
+		ob_end_flush();
 	}
 
 	public function wp_handle_upload( &$file, $overrides = false, $time = null ) {
