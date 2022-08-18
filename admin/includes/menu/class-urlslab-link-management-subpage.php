@@ -59,115 +59,63 @@ class Urlslab_Link_Management_Subpage extends Urlslab_Admin_Subpage {
 	public function render_modals() {}
 
 	public function render_settings() {
+		$current_replacement_strategy = get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
+		$settings = array(
+			new Urlslab_Setting_Switch(
+				'link-management[]',
+				Urlslab_Link_Enhancer::SETTING_NAME_REMOVE_LINKS,
+				'Hide the links you want from any of your pages',
+				'Hide Links',
+				get_option( Urlslab_Link_Enhancer::SETTING_NAME_REMOVE_LINKS, Urlslab_Link_Enhancer::SETTING_DEFAULT_REMOVE_LINKS )
+			),
+			new Urlslab_Setting_Switch(
+				'link-management[]',
+				Urlslab_Link_Enhancer::SETTING_NAME_URLS_MAP,
+				'Get data of which pages are linking to each other',
+				'Track Internal links',
+				get_option(
+					Urlslab_Link_Enhancer::SETTING_NAME_URLS_MAP,
+					Urlslab_Link_Enhancer::SETTING_DEFAULT_URLS_MAP
+				)
+			),
+			new Urlslab_Setting_Option(
+				Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY,
+				array(
+					array(
+						'value' => Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY,
+						'is_selected' => Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY == $current_replacement_strategy,
+						'option_name' => 'Generate descriptions with summaries',
+					),
+					array(
+						'value' => Urlslab_Link_Enhancer::DESC_TEXT_META_DESCRIPTION,
+						'is_selected' => Urlslab_Link_Enhancer::DESC_TEXT_META_DESCRIPTION == $current_replacement_strategy,
+						'option_name' => 'Generate descriptions with meta description',
+					),
+					array(
+						'value' => Urlslab_Link_Enhancer::DESC_TEXT_TITLE,
+						'is_selected' => Urlslab_Link_Enhancer::DESC_TEXT_TITLE == $current_replacement_strategy,
+						'option_name' => 'Generate descriptions with Url title',
+					),
+					array(
+						'value' => Urlslab_Link_Enhancer::DESC_TEXT_URL,
+						'is_selected' => Urlslab_Link_Enhancer::DESC_TEXT_URL == $current_replacement_strategy,
+						'option_name' => 'Generate descriptions with Url path',
+					),
+				),
+				'Specify which data should be used to enhance your links automatically',
+				'Description generation'
+			),
+		);
+
 		?>
 		<div>
 			<form method="post" action="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=update-settings', 1 ) ); ?>">
 				<?php wp_nonce_field( 'link-management-settings' ); ?>
-				<div class="urlslab-setting-item">
-					<div>
-						<h4>Hide Links</h4>
-					</div>
-					<div>
-						<p>
-						<div class="urlslab-switch">
-							<input class="urlslab-switch-input" type="checkbox" id="remove-links" name="link-management[]"
-								   value="<?php echo esc_attr( Urlslab_Link_Enhancer::SETTING_NAME_REMOVE_LINKS ); ?>"
-								<?php
-								if ( get_option(
-									Urlslab_Link_Enhancer::SETTING_NAME_REMOVE_LINKS,
-									Urlslab_Link_Enhancer::SETTING_DEFAULT_REMOVE_LINKS
-								) ) {
-									echo 'checked';
-								}
-								?>
-							>
-							<label for="remove-links" class="urlslab-switch-label">switch</label>
-						</div>
-						</p>
-						<span class="urlslab-info">
-						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
-							 alt="info"
-							 width="10px">
-						Hide the links you want from any of your pages
-					</span>
-					</div>
-				</div>
-				<div class="urlslab-setting-item">
-					<div>
-						<h4>Track Internal links</h4>
-					</div>
-					<div>
-						<p>
-						<div class="urlslab-switch">
-							<input class="urlslab-switch-input" type="checkbox" id="url-map" name="link-management[]"
-								   value="<?php echo esc_attr( Urlslab_Link_Enhancer::SETTING_NAME_URLS_MAP ); ?>"
-								<?php
-								if ( get_option(
-									Urlslab_Link_Enhancer::SETTING_NAME_URLS_MAP,
-									Urlslab_Link_Enhancer::SETTING_DEFAULT_URLS_MAP
-								) ) {
-									echo 'checked';
-								}
-								?>
-							>
-							<label for="url-map" class="urlslab-switch-label">switch</label>
-						</div>
-						</p>
-						<span class="urlslab-info">
-						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
-							 alt="info"
-							 width="10px">
-						Get data of which pages are linking to each other
-					</span>
-					</div>
-				</div>
-				<div class="urlslab-setting-item">
-					<div>
-						<h4>Description generation</h4>
-					</div>
-					<div>
-						<p>
-						<div>
-							<?php $current_replacement_strategy = get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY ); ?>
-							<select name="<?php echo esc_attr( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ); ?>" id="desc-replacement">
-								<option value="<?php echo esc_attr( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY ); ?>"
-									<?php
-									if ( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY == $current_replacement_strategy ) {
-										echo ' selected';}
-									?>
-								>Generate descriptions with summaries</option>
-								<option value="<?php echo esc_attr( Urlslab_Link_Enhancer::DESC_TEXT_META_DESCRIPTION ); ?>"
-									<?php
-									if ( Urlslab_Link_Enhancer::DESC_TEXT_META_DESCRIPTION == $current_replacement_strategy ) {
-										echo ' selected';
-									}
-									?>
-								>Generate descriptions with meta description</option>
-								<option value="<?php echo esc_attr( Urlslab_Link_Enhancer::DESC_TEXT_TITLE ); ?>"
-									<?php
-									if ( Urlslab_Link_Enhancer::DESC_TEXT_TITLE == $current_replacement_strategy ) {
-										echo ' selected';
-									}
-									?>
-								>Generate descriptions with Url title</option>
-								<option value="<?php echo esc_attr( Urlslab_Link_Enhancer::DESC_TEXT_URL ); ?>"
-									<?php
-									if ( Urlslab_Link_Enhancer::DESC_TEXT_URL == $current_replacement_strategy ) {
-										echo ' selected';
-									}
-									?>
-								>Generate descriptions with Url path</option>
-							</select>
-						</div>
-						</p>
-						<span class="urlslab-info">
-						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
-							 alt="info"
-							 width="10px">
-						Specify which data should be used to enhance your links automatically
-					</span>
-					</div>
-				</div>
+				<?php 
+				foreach ( $settings as $setting ) {
+					$setting->render_setting();
+				}
+				?>
 				<p>
 					<input
 							type="submit"

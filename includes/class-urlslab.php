@@ -185,10 +185,48 @@ class Urlslab {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-urlslab-public.php';
 
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
+
+		//services
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-api.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-api.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-screenshot-api.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-user-management-api.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/urlslab-api-model.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-batch-request.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-url-data-response.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-error-response.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-keyword-data.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-api-key.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-data-fetcher.php';
+
+		//settings
+		require_once URLSLAB_PLUGIN_DIR . '/admin/templates/settings/class-urlslab-admin-setting-element.php';
+		require_once URLSLAB_PLUGIN_DIR . '/admin/templates/settings/class-urlslab-setting-disabled.php';
+		require_once URLSLAB_PLUGIN_DIR . '/admin/templates/settings/class-urlslab-setting-input.php';
+		require_once URLSLAB_PLUGIN_DIR . '/admin/templates/settings/class-urlslab-setting-switch.php';
+		require_once URLSLAB_PLUGIN_DIR . '/admin/templates/settings/class-urlslab-setting-option.php';
+
+		//additional
+		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/helpers/urlslab-helpers.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/helpers/class-urlslab-status.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
+
+		//widgets
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-screenshot-widget.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-related-resources-widget.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-media-offloader-widget.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-link-enhancer.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-keywords-links.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-image-alt-text.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-meta-tag.php';
+
+
+		//menu pages
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-page-factory.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-api.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-admin-page.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-admin-subpage.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-dashboard-page.php';
@@ -202,54 +240,12 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-keyword-linking-subpage.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-link-management-subpage.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-ui-elements-page.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/helpers/class-urlslab-status.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-screenshot-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-related-resources-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-media-offloader-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-link-enhancer.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-keywords-links.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-image-alt-text.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-meta-tag.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-screenshot-api.php';
-		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/tables/class-urlslab-screenshot-table.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-api-key.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-user-management-api.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/helpers/urlslab-helpers.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-data-fetcher.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-api.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/urlslab-api-model.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-batch-request.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-url-data-response.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-error-response.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-keyword-data.php';
+
+		//tables
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/tables/class-urlslab-keyword-link-table.php';
+		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/tables/class-urlslab-screenshot-table.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/tables/class-urlslab-offloader-table.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/tables/class-urlslab-related-resources-widget-table.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-data-fetcher.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
 
 
 		$this->loader = new Urlslab_Loader();
@@ -309,8 +305,81 @@ class Urlslab {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		$this->loader->add_action( 'template_redirect', $plugin_public, 'downoad_offloaded_file' );
-		$this->init_activated_widgets();
 
+		//head content
+		//# TODO - parsing of header should be added and the meta tag widget should not depend on <head></head>
+		//      $this->loader->add_action( 'get_template_part_templates/head', $this, 'buffer_head_start', -100000 );
+		//      $this->loader->add_action( 'get_template_part_lib/pagesources', $this, 'buffer_end', 100000 );
+
+		//body content
+		$this->loader->add_action( 'wp_body_open', $this, 'buffer_content_start' );
+		$this->loader->add_action( 'wp_footer', $this, 'buffer_end' );
+
+		$this->init_activated_widgets();
+	}
+
+	public function buffer_head_start() {
+		ob_start( array( $this, 'urlslab_head_content' ), 0 );
+	}
+
+	public function buffer_content_start() {
+		ob_start( array( $this, 'urlslab_content' ), 0, PHP_OUTPUT_HANDLER_FLUSHABLE | PHP_OUTPUT_HANDLER_REMOVABLE );
+	}
+
+	public function buffer_end() {
+		ob_end_flush();
+	}
+
+	public function urlslab_head_content( $content ) {
+		if ( empty( $content ) ) {
+			return $content;    //nothing to process
+		}
+		//TODO we need to debug why parsing of head HTML is not working
+		$document = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
+		$document->encoding = get_bloginfo( 'charset' );
+		$document->strictErrorChecking = false; // phpcs:ignore
+		$libxml_previous_state = libxml_use_internal_errors( true );
+
+		try {
+			$document->loadHTML(
+				mb_convert_encoding( $content, 'HTML-ENTITIES', get_bloginfo( 'charset' ) ),
+				LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE
+			);
+			libxml_clear_errors();
+			libxml_use_internal_errors( $libxml_previous_state );
+
+			do_action( 'urlslab_head_content', $document );
+
+			return $document->saveHTML();
+		} catch ( Exception $e ) {
+			return $content;
+		}
+	}
+
+	public function urlslab_content( $content ) {
+		if ( empty( $content ) ) {
+			return $content;    //nothing to process
+		}
+
+		$document = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
+		$document->encoding = get_bloginfo( 'charset' );
+		$document->strictErrorChecking = false; // phpcs:ignore
+		$libxml_previous_state = libxml_use_internal_errors( true );
+
+		try {
+			$document->loadHTML(
+				mb_convert_encoding( $content, 'HTML-ENTITIES', get_bloginfo( 'charset' ) ),
+				LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE
+			);
+			libxml_clear_errors();
+			libxml_use_internal_errors( $libxml_previous_state );
+
+			do_action( 'urlslab_content', $document );
+
+			return $document->saveHTML();
+		} catch ( Exception $e ) {
+			return $content;
+		}
 	}
 
 	private function init_activated_widgets() {

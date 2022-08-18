@@ -101,7 +101,7 @@ class Urlslab_Urls_Page extends Urlslab_Admin_Page {
 	}
 
 	public function load_page() {
-		require URLSLAB_PLUGIN_DIR . 'admin/partials/urlslab-admin-urls.php';
+		require URLSLAB_PLUGIN_DIR . 'admin/templates/page/urlslab-admin-urls.php';
 	}
 
 	public function render_subpage() {

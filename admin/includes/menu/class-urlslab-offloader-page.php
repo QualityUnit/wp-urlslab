@@ -30,12 +30,6 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 						$_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ];
 				}
 
-				if ( isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ] ) &&
-					 ! empty( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ] ) ) {
-					$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ] =
-						$_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ];
-				}
-
 				if ( isset( $_POST['offload-opt'] ) ) {
 					foreach ( $_POST['offload-opt'] as $offload_opt ) {
 						$saving_opt[ $offload_opt ] = true;
@@ -103,6 +97,136 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 				//# Deleting the credentials
 			}
 			//# Edit AWS settings
+
+			//# Edit Image Optimisation
+			if ( isset( $_POST['submit'] ) &&
+				 isset( $_GET['action'] ) &&
+				 'update-image-optimisation-settings' == $_GET['action'] ) {
+				check_admin_referer( 'image-conversion-update' );
+
+				if ( isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ] ) &&
+					 ( 0 > $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ] ||
+					 100 < $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ] ) ) {
+					wp_safe_redirect(
+						$this->menu_page(
+							'media-offloader',
+							array(
+								'status' => 'failure',
+								'urlslab-message' => 'webp quality should be a number between 0 and 100',
+							),
+							$_GET['sub-tab'] ?? ''
+						)
+					);
+					exit;
+				}
+
+				if ( isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ] ) &&
+					 ( 0 > $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ] ||
+					   100 < $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ] ) ) {
+					wp_safe_redirect(
+						$this->menu_page(
+							'media-offloader',
+							array(
+								'status' => 'failure',
+								'urlslab-message' => 'Avif quality should be a number between 0 and 100',
+							),
+							$_GET['sub-tab'] ?? ''
+						)
+					);
+					exit;
+				}
+
+				if ( isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ] ) &&
+					 ( 0 > $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ] ||
+					   10 < $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ] ) ) {
+					wp_safe_redirect(
+						$this->menu_page(
+							'media-offloader',
+							array(
+								'status' => 'failure',
+								'urlslab-message' => 'Avif Speed should be a number between 0 and 10',
+							),
+							$_GET['sub-tab'] ?? ''
+						)
+					);
+					exit;
+				}
+
+
+				if ( 'Save Changes' === $_POST['submit'] &&
+					 isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ] ) &&
+					 isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ] ) &&
+					 isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ] ) ) {
+					$saving_opt = array();
+					if ( isset( $_POST['image-opt'] ) ) {
+						foreach ( $_POST['image-opt'] as $image_opt_setting ) {
+							$saving_opt[ $image_opt_setting ] = true;
+						}
+					}
+					if ( isset( $_POST['webp-conversion-types'] ) ) {
+						$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEBP_TYPES_TO_CONVERT ] =
+							$_POST['webp-conversion-types'];
+					}
+					if ( isset( $_POST['avif-conversion-types'] ) ) {
+						$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_TYPES_TO_CONVERT ] =
+							$_POST['avif-conversion-types'];
+					}
+					$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ] =
+						$_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ];
+					$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ] =
+						$_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ];
+					$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ] =
+						$_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ];
+
+					Urlslab_Media_Offloader_Widget::update_option_image_optimisation( $saving_opt );
+
+
+					wp_safe_redirect(
+						$this->menu_page(
+							'media-offloader',
+							array(
+								'status' => 'success',
+								'urlslab-message' => 'Image Conversion settings was saved successfully',
+							),
+							$_GET['sub-tab'] ?? ''
+						)
+					);
+					exit;
+				}
+			}
+			//# Edit Image Optimisation
+
+			//# Edit Lazy Loading
+			if ( isset( $_POST['submit'] ) &&
+				 isset( $_GET['action'] ) &&
+				 'update-lazy-loading-settings' == $_GET['action'] ) {
+				check_admin_referer( 'lazy-loading-update' );
+
+				if ( 'Save Changes' === $_POST['submit'] ) {
+					$saving_opt = array();
+					if ( isset( $_POST['lazy-loading'] ) ) {
+						foreach ( $_POST['lazy-loading'] as $image_opt_setting ) {
+							$saving_opt[ $image_opt_setting ] = true;
+						}
+					}
+
+					Urlslab_Media_Offloader_Widget::update_option_lazy_loading( $saving_opt );
+
+
+					wp_safe_redirect(
+						$this->menu_page(
+							'media-offloader',
+							array(
+								'status' => 'success',
+								'urlslab-message' => 'Lazy Load settings was saved successfully',
+							),
+							$_GET['sub-tab'] ?? ''
+						)
+					);
+					exit;
+				}
+			}
+			//# Edit Lazy Loading
 
 		}
 
@@ -329,7 +453,7 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 	}
 
 	public function load_page() {
-		require URLSLAB_PLUGIN_DIR . 'admin/partials/urlslab-admin-media-offloader.php';
+		require URLSLAB_PLUGIN_DIR . 'admin/templates/page/urlslab-admin-media-offloader.php';
 	}
 
 	public function get_active_page_tab(): string {
@@ -357,219 +481,215 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 	}
 
 	public function render_settings() {
+		$current_default_driver = get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_NEW_FILE_DRIVER );
+		$settings = array(
+			new Urlslab_Setting_Switch(
+				'offload-opt[]',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND,
+				'Enable/Disable offloading of WordPress media attachments in the back-end',
+				'Offload WordPress media on background',
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND )
+			),
+			new Urlslab_Setting_Switch(
+				'offload-opt[]',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_SAVE_EXTERNAL,
+				'Offload media from external urls, found on pages of your domain with the current driver',
+				'Offload External media found in page',
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_SAVE_EXTERNAL, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_SAVE_EXTERNAL )
+			),
+			new Urlslab_Setting_Switch(
+				'offload-opt[]',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_SAVE_INTERNAL,
+				'Offload media from internal urls, found on pages of your domain with the current driver',
+				'Offload Internal media found in page',
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_SAVE_INTERNAL, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_SAVE_INTERNAL )
+			),
+			new Urlslab_Setting_Option(
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER,
+				array(
+					array(
+						'value' => Urlslab_Driver::DRIVER_DB,
+						'is_selected' => Urlslab_Driver::DRIVER_DB == $current_default_driver,
+						'option_name' => 'Database Driver',
+					),
+					array(
+						'value' => Urlslab_Driver::DRIVER_LOCAL_FILE,
+						'is_selected' => Urlslab_Driver::DRIVER_LOCAL_FILE == $current_default_driver,
+						'option_name' => 'Local File Driver',
+					),
+					array(
+						'value' => Urlslab_Driver::DRIVER_S3,
+						'is_selected' => Urlslab_Driver::DRIVER_S3 == $current_default_driver,
+						'option_name' => 'S3 Driver',
+					),
+				),
+				'Current default driver to use for offloading the media',
+				'Default Driver'
+			),
+			new Urlslab_Setting_Switch(
+				'offload-opt[]',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_S3,
+				'Transfer all Media stored in S3 object storage to current default driver',
+				'Transfer media from S3 to default driver on background',
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_S3, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_S3 )
+			),
+			new Urlslab_Setting_Switch(
+				'offload-opt[]',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_DB,
+				'Transfer all Media stored in database to current default driver',
+				'Transfer media from database to default driver on background',
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_DB, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB )
+			),
+			new Urlslab_Setting_Switch(
+				'offload-opt[]',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES,
+				'Transfer all Media stored in Local File Storage to current default driver',
+				'Transfer media from local file system to default driver on background',
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_LOCAL_FILES )
+			),
+		);
 		?>
 		<form method="post" action="<?php echo esc_url( $this->menu_page( 'media-offloader', 'action=update-settings', 1 ) ); ?>">
 			<?php wp_nonce_field( 'offloader-update' ); ?>
-			<div class="urlslab-setting-item">
-				<div>
-					<h4>Offload WordPress media on background</h4>
-				</div>
-				<div>
-					<p>
-					<div class="urlslab-switch">
-						<input class="urlslab-switch-input"
-							   type="checkbox"
-							   id="attachment-import"
-							   name="offload-opt[]"
-							   value="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ); ?>"
-							<?php echo get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ) ? 'checked' : ''; ?>>
-						<label for="attachment-import" class="urlslab-switch-label">switch</label>
-					</div>
-					</p>
-					<span class="urlslab-info">
-						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
-							 alt="info"
-							 width="10px">
-						Enable/Disable offloading of WordPress media attachments in the back-end
-						</span>
-				</div>
-			</div>
-			<div class="urlslab-setting-item">
-				<div>
-					<h4>Offload External media found in page</h4>
-				</div>
-				<div>
-					<p>
-					<div class="urlslab-switch">
-						<input class="urlslab-switch-input"
-							   type="checkbox"
-							   id="external-resources"
-							   name="offload-opt[]"
-							   value="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_SAVE_EXTERNAL ); ?>"
-							<?php echo get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_SAVE_EXTERNAL, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_SAVE_EXTERNAL ) ? 'checked' : ''; ?>>
-						<label for="external-resources" class="urlslab-switch-label">switch</label>
-					</div>
-					</p>
-					<span class="urlslab-info">
-						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
-							 alt="info"
-							 width="10px">
-						Offload media from external urls, found on pages of your domain with the current driver
-						</span>
-				</div>
-			</div>
-			<div class="urlslab-setting-item">
-				<div>
-					<h4>Offload Internal media found in page</h4>
-				</div>
-				<div>
-					<p>
-					<div class="urlslab-switch">
-						<input class="urlslab-switch-input"
-							   type="checkbox"
-							   id="internal-resources"
-							   name="offload-opt[]"
-							   value="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_SAVE_INTERNAL ); ?>"
-							<?php echo get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_SAVE_INTERNAL, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_SAVE_INTERNAL ) ? 'checked' : ''; ?>>
-						<label for="internal-resources" class="urlslab-switch-label">switch</label>
-					</div>
-					</p>
-					<span class="urlslab-info">
-						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
-							 alt="info"
-							 width="10px">
-						Offload media from internal urls, found on pages of your domain with the current driver
-						</span>
-				</div>
-			</div>
-			<div class="urlslab-setting-item">
-				<div>
-					<h4>Default Driver</h4>
-				</div>
-				<div>
-					<p>
-						<?php $current_default_driver = get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_NEW_FILE_DRIVER ); ?>
-						<select name="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ); ?>"
-								id="default-file-driver">
-							<?php $db_driver_selected = Urlslab_Driver::DRIVER_DB == $current_default_driver; ?>
-							<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_DB ); ?>"
-								<?php
-								if ( $db_driver_selected ) {
-									echo ' selected';
-								}
-								?>
-							>Database Driver
-							</option>
-							<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_LOCAL_FILE ); ?>"
-								<?php
-								$local_file_selected = Urlslab_Driver::DRIVER_LOCAL_FILE == $current_default_driver;
-								if ( $local_file_selected ) {
-									echo ' selected';
-								}
-								?>
-							>Local File Driver
-							</option>
-							<option value="<?php echo esc_attr( Urlslab_Driver::DRIVER_S3 ); ?>"
-								<?php
-								$s3_selected = Urlslab_Driver::DRIVER_S3 == $current_default_driver;
-								if ( $s3_selected ) {
-									echo ' selected';
-								}
-								?>
-							>S3 Driver
-							</option>
-						</select>
-					</p>
-					<span class="urlslab-info">
-						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
-							 alt="info"
-							 width="10px">
-						Current default driver to use for offloading the media
-						</span>
-				</div>
-			</div>
-			<div class="urlslab-setting-item">
-				<div>
-					<h4>Transfer media from S3 to default driver on background</h4>
-				</div>
-				<div>
-					<p>
-					<div class="urlslab-switch">
-						<input class="urlslab-switch-input"
-							   type="checkbox"
-							   id="transfer-s3"
-							   name="offload-opt[]"
-							   value="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ); ?>"
-							<?php echo get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_S3, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_S3 ) ? 'checked' : ''; ?>>
-						<label for="transfer-s3" class="urlslab-switch-label">switch</label>
-					</div>
-					</p>
-					<span class="urlslab-info">
-						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
-							 alt="info"
-							 width="10px">
-						Transfer all Media stored in S3 object storage to current default driver
-						</span>
-				</div>
-			</div>
-			<div class="urlslab-setting-item">
-				<div>
-					<h4>Transfer media from database to default driver on background</h4>
-				</div>
-				<div>
-					<p>
-					<div class="urlslab-switch">
-						<input class="urlslab-switch-input"
-							   type="checkbox"
-							   id="transfer-db"
-							   name="offload-opt[]"
-							   value="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ); ?>"
-							<?php echo get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_DB, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB ) ? 'checked' : ''; ?>>
-						<label for="transfer-db" class="urlslab-switch-label">switch</label>
-					</div>
-					</p>
-					<span class="urlslab-info">
-						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
-							 alt="info"
-							 width="10px">
-						Transfer all Media stored in database to current default driver
-						</span>
-				</div>
-			</div>
-			<div class="urlslab-setting-item">
-				<div>
-					<h4>Transfer media from local file system to default driver on background</h4>
-				</div>
-				<div>
-					<p>
-					<div class="urlslab-switch">
-						<input class="urlslab-switch-input"
-							   type="checkbox"
-							   id="transfer-local-file"
-							   name="offload-opt[]"
-							   value="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ); ?>"
-							<?php echo get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_LOCAL_FILES ) ? 'checked' : ''; ?>>
-						<label for="transfer-local-file" class="urlslab-switch-label">switch</label>
-					</div>
-					</p>
-					<span class="urlslab-info">
-						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
-							 alt="info"
-							 width="10px">
-						Transfer all Media stored in Local File Storage to current default driver
-						</span>
-				</div>
-			</div>
-			<div class="urlslab-setting-item">
-				<div>
-					<h4>content hook priority</h4>
-				</div>
-				<div>
-					<p>
-						<input id="prio"
-							   name="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ); ?>"
-							   value="<?php echo esc_attr( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_MANIPULATION_PRIORITY ) ); ?>"
-							   type="number"
-						>
-					</p>
-					<span class="urlslab-info">
-						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
-							 alt="info"
-							 width="10px">
-						The priority which specifies in which order the widget should work. the higher, the priority more Media would be saved.
-						</span>
-				</div>
-			</div>
+			<?php
+			foreach ( $settings as $setting ) {
+				$setting->render_setting();
+			}
+			?>
+			<p>
+				<input
+						type="submit"
+						name="submit"
+						id="save-sub-widget"
+						class="urlslab-btn-primary"
+						value="Save Changes">
+			</p>
+		</form>
+		<?php
+	}
+
+	public function render_image_optimisation_settings() {
+		$conversion_webp = get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_WEBP_TYPES_TO_CONVERT, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT );
+		$setting_conversion_webp = array();
+		foreach ( Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT as $type_to_conv ) {
+			$setting_conversion_webp[ $type_to_conv ] = in_array( $type_to_conv, $conversion_webp );
+		}
+
+		$conversion_avif = get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_TYPES_TO_CONVERT, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT );
+		$setting_conversion_avif = array();
+		foreach ( Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT as $type_to_conv ) {
+			$setting_conversion_avif[ $type_to_conv ] = in_array( $type_to_conv, $conversion_avif );
+		}
+
+		$settings = array(
+			new Urlslab_Setting_Switch(
+				'image-opt[]',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE,
+				'Generate the Webp version of your images and add it as alternative and let browsers choose which one to use',
+				'Generate Webp Images',
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, false )
+			),
+			new Urlslab_Setting_Switch(
+				'webp-conversion-types[]',
+				$setting_conversion_webp,
+				'Select to convert which file type to Webp',
+				'Convert filetypes to Webp',
+				false
+			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY,
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_WEPB_QUALITY ),
+				'The Quality of Webp image. the less the quality, the faster is the image loading time; number between 0 and 100',
+				'Webp Conversion Quality',
+				'Number between 0 and 100'
+			),
+			new Urlslab_Setting_Switch(
+				'image-opt[]',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE,
+				'Generate the Avif version of your images and add it as alternative and let browsers choose which one to use',
+				'Generate Avif Images',
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE, false )
+			),
+			new Urlslab_Setting_Switch(
+				'avif-conversion-types[]',
+				$setting_conversion_avif,
+				'Select to convert which file type to avif',
+				'Convert filetypes to Avif',
+				false
+			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY,
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_AVIF_QUALITY ),
+				'The Quality of Avif image. the less the quality, the faster is the image loading time; number between 0 and 100',
+				'Avif Conversion Quality',
+				'Number between 0 and 100'
+			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED,
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_AVIF_SPEED ),
+				'The speed of Avif conversion. An integer between 0 (slowest) and 6 (fastest)',
+				'Avif conversion speed',
+				'Number between 0 and 10'
+			),
+		);
+
+		?>
+		<form method="post" action="<?php echo esc_url( $this->menu_page( 'media-offloader', 'action=update-image-optimisation-settings', 3 ) ); ?>">
+			<?php wp_nonce_field( 'image-conversion-update' ); ?>
+			<h3>Image Conversion</h3>
+			<?php
+			foreach ( $settings as $setting ) {
+				$setting->render_setting();
+			}
+			?>
+			<p>
+				<input
+						type="submit"
+						name="submit"
+						id="save-sub-widget"
+						class="urlslab-btn-primary"
+						value="Save Changes">
+			</p>
+		</form>
+		<?php
+	}
+
+	public function render_lazy_loading_settings() {
+		$settings = array(
+			new Urlslab_Setting_Switch(
+				'lazy-loading[]',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_IMG_LAZY_LOADING,
+				'Enable/Disable lazy loading for Images in your pages',
+				'Image Lazy Loading',
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMG_LAZY_LOADING, false )
+			),
+			new Urlslab_Setting_Switch(
+				'lazy-loading[]',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_VIDEO_LAZY_LOADING,
+				'Enable/Disable lazy loading for Videos in your pages',
+				'Video Lazy Loading',
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_VIDEO_LAZY_LOADING, false )
+			),
+			new Urlslab_Setting_Switch(
+				'lazy-loading[]',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_YOUTUBE_LAZY_LOADING,
+				'Enable/Disable lazy loading for Youtube Videos in your pages',
+				'Video Lazy Loading',
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_YOUTUBE_LAZY_LOADING, false )
+			),
+		);
+		?>
+		<form method="post" action="<?php echo esc_url( $this->menu_page( 'media-offloader', 'action=update-lazy-loading-settings', 4 ) ); ?>">
+			<?php wp_nonce_field( 'lazy-loading-update' ); ?>
+			<h3>Image Conversion</h3>
+			<?php
+			foreach ( $settings as $setting ) {
+				$setting->render_setting();
+			}
+			?>
 			<p>
 				<input
 						type="submit"
@@ -583,129 +703,83 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 	}
 
 	public function render_driver_settings() {
+		//# Access Key Settings
+		$access_key_setting = null;
+		$access_key = get_option( Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY, '' );
+		if ( empty( $access_key ) ) {
+			$access_key_setting = new Urlslab_Setting_Input(
+				'text',
+				Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY,
+				'',
+				'',
+				'AWS S3 Access Key',
+				'AWS S3 Access Key...'
+			);
+		} else {
+			$access_key_setting = new Urlslab_Setting_Disabled(
+				urlslab_masked_info( $access_key ),
+				'',
+				'AWS S3 Access Key'
+			);
+		}
+
+		//# Secret Key Settings
+		$secret_key_settings = null;
+		$secret_key = get_option( Urlslab_Driver_S3::SETTING_NAME_S3_SECRET, '' );
+		if ( empty( $access_key ) ) {
+			$secret_key_settings = new Urlslab_Setting_Input(
+				'text',
+				Urlslab_Driver_S3::SETTING_NAME_S3_SECRET,
+				'',
+				'',
+				'AWS S3 Secret Key',
+				'AWS S3 Secret Key...'
+			);
+		} else {
+			$secret_key_settings = new Urlslab_Setting_Disabled(
+				urlslab_masked_info( $secret_key ),
+				'',
+				'AWS S3 Secret Key'
+			);
+		}
+
+		$settings = array(
+			$access_key_setting,
+			$secret_key_settings,
+			new Urlslab_Setting_Input(
+				'text',
+				Urlslab_Driver_S3::SETTING_NAME_S3_REGION,
+				get_option( Urlslab_Driver_S3::SETTING_NAME_S3_REGION, '' ),
+				'',
+				'AWS S3 Region',
+				'AWS S3 Region...'
+			),
+			new Urlslab_Setting_Input(
+				'text',
+				Urlslab_Driver_S3::SETTING_NAME_S3_BUCKET,
+				get_option( Urlslab_Driver_S3::SETTING_NAME_S3_BUCKET, '' ),
+				'',
+				'AWS S3 Bucket',
+				'AWS S3 Bucket...'
+			),
+			new Urlslab_Setting_Input(
+				'text',
+				Urlslab_Driver_S3::SETTING_NAME_S3_URL_PREFIX,
+				get_option( Urlslab_Driver_S3::SETTING_NAME_S3_URL_PREFIX, '' ),
+				'URL prefix for offloaded media, so that it can be used with CDN. Leave empty if CDN is not configured.',
+				'AWS S3 Url Prefix',
+				'https://cdn.yourdomain.com/'
+			),
+		);
 		?>
 		<form method="post" action="<?php echo esc_url( $this->menu_page( 'media-offloader', 'action=update-s3-settings', 2 ) ); ?>">
 			<?php wp_nonce_field( 's3-update' ); ?>
 			<h3>S3 Driver Settings</h3>
-			<div class="urlslab-setting-item">
-				<div>
-					<h4>
-						AWS S3 Access Key
-					</h4>
-				</div>
-				<div>
-					<p>
-						<?php
-						$access_key = get_option( Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY, '' );
-						if ( ! empty( $access_key ) ) {
-							$value = urlslab_masked_info( $access_key );
-							?>
-							<span id="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY ); ?>">
-								<?php echo esc_html( $value ); ?>
-								</span>
-							<?php
-						} else {
-							?>
-							<input id="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY ); ?>"
-								   name="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY ); ?>"
-								   value=""
-								   placeholder="AWS S3 Access Key..."
-								   type="text"
-							>
-							<?php
-						}
-						?>
-					</p>
-				</div>
-			</div>
-			<div class="urlslab-setting-item">
-				<div>
-					<h4>
-						AWS S3 Secret Key
-					</h4>
-				</div>
-				<div>
-					<p>
-						<?php
-						$secret_key = get_option( Urlslab_Driver_S3::SETTING_NAME_S3_SECRET, '' );
-						if ( ! empty( $secret_key ) ) {
-							$value = urlslab_masked_info( $secret_key );
-							?>
-							<span id="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_SECRET ); ?>">
-								<?php echo esc_html( $value ); ?>
-								</span>
-							<?php
-						} else {
-							?>
-							<input id="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_SECRET ); ?>"
-								   name="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_SECRET ); ?>"
-								   value=""
-								   placeholder="AWS S3 Secret Key..."
-								   type="text"
-							>
-							<?php
-						}
-						?>
-					</p>
-				</div>
-			</div>
-			<div class="urlslab-setting-item">
-				<div>
-					<h4>
-						AWS S3 Region
-					</h4>
-				</div>
-				<div>
-					<p>
-						<input id="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_REGION ); ?>"
-							   name="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_REGION ); ?>"
-							   value="<?php echo esc_attr( get_option( Urlslab_Driver_S3::SETTING_NAME_S3_REGION, '' ) ); ?>"
-							   placeholder="AWS S3 Region..."
-							   type="text"
-						>
-					</p>
-				</div>
-			</div>
-			<div class="urlslab-setting-item">
-				<div>
-					<h4>
-						AWS S3 Bucket
-					</h4>
-				</div>
-				<div>
-					<p>
-						<input id="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_BUCKET ); ?>"
-							   name="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_BUCKET ); ?>"
-							   value="<?php echo esc_attr( get_option( Urlslab_Driver_S3::SETTING_NAME_S3_BUCKET, '' ) ); ?>"
-							   placeholder="AWS S3 Bucket..."
-							   type="text"
-						>
-					</p>
-				</div>
-			</div>
-			<div class="urlslab-setting-item">
-				<div>
-					<h4>
-						AWS S3 Url Prefix
-					</h4>
-				</div>
-				<div>
-					<p>
-						<input id="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_URL_PREFIX ); ?>"
-							   name="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_URL_PREFIX ); ?>"
-							   value="<?php echo esc_attr( get_option( Urlslab_Driver_S3::SETTING_NAME_S3_URL_PREFIX, '' ) ); ?>"
-							   placeholder="https://cdn.yourdomain.com/"
-							   type="text"
-						>
-					</p>
-					<span class="urlslab-info">
-						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
-							 alt="info"
-							 width="10px">
-						URL prefix for offloaded media, so that it can be used with CDN. Leave empty if CDN is not configured.
-					</span>
-				</div>
-			</div>
+			<?php
+			foreach ( $settings as $setting ) {
+				$setting->render_setting();
+			}
+			?>
 			<?php if ( empty( $secret_key ) && empty( $access_key ) ) { ?>
 				<p>
 					<input
@@ -722,7 +796,7 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 							name="submit"
 							id="save-sub-widget"
 							class="urlslab-btn-primary"
-							value="Save changes">
+							value="Save Changes">
 
 					<input
 							type="submit"

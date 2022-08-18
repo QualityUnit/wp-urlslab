@@ -8,10 +8,7 @@ function get_action() {
 	return $current_action;
 }
 
-function urlslab_admin_menu_page_url( $menu_slug = '' ): string {
-	if ( empty( $menu_slug ) ) {
-		$menu_slug = URLSLAB_PLUGIN_DIR . '/admin/partials/urlslab-admin-display.php';
-	}
+function urlslab_admin_menu_page_url( $menu_slug ): string {
 	return admin_url() . 'admin.php?page=' . urlencode( $menu_slug );
 }
 

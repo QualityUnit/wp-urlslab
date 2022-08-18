@@ -36,20 +36,9 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	}
 
 	public function init_widget( Urlslab_Loader $loader ) {
-		$loader->add_action( 'wp_head', $this, 'hook_callback_widget_start', -10000 );
-		$loader->add_action( 'wp_head', $this, 'hook_callback_widget_end', 100000 );
+		$loader->add_action( 'urlslab_head_content', $this, 'theContentHook' );
 	}
 
-	public function hook_callback_widget_start() {
-		ob_start();
-	}
-
-	public function hook_callback_widget_end() {
-		$content = ob_get_contents();
-		ob_end_clean();
-		$og_meta_tag = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-meta-tag' );
-		echo $og_meta_tag->theContentHook( $content ); // phpcs:ignore
-	}
 
 	/**
 	 * @return string
@@ -79,24 +68,12 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 		return $this->landing_page_link;
 	}
 
-	public function theContentHook( $content) {
-		if (!strlen( trim( $content ) )) {
-			return $content;    //nothing to process
-		}
-
-		$document = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
-		$document->encoding = get_bloginfo( 'charset' );
-		$document->strictErrorChecking = false;
-		$libxml_previous_state = libxml_use_internal_errors( true );
+	public function theContentHook( DOMDocument $document ) {
 		try {
-			$document->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', get_bloginfo( 'charset' ) ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
 			$head_tag = $document->getElementsByTagName( 'head' )[0];
 			if (empty( $head_tag ) || !is_object( $head_tag )) {
-				return $content;
+				return;
 			}
-
-			libxml_clear_errors();
-			libxml_use_internal_errors( $libxml_previous_state );
 
 			$xpath = new DOMXPath( $document );
 			$meta_description = $xpath->query( "//meta[@name='description']" );
@@ -182,14 +159,14 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 						}
 					}
 					// meta og image generation
-					return $document->saveHTML();
+					return;
 				}
 			}
 
-			return $content;
+			return;
 
 		} catch (Exception $e) {
-			return $content . "\n" . "<!---\n Error:" . str_replace( '>', ' ', $e->getMessage() ) . "\n--->";
+			return;
 		}
 	}
 

@@ -364,8 +364,8 @@ class Urlslab_File_Data {
 
 	public function has_file_alternative() {
 		return (
-			true === get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, true ) ||
-			true === get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE, true )
+			true === get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, false ) ||
+			true === get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE, false )
 			) &&
 			self::FILE_ALTERNATIVE_AVAILABLE === $this->use_alternative;
 	}
