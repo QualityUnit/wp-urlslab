@@ -108,16 +108,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	public function init_widget( Urlslab_Loader $loader ) {
 		$loader->add_action( 'wp_handle_upload', $this, 'wp_handle_upload', 10, 1 );
-
-		$loader->add_action( 'wp_body_open', $this, 'buffer_start', PHP_INT_MIN );
-		$loader->add_action( 'wp_footer', $this, 'buffer_end', PHP_INT_MIN );
-		//      $loader->add_filter(
-		//          'the_content',
-		//          $this,
-		//          'the_content',
-		//          get_option( self::SETTING_NAME_MANIPULATION_PRIORITY, self::SETTING_DEFAULT_MANIPULATION_PRIORITY )
-		//      );
-
+		$loader->add_action( 'urlslab_content', $this, 'the_content' );
 	}
 
 	/**
@@ -150,14 +141,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	public function has_shortcode(): bool {
 		return false;
-	}
-
-	function buffer_start() {
-		ob_start( array( $this, 'the_content' ), 0, PHP_OUTPUT_HANDLER_FLUSHABLE | PHP_OUTPUT_HANDLER_REMOVABLE );
-	}
-
-	function buffer_end() {
-		ob_end_flush();
 	}
 
 	public function wp_handle_upload( &$file, $overrides = false, $time = null ) {
@@ -208,25 +191,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		return '';
 	}
 
-	public function the_content( $content ) {
-		if ( empty( $content ) ) {
-			return $content;    //nothing to process
-		}
-
-		$document = new DOMDocument();
-		$document->encoding = get_bloginfo( 'charset' );
-		$document->strictErrorChecking = false; // phpcs:ignore
-		$libxml_previous_state = libxml_use_internal_errors( true );
-
+	public function the_content( DOMDocument $document ) {
 		try {
-			$document->loadHTML(
-				mb_convert_encoding( $content, 'HTML-ENTITIES', 'UTF-8' ),
-				LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
-			);
-			libxml_clear_errors();
-			libxml_use_internal_errors( $libxml_previous_state );
-
-
 			$found_urls = array();
 			$url_fileids = array();
 			$elements_to_process = array();
@@ -306,12 +272,9 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				$this->update_last_seen_date( array_keys( $found_urls ) );
 			}
 
-
 			$this->process_lazy_loading( $document );
-
-			return $document->saveHTML();
 		} catch ( Exception $e ) {
-			return $content . "\n" . "<!---\n Error:" . esc_html( $e->getMessage() ) . "\n--->";
+			//TODO log error
 		}
 	}
 
@@ -322,8 +285,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	 * @return bool
 	 */
 	private function has_parent_node( DOMElement $dom_element, $tag_name ): bool {
-		if ( $dom_element->parentNode ) {
-			if ( $dom_element->parentNode->tagName == $tag_name ) {
+		if ( property_exists( $dom_element, 'parentNode' ) ) {
+			if ( property_exists( $dom_element->parentNode, 'tagName' ) && $dom_element->parentNode->tagName == $tag_name ) {
 				return true;
 			}
 			return 'DOMElement' == get_class( $dom_element->parentNode ) && $this->has_parent_node( $dom_element->parentNode, $tag_name );
@@ -776,7 +739,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	private function picture_has_source_for_type( DOMElement $picture_element, $filetype, $media = false ): bool {
 		foreach ( $picture_element->childNodes as $node ) {
-			if ( 'source' == $node->tagName && $node->getAttribute( 'type' ) == $filetype && ( false === $media || $node->getAttribute( 'media' ) === $media ) ) {
+			if ( property_exists( $node, 'tagName' ) && 'source' == $node->tagName && $node->getAttribute( 'type' ) == $filetype && ( false === $media || $node->getAttribute( 'media' ) === $media ) ) {
 				return true;
 			}
 		}

@@ -35,11 +35,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	public function init_widget( Urlslab_Loader $loader ) {
-		$loader->add_filter( 'the_content', $this, 'hook_callback', 12 );
-	}
-
-	public function hook_callback( $content ) {
-		return $this->theContentHook( $content );
+		$loader->add_action( 'urlslab_content', $this, 'theContentHook', 12 );
 	}
 
 	/**
@@ -70,20 +66,8 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		return $this->landing_page_link;
 	}
 
-	public function theContentHook( $content ) {
-		if ( trim( $content ) === '' ) {
-			return $content;    //nothing to process
-		}
-
-		$document = new DOMDocument();
-		$document->encoding = get_bloginfo( 'charset' );
-		$document->strictErrorChecking = false;
-		$libxml_previous_state = libxml_use_internal_errors( true );
+	public function theContentHook( DOMDocument $document ) {
 		try {
-			$document->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', 'UTF-8' ) );
-			libxml_clear_errors();
-			libxml_use_internal_errors( $libxml_previous_state );
-
 			$elements = $document->getElementsByTagName( 'a' );
 
 			$link_elements = array();
@@ -149,10 +133,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 					}
 				}
 			}
-
-			return $document->saveHTML();
 		} catch ( Exception $e ) {
-			return $content . "\n" . "<!---\n Error:" . str_replace( '>', ' ', $e->getMessage() ) . "\n--->";
 		}
 	}
 

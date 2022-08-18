@@ -21,11 +21,7 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	}
 
 	public function init_widget( Urlslab_Loader $loader ) {
-		$loader->add_filter( 'the_content', $this, 'hook_callback', 13 );
-	}
-
-	public function hook_callback( $content ) {
-		return $this->theContentHook( $content );
+		$loader->add_action( 'urlslab_content', $this, 'theContentHook', 13 );
 	}
 
 	/**
@@ -56,20 +52,8 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 		return $this->landing_page_link;
 	}
 
-	public function theContentHook( $content) {
-		if (trim( $content ) === '') {
-			return $content;    //nothing to process
-		}
-
-		$document = new DOMDocument();
-		$document->encoding = get_bloginfo( 'charset' );
-		$document->strictErrorChecking = false; // phpcs:ignore
-		$libxml_previous_state = libxml_use_internal_errors( true );
+	public function theContentHook( DOMDocument $document) {
 		try {
-			$document->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', 'UTF-8' ) );
-			libxml_clear_errors();
-			libxml_use_internal_errors( $libxml_previous_state );
-
 			$xpath = new DOMXPath( $document );
 			$table_data = $xpath->query( "//img[not(@alt) or @alt='']|//*[starts-with(name(),'h')]" );
 			$title = get_the_title();
@@ -87,11 +71,12 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 					}
 				}
 			} else {
-				return $content;
+				return;
 			}
-			return $document->saveHTML();
+			return;
 		} catch (Exception $e) {
-			return $content . "\n" . "<!---\n Error:" . esc_html( $e->getMessage() ) . "\n--->";
+			//TODO logging errors
+			return;
 		}
 	}
 

@@ -11,7 +11,7 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 	}
 
 	public function upload_content( Urlslab_File_Data $file ) {
-		if ( strlen( $file->get_local_file() ) && file_exists( $file->get_local_file() ) ) {
+		if ( strlen( $file->get_local_file() ) && file_exists( $file->get_local_file() ) && false !== strpos( $file->get_local_file(), $upload_dir = wp_get_upload_dir() ) ) {
 			return true;    //we have local file on disk already, no need to save it to storage
 		}
 		return parent::upload_content( $file );
@@ -29,6 +29,7 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 
 		global $wpdb;
 		$new_file = $dir . $file_obj->get_filename();
+
 		if ( file_exists( $new_file ) ) {
 			//# synchronising DB with file data
 			$wpdb->update( URLSLAB_FILES_TABLE, array( 'local_file' => $new_file ), array( 'fileid' => $file_obj->get_fileid() ) );
