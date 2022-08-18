@@ -2,7 +2,7 @@
 ?>
 
 <div class="urlslab-wrap">
-	<?php require plugin_dir_path( __FILE__ ) . 'urlslab-admin-header.php'; ?>
+	<?php require URLSLAB_PLUGIN_DIR . '/admin/templates/partials/urlslab-admin-header.php'; ?>
 	<section class="urlslab-content-container">
 		<div class="urlslab-card-container urlslab-container-shadow col-12">
 			<div class="urlslab-card-header">
@@ -62,7 +62,7 @@
 			<div class="urlslab-card-header">
 				<h3><?php echo esc_html( $widget->get_widget_title() ); ?></h3>
 				<?php
-				require plugin_dir_path( __FILE__ ) . 'urlslab-admin-activation-card-header.php';
+				require URLSLAB_PLUGIN_DIR . '/admin/templates/partials/urlslab-admin-activation-card-header.php';
 				?>
 			</div>
 			<div class="urlslab-card-content">

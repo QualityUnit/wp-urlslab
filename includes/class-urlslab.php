@@ -185,10 +185,41 @@ class Urlslab {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-urlslab-public.php';
 
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
+
+		//services
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-api.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-api.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-screenshot-api.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-user-management-api.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/urlslab-api-model.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-batch-request.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-url-data-response.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-error-response.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-keyword-data.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-api-key.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-data-fetcher.php';
+
+		//additional
+		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/helpers/urlslab-helpers.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/helpers/class-urlslab-status.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
+
+		//widgets
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-screenshot-widget.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-related-resources-widget.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-media-offloader-widget.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-link-enhancer.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-keywords-links.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-image-alt-text.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-meta-tag.php';
+
+
+		//menu pages
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-page-factory.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-api.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-admin-page.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-admin-subpage.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-dashboard-page.php';
@@ -202,54 +233,12 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-keyword-linking-subpage.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-link-management-subpage.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-ui-elements-page.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/helpers/class-urlslab-status.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-screenshot-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-related-resources-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-media-offloader-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-link-enhancer.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-keywords-links.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-image-alt-text.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-meta-tag.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-screenshot-api.php';
-		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/tables/class-urlslab-screenshot-table.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-api-key.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-user-management-api.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/helpers/urlslab-helpers.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-data-fetcher.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-api.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/urlslab-api-model.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-batch-request.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-url-data-response.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-error-response.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-keyword-data.php';
+
+		//tables
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/tables/class-urlslab-keyword-link-table.php';
+		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/tables/class-urlslab-screenshot-table.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/tables/class-urlslab-offloader-table.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/tables/class-urlslab-related-resources-widget-table.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-data-fetcher.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
 
 
 		$this->loader = new Urlslab_Loader();

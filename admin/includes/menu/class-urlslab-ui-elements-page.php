@@ -45,7 +45,7 @@ class Urlslab_UI_Elements_Page extends Urlslab_Admin_Page {
 	}
 
 	public function load_page() {
-		require URLSLAB_PLUGIN_DIR . 'admin/partials/urlslab-admin-ui-elements.php';
+		require URLSLAB_PLUGIN_DIR . 'admin/templates/page/urlslab-admin-ui-elements.php';
 	}
 
 	public function get_active_page_tab(): string {

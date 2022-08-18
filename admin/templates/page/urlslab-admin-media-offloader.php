@@ -1,7 +1,7 @@
 <?php
 ?>
 <div class="urlslab-wrap">
-	<?php require plugin_dir_path( __FILE__ ) . 'urlslab-admin-header.php'; ?>
+	<?php require URLSLAB_PLUGIN_DIR . '/admin/templates/partials/urlslab-admin-header.php'; ?>
 	<section class="urlslab-content-container">
 		<?php
 		$user = Urlslab_User_Widget::get_instance();
@@ -40,7 +40,7 @@
 						<h3>How it Works?</h3>
 						<?php
 						$widget = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-media-offloader' );
-						require plugin_dir_path( __FILE__ ) . 'urlslab-admin-activation-card-header.php';
+						require URLSLAB_PLUGIN_DIR . '/admin/templates/partials/urlslab-admin-activation-card-header.php';
 						?>
 					</div>
 					Offload different resources in your page either to Database or file system or S3.

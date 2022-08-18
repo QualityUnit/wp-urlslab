@@ -1,7 +1,7 @@
 <?php
 ?>
 <div class="urlslab-wrap">
-	<?php require plugin_dir_path( __FILE__ ) . 'urlslab-admin-header.php'; ?>
+	<?php require URLSLAB_PLUGIN_DIR . '/admin/templates/partials/urlslab-admin-header.php'; ?>
 	<section class="urlslab-content-container">
 		<?php
 		$page_data = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-header-seo' );
@@ -23,7 +23,7 @@
 					<h3>How it Works?</h3>
 					<?php
 					$widget = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-meta-tag' );
-					require plugin_dir_path( __FILE__ ) . 'urlslab-admin-activation-card-header.php';
+					require URLSLAB_PLUGIN_DIR . '/admin/templates/partials/urlslab-admin-activation-card-header.php';
 					?>
 				</div>
 				<p>Generate Meta tags automatically from the content summary of your pages. Activate the plugin and sit

@@ -63,7 +63,7 @@ class Urlslab_Link_Building_Page extends Urlslab_Admin_Page {
 	}
 
 	public function load_page() {
-		require URLSLAB_PLUGIN_DIR . 'admin/partials/urlslab-admin-link-building.php';
+		require URLSLAB_PLUGIN_DIR . 'admin/templates/page/urlslab-admin-link-building.php';
 	}
 
 	public function get_page_tabs(): array {
