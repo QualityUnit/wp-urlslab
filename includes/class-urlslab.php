@@ -200,6 +200,13 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-api-key.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-data-fetcher.php';
 
+		//settings
+		require_once URLSLAB_PLUGIN_DIR . '/admin/templates/settings/class-urlslab-admin-setting-element.php';
+		require_once URLSLAB_PLUGIN_DIR . '/admin/templates/settings/class-urlslab-setting-disabled.php';
+		require_once URLSLAB_PLUGIN_DIR . '/admin/templates/settings/class-urlslab-setting-input.php';
+		require_once URLSLAB_PLUGIN_DIR . '/admin/templates/settings/class-urlslab-setting-switch.php';
+		require_once URLSLAB_PLUGIN_DIR . '/admin/templates/settings/class-urlslab-setting-option.php';
+
 		//additional
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/helpers/urlslab-helpers.php';

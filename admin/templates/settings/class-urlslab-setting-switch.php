@@ -1,0 +1,52 @@
+<?php
+
+class Urlslab_Setting_Switch implements Urlslab_Admin_Setting_Element {
+	private string $input_name;
+	private string $input_value;
+	private string $input_desc;
+	private string $setting_headline;
+	private bool $is_checked;
+
+	public function __construct(
+		string $input_name,
+		string $input_value,
+		string $input_desc,
+		string $setting_headline,
+		bool $is_checked
+	) {
+		$this->input_name       = $input_name;
+		$this->input_value      = $input_value;
+		$this->input_desc       = $input_desc;
+		$this->setting_headline = $setting_headline;
+		$this->is_checked = $is_checked;
+	}
+
+	public function render_setting() {
+		?>
+		<div class="urlslab-setting-item">
+			<div>
+				<h4><?php echo esc_html( $this->setting_headline ); ?></h4>
+			</div>
+			<div>
+				<p>
+				<div class="urlslab-switch">
+					<input class="urlslab-switch-input"
+						   type="checkbox"
+						   id="<?php echo esc_attr( $this->input_value ); ?>"
+						   name="<?php echo esc_attr( $this->input_name ); ?>"
+						   value="<?php echo esc_attr( $this->input_value ); ?>"
+						<?php echo $this->is_checked ? 'checked' : ''; ?>>
+					<label for="<?php echo esc_attr( $this->input_value ); ?>" class="urlslab-switch-label">switch</label>
+				</div>
+				</p>
+				<span class="urlslab-info">
+						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
+							 alt="info"
+							 width="10px">
+						<?php echo esc_html( $this->input_desc ); ?>
+						</span>
+			</div>
+		</div>
+		<?php
+	}
+}
