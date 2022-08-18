@@ -104,6 +104,136 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 			}
 			//# Edit AWS settings
 
+			//# Edit Image Optimisation
+			if ( isset( $_POST['submit'] ) &&
+				 isset( $_GET['action'] ) &&
+				 'update-image-optimisation-settings' == $_GET['action'] ) {
+				check_admin_referer( 'image-conversion-update' );
+
+				if ( isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ] ) &&
+					 ( 0 > $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ] ||
+					 100 < $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ] ) ) {
+					wp_safe_redirect(
+						$this->menu_page(
+							'media-offloader',
+							array(
+								'status' => 'failure',
+								'urlslab-message' => 'webp quality should be a number between 0 and 100',
+							),
+							$_GET['sub-tab'] ?? ''
+						)
+					);
+					exit;
+				}
+
+				if ( isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ] ) &&
+					 ( 0 > $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ] ||
+					   100 < $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ] ) ) {
+					wp_safe_redirect(
+						$this->menu_page(
+							'media-offloader',
+							array(
+								'status' => 'failure',
+								'urlslab-message' => 'Avif quality should be a number between 0 and 100',
+							),
+							$_GET['sub-tab'] ?? ''
+						)
+					);
+					exit;
+				}
+
+				if ( isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ] ) &&
+					 ( 0 > $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ] ||
+					   10 < $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ] ) ) {
+					wp_safe_redirect(
+						$this->menu_page(
+							'media-offloader',
+							array(
+								'status' => 'failure',
+								'urlslab-message' => 'Avif Speed should be a number between 0 and 10',
+							),
+							$_GET['sub-tab'] ?? ''
+						)
+					);
+					exit;
+				}
+
+
+				if ( 'Save Changes' === $_POST['submit'] &&
+					 isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ] ) &&
+					 isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ] ) &&
+					 isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ] ) ) {
+					$saving_opt = array();
+					if ( isset( $_POST['image-opt'] ) ) {
+						foreach ( $_POST['image-opt'] as $image_opt_setting ) {
+							$saving_opt[ $image_opt_setting ] = true;
+						}
+					}
+					if ( isset( $_POST['webp-conversion-types'] ) ) {
+						$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEBP_TYPES_TO_CONVERT ] =
+							$_POST['webp-conversion-types'];
+					}
+					if ( isset( $_POST['avif-conversion-types'] ) ) {
+						$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_TYPES_TO_CONVERT ] =
+							$_POST['avif-conversion-types'];
+					}
+					$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ] =
+						$_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ];
+					$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ] =
+						$_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ];
+					$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ] =
+						$_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ];
+
+					Urlslab_Media_Offloader_Widget::update_option_image_optimisation( $saving_opt );
+
+
+					wp_safe_redirect(
+						$this->menu_page(
+							'media-offloader',
+							array(
+								'status' => 'success',
+								'urlslab-message' => 'Image Conversion settings was saved successfully',
+							),
+							$_GET['sub-tab'] ?? ''
+						)
+					);
+					exit;
+				}
+			}
+			//# Edit Image Optimisation
+
+			//# Edit Lazy Loading
+			if ( isset( $_POST['submit'] ) &&
+				 isset( $_GET['action'] ) &&
+				 'update-lazy-loading-settings' == $_GET['action'] ) {
+				check_admin_referer( 'lazy-loading-update' );
+
+				if ( 'Save Changes' === $_POST['submit'] ) {
+					$saving_opt = array();
+					if ( isset( $_POST['lazy-loading'] ) ) {
+						foreach ( $_POST['lazy-loading'] as $image_opt_setting ) {
+							$saving_opt[ $image_opt_setting ] = true;
+						}
+					}
+
+					Urlslab_Media_Offloader_Widget::update_option_lazy_loading( $saving_opt );
+
+
+					wp_safe_redirect(
+						$this->menu_page(
+							'media-offloader',
+							array(
+								'status' => 'success',
+								'urlslab-message' => 'Lazy Load settings was saved successfully',
+							),
+							$_GET['sub-tab'] ?? ''
+						)
+					);
+					exit;
+				}
+			}
+			//# Edit Lazy Loading
+
 		}
 
 		//# Transfer single file
@@ -507,7 +637,7 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 				Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY,
 				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_AVIF_QUALITY ),
 				'The Quality of Avif image. the less the quality, the faster is the image loading time; number between 0 and 100',
-				'Webp Conversion Quality',
+				'Avif Conversion Quality',
 				'Number between 0 and 100'
 			),
 			new Urlslab_Setting_Input(
@@ -521,7 +651,7 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 		);
 
 		?>
-		<form method="post" action="<?php echo esc_url( $this->menu_page( 'media-offloader', 'action=update-image-optimisation-settings', 2 ) ); ?>">
+		<form method="post" action="<?php echo esc_url( $this->menu_page( 'media-offloader', 'action=update-image-optimisation-settings', 3 ) ); ?>">
 			<?php wp_nonce_field( 'image-conversion-update' ); ?>
 			<h3>Image Conversion</h3>
 			<?php
@@ -566,7 +696,7 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 			),
 		);
 		?>
-		<form method="post" action="<?php echo esc_url( $this->menu_page( 'media-offloader', 'action=update-lazy-loading-settings', 3 ) ); ?>">
+		<form method="post" action="<?php echo esc_url( $this->menu_page( 'media-offloader', 'action=update-lazy-loading-settings', 4 ) ); ?>">
 			<?php wp_nonce_field( 'lazy-loading-update' ); ?>
 			<h3>Image Conversion</h3>
 			<?php

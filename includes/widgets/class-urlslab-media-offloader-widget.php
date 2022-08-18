@@ -61,7 +61,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	// quality: The accepted values are 0 (worst quality) through 100 (highest quality). Any integers out of this range are clamped to the 0-100 range.
 	public const SETTING_DEFAULT_AVIF_QUALITY = 80;
-	public const SETTING_NAME_AVIF_SPEED = 'urlslab_avif_quality';
+	public const SETTING_NAME_AVIF_SPEED = 'urlslab_avif_speed';
 
 	// speed: Default value 6. Accepted values are int the range of 0 (slowest) through 10 (fastest). Integers outside the 0-10 range are clamped.
 	public const SETTING_DEFAULT_AVIF_SPEED = 5;
@@ -683,8 +683,125 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				false
 			);
 		}
+	}
 
+	public static function update_option_image_optimisation( array $new_settings ) {
+		if ( isset( $new_settings[ self::SETTING_NAME_USE_WEBP_ALTERNATIVE ] ) &&
+			 ! empty( $new_settings[ self::SETTING_NAME_USE_WEBP_ALTERNATIVE ] ) ) {
+			update_option(
+				self::SETTING_NAME_USE_WEBP_ALTERNATIVE,
+				$new_settings[ self::SETTING_NAME_USE_WEBP_ALTERNATIVE ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_USE_WEBP_ALTERNATIVE,
+				false
+			);
+		}
 
+		if ( isset( $new_settings[ self::SETTING_NAME_WEBP_TYPES_TO_CONVERT ] ) &&
+			 ! empty( $new_settings[ self::SETTING_NAME_WEBP_TYPES_TO_CONVERT ] ) ) {
+			update_option(
+				self::SETTING_NAME_WEBP_TYPES_TO_CONVERT,
+				$new_settings[ self::SETTING_NAME_WEBP_TYPES_TO_CONVERT ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_WEBP_TYPES_TO_CONVERT,
+				array()
+			);
+		}
+
+		if ( isset( $new_settings[ self::SETTING_NAME_USE_AVIF_ALTERNATIVE ] ) &&
+			 ! empty( $new_settings[ self::SETTING_NAME_USE_AVIF_ALTERNATIVE ] ) ) {
+			update_option(
+				self::SETTING_NAME_USE_AVIF_ALTERNATIVE,
+				$new_settings[ self::SETTING_NAME_USE_AVIF_ALTERNATIVE ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_USE_AVIF_ALTERNATIVE,
+				false
+			);
+		}
+
+		if ( isset( $new_settings[ self::SETTING_NAME_AVIF_TYPES_TO_CONVERT ] ) &&
+			 ! empty( $new_settings[ self::SETTING_NAME_AVIF_TYPES_TO_CONVERT ] ) ) {
+			update_option(
+				self::SETTING_NAME_AVIF_TYPES_TO_CONVERT,
+				$new_settings[ self::SETTING_NAME_AVIF_TYPES_TO_CONVERT ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_AVIF_TYPES_TO_CONVERT,
+				array()
+			);
+		}
+
+		if ( isset( $new_settings[ self::SETTING_NAME_WEPB_QUALITY ] ) &&
+			 ! empty( $new_settings[ self::SETTING_NAME_WEPB_QUALITY ] ) ) {
+			update_option(
+				self::SETTING_NAME_WEPB_QUALITY,
+				$new_settings[ self::SETTING_NAME_WEPB_QUALITY ]
+			);
+		}
+
+		if ( isset( $new_settings[ self::SETTING_NAME_AVIF_QUALITY ] ) &&
+			 ! empty( $new_settings[ self::SETTING_NAME_AVIF_QUALITY ] ) ) {
+			update_option(
+				self::SETTING_NAME_AVIF_QUALITY,
+				$new_settings[ self::SETTING_NAME_AVIF_QUALITY ]
+			);
+		}
+
+		if ( isset( $new_settings[ self::SETTING_NAME_AVIF_SPEED ] ) &&
+			 ! empty( $new_settings[ self::SETTING_NAME_AVIF_SPEED ] ) ) {
+			update_option(
+				self::SETTING_NAME_AVIF_SPEED,
+				$new_settings[ self::SETTING_NAME_AVIF_SPEED ]
+			);
+		}
+	}
+
+	public static function update_option_lazy_loading( array $new_settings ) {
+		if ( isset( $new_settings[ self::SETTING_NAME_IMG_LAZY_LOADING ] ) &&
+			 ! empty( $new_settings[ self::SETTING_NAME_IMG_LAZY_LOADING ] ) ) {
+			update_option(
+				self::SETTING_NAME_IMG_LAZY_LOADING,
+				$new_settings[ self::SETTING_NAME_IMG_LAZY_LOADING ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_IMG_LAZY_LOADING,
+				false
+			);
+		}
+
+		if ( isset( $new_settings[ self::SETTING_NAME_VIDEO_LAZY_LOADING ] ) &&
+			 ! empty( $new_settings[ self::SETTING_NAME_VIDEO_LAZY_LOADING ] ) ) {
+			update_option(
+				self::SETTING_NAME_VIDEO_LAZY_LOADING,
+				$new_settings[ self::SETTING_NAME_VIDEO_LAZY_LOADING ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_VIDEO_LAZY_LOADING,
+				false
+			);
+		}
+
+		if ( isset( $new_settings[ self::SETTING_NAME_YOUTUBE_LAZY_LOADING ] ) &&
+			 ! empty( $new_settings[ self::SETTING_NAME_YOUTUBE_LAZY_LOADING ] ) ) {
+			update_option(
+				self::SETTING_NAME_YOUTUBE_LAZY_LOADING,
+				$new_settings[ self::SETTING_NAME_YOUTUBE_LAZY_LOADING ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_YOUTUBE_LAZY_LOADING,
+				false
+			);
+		}
 	}
 
 	/**
