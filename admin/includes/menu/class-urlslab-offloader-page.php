@@ -497,129 +497,83 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 	}
 
 	public function render_driver_settings() {
+		//# Access Key Settings
+		$access_key_setting = null;
+		$access_key = get_option( Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY, '' );
+		if ( empty( $access_key ) ) {
+			$access_key_setting = new Urlslab_Setting_Input(
+				'text',
+				Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY,
+				'',
+				'',
+				'AWS S3 Access Key',
+				'AWS S3 Access Key...'
+			);
+		} else {
+			$access_key_setting = new Urlslab_Setting_Disabled(
+				urlslab_masked_info( $access_key ),
+				'',
+				'AWS S3 Access Key'
+			);
+		}
+
+		//# Secret Key Settings
+		$secret_key_settings = null;
+		$secret_key = get_option( Urlslab_Driver_S3::SETTING_NAME_S3_SECRET, '' );
+		if ( empty( $access_key ) ) {
+			$secret_key_settings = new Urlslab_Setting_Input(
+				'text',
+				Urlslab_Driver_S3::SETTING_NAME_S3_SECRET,
+				'',
+				'',
+				'AWS S3 Secret Key',
+				'AWS S3 Secret Key...'
+			);
+		} else {
+			$secret_key_settings = new Urlslab_Setting_Disabled(
+				urlslab_masked_info( $secret_key ),
+				'',
+				'AWS S3 Secret Key'
+			);
+		}
+
+		$settings = array(
+			$access_key_setting,
+			$secret_key_settings,
+			new Urlslab_Setting_Input(
+				'text',
+				Urlslab_Driver_S3::SETTING_NAME_S3_REGION,
+				get_option( Urlslab_Driver_S3::SETTING_NAME_S3_REGION, '' ),
+				'',
+				'AWS S3 Region',
+				'AWS S3 Region...'
+			),
+			new Urlslab_Setting_Input(
+				'text',
+				Urlslab_Driver_S3::SETTING_NAME_S3_BUCKET,
+				get_option( Urlslab_Driver_S3::SETTING_NAME_S3_BUCKET, '' ),
+				'',
+				'AWS S3 Bucket',
+				'AWS S3 Bucket...'
+			),
+			new Urlslab_Setting_Input(
+				'text',
+				Urlslab_Driver_S3::SETTING_NAME_S3_URL_PREFIX,
+				get_option( Urlslab_Driver_S3::SETTING_NAME_S3_URL_PREFIX, '' ),
+				'URL prefix for offloaded media, so that it can be used with CDN. Leave empty if CDN is not configured.',
+				'AWS S3 Url Prefix',
+				'https://cdn.yourdomain.com/'
+			),
+		);
 		?>
 		<form method="post" action="<?php echo esc_url( $this->menu_page( 'media-offloader', 'action=update-s3-settings', 2 ) ); ?>">
 			<?php wp_nonce_field( 's3-update' ); ?>
 			<h3>S3 Driver Settings</h3>
-			<div class="urlslab-setting-item">
-				<div>
-					<h4>
-						AWS S3 Access Key
-					</h4>
-				</div>
-				<div>
-					<p>
-						<?php
-						$access_key = get_option( Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY, '' );
-						if ( ! empty( $access_key ) ) {
-							$value = urlslab_masked_info( $access_key );
-							?>
-							<span id="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY ); ?>">
-								<?php echo esc_html( $value ); ?>
-								</span>
-							<?php
-						} else {
-							?>
-							<input id="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY ); ?>"
-								   name="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY ); ?>"
-								   value=""
-								   placeholder="AWS S3 Access Key..."
-								   type="text"
-							>
-							<?php
-						}
-						?>
-					</p>
-				</div>
-			</div>
-			<div class="urlslab-setting-item">
-				<div>
-					<h4>
-						AWS S3 Secret Key
-					</h4>
-				</div>
-				<div>
-					<p>
-						<?php
-						$secret_key = get_option( Urlslab_Driver_S3::SETTING_NAME_S3_SECRET, '' );
-						if ( ! empty( $secret_key ) ) {
-							$value = urlslab_masked_info( $secret_key );
-							?>
-							<span id="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_SECRET ); ?>">
-								<?php echo esc_html( $value ); ?>
-								</span>
-							<?php
-						} else {
-							?>
-							<input id="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_SECRET ); ?>"
-								   name="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_SECRET ); ?>"
-								   value=""
-								   placeholder="AWS S3 Secret Key..."
-								   type="text"
-							>
-							<?php
-						}
-						?>
-					</p>
-				</div>
-			</div>
-			<div class="urlslab-setting-item">
-				<div>
-					<h4>
-						AWS S3 Region
-					</h4>
-				</div>
-				<div>
-					<p>
-						<input id="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_REGION ); ?>"
-							   name="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_REGION ); ?>"
-							   value="<?php echo esc_attr( get_option( Urlslab_Driver_S3::SETTING_NAME_S3_REGION, '' ) ); ?>"
-							   placeholder="AWS S3 Region..."
-							   type="text"
-						>
-					</p>
-				</div>
-			</div>
-			<div class="urlslab-setting-item">
-				<div>
-					<h4>
-						AWS S3 Bucket
-					</h4>
-				</div>
-				<div>
-					<p>
-						<input id="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_BUCKET ); ?>"
-							   name="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_BUCKET ); ?>"
-							   value="<?php echo esc_attr( get_option( Urlslab_Driver_S3::SETTING_NAME_S3_BUCKET, '' ) ); ?>"
-							   placeholder="AWS S3 Bucket..."
-							   type="text"
-						>
-					</p>
-				</div>
-			</div>
-			<div class="urlslab-setting-item">
-				<div>
-					<h4>
-						AWS S3 Url Prefix
-					</h4>
-				</div>
-				<div>
-					<p>
-						<input id="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_URL_PREFIX ); ?>"
-							   name="<?php echo esc_attr( Urlslab_Driver_S3::SETTING_NAME_S3_URL_PREFIX ); ?>"
-							   value="<?php echo esc_attr( get_option( Urlslab_Driver_S3::SETTING_NAME_S3_URL_PREFIX, '' ) ); ?>"
-							   placeholder="https://cdn.yourdomain.com/"
-							   type="text"
-						>
-					</p>
-					<span class="urlslab-info">
-						<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/information.png' ) . 'information.png' ); ?>"
-							 alt="info"
-							 width="10px">
-						URL prefix for offloaded media, so that it can be used with CDN. Leave empty if CDN is not configured.
-					</span>
-				</div>
-			</div>
+			<?php
+			foreach ( $settings as $setting ) {
+				$setting->render_setting();
+			}
+			?>
 			<?php if ( empty( $secret_key ) && empty( $access_key ) ) { ?>
 				<p>
 					<input
@@ -636,7 +590,7 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 							name="submit"
 							id="save-sub-widget"
 							class="urlslab-btn-primary"
-							value="Save changes">
+							value="Save Changes">
 
 					<input
 							type="submit"
