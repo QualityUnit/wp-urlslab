@@ -5,8 +5,10 @@ class Urlslab_Convert_Images_Cron {
 	const MAX_RUN_TIME = 10;
 
 	public function urlslab_cron_exec() {
-		$this->start_time = time();
-		while ( time() - $this->start_time < self::MAX_RUN_TIME && $this->convert_next_file() ) {
+		if ( ( function_exists( 'imagewebp' ) && get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, false ) ) || ( function_exists( 'imageavif' ) && get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE, false ) ) ) {
+			$this->start_time = time();
+			while ( time() - $this->start_time < self::MAX_RUN_TIME && $this->convert_next_file() ) {
+			}
 		}
 	}
 
@@ -17,6 +19,8 @@ class Urlslab_Convert_Images_Cron {
 			get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_WEBP_TYPES_TO_CONVERT, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT ),
 			get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_TYPES_TO_CONVERT, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT )
 		);
+		$values = array_unique( $values );
+
 		if ( empty( $values ) ) {
 			return false;
 		}
@@ -105,7 +109,7 @@ class Urlslab_Convert_Images_Cron {
 		//WEBP file
 		if (
 			function_exists( 'imagewebp' ) &&
-			true === get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, true )
+			true === get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, false )
 		) {
 
 			$webp_name = wp_tempnam();
@@ -166,7 +170,7 @@ class Urlslab_Convert_Images_Cron {
 		//AVIF file
 		if (
 			function_exists( 'imageavif' ) &&
-			true === get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE, true )
+			true === get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE, false )
 		) {
 
 			$avif_filename = wp_tempnam();

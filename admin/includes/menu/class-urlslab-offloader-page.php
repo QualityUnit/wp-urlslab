@@ -30,12 +30,6 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 						$_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ];
 				}
 
-				if ( isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ] ) &&
-					 ! empty( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ] ) ) {
-					$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ] =
-						$_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY ];
-				}
-
 				if ( isset( $_POST['offload-opt'] ) ) {
 					foreach ( $_POST['offload-opt'] as $offload_opt ) {
 						$saving_opt[ $offload_opt ] = true;
@@ -552,14 +546,6 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 				'Transfer all Media stored in Local File Storage to current default driver',
 				'Transfer media from local file system to default driver on background',
 				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_LOCAL_FILES )
-			),
-			new Urlslab_Setting_Input(
-				'number',
-				Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY,
-				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_MANIPULATION_PRIORITY, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_MANIPULATION_PRIORITY ),
-				'The priority which specifies in which order the widget should work. the higher, the priority more Media would be saved.',
-				'content hook priority',
-				'Content Hook Priority'
 			),
 		);
 		?>

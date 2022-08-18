@@ -14,11 +14,8 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-file-data.ph
 class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	private string $widget_slug;
-
 	private string $widget_title;
-
 	private string $widget_description;
-
 	private string $landing_page_link;
 
 	public const SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND = 'urlslab_import_post_attachements';
@@ -33,10 +30,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public const SETTING_DEFAULT_SAVE_INTERNAL = false;
 
 	public const SETTING_NAME_NEW_FILE_DRIVER = 'urlslab_file_driver';
-	public const SETTING_DEFAULT_NEW_FILE_DRIVER = Urlslab_Driver::DRIVER_DB;
-
-	public const SETTING_NAME_MANIPULATION_PRIORITY = 'urlslab_manipulation_priority';
-	public const SETTING_DEFAULT_MANIPULATION_PRIORITY = 1000;
+	public const SETTING_DEFAULT_NEW_FILE_DRIVER = Urlslab_Driver::DRIVER_LOCAL_FILE;
 
 	//TRANSFER SETTINGS
 	public const SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES = 'urlslab_transfer_all_data_from_local_files';
@@ -579,14 +573,25 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	public static function add_option() {
-		add_option( self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND, self::SETTING_DEFAULT_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND, '', true );
+		add_option( self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND, self::SETTING_DEFAULT_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND, '', false );
 		add_option( self::SETTING_NAME_SAVE_EXTERNAL, self::SETTING_DEFAULT_SAVE_EXTERNAL, '', true );
 		add_option( self::SETTING_NAME_SAVE_INTERNAL, self::SETTING_DEFAULT_SAVE_INTERNAL, '', true );
 		add_option( self::SETTING_NAME_NEW_FILE_DRIVER, self::SETTING_DEFAULT_NEW_FILE_DRIVER, '', true );
-		add_option( self::SETTING_NAME_MANIPULATION_PRIORITY, self::SETTING_DEFAULT_MANIPULATION_PRIORITY, '', true );
 		add_option( self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES, self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_LOCAL_FILES, '', true );
 		add_option( self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3, self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_S3, '', true );
 		add_option( self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB, self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB, '', true );
+
+		add_option( self::SETTING_NAME_USE_AVIF_ALTERNATIVE, false, '', true );
+		add_option( self::SETTING_NAME_USE_WEBP_ALTERNATIVE, false, '', true );
+		add_option( self::SETTING_NAME_WEPB_QUALITY, self::SETTING_DEFAULT_WEPB_QUALITY, '', true );
+		add_option( self::SETTING_NAME_AVIF_QUALITY, self::SETTING_DEFAULT_AVIF_QUALITY, '', true );
+		add_option( self::SETTING_NAME_AVIF_SPEED, self::SETTING_DEFAULT_AVIF_SPEED, '', true );
+		add_option( self::SETTING_NAME_AVIF_TYPES_TO_CONVERT, self::SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT, '', true );
+		add_option( self::SETTING_NAME_WEBP_TYPES_TO_CONVERT, self::SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT, '', true );
+
+		add_option( self::SETTING_NAME_IMG_LAZY_LOADING, false, '', true );
+		add_option( self::SETTING_NAME_VIDEO_LAZY_LOADING, false, '', true );
+		add_option( self::SETTING_NAME_YOUTUBE_LAZY_LOADING, false, '', true );
 	}
 
 	public static function update_settings( array $new_settings ) {
@@ -634,14 +639,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			update_option(
 				self::SETTING_NAME_NEW_FILE_DRIVER,
 				$new_settings[ self::SETTING_NAME_NEW_FILE_DRIVER ]
-			);
-		}
-
-		if ( isset( $new_settings[ self::SETTING_NAME_MANIPULATION_PRIORITY ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_MANIPULATION_PRIORITY ] ) ) {
-			update_option(
-				self::SETTING_NAME_MANIPULATION_PRIORITY,
-				$new_settings[ self::SETTING_NAME_MANIPULATION_PRIORITY ]
 			);
 		}
 
