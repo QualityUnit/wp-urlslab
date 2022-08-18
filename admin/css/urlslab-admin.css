@@ -463,6 +463,12 @@ figure {
 	transition: left 0.25s ease;
 }
 
+.urlslab-multi-switch {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
 .urlslab-switch-input:checked + .urlslab-switch-label::before {
 	background-color: #0aa8a7;
 }

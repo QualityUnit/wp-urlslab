@@ -453,31 +453,82 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 	}
 
 	public function render_image_optimisation_settings() {
+		$conversion_webp = get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_WEBP_TYPES_TO_CONVERT, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT );
+		$setting_conversion_webp = array();
+		foreach ( Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT as $type_to_conv ) {
+			$setting_conversion_webp[ $type_to_conv ] = in_array( $type_to_conv, $conversion_webp );
+		}
+
+		$conversion_avif = get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_TYPES_TO_CONVERT, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT );
+		$setting_conversion_avif = array();
+		foreach ( Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT as $type_to_conv ) {
+			$setting_conversion_avif[ $type_to_conv ] = in_array( $type_to_conv, $conversion_avif );
+		}
+
+		$settings = array(
+			new Urlslab_Setting_Switch(
+				'image-opt[]',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE,
+				'Generate the Webp version of your images and add it as alternative and let browsers choose which one to use',
+				'Generate Webp Images',
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, false )
+			),
+			new Urlslab_Setting_Switch(
+				'webp-conversion-types[]',
+				$setting_conversion_webp,
+				'Select to convert which file type to Webp',
+				'Convert filetypes to Webp',
+				false
+			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY,
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_WEPB_QUALITY ),
+				'The Quality of Webp image. the less the quality, the faster is the image loading time; number between 0 and 100',
+				'Webp Conversion Quality',
+				'Number between 0 and 100'
+			),
+			new Urlslab_Setting_Switch(
+				'image-opt[]',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE,
+				'Generate the Avif version of your images and add it as alternative and let browsers choose which one to use',
+				'Generate Avif Images',
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE, false )
+			),
+			new Urlslab_Setting_Switch(
+				'avif-conversion-types[]',
+				$setting_conversion_avif,
+				'Select to convert which file type to avif',
+				'Convert filetypes to Avif',
+				false
+			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY,
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_AVIF_QUALITY ),
+				'The Quality of Avif image. the less the quality, the faster is the image loading time; number between 0 and 100',
+				'Webp Conversion Quality',
+				'Number between 0 and 100'
+			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED,
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_AVIF_SPEED ),
+				'The speed of Avif conversion. An integer between 0 (slowest) and 6 (fastest)',
+				'Avif conversion speed',
+				'Number between 0 and 10'
+			),
+		);
 
 		?>
-		<form method="post" action="<?php echo esc_url( $this->menu_page( 'media-offloader', 'action=update-image-optimisation-settings', 0 ) ); ?>">
-			<?php wp_nonce_field( 's4-update' ); ?>
+		<form method="post" action="<?php echo esc_url( $this->menu_page( 'media-offloader', 'action=update-image-optimisation-settings', 2 ) ); ?>">
+			<?php wp_nonce_field( 'image-conversion-update' ); ?>
 			<h3>Image Conversion</h3>
-			<div class="urlslab-setting-item">
-				<div>
-					<h4>
-						Generate Webp images
-					</h4>
-				</div>
-				<div>
-					<p>
-					<div class="urlslab-switch">
-						<input class="urlslab-switch-input"
-							   type="checkbox"
-							   id="use-webp"
-							   name="img-opt[]"
-							   value="<?php echo esc_attr( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE ); ?>"
-								<?php echo get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, false ) ? 'checked' : ''; ?>>
-						<label for="use-webp" class="urlslab-switch-label">switch</label>
-					</div>
-					</p>
-				</div>
-			</div>
+			<?php
+			foreach ( $settings as $setting ) {
+				$setting->render_setting();
+			}
+			?>
 			<p>
 				<input
 						type="submit"
@@ -488,12 +539,51 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 			</p>
 		</form>
 		<?php
-
-
 	}
 
 	public function render_lazy_loading_settings() {
-
+		$settings = array(
+			new Urlslab_Setting_Switch(
+				'lazy-loading[]',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_IMG_LAZY_LOADING,
+				'Enable/Disable lazy loading for Images in your pages',
+				'Image Lazy Loading',
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMG_LAZY_LOADING, false )
+			),
+			new Urlslab_Setting_Switch(
+				'lazy-loading[]',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_VIDEO_LAZY_LOADING,
+				'Enable/Disable lazy loading for Videos in your pages',
+				'Video Lazy Loading',
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_VIDEO_LAZY_LOADING, false )
+			),
+			new Urlslab_Setting_Switch(
+				'lazy-loading[]',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_YOUTUBE_LAZY_LOADING,
+				'Enable/Disable lazy loading for Youtube Videos in your pages',
+				'Video Lazy Loading',
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_YOUTUBE_LAZY_LOADING, false )
+			),
+		);
+		?>
+		<form method="post" action="<?php echo esc_url( $this->menu_page( 'media-offloader', 'action=update-lazy-loading-settings', 3 ) ); ?>">
+			<?php wp_nonce_field( 'lazy-loading-update' ); ?>
+			<h3>Image Conversion</h3>
+			<?php
+			foreach ( $settings as $setting ) {
+				$setting->render_setting();
+			}
+			?>
+			<p>
+				<input
+						type="submit"
+						name="submit"
+						id="save-sub-widget"
+						class="urlslab-btn-primary"
+						value="Save Changes">
+			</p>
+		</form>
+		<?php
 	}
 
 	public function render_driver_settings() {
