@@ -333,6 +333,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-cron.php';
 		$cron_job_offload = new Urlslab_Offload_Cron();
 		$this->loader->add_action( 'urlslab_cron_hook', $cron_job_offload, 'urlslab_cron_exec', 10, 0 );
+		$this->loader->add_action( 'admin_init', $cron_job_offload, 'urlslab_cron_exec', 10, 0 );
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-convert-images-cron.php';
 		$cron_job_convert = new Urlslab_Convert_Images_Cron();
