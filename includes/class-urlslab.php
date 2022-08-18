@@ -300,9 +300,8 @@ class Urlslab {
 		$this->loader->add_action( 'template_redirect', $plugin_public, 'downoad_offloaded_file' );
 
 		//head content
-		//TODO we need to debug why parsing of head HTML is not working
-		//$this->loader->add_action( 'wp_head', $this, 'buffer_head_start', -100000 );
-		//$this->loader->add_action( 'wp_head', $this, 'buffer_end', 100000 );
+		$this->loader->add_action( 'get_template_part_templates/head', $this, 'buffer_head_start', -100000 );
+		$this->loader->add_action( 'get_template_part_lib/pagesources', $this, 'buffer_end', 100000 );
 
 		//body content
 		$this->loader->add_action( 'wp_body_open', $this, 'buffer_content_start' );
@@ -312,7 +311,7 @@ class Urlslab {
 	}
 
 	public function buffer_head_start() {
-		ob_start( array( $this, 'urlslab_head_content' ), 0, PHP_OUTPUT_HANDLER_FLUSHABLE | PHP_OUTPUT_HANDLER_REMOVABLE );
+		ob_start( array( $this, 'urlslab_head_content' ), 0 );
 	}
 
 	public function buffer_content_start() {
@@ -327,7 +326,7 @@ class Urlslab {
 		if ( empty( $content ) ) {
 			return $content;    //nothing to process
 		}
-
+		//TODO we need to debug why parsing of head HTML is not working
 		$document = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
 		$document->encoding = get_bloginfo( 'charset' );
 		$document->strictErrorChecking = false; // phpcs:ignore
