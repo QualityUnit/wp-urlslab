@@ -13,7 +13,7 @@ if ( isset( $_GET['tab'] ) and 'related-resource' == $_GET['tab'] ) {
 				<h3>How it Works?</h3>
 				<?php
 				$widget = Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-related-resources' );
-				require plugin_dir_path( __FILE__ ) . 'urlslab-admin-activation-card-header.php';
+				require URLSLAB_PLUGIN_DIR . '/admin/templates/partials/urlslab-admin-activation-card-header.php';
 				?>
 			</div>
 			<p>Generate Nice Related resources in your pages to increase your Internal Link building.</p>

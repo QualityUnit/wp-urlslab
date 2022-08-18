@@ -118,7 +118,7 @@ class Urlslab_Integrations_Page extends Urlslab_Admin_Page {
 	}
 
 	public function load_page() {
-		require URLSLAB_PLUGIN_DIR . 'admin/partials/urlslab-admin-integrations.php';
+		require URLSLAB_PLUGIN_DIR . 'admin/templates/page/urlslab-admin-integrations.php';
 	}
 
 	/**

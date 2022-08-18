@@ -128,7 +128,7 @@ class Urlslab_Admin {
 	}
 
 	public function get_urlslab_admin_menu_hook_suffix(): string {
-		return 'toplevel_page_urlslab/admin/partials/urlslab-admin-display';
+		return 'toplevel_page_urlslab/admin/templates/urlslab-admin-display';
 	}
 
 	public function urlslab_admin_menu() {
