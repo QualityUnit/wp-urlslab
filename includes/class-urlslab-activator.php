@@ -56,26 +56,15 @@ class Urlslab_Activator {
 		global $wpdb;
 		$version = get_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 
-		if ( version_compare( $version, '1.2.0', '<' ) ) {
-			$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_KEYWORDS_TABLE ); // phpcs:ignore
-			//create table again
-			self::init_keyword_widget_tables();
-			update_option( URLSLAB_VERSION_SETTING, '1.2.0' );
-		}
-
-		if ( version_compare( $version, '1.3.0', '<' ) ) {
-			$wpdb->query('ALTER TABLE ' . URLSLAB_FILES_TABLE . ' ADD COLUMN last_seen DATETIME NULL;'); // phpcs:ignore
-		}
-
-		if ( version_compare( $version, '1.4.0', '<' ) ) {
-			$wpdb->query('ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN visibility char(1) NOT NULL DEFAULT 'V';"); // phpcs:ignore
-		}
-
-		if ( version_compare( $version, '1.8.0', '<' ) ) {
+		if ( version_compare( $version, '1.9.0', '<' ) ) {
+			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_KEYWORDS_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILES_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILE_ALTERNATIVES_TABLE . ';'); // phpcs:ignore
+			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_URLS_TABLE . ';'); // phpcs:ignore
 			self::init_urlslab_files();
 			self::init_urlslab_file_alternatives();
+			self::init_keyword_widget_tables();
+			self::init_urls_tables();
 		}
 
 		//all update steps done, set the current version
