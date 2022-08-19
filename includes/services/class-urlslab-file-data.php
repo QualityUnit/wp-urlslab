@@ -367,8 +367,8 @@ class Urlslab_File_Data {
 
 	public function has_file_alternative() {
 		return (
-			( false !== get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, false ) && self::FILE_ALTERNATIVE_AVAILABLE === $this->webp_alternative ) ||
-			( false !== get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE, false ) && self::FILE_ALTERNATIVE_AVAILABLE === $this->avif_alternative )
+			( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, false ) && self::FILE_ALTERNATIVE_AVAILABLE === $this->webp_alternative ) ||
+			( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE, false ) && self::FILE_ALTERNATIVE_AVAILABLE === $this->avif_alternative )
 		);
 	}
 
