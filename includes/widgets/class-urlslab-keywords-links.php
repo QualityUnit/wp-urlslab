@@ -37,13 +37,19 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 	//if page contains more links than this limit, don't try to add next links to page
 	public const SETTING_NAME_MAX_LINKS_ON_PAGE = 'urlslab_max_link_on_page';
-	public const MAX_DEFAULT_LINKS_ON_PAGE = 100;
+	public const SETTING_DEFAULT_MAX_LINKS_ON_PAGE = 100;
 
 	public const SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE = 'urlslab_max_replacements_per_page';
-	public const MAX_DEFAULT_REPLACEMENTS_PER_PAGE = 30;
+	public const SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PAGE = 30;
 
 	public const SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH = 'urlslab_max_replacements_per_paragraph';
-	public const MAX_DEFAULT_REPLACEMENTS_PER_PARAGRAPH = 2;
+	public const SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PARAGRAPH = 2;
+
+	//minimum paragraph length defines minimum size of text length, where can be placed the link
+	//in too short texts we will not try to include links
+	public const SETTING_NAME_MIN_PARAGRAPH_LENGTH = 'urlslab_min_paragraph_len';
+	public const SETTING_DEFAULT_MIN_PARAGRAPH_LENGTH = 50;
+
 
 	public function __construct() {
 		$this->widget_slug = 'urlslab-keywords-links';
@@ -86,13 +92,13 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	private function replaceKeywordWithLinks( DOMText $node, DOMDocument $document, array $keywords ) {
-		if ( $this->cnt_page_links > get_option( self::SETTING_NAME_MAX_LINKS_ON_PAGE, self::MAX_DEFAULT_LINKS_ON_PAGE ) ||
-			 $this->cnt_page_link_replacements > get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE, self::MAX_DEFAULT_REPLACEMENTS_PER_PAGE ) ||
-			 $this->cnt_paragraph_link_replacements > get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH, self::MAX_DEFAULT_REPLACEMENTS_PER_PARAGRAPH ) ) {
+		if ( $this->cnt_page_links > get_option( self::SETTING_NAME_MAX_LINKS_ON_PAGE, self::SETTING_DEFAULT_MAX_LINKS_ON_PAGE ) ||
+			 $this->cnt_page_link_replacements > get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE, self::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PAGE ) ||
+			 $this->cnt_paragraph_link_replacements > get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH, self::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PARAGRAPH ) ) {
 			return;
 		}
 
-		if ( 0 == strlen( trim( $node->nodeValue ) ) ) {
+		if ( strlen( trim( $node->nodeValue ) ) < get_option(self::SETTING_NAME_MIN_PARAGRAPH_LENGTH, self::SETTING_DEFAULT_MIN_PARAGRAPH_LENGTH)) {
 			return; //empty node
 		}
 
@@ -270,12 +276,12 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	public function theContentHook( DOMDocument $document ) {
-		$this->init_keywords_cache( strtolower( $document->saveHTML() ) );
+		$this->init_keywords_cache( strtolower( $document->textContent ) );
 		if ( count( $this->keywords_cache ) == 0 ) {
 			return;
 		}
 		try {
-			if ( $this->cnt_page_links > get_option( self::SETTING_NAME_MAX_LINKS_ON_PAGE, self::MAX_DEFAULT_LINKS_ON_PAGE ) ) {
+			if ( $this->cnt_page_links > get_option( self::SETTING_NAME_MAX_LINKS_ON_PAGE, self::SETTING_DEFAULT_MAX_LINKS_ON_PAGE ) ) {
 				return;
 			}
 			$this->findTextDOMElements( $document, $document );
@@ -344,9 +350,10 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		add_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD, self::MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD, '', true );
 		add_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL, self::MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD_URL, '', true );
 		add_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_URL, self::MAX_DEFAULT_REPLACEMENTS_PER_URL, '', true );
-		add_option( self::SETTING_NAME_MAX_LINKS_ON_PAGE, self::MAX_DEFAULT_LINKS_ON_PAGE, '', true );
-		add_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE, self::MAX_DEFAULT_REPLACEMENTS_PER_PAGE, '', true );
-		add_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH, self::MAX_DEFAULT_REPLACEMENTS_PER_PARAGRAPH, '', true );
+		add_option( self::SETTING_NAME_MAX_LINKS_ON_PAGE, self::SETTING_DEFAULT_MAX_LINKS_ON_PAGE, '', true );
+		add_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE, self::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PAGE, '', true );
+		add_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH, self::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PARAGRAPH, '', true );
+		add_option( self::SETTING_NAME_MIN_PARAGRAPH_LENGTH, self::SETTING_DEFAULT_MIN_PARAGRAPH_LENGTH, '', true );
 	}
 
 	public static function update_settings( array $new_settings ) {
@@ -395,6 +402,14 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			update_option(
 				self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH,
 				$new_settings[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH ]
+			);
+		}
+
+		if ( isset( $new_settings[ self::SETTING_NAME_MIN_PARAGRAPH_LENGTH ] ) &&
+			 ! empty( $new_settings[ self::SETTING_NAME_MIN_PARAGRAPH_LENGTH ] ) ) {
+			update_option(
+				self::SETTING_NAME_MIN_PARAGRAPH_LENGTH,
+				$new_settings[ self::SETTING_NAME_MIN_PARAGRAPH_LENGTH ]
 			);
 		}
 

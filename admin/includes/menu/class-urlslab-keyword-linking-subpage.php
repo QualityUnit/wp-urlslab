@@ -593,7 +593,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			new Urlslab_Setting_Input(
 				'number',
 				Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE,
-				get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE, Urlslab_Keywords_Links::MAX_DEFAULT_REPLACEMENTS_PER_PAGE ),
+				get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE, Urlslab_Keywords_Links::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PAGE ),
 				'the maximum number of auto links to be generated',
 				'Max Auto links in page',
 				''
@@ -601,9 +601,17 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			new Urlslab_Setting_Input(
 				'number',
 				Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH,
-				get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH, Urlslab_Keywords_Links::MAX_DEFAULT_REPLACEMENTS_PER_PARAGRAPH ),
+				get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH, Urlslab_Keywords_Links::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PARAGRAPH ),
 				'the maximum number of auto links to be created for each paragraph',
 				'Max auto links per paragraph',
+				''
+			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Keywords_Links::SETTING_NAME_MIN_PARAGRAPH_LENGTH,
+				get_option( Urlslab_Keywords_Links::SETTING_NAME_MIN_PARAGRAPH_LENGTH, Urlslab_Keywords_Links::SETTING_DEFAULT_MIN_PARAGRAPH_LENGTH ),
+				'Skip searching for keywords in paragraph shorter as defined limit',
+				'Min paragraph length [# of characters]',
 				''
 			),
 		)
