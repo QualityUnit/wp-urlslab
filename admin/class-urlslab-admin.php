@@ -83,8 +83,6 @@ class Urlslab_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->urlslab . '-jquery-modal', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css' );
-
 		wp_enqueue_style(
 			$this->urlslab,
 			plugin_dir_url( __FILE__ ) . 'css/urlslab-admin.css',
@@ -113,9 +111,6 @@ class Urlslab_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
-		wp_enqueue_script( $this->urlslab . '-jquery-modal', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js' );
-
 
 		wp_enqueue_script(
 			$this->urlslab,
