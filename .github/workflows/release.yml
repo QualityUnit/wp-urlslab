@@ -26,7 +26,7 @@ jobs:
         run: composer test
 
       - name: Remove unnecessary files
-        run: rm -rf .git .idea .github *.md *.lock .editorconfig .eslintignore .eslintrc .gitignore .stylelintrc vendor composer.json *.lock package.json phpcs.xml webpack.config.js commitlint.config.js
+        run: rm -rf .git .idea .github *.md *.lock .editorconfig .eslintignore .eslintrc .gitignore .stylelintrc composer.json *.lock package.json phpcs.xml webpack.config.js commitlint.config.js debug.log
 
       - name: Version
         id: version
@@ -46,7 +46,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          draft: true
+          draft: false
           prerelease: false
 
       - name: Upload Release Asset
