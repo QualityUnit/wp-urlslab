@@ -71,8 +71,9 @@ class Urlslab_Activator {
 			$wpdb->query('ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN visibility char(1) NOT NULL DEFAULT 'V';"); // phpcs:ignore
 		}
 
-		if ( version_compare( $version, '1.7.0', '<' ) ) {
+		if ( version_compare( $version, '1.8.0', '<' ) ) {
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILES_TABLE . ';'); // phpcs:ignore
+			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILE_ALTERNATIVES_TABLE . ';'); // phpcs:ignore
 			self::init_urlslab_files();
 			self::init_urlslab_file_alternatives();
 		}
@@ -189,7 +190,8 @@ class Urlslab_Activator {
 			filestatus char(1) NOT NULL,
 			driver char(1) NOT NULL,
 			last_seen datetime NULL,
-    		use_alternative char(1) NOT NULL DEFAULT 'N',
+    		webp_alternative char(1) NOT NULL DEFAULT 'N',
+    		avif_alternative char(1) NOT NULL DEFAULT 'N',
 			PRIMARY KEY (fileid),
 			INDEX idx_file_filter (driver, filestatus),
 			INDEX idx_file_sort (filesize)

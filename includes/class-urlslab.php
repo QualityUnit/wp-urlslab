@@ -403,9 +403,18 @@ class Urlslab {
 		$cron_job_offload = new Urlslab_Offload_Cron();
 		$this->loader->add_action( 'urlslab_cron_hook', $cron_job_offload, 'urlslab_cron_exec', 10, 0 );
 
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-convert-images-cron.php';
-		$cron_job_convert = new Urlslab_Convert_Images_Cron();
-		$this->loader->add_action( 'urlslab_cron_hook', $cron_job_convert, 'urlslab_cron_exec', 10, 0 );
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-convert-webp-images-cron.php';
+		$cron_job_webp_convert = new Urlslab_Convert_Webp_Images_Cron();
+		if ( $cron_job_webp_convert->is_format_supported() ) {
+			$this->loader->add_action( 'urlslab_cron_hook', $cron_job_webp_convert, 'cron_exec', 11, 0 );
+			$this->loader->add_action( 'admin_init', $cron_job_webp_convert, 'cron_exec', 11, 0 );
+		}
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-convert-avif-images-cron.php';
+		$cron_job_avif_convert = new Urlslab_Convert_Avif_Images_Cron();
+		if ( $cron_job_avif_convert->is_format_supported() ) {
+			$this->loader->add_action( 'urlslab_cron_hook', $cron_job_avif_convert, 'cron_exec', 11, 0 );
+			$this->loader->add_action( 'admin_init', $cron_job_avif_convert, 'cron_exec', 11, 0 );
+		}
 	}
 
 	/**

@@ -8,7 +8,7 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 
 	public function __construct() {
 		$this->menu_slug = 'urlslab-media-offloader';
-		$this->page_title = 'Media Offloader';
+		$this->page_title = 'Media Files';
 	}
 
 	public function on_page_load( string $action, string $component ) {
@@ -428,8 +428,8 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 	public function register_submenu( string $parent_slug ) {
 		$hook = add_submenu_page(
 			$parent_slug,
-			'Urlslab Media Offloader',
-			'Media Offloader',
+			'Media Files',
+			'Media Files',
 			'manage_options',
 			$this->menu_slug,
 			array( $this, 'load_page' )
@@ -443,7 +443,7 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 
 	public function get_page_tabs(): array {
 		return array(
-			'media-offloader' => 'Media Offloader',
+			'media-offloader' => 'Media Files',
 		);
 	}
 
@@ -585,7 +585,8 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 			new Urlslab_Setting_Switch(
 				'image-opt[]',
 				Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE,
-				'Generate the Webp version of your images and add it as alternative and let browsers choose which one to use',
+				( function_exists( 'imagewebp' ) ? '' : 'IMPORTANT: WEBP file format is not supported on your server. ' ) .
+					'Generate the Webp version of your images and add it as alternative and let browsers choose which one to use',
 				'Generate Webp Images',
 				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, false )
 			),
@@ -607,7 +608,8 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 			new Urlslab_Setting_Switch(
 				'image-opt[]',
 				Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE,
-				'Generate the Avif version of your images and add it as alternative and let browsers choose which one to use',
+				( function_exists( 'imageavif' ) ? '' : 'IMPORTANT: AVIF file format is not supported on your server. ' ) .
+				'Generate the Avif version of your images and let browsers to choose the most effective file format.',
 				'Generate Avif Images',
 				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE, false )
 			),
@@ -677,7 +679,7 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 				'lazy-loading[]',
 				Urlslab_Media_Offloader_Widget::SETTING_NAME_YOUTUBE_LAZY_LOADING,
 				'Enable/Disable lazy loading for Youtube Videos in your pages',
-				'Video Lazy Loading',
+				'Youtube Lazy Loading',
 				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_YOUTUBE_LAZY_LOADING, false )
 			),
 		);
