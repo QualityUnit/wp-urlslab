@@ -91,6 +91,8 @@
 	}
 
 	function createHTMLPopupUrlRelation(
+		closeIcon,
+		modalId,
 		pageParam,
 		tabParam,
 		srcUrlHash = '',
@@ -98,8 +100,13 @@
 		destUrlHash = '',
 		destUrl = '' ) {
 		return $( `
-		<div>
-			<h2>${ srcUrlHash != '' ? 'Edit Url Relation' : 'Add Url Relation' }</h2>
+		<div id="${ modalId }" class="urlslab-modal modal">
+			<div>
+				<h2>${ srcUrlHash != '' ? 'Edit Url Relation' : 'Add Url Relation' }</h2>
+				<button data-close-modal-id="${ modalId }" class="modal-close">
+					<img src="${ closeIcon }" alt="info" width="17px">
+				</button>
+			</div>
 			<form method="post" action="?page=${ pageParam }&tab=${ tabParam }&action=url-relation-edit">
 				<input type="hidden" name="srcUrlHash" value="${ srcUrlHash }">
 				<input type="hidden" name="destUrlHash" value="${ destUrlHash }">
@@ -182,26 +189,52 @@
 		} );
 		//# Keyword import
 
+		//# Related resources import
+		$( '#related-resources-import-modal' ).dialog( {
+			autoOpen: false,
+			closeOnEscape: true,
+			closeText: '',
+		} );
+		$( '#related-resources-import-btn' ).on( 'click', function() {
+			$( '#related-resources-import-modal' ).dialog( 'open' );
+		} );
+		//# Related resources import
+
 		//# Modal - Related Resource Modals
 		$( '.url-relation-edit' ).each( function() {
-			$( this ).on( 'click', function( event ) {
-				event.preventDefault();
-				this.blur();
-				const urlSrcHash = $( this ).data( 'src-url-hash' );
-				const urlSrc = $( this ).data( 'src-url' );
-				const urlDestHash = $( this ).data( 'dest-url-hash' );
-				const urlDest = $( this ).data( 'dest-url' );
-				const urlParams = new URLSearchParams( window.location.search );
-				createHTMLPopupUrlRelation( urlParams.get( 'page' ), urlParams.get( 'tab' ), urlSrcHash, urlSrc, urlDestHash, urlDest )
-					.appendTo( 'body' ).modal();
+			const closeIcon = $( this ).data( 'close-icon' );
+			const urlSrcHash = $( this ).data( 'src-url-hash' );
+			const urlSrc = $( this ).data( 'src-url' );
+			const urlDestHash = $( this ).data( 'dest-url-hash' );
+			const urlDest = $( this ).data( 'dest-url' );
+			const urlParams = new URLSearchParams( window.location.search );
+			createHTMLPopupUrlRelation( closeIcon, 'modal-rr-' + urlSrcHash + urlDestHash, urlParams.get( 'page' ), urlParams.get( 'tab' ), urlSrcHash, urlSrc, urlDestHash, urlDest )
+				.appendTo( 'body' ).dialog( {
+					autoOpen: false,
+					closeOnEscape: true,
+					closeText: '',
+				} );
+			$( this ).on( 'click', function() {
+				$( '#modal-rr-' + urlSrcHash + urlDestHash ).dialog( 'open' );
 			} );
 		} );
 
-		$( '#add-url-relation-btn' ).on( 'click', function( event ) {
-			event.preventDefault();
-			this.blur();
-			createHTMLPopupUrlRelation( urlParams.get( 'page' ), urlParams.get( 'tab' ) ).appendTo( 'body' ).modal();
-		} );
+		const relatedResourceBtn = $( '#add-url-relation-btn' );
+		if ( relatedResourceBtn.length ) {
+			const closeIcon = relatedResourceBtn.data( 'close-icon' );
+			const urlParams = new URLSearchParams( window.location.search );
+			createHTMLPopupUrlRelation( closeIcon, 'add-url-relation-modal', urlParams.get( 'page' ), urlParams.get( 'tab' ) )
+				.appendTo( 'body' ).dialog( {
+					autoOpen: false,
+					closeOnEscape: true,
+					closeText: '',
+				} );
+			relatedResourceBtn.on( 'click', function() {
+				event.preventDefault();
+				this.blur();
+				$( '#add-url-relation-modal' ).dialog( 'open' );
+			} );
+		}
 		//# Modal - Related Resource Modals
 
 		$( '.modal-close' ).each( function() {
