@@ -94,7 +94,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	 */
 	public function __construct() {
 		$this->widget_slug = 'urlslab-media-offloader';
-		$this->widget_title = 'Media Offloader';
+		$this->widget_title = 'Media Files';
 		$this->widget_description = 'Offload media files from local directory to database or S3';
 		$this->landing_page_link = 'https://www.urlslab.com';
 	}

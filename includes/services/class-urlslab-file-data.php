@@ -18,7 +18,8 @@ class Urlslab_File_Data {
 	private $local_file;
 	private $driver;
 	private $last_seen;
-	private $use_alternative;
+	private $webp_alternative;
+	private $avif_alternative;
 	private $alternatives = array();
 
 	static $mime_types = array(
@@ -239,7 +240,8 @@ class Urlslab_File_Data {
 		$this->local_file = $file['local_file'] ?? '';
 		$this->driver = $file['driver'] ?? '';
 		$this->last_seen = $file['last_seen'] ?? null;
-		$this->use_alternative = $file['use_alternative'] ?? self::FILE_ALTERNATIVE_NOT_PROCESSED;
+		$this->webp_alternative = $file['webp_alternative'] ?? self::FILE_ALTERNATIVE_NOT_PROCESSED;
+		$this->avif_alternative = $file['avif_alternative'] ?? self::FILE_ALTERNATIVE_NOT_PROCESSED;
 	}
 
 	public function as_array() {
@@ -255,7 +257,8 @@ class Urlslab_File_Data {
 			'local_file' => $this->get_local_file(),
 			'driver' => $this->get_driver(),
 			'last_seen' => $this->get_last_seen(),
-			'use_alternative' => $this->use_alternative,
+			'webp_alternative' => $this->webp_alternative,
+			'avif_alternative' => $this->avif_alternative,
 		);
 	}
 
@@ -364,20 +367,25 @@ class Urlslab_File_Data {
 
 	public function has_file_alternative() {
 		return (
-			true === get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, false ) ||
-			true === get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE, false )
-			) &&
-			self::FILE_ALTERNATIVE_AVAILABLE === $this->use_alternative;
+			( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, false ) && self::FILE_ALTERNATIVE_AVAILABLE === $this->webp_alternative ) ||
+			( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE, false ) && self::FILE_ALTERNATIVE_AVAILABLE === $this->avif_alternative )
+		);
 	}
 
-	public function get_use_alternative() {
-		return $this->use_alternative;
+	public function get_avif_alternative() {
+		return $this->avif_alternative;
 	}
+
+	public function get_webp_alternative() {
+		return $this->webp_alternative;
+	}
+
 
 	public function add_alternative( Urlslab_File_Data $alternative_file ) {
 		$this->alternatives[ $alternative_file->get_fileid() ] = $alternative_file;
 	}
 
+	//set just in runtime, no db value
 	public function get_alternatives() {
 		return $this->alternatives;
 	}
