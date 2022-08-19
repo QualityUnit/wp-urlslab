@@ -407,13 +407,11 @@ class Urlslab {
 		$cron_job_webp_convert = new Urlslab_Convert_Webp_Images_Cron();
 		if ( $cron_job_webp_convert->is_format_supported() ) {
 			$this->loader->add_action( 'urlslab_cron_hook', $cron_job_webp_convert, 'cron_exec', 11, 0 );
-			$this->loader->add_action( 'admin_init', $cron_job_webp_convert, 'cron_exec', 11, 0 );
 		}
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-convert-avif-images-cron.php';
 		$cron_job_avif_convert = new Urlslab_Convert_Avif_Images_Cron();
 		if ( $cron_job_avif_convert->is_format_supported() ) {
 			$this->loader->add_action( 'urlslab_cron_hook', $cron_job_avif_convert, 'cron_exec', 11, 0 );
-			$this->loader->add_action( 'admin_init', $cron_job_avif_convert, 'cron_exec', 11, 0 );
 		}
 	}
 
