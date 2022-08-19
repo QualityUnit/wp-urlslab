@@ -479,4 +479,32 @@ figure {
 
 /** Urlslab switch **/
 
+/** Urlslab Modal **/
+
+.d-none {
+	display: none;
+}
+
+.urlslab-modal {
+	min-width: 30rem !important;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.urlslab-modal > div:first-child {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+}
+
+.modal-close {
+	border: none;
+	background-color: transparent;
+	font-weight: bold;
+	cursor: pointer;
+	font-size: 15px;
+}
+
+/** Urlslab Modal **/
+
 /** Urlslab Content **/

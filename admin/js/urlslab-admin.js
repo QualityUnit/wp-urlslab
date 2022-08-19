@@ -29,58 +29,6 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 
-	/**
-	 * Functions
-	 *
-	 * @param  pageParam
-	 * @param  tabParam
-	 * @param  keywordHash
-	 * @param  keyword
-	 * @param  keywordLink
-	 * @param  keywordPrio
-	 * @param  keywordLang
-	 * @param  keywordFilter
-	 */
-	function createHTMLPopupKeyword(
-		pageParam,
-		tabParam,
-		keywordHash = '',
-		keyword = '',
-		keywordLink = '',
-		keywordPrio = '',
-		keywordLang = '',
-		keywordFilter = '' ) {
-		return $( `
-		<div>
-		<h2>${ keyword != '' ? `Edit ${ keyword }` : 'Add Keyword' }</h2>
-			<form method="post" action="?page=${ pageParam }&tab=${ tabParam }&action=keyword-edit">
-				<input type="hidden" name="keywordHash" value="${ keywordHash }">
-				<label for="keyword">Keyword: </label>
-				<input id="keyword" name="keyword" type="text" value="${ keyword }" placeholder="Keyword...">
-				<br class="clear"/>
-				<br class="clear"/>
-				<label for="keyword-link">Keyword Link: </label>
-				<input id="keyword-link" name="keyword-link" type="text" value="${ keywordLink }" placeholder="Keyword Link...">
-				<br class="clear"/>
-				<br class="clear"/>
-				<label for="keyword-prio">Keyword Priority: </label>
-				<input id="keyword-prio" name="keyword-prio" type="text" value="${ keywordPrio }" placeholder="Keyword Prio...">
-				<br class="clear"/>
-				<br class="clear"/>
-				<label for="keyword-lang">Keyword Lang: </label>
-				<input id="keyword-lang" name="keyword-lang" type="text" value="${ keywordLang }" placeholder="Keyword Lang...">
-				<br class="clear"/>
-				<br class="clear"/>
-				<label for="keyword-url-filter">Keyword Url Filter: </label>
-				<input id="keyword-url-filter" name="keyword-url-filter" type="text" value="${ keywordFilter }" placeholder="Keyword Url Filter...">
-				<br class="clear"/>
-				<br class="clear"/>
-				<input type="submit" name="submit" class="button" value="${ keyword != '' ? 'Edit Keyword' : 'Add Keyword' }">
-			</form>
-		</div>
-		` );
-	}
-
 	function createHTMLPopupUrlRelation(
 		pageParam,
 		tabParam,
@@ -110,39 +58,6 @@
 	/** Functions */
 
 	$( document ).ready( function() {
-		//# Modal - Keyword Modals
-		$( '.keyword-edit' ).each( function() {
-			$( this ).on( 'click', function( event ) {
-				event.preventDefault();
-				const urlParams = new URLSearchParams( window.location.search );
-				this.blur();
-				const keywordHash = $( this ).data( 'keyword-hash' );
-				const keyword = $( this ).data( 'keyword' );
-				const keywordLink = $( this ).data( 'dest-url' );
-				const keywordPrio = $( this ).data( 'prio' );
-				const keywordLang = $( this ).data( 'lang' );
-				const keywordFilter = $( this ).data( 'url-filter' );
-				createHTMLPopupKeyword(
-					urlParams.get( 'page' ),
-					urlParams.get( 'tab' ),
-					keywordHash,
-					keyword,
-					keywordLink,
-					keywordPrio,
-					keywordLang,
-					keywordFilter
-				).appendTo( 'body' ).modal();
-			} );
-		} );
-
-		$( '#add-keyword-btn' ).on( 'click', function( event ) {
-			event.preventDefault();
-			this.blur();
-			const urlParams = new URLSearchParams( window.location.search );
-			createHTMLPopupKeyword( urlParams.get( 'page' ), urlParams.get( 'tab' ) ).appendTo( 'body' ).modal();
-		} );
-		//# Modal - Keyword Modals
-
 		//# Modal - Related Resource Modals
 		$( '.url-relation-edit' ).each( function() {
 			$( this ).on( 'click', function( event ) {
@@ -164,6 +79,46 @@
 			createHTMLPopupUrlRelation( urlParams.get( 'page' ), urlParams.get( 'tab' ) ).appendTo( 'body' ).modal();
 		} );
 		//# Modal - Related Resource Modals
+
+		//# Modal
+
+		$( '.modal-close' ).each( function() {
+			const closeId = '#' + $( this ).data( 'close-modal-id' );
+			$( this ).on( 'click', function() {
+				$( closeId ).dialog( 'close' );
+			} );
+		} );
+
+		//# Keyword import
+		$( '#import-modal' ).dialog( {
+			autoOpen: false,
+			closeOnEscape: true,
+			closeText: '',
+		} );
+		$( '#import-btn' ).on( 'click', function() {
+			$( '#import-modal' ).dialog( 'open' );
+		} );
+		//# Keyword import
+
+		//# Keyword Edit
+
+		$( '.keyword-edit' ).each( function() {
+			const modalId = '#' + $( this ).data( 'modal-id' );
+			const modal = $( modalId ).dialog( {
+				autoOpen: false,
+				closeOnEscape: true,
+				closeText: '',
+			} );
+			$( this ).on( 'click', function() {
+				modal.removeClass( 'd-none' );
+				modal.addClass( 'urlslab-modal' );
+				modal.dialog( 'open' );
+			} );
+		} );
+
+		//# Keyword Edit
+
+		//# Modal
 
 		//# Vertical tab
 		const urlParams = new URLSearchParams( window.location.search );

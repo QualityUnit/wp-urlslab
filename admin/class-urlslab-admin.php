@@ -114,13 +114,10 @@ class Urlslab_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->urlslab . '-jquery-modal', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js' );
-
-
 		wp_enqueue_script(
 			$this->urlslab,
 			plugin_dir_url( __FILE__ ) . 'js/urlslab-admin.js',
-			array( 'jquery', 'jquery-ui-tabs' ),
+			array( 'jquery', 'jquery-ui-tabs', 'jquery-ui-dialog' ),
 			$this->version,
 			false
 		);
