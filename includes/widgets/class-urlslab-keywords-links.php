@@ -98,7 +98,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			return;
 		}
 
-		if ( strlen( trim( $node->nodeValue ) ) < get_option(self::SETTING_NAME_MIN_PARAGRAPH_LENGTH, self::SETTING_DEFAULT_MIN_PARAGRAPH_LENGTH)) {
+		if ( strlen( trim( $node->nodeValue ) ) < get_option( self::SETTING_NAME_MIN_PARAGRAPH_LENGTH, self::SETTING_DEFAULT_MIN_PARAGRAPH_LENGTH ) ) {
 			return; //empty node
 		}
 
