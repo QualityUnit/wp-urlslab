@@ -128,7 +128,7 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 					'local_file' => $avif_name,
 					'driver' => $file->get_driver(),
 					'webp_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_DISABLED,
-					'avif_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_AVAILABLE,
+					'avif_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_DISABLED,
 				)
 			);
 

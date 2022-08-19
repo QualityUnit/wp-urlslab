@@ -13,6 +13,8 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 	/**
 	 * @param string $search_key the searching key to search for
 	 * @param string $status_filter the filter of files for status
+	 * @param string $webp_filter the filter of files for status
+	 * @param string $avif_filter the filter of files for status
 	 * @param string $driver_filter the filter for file drivers
 	 * @param int $limit the limit of the results
 	 * @param int $offset the offset of results for pagination
@@ -22,6 +24,8 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 	private function get_offloading_files(
 		string $search_key,
 		string $status_filter,
+		string $webp_filter,
+		string $avif_filter,
 		string $driver_filter,
 		int $limit,
 		int $offset ): array {
@@ -31,36 +35,50 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 
 		/* -- Preparing your query -- */
 		$query = "SELECT * FROM $table";
+		$where = '';
 
 		/* -- Preparing the condition -- */
-		if (
-			! empty( $search_key ) ||
-			! empty( $status_filter ) ||
-			! empty( $driver_filter ) ) {
-			$query .= ' WHERE ';
-		}
+
 		if ( ! empty( $search_key ) ) {
-			$query .= 'filename LIKE %s OR url LIKE %s';
+			$where .= 'filename LIKE %s OR url LIKE %s';
 			$values[] = '%' . $search_key . '%';
 			$values[] = '%' . $search_key . '%';
 		}
 
 		if ( ! empty( $status_filter ) ) {
-			if ( ! empty( $search_key ) ) {
-				$query .= ' AND ';
+			if ( strlen( $where ) ) {
+				$where .= ' AND ';
 			}
-			$query .= 'filestatus=%s';
+			$where .= 'filestatus=%s';
 			$values[] = $status_filter;
 		}
 
-		if ( ! empty( $driver_filter ) ) {
-			if ( ! empty( $search_key ) || ! empty( $status_filter ) ) {
-				$query .= ' AND ';
+		if ( ! empty( $webp_filter ) ) {
+			if ( strlen( $where ) ) {
+				$where .= ' AND ';
 			}
-			$query .= 'driver=%s';
+			$where .= 'webp_alternative=%s';
+			$values[] = $webp_filter;
+		}
+		if ( ! empty( $avif_filter ) ) {
+			if ( strlen( $where ) ) {
+				$where .= ' AND ';
+			}
+			$where .= 'avif_alternative=%s';
+			$values[] = $avif_filter;
+		}
+
+		if ( ! empty( $driver_filter ) ) {
+			if ( strlen( $where ) ) {
+				$where .= ' AND ';
+			}
+			$where .= 'driver=%s';
 			$values[] = $driver_filter;
 		}
 
+		if ( strlen( $where ) ) {
+			$query .= ' WHERE ' . $where;
+		}
 
 		/* -- Ordering parameters -- */
 		//Parameters that are going to be used to order the result
@@ -96,27 +114,47 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 	/**
 	 * @return mixed count for pagination
 	 */
-	private function count_offloading_files( string $driver_filter = '', string $status = '' ) {
+	private function count_offloading_files( string $driver_filter = '', string $status = '', $webp_status = '', $avif_status = '' ) {
 		global $wpdb;
 		$table = URLSLAB_FILES_TABLE;
 
 		if ( empty( $driver_filter ) && empty( $status ) ) {
 			return $wpdb->get_row( "SELECT COUNT(*) AS cnt FROM $table", ARRAY_A )['cnt']; // phpcs:ignore
 		} else {
-			$query = "SELECT COUNT(*) AS cnt FROM $table WHERE ";
+			$query = "SELECT COUNT(*) AS cnt FROM $table ";
+			$where = '';
 			$values = array();
 			if ( ! empty( $driver_filter ) ) {
-				$query .= 'driver=%s';
+				$where .= 'driver=%s';
 				$values[] = $driver_filter;
 			}
 
-			if ( ! empty( $driver_filter ) && ! empty( $status ) ) {
-				$query .= ' AND ';
+			if ( ! empty( $status ) ) {
+				if ( strlen( $where ) ) {
+					$where .= ' AND ';
+				}
+				$where .= 'filestatus=%s';
+				$values[] = $status;
 			}
 
-			if ( ! empty( $status ) ) {
-				$query .= 'filestatus=%s';
-				$values[] = $status;
+			if ( ! empty( $webp_status ) ) {
+				if ( strlen( $where ) ) {
+					$where .= ' AND ';
+				}
+				$where .= 'webp_alternative=%s';
+				$values[] = $webp_status;
+			}
+
+			if ( ! empty( $avif_status ) ) {
+				if ( strlen( $where ) ) {
+					$where .= ' AND ';
+				}
+				$where .= 'avif_alternative=%s';
+				$values[] = $avif_status;
+			}
+
+			if ( strlen( $where ) ) {
+				$query .= ' WHERE ' . $where;
 			}
 
 			return $wpdb->get_row(
@@ -173,7 +211,20 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 			case 'col_file_size':
 				return (int) $item->get_filesize() / 1000 . ' KB';
 			case 'col_file_type':
-				return $item->get_filetype();
+				$value = $item->get_filetype();
+				switch ( $item->get_webp_alternative() ) {
+					case Urlslab_File_Data::FILE_ALTERNATIVE_AVAILABLE:
+						$value .= '<br/>WEBP alternative';
+						break;
+					default:
+				}
+				switch ( $item->get_avif_alternative() ) {
+					case Urlslab_File_Data::FILE_ALTERNATIVE_AVAILABLE:
+						$value .= '<br/>AVIF alternative';
+						break;
+					default:
+				}
+				return $value;
 			case 'col_width':
 				return $item->get_width();
 			case 'col_height':
@@ -292,6 +343,8 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 	protected function get_views() {
 		$views = array();
 		$current_status = ( ! empty( $_REQUEST['status_filter'] ) ? $_REQUEST['status_filter'] : '' );
+		$current_webp = ( ! empty( $_REQUEST['webp_filter'] ) ? $_REQUEST['webp_filter'] : '' );
+		$current_avif = ( ! empty( $_REQUEST['avif_filter'] ) ? $_REQUEST['avif_filter'] : '' );
 		$current_driver = ( ! empty( $_REQUEST['driver_filter'] ) ? $_REQUEST['driver_filter'] : '' );
 
 		//# All case
@@ -351,6 +404,24 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 		$views['new_status'] = "<a href='$new_status_url' $class>New <span class='count'>($new_status_count)</span></a>";
 		//# status new case
 
+		//# webp case
+		$class = ( Urlslab_File_Data::FILE_ALTERNATIVE_AVAILABLE == $current_webp ? ' class="current"' : '' );
+		$available_webp_url = add_query_arg( 'webp_filter', Urlslab_File_Data::FILE_ALTERNATIVE_AVAILABLE );
+		$views['available_webp'] = "<a href='$available_webp_url' $class>WEBP available</a>";
+
+		$class = ( Urlslab_File_Data::FILE_ALTERNATIVE_DISABLED == $current_webp ? ' class="current"' : '' );
+		$disabled_webp_url = add_query_arg( 'webp_filter', Urlslab_File_Data::FILE_ALTERNATIVE_DISABLED );
+		$views['disabled_webp'] = "<a href='$disabled_webp_url' $class>WEBP disabled</a>";
+
+		//# avif case
+		$class = ( Urlslab_File_Data::FILE_ALTERNATIVE_AVAILABLE == $current_avif ? ' class="current"' : '' );
+		$available_avif_url = add_query_arg( 'avif_filter', Urlslab_File_Data::FILE_ALTERNATIVE_AVAILABLE );
+		$views['available_avif'] = "<a href='$available_avif_url' $class>AVIF available</a>";
+
+		$class = ( Urlslab_File_Data::FILE_ALTERNATIVE_DISABLED == $current_avif ? ' class="current"' : '' );
+		$disabled_avif_url = add_query_arg( 'avif_filter', Urlslab_File_Data::FILE_ALTERNATIVE_DISABLED );
+		$views['disabled_avif'] = "<a href='$disabled_avif_url' $class>AVIF disabled</a>";
+
 		return $views;
 	}
 
@@ -362,6 +433,8 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 
 		$offloading_search_key = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
 		$file_status_filter = isset( $_REQUEST['status_filter'] ) ? wp_unslash( trim( $_REQUEST['status_filter'] ) ) : '';
+		$webp_filter = isset( $_REQUEST['webp_filter'] ) ? wp_unslash( trim( $_REQUEST['webp_filter'] ) ) : '';
+		$avif_filter = isset( $_REQUEST['avif_filter'] ) ? wp_unslash( trim( $_REQUEST['avif_filter'] ) ) : '';
 		$file_driver_filter = isset( $_REQUEST['driver_filter'] ) ? wp_unslash( trim( $_REQUEST['driver_filter'] ) ) : '';
 
 		$table_page = $this->get_pagenum();
@@ -370,11 +443,13 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 		$query_results = $this->get_offloading_files(
 			$offloading_search_key,
 			$file_status_filter,
+			$webp_filter,
+			$avif_filter,
 			$file_driver_filter,
 			$items_per_page,
 			( $table_page - 1 ) * $items_per_page
 		);
-		$total_count = $this->count_offloading_files( $file_driver_filter, $file_status_filter );
+		$total_count = $this->count_offloading_files( $file_driver_filter, $file_status_filter, $webp_filter, $avif_filter );
 
 
 		// set the pagination arguments

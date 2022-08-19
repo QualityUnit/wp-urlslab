@@ -126,7 +126,7 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 					'filestatus' => Urlslab_Driver::STATUS_PENDING,
 					'local_file' => $webp_name,
 					'driver' => $file->get_driver(),
-					'webp_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_AVAILABLE,
+					'webp_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_DISABLED,
 					'avif_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_DISABLED,
 				)
 			);
