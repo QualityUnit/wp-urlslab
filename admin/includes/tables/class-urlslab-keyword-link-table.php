@@ -162,43 +162,6 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 		$title = '<strong>' . $item->get_keyword() . '</strong>';
 		$actions = array();
 		if ( isset( $_REQUEST['page'] ) ) {
-			?>
-			<div id='<?php echo esc_attr( 'modal-k-' . $item->get_kw_md5() ); ?>' class='modal'>
-				<div>
-					<h2>Edit Keyword</h2>
-					<button id='close-import-modal' data-close-modal-id='<?php echo esc_attr( 'modal-k-' . $item->get_kw_md5() ); ?>' class='modal-close'>
-						<img src='<?php esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/delete.png' ) . 'delete.png' ); ?>' alt='info' width='17px' />
-					</button>
-				</div>
-				<form method='post' action='?page=<?php echo esc_attr( $_REQUEST['page'] ); ?>&action=keyword-edit'>
-					<input type='hidden' name='keywordHash' value='<?php echo esc_attr( $item->get_kw_md5() ); ?>'>
-					<label for='keyword'>Keyword: </label>
-					<input id='keyword' name='keyword' type='text' value='<?php echo esc_attr( $item->get_keyword() ); ?>' placeholder='Keyword...'>
-					<br class='clear'/>
-					<br class='clear'/>
-					<label for='keyword-link'>Keyword Link: </label>
-					<input id='keyword-link' name='keyword-link' type='text' value='<?php echo esc_attr( $item->get_keyword_url_link() ); ?>' placeholder='KeywordLink...'>
-					<br class='clear'/>
-					<br class='clear'/>
-					<label for='keyword-prio'>Keyword Priority: </label>
-					<input id='keyword-prio' name='keyword-prio' type='text' value='<?php echo esc_attr( $item->get_keyword_priority() ); ?>' placeholder='Keyword Prio...'>
-					<br class='clear'/>
-					<br class='clear'/>
-					<label for='keyword-lang'>Keyword Lang: </label>
-					<input id='keyword-lang' name='keyword-lang' type='text' value='<?php echo esc_attr( $item->get_keyword_url_lang() ); ?>'
-						   placeholder='Keyword Lang...'>
-					<br class='clear'/>
-					<br class='clear'/>
-					<label for='keyword-url-filter'>Keyword Url Filter: </label>
-					<input id='keyword-url-filter' name='keyword-url-filter' type='text' value='<?php echo esc_attr( $item->get_keyword_url_filter() ); ?>'
-						   placeholder='Keyword Url Filter...'>
-					<br class='clear'/>
-					<br class='clear'/>
-					<input type='submit' name='submit' class='button' value='Edit Keyword'>
-				</form>
-			</div>
-			<?php
-
 			$actions = array(
 				'delete' => sprintf(
 					'<a href="?page=%s&s=%s&action=%s&kw_md5=%s&_wpnonce=%s">Delete</a>',
@@ -209,9 +172,15 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 					$delete_nonce
 				),
 				'edit' => sprintf(
-					'<span class="%s" data-modal-id="%s">Edit</span>',
+					'<span class="%s" rel="modal:open" data-close-icon="%s" data-keyword-hash="%s" data-keyword="%s" data-dest-url="%s" data-prio="%s" data-lang="%s" data-url-filter="%s">Edit</span>',
 					'keyword-edit color-primary',
-					'modal-k-' . $item->get_kw_md5(),
+					esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/delete.png' ) . 'delete.png' ),
+					esc_attr( $item->get_kw_md5() ),
+					esc_attr( $item->get_keyword() ),
+					esc_attr( $item->get_keyword_url_link() ),
+					esc_attr( $item->get_keyword_priority() ),
+					esc_attr( $item->get_keyword_url_lang() ),
+					esc_attr( $item->get_keyword_url_filter() ),
 				),
 			);
 		}

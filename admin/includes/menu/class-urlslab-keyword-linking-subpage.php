@@ -482,7 +482,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		?>
 		<div class="urlslab-action-container">
 			<div>
-				<button id="add-keyword-btn" class="button button-primary">
+				<button id="add-keyword-btn" class="button button-primary" data-close-icon="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/delete.png' ) . 'delete.png' ); ?>">
 					Add Keyword
 				</button>
 				<button id="import-btn" class="button button-primary">
