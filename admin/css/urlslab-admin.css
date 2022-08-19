@@ -500,7 +500,6 @@ figure {
 .modal-close {
 	border: none;
 	background-color: transparent;
-	font-weight: bold;
 	cursor: pointer;
 	font-size: 15px;
 }
