@@ -4,7 +4,12 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-convert-images-c
 class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 
 	public function is_format_supported() {
-		return function_exists( 'imageavif' ) && get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE, false );
+		return function_exists( 'imageavif' ) ||
+			(
+				extension_loaded( 'imagick' ) &&
+				count( Imagick::queryFormats( 'AVIF*' ) ) > 0 &&
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE, false )
+			);
 	}
 
 	protected function get_file_types(): array {
@@ -60,28 +65,14 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 		$original_image_filename = wp_tempnam();
 		if ( Urlslab_Driver::get_driver( $file )->save_to_file( $file, $original_image_filename ) ) {
 
-			switch ( $file->get_filetype() ) {
-				case 'image/png':
-					$im = imagecreatefrompng( $original_image_filename );
-					break;
-				case 'image/jpeg':
-					$im = imagecreatefromjpeg( $original_image_filename );
-					break;
-				case 'image/gif':
-					$im = imagecreatefromgif( $original_image_filename );
-					break;
-				case 'image/bmp':
-					$im = imagecreatefrombmp( $original_image_filename );
-					break;
-				default:
-					//unsupported file type
-					unlink( $original_image_filename );
-					return true;
-			}
-
+			$new_file_name = $this->convert_image_format( $file, $original_image_filename, 'avif' );
 			unlink( $original_image_filename );
 
-			$this->process_file( $file, $im );
+			if ( empty( $new_file_name ) || ! file_exists( $new_file_name ) ) {
+				return true;
+			}
+
+			$this->process_file( $file, $new_file_name );
 
 			//processing of file done
 			$wpdb->update(
@@ -97,63 +88,44 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 		return true;
 	}
 
-	protected function process_file( Urlslab_File_Data $file, $im ) {
+	protected function process_file( Urlslab_File_Data $file, string $new_file_name ) {
 		global $wpdb;
 
-		//AVIF file
-		if ( $this->is_format_supported() ) {
-
-			$avif_name = wp_tempnam();
-			if (
-				! imageavif(
-					$im,
-					$avif_name,
-					get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_AVIF_QUALITY ),
-					get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_AVIF_SPEED )
-				)
-			) {
-				unlink( $avif_name );
-				return false;
-			}
-
-			$avif_file = new Urlslab_File_Data(
-				array(
-					'url' => $file->get_url( '.avif' ),
-					'filename' => $file->get_filename() . '.avif',
-					'filesize' => filesize( $avif_name ),
-					'filetype' => 'image/avif',
-					'width' => $file->get_width(),
-					'height' => $file->get_height(),
-					'filestatus' => Urlslab_Driver::STATUS_PENDING,
-					'local_file' => $avif_name,
-					'driver' => $file->get_driver(),
-					'webp_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_DISABLED,
-					'avif_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_DISABLED,
-				)
-			);
-
-			if ( ! (
-				$this->insert_alternative_file( $avif_file ) &&
-				$this->insert_file_alternative_relation( $file, $avif_file ) &&
-				Urlslab_Driver::get_driver( $avif_file )->upload_content( $avif_file )
+		$avif_file = new Urlslab_File_Data(
+			array(
+				'url' => $file->get_url( '.avif' ),
+				'filename' => $file->get_filename() . '.avif',
+				'filesize' => filesize( $new_file_name ),
+				'filetype' => 'image/avif',
+				'width' => $file->get_width(),
+				'height' => $file->get_height(),
+				'filestatus' => Urlslab_Driver::STATUS_PENDING,
+				'local_file' => $new_file_name,
+				'driver' => $file->get_driver(),
+				'webp_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_DISABLED,
+				'avif_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_DISABLED,
 			)
-			) {
-				unlink( $avif_name );
-				return false;
-			}
-			$wpdb->update(
-				URLSLAB_FILES_TABLE,
-				array(
-					'filestatus' => Urlslab_Driver::STATUS_ACTIVE,
-				),
-				array(
-					'fileid' => $avif_file->get_fileid(),
-				)
-			);
-			unlink( $avif_name );
-			return true;
-		}
+		);
 
-		return false;
+		if ( ! (
+			$this->insert_alternative_file( $avif_file ) &&
+			$this->insert_file_alternative_relation( $file, $avif_file ) &&
+			Urlslab_Driver::get_driver( $avif_file )->upload_content( $avif_file )
+		)
+		) {
+			unlink( $new_file_name );
+			return false;
+		}
+		$wpdb->update(
+			URLSLAB_FILES_TABLE,
+			array(
+				'filestatus' => Urlslab_Driver::STATUS_ACTIVE,
+			),
+			array(
+				'fileid' => $avif_file->get_fileid(),
+			)
+		);
+		unlink( $new_file_name );
+		return true;
 	}
 }
