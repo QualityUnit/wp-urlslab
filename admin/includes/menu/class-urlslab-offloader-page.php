@@ -581,11 +581,14 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 			$setting_conversion_avif[ $type_to_conv ] = in_array( $type_to_conv, $conversion_avif );
 		}
 
+		$cron_webp = new Urlslab_Convert_Webp_Images_Cron();
+		$cron_avif = new Urlslab_Convert_Avif_Images_Cron();
+
 		$settings = array(
 			new Urlslab_Setting_Switch(
 				'image-opt[]',
 				Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE,
-				( function_exists( 'imagewebp' ) ? '' : 'IMPORTANT: WEBP file format is not supported on your server. ' ) .
+				( $cron_webp->is_format_supported() ? '' : 'IMPORTANT: WEBP file format is not supported on your server. ' ) .
 					'Generate the Webp version of your images and add it as alternative and let browsers choose which one to use',
 				'Generate Webp Images',
 				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, false )
@@ -608,7 +611,7 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 			new Urlslab_Setting_Switch(
 				'image-opt[]',
 				Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE,
-				( function_exists( 'imageavif' ) ? '' : 'IMPORTANT: AVIF file format is not supported on your server. ' ) .
+				( $cron_avif->is_format_supported() ? '' : 'IMPORTANT: AVIF file format is not supported on your server. ' ) .
 				'Generate the Avif version of your images and let browsers to choose the most effective file format.',
 				'Generate Avif Images',
 				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE, false )

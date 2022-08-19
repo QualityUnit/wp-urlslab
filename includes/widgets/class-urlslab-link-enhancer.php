@@ -79,8 +79,11 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 					}
 
 					if ( ! empty( trim( $dom_element->getAttribute( 'href' ) ) ) ) {
-						$url = new Urlslab_Url( $dom_element->getAttribute( 'href' ) );
-						$link_elements[] = array( $dom_element, $url );
+						try {
+							$url = new Urlslab_Url( $dom_element->getAttribute( 'href' ) );
+							$link_elements[] = array( $dom_element, $url );
+						} catch ( Exception $e ) {
+						}
 					}
 				}
 			}
