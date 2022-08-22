@@ -286,7 +286,7 @@ class Urlslab_File_Data {
 				return basename( $this->local_file );
 			}
 			$parsed_url = parse_url( $this->url );
-			return (isset( $parsed_url['query'] ) ? md5($parsed_url['query']) . '-' : '') . basename( isset( $parsed_url['path'] ) ? $parsed_url['path'] : md5($this->url) );
+			return ( isset( $parsed_url['query'] ) ? md5( $parsed_url['query'] ) . '-' : '' ) . basename( isset( $parsed_url['path'] ) ? $parsed_url['path'] : md5( $this->url ) );
 		}
 		return $this->filename;
 	}
