@@ -74,15 +74,15 @@
 				</div>
 				<div class="form-item mar-bottom-1">
 					<label for="keyword-prio">Keyword Priority: </label>
-					<input id="keyword-prio" name="keyword-prio" type="text" value="${ keywordPrio }" placeholder="Keyword Prio...">
+					<input id="keyword-prio" name="keyword-prio" type="text" value="${ keywordPrio }" placeholder="10">
 				</div>
 				<div class="form-item mar-bottom-1">
 					<label for="keyword-lang">Keyword Lang: </label>
-					<input id="keyword-lang" name="keyword-lang" type="text" value="${ keywordLang }" placeholder="Keyword Lang...">
+					<input id="keyword-lang" name="keyword-lang" type="text" value="${ keywordLang }" placeholder="all">
 				</div>
 				<div class="form-item mar-bottom-1">
 					<label for="keyword-url-filter">Keyword Url Filter: </label>
-					<input id="keyword-url-filter" name="keyword-url-filter" type="text" value="${ keywordFilter }" placeholder="Keyword Url Filter...">
+					<input id="keyword-url-filter" name="keyword-url-filter" type="text" value="${ keywordFilter }" placeholder=".*">
 				</div>
 				<input type="submit" name="submit" class="button" value="${ keyword != '' ? 'Edit Keyword' : 'Add Keyword' }">
 			</form>
@@ -143,7 +143,7 @@
 				closeIcon,
 				'modal-k-' + keywordHash,
 				urlParams.get( 'page' ),
-				urlParams.get( 'tab' ),
+				urlParams.get( 'tab' ) || '',
 				keywordHash,
 				keyword,
 				keywordLink,
@@ -167,7 +167,7 @@
 		if ( addKeywordBtn.length ) {
 			const closeIcon = addKeywordBtn.data( 'close-icon' );
 			const urlParams = new URLSearchParams( window.location.search );
-			createHTMLPopupKeyword( closeIcon, 'add-keyword-modal', urlParams.get( 'page' ), urlParams.get( 'tab' ) )
+			createHTMLPopupKeyword( closeIcon, 'add-keyword-modal', urlParams.get( 'page' ), urlParams.get( 'tab' ) || '' )
 				.appendTo( 'body' ).dialog( {
 					modal: true,
 					dialogClass: 'no-close',
@@ -220,7 +220,7 @@
 			const urlDestHash = $( this ).data( 'dest-url-hash' );
 			const urlDest = $( this ).data( 'dest-url' );
 			const urlParams = new URLSearchParams( window.location.search );
-			createHTMLPopupUrlRelation( closeIcon, 'modal-rr-' + urlSrcHash + urlDestHash, urlParams.get( 'page' ), urlParams.get( 'tab' ), urlSrcHash, urlSrc, urlDestHash, urlDest )
+			createHTMLPopupUrlRelation( closeIcon, 'modal-rr-' + urlSrcHash + urlDestHash, urlParams.get( 'page' ), urlParams.get( 'tab' ) || '', urlSrcHash, urlSrc, urlDestHash, urlDest )
 				.appendTo( 'body' ).dialog( {
 					dialogClass: 'no-close',
 					minWidth: 500,
@@ -237,7 +237,7 @@
 		if ( relatedResourceBtn.length ) {
 			const closeIcon = relatedResourceBtn.data( 'close-icon' );
 			const urlParams = new URLSearchParams( window.location.search );
-			createHTMLPopupUrlRelation( closeIcon, 'add-url-relation-modal', urlParams.get( 'page' ), urlParams.get( 'tab' ) )
+			createHTMLPopupUrlRelation( closeIcon, 'add-url-relation-modal', urlParams.get( 'page' ), urlParams.get( 'tab' ) || '' )
 				.appendTo( 'body' ).dialog( {
 					modal: true,
 					dialogClass: 'no-close',
