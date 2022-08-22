@@ -486,7 +486,6 @@ figure {
 }
 
 .urlslab-modal {
-	min-width: 30rem !important;
 	display: flex;
 	flex-wrap: wrap;
 }
@@ -502,6 +501,10 @@ figure {
 	background-color: transparent;
 	cursor: pointer;
 	font-size: 15px;
+}
+
+.no-close .ui-dialog-titlebar-close {
+	display: none;
 }
 
 .form-item {

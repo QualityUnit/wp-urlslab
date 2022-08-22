@@ -151,6 +151,9 @@
 				keywordLang,
 				keywordFilter
 			).appendTo( 'body' ).dialog( {
+				modal: true,
+				dialogClass: 'no-close',
+				minWidth: 500,
 				autoOpen: false,
 				closeOnEscape: true,
 				closeText: '',
@@ -166,6 +169,9 @@
 			const urlParams = new URLSearchParams( window.location.search );
 			createHTMLPopupKeyword( closeIcon, 'add-keyword-modal', urlParams.get( 'page' ), urlParams.get( 'tab' ) )
 				.appendTo( 'body' ).dialog( {
+					modal: true,
+					dialogClass: 'no-close',
+					minWidth: 500,
 					autoOpen: false,
 					closeOnEscape: true,
 					closeText: '',
@@ -180,6 +186,9 @@
 
 		//# Keyword import
 		$( '#import-modal' ).dialog( {
+			modal: true,
+			dialogClass: 'no-close',
+			minWidth: 500,
 			autoOpen: false,
 			closeOnEscape: true,
 			closeText: '',
@@ -191,6 +200,9 @@
 
 		//# Related resources import
 		$( '#related-resources-import-modal' ).dialog( {
+			modal: true,
+			dialogClass: 'no-close',
+			minWidth: 500,
 			autoOpen: false,
 			closeOnEscape: true,
 			closeText: '',
@@ -210,6 +222,8 @@
 			const urlParams = new URLSearchParams( window.location.search );
 			createHTMLPopupUrlRelation( closeIcon, 'modal-rr-' + urlSrcHash + urlDestHash, urlParams.get( 'page' ), urlParams.get( 'tab' ), urlSrcHash, urlSrc, urlDestHash, urlDest )
 				.appendTo( 'body' ).dialog( {
+					dialogClass: 'no-close',
+					minWidth: 500,
 					autoOpen: false,
 					closeOnEscape: true,
 					closeText: '',
@@ -225,6 +239,9 @@
 			const urlParams = new URLSearchParams( window.location.search );
 			createHTMLPopupUrlRelation( closeIcon, 'add-url-relation-modal', urlParams.get( 'page' ), urlParams.get( 'tab' ) )
 				.appendTo( 'body' ).dialog( {
+					modal: true,
+					dialogClass: 'no-close',
+					minWidth: 500,
 					autoOpen: false,
 					closeOnEscape: true,
 					closeText: '',
@@ -255,6 +272,7 @@
 		$( '#urlslab-vertical-tabs' ).tabs( {
 			active: activeTab,
 		} );
+		$( '#urlslab-vertical-tabs' ).removeClass( 'd-none' );
 		//# Vertical tab
 	} );
 }( jQuery ) );
