@@ -65,6 +65,12 @@ abstract class Urlslab_Convert_Images_Cron {
 				return '';
 		}
 
+		if ( ! imageistruecolor( $im ) ) {
+			if ( ! imagepalettetotruecolor( $im ) ) {
+				return '';
+			}
+		}
+
 		$tmp_name = wp_tempnam();
 
 		switch ( $new_format ) {

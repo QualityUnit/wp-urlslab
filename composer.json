@@ -24,7 +24,6 @@
     "ext-json": "*",
     "ext-libxml": "*",
     "ext-dom": "*",
-    "ext-imagick": "*",
     "aws/aws-sdk-php": "^3.233",
     "ext-gd": "*"
   },
