@@ -538,7 +538,13 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					<li class="color-warning">filter (optional - defaults to regular expression '.*')</li>
 				</ul>
 			</div>
-			<form action="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=import&s=' . $_REQUEST['s'] ?? '' ) ); ?>" method="post"
+			<?php
+			$search_param = '';
+			if ( isset( $_REQUEST['s'] ) && ! empty( $_REQUEST['s'] ) ) {
+				$search_param = '&s=' . $_REQUEST['s'];
+			}
+			?>
+			<form action="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=import' . $search_param ) ); ?>" method="post"
 				  enctype="multipart/form-data">
 				<?php wp_nonce_field( 'keyword-widget-import' ); ?>
 				<input type="file" name="csv_file">
