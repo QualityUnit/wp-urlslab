@@ -19,7 +19,7 @@
 	},
   "require": {
     "php": ">=7.4",
-    "composer/installers": "^2.1",
+    "composer/installers": "^2.2",
     "roots/wp-config": "1.0.0",
     "ext-json": "*",
     "ext-libxml": "*",
