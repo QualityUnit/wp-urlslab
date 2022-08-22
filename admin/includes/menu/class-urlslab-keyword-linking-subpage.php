@@ -482,12 +482,12 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		?>
 		<div class="urlslab-action-container">
 			<div>
-				<button id="add-keyword-btn" class="button button-primary">
+				<button id="add-keyword-btn" class="button button-primary" data-close-icon="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/delete.png' ) . 'delete.png' ); ?>">
 					Add Keyword
 				</button>
-				<a href="#ex1" rel="modal:open" class="button button-primary">
+				<button id="import-btn" class="button button-primary">
 					Import
-				</a>
+				</button>
 			</div>
 			<div>
 				<a href="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=export' ) ); ?>" target="_blank"
@@ -519,8 +519,15 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 
 	public function render_modals() {
 		?>
-		<div id="ex1" class="modal">
-			<h2>Import Keyword CSV</h2>
+		<div id="import-modal" class="modal urlslab-modal">
+			<div>
+				<h2>Import Keyword CSV</h2>
+				<button data-close-modal-id="import-modal" class="modal-close">
+					<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/delete.png' ) . 'delete.png' ); ?>"
+						 alt="info"
+						 width="17px">
+				</button>
+			</div>
 			<div>
 				The CSV file should contain headers. the CSV file should include following headers:
 				<ul>

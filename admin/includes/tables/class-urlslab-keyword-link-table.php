@@ -160,7 +160,6 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 		$delete_nonce = wp_create_nonce( 'urlslab_delete_keyword' );
 
 		$title = '<strong>' . $item->get_keyword() . '</strong>';
-
 		$actions = array();
 		if ( isset( $_REQUEST['page'] ) ) {
 			$actions = array(
@@ -173,8 +172,9 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 					$delete_nonce
 				),
 				'edit' => sprintf(
-					'<span class="%s" rel="modal:open" data-keyword-hash="%s" data-keyword="%s" data-dest-url="%s" data-prio="%s" data-lang="%s" data-url-filter="%s">Edit</span>',
+					'<span class="%s" rel="modal:open" data-close-icon="%s" data-keyword-hash="%s" data-keyword="%s" data-dest-url="%s" data-prio="%s" data-lang="%s" data-url-filter="%s">Edit</span>',
 					'keyword-edit color-primary',
+					esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/delete.png' ) . 'delete.png' ),
 					esc_attr( $item->get_kw_md5() ),
 					esc_attr( $item->get_keyword() ),
 					esc_attr( $item->get_keyword_url_link() ),

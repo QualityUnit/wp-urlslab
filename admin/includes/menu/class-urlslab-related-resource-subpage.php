@@ -165,10 +165,10 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		?>
 		<div class="urlslab-action-container">
 			<div>
-				<button id="add-url-relation-btn" class="button button-primary">
+				<button id="add-url-relation-btn" data-close-icon="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/delete.png' ) . 'delete.png' ); ?>" class="button button-primary">
 					Add Url Relation
 				</button>
-				<a href="#ex1" rel="modal:open" class="button button-primary">
+				<a id="related-resources-import-btn" class="button button-primary">
 					Import
 				</a>
 			</div>
@@ -202,8 +202,15 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 
 	public function render_modals() {
 		?>
-		<div id="ex1" class="modal">
-			<h2>Import Related Resources CSV</h2>
+		<div id="related-resources-import-modal" class="modal urlslab-modal">
+			<div>
+				<h2>Import Related Resources CSV</h2>
+				<button data-close-modal-id="related-resources-import-modal" class="modal-close">
+					<img src="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/delete.png' ) . 'delete.png' ); ?>"
+						 alt="info"
+						 width="17px">
+				</button>
+			</div>
 			<div>
 				The CSV file should contain headers. the CSV file should include following headers:
 				<ul>

@@ -265,8 +265,9 @@ class Urlslab_Related_Resources_Widget_Table extends WP_List_Table {
 					$delete_nonce
 				),
 				'edit' => sprintf(
-					'<span class="%s" rel="modal:open" data-src-url-hash="%s" data-src-url="%s" data-dest-url-hash="%s" data-dest-url="%s">Edit</span>',
+					'<span class="%s" data-close-icon="%s" data-src-url-hash="%s" data-src-url="%s" data-dest-url-hash="%s" data-dest-url="%s">Edit</span>',
 					'url-relation-edit color-primary',
+					esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/delete.png' ) . 'delete.png' ),
 					esc_attr( $item[0]->get_url()->get_url_id() ),
 					'http://' . esc_attr( $item[0]->get_url()->get_url() ),
 					esc_attr( $item[1]->get_url()->get_url_id() ),

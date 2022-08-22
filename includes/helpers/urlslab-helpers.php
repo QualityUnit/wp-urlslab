@@ -20,6 +20,100 @@ function urlslab_get_action(): string {
 	return $current_action;
 }
 
+function urlslab_generate_keyword_form( ?Urlslab_Url_Keyword_Data $item ) {
+	if ( isset( $_REQUEST['page'] ) ) {
+		if ( null == $item ) {
+			return sprintf(
+				"<div id='%s' class='modal'>
+			<div>
+				<h2>Edit Keyword</h2>
+				<button id='close-import-modal' data-close-modal-id='%s' class='modal-close'>
+					<img src='%s' alt='info' width='17px' />
+				</button>
+			</div>
+			<form method='post' action='?page=%s&action=keyword-edit'>
+				<input type='hidden' name='keywordHash' value=''>
+				<label for='keyword'>Keyword: </label>
+				<input id='keyword' name='keyword' type='text' value='' placeholder='Keyword...'>
+				<br class='clear'/>
+				<br class='clear'/>
+				<label for='keyword-link'>Keyword Link: </label>
+				<input id='keyword-link' name='keyword-link' type='text' value='' placeholder='Keyword...'>
+				<br class='clear'/>
+				<br class='clear'/>
+				<label for='keyword-prio'>Keyword Priority: </label>
+				<input id='keyword-prio' name='keyword-prio' type='text' value='' placeholder='Keyword Prio...'>
+				<br class='clear'/>
+				<br class='clear'/>
+				<label for='keyword-lang'>Keyword Lang: </label>
+				<input id='keyword-lang' name='keyword-lang' type='text' value=''
+					   placeholder='Keyword Lang...'>
+				<br class='clear'/>
+				<br class='clear'/>
+				<label for='keyword-url-filter'>Keyword Url Filter: </label>
+				<input id='keyword-url-filter' name='keyword-url-filter' type='text' value=''
+					   placeholder='Keyword Url Filter...'>
+				<br class='clear'/>
+				<br class='clear'/>
+				<input type='submit' name='submit' class='button' value='Edit Keyword'>
+			</form>
+		</div>",
+				'add-keyword-modal',
+				'add-keyword-modal',
+				esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/delete.png' ) . 'delete.png' ),
+				esc_attr( $_REQUEST['page'] ),
+			);
+		} else {
+			return sprintf(
+				"<div id='%s' class='modal'>
+			<div>
+				<h2>Edit Keyword</h2>
+				<button id='close-import-modal' data-close-modal-id='%s' class='modal-close'>
+					<img src='%s' alt='info' width='17px' />
+				</button>
+			</div>
+			<form method='post' action='?page=%s&action=keyword-edit'>
+				<input type='hidden' name='keywordHash' value='%s'>
+				<label for='keyword'>Keyword: </label>
+				<input id='keyword' name='keyword' type='text' value='%s' placeholder='Keyword...'>
+				<br class='clear'/>
+				<br class='clear'/>
+				<label for='keyword-link'>Keyword Link: </label>
+				<input id='keyword-link' name='keyword-link' type='text' value='%s' placeholder='Keyword...'>
+				<br class='clear'/>
+				<br class='clear'/>
+				<label for='keyword-prio'>Keyword Priority: </label>
+				<input id='keyword-prio' name='keyword-prio' type='text' value='%s' placeholder='Keyword Prio...'>
+				<br class='clear'/>
+				<br class='clear'/>
+				<label for='keyword-lang'>Keyword Lang: </label>
+				<input id='keyword-lang' name='keyword-lang' type='text' value='%s'
+					   placeholder='Keyword Lang...'>
+				<br class='clear'/>
+				<br class='clear'/>
+				<label for='keyword-url-filter'>Keyword Url Filter: </label>
+				<input id='keyword-url-filter' name='keyword-url-filter' type='text' value='%s'
+					   placeholder='Keyword Url Filter...'>
+				<br class='clear'/>
+				<br class='clear'/>
+				<input type='submit' name='submit' class='button' value='Edit Keyword'>
+			</form>
+		</div>",
+				'modal-k-' . $item->get_kw_md5(),
+				'modal-k-' . $item->get_kw_md5(),
+				esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/delete.png' ) . 'delete.png' ),
+				esc_attr( $_REQUEST['page'] ),
+				$item->get_kw_md5(),
+				$item->get_keyword(),
+				$item->get_keyword_url_link(),
+				$item->get_keyword_priority(),
+				$item->get_keyword_url_lang(),
+				$item->get_keyword_url_filter(),
+			);
+		}
+	}
+}
+
 function urlslab_file_upload_code_to_message( int $code ): string {
 	switch ( $code ) {
 		case UPLOAD_ERR_INI_SIZE:
