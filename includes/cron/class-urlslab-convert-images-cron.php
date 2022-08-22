@@ -65,7 +65,7 @@ abstract class Urlslab_Convert_Images_Cron {
 				return '';
 		}
 
-		if( ! imageistruecolor( $im ) ) {
+		if ( ! imageistruecolor( $im ) ) {
 			if ( ! imagepalettetotruecolor( $im ) ) {
 				return '';
 			}
