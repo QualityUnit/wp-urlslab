@@ -31,20 +31,17 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				 'Edit Keyword' === $_POST['submit'] ) {
 				if ( isset( $_POST['keywordHash'] ) && ! empty( $_POST['keywordHash'] ) &&
 					 isset( $_POST['keyword'] ) && ! empty( $_POST['keyword'] ) &&
-					 isset( $_POST['keyword-prio'] ) && ! empty( $_POST['keyword-prio'] ) &&
-					 isset( $_POST['keyword-lang'] ) && ! empty( $_POST['keyword-lang'] ) &&
-					 isset( $_POST['keyword-link'] ) && ! empty( $_POST['keyword-link'] ) &&
-					 isset( $_POST['keyword-url-filter'] ) && ! empty( $_POST['keyword-url-filter'] ) ) {
+					 isset( $_POST['keyword-link'] ) && ! empty( $_POST['keyword-link'] ) ) {
 					try {
 						$this->edit_keyword(
 							$_POST['keywordHash'],
 							new Urlslab_Url_Keyword_Data(
 								$_POST['keyword'],
-								$_POST['keyword-prio'],
+								isset( $_POST['keyword-prio'] ) && ! empty( $_POST['keyword-prio'] ) ? $_POST['keyword-prio'] : 10,
 								strlen( $_POST['keyword'] ),
-								$_POST['keyword-lang'],
+								isset( $_POST['keyword-lang'] ) && ! empty( $_POST['keyword-lang'] ) ? $_POST['keyword-lang'] : 'all',
 								$_POST['keyword-link'],
-								$_POST['keyword-url-filter'],
+								isset( $_POST['keyword-url-filter'] ) && ! empty( $_POST['keyword-url-filter'] ) ? $_POST['keyword-url-filter'] : '.*',
 							)
 						);
 						wp_safe_redirect(
