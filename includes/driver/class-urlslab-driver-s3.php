@@ -76,7 +76,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 	}
 
 	private function get_file_dir( Urlslab_File_Data $file ) {
-		return self::URLSLAB_DIR . substr( $file->get_fileid(), 0, 2 ) . '/';
+		return self::URLSLAB_DIR . substr( $file->get_fileid(), 0, 4 ) . '/';
 	}
 
 	public function get_url( Urlslab_File_Data $file ) {

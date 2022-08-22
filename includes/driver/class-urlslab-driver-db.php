@@ -74,10 +74,6 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 		return $content;
 	}
 
-	public function get_url( Urlslab_File_Data $file ) {
-		return site_url( self::DOWNLOAD_URL_PATH . urlencode( $file->get_fileid() ) . '/' . urlencode( $file->get_filename() ) );
-	}
-
 	function is_connected() {
 		return true;
 	}

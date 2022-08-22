@@ -56,12 +56,14 @@ class Urlslab_Activator {
 		global $wpdb;
 		$version = get_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 
-		if ( version_compare( $version, '1.9.0', '<' ) ) {
+		if ( version_compare( $version, '1.10.0', '<' ) ) {
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_KEYWORDS_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILES_TABLE . ';'); // phpcs:ignore
+			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILE_CONTENTS_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILE_ALTERNATIVES_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_URLS_TABLE . ';'); // phpcs:ignore
 			self::init_urlslab_files();
+			self::init_urlslab_file_contents();
 			self::init_urlslab_file_alternatives();
 			self::init_keyword_widget_tables();
 			self::init_urls_tables();
