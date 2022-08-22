@@ -18,7 +18,7 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 	}
 
 	private function get_file_dir( Urlslab_File_Data $file ) {
-		return '/' . self::URLSLAB_DIR . substr( $file->get_fileid(), 0, 2 ) . '/';
+		return '/' . self::URLSLAB_DIR . substr( $file->get_fileid(), 0, 4 ) . '/';
 	}
 
 	function save_file_to_storage( Urlslab_File_Data $file_obj, string $local_file_name ):bool {
