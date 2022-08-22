@@ -74,15 +74,15 @@
 				</div>
 				<div class="form-item mar-bottom-1">
 					<label for="keyword-prio">Keyword Priority: </label>
-					<input id="keyword-prio" name="keyword-prio" type="text" value="${ keywordPrio }" placeholder="Keyword Prio...">
+					<input id="keyword-prio" name="keyword-prio" type="text" value="${ keywordPrio }" placeholder="10">
 				</div>
 				<div class="form-item mar-bottom-1">
 					<label for="keyword-lang">Keyword Lang: </label>
-					<input id="keyword-lang" name="keyword-lang" type="text" value="${ keywordLang }" placeholder="Keyword Lang...">
+					<input id="keyword-lang" name="keyword-lang" type="text" value="${ keywordLang }" placeholder="all">
 				</div>
 				<div class="form-item mar-bottom-1">
 					<label for="keyword-url-filter">Keyword Url Filter: </label>
-					<input id="keyword-url-filter" name="keyword-url-filter" type="text" value="${ keywordFilter }" placeholder="Keyword Url Filter...">
+					<input id="keyword-url-filter" name="keyword-url-filter" type="text" value="${ keywordFilter }" placeholder=".*">
 				</div>
 				<input type="submit" name="submit" class="button" value="${ keyword != '' ? 'Edit Keyword' : 'Add Keyword' }">
 			</form>
