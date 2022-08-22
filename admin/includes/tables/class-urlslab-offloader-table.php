@@ -171,7 +171,8 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 	 */
 	function get_columns(): array {
 		return array(
-			'col_url' => 'Url',
+			'col_url' => 'Original Url',
+			'col_generated_resource' => 'Offloaded Url',
 			'col_local_file' => 'Local File',
 			'col_filename' => 'File Name',
 			'col_file_size' => 'File Size',
@@ -200,6 +201,18 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 					esc_url( $item->get_url() ),
 					esc_url( $item->get_url() )
 				);
+
+			case 'col_generated_resource':
+				if ( $item->get_filestatus() == Urlslab_Driver::STATUS_ACTIVE ) {
+					$url = Urlslab_Driver::get_driver( $item )->get_url( $item );
+					return sprintf(
+						'<a href="%s" target="_blank">%s</a>',
+						$url,
+						$url
+					);
+				} else {
+					return 'File not generated yet';
+				}
 			case 'col_local_file':
 				return $this->local_file_to_html( $item->get_local_file(), $item->get_driver() );
 			case 'col_filename':
