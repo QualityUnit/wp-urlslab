@@ -171,8 +171,8 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 	 */
 	function get_columns(): array {
 		return array(
-			'col_url' => 'Url',
-			'col_generated_resource' => 'Generated Offloaded Url',
+			'col_url' => 'Original Url',
+			'col_generated_resource' => 'Offloaded Url',
 			'col_local_file' => 'Local File',
 			'col_filename' => 'File Name',
 			'col_file_size' => 'File Size',
