@@ -22,20 +22,21 @@ class Urlslab_Link_Building_Page extends Urlslab_Admin_Page {
 
 	public function on_page_load( string $action, string $component ) {
 
+		$active_tab = $this->get_active_page_tab();
 		//# Handle request for link building tab
-		if ( ( ! isset( $_REQUEST['tab'] ) ) or ( 'keyword-linking' == $_REQUEST['tab'] ) ) {
+		if ( 'keyword-linking' == $active_tab ) {
 			$this->link_building_subpage->handle_action();
 		}
 		//# Handle request for link building tab
 
 		//# Handle request for related resource tab
-		if ( isset( $_REQUEST['tab'] ) and 'related-resource' == $_REQUEST['tab'] ) {
+		if ( 'related-resource' == $active_tab ) {
 			$this->related_resource_subpage->handle_action();
 		}
 		//# Handle request for related resource tab
 
 		//# Handle request for link management tab
-		if ( isset( $_REQUEST['tab'] ) and 'link-management' == $_REQUEST['tab'] ) {
+		if ( 'link-management' == $active_tab ) {
 			$this->link_management_subpage->handle_action();
 		}
 		//# Handle request for link management tab
@@ -76,7 +77,7 @@ class Urlslab_Link_Building_Page extends Urlslab_Admin_Page {
 
 	public function get_active_page_tab(): string {
 		$active_tab = 'keyword-linking';
-		if ( isset( $_GET['tab'] ) ) {
+		if ( isset( $_GET['tab'] ) && ! empty($_GET['tab']) ) {
 			$active_tab = $_GET['tab'];
 		}
 		return $active_tab;

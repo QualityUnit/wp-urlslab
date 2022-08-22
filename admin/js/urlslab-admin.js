@@ -143,7 +143,7 @@
 				closeIcon,
 				'modal-k-' + keywordHash,
 				urlParams.get( 'page' ),
-				urlParams.get( 'tab' ),
+				urlParams.get( 'tab' ) || '',
 				keywordHash,
 				keyword,
 				keywordLink,
@@ -167,7 +167,7 @@
 		if ( addKeywordBtn.length ) {
 			const closeIcon = addKeywordBtn.data( 'close-icon' );
 			const urlParams = new URLSearchParams( window.location.search );
-			createHTMLPopupKeyword( closeIcon, 'add-keyword-modal', urlParams.get( 'page' ), urlParams.get( 'tab' ) )
+			createHTMLPopupKeyword( closeIcon, 'add-keyword-modal', urlParams.get( 'page' ), urlParams.get( 'tab' ) || '' )
 				.appendTo( 'body' ).dialog( {
 					modal: true,
 					dialogClass: 'no-close',
@@ -220,7 +220,7 @@
 			const urlDestHash = $( this ).data( 'dest-url-hash' );
 			const urlDest = $( this ).data( 'dest-url' );
 			const urlParams = new URLSearchParams( window.location.search );
-			createHTMLPopupUrlRelation( closeIcon, 'modal-rr-' + urlSrcHash + urlDestHash, urlParams.get( 'page' ), urlParams.get( 'tab' ), urlSrcHash, urlSrc, urlDestHash, urlDest )
+			createHTMLPopupUrlRelation( closeIcon, 'modal-rr-' + urlSrcHash + urlDestHash, urlParams.get( 'page' ), urlParams.get( 'tab' ) || '', urlSrcHash, urlSrc, urlDestHash, urlDest )
 				.appendTo( 'body' ).dialog( {
 					dialogClass: 'no-close',
 					minWidth: 500,
@@ -237,7 +237,7 @@
 		if ( relatedResourceBtn.length ) {
 			const closeIcon = relatedResourceBtn.data( 'close-icon' );
 			const urlParams = new URLSearchParams( window.location.search );
-			createHTMLPopupUrlRelation( closeIcon, 'add-url-relation-modal', urlParams.get( 'page' ), urlParams.get( 'tab' ) )
+			createHTMLPopupUrlRelation( closeIcon, 'add-url-relation-modal', urlParams.get( 'page' ), urlParams.get( 'tab' ) || '' )
 				.appendTo( 'body' ).dialog( {
 					modal: true,
 					dialogClass: 'no-close',
