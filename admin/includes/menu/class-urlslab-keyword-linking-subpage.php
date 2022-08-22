@@ -4,11 +4,13 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 
 	private Urlslab_Admin_Page $parent_page;
 	private Urlslab_Keyword_Link_Table $keyword_table;
+	private Urlslab_Url_Data_Fetcher $data_fetcher;
 	private string $subpage_slug;
 
-	public function __construct( $parent_page ) {
+	public function __construct( $parent_page, Urlslab_Url_Data_Fetcher $data_fetcher ) {
 		$this->parent_page = $parent_page;
 		$this->subpage_slug = 'keyword-linking';
+		$this->data_fetcher = $data_fetcher;
 	}
 
 
@@ -33,6 +35,22 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					 isset( $_POST['keyword'] ) && ! empty( $_POST['keyword'] ) &&
 					 isset( $_POST['keyword-link'] ) && ! empty( $_POST['keyword-link'] ) ) {
 					try {
+						//# Scheduling Url
+						if ( ! $this->data_fetcher->fetch_schedule_url(
+							new Urlslab_Url( $_POST['keyword-link'] )
+						) ) {
+							wp_safe_redirect(
+								$this->parent_page->menu_page(
+									$this->subpage_slug,
+									array(
+										'status' => 'failure',
+										'urlslab-message' => 'couldnt schedule url, please try again',
+									)
+								)
+							);
+							exit;
+						}
+						//# Scheduling Url
 						$this->edit_keyword(
 							$_POST['keywordHash'],
 							new Urlslab_Url_Keyword_Data(
@@ -87,6 +105,22 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				if ( isset( $_POST['keyword'] ) && ! empty( $_POST['keyword'] ) &&
 					 isset( $_POST['keyword-link'] ) && ! empty( $_POST['keyword-link'] ) ) {
 					try {
+						//# Scheduling Url
+						if ( ! $this->data_fetcher->fetch_schedule_url(
+							new Urlslab_Url( $_POST['keyword-link'] )
+						) ) {
+							wp_safe_redirect(
+								$this->parent_page->menu_page(
+									$this->subpage_slug,
+									array(
+										'status' => 'failure',
+										'urlslab-message' => 'couldnt schedule url, please try again',
+									)
+								)
+							);
+							exit;
+						}
+						//# Scheduling Url
 						$this->add_keyword(
 							new Urlslab_Url_Keyword_Data(
 								$_POST['keyword'],
@@ -232,6 +266,25 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				$sample_data[ strtolower( $post->post_title ) ] = get_permalink( $post->ID );
 			}
 		}
+
+		//# Scheduling Src and Dest URLs
+		$crawling_urls = array();
+		foreach ( $sample_data as $data ) {
+			$crawling_urls[] = new Urlslab_Url( $data );
+		}
+		if ( ! $this->data_fetcher->prepare_url_batch_for_scheduling( $crawling_urls ) ) {
+			wp_safe_redirect(
+				$this->parent_page->menu_page(
+					$this->subpage_slug,
+					array(
+						'status' => 'failure',
+						'urlslab-message' => 'Couldnt create the sample data',
+					)
+				)
+			);
+			exit;
+		}
+		//# Scheduling Src and Dest URLs
 
 		foreach ( $sample_data as $kw => $url ) {
 			$data_row = new Urlslab_Url_Keyword_Data( $kw, 100, strlen( $kw ), 'all', $url, '.*' );
