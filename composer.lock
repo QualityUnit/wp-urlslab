@@ -1817,7 +1817,6 @@
         "ext-json": "*",
         "ext-libxml": "*",
         "ext-dom": "*",
-        "ext-imagick": "*",
         "ext-gd": "*"
     },
     "platform-dev": [],
