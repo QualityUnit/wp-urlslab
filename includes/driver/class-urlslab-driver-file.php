@@ -11,7 +11,7 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 	}
 
 	public function upload_content( Urlslab_File_Data $file ) {
-		if ( strlen( $file->get_local_file() ) && file_exists( $file->get_local_file() ) && false !== strpos( $file->get_local_file(), $upload_dir = wp_get_upload_dir() ) ) {
+		if ( strlen( $file->get_local_file() ) && file_exists( $file->get_local_file() ) && false !== strpos( $file->get_local_file(), wp_get_upload_dir()['basedir'] ) ) {
 			return true;    //we have local file on disk already, no need to save it to storage
 		}
 		return parent::upload_content( $file );

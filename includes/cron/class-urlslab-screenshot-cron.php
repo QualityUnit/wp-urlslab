@@ -43,7 +43,9 @@ class Urlslab_Screenshot_Cron {
 		if ( ! empty( $rsp ) ) {
 			$new_status_urls = array();
 			foreach ( $schedules as $i => $schedule ) {
-				$new_status_urls[] = $rsp[ $i ];
+				if ( isset( $rsp[ $i ] ) ) {
+					$new_status_urls[] = $rsp[ $i ];
+				}
 			}
 			$this->url_data_fetcher->save_urls_batch( $new_status_urls );
 		}
