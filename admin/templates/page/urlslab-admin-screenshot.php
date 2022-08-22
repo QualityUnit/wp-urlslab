@@ -5,7 +5,7 @@ $user = Urlslab_User_Widget::get_instance();
 if ( ! isset( $_GET['tab'] ) or ( 'screenshot-widget' == $_GET['tab'] ) ) {
 
 	?>
-	<div id="urlslab-vertical-tabs" class="urlslab-container-shadow urlslab-ui-tabs-vertical">
+	<div id="urlslab-vertical-tabs" class="urlslab-container-shadow urlslab-ui-tabs-vertical d-none">
 		<ul class="urlslab-tab-topic">
 			<li><a href="#fragment-1"><span>Overview</span></a></li>
 		</ul>
