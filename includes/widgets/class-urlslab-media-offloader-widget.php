@@ -268,8 +268,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 			if ( count( $found_urls ) > 0 ) {
 				$this->update_last_seen_date( array_keys( $found_urls ) );
-			}
-
+			}       
 		} catch ( Exception $e ) {
 			//TODO log error
 		}
@@ -389,9 +388,9 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		} else {
 			//this is simple img tag
 			$lazy_loading = false;
-			if ( ! empty( $dom_element->getAttribute( 'src' ) )) {
+			if ( ! empty( $dom_element->getAttribute( 'src' ) ) ) {
 				$img_url_object = new Urlslab_File_Data( array( 'url' => $dom_element->getAttribute( 'src' ) ) );
-			} else if (! empty( $dom_element->getAttribute( 'data-src' ) )) {
+			} else if ( ! empty( $dom_element->getAttribute( 'data-src' ) ) ) {
 				$lazy_loading = true;
 				$img_url_object = new Urlslab_File_Data( array( 'url' => $dom_element->getAttribute( 'data-src' ) ) );
 			}
@@ -914,8 +913,11 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		//find all youtube iframes
 		$iframe_elements = $document->getElementsByTagName( 'iframe' );
 		foreach ( $iframe_elements as $element ) {
-			if ( $element->hasAttribute( 'src' ) && ( $ytid = $this->get_youtube_videoid( $element->getAttribute( 'src' ) ) ) ) {
-				$youtube_ids[ $ytid ] = $ytid;
+			if ( $element->hasAttribute( 'src' ) ) {
+				$ytid = $this->get_youtube_videoid( $element->getAttribute( 'src' ) );
+				if ( $ytid ) {
+					$youtube_ids[ $ytid ] = $ytid;
+				}
 			}
 		}
 

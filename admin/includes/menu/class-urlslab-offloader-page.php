@@ -209,9 +209,9 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 							$saving_opt[ $image_opt_setting ] = true;
 						}
 					}
-					if ( isset( $_POST[Urlslab_Media_Offloader_Widget::SETTING_NAME_YOUTUBE_API_KEY] ) ) {
+					if ( isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_YOUTUBE_API_KEY ] ) ) {
 						$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_YOUTUBE_API_KEY ] =
-								$_POST[Urlslab_Media_Offloader_Widget::SETTING_NAME_YOUTUBE_API_KEY];
+								$_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_YOUTUBE_API_KEY ];
 					}
 
 					Urlslab_Media_Offloader_Widget::update_option_lazy_loading( $saving_opt );

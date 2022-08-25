@@ -36,7 +36,8 @@ class Urlslab_Youtube_Cron {
 			)
 		);
 
-		if ( $microdata = $this->get_youtube_microdata( $youtube_obj ) ) {
+		$microdata = $this->get_youtube_microdata( $youtube_obj );
+		if ( $microdata ) {
 			//update status to active
 			$wpdb->update(
 				URLSLAB_YOUTUBE_CACHE_TABLE,
@@ -69,8 +70,8 @@ class Urlslab_Youtube_Cron {
 		$url     = 'https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet%2CcontentDetails&contentDetails.duration&id=' . $youtube_obj->get_videoid() . '&key=' . get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_YOUTUBE_API_KEY ); // json source
 		$response = wp_remote_get( $url, array( 'sslverify' => false ) );
 		if ( ! is_wp_error( $response ) ) {
-			$value = json_decode($response['body']);
-			if (property_exists($value, 'error')) {
+			$value = json_decode( $response['body'] );
+			if ( property_exists( $value, 'error' ) ) {
 				//TODO log debug message
 				return false;
 			}
