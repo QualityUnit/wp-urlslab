@@ -18,6 +18,7 @@ class Urlslab_Setting_Input implements Urlslab_Admin_Setting_Element {
 		string $placeholder
 	) {
 		if ( 'text' != $input_type &&
+				'password' != $input_type &&
 			 'number' != $input_type ) {
 			throw new Exception( 'Unsupported input' );
 		}

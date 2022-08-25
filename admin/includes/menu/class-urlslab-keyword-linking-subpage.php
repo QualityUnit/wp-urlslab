@@ -88,10 +88,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			if ( isset( $_POST['submit'] ) &&
 				 'Add Keyword' === $_POST['submit'] ) {
 				if ( isset( $_POST['keyword'] ) && ! empty( $_POST['keyword'] ) &&
-					 isset( $_POST['keyword-prio'] ) && ! empty( $_POST['keyword-prio'] ) &&
-					 isset( $_POST['keyword-lang'] ) && ! empty( $_POST['keyword-lang'] ) &&
-					 isset( $_POST['keyword-link'] ) && ! empty( $_POST['keyword-link'] ) &&
-					 isset( $_POST['keyword-url-filter'] ) && ! empty( $_POST['keyword-url-filter'] ) ) {
+					 isset( $_POST['keyword-link'] ) && ! empty( $_POST['keyword-link'] ) ) {
 					try {
 						$this->add_keyword(
 							new Urlslab_Url_Keyword_Data(

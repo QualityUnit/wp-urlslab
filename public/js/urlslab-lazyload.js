@@ -6,7 +6,7 @@
 
 const urlslabLazyLoad = () => {
 	const media = document.querySelectorAll(
-		'img[data-urlslabsrc], img[data-urlslabsrcset], video[data-urlslabsrc], .lazybg'
+		'img[data-src], img[data-srcset], video[data-src], .lazybg'
 	);
 
 	const eventType = ( element ) => {
@@ -73,9 +73,9 @@ const urlslabLazyLoad = () => {
 			element.removeAttribute('urlslab-lazy');
 		}
 
-		if ( element.hasAttribute( 'data-urlslabsrcset' ) ) {
-			element.setAttribute( 'srcset', element.getAttribute( 'data-urlslabsrcset' ) );
-			element.removeAttribute( 'data-urlslabsrcset' );
+		if ( element.hasAttribute( 'data-srcset' ) ) {
+			element.setAttribute( 'srcset', element.getAttribute( 'data-srcset' ) );
+			element.removeAttribute( 'data-srcset' );
 			element.addEventListener(
 				eventType( element ),
 				() => {
@@ -85,9 +85,9 @@ const urlslabLazyLoad = () => {
 			);
 		}
 
-		if ( element.hasAttribute( 'data-urlslabsrc' ) ) {
-			element.setAttribute( 'src', element.getAttribute( 'data-urlslabsrc' ) );
-			element.removeAttribute( 'data-urlslabsrc' );
+		if ( element.hasAttribute( 'data-src' ) ) {
+			element.setAttribute( 'src', element.getAttribute( 'data-src' ) );
+			element.removeAttribute( 'data-src' );
 			element.addEventListener(
 				eventType( element ),
 				() => {
@@ -111,6 +111,36 @@ const urlslabLazyLoad = () => {
 		}
 	};
 
+	const loadYouTube = ( yt ) => {
+		if ( ! yt.hasAttribute('urlslab-active') ) {
+			yt.setAttribute('urlslab-active', true);
+
+			const videoID = yt.dataset.ytid;
+			const iframe = document.createElement( 'iframe' );
+
+			Object.assign( iframe, {
+				className: 'youtube_urlslab_loader--embed',
+				title: yt.getAttribute( 'title' ),
+				src: `https://www.youtube.com/embed/${ videoID }?feature=oembed&autoplay=1&playsinline=1&rel=0`,
+				frameborder: '0',
+				allow: 'accelerometer; autoplay; gyroscope; fullscreen',
+			} );
+
+			if (yt.hasAttribute('width')) {
+				iframe.setAttribute('width', yt.getAttribute('width'))
+			}
+			if (yt.hasAttribute('height')) {
+				iframe.setAttribute('height', yt.getAttribute('height'))
+			}
+
+			yt.insertAdjacentElement( "afterbegin", iframe )
+			setTimeout( () => {
+				yt.classList.add( "active" )
+			}, 200 )
+		}
+	};
+
+
 	if ( 'IntersectionObserver' in window && media.length > 0 ) {
 		const mediaObserver = new IntersectionObserver(
 			( entries ) => {
@@ -130,6 +160,15 @@ const urlslabLazyLoad = () => {
             mediaObserver.observe( mediaObject );
 			}
 		);
+	}
+
+	const youtubeVideo = document.querySelectorAll( '.youtube_urlslab_loader' );
+	if ( youtubeVideo !== null ) {
+		youtubeVideo.forEach( ( element ) => {
+			const yt = element;
+			yt.addEventListener( 'click', () => { loadYouTube( yt ); }, { once: true } );
+			yt.removeEventListener( 'click', loadYouTube );
+		} );
 	}
 };
 

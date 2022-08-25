@@ -50,13 +50,14 @@ class Urlslab_Activator {
 		self::init_urlslab_files();
 		self::init_urlslab_file_alternatives();
 		self::init_urlslab_file_contents();
+		self::init_youtube_cache_tables();
 	}
 
 	private static function upgrade_steps() {
 		global $wpdb;
 		$version = get_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 
-		if ( version_compare( $version, '1.10.0', '<' ) ) {
+		if ( version_compare( $version, '1.11.0', '<' ) ) {
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_KEYWORDS_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILES_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILE_CONTENTS_TABLE . ';'); // phpcs:ignore
@@ -91,6 +92,21 @@ class Urlslab_Activator {
 			visibility char(1) NOT NULL DEFAULT 'V', -- V: visible, H: hidden
 			PRIMARY KEY  (urlMd5),
 			INDEX (updateStatusDate, status)
+		) $charset_collate;";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_youtube_cache_tables() {
+		global $wpdb;
+		$table_name = URLSLAB_YOUTUBE_CACHE_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+			videoid varchar(32) NOT NULL,
+			microdata text,
+			status char(1) NOT NULL, -- P: processing, A: Available, N: New, D - disabled
+			PRIMARY KEY  (videoid)
 		) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

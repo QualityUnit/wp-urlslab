@@ -197,6 +197,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-url-data-response.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-error-response.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-keyword-data.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-youtube-data.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-api-key.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-data-fetcher.php';
 
@@ -413,6 +414,11 @@ class Urlslab {
 		if ( $cron_job_avif_convert->is_format_supported() ) {
 			$this->loader->add_action( 'urlslab_cron_hook', $cron_job_avif_convert, 'cron_exec', 11, 0 );
 		}
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-youtube-cron.php';
+		$cron_youtube = new Urlslab_Youtube_Cron();
+		$this->loader->add_action( 'urlslab_cron_hook', $cron_youtube, 'cron_exec', 12, 0 );
+		//TODO REMOVE
+		$this->loader->add_action( 'admin_init', $cron_youtube, 'cron_exec', 12, 0 );
 	}
 
 	/**
