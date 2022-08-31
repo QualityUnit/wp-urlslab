@@ -3714,7 +3714,7 @@
     "@babel/runtime" "^7.16.0"
     lodash "^4.17.21"
 
-"@wordpress/stylelint-config@^20", "@wordpress/stylelint-config@^20.0.1":
+"@wordpress/stylelint-config@^20.0.1":
   version "20.0.2"
   resolved "https://registry.yarnpkg.com/@wordpress/stylelint-config/-/stylelint-config-20.0.2.tgz#343c351606ba9167736b42479fa66047cb3507e7"
   integrity sha512-guP0Cwc4PysbRJroxWcBxViYaqaTlxrkcZ/dfsoB0ZLO+RrZ8YFktt02mt6q6MASLTBEWIBHVQ5nKLVFPWAWJg==
@@ -3722,14 +3722,15 @@
     stylelint-config-recommended "^6.0.0"
     stylelint-config-recommended-scss "^5.0.2"
 
-"@wordpress/token-list@^2.16.0":
-  version "2.16.0"
-  resolved "https://registry.yarnpkg.com/@wordpress/token-list/-/token-list-2.16.0.tgz#983c231d4d1fdab2cb60ccb34be3606ab28e4e64"
-  integrity sha512-BqwSVthVrO4peHxKrTRilDOAHz8esqOwOsRMfWwc/1XUf7nrGrbz+YBTZhg37H9DsuLax31GzgoxYw57JlbIZQ==
+"@wordpress/stylelint-config@^21":
+  version "21.0.0"
+  resolved "https://registry.yarnpkg.com/@wordpress/stylelint-config/-/stylelint-config-21.0.0.tgz#550418e8ce5d87c39c82834095f6898c6ea27860"
+  integrity sha512-6d+eNMOz0BUsmZrPiWnU9i9m67Cbez+zhQLGU0LLFtmqLr2EI5JjfKEjkxftNkhWPRIlIqWPiUVzn6huaNA2Qw==
   dependencies:
-    "@babel/runtime" "^7.16.0"
+    stylelint-config-recommended "^6.0.0"
+    stylelint-config-recommended-scss "^5.0.2"
 
-"@wordpress/token-list@^2.7.0":
+"@wordpress/token-list@^2.15.0", "@wordpress/token-list@^2.7.0":
   version "2.15.0"
   resolved "https://registry.yarnpkg.com/@wordpress/token-list/-/token-list-2.15.0.tgz#e61dd2ab9cfdc18121a1a2219881346eb512da41"
   integrity sha512-ghs6w7UwXK9VF6ePhkq3NtBlzGfarEOEVP/1pCd3ClV8KYq8SnwE3Kqqr1iEl+pMI9+VdDnXg2DdD3OS+PmIWg==
