@@ -16,7 +16,7 @@
 		"packages-update": "wp-scripts packages-update"
 	},
 	"devDependencies": {
-		"@commitlint/cli": "^17.0.3",
+		"@commitlint/cli": "^17.1.2",
 		"@commitlint/config-conventional": "^17.1.0",
 		"@wordpress/base-styles": "^4",
 		"@wordpress/block-editor": "^9",
