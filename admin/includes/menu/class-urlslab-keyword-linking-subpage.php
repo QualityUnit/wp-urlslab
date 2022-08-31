@@ -36,42 +36,54 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					 isset( $_POST['keyword-link'] ) && ! empty( $_POST['keyword-link'] ) ) {
 					try {
 						//# Scheduling Url
-						if ( ! $this->data_fetcher->fetch_schedule_url(
-							new Urlslab_Url( $_POST['keyword-link'] )
-						) ) {
+						$url = new Urlslab_Url( $_POST['keyword-link'] );
+						if ( $url->is_url_valid() ) {
+							if ( $this->data_fetcher->prepare_url_batch_for_scheduling( array( $url ) ) ) {
+								$this->edit_keyword(
+									$_POST['keywordHash'],
+									new Urlslab_Url_Keyword_Data(
+										$_POST['keyword'],
+										isset( $_POST['keyword-prio'] ) && ! empty( $_POST['keyword-prio'] ) ? $_POST['keyword-prio'] : 10,
+										strlen( $_POST['keyword'] ),
+										isset( $_POST['keyword-lang'] ) && ! empty( $_POST['keyword-lang'] ) ? $_POST['keyword-lang'] : 'all',
+										$_POST['keyword-link'],
+										isset( $_POST['keyword-url-filter'] ) && ! empty( $_POST['keyword-url-filter'] ) ? $_POST['keyword-url-filter'] : '.*',
+									)
+								);
+								wp_safe_redirect(
+									$this->parent_page->menu_page(
+										$this->subpage_slug,
+										array(
+											'status' => 'success',
+											'urlslab-message' => 'keyword was edited successfully',
+										)
+									)
+								);
+								exit;
+							} else {
+								wp_safe_redirect(
+									$this->parent_page->menu_page(
+										$this->subpage_slug,
+										array(
+											'status' => 'failure',
+											'urlslab-message' => 'couldnt schedule url, please try again',
+										)
+									)
+								);
+								exit;
+							}
+						} else {
 							wp_safe_redirect(
 								$this->parent_page->menu_page(
 									$this->subpage_slug,
 									array(
 										'status' => 'failure',
-										'urlslab-message' => 'couldnt schedule url, please try again',
+										'urlslab-message' => 'entered url is not valid',
 									)
 								)
 							);
 							exit;
 						}
-						//# Scheduling Url
-						$this->edit_keyword(
-							$_POST['keywordHash'],
-							new Urlslab_Url_Keyword_Data(
-								$_POST['keyword'],
-								isset( $_POST['keyword-prio'] ) && ! empty( $_POST['keyword-prio'] ) ? $_POST['keyword-prio'] : 10,
-								strlen( $_POST['keyword'] ),
-								isset( $_POST['keyword-lang'] ) && ! empty( $_POST['keyword-lang'] ) ? $_POST['keyword-lang'] : 'all',
-								$_POST['keyword-link'],
-								isset( $_POST['keyword-url-filter'] ) && ! empty( $_POST['keyword-url-filter'] ) ? $_POST['keyword-url-filter'] : '.*',
-							)
-						);
-						wp_safe_redirect(
-							$this->parent_page->menu_page(
-								$this->subpage_slug,
-								array(
-									'status' => 'success',
-									'urlslab-message' => 'keyword was edited successfully',
-								)
-							)
-						);
-						exit;
 					} catch ( Exception $e ) {
 						wp_safe_redirect(
 							$this->parent_page->menu_page(
@@ -105,42 +117,54 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				if ( isset( $_POST['keyword'] ) && ! empty( $_POST['keyword'] ) &&
 					 isset( $_POST['keyword-link'] ) && ! empty( $_POST['keyword-link'] ) ) {
 					try {
-						//# Scheduling Url
-						if ( ! $this->data_fetcher->fetch_schedule_url(
-							new Urlslab_Url( $_POST['keyword-link'] )
-						) ) {
+
+						$url = new Urlslab_Url( $_POST['keyword-link'] );
+						if ( $url->is_url_valid() ) {
+							if ( $this->data_fetcher->prepare_url_batch_for_scheduling( array( $url ) ) ) {
+								$this->add_keyword(
+									new Urlslab_Url_Keyword_Data(
+										$_POST['keyword'],
+										isset( $_POST['keyword-prio'] ) && ! empty( $_POST['keyword-prio'] ) ? $_POST['keyword-prio'] : 10,
+										strlen( $_POST['keyword'] ),
+										isset( $_POST['keyword-lang'] ) && ! empty( $_POST['keyword-lang'] ) ? $_POST['keyword-lang'] : 'all',
+										$_POST['keyword-link'],
+										isset( $_POST['keyword-url-filter'] ) && ! empty( $_POST['keyword-url-filter'] ) ? $_POST['keyword-url-filter'] : '.*',
+									)
+								);
+								wp_safe_redirect(
+									$this->parent_page->menu_page(
+										$this->subpage_slug,
+										array(
+											'status' => 'success',
+											'urlslab-message' => 'Keyword was added successfully',
+										)
+									)
+								);
+								exit;
+							} else {
+								wp_safe_redirect(
+									$this->parent_page->menu_page(
+										$this->subpage_slug,
+										array(
+											'status' => 'failure',
+											'urlslab-message' => 'couldnt schedule url, please try again',
+										)
+									)
+								);
+								exit;
+							}
+						} else {
 							wp_safe_redirect(
 								$this->parent_page->menu_page(
 									$this->subpage_slug,
 									array(
 										'status' => 'failure',
-										'urlslab-message' => 'couldnt schedule url, please try again',
+										'urlslab-message' => 'entered url is not valid',
 									)
 								)
 							);
 							exit;
 						}
-						//# Scheduling Url
-						$this->add_keyword(
-							new Urlslab_Url_Keyword_Data(
-								$_POST['keyword'],
-								isset( $_POST['keyword-prio'] ) && ! empty( $_POST['keyword-prio'] ) ? $_POST['keyword-prio'] : 10,
-								strlen( $_POST['keyword'] ),
-								isset( $_POST['keyword-lang'] ) && ! empty( $_POST['keyword-lang'] ) ? $_POST['keyword-lang'] : 'all',
-								$_POST['keyword-link'],
-								isset( $_POST['keyword-url-filter'] ) && ! empty( $_POST['keyword-url-filter'] ) ? $_POST['keyword-url-filter'] : '.*',
-							)
-						);
-						wp_safe_redirect(
-							$this->parent_page->menu_page(
-								$this->subpage_slug,
-								array(
-									'status' => 'success',
-									'urlslab-message' => 'Keyword was added successfully',
-								)
-							)
-						);
-						exit;
 					} catch ( Exception $e ) {
 						wp_safe_redirect(
 							$this->parent_page->menu_page(
@@ -474,6 +498,10 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					$data_row = new Urlslab_Url_Keyword_Data( $data[0], isset( $data[2] ) && is_numeric( $data[2] ) ? (int) $data[2] : 10, strlen( $data[0] ), isset( $data[3] ) && strlen( $data[3] ) > 0 ? $data[3] : 'all', $data[1], isset( $data[4] ) ? $data[4] : '.*' );
 
 					$result = $this->create_row( $data_row );
+					$scheduling_url = new Urlslab_Url( $data_row->get_keyword_url_link() );
+					if ( $scheduling_url->is_url_valid() ) {
+						$this->data_fetcher->prepare_url_batch_for_scheduling( array( $scheduling_url ) );
+					}
 					if ( $result ) {
 						$processed_rows++;
 					}
