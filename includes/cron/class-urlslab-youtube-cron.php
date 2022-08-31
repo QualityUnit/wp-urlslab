@@ -1,18 +1,13 @@
 <?php
+require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
 
-class Urlslab_Youtube_Cron {
-	private $start_time;
-	const MAX_RUN_TIME = 10;
+class Urlslab_Youtube_Cron extends Urlslab_Cron {
 
-	public function cron_exec() {
-		if ( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_YOUTUBE_LAZY_LOADING, false ) && strlen( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_YOUTUBE_API_KEY, '' ) ) ) {
-			$this->start_time = time();
-			while ( time() - $this->start_time < self::MAX_RUN_TIME && $this->offload_next_youtube_video() ) {
-			}
+	protected function execute(): bool {
+		if ( ! get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_YOUTUBE_LAZY_LOADING, false ) || 0 == strlen( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_YOUTUBE_API_KEY, '' ) ) ) {
+			return false;
 		}
-	}
 
-	private function offload_next_youtube_video() {
 		global $wpdb;
 		$youtube_row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' WHERE status = %s LIMIT 1', Urlslab_Youtube_Data::YOUTUBE_NEW ), ARRAY_A ); // phpcs:ignore
 		if ( empty( $youtube_row ) ) {

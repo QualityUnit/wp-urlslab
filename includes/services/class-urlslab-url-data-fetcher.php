@@ -194,6 +194,7 @@ or (updateStatusDate < %d AND status = %s)
 			}
 		} catch ( Exception $e ) {
 			urlslab_debug_log( $e );
+			return array();
 		}
 		foreach ( $grouped_urls['blocked_urls'] as $blocked_url ) {
 			$scheduled[ $blocked_url->get_url_id() ] = Urlslab_Url_Data::empty(

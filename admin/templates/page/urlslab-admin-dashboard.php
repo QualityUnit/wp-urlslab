@@ -51,6 +51,7 @@
 					</div>
 				</div>
 				<a class="button button-primary" href="<?php echo esc_url( $urls_page->menu_page( '' ) ); ?>">Manage</a>
+				<button class="button button-primary" id="urlslab-cron-btn">Start cron</button>
 			</div>
 		</div>
 		<?php
