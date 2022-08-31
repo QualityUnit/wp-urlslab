@@ -55,7 +55,7 @@ class Urlslab_Activator {
 
 	private static function upgrade_steps() {
 		global $wpdb;
-		$version = get_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
+		$version = get_option( URLSLAB_VERSION_SETTING, '1.0.0' );
 
 		if ( version_compare( $version, '1.11.0', '<' ) ) {
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_KEYWORDS_TABLE . ';'); // phpcs:ignore
