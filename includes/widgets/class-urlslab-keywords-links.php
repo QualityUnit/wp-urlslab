@@ -48,7 +48,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	//minimum paragraph length defines minimum size of text length, where can be placed the link
 	//in too short texts we will not try to include links
 	public const SETTING_NAME_MIN_PARAGRAPH_LENGTH = 'urlslab_min_paragraph_len';
-	public const SETTING_DEFAULT_MIN_PARAGRAPH_LENGTH = 50;
+	public const SETTING_DEFAULT_MIN_PARAGRAPH_LENGTH = 1;
 
 
 	public function __construct() {
@@ -238,10 +238,11 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			if (
 				( ! isset( $this->kw_page_replacement_counts[ $row['kw'] ] ) || $this->kw_page_replacement_counts[ $row['kw'] ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD, self::MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD ) ) &&
 				( ! isset( $this->url_page_replacement_counts[ $row['url'] ] ) || $this->url_page_replacement_counts[ $row['url'] ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_URL, self::MAX_DEFAULT_REPLACEMENTS_PER_URL ) ) &&
-				( ! isset( $this->urlandkw_page_replacement_counts[ $kw_md5 ] ) || $this->urlandkw_page_replacement_counts[ $kw_md5 ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL, self::MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD_URL ) ) &&
-					strpos( $inputText, strtolower( $row['kw'] ) ) !== false
+				( ! isset( $this->urlandkw_page_replacement_counts[ $kw_md5 ] ) || $this->urlandkw_page_replacement_counts[ $kw_md5 ] < get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL, self::MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD_URL ) )
 			) {
-				$keywords[ $kw_md5 ] = $row;
+				if ( strpos( $inputText, strtolower( $row['kw'] ) ) !== false ) {
+					$keywords[ $kw_md5 ] = $row;
+				}
 			} else {
 				unset( $this->keywords_cache[ $kw_md5 ] );
 			}
