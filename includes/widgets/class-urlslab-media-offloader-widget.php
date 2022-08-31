@@ -65,6 +65,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public const SETTING_NAME_IMG_LAZY_LOADING = 'urlslab_img_lazy';
 	public const SETTING_NAME_VIDEO_LAZY_LOADING = 'urlslab_video_lazy';
 	public const SETTING_NAME_YOUTUBE_LAZY_LOADING = 'urlslab_youtube_lazy';
+	public const SETTING_NAME_YOUTUBE_API_KEY = 'urlslab_youtube_apikey';
 
 	private $files = array();
 
@@ -186,6 +187,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	public function the_content( DOMDocument $document ) {
+
+		//TODO Lazy loading should be separated widget
+		$this->process_lazy_loading( $document );
+
 		try {
 			$found_urls = array();
 			$url_fileids = array();
@@ -243,7 +248,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 						case 'source':
 							$found_urls = array_merge( $this->process_source_tag( $dom_element, $document ), $found_urls );
 							break;
-
 						case 'audio': //for now we don't have alternatives for audio files
 							$found_urls = array_merge( $this->replace_attributes( $dom_element ), $found_urls );
 							break;
@@ -264,9 +268,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 			if ( count( $found_urls ) > 0 ) {
 				$this->update_last_seen_date( array_keys( $found_urls ) );
-			}
-
-			$this->process_lazy_loading( $document );
+			}       
 		} catch ( Exception $e ) {
 			//TODO log error
 		}
@@ -324,6 +326,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 					}
 					if ( $dom_element->hasAttribute( 'data-srcset' ) ) {
 						$source_element->setAttribute( 'data-srcset', $dom_element->getAttribute( 'data-srcset' ) );
+						$source_element->setAttribute( 'urlslab-lazy', 'yes' );
 						foreach ( $url_alternatives as $arr_alternative ) {
 							$source_element->setAttribute( 'data-srcset', str_replace( $arr_alternative['old_url'], $arr_alternative['new_url'], $source_element->getAttribute( 'data-srcset' ) ) );
 						}
@@ -357,11 +360,11 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		if ( $this->has_parent_node( $dom_element, 'picture' ) ) {
 
 			$lazy_loading = false;
-			if ( empty( $dom_element->getAttribute( 'src' ) ) && ! empty( $dom_element->getAttribute( 'data-src' ) ) ) {
+			if ( ! empty( $dom_element->getAttribute( 'src' ) ) ) {
+				$img_url_object = new Urlslab_File_Data( array( 'url' => $dom_element->getAttribute( 'src' ) ) );
+			} else if ( ! empty( $dom_element->getAttribute( 'data-src' ) ) ) {
 				$lazy_loading = true;
 				$img_url_object = new Urlslab_File_Data( array( 'url' => $dom_element->getAttribute( 'data-src' ) ) );
-			} else {
-				$img_url_object = new Urlslab_File_Data( array( 'url' => $dom_element->getAttribute( 'src' ) ) );
 			}
 
 			if ( isset( $this->files[ $img_url_object->get_fileid() ] ) && $this->files[ $img_url_object->get_fileid() ]->has_file_alternative() ) {
@@ -371,6 +374,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 						$source_url = Urlslab_Driver::get_driver( $alternative_file_obj )->get_url( $alternative_file_obj );
 						if ( $lazy_loading ) {
 							$source_element->setAttribute( 'data-srcset', $source_url );
+							$source_element->setAttribute( 'urlslab-lazy', 'yes' );
 						} else {
 							$source_element->setAttribute( 'srcset', $source_url );
 						}
@@ -384,11 +388,11 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		} else {
 			//this is simple img tag
 			$lazy_loading = false;
-			if ( empty( $dom_element->getAttribute( 'src' ) ) && ! empty( $dom_element->getAttribute( 'data-src' ) ) ) {
+			if ( ! empty( $dom_element->getAttribute( 'src' ) ) ) {
+				$img_url_object = new Urlslab_File_Data( array( 'url' => $dom_element->getAttribute( 'src' ) ) );
+			} else if ( ! empty( $dom_element->getAttribute( 'data-src' ) ) ) {
 				$lazy_loading = true;
 				$img_url_object = new Urlslab_File_Data( array( 'url' => $dom_element->getAttribute( 'data-src' ) ) );
-			} else {
-				$img_url_object = new Urlslab_File_Data( array( 'url' => $dom_element->getAttribute( 'src' ) ) );
 			}
 
 			if ( isset( $this->files[ $img_url_object->get_fileid() ] ) && $this->files[ $img_url_object->get_fileid() ]->has_file_alternative() && count( $this->files[ $img_url_object->get_fileid() ]->get_alternatives() ) > 0 ) {
@@ -402,6 +406,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 					$source_element = $document->createElement( 'source' );
 					if ( $lazy_loading ) {
 						$source_element->setAttribute( 'data-srcset', $new_img_element->getAttribute( 'srcset' ) );
+						$source_element->setAttribute( 'urlslab-lazy', 'yes' );
 					} else {
 						$source_element->setAttribute( 'srcset', $new_img_element->getAttribute( 'srcset' ) );
 					}
@@ -423,6 +428,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 					$source_url = Urlslab_Driver::get_driver( $alternative_file )->get_url( $alternative_file );
 					if ( $lazy_loading ) {
 						$source_element->setAttribute( 'data-srcset', $source_url );
+						$source_element->setAttribute( 'urlslab-lazy', 'yes' );
 					} else {
 						$source_element->setAttribute( 'srcset', $source_url );
 					}
@@ -440,7 +446,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		}
 		return $found_urls;
 	}
-
 
 	private function get_files_for_urls( array $old_url_ids ) :array {
 		if ( empty( $old_url_ids ) ) {
@@ -592,6 +597,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		add_option( self::SETTING_NAME_IMG_LAZY_LOADING, false, '', true );
 		add_option( self::SETTING_NAME_VIDEO_LAZY_LOADING, false, '', true );
 		add_option( self::SETTING_NAME_YOUTUBE_LAZY_LOADING, false, '', true );
+		add_option( self::SETTING_NAME_YOUTUBE_API_KEY, '', '', true );
 	}
 
 	public static function update_settings( array $new_settings ) {
@@ -799,6 +805,15 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				false
 			);
 		}
+
+		if ( isset( $new_settings[ self::SETTING_NAME_YOUTUBE_API_KEY ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_YOUTUBE_API_KEY ] ) ) {
+			update_option(
+				self::SETTING_NAME_YOUTUBE_API_KEY,
+				$new_settings[ self::SETTING_NAME_YOUTUBE_API_KEY ]
+			);
+		}
+
 	}
 
 	/**
@@ -862,23 +877,13 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	private function add_img_lazy_loading( DOMElement $dom_element ) {
 		if ( $dom_element->hasAttribute( 'src' ) ) {
-			$dom_element->setAttribute( 'data-urlslabsrc', $dom_element->getAttribute( 'src' ) );
+			$dom_element->setAttribute( 'data-src', $dom_element->getAttribute( 'src' ) );
 			$dom_element->removeAttribute( 'src' );
 		}
 
-		if ( $dom_element->hasAttribute( 'data-src' ) ) {
-			$dom_element->setAttribute( 'data-urlslabsrc', $dom_element->getAttribute( 'data-src' ) );
-			$dom_element->removeAttribute( 'data-src' );
-		}
-
 		if ( $dom_element->hasAttribute( 'srcset' ) ) {
-			$dom_element->setAttribute( 'data-urlslabsrcset', $dom_element->getAttribute( 'srcset' ) );
+			$dom_element->setAttribute( 'data-srcset', $dom_element->getAttribute( 'srcset' ) );
 			$dom_element->removeAttribute( 'srcset' );
-		}
-
-		if ( $dom_element->hasAttribute( 'data-full-url' ) ) {
-			$dom_element->setAttribute( 'data-ursllabfull-url', $dom_element->getAttribute( 'data-full-url' ) );
-			$dom_element->removeAttribute( 'data-full-url' );
 		}
 
 		if ( $dom_element->hasAttribute( 'style' ) ) {
@@ -895,16 +900,167 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	private function add_source_lazy_loading( DOMElement $dom_element ) {
 		if ( $this->has_parent_node( $dom_element, 'picture' ) ) {
 			if ( $dom_element->hasAttribute( 'srcset' ) ) {
-				$dom_element->setAttribute( 'data-urlslabsrcset', $dom_element->getAttribute( 'srcset' ) );
+				$dom_element->setAttribute( 'data-srcset', $dom_element->getAttribute( 'srcset' ) );
 				$dom_element->removeAttribute( 'srcset' );
-			}
-
-			if ( $dom_element->hasAttribute( 'data-srcset' ) ) {
-				$dom_element->setAttribute( 'data-urlslabsrcset', $dom_element->getAttribute( 'data-srcset' ) );
-				$dom_element->removeAttribute( 'data-srcset' );
 			}
 			$dom_element->setAttribute( 'urlslab-lazy', 'yes' );
 		}
+	}
+
+	private function add_youtube_lazy_loading( DOMDocument $document ) {
+		$youtube_ids = array();
+
+		//find all youtube iframes
+		$iframe_elements = $document->getElementsByTagName( 'iframe' );
+		foreach ( $iframe_elements as $element ) {
+			if ( $element->hasAttribute( 'src' ) ) {
+				$ytid = $this->get_youtube_videoid( $element->getAttribute( 'src' ) );
+				if ( $ytid ) {
+					$youtube_ids[ $ytid ] = $ytid;
+				}
+			}
+		}
+
+		//find elementor blocks
+		$xpath         = new DOMXPath( $document );
+		$elementor_divs = $xpath->query( "//div[contains(@class, 'elementor-widget-video')]" );
+		foreach ( $elementor_divs as $element ) {
+			if ( $element->hasAttribute( 'data-settings' ) ) {
+				$json = json_decode( $element->getAttribute( 'data-settings' ) );
+				if ( is_object( $json ) && property_exists( $json, 'youtube_url' ) ) {
+					$ytid = $this->get_youtube_videoid( $json->youtube_url );
+					if ( $ytid ) {
+						$youtube_ids[ $ytid ] = $ytid;
+					}
+				}
+			}
+		}
+
+		if ( empty( $youtube_ids ) ) {
+			return; //no yt videos in page
+		}
+
+		$video_objects = $this->get_youtube_videos( array_keys( $youtube_ids ) );
+
+		//enhance iframe versions
+		foreach ( $iframe_elements as $element ) {
+			if ( $element->hasAttribute( 'src' ) ) {
+				$ytid = $this->get_youtube_videoid( $element->getAttribute( 'src' ) );
+				if ( $ytid && isset( $video_objects[ $ytid ] ) && Urlslab_Youtube_Data::YOUTUBE_AVAILABLE === $video_objects[ $ytid ]->get_status() ) {
+					$this->replace_iframe_with_youtube_placeholder( $document, $element, $video_objects[ $ytid ] );
+				}
+			}
+		}
+
+		//enhance elementor objects with schema
+		foreach ( $elementor_divs as $element ) {
+			if ( $element->hasAttribute( 'data-settings' ) ) {
+				$json = json_decode( $element->getAttribute( 'data-settings' ) );
+				if ( is_object( $json ) && property_exists( $json, 'youtube_url' ) ) {
+					$ytid = $this->get_youtube_videoid( $json->youtube_url );
+					if ( $ytid && isset( $video_objects[ $ytid ] ) && Urlslab_Youtube_Data::YOUTUBE_AVAILABLE === $video_objects[ $ytid ]->get_status() ) {
+						$this->append_video_schema( $document, $element, $video_objects[ $ytid ] );
+					}
+				}
+			}
+		}
+
+	}
+
+	private function replace_iframe_with_youtube_placeholder( DOMDocument $document, DOMElement $iframe, Urlslab_Youtube_Data $youtube_obj ):bool {
+		$youtube_loader = $document->createElement( 'div' );
+		$youtube_loader->setAttribute( 'class', 'youtube_urlslab_loader' );
+		$youtube_loader->setAttribute( 'data-ytid', $youtube_obj->get_videoid() );
+		if ( $iframe->hasAttribute( 'width' ) ) {
+			$youtube_loader->setAttribute( 'width', $iframe->getAttribute( 'width' ) );
+		}
+		if ( $iframe->hasAttribute( 'height' ) ) {
+			$youtube_loader->setAttribute( 'height', $iframe->getAttribute( 'height' ) );
+		}
+
+		$youtube_img = $document->createElement( 'img' );
+		$youtube_img->setAttribute( 'class', 'youtube_urlslab_loader--img' );
+		$youtube_img->setAttribute( 'data-src', 'https://i.ytimg.com/vi/' . $youtube_obj->get_videoid() . '/hqdefault.jpg' );
+		$youtube_img->setAttribute( 'style', 'opacity: 0; transition: opacity .5s;' );
+		$youtube_img->setAttribute( 'alt', 'Youtube video ' . $youtube_obj->get_title() );
+		$youtube_img->setAttribute( 'urlslab-lazy', 'yes' );
+
+		$youtube_loader->appendChild( $youtube_img );
+
+		$iframe->parentNode->replaceChild( $youtube_loader, $iframe );
+		$this->append_video_schema( $document, $youtube_loader, $youtube_obj );
+		return true;
+	}
+
+	private function append_video_schema( DOMDocument $document, DOMElement $youtube_loader, Urlslab_Youtube_Data $youtube_obj ) {
+		if ( ! empty( $youtube_obj->get_microdata() ) ) {
+			$schema = $document->createElement( 'div' );
+			$schema->setAttribute( 'itemscope', null );
+			$schema->setAttribute( 'itemtype', 'https://schema.org/VideoObject' );
+			$schema->setAttribute( 'itemprop', 'video' );
+			$this->append_meta_attribute( $document, $schema, 'name', $youtube_obj->get_title() );
+			$this->append_meta_attribute( $document, $schema, 'description', $youtube_obj->get_description() );
+			$this->append_meta_attribute( $document, $schema, 'thumbnailUrl', $youtube_obj->get_thumbnail_url(), 'link' );
+			$this->append_meta_attribute( $document, $schema, 'contentUrl', 'https://www.youtube.com/watch?v=' . $youtube_obj->get_videoid(), 'link' );
+			$this->append_meta_attribute( $document, $schema, 'embedUrl', 'https://www.youtube.com/embed/' . $youtube_obj->get_videoid(), 'link' );
+			$this->append_meta_attribute( $document, $schema, 'duration', $youtube_obj->get_duration() );
+			$this->append_meta_attribute( $document, $schema, 'uploadDate', $youtube_obj->get_published_at() );
+			$youtube_loader->appendChild( $schema );
+		}
+	}
+
+	private function append_meta_attribute( DOMDocument $document, DOMElement $schema, $name, $content, $element_type = 'meta' ) {
+		$meta = $document->createElement( $element_type );
+		$meta->setAttribute( 'itemprop', $name );
+		$meta->setAttribute( 'content', $content );
+		$schema->appendChild( $meta );
+	}
+
+	private function get_youtube_videoid( $url ) {
+		if ( preg_match( "/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user|shorts)\/))([^\?&\"'>]+)/", $url, $matches ) ) {
+			return $matches[1];
+		}
+		return false;
+	}
+
+	private function get_youtube_videos( array $youtube_ids ):array {
+		if ( empty( $youtube_ids ) ) {
+			return array();
+		}
+		global $wpdb;
+		$videos = array();
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT * FROM ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' WHERE videoid in (' . trim( str_repeat( '%s,', count( $youtube_ids ) ), ',' ) . ')', // phpcs:ignore
+				$youtube_ids
+			),
+			'ARRAY_A'
+		);
+
+		foreach ( $results as $row ) {
+			$video_obj = new Urlslab_Youtube_Data( $row );
+			$videos[ $video_obj->get_videoid() ] = $video_obj;
+		}
+
+
+		//schedule missing videos
+		$placeholders = array();
+		$values = array();
+		foreach ( $youtube_ids as $videoid ) {
+			if ( ! isset( $videos[ $videoid ] ) ) {
+				$placeholders[] = '(%s, %s)';
+				array_push( $values, $videoid, Urlslab_Youtube_Data::YOUTUBE_NEW );
+			}
+		}
+		if ( ! empty( $placeholders ) ) {
+			global $wpdb;
+			$query = 'INSERT IGNORE INTO ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' (
+                   videoid,
+                   status) VALUES ' . implode( ', ', $placeholders );
+			$wpdb->query( $wpdb->prepare( $query, $values ) ); // phpcs:ignore
+		}
+
+		return $videos;
 	}
 
 	private function add_video_lazy_loading( DOMElement $dom_element ) {
@@ -914,13 +1070,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		}
 		$dom_element->setAttribute( 'style', 'opacity: 0;' );
 
-		if ( $dom_element->hasAttribute( 'data-src' ) ) {
-			$dom_element->setAttribute( 'data-urlslabsrc', $dom_element->getAttribute( 'data-src' ) );
-			$dom_element->removeAttribute( 'data-src' );
-		}
-
 		if ( $dom_element->hasAttribute( 'src' ) ) {
-			$dom_element->setAttribute( 'data-urlslabsrc', $dom_element->getAttribute( 'src' ) );
+			$dom_element->setAttribute( 'data-src', $dom_element->getAttribute( 'src' ) );
 			$dom_element->removeAttribute( 'src' );
 		}
 
@@ -928,6 +1079,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	private function process_lazy_loading( DOMDocument $document ) {
+		if ( get_option( self::SETTING_NAME_YOUTUBE_LAZY_LOADING, false ) ) {
+			$this->add_youtube_lazy_loading( $document );
+		}
+
 		if ( get_option( self::SETTING_NAME_IMG_LAZY_LOADING, false ) ) {
 			$dom_elements = $document->getElementsByTagName( 'img' );
 			foreach ( $dom_elements as $element ) {
@@ -944,5 +1099,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				$this->add_video_lazy_loading( $element );
 			}
 		}
+
 	}
 }
