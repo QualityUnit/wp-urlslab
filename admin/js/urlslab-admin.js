@@ -56,38 +56,38 @@
 		keywordFilter = '' ) {
 		return $(
 			`
-			< div id = "${ modalId }" class = "urlslab-modal modal" >
-			< div >
-				< h2 > ${ keyword != '' ? `Edit ${ keyword }` : 'Add Keyword' } < / h2 >
-				< button data - close - modal - id = "${ modalId }" class = "modal-close" >
-					< img src = "${ closeIcon }" alt = "info" width = "17px" >
-				< / button >
-			< / div >
-			< form method = "post" class = "col-12" action = "?page=${ pageParam }&tab=${ tabParam }&action=keyword-edit" >
-				< input type = "hidden" name = "keywordHash" value = "${ keywordHash }" >
-				< div class = "form-item mar-bottom-1" >
-					< label for = "keyword" > Keyword: < / label >
-					< input id = "keyword" name = "keyword" type = "text" value = "${ keyword }" placeholder = "Keyword..." >
-				< / div >
-				< div class = "form-item mar-bottom-1" >
-					< label for = "keyword-link" > Keyword Link: < / label >
-					< input id = "keyword-link" name = "keyword-link" type = "text" value = "${ keywordLink }" placeholder = "Keyword Link..." >
-				< / div >
-				< div class = "form-item mar-bottom-1" >
-					< label for = "keyword-prio" > Keyword Priority: < / label >
-					< input id = "keyword-prio" name = "keyword-prio" type = "text" value = "${ keywordPrio }" placeholder = "10" >
-				< / div >
-				< div class = "form-item mar-bottom-1" >
-					< label for = "keyword-lang" > Keyword Lang: < / label >
-					< input id = "keyword-lang" name = "keyword-lang" type = "text" value = "${ keywordLang }" placeholder = "all" >
-				< / div >
-				< div class = "form-item mar-bottom-1" >
-					< label for = "keyword-url-filter" > Keyword Url Filter: < / label >
-					< input id = "keyword-url-filter" name = "keyword-url-filter" type = "text" value = "${ keywordFilter }" placeholder = ".*" >
-				< / div >
-				< input type = "submit" name = "submit" class = "button" value = "${ keyword != '' ? 'Edit Keyword' : 'Add Keyword' }" >
-			< / form >
-			< / div >
+		<div id="${ modalId }" class="urlslab-modal modal">
+			<div>
+				<h2>${ keyword != '' ? `Edit ${ keyword }` : 'Add Keyword' }</h2>
+				<button data-close-modal-id="${ modalId }" class="modal-close">
+					<img src="${ closeIcon }" alt="info" width="17px">
+				</button>
+			</div>
+			<form method="post" class="col-12" action="?page=${ pageParam }&tab=${ tabParam }&action=keyword-edit">
+				<input type="hidden" name="keywordHash" value="${ keywordHash }">
+				<div class="form-item mar-bottom-1">
+					<label for="keyword">Keyword: </label>
+					<input id="keyword" name="keyword" type="text" value="${ keyword }" placeholder="Keyword...">
+				</div>
+				<div class="form-item mar-bottom-1">
+					<label for="keyword-link">Keyword Link: </label>
+					<input id="keyword-link" name="keyword-link" type="text" value="${ keywordLink }" placeholder="Keyword Link...">
+				</div>
+				<div class="form-item mar-bottom-1">
+					<label for="keyword-prio">Keyword Priority: </label>
+					<input id="keyword-prio" name="keyword-prio" type="text" value="${ keywordPrio }" placeholder="10">
+				</div>
+				<div class="form-item mar-bottom-1">
+					<label for="keyword-lang">Keyword Lang: </label>
+					<input id="keyword-lang" name="keyword-lang" type="text" value="${ keywordLang }" placeholder="all">
+				</div>
+				<div class="form-item mar-bottom-1">
+					<label for="keyword-url-filter">Keyword Url Filter: </label>
+					<input id="keyword-url-filter" name="keyword-url-filter" type="text" value="${ keywordFilter }" placeholder=".*">
+				</div>
+				<input type="submit" name="submit" class="button" value="${ keyword != '' ? 'Edit Keyword' : 'Add Keyword' }">
+			</form>
+		</div>
 			`
 		);
 	}
@@ -103,27 +103,27 @@
 		destUrl = '' ) {
 		return $(
 			`
-			< div id = "${ modalId }" class = "urlslab-modal modal" >
-			< div >
-				< h2 > ${ srcUrlHash != '' ? 'Edit Url Relation' : 'Add Url Relation' } < / h2 >
-				< button data - close - modal - id = "${ modalId }" class = "modal-close" >
-					< img src = "${ closeIcon }" alt = "info" width = "17px" >
-				< / button >
-			< / div >
-			< form method = "post" action = "?page=${ pageParam }&tab=${ tabParam }&action=url-relation-edit" >
-				< input type = "hidden" name = "srcUrlHash" value = "${ srcUrlHash }" >
-				< input type = "hidden" name = "destUrlHash" value = "${ destUrlHash }" >
-				< label for = "src-url" > Src URL: < / label >
-				< input id = "src-url" name = "srcUrl" type = "text" value = "${ srcUrl }" placeholder = "Src URL..." >
-				< br class = "clear" / >
-				< br class = "clear" / >
-				< label for = "dest-url" > Dest URL: < / label >
-				< input id = "dest-url" name = "destUrl" type = "text" value = "${ destUrl }" placeholder = "Dest URL..." >
-				< br class = "clear" / >
-				< br class = "clear" / >
-				< input type = "submit" name = "submit" class = "button" value = "${ srcUrlHash != '' ? 'Edit Url Relation' : 'Add Url Relation' }" >
-			< / form >
-			< / div >
+		<div id="${ modalId }" class="urlslab-modal modal">
+			<div>
+				<h2>${ srcUrlHash != '' ? 'Edit Url Relation' : 'Add Url Relation' }</h2>
+				<button data-close-modal-id="${ modalId }" class="modal-close">
+					<img src="${ closeIcon }" alt="info" width="17px">
+				</button>
+			</div>
+			<form method="post" action="?page=${ pageParam }&tab=${ tabParam }&action=url-relation-edit">
+				<input type="hidden" name="srcUrlHash" value="${ srcUrlHash }">
+				<input type="hidden" name="destUrlHash" value="${ destUrlHash }">
+				<label for="src-url">Src URL: </label>
+				<input id="src-url" name="srcUrl" type="text" value="${ srcUrl }" placeholder="Src URL...">
+				<br class="clear"/>
+				<br class="clear"/>
+				<label for="dest-url">Dest URL: </label>
+				<input id="dest-url" name="destUrl" type="text" value="${ destUrl }" placeholder="Dest URL...">
+				<br class="clear"/>
+				<br class="clear"/>
+				<input type="submit" name="submit" class="button" value="${ srcUrlHash != '' ? 'Edit Url Relation' : 'Add Url Relation' }">
+			</form>
+		</div>
 			`
 		);
 	}
@@ -131,63 +131,58 @@
 	//# Cron
 	var urlslabCronObj = {
 
-		start: function () {
-			if (urlslabCronObj.is_running()) {
+		start() {
+			if ( urlslabCronObj.is_running() ) {
 				return;
 			}
 			urlslabCronObj.running = true;
 			urlslabCronObj.callAjaxMethod();
 		},
 
-		stop: function () {
+		stop() {
 			urlslabCronObj.running = false;
 		},
 
-		is_running: function () {
+		is_running() {
 			return urlslabCronObj.running;
 		},
 
-		callAjaxMethod:function(){
-			if (urlslabCronObj.running) {
-				wp.ajax.post( "urlslab_exec_cron", {} )
+		callAjaxMethod() {
+			if ( urlslabCronObj.running ) {
+				wp.ajax.post( 'urlslab_exec_cron', {} )
 					.done(
-						function(response) {
+						function( response ) {
 							urlslabCronObj.callAjaxMethod();
 						}
 					).fail(
 						function( reason ) {
 							urlslabCronObj.stop();
-						} 
+						}
 					);
 			}
-		}
-	}
-
+		},
+	};
 
 	/** Functions */
 
 	$( document ).ready(
 		function() {
-
-
 			$( '#urlslab-cron-btn' ).on(
-				"click",
-				function () {
-					if (urlslabCronObj.is_running()) {
+				'click',
+				function() {
+					if ( urlslabCronObj.is_running() ) {
 						urlslabCronObj.stop();
-						$( this ).removeClass( "cron-running" );
-						$( this ).text( "Start cron" );
+						$( this ).removeClass( 'cron-running' );
+						$( this ).text( 'Start cron' );
 					} else {
 						urlslabCronObj.start();
-						$( this ).addClass( "cron-running" );
-						$( this ).text( "Stop cron" );
+						$( this ).addClass( 'cron-running' );
+						$( this ).text( 'Stop cron' );
 					}
 				}
 			);
 
 			//# Modal
-
-
 
 			//# Modal - Keyword Modals
 			$( '.keyword-edit' ).each(
@@ -246,14 +241,14 @@
 							closeText: '',
 						 }
 					);
-					addKeywordBtn.on(
-						'click',
-						function() {
-							event.preventDefault();
-							this.blur();
-							$( '#add-keyword-modal' ).dialog( 'open' );
-						}
-					);
+				addKeywordBtn.on(
+					'click',
+					function() {
+						event.preventDefault();
+						this.blur();
+						$( '#add-keyword-modal' ).dialog( 'open' );
+					}
+				);
 			}
 			//# Modal - Keyword Modals
 
@@ -305,15 +300,15 @@
 					const urlDest = $( this ).data( 'dest-url' );
 					const urlParams = new URLSearchParams( window.location.search );
 					createHTMLPopupUrlRelation( closeIcon, 'modal-rr-' + urlSrcHash + urlDestHash, urlParams.get( 'page' ), urlParams.get( 'tab' ) || '', urlSrcHash, urlSrc, urlDestHash, urlDest )
-					.appendTo( 'body' ).dialog(
-						{
-							dialogClass: 'no-close',
-							minWidth: 500,
-							autoOpen: false,
-							closeOnEscape: true,
-							closeText: '',
-						}
-					);
+						.appendTo( 'body' ).dialog(
+							{
+								dialogClass: 'no-close',
+								minWidth: 500,
+								autoOpen: false,
+								closeOnEscape: true,
+								closeText: '',
+							}
+						);
 					$( this ).on(
 						'click',
 						function() {
@@ -338,14 +333,14 @@
 							closeText: '',
 						 }
 					);
-					relatedResourceBtn.on(
-						'click',
-						function() {
-							event.preventDefault();
-							this.blur();
-							$( '#add-url-relation-modal' ).dialog( 'open' );
-						}
-					);
+				relatedResourceBtn.on(
+					'click',
+					function() {
+						event.preventDefault();
+						this.blur();
+						$( '#add-url-relation-modal' ).dialog( 'open' );
+					}
+				);
 			}
 			//# Modal - Related Resource Modals
 
@@ -376,7 +371,6 @@
 			);
 			$( '#urlslab-vertical-tabs' ).removeClass( 'd-none' );
 			//# Vertical tab
-
 		}
 	);
 }( jQuery ) );
