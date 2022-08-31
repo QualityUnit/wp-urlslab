@@ -313,8 +313,8 @@ class Urlslab {
 		//      $this->loader->add_action( 'get_template_part_lib/pagesources', $this, 'buffer_end', 100000 );
 
 		//body content
-		$this->loader->add_action( 'wp_body_open', $this, 'buffer_content_start' );
-		$this->loader->add_action( 'wp_footer', $this, 'buffer_end' );
+		$this->loader->add_action( 'wp_body_open', $this, 'buffer_content_start', PHP_INT_MAX );
+		$this->loader->add_action( 'wp_footer', $this, 'buffer_end', PHP_INT_MIN );
 
 		$this->init_activated_widgets();
 	}
