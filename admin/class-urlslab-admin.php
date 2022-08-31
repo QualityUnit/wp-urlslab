@@ -117,7 +117,7 @@ class Urlslab_Admin {
 		wp_enqueue_script(
 			$this->urlslab,
 			plugin_dir_url( __FILE__ ) . 'js/urlslab-admin.js',
-			array( 'jquery', 'jquery-ui-tabs', 'jquery-ui-dialog' ),
+			array( 'jquery', 'jquery-ui-tabs', 'jquery-ui-dialog', 'wp-util' ),
 			$this->version,
 			false
 		);

@@ -390,33 +390,64 @@ class Urlslab {
 		}
 	}
 
+	private function add_cron_task( $task ) {
+		$this->cron_tasks[] = $task;
+		$this->loader->add_action( 'urlslab_cron_hook', $task, 'cron_exec', 10, 0 );
+	}
+
+	public function execute_cron_tasks() {
+		$data = array();
+		$start_time = time();
+		$max_time = 15;
+		foreach ( $this->cron_tasks as $task ) {
+			if ( $max_time > ( time() - $start_time ) ) {
+				try {
+					$task_time = time();
+					$task->ajax_exec( $start_time, 15 );
+					$data[ get_class( $task ) ] = time() - $task_time;
+				} catch ( Exception $e ) {
+					$data[ get_class( $task ) ] = $e->getMessage();
+				}
+			}
+		}
+		return wp_send_json_success( $data );
+	}
+
 	private function define_backend_hooks() {
-		//defining Upgrade hook
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
-		$cron_job = new Urlslab_Screenshot_Cron( $this->url_data_fetcher );
-		$this->loader->add_action( 'urlslab_cron_hook', $cron_job, 'urlslab_cron_exec', 10, 0 );
+		$this->loader->add_action( 'wp_ajax_urlslab_exec_cron', $this, 'execute_cron_tasks' );
+
 
 		if ( ! wp_next_scheduled( 'urlslab_cron_hook' ) ) {
 			wp_schedule_event( time(), 'every_minute', 'urlslab_cron_hook' );
 		}
 
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-cron.php';
-		$cron_job_offload = new Urlslab_Offload_Cron();
-		$this->loader->add_action( 'urlslab_cron_hook', $cron_job_offload, 'urlslab_cron_exec', 10, 0 );
+		//defining Upgrade hook
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
+		$this->add_cron_task( new Urlslab_Screenshot_Cron( $this->url_data_fetcher ) );
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-youtube-cron.php';
+		$this->add_cron_task( new Urlslab_Youtube_Cron() );
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-background-attachments-cron.php';
+		$this->add_cron_task( new Urlslab_Offload_Background_Attachments_Cron() );
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-transfer-files-cron.php';
+		$this->add_cron_task( new Urlslab_Offload_Transfer_Files_Cron() );
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-enqueue-files-cron.php';
+		$this->add_cron_task( new Urlslab_Offload_Enqueue_Files_Cron() );
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-convert-webp-images-cron.php';
 		$cron_job_webp_convert = new Urlslab_Convert_Webp_Images_Cron();
 		if ( $cron_job_webp_convert->is_format_supported() ) {
-			$this->loader->add_action( 'urlslab_cron_hook', $cron_job_webp_convert, 'cron_exec', 11, 0 );
+			$this->add_cron_task( $cron_job_webp_convert );
 		}
+
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-convert-avif-images-cron.php';
 		$cron_job_avif_convert = new Urlslab_Convert_Avif_Images_Cron();
 		if ( $cron_job_avif_convert->is_format_supported() ) {
-			$this->loader->add_action( 'urlslab_cron_hook', $cron_job_avif_convert, 'cron_exec', 11, 0 );
+			$this->add_cron_task( $cron_job_avif_convert );
 		}
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-youtube-cron.php';
-		$cron_youtube = new Urlslab_Youtube_Cron();
-		$this->loader->add_action( 'urlslab_cron_hook', $cron_youtube, 'cron_exec', 12, 0 );
 	}
 
 	/**

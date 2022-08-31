@@ -1,15 +1,10 @@
 <?php
+require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
 
-abstract class Urlslab_Convert_Images_Cron {
-	private $start_time;
-	const MAX_RUN_TIME = 10;
+abstract class Urlslab_Convert_Images_Cron extends Urlslab_Cron {
 
-	public function cron_exec() {
-		if ( $this->is_format_supported() ) {
-			$this->start_time = time();
-			while ( time() - $this->start_time < self::MAX_RUN_TIME && $this->convert_next_file() ) {
-			}
-		}
+	protected function execute(): bool {
+		return $this->is_format_supported() && $this->convert_next_file();
 	}
 
 	abstract public function is_format_supported();
