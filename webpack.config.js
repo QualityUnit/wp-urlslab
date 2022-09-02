@@ -6,14 +6,16 @@ const path = require('path');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 assetsFolder = 'assets';
-buildFolder = 'public';
+buildFolder = 'public/build';
 
 module.exports = {
   entry: {
       main: [
       './'+assetsFolder+'/scss/urlslab_youtube_loader.scss',
+      './'+assetsFolder+'/urlslab-public.css',
       ],
       'urlslab-lazyload':'./'+assetsFolder+'/js/urlslab-lazyload.js',
       'urlslab-public':'./'+assetsFolder+'/js/urlslab-public.js',
@@ -88,6 +90,11 @@ module.exports = {
     ],
   },
   plugins: [
+    new CleanWebpackPlugin({
+      // dry: true,
+      verbose: true,
+      protectWebpackAssets: false,
+    }),
     new CopyWebpackPlugin({
         patterns: [
           {
