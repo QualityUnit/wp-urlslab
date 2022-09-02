@@ -1,0 +1,98 @@
+/* stylelint-disable selector-class-pattern, no-descending-specificity */
+/* stylelint-disable value-keyword-case */
+
+@import "common/variables";
+@import "common/mixins";
+
+.youtube_urlslab_loader {
+
+	position: relative;
+	cursor: pointer;
+	padding-bottom: 56.75%;
+	min-height: auto;
+	height: 0;
+	width: 100%;
+
+	&.active {
+
+		img,
+		&::before,
+		&::after {
+			opacity: 0;
+			display: none;
+		}
+
+		.youtube_urlslab_loader--embed {
+			opacity: 1;
+		}
+	}
+
+	iframe.youtube_urlslab_loader--embed {
+		position: fixed;
+		top: -30px;
+		z-index: 2;
+		opacity: 0;
+		min-height: auto;
+	}
+
+	&--elementor iframe.youtube_urlslab_loader--embed {
+		top: 0;
+	}
+
+	& &--img {
+		object-fit: cover;
+	}
+
+	& &--img,
+	iframe.youtube_urlslab_loader--embed {
+		position: absolute;
+		width: 100%;
+		height: 100% !important;
+		top: 0;
+		margin: 0 !important;
+	}
+
+	&::before {
+
+		@include fullSize;
+		content: attr(title);
+		position: absolute;
+		display: block;
+		top: 0;
+		left: 0;
+		padding: 1em 2em;
+		z-index: 1;
+		background: linear-gradient(to bottom, rgba($black, 0.6), rgba($black, 0) 4em);
+		color: currentColor;
+	}
+
+	&::after {
+
+		@include absoluteCenter;
+		width: 3em;
+		height: 2.5em;
+		content: "";
+		position: absolute;
+		display: block;
+		background: url(../images/youtube.svg) no-repeat;
+		background-size: contain;
+		z-index: 1;
+		font-size: 1.5rem;
+	}
+
+	@media (min-width: $breakpoint-desktop-box) {
+
+		&:hover {
+
+			&::after {
+				background-image: url(../images/youtube_active.svg);
+			}
+		}
+	}
+
+	&--embed,
+	&::before,
+	&::after {
+		transition: opacity 0.5s;
+	}
+}

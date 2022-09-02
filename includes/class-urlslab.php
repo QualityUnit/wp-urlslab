@@ -305,7 +305,7 @@ class Urlslab {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-		$this->loader->add_action( 'template_redirect', $plugin_public, 'downoad_offloaded_file' );
+		$this->loader->add_action( 'template_redirect', $plugin_public, 'download_offloaded_file' );
 
 		//head content
 		//# TODO - parsing of header should be added and the meta tag widget should not depend on <head></head>
