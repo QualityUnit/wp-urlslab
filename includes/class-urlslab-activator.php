@@ -33,7 +33,7 @@ class Urlslab_Activator {
 		Urlslab_Activator::install_tables();
 		Urlslab_Activator::upgrade_steps();
 
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-cron.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-background-attachments-cron.php';
 		add_option( Urlslab_Offload_Background_Attachments_Cron::SETTING_NAME_SCHEDULER_POINTER, -1, '', false );
 		Urlslab_Keywords_Links::add_option();
 		Urlslab_Link_Enhancer::add_option();
