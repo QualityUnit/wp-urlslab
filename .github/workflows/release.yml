@@ -25,6 +25,12 @@ jobs:
       - name: Run tests
         run: composer test
 
+      - name: Install Yarn dependencies [assets]
+        run: yarn
+
+      - name: Build CSS and JS [assets]
+        run: yarn production
+
       - name: Remove unnecessary files
         run: rm -rf .git .idea .github *.md *.lock .editorconfig .eslintignore .eslintrc .gitignore .stylelintrc composer.json *.lock package.json phpcs.xml webpack.config.js commitlint.config.js debug.log
 

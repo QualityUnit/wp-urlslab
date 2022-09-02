@@ -59,7 +59,7 @@ class Urlslab_Public {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-		wp_enqueue_style( $this->urlslab, plugin_dir_url( __FILE__ ) . 'css/urlslab-public.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->urlslab, plugin_dir_url( __FILE__ ) . 'build/css/urlslab-public.css', array(), $this->version, 'all' );
 	}
 
 	/**
@@ -68,17 +68,18 @@ class Urlslab_Public {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-		wp_enqueue_script( $this->urlslab, plugin_dir_url( __FILE__ ) . 'js/urlslab-public.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->urlslab, plugin_dir_url( __FILE__ ) . 'build/js/urlslab-public.js', array( 'jquery' ), $this->version, false );
 		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( 'urlslab-media-offloader' ) ) {
+			wp_enqueue_style( 'urlslab_youtube_loader', plugin_dir_url( __FILE__ ) . 'build/css/urlslab_youtube_loader.css', array(), $this->version, 'all' );
 			add_action(
 				'wp_footer',
 				function () {
-					wp_enqueue_script( 'urlslab', plugin_dir_url( __FILE__ ) . 'js/urlslab-lazyload.js', array( 'jquery' ), URLSLAB_VERSION, false );}
+					wp_enqueue_script( 'urlslab', plugin_dir_url( __FILE__ ) . 'build/js/urlslab-lazyload.js', array( 'jquery' ), URLSLAB_VERSION, false );}
 			);
 		}
 	}
 
-	public function downoad_offloaded_file() {
+	public function download_offloaded_file() {
 		if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], Urlslab_Driver::DOWNLOAD_URL_PATH ) !== false ) {
 			Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-media-offloader' )->output_content();
 			exit();
