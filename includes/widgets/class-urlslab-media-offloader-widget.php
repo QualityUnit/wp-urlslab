@@ -968,7 +968,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				if ( is_object( $json ) && property_exists( $json, 'youtube_url' ) ) {
 					$ytid = $this->get_youtube_videoid( $json->youtube_url );
 					if ( $ytid ) {
-						$this->replace_youtube_element_with_placeholder( $document, $element, $video_objects, $ytid );
+						$this->emhance_elementor_element_with_placeholder( $document, $element, $video_objects, $ytid );
 					}
 				}
 			}
@@ -985,6 +985,33 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		}
 
 	}
+
+	private function emhance_elementor_element_with_placeholder( DOMDocument $document, DOMElement $element, $video_objects, $ytid ):bool {
+		$youtube_loader = $document->createElement( 'div' );
+		$youtube_loader->setAttribute( 'class', 'youtube_urlslab_loader youtube_urlslab_loader--elementor' );
+		$youtube_loader->setAttribute( 'data-ytid', $ytid );
+
+		$youtube_img = $document->createElement( 'img' );
+		$youtube_img->setAttribute( 'class', 'youtube_urlslab_loader--img' );
+		$youtube_img->setAttribute( 'data-src', 'https://i.ytimg.com/vi/' . $ytid . '/hqdefault.jpg' );
+		$youtube_img->setAttribute( 'style', 'opacity: 0; transition: opacity .5s;' );
+		if ( isset( $video_objects[ $ytid ] ) ) {
+			$youtube_img->setAttribute( 'alt', 'Youtube video: ' . $video_objects[ $ytid ]->get_title() );
+		}
+		$youtube_img->setAttribute( 'urlslab-lazy', 'yes' );
+		$youtube_loader->appendChild( $youtube_img );
+
+		$xpath         = new DOMXPath( $document );
+		$child    = $xpath->query( "//div[@data-id='" . $element->getAttribute( 'data-id' ) . "']//div[contains(@class, 'elementor-video')]" );
+		if ( $child->length ) {
+			$child->item( 0 )->appendChild( $youtube_loader );
+		}
+
+		return true;
+	}
+
+
+
 
 	private function replace_youtube_element_with_placeholder( DOMDocument $document, DOMElement $element, $video_objects, $ytid ):bool {
 		$youtube_loader = $document->createElement( 'div' );
