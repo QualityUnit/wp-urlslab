@@ -16,7 +16,7 @@
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "css-minimizer-webpack-plugin": "^4.0.0",
-    "eslint": "^8.13.0",
+    "eslint": "^8.23.0",
     "eslint-config-airbnb": "^19.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsx-a11y": "^6.5.1",
@@ -61,6 +61,7 @@
     "extract-loader": "^5.1.0",
     "file-loader": "^6.2.0",
     "optimize-css-assets-webpack-plugin": "^6.0.1",
+    "stylelint": "^14.11.0",
     "url-loader": "^4.1.1"
   }
 }
