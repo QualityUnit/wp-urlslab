@@ -594,7 +594,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 
 	public function render_modals() {
 		?>
-		<div id="import-modal" class="modal urlslab-modal">
+		<div id="import-modal" class="modal urlslab-modal d-none">
 			<div>
 				<h2>Import Keyword CSV</h2>
 				<button data-close-modal-id="import-modal" class="modal-close">

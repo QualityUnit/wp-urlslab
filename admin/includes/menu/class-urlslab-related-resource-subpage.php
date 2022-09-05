@@ -202,7 +202,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 
 	public function render_modals() {
 		?>
-		<div id="related-resources-import-modal" class="modal urlslab-modal">
+		<div id="related-resources-import-modal" class="modal urlslab-modal d-none">
 			<div>
 				<h2>Import Related Resources CSV</h2>
 				<button data-close-modal-id="related-resources-import-modal" class="modal-close">

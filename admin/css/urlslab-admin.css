@@ -482,7 +482,7 @@ figure {
 /** Urlslab Modal **/
 
 .d-none {
-	display: none;
+	display: none !important;
 }
 
 .urlslab-modal {
