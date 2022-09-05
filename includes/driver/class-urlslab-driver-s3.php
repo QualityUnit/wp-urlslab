@@ -207,7 +207,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 					'Key' => $this->get_file_dir( $file ) . $file->get_filename(),
 				)
 			);
-		} catch (\Aws\S3\Exception\S3Exception $e ) {
+		} catch ( \Aws\S3\Exception\S3Exception $e ) {
 			return false;
 		}
 		return true;
