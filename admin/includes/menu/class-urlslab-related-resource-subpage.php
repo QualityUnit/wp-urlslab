@@ -441,43 +441,17 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		foreach ( $sample_urls as $id => $url ) {
 			$sample_urls[ $id ] = new Urlslab_Url( $url );
 		}
-
-		if ( ! $this->url_data_fetcher->prepare_url_batch_for_scheduling( $sample_urls ) ) {
-			return false;
-		}
-
-
-		global $wpdb;
-		$table = URLSLAB_RELATED_RESOURCE_TABLE;
-		$values = array();
-		$placeholder = array();
-
 		$max = count( $sample_urls );
 		for ( $i = 0; $i < $max; $i++ ) {
 			for ( $j = $i + 1; $j < $max && $j < ( $i + 10 ); $j++ ) {
-				array_push(
-					$values,
-					$sample_urls[ $i ]->get_url_id(),
-					$sample_urls[ $j ]->get_url_id(),
+				$this->create_row(
+					array(
+						$sample_urls[ $i ],
+						$sample_urls[ $j ],
+					)
 				);
-				$placeholder[] = '(%s, %s)';
 			}
 		}
-
-		$placeholder_string = implode( ', ', $placeholder );
-		$update_query = "INSERT IGNORE INTO $table (
-                   srcUrlMd5,
-                   destUrlMd5) VALUES
-                   $placeholder_string";
-
-		$result = $wpdb->query(
-			$wpdb->prepare(
-				$update_query, // phpcs:ignore
-				$values
-			)
-		);
-
-		return is_numeric( $result );
 	}
 
 	private function edit_url_relation(

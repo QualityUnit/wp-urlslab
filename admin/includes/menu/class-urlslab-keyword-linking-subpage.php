@@ -291,28 +291,11 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			}
 		}
 
-		//# Scheduling Src and Dest URLs
-		$crawling_urls = array();
-		foreach ( $sample_data as $data ) {
-			$crawling_urls[] = new Urlslab_Url( $data );
-		}
-		if ( ! $this->data_fetcher->prepare_url_batch_for_scheduling( $crawling_urls ) ) {
-			wp_safe_redirect(
-				$this->parent_page->menu_page(
-					$this->subpage_slug,
-					array(
-						'status' => 'failure',
-						'urlslab-message' => 'Couldnt create the sample data',
-					)
-				)
-			);
-			exit;
-		}
-		//# Scheduling Src and Dest URLs
-
 		foreach ( $sample_data as $kw => $url ) {
 			$data_row = new Urlslab_Url_Keyword_Data( $kw, 100, strlen( $kw ), 'all', $url, '.*' );
-			$this->create_row( $data_row );
+			if ( $this->data_fetcher->prepare_url_batch_for_scheduling( array( new Urlslab_Url( $url ) ) ) ) {
+				$this->create_row( $data_row );
+			}
 		}
 	}
 
