@@ -40,6 +40,9 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public const SETTING_DEFAULT_TRANSFER_FROM_DRIVER_S3 = false;
 	public const SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB = false;
 
+	public const SETTING_NAME_DELETE_AFTER_TRANSFER = 'urlslab_transfer_del';
+	public const SETTING_DEFAULT_DELETE_AFTER_TRANSFER = false;
+
 	//WEBP CONVERSION SETTINGS
 	public const SETTING_NAME_USE_WEBP_ALTERNATIVE = 'urlslab_use_webp';
 	public const SETTING_NAME_WEBP_TYPES_TO_CONVERT = 'urlslab_webp_types';
@@ -582,15 +585,16 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		add_option( self::SETTING_NAME_SAVE_EXTERNAL, self::SETTING_DEFAULT_SAVE_EXTERNAL, '', true );
 		add_option( self::SETTING_NAME_SAVE_INTERNAL, self::SETTING_DEFAULT_SAVE_INTERNAL, '', true );
 		add_option( self::SETTING_NAME_NEW_FILE_DRIVER, self::SETTING_DEFAULT_NEW_FILE_DRIVER, '', true );
-		add_option( self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES, self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_LOCAL_FILES, '', true );
-		add_option( self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3, self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_S3, '', true );
-		add_option( self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB, self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB, '', true );
+		add_option( self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES, self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_LOCAL_FILES, '', false );
+		add_option( self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3, self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_S3, '', false );
+		add_option( self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB, self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB, '', false );
+		add_option( self::SETTING_NAME_DELETE_AFTER_TRANSFER, self::SETTING_DEFAULT_DELETE_AFTER_TRANSFER, '', false );
 
 		add_option( self::SETTING_NAME_USE_AVIF_ALTERNATIVE, false, '', true );
 		add_option( self::SETTING_NAME_USE_WEBP_ALTERNATIVE, false, '', true );
-		add_option( self::SETTING_NAME_WEPB_QUALITY, self::SETTING_DEFAULT_WEPB_QUALITY, '', true );
-		add_option( self::SETTING_NAME_AVIF_QUALITY, self::SETTING_DEFAULT_AVIF_QUALITY, '', true );
-		add_option( self::SETTING_NAME_AVIF_SPEED, self::SETTING_DEFAULT_AVIF_SPEED, '', true );
+		add_option( self::SETTING_NAME_WEPB_QUALITY, self::SETTING_DEFAULT_WEPB_QUALITY, '', false );
+		add_option( self::SETTING_NAME_AVIF_QUALITY, self::SETTING_DEFAULT_AVIF_QUALITY, '', false );
+		add_option( self::SETTING_NAME_AVIF_SPEED, self::SETTING_DEFAULT_AVIF_SPEED, '', false );
 		add_option( self::SETTING_NAME_AVIF_TYPES_TO_CONVERT, self::SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT, '', true );
 		add_option( self::SETTING_NAME_WEBP_TYPES_TO_CONVERT, self::SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT, '', true );
 
@@ -683,6 +687,18 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		} else {
 			update_option(
 				self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB,
+				false
+			);
+		}
+		if ( isset( $new_settings[ self::SETTING_NAME_DELETE_AFTER_TRANSFER ] ) &&
+			 ! empty( $new_settings[ self::SETTING_NAME_DELETE_AFTER_TRANSFER ] ) ) {
+			update_option(
+				self::SETTING_NAME_DELETE_AFTER_TRANSFER,
+				$new_settings[ self::SETTING_NAME_DELETE_AFTER_TRANSFER ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_DELETE_AFTER_TRANSFER,
 				false
 			);
 		}

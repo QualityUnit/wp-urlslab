@@ -195,4 +195,21 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 			''
 		);
 	}
+
+	public function delete_content( Urlslab_File_Data $file ): bool {
+		if ( ! $this->is_configured() ) {
+			return false;
+		}
+		try {
+			$result = $this->getClient()->deleteObject(
+				array(
+					'Bucket' => get_option( self::SETTING_NAME_S3_BUCKET, '' ),
+					'Key' => $this->get_file_dir( $file ) . $file->get_filename(),
+				)
+			);
+		} catch (\Aws\S3\Exception\S3Exception $e ) {
+			return false;
+		}
+		return true;
+	}
 }

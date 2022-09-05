@@ -39,6 +39,8 @@ abstract class Urlslab_Driver {
 
 	abstract public function save_to_file( Urlslab_File_Data $file, $file_name ): bool;
 
+	abstract public function delete_content( Urlslab_File_Data $file ): bool;
+
 	public function get_url( Urlslab_File_Data $file ) {
 		return site_url( self::DOWNLOAD_URL_PATH . urlencode( $file->get_fileid() ) . '/' . urlencode( $file->get_filename() ) );
 	}
@@ -125,6 +127,8 @@ abstract class Urlslab_Driver {
 				( 0 == $file->get_filesize() && 0 < filesize( $tmp_name ) )
 			)
 		) {
+			$old_file = clone $file;
+
 			//set new driver of storage
 			$file->set_driver( $dest_driver );
 			//save file to new storage
@@ -140,6 +144,11 @@ abstract class Urlslab_Driver {
 						'fileid' => $file->get_fileid(),
 					)
 				);
+				//delete original file
+				if ( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_DELETE_AFTER_TRANSFER, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_DELETE_AFTER_TRANSFER ) ) {
+					Urlslab_Driver::get_driver( $old_file )->delete_content( $old_file );
+				}
+
 				$result = true;
 			}
 		}
