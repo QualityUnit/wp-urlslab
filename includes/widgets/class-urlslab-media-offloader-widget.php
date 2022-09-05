@@ -229,6 +229,24 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				}
 			}
 
+			//search urls in style attributes
+			$xpath         = new DOMXPath( $document );
+			$styled_elements = $xpath->query( "//*[contains(@style, 'url')]" );
+			foreach ( $styled_elements as $styled_element ) {
+				if ( preg_match_all( '/url\((.*?)\)/', $styled_element->getAttribute( 'style' ), $matches ) ) {
+					foreach ( $matches[1] as $matched_url ) {
+						$file_obj = new Urlslab_File_Data( array( 'url' => $matched_url ) );
+						if ( ! $styled_element->hasAttribute( 'urlslab-id' ) ) {
+							$styled_element->setAttribute( 'urlslab-id', $element_ids_cnt++ );
+						}
+						$url_fileids[ $file_obj->get_fileid() ] = $matched_url;
+						$elements_to_process['style'][ $styled_element->getAttribute( 'urlslab-id' ) ] = $styled_element;
+					}
+				}
+			}
+
+
+
 			//*********************************
 			//find files for elements
 			//*********************************
@@ -253,6 +271,9 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 							break;
 						case 'video': //for now we don't have alternatives for video files
 							$found_urls = array_merge( $this->replace_attributes( $dom_element ), $found_urls );
+							break;
+						case 'style': //for now we don't have alternatives for video files
+							$found_urls = array_merge( $this->replace_style_attribute( $dom_element ), $found_urls );
 							break;
 						default:
 							$found_urls = array_merge( $this->replace_attributes( $dom_element ), $found_urls );
@@ -831,6 +852,13 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		return $found_urls;
 	}
 
+	private function replace_style_attribute( $dom_element ): array {
+		$found_urls = array();
+		/** @noinspection SlowArrayOperationsInLoopInspection */
+		$found_urls = array_merge_recursive( $this->replace_attribute( $dom_element, 'style' ), $found_urls );
+		return $found_urls;
+	}
+
 	/**
 	 * @param $dom_element
 	 * @param $attribute
@@ -850,6 +878,18 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 							$source_url = Urlslab_Driver::get_driver( $this->files[ $old_file_obj->get_fileid() ] )->get_url( $this->files[ $old_file_obj->get_fileid() ] );
 							$dom_element->setAttribute( $attribute, str_replace( $url_val[0], $source_url, $dom_element->getAttribute( $attribute ) ) );
 							$found_urls[ $old_file_obj->get_fileid() ] = 1;
+						}
+					}
+					break;
+				case 'style':
+					if ( preg_match_all( '/url\((.*?)\)/', $dom_element->getAttribute( $attribute ), $matches ) ) {
+						foreach ( $matches[1] as $matched_url ) {
+							$old_file_obj = new Urlslab_File_Data( array( 'url' => $matched_url ) );
+							if ( isset( $this->files[ $old_file_obj->get_fileid() ] ) && Urlslab_Driver::STATUS_ACTIVE === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() ) {
+								$source_url = Urlslab_Driver::get_driver( $this->files[ $old_file_obj->get_fileid() ] )->get_url( $this->files[ $old_file_obj->get_fileid() ] );
+								$dom_element->setAttribute( $attribute, str_replace( $matched_url, $source_url, $dom_element->getAttribute( $attribute ) ) );
+								$found_urls[ $old_file_obj->get_fileid() ] = 1;
+							}
 						}
 					}
 					break;
