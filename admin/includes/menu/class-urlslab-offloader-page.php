@@ -551,6 +551,13 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 				'Transfer media from local file system to default driver on background',
 				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_LOCAL_FILES )
 			),
+			new Urlslab_Setting_Switch(
+				'offload-opt[]',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_DELETE_AFTER_TRANSFER,
+				'Delete file from original storage after transfer was completed',
+				'Delete original file after transfer',
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_DELETE_AFTER_TRANSFER, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_DELETE_AFTER_TRANSFER )
+			),
 		);
 		?>
 		<form method="post" action="<?php echo esc_url( $this->menu_page( 'media-offloader', 'action=update-settings', 1 ) ); ?>">

@@ -82,4 +82,10 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 	public static function get_driver_settings(): array {
 		return array();
 	}
+
+	public function delete_content( Urlslab_File_Data $file ): bool {
+		return true;
+		//we will not delete files from disk yet
+		//return unlink( $file->get_local_file() );
+	}
 }

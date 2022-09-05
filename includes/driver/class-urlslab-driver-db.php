@@ -11,7 +11,7 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 
 		//clean old content data
 		global $wpdb;
-		$wpdb->delete( URLSLAB_FILE_CONTENTS_TABLE, array( 'fileid' => $file->get_fileid() ) );
+		$this->delete_content( $file );
 
 		$handle = fopen( $local_file_name, 'rb' );
 		if ( false === $handle ) {
@@ -96,5 +96,10 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 
 	public static function get_driver_settings(): array {
 		return array();
+	}
+
+	public function delete_content( Urlslab_File_Data $file ): bool {
+		global $wpdb;
+		return $wpdb->delete( URLSLAB_FILE_CONTENTS_TABLE, array( 'fileid' => $file->get_fileid() ) );
 	}
 }
