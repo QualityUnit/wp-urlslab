@@ -263,6 +263,7 @@
 					closeText: '',
 				}
 			);
+			$( '#import-modal' ).removeClass( 'd-none' );
 			$( '#import-btn' ).on(
 				'click',
 				function() {
@@ -282,6 +283,7 @@
 					closeText: '',
 				}
 			);
+			$( '#related-resources-import-modal' ).removeClass( 'd-none' );
 			$( '#related-resources-import-btn' ).on(
 				'click',
 				function() {

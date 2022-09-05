@@ -482,7 +482,7 @@ figure {
 /** Urlslab Modal **/
 
 .d-none {
-	display: none;
+	display: none !important;
 }
 
 .urlslab-modal {
@@ -503,7 +503,7 @@ figure {
 	font-size: 15px;
 }
 
-.no-close .ui-dialog-titlebar-close {
+.no-close .ui-dialog-titlebar {
 	display: none;
 }
 
