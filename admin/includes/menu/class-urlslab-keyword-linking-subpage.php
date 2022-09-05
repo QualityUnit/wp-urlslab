@@ -262,8 +262,11 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 	}
 
 	private function init_sample_data() {
+		wp_raise_memory_limit( 'admin' );
+
 		//in case installation is empty, use some static mappings
 		$sample_data = array(
+			'wordpress' => 'https://www.liveagent.com/blog/best-live-chat-plugins-for-wordpress/',
 			'screenshot' => 'https://www.urlslab.com',
 			'google' => 'https://www.google.com',
 			'support' => 'https://www.liveagent.com/',

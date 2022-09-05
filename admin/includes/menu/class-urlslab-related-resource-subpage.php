@@ -419,6 +419,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 	}
 
 	private function init_sample_data() {
+		wp_raise_memory_limit( 'admin' );
 		$sample_urls = array();
 
 		//try to load all titles with less than 4 words
