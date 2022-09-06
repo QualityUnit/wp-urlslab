@@ -55,7 +55,7 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	public function theContentHook( DOMDocument $document) {
 		try {
 			$xpath = new DOMXPath( $document );
-			$table_data = $xpath->query( "//img[(not(@alt) or @alt='')]|//*[starts-with(name(),'h')]" );
+			$table_data = $xpath->query( "//img[not(@alt) or @alt='']|//*[starts-with(name(),'h')]" );
 			$title = get_the_title();
 
 			if (!empty( $table_data )) {
