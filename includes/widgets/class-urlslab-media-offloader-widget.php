@@ -210,8 +210,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 					continue;
 				}
 				foreach ( $dom_elements as $dom_element ) {
-					//TODO we should allow to skip also any predefined pattern or regexp of urls (defined as setting)
-					if ( $dom_element->hasAttribute( 'urlslab-skip' ) ) {
+					if ( $this->is_skip_elemenet( $dom_element ) ) {
 						continue;
 					}
 					foreach ( $tag_attributes as $attribute ) {
@@ -236,7 +235,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			$xpath         = new DOMXPath( $document );
 			$styled_elements = $xpath->query( "//*[contains(@style, 'url')]" );
 			foreach ( $styled_elements as $styled_element ) {
-				if ( preg_match_all( '/url\((.*?)\)/', $styled_element->getAttribute( 'style' ), $matches ) ) {
+				if ( ! $this->is_skip_elemenet( $styled_element ) && preg_match_all( '/url\((.*?)\)/', $styled_element->getAttribute( 'style' ), $matches ) ) {
 					foreach ( $matches[1] as $matched_url ) {
 						$file_obj = new Urlslab_File_Data( array( 'url' => $matched_url ) );
 						if ( ! $styled_element->hasAttribute( 'urlslab-id' ) ) {
@@ -969,7 +968,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		//find all youtube iframes
 		$iframe_elements = $document->getElementsByTagName( 'iframe' );
 		foreach ( $iframe_elements as $element ) {
-			if ( $element->hasAttribute( 'src' ) ) {
+			if ( ! $this->is_skip_elemenet( $element ) && $element->hasAttribute( 'src' ) ) {
 				$ytid = $this->get_youtube_videoid( $element->getAttribute( 'src' ) );
 				if ( $ytid ) {
 					$youtube_ids[ $ytid ] = $ytid;
@@ -981,7 +980,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		$xpath         = new DOMXPath( $document );
 		$elementor_divs = $xpath->query( "//div[contains(@class, 'elementor-widget-video')]" );
 		foreach ( $elementor_divs as $element ) {
-			if ( $element->hasAttribute( 'data-settings' ) ) {
+			if ( ! $this->is_skip_elemenet( $element ) && $element->hasAttribute( 'data-settings' ) ) {
 				$json = json_decode( $element->getAttribute( 'data-settings' ) );
 				if ( is_object( $json ) && property_exists( $json, 'youtube_url' ) ) {
 					$ytid = $this->get_youtube_videoid( $json->youtube_url );
@@ -996,8 +995,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		$xpath         = new DOMXPath( $document );
 		$yt_elements = $xpath->query( '//*[@data-ytid]' );
 		foreach ( $yt_elements as $yt_element ) {
-			$ytid = $yt_element->getAttribute( 'data-ytid' );
-			$youtube_ids[ $ytid ] = $ytid;
+			if ( ! $this->is_skip_elemenet( $yt_element ) ) {
+				$ytid = $yt_element->getAttribute( 'data-ytid' );
+				$youtube_ids[ $ytid ] = $ytid;
+			}
 		}
 
 
@@ -1188,19 +1189,24 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		if ( get_option( self::SETTING_NAME_IMG_LAZY_LOADING, false ) ) {
 			$dom_elements = $document->getElementsByTagName( 'img' );
 			foreach ( $dom_elements as $element ) {
-				$this->add_img_lazy_loading( $element );
+				if ( ! $this->is_skip_elemenet( $element ) ) {
+					$this->add_img_lazy_loading( $element );
+				}
 			}
 			$dom_elements = $document->getElementsByTagName( 'source' );
 			foreach ( $dom_elements as $element ) {
-				$this->add_source_lazy_loading( $element );
+				if ( ! $this->is_skip_elemenet( $element ) ) {
+					$this->add_source_lazy_loading( $element );
+				}
 			}
 		}
 		if ( get_option( self::SETTING_NAME_VIDEO_LAZY_LOADING, false ) ) {
 			$dom_elements = $document->getElementsByTagName( 'video' );
 			foreach ( $dom_elements as $element ) {
-				$this->add_video_lazy_loading( $element );
+				if ( ! $this->is_skip_elemenet( $element ) ) {
+					$this->add_video_lazy_loading( $element );
+				}
 			}
 		}
-
 	}
 }
