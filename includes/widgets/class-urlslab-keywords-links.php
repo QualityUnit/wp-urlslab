@@ -255,7 +255,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 	private function findTextDOMElements( DOMNode $dom, DOMDocument $document ) {
 		//skip processing if HTML tag contains attribute "urlslab-skip"
-		if ( $dom->hasAttributes() && $dom->hasAttribute( 'urlslab-skip' ) ) {
+		if ( $this->is_skip_elemenet( $dom ) ) {
 			return;
 		}
 

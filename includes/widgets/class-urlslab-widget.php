@@ -85,4 +85,12 @@ abstract class Urlslab_Widget {
 	 * @return void
 	 */
 	public abstract static function update_settings( array $new_settings );
+
+	protected function is_skip_elemenet( DOMNode $dom ) {
+		return $dom->hasAttributes() &&
+		(
+			$dom->hasAttribute( 'urlslab-skip' ) ||
+			( $dom->hasAttributes( 'class' ) && false !== strpos( $dom->getAttribute( 'class' ), 'urlslab-skip' ) )
+		);
+	}
 }
