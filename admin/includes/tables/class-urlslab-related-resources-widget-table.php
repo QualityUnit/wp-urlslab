@@ -102,12 +102,12 @@ class Urlslab_Related_Resources_Widget_Table extends WP_List_Table {
 		return $query_res;
 	}
 
-	private function delete_url_relation( string $src_url, string $dest_url ) {
+	private function delete_url_relation( int $src_url, int $dest_url ) {
 		global $wpdb;
 		$table = URLSLAB_RELATED_RESOURCE_TABLE;
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM $table WHERE srcUrlMd5 = %s AND destUrlMd5 = %s", // phpcs:ignore
+				"DELETE FROM $table WHERE srcUrlMd5 = %d AND destUrlMd5 = %d", // phpcs:ignore
 				$src_url,
 				$dest_url
 			)
@@ -131,7 +131,7 @@ class Urlslab_Related_Resources_Widget_Table extends WP_List_Table {
 		$placeholder = array();
 		$values = array();
 		foreach ( $src_urls as $i => $id ) {
-			$placeholder[] = '(%s, %s)';
+			$placeholder[] = '(%d, %d)';
 			array_push( $values, $id, $dest_urls[ $i ] );
 		}
 		$placeholder_string = implode( ', ', $placeholder );

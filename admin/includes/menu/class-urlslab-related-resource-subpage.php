@@ -349,7 +349,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		$update_query = "INSERT IGNORE INTO $table (
                    srcUrlMd5,
                    destUrlMd5) VALUES
-                   (%s, %s)";
+                   (%d, %d)";
 
 		$result = $wpdb->query(
 			$wpdb->prepare(
@@ -471,8 +471,8 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 				'destUrlMd5' => $old_dest_url,
 			),
 			array(
-				'%s',
-				'%s',
+				'%d',
+				'%d',
 			)
 		);
 		//# Deletion of Relation
@@ -487,7 +487,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		$query = 'INSERT INTO ' . URLSLAB_RELATED_RESOURCE_TABLE . ' (
                    srcUrlMd5,
                    destUrlMd5
-        ) VALUES (%s, %s)';
+        ) VALUES (%d, %d)';
 
 		$wpdb->query(
 			$wpdb->prepare( $query, // phpcs:ignore
@@ -516,7 +516,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		$query = 'INSERT INTO ' . URLSLAB_RELATED_RESOURCE_TABLE . ' (
                    srcUrlMd5,
                    destUrlMd5
-        ) VALUES (%s, %s)';
+        ) VALUES (%d, %d)';
 
 		$wpdb->query(
 			$wpdb->prepare( $query, // phpcs:ignore

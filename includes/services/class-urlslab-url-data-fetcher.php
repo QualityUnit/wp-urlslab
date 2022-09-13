@@ -134,7 +134,7 @@ or (updateStatusDate < %d AND status = %s)
 				$url->get_url(),
 				Urlslab_Status::$not_crawling,
 			);
-			$placeholder[] = '(%s, %s, %s)';
+			$placeholder[] = '(%d, %s, %s)';
 		}
 
 		$placeholder_string = implode( ', ', $placeholder );
@@ -284,7 +284,7 @@ or (updateStatusDate < %d AND status = %s)
 					$url->get_url_meta_description(),
 					$url->get_url_summary(),
 				);
-				$placeholder[] = '(%s, %s, %s, %s, %s, %d, %s, %s, %s, %s)';
+				$placeholder[] = '(%d, %s, %s, %s, %s, %d, %s, %s, %s, %s)';
 			}
 		}
 
@@ -353,7 +353,7 @@ or (updateStatusDate < %d AND status = %s)
 
 		global $wpdb;
 		$table = URLSLAB_URLS_TABLE;
-		$placeholders = implode( ', ', array_fill( 0, count( $valid_urls ), '%s' ) );
+		$placeholders = implode( ', ', array_fill( 0, count( $valid_urls ), '%d' ) );
 		$url_hashes = array();
 		foreach ( $valid_urls as $url ) {
 			$url_hashes[] = $url->get_url_id();
@@ -397,19 +397,17 @@ or (updateStatusDate < %d AND status = %s)
 		$insert_placeholders = array();
 		$insert_values = array();
 		foreach ( $urls as $url ) {
-			if ( ! isset( $results[ $url->get_url_id() ] ) ) {
-				$url_data = Urlslab_Url_Data::empty( $url, Urlslab_Status::$not_crawling );
-				array_push(
-					$insert_values,
-					$url->get_url_id(),
-					$url->get_url(),
-					$url_data->get_url_title(),
-					$url_data->get_url_meta_description(),
-					Urlslab_Status::$new,
-					gmdate( 'Y-m-d H:i:s' )
-				);
-				$insert_placeholders[] = '(%s, %s, %s, %s, %s, %s)';
-			}
+			$url_data = Urlslab_Url_Data::empty( $url, Urlslab_Status::$not_crawling );
+			array_push(
+				$insert_values,
+				$url->get_url_id(),
+				$url->get_url(),
+				$url_data->get_url_title(),
+				$url_data->get_url_meta_description(),
+				Urlslab_Status::$new,
+				gmdate( 'Y-m-d H:i:s' )
+			);
+			$insert_placeholders[] = '(%d, %s, %s, %s, %s, %s)';
 		}
 
 		$insert_query = "INSERT IGNORE INTO $table (urlMd5, urlName, urlTitle, urlMetaDescription, status, updateStatusDate) VALUES";
@@ -441,7 +439,7 @@ or (updateStatusDate < %d AND status = %s)
        				 u.urlSummary AS urlSummary
 				FROM $related_urls_table r
                 INNER JOIN $urls_table as u ON r.destUrlMd5 = u.urlMd5
-				WHERE r.srcUrlMd5 = %s AND u.visibility = '%s'
+				WHERE r.srcUrlMd5 = %d AND u.visibility = '%s'
 				LIMIT %d";
 
 		$query_res = $wpdb->get_results(

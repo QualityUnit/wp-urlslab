@@ -91,7 +91,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 	}
 
 	/**
-	 * @param string[] $url_ids
+	 * @param int[] $url_ids
 	 *
 	 * @return void
 	 */
@@ -103,7 +103,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		$table = URLSLAB_URLS_TABLE;
 		$placeholder = array();
 		foreach ( $url_ids as $id ) {
-			$placeholder[] = '(%s)';
+			$placeholder[] = '(%d)';
 		}
 		$placeholder_string = implode( ', ', $placeholder );
 		$delete_query = "DELETE FROM $table WHERE urlMd5 IN ($placeholder_string)";
@@ -115,10 +115,10 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		);
 	}
 
-	private function delete_url_screenshot( string $url_md5 ) {
+	private function delete_url_screenshot( int $url_md5 ) {
 		global $wpdb;
 		$table = URLSLAB_URLS_TABLE;
-		$delete_query = "DELETE FROM $table WHERE urlMd5 = %s";
+		$delete_query = "DELETE FROM $table WHERE urlMd5 = %d";
 		$wpdb->query(
 			$wpdb->prepare(
 				$delete_query, // phpcs:ignore
@@ -127,10 +127,10 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		);
 	}
 
-	private function change_url_visibility( string $url_md5, string $visibility ) {
+	private function change_url_visibility( int $url_md5, string $visibility ) {
 		global $wpdb;
 		$table = URLSLAB_URLS_TABLE;
-		$update_query = "UPDATE $table SET visibility = %s WHERE urlMd5 = %s";
+		$update_query = "UPDATE $table SET visibility = %s WHERE urlMd5 = %d";
 		$wpdb->query(
 			$wpdb->prepare(
 				$update_query, // phpcs:ignore
