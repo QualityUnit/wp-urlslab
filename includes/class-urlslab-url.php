@@ -101,8 +101,8 @@ class Urlslab_Url {
 		$this->urlslab_parsed_url = $url;
 	}
 
-	public function get_url_id(): string {
-		return md5( $this->urlslab_parsed_url );
+	public function get_url_id(): int {
+		return crc32( md5( $this->urlslab_parsed_url ) );
 	}
 
 	public function get_url_path(): string {

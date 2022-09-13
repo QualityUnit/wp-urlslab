@@ -187,7 +187,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 				gmdate( 'Y-m-d H:i:s' ),
 				gmdate( 'Y-m-d H:i:s' ),
 			);
-			$placeholder[] = '(%s, %s, %s, %s)';
+			$placeholder[] = '(%d, %d, %s, %s)';
 		}
 
 		$table = URLSLAB_URLS_MAP_TABLE;

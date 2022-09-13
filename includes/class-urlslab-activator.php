@@ -57,17 +57,21 @@ class Urlslab_Activator {
 		global $wpdb;
 		$version = get_option( URLSLAB_VERSION_SETTING, '1.0.0' );
 
-		if ( version_compare( $version, '1.11.0', '<' ) ) {
+		if ( version_compare( $version, '1.13.0', '<' ) ) {
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_KEYWORDS_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILES_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILE_CONTENTS_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILE_ALTERNATIVES_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_URLS_TABLE . ';'); // phpcs:ignore
+			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_RELATED_RESOURCE_TABLE . ';'); // phpcs:ignore
+			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_URLS_MAP_TABLE . ';'); // phpcs:ignore
 			self::init_urlslab_files();
 			self::init_urlslab_file_contents();
 			self::init_urlslab_file_alternatives();
 			self::init_keyword_widget_tables();
 			self::init_urls_tables();
+			self::init_urls_map_tables();
+			self::init_related_resources_widget_tables();
 		}
 
 		//all update steps done, set the current version
@@ -79,7 +83,7 @@ class Urlslab_Activator {
 		$table_name = URLSLAB_URLS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
-			urlMd5 varchar(32) NOT NULL,
+			urlMd5 bigint NOT NULL,
 			urlName varchar(2048) NOT NULL,
 			status char(1) NOT NULL, -- U: update, P: pending, A: Available, N: Not scheduled, B: Broken Link
 			domainId char(16),
@@ -118,8 +122,8 @@ class Urlslab_Activator {
 		$table_name = URLSLAB_URLS_MAP_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
-			srcUrlMd5 varchar(32) NOT NULL,
-			destUrlMd5 varchar(32) NOT NULL,
+			srcUrlMd5 bigint NOT NULL,
+			destUrlMd5 bigint NOT NULL,
 			firstSeen DATETIME NOT NULL,
 			lastSeen DATETIME NOT NULL,
 			PRIMARY KEY  (srcUrlMd5, destUrlMd5),
@@ -158,8 +162,8 @@ class Urlslab_Activator {
 		$table_name = URLSLAB_RELATED_RESOURCE_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
-			srcUrlMd5 varchar(32) NOT NULL,
-			destUrlMd5 varchar(32) NOT NULL,
+			srcUrlMd5 bigint NOT NULL,
+			destUrlMd5 bigint NOT NULL,
 			PRIMARY KEY  (srcUrlMd5,destUrlMd5)
 		) $charset_collate;";
 
