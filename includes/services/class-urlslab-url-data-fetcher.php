@@ -436,7 +436,8 @@ or (updateStatusDate < %d AND status = %s)
        				 u.updateStatusDate AS updateStatusDate,
        				 u.urlTitle AS urlTitle,
        				 u.urlMetaDescription AS urlMetaDescription,
-       				 u.urlSummary AS urlSummary
+       				 u.urlSummary AS urlSummary,
+       				 u.visibility AS visibility
 				FROM $related_urls_table r
                 INNER JOIN $urls_table as u ON r.destUrlMd5 = u.urlMd5
 				WHERE r.srcUrlMd5 = %d AND u.visibility = '%s'
