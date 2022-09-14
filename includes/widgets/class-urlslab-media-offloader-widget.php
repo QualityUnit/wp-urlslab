@@ -78,6 +78,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			'src',
 			'data-src',
 			'data-full-url',
+			'data-splide-lazy',
 			'srcset',
 		),
 		'video' => array(
