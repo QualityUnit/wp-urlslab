@@ -1189,7 +1189,15 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		if ( get_option( self::SETTING_NAME_IMG_LAZY_LOADING, false ) ) {
 			$dom_elements = $document->getElementsByTagName( 'img' );
 			foreach ( $dom_elements as $element ) {
-				if ( ! $this->is_skip_elemenet( $element ) ) {
+				$has_lazy_loading_attr = false;
+				foreach ( $this->media_tags_attributes as $valid_attr ) {
+					if ( $element->hasAttribute( $valid_attr ) ) {
+						$has_lazy_loading_attr = true;
+						break;
+					}
+				}
+
+				if ( ! $this->is_skip_elemenet( $element ) && $has_lazy_loading_attr ) {
 					$this->add_img_lazy_loading( $element );
 				}
 			}
