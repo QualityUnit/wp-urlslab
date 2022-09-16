@@ -942,6 +942,11 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			$dom_element->removeAttribute( 'srcset' );
 		}
 
+		if ( $dom_element->hasAttribute( 'data-splide-lazy' ) ) {
+			$dom_element->setAttribute( 'data-src', $dom_element->getAttribute( 'data-splide-lazy' ) );
+			$dom_element->removeAttribute( 'src' );
+		}
+
 		if ( $dom_element->hasAttribute( 'style' ) ) {
 			$dom_element->setAttribute( 'data-urlslabstyle', $dom_element->getAttribute( 'style' ) );
 		}
@@ -1191,7 +1196,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			$dom_elements = $document->getElementsByTagName( 'img' );
 			foreach ( $dom_elements as $element ) {
 				$has_lazy_loading_attr = false;
-				foreach ( $this->media_tags_attributes as $valid_attr ) {
+				foreach ( $this->media_tags_attributes['img'] as $valid_attr ) {
 					if ( $element->hasAttribute( $valid_attr ) ) {
 						$has_lazy_loading_attr = true;
 						break;
