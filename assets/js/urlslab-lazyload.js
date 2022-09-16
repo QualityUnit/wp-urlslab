@@ -116,30 +116,32 @@ const urlslabLazyLoad = () => {
 			yt.setAttribute('urlslab-active', true);
 
 			const videoID = yt.dataset.ytid;
-			const iframe = document.createElement( 'iframe' );
 
-			Object.assign( iframe, {
-				className: 'youtube_urlslab_loader--embed',
-				title: yt.getAttribute( 'title' ),
-				src: `https://www.youtube.com/embed/${ videoID }?feature=oembed&autoplay=1&playsinline=1&rel=0`,
-				frameborder: '0',
-				allow: 'accelerometer; autoplay; gyroscope; fullscreen',
-			} );
-
-			if (yt.hasAttribute('width')) {
-				iframe.setAttribute('width', yt.getAttribute('width'))
+			if( videoID ) {
+				const iframe = document.createElement( 'iframe' );
+	
+				Object.assign( iframe, {
+					className: 'youtube_urlslab_loader--embed',
+					title: yt.getAttribute( 'title' ),
+					src: `https://www.youtube.com/embed/${ videoID }?feature=oembed&autoplay=1&playsinline=1&rel=0`,
+					frameborder: '0',
+					allow: 'accelerometer; autoplay; gyroscope; fullscreen',
+				} );
+	
+				if (yt.hasAttribute('width')) {
+					iframe.setAttribute('width', yt.getAttribute('width'))
+				}
+				if (yt.hasAttribute('height')) {
+					iframe.setAttribute('height', yt.getAttribute('height'))
+				}
+	
+				yt.insertAdjacentElement( "afterbegin", iframe )
+				setTimeout( () => {
+					yt.classList.add( "active" )
+				}, 200 )
 			}
-			if (yt.hasAttribute('height')) {
-				iframe.setAttribute('height', yt.getAttribute('height'))
-			}
-
-			yt.insertAdjacentElement( "afterbegin", iframe )
-			setTimeout( () => {
-				yt.classList.add( "active" )
-			}, 200 )
 		}
 	};
-
 
 	if ( 'IntersectionObserver' in window && media.length > 0 ) {
 		const mediaObserver = new IntersectionObserver(
