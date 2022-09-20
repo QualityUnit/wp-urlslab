@@ -345,7 +345,7 @@ or (updateStatusDate < %d AND status = %s)
 		$broken_urls = array();
 		foreach ( $urls as $url ) {
 			if ( $url->is_url_valid() ) {
-				$valid_urls[] = $url;
+				$valid_urls[ $url->get_url_id() ] = $url;
 			} else {
 				$broken_urls[] = $url;
 			}
@@ -354,16 +354,12 @@ or (updateStatusDate < %d AND status = %s)
 		global $wpdb;
 		$table = URLSLAB_URLS_TABLE;
 		$placeholders = implode( ', ', array_fill( 0, count( $valid_urls ), '%d' ) );
-		$url_hashes = array();
-		foreach ( $valid_urls as $url ) {
-			$url_hashes[] = $url->get_url_id();
-		}
 
 		if ( ! empty( $valid_urls ) ) {
 			$query_results = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT * FROM $table WHERE urlMd5 IN ($placeholders)", // phpcs:ignore
-					$url_hashes,
+					array_keys( $valid_urls ),
 				),
 				ARRAY_A
 			);
@@ -373,10 +369,13 @@ or (updateStatusDate < %d AND status = %s)
 		if ( ! empty( $query_results ) ) {
 			foreach ( $query_results as $res ) {
 				$results[ $res['urlMd5'] ] = $this->transform( $res );
+				//# Adding only urls that are no scheduled
+				unset( $valid_urls[ $res['urlMd5'] ] );
 			}
 		}
 
 
+		//# Adding only urls that are no scheduled
 		$this->prepare_url_batch_for_scheduling( $valid_urls );
 		$this->mark_as_broken_batch( $broken_urls );
 		return $results;
