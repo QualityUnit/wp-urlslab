@@ -16,4 +16,21 @@ class Urlslab_User_Management_Api extends Urlslab_Api {
 		)[0];
 	}
 
+	/**
+	 * @return Urlslab_Jwt_Token
+	 * @throws Urlslab_Technical_Exception
+	 */
+	public function fetch_jwt_token(): Urlslab_Jwt_Token {
+		$rsp = $this->urlslab_get_response(
+			$this->base_url . 'token/',
+			''
+		);
+		if ( 200 != $rsp[0] ) {
+			throw new Urlslab_Technical_Exception( 'Error From Urlslab Server' );
+		}
+
+		$token_string = json_decode( $rsp[1], true )['token'];
+		return new Urlslab_Jwt_Token( $token_string );
+	}
+
 }

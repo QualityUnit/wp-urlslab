@@ -21,6 +21,7 @@
     "php": ">=7.4",
     "composer/installers": "^2.2",
     "roots/wp-config": "1.0.0",
+    "lcobucci/jwt": "4.2.1",
     "ext-json": "*",
     "ext-libxml": "*",
     "ext-dom": "*",
