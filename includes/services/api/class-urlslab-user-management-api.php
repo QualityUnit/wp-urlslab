@@ -1,8 +1,11 @@
 <?php
 
+// phpcs:disable WordPress.NamingConventions
+
 class Urlslab_User_Management_Api extends Urlslab_Api {
 
 	private int $installation_id;
+	public static string $JWT_OPTION = 'urlslab_jwt_token';
 
 	public function __construct( Urlslab_Api_Key $api_key, int $installation_id ) {
 		parent::__construct( $api_key );
@@ -14,6 +17,23 @@ class Urlslab_User_Management_Api extends Urlslab_Api {
 			$this->base_url . 'manage/validation/' . $this->installation_id,
 			''
 		)[0];
+	}
+
+	public function update_token( bool $force = false ): bool {
+		$jwt_token = get_option( self::$JWT_OPTION, '' );
+		if ( empty( $jwt_token ) || $force ) {
+			//# No token available
+			try {
+				$urlslab_jwt_token = $this->fetch_jwt_token();
+				if ( $urlslab_jwt_token->is_valid( $this->get_api_key() ) ) {
+					update_option( self::$JWT_OPTION, $urlslab_jwt_token->get_token() );
+					return true;
+				}
+			} catch ( Exception $e ) {
+				return false;
+			}       
+		}
+		return false;
 	}
 
 	/**

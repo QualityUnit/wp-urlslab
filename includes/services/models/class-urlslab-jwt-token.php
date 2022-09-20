@@ -24,6 +24,10 @@ class Urlslab_Jwt_Token {
 		$this->parser = new Parser( new JoseEncoder() );
 	}
 
+	public function get_token(): string {
+		return $this->jwt_token;
+	}
+
 	/**
 	 * @param Urlslab_Api_Key $api_key
 	 *
