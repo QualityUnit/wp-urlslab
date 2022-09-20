@@ -308,9 +308,12 @@ class Urlslab {
 		$this->loader->add_action( 'template_redirect', $plugin_public, 'download_offloaded_file' );
 
 		//head content
-		//# TODO - parsing of header should be added and the meta tag widget should not depend on <head></head>
-		$this->loader->add_action( 'wp_head', $this, 'buffer_head_start', 0 );
-		$this->loader->add_action( 'wp_head', $this, 'buffer_end', PHP_INT_MAX );
+		$urlslab_user = Urlslab_User_Widget::get_instance();
+		if ( $urlslab_user->is_widget_activated( 'urlslab-meta-tag' ) ) {
+			//# Only adding header hook if the widget is activated by the user
+			$this->loader->add_action( 'wp_head', $this, 'buffer_head_start', 0 );
+			$this->loader->add_action( 'wp_head', $this, 'buffer_end', PHP_INT_MAX );
+		}
 
 		//body content
 		$this->loader->add_action( 'wp_body_open', $this, 'buffer_content_start', PHP_INT_MAX );
