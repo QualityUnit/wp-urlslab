@@ -310,7 +310,7 @@ class Urlslab {
 		//head content
 		//# TODO - parsing of header should be added and the meta tag widget should not depend on <head></head>
 		$this->loader->add_action( 'wp_head', $this, 'buffer_head_start', 0 );
-		$this->loader->add_action( 'wp_head', $this, 'buffer_end', 1000 );
+		$this->loader->add_action( 'wp_head', $this, 'buffer_end', PHP_INT_MAX );
 
 		//body content
 		$this->loader->add_action( 'wp_body_open', $this, 'buffer_content_start', PHP_INT_MAX );
