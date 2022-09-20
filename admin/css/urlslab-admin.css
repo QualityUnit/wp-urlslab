@@ -95,6 +95,8 @@ figure {
 
 .urlslab-btn-success {
 	text-decoration: none;
+	border: none;
+	cursor: pointer;
 	height: 100%;
 	padding: 10px;
 	background-color: #0aa8a7;

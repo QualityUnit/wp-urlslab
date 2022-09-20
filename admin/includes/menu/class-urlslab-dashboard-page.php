@@ -44,9 +44,10 @@ class Urlslab_Dashboard_Page extends Urlslab_Admin_Page {
 
 	public function on_page_load( string $action, string $component ) {
 		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
-			 'GET' == $_SERVER['REQUEST_METHOD'] and
+			 'POST' == $_SERVER['REQUEST_METHOD'] and
 			 ( 'activate' == $action or 'deactivate' == $action ) and
-			 isset( $_GET['widget'] ) ) {
+			 ! is_bool( check_admin_referer( 'urlslab-widget-activation' ) ) and
+			 isset( $_POST['widget'] ) ) {
 
 			$redirect_to = $this->menu_page(
 				'',
@@ -57,7 +58,7 @@ class Urlslab_Dashboard_Page extends Urlslab_Admin_Page {
 			);
 
 			if ( 'activate' == $action ) {
-				$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $_GET['widget'] );
+				$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $_POST['widget'] );
 				if ( is_bool( $widget ) && ! $widget ) {
 					$redirect_to = $this->menu_page(
 						'',
@@ -79,7 +80,7 @@ class Urlslab_Dashboard_Page extends Urlslab_Admin_Page {
 			}
 
 			if ( 'deactivate' == $action ) {
-				$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $_GET['widget'] );
+				$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $_POST['widget'] );
 				if ( is_bool( $widget ) && ! $widget ) {
 					$redirect_to = $this->menu_page(
 						'',
