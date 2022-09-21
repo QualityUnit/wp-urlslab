@@ -62,7 +62,7 @@
     "file-loader": "^6.2.0",
     "gulp": "^4.0.2",
     "optimize-css-assets-webpack-plugin": "^6.0.1",
-    "stylelint": "^14.11.0",
+    "stylelint": "^14.12.1",
     "url-loader": "^4.1.1"
   }
 }
