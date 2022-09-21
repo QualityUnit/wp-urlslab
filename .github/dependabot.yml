@@ -10,9 +10,9 @@ updates:
     labels:
       - "type:dependencies"
     assignees:
-      - "mvstepanek"
+      - "yasha-dev1"
     reviewers:
-      - "mvstepanek"
+      - "yasha-dev1"
 
   - package-ecosystem: npm
     directory: "/"
@@ -24,9 +24,9 @@ updates:
     labels:
       - "type:dependencies"
     assignees:
-      - "mvstepanek"
+      - "yasha-dev1"
     reviewers:
-      - "mvstepanek"
+      - "yasha-dev1"
 
   - package-ecosystem: github-actions
     directory: "/"
@@ -37,6 +37,6 @@ updates:
     labels:
       - "type:dependencies"
     assignees:
-      - "mvstepanek"
+      - "yasha-dev1"
     reviewers:
-      - "mvstepanek"
+      - "yasha-dev1"
