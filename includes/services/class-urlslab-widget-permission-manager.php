@@ -2,14 +2,14 @@
 
 // phpcs:disable WordPress.NamingConventions
 
-class Urlslab_Jwt_Manager {
+class Urlslab_Widget_Permission_Manager {
 	
-	private static Urlslab_Jwt_Manager $instance;
+	private static Urlslab_Widget_Permission_Manager $instance;
 	private static string $JWT_TOKEN_OPTION = 'urlslab_jwt_token';
 	private ?Urlslab_Jwt_Token $token;
 	private Urlslab_User_Management_Api $user_management_api;
 	
-	public static function get_instance() {
+	public static function get_instance(): Urlslab_Widget_Permission_Manager {
 		if ( empty( self::$instance ) ) {
 			self::$instance                    = new self;
 		}
@@ -18,6 +18,9 @@ class Urlslab_Jwt_Manager {
 	}
 
 	public function init( Urlslab_User_Management_Api $user_management_api ) {
+		if ( $user_management_api->get_api_key()->is_empty() ) {
+			return;
+		}
 		$this->user_management_api = $user_management_api;
 		$jwt_plain_token = get_option( self::$JWT_TOKEN_OPTION, '' );
 		if ( empty( $jwt_plain_token ) ) {
@@ -35,6 +38,26 @@ class Urlslab_Jwt_Manager {
 			} catch ( Exception $e ) {
 				//# Token not valid
 				$this->update_token();
+			}
+		}
+	}
+
+	/**
+	 * @param Urlslab_Widget $widget
+	 * @param array $default_val
+	 *
+	 * @return array returns false if the jwt token is not available and
+	 * associative array containing all the limit params if the token exists
+	 */
+	public function get_limitation( Urlslab_Widget $widget, array $default_val = array() ): array {
+		if ( empty( $this->token ) ) {
+			return $default_val;
+		} else {
+			$token_permission_claim = $this->token->get_claim( $widget->get_widget_slug() );
+			if ( ! empty( $token_permission_claim ) ) {
+				return $token_permission_claim;
+			} else {
+				return $default_val;
 			}
 		}
 	}

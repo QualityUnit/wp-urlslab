@@ -140,6 +140,15 @@ class Urlslab {
 			$urlslab_user_widget->add_api_key(
 				new Urlslab_Api_Key( $api_key )
 			);
+			//# Initializing JWT Manager
+			$jwt_token_manager = Urlslab_Widget_Permission_Manager::get_instance();
+			$jwt_token_manager->init(
+				new Urlslab_User_Management_Api(
+					$api_key,
+					self::get_installation_id()
+				)
+			);
+			//# Initializing JWT Manager
 		}
 	}
 
@@ -421,7 +430,6 @@ class Urlslab {
 			wp_schedule_event( time(), 'every_minute', 'urlslab_cron_hook' );
 		}
 
-		//defining Upgrade hook
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
 		$this->add_cron_task( new Urlslab_Screenshot_Cron( $this->url_data_fetcher ) );
 

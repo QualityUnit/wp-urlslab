@@ -22,10 +22,16 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	const SETTING_NAME_URLS_MAP = 'urlslab_urls_map';
 	const SETTING_DEFAULT_URLS_MAP = true;
 
+	private array $default_permissions = array(
+		'keywordCount' => 30,
+	);
+
 	/**
 	 * @param Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher
+	 * @param Urlslab_Widget_Permission_Manager $widget_permission_manager
 	 */
-	public function __construct( Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher ) {
+	public function __construct( Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher, Urlslab_Widget_Permission_Manager $widget_permission_manager ) {
+		parent::__construct( $widget_permission_manager );
 		$this->urlslab_url_data_fetcher = $urlslab_url_data_fetcher;
 		$this->widget_slug = 'urlslab-link-enhancer';
 		$this->widget_title = 'Link Management';
@@ -64,6 +70,17 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	 */
 	public function get_landing_page_link(): string {
 		return $this->landing_page_link;
+	}
+
+	public function is_widget_permitted(): bool {
+		$permissions = $this->widget_permission_manager->get_limitation(
+			$this,
+			$this->default_permissions
+		);
+		if ( is_string( $permissions['keywordCount'] ) && 'unlimited' == $permissions['keywordCount'] ) {
+			return true;
+		}
+		return $this->keyword_cnt_lt( $permissions['keywordCount'] );
 	}
 
 	public function theContentHook( DOMDocument $document ) {

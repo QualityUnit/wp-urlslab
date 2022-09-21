@@ -2,6 +2,12 @@
 
 abstract class Urlslab_Widget {
 
+	protected Urlslab_Widget_Permission_Manager $widget_permission_manager;
+
+	public function __construct( Urlslab_Widget_Permission_Manager $widget_permission_manager ) {
+		$this->widget_permission_manager = $widget_permission_manager;
+	}
+
 	/**
 	 * @param Urlslab_Loader $loader
 	 *
@@ -38,6 +44,11 @@ abstract class Urlslab_Widget {
 	 * @return string get tab slug that the widget is located in
 	 */
 	public abstract function get_widget_tab(): string;
+
+	/**
+	 * @return bool if the widget is allowed to begin processing
+	 */
+	public abstract function is_widget_permitted(): bool;
 
 	/**
 	 * @param $args array|string extra arguments by the user

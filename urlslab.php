@@ -63,6 +63,7 @@ define( 'URLSLAB_FILES_TABLE', $wpdb->prefix . 'urlslab_files' );
 define( 'URLSLAB_FILE_ALTERNATIVES_TABLE', $wpdb->prefix . 'urlslab_file_alternatives' );
 define( 'URLSLAB_FILE_CONTENTS_TABLE', $wpdb->prefix . 'urlslab_file_contents' );
 define( 'URLSLAB_YOUTUBE_CACHE_TABLE', $wpdb->prefix . 'urlslab_youtube_cache' );
+define( 'URLSLAB_FEATURE_TRACKING_TABLE', $wpdb->prefix . 'urlslab_feature_tracking' );
 
 define( 'URLSLAB_PLUGIN_LOG', plugin_dir_path( __FILE__ ) . 'debug.log' );
 

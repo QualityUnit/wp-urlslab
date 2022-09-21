@@ -51,6 +51,7 @@ class Urlslab_Activator {
 		self::init_urlslab_file_alternatives();
 		self::init_urlslab_file_contents();
 		self::init_youtube_cache_tables();
+		self::init_feature_stats_tracking_table();
 	}
 
 	private static function upgrade_steps() {
@@ -237,6 +238,23 @@ class Urlslab_Activator {
 			  contentid SMALLINT UNSIGNED NOT NULL,
 			  content longblob DEFAULT NULL,
 			  PRIMARY KEY (fileid,contentid)
+		) $charset_collate;";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_feature_stats_tracking_table() {
+		//# this table is for tracking feature usages
+		//# Its only useful for imageAltText, meta tags
+		global $wpdb;
+		$table_name = URLSLAB_FEATURE_TRACKING_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+    		  widget_slug varchar(60) NOT NULL,
+    		  url varchar(300) NOT NULL, 
+    		  usage_count SMALLINT UNSIGNED NOT NULL,
+			  PRIMARY KEY (widget_slug, url)
 		) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

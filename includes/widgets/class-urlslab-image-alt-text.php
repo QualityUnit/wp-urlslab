@@ -9,10 +9,14 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	private string $widget_description;
 	private string $landing_page_link;
 	private Urlslab_Admin_Page $parent_page;
+	private array $default_permissions = array(
+		'generation' => 10
+	);
 
 	/**
 	 */
-	public function __construct() {
+	public function __construct( Urlslab_Widget_Permission_Manager $widget_permission_manager) {
+		parent::__construct( $widget_permission_manager );
 		$this->widget_slug        = 'urlslab-image-alt-attribute';
 		$this->widget_title       = 'Image Alt Attributes';
 		$this->widget_description = 'Urlslab Image Alt Attributes - automatic enhancing of image alt atribute with name of heading, where is image included';
@@ -52,7 +56,22 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 		return $this->landing_page_link;
 	}
 
+	public function is_widget_permitted(): bool {
+		$permissions = $this->widget_permission_manager->get_limitation(
+			$this,
+			$this->default_permissions
+		);
+		if (is_string( $permissions['generation'] ) && $permissions['generation'] == 'unlimited') {
+			return true;
+		}
+		$generated_alt = $this->cnt_generated_alt();
+		return $generated_alt <= $permissions['generation'];
+	}
+
 	public function theContentHook( DOMDocument $document) {
+		if (! $this->is_widget_permitted() ) {
+			return;
+		}
 		try {
 			$xpath = new DOMXPath( $document );
 			$table_data = $xpath->query( "//img[not(@alt) or @alt='']|//*[starts-with(name(),'h')]" );
@@ -78,6 +97,17 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 			//TODO logging errors
 			return;
 		}
+	}
+
+	private function cnt_generated_alt(): int {
+		global $wpdb;
+		$table_name = URLSLAB_FEATURE_TRACKING_TABLE;
+		return $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT SUM(usage_count) AS usage_cnt FROM $table_name WHERE widget_slug = %s GROUP BY widget_slug",
+				$this->widget_slug
+			)
+		)['usage_cnt'] ?? 0;
 	}
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = ''): string {

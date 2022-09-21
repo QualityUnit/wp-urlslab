@@ -53,8 +53,13 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	public const SETTING_NAME_MIN_PARAGRAPH_LENGTH = 'urlslab_min_paragraph_len';
 	public const SETTING_DEFAULT_MIN_PARAGRAPH_LENGTH = 1;
 
+	private array $default_permissions = array(
+		'keywordCount' => 30,
+	);
 
-	public function __construct() {
+
+	public function __construct( Urlslab_Widget_Permission_Manager $widget_permission_manager ) {
+		parent::__construct( $widget_permission_manager );
 		$this->widget_slug = 'urlslab-keywords-links';
 		$this->widget_title = 'Keywords Links';
 		$this->widget_description = 'Build automatic links from your keywords that appear in website content';
@@ -92,6 +97,30 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	 */
 	public function get_landing_page_link(): string {
 		return $this->landing_page_link;
+	}
+
+	public function is_widget_permitted(): bool {
+		$permissions = $this->widget_permission_manager->get_limitation(
+			$this,
+			$this->default_permissions
+		);
+		if ( is_string( $permissions['keywordCount'] ) && 'unlimited' == $permissions['keywordCount'] ) {
+			return true;
+		}
+		return $this->keyword_cnt_lt( $permissions['keywordCount'] );
+	}
+
+	private function keyword_cnt_lt( int $limit ) {
+		global $wpdb;
+		$table_name = URLSLAB_KEYWORDS_TABLE;
+		return count(
+			$wpdb->get_results(
+				$wpdb->prepare(
+				"SELECT 1 FROM $table_name LIMIT $limit", // phpcs:ignore
+				),
+				ARRAY_N
+			)
+		) < $limit;
 	}
 
 	private function replaceKeywordWithLinks( DOMText $node, DOMDocument $document, array $keywords ) {
@@ -284,6 +313,9 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	public function theContentHook( DOMDocument $document ) {
+		if ( ! $this->is_widget_permitted() ) {
+			return;
+		}
 		$this->init_keywords_cache( strtolower( $document->textContent ) );
 		if ( count( $this->keywords_cache ) == 0 ) {
 			return;
