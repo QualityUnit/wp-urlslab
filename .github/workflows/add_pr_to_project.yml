@@ -12,5 +12,5 @@ jobs:
     steps:
       - uses: actions/add-to-project@v0.3.0
         with:
-          project-url: https://github.com/orgs/QualityUnit/projects/25
+          project-url: https://github.com/orgs/QualityUnit/projects/30
           github-token: ${{ secrets.GH_PAT }}
