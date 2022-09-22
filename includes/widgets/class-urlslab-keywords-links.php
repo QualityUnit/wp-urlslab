@@ -110,7 +110,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		return $this->keyword_cnt_lt( $permissions['keywordCount'] );
 	}
 
-	private function keyword_cnt_lt( int $limit ) {
+	private function keyword_cnt_lt( int $limit ): bool {
 		global $wpdb;
 		$table_name = URLSLAB_KEYWORDS_TABLE;
 		return count(
@@ -313,9 +313,6 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	public function theContentHook( DOMDocument $document ) {
-		if ( ! $this->is_widget_permitted() ) {
-			return;
-		}
 		$this->init_keywords_cache( strtolower( $document->textContent ) );
 		if ( count( $this->keywords_cache ) == 0 ) {
 			return;

@@ -24,14 +24,14 @@ class Urlslab_Available_Widgets {
 	 *
 	 * @return void
 	 */
-	public function init_widgets( Urlslab_Url_Data_Fetcher $url_fetcher ) {
-		$urlslab_screenshot = new Urlslab_Screenshot_Widget( $url_fetcher );
-		$urlslab_related_resources = new Urlslab_Related_Resources_Widget( $url_fetcher );
-		$urlslab_link_enhancer = new Urlslab_Link_Enhancer( $url_fetcher );
-		$urlslab_keyword_links = new Urlslab_Keywords_Links();
-		$urlslab_image_alt_text = new Urlslab_Image_Alt_Text();
-		$urlslab_og_meta_tag = new Urlslab_Meta_Tag( $url_fetcher );
-		$urlslab_media_offloader = new Urlslab_Media_Offloader_Widget();
+	public function init_widgets( Urlslab_Url_Data_Fetcher $url_fetcher, Urlslab_Widget_Permission_Manager $urlslab_widget_permission_manager ) {
+		$urlslab_screenshot = new Urlslab_Screenshot_Widget( $url_fetcher, $urlslab_widget_permission_manager );
+		$urlslab_related_resources = new Urlslab_Related_Resources_Widget( $url_fetcher, $urlslab_widget_permission_manager );
+		$urlslab_link_enhancer = new Urlslab_Link_Enhancer( $url_fetcher, $urlslab_widget_permission_manager );
+		$urlslab_keyword_links = new Urlslab_Keywords_Links( $urlslab_widget_permission_manager );
+		$urlslab_image_alt_text = new Urlslab_Image_Alt_Text( $urlslab_widget_permission_manager );
+		$urlslab_og_meta_tag = new Urlslab_Meta_Tag( $url_fetcher, $urlslab_widget_permission_manager );
+		$urlslab_media_offloader = new Urlslab_Media_Offloader_Widget( $urlslab_widget_permission_manager );
 
 		$this->available_widgets = array(
 			$urlslab_screenshot->get_widget_slug() => $urlslab_screenshot,

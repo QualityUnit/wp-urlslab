@@ -23,7 +23,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	const SETTING_DEFAULT_URLS_MAP = true;
 
 	private array $default_permissions = array(
-		'keywordCount' => 30,
+		'generation' => 30,
 	);
 
 	/**
@@ -77,10 +77,24 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			$this,
 			$this->default_permissions
 		);
-		if ( is_string( $permissions['keywordCount'] ) && 'unlimited' == $permissions['keywordCount'] ) {
+		if ( is_string( $permissions['generation'] ) && 'unlimited' == $permissions['keywordCount'] ) {
 			return true;
 		}
-		return $this->keyword_cnt_lt( $permissions['keywordCount'] );
+		return $this->link_is_lt( $permissions['generation'] );
+	}
+
+	private function link_is_lt( int $limit ): bool {
+		global $wpdb;
+		$table_name = URLSLAB_FEATURE_TRACKING_TABLE;
+		return count(
+			$wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT 1 FROM $table_name WHERE widget_slug = %s GROUP BY widget_slug, url LIMIT $limit", //# phpcs:ignore
+					$this->widget_slug
+				),
+				ARRAY_N
+			)
+		) < $limit;
 	}
 
 	public function theContentHook( DOMDocument $document ) {

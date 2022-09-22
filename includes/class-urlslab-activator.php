@@ -253,7 +253,6 @@ class Urlslab_Activator {
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
     		  widget_slug varchar(60) NOT NULL,
     		  url varchar(300) NOT NULL, 
-    		  usage_count SMALLINT UNSIGNED NOT NULL,
 			  PRIMARY KEY (widget_slug, url)
 		) $charset_collate;";
 

@@ -64,14 +64,10 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 		if (is_string( $permissions['generation'] ) && $permissions['generation'] == 'unlimited') {
 			return true;
 		}
-		$generated_alt = $this->cnt_generated_alt();
-		return $generated_alt <= $permissions['generation'];
+		return $this->cnt_generated_alt_lt( $permissions['generation'] );
 	}
 
 	public function theContentHook( DOMDocument $document) {
-		if (! $this->is_widget_permitted() ) {
-			return;
-		}
 		try {
 			$xpath = new DOMXPath( $document );
 			$table_data = $xpath->query( "//img[not(@alt) or @alt='']|//*[starts-with(name(),'h')]" );
@@ -99,15 +95,18 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 		}
 	}
 
-	private function cnt_generated_alt(): int {
+	private function cnt_generated_alt_lt( int $limit ): bool {
 		global $wpdb;
 		$table_name = URLSLAB_FEATURE_TRACKING_TABLE;
-		return $wpdb->get_row(
-			$wpdb->prepare(
-				"SELECT SUM(usage_count) AS usage_cnt FROM $table_name WHERE widget_slug = %s GROUP BY widget_slug",
-				$this->widget_slug
+		return count(
+			$wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT 1 FROM $table_name WHERE widget_slug = %s GROUP BY widget_slug, url LIMIT $limit",
+					$this->widget_slug
+				),
+				ARRAY_N
 			)
-		)['usage_cnt'] ?? 0;
+		) < $limit;
 	}
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = ''): string {

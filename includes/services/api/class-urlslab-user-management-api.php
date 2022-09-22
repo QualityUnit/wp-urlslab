@@ -2,6 +2,8 @@
 
 // phpcs:disable WordPress.NamingConventions
 
+require_once URLSLAB_PLUGIN_DIR . '/includes/exceptions/class-urlslab-technical-exception.php';
+
 class Urlslab_User_Management_Api extends Urlslab_Api {
 
 	private int $installation_id;
@@ -31,7 +33,7 @@ class Urlslab_User_Management_Api extends Urlslab_Api {
 				}
 			} catch ( Exception $e ) {
 				return false;
-			}       
+			}
 		}
 		return false;
 	}

@@ -95,9 +95,14 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		),
 	);
 
+	private array $default_permissions = array(
+		'offloadedFilesCnt' => 30,
+	);
+
 	/**
 	 */
-	public function __construct() {
+	public function __construct( Urlslab_Widget_Permission_Manager $widget_permission_manager ) {
+		parent::__construct( $widget_permission_manager );
 		$this->widget_slug = 'urlslab-media-offloader';
 		$this->widget_title = 'Media Files';
 		$this->widget_description = 'Offload media files from local directory to database or S3';
@@ -188,6 +193,30 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
 		return '';
+	}
+
+	public function is_widget_permitted(): bool {
+		$permissions = $this->widget_permission_manager->get_limitation(
+			$this,
+			$this->default_permissions
+		);
+		if ( is_string( $permissions['offloadedFilesCnt'] ) && 'unlimited' == $permissions['offloadedFilesCnt'] ) {
+			return true;
+		}
+		return $this->file_cnt_lt( $permissions['offloadedFilesCnt'] );
+	}
+
+	private function file_cnt_lt( int $limit ): bool {
+		global $wpdb;
+		$table_name = URLSLAB_FILES_TABLE;
+		return count(
+			$wpdb->get_results(
+				$wpdb->prepare(
+					       "SELECT 1 FROM $table_name LIMIT $limit", // phpcs:ignore
+				),
+				ARRAY_N
+			)
+		) < $limit;
 	}
 
 	public function the_content( DOMDocument $document ) {

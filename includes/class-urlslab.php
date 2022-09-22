@@ -133,7 +133,8 @@ class Urlslab {
 		$this->url_data_fetcher = new Urlslab_Url_Data_Fetcher(
 			new Urlslab_Screenshot_Api( $urlslab_api )
 		);
-		$urlslab_available_widgets->init_widgets( $this->url_data_fetcher );
+		$jwt_token_manager = Urlslab_Widget_Permission_Manager::get_instance();
+		$urlslab_available_widgets->init_widgets( $this->url_data_fetcher, $jwt_token_manager );
 		$urlslab_user_widget = Urlslab_User_Widget::get_instance();
 
 		if ( ! empty( $api_key ) ) {
@@ -141,10 +142,9 @@ class Urlslab {
 				new Urlslab_Api_Key( $api_key )
 			);
 			//# Initializing JWT Manager
-			$jwt_token_manager = Urlslab_Widget_Permission_Manager::get_instance();
 			$jwt_token_manager->init(
 				new Urlslab_User_Management_Api(
-					$api_key,
+					new Urlslab_Api_Key( $api_key ),
 					self::get_installation_id()
 				)
 			);
@@ -233,6 +233,10 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-keywords-links.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-image-alt-text.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-meta-tag.php';
+
+		//permissions
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-jwt-token.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-widget-permission-manager.php';
 
 
 		//menu pages

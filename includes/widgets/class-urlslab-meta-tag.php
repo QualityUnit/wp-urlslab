@@ -23,10 +23,16 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	const SETTING_NAME_META_OG_DESC_GENERATION = 'urlslab_og_desc_generation';
 	const DEFAULT_META_OG_DESC_GENERATION = false;
 
+	private array $default_permissions = array(
+		'generation' => 10
+	);
+
 	/**
 	 * @param Urlslab_Url_Data_Fetcher $url_data_fetcher
+	 * @param Urlslab_Widget_Permission_Manager $widget_permission_manager
 	 */
-	public function __construct( Urlslab_Url_Data_Fetcher $url_data_fetcher) {
+	public function __construct( Urlslab_Url_Data_Fetcher $url_data_fetcher, Urlslab_Widget_Permission_Manager $widget_permission_manager) {
+		parent::__construct( $widget_permission_manager );
 		$this->widget_slug = 'urlslab-meta-tag';
 		$this->widget_title = 'Meta Tag';
 		$this->widget_description = 'Generate meta tags automatically if there is no meta tag for your pages based on the content. generate og meta tags automatically from the data from URLSLAB';
@@ -37,6 +43,31 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 
 	public function init_widget( Urlslab_Loader $loader ) {
 		$loader->add_action( 'urlslab_head_content', $this, 'theContentHook' );
+	}
+
+	public function is_widget_permitted(): bool {
+		$permissions = $this->widget_permission_manager->get_limitation(
+			$this,
+			$this->default_permissions
+		);
+		if ( is_string( $permissions['generation'] ) && 'unlimited' == $permissions['generation'] ) {
+			return true;
+		}
+		return $this->meta_manipulation_is_lt( $permissions['generation'] );
+	}
+
+	private function meta_manipulation_is_lt( int $limit ): bool {
+		global $wpdb;
+		$table_name = URLSLAB_FEATURE_TRACKING_TABLE;
+		return count(
+			$wpdb->get_results(
+				$wpdb->prepare(
+					       "SELECT 1 FROM $table_name WHERE widget_slug = %s GROUP BY widget_slug, url LIMIT $limit", //# phpcs:ignore
+					$this->widget_slug
+				),
+				ARRAY_N
+			)
+		) < $limit;
 	}
 
 
