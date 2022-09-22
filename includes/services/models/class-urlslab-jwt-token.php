@@ -70,21 +70,18 @@ class Urlslab_Jwt_Token {
 
 		$token = $this->parser->parse( $this->jwt_token );
 		$validator = new Validator();
+		$public_key = "-----BEGIN PUBLIC KEY-----\n" . $api_key->get_api_key() . "\n-----END PUBLIC KEY-----";
 		$signing_constraint = new SignedWith(
 			new Sha256(),
-			InMemory::plainText( $api_key->get_api_key() )
+			InMemory::plainText( $public_key )
 		);
 		$time_constraint = new FrozenClock( new DateTimeImmutable() );
 
-		try {
-			$validator->assert( $token, $signing_constraint );
-			$validator->assert( $token, new StrictValidAt( $time_constraint ) );
-			$validator->assert( $token, new IssuedBy( $this->issuer ) );
-			$validator->assert( $token, new PermittedFor( $this->aud ) );
-			return true;
-		} catch ( RequiredConstraintsViolated $e ) {
-			throw new Urlslab_Invalid_Jwt_Token_Exception( 'JWT Token Not Valid' );
-		}
+		$validator->assert( $token, $signing_constraint );
+		$validator->assert( $token, new StrictValidAt( $time_constraint ) );
+		$validator->assert( $token, new IssuedBy( $this->issuer ) );
+		$validator->assert( $token, new PermittedFor( $this->aud ) );
+		return true;
 	}
 
 }

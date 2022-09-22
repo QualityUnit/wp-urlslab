@@ -75,6 +75,10 @@ class Urlslab_Activator {
 			self::init_related_resources_widget_tables();
 		}
 
+		if ( version_compare( $version, '1.18.0', '<' ) ) {
+			self::init_feature_stats_tracking_table();
+		}
+
 		//all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}

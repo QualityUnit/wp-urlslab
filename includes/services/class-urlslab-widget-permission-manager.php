@@ -71,6 +71,7 @@ class Urlslab_Widget_Permission_Manager {
 			}
 		} catch ( Exception $e ) {
 			//# not updating anything, not valid
+			echo $e->getMessage();
 		}
 	}
 	
