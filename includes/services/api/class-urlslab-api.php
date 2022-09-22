@@ -6,7 +6,7 @@ abstract class Urlslab_Api {
 
 	private Urlslab_Api_Key $api_key;
 
-	protected string $base_url = 'http://172.17.0.1:9001/api/v1/';
+	protected string $base_url = 'https://www.urlslab.com/api/v1/';
 
 	/**
 	 * @param Urlslab_Api_Key $api_key
