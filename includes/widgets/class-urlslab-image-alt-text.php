@@ -57,14 +57,7 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	}
 
 	public function is_widget_permitted(): bool {
-		$permissions = $this->widget_permission_manager->get_limitation(
-			$this,
-			$this->default_permissions
-		);
-		if (is_string( $permissions['generation'] ) && $permissions['generation'] == 'unlimited') {
-			return true;
-		}
-		return $this->cnt_generated_alt_lt( $permissions['generation'] );
+		return true;
 	}
 
 	public function theContentHook( DOMDocument $document) {
@@ -93,20 +86,6 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 			//TODO logging errors
 			return;
 		}
-	}
-
-	private function cnt_generated_alt_lt( int $limit ): bool {
-		global $wpdb;
-		$table_name = URLSLAB_FEATURE_TRACKING_TABLE;
-		return count(
-			$wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT 1 FROM $table_name WHERE widget_slug = %s GROUP BY widget_slug, url LIMIT $limit",
-					$this->widget_slug
-				),
-				ARRAY_N
-			)
-		) < $limit;
 	}
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = ''): string {

@@ -58,28 +58,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	}
 
 	public function is_widget_permitted(): bool {
-		$permissions = $this->widget_permission_manager->get_limitation(
-			$this,
-			$this->default_permissions
-		);
-		if ( is_string( $permissions['generation'] ) && 'unlimited' == $permissions['generation'] ) {
-			return true;
-		}
-		return $this->cnt_generated_screenshot_lt( $permissions['generation'] );
-	}
-
-	private function cnt_generated_screenshot_lt( int $limit ): bool {
-		global $wpdb;
-		$table_name = URLSLAB_FEATURE_TRACKING_TABLE;
-		return count(
-			$wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT 1 FROM $table_name WHERE widget_slug = %s GROUP BY widget_slug, url LIMIT $limit", //# phpcs:ignore
-					$this->widget_slug
-				),
-				ARRAY_N
-			)
-		) < $limit;
+		return true;
 	}
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
