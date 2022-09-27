@@ -1,7 +1,7 @@
 ---
 name: Feature Request
 about: Suggest an idea
-labels: status:in-confirmation, type:feature
+labels: product:URLsLab Plugin, status:in-confirmation, type:feature
 ---
 
 <!--

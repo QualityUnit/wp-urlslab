@@ -2,7 +2,7 @@
 name: Bug Report
 about: Create a report to help us improve
 title: "[Bug]: "
-labels: status:in-confirmation, type:bug
+labels: product:URLsLab Plugin, status:in-confirmation, type:bug
 ---
 
 <!--

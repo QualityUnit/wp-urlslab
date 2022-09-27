@@ -1,7 +1,7 @@
 ---
 name: Improvement Request
 about: Suggest an improvement
-labels: status:in-confirmation, type:improvement
+labels: product:URLsLab Plugin, status:in-confirmation, type:improvement
 ---
 
 <!--

@@ -2,7 +2,7 @@
 name: Code Refactoring
 about: Task for code refactoring
 title: "[Refactor]: "
-labels: status:in-confirmation, type:refactoring
+labels: product:URLsLab Plugin, status:in-confirmation, type:refactoring
 ---
 
 <!--
