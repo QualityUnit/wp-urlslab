@@ -9,15 +9,15 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 			return false;
 		}
 
-		//clean old content data
-		global $wpdb;
-		$this->delete_content( $file );
-
 		$handle = fopen( $local_file_name, 'rb' );
 		if ( false === $handle ) {
 			return false;
 		}
 
+		//clean old content data
+		$this->delete_content( $file );
+
+		global $wpdb;
 		$result = true;
 		$content_id = 1;
 		while ( ! feof( $handle ) ) {
