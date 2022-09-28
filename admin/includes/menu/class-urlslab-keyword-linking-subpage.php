@@ -668,7 +668,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				'number',
 				Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE,
 				get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE, Urlslab_Keywords_Links::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PAGE ),
-				'the maximum number of auto links to be generated',
+				'the maximum number of links to be generated in whole page',
 				'Max Auto links in page',
 				''
 			),
@@ -676,8 +676,24 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				'number',
 				Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH,
 				get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH, Urlslab_Keywords_Links::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PARAGRAPH ),
-				'the maximum number of auto links to be created for each paragraph',
+				'the maximum number of links to be created in paragraph',
 				'Max auto links per paragraph',
+				''
+			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Keywords_Links::SETTING_NAME_MIN_CHARS_BEFORE_LINK,
+				get_option( Urlslab_Keywords_Links::SETTING_NAME_MIN_CHARS_BEFORE_LINK, Urlslab_Keywords_Links::SETTING_DEFAULT_MIN_CHARS_BEFORE_LINK ),
+				'Minimum number of characters before the link defines space between inserted link',
+				'Min # chars before link',
+				''
+			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Keywords_Links::SETTING_NAME_MIN_CHARS_AFTER_LINK,
+				get_option( Urlslab_Keywords_Links::SETTING_NAME_MIN_CHARS_AFTER_LINK, Urlslab_Keywords_Links::SETTING_DEFAULT_MIN_CHARS_AFTER_LINK ),
+				'Minimum number of characters after the link defines space between inserted link',
+				'Min # chars after link',
 				''
 			),
 			new Urlslab_Setting_Input(
@@ -688,8 +704,15 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				'Min paragraph length [# of characters]',
 				''
 			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Keywords_Links::SETTING_NAME_MAX_PARAGRAPH_DENSITY,
+				get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_PARAGRAPH_DENSITY, Urlslab_Keywords_Links::SETTING_DEFAULT_MAX_PARAGRAPH_DENSITY ),
+				'Maximum paragraph density defines maximum number of links per character can be included in paragraph. Example: By defining value 100 will be included maximum 5 links in 500 characters long paragraph.',
+				'Paragraph density [min # of characters per link]',
+				''
+			),
 		)
-
 		?>
 		<form method="post" action="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=update-settings', 1 ) ); ?>">
 			<?php wp_nonce_field( 'keyword-update-settings' ); ?>
