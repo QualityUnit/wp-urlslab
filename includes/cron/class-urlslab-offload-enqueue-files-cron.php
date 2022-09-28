@@ -18,10 +18,6 @@ class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
 		}
 
 		$file = new Urlslab_File_Data( $file_row );
-		if ( $file->get_filestatus() != Urlslab_Driver::STATUS_NEW ) {
-			return false;
-		}
-
 		if ( ! Urlslab_Driver::get_driver( $file )->is_connected() ) {
 			return false;
 		}
@@ -31,11 +27,10 @@ class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
 			URLSLAB_FILES_TABLE,
 			array(
 				'filestatus' => Urlslab_Driver::STATUS_PENDING,
+				'last_seen' => gmdate( 'Y-m-d H:i:s' ),
 			),
 			array(
 				'fileid' => $file->get_fileid(),
-				'filestatus' => Urlslab_Driver::STATUS_NEW,
-				'last_seen' => strtotime( gmdate( 'Y-m-d H:i:s' ) ),
 			)
 		);
 
