@@ -566,9 +566,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		$file = new Urlslab_File_Data( $row );
 		status_header( 200 );
 		header( 'Content-Type: ' . $file->get_filetype() );
+		header( 'Content-Type: application/octet-stream' );
 		header( 'Content-Disposition: inline; filename="' . $file->get_filename() . '"' );
-		header( 'Content-Transfer-Encoding: binary' );
-		header( 'Pragma: public' );
+		//      header( 'Content-Transfer-Encoding: binary' );
+		//      header( 'Pragma: public' );
 
 		$expires_offset = get_option( self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME, self::SETTING_DEFAULT_MEDIA_CACHE_EXPIRE_TIME );
 		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
