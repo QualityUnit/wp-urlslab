@@ -18,16 +18,13 @@ class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
 		}
 
 		$file = new Urlslab_File_Data( $file_row );
-		if ( $file->get_filestatus() != Urlslab_Driver::STATUS_NEW ) {
-			return false;
-		}
 
 		if ( ! Urlslab_Driver::get_driver( $file )->is_connected() ) {
 			return false;
 		}
 
 		//update status to pending
-		$wpdb->update(
+		$update_affected_rows = $wpdb->update(
 			URLSLAB_FILES_TABLE,
 			array(
 				'filestatus' => Urlslab_Driver::STATUS_PENDING,
@@ -35,9 +32,13 @@ class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
 			),
 			array(
 				'fileid' => $file->get_fileid(),
-				'filestatus' => Urlslab_Driver::STATUS_NEW,
+				'filestatus' => $file->get_filestatus(),
 			)
 		);
+
+		if ( 1 !== $update_affected_rows ) {
+			return true;
+		}
 
 		if ( Urlslab_Driver::get_driver( $file )->upload_content( $file ) ) {
 			//update status to active
