@@ -36,6 +36,26 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 					}
 				}
 
+				if ( isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME ] ) ) {
+					if (
+							0 > $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME ] ||
+							! is_numeric( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME ] )
+					) {
+						wp_safe_redirect(
+							$this->menu_page(
+								'media-offloader',
+								array(
+									'status' => 'failure',
+									'urlslab-message' => 'Cache expiration time needs to be number',
+								),
+								$_GET['sub-tab'] ?? ''
+							)
+						);
+						exit;
+					}
+					$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME ] = $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME ];
+				}
+
 				Urlslab_Media_Offloader_Widget::update_settings( $saving_opt );
 
 
@@ -557,6 +577,14 @@ class Urlslab_Offloader_Page extends Urlslab_Admin_Page {
 				'Delete file from original storage after transfer was completed',
 				'Delete original file after transfer',
 				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_DELETE_AFTER_TRANSFER, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_DELETE_AFTER_TRANSFER )
+			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME,
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_MEDIA_CACHE_EXPIRE_TIME ),
+				'Media files cache expiration time - defines how long will be file cached in the browser or CDN',
+				'Cache expiration [seconds]',
+				'Integer Number higher or equal 0'
 			),
 		);
 		?>

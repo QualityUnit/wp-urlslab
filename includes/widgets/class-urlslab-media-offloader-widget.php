@@ -70,6 +70,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public const SETTING_NAME_YOUTUBE_LAZY_LOADING = 'urlslab_youtube_lazy';
 	public const SETTING_NAME_YOUTUBE_API_KEY = 'urlslab_youtube_apikey';
 
+	public const SETTING_DEFAULT_MEDIA_CACHE_EXPIRE_TIME = 31536000;
+	public const SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME = 'urlslab_media_cache_expire';
+
+
 	private $files = array();
 
 
@@ -562,15 +566,14 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		$file = new Urlslab_File_Data( $row );
 		status_header( 200 );
 		header( 'Content-Type: ' . $file->get_filetype() );
-		//      header( 'Content-Disposition: inline; filename="' . $file->get_filename() . '"' );
-		//      header( 'Content-Transfer-Encoding: binary' );
-		//      header( 'Pragma: public' );
+		header( 'Content-Disposition: inline; filename="' . $file->get_filename() . '"' );
+		header( 'Content-Transfer-Encoding: binary' );
+		header( 'Pragma: public' );
 
-		//TODO define how long should be files cached (maybe each mime type should have own settings)
-		$expires_offset = 9000;
-		//      header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
-		//      header( "Cache-Control: public, max-age=$expires_offset" );
-		//      header( 'Content-length: ' . $file->get_filesize() );
+		$expires_offset = get_option( self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME, self::SETTING_DEFAULT_MEDIA_CACHE_EXPIRE_TIME );
+		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
+		header( "Cache-Control: public, max-age=$expires_offset" );
+		header( 'Content-length: ' . $file->get_filesize() );
 
 		$driver = Urlslab_Driver::get_driver( $file );
 		$driver->output_file_content( $file );
@@ -623,6 +626,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		add_option( self::SETTING_NAME_VIDEO_LAZY_LOADING, false, '', true );
 		add_option( self::SETTING_NAME_YOUTUBE_LAZY_LOADING, false, '', true );
 		add_option( self::SETTING_NAME_YOUTUBE_API_KEY, '', '', true );
+		add_option( self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME, self::SETTING_DEFAULT_MEDIA_CACHE_EXPIRE_TIME, '', true );
 	}
 
 	public static function update_settings( array $new_settings ) {
@@ -721,6 +725,14 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			update_option(
 				self::SETTING_NAME_DELETE_AFTER_TRANSFER,
 				false
+			);
+		}
+
+		if ( isset( $new_settings[ self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME ] ) ) {
+			update_option(
+				self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME,
+				$new_settings[ self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME ]
 			);
 		}
 	}
