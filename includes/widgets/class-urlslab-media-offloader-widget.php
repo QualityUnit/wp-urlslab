@@ -562,15 +562,15 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		$file = new Urlslab_File_Data( $row );
 		status_header( 200 );
 		header( 'Content-Type: ' . $file->get_filetype() );
-		header( 'Content-Disposition: inline; filename="' . $file->get_filename() . '"' );
-		header( 'Content-Transfer-Encoding: binary' );
-		header( 'Pragma: public' );
+		//      header( 'Content-Disposition: inline; filename="' . $file->get_filename() . '"' );
+		//      header( 'Content-Transfer-Encoding: binary' );
+		//      header( 'Pragma: public' );
 
 		//TODO define how long should be files cached (maybe each mime type should have own settings)
 		$expires_offset = 9000;
-		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
-		header( "Cache-Control: public, max-age=$expires_offset" );
-		header( 'Content-length: ' . $file->get_filesize() );
+		//      header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
+		//      header( "Cache-Control: public, max-age=$expires_offset" );
+		//      header( 'Content-length: ' . $file->get_filesize() );
 
 		$driver = Urlslab_Driver::get_driver( $file );
 		$driver->output_file_content( $file );
