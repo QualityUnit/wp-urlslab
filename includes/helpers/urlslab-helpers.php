@@ -1,5 +1,29 @@
 <?php
 
+function urlslab_get_supported_media(): array {
+	return array(
+		'img' => array(
+			'src',
+			'data-src',
+			'data-full-url',
+			'data-splide-lazy',
+			'srcset',
+		),
+		'video' => array(
+			'src',
+			'data-src',
+		),
+		'audio' => array(
+			'src',
+			'data-src',
+		),
+		'source' => array(
+			'srcset',
+			'data-srcset',
+		),
+	);
+}
+
 function get_action() {
 	$current_action = '';
 	if ( isset( $_REQUEST['action'] ) and -1 != $_REQUEST['action'] ) {
