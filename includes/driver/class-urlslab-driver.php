@@ -63,8 +63,8 @@ abstract class Urlslab_Driver {
 			}
 			$result = $this->save_file_to_storage( $file, $file->get_local_file() );
 		} elseif ( strlen( $file->get_url() ) ) {
-			$local_tmp_file = download_url( $file->get_url() );
-			if ( is_wp_error( $local_tmp_file ) ) {
+			$local_tmp_file = get_temp_dir() . $file->get_fileid();
+			if ( ! file_put_contents( $local_tmp_file, fopen( $file->get_url(), 'r' ) ) ) {
 				return false;
 			}
 			$file_size = filesize( $local_tmp_file );
