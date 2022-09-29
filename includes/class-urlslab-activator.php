@@ -42,6 +42,7 @@ class Urlslab_Activator {
 	}
 
 	private static function install_tables() {
+		add_option( URLSLAB_VERSION_SETTING, '1.0.0' );
 		self::init_urls_tables();
 		self::init_urls_map_tables();
 		self::init_keyword_widget_tables();
@@ -55,26 +56,28 @@ class Urlslab_Activator {
 
 	private static function upgrade_steps() {
 		global $wpdb;
-		$version = get_option( URLSLAB_VERSION_SETTING, '1.0.0' );
+		$version = get_option( URLSLAB_VERSION_SETTING, '1.0' );
 
-		if ( version_compare( $version, '1.13.0', '<' ) ) {
+		if ( version_compare( $version, '1.13', '<' ) ) {
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_KEYWORDS_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILES_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILE_CONTENTS_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILE_ALTERNATIVES_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_URLS_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_RELATED_RESOURCE_TABLE . ';'); // phpcs:ignore
-			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_URLS_MAP_TABLE . ';'); // phpcs:ignore
 			self::init_urlslab_files();
 			self::init_urlslab_file_contents();
 			self::init_urlslab_file_alternatives();
 			self::init_keyword_widget_tables();
 			self::init_urls_tables();
-			self::init_urls_map_tables();
 			self::init_related_resources_widget_tables();
 		}
 
-		//all update steps done, set the current version
+		if ( version_compare( $version, '1.22', '<' ) ) {
+			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_URLS_MAP_TABLE . ';'); // phpcs:ignore
+			self::init_urls_map_tables();
+		}
+			//all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
 
@@ -124,12 +127,9 @@ class Urlslab_Activator {
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
 			srcUrlMd5 bigint NOT NULL,
 			destUrlMd5 bigint NOT NULL,
-			firstSeen DATETIME NOT NULL,
-			lastSeen DATETIME NOT NULL,
 			PRIMARY KEY  (srcUrlMd5, destUrlMd5),
     		INDEX idx_desturl (destUrlMd5)
 		) $charset_collate;";
-
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 	}
