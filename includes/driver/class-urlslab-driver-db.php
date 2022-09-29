@@ -46,25 +46,12 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 		global $wpdb;
 		ob_clean();
 		$local_tmp_file = wp_tempnam();
-		if ( is_object( $wpdb->dbh ) && $wpdb->use_mysqli ) {
-			$records = $wpdb->dbh->query( $wpdb->prepare( 'select content from ' . URLSLAB_FILE_CONTENTS_TABLE . ' WHERE fileid=%s ORDER BY contentid', $file_obj->get_fileid() ) ); // phpcs:ignore
-			if ( false === $records ) {
-				return; //no content???
-			}
-			$fp = fopen( $local_tmp_file, 'w' );
-			while ( $data = $records->fetch_assoc() ) {
-				fwrite( $fp, $data['content'] ); // phpcs:ignore
-			}
-			fclose( $fp );
-		} else {
-			$fp = fopen( $local_tmp_file, 'w' );
-			fwrite($fp, $this->get_file_content( $file_obj ) ); // phpcs:ignore
-			fclose( $fp );
+		if ( $this->save_to_file( $file_obj, $local_tmp_file ) ) {
+			$serving_fp = fopen( $local_tmp_file, 'rb' );
+			// dump the picture and stop the script
+			fpassthru( $serving_fp );
+			fclose( $serving_fp );
 		}
-
-		$serving_fp = fopen( $local_tmp_file, 'rb' );
-		// dump the picture and stop the script
-		fpassthru( $serving_fp );
 		unlink( $local_tmp_file );
 		exit;
 	}
@@ -87,16 +74,29 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 	}
 
 	public function save_to_file( Urlslab_File_Data $file, $file_name ): bool {
-		$fhandle = fopen( $file_name, 'wb' );
-
 		global $wpdb;
-		$results = $wpdb->get_results( $wpdb->prepare( 'select content from ' . URLSLAB_FILE_CONTENTS_TABLE . ' WHERE fileid=%s ORDER BY contentid', $file->get_fileid() ), ARRAY_A ); // phpcs:ignore
-		if ( ! empty( $results ) ) {
-			foreach ( $results as $row ) {
-				fwrite( $fhandle, $row['content'] );
+		$fhandle = fopen( $file_name, 'wb' );
+		$sql = $wpdb->prepare( 'select content from ' . URLSLAB_FILE_CONTENTS_TABLE . ' WHERE fileid=%s ORDER BY contentid', $file->get_fileid() ); // phpcs:ignore
+		if ( is_object( $wpdb->dbh ) && $wpdb->use_mysqli ) {
+			$records = $wpdb->dbh->query( $sql );
+			if ( false !== $records ) {
+				while ( $data = $records->fetch_assoc() ) {
+					fwrite( $fhandle, $data['content'] ); // phpcs:ignore
+				}
+			} else {
+				fclose( $fhandle );
+				return false;
 			}
 		} else {
-			return false;
+			$results = $wpdb->get_results( $sql, ARRAY_A ); // phpcs:ignore
+			if ( ! empty( $results ) ) {
+				foreach ( $results as $row ) {
+					fwrite( $fhandle, $row['content'] );
+				}
+			} else {
+				fclose( $fhandle );
+				return false;
+			}
 		}
 		fclose( $fhandle );
 		return true;
