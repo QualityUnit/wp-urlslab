@@ -315,5 +315,109 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$schema->appendChild( $meta );
 	}
 
+	private function add_img_lazy_loading( DOMElement $dom_element ) {
+		if ( $dom_element->hasAttribute( 'src' ) ) {
+			$dom_element->setAttribute( 'data-src', $dom_element->getAttribute( 'src' ) );
+			$dom_element->removeAttribute( 'src' );
+		}
+
+		if ( $dom_element->hasAttribute( 'srcset' ) ) {
+			$dom_element->setAttribute( 'data-srcset', $dom_element->getAttribute( 'srcset' ) );
+			$dom_element->removeAttribute( 'srcset' );
+		}
+
+		if ( $dom_element->hasAttribute( 'data-splide-lazy' ) ) {
+			$dom_element->setAttribute( 'data-src', $dom_element->getAttribute( 'data-splide-lazy' ) );
+			$dom_element->removeAttribute( 'src' );
+		}
+
+		if ( $dom_element->hasAttribute( 'style' ) ) {
+			$dom_element->setAttribute( 'data-urlslabstyle', $dom_element->getAttribute( 'style' ) );
+		}
+		$dom_element->setAttribute( 'style', 'opacity: 0; transition: opacity .5s;' );
+
+		if ( ! $dom_element->hasAttribute( 'loading' ) ) {
+			$dom_element->setAttribute( 'loading', 'lazy' );
+		}
+		$dom_element->setAttribute( 'urlslab-lazy', 'yes' );
+	}
+
+	private function add_source_lazy_loading( DOMElement $dom_element ) {
+		if ( $this->has_parent_node( $dom_element, 'picture' ) ) {
+			if ( $dom_element->hasAttribute( 'srcset' ) ) {
+				$dom_element->setAttribute( 'data-srcset', $dom_element->getAttribute( 'srcset' ) );
+				$dom_element->removeAttribute( 'srcset' );
+			}
+			$dom_element->setAttribute( 'urlslab-lazy', 'yes' );
+		}
+	}
+
+	private function emhance_elementor_element_with_placeholder( DOMDocument $document, DOMElement $element, $video_objects, $ytid ):bool {
+		$youtube_loader = $document->createElement( 'div' );
+		$youtube_loader->setAttribute( 'class', 'youtube_urlslab_loader youtube_urlslab_loader--elementor' );
+		$youtube_loader->setAttribute( 'data-ytid', $ytid );
+
+		$youtube_img = $document->createElement( 'img' );
+		$youtube_img->setAttribute( 'class', 'youtube_urlslab_loader--img' );
+		$youtube_img->setAttribute( 'data-src', 'https://i.ytimg.com/vi/' . $ytid . '/hqdefault.jpg' );
+		$youtube_img->setAttribute( 'style', 'opacity: 0; transition: opacity .5s;' );
+		if ( isset( $video_objects[ $ytid ] ) ) {
+			$youtube_img->setAttribute( 'alt', 'Youtube video: ' . $video_objects[ $ytid ]->get_title() );
+		}
+		$youtube_img->setAttribute( 'urlslab-lazy', 'yes' );
+		$youtube_loader->appendChild( $youtube_img );
+
+		$xpath         = new DOMXPath( $document );
+		$child    = $xpath->query( "//div[@data-id='" . $element->getAttribute( 'data-id' ) . "']//div[contains(@class, 'elementor-video')]" );
+		if ( $child->length ) {
+			$child->item( 0 )->appendChild( $youtube_loader );
+		}
+
+		return true;
+	}
+
+
+
+
+	private function replace_youtube_element_with_placeholder( DOMDocument $document, DOMElement $element, $video_objects, $ytid ):bool {
+		$youtube_loader = $document->createElement( 'div' );
+		$youtube_loader->setAttribute( 'class', 'youtube_urlslab_loader' );
+		$youtube_loader->setAttribute( 'data-ytid', $ytid );
+		if ( $element->hasAttribute( 'width' ) ) {
+			$youtube_loader->setAttribute( 'width', $element->getAttribute( 'width' ) );
+		}
+		if ( $element->hasAttribute( 'height' ) ) {
+			$youtube_loader->setAttribute( 'height', $element->getAttribute( 'height' ) );
+		}
+
+		$youtube_img = $document->createElement( 'img' );
+		$youtube_img->setAttribute( 'class', 'youtube_urlslab_loader--img' );
+		$youtube_img->setAttribute( 'data-src', 'https://i.ytimg.com/vi/' . $ytid . '/hqdefault.jpg' );
+		$youtube_img->setAttribute( 'style', 'opacity: 0; transition: opacity .5s;' );
+		if ( isset( $video_objects[ $ytid ] ) ) {
+			$youtube_img->setAttribute( 'alt', 'Youtube video: ' . $video_objects[ $ytid ]->get_title() );
+		}
+		$youtube_img->setAttribute( 'urlslab-lazy', 'yes' );
+		$youtube_loader->appendChild( $youtube_img );
+		$element->parentNode->replaceChild( $youtube_loader, $element );
+
+		return true;
+	}
+
+	private function add_video_lazy_loading( DOMElement $dom_element ) {
+
+		if ( $dom_element->hasAttribute( 'style' ) ) {
+			$dom_element->setAttribute( 'data-urlslabstyle', $dom_element->getAttribute( 'style' ) );
+		}
+		$dom_element->setAttribute( 'style', 'opacity: 0;' );
+
+		if ( $dom_element->hasAttribute( 'src' ) ) {
+			$dom_element->setAttribute( 'data-src', $dom_element->getAttribute( 'src' ) );
+			$dom_element->removeAttribute( 'src' );
+		}
+
+		$dom_element->setAttribute( 'urlslab-lazy', 'yes' );
+	}
+
 
 }
