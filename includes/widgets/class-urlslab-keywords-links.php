@@ -48,11 +48,16 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	public const SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH = 'urlslab_max_replacements_per_paragraph';
 	public const SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PARAGRAPH = 2;
 
+	public const SETTING_NAME_MIN_CHARS_TO_NEXT_LINK = 'urlslab_min_ch_around_lnk';
+	public const SETTING_DEFAULT_MIN_CHARS_TO_NEXT_LINK = 20;
+
 	//minimum paragraph length defines minimum size of text length, where can be placed the link
 	//in too short texts we will not try to include links
-	public const SETTING_NAME_MIN_PARAGRAPH_LENGTH = 'urlslab_min_paragraph_len';
-	public const SETTING_DEFAULT_MIN_PARAGRAPH_LENGTH = 1;
+	public const SETTING_NAME_MIN_PARAGRAPH_LENGTH = 'urlslab_min_prgr_len';
+	public const SETTING_DEFAULT_MIN_PARAGRAPH_LENGTH = 30;
 
+	public const SETTING_NAME_MAX_PARAGRAPH_DENSITY = 'urlslab_max_prgr_density';
+	public const SETTING_DEFAULT_MAX_PARAGRAPH_DENSITY = 100; //one link per 100 characters
 
 	public function __construct() {
 		$this->widget_slug = 'urlslab-keywords-links';
@@ -94,20 +99,25 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		return $this->landing_page_link;
 	}
 
-	private function replaceKeywordWithLinks( DOMText $node, DOMDocument $document, array $keywords ) {
+	private function replaceKeywordWithLinks( DOMText $node, DOMDocument $document, array $keywords, int $position_start, $position_end, $min_text_len, $max_paragraph_density_links ) {
 		if ( $this->cnt_page_links > get_option( self::SETTING_NAME_MAX_LINKS_ON_PAGE, self::SETTING_DEFAULT_MAX_LINKS_ON_PAGE ) ||
 			 $this->cnt_page_link_replacements > get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE, self::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PAGE ) ||
-			 $this->cnt_paragraph_link_replacements > get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH, self::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PARAGRAPH ) ) {
+			 $this->cnt_paragraph_link_replacements > get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH, self::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PARAGRAPH ) ||
+			 $this->cnt_paragraph_link_replacements >= $max_paragraph_density_links
+		) {
 			return;
 		}
 
-		if ( strlen( trim( $node->nodeValue ) ) < get_option( self::SETTING_NAME_MIN_PARAGRAPH_LENGTH, self::SETTING_DEFAULT_MIN_PARAGRAPH_LENGTH ) ) {
-			return; //empty node
+		$possible_value_len = strlen( $node->nodeValue ) - $position_start - $position_end;
+		if ( $possible_value_len < $min_text_len ) {
+			return;
 		}
 
+		$node_value = substr( strtolower( $node->nodeValue ), $position_start, $possible_value_len );
+
 		foreach ( $keywords as $kw_md5 => $kwRow ) {
-			if ( preg_match( '/\b(' . preg_quote( $kwRow['kw'], '/' ) . ')\b/', strtolower( $node->nodeValue ), $matches, PREG_OFFSET_CAPTURE ) ) {
-				$pos = $matches[1][1];
+			if ( preg_match( '/\b(' . preg_quote( $kwRow['kw'], '/' ) . ')\b/', $node_value, $matches, PREG_OFFSET_CAPTURE ) ) {
+				$pos = $matches[1][1] + $position_start;
 				$this->cnt_page_links++;
 				$this->cnt_page_link_replacements++;
 				$this->cnt_paragraph_link_replacements++;
@@ -169,10 +179,10 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 				//process other keywords in text
 				if ( is_object( $domTextStart ) ) {
-					$this->replaceKeywordWithLinks( $domTextStart, $document, $keywords );
+					$this->replaceKeywordWithLinks( $domTextStart, $document, $keywords, 0, get_option( self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK, self::SETTING_DEFAULT_MIN_CHARS_TO_NEXT_LINK ), 0, $max_paragraph_density_links );
 				}
 				if ( is_object( $domTextEnd ) ) {
-					$this->replaceKeywordWithLinks( $domTextEnd, $document, $keywords );
+					$this->replaceKeywordWithLinks( $domTextEnd, $document, $keywords, get_option( self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK, self::SETTING_DEFAULT_MIN_CHARS_TO_NEXT_LINK ), 0, 0, $max_paragraph_density_links );
 				}
 
 				//remove processed node
@@ -263,7 +273,15 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			foreach ( $dom->childNodes as $node ) {
 
 				if ( $node instanceof DOMText && strlen( trim( $node->nodeValue ) ) > 1 ) {
-					$this->replaceKeywordWithLinks( $node, $document, $this->get_keywords( strtolower( $node->nodeValue ) ) );
+					$this->replaceKeywordWithLinks(
+						$node,
+						$document,
+						$this->get_keywords( strtolower( $node->nodeValue ) ),
+						0,
+						0,
+						get_option( self::SETTING_NAME_MIN_PARAGRAPH_LENGTH, self::SETTING_DEFAULT_MIN_PARAGRAPH_LENGTH ),
+						round( 1 / get_option( self::SETTING_NAME_MAX_PARAGRAPH_DENSITY, self::SETTING_DEFAULT_MAX_PARAGRAPH_DENSITY ) * strlen( $node->nodeValue ) )
+					);
 				} else {
 					if ( count( $this->link_counts ) > 0 && preg_match( '/^[hH][0-9]$/', $node->nodeName ) ) {
 						$this->cnt_paragraph_link_replacements = array_shift( $this->link_counts );
@@ -361,7 +379,9 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		add_option( self::SETTING_NAME_MAX_LINKS_ON_PAGE, self::SETTING_DEFAULT_MAX_LINKS_ON_PAGE, '', true );
 		add_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE, self::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PAGE, '', true );
 		add_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH, self::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PARAGRAPH, '', true );
+		add_option( self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK, self::SETTING_DEFAULT_MIN_CHARS_TO_NEXT_LINK, '', true );
 		add_option( self::SETTING_NAME_MIN_PARAGRAPH_LENGTH, self::SETTING_DEFAULT_MIN_PARAGRAPH_LENGTH, '', true );
+		add_option( self::SETTING_NAME_MAX_PARAGRAPH_DENSITY, self::SETTING_DEFAULT_MAX_PARAGRAPH_DENSITY, '', true );
 	}
 
 	public static function update_settings( array $new_settings ) {
@@ -413,13 +433,27 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			);
 		}
 
+		if ( isset( $new_settings[ self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK ] ) ) {
+			update_option(
+				self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK,
+				$new_settings[ self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK ]
+			);
+		}
+
 		if ( isset( $new_settings[ self::SETTING_NAME_MIN_PARAGRAPH_LENGTH ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_MIN_PARAGRAPH_LENGTH ] ) ) {
+			! empty( $new_settings[ self::SETTING_NAME_MIN_PARAGRAPH_LENGTH ] ) ) {
 			update_option(
 				self::SETTING_NAME_MIN_PARAGRAPH_LENGTH,
 				$new_settings[ self::SETTING_NAME_MIN_PARAGRAPH_LENGTH ]
 			);
 		}
-
+		if ( isset( $new_settings[ self::SETTING_NAME_MAX_PARAGRAPH_DENSITY ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_MAX_PARAGRAPH_DENSITY ] ) ) {
+			update_option(
+				self::SETTING_NAME_MAX_PARAGRAPH_DENSITY,
+				$new_settings[ self::SETTING_NAME_MAX_PARAGRAPH_DENSITY ]
+			);
+		}
 	}
 }
