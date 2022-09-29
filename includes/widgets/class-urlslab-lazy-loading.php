@@ -1,5 +1,6 @@
 <?php
 
+// phpcs:disable WordPress.NamingConventions
 class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 	private string $widget_slug;
@@ -244,6 +245,22 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 	}
 
+	/**
+	 * this is workaround of parsing bug in php DOMDocument which doesn't understand the source as single tag
+	 * @param DOMElement $dom_element
+	 * @param $tag_name
+	 * @return bool
+	 */
+	private function has_parent_node( DOMElement $dom_element, $tag_name ): bool {
+		if ( property_exists( $dom_element, 'parentNode' ) ) {
+			if ( property_exists( $dom_element->parentNode, 'tagName' ) && $dom_element->parentNode->tagName == $tag_name ) {
+				return true;
+			}
+			return 'DOMElement' == get_class( $dom_element->parentNode ) && $this->has_parent_node( $dom_element->parentNode, $tag_name );
+		}
+		return false;
+	}
+
 	private function get_youtube_videoid( $url ) {
 		if ( preg_match( "/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user|shorts)\/))([^\?&\"'>]+)/", $url, $matches ) ) {
 			return $matches[1];
@@ -375,9 +392,6 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 		return true;
 	}
-
-
-
 
 	private function replace_youtube_element_with_placeholder( DOMDocument $document, DOMElement $element, $video_objects, $ytid ):bool {
 		$youtube_loader = $document->createElement( 'div' );
