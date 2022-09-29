@@ -682,18 +682,10 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			),
 			new Urlslab_Setting_Input(
 				'number',
-				Urlslab_Keywords_Links::SETTING_NAME_MIN_CHARS_BEFORE_LINK,
-				get_option( Urlslab_Keywords_Links::SETTING_NAME_MIN_CHARS_BEFORE_LINK, Urlslab_Keywords_Links::SETTING_DEFAULT_MIN_CHARS_BEFORE_LINK ),
-				'Minimum number of characters before the link defines space between inserted link',
-				'Min # chars before link',
-				''
-			),
-			new Urlslab_Setting_Input(
-				'number',
-				Urlslab_Keywords_Links::SETTING_NAME_MIN_CHARS_AFTER_LINK,
-				get_option( Urlslab_Keywords_Links::SETTING_NAME_MIN_CHARS_AFTER_LINK, Urlslab_Keywords_Links::SETTING_DEFAULT_MIN_CHARS_AFTER_LINK ),
-				'Minimum number of characters after the link defines space between inserted link',
-				'Min # chars after link',
+				Urlslab_Keywords_Links::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK,
+				get_option( Urlslab_Keywords_Links::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK, Urlslab_Keywords_Links::SETTING_DEFAULT_MIN_CHARS_TO_NEXT_LINK ),
+				'Minimum number of characters between next inserted link',
+				'Min # chars to next link',
 				''
 			),
 			new Urlslab_Setting_Input(

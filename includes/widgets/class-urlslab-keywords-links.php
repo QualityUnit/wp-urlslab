@@ -48,12 +48,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	public const SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH = 'urlslab_max_replacements_per_paragraph';
 	public const SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PARAGRAPH = 2;
 
-
-	public const SETTING_NAME_MIN_CHARS_BEFORE_LINK = 'urlslab_min_ch_before_lnk';
-	public const SETTING_DEFAULT_MIN_CHARS_BEFORE_LINK = 0;
-
-	public const SETTING_NAME_MIN_CHARS_AFTER_LINK = 'urlslab_min_ch_after_lnk';
-	public const SETTING_DEFAULT_MIN_CHARS_AFTER_LINK = 20;
+	public const SETTING_NAME_MIN_CHARS_TO_NEXT_LINK = 'urlslab_min_ch_around_lnk';
+	public const SETTING_DEFAULT_MIN_CHARS_TO_NEXT_LINK = 20;
 
 	//minimum paragraph length defines minimum size of text length, where can be placed the link
 	//in too short texts we will not try to include links
@@ -183,10 +179,10 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 				//process other keywords in text
 				if ( is_object( $domTextStart ) ) {
-					$this->replaceKeywordWithLinks( $domTextStart, $document, $keywords, 0, get_option( self::SETTING_NAME_MIN_CHARS_BEFORE_LINK, self::SETTING_DEFAULT_MIN_CHARS_BEFORE_LINK ), 0, $max_paragraph_density_links );
+					$this->replaceKeywordWithLinks( $domTextStart, $document, $keywords, 0, get_option( self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK, self::SETTING_DEFAULT_MIN_CHARS_TO_NEXT_LINK ), 0, $max_paragraph_density_links );
 				}
 				if ( is_object( $domTextEnd ) ) {
-					$this->replaceKeywordWithLinks( $domTextEnd, $document, $keywords, get_option( self::SETTING_NAME_MIN_CHARS_AFTER_LINK, self::SETTING_DEFAULT_MIN_CHARS_AFTER_LINK ), 0, 0, $max_paragraph_density_links );
+					$this->replaceKeywordWithLinks( $domTextEnd, $document, $keywords, get_option( self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK, self::SETTING_DEFAULT_MIN_CHARS_TO_NEXT_LINK ), 0, 0, $max_paragraph_density_links );
 				}
 
 				//remove processed node
@@ -383,8 +379,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		add_option( self::SETTING_NAME_MAX_LINKS_ON_PAGE, self::SETTING_DEFAULT_MAX_LINKS_ON_PAGE, '', true );
 		add_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE, self::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PAGE, '', true );
 		add_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH, self::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PARAGRAPH, '', true );
-		add_option( self::SETTING_NAME_MIN_CHARS_BEFORE_LINK, self::SETTING_DEFAULT_MIN_CHARS_BEFORE_LINK, '', true );
-		add_option( self::SETTING_NAME_MIN_CHARS_AFTER_LINK, self::SETTING_DEFAULT_MIN_CHARS_AFTER_LINK, '', true );
+		add_option( self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK, self::SETTING_DEFAULT_MIN_CHARS_TO_NEXT_LINK, '', true );
 		add_option( self::SETTING_NAME_MIN_PARAGRAPH_LENGTH, self::SETTING_DEFAULT_MIN_PARAGRAPH_LENGTH, '', true );
 		add_option( self::SETTING_NAME_MAX_PARAGRAPH_DENSITY, self::SETTING_DEFAULT_MAX_PARAGRAPH_DENSITY, '', true );
 	}
@@ -438,18 +433,11 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			);
 		}
 
-		if ( isset( $new_settings[ self::SETTING_NAME_MIN_CHARS_BEFORE_LINK ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_MIN_CHARS_BEFORE_LINK ] ) ) {
+		if ( isset( $new_settings[ self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK ] ) ) {
 			update_option(
-				self::SETTING_NAME_MIN_CHARS_BEFORE_LINK,
-				$new_settings[ self::SETTING_NAME_MIN_CHARS_BEFORE_LINK ]
-			);
-		}
-		if ( isset( $new_settings[ self::SETTING_NAME_MIN_CHARS_AFTER_LINK ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_MIN_CHARS_AFTER_LINK ] ) ) {
-			update_option(
-				self::SETTING_NAME_MIN_CHARS_AFTER_LINK,
-				$new_settings[ self::SETTING_NAME_MIN_CHARS_AFTER_LINK ]
+				self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK,
+				$new_settings[ self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK ]
 			);
 		}
 
