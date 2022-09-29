@@ -56,9 +56,9 @@ class Urlslab_Activator {
 
 	private static function upgrade_steps() {
 		global $wpdb;
-		$version = get_option( URLSLAB_VERSION_SETTING, '1.0.0' );
+		$version = get_option( URLSLAB_VERSION_SETTING, '1.0' );
 
-		if ( version_compare( $version, '1.13.0', '<' ) ) {
+		if ( version_compare( $version, '1.13', '<' ) ) {
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_KEYWORDS_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILES_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILE_CONTENTS_TABLE . ';'); // phpcs:ignore
@@ -73,7 +73,7 @@ class Urlslab_Activator {
 			self::init_related_resources_widget_tables();
 		}
 
-		if ( version_compare( $version, '1.22.0', '<' ) ) {
+		if ( version_compare( $version, '1.22', '<' ) ) {
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_URLS_MAP_TABLE . ';'); // phpcs:ignore
 			self::init_urls_map_tables();
 		}
