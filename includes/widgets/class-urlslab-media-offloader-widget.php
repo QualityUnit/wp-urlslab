@@ -567,11 +567,13 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		status_header( 200 );
 		header( 'Content-Type: ' . $file->get_filetype() );
 		header( 'Content-Disposition: inline; filename="' . $file->get_filename() . '"' );
+		header( 'Content-Transfer-Encoding: binary' );
 		header( 'Pragma: public' );
 
 		$expires_offset = get_option( self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME, self::SETTING_DEFAULT_MEDIA_CACHE_EXPIRE_TIME );
 		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
 		header( "Cache-Control: public, max-age=$expires_offset" );
+		header( 'Content-length: ' . $file->get_filesize() );
 
 		$driver = Urlslab_Driver::get_driver( $file );
 		$driver->output_file_content( $file );
