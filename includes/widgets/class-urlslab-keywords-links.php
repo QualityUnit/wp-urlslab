@@ -103,7 +103,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		if ( $this->cnt_page_links > get_option( self::SETTING_NAME_MAX_LINKS_ON_PAGE, self::SETTING_DEFAULT_MAX_LINKS_ON_PAGE ) ||
 			 $this->cnt_page_link_replacements > get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE, self::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PAGE ) ||
 			 $this->cnt_paragraph_link_replacements > get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH, self::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PARAGRAPH ) ||
-			 $this->cnt_paragraph_link_replacements > $max_paragraph_density_links
+			 $this->cnt_paragraph_link_replacements >= $max_paragraph_density_links
 		) {
 			return;
 		}
@@ -280,7 +280,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 						0,
 						0,
 						get_option( self::SETTING_NAME_MIN_PARAGRAPH_LENGTH, self::SETTING_DEFAULT_MIN_PARAGRAPH_LENGTH ),
-						ceil( 1 / get_option( self::SETTING_NAME_MAX_PARAGRAPH_DENSITY, self::SETTING_DEFAULT_MAX_PARAGRAPH_DENSITY ) * strlen( $node->nodeValue ) )
+						round( 1 / get_option( self::SETTING_NAME_MAX_PARAGRAPH_DENSITY, self::SETTING_DEFAULT_MAX_PARAGRAPH_DENSITY ) * strlen( $node->nodeValue ) )
 					);
 				} else {
 					if ( count( $this->link_counts ) > 0 && preg_match( '/^[hH][0-9]$/', $node->nodeName ) ) {
