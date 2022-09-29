@@ -44,21 +44,28 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 
 	function output_file_content( Urlslab_File_Data $file_obj ) {
 		global $wpdb;
+		ob_clean();
+		$local_tmp_file = wp_tempnam();
 		if ( is_object( $wpdb->dbh ) && $wpdb->use_mysqli ) {
 			$records = $wpdb->dbh->query( $wpdb->prepare( 'select content from ' . URLSLAB_FILE_CONTENTS_TABLE . ' WHERE fileid=%s ORDER BY contentid', $file_obj->get_fileid() ) ); // phpcs:ignore
 			if ( false === $records ) {
 				return; //no content???
 			}
+			$fp = fopen( $local_tmp_file, 'w' );
 			while ( $data = $records->fetch_assoc() ) {
-				echo $data['content']; // phpcs:ignore
-				ob_flush();
-				flush();
+				fwrite( $fp, $data['content'] ); // phpcs:ignore
 			}
 		} else {
-			echo $this->get_file_content( $file_obj ); // phpcs:ignore
-			ob_flush();
-			flush();
+			$fp = fopen( $local_tmp_file, 'w' );
+			fwrite($fp, $this->get_file_content( $file_obj ) ); // phpcs:ignore
 		}
+		fclose( $fp );
+
+		$serving_fp = fopen( $local_tmp_file, 'rb' );
+		// dump the picture and stop the script
+		fpassthru( $serving_fp );
+		unlink( $local_tmp_file );
+		exit;
 	}
 
 	function get_file_content( Urlslab_File_Data $file_obj ) {
