@@ -99,11 +99,11 @@ function urlslab_generate_keyword_form( ?Urlslab_Url_Keyword_Data $item ) {
 				<input type='submit' name='submit' class='button' value='Edit Keyword'>
 			</form>
 		</div>",
-				'modal-k-' . $item->get_kw_md5(),
-				'modal-k-' . $item->get_kw_md5(),
+				'modal-k-' . $item->get_kw_id(),
+				'modal-k-' . $item->get_kw_id(),
 				esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/delete.png' ) . 'delete.png' ),
 				esc_attr( $_REQUEST['page'] ),
-				$item->get_kw_md5(),
+				$item->get_kw_id(),
 				$item->get_keyword(),
 				$item->get_keyword_url_link(),
 				$item->get_keyword_priority(),
