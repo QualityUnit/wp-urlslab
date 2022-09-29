@@ -174,41 +174,68 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			return;
 		}
 
-
 		$srcUrlId = get_current_page_url()->get_url_id();
+
+		global $wpdb;
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT destUrlMd5 FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE srcUrlMd5 = %d', // phpcs:ignore
+				$srcUrlId
+			),
+			'ARRAY_A'
+		);
+
+		$destinations = array();
+		array_walk(
+			$results,
+			function ( $value, $key ) use ( &$destinations ) {
+				$destinations[ $value['destUrlMd5'] ] = true;
+			}
+		);
+
+		$tracked_urls = array();
 
 		$values = array();
 		$placeholder = array();
 		foreach ( $url_ids as $url_id ) {
-			array_push(
-				$values,
-				$srcUrlId,
-				$url_id,
-				gmdate( 'Y-m-d H:i:s' ),
-				gmdate( 'Y-m-d H:i:s' ),
-			);
-			$placeholder[] = '(%d, %d, %s, %s)';
+			if ( ! isset( $destinations[ $url_id ] ) ) {
+				array_push(
+					$values,
+					$srcUrlId,
+					$url_id,
+				);
+				$placeholder[] = '(%d,%d)';
+			} else {
+				$tracked_urls[ $url_id ] = true;
+			}
 		}
 
-		$table = URLSLAB_URLS_MAP_TABLE;
-		$placeholder_string = implode( ', ', $placeholder );
-		$insert_update_query = "INSERT INTO $table (
-                   srcUrlMd5,
-                   destUrlMd5,
-                   firstSeen,
-                   lastSeen
-                   ) VALUES
-                   $placeholder_string
-                   ON DUPLICATE KEY UPDATE
-                   lastSeen = VALUES(lastSeen)";
+		if ( ! empty( $values ) ) {
+			$table = URLSLAB_URLS_MAP_TABLE;
+			$placeholder_string = implode( ', ', $placeholder );
+			$insert_update_query = "INSERT IGNORE INTO $table (srcUrlMd5, destUrlMd5) VALUES $placeholder_string";
 
-		global $wpdb;
-		$wpdb->query(
-			$wpdb->prepare(
-				$insert_update_query, // phpcs:ignore
-				$values
-			)
-		);
+			$wpdb->query(
+				$wpdb->prepare(
+					$insert_update_query, // phpcs:ignore
+					$values
+				)
+			);
+		}
+
+		$delete = array_diff( array_keys( $destinations ), array_keys( $tracked_urls ) );
+		if ( ! empty( $delete ) ) {
+			$values = array( $srcUrlId );
+			$placeholder = array();
+			foreach ( $delete as $url_id ) {
+				$placeholder[] = '%d';
+				$values[] = $url_id;
+			}
+			$table = URLSLAB_URLS_MAP_TABLE;
+			$placeholder_string = implode( ',', $placeholder );
+			$delete_query = "DELETE FROM $table WHERE srcUrlMd5=%d AND destUrlMd5 IN ($placeholder_string)";
+			$wpdb->query( $wpdb->prepare( $delete_query, $values ) ); // phpcs:ignore
+		}
 	}
 
 	public static function add_option() {
