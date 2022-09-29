@@ -55,11 +55,12 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 			while ( $data = $records->fetch_assoc() ) {
 				fwrite( $fp, $data['content'] ); // phpcs:ignore
 			}
+			fclose( $fp );
 		} else {
 			$fp = fopen( $local_tmp_file, 'w' );
 			fwrite($fp, $this->get_file_content( $file_obj ) ); // phpcs:ignore
+			fclose( $fp );
 		}
-		fclose( $fp );
 
 		$serving_fp = fopen( $local_tmp_file, 'rb' );
 		// dump the picture and stop the script
