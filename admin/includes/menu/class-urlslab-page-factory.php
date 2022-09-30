@@ -23,7 +23,7 @@ class Urlslab_Page_Factory {
 			$header_widgets = new Urlslab_Header_Widgets_Page();
 			$link_building_page = new Urlslab_Link_Building_Page();
 			$image_seo = new Urlslab_Image_Seo_Widgets_Page();
-			$offloader_page = new Urlslab_Offloader_Page();
+			$media_page = new Urlslab_Media_Page();
 			$ui_elements = new Urlslab_UI_Elements_Page();
 			$integrations_page = new Urlslab_Integrations_Page();
 
@@ -33,7 +33,7 @@ class Urlslab_Page_Factory {
 				$header_widgets->get_menu_slug() => $header_widgets,
 				$link_building_page->get_menu_slug() => $link_building_page,
 				$image_seo->get_menu_slug() => $image_seo,
-				$offloader_page->get_menu_slug() => $offloader_page,
+				$media_page->get_menu_slug() => $media_page,
 				$ui_elements->get_menu_slug() => $ui_elements,
 				$integrations_page->get_menu_slug() => $integrations_page,
 			);
