@@ -20,7 +20,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$this->widget_title = 'Lazy Loading';
 		$this->widget_description = 'Urlslab Lazy Loading';
 		$this->landing_page_link = 'https://www.urlslab.com';
-		$this->parent_page        = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-media-offloader' );
+		$this->parent_page        = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-media' );
 	}
 
 	public static function add_option() {

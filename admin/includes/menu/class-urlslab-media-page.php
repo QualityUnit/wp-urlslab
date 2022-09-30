@@ -10,8 +10,8 @@ class Urlslab_Media_Page extends Urlslab_Admin_Page {
 	public function __construct() {
 		$this->menu_slug = 'urlslab-media';
 		$this->page_title = 'Media';
-		$this->media_offloader_subpage = new Urlslab_Media_Offloader_Subpage();
-		$this->lazyload_subpage = new Urlslab_Lazyload_Subpage();
+		$this->media_offloader_subpage = new Urlslab_Media_Offloader_Subpage( $this );
+		$this->lazyload_subpage = new Urlslab_Lazyload_Subpage( $this );
 	}
 
 	public function on_page_load( string $action, string $component ) {
@@ -52,7 +52,7 @@ class Urlslab_Media_Page extends Urlslab_Admin_Page {
 	}
 
 	public function load_page() {
-		require URLSLAB_PLUGIN_DIR . 'admin/templates/page/urlslab-admin-link-building.php';
+		require URLSLAB_PLUGIN_DIR . 'admin/templates/page/urlslab-admin-media.php';
 	}
 
 	public function get_page_tabs(): array {
