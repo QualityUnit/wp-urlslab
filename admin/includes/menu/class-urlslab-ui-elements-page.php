@@ -10,6 +10,8 @@ class Urlslab_UI_Elements_Page extends Urlslab_Admin_Page {
 		$this->page_title = 'UI Elements';
 	}
 
+	public function init_ajax_hooks( Urlslab_Loader $urlslab_loader ) {}
+
 	public function on_page_load( string $action, string $component ) {
 		// TODO: Implement on_page_load() method.
 	}

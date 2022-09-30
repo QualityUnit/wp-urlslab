@@ -280,7 +280,7 @@ class Urlslab {
 	 * @access   private
 	 */
 	private function define_admin_hooks() {
-		$plugin_admin = new Urlslab_Admin( $this->get_urlslab(), $this->get_version() );
+		$plugin_admin = new Urlslab_Admin( $this->get_urlslab(), $this->get_version(), $this->loader );
 
 		$this->loader->add_action( 'admin_init', $this, 'urlslab_upgrade', 10, 0 );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
@@ -416,7 +416,7 @@ class Urlslab {
 				}
 			}
 		}
-		return wp_send_json_success( $data );
+		wp_send_json_success( $data );
 	}
 
 	private function define_backend_hooks() {

@@ -11,6 +11,14 @@ class Urlslab_Urls_Page extends Urlslab_Admin_Page {
 		$this->page_title = 'URLS';
 	}
 
+	public function init_ajax_hooks( Urlslab_Loader $urlslab_loader ) {
+		$urlslab_loader->add_action( 'wp_ajax_urlslab_url_backlink_fetch', $this, 'url_backlink_fetch' );
+    }
+
+    public function url_backlink_fetch() {
+        
+    }
+
 	/**
 	 * @param string $action
 	 * @param string $component

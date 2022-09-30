@@ -46,7 +46,7 @@ class Urlslab_Page_Factory {
 	/**
 	 * @return void
 	 */
-	public function init_admin_menus() {
+	public function init_admin_menus( Urlslab_Loader $urlslab_loader ) {
 		foreach ( self::$menus as $menu ) {
 			$menu->register_submenu(
 				self::$admin_plugin_main_page->get_menu_slug()

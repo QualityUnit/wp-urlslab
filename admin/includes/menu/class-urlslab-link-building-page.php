@@ -23,6 +23,8 @@ class Urlslab_Link_Building_Page extends Urlslab_Admin_Page {
 
 	}
 
+	public function init_ajax_hooks( Urlslab_Loader $urlslab_loader ) {}
+
 	public function on_page_load( string $action, string $component ) {
 
 		$active_tab = $this->get_active_page_tab();

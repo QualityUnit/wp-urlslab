@@ -48,6 +48,8 @@ class Urlslab_Admin {
 	 */
 	private Urlslab_Page_Factory $urlslab_menu_factory;
 
+	private Urlslab_Loader $urlslab_loader;
+
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -56,10 +58,11 @@ class Urlslab_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function __construct( string $urlslab, string $version ) {
+	public function __construct( string $urlslab, string $version, Urlslab_Loader $urlslab_loader ) {
 
 		$this->urlslab = $urlslab;
 		$this->version = $version;
+		$this->urlslab_loader = $urlslab_loader;
 		$this->urlslab_menu_factory = Urlslab_Page_Factory::get_instance();
 
 	}
@@ -141,7 +144,7 @@ class Urlslab_Admin {
 			80
 		);
 
-		$this->urlslab_menu_factory->init_admin_menus();
+		$this->urlslab_menu_factory->init_admin_menus( $this->urlslab_loader );
 	}
 
 	function urlslab_load_add_widgets_page() {
