@@ -330,18 +330,18 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		global $wpdb;
 		//# Add Keyword
 		$query = 'INSERT INTO ' . URLSLAB_KEYWORDS_TABLE . ' (
-                   kwMd5,
+                   kw_id,
                    keyword,
                    kw_priority,
                    kw_length,
                    lang,
                    urlLink,
-                   urlFilter) VALUES (%s, %s, %d, %d, %s, %s, %s)';
+                   urlFilter) VALUES (%d, %s, %d, %d, %s, %s, %s)';
 
 		$wpdb->query(
 		    $wpdb->prepare( $query, // phpcs:ignore
 				array(
-					$keyword->get_kw_md5(),
+					$keyword->get_kw_id(),
 					$keyword->get_keyword(),
 					$keyword->get_keyword_priority(),
 					$keyword->get_keyword_length(),
@@ -364,7 +364,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		$wpdb->delete(
 			URLSLAB_KEYWORDS_TABLE,
 			array(
-				'kwMd5' => $old_keyword_hash,
+				'kw_id' => $old_keyword_hash,
 			),
 			array(
 				'%s',
@@ -374,7 +374,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 
 		//# Add Keyword
 		$query = 'INSERT INTO ' . URLSLAB_KEYWORDS_TABLE . ' (
-                   kwMd5,
+                   kw_id,
                    keyword,
                    kw_priority,
                    kw_length,
@@ -385,7 +385,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		$wpdb->query(
 			$wpdb->prepare( $query, // phpcs:ignore
 				array(
-					$keyword->get_kw_md5(),
+					$keyword->get_kw_id(),
 					$keyword->get_keyword(),
 					$keyword->get_keyword_priority(),
 					$keyword->get_keyword_length(),
@@ -407,7 +407,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				 isset( $_FILES['csv_file']['size'] ) &&
 				 isset( $_FILES['csv_file']['tmp_name'] ) &&
 				 $_FILES['csv_file']['size'] > 0 ) {
-				$res = $this->process_csv( $_FILES['csv_file']['tmp_name'] );
+				$res = $this->import_csv( $_FILES['csv_file']['tmp_name'] );
 				if ( $res > 0 ) {
 					$redirect_to = $this->parent_page->menu_page(
 						$this->subpage_slug,
@@ -463,7 +463,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 	 *
 	 * @return int
 	 */
-	private function process_csv( $file ): int {
+	private function import_csv( $file ): int {
 		//# Reading/Parsing CSV File
 		$row = 0;
 		$processed_rows = 0;
@@ -508,13 +508,13 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 	private function create_row( Urlslab_Url_Keyword_Data $data_row ): bool {
 		global $wpdb;
 		$update_query = 'INSERT INTO ' . URLSLAB_KEYWORDS_TABLE . ' (
-                   kwMd5,
+                   kw_id,
                    keyword,
                    kw_priority,
                    kw_length,
                    lang,
                    urlLink,
-                   urlFilter) VALUES (%s, %s, %d, %d, %s, %s, %s)
+                   urlFilter) VALUES (%d, %s, %d, %d, %s, %s, %s)
                    ON DUPLICATE KEY UPDATE
                    kw_priority = VALUES(kw_priority),
                    kw_length = VALUES(kw_length),
@@ -525,7 +525,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		$result = $wpdb->query(
 			$wpdb->prepare( $update_query, // phpcs:ignore
 				array(
-					$data_row->get_kw_md5(),
+					$data_row->get_kw_id(),
 					$data_row->get_keyword(),
 					$data_row->get_keyword_priority(),
 					$data_row->get_keyword_length(),
@@ -703,6 +703,16 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				'Maximum paragraph density defines maximum number of links per character can be included in paragraph. Example: By defining value 100 will be included maximum 5 links in 500 characters long paragraph.',
 				'Paragraph density [min # of characters per link]',
 				''
+			),
+			new Urlslab_Setting_Switch(
+				'kw_map[]',
+				Urlslab_Keywords_Links::SETTING_NAME_KW_MAP,
+				'Track usage of inserted keywords/links on pages',
+				'Track used Keywords',
+				get_option(
+					Urlslab_Keywords_Links::SETTING_NAME_KW_MAP,
+					Urlslab_Keywords_Links::SETTING_DEFAULT_KW_MAP
+				)
 			),
 		)
 		?>

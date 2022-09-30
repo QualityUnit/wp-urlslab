@@ -45,13 +45,14 @@ class Urlslab_Activator {
 		add_option( URLSLAB_VERSION_SETTING, '1.0.0' );
 		self::init_urls_tables();
 		self::init_urls_map_tables();
-		self::init_keyword_widget_tables();
+		self::init_keywords_tables();
 		self::init_related_resources_widget_tables();
 		self::init_urlslab_error_log();
 		self::init_urlslab_files();
 		self::init_urlslab_file_alternatives();
 		self::init_urlslab_file_contents();
 		self::init_youtube_cache_tables();
+		self::init_keywords_map();
 	}
 
 	private static function upgrade_steps() {
@@ -59,7 +60,6 @@ class Urlslab_Activator {
 		$version = get_option( URLSLAB_VERSION_SETTING, '1.0' );
 
 		if ( version_compare( $version, '1.13', '<' ) ) {
-			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_KEYWORDS_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILES_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILE_CONTENTS_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILE_ALTERNATIVES_TABLE . ';'); // phpcs:ignore
@@ -68,7 +68,6 @@ class Urlslab_Activator {
 			self::init_urlslab_files();
 			self::init_urlslab_file_contents();
 			self::init_urlslab_file_alternatives();
-			self::init_keyword_widget_tables();
 			self::init_urls_tables();
 			self::init_related_resources_widget_tables();
 		}
@@ -77,7 +76,11 @@ class Urlslab_Activator {
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_URLS_MAP_TABLE . ';'); // phpcs:ignore
 			self::init_urls_map_tables();
 		}
-			//all update steps done, set the current version
+		if ( version_compare( $version, '1.24', '<' ) ) {
+			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_KEYWORDS_TABLE . ';'); // phpcs:ignore
+			self::init_keywords_tables();
+		}
+		//all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
 
@@ -136,21 +139,36 @@ class Urlslab_Activator {
 
 
 
-	private static function init_keyword_widget_tables() {
+	private static function init_keywords_tables() {
 		global $wpdb;
 		$table_name = URLSLAB_KEYWORDS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
-    		kwMd5 varchar(32) NOT NULL,
+    		kw_id bigint NOT NULL,
 			keyword varchar(250) NOT NULL,
 			urlLink varchar(500) NOT NULL,
 			kw_priority TINYINT UNSIGNED NOT NULL DEFAULT 10,
 			kw_length TINYINT UNSIGNED NOT NULL,
 			lang varchar(10) NOT NULL DEFAULT 'all',
 			urlFilter varchar(250) NOT NULL DEFAULT '.*',
-    		PRIMARY KEY  (kwMd5),
+    		PRIMARY KEY  (kw_id),
 			INDEX  idx_keywords (keyword),
 			INDEX idx_sorting (lang, kw_priority, kw_length)
+		) $charset_collate;";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_keywords_map() {
+		global $wpdb;
+		$table_name = URLSLAB_KEYWORDS_MAP_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+    		kw_id bigint NOT NULL,
+    		urlMd5 bigint NOT NULL,
+    		PRIMARY KEY  (kw_id, urlMd5),
+			INDEX  idx_urls (urlMd5)
 		) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

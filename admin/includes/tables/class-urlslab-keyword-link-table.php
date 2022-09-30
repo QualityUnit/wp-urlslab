@@ -86,7 +86,7 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 			$placeholder[] = '(%s)';
 		}
 		$placeholder_string = implode( ', ', $placeholder );
-		$delete_query = "DELETE FROM $table WHERE kwMd5 IN ($placeholder_string)";
+		$delete_query = "DELETE FROM $table WHERE kw_id IN ($placeholder_string)";
 		$wpdb->query(
 			$wpdb->prepare(
 				$delete_query, // phpcs:ignore
@@ -103,7 +103,7 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	private function delete_keyword( string $kw_md5 ) {
 		global $wpdb;
 		$table = URLSLAB_KEYWORDS_TABLE;
-		$delete_query = "DELETE FROM $table WHERE kwMd5 = %s";
+		$delete_query = "DELETE FROM $table WHERE kw_id = %s";
 		$wpdb->query(
 			$wpdb->prepare(
 				$delete_query, // phpcs:ignore
@@ -143,7 +143,7 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	function column_cb( $item ): string {
 		return sprintf(
 			'<input type="checkbox" name="bulk-delete[]" value="%s" />',
-			$item->get_kw_md5()
+			$item->get_kw_id()
 		);
 	}
 
@@ -168,14 +168,14 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 					esc_attr( $_REQUEST['page'] ),
 					esc_html( $_REQUEST['s'] ?? '' ),
 					'delete',
-					esc_attr( $item->get_kw_md5() ),
+					esc_attr( $item->get_kw_id() ),
 					$delete_nonce
 				),
 				'edit' => sprintf(
 					'<span class="%s" rel="modal:open" data-close-icon="%s" data-keyword-hash="%s" data-keyword="%s" data-dest-url="%s" data-prio="%s" data-lang="%s" data-url-filter="%s">Edit</span>',
 					'keyword-edit color-primary',
 					esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/delete.png' ) . 'delete.png' ),
-					esc_attr( $item->get_kw_md5() ),
+					esc_attr( $item->get_kw_id() ),
 					esc_attr( $item->get_keyword() ),
 					esc_attr( $item->get_keyword_url_link() ),
 					esc_attr( $item->get_keyword_priority() ),
@@ -207,7 +207,7 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 			case 'col_lang':
 				return $item->get_keyword_url_lang();
 			case 'col_kw_md5':
-				return $item->get_kw_md5();
+				return $item->get_kw_id();
 			default:
 				return print_r( $item, true );
 		}

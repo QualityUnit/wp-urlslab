@@ -126,10 +126,6 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 										'title',
 										$result[ $url_obj->get_url_id() ]->get_url_summary_text(),
 									);
-									$dom_elem->setAttribute(
-										'urlslab-enhanced',
-										'Y',
-									);
 								}
 							}
 						}
