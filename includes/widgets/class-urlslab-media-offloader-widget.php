@@ -494,12 +494,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		foreach ( $urls as $fileid => $url ) {
 			if ( ( urlslab_is_same_domain_url( $url ) && $save_internal ) || $save_external ) {
 				$placeholders[] = '(%s, %s, %s, %s)';
-				//TODO - fix this back, just for liveagent.local
-				if (is_numeric(strpos( $url, 'liveagent.local' ))) {
-					$url = str_replace('liveagent.local', 'liveagent.com', $url);
-				}
-				//TODO - fix this back, just for liveagent.local
-
 				array_push( $values, $fileid, $url, Urlslab_Driver::STATUS_NEW, $default_driver );
 			}
 		}
