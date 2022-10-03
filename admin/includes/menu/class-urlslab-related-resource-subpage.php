@@ -7,10 +7,12 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 	private Urlslab_Url_Data_Fetcher $url_data_fetcher;
 	private string $subpage_slug;
 
-	public function __construct( $parent_page,
-		Urlslab_Url_Data_Fetcher $url_data_fetcher ) {
-		$this->parent_page = $parent_page;
-		$this->subpage_slug = 'related-resource';
+	public function __construct(
+		$parent_page,
+		Urlslab_Url_Data_Fetcher $url_data_fetcher
+	) {
+		$this->parent_page      = $parent_page;
+		$this->subpage_slug     = 'related-resource';
 		$this->url_data_fetcher = $url_data_fetcher;
 	}
 
@@ -32,9 +34,9 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 			if ( isset( $_POST['submit'] ) &&
 				 'Edit Url Relation' === $_POST['submit'] ) {
 				if ( isset( $_POST['srcUrlHash'] ) && ! empty( $_POST['srcUrlHash'] ) &&
-					isset( $_POST['destUrlHash'] ) && ! empty( $_POST['destUrlHash'] ) &&
-					isset( $_POST['srcUrl'] ) && ! empty( $_POST['srcUrl'] ) &&
-					isset( $_POST['destUrl'] ) && ! empty( $_POST['destUrl'] ) ) {
+					 isset( $_POST['destUrlHash'] ) && ! empty( $_POST['destUrlHash'] ) &&
+					 isset( $_POST['srcUrl'] ) && ! empty( $_POST['srcUrl'] ) &&
+					 isset( $_POST['destUrl'] ) && ! empty( $_POST['destUrl'] ) ) {
 					$this->edit_url_relation(
 						$_POST['srcUrlHash'],
 						$_POST['destUrlHash'],
@@ -45,7 +47,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 						$this->parent_page->menu_page(
 							$this->subpage_slug,
 							array(
-								'status' => 'success',
+								'status'          => 'success',
 								'urlslab-message' => 'keyword was edited successfully',
 							)
 						)
@@ -56,7 +58,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 						$this->parent_page->menu_page(
 							$this->subpage_slug,
 							array(
-								'status' => 'failure',
+								'status'          => 'failure',
 								'urlslab-message' => 'entered relation detail was not valid',
 							)
 						)
@@ -70,7 +72,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 			if ( isset( $_POST['submit'] ) &&
 				 'Add Url Relation' === $_POST['submit'] ) {
 				if ( isset( $_POST['srcUrl'] ) && ! empty( $_POST['srcUrl'] ) &&
-					isset( $_POST['destUrl'] ) && ! empty( $_POST['destUrl'] ) ) {
+					 isset( $_POST['destUrl'] ) && ! empty( $_POST['destUrl'] ) ) {
 					try {
 						$this->add_url_relation(
 							new Urlslab_Url( $_POST['srcUrl'] ),
@@ -103,7 +105,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 						$this->parent_page->menu_page(
 							$this->subpage_slug,
 							array(
-								'status' => 'failure',
+								'status'          => 'failure',
 								'urlslab-message' => 'entered relation detail was not valid',
 							)
 						)
@@ -134,7 +136,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 					$this->parent_page->menu_page(
 						$this->subpage_slug,
 						array(
-							'status' => 'success',
+							'status'          => 'success',
 							'urlslab-message' => 'All Data deleted successfully',
 						)
 					)
@@ -150,7 +152,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 					$this->parent_page->menu_page(
 						$this->subpage_slug,
 						array(
-							'status' => 'success',
+							'status'          => 'success',
 							'urlslab-message' => 'Sample Data generated successfully',
 						)
 					)
@@ -165,7 +167,9 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		?>
 		<div class="urlslab-action-container">
 			<div>
-				<button id="add-url-relation-btn" data-close-icon="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/delete.png' ) . 'delete.png' ); ?>" class="button button-primary">
+				<button id="add-url-relation-btn"
+						data-close-icon="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/delete.png' ) . 'delete.png' ); ?>"
+						class="button button-primary">
 					Add Url Relation
 				</button>
 				<a id="related-resources-import-btn" class="button button-primary">
@@ -173,7 +177,8 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 				</a>
 			</div>
 			<div>
-				<a href="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=export' ) ); ?>" target="_blank"
+				<a href="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=export' ) ); ?>"
+				   target="_blank"
 				   class="button">Export</a>
 				<a href="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=clear' ) ); ?>"
 				   class="button">Delete all</a>
@@ -218,7 +223,8 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 					<li class="color-danger">dest URL (required)</li>
 				</ul>
 			</div>
-			<form action="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=import' ) ); ?>" method="post"
+			<form action="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=import' ) ); ?>"
+				  method="post"
 				  enctype="multipart/form-data">
 				<?php wp_nonce_field( 'related-resource-widget-import' ); ?>
 				<input type="file" name="csv_file">
@@ -234,9 +240,9 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		add_screen_option(
 			'per_page',
 			array(
-				'label' => 'Relations',
+				'label'   => 'Relations',
 				'default' => 50,
-				'option' => 'users_per_page',
+				'option'  => 'users_per_page',
 			)
 		);
 
@@ -257,7 +263,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 					$redirect_to = $this->parent_page->menu_page(
 						$this->subpage_slug,
 						array(
-							'status' => 'success',
+							'status'          => 'success',
 							'urlslab-message' => 'Processed ' . $res . ' rows of CSV successfully',
 						)
 					);
@@ -265,7 +271,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 					$redirect_to = $this->parent_page->menu_page(
 						$this->subpage_slug,
 						array(
-							'status' => 'failure',
+							'status'          => 'failure',
 							'urlslab-message' => 'Didnt process any rows of CSV',
 						)
 					);
@@ -274,7 +280,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 				$redirect_to = $this->parent_page->menu_page(
 					$this->subpage_slug,
 					array(
-						'status' => 'failure',
+						'status'          => 'failure',
 						'urlslab-message' => urlslab_file_upload_code_to_message( $_FILES['csv_file']['error'] ),
 					)
 				);
@@ -283,7 +289,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 			$redirect_to = $this->parent_page->menu_page(
 				$this->subpage_slug,
 				array(
-					'status' => 'failure',
+					'status'          => 'failure',
 					'urlslab-message' => 'Error in processing CSV: ' . $e->getMessage(),
 				)
 			);
@@ -295,13 +301,17 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 
 	private function import_csv( $file ): int {
 		//# Reading/Parsing CSV File
-		$row = 1;
+		$row            = 1;
 		$processed_rows = 0;
+
+		$urls         = array();
+		$related_urls = array();
+
 		$handle = fopen( $file, 'r' );
 		if ( false !== ( $handle ) ) {
 			wp_raise_memory_limit( 'admin' );
 			while ( ( $data = fgetcsv( $handle ) ) !== false ) {
-				$row++;
+				$row ++;
 				//# processing CSV Header
 				if ( 1 == $row ) {
 					continue;
@@ -312,56 +322,59 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 				}
 				//SrcUrl, DestUrl
 				try {
+
 					$data_row = array(
 						new Urlslab_Url( $data[0] ),
 						new Urlslab_Url( $data[1] ),
 					);
 
-					$res = $this->create_row( $data_row );
-					if ( $res ) {
-						$processed_rows++;
-					}
+					$related_urls[]                     = $data_row;
+					$urls[ $data_row[0]->get_url_id() ] = $data_row[0];
+					$urls[ $data_row[1]->get_url_id() ] = $data_row[1];
 				} catch ( Exception $e ) {
 					//# handling the failure of a single row
 				}
 			}
 			fclose( $handle );
+
+			if ( ! $this->url_data_fetcher->prepare_url_batch_for_scheduling( $urls ) ) {
+				return false;
+			}
+
+			$res = $this->create_related_resources_rows( $related_urls );
+
 		}
 
 		return $processed_rows;
 	}
 
 	/**
-	 * @param Urlslab_Url[] $data srcUrl and destUrl
+	 * @param Urlslab_Url[] $related_resources srcUrl and destUrl
 	 *
 	 * @return bool
 	 */
-	private function create_row( array $data ): bool {
-		//# Scheduling Src and Dest URLs
-		if ( ! $this->url_data_fetcher->prepare_url_batch_for_scheduling( $data ) ) {
-			return false;
+	private function create_related_resources_rows( array $related_resources ): int {
+		if ( 0 == count( $related_resources ) ) {
+			return 0;
 		}
-		//# Scheduling Src and Dest URLs
-
 		global $wpdb;
-		$table = URLSLAB_RELATED_RESOURCE_TABLE;
+		$insert_placeholders = array();
+		$insert_values       = array();
+		foreach ( $related_resources as $related_resource ) {
+			array_push(
+				$insert_values,
+				$related_resource[0]->get_url_id(),
+				$related_resource[1]->get_url_id(),
+			);
+			$insert_placeholders[] = '(%d, %s)';
+		}
 
-		$update_query = "INSERT IGNORE INTO $table (
+		$insert_query = 'INSERT IGNORE INTO ' . URLSLAB_RELATED_RESOURCE_TABLE . ' (
                    srcUrlMd5,
-                   destUrlMd5) VALUES
-                   (%d, %d)";
+                   destUrlMd5
+                   ) VALUES ' . implode( ', ', $insert_placeholders );
 
-		$result = $wpdb->query(
-			$wpdb->prepare(
-				$update_query, // phpcs:ignore
-				array(
-					$data[0]->get_url_id(),
-					$data[1]->get_url_id(),
-				)
-			)
-		);
-
-		return is_numeric( $result );
+		return $wpdb->query( $wpdb->prepare( $insert_query, $insert_values ) ); // phpcs:ignore
 	}
 
 	private function export_csv_url_relations() {
@@ -371,9 +384,9 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		fputcsv( $output, array( 'Src URL', 'Dest URL' ) );
 		global $wpdb;
 		$related_resource_table = URLSLAB_RELATED_RESOURCE_TABLE;
-		$urls_table = URLSLAB_URLS_TABLE;
+		$urls_table             = URLSLAB_URLS_TABLE;
 
-		$query = "SELECT u.urlName AS srcUrlName,
+		$query  = "SELECT u.urlName AS srcUrlName,
 				       v.urlName AS destUrlName
 				FROM $related_resource_table r
 				         INNER JOIN $urls_table as u
@@ -426,8 +439,8 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		$posts = get_posts(
 			array(
 				'numberposts' => 1000,
-				'orderby' => 'date',
-				'order' => 'DESC',
+				'orderby'     => 'date',
+				'order'       => 'DESC',
 			)
 		);
 
@@ -436,30 +449,36 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 				$sample_urls[] = get_permalink( $post->ID );
 			}
 		}
-		$sample_urls = array_unique( $sample_urls );
+		$sample_urls       = array_unique( $sample_urls );
+		$related_resources = array();
 		sort( $sample_urls, SORT_STRING | SORT_FLAG_CASE | SORT_NATURAL );
 
 		foreach ( $sample_urls as $id => $url ) {
 			$sample_urls[ $id ] = new Urlslab_Url( $url );
 		}
 		$max = count( $sample_urls );
-		for ( $i = 0; $i < $max; $i++ ) {
-			for ( $j = $i + 1; $j < $max && $j < ( $i + 10 ); $j++ ) {
-				$this->create_row(
-					array(
-						$sample_urls[ $i ],
-						$sample_urls[ $j ],
-					)
+		for ( $i = 0; $i < $max; $i ++ ) {
+			for ( $j = $i + 1; $j < $max && $j < ( $i + 10 ); $j ++ ) {
+				$related_resources[] = array(
+					$sample_urls[ $i ],
+					$sample_urls[ $j ],
 				);
 			}
 		}
+
+		if ( ! $this->url_data_fetcher->prepare_url_batch_for_scheduling( $sample_urls ) ) {
+			return false;
+		}
+
+		$this->create_related_resources_rows( $related_resources );
 	}
 
 	private function edit_url_relation(
 		string $old_src_url,
 		string $old_dest_url,
 		Urlslab_Url $src_url,
-		Urlslab_Url $dest_url ): void {
+		Urlslab_Url $dest_url
+	): void {
 
 		global $wpdb;
 
@@ -467,7 +486,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		$wpdb->delete(
 			URLSLAB_RELATED_RESOURCE_TABLE,
 			array(
-				'srcUrlMd5' => $old_src_url,
+				'srcUrlMd5'  => $old_src_url,
 				'destUrlMd5' => $old_dest_url,
 			),
 			array(
@@ -502,7 +521,8 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 
 	private function add_url_relation(
 		Urlslab_Url $src_url,
-		Urlslab_Url $dest_url ): void {
+		Urlslab_Url $dest_url
+	): void {
 
 		global $wpdb;
 
@@ -530,5 +550,6 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 	}
 
 
-	public function render_settings() {}
+	public function render_settings() {
+	}
 }
