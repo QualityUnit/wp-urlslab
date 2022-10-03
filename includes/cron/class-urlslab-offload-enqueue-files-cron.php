@@ -28,7 +28,7 @@ class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
 			URLSLAB_FILES_TABLE,
 			array(
 				'filestatus' => Urlslab_Driver::STATUS_PENDING,
-				'last_seen' => strtotime( gmdate( 'Y-m-d H:i:s' ) ),
+				'last_seen' => gmdate( 'Y-m-d H:i:s' ),
 			),
 			array(
 				'fileid' => $file->get_fileid(),
