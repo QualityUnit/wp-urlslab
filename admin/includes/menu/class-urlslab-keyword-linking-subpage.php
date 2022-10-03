@@ -8,7 +8,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 	private string $subpage_slug;
 
 	public function __construct( $parent_page, Urlslab_Url_Data_Fetcher $data_fetcher ) {
-		$this->parent_page = $parent_page;
+		$this->parent_page  = $parent_page;
 		$this->subpage_slug = 'keyword-linking';
 		$this->data_fetcher = $data_fetcher;
 	}
@@ -54,7 +54,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 									$this->parent_page->menu_page(
 										$this->subpage_slug,
 										array(
-											'status' => 'success',
+											'status'          => 'success',
 											'urlslab-message' => 'keyword was edited successfully',
 										)
 									)
@@ -65,7 +65,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 									$this->parent_page->menu_page(
 										$this->subpage_slug,
 										array(
-											'status' => 'failure',
+											'status'          => 'failure',
 											'urlslab-message' => 'couldnt schedule url, please try again',
 										)
 									)
@@ -77,7 +77,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 								$this->parent_page->menu_page(
 									$this->subpage_slug,
 									array(
-										'status' => 'failure',
+										'status'          => 'failure',
 										'urlslab-message' => 'entered url is not valid',
 									)
 								)
@@ -89,7 +89,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 							$this->parent_page->menu_page(
 								$this->subpage_slug,
 								array(
-									'status' => 'failure',
+									'status'          => 'failure',
 									'urlslab-message' => $e->getMessage(),
 								)
 							)
@@ -101,7 +101,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 						$this->parent_page->menu_page(
 							$this->subpage_slug,
 							array(
-								'status' => 'failure',
+								'status'          => 'failure',
 								'urlslab-message' => 'entered keyword detail was not valid',
 							)
 						)
@@ -135,7 +135,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 									$this->parent_page->menu_page(
 										$this->subpage_slug,
 										array(
-											'status' => 'success',
+											'status'          => 'success',
 											'urlslab-message' => 'Keyword was added successfully',
 										)
 									)
@@ -146,7 +146,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 									$this->parent_page->menu_page(
 										$this->subpage_slug,
 										array(
-											'status' => 'failure',
+											'status'          => 'failure',
 											'urlslab-message' => 'couldnt schedule url, please try again',
 										)
 									)
@@ -158,7 +158,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 								$this->parent_page->menu_page(
 									$this->subpage_slug,
 									array(
-										'status' => 'failure',
+										'status'          => 'failure',
 										'urlslab-message' => 'entered url is not valid',
 									)
 								)
@@ -170,7 +170,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 							$this->parent_page->menu_page(
 								$this->subpage_slug,
 								array(
-									'status' => 'failure',
+									'status'          => 'failure',
 									'urlslab-message' => $e->getMessage(),
 								)
 							)
@@ -182,7 +182,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 						$this->parent_page->menu_page(
 							$this->subpage_slug,
 							array(
-								'status' => 'failure',
+								'status'          => 'failure',
 								'urlslab-message' => 'entered keyword detail was not valid',
 							)
 						)
@@ -203,7 +203,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					$this->parent_page->menu_page(
 						$this->subpage_slug,
 						array(
-							'status' => 'success',
+							'status'          => 'success',
 							'urlslab-message' => 'Keyword settings was saved successfully',
 						),
 						$_GET['sub-tab'] ?? ''
@@ -234,7 +234,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					$this->parent_page->menu_page(
 						$this->subpage_slug,
 						array(
-							'status'  => 'success',
+							'status'          => 'success',
 							'urlslab-message' => 'All Data deleted successfully',
 						)
 					)
@@ -250,7 +250,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					$this->parent_page->menu_page(
 						$this->subpage_slug,
 						array(
-							'status' => 'success',
+							'status'          => 'success',
 							'urlslab-message' => 'Sample Data generated successfully',
 						)
 					)
@@ -266,16 +266,16 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 
 		//in case installation is empty, use some static mappings
 		$sample_data = array(
-			'wordpress' => 'https://www.liveagent.com/blog/best-live-chat-plugins-for-wordpress/',
-			'screenshot' => 'https://www.urlslab.com',
-			'google' => 'https://www.google.com',
-			'support' => 'https://www.liveagent.com/',
-			'help desk' => 'https://www.liveagent.com/help-desk-software/',
-			'helpdesk' => 'https://www.liveagent.com/help-desk-software/',
-			'chat' => 'https://www.liveagent.com/live-chat-software/',
-			'call' => 'https://www.liveagent.com/call-center-software/',
-			'call center' => 'https://www.liveagent.com/call-center-software/',
-			'affiliate' => 'https://www.postaffiliatepro.com/affiliate-marketing-glossary/affiliate/',
+			'wordpress'           => 'https://www.liveagent.com/blog/best-live-chat-plugins-for-wordpress/',
+			'screenshot'          => 'https://www.urlslab.com',
+			'google'              => 'https://www.google.com',
+			'support'             => 'https://www.liveagent.com/',
+			'help desk'           => 'https://www.liveagent.com/help-desk-software/',
+			'helpdesk'            => 'https://www.liveagent.com/help-desk-software/',
+			'chat'                => 'https://www.liveagent.com/live-chat-software/',
+			'call'                => 'https://www.liveagent.com/call-center-software/',
+			'call center'         => 'https://www.liveagent.com/call-center-software/',
+			'affiliate'           => 'https://www.postaffiliatepro.com/affiliate-marketing-glossary/affiliate/',
 			'affiliate marketing' => 'https://www.postaffiliatepro.com/affiliate-marketing-software/',
 		);
 
@@ -318,7 +318,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		global $wpdb;
 		$table = URLSLAB_KEYWORDS_TABLE;
 
-		$query = "SELECT keyword, urlLink, kw_priority, lang, urlFilter FROM $table ORDER BY keyword, lang, urlFilter, kw_priority  ASC, kw_length DESC";
+		$query  = "SELECT keyword, urlLink, kw_priority, lang, urlFilter FROM $table ORDER BY keyword, lang, urlFilter, kw_priority  ASC, kw_length DESC";
 		$result = $wpdb->get_results( $query, ARRAY_N ); //# phpcs:ignore
 		foreach ( $result as $row ) {
 			fputcsv( $output, $row );
@@ -339,7 +339,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
                    urlFilter) VALUES (%d, %s, %d, %d, %s, %s, %s)';
 
 		$wpdb->query(
-		    $wpdb->prepare( $query, // phpcs:ignore
+			$wpdb->prepare( $query, // phpcs:ignore
 				array(
 					$keyword->get_kw_id(),
 					$keyword->get_keyword(),
@@ -357,7 +357,8 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 
 	private function edit_keyword(
 		string $old_keyword_hash,
-		Urlslab_Url_Keyword_Data $keyword ) {
+		Urlslab_Url_Keyword_Data $keyword
+	) {
 		global $wpdb;
 
 		//# Deletion of keyword
@@ -412,7 +413,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					$redirect_to = $this->parent_page->menu_page(
 						$this->subpage_slug,
 						array(
-							'status' => 'success',
+							'status'          => 'success',
 							'urlslab-message' => 'CSV File was added successfully',
 						)
 					);
@@ -420,7 +421,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					$redirect_to = $this->parent_page->menu_page(
 						$this->subpage_slug,
 						array(
-							'status' => 'failure',
+							'status'          => 'failure',
 							'urlslab-message' => 'There was a problem in parsing the CSV',
 						)
 					);
@@ -430,7 +431,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					$redirect_to = $this->parent_page->menu_page(
 						$this->subpage_slug,
 						array(
-							'status' => 'failure',
+							'status'          => 'failure',
 							'urlslab-message' => urlslab_file_upload_code_to_message( $_FILES['csv_file']['error'] ),
 						)
 					);
@@ -438,7 +439,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					$redirect_to = $this->parent_page->menu_page(
 						$this->subpage_slug,
 						array(
-							'status' => 'failure',
+							'status'          => 'failure',
 							'urlslab-message' => 'Oops! somethgin wrong with the uploaded file',
 						)
 					);
@@ -448,7 +449,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			$redirect_to = $this->parent_page->menu_page(
 				$this->subpage_slug,
 				array(
-					'status' => 'failure',
+					'status'          => 'failure',
 					'urlslab-message' => 'Error in processing CSV: ' . $e->getMessage(),
 				)
 			);
@@ -465,17 +466,17 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 	 */
 	private function import_csv( $file ): int {
 		//# Reading/Parsing CSV File
-		$row = 0;
+		$row            = 0;
 		$processed_rows = 0;
-		$handle = fopen( $file, 'r' );
+		$handle         = fopen( $file, 'r' );
 
-        $urls = array();
-        $keywords = array();
+		$urls     = array();
+		$keywords = array();
 
 		if ( false !== ( $handle ) ) {
 			wp_raise_memory_limit( 'admin' );
 			while ( ( $data = fgetcsv( $handle ) ) !== false ) {
-				$row++;
+				$row ++;
 				//# processing CSV Header
 				if ( 1 == $row ) {
 					continue;
@@ -485,12 +486,12 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				}
 				//Keyword, URL, Priority, Lang, Filter
 				try {
-                    $data_row = new Urlslab_Url_Keyword_Data( $data[0], isset( $data[2] ) && is_numeric( $data[2] ) ? (int) $data[2] : 10, strlen( $data[0] ), isset( $data[3] ) && strlen( $data[3] ) > 0 ? $data[3] : 'all', $data[1], isset( $data[4] ) ? $data[4] : '.*' );
+					$data_row   = new Urlslab_Url_Keyword_Data( $data[0], isset( $data[2] ) && is_numeric( $data[2] ) ? (int) $data[2] : 10, strlen( $data[0] ), isset( $data[3] ) && strlen( $data[3] ) > 0 ? $data[3] : 'all', $data[1], isset( $data[4] ) ? $data[4] : '.*' );
 					$keywords[] = $data_row;
 
 					$scheduling_url = new Urlslab_Url( $data_row->get_keyword_url_link() );
 					if ( $scheduling_url->is_url_valid() ) {
-                        $urls[$scheduling_url->get_url_id()] = $scheduling_url;
+						$urls[ $scheduling_url->get_url_id() ] = $scheduling_url;
 					}
 				} catch ( Exception $e ) {
 					//# row not inserted
@@ -498,13 +499,14 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			}
 			fclose( $handle );
 
-            //insert urls
-            $this->data_fetcher->prepare_url_batch_for_scheduling( $urls );
+			//insert urls
+			$this->data_fetcher->prepare_url_batch_for_scheduling( $urls );
 
-            //insert keywords
-            $processed_rows = $this->create_keywords( $keywords );
+			//insert keywords
+			$processed_rows = $this->create_keywords( $keywords );
 
 		}
+
 		return $processed_rows;
 	}
 
@@ -513,25 +515,25 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 	 *
 	 * @return bool
 	 */
-	private function create_keywords(array $keywords ): int {
+	private function create_keywords( array $keywords ): int {
 		global $wpdb;
-        $insert_placeholders = array();
-        $insert_values = array();
-        foreach ( $keywords as $keyword ) {
-            array_push(
-                $insert_values,
-                $keyword->get_kw_id(),
-                $keyword->get_keyword(),
-                $keyword->get_keyword_priority(),
-                $keyword->get_keyword_length(),
-                $keyword->get_keyword_url_lang(),
-                $keyword->get_keyword_url_link(),
-                $keyword->get_keyword_url_filter(),
-            );
-            $insert_placeholders[] = '(%d, %s, %d, %d, %s, %s, %s)';
-        }
+		$insert_placeholders = array();
+		$insert_values       = array();
+		foreach ( $keywords as $keyword ) {
+			array_push(
+				$insert_values,
+				$keyword->get_kw_id(),
+				$keyword->get_keyword(),
+				$keyword->get_keyword_priority(),
+				$keyword->get_keyword_length(),
+				$keyword->get_keyword_url_lang(),
+				$keyword->get_keyword_url_link(),
+				$keyword->get_keyword_url_filter(),
+			);
+			$insert_placeholders[] = '(%d, %s, %d, %d, %s, %s, %s)';
+		}
 
-        $insert_query = 'INSERT IGNORE INTO ' . URLSLAB_KEYWORDS_TABLE . ' (
+		$insert_query = 'INSERT IGNORE INTO ' . URLSLAB_KEYWORDS_TABLE . ' (
                    kw_id,
                    keyword,
                    kw_priority,
@@ -547,14 +549,15 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
                    urlLink = VALUES(urlLink),
                    urlFilter = VALUES(urlFilter)';
 
-        return $wpdb->query( $wpdb->prepare( $insert_query, $insert_values ) ); // phpcs:ignore
+		return $wpdb->query( $wpdb->prepare( $insert_query, $insert_values ) ); // phpcs:ignore
 	}
 
 	public function render_manage_buttons() {
 		?>
 		<div class="urlslab-action-container">
 			<div>
-				<button id="add-keyword-btn" class="button button-primary" data-close-icon="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/delete.png' ) . 'delete.png' ); ?>">
+				<button id="add-keyword-btn" class="button button-primary"
+						data-close-icon="<?php echo esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/delete.png' ) . 'delete.png' ); ?>">
 					Add Keyword
 				</button>
 				<button id="import-btn" class="button button-primary">
@@ -562,7 +565,8 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				</button>
 			</div>
 			<div>
-				<a href="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=export' ) ); ?>" target="_blank"
+				<a href="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=export' ) ); ?>"
+				   target="_blank"
 				   class="button">Export</a>
 				<a href="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=clear' ) ); ?>"
 				   class="button">Delete all</a>
@@ -616,7 +620,8 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				$search_param = '&s=' . $_REQUEST['s'];
 			}
 			?>
-			<form action="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=import' . $search_param ) ); ?>" method="post"
+			<form action="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=import' . $search_param ) ); ?>"
+				  method="post"
 				  enctype="multipart/form-data">
 				<?php wp_nonce_field( 'keyword-widget-import' ); ?>
 				<input type="file" name="csv_file">
@@ -630,10 +635,10 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 
 	public function set_table_screen_options() {
 		$option = 'per_page';
-		$args = array(
-			'label' => 'Keywords',
+		$args   = array(
+			'label'   => 'Keywords',
 			'default' => 50,
-			'option' => 'users_per_page',
+			'option'  => 'users_per_page',
 		);
 
 		add_screen_option( $option, $args );
@@ -727,7 +732,8 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			),
 		)
 		?>
-		<form method="post" action="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=update-settings', 1 ) ); ?>">
+		<form method="post"
+			  action="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=update-settings', 1 ) ); ?>">
 			<?php wp_nonce_field( 'keyword-update-settings' ); ?>
 			<?php
 			foreach ( $settings as $setting ) {
