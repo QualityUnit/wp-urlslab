@@ -43,8 +43,12 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 	}
 
 	function output_file_content( Urlslab_File_Data $file_obj ) {
-		global $wpdb;
-		ob_clean();
+		if ( ob_get_length() ) {
+			ob_clean();
+		}
+		if ( ! function_exists( 'wp_tempnam' ) ) {
+			require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		}
 		$local_tmp_file = wp_tempnam();
 		if ( $this->save_to_file( $file_obj, $local_tmp_file ) ) {
 			$serving_fp = fopen( $local_tmp_file, 'rb' );
