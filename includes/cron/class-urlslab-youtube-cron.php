@@ -4,7 +4,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
 class Urlslab_Youtube_Cron extends Urlslab_Cron {
 
 	protected function execute(): bool {
-		if ( ! get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_YOUTUBE_LAZY_LOADING, false ) || 0 == strlen( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_YOUTUBE_API_KEY, '' ) ) ) {
+		if ( ! get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_LAZY_LOADING, false ) || 0 == strlen( get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_API_KEY, '' ) ) ) {
 			return false;
 		}
 
