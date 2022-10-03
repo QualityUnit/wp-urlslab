@@ -387,7 +387,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				$img_url_object = new Urlslab_File_Data( array( 'url' => $dom_element->getAttribute( 'data-src' ) ) );
 			}
 
-			if ( isset( $this->files[ $img_url_object->get_fileid() ] ) && $this->files[ $img_url_object->get_fileid() ]->has_file_alternative() && count( $this->files[ $img_url_object->get_fileid() ]->get_alternatives() ) > 0 ) {
+			if ( is_object( $img_url_object ) && isset( $this->files[ $img_url_object->get_fileid() ] ) && $this->files[ $img_url_object->get_fileid() ]->has_file_alternative() && count( $this->files[ $img_url_object->get_fileid() ]->get_alternatives() ) > 0 ) {
 				//encapsulate img into picture element and add source tag for alternatives
 				$picture_element = $document->createElement( 'picture' );
 
