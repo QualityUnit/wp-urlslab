@@ -297,7 +297,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		foreach ( $sample_data as $kw => $url ) {
 			$data_row = new Urlslab_Url_Keyword_Data( $kw, 100, strlen( $kw ), 'all', $url, '.*' );
 			if ( $this->data_fetcher->prepare_url_batch_for_scheduling( array( new Urlslab_Url( $url ) ) ) ) {
-				$this->create_row( $data_row );
+				$this->create_keywords( array( $data_row ) );
 			}
 		}
 	}
@@ -468,6 +468,10 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		$row = 0;
 		$processed_rows = 0;
 		$handle = fopen( $file, 'r' );
+
+        $urls = array();
+        $keywords = array();
+
 		if ( false !== ( $handle ) ) {
 			wp_raise_memory_limit( 'admin' );
 			while ( ( $data = fgetcsv( $handle ) ) !== false ) {
@@ -481,40 +485,61 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				}
 				//Keyword, URL, Priority, Lang, Filter
 				try {
-					$data_row = new Urlslab_Url_Keyword_Data( $data[0], isset( $data[2] ) && is_numeric( $data[2] ) ? (int) $data[2] : 10, strlen( $data[0] ), isset( $data[3] ) && strlen( $data[3] ) > 0 ? $data[3] : 'all', $data[1], isset( $data[4] ) ? $data[4] : '.*' );
+                    $data_row = new Urlslab_Url_Keyword_Data( $data[0], isset( $data[2] ) && is_numeric( $data[2] ) ? (int) $data[2] : 10, strlen( $data[0] ), isset( $data[3] ) && strlen( $data[3] ) > 0 ? $data[3] : 'all', $data[1], isset( $data[4] ) ? $data[4] : '.*' );
+					$keywords[] = $data_row;
 
-					$result = $this->create_row( $data_row );
 					$scheduling_url = new Urlslab_Url( $data_row->get_keyword_url_link() );
 					if ( $scheduling_url->is_url_valid() ) {
-						$this->data_fetcher->prepare_url_batch_for_scheduling( array( $scheduling_url ) );
-					}
-					if ( $result ) {
-						$processed_rows++;
+                        $urls[$scheduling_url->get_url_id()] = $scheduling_url;
 					}
 				} catch ( Exception $e ) {
 					//# row not inserted
 				}
 			}
 			fclose( $handle );
+
+            //insert urls
+            $this->data_fetcher->prepare_url_batch_for_scheduling( $urls );
+
+            //insert keywords
+            $processed_rows = $this->create_keywords( $keywords );
+
 		}
 		return $processed_rows;
 	}
 
 	/**
-	 * @param Urlslab_Url_Keyword_Data $data_row
+	 * @param Urlslab_Url_Keyword_Data $keywords
 	 *
 	 * @return bool
 	 */
-	private function create_row( Urlslab_Url_Keyword_Data $data_row ): bool {
+	private function create_keywords(array $keywords ): int {
 		global $wpdb;
-		$update_query = 'INSERT INTO ' . URLSLAB_KEYWORDS_TABLE . ' (
+        $insert_placeholders = array();
+        $insert_values = array();
+        foreach ( $keywords as $keyword ) {
+            array_push(
+                $insert_values,
+                $keyword->get_kw_id(),
+                $keyword->get_keyword(),
+                $keyword->get_keyword_priority(),
+                $keyword->get_keyword_length(),
+                $keyword->get_keyword_url_lang(),
+                $keyword->get_keyword_url_link(),
+                $keyword->get_keyword_url_filter(),
+            );
+            $insert_placeholders[] = '(%d, %s, %d, %d, %s, %s, %s)';
+        }
+
+        $insert_query = 'INSERT IGNORE INTO ' . URLSLAB_KEYWORDS_TABLE . ' (
                    kw_id,
                    keyword,
                    kw_priority,
                    kw_length,
                    lang,
                    urlLink,
-                   urlFilter) VALUES (%d, %s, %d, %d, %s, %s, %s)
+                   urlFilter) 
+                   VALUES ' . implode( ', ', $insert_placeholders ) . '
                    ON DUPLICATE KEY UPDATE
                    kw_priority = VALUES(kw_priority),
                    kw_length = VALUES(kw_length),
@@ -522,21 +547,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
                    urlLink = VALUES(urlLink),
                    urlFilter = VALUES(urlFilter)';
 
-		$result = $wpdb->query(
-			$wpdb->prepare( $update_query, // phpcs:ignore
-				array(
-					$data_row->get_kw_id(),
-					$data_row->get_keyword(),
-					$data_row->get_keyword_priority(),
-					$data_row->get_keyword_length(),
-					$data_row->get_keyword_url_lang(),
-					$data_row->get_keyword_url_link(),
-					$data_row->get_keyword_url_filter(),
-				)
-			)
-		);
-
-		return is_numeric( $result );
+        return $wpdb->query( $wpdb->prepare( $insert_query, $insert_values ) ); // phpcs:ignore
 	}
 
 	public function render_manage_buttons() {

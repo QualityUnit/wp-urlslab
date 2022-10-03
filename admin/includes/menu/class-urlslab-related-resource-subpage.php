@@ -297,6 +297,10 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		//# Reading/Parsing CSV File
 		$row = 1;
 		$processed_rows = 0;
+
+        $urls = array();
+        $related_urls = array();
+
 		$handle = fopen( $file, 'r' );
 		if ( false !== ( $handle ) ) {
 			wp_raise_memory_limit( 'admin' );
@@ -312,56 +316,59 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 				}
 				//SrcUrl, DestUrl
 				try {
+
 					$data_row = array(
 						new Urlslab_Url( $data[0] ),
 						new Urlslab_Url( $data[1] ),
 					);
 
-					$res = $this->create_row( $data_row );
-					if ( $res ) {
-						$processed_rows++;
-					}
+                    $related_urls[] = $data_row;
+                    $urls[$data_row[0]->get_url_id()] = $data_row[0];
+                    $urls[$data_row[1]->get_url_id()] = $data_row[1];
 				} catch ( Exception $e ) {
 					//# handling the failure of a single row
 				}
 			}
 			fclose( $handle );
+
+            if ( ! $this->url_data_fetcher->prepare_url_batch_for_scheduling( $urls ) ) {
+                return false;
+            }
+
+            $res = $this->create_related_resources_rows( $related_urls );
+
 		}
 
 		return $processed_rows;
 	}
 
 	/**
-	 * @param Urlslab_Url[] $data srcUrl and destUrl
+	 * @param Urlslab_Url[] $related_resources srcUrl and destUrl
 	 *
 	 * @return bool
 	 */
-	private function create_row( array $data ): bool {
-		//# Scheduling Src and Dest URLs
-		if ( ! $this->url_data_fetcher->prepare_url_batch_for_scheduling( $data ) ) {
-			return false;
-		}
-		//# Scheduling Src and Dest URLs
+	private function create_related_resources_rows(array $related_resources ): int {
+        if (0 == count($related_resources)) {
+            return 0;
+        }
+        global $wpdb;
+        $insert_placeholders = array();
+        $insert_values = array();
+        foreach ( $related_resources as $related_resource ) {
+            array_push(
+                $insert_values,
+                $related_resource[0]->get_url_id(),
+                $related_resource[1]->get_url_id(),
+            );
+            $insert_placeholders[] = '(%d, %s)';
+        }
 
-		global $wpdb;
-		$table = URLSLAB_RELATED_RESOURCE_TABLE;
-
-		$update_query = "INSERT IGNORE INTO $table (
+        $insert_query = 'INSERT IGNORE INTO ' . URLSLAB_RELATED_RESOURCE_TABLE . ' (
                    srcUrlMd5,
-                   destUrlMd5) VALUES
-                   (%d, %d)";
+                   destUrlMd5
+                   ) VALUES ' . implode( ', ', $insert_placeholders );
 
-		$result = $wpdb->query(
-			$wpdb->prepare(
-				$update_query, // phpcs:ignore
-				array(
-					$data[0]->get_url_id(),
-					$data[1]->get_url_id(),
-				)
-			)
-		);
-
-		return is_numeric( $result );
+        return $wpdb->query( $wpdb->prepare( $insert_query, $insert_values ) ); // phpcs:ignore
 	}
 
 	private function export_csv_url_relations() {
@@ -437,6 +444,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 			}
 		}
 		$sample_urls = array_unique( $sample_urls );
+        $related_resources = array();
 		sort( $sample_urls, SORT_STRING | SORT_FLAG_CASE | SORT_NATURAL );
 
 		foreach ( $sample_urls as $id => $url ) {
@@ -445,14 +453,18 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		$max = count( $sample_urls );
 		for ( $i = 0; $i < $max; $i++ ) {
 			for ( $j = $i + 1; $j < $max && $j < ( $i + 10 ); $j++ ) {
-				$this->create_row(
-					array(
-						$sample_urls[ $i ],
-						$sample_urls[ $j ],
-					)
+                $related_resources[] = array(
+                    $sample_urls[ $i ],
+                    $sample_urls[ $j ],
 				);
 			}
 		}
+
+        if ( ! $this->url_data_fetcher->prepare_url_batch_for_scheduling( $sample_urls ) ) {
+            return false;
+        }
+
+        $this->create_related_resources_rows( $related_resources );
 	}
 
 	private function edit_url_relation(
