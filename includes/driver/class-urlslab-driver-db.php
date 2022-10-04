@@ -52,7 +52,7 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 			exit();
 		}
 		foreach ( $results as $row ) {
-			echo $row['content'];
+			echo $row['content']; // phpcs:ignore
 			if ( ob_get_length() ) {
 				ob_flush();
 			}
