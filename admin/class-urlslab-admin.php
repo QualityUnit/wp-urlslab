@@ -124,6 +124,14 @@ class Urlslab_Admin {
 			$this->version,
 			false
 		);
+		wp_localize_script(
+			$this->urlslab,
+			'params',
+			array(
+				'nonce' => wp_create_nonce( 'backlink_discovery_nonce' ),
+				'ajaxURL' => admin_url( 'admin-ajax.php' ),
+			)
+		);
 
 	}
 
@@ -144,7 +152,11 @@ class Urlslab_Admin {
 			80
 		);
 
-		$this->urlslab_menu_factory->init_admin_menus( $this->urlslab_loader );
+		$this->urlslab_menu_factory->init_admin_menus();
+	}
+
+	public function urlslab_page_ajax() {
+		$this->urlslab_menu_factory->init_page_ajax( $this->urlslab_loader );
 	}
 
 	function urlslab_load_add_widgets_page() {

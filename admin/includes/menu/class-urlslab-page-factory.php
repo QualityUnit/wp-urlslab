@@ -46,10 +46,18 @@ class Urlslab_Page_Factory {
 	/**
 	 * @return void
 	 */
-	public function init_admin_menus( Urlslab_Loader $urlslab_loader ) {
+	public function init_admin_menus() {
 		foreach ( self::$menus as $menu ) {
 			$menu->register_submenu(
 				self::$admin_plugin_main_page->get_menu_slug()
+			);
+		}
+	}
+
+	public function init_page_ajax( Urlslab_Loader $urlslab_loader ) {
+		foreach ( self::$menus as $menu ) {
+			$menu->init_ajax_hooks(
+				$urlslab_loader
 			);
 		}
 	}

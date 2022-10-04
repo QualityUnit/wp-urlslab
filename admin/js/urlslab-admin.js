@@ -163,6 +163,41 @@
 		},
 	};
 
+	//# Backlink ajax
+	const urlslabBacklinkReqObj = {
+
+		callAjaxMethod( destinationUrl ) {
+			$.get(
+				params.ajaxURL, {
+					action: 'urlslab_url_backlink_fetch',
+					urlId: destinationUrl,
+					security: params.nonce,
+				},
+				function( response ) {
+					// Do stuff here
+					console.log( response );
+				}
+			);
+
+			// wp.ajax.post('urlslab_url_backlink_fetch', {
+			// 	urlId: destinationUrl,
+			// 	nonce: window.securityNonce
+			// }).done(
+			// 	function (response) {
+			// 		//# add the list of source urls to ui
+			// 		console.log("got the response")
+			// 		console.log(response)
+			// 	}
+			// ).fail(
+			// 	function (reason) {
+			// 		console.log("there was an error! Oops")
+			// 		console.log(reason)
+			// 	}
+			// );
+		},
+
+	};
+
 	/** Functions */
 
 	$( document ).ready(
@@ -181,6 +216,8 @@
 					}
 				}
 			);
+
+			urlslabBacklinkReqObj.callAjaxMethod( 1 );
 
 			//# Modal
 

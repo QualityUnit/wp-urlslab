@@ -281,6 +281,7 @@ class Urlslab {
 	 */
 	private function define_admin_hooks() {
 		$plugin_admin = new Urlslab_Admin( $this->get_urlslab(), $this->get_version(), $this->loader );
+		$plugin_admin->urlslab_page_ajax();
 
 		$this->loader->add_action( 'admin_init', $this, 'urlslab_upgrade', 10, 0 );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
