@@ -43,17 +43,39 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 	}
 
 	function output_file_content( Urlslab_File_Data $file_obj ) {
+		$this->sanitize_output();
+
 		global $wpdb;
-		ob_clean();
-		$local_tmp_file = wp_tempnam();
-		if ( $this->save_to_file( $file_obj, $local_tmp_file ) ) {
-			$serving_fp = fopen( $local_tmp_file, 'rb' );
-			// dump the picture and stop the script
-			fpassthru( $serving_fp );
-			fclose( $serving_fp );
+		if ( is_object( $wpdb->dbh ) && $wpdb->use_mysqli ) {
+			$records = $wpdb->dbh->query( $wpdb->prepare( 'select content from ' . URLSLAB_FILE_CONTENTS_TABLE . ' WHERE fileid=%s ORDER BY contentid', $file_obj->get_fileid() ) ); // phpcs:ignore
+			if ( false === $records ) {
+				return; //no content???
+			}
+			while ( $data = $records->fetch_assoc() ) {
+				echo $data['content']; // phpcs:ignore
+				if ( ob_get_length() ) {
+					ob_flush();
+				}
+				flush();
+			}
+		} else {
+			//iteration through results set not supported, store to local file and pass through local file to browser
+			if ( ! function_exists( 'wp_tempnam' ) ) {
+				require_once( ABSPATH . 'wp-admin/includes/file.php' );
+			}
+			$local_tmp_file = wp_tempnam();
+			if ( $this->save_to_file( $file_obj, $local_tmp_file ) ) {
+				$serving_fp = fopen( $local_tmp_file, 'rb' );
+				fpassthru( $serving_fp );
+				fclose( $serving_fp );
+				if ( ob_get_length() ) {
+					ob_flush();
+				}
+				flush();
+			}
+			unlink( $local_tmp_file );
+			exit;
 		}
-		unlink( $local_tmp_file );
-		exit;
 	}
 
 	function get_file_content( Urlslab_File_Data $file_obj ) {

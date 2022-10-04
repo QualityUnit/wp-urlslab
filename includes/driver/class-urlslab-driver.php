@@ -170,4 +170,10 @@ abstract class Urlslab_Driver {
 	}
 
 
+	protected function sanitize_output() {
+		remove_all_actions( 'template_redirect' );
+		while ( ob_get_level() ) {
+			ob_end_clean();
+		}
+	}
 }
