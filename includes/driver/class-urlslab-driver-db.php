@@ -46,17 +46,18 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 		if ( ob_get_length() ) {
 			ob_clean();
 		}
-		if ( ! function_exists( 'wp_tempnam' ) ) {
-			require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		global $wpdb;
+		$results = $wpdb->get_results( $wpdb->prepare( 'select content from ' . URLSLAB_FILE_CONTENTS_TABLE . ' WHERE fileid=%s ORDER BY contentid', $file_obj->get_fileid() ), ARRAY_A ); // phpcs:ignore
+		if ( empty( $results ) ) {
+			exit();
 		}
-		$local_tmp_file = wp_tempnam();
-		if ( $this->save_to_file( $file_obj, $local_tmp_file ) ) {
-			$serving_fp = fopen( $local_tmp_file, 'rb' );
-			// dump the picture and stop the script
-			fpassthru( $serving_fp );
-			fclose( $serving_fp );
+		foreach ( $results as $row ) {
+			echo $row['content'];
+			if ( ob_get_length() ) {
+				ob_flush();
+			}
+			flush();
 		}
-		unlink( $local_tmp_file );
 		exit;
 	}
 
