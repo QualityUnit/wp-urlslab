@@ -62,7 +62,7 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 	}
 
 	private function get_youtube_microdata( Urlslab_Youtube_Data $youtube_obj ) {
-		$url     = 'https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet%2CcontentDetails&contentDetails.duration&id=' . $youtube_obj->get_videoid() . '&key=' . get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_YOUTUBE_API_KEY ); // json source
+		$url     = 'https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet%2CcontentDetails&contentDetails.duration&id=' . $youtube_obj->get_videoid() . '&key=' . get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_API_KEY ); // json source
 		$response = wp_remote_get( $url, array( 'sslverify' => false ) );
 		if ( ! is_wp_error( $response ) ) {
 			$value = json_decode( $response['body'] );
