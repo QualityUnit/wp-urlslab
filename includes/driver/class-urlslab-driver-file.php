@@ -50,6 +50,8 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 			return false;
 		}
 
+		$this->sanitize_output();
+
 		$handle = fopen( $file_obj->get_local_file(), 'rb' );
 		if ( false === $handle ) {
 			return false;

@@ -38,6 +38,8 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 			return;
 		}
 
+		$this->sanitize_output();
+
 		$result = $this->getClient()->getObject(
 			array(
 				'Bucket' => get_option( self::SETTING_NAME_S3_BUCKET, '' ),

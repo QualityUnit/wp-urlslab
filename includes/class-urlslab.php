@@ -308,7 +308,7 @@ class Urlslab {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-		$this->loader->add_action( 'template_redirect', $plugin_public, 'download_offloaded_file' );
+		$this->loader->add_action( 'template_redirect', $plugin_public, 'download_offloaded_file', PHP_INT_MAX );
 
 		//head content
 		$urlslab_user = Urlslab_User_Widget::get_instance();
