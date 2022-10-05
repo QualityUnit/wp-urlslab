@@ -451,7 +451,11 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		// create a nonce
 		$delete_nonce = wp_create_nonce( 'urlslab_delete_screenshot' );
 
-		$title = '<strong>' . esc_url( $item->get_url()->get_url() ) . '</strong>';
+		$title = sprintf(
+			"<strong><a target='_blank' href='%s'>%s</a></strong>",
+			'http://' . $item->get_url()->get_url(),
+			$item->get_url()->get_url(),
+		);
 
 		$actions = array();
 		if ( isset( $_REQUEST['page'] ) ) {

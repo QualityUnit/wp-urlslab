@@ -168,10 +168,10 @@
 	const urlslabBacklinkReqObj = {
 
 		callAjaxMethod( destinationUrl, parentElement ) {
-			const addingHtml = $("<tr></tr>")
-			const addingHtmlTd = $("<td colspan='9'></td>")
+			const addingHtml = $(`<tr id="container-url-backlink-${destinationUrl}"></tr>`)
+			const addingHtmlTd = $("<td colspan='10'></td>")
 			const that = this
-			addingHtmlTd.append(this.createHeader(addingHtml))
+			addingHtmlTd.append(this.createHeader())
 
 			if (backlinkRequestCache[destinationUrl] === undefined || backlinkRequestCache[destinationUrl] === null) {
 				$.get(
@@ -201,13 +201,10 @@
 			}
 		},
 
-		createHeader(expandedElement) {
-			const collapseBtn = $("<span class='backlink-show'>Collapse</span>")
+		createHeader() {
+			const collapseBtn = $("<h4>Backlinks: </h4>")
 			const header = $(`<div class="dropdown-header"></div>`);
 			header.append(collapseBtn)
-			collapseBtn.on("click", function () {
-				expandedElement.remove();
-			})
 			return header;
 		},
 
@@ -215,7 +212,7 @@
 			const addingHtmlContent = $("<ul class='ajax_container'></ul>");
 			rawData.forEach(elem => {
 				addingHtmlContent.append(
-					$(`<li>${elem}</li>`)
+					$(`<li><a target="_blank" href="http://${elem}">${elem}</a></li>`)
 				)
 			})
 			if (rawData.length === 0) {
@@ -249,7 +246,11 @@
 			$(".backlink-show").each(function () {
 				const urlId = $( this ).data("url-id");
 				$(this).on("click", function () {
-					urlslabBacklinkReqObj.callAjaxMethod(urlId, $(this).closest('tr'));
+					if ($(`#container-url-backlink-${urlId}`).length) {
+						$(`#container-url-backlink-${urlId}`).remove();
+					} else {
+						urlslabBacklinkReqObj.callAjaxMethod(urlId, $(this).closest('tr'));
+					}
 				});
 			});
 			//# Backlinks

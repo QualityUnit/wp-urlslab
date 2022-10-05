@@ -40,7 +40,7 @@ class Urlslab_Urls_Page extends Urlslab_Admin_Page {
 
 		return $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT v.urlName FROM $map_table AS d LEFT JOIN $source_table AS v ON d.destUrlMd5 = v.urlMd5 WHERE d.destUrlMd5 = %s", //#phpcs:ignore
+				"SELECT v.urlName FROM $map_table AS d LEFT JOIN $source_table AS v ON d.srcUrlMd5 = v.urlMd5 WHERE d.destUrlMd5 = %s", //#phpcs:ignore
 				$url_id
 			),
 			ARRAY_N
