@@ -3,7 +3,7 @@
  */
 
 const path = require('path');
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const OptimizeCssAssetsPlugin = require('image-minimizer-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -86,7 +86,6 @@ module.exports = {
           },
         },
       }),
-      new OptimizeCssAssetsPlugin({}),
     ],
   },
   plugins: [
