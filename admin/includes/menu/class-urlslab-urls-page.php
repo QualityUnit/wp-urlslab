@@ -18,9 +18,9 @@ class Urlslab_Urls_Page extends Urlslab_Admin_Page {
 	public function url_backlink_fetch() {
 		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
 			'GET' === $_SERVER['REQUEST_METHOD'] and
-			isset( $_GET['urlId'] ) ) {
+			isset( $_GET['data'] ) ) {
 			check_ajax_referer( 'backlink_discovery_nonce', 'security' );
-			$data = $this->fetch_url_backlink( $_GET['urlId'] );
+			$data = $this->fetch_url_backlink( $_GET['data'] );
 			wp_send_json_success( $data );
 		}
 
@@ -31,7 +31,7 @@ class Urlslab_Urls_Page extends Urlslab_Admin_Page {
 	/**
 	 * @param int $url_id
 	 *
-	 * @return string[]
+	 * @return array
 	 */
 	private function fetch_url_backlink( int $url_id ): array {
 		global $wpdb;
@@ -40,10 +40,20 @@ class Urlslab_Urls_Page extends Urlslab_Admin_Page {
 
 		return $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT v.urlName FROM $map_table AS d LEFT JOIN $source_table AS v ON d.srcUrlMd5 = v.urlMd5 WHERE d.destUrlMd5 = %s", //#phpcs:ignore
+				"SELECT     v.urlName AS urlName,
+       				              v.status AS status,
+                                  v.domainId AS domainId,
+                                  v.urlId AS urlId,
+                                  v.screenshotDate AS screenshotDate,
+       				              v.updateStatusDate AS updateStatusDate,
+       				              v.urlTitle AS urlTitle,
+                                  v.urlMetaDescription AS urlMetaDescription,
+                                  v.urlSummary AS urlSummary,
+       				              v.visibility AS visibility
+FROM $map_table AS d LEFT JOIN $source_table AS v ON d.srcUrlMd5 = v.urlMd5 WHERE d.destUrlMd5 = %s", //#phpcs:ignore
 				$url_id
 			),
-			ARRAY_N
+			ARRAY_A
 		);
 	}
 

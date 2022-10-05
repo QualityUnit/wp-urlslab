@@ -128,7 +128,8 @@ class Urlslab_Admin {
 			$this->urlslab,
 			'params',
 			array(
-				'nonce' => wp_create_nonce( 'backlink_discovery_nonce' ),
+				'kw_map_nonce' => wp_create_nonce( 'keyword_map_nonce' ),
+				'url_map_nonce' => wp_create_nonce( 'backlink_discovery_nonce' ),
 				'ajaxURL' => admin_url( 'admin-ajax.php' ),
 			)
 		);

@@ -182,6 +182,10 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 					esc_attr( $item->get_keyword_url_lang() ),
 					esc_attr( $item->get_keyword_url_filter() ),
 				),
+				'usage' => sprintf(
+					'<span class="keyword-map-show" data-kw-id="%s">Where is used?</span>',
+					$item->get_kw_id()
+				),
 			);
 		}
 

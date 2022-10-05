@@ -167,53 +167,79 @@
 	const backlinkRequestCache = {}
 	const urlslabBacklinkReqObj = {
 
-		callAjaxMethod( destinationUrl, parentElement ) {
-			const addingHtml = $(`<tr id="container-url-backlink-${destinationUrl}"></tr>`)
-			const addingHtmlTd = $("<td colspan='10'></td>")
-			const that = this
-			addingHtmlTd.append(this.createHeader())
-
-			if (backlinkRequestCache[destinationUrl] === undefined || backlinkRequestCache[destinationUrl] === null) {
+		callAjaxMethod( data, insertingElement, action, nonce ) {
+			insertingElement.empty();
+			if (backlinkRequestCache[data] === undefined || backlinkRequestCache[data] === null) {
 				$.get(
 					params.ajaxURL, {
-						action: 'urlslab_url_backlink_fetch',
-						urlId: destinationUrl,
-						security: params.nonce,
+						action: action,
+						data: data,
+						security: nonce,
 					}
 				).done(
 					function( response ) {
-						backlinkRequestCache[destinationUrl] = response.data
-						addingHtmlTd.append(that.createContent(response.data))
-						addingHtml.append(addingHtmlTd)
-						parentElement.after(addingHtml)
+						backlinkRequestCache[data] = response.data
+
+						response.data.forEach(rsp => {
+							let img = "";
+							if (response.data.state === "A") {
+								img = `<img src='https://urlslab.com/public/carousel/${rsp.domainId}/${rsp.urlId}/${rsp.screenshotData}'>`
+							}
+							insertingElement.append(
+								$(`
+						<div class="popup-ajax-container">
+							<div class="col-12">
+							<div class="float-left col-6">
+								<figure>
+									${img}
+								</figure>
+							</div>
+							<div class="float-left col-6">
+								<p><strong><a href="http://${rsp.urlName}">${rsp.urlName}</a></strong></p>
+								<p>${rsp.urlTitle}</p>
+							</div>
+</div>
+						</div>
+						`)
+							)
+						})
 					}
 				).fail(
 					function( reason ) {
-						addingHtmlTd.append($("<div class='ajax_container'></div>").text("Oops! something went wrong"))
-						addingHtml.append(addingHtmlTd)
-						parentElement.after(addingHtml)
+						insertingElement.append("Oops! something happened")
 					}
 				);
 			} else {
-				addingHtmlTd.append(that.createContent(backlinkRequestCache[destinationUrl]))
-				addingHtml.append(addingHtmlTd)
-				parentElement.after(addingHtml)
+				backlinkRequestCache[data].forEach(rsp => {
+					let img = "";
+					if (backlinkRequestCache[data].state === "A") {
+						img = `<img src='https://urlslab.com/public/carousel/${rsp.domainId}/${rsp.urlId}/${rsp.screenshotData}'>`
+					}
+					insertingElement.append(
+						$(`
+						<div class="popup-ajax-container">
+							<div class="col-12">
+							<div class="float-left col-6">
+								<figure>
+									${img}
+								</figure>
+							</div>
+							<div class="float-left col-6">
+								<p><strong><a href="http://${rsp.urlName}">${rsp.urlName}</a></strong></p>
+								<p>${rsp.urlTitle}</p>
+							</div>
+</div>
+						</div>
+						`)
+					)
+				})
 			}
-		},
-
-		createHeader() {
-			const collapseBtn = $("<h4>Backlinks: </h4>")
-			const header = $(`<div class="dropdown-header"></div>`);
-			header.append(collapseBtn)
-			return header;
 		},
 
 		createContent(rawData) {
 			const addingHtmlContent = $("<ul class='ajax_container'></ul>");
 			rawData.forEach(elem => {
-				addingHtmlContent.append(
-					$(`<li><a target="_blank" href="http://${elem}">${elem}</a></li>`)
-				)
+
 			})
 			if (rawData.length === 0) {
 				addingHtmlContent.text("No backlinks found!")
@@ -242,18 +268,41 @@
 				}
 			);
 
+
+
+			$("#empty-url-backlinks-modal").dialog(
+				{
+					modal: true,
+					dialogClass: 'no-close',
+					minWidth: 500,
+					autoOpen: false,
+					closeOnEscape: true,
+					closeText: '',
+				}
+			);
+			$("#empty-url-backlinks-modal").removeClass('d-none')
 			//# Backlinks
 			$(".backlink-show").each(function () {
 				const urlId = $( this ).data("url-id");
 				$(this).on("click", function () {
-					if ($(`#container-url-backlink-${urlId}`).length) {
-						$(`#container-url-backlink-${urlId}`).remove();
-					} else {
-						urlslabBacklinkReqObj.callAjaxMethod(urlId, $(this).closest('tr'));
-					}
+					$("#empty-url-backlinks-modal").dialog( 'open' );
+					urlslabBacklinkReqObj.callAjaxMethod(urlId, $("#modal-content"), 'urlslab_url_backlink_fetch', params.url_map_nonce);
 				});
 			});
 			//# Backlinks
+
+			//# Keyword mappings
+			$(".keyword-map-show").each(function () {
+				const kwId = $( this ).data("kw-id");
+				$(this).on("click", function () {
+					if ($(`#ajax-content-container-${kwId}`).length) {
+						$(`#ajax-content-container-${kwId}`).remove();
+					} else {
+						urlslabBacklinkReqObj.callAjaxMethod(kwId, $(this).closest('tr'), 'urlslab_keyword_usage', params.kw_map_nonce, 6);
+					}
+				});
+			});
+			//# Keyword mappings
 
 			//# Modal
 

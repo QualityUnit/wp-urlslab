@@ -302,6 +302,38 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		}
 	}
 
+	public function urlslab_keyword_usage() {
+		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
+			 'GET' === $_SERVER['REQUEST_METHOD'] and
+			 isset( $_GET['data'] ) ) {
+			check_ajax_referer( 'keyword_map_nonce', 'security' );
+			$data = $this->fetch_keyword_usage( $_GET['data'] );
+			wp_send_json_success( $data );
+		}
+
+		wp_send_json_error( array( 'error' => 'Bad Request' ) );
+	}
+
+	/**
+	 * @param int $kw_id
+	 *
+	 * @return string[]
+	 */
+	private function fetch_keyword_usage( int $kw_id ): array {
+		global $wpdb;
+		$map_table = URLSLAB_KEYWORDS_MAP_TABLE;
+		$source_table = URLSLAB_URLS_TABLE;
+
+		return $wpdb->get_results(
+			$wpdb->prepare(
+			    "SELECT v.urlName FROM $map_table AS d LEFT JOIN $source_table AS v ON d.urlMd5 = v.urlMd5 WHERE d.kw_id = %s", //#phpcs:ignore
+				$kw_id
+			),
+			ARRAY_N
+		);
+
+	}
+
 	private function clear_keywords() {
 		global $wpdb;
 		$table = URLSLAB_KEYWORDS_TABLE;

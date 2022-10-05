@@ -520,17 +520,27 @@ figure {
 
 /** Urlslab Backlinks **/
 
-.backlink-show {
+.backlink-show, .keyword-map-show {
 	color: #2271b1;
 	cursor: pointer;
 }
 
-.backlink-show:hover {
+.backlink-show:hover, .keyword-map-show:hover {
 	text-decoration: underline;
 }
 
 .ajax_container {
 	width: 100% !important;
+}
+
+.popup-ajax-container {
+	box-sizing: border-box;
+	padding: 15px;
+	margin-bottom: 10px;
+	float: left;
+	border: 3px solid #0aa8a7;
+	width: 100%;
+	border-radius: 10px;
 }
 
 /** Urlslab Backlinks **/
