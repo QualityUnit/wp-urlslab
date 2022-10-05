@@ -9,9 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node_version: ["14", "16", "17"]
 
     steps:
       - uses: actions/checkout@v3
@@ -19,7 +16,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node_version }}
+          node-version: 18
 
       - name: Install Yarn dependencies
         run: yarn
