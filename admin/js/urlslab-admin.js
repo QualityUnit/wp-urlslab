@@ -164,37 +164,65 @@
 	};
 
 	//# Backlink ajax
+	const backlinkRequestCache = {}
 	const urlslabBacklinkReqObj = {
 
-		callAjaxMethod( destinationUrl ) {
-			$.get(
-				params.ajaxURL, {
-					action: 'urlslab_url_backlink_fetch',
-					urlId: destinationUrl,
-					security: params.nonce,
-				},
-				function( response ) {
-					// Do stuff here
-					console.log( response );
-				}
-			);
+		callAjaxMethod( destinationUrl, parentElement ) {
+			const addingHtml = $("<tr></tr>")
+			const addingHtmlTd = $("<td colspan='9'></td>")
+			const that = this
+			addingHtmlTd.append(this.createHeader(addingHtml))
 
-			// wp.ajax.post('urlslab_url_backlink_fetch', {
-			// 	urlId: destinationUrl,
-			// 	nonce: window.securityNonce
-			// }).done(
-			// 	function (response) {
-			// 		//# add the list of source urls to ui
-			// 		console.log("got the response")
-			// 		console.log(response)
-			// 	}
-			// ).fail(
-			// 	function (reason) {
-			// 		console.log("there was an error! Oops")
-			// 		console.log(reason)
-			// 	}
-			// );
+			if (backlinkRequestCache[destinationUrl] === undefined || backlinkRequestCache[destinationUrl] === null) {
+				$.get(
+					params.ajaxURL, {
+						action: 'urlslab_url_backlink_fetch',
+						urlId: destinationUrl,
+						security: params.nonce,
+					}
+				).done(
+					function( response ) {
+						backlinkRequestCache[destinationUrl] = response.data
+						addingHtmlTd.append(that.createContent(response.data))
+						addingHtml.append(addingHtmlTd)
+						parentElement.after(addingHtml)
+					}
+				).fail(
+					function( reason ) {
+						addingHtmlTd.append($("<div class='ajax_container'></div>").text("Oops! something went wrong"))
+						addingHtml.append(addingHtmlTd)
+						parentElement.after(addingHtml)
+					}
+				);
+			} else {
+				addingHtmlTd.append(that.createContent(backlinkRequestCache[destinationUrl]))
+				addingHtml.append(addingHtmlTd)
+				parentElement.after(addingHtml)
+			}
 		},
+
+		createHeader(expandedElement) {
+			const collapseBtn = $("<span class='backlink-show'>Collapse</span>")
+			const header = $(`<div class="dropdown-header"></div>`);
+			header.append(collapseBtn)
+			collapseBtn.on("click", function () {
+				expandedElement.remove();
+			})
+			return header;
+		},
+
+		createContent(rawData) {
+			const addingHtmlContent = $("<ul class='ajax_container'></ul>");
+			rawData.forEach(elem => {
+				addingHtmlContent.append(
+					$(`<li>${elem}</li>`)
+				)
+			})
+			if (rawData.length === 0) {
+				addingHtmlContent.text("No backlinks found!")
+			}
+			return addingHtmlContent;
+		}
 
 	};
 
@@ -217,7 +245,14 @@
 				}
 			);
 
-			urlslabBacklinkReqObj.callAjaxMethod( 1 );
+			//# Backlinks
+			$(".backlink-show").each(function () {
+				const urlId = $( this ).data("url-id");
+				$(this).on("click", function () {
+					urlslabBacklinkReqObj.callAjaxMethod(urlId, $(this).closest('tr'));
+				});
+			});
+			//# Backlinks
 
 			//# Modal
 

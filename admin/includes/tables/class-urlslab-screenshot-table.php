@@ -465,6 +465,10 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 					esc_attr( $item->get_url()->get_url_id() ),
 					$delete_nonce
 				),
+				'backlinks' => sprintf(
+					'<span class="backlink-show" data-url-id="%s">Backlinks</span>',
+					esc_attr( $item->get_url()->get_url_id() ),
+				),
 			);
 		}
 
