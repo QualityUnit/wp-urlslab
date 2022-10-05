@@ -42,7 +42,8 @@
     "webpack-merge": "^5.8.0"
   },
   "engines": {
-    "node": "^12 || >=14"
+    "node": "18.10.0",
+    "npm": ">=8.19.2"
   },
   "license": "MIT",
   "private": false,
