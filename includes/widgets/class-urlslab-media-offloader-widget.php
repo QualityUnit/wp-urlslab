@@ -65,6 +65,9 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public const SETTING_DEFAULT_MEDIA_CACHE_EXPIRE_TIME = 31536000;
 	public const SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME = 'urlslab_media_cache_expire';
 
+	public const SETTING_NAME_IMAGE_RESIZING = 'urlslab_img_resize';
+	public const SETTING_DEFAULT_IMAGE_RESIZING = 1;
+
 
 	private $files = array();
 
@@ -580,6 +583,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 		add_option( self::SETTING_NAME_USE_AVIF_ALTERNATIVE, false, '', true );
 		add_option( self::SETTING_NAME_USE_WEBP_ALTERNATIVE, false, '', true );
+		add_option( self::SETTING_NAME_IMAGE_RESIZING, self::SETTING_DEFAULT_IMAGE_RESIZING, '', false );
 		add_option( self::SETTING_NAME_WEPB_QUALITY, self::SETTING_DEFAULT_WEPB_QUALITY, '', false );
 		add_option( self::SETTING_NAME_AVIF_QUALITY, self::SETTING_DEFAULT_AVIF_QUALITY, '', false );
 		add_option( self::SETTING_NAME_AVIF_SPEED, self::SETTING_DEFAULT_AVIF_SPEED, '', false );
@@ -708,6 +712,18 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			update_option(
 				self::SETTING_NAME_USE_WEBP_ALTERNATIVE,
 				false
+			);
+		}
+		if ( isset( $new_settings[ self::SETTING_NAME_IMAGE_RESIZING ] ) &&
+			 ! empty( $new_settings[ self::SETTING_NAME_IMAGE_RESIZING ] ) ) {
+			update_option(
+				self::SETTING_NAME_IMAGE_RESIZING,
+				1
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_IMAGE_RESIZING,
+				0
 			);
 		}
 

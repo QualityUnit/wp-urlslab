@@ -65,7 +65,22 @@ abstract class Urlslab_Driver {
 		} elseif ( strlen( $file->get_url() ) ) {
 			$local_tmp_file = download_url( $file->get_url() );
 			if ( is_wp_error( $local_tmp_file ) ) {
-				return false;
+				if (
+					get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMAGE_RESIZING, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_IMAGE_RESIZING ) &&
+					404 == $local_tmp_file->get_error_data( 'http_404' )['code'] &&
+					preg_match( '/^(.*?)-([0-9]*?)x([0-9]*?)\.(.*?)$/', $file->get_url(), $matches )
+				) {
+					$original_tmp_file = download_url( $matches[1] . '.' . $matches[4] );
+					if ( ! is_wp_error( $original_tmp_file ) ) {
+						$local_tmp_file = $this->resize_image( $original_tmp_file, $matches[2], $matches[3] );
+						unlink( $original_tmp_file );
+						if ( false === $local_tmp_file ) {
+							return false;
+						}
+					} else {
+						return false;
+					}
+				}
 			}
 			$file_size = filesize( $local_tmp_file );
 			if ( $file_size && ( empty( $file->get_filesize() ) || $file->get_filesize() != $file_size ) ) {
@@ -90,6 +105,58 @@ abstract class Urlslab_Driver {
 			}
 		}
 		return $result;
+	}
+
+	private function resize_image( $file, $w, $h ) {
+		$img_info = getimagesize( $file );
+		$width = $img_info[0];
+		$height = $img_info[1];
+
+		$r = $width / $height;
+		if ( $w / $h > $r ) {
+			$newwidth = $h * $r;
+			$newheight = $h;
+		} else {
+			$newheight = $w / $r;
+			$newwidth = $w;
+		}
+
+		switch ( $img_info['mime'] ) {
+			case 'image/png':
+				$src = imagecreatefrompng( $file );
+				break;
+			case 'image/bmp':
+				$src = imagecreatefrombmp( $file );
+				break;
+			case 'image/gif':
+				$src = imagecreatefromgif( $file );
+				break;
+			case 'image/jpg':
+				$src = imagecreatefromjpeg( $file );
+				break;
+			default:
+				return false;
+		}
+		$dst = imagecreatetruecolor( $newwidth, $newheight );
+		imagecopyresampled( $dst, $src, 0, 0, 0, 0, $newwidth, $newheight, $width, $height );
+		$tmp_name = wp_tempnam();
+		switch ( $img_info['mime'] ) {
+			case 'image/png':
+				imagepng( $dst, $tmp_name );
+				break;
+			case 'image/bmp':
+				imagebmp( $dst, $tmp_name );
+				break;
+			case 'image/gif':
+				imagegif( $dst, $tmp_name );
+				break;
+			case 'image/jpg':
+				imagejpeg( $dst, $tmp_name );
+				break;
+			default:
+				return false;
+		}
+		return $tmp_name;
 	}
 
 	public static function get_driver( Urlslab_File_Data $file ): Urlslab_Driver {

@@ -53,7 +53,7 @@ class Urlslab_Lazyload_Subpage extends Urlslab_Admin_Subpage {
 		?>
 		<form method="post" action="<?php echo esc_url( $this->parent_page->menu_page( 'lazy-load', 'action=update-lazy-loading-settings', 1 ) ); ?>">
 			<?php wp_nonce_field( 'lazy-loading-update' ); ?>
-			<h3>Image Conversion</h3>
+			<h3>Lazy Loading</h3>
 			<?php
 			foreach ( $settings as $setting ) {
 				$setting->render_setting();
