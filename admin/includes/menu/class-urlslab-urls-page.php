@@ -21,7 +21,14 @@ class Urlslab_Urls_Page extends Urlslab_Admin_Page {
 			isset( $_GET['data'] ) ) {
 			check_ajax_referer( 'backlink_discovery_nonce', 'security' );
 			$data = $this->fetch_url_backlink( $_GET['data'] );
-			wp_send_json_success( $data );
+			wp_send_json_success(
+				array(
+					array(
+						'title' => 'Backlinks',
+						'data' => $data,
+					),
+				) 
+			);
 		}
 
 		wp_send_json_error( array( 'error' => 'Bad Request' ) );

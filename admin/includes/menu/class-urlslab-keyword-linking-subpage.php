@@ -307,8 +307,20 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			 'GET' === $_SERVER['REQUEST_METHOD'] and
 			 isset( $_GET['data'] ) ) {
 			check_ajax_referer( 'keyword_map_nonce', 'security' );
-			$data = $this->fetch_keyword_usage( $_GET['data'] );
-			wp_send_json_success( $data );
+			$kw_usage = $this->fetch_keyword_usage( $_GET['data'] );
+			$kw_recommendation = $this->fetch_recommended_urls_to( $kw_usage );
+			wp_send_json_success(
+				array(
+					array(
+						'title' => 'Keyword is used in:',
+						'data' => $kw_usage,
+					),
+					array(
+						'title' => 'Recommended Urls to include keyword in:',
+						'data' => $kw_recommendation,
+					),
+				)
+			);
 		}
 
 		wp_send_json_error( array( 'error' => 'Bad Request' ) );
@@ -326,7 +338,8 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 
 		return $wpdb->get_results(
 			$wpdb->prepare(
-			    "SELECT v.urlName AS urlName,
+				"SELECT     v.urlMd5 AS urlMd5,
+                                  v.urlName AS urlName,
        				              v.status AS status,
                                   v.domainId AS domainId,
                                   v.urlId AS urlId,
@@ -340,7 +353,42 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			),
 			ARRAY_A
 		);
+	}
 
+	private function fetch_recommended_urls_to( array $urls ) {
+		if ( empty( $urls ) ) {
+			return array();
+		}
+		global $wpdb;
+		$related_resource_table = URLSLAB_RELATED_RESOURCE_TABLE;
+		$source_table = URLSLAB_URLS_TABLE;
+		$placeholder = array();
+		$values = array();
+		foreach ( $urls as $url ) {
+			$placeholder[] = '(%s)';
+			$values[] = $url['urlMd5'];
+		}
+		$placeholder_string = implode( ', ', $placeholder );
+		return $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT v.urlMd5             AS urlMd5,
+       v.urlName            AS urlName,
+       v.status             AS status,
+       v.domainId           AS domainId,
+       v.urlId              AS urlId,
+       v.screenshotDate     AS screenshotDate,
+       v.updateStatusDate   AS updateStatusDate,
+       v.urlTitle           AS urlTitle,
+       v.urlMetaDescription AS urlMetaDescription,
+       v.urlSummary         AS urlSummary,
+       v.visibility         AS visibility
+FROM $related_resource_table AS d
+         LEFT JOIN $source_table AS v ON d.destUrlMd5 = v.urlMd5
+WHERE d.srcUrlMd5 IN ($placeholder_string)", //#phpcs:ignore
+				$values
+			),
+			ARRAY_A
+		);
 	}
 
 	private function clear_keywords() {

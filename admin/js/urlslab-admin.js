@@ -164,43 +164,26 @@
 	};
 
 	//# Backlink ajax
-	const backlinkRequestCache = {}
-	const urlslabBacklinkReqObj = {
+	const cache = {}
+	const urlslabRequest = {
 
-		callAjaxMethod( data, insertingElement, action, nonce ) {
+		callAjaxMethod(cacheId, inputData, action, nonce, ajaxURL) {
+			$("#empty-url-backlinks-modal").dialog( 'open' );
+			const insertingElement = $("#modal-content");
+
 			insertingElement.empty();
-			if (backlinkRequestCache[data] === undefined || backlinkRequestCache[data] === null) {
+			if (cache[cacheId] === undefined || cache[cacheId] === null) {
+				const that = this;
 				$.get(
-					params.ajaxURL, {
+					ajaxURL, {
 						action: action,
-						data: data,
+						data: inputData,
 						security: nonce,
 					}
 				).done(
 					function( response ) {
-						backlinkRequestCache[data] = response.data
-
-						if(response.data.length === 0) {
-							insertingElement.append("No url to show")
-						}
-
-						response.data.forEach(rsp => {
-							insertingElement.append(
-								$(`
-						<div class="popup-ajax-container">
-							<div class="col-12">
-							<div class="float-left col-6">
-								<a href="http://${rsp.urlName}" target="_blank">${rsp.urlName}</a>
-							</div>
-							<div class="float-left col-6">
-															&nbsp;&nbsp;&nbsp;${rsp.urlTitle}
-
-</div>
-</div>
-						</div>
-						`)
-							)
-						})
+						cache[cacheId] = response.data
+						that.generateContent(cacheId, insertingElement)
 					}
 				).fail(
 					function( reason ) {
@@ -208,30 +191,36 @@
 					}
 				);
 			} else {
-				if(backlinkRequestCache[data].length === 0) {
-					insertingElement.append("No url to show")
-				}
+				this.generateContent(cacheId, insertingElement)
+			}
+		},
 
-				backlinkRequestCache[data].forEach(rsp => {
-					insertingElement.append(
+		generateContent( cacheId, insertingElement ) {
+			cache[cacheId].forEach(section => {
+				const sectionContainer = $("<div></div>");
+				sectionContainer.append($(`<h4>${section.title}</h4>`));
+				if(section.data.length === 0) {
+					sectionContainer.append("No data to show...")
+				}
+				section.data.forEach(data => {
+					sectionContainer.append(
 						$(`
 						<div class="popup-ajax-container">
 							<div class="col-12">
-							<div class="float-left col-6">
-								<a href="http://${rsp.urlName}" target="_blank">${rsp.urlName}</a>
+								<div class="float-left col-6">
+									<a href="http://${data.urlName}" target="_blank">${data.urlName}</a>
+								</div>
+								<div class="float-left col-6">&nbsp;&nbsp;&nbsp;${data.urlTitle}</div>
 							</div>
-							<div class="float-left col-6">
-															&nbsp;&nbsp;&nbsp;${rsp.urlTitle}
-
-</div>
-</div>
 						</div>
 						`)
 					)
 				})
-			}
+				insertingElement.append(sectionContainer)
+			})
 		}
-	};
+
+	}
 
 	/** Functions */
 
@@ -269,8 +258,7 @@
 			$(".backlink-show").each(function () {
 				const urlId = $( this ).data("url-id");
 				$(this).on("click", function () {
-					$("#empty-url-backlinks-modal").dialog( 'open' );
-					urlslabBacklinkReqObj.callAjaxMethod(urlId, $("#modal-content"), 'urlslab_url_backlink_fetch', params.url_map_nonce);
+					urlslabRequest.callAjaxMethod(urlId, urlId, "urlslab_url_backlink_fetch", params.url_map_nonce, params.ajaxURL)
 				});
 			});
 			//# Backlinks
@@ -279,8 +267,7 @@
 			$(".keyword-map-show").each(function () {
 				const kwId = $( this ).data("kw-id");
 				$(this).on("click", function () {
-					$("#empty-url-backlinks-modal").dialog( 'open' );
-					urlslabBacklinkReqObj.callAjaxMethod(kwId, $("#modal-content"), 'urlslab_keyword_usage', params.kw_map_nonce);
+					urlslabRequest.callAjaxMethod(kwId, kwId, "urlslab_keyword_usage", params.kw_map_nonce, params.ajaxURL)
 				});
 			});
 			//# Keyword mappings
