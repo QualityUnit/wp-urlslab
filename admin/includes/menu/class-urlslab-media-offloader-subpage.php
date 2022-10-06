@@ -206,6 +206,13 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 				'Avif conversion speed',
 				'Number between 0 and 10'
 			),
+			new Urlslab_Setting_Switch(
+				'image-opt[]',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_IMAGE_RESIZING,
+				'If image of smaller size doesn\'t exist, but image url is used in the content, create copy of original image with smaller size. e.g. if /img/myimage-340x200.jpg doesn\'t exist, but there is /img/myimage.jpg, plugin will create smaller image from original source',
+				'Resize missing image sizes',
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMAGE_RESIZING, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_IMAGE_RESIZING )
+			),
 		);
 
 		?>
