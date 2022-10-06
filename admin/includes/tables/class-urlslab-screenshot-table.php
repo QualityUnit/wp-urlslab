@@ -35,6 +35,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 	private function get_url_screenshots( string $url_status_filter, string $url_search_key, int $limit, int $offset ): array {
 		global $wpdb;
 		$table = URLSLAB_URLS_TABLE;
+		$join_table = URLSLAB_URLS_MAP_TABLE;
 		$values = array();
 
 		/* -- Preparing your query -- */
@@ -49,7 +50,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
        v.urlSummary AS urlSummary,
        v.visibility AS visibility,
        SUM(!ISNULL(d.destUrlMd5)) AS backlinkCnt
-FROM ms_urlslab_urls AS v LEFT JOIN ms_urlslab_urls_map AS d ON d.destUrlMd5 = v.urlMd5
+FROM $table AS v LEFT JOIN $join_table AS d ON d.destUrlMd5 = v.urlMd5
 GROUP BY urlMd5
 ";
 
