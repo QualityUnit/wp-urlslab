@@ -23,6 +23,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 			$row['urlSummary'],
 			$row['status'],
 			$row['visibility'],
+			$row['backlinkCnt']
 		);
 	}
 
@@ -37,7 +38,20 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		$values = array();
 
 		/* -- Preparing your query -- */
-		$query = "SELECT * FROM $table";
+		$query = "SELECT v.urlName AS urlName,
+       v.status AS status,
+       v.domainId AS domainId,
+       v.urlId AS urlId,
+       v.screenshotDate AS screenshotDate,
+       v.updateStatusDate AS updateStatusDate,
+       v.urlTitle AS urlTitle,
+       v.urlMetaDescription AS urlMetaDescription,
+       v.urlSummary AS urlSummary,
+       v.visibility AS visibility,
+       COALESCE(d.cnt, 0) AS backlinkCnt FROM $table AS v LEFT JOIN (
+    SELECT destUrlMd5 AS destinationUrl, COUNT(*) AS cnt FROM ms_urlslab_urls_map
+                                                  GROUP BY destUrlMd5
+) AS d ON d.destinationUrl = urlMd5";
 
 		/* -- Preparing the condition -- */
 		if ( ! empty( $url_status_filter ) ) {
@@ -195,6 +209,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 			'col_url_title' => 'Url Title',
 			'col_url_meta_description' => 'Url Meta Description',
 			'col_url_summary' => 'Url Summary',
+			'col_backlink_cnt' => 'Backlink Count',
 		);
 
 		if ( Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-link-enhancer' )->visibility_active_in_table() ) {
@@ -434,6 +449,8 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 				return esc_attr( $item->get_url_meta_description() ) ?? '';
 			case 'col_url_summary':
 				return esc_attr( $item->get_url_summary() ) ?? '';
+			case 'col_backlink_cnt':
+				return esc_html( $item->get_backlink_cnt() );
 			default:
 				return print_r( $item, true ); //Show the whole array for troubleshooting purposes
 		}
@@ -537,6 +554,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		return array(
 			'col_url_name' => 'urlName',
 			'col_update_status_date' => 'updateStatusDate',
+			'col_backlink_cnt' => 'backlinkCnt',
 		);
 	}
 

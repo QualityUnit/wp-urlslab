@@ -17,6 +17,7 @@ class Urlslab_Url_Data {
 	private ?string $screenshot_status;
 	private int $wp_pageid = -1;
 	private ?string $visibility = self::VISIBILITY_VISIBLE;
+	private int $backlink_cnt = 0;
 
 	/**
 	 * @param Urlslab_Url $url
@@ -28,6 +29,8 @@ class Urlslab_Url_Data {
 	 * @param $url_meta_description
 	 * @param $url_summary
 	 * @param $screenshot_status
+	 * @param string $visibility
+	 * @param int $backlinkCount
 	 */
 	public function __construct(
 		Urlslab_Url $url,
@@ -39,7 +42,8 @@ class Urlslab_Url_Data {
 					$url_meta_description,
 					$url_summary,
 					$screenshot_status,
-					$visibility = self::VISIBILITY_VISIBLE
+					$visibility = self::VISIBILITY_VISIBLE,
+					$backlink_count = 0
 	) {
 		$this->url                     = $url;
 		$this->domain_id               = $domain_id;
@@ -51,6 +55,7 @@ class Urlslab_Url_Data {
 		$this->url_summary             = $url_summary;
 		$this->screenshot_status       = $screenshot_status;
 		$this->visibility       = $visibility;
+		$this->backlink_cnt = $backlink_count;
 	}
 
 	static function empty( Urlslab_Url $url, string $urlslab_status ): Urlslab_Url_Data {
@@ -169,6 +174,13 @@ class Urlslab_Url_Data {
 
 	public function is_visible() {
 		return self::VISIBILITY_VISIBLE === $this->visibility;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function get_backlink_cnt(): int {
+		return $this->backlink_cnt;
 	}
 
 	/**
