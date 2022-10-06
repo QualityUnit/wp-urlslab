@@ -48,10 +48,10 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
        v.urlMetaDescription AS urlMetaDescription,
        v.urlSummary AS urlSummary,
        v.visibility AS visibility,
-       COALESCE(d.cnt, 0) AS backlinkCnt FROM $table AS v LEFT JOIN (
-    SELECT destUrlMd5 AS destinationUrl, COUNT(*) AS cnt FROM ms_urlslab_urls_map
-                                                  GROUP BY destUrlMd5
-) AS d ON d.destinationUrl = urlMd5";
+       SUM(!ISNULL(d.destUrlMd5)) AS backlinkCnt
+FROM ms_urlslab_urls AS v LEFT JOIN ms_urlslab_urls_map AS d ON d.destUrlMd5 = v.urlMd5
+GROUP BY urlMd5
+";
 
 		/* -- Preparing the condition -- */
 		if ( ! empty( $url_status_filter ) ) {
