@@ -14,6 +14,8 @@ class Urlslab_Media_Page extends Urlslab_Admin_Page {
 		$this->lazyload_subpage = new Urlslab_Lazyload_Subpage( $this );
 	}
 
+	public function init_ajax_hooks( Urlslab_Loader $urlslab_loader ) {}
+
 	public function on_page_load( string $action, string $component ) {
 
 		$active_tab = $this->get_active_page_tab();

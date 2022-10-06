@@ -23,6 +23,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 			$row['urlSummary'],
 			$row['status'],
 			$row['visibility'],
+			$row['backlinkCnt']
 		);
 	}
 
@@ -34,10 +35,24 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 	private function get_url_screenshots( string $url_status_filter, string $url_search_key, int $limit, int $offset ): array {
 		global $wpdb;
 		$table = URLSLAB_URLS_TABLE;
+		$join_table = URLSLAB_URLS_MAP_TABLE;
 		$values = array();
 
 		/* -- Preparing your query -- */
-		$query = "SELECT * FROM $table";
+		$query = "SELECT v.urlName AS urlName,
+       v.status AS status,
+       v.domainId AS domainId,
+       v.urlId AS urlId,
+       v.screenshotDate AS screenshotDate,
+       v.updateStatusDate AS updateStatusDate,
+       v.urlTitle AS urlTitle,
+       v.urlMetaDescription AS urlMetaDescription,
+       v.urlSummary AS urlSummary,
+       v.visibility AS visibility,
+       SUM(!ISNULL(d.destUrlMd5)) AS backlinkCnt
+FROM $table AS v LEFT JOIN $join_table AS d ON d.destUrlMd5 = v.urlMd5
+GROUP BY urlMd5
+";
 
 		/* -- Preparing the condition -- */
 		if ( ! empty( $url_status_filter ) ) {
@@ -195,6 +210,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 			'col_url_title' => 'Url Title',
 			'col_url_meta_description' => 'Url Meta Description',
 			'col_url_summary' => 'Url Summary',
+			'col_backlink_cnt' => 'Backlink Count',
 		);
 
 		if ( Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-link-enhancer' )->visibility_active_in_table() ) {
@@ -434,6 +450,8 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 				return esc_attr( $item->get_url_meta_description() ) ?? '';
 			case 'col_url_summary':
 				return esc_attr( $item->get_url_summary() ) ?? '';
+			case 'col_backlink_cnt':
+				return esc_html( $item->get_backlink_cnt() );
 			default:
 				return print_r( $item, true ); //Show the whole array for troubleshooting purposes
 		}
@@ -451,7 +469,11 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		// create a nonce
 		$delete_nonce = wp_create_nonce( 'urlslab_delete_screenshot' );
 
-		$title = '<strong>' . esc_url( $item->get_url()->get_url() ) . '</strong>';
+		$title = sprintf(
+			"<strong><a target='_blank' href='%s'>%s</a></strong>",
+			'http://' . $item->get_url()->get_url(),
+			$item->get_url()->get_url(),
+		);
 
 		$actions = array();
 		if ( isset( $_REQUEST['page'] ) ) {
@@ -464,6 +486,10 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 					'delete',
 					esc_attr( $item->get_url()->get_url_id() ),
 					$delete_nonce
+				),
+				'backlinks' => sprintf(
+					'<span class="backlink-show" data-url-id="%s">Backlinks</span>',
+					esc_attr( $item->get_url()->get_url_id() ),
 				),
 			);
 		}
@@ -529,6 +555,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		return array(
 			'col_url_name' => 'urlName',
 			'col_update_status_date' => 'updateStatusDate',
+			'col_backlink_cnt' => 'backlinkCnt',
 		);
 	}
 

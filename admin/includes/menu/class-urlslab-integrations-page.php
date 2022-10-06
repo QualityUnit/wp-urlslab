@@ -11,6 +11,8 @@ class Urlslab_Integrations_Page extends Urlslab_Admin_Page {
 		$this->page_title = 'Integrations';
 	}
 
+	public function init_ajax_hooks( Urlslab_Loader $urlslab_loader ) {}
+
 	/**
 	 * @param string $action
 	 * @param string $component

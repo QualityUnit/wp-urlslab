@@ -11,6 +11,59 @@ class Urlslab_Urls_Page extends Urlslab_Admin_Page {
 		$this->page_title = 'URLS';
 	}
 
+	public function init_ajax_hooks( Urlslab_Loader $urlslab_loader ) {
+		$urlslab_loader->add_action( 'wp_ajax_urlslab_url_backlink_fetch', $this, 'url_backlink_fetch' );
+	}
+
+	public function url_backlink_fetch() {
+		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
+			'GET' === $_SERVER['REQUEST_METHOD'] and
+			isset( $_GET['data'] ) ) {
+			check_ajax_referer( 'backlink_discovery_nonce', 'security' );
+			$data = $this->fetch_url_backlink( $_GET['data'] );
+			wp_send_json_success(
+				array(
+					array(
+						'title' => 'Backlinks',
+						'data' => $data,
+					),
+				) 
+			);
+		}
+
+		wp_send_json_error( array( 'error' => 'Bad Request' ) );
+	}
+
+
+	/**
+	 * @param int $url_id
+	 *
+	 * @return array
+	 */
+	private function fetch_url_backlink( int $url_id ): array {
+		global $wpdb;
+		$map_table = URLSLAB_URLS_MAP_TABLE;
+		$source_table = URLSLAB_URLS_TABLE;
+
+		return $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT     v.urlName AS urlName,
+       				              v.status AS status,
+                                  v.domainId AS domainId,
+                                  v.urlId AS urlId,
+                                  v.screenshotDate AS screenshotDate,
+       				              v.updateStatusDate AS updateStatusDate,
+       				              v.urlTitle AS urlTitle,
+                                  v.urlMetaDescription AS urlMetaDescription,
+                                  v.urlSummary AS urlSummary,
+       				              v.visibility AS visibility
+FROM $map_table AS d LEFT JOIN $source_table AS v ON d.srcUrlMd5 = v.urlMd5 WHERE d.destUrlMd5 = %s", //#phpcs:ignore
+				$url_id
+			),
+			ARRAY_A
+		);
+	}
+
 	/**
 	 * @param string $action
 	 * @param string $component

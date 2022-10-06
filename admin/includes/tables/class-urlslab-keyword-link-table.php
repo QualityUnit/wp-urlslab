@@ -18,7 +18,8 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 			$row['kw_length'],
 			$row['lang'],
 			$row['urlLink'],
-			$row['urlFilter']
+			$row['urlFilter'],
+			$row['keywordCountUsage']
 		);
 	}
 
@@ -30,10 +31,21 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	private function get_keywords( string $keyword_search, int $limit, int $offset ): array {
 		global $wpdb;
 		$table = URLSLAB_KEYWORDS_TABLE;
+		$map_table = URLSLAB_KEYWORDS_MAP_TABLE;
 		$values = array();
 
 		/* -- Preparing your query -- */
-		$query = "SELECT * FROM $table";
+		$query = "SELECT v.keyword              AS keyword,
+       v.kw_priority          AS kw_priority,
+       v.kw_length            AS kw_length,
+       v.lang                 AS lang,
+       v.urlLink              AS urlLink,
+       v.urlFilter            AS urlFilter,
+       SUM(!ISNULL(d.urlMd5)) AS keywordCountUsage
+FROM $table AS v
+         LEFT JOIN $map_table AS d ON d.kw_id = v.kw_id
+GROUP BY keyword
+";
 
 		/* -- Preparing the condition -- */
 		if ( ! empty( $keyword_search ) ) {
@@ -130,6 +142,7 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 			'col_kw_priority' => 'Priority',
 			'col_lang' => 'Lang',
 			'col_url_filter' => 'Url Filter [Regexp]',
+			'col_kw_usage_cnt' => 'Keyword Usage Count',
 		);
 	}
 
@@ -182,6 +195,10 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 					esc_attr( $item->get_keyword_url_lang() ),
 					esc_attr( $item->get_keyword_url_filter() ),
 				),
+				'usage' => sprintf(
+					'<span class="keyword-map-show" data-kw-id="%s">Where is used?</span>',
+					$item->get_kw_id()
+				),
 			);
 		}
 
@@ -208,6 +225,8 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 				return $item->get_keyword_url_lang();
 			case 'col_kw_md5':
 				return $item->get_kw_id();
+			case 'col_kw_usage_cnt':
+				return $item->get_keyword_usage_count();
 			default:
 				return print_r( $item, true );
 		}
@@ -272,6 +291,7 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 			'col_keyword' => 'keyword',
 			'col_kw_priority' => 'kw_priority',
 			'col_lang' => 'lang',
+			'col_kw_usage_cnt' => 'keywordCountUsage',
 		);
 	}
 

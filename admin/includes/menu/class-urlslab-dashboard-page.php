@@ -10,6 +10,8 @@ class Urlslab_Dashboard_Page extends Urlslab_Admin_Page {
 		$this->page_title = 'Dashboard';
 	}
 
+	public function init_ajax_hooks( Urlslab_Loader $urlslab_loader ) {}
+
 	public function register_submenu( string $parent_slug ) {
 		$hook = add_submenu_page(
 			$parent_slug,

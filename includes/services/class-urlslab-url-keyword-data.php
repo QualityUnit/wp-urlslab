@@ -8,6 +8,7 @@ class Urlslab_Url_Keyword_Data {
 	private string $keyword_url_lang;
 	private string $keyword_url_link;
 	private string $keyword_url_filter;
+	private int $keyword_usage_count;
 
 	/**
 	 * @param string $keyword
@@ -19,7 +20,7 @@ class Urlslab_Url_Keyword_Data {
 	 *
 	 * @throws Exception
 	 */
-	public function __construct( $keyword, $keyword_priority, $keyword_length, $keyword_url_lang, $keyword_url_link, $keyword_url_filter ) {
+	public function __construct( $keyword, $keyword_priority, $keyword_length, $keyword_url_lang, $keyword_url_link, $keyword_url_filter, $keyword_usage_count = 0 ) {
 		if ( empty( $keyword ) && ! is_string( $keyword ) ) {
 			throw new Exception( 'Keyword is empty' );}
 		if ( ! is_numeric( $keyword_priority ) ) {
@@ -47,6 +48,7 @@ class Urlslab_Url_Keyword_Data {
 		$this->keyword_url_lang = $keyword_url_lang;
 		$this->keyword_url_link = $keyword_url_link;
 		$this->keyword_url_filter = $keyword_url_filter;
+		$this->keyword_usage_count = $keyword_usage_count;
 	}
 
 	/**
@@ -96,6 +98,13 @@ class Urlslab_Url_Keyword_Data {
 	 */
 	public function get_keyword_url_filter(): string {
 		return $this->keyword_url_filter;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function get_keyword_usage_count(): int {
+		return $this->keyword_usage_count;
 	}
 
 }

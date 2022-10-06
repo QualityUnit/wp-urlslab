@@ -12,6 +12,8 @@ class Urlslab_Header_Widgets_Page extends Urlslab_Admin_Page {
 		$this->init_sub_widgets();
 	}
 
+	public function init_ajax_hooks( Urlslab_Loader $urlslab_loader ) {}
+
 	public function on_page_load( string $action, string $component ) {
 		if ( isset( $_GET['action'] ) &&
 			 'activation' == $_GET['action'] ) {

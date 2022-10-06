@@ -518,4 +518,28 @@ figure {
 
 /** Urlslab Modal **/
 
+/** Urlslab Backlinks **/
+
+.backlink-show, .keyword-map-show {
+	color: #2271b1;
+	cursor: pointer;
+}
+
+.backlink-show:hover, .keyword-map-show:hover {
+	text-decoration: underline;
+}
+
+.ajax_container {
+	width: 100% !important;
+}
+
+.popup-ajax-container {
+	box-sizing: border-box;
+	float: left;
+	border-bottom: 1px solid #afafaf;
+	width: 100%;
+}
+
+/** Urlslab Backlinks **/
+
 /** Urlslab Content **/

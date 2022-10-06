@@ -54,6 +54,14 @@ class Urlslab_Page_Factory {
 		}
 	}
 
+	public function init_page_ajax( Urlslab_Loader $urlslab_loader ) {
+		foreach ( self::$menus as $menu ) {
+			$menu->init_ajax_hooks(
+				$urlslab_loader
+			);
+		}
+	}
+
 	public function init_on_page_loads(
 		string $page_slug,
 		string $action,
