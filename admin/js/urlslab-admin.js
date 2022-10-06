@@ -208,6 +208,10 @@
 					}
 				);
 			} else {
+				if(backlinkRequestCache[data].length === 0) {
+					insertingElement.append("No url to show")
+				}
+
 				backlinkRequestCache[data].forEach(rsp => {
 					insertingElement.append(
 						$(`
