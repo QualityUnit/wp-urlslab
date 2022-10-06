@@ -382,9 +382,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
        v.urlMetaDescription AS urlMetaDescription,
        v.urlSummary         AS urlSummary,
        v.visibility         AS visibility
-FROM $related_resource_table AS d
-         LEFT JOIN $source_table AS v ON d.destUrlMd5 = v.urlMd5
-WHERE d.srcUrlMd5 IN ($placeholder_string)", //#phpcs:ignore
+FROM $related_resource_table AS d LEFT JOIN $source_table AS v ON d.destUrlMd5 = v.urlMd5 WHERE d.srcUrlMd5 IN ($placeholder_string)", //#phpcs:ignore
 				$values
 			),
 			ARRAY_A
