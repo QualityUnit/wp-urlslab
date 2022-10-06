@@ -180,24 +180,22 @@
 					function( response ) {
 						backlinkRequestCache[data] = response.data
 
+						if(response.data.length === 0) {
+							insertingElement.append("No url to show")
+						}
+
 						response.data.forEach(rsp => {
-							let img = "";
-							if (response.data.state === "A") {
-								img = `<img src='https://urlslab.com/public/carousel/${rsp.domainId}/${rsp.urlId}/${rsp.screenshotData}'>`
-							}
 							insertingElement.append(
 								$(`
 						<div class="popup-ajax-container">
 							<div class="col-12">
 							<div class="float-left col-6">
-								<figure>
-									${img}
-								</figure>
+								<a href="http://${rsp.urlName}" target="_blank">${rsp.urlName}</a>
 							</div>
 							<div class="float-left col-6">
-								<p><strong><a href="http://${rsp.urlName}">${rsp.urlName}</a></strong></p>
-								<p>${rsp.urlTitle}</p>
-							</div>
+															&nbsp;&nbsp;&nbsp;${rsp.urlTitle}
+
+</div>
 </div>
 						</div>
 						`)
@@ -211,42 +209,24 @@
 				);
 			} else {
 				backlinkRequestCache[data].forEach(rsp => {
-					let img = "";
-					if (backlinkRequestCache[data].state === "A") {
-						img = `<img src='https://urlslab.com/public/carousel/${rsp.domainId}/${rsp.urlId}/${rsp.screenshotData}'>`
-					}
 					insertingElement.append(
 						$(`
 						<div class="popup-ajax-container">
 							<div class="col-12">
 							<div class="float-left col-6">
-								<figure>
-									${img}
-								</figure>
+								<a href="http://${rsp.urlName}" target="_blank">${rsp.urlName}</a>
 							</div>
 							<div class="float-left col-6">
-								<p><strong><a href="http://${rsp.urlName}">${rsp.urlName}</a></strong></p>
-								<p>${rsp.urlTitle}</p>
-							</div>
+															&nbsp;&nbsp;&nbsp;${rsp.urlTitle}
+
+</div>
 </div>
 						</div>
 						`)
 					)
 				})
 			}
-		},
-
-		createContent(rawData) {
-			const addingHtmlContent = $("<ul class='ajax_container'></ul>");
-			rawData.forEach(elem => {
-
-			})
-			if (rawData.length === 0) {
-				addingHtmlContent.text("No backlinks found!")
-			}
-			return addingHtmlContent;
 		}
-
 	};
 
 	/** Functions */
@@ -295,11 +275,8 @@
 			$(".keyword-map-show").each(function () {
 				const kwId = $( this ).data("kw-id");
 				$(this).on("click", function () {
-					if ($(`#ajax-content-container-${kwId}`).length) {
-						$(`#ajax-content-container-${kwId}`).remove();
-					} else {
-						urlslabBacklinkReqObj.callAjaxMethod(kwId, $(this).closest('tr'), 'urlslab_keyword_usage', params.kw_map_nonce, 6);
-					}
+					$("#empty-url-backlinks-modal").dialog( 'open' );
+					urlslabBacklinkReqObj.callAjaxMethod(kwId, $("#modal-content"), 'urlslab_keyword_usage', params.kw_map_nonce);
 				});
 			});
 			//# Keyword mappings

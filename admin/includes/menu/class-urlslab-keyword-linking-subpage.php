@@ -326,10 +326,19 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 
 		return $wpdb->get_results(
 			$wpdb->prepare(
-			    "SELECT v.urlName FROM $map_table AS d LEFT JOIN $source_table AS v ON d.urlMd5 = v.urlMd5 WHERE d.kw_id = %s", //#phpcs:ignore
+			    "SELECT v.urlName AS urlName,
+       				              v.status AS status,
+                                  v.domainId AS domainId,
+                                  v.urlId AS urlId,
+                                  v.screenshotDate AS screenshotDate,
+       				              v.updateStatusDate AS updateStatusDate,
+       				              v.urlTitle AS urlTitle,
+                                  v.urlMetaDescription AS urlMetaDescription,
+                                  v.urlSummary AS urlSummary,
+       				              v.visibility AS visibility FROM $map_table AS d LEFT JOIN $source_table AS v ON d.urlMd5 = v.urlMd5 WHERE d.kw_id = %s", //#phpcs:ignore
 				$kw_id
 			),
-			ARRAY_N
+			ARRAY_A
 		);
 
 	}

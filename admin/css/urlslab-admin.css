@@ -535,12 +535,9 @@ figure {
 
 .popup-ajax-container {
 	box-sizing: border-box;
-	padding: 15px;
-	margin-bottom: 10px;
 	float: left;
-	border: 3px solid #0aa8a7;
+	border-bottom: 1px solid #afafaf;
 	width: 100%;
-	border-radius: 10px;
 }
 
 /** Urlslab Backlinks **/
