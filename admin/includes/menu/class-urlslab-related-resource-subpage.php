@@ -394,15 +394,37 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 				         INNER JOIN $urls_table as v
 				                    ON r.destUrlMd5 = v.urlMd5
 			    WHERE r.srcUrlMd5 <> r.destUrlMd5";
-		$result = $wpdb->get_results( $query, ARRAY_N ); // phpcs:ignore
-		foreach ( $result as $row ) {
-			fputcsv(
-				$output,
-				array(
-					urlslab_get_current_page_protocol() . $row[0],
-					urlslab_get_current_page_protocol() . $row[1],
-				)
-			);
+
+
+		if ( is_object( $wpdb->dbh ) && $wpdb->use_mysqli ) {
+			$records = $wpdb->dbh->query( $query ); // phpcs:ignore
+			if ( false === $records ) {
+				return; //no content???
+			}
+			while ( $data = $records->fetch_assoc() ) {
+				fputcsv(
+					$output,
+					array(
+						urlslab_get_current_page_protocol() . $data['srcUrlName'],
+						urlslab_get_current_page_protocol() . $data['destUrlName'],
+					)
+				);
+				if ( ob_get_length() ) {
+					ob_flush();
+				}
+				flush();
+			}
+		} else {
+			$result = $wpdb->get_results( $query . ' LIMIT 10000', ARRAY_N ); // phpcs:ignore
+			foreach ( $result as $row ) {
+				fputcsv(
+					$output,
+					array(
+						urlslab_get_current_page_protocol() . $row[0],
+						urlslab_get_current_page_protocol() . $row[1],
+					)
+				);
+			}
 		}
 		fclose( $output );
 	}
