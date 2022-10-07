@@ -190,6 +190,11 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 						if ( strlen( $dom_element->getAttribute( $attribute ) ) ) {
 							$urlvalues = explode( ',', $dom_element->getAttribute( $attribute ) );
 							foreach ( $urlvalues as $url_value ) {
+
+								/** TODO - liveagent.com */
+								$url_value = str_replace('liveagent.local', 'liveagent.com', $url_value);
+								/** TODO - liveagent.com */
+
 								$url_val = explode( ' ', trim( $url_value ) );
 								$file_obj = new Urlslab_File_Data( array( 'url' => $url_val[0] ) );
 

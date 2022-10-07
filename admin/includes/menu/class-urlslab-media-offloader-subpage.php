@@ -578,6 +578,21 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 		//# Transfer single file
 	}
 
+	private function get_file_data( string $fileid ): Urlslab_File_Data {
+		global $wpdb;
+		$table = URLSLAB_FILES_TABLE;
+
+		return new Urlslab_File_Data(
+			$wpdb->get_row(
+				$wpdb->prepare(
+					"SELECT * FROM $table WHERE fileid=%s", // phpcs:ignore
+					$fileid
+				),
+				ARRAY_A
+			)
+		);
+	}
+
 	private function process_file_transfer() {
 
 		$destination_driver = '';
