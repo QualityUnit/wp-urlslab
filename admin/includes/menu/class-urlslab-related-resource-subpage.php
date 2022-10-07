@@ -259,7 +259,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 				 ! empty( $_FILES['csv_file'] ) and
 				 $_FILES['csv_file']['size'] > 0 ) {
 				$res = $this->import_csv( $_FILES['csv_file']['tmp_name'] );
-				if ( $res > 0 ) {
+				if ( $res > -1 ) {
 					$redirect_to = $this->parent_page->menu_page(
 						$this->subpage_slug,
 						array(
@@ -341,7 +341,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 				return false;
 			}
 
-			$res = $this->create_related_resources_rows( $related_urls );
+			$processed_rows = $this->create_related_resources_rows( $related_urls );
 
 		}
 
@@ -374,7 +374,13 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
                    destUrlMd5
                    ) VALUES ' . implode( ', ', $insert_placeholders );
 
-		return $wpdb->query( $wpdb->prepare( $insert_query, $insert_values ) ); // phpcs:ignore
+        $res = $wpdb->query( $wpdb->prepare( $insert_query, $insert_values ) ); // phpcs:ignore
+
+		if ( is_bool( $res ) and ! $res ) {
+			return -1;
+		} else {
+			return $res;
+		}
 	}
 
 	private function export_csv_url_relations() {
