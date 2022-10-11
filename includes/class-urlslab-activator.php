@@ -49,6 +49,7 @@ class Urlslab_Activator {
 		self::init_related_resources_widget_tables();
 		self::init_urlslab_error_log();
 		self::init_urlslab_files();
+		self::init_urlslab_file_urls();
 		self::init_urlslab_file_alternatives();
 		self::init_urlslab_file_contents();
 		self::init_youtube_cache_tables();
@@ -79,6 +80,9 @@ class Urlslab_Activator {
 		if ( version_compare( $version, '1.24', '<' ) ) {
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_KEYWORDS_TABLE . ';'); // phpcs:ignore
 			self::init_keywords_tables();
+		}
+		if ( version_compare( $version, '1.31', '<' ) ) {
+			self::init_urlslab_file_urls();
 		}
 		//all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -225,6 +229,20 @@ class Urlslab_Activator {
 			INDEX idx_file_filter (driver, filestatus),
 			INDEX idx_file_sort (filesize)
 		) $charset_collate;";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_urlslab_file_urls() {
+		global $wpdb;
+		$table_name = URLSLAB_FILE_URLS_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+			urlMd5 bigint NOT NULL,
+			fileid char(32) NOT NULL,
+			PRIMARY KEY (urlMd5, fileid),
+			INDEX idx_files (fileid)) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
