@@ -114,6 +114,20 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 				'Cache expiration [seconds]',
 				'Integer Number higher or equal 0'
 			),
+			new Urlslab_Setting_Switch(
+				'offload-opt[]',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_LOG_IMAGES,
+				'Keep updated log where was used specific image on website.',
+				'Track usage of images',
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_LOG_IMAGES, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_LOG_IMAGES )
+			),
+			new Urlslab_Setting_Switch(
+				'offload-opt[]',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_HIDE_ERROR_IMAGES,
+				'Hide from HTML content images in error state',
+				'Hide failed images',
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_HIDE_ERROR_IMAGES, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_HIDE_ERROR_IMAGES )
+			),
 		);
 		?>
 		<form method="post" action="<?php echo esc_url( $this->parent_page->menu_page( 'media-offloading', 'action=update-settings', 1 ) ); ?>">
