@@ -44,7 +44,6 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
        SUM(!ISNULL(d.urlMd5)) AS keywordCountUsage
 FROM $table AS v
          LEFT JOIN $map_table AS d ON d.kw_id = v.kw_id
-GROUP BY keyword
 ";
 
 		/* -- Preparing the condition -- */
@@ -56,6 +55,7 @@ GROUP BY keyword
 
 		/* -- Ordering parameters -- */
 		//Parameters that are going to be used to order the result
+		$query .= ' GROUP BY keyword';
 		$orderby = ( isset( $_GET['orderby'] ) ) ? esc_sql( $_GET['orderby'] ) : 'kw_priority';
 		$order = ( isset( $_GET['order'] ) ) ? esc_sql( $_GET['order'] ) : 'ASC';
 		if ( ! empty( $orderby ) && ! empty( $order ) ) {
@@ -195,6 +195,17 @@ GROUP BY keyword
 					esc_attr( $item->get_keyword_url_lang() ),
 					esc_attr( $item->get_keyword_url_filter() ),
 				),
+			);
+		}
+
+		return $title . $this->row_actions( $actions );
+	}
+
+	function column_col_kw_usage_cnt( $item ): string {
+		$title = '<span>' . $item->get_keyword_usage_count() . '</span>';
+		$actions = array();
+		if ( isset( $_REQUEST['page'] ) ) {
+			$actions = array(
 				'usage' => sprintf(
 					'<span class="keyword-map-show" data-kw-id="%s">Where is used?</span>',
 					$item->get_kw_id()
