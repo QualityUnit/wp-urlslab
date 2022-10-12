@@ -60,7 +60,7 @@ abstract class Urlslab_Convert_Images_Cron extends Urlslab_Cron {
 				return '';
 		}
 
-		if (false === $im) {
+		if ( false === $im ) {
 			return '';
 		}
 
