@@ -46,7 +46,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	//WEBP CONVERSION SETTINGS
 	public const SETTING_NAME_USE_WEBP_ALTERNATIVE = 'urlslab_use_webp';
 	public const SETTING_NAME_WEBP_TYPES_TO_CONVERT = 'urlslab_webp_types';
-	public const SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT = array( 'image/png', 'image/jpeg', 'image/bmp' );
+	public const SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT = array( 'image/png', 'image/jpeg', 'image/bmp', 'image/gif' );
 	public const SETTING_NAME_WEPB_QUALITY = 'urlslab_webp_quality';
 	public const SETTING_DEFAULT_WEPB_QUALITY = 80;
 

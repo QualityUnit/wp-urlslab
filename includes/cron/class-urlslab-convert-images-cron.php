@@ -60,6 +60,10 @@ abstract class Urlslab_Convert_Images_Cron extends Urlslab_Cron {
 				return '';
 		}
 
+		if ( false === $im ) {
+			return '';
+		}
+
 		if ( ! imageistruecolor( $im ) ) {
 			if ( ! imagepalettetotruecolor( $im ) ) {
 				return '';
