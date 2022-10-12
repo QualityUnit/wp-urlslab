@@ -51,7 +51,6 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
        v.visibility AS visibility,
        SUM(!ISNULL(d.destUrlMd5)) AS backlinkCnt
 FROM $table AS v LEFT JOIN $join_table AS d ON d.destUrlMd5 = v.urlMd5
-GROUP BY urlMd5
 ";
 
 		/* -- Preparing the condition -- */
@@ -71,6 +70,7 @@ GROUP BY urlMd5
 
 		/* -- Ordering parameters -- */
 		//Parameters that are going to be used to order the result
+		$query .= ' GROUP BY urlMd5';
 		$orderby = ( isset( $_GET['orderby'] ) ) ? esc_sql( $_GET['orderby'] ) : 'updateStatusDate';
 		$order = ( isset( $_GET['order'] ) ) ? esc_sql( $_GET['order'] ) : 'ASC';
 		if ( ! empty( $orderby ) && ! empty( $order ) ) {
@@ -450,8 +450,6 @@ GROUP BY urlMd5
 				return esc_attr( $item->get_url_meta_description() ) ?? '';
 			case 'col_url_summary':
 				return esc_attr( $item->get_url_summary() ) ?? '';
-			case 'col_backlink_cnt':
-				return esc_html( $item->get_backlink_cnt() );
 			default:
 				return print_r( $item, true ); //Show the whole array for troubleshooting purposes
 		}
@@ -487,6 +485,21 @@ GROUP BY urlMd5
 					esc_attr( $item->get_url()->get_url_id() ),
 					$delete_nonce
 				),
+			);
+		}
+
+		return $title . $this->row_actions( $actions );
+	}
+
+	function column_col_backlink_cnt( $item ): string {
+		$title = sprintf(
+			'<span>%s</span>',
+			$item->get_backlink_cnt(),
+		);
+
+		$actions = array();
+		if ( isset( $_REQUEST['page'] ) ) {
+			$actions = array(
 				'backlinks' => sprintf(
 					'<span class="backlink-show" data-url-id="%s">Backlinks</span>',
 					esc_attr( $item->get_url()->get_url_id() ),
