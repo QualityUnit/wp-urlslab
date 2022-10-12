@@ -69,6 +69,15 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 			unlink( $original_image_filename );
 
 			if ( empty( $new_file ) || ! file_exists( $new_file ) ) {
+				$wpdb->update(
+					URLSLAB_FILES_TABLE,
+					array(
+						'webp_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_DISABLED,
+					),
+					array(
+						'fileid' => $file->get_fileid(),
+					)
+				);
 				return true;
 			}
 
