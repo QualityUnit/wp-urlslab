@@ -45,7 +45,7 @@ class Urlslab_Lazyload_Subpage extends Urlslab_Admin_Subpage {
 				'password',
 				Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_API_KEY,
 				get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_API_KEY, '' ),
-				'Youtube API Key is used to cache video preview images localy and serve them on place of youtube code',
+				'Youtube API Key is used to cache video preview images localy and serve them on place of youtube code. Leave empty to load the key from environment variable YOUTUBE_API_KEY.',
 				'Youtube API Key',
 				'Youtube API Key'
 			),

@@ -27,7 +27,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		add_option( self::SETTING_NAME_IMG_LAZY_LOADING, false, '', true );
 		add_option( self::SETTING_NAME_VIDEO_LAZY_LOADING, false, '', true );
 		add_option( self::SETTING_NAME_YOUTUBE_LAZY_LOADING, false, '', true );
-		add_option( self::SETTING_NAME_YOUTUBE_API_KEY, '', '', true );
+		add_option( self::SETTING_NAME_YOUTUBE_API_KEY, '', '', false );
 	}
 
 	public function init_widget( Urlslab_Loader $loader ) {

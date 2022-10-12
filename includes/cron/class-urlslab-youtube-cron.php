@@ -4,7 +4,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
 class Urlslab_Youtube_Cron extends Urlslab_Cron {
 
 	protected function execute(): bool {
-		if ( ! get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_LAZY_LOADING, false ) || 0 == strlen( get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_API_KEY, '' ) ) ) {
+		if ( ! get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_LAZY_LOADING, false ) || 0 == strlen( $this->get_youtube_key() ) ) {
 			return false;
 		}
 
@@ -27,7 +27,7 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 			),
 			array(
 				'videoid' => $youtube_obj->get_videoid(),
-				'status' => Urlslab_Youtube_Data::YOUTUBE_NEW,
+				'status'  => Urlslab_Youtube_Data::YOUTUBE_NEW,
 			)
 		);
 
@@ -37,7 +37,7 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 			$wpdb->update(
 				URLSLAB_YOUTUBE_CACHE_TABLE,
 				array(
-					'status' => Urlslab_Youtube_Data::YOUTUBE_AVAILABLE,
+					'status'    => Urlslab_Youtube_Data::YOUTUBE_AVAILABLE,
 					'microdata' => $microdata,
 				),
 				array(
@@ -52,17 +52,32 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 				),
 				array(
 					'videoid' => $youtube_obj->get_videoid(),
-					'status' => Urlslab_Youtube_Data::YOUTUBE_PROCESSING,
+					'status'  => Urlslab_Youtube_Data::YOUTUBE_PROCESSING,
 				)
 			);
+
 			//something went wrong, wait with next processing
 			return false;
 		}
+
 		return true;
 	}
 
+	private function get_youtube_key() {
+		$key = get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_API_KEY );
+		if ( strlen( $key ) ) {
+			return $key;
+		}
+		$key = env( 'YOUTUBE_API_KEY' );
+		if ( strlen( $key ) ) {
+			return $key;
+		}
+
+		return false;
+	}
+
 	private function get_youtube_microdata( Urlslab_Youtube_Data $youtube_obj ) {
-		$url     = 'https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet%2CcontentDetails&contentDetails.duration&id=' . $youtube_obj->get_videoid() . '&key=' . get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_API_KEY ); // json source
+		$url      = 'https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet%2CcontentDetails&contentDetails.duration&id=' . $youtube_obj->get_videoid() . '&key=' . $this->get_youtube_key(); // json source
 		$response = wp_remote_get( $url, array( 'sslverify' => false ) );
 		if ( ! is_wp_error( $response ) ) {
 			$value = json_decode( $response['body'] );
@@ -70,8 +85,10 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 				//TODO log debug message
 				return false;
 			}
+
 			return $response['body'];
 		}
+
 		return false;
 	}
 }

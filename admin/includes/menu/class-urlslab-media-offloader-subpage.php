@@ -259,7 +259,7 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 				'text',
 				Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY,
 				'',
-				'',
+				'Leave empty if AWS access key should be loaded from environment variable AWS_KEY',
 				'AWS S3 Access Key',
 				'AWS S3 Access Key...'
 			);
@@ -272,14 +272,13 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 		}
 
 		//# Secret Key Settings
-		$secret_key_settings = null;
 		$secret_key = get_option( Urlslab_Driver_S3::SETTING_NAME_S3_SECRET, '' );
 		if ( empty( $access_key ) ) {
 			$secret_key_settings = new Urlslab_Setting_Input(
 				'text',
 				Urlslab_Driver_S3::SETTING_NAME_S3_SECRET,
 				'',
-				'',
+				'Leave empty if AWS secret key should be loaded from environment variable AWS_SECRET',
 				'AWS S3 Secret Key',
 				'AWS S3 Secret Key...'
 			);

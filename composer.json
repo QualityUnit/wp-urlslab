@@ -25,7 +25,8 @@
     "ext-libxml": "*",
     "ext-dom": "*",
     "aws/aws-sdk-php": "^3.238",
-    "ext-gd": "*"
+    "ext-gd": "*",
+    "oscarotero/env": "^2.1"
   },
   "require-dev": {
     "squizlabs/php_codesniffer": "^3.7",
