@@ -94,6 +94,7 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 		$avif_file = new Urlslab_File_Data(
 			array(
 				'url' => $file->get_url( '.avif' ),
+				'parent_url' => $file->get_parent_url(),
 				'filename' => $file->get_filename() . '.avif',
 				'filesize' => filesize( $new_file_name ),
 				'filetype' => 'image/avif',

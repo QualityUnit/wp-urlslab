@@ -70,7 +70,11 @@ abstract class Urlslab_Driver {
 					404 == $local_tmp_file->get_error_data( 'http_404' )['code'] &&
 					preg_match( '/^(.*?)-([0-9]*?)x([0-9]*?)\.(.*?)$/', $file->get_url(), $matches )
 				) {
-					$original_tmp_file = download_url( $matches[1] . '.' . $matches[4] );
+					if ( strlen( $file->get_parent_url() ) ) {
+						$original_tmp_file = download_url( $file->get_parent_url() );
+					} else {
+						$original_tmp_file = download_url( $matches[1] . '.' . $matches[4] );
+					}
 					if ( ! is_wp_error( $original_tmp_file ) ) {
 						$local_tmp_file = $this->resize_image( $original_tmp_file, $matches[2], $matches[3] );
 						unlink( $original_tmp_file );
@@ -132,6 +136,8 @@ abstract class Urlslab_Driver {
 				$src = imagecreatefromgif( $file );
 				break;
 			case 'image/jpg':
+			case 'image/jpe':
+			case 'image/jpeg':
 				$src = imagecreatefromjpeg( $file );
 				break;
 			default:
@@ -151,6 +157,8 @@ abstract class Urlslab_Driver {
 				imagegif( $dst, $tmp_name );
 				break;
 			case 'image/jpg':
+			case 'image/jpe':
+			case 'image/jpeg':
 				imagejpeg( $dst, $tmp_name );
 				break;
 			default:
