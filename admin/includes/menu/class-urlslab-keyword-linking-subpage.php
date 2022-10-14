@@ -42,12 +42,13 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 								$this->edit_keyword(
 									$_POST['keywordHash'],
 									new Urlslab_Url_Keyword_Data(
-										$_POST['keyword'],
-										isset( $_POST['keyword-prio'] ) && ! empty( $_POST['keyword-prio'] ) ? $_POST['keyword-prio'] : 10,
-										strlen( $_POST['keyword'] ),
-										isset( $_POST['keyword-lang'] ) && ! empty( $_POST['keyword-lang'] ) ? $_POST['keyword-lang'] : 'all',
-										$_POST['keyword-link'],
-										isset( $_POST['keyword-url-filter'] ) && ! empty( $_POST['keyword-url-filter'] ) ? $_POST['keyword-url-filter'] : '.*',
+										array(
+											'keyword' => $_POST['keyword'],
+											'urlLink' => $_POST['keyword-link'],
+											'kw_priority' => $_POST['keyword-prio'] ?? null,
+											'lang' => $_POST['keyword-lang'] ?? null,
+											'urlFilter' => $_POST['keyword-url-filter'] ?? null,
+										)
 									)
 								);
 								wp_safe_redirect(
@@ -123,12 +124,13 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 							if ( $this->data_fetcher->prepare_url_batch_for_scheduling( array( $url ) ) ) {
 								$this->add_keyword(
 									new Urlslab_Url_Keyword_Data(
-										$_POST['keyword'],
-										isset( $_POST['keyword-prio'] ) && ! empty( $_POST['keyword-prio'] ) ? $_POST['keyword-prio'] : 10,
-										strlen( $_POST['keyword'] ),
-										isset( $_POST['keyword-lang'] ) && ! empty( $_POST['keyword-lang'] ) ? $_POST['keyword-lang'] : 'all',
-										$_POST['keyword-link'],
-										isset( $_POST['keyword-url-filter'] ) && ! empty( $_POST['keyword-url-filter'] ) ? $_POST['keyword-url-filter'] : '.*',
+										array(
+											'keyword' => $_POST['keyword'],
+											'urlLink' => $_POST['keyword-link'],
+											'kw_priority' => $_POST['keyword-prio'] ?? null,
+											'lang' => $_POST['keyword-lang'] ?? null,
+											'urlFilter' => $_POST['keyword-url-filter'] ?? null,
+										)
 									)
 								);
 								wp_safe_redirect(
@@ -295,7 +297,15 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		}
 
 		foreach ( $sample_data as $kw => $url ) {
-			$data_row = new Urlslab_Url_Keyword_Data( $kw, 100, strlen( $kw ), 'all', $url, '.*' );
+			$data_row = new Urlslab_Url_Keyword_Data(
+				array(
+					'keyword' => $kw,
+					'urlLink' => $url,
+					'kw_priority' => 100,
+					'lang' => 'all',
+					'urlFilter' => '.*',
+				)
+			);
 			if ( $this->data_fetcher->prepare_url_batch_for_scheduling( array( new Urlslab_Url( $url ) ) ) ) {
 				$this->create_keywords( array( $data_row ) );
 			}
@@ -575,7 +585,15 @@ FROM $related_resource_table AS d LEFT JOIN $source_table AS v ON d.destUrlMd5 =
 				}
 				//Keyword, URL, Priority, Lang, Filter
 				try {
-					$data_row   = new Urlslab_Url_Keyword_Data( $data[0], isset( $data[2] ) && is_numeric( $data[2] ) ? (int) $data[2] : 10, strlen( $data[0] ), isset( $data[3] ) && strlen( $data[3] ) > 0 ? $data[3] : 'all', $data[1], isset( $data[4] ) ? $data[4] : '.*' );
+					$data_row   = new Urlslab_Url_Keyword_Data(
+						array(
+							'keyword' => $data[0],
+							'urlLink' => $data[1],
+							'kw_priority' => $data[2] ?? null,
+							'lang' => $data[3] ?? null,
+							'urlFilter' => $data[4] ?? null,
+						)
+					);
 					$keywords[] = $data_row;
 
 					$scheduling_url = new Urlslab_Url( $data_row->get_keyword_url_link() );

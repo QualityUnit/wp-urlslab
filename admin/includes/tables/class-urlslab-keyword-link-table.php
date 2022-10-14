@@ -12,15 +12,7 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	 * @return Urlslab_Url_Keyword_Data
 	 */
 	private function transform( array $row ): Urlslab_Url_Keyword_Data {
-		return new Urlslab_Url_Keyword_Data(
-			$row['keyword'],
-			$row['kw_priority'],
-			$row['kw_length'],
-			$row['lang'],
-			$row['urlLink'],
-			$row['urlFilter'],
-			$row['keywordCountUsage']
-		);
+		return new Urlslab_Url_Keyword_Data( $row );
 	}
 
 
@@ -35,7 +27,9 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 		$values = array();
 
 		/* -- Preparing your query -- */
-		$query = "SELECT v.keyword              AS keyword,
+		$query = "SELECT 
+       v.kw_id				  AS kw_id,
+       v.keyword              AS keyword,
        v.kw_priority          AS kw_priority,
        v.kw_length            AS kw_length,
        v.lang                 AS lang,
