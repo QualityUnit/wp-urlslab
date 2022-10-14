@@ -49,8 +49,11 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
        v.urlMetaDescription AS urlMetaDescription,
        v.urlSummary AS urlSummary,
        v.visibility AS visibility,
-       SUM(!ISNULL(d.destUrlMd5)) AS backlinkCnt
-FROM $table AS v LEFT JOIN $join_table AS d ON d.destUrlMd5 = v.urlMd5
+       COALESCE(d.cnt, 0) AS backlinkCnt
+FROM $table AS v LEFT JOIN (
+    SELECT destUrlMd5 AS destinationUrl, COUNT(*) AS cnt FROM $join_table
+    GROUP BY destUrlMd5
+) AS d ON d.destinationUrl = urlMd5
 ";
 
 		/* -- Preparing the condition -- */
