@@ -129,6 +129,7 @@ class Urlslab_Admin {
 			'params',
 			array(
 				'kw_map_nonce' => wp_create_nonce( 'keyword_map_nonce' ),
+				'media_nonce' => wp_create_nonce( 'media_usage_nonce' ),
 				'url_map_nonce' => wp_create_nonce( 'backlink_discovery_nonce' ),
 				'ajaxURL' => admin_url( 'admin-ajax.php' ),
 			)

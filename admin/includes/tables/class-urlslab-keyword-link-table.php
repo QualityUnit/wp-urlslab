@@ -207,7 +207,7 @@ FROM $table AS v
 		if ( isset( $_REQUEST['page'] ) ) {
 			$actions = array(
 				'usage' => sprintf(
-					'<span class="keyword-map-show" data-kw-id="%s">Where is used?</span>',
+					'<span class="keyword-map-show urlslab-ajax-show" data-kw-id="%s">Where is used?</span>',
 					$item->get_kw_id()
 				),
 			);

@@ -31,10 +31,24 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 		int $offset ): array {
 		global $wpdb;
 		$table = URLSLAB_FILES_TABLE;
+		$join_table = URLSLAB_FILE_URLS_TABLE;
 		$values = array();
 
 		/* -- Preparing your query -- */
-		$query = "SELECT * FROM $table";
+		$query = "SELECT v.fileid AS fileid,
+       					 v.url AS url,
+       					 v.local_file AS local_file,
+       					 v.filename AS filename,
+       					 v.filesize AS filesize,
+       					 v.width AS width,
+       					 v.height AS height,
+       					 v.filestatus AS filestatus,
+       					 v.driver AS driver,
+       					 v.last_seen AS last_seen,
+       					 v.webp_alternative AS webp_alternative,
+       					 v.avif_alternative AS avif_alternative,
+       					 SUM(!ISNULL(d.urlMd5)) AS imageCountUsage
+       FROM $table AS v LEFT JOIN $join_table AS d ON d.fileid = v.fileid";
 		$where = '';
 
 		/* -- Preparing the condition -- */
@@ -81,6 +95,7 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 		}
 
 		/* -- Ordering parameters -- */
+		$query .= ' GROUP BY fileid';
 		//Parameters that are going to be used to order the result
 		$orderby = ( isset( $_GET['orderby'] ) ) ? esc_sql( $_GET['orderby'] ) : 'fileid';
 		$order = ( isset( $_GET['order'] ) ) ? esc_sql( $_GET['order'] ) : 'ASC';
@@ -182,6 +197,7 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 			'col_file_status' => 'File Status',
 			'col_driver' => 'Driver',
 			'col_last_seen' => 'Last Seen',
+			'col_image_usage_count' => 'Image Usage Count',
 		);
 	}
 
@@ -344,12 +360,39 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Method for name column
+	 *
+	 * @param Urlslab_File_Data $item an array of DB data
+	 *
+	 * @return string
+	 */
+	public function column_col_image_usage_count( $item ) {
+		$title = sprintf(
+			'<span>%s</span>',
+			$item->get_image_usage_count(),
+		);
+
+		$actions = array();
+		if ( isset( $_REQUEST['page'] ) ) {
+			$actions = array(
+				'mediaUsage' => sprintf(
+					'<span class="media-usage-show urlslab-ajax-show" data-file-id="%s">Media Usage</span>',
+					esc_attr( $item->get_fileid() ),
+				),
+			);
+		}
+
+		return $title . $this->row_actions( $actions );
+	}
+
+	/**
 	 * Decide which columns to activate the sorting functionality on
 	 * @return array $sortable, the array of columns that can be sorted by the user
 	 */
 	public function get_sortable_columns(): array {
 		return array(
 			'col_file_size' => 'filesize',
+			'col_image_usage_count' => 'imageCountUsage',
 		);
 	}
 
