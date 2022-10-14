@@ -692,6 +692,14 @@ FROM $related_resource_table AS d LEFT JOIN $source_table AS v ON d.destUrlMd5 =
 			?>
 			<input type="hidden" name="page" value="<?php echo esc_attr( $this->parent_page->get_menu_slug() ); ?>">
 			<input type="hidden" name="tab" value="<?php echo esc_attr( $this->subpage_slug ); ?>">
+			<p class="search-box float-left col-12">
+				<?php
+				$filter = $_GET['lang'] ?? '';
+				?>
+				<label class="screen-reader-text" for="lang-filter">Lang:</label>
+				<input type="search" id="lang-filter" placeholder="lang filter..." name="lang" value="<?php echo esc_attr( $filter ); ?>" />
+				<?php submit_button( 'Filter', '', '', false, array( 'id' => 'search-submit' ) ); ?>
+			</p>
 			<?php
 			$this->keyword_table->search_box( 'Search', 'urlslab-keyword-input' );
 			$this->keyword_table->display();
