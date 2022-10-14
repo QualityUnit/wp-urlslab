@@ -84,6 +84,12 @@ class Urlslab_Activator {
 		if ( version_compare( $version, '1.31', '<' ) ) {
 			self::init_urlslab_file_urls();
 		}
+
+		if ( version_compare( $version, '1.32', '<' ) ) {
+			$wpdb->query('ALTER TABLE ' . URLSLAB_FILES_TABLE . ' ADD COLUMN parent_url varchar(1024);'); // phpcs:ignore
+			$wpdb->query('DELETE FROM ' . URLSLAB_FILES_TABLE . ' WHERE filestatus=\'E\';'); // phpcs:ignore
+		}
+
 		//all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -214,6 +220,7 @@ class Urlslab_Activator {
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
 			fileid char(32) NOT NULL,
 			url varchar(1024) NOT NULL,
+			parent_url varchar(1024),
 			local_file varchar(1024),
 			filename varchar(750),
 			filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,

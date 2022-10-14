@@ -103,6 +103,7 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 			$webp_file = new Urlslab_File_Data(
 				array(
 					'url' => $file->get_url( '.webp' ),
+					'parent_url' => $file->get_parent_url(),
 					'filename' => $file->get_filename() . '.webp',
 					'filesize' => filesize( $new_file_name ),
 					'filetype' => 'image/webp',

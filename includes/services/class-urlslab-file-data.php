@@ -9,6 +9,7 @@ class Urlslab_File_Data {
 
 	private $fileid;
 	private $url;
+	private $parent_url;
 	private $filename;
 	private $filesize;
 	private $filetype;
@@ -216,20 +217,13 @@ class Urlslab_File_Data {
 
 
 	/**
-	 * @param Urlslab_Url $url
-	 * @param $domain_id
-	 * @param $url_id
-	 * @param $screenshot_date
-	 * @param $last_status_change_date
-	 * @param $url_title
-	 * @param $url_meta_description
-	 * @param $url_summary
-	 * @param $screenshot_status
+	 * @param array $file
 	 */
 	public function __construct(
 		array $file
 	) {
 		$this->url = $file['url'];
+		$this->parent_url = $file['parent_url'] ?? '';
 		$this->fileid = $file['fileid'] ?? null;
 		$this->filename = $file['filename'] ?? '';
 		$this->filesize = $file['filesize'] ?? 0;
@@ -247,6 +241,7 @@ class Urlslab_File_Data {
 	public function as_array() {
 		return array(
 			'url' => $this->get_url(),
+			'parent_url' => $this->get_parent_url(),
 			'fileid' => $this->get_fileid(),
 			'filename' => $this->get_filename(),
 			'filesize' => $this->get_filesize(),
@@ -321,6 +316,10 @@ class Urlslab_File_Data {
 		$path = isset( $parsed_url['path'] ) ? $parsed_url['path'] : '';
 		$query = isset( $parsed_url['query'] ) ? '?' . $parsed_url['query'] : '';
 		return "$scheme$user$pass$host$port$path$append_file_name$query";
+	}
+
+	public function get_parent_url() {
+		return $this->parent_url;
 	}
 
 	private function get_url_no_protocol() {
