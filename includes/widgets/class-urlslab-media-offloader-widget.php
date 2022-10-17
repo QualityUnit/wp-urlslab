@@ -325,7 +325,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 					$placeholders[] = '%s';
 					$values[]       = $fileid;
 				}
-				$delete_sql = 'DELETE FROM $table WHERE urlMd5=%d AND fileid IN (' . implode( ',', $placeholders ) . ')';
+				$delete_sql = "DELETE FROM $table WHERE urlMd5=%d AND fileid IN (' . implode( ',', $placeholders ) . ')";
 
 				$wpdb->query(
 					$wpdb->prepare(

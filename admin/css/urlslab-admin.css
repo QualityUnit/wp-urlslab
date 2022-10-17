@@ -520,12 +520,12 @@ figure {
 
 /** Urlslab Backlinks **/
 
-.backlink-show, .keyword-map-show {
+.urlslab-ajax-show {
 	color: #2271b1;
 	cursor: pointer;
 }
 
-.backlink-show:hover, .keyword-map-show:hover {
+.urlslab-ajax-show:hover {
 	text-decoration: underline;
 }
 

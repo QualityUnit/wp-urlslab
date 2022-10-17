@@ -501,7 +501,7 @@ FROM $table AS v LEFT JOIN $join_table AS d ON d.destUrlMd5 = v.urlMd5
 		if ( isset( $_REQUEST['page'] ) ) {
 			$actions = array(
 				'backlinks' => sprintf(
-					'<span class="backlink-show" data-url-id="%s">Backlinks</span>',
+					'<span class="backlink-show urlslab-ajax-show" data-url-id="%s">Backlinks</span>',
 					esc_attr( $item->get_url()->get_url_id() ),
 				),
 			);

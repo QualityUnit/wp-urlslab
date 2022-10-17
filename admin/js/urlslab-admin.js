@@ -272,6 +272,15 @@
 			});
 			//# Keyword mappings
 
+			//# Media mappings
+			$(".media-usage-show").each(function () {
+				const fileId = $( this ).data("file-id");
+				$(this).on("click", function () {
+					urlslabRequest.callAjaxMethod(fileId, fileId, "urlslab_media_usage", params.media_nonce, params.ajaxURL)
+				});
+			});
+			//# Media mappings
+
 			//# Modal
 
 			//# Modal - Keyword Modals
