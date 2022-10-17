@@ -2,6 +2,7 @@
 
 class Urlslab_Url_Keyword_Data {
 
+	private string $kw_id;
 	private string $keyword;
 	private int $keyword_priority;
 	private int $keyword_length;
@@ -20,34 +21,48 @@ class Urlslab_Url_Keyword_Data {
 	 *
 	 * @throws Exception
 	 */
-	public function __construct( $keyword, $keyword_priority, $keyword_length, $keyword_url_lang, $keyword_url_link, $keyword_url_filter, $keyword_usage_count = 0 ) {
-		if ( empty( $keyword ) && ! is_string( $keyword ) ) {
-			throw new Exception( 'Keyword is empty' );}
-		if ( ! is_numeric( $keyword_priority ) ) {
-			throw new Exception( 'Keyword Priority is not a number' );
-		} else if ( $keyword_priority < 0 ) {
-			throw new Exception( 'Keyword Priority should be a number higher as 0' );
-		}
-		if ( ! is_numeric( $keyword_length ) ) {
-			throw new Exception( 'Keyword length is not a number' );
+	public function __construct( array $data ) {
+		$keyword_prio = 10;
+		$keyword_lang = 'all';
+		$keyword_filter = '.*';
+		$keyword_usage_count = 0;
+
+		if ( ! isset( $data['keyword'] ) || empty( $data['keyword'] ) || ! is_string( $data['keyword'] ) ) {
+			throw new Exception( 'Keyword is empty' );
 		}
 
-		if ( empty( $keyword_url_lang ) ) {
-			throw new Exception( 'Keyword language is empty' );
-		}
-		if ( empty( $keyword_url_link ) ) {
+		if ( ! isset( $data['urlLink'] ) || empty( $data['urlLink'] ) ) {
 			throw new Exception( 'keyword link is empty' );
 		}
-		if ( empty( $keyword_url_filter ) ) {
-			throw new Exception( 'keyword Url Filter is empty' );
+
+		if ( isset( $data['kw_priority'] ) && null != $data['kw_priority'] ) {
+			if ( ! is_numeric( $data['kw_priority'] ) ) {
+				throw new Exception( 'Keyword Priority is not a number' );
+			} else if ( $data['kw_priority'] < 0 ) {
+				throw new Exception( 'Keyword Priority should be a number higher as 0' );
+			}
+			$keyword_prio = $data['kw_priority'];
 		}
 
-		$this->keyword = $keyword;
-		$this->keyword_priority = $keyword_priority;
-		$this->keyword_length = $keyword_length;
-		$this->keyword_url_lang = $keyword_url_lang;
-		$this->keyword_url_link = $keyword_url_link;
-		$this->keyword_url_filter = $keyword_url_filter;
+		if ( isset( $data['lang'] ) && null != $data['lang'] ) {
+			$keyword_lang = $data['lang'];
+		}
+
+		if ( isset( $data['urlFilter'] ) && null != $data['urlFilter'] ) {
+			$keyword_filter = $data['urlFilter'];
+		}
+
+		if ( isset( $data['keywordCountUsage'] ) && null != $data['keywordCountUsage'] ) {
+			$keyword_usage_count = $data['keywordCountUsage'];
+		}
+
+		$this->kw_id = $data['kw_id'] ?? '';
+		$this->keyword = $data['keyword'];
+		$this->keyword_priority = $keyword_prio;
+		$this->keyword_length = $data['kw_length'] ?? strlen( $data['keyword'] );
+		$this->keyword_url_lang = $keyword_lang;
+		$this->keyword_url_link = $data['urlLink'];
+		$this->keyword_url_filter = $keyword_filter;
 		$this->keyword_usage_count = $keyword_usage_count;
 	}
 
@@ -55,6 +70,9 @@ class Urlslab_Url_Keyword_Data {
 	 * @return string
 	 */
 	public function get_kw_id(): string {
+		if ( ! empty( $this->kw_id ) ) {
+			return $this->kw_id;
+		}
 		return crc32( md5( $this->get_keyword() . '|' . $this->get_keyword_url_link() . '|' . $this->get_keyword_url_lang() ) );
 	}
 
