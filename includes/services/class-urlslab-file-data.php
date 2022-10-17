@@ -21,6 +21,7 @@ class Urlslab_File_Data {
 	private $last_seen;
 	private $webp_alternative;
 	private $avif_alternative;
+	private $image_usage_count;
 	private $alternatives = array();
 
 	static $mime_types = array(
@@ -236,6 +237,7 @@ class Urlslab_File_Data {
 		$this->last_seen = $file['last_seen'] ?? null;
 		$this->webp_alternative = $file['webp_alternative'] ?? self::FILE_ALTERNATIVE_NOT_PROCESSED;
 		$this->avif_alternative = $file['avif_alternative'] ?? self::FILE_ALTERNATIVE_NOT_PROCESSED;
+		$this->image_usage_count = $file['imageCountUsage'] ?? 0;
 	}
 
 	public function as_array() {
@@ -388,5 +390,9 @@ class Urlslab_File_Data {
 	//set just in runtime, no db value
 	public function get_alternatives() {
 		return $this->alternatives;
+	}
+
+	public function get_image_usage_count(): int {
+		return $this->image_usage_count;
 	}
 }
