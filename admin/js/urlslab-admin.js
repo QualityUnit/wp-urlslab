@@ -203,12 +203,19 @@
 					sectionContainer.append("No data to show...")
 				}
 				section.data.forEach(data => {
+					let editHtml = "";
+					if (data.editLink !== null && data.editLink !== undefined) {
+						editHtml = `<a href="${data.editLink}" target="_blank">Edit</a>`
+					}
 					sectionContainer.append(
 						$(`
 						<div class="popup-ajax-container">
 							<div class="col-12">
 								<div class="float-left col-6">
 									<a href="http://${data.urlName}" target="_blank">${data.urlName}</a>
+									&nbsp;
+									&nbsp;
+									${editHtml}
 								</div>
 								<div class="float-left col-6">&nbsp;&nbsp;&nbsp;${data.urlTitle}</div>
 							</div>
