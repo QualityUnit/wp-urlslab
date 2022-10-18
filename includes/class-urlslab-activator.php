@@ -90,6 +90,10 @@ class Urlslab_Activator {
 			$wpdb->query('DELETE FROM ' . URLSLAB_FILES_TABLE . ' WHERE filestatus=\'E\';'); // phpcs:ignore
 		}
 
+		if ( version_compare( $version, '1.34', '<' ) ) {
+			$wpdb->query('ALTER TABLE ' . URLSLAB_RELATED_RESOURCE_TABLE . ' ADD COLUMN pos tinyint unsigned default 10;'); // phpcs:ignore
+		}
+
 		//all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -192,6 +196,7 @@ class Urlslab_Activator {
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
 			srcUrlMd5 bigint NOT NULL,
 			destUrlMd5 bigint NOT NULL,
+			pos tinyint unsigned default 10,
 			PRIMARY KEY  (srcUrlMd5,destUrlMd5)
 		) $charset_collate;";
 
