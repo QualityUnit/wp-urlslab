@@ -22,9 +22,9 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	 */
 	private function get_keywords( string $keyword_search, string $lang, int $limit, int $offset ): array {
 		global $wpdb;
-		$table = URLSLAB_KEYWORDS_TABLE;
+		$table     = URLSLAB_KEYWORDS_TABLE;
 		$map_table = URLSLAB_KEYWORDS_MAP_TABLE;
-		$values = array();
+		$values    = array();
 
 		/* -- Preparing your query -- */
 		$query = "SELECT
@@ -42,33 +42,34 @@ FROM $table AS v
 
 		/* -- Preparing the condition -- */
 		if ( ! empty( $keyword_search ) ) {
-			$query .= ' WHERE keyword LIKE %s';
+			$query    .= ' WHERE keyword LIKE %s';
 			$values[] = '%' . $keyword_search . '%';
 		}
 
 		if ( ! empty( $keyword_search ) && ! empty( $lang ) ) {
-			$query .= ' AND lang = %s';
+			$query    .= ' AND lang = %s';
 			$values[] = $lang;
 		} else if ( ! empty( $lang ) && empty( $keyword_search ) ) {
-			$query .= ' WHERE lang = %s';
+			$query    .= ' WHERE lang = %s';
 			$values[] = $lang;
 		}
 
 
 		/* -- Ordering parameters -- */
 		//Parameters that are going to be used to order the result
-		$query .= ' GROUP BY keyword';
+		$query   .= ' GROUP BY keyword';
 		$orderby = ( isset( $_GET['orderby'] ) ) ? esc_sql( $_GET['orderby'] ) : 'kw_priority';
-		$order = ( isset( $_GET['order'] ) ) ? esc_sql( $_GET['order'] ) : 'ASC';
+		$order   = ( isset( $_GET['order'] ) ) ? esc_sql( $_GET['order'] ) : 'ASC';
 		if ( ! empty( $orderby ) && ! empty( $order ) ) {
-			$query .= ' ORDER BY ' . $orderby . ' ' . $order . ', kw_length DESC'; }
+			$query .= ' ORDER BY ' . $orderby . ' ' . $order . ', kw_length DESC';
+		}
 
 		/* -- Pagination parameters -- */
 		$query .= ' LIMIT ' . $limit . ' OFFSET ' . $offset;
-		$res = array();
+		$res   = array();
 		if ( empty( $values ) ) {
 			$res = $wpdb->get_results(
-					$query, // phpcs:ignore
+				$query, // phpcs:ignore
 				ARRAY_A
 			);
 		} else {
@@ -84,6 +85,7 @@ FROM $table AS v
 		foreach ( $res as $row ) {
 			$query_res[] = $this->transform( $row );
 		}
+
 		return $query_res;
 	}
 
@@ -94,13 +96,13 @@ FROM $table AS v
 	 */
 	private function delete_keywords( array $delete_ids ) {
 		global $wpdb;
-		$table = URLSLAB_KEYWORDS_TABLE;
+		$table       = URLSLAB_KEYWORDS_TABLE;
 		$placeholder = array();
 		foreach ( $delete_ids as $id ) {
 			$placeholder[] = '(%s)';
 		}
 		$placeholder_string = implode( ', ', $placeholder );
-		$delete_query = "DELETE FROM $table WHERE kw_id IN ($placeholder_string)";
+		$delete_query       = "DELETE FROM $table WHERE kw_id IN ($placeholder_string)";
 		$wpdb->query(
 			$wpdb->prepare(
 				$delete_query, // phpcs:ignore
@@ -116,7 +118,7 @@ FROM $table AS v
 	 */
 	private function delete_keyword( string $kw_md5 ) {
 		global $wpdb;
-		$table = URLSLAB_KEYWORDS_TABLE;
+		$table        = URLSLAB_KEYWORDS_TABLE;
 		$delete_query = "DELETE FROM $table WHERE kw_id = %s";
 		$wpdb->query(
 			$wpdb->prepare(
@@ -129,6 +131,7 @@ FROM $table AS v
 	private function count_keywords(): ?string {
 		global $wpdb;
 		$table = URLSLAB_KEYWORDS_TABLE;
+
 		return $wpdb->get_row( "SELECT COUNT(*) AS cnt FROM $table", ARRAY_A )['cnt']; // phpcs:ignore
 	}
 
@@ -138,12 +141,12 @@ FROM $table AS v
 	 */
 	function get_columns(): array {
 		return array(
-			'cb' => '<input type="checkbox" />',
-			'col_keyword' => 'Keyword',
-			'col_url_link' => 'Destination URL',
-			'col_kw_priority' => 'Priority',
-			'col_lang' => 'Lang',
-			'col_url_filter' => 'Url Filter [Regexp]',
+			'cb'               => '<input type="checkbox" />',
+			'col_keyword'      => 'Keyword',
+			'col_url_link'     => 'Destination URL',
+			'col_kw_priority'  => 'Priority',
+			'col_lang'         => 'Lang',
+			'col_url_filter'   => 'Url Filter [Regexp]',
 			'col_kw_usage_cnt' => 'Keyword Usage Count',
 		);
 	}
@@ -174,7 +177,7 @@ FROM $table AS v
 		// create a nonce
 		$delete_nonce = wp_create_nonce( 'urlslab_delete_keyword' );
 
-		$title = '<strong>' . $item->get_keyword() . '</strong>';
+		$title   = '<strong>' . $item->get_keyword() . '</strong>';
 		$actions = array();
 		if ( isset( $_REQUEST['page'] ) ) {
 			$actions = array(
@@ -186,7 +189,7 @@ FROM $table AS v
 					esc_attr( $item->get_kw_id() ),
 					$delete_nonce
 				),
-				'edit' => sprintf(
+				'edit'   => sprintf(
 					'<span class="%s" rel="modal:open" data-close-icon="%s" data-keyword-hash="%s" data-keyword="%s" data-dest-url="%s" data-prio="%s" data-lang="%s" data-url-filter="%s">Edit</span>',
 					'keyword-edit color-primary',
 					esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/delete.png' ) . 'delete.png' ),
@@ -204,7 +207,7 @@ FROM $table AS v
 	}
 
 	function column_col_kw_usage_cnt( $item ): string {
-		$title = '<span>' . $item->get_keyword_usage_count() . '</span>';
+		$title   = '<span>' . $item->get_keyword_usage_count() . '</span>';
 		$actions = array();
 		if ( isset( $_REQUEST['page'] ) ) {
 			$actions = array(
@@ -232,10 +235,11 @@ FROM $table AS v
 				return $this->priority_ui_convert( $item->get_keyword_priority() );
 			case 'col_url_link':
 				$value = '<a href="' . $item->get_keyword_url_link() . '" target="_blank">' . $item->get_keyword_url_link() . '</a>';
-				$id = url_to_postid($item->get_keyword_url_link());
-				if ($id) {
+				$id    = url_to_postid( $item->get_keyword_url_link() );
+				if ( $id ) {
 					$value .= ' <a class="keyword-map-show urlslab-ajax-show" href="' . get_edit_post_link( $id ) . '" target="_blank">edit post</a>';
 				}
+
 				return $value;
 			case 'col_url_filter':
 				return $item->get_keyword_url_filter();
@@ -264,8 +268,8 @@ FROM $table AS v
 	public function process_bulk_action() {
 		//Detect when a bulk action is being triggered...
 		if ( 'delete' === $this->current_action() &&
-		isset( $_GET['kw_md5'] ) &&
-		isset( $_REQUEST['_wpnonce'] ) ) {
+			 isset( $_GET['kw_md5'] ) &&
+			 isset( $_REQUEST['_wpnonce'] ) ) {
 
 			// In our file that handles the request, verify the nonce.
 			$nonce = wp_unslash( $_REQUEST['_wpnonce'] );
@@ -306,9 +310,9 @@ FROM $table AS v
 	 */
 	public function get_sortable_columns(): array {
 		return array(
-			'col_keyword' => 'keyword',
-			'col_kw_priority' => 'kw_priority',
-			'col_lang' => 'lang',
+			'col_keyword'      => 'keyword',
+			'col_kw_priority'  => 'kw_priority',
+			'col_lang'         => 'lang',
 			'col_kw_usage_cnt' => 'keywordCountUsage',
 		);
 	}
@@ -319,13 +323,13 @@ FROM $table AS v
 	 */
 	function prepare_items() {
 
-		$keyword_search_key = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
+		$keyword_search_key  = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
 		$keyword_lang_filter = $_GET['lang'] ?? '';
 
 		$this->process_bulk_action();
 
 
-		$table_page = $this->get_pagenum();
+		$table_page     = $this->get_pagenum();
 		$items_per_page = $this->get_items_per_page( 'users_per_page' );
 
 		$query_results = $this->get_keywords(
@@ -334,7 +338,7 @@ FROM $table AS v
 			$items_per_page,
 			( $table_page - 1 ) * $items_per_page
 		);
-		$total_count = $this->count_keywords();
+		$total_count   = $this->count_keywords();
 
 
 		// set the pagination arguments

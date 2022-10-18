@@ -15,25 +15,33 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 
 
 	public function handle_action() {
-		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
-			 'POST' === $_SERVER['REQUEST_METHOD'] and
-			 isset( $_GET['action'] ) and
-			 - 1 != $_GET['action'] ) {
+		if (
+			isset( $_SERVER['REQUEST_METHOD'] ) and
+			'POST' === $_SERVER['REQUEST_METHOD'] and
+			isset( $_GET['action'] ) and
+			- 1 != $_GET['action']
+		) {
 
 			//# Import Functionality
-			if ( isset( $_POST['submit'] ) &&
-				 'Import' === $_POST['submit'] ) {
+			if (
+				isset( $_POST['submit'] ) &&
+				'Import' === $_POST['submit']
+			) {
 				check_admin_referer( 'keyword-widget-import' );
 				$this->import_csv_keywords();
 			}
 			//# Import Functionality
 
 			//# Edit Functionality
-			if ( isset( $_POST['submit'] ) &&
-				 'Edit Keyword' === $_POST['submit'] ) {
-				if ( isset( $_POST['keywordHash'] ) && ! empty( $_POST['keywordHash'] ) &&
-					 isset( $_POST['keyword'] ) && ! empty( $_POST['keyword'] ) &&
-					 isset( $_POST['keyword-link'] ) && ! empty( $_POST['keyword-link'] ) ) {
+			if (
+				isset( $_POST['submit'] ) &&
+				'Edit Keyword' === $_POST['submit']
+			) {
+				if (
+					isset( $_POST['keywordHash'] ) && ! empty( $_POST['keywordHash'] ) &&
+					isset( $_POST['keyword'] ) && ! empty( $_POST['keyword'] ) &&
+					isset( $_POST['keyword-link'] ) && ! empty( $_POST['keyword-link'] )
+				) {
 					try {
 						//# Scheduling Url
 						$url = new Urlslab_Url( $_POST['keyword-link'] );
@@ -43,11 +51,11 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 									$_POST['keywordHash'],
 									new Urlslab_Url_Keyword_Data(
 										array(
-											'keyword' => $_POST['keyword'],
-											'urlLink' => $_POST['keyword-link'],
+											'keyword'     => $_POST['keyword'],
+											'urlLink'     => $_POST['keyword-link'],
 											'kw_priority' => $_POST['keyword-prio'] ?? null,
-											'lang' => $_POST['keyword-lang'] ?? null,
-											'urlFilter' => $_POST['keyword-url-filter'] ?? null,
+											'lang'        => $_POST['keyword-lang'] ?? null,
+											'urlFilter'   => $_POST['keyword-url-filter'] ?? null,
 										)
 									)
 								);
@@ -113,10 +121,14 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			//# Edit Functionality
 
 			//# Add Functionality
-			if ( isset( $_POST['submit'] ) &&
-				 'Add Keyword' === $_POST['submit'] ) {
-				if ( isset( $_POST['keyword'] ) && ! empty( $_POST['keyword'] ) &&
-					 isset( $_POST['keyword-link'] ) && ! empty( $_POST['keyword-link'] ) ) {
+			if (
+				isset( $_POST['submit'] ) &&
+				'Add Keyword' === $_POST['submit']
+			) {
+				if (
+					isset( $_POST['keyword'] ) && ! empty( $_POST['keyword'] ) &&
+					isset( $_POST['keyword-link'] ) && ! empty( $_POST['keyword-link'] )
+				) {
 					try {
 
 						$url = new Urlslab_Url( $_POST['keyword-link'] );
@@ -125,11 +137,11 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 								$this->add_keyword(
 									new Urlslab_Url_Keyword_Data(
 										array(
-											'keyword' => $_POST['keyword'],
-											'urlLink' => $_POST['keyword-link'],
+											'keyword'     => $_POST['keyword'],
+											'urlLink'     => $_POST['keyword-link'],
 											'kw_priority' => $_POST['keyword-prio'] ?? null,
-											'lang' => $_POST['keyword-lang'] ?? null,
-											'urlFilter' => $_POST['keyword-url-filter'] ?? null,
+											'lang'        => $_POST['keyword-lang'] ?? null,
+											'urlFilter'   => $_POST['keyword-url-filter'] ?? null,
 										)
 									)
 								);
@@ -195,9 +207,11 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			//# Add Functionality
 
 			//# Edit settings
-			if ( isset( $_POST['submit'] ) &&
-				 'Save Changes' === $_POST['submit'] &&
-				 'update-settings' == $_GET['action'] ) {
+			if (
+				isset( $_POST['submit'] ) &&
+				'Save Changes' === $_POST['submit'] &&
+				'update-settings' == $_GET['action']
+			) {
 
 				Urlslab_Keywords_Links::update_settings( $_POST );
 
@@ -217,10 +231,12 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 
 		}
 
-		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
-			 'GET' === $_SERVER['REQUEST_METHOD'] and
-			 isset( $_REQUEST['action'] ) and
-			 - 1 != $_REQUEST['action'] ) {
+		if (
+			isset( $_SERVER['REQUEST_METHOD'] ) and
+			'GET' === $_SERVER['REQUEST_METHOD'] and
+			isset( $_REQUEST['action'] ) and
+			- 1 != $_REQUEST['action']
+		) {
 
 			//# Export Functionality
 			if ( 'export' == $_REQUEST['action'] ) {
@@ -299,11 +315,11 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		foreach ( $sample_data as $kw => $url ) {
 			$data_row = new Urlslab_Url_Keyword_Data(
 				array(
-					'keyword' => $kw,
-					'urlLink' => $url,
+					'keyword'     => $kw,
+					'urlLink'     => $url,
 					'kw_priority' => 100,
-					'lang' => 'all',
-					'urlFilter' => '.*',
+					'lang'        => 'all',
+					'urlFilter'   => '.*',
 				)
 			);
 			if ( $this->data_fetcher->prepare_url_batch_for_scheduling( array( new Urlslab_Url( $url ) ) ) ) {
@@ -313,21 +329,23 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 	}
 
 	public function urlslab_keyword_usage() {
-		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
-			 'GET' === $_SERVER['REQUEST_METHOD'] and
-			 isset( $_GET['data'] ) ) {
+		if (
+			isset( $_SERVER['REQUEST_METHOD'] ) and
+			'GET' === $_SERVER['REQUEST_METHOD'] and
+			isset( $_GET['data'] )
+		) {
 			check_ajax_referer( 'keyword_map_nonce', 'security' );
-			$kw_usage = $this->fetch_keyword_usage( $_GET['data'] );
+			$kw_usage          = $this->fetch_keyword_usage( $_GET['data'] );
 			$kw_recommendation = $this->fetch_recommended_urls_to( $_GET['data'] );
 			wp_send_json_success(
 				array(
 					array(
 						'title' => 'Keyword occurences:',
-						'data' => $kw_usage,
+						'data'  => $kw_usage,
 					),
 					array(
 						'title' => 'Recommendation: Add keyword to pages:',
-						'data' => $kw_recommendation,
+						'data'  => $kw_recommendation,
 					),
 				)
 			);
@@ -343,7 +361,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 	 */
 	private function fetch_keyword_usage( int $kw_id ): array {
 		global $wpdb;
-		$map_table = URLSLAB_KEYWORDS_MAP_TABLE;
+		$map_table    = URLSLAB_KEYWORDS_MAP_TABLE;
 		$source_table = URLSLAB_URLS_TABLE;
 
 		$results = $wpdb->get_results(
@@ -363,13 +381,14 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			),
 			ARRAY_A
 		);
-		foreach ($results as $id => $row) {
-			$row['pageid'] = url_to_postid($row['urlName']);
-			if ($row['pageid']) {
+		foreach ( $results as $id => $row ) {
+			$row['pageid'] = url_to_postid( $row['urlName'] );
+			if ( $row['pageid'] ) {
 				$row['edit_link'] = get_edit_post_link( $row['pageid'] );
 			}
-			$results[$id] = $row;
+			$results[ $id ] = $row;
 		}
+
 		return $results;
 	}
 
@@ -378,17 +397,17 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			return array();
 		}
 		global $wpdb;
-		$keyword_table = URLSLAB_KEYWORDS_TABLE;
+		$keyword_table          = URLSLAB_KEYWORDS_TABLE;
 		$related_resource_table = URLSLAB_RELATED_RESOURCE_TABLE;
-		$source_table = URLSLAB_URLS_TABLE;
+		$source_table           = URLSLAB_URLS_TABLE;
 
-		$kw_url = $wpdb->get_var(
+		$kw_url  = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT urlLink FROM $keyword_table WHERE kw_id = %s",//# phpcs:ignore
 				$kw_id
 			)
 		);
-		$kw_url = new Urlslab_Url( $kw_url );
+		$kw_url  = new Urlslab_Url( $kw_url );
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT v.urlMd5             AS urlMd5,
@@ -408,12 +427,12 @@ FROM $related_resource_table AS d LEFT JOIN $source_table AS v ON d.destUrlMd5 =
 			ARRAY_A
 		);
 
-		foreach ($results as $id => $row) {
-			$row['pageid'] = url_to_postid($row['urlName']);
-			if ($row['pageid']) {
+		foreach ( $results as $id => $row ) {
+			$row['pageid'] = url_to_postid( $row['urlName'] );
+			if ( $row['pageid'] ) {
 				$row['edit_link'] = get_edit_post_link( $row['pageid'] );
 			}
-			$results[$id] = $row;
+			$results[ $id ] = $row;
 		}
 
 		return $results;
@@ -456,7 +475,8 @@ FROM $related_resource_table AS d LEFT JOIN $source_table AS v ON d.destUrlMd5 =
                    urlFilter) VALUES (%d, %s, %d, %d, %s, %s, %s)';
 
 		$wpdb->query(
-			$wpdb->prepare( $query, // phpcs:ignore
+			$wpdb->prepare(
+				$query, // phpcs:ignore
 				array(
 					$keyword->get_kw_id(),
 					$keyword->get_keyword(),
@@ -501,7 +521,8 @@ FROM $related_resource_table AS d LEFT JOIN $source_table AS v ON d.destUrlMd5 =
                    urlFilter) VALUES (%s, %s, %d, %d, %s, %s, %s)';
 
 		$wpdb->query(
-			$wpdb->prepare( $query, // phpcs:ignore
+			$wpdb->prepare(
+				$query, // phpcs:ignore
 				array(
 					$keyword->get_kw_id(),
 					$keyword->get_keyword(),
@@ -524,7 +545,8 @@ FROM $related_resource_table AS d LEFT JOIN $source_table AS v ON d.destUrlMd5 =
 			if ( ! empty( $_FILES['csv_file'] ) &&
 				 isset( $_FILES['csv_file']['size'] ) &&
 				 isset( $_FILES['csv_file']['tmp_name'] ) &&
-				 $_FILES['csv_file']['size'] > 0 ) {
+				 $_FILES['csv_file']['size'] > 0
+			) {
 				$res = $this->import_csv( $_FILES['csv_file']['tmp_name'] );
 				if ( $res > 0 ) {
 					$redirect_to = $this->parent_page->menu_page(
@@ -605,11 +627,11 @@ FROM $related_resource_table AS d LEFT JOIN $source_table AS v ON d.destUrlMd5 =
 				try {
 					$data_row   = new Urlslab_Url_Keyword_Data(
 						array(
-							'keyword' => $data[0],
-							'urlLink' => $data[1],
+							'keyword'     => $data[0],
+							'urlLink'     => $data[1],
 							'kw_priority' => $data[2] ?? null,
-							'lang' => $data[3] ?? null,
-							'urlFilter' => $data[4] ?? null,
+							'lang'        => $data[3] ?? null,
+							'urlFilter'   => $data[4] ?? null,
 						)
 					);
 					$keywords[] = $data_row;
@@ -715,7 +737,8 @@ FROM $related_resource_table AS d LEFT JOIN $source_table AS v ON d.destUrlMd5 =
 				$filter = $_GET['lang'] ?? '';
 				?>
 				<label class="screen-reader-text" for="lang-filter">Lang:</label>
-				<input type="search" id="lang-filter" placeholder="lang filter..." name="lang" value="<?php echo esc_attr( $filter ); ?>" />
+				<input type="search" id="lang-filter" placeholder="lang filter..." name="lang"
+					   value="<?php echo esc_attr( $filter ); ?>"/>
 				<?php submit_button( 'Filter', '', '', false, array( 'id' => 'search-submit' ) ); ?>
 			</p>
 			<?php
