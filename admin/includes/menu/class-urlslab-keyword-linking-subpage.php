@@ -340,11 +340,11 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			wp_send_json_success(
 				array(
 					array(
-						'title' => 'Keyword is used in:',
+						'title' => 'Keyword occurences:',
 						'data'  => $kw_usage,
 					),
 					array(
-						'title' => 'Recommended Urls to include keyword in:',
+						'title' => 'Recommendation: Add keyword to pages:',
 						'data'  => $kw_recommendation,
 					),
 				)
@@ -364,7 +364,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		$map_table    = URLSLAB_KEYWORDS_MAP_TABLE;
 		$source_table = URLSLAB_URLS_TABLE;
 
-		return $wpdb->get_results(
+		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT     v.urlMd5 AS urlMd5,
                                   v.urlName AS urlName,
@@ -381,6 +381,16 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			),
 			ARRAY_A
 		);
+		foreach ( $results as $id => $row ) {
+			$rewritten_url = parse_url( get_site_url(), PHP_URL_SCHEME ) . '://' . str_replace( 'liveagent.com', 'liveagent.local', $row['urlName'] );
+			$row['pageid'] = url_to_postid( $rewritten_url );
+			if ( $row['pageid'] ) {
+				$row['editLink'] = get_edit_post_link( $row['pageid'] );
+			}
+			$results[ $id ] = $row;
+		}
+
+		return $results;
 	}
 
 	private function fetch_recommended_urls_to( int $kw_id ) {
@@ -392,32 +402,42 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		$related_resource_table = URLSLAB_RELATED_RESOURCE_TABLE;
 		$source_table           = URLSLAB_URLS_TABLE;
 
-		$kw_url = $wpdb->get_var(
+		$kw_url  = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT urlLink FROM $keyword_table WHERE kw_id = %s",//# phpcs:ignore
 				$kw_id
 			)
 		);
-		$kw_url = new Urlslab_Url( $kw_url );
-
-		return $wpdb->get_results(
+		$kw_url  = new Urlslab_Url( $kw_url );
+		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT v.urlMd5             AS urlMd5,
-							   v.urlName            AS urlName,
-							   v.status             AS status,
-							   v.domainId           AS domainId,
-							   v.urlId              AS urlId,
-							   v.screenshotDate     AS screenshotDate,
-							   v.updateStatusDate   AS updateStatusDate,
-							   v.urlTitle           AS urlTitle,
-							   v.urlMetaDescription AS urlMetaDescription,
-							   v.urlSummary         AS urlSummary,
-							   v.visibility         AS visibility
-						FROM $related_resource_table AS d LEFT JOIN $source_table AS v ON d.destUrlMd5 = v.urlMd5	WHERE d.srcUrlMd5 = %s ORDER BY d.pos", //#phpcs:ignore
+       v.urlName            AS urlName,
+       v.status             AS status,
+       v.domainId           AS domainId,
+       v.urlId              AS urlId,
+       v.screenshotDate     AS screenshotDate,
+       v.updateStatusDate   AS updateStatusDate,
+       v.urlTitle           AS urlTitle,
+       v.urlMetaDescription AS urlMetaDescription,
+       v.urlSummary         AS urlSummary,
+       v.visibility         AS visibility
+FROM $related_resource_table AS d LEFT JOIN $source_table AS v ON d.destUrlMd5 = v.urlMd5 WHERE d.srcUrlMd5 = %s", //#phpcs:ignore
 				$kw_url->get_url_id()
 			),
 			ARRAY_A
 		);
+
+		foreach ( $results as $id => $row ) {
+			$rewritten_url = parse_url( get_site_url(), PHP_URL_SCHEME ) . '://' . str_replace( 'liveagent.com', 'liveagent.local', $row['urlName'] );
+			$row['pageid'] = url_to_postid( $rewritten_url );
+			if ( $row['pageid'] ) {
+				$row['edit_link'] = get_edit_post_link( $row['pageid'] );
+			}
+			$results[ $id ] = $row;
+		}
+
+		return $results;
 	}
 
 	private function clear_keywords() {
@@ -457,7 +477,8 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
                    urlFilter) VALUES (%d, %s, %d, %d, %s, %s, %s)';
 
 		$wpdb->query(
-			$wpdb->prepare( $query, // phpcs:ignore
+			$wpdb->prepare(
+				$query, // phpcs:ignore
 				array(
 					$keyword->get_kw_id(),
 					$keyword->get_keyword(),
@@ -502,7 +523,8 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
                    urlFilter) VALUES (%s, %s, %d, %d, %s, %s, %s)';
 
 		$wpdb->query(
-			$wpdb->prepare( $query, // phpcs:ignore
+			$wpdb->prepare(
+				$query, // phpcs:ignore
 				array(
 					$keyword->get_kw_id(),
 					$keyword->get_keyword(),
@@ -667,7 +689,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
                    kw_length,
                    lang,
                    urlLink,
-                   urlFilter) 
+                   urlFilter)
                    VALUES ' . implode( ', ', $insert_placeholders ) . '
                    ON DUPLICATE KEY UPDATE
                    kw_priority = VALUES(kw_priority),
