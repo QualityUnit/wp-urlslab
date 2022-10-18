@@ -429,7 +429,8 @@ FROM $related_resource_table AS d LEFT JOIN $source_table AS v ON d.destUrlMd5 =
 		);
 
 		foreach ( $results as $id => $row ) {
-			$row['pageid'] = url_to_postid( $row['urlName'] );
+			$rewritten_url = parse_url( get_site_url(), PHP_URL_SCHEME ) . '://' . str_replace( 'liveagent.com', 'liveagent.local', $row['urlName'] );
+			$row['pageid'] = url_to_postid( $rewritten_url );
 			if ( $row['pageid'] ) {
 				$row['edit_link'] = get_edit_post_link( $row['pageid'] );
 			}
