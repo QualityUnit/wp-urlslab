@@ -400,7 +400,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		$res = $wpdb->query( $wpdb->prepare( $insert_query, $insert_values ) ); // phpcs:ignore
 
 		if ( is_bool( $res ) and ! $res ) {
-			return - 1;
+			return -1;
 		} else {
 			return $res;
 		}
