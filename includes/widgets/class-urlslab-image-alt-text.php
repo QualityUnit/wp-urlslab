@@ -52,20 +52,20 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 		return $this->landing_page_link;
 	}
 
-	public function theContentHook( DOMDocument $document) {
+	public function theContentHook( DOMDocument $document ) {
 		try {
-			$xpath = new DOMXPath( $document );
+			$xpath      = new DOMXPath( $document );
 			$table_data = $xpath->query( "//img[not(@alt) or @alt='']|//*[starts-with(name(),'h')]" );
-			$title = get_the_title();
+			$title      = get_the_title();
 
-			if (!empty( $table_data )) {
-				foreach ($table_data as $element) {
-					if (substr( $element->nodeName, 0, 1 ) == 'h') {
+			if ( ! empty( $table_data ) ) {
+				foreach ( $table_data as $element ) {
+					if ( substr( $element->nodeName, 0, 1 ) == 'h' ) {
 						$title = $element->nodeValue;
-					} elseif ('img' == $element->nodeName && !$this->is_skip_elemenet( $element )) {
-						if (isset( $element->parentNode ) && $element->parentNode->nodeName == 'a' && $element->parentNode->hasAttribute( 'title' ) && ( !$element->hasAttribute( 'urlslab-skip' ) && !$element->get )) {
+					} else if ( 'img' == $element->nodeName && ! $this->is_skip_elemenet( $element ) ) {
+						if ( isset( $element->parentNode ) && $element->parentNode->nodeName == 'a' && $element->parentNode->hasAttribute( 'title' ) ) {
 							$element->setAttribute( 'alt', $title . ' - ' . $element->parentNode->getAttribute( 'title' ) );
-						} elseif (strlen( $title )) {
+						} else if ( strlen( $title ) ) {
 							$element->setAttribute( 'alt', $title );
 						}
 					}
@@ -74,13 +74,12 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 				return;
 			}
 			return;
-		} catch (Exception $e) {
-			//TODO logging errors
+		} catch ( Exception $e ) {
 			return;
 		}
 	}
 
-	public function get_shortcode_content( $atts = array(), $content = null, $tag = ''): string {
+	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
 		return '';
 	}
 
@@ -104,5 +103,6 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 		return 'image-alt-text';
 	}
 
-	public static function update_settings( array $new_settings ) {}
+	public static function update_settings( array $new_settings ) {
+	}
 }
