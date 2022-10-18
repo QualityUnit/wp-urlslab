@@ -322,11 +322,11 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			wp_send_json_success(
 				array(
 					array(
-						'title' => 'Keyword is used in:',
+						'title' => 'Keyword occurences:',
 						'data' => $kw_usage,
 					),
 					array(
-						'title' => 'Recommended Urls to include keyword in:',
+						'title' => 'Recommendation: Add keyword to pages:',
 						'data' => $kw_recommendation,
 					),
 				)
@@ -346,7 +346,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		$map_table = URLSLAB_KEYWORDS_MAP_TABLE;
 		$source_table = URLSLAB_URLS_TABLE;
 
-		return $wpdb->get_results(
+		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT     v.urlMd5 AS urlMd5,
                                   v.urlName AS urlName,
@@ -363,6 +363,14 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			),
 			ARRAY_A
 		);
+		foreach ($results as $id => $row) {
+			$row['pageid'] = url_to_postid($row['urlName']);
+			if ($row['pageid']) {
+				$row['edit_link'] = get_edit_post_link( $row['pageid'] );
+			}
+			$results[$id] = $row;
+		}
+		return $results;
 	}
 
 	private function fetch_recommended_urls_to( int $kw_id ) {
@@ -381,7 +389,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			)
 		);
 		$kw_url = new Urlslab_Url( $kw_url );
-		return $wpdb->get_results(
+		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT v.urlMd5             AS urlMd5,
        v.urlName            AS urlName,
@@ -399,6 +407,16 @@ FROM $related_resource_table AS d LEFT JOIN $source_table AS v ON d.destUrlMd5 =
 			),
 			ARRAY_A
 		);
+
+		foreach ($results as $id => $row) {
+			$row['pageid'] = url_to_postid($row['urlName']);
+			if ($row['pageid']) {
+				$row['edit_link'] = get_edit_post_link( $row['pageid'] );
+			}
+			$results[$id] = $row;
+		}
+
+		return $results;
 	}
 
 	private function clear_keywords() {
@@ -647,7 +665,7 @@ FROM $related_resource_table AS d LEFT JOIN $source_table AS v ON d.destUrlMd5 =
                    kw_length,
                    lang,
                    urlLink,
-                   urlFilter) 
+                   urlFilter)
                    VALUES ' . implode( ', ', $insert_placeholders ) . '
                    ON DUPLICATE KEY UPDATE
                    kw_priority = VALUES(kw_priority),

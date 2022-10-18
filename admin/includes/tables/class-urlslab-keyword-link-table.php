@@ -27,7 +27,7 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 		$values = array();
 
 		/* -- Preparing your query -- */
-		$query = "SELECT 
+		$query = "SELECT
        v.kw_id				  AS kw_id,
        v.keyword              AS keyword,
        v.kw_priority          AS kw_priority,
@@ -231,7 +231,12 @@ FROM $table AS v
 			case 'col_kw_priority':
 				return $this->priority_ui_convert( $item->get_keyword_priority() );
 			case 'col_url_link':
-				return $item->get_keyword_url_link();
+				$value = '<a href="' . $item->get_keyword_url_link() . '" target="_blank">' . $item->get_keyword_url_link() . '</a>';
+				$id = url_to_postid($item->get_keyword_url_link());
+				if ($id) {
+					$value .= ' <a class="keyword-map-show urlslab-ajax-show" href="' . get_edit_post_link( $id ) . '" target="_blank">edit post</a>';
+				}
+				return $value;
 			case 'col_url_filter':
 				return $item->get_keyword_url_filter();
 			case 'col_lang':

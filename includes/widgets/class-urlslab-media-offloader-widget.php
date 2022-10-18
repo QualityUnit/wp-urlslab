@@ -973,6 +973,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 								$dom_element->setAttribute( $attribute, str_replace( $url_val[0], $source_url, $dom_element->getAttribute( $attribute ) ) );
 								$found_urls[ $old_file_obj->get_fileid() ] = 1;
 							} else if ( Urlslab_Driver::STATUS_ERROR === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() && get_option( self::SETTING_NAME_HIDE_ERROR_IMAGES, self::SETTING_DEFAULT_HIDE_ERROR_IMAGES ) ) {
+								$dom_element->setAttribute( 'urlslab-message', 'URL does not exist:' . esc_html($url_value) );
+								$dom_element->setAttribute( 'style', 'display:none;visibility:hidden;' );
 								$dom_element->setAttribute( $attribute, trim( str_replace( $url_value, '', $dom_element->getAttribute( $attribute ) ), ',' ) );
 							}
 						}
@@ -988,6 +990,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 									$dom_element->setAttribute( $attribute, str_replace( $matched_url, $source_url, $dom_element->getAttribute( $attribute ) ) );
 									$found_urls[ $old_file_obj->get_fileid() ] = 1;
 								} else if ( Urlslab_Driver::STATUS_ERROR === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() && get_option( self::SETTING_NAME_HIDE_ERROR_IMAGES, self::SETTING_DEFAULT_HIDE_ERROR_IMAGES ) ) {
+									$dom_element->setAttribute( 'urlslab-message', 'URL does not exist:' . esc_html($matched_url) );
+									$dom_element->setAttribute( 'style', 'display:none;visibility:hidden;' );
 									$dom_element->setAttribute( $attribute, str_replace( $matched_url, '', $dom_element->getAttribute( $attribute ) ) );
 								}
 							}
@@ -1003,6 +1007,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 							$dom_element->setAttribute( $attribute, $source_url );
 							$found_urls[ $old_file_obj->get_fileid() ] = 1;
 						} else if ( Urlslab_Driver::STATUS_ERROR === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() && get_option( self::SETTING_NAME_HIDE_ERROR_IMAGES, self::SETTING_DEFAULT_HIDE_ERROR_IMAGES ) ) {
+							$dom_element->setAttribute( 'urlslab-message', 'URL does not exist:' . esc_html($url) );
+							$dom_element->setAttribute( 'style', 'display:none;visibility:hidden;' );
 							$dom_element->removeAttribute( $attribute );
 						}
 					}
