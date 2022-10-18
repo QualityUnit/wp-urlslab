@@ -436,10 +436,12 @@ or (updateStatusDate < %d AND status = %s)
        				 u.urlTitle AS urlTitle,
        				 u.urlMetaDescription AS urlMetaDescription,
        				 u.urlSummary AS urlSummary,
-       				 u.visibility AS visibility
+       				 u.visibility AS visibility,
+       				 r.pos as pos
 				FROM $related_urls_table r
                 INNER JOIN $urls_table as u ON r.destUrlMd5 = u.urlMd5
 				WHERE r.srcUrlMd5 = %d AND u.visibility = '%s'
+				ORDER BY r.pos
 				LIMIT %d";
 
 		$query_res = $wpdb->get_results(

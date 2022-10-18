@@ -100,7 +100,8 @@
 		srcUrlHash = '',
 		srcUrl = '',
 		destUrlHash = '',
-		destUrl = '' ) {
+		destUrl = '',
+		pos = 10) {
 		return $(
 			`
 		<div id="${ modalId }" class="urlslab-modal modal">
@@ -113,12 +114,16 @@
 			<form method="post" action="?page=${ pageParam }&tab=${ tabParam }&action=url-relation-edit">
 				<input type="hidden" name="srcUrlHash" value="${ srcUrlHash }">
 				<input type="hidden" name="destUrlHash" value="${ destUrlHash }">
-				<label for="src-url">Src URL: </label>
-				<input id="src-url" name="srcUrl" type="text" value="${ srcUrl }" placeholder="Src URL...">
+				<label for="src-url">Source URL: </label>
+				<input id="src-url" name="srcUrl" type="text" value="${ srcUrl }" placeholder="Source URL...">
 				<br class="clear"/>
 				<br class="clear"/>
-				<label for="dest-url">Dest URL: </label>
-				<input id="dest-url" name="destUrl" type="text" value="${ destUrl }" placeholder="Dest URL...">
+				<label for="dest-url">Destination URL: </label>
+				<input id="dest-url" name="destUrl" type="text" value="${ destUrl }" placeholder="Destination URL...">
+				<br class="clear"/>
+				<br class="clear"/>
+				<label for="pos">Position: </label>
+				<input id="pos" name="pos" type="text" value="${ pos }" placeholder="10">
 				<br class="clear"/>
 				<br class="clear"/>
 				<input type="submit" name="submit" class="button" value="${ srcUrlHash != '' ? 'Edit Url Relation' : 'Add Url Relation' }">
@@ -399,8 +404,9 @@
 					const urlSrc = $( this ).data( 'src-url' );
 					const urlDestHash = $( this ).data( 'dest-url-hash' );
 					const urlDest = $( this ).data( 'dest-url' );
+					const pos = $( this ).data( 'pos' );
 					const urlParams = new URLSearchParams( window.location.search );
-					createHTMLPopupUrlRelation( closeIcon, 'modal-rr-' + urlSrcHash + urlDestHash, urlParams.get( 'page' ), urlParams.get( 'tab' ) || '', urlSrcHash, urlSrc, urlDestHash, urlDest )
+					createHTMLPopupUrlRelation( closeIcon, 'modal-rr-' + urlSrcHash + urlDestHash, urlParams.get( 'page' ), urlParams.get( 'tab' ) || '', urlSrcHash, urlSrc, urlDestHash, urlDest, pos )
 						.appendTo( 'body' ).dialog(
 							{
 								dialogClass: 'no-close',

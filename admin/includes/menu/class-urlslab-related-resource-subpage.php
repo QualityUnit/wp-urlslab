@@ -17,31 +17,40 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 	}
 
 	public function handle_action() {
-		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
-			 'POST' === $_SERVER['REQUEST_METHOD'] and
-			 isset( $_REQUEST['action'] ) and
-			 - 1 != $_REQUEST['action'] ) {
+		if (
+			isset( $_SERVER['REQUEST_METHOD'] ) and
+			'POST' === $_SERVER['REQUEST_METHOD'] and
+			isset( $_REQUEST['action'] ) and
+			- 1 != $_REQUEST['action']
+		) {
 
 			//# Import Functionality
-			if ( isset( $_POST['submit'] ) &&
-				 'Import' === $_POST['submit'] ) {
+			if (
+				isset( $_POST['submit'] ) &&
+				'Import' === $_POST['submit']
+			) {
 				check_admin_referer( 'related-resource-widget-import' );
 				$this->import_csv_url_relations();
 			}
 			//# Import Functionality
 
 			//# Edit Functionality
-			if ( isset( $_POST['submit'] ) &&
-				 'Edit Url Relation' === $_POST['submit'] ) {
-				if ( isset( $_POST['srcUrlHash'] ) && ! empty( $_POST['srcUrlHash'] ) &&
-					 isset( $_POST['destUrlHash'] ) && ! empty( $_POST['destUrlHash'] ) &&
-					 isset( $_POST['srcUrl'] ) && ! empty( $_POST['srcUrl'] ) &&
-					 isset( $_POST['destUrl'] ) && ! empty( $_POST['destUrl'] ) ) {
+			if (
+				isset( $_POST['submit'] ) &&
+				'Edit Url Relation' === $_POST['submit']
+			) {
+				if (
+					isset( $_POST['srcUrlHash'] ) && ! empty( $_POST['srcUrlHash'] ) &&
+					isset( $_POST['destUrlHash'] ) && ! empty( $_POST['destUrlHash'] ) &&
+					isset( $_POST['srcUrl'] ) && ! empty( $_POST['srcUrl'] ) &&
+					isset( $_POST['destUrl'] ) && ! empty( $_POST['destUrl'] )
+				) {
 					$this->edit_url_relation(
 						$_POST['srcUrlHash'],
 						$_POST['destUrlHash'],
 						new Urlslab_Url( $_POST['srcUrl'] ),
 						new Urlslab_Url( $_POST['destUrl'] ),
+						$_POST['pos'] ?? 10,
 					);
 					wp_safe_redirect(
 						$this->parent_page->menu_page(
@@ -69,14 +78,19 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 			//# Edit Functionality
 
 			# Add Functionality
-			if ( isset( $_POST['submit'] ) &&
-				 'Add Url Relation' === $_POST['submit'] ) {
-				if ( isset( $_POST['srcUrl'] ) && ! empty( $_POST['srcUrl'] ) &&
-					 isset( $_POST['destUrl'] ) && ! empty( $_POST['destUrl'] ) ) {
+			if (
+				isset( $_POST['submit'] ) &&
+				'Add Url Relation' === $_POST['submit']
+			) {
+				if (
+					isset( $_POST['srcUrl'] ) && ! empty( $_POST['srcUrl'] ) &&
+					isset( $_POST['destUrl'] ) && ! empty( $_POST['destUrl'] )
+				) {
 					try {
 						$this->add_url_relation(
 							new Urlslab_Url( $_POST['srcUrl'] ),
 							new Urlslab_Url( $_POST['destUrl'] ),
+							$_POST['pos'] ?? 10
 						);
 						wp_safe_redirect(
 							$this->parent_page->menu_page(
@@ -117,10 +131,12 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 
 		}
 
-		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
-			 'GET' === $_SERVER['REQUEST_METHOD'] and
-			 isset( $_REQUEST['action'] ) and
-			 - 1 != $_REQUEST['action'] ) {
+		if (
+			isset( $_SERVER['REQUEST_METHOD'] ) and
+			'GET' === $_SERVER['REQUEST_METHOD'] and
+			isset( $_REQUEST['action'] ) and
+			- 1 != $_REQUEST['action']
+		) {
 
 			//# Export Functionality
 			if ( 'export' == $_REQUEST['action'] ) {
@@ -219,8 +235,9 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 			<div>
 				The CSV file should contain headers. the CSV file should include following headers:
 				<ul>
-					<li class="color-danger">src URL (required)</li>
-					<li class="color-danger">dest URL (required)</li>
+					<li class="color-danger">Src URL (required)</li>
+					<li class="color-danger">Dest URL (required)</li>
+					<li class="color-danger">Position (optional, default value 10)</li>
 				</ul>
 			</div>
 			<form action="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=import' ) ); ?>"
@@ -251,15 +268,17 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 
 	private function import_csv_url_relations(): void {
 		try {
-			if ( isset( $_FILES['csv_file']['error'] ) and
-				 UPLOAD_ERR_OK == $_FILES['csv_file']['error'] and
-				 isset( $_FILES['csv_file'] ) and
-				 isset( $_FILES['csv_file']['size'] ) and
-				 isset( $_FILES['csv_file']['tmp_name'] ) and
-				 ! empty( $_FILES['csv_file'] ) and
-				 $_FILES['csv_file']['size'] > 0 ) {
+			if (
+				isset( $_FILES['csv_file']['error'] ) and
+				UPLOAD_ERR_OK == $_FILES['csv_file']['error'] and
+				isset( $_FILES['csv_file'] ) and
+				isset( $_FILES['csv_file']['size'] ) and
+				isset( $_FILES['csv_file']['tmp_name'] ) and
+				! empty( $_FILES['csv_file'] ) and
+				$_FILES['csv_file']['size'] > 0
+			) {
 				$res = $this->import_csv( $_FILES['csv_file']['tmp_name'] );
-				if ( $res > -1 ) {
+				if ( $res > - 1 ) {
 					$redirect_to = $this->parent_page->menu_page(
 						$this->subpage_slug,
 						array(
@@ -317,7 +336,8 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 					continue;
 				}
 				if ( ! isset( $data[0] ) || strlen( $data[0] ) == 0 ||
-					 ! isset( $data[1] ) || strlen( $data[1] ) == 0 ) {
+					 ! isset( $data[1] ) || strlen( $data[1] ) == 0
+				) {
 					continue;
 				}
 				//SrcUrl, DestUrl
@@ -326,6 +346,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 					$data_row = array(
 						new Urlslab_Url( $data[0] ),
 						new Urlslab_Url( $data[1] ),
+						$data[2] ?? 10,
 					);
 
 					$related_urls[]                     = $data_row;
@@ -365,19 +386,21 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 				$insert_values,
 				$related_resource[0]->get_url_id(),
 				$related_resource[1]->get_url_id(),
+				$related_resource[2],
 			);
-			$insert_placeholders[] = '(%d, %s)';
+			$insert_placeholders[] = '(%d, %d, %d)';
 		}
 
 		$insert_query = 'INSERT IGNORE INTO ' . URLSLAB_RELATED_RESOURCE_TABLE . ' (
                    srcUrlMd5,
-                   destUrlMd5
+                   destUrlMd5,
+                   pos
                    ) VALUES ' . implode( ', ', $insert_placeholders );
 
-        $res = $wpdb->query( $wpdb->prepare( $insert_query, $insert_values ) ); // phpcs:ignore
+		$res = $wpdb->query( $wpdb->prepare( $insert_query, $insert_values ) ); // phpcs:ignore
 
 		if ( is_bool( $res ) and ! $res ) {
-			return -1;
+			return - 1;
 		} else {
 			return $res;
 		}
@@ -387,19 +410,21 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		header( 'Content-Type: text/csv; charset=utf-8' );
 		header( 'Content-Disposition: attachment; filename=urlslab-related-resources.csv' );
 		$output = fopen( 'php://output', 'w' );
-		fputcsv( $output, array( 'Src URL', 'Dest URL' ) );
+		fputcsv( $output, array( 'Src URL', 'Dest URL', 'Position' ) );
 		global $wpdb;
 		$related_resource_table = URLSLAB_RELATED_RESOURCE_TABLE;
 		$urls_table             = URLSLAB_URLS_TABLE;
 
-		$query  = "SELECT u.urlName AS srcUrlName,
-				       v.urlName AS destUrlName
+		$query = "SELECT u.urlName AS srcUrlName,
+				       v.urlName AS destUrlName,
+				       r.pos
 				FROM $related_resource_table r
 				         INNER JOIN $urls_table as u
 				                    ON r.srcUrlMd5 = u.urlMd5
 				         INNER JOIN $urls_table as v
 				                    ON r.destUrlMd5 = v.urlMd5
-			    WHERE r.srcUrlMd5 <> r.destUrlMd5";
+			    WHERE r.srcUrlMd5 <> r.destUrlMd5
+			    ORDER BY u.urlName, r.pos";
 
 
 		if ( is_object( $wpdb->dbh ) && $wpdb->use_mysqli ) {
@@ -413,6 +438,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 					array(
 						urlslab_get_current_page_protocol() . $data['srcUrlName'],
 						urlslab_get_current_page_protocol() . $data['destUrlName'],
+						$data['pos'],
 					)
 				);
 				if ( ob_get_length() ) {
@@ -428,6 +454,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 					array(
 						urlslab_get_current_page_protocol() . $row[0],
 						urlslab_get_current_page_protocol() . $row[1],
+						$row[2],
 					)
 				);
 			}
@@ -446,6 +473,8 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 				return 'srcUrl';
 			case 'dest url':
 				return 'destUrl';
+			case 'position':
+				return 'pos';
 			default:
 				return false;
 		}
@@ -490,6 +519,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 				$related_resources[] = array(
 					$sample_urls[ $i ],
 					$sample_urls[ $j ],
+					$j,
 				);
 			}
 		}
@@ -505,7 +535,8 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		string $old_src_url,
 		string $old_dest_url,
 		Urlslab_Url $src_url,
-		Urlslab_Url $dest_url
+		Urlslab_Url $dest_url,
+		int $pos = 10
 	): void {
 
 		global $wpdb;
@@ -533,14 +564,16 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		//# Add Relation
 		$query = 'INSERT INTO ' . URLSLAB_RELATED_RESOURCE_TABLE . ' (
                    srcUrlMd5,
-                   destUrlMd5
-        ) VALUES (%d, %d)';
+                   destUrlMd5,
+                   pos
+        ) VALUES (%d, %d, %d)';
 
 		$wpdb->query(
 			$wpdb->prepare( $query, // phpcs:ignore
 				array(
 					$src_url->get_url_id(),
 					$dest_url->get_url_id(),
+					$pos,
 				)
 			)
 		);
@@ -549,7 +582,8 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 
 	private function add_url_relation(
 		Urlslab_Url $src_url,
-		Urlslab_Url $dest_url
+		Urlslab_Url $dest_url,
+		int $position = 10
 	): void {
 
 		global $wpdb;
@@ -563,14 +597,16 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		//# Add Relation
 		$query = 'INSERT INTO ' . URLSLAB_RELATED_RESOURCE_TABLE . ' (
                    srcUrlMd5,
-                   destUrlMd5
-        ) VALUES (%d, %d)';
+                   destUrlMd5,
+                   pos
+        ) VALUES (%d, %d, %d)';
 
 		$wpdb->query(
 			$wpdb->prepare( $query, // phpcs:ignore
 				array(
 					$src_url->get_url_id(),
 					$dest_url->get_url_id(),
+					$position,
 				)
 			)
 		);
@@ -578,6 +614,5 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 	}
 
 
-	public function render_settings() {
-	}
+	public function render_settings() {}
 }
