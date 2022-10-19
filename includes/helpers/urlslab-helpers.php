@@ -2,18 +2,18 @@
 
 function urlslab_get_supported_media(): array {
 	return array(
-		'img' => array(
+		'img'    => array(
 			'src',
 			'data-src',
 			'data-full-url',
 			'data-splide-lazy',
 			'srcset',
 		),
-		'video' => array(
+		'video'  => array(
 			'src',
 			'data-src',
 		),
-		'audio' => array(
+		'audio'  => array(
 			'src',
 			'data-src',
 		),
@@ -26,9 +26,10 @@ function urlslab_get_supported_media(): array {
 
 function get_action() {
 	$current_action = '';
-	if ( isset( $_REQUEST['action'] ) and -1 != $_REQUEST['action'] ) {
+	if ( isset( $_REQUEST['action'] ) and - 1 != $_REQUEST['action'] ) {
 		$current_action = $_REQUEST['action'];
 	}
+
 	return $current_action;
 }
 
@@ -38,9 +39,10 @@ function urlslab_admin_menu_page_url( $menu_slug ): string {
 
 function urlslab_get_action(): string {
 	$current_action = '';
-	if ( isset( $_REQUEST['action'] ) and -1 != $_REQUEST['action'] ) {
+	if ( isset( $_REQUEST['action'] ) and - 1 != $_REQUEST['action'] ) {
 		$current_action = $_REQUEST['action'];
 	}
+
 	return $current_action;
 }
 
@@ -166,6 +168,7 @@ function urlslab_file_upload_code_to_message( int $code ): string {
 			$message = 'Unknown upload error';
 			break;
 	}
+
 	return $message;
 }
 
@@ -200,7 +203,15 @@ function get_current_page_url(): Urlslab_Url {
 	if ( is_category() ) {
 		$current_url = get_category_link( get_query_var( 'cat' ) );
 	}
+
 	return new Urlslab_Url( $current_url );
+}
+
+function urlslab_add_current_page_protocol( string $url ): string {
+	if ( str_starts_with( $url, 'http' ) ) {
+		return $url;
+	}
+	return urlslab_get_current_page_protocol() . $url;
 }
 
 function urlslab_get_current_page_protocol(): string {
@@ -208,6 +219,7 @@ function urlslab_get_current_page_protocol(): string {
 	if ( empty( $protocol ) ) {
 		return 'http://';
 	}
+
 	return $protocol . '://';
 }
 
@@ -242,6 +254,7 @@ function urlslab_update_widget_settings( array $option, string $setting_name, $s
 			)
 		);
 	}
+
 	return $option;
 }
 
@@ -287,10 +300,10 @@ function urlslab_masked_info( string $text ): string {
 		return '';
 	}
 	$masked_text = '';
-	for ( $x = 0; $x <= strlen( $text ) - 4; $x++ ) {
+	for ( $x = 0; $x <= strlen( $text ) - 4; $x ++ ) {
 		$masked_text = $masked_text . '*';
 	}
 
-	return $masked_text . substr( $text, -5 );
+	return $masked_text . substr( $text, - 5 );
 }
 

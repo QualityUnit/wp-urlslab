@@ -235,7 +235,7 @@ FROM $table AS v
 				return $this->priority_ui_convert( $item->get_keyword_priority() );
 			case 'col_url_link':
 				$value = '<a href="' . $item->get_keyword_url_link() . '" target="_blank">' . $item->get_keyword_url_link() . '</a>';
-				$id    = url_to_postid( $item->get_keyword_url_link() );
+				$id    = url_to_postid( urlslab_add_current_page_protocol( $item->get_keyword_url_link() ) );
 				if ( $id ) {
 					$value .= ' <a class="keyword-map-show urlslab-ajax-show" href="' . get_edit_post_link( $id ) . '" target="_blank">edit post</a>';
 				}

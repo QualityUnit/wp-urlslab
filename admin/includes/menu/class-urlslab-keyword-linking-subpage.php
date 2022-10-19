@@ -382,8 +382,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			ARRAY_A
 		);
 		foreach ( $results as $id => $row ) {
-			$rewritten_url = parse_url( get_site_url(), PHP_URL_SCHEME ) . '://' . str_replace( 'liveagent.com', 'liveagent.local', $row['urlName'] );
-			$row['pageid'] = url_to_postid( $rewritten_url );
+			$row['pageid'] = url_to_postid( urlslab_add_current_page_protocol( $row['urlName'] ) );
 			if ( $row['pageid'] ) {
 				$row['editLink'] = get_edit_post_link( $row['pageid'] );
 			}
@@ -429,8 +428,7 @@ FROM $related_resource_table AS d LEFT JOIN $source_table AS v ON d.destUrlMd5 =
 		);
 
 		foreach ( $results as $id => $row ) {
-			$rewritten_url = parse_url( get_site_url(), PHP_URL_SCHEME ) . '://' . str_replace( 'liveagent.com', 'liveagent.local', $row['urlName'] );
-			$row['pageid'] = url_to_postid( $rewritten_url );
+			$row['pageid'] = url_to_postid( urlslab_add_current_page_protocol( $row['urlName'] ) );
 			if ( $row['pageid'] ) {
 				$row['edit_link'] = get_edit_post_link( $row['pageid'] );
 			}
