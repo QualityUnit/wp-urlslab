@@ -38,15 +38,6 @@ jobs:
       - name: Remove Unnecessary Files
         run: rm -rf .git .idea .github *.md *.lock .editorconfig .eslintignore .eslintrc .gitignore .stylelintrc composer.json *.lock package.json phpcs.xml webpack.config.js commitlint.config.js debug.log
 
-  release:
-    name: 2️⃣ Release
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout the code
-        uses: actions/checkout@v3
-
       - name: Get the Version
         id: version
         uses: actions-ecosystem/action-regex-match@v2
