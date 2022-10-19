@@ -1,14 +1,10 @@
-name: Release
+name: Release Nightly
 
 on:
   push:
     tags:
-      - '[0-9]+.[0-9]+.[0-9]'
-      - '[0-9]+.[0-9][0-9]+.[0-9]'
-  workflow_call:
-    secrets:
-      CICD_PAT:
-        required: true
+      - '[0-9]+.[0-9]+.[0-9]+-nightly'
+      - '[0-9]+.[0-9][0-9]+.[0-9]+-nightly'
 
 jobs:
   build:
@@ -68,33 +64,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           draft: false
-          prerelease: false
+          prerelease: true
           body: See changes in the [CHANGELOG.md](CHANGELOG.md)
           files: ./urlslab-plugin_${{ steps.version.outputs.group1 }}.zip
-
-  deploy:
-    name: 3️⃣ Deploy
-    needs: release
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Get the Version
-        id: version
-        uses: actions-ecosystem/action-regex-match@v2
-        with:
-          text: ${{ github.ref }}
-          regex: ".*/([^/]+)$"
-
-      - name: Trigger the Update Pipeline
-        id: trigger
-        uses: aurelien-baudet/workflow-dispatch@v2
-        with:
-          workflow: update-urlslab.yml
-          repo: QualityUnit/liveagent-wp
-          ref: dev
-          token: ${{ secrets.CICD_PAT }}
-          wait-for-completion-interval: 5s
-          inputs: '{
-                  "repository":"liveagent-wp",
-                  "version":"${{ steps.version.outputs.group1 }}"
-                }'
