@@ -231,7 +231,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			//find files for elements
 			//*********************************
 			$this->files = $this->get_files_for_urls( array_keys( $url_fileids ) );
-			$this->log_file_usage();
+			$this->log_file_usage( $url_fileids );
 
 			//*********************************
 			//process elements from page
@@ -275,7 +275,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		}
 	}
 
-	private function log_file_usage() {
+	private function log_file_usage( array $missing_file_ids ) {
 		if ( get_option( self::SETTING_NAME_LOG_IMAGES, self::SETTING_DEFAULT_LOG_IMAGES ) ) {
 			global $wpdb;
 			$current_page = get_current_page_url();
@@ -296,8 +296,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				}
 			);
 
-			$insert = array_diff( array_keys( $this->files ), array_keys( $files ) );
-			$delete = array_diff( array_keys( $files ), array_keys( $this->files ) );
+			$page_fileids = array_merge( array_keys( $this->files ), array_keys( $missing_file_ids ) );
+
+			$insert = array_diff( $page_fileids, array_keys( $files ) );
+			$delete = array_diff( array_keys( $files ), $page_fileids );
 			if ( ! empty( $insert ) ) {
 				$table        = URLSLAB_FILE_URLS_TABLE;
 				$placeholders = array();
@@ -520,6 +522,21 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 					$picture_element->insertBefore( $source_element, $new_img_element );
 					//process this source tag as other source elements
 					$found_urls = array_merge( $this->process_source_tag( $source_element, $document ), $found_urls );
+				} else if ( $new_img_element->hasAttribute( 'data-srcset' ) ) {
+					//create basic source with type from original img
+					$source_element = $document->createElement( 'source' );
+					$source_element->setAttribute( 'data-srcset', $new_img_element->getAttribute( 'data-srcset' ) );
+					$source_element->setAttribute( 'urlslab-lazy', 'yes' );
+					$new_img_element->removeAttribute( 'data-srcset' );
+
+					if ( $new_img_element->hasAttribute( 'sizes' ) ) {
+						$source_element->setAttribute( 'sizes', $new_img_element->getAttribute( 'sizes' ) );
+						$new_img_element->removeAttribute( 'sizes' );
+					}
+
+					$picture_element->insertBefore( $source_element, $new_img_element );
+					//process this source tag as other source elements
+					$found_urls = array_merge( $this->process_source_tag( $source_element, $document ), $found_urls );
 				}
 
 				//add simple alternatives to src url
@@ -582,6 +599,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			foreach ( $results as $file_array ) {
 				$file_obj = new Urlslab_File_Data( $file_array );
 				$new_urls[ $file_array['parent_fileid'] ]->add_alternative( $file_obj );
+				$new_urls[ $file_obj->get_fileid() ] = $file_obj;
 			}
 		}
 
@@ -702,8 +720,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	public static function update_settings( array $new_settings ) {
-		if ( isset( $new_settings[ self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ] )
+		) {
 			update_option(
 				self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND,
 				$new_settings[ self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ]
@@ -715,8 +735,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			);
 		}
 
-		if ( isset( $new_settings[ self::SETTING_NAME_SAVE_EXTERNAL ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_SAVE_EXTERNAL ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_SAVE_EXTERNAL ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_SAVE_EXTERNAL ] )
+		) {
 			update_option(
 				self::SETTING_NAME_SAVE_EXTERNAL,
 				$new_settings[ self::SETTING_NAME_SAVE_EXTERNAL ]
@@ -727,8 +749,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				false
 			);
 		}
-		if ( isset( $new_settings[ self::SETTING_NAME_LOG_IMAGES ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_LOG_IMAGES ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_LOG_IMAGES ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_LOG_IMAGES ] )
+		) {
 			update_option(
 				self::SETTING_NAME_LOG_IMAGES,
 				$new_settings[ self::SETTING_NAME_LOG_IMAGES ]
@@ -739,8 +763,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				0
 			);
 		}
-		if ( isset( $new_settings[ self::SETTING_NAME_HIDE_ERROR_IMAGES ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_HIDE_ERROR_IMAGES ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_HIDE_ERROR_IMAGES ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_HIDE_ERROR_IMAGES ] )
+		) {
 			update_option(
 				self::SETTING_NAME_HIDE_ERROR_IMAGES,
 				$new_settings[ self::SETTING_NAME_HIDE_ERROR_IMAGES ]
@@ -752,8 +778,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			);
 		}
 
-		if ( isset( $new_settings[ self::SETTING_NAME_SAVE_INTERNAL ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_SAVE_INTERNAL ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_SAVE_INTERNAL ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_SAVE_INTERNAL ] )
+		) {
 			update_option(
 				self::SETTING_NAME_SAVE_INTERNAL,
 				$new_settings[ self::SETTING_NAME_SAVE_INTERNAL ]
@@ -765,16 +793,20 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			);
 		}
 
-		if ( isset( $new_settings[ self::SETTING_NAME_NEW_FILE_DRIVER ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_NEW_FILE_DRIVER ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_NEW_FILE_DRIVER ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_NEW_FILE_DRIVER ] )
+		) {
 			update_option(
 				self::SETTING_NAME_NEW_FILE_DRIVER,
 				$new_settings[ self::SETTING_NAME_NEW_FILE_DRIVER ]
 			);
 		}
 
-		if ( isset( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ] )
+		) {
 			update_option(
 				self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES,
 				$new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ]
@@ -786,8 +818,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			);
 		}
 
-		if ( isset( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ] )
+		) {
 			update_option(
 				self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3,
 				$new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ]
@@ -799,8 +833,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			);
 		}
 
-		if ( isset( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ] )
+		) {
 			update_option(
 				self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB,
 				$new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ]
@@ -811,8 +847,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				false
 			);
 		}
-		if ( isset( $new_settings[ self::SETTING_NAME_DELETE_AFTER_TRANSFER ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_DELETE_AFTER_TRANSFER ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_DELETE_AFTER_TRANSFER ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_DELETE_AFTER_TRANSFER ] )
+		) {
 			update_option(
 				self::SETTING_NAME_DELETE_AFTER_TRANSFER,
 				$new_settings[ self::SETTING_NAME_DELETE_AFTER_TRANSFER ]
@@ -824,8 +862,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			);
 		}
 
-		if ( isset( $new_settings[ self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME ] )
+		) {
 			update_option(
 				self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME,
 				$new_settings[ self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME ]
@@ -834,8 +874,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	public static function update_option_image_optimisation( array $new_settings ) {
-		if ( isset( $new_settings[ self::SETTING_NAME_USE_WEBP_ALTERNATIVE ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_USE_WEBP_ALTERNATIVE ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_USE_WEBP_ALTERNATIVE ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_USE_WEBP_ALTERNATIVE ] )
+		) {
 			update_option(
 				self::SETTING_NAME_USE_WEBP_ALTERNATIVE,
 				$new_settings[ self::SETTING_NAME_USE_WEBP_ALTERNATIVE ]
@@ -846,8 +888,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				false
 			);
 		}
-		if ( isset( $new_settings[ self::SETTING_NAME_IMAGE_RESIZING ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_IMAGE_RESIZING ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_IMAGE_RESIZING ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_IMAGE_RESIZING ] )
+		) {
 			update_option(
 				self::SETTING_NAME_IMAGE_RESIZING,
 				1
@@ -859,8 +903,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			);
 		}
 
-		if ( isset( $new_settings[ self::SETTING_NAME_WEBP_TYPES_TO_CONVERT ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_WEBP_TYPES_TO_CONVERT ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_WEBP_TYPES_TO_CONVERT ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_WEBP_TYPES_TO_CONVERT ] )
+		) {
 			update_option(
 				self::SETTING_NAME_WEBP_TYPES_TO_CONVERT,
 				$new_settings[ self::SETTING_NAME_WEBP_TYPES_TO_CONVERT ]
@@ -872,8 +918,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			);
 		}
 
-		if ( isset( $new_settings[ self::SETTING_NAME_USE_AVIF_ALTERNATIVE ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_USE_AVIF_ALTERNATIVE ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_USE_AVIF_ALTERNATIVE ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_USE_AVIF_ALTERNATIVE ] )
+		) {
 			update_option(
 				self::SETTING_NAME_USE_AVIF_ALTERNATIVE,
 				$new_settings[ self::SETTING_NAME_USE_AVIF_ALTERNATIVE ]
@@ -885,8 +933,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			);
 		}
 
-		if ( isset( $new_settings[ self::SETTING_NAME_AVIF_TYPES_TO_CONVERT ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_AVIF_TYPES_TO_CONVERT ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_AVIF_TYPES_TO_CONVERT ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_AVIF_TYPES_TO_CONVERT ] )
+		) {
 			update_option(
 				self::SETTING_NAME_AVIF_TYPES_TO_CONVERT,
 				$new_settings[ self::SETTING_NAME_AVIF_TYPES_TO_CONVERT ]
@@ -898,24 +948,30 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			);
 		}
 
-		if ( isset( $new_settings[ self::SETTING_NAME_WEPB_QUALITY ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_WEPB_QUALITY ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_WEPB_QUALITY ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_WEPB_QUALITY ] )
+		) {
 			update_option(
 				self::SETTING_NAME_WEPB_QUALITY,
 				$new_settings[ self::SETTING_NAME_WEPB_QUALITY ]
 			);
 		}
 
-		if ( isset( $new_settings[ self::SETTING_NAME_AVIF_QUALITY ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_AVIF_QUALITY ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_AVIF_QUALITY ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_AVIF_QUALITY ] )
+		) {
 			update_option(
 				self::SETTING_NAME_AVIF_QUALITY,
 				$new_settings[ self::SETTING_NAME_AVIF_QUALITY ]
 			);
 		}
 
-		if ( isset( $new_settings[ self::SETTING_NAME_AVIF_SPEED ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_AVIF_SPEED ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_AVIF_SPEED ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_AVIF_SPEED ] )
+		) {
 			update_option(
 				self::SETTING_NAME_AVIF_SPEED,
 				$new_settings[ self::SETTING_NAME_AVIF_SPEED ]
@@ -958,6 +1014,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		$found_urls = array();
 		if ( $dom_element->hasAttribute( $attribute ) && strlen( $dom_element->getAttribute( $attribute ) ) > 0 ) {
 			switch ( $attribute ) {
+				case 'data-srcset':
 				case 'srcset':
 					$urlvalues = explode( ',', $dom_element->getAttribute( $attribute ) );
 					if ( $dom_element->hasAttribute( 'src' ) ) {
