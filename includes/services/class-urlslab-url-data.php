@@ -124,7 +124,7 @@ class Urlslab_Url_Data {
 
 	private function init_wp_page_id() {
 		if ( $this->wp_pageid < 0 ) {
-			$this->wp_pageid = url_to_postid( urlslab_get_current_page_protocol() . $this->get_url()->get_url() );
+			$this->wp_pageid = url_to_postid( urlslab_add_current_page_protocol( $this->get_url()->get_url() ) );
 		}
 	}
 
