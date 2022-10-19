@@ -61,6 +61,8 @@ jobs:
           draft: false
           prerelease: false
           body: See changes in the [CHANGELOG.md](CHANGELOG.md)
+          generate_release_notes: true
+          append_body: true
           files: ./urlslab-plugin_${{ steps.version.outputs.group1 }}.zip
 
   deploy:
