@@ -8,6 +8,7 @@ function urlslab_get_supported_media(): array {
 			'data-full-url',
 			'data-splide-lazy',
 			'srcset',
+			'data-srcset',
 		),
 		'video'  => array(
 			'src',

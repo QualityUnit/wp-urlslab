@@ -231,7 +231,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			//find files for elements
 			//*********************************
 			$this->files = $this->get_files_for_urls( array_keys( $url_fileids ) );
-			$this->log_file_usage();
+			$this->log_file_usage($url_fileids);
 
 			//*********************************
 			//process elements from page
@@ -275,7 +275,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		}
 	}
 
-	private function log_file_usage() {
+	private function log_file_usage(array $missing_file_ids) {
 		if ( get_option( self::SETTING_NAME_LOG_IMAGES, self::SETTING_DEFAULT_LOG_IMAGES ) ) {
 			global $wpdb;
 			$current_page = get_current_page_url();
@@ -296,8 +296,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				}
 			);
 
-			$insert = array_diff( array_keys( $this->files ), array_keys( $files ) );
-			$delete = array_diff( array_keys( $files ), array_keys( $this->files ) );
+			$page_fileids = array_merge( array_keys( $this->files ), array_keys( $missing_file_ids ) );
+
+			$insert = array_diff( $page_fileids, array_keys( $files ) );
+			$delete = array_diff( array_keys( $files ), $page_fileids );
 			if ( ! empty( $insert ) ) {
 				$table        = URLSLAB_FILE_URLS_TABLE;
 				$placeholders = array();
@@ -520,6 +522,21 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 					$picture_element->insertBefore( $source_element, $new_img_element );
 					//process this source tag as other source elements
 					$found_urls = array_merge( $this->process_source_tag( $source_element, $document ), $found_urls );
+				} elseif ( $new_img_element->hasAttribute( 'data-srcset' ) ) {
+					//create basic source with type from original img
+					$source_element = $document->createElement( 'source' );
+					$source_element->setAttribute( 'data-srcset', $new_img_element->getAttribute( 'data-srcset' ) );
+					$source_element->setAttribute( 'urlslab-lazy', 'yes' );
+					$new_img_element->removeAttribute( 'data-srcset' );
+
+					if ( $new_img_element->hasAttribute( 'sizes' ) ) {
+						$source_element->setAttribute( 'sizes', $new_img_element->getAttribute( 'sizes' ) );
+						$new_img_element->removeAttribute( 'sizes' );
+					}
+
+					$picture_element->insertBefore( $source_element, $new_img_element );
+					//process this source tag as other source elements
+					$found_urls = array_merge( $this->process_source_tag( $source_element, $document ), $found_urls );
 				}
 
 				//add simple alternatives to src url
@@ -582,6 +599,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			foreach ( $results as $file_array ) {
 				$file_obj = new Urlslab_File_Data( $file_array );
 				$new_urls[ $file_array['parent_fileid'] ]->add_alternative( $file_obj );
+				$new_urls[ $file_obj->get_fileid() ] =  $file_obj;
 			}
 		}
 
@@ -958,6 +976,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		$found_urls = array();
 		if ( $dom_element->hasAttribute( $attribute ) && strlen( $dom_element->getAttribute( $attribute ) ) > 0 ) {
 			switch ( $attribute ) {
+				case 'data-srcset':
 				case 'srcset':
 					$urlvalues = explode( ',', $dom_element->getAttribute( $attribute ) );
 					if ( $dom_element->hasAttribute( 'src' ) ) {
