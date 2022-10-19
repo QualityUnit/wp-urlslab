@@ -76,8 +76,8 @@ jobs:
           text: ${{ github.ref }}
           regex: ".*/([^/]+)$"
 
-      - name: Trigger the Update Pipeline
-        id: trigger
+      - name: Trigger the Update Pipeline [LiveAgent]
+        id: trigger-la
         uses: aurelien-baudet/workflow-dispatch@v2
         with:
           workflow: update-urlslab.yml
@@ -87,5 +87,19 @@ jobs:
           wait-for-completion-interval: 5s
           inputs: '{
                   "repository":"liveagent-wp",
+                  "version":"${{ steps.version.outputs.group1 }}"
+                }'
+
+      - name: Trigger the Update Pipeline [PostAffiliatePro]
+        id: trigger-pap
+        uses: aurelien-baudet/workflow-dispatch@v2
+        with:
+          workflow: update-urlslab.yml
+          repo: QualityUnit/postaffiliatepro-wp
+          ref: main
+          token: ${{ secrets.CICD_PAT }}
+          wait-for-completion-interval: 5s
+          inputs: '{
+                  "repository":"postaffiliatepro-wp",
                   "version":"${{ steps.version.outputs.group1 }}"
                 }'
