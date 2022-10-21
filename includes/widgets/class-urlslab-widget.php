@@ -7,7 +7,7 @@ abstract class Urlslab_Widget {
 	 *
 	 * @return void
 	 */
-	public abstract function init_widget( Urlslab_Loader $loader);
+	public abstract function init_widget( Urlslab_Loader $loader );
 
 	/**
 	 * @return string Widget slug for identifying the widget
@@ -46,7 +46,7 @@ abstract class Urlslab_Widget {
 	 */
 	public function admin_widget_page( $args = '' ): string {
 		$args = wp_parse_args( $args, array() );
-		$url = $this->get_parent_page()->menu_page( $this->get_widget_tab() );
+		$url  = $this->get_parent_page()->menu_page( $this->get_widget_tab() );
 
 		if ( ! empty( $args ) ) {
 			$url = add_query_arg( $args, $url );
@@ -86,11 +86,17 @@ abstract class Urlslab_Widget {
 	 */
 	public abstract static function update_settings( array $new_settings );
 
-	protected function is_skip_elemenet( DOMNode $dom ) {
+	protected function is_skip_elemenet( DOMNode $dom, $custom_widget_skip = '' ) {
 		return $dom->hasAttributes() &&
-		(
-			$dom->hasAttribute( 'urlslab-skip' ) ||
-			( $dom->hasAttribute( 'class' ) && false !== strpos( $dom->getAttribute( 'class' ), 'urlslab-skip' ) )
-		);
+			   (
+				   $dom->hasAttribute( 'urlslab-skip' ) ||
+				   ( $dom->hasAttribute( 'class' ) && false !== strpos( $dom->getAttribute( 'class' ), 'urlslab-skip' ) ) ||
+				   ( ! empty( $custom_widget_skip ) &&
+					 (
+						 $dom->hasAttribute( 'urlslab-skip-' . $custom_widget_skip ) ||
+						 ( $dom->hasAttribute( 'class' ) && false !== strpos( $dom->getAttribute( 'class' ), 'urlslab-skip-' . $custom_widget_skip ) )
+					 )
+				   )
+			   );
 	}
 }

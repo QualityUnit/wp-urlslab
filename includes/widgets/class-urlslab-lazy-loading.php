@@ -136,7 +136,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	private function add_videos_lazy_loading( DOMDocument $document ) {
 		$dom_elements = $document->getElementsByTagName( 'video' );
 		foreach ( $dom_elements as $element ) {
-			if ( ! $this->is_skip_elemenet( $element ) ) {
+			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) ) {
 				$this->add_video_lazy_loading( $element );
 			}
 		}
@@ -153,13 +153,13 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 				}
 			}
 
-			if ( ! $this->is_skip_elemenet( $element ) && $has_lazy_loading_attr ) {
+			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) && $has_lazy_loading_attr ) {
 				$this->add_img_lazy_loading( $element );
 			}
 		}
 		$dom_elements = $document->getElementsByTagName( 'source' );
 		foreach ( $dom_elements as $element ) {
-			if ( ! $this->is_skip_elemenet( $element ) ) {
+			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) ) {
 				$this->add_source_lazy_loading( $element );
 			}
 		}
@@ -171,7 +171,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		//find all youtube iframes
 		$iframe_elements = $document->getElementsByTagName( 'iframe' );
 		foreach ( $iframe_elements as $element ) {
-			if ( ! $this->is_skip_elemenet( $element ) && $element->hasAttribute( 'src' ) ) {
+			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) && $element->hasAttribute( 'src' ) ) {
 				$ytid = $this->get_youtube_videoid( $element->getAttribute( 'src' ) );
 				if ( $ytid ) {
 					$youtube_ids[ $ytid ] = $ytid;
@@ -183,7 +183,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$xpath          = new DOMXPath( $document );
 		$elementor_divs = $xpath->query( "//div[contains(@class, 'elementor-widget-video')]" );
 		foreach ( $elementor_divs as $element ) {
-			if ( ! $this->is_skip_elemenet( $element ) && $element->hasAttribute( 'data-settings' ) ) {
+			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) && $element->hasAttribute( 'data-settings' ) ) {
 				$json = json_decode( $element->getAttribute( 'data-settings' ) );
 				if ( is_object( $json ) && property_exists( $json, 'youtube_url' ) ) {
 					$ytid = $this->get_youtube_videoid( $json->youtube_url );
@@ -198,7 +198,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$xpath       = new DOMXPath( $document );
 		$yt_elements = $xpath->query( '//*[@data-ytid]' );
 		foreach ( $yt_elements as $yt_element ) {
-			if ( ! $this->is_skip_elemenet( $yt_element ) ) {
+			if ( ! $this->is_skip_elemenet( $yt_element, 'lazy' ) ) {
 				$ytid = $yt_element->getAttribute( 'data-ytid' );
 				$youtube_ids[ $ytid ] = $ytid;
 			}
