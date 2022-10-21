@@ -376,7 +376,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
        				              v.urlTitle AS urlTitle,
                                   v.urlMetaDescription AS urlMetaDescription,
                                   v.urlSummary AS urlSummary,
-       				              v.visibility AS visibility FROM $map_table AS d LEFT JOIN $source_table AS v ON d.urlMd5 = v.urlMd5 WHERE d.kw_id = %s", //#phpcs:ignore
+       				              v.visibility AS visibility FROM $map_table AS d INNER JOIN $source_table AS v ON d.urlMd5 = v.urlMd5 WHERE d.kw_id = %s", //#phpcs:ignore
 				$kw_id
 			),
 			ARRAY_A
@@ -421,7 +421,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
        v.urlMetaDescription AS urlMetaDescription,
        v.urlSummary         AS urlSummary,
        v.visibility         AS visibility
-FROM $related_resource_table AS d LEFT JOIN $source_table AS v ON d.destUrlMd5 = v.urlMd5 WHERE d.srcUrlMd5 = %s", //#phpcs:ignore
+FROM $related_resource_table AS d INNER JOIN $source_table AS v ON d.destUrlMd5 = v.urlMd5 WHERE d.srcUrlMd5 = %s", //#phpcs:ignore
 				$kw_url->get_url_id()
 			),
 			ARRAY_A
