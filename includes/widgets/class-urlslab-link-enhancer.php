@@ -73,8 +73,8 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			$link_elements = array();
 			if ( $elements instanceof DOMNodeList ) {
 				foreach ( $elements as $dom_element ) {
-					//skip processing if A tag contains attribute "urlslab-skip"
-					if ( $this->is_skip_elemenet( $dom_element ) ) {
+					//skip processing if A tag contains attribute "urlslab-skip" or urlslab-skip-title
+					if ( $this->is_skip_elemenet( $dom_element, 'title' ) ) {
 						continue;
 					}
 

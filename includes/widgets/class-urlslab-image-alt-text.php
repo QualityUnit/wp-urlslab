@@ -62,7 +62,7 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 				foreach ( $table_data as $element ) {
 					if ( preg_match( '/^[hH][0-9].*$/', $element->nodeName ) ) {
 						$title = $element->nodeValue;
-					} else if ( 'img' == $element->nodeName && ! $this->is_skip_elemenet( $element ) ) {
+					} else if ( 'img' == $element->nodeName && ! $this->is_skip_elemenet( $element, 'img-alt' ) ) {
 						if ( isset( $element->parentNode ) && $element->parentNode->nodeName == 'a' && $element->parentNode->hasAttribute( 'title' ) ) {
 							$element->setAttribute( 'alt', $title . ' - ' . $element->parentNode->getAttribute( 'title' ) );
 						} else if ( strlen( $title ) ) {

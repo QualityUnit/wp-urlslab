@@ -189,7 +189,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 					continue;
 				}
 				foreach ( $dom_elements as $dom_element ) {
-					if ( $this->is_skip_elemenet( $dom_element ) ) {
+					if ( $this->is_skip_elemenet( $dom_element, 'offload' ) ) {
 						continue;
 					}
 					foreach ( $tag_attributes as $attribute ) {
@@ -214,7 +214,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			$xpath           = new DOMXPath( $document );
 			$styled_elements = $xpath->query( "//*[contains(@style, 'url')]" );
 			foreach ( $styled_elements as $styled_element ) {
-				if ( ! $this->is_skip_elemenet( $styled_element ) && preg_match_all( '/url\((.*?)\)/', $styled_element->getAttribute( 'style' ), $matches ) ) {
+				if ( ! $this->is_skip_elemenet( $styled_element, 'offload' ) && preg_match_all( '/url\((.*?)\)/', $styled_element->getAttribute( 'style' ), $matches ) ) {
 					foreach ( $matches[1] as $matched_url ) {
 						$file_obj = new Urlslab_File_Data( array( 'url' => $matched_url ) );
 						if ( ! $styled_element->hasAttribute( 'urlslab-id' ) ) {
