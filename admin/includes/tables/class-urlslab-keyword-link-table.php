@@ -57,7 +57,7 @@ FROM $table AS v
 
 		/* -- Ordering parameters -- */
 		//Parameters that are going to be used to order the result
-		$query   .= ' GROUP BY keyword';
+		$query   .= ' GROUP BY kw_id';
 		$orderby = ( isset( $_GET['orderby'] ) ) ? esc_sql( $_GET['orderby'] ) : 'kw_priority';
 		$order   = ( isset( $_GET['order'] ) ) ? esc_sql( $_GET['order'] ) : 'ASC';
 		if ( ! empty( $orderby ) && ! empty( $order ) ) {
