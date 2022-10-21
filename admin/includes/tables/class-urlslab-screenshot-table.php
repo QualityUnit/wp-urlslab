@@ -39,7 +39,9 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 		$values = array();
 
 		/* -- Preparing your query -- */
-		$query = "SELECT v.urlName AS urlName,
+		$query = "SELECT 
+       v.urlMd5	AS urlMd5,
+       v.urlName AS urlName,
        v.status AS status,
        v.domainId AS domainId,
        v.urlId AS urlId,
