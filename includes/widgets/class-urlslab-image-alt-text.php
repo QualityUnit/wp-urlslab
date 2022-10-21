@@ -60,7 +60,7 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 
 			if ( ! empty( $table_data ) ) {
 				foreach ( $table_data as $element ) {
-					if ( substr( $element->nodeName, 0, 1 ) == 'h' ) {
+					if ( preg_match('/^[hH][0-9].*$/', $element->nodeName ) ) {
 						$title = $element->nodeValue;
 					} else if ( 'img' == $element->nodeName && ! $this->is_skip_elemenet( $element ) ) {
 						if ( isset( $element->parentNode ) && $element->parentNode->nodeName == 'a' && $element->parentNode->hasAttribute( 'title' ) ) {
