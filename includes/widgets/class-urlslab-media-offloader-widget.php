@@ -278,8 +278,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	private function log_file_usage( array $missing_file_ids ) {
 		if ( get_option( self::SETTING_NAME_LOG_IMAGES, self::SETTING_DEFAULT_LOG_IMAGES ) ) {
 			global $wpdb;
-			$current_page = get_current_page_url();
-			$urlid        = $current_page->get_url_id();
+
+			$urlid        = $this->get_current_page_url()->get_url_id();
 			$results      = $wpdb->get_results(
 				$wpdb->prepare(
 					'SELECT fileid FROM ' . URLSLAB_FILE_URLS_TABLE . ' WHERE urlMd5 = %d', // phpcs:ignore

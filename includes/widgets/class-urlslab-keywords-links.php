@@ -227,12 +227,12 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kw_id, keyword, urlLink, urlFilter FROM ' . $keyword_table . " WHERE (lang = %s OR lang = 'all') ORDER BY kw_priority ASC, kw_length DESC", urlslab_get_language() ), 'ARRAY_A' ); // phpcs:ignore
 
 		$this->keywords_cache = array();
-		$current_page = get_current_page_url();
+
 		foreach ( $results as $row ) {
 			$kwUrl = new Urlslab_Url( $row['urlLink'] );
 			if (
-					$current_page->get_url_id() != $kwUrl->get_url_id() &&
-					preg_match( '/' . str_replace( '/', '\\/', $row['urlFilter'] ) . '/', $current_page->get_url() ) &&
+					$this->get_current_page_url()->get_url_id() != $kwUrl->get_url_id() &&
+					preg_match( '/' . str_replace( '/', '\\/', $row['urlFilter'] ) . '/', $this->get_current_page_url()->get_url() ) &&
 					strpos( $input_text, strtolower( $row['keyword'] ) ) !== false
 			) {
 				$this->keywords_cache[ $row['kw_id'] ] = array(
@@ -323,7 +323,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			return;
 		}
 
-		$srcUrlId = get_current_page_url()->get_url_id();
+		$srcUrlId = $this->get_current_page_url()->get_url_id();
 
 		global $wpdb;
 		$results = $wpdb->get_results(

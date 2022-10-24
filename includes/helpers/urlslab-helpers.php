@@ -199,15 +199,6 @@ function urlslab_is_same_domain_url( $url ): bool {
 	return strtolower( parse_url( get_site_url(), PHP_URL_HOST ) ) == $url_host_name;
 }
 
-function get_current_page_url(): Urlslab_Url {
-	$current_url = get_permalink( get_the_ID() );
-	if ( is_category() ) {
-		$current_url = get_category_link( get_query_var( 'cat' ) );
-	}
-
-	return new Urlslab_Url( $current_url );
-}
-
 function urlslab_add_current_page_protocol( string $url ): string {
 	if ( str_starts_with( $url, 'http' ) ) {
 		return $url;

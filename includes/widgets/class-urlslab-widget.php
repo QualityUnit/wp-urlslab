@@ -2,6 +2,8 @@
 
 abstract class Urlslab_Widget {
 
+	private ?Urlslab_Url $current_page_url = null;
+
 	/**
 	 * @param Urlslab_Loader $loader
 	 *
@@ -98,5 +100,20 @@ abstract class Urlslab_Widget {
 					 )
 				   )
 			   );
+	}
+
+	protected function get_current_page_url(): Urlslab_Url {
+		if ( is_object( $this->current_page_url ) ) {
+			return $this->current_page_url;
+		}
+
+		$current_url = get_permalink( get_the_ID() );
+		if ( is_category() ) {
+			$current_url = get_category_link( get_query_var( 'cat' ) );
+		}
+
+		$this->current_page_url = new Urlslab_Url( $current_url );
+
+		return $this->current_page_url;
 	}
 }
