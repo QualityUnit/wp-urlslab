@@ -445,7 +445,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				}
 				$this->cnt_page_links ++;
 				$cnt ++;
-			} else if ( preg_match( '/[hH][0-9]{1,}/', $element->nodeName ) ) {
+			} else if ( preg_match( '/^[hH][0-9]$/', $element->nodeName ) ) {
 				$hadHAlready         = true;
 				$this->link_counts[] = $cnt;
 				$cnt                 = 0;
