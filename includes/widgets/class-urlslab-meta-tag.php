@@ -87,7 +87,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 				$meta_og_image->count() == 0 ||
 				$meta_og_description->count() == 0) {
 				$url_data = $this->url_data_fetcher->fetch_schedule_url(
-					get_current_page_url()
+					$this->get_current_page_url()
 				);
 
 				if (is_object( $url_data )) {

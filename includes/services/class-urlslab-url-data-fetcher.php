@@ -8,6 +8,8 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-data.php
 class Urlslab_Url_Data_Fetcher {
 	private Urlslab_Screenshot_Api $urlslab_screenshot_api;
 
+	private array $urls_cache = array();
+
 	public function __construct( ?Urlslab_Screenshot_Api $urlslab_screenshot_api ) {
 		if ( isset( $urlslab_screenshot_api ) ) {
 			$this->urlslab_screenshot_api = $urlslab_screenshot_api;
@@ -79,7 +81,7 @@ or (updateStatusDate < %d AND status = %s)
 		//# updating the date
 		$res = array();
 		if ( is_array( $schedules ) && count( $schedules ) > 0 ) {
-			$values = array();
+			$values      = array();
 			$placeholder = array();
 			foreach ( $schedules as $schedule ) {
 				$res[] = $this->transform( $schedule )->get_url();
@@ -92,7 +94,7 @@ or (updateStatusDate < %d AND status = %s)
 			}
 
 			$placeholder_string = implode( ', ', $placeholder );
-			$update_query = "INSERT INTO $table (
+			$update_query       = "INSERT INTO $table (
                    urlMd5,
                    updateStatusDate
                    ) VALUES
@@ -107,6 +109,7 @@ or (updateStatusDate < %d AND status = %s)
 				)
 			);
 		}
+
 		//# updating the date
 
 		return $res;
@@ -125,7 +128,7 @@ or (updateStatusDate < %d AND status = %s)
 		global $wpdb;
 		$table = URLSLAB_URLS_TABLE;
 
-		$values = array();
+		$values      = array();
 		$placeholder = array();
 		foreach ( $urls as $url ) {
 			array_push(
@@ -138,7 +141,7 @@ or (updateStatusDate < %d AND status = %s)
 		}
 
 		$placeholder_string = implode( ', ', $placeholder );
-		$update_query = "INSERT IGNORE INTO $table (
+		$update_query       = "INSERT IGNORE INTO $table (
                    urlMd5,
                    urlName,
                    status) VALUES
@@ -171,7 +174,7 @@ or (updateStatusDate < %d AND status = %s)
 	 */
 	public function schedule_urls_batch( array $urls ): array {
 		$grouped_urls = $this->filter_schedules_batch( $urls );
-		$scheduled = array();
+		$scheduled    = array();
 		if ( $this->urlslab_screenshot_api->has_api_key() ) {
 			$scheduling_urls = array_merge(
 				$grouped_urls['main_page_urls'],
@@ -194,6 +197,7 @@ or (updateStatusDate < %d AND status = %s)
 			}
 		} catch ( Exception $e ) {
 			urlslab_debug_log( $e );
+
 			return array();
 		}
 		foreach ( $grouped_urls['blocked_urls'] as $blocked_url ) {
@@ -224,9 +228,9 @@ or (updateStatusDate < %d AND status = %s)
 	 * @return array
 	 */
 	private function filter_schedules_batch( array $urls ) {
-		$not_crawling_urls = array();
-		$main_page_urls = array();
-		$blocked_urls = array();
+		$not_crawling_urls     = array();
+		$main_page_urls        = array();
+		$blocked_urls          = array();
 		$possibly_blocked_urls = array();
 		foreach ( $urls as $url ) {
 			if ( ! $url->is_url_valid() || $url->is_url_blacklisted() ) {
@@ -241,10 +245,11 @@ or (updateStatusDate < %d AND status = %s)
 
 			$possibly_blocked_urls[] = $url;
 		}
+
 		return array(
-			'not_crawling_urls' => $not_crawling_urls,
-			'main_page_urls' => $main_page_urls,
-			'blocked_urls' => $blocked_urls,
+			'not_crawling_urls'     => $not_crawling_urls,
+			'main_page_urls'        => $main_page_urls,
+			'blocked_urls'          => $blocked_urls,
 			'possibly_blocked_urls' => $possibly_blocked_urls,
 		);
 	}
@@ -267,7 +272,7 @@ or (updateStatusDate < %d AND status = %s)
 		global $wpdb;
 		$table = URLSLAB_URLS_TABLE;
 
-		$values = array();
+		$values      = array();
 		$placeholder = array();
 		foreach ( $urls as $url ) {
 			if ( ! is_null( $url ) ) {
@@ -289,7 +294,7 @@ or (updateStatusDate < %d AND status = %s)
 		}
 
 		$placeholder_string = implode( ', ', $placeholder );
-		$update_query = "INSERT INTO $table (
+		$update_query       = "INSERT INTO $table (
                    urlMd5,
                    urlName,
                    status,
@@ -328,6 +333,7 @@ or (updateStatusDate < %d AND status = %s)
 	 */
 	public function fetch_schedule_url( Urlslab_Url $url ) {
 		$array = $this->fetch_schedule_urls_batch( array( $url ) );
+
 		return reset( $array );
 	}
 
@@ -337,14 +343,17 @@ or (updateStatusDate < %d AND status = %s)
 	 * @return array
 	 */
 	public function fetch_schedule_urls_batch( $urls ): ?array {
+		$results = array();
 		if ( empty( $urls ) ) {
-			return null;
+			return $results;
 		}
 
-		$valid_urls = array();
+		$valid_urls  = array();
 		$broken_urls = array();
 		foreach ( $urls as $url ) {
-			if ( $url->is_url_valid() ) {
+			if ( isset( $this->urls_cache[ $url->get_url_id() ] ) ) {
+				$results[ $url->get_url_id() ] = $this->urls_cache[ $url->get_url_id() ];
+			} else if ( $url->is_url_valid() ) {
 				$valid_urls[ $url->get_url_id() ] = $url;
 			} else {
 				$broken_urls[] = $url;
@@ -353,9 +362,9 @@ or (updateStatusDate < %d AND status = %s)
 
 		global $wpdb;
 		$table = URLSLAB_URLS_TABLE;
-		$placeholders = implode( ', ', array_fill( 0, count( $valid_urls ), '%d' ) );
 
 		if ( ! empty( $valid_urls ) ) {
+			$placeholders  = implode( ', ', array_fill( 0, count( $valid_urls ), '%d' ) );
 			$query_results = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT * FROM $table WHERE urlMd5 IN ($placeholders)", // phpcs:ignore
@@ -365,10 +374,10 @@ or (updateStatusDate < %d AND status = %s)
 			);
 		}
 
-		$results = array();
 		if ( ! empty( $query_results ) ) {
 			foreach ( $query_results as $res ) {
-				$results[ $res['urlMd5'] ] = $this->transform( $res );
+				$results[ $res['urlMd5'] ]          = $this->transform( $res );
+				$this->urls_cache[ $res['urlMd5'] ] = $results[ $res['urlMd5'] ];
 				//# Adding only urls that are no scheduled
 				unset( $valid_urls[ $res['urlMd5'] ] );
 			}
@@ -378,6 +387,7 @@ or (updateStatusDate < %d AND status = %s)
 		//# Adding only urls that are no scheduled
 		$this->prepare_url_batch_for_scheduling( $valid_urls );
 		$this->mark_as_broken_batch( $broken_urls );
+
 		return $results;
 	}
 
@@ -394,7 +404,7 @@ or (updateStatusDate < %d AND status = %s)
 		$table = URLSLAB_URLS_TABLE;
 
 		$insert_placeholders = array();
-		$insert_values = array();
+		$insert_values       = array();
 		foreach ( $urls as $url ) {
 			$url_data = Urlslab_Url_Data::empty( $url, Urlslab_Status::$not_crawling );
 			array_push(
@@ -415,7 +425,7 @@ or (updateStatusDate < %d AND status = %s)
 		return is_numeric(
 			$wpdb->query(
 				$wpdb->prepare(
-				$insert_query, // phpcs:ignore
+					$insert_query, // phpcs:ignore
 					$insert_values
 				),
 			)
@@ -425,9 +435,9 @@ or (updateStatusDate < %d AND status = %s)
 
 	public function fetch_related_urls_to( Urlslab_Url $url, int $limit ): array {
 		global $wpdb;
-		$urls_table = URLSLAB_URLS_TABLE;
+		$urls_table         = URLSLAB_URLS_TABLE;
 		$related_urls_table = URLSLAB_RELATED_RESOURCE_TABLE;
-		$q = "SELECT u.urlName AS urlName,
+		$q                  = "SELECT u.urlName AS urlName,
        				 u.status AS status,
        				 u.domainId AS domainId,
        				 u.urlId AS urlId,
@@ -468,6 +478,7 @@ or (updateStatusDate < %d AND status = %s)
 		$query = "SELECT COUNT(*) AS cnt FROM $table";
 		if ( ! empty( $status ) ) {
 			$query .= ' WHERE status = %s';
+
 			return $wpdb->get_row(
 				$wpdb->prepare(
 					$query, // phpcs:ignore
@@ -484,6 +495,7 @@ or (updateStatusDate < %d AND status = %s)
 		global $wpdb;
 		$table = URLSLAB_URLS_TABLE;
 		$query = "SELECT COUNT(*) AS cnt FROM $table WHERE urlSummary IS NOT NULL";
+
 		return $wpdb->get_row( $query, ARRAY_A )['cnt']; // phpcs:ignore
 	}
 

@@ -27,11 +27,11 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	 */
 	public function __construct( Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher ) {
 		$this->urlslab_url_data_fetcher = $urlslab_url_data_fetcher;
-		$this->widget_slug = 'urlslab-link-enhancer';
-		$this->widget_title = 'Link Management';
-		$this->widget_description = 'Enhance all external and internal links in your pages using link enhancer widget. add title to your link automatically';
-		$this->landing_page_link = 'https://www.urlslab.com';
-		$this->parent_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-link-building' );
+		$this->widget_slug              = 'urlslab-link-enhancer';
+		$this->widget_title             = 'Link Management';
+		$this->widget_description       = 'Enhance all external and internal links in your pages using link enhancer widget. add title to your link automatically';
+		$this->landing_page_link        = 'https://www.urlslab.com';
+		$this->parent_page              = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-link-building' );
 	}
 
 	public function init_widget( Urlslab_Loader $loader ) {
@@ -80,7 +80,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 					if ( ! empty( trim( $dom_element->getAttribute( 'href' ) ) ) ) {
 						try {
-							$url = new Urlslab_Url( $dom_element->getAttribute( 'href' ) );
+							$url             = new Urlslab_Url( $dom_element->getAttribute( 'href' ) );
 							$link_elements[] = array( $dom_element, $url );
 						} catch ( Exception $e ) {
 						}
@@ -91,7 +91,10 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			if ( ! empty( $link_elements ) ) {
 
 				$result = $this->urlslab_url_data_fetcher->fetch_schedule_urls_batch(
-					array_map( fn( $elem): Urlslab_Url => $elem[1], $link_elements )
+					array_merge(
+						array( new Urlslab_Url( urlslab_get_current_page_protocol() . $this->get_current_page_url()->get_url() ) ),
+						array_map( fn( $elem ): Urlslab_Url => $elem[1], $link_elements )
+					)
 				);
 
 				if ( ! empty( $result ) ) {
@@ -99,9 +102,11 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 					$this->update_urls_map( array_keys( $result ) );
 
 					foreach ( $link_elements as $arr_element ) {
-						list($dom_elem, $url_obj) = $arr_element;
-						if ( isset( $result[ $url_obj->get_url_id() ] ) &&
-							! empty( $result[ $url_obj->get_url_id() ] ) ) {
+						list( $dom_elem, $url_obj ) = $arr_element;
+						if (
+							isset( $result[ $url_obj->get_url_id() ] ) &&
+							! empty( $result[ $url_obj->get_url_id() ] )
+						) {
 
 							if (
 								get_option( self::SETTING_NAME_REMOVE_LINKS, self::SETTING_DEFAULT_REMOVE_LINKS ) &&
@@ -170,7 +175,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			return;
 		}
 
-		$srcUrlId = get_current_page_url()->get_url_id();
+		$srcUrlId = $this->get_current_page_url()->get_url_id();
 
 		global $wpdb;
 		$results = $wpdb->get_results(
@@ -184,14 +189,14 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		$destinations = array();
 		array_walk(
 			$results,
-			function ( $value, $key ) use ( &$destinations ) {
+			function( $value, $key ) use ( &$destinations ) {
 				$destinations[ $value['destUrlMd5'] ] = true;
 			}
 		);
 
 		$tracked_urls = array();
 
-		$values = array();
+		$values      = array();
 		$placeholder = array();
 		foreach ( $url_ids as $url_id ) {
 			if ( ! isset( $destinations[ $url_id ] ) ) {
@@ -207,8 +212,8 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		}
 
 		if ( ! empty( $values ) ) {
-			$table = URLSLAB_URLS_MAP_TABLE;
-			$placeholder_string = implode( ', ', $placeholder );
+			$table               = URLSLAB_URLS_MAP_TABLE;
+			$placeholder_string  = implode( ', ', $placeholder );
 			$insert_update_query = "INSERT IGNORE INTO $table (srcUrlMd5, destUrlMd5) VALUES $placeholder_string";
 
 			$wpdb->query(
@@ -221,15 +226,15 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 		$delete = array_diff( array_keys( $destinations ), array_keys( $tracked_urls ) );
 		if ( ! empty( $delete ) ) {
-			$values = array( $srcUrlId );
+			$values      = array( $srcUrlId );
 			$placeholder = array();
 			foreach ( $delete as $url_id ) {
 				$placeholder[] = '%d';
-				$values[] = $url_id;
+				$values[]      = $url_id;
 			}
-			$table = URLSLAB_URLS_MAP_TABLE;
+			$table              = URLSLAB_URLS_MAP_TABLE;
 			$placeholder_string = implode( ',', $placeholder );
-			$delete_query = "DELETE FROM $table WHERE srcUrlMd5=%d AND destUrlMd5 IN ($placeholder_string)";
+			$delete_query       = "DELETE FROM $table WHERE srcUrlMd5=%d AND destUrlMd5 IN ($placeholder_string)";
 			$wpdb->query( $wpdb->prepare( $delete_query, $values ) ); // phpcs:ignore
 		}
 	}
@@ -241,16 +246,20 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	public static function update_settings( array $new_settings ) {
-		if ( isset( $new_settings[ self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ] )
+		) {
 			update_option(
 				self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY,
 				$new_settings[ self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ]
 			);
 		}
 
-		if ( isset( $new_settings[ self::SETTING_NAME_REMOVE_LINKS ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_REMOVE_LINKS ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_REMOVE_LINKS ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_REMOVE_LINKS ] )
+		) {
 			update_option(
 				self::SETTING_NAME_REMOVE_LINKS,
 				$new_settings[ self::SETTING_NAME_REMOVE_LINKS ]
@@ -262,8 +271,10 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			);
 		}
 
-		if ( isset( $new_settings[ self::SETTING_NAME_URLS_MAP ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_URLS_MAP ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_URLS_MAP ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_URLS_MAP ] )
+		) {
 			update_option(
 				self::SETTING_NAME_URLS_MAP,
 				$new_settings[ self::SETTING_NAME_URLS_MAP ]

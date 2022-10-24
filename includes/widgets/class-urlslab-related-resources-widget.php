@@ -65,7 +65,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 		$urlslab_atts = shortcode_atts(
 			array(
-						'url' => urlslab_get_current_page_protocol() . get_current_page_url()->get_url(),
+						'url' => urlslab_get_current_page_protocol() . $this->get_current_page_url()->get_url(),
 						'related-count' => 8,
 						'show-image' => false,
 						'default-image' => '',
