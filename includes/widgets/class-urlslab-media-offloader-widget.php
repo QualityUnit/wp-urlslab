@@ -76,14 +76,16 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public const SETTING_DEFAULT_HIDE_ERROR_IMAGES = 0;
 
 	private $files = array();
+	private Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher;
 
 	/**
 	 */
-	public function __construct() {
-		$this->widget_slug        = 'urlslab-media-offloader';
-		$this->widget_title       = 'Media Files';
-		$this->widget_description = 'Offload media files from local directory to database or S3';
-		$this->landing_page_link  = 'https://www.urlslab.com';
+	public function __construct( Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher ) {
+		$this->widget_slug              = 'urlslab-media-offloader';
+		$this->widget_title             = 'Media Files';
+		$this->widget_description       = 'Offload media files from local directory to database or S3';
+		$this->landing_page_link        = 'https://www.urlslab.com';
+		$this->urlslab_url_data_fetcher = $urlslab_url_data_fetcher;
 	}
 
 
@@ -279,8 +281,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		if ( get_option( self::SETTING_NAME_LOG_IMAGES, self::SETTING_DEFAULT_LOG_IMAGES ) ) {
 			global $wpdb;
 
-			$urlid        = $this->get_current_page_url()->get_url_id();
-			$results      = $wpdb->get_results(
+			$urlid   = $this->get_current_page_url()->get_url_id();
+			$results = $wpdb->get_results(
 				$wpdb->prepare(
 					'SELECT fileid FROM ' . URLSLAB_FILE_URLS_TABLE . ' WHERE urlMd5 = %d', // phpcs:ignore
 					$urlid
@@ -317,6 +319,11 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 						$values
 					)
 				);
+
+				$this->urlslab_url_data_fetcher->fetch_schedule_urls_batch(
+					array( new Urlslab_Url( urlslab_get_current_page_protocol() . $this->get_current_page_url()->get_url() ) )
+				);
+
 			}
 
 			if ( ! empty( $delete ) ) {
