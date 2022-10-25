@@ -14,12 +14,12 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	 * @param Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher
 	 */
 	public function __construct( Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher ) {
-		$this->widget_slug = 'urlslab-screenshot';
-		$this->widget_title = 'Screenshot';
-		$this->widget_description = 'Embed any screenshot of URL in your pages using wordpress shortcodes.';
-		$this->landing_page_link = 'https://www.urlslab.com';
+		$this->widget_slug              = 'urlslab-screenshot';
+		$this->widget_title             = 'Screenshot';
+		$this->widget_description       = 'Embed any screenshot of URL in your pages using wordpress shortcodes.';
+		$this->landing_page_link        = 'https://www.urlslab.com';
 		$this->urlslab_url_data_fetcher = $urlslab_url_data_fetcher;
-		$this->parent_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-ui-elements' );
+		$this->parent_page              = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-ui-elements' );
 	}
 
 	public function init_widget( Urlslab_Loader $loader ) {
@@ -78,7 +78,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			);
 
 			if ( ! empty( $url_data ) && ! $url_data->is_empty() ) {
-				$urlslab_atts['alt'] = $url_data->get_url_summary_text();
+				$urlslab_atts['alt'] = $url_data->get_url_summary_text( get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY ) );
 
 				switch ( $url_data->get_screenshot_status() ) {
 					case Urlslab_Status::$recurring_update:

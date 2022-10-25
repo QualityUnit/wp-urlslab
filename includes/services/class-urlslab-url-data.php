@@ -5,6 +5,8 @@ class Urlslab_Url_Data {
 	public const VISIBILITY_VISIBLE = 'V';
 	public const VISIBILITY_HIDDEN = 'H';
 
+	private const EMPTY = '<empty>';
+
 	private $domain_id;
 	private $url_id;
 
@@ -15,7 +17,7 @@ class Urlslab_Url_Data {
 	private ?string $url_meta_description;
 	private ?string $url_summary;
 	private ?string $screenshot_status;
-	private int $wp_pageid = -1;
+	private int $wp_pageid = - 1;
 	private ?string $visibility = self::VISIBILITY_VISIBLE;
 	private int $backlink_cnt = 0;
 
@@ -34,16 +36,16 @@ class Urlslab_Url_Data {
 	 */
 	public function __construct(
 		Urlslab_Url $url,
-					$domain_id,
-					$url_id,
-					$screenshot_date,
-					$last_status_change_date,
-					$url_title,
-					$url_meta_description,
-					$url_summary,
-					$screenshot_status,
-					$visibility = self::VISIBILITY_VISIBLE,
-					$backlink_count = 0
+		$domain_id,
+		$url_id,
+		$screenshot_date,
+		$last_status_change_date,
+		$url_title,
+		$url_meta_description,
+		$url_summary,
+		$screenshot_status,
+		$visibility = self::VISIBILITY_VISIBLE,
+		$backlink_count = 0
 	) {
 		$this->url                     = $url;
 		$this->domain_id               = $domain_id;
@@ -54,8 +56,8 @@ class Urlslab_Url_Data {
 		$this->url_meta_description    = $url_meta_description;
 		$this->url_summary             = $url_summary;
 		$this->screenshot_status       = $screenshot_status;
-		$this->visibility       = $visibility;
-		$this->backlink_cnt = $backlink_count;
+		$this->visibility              = $visibility;
+		$this->backlink_cnt            = $backlink_count;
 	}
 
 	static function empty( Urlslab_Url $url, string $urlslab_status ): Urlslab_Url_Data {
@@ -105,7 +107,7 @@ class Urlslab_Url_Data {
 	 * @return mixed
 	 */
 	public function get_screenshot_date() {
-		 return $this->screenshot_date;
+		return $this->screenshot_date;
 	}
 
 	/**
@@ -117,6 +119,15 @@ class Urlslab_Url_Data {
 			if ( $this->wp_pageid > 0 ) {
 				$this->url_title = get_the_title( $this->wp_pageid );
 			}
+			if ( ! strlen( $this->url_title ) ) {
+				$this->url_title = self::EMPTY;
+			}
+			global $wpdb;
+			$wpdb->update( URLSLAB_URLS_TABLE, array( 'urlTitle' => $this->url_title ), array( 'urlMd5' => $this->get_url_id() ) );
+		}
+
+		if ( self::EMPTY === $this->url_title ) {
+			return '';
 		}
 
 		return $this->url_title ?? '';
@@ -140,6 +151,15 @@ class Urlslab_Url_Data {
 					$this->url_meta_description = $desc['_yoast_wpseo_metadesc'][0];
 				}
 			}
+			if ( ! strlen( $this->url_meta_description ) ) {
+				$this->url_meta_description = self::EMPTY;
+			}
+			global $wpdb;
+			$wpdb->update( URLSLAB_URLS_TABLE, array( 'urlMetaDescription' => $this->url_meta_description ), array( 'urlMd5' => $this->get_url_id() ) );
+		}
+
+		if ( self::EMPTY === $this->url_meta_description ) {
+			return '';
 		}
 
 		return $this->url_meta_description ?? '';
@@ -228,9 +248,9 @@ class Urlslab_Url_Data {
 	/**
 	 * @return string
 	 */
-	public function get_url_summary_text(): string {
+	public function get_url_summary_text( $strategy ): string {
 
-		switch ( get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY ) ) {
+		switch ( $strategy ) {
 
 			case Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY: //# phpcs:ignore
 				if ( trim( $this->url_summary ) !== '' ) {

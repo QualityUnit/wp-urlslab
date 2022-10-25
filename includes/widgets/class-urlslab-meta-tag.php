@@ -26,13 +26,13 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	/**
 	 * @param Urlslab_Url_Data_Fetcher $url_data_fetcher
 	 */
-	public function __construct( Urlslab_Url_Data_Fetcher $url_data_fetcher) {
-		$this->widget_slug = 'urlslab-meta-tag';
-		$this->widget_title = 'Meta Tag';
+	public function __construct( Urlslab_Url_Data_Fetcher $url_data_fetcher ) {
+		$this->widget_slug        = 'urlslab-meta-tag';
+		$this->widget_title       = 'Meta Tag';
 		$this->widget_description = 'Generate meta tags automatically if there is no meta tag for your pages based on the content. generate og meta tags automatically from the data from URLSLAB';
-		$this->landing_page_link = 'https://www.urlslab.com';
-		$this->parent_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-header-seo' );
-		$this->url_data_fetcher = $url_data_fetcher;
+		$this->landing_page_link  = 'https://www.urlslab.com';
+		$this->parent_page        = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-header-seo' );
+		$this->url_data_fetcher   = $url_data_fetcher;
 	}
 
 	public function init_widget( Urlslab_Loader $loader ) {
@@ -71,37 +71,40 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	public function theContentHook( DOMDocument $document ) {
 		try {
 			$head_tag = $document->getElementsByTagName( 'head' )[0];
-			if (empty( $head_tag ) || !is_object( $head_tag )) {
+			if ( empty( $head_tag ) || ! is_object( $head_tag ) ) {
 				return;
 			}
 
-			$xpath = new DOMXPath( $document );
-			$meta_description = $xpath->query( "//meta[@name='description']" );
-			$meta_og_title = $xpath->query( "//meta[@property='og:title']" );
-			$meta_og_image = $xpath->query( "//meta[@property='og:image']" );
+			$xpath               = new DOMXPath( $document );
+			$meta_description    = $xpath->query( "//meta[@name='description']" );
+			$meta_og_title       = $xpath->query( "//meta[@property='og:title']" );
+			$meta_og_image       = $xpath->query( "//meta[@property='og:image']" );
 			$meta_og_description = $xpath->query( "//meta[@property='og:description']" );
 
 			$url_data = null;
-			if ($meta_description->count() == 0 ||
+			if (
+				$meta_description->count() == 0 ||
 				$meta_og_title->count() == 0 ||
 				$meta_og_image->count() == 0 ||
-				$meta_og_description->count() == 0) {
+				$meta_og_description->count() == 0
+			) {
 				$url_data = $this->url_data_fetcher->fetch_schedule_url(
 					$this->get_current_page_url()
 				);
 
-				if (is_object( $url_data )) {
-					if (in_array( 'meta-description', $this->activated_sub_widgets )) {
+				if ( is_object( $url_data ) ) {
+					$strategy = get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
+					if ( in_array( 'meta-description', $this->activated_sub_widgets ) ) {
 						// meta description generation
-						if ($meta_description->count() == 0) {
+						if ( $meta_description->count() == 0 ) {
 							$node = $document->createElement( 'meta' );
 							$node->setAttribute( 'name', 'description' );
-							$node->setAttribute( 'content', $url_data->get_url_summary_text() );
+							$node->setAttribute( 'content', $url_data->get_url_summary_text( $strategy ) );
 							$head_tag->appendChild( $node );
 						} else {
-							foreach ($meta_description as $node) {
-								if (strlen( trim( $node->getAttribute( 'content' ) ) ) < 3) {
-									$node->setAttribute( 'content', $url_data->get_url_summary_text() );
+							foreach ( $meta_description as $node ) {
+								if ( strlen( trim( $node->getAttribute( 'content' ) ) ) < 3 ) {
+									$node->setAttribute( 'content', $url_data->get_url_summary_text( $strategy ) );
 								}
 							}
 						}
@@ -109,16 +112,16 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 					}
 
 					// meta og title generation
-					if (in_array( 'meta-og-title', $this->activated_sub_widgets )) {
+					if ( in_array( 'meta-og-title', $this->activated_sub_widgets ) ) {
 						if ( $meta_og_title->count() == 0 ) {
 							$node = $document->createElement( 'meta' );
 							$node->setAttribute( 'property', 'og:title' );
-							$node->setAttribute( 'content', $url_data->get_url_summary_text() );
+							$node->setAttribute( 'content', $url_data->get_url_summary_text( $strategy ) );
 							$head_tag->appendChild( $node );
 						} else {
 							foreach ( $meta_og_title as $node ) {
 								if ( strlen( trim( $node->getAttribute( 'content' ) ) ) < 3 ) {
-									$node->setAttribute( 'content', $url_data->get_url_summary_text() );
+									$node->setAttribute( 'content', $url_data->get_url_summary_text( $strategy ) );
 								}
 							}
 						}
@@ -126,16 +129,16 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 					// meta og title generation
 
 					// meta og description generation
-					if (in_array( 'meta-og-desc', $this->activated_sub_widgets )) {
+					if ( in_array( 'meta-og-desc', $this->activated_sub_widgets ) ) {
 						if ( $meta_og_description->count() == 0 ) {
 							$node = $document->createElement( 'meta' );
 							$node->setAttribute( 'property', 'og:description' );
-							$node->setAttribute( 'content', $url_data->get_url_summary_text() );
+							$node->setAttribute( 'content', $url_data->get_url_summary_text( $strategy ) );
 							$head_tag->appendChild( $node );
 						} else {
 							foreach ( $meta_og_description as $node ) {
 								if ( strlen( trim( $node->getAttribute( 'content' ) ) ) < 3 ) {
-									$node->setAttribute( 'content', $url_data->get_url_summary_text() );
+									$node->setAttribute( 'content', $url_data->get_url_summary_text( $strategy ) );
 								}
 							}
 						}
@@ -143,9 +146,11 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 					// meta og description generation
 
 					// meta og image generation
-					if (in_array( 'meta-og-image', $this->activated_sub_widgets )) {
-						if ( $meta_og_image->count() == 0 &&
-							 $url_data->screenshot_exists() ) {
+					if ( in_array( 'meta-og-image', $this->activated_sub_widgets ) ) {
+						if (
+							$meta_og_image->count() == 0 &&
+							$url_data->screenshot_exists()
+						) {
 							$node = $document->createElement( 'meta' );
 							$node->setAttribute( 'property', 'og:image' );
 							$node->setAttribute( 'content', $url_data->render_screenshot_path() );
@@ -158,6 +163,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 							}
 						}
 					}
+
 					// meta og image generation
 					return;
 				}
@@ -165,12 +171,12 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 
 			return;
 
-		} catch (Exception $e) {
+		} catch ( Exception $e ) {
 			return;
 		}
 	}
 
-	public function get_shortcode_content( $atts = array(), $content = null, $tag = ''): string {
+	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
 		return '';
 	}
 
@@ -195,7 +201,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	}
 
 	public static function update_settings( array $new_settings ) {
-		if (in_array( self::SETTING_NAME_META_DESCRIPTION_GENERATION, $new_settings )) {
+		if ( in_array( self::SETTING_NAME_META_DESCRIPTION_GENERATION, $new_settings ) ) {
 			update_option(
 				self::SETTING_NAME_META_DESCRIPTION_GENERATION,
 				true
@@ -207,7 +213,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			);
 		}
 
-		if (in_array( self::SETTING_NAME_META_OG_DESC_GENERATION, $new_settings )) {
+		if ( in_array( self::SETTING_NAME_META_OG_DESC_GENERATION, $new_settings ) ) {
 			update_option(
 				self::SETTING_NAME_META_OG_DESC_GENERATION,
 				true
@@ -219,7 +225,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			);
 		}
 
-		if (in_array( self::SETTING_NAME_META_OG_IMAGE_GENERATION, $new_settings )) {
+		if ( in_array( self::SETTING_NAME_META_OG_IMAGE_GENERATION, $new_settings ) ) {
 			update_option(
 				self::SETTING_NAME_META_OG_IMAGE_GENERATION,
 				true
@@ -231,7 +237,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			);
 		}
 
-		if (in_array( self::SETTING_NAME_META_OG_TITLE_GENERATION, $new_settings )) {
+		if ( in_array( self::SETTING_NAME_META_OG_TITLE_GENERATION, $new_settings ) ) {
 			update_option(
 				self::SETTING_NAME_META_OG_TITLE_GENERATION,
 				true

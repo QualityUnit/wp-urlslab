@@ -246,19 +246,20 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$currentUrl           = $this->get_current_page_url()->get_url();
 
 		foreach ( $results as $row ) {
-			$kwUrl = new Urlslab_Url( $row['urlLink'] );
 			if (
-				$this->get_current_page_url()->get_url_id() != $kwUrl->get_url_id() &&
-				preg_match( '/' . str_replace( '/', '\\/', $row['urlFilter'] ) . '/', $currentUrl ) &&
+				( '.*' === $row['urlFilter'] || '' === $row['urlFilter'] || preg_match( '/' . str_replace( '/', '\\/', $row['urlFilter'] ) . '/', $currentUrl ) ) &&
 				strpos( $input_text, strtolower( $row['keyword'] ) ) !== false
 			) {
-				$this->keywords_cache[ $row['kw_id'] ] = array(
-					'kw'  => strtolower( $row['keyword'] ),
-					'url' => $row['urlLink'],
-				);
-				//addressing cache
-				$this->keywords_cache_ids[ strtolower( $row['keyword'] ) ][] = $row['kw_id'];
-				$this->urls_cache_ids[ $row['urlLink'] ][]                   = $row['kw_id'];
+				$kwUrl = new Urlslab_Url( $row['urlLink'] );
+				if ( $this->get_current_page_url()->get_url_id() != $kwUrl->get_url_id() ) {
+					$this->keywords_cache[ $row['kw_id'] ] = array(
+						'kw'  => strtolower( $row['keyword'] ),
+						'url' => $row['urlLink'],
+					);
+					//addressing cache
+					$this->keywords_cache_ids[ strtolower( $row['keyword'] ) ][] = $row['kw_id'];
+					$this->urls_cache_ids[ $row['urlLink'] ][]                   = $row['kw_id'];
+				}
 			}
 		}
 	}
@@ -273,7 +274,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 					( ! isset( $this->url_page_replacement_counts[ $row['url'] ] ) || $this->url_page_replacement_counts[ $row['url'] ] < $this->options[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ] ) &&
 					( ! isset( $this->urlandkw_page_replacement_counts[ $kw_id ] ) || $this->urlandkw_page_replacement_counts[ $kw_id ] < $this->options[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL ] )
 				) {
-					if ( strlen( $row['kw'] ) <= $len && strpos( $inputText, strtolower( $row['kw'] ) ) !== false ) {
+					if ( strpos( $inputText, $row['kw'] ) !== false ) {
 						$keywords[ $kw_id ] = $row;
 					}
 				} else {

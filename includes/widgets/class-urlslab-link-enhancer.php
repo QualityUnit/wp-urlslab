@@ -22,6 +22,8 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	const SETTING_NAME_URLS_MAP = 'urlslab_urls_map';
 	const SETTING_DEFAULT_URLS_MAP = true;
 
+	private array $options = array();
+
 	/**
 	 * @param Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher
 	 */
@@ -35,7 +37,26 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	public function init_widget( Urlslab_Loader $loader ) {
+		$loader->add_action( 'post_updated', $this, 'post_updated', 10, 3 );
 		$loader->add_action( 'urlslab_content', $this, 'theContentHook', 12 );
+		$this->options[ self::SETTING_NAME_REMOVE_LINKS ] = get_option( self::SETTING_NAME_REMOVE_LINKS, self::SETTING_DEFAULT_REMOVE_LINKS );
+	}
+
+	public function post_updated( $post_id, $post, $post_before ) {
+		$data = array();
+		if ( $post->post_title != $post_before->post_title ) {
+			$data['urlTitle'] = $post->post_title;
+		}
+		$desc = get_post_meta( $post_id );
+		if ( isset( $desc['_yoast_wpseo_metadesc'][0] ) ) {
+			$data['urlMetaDescription'] = $desc['_yoast_wpseo_metadesc'][0];
+		}
+
+		if ( ! empty( $data ) ) {
+			$url = new Urlslab_Url( get_permalink( $post_id ) );
+			global $wpdb;
+			$wpdb->update( URLSLAB_URLS_TABLE, $data, array( 'urlMd5' => $url->get_url_id() ) );
+		}
 	}
 
 	/**
@@ -98,6 +119,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 				);
 
 				if ( ! empty( $result ) ) {
+					$strategy = get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
 
 					$this->update_urls_map( array_keys( $result ) );
 
@@ -109,7 +131,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 						) {
 
 							if (
-								get_option( self::SETTING_NAME_REMOVE_LINKS, self::SETTING_DEFAULT_REMOVE_LINKS ) &&
+								$this->options[ self::SETTING_NAME_REMOVE_LINKS ] &&
 								! $result[ $url_obj->get_url_id() ]->is_visible()
 							) {
 								//link should not be visible, remove it from content
@@ -120,7 +142,6 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 									}
 									$dom_elem->parentNode->replaceChild( $fragment, $dom_elem );
 								} else {
-									//co ak to je iba obycajny text?
 									$txt_element = $document->createTextNode( $dom_elem->domValue );
 									$dom_elem->parentNode->replaceChild( $txt_element, $dom_elem );
 								}
@@ -129,7 +150,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 								if ( empty( $dom_elem->getAttribute( 'title' ) ) ) {
 									$dom_elem->setAttribute(
 										'title',
-										$result[ $url_obj->get_url_id() ]->get_url_summary_text(),
+										$result[ $url_obj->get_url_id() ]->get_url_summary_text( $strategy ),
 									);
 								}
 							}
