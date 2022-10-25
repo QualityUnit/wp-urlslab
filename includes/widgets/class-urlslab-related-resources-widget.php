@@ -15,12 +15,12 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	 * @param Urlslab_Url_Data_Fetcher $url_data_fetcher
 	 */
 	public function __construct( Urlslab_Url_Data_Fetcher $url_data_fetcher ) {
-		$this->widget_slug = 'urlslab-related-resources';
-		$this->widget_title = 'Related Resources';
+		$this->widget_slug        = 'urlslab-related-resources';
+		$this->widget_title       = 'Related Resources';
 		$this->widget_description = 'Configure widget to show contextually similar pages to any of your pages to build internal link building';
-		$this->landing_page_link = 'https://www.urlslab.com';
-		$this->parent_page = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-link-building' );
-		$this->url_data_fetcher = $url_data_fetcher;
+		$this->landing_page_link  = 'https://www.urlslab.com';
+		$this->parent_page        = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-link-building' );
+		$this->url_data_fetcher   = $url_data_fetcher;
 	}
 
 	public function init_widget( Urlslab_Loader $loader ) {
@@ -65,27 +65,30 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 		$urlslab_atts = shortcode_atts(
 			array(
-						'url' => urlslab_get_current_page_protocol() . $this->get_current_page_url()->get_url(),
-						'related-count' => 8,
-						'show-image' => false,
-						'default-image' => '',
-				),
+				'url'           => urlslab_get_current_page_protocol() . $this->get_current_page_url()->get_url(),
+				'related-count' => 8,
+				'show-image'    => false,
+				'default-image' => '',
+			),
 			$atts,
 			$tag
 		);
 
 		$result = $this->url_data_fetcher->fetch_related_urls_to(
-			new Urlslab_Url( $urlslab_atts[ 'url' ] ),
-			$urlslab_atts[ 'related-count' ]
+			new Urlslab_Url( $urlslab_atts['url'] ),
+			$urlslab_atts['related-count']
 		);
 
-		if ( !empty( $result ) ) {
-			$content = $this->render_shortcode_header();
+		if ( ! empty( $result ) ) {
+			$content  = $this->render_shortcode_header();
+			$strategy = get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
 			foreach ( $result as $url ) {
-				$content .= $this->render_shortcode_item( $url, $urlslab_atts );
+				$content .= $this->render_shortcode_item( $url, $urlslab_atts, $strategy );
 			}
+
 			return $content . $this->render_shortcode_footer();
 		}
+
 		return '';
 	}
 
@@ -101,30 +104,33 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		return '</ul>';
 	}
 
-	private function render_shortcode_item( Urlslab_Url_Data $url, array $urlslab_atts ): string {
+	private function render_shortcode_item( Urlslab_Url_Data $url, array $urlslab_atts, $strategy ): string {
 		$title = $url->get_url_title();
 		if ( empty( $title ) ) {
 			return '';
 		}
 
 		return '<li urlslab-skip="true">' .
-				'<a href="' . esc_url( urlslab_get_current_page_protocol() . $url->get_url()->get_url() ) . '"' .
-				' title="' . esc_attr( $url->get_url_summary_text() ) . '"' .
-				( urlslab_is_same_domain_url( $url->get_url()->get_url() ) ? '' : ' target="_blank"' ) .
-				'urlslab-skip="true">' .
-				$this->render_screenshot( $url, $urlslab_atts ) .
-				esc_html( $title ) .
-				'</a>' .
-				'</li>';
+			   '<a href="' . esc_url( urlslab_get_current_page_protocol() . $url->get_url()->get_url() ) . '"' .
+			   ' title="' . esc_attr( $url->get_url_summary_text( $strategy ) ) . '"' .
+			   ( urlslab_is_same_domain_url( $url->get_url()->get_url() ) ? '' : ' target="_blank"' ) .
+			   'urlslab-skip="true">' .
+			   $this->render_screenshot( $url, $urlslab_atts, $strategy ) .
+			   esc_html( $title ) .
+			   '</a>' .
+			   '</li>';
 	}
 
-	private function render_screenshot( Urlslab_Url_Data $url, array $urlslab_atts ): string {
-		if ( ( $urlslab_atts[ 'show-image' ] === true || $urlslab_atts[ 'show-image' ] == 'true' )
-				&& $url->screenshot_exists() ) {
+	private function render_screenshot( Urlslab_Url_Data $url, array $urlslab_atts, $strategy ): string {
+		if (
+			( $urlslab_atts['show-image'] === true || $urlslab_atts['show-image'] == 'true' )
+			&& $url->screenshot_exists()
+		) {
 			return '<img alt="' .
-					esc_attr( $url->get_url_summary_text() ) .
-					'" src="' . $url->render_screenshot_path( 'thumbnail' ) . '">';
+				   esc_attr( $url->get_url_summary_text( $strategy ) ) .
+				   '" src="' . $url->render_screenshot_path( 'thumbnail' ) . '">';
 		}
+
 		return '';
 	}
 

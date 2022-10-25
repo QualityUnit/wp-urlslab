@@ -3,6 +3,7 @@
 class Urlslab_Url {
 
 	private string $urlslab_parsed_url;
+	private $url_id = null;
 	private array $url_components = array();
 	private array $domain_blacklists = array(
 		'google.com',
@@ -37,6 +38,7 @@ class Urlslab_Url {
 				return true;
 			}
 		}
+
 		return false;
 	}
 
@@ -59,6 +61,7 @@ class Urlslab_Url {
 		if ( ! is_array( $parsed_url ) ) {
 			$this->url_components     = array( 'path' => '' );
 			$this->urlslab_parsed_url = '';
+
 			return;
 		}
 
@@ -102,7 +105,11 @@ class Urlslab_Url {
 	}
 
 	public function get_url_id(): int {
-		return crc32( md5( $this->urlslab_parsed_url ) );
+		if ( null === $this->url_id ) {
+			$this->url_id = crc32( md5( $this->urlslab_parsed_url ) );
+		}
+
+		return $this->url_id;
 	}
 
 	public function get_url_path(): string {
