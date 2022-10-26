@@ -25,7 +25,7 @@ class Urlslab_Url_Data_Fetcher {
 		return new Urlslab_Url_Data(
 			new Urlslab_Url( parse_url( get_site_url(), PHP_URL_SCHEME ) . '://' . $row['urlName'] ),
 			$row['domainId'],
-			$row['urlId'] ?? ($row['urlMd5'] ?? ''),
+			$row['urlId'] ?? ( $row['urlMd5'] ?? '' ),
 			$row['screenshotDate'],
 			$row['updateStatusDate'],
 			$row['urlTitle'],
