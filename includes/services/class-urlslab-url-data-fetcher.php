@@ -25,7 +25,7 @@ class Urlslab_Url_Data_Fetcher {
 		return new Urlslab_Url_Data(
 			new Urlslab_Url( parse_url( get_site_url(), PHP_URL_SCHEME ) . '://' . $row['urlName'] ),
 			$row['domainId'],
-			$row['urlId'] ?? $row['urlMd5'],
+			$row['urlId'] ?? '',
 			$row['screenshotDate'],
 			$row['updateStatusDate'],
 			$row['urlTitle'],
@@ -378,7 +378,7 @@ or (updateStatusDate < %d AND status = %s)
 			foreach ( $query_results as $res ) {
 				$results[ $res['urlMd5'] ]          = $this->transform( $res );
 				$this->urls_cache[ $res['urlMd5'] ] = $results[ $res['urlMd5'] ];
-				//# Adding only urls that are no scheduled
+				//# Adding only urls that are not scheduled
 				unset( $valid_urls[ $res['urlMd5'] ] );
 			}
 		}
