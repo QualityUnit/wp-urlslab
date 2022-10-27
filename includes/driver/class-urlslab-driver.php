@@ -21,6 +21,7 @@ abstract class Urlslab_Driver {
 	 * return content of file
 	 *
 	 * @param Urlslab_File_Data $file_obj
+	 *
 	 * @return mixed
 	 */
 	abstract function get_file_content( Urlslab_File_Data $file_obj );
@@ -29,11 +30,12 @@ abstract class Urlslab_Driver {
 	 * output content of file to standard output
 	 *
 	 * @param Urlslab_File_Data $file_obj
+	 *
 	 * @return mixed
 	 */
 	abstract function output_file_content( Urlslab_File_Data $file_obj );
 
-	abstract function save_file_to_storage( Urlslab_File_Data $file_obj, string $local_file_name ):bool;
+	abstract function save_file_to_storage( Urlslab_File_Data $file_obj, string $local_file_name ): bool;
 
 	abstract function is_connected();
 
@@ -46,7 +48,7 @@ abstract class Urlslab_Driver {
 	}
 
 	public function upload_content( Urlslab_File_Data $file ) {
-		$result = false;
+		$result      = false;
 		$update_data = array();
 
 		if ( strlen( $file->get_local_file() ) && file_exists( $file->get_local_file() ) ) {
@@ -57,12 +59,12 @@ abstract class Urlslab_Driver {
 			if ( empty( $file->get_height() ) || 0 === $file->get_height() || empty( $file->get_width() ) || 0 === $file->get_width() ) {
 				$size = getimagesize( $file->get_local_file() );
 				if ( $size ) {
-					$update_data['width'] = $size[0];
+					$update_data['width']  = $size[0];
 					$update_data['height'] = $size[1];
 				}
 			}
 			$result = $this->save_file_to_storage( $file, $file->get_local_file() );
-		} elseif ( strlen( $file->get_url() ) ) {
+		} else if ( strlen( $file->get_url() ) ) {
 			$local_tmp_file = download_url( $file->get_url() );
 			if ( is_wp_error( $local_tmp_file ) ) {
 				if (
@@ -79,11 +81,14 @@ abstract class Urlslab_Driver {
 						$local_tmp_file = $this->resize_image( $original_tmp_file, $matches[2], $matches[3] );
 						unlink( $original_tmp_file );
 						if ( false === $local_tmp_file ) {
+							//on this place we could use original file as new file if we want, but it would generate useless traffic
 							return false;
 						}
 					} else {
 						return false;
 					}
+				} else {
+					return false;
 				}
 			}
 			$file_size = filesize( $local_tmp_file );
@@ -93,7 +98,7 @@ abstract class Urlslab_Driver {
 			if ( empty( $file->get_height() ) || 0 === $file->get_height() || empty( $file->get_width() ) || 0 === $file->get_width() ) {
 				$size = getimagesize( $local_tmp_file );
 				if ( $size ) {
-					$update_data['width'] = $size[0];
+					$update_data['width']  = $size[0];
 					$update_data['height'] = $size[1];
 				}
 			}
@@ -108,21 +113,22 @@ abstract class Urlslab_Driver {
 				$wpdb->update( URLSLAB_FILES_TABLE, $update_data, array( 'fileid' => $file->get_fileid() ) );
 			}
 		}
+
 		return $result;
 	}
 
 	private function resize_image( $file, $w, $h ) {
 		$img_info = getimagesize( $file );
-		$width = $img_info[0];
-		$height = $img_info[1];
+		$width    = $img_info[0];
+		$height   = $img_info[1];
 
 		$r = $width / $height;
 		if ( $w / $h > $r ) {
-			$newwidth = $h * $r;
+			$newwidth  = $h * $r;
 			$newheight = $h;
 		} else {
 			$newheight = $w / $r;
-			$newwidth = $w;
+			$newwidth  = $w;
 		}
 
 		switch ( $img_info['mime'] ) {
@@ -164,6 +170,7 @@ abstract class Urlslab_Driver {
 			default:
 				return false;
 		}
+
 		return $tmp_name;
 	}
 
@@ -185,15 +192,17 @@ abstract class Urlslab_Driver {
 			default:
 				throw new Exception( 'Driver not found' );
 		}
+
 		return self::$driver_cache[ $file->get_driver() ];
 	}
 
 	public static function transfer_file_to_storage(
 		Urlslab_File_Data $file,
-		string $dest_driver ): bool {
+		string $dest_driver
+	): bool {
 		global $wpdb;
 
-		$result = false;
+		$result   = false;
 		$tmp_name = wp_tempnam();
 		if (
 			Urlslab_Driver::get_driver( $file )->save_to_file( $file, $tmp_name ) &&
@@ -212,7 +221,7 @@ abstract class Urlslab_Driver {
 				$wpdb->update(
 					URLSLAB_FILES_TABLE,
 					array(
-						'driver' => $file->get_driver(),
+						'driver'   => $file->get_driver(),
 						'filesize' => filesize( $tmp_name ),
 					),
 					array(
@@ -228,6 +237,7 @@ abstract class Urlslab_Driver {
 			}
 		}
 		unlink( $tmp_name );
+
 		return $result;
 	}
 
