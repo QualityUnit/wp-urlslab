@@ -484,7 +484,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 										'keyword'     => $missing_kw,
 										'urlLink'     => urlslab_add_current_page_protocol( $arrU['obj']->get_url() ),
 										'lang'        => urlslab_get_language(),
-										'kw_priority' => 10,
+										'kw_priority' => 100,
 										'urlFilter'   => '.*',
 									)
 								);
