@@ -4,6 +4,11 @@
 class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 
+	const KW_EDITOR = 'E';    //link added by editor in original content
+	const KW_URLSLAB = 'U';    //link added by urlslab
+
+	private Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher;
+
 	private string $widget_slug;
 	private string $widget_title;
 	private string $widget_description;
@@ -17,6 +22,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	private array $kw_page_replacement_counts = array();
 	private array $url_page_replacement_counts = array();
 	private array $urlandkw_page_replacement_counts = array();
+	private array $page_keywords = array();
 
 	private array $keywords_cache = array();
 
@@ -61,14 +67,23 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 	public const SETTING_NAME_KW_MAP = 'urlslab_kw_map';
 	public const SETTING_DEFAULT_KW_MAP = 1;
+
+	public const SETTING_NAME_KW_IMPORT_INTERNAL_LINKS = 'urlslab_kw_imp_int';
+	public const SETTING_DEFAULT_KW_IMPORT_INTERNAL_LINKS = 0;
+
+	public const SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS = 'urlslab_kw_imp_ext';
+	public const SETTING_DEFAULT_KW_IMPORT_EXTERNAL_LINKS = 0;
+
+
 	private array $options = array();
 
-	public function __construct() {
-		$this->widget_slug        = 'urlslab-keywords-links';
-		$this->widget_title       = 'Keywords Links';
-		$this->widget_description = 'Build automatic links from your keywords that appear in website content';
-		$this->landing_page_link  = 'https://www.urlslab.com';
-		$this->parent_page        = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-link-building' );
+	public function __construct( Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher ) {
+		$this->urlslab_url_data_fetcher = $urlslab_url_data_fetcher;
+		$this->widget_slug              = 'urlslab-keywords-links';
+		$this->widget_title             = 'Keywords Links';
+		$this->widget_description       = 'Build automatic links from your keywords that appear in website content';
+		$this->landing_page_link        = 'https://www.urlslab.com';
+		$this->parent_page              = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-link-building' );
 	}
 
 	public function init_widget( Urlslab_Loader $loader ) {
@@ -82,6 +97,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$this->options[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE ]        = get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE, self::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PAGE );
 		$this->options[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH ]   = get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH, self::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PARAGRAPH );
 		$this->options[ self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK ]           = get_option( self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK, self::SETTING_DEFAULT_MIN_CHARS_TO_NEXT_LINK );
+		$this->options[ self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS ]         = get_option( self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS, self::SETTING_DEFAULT_KW_IMPORT_INTERNAL_LINKS );
+		$this->options[ self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS ]         = get_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS, self::SETTING_DEFAULT_KW_IMPORT_EXTERNAL_LINKS );
 	}
 
 	/**
@@ -174,8 +191,15 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				}
 
 				//add keyword as link
+				$urlObj                                                               = new Urlslab_Url( $kwRow['url'] );
+				$this->page_keywords[ $kwRow['kw'] ]['urls'][ $urlObj->get_url_id() ] = array(
+					'obj' => $urlObj,
+					't'   => self::KW_URLSLAB,
+				);
+				$this->page_keywords[ $kwRow['kw'] ]['kw_id']                         = $kw_id;
+
 				$linkDom = $document->createElement( 'a', substr( $node->nodeValue, $pos, strlen( $kwRow['kw'] ) ) );
-				$linkDom->setAttribute( 'href', $kwRow['url'] );
+				$linkDom->setAttribute( 'href', urlslab_add_current_page_protocol( $urlObj->get_url() ) );
 				$linkDom->setAttribute( 'urlslab-kw', 'y' );
 
 				//if relative url or url from same domain, don't add target attribute
@@ -243,9 +267,12 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kw_id, keyword, urlLink, urlFilter FROM ' . $keyword_table . " WHERE (lang = %s OR lang = 'all') ORDER BY kw_priority ASC, kw_length DESC", urlslab_get_language() ), 'ARRAY_A' ); // phpcs:ignore
 
 		$this->keywords_cache = array();
-		$currentUrl           = $this->get_current_page_url()->get_url();
+		$currentUrl           = urlslab_add_current_page_protocol( $this->get_current_page_url()->get_url() );
 
 		foreach ( $results as $row ) {
+			if ( isset( $this->page_keywords[ $row['keyword'] ] ) ) {
+				$this->page_keywords[ $row['keyword'] ]['kw_id'] = $row['kw_id'];
+			}
 			if (
 				( '.*' === $row['urlFilter'] || '' === $row['urlFilter'] || preg_match( '/' . str_replace( '/', '\\/', $row['urlFilter'] ) . '/', $currentUrl ) ) &&
 				strpos( $input_text, strtolower( $row['keyword'] ) ) !== false
@@ -344,14 +371,12 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	public function theContentHook( DOMDocument $document ) {
 		$this->initLinkCounts( $document );
 		$this->init_keywords_cache( strtolower( $document->textContent ) );
-		if ( count( $this->keywords_cache ) == 0 ) {
-			return;
-		}
 		try {
-			if ( $this->cnt_page_links > get_option( self::SETTING_NAME_MAX_LINKS_ON_PAGE, self::SETTING_DEFAULT_MAX_LINKS_ON_PAGE ) ) {
-				return;
+			if ( count( $this->keywords_cache ) > 0 ) {
+				if ( $this->cnt_page_links < get_option( self::SETTING_NAME_MAX_LINKS_ON_PAGE, self::SETTING_DEFAULT_MAX_LINKS_ON_PAGE ) ) {
+					$this->findTextDOMElements( $document, $document );
+				}
 			}
-			$this->findTextDOMElements( $document, $document );
 			$this->logUsedKeywords();
 		} catch ( Exception $e ) {
 		}
@@ -367,64 +392,116 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		global $wpdb;
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT kw_id FROM ' . URLSLAB_KEYWORDS_MAP_TABLE . ' WHERE urlMd5 = %d', // phpcs:ignore
+				'SELECT kw_id, destUrlMd5, kwType FROM ' . URLSLAB_KEYWORDS_MAP_TABLE . ' WHERE urlMd5 = %d', // phpcs:ignore
 				$srcUrlId
 			),
 			'ARRAY_A'
 		);
 
-		$keywords = array();
+		$db_map = array();
 		array_walk(
 			$results,
-			function( $value, $key ) use ( &$keywords ) {
-				$keywords[ $value['kw_id'] ] = true;
+			function( $value, $key ) use ( &$db_map ) {
+				$db_map[ $value['kw_id'] . '|' . $value['destUrlMd5'] ] = $value['kwType'];
 			}
 		);
 
-		$tracked_kws = array();
-
-		$values      = array();
-		$placeholder = array();
-		foreach ( $this->urlandkw_page_replacement_counts as $kw_id => $dummy ) {
-			if ( ! isset( $keywords[ $kw_id ] ) ) {
-				array_push(
-					$values,
-					$kw_id,
-					$srcUrlId,
-				);
-				$placeholder[] = '(%d,%d)';
+		$insert_values      = array();
+		$insert_placeholder = array();
+		$missing_keywords   = array();
+		foreach ( $this->page_keywords as $keyword => $kw_arr ) {
+			if ( isset( $kw_arr['kw_id'] ) ) {
+				foreach ( $kw_arr['urls'] as $urlId => $arrU ) {
+					try {
+						$key = $kw_arr['kw_id'] . '|' . $urlId;
+						if ( ! isset( $db_map[ $key ] ) || $db_map[ $key ] != $arrU['t'] ) {
+							array_push(
+								$insert_values,
+								$kw_arr['kw_id'],
+								$srcUrlId,
+								$urlId,
+								$arrU['t']
+							);
+							$insert_placeholder[] = '(%d,%d,%d,%s)';
+						} else {
+							unset( $db_map[ $key ] );
+						}
+					} catch ( Exception $e ) {
+					}
+				}
 			} else {
-				$tracked_kws[ $kw_id ] = true;
+				$missing_keywords[ $keyword ] = $kw_arr['urls'];
 			}
 		}
 
-		if ( ! empty( $values ) ) {
-			$table               = URLSLAB_KEYWORDS_MAP_TABLE;
-			$placeholder_string  = implode( ', ', $placeholder );
-			$insert_update_query = "INSERT IGNORE INTO $table (kw_id, urlMd5) VALUES $placeholder_string";
+		$table = URLSLAB_KEYWORDS_MAP_TABLE;
 
+		if ( ! empty( $insert_values ) ) {
+			$table               = URLSLAB_KEYWORDS_MAP_TABLE;
+			$placeholder_string  = implode( ',', $insert_placeholder );
+			$insert_update_query = "INSERT INTO $table (kw_id, urlMd5, destUrlMd5, kwType) VALUES $placeholder_string ON DUPLICATE KEY UPDATE kwType = VALUES(kwType)";
 			$wpdb->query(
 				$wpdb->prepare(
 					$insert_update_query, // phpcs:ignore
-					$values
+					$insert_values
 				)
 			);
 		}
 
-		$delete = array_diff( array_keys( $keywords ), array_keys( $tracked_kws ) );
-		if ( ! empty( $delete ) ) {
-			$values      = array( $srcUrlId );
-			$placeholder = array();
-			foreach ( $delete as $url_id ) {
-				$placeholder[] = '%d';
-				$values[]      = $url_id;
+
+		if ( ! empty( $db_map ) ) {
+			$delete_where  = array();
+			$delete_values = array( $srcUrlId );
+			foreach ( $db_map as $key => $type ) {
+				$k              = explode( '|', $key );
+				$delete_where[] = '(kw_id=%d AND destUrlMd5=%d)';
+				array_push(
+					$delete_values,
+					$k[0],
+					$k[1]
+				);
 			}
-			$table              = URLSLAB_URLS_MAP_TABLE;
-			$placeholder_string = implode( ',', $placeholder );
-			$delete_query       = "DELETE FROM $table WHERE srcUrlMd5=%d AND destUrlMd5 IN ($placeholder_string)";
-			$wpdb->query( $wpdb->prepare( $delete_query, $values ) ); // phpcs:ignore
+			if ( ! empty( $delete_where ) ) {
+				$where_string = implode( 'OR', $delete_where );
+				$delete_query = "DELETE FROM $table WHERE urlMd5=%d AND ($where_string)";
+				$wpdb->query( $wpdb->prepare( $delete_query, $delete_values ) ); // phpcs:ignore
+			}
 		}
 
+		if ( ! empty( $missing_keywords ) ) {
+			if ( $this->options[ self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS ] || $this->options[ self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS ] ) {
+				$schedule_urls = array();
+				$new_keywords  = array();
+				foreach ( $missing_keywords as $missing_kw => $urls ) {
+					foreach ( $urls as $urlId => $arrU ) {
+						try {
+
+							$is_internal = urlslab_is_same_domain_url( $arrU['obj']->get_url() );
+							if ( ( $is_internal && $this->options[ self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS ] ) || ( ! $is_internal && $this->options[ self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS ] ) ) {
+								$schedule_urls[ $urlId ] = $arrU['obj'];
+								$new_keywords[]          = new Urlslab_Url_Keyword_Data(
+									array(
+										'keyword'     => $missing_kw,
+										'urlLink'     => urlslab_add_current_page_protocol( $arrU['obj']->get_url() ),
+										'lang'        => urlslab_get_language(),
+										'kw_priority' => 10,
+										'urlFilter'   => '.*',
+									)
+								);
+							}
+						} catch ( Exception $e ) {
+						}
+					}
+				}
+
+				if ( ! empty( $schedule_urls ) ) {
+					$this->urlslab_url_data_fetcher->prepare_url_batch_for_scheduling( $schedule_urls );
+				}
+				if ( ! empty( $new_keywords ) ) {
+					Urlslab_Url_Keyword_Data::create_keywords( $new_keywords );
+				}
+			}
+		}
 	}
 
 	private function initLinkCounts( DOMDocument $document ) {
@@ -434,18 +511,40 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$this->url_page_replacement_counts      = array();
 		$this->urlandkw_page_replacement_counts = array();
 		$this->link_counts                      = array();
+		$this->page_keywords                    = array();
 		$cnt                                    = 0;
 		$xpath                                  = new DOMXPath( $document );
-		$table_data                             = $xpath->query( "//a|//*[starts-with(name(),'h')]" );
+		$table_data                             = $xpath->query( "//a[not(ancestor-or-self::*[contains(@class, 'urlslab-skip') or contains(@class, 'urlslab-skip-keywords')])]|//*[substring-after(name(), 'h') > 0 and not(ancestor-or-self::*[contains(@class, 'urlslab-skip') or contains(@class, 'urlslab-skip-keywords')])]" );
 		$hasLinksBeforeH1                       = false;
 		$hadHAlready                            = false;
 		foreach ( $table_data as $element ) {
 			if ( 'a' == $element->nodeName ) {
-				if ( ! $hadHAlready ) {
-					$hasLinksBeforeH1 = true;
+				if ( $element->hasAttribute( 'href' ) && ! $this->is_skip_elemenet( $element, 'keywords' ) ) {
+					try {
+						$href = $element->getAttribute( 'href' );
+						if ( strlen( $href ) && '#' != substr( $href, 0, 1 ) ) {
+							$link_text = $this->get_link_element_text( $element );
+							if ( strlen( $link_text ) ) {
+								$urlObj = new Urlslab_Url( $href );
+								if (
+									$urlObj->is_url_valid() &&
+									$this->get_current_page_url()->get_url_id() != $urlObj->get_url_id()
+								) {
+									$this->page_keywords[ $link_text ]['urls'][ $urlObj->get_url_id() ] = array(
+										'obj' => $urlObj,
+										't'   => self::KW_EDITOR,
+									);
+								}
+							}
+							if ( ! $hadHAlready ) {
+								$hasLinksBeforeH1 = true;
+							}
+							$this->cnt_page_links ++;
+							$cnt ++;
+						}
+					} catch ( Exception $e ) {
+					}
 				}
-				$this->cnt_page_links ++;
-				$cnt ++;
 			} else if ( preg_match( '/^[hH][0-9]$/', $element->nodeName ) ) {
 				$hadHAlready         = true;
 				$this->link_counts[] = $cnt;
@@ -459,27 +558,35 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		}
 	}
 
-	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
+	public
+	function get_shortcode_content(
+		$atts = array(), $content = null, $tag = ''
+	): string {
 		return '';
 	}
 
-	public function has_shortcode(): bool {
+	public
+	function has_shortcode(): bool {
 		return false;
 	}
 
-	public function render_widget_overview() {
+	public
+	function render_widget_overview() {
 		// TODO: Implement render_widget_overview() method.
 	}
 
-	public function get_thumbnail_demo_url(): string {
+	public
+	function get_thumbnail_demo_url(): string {
 		return plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/demo/link-enhancer-demo.png' ) . 'link-enhancer-demo.png';
 	}
 
-	public function get_parent_page(): Urlslab_Admin_Page {
+	public
+	function get_parent_page(): Urlslab_Admin_Page {
 		return $this->parent_page;
 	}
 
-	public function get_widget_tab(): string {
+	public
+	function get_widget_tab(): string {
 		return 'keyword-linking';
 	}
 
@@ -494,9 +601,13 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		add_option( self::SETTING_NAME_MIN_PARAGRAPH_LENGTH, self::SETTING_DEFAULT_MIN_PARAGRAPH_LENGTH, '', true );
 		add_option( self::SETTING_NAME_MAX_PARAGRAPH_DENSITY, self::SETTING_DEFAULT_MAX_PARAGRAPH_DENSITY, '', true );
 		add_option( self::SETTING_NAME_KW_MAP, self::SETTING_DEFAULT_KW_MAP, '', true );
+		add_option( self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS, self::SETTING_DEFAULT_KW_IMPORT_INTERNAL_LINKS, '', true );
+		add_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS, self::SETTING_DEFAULT_KW_IMPORT_EXTERNAL_LINKS, '', true );
 	}
 
-	public static function update_settings( array $new_settings ) {
+	public static function update_settings(
+		array $new_settings
+	) {
 		if (
 			isset( $new_settings[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD ] ) &&
 			! empty( $new_settings[ self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD ] )
@@ -585,19 +696,36 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				$new_settings[ self::SETTING_NAME_MAX_PARAGRAPH_DENSITY ]
 			);
 		}
-		if (
-			isset( $new_settings['kw_map'] ) &&
-			! empty( $new_settings['kw_map'] )
-		) {
-			update_option(
-				self::SETTING_NAME_KW_MAP,
-				1
-			);
+		if ( isset( $new_settings['kw_map'] ) && in_array( self::SETTING_NAME_KW_MAP, $new_settings['kw_map'] ) ) {
+			update_option( self::SETTING_NAME_KW_MAP, 1 );
 		} else {
-			update_option(
-				self::SETTING_NAME_KW_MAP,
-				0
-			);
+			update_option( self::SETTING_NAME_KW_MAP, 0 );
 		}
+		if ( isset( $new_settings['kw_map'] ) && in_array( self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS, $new_settings['kw_map'] ) ) {
+			update_option( self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS, 1 );
+		} else {
+			update_option( self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS, 0 );
+		}
+		if ( isset( $new_settings['kw_map'] ) && in_array( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS, $new_settings['kw_map'] ) ) {
+			update_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS, 1 );
+		} else {
+			update_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS, 0 );
+		}
+	}
+
+	private function get_link_element_text( $dom ): string {
+		if ( ! empty( $dom->childNodes ) ) {
+			foreach ( $dom->childNodes as $node ) {
+				if ( ! $this->is_skip_elemenet( $node, 'keywords' ) ) {
+					if ( $node instanceof DOMText ) {
+						if ( strlen( trim( $node->nodeValue ) ) > 1 ) {
+							return strtolower( trim( $node->nodeValue ) );
+						}
+					}
+				}
+			}
+		}
+
+		return '';
 	}
 }

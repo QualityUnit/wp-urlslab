@@ -10,6 +10,7 @@ class Urlslab_Url_Keyword_Data {
 	private string $keyword_url_link;
 	private string $keyword_url_filter;
 	private int $keyword_usage_count;
+	private int $link_usage_count;
 
 	/**
 	 * @param string $keyword
@@ -22,9 +23,9 @@ class Urlslab_Url_Keyword_Data {
 	 * @throws Exception
 	 */
 	public function __construct( array $data ) {
-		$keyword_prio = 10;
-		$keyword_lang = 'all';
-		$keyword_filter = '.*';
+		$keyword_prio        = 10;
+		$keyword_lang        = 'all';
+		$keyword_filter      = '.*';
 		$keyword_usage_count = 0;
 
 		if ( ! isset( $data['keyword'] ) || empty( $data['keyword'] ) || ! is_string( $data['keyword'] ) ) {
@@ -55,15 +56,19 @@ class Urlslab_Url_Keyword_Data {
 		if ( isset( $data['keywordCountUsage'] ) && null != $data['keywordCountUsage'] ) {
 			$keyword_usage_count = $data['keywordCountUsage'];
 		}
+		if ( isset( $data['linkCountUsage'] ) && null != $data['linkCountUsage'] ) {
+			$link_usage_count = $data['linkCountUsage'];
+		}
 
-		$this->kw_id = $data['kw_id'] ?? '';
-		$this->keyword = $data['keyword'];
-		$this->keyword_priority = $keyword_prio;
-		$this->keyword_length = $data['kw_length'] ?? strlen( $data['keyword'] );
-		$this->keyword_url_lang = $keyword_lang;
-		$this->keyword_url_link = $data['urlLink'];
-		$this->keyword_url_filter = $keyword_filter;
+		$this->kw_id               = $data['kw_id'] ?? '';
+		$this->keyword             = $data['keyword'];
+		$this->keyword_priority    = $keyword_prio;
+		$this->keyword_length      = $data['kw_length'] ?? strlen( $data['keyword'] );
+		$this->keyword_url_lang    = $keyword_lang;
+		$this->keyword_url_link    = $data['urlLink'];
+		$this->keyword_url_filter  = $keyword_filter;
 		$this->keyword_usage_count = $keyword_usage_count;
+		$this->link_usage_count    = $link_usage_count ?? 0;
 	}
 
 	/**
@@ -73,6 +78,7 @@ class Urlslab_Url_Keyword_Data {
 		if ( ! empty( $this->kw_id ) ) {
 			return $this->kw_id;
 		}
+
 		return crc32( md5( $this->get_keyword() . '|' . $this->get_keyword_url_link() . '|' . $this->get_keyword_url_lang() ) );
 	}
 
@@ -123,6 +129,50 @@ class Urlslab_Url_Keyword_Data {
 	 */
 	public function get_keyword_usage_count(): int {
 		return $this->keyword_usage_count;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function get_link_usage_count(): int {
+		return $this->link_usage_count;
+	}
+
+	public static function create_keywords( array $keywords ): int {
+		global $wpdb;
+		$insert_placeholders = array();
+		$insert_values       = array();
+		foreach ( $keywords as $keyword ) {
+			array_push(
+				$insert_values,
+				$keyword->get_kw_id(),
+				$keyword->get_keyword(),
+				$keyword->get_keyword_priority(),
+				$keyword->get_keyword_length(),
+				$keyword->get_keyword_url_lang(),
+				$keyword->get_keyword_url_link(),
+				$keyword->get_keyword_url_filter(),
+			);
+			$insert_placeholders[] = '(%d, %s, %d, %d, %s, %s, %s)';
+		}
+
+		$insert_query = 'INSERT IGNORE INTO ' . URLSLAB_KEYWORDS_TABLE . ' (
+                   kw_id,
+                   keyword,
+                   kw_priority,
+                   kw_length,
+                   lang,
+                   urlLink,
+                   urlFilter)
+                   VALUES ' . implode( ', ', $insert_placeholders ) . '
+                   ON DUPLICATE KEY UPDATE
+                   kw_priority = VALUES(kw_priority),
+                   kw_length = VALUES(kw_length),
+                   lang = VALUES(lang),
+                   urlLink = VALUES(urlLink),
+                   urlFilter = VALUES(urlFilter)';
+
+		return $wpdb->query( $wpdb->prepare( $insert_query, $insert_values ) ); // phpcs:ignore
 	}
 
 }

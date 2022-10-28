@@ -89,7 +89,8 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 	public function theContentHook( DOMDocument $document ) {
 		try {
-			$elements = $document->getElementsByTagName( 'a' );
+			$xpath    = new DOMXPath( $document );
+			$elements = $xpath->query( "//a[not(ancestor-or-self::*[contains(@class, 'urlslab-skip') or contains(@class, 'urlslab-skip-title')])]" );
 
 			$link_elements = array();
 			if ( $elements instanceof DOMNodeList ) {
@@ -113,7 +114,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 				$result = $this->urlslab_url_data_fetcher->fetch_schedule_urls_batch(
 					array_merge(
-						array( new Urlslab_Url( urlslab_get_current_page_protocol() . $this->get_current_page_url()->get_url() ) ),
+						array( new Urlslab_Url( urlslab_add_current_page_protocol( $this->get_current_page_url()->get_url() ) ) ),
 						array_map( fn( $elem ): Urlslab_Url => $elem[1], $link_elements )
 					)
 				);

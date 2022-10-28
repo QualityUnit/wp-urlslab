@@ -65,7 +65,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 		$urlslab_atts = shortcode_atts(
 			array(
-				'url'           => urlslab_get_current_page_protocol() . $this->get_current_page_url()->get_url(),
+				'url'           => urlslab_add_current_page_protocol( $this->get_current_page_url()->get_url() ),
 				'related-count' => 8,
 				'show-image'    => false,
 				'default-image' => '',
@@ -97,7 +97,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	private function render_shortcode_header(): string {
-		return '<ul>';
+		return '<ul class="urlslab-skip">';
 	}
 
 	private function render_shortcode_footer(): string {
@@ -110,11 +110,11 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			return '';
 		}
 
-		return '<li urlslab-skip="true">' .
-			   '<a href="' . esc_url( urlslab_get_current_page_protocol() . $url->get_url()->get_url() ) . '"' .
+		return '<li>' .
+			   '<a href="' . esc_url( urlslab_add_current_page_protocol( $url->get_url()->get_url() ) ) . '"' .
 			   ' title="' . esc_attr( $url->get_url_summary_text( $strategy ) ) . '"' .
 			   ( urlslab_is_same_domain_url( $url->get_url()->get_url() ) ? '' : ' target="_blank"' ) .
-			   'urlslab-skip="true">' .
+			   '>' .
 			   $this->render_screenshot( $url, $urlslab_atts, $strategy ) .
 			   esc_html( $title ) .
 			   '</a>' .

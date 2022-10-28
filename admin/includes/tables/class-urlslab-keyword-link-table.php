@@ -28,17 +28,17 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 
 		/* -- Preparing your query -- */
 		$query = "SELECT
-       v.kw_id				  AS kw_id,
-       v.keyword              AS keyword,
-       v.kw_priority          AS kw_priority,
-       v.kw_length            AS kw_length,
-       v.lang                 AS lang,
-       v.urlLink              AS urlLink,
-       v.urlFilter            AS urlFilter,
-       SUM(!ISNULL(d.urlMd5)) AS keywordCountUsage
-FROM $table AS v
-         LEFT JOIN $map_table AS d ON d.kw_id = v.kw_id
-";
+						v.kw_id				  AS kw_id,
+						v.keyword              AS keyword,
+						v.kw_priority          AS kw_priority,
+						v.kw_length            AS kw_length,
+						v.lang                 AS lang,
+						v.urlLink              AS urlLink,
+						v.urlFilter            AS urlFilter,
+						SUM(!ISNULL(d.urlMd5)) AS keywordCountUsage,
+						SUM(!ISNULL(d.destUrlMd5)) AS linkCountUsage
+					FROM $table AS v
+					LEFT JOIN $map_table AS d ON d.kw_id = v.kw_id";
 
 		/* -- Preparing the condition -- */
 		if ( ! empty( $keyword_search ) ) {
@@ -148,6 +148,7 @@ FROM $table AS v
 			'col_lang'         => 'Lang',
 			'col_url_filter'   => 'Url Filter [Regexp]',
 			'col_kw_usage_cnt' => 'Keyword Usage Count',
+			'col_link_usage_cnt' => 'Link Usage Count',
 		);
 	}
 
@@ -219,6 +220,10 @@ FROM $table AS v
 		}
 
 		return $title . $this->row_actions( $actions );
+	}
+
+	function column_col_link_usage_cnt( $item ): string {
+		return '<span>' . $item->get_link_usage_count() . '</span>';
 	}
 
 	/**
@@ -314,6 +319,7 @@ FROM $table AS v
 			'col_kw_priority'  => 'kw_priority',
 			'col_lang'         => 'lang',
 			'col_kw_usage_cnt' => 'keywordCountUsage',
+			'col_link_usage_cnt' => 'linkCountUsage',
 		);
 	}
 
