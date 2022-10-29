@@ -4766,9 +4766,9 @@ ignore@^5.1.9, ignore@^5.2.0:
   version "5.2.0"
   resolved "https://registry.npmjs.org/ignore/-/ignore-5.2.0.tgz"
 
-image-minimizer-webpack-plugin@^3.6.1:
-  version "3.6.1"
-  resolved "https://registry.npmjs.org/image-minimizer-webpack-plugin/-/image-minimizer-webpack-plugin-3.6.1.tgz"
+image-minimizer-webpack-plugin@^3.7.0:
+  version "3.7.0"
+  resolved "https://registry.yarnpkg.com/image-minimizer-webpack-plugin/-/image-minimizer-webpack-plugin-3.7.0.tgz#97d3ab8ad8e4338e53bdf72a40e752fdc88649ff"
   dependencies:
     schema-utils "^4.0.0"
     serialize-javascript "^6.0.0"
