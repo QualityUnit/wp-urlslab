@@ -68,13 +68,17 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	public const SETTING_NAME_KW_MAP = 'urlslab_kw_map';
 	public const SETTING_DEFAULT_KW_MAP = 1;
 
+	//IMPORT KEYWORDS
 	public const SETTING_NAME_KW_IMPORT_INTERNAL_LINKS = 'urlslab_kw_imp_int';
 	public const SETTING_DEFAULT_KW_IMPORT_INTERNAL_LINKS = 0;
 
 	public const SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS = 'urlslab_kw_imp_ext';
 	public const SETTING_DEFAULT_KW_IMPORT_EXTERNAL_LINKS = 0;
 
+	public const SETTING_NAME_KW_IMPORT_MAX_LENGTH = 'urlslab_kw_max_len';
+	public const SETTING_DEFAULT__KW_IMPORT_MAX_LENGTH = 100;
 
+	//SETTINGS CACHE
 	private array $options = array();
 
 	public function __construct( Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher ) {
@@ -99,6 +103,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$this->options[ self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK ]           = get_option( self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK, self::SETTING_DEFAULT_MIN_CHARS_TO_NEXT_LINK );
 		$this->options[ self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS ]         = get_option( self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS, self::SETTING_DEFAULT_KW_IMPORT_INTERNAL_LINKS );
 		$this->options[ self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS ]         = get_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS, self::SETTING_DEFAULT_KW_IMPORT_EXTERNAL_LINKS );
+		$this->options[ self::SETTING_NAME_KW_IMPORT_MAX_LENGTH ]             = get_option( self::SETTING_NAME_KW_IMPORT_MAX_LENGTH, self::SETTING_DEFAULT__KW_IMPORT_MAX_LENGTH );
 	}
 
 	/**
@@ -473,23 +478,25 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				$schedule_urls = array();
 				$new_keywords  = array();
 				foreach ( $missing_keywords as $missing_kw => $urls ) {
-					foreach ( $urls as $urlId => $arrU ) {
-						try {
+					if ( strlen( $missing_kw ) < $this->options[ self::SETTING_NAME_KW_IMPORT_MAX_LENGTH ] ) {
+						foreach ( $urls as $urlId => $arrU ) {
+							try {
 
-							$is_internal = urlslab_is_same_domain_url( $arrU['obj']->get_url() );
-							if ( ( $is_internal && $this->options[ self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS ] ) || ( ! $is_internal && $this->options[ self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS ] ) ) {
-								$schedule_urls[ $urlId ] = $arrU['obj'];
-								$new_keywords[]          = new Urlslab_Url_Keyword_Data(
-									array(
-										'keyword'     => $missing_kw,
-										'urlLink'     => urlslab_add_current_page_protocol( $arrU['obj']->get_url() ),
-										'lang'        => urlslab_get_language(),
-										'kw_priority' => 100,
-										'urlFilter'   => '.*',
-									)
-								);
+								$is_internal = urlslab_is_same_domain_url( $arrU['obj']->get_url() );
+								if ( ( $is_internal && $this->options[ self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS ] ) || ( ! $is_internal && $this->options[ self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS ] ) ) {
+									$schedule_urls[ $urlId ] = $arrU['obj'];
+									$new_keywords[]          = new Urlslab_Url_Keyword_Data(
+										array(
+											'keyword'     => $missing_kw,
+											'urlLink'     => urlslab_add_current_page_protocol( $arrU['obj']->get_url() ),
+											'lang'        => urlslab_get_language(),
+											'kw_priority' => 100,
+											'urlFilter'   => '.*',
+										)
+									);
+								}
+							} catch ( Exception $e ) {
 							}
-						} catch ( Exception $e ) {
 						}
 					}
 				}
@@ -522,7 +529,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				if ( $element->hasAttribute( 'href' ) && ! $this->is_skip_elemenet( $element, 'keywords' ) ) {
 					try {
 						$href = $element->getAttribute( 'href' );
-						if ( strlen( $href ) && '#' != substr( $href, 0, 1 ) ) {
+						if ( strlen( $href ) && '#' != substr( $href, 0, 1 ) && 'tel:' != substr( $href, 0, 4 ) && 'mailto:' != substr( $href, 0, 7 ) ) {
 							$link_text = $this->get_link_element_text( $element );
 							if ( strlen( $link_text ) ) {
 								$urlObj = new Urlslab_Url( $href );

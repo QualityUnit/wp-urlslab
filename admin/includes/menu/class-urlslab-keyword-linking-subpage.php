@@ -349,18 +349,18 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		$kw_url  = new Urlslab_Url( $kw_url );
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT v.urlMd5             AS urlMd5,
-       v.urlName            AS urlName,
-       v.status             AS status,
-       v.domainId           AS domainId,
-       v.urlId              AS urlId,
-       v.screenshotDate     AS screenshotDate,
-       v.updateStatusDate   AS updateStatusDate,
-       v.urlTitle           AS urlTitle,
-       v.urlMetaDescription AS urlMetaDescription,
-       v.urlSummary         AS urlSummary,
-       v.visibility         AS visibility
-FROM $related_resource_table AS d INNER JOIN $source_table AS v ON d.destUrlMd5 = v.urlMd5 WHERE d.srcUrlMd5 = %s", //#phpcs:ignore
+				"SELECT	v.urlMd5             AS urlMd5,
+								v.urlName            AS urlName,
+								v.status             AS status,
+								v.domainId           AS domainId,
+								v.urlId              AS urlId,
+								v.screenshotDate     AS screenshotDate,
+								v.updateStatusDate   AS updateStatusDate,
+								v.urlTitle           AS urlTitle,
+								v.urlMetaDescription AS urlMetaDescription,
+								v.urlSummary         AS urlSummary,
+								v.visibility         AS visibility
+						FROM $related_resource_table AS d INNER JOIN $source_table AS v ON d.destUrlMd5 = v.urlMd5 WHERE d.srcUrlMd5 = %s", //#phpcs:ignore
 				$kw_url->get_url_id()
 			),
 			ARRAY_A
