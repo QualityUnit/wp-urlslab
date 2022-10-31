@@ -212,6 +212,10 @@
 					if (data.editLink !== null && data.editLink !== undefined) {
 						editHtml = `<a href="${data.editLink}" target="_blank">Edit</a>`
 					}
+					let linkType = "Editor Link";
+					if (data.linkType != "E") {
+						linkType = "Urlslab Link";
+					}
 					sectionContainer.append(
 						$(`
 						<div class="popup-ajax-container">
@@ -223,6 +227,7 @@
 									${editHtml}
 								</div>
 								<div class="float-left col-6">&nbsp;&nbsp;&nbsp;${data.urlTitle}</div>
+								<div class="float-left col-6">&nbsp;&nbsp;&nbsp;${linkType}</div>
 							</div>
 						</div>
 						`)

@@ -313,6 +313,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 								v.urlSummary AS urlSummary,
 								v.visibility AS visibility,
 								d.destUrlMd5 AS destUrlMd5,
+								d.linkType AS linkType,
 								u.urlName as destUrlName,
 								u.urlTitle AS destUrlTitle
 					FROM $map_table AS d INNER JOIN $source_table AS v ON d.urlMd5 = v.urlMd5 LEFT JOIN $source_table AS u ON d.destUrlMd5 = u.urlMd5 WHERE d.kw_id = %d", //#phpcs:ignore
@@ -387,11 +388,11 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		header( 'Content-Type: text/csv; charset=utf-8' );
 		header( 'Content-Disposition: attachment; filename=keywords.csv' );
 		$output = fopen( 'php://output', 'w' );
-		fputcsv( $output, array( 'Keyword', 'URL', 'Priority', 'Lang', 'Filter' ) );
+		fputcsv( $output, array( 'Keyword', 'URL', 'Priority', 'Lang', 'Filter', 'Type' ) );
 		global $wpdb;
 		$table = URLSLAB_KEYWORDS_TABLE;
 
-		$query  = "SELECT keyword, urlLink, kw_priority, lang, urlFilter FROM $table ORDER BY keyword, lang, urlFilter, kw_priority  ASC, kw_length DESC";
+		$query  = "SELECT keyword, urlLink, kw_priority, lang, urlFilter, kwType FROM $table ORDER BY keyword, lang, urlFilter, kw_priority  ASC, kw_length DESC";
 		$result = $wpdb->get_results( $query, ARRAY_N ); //# phpcs:ignore
 		foreach ( $result as $row ) {
 			fputcsv( $output, $row );
@@ -409,7 +410,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
                    kw_length,
                    lang,
                    urlLink,
-                   urlFilter) VALUES (%d, %s, %d, %d, %s, %s, %s)';
+                   urlFilter) VALUES (%d, %s, %d, %d, %s, %s, %s, %s)';
 
 		$wpdb->query(
 			$wpdb->prepare(
@@ -422,6 +423,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					$keyword->get_keyword_url_lang(),
 					$keyword->get_keyword_url_link(),
 					$keyword->get_keyword_url_filter(),
+					$keyword->get_keyword_type(),
 				)
 			)
 		);
@@ -455,7 +457,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
                    kw_length,
                    lang,
                    urlLink,
-                   urlFilter) VALUES (%s, %s, %d, %d, %s, %s, %s)';
+                   urlFilter) VALUES (%s, %s, %d, %d, %s, %s, %s, %s)';
 
 		$wpdb->query(
 			$wpdb->prepare(
@@ -468,6 +470,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					$keyword->get_keyword_url_lang(),
 					$keyword->get_keyword_url_link(),
 					$keyword->get_keyword_url_filter(),
+					$keyword->get_keyword_type(),
 				)
 			)
 		);
@@ -569,6 +572,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 							'kw_priority' => $data[2] ?? null,
 							'lang'        => $data[3] ?? null,
 							'urlFilter'   => $data[4] ?? null,
+							'kwType'      => $data[5] ?? Urlslab_Keywords_Links::KW_MANUAL,
 						)
 					);
 					$keywords[] = $data_row;
@@ -661,6 +665,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					<li class="color-warning">priority (optional - defaults to 10)</li>
 					<li class="color-warning">lang (optional - defaults to 'all')</li>
 					<li class="color-warning">filter (optional - defaults to regular expression '.*')</li>
+					<li class="color-warning">type (optional - defaults to M, Possible values: M - manual link, I - imported link)</li>
 				</ul>
 			</div>
 			<?php
@@ -798,6 +803,14 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					Urlslab_Keywords_Links::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS,
 					Urlslab_Keywords_Links::SETTING_DEFAULT_KW_IMPORT_EXTERNAL_LINKS
 				)
+			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Keywords_Links::SETTING_NAME_KW_IMPORT_MAX_LENGTH,
+				get_option( Urlslab_Keywords_Links::SETTING_NAME_KW_IMPORT_MAX_LENGTH, Urlslab_Keywords_Links::SETTING_DEFAULT_KW_IMPORT_MAX_LENGTH ),
+				'Import from HTML pages just keywords with maximum length defined by this setting. It is way how to avoid import of too long links, which have low chance to appear on any other place.',
+				'Max length of auto-imported keyword [# of characters]',
+				''
 			),
 		)
 		?>

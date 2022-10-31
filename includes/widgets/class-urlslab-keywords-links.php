@@ -4,8 +4,13 @@
 class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 
-	const KW_EDITOR = 'E';    //link added by editor in original content
-	const KW_URLSLAB = 'U';    //link added by urlslab
+	//Type - map
+	const KW_LINK_EDITOR = 'E';    //link added by editor in original content
+	const KW_LINK_URLSLAB = 'U';    //link added by urlslab
+
+	//type - KW
+	const KW_MANUAL = 'M';        //manually created keyword (default)
+	const KW_IMPORTED = 'I';        //manually created keyword
 
 	private Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher;
 
@@ -76,7 +81,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	public const SETTING_DEFAULT_KW_IMPORT_EXTERNAL_LINKS = 0;
 
 	public const SETTING_NAME_KW_IMPORT_MAX_LENGTH = 'urlslab_kw_max_len';
-	public const SETTING_DEFAULT__KW_IMPORT_MAX_LENGTH = 100;
+	public const SETTING_DEFAULT_KW_IMPORT_MAX_LENGTH = 100;
 
 	//SETTINGS CACHE
 	private array $options = array();
@@ -103,7 +108,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$this->options[ self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK ]           = get_option( self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK, self::SETTING_DEFAULT_MIN_CHARS_TO_NEXT_LINK );
 		$this->options[ self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS ]         = get_option( self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS, self::SETTING_DEFAULT_KW_IMPORT_INTERNAL_LINKS );
 		$this->options[ self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS ]         = get_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS, self::SETTING_DEFAULT_KW_IMPORT_EXTERNAL_LINKS );
-		$this->options[ self::SETTING_NAME_KW_IMPORT_MAX_LENGTH ]             = get_option( self::SETTING_NAME_KW_IMPORT_MAX_LENGTH, self::SETTING_DEFAULT__KW_IMPORT_MAX_LENGTH );
+		$this->options[ self::SETTING_NAME_KW_IMPORT_MAX_LENGTH ]             = get_option( self::SETTING_NAME_KW_IMPORT_MAX_LENGTH, self::SETTING_DEFAULT_KW_IMPORT_MAX_LENGTH );
 	}
 
 	/**
@@ -199,7 +204,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				$urlObj                                                               = new Urlslab_Url( $kwRow['url'] );
 				$this->page_keywords[ $kwRow['kw'] ]['urls'][ $urlObj->get_url_id() ] = array(
 					'obj' => $urlObj,
-					't'   => self::KW_URLSLAB,
+					't'   => self::KW_LINK_URLSLAB,
 				);
 				$this->page_keywords[ $kwRow['kw'] ]['kw_id']                         = $kw_id;
 
@@ -397,7 +402,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		global $wpdb;
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT kw_id, destUrlMd5, kwType FROM ' . URLSLAB_KEYWORDS_MAP_TABLE . ' WHERE urlMd5 = %d', // phpcs:ignore
+				'SELECT kw_id, destUrlMd5, linkType FROM ' . URLSLAB_KEYWORDS_MAP_TABLE . ' WHERE urlMd5 = %d', // phpcs:ignore
 				$srcUrlId
 			),
 			'ARRAY_A'
@@ -407,7 +412,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		array_walk(
 			$results,
 			function( $value, $key ) use ( &$db_map ) {
-				$db_map[ $value['kw_id'] . '|' . $value['destUrlMd5'] ] = $value['kwType'];
+				$db_map[ $value['kw_id'] . '|' . $value['destUrlMd5'] ] = $value['linkType'];
 			}
 		);
 
@@ -442,9 +447,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$table = URLSLAB_KEYWORDS_MAP_TABLE;
 
 		if ( ! empty( $insert_values ) ) {
-			$table               = URLSLAB_KEYWORDS_MAP_TABLE;
 			$placeholder_string  = implode( ',', $insert_placeholder );
-			$insert_update_query = "INSERT INTO $table (kw_id, urlMd5, destUrlMd5, kwType) VALUES $placeholder_string ON DUPLICATE KEY UPDATE kwType = VALUES(kwType)";
+			$insert_update_query = "INSERT INTO $table (kw_id, urlMd5, destUrlMd5, linkType) VALUES $placeholder_string ON DUPLICATE KEY UPDATE linkType = VALUES(linkType)";
 			$wpdb->query(
 				$wpdb->prepare(
 					$insert_update_query, // phpcs:ignore
@@ -492,6 +496,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 											'lang'        => urlslab_get_language(),
 											'kw_priority' => 100,
 											'urlFilter'   => '.*',
+											'kwType'   => self::KW_IMPORTED,
 										)
 									);
 								}
@@ -539,7 +544,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 								) {
 									$this->page_keywords[ $link_text ]['urls'][ $urlObj->get_url_id() ] = array(
 										'obj' => $urlObj,
-										't'   => self::KW_EDITOR,
+										't'   => self::KW_LINK_EDITOR,
 									);
 								}
 							}
@@ -610,6 +615,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		add_option( self::SETTING_NAME_KW_MAP, self::SETTING_DEFAULT_KW_MAP, '', true );
 		add_option( self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS, self::SETTING_DEFAULT_KW_IMPORT_INTERNAL_LINKS, '', true );
 		add_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS, self::SETTING_DEFAULT_KW_IMPORT_EXTERNAL_LINKS, '', true );
+		add_option( self::SETTING_NAME_KW_IMPORT_MAX_LENGTH, self::SETTING_DEFAULT_KW_IMPORT_MAX_LENGTH, '', true );
 	}
 
 	public static function update_settings(
@@ -685,6 +691,15 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			);
 		}
 
+		if (
+			isset( $new_settings[ self::SETTING_NAME_KW_IMPORT_MAX_LENGTH ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_KW_IMPORT_MAX_LENGTH ] )
+		) {
+			update_option(
+				self::SETTING_NAME_KW_IMPORT_MAX_LENGTH,
+				$new_settings[ self::SETTING_NAME_KW_IMPORT_MAX_LENGTH ]
+			);
+		}
 		if (
 			isset( $new_settings[ self::SETTING_NAME_MIN_PARAGRAPH_LENGTH ] ) &&
 			! empty( $new_settings[ self::SETTING_NAME_MIN_PARAGRAPH_LENGTH ] )

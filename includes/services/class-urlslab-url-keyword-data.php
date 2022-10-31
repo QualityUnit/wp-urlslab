@@ -11,6 +11,7 @@ class Urlslab_Url_Keyword_Data {
 	private string $keyword_url_filter;
 	private int $keyword_usage_count;
 	private int $link_usage_count;
+	private string $kw_type;
 
 	/**
 	 * @param string $keyword
@@ -69,6 +70,7 @@ class Urlslab_Url_Keyword_Data {
 		$this->keyword_url_filter  = $keyword_filter;
 		$this->keyword_usage_count = $keyword_usage_count;
 		$this->link_usage_count    = $link_usage_count ?? 0;
+		$this->kw_type              = $data['kwType'] ?? Urlslab_Keywords_Links::KW_MANUAL;
 	}
 
 	/**
@@ -120,6 +122,13 @@ class Urlslab_Url_Keyword_Data {
 	/**
 	 * @return string
 	 */
+	public function get_keyword_type(): string {
+		return $this->kw_type;
+	}
+
+	/**
+	 * @return string
+	 */
 	public function get_keyword_url_filter(): string {
 		return $this->keyword_url_filter;
 	}
@@ -152,8 +161,9 @@ class Urlslab_Url_Keyword_Data {
 				$keyword->get_keyword_url_lang(),
 				$keyword->get_keyword_url_link(),
 				$keyword->get_keyword_url_filter(),
+				$keyword->get_keyword_type(),
 			);
-			$insert_placeholders[] = '(%d, %s, %d, %d, %s, %s, %s)';
+			$insert_placeholders[] = '(%d,%s,%d,%d,%s,%s,%s,%s)';
 		}
 
 		$insert_query = 'INSERT IGNORE INTO ' . URLSLAB_KEYWORDS_TABLE . ' (
@@ -163,14 +173,16 @@ class Urlslab_Url_Keyword_Data {
                    kw_length,
                    lang,
                    urlLink,
-                   urlFilter)
+                   urlFilter,
+                   kwType)
                    VALUES ' . implode( ', ', $insert_placeholders ) . '
                    ON DUPLICATE KEY UPDATE
                    kw_priority = VALUES(kw_priority),
                    kw_length = VALUES(kw_length),
                    lang = VALUES(lang),
                    urlLink = VALUES(urlLink),
-                   urlFilter = VALUES(urlFilter)';
+                   urlFilter = VALUES(urlFilter),
+                   kwType = VALUES(kwType)';
 
 		return $wpdb->query( $wpdb->prepare( $insert_query, $insert_values ) ); // phpcs:ignore
 	}
