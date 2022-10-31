@@ -181,7 +181,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 		//find elementor blocks
 		$xpath          = new DOMXPath( $document );
-		$elementor_divs = $xpath->query( "//div[contains(@class, 'elementor-widget-video')]" );
+		$elementor_divs = $xpath->query( "//div[contains(@class, 'elementor-widget-video') and not(ancestor-or-self::*[contains(@class, 'urlslab-skip') or contains(@class, 'urlslab-skip-lazy')])]" );
 		foreach ( $elementor_divs as $element ) {
 			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) && $element->hasAttribute( 'data-settings' ) ) {
 				$json = json_decode( $element->getAttribute( 'data-settings' ) );
@@ -196,7 +196,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 		//find all elements with data-ytid parameter
 		$xpath       = new DOMXPath( $document );
-		$yt_elements = $xpath->query( '//*[@data-ytid]' );
+		$yt_elements = $xpath->query( "//*[@data-ytid and not(ancestor-or-self::*[contains(@class, 'urlslab-skip') or contains(@class, 'urlslab-skip-lazy')])]" );
 		foreach ( $yt_elements as $yt_element ) {
 			if ( ! $this->is_skip_elemenet( $yt_element, 'lazy' ) ) {
 				$ytid = $yt_element->getAttribute( 'data-ytid' );
@@ -236,7 +236,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 		//add schema to all elements with attribute data-ytid
 		$xpath       = new DOMXPath( $document );
-		$yt_elements = $xpath->query( '//*[@data-ytid]' );
+		$yt_elements = $xpath->query( "//*[@data-ytid and not(ancestor-or-self::*[contains(@class, 'urlslab-skip') or contains(@class, 'urlslab-skip-lazy')])]" );
 		foreach ( $yt_elements as $yt_element ) {
 			$ytid = $yt_element->getAttribute( 'data-ytid' );
 			if ( isset( $video_objects[ $ytid ] ) && Urlslab_Youtube_Data::YOUTUBE_AVAILABLE === $video_objects[ $ytid ]->get_status() ) {

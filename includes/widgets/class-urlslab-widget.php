@@ -2,7 +2,7 @@
 
 abstract class Urlslab_Widget {
 
-	private ?Urlslab_Url $current_page_url = null;
+	private $current_page_url = null;
 
 	/**
 	 * @param Urlslab_Loader $loader
@@ -89,16 +89,10 @@ abstract class Urlslab_Widget {
 	public abstract static function update_settings( array $new_settings );
 
 	protected function is_skip_elemenet( DOMNode $dom, $custom_widget_skip = '' ) {
-		return $dom->hasAttributes() &&
+		return $dom->hasAttributes() && $dom->hasAttribute( 'class' ) &&
 			   (
-				   $dom->hasAttribute( 'urlslab-skip' ) ||
-				   ( $dom->hasAttribute( 'class' ) && false !== strpos( $dom->getAttribute( 'class' ), 'urlslab-skip' ) ) ||
-				   ( ! empty( $custom_widget_skip ) &&
-					 (
-						 $dom->hasAttribute( 'urlslab-skip-' . $custom_widget_skip ) ||
-						 ( $dom->hasAttribute( 'class' ) && false !== strpos( $dom->getAttribute( 'class' ), 'urlslab-skip-' . $custom_widget_skip ) )
-					 )
-				   )
+				   ( ! empty( $custom_widget_skip ) && false !== strpos( $dom->getAttribute( 'class' ), 'urlslab-skip-' . $custom_widget_skip ) ) ||
+				   ( strpos( $dom->getAttribute( 'class' ), 'urlslab-skip' ) && strpos( $dom->getAttribute( 'class' ), 'urlslab-skip' ) != strpos( $dom->getAttribute( 'class' ), 'urlslab-skip-' ) )
 			   );
 	}
 
@@ -107,12 +101,11 @@ abstract class Urlslab_Widget {
 			return $this->current_page_url;
 		}
 
-		$current_url = get_permalink( get_the_ID() );
 		if ( is_category() ) {
-			$current_url = get_category_link( get_query_var( 'cat' ) );
+			$this->current_page_url = new Urlslab_Url( get_category_link( get_query_var( 'cat' ) ) );
+		} else {
+			$this->current_page_url = new Urlslab_Url( get_permalink( get_the_ID() ) );
 		}
-
-		$this->current_page_url = new Urlslab_Url( $current_url );
 
 		return $this->current_page_url;
 	}

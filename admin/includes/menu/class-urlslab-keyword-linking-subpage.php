@@ -260,71 +260,6 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				exit;
 			}
 			//# Clear Functionality
-
-			//# Sample Data Generation
-			if ( 'generate_sample_data' == $_REQUEST['action'] ) {
-				$this->init_sample_data();
-				wp_safe_redirect(
-					$this->parent_page->menu_page(
-						$this->subpage_slug,
-						array(
-							'status'          => 'success',
-							'urlslab-message' => 'Sample Data generated successfully',
-						)
-					)
-				);
-				exit;
-			}
-			//# Sample Data Generation
-		}
-	}
-
-	private function init_sample_data() {
-		wp_raise_memory_limit( 'admin' );
-
-		//in case installation is empty, use some static mappings
-		$sample_data = array(
-			'wordpress'           => 'https://www.liveagent.com/blog/best-live-chat-plugins-for-wordpress/',
-			'screenshot'          => 'https://www.urlslab.com',
-			'google'              => 'https://www.google.com',
-			'support'             => 'https://www.liveagent.com/',
-			'help desk'           => 'https://www.liveagent.com/help-desk-software/',
-			'helpdesk'            => 'https://www.liveagent.com/help-desk-software/',
-			'chat'                => 'https://www.liveagent.com/live-chat-software/',
-			'call'                => 'https://www.liveagent.com/call-center-software/',
-			'call center'         => 'https://www.liveagent.com/call-center-software/',
-			'affiliate'           => 'https://www.postaffiliatepro.com/affiliate-marketing-glossary/affiliate/',
-			'affiliate marketing' => 'https://www.postaffiliatepro.com/affiliate-marketing-software/',
-		);
-
-		//try to load all titles with less than 4 words
-		$posts = get_posts(
-			array(
-				'numberposts' => 1000,
-				'orderby'     => 'date',
-				'order'       => 'DESC',
-			)
-		);
-
-		foreach ( $posts as $post ) {
-			if ( 'publish' == $post->post_status && substr_count( $post->post_title, ' ' ) < 3 ) {
-				$sample_data[ strtolower( $post->post_title ) ] = get_permalink( $post->ID );
-			}
-		}
-
-		foreach ( $sample_data as $kw => $url ) {
-			$data_row = new Urlslab_Url_Keyword_Data(
-				array(
-					'keyword'     => $kw,
-					'urlLink'     => $url,
-					'kw_priority' => 100,
-					'lang'        => 'all',
-					'urlFilter'   => '.*',
-				)
-			);
-			if ( $this->data_fetcher->prepare_url_batch_for_scheduling( array( new Urlslab_Url( $url ) ) ) ) {
-				$this->create_keywords( array( $data_row ) );
-			}
 		}
 	}
 
@@ -366,17 +301,22 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT     v.urlMd5 AS urlMd5,
-                                  v.urlName AS urlName,
-       				              v.status AS status,
-                                  v.domainId AS domainId,
-                                  v.urlId AS urlId,
-                                  v.screenshotDate AS screenshotDate,
-       				              v.updateStatusDate AS updateStatusDate,
-       				              v.urlTitle AS urlTitle,
-                                  v.urlMetaDescription AS urlMetaDescription,
-                                  v.urlSummary AS urlSummary,
-       				              v.visibility AS visibility FROM $map_table AS d INNER JOIN $source_table AS v ON d.urlMd5 = v.urlMd5 WHERE d.kw_id = %s", //#phpcs:ignore
+				"SELECT	v.urlMd5 AS urlMd5,
+								v.urlName AS urlName,
+								v.status AS status,
+								v.domainId AS domainId,
+								v.urlId AS urlId,
+								v.screenshotDate AS screenshotDate,
+								v.updateStatusDate AS updateStatusDate,
+								v.urlTitle AS urlTitle,
+								v.urlMetaDescription AS urlMetaDescription,
+								v.urlSummary AS urlSummary,
+								v.visibility AS visibility,
+								d.destUrlMd5 AS destUrlMd5,
+								d.linkType AS linkType,
+								u.urlName as destUrlName,
+								u.urlTitle AS destUrlTitle
+					FROM $map_table AS d INNER JOIN $source_table AS v ON d.urlMd5 = v.urlMd5 LEFT JOIN $source_table AS u ON d.destUrlMd5 = u.urlMd5 WHERE d.kw_id = %d", //#phpcs:ignore
 				$kw_id
 			),
 			ARRAY_A
@@ -410,18 +350,18 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		$kw_url  = new Urlslab_Url( $kw_url );
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT v.urlMd5             AS urlMd5,
-       v.urlName            AS urlName,
-       v.status             AS status,
-       v.domainId           AS domainId,
-       v.urlId              AS urlId,
-       v.screenshotDate     AS screenshotDate,
-       v.updateStatusDate   AS updateStatusDate,
-       v.urlTitle           AS urlTitle,
-       v.urlMetaDescription AS urlMetaDescription,
-       v.urlSummary         AS urlSummary,
-       v.visibility         AS visibility
-FROM $related_resource_table AS d INNER JOIN $source_table AS v ON d.destUrlMd5 = v.urlMd5 WHERE d.srcUrlMd5 = %s", //#phpcs:ignore
+				"SELECT	v.urlMd5             AS urlMd5,
+								v.urlName            AS urlName,
+								v.status             AS status,
+								v.domainId           AS domainId,
+								v.urlId              AS urlId,
+								v.screenshotDate     AS screenshotDate,
+								v.updateStatusDate   AS updateStatusDate,
+								v.urlTitle           AS urlTitle,
+								v.urlMetaDescription AS urlMetaDescription,
+								v.urlSummary         AS urlSummary,
+								v.visibility         AS visibility
+						FROM $related_resource_table AS d INNER JOIN $source_table AS v ON d.destUrlMd5 = v.urlMd5 WHERE d.srcUrlMd5 = %s", //#phpcs:ignore
 				$kw_url->get_url_id()
 			),
 			ARRAY_A
@@ -440,21 +380,19 @@ FROM $related_resource_table AS d INNER JOIN $source_table AS v ON d.destUrlMd5 
 
 	private function clear_keywords() {
 		global $wpdb;
-		$table = URLSLAB_KEYWORDS_TABLE;
-
-		$query = "TRUNCATE $table";
-		$wpdb->query( $query ); // phpcs:ignore
+		$wpdb->query( "TRUNCATE " . URLSLAB_KEYWORDS_TABLE ); // phpcs:ignore
+		$wpdb->query( "TRUNCATE " . URLSLAB_KEYWORDS_MAP_TABLE ); // phpcs:ignore
 	}
 
 	private function export_csv_keywords() {
 		header( 'Content-Type: text/csv; charset=utf-8' );
 		header( 'Content-Disposition: attachment; filename=keywords.csv' );
 		$output = fopen( 'php://output', 'w' );
-		fputcsv( $output, array( 'Keyword', 'URL', 'Priority', 'Lang', 'Filter' ) );
+		fputcsv( $output, array( 'Keyword', 'URL', 'Priority', 'Lang', 'Filter', 'Type' ) );
 		global $wpdb;
 		$table = URLSLAB_KEYWORDS_TABLE;
 
-		$query  = "SELECT keyword, urlLink, kw_priority, lang, urlFilter FROM $table ORDER BY keyword, lang, urlFilter, kw_priority  ASC, kw_length DESC";
+		$query  = "SELECT keyword, urlLink, kw_priority, lang, urlFilter, kwType FROM $table ORDER BY keyword, lang, urlFilter, kw_priority  ASC, kw_length DESC";
 		$result = $wpdb->get_results( $query, ARRAY_N ); //# phpcs:ignore
 		foreach ( $result as $row ) {
 			fputcsv( $output, $row );
@@ -472,7 +410,7 @@ FROM $related_resource_table AS d INNER JOIN $source_table AS v ON d.destUrlMd5 
                    kw_length,
                    lang,
                    urlLink,
-                   urlFilter) VALUES (%d, %s, %d, %d, %s, %s, %s)';
+                   urlFilter) VALUES (%d, %s, %d, %d, %s, %s, %s, %s)';
 
 		$wpdb->query(
 			$wpdb->prepare(
@@ -485,6 +423,7 @@ FROM $related_resource_table AS d INNER JOIN $source_table AS v ON d.destUrlMd5 
 					$keyword->get_keyword_url_lang(),
 					$keyword->get_keyword_url_link(),
 					$keyword->get_keyword_url_filter(),
+					$keyword->get_keyword_type(),
 				)
 			)
 		);
@@ -518,7 +457,7 @@ FROM $related_resource_table AS d INNER JOIN $source_table AS v ON d.destUrlMd5 
                    kw_length,
                    lang,
                    urlLink,
-                   urlFilter) VALUES (%s, %s, %d, %d, %s, %s, %s)';
+                   urlFilter) VALUES (%s, %s, %d, %d, %s, %s, %s, %s)';
 
 		$wpdb->query(
 			$wpdb->prepare(
@@ -531,6 +470,7 @@ FROM $related_resource_table AS d INNER JOIN $source_table AS v ON d.destUrlMd5 
 					$keyword->get_keyword_url_lang(),
 					$keyword->get_keyword_url_link(),
 					$keyword->get_keyword_url_filter(),
+					$keyword->get_keyword_type(),
 				)
 			)
 		);
@@ -632,6 +572,7 @@ FROM $related_resource_table AS d INNER JOIN $source_table AS v ON d.destUrlMd5 
 							'kw_priority' => $data[2] ?? null,
 							'lang'        => $data[3] ?? null,
 							'urlFilter'   => $data[4] ?? null,
+							'kwType'      => $data[5] ?? Urlslab_Keywords_Links::KW_MANUAL,
 						)
 					);
 					$keywords[] = $data_row;
@@ -650,53 +591,11 @@ FROM $related_resource_table AS d INNER JOIN $source_table AS v ON d.destUrlMd5 
 			$this->data_fetcher->prepare_url_batch_for_scheduling( $urls );
 
 			//insert keywords
-			$processed_rows = $this->create_keywords( $keywords );
+			$processed_rows = Urlslab_Url_Keyword_Data::create_keywords( $keywords );
 
 		}
 
 		return $processed_rows;
-	}
-
-	/**
-	 * @param Urlslab_Url_Keyword_Data $keywords
-	 *
-	 * @return bool
-	 */
-	private function create_keywords( array $keywords ): int {
-		global $wpdb;
-		$insert_placeholders = array();
-		$insert_values       = array();
-		foreach ( $keywords as $keyword ) {
-			array_push(
-				$insert_values,
-				$keyword->get_kw_id(),
-				$keyword->get_keyword(),
-				$keyword->get_keyword_priority(),
-				$keyword->get_keyword_length(),
-				$keyword->get_keyword_url_lang(),
-				$keyword->get_keyword_url_link(),
-				$keyword->get_keyword_url_filter(),
-			);
-			$insert_placeholders[] = '(%d, %s, %d, %d, %s, %s, %s)';
-		}
-
-		$insert_query = 'INSERT IGNORE INTO ' . URLSLAB_KEYWORDS_TABLE . ' (
-                   kw_id,
-                   keyword,
-                   kw_priority,
-                   kw_length,
-                   lang,
-                   urlLink,
-                   urlFilter)
-                   VALUES ' . implode( ', ', $insert_placeholders ) . '
-                   ON DUPLICATE KEY UPDATE
-                   kw_priority = VALUES(kw_priority),
-                   kw_length = VALUES(kw_length),
-                   lang = VALUES(lang),
-                   urlLink = VALUES(urlLink),
-                   urlFilter = VALUES(urlFilter)';
-
-		return $wpdb->query( $wpdb->prepare( $insert_query, $insert_values ) ); // phpcs:ignore
 	}
 
 	public function render_manage_buttons() {
@@ -717,8 +616,6 @@ FROM $related_resource_table AS d INNER JOIN $source_table AS v ON d.destUrlMd5 
 				   class="button">Export</a>
 				<a href="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=clear' ) ); ?>"
 				   class="button">Delete all</a>
-				<a href="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=generate_sample_data' ) ); ?>"
-				   class="button">Generate Sample Data</a>
 			</div>
 		</div>
 		<?php
@@ -768,6 +665,7 @@ FROM $related_resource_table AS d INNER JOIN $source_table AS v ON d.destUrlMd5 
 					<li class="color-warning">priority (optional - defaults to 10)</li>
 					<li class="color-warning">lang (optional - defaults to 'all')</li>
 					<li class="color-warning">filter (optional - defaults to regular expression '.*')</li>
+					<li class="color-warning">type (optional - defaults to M, Possible values: M - manual link, I - imported link)</li>
 				</ul>
 			</div>
 			<?php
@@ -885,6 +783,34 @@ FROM $related_resource_table AS d INNER JOIN $source_table AS v ON d.destUrlMd5 
 					Urlslab_Keywords_Links::SETTING_NAME_KW_MAP,
 					Urlslab_Keywords_Links::SETTING_DEFAULT_KW_MAP
 				)
+			),
+			new Urlslab_Setting_Switch(
+				'kw_map[]',
+				Urlslab_Keywords_Links::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS,
+				'Import all internal links found in page as keywords',
+				'Import internal links as keywords',
+				get_option(
+					Urlslab_Keywords_Links::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS,
+					Urlslab_Keywords_Links::SETTING_DEFAULT_KW_IMPORT_INTERNAL_LINKS
+				)
+			),
+			new Urlslab_Setting_Switch(
+				'kw_map[]',
+				Urlslab_Keywords_Links::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS,
+				'Import all external links found in page as keywords',
+				'Import external links as keywords',
+				get_option(
+					Urlslab_Keywords_Links::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS,
+					Urlslab_Keywords_Links::SETTING_DEFAULT_KW_IMPORT_EXTERNAL_LINKS
+				)
+			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Keywords_Links::SETTING_NAME_KW_IMPORT_MAX_LENGTH,
+				get_option( Urlslab_Keywords_Links::SETTING_NAME_KW_IMPORT_MAX_LENGTH, Urlslab_Keywords_Links::SETTING_DEFAULT_KW_IMPORT_MAX_LENGTH ),
+				'Import from HTML pages just keywords with maximum length defined by this setting. It is way how to avoid import of too long links, which have low chance to appear on any other place.',
+				'Max length of auto-imported keyword [# of characters]',
+				''
 			),
 		)
 		?>

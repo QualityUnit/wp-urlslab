@@ -23,7 +23,7 @@ class Urlslab_Url_Data_Fetcher {
 	 */
 	private function transform( array $row ): Urlslab_Url_Data {
 		return new Urlslab_Url_Data(
-			new Urlslab_Url( parse_url( get_site_url(), PHP_URL_SCHEME ) . '://' . $row['urlName'] ),
+			new Urlslab_Url( urlslab_add_current_page_protocol( $row['urlName'] ) ),
 			$row['domainId'],
 			$row['urlId'] ?? '',
 			$row['screenshotDate'],

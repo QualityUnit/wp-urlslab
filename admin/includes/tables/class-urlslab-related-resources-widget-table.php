@@ -278,9 +278,9 @@ class Urlslab_Related_Resources_Widget_Table extends WP_List_Table {
 					'url-relation-edit color-primary',
 					esc_url( plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/icons/delete.png' ) . 'delete.png' ),
 					esc_attr( $item[0]->get_url()->get_url_id() ),
-					'http://' . esc_attr( $item[0]->get_url()->get_url() ),
+					esc_attr( urlslab_add_current_page_protocol( $item[0]->get_url()->get_url() ) ),
 					esc_attr( $item[1]->get_url()->get_url_id() ),
-					'http://' . esc_attr( $item[1]->get_url()->get_url() ),
+					esc_attr( urlslab_add_current_page_protocol( $item[1]->get_url()->get_url() ) ),
 					$item[2]
 				),
 			);

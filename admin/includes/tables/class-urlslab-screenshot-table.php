@@ -13,7 +13,7 @@ class Urlslab_Screenshot_Table extends WP_List_Table {
 	 */
 	private function transform( array $row ): Urlslab_Url_Data {
 		return new Urlslab_Url_Data(
-			new Urlslab_Url( parse_url( get_site_url(), PHP_URL_SCHEME ) . '://' . $row['urlName'] ),
+			new Urlslab_Url( urlslab_get_current_page_protocol() . $row['urlName'] ),
 			$row['domainId'],
 			$row['urlId'],
 			$row['screenshotDate'],
@@ -471,7 +471,7 @@ FROM $table AS v LEFT JOIN $join_table AS d ON d.destUrlMd5 = v.urlMd5
 
 		$title = sprintf(
 			"<strong><a target='_blank' href='%s'>%s</a></strong>",
-			'http://' . $item->get_url()->get_url(),
+			urlslab_add_current_page_protocol( $item->get_url()->get_url() ),
 			$item->get_url()->get_url(),
 		);
 

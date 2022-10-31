@@ -28,17 +28,18 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 
 		/* -- Preparing your query -- */
 		$query = "SELECT
-       v.kw_id				  AS kw_id,
-       v.keyword              AS keyword,
-       v.kw_priority          AS kw_priority,
-       v.kw_length            AS kw_length,
-       v.lang                 AS lang,
-       v.urlLink              AS urlLink,
-       v.urlFilter            AS urlFilter,
-       SUM(!ISNULL(d.urlMd5)) AS keywordCountUsage
-FROM $table AS v
-         LEFT JOIN $map_table AS d ON d.kw_id = v.kw_id
-";
+						v.kw_id				   AS kw_id,
+						v.keyword              AS keyword,
+						v.kw_priority          AS kw_priority,
+						v.kw_length            AS kw_length,
+						v.lang                 AS lang,
+						v.urlLink              AS urlLink,
+						v.urlFilter            AS urlFilter,
+						v.kwType               AS kwType,
+						SUM(!ISNULL(d.urlMd5)) AS keywordCountUsage,
+						SUM(!ISNULL(d.destUrlMd5)) AS linkCountUsage
+					FROM $table AS v
+					LEFT JOIN $map_table AS d ON d.kw_id = v.kw_id";
 
 		/* -- Preparing the condition -- */
 		if ( ! empty( $keyword_search ) ) {
@@ -141,13 +142,15 @@ FROM $table AS v
 	 */
 	function get_columns(): array {
 		return array(
-			'cb'               => '<input type="checkbox" />',
-			'col_keyword'      => 'Keyword',
-			'col_url_link'     => 'Destination URL',
-			'col_kw_priority'  => 'Priority',
-			'col_lang'         => 'Lang',
-			'col_url_filter'   => 'Url Filter [Regexp]',
-			'col_kw_usage_cnt' => 'Keyword Usage Count',
+			'cb'                 => '<input type="checkbox" />',
+			'col_keyword'        => 'Keyword',
+			'col_url_link'       => 'Destination URL',
+			'col_kw_priority'    => 'Priority',
+			'col_lang'           => 'Lang',
+			'col_url_filter'     => 'Url Filter [Regexp]',
+			'col_kwType'         => 'Type',
+			'col_kw_usage_cnt'   => 'Keyword Usage Count',
+			'col_link_usage_cnt' => 'Link Usage Count',
 		);
 	}
 
@@ -221,6 +224,20 @@ FROM $table AS v
 		return $title . $this->row_actions( $actions );
 	}
 
+	function column_col_link_usage_cnt( $item ): string {
+		return '<span>' . $item->get_link_usage_count() . '</span>';
+	}
+
+	function column_col_kwType( $item ): string {
+		switch ( $item->get_keyword_type() ) {
+			case Urlslab_Keywords_Links::KW_IMPORTED:
+				return '<span>Auto-Imported</span>';
+			case Urlslab_Keywords_Links::KW_MANUAL:
+			default:
+				return '<span>Manual</span>';
+		}
+	}
+
 	/**
 	 * Render a column when no column specific method exists.
 	 *
@@ -249,6 +266,8 @@ FROM $table AS v
 				return $item->get_kw_id();
 			case 'col_kw_usage_cnt':
 				return $item->get_keyword_usage_count();
+			case 'col_kwType':
+				return $item->get_keyword_type();
 			default:
 				return print_r( $item, true );
 		}
@@ -267,9 +286,11 @@ FROM $table AS v
 
 	public function process_bulk_action() {
 		//Detect when a bulk action is being triggered...
-		if ( 'delete' === $this->current_action() &&
-			 isset( $_GET['kw_md5'] ) &&
-			 isset( $_REQUEST['_wpnonce'] ) ) {
+		if (
+			'delete' === $this->current_action() &&
+			isset( $_GET['kw_md5'] ) &&
+			isset( $_REQUEST['_wpnonce'] )
+		) {
 
 			// In our file that handles the request, verify the nonce.
 			$nonce = wp_unslash( $_REQUEST['_wpnonce'] );
@@ -292,8 +313,10 @@ FROM $table AS v
 
 
 		// Bulk Delete triggered
-		if ( ( isset( $_GET['action'] ) && 'bulk-delete' == $_GET['action'] )
-			 || ( isset( $_GET['action2'] ) && 'bulk-delete' == $_GET['action2'] ) ) {
+		if (
+			( isset( $_GET['action'] ) && 'bulk-delete' == $_GET['action'] )
+			|| ( isset( $_GET['action2'] ) && 'bulk-delete' == $_GET['action2'] )
+		) {
 
 			if ( isset( $_GET['bulk-delete'] ) ) {
 				$delete_ids = esc_sql( $_GET['bulk-delete'] );
@@ -310,10 +333,12 @@ FROM $table AS v
 	 */
 	public function get_sortable_columns(): array {
 		return array(
-			'col_keyword'      => 'keyword',
-			'col_kw_priority'  => 'kw_priority',
-			'col_lang'         => 'lang',
-			'col_kw_usage_cnt' => 'keywordCountUsage',
+			'col_keyword'        => 'keyword',
+			'col_kw_priority'    => 'kw_priority',
+			'col_lang'           => 'lang',
+			'col_kw_usage_cnt'   => 'keywordCountUsage',
+			'col_link_usage_cnt' => 'linkCountUsage',
+			'col_kw_type'        => 'kwType',
 		);
 	}
 

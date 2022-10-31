@@ -93,7 +93,12 @@ class Urlslab_Activator {
 		if ( version_compare( $version, '1.34', '<' ) ) {
 			$wpdb->query('ALTER TABLE ' . URLSLAB_RELATED_RESOURCE_TABLE . ' ADD COLUMN pos tinyint unsigned default 10;'); // phpcs:ignore
 		}
-
+		if ( version_compare( $version, '1.39', '<' ) ) {
+			$wpdb->query('ALTER TABLE ' . URLSLAB_KEYWORDS_MAP_TABLE . " ADD COLUMN `destUrlMd5` BIGINT(20) DEFAULT 0, ADD COLUMN `linkType` char(1) NOT NULL DEFAULT 'U', DROP PRIMARY KEY, ADD PRIMARY KEY (`kw_id`, `urlMd5`, `destUrlMd5`), ADD INDEX dest_urls (destUrlMd5);"); // phpcs:ignore
+		}
+		if ( version_compare( $version, '1.40', '<' ) ) {
+			$wpdb->query('ALTER TABLE ' . URLSLAB_KEYWORDS_TABLE . " ADD COLUMN `kwType` char(1) NOT NULL DEFAULT 'M';"); // phpcs:ignore
+		}
 		//all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -165,6 +170,7 @@ class Urlslab_Activator {
 			kw_length TINYINT UNSIGNED NOT NULL,
 			lang varchar(10) NOT NULL DEFAULT 'all',
 			urlFilter varchar(250) NOT NULL DEFAULT '.*',
+			kwType char(1) NOT NULL DEFAULT 'M', -- M: manual, I: imported
     		PRIMARY KEY  (kw_id),
 			INDEX  idx_keywords (keyword),
 			INDEX idx_sorting (lang, kw_priority, kw_length)
@@ -181,8 +187,11 @@ class Urlslab_Activator {
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
     		kw_id bigint NOT NULL,
     		urlMd5 bigint NOT NULL,
-    		PRIMARY KEY  (kw_id, urlMd5),
-			INDEX  idx_urls (urlMd5)
+    		destUrlMd5 bigint DEFAULT 0,
+    		linkType char(1) NOT NULL DEFAULT 'U',
+    		PRIMARY KEY  (kw_id, urlMd5, destUrlMd5),
+			INDEX  idx_urls (urlMd5),
+			INDEX dest_urls (destUrlMd5)
 		) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

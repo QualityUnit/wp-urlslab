@@ -185,7 +185,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			//find all elements to process
 			//*********************************
 			foreach ( urlslab_get_supported_media() as $tag_name => $tag_attributes ) {
-				$dom_elements = $document->getElementsByTagName( $tag_name );
+				$xpath        = new DOMXPath( $document );
+				$dom_elements = $xpath->query( '//' . $tag_name . "[not(ancestor-or-self::*[contains(@class, 'urlslab-skip') or contains(@class, 'urlslab-skip-offload')])]" );
 
 				if ( empty( $dom_elements ) ) {
 					continue;
@@ -214,7 +215,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 			//search urls in style attributes
 			$xpath           = new DOMXPath( $document );
-			$styled_elements = $xpath->query( "//*[contains(@style, 'url')]" );
+			$styled_elements = $xpath->query( "//*[contains(@style, 'url') and not(ancestor-or-self::*[contains(@class, 'urlslab-skip') or contains(@class, 'urlslab-skip-offload')])]" );
 			foreach ( $styled_elements as $styled_element ) {
 				if ( ! $this->is_skip_elemenet( $styled_element, 'offload' ) && preg_match_all( '/url\((.*?)\)/', $styled_element->getAttribute( 'style' ), $matches ) ) {
 					foreach ( $matches[1] as $matched_url ) {
@@ -321,7 +322,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				);
 
 				$this->urlslab_url_data_fetcher->fetch_schedule_urls_batch(
-					array( new Urlslab_Url( urlslab_get_current_page_protocol() . $this->get_current_page_url()->get_url() ) )
+					array( new Urlslab_Url( urlslab_add_current_page_protocol( $this->get_current_page_url()->get_url() ) ) )
 				);
 
 			}
