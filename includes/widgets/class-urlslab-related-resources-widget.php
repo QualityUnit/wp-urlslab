@@ -97,7 +97,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	private function render_shortcode_header(): string {
-		return '<ul class="urlslab-skip">';
+		return '<ul class="urlslab-skip-all">';
 	}
 
 	private function render_shortcode_footer(): string {
