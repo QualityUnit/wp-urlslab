@@ -383,7 +383,6 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$youtube_img = $document->createElement( 'img' );
 		$youtube_img->setAttribute( 'class', 'youtube_urlslab_loader--img' );
 		$youtube_img->setAttribute( 'data-src', 'https://i.ytimg.com/vi/' . $ytid . '/hqdefault.jpg' );
-		$youtube_img->setAttribute( 'style', 'opacity: 0; transition: opacity .5s;' );
 		if ( isset( $video_objects[ $ytid ] ) && strlen( $video_objects[ $ytid ]->get_title() ) ) {
 			$youtube_img->setAttribute( 'alt', 'Youtube video: ' . $video_objects[ $ytid ]->get_title() );
 		}
@@ -412,7 +411,6 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$youtube_img = $document->createElement( 'img' );
 		$youtube_img->setAttribute( 'class', 'youtube_urlslab_loader--img' );
 		$youtube_img->setAttribute( 'data-src', 'https://i.ytimg.com/vi/' . $ytid . '/hqdefault.jpg' );
-		$youtube_img->setAttribute( 'style', 'opacity: 0; transition: opacity .5s;' );
 		if ( isset( $video_objects[ $ytid ] ) && strlen( $video_objects[ $ytid ]->get_title() ) ) {
 			$youtube_img->setAttribute( 'alt', 'Youtube video: ' . $video_objects[ $ytid ]->get_title() );
 		}

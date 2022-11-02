@@ -15,10 +15,8 @@ module.exports = {
   entry: {
       main: [
       './'+assetsFolder+'/scss/urlslab_youtube_loader.scss',
-      './'+assetsFolder+'/urlslab-public.css',
       ],
       'urlslab-lazyload':'./'+assetsFolder+'/js/urlslab-lazyload.js',
-      'urlslab-public':'./'+assetsFolder+'/js/urlslab-public.js',
   },
   output: {
     filename: 'js/[name].js',
