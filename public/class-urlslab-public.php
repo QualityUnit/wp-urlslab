@@ -44,6 +44,7 @@ class Urlslab_Public {
 	 *
 	 * @param string $urlslab The name of the plugin.
 	 * @param string $version The version of this plugin.
+	 *
 	 * @since    1.0.0
 	 */
 	public function __construct( $urlslab, $version ) {
@@ -58,8 +59,7 @@ class Urlslab_Public {
 	 *
 	 * @since    1.0.0
 	 */
-	public function enqueue_styles() {
-	}
+	public function enqueue_styles() {}
 
 	/**
 	 * Register the JavaScript for the public-facing side of the site.
@@ -71,8 +71,20 @@ class Urlslab_Public {
 			wp_enqueue_style( 'urlslab_youtube_loader', plugin_dir_url( __FILE__ ) . 'build/css/urlslab_youtube_loader.css', array(), $this->version, 'all' );
 			add_action(
 				'wp_footer',
-				function () {
-					wp_enqueue_script( 'urlslab', plugin_dir_url( __FILE__ ) . 'build/js/urlslab-lazyload.js', array( 'jquery' ), URLSLAB_VERSION, true );}
+				function() {
+					wp_enqueue_script( 'urlslab', plugin_dir_url( __FILE__ ) . 'build/js/urlslab-lazyload.js', array( 'jquery' ), URLSLAB_VERSION, true );
+				}
+			);
+			add_filter(
+				'script_loader_tag',
+				function( $tag, $handle ) {
+					if ( false === strpos( $handle, 'urlslab' ) || false !== strpos( $tag, 'async' ) || false !== strpos( $tag, 'defer' ) ) {
+						return $tag;
+					}
+					return str_replace( ' src', ' async defer src', $tag );
+				},
+				10,
+				2
 			);
 		}
 	}
