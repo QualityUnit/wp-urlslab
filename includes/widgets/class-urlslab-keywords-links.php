@@ -324,7 +324,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	private function findTextDOMElements( DOMNode $dom, DOMDocument $document ) {
-		//skip processing if HTML tag contains attribute "urlslab-skip" or "urlslab-skip-keywords"
+		//skip processing if HTML tag contains attribute "urlslab-skip-all" or "urlslab-skip-keywords"
 		if ( $this->is_skip_elemenet( $dom, 'keywords' ) ) {
 			return;
 		}
@@ -527,7 +527,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$this->page_keywords                    = array();
 		$cnt                                    = 0;
 		$xpath                                  = new DOMXPath( $document );
-		$table_data                             = $xpath->query( "//a[not(ancestor-or-self::*[contains(@class, 'urlslab-skip') or contains(@class, 'urlslab-skip-keywords')])]|//*[substring-after(name(), 'h') > 0 and not(ancestor-or-self::*[contains(@class, 'urlslab-skip') or contains(@class, 'urlslab-skip-keywords')])]" );
+		$table_data                             = $xpath->query( "//a[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-keywords')])]|//*[substring-after(name(), 'h') > 0 and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-keywords')])]" );
 		$hasLinksBeforeH1                       = false;
 		$hadHAlready                            = false;
 		foreach ( $table_data as $element ) {

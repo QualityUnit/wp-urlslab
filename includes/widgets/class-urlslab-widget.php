@@ -92,7 +92,7 @@ abstract class Urlslab_Widget {
 		return $dom->hasAttributes() && $dom->hasAttribute( 'class' ) &&
 			   (
 				   ( ! empty( $custom_widget_skip ) && false !== strpos( $dom->getAttribute( 'class' ), 'urlslab-skip-' . $custom_widget_skip ) ) ||
-				   ( strpos( $dom->getAttribute( 'class' ), 'urlslab-skip' ) && strpos( $dom->getAttribute( 'class' ), 'urlslab-skip' ) != strpos( $dom->getAttribute( 'class' ), 'urlslab-skip-' ) )
+				   ( false !== strpos( $dom->getAttribute( 'class' ), 'urlslab-skip-all' ) )
 			   );
 	}
 

@@ -90,12 +90,12 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	public function theContentHook( DOMDocument $document ) {
 		try {
 			$xpath    = new DOMXPath( $document );
-			$elements = $xpath->query( "//a[not(ancestor-or-self::*[contains(@class, 'urlslab-skip') or contains(@class, 'urlslab-skip-title')])]" );
+			$elements = $xpath->query( "//a[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-title')])]" );
 
 			$link_elements = array();
 			if ( $elements instanceof DOMNodeList ) {
 				foreach ( $elements as $dom_element ) {
-					//skip processing if A tag contains attribute "urlslab-skip" or urlslab-skip-title
+					//skip processing if A tag contains attribute "urlslab-skip-all" or urlslab-skip-title
 					if ( $this->is_skip_elemenet( $dom_element, 'title' ) ) {
 						continue;
 					}
