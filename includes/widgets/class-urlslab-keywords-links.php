@@ -213,7 +213,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				$linkDom->setAttribute( 'urlslab-kw', 'y' );
 
 				//if relative url or url from same domain, don't add target attribute
-				if ( ! urlslab_is_same_domain_url( $kwRow['url'] ) ) {
+				if ( ! $urlObj->is_same_domain_url() ) {
 					$linkDom->setAttribute( 'target', '_blank' );
 				}
 
@@ -485,9 +485,10 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 					if ( strlen( $missing_kw ) < $this->options[ self::SETTING_NAME_KW_IMPORT_MAX_LENGTH ] ) {
 						foreach ( $urls as $urlId => $arrU ) {
 							try {
-
-								$is_internal = urlslab_is_same_domain_url( $arrU['obj']->get_url() );
-								if ( ( $is_internal && $this->options[ self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS ] ) || ( ! $is_internal && $this->options[ self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS ] ) ) {
+								if (
+									( $arrU['obj']->is_same_domain_url() && $this->options[ self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS ] ) ||
+									( ( ! $arrU['obj']->is_same_domain_url() ) && $this->options[ self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS ] )
+								) {
 									$schedule_urls[ $urlId ] = $arrU['obj'];
 									$new_keywords[]          = new Urlslab_Url_Keyword_Data(
 										array(
@@ -496,7 +497,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 											'lang'        => urlslab_get_language(),
 											'kw_priority' => 100,
 											'urlFilter'   => '.*',
-											'kwType'   => self::KW_IMPORTED,
+											'kwType'      => self::KW_IMPORTED,
 										)
 									);
 								}
