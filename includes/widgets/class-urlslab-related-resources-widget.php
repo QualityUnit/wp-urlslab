@@ -113,7 +113,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		return '<li>' .
 			   '<a href="' . esc_url( urlslab_add_current_page_protocol( $url->get_url()->get_url() ) ) . '"' .
 			   ' title="' . esc_attr( $url->get_url_summary_text( $strategy ) ) . '"' .
-			   ( urlslab_is_same_domain_url( $url->get_url()->get_url() ) ? '' : ' target="_blank"' ) .
+			   ( $url->get_url()->is_same_domain_url() ? '' : ' target="_blank"' ) .
 			   '>' .
 			   $this->render_screenshot( $url, $urlslab_atts, $strategy ) .
 			   esc_html( $title ) .

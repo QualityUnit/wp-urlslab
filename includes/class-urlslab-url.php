@@ -3,6 +3,7 @@
 class Urlslab_Url {
 
 	private string $urlslab_parsed_url;
+	private bool $is_same_domain_url = false;
 	private $url_id = null;
 	private array $url_components = array();
 	private array $domain_blacklists = array(
@@ -49,6 +50,10 @@ class Urlslab_Url {
 		return $this->urlslab_parsed_url;
 	}
 
+	public function is_same_domain_url(): bool {
+		return $this->is_same_domain_url;
+	}
+
 	/**
 	 * @throws Exception
 	 */
@@ -75,10 +80,18 @@ class Urlslab_Url {
 			$this->url_components['scheme'] = parse_url( get_site_url(), PHP_URL_SCHEME ) ?? 'http';
 		}
 
+		$current_site_host = strtolower( parse_url( get_site_url(), PHP_URL_HOST ) );
 		if ( ! isset( $this->url_components['host'] ) ) {
-			$this->url_components['host'] = parse_url( get_site_url(), PHP_URL_HOST );
+			$this->is_same_domain_url     = true;
+			$this->url_components['host'] = $current_site_host;
 			if ( substr( $this->url_components['path'], 0, 1 ) != '/' ) {
 				$this->url_components['path'] = '/' . $this->url_components['path'];
+			}
+		} else {
+			if ( strtolower( $this->url_components['host'] ) == $current_site_host ) {
+				$this->is_same_domain_url = true;
+			} else {
+				$this->is_same_domain_url = false;
 			}
 		}
 
