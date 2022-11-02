@@ -59,7 +59,6 @@ class Urlslab_Public {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-		wp_enqueue_style( $this->urlslab, plugin_dir_url( __FILE__ ) . 'build/css/urlslab-public.css', array(), $this->version, 'all' );
 	}
 
 	/**
@@ -68,13 +67,12 @@ class Urlslab_Public {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-		wp_enqueue_script( $this->urlslab, plugin_dir_url( __FILE__ ) . 'build/js/urlslab-public.js', array( 'jquery' ), $this->version, false );
 		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( 'urlslab-media-offloader' ) ) {
 			wp_enqueue_style( 'urlslab_youtube_loader', plugin_dir_url( __FILE__ ) . 'build/css/urlslab_youtube_loader.css', array(), $this->version, 'all' );
 			add_action(
 				'wp_footer',
 				function () {
-					wp_enqueue_script( 'urlslab', plugin_dir_url( __FILE__ ) . 'build/js/urlslab-lazyload.js', array( 'jquery' ), URLSLAB_VERSION, false );}
+					wp_enqueue_script( 'urlslab', plugin_dir_url( __FILE__ ) . 'build/js/urlslab-lazyload.js', array( 'jquery' ), URLSLAB_VERSION, true );}
 			);
 		}
 	}

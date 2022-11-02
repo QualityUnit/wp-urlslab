@@ -26,9 +26,9 @@ class Urlslab_Youtube_Data {
 	public function __construct(
 		array $video
 	) {
-		$this->videoid = $video['videoid'];
+		$this->videoid   = $video['videoid'];
 		$this->microdata = $video['microdata'] ?? null;
-		$this->status = $video['status'] ?? self::YOUTUBE_NEW;
+		$this->status    = $video['status'] ?? self::YOUTUBE_NEW;
 		if ( strlen( $this->microdata ) ) {
 			$this->microdata_obj = json_decode( $this->microdata );
 		}
@@ -36,9 +36,9 @@ class Urlslab_Youtube_Data {
 
 	public function as_array() {
 		return array(
-			'videoid' => $this->get_videoid(),
+			'videoid'   => $this->get_videoid(),
 			'microdata' => $this->get_microdata(),
-			'status' => $this->get_status(),
+			'status'    => $this->get_status(),
 		);
 	}
 
@@ -62,11 +62,20 @@ class Urlslab_Youtube_Data {
 		if ( is_object( $this->microdata_obj ) && property_exists( $this->microdata_obj, 'items' ) && property_exists( $this->microdata_obj->items[0], 'snippet' ) ) {
 			return $this->microdata_obj->items[0]->snippet->title;
 		}
-		return false;
+
+		if ( strlen( $this->get_channel_title() ) ) {
+			return $this->get_channel_title();
+		}
+
+		return 'Youtube video';
 	}
 
 	public function get_description() {
-		return $this->microdata_obj->items[0]->snippet->description;
+		if ( ! empty( $this->microdata_obj->items[0]->snippet->description ) ) {
+			return $this->microdata_obj->items[0]->snippet->description;
+		}
+
+		return 'Topic: ' . $this->get_title();
 	}
 
 	public function get_published_at() {
@@ -74,7 +83,14 @@ class Urlslab_Youtube_Data {
 	}
 
 	public function get_duration() {
-		return $this->microdata_obj->items[0]->snippet->duration;
+		if ( ! empty( $this->microdata_obj->items[0]->snippet->duration ) ) {
+			return $this->microdata_obj->items[0]->snippet->duration;
+		}
+		if ( ! empty( $this->microdata_obj->items[0]->contentDetails->duration ) ) {
+			return $this->microdata_obj->items[0]->contentDetails->duration;
+		}
+
+		return 'PT60s';
 	}
 
 	public function get_thumbnail_url() {
