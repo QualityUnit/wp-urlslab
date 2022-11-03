@@ -270,9 +270,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			}
 			$this->schedule_missing_images( $url_fileids );
 
-			if ( count( $found_urls ) > 0 ) {
-				$this->update_last_seen_date( array_keys( $found_urls ) );
-			}
 		} catch ( Exception $e ) {
 			//TODO log error
 		}
@@ -675,15 +672,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 		$driver = Urlslab_Driver::get_driver( $file );
 		$driver->output_file_content( $file );
-	}
-
-	private function update_last_seen_date( array $found_urls ) {
-		if ( ! empty( $found_urls ) ) {
-			global $wpdb;
-			$query = 'UPDATE ' . URLSLAB_FILES_TABLE . ' SET last_seen = %s WHERE fileid IN (' . implode( ',', array_fill( 0, count( $found_urls ), '%s' ) ) . ')'; // phpcs:ignore
-			array_unshift( $found_urls, gmdate( 'Y-m-d H:i:s' ) );
-			$wpdb->query( $wpdb->prepare( $query, $found_urls ) ); // phpcs:ignore
-		}
 	}
 
 	public function get_parent_page(): Urlslab_Admin_Page {

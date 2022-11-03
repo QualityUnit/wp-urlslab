@@ -123,7 +123,7 @@ class Urlslab_Url_Data {
 				$this->url_title = self::EMPTY;
 			}
 			global $wpdb;
-			$wpdb->update( URLSLAB_URLS_TABLE, array( 'urlTitle' => $this->url_title ), array( 'urlMd5' => $this->get_url_id() ) );
+			$wpdb->update( URLSLAB_URLS_TABLE, array( 'urlTitle' => $this->url_title ), array( 'urlMd5' => $this->url->get_url_id() ) );
 		}
 
 		if ( self::EMPTY === $this->url_title ) {
@@ -155,7 +155,7 @@ class Urlslab_Url_Data {
 				$this->url_meta_description = self::EMPTY;
 			}
 			global $wpdb;
-			$wpdb->update( URLSLAB_URLS_TABLE, array( 'urlMetaDescription' => $this->url_meta_description ), array( 'urlMd5' => $this->get_url_id() ) );
+			$wpdb->update( URLSLAB_URLS_TABLE, array( 'urlMetaDescription' => $this->url_meta_description ), array( 'urlMd5' => $this->url->get_url_id() ) );
 		}
 
 		if ( self::EMPTY === $this->url_meta_description ) {
