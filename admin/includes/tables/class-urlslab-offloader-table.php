@@ -44,7 +44,6 @@ class Urlslab_Offloader_Table extends WP_List_Table {
        					 v.height AS height,
        					 v.filestatus AS filestatus,
        					 v.driver AS driver,
-       					 v.last_seen AS last_seen,
        					 v.webp_alternative AS webp_alternative,
        					 v.avif_alternative AS avif_alternative,
        					 SUM(!ISNULL(d.urlMd5)) AS imageCountUsage
@@ -196,7 +195,6 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 			'col_height' => 'Height',
 			'col_file_status' => 'File Status',
 			'col_driver' => 'Driver',
-			'col_last_seen' => 'Last Seen',
 			'col_image_usage_count' => 'Image Usage Count',
 		);
 	}
@@ -262,8 +260,6 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 				return $this->status_to_html( $item->get_filestatus() );
 			case 'col_driver':
 				return $this->driver_to_html( $item->get_driver() );
-			case 'col_last_seen':
-				return $item->get_last_seen();
 			default:
 				return print_r( $item, true );
 		}

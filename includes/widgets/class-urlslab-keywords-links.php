@@ -273,9 +273,13 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		global $wpdb;
 
 		$keyword_table = URLSLAB_KEYWORDS_TABLE;
+		$lang          = urlslab_get_language();
 
-		$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kw_id, keyword, urlLink, urlFilter FROM ' . $keyword_table . " WHERE (lang = %s OR lang = 'all') ORDER BY kw_priority ASC, kw_length DESC", urlslab_get_language() ), 'ARRAY_A' ); // phpcs:ignore
-
+		$results = wp_cache_get( 'kws_' . $lang, 'urlslab', false, $found );
+		if ( false === $results || ! $found ) {
+			$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kw_id, keyword, urlLink, urlFilter FROM ' . $keyword_table . " WHERE (lang = %s OR lang = 'all') ORDER BY kw_priority ASC, kw_length DESC", urlslab_get_language() ), 'ARRAY_A' ); // phpcs:ignore
+			wp_cache_set( 'kws_' . $lang, $results, 'urlslab', 120 );
+		}
 		$this->keywords_cache = array();
 		$currentUrl           = urlslab_add_current_page_protocol( $this->get_current_page_url()->get_url() );
 
