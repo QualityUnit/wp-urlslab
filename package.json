@@ -47,7 +47,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build": "webpack --mode=development",
+    "build": "webpack --mode=production",
     "watch": "webpack --mode=development --watch",
     "bundle": "yarn install && npm run watch",
     "dev": "webpack serve --config configuration/webpack.dev.config.js --mode=development",
