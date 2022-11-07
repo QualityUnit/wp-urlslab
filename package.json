@@ -51,7 +51,7 @@
     "watch": "webpack --mode=development --watch",
     "bundle": "yarn install && npm run watch",
     "dev": "webpack serve --config configuration/webpack.dev.config.js --mode=development",
-    "production": "cross-env NODE_ENV=production webpack --mode=production",
+    "production": "webpack --mode=production",
     "lint:sass": "sass-lint -v -q",
     "lint:js": "eslint --ext .js src/js/"
   },
