@@ -94,7 +94,17 @@ class Urlslab_Youtube_Data {
 	}
 
 	public function get_thumbnail_url() {
-		return $this->microdata_obj->items[0]->snippet->thumbnails->maxres->url;
+		if ( ! empty( $this->microdata_obj->items[0]->snippet->thumbnails->maxres->url ) ) {
+			return $this->microdata_obj->items[0]->snippet->thumbnails->maxres->url;
+		} else if ( ! empty( $this->microdata_obj->items[0]->snippet->thumbnails->standard->url ) ) {
+			return $this->microdata_obj->items[0]->snippet->thumbnails->standard->url;
+		} else if ( ! empty( $this->microdata_obj->items[0]->snippet->thumbnails->high->url ) ) {
+			return $this->microdata_obj->items[0]->snippet->thumbnails->high->url;
+		} else if ( ! empty( $this->microdata_obj->items[0]->snippet->thumbnails->default->url ) ) {
+			return $this->microdata_obj->items[0]->snippet->thumbnails->default->url;
+		}
+
+		return '';
 	}
 
 }

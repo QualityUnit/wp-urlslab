@@ -16,10 +16,10 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	public const SETTING_NAME_YOUTUBE_API_KEY = 'urlslab_youtube_apikey';
 
 	public function __construct() {
-		$this->widget_slug = 'urlslab-lazy-loading';
-		$this->widget_title = 'Lazy Loading';
+		$this->widget_slug        = 'urlslab-lazy-loading';
+		$this->widget_title       = 'Lazy Loading';
 		$this->widget_description = 'Urlslab Lazy Loading';
-		$this->landing_page_link = 'https://www.urlslab.com';
+		$this->landing_page_link  = 'https://www.urlslab.com';
 		$this->parent_page        = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-media' );
 	}
 
@@ -73,8 +73,10 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	public static function update_settings( array $new_settings ) {
-		if ( isset( $new_settings[ self::SETTING_NAME_IMG_LAZY_LOADING ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_IMG_LAZY_LOADING ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_IMG_LAZY_LOADING ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_IMG_LAZY_LOADING ] )
+		) {
 			update_option(
 				self::SETTING_NAME_IMG_LAZY_LOADING,
 				$new_settings[ self::SETTING_NAME_IMG_LAZY_LOADING ]
@@ -86,8 +88,10 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			);
 		}
 
-		if ( isset( $new_settings[ self::SETTING_NAME_VIDEO_LAZY_LOADING ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_VIDEO_LAZY_LOADING ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_VIDEO_LAZY_LOADING ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_VIDEO_LAZY_LOADING ] )
+		) {
 			update_option(
 				self::SETTING_NAME_VIDEO_LAZY_LOADING,
 				$new_settings[ self::SETTING_NAME_VIDEO_LAZY_LOADING ]
@@ -99,8 +103,10 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			);
 		}
 
-		if ( isset( $new_settings[ self::SETTING_NAME_YOUTUBE_LAZY_LOADING ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_YOUTUBE_LAZY_LOADING ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_YOUTUBE_LAZY_LOADING ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_YOUTUBE_LAZY_LOADING ] )
+		) {
 			update_option(
 				self::SETTING_NAME_YOUTUBE_LAZY_LOADING,
 				$new_settings[ self::SETTING_NAME_YOUTUBE_LAZY_LOADING ]
@@ -112,8 +118,10 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			);
 		}
 
-		if ( isset( $new_settings[ self::SETTING_NAME_YOUTUBE_API_KEY ] ) &&
-			 ! empty( $new_settings[ self::SETTING_NAME_YOUTUBE_API_KEY ] ) ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_YOUTUBE_API_KEY ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_YOUTUBE_API_KEY ] )
+		) {
 			update_option(
 				self::SETTING_NAME_YOUTUBE_API_KEY,
 				$new_settings[ self::SETTING_NAME_YOUTUBE_API_KEY ]
@@ -199,7 +207,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$yt_elements = $xpath->query( "//*[@data-ytid and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
 		foreach ( $yt_elements as $yt_element ) {
 			if ( ! $this->is_skip_elemenet( $yt_element, 'lazy' ) ) {
-				$ytid = $yt_element->getAttribute( 'data-ytid' );
+				$ytid                 = $yt_element->getAttribute( 'data-ytid' );
 				$youtube_ids[ $ytid ] = $ytid;
 			}
 		}
@@ -394,6 +402,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		if ( $child->length ) {
 			$child->item( 0 )->appendChild( $youtube_loader );
 		}
+
 		return true;
 	}
 
