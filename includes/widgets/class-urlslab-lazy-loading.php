@@ -13,6 +13,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	public const SETTING_NAME_IMG_LAZY_LOADING = 'urlslab_img_lazy';
 	public const SETTING_NAME_VIDEO_LAZY_LOADING = 'urlslab_video_lazy';
 	public const SETTING_NAME_YOUTUBE_LAZY_LOADING = 'urlslab_youtube_lazy';
+	public const SETTING_NAME_REMOVE_WP_LAZY_LOADING = 'urlslab_remove_wp_lazy';
 	public const SETTING_NAME_YOUTUBE_API_KEY = 'urlslab_youtube_apikey';
 
 	public function __construct() {
@@ -27,6 +28,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		add_option( self::SETTING_NAME_IMG_LAZY_LOADING, false, '', true );
 		add_option( self::SETTING_NAME_VIDEO_LAZY_LOADING, false, '', true );
 		add_option( self::SETTING_NAME_YOUTUBE_LAZY_LOADING, false, '', true );
+		add_option( self::SETTING_NAME_REMOVE_WP_LAZY_LOADING, true, '', true );
 		add_option( self::SETTING_NAME_YOUTUBE_API_KEY, '', '', false );
 	}
 
@@ -117,6 +119,20 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 				false
 			);
 		}
+		if (
+			isset( $new_settings[ self::SETTING_NAME_REMOVE_WP_LAZY_LOADING ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_REMOVE_WP_LAZY_LOADING ] )
+		) {
+			update_option(
+				self::SETTING_NAME_REMOVE_WP_LAZY_LOADING,
+				$new_settings[ self::SETTING_NAME_REMOVE_WP_LAZY_LOADING ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_REMOVE_WP_LAZY_LOADING,
+				false
+			);
+		}
 
 		if (
 			isset( $new_settings[ self::SETTING_NAME_YOUTUBE_API_KEY ] ) &&
@@ -132,6 +148,9 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	public function the_content( DOMDocument $document ) {
 		if ( get_option( self::SETTING_NAME_YOUTUBE_LAZY_LOADING, false ) ) {
 			$this->add_youtube_lazy_loading( $document );
+		}
+		if ( get_option( self::SETTING_NAME_REMOVE_WP_LAZY_LOADING, true ) ) {
+			$this->remove_default_wp_img_lazy_loading( $document );
 		}
 		if ( get_option( self::SETTING_NAME_IMG_LAZY_LOADING, false ) ) {
 			$this->add_images_lazy_loading( $document );
@@ -176,9 +195,17 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		}
 	}
 
+	private function remove_default_wp_img_lazy_loading( DOMDocument $document ) {
+		$xpath        = new DOMXPath( $document );
+		$dom_elements = $xpath->query( "//img[@loading='lazy' and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-nolazy')])]" );
+		foreach ( $dom_elements as $element ) {
+			$element->removeAttribute( 'loading' );
+		}
+	}
+
 	private function add_youtube_lazy_loading( DOMDocument $document ) {
 		$youtube_ids = array();
-		$xpath           = new DOMXPath( $document );
+		$xpath       = new DOMXPath( $document );
 
 		//find all YouTube iframes
 		$iframe_elements = $xpath->query( "//iframe[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );

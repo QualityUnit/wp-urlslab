@@ -29,6 +29,13 @@ class Urlslab_Lazyload_Subpage extends Urlslab_Admin_Subpage {
 			),
 			new Urlslab_Setting_Switch(
 				'lazy-loading[]',
+				Urlslab_Lazy_Loading::SETTING_NAME_REMOVE_WP_LAZY_LOADING,
+				"Remove attribute loading='lazy' added by default to all images by Wordpress and control lazy loading by Urlslab plugin only. Sometimes you need to load images faster and this is the way how to do it. To disable this feature on specific elements, add class urlslab-skip-nolazy",
+				'Disable WordPress lazy loading',
+				get_option( Urlslab_Lazy_Loading::SETTING_NAME_REMOVE_WP_LAZY_LOADING, true )
+			),
+			new Urlslab_Setting_Switch(
+				'lazy-loading[]',
 				Urlslab_Lazy_Loading::SETTING_NAME_VIDEO_LAZY_LOADING,
 				'Enable/Disable lazy loading for Videos in your pages',
 				'Video Lazy Loading',
@@ -51,7 +58,8 @@ class Urlslab_Lazyload_Subpage extends Urlslab_Admin_Subpage {
 			),
 		);
 		?>
-		<form method="post" action="<?php echo esc_url( $this->parent_page->menu_page( 'lazy-load', 'action=update-lazy-loading-settings', 1 ) ); ?>">
+		<form method="post"
+			  action="<?php echo esc_url( $this->parent_page->menu_page( 'lazy-load', 'action=update-lazy-loading-settings', 1 ) ); ?>">
 			<?php wp_nonce_field( 'lazy-loading-update' ); ?>
 			<h3>Lazy Loading</h3>
 			<?php
@@ -61,11 +69,11 @@ class Urlslab_Lazyload_Subpage extends Urlslab_Admin_Subpage {
 			?>
 			<p>
 				<input
-					type="submit"
-					name="submit"
-					id="save-sub-widget"
-					class="urlslab-btn-primary"
-					value="Save Changes">
+						type="submit"
+						name="submit"
+						id="save-sub-widget"
+						class="urlslab-btn-primary"
+						value="Save Changes">
 			</p>
 		</form>
 		<?php
@@ -74,13 +82,15 @@ class Urlslab_Lazyload_Subpage extends Urlslab_Admin_Subpage {
 	public function set_table_screen_options() {}
 
 	public function handle_action() {
-		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
-			 'POST' === $_SERVER['REQUEST_METHOD'] and
-			 isset( $_REQUEST['action'] ) and
-			 - 1 != $_REQUEST['action'] and
-			 isset( $_POST['submit'] ) and
-			 isset( $_GET['action'] ) and
-			 'update-lazy-loading-settings' == $_GET['action'] ) {
+		if (
+			isset( $_SERVER['REQUEST_METHOD'] ) and
+			'POST' === $_SERVER['REQUEST_METHOD'] and
+			isset( $_REQUEST['action'] ) and
+			- 1 != $_REQUEST['action'] and
+			isset( $_POST['submit'] ) and
+			isset( $_GET['action'] ) and
+			'update-lazy-loading-settings' == $_GET['action']
+		) {
 			//# Edit Lazy Loading
 			check_admin_referer( 'lazy-loading-update' );
 
@@ -103,7 +113,7 @@ class Urlslab_Lazyload_Subpage extends Urlslab_Admin_Subpage {
 					$this->parent_page->menu_page(
 						'lazy-load',
 						array(
-							'status' => 'success',
+							'status'          => 'success',
 							'urlslab-message' => 'Lazy Load settings was saved successfully',
 						),
 						$_GET['sub-tab'] ?? ''
