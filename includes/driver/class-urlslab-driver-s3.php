@@ -14,14 +14,14 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 
 	private $client;
 
-	function get_file_content( Urlslab_File_Data $file_obj ) {
+	function get_file_content( Urlslab_File_Data $file_pointer ) {
 		if ( ! $this->is_configured() ) {
 			return false;
 		}
 		$result = $this->getClient()->getObject(
 			array(
 				'Bucket' => get_option( self::SETTING_NAME_S3_BUCKET, '' ),
-				'Key'    => $this->get_file_dir( $file_obj ) . $file_obj->get_filename(),
+				'Key'    => $this->get_file_dir( $file_pointer ) . $file_pointer->get_filename(),
 			)
 		);
 
@@ -150,14 +150,14 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 			   ! empty( get_option( self::SETTING_NAME_S3_BUCKET, '' ) );
 	}
 
-	public function save_to_file( Urlslab_File_Data $file, $file_name ): bool {
+	public function save_to_file( Urlslab_File_Data $file_pointer, $file_name ): bool {
 		if ( ! $this->is_configured() ) {
 			return false;
 		}
 		$result = $this->getClient()->getObject(
 			array(
 				'Bucket' => get_option( self::SETTING_NAME_S3_BUCKET, '' ),
-				'Key'    => $this->get_file_dir( $file ) . $file->get_filename(),
+				'Key'    => $this->get_file_dir( $file_pointer ) . $file_pointer->get_filename(),
 			)
 		);
 
@@ -227,7 +227,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 		);
 	}
 
-	public function delete_content( Urlslab_File_Data $file ): bool {
+	public function delete_content( Urlslab_File_Data $file_pointer ): bool {
 		if ( ! $this->is_configured() ) {
 			return false;
 		}
@@ -235,7 +235,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 			$result = $this->getClient()->deleteObject(
 				array(
 					'Bucket' => get_option( self::SETTING_NAME_S3_BUCKET, '' ),
-					'Key'    => $this->get_file_dir( $file ) . $file->get_filename(),
+					'Key'    => $this->get_file_dir( $file_pointer ) . $file_pointer->get_filename(),
 				)
 			);
 		} catch ( \Aws\S3\Exception\S3Exception $e ) {

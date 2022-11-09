@@ -591,7 +591,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				$arr_file_with_alternatives[] = $file_obj->get_fileid();
 			}
 		}
-
+//TODO
 		if ( ! empty( $arr_file_with_alternatives ) ) {
 			$results = $wpdb->get_results(
 				$wpdb->prepare(
@@ -613,7 +613,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	private function schedule_missing_images( array $urls ) {
 		$save_internal  = get_option( self::SETTING_NAME_SAVE_INTERNAL, self::SETTING_DEFAULT_SAVE_INTERNAL );
 		$save_external  = get_option( self::SETTING_NAME_SAVE_EXTERNAL, self::SETTING_DEFAULT_SAVE_EXTERNAL );
-		$default_driver = get_option( self::SETTING_NAME_NEW_FILE_DRIVER, self::SETTING_DEFAULT_NEW_FILE_DRIVER );
 		if ( ! ( $save_internal || $save_external ) ) {
 			return;
 		}
@@ -623,8 +622,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 		foreach ( $urls as $fileid => $url ) {
 			if ( ( urlslab_is_same_domain_url( $url ) && $save_internal ) || $save_external ) {
-				$placeholders[] = '(%s, %s, %s, %s, %s)';
-				array_push( $values, $fileid, $url, $this->parent_urls[ $fileid ] ?? '', Urlslab_Driver::STATUS_NEW, $default_driver );
+				$placeholders[] = '(%s,%s,%s,%s)';
+				array_push( $values, $fileid, $url, $this->parent_urls[ $fileid ] ?? '', Urlslab_Driver::STATUS_NEW );
 			}
 		}
 		if ( ! empty( $placeholders ) ) {
@@ -633,8 +632,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
                    fileid,
                    url,
                    parent_url,
-                   filestatus,
-                   driver) VALUES ' . implode( ', ', $placeholders );
+                   filestatus) VALUES ' . implode( ', ', $placeholders );
 
 			$wpdb->query( $wpdb->prepare( $query, $values ) ); // phpcs:ignore
 		}

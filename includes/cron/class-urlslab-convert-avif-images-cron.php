@@ -110,7 +110,6 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 
 		if ( ! (
 			$this->insert_alternative_file( $avif_file ) &&
-			$this->insert_file_alternative_relation( $file, $avif_file ) &&
 			Urlslab_Driver::get_driver( $avif_file )->upload_content( $avif_file )
 		)
 		) {

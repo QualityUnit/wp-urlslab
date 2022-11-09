@@ -34,7 +34,7 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 
 	public function render_settings() {
 		$current_default_driver = get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_NEW_FILE_DRIVER );
-		$settings = array(
+		$settings               = array(
 			new Urlslab_Setting_Switch(
 				'offload-opt[]',
 				Urlslab_Media_Offloader_Widget::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND,
@@ -60,17 +60,17 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 				Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER,
 				array(
 					array(
-						'value' => Urlslab_Driver::DRIVER_DB,
+						'value'       => Urlslab_Driver::DRIVER_DB,
 						'is_selected' => Urlslab_Driver::DRIVER_DB == $current_default_driver,
 						'option_name' => 'Database Driver',
 					),
 					array(
-						'value' => Urlslab_Driver::DRIVER_LOCAL_FILE,
+						'value'       => Urlslab_Driver::DRIVER_LOCAL_FILE,
 						'is_selected' => Urlslab_Driver::DRIVER_LOCAL_FILE == $current_default_driver,
 						'option_name' => 'Local File Driver',
 					),
 					array(
-						'value' => Urlslab_Driver::DRIVER_S3,
+						'value'       => Urlslab_Driver::DRIVER_S3,
 						'is_selected' => Urlslab_Driver::DRIVER_S3 == $current_default_driver,
 						'option_name' => 'S3 Driver',
 					),
@@ -130,7 +130,8 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 			),
 		);
 		?>
-		<form method="post" action="<?php echo esc_url( $this->parent_page->menu_page( 'media-offloading', 'action=update-settings', 1 ) ); ?>">
+		<form method="post"
+			  action="<?php echo esc_url( $this->parent_page->menu_page( 'media-offloading', 'action=update-settings', 1 ) ); ?>">
 			<?php wp_nonce_field( 'offloader-update' ); ?>
 			<?php
 			foreach ( $settings as $setting ) {
@@ -150,13 +151,13 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 	}
 
 	public function render_image_optimisation_settings() {
-		$conversion_webp = get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_WEBP_TYPES_TO_CONVERT, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT );
+		$conversion_webp         = get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_WEBP_TYPES_TO_CONVERT, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT );
 		$setting_conversion_webp = array();
 		foreach ( Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT as $type_to_conv ) {
 			$setting_conversion_webp[ $type_to_conv ] = in_array( $type_to_conv, $conversion_webp );
 		}
 
-		$conversion_avif = get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_TYPES_TO_CONVERT, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT );
+		$conversion_avif         = get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_TYPES_TO_CONVERT, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT );
 		$setting_conversion_avif = array();
 		foreach ( Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT as $type_to_conv ) {
 			$setting_conversion_avif[ $type_to_conv ] = in_array( $type_to_conv, $conversion_avif );
@@ -230,7 +231,8 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 		);
 
 		?>
-		<form method="post" action="<?php echo esc_url( $this->parent_page->menu_page( 'media-offloading', 'action=update-image-optimisation-settings', 3 ) ); ?>">
+		<form method="post"
+			  action="<?php echo esc_url( $this->parent_page->menu_page( 'media-offloading', 'action=update-image-optimisation-settings', 3 ) ); ?>">
 			<?php wp_nonce_field( 'image-conversion-update' ); ?>
 			<h3>Image Conversion</h3>
 			<?php
@@ -253,7 +255,7 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 	public function render_driver_settings() {
 		//# Access Key Settings
 		$access_key_setting = null;
-		$access_key = get_option( Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY, '' );
+		$access_key         = get_option( Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY, '' );
 		if ( empty( $access_key ) ) {
 			$access_key_setting = new Urlslab_Setting_Input(
 				'text',
@@ -319,7 +321,8 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 			),
 		);
 		?>
-		<form method="post" action="<?php echo esc_url( $this->parent_page->menu_page( 'media-offloading', 'action=update-s3-settings', 2 ) ); ?>">
+		<form method="post"
+			  action="<?php echo esc_url( $this->parent_page->menu_page( 'media-offloading', 'action=update-s3-settings', 2 ) ); ?>">
 			<?php wp_nonce_field( 's3-update' ); ?>
 			<h3>S3 Driver Settings</h3>
 			<?php
@@ -359,10 +362,10 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 
 	public function set_table_screen_options() {
 		$option = 'per_page';
-		$args = array(
-			'label' => 'Assets',
+		$args   = array(
+			'label'   => 'Assets',
 			'default' => 50,
-			'option' => 'users_per_page',
+			'option'  => 'users_per_page',
 		);
 
 		add_screen_option( $option, $args );
@@ -371,20 +374,26 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 	}
 
 	public function handle_action() {
-		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
-			 'POST' === $_SERVER['REQUEST_METHOD'] and
-			 isset( $_REQUEST['action'] ) and
-			 - 1 != $_REQUEST['action'] ) {
+		if (
+			isset( $_SERVER['REQUEST_METHOD'] ) and
+			'POST' === $_SERVER['REQUEST_METHOD'] and
+			isset( $_REQUEST['action'] ) and
+			- 1 != $_REQUEST['action']
+		) {
 			//# Edit settings
-			if ( isset( $_POST['submit'] ) &&
-				 'Save Changes' === $_POST['submit'] &&
-				 isset( $_GET['action'] ) &&
-				 'update-settings' == $_GET['action'] ) {
+			if (
+				isset( $_POST['submit'] ) &&
+				'Save Changes' === $_POST['submit'] &&
+				isset( $_GET['action'] ) &&
+				'update-settings' == $_GET['action']
+			) {
 				check_admin_referer( 'offloader-update' );
 
 				$saving_opt = array();
-				if ( isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ] ) &&
-					 ! empty( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ] ) ) {
+				if (
+					isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ] ) &&
+					! empty( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ] )
+				) {
 					$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ] =
 						$_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ];
 				}
@@ -404,7 +413,7 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 							$this->parent_page->menu_page(
 								'media-offloading',
 								array(
-									'status' => 'failure',
+									'status'          => 'failure',
 									'urlslab-message' => 'Cache expiration time needs to be number',
 								),
 								$_GET['sub-tab'] ?? ''
@@ -422,7 +431,7 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 					$this->parent_page->menu_page(
 						'media-offloading',
 						array(
-							'status' => 'success',
+							'status'          => 'success',
 							'urlslab-message' => 'Keyword settings was saved successfully',
 						),
 						$_GET['sub-tab'] ?? ''
@@ -433,9 +442,11 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 			//# Edit settings
 
 			//# Edit AWS settings
-			if ( isset( $_POST['submit'] ) &&
-				 isset( $_GET['action'] ) &&
-				 'update-s3-settings' == $_GET['action'] ) {
+			if (
+				isset( $_POST['submit'] ) &&
+				isset( $_GET['action'] ) &&
+				'update-s3-settings' == $_GET['action']
+			) {
 				check_admin_referer( 's3-update' );
 
 				//# Saving/updating the credentials
@@ -447,7 +458,7 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 						$this->parent_page->menu_page(
 							'media-offloading',
 							array(
-								'status' => 'success',
+								'status'          => 'success',
 								'urlslab-message' => 'AWS S3 settings was saved successfully',
 							),
 							$_GET['sub-tab'] ?? ''
@@ -465,7 +476,7 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 						$this->parent_page->menu_page(
 							'media-offloading',
 							array(
-								'status' => 'success',
+								'status'          => 'success',
 								'urlslab-message' => 'AWS S3 settings was removed successfully',
 							),
 							$_GET['sub-tab'] ?? ''
@@ -478,19 +489,23 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 			//# Edit AWS settings
 
 			//# Edit Image Optimisation
-			if ( isset( $_POST['submit'] ) &&
-				 isset( $_GET['action'] ) &&
-				 'update-image-optimisation-settings' == $_GET['action'] ) {
+			if (
+				isset( $_POST['submit'] ) &&
+				isset( $_GET['action'] ) &&
+				'update-image-optimisation-settings' == $_GET['action']
+			) {
 				check_admin_referer( 'image-conversion-update' );
 
-				if ( isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ] ) &&
-					 ( 0 > $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ] ||
-					   100 < $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ] ) ) {
+				if (
+					isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ] ) &&
+					( 0 > $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ] ||
+					  100 < $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ] )
+				) {
 					wp_safe_redirect(
 						$this->parent_page->menu_page(
 							'media-offloading',
 							array(
-								'status' => 'failure',
+								'status'          => 'failure',
 								'urlslab-message' => 'webp quality should be a number between 0 and 100',
 							),
 							$_GET['sub-tab'] ?? ''
@@ -499,14 +514,16 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 					exit;
 				}
 
-				if ( isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ] ) &&
-					 ( 0 > $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ] ||
-					   100 < $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ] ) ) {
+				if (
+					isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ] ) &&
+					( 0 > $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ] ||
+					  100 < $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ] )
+				) {
 					wp_safe_redirect(
 						$this->parent_page->menu_page(
 							'media-offloading',
 							array(
-								'status' => 'failure',
+								'status'          => 'failure',
 								'urlslab-message' => 'Avif quality should be a number between 0 and 100',
 							),
 							$_GET['sub-tab'] ?? ''
@@ -515,14 +532,16 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 					exit;
 				}
 
-				if ( isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ] ) &&
-					 ( 0 > $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ] ||
-					   10 < $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ] ) ) {
+				if (
+					isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ] ) &&
+					( 0 > $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ] ||
+					  10 < $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ] )
+				) {
 					wp_safe_redirect(
 						$this->parent_page->menu_page(
 							'media-offloading',
 							array(
-								'status' => 'failure',
+								'status'          => 'failure',
 								'urlslab-message' => 'Avif Speed should be a number between 0 and 10',
 							),
 							$_GET['sub-tab'] ?? ''
@@ -532,10 +551,12 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 				}
 
 
-				if ( 'Save Changes' === $_POST['submit'] &&
-					 isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ] ) &&
-					 isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ] ) &&
-					 isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ] ) ) {
+				if (
+					'Save Changes' === $_POST['submit'] &&
+					isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ] ) &&
+					isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ] ) &&
+					isset( $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ] )
+				) {
 					$saving_opt = array();
 					if ( isset( $_POST['image-opt'] ) ) {
 						foreach ( $_POST['image-opt'] as $image_opt_setting ) {
@@ -554,7 +575,7 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 						$_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ];
 					$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ] =
 						$_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ];
-					$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ] =
+					$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ]   =
 						$_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED ];
 
 					Urlslab_Media_Offloader_Widget::update_option_image_optimisation( $saving_opt );
@@ -564,7 +585,7 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 						$this->parent_page->menu_page(
 							'media-offloading',
 							array(
-								'status' => 'success',
+								'status'          => 'success',
 								'urlslab-message' => 'Image Conversion settings was saved successfully',
 							),
 							$_GET['sub-tab'] ?? ''
@@ -585,7 +606,8 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 				'transfer-to-db' === $_GET['action']
 			) &&
 			isset( $_GET['file'] ) &&
-			isset( $_REQUEST['_wpnonce'] ) ) {
+			isset( $_REQUEST['_wpnonce'] )
+		) {
 			$this->process_file_transfer();
 		}
 		//# Transfer single file
@@ -593,12 +615,13 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 
 	private function get_file_data( string $fileid ): Urlslab_File_Data {
 		global $wpdb;
-		$table = URLSLAB_FILES_TABLE;
+		$table         = URLSLAB_FILES_TABLE;
+		$table_pointer = URLSLAB_FILE_POINTERS_TABLE;
 
 		return new Urlslab_File_Data(
 			$wpdb->get_row(
 				$wpdb->prepare(
-					"SELECT * FROM $table WHERE fileid=%s", // phpcs:ignore
+					"SELECT f.*, p.* FROM $table f LEFT JOIN $table_pointer p ON f.filehash=p.filehash AND f.filesize=p.filesize WHERE f.fileid=%s", // phpcs:ignore
 					$fileid
 				),
 				ARRAY_A
@@ -610,10 +633,12 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 
 		$destination_driver = '';
 		//# Single transfers
-		if ( isset( $_GET['action'] ) &&
-			 'transfer-to-localfile' === $_GET['action'] &&
-			 isset( $_GET['file'] ) &&
-			 isset( $_REQUEST['_wpnonce'] ) ) {
+		if (
+			isset( $_GET['action'] ) &&
+			'transfer-to-localfile' === $_GET['action'] &&
+			isset( $_GET['file'] ) &&
+			isset( $_REQUEST['_wpnonce'] )
+		) {
 
 			// In our file that handles the request, verify the nonce.
 			$nonce = wp_unslash( $_REQUEST['_wpnonce'] );
@@ -626,7 +651,7 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 					$this->parent_page->menu_page(
 						'',
 						array(
-							'status' => 'failure',
+							'status'          => 'failure',
 							'urlslab-message' => 'this link is expired',
 						)
 					)
@@ -636,10 +661,12 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 			$destination_driver = Urlslab_Driver::DRIVER_LOCAL_FILE;
 		}
 
-		if ( isset( $_GET['action'] ) &&
-			 'transfer-to-s3' === $_GET['action'] &&
-			 isset( $_GET['file'] ) &&
-			 isset( $_REQUEST['_wpnonce'] ) ) {
+		if (
+			isset( $_GET['action'] ) &&
+			'transfer-to-s3' === $_GET['action'] &&
+			isset( $_GET['file'] ) &&
+			isset( $_REQUEST['_wpnonce'] )
+		) {
 
 			// In our file that handles the request, verify the nonce.
 			$nonce = wp_unslash( $_REQUEST['_wpnonce'] );
@@ -652,7 +679,7 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 					$this->parent_page->menu_page(
 						'',
 						array(
-							'status' => 'failure',
+							'status'          => 'failure',
 							'urlslab-message' => 'this link is expired',
 						)
 					)
@@ -662,10 +689,12 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 			$destination_driver = Urlslab_Driver::DRIVER_S3;
 		}
 
-		if ( isset( $_GET['action'] ) &&
-			 'transfer-to-db' === $_GET['action'] &&
-			 isset( $_GET['file'] ) &&
-			 isset( $_REQUEST['_wpnonce'] ) ) {
+		if (
+			isset( $_GET['action'] ) &&
+			'transfer-to-db' === $_GET['action'] &&
+			isset( $_GET['file'] ) &&
+			isset( $_REQUEST['_wpnonce'] )
+		) {
 
 			// In our file that handles the request, verify the nonce.
 			$nonce = wp_unslash( $_REQUEST['_wpnonce'] );
@@ -678,7 +707,7 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 					$this->parent_page->menu_page(
 						'',
 						array(
-							'status' => 'failure',
+							'status'          => 'failure',
 							'urlslab-message' => 'this link is expired',
 						)
 					)
@@ -690,7 +719,7 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 
 
 		if ( ! empty( $destination_driver ) ) {
-			$file = $this->get_file_data( $_GET['file'] );
+			$file      = $this->get_file_data( $_GET['file'] );
 			$dummy_obj = clone $file;
 			$dummy_obj->set_driver( $destination_driver );
 			try {
@@ -708,7 +737,7 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 							$this->parent_page->menu_page(
 								'',
 								array(
-									'status' => 'failure',
+									'status'          => 'failure',
 									'urlslab-message' => 'Oops something went wrong in transferring files, try again later',
 								)
 							)
@@ -720,7 +749,7 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 						$this->parent_page->menu_page(
 							'',
 							array(
-								'status' => 'failure',
+								'status'          => 'failure',
 								'urlslab-message' => 'credentials not authenticated for driver',
 							)
 						)
@@ -732,7 +761,7 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 					$this->parent_page->menu_page(
 						'',
 						array(
-							'status' => 'failure',
+							'status'          => 'failure',
 							'urlslab-message' => 'credentials not authenticated for driver - ' . $e->getMessage(),
 						)
 					)

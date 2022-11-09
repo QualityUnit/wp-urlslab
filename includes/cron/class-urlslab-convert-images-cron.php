@@ -94,24 +94,6 @@ abstract class Urlslab_Convert_Images_Cron extends Urlslab_Cron {
 	abstract protected function process_file( Urlslab_File_Data $file, string $new_file_name );
 	abstract protected function convert_next_file();
 
-	protected function insert_file_alternative_relation( Urlslab_File_Data $file, Urlslab_File_Data $file_alternative ): bool {
-		global $wpdb;
-
-		$data = array(
-			'fileid' => $file->get_fileid(),
-			'alternative_fileid' => $file_alternative->get_fileid(),
-		);
-
-		return $wpdb->query(
-			$wpdb->prepare(
-				'INSERT IGNORE INTO ' . URLSLAB_FILE_ALTERNATIVES_TABLE . // phpcs:ignore
-				' (' . implode( ',', array_keys( $data ) ) . // phpcs:ignore
-				') VALUES (%s, %s)',
-				array_values( $data )
-			)
-		);
-	}
-
 	protected function insert_alternative_file( Urlslab_File_Data $file ): bool {
 		global $wpdb;
 

@@ -119,7 +119,6 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 
 		if ( ! (
 			$this->insert_alternative_file( $webp_file ) &&
-			$this->insert_file_alternative_relation( $file, $webp_file ) &&
 			Urlslab_Driver::get_driver( $webp_file )->upload_content( $webp_file )
 		)
 		) {

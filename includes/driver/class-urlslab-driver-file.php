@@ -3,11 +3,13 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/driver/class-urlslab-driver.php';
 
 class Urlslab_Driver_File extends Urlslab_Driver {
 
-	function get_file_content( Urlslab_File_Data $file_obj ) {
-		if ( ! file_exists( $file_obj->get_local_file() ) ) {
+	function get_file_content( Urlslab_File_Pointer $file_pointer ) {
+		$file_path =
+		//TODO file pointer has no local path information
+		if ( ! file_exists( $file_pointer->get_local_file() ) ) {
 			return false;
 		}
-		return file_get_contents( $file_obj->get_local_file() );
+		return file_get_contents( $file_pointer->get_local_file() );
 	}
 
 	public function upload_content( Urlslab_File_Data $file ) {
@@ -18,7 +20,7 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 	}
 
 	private function get_file_dir( Urlslab_File_Data $file ) {
-		return '/' . self::URLSLAB_DIR . substr( $file->get_fileid(), 0, 4 ) . '/';
+		return '/' . self::URLSLAB_DIR . $file->get_filesize() . '/' . $file->get_filehash() . '/';
 	}
 
 	function save_file_to_storage( Urlslab_File_Data $file_obj, string $local_file_name ):bool {
@@ -77,15 +79,15 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 		return true;
 	}
 
-	public function save_to_file( Urlslab_File_Data $file, $file_name ): bool {
-		return copy( $file->get_local_file(), $file_name );
+	public function save_to_file( Urlslab_File_Data $file_pointer, $file_name ): bool {
+		return copy( $file_pointer->get_local_file(), $file_name );
 	}
 
 	public static function get_driver_settings(): array {
 		return array();
 	}
 
-	public function delete_content( Urlslab_File_Data $file ): bool {
+	public function delete_content( Urlslab_File_Data $file_pointer ): bool {
 		return true;
 		//we will not delete files from disk yet
 		//return unlink( $file->get_local_file() );

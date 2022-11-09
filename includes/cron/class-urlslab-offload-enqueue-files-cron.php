@@ -6,7 +6,7 @@ class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
 	protected function execute(): bool {
 		global $wpdb;
 		$file_row = $wpdb->get_row(
-			$wpdb->prepare( 'SELECT * FROM ' . URLSLAB_FILES_TABLE . ' WHERE (filestatus = %s OR (last_seen < %s AND filestatus = %s)) LIMIT 1', // phpcs:ignore
+			$wpdb->prepare( 'SELECT * FROM ' . URLSLAB_FILES_TABLE . ' WHERE (filestatus = %s OR (status_changed < %s AND filestatus = %s)) LIMIT 1', // phpcs:ignore
 				Urlslab_Driver::STATUS_NEW,
 				gmdate( 'Y-m-d H:i:s', strtotime( '-1 hour' ) ),
 				Urlslab_Driver::STATUS_PENDING
@@ -19,7 +19,9 @@ class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
 
 		$file = new Urlslab_File_Data( $file_row );
 
-		if ( ! Urlslab_Driver::get_driver( $file )->is_connected() ) {
+		$default_driver = Urlslab_Driver::get_driver( get_option(Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_NEW_FILE_DRIVER) );
+
+		if ( ! $default_driver->is_connected() ) {
 			return false;
 		}
 
@@ -28,7 +30,7 @@ class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
 			URLSLAB_FILES_TABLE,
 			array(
 				'filestatus' => Urlslab_Driver::STATUS_PENDING,
-				'last_seen' => gmdate( 'Y-m-d H:i:s' ),
+				'status_changed' => gmdate( 'Y-m-d H:i:s' ),
 			),
 			array(
 				'fileid' => $file->get_fileid(),
@@ -40,13 +42,14 @@ class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
 			return true;
 		}
 
-		if ( Urlslab_Driver::get_driver( $file )->upload_content( $file ) ) {
+		if ( $default_driver->upload_content( $file ) ) {
 			//update status to active
 			$wpdb->update(
 				URLSLAB_FILES_TABLE,
 				array(
 					'filestatus' => Urlslab_Driver::STATUS_ACTIVE,
 					'filetype' => $file->get_filetype(),
+					'status_changed' => gmdate( 'Y-m-d H:i:s' ),
 				),
 				array(
 					'fileid' => $file->get_fileid(),
@@ -59,6 +62,7 @@ class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
 				URLSLAB_FILES_TABLE,
 				array(
 					'filestatus' => Urlslab_Driver::STATUS_ERROR,
+					'status_changed' => gmdate( 'Y-m-d H:i:s' ),
 				),
 				array(
 					'fileid' => $file->get_fileid(),

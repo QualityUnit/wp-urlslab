@@ -20,31 +20,31 @@ abstract class Urlslab_Driver {
 	/**
 	 * return content of file
 	 *
-	 * @param Urlslab_File_Data $file_obj
+	 * @param Urlslab_File_Pointer $file_pointer
 	 *
 	 * @return mixed
 	 */
-	abstract function get_file_content( Urlslab_File_Data $file_obj );
+	abstract function get_file_content( Urlslab_File_Pointer $file_pointer );
 
 	/**
 	 * output content of file to standard output
 	 *
-	 * @param Urlslab_File_Data $file_obj
+	 * @param Urlslab_File_Pointer $file_pointer
 	 *
 	 * @return mixed
 	 */
-	abstract function output_file_content( Urlslab_File_Data $file_obj );
+	abstract function output_file_content( Urlslab_File_Pointer $file_pointer );
 
-	abstract function save_file_to_storage( Urlslab_File_Data $file_obj, string $local_file_name ): bool;
+	abstract function save_file_to_storage( Urlslab_File_Pointer $file_pointer, string $local_file_name ): bool;
 
 	abstract function is_connected();
 
-	abstract public function save_to_file( Urlslab_File_Data $file, $file_name ): bool;
+	abstract public function save_to_file( Urlslab_File_Pointer $file_pointer_pointer, $file_name ): bool;
 
-	abstract public function delete_content( Urlslab_File_Data $file ): bool;
+	abstract public function delete_content( Urlslab_File_Pointer $file_pointer_pointer ): bool;
 
-	public function get_url( Urlslab_File_Data $file ) {
-		return site_url( self::DOWNLOAD_URL_PATH . urlencode( $file->get_fileid() ) . '/' . urlencode( $file->get_filename() ) );
+	public function get_url( Urlslab_File_Data $file  ) {
+		return site_url( self::DOWNLOAD_URL_PATH . urlencode( $file->get_filesize() ) . '/' . urlencode( $file->get_filehash() ) . '/' . urlencode( $file->get_filename() ) );
 	}
 
 	public function upload_content( Urlslab_File_Data $file ) {
@@ -174,30 +174,29 @@ abstract class Urlslab_Driver {
 		return $tmp_name;
 	}
 
-	public static function get_driver( Urlslab_File_Data $file ): Urlslab_Driver {
-		if ( isset( self::$driver_cache[ $file->get_driver() ] ) ) {
-			return self::$driver_cache[ $file->get_driver() ];
+	public static function get_driver( $driver ): Urlslab_Driver {
+		if ( isset( self::$driver_cache[ $driver ] ) ) {
+			return self::$driver_cache[ $driver ];
 		}
 
-		switch ( $file->get_driver() ) {
+		switch ( $driver ) {
 			case self::DRIVER_DB:
-				self::$driver_cache[ $file->get_driver() ] = new Urlslab_Driver_Db();
+				self::$driver_cache[ self::DRIVER_DB ] = new Urlslab_Driver_Db();
 				break;
 			case self::DRIVER_S3:
-				self::$driver_cache[ $file->get_driver() ] = new Urlslab_Driver_S3();
+				self::$driver_cache[ self::DRIVER_S3 ] = new Urlslab_Driver_S3();
 				break;
 			case self::DRIVER_LOCAL_FILE:
-				self::$driver_cache[ $file->get_driver() ] = new Urlslab_Driver_File();
+				self::$driver_cache[ self::DRIVER_LOCAL_FILE ] = new Urlslab_Driver_File();
 				break;
 			default:
 				throw new Exception( 'Driver not found' );
 		}
-
-		return self::$driver_cache[ $file->get_driver() ];
+		return self::$driver_cache[ $driver ];
 	}
 
 	public static function transfer_file_to_storage(
-		Urlslab_File_Data $file,
+		Urlslab_File_Pointer $file_pointer,
 		string $dest_driver
 	): bool {
 		global $wpdb;
@@ -205,32 +204,33 @@ abstract class Urlslab_Driver {
 		$result   = false;
 		$tmp_name = wp_tempnam();
 		if (
-			Urlslab_Driver::get_driver( $file )->save_to_file( $file, $tmp_name ) &&
+			Urlslab_Driver::get_driver( $file_pointer->get_driver() )->save_to_file( $file_pointer, $tmp_name ) &&
 			(
-				filesize( $tmp_name ) == $file->get_filesize() ||
-				( 0 == $file->get_filesize() && 0 < filesize( $tmp_name ) )
+				filesize( $tmp_name ) == $file_pointer->get_filesize() ||
+				( 0 == $file_pointer->get_filesize() && 0 < filesize( $tmp_name ) )
 			)
 		) {
-			$old_file = clone $file;
+			$old_file = clone $file_pointer;
 
 			//set new driver of storage
-			$file->set_driver( $dest_driver );
+			$file_pointer->set_driver( $dest_driver );
 			//save file to new storage
-			if ( Urlslab_Driver::get_driver( $file )->save_file_to_storage( $file, $tmp_name ) ) {
+			if ( Urlslab_Driver::get_driver( $file_pointer->get_driver() )->save_file_to_storage( $file_pointer, $tmp_name ) ) {
 				//change driver of file in db
 				$wpdb->update(
 					URLSLAB_FILES_TABLE,
 					array(
-						'driver'   => $file->get_driver(),
+						'driver'   => $file_pointer->get_driver(),
 						'filesize' => filesize( $tmp_name ),
 					),
 					array(
-						'fileid' => $file->get_fileid(),
+						'filehash' => $file_pointer->get_fileid(),
+						'filesize' => $file_pointer->get_filesize(),
 					)
 				);
 				//delete original file
 				if ( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_DELETE_AFTER_TRANSFER, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_DELETE_AFTER_TRANSFER ) ) {
-					Urlslab_Driver::get_driver( $old_file )->delete_content( $old_file );
+					Urlslab_Driver::get_driver( $old_file->get_driver() )->delete_content( $old_file );
 				}
 
 				$result = true;
@@ -240,20 +240,6 @@ abstract class Urlslab_Driver {
 
 		return $result;
 	}
-
-	public static function get_driver_name( string $driver_initials ) {
-		switch ( $driver_initials ) {
-			case Urlslab_Driver::DRIVER_S3:
-				return 's3';
-			case Urlslab_Driver::DRIVER_DB:
-				return 'database';
-			case Urlslab_Driver::DRIVER_LOCAL_FILE:
-				return 'local file';
-			default:
-				return 'Unknown Driver';
-		}
-	}
-
 
 	protected function sanitize_output() {
 		remove_all_actions( 'template_redirect' );
