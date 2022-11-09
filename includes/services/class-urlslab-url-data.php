@@ -119,7 +119,7 @@ class Urlslab_Url_Data {
 			if ( $this->wp_pageid > 0 ) {
 				$this->url_title = get_the_title( $this->wp_pageid );
 			}
-			if ( ! strlen( $this->url_title ) ) {
+			if ( empty( $this->url_title ) ) {
 				$this->url_title = self::EMPTY;
 			}
 			global $wpdb;
@@ -151,7 +151,7 @@ class Urlslab_Url_Data {
 					$this->url_meta_description = $desc['_yoast_wpseo_metadesc'][0];
 				}
 			}
-			if ( ! strlen( $this->url_meta_description ) ) {
+			if ( empty( $this->url_meta_description ) ) {
 				$this->url_meta_description = self::EMPTY;
 			}
 			global $wpdb;
@@ -253,7 +253,7 @@ class Urlslab_Url_Data {
 		switch ( $strategy ) {
 
 			case Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY: //# phpcs:ignore
-				if ( trim( $this->url_summary ) !== '' ) {
+				if ( ! empty( $this->url_summary ) && trim( $this->url_summary ) !== '' ) {
 					return $this->url_summary;
 				}
 			case Urlslab_Link_Enhancer::DESC_TEXT_META_DESCRIPTION: //# phpcs:ignore

@@ -325,7 +325,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	private function append_video_schema( DOMDocument $document, DOMElement $youtube_loader, Urlslab_Youtube_Data $youtube_obj ) {
 		if ( ! empty( $youtube_obj->get_microdata() ) ) {
 			$schema = $document->createElement( 'div' );
-			$schema->setAttribute( 'itemscope', null );
+			$schema->setAttribute( 'itemscope', false );
 			$schema->setAttribute( 'itemtype', 'https://schema.org/VideoObject' );
 			$schema->setAttribute( 'itemprop', 'video' );
 			$this->append_meta_attribute( $document, $schema, 'name', $youtube_obj->get_title() );
