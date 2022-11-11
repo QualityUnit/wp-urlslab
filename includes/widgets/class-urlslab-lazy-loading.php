@@ -13,6 +13,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	public const SETTING_NAME_IMG_LAZY_LOADING = 'urlslab_img_lazy';
 	public const SETTING_NAME_VIDEO_LAZY_LOADING = 'urlslab_video_lazy';
 	public const SETTING_NAME_YOUTUBE_LAZY_LOADING = 'urlslab_youtube_lazy';
+	public const SETTING_NAME_REMOVE_WP_LAZY_LOADING = 'urlslab_remove_wp_lazy';
 	public const SETTING_NAME_YOUTUBE_API_KEY = 'urlslab_youtube_apikey';
 
 	public function __construct() {
@@ -27,6 +28,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		add_option( self::SETTING_NAME_IMG_LAZY_LOADING, false, '', true );
 		add_option( self::SETTING_NAME_VIDEO_LAZY_LOADING, false, '', true );
 		add_option( self::SETTING_NAME_YOUTUBE_LAZY_LOADING, false, '', true );
+		add_option( self::SETTING_NAME_REMOVE_WP_LAZY_LOADING, true, '', true );
 		add_option( self::SETTING_NAME_YOUTUBE_API_KEY, '', '', false );
 	}
 
@@ -117,6 +119,20 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 				false
 			);
 		}
+		if (
+			isset( $new_settings[ self::SETTING_NAME_REMOVE_WP_LAZY_LOADING ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_REMOVE_WP_LAZY_LOADING ] )
+		) {
+			update_option(
+				self::SETTING_NAME_REMOVE_WP_LAZY_LOADING,
+				$new_settings[ self::SETTING_NAME_REMOVE_WP_LAZY_LOADING ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_REMOVE_WP_LAZY_LOADING,
+				false
+			);
+		}
 
 		if (
 			isset( $new_settings[ self::SETTING_NAME_YOUTUBE_API_KEY ] ) &&
@@ -133,6 +149,9 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		if ( get_option( self::SETTING_NAME_YOUTUBE_LAZY_LOADING, false ) ) {
 			$this->add_youtube_lazy_loading( $document );
 		}
+		if ( get_option( self::SETTING_NAME_REMOVE_WP_LAZY_LOADING, true ) ) {
+			$this->remove_default_wp_img_lazy_loading( $document );
+		}
 		if ( get_option( self::SETTING_NAME_IMG_LAZY_LOADING, false ) ) {
 			$this->add_images_lazy_loading( $document );
 		}
@@ -142,7 +161,8 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	private function add_videos_lazy_loading( DOMDocument $document ) {
-		$dom_elements = $document->getElementsByTagName( 'video' );
+		$xpath        = new DOMXPath( $document );
+		$dom_elements = $xpath->query( "//video[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
 		foreach ( $dom_elements as $element ) {
 			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) ) {
 				$this->add_video_lazy_loading( $element );
@@ -151,7 +171,8 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	private function add_images_lazy_loading( DOMDocument $document ) {
-		$dom_elements = $document->getElementsByTagName( 'img' );
+		$xpath        = new DOMXPath( $document );
+		$dom_elements = $xpath->query( "//img[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
 		foreach ( $dom_elements as $element ) {
 			$has_lazy_loading_attr = false;
 			foreach ( urlslab_get_supported_media()['img'] as $valid_attr ) {
@@ -165,7 +186,8 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 				$this->add_img_lazy_loading( $element );
 			}
 		}
-		$dom_elements = $document->getElementsByTagName( 'source' );
+		$xpath        = new DOMXPath( $document );
+		$dom_elements = $xpath->query( "//source[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
 		foreach ( $dom_elements as $element ) {
 			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) ) {
 				$this->add_source_lazy_loading( $element );
@@ -173,11 +195,20 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		}
 	}
 
+	private function remove_default_wp_img_lazy_loading( DOMDocument $document ) {
+		$xpath        = new DOMXPath( $document );
+		$dom_elements = $xpath->query( "//img[@loading='lazy' and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-nolazy')])]" );
+		foreach ( $dom_elements as $element ) {
+			$element->removeAttribute( 'loading' );
+		}
+	}
+
 	private function add_youtube_lazy_loading( DOMDocument $document ) {
 		$youtube_ids = array();
+		$xpath       = new DOMXPath( $document );
 
-		//find all youtube iframes
-		$iframe_elements = $document->getElementsByTagName( 'iframe' );
+		//find all YouTube iframes
+		$iframe_elements = $xpath->query( "//iframe[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
 		foreach ( $iframe_elements as $element ) {
 			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) && $element->hasAttribute( 'src' ) ) {
 				$ytid = $this->get_youtube_videoid( $element->getAttribute( 'src' ) );
@@ -188,7 +219,6 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		}
 
 		//find elementor blocks
-		$xpath          = new DOMXPath( $document );
 		$elementor_divs = $xpath->query( "//div[contains(@class, 'elementor-widget-video') and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
 		foreach ( $elementor_divs as $element ) {
 			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) && $element->hasAttribute( 'data-settings' ) ) {
@@ -203,7 +233,6 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		}
 
 		//find all elements with data-ytid parameter
-		$xpath       = new DOMXPath( $document );
 		$yt_elements = $xpath->query( "//*[@data-ytid and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
 		foreach ( $yt_elements as $yt_element ) {
 			if ( ! $this->is_skip_elemenet( $yt_element, 'lazy' ) ) {
@@ -243,7 +272,6 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		}
 
 		//add schema to all elements with attribute data-ytid
-		$xpath       = new DOMXPath( $document );
 		$yt_elements = $xpath->query( "//*[@data-ytid and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
 		foreach ( $yt_elements as $yt_element ) {
 			$ytid = $yt_element->getAttribute( 'data-ytid' );
@@ -325,7 +353,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	private function append_video_schema( DOMDocument $document, DOMElement $youtube_loader, Urlslab_Youtube_Data $youtube_obj ) {
 		if ( ! empty( $youtube_obj->get_microdata() ) ) {
 			$schema = $document->createElement( 'div' );
-			$schema->setAttribute( 'itemscope', null );
+			$schema->setAttribute( 'itemscope', false );
 			$schema->setAttribute( 'itemtype', 'https://schema.org/VideoObject' );
 			$schema->setAttribute( 'itemprop', 'video' );
 			$this->append_meta_attribute( $document, $schema, 'name', $youtube_obj->get_title() );
