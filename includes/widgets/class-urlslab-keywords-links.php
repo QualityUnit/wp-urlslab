@@ -272,14 +272,19 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	private function init_keywords_cache( $input_text ) {
 		global $wpdb;
 
-		$keyword_table = URLSLAB_KEYWORDS_TABLE;
-		$lang          = urlslab_get_language();
+		$page_cache = array();
 
-		$results = wp_cache_get( 'kws_' . $lang, 'urlslab', false, $found );
-		if ( false === $results || ! $found ) {
-			$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kw_id, keyword, urlLink, urlFilter FROM ' . $keyword_table . " WHERE (lang = %s OR lang = 'all') ORDER BY kw_priority ASC, kw_length DESC", urlslab_get_language() ), 'ARRAY_A' ); // phpcs:ignore
-			wp_cache_set( 'kws_' . $lang, $results, 'urlslab', 120 );
+		$text_hash = md5( $input_text );
+		$results   = wp_cache_get( 'pg_kws_' . $text_hash, 'urlslab_kw', false, $has_page_cache );
+		if ( ! $has_page_cache ) {
+			$lang    = urlslab_get_language();
+			$results = wp_cache_get( 'kws_' . $lang, 'urlslab_kw', false, $found );
+			if ( false === $results || ! $found ) {
+				$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kw_id, keyword, urlLink, urlFilter FROM ' . URLSLAB_KEYWORDS_TABLE . " WHERE (lang = %s OR lang = 'all') ORDER BY kw_priority ASC, kw_length DESC", urlslab_get_language() ), 'ARRAY_A' ); // phpcs:ignore
+				wp_cache_set( 'kws_' . $lang, $results, 'urlslab_kw', 900 );
+			}
 		}
+
 		$this->keywords_cache = array();
 		$currentUrl           = urlslab_add_current_page_protocol( $this->get_current_page_url()->get_url() );
 
@@ -300,8 +305,13 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 					//addressing cache
 					$this->keywords_cache_ids[ strtolower( $row['keyword'] ) ][] = $row['kw_id'];
 					$this->urls_cache_ids[ $row['urlLink'] ][]                   = $row['kw_id'];
+					$page_cache[]                                                = $row;
 				}
 			}
+		}
+
+		if ( ! $has_page_cache ) {
+			wp_cache_set( 'pg_kws_' . $text_hash, $page_cache, 'urlslab_kw', 2628000 );
 		}
 	}
 
@@ -755,4 +765,9 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 		return '';
 	}
+
+	public static function keywords_changed() {
+		wp_cache_flush_group( 'urlslab_kw' );
+	}
+
 }

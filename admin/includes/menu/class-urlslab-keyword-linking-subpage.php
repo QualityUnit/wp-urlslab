@@ -382,6 +382,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		global $wpdb;
 		$wpdb->query( "TRUNCATE " . URLSLAB_KEYWORDS_TABLE ); // phpcs:ignore
 		$wpdb->query( "TRUNCATE " . URLSLAB_KEYWORDS_MAP_TABLE ); // phpcs:ignore
+		Urlslab_Keywords_Links::keywords_changed();
 	}
 
 	private function export_csv_keywords() {
@@ -427,7 +428,8 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				)
 			)
 		);
-		//# Add Keyword
+
+		Urlslab_Keywords_Links::keywords_changed();
 	}
 
 
@@ -474,7 +476,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				)
 			)
 		);
-		//# Add Keyword
+		Urlslab_Keywords_Links::keywords_changed();
 	}
 
 	/**

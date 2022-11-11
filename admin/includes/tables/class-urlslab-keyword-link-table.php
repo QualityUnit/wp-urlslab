@@ -110,6 +110,7 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 				$delete_ids
 			)
 		);
+		Urlslab_Keywords_Links::keywords_changed();
 	}
 
 	/**
@@ -127,6 +128,7 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 				$kw_md5
 			)
 		);
+		Urlslab_Keywords_Links::keywords_changed();
 	}
 
 	private function count_keywords(): ?string {

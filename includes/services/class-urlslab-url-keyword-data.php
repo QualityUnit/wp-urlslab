@@ -184,7 +184,11 @@ class Urlslab_Url_Keyword_Data {
                    urlFilter = VALUES(urlFilter),
                    kwType = VALUES(kwType)';
 
-		return $wpdb->query( $wpdb->prepare( $insert_query, $insert_values ) ); // phpcs:ignore
+		$result = $wpdb->query( $wpdb->prepare( $insert_query, $insert_values ) ); // phpcs:ignore
+
+		Urlslab_Keywords_Links::keywords_changed();
+
+		return $result;
 	}
 
 }
