@@ -12,40 +12,88 @@ class Urlslab_File_Data {
 	private $status_changed;
 	private $webp_fileid;
 	private $avif_fileid;
+	private Urlslab_File_Pointer_Data $file_pointer;
+
 
 	/**
-	 * @param array $file
+	 * @param array $file_arr
 	 */
 	public function __construct(
-		array $file
+		array $file_arr
 	) {
-		$this->fileid = $file['fileid'] ?? null;
-		$this->url = $file['url'];
-		$this->parent_url = $file['parent_url'] ?? '';
-		$this->filename = $file['filename'] ?? $this->get_filename();
-		$this->filestatus = $file['filestatus'] ?? '';
-		$this->filehash = $file['filehash'] ?? '';
-		$this->filesize = $file['filesize'] ?? 0;
-		$this->local_file = $file['local_file'] ?? '';
-		$this->status_changed = $file['status_changed'] ?? null;
-		$this->webp_fileid = $file['webp_fileid'] ?? '';
-		$this->avif_fileid = $file['avif_fileid'] ?? '';
+		$this->fileid         = $file_arr['fileid'] ?? null;
+		$this->url            = $file_arr['url'];
+		$this->parent_url     = $file_arr['parent_url'] ?? '';
+		$this->filename       = $file_arr['filename'] ?? $this->get_filename();
+		$this->filestatus     = $file_arr['filestatus'] ?? '';
+		$this->filehash       = $file_arr['filehash'] ?? '';
+		$this->filesize       = $file_arr['filesize'] ?? 0;
+		$this->local_file     = $file_arr['local_file'] ?? '';
+		$this->status_changed = $file_arr['status_changed'] ?? null;
+		$this->webp_fileid    = $file_arr['webp_fileid'] ?? '';
+		$this->avif_fileid    = $file_arr['avif_fileid'] ?? '';
+		$this->file_pointer   = new Urlslab_File_Pointer_Data( $file_arr );
 	}
 
 	public function as_array() {
-		return array(
-			'fileid' => $this->get_fileid(),
-			'url' => $this->get_url(),
-			'parent_url' => $this->get_parent_url(),
-			'filename' => $this->get_filename(),
-			'filestatus' => $this->get_filestatus(),
-			'filehash' => $this->get_filehash(),
-			'filesize' => $this->get_filesize(),
-			'local_file' => $this->get_local_file(),
-			'status_changed' => $this->get_status_changed(),
-			'webp_fileid' => $this->webp_fileid,
-			'avif_fileid' => $this->avif_fileid,
+		return array_merge(
+			array(
+				'fileid'         => $this->get_fileid(),
+				'url'            => $this->get_url(),
+				'parent_url'     => $this->get_parent_url(),
+				'filename'       => $this->get_filename(),
+				'filestatus'     => $this->get_filestatus(),
+				'filehash'       => $this->get_filehash(),
+				'filesize'       => $this->get_filesize(),
+				'local_file'     => $this->get_local_file(),
+				'status_changed' => $this->get_status_changed(),
+				'webp_fileid'    => $this->webp_fileid,
+				'avif_fileid'    => $this->avif_fileid,
+			),
+			$this->file_pointer->as_array()
 		);
+	}
+
+	public static function get_file( string $fileid ): ?Urlslab_File_Data {
+		global $wpdb;
+		$table         = URLSLAB_FILES_TABLE;
+		$table_pointer = URLSLAB_FILE_POINTERS_TABLE;
+
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT f.*, p.* FROM $table f LEFT JOIN $table_pointer p ON f.filehash=p.filehash AND f.filesize=p.filesize WHERE f.fileid=%s", // phpcs:ignore
+				$fileid
+			),
+			ARRAY_A
+		);
+
+		if (empty($row)) {
+			return null;
+		}
+
+		return new Urlslab_File_Data( $row );
+	}
+
+	public static function get_files( array $file_ids ): array {
+		global $wpdb;
+		$files   = array();
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT * FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON f.hashid=p.hashid AND f.filesize=p.filesize WHERE f.fileid in (' . trim( str_repeat( '%s,', count( $file_ids ) ), ',' ) . ')', // phpcs:ignore
+				$file_ids
+			),
+			'ARRAY_A'
+		);
+		foreach ( $results as $file_array ) {
+			$file_obj                         = new Urlslab_File_Data( $file_array );
+			$files[ $file_obj->get_fileid() ] = $file_obj;
+		}
+
+		return $files;
+	}
+
+	public function get_file_pointer(): Urlslab_File_Pointer_Data {
+		return $this->file_pointer;
 	}
 
 	public function get_fileid() {
@@ -55,6 +103,7 @@ class Urlslab_File_Data {
 		if ( ! empty( $this->get_url() ) ) {
 			return md5( $this->get_url_no_protocol() );
 		}
+
 		return '';
 	}
 
@@ -72,21 +121,24 @@ class Urlslab_File_Data {
 				return basename( $this->local_file );
 			}
 			$parsed_url = parse_url( $this->url );
+
 			return ( isset( $parsed_url['query'] ) ? md5( $parsed_url['query'] ) . '-' : '' ) . basename( isset( $parsed_url['path'] ) ? $parsed_url['path'] : md5( $this->url ) );
 		}
+
 		return $this->filename;
 	}
 
 	public function get_url( $append_file_name = '' ) {
 		$parsed_url = parse_url( $this->url );
-		$scheme = isset( $parsed_url['scheme'] ) ? $parsed_url['scheme'] . '://' : parse_url( get_site_url(), PHP_URL_SCHEME ) . '://';
-		$host = isset( $parsed_url['host'] ) ? $parsed_url['host'] : parse_url( get_site_url(), PHP_URL_HOST );
-		$port = isset( $parsed_url['port'] ) ? ':' . $parsed_url['port'] : '';
-		$user = isset( $parsed_url['user'] ) ? $parsed_url['user'] : '';
-		$pass = isset( $parsed_url['pass'] ) ? ':' . $parsed_url['pass'] : '';
-		$pass = ( $user || $pass ) ? "$pass@" : '';
-		$path = isset( $parsed_url['path'] ) ? $parsed_url['path'] : '';
-		$query = isset( $parsed_url['query'] ) ? '?' . $parsed_url['query'] : '';
+		$scheme     = isset( $parsed_url['scheme'] ) ? $parsed_url['scheme'] . '://' : parse_url( get_site_url(), PHP_URL_SCHEME ) . '://';
+		$host       = isset( $parsed_url['host'] ) ? $parsed_url['host'] : parse_url( get_site_url(), PHP_URL_HOST );
+		$port       = isset( $parsed_url['port'] ) ? ':' . $parsed_url['port'] : '';
+		$user       = isset( $parsed_url['user'] ) ? $parsed_url['user'] : '';
+		$pass       = isset( $parsed_url['pass'] ) ? ':' . $parsed_url['pass'] : '';
+		$pass       = ( $user || $pass ) ? "$pass@" : '';
+		$path       = isset( $parsed_url['path'] ) ? $parsed_url['path'] : '';
+		$query      = isset( $parsed_url['query'] ) ? '?' . $parsed_url['query'] : '';
+
 		return "$scheme$user$pass$host$port$path$append_file_name$query";
 	}
 
@@ -96,13 +148,14 @@ class Urlslab_File_Data {
 
 	private function get_url_no_protocol() {
 		$parsed_url = parse_url( $this->url );
-		$host = isset( $parsed_url['host'] ) ? $parsed_url['host'] : parse_url( get_site_url(), PHP_URL_HOST );
-		$port = isset( $parsed_url['port'] ) ? ':' . $parsed_url['port'] : '';
-		$user = isset( $parsed_url['user'] ) ? $parsed_url['user'] : '';
-		$pass = isset( $parsed_url['pass'] ) ? ':' . $parsed_url['pass'] : '';
-		$pass = ( $user || $pass ) ? "$pass@" : '';
-		$path = isset( $parsed_url['path'] ) ? $parsed_url['path'] : '';
-		$query = isset( $parsed_url['query'] ) ? '?' . $parsed_url['query'] : '';
+		$host       = isset( $parsed_url['host'] ) ? $parsed_url['host'] : parse_url( get_site_url(), PHP_URL_HOST );
+		$port       = isset( $parsed_url['port'] ) ? ':' . $parsed_url['port'] : '';
+		$user       = isset( $parsed_url['user'] ) ? $parsed_url['user'] : '';
+		$pass       = isset( $parsed_url['pass'] ) ? ':' . $parsed_url['pass'] : '';
+		$pass       = ( $user || $pass ) ? "$pass@" : '';
+		$path       = isset( $parsed_url['path'] ) ? $parsed_url['path'] : '';
+		$query      = isset( $parsed_url['query'] ) ? '?' . $parsed_url['query'] : '';
+
 		return "$user$pass$host$port$path$query";
 	}
 
@@ -117,6 +170,7 @@ class Urlslab_File_Data {
 	public function get_filehash() {
 		return $this->filehash;
 	}
+
 	public function get_filesize() {
 		return $this->filesize;
 	}

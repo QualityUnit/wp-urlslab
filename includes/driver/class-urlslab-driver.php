@@ -20,28 +20,28 @@ abstract class Urlslab_Driver {
 	/**
 	 * return content of file
 	 *
-	 * @param Urlslab_File_Pointer $file_pointer
+	 * @param Urlslab_File_Data $file_pointer
 	 *
 	 * @return mixed
 	 */
-	abstract function get_file_content( Urlslab_File_Pointer $file_pointer );
+	abstract function get_file_content( Urlslab_File_Data $file );
 
 	/**
 	 * output content of file to standard output
 	 *
-	 * @param Urlslab_File_Pointer $file_pointer
+	 * @param Urlslab_File_Data $file
 	 *
 	 * @return mixed
 	 */
-	abstract function output_file_content( Urlslab_File_Pointer $file_pointer );
+	abstract function output_file_content( Urlslab_File_Data $file );
 
-	abstract function save_file_to_storage( Urlslab_File_Pointer $file_pointer, string $local_file_name ): bool;
+	abstract function save_file_to_storage( Urlslab_File_Data $file, string $local_file_name ): bool;
 
 	abstract function is_connected();
 
-	abstract public function save_to_file( Urlslab_File_Pointer $file_pointer_pointer, $file_name ): bool;
+	abstract public function save_to_file( Urlslab_File_Data $file, $file_name ): bool;
 
-	abstract public function delete_content( Urlslab_File_Pointer $file_pointer_pointer ): bool;
+	abstract public function delete_content( Urlslab_File_Data $file ): bool;
 
 	public function get_url( Urlslab_File_Data $file  ) {
 		return site_url( self::DOWNLOAD_URL_PATH . urlencode( $file->get_filesize() ) . '/' . urlencode( $file->get_filehash() ) . '/' . urlencode( $file->get_filename() ) );
@@ -196,7 +196,7 @@ abstract class Urlslab_Driver {
 	}
 
 	public static function transfer_file_to_storage(
-		Urlslab_File_Pointer $file_pointer,
+		Urlslab_File_Data $file,
 		string $dest_driver
 	): bool {
 		global $wpdb;
@@ -204,33 +204,33 @@ abstract class Urlslab_Driver {
 		$result   = false;
 		$tmp_name = wp_tempnam();
 		if (
-			Urlslab_Driver::get_driver( $file_pointer->get_driver() )->save_to_file( $file_pointer, $tmp_name ) &&
+			Urlslab_Driver::get_driver( $file->get_file_pointer()->get_driver() )->save_to_file( $file, $tmp_name ) &&
 			(
-				filesize( $tmp_name ) == $file_pointer->get_filesize() ||
-				( 0 == $file_pointer->get_filesize() && 0 < filesize( $tmp_name ) )
+				filesize( $tmp_name ) == $file->get_file_pointer()->get_filesize() ||
+				( 0 == $file->get_file_pointer()->get_filesize() && 0 < filesize( $tmp_name ) )
 			)
 		) {
-			$old_file = clone $file_pointer;
+			$old_file = clone $file;
 
 			//set new driver of storage
-			$file_pointer->set_driver( $dest_driver );
+			$file->get_file_pointer()->set_driver( $dest_driver );
 			//save file to new storage
-			if ( Urlslab_Driver::get_driver( $file_pointer->get_driver() )->save_file_to_storage( $file_pointer, $tmp_name ) ) {
+			if ( Urlslab_Driver::get_driver( $file->get_file_pointer()->get_driver() )->save_file_to_storage( $file, $tmp_name ) ) {
 				//change driver of file in db
 				$wpdb->update(
-					URLSLAB_FILES_TABLE,
+					URLSLAB_FILE_POINTERS_TABLE,
 					array(
-						'driver'   => $file_pointer->get_driver(),
-						'filesize' => filesize( $tmp_name ),
+						'driver'   => $file->get_file_pointer()->get_driver(),
+						'filesize' => filesize( $tmp_name ),	//TODO update filesize also in files table if this was changed
 					),
 					array(
-						'filehash' => $file_pointer->get_fileid(),
-						'filesize' => $file_pointer->get_filesize(),
+						'filehash' => $file->get_filehash(),
+						'filesize' => $file->get_filesize(),
 					)
 				);
 				//delete original file
 				if ( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_DELETE_AFTER_TRANSFER, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_DELETE_AFTER_TRANSFER ) ) {
-					Urlslab_Driver::get_driver( $old_file->get_driver() )->delete_content( $old_file );
+					Urlslab_Driver::get_driver( $old_file->get_file_pointer()->get_driver() )->delete_content( $old_file );
 				}
 
 				$result = true;

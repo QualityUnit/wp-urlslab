@@ -1,6 +1,6 @@
 <?php
 
-class Urlslab_File_Pointer {
+class Urlslab_File_Pointer_Data {
 
 	private $filehash;
 	private $filesize;

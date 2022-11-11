@@ -55,7 +55,7 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 			)
 		);
 
-		if ( ! Urlslab_Driver::get_driver( $file )->is_connected() ) {
+		if ( ! Urlslab_Driver::get_driver( $file->get_file_pointer()->get_driver() )->is_connected() ) {
 			//NOT connected, continue with next file
 			return true;
 		}
@@ -63,7 +63,7 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 
 		//create local image file
 		$original_image_filename = wp_tempnam();
-		if ( Urlslab_Driver::get_driver( $file )->save_to_file( $file, $original_image_filename ) ) {
+		if ( Urlslab_Driver::get_driver( $file->get_file_pointer()->get_driver() )->save_to_file( $file, $original_image_filename ) ) {
 
 			$new_file = $this->convert_image_format( $file, $original_image_filename, 'webp' );
 			unlink( $original_image_filename );
@@ -119,7 +119,7 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 
 		if ( ! (
 			$this->insert_alternative_file( $webp_file ) &&
-			Urlslab_Driver::get_driver( $webp_file )->upload_content( $webp_file )
+			Urlslab_Driver::get_driver( $webp_file->get_file_pointer()->get_driver() )->upload_content( $webp_file )
 		)
 		) {
 			unlink( $new_file_name );

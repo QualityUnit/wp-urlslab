@@ -3,13 +3,12 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/driver/class-urlslab-driver.php';
 
 class Urlslab_Driver_File extends Urlslab_Driver {
 
-	function get_file_content( Urlslab_File_Pointer $file_pointer ) {
-		$file_path =
+	function get_file_content( Urlslab_File_Data $file ) {
 		//TODO file pointer has no local path information
-		if ( ! file_exists( $file_pointer->get_local_file() ) ) {
+		if ( ! file_exists( $file->get_local_file() ) ) {
 			return false;
 		}
-		return file_get_contents( $file_pointer->get_local_file() );
+		return file_get_contents( $file->get_local_file() );
 	}
 
 	public function upload_content( Urlslab_File_Data $file ) {
@@ -23,18 +22,18 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 		return '/' . self::URLSLAB_DIR . $file->get_filesize() . '/' . $file->get_filehash() . '/';
 	}
 
-	function save_file_to_storage( Urlslab_File_Data $file_obj, string $local_file_name ):bool {
-		$dir = wp_upload_dir()['basedir'] . $this->get_file_dir( $file_obj );
+	function save_file_to_storage( Urlslab_File_Data $file, string $local_file_name ):bool {
+		$dir = wp_upload_dir()['basedir'] . $this->get_file_dir( $file );
 		if ( ! file_exists( $dir ) ) {
 			wp_mkdir_p( $dir );
 		}
 
 		global $wpdb;
-		$new_file = $dir . $file_obj->get_filename();
+		$new_file = $dir . $file->get_filename();
 
 		if ( file_exists( $new_file ) ) {
 			//# synchronising DB with file data
-			$wpdb->update( URLSLAB_FILES_TABLE, array( 'local_file' => $new_file ), array( 'fileid' => $file_obj->get_fileid() ) );
+			$wpdb->update( URLSLAB_FILES_TABLE, array( 'local_file' => $new_file ), array( 'fileid' => $file->get_fileid() ) );
 			return true;
 		}
 
@@ -43,18 +42,18 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 		}
 
 		//set new local file name
-		$wpdb->update( URLSLAB_FILES_TABLE, array( 'local_file' => $new_file ), array( 'fileid' => $file_obj->get_fileid() ) );
+		$wpdb->update( URLSLAB_FILES_TABLE, array( 'local_file' => $new_file ), array( 'fileid' => $file->get_fileid() ) );
 		return true;
 	}
 
-	function output_file_content( Urlslab_File_Data $file_obj ) {
-		if ( ! file_exists( $file_obj->get_local_file() ) ) {
+	function output_file_content( Urlslab_File_Data $file ) {
+		if ( ! file_exists( $file->get_local_file() ) ) {
 			return false;
 		}
 
 		$this->sanitize_output();
 
-		$handle = fopen( $file_obj->get_local_file(), 'rb' );
+		$handle = fopen( $file->get_local_file(), 'rb' );
 		if ( false === $handle ) {
 			return false;
 		}
@@ -79,8 +78,8 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 		return true;
 	}
 
-	public function save_to_file( Urlslab_File_Data $file_pointer, $file_name ): bool {
-		return copy( $file_pointer->get_local_file(), $file_name );
+	public function save_to_file( Urlslab_File_Data $file, $file_name ): bool {
+		return copy( $file->get_local_file(), $file_name );
 	}
 
 	public static function get_driver_settings(): array {

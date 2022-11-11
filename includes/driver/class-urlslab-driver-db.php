@@ -4,7 +4,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/driver/class-urlslab-driver.php';
 class Urlslab_Driver_Db extends Urlslab_Driver {
 	const MAX_DB_CHUNK_SIZE = 500000;
 
-	public function save_file_to_storage( Urlslab_File_Pointer $file_pointer, $local_file_name ):bool {
+	public function save_file_to_storage( Urlslab_File_Data $file, $local_file_name ):bool {
 		if ( ! file_exists( $local_file_name ) || ! filesize( $local_file_name ) ) {
 			return false;
 		}
@@ -15,7 +15,7 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 		}
 
 		//clean old content data
-		$this->delete_content( $file_pointer );
+		$this->delete_content( $file );
 
 		global $wpdb;
 		$result = true;
@@ -26,8 +26,8 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 			$result = $wpdb->insert(
 				URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE,
 				array(
-					'filehash' => $file_pointer->get_filehash(),
-					'filesize' => $file_pointer->get_filesize(),
+					'filehash' => $file->get_filehash(),
+					'filesize' => $file->get_filesize(),
 					'partid' => $part_id,
 					'content' => $contents,
 				)
@@ -43,12 +43,12 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 		return false !== $result;
 	}
 
-	function output_file_content( Urlslab_File_Pointer $file_pointer ) {
+	function output_file_content( Urlslab_File_Data $file ) {
 		$this->sanitize_output();
 
 		global $wpdb;
 		if ( is_object( $wpdb->dbh ) && $wpdb->use_mysqli ) {
-			$records = $wpdb->dbh->query( $wpdb->prepare( 'select content from ' . URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE . ' WHERE filehash=%s AND filesize=%d ORDER BY partid', $file_pointer->get_filehash(), $file_pointer->get_filesize() ) ); // phpcs:ignore
+			$records = $wpdb->dbh->query( $wpdb->prepare( 'select content from ' . URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE . ' WHERE filehash=%s AND filesize=%d ORDER BY partid', $file->get_filehash(), $file->get_filesize() ) ); // phpcs:ignore
 			if ( false === $records ) {
 				return; //no content???
 			}
@@ -65,7 +65,7 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 				require_once( ABSPATH . 'wp-admin/includes/file.php' );
 			}
 			$local_tmp_file = wp_tempnam();
-			if ( $this->save_to_file( $file_pointer, $local_tmp_file ) ) {
+			if ( $this->save_to_file( $file, $local_tmp_file ) ) {
 				$serving_fp = fopen( $local_tmp_file, 'rb' );
 				fpassthru( $serving_fp );
 				fclose( $serving_fp );
@@ -79,9 +79,9 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 		}
 	}
 
-	function get_file_content( Urlslab_File_Pointer $file_pointer ) {
+	function get_file_content( Urlslab_File_Data $file ) {
 		global $wpdb;
-		$results = $wpdb->get_results( $wpdb->prepare( 'select content from ' . URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE . ' WHERE filehash=%s AND filesize=%d ORDER BY partid', $file_pointer->get_filehash(), $file_pointer->get_filesize() ), ARRAY_A ); // phpcs:ignore
+		$results = $wpdb->get_results( $wpdb->prepare( 'select content from ' . URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE . ' WHERE filehash=%s AND filesize=%d ORDER BY partid', $file->get_filehash(), $file->get_filesize() ), ARRAY_A ); // phpcs:ignore
 		if ( empty( $results ) ) {
 			return false;
 		}
@@ -96,10 +96,10 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 		return true;
 	}
 
-	public function save_to_file( Urlslab_File_Pointer $file_pointer, $file_name ): bool {
+	public function save_to_file( Urlslab_File_Data $file, $file_name ): bool {
 		global $wpdb;
 		$fhandle = fopen( $file_name, 'wb' );
-		$sql = $wpdb->prepare( 'select content from ' . URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE . ' WHERE filehash=%s AND filesize=%d ORDER BY partid', $file_pointer->get_filehash(), $file_pointer->get_filesize() ); // phpcs:ignore
+		$sql = $wpdb->prepare( 'select content from ' . URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE . ' WHERE filehash=%s AND filesize=%d ORDER BY partid', $file->get_filehash(), $file->get_filesize() ); // phpcs:ignore
 		if ( is_object( $wpdb->dbh ) && $wpdb->use_mysqli ) {
 			$records = $wpdb->dbh->query( $sql );
 			if ( false !== $records ) {
@@ -129,8 +129,8 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 		return array();
 	}
 
-	public function delete_content( Urlslab_File_Pointer $file_pointer ): bool {
+	public function delete_content( Urlslab_File_Data $file ): bool {
 		global $wpdb;
-		return $wpdb->delete( URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE, array( 'filehash' => $file_pointer->get_filehash(), 'filesize' => $file_pointer->get_filesize() ) );
+		return $wpdb->delete( URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE, array( 'filehash' => $file->get_filehash(), 'filesize' => $file->get_filesize() ) );
 	}
 }

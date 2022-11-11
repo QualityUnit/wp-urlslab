@@ -29,7 +29,7 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 		array_unshift( $values, Urlslab_Driver::STATUS_ACTIVE, Urlslab_File_Data::FILE_ALTERNATIVE_NOT_PROCESSED );
 
 		$file_row = $wpdb->get_row(
-			$wpdb->prepare( 'SELECT * FROM ' . URLSLAB_FILES_TABLE . ' WHERE filestatus = %s AND avif_alternative = %s AND filetype IN (' . $placeholders . ') LIMIT 1', $values ), // phpcs:ignore
+			$wpdb->prepare( 'SELECT * FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON f.hashid=p.hasid AND f.filesize=p.filesize WHERE f.filestatus = %s AND f.avif_fileid = %s AND f.filetype IN (' . $placeholders . ') LIMIT 1', $values ), // phpcs:ignore
 			ARRAY_A
 		);
 
@@ -63,7 +63,7 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 
 		//create local image file
 		$original_image_filename = wp_tempnam();
-		if ( Urlslab_Driver::get_driver( $file )->save_to_file( $file, $original_image_filename ) ) {
+		if ( Urlslab_Driver::get_driver( $file->get_file_pointer()->get_driver() )->save_to_file( $file, $original_image_filename ) ) {
 
 			$new_file_name = $this->convert_image_format( $file, $original_image_filename, 'avif' );
 			unlink( $original_image_filename );
@@ -110,7 +110,7 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 
 		if ( ! (
 			$this->insert_alternative_file( $avif_file ) &&
-			Urlslab_Driver::get_driver( $avif_file )->upload_content( $avif_file )
+			Urlslab_Driver::get_driver( $avif_file->get_file_pointer()->get_driver() )->upload_content( $avif_file )
 		)
 		) {
 			unlink( $new_file_name );

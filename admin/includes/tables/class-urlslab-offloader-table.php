@@ -6,10 +6,6 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 
 class Urlslab_Offloader_Table extends WP_List_Table {
 
-	private function transform( array $row ): Urlslab_File_Data {
-		return new Urlslab_File_Data( $row );
-	}
-
 	/**
 	 * @param string $search_key the searching key to search for
 	 * @param string $status_filter the filter of files for status
@@ -31,6 +27,7 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 		int $offset ): array {
 		global $wpdb;
 		$table = URLSLAB_FILES_TABLE;
+		$pointer_table = URLSLAB_FILE_POINTERS_TABLE;
 		$join_table = URLSLAB_FILE_URLS_TABLE;
 		$values = array();
 
@@ -46,8 +43,11 @@ class Urlslab_Offloader_Table extends WP_List_Table {
        					 v.driver AS driver,
        					 v.webp_alternative AS webp_alternative,
        					 v.avif_alternative AS avif_alternative,
-       					 SUM(!ISNULL(d.urlMd5)) AS imageCountUsage
-       FROM $table AS v LEFT JOIN $join_table AS d ON d.fileid = v.fileid";
+       					 SUM(!ISNULL(d.urlMd5)) AS imageCountUsage,
+       					 p.*
+		FROM $table AS v 
+		LEFT JOIN $join_table AS d ON d.fileid = v.fileid
+		LEFT JOIN $pointer_table AS p ON v.hashid = p.hashid AND v.filesize=p.filesize";
 		$where = '';
 
 		/* -- Preparing the condition -- */
@@ -120,7 +120,7 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 		}
 		$query_res = array();
 		foreach ( $res as $row ) {
-			$query_res[] = $this->transform( $row );
+			$query_res[] = new Urlslab_File_Data( $row );
 		}
 		return $query_res;
 	}
@@ -218,7 +218,7 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 
 			case 'col_generated_resource':
 				if ( $item->get_filestatus() == Urlslab_Driver::STATUS_ACTIVE ) {
-					$url = Urlslab_Driver::get_driver( $item )->get_url( $item );
+					$url = Urlslab_Driver::get_driver( $item->get_file_pointer()->get_driver() )->get_url( $item );
 					return sprintf(
 						'<a href="%s" target="_blank">%s</a>',
 						$url,

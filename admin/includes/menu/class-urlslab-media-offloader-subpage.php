@@ -613,22 +613,6 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 		//# Transfer single file
 	}
 
-	private function get_file_data( string $fileid ): Urlslab_File_Data {
-		global $wpdb;
-		$table         = URLSLAB_FILES_TABLE;
-		$table_pointer = URLSLAB_FILE_POINTERS_TABLE;
-
-		return new Urlslab_File_Data(
-			$wpdb->get_row(
-				$wpdb->prepare(
-					"SELECT f.*, p.* FROM $table f LEFT JOIN $table_pointer p ON f.filehash=p.filehash AND f.filesize=p.filesize WHERE f.fileid=%s", // phpcs:ignore
-					$fileid
-				),
-				ARRAY_A
-			)
-		);
-	}
-
 	private function process_file_transfer() {
 
 		$destination_driver = '';
@@ -719,16 +703,27 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 
 
 		if ( ! empty( $destination_driver ) ) {
-			$file      = $this->get_file_data( $_GET['file'] );
-			$dummy_obj = clone $file;
-			$dummy_obj->set_driver( $destination_driver );
+			$file = Urlslab_File_Data::get_file( $_GET['file'] );
+			if (null == $file) {
+				wp_safe_redirect(
+					$this->parent_page->menu_page(
+						'',
+						array(
+							'status'          => 'failure',
+							'urlslab-message' => 'File not found',
+						)
+					)
+				);
+				exit();
+			}
+
 			try {
 				if (
-					Urlslab_Driver::get_driver( $file )->is_connected() &&
-					Urlslab_Driver::get_driver( $dummy_obj )->is_connected()
+					Urlslab_Driver::get_driver( $file->get_file_pointer()->get_driver() )->is_connected() &&
+					Urlslab_Driver::get_driver( $destination_driver )->is_connected()
 				) {
 					$result = Urlslab_Driver::transfer_file_to_storage(
-						$this->get_file_data( $_GET['file'] ),
+						$file,
 						$destination_driver
 					);
 
