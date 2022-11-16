@@ -1,6 +1,10 @@
 <?php
 
 class Urlslab_File_Data {
+	public const ALTERNATIVE_PROCESSING = 'P';
+	public const ALTERNATIVE_DISABLED = 'D';
+	public const ALTERNATIVE_ERROR = 'E';
+
 	private $fileid;
 	private $url;
 	private $parent_url;
@@ -13,6 +17,7 @@ class Urlslab_File_Data {
 	private $webp_fileid;
 	private $avif_fileid;
 	private Urlslab_File_Pointer_Data $file_pointer;
+	private $usage_count = 0;
 
 
 	/**
@@ -28,6 +33,7 @@ class Urlslab_File_Data {
 		$this->filestatus     = $file_arr['filestatus'] ?? '';
 		$this->filehash       = $file_arr['filehash'] ?? '';
 		$this->filesize       = $file_arr['filesize'] ?? 0;
+		$this->usage_count    = $file_arr['imageCountUsage'] ?? 0;
 		$this->local_file     = $file_arr['local_file'] ?? '';
 		$this->status_changed = $file_arr['status_changed'] ?? null;
 		$this->webp_fileid    = $file_arr['webp_fileid'] ?? '';
@@ -61,13 +67,24 @@ class Urlslab_File_Data {
 
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT f.*, p.* FROM $table f LEFT JOIN $table_pointer p ON f.filehash=p.filehash AND f.filesize=p.filesize WHERE f.fileid=%s", // phpcs:ignore
+				"SELECT 
+    					 f.*, 
+    					 p.filehash as p_filehash,
+       					 p.filesize as p_filesize,
+       					 p.filetype as filetype,
+       					 p.width as width,
+       					 p.driver AS driver,
+       					 p.webp_hash AS webp_hash,
+       					 p.avif_hash AS avif_hash,
+       					 p.webp_filesize AS webp_filesize,
+       					 p.avif_filesize AS avif_filesize 
+						FROM $table f LEFT JOIN $table_pointer p ON f.filehash=p.filehash AND f.filesize=p.filesize	WHERE f.fileid=%s LIMIT 1", // phpcs:ignore
 				$fileid
 			),
 			ARRAY_A
 		);
 
-		if (empty($row)) {
+		if ( empty( $row ) ) {
 			return null;
 		}
 
@@ -79,7 +96,18 @@ class Urlslab_File_Data {
 		$files   = array();
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON f.hashid=p.hashid AND f.filesize=p.filesize WHERE f.fileid in (' . trim( str_repeat( '%s,', count( $file_ids ) ), ',' ) . ')', // phpcs:ignore
+				'SELECT 
+    					f.*,
+    					p.filehash as p_filehash,
+       					 p.filesize as p_filesize,
+       					 p.filetype as filetype,
+       					 p.width as width,
+       					 p.driver AS driver,
+       					 p.webp_hash AS webp_hash,
+       					 p.avif_hash AS avif_hash,
+       					 p.webp_filesize AS webp_filesize,
+       					 p.avif_filesize AS avif_filesize
+						FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON f.filehash=p.filehash AND f.filesize=p.filesize WHERE f.fileid in (' . trim( str_repeat( '%s,', count( $file_ids ) ), ',' ) . ')', // phpcs:ignore
 				$file_ids
 			),
 			'ARRAY_A'
@@ -173,5 +201,10 @@ class Urlslab_File_Data {
 
 	public function get_filesize() {
 		return $this->filesize;
+	}
+
+	//TODO used just in UI - not very nice pattern, something to refactor in the react admin UI
+	public function get_image_usage_count() {
+		return $this->usage_count;
 	}
 }

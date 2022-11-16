@@ -212,8 +212,8 @@ class Urlslab_File_Pointer_Data {
 	public function __construct(
 		array $file
 	) {
-		$this->filehash = $file['filehash'];
-		$this->filesize = $file['filesize'] ?? 0;
+		$this->filehash = $file['p_filehash'] ?? '';
+		$this->filesize = $file['p_filesize'] ?? 0;
 		$this->filetype = $file['filetype'] ?? '';
 		$this->width = $file['width'] ?? 0;
 		$this->height = $file['height'] ?? 0;
@@ -237,6 +237,24 @@ class Urlslab_File_Pointer_Data {
 			'webp_filesize' => $this->webp_filesize,
 			'avif_filesize' => $this->avif_filesize,
 		);
+	}
+
+	public static function get_file_pointer( string $filehash, int $filesize ): ?Urlslab_File_Pointer_Data {
+		global $wpdb;
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				'SELECT *	FROM ' . URLSLAB_FILE_POINTERS_TABLE . ' WHERE filehash=%s AND filesize=%d LIMIT 1', // phpcs:ignore
+				$filehash,
+				$filesize
+			),
+			ARRAY_A
+		);
+
+		if ( empty( $row ) ) {
+			return null;
+		}
+
+		return new Urlslab_File_Pointer_Data( $row );
 	}
 
 	public function get_filehash() {

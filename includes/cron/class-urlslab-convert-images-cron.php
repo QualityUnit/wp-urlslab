@@ -13,6 +13,7 @@ abstract class Urlslab_Convert_Images_Cron extends Urlslab_Cron {
 	 * @param Urlslab_File_Data $file
 	 * @param string $original_image_filename
 	 * @param string $new_format
+	 *
 	 * @return false|string new filename
 	 */
 	private function convert_with_imagick( Urlslab_File_Data $file, string $original_image_filename, string $new_format ): string {
@@ -32,14 +33,18 @@ abstract class Urlslab_Convert_Images_Cron extends Urlslab_Cron {
 		$tmp_name = wp_tempnam();
 		if ( ! $image->writeImage( $tmp_name ) ) {
 			unlink( $tmp_name );
+
 			return '';
 		}
+
 		return $tmp_name;
 	}
-		/**
+
+	/**
 	 * @param Urlslab_File_Data $file
 	 * @param string $original_image_filename
 	 * @param string $new_format
+	 *
 	 * @return false|string new filename
 	 */
 	private function convert_with_native( Urlslab_File_Data $file, string $original_image_filename, string $new_format ): string {
@@ -76,12 +81,14 @@ abstract class Urlslab_Convert_Images_Cron extends Urlslab_Cron {
 			case 'webp':
 				if ( ! function_exists( 'imagewebp' ) || ! imagewebp( $im, $tmp_name, get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_WEPB_QUALITY ) ) ) {
 					unlink( $tmp_name );
+
 					return '';
 				}
 				break;
 			case 'avif':
 				if ( ! function_exists( 'imageavif' ) || ! imageavif( $im, $tmp_name, get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_AVIF_QUALITY ), get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_AVIF_SPEED ) ) ) {
 					unlink( $tmp_name );
+
 					return false;
 				}
 				break;
@@ -91,32 +98,31 @@ abstract class Urlslab_Convert_Images_Cron extends Urlslab_Cron {
 	}
 
 	abstract protected function get_file_types(): array;
-	abstract protected function process_file( Urlslab_File_Data $file, string $new_file_name );
+
+	abstract protected function process_file( Urlslab_File_Data $file, string $new_file_name ): ?Urlslab_File_Data;
+
 	abstract protected function convert_next_file();
 
 	protected function insert_alternative_file( Urlslab_File_Data $file ): bool {
 		global $wpdb;
 
 		$data = array(
-			'fileid' => $file->get_fileid(),
-			'url' => $file->get_url(),
-			'local_file' => $file->get_local_file(),
-			'filename' => $file->get_filename(),
-			'filesize' => $file->get_filesize(),
-			'filetype' => $file->get_filetype(),
-			'filestatus' => $file->get_filestatus(),
-			'driver' => $file->get_driver(),
-			'width' => $file->get_width(),
-			'height' => $file->get_height(),
-			'webp_alternative' => $file->get_webp_alternative(),
-			'avif_alternative' => $file->get_avif_alternative(),
+			'fileid'           => $file->get_fileid(),
+			'url'              => $file->get_url(),
+			'local_file'       => $file->get_local_file(),
+			'filename'         => $file->get_filename(),
+			'filesize'         => $file->get_filesize(),
+			'filestatus'       => $file->get_filestatus(),
+			'status_changed' => time(),
+			'webp_fileid' => $file->get_webp_fileid(),
+			'avif_fileid' => $file->get_avif_fileid(),
 		);
 
 		return $wpdb->query(
 			$wpdb->prepare(
 				'INSERT IGNORE INTO ' . URLSLAB_FILES_TABLE . // phpcs:ignore
 				' (' . implode( ',', array_keys( $data ) ) . // phpcs:ignore
-				') VALUES (%s, %s, %s, %s, %d, %s, %s, %s, %d, %d, %s, %s)',
+				') VALUES (%s, %s, %s, %s, %d, %s, %d, %s, %s)',
 				array_values( $data )
 			)
 		);

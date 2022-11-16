@@ -43,71 +43,113 @@ abstract class Urlslab_Driver {
 
 	abstract public function delete_content( Urlslab_File_Data $file ): bool;
 
-	public function get_url( Urlslab_File_Data $file  ) {
-		return site_url( self::DOWNLOAD_URL_PATH . urlencode( $file->get_filesize() ) . '/' . urlencode( $file->get_filehash() ) . '/' . urlencode( $file->get_filename() ) );
+	abstract public function get_driver_code(): string;
+
+	public function get_url( Urlslab_File_Data $file ) {
+		//URL to standard proxy script
+		return site_url( self::DOWNLOAD_URL_PATH . urlencode( $file->get_fileid() ) . '/' . urlencode( $file->get_filename() ) );
 	}
 
-	public function upload_content( Urlslab_File_Data $file ) {
-		$result      = false;
-		$update_data = array();
+	public function get_file_hash( $file_name ) {
+		return hash_file( 'xxh3', $file_name, false );
+	}
 
-		if ( strlen( $file->get_local_file() ) && file_exists( $file->get_local_file() ) ) {
-			$file_size = filesize( $file->get_local_file() );
-			if ( $file_size && ( empty( $file->get_filesize() ) || $file->get_filesize() != $file_size ) ) {
-				$update_data['filesize'] = $file_size;
-			}
-			if ( empty( $file->get_height() ) || 0 === $file->get_height() || empty( $file->get_width() ) || 0 === $file->get_width() ) {
-				$size = getimagesize( $file->get_local_file() );
-				if ( $size ) {
-					$update_data['width']  = $size[0];
-					$update_data['height'] = $size[1];
+	/**
+	 * @param Urlslab_File_Data $file
+	 *
+	 * @return string|null filename of downloaded file
+	 */
+	private function download_url( Urlslab_File_Data $file ): ?string {
+		$local_tmp_file = download_url( $file->get_url() );
+		if ( is_wp_error( $local_tmp_file ) ) {
+			if (
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMAGE_RESIZING, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_IMAGE_RESIZING ) &&
+				404 == $local_tmp_file->get_error_data( 'http_404' )['code'] &&
+				preg_match( '/^(.*?)-([0-9]*?)x([0-9]*?)\.(.*?)$/', $file->get_url(), $matches )
+			) {
+				if ( strlen( $file->get_parent_url() ) ) {
+					$original_tmp_file = download_url( $file->get_parent_url() );
+				} else {
+					$original_tmp_file = download_url( $matches[1] . '.' . $matches[4] );
 				}
-			}
-			$result = $this->save_file_to_storage( $file, $file->get_local_file() );
-		} else if ( strlen( $file->get_url() ) ) {
-			$local_tmp_file = download_url( $file->get_url() );
-			if ( is_wp_error( $local_tmp_file ) ) {
-				if (
-					get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMAGE_RESIZING, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_IMAGE_RESIZING ) &&
-					404 == $local_tmp_file->get_error_data( 'http_404' )['code'] &&
-					preg_match( '/^(.*?)-([0-9]*?)x([0-9]*?)\.(.*?)$/', $file->get_url(), $matches )
-				) {
-					if ( strlen( $file->get_parent_url() ) ) {
-						$original_tmp_file = download_url( $file->get_parent_url() );
-					} else {
-						$original_tmp_file = download_url( $matches[1] . '.' . $matches[4] );
-					}
-					if ( ! is_wp_error( $original_tmp_file ) ) {
-						$local_tmp_file = $this->resize_image( $original_tmp_file, $matches[2], $matches[3] );
-						unlink( $original_tmp_file );
-						if ( false === $local_tmp_file ) {
-							//on this place we could use original file as new file if we want, but it would generate useless traffic
-							return false;
-						}
-					} else {
+				if ( ! is_wp_error( $original_tmp_file ) ) {
+					$local_tmp_file = $this->resize_image( $original_tmp_file, $matches[2], $matches[3] );
+					unlink( $original_tmp_file );
+					if ( false === $local_tmp_file ) {
+						//on this place we could use original file as new file if we want, but it would generate useless traffic
 						return false;
 					}
 				} else {
 					return false;
 				}
+			} else {
+				return false;
 			}
-			$file_size = filesize( $local_tmp_file );
-			if ( $file_size && ( empty( $file->get_filesize() ) || $file->get_filesize() != $file_size ) ) {
-				$update_data['filesize'] = $file_size;
+		}
+
+		return $local_tmp_file;
+	}
+
+	public function upload_content( Urlslab_File_Data $file ) {
+		global $wpdb;
+
+		if ( strlen( $file->get_local_file() ) && file_exists( $file->get_local_file() ) ) {
+			$file_name   = $file->get_local_file();
+			$delete_file = false;
+		} else {
+			$file_name = $this->download_url( $file );
+			if ( false === $file_name ) {
+				return false;
 			}
-			if ( empty( $file->get_height() ) || 0 === $file->get_height() || empty( $file->get_width() ) || 0 === $file->get_width() ) {
-				$size = getimagesize( $local_tmp_file );
-				if ( $size ) {
-					$update_data['width']  = $size[0];
-					$update_data['height'] = $size[1];
-				}
+			$delete_file = true;
+		}
+
+		$update_data = array();
+
+		$filehash = $this->get_file_hash( $file_name );
+		if ( $filehash && $file->get_filehash() != $filehash ) {
+			$update_data['filehash'] = $filehash;
+		}
+
+		$file_size = filesize( $file_name );
+		if ( $file_size && ( empty( $file->get_filesize() ) || $file->get_filesize() != $file_size ) ) {
+			$update_data['filesize'] = $file_size;
+		}
+
+		//if pointer exists, stop uploading
+		$pointer = Urlslab_File_Pointer_Data::get_file_pointer( $filehash, $file_size );
+
+		if ( null == $pointer ) {
+			$result = $this->save_file_to_storage( $file, $file_name );
+
+			//create pointer
+			$size = getimagesize( $file_name );
+			if ( $size ) {
+				$width  = $size[0];
+				$height = $size[1];
+			} else {
+				$width  = 0;
+				$height = 0;
 			}
-			$result = $this->save_file_to_storage( $file, $local_tmp_file );
-			unlink( $local_tmp_file );
+
+			$wpdb->insert(
+				URLSLAB_FILE_POINTERS_TABLE,
+				array(
+					'filehash' => $filehash,
+					'filesize' => $file_size,
+					'driver'   => $this->get_driver_code(),
+					'filetype' => Urlslab_File_Pointer_Data::get_mime_type_from_filename( $file_name ),
+					'width'    => $width,
+					'height'   => $height,
+				)
+			);
+		}
+
+		if ( $delete_file ) {
+			unlink( $file_name );
 		}
 
 		if ( $result ) {
-			global $wpdb;
 			//update filesize attribute
 			if ( ! empty( $update_data ) ) {
 				$wpdb->update( URLSLAB_FILES_TABLE, $update_data, array( 'fileid' => $file->get_fileid() ) );
@@ -192,6 +234,7 @@ abstract class Urlslab_Driver {
 			default:
 				throw new Exception( 'Driver not found' );
 		}
+
 		return self::$driver_cache[ $driver ];
 	}
 
@@ -221,7 +264,7 @@ abstract class Urlslab_Driver {
 					URLSLAB_FILE_POINTERS_TABLE,
 					array(
 						'driver'   => $file->get_file_pointer()->get_driver(),
-						'filesize' => filesize( $tmp_name ),	//TODO update filesize also in files table if this was changed
+						'filesize' => filesize( $tmp_name ),
 					),
 					array(
 						'filehash' => $file->get_filehash(),

@@ -5,11 +5,11 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 
 	public function is_format_supported() {
 		return function_exists( 'imageavif' ) ||
-			(
-				extension_loaded( 'imagick' ) &&
-				count( Imagick::queryFormats( 'AVIF*' ) ) > 0 &&
-				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE, false )
-			);
+			   (
+				   extension_loaded( 'imagick' ) &&
+				   count( Imagick::queryFormats( 'AVIF*' ) ) > 0 &&
+				   get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE, false )
+			   );
 	}
 
 	protected function get_file_types(): array {
@@ -26,10 +26,24 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 		}
 
 		$placeholders = implode( ',', array_fill( 0, count( $values ), '%s' ) );
-		array_unshift( $values, Urlslab_Driver::STATUS_ACTIVE, Urlslab_File_Data::FILE_ALTERNATIVE_NOT_PROCESSED );
+		array_unshift( $values, Urlslab_Driver::STATUS_ACTIVE );
 
 		$file_row = $wpdb->get_row(
-			$wpdb->prepare( 'SELECT * FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON f.hashid=p.hasid AND f.filesize=p.filesize WHERE f.filestatus = %s AND f.avif_fileid = %s AND f.filetype IN (' . $placeholders . ') LIMIT 1', $values ), // phpcs:ignore
+			$wpdb->prepare(
+				'SELECT 
+    					 f.*, 
+    					 p.filehash as p_filehash,
+       					 p.filesize as p_filesize,
+       					 p.filetype as filetype,
+       					 p.width as width,
+       					 p.driver AS driver,
+       					 p.webp_hash AS webp_hash,
+       					 p.avif_hash AS avif_hash,
+       					 p.webp_filesize AS webp_filesize,
+       					 p.avif_filesize AS avif_filesize 
+						FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . " p ON f.filehash=p.hasid AND f.filesize=p.filesize WHERE f.filestatus = %s AND (f.avif_fileid = null OR f.avif_fileid = '') AND f.filetype IN (" . $placeholders . ') LIMIT 1', // phpcs:ignore
+				$values
+			),
 			ARRAY_A
 		);
 
@@ -38,7 +52,7 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 		}
 
 		$file = new Urlslab_File_Data( $file_row );
-		if ( Urlslab_File_Data::FILE_ALTERNATIVE_NOT_PROCESSED !== $file->get_avif_alternative() ) {
+		if ( ! empty( $file->get_avif_fileid() ) ) {
 			//This file is already processing, disabled or processed -> continue to next file
 			return true;
 		}
@@ -47,11 +61,10 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 		$wpdb->update(
 			URLSLAB_FILES_TABLE,
 			array(
-				'avif_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_PROCESSING,
+				'avif_fileid' => Urlslab_File_Data::ALTERNATIVE_PROCESSING,
 			),
 			array(
 				'fileid' => $file->get_fileid(),
-				'avif_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_NOT_PROCESSED,
 			)
 		);
 
@@ -69,42 +82,59 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 			unlink( $original_image_filename );
 
 			if ( empty( $new_file_name ) || ! file_exists( $new_file_name ) ) {
+				$wpdb->update(
+					URLSLAB_FILES_TABLE,
+					array(
+						'avif_fileid' => Urlslab_File_Data::ALTERNATIVE_DISABLED,
+					),
+					array(
+						'fileid' => $file->get_fileid(),
+					)
+				);
+
 				return true;
 			}
 
-			$this->process_file( $file, $new_file_name );
+			$avif_file = $this->process_file( $file, $new_file_name );
 
+			if ( $avif_file ) {
+				$data = array(
+					'avif_fileid' => $avif_file->get_fileid(),
+				);
+			} else {
+				$data = array(
+					'avif_fileid' => Urlslab_File_Data::ALTERNATIVE_ERROR,
+				);
+			}
 			//processing of file done
 			$wpdb->update(
 				URLSLAB_FILES_TABLE,
-				array(
-					'avif_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_AVAILABLE,
-				),
+				$data,
 				array(
 					'fileid' => $file->get_fileid(),
 				)
 			);
 		}
+
 		return true;
 	}
 
-	protected function process_file( Urlslab_File_Data $file, string $new_file_name ) {
+	protected function process_file( Urlslab_File_Data $file, string $new_file_name ): ?Urlslab_File_Data {
 		global $wpdb;
 
 		$avif_file = new Urlslab_File_Data(
 			array(
-				'url' => $file->get_url( '.avif' ),
-				'parent_url' => $file->get_parent_url(),
-				'filename' => $file->get_filename() . '.avif',
-				'filesize' => filesize( $new_file_name ),
-				'filetype' => 'image/avif',
-				'width' => $file->get_width(),
-				'height' => $file->get_height(),
-				'filestatus' => Urlslab_Driver::STATUS_PENDING,
-				'local_file' => $new_file_name,
-				'driver' => $file->get_driver(),
-				'webp_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_DISABLED,
-				'avif_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_DISABLED,
+				'url'         => $file->get_url( '.avif' ),
+				'parent_url'  => $file->get_parent_url(),
+				'filename'    => $file->get_filename() . '.avif',
+				'filesize'    => filesize( $new_file_name ),
+				'filetype'    => 'image/avif',
+				'width'       => $file->get_width(),
+				'height'      => $file->get_height(),
+				'filestatus'  => Urlslab_Driver::STATUS_PENDING,
+				'local_file'  => $new_file_name,
+				'webp_fileid' => Urlslab_File_Data::ALTERNATIVE_DISABLED,
+				'avif_fileid' => Urlslab_File_Data::ALTERNATIVE_DISABLED,
 			)
 		);
 
@@ -114,6 +144,7 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 		)
 		) {
 			unlink( $new_file_name );
+
 			return false;
 		}
 		$wpdb->update(
@@ -126,6 +157,7 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 			)
 		);
 		unlink( $new_file_name );
-		return true;
+
+		return $avif_file;
 	}
 }

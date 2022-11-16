@@ -80,7 +80,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 	}
 
 	private function get_file_dir( Urlslab_File_Data $file ) {
-		return self::URLSLAB_DIR . substr( $file->get_fileid(), 0, 4 ) . '/';
+		return self::URLSLAB_DIR . $file->get_filesize() . '/' . $file->get_filehash() . '/';
 	}
 
 	public function get_url( Urlslab_File_Data $file ) {
@@ -244,4 +244,9 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 
 		return true;
 	}
+
+	public function get_driver_code(): string {
+		return self::DRIVER_S3;
+	}
+
 }

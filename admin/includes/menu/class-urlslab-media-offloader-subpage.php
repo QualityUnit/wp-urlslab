@@ -704,7 +704,7 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 
 		if ( ! empty( $destination_driver ) ) {
 			$file = Urlslab_File_Data::get_file( $_GET['file'] );
-			if (null == $file) {
+			if ( null == $file ) {
 				wp_safe_redirect(
 					$this->parent_page->menu_page(
 						'',

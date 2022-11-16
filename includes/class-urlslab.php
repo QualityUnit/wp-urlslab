@@ -197,6 +197,8 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-url-data-response.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-error-response.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-keyword-data.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-file-data.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-file-pointer-data.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-youtube-data.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-api-key.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-data-fetcher.php';

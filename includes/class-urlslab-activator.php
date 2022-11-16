@@ -284,7 +284,7 @@ class Urlslab_Activator {
 				driver char(1) NOT NULL,
 				webp_hash varchar(32) NOT NULL DEFAULT '',
 				webp_filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
-				avif_hashid varchar(32) NOT NULL DEFAULT '',
+				avif_hash varchar(32) NOT NULL DEFAULT '',
 				avif_filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
 				PRIMARY KEY (filehash,filesize)
 		) $charset_collate;";
