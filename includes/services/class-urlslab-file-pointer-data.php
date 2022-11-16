@@ -293,7 +293,8 @@ class Urlslab_File_Pointer_Data {
 				$finfo = finfo_open( FILEINFO_MIME );
 				$mimetype = finfo_file( $finfo, $filename );
 				finfo_close( $finfo );
-				return $mimetype;
+				$mimetype = explode(';', $mimetype);
+				return $mimetype[0];
 			}
 		}
 		return 'application/octet-stream';

@@ -60,7 +60,7 @@ class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
 				URLSLAB_FILES_TABLE,
 				array(
 					'filestatus'     => Urlslab_Driver::STATUS_ACTIVE,
-					'filetype'       => $file->get_filetype(),
+					'filetype'       => $file->get_file_pointer()->get_filetype(),
 					'status_changed' => gmdate( 'Y-m-d H:i:s' ),
 				),
 				array(

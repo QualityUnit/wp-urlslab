@@ -51,7 +51,7 @@ abstract class Urlslab_Driver {
 	}
 
 	public function get_file_hash( $file_name ) {
-		return hash_file( 'xxh3', $file_name, false );
+		return hash_file( 'crc32', $file_name );
 	}
 
 	/**
@@ -109,11 +109,13 @@ abstract class Urlslab_Driver {
 		$filehash = $this->get_file_hash( $file_name );
 		if ( $filehash && $file->get_filehash() != $filehash ) {
 			$update_data['filehash'] = $filehash;
+			$file->set_filehash($filehash);
 		}
 
 		$file_size = filesize( $file_name );
 		if ( $file_size && ( empty( $file->get_filesize() ) || $file->get_filesize() != $file_size ) ) {
 			$update_data['filesize'] = $file_size;
+			$file->set_filesize($file_size);
 		}
 
 		//if pointer exists, stop uploading
@@ -138,7 +140,7 @@ abstract class Urlslab_Driver {
 					'filehash' => $filehash,
 					'filesize' => $file_size,
 					'driver'   => $this->get_driver_code(),
-					'filetype' => Urlslab_File_Pointer_Data::get_mime_type_from_filename( $file_name ),
+					'filetype' => Urlslab_File_Pointer_Data::get_mime_type_from_filename( $file->get_filename() ),
 					'width'    => $width,
 					'height'   => $height,
 				)

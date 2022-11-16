@@ -207,4 +207,12 @@ class Urlslab_File_Data {
 	public function get_image_usage_count() {
 		return $this->usage_count;
 	}
+
+	public function set_filehash( string $filehash ) {
+		$this->filehash = $filehash;
+	}
+
+	public function set_filesize( int $file_size ) {
+		$this->filesize = $file_size;
+	}
 }

@@ -95,11 +95,7 @@ class Urlslab {
 			return $default;
 		}
 
-		if ( isset( $option[ $name ] ) ) {
-			return $option[ $name ];
-		} else {
-			return $default;
-		}
+		return $option[ $name ] ?? $default;
 	}
 
 	/**

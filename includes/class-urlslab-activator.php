@@ -276,7 +276,7 @@ class Urlslab_Activator {
 		$table_name = URLSLAB_FILE_POINTERS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
-				filehash char(32) NOT NULL,
+				filehash varchar(32) NOT NULL,
 				filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
 				filetype varchar(100),
 				width mediumint(8) UNSIGNED ZEROFILL DEFAULT NULL,
@@ -298,7 +298,7 @@ class Urlslab_Activator {
 		$table_name = URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
-    		  filehash char(32) NOT NULL,
+    		  filehash varchar(32) NOT NULL,
     		  filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
 			  partid SMALLINT UNSIGNED NOT NULL,
 			  content longblob DEFAULT NULL,
