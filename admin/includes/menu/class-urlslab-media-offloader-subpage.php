@@ -719,7 +719,7 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 
 			try {
 				if (
-					Urlslab_Driver::get_driver( $file->get_file_pointer()->get_driver() )->is_connected() &&
+					$file->get_file_pointer()->get_driver()->is_connected() &&
 					Urlslab_Driver::get_driver( $destination_driver )->is_connected()
 				) {
 					$result = Urlslab_Driver::transfer_file_to_storage(

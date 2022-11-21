@@ -30,7 +30,15 @@ class Urlslab_Offload_Transfer_Files_Cron extends Urlslab_Cron {
 		global $wpdb;
 		$file_row = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_FILE_POINTERS_TABLE . ' WHERE driver <> %s AND driver IN (' . implode(',', $placeholders) . ') LIMIT 1', // phpcs:ignore
+				'SELECT f.*, 
+       					 p.filehash as p_filehash,
+       					 p.filesize as p_filesize,
+       					 p.width as width,
+       					 p.driver AS driver,
+       					 p.webp_hash AS webp_hash,
+       					 p.avif_hash AS avif_hash,
+       					 p.webp_filesize AS webp_filesize,
+       					 p.avif_filesize AS avif_filesize FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON f.filehash=p.filehash AND f.filesize=p.filesize WHERE p.driver <> %s AND p.driver IN (' . implode(',', $placeholders) . ') LIMIT 1', // phpcs:ignore
 				$data
 			),
 			ARRAY_A
@@ -40,7 +48,7 @@ class Urlslab_Offload_Transfer_Files_Cron extends Urlslab_Cron {
 		}
 
 		return Urlslab_Driver::transfer_file_to_storage(
-			new Urlslab_File_Pointer_Data( $file_row ),
+			new Urlslab_File_Data( $file_row ),
 			$latest_file_driver
 		);
 	}

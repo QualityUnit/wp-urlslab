@@ -1,61 +1,230 @@
 <?php
 
-class Urlslab_File_Data {
+class Urlslab_File_Data extends Urlslab_Data {
 	public const ALTERNATIVE_PROCESSING = 'P';
 	public const ALTERNATIVE_DISABLED = 'D';
 	public const ALTERNATIVE_ERROR = 'E';
 
-	private $fileid;
-	private $url;
-	private $parent_url;
-	private $filename;
-	private $filestatus;
-	private $filehash;
-	private $filesize;
-	private $local_file;
-	private $status_changed;
-	private $webp_fileid;
-	private $avif_fileid;
-	private Urlslab_File_Pointer_Data $file_pointer;
-	private $usage_count = 0;
 
+	static $mime_types = array(
+		'txt'  => 'text/plain',
+		'htm'  => 'text/html',
+		'html' => 'text/html',
+		'css'  => 'text/css',
+		'json' => array(
+			'application/json',
+			'text/json',
+		),
+		'xml'  => 'application/xml',
+		'swf'  => 'application/x-shockwave-flash',
+		'flv'  => 'video/x-flv',
+
+		'hqx'   => 'application/mac-binhex40',
+		'cpt'   => 'application/mac-compactpro',
+		'csv'   => array(
+			'text/x-comma-separated-values',
+			'text/comma-separated-values',
+			'application/octet-stream',
+			'application/vnd.ms-excel',
+			'application/x-csv',
+			'text/x-csv',
+			'text/csv',
+			'application/csv',
+			'application/excel',
+			'application/vnd.msexcel',
+		),
+		'bin'   => 'application/macbinary',
+		'dms'   => 'application/octet-stream',
+		'lha'   => 'application/octet-stream',
+		'lzh'   => 'application/octet-stream',
+		'exe'   => array(
+			'application/octet-stream',
+			'application/x-msdownload',
+		),
+		'class' => 'application/octet-stream',
+		'so'    => 'application/octet-stream',
+		'sea'   => 'application/octet-stream',
+		'dll'   => 'application/octet-stream',
+		'oda'   => 'application/oda',
+		'ps'    => 'application/postscript',
+		'smi'   => 'application/smil',
+		'smil'  => 'application/smil',
+		'mif'   => 'application/vnd.mif',
+		'wbxml' => 'application/wbxml',
+		'wmlc'  => 'application/wmlc',
+		'dcr'   => 'application/x-director',
+		'dir'   => 'application/x-director',
+		'dxr'   => 'application/x-director',
+		'dvi'   => 'application/x-dvi',
+		'gtar'  => 'application/x-gtar',
+		'gz'    => 'application/x-gzip',
+		'php'   => 'application/x-httpd-php',
+		'php4'  => 'application/x-httpd-php',
+		'php3'  => 'application/x-httpd-php',
+		'phtml' => 'application/x-httpd-php',
+		'phps'  => 'application/x-httpd-php-source',
+		'js'    => array(
+			'application/javascript',
+			'application/x-javascript',
+		),
+		'sit'   => 'application/x-stuffit',
+		'tar'   => 'application/x-tar',
+		'tgz'   => array(
+			'application/x-tar',
+			'application/x-gzip-compressed',
+		),
+		'xhtml' => 'application/xhtml+xml',
+		'xht'   => 'application/xhtml+xml',
+		'bmp'   => array(
+			'image/bmp',
+			'image/x-windows-bmp',
+		),
+		'gif'   => 'image/gif',
+		'jpeg'  => array(
+			'image/jpeg',
+			'image/pjpeg',
+		),
+		'jpg'   => array(
+			'image/jpeg',
+			'image/pjpeg',
+		),
+		'jpe'   => array(
+			'image/jpeg',
+			'image/pjpeg',
+		),
+		'png'   => array(
+			'image/png',
+			'image/x-png',
+		),
+		'tiff'  => 'image/tiff',
+		'tif'   => 'image/tiff',
+		'shtml' => 'text/html',
+		'text'  => 'text/plain',
+		'log'   => array(
+			'text/plain',
+			'text/x-log',
+		),
+		'rtx'   => 'text/richtext',
+		'rtf'   => 'text/rtf',
+		'xsl'   => 'text/xml',
+		'docx'  => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		'xlsx'  => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+		'word'  => array(
+			'application/msword',
+			'application/octet-stream',
+		),
+		'xl'    => 'application/excel',
+		'eml'   => 'message/rfc822',
+
+		// images
+		'png'   => 'image/png',
+		'jpe'   => 'image/jpeg',
+		'jpeg'  => 'image/jpeg',
+		'jpg'   => 'image/jpeg',
+		'gif'   => 'image/gif',
+		'bmp'   => 'image/bmp',
+		'ico'   => 'image/vnd.microsoft.icon',
+		'tiff'  => 'image/tiff',
+		'tif'   => 'image/tiff',
+		'svg'   => 'image/svg+xml',
+		'svgz'  => 'image/svg+xml',
+
+		// archives
+		'zip'   => array(
+			'application/x-zip',
+			'application/zip',
+			'application/x-zip-compressed',
+		),
+		'rar'   => 'application/x-rar-compressed',
+		'msi'   => 'application/x-msdownload',
+		'cab'   => 'application/vnd.ms-cab-compressed',
+
+		// audio/video
+		'mid'   => 'audio/midi',
+		'midi'  => 'audio/midi',
+		'mpga'  => 'audio/mpeg',
+		'mp2'   => 'audio/mpeg',
+		'mp3'   => array(
+			'audio/mpeg',
+			'audio/mpg',
+			'audio/mpeg3',
+			'audio/mp3',
+		),
+		'aif'   => 'audio/x-aiff',
+		'aiff'  => 'audio/x-aiff',
+		'aifc'  => 'audio/x-aiff',
+		'ram'   => 'audio/x-pn-realaudio',
+		'rm'    => 'audio/x-pn-realaudio',
+		'rpm'   => 'audio/x-pn-realaudio-plugin',
+		'ra'    => 'audio/x-realaudio',
+		'rv'    => 'video/vnd.rn-realvideo',
+		'wav'   => array(
+			'audio/x-wav',
+			'audio/wave',
+			'audio/wav',
+		),
+		'mpeg'  => 'video/mpeg',
+		'mpg'   => 'video/mpeg',
+		'mpe'   => 'video/mpeg',
+		'qt'    => 'video/quicktime',
+		'mov'   => 'video/quicktime',
+		'avi'   => 'video/x-msvideo',
+		'movie' => 'video/x-sgi-movie',
+
+		// adobe
+		'pdf'   => 'application/pdf',
+		'psd'   => array(
+			'image/vnd.adobe.photoshop',
+			'application/x-photoshop',
+		),
+		'ai'    => 'application/postscript',
+		'eps'   => 'application/postscript',
+		'ps'    => 'application/postscript',
+
+		// ms office
+		'doc'   => 'application/msword',
+		'rtf'   => 'application/rtf',
+		'xls'   => array(
+			'application/excel',
+			'application/vnd.ms-excel',
+			'application/msexcel',
+		),
+		'ppt'   => array(
+			'application/powerpoint',
+			'application/vnd.ms-powerpoint',
+		),
+		// open office
+		'odt'   => 'application/vnd.oasis.opendocument.text',
+		'ods'   => 'application/vnd.oasis.opendocument.spreadsheet',
+	);
+
+
+	private Urlslab_File_Pointer_Data $file_pointer;
 
 	/**
 	 * @param array $file_arr
 	 */
 	public function __construct(
-		array $file_arr
+		array $file_arr = array(), $loaded_from_db = true
 	) {
-		$this->fileid         = $file_arr['fileid'] ?? null;
-		$this->url            = $file_arr['url'];
-		$this->parent_url     = $file_arr['parent_url'] ?? '';
-		$this->filename       = $file_arr['filename'] ?? $this->get_filename();
-		$this->filestatus     = $file_arr['filestatus'] ?? '';
-		$this->filehash       = $file_arr['filehash'] ?? '';
-		$this->filesize       = $file_arr['filesize'] ?? 0;
-		$this->usage_count    = $file_arr['imageCountUsage'] ?? 0;
-		$this->local_file     = $file_arr['local_file'] ?? '';
-		$this->status_changed = $file_arr['status_changed'] ?? null;
-		$this->webp_fileid    = $file_arr['webp_fileid'] ?? '';
-		$this->avif_fileid    = $file_arr['avif_fileid'] ?? '';
-		$this->file_pointer   = new Urlslab_File_Pointer_Data( $file_arr );
+		$this->set( 'fileid', $file_arr['fileid'] ?? null, $loaded_from_db );
+		$this->set( 'url', $file_arr['url'], $loaded_from_db );
+		$this->set( 'parent_url', $file_arr['parent_url'] ?? '', $loaded_from_db );
+		$this->set( 'filename', $file_arr['filename'] ?? $this->get_filename(), $loaded_from_db );
+		$this->set( 'filestatus', $file_arr['filestatus'] ?? '', $loaded_from_db );
+		$this->set( 'filehash', $file_arr['filehash'] ?? '', $loaded_from_db );
+		$this->set( 'filesize', $file_arr['filesize'] ?? 0, $loaded_from_db );
+		$this->set( 'usage_count', $file_arr['imageCountUsage'] ?? 0, true );
+		$this->set( 'local_file', $file_arr['local_file'] ?? '', $loaded_from_db );
+		$this->set( 'status_changed', $file_arr['status_changed'] ?? gmdate( 'Y-m-d H:i:s' ), $loaded_from_db );
+		$this->set( 'webp_fileid', $file_arr['webp_fileid'] ?? '', $loaded_from_db );
+		$this->set( 'avif_fileid', $file_arr['avif_fileid'] ?? '', $loaded_from_db );
+		$this->file_pointer = new Urlslab_File_Pointer_Data( $file_arr, $loaded_from_db );
 	}
 
-	public function as_array() {
+	public function as_array(): array {
 		return array_merge(
-			array(
-				'fileid'         => $this->get_fileid(),
-				'url'            => $this->get_url(),
-				'parent_url'     => $this->get_parent_url(),
-				'filename'       => $this->get_filename(),
-				'filestatus'     => $this->get_filestatus(),
-				'filehash'       => $this->get_filehash(),
-				'filesize'       => $this->get_filesize(),
-				'local_file'     => $this->get_local_file(),
-				'status_changed' => $this->get_status_changed(),
-				'webp_fileid'    => $this->webp_fileid,
-				'avif_fileid'    => $this->avif_fileid,
-			),
+			$this->data,
 			$this->file_pointer->as_array()
 		);
 	}
@@ -71,7 +240,6 @@ class Urlslab_File_Data {
     					 f.*, 
     					 p.filehash as p_filehash,
        					 p.filesize as p_filesize,
-       					 p.filetype as filetype,
        					 p.width as width,
        					 p.driver AS driver,
        					 p.webp_hash AS webp_hash,
@@ -100,7 +268,6 @@ class Urlslab_File_Data {
     					f.*,
     					p.filehash as p_filehash,
        					 p.filesize as p_filesize,
-       					 p.filetype as filetype,
        					 p.width as width,
        					 p.driver AS driver,
        					 p.webp_hash AS webp_hash,
@@ -125,39 +292,27 @@ class Urlslab_File_Data {
 	}
 
 	public function get_fileid() {
-		if ( ! empty( $this->fileid ) ) {
-			return $this->fileid;
-		}
-		if ( ! empty( $this->get_url() ) ) {
-			return md5( $this->get_url_no_protocol() );
+		if ( empty( $this->get( 'fileid' ) ) && ! empty( $this->get_url() ) ) {
+			$this->set( 'fileid', md5( $this->get_url_no_protocol() ) );
 		}
 
-		return '';
-	}
-
-	public function get_filestatus() {
-		return $this->filestatus;
-	}
-
-	public function get_local_file() {
-		return $this->local_file;
+		return $this->get( 'fileid' );
 	}
 
 	public function get_filename() {
-		if ( empty( $this->filename ) ) {
-			if ( ! empty( $this->local_file ) ) {
-				return basename( $this->local_file );
+		if ( empty( $this->get( 'filename' ) ) ) {
+			if ( ! empty( $this->get( 'local_file' ) ) ) {
+				return basename( $this->get( 'local_file' ) );
 			}
-			$parsed_url = parse_url( $this->url );
-
-			return ( isset( $parsed_url['query'] ) ? md5( $parsed_url['query'] ) . '-' : '' ) . basename( isset( $parsed_url['path'] ) ? $parsed_url['path'] : md5( $this->url ) );
+			$parsed_url = parse_url( $this->get( 'url' ) );
+			$this->set( 'filename', ( isset( $parsed_url['query'] ) ? md5( $parsed_url['query'] ) . '-' : '' ) . basename( isset( $parsed_url['path'] ) ? $parsed_url['path'] : md5( $this->get( 'url' ) ) ) );
 		}
 
-		return $this->filename;
+		return $this->get( 'filename' );
 	}
 
 	public function get_url( $append_file_name = '' ) {
-		$parsed_url = parse_url( $this->url );
+		$parsed_url = parse_url( $this->get( 'url' ) );
 		$scheme     = isset( $parsed_url['scheme'] ) ? $parsed_url['scheme'] . '://' : parse_url( get_site_url(), PHP_URL_SCHEME ) . '://';
 		$host       = isset( $parsed_url['host'] ) ? $parsed_url['host'] : parse_url( get_site_url(), PHP_URL_HOST );
 		$port       = isset( $parsed_url['port'] ) ? ':' . $parsed_url['port'] : '';
@@ -170,12 +325,8 @@ class Urlslab_File_Data {
 		return "$scheme$user$pass$host$port$path$append_file_name$query";
 	}
 
-	public function get_parent_url() {
-		return $this->parent_url;
-	}
-
 	private function get_url_no_protocol() {
-		$parsed_url = parse_url( $this->url );
+		$parsed_url = parse_url( $this->get( 'url' ) );
 		$host       = isset( $parsed_url['host'] ) ? $parsed_url['host'] : parse_url( get_site_url(), PHP_URL_HOST );
 		$port       = isset( $parsed_url['port'] ) ? ':' . $parsed_url['port'] : '';
 		$user       = isset( $parsed_url['user'] ) ? $parsed_url['user'] : '';
@@ -187,32 +338,66 @@ class Urlslab_File_Data {
 		return "$user$pass$host$port$path$query";
 	}
 
-	public function get_avif_fileid() {
-		return $this->avif_fileid;
-	}
-
-	public function get_webp_fileid() {
-		return $this->webp_fileid;
-	}
-
-	public function get_filehash() {
-		return $this->filehash;
-	}
-
-	public function get_filesize() {
-		return $this->filesize;
-	}
-
-	//TODO used just in UI - not very nice pattern, something to refactor in the react admin UI
-	public function get_image_usage_count() {
-		return $this->usage_count;
-	}
-
 	public function set_filehash( string $filehash ) {
-		$this->filehash = $filehash;
+		$this->set( 'filehash', $filehash );
+		$this->get_file_pointer()->set( 'filehash', $filehash );
 	}
 
 	public function set_filesize( int $file_size ) {
-		$this->filesize = $file_size;
+		$this->set( 'filesize', $file_size );
+		$this->get_file_pointer()->set( 'filesize', $file_size );
+	}
+
+	public function get_filetype() {
+		if ( empty( $this->get( 'filetype' ) ) ) {
+			$this->set( 'filetype', $this->get_mime_type_from_filename( $this->get_filename() ) );
+		}
+
+		return $this->get( 'filetype' );
+	}
+
+	public function get_mime_type_from_filename( $filename ) {
+		$ext = explode( '.', $filename );
+		$ext = strtolower( end( $ext ) );
+
+		if ( array_key_exists( $ext, self::$mime_types ) ) {
+			return ( is_array( self::$mime_types[ $ext ] ) ) ? self::$mime_types[ $ext ][0] : self::$mime_types[ $ext ];
+		} else if ( function_exists( 'finfo_open' ) ) {
+			if ( file_exists( $filename ) ) {
+				$finfo    = finfo_open( FILEINFO_MIME );
+				$mimetype = finfo_file( $finfo, $filename );
+				finfo_close( $finfo );
+				$mimetype = explode( ';', $mimetype );
+
+				return $mimetype[0];
+			}
+		}
+
+		return 'application/octet-stream';
+	}
+
+	function get_table_name(): string {
+		return URLSLAB_FILES_TABLE;
+	}
+
+	function get_primary_columns(): array {
+		return array( 'fileid' );
+	}
+
+	function get_columns(): array {
+		return array(
+			'fileid'         => '%s',
+			'url'            => '%s',
+			'parent_url'     => '%s',
+			'local_file'     => '%s',
+			'filename'       => '%s',
+			'filestatus'     => '%s',
+			'filetype'       => '%s',
+			'filehash'       => '%s',
+			'filesize'       => '%d',
+			'status_changed' => '%s',
+			'webp_fileid'    => '%s',
+			'avif_fileid'    => '%s',
+		);
 	}
 }

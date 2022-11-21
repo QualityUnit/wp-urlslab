@@ -80,7 +80,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 	}
 
 	private function get_file_dir( Urlslab_File_Data $file ) {
-		return self::URLSLAB_DIR . $file->get_filesize() . '/' . $file->get_filehash() . '/';
+		return self::URLSLAB_DIR . $file->get( 'filesize' ) . '/' . $file->get( 'filehash' ) . '/';
 	}
 
 	public function get_url( Urlslab_File_Data $file ) {

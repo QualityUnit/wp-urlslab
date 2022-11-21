@@ -36,7 +36,6 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 		$query = "SELECT f.*,
        					 p.filehash as p_filehash,
        					 p.filesize as p_filesize,
-       					 p.filetype as filetype,
        					 p.width as width,
        					 p.driver AS driver,
        					 p.webp_hash AS webp_hash,
@@ -217,8 +216,8 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 				);
 
 			case 'col_generated_resource':
-				if ( $item->get_filestatus() == Urlslab_Driver::STATUS_ACTIVE ) {
-					$url = Urlslab_Driver::get_driver( $item->get_file_pointer()->get_driver() )->get_url( $item );
+				if ( $item->get( 'filestatus' ) == Urlslab_Driver::STATUS_ACTIVE ) {
+					$url = $item->get_file_pointer()->get_driver()->get_url( $item );
 
 					return sprintf(
 						'<a href="%s" target="_blank">%s</a>',
@@ -229,7 +228,7 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 					return 'File not generated yet';
 				}
 			case 'col_local_file':
-				return $this->local_file_to_html( $item->get_local_file(), $item->get_file_pointer()->get_driver() );
+				return $this->local_file_to_html( $item->get( 'local_file' ), $item->get_file_pointer()->get( 'driver' ) );
 			case 'col_filename':
 				return sprintf(
 					'<span title="%s">%s</span>',
@@ -237,25 +236,25 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 					substr( $item->get_filename(), 0, 70 )
 				);
 			case 'col_file_size':
-				return (int) $item->get_filesize() / 1000 . ' KB';
+				return (int) $item->get( 'filesize' ) / 1000 . ' KB';
 			case 'col_file_type':
-				$value = $item->get_file_pointer()->get_filetype();
-				if ( ! empty( $item->get_webp_fileid() ) ) {
+				$value = $item->get_file_pointer()->get( 'filetype' );
+				if ( ! empty( $item->get( 'webp_fileid' ) ) ) {
 					$value .= '<br/>WEBP alternative';
 				}
-				if ( ! empty( $item->get_avif_fileid() ) ) {
+				if ( ! empty( $item->get( 'avif_fileid' ) ) ) {
 					$value .= '<br/>AVIF alternative';
 				}
 
 				return $value;
 			case 'col_width':
-				return $item->get_file_pointer()->get_width();
+				return $item->get_file_pointer()->get( 'width' );
 			case 'col_height':
-				return $item->get_file_pointer()->get_height();
+				return $item->get_file_pointer()->get( 'height' );
 			case 'col_file_status':
-				return $this->status_to_html( $item->get_filestatus() );
+				return $this->status_to_html( $item->get( 'filestatus' ) );
 			case 'col_driver':
-				return $this->driver_to_html( $item->get_file_pointer()->get_driver() );
+				return $this->driver_to_html( $item->get_file_pointer()->get( 'driver' ) );
 			default:
 				return print_r( $item, true );
 		}
@@ -273,12 +272,12 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 		// create a nonce
 		$transfer_nonce = wp_create_nonce( 'urlslab_transfer_file' );
 
-		$title = $this->driver_to_html( $item->get_file_pointer()->get_driver() );
+		$title = $this->driver_to_html( $item->get_file_pointer()->get( 'driver' ) );
 
 		$actions = array();
 		if ( isset( $_REQUEST['page'] ) ) {
 			$actions        = array();
-			$current_driver = $item->get_file_pointer()->get_driver();
+			$current_driver = $item->get_file_pointer()->get( 'driver' );
 
 
 			switch ( $current_driver ) {
@@ -361,7 +360,7 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 	public function column_col_image_usage_count( $item ) {
 		$title = sprintf(
 			'<span>%s</span>',
-			$item->get_image_usage_count(),
+			$item->get( 'usage_count' ),
 		);
 
 		$actions = array();

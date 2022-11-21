@@ -26,8 +26,8 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 			$result = $wpdb->insert(
 				URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE,
 				array(
-					'filehash' => $file->get_filehash(),
-					'filesize' => $file->get_filesize(),
+					'filehash' => $file->get( 'filehash' ),
+					'filesize' => $file->get( 'filesize' ),
 					'partid'   => $part_id,
 					'content'  => $contents,
 				)
@@ -49,7 +49,7 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 
 		global $wpdb;
 		if ( is_object( $wpdb->dbh ) && $wpdb->use_mysqli ) {
-			$records = $wpdb->dbh->query( $wpdb->prepare( 'select content from ' . URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE . ' WHERE filehash=%s AND filesize=%d ORDER BY partid', $file->get_filehash(), $file->get_filesize() ) ); // phpcs:ignore
+			$records = $wpdb->dbh->query( $wpdb->prepare( 'select content from ' . URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE . ' WHERE filehash=%s AND filesize=%d ORDER BY partid', $file->get( 'filehash' ), $file->get( 'filesize' ) ) ); // phpcs:ignore
 			if ( false === $records ) {
 				return; //no content???
 			}
@@ -82,7 +82,7 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 
 	function get_file_content( Urlslab_File_Data $file ) {
 		global $wpdb;
-		$results = $wpdb->get_results( $wpdb->prepare( 'select content from ' . URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE . ' WHERE filehash=%s AND filesize=%d ORDER BY partid', $file->get_filehash(), $file->get_filesize() ), ARRAY_A ); // phpcs:ignore
+		$results = $wpdb->get_results( $wpdb->prepare( 'select content from ' . URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE . ' WHERE filehash=%s AND filesize=%d ORDER BY partid', $file->get( 'filehash' ), $file->get( 'filesize' ) ), ARRAY_A ); // phpcs:ignore
 		if ( empty( $results ) ) {
 			return false;
 		}
@@ -103,7 +103,7 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 	public function save_to_file( Urlslab_File_Data $file, $file_name ): bool {
 		global $wpdb;
 		$fhandle = fopen( $file_name, 'wb' );
-		$sql     = $wpdb->prepare( 'select content from ' . URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE . ' WHERE filehash=%s AND filesize=%d ORDER BY partid', $file->get_filehash(), $file->get_filesize() ); // phpcs:ignore
+		$sql     = $wpdb->prepare( 'select content from ' . URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE . ' WHERE filehash=%s AND filesize=%d ORDER BY partid', $file->get( 'filehash' ), $file->get( 'filesize' ) ); // phpcs:ignore
 		if ( is_object( $wpdb->dbh ) && $wpdb->use_mysqli ) {
 			$records = $wpdb->dbh->query( $sql );
 			if ( false !== $records ) {
@@ -142,8 +142,8 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 		return $wpdb->delete(
 			URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE,
 			array(
-				'filehash' => $file->get_filehash(),
-				'filesize' => $file->get_filesize(),
+				'filehash' => $file->get( 'filehash' ),
+				'filesize' => $file->get( 'filesize' ),
 			)
 		);
 	}

@@ -242,6 +242,7 @@ class Urlslab_Activator {
 			parent_url varchar(1024),
 			local_file varchar(1024),
 			filename varchar(750),
+			filetype varchar(32),
 			filestatus char(1) NOT NULL,
 			filehash varchar(32) NOT NULL DEFAULT '',
 			filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
@@ -278,7 +279,6 @@ class Urlslab_Activator {
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
 				filehash varchar(32) NOT NULL,
 				filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
-				filetype varchar(100),
 				width mediumint(8) UNSIGNED ZEROFILL DEFAULT NULL,
 				height mediumint(8) UNSIGNED ZEROFILL DEFAULT NULL,
 				driver char(1) NOT NULL,

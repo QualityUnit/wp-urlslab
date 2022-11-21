@@ -103,32 +103,6 @@ abstract class Urlslab_Convert_Images_Cron extends Urlslab_Cron {
 
 	abstract protected function convert_next_file();
 
-	protected function insert_alternative_file( Urlslab_File_Data $file ): bool {
-		global $wpdb;
-
-		$data = array(
-			'fileid'           => $file->get_fileid(),
-			'url'              => $file->get_url(),
-			'local_file'       => $file->get_local_file(),
-			'filename'         => $file->get_filename(),
-			'filesize'         => $file->get_filesize(),
-			'filestatus'       => $file->get_filestatus(),
-			'status_changed' => time(),
-			'webp_fileid' => $file->get_webp_fileid(),
-			'avif_fileid' => $file->get_avif_fileid(),
-		);
-
-		return $wpdb->query(
-			$wpdb->prepare(
-				'INSERT IGNORE INTO ' . URLSLAB_FILES_TABLE . // phpcs:ignore
-				' (' . implode( ',', array_keys( $data ) ) . // phpcs:ignore
-				') VALUES (%s, %s, %s, %s, %d, %s, %d, %s, %s)',
-				array_values( $data )
-			)
-		);
-	}
-
-
 	protected function convert_image_format( Urlslab_File_Data $file, string $original_image_filename, string $new_format ): string {
 		if ( extension_loaded( 'imagick' ) && count( Imagick::queryFormats( strtoupper( $new_format ) . '*' ) ) > 0 ) {
 			return $this->convert_with_imagick( $file, $original_image_filename, $new_format );

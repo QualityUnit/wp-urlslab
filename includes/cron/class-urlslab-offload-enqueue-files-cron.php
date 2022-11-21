@@ -11,7 +11,6 @@ class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
     					f.*,
     					p.filehash as p_filehash,
        					 p.filesize as p_filesize,
-       					 p.filetype as filetype,
        					 p.width as width,
        					 p.driver AS driver,
        					 p.webp_hash AS webp_hash,
@@ -37,51 +36,18 @@ class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
 			return false;
 		}
 
-		//update status to pending
-		$update_affected_rows = $wpdb->update(
-			URLSLAB_FILES_TABLE,
-			array(
-				'filestatus'     => Urlslab_Driver::STATUS_PENDING,
-				'status_changed' => gmdate( 'Y-m-d H:i:s' ),
-			),
-			array(
-				'fileid'     => $file->get_fileid(),
-				'filestatus' => $file->get_filestatus(),
-			)
-		);
-
-		if ( 1 !== $update_affected_rows ) {
-			return true;
-		}
+		$file->set( 'filestatus', Urlslab_Driver::STATUS_PENDING );
+		$file->set( 'status_changed', gmdate( 'Y-m-d H:i:s' ) );
+		$file->set( 'filetype', $file->get_filetype() ); //update filetype from file name
+		$file->update();
 
 		if ( $default_driver->upload_content( $file ) ) {
-			//update status to active
-			$wpdb->update(
-				URLSLAB_FILES_TABLE,
-				array(
-					'filestatus'     => Urlslab_Driver::STATUS_ACTIVE,
-					'filetype'       => $file->get_file_pointer()->get_filetype(),
-					'status_changed' => gmdate( 'Y-m-d H:i:s' ),
-				),
-				array(
-					'fileid'     => $file->get_fileid(),
-					'filestatus' => Urlslab_Driver::STATUS_PENDING,
-				)
-			);
+			$file->set( 'filestatus', Urlslab_Driver::STATUS_ACTIVE );
 		} else {
-			//something went wrong, set status error
-			$wpdb->update(
-				URLSLAB_FILES_TABLE,
-				array(
-					'filestatus'     => Urlslab_Driver::STATUS_ERROR,
-					'status_changed' => gmdate( 'Y-m-d H:i:s' ),
-				),
-				array(
-					'fileid'     => $file->get_fileid(),
-					'filestatus' => Urlslab_Driver::STATUS_PENDING,
-				)
-			);
+			$file->set( 'filestatus', Urlslab_Driver::STATUS_ERROR );
 		}
+		$file->set( 'status_changed', gmdate( 'Y-m-d H:i:s' ) );
+		$file->update();
 
 		return true;
 	}

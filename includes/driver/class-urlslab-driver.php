@@ -67,8 +67,8 @@ abstract class Urlslab_Driver {
 				404 == $local_tmp_file->get_error_data( 'http_404' )['code'] &&
 				preg_match( '/^(.*?)-([0-9]*?)x([0-9]*?)\.(.*?)$/', $file->get_url(), $matches )
 			) {
-				if ( strlen( $file->get_parent_url() ) ) {
-					$original_tmp_file = download_url( $file->get_parent_url() );
+				if ( strlen( $file->get( 'parent_url' ) ) ) {
+					$original_tmp_file = download_url( $file->get( 'parent_url' ) );
 				} else {
 					$original_tmp_file = download_url( $matches[1] . '.' . $matches[4] );
 				}
@@ -91,60 +91,45 @@ abstract class Urlslab_Driver {
 	}
 
 	public function upload_content( Urlslab_File_Data $file ) {
-		global $wpdb;
-
-		if ( strlen( $file->get_local_file() ) && file_exists( $file->get_local_file() ) ) {
-			$file_name   = $file->get_local_file();
+		if ( strlen( $file->get( 'local_file' ) ) && file_exists( $file->get( 'local_file' ) ) ) {
+			$file_name   = $file->get( 'local_file' );
 			$delete_file = false;
 		} else {
 			$file_name = $this->download_url( $file );
 			if ( false === $file_name ) {
 				return false;
 			}
+			if ( $file->get_filetype() == 'application/octet-stream' ) {
+				$file->set( 'filetype', $file->get_mime_type_from_filename( $file_name ) );
+			}
 			$delete_file = true;
 		}
 
-		$update_data = array();
-
 		$filehash = $this->get_file_hash( $file_name );
-		if ( $filehash && $file->get_filehash() != $filehash ) {
-			$update_data['filehash'] = $filehash;
-			$file->set_filehash($filehash);
+		if ( $filehash ) {
+			$file->set_filehash( $filehash );
 		}
 
 		$file_size = filesize( $file_name );
-		if ( $file_size && ( empty( $file->get_filesize() ) || $file->get_filesize() != $file_size ) ) {
-			$update_data['filesize'] = $file_size;
-			$file->set_filesize($file_size);
+		if ( $file_size ) {
+			$file->set_filesize( $file_size );
 		}
 
-		//if pointer exists, stop uploading
-		$pointer = Urlslab_File_Pointer_Data::get_file_pointer( $filehash, $file_size );
-
-		if ( null == $pointer ) {
+		if ( ! $file->get_file_pointer()->load() ) {
 			$result = $this->save_file_to_storage( $file, $file_name );
 
 			//create pointer
-			$size = getimagesize( $file_name );
-			if ( $size ) {
-				$width  = $size[0];
-				$height = $size[1];
-			} else {
-				$width  = 0;
-				$height = 0;
-			}
+			$file->get_file_pointer()->set( 'filehash', $filehash );
+			$file->get_file_pointer()->set( 'filesize', $file_size );
+			$file->get_file_pointer()->set( 'driver', $this->get_driver_code() );
 
-			$wpdb->insert(
-				URLSLAB_FILE_POINTERS_TABLE,
-				array(
-					'filehash' => $filehash,
-					'filesize' => $file_size,
-					'driver'   => $this->get_driver_code(),
-					'filetype' => Urlslab_File_Pointer_Data::get_mime_type_from_filename( $file->get_filename() ),
-					'width'    => $width,
-					'height'   => $height,
-				)
-			);
+			$size = getimagesize( $file_name );
+			$file->get_file_pointer()->set( 'width', $size[0] ?? 0 );
+			$file->get_file_pointer()->set( 'height', $size[1] ?? 0 );
+
+			$file->get_file_pointer()->insert();
+		} else {
+			$result = true;
 		}
 
 		if ( $delete_file ) {
@@ -153,9 +138,7 @@ abstract class Urlslab_Driver {
 
 		if ( $result ) {
 			//update filesize attribute
-			if ( ! empty( $update_data ) ) {
-				$wpdb->update( URLSLAB_FILES_TABLE, $update_data, array( 'fileid' => $file->get_fileid() ) );
-			}
+			$file->update();
 		}
 
 		return $result;
@@ -244,38 +227,27 @@ abstract class Urlslab_Driver {
 		Urlslab_File_Data $file,
 		string $dest_driver
 	): bool {
-		global $wpdb;
-
 		$result   = false;
 		$tmp_name = wp_tempnam();
 		if (
-			Urlslab_Driver::get_driver( $file->get_file_pointer()->get_driver() )->save_to_file( $file, $tmp_name ) &&
+			$file->get_file_pointer()->get_driver()->save_to_file( $file, $tmp_name ) &&
 			(
-				filesize( $tmp_name ) == $file->get_file_pointer()->get_filesize() ||
-				( 0 == $file->get_file_pointer()->get_filesize() && 0 < filesize( $tmp_name ) )
+				filesize( $tmp_name ) == $file->get_file_pointer()->get( 'filesize' ) ||
+				( 0 == $file->get_file_pointer()->get( 'filesize' ) && 0 < filesize( $tmp_name ) )
 			)
 		) {
 			$old_file = clone $file;
 
 			//set new driver of storage
-			$file->get_file_pointer()->set_driver( $dest_driver );
+			$file->get_file_pointer()->set( 'driver', $dest_driver );
 			//save file to new storage
-			if ( Urlslab_Driver::get_driver( $file->get_file_pointer()->get_driver() )->save_file_to_storage( $file, $tmp_name ) ) {
-				//change driver of file in db
-				$wpdb->update(
-					URLSLAB_FILE_POINTERS_TABLE,
-					array(
-						'driver'   => $file->get_file_pointer()->get_driver(),
-						'filesize' => filesize( $tmp_name ),
-					),
-					array(
-						'filehash' => $file->get_filehash(),
-						'filesize' => $file->get_filesize(),
-					)
-				);
+			if ( $file->get_file_pointer()->get_driver()->save_file_to_storage( $file, $tmp_name ) ) {
+				$file->get_file_pointer()->set( 'filesize', filesize( $tmp_name ) );
+				$file->get_file_pointer()->update();
+
 				//delete original file
 				if ( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_DELETE_AFTER_TRANSFER, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_DELETE_AFTER_TRANSFER ) ) {
-					Urlslab_Driver::get_driver( $old_file->get_file_pointer()->get_driver() )->delete_content( $old_file );
+					$old_file->get_file_pointer()->get_driver()->delete_content( $old_file );
 				}
 
 				$result = true;

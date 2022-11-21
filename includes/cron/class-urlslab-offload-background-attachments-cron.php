@@ -37,22 +37,24 @@ class Urlslab_Offload_Background_Attachments_Cron extends Urlslab_Cron {
 
 			$file = new Urlslab_File_Data(
 				array(
-					'url'        => $url,
-					'filename'   => isset( $meta['file'] ) ? basename( $meta['file'] ) : basename( $file_path ),
-					'filestatus' => Urlslab_Driver::STATUS_NEW,
-					'local_file' => $file_path,
-				)
+					'url'            => $url,
+					'filename'       => isset( $meta['file'] ) ? basename( $meta['file'] ) : basename( $file_path ),
+					'status_changed' => gmdate( 'Y-m-d H:i:s' ),
+					'filestatus'     => Urlslab_Driver::STATUS_NEW,
+					'local_file'     => $file_path,
+				),
+				false
 			);
 
-			$placeholders[] = '(%s,%s,%s,%s,%s)';
-			array_push( $values, $file->get_fileid(), $file->get_url(), $file->get_filename(), $file->get_filestatus(), $file->get_local_file() );
+			$placeholders[] = '(%s,%s,%s,%s,%s,%s)';
+			array_push( $values, $file->get_fileid(), $file->get_url(), $file->get_filename(), $file->get( 'status_changed' ), $file->get( 'filestatus' ), $file->get( 'local_file' ) );
 		}
 
 		if ( count( $placeholders ) ) {
 			update_option( self::SETTING_NAME_SCHEDULER_POINTER, $last_post_id );
 			$result = $wpdb->query(
 				$wpdb->prepare(
-					'INSERT IGNORE INTO ' . URLSLAB_FILES_TABLE . ' (fileid, url, filename, filestatus, local_file) VALUES ' . // phpcs:ignore
+					'INSERT IGNORE INTO ' . URLSLAB_FILES_TABLE . ' (fileid, url, filename, status_changed, filestatus, local_file) VALUES ' . // phpcs:ignore
 					implode( ', ', $placeholders ), // phpcs:ignore
 					$values
 				)
