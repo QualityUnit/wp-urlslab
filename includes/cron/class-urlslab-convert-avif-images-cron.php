@@ -59,7 +59,7 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 		$file->set( 'avif_fileid', Urlslab_File_Data::ALTERNATIVE_PROCESSING );
 		$file->update();
 
-		if ( ! Urlslab_Driver::get_driver( $file )->is_connected() ) {
+		if ( ! $file->get_file_pointer()->get_driver()->is_connected() ) {
 			//NOT connected, continue with next file
 			return true;
 		}
