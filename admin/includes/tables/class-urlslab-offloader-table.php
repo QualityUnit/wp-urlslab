@@ -239,10 +239,10 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 				return (int) $item->get( 'filesize' ) / 1000 . ' KB';
 			case 'col_file_type':
 				$value = $item->get_file_pointer()->get( 'filetype' );
-				if ( ! empty( $item->get( 'webp_fileid' ) ) ) {
+				if ( strlen( $item->get( 'webp_fileid' ) ) > 2 ) {
 					$value .= '<br/>WEBP alternative';
 				}
-				if ( ! empty( $item->get( 'avif_fileid' ) ) ) {
+				if ( strlen( $item->get( 'avif_fileid' ) ) > 2 ) {
 					$value .= '<br/>AVIF alternative';
 				}
 

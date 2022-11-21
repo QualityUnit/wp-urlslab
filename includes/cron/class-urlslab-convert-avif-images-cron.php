@@ -40,7 +40,7 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
        					 p.avif_hash AS avif_hash,
        					 p.webp_filesize AS webp_filesize,
        					 p.avif_filesize AS avif_filesize 
-						FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . " p ON f.filehash=p.hasid AND f.filesize=p.filesize WHERE f.filestatus = %s AND (f.avif_fileid = null OR f.avif_fileid = '') AND f.filetype IN (" . $placeholders . ') LIMIT 1', // phpcs:ignore
+						FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . " p ON f.filehash=p.hasid AND f.filesize=p.filesize WHERE f.filestatus = %s AND (f.avif_fileid IS NULL OR f.avif_fileid = '') AND f.filetype IN (" . $placeholders . ') LIMIT 1', // phpcs:ignore
 				$values
 			),
 			ARRAY_A
@@ -56,16 +56,8 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 			return true;
 		}
 
-		//update status to processing (lock file)
-		$wpdb->update(
-			URLSLAB_FILES_TABLE,
-			array(
-				'avif_fileid' => Urlslab_File_Data::ALTERNATIVE_PROCESSING,
-			),
-			array(
-				'fileid' => $file->get_fileid(),
-			)
-		);
+		$file->set( 'avif_fileid', Urlslab_File_Data::ALTERNATIVE_PROCESSING );
+		$file->update();
 
 		if ( ! Urlslab_Driver::get_driver( $file )->is_connected() ) {
 			//NOT connected, continue with next file
@@ -81,15 +73,8 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 			unlink( $original_image_filename );
 
 			if ( empty( $new_file_name ) || ! file_exists( $new_file_name ) ) {
-				$wpdb->update(
-					URLSLAB_FILES_TABLE,
-					array(
-						'avif_fileid' => Urlslab_File_Data::ALTERNATIVE_DISABLED,
-					),
-					array(
-						'fileid' => $file->get_fileid(),
-					)
-				);
+				$file->set( 'avif_fileid', Urlslab_File_Data::ALTERNATIVE_DISABLED );
+				$file->update();
 
 				return true;
 			}
@@ -97,22 +82,11 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 			$avif_file = $this->process_file( $file, $new_file_name );
 
 			if ( $avif_file ) {
-				$data = array(
-					'avif_fileid' => $avif_file->get_fileid(),
-				);
+				$file->set( 'avif_fileid', $avif_file->get_fileid() );
 			} else {
-				$data = array(
-					'avif_fileid' => Urlslab_File_Data::ALTERNATIVE_ERROR,
-				);
+				$file->set( 'avif_fileid', Urlslab_File_Data::ALTERNATIVE_ERROR );
 			}
-			//processing of file done
-			$wpdb->update(
-				URLSLAB_FILES_TABLE,
-				$data,
-				array(
-					'fileid' => $file->get_fileid(),
-				)
-			);
+			$file->update();
 		}
 
 		return true;
@@ -123,20 +97,23 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 
 		$avif_file = new Urlslab_File_Data(
 			array(
-				'url'         => $file->get_url( '.avif' ),
-				'parent_url'  => $file->get( 'parent_url' ),
-				'filename'    => $file->get_filename() . '.avif',
-				'filesize'    => filesize( $new_file_name ),
-				'filetype'    => 'image/avif',
-				'width'       => $file->get_width(),
-				'height'      => $file->get_height(),
-				'filestatus'  => Urlslab_Driver::STATUS_PENDING,
-				'local_file'  => $new_file_name,
-				'webp_fileid' => Urlslab_File_Data::ALTERNATIVE_DISABLED,
-				'avif_fileid' => Urlslab_File_Data::ALTERNATIVE_DISABLED,
+				'url'            => $file->get_url( '.avif' ),
+				'parent_url'     => $file->get( 'parent_url' ),
+				'filename'       => $file->get_filename() . '.avif',
+				'filesize'       => filesize( $new_file_name ),
+				'filetype'       => 'image/avif',
+				'width'          => $file->get( 'width' ),
+				'height'         => $file->get( 'height' ),
+				'filestatus'     => Urlslab_Driver::STATUS_PENDING,
+				'status_changed' => gmdate( 'Y-m-d H:i:s' ),
+				'local_file'     => $new_file_name,
+				'webp_fileid'    => Urlslab_File_Data::ALTERNATIVE_DISABLED,
+				'avif_fileid'    => Urlslab_File_Data::ALTERNATIVE_DISABLED,
 			),
 			false
 		);
+
+		$avif_file->set( 'fileid', $avif_file->get_fileid() ); //init file id
 
 		if ( ! $avif_file->insert() || ! $avif_file->get_file_pointer()->get_driver()->upload_content( $avif_file ) ) {
 			unlink( $new_file_name );

@@ -21,6 +21,9 @@ class Urlslab_File_Pointer_Data extends Urlslab_Data {
 	}
 
 	public function get_driver(): Urlslab_Driver {
+		if (empty($this->get( 'driver' ))) {
+			$this->set( 'driver', get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_NEW_FILE_DRIVER ));
+		}
 		return Urlslab_Driver::get_driver( $this->get( 'driver' ) );
 	}
 

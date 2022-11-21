@@ -38,7 +38,7 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
        					 p.webp_hash AS webp_hash,
        					 p.avif_hash AS avif_hash,
        					 p.webp_filesize AS webp_filesize,
-       					 p.avif_filesize AS avif_filesize  FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . " p ON f.filehash=p.filehash AND f.filesize=p.filesize WHERE f.filestatus = %s AND (f.webp_fileid = null OR f.webp_fileid = '') AND f.filetype IN (" . $placeholders . ') LIMIT 1', // phpcs:ignore
+       					 p.avif_filesize AS avif_filesize  FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . " p ON f.filehash=p.filehash AND f.filesize=p.filesize WHERE f.filestatus = %s AND (f.webp_fileid IS NULL OR f.webp_fileid = '') AND f.filetype IN (" . $placeholders . ') LIMIT 1', // phpcs:ignore
 				$values
 			), // phpcs:ignore
 			ARRAY_A
@@ -92,15 +92,17 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 				'filename'    => $file->get_filename() . '.webp',
 				'filesize'    => filesize( $new_file_name ),
 				'filetype'    => 'image/webp',
-				'width'       => $file->get_width(),
-				'height'      => $file->get_height(),
+				'width'       => $file->get('width'),
+				'height'      => $file->get('height'),
 				'filestatus'  => Urlslab_Driver::STATUS_PENDING,
+				'status_changed'  => gmdate( 'Y-m-d H:i:s' ),
 				'local_file'  => $new_file_name,
 				'webp_fileid' => Urlslab_File_Data::ALTERNATIVE_DISABLED,
 				'avif_fileid' => Urlslab_File_Data::ALTERNATIVE_DISABLED,
 			),
 			false
 		);
+		$webp_file->set('fileid', $webp_file->get_fileid()); //init file id
 
 		if ( ! $webp_file->insert() || ! $webp_file->get_file_pointer()->get_driver()->upload_content( $webp_file ) ) {
 			unlink( $new_file_name );

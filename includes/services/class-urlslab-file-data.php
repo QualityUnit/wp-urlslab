@@ -207,18 +207,20 @@ class Urlslab_File_Data extends Urlslab_Data {
 	public function __construct(
 		array $file_arr = array(), $loaded_from_db = true
 	) {
-		$this->set( 'fileid', $file_arr['fileid'] ?? null, $loaded_from_db );
-		$this->set( 'url', $file_arr['url'], $loaded_from_db );
-		$this->set( 'parent_url', $file_arr['parent_url'] ?? '', $loaded_from_db );
-		$this->set( 'filename', $file_arr['filename'] ?? $this->get_filename(), $loaded_from_db );
-		$this->set( 'filestatus', $file_arr['filestatus'] ?? '', $loaded_from_db );
-		$this->set( 'filehash', $file_arr['filehash'] ?? '', $loaded_from_db );
-		$this->set( 'filesize', $file_arr['filesize'] ?? 0, $loaded_from_db );
+		$this->set( 'fileid', $file_arr['fileid'] ?? null, ! $loaded_from_db );
+		$this->set( 'url', $file_arr['url'], ! $loaded_from_db );
+		$this->set( 'parent_url', $file_arr['parent_url'] ?? '', ! $loaded_from_db );
+		$this->set( 'filename', $file_arr['filename'] ?? $this->get_filename(), ! $loaded_from_db );
+		$this->set( 'filestatus', $file_arr['filestatus'] ?? '', ! $loaded_from_db );
+		$this->set( 'filehash', $file_arr['filehash'] ?? '', ! $loaded_from_db );
+		$this->set( 'filesize', $file_arr['filesize'] ?? 0, ! $loaded_from_db );
 		$this->set( 'usage_count', $file_arr['imageCountUsage'] ?? 0, true );
-		$this->set( 'local_file', $file_arr['local_file'] ?? '', $loaded_from_db );
-		$this->set( 'status_changed', $file_arr['status_changed'] ?? gmdate( 'Y-m-d H:i:s' ), $loaded_from_db );
-		$this->set( 'webp_fileid', $file_arr['webp_fileid'] ?? '', $loaded_from_db );
-		$this->set( 'avif_fileid', $file_arr['avif_fileid'] ?? '', $loaded_from_db );
+		$this->set( 'local_file', $file_arr['local_file'] ?? '', ! $loaded_from_db );
+		$this->set( 'status_changed', $file_arr['status_changed'] ?? gmdate( 'Y-m-d H:i:s' ), ! $loaded_from_db );
+		$this->set( 'webp_fileid', $file_arr['webp_fileid'] ?? '', ! $loaded_from_db );
+		$this->set( 'avif_fileid', $file_arr['avif_fileid'] ?? '', ! $loaded_from_db );
+		$this->set( 'filetype', $file_arr['filetype'] ?? '', ! $loaded_from_db );
+
 		$this->file_pointer = new Urlslab_File_Pointer_Data( $file_arr, $loaded_from_db );
 	}
 
