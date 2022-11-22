@@ -632,7 +632,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		@set_time_limit( 0 );
 
 		status_header( 200 );
-		header( 'Content-Type: ' . $file->get_file_pointer()->get( 'filetype' ) );
+		header( 'Content-Type: ' . $file->get( 'filetype' ) );
 		header( 'Content-Disposition: inline; filename="' . $file->get_filename() . '"' );
 		header( 'Content-Transfer-Encoding: binary' );
 		header( 'Pragma: public' );

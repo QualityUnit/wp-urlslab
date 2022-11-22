@@ -150,6 +150,7 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 			return false;
 		}
 		$webp_file->set( 'filestatus', Urlslab_Driver::STATUS_ACTIVE );
+		$webp_file->set( 'local_file', '' );
 		$webp_file->update();
 
 		$file->get_file_pointer()->set( 'webp_filehash', $webp_file->get_file_pointer()->get( 'filehash' ) );

@@ -134,6 +134,7 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 		}
 
 		$avif_file->set( 'filestatus', Urlslab_Driver::STATUS_ACTIVE );
+		$avif_file->set( 'local_file', '' );
 		$avif_file->update();
 
 		$file->get_file_pointer()->set( 'avif_filehash', $avif_file->get_file_pointer()->get( 'filehash' ) );
