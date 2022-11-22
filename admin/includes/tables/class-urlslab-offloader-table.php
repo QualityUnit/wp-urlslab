@@ -567,19 +567,16 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 
 	private function local_file_to_html( string $local_file, string $driver ) {
 		switch ( $driver ) {
-			case Urlslab_Driver::DRIVER_DB:
-			case Urlslab_Driver::DRIVER_S3:
-				return sprintf(
-					'<span title="%s">%s</span>',
-					esc_attr( $local_file ),
-					empty( $local_file ) ? 'asset not downloaded in file server' : 'asset downloaded in file server but not used'
-				);
-
 			case Urlslab_Driver::DRIVER_LOCAL_FILE:
 				return sprintf(
 					'<span title="%s">%s</span>',
 					esc_attr( $local_file ),
 					substr( $local_file, 0, 70 )
+				);
+			default:
+				return sprintf(
+					'<span>%s</span>',
+					esc_attr( $local_file )
 				);
 		}
 	}
