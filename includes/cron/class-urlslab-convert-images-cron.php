@@ -103,6 +103,8 @@ abstract class Urlslab_Convert_Images_Cron extends Urlslab_Cron {
 
 	abstract protected function convert_next_file();
 
+	abstract protected function create_file_for_pointer(Urlslab_File_Data $file): ?Urlslab_File_Data;
+
 	protected function convert_image_format( Urlslab_File_Data $file, string $original_image_filename, string $new_format ): string {
 		if ( extension_loaded( 'imagick' ) && count( Imagick::queryFormats( strtoupper( $new_format ) . '*' ) ) > 0 ) {
 			return $this->convert_with_imagick( $file, $original_image_filename, $new_format );

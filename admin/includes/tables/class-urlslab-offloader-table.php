@@ -38,8 +38,8 @@ class Urlslab_Offloader_Table extends WP_List_Table {
        					 p.filesize as p_filesize,
        					 p.width as width,
        					 p.driver AS driver,
-       					 p.webp_hash AS webp_hash,
-       					 p.avif_hash AS avif_hash,
+       					 p.webp_filehash AS webp_filehash,
+       					 p.avif_filehash AS avif_filehash,
        					 p.webp_filesize AS webp_filesize,
        					 p.avif_filesize AS avif_filesize,
        					 SUM(!ISNULL(d.urlMd5)) AS imageCountUsage

@@ -13,8 +13,8 @@ class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
        					 p.filesize as p_filesize,
        					 p.width as width,
        					 p.driver AS driver,
-       					 p.webp_hash AS webp_hash,
-       					 p.avif_hash AS avif_hash,
+       					 p.webp_filehash AS webp_filehash,
+       					 p.avif_filehash AS avif_filehash,
        					 p.webp_filesize AS webp_filesize,
        					 p.avif_filesize AS avif_filesize
 					FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON f.filehash=p.filehash AND f.filesize=p.filesize WHERE (f.filestatus = %s OR (f.status_changed < %s AND f.filestatus = %s)) LIMIT 1', // phpcs:ignore

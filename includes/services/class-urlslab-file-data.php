@@ -244,8 +244,8 @@ class Urlslab_File_Data extends Urlslab_Data {
        					 p.filesize as p_filesize,
        					 p.width as width,
        					 p.driver AS driver,
-       					 p.webp_hash AS webp_hash,
-       					 p.avif_hash AS avif_hash,
+       					 p.webp_filehash AS webp_filehash,
+       					 p.avif_filehash AS avif_filehash,
        					 p.webp_filesize AS webp_filesize,
        					 p.avif_filesize AS avif_filesize 
 						FROM $table f LEFT JOIN $table_pointer p ON f.filehash=p.filehash AND f.filesize=p.filesize	WHERE f.fileid=%s LIMIT 1", // phpcs:ignore
@@ -272,8 +272,8 @@ class Urlslab_File_Data extends Urlslab_Data {
        					 p.filesize as p_filesize,
        					 p.width as width,
        					 p.driver AS driver,
-       					 p.webp_hash AS webp_hash,
-       					 p.avif_hash AS avif_hash,
+       					 p.webp_filehash AS webp_filehash,
+       					 p.avif_filehash AS avif_filehash,
        					 p.webp_filesize AS webp_filesize,
        					 p.avif_filesize AS avif_filesize
 						FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON f.filehash=p.filehash AND f.filesize=p.filesize WHERE f.fileid in (' . trim( str_repeat( '%s,', count( $file_ids ) ), ',' ) . ')', // phpcs:ignore
@@ -291,6 +291,11 @@ class Urlslab_File_Data extends Urlslab_Data {
 
 	public function get_file_pointer(): Urlslab_File_Pointer_Data {
 		return $this->file_pointer;
+	}
+
+
+	public function generate_file_hash( $file_name ) {
+		return hash_file( 'crc32', $file_name );
 	}
 
 	public function get_fileid() {

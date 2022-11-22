@@ -50,9 +50,6 @@ abstract class Urlslab_Driver {
 		return site_url( self::DOWNLOAD_URL_PATH . urlencode( $file->get_fileid() ) . '/' . urlencode( $file->get_filename() ) );
 	}
 
-	public function get_file_hash( $file_name ) {
-		return hash_file( 'crc32', $file_name );
-	}
 
 	/**
 	 * @param Urlslab_File_Data $file
@@ -105,7 +102,7 @@ abstract class Urlslab_Driver {
 			$delete_file = true;
 		}
 
-		$filehash = $this->get_file_hash( $file_name );
+		$filehash = $file->generate_file_hash( $file_name );
 		if ( $filehash ) {
 			$file->set_filehash( $filehash );
 		}
@@ -119,8 +116,8 @@ abstract class Urlslab_Driver {
 			$result = $this->save_file_to_storage( $file, $file_name );
 
 			//create pointer
-			$file->get_file_pointer()->set( 'filehash', $filehash );
-			$file->get_file_pointer()->set( 'filesize', $file_size );
+			$file->set_filehash( $filehash );
+			$file->set_filesize( $file_size );
 			$file->get_file_pointer()->set( 'driver', $this->get_driver_code() );
 
 			$size = getimagesize( $file_name );

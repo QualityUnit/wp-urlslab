@@ -282,9 +282,9 @@ class Urlslab_Activator {
 				width mediumint(8) UNSIGNED ZEROFILL DEFAULT NULL,
 				height mediumint(8) UNSIGNED ZEROFILL DEFAULT NULL,
 				driver char(1) NOT NULL,
-				webp_hash varchar(32) NOT NULL DEFAULT '',
+				webp_filehash varchar(32) NOT NULL DEFAULT '',
 				webp_filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
-				avif_hash varchar(32) NOT NULL DEFAULT '',
+				avif_filehash varchar(32) NOT NULL DEFAULT '',
 				avif_filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
 				PRIMARY KEY (filehash,filesize)
 		) $charset_collate;";
