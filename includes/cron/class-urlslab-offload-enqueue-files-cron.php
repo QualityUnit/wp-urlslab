@@ -37,7 +37,7 @@ class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
 		}
 
 		$file->set( 'filestatus', Urlslab_Driver::STATUS_PENDING );
-		$file->set( 'status_changed', gmdate( 'Y-m-d H:i:s' ) );
+		$file->set( 'status_changed', Urlslab_Data::get_now() );
 		$file->set( 'filetype', $file->get_filetype() ); //update filetype from file name
 		$file->update();
 
@@ -46,7 +46,7 @@ class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
 		} else {
 			$file->set( 'filestatus', Urlslab_Driver::STATUS_ERROR );
 		}
-		$file->set( 'status_changed', gmdate( 'Y-m-d H:i:s' ) );
+		$file->set( 'status_changed', Urlslab_Data::get_now() );
 		$file->update();
 
 		return true;

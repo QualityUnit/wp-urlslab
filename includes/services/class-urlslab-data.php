@@ -119,4 +119,8 @@ abstract class Urlslab_Data {
 
 		return true;
 	}
+
+	public static function get_now(): string {
+		return gmdate( 'Y-m-d H:i:s' );
+	}
 }

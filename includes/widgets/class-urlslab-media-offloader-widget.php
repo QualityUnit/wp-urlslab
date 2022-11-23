@@ -135,7 +135,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				'filename'       => basename( $file['file'] ),
 				'filesize'       => filesize( $file['file'] ),
 				'filestatus'     => Urlslab_Driver::STATUS_NEW,
-				'status_changed' => gmdate( 'Y-m-d H:i:s' ),
+				'status_changed' => Urlslab_Data::get_now(),
 				'driver'         => get_option( self::SETTING_NAME_NEW_FILE_DRIVER, self::SETTING_DEFAULT_NEW_FILE_DRIVER ),
 			),
 			false
@@ -598,11 +598,12 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 		$placeholders = array();
 		$values       = array();
+		$now = Urlslab_Data::get_now();
 
 		foreach ( $urls as $fileid => $url ) {
 			if ( ( urlslab_is_same_domain_url( $url ) && $save_internal ) || $save_external ) {
 				$placeholders[] = '(%s,%s,%s,%s,%s)';
-				array_push( $values, $fileid, $url, $this->parent_urls[ $fileid ] ?? '', Urlslab_Driver::STATUS_NEW, gmdate( 'Y-m-d H:i:s' ) );
+				array_push( $values, $fileid, $url, $this->parent_urls[ $fileid ] ?? '', Urlslab_Driver::STATUS_NEW, $now );
 			}
 		}
 		if ( ! empty( $placeholders ) ) {

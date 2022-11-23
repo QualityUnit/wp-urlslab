@@ -39,7 +39,7 @@ class Urlslab_Offload_Background_Attachments_Cron extends Urlslab_Cron {
 				array(
 					'url'            => $url,
 					'filename'       => isset( $meta['file'] ) ? basename( $meta['file'] ) : basename( $file_path ),
-					'status_changed' => gmdate( 'Y-m-d H:i:s' ),
+					'status_changed' => Urlslab_Data::get_now(),
 					'filestatus'     => Urlslab_Driver::STATUS_NEW,
 					'local_file'     => $file_path,
 				),

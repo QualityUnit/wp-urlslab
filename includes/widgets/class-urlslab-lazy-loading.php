@@ -275,7 +275,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$yt_elements = $xpath->query( "//*[@data-ytid and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
 		foreach ( $yt_elements as $yt_element ) {
 			$ytid = $yt_element->getAttribute( 'data-ytid' );
-			if ( isset( $video_objects[ $ytid ] ) && Urlslab_Youtube_Data::YOUTUBE_AVAILABLE === $video_objects[ $ytid ]->get_status() ) {
+			if ( isset( $video_objects[ $ytid ] ) && Urlslab_Youtube_Data::YOUTUBE_AVAILABLE === $video_objects[ $ytid ]->get( 'status' ) ) {
 				$this->append_video_schema( $document, $yt_element, $video_objects[ $ytid ] );
 			}
 		}
@@ -325,25 +325,24 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		);
 
 		foreach ( $results as $row ) {
-			$video_obj                           = new Urlslab_Youtube_Data( $row );
-			$videos[ $video_obj->get_videoid() ] = $video_obj;
+			$video_obj                              = new Urlslab_Youtube_Data( $row, true );
+			$videos[ $video_obj->get( 'videoid' ) ] = $video_obj;
 		}
 
 
 		//schedule missing videos
 		$placeholders = array();
 		$values       = array();
+		$now          = Urlslab_Data::get_now();
 		foreach ( $youtube_ids as $videoid ) {
 			if ( ! isset( $videos[ $videoid ] ) ) {
-				$placeholders[] = '(%s, %s)';
-				array_push( $values, $videoid, Urlslab_Youtube_Data::YOUTUBE_NEW );
+				$placeholders[] = '(%s,%s,%s)';
+				array_push( $values, $videoid, Urlslab_Youtube_Data::YOUTUBE_NEW, $now );
 			}
 		}
 		if ( ! empty( $placeholders ) ) {
 			global $wpdb;
-			$query = 'INSERT IGNORE INTO ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' (
-                   videoid,
-                   status) VALUES ' . implode( ', ', $placeholders );
+			$query = 'INSERT IGNORE INTO ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' (videoid, status, status_changed) VALUES ' . implode( ', ', $placeholders );
 			$wpdb->query( $wpdb->prepare( $query, $values ) ); // phpcs:ignore
 		}
 
@@ -351,7 +350,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	private function append_video_schema( DOMDocument $document, DOMElement $youtube_loader, Urlslab_Youtube_Data $youtube_obj ) {
-		if ( ! empty( $youtube_obj->get_microdata() ) ) {
+		if ( ! empty( $youtube_obj->get( 'microdata' ) ) ) {
 			$schema = $document->createElement( 'div' );
 			$schema->setAttribute( 'itemscope', false );
 			$schema->setAttribute( 'itemtype', 'https://schema.org/VideoObject' );
@@ -359,8 +358,8 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			$this->append_meta_attribute( $document, $schema, 'name', $youtube_obj->get_title() );
 			$this->append_meta_attribute( $document, $schema, 'description', $youtube_obj->get_description() );
 			$this->append_meta_attribute( $document, $schema, 'thumbnailUrl', $youtube_obj->get_thumbnail_url(), 'link' );
-			$this->append_meta_attribute( $document, $schema, 'contentUrl', 'https://www.youtube.com/watch?v=' . $youtube_obj->get_videoid(), 'link' );
-			$this->append_meta_attribute( $document, $schema, 'embedUrl', 'https://www.youtube.com/embed/' . $youtube_obj->get_videoid(), 'link' );
+			$this->append_meta_attribute( $document, $schema, 'contentUrl', 'https://www.youtube.com/watch?v=' . $youtube_obj->get( 'videoid' ), 'link' );
+			$this->append_meta_attribute( $document, $schema, 'embedUrl', 'https://www.youtube.com/embed/' . $youtube_obj->get( 'videoid' ), 'link' );
 			$this->append_meta_attribute( $document, $schema, 'duration', $youtube_obj->get_duration() );
 			$this->append_meta_attribute( $document, $schema, 'uploadDate', $youtube_obj->get_published_at() );
 			$youtube_loader->appendChild( $schema );

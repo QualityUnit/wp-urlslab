@@ -1,57 +1,21 @@
 <?php
 
-class Urlslab_Youtube_Data {
+class Urlslab_Youtube_Data extends Urlslab_Data {
 
 	const YOUTUBE_NEW = 'N';
 	const YOUTUBE_AVAILABLE = 'A';
 	const YOUTUBE_PROCESSING = 'P';
 	const YOUTUBE_DISABLED = 'D';
-
-	private $videoid;
-	private $microdata;
-	private $status;
 	private $microdata_obj;
 
-	/**
-	 * @param Urlslab_Url $url
-	 * @param $domain_id
-	 * @param $url_id
-	 * @param $screenshot_date
-	 * @param $last_status_change_date
-	 * @param $url_title
-	 * @param $url_meta_description
-	 * @param $url_summary
-	 * @param $screenshot_status
-	 */
-	public function __construct(
-		array $video
-	) {
-		$this->videoid   = $video['videoid'];
-		$this->microdata = $video['microdata'] ?? null;
-		$this->status    = $video['status'] ?? self::YOUTUBE_NEW;
-		if ( strlen( $this->microdata ) ) {
-			$this->microdata_obj = json_decode( $this->microdata );
+	public function __construct( array $video, $loaded_from_db = false ) {
+		$this->set( 'videoid', $video['videoid'], ! $loaded_from_db );
+		$this->set( 'microdata', $video['microdata'] ?? null, ! $loaded_from_db );
+		$this->set( 'status', $video['status'] ?? self::YOUTUBE_NEW, ! $loaded_from_db );
+		$this->set( 'status_changed', $video['status_changed'] ?? self::get_now(), true );
+		if ( strlen( $this->get( 'microdata' ) ) ) {
+			$this->microdata_obj = json_decode( $this->get( 'microdata' ) );
 		}
-	}
-
-	public function as_array() {
-		return array(
-			'videoid'   => $this->get_videoid(),
-			'microdata' => $this->get_microdata(),
-			'status'    => $this->get_status(),
-		);
-	}
-
-	public function get_videoid() {
-		return $this->videoid;
-	}
-
-	public function get_status() {
-		return $this->status;
-	}
-
-	public function get_microdata() {
-		return $this->microdata;
 	}
 
 	public function get_channel_title() {
@@ -107,4 +71,20 @@ class Urlslab_Youtube_Data {
 		return '';
 	}
 
+	function get_table_name(): string {
+		return URLSLAB_YOUTUBE_CACHE_TABLE;
+	}
+
+	function get_primary_columns(): array {
+		return array( 'videoid' );
+	}
+
+	function get_columns(): array {
+		return array(
+			'videoid'        => '%s',
+			'microdata'      => '%s',
+			'status'         => '%s',
+			'status_changed' => '%s',
+		);
+	}
 }

@@ -95,6 +95,7 @@ class Urlslab_Activator {
 		}
 
 		if ( version_compare( $version, '1.42', '<' ) ) {
+			$wpdb->query('ALTER TABLE ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' ADD COLUMN status_changed datetime NULL;'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILES_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILE_URLS_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . $wpdb->prefix . 'urlslab_file_alternatives' . ';'); // phpcs:ignore
@@ -139,6 +140,7 @@ class Urlslab_Activator {
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
 			videoid varchar(32) NOT NULL,
 			microdata text,
+			status_changed datetime NULL,
 			status char(1) NOT NULL, -- P: processing, A: Available, N: New, D - disabled
 			PRIMARY KEY  (videoid)
 		) $charset_collate;";

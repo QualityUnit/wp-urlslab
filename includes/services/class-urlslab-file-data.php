@@ -216,7 +216,7 @@ class Urlslab_File_Data extends Urlslab_Data {
 		$this->set( 'filesize', $file_arr['filesize'] ?? 0, ! $loaded_from_db );
 		$this->set( 'usage_count', $file_arr['imageCountUsage'] ?? 0, true );
 		$this->set( 'local_file', $file_arr['local_file'] ?? '', ! $loaded_from_db );
-		$this->set( 'status_changed', $file_arr['status_changed'] ?? gmdate( 'Y-m-d H:i:s' ), ! $loaded_from_db );
+		$this->set( 'status_changed', $file_arr['status_changed'] ?? Urlslab_Data::get_now(), ! $loaded_from_db );
 		$this->set( 'webp_fileid', $file_arr['webp_fileid'] ?? '', ! $loaded_from_db );
 		$this->set( 'avif_fileid', $file_arr['avif_fileid'] ?? '', ! $loaded_from_db );
 		$this->set( 'filetype', $file_arr['filetype'] ?? '', ! $loaded_from_db );
