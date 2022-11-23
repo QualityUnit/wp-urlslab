@@ -68,15 +68,13 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 			if ( strlen( $where ) ) {
 				$where .= ' AND ';
 			}
-			$where    .= 'webp_fileid=%s';
-			$values[] = $webp_filter;
+			$where    .= 'length(webp_fileid)>1';
 		}
 		if ( ! empty( $avif_filter ) ) {
 			if ( strlen( $where ) ) {
 				$where .= ' AND ';
 			}
-			$where    .= 'avif_fileid=%s';
-			$values[] = $avif_filter;
+			$where    .= 'length(avif_fileid)>1';
 		}
 
 		if ( ! empty( $driver_filter ) ) {
@@ -130,7 +128,7 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 	 */
 	private function count_offloading_files( string $driver_filter = '', string $status = '', $webp_status = '', $avif_status = '' ) {
 		global $wpdb;
-		$sql = 'SELECT COUNT(*) AS cnt FROM ' . URLSLAB_FILES_TABLE;
+		$sql = 'SELECT COUNT(*) AS cnt FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON f.filehash=p.filehash AND f.filesize=p.filesize';
 		if ( empty( $driver_filter ) && empty( $status ) ) {
 			return $wpdb->get_row( $sql, ARRAY_A )['cnt']; // phpcs:ignore
 		} else {
@@ -456,18 +454,10 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 		$available_webp_url      = add_query_arg( 'webp_filter', 'Y' );
 		$views['available_webp'] = "<a href='$available_webp_url' $class>WEBP available</a>";
 
-		$class                  = ( ! empty( $current_webp ) ? ' class="current"' : '' );
-		$disabled_webp_url      = add_query_arg( 'webp_filter', 'Y' );
-		$views['disabled_webp'] = "<a href='$disabled_webp_url' $class>WEBP disabled</a>";
-
 		//# avif case
 		$class                   = ( ! empty( $current_avif ) ? ' class="current"' : '' );
 		$available_avif_url      = add_query_arg( 'avif_filter', 'Y' );
 		$views['available_avif'] = "<a href='$available_avif_url' $class>AVIF available</a>";
-
-		$class                  = ( ! empty( $current_avif ) ? ' class="current"' : '' );
-		$disabled_avif_url      = add_query_arg( 'avif_filter', 'Y' );
-		$views['disabled_avif'] = "<a href='$disabled_avif_url' $class>AVIF disabled</a>";
 
 		return $views;
 	}
