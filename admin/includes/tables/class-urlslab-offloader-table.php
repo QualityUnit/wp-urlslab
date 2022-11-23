@@ -130,7 +130,7 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 	 */
 	private function count_offloading_files( string $driver_filter = '', string $status = '', $webp_status = '', $avif_status = '' ) {
 		global $wpdb;
-		$sql = 'SELECT COUNT(*) AS cnt FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON f.filehash=p.filehash AND f.filesize=p.filesize';
+		$sql = 'SELECT COUNT(*) AS cnt FROM ' . URLSLAB_FILES_TABLE;
 		if ( empty( $driver_filter ) && empty( $status ) ) {
 			return $wpdb->get_row( $sql, ARRAY_A )['cnt']; // phpcs:ignore
 		} else {
