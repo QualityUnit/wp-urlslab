@@ -6,7 +6,6 @@ class Urlslab_Offload_Transfer_Files_Cron extends Urlslab_Cron {
 	protected function execute(): bool {
 		$latest_file_driver = get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_NEW_FILE_DRIVER );
 		$data = array(
-			Urlslab_Driver::STATUS_ACTIVE,
 			$latest_file_driver,
 		);
 		$placeholders = array();
@@ -31,7 +30,15 @@ class Urlslab_Offload_Transfer_Files_Cron extends Urlslab_Cron {
 		global $wpdb;
 		$file_row = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_FILES_TABLE . ' WHERE filestatus = %s AND driver <> %s AND driver IN (' . implode(',', $placeholders) . ') LIMIT 1', // phpcs:ignore
+				'SELECT f.*, 
+       					 p.filehash as p_filehash,
+       					 p.filesize as p_filesize,
+       					 p.width as width,
+       					 p.driver AS driver,
+       					 p.webp_filehash AS webp_filehash,
+       					 p.avif_filehash AS avif_filehash,
+       					 p.webp_filesize AS webp_filesize,
+       					 p.avif_filesize AS avif_filesize FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON f.filehash=p.filehash AND f.filesize=p.filesize WHERE p.driver <> %s AND p.driver IN (' . implode(',', $placeholders) . ') LIMIT 1', // phpcs:ignore
 				$data
 			),
 			ARRAY_A

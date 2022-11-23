@@ -95,11 +95,7 @@ class Urlslab {
 			return $default;
 		}
 
-		if ( isset( $option[ $name ] ) ) {
-			return $option[ $name ];
-		} else {
-			return $default;
-		}
+		return $option[ $name ] ?? $default;
 	}
 
 	/**
@@ -111,6 +107,7 @@ class Urlslab {
 			$installation_id = rand();
 			self::update_option( 'installation_id', $installation_id );
 		}
+
 		return $installation_id;
 	}
 
@@ -127,10 +124,10 @@ class Urlslab {
 
 
 	public function init_urlslab_user() {
-		$api_key = $this->get_option( 'api-key' );
+		$api_key                   = $this->get_option( 'api-key' );
 		$urlslab_available_widgets = Urlslab_Available_Widgets::get_instance();
-		$urlslab_api = new Urlslab_Api_Key( $api_key );
-		$this->url_data_fetcher = new Urlslab_Url_Data_Fetcher(
+		$urlslab_api               = new Urlslab_Api_Key( $api_key );
+		$this->url_data_fetcher    = new Urlslab_Url_Data_Fetcher(
 			new Urlslab_Screenshot_Api( $urlslab_api )
 		);
 		$urlslab_available_widgets->init_widgets( $this->url_data_fetcher );
@@ -163,9 +160,9 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/vendor/autoload.php';
 
 		/**
-				 * The class responsible for orchestrating the actions and filters of the
-				 * core plugin.
-				 */
+		 * The class responsible for orchestrating the actions and filters of the
+		 * core plugin.
+		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-urlslab-loader.php';
 
 		/**
@@ -197,6 +194,9 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-url-data-response.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-error-response.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-keyword-data.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-data.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-file-data.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-file-pointer-data.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-youtube-data.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-api-key.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-data-fetcher.php';
@@ -343,10 +343,10 @@ class Urlslab {
 			return $content;    //nothing to process
 		}
 		//TODO we need to debug why parsing of head HTML is not working
-		$document = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
-		$document->encoding = get_bloginfo( 'charset' );
+		$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
+		$document->encoding            = get_bloginfo( 'charset' );
 		$document->strictErrorChecking = false; // phpcs:ignore
-		$libxml_previous_state = libxml_use_internal_errors( true );
+		$libxml_previous_state         = libxml_use_internal_errors( true );
 
 		try {
 			$document->loadHTML(
@@ -369,10 +369,10 @@ class Urlslab {
 			return $content;    //nothing to process
 		}
 
-		$document = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
-		$document->encoding = get_bloginfo( 'charset' );
+		$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
+		$document->encoding            = get_bloginfo( 'charset' );
 		$document->strictErrorChecking = false; // phpcs:ignore
-		$libxml_previous_state = libxml_use_internal_errors( true );
+		$libxml_previous_state         = libxml_use_internal_errors( true );
 
 		try {
 			$document->loadHTML(
@@ -403,9 +403,9 @@ class Urlslab {
 	}
 
 	public function execute_cron_tasks() {
-		$data = array();
+		$data       = array();
 		$start_time = time();
-		$max_time = 15;
+		$max_time   = 15;
 		foreach ( $this->cron_tasks as $task ) {
 			if ( $max_time > ( time() - $start_time ) ) {
 				try {

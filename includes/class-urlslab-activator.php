@@ -50,8 +50,8 @@ class Urlslab_Activator {
 		self::init_urlslab_error_log();
 		self::init_urlslab_files();
 		self::init_urlslab_file_urls();
-		self::init_urlslab_file_alternatives();
-		self::init_urlslab_file_contents();
+		self::init_urlslab_file_pointers();
+		self::init_urlslab_file_db_driver_contents();
 		self::init_youtube_cache_tables();
 		self::init_keywords_map();
 	}
@@ -61,14 +61,8 @@ class Urlslab_Activator {
 		$version = get_option( URLSLAB_VERSION_SETTING, '1.0' );
 
 		if ( version_compare( $version, '1.13', '<' ) ) {
-			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILES_TABLE . ';'); // phpcs:ignore
-			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILE_CONTENTS_TABLE . ';'); // phpcs:ignore
-			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILE_ALTERNATIVES_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_URLS_TABLE . ';'); // phpcs:ignore
 			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_RELATED_RESOURCE_TABLE . ';'); // phpcs:ignore
-			self::init_urlslab_files();
-			self::init_urlslab_file_contents();
-			self::init_urlslab_file_alternatives();
 			self::init_urls_tables();
 			self::init_related_resources_widget_tables();
 		}
@@ -98,6 +92,18 @@ class Urlslab_Activator {
 		}
 		if ( version_compare( $version, '1.40', '<' ) ) {
 			$wpdb->query('ALTER TABLE ' . URLSLAB_KEYWORDS_TABLE . " ADD COLUMN `kwType` char(1) NOT NULL DEFAULT 'M';"); // phpcs:ignore
+		}
+
+		if ( version_compare( $version, '1.42', '<' ) ) {
+			$wpdb->query('ALTER TABLE ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' ADD COLUMN status_changed datetime NULL;'); // phpcs:ignore
+			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILES_TABLE . ';'); // phpcs:ignore
+			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILE_URLS_TABLE . ';'); // phpcs:ignore
+			$wpdb->query('DROP TABLE IF EXISTS ' . $wpdb->prefix . 'urlslab_file_alternatives' . ';'); // phpcs:ignore
+			$wpdb->query( 'DROP TABLE IF EXISTS ' . $wpdb->prefix . 'urlslab_file_contents' . ';'); // phpcs:ignore
+			self::init_urlslab_files();
+			self::init_urlslab_file_urls();
+			self::init_urlslab_file_db_driver_contents();
+			self::init_urlslab_file_pointers();
 		}
 		//all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -134,6 +140,7 @@ class Urlslab_Activator {
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
 			videoid varchar(32) NOT NULL,
 			microdata text,
+			status_changed datetime NULL,
 			status char(1) NOT NULL, -- P: processing, A: Available, N: New, D - disabled
 			PRIMARY KEY  (videoid)
 		) $charset_collate;";
@@ -237,18 +244,16 @@ class Urlslab_Activator {
 			parent_url varchar(1024),
 			local_file varchar(1024),
 			filename varchar(750),
-			filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
-			filetype varchar(100),
-			width mediumint(8) UNSIGNED ZEROFILL DEFAULT NULL,
-			height mediumint(8) UNSIGNED ZEROFILL DEFAULT NULL,
+			filetype varchar(32),
 			filestatus char(1) NOT NULL,
-			driver char(1) NOT NULL,
-			last_seen datetime NULL,
-    		webp_alternative char(1) NOT NULL DEFAULT 'N',
-    		avif_alternative char(1) NOT NULL DEFAULT 'N',
+			filehash varchar(32) NOT NULL DEFAULT '',
+			filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
+			status_changed datetime NULL,
+			webp_fileid varchar(32),
+			avif_fileid varchar(32),
 			PRIMARY KEY (fileid),
-			INDEX idx_file_filter (driver, filestatus),
-			INDEX idx_file_sort (filesize)
+			INDEX idx_file_filter (filestatus, status_changed),
+			INDEX idx_file_pointer (filehash, filesize)
 		) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -269,31 +274,37 @@ class Urlslab_Activator {
 		dbDelta( $sql );
 	}
 
-	private static function init_urlslab_file_alternatives() {
+	private static function init_urlslab_file_pointers() {
 		global $wpdb;
-		$table_name = URLSLAB_FILE_ALTERNATIVES_TABLE;
+		$table_name = URLSLAB_FILE_POINTERS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
-			fileid char(32) NOT NULL,
-			alternative_fileid char(32),
-			PRIMARY KEY (fileid, alternative_fileid),
-    		INDEX idx_alternative_fileid (alternative_fileid)
+				filehash varchar(32) NOT NULL,
+				filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
+				width mediumint(8) UNSIGNED ZEROFILL DEFAULT NULL,
+				height mediumint(8) UNSIGNED ZEROFILL DEFAULT NULL,
+				driver char(1) NOT NULL,
+				webp_filehash varchar(32) NOT NULL DEFAULT '',
+				webp_filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
+				avif_filehash varchar(32) NOT NULL DEFAULT '',
+				avif_filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
+				PRIMARY KEY (filehash,filesize)
 		) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 	}
 
-
-	private static function init_urlslab_file_contents() {
+	private static function init_urlslab_file_db_driver_contents() {
 		global $wpdb;
-		$table_name = URLSLAB_FILE_CONTENTS_TABLE;
+		$table_name = URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
-    		  fileid char(32) NOT NULL,
-			  contentid SMALLINT UNSIGNED NOT NULL,
+    		  filehash varchar(32) NOT NULL,
+    		  filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
+			  partid SMALLINT UNSIGNED NOT NULL,
 			  content longblob DEFAULT NULL,
-			  PRIMARY KEY (fileid,contentid)
+			  PRIMARY KEY (filehash,filesize,partid)
 		) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

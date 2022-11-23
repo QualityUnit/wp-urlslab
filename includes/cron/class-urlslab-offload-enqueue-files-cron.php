@@ -6,7 +6,18 @@ class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
 	protected function execute(): bool {
 		global $wpdb;
 		$file_row = $wpdb->get_row(
-			$wpdb->prepare( 'SELECT * FROM ' . URLSLAB_FILES_TABLE . ' WHERE (filestatus = %s OR (last_seen < %s AND filestatus = %s)) LIMIT 1', // phpcs:ignore
+			$wpdb->prepare(
+				'SELECT 
+    					f.*,
+    					p.filehash as p_filehash,
+       					 p.filesize as p_filesize,
+       					 p.width as width,
+       					 p.driver AS driver,
+       					 p.webp_filehash AS webp_filehash,
+       					 p.avif_filehash AS avif_filehash,
+       					 p.webp_filesize AS webp_filesize,
+       					 p.avif_filesize AS avif_filesize
+					FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON f.filehash=p.filehash AND f.filesize=p.filesize WHERE (f.filestatus = %s OR (f.status_changed < %s AND f.filestatus = %s)) LIMIT 1', // phpcs:ignore
 				Urlslab_Driver::STATUS_NEW,
 				gmdate( 'Y-m-d H:i:s', strtotime( '-1 hour' ) ),
 				Urlslab_Driver::STATUS_PENDING
@@ -19,53 +30,25 @@ class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
 
 		$file = new Urlslab_File_Data( $file_row );
 
-		if ( ! Urlslab_Driver::get_driver( $file )->is_connected() ) {
+		$default_driver = Urlslab_Driver::get_driver( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_NEW_FILE_DRIVER ) );
+
+		if ( ! $default_driver->is_connected() ) {
 			return false;
 		}
 
-		//update status to pending
-		$update_affected_rows = $wpdb->update(
-			URLSLAB_FILES_TABLE,
-			array(
-				'filestatus' => Urlslab_Driver::STATUS_PENDING,
-				'last_seen' => gmdate( 'Y-m-d H:i:s' ),
-			),
-			array(
-				'fileid' => $file->get_fileid(),
-				'filestatus' => $file->get_filestatus(),
-			)
-		);
+		$file->set( 'filestatus', Urlslab_Driver::STATUS_PENDING );
+		$file->set( 'status_changed', Urlslab_Data::get_now() );
+		$file->set( 'filetype', $file->get_filetype() ); //update filetype from file name
+		$file->update();
 
-		if ( 1 !== $update_affected_rows ) {
-			return true;
-		}
-
-		if ( Urlslab_Driver::get_driver( $file )->upload_content( $file ) ) {
-			//update status to active
-			$wpdb->update(
-				URLSLAB_FILES_TABLE,
-				array(
-					'filestatus' => Urlslab_Driver::STATUS_ACTIVE,
-					'filetype' => $file->get_filetype(),
-				),
-				array(
-					'fileid' => $file->get_fileid(),
-					'filestatus' => Urlslab_Driver::STATUS_PENDING,
-				)
-			);
+		if ( $default_driver->upload_content( $file ) ) {
+			$file->set( 'filestatus', Urlslab_Driver::STATUS_ACTIVE );
 		} else {
-			//something went wrong, set status error
-			$wpdb->update(
-				URLSLAB_FILES_TABLE,
-				array(
-					'filestatus' => Urlslab_Driver::STATUS_ERROR,
-				),
-				array(
-					'fileid' => $file->get_fileid(),
-					'filestatus' => Urlslab_Driver::STATUS_PENDING,
-				)
-			);
+			$file->set( 'filestatus', Urlslab_Driver::STATUS_ERROR );
 		}
+		$file->set( 'status_changed', Urlslab_Data::get_now() );
+		$file->update();
+
 		return true;
 	}
 }

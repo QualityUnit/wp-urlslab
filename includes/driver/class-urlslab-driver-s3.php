@@ -14,14 +14,14 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 
 	private $client;
 
-	function get_file_content( Urlslab_File_Data $file_obj ) {
+	function get_file_content( Urlslab_File_Data $file ) {
 		if ( ! $this->is_configured() ) {
 			return false;
 		}
 		$result = $this->getClient()->getObject(
 			array(
 				'Bucket' => get_option( self::SETTING_NAME_S3_BUCKET, '' ),
-				'Key'    => $this->get_file_dir( $file_obj ) . $file_obj->get_filename(),
+				'Key'    => $this->get_file_dir( $file ) . $file->get_filename(),
 			)
 		);
 
@@ -34,7 +34,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 		return $content;
 	}
 
-	function output_file_content( Urlslab_File_Data $file_obj ) {
+	function output_file_content( Urlslab_File_Data $file ) {
 		if ( ! $this->is_configured() ) {
 			return;
 		}
@@ -44,7 +44,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 		$result = $this->getClient()->getObject(
 			array(
 				'Bucket' => get_option( self::SETTING_NAME_S3_BUCKET, '' ),
-				'Key'    => $this->get_file_dir( $file_obj ) . $file_obj->get_filename(),
+				'Key'    => $this->get_file_dir( $file ) . $file->get_filename(),
 			)
 		);
 
@@ -56,7 +56,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 		}
 	}
 
-	function save_file_to_storage( Urlslab_File_Data $file_obj, string $local_file_name ): bool {
+	function save_file_to_storage( Urlslab_File_Data $file, string $local_file_name ): bool {
 		if ( ! $this->is_configured() ) {
 			return false;
 		}
@@ -66,7 +66,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 			$local_file_name,
 			array(
 				'Bucket' => get_option( self::SETTING_NAME_S3_BUCKET, '' ),
-				'Key'    => $this->get_file_dir( $file_obj ) . $file_obj->get_filename(),
+				'Key'    => $this->get_file_dir( $file ) . $file->get_filename(),
 			)
 		);
 
@@ -80,7 +80,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 	}
 
 	private function get_file_dir( Urlslab_File_Data $file ) {
-		return self::URLSLAB_DIR . substr( $file->get_fileid(), 0, 4 ) . '/';
+		return self::URLSLAB_DIR . $file->get( 'filesize' ) . '/' . $file->get( 'filehash' ) . '/';
 	}
 
 	public function get_url( Urlslab_File_Data $file ) {
@@ -244,4 +244,9 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 
 		return true;
 	}
+
+	public function get_driver_code(): string {
+		return self::DRIVER_S3;
+	}
+
 }

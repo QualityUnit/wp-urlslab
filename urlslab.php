@@ -17,7 +17,7 @@
  * Plugin Name:       Urlslab
  * Plugin URI:        https://urlslab.com
  * Description:       URLSLAB Services
- * Version:           1.40.9
+ * Version:           1.42.0
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            URLSLAB
@@ -36,7 +36,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-const URLSLAB_VERSION = '1.40.9';
+const URLSLAB_VERSION = '1.42.0';
 const URLSLAB_VERSION_SETTING = 'urlslab_ver';
 
 /**
@@ -62,8 +62,8 @@ define( 'URLSLAB_KEYWORDS_MAP_TABLE', $wpdb->prefix . 'urlslab_keywords_map' );
 define( 'URLSLAB_RELATED_RESOURCE_TABLE', $wpdb->prefix . 'urlslab_related_urls' );
 define( 'URLSLAB_FILES_TABLE', $wpdb->prefix . 'urlslab_files' );
 define( 'URLSLAB_FILE_URLS_TABLE', $wpdb->prefix . 'urlslab_file_urls' );
-define( 'URLSLAB_FILE_ALTERNATIVES_TABLE', $wpdb->prefix . 'urlslab_file_alternatives' );
-define( 'URLSLAB_FILE_CONTENTS_TABLE', $wpdb->prefix . 'urlslab_file_contents' );
+define( 'URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE', $wpdb->prefix . 'urlslab_file_db_driver_contents' );
+define( 'URLSLAB_FILE_POINTERS_TABLE', $wpdb->prefix . 'urlslab_file_pointers' );
 define( 'URLSLAB_YOUTUBE_CACHE_TABLE', $wpdb->prefix . 'urlslab_youtube_cache' );
 
 define( 'URLSLAB_PLUGIN_LOG', plugin_dir_path( __FILE__ ) . 'debug.log' );

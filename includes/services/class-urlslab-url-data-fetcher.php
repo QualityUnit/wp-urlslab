@@ -284,7 +284,7 @@ or (updateStatusDate < %d AND status = %s)
 					$url->get_domain_id(),
 					$url->get_url_id(),
 					$url->get_screenshot_date(),
-					gmdate( 'Y-m-d H:i:s' ),
+					Urlslab_Data::get_now(),
 					$url->get_url_title(),
 					$url->get_url_meta_description(),
 					$url->get_url_summary(),
@@ -414,7 +414,7 @@ or (updateStatusDate < %d AND status = %s)
 				$url_data->get_url_title(),
 				$url_data->get_url_meta_description(),
 				Urlslab_Status::$new,
-				gmdate( 'Y-m-d H:i:s' )
+				Urlslab_Data::get_now()
 			);
 			$insert_placeholders[] = '(%d, %s, %s, %s, %s, %s)';
 		}

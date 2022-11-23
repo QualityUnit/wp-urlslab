@@ -5,11 +5,11 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 
 	public function is_format_supported() {
 		return function_exists( 'imagewebp' ) ||
-			(
-				extension_loaded( 'imagick' ) &&
-				count( Imagick::queryFormats( 'WEBP*' ) ) > 0 &&
-				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, false )
-			);
+			   (
+				   extension_loaded( 'imagick' ) &&
+				   count( Imagick::queryFormats( 'WEBP*' ) ) > 0 &&
+				   get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE, false )
+			   );
 	}
 
 	protected function get_file_types(): array {
@@ -26,10 +26,21 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 		}
 
 		$placeholders = implode( ',', array_fill( 0, count( $values ), '%s' ) );
-		array_unshift( $values, Urlslab_Driver::STATUS_ACTIVE, Urlslab_File_Data::FILE_ALTERNATIVE_NOT_PROCESSED );
+		array_unshift( $values, Urlslab_Driver::STATUS_ACTIVE );
 
 		$file_row = $wpdb->get_row(
-			$wpdb->prepare( 'SELECT * FROM ' . URLSLAB_FILES_TABLE . ' WHERE filestatus = %s AND webp_alternative = %s AND filetype IN (' . $placeholders . ') LIMIT 1', $values ), // phpcs:ignore
+			$wpdb->prepare(
+				'SELECT f.*, 
+    					 p.filehash as p_filehash,
+       					 p.filesize as p_filesize,
+       					 p.width as width,
+       					 p.driver AS driver,
+       					 p.webp_filehash AS webp_filehash,
+       					 p.avif_filehash AS avif_filehash,
+       					 p.webp_filesize AS webp_filesize,
+       					 p.avif_filesize AS avif_filesize  FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . " p ON f.filehash=p.filehash AND f.filesize=p.filesize WHERE f.filestatus = %s AND (f.webp_fileid IS NULL OR f.webp_fileid = '') AND f.filetype IN (" . $placeholders . ') LIMIT 1', // phpcs:ignore
+				$values
+			), // phpcs:ignore
 			ARRAY_A
 		);
 
@@ -38,105 +49,116 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 		}
 
 		$file = new Urlslab_File_Data( $file_row );
-		if ( Urlslab_File_Data::FILE_ALTERNATIVE_NOT_PROCESSED !== $file->get_webp_alternative() ) {
+		if ( ! empty( $file->get( 'webp_fileid' ) ) || ! $file->get_file_pointer()->get_driver()->is_connected() ) {
 			//This file is already processing, disabled or processed -> continue to next file
 			return true;
 		}
 
-		//update status to processing (lock file)
-		$wpdb->update(
-			URLSLAB_FILES_TABLE,
-			array(
-				'webp_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_PROCESSING,
-			),
-			array(
-				'fileid' => $file->get_fileid(),
-				'webp_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_NOT_PROCESSED,
-			)
-		);
+		//check if webp was not computed already for other file
+		if ( strlen( $file->get_file_pointer()->get( 'webp_filehash' ) ) > 2 && $file->get_file_pointer()->get( 'webp_filesize' ) > 0 ) {
+			$webp_file = $this->create_file_for_pointer( $file );
+			if ( $webp_file ) {
+				$file->set( 'webp_fileid', $webp_file->get_fileid() );
+				$file->update();
 
-		if ( ! Urlslab_Driver::get_driver( $file )->is_connected() ) {
-			//NOT connected, continue with next file
-			return true;
+				return true;
+			}
 		}
 
+		$file->set( 'webp_fileid', Urlslab_File_Data::ALTERNATIVE_PROCESSING );
+		$file->update();
 
 		//create local image file
 		$original_image_filename = wp_tempnam();
-		if ( Urlslab_Driver::get_driver( $file )->save_to_file( $file, $original_image_filename ) ) {
+		if ( $file->get_file_pointer()->get_driver()->save_to_file( $file, $original_image_filename ) ) {
 
 			$new_file = $this->convert_image_format( $file, $original_image_filename, 'webp' );
 			unlink( $original_image_filename );
 
 			if ( empty( $new_file ) || ! file_exists( $new_file ) ) {
-				$wpdb->update(
-					URLSLAB_FILES_TABLE,
-					array(
-						'webp_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_DISABLED,
-					),
-					array(
-						'fileid' => $file->get_fileid(),
-					)
-				);
+				$file->set( 'webp_fileid', Urlslab_File_Data::ALTERNATIVE_DISABLED );
+				$file->update();
+
 				return true;
 			}
 
-			$this->process_file( $file, $new_file );
+			$webp_file = $this->process_file( $file, $new_file );
 
-			//processing of file done
-			$wpdb->update(
-				URLSLAB_FILES_TABLE,
-				array(
-					'webp_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_AVAILABLE,
-				),
-				array(
-					'fileid' => $file->get_fileid(),
-				)
-			);
+			if ( $webp_file ) {
+				$file->set( 'webp_fileid', $webp_file->get_fileid() );
+			} else {
+				$file->set( 'webp_fileid', Urlslab_File_Data::ALTERNATIVE_ERROR );
+			}
+			$file->update();
 		}
+
 		return true;
 	}
 
-	protected function process_file( Urlslab_File_Data $file, string $new_file_name ) {
-		global $wpdb;
+	protected function create_file_for_pointer( Urlslab_File_Data $file ): ?Urlslab_File_Data {
+		$webp_file = new Urlslab_File_Data(
+			array(
+				'url'            => $file->get_url( '.webp' ),
+				'parent_url'     => $file->get( 'parent_url' ),
+				'filename'       => $file->get_filename() . '.webp',
+				'filesize'       => $file->get_file_pointer()->get( 'webp_filesize' ),
+				'filehash'       => $file->get_file_pointer()->get( 'webp_filehash' ),
+				'filetype'       => 'image/webp',
+				'width'          => $file->get( 'width' ),
+				'height'         => $file->get( 'height' ),
+				'filestatus'     => Urlslab_Driver::STATUS_ACTIVE,
+				'status_changed' => Urlslab_Data::get_now(),
+				'local_file'     => '',
+				'webp_fileid'    => Urlslab_File_Data::ALTERNATIVE_DISABLED,
+				'avif_fileid'    => Urlslab_File_Data::ALTERNATIVE_DISABLED,
+			),
+			false
+		);
+		$webp_file->set( 'fileid', $webp_file->get_fileid() ); //init file id
 
-			$webp_file = new Urlslab_File_Data(
-				array(
-					'url' => $file->get_url( '.webp' ),
-					'parent_url' => $file->get_parent_url(),
-					'filename' => $file->get_filename() . '.webp',
-					'filesize' => filesize( $new_file_name ),
-					'filetype' => 'image/webp',
-					'width' => $file->get_width(),
-					'height' => $file->get_height(),
-					'filestatus' => Urlslab_Driver::STATUS_PENDING,
-					'local_file' => $new_file_name,
-					'driver' => $file->get_driver(),
-					'webp_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_DISABLED,
-					'avif_alternative' => Urlslab_File_Data::FILE_ALTERNATIVE_DISABLED,
-				)
-			);
+		if ( $webp_file->insert() ) {
+			return $webp_file;
+		}
 
-		if ( ! (
-			$this->insert_alternative_file( $webp_file ) &&
-			$this->insert_file_alternative_relation( $file, $webp_file ) &&
-			Urlslab_Driver::get_driver( $webp_file )->upload_content( $webp_file )
-		)
-		) {
+		return false;
+	}
+
+	protected function process_file( Urlslab_File_Data $file, string $new_file_name ): ?Urlslab_File_Data {
+		$webp_file = new Urlslab_File_Data(
+			array(
+				'url'            => $file->get_url( '.webp' ),
+				'parent_url'     => $file->get( 'parent_url' ),
+				'filename'       => $file->get_filename() . '.webp',
+				'filesize'       => filesize( $new_file_name ),
+				'filehash'       => $file->generate_file_hash( $new_file_name ),
+				'filetype'       => 'image/webp',
+				'width'          => $file->get( 'width' ),
+				'height'         => $file->get( 'height' ),
+				'filestatus'     => Urlslab_Driver::STATUS_PENDING,
+				'status_changed' => Urlslab_Data::get_now(),
+				'local_file'     => $new_file_name,
+				'webp_fileid'    => Urlslab_File_Data::ALTERNATIVE_DISABLED,
+				'avif_fileid'    => Urlslab_File_Data::ALTERNATIVE_DISABLED,
+			),
+			false
+		);
+		$webp_file->set( 'fileid', $webp_file->get_fileid() ); //init file id
+
+		if ( ! $webp_file->insert() || ! $webp_file->get_file_pointer()->get_driver()->upload_content( $webp_file ) ) {
 			unlink( $new_file_name );
+
 			return false;
 		}
-		$wpdb->update(
-			URLSLAB_FILES_TABLE,
-			array(
-				'filestatus' => Urlslab_Driver::STATUS_ACTIVE,
-			),
-			array(
-				'fileid' => $webp_file->get_fileid(),
-			)
-		);
-		unlink( $new_file_name );
-		return true;
-	}
+		$webp_file->set( 'filestatus', Urlslab_Driver::STATUS_ACTIVE );
+		$webp_file->set( 'local_file', '' );
+		$webp_file->update();
 
+		$file->get_file_pointer()->set( 'webp_filehash', $webp_file->get_file_pointer()->get( 'filehash' ) );
+		$file->get_file_pointer()->set( 'webp_filesize', $webp_file->get_file_pointer()->get( 'filesize' ) );
+		$file->get_file_pointer()->update();
+
+		unlink( $new_file_name );
+
+		return $webp_file;
+	}
 }

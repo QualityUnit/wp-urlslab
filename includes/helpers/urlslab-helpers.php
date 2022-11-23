@@ -232,7 +232,7 @@ function urlslab_get_language() {
 function urlslab_debug_log( Exception $e ) {
 	if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
 		// phpcs:disable WordPress.PHP.DevelopmentFunctions
-		error_log( $e->getTraceAsString(), 3, URLSLAB_PLUGIN_LOG );
+		@error_log( $e->getTraceAsString(), 3, URLSLAB_PLUGIN_LOG );
 		// phpcs:enable
 	}
 }
