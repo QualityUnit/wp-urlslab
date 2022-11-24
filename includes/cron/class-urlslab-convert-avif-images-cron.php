@@ -130,7 +130,7 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 		if ( ! $avif_file->insert() || ! $avif_file->get_file_pointer()->get_driver()->upload_content( $avif_file ) ) {
 			unlink( $new_file_name );
 
-			return false;
+			return null;
 		}
 
 		$avif_file->set( 'filestatus', Urlslab_Driver::STATUS_ACTIVE );
@@ -172,6 +172,6 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 			return $avif_file;
 		}
 
-		return false;
+		return null;
 	}
 }

@@ -120,7 +120,7 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 			return $webp_file;
 		}
 
-		return false;
+		return null;
 	}
 
 	protected function process_file( Urlslab_File_Data $file, string $new_file_name ): ?Urlslab_File_Data {
@@ -147,7 +147,7 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 		if ( ! $webp_file->insert() || ! $webp_file->get_file_pointer()->get_driver()->upload_content( $webp_file ) ) {
 			unlink( $new_file_name );
 
-			return false;
+			return null;
 		}
 		$webp_file->set( 'filestatus', Urlslab_Driver::STATUS_ACTIVE );
 		$webp_file->set( 'local_file', '' );

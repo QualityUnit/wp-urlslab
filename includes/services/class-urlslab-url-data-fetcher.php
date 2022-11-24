@@ -342,7 +342,7 @@ or (updateStatusDate < %d AND status = %s)
 	 *
 	 * @return array
 	 */
-	public function fetch_schedule_urls_batch( $urls ): ?array {
+	public function fetch_schedule_urls_batch( $urls ): array {
 		$results = array();
 		if ( empty( $urls ) ) {
 			return $results;

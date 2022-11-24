@@ -74,13 +74,13 @@ abstract class Urlslab_Driver {
 					unlink( $original_tmp_file );
 					if ( false === $local_tmp_file ) {
 						//on this place we could use original file as new file if we want, but it would generate useless traffic
-						return false;
+						return '';
 					}
 				} else {
-					return false;
+					return '';
 				}
 			} else {
-				return false;
+				return '';
 			}
 		}
 
