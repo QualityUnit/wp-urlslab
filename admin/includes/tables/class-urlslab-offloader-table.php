@@ -37,6 +37,7 @@ class Urlslab_Offloader_Table extends WP_List_Table {
        					 p.filehash as p_filehash,
        					 p.filesize as p_filesize,
        					 p.width as width,
+       					 p.height as height,
        					 p.driver AS driver,
        					 p.webp_filehash AS webp_filehash,
        					 p.avif_filehash AS avif_filehash,

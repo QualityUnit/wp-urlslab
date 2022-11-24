@@ -61,6 +61,8 @@ abstract class Urlslab_Driver {
 		if ( is_wp_error( $local_tmp_file ) ) {
 			if (
 				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMAGE_RESIZING, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_IMAGE_RESIZING ) &&
+				is_array( $local_tmp_file->get_error_data( 'http_404' ) ) &&
+				isset( $local_tmp_file->get_error_data( 'http_404' )['code'] ) &&
 				404 == $local_tmp_file->get_error_data( 'http_404' )['code'] &&
 				preg_match( '/^(.*?)-([0-9]*?)x([0-9]*?)\.(.*?)$/', $file->get_url(), $matches )
 			) {

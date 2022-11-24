@@ -34,6 +34,7 @@ class Urlslab_Offload_Transfer_Files_Cron extends Urlslab_Cron {
        					 p.filehash as p_filehash,
        					 p.filesize as p_filesize,
        					 p.width as width,
+       					 p.height as height,
        					 p.driver AS driver,
        					 p.webp_filehash AS webp_filehash,
        					 p.avif_filehash AS avif_filehash,
