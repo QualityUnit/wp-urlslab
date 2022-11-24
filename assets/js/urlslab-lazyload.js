@@ -6,7 +6,7 @@
 
 const urlslabLazyLoad = () => {
 	const media = document.querySelectorAll(
-		'img[data-src], img[data-srcset], video[data-src], .lazybg'
+		'img[urlslab-lazy], img[data-src], img[data-srcset], video[data-src], .lazybg'
 	);
 
 	const eventType = ( element ) => {

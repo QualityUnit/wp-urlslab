@@ -228,6 +228,13 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 				'Resize missing image sizes',
 				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMAGE_RESIZING, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_IMAGE_RESIZING )
 			),
+			new Urlslab_Setting_Switch(
+				'image-opt[]',
+				Urlslab_Media_Offloader_Widget::SETTING_NAME_IMG_MIN_WIDTH,
+				'Skip loading of images into browser if size of window is smaller as defined width. This feature optimize amount of transferred data for small devices and is useful in case you set by css breaking points when image is not displayed on smaller devices. Add class name urlslab-min-width-[number] on image or any parent elemenet to apply this functionality. Example: <img src="image.jpg" class="urlslab-min-width-768"> will load image just if window is wider or equal 768 pixels',
+				'Skip loading image on small devices',
+				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMG_MIN_WIDTH, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_IMG_MIN_WIDTH )
+			),
 		);
 
 		?>
