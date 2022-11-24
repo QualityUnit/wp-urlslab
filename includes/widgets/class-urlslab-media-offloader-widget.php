@@ -76,6 +76,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public const SETTING_DEFAULT_HIDE_ERROR_IMAGES = 0;
 
 	private const URLSLAB_MIN_WIDTH = 'urlslab-min-width-';
+	public const SETTING_NAME_IMG_MIN_WIDTH = 'urlslab_img_min_width';
+	public const SETTING_DEFAULT_IMG_MIN_WIDTH = 0;
 
 
 	private $files = array();
@@ -158,7 +160,9 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	public function the_content( DOMDocument $document ) {
 		$this->process_offloading( $document );
-		$this->process_min_width( $document );
+		if ( get_option( self::SETTING_NAME_IMG_MIN_WIDTH, self::SETTING_DEFAULT_IMG_MIN_WIDTH ) ) {
+			$this->process_min_width( $document );
+		}
 	}
 
 	public function process_min_width( DOMDocument $document ) {
@@ -173,8 +177,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		if ( ! $img_element->hasAttribute( 'src' ) && ! $img_element->hasAttribute( 'data-src' ) ) {
 			return true;
 		}
-		$min_width = $this->get_min_width_class_value($img_element);
-		if (false === $min_width) {
+		$min_width = $this->get_min_width_class_value( $img_element );
+		if ( false === $min_width ) {
 			return true;
 		}
 		$media_value = '(min-width: ' . $min_width . 'px)';
@@ -195,7 +199,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			foreach ( $img_element->parentNode->childNodes as $node ) {
 				if ( property_exists( $node, 'tagName' ) && 'source' == $node->tagName ) {
 					if ( $node->hasAttribute( 'media' ) ) {
-						if ($media_value != $node->getAttribute( 'media' )) {
+						if ( $media_value != $node->getAttribute( 'media' ) ) {
 							$node->setAttribute( 'media', $media_value . ' and (' . $node->getAttribute( 'media' ) . ')' );
 						}
 					} else {
@@ -207,11 +211,11 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			$picture_element = $document->createElement( 'picture' );
 			$new_img_element = clone $img_element;
 			$source_element  = $document->createElement( 'source' );
-			if ($new_img_element->hasAttribute( 'src' )) {
+			if ( $new_img_element->hasAttribute( 'src' ) ) {
 				$source_element->setAttribute( 'srcset', $new_img_element->getAttribute( 'src' ) );
 				$new_img_element->setAttribute( 'src', '' );
 			}
-			if ($new_img_element->hasAttribute( 'data-src' )) {
+			if ( $new_img_element->hasAttribute( 'data-src' ) ) {
 				$source_element->setAttribute( 'data-srcset', $new_img_element->getAttribute( 'data-src' ) );
 				$new_img_element->setAttribute( 'data-src', '' );
 			}
@@ -223,17 +227,18 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	}
 
-	private function get_min_width_class_value( DOMElement $element ): ?int {
-		if ($element->hasAttribute('class') && false !== strpos($element->getAttribute('class'), self::URLSLAB_MIN_WIDTH )) {
-			if (preg_match('/' . self::URLSLAB_MIN_WIDTH . '([0-9]*)/', $element->getAttribute('class'), $match)) {
-				if (strlen($match[1])) {
+	private function get_min_width_class_value( DOMElement $element ) {
+		if ( $element->hasAttribute( 'class' ) && false !== strpos( $element->getAttribute( 'class' ), self::URLSLAB_MIN_WIDTH ) ) {
+			if ( preg_match( '/' . self::URLSLAB_MIN_WIDTH . '([0-9]*)/', $element->getAttribute( 'class' ), $match ) ) {
+				if ( strlen( $match[1] ) ) {
 					return (int) $match[1];
 				}
 			}
 		}
-		if (property_exists( $element, 'parentNode' )) {
-			return $this->get_min_width_class_value($element->parentNode);
+		if ( property_exists( $element, 'parentNode' ) ) {
+			return $this->get_min_width_class_value( $element->parentNode );
 		}
+
 		return false;
 	}
 
@@ -760,6 +765,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		add_option( self::SETTING_NAME_USE_AVIF_ALTERNATIVE, false, '', true );
 		add_option( self::SETTING_NAME_USE_WEBP_ALTERNATIVE, false, '', true );
 		add_option( self::SETTING_NAME_IMAGE_RESIZING, self::SETTING_DEFAULT_IMAGE_RESIZING, '', false );
+		add_option( self::SETTING_NAME_IMG_MIN_WIDTH, self::SETTING_DEFAULT_IMG_MIN_WIDTH, '', true );
 		add_option( self::SETTING_NAME_LOG_IMAGES, self::SETTING_DEFAULT_LOG_IMAGES, '', true );
 		add_option( self::SETTING_NAME_HIDE_ERROR_IMAGES, self::SETTING_DEFAULT_HIDE_ERROR_IMAGES, '', true );
 		add_option( self::SETTING_NAME_WEPB_QUALITY, self::SETTING_DEFAULT_WEPB_QUALITY, '', false );
@@ -930,104 +936,74 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			isset( $new_settings[ self::SETTING_NAME_USE_WEBP_ALTERNATIVE ] ) &&
 			! empty( $new_settings[ self::SETTING_NAME_USE_WEBP_ALTERNATIVE ] )
 		) {
-			update_option(
-				self::SETTING_NAME_USE_WEBP_ALTERNATIVE,
-				$new_settings[ self::SETTING_NAME_USE_WEBP_ALTERNATIVE ]
-			);
+			update_option( self::SETTING_NAME_USE_WEBP_ALTERNATIVE, $new_settings[ self::SETTING_NAME_USE_WEBP_ALTERNATIVE ] );
 		} else {
-			update_option(
-				self::SETTING_NAME_USE_WEBP_ALTERNATIVE,
-				false
-			);
+			update_option( self::SETTING_NAME_USE_WEBP_ALTERNATIVE, false );
 		}
 		if (
 			isset( $new_settings[ self::SETTING_NAME_IMAGE_RESIZING ] ) &&
 			! empty( $new_settings[ self::SETTING_NAME_IMAGE_RESIZING ] )
 		) {
-			update_option(
-				self::SETTING_NAME_IMAGE_RESIZING,
-				1
-			);
+			update_option( self::SETTING_NAME_IMAGE_RESIZING, 1 );
 		} else {
-			update_option(
-				self::SETTING_NAME_IMAGE_RESIZING,
-				0
-			);
+			update_option( self::SETTING_NAME_IMAGE_RESIZING, 0 );
+		}
+
+		if (
+			isset( $new_settings[ self::SETTING_NAME_IMG_MIN_WIDTH ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_IMG_MIN_WIDTH ] )
+		) {
+			update_option( self::SETTING_NAME_IMG_MIN_WIDTH, 1 );
+		} else {
+			update_option( self::SETTING_NAME_IMG_MIN_WIDTH, 0 );
 		}
 
 		if (
 			isset( $new_settings[ self::SETTING_NAME_WEBP_TYPES_TO_CONVERT ] ) &&
 			! empty( $new_settings[ self::SETTING_NAME_WEBP_TYPES_TO_CONVERT ] )
 		) {
-			update_option(
-				self::SETTING_NAME_WEBP_TYPES_TO_CONVERT,
-				$new_settings[ self::SETTING_NAME_WEBP_TYPES_TO_CONVERT ]
-			);
+			update_option( self::SETTING_NAME_WEBP_TYPES_TO_CONVERT, $new_settings[ self::SETTING_NAME_WEBP_TYPES_TO_CONVERT ] );
 		} else {
-			update_option(
-				self::SETTING_NAME_WEBP_TYPES_TO_CONVERT,
-				array()
-			);
+			update_option( self::SETTING_NAME_WEBP_TYPES_TO_CONVERT, array() );
 		}
 
 		if (
 			isset( $new_settings[ self::SETTING_NAME_USE_AVIF_ALTERNATIVE ] ) &&
 			! empty( $new_settings[ self::SETTING_NAME_USE_AVIF_ALTERNATIVE ] )
 		) {
-			update_option(
-				self::SETTING_NAME_USE_AVIF_ALTERNATIVE,
-				$new_settings[ self::SETTING_NAME_USE_AVIF_ALTERNATIVE ]
-			);
+			update_option( self::SETTING_NAME_USE_AVIF_ALTERNATIVE, $new_settings[ self::SETTING_NAME_USE_AVIF_ALTERNATIVE ] );
 		} else {
-			update_option(
-				self::SETTING_NAME_USE_AVIF_ALTERNATIVE,
-				false
-			);
+			update_option( self::SETTING_NAME_USE_AVIF_ALTERNATIVE, false );
 		}
 
 		if (
 			isset( $new_settings[ self::SETTING_NAME_AVIF_TYPES_TO_CONVERT ] ) &&
 			! empty( $new_settings[ self::SETTING_NAME_AVIF_TYPES_TO_CONVERT ] )
 		) {
-			update_option(
-				self::SETTING_NAME_AVIF_TYPES_TO_CONVERT,
-				$new_settings[ self::SETTING_NAME_AVIF_TYPES_TO_CONVERT ]
-			);
+			update_option( self::SETTING_NAME_AVIF_TYPES_TO_CONVERT, $new_settings[ self::SETTING_NAME_AVIF_TYPES_TO_CONVERT ] );
 		} else {
-			update_option(
-				self::SETTING_NAME_AVIF_TYPES_TO_CONVERT,
-				array()
-			);
+			update_option( self::SETTING_NAME_AVIF_TYPES_TO_CONVERT, array() );
 		}
 
 		if (
 			isset( $new_settings[ self::SETTING_NAME_WEPB_QUALITY ] ) &&
 			! empty( $new_settings[ self::SETTING_NAME_WEPB_QUALITY ] )
 		) {
-			update_option(
-				self::SETTING_NAME_WEPB_QUALITY,
-				$new_settings[ self::SETTING_NAME_WEPB_QUALITY ]
-			);
+			update_option( self::SETTING_NAME_WEPB_QUALITY, $new_settings[ self::SETTING_NAME_WEPB_QUALITY ] );
 		}
 
 		if (
 			isset( $new_settings[ self::SETTING_NAME_AVIF_QUALITY ] ) &&
 			! empty( $new_settings[ self::SETTING_NAME_AVIF_QUALITY ] )
 		) {
-			update_option(
-				self::SETTING_NAME_AVIF_QUALITY,
-				$new_settings[ self::SETTING_NAME_AVIF_QUALITY ]
-			);
+			update_option( self::SETTING_NAME_AVIF_QUALITY, $new_settings[ self::SETTING_NAME_AVIF_QUALITY ] );
 		}
 
 		if (
 			isset( $new_settings[ self::SETTING_NAME_AVIF_SPEED ] ) &&
 			! empty( $new_settings[ self::SETTING_NAME_AVIF_SPEED ] )
 		) {
-			update_option(
-				self::SETTING_NAME_AVIF_SPEED,
-				$new_settings[ self::SETTING_NAME_AVIF_SPEED ]
-			);
+			update_option( self::SETTING_NAME_AVIF_SPEED, $new_settings[ self::SETTING_NAME_AVIF_SPEED ] );
 		}
 	}
 
