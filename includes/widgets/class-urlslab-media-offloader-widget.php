@@ -75,6 +75,9 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public const SETTING_NAME_HIDE_ERROR_IMAGES = 'urlslab_img_hide_err';
 	public const SETTING_DEFAULT_HIDE_ERROR_IMAGES = 0;
 
+	private const URLSLAB_MIN_WIDTH = 'urlslab-min-width-';
+
+
 	private $files = array();
 	private Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher;
 
@@ -154,6 +157,88 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	public function the_content( DOMDocument $document ) {
+		$this->process_offloading( $document );
+		$this->process_min_width( $document );
+	}
+
+	public function process_min_width( DOMDocument $document ) {
+		$xpath        = new DOMXPath( $document );
+		$dom_elements = $xpath->query( "//img[ancestor-or-self::*[contains(@class, '" . self::URLSLAB_MIN_WIDTH . "') and not (contains(@class, 'urlslab-skip-all'))]]" );
+		foreach ( $dom_elements as $img_element ) {
+			$this->add_min_width_to_img( $document, $img_element );
+		}
+	}
+
+	private function add_min_width_to_img( DOMDocument $document, DOMElement $img_element ) {
+		if ( ! $img_element->hasAttribute( 'src' ) && ! $img_element->hasAttribute( 'data-src' ) ) {
+			return true;
+		}
+		$min_width = $this->get_min_width_class_value($img_element);
+		if (false === $min_width) {
+			return true;
+		}
+		$media_value = '(min-width: ' . $min_width . 'px)';
+		if ( $this->has_parent_node( $img_element, 'picture' ) ) {
+			$source_element = $document->createElement( 'source' );
+			if ( $img_element->hasAttribute( 'src' ) ) {
+				$source_element->setAttribute( 'srcset', $img_element->getAttribute( 'src' ) );
+				$img_element->setAttribute( 'src', '' );
+			}
+			if ( $img_element->hasAttribute( 'data-src' ) ) {
+				$source_element->setAttribute( 'data-srcset', $img_element->getAttribute( 'data-src' ) );
+				$img_element->setAttribute( 'data-src', '' );
+			}
+			$source_element->setAttribute( 'media', $media_value );
+			$img_element->parentNode->insertBefore( $source_element, $img_element );
+
+			//iterate all other source tags in picture tag and add min-width to media attribute
+			foreach ( $img_element->parentNode->childNodes as $node ) {
+				if ( property_exists( $node, 'tagName' ) && 'source' == $node->tagName ) {
+					if ( $node->hasAttribute( 'media' ) ) {
+						if ($media_value != $node->getAttribute( 'media' )) {
+							$node->setAttribute( 'media', $media_value . ' and (' . $node->getAttribute( 'media' ) . ')' );
+						}
+					} else {
+						$node->setAttribute( 'media', $media_value );
+					}
+				}
+			}
+		} else {
+			$picture_element = $document->createElement( 'picture' );
+			$new_img_element = clone $img_element;
+			$source_element  = $document->createElement( 'source' );
+			if ($new_img_element->hasAttribute( 'src' )) {
+				$source_element->setAttribute( 'srcset', $new_img_element->getAttribute( 'src' ) );
+				$new_img_element->setAttribute( 'src', '' );
+			}
+			if ($new_img_element->hasAttribute( 'data-src' )) {
+				$source_element->setAttribute( 'data-srcset', $new_img_element->getAttribute( 'data-src' ) );
+				$new_img_element->setAttribute( 'data-src', '' );
+			}
+			$source_element->setAttribute( 'media', $media_value );
+			$picture_element->appendChild( $source_element );
+			$picture_element->appendChild( $new_img_element );
+			$img_element->parentNode->replaceChild( $picture_element, $img_element );
+		}
+
+	}
+
+	private function get_min_width_class_value( DOMElement $element ): ?int {
+		if ($element->hasAttribute('class') && false !== strpos($element->getAttribute('class'), self::URLSLAB_MIN_WIDTH )) {
+			if (preg_match('/' . self::URLSLAB_MIN_WIDTH . '([0-9]*)/', $element->getAttribute('class'), $match)) {
+				if (strlen($match[1])) {
+					return (int) $match[1];
+				}
+			}
+		}
+		if (property_exists( $element, 'parentNode' )) {
+			return $this->get_min_width_class_value($element->parentNode);
+		}
+		return false;
+	}
+
+
+	public function process_offloading( DOMDocument $document ) {
 		try {
 			$found_urls          = array();
 			$url_fileids         = array();
@@ -598,7 +683,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 		$placeholders = array();
 		$values       = array();
-		$now = Urlslab_Data::get_now();
+		$now          = Urlslab_Data::get_now();
 
 		foreach ( $urls as $fileid => $url ) {
 			if ( ( urlslab_is_same_domain_url( $url ) && $save_internal ) || $save_external ) {
