@@ -93,7 +93,7 @@ abstract class Urlslab_Driver {
 			$delete_file = false;
 		} else {
 			$file_name = $this->download_url( $file );
-			if ( false === $file_name ) {
+			if ( empty( $file_name ) || ! file_exists( $file_name ) ) {
 				return false;
 			}
 			if ( $file->get_filetype() == 'application/octet-stream' ) {
