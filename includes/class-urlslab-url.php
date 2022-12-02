@@ -135,4 +135,8 @@ class Urlslab_Url {
 			   ! empty( $this->url_components['host'] );
 	}
 
+	public function get_url_with_protocol() {
+		return $this->url_components['scheme'] . '://' . $this->get_url();
+	}
+
 }

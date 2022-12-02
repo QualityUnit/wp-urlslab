@@ -196,6 +196,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-keyword-data.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-data.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-file-data.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-file-pointer-data.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-youtube-data.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-api-key.php';
@@ -440,6 +441,9 @@ class Urlslab {
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-transfer-files-cron.php';
 		$this->add_cron_task( new Urlslab_Offload_Transfer_Files_Cron() );
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-update-urls-cron.php';
+		$this->add_cron_task( new Urlslab_Update_Urls_Cron() );
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-enqueue-files-cron.php';
 		$this->add_cron_task( new Urlslab_Offload_Enqueue_Files_Cron() );

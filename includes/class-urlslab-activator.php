@@ -105,6 +105,12 @@ class Urlslab_Activator {
 			self::init_urlslab_file_db_driver_contents();
 			self::init_urlslab_file_pointers();
 		}
+
+		if ( version_compare( $version, '1.42.6', '<' ) ) {
+			$wpdb->query('UPDATE ' . URLSLAB_URLS_TABLE . " SET urlTitle=null WHERE urlTitle='<empty>'"); // phpcs:ignore
+			$wpdb->query('UPDATE ' . URLSLAB_URLS_TABLE . " SET urlMetaDescription=null WHERE urlMetaDescription='<empty>'"); // phpcs:ignore
+		}
+
 		//all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}

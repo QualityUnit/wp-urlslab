@@ -5,8 +5,6 @@ class Urlslab_Url_Data {
 	public const VISIBILITY_VISIBLE = 'V';
 	public const VISIBILITY_HIDDEN = 'H';
 
-	private const EMPTY = '<empty>';
-
 	private $domain_id;
 	private $url_id;
 
@@ -17,7 +15,6 @@ class Urlslab_Url_Data {
 	private ?string $url_meta_description;
 	private ?string $url_summary;
 	private ?string $screenshot_status;
-	private int $wp_pageid = - 1;
 	private ?string $visibility = self::VISIBILITY_VISIBLE;
 	private int $backlink_cnt = 0;
 
@@ -114,51 +111,18 @@ class Urlslab_Url_Data {
 	 * @return string
 	 */
 	public function get_url_title(): string {
-		if ( empty( $this->url_title ) ) {
-			$this->init_wp_page_id();
-			if ( $this->wp_pageid > 0 ) {
-				$this->url_title = get_the_title( $this->wp_pageid );
-			}
-			if ( empty( $this->url_title ) ) {
-				$this->url_title = self::EMPTY;
-			}
-			global $wpdb;
-			$wpdb->update( URLSLAB_URLS_TABLE, array( 'urlTitle' => $this->url_title ), array( 'urlMd5' => $this->url->get_url_id() ) );
-		}
-
-		if ( self::EMPTY === $this->url_title ) {
+		if ( Urlslab_Url_Row::VALUE_EMPTY == $this->url_title ) {
 			return '';
 		}
 
 		return $this->url_title ?? '';
 	}
 
-	private function init_wp_page_id() {
-		if ( $this->wp_pageid < 0 ) {
-			$this->wp_pageid = url_to_postid( urlslab_add_current_page_protocol( $this->get_url()->get_url() ) );
-		}
-	}
-
 	/**
 	 * @return string
 	 */
 	public function get_url_meta_description(): string {
-		if ( empty( $this->url_meta_description ) ) {
-			$this->init_wp_page_id();
-			if ( $this->wp_pageid > 0 ) {
-				$desc = get_post_meta( $this->wp_pageid );
-				if ( isset( $desc['_yoast_wpseo_metadesc'][0] ) ) {
-					$this->url_meta_description = $desc['_yoast_wpseo_metadesc'][0];
-				}
-			}
-			if ( empty( $this->url_meta_description ) ) {
-				$this->url_meta_description = self::EMPTY;
-			}
-			global $wpdb;
-			$wpdb->update( URLSLAB_URLS_TABLE, array( 'urlMetaDescription' => $this->url_meta_description ), array( 'urlMd5' => $this->url->get_url_id() ) );
-		}
-
-		if ( self::EMPTY === $this->url_meta_description ) {
+		if ( Urlslab_Url_Row::VALUE_EMPTY == $this->url_meta_description ) {
 			return '';
 		}
 
