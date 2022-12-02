@@ -61,7 +61,6 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
-		global $wpdb;
 
 		$urlslab_atts = shortcode_atts(
 			array(
@@ -74,22 +73,24 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			$tag
 		);
 
-		$result = $this->url_data_fetcher->fetch_related_urls_to(
-			new Urlslab_Url( $urlslab_atts['url'] ),
+		$current_url = new Urlslab_Url( $urlslab_atts['url'] );
+		$result      = $this->url_data_fetcher->fetch_related_urls_to(
+			$current_url,
 			$urlslab_atts['related-count']
 		);
+		$content     = '<!-- ' . esc_html( $urlslab_atts['url'] . ' - ' . $current_url->get_url_id() . ' - ' . $current_url->get_url() ) . ' -->';
 
 		if ( ! empty( $result ) ) {
-			$content  = $this->render_shortcode_header();
+			$content  .= $this->render_shortcode_header();
 			$strategy = get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
 			foreach ( $result as $url ) {
 				$content .= $this->render_shortcode_item( $url, $urlslab_atts, $strategy );
 			}
 
-			return $content . $this->render_shortcode_footer();
+			$content .= $this->render_shortcode_footer();
 		}
 
-		return '';
+		return $content;
 	}
 
 	public function has_shortcode(): bool {
