@@ -172,7 +172,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 	private function add_images_lazy_loading( DOMDocument $document ) {
 		$xpath        = new DOMXPath( $document );
-		$dom_elements = $xpath->query( "//img[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
+		$dom_elements = $xpath->query( "//img[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')]) and not(starts-with(@src, 'data:'))]" );
 		foreach ( $dom_elements as $element ) {
 			$has_lazy_loading_attr = false;
 			foreach ( urlslab_get_supported_media()['img'] as $valid_attr ) {

@@ -167,7 +167,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	public function process_min_width( DOMDocument $document ) {
 		$xpath        = new DOMXPath( $document );
-		$dom_elements = $xpath->query( "//img[ancestor-or-self::*[contains(@class, '" . self::URLSLAB_MIN_WIDTH . "') and not (contains(@class, 'urlslab-skip-all'))]]" );
+		$dom_elements = $xpath->query( "//img[ancestor-or-self::*[contains(@class, '" . self::URLSLAB_MIN_WIDTH . "') and not(contains(@class, 'urlslab-skip-all')) and not(starts-with(@src, 'data:'))]]" );
 		foreach ( $dom_elements as $img_element ) {
 			$this->add_min_width_to_img( $document, $img_element );
 		}
@@ -265,7 +265,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 						continue;
 					}
 					foreach ( $tag_attributes as $attribute ) {
-						if ( strlen( $dom_element->getAttribute( $attribute ) ) ) {
+						if ( strlen( $dom_element->getAttribute( $attribute ) ) && 0 !== strpos( $dom_element->getAttribute( $attribute ), 'data:' ) ) {
 							$urlvalues = explode( ',', $dom_element->getAttribute( $attribute ) );
 							foreach ( $urlvalues as $url_value ) {
 								$url_val  = explode( ' ', trim( $url_value ) );
