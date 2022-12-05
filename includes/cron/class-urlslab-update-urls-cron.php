@@ -44,7 +44,7 @@ class Urlslab_Update_Urls_Cron extends Urlslab_Cron {
 					default:
 				}
 			}
-		} else if ( empty( $page_content_file_name ) ) {
+		} else if ( empty( $page_content_file_name ) || ! file_exists( $page_content_file_name ) || 0 == filesize( $page_content_file_name ) ) {
 			$url->set( 'urlTitle', Urlslab_Url_Row::VALUE_EMPTY );
 			$url->set( 'urlMetaDescription', Urlslab_Url_Row::VALUE_EMPTY );
 		} else {
