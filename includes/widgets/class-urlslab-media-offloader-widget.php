@@ -131,7 +131,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		return false;
 	}
 
-	public function wp_handle_upload( &$file, $overrides = false, $time = null ) {
+	public function wp_handle_upload( $file, $overrides = false, $time = null ) {
 		$file_obj = new Urlslab_File_Data(
 			array(
 				'url'            => $file['url'],
@@ -145,6 +145,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			),
 			false
 		);
+		$file_obj->get_fileid(); //init fileid before insert
 
 		$driver = $file_obj->get_file_pointer()->get_driver();
 		if ( $driver->is_connected() && $file_obj->insert() ) {
