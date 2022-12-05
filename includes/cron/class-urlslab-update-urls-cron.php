@@ -36,15 +36,15 @@ class Urlslab_Update_Urls_Cron extends Urlslab_Cron {
 			$url->set( 'urlTitle', Urlslab_Url_Row::VALUE_EMPTY );
 			$url->set( 'urlMetaDescription', Urlslab_Url_Row::VALUE_EMPTY );
 			if ( 'http_404' == $page_content_file_name->get_error_code() ) {
-				switch ($page_content_file_name->get_error_data()['code']) {
+				switch ( $page_content_file_name->get_error_data()['code'] ) {
 					case 404:
 						$url->set( 'status', Urlslab_Url_Row::STATUS_BROKEN );
 						break;
-					case 503:	//not sure if we should invalidate url to 503 page - it can come again online
+					case 503:    //not sure if we should invalidate url to 503 page - it can come again online
 					default:
 				}
 			}
-		} elseif (empty( $page_content_file_name ) ) {
+		} else if ( empty( $page_content_file_name ) ) {
 			$url->set( 'urlTitle', Urlslab_Url_Row::VALUE_EMPTY );
 			$url->set( 'urlMetaDescription', Urlslab_Url_Row::VALUE_EMPTY );
 		} else {
