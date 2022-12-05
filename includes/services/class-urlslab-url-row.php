@@ -21,7 +21,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$this->set( 'domainId', $url['domainId'], ! $loaded_from_db );
 		$this->set( 'urlId', $url['urlId'], ! $loaded_from_db );
 		$this->set( 'screenshotDate', $url['screenshotDate'], ! $loaded_from_db );
-		$this->set( 'updateStatusDate', $url['updateStatusDate'], ! $loaded_from_db );
+		$this->set( 'updateStatusDate', $url['updateStatusDate'] ?? self::get_now(), ! $loaded_from_db );
 		$this->set( 'urlTitle', $url['urlTitle'], ! $loaded_from_db );
 		$this->set( 'urlMetaDescription', $url['urlMetaDescription'], ! $loaded_from_db );
 		$this->set( 'urlSummary', $url['urlSummary'], ! $loaded_from_db );

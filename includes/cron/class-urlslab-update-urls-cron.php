@@ -23,7 +23,8 @@ class Urlslab_Update_Urls_Cron extends Urlslab_Cron {
 		if ( empty( $url->get( 'urlMetaDescription' ) ) ) {
 			$url->set( 'urlMetaDescription', Urlslab_Url_Row::VALUE_EMPTY );
 		}
-		$url->update();
+		$url->set( 'updateStatusDate', Urlslab_Url_Row::get_now() );
+		$url->update();    //lock the entry, so no other process will start working on it
 
 		return $this->updateUrl( $url );
 	}
@@ -34,6 +35,9 @@ class Urlslab_Update_Urls_Cron extends Urlslab_Cron {
 		if ( empty( $page_content_file_name ) || is_wp_error( $page_content_file_name ) ) {
 			$url->set( 'urlTitle', Urlslab_Url_Row::VALUE_EMPTY );
 			$url->set( 'urlMetaDescription', Urlslab_Url_Row::VALUE_EMPTY );
+			if ( isset( $page_content_file_name['errors']['http_404'] ) ) {
+				$url->set( 'status', Urlslab_Url_Row::STATUS_BROKEN );
+			}
 		} else {
 			$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
 			$document->encoding            = 'utf-8';
@@ -78,6 +82,8 @@ class Urlslab_Update_Urls_Cron extends Urlslab_Cron {
 			}
 			unlink( $page_content_file_name );
 		}
+
+		$url->set( 'updateStatusDate', Urlslab_Url_Row::get_now() );
 
 		return $url->update();
 	}
