@@ -32,12 +32,21 @@ class Urlslab_Update_Urls_Cron extends Urlslab_Cron {
 	private function updateUrl( Urlslab_Url_Row $url ) {
 		$page_content_file_name = download_url( $url->get_url()->get_url_with_protocol() );
 
-		if ( empty( $page_content_file_name ) || is_wp_error( $page_content_file_name ) ) {
+		if ( is_wp_error( $page_content_file_name ) ) {
 			$url->set( 'urlTitle', Urlslab_Url_Row::VALUE_EMPTY );
 			$url->set( 'urlMetaDescription', Urlslab_Url_Row::VALUE_EMPTY );
-			if ( isset( $page_content_file_name['errors']['http_404'] ) ) {
-				$url->set( 'status', Urlslab_Url_Row::STATUS_BROKEN );
+			if ( 'http_404' == $page_content_file_name->get_error_code() ) {
+				switch ($page_content_file_name->get_error_data()['code']) {
+					case 404:
+						$url->set( 'status', Urlslab_Url_Row::STATUS_BROKEN );
+						break;
+					case 503:	//not sure if we should invalidate url to 503 page - it can come again online
+					default:
+				}
 			}
+		} elseif (empty( $page_content_file_name ) ) {
+			$url->set( 'urlTitle', Urlslab_Url_Row::VALUE_EMPTY );
+			$url->set( 'urlMetaDescription', Urlslab_Url_Row::VALUE_EMPTY );
 		} else {
 			$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
 			$document->encoding            = 'utf-8';
