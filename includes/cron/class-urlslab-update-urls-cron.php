@@ -7,7 +7,7 @@ class Urlslab_Update_Urls_Cron extends Urlslab_Cron {
 		global $wpdb;
 		$url_row = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_URLS_TABLE . " WHERE status<>%s AND (urlTitle is null or urlTitle='' or urlMetaDescription is null or urlMetaDescription='') LIMIT 1", // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_URLS_TABLE . " WHERE status<>%s AND (urlTitle is null or urlTitle='' or urlMetaDescription is null or urlMetaDescription='') ORDER BY updateStatusDate LIMIT 1", // phpcs:ignore
 				Urlslab_Url_Row::STATUS_BROKEN
 			),
 			ARRAY_A
@@ -17,10 +17,10 @@ class Urlslab_Update_Urls_Cron extends Urlslab_Cron {
 		}
 
 		$url = new Urlslab_Url_Row( $url_row );
-		if ( empty( $url->get( 'urlTitle' ) ) ) {
+		if ( ! strlen( trim( $url->get( 'urlTitle' ) ) ) ) {
 			$url->set( 'urlTitle', Urlslab_Url_Row::VALUE_EMPTY );
 		}
-		if ( empty( $url->get( 'urlMetaDescription' ) ) ) {
+		if ( ! strlen( trim( $url->get( 'urlMetaDescription' ) ) ) ) {
 			$url->set( 'urlMetaDescription', Urlslab_Url_Row::VALUE_EMPTY );
 		}
 		$url->set( 'updateStatusDate', Urlslab_Url_Row::get_now() );
