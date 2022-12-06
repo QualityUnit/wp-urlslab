@@ -143,7 +143,12 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 									}
 									$dom_elem->parentNode->replaceChild( $fragment, $dom_elem );
 								} else {
-									$txt_element = $document->createTextNode( $dom_elem->domValue );
+									if ( property_exists( $dom_element, 'domValue' ) ) {
+										$txt_value = $dom_elem->domValue;
+									} else {
+										$txt_value = '';
+									}
+									$txt_element = $document->createTextNode( $txt_value );
 									$dom_elem->parentNode->replaceChild( $txt_element, $dom_elem );
 								}
 							} else {
