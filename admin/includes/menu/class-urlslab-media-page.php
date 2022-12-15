@@ -51,6 +51,7 @@ class Urlslab_Media_Page extends Urlslab_Admin_Page {
                                   v.urlId AS urlId,
                                   v.screenshotDate AS screenshotDate,
        				              v.updateStatusDate AS updateStatusDate,
+       				              v.urlCheckDate AS urlCheckDate,
        				              v.urlTitle AS urlTitle,
                                   v.urlMetaDescription AS urlMetaDescription,
                                   v.urlSummary AS urlSummary,

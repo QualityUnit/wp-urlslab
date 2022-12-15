@@ -5,10 +5,15 @@ class Urlslab_Update_Urls_Cron extends Urlslab_Cron {
 
 	protected function execute(): bool {
 		global $wpdb;
+
+		if ( empty( get_option( Urlslab_Link_Enhancer::SETTING_NAME_LAST_LINK_VALIDATION ) ) || 1 != get_option( Urlslab_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS ) ) {
+			return false;
+		}
+
 		$url_row = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_URLS_TABLE . " WHERE status<>%s AND (urlTitle is null or urlTitle='' or urlMetaDescription is null or urlMetaDescription='') ORDER BY updateStatusDate LIMIT 1", // phpcs:ignore
-				Urlslab_Url_Row::STATUS_BROKEN
+				'SELECT * FROM ' . URLSLAB_URLS_TABLE . " WHERE urlCheckDate < %s OR urlCheckDate is NULL LIMIT 1", // phpcs:ignore
+				get_option( Urlslab_Link_Enhancer::SETTING_NAME_LAST_LINK_VALIDATION )
 			),
 			ARRAY_A
 		);
@@ -23,7 +28,7 @@ class Urlslab_Update_Urls_Cron extends Urlslab_Cron {
 		if ( ! strlen( trim( $url->get( 'urlMetaDescription' ) ) ) ) {
 			$url->set( 'urlMetaDescription', Urlslab_Url_Row::VALUE_EMPTY );
 		}
-		$url->set( 'updateStatusDate', Urlslab_Url_Row::get_now() );
+		$url->set( 'urlCheckDate', Urlslab_Url_Row::get_now() );
 		$url->update();    //lock the entry, so no other process will start working on it
 
 		return $this->updateUrl( $url );
@@ -38,9 +43,12 @@ class Urlslab_Update_Urls_Cron extends Urlslab_Cron {
 			if ( 'http_404' == $page_content_file_name->get_error_code() ) {
 				switch ( $page_content_file_name->get_error_data()['code'] ) {
 					case 404:
-						$url->set( 'status', Urlslab_Url_Row::STATUS_BROKEN );
+						$url->set( 'status', Urlslab_Url_Row::STATUS_4XX );
 						break;
-					case 503:    //not sure if we should invalidate url to 503 page - it can come again online
+					case 500:
+					case 503:    //not sure if we should invalidate url to 503 page - it can come again online, we can later revalidate it
+						$url->set( 'status', Urlslab_Url_Row::STATUS_5XX );
+						break;
 					default:
 				}
 			}
@@ -87,12 +95,20 @@ class Urlslab_Update_Urls_Cron extends Urlslab_Cron {
 						$url->set( 'urlMetaDescription', Urlslab_Url_Row::VALUE_EMPTY );
 					}
 				}
+				switch ( $url->get( 'status' ) ) {
+					case Urlslab_Url_Row::STATUS_5XX:
+					case Urlslab_Url_Row::STATUS_4XX:
+						$url->set( 'status', Urlslab_Url_Row::STATUS_ACTIVE );
+						$url->set( 'updateStatusDate', Urlslab_Url_Row::get_now() );
+						break;
+					default:
+				}
 			} catch ( Exception $e ) {
 			}
 			unlink( $page_content_file_name );
 		}
 
-		$url->set( 'updateStatusDate', Urlslab_Url_Row::get_now() );
+		$url->set( 'urlCheckDate', Urlslab_Url_Row::get_now() );
 
 		return $url->update();
 	}

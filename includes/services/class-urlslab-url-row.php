@@ -5,6 +5,8 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	public const VALUE_EMPTY = 'E';
 
 	public const STATUS_BROKEN = 'B';
+	public const STATUS_4XX = '4';
+	public const STATUS_5XX = '5';
 	public const STATUS_ACTIVE = 'A';
 	public const STATUS_PENDING = 'P';
 	public const STATUS_NEW = 'N';
@@ -22,6 +24,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$this->set( 'urlId', $url['urlId'], ! $loaded_from_db );
 		$this->set( 'screenshotDate', $url['screenshotDate'], ! $loaded_from_db );
 		$this->set( 'updateStatusDate', $url['updateStatusDate'] ?? self::get_now(), ! $loaded_from_db );
+		$this->set( 'urlCheckDate', $url['urlCheckDate'] ?? '', ! $loaded_from_db );
 		$this->set( 'urlTitle', $url['urlTitle'], ! $loaded_from_db );
 		$this->set( 'urlMetaDescription', $url['urlMetaDescription'], ! $loaded_from_db );
 		$this->set( 'urlSummary', $url['urlSummary'], ! $loaded_from_db );
@@ -49,6 +52,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 			'urlId'              => '%s',
 			'screenshotDate'     => '%d',
 			'updateStatusDate'   => '%s',
+			'urlCheckDate'       => '%s',
 			'urlTitle'           => '%s',
 			'urlMetaDescription' => '%s',
 			'urlSummary'         => '%s',
