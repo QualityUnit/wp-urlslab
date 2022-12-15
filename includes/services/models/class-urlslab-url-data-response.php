@@ -43,6 +43,7 @@ class Urlslab_Url_Data_Response {
 			$this->domain_id,
 			$this->url_id,
 			$this->screenshot_date,
+			null,
 			time(),
 			$this->url_title,
 			$this->url_meta_description,

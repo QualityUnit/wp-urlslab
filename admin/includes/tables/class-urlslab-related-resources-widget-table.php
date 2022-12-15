@@ -22,6 +22,7 @@ class Urlslab_Related_Resources_Widget_Table extends WP_List_Table {
 				null,
 				null,
 				null,
+				null,
 				$row['srcStatus'],
 			),
 			new Urlslab_Url_Data(
@@ -30,6 +31,7 @@ class Urlslab_Related_Resources_Widget_Table extends WP_List_Table {
 				$row['destUrlId'],
 				$row['destScreenshotDate'],
 				0,
+				null,
 				null,
 				null,
 				null,

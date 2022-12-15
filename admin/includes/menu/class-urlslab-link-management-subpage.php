@@ -64,9 +64,16 @@ class Urlslab_Link_Management_Subpage extends Urlslab_Admin_Subpage {
 			new Urlslab_Setting_Switch(
 				'link-management[]',
 				Urlslab_Link_Enhancer::SETTING_NAME_REMOVE_LINKS,
-				'Hide the links you want from any of your pages',
+				'Hide links with status 404 or 503 or marked as invisible from all pages',
 				'Hide Links',
 				get_option( Urlslab_Link_Enhancer::SETTING_NAME_REMOVE_LINKS, Urlslab_Link_Enhancer::SETTING_DEFAULT_REMOVE_LINKS )
+			),
+			new Urlslab_Setting_Switch(
+				'link-management[]',
+				Urlslab_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS,
+				'Make request to each URL found in website (in background by cron) and test if it is valid or invalid url (e.g. 404 page)',
+				'Validate Links',
+				get_option( Urlslab_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS, 0 )
 			),
 			new Urlslab_Setting_Switch(
 				'link-management[]',
