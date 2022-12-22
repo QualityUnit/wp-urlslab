@@ -84,8 +84,12 @@ class Urlslab_Url {
 		if ( ! isset( $this->url_components['host'] ) ) {
 			$this->is_same_domain_url     = true;
 			$this->url_components['host'] = $current_site_host;
+			if ( substr( $this->url_components['path'], 0, 2 ) == './' ) {
+				$this->url_components['path'] = substr( $this->url_components['path'], 2 );
+			}
 			if ( substr( $this->url_components['path'], 0, 1 ) != '/' ) {
-				$this->url_components['path'] = '/' . $this->url_components['path'];
+				global $wp;
+				$this->url_components['path'] = '/' . ltrim( rtrim( $wp->request, '/' ) . '/' . $this->url_components['path'], '/' );
 			}
 		} else {
 			if ( strtolower( $this->url_components['host'] ) == $current_site_host ) {
