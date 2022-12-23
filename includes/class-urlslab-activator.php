@@ -116,6 +116,10 @@ class Urlslab_Activator {
 			$wpdb->query('ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD INDEX idxUrlCheck (urlCheckDate);"); // phpcs:ignore
 		}
 
+		if ( version_compare( $version, '1.43.1', '<' ) ) {
+			$wpdb->query('UPDATE ' . URLSLAB_URLS_TABLE . " SET status = 'P' WHERE status != 'P'"); // phpcs:ignore
+		}
+
 		//all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
