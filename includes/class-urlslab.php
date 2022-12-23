@@ -403,6 +403,10 @@ class Urlslab {
 		$this->loader->add_action( 'urlslab_cron_hook', $task, 'cron_exec', 10, 0 );
 	}
 
+	public function urlslab_exec_restart_url_scanning() {
+		update_option( Urlslab_Link_Enhancer::SETTING_NAME_LAST_LINK_VALIDATION_START, Urlslab_Data::get_now() );
+	}
+
 	public function execute_cron_tasks() {
 		$data       = array();
 		$start_time = time();
@@ -423,6 +427,7 @@ class Urlslab {
 
 	private function define_backend_hooks() {
 		$this->loader->add_action( 'wp_ajax_urlslab_exec_cron', $this, 'execute_cron_tasks' );
+		$this->loader->add_action( 'wp_ajax_urlslab_exec_restart_url_scanning', $this, 'urlslab_exec_restart_url_scanning' );
 
 
 		if ( ! wp_next_scheduled( 'urlslab_cron_hook' ) ) {
