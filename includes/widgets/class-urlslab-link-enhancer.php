@@ -19,7 +19,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	const SETTING_NAME_REMOVE_LINKS = 'urlslab_remove_links';
 	const SETTING_DEFAULT_REMOVE_LINKS = true;
 	const SETTING_NAME_VALIDATE_LINKS = 'urlslab_validate_links';
-	const SETTING_NAME_LAST_LINK_VALIDATION = 'urlslab_last_validation';
+	const SETTING_NAME_LAST_LINK_VALIDATION_START = 'urlslab_last_validation';
 
 	const SETTING_NAME_URLS_MAP = 'urlslab_urls_map';
 	const SETTING_DEFAULT_URLS_MAP = true;
@@ -273,7 +273,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		add_option( self::SETTING_NAME_REMOVE_LINKS, self::SETTING_DEFAULT_REMOVE_LINKS, '', true );
 		add_option( self::SETTING_NAME_URLS_MAP, self::SETTING_DEFAULT_URLS_MAP, '', true );
 		add_option( self::SETTING_NAME_VALIDATE_LINKS, false, '', false );
-		add_option( self::SETTING_NAME_LAST_LINK_VALIDATION, Urlslab_Data::get_now(), '', false );
+		add_option( self::SETTING_NAME_LAST_LINK_VALIDATION_START, Urlslab_Data::get_now(), '', false );
 	}
 
 	public static function update_settings( array $new_settings ) {

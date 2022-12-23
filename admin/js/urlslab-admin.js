@@ -258,7 +258,22 @@
 				}
 			);
 
-
+			$( '#urlslab-restart-url-scan-btn' ).on(
+				'click',
+				function() {
+					//call API call to reset the time when rescanning started
+					wp.ajax.post( 'urlslab_exec_restart_url_scanning', {} )
+						.done(
+							function( response ) {
+								alert("All urls will be checked on the background from now. Process can take many hours.");
+							}
+						).fail(
+						function( reason ) {
+							alert("Failed to schedule full scan of all urls.");
+						}
+					);
+				}
+			);
 
 			$("#empty-url-backlinks-modal").dialog(
 				{

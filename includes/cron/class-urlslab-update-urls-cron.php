@@ -6,14 +6,14 @@ class Urlslab_Update_Urls_Cron extends Urlslab_Cron {
 	protected function execute(): bool {
 		global $wpdb;
 
-		if ( empty( get_option( Urlslab_Link_Enhancer::SETTING_NAME_LAST_LINK_VALIDATION ) ) || 1 != get_option( Urlslab_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS ) ) {
+		if ( empty( get_option( Urlslab_Link_Enhancer::SETTING_NAME_LAST_LINK_VALIDATION_START ) ) || 1 != get_option( Urlslab_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS ) ) {
 			return false;
 		}
 
 		$url_row = $wpdb->get_row(
 			$wpdb->prepare(
 				'SELECT * FROM ' . URLSLAB_URLS_TABLE . " WHERE urlCheckDate < %s OR urlCheckDate is NULL LIMIT 1", // phpcs:ignore
-				get_option( Urlslab_Link_Enhancer::SETTING_NAME_LAST_LINK_VALIDATION )
+				get_option( Urlslab_Link_Enhancer::SETTING_NAME_LAST_LINK_VALIDATION_START )
 			),
 			ARRAY_A
 		);
