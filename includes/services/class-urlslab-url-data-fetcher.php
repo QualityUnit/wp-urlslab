@@ -234,7 +234,7 @@ or (updateStatusDate < %d AND status = %s)
 		$blocked_urls          = array();
 		$possibly_blocked_urls = array();
 		foreach ( $urls as $url ) {
-			if ( ! $url->is_url_valid() || $url->is_url_blacklisted() ) {
+			if ( ! $url->is_url_valid() ) {
 				$not_crawling_urls[] = $url;
 				continue;
 			}

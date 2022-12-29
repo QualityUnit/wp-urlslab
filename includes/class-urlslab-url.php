@@ -6,12 +6,13 @@ class Urlslab_Url {
 	private bool $is_same_domain_url = false;
 	private $url_id = null;
 	private array $url_components = array();
-	private array $domain_blacklists = array(
+	private static $domain_blacklists = array(
 		'google.com',
 		'facebook.com',
 		'instagram.com',
 		'twitter.com',
 		'localhost',
+		'wa.me',
 	);
 	private const SKIP_QUERY_PARAMS_REGEXP = '/^(utm_[a-zA-Z0-9]*|_gl|_ga.*|gclid|fbclid|fb_[a-zA-Z0-9]*|msclkid|zenid|lons1|appns|lpcid|mm_src|muid|phpsessid|jsessionid|aspsessionid|doing_wp_cron|sid|pk_vid|source)$/';
 
@@ -33,9 +34,10 @@ class Urlslab_Url {
 		return true;
 	}
 
-	public function is_url_blacklisted(): bool {
-		foreach ( $this->domain_blacklists as $domain_blacklist ) {
-			if ( str_contains( $this->url_components['host'], $domain_blacklist ) ) {
+	private function is_url_blacklisted(): bool {
+		$host = strtolower($this->url_components['host']);
+		foreach ( self::$domain_blacklists as $domain_blacklist ) {
+			if ( str_contains( $host, $domain_blacklist ) ) {
 				return true;
 			}
 		}
@@ -58,10 +60,7 @@ class Urlslab_Url {
 	 * @throws Exception
 	 */
 	private function urlslab_url_init( string $input_url ): void {
-		if (
-			preg_match( '/^(bitcoin|ftp|ftps|geo|im|irc|ircs|magnet|mailto|matrix|mms|news|nntp|openpgp4fpr|sftp|sip|sms|smsto|ssh|tel|urn|webcal|wtai|xmpp):/', $input_url ) ||
-			str_starts_with( $input_url, 'https://wa.me/' )
-		) {
+		if ( preg_match( '/^(bitcoin|ftp|ftps|geo|im|irc|ircs|magnet|mailto|matrix|mms|news|nntp|openpgp4fpr|sftp|sip|sms|smsto|ssh|tel|urn|webcal|wtai|xmpp):/', $input_url ) ) {
 			throw new Exception( 'protocol handlers as url not supported' );
 		}
 
@@ -103,6 +102,9 @@ class Urlslab_Url {
 				$this->is_same_domain_url = true;
 			} else {
 				$this->is_same_domain_url = false;
+				if ( $this->is_url_blacklisted() ) {
+					throw new Exception( 'domain not supported' );
+				}
 			}
 		}
 
