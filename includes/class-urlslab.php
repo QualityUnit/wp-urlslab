@@ -366,7 +366,7 @@ class Urlslab {
 	}
 
 	public function urlslab_content( $content ) {
-		if ( empty( $content ) ) {
+		if ( empty( $content ) || http_response_code() !== 200 ) {
 			return $content;    //nothing to process
 		}
 
