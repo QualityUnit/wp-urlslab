@@ -18,6 +18,8 @@ class Urlslab_Url {
 
 	/**
 	 * @param string $url
+	 *
+	 * @throws Exception
 	 */
 	public function __construct( string $url ) {
 		$this->urlslab_url_init( $url );
@@ -35,7 +37,7 @@ class Urlslab_Url {
 	}
 
 	private function is_url_blacklisted(): bool {
-		$host = strtolower($this->url_components['host']);
+		$host = strtolower( $this->url_components['host'] );
 		foreach ( self::$domain_blacklists as $domain_blacklist ) {
 			if ( str_contains( $host, $domain_blacklist ) ) {
 				return true;
