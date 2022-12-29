@@ -58,7 +58,10 @@ class Urlslab_Url {
 	 * @throws Exception
 	 */
 	private function urlslab_url_init( string $input_url ): void {
-		if (preg_match('/^(bitcoin|ftp|ftps|geo|im|irc|ircs|magnet|mailto|matrix|mms|news|nntp|openpgp4fpr|sftp|sip|sms|smsto|ssh|tel|urn|webcal|wtai|xmpp):/', $input_url)) {
+		if (
+			preg_match( '/^(bitcoin|ftp|ftps|geo|im|irc|ircs|magnet|mailto|matrix|mms|news|nntp|openpgp4fpr|sftp|sip|sms|smsto|ssh|tel|urn|webcal|wtai|xmpp):/', $input_url ) ||
+			str_starts_with( $input_url, 'https://wa.me/' )
+		) {
 			throw new Exception( 'protocol handlers as url not supported' );
 		}
 
