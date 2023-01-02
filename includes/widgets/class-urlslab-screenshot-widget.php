@@ -72,42 +72,46 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		);
 
 
-		if ( ! empty( $urlslab_atts['url'] ) ) {
-			$url_data = $this->urlslab_url_data_fetcher->fetch_schedule_url(
-				new Urlslab_Url( $urlslab_atts['url'] )
-			);
+		try {
+			if ( ! empty( $urlslab_atts['url'] ) ) {
+				$url_data = $this->urlslab_url_data_fetcher->fetch_schedule_url(
+					new Urlslab_Url( $urlslab_atts['url'] )
+				);
 
-			if ( ! empty( $url_data ) && ! $url_data->is_empty() ) {
-				$urlslab_atts['alt'] = $url_data->get_url_summary_text( get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY ) );
+				if ( ! empty( $url_data ) && ! $url_data->is_empty() ) {
+					$urlslab_atts['alt'] = $url_data->get_url_summary_text( get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY ) );
 
-				switch ( $url_data->get_screenshot_status() ) {
-					case Urlslab_Status::$recurring_update:
-					case Urlslab_Status::$available:
-						return $this->render_shortcode(
-							$urlslab_atts['url'],
-							$url_data->render_screenshot_path( $urlslab_atts['screenshot-type'] ),
-							$urlslab_atts['alt'],
-							$urlslab_atts['width'],
-							$urlslab_atts['height'],
-						);
+					switch ( $url_data->get_screenshot_status() ) {
+						case Urlslab_Status::$recurring_update:
+						case Urlslab_Status::$available:
+							return $this->render_shortcode(
+								$urlslab_atts['url'],
+								$url_data->render_screenshot_path( $urlslab_atts['screenshot-type'] ),
+								$urlslab_atts['alt'],
+								$urlslab_atts['width'],
+								$urlslab_atts['height'],
+							);
 
-					case Urlslab_Status::$new:
-					case Urlslab_Status::$pending:
-						//default url
-						return $this->render_shortcode(
-							$urlslab_atts['url'],
-							$urlslab_atts['default-image'],
-							$urlslab_atts['alt'],
-							$urlslab_atts['width'],
-							$urlslab_atts['height'],
-						);
+						case Urlslab_Status::$new:
+						case Urlslab_Status::$pending:
+							//default url
+							return $this->render_shortcode(
+								$urlslab_atts['url'],
+								$urlslab_atts['default-image'],
+								$urlslab_atts['alt'],
+								$urlslab_atts['width'],
+								$urlslab_atts['height'],
+							);
 
-					case Urlslab_Status::$not_crawling:
-					case Urlslab_Status::$blocked:
-					default:
-						return '';
+						case Urlslab_Status::$not_crawling:
+						case Urlslab_Status::$blocked:
+						default:
+							return '';
+					}
 				}
 			}
+		} catch ( Exception $e ) {
+			return '';
 		}
 
 		return $this->render_shortcode(
