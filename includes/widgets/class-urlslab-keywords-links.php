@@ -209,9 +209,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 					);
 					$this->page_keywords[ $kwRow['kw'] ]['kw_id']                         = $kw_id;
 
-					$linkDom = $document->createElement( 'a', substr( $node->nodeValue, $pos, strlen( $kwRow['kw'] ) ) );
+					$linkDom = $document->createElement( 'a', htmlspecialchars( substr( $node->nodeValue, $pos, strlen( $kwRow['kw'] ) ) ) );
 					$linkDom->setAttribute( 'href', urlslab_add_current_page_protocol( $urlObj->get_url() ) );
-					$linkDom->setAttribute( 'urlslab-kw', 'y' );
 
 					//if relative url or url from same domain, don't add target attribute
 					if ( ! $urlObj->is_same_domain_url() ) {
