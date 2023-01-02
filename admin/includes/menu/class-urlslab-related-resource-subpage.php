@@ -45,23 +45,36 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 					isset( $_POST['srcUrl'] ) && ! empty( $_POST['srcUrl'] ) &&
 					isset( $_POST['destUrl'] ) && ! empty( $_POST['destUrl'] )
 				) {
-					$this->edit_url_relation(
-						$_POST['srcUrlHash'],
-						$_POST['destUrlHash'],
-						new Urlslab_Url( $_POST['srcUrl'] ),
-						new Urlslab_Url( $_POST['destUrl'] ),
-						$_POST['pos'] ?? 10,
-					);
-					wp_safe_redirect(
-						$this->parent_page->menu_page(
-							$this->subpage_slug,
-							array(
-								'status'          => 'success',
-								'urlslab-message' => 'keyword was edited successfully',
+					try {
+						$this->edit_url_relation(
+							$_POST['srcUrlHash'],
+							$_POST['destUrlHash'],
+							new Urlslab_Url( $_POST['srcUrl'] ),
+							new Urlslab_Url( $_POST['destUrl'] ),
+							$_POST['pos'] ?? 10,
+						);
+						wp_safe_redirect(
+							$this->parent_page->menu_page(
+								$this->subpage_slug,
+								array(
+									'status'          => 'success',
+									'urlslab-message' => 'keyword was edited successfully',
+								)
 							)
-						)
-					);
-					exit;
+						);
+						exit;
+					} catch ( Exception $e ) {
+						wp_safe_redirect(
+							$this->parent_page->menu_page(
+								$this->subpage_slug,
+								array(
+									'status'          => 'failure',
+									'urlslab-message' => 'entered relation detail was not valid',
+								)
+							)
+						);
+						exit;
+					}
 				} else {
 					wp_safe_redirect(
 						$this->parent_page->menu_page(
@@ -400,7 +413,7 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		$res = $wpdb->query( $wpdb->prepare( $insert_query, $insert_values ) ); // phpcs:ignore
 
 		if ( is_bool( $res ) and ! $res ) {
-			return -1;
+			return - 1;
 		} else {
 			return $res;
 		}
@@ -511,7 +524,11 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		sort( $sample_urls, SORT_STRING | SORT_FLAG_CASE | SORT_NATURAL );
 
 		foreach ( $sample_urls as $id => $url ) {
-			$sample_urls[ $id ] = new Urlslab_Url( $url );
+			try {
+				$sample_urls[ $id ] = new Urlslab_Url( $url );
+			} catch ( Exception $e ) {
+				//noop
+			}
 		}
 		$max = count( $sample_urls );
 		for ( $i = 0; $i < $max; $i ++ ) {

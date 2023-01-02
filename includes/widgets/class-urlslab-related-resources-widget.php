@@ -73,21 +73,24 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			$tag
 		);
 
-		$current_url = new Urlslab_Url( $urlslab_atts['url'] );
-		$result      = $this->url_data_fetcher->fetch_related_urls_to(
-			$current_url,
-			$urlslab_atts['related-count']
-		);
-		$content     = '<!-- ' . esc_html( $urlslab_atts['url'] . ' - ' . $current_url->get_url_id() . ' - ' . $current_url->get_url() ) . ' -->';
+		try {
+			$current_url = new Urlslab_Url( $urlslab_atts['url'] );
+			$result      = $this->url_data_fetcher->fetch_related_urls_to(
+				$current_url,
+				$urlslab_atts['related-count']
+			);
+			$content     = '<!-- ' . esc_html( $urlslab_atts['url'] . ' - ' . $current_url->get_url_id() . ' - ' . $current_url->get_url() ) . ' -->';
 
-		if ( ! empty( $result ) ) {
-			$content  .= $this->render_shortcode_header();
-			$strategy = get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
-			foreach ( $result as $url ) {
-				$content .= $this->render_shortcode_item( $url, $urlslab_atts, $strategy );
+			if ( ! empty( $result ) ) {
+				$content  .= $this->render_shortcode_header();
+				$strategy = get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
+				foreach ( $result as $url ) {
+					$content .= $this->render_shortcode_item( $url, $urlslab_atts, $strategy );
+				}
+
+				$content .= $this->render_shortcode_footer();
 			}
-
-			$content .= $this->render_shortcode_footer();
+		} catch (Exception $e) {
 		}
 
 		return $content;

@@ -201,43 +201,46 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				}
 
 				//add keyword as link
-				$urlObj                                                               = new Urlslab_Url( $kwRow['url'] );
-				$this->page_keywords[ $kwRow['kw'] ]['urls'][ $urlObj->get_url_id() ] = array(
-					'obj' => $urlObj,
-					't'   => self::KW_LINK_URLSLAB,
-				);
-				$this->page_keywords[ $kwRow['kw'] ]['kw_id']                         = $kw_id;
+				try {
+					$urlObj                                                               = new Urlslab_Url( $kwRow['url'] );
+					$this->page_keywords[ $kwRow['kw'] ]['urls'][ $urlObj->get_url_id() ] = array(
+						'obj' => $urlObj,
+						't'   => self::KW_LINK_URLSLAB,
+					);
+					$this->page_keywords[ $kwRow['kw'] ]['kw_id']                         = $kw_id;
 
-				$linkDom = $document->createElement( 'a', substr( $node->nodeValue, $pos, strlen( $kwRow['kw'] ) ) );
-				$linkDom->setAttribute( 'href', urlslab_add_current_page_protocol( $urlObj->get_url() ) );
-				$linkDom->setAttribute( 'urlslab-kw', 'y' );
+					$linkDom = $document->createElement( 'a', substr( $node->nodeValue, $pos, strlen( $kwRow['kw'] ) ) );
+					$linkDom->setAttribute( 'href', urlslab_add_current_page_protocol( $urlObj->get_url() ) );
+					$linkDom->setAttribute( 'urlslab-kw', 'y' );
 
-				//if relative url or url from same domain, don't add target attribute
-				if ( ! $urlObj->is_same_domain_url() ) {
-					$linkDom->setAttribute( 'target', '_blank' );
+					//if relative url or url from same domain, don't add target attribute
+					if ( ! $urlObj->is_same_domain_url() ) {
+						$linkDom->setAttribute( 'target', '_blank' );
+					}
+
+					$node->parentNode->insertBefore( $linkDom, $node );
+
+					//add text after keyword
+					if ( $pos + strlen( $kwRow['kw'] ) < strlen( $node->nodeValue ) ) {
+						$domTextEnd = $document->createTextNode( substr( $node->nodeValue, $pos + strlen( $kwRow['kw'] ) ) );
+						$node->parentNode->insertBefore( $domTextEnd, $node );
+					} else {
+						$domTextEnd = null;
+					}
+					unset( $keywords[ $kw_id ] );
+
+					//process other keywords in text
+					if ( is_object( $domTextStart ) ) {
+						$this->replaceKeywordWithLinks( $domTextStart, $document, $keywords, 0, $this->options[ self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK ], 0, $max_paragraph_density_links );
+					}
+					if ( is_object( $domTextEnd ) ) {
+						$this->replaceKeywordWithLinks( $domTextEnd, $document, $keywords, $this->options[ self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK ], 0, 0, $max_paragraph_density_links );
+					}
+
+					//remove processed node
+					$this->remove_nodes[] = $node;
+				} catch ( Exception $e ) {
 				}
-
-				$node->parentNode->insertBefore( $linkDom, $node );
-
-				//add text after keyword
-				if ( $pos + strlen( $kwRow['kw'] ) < strlen( $node->nodeValue ) ) {
-					$domTextEnd = $document->createTextNode( substr( $node->nodeValue, $pos + strlen( $kwRow['kw'] ) ) );
-					$node->parentNode->insertBefore( $domTextEnd, $node );
-				} else {
-					$domTextEnd = null;
-				}
-				unset( $keywords[ $kw_id ] );
-
-				//process other keywords in text
-				if ( is_object( $domTextStart ) ) {
-					$this->replaceKeywordWithLinks( $domTextStart, $document, $keywords, 0, $this->options[ self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK ], 0, $max_paragraph_density_links );
-				}
-				if ( is_object( $domTextEnd ) ) {
-					$this->replaceKeywordWithLinks( $domTextEnd, $document, $keywords, $this->options[ self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK ], 0, 0, $max_paragraph_density_links );
-				}
-
-				//remove processed node
-				$this->remove_nodes[] = $node;
 
 				return;
 			} else {
@@ -291,15 +294,19 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				( '.*' === $row['urlFilter'] || '' === $row['urlFilter'] || preg_match( '/' . str_replace( '/', '\\/', $row['urlFilter'] ) . '/', $currentUrl ) ) &&
 				strpos( $input_text, strtolower( $row['keyword'] ) ) !== false
 			) {
-				$kwUrl = new Urlslab_Url( $row['urlLink'] );
-				if ( $this->get_current_page_url()->get_url_id() != $kwUrl->get_url_id() ) {
-					$this->keywords_cache[ $row['kw_id'] ] = array(
-						'kw'  => strtolower( $row['keyword'] ),
-						'url' => $row['urlLink'],
-					);
-					//addressing cache
-					$this->keywords_cache_ids[ strtolower( $row['keyword'] ) ][] = $row['kw_id'];
-					$this->urls_cache_ids[ $row['urlLink'] ][]                   = $row['kw_id'];
+				try {
+					$kwUrl = new Urlslab_Url( $row['urlLink'] );
+					if ( $this->get_current_page_url()->get_url_id() != $kwUrl->get_url_id() ) {
+						$this->keywords_cache[ $row['kw_id'] ] = array(
+							'kw'  => strtolower( $row['keyword'] ),
+							'url' => $row['urlLink'],
+						);
+						//addressing cache
+						$this->keywords_cache_ids[ strtolower( $row['keyword'] ) ][] = $row['kw_id'];
+						$this->urls_cache_ids[ $row['urlLink'] ][]                   = $row['kw_id'];
+					}
+				} catch ( Exception $e ) {
+
 				}
 			}
 		}
@@ -542,15 +549,18 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 						if ( strlen( $href ) && '#' != substr( $href, 0, 1 ) && 'tel:' != substr( $href, 0, 4 ) && 'mailto:' != substr( $href, 0, 7 ) ) {
 							$link_text = $this->get_link_element_text( $element );
 							if ( strlen( $link_text ) ) {
-								$urlObj = new Urlslab_Url( $href );
-								if (
-									$urlObj->is_url_valid() &&
-									$this->get_current_page_url()->get_url_id() != $urlObj->get_url_id()
-								) {
-									$this->page_keywords[ $link_text ]['urls'][ $urlObj->get_url_id() ] = array(
-										'obj' => $urlObj,
-										't'   => self::KW_LINK_EDITOR,
-									);
+								try {
+									$urlObj = new Urlslab_Url( $href );
+									if (
+										$urlObj->is_url_valid() &&
+										$this->get_current_page_url()->get_url_id() != $urlObj->get_url_id()
+									) {
+										$this->page_keywords[ $link_text ]['urls'][ $urlObj->get_url_id() ] = array(
+											'obj' => $urlObj,
+											't'   => self::KW_LINK_EDITOR,
+										);
+									}
+								} catch ( Exception $e ) {
 								}
 							}
 							if ( ! $hadHAlready ) {

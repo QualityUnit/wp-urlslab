@@ -342,13 +342,17 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		$related_resource_table = URLSLAB_RELATED_RESOURCE_TABLE;
 		$source_table           = URLSLAB_URLS_TABLE;
 
-		$kw_url  = $wpdb->get_var(
+		$kw_url = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT urlLink FROM $keyword_table WHERE kw_id = %s",//# phpcs:ignore
 				$kw_id
 			)
 		);
-		$kw_url  = new Urlslab_Url( $kw_url );
+		try {
+			$kw_url = new Urlslab_Url( $kw_url );
+		} catch ( Exception $e ) {
+			return array();
+		}
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT	v.urlMd5             AS urlMd5,
@@ -667,7 +671,9 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 					<li class="color-warning">priority (optional - defaults to 10)</li>
 					<li class="color-warning">lang (optional - defaults to 'all')</li>
 					<li class="color-warning">filter (optional - defaults to regular expression '.*')</li>
-					<li class="color-warning">type (optional - defaults to M, Possible values: M - manual link, I - imported link)</li>
+					<li class="color-warning">type (optional - defaults to M, Possible values: M - manual link, I -
+						imported link)
+					</li>
 				</ul>
 			</div>
 			<?php
