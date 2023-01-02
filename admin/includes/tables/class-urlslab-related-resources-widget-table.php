@@ -101,7 +101,10 @@ class Urlslab_Related_Resources_Widget_Table extends WP_List_Table {
 		}
 		$query_res = array();
 		foreach ( $res as $row ) {
-			$query_res[] = $this->transform( $row );
+			try {
+				$query_res[] = $this->transform( $row );
+			} catch ( Exception $e ) {
+			}
 		}
 
 		return $query_res;

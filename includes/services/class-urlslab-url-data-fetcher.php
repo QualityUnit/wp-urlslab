@@ -85,13 +85,16 @@ or (updateStatusDate < %d AND status = %s)
 			$values      = array();
 			$placeholder = array();
 			foreach ( $schedules as $schedule ) {
-				$res[] = $this->transform( $schedule )->get_url();
-				array_push(
-					$values,
-					$schedule['urlMd5'],
-					strtotime( gmdate( 'Y-m-d H:i:s' ) ),
-				);
-				$placeholder[] = '(%s, %d)';
+				try {
+					$res[] = $this->transform( $schedule )->get_url();
+					array_push(
+						$values,
+						$schedule['urlMd5'],
+						strtotime( gmdate( 'Y-m-d H:i:s' ) ),
+					);
+					$placeholder[] = '(%s, %d)';
+				} catch ( Exception $e ) {
+				}
 			}
 
 			$placeholder_string = implode( ', ', $placeholder );
@@ -377,10 +380,13 @@ or (updateStatusDate < %d AND status = %s)
 
 		if ( ! empty( $query_results ) ) {
 			foreach ( $query_results as $res ) {
-				$results[ $res['urlMd5'] ]          = $this->transform( $res );
-				$this->urls_cache[ $res['urlMd5'] ] = $results[ $res['urlMd5'] ];
-				//# Adding only urls that are not scheduled
-				unset( $valid_urls[ $res['urlMd5'] ] );
+				try {
+					$results[ $res['urlMd5'] ]          = $this->transform( $res );
+					$this->urls_cache[ $res['urlMd5'] ] = $results[ $res['urlMd5'] ];
+					//# Adding only urls that are not scheduled
+					unset( $valid_urls[ $res['urlMd5'] ] );
+				} catch ( Exception $e ) {
+				}
 			}
 		}
 
@@ -468,7 +474,11 @@ or (updateStatusDate < %d AND status = %s)
 
 		$result = array();
 		foreach ( $query_res as $res ) {
-			$result[] = $this->transform( $res );
+			try {
+				$result[] = $this->transform( $res );
+			} catch ( Exception $e ) {
+
+			}
 		}
 
 		return $result;

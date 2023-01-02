@@ -55,9 +55,12 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		}
 
 		if ( ! empty( $data ) ) {
-			$url = new Urlslab_Url( get_permalink( $post_id ) );
-			global $wpdb;
-			$wpdb->update( URLSLAB_URLS_TABLE, $data, array( 'urlMd5' => $url->get_url_id() ) );
+			try {
+				$url = new Urlslab_Url( get_permalink( $post_id ) );
+				global $wpdb;
+				$wpdb->update( URLSLAB_URLS_TABLE, $data, array( 'urlMd5' => $url->get_url_id() ) );
+			} catch ( Exception $e ) {
+			}
 		}
 	}
 

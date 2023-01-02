@@ -35,79 +35,84 @@ class Urlslab_Update_Urls_Cron extends Urlslab_Cron {
 	}
 
 	private function updateUrl( Urlslab_Url_Row $url ) {
-		$page_content_file_name = download_url( $url->get_url()->get_url_with_protocol() );
+		try {
+			$page_content_file_name = download_url( $url->get_url()->get_url_with_protocol() );
 
-		if ( is_wp_error( $page_content_file_name ) ) {
-			$url->set( 'urlTitle', Urlslab_Url_Row::VALUE_EMPTY );
-			$url->set( 'urlMetaDescription', Urlslab_Url_Row::VALUE_EMPTY );
-			if ( 'http_404' == $page_content_file_name->get_error_code() ) {
-				switch ( $page_content_file_name->get_error_data()['code'] ) {
-					case 404:
-						$url->set( 'status', Urlslab_Url_Row::STATUS_4XX );
-						break;
-					case 500:
-					case 503:    //not sure if we should invalidate url to 503 page - it can come again online, we can later revalidate it
-						$url->set( 'status', Urlslab_Url_Row::STATUS_5XX );
-						break;
-					default:
+			if ( is_wp_error( $page_content_file_name ) ) {
+				$url->set( 'urlTitle', Urlslab_Url_Row::VALUE_EMPTY );
+				$url->set( 'urlMetaDescription', Urlslab_Url_Row::VALUE_EMPTY );
+				if ( 'http_404' == $page_content_file_name->get_error_code() ) {
+					switch ( $page_content_file_name->get_error_data()['code'] ) {
+						case 404:
+							$url->set( 'status', Urlslab_Url_Row::STATUS_4XX );
+							break;
+						case 500:
+						case 503:    //not sure if we should invalidate url to 503 page - it can come again online, we can later revalidate it
+							$url->set( 'status', Urlslab_Url_Row::STATUS_5XX );
+							break;
+						default:
+					}
 				}
-			}
-		} else if ( empty( $page_content_file_name ) || ! file_exists( $page_content_file_name ) || 0 == filesize( $page_content_file_name ) ) {
-			$url->set( 'urlTitle', Urlslab_Url_Row::VALUE_EMPTY );
-			$url->set( 'urlMetaDescription', Urlslab_Url_Row::VALUE_EMPTY );
-		} else {
-			$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
-			$document->encoding            = 'utf-8';
-			$document->strictErrorChecking = false; // phpcs:ignore
-			$libxml_previous_state         = libxml_use_internal_errors( true );
+			} else if ( empty( $page_content_file_name ) || ! file_exists( $page_content_file_name ) || 0 == filesize( $page_content_file_name ) ) {
+				$url->set( 'urlTitle', Urlslab_Url_Row::VALUE_EMPTY );
+				$url->set( 'urlMetaDescription', Urlslab_Url_Row::VALUE_EMPTY );
+			} else {
+				$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
+				$document->encoding            = 'utf-8';
+				$document->strictErrorChecking = false; // phpcs:ignore
+				$libxml_previous_state         = libxml_use_internal_errors( true );
 
-			try {
-				$document->loadHTML(
-					mb_convert_encoding( file_get_contents( $page_content_file_name ), 'HTML-ENTITIES', 'utf-8' ),
-					LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE
-				);
-				libxml_clear_errors();
-				libxml_use_internal_errors( $libxml_previous_state );
+				try {
+					$document->loadHTML(
+						mb_convert_encoding( file_get_contents( $page_content_file_name ), 'HTML-ENTITIES', 'utf-8' ),
+						LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE
+					);
+					libxml_clear_errors();
+					libxml_use_internal_errors( $libxml_previous_state );
 
 
-				// find the title
-				if ( $url->get( 'urlTitle' ) == Urlslab_Url_Row::VALUE_EMPTY ) {
-					$titlelist = $document->getElementsByTagName( 'title' );
-					if ( $titlelist->length > 0 ) {
-						$url->set( 'urlTitle', $titlelist->item( 0 )->nodeValue );
-						if ( empty( $url->get( 'urlTitle' ) ) ) {
+					// find the title
+					if ( $url->get( 'urlTitle' ) == Urlslab_Url_Row::VALUE_EMPTY ) {
+						$titlelist = $document->getElementsByTagName( 'title' );
+						if ( $titlelist->length > 0 ) {
+							$url->set( 'urlTitle', $titlelist->item( 0 )->nodeValue );
+							if ( empty( $url->get( 'urlTitle' ) ) ) {
+								$url->set( 'urlTitle', Urlslab_Url_Row::VALUE_EMPTY );
+							}
+						} else {
 							$url->set( 'urlTitle', Urlslab_Url_Row::VALUE_EMPTY );
 						}
-					} else {
-						$url->set( 'urlTitle', Urlslab_Url_Row::VALUE_EMPTY );
 					}
-				}
 
-				if ( $url->get( 'urlMetaDescription' ) == Urlslab_Url_Row::VALUE_EMPTY ) {
-					$xpath            = new DOMXPath( $document );
-					$metadescriptions = $xpath->evaluate( '//meta[@name="description"]/@content' );
-					if ( $metadescriptions->length > 0 ) {
-						$url->set( 'urlMetaDescription', $xpath->evaluate( '//meta[@name="description"]/@content' )->item( 0 )->value );
-						if ( empty( $url->get( 'urlMetaDescription' ) ) ) {
+					if ( $url->get( 'urlMetaDescription' ) == Urlslab_Url_Row::VALUE_EMPTY ) {
+						$xpath            = new DOMXPath( $document );
+						$metadescriptions = $xpath->evaluate( '//meta[@name="description"]/@content' );
+						if ( $metadescriptions->length > 0 ) {
+							$url->set( 'urlMetaDescription', $xpath->evaluate( '//meta[@name="description"]/@content' )->item( 0 )->value );
+							if ( empty( $url->get( 'urlMetaDescription' ) ) ) {
+								$url->set( 'urlMetaDescription', Urlslab_Url_Row::VALUE_EMPTY );
+							}
+						} else {
 							$url->set( 'urlMetaDescription', Urlslab_Url_Row::VALUE_EMPTY );
 						}
-					} else {
-						$url->set( 'urlMetaDescription', Urlslab_Url_Row::VALUE_EMPTY );
 					}
+					switch ( $url->get( 'status' ) ) {
+						case Urlslab_Url_Row::STATUS_5XX:
+						case Urlslab_Url_Row::STATUS_4XX:
+							$url->set( 'status', Urlslab_Url_Row::STATUS_ACTIVE );
+							$url->set( 'updateStatusDate', Urlslab_Url_Row::get_now() );
+							break;
+						default:
+					}
+				} catch ( Exception $e ) {
 				}
-				switch ( $url->get( 'status' ) ) {
-					case Urlslab_Url_Row::STATUS_5XX:
-					case Urlslab_Url_Row::STATUS_4XX:
-						$url->set( 'status', Urlslab_Url_Row::STATUS_ACTIVE );
-						$url->set( 'updateStatusDate', Urlslab_Url_Row::get_now() );
-						break;
-					default:
-				}
-			} catch ( Exception $e ) {
+				unlink( $page_content_file_name );
 			}
-			unlink( $page_content_file_name );
+		} catch ( Exception $e ) {
+			$url->set( 'urlTitle', Urlslab_Url_Row::VALUE_EMPTY );
+			$url->set( 'urlMetaDescription', Urlslab_Url_Row::VALUE_EMPTY );
+			$url->set( 'status', Urlslab_Url_Row::STATUS_BROKEN );
 		}
-
 		$url->set( 'urlCheckDate', Urlslab_Url_Row::get_now() );
 
 		return $url->update();
