@@ -256,13 +256,6 @@ FROM $table AS v LEFT JOIN $join_table AS d ON d.destUrlMd5 = v.urlMd5
 		$views['pending'] = "<a href='$pending_url' $class>Pending <span class='count'>($pending_count)</span></a>";
 		//# Pending case
 
-		//# Broken url case
-		$class = ( Urlslab_Status::$not_crawling == $current ? ' class="current"' : '' );
-		$not_crawling_url = add_query_arg( 'filter', Urlslab_Status::$not_crawling );
-		$not_crawling_count = $this->count_url_screenshots( Urlslab_Status::$not_crawling );
-		$views['not_crawling'] = "<a href='$not_crawling_url' $class>Not crawling <span class='count'>($not_crawling_count)</span></a>";
-		//# Broken url case
-
 		//# Blocked url case
 		$class = ( Urlslab_Status::$blocked == $current ? ' class="current"' : '' );
 		$blocked_url = add_query_arg( 'filter', Urlslab_Status::$blocked );
