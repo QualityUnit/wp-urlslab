@@ -88,13 +88,15 @@ class Urlslab_Admin {
 
 		wp_enqueue_style( $this->urlslab . '-jquery-modal', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css' );
 
-		wp_enqueue_style(
-			$this->urlslab,
-			plugin_dir_url( __FILE__ ) . 'css/urlslab-admin.css',
-			array(),
-			$this->version,
-			'all'
-		);
+		wp_enqueue_style( $this->urlslab . '-settings', plugin_dir_url( __FILE__ ) . 'dist/assets/style.css' );
+
+		// wp_enqueue_style(
+		// 	$this->urlslab,
+		// 	plugin_dir_url( __FILE__ ) . 'css/urlslab-admin.css',
+		// 	array(),
+		// 	$this->version,
+		// 	'all'
+		// );
 
 	}
 
@@ -117,12 +119,26 @@ class Urlslab_Admin {
 		 * class.
 		 */
 
+		// Allows to use POST etc via Rest API cookie authentification
+
+		// wp_localize_script( 'wp-api', 'urlslabNonceAuth', array(
+    // 'root' => esc_url_raw( rest_url() ),
+    // 'nonce' => wp_create_nonce( 'wp_rest' )
+		// ) );
+
 		wp_enqueue_script(
 			$this->urlslab,
 			plugin_dir_url( __FILE__ ) . 'js/urlslab-admin.js',
 			array( 'jquery', 'jquery-ui-tabs', 'jquery-ui-dialog', 'wp-util' ),
 			$this->version,
 			false
+		);
+		wp_enqueue_script(
+			$this->urlslab . '-settings',
+			plugin_dir_url( __FILE__ ) . 'dist/settings.js',
+			false,
+			$this->version,
+			true
 		);
 		wp_localize_script(
 			$this->urlslab,
