@@ -1,0 +1,169 @@
+/* stylelint-disable no-descending-specificity */
+
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-input,
+.urlslab-textarea {
+
+	&.input__text,
+	&[type="text"],
+	&[type="email"],
+	&[type="password"],
+	&[type="url"],
+	&[type="number"],
+	&[type="search"] {
+		outline: none;
+		border: none;
+		border-radius: 6px;
+		padding: 0.5em 1em;
+		font-size: 0.8125rem;
+		font-weight: $font-weight-normal;
+		width: 100%;
+		color: currentcolor;
+		transition: all 0.2s;
+		background-color: $white;
+
+		&[disabled] {
+			background-color: $grey-lightest;
+			color: $grey-dark;
+			cursor: not-allowed;
+		}
+
+		@include input-placeholder {
+			color: currentcolor;
+			font-size: 1em;
+			transition: all 0.2s;
+			opacity: 1;
+		}
+	}
+
+	&[type="checkbox"] {
+		display: none;
+	}
+}
+
+.urlslab-input[type="search"] {
+	font-weight: $font-weight-normal;
+	padding: 0.5em 0.5em 0.5em 3.5em;
+	border-radius: 1.5em;
+	border: 1px solid transparent;
+	background-color: $grey-light;
+
+	@include input-placeholder {
+		color: currentcolor;
+		font-size: 0.875rem;
+		transition: all 0.2s;
+		opacity: 1;
+	}
+}
+
+.urlslab-inputField {
+	position: relative;
+	border: 1px solid currentcolor;
+	border-radius: 6px;
+	font-size: 1rem;
+	color: $grey-medium;
+	transition: all 0.2s;
+
+	&-wrap {
+		display: block;
+		margin-bottom: 1.25em;
+
+		&.inline {
+			display: flex;
+			align-items: center;
+
+			.urlslab-inputField-label {
+				margin-right: 0.5em;
+			}
+		}
+	}
+
+	&.has-svg {
+
+		input:not([type="search"]) {
+			padding: 1.25em 1em 1.25em 3.5em;
+		}
+	}
+
+	&.has-value {
+		box-shadow: 0 0 0 1px currentcolor;
+	}
+
+	&__search {
+		border-radius: 1.5em;
+		max-width: 18.75em;
+
+		&:focus-within {
+			color: $black;
+			border-color: transparent !important;
+		}
+
+		svg {
+
+			@include square(1.25em);
+		}
+	}
+
+	&.success[class] {
+		color: $saturated-green;
+		border-color: currentcolor;
+		box-shadow: 0 0 0 1px currentcolor;
+	}
+
+	&.error[class] {
+		color: $saturated-red;
+		border-color: currentcolor;
+		box-shadow: 0 0 0 1px currentcolor;
+	}
+
+	&.warning[class] {
+		color: $saturated-orange;
+		border-color: currentcolor;
+		box-shadow: 0 0 0 1px currentcolor;
+	}
+
+	&.info[class] {
+		color: $saturated-cyan;
+		border-color: currentcolor;
+		box-shadow: 0 0 0 1px currentcolor;
+	}
+
+	&::before {
+
+		color: currentcolor;
+	}
+
+	&:focus-within {
+		color: $black;
+		border-color: $primary-color;
+		box-shadow: 0 0 0 1px $primary-color;
+
+		&::before {
+
+			color: currentcolor;
+		}
+
+		svg {
+			fill: currentcolor;
+		}
+
+		input {
+
+			@include input-placeholder {
+				opacity: 0.25;
+			}
+		}
+	}
+
+	svg {
+
+		position: absolute;
+		height: 1.5em;
+		left: 0.85em;
+		top: 50%;
+		transform: translateY(-50%);
+		fill: $grey-medium;
+	}
+}

@@ -9,7 +9,6 @@ export default function InputField({ defaultValue, placeholder, message, classNa
 	const handleVal = (event) => {
 		setVal(event.target.value);
 	};
-
 	const valueStatus = () => {
 		if (val) {
 			if ((type === undefined || type === 'text') ||
@@ -38,10 +37,11 @@ export default function InputField({ defaultValue, placeholder, message, classNa
 					disabled={disabled ? 'disabled' : ''}
 				/>
 			</div>
-			{message?.length && valueStatus().length
-				? <div className="urlslab-inputField-message">{message}</div>
-				: null
+			{
+				message?.length && valueStatus().length
+					? <div className="urlslab-inputField-message">{message}</div>
+					: null
 			}
-		</label>
+		</label >
 	);
 }
