@@ -183,6 +183,7 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 	 */
 	function get_columns(): array {
 		return array(
+			'cb'                 => '<input type="checkbox" />',
 			'col_url'                => 'Original Url',
 			'col_generated_resource' => 'Offloaded Url',
 			'col_local_file'         => 'Local File',
@@ -194,6 +195,79 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 			'col_file_status'        => 'File Status',
 			'col_driver'             => 'Driver',
 			'col_image_usage_count'  => 'Image Usage Count',
+		);
+	}
+
+	/**
+	 * Render the bulk edit checkbox
+	 *
+	 * @param Urlslab_File_Data $item
+	 *
+	 * @return string
+	 */
+	function column_cb( $item ): string {
+		return sprintf(
+			'<input type="checkbox" name="bulk-delete[]" value="%s" />',
+			$item->get_fileid()
+		);
+	}
+
+	/**
+	 * Returns an associative array containing the bulk action
+	 *
+	 * @return array
+	 */
+	public function get_bulk_actions(): array {
+		return array(
+			'bulk-delete' => 'Delete',
+		);
+	}
+
+	public function process_bulk_action() {
+		// Bulk Delete triggered
+		if (
+			( isset( $_GET['action'] ) && 'bulk-delete' == $_GET['action'] )
+			|| ( isset( $_GET['action2'] ) && 'bulk-delete' == $_GET['action2'] )
+		) {
+
+			if ( isset( $_GET['bulk-delete'] ) ) {
+				$delete_ids = esc_sql( $_GET['bulk-delete'] );
+				// loop over the array of record IDs and delete them
+				$this->delete_files( $delete_ids );
+			}
+		}
+		$this->graceful_exit();
+	}
+
+	/**
+	 * @param string[] $delete_ids
+	 *
+	 * @return void
+	 */
+	private function delete_files( array $delete_ids ) {
+		global $wpdb;
+		$placeholder = array();
+		foreach ( $delete_ids as $id ) {
+			$placeholder[] = '%s';
+		}
+		$placeholder_string = implode( ',', $placeholder );
+
+		$table       = URLSLAB_FILE_URLS_TABLE;
+		$delete_query       = "DELETE FROM $table WHERE fileid IN ($placeholder_string)";
+		$wpdb->query(
+			$wpdb->prepare(
+				$delete_query, // phpcs:ignore
+				$delete_ids
+			)
+		);
+
+		$table       = URLSLAB_FILES_TABLE;
+		$delete_query       = "DELETE FROM $table WHERE fileid IN ($placeholder_string)";
+		$wpdb->query(
+			$wpdb->prepare(
+				$delete_query, // phpcs:ignore
+				$delete_ids
+			)
 		);
 	}
 
@@ -474,6 +548,9 @@ class Urlslab_Offloader_Table extends WP_List_Table {
 		$webp_filter           = isset( $_REQUEST['webp_filter'] ) ? wp_unslash( trim( $_REQUEST['webp_filter'] ) ) : '';
 		$avif_filter           = isset( $_REQUEST['avif_filter'] ) ? wp_unslash( trim( $_REQUEST['avif_filter'] ) ) : '';
 		$file_driver_filter    = isset( $_REQUEST['driver_filter'] ) ? wp_unslash( trim( $_REQUEST['driver_filter'] ) ) : '';
+
+		$this->process_bulk_action();
+
 
 		$table_page     = $this->get_pagenum();
 		$items_per_page = $this->get_items_per_page( 'users_per_page' );
