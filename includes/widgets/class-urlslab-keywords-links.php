@@ -80,6 +80,9 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	public const SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS = 'urlslab_kw_imp_ext';
 	public const SETTING_DEFAULT_KW_IMPORT_EXTERNAL_LINKS = 0;
 
+	public const SETTING_NAME_ADD_ID_TO_ALL_H_TAGS = 'urlslab_H_add_id';
+	public const SETTING_DEFAULT_ADD_ID_TO_ALL_H_TAGS = 0;
+
 	public const SETTING_NAME_KW_IMPORT_MAX_LENGTH = 'urlslab_kw_max_len';
 	public const SETTING_DEFAULT_KW_IMPORT_MAX_LENGTH = 100;
 
@@ -108,6 +111,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$this->options[ self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK ]           = get_option( self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK, self::SETTING_DEFAULT_MIN_CHARS_TO_NEXT_LINK );
 		$this->options[ self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS ]         = get_option( self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS, self::SETTING_DEFAULT_KW_IMPORT_INTERNAL_LINKS );
 		$this->options[ self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS ]         = get_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS, self::SETTING_DEFAULT_KW_IMPORT_EXTERNAL_LINKS );
+		$this->options[ self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS ]             = get_option( self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS, self::SETTING_DEFAULT_ADD_ID_TO_ALL_H_TAGS );
 		$this->options[ self::SETTING_NAME_KW_IMPORT_MAX_LENGTH ]             = get_option( self::SETTING_NAME_KW_IMPORT_MAX_LENGTH, self::SETTING_DEFAULT_KW_IMPORT_MAX_LENGTH );
 	}
 
@@ -389,6 +393,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	public function theContentHook( DOMDocument $document ) {
+		$this->addIdToHTags( $document );
 		$this->initLinkCounts( $document );
 		$this->init_keywords_cache( strtolower( $document->textContent ) );
 		try {
@@ -527,6 +532,24 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		}
 	}
 
+	private function addIdToHTags( DOMDocument $document ) {
+		if ( $this->options[ self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS ] ) {
+			$used_ids = array();
+			$xpath    = new DOMXPath( $document );
+			$headers  = $xpath->query( "//*[substring-after(name(), 'h') > 0 and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-keywords')])]" );
+			foreach ( $headers as $header_element ) {
+				if ( ! $header_element->hasAttribute( 'id' ) ) {
+					$id = strtolower( trim( $header_element->nodeValue ) );
+					$id = 'h-' . trim( preg_replace( '/[^\w]+/', '-', $id ), '-' );
+					if ( ! isset( $used_ids[ $id ] ) ) {
+						$header_element->setAttribute( 'id', $id );
+					}
+				}
+				$used_ids[ $header_element->getAttribute( 'id' ) ] = 1;
+			}
+		}
+	}
+
 	private function initLinkCounts( DOMDocument $document ) {
 		$this->cnt_page_link_replacements       = 0;
 		$this->cnt_page_links                   = 0;
@@ -629,6 +652,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		add_option( self::SETTING_NAME_KW_MAP, self::SETTING_DEFAULT_KW_MAP, '', true );
 		add_option( self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS, self::SETTING_DEFAULT_KW_IMPORT_INTERNAL_LINKS, '', true );
 		add_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS, self::SETTING_DEFAULT_KW_IMPORT_EXTERNAL_LINKS, '', true );
+		add_option( self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS, self::SETTING_DEFAULT_ADD_ID_TO_ALL_H_TAGS, '', true );
 		add_option( self::SETTING_NAME_KW_IMPORT_MAX_LENGTH, self::SETTING_DEFAULT_KW_IMPORT_MAX_LENGTH, '', true );
 	}
 
@@ -746,6 +770,11 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			update_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS, 1 );
 		} else {
 			update_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS, 0 );
+		}
+		if ( isset( $new_settings['kw_map'] ) && in_array( self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS, $new_settings['kw_map'] ) ) {
+			update_option( self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS, 1 );
+		} else {
+			update_option( self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS, 0 );
 		}
 	}
 

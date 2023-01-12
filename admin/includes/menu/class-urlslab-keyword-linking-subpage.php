@@ -837,6 +837,16 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				'Max length of auto-imported keyword [# of characters]',
 				''
 			),
+			new Urlslab_Setting_Switch(
+				'kw_map[]',
+				Urlslab_Keywords_Links::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS,
+				'Enhance all H tags with ID attribute to allow addressing not just URL, but also specific part of the content starting with H tag.',
+				'Add anchor id to all H tags',
+				get_option(
+					Urlslab_Keywords_Links::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS,
+					Urlslab_Keywords_Links::SETTING_DEFAULT_ADD_ID_TO_ALL_H_TAGS
+				)
+			),
 		)
 		?>
 		<form method="post"
