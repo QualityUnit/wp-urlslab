@@ -1,0 +1,39 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+
+button.urlslab-button,
+.urlslab-button {
+
+	@include appearance;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background-color: $grey-light;
+	outline: none;
+	border: none;
+	font-size: 0.8125rem;
+	padding: 1em 2em;
+	border-radius: 0.375em;
+	transition: all $transitionTime ease;
+	cursor: pointer;
+
+	&.active {
+		background-color: $primary-color;
+		color: $white;
+	}
+
+	svg {
+
+		@include square(1.5em);
+		fill: currentcolor;
+	}
+
+	@media (hover: hover) {
+
+		&:hover {
+			background-color: $grey-medium;
+			color: $black;
+		}
+	}
+}
