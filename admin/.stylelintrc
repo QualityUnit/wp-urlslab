@@ -1,0 +1,7 @@
+{
+	"rules": {
+		"selector-class-pattern": "[a-zA-Z]",
+		"no-descending-specificity": null
+	},
+	"extends": [ "@wordpress/stylelint-config", "@wordpress/stylelint-config/scss" ]
+}
