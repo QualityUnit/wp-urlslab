@@ -1,0 +1,78 @@
+@mixin appearance($appearance: none) {
+	-webkit-appearance: $appearance;
+	-moz-appearance: $appearance;
+	-ms-appearance: $appearance;
+	-o-appearance: $appearance;
+	appearance: $appearance;
+}
+
+@mixin square($size: 1.5em, $important: "") {
+	width: $size #{$important};
+	height: $size #{$important};
+}
+
+//Mixin for Placeholder input attribute, like input type="search" HTML5 element
+
+@mixin input-placeholder {
+
+	&:-moz-placeholder {
+		@content;
+	}
+
+	&::-moz-placeholder {
+		@content;
+	}
+
+	&:-ms-input-placeholder,
+	&::-ms-input-placeholder {
+		@content;
+	}
+
+	&::-webkit-input-placeholder {
+		@content;
+	}
+
+	&::placeholder {
+		@content;
+	}
+}
+
+///Complete left to right, top to bottom
+///stretching of absolutely positioned element
+
+@mixin posZero() {
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+}
+
+//Custom position of absolutely positioned element,
+//if only 1 variable set, all others are set the same
+
+@mixin posCustom($top: 0, $right: $top, $bottom: $top, $left: $top) {
+	top: $top;
+	right: $right;
+	bottom: $bottom;
+	left: $left;
+}
+
+@mixin scrollbar($width:6px) {
+
+	&::-webkit-scrollbar-track {
+		background-color: transparent;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: $light-gray;
+		border-radius: 0.625em;
+		height: 5em;
+	}
+
+	&::-webkit-scrollbar {
+		width: $width;
+	}
+
+	scrollbar-width: $width;
+	scrollbar-color: $light-gray transparent;
+}

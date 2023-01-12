@@ -50,7 +50,8 @@
 				<button class="button button-primary" id="urlslab-restart-url-scan-btn">Rescan all urls</button>
 			</div>
 		</div>
-		<?php
+		<div id="urlslab-settings"></div>
+		<!-- <?php
 			$user = Urlslab_User_Widget::get_instance();
 			$widgets = Urlslab_Available_Widgets::get_instance();
 		foreach ( $widgets->get_available_widgets() as $widget ) {
@@ -78,6 +79,6 @@
 
 			<?php
 		}
-		?>
+		?> -->
 	</section>
 </div>
