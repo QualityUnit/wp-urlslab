@@ -20,7 +20,7 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	 * Getting URL Keywords
 	 * @return array|stdClass[]
 	 */
-	private function get_keywords( string $keyword_search, string $lang, int $limit, int $offset ): array {
+	private function get_keywords( string $keyword_search, string $lang, string $url, int $limit, int $offset ): array {
 		global $wpdb;
 		$table     = URLSLAB_KEYWORDS_TABLE;
 		$map_table = URLSLAB_KEYWORDS_MAP_TABLE;
@@ -53,6 +53,14 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 		} else if ( ! empty( $lang ) && empty( $keyword_search ) ) {
 			$query    .= ' WHERE lang = %s';
 			$values[] = $lang;
+		}
+
+		if ( ( ! empty( $lang ) || ! empty( $keyword_search ) ) && ! empty( $url ) ) {
+			$query    .= ' AND urlLink = %s';
+			$values[] = $url;
+		} else if ( ! empty( $url ) ) {
+			$query    .= ' WHERE urlLink = %s';
+			$values[] = $url;
 		}
 
 
@@ -349,6 +357,7 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	function prepare_items() {
 
 		$keyword_search_key  = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
+		$url_search_key = $_GET['url'] ?? '';
 		$keyword_lang_filter = $_GET['lang'] ?? '';
 
 		$this->process_bulk_action();
@@ -360,6 +369,7 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 		$query_results = $this->get_keywords(
 			$keyword_search_key,
 			$keyword_lang_filter,
+			$url_search_key,
 			$items_per_page,
 			( $table_page - 1 ) * $items_per_page
 		);
