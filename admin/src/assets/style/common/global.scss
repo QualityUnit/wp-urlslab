@@ -1,0 +1,83 @@
+@use "variables" as *;
+
+*,
+::before,
+::after {
+	box-sizing: border-box;
+}
+
+*[class*="urlslab-"] {
+	font-family: Poppins, sans-serif;
+	font-weight: $font-weight-semi;
+}
+
+/** General styles **/
+
+/** Urlslab Header **/
+.urlslab-wrap {
+	margin: 80px auto;
+	max-width: 80rem;
+	display: flex;
+	column-gap: 10px;
+	flex-direction: column;
+}
+
+.urlslab-header {
+	position: fixed;
+	z-index: 100;
+	left: 160px;
+	top: 32px;
+	display: flex;
+	justify-content: center;
+	background-color: #fff;
+	width: calc(100% - 160px);
+	height: 80px;
+}
+
+/** Tablet Mode */
+
+@media only screen and (max-width: 960px) {
+
+	.urlslab-header {
+		width: calc(100% - 36px);
+		left: 36px;
+	}
+}
+
+
+/** Mobile Mode */
+
+.urlslab-header-content-container {
+	display: flex;
+	justify-content: flex-start;
+	align-content: center;
+	width: 80rem;
+}
+
+.urlslab-header-content-container > figure {
+	display: flex;
+	align-content: center;
+	width: 150px;
+}
+
+.urlslab-header-content-container > div {
+	display: flex;
+	align-content: center;
+	margin-left: 2em;
+}
+
+.urlslab-header-content-container h1 {
+	font-size: 17px;
+	font-weight: 500;
+	border-radius: 10px;
+	padding: 0 13px;
+	line-height: 55px;
+}
+
+.urlslab-error-notification {
+	margin-top: 10px;
+	background-color: #fff;
+	border-left: 3px solid #f00;
+	border-radius: 10px;
+	padding: 1em;
+}
