@@ -20,7 +20,7 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	 * Getting URL Keywords
 	 * @return array|stdClass[]
 	 */
-	private function get_keywords( string $keyword_search, string $lang, string $url, int $limit, int $offset ): array {
+	private function get_keywords( string $keyword_search, string $lang, string $url, string $priority, string $usages, int $limit, int $offset ): array {
 		global $wpdb;
 		$table     = URLSLAB_KEYWORDS_TABLE;
 		$map_table = URLSLAB_KEYWORDS_MAP_TABLE;
@@ -42,31 +42,37 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 					LEFT JOIN $map_table AS d ON d.kw_id = v.kw_id";
 
 		/* -- Preparing the condition -- */
+		$query .= ' WHERE true ';
 		if ( ! empty( $keyword_search ) ) {
-			$query    .= ' WHERE keyword LIKE %s';
+			$query    .= ' AND keyword LIKE %s ';
 			$values[] = '%' . $keyword_search . '%';
 		}
 
-		if ( ! empty( $keyword_search ) && ! empty( $lang ) ) {
+		if ( ! empty( $lang ) ) {
 			$query    .= ' AND lang = %s';
-			$values[] = $lang;
-		} else if ( ! empty( $lang ) && empty( $keyword_search ) ) {
-			$query    .= ' WHERE lang = %s';
 			$values[] = $lang;
 		}
 
-		if ( ( ! empty( $lang ) || ! empty( $keyword_search ) ) && ! empty( $url ) ) {
+		if ( ! empty( $url ) ) {
 			$query    .= ' AND urlLink = %s';
 			$values[] = $url;
-		} else if ( ! empty( $url ) ) {
-			$query    .= ' WHERE urlLink = %s';
-			$values[] = $url;
+		}
+
+		if ( ! empty( $priority ) ) {
+			$query    .= ' AND kw_priority = %d';
+			$values[] = (int) $priority;
 		}
 
 
 		/* -- Ordering parameters -- */
 		//Parameters that are going to be used to order the result
-		$query   .= ' GROUP BY kw_id';
+		$query .= ' GROUP BY kw_id';
+
+		if ( ! empty( $usages ) ) {
+			$query    .= ' HAVING keywordCountUsage = %d';
+			$values[] = (int) $usages;
+		}
+
 		$orderby = ( isset( $_GET['orderby'] ) ) ? esc_sql( $_GET['orderby'] ) : 'kw_priority';
 		$order   = ( isset( $_GET['order'] ) ) ? esc_sql( $_GET['order'] ) : 'ASC';
 		if ( ! empty( $orderby ) && ! empty( $order ) ) {
@@ -356,9 +362,11 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	 */
 	function prepare_items() {
 
-		$keyword_search_key  = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
-		$url_search_key      = $_GET['url'] ?? '';
-		$keyword_lang_filter = $_GET['lang'] ?? '';
+		$keyword_search_key      = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
+		$url_search_key          = $_GET['url'] ?? '';
+		$keyword_lang_filter     = $_GET['lang'] ?? '';
+		$keyword_priority_filter = $_GET['priority'] ?? '';
+		$keyword_usages_filter   = $_GET['usages'] ?? '';
 
 		$this->process_bulk_action();
 
@@ -370,6 +378,8 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 			$keyword_search_key,
 			$keyword_lang_filter,
 			$url_search_key,
+			$keyword_priority_filter,
+			$keyword_usages_filter,
 			$items_per_page,
 			( $table_page - 1 ) * $items_per_page
 		);
