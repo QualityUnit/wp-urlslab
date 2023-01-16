@@ -642,7 +642,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				<label class="screen-reader-text" for="lang-filter">Lang:</label>
 				<input type="search" id="lang-filter" placeholder="lang filter..." name="lang"
 					   value="<?php echo esc_attr( $filter ); ?>"/>
-				<?php submit_button( 'Filter Lang', '', '', false, array( 'id' => 'search-submit' ) ); ?>
+				<?php submit_button( 'Filter', '', '', false, array( 'id' => 'search-submit' ) ); ?>
 			</p>
 			<p class="search-box float-left col-12">
 				<?php
@@ -651,7 +651,6 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				<label class="screen-reader-text" for="url-filter">URL:</label>
 				<input type="search" id="url-filter" placeholder="URL filter..." name="url"
 					   value="<?php echo esc_attr( $filter ); ?>"/>
-				<?php submit_button( 'Filter Url', '', '', false, array( 'id' => 'search-submit' ) ); ?>
 			</p>
 			<p class="search-box float-left col-12">
 				<?php
@@ -660,7 +659,22 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 				<label class="screen-reader-text" for="urlslab-keyword-input">Keyword:</label>
 				<input type="search" id="urlslab-keyword-input" placeholder="Keyword filter..." name="s"
 					   value="<?php echo esc_attr( $filter ); ?>"/>
-				<?php submit_button( 'Filter Keyword', '', '', false, array( 'id' => 'search-submit' ) ); ?>
+			</p>
+			<p class="search-box float-left col-12">
+				<?php
+				$filter = $_GET['priority'] ?? '';
+				?>
+				<label class="screen-reader-text" for="urlslab-priority-input">Priority:</label>
+				<input type="search" id="urlslab-priority-input" placeholder="Priority filter..." name="priority"
+					   value="<?php echo esc_attr( $filter ); ?>"/>
+			</p>
+			<p class="search-box float-left col-12">
+				<?php
+				$filter = $_GET['usages'] ?? '';
+				?>
+				<label class="screen-reader-text" for="urlslab-usages-input">Usage:</label>
+				<input type="search" id="urlslab-usages-input" placeholder="Usage filter..." name="usages"
+					   value="<?php echo esc_attr( $filter ); ?>"/>
 			</p>
 			<?php
 			$this->keyword_table->display();
