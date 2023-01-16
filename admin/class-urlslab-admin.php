@@ -60,9 +60,9 @@ class Urlslab_Admin {
 	 */
 	public function __construct( string $urlslab, string $version, Urlslab_Loader $urlslab_loader ) {
 
-		$this->urlslab = $urlslab;
-		$this->version = $version;
-		$this->urlslab_loader = $urlslab_loader;
+		$this->urlslab              = $urlslab;
+		$this->version              = $version;
+		$this->urlslab_loader       = $urlslab_loader;
 		$this->urlslab_menu_factory = Urlslab_Page_Factory::get_instance();
 
 	}
@@ -128,10 +128,10 @@ class Urlslab_Admin {
 			$this->urlslab,
 			'params',
 			array(
-				'kw_map_nonce' => wp_create_nonce( 'keyword_map_nonce' ),
-				'media_nonce' => wp_create_nonce( 'media_usage_nonce' ),
+				'kw_map_nonce'  => wp_create_nonce( 'keyword_map_nonce' ),
+				'media_nonce'   => wp_create_nonce( 'media_usage_nonce' ),
 				'url_map_nonce' => wp_create_nonce( 'backlink_discovery_nonce' ),
-				'ajaxURL' => admin_url( 'admin-ajax.php' ),
+				'ajaxURL'       => admin_url( 'admin-ajax.php' ),
 			)
 		);
 
@@ -162,24 +162,24 @@ class Urlslab_Admin {
 	}
 
 	function urlslab_load_add_widgets_page() {
-		$action = '';
+		$action    = '';
 		$page_slug = '';
 		$component = '';
 
 		//# action initialization
-		if ( isset( $_REQUEST['action'] ) and -1 != $_REQUEST['action'] ) {
+		if ( isset( $_REQUEST['action'] ) and - 1 != $_REQUEST['action'] and is_string( $_REQUEST['action'] ) ) {
 			$action = $_REQUEST['action'];
 		}
 		//# action initialization
 
 		//# slug initialization
-		if ( isset( $_REQUEST['page'] ) and -1 != $_REQUEST['page'] ) {
+		if ( isset( $_REQUEST['page'] ) and - 1 != $_REQUEST['page'] ) {
 			$page_slug = $_REQUEST['page'];
 		}
 		//# slug initialization
 
 		//# component initialization
-		if ( isset( $_REQUEST['component'] ) and -1 != $_REQUEST['component'] ) {
+		if ( isset( $_REQUEST['component'] ) and - 1 != $_REQUEST['component'] ) {
 			$component = $_REQUEST['component'];
 		}
 		//# component initialization
