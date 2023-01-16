@@ -238,8 +238,8 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 
 	function column_col_kwType( $item ): string {
 		switch ( $item->get_keyword_type() ) {
-			case Urlslab_Keywords_Links::KW_IMPORTED:
-				return '<span>Auto-Imported</span>';
+			case Urlslab_Keywords_Links::KW_IMPORTED_FROM_CONTENT:
+				return '<span>Auto-Imported from content</span>';
 			case Urlslab_Keywords_Links::KW_MANUAL:
 			default:
 				return '<span>Manual</span>';
@@ -357,7 +357,7 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 	function prepare_items() {
 
 		$keyword_search_key  = isset( $_REQUEST['s'] ) ? wp_unslash( trim( $_REQUEST['s'] ) ) : '';
-		$url_search_key = $_GET['url'] ?? '';
+		$url_search_key      = $_GET['url'] ?? '';
 		$keyword_lang_filter = $_GET['lang'] ?? '';
 
 		$this->process_bulk_action();

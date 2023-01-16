@@ -727,6 +727,33 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 
 	public function render_settings() {
 		$settings = array(
+			new Urlslab_Setting_Option(
+				Urlslab_Keywords_Links::SETTING_NAME_KW_TYPES_TO_USE,
+				array(
+					array(
+						'value'       => '',
+						'is_selected' => '' == get_option( Urlslab_Keywords_Links::SETTING_NAME_KW_TYPES_TO_USE, '' ),
+						'option_name' => 'Use all keyword types',
+					),
+					array(
+						'value'       => Urlslab_Keywords_Links::KW_MANUAL,
+						'is_selected' => Urlslab_Keywords_Links::KW_MANUAL == get_option( Urlslab_Keywords_Links::SETTING_NAME_KW_TYPES_TO_USE, '' ),
+						'option_name' => 'Use just manually created keywords',
+					),
+					array(
+						'value'       => Urlslab_Keywords_Links::KW_IMPORTED_FROM_CONTENT,
+						'is_selected' => Urlslab_Keywords_Links::KW_IMPORTED_FROM_CONTENT == get_option( Urlslab_Keywords_Links::SETTING_NAME_KW_TYPES_TO_USE, '' ),
+						'option_name' => 'Use just keywords importent from existing links in content',
+					),
+					array(
+						'value'       => Urlslab_Keywords_Links::KW_NONE,
+						'is_selected' => Urlslab_Keywords_Links::KW_NONE == get_option( Urlslab_Keywords_Links::SETTING_NAME_KW_TYPES_TO_USE, '' ),
+						'option_name' => 'Switched OFF - no replacements',
+					),
+				),
+				'Specify types of keywords used to create a link.',
+				'Create links from keywords'
+			),
 			new Urlslab_Setting_Input(
 				'number',
 				Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD,

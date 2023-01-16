@@ -10,7 +10,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 	//type - KW
 	const KW_MANUAL = 'M';        //manually created keyword (default)
-	const KW_IMPORTED = 'I';        //manually created keyword
+	const KW_IMPORTED_FROM_CONTENT = 'I';        //keywords imported from content
+	const KW_NONE = 'X';        //in this case none link will be created in content
 
 	private Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher;
 
@@ -86,6 +87,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	public const SETTING_NAME_KW_IMPORT_MAX_LENGTH = 'urlslab_kw_max_len';
 	public const SETTING_DEFAULT_KW_IMPORT_MAX_LENGTH = 100;
 
+	public const SETTING_NAME_KW_TYPES_TO_USE = 'urlslab_kw_types_use';
+
 	//SETTINGS CACHE
 	private array $options = array();
 
@@ -113,6 +116,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$this->options[ self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS ]         = get_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS, self::SETTING_DEFAULT_KW_IMPORT_EXTERNAL_LINKS );
 		$this->options[ self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS ]             = get_option( self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS, self::SETTING_DEFAULT_ADD_ID_TO_ALL_H_TAGS );
 		$this->options[ self::SETTING_NAME_KW_IMPORT_MAX_LENGTH ]             = get_option( self::SETTING_NAME_KW_IMPORT_MAX_LENGTH, self::SETTING_DEFAULT_KW_IMPORT_MAX_LENGTH );
+		$this->options[ self::SETTING_NAME_KW_TYPES_TO_USE ]                  = get_option( self::SETTING_NAME_KW_TYPES_TO_USE, '' );
 	}
 
 	/**
@@ -216,6 +220,9 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 					$linkDom = $document->createElement( 'a', htmlspecialchars( substr( $node->nodeValue, $pos, strlen( $kwRow['kw'] ) ) ) );
 					$linkDom->setAttribute( 'href', urlslab_add_current_page_protocol( $urlObj->get_url() ) );
 
+					if ( is_user_logged_in() ) {
+						$linkDom->setAttribute( 'urlslab-link', $urlObj->get_url_id() );
+					}
 					//if relative url or url from same domain, don't add target attribute
 					if ( ! $urlObj->is_same_domain_url() ) {
 						$linkDom->setAttribute( 'target', '_blank' );
@@ -281,10 +288,24 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$keyword_table = URLSLAB_KEYWORDS_TABLE;
 		$lang          = urlslab_get_language();
 
-		$results = wp_cache_get( 'kws_' . $lang, 'urlslab', false, $found );
-		if ( false === $results || ! $found ) {
-			$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kw_id, keyword, urlLink, urlFilter FROM ' . $keyword_table . " WHERE (lang = %s OR lang = 'all') ORDER BY kw_priority ASC, kw_length DESC", urlslab_get_language() ), 'ARRAY_A' ); // phpcs:ignore
-			wp_cache_set( 'kws_' . $lang, $results, 'urlslab', 120 );
+		$results = array();
+		if ( self::KW_NONE != $this->options[ self::SETTING_NAME_KW_TYPES_TO_USE ] ) {
+			$results = wp_cache_get( 'kws_' . $lang, 'urlslab', false, $found );
+			if ( false === $results || ! $found ) {
+
+				$sql_data = array();
+
+				$where_type = '';
+				if ( '' != $this->options[ self::SETTING_NAME_KW_TYPES_TO_USE ] ) {
+					$where_type = ' kwType=%s AND ';
+					$sql_data[] = $this->options[ self::SETTING_NAME_KW_TYPES_TO_USE ];
+				}
+
+				$sql_data[] = urlslab_get_language();
+
+				$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kw_id, keyword, urlLink, urlFilter FROM ' . $keyword_table . ' WHERE ' . $where_type . "(lang = %s OR lang = 'all') ORDER BY kw_priority ASC, kw_length DESC", $sql_data ), 'ARRAY_A' ); // phpcs:ignore
+				wp_cache_set( 'kws_' . $lang, $results, 'urlslab', 120 );
+			}
 		}
 		$this->keywords_cache = array();
 		$currentUrl           = urlslab_add_current_page_protocol( $this->get_current_page_url()->get_url() );
@@ -512,7 +533,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 											'lang'        => urlslab_get_language(),
 											'kw_priority' => 100,
 											'urlFilter'   => '.*',
-											'kwType'      => self::KW_IMPORTED,
+											'kwType'      => self::KW_IMPORTED_FROM_CONTENT,
 										)
 									);
 								}
@@ -654,6 +675,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		add_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS, self::SETTING_DEFAULT_KW_IMPORT_EXTERNAL_LINKS, '', true );
 		add_option( self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS, self::SETTING_DEFAULT_ADD_ID_TO_ALL_H_TAGS, '', true );
 		add_option( self::SETTING_NAME_KW_IMPORT_MAX_LENGTH, self::SETTING_DEFAULT_KW_IMPORT_MAX_LENGTH, '', true );
+		add_option( self::SETTING_NAME_KW_TYPES_TO_USE, '', '', true );
 	}
 
 	public static function update_settings(
@@ -726,6 +748,16 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			update_option(
 				self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK,
 				$new_settings[ self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK ]
+			);
+		}
+
+		if (
+			isset( $new_settings[ self::SETTING_NAME_KW_TYPES_TO_USE ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_KW_TYPES_TO_USE ] )
+		) {
+			update_option(
+				self::SETTING_NAME_KW_TYPES_TO_USE,
+				$new_settings[ self::SETTING_NAME_KW_TYPES_TO_USE ]
 			);
 		}
 
