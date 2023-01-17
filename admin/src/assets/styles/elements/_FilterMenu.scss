@@ -1,0 +1,115 @@
+/* stylelint-disable selector-class-pattern, no-descending-specificity */
+
+@use "../common/variables" as *;
+@use "../common/mixins" as *;
+@use "../elements/MenuArrow" as *;
+
+.urlslab-FilterMenu {
+	position: relative;
+	z-index: 2;
+	max-width: 12em;
+
+	+ .urlslab-FilterMenu {
+		z-index: 1;
+	}
+
+	&__title {
+
+		@extend %MenuArrow;
+		display: flex;
+		align-items: center;
+		font-size: 0.875rem;
+		font-family: OpenSans, sans-serif;
+		font-weight: $font-weight-normal;
+		line-height: 1;
+		border: 1px solid $grey-medium;
+		border-radius: 6px;
+		padding: 0.7em 1em;
+		transition: all 0.2s;
+		min-width: 10em;
+		cursor: pointer;
+
+		svg {
+			margin-right: 0.5em;
+		}
+
+		&.active {
+			color: $primary-color;
+			border-color: currentcolor;
+		}
+
+		@media (hover: hover) {
+
+			&:hover {
+				color: $primary-color;
+				border-color: currentcolor;
+			}
+
+			&.active:hover {
+				color: $black;
+				border-color: $grey-light;
+			}
+		}
+	}
+
+	&__items {
+		position: absolute;
+		top: calc(100% + 1px);
+		left: calc(-50% - 2.5em);
+		transform: translateX(50%);
+		display: none;
+		opacity: 0;
+		border-radius: 6px;
+		background-color: $white;
+		width: calc(100% + 5em);
+		padding: 1em 1.45em;
+		transition: opacity 0.1s;
+		filter: drop-shadow(0 1px 6px rgba($black-real, 0.16));
+
+		&--inn {
+
+			@include scrollbar(8px);
+			max-height: 19em;
+			overflow-y: scroll;
+			position: relative;
+			margin-left: -1.45em;
+			margin-right: -1.95em;
+
+			&.has-scrollbar {
+				margin-right: -1.45em;
+			}
+		}
+
+		&.active {
+			display: block;
+		}
+
+		&.visible {
+			opacity: 1;
+		}
+	}
+
+	&__item {
+		display: flex;
+		align-content: center;
+		padding: 0.5em 1em;
+		margin-bottom: 0.25em;
+		font-size: 0.8125rem;
+		font-weight: $font-weight-normal;
+
+		* {
+			font-weight: inherit;
+		}
+
+		&:last-of-type {
+			margin-bottom: 0;
+		}
+
+		@media (hover: hover) {
+
+			&:hover {
+				background-color: $grey-lightest;
+			}
+		}
+	}
+}
