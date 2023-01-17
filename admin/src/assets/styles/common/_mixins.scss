@@ -1,3 +1,7 @@
+/* stylelint-disable */
+@use "sass:math";
+@use "variables" as *;
+
 @mixin appearance($appearance: none) {
 	-webkit-appearance: $appearance;
 	-moz-appearance: $appearance;
@@ -9,6 +13,24 @@
 @mixin square($size: 1.5em, $important: "") {
 	width: $size #{$important};
 	height: $size #{$important};
+}
+
+@mixin triangle($size, $color, $direction) {
+	height: 0;
+	width: 0;
+	border-color: transparent;
+	border-style: solid;
+	border-width: math.div($size, 2);
+
+	@if $direction == up {
+		border-bottom-color: $color;
+	} @else if $direction == right {
+		border-left-color: $color;
+	} @else if $direction == down {
+		border-top-color: $color;
+	} @else if $direction == left {
+		border-right-color: $color;
+	}
 }
 
 //Mixin for Placeholder input attribute, like input type="search" HTML5 element
@@ -64,7 +86,7 @@
 	}
 
 	&::-webkit-scrollbar-thumb {
-		background-color: $light-gray;
+		background-color: $grey-light;
 		border-radius: 0.625em;
 		height: 5em;
 	}
@@ -74,5 +96,5 @@
 	}
 
 	scrollbar-width: $width;
-	scrollbar-color: $light-gray transparent;
+	scrollbar-color: $grey-light transparent;
 }

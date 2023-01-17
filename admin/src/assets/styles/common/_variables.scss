@@ -1,5 +1,18 @@
 $transitionTime: 0.25s;
 
+$sizes: (
+	"xxs": 0.15em,
+	"xs": 0.25em,
+	"s": 0.5em,
+	"m": 1em,
+	"l": 1.5em,
+	"xl": 2em,
+	"xxl": 2.5em,
+	"xxxl": 3.25em,
+	"extreme": 4.5em,
+	"ultra": 6em
+);
+
 $font-weight-normal: 400;
 $font-weight-semi: 600;
 $font-weight-bold: 700;
@@ -25,3 +38,13 @@ $grey-lightest: #f5f5f7;
 $white: #fff;
 
 $box-shadow-small:  0 1px 3px rgba($black-real, 0.16);
+
+$breakpoint-desktop-big: 1600px;
+$breakpoint-desktop-box: 1380px;
+$breakpoint-desktop: 1180px;
+$breakpoint-tablet-small: 600px;
+$breakpoint-tablet: 768px;
+$breakpoint-tablet-landscape: 1024px;
+$breakpoint-mobile: 480px;
+$breakpoint-iphone-new: 415px;
+$breakpoint-iphone-old: 376px;

@@ -2,6 +2,14 @@
 
 @use "../common/mixins" as *;
 @use "../common/variables" as *;
+@use "sass:list";
+
+$status: (
+	"success": $saturated-green $desaturated-green,
+	"warning": $saturated-orange $desaturated-orange,
+	"error": $saturated-red $desaturated-red,
+	"info": $saturated-cyan $desaturated-cyan,
+);
 
 .urlslab-input,
 .urlslab-textarea {
@@ -38,23 +46,9 @@
 		}
 	}
 
-	&[type="checkbox"] {
+	&[type="checkbox"],
+	&[type="radio"] {
 		display: none;
-	}
-}
-
-.urlslab-input[type="search"] {
-	font-weight: $font-weight-normal;
-	padding: 0.5em 0.5em 0.5em 3.5em;
-	border-radius: 1.5em;
-	border: 1px solid transparent;
-	background-color: $grey-light;
-
-	@include input-placeholder {
-		color: currentcolor;
-		font-size: 0.875rem;
-		transition: all 0.2s;
-		opacity: 1;
 	}
 }
 
@@ -66,6 +60,32 @@
 	color: $grey-medium;
 	transition: all 0.2s;
 
+	&-label {
+		font-weight: $font-weight-semi;
+	}
+
+	&.dark-text {
+		color: $black;
+		border-color: $grey-medium;
+	}
+
+	&[data-unit] {
+		display: flex;
+		align-items: center;
+
+		&::before {
+			content: attr(data-unit);
+			color: $grey-dark;
+			font-weight: $font-weight-normal;
+			font-size: 0.8125rem;
+			margin-left: 0.5em;
+		}
+
+		input {
+			text-align: right;
+		}
+	}
+
 	&-wrap {
 		display: block;
 		margin-bottom: 1.25em;
@@ -73,61 +93,52 @@
 		&.inline {
 			display: flex;
 			align-items: center;
+			flex-wrap: wrap;
 
 			.urlslab-inputField-label {
 				margin-right: 0.5em;
 			}
 		}
+
+		&.has-value {
+
+			.urlslab-inputField {
+				box-shadow: 0 0 0 1px currentcolor;
+
+				&-message {
+					font-size: 0.75rem;
+					font-weight: $font-weight-normal;
+					padding: 0.5em 1em;
+					margin: 0.5em 0;
+					border-radius: 4px;
+					width: 100%;
+				}
+			}
+		}
+
+		@each $state, $value in $status {
+			&.#{$state}[class] {
+
+				.urlslab-inputField {
+					color: list.nth($value, 1);
+					border-color: currentcolor;
+					box-shadow: 0 0 0 1px currentcolor;
+
+					&-message {
+						color: list.nth($value, 1);
+						background-color: list.nth($value, 2);
+					}
+				}
+			}
+		}
 	}
+
 
 	&.has-svg {
 
 		input:not([type="search"]) {
 			padding: 1.25em 1em 1.25em 3.5em;
 		}
-	}
-
-	&.has-value {
-		box-shadow: 0 0 0 1px currentcolor;
-	}
-
-	&__search {
-		border-radius: 1.5em;
-		max-width: 18.75em;
-
-		&:focus-within {
-			color: $black;
-			border-color: transparent !important;
-		}
-
-		svg {
-
-			@include square(1.25em);
-		}
-	}
-
-	&.success[class] {
-		color: $saturated-green;
-		border-color: currentcolor;
-		box-shadow: 0 0 0 1px currentcolor;
-	}
-
-	&.error[class] {
-		color: $saturated-red;
-		border-color: currentcolor;
-		box-shadow: 0 0 0 1px currentcolor;
-	}
-
-	&.warning[class] {
-		color: $saturated-orange;
-		border-color: currentcolor;
-		box-shadow: 0 0 0 1px currentcolor;
-	}
-
-	&.info[class] {
-		color: $saturated-cyan;
-		border-color: currentcolor;
-		box-shadow: 0 0 0 1px currentcolor;
 	}
 
 	&::before {

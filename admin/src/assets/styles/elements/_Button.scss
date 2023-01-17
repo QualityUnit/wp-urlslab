@@ -13,6 +13,7 @@ button.urlslab-button,
 	outline: none;
 	border: none;
 	font-size: 0.8125rem;
+	font-weight: $font-weight-semi;
 	padding: 1em 2em;
 	border-radius: 0.375em;
 	transition: all $transitionTime ease;
@@ -26,13 +27,14 @@ button.urlslab-button,
 	svg {
 
 		@include square(1.5em);
+		margin-right: 0.5em;
 		fill: currentcolor;
 	}
 
 	@media (hover: hover) {
 
 		&:hover {
-			background-color: $grey-medium;
+			background-color: $grey-lightest;
 			color: $black;
 		}
 	}
