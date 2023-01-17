@@ -3,10 +3,11 @@
 
 .urlslab-dashboardmodule {
 	position: relative;
-	box-shadow: $box-shadow-small;
 	padding: 1.5em;
 	margin: 2em;
+	background-color: $white;
 	border-radius: 10px;
+	box-shadow: $box-shadow-small;
 	transition: all $transitionTime;
 
 	&.active {
