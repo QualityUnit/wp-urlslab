@@ -136,7 +136,7 @@ class Urlslab_Admin {
 		wp_enqueue_script(
 			$this->urlslab . '-settings',
 			plugin_dir_url( __FILE__ ) . 'dist/settings.js',
-			false,
+			array( 'wp-element', 'wp-i18n' ),
 			$this->version,
 			true
 		);
