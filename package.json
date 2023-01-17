@@ -47,11 +47,12 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build": "webpack --mode=production",
+    "build:admin": "cd ./admin/ && yarn && yarn build",
+    "build": "webpack --mode=production && yarn build:admin",
     "watch": "webpack --mode=development --watch",
     "bundle": "yarn install && npm run watch",
     "dev": "webpack serve --config configuration/webpack.dev.config.js --mode=development",
-    "production": "webpack --mode=production",
+    "production": "webpack --mode=production && yarn build:admin",
     "lint:sass": "sass-lint -v -q",
     "lint:js": "eslint --ext .js src/js/"
   },
