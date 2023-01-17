@@ -1,6 +1,6 @@
 <?php
 
-class Urlslab_Api_Router extends WP_REST_Controller {
+class Urlslab_Api_Router {
 	private Urlslab $urlslab;
 
 	public function register_routes( Urlslab $urlslab ) {
