@@ -8,7 +8,56 @@
 
 *[class*="urlslab-"] {
 	font-family: Poppins, sans-serif;
-	font-weight: $font-weight-semi;
+}
+
+.urlslab-learnMore {
+	display: flex;
+	align-items: center;
+	color: $grey-dark;
+	cursor: pointer;
+	transition: all 0.2s;
+
+	svg {
+		margin-left: 0.5em;
+		fill: currentcolor;
+		transform: translateX(0);
+		transition: transform 0.2s;
+	}
+
+	@media (hover: hover) {
+
+		&:hover {
+			color: $primary-color;
+
+			svg {
+				transform: translateX(0.25em);
+			}
+		}
+	}
+}
+
+
+.flex {
+	display: flex;
+
+	&-align-center {
+		align-items: center;
+		align-content: center;
+	}
+
+	@media (min-width: $breakpoint-tablet) {
+
+		&-tablet {
+			display: flex;
+		}
+	}
+
+	@media (min-width: $breakpoint-tablet-landscape) {
+
+		&-tablet-landscape {
+			display: flex;
+		}
+	}
 }
 
 /** General styles **/

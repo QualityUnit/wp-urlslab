@@ -1,0 +1,98 @@
+/* stylelint-disable selector-class-pattern, no-descending-specificity */
+
+@use "../common/variables" as *;
+@use "../common/mixins" as *;
+
+.urlslab-rangeslider {
+	padding: 0 1em 1em;
+
+	&-top {
+		position: relative;
+		z-index: 20;
+		overflow: hidden;
+		height: 2em;
+		padding-top: 1em;
+	}
+
+	&-inputs {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-top: 1em;
+
+		label {
+			width: calc(50% - 1em);
+		}
+
+		input[type] {
+			padding-right: 0;
+		}
+	}
+
+	&-slider {
+		position: relative;
+	}
+
+	&-track,
+	&-range {
+		position: absolute;
+		border-radius: 4px;
+		height: 0.5rem;
+	}
+
+	&-track {
+		background-color: $grey-light;
+		width: 100%;
+		z-index: 1;
+	}
+
+	&-range {
+		background-color: $primary-color;
+		z-index: 2;
+	}
+
+	&-thumb,
+	&-thumb::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	@mixin thumbInn( $size: 0.75rem ) {
+
+		@include square($size);
+
+		background: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='6' cy='6' r='6' fill='%232570ED'/%3E%3Cpath d='M6 3.5V8.5' stroke='white' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+		background-size: contain;
+		border: none;
+		border-radius: 50%;
+		box-shadow: $box-shadow-small;
+		transform: translateY(4px);
+		pointer-events: all;
+		cursor: pointer;
+	}
+
+	&-thumb {
+		pointer-events: none;
+		position: absolute;
+		z-index: 3;
+		width: 100%;
+		height: 0;
+		margin: 0;
+		outline: none;
+
+		&-max {
+			z-index: 5;
+			transform: translateZ(1px);
+		}
+	}
+
+	&-thumb::-moz-range-thumb {
+
+		@include thumbInn;
+	}
+
+	&-thumb::-webkit-slider-thumb {
+
+		@include thumbInn;
+	}
+}

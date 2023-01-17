@@ -4,10 +4,13 @@
 .urlslab-switch {
 	display: inline-flex;
 	align-items: center;
+	cursor: pointer;
+	transition: all $transitionTime;
 
 	&-text {
 		order: -1;
 		margin-right: 0.5em;
+		font-weight: $font-weight-semi;
 
 		.textAfter & {
 			order: 0;
@@ -20,10 +23,6 @@
 		display: none !important;
 	}
 
-	&-label {
-		font-weight: $font-weight-semi;
-	}
-
 	&-switcher {
 		position: relative;
 		display: block;
@@ -31,6 +30,7 @@
 		height: 1.5rem;
 		color: transparent;
 		user-select: none;
+		cursor: pointer;
 
 		&::before,
 		&::after {
@@ -58,6 +58,13 @@
 			background-color: $white;
 			box-shadow: $box-shadow-small;
 			transition: transform $transitionTime ease;
+		}
+	}
+
+	@media (hover: hover) {
+
+		&:hover {
+			color: $primary-color;
 		}
 	}
 

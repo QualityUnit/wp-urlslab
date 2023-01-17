@@ -1,9 +1,9 @@
-import '../assets/style/elements/Checkbox.scss';
+import '../assets/styles/elements/_Checkbox.scss';
 
-export default function Checkbox({ checked, radial, onChange, textBefore, children }) {
+export default function Checkbox({ checked, radial, name, className, onChange, textBefore, children }) {
 	return (
-		<label className={`urlslab-checkbox ${textBefore ? 'textBefore' : ''} ${radial ? 'radial' : ''}`}>
-			<input className="urlslab-checkbox-input" type="checkbox" defaultChecked={checked} />
+		<label className={`urlslab-checkbox ${className || ''} ${textBefore ? 'textBefore' : ''} ${radial ? 'radial' : ''}`}>
+			<input className="urlslab-checkbox-input" type={name ? 'radio' : 'checkbox'} name={name || ''} defaultChecked={checked} />
 			<div className="urlslab-checkbox-box"></div>
 			<span className="urlslab-checkbox-text">{children}</span>
 		</label>
