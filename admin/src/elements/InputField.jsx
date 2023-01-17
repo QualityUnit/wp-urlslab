@@ -9,6 +9,7 @@ export default function InputField({ defaultValue, placeholder, message, classNa
 	const handleVal = (event) => {
 		setVal(event.target.value);
 	};
+
 	const valueStatus = () => {
 		if (val) {
 			if ((type === undefined || type === 'text') ||
