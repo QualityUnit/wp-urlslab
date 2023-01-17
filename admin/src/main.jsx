@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App'
-// import './index.css'
+import Modules from './Modules'
+import './assets/styles/common/global.scss'
 
 ReactDOM.createRoot(document.getElementById('urlslab-settings')).render(
   <React.StrictMode>
-    <App />
+    <Modules />
   </React.StrictMode>,
 )

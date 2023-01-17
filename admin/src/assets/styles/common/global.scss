@@ -45,6 +45,10 @@
 		align-content: center;
 	}
 
+	&-wrap {
+		flex-wrap: wrap;
+	}
+
 	@media (min-width: $breakpoint-tablet) {
 
 		&-tablet {
