@@ -1,0 +1,75 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+
+.urlslab-optionbutton {
+
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background-color: $white;
+	border: 1px solid $grey-medium;
+	font-size: 0.8125rem;
+	padding: 1em 2em;
+	border-radius: 0.375em;
+	transition: all $transitionTime ease;
+	cursor: pointer;
+
+	&.active {
+		border-color: $primary-color;
+		box-shadow: 0 0 0 1px $primary-color, $box-shadow-small;
+	}
+
+	input[type="radio"] {
+		display: none;
+		margin: 0 0.5em 0 0;
+	}
+
+	&-radio {
+
+		@include square(1rem);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 50%;
+		border: 1px solid $grey-medium;
+		margin-right: 0.5em;
+
+		&::before {
+
+			@include square(0.5rem);
+			display: block;
+			content: "";
+			opacity: 0;
+			background-color: $primary-color;
+			border-radius: 50%;
+		}
+
+		.active > & {
+			border-color: $primary-color;
+
+			&::before {
+				opacity: 1;
+			}
+		}
+	}
+
+	&-text {
+		font-weight: inherit;
+	}
+
+	svg {
+
+		@include square(1.5em);
+		margin-right: 0.5em;
+		fill: currentcolor;
+	}
+
+	@media (hover: hover) {
+
+		&:hover {
+			background-color: $grey-lightest;
+			color: $black;
+		}
+	}
+}

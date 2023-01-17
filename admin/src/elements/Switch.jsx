@@ -1,13 +1,38 @@
-import '../assets/style/elements/Switch.scss';
+import { useState, useEffect } from 'react';
+import '../assets/styles/elements/_Switch.scss';
 
-export default function Switch({ id, textAfter, secondary, onChange, group, checked, children }) {
+export default function Switch({ id, textAfter, className, style, secondary, onChange, group, checked, label, labelOff }) {
+	const [isChecked, setChecked] = useState(checked ? true : false);
+	const handleOnChange = (event) => {
+		if (onChange) {
+			onChange(event.target.checked);
+		}
+		setChecked(event.target.checked);
+	}
+	// Get min and max values when their state changes
+	useEffect((event) => {
+		if (onChange) {
+			onChange(isChecked);
+		}
+	}, [onChange]);
+
 	return (
-		<div className={`urlslab-switch ${secondary ? 'secondary' : ''} ${textAfter ? 'textAfter' : ''}`}>
-			<label className="urlslab-switch-label">
-				<input className="urlslab-switch-input" type="checkbox" id={id} name={group} defaultChecked={checked} />
-				<div className="urlslab-switch-switcher"></div>
-			</label>
-			<span className="urlslab-switch-text">{children}</span>
-		</div>
+		<label className={`urlslab-switch ${className || ''} ${secondary ? 'secondary' : ''} ${textAfter ? 'textAfter' : ''}`}
+			style={{ style }}>
+			<input
+				className="urlslab-switch-input"
+				type="checkbox" id={id}
+				name={group}
+				defaultChecked={checked}
+				onChange={(event) => handleOnChange(event)}
+			/>
+			<div className="urlslab-switch-switcher"></div>
+			<span className="urlslab-switch-text">
+				{!isChecked
+					? label
+					: labelOff ? labelOff : label
+				}
+			</span>
+		</label>
 	)
 }

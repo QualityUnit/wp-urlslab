@@ -1,0 +1,38 @@
+/* stylelint-disable selector-class-pattern, no-descending-specificity */
+
+@use "../common/variables" as *;
+@use "../common/mixins" as *;
+
+
+%MenuArrow {
+
+	&::after {
+
+		@include triangle(0.75em, $black, "down");
+		display: block;
+		position: relative;
+		flex: 0 0 auto;
+		content: "";
+		transition: all 0.2s;
+		transform: scaleY(1);
+		margin-left: auto;
+		top: 0.15em;
+		cursor: pointer;
+	}
+
+	&.menu-active,
+	&.active,
+	.active & {
+
+		&::after {
+			transform: scaleY(-1);
+			top: -0.15em;
+		}
+	}
+
+	@media (max-width: $breakpoint-tablet-landscape) {
+
+		transform: scale(0.75);
+		filter: brightness(0.5);
+	}
+}
