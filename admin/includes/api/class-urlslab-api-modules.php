@@ -25,7 +25,7 @@ class Urlslab_Api_Modules extends WP_REST_Controller {
 
 		register_rest_route(
 			$namespace,
-			$base . '/(?P<id>[\d]+)',
+			$base . '/(?P<id>[0-9a-zA-Z_\-]+)',
 			array(
 				array(
 					'methods'             => WP_REST_Server::READABLE,
