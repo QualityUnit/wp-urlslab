@@ -14,12 +14,6 @@ class Urlslab_Api_Modules extends WP_REST_Controller {
 					'args'                => array(),
 					'permission_callback' => array( $this, 'get_items_permissions_check' ),
 				),
-				array(
-					'methods'             => WP_REST_Server::CREATABLE,
-					'callback'            => array( $this, 'create_item' ),
-					'permission_callback' => array( $this, 'create_item_permissions_check' ),
-					'args'                => $this->get_endpoint_args_for_item_schema( true ),
-				),
 			)
 		);
 
@@ -31,26 +25,17 @@ class Urlslab_Api_Modules extends WP_REST_Controller {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_item' ),
 					'permission_callback' => array( $this, 'get_item_permissions_check' ),
-					'args'                => array(
-						'context' => array(
-							'default' => 'view',
-						),
-					),
+					'args'                => array(),
 				),
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'update_item' ),
 					'permission_callback' => array( $this, 'update_item_permissions_check' ),
-					'args'                => $this->get_endpoint_args_for_item_schema( false ),
-				),
-				array(
-					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'delete_item' ),
-					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
 					'args'                => array(
-						'force' => array(
-							'default' => false,
-						),
+						'active' => array(
+							'default' => true,
+							'required' => true,
+						)
 					),
 				),
 			)
@@ -61,24 +46,8 @@ class Urlslab_Api_Modules extends WP_REST_Controller {
 		return current_user_can( 'read' );
 	}
 
-	public function create_item_permissions_check( $request ) {
-		return false;    //It is not possible to create any module aby api
-	}
-
 	public function update_item_permissions_check( $request ) {
 		return current_user_can( 'edit_plugins' );
-	}
-
-	public function delete_item_permissions_check( $request ) {
-		return false;
-	}
-
-	public function create_item( $request ) {
-		return new WP_Error( 'invalid-method', __( 'New module can not be created by API call', 'urlslab' ), array( 'status' => 500 ) );
-	}
-
-	public function delete_item( $request ) {
-		return new WP_Error( 'invalid-method', __( 'Module can not be deleted by API call', 'urlslab' ), array( 'status' => 500 ) );
 	}
 
 	public function get_items( $request ) {
