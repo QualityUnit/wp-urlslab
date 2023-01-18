@@ -43,13 +43,11 @@ class Urlslab_Api_Modules extends WP_REST_Controller {
 	}
 
 	public function get_items_permissions_check( $request ) {
-		return true; //TODO
 		return current_user_can( 'read' );
 	}
 
 	public function update_item_permissions_check( $request ) {
-		return true; //TODO
-		return current_user_can( 'edit_plugins' );
+		return current_user_can( 'administrator' );
 	}
 
 	public function get_items( $request ) {
