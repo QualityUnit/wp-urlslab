@@ -427,6 +427,7 @@ class Urlslab {
 
 		$this->loader->add_action(
 			'rest_api_init',
+			$this,
 			function() {
 				(new Urlslab_Api_Router())->register_routes();
 			}
