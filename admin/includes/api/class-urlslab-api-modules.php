@@ -43,12 +43,12 @@ class Urlslab_Api_Modules extends WP_REST_Controller {
 	}
 
 	public function get_items_permissions_check( $request ) {
-		return true;
+		return true; //TODO
 		return current_user_can( 'read' );
 	}
 
 	public function update_item_permissions_check( $request ) {
-		return true;
+		return true; //TODO
 		return current_user_can( 'edit_plugins' );
 	}
 
@@ -96,10 +96,10 @@ class Urlslab_Api_Modules extends WP_REST_Controller {
 		try {
 			$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $request->get_param( 'id' ) );
 			if ( false !== $widget ) {
-				if ( false == $request->get_param( 'active' ) ) {
-					Urlslab_User_Widget::get_instance()->activate_widget( $widget );
-				} else {
+				if ( false == $request->get_json_params()['active'] ) {
 					Urlslab_User_Widget::get_instance()->deactivate_widget( $widget );
+				} else {
+					Urlslab_User_Widget::get_instance()->activate_widget( $widget );
 				}
 
 				$data = (object) array(
