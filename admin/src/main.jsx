@@ -1,12 +1,12 @@
-import { render } from '@wordpress/element';
+import React from 'react'
+import { createRoot } from '@wordpress/element'
 import Modules from './Modules'
 import './assets/styles/common/global.scss'
+import App from './App'
 
-document.addEventListener("DOMContentLoaded", () => {
-  render(
-    <React.StrictMode>
-      <Modules />
-    </React.StrictMode>,
-    document.getElementById('urlslab-settings')
-  )
-});
+createRoot(document.getElementById('urlslab-settings')).render(
+  <React.StrictMode>
+    <Modules />
+    <App />
+  </React.StrictMode>
+)
