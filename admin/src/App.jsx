@@ -41,17 +41,6 @@ function App() {
 
   return (
     <div className="App">
-      <DashboardModule
-        // moduleId={modules?.endpoint?.moduleId}
-        // hasApi={modules?.endpoint?.moduleId?.hasApi}
-        // isActive={modules?.endpoint?.moduleId?.active}
-        hasApi
-        isActive
-        title="Meta tag module"
-        image="/src/assets/images/modules/meta_tags.png"
-      >
-        Automate the process of creating meta descriptions with the URLSLAB plugin. Our plugin can load a page’s meta description, and if it’s missing, it will generate one for you. Save time…
-      </DashboardModule>
       <Switch checked />
       <Switch secondary />
       <Switch label="Turn on"></Switch>
