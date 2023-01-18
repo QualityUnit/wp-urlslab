@@ -6,3 +6,10 @@ export const publicDir = () => {
 	}
 	return '';
 }
+
+export const domain = () => {
+	if(env === 'production') {
+		return ''
+	}
+	return 'http://liveagent.local';
+}

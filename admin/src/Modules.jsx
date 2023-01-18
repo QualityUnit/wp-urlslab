@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import apiFetch from "@wordpress/api-fetch";
+import { fetchModules } from './api/modules';
 import DashboardModule from './components/DashboardModule';
 // import ModulesData from './data/modules.json';
 import { publicDir } from './constants/variables';
@@ -15,14 +15,12 @@ export default function Modules() {
   }
 
   useEffect(() => {
-    apiFetch({
-      path: 'http://liveagent.local/wp-json/urlslab/v1/module'
-      // headers: { 'X-WP-Nonce': window.myvars.nonce }
-    }).then((ModulesData) => {
+    fetchModules().then((ModulesData) => {
       setModulesData(ModulesData)
     })
   }, []);
 
+  // activateModule('urlslab-screenshot', false);
 
   return (
     <>
