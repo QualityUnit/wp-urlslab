@@ -424,8 +424,14 @@ class Urlslab {
 	}
 
 	private function define_backend_hooks() {
-		$router = new Urlslab_Api_Router();
-		$router->register_routes( $this );
+
+		$this->loader->add_action(
+			'rest_api_init',
+			function() {
+				(new Urlslab_Api_Router())->register_routes();
+			}
+		);
+
 
 		if ( ! wp_next_scheduled( 'urlslab_cron_hook' ) ) {
 			wp_schedule_event( time(), 'every_minute', 'urlslab_cron_hook' );
