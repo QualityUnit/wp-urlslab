@@ -33,8 +33,10 @@ class Urlslab_Api_Modules extends WP_REST_Controller {
 					'permission_callback' => array( $this, 'update_item_permissions_check' ),
 					'args'                => array(
 						'active' => array(
-							'default' => true,
 							'required' => true,
+							'validate_callback' => function($param) {
+								return is_bool( $param );
+							}
 						)
 					),
 				),
