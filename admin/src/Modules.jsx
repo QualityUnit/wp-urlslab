@@ -29,8 +29,8 @@ export default function Modules() {
       <SearchField onChange={(value) => handleSearch(value)} />
       {/*<FilterMenu filterItems={filterActive}>All items</FilterMenu> */}
       <div className="urlslab-modules flex-tablet-landscape flex-wrap">
-        {
-          modules.map((module) => {
+        {modules
+          ? modules.map((module) => {
             const title = module.title.toLowerCase();
             const excerpt = module.description.toLowerCase();
             return (
@@ -49,6 +49,7 @@ export default function Modules() {
                 : null
             )
           })
+          : null
         }
       </div>
     </>
