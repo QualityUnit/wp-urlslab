@@ -1,8 +1,25 @@
+import { useState } from 'react';
+
 import DashboardModule from './components/DashboardModule';
 import ModulesData from './data/modules.json';
+import { publicDir } from './constants/variables';
+import SearchField from './elements/SearchField';
+import FilterMenu from './elements/FilterMenu';
 
 export default function Modules() {
-  // console.log(ModulesData);
+  const [searchValue, setSearchVal] = useState('');
+  const handleSearch = (value) => {
+    setSearchVal(value);
+    console.log(searchValue);
+  }
+
+  // const filterActive = {};
+  // ModulesData.map(module => {
+  //   if (module.active) {
+  //     filterActive[0] = 'Active modules';
+  //   }
+  // })
+  // console.log(filterActive);
 
   // Use "for" loop for large data set
 
@@ -26,25 +43,32 @@ export default function Modules() {
   // });
 
   return (
-    <div className="urlslab-modules flex-tablet-landscape flex-wrap">
-      {
-        ModulesData.map((module) => {
-
-          return (
-            <DashboardModule
-              // moduleId={modules?.endpoint?.moduleId}
-              // hasApi={modules?.endpoint?.moduleId?.hasApi}
-              // isActive={modules?.endpoint?.moduleId?.active}
-              hasApi={module.apikey}
-              isActive={module.active}
-              title={module.title}
-              image={`/images/modules/${module.id}.png`}
-            >
-              {module.description}
-            </DashboardModule>
-          )
-        })
-      }
-    </div>
+    <>
+      <SearchField onChange={(value) => handleSearch(value)} />
+      {/* <FilterMenu filterItems={filterActive}>All items</FilterMenu> */}
+      <div className="urlslab-modules flex-tablet-landscape flex-wrap">
+        {
+          ModulesData.map((module) => {
+            const title = module.title.toLowerCase();
+            const excerpt = module.description.toLowerCase();
+            return (
+              (title.includes(searchValue) || excerpt.includes(searchValue))
+                ? <DashboardModule
+                  key={module.id
+                  }
+                  hasApi={module.apikey}
+                  isActive={module.active}
+                  title={module.title}
+                  image={`${publicDir || ''}/images/modules/${module.id}.png`
+                  }
+                >
+                  {module.description}
+                </DashboardModule>
+                : null
+            )
+          })
+        }
+      </div>
+    </>
   )
 }
