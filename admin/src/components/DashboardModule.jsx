@@ -1,4 +1,5 @@
 import Switch from '../elements/Switch';
+import { setModule } from '../api/modules';
 import { ReactComponent as ArrowIcon } from "../assets/images/icon-arrow.svg";
 import { ReactComponent as ApiIcon } from "../assets/images/api-exclamation.svg";
 import "../assets/styles/components/_DashboardModule.scss";
@@ -6,8 +7,17 @@ import { useState } from 'react';
 
 export default function DashboardModule({ moduleId, image, isActive, title, hasApi, children }) {
 	const [moduleActive, setModuleActive] = useState(isActive ? true : false);
-	const handleSwitch = (active) => {
-		setModuleActive(active);
+	const [activating, setIsActivating] = useState(false);
+	const handleSwitch = () => {
+		setIsActivating(true)
+		setModule(moduleId, { active: !moduleActive }).then(data => {
+			if (data) {
+				setModuleActive(data.active)
+				setIsActivating(false)
+				console.log(data)
+			}
+		}
+		);
 	}
 
 	return (
@@ -17,6 +27,10 @@ export default function DashboardModule({ moduleId, image, isActive, title, hasA
 					<ApiIcon />
 					This module requires API key
 				</div>
+				: ''
+			}
+			{activating
+				? <div className="urlslab-dashboardmodule-activating">{moduleActive ? 'Dectivating…' : 'Activating…'}</div>
 				: ''
 			}
 			<Switch
