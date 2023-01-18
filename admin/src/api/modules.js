@@ -4,7 +4,14 @@ import { domain } from "../constants/variables";
 export async function fetchModules() {
 	try {
 		const result = await apiFetch({
-			path: `${domain()}/wp-json/urlslab/v1/module`
+			method: "GET",
+			path: `${domain()}/wp-json/urlslab/v1/module`,
+			headers: {
+				'Content-Type': 'application/json',
+				'accept': 'application/json',
+				'X-WP-Nonce': wpApiSettings.nonce
+			},
+			credentials: 'include'
 		}).then((ModulesData) => {
 			return ModulesData;
 		});
@@ -14,21 +21,20 @@ export async function fetchModules() {
 	}
 }
 
-export async function activateModule( slug, active ) {
+export async function setModule( slug, object ) {
 	try {
-		const result = await apiFetch(`${domain()}/wp-json/urlslab/v1/module/${slug}`, {
+		const result = await apiFetch({
 			method: "POST",
+			path: `${domain()}/wp-json/urlslab/v1/module/${slug}`,
 			headers: {
 				'Content-Type': 'application/json',
 				'accept': 'application/json',
+				'X-WP-Nonce': wpApiSettings.nonce
 			},
 			credentials: 'include',
-			body:JSON.stringify({
-				active: active,
-			})
+			data: object
 		});
-
-		return result.json();
+		return result;
 	} catch (error) {
 		return false;
 	}
