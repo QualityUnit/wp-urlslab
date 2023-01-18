@@ -22,6 +22,7 @@ $status: (
 	&[type="number"],
 	&[type="search"] {
 		outline: none;
+		box-shadow: none;
 		border: none;
 		border-radius: 6px;
 		padding: 0.5em 1em;
@@ -31,6 +32,12 @@ $status: (
 		color: currentcolor;
 		transition: all 0.2s;
 		background-color: $white;
+
+		&:focus {
+			outline: none;
+			box-shadow: none;
+			border-color: transparent;
+		}
 
 		&[disabled] {
 			background-color: $grey-lightest;

@@ -36,7 +36,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-const URLSLAB_VERSION = '1.43.7';
+const URLSLAB_VERSION = '1.43.8';
 const URLSLAB_VERSION_SETTING = 'urlslab_ver';
 
 /**
