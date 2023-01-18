@@ -425,11 +425,10 @@ class Urlslab {
 
 	private function define_backend_hooks() {
 
-		$this->loader->add_action(
+		add_action(
 			'rest_api_init',
-			$this,
 			function() {
-				(new Urlslab_Api_Router())->register_routes();
+				( new Urlslab_Api_Router() )->register_routes();
 			}
 		);
 
