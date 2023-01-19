@@ -1,9 +1,27 @@
 {
+	"globals": {
+		"fetch": false,
+		"IntersectionObserver": false,
+		"ResizeObserver": false
+	},
 	"parser": "@babel/eslint-parser",
 	"parserOptions": {
 		"requireConfigFile": false
 	},
 	"extends": [
-		"plugin:@wordpress/eslint-plugin/recommended-with-formatting"
-	]
+		"plugin:@wordpress/eslint-plugin/recommended-with-formatting",
+		"plugin:import/react",
+		"plugin:react-hooks/recommended",
+		"plugin:react/jsx-runtime"
+	],
+	"rules": {
+		"jsx-a11y/label-has-associated-control": false
+	},
+	"settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  }
 }
