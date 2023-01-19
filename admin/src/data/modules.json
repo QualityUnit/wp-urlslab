@@ -1,0 +1,65 @@
+[
+	{
+		"id": "meta_tags",
+		"active": false,
+		"apikey": true,
+		"title": "Meta tags",
+		"description": "Automate the process of creating meta descriptions with the URLSLAB plugin. Our plugin can load a page’s meta description, and if it’s missing, it will generate one for you. Save time…"
+	},
+	{
+		"id": "link_building",
+		"active": true,
+		"apikey": true,
+		"title": "Link building",
+		"description": "Testing string. Automate the process of creating meta descriptions with the URLSLAB plugin. Our plugin can load a page’s meta description, and if it’s missing, it will generate one for you. Save time…"
+	},
+	{
+		"id": "link_enhancer",
+		"active": false,
+		"apikey": true,
+		"title": "Link enhancer",
+		"description": "Testing Link Blah. Automate the process of creating meta descriptions with the URLSLAB plugin. Our plugin can load a page’s meta description, and if it’s missing, it will generate one for you. Save time…"
+	},
+	{
+		"id": "media_offloading",
+		"active": false,
+		"apikey": false,
+		"title": "Media offloading",
+		"description": "Automate the process of creating meta descriptions with the URLSLAB plugin. Our plugin can load a page’s meta description, and if it’s missing, it will generate one for you. Save time…"
+	},
+	{
+		"id": "image_alt_attributes",
+		"active": false,
+		"apikey": false,
+		"title": "Image Alt attributes",
+		"description": "Automate the process of creating meta descriptions with the URLSLAB plugin. Our plugin can load a page’s meta description, and if it’s missing, it will generate one for you. Save time…"
+	},
+	{
+		"id": "image_lazy_loading",
+		"active": false,
+		"apikey": false,
+		"title": "Image Lazy loading",
+		"description": "Automate the process of creating meta descriptions with the URLSLAB plugin. Our plugin can load a page’s meta description, and if it’s missing, it will generate one for you. Save time…"
+	},
+	{
+		"id": "yt_lazy_loading",
+		"active": false,
+		"apikey": false,
+		"title": "Youtube Lazy Loading",
+		"description": "Automate the process of creating meta descriptions with the URLSLAB plugin. Our plugin can load a page’s meta description, and if it’s missing, it will generate one for you. Save time…"
+	},
+	{
+		"id": "related_resources",
+		"active": false,
+		"apikey": true,
+		"title": "Related resources",
+		"description": "Automate the process of creating meta descriptions with the URLSLAB plugin. Our plugin can load a page’s meta description, and if it’s missing, it will generate one for you. Save time…"
+	},
+	{
+		"id": "screenshot",
+		"active": false,
+		"apikey": true,
+		"title": "Screenshot module",
+		"description": "Automate the process of creating meta descriptions with the URLSLAB plugin. Our plugin can load a page’s meta description, and if it’s missing, it will generate one for you. Save time…"
+	}
+]

@@ -1,0 +1,187 @@
+/* stylelint-disable no-descending-specificity */
+
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+@use "sass:list";
+
+$status: (
+	"success": $saturated-green $desaturated-green,
+	"warning": $saturated-orange $desaturated-orange,
+	"error": $saturated-red $desaturated-red,
+	"info": $saturated-cyan $desaturated-cyan,
+);
+
+.urlslab-input,
+.urlslab-textarea {
+
+	&.input__text,
+	&[type="text"],
+	&[type="email"],
+	&[type="password"],
+	&[type="url"],
+	&[type="number"],
+	&[type="search"] {
+		outline: none;
+		box-shadow: none;
+		border: none;
+		border-radius: 6px;
+		padding: 0.5em 1em;
+		font-size: 0.8125rem;
+		font-weight: $font-weight-normal;
+		width: 100%;
+		color: currentcolor;
+		transition: all 0.2s;
+		background-color: $white;
+
+		&:focus {
+			outline: none;
+			box-shadow: none;
+			border-color: transparent;
+		}
+
+		&[disabled] {
+			background-color: $grey-lightest;
+			color: $grey-dark;
+			cursor: not-allowed;
+		}
+
+		@include input-placeholder {
+			color: currentcolor;
+			font-size: 1em;
+			transition: all 0.2s;
+			opacity: 1;
+		}
+	}
+
+	&[type="checkbox"],
+	&[type="radio"] {
+		display: none;
+	}
+}
+
+.urlslab-inputField {
+	position: relative;
+	border: 1px solid currentcolor;
+	border-radius: 6px;
+	font-size: 1rem;
+	color: $grey-medium;
+	transition: all 0.2s;
+
+	&-label {
+		font-weight: $font-weight-semi;
+	}
+
+	&.dark-text {
+		color: $black;
+		border-color: $grey-medium;
+	}
+
+	&[data-unit] {
+		display: flex;
+		align-items: center;
+
+		&::before {
+			content: attr(data-unit);
+			color: $grey-dark;
+			font-weight: $font-weight-normal;
+			font-size: 0.8125rem;
+			margin-left: 0.5em;
+		}
+
+		input {
+			text-align: right;
+		}
+	}
+
+	&-wrap {
+		display: block;
+		margin-bottom: 1.25em;
+
+		&.inline {
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
+
+			.urlslab-inputField-label {
+				margin-right: 0.5em;
+			}
+		}
+
+		&.has-value {
+
+			.urlslab-inputField {
+				box-shadow: 0 0 0 1px currentcolor;
+
+				&-message {
+					font-size: 0.75rem;
+					font-weight: $font-weight-normal;
+					padding: 0.5em 1em;
+					margin: 0.5em 0;
+					border-radius: 4px;
+					width: 100%;
+				}
+			}
+		}
+
+		@each $state, $value in $status {
+			&.#{$state}[class] {
+
+				.urlslab-inputField {
+					color: list.nth($value, 1);
+					border-color: currentcolor;
+					box-shadow: 0 0 0 1px currentcolor;
+
+					&-message {
+						color: list.nth($value, 1);
+						background-color: list.nth($value, 2);
+					}
+				}
+			}
+		}
+	}
+
+
+	&.has-svg {
+
+		input:not([type="search"]) {
+			padding: 1.25em 1em 1.25em 3.5em;
+		}
+	}
+
+	&::before {
+
+		color: currentcolor;
+	}
+
+	&:focus-within {
+		color: $black;
+		border-color: $primary-color;
+		box-shadow: 0 0 0 1px $primary-color;
+
+		&::before {
+
+			color: currentcolor;
+		}
+
+		svg {
+			fill: currentcolor;
+		}
+
+		input {
+
+			@include input-placeholder {
+				opacity: 0.25;
+			}
+		}
+	}
+
+	svg {
+
+		position: absolute;
+		height: 1.5em;
+		left: 0.85em;
+		top: 50%;
+		transform: translateY(-50%);
+		fill: $grey-medium;
+	}
+}
