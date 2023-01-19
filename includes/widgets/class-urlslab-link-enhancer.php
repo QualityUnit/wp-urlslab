@@ -264,63 +264,6 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		}
 	}
 
-	public static function update_settings( array $new_settings ) {
-		if (
-			isset( $new_settings[ self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ] )
-		) {
-			update_option(
-				self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY,
-				$new_settings[ self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ]
-			);
-		}
-
-		if (
-			isset( $new_settings[ self::SETTING_NAME_REMOVE_LINKS ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_REMOVE_LINKS ] )
-		) {
-			update_option(
-				self::SETTING_NAME_REMOVE_LINKS,
-				$new_settings[ self::SETTING_NAME_REMOVE_LINKS ]
-			);
-		} else {
-			update_option(
-				self::SETTING_NAME_REMOVE_LINKS,
-				false
-			);
-		}
-
-		if (
-			isset( $new_settings[ self::SETTING_NAME_VALIDATE_LINKS ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_VALIDATE_LINKS ] )
-		) {
-			update_option(
-				self::SETTING_NAME_VALIDATE_LINKS,
-				$new_settings[ self::SETTING_NAME_VALIDATE_LINKS ]
-			);
-		} else {
-			update_option(
-				self::SETTING_NAME_VALIDATE_LINKS,
-				false
-			);
-		}
-
-		if (
-			isset( $new_settings[ self::SETTING_NAME_URLS_MAP ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_URLS_MAP ] )
-		) {
-			update_option(
-				self::SETTING_NAME_URLS_MAP,
-				$new_settings[ self::SETTING_NAME_URLS_MAP ]
-			);
-		} else {
-			update_option(
-				self::SETTING_NAME_URLS_MAP,
-				false
-			);
-		}
-	}
-
 	public function is_api_key_required() {
 		return true;
 	}

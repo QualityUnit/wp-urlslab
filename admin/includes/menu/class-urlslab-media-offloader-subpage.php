@@ -32,10 +32,6 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 
 	public function render_modals() {}
 
-	public function render_settings() {
-
-	}
-
 	public function render_image_optimisation_settings() {
 		$conversion_webp         = get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_WEBP_TYPES_TO_CONVERT, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT );
 		$setting_conversion_webp = array();
@@ -145,113 +141,6 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 		<?php
 	}
 
-	public function render_driver_settings() {
-		//# Access Key Settings
-		$access_key_setting = null;
-		$access_key         = get_option( Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY, '' );
-		if ( empty( $access_key ) ) {
-			$access_key_setting = new Urlslab_Setting_Input(
-				'text',
-				Urlslab_Driver_S3::SETTING_NAME_S3_ACCESS_KEY,
-				'',
-				'Leave empty if AWS access key should be loaded from environment variable AWS_KEY',
-				'AWS S3 Access Key',
-				'AWS S3 Access Key...'
-			);
-		} else {
-			$access_key_setting = new Urlslab_Setting_Disabled(
-				urlslab_masked_info( $access_key ),
-				'',
-				'AWS S3 Access Key'
-			);
-		}
-
-		//# Secret Key Settings
-		$secret_key = get_option( Urlslab_Driver_S3::SETTING_NAME_S3_SECRET, '' );
-		if ( empty( $access_key ) ) {
-			$secret_key_settings = new Urlslab_Setting_Input(
-				'text',
-				Urlslab_Driver_S3::SETTING_NAME_S3_SECRET,
-				'',
-				'Leave empty if AWS secret key should be loaded from environment variable AWS_SECRET',
-				'AWS S3 Secret Key',
-				'AWS S3 Secret Key...'
-			);
-		} else {
-			$secret_key_settings = new Urlslab_Setting_Disabled(
-				urlslab_masked_info( $secret_key ),
-				'',
-				'AWS S3 Secret Key'
-			);
-		}
-
-		$settings = array(
-			$access_key_setting,
-			$secret_key_settings,
-			new Urlslab_Setting_Input(
-				'text',
-				Urlslab_Driver_S3::SETTING_NAME_S3_REGION,
-				get_option( Urlslab_Driver_S3::SETTING_NAME_S3_REGION, '' ),
-				'',
-				'AWS S3 Region',
-				'AWS S3 Region...'
-			),
-			new Urlslab_Setting_Input(
-				'text',
-				Urlslab_Driver_S3::SETTING_NAME_S3_BUCKET,
-				get_option( Urlslab_Driver_S3::SETTING_NAME_S3_BUCKET, '' ),
-				'',
-				'AWS S3 Bucket',
-				'AWS S3 Bucket...'
-			),
-			new Urlslab_Setting_Input(
-				'text',
-				Urlslab_Driver_S3::SETTING_NAME_S3_URL_PREFIX,
-				get_option( Urlslab_Driver_S3::SETTING_NAME_S3_URL_PREFIX, '' ),
-				'URL prefix for offloaded media, so that it can be used with CDN. Leave empty if CDN is not configured.',
-				'AWS S3 Url Prefix',
-				'https://cdn.yourdomain.com/'
-			),
-		);
-		?>
-		<form method="post"
-			  action="<?php echo esc_url( $this->parent_page->menu_page( 'media-offloading', 'action=update-s3-settings', 2 ) ); ?>">
-			<?php wp_nonce_field( 's3-update' ); ?>
-			<h3>S3 Driver Settings</h3>
-			<?php
-			foreach ( $settings as $setting ) {
-				$setting->render_setting();
-			}
-			?>
-			<?php if ( empty( $secret_key ) && empty( $access_key ) ) { ?>
-				<p>
-					<input
-							type="submit"
-							name="submit"
-							id="save-sub-widget"
-							class="urlslab-btn-primary"
-							value="Save Changes">
-				</p>
-			<?php } else { ?>
-				<p>
-					<input
-							type="submit"
-							name="submit"
-							id="save-sub-widget"
-							class="urlslab-btn-primary"
-							value="Save Changes">
-
-					<input
-							type="submit"
-							name="submit"
-							id="save-sub-widget"
-							class="urlslab-btn-error"
-							value="Remove Credentials">
-				</p>
-			<?php } ?>
-		</form>
-		<?php
-	}
 
 	public function set_table_screen_options() {
 		$option = 'per_page';
@@ -317,9 +206,6 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 					$saving_opt[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME ] = $_POST[ Urlslab_Media_Offloader_Widget::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME ];
 				}
 
-				Urlslab_Media_Offloader_Widget::update_settings( $saving_opt );
-
-
 				wp_safe_redirect(
 					$this->parent_page->menu_page(
 						'media-offloading',
@@ -332,54 +218,6 @@ class Urlslab_Media_Offloader_Subpage extends Urlslab_Admin_Subpage {
 				);
 				exit;
 			}
-			//# Edit settings
-
-			//# Edit AWS settings
-			if (
-				isset( $_POST['submit'] ) &&
-				isset( $_GET['action'] ) &&
-				'update-s3-settings' == $_GET['action']
-			) {
-				check_admin_referer( 's3-update' );
-
-				//# Saving/updating the credentials
-				if ( 'Save Changes' === $_POST['submit'] ) {
-					Urlslab_Driver_S3::update_options( $_POST );
-
-
-					wp_safe_redirect(
-						$this->parent_page->menu_page(
-							'media-offloading',
-							array(
-								'status'          => 'success',
-								'urlslab-message' => 'AWS S3 settings was saved successfully',
-							),
-							$_GET['sub-tab'] ?? ''
-						)
-					);
-					exit;
-				}
-				//# Saving/updating the credentials
-
-				//# Deleting the credentials
-				if ( 'Remove Credentials' === $_POST['submit'] ) {
-					Urlslab_Driver_S3::remove_options();
-
-					wp_safe_redirect(
-						$this->parent_page->menu_page(
-							'media-offloading',
-							array(
-								'status'          => 'success',
-								'urlslab-message' => 'AWS S3 settings was removed successfully',
-							),
-							$_GET['sub-tab'] ?? ''
-						)
-					);
-					exit;
-				}
-				//# Deleting the credentials
-			}
-			//# Edit AWS settings
 
 			//# Edit Image Optimisation
 			if (

@@ -45,15 +45,6 @@ if ( ! isset( $_GET['tab'] ) or ( 'media-offloading' == $_GET['tab'] ) ) {
 				</li>
 			</ol>
 		</div>
-		<div id="fragment-2">
-			<?php $this->media_offloader_subpage->render_settings(); ?>
-		</div>
-		<div id="fragment-3">
-			<?php $this->media_offloader_subpage->render_driver_settings(); ?>
-		</div>
-		<div id="fragment-4">
-			<?php $this->media_offloader_subpage->render_image_optimisation_settings(); ?>
-		</div>
 	</div>
 	<?php
 	$offloader_page->render_subpage();

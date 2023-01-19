@@ -15,37 +15,6 @@ class Urlslab_Header_Widgets_Page extends Urlslab_Admin_Page {
 	public function init_ajax_hooks( Urlslab_Loader $urlslab_loader ) {}
 
 	public function on_page_load( string $action, string $component ) {
-		if ( isset( $_GET['action'] ) &&
-			 'activation' == $_GET['action'] ) {
-			check_admin_referer( 'sub-widget-activation' );
-			if ( isset( $_POST['meta-opt'] ) ) {
-				Urlslab_Meta_Tag::update_settings( $_POST['meta-opt'] );
-				wp_safe_redirect(
-					$this->menu_page(
-						'meta-tags',
-						array(
-							'status' => 'success',
-							'urlslab-message' => 'Meta tag settings saved successfully',
-						),
-						$_GET['sub-tab'] ?? ''
-					)
-				);
-				exit;
-			} else {
-				Urlslab_Meta_Tag::update_settings( array() );
-				wp_safe_redirect(
-					$this->menu_page(
-						'meta-tags',
-						array(
-							'status' => 'success',
-							'urlslab-message' => 'Meta tag settings saved successfully',
-						),
-						$_GET['sub-tab'] ?? ''
-					)
-				);
-				exit;
-			}
-		}
 	}
 
 	public function register_submenu( string $parent_slug ) {

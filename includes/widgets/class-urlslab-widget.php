@@ -6,6 +6,8 @@ abstract class Urlslab_Widget {
 	const OPTION_TYPE_CHECKBOX = 'C';
 	const OPTION_TYPE_TEXT = 'T';
 	const OPTION_TYPE_PASSWORD = 'P';
+	const PASSWORD_PLACEHOLDER = '********';
+
 	const OPTION_TYPE_LISTBOX = 'L';
 	const OPTION_TYPE_DATETIME = 'D';
 	const OPTION_TYPE_MULTI_CHECKBOX = 'M';
@@ -93,13 +95,6 @@ abstract class Urlslab_Widget {
 	 */
 	public abstract function get_thumbnail_demo_url(): string;
 
-	/**
-	 * @param array $new_settings
-	 *
-	 * @return void
-	 */
-	public abstract static function update_settings( array $new_settings );
-
 	public function is_api_key_required() {
 		return false;
 	}
@@ -112,7 +107,17 @@ abstract class Urlslab_Widget {
 			$this->init_options();
 		}
 		foreach ( $this->options as $id => $option ) {
-			$this->options[ $id ]['value'] = get_option( $id, $option['default'] ?? false );
+			switch ($option['type']) {
+				case self::OPTION_TYPE_PASSWORD:
+					if (get_option( $id, $option['default'] ?? false )) {
+						$this->options[ $id ]['value'] = self::PASSWORD_PLACEHOLDER;
+					} else {
+						$this->options[ $id ]['value'] = '';
+					}
+					break;
+				default:
+					$this->options[ $id ]['value'] = get_option( $id, $option['default'] ?? false );
+			}
 		}
 
 		return $this->options;
@@ -161,6 +166,10 @@ abstract class Urlslab_Widget {
 			if ( ! isset( $this->options[ $option_id ]['possible_values'][ $value ] ) ) {
 				return false;
 			}
+		}
+
+		if (self::OPTION_TYPE_PASSWORD == $this->options[ $option_id ]['type'] && self::PASSWORD_PLACEHOLDER == $value ) {
+			return false;
 		}
 
 		return update_option( $option_id, $value );

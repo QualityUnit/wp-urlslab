@@ -206,29 +206,6 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			}
 			//# Add Functionality
 
-			//# Edit settings
-			if (
-				isset( $_POST['submit'] ) &&
-				'Save Changes' === $_POST['submit'] &&
-				'update-settings' == $_GET['action']
-			) {
-
-				Urlslab_Keywords_Links::update_settings( $_POST );
-
-				wp_safe_redirect(
-					$this->parent_page->menu_page(
-						$this->subpage_slug,
-						array(
-							'status'          => 'success',
-							'urlslab-message' => 'Keyword settings was saved successfully',
-						),
-						$_GET['sub-tab'] ?? ''
-					)
-				);
-				exit;
-			}
-			//# Edit settings
-
 		}
 
 		if (
@@ -737,9 +714,5 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		add_screen_option( $option, $args );
 
 		$this->keyword_table = new Urlslab_Keyword_Link_Table();
-	}
-
-	//TODO: delete when react client ready
-	public function render_settings() {
 	}
 }

@@ -104,8 +104,6 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 		return 'image-alt-text';
 	}
 
-	public static function update_settings( array $new_settings ) {}
-
 	public function is_api_key_required() {
 		return true;
 	}

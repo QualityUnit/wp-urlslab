@@ -154,8 +154,6 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		return 'related-resource';
 	}
 
-	public static function update_settings( array $new_settings ) {}
-
 	public function is_api_key_required() {
 		return true;
 	}

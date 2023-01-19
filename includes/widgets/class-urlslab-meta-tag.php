@@ -198,56 +198,6 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 		return 'meta-tags';
 	}
 
-	public static function update_settings( array $new_settings ) {
-		if ( in_array( self::SETTING_NAME_META_DESCRIPTION_GENERATION, $new_settings ) ) {
-			update_option(
-				self::SETTING_NAME_META_DESCRIPTION_GENERATION,
-				true
-			);
-		} else {
-			update_option(
-				self::SETTING_NAME_META_DESCRIPTION_GENERATION,
-				false
-			);
-		}
-
-		if ( in_array( self::SETTING_NAME_META_OG_DESC_GENERATION, $new_settings ) ) {
-			update_option(
-				self::SETTING_NAME_META_OG_DESC_GENERATION,
-				true
-			);
-		} else {
-			update_option(
-				self::SETTING_NAME_META_OG_DESC_GENERATION,
-				false
-			);
-		}
-
-		if ( in_array( self::SETTING_NAME_META_OG_IMAGE_GENERATION, $new_settings ) ) {
-			update_option(
-				self::SETTING_NAME_META_OG_IMAGE_GENERATION,
-				true
-			);
-		} else {
-			update_option(
-				self::SETTING_NAME_META_OG_IMAGE_GENERATION,
-				false
-			);
-		}
-
-		if ( in_array( self::SETTING_NAME_META_OG_TITLE_GENERATION, $new_settings ) ) {
-			update_option(
-				self::SETTING_NAME_META_OG_TITLE_GENERATION,
-				true
-			);
-		} else {
-			update_option(
-				self::SETTING_NAME_META_OG_TITLE_GENERATION,
-				false
-			);
-		}
-	}
-
 	public function is_api_key_required() {
 		return true;
 	}

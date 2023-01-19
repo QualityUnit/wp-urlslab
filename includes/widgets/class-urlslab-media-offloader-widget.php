@@ -77,6 +77,13 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public const SETTING_DEFAULT_IMG_MIN_WIDTH = 0;
 
 
+	public const SETTING_NAME_S3_BUCKET = 'urlslab_AWS_S3_bucket';
+	public const SETTING_NAME_S3_REGION = 'urlslab_AWS_S3_region';
+	public const SETTING_NAME_S3_ACCESS_KEY = 'urlslab_AWS_S3_access_key';
+	public const SETTING_NAME_S3_SECRET = 'urlslab_AWS_S3_secret';
+	public const SETTING_NAME_S3_URL_PREFIX = 'urlslab_AWS_S3_url_prefix';
+
+
 	private $files = array();
 	private Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher;
 
@@ -752,161 +759,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		return '';
 	}
 
-	//TODO: we will remove this function once react client will be implemented
-	public static function update_settings( array $new_settings ) {
-		if (
-			isset( $new_settings[ self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ] )
-		) {
-			update_option(
-				self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND,
-				$new_settings[ self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ]
-			);
-		} else {
-			update_option(
-				self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND,
-				false
-			);
-		}
-
-		if (
-			isset( $new_settings[ self::SETTING_NAME_SAVE_EXTERNAL ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_SAVE_EXTERNAL ] )
-		) {
-			update_option(
-				self::SETTING_NAME_SAVE_EXTERNAL,
-				$new_settings[ self::SETTING_NAME_SAVE_EXTERNAL ]
-			);
-		} else {
-			update_option(
-				self::SETTING_NAME_SAVE_EXTERNAL,
-				false
-			);
-		}
-		if (
-			isset( $new_settings[ self::SETTING_NAME_LOG_IMAGES ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_LOG_IMAGES ] )
-		) {
-			update_option(
-				self::SETTING_NAME_LOG_IMAGES,
-				$new_settings[ self::SETTING_NAME_LOG_IMAGES ]
-			);
-		} else {
-			update_option(
-				self::SETTING_NAME_LOG_IMAGES,
-				0
-			);
-		}
-		if (
-			isset( $new_settings[ self::SETTING_NAME_HIDE_ERROR_IMAGES ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_HIDE_ERROR_IMAGES ] )
-		) {
-			update_option(
-				self::SETTING_NAME_HIDE_ERROR_IMAGES,
-				$new_settings[ self::SETTING_NAME_HIDE_ERROR_IMAGES ]
-			);
-		} else {
-			update_option(
-				self::SETTING_NAME_HIDE_ERROR_IMAGES,
-				0
-			);
-		}
-
-		if (
-			isset( $new_settings[ self::SETTING_NAME_SAVE_INTERNAL ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_SAVE_INTERNAL ] )
-		) {
-			update_option(
-				self::SETTING_NAME_SAVE_INTERNAL,
-				$new_settings[ self::SETTING_NAME_SAVE_INTERNAL ]
-			);
-		} else {
-			update_option(
-				self::SETTING_NAME_SAVE_INTERNAL,
-				false
-			);
-		}
-
-		if (
-			isset( $new_settings[ self::SETTING_NAME_NEW_FILE_DRIVER ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_NEW_FILE_DRIVER ] )
-		) {
-			update_option(
-				self::SETTING_NAME_NEW_FILE_DRIVER,
-				$new_settings[ self::SETTING_NAME_NEW_FILE_DRIVER ]
-			);
-		}
-
-		if (
-			isset( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ] )
-		) {
-			update_option(
-				self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES,
-				$new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ]
-			);
-		} else {
-			update_option(
-				self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES,
-				false
-			);
-		}
-
-		if (
-			isset( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ] )
-		) {
-			update_option(
-				self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3,
-				$new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ]
-			);
-		} else {
-			update_option(
-				self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3,
-				false
-			);
-		}
-
-		if (
-			isset( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ] )
-		) {
-			update_option(
-				self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB,
-				$new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ]
-			);
-		} else {
-			update_option(
-				self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB,
-				false
-			);
-		}
-		if (
-			isset( $new_settings[ self::SETTING_NAME_DELETE_AFTER_TRANSFER ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_DELETE_AFTER_TRANSFER ] )
-		) {
-			update_option(
-				self::SETTING_NAME_DELETE_AFTER_TRANSFER,
-				$new_settings[ self::SETTING_NAME_DELETE_AFTER_TRANSFER ]
-			);
-		} else {
-			update_option(
-				self::SETTING_NAME_DELETE_AFTER_TRANSFER,
-				false
-			);
-		}
-
-		if (
-			isset( $new_settings[ self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME ] )
-		) {
-			update_option(
-				self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME,
-				$new_settings[ self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME ]
-			);
-		}
-	}
-
 	public static function update_option_image_optimisation( array $new_settings ) {
 		if (
 			isset( $new_settings[ self::SETTING_NAME_USE_WEBP_ALTERNATIVE ] ) &&
@@ -1296,5 +1148,52 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				return is_numeric( $value ) && 0 <= $value;
 			}
 		);
+
+		//S3 settings
+		$this->add_option_definition(
+			self::SETTING_NAME_S3_ACCESS_KEY,
+			'',
+			true,
+			__( 'AWS S3 Access Key' ),
+			__('Leave empty if AWS access key should be loaded from environment variable AWS_KEY'),
+			self::OPTION_TYPE_TEXT
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_S3_SECRET,
+			'',
+			true,
+			__( 'AWS S3 Key Secret' ),
+			__('Leave empty if AWS secret key should be loaded from environment variable AWS_SECRET'),
+			self::OPTION_TYPE_PASSWORD
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_S3_REGION,
+			'',
+			true,
+			__( 'AWS S3 Region' ),
+			'',
+			self::OPTION_TYPE_TEXT
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_S3_BUCKET,
+			'',
+			true,
+			__( 'AWS S3 Bucket' ),
+			__( 'AWS S3 bucket name if you want to transfer files to AWS S3' ),
+			self::OPTION_TYPE_TEXT
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_S3_URL_PREFIX,
+			'',
+			true,
+			__( 'AWS S3 Url Prefix' ),
+			__( 'URL prefix for offloaded media, so that it can be used with CDN. Leave empty if CDN is not configured. (Example: https://cdn.yourdomain.com/)' ),
+			self::OPTION_TYPE_TEXT
+		);
+
 	}
 }
