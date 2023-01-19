@@ -21,7 +21,7 @@ export default function DashboardModule({ moduleId, image, isActive, title, hasA
 	}
 
 	return (
-		<div className={`urlslab-dashboardmodule ${moduleActive ? 'active' : ''}`}>
+		<div className={`urlslab-dashboardmodule ${activating ? 'activating' : ''} ${moduleActive ? 'active' : ''}`}>
 			{hasApi
 				? <div className="urlslab-dashboardmodule-api">
 					<ApiIcon />
