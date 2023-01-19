@@ -24,11 +24,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	//automatically offload external images found in every page content (starting with damain name different as current page)
 	public const SETTING_NAME_SAVE_EXTERNAL = 'urlslab_save_external_resources';
-	public const SETTING_DEFAULT_SAVE_EXTERNAL = false;
-
 	//automatically offload internal images found in every page content (starting with damain name same as current page)
 	public const SETTING_NAME_SAVE_INTERNAL = 'urlslab_save_internal_resources';
-	public const SETTING_DEFAULT_SAVE_INTERNAL = false;
 
 	public const SETTING_NAME_NEW_FILE_DRIVER = 'urlslab_file_driver';
 	public const SETTING_DEFAULT_NEW_FILE_DRIVER = Urlslab_Driver::DRIVER_LOCAL_FILE;
@@ -683,8 +680,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	private function schedule_missing_images( array $urls ) {
-		$save_internal = get_option( self::SETTING_NAME_SAVE_INTERNAL, self::SETTING_DEFAULT_SAVE_INTERNAL );
-		$save_external = get_option( self::SETTING_NAME_SAVE_EXTERNAL, self::SETTING_DEFAULT_SAVE_EXTERNAL );
+		$save_internal = $this->get_option( self::SETTING_NAME_SAVE_INTERNAL );
+		$save_external = $this->get_option( self::SETTING_NAME_SAVE_EXTERNAL );
 		if ( ! ( $save_internal || $save_external ) ) {
 			return;
 		}
@@ -1108,7 +1105,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_SAVE_EXTERNAL,
-			self::SETTING_DEFAULT_SAVE_EXTERNAL,
+			false,
 			true,
 			__( 'Offload External media found in page' ),
 			__( 'Offload media from external urls, found on pages of your domain with the current driver' )
@@ -1116,7 +1113,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_SAVE_INTERNAL,
-			self::SETTING_DEFAULT_SAVE_INTERNAL,
+			false,
 			true,
 			__( 'Offload Internal media found in page' ),
 			__( 'Offload media from internal urls, found on pages of your domain with the current driver' )

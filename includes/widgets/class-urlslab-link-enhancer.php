@@ -17,14 +17,9 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 	public const SETTING_NAME_DESC_REPLACEMENT_STRATEGY = 'urlslab_desc_replacement_strategy';
 	const SETTING_NAME_REMOVE_LINKS = 'urlslab_remove_links';
-	const SETTING_DEFAULT_REMOVE_LINKS = true;
 	const SETTING_NAME_VALIDATE_LINKS = 'urlslab_validate_links';
 	const SETTING_NAME_LAST_LINK_VALIDATION_START = 'urlslab_last_validation';
-
 	const SETTING_NAME_URLS_MAP = 'urlslab_urls_map';
-	const SETTING_DEFAULT_URLS_MAP = true;
-
-	private array $options = array();
 
 	/**
 	 * @param Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher
@@ -41,7 +36,6 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	public function init_widget( Urlslab_Loader $loader ) {
 		$loader->add_action( 'post_updated', $this, 'post_updated', 10, 3 );
 		$loader->add_action( 'urlslab_content', $this, 'theContentHook', 12 );
-		$this->options[ self::SETTING_NAME_REMOVE_LINKS ] = get_option( self::SETTING_NAME_REMOVE_LINKS, self::SETTING_DEFAULT_REMOVE_LINKS );
 	}
 
 	public function post_updated( $post_id, $post, $post_before ) {
@@ -137,7 +131,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 						) {
 
 							if (
-								$this->options[ self::SETTING_NAME_REMOVE_LINKS ] &&
+								$this->get_option( self::SETTING_NAME_REMOVE_LINKS ) &&
 								! $result[ $url_obj->get_url_id() ]->is_visible()
 							) {
 								//link should not be visible, remove it from content
@@ -182,8 +176,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	public function visibility_active_in_table(): bool {
-		return Urlslab_User_Widget::get_instance()->is_widget_activated( $this->widget_slug ) &&
-			   get_option( self::SETTING_NAME_REMOVE_LINKS, self::SETTING_DEFAULT_REMOVE_LINKS ) == 1;
+		return Urlslab_User_Widget::get_instance()->is_widget_activated( $this->widget_slug ) && $this->get_option( self::SETTING_NAME_REMOVE_LINKS );
 	}
 
 	public function render_widget_overview() {
@@ -203,7 +196,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	private function update_urls_map( array $url_ids ) {
-		if ( get_option( self::SETTING_NAME_URLS_MAP, self::SETTING_DEFAULT_URLS_MAP ) == 0 ) {
+		if ( ! $this->get_option( self::SETTING_NAME_URLS_MAP ) ) {
 			return;
 		}
 
@@ -350,7 +343,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_REMOVE_LINKS,
-			self::SETTING_DEFAULT_REMOVE_LINKS,
+			true,
 			true,
 			__( 'Hide Links' ),
 			__( 'Hide links with status 404 or 503 or marked as invisible from all pages' )
@@ -358,7 +351,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_URLS_MAP,
-			self::SETTING_DEFAULT_URLS_MAP,
+			true,
 			true,
 			__( 'Track Internal links' ),
 			__( 'Get data of which pages are linking to each other' )

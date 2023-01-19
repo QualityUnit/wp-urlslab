@@ -166,6 +166,17 @@ abstract class Urlslab_Widget {
 		return update_option( $option_id, $value );
 	}
 
+	public function get_option( $option_id ) {
+		if ( ! isset( $this->options[ $option_id ] ) ) {
+			return null;
+		}
+		if ( ! isset( $this->options[ $option_id ]['value'] ) ) {
+			$this->options[ $option_id ]['value'] = get_option( $option_id, $this->options[ $option_id ]['default'] );
+		}
+
+		return $this->options[ $option_id ]['value'];
+	}
+
 	protected function is_skip_elemenet( DOMNode $dom, $custom_widget_skip = '' ) {
 		return $dom->hasAttributes() && $dom->hasAttribute( 'class' ) &&
 			   (

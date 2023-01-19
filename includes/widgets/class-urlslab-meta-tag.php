@@ -16,10 +16,8 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 
 	const SETTING_NAME_META_OG_IMAGE_GENERATION = 'urlslab_og_image_generation';
 	const DEFAULT_META_OG_IMAGE_GENERATION = false;
-
 	const SETTING_NAME_META_OG_TITLE_GENERATION = 'urlslab_og_title_generation';
 	const DEFAULT_META_OG_TITLE_GENERATION = false;
-
 	const SETTING_NAME_META_OG_DESC_GENERATION = 'urlslab_og_desc_generation';
 	const DEFAULT_META_OG_DESC_GENERATION = false;
 
