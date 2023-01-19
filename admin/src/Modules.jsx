@@ -26,7 +26,7 @@ export default function Modules() {
 
   return (
     <>
-      <SearchField onChange={(value) => handleSearch(value)} />
+      <SearchField onChange={(value) => handleSearch(value)} placeholder="Search module…" />
       <Checkbox onChange={() => showActive()}>Show only active</Checkbox>
       {/*<FilterMenu filterItems={filterActive}>All items</FilterMenu> */}
       <div className="urlslab-modules flex-tablet-landscape flex-wrap">

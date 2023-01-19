@@ -39,7 +39,7 @@
     "@types/react-dom": "^18.0.9",
     "@vitejs/plugin-react": "^3.0.0",
     "@wordpress/eslint-plugin": "^13.8.0",
-    "@wordpress/stylelint-config": "^21.7.0",
+    "@wordpress/stylelint-config": "^21.8.0",
     "eslint": "^8.31.0",
     "eslint-plugin-import": "^2.26.0",
     "sass": "^1.57.1",

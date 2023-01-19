@@ -1592,10 +1592,10 @@
   resolved "https://registry.yarnpkg.com/@wordpress/prettier-config/-/prettier-config-2.7.0.tgz#6dad5417bcb459687f510d7a0035994407237eb1"
   integrity sha512-VaZ3ZSxgu0X7C3sGh0QqTiAoqQJ9qzV2g6lImWo8yinBppa0Xtxj6Xye3j1Gh21sO0YM5HqIS9tVtFILoYasBg==
 
-"@wordpress/stylelint-config@^21.7.0":
-  version "21.7.0"
-  resolved "https://registry.yarnpkg.com/@wordpress/stylelint-config/-/stylelint-config-21.7.0.tgz#f313ebb9166f8b921209537a249cb45f041540b4"
-  integrity sha512-mo+M1+lBwy2jZ6mY6KNblukd6v1V1Agm5PleNnywlfimphu0e+Wu43KI/Yh9GvpTKaBtj2RP4H0aYlaxSzNYWQ==
+"@wordpress/stylelint-config@^21.8.0":
+  version "21.8.0"
+  resolved "https://registry.yarnpkg.com/@wordpress/stylelint-config/-/stylelint-config-21.8.0.tgz#d3b82a604fbac79231d60b0e7e98abf44a1105f7"
+  integrity sha512-YbKPBMQ1jieJHtS3AXjGDSwfc1SeHuNLkT67jtspGDpqI/s38mT+Z1n89a7ZUiQ4I8HP+/6aI33R/hPe7WrsSQ==
   dependencies:
     stylelint-config-recommended "^6.0.0"
     stylelint-config-recommended-scss "^5.0.2"
