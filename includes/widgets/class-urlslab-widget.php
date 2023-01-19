@@ -149,11 +149,12 @@ abstract class Urlslab_Widget {
 			return false;
 		}
 		if ( null !== $this->options[ $option_id ]['validator'] ) {
-			if ( ! call_user_func( $this->options[ $option_id ]['validator']($value) ) ) {
+			if ( ! call_user_func( $this->options[ $option_id ]['validator'], $value ) ) {
 				return false;
 			}
 		}
-		return update_option($option_id, $value);
+
+		return update_option( $option_id, $value );
 	}
 
 	protected function is_skip_elemenet( DOMNode $dom, $custom_widget_skip = '' ) {
