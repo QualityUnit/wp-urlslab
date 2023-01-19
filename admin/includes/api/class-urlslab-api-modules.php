@@ -33,11 +33,11 @@ class Urlslab_Api_Modules extends WP_REST_Controller {
 					'permission_callback' => array( $this, 'update_item_permissions_check' ),
 					'args'                => array(
 						'active' => array(
-							'required' => true,
-							'validate_callback' => function($param) {
+							'required'          => true,
+							'validate_callback' => function( $param ) {
 								return is_bool( $param );
-							}
-						)
+							},
+						),
 					),
 				),
 			)
@@ -56,13 +56,7 @@ class Urlslab_Api_Modules extends WP_REST_Controller {
 		try {
 			$data = array();
 			foreach ( Urlslab_Available_Widgets::get_instance()->get_available_widgets() as $widget ) {
-				$data[] = (object) array(
-					'id'          => $widget->get_widget_slug(),
-					'title'       => $widget->get_widget_title(),
-					'apikey'      => false,
-					'description' => $widget->get_widget_description(),
-					'active'      => Urlslab_User_Widget::get_instance()->is_widget_activated( $widget->get_widget_slug() ),
-				);
+				$data[] = $this->get_widget_data( $widget );
 			}
 
 			return new WP_REST_Response( $data, 200 );
@@ -71,19 +65,21 @@ class Urlslab_Api_Modules extends WP_REST_Controller {
 		}
 	}
 
+	private function get_widget_data( Urlslab_Widget $widget ): stdClass {
+		return (object) array(
+			'id'          => $widget->get_widget_slug(),
+			'title'       => $widget->get_widget_title(),
+			'apikey'      => $widget->is_api_key_required(),
+			'description' => $widget->get_widget_description(),
+			'active'      => Urlslab_User_Widget::get_instance()->is_widget_activated( $widget->get_widget_slug() ),
+		);
+	}
+
 	public function get_item( $request ) {
 		try {
 			$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $request->get_param( 'id' ) );
 			if ( false !== $widget ) {
-				$data = (object) array(
-					'id'          => $widget->get_widget_slug(),
-					'title'       => $widget->get_widget_title(),
-					'apikey'      => false,
-					'description' => $widget->get_widget_description(),
-					'active'      => Urlslab_User_Widget::get_instance()->is_widget_activated( $widget->get_widget_slug() ),
-				);
-
-				return new WP_REST_Response( $data, 200 );
+				return new WP_REST_Response( $this->get_widget_data( $widget ), 200 );
 			}
 
 			return new WP_Error( 'not-found', __( 'Module not found', 'urlslab' ), array( 'status' => 404 ) );
@@ -102,15 +98,7 @@ class Urlslab_Api_Modules extends WP_REST_Controller {
 					Urlslab_User_Widget::get_instance()->activate_widget( $widget );
 				}
 
-				$data = (object) array(
-					'id'          => $widget->get_widget_slug(),
-					'title'       => $widget->get_widget_title(),
-					'apikey'      => false,
-					'description' => $widget->get_widget_description(),
-					'active'      => Urlslab_User_Widget::get_instance()->is_widget_activated( $widget->get_widget_slug() ),
-				);
-
-				return new WP_REST_Response( $data, 200 );
+				return new WP_REST_Response( $this->get_widget_data( $widget ), 200 );
 			}
 
 			return new WP_Error( 'not-found', __( 'Module not found', 'urlslab' ), array( 'status' => 404 ) );

@@ -105,4 +105,8 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	}
 
 	public static function update_settings( array $new_settings ) {}
+
+	public function is_api_key_required() {
+		return true;
+	}
 }
