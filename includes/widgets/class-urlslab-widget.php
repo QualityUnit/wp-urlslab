@@ -106,17 +106,17 @@ abstract class Urlslab_Widget {
 		if ( empty( $this->options ) ) {
 			$this->init_options();
 		}
-		foreach ( $this->options as $id => $option ) {
+		foreach ( $this->options as $option_id => $option ) {
 			switch ( $option['type'] ) {
 				case self::OPTION_TYPE_PASSWORD:
-					if ( get_option( $id, $option['default'] ?? false ) ) {
-						$this->options[ $id ]['value'] = self::PASSWORD_PLACEHOLDER;
+					if ( get_option( $option_id, $option['default'] ?? false ) ) {
+						$this->options[ $option_id ]['value'] = self::PASSWORD_PLACEHOLDER;
 					} else {
-						$this->options[ $id ]['value'] = '';
+						$this->options[ $option_id ]['value'] = '';
 					}
 					break;
 				default:
-					$this->options[ $id ]['value'] = get_option( $id, $option['default'] ?? false );
+					$this->options[ $option_id ]['value'] = get_option( $option_id, $option['default'] ?? false );
 			}
 		}
 

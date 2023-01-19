@@ -119,7 +119,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 				);
 
 				if ( ! empty( $result ) ) {
-					$strategy = get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
+					$strategy = $this->get_option( self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY );
 
 					$this->update_urls_map( array_keys( $result ) );
 
