@@ -109,4 +109,8 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	public function is_api_key_required() {
 		return true;
 	}
+
+	protected function init_options() {
+		// TODO: Implement init_options() method.
+	}
 }

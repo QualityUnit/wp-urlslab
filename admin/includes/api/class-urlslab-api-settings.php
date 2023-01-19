@@ -47,7 +47,7 @@ class Urlslab_Api_Settings extends WP_REST_Controller {
 				return new WP_Error( 'not-found', __( 'Module not found', 'urlslab' ), array( 'status' => 404 ) );
 			}
 
-			return new WP_REST_Response( (object) $widget->get_settings(), 200 );
+			return new WP_REST_Response( (object) $widget->get_options(), 200 );
 		} catch ( Exception $e ) {
 			return new WP_Error( 'exception', __( 'Failed to get list of modules', 'urlslab' ) );
 		}
@@ -60,13 +60,14 @@ class Urlslab_Api_Settings extends WP_REST_Controller {
 				return new WP_Error( 'not-found', __( 'Module not found', 'urlslab' ), array( 'status' => 404 ) );
 			}
 
-			if ( ! str_starts_with( $request->get_param( 'setting_name' ), 'urlslab' ) ) {
-				return new WP_Error( 'error', __( 'Setting name should start with "urlslab"', 'urlslab' ), array( 'status' => 500 ) );
+			if ( ! isset( $widget->get_options()[ $request->get_param( 'setting_name' ) ] ) ) {
+				return new WP_Error( 'error', __( 'Setting name is not defined in module', 'urlslab' ), array( 'status' => 500 ) );
 			}
 
-			$widget->update_setting( $request->get_param( 'setting_name' ), $request->get_json_params()['value'] );
-
-			return new WP_REST_Response( (object) $widget->get_settings(), 200 );
+			if ($widget->update_option( $request->get_param( 'setting_name' ), $request->get_json_params()['value'] )) {
+				return new WP_REST_Response( (object) $widget->get_options(), 200 );
+			}
+			return new WP_Error( 'error', __( 'Failed to save setting', 'urlslab' ), array( 'status' => 500 ) );
 		} catch ( Exception $e ) {
 			return new WP_Error( 'exception', __( 'Failed to update module', 'urlslab' ), array( 'status' => 500 ) );
 		}

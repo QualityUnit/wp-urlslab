@@ -2,7 +2,18 @@
 
 abstract class Urlslab_Widget {
 
+
+	const OPTION_TYPE_CHECKBOX = 'C';
+	const OPTION_TYPE_TEXT = 'T';
+	const OPTION_TYPE_PASSWORD = 'P';
+	const OPTION_TYPE_LISTBOX = 'L';
+	const OPTION_TYPE_MULTI_CHECKBOX = 'M';
+	const OPTION_TYPE_NUMBER = 'N';
+
+
 	private $current_page_url = null;
+
+	private $options = array();
 
 	/**
 	 * @param Urlslab_Loader $loader
@@ -90,6 +101,59 @@ abstract class Urlslab_Widget {
 
 	public function is_api_key_required() {
 		return false;
+	}
+
+	/**
+	 * @return array - liest of module settings, where id is setting name and value is setting value
+	 */
+	public function get_options() {
+		if ( empty( $this->options ) ) {
+			$this->init_options();
+		}
+		foreach ( $this->options as $id => $option ) {
+			$this->options[ $id ]['value'] = get_option( $id, $option['default'] ?? false );
+		}
+
+		return $this->options;
+	}
+
+	public function add_options_on_activate() {
+		if ( empty( $this->options ) ) {
+			$this->init_options();
+		}
+		foreach ( $this->options as $option ) {
+			add_option( $option['id'], $option['default'] ?? false, '', $option['autoload'] ?? true );
+		}
+	}
+
+	protected abstract function init_options();
+
+	protected function add_option_definition( string $option_id, $default_value = false, bool $autoload = true, string $title = '', string $description = '', $type = self::OPTION_TYPE_CHECKBOX, $possible_values = false, callable $validator = null ) {
+		$this->options[ $option_id ] = array(
+			'id'              => $option_id,
+			'default'         => $default_value,
+			'autoload'        => $autoload,
+			'title'           => $title,
+			'description'     => $description,
+			'type'            => $type,
+			'possible_values' => $possible_values,
+			'validator'       => $validator,
+		);
+	}
+
+	public function update_option( $option_id, $value ): bool {
+		if ( empty( $this->options ) ) {
+			$this->init_options();
+		}
+		if ( ! isset( $this->options[ $option_id ] ) ) {
+			return false;
+		}
+		if ( null !== $this->options[ $option_id ]['validator'] ) {
+			if ( ! call_user_func( $this->options[ $option_id ]['validator']($value) ) ) {
+				return false;
+			}
+		}
+		return update_option($option_id, $value);
 	}
 
 	protected function is_skip_elemenet( DOMNode $dom, $custom_widget_skip = '' ) {

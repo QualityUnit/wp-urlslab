@@ -471,4 +471,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 
+	protected function init_options() {
+		// TODO: Implement init_options() method.
+	}
 }

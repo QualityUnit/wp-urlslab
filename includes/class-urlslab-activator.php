@@ -34,11 +34,11 @@ class Urlslab_Activator {
 		Urlslab_Activator::upgrade_steps();
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-background-attachments-cron.php';
-		add_option( Urlslab_Offload_Background_Attachments_Cron::SETTING_NAME_SCHEDULER_POINTER, -1, '', false );
-		Urlslab_Keywords_Links::add_option();
-		Urlslab_Link_Enhancer::add_option();
-		Urlslab_Media_Offloader_Widget::add_option();
-		Urlslab_Meta_Tag::add_option();
+		add_option( Urlslab_Offload_Background_Attachments_Cron::SETTING_NAME_SCHEDULER_POINTER, - 1, '', false );
+		( new Urlslab_Keywords_Links() )->add_options_on_activate();
+		( new Urlslab_Link_Enhancer() )->add_options_on_activate();
+		( new Urlslab_Media_Offloader_Widget() )->add_options_on_activate();
+		( new Urlslab_Meta_Tag() )->add_options_on_activate();
 	}
 
 	private static function install_tables() {
@@ -61,18 +61,18 @@ class Urlslab_Activator {
 		$version = get_option( URLSLAB_VERSION_SETTING, '1.0' );
 
 		if ( version_compare( $version, '1.13', '<' ) ) {
-			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_URLS_TABLE . ';'); // phpcs:ignore
-			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_RELATED_RESOURCE_TABLE . ';'); // phpcs:ignore
+			$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_URLS_TABLE . ';' ); // phpcs:ignore
+			$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_RELATED_RESOURCE_TABLE . ';' ); // phpcs:ignore
 			self::init_urls_tables();
 			self::init_related_resources_widget_tables();
 		}
 
 		if ( version_compare( $version, '1.22', '<' ) ) {
-			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_URLS_MAP_TABLE . ';'); // phpcs:ignore
+			$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_URLS_MAP_TABLE . ';' ); // phpcs:ignore
 			self::init_urls_map_tables();
 		}
 		if ( version_compare( $version, '1.24', '<' ) ) {
-			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_KEYWORDS_TABLE . ';'); // phpcs:ignore
+			$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_KEYWORDS_TABLE . ';' ); // phpcs:ignore
 			self::init_keywords_tables();
 		}
 		if ( version_compare( $version, '1.31', '<' ) ) {
@@ -80,26 +80,26 @@ class Urlslab_Activator {
 		}
 
 		if ( version_compare( $version, '1.32', '<' ) ) {
-			$wpdb->query('ALTER TABLE ' . URLSLAB_FILES_TABLE . ' ADD COLUMN parent_url varchar(1024);'); // phpcs:ignore
-			$wpdb->query('DELETE FROM ' . URLSLAB_FILES_TABLE . ' WHERE filestatus=\'E\';'); // phpcs:ignore
+			$wpdb->query( 'ALTER TABLE ' . URLSLAB_FILES_TABLE . ' ADD COLUMN parent_url varchar(1024);' ); // phpcs:ignore
+			$wpdb->query( 'DELETE FROM ' . URLSLAB_FILES_TABLE . ' WHERE filestatus=\'E\';' ); // phpcs:ignore
 		}
 
 		if ( version_compare( $version, '1.34', '<' ) ) {
-			$wpdb->query('ALTER TABLE ' . URLSLAB_RELATED_RESOURCE_TABLE . ' ADD COLUMN pos tinyint unsigned default 10;'); // phpcs:ignore
+			$wpdb->query( 'ALTER TABLE ' . URLSLAB_RELATED_RESOURCE_TABLE . ' ADD COLUMN pos tinyint unsigned default 10;' ); // phpcs:ignore
 		}
 		if ( version_compare( $version, '1.39', '<' ) ) {
-			$wpdb->query('ALTER TABLE ' . URLSLAB_KEYWORDS_MAP_TABLE . " ADD COLUMN `destUrlMd5` BIGINT(20) DEFAULT 0, ADD COLUMN `linkType` char(1) NOT NULL DEFAULT 'U', DROP PRIMARY KEY, ADD PRIMARY KEY (`kw_id`, `urlMd5`, `destUrlMd5`), ADD INDEX dest_urls (destUrlMd5);"); // phpcs:ignore
+			$wpdb->query( 'ALTER TABLE ' . URLSLAB_KEYWORDS_MAP_TABLE . " ADD COLUMN `destUrlMd5` BIGINT(20) DEFAULT 0, ADD COLUMN `linkType` char(1) NOT NULL DEFAULT 'U', DROP PRIMARY KEY, ADD PRIMARY KEY (`kw_id`, `urlMd5`, `destUrlMd5`), ADD INDEX dest_urls (destUrlMd5);" ); // phpcs:ignore
 		}
 		if ( version_compare( $version, '1.40', '<' ) ) {
-			$wpdb->query('ALTER TABLE ' . URLSLAB_KEYWORDS_TABLE . " ADD COLUMN `kwType` char(1) NOT NULL DEFAULT 'M';"); // phpcs:ignore
+			$wpdb->query( 'ALTER TABLE ' . URLSLAB_KEYWORDS_TABLE . " ADD COLUMN `kwType` char(1) NOT NULL DEFAULT 'M';" ); // phpcs:ignore
 		}
 
 		if ( version_compare( $version, '1.42', '<' ) ) {
-			$wpdb->query('ALTER TABLE ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' ADD COLUMN status_changed datetime NULL;'); // phpcs:ignore
-			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILES_TABLE . ';'); // phpcs:ignore
-			$wpdb->query('DROP TABLE IF EXISTS ' . URLSLAB_FILE_URLS_TABLE . ';'); // phpcs:ignore
-			$wpdb->query('DROP TABLE IF EXISTS ' . $wpdb->prefix . 'urlslab_file_alternatives' . ';'); // phpcs:ignore
-			$wpdb->query( 'DROP TABLE IF EXISTS ' . $wpdb->prefix . 'urlslab_file_contents' . ';'); // phpcs:ignore
+			$wpdb->query( 'ALTER TABLE ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' ADD COLUMN status_changed datetime NULL;' ); // phpcs:ignore
+			$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_FILES_TABLE . ';' ); // phpcs:ignore
+			$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_FILE_URLS_TABLE . ';' ); // phpcs:ignore
+			$wpdb->query( 'DROP TABLE IF EXISTS ' . $wpdb->prefix . 'urlslab_file_alternatives' . ';' ); // phpcs:ignore
+			$wpdb->query( 'DROP TABLE IF EXISTS ' . $wpdb->prefix . 'urlslab_file_contents' . ';' ); // phpcs:ignore
 			self::init_urlslab_files();
 			self::init_urlslab_file_urls();
 			self::init_urlslab_file_db_driver_contents();
@@ -107,13 +107,13 @@ class Urlslab_Activator {
 		}
 
 		if ( version_compare( $version, '1.42.6', '<' ) ) {
-			$wpdb->query('UPDATE ' . URLSLAB_URLS_TABLE . " SET urlTitle=null WHERE urlTitle='<empty>'"); // phpcs:ignore
-			$wpdb->query('UPDATE ' . URLSLAB_URLS_TABLE . " SET urlMetaDescription=null WHERE urlMetaDescription='<empty>'"); // phpcs:ignore
+			$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . " SET urlTitle=null WHERE urlTitle='<empty>'" ); // phpcs:ignore
+			$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . " SET urlMetaDescription=null WHERE urlMetaDescription='<empty>'" ); // phpcs:ignore
 		}
 
 		if ( version_compare( $version, '1.43.0', '<' ) ) {
-			$wpdb->query('ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN urlCheckDate DATETIME;"); // phpcs:ignore
-			$wpdb->query('ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD INDEX idxUrlCheck (urlCheckDate);"); // phpcs:ignore
+			$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN urlCheckDate DATETIME;" ); // phpcs:ignore
+			$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD INDEX idxUrlCheck (urlCheckDate);" ); // phpcs:ignore
 		}
 
 		//all update steps done, set the current version
@@ -122,9 +122,9 @@ class Urlslab_Activator {
 
 	private static function init_urls_tables() {
 		global $wpdb;
-		$table_name = URLSLAB_URLS_TABLE;
+		$table_name      = URLSLAB_URLS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+		$sql             = "CREATE TABLE IF NOT EXISTS $table_name (
 			urlMd5 bigint NOT NULL,
 			urlName varchar(2048) NOT NULL,
 			status char(1) NOT NULL, -- U: update, P: pending, A: Available, N: Not scheduled, B: Broken Link
@@ -148,9 +148,9 @@ class Urlslab_Activator {
 
 	private static function init_youtube_cache_tables() {
 		global $wpdb;
-		$table_name = URLSLAB_YOUTUBE_CACHE_TABLE;
+		$table_name      = URLSLAB_YOUTUBE_CACHE_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+		$sql             = "CREATE TABLE IF NOT EXISTS $table_name (
 			videoid varchar(32) NOT NULL,
 			microdata text,
 			status_changed datetime NULL,
@@ -164,9 +164,9 @@ class Urlslab_Activator {
 
 	private static function init_urls_map_tables() {
 		global $wpdb;
-		$table_name = URLSLAB_URLS_MAP_TABLE;
+		$table_name      = URLSLAB_URLS_MAP_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+		$sql             = "CREATE TABLE IF NOT EXISTS $table_name (
 			srcUrlMd5 bigint NOT NULL,
 			destUrlMd5 bigint NOT NULL,
 			PRIMARY KEY  (srcUrlMd5, destUrlMd5),
@@ -177,12 +177,11 @@ class Urlslab_Activator {
 	}
 
 
-
 	private static function init_keywords_tables() {
 		global $wpdb;
-		$table_name = URLSLAB_KEYWORDS_TABLE;
+		$table_name      = URLSLAB_KEYWORDS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+		$sql             = "CREATE TABLE IF NOT EXISTS $table_name (
     		kw_id bigint NOT NULL,
 			keyword varchar(250) NOT NULL,
 			urlLink varchar(500) NOT NULL,
@@ -202,9 +201,9 @@ class Urlslab_Activator {
 
 	private static function init_keywords_map() {
 		global $wpdb;
-		$table_name = URLSLAB_KEYWORDS_MAP_TABLE;
+		$table_name      = URLSLAB_KEYWORDS_MAP_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+		$sql             = "CREATE TABLE IF NOT EXISTS $table_name (
     		kw_id bigint NOT NULL,
     		urlMd5 bigint NOT NULL,
     		destUrlMd5 bigint DEFAULT 0,
@@ -220,9 +219,9 @@ class Urlslab_Activator {
 
 	private static function init_related_resources_widget_tables() {
 		global $wpdb;
-		$table_name = URLSLAB_RELATED_RESOURCE_TABLE;
+		$table_name      = URLSLAB_RELATED_RESOURCE_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+		$sql             = "CREATE TABLE IF NOT EXISTS $table_name (
 			srcUrlMd5 bigint NOT NULL,
 			destUrlMd5 bigint NOT NULL,
 			pos tinyint unsigned default 10,
@@ -235,9 +234,9 @@ class Urlslab_Activator {
 
 	private static function init_urlslab_error_log() {
 		global $wpdb;
-		$table_name = URLSLAB_ERROR_LOG_TABLE;
+		$table_name      = URLSLAB_ERROR_LOG_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+		$sql             = "CREATE TABLE IF NOT EXISTS $table_name (
     		id int NOT NULL AUTO_INCREMENT,
 			errorLog text NOT NULL,
 			PRIMARY KEY  (id)
@@ -249,9 +248,9 @@ class Urlslab_Activator {
 
 	private static function init_urlslab_files() {
 		global $wpdb;
-		$table_name = URLSLAB_FILES_TABLE;
+		$table_name      = URLSLAB_FILES_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+		$sql             = "CREATE TABLE IF NOT EXISTS $table_name (
 			fileid char(32) NOT NULL,
 			url varchar(1024) NOT NULL,
 			parent_url varchar(1024),
@@ -275,9 +274,9 @@ class Urlslab_Activator {
 
 	private static function init_urlslab_file_urls() {
 		global $wpdb;
-		$table_name = URLSLAB_FILE_URLS_TABLE;
+		$table_name      = URLSLAB_FILE_URLS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+		$sql             = "CREATE TABLE IF NOT EXISTS $table_name (
 			urlMd5 bigint NOT NULL,
 			fileid char(32) NOT NULL,
 			PRIMARY KEY (urlMd5, fileid),
@@ -289,9 +288,9 @@ class Urlslab_Activator {
 
 	private static function init_urlslab_file_pointers() {
 		global $wpdb;
-		$table_name = URLSLAB_FILE_POINTERS_TABLE;
+		$table_name      = URLSLAB_FILE_POINTERS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+		$sql             = "CREATE TABLE IF NOT EXISTS $table_name (
 				filehash varchar(32) NOT NULL,
 				filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
 				width mediumint(8) UNSIGNED ZEROFILL DEFAULT NULL,
@@ -310,9 +309,9 @@ class Urlslab_Activator {
 
 	private static function init_urlslab_file_db_driver_contents() {
 		global $wpdb;
-		$table_name = URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE;
+		$table_name      = URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+		$sql             = "CREATE TABLE IF NOT EXISTS $table_name (
     		  filehash varchar(32) NOT NULL,
     		  filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
 			  partid SMALLINT UNSIGNED NOT NULL,

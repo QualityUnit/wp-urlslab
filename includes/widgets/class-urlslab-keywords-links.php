@@ -825,4 +825,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 		return '';
 	}
+
+	protected function init_options() {
+		// TODO: Implement init_options() method.
+	}
 }

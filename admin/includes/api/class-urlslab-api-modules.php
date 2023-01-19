@@ -78,11 +78,11 @@ class Urlslab_Api_Modules extends WP_REST_Controller {
 	public function get_item( $request ) {
 		try {
 			$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $request->get_param( 'id' ) );
-			if ( false !== $widget ) {
-				return new WP_REST_Response( $this->get_widget_data( $widget ), 200 );
+			if ( false === $widget ) {
+				return new WP_Error( 'not-found', __( 'Module not found', 'urlslab' ), array( 'status' => 404 ) );
 			}
 
-			return new WP_Error( 'not-found', __( 'Module not found', 'urlslab' ), array( 'status' => 404 ) );
+			return new WP_REST_Response( $this->get_widget_data( $widget ), 200 );
 		} catch ( Exception $e ) {
 			return new WP_Error( 'exception', __( 'Failed to get module', 'urlslab' ) );
 		}
@@ -91,17 +91,16 @@ class Urlslab_Api_Modules extends WP_REST_Controller {
 	public function update_item( $request ) {
 		try {
 			$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $request->get_param( 'id' ) );
-			if ( false !== $widget ) {
-				if ( false == $request->get_json_params()['active'] ) {
-					Urlslab_User_Widget::get_instance()->deactivate_widget( $widget );
-				} else {
-					Urlslab_User_Widget::get_instance()->activate_widget( $widget );
-				}
-
-				return new WP_REST_Response( $this->get_widget_data( $widget ), 200 );
+			if ( false === $widget ) {
+				return new WP_Error( 'not-found', __( 'Module not found', 'urlslab' ), array( 'status' => 404 ) );
 			}
 
-			return new WP_Error( 'not-found', __( 'Module not found', 'urlslab' ), array( 'status' => 404 ) );
+			if ( $request->get_json_params()['active'] ) {
+				Urlslab_User_Widget::get_instance()->activate_widget( $widget );
+			} else {
+				Urlslab_User_Widget::get_instance()->deactivate_widget( $widget );
+			}
+			return new WP_REST_Response( $this->get_widget_data( $widget ), 200 );
 		} catch ( Exception $e ) {
 			return new WP_Error( 'exception', __( 'Failed to update module', 'urlslab' ), array( 'status' => 500 ) );
 		}

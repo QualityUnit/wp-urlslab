@@ -340,4 +340,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		return true;
 	}
 
+	protected function init_options() {
+		// TODO: Implement init_options() method.
+	}
 }

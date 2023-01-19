@@ -159,4 +159,8 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	public function is_api_key_required() {
 		return true;
 	}
+
+	protected function init_options() {
+		// TODO: Implement init_options() method.
+	}
 }

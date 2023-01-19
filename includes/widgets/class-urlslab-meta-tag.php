@@ -259,4 +259,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 		return true;
 	}
 
+	protected function init_options() {
+		// TODO: Implement init_options() method.
+	}
 }
