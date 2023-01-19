@@ -13,6 +13,10 @@
 
 	&.active {
 		box-shadow: 0 0 0 2px $primary-color;
+
+		&.activating {
+			box-shadow: $box-shadow-small;
+		}
 	}
 
 	&-activating {
@@ -24,9 +28,13 @@
 		justify-content: center;
 		font-weight: $font-weight-semi;
 		z-index: 2;
-		background-color: rgba($black, 0.7);
-		color: $white;
+		background-color: rgba($white, 0.7);
+		color: $black;
 		animation: fadeIn $transitionTime;
+
+		~ * {
+			opacity: 0.5;
+		}
 	}
 
 	&-api {
