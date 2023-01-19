@@ -107,9 +107,9 @@ abstract class Urlslab_Widget {
 			$this->init_options();
 		}
 		foreach ( $this->options as $id => $option ) {
-			switch ($option['type']) {
+			switch ( $option['type'] ) {
 				case self::OPTION_TYPE_PASSWORD:
-					if (get_option( $id, $option['default'] ?? false )) {
+					if ( get_option( $id, $option['default'] ?? false ) ) {
 						$this->options[ $id ]['value'] = self::PASSWORD_PLACEHOLDER;
 					} else {
 						$this->options[ $id ]['value'] = '';
@@ -168,7 +168,7 @@ abstract class Urlslab_Widget {
 			}
 		}
 
-		if (self::OPTION_TYPE_PASSWORD == $this->options[ $option_id ]['type'] && self::PASSWORD_PLACEHOLDER == $value ) {
+		if ( self::OPTION_TYPE_PASSWORD == $this->options[ $option_id ]['type'] && self::PASSWORD_PLACEHOLDER == $value ) {
 			return false;
 		}
 

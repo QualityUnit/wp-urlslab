@@ -1155,7 +1155,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			'',
 			true,
 			__( 'AWS S3 Access Key' ),
-			__('Leave empty if AWS access key should be loaded from environment variable AWS_KEY'),
+			__( 'Leave empty if AWS access key should be loaded from environment variable AWS_KEY' ),
 			self::OPTION_TYPE_TEXT
 		);
 
@@ -1164,7 +1164,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			'',
 			true,
 			__( 'AWS S3 Key Secret' ),
-			__('Leave empty if AWS secret key should be loaded from environment variable AWS_SECRET'),
+			__( 'Leave empty if AWS secret key should be loaded from environment variable AWS_SECRET' ),
 			self::OPTION_TYPE_PASSWORD
 		);
 

@@ -67,16 +67,16 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	public function the_content( DOMDocument $document ) {
-		if ( get_option( self::SETTING_NAME_YOUTUBE_LAZY_LOADING, false ) ) {
+		if ( $this->get_option( self::SETTING_NAME_YOUTUBE_LAZY_LOADING ) ) {
 			$this->add_youtube_lazy_loading( $document );
 		}
-		if ( get_option( self::SETTING_NAME_REMOVE_WP_LAZY_LOADING, true ) ) {
+		if ( $this->get_option( self::SETTING_NAME_REMOVE_WP_LAZY_LOADING ) ) {
 			$this->remove_default_wp_img_lazy_loading( $document );
 		}
-		if ( get_option( self::SETTING_NAME_IMG_LAZY_LOADING, false ) ) {
+		if ( $this->get_option( self::SETTING_NAME_IMG_LAZY_LOADING ) ) {
 			$this->add_images_lazy_loading( $document );
 		}
-		if ( get_option( self::SETTING_NAME_VIDEO_LAZY_LOADING, false ) ) {
+		if ( $this->get_option( self::SETTING_NAME_VIDEO_LAZY_LOADING ) ) {
 			$this->add_videos_lazy_loading( $document );
 		}
 	}
