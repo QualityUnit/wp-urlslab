@@ -252,6 +252,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/tables/class-urlslab-offloader-table.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/tables/class-urlslab-related-resources-widget-table.php';
 
+		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-api-router.php';
 
 		$this->loader = new Urlslab_Loader();
 
@@ -403,9 +404,6 @@ class Urlslab {
 		$this->loader->add_action( 'urlslab_cron_hook', $task, 'cron_exec', 10, 0 );
 	}
 
-	public function urlslab_exec_restart_url_scanning() {
-		update_option( Urlslab_Link_Enhancer::SETTING_NAME_LAST_LINK_VALIDATION_START, Urlslab_Data::get_now() );
-	}
 
 	public function execute_cron_tasks() {
 		$data       = array();
@@ -426,8 +424,13 @@ class Urlslab {
 	}
 
 	private function define_backend_hooks() {
-		$this->loader->add_action( 'wp_ajax_urlslab_exec_cron', $this, 'execute_cron_tasks' );
-		$this->loader->add_action( 'wp_ajax_urlslab_exec_restart_url_scanning', $this, 'urlslab_exec_restart_url_scanning' );
+
+		add_action(
+			'rest_api_init',
+			function() {
+				( new Urlslab_Api_Router() )->register_routes();
+			}
+		);
 
 
 		if ( ! wp_next_scheduled( 'urlslab_cron_hook' ) ) {

@@ -253,4 +253,10 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	public static function add_option() {
 		add_option( 'header-seo', array(), '', true );
 	}
+
+
+	public function is_api_key_required() {
+		return true;
+	}
+
 }

@@ -88,6 +88,10 @@ abstract class Urlslab_Widget {
 	 */
 	public abstract static function update_settings( array $new_settings );
 
+	public function is_api_key_required() {
+		return false;
+	}
+
 	protected function is_skip_elemenet( DOMNode $dom, $custom_widget_skip = '' ) {
 		return $dom->hasAttributes() && $dom->hasAttribute( 'class' ) &&
 			   (
