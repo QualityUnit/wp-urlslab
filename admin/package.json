@@ -26,10 +26,11 @@
     "@babel/eslint-parser": "^7.19.1",
     "@wordpress/api-fetch": "^6.22.0",
     "@wordpress/element": "^5.1.0",
+    "@wordpress/react-i18n": "^3.23.0",
     "encoding": "^0.1.13",
-    "eslint-plugin-react": "^7.32.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "stylelint": "^14.2",
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-fonts": "^0.7.0",
     "vite-plugin-svgr": "^2.4.0"
@@ -39,9 +40,13 @@
     "@types/react-dom": "^18.0.9",
     "@vitejs/plugin-react": "^3.0.0",
     "@wordpress/eslint-plugin": "^13.8.0",
-    "@wordpress/stylelint-config": "^21.7.0",
+    "@wordpress/stylelint-config": "^21.8.0",
     "eslint": "^8.31.0",
+    "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-react": "^7.32.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "sass": "^1.57.1",
     "vite": "^4.0.0"
   }

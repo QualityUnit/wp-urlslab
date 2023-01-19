@@ -1,24 +1,21 @@
-import { useState } from 'react'
-import DashboardModule from './components/DashboardModule'
-import Switch from './elements/Switch'
-import Button from './elements/Button'
-import Checkbox from './elements/Checkbox'
-import Tooltip from './elements/Tooltip'
-import SearchField from './elements/SearchField'
-import InputField from './elements/InputField'
-import FilterMenu from './elements/FilterMenu'
-import SortMenu from './elements/SortMenu'
-import RangeSlider from './elements/RangeSlider'
-import OptionButton from './elements/OptionButton'
+import { React } from 'react';
+import Switch from './elements/Switch';
+import Button from './elements/Button';
+import Checkbox from './elements/Checkbox';
+import Tooltip from './elements/Tooltip';
+import SearchField from './elements/SearchField';
+import InputField from './elements/InputField';
+import FilterMenu from './elements/FilterMenu';
+import SortMenu from './elements/SortMenu';
+import RangeSlider from './elements/RangeSlider';
+import OptionButton from './elements/OptionButton';
 
 function App() {
-  const [count, setCount] = useState(0);
-
   const testingFilterItems = {
     0: 'Most reviews from external portals',
     1: 'Best ratings from external portals',
     2: 'Out best rating',
-    3: 'Recently updated'
+    3: 'Recently updated',
   };
 
   // const createPost = fetch('http://liveagent.local/wp-json/wp/v2/posts', {
@@ -43,18 +40,20 @@ function App() {
     <div className="App">
       <Switch checked />
       <Switch secondary />
-      <Switch label="Turn on"></Switch>
-      <div></div>
+      <Switch label="Turn on" />
+      <div />
       <Button>Button</Button>
       <Button active>
-        Button</Button>
-      <div></div>
+        Button
+
+      </Button>
+      <div />
       <Checkbox checked />
       <Tooltip>This is a tooltip</Tooltip>
       <SearchField />
       <div><br /></div>
       <OptionButton name="source" id="source_files" checked>Files</OptionButton>
-      <OptionButton name="source" id="source_url" >External URL</OptionButton>
+      <OptionButton name="source" id="source_url">External URL</OptionButton>
 
       <InputField type="email" label="This is an email" message="Has some message" />
       <InputField style={{ maxWidth: '25em' }} />
@@ -68,12 +67,18 @@ function App() {
 
         All items
       </SortMenu>
-      <RangeSlider min="10" max="200" unit="px" onChange={({ min, max }) =>
-        console.log(`min = ${min}, max = ${max}`)
-      }>File Width</RangeSlider>
+      <RangeSlider
+        min="10"
+        max="200"
+        unit="px"
+        onChange={({ min, max }) => console.log(`min = ${min}, max = ${max}`)}
+      >
+        File Width
+
+      </RangeSlider>
       {/* <DashboardModule type="media" /> */}
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
