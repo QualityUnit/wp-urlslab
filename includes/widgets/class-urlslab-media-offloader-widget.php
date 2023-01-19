@@ -60,22 +60,16 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	// speed: Default value 6. Accepted values are int the range of 0 (slowest) through 10 (fastest). Integers outside the 0-10 range are clamped.
 	public const SETTING_DEFAULT_AVIF_SPEED = 5;
-	public const SETTING_DEFAULT_MEDIA_CACHE_EXPIRE_TIME = 31536000;
 	public const SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME = 'urlslab_media_cache_expire';
 
 	public const SETTING_NAME_IMAGE_RESIZING = 'urlslab_img_resize';
 	public const SETTING_DEFAULT_IMAGE_RESIZING = 1;
 
 	public const SETTING_NAME_LOG_IMAGES = 'urlslab_img_log';
-	public const SETTING_DEFAULT_LOG_IMAGES = 0;
-
 	public const SETTING_NAME_HIDE_ERROR_IMAGES = 'urlslab_img_hide_err';
-	public const SETTING_DEFAULT_HIDE_ERROR_IMAGES = 0;
 
 	private const URLSLAB_MIN_WIDTH = 'urlslab-min-width-';
 	public const SETTING_NAME_IMG_MIN_WIDTH = 'urlslab_img_min_width';
-	public const SETTING_DEFAULT_IMG_MIN_WIDTH = 0;
-
 
 	public const SETTING_NAME_S3_BUCKET = 'urlslab_AWS_S3_bucket';
 	public const SETTING_NAME_S3_REGION = 'urlslab_AWS_S3_region';
@@ -145,7 +139,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				'filesize'       => filesize( $file['file'] ),
 				'filestatus'     => Urlslab_Driver::STATUS_NEW,
 				'status_changed' => Urlslab_Data::get_now(),
-				'driver'         => get_option( self::SETTING_NAME_NEW_FILE_DRIVER, self::SETTING_DEFAULT_NEW_FILE_DRIVER ),
+				'driver'         => $this->get_option( self::SETTING_NAME_NEW_FILE_DRIVER ),
 			),
 			false
 		);
@@ -165,7 +159,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	public function the_content( DOMDocument $document ) {
 		$this->process_offloading( $document );
-		if ( get_option( self::SETTING_NAME_IMG_MIN_WIDTH, self::SETTING_DEFAULT_IMG_MIN_WIDTH ) ) {
+		if ( $this->get_option( self::SETTING_NAME_IMG_MIN_WIDTH ) ) {
 			$this->process_min_width( $document );
 		}
 	}
@@ -350,7 +344,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	private function log_file_usage( array $missing_file_ids ) {
-		if ( get_option( self::SETTING_NAME_LOG_IMAGES, self::SETTING_DEFAULT_LOG_IMAGES ) ) {
+		if ( $this->get_option( self::SETTING_NAME_LOG_IMAGES ) ) {
 			global $wpdb;
 
 			$urlid   = $this->get_current_page_url()->get_url_id();
@@ -735,7 +729,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		header( 'Content-Transfer-Encoding: binary' );
 		header( 'Pragma: public' );
 
-		$expires_offset = get_option( self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME, self::SETTING_DEFAULT_MEDIA_CACHE_EXPIRE_TIME );
+		$expires_offset = $this->get_option( self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME );
 		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
 		header( "Cache-Control: public, max-age=$expires_offset" );
 		header( 'Content-length: ' . $file->get_file_pointer()->get( 'filesize' ) );
@@ -757,82 +751,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	public function get_thumbnail_demo_url(): string {
 		return '';
-	}
-
-	public static function update_option_image_optimisation( array $new_settings ) {
-		if (
-			isset( $new_settings[ self::SETTING_NAME_USE_WEBP_ALTERNATIVE ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_USE_WEBP_ALTERNATIVE ] )
-		) {
-			update_option( self::SETTING_NAME_USE_WEBP_ALTERNATIVE, $new_settings[ self::SETTING_NAME_USE_WEBP_ALTERNATIVE ] );
-		} else {
-			update_option( self::SETTING_NAME_USE_WEBP_ALTERNATIVE, false );
-		}
-		if (
-			isset( $new_settings[ self::SETTING_NAME_IMAGE_RESIZING ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_IMAGE_RESIZING ] )
-		) {
-			update_option( self::SETTING_NAME_IMAGE_RESIZING, 1 );
-		} else {
-			update_option( self::SETTING_NAME_IMAGE_RESIZING, 0 );
-		}
-
-		if (
-			isset( $new_settings[ self::SETTING_NAME_IMG_MIN_WIDTH ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_IMG_MIN_WIDTH ] )
-		) {
-			update_option( self::SETTING_NAME_IMG_MIN_WIDTH, 1 );
-		} else {
-			update_option( self::SETTING_NAME_IMG_MIN_WIDTH, 0 );
-		}
-
-		if (
-			isset( $new_settings[ self::SETTING_NAME_WEBP_TYPES_TO_CONVERT ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_WEBP_TYPES_TO_CONVERT ] )
-		) {
-			update_option( self::SETTING_NAME_WEBP_TYPES_TO_CONVERT, $new_settings[ self::SETTING_NAME_WEBP_TYPES_TO_CONVERT ] );
-		} else {
-			update_option( self::SETTING_NAME_WEBP_TYPES_TO_CONVERT, array() );
-		}
-
-		if (
-			isset( $new_settings[ self::SETTING_NAME_USE_AVIF_ALTERNATIVE ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_USE_AVIF_ALTERNATIVE ] )
-		) {
-			update_option( self::SETTING_NAME_USE_AVIF_ALTERNATIVE, $new_settings[ self::SETTING_NAME_USE_AVIF_ALTERNATIVE ] );
-		} else {
-			update_option( self::SETTING_NAME_USE_AVIF_ALTERNATIVE, false );
-		}
-
-		if (
-			isset( $new_settings[ self::SETTING_NAME_AVIF_TYPES_TO_CONVERT ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_AVIF_TYPES_TO_CONVERT ] )
-		) {
-			update_option( self::SETTING_NAME_AVIF_TYPES_TO_CONVERT, $new_settings[ self::SETTING_NAME_AVIF_TYPES_TO_CONVERT ] );
-		} else {
-			update_option( self::SETTING_NAME_AVIF_TYPES_TO_CONVERT, array() );
-		}
-
-		if (
-			isset( $new_settings[ self::SETTING_NAME_WEPB_QUALITY ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_WEPB_QUALITY ] )
-		) {
-			update_option( self::SETTING_NAME_WEPB_QUALITY, $new_settings[ self::SETTING_NAME_WEPB_QUALITY ] );
-		}
-
-		if (
-			isset( $new_settings[ self::SETTING_NAME_AVIF_QUALITY ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_AVIF_QUALITY ] )
-		) {
-			update_option( self::SETTING_NAME_AVIF_QUALITY, $new_settings[ self::SETTING_NAME_AVIF_QUALITY ] );
-		}
-
-		if (
-			isset( $new_settings[ self::SETTING_NAME_AVIF_SPEED ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_AVIF_SPEED ] )
-		) {
-			update_option( self::SETTING_NAME_AVIF_SPEED, $new_settings[ self::SETTING_NAME_AVIF_SPEED ] );
-		}
 	}
 
 	/**
@@ -889,7 +807,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 								$source_url = $this->files[ $old_file_obj->get_fileid() ]->get_file_pointer()->get_driver()->get_url( $this->files[ $old_file_obj->get_fileid() ] );
 								$dom_element->setAttribute( $attribute, str_replace( $url_val[0], $source_url, $dom_element->getAttribute( $attribute ) ) );
 								$found_urls[ $old_file_obj->get_fileid() ] = 1;
-							} else if ( Urlslab_Driver::STATUS_ERROR === $this->files[ $old_file_obj->get_fileid() ]->get( 'filestatus' ) && get_option( self::SETTING_NAME_HIDE_ERROR_IMAGES, self::SETTING_DEFAULT_HIDE_ERROR_IMAGES ) ) {
+							} else if ( Urlslab_Driver::STATUS_ERROR === $this->files[ $old_file_obj->get_fileid() ]->get( 'filestatus' ) && $this->get_option( self::SETTING_NAME_HIDE_ERROR_IMAGES ) ) {
 								$dom_element->setAttribute( 'urlslab-message', 'URL does not exist:' . esc_html( $url_value ) );
 								$dom_element->setAttribute( 'style', 'display:none;visibility:hidden;' );
 								$dom_element->setAttribute( $attribute, trim( str_replace( $url_value, '', $dom_element->getAttribute( $attribute ) ), ',' ) );
@@ -906,7 +824,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 									$source_url = $this->files[ $old_file_obj->get_fileid() ]->get_file_pointer()->get_driver()->get_url( $this->files[ $old_file_obj->get_fileid() ] );
 									$dom_element->setAttribute( $attribute, str_replace( $matched_url, $source_url, $dom_element->getAttribute( $attribute ) ) );
 									$found_urls[ $old_file_obj->get_fileid() ] = 1;
-								} else if ( Urlslab_Driver::STATUS_ERROR === $this->files[ $old_file_obj->get_fileid() ]->get( 'filestatus' ) && get_option( self::SETTING_NAME_HIDE_ERROR_IMAGES, self::SETTING_DEFAULT_HIDE_ERROR_IMAGES ) ) {
+								} else if ( Urlslab_Driver::STATUS_ERROR === $this->files[ $old_file_obj->get_fileid() ]->get( 'filestatus' ) && $this->get_option( self::SETTING_NAME_HIDE_ERROR_IMAGES ) ) {
 									$dom_element->setAttribute( 'urlslab-message', 'URL does not exist:' . esc_html( $matched_url ) );
 									$dom_element->setAttribute( 'style', 'display:none;visibility:hidden;' );
 									$dom_element->setAttribute( $attribute, str_replace( $matched_url, '', $dom_element->getAttribute( $attribute ) ) );
@@ -923,7 +841,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 							$source_url = $this->files[ $old_file_obj->get_fileid() ]->get_file_pointer()->get_driver()->get_url( $this->files[ $old_file_obj->get_fileid() ] );
 							$dom_element->setAttribute( $attribute, $source_url );
 							$found_urls[ $old_file_obj->get_fileid() ] = 1;
-						} else if ( Urlslab_Driver::STATUS_ERROR === $this->files[ $old_file_obj->get_fileid() ]->get( 'filestatus' ) && get_option( self::SETTING_NAME_HIDE_ERROR_IMAGES, self::SETTING_DEFAULT_HIDE_ERROR_IMAGES ) ) {
+						} else if ( Urlslab_Driver::STATUS_ERROR === $this->files[ $old_file_obj->get_fileid() ]->get( 'filestatus' ) && $this->get_option( self::SETTING_NAME_HIDE_ERROR_IMAGES ) ) {
 							$dom_element->setAttribute( 'urlslab-message', 'URL does not exist:' . esc_html( $url ) );
 							$dom_element->setAttribute( 'style', 'display:none;visibility:hidden;' );
 							$dom_element->removeAttribute( $attribute );
@@ -1114,7 +1032,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_IMG_MIN_WIDTH,
-			self::SETTING_DEFAULT_IMG_MIN_WIDTH,
+			0,
 			true,
 			__( 'Skip loading image on small devices' ),
 			__( 'Skip loading of images into browser if size of window is smaller as defined width. This feature optimize amount of transferred data for small devices and is useful in case you set by css breaking points when image is not displayed on smaller devices. Add class name urlslab-min-width-[number] on image or any parent elemenet to apply this functionality. Example: <img src="image.jpg" class="urlslab-min-width-768"> will load image just if window is wider or equal 768 pixels' )
@@ -1122,7 +1040,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_LOG_IMAGES,
-			self::SETTING_DEFAULT_LOG_IMAGES,
+			false,
 			true,
 			__( 'Track usage of images' ),
 			__( 'Keep updated log where was used specific image on website.' )
@@ -1130,7 +1048,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_HIDE_ERROR_IMAGES,
-			self::SETTING_DEFAULT_HIDE_ERROR_IMAGES,
+			false,
 			true,
 			__( 'Hide failed images' ),
 			__( 'Hide from HTML content images in error state' )
@@ -1138,7 +1056,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME,
-			self::SETTING_DEFAULT_MEDIA_CACHE_EXPIRE_TIME,
+			31536000,
 			true,
 			__( 'Cache expiration [seconds]' ),
 			__( 'Media files cache expiration time - defines how long will be file cached in the browser or CDN' ),
