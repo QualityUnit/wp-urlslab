@@ -739,6 +739,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		$this->keyword_table = new Urlslab_Keyword_Link_Table();
 	}
 
+	//TODO: delete when react client ready
 	public function render_settings() {
 		$settings = array(
 			new Urlslab_Setting_Option(

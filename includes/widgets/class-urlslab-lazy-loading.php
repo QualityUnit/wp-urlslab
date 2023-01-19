@@ -468,36 +468,36 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			self::SETTING_NAME_IMG_LAZY_LOADING,
 			false,
 			true,
-			__('Image Lazy Loading'),
-			__('Enable/Disable lazy loading for Images in your pages')
+			__( 'Image Lazy Loading' ),
+			__( 'Enable/Disable lazy loading for Images in your pages' )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_VIDEO_LAZY_LOADING,
 			false,
 			true,
-			__('Video Lazy Loading'),
-			__('Enable/Disable lazy loading for Videos in your pages')
+			__( 'Video Lazy Loading' ),
+			__( 'Enable/Disable lazy loading for Videos in your pages' )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_YOUTUBE_LAZY_LOADING,
 			false,
 			true,
-			__('Youtube Lazy Loading'),
-			__('Enable/Disable lazy loading for Youtube Videos in your pages')
+			__( 'Youtube Lazy Loading' ),
+			__( 'Enable/Disable lazy loading for Youtube Videos in your pages' )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_REMOVE_WP_LAZY_LOADING,
 			true,
 			true,
-			__('Disable WordPress lazy loading'),
-			__("Remove attribute loading='lazy' added by default to all images by Wordpress and control lazy loading by Urlslab plugin only. Sometimes you need to load images faster and this is the way how to do it. To disable this feature on specific elements, add class urlslab-skip-nolazy")
+			__( 'Disable WordPress lazy loading' ),
+			__( "Remove attribute loading='lazy' added by default to all images by Wordpress and control lazy loading by Urlslab plugin only. Sometimes you need to load images faster and this is the way how to do it. To disable this feature on specific elements, add class urlslab-skip-nolazy" )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_YOUTUBE_API_KEY,
 			'',
 			false,
-			__('Youtube API Key'),
-			__('Youtube API Key is used to cache video preview images localy and serve them on place of youtube code. Leave empty to load the key from environment variable YOUTUBE_API_KEY.'),
+			__( 'Youtube API Key' ),
+			__( 'Youtube API Key is used to cache video preview images localy and serve them on place of youtube code. Leave empty to load the key from environment variable YOUTUBE_API_KEY.' ),
 			self::OPTION_TYPE_PASSWORD
 		);
 	}

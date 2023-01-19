@@ -122,8 +122,8 @@ class Urlslab_Admin {
 		// Allows to use POST etc via Rest API cookie authentification
 
 		// wp_localize_script( 'wp-api', 'urlslabNonceAuth', array(
-    // 'root' => esc_url_raw( rest_url() ),
-    // 'nonce' => wp_create_nonce( 'wp_rest' )
+		// 'root' => esc_url_raw( rest_url() ),
+		// 'nonce' => wp_create_nonce( 'wp_rest' )
 		// ) );
 
 		wp_enqueue_script(

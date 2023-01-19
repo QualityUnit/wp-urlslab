@@ -660,24 +660,6 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		return 'keyword-linking';
 	}
 
-	public static function add_option() {
-		add_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD, self::MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD, '', true );
-		add_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL, self::MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD_URL, '', true );
-		add_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_URL, self::MAX_DEFAULT_REPLACEMENTS_PER_URL, '', true );
-		add_option( self::SETTING_NAME_MAX_LINKS_ON_PAGE, self::SETTING_DEFAULT_MAX_LINKS_ON_PAGE, '', true );
-		add_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE, self::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PAGE, '', true );
-		add_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH, self::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PARAGRAPH, '', true );
-		add_option( self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK, self::SETTING_DEFAULT_MIN_CHARS_TO_NEXT_LINK, '', true );
-		add_option( self::SETTING_NAME_MIN_PARAGRAPH_LENGTH, self::SETTING_DEFAULT_MIN_PARAGRAPH_LENGTH, '', true );
-		add_option( self::SETTING_NAME_MAX_PARAGRAPH_DENSITY, self::SETTING_DEFAULT_MAX_PARAGRAPH_DENSITY, '', true );
-		add_option( self::SETTING_NAME_KW_MAP, self::SETTING_DEFAULT_KW_MAP, '', true );
-		add_option( self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS, self::SETTING_DEFAULT_KW_IMPORT_INTERNAL_LINKS, '', true );
-		add_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS, self::SETTING_DEFAULT_KW_IMPORT_EXTERNAL_LINKS, '', true );
-		add_option( self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS, self::SETTING_DEFAULT_ADD_ID_TO_ALL_H_TAGS, '', true );
-		add_option( self::SETTING_NAME_KW_IMPORT_MAX_LENGTH, self::SETTING_DEFAULT_KW_IMPORT_MAX_LENGTH, '', true );
-		add_option( self::SETTING_NAME_KW_TYPES_TO_USE, '', '', true );
-	}
-
 	public static function update_settings(
 		array $new_settings
 	) {
@@ -827,6 +809,177 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	protected function init_options() {
-		// TODO: Implement init_options() method.
+		$this->add_option_definition(
+			self::SETTING_NAME_KW_TYPES_TO_USE,
+			'',
+			true,
+			__( 'Create links from keywords' ),
+			__( 'Specify types of keywords used to create a link.' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				''                                               => __( 'Use all keyword types' ),
+				Urlslab_Keywords_Links::KW_MANUAL                => __( 'Use just manually created keywords' ),
+				Urlslab_Keywords_Links::KW_IMPORTED_FROM_CONTENT => __( 'Use just keywords importent from existing links in content' ),
+				Urlslab_Keywords_Links::KW_NONE                  => __( 'Switched OFF - no replacements' ),
+			)
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD,
+			self::MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD,
+			true,
+			__( 'Max Replacement Per Keyword' ),
+			__( 'Maximum number of times, that each keyword should be replaced in a page' ),
+			self::OPTION_TYPE_NUMBER,
+			false,
+			function( $value ) {
+				return is_numeric( $value ) && 0 <= $value;
+			}
+		);
+
+
+		$this->add_option_definition(
+			self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL,
+			self::MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD_URL,
+			true,
+			__( 'Max Replacement Per Keyword-Url pair' ),
+			__( 'Maximum number of times, that each keyword-url pair should be replaced in a page' ),
+			self::OPTION_TYPE_NUMBER,
+			false,
+			function( $value ) {
+				return is_numeric( $value ) && 0 <= $value;
+			}
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_MAX_REPLACEMENTS_PER_URL,
+			self::MAX_DEFAULT_REPLACEMENTS_PER_URL,
+			true,
+			__( 'Max Replacement Per Url' ),
+			__( 'Maximum number of times, that a keyword link should be generated for a single outbound url' ),
+			self::OPTION_TYPE_NUMBER,
+			false,
+			function( $value ) {
+				return is_numeric( $value ) && 0 <= $value;
+			}
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_MAX_LINKS_ON_PAGE,
+			self::SETTING_DEFAULT_MAX_LINKS_ON_PAGE,
+			true,
+			__( 'Max Links in page (manual and auto links)' ),
+			__( 'the maximum number of links that exists in a page for both auto and manual links' ),
+			self::OPTION_TYPE_NUMBER,
+			false,
+			function( $value ) {
+				return is_numeric( $value ) && 0 <= $value;
+			}
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE,
+			self::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PAGE,
+			true,
+			__( 'Max Auto links in page' ),
+			__( 'the maximum number of links to be generated in whole page' ),
+			self::OPTION_TYPE_NUMBER,
+			false,
+			function( $value ) {
+				return is_numeric( $value ) && 0 <= $value;
+			}
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH,
+			self::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PARAGRAPH,
+			true,
+			__( 'Max auto links per paragraph' ),
+			__( 'The maximum number of links to be created in paragraph' ),
+			self::OPTION_TYPE_NUMBER,
+			false,
+			function( $value ) {
+				return is_numeric( $value ) && 0 <= $value;
+			}
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK,
+			self::SETTING_DEFAULT_MIN_CHARS_TO_NEXT_LINK,
+			true,
+			__( 'Min # chars to next link' ),
+			__( 'Minimum number of characters between next inserted link' ),
+			self::OPTION_TYPE_NUMBER,
+			false,
+			function( $value ) {
+				return is_numeric( $value ) && 0 <= $value;
+			}
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_MIN_PARAGRAPH_LENGTH,
+			self::SETTING_DEFAULT_MIN_PARAGRAPH_LENGTH,
+			true,
+			__( 'Min paragraph length [# of characters]' ),
+			__( 'Skip searching for keywords in paragraph shorter as defined limit' ),
+			self::OPTION_TYPE_NUMBER,
+			false,
+			function( $value ) {
+				return is_numeric( $value ) && 0 <= $value;
+			}
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_MAX_PARAGRAPH_DENSITY,
+			self::SETTING_DEFAULT_MAX_PARAGRAPH_DENSITY,
+			true,
+			__( 'Paragraph density [min # of characters per link]' ),
+			__( 'Maximum paragraph density defines maximum number of links per character can be included in paragraph. Example: By defining value 100 will be included maximum 5 links in 500 characters long paragraph.' ),
+			self::OPTION_TYPE_NUMBER,
+			false,
+			function( $value ) {
+				return is_numeric( $value ) && 0 <= $value;
+			}
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_KW_MAP,
+			self::SETTING_DEFAULT_KW_MAP,
+			true,
+			__( 'Track used Keywords' ),
+			__( 'Track usage of inserted keywords/links on pages' )
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS,
+			self::SETTING_DEFAULT_KW_IMPORT_INTERNAL_LINKS,
+			true,
+			__( 'Import internal links as keywords' ),
+			__( 'Import all internal links found in page as keywords' )
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS,
+			self::SETTING_DEFAULT_KW_IMPORT_EXTERNAL_LINKS,
+			true,
+			__( 'Import external links as keywords' ),
+			__( 'Import all external links found in page as keywords' )
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_KW_IMPORT_MAX_LENGTH,
+			self::SETTING_DEFAULT_KW_IMPORT_MAX_LENGTH,
+			true,
+			__( 'Max length of auto-imported keyword [# of characters]' ),
+			__( 'Import from HTML pages just keywords with maximum length defined by this setting. It is way how to avoid import of too long links, which have low chance to appear on any other place.' ),
+			self::OPTION_TYPE_NUMBER,
+			false,
+			function( $value ) {
+				return is_numeric( $value ) && 0 <= $value;
+			}
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS,
+			self::SETTING_DEFAULT_ADD_ID_TO_ALL_H_TAGS,
+			true,
+			__( 'Add anchor id to all H tags' ),
+			__( 'Enhance all H tags with ID attribute to allow addressing not just URL, but also specific part of the content starting with H tag.' )
+		);
 	}
 }

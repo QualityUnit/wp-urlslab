@@ -7,6 +7,7 @@ abstract class Urlslab_Widget {
 	const OPTION_TYPE_TEXT = 'T';
 	const OPTION_TYPE_PASSWORD = 'P';
 	const OPTION_TYPE_LISTBOX = 'L';
+	const OPTION_TYPE_DATETIME = 'D';
 	const OPTION_TYPE_MULTI_CHECKBOX = 'M';
 	const OPTION_TYPE_NUMBER = 'N';
 
@@ -145,11 +146,19 @@ abstract class Urlslab_Widget {
 		if ( empty( $this->options ) ) {
 			$this->init_options();
 		}
+
 		if ( ! isset( $this->options[ $option_id ] ) ) {
 			return false;
 		}
+
 		if ( null !== $this->options[ $option_id ]['validator'] ) {
 			if ( ! call_user_func( $this->options[ $option_id ]['validator'], $value ) ) {
+				return false;
+			}
+		}
+
+		if ( is_array( $this->options[ $option_id ]['possible_values'] ) ) {
+			if ( ! isset( $this->options[ $option_id ]['possible_values'][ $value ] ) ) {
 				return false;
 			}
 		}

@@ -250,16 +250,36 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 		}
 	}
 
-	public static function add_option() {
-		add_option( 'header-seo', array(), '', true );
-	}
-
-
 	public function is_api_key_required() {
 		return true;
 	}
 
 	protected function init_options() {
-		// TODO: Implement init_options() method.
+		$this->add_option_definition(
+			self::SETTING_NAME_META_DESCRIPTION_GENERATION,
+			self::DEFAULT_META_DESCRIPTION_GENERATION,
+			true,
+			__( 'Generate Page Meta Description if missing' )
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_META_OG_TITLE_GENERATION,
+			self::DEFAULT_META_OG_TITLE_GENERATION,
+			true,
+			__( 'Generate header OG Title if missing' )
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_META_OG_DESC_GENERATION,
+			self::DEFAULT_META_OG_DESC_GENERATION,
+			true,
+			__( 'Generate header OG Description if missing' )
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_META_OG_IMAGE_GENERATION,
+			self::DEFAULT_META_OG_IMAGE_GENERATION,
+			true,
+			__( 'Generate header OG Image if missing' ),
+			__( 'As OG Image will be generated screenshot of requested page - it can take few days to generate screenshot.' )
+		);
+
 	}
 }
