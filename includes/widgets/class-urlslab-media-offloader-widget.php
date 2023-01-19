@@ -755,6 +755,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		return '';
 	}
 
+	//TODO: we will remove this function once react client will be implemented
 	public static function update_settings( array $new_settings ) {
 		if (
 			isset( $new_settings[ self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ] ) &&
