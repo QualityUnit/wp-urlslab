@@ -17,7 +17,7 @@ abstract class Urlslab_Widget {
 	private $current_page_url = null;
 
 	private $options = false;
-	private $option_seciotns = array();
+	private $option_sections = array();
 
 	/**
 	 * @param Urlslab_Loader $loader
@@ -103,29 +103,35 @@ abstract class Urlslab_Widget {
 	/**
 	 * @return array - liest of module settings, where id is setting name and value is setting value
 	 */
-	public function get_options() {
+	public function get_options($section_id = false):array {
 		if ( false === $this->options ) {
 			$this->init_options();
 		}
+
+		$result = array();
+
 		foreach ( $this->options as $option_id => $option ) {
 			switch ( $option['type'] ) {
 				case self::OPTION_TYPE_PASSWORD:
 					if ( get_option( $option_id, $option['default'] ?? false ) ) {
-						$this->options[ $option_id ]['value'] = self::PASSWORD_PLACEHOLDER;
+						$option['value'] = self::PASSWORD_PLACEHOLDER;
 					} else {
-						$this->options[ $option_id ]['value'] = '';
+						$option['value'] = '';
 					}
 					break;
 				default:
-					$this->options[ $option_id ]['value'] = $this->get_option( $option_id );
+					$option['value'] = $this->get_option( $option_id );
+			}
+			if (false == $section_id || $option['section'] == $section_id) {
+				$result[] = $option;
 			}
 		}
 
-		return $this->options;
+		return $result;
 	}
 
-	public function get_option_sections() {
-		return $this->option_seciotns;
+	public function get_option_sections():array {
+		return $this->option_sections;
 	}
 
 	public function add_options_on_activate() {
@@ -144,16 +150,16 @@ abstract class Urlslab_Widget {
 		$this->add_options();
 	}
 
-	protected function add_options_form_section( $id, $titel, $description ) {
-		$this->option_seciotns[ $id ] = (object) array(
+	protected function add_options_form_section( $id, $title, $description ) {
+		$this->option_sections[ $id ] = array(
 			'id'          => $id,
-			'title'       => $titel,
+			'title'       => $title,
 			'description' => $description,
 		);
 	}
 
 	protected function add_option_definition( string $option_id, $default_value = false, bool $autoload = true, string $title = '', string $description = '', $type = self::OPTION_TYPE_CHECKBOX, $possible_values = false, callable $validator = null, $form_section_id = 'default' ) {
-		if ( $form_section_id && ! isset( $this->option_seciotns[ $form_section_id ] ) ) {
+		if ( $form_section_id && ! isset( $this->option_sections[ $form_section_id ] ) ) {
 			$form_section_id = 'default';
 		}
 		$this->options[ $option_id ] = array(
