@@ -69,39 +69,39 @@ class Urlslab_Api_Youtube_Cache extends WP_REST_Controller {
 
 	public function get_items( $request ) {
 		global $wpdb;
-		$query_data   = array();
+		$query_data = array();
 		$where_data = array();
 
-		if ($request->get_param('from_id')) {
+		if ( $request->get_param( 'from_id' ) ) {
 			$where_data[] = 'videoid>%s';
-			$query_data[] = $request->get_param('from_id');
+			$query_data[] = $request->get_param( 'from_id' );
 		}
-		if ($request->get_param('from_sort_column')) {
-			if ('DESC' == $request->get_param('sort_direction')) {
-				$where_data[] = sanitize_key($request->get_param('sort_column')) . '<%s';
+		if ( $request->get_param( 'from_sort_column' ) ) {
+			if ( 'DESC' == $request->get_param( 'sort_direction' ) ) {
+				$where_data[] = sanitize_key( $request->get_param( 'sort_column' ) ) . '<%s';
 			} else {
-				$where_data[] = sanitize_key($request->get_param('sort_column')) . '>%s';
+				$where_data[] = sanitize_key( $request->get_param( 'sort_column' ) ) . '>%s';
 			}
-			$query_data[] = $request->get_param('from_id');
+			$query_data[] = $request->get_param( 'from_id' );
 		}
 
 		$order_data = array();
-		if ($request->get_param('sort_column')) {
-			$order_data[] = sanitize_key($request->get_param('sort_column')) . ($request->get_param('sort_direction') ? ' ' . $request->get_param('sort_direction') : '');
+		if ( $request->get_param( 'sort_column' ) ) {
+			$order_data[] = sanitize_key( $request->get_param( 'sort_column' ) ) . ( $request->get_param( 'sort_direction' ) ? ' ' . $request->get_param( 'sort_direction' ) : '' );
 			$order_data[] = 'videoid ASC';
 		}
 
 		$limit_string = '';
-		if ($request->get_param('rows_per_page')) {
+		if ( $request->get_param( 'rows_per_page' ) ) {
 			$limit_string = '%d';
-			$query_data[] = $request->get_param('rows_per_page');
+			$query_data[] = $request->get_param( 'rows_per_page' );
 		}
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT * FROM ' . URLSLAB_YOUTUBE_CACHE_TABLE .
-				( !empty( $where_data ) ? ' WHERE ' . implode( ' AND ', $where_data) : '' ) .
-				( !empty( $order_data ) ? ' ORDER BY ' . implode(',', $order_data) : '' ) .
+				( ! empty( $where_data ) ? ' WHERE ' . implode( ' AND ', $where_data ) : '' ) .
+				( ! empty( $order_data ) ? ' ORDER BY ' . implode( ',', $order_data ) : '' ) .
 				( strlen( $limit_string ) ? ' LIMIT ' . $limit_string : '' ),
 				$query_data
 			),
