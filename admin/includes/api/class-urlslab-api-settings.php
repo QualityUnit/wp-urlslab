@@ -43,7 +43,7 @@ class Urlslab_Api_Settings extends WP_REST_Controller {
 	private function prepare_options_and_sections( Urlslab_Widget $widget ) {
 		$options = array();
 		foreach ( $widget->get_options() as $option_arr ) {
-			$options[] = (object) $option_arr;
+			$options[ $option_arr['section'] ][] = (object) $option_arr;
 		}
 
 		return (object) array(

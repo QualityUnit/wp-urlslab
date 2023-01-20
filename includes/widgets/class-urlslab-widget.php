@@ -152,9 +152,9 @@ abstract class Urlslab_Widget {
 		);
 	}
 
-	protected function add_option_definition( string $option_id, $default_value = false, bool $autoload = true, string $title = '', string $description = '', $type = self::OPTION_TYPE_CHECKBOX, $possible_values = false, callable $validator = null, $form_section_id = false ) {
+	protected function add_option_definition( string $option_id, $default_value = false, bool $autoload = true, string $title = '', string $description = '', $type = self::OPTION_TYPE_CHECKBOX, $possible_values = false, callable $validator = null, $form_section_id = 'default' ) {
 		if ( $form_section_id && ! isset( $this->option_seciotns[ $form_section_id ] ) ) {
-			$form_section_id = false;
+			$form_section_id = 'default';
 		}
 		$this->options[ $option_id ] = array(
 			'id'              => $option_id,
