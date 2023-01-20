@@ -15,7 +15,7 @@
 		"plugin:react/jsx-runtime"
 	],
 	"rules": {
-		"jsx-a11y/label-has-associated-control": false
+		"jsx-a11y/label-has-associated-control": 0
 	},
 	"settings": {
     "import/resolver": {
