@@ -665,8 +665,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		);
 
 
-
-		$this->add_options_form_section('replacements', __('Keyword replacements'), __('Have under control frequency of keywords replaced as links in your content.'));
+		$this->add_options_form_section( 'replacements', __( 'Keyword replacements' ), __( 'Have under control frequency of keywords replaced as links in your content.' ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD,
@@ -794,7 +793,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			'replacements'
 		);
 
-		$this->add_option_definition('import', __('Automatic Keyword imports'), __('Plugin can automatically read links used in your existing content and use them as definition for new links for your website.'));
+		$this->add_option_definition( 'import', __( 'Automatic Keyword imports' ), __( 'Plugin can automatically read links used in your existing content and use them as definition for new links for your website.' ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS,

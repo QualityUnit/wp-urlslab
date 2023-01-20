@@ -895,7 +895,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		);
 
 
-		$this->add_options_form_section('import', __('Automatic media offloading'), __('Urlslab plugin can automatically offload different types of media from your website and cache them with prefered storage drive to optimaze speed of content deliver to visitors'));
+		$this->add_options_form_section( 'import', __( 'Automatic media offloading' ), __( 'Urlslab plugin can automatically offload different types of media from your website and cache them with prefered storage drive to optimaze speed of content deliver to visitors' ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND,
@@ -934,7 +934,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		);
 
 
-		$this->add_options_form_section('storage', __('Media Content Storage'), __('Define driver used to cach all media files and how will be data transferred between drivers'));
+		$this->add_options_form_section( 'storage', __( 'Media Content Storage' ), __( 'Define driver used to cach all media files and how will be data transferred between drivers' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_NEW_FILE_DRIVER,
 			self::SETTING_DEFAULT_NEW_FILE_DRIVER,
@@ -1000,7 +1000,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		);
 
 
-		$this->add_options_form_section('s3', __('AWS S3 Storage driver settings'), '');
+		$this->add_options_form_section( 's3', __( 'AWS S3 Storage driver settings' ), '' );
 		//S3 settings
 		$this->add_option_definition(
 			self::SETTING_NAME_S3_ACCESS_KEY,
@@ -1063,8 +1063,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		);
 
 
-
-		$this->add_options_form_section('img_opt', __('Image optimisation'), __('Plugin can automatically optimaze all cached images and convert them to multiple sizes and image formats for you. Based on your settings, visitors will load into the browser just the most optimized image format to maximize speed of loading'));
+		$this->add_options_form_section( 'img_opt', __( 'Image optimisation' ), __( 'Plugin can automatically optimaze all cached images and convert them to multiple sizes and image formats for you. Based on your settings, visitors will load into the browser just the most optimized image format to maximize speed of loading' ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_USE_WEBP_ALTERNATIVE,

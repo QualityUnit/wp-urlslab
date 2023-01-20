@@ -415,7 +415,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			__( "Remove attribute loading='lazy' added by default to all images by Wordpress and control lazy loading by Urlslab plugin only. Sometimes you need to load images faster and this is the way how to do it. To disable this feature on specific elements, add class urlslab-skip-nolazy" )
 		);
 
-		$this->add_options_form_section('youtube', __('Youtube'), __('Lazyload content (e.g. preview image, title, description, etc.) from youtube and load slow youtube iframes just in case user clicks the video image. Urlslab plugin will store information laoded from youtube to local cache.'));
+		$this->add_options_form_section( 'youtube', __( 'Youtube' ), __( 'Lazyload content (e.g. preview image, title, description, etc.) from youtube and load slow youtube iframes just in case user clicks the video image. Urlslab plugin will store information laoded from youtube to local cache.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_YOUTUBE_LAZY_LOADING,
 			false,
