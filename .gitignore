@@ -2,6 +2,7 @@ node_modules/
 package-lock.json
 vendor
 build
+dist
 .idea/
 .husky
 # Numerous always-ignore extensions
