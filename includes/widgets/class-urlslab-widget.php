@@ -103,7 +103,7 @@ abstract class Urlslab_Widget {
 	/**
 	 * @return array - liest of module settings, where id is setting name and value is setting value
 	 */
-	public function get_options($section_id = false):array {
+	public function get_options( $section_id = false ): array {
 		if ( false === $this->options ) {
 			$this->init_options();
 		}
@@ -122,7 +122,7 @@ abstract class Urlslab_Widget {
 				default:
 					$option['value'] = $this->get_option( $option_id );
 			}
-			if (false == $section_id || $option['section'] == $section_id) {
+			if ( false == $section_id || $option['section'] == $section_id ) {
 				$result[] = $option;
 			}
 		}
@@ -130,7 +130,7 @@ abstract class Urlslab_Widget {
 		return $result;
 	}
 
-	public function get_option_sections():array {
+	public function get_option_sections(): array {
 		return $this->option_sections;
 	}
 
