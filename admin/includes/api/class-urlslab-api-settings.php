@@ -40,6 +40,14 @@ class Urlslab_Api_Settings extends WP_REST_Controller {
 		return current_user_can( 'administrator' );
 	}
 
+	private function prepare_options_and_sections(Urlslab_Widget $widget) {
+		$options = array();
+		foreach ($widget->get_options() as $option_arr) {
+			$options[] = (object) $option_arr;
+		}
+		return (object) array('sections' => $widget->get_option_sections(), 'options' => $options);
+	}
+
 	public function get_items( $request ) {
 		try {
 			$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $request->get_param( 'module_id' ) );
@@ -47,7 +55,7 @@ class Urlslab_Api_Settings extends WP_REST_Controller {
 				return new WP_Error( 'not-found', __( 'Module not found', 'urlslab' ), array( 'status' => 404 ) );
 			}
 
-			return new WP_REST_Response( (object) $widget->get_options(), 200 );
+			return new WP_REST_Response( $this->prepare_options_and_sections($widget), 200 );
 		} catch ( Exception $e ) {
 			return new WP_Error( 'exception', __( 'Failed to get list of modules', 'urlslab' ) );
 		}
@@ -65,7 +73,7 @@ class Urlslab_Api_Settings extends WP_REST_Controller {
 			}
 
 			if ( $widget->update_option( $request->get_param( 'setting_name' ), $request->get_json_params()['value'] ) ) {
-				return new WP_REST_Response( (object) $widget->get_options(), 200 );
+				return new WP_REST_Response( $this->prepare_options_and_sections($widget), 200 );
 			}
 
 			return new WP_Error( 'error', __( 'Failed to save setting', 'urlslab' ), array( 'status' => 500 ) );

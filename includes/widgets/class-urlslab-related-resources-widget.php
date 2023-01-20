@@ -158,7 +158,6 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		return true;
 	}
 
-	protected function init_options() {
-		// TODO: Implement init_options() method.
+	protected function add_options() {
 	}
 }

@@ -631,7 +631,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		return '';
 	}
 
-	protected function init_options() {
+	protected function add_options() {
+
 		$this->add_option_definition(
 			self::SETTING_NAME_KW_TYPES_TO_USE,
 			'',
@@ -648,6 +649,26 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		);
 
 		$this->add_option_definition(
+			self::SETTING_NAME_KW_MAP,
+			true,
+			true,
+			__( 'Track used Keywords' ),
+			__( 'Track usage of inserted keywords/links on pages' )
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS,
+			false,
+			true,
+			__( 'Add anchor id to all H tags' ),
+			__( 'Enhance all H tags with ID attribute to allow addressing not just URL, but also specific part of the content starting with H tag.' )
+		);
+
+
+
+		$this->add_options_form_section('replacements', __('Keyword replacements'), __('Have under control frequency of keywords replaced as links in your content.'));
+
+		$this->add_option_definition(
 			self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD,
 			2,
 			true,
@@ -657,7 +678,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			false,
 			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
-			}
+			},
+			'replacements'
 		);
 
 
@@ -671,7 +693,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			false,
 			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
-			}
+			},
+			'replacements'
 		);
 
 		$this->add_option_definition(
@@ -684,7 +707,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			false,
 			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
-			}
+			},
+			'replacements'
 		);
 
 		$this->add_option_definition(
@@ -697,7 +721,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			false,
 			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
-			}
+			},
+			'replacements'
 		);
 
 		$this->add_option_definition(
@@ -710,7 +735,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			false,
 			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
-			}
+			},
+			'replacements'
 		);
 
 		$this->add_option_definition(
@@ -723,7 +749,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			false,
 			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
-			}
+			},
+			'replacements'
 		);
 
 		$this->add_option_definition(
@@ -736,7 +763,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			false,
 			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
-			}
+			},
+			'replacements'
 		);
 
 		$this->add_option_definition(
@@ -749,7 +777,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			false,
 			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
-			}
+			},
+			'replacements'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_MAX_PARAGRAPH_DENSITY,
@@ -761,29 +790,33 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			false,
 			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
-			}
+			},
+			'replacements'
 		);
-		$this->add_option_definition(
-			self::SETTING_NAME_KW_MAP,
-			true,
-			true,
-			__( 'Track used Keywords' ),
-			__( 'Track usage of inserted keywords/links on pages' )
-		);
+
+		$this->add_option_definition('import', __('Automatic Keyword imports'), __('Plugin can automatically read links used in your existing content and use them as definition for new links for your website.'));
 
 		$this->add_option_definition(
 			self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS,
 			false,
 			true,
 			__( 'Import internal links as keywords' ),
-			__( 'Import all internal links found in page as keywords' )
+			__( 'Import all internal links found in page as keywords' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'import'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS,
 			false,
 			true,
 			__( 'Import external links as keywords' ),
-			__( 'Import all external links found in page as keywords' )
+			__( 'Import all external links found in page as keywords' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'import'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_KW_IMPORT_MAX_LENGTH,
@@ -795,14 +828,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			false,
 			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
-			}
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS,
-			false,
-			true,
-			__( 'Add anchor id to all H tags' ),
-			__( 'Enhance all H tags with ID attribute to allow addressing not just URL, but also specific part of the content starting with H tag.' )
+			},
+			'import'
 		);
 	}
 }

@@ -202,7 +202,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 		return true;
 	}
 
-	protected function init_options() {
+	protected function add_options() {
 		$this->add_option_definition(
 			self::SETTING_NAME_META_DESCRIPTION_GENERATION,
 			self::DEFAULT_META_DESCRIPTION_GENERATION,

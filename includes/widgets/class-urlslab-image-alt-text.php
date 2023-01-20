@@ -108,7 +108,6 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 		return true;
 	}
 
-	protected function init_options() {
-		// TODO: Implement init_options() method.
+	protected function add_options() {
 	}
 }

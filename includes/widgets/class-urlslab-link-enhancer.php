@@ -268,7 +268,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		return true;
 	}
 
-	protected function init_options() {
+	protected function add_options() {
 		$this->add_option_definition(
 			self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY,
 			self::DESC_TEXT_SUMMARY,
@@ -297,7 +297,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			true,
 			true,
 			__( 'Track Internal links' ),
-			__( 'Get data of which pages are linking to each other' )
+			__( 'Store all links used in your website and analyze relations and content clusters between pages.' )
 		);
 
 		$this->add_option_definition(

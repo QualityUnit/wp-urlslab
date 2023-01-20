@@ -392,7 +392,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 
-	protected function init_options() {
+	protected function add_options() {
 		$this->add_option_definition(
 			self::SETTING_NAME_IMG_LAZY_LOADING,
 			false,
@@ -408,18 +408,24 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			__( 'Enable/Disable lazy loading for Videos in your pages' )
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_YOUTUBE_LAZY_LOADING,
-			false,
-			true,
-			__( 'Youtube Lazy Loading' ),
-			__( 'Enable/Disable lazy loading for Youtube Videos in your pages' )
-		);
-		$this->add_option_definition(
 			self::SETTING_NAME_REMOVE_WP_LAZY_LOADING,
 			true,
 			true,
 			__( 'Disable WordPress lazy loading' ),
 			__( "Remove attribute loading='lazy' added by default to all images by Wordpress and control lazy loading by Urlslab plugin only. Sometimes you need to load images faster and this is the way how to do it. To disable this feature on specific elements, add class urlslab-skip-nolazy" )
+		);
+
+		$this->add_options_form_section('youtube', __('Youtube'), __('Lazyload content (e.g. preview image, title, description, etc.) from youtube and load slow youtube iframes just in case user clicks the video image. Urlslab plugin will store information laoded from youtube to local cache.'));
+		$this->add_option_definition(
+			self::SETTING_NAME_YOUTUBE_LAZY_LOADING,
+			false,
+			true,
+			__( 'Youtube Lazy Loading' ),
+			__( 'Enable/Disable lazy loading for Youtube Videos in your pages' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'youtube'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_YOUTUBE_API_KEY,
@@ -427,7 +433,10 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			false,
 			__( 'Youtube API Key' ),
 			__( 'Youtube API Key is used to cache video preview images localy and serve them on place of youtube code. Leave empty to load the key from environment variable YOUTUBE_API_KEY.' ),
-			self::OPTION_TYPE_PASSWORD
+			self::OPTION_TYPE_PASSWORD,
+			false,
+			null,
+			'youtube'
 		);
 	}
 }
