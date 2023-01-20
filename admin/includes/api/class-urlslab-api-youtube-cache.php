@@ -99,10 +99,10 @@ class Urlslab_Api_Youtube_Cache extends WP_REST_Controller {
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_YOUTUBE_CACHE_TABLE .
-				( ! empty( $where_data ) ? ' WHERE ' . implode( ' AND ', $where_data ) : '' ) .
-				( ! empty( $order_data ) ? ' ORDER BY ' . implode( ',', $order_data ) : '' ) .
-				( strlen( $limit_string ) ? ' LIMIT ' . $limit_string : '' ),
+				'SELECT * FROM ' . URLSLAB_YOUTUBE_CACHE_TABLE . // phpcs:ignore
+				( ! empty( $where_data ) ? ' WHERE ' . implode( ' AND ', $where_data ) : '' ) . // phpcs:ignore
+				( ! empty( $order_data ) ? ' ORDER BY ' . implode( ',', $order_data ) : '' ) . // phpcs:ignore
+				( strlen( $limit_string ) ? ' LIMIT ' . $limit_string : '' ), // phpcs:ignore
 				$query_data
 			),
 			OBJECT ); // phpcs:ignore
