@@ -1,11 +1,10 @@
 import React from 'react';
 import { render } from '@wordpress/element';
-import Modules from './Modules';
-import './assets/styles/common/global.scss';
+import App from './App';
 
 render(
 	<React.StrictMode>
-		<Modules />
+		<App />
 	</React.StrictMode>,
-	document.getElementById( 'urlslab-settings' ),
+	document.getElementById( 'urlslab-root' ),
 );

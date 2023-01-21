@@ -1,17 +1,24 @@
+/* stylelint-disable selector-class-pattern, no-descending-specificity */
 @use "../common/mixins" as *;
 @use "../common/variables" as *;
 
 
-button.urlslab-button,
-.urlslab-button {
+button {
 
 	@include appearance;
+	outline: none;
+	border: none;
+	background-color: transparent;
+	padding: 0;
+	cursor: pointer;
+}
+
+button.urlslab-button,
+.urlslab-button {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	background-color: $grey-light;
-	outline: none;
-	border: none;
 	font-size: 0.8125rem;
 	font-weight: $font-weight-semi;
 	padding: 1em 2em;

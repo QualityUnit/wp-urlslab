@@ -56,10 +56,11 @@ class Urlslab_Api_Modules extends WP_REST_Controller {
 		try {
 			$data = array();
 			foreach ( Urlslab_Available_Widgets::get_instance()->get_available_widgets() as $widget ) {
-				$data[] = $this->get_widget_data( $widget );
+				$widgetData = $this->get_widget_data( $widget );
+				$data[$widgetData->id] = $widgetData;
 			}
 
-			return new WP_REST_Response( $data, 200 );
+			return new WP_REST_Response( (object) $data, 200 );
 		} catch ( Exception $e ) {
 			return new WP_Error( 'exception', __( 'Failed to get list of modules', 'urlslab' ) );
 		}

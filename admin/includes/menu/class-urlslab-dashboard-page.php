@@ -7,7 +7,7 @@ class Urlslab_Dashboard_Page extends Urlslab_Admin_Page {
 
 	public function __construct() {
 		$this->menu_slug = 'urlslab-dashboard';
-		$this->page_title = 'Dashboard';
+		$this->page_title = 'Modules';
 	}
 
 	public function init_ajax_hooks( Urlslab_Loader $urlslab_loader ) {}
@@ -15,8 +15,8 @@ class Urlslab_Dashboard_Page extends Urlslab_Admin_Page {
 	public function register_submenu( string $parent_slug ) {
 		$hook = add_submenu_page(
 			$parent_slug,
-			'Urlslab Dashboard',
-			'Dashboard',
+			'Urlslab Modules',
+			'Modules',
 			'manage_options',
 			$this->menu_slug,
 			array( $this, 'load_page' )
