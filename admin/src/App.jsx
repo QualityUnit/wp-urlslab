@@ -49,7 +49,6 @@ export default function App() {
 						{ ! module
 							? <Modules modules={ modules } onChange={ ( moduleId, activated ) => handleModuleActivation( moduleId, activated ) } />
 							: <DynamicModule moduleId={ module } />
-							// : <div style={ { height: '10em', backgroundColor: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center' } }><h2>This is demo of { fetchedModules[ module ].title } page</h2></div>
 						}
 					</> )
 				: ''

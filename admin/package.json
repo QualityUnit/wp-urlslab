@@ -33,7 +33,8 @@
     "stylelint": "^14.2",
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-fonts": "^0.7.0",
-    "vite-plugin-svgr": "^2.4.0"
+    "vite-plugin-svgr": "^2.4.0",
+    "vite-react-jsx": "^1.1.2"
   },
   "devDependencies": {
     "@types/react": "^18.0.26",

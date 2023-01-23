@@ -8,7 +8,9 @@ export default defineConfig( {
 	base: './',
 	plugins: [
 		svgr(),
-		react(),
+		react( {
+			exclude: './src/modules/**/*.jsx',
+		} ),
 		VitePluginFonts( {
 			google: {
 				families: [
@@ -26,6 +28,7 @@ export default defineConfig( {
 	],
 
 	build: {
+		manifest: true,
 		rollupOptions: {
 			input: {
 				settings: './src/main.jsx',

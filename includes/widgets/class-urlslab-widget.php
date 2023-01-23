@@ -3,15 +3,15 @@
 abstract class Urlslab_Widget {
 
 
-	const OPTION_TYPE_CHECKBOX = 'C';
-	const OPTION_TYPE_TEXT = 'T';
-	const OPTION_TYPE_PASSWORD = 'P';
+	const OPTION_TYPE_CHECKBOX = 'checkbox';
+	const OPTION_TYPE_TEXT = 'text';
+	const OPTION_TYPE_PASSWORD = 'password';
 	const PASSWORD_PLACEHOLDER = '********';
 
-	const OPTION_TYPE_LISTBOX = 'L';
-	const OPTION_TYPE_DATETIME = 'D';
-	const OPTION_TYPE_MULTI_CHECKBOX = 'M';
-	const OPTION_TYPE_NUMBER = 'N';
+	const OPTION_TYPE_LISTBOX = 'listbox';
+	const OPTION_TYPE_DATETIME = 'datetime';
+	const OPTION_TYPE_MULTI_CHECKBOX = 'multicheck';
+	const OPTION_TYPE_NUMBER = 'number';
 
 
 	private $current_page_url = null;

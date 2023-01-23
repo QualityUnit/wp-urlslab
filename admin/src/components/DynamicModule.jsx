@@ -1,6 +1,6 @@
-import { lazy, Suspense } from '@wordpress/element';
-import { useState, useEffect } from 'react';
+import { lazy, Suspense, useState, useEffect } from 'react';
 import { fetchSettings } from '../api/settings';
+import { publicDir } from '../constants/variables';
 import ErrorBoundary from './ErrorBoundary';
 import Loader from './Loader';
 
@@ -27,6 +27,7 @@ export default function DynamicModule( { moduleId } ) {
 	};
 
 	const Module = lazy( () => import( `../modules/${ moduleName( ) }.jsx` ) );
+	// const Module = lazy( () => import( `../modules/LazyLoading` ) );
 
 	return (
 		<ErrorBoundary>

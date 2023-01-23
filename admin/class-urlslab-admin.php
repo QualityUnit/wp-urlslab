@@ -1,4 +1,5 @@
 <?php
+	use Idleberg\WordpressViteAssets\WordpressViteAssets;
 
 /**
  * The admin-specific functionality of the plugin.
@@ -20,7 +21,6 @@
  * @subpackage urlslab/admin
  */
 class Urlslab_Admin {
-
 	/**
 	 * The ID of this plugin.
 	 *
@@ -134,22 +134,29 @@ class Urlslab_Admin {
 			false
 		);
 		
-		wp_enqueue_script(
-			$this->urlslab . '-settings',
-			plugin_dir_url( __FILE__ ) . 'dist/settings.js',
-			array( 'wp-element', 'wp-i18n' ),
-			$this->version,
-			true
-		);
+		$baseUrl = get_stylesheet_directory_uri();
+		$manifest = plugin_dir_url( __FILE__ ) . 'dist/manifest.json';
+		$entryPoint = "src/main.jsx";
 
-		add_filter('script_loader_tag', function ($tag, $handle) {
-				// if not your script, do nothing and return original $tag
-				if ( $this->urlslab . '-settings' !== $handle ) {
-						return $tag;
-				}
-				// change the script tag by adding type="module" and return it.
-				return str_replace( ' src', ' type="module" src', $tag );
-		} , 10, 3);
+		$viteAssets = new WordpressViteAssets($manifest, $baseUrl);
+		$viteAssets->inject($entryPoint);
+		
+		// wp_enqueue_script(
+		// 	$this->urlslab . '-settings',
+		// 	plugin_dir_url( __FILE__ ) . 'dist/settings.js',
+		// 	array( 'wp-element', 'wp-i18n' ),
+		// 	$this->version,
+		// 	true
+		// );
+
+		// add_filter('script_loader_tag', function ($tag, $handle) {
+		// 		// if not your script, do nothing and return original $tag
+		// 		if ( $this->urlslab . '-settings' !== $handle ) {
+		// 				return $tag;
+		// 		}
+		// 		// change the script tag by adding type="module" and return it.
+		// 		return str_replace( ' src', ' type="module" src', $tag );
+		// } , 10, 3);
 		
 		wp_localize_script(
 			$this->urlslab,
