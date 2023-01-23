@@ -133,6 +133,7 @@ class Urlslab_Admin {
 			$this->version,
 			false
 		);
+		
 		wp_enqueue_script(
 			$this->urlslab . '-settings',
 			plugin_dir_url( __FILE__ ) . 'dist/settings.js',
@@ -140,6 +141,16 @@ class Urlslab_Admin {
 			$this->version,
 			true
 		);
+
+		add_filter('script_loader_tag', function ($tag, $handle) {
+				// if not your script, do nothing and return original $tag
+				if ( $this->urlslab . '-settings' !== $handle ) {
+						return $tag;
+				}
+				// change the script tag by adding type="module" and return it.
+				return str_replace( ' src', ' type="module" src', $tag );
+		} , 10, 3);
+		
 		wp_localize_script(
 			$this->urlslab,
 			'params',

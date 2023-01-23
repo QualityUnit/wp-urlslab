@@ -1,0 +1,17 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-loader {
+	text-align: center;
+	min-height: 10em;
+	width: 100%;
+	font-size: 1.5em;
+	font-weight: $font-weight-semi;
+
+	&-anim {
+
+		@include square(3em);
+		display: block;
+		margin: 0 auto 0.5em;
+	}
+}
