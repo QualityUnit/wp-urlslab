@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import { VitePluginFonts } from 'vite-plugin-fonts';
+import babel from 'vite-plugin-babel';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
 
@@ -8,9 +9,8 @@ export default defineConfig( {
 	base: './',
 	plugins: [
 		svgr(),
-		react( {
-			exclude: './src/modules/**/*.jsx',
-		} ),
+		babel(),
+		react(),
 		VitePluginFonts( {
 			google: {
 				families: [
@@ -26,9 +26,7 @@ export default defineConfig( {
 			},
 		} ),
 	],
-
 	build: {
-		manifest: true,
 		rollupOptions: {
 			input: {
 				settings: './src/main.jsx',

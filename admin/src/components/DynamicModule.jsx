@@ -1,6 +1,5 @@
 import { lazy, Suspense, useState, useEffect } from 'react';
 import { fetchSettings } from '../api/settings';
-import { publicDir } from '../constants/variables';
 import ErrorBoundary from './ErrorBoundary';
 import Loader from './Loader';
 
@@ -32,7 +31,10 @@ export default function DynamicModule( { moduleId } ) {
 	return (
 		<ErrorBoundary>
 			<Suspense fallback={ <Loader /> }>
-				<Module settings={ settings } />
+				{ Module
+					? <Module settings={ settings } />
+					: null
+				}
 			</Suspense>
 		</ErrorBoundary>
 	);

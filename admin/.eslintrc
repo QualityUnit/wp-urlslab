@@ -13,6 +13,7 @@
 		"plugin:import/react",
 		"plugin:react-hooks/recommended",
 		"plugin:react/jsx-runtime"
+		// "plugin:babel/transform-react-jsx"
 	],
 	"rules": {
 		"jsx-a11y/label-has-associated-control": 0

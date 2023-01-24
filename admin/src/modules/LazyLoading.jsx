@@ -1,18 +1,21 @@
+import Switch from '../elements/Switch';
 export default function LazyLoading( { settings } ) {
-	console.log( settings );
+	const handleOption = ( option ) => {
+		console.log( option );
+	};
+
 	return (
-	 'Gule'
-		// settings
-		// 	? ( settings.map( ( setting ) => {
-		// 		setting.options.map( ( option ) => {
-		// 			return (
-		// 				<>
-		// 					{ option.title }
-		// 					<br />
-		// 				</>
-		// 			);
-		// 		} );
-		// 	} ) )
-		// 	: null
+		settings
+			? ( settings.map( ( setting ) => {
+				return setting.options.map( ( option ) => {
+					return (
+						<>
+							<button onClick={ () => handleOption( option ) }>{ option.title }</button>
+							<br />
+						</>
+					);
+				} );
+			} ) )
+			: null
 	);
 }

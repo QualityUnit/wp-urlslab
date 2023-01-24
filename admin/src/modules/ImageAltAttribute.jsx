@@ -1,5 +1,5 @@
 export default function ImageAltAttribute( { settings } ) {
 	return (
-		'Image Alt'
+		<h2>Image Alt</h2>
 	);
 }

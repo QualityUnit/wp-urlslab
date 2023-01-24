@@ -1,10 +1,9 @@
 import React from 'react';
-import { render } from '@wordpress/element';
+import { createRoot } from 'react-dom';
 import App from './App';
 
-render(
+createRoot( document.getElementById( 'urlslab-root' ) ).render(
 	<React.StrictMode>
 		<App />
-	</React.StrictMode>,
-	document.getElementById( 'urlslab-root' ),
+	</React.StrictMode>
 );

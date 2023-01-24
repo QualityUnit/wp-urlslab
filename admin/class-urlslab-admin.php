@@ -1,6 +1,4 @@
 <?php
-	use Idleberg\WordpressViteAssets\WordpressViteAssets;
-
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -72,6 +70,32 @@ class Urlslab_Admin {
 	 *
 	 * @since    1.0.0
 	 */
+
+	public function enqueue_react_settings() {
+		wp_enqueue_style( $this->urlslab . '-settings', plugin_dir_url( __FILE__ ) . 'dist/assets/style.css' );
+
+
+		wp_enqueue_script( 'react-18', 'https://unpkg.com/react@18/umd/react.production.min.js', [], false, true );
+		wp_enqueue_script( 'react-dom-18', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', [], false, true );
+
+		wp_enqueue_script(
+			$this->urlslab . '-settings',
+			plugin_dir_url( __FILE__ ) . 'dist/settings.js',
+			array( 'react-18', 'react-dom-18', 'wp-api-fetch', 'wp-element', 'wp-i18n' ),
+			$this->version,
+			true
+		);
+
+		add_filter('script_loader_tag', function ($tag, $handle) {
+				// if not your script, do nothing and return original $tag
+				if ( $this->urlslab . '-settings' !== $handle ) {
+						return $tag;
+				}
+				// change the script tag by adding type="module" and return it.
+				return str_replace( ' src', ' type="module" src', $tag );
+		} , 10, 3);
+	}
+
 	public function enqueue_styles() {
 
 		/**
@@ -87,16 +111,6 @@ class Urlslab_Admin {
 		 */
 
 		wp_enqueue_style( $this->urlslab . '-jquery-modal', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css' );
-
-		wp_enqueue_style( $this->urlslab . '-settings', plugin_dir_url( __FILE__ ) . 'dist/assets/style.css' );
-
-		// wp_enqueue_style(
-		// 	$this->urlslab,
-		// 	plugin_dir_url( __FILE__ ) . 'css/urlslab-admin.css',
-		// 	array(),
-		// 	$this->version,
-		// 	'all'
-		// );
 
 	}
 
@@ -133,30 +147,6 @@ class Urlslab_Admin {
 			$this->version,
 			false
 		);
-		
-		$baseUrl = get_stylesheet_directory_uri();
-		$manifest = plugin_dir_url( __FILE__ ) . 'dist/manifest.json';
-		$entryPoint = "src/main.jsx";
-
-		$viteAssets = new WordpressViteAssets($manifest, $baseUrl);
-		$viteAssets->inject($entryPoint);
-		
-		// wp_enqueue_script(
-		// 	$this->urlslab . '-settings',
-		// 	plugin_dir_url( __FILE__ ) . 'dist/settings.js',
-		// 	array( 'wp-element', 'wp-i18n' ),
-		// 	$this->version,
-		// 	true
-		// );
-
-		// add_filter('script_loader_tag', function ($tag, $handle) {
-		// 		// if not your script, do nothing and return original $tag
-		// 		if ( $this->urlslab . '-settings' !== $handle ) {
-		// 				return $tag;
-		// 		}
-		// 		// change the script tag by adding type="module" and return it.
-		// 		return str_replace( ' src', ' type="module" src', $tag );
-		// } , 10, 3);
 		
 		wp_localize_script(
 			$this->urlslab,
