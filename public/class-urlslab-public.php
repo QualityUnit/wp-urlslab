@@ -68,7 +68,6 @@ class Urlslab_Public {
 	 */
 	public function enqueue_scripts() {
 		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( 'urlslab-media-offloader' ) ) {
-			wp_enqueue_style( 'urlslab_youtube_loader', plugin_dir_url( __FILE__ ) . 'build/css/urlslab_youtube_loader.css', array(), $this->version, 'all' );
 			add_action(
 				'wp_footer',
 				function() {
