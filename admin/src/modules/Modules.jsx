@@ -16,6 +16,10 @@ export default function Modules( { modules, onChange } ) {
 	// 	setSearchVal( value );
 	// };
 
+	if ( ! modules.length ) {
+		return;
+	}
+
 	return (
 		<>
 			{ /* <SearchField onChange={ ( value ) => handleSearch( value ) } placeholder={ __( 'Search module…' ) } />

@@ -74,14 +74,10 @@ class Urlslab_Admin {
 	public function enqueue_react_settings() {
 		wp_enqueue_style( $this->urlslab . '-settings', plugin_dir_url( __FILE__ ) . 'dist/assets/style.css' );
 
-
-		wp_enqueue_script( 'react-18', 'https://unpkg.com/react@18/umd/react.production.min.js', [], false, true );
-		wp_enqueue_script( 'react-dom-18', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', [], false, true );
-
 		wp_enqueue_script(
 			$this->urlslab . '-settings',
 			plugin_dir_url( __FILE__ ) . 'dist/settings.js',
-			array( 'react-18', 'react-dom-18', 'wp-api-fetch', 'wp-element', 'wp-i18n' ),
+			array( 'react', 'react-dom', 'wp-api-fetch', 'wp-element', 'wp-i18n' ),
 			$this->version,
 			true
 		);

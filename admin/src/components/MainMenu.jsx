@@ -11,7 +11,7 @@ export default function MainMenu( { modules, activePage } ) {
 
 	return (
 		<ul className={ `urlslab-mainmenu` }>
-			<li key="urlslab-modules"><button type="button" onClick={ () => handleActive( null ) }>{ __( 'Modules' ) }</button></li>
+			<li key="urlslab-modules"><button type="button" onClick={ () => handleActive( 'urlslab-modules' ) }>{ __( 'Modules' ) }</button></li>
 			{ modules.length
 				? modules.map( ( module ) => {
 					return (
