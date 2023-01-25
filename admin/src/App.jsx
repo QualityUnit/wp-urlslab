@@ -1,5 +1,4 @@
 import { useState, useEffect, Suspense } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
 import { fetchModules } from './api/modules';
 import MainMenu from './components/MainMenu';
 import DynamicModule from './components/DynamicModule';
@@ -7,7 +6,6 @@ import Loader from './components/Loader';
 import './assets/styles/common/global.scss';
 
 export default function App() {
-	const { __ } = useI18n();
 	const [ module, setModule ] = useState( 'urlslab-modules' );
 	const [ fetchedModules, setModulesData ] = useState( );
 
@@ -32,17 +30,16 @@ export default function App() {
 	}, [ fetchedModules ] );
 
 	return (
-		<>
-			<Suspense fallback={ <Loader /> }>
-				<MainMenu modules={ ! fetchedModules || Object.values( fetchedModules ) } activePage={ ( selectedModule ) => handleModulePage( selectedModule ) } />
+		<Suspense fallback={ <Loader /> }>
+			<MainMenu
+				modules={ ! fetchedModules || Object.values( fetchedModules ) }
+				activePage={ ( selectedModule ) => handleModulePage( selectedModule ) }
+			/>
 
-				{ /* { fetchedModules && ! module
-					? s
-					: null
-				} */ }
-				<DynamicModule modules={ ! fetchedModules || Object.values( fetchedModules ) } moduleId={ module } />
-				{ /* <DynamicModule moduleId={ module || 'urlslab-lazy-loading' } /> */ }
-			</Suspense>
-		</>
+			<DynamicModule
+				modules={ ! fetchedModules || Object.values( fetchedModules ) }
+				moduleId={ module }
+			/>
+		</Suspense>
 	);
 }
