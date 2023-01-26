@@ -26,6 +26,9 @@ export default defineConfig( {
 			},
 		} ),
 	],
+	server: {
+		port: 1337,
+	},
 	build: {
 		minify: false,
 		rollupOptions: {

@@ -2,15 +2,48 @@
 @use "../common/mixins" as *;
 
 .urlslab-mainmenu {
-	position: absolute;
-	left: 0;
+
+	position: sticky;
+	top: 95px;
+	height: calc(100vh - 95px);
+	padding: 1em 0;
+	margin: 0;
+	background-color: $white;
+	box-shadow: 0 0 6px rgba($black-real, 0.16);
+
+	&-menu {
+		width: $menuWidth;
+	}
 
 	&-item {
+		font-size: 0.75rem;
+		cursor: pointer;
+
+		button {
+			width: 100%;
+			text-align: left;
+			padding: 0.5em 2.1666em;
+		}
 
 		&.active {
+			background-color: $grey-lighter;
+			cursor: default;
 
 			button {
-				color: $primary-color;
+				color: $black;
+				font-weight: $font-weight-semi;
+				transition: all $transitionTime;
+				cursor: default;
+			}
+		}
+
+		@media (hover: hover) {
+
+			&:not(.active):hover {
+
+				button {
+					color: $primary-color;
+				}
 			}
 		}
 	}

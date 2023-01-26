@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import '../assets/styles/components/_MainMenu.scss';
 
-export default function MainMenu( { modules, activePage } ) {
+export default function SettingsMenu( { modules, activePage } ) {
 	const { __ } = useI18n();
 	const [ activeId, setActive ] = useState( 'urlslab-modules' );
 	const handleActive = ( module ) => {
@@ -20,7 +20,7 @@ export default function MainMenu( { modules, activePage } ) {
 	};
 
 	return (
-		<ul className="urlslab-mainmenu-menu urlslab-mainmenu-main">
+		<ul className="urlslab-mainmenu-menu urlslab-mainmenu-settings">
 			<li key="urlslab-modules"
 				className={ `urlslab-mainmenu-item ${ activator( 'urlslab-modules' ) }` }>
 				<button

@@ -72,24 +72,27 @@ class Urlslab_Admin {
 	 */
 
 	public function enqueue_react_settings() {
-		wp_enqueue_style( $this->urlslab . '-settings', plugin_dir_url( __FILE__ ) . 'dist/assets/style.css' );
+		$current_page = $_GET["page"];
 
-		wp_enqueue_script(
-			$this->urlslab . '-settings',
-			plugin_dir_url( __FILE__ ) . 'dist/settings.js',
-			array( 'react', 'react-dom', 'wp-api-fetch', 'wp-element', 'wp-i18n' ),
-			$this->version,
-			true
-		);
-
-		add_filter('script_loader_tag', function ($tag, $handle) {
-				// if not your script, do nothing and return original $tag
-				if ( $this->urlslab . '-settings' !== $handle ) {
-						return $tag;
-				}
-				// change the script tag by adding type="module" and return it.
-				return str_replace( ' src', ' type="module" src', $tag );
-		} , 10, 3);
+		if ( isset( $current_page ) && str_contains( $current_page, 'urlslab' ) ) {
+			wp_enqueue_style( $this->urlslab . '-settings', plugin_dir_url( __FILE__ ) . 'dist/assets/style.css' );
+			wp_enqueue_script(
+				$this->urlslab . '-settings',
+				plugin_dir_url( __FILE__ ) . 'dist/settings.js',
+				array( 'react', 'react-dom', 'wp-api-fetch', 'wp-element', 'wp-i18n' ),
+				$this->version,
+				true
+			);
+	
+			add_filter('script_loader_tag', function ($tag, $handle) {
+					// if not your script, do nothing and return original $tag
+					if ( $this->urlslab . '-settings' !== $handle ) {
+							return $tag;
+					}
+					// change the script tag by adding type="module" and return it.
+					return str_replace( ' src', ' type="module" src', $tag );
+			} , 10, 3);
+		}
 	}
 
 	public function enqueue_styles() {

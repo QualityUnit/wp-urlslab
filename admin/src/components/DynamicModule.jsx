@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import ErrorBoundary from './ErrorBoundary';
 import Loader from './Loader';
+import '../assets/styles/layouts/_DynamicModule.scss';
 
 export default function DynamicModule( { modules, moduleId, onChange } ) {
 	const handleModuleValues = ( module, value ) => {
@@ -21,7 +22,7 @@ export default function DynamicModule( { modules, moduleId, onChange } ) {
 	const Module = lazy( () => import( `../modules/${ renameModule() }.jsx` ) );
 
 	return (
-		<div className="urlslab-module">
+		<div className="urlslab-DynamicModule">
 			<ErrorBoundary>
 				<Suspense fallback={ <Loader /> }>
 					<Module modules={ modules } moduleId={ moduleId } onChange={ ( module, value ) => handleModuleValues( module, value ) } />

@@ -42,7 +42,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return $this->widget_title . ' Widget';
+		return $this->widget_title . ' module';
 	}
 
 	/**
