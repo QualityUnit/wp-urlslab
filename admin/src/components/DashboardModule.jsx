@@ -3,7 +3,6 @@ import { useState } from 'react';
 import Switch from '../elements/Switch';
 
 import { setModule } from '../api/modules';
-// import { fetchSettings, processSettings } from '../api/settings';
 import { ReactComponent as ArrowIcon } from '../assets/images/icon-arrow.svg';
 import { ReactComponent as ApiIcon } from '../assets/images/api-exclamation.svg';
 import '../assets/styles/components/_DashboardModule.scss';
@@ -24,14 +23,6 @@ export default function DashboardModule( { moduleId, title, children, image, isA
 		}
 		);
 	};
-
-	// const handleModuleSettings = () => {
-	// 	fetchSettings( moduleId ).then( ( settings ) => {
-	// 		if ( settings ) {
-	// 			setModuleSettings( settings );
-	// 		}
-	// 	} );
-	// };
 
 	return (
 		<div className={ `urlslab-dashboardmodule ${ activating ? 'activating' : '' } ${ moduleActive ? 'active' : '' }` }>

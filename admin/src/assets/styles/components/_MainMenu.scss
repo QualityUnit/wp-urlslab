@@ -1,4 +1,17 @@
+@use "../common/variables" as *;
+@use "../common/mixins" as *;
+
 .urlslab-mainmenu {
 	position: absolute;
 	left: 0;
+
+	&-item {
+
+		&.active {
+
+			button {
+				color: $primary-color;
+			}
+		}
+	}
 }

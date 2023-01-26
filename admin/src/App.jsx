@@ -9,10 +9,13 @@ export default function App() {
 	const [ module, setModule ] = useState( 'urlslab-modules' );
 	const [ fetchedModules, setModulesData ] = useState( );
 
-	const handleModuleActivation = ( moduleId, activated ) => {
-		setModulesData( { ...fetchedModules, [ moduleId ]: { ...fetchedModules[ moduleId ], active: activated } } );
-	};
 	// console.log( fetchedModules );
+
+	const handleModuleValues = ( moduleId, value ) => {
+		if ( module === 'urlslab-modules' ) {
+			setModulesData( { ...fetchedModules, [ moduleId ]: { ...fetchedModules[ moduleId ], active: value } } );
+		}
+	};
 
 	const handleModulePage = ( selectedModule ) => {
 		setModule( selectedModule );
@@ -39,6 +42,7 @@ export default function App() {
 			<DynamicModule
 				modules={ ! fetchedModules || Object.values( fetchedModules ) }
 				moduleId={ module }
+				onChange={ ( moduleId, value ) => handleModuleValues( moduleId, value ) }
 			/>
 		</Suspense>
 	);
