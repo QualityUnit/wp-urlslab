@@ -33,6 +33,7 @@ class Urlslab_Available_Widgets {
 		$urlslab_og_meta_tag       = new Urlslab_Meta_Tag( $url_fetcher );
 		$urlslab_media_offloader   = new Urlslab_Media_Offloader_Widget( $url_fetcher );
 		$urlslab_lazy_loading      = new Urlslab_Lazy_Loading();
+		$urlslab_css_optimizer     = new Urlslab_CSS_Optimizer();
 
 		$this->available_widgets = array(
 			$urlslab_screenshot->get_widget_slug()        => $urlslab_screenshot,
@@ -43,6 +44,7 @@ class Urlslab_Available_Widgets {
 			$urlslab_og_meta_tag->get_widget_slug()       => $urlslab_og_meta_tag,
 			$urlslab_media_offloader->get_widget_slug()   => $urlslab_media_offloader,
 			$urlslab_lazy_loading->get_widget_slug()      => $urlslab_lazy_loading,
+			$urlslab_css_optimizer->get_widget_slug()     => $urlslab_css_optimizer,
 		);
 	}
 
