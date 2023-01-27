@@ -5,18 +5,24 @@ import SearchField from '../elements/SearchField';
 import '../assets/styles/components/_MainMenu.scss';
 import BackButton from '../elements/BackButton';
 
-export default function SettingsMenu( { modules, activePage } ) {
+export default function SettingsMenu( { modules, backButton, activeSetting } ) {
 	const { __ } = useI18n();
-	const [ activeId, setActive ] = useState( 'urlslab-generalsettings' );
-	const handleActive = ( module ) => {
-		setActive( module );
-		if ( activePage ) {
-			activePage( module );
+	const [ activeSettingId, setActiveSetting ] = useState( 'urlslab-general-settings' );
+	const handleBackButton = ( module ) => {
+		if ( backButton ) {
+			backButton( module );
+		}
+	};
+
+	const handleActive = ( setting ) => {
+		setActiveSetting( setting );
+		if ( activeSetting ) {
+			activeSetting( setting );
 		}
 	};
 
 	const activator = ( moduleId ) => {
-		if ( moduleId === activeId ) {
+		if ( moduleId === activeSettingId ) {
 			return 'active';
 		}
 		return '';
@@ -29,16 +35,16 @@ export default function SettingsMenu( { modules, activePage } ) {
 			</div>
 			<BackButton
 				className="urlslab-mainmenu-element"
-				onClick={ () => handleActive( 'urlslab-modules' ) }
+				onClick={ () => handleBackButton( 'urlslab-modules' ) }
 			>
 				{ __( 'Back to Home' ) }
 			</BackButton>
 			<ul className="urlslab-mainmenu-settings">
 				<li key="urlslab-settings"
-					className={ `urlslab-mainmenu-item ${ activator( 'urlslab-generalsettings' ) }` }>
+					className={ `urlslab-mainmenu-item ${ activator( 'urlslab-general-settings' ) }` }>
 					<button
 						type="button"
-						onClick={ () => handleActive( 'urlslab-generalsettings' ) }>{ __( 'General Settings' ) }
+						onClick={ () => handleActive( 'urlslab-general-settings' ) }>{ __( 'General Settings' ) }
 					</button>
 				</li>
 

@@ -11,6 +11,7 @@ import SettingsMenu from './components/SettingsMenu';
 export default function App() {
 	const { __ } = useI18n();
 	const [ module, setModule ] = useState( 'urlslab-modules' );
+	const [ setting, setActiveSetting ] = useState( 'urlslab-general-settings' );
 	const [ fetchedModules, setModulesData ] = useState( );
 	const [ pageTitle, setTitle ] = useState( __( 'Modules' ) );
 
@@ -58,7 +59,8 @@ export default function App() {
 							/>
 							<SettingsMenu
 								modules={ ! fetchedModules || Object.values( fetchedModules ) }
-								activePage={ ( selectedModule ) => handleModulePage( selectedModule ) }
+								backButton={ ( selectedModule ) => handleModulePage( selectedModule ) }
+								activeSetting={ ( selectedSetting ) => setActiveSetting( selectedSetting ) }
 							/>
 						</Suspense>
 					</div>
@@ -67,6 +69,7 @@ export default function App() {
 					<DynamicModule
 						modules={ ! fetchedModules || Object.values( fetchedModules ) }
 						moduleId={ module }
+						settingId={ setting }
 						onChange={ ( moduleId, value ) => handleModuleValues( moduleId, value ) }
 					/>
 				</Suspense>
