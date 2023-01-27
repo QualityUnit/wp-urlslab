@@ -8,6 +8,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	private string $widget_description;
 	private string $landing_page_link;
 	private Urlslab_Admin_Page $parent_page;
+	private $lazy_load_youtube_css = false;
 
 	//Lazy Loading settings
 	public const SETTING_NAME_IMG_LAZY_LOADING = 'urlslab_img_lazy';
@@ -351,7 +352,24 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			$child->item( 0 )->appendChild( $youtube_loader );
 		}
 
+		$this->lazyload_youtube_css( $document, $youtube_loader );
+
+
 		return true;
+	}
+
+	private function lazyload_youtube_css( DOMDocument $document, DOMElement $element ) {
+		if ( $this->lazy_load_youtube_css ) {
+			return true;
+		}
+		$css_link_element = $document->createElement( 'link' );
+		$css_link_element->setAttribute( 'rel', 'stylesheet' );
+		$css_link_element->setAttribute( 'id', 'urlslab_youtube_loader-css' );
+		$css_link_element->setAttribute( 'type', 'text/css' );
+		$css_link_element->setAttribute( 'media', 'all' );
+		$css_link_element->setAttribute( 'href', plugin_dir_url( URLSLAB_PLUGIN_DIR . 'public/build/css/urlslab_youtube_loader.css' ) . 'urlslab_youtube_loader.css' );
+		$element->insertBefore( $css_link_element );
+		$this->lazy_load_youtube_css = true;
 	}
 
 	private function replace_youtube_element_with_placeholder( DOMDocument $document, DOMElement $element, $video_objects, $ytid ): bool {
@@ -372,8 +390,11 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			$youtube_img->setAttribute( 'alt', 'Youtube video: ' . $video_objects[ $ytid ]->get_title() );
 		}
 		$youtube_img->setAttribute( 'urlslab-lazy', 'yes' );
+
 		$youtube_loader->appendChild( $youtube_img );
 		$element->parentNode->replaceChild( $youtube_loader, $element );
+
+		$this->lazyload_youtube_css( $document, $youtube_loader );
 
 		return true;
 	}
