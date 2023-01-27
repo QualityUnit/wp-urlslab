@@ -62,12 +62,16 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 			$links     = array();
 			foreach ( $css_links as $link_object ) {
 				if ( ! isset( $links[ $link_object->getAttribute( 'href' ) ] ) ) {
-					$links[ $link_object->getAttribute( 'href' ) ] = ( new Urlslab_Url( $link_object->getAttribute( 'href' ) ) )->get_url_id();
+					$url = new Urlslab_Url( $link_object->getAttribute( 'href' ) );
+					if ( $url->is_same_domain_url() ) {
+						$links[ $link_object->getAttribute( 'href' ) ] = $url->get_url_id();
+					}
 				}
 			}
 
 			$css_files = Urlslab_CSS_Cache_Row::get_css_files( $links );
 
+			$remove_elements = array();
 			foreach ( $css_links as $link_object ) {
 				if ( isset( $links[ $link_object->getAttribute( 'href' ) ] ) && isset( $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ] ) ) {
 					if ( $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ]->get( 'status' ) == Urlslab_CSS_Cache_Row::STATUS_ACTIVE ) {
@@ -76,10 +80,18 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 						if ( $link_object->hasAttribute( 'media' ) ) {
 							$new_elm->setAttribute( 'media', $link_object->getAttribute( 'media' ) );
 						}
+						if ( $link_object->hasAttribute( 'id' ) ) {
+							$new_elm->setAttribute( 'id', $link_object->getAttribute( 'id' ) );
+						}
+						$link_object->setAttribute( 'urlslab-old', 'should-remove' );
+						$new_elm->setAttribute( 'urlslab-css', '1' );
 						$link_object->parentNode->insertBefore( $new_elm, $link_object );
-						$link_object->parentNode->removeChild( $link_object );
+						$remove_elements[] = $link_object;
 					}
 				}
+			}
+			foreach ( $remove_elements as $element ) {
+				$element->parentNode->removeChild( $element );
 			}
 
 			$this->insert_missing_css_files( $links, $css_files );
