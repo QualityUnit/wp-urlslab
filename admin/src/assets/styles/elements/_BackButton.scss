@@ -1,0 +1,34 @@
+@use "../common/variables" as *;
+@use "../common/mixins" as *;
+
+.urlslab-backButton {
+
+	&-button {
+
+		display: flex;
+		align-items: center;
+		font-size: 1rem;
+		font-weight: $font-weight-semi;
+		margin-top: 0.5em;
+		transition: all $transitionTime;
+
+		svg {
+			margin-right: 0.5em;
+			margin-left: -1em;
+			fill: currentcolor;
+			transform: translateX(0) scaleX(-1);
+			transition: all $transitionTime;
+		}
+
+		@media (hover: hover) {
+
+			&:hover {
+				color: $primary-color;
+
+				svg {
+					transform: translateX(-0.25em) scaleX(-1);
+				}
+			}
+		}
+	}
+}

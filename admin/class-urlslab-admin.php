@@ -76,6 +76,7 @@ class Urlslab_Admin {
 
 		if ( isset( $current_page ) && str_contains( $current_page, 'urlslab' ) ) {
 			wp_enqueue_style( $this->urlslab . '-settings', plugin_dir_url( __FILE__ ) . 'dist/assets/style.css' );
+
 			wp_enqueue_script(
 				$this->urlslab . '-settings',
 				plugin_dir_url( __FILE__ ) . 'dist/settings.js',
@@ -89,6 +90,7 @@ class Urlslab_Admin {
 					if ( $this->urlslab . '-settings' !== $handle ) {
 							return $tag;
 					}
+
 					// change the script tag by adding type="module" and return it.
 					return str_replace( ' src', ' type="module" src', $tag );
 			} , 10, 3);

@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
+import SearchField from '../elements/SearchField';
+
 import '../assets/styles/components/_MainMenu.scss';
+import BackButton from '../elements/BackButton';
 
 export default function SettingsMenu( { modules, activePage } ) {
 	const { __ } = useI18n();
-	const [ activeId, setActive ] = useState( 'urlslab-modules' );
+	const [ activeId, setActive ] = useState( 'urlslab-generalsettings' );
 	const handleActive = ( module ) => {
 		setActive( module );
 		if ( activePage ) {
@@ -20,37 +23,41 @@ export default function SettingsMenu( { modules, activePage } ) {
 	};
 
 	return (
-		<ul className="urlslab-mainmenu-menu urlslab-mainmenu-settings">
-			<li key="urlslab-modules"
-				className={ `urlslab-mainmenu-item ${ activator( 'urlslab-modules' ) }` }>
-				<button
-					type="button"
-					onClick={ () => handleActive( 'urlslab-modules' ) }>{ __( 'Modules' ) }
-				</button>
-			</li>
+		<div className="urlslab-mainmenu-menu">
+			<div className="urlslab-mainmenu-element urlslab-mainmenu-search">
+				<SearchField />
+			</div>
+			<BackButton
+				className="urlslab-mainmenu-element"
+				onClick={ () => handleActive( 'urlslab-modules' ) }
+			>
+				{ __( 'Back to Home' ) }
+			</BackButton>
+			<ul className="urlslab-mainmenu-settings">
+				<li key="urlslab-settings"
+					className={ `urlslab-mainmenu-item ${ activator( 'urlslab-generalsettings' ) }` }>
+					<button
+						type="button"
+						onClick={ () => handleActive( 'urlslab-generalsettings' ) }>{ __( 'General Settings' ) }
+					</button>
+				</li>
 
-			{ modules.length
-				? modules.map( ( module ) => {
-					return (
-						module.active
-							? <li key={ module.id } className={ `urlslab-mainmenu-item ${ activator( module.id ) }` }>
-								<button
-									type="button"
-									onClick={ () => handleActive( module.id ) }>{ module.title }
-								</button>
-							</li>
-							: ''
-					);
-				} )
-				: ''
-			}
-			<li key="urlslab-settings"
-				className={ `urlslab-mainmenu-item ${ activator( 'urlslab-settings' ) }` }>
-				<button
-					type="button"
-					onClick={ () => handleActive( 'urlslab-settings' ) }>{ __( 'Settings' ) }
-				</button>
-			</li>
-		</ul>
+				{ modules.length
+					? modules.map( ( module ) => {
+						return (
+							module.active
+								? <li key={ module.id } className={ `urlslab-mainmenu-item ${ activator( module.id ) }` }>
+									<button
+										type="button"
+										onClick={ () => handleActive( module.id ) }>{ module.title }
+									</button>
+								</li>
+								: ''
+						);
+					} )
+					: ''
+				}
+			</ul>
+		</div>
 	);
 }

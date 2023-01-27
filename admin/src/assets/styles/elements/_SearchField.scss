@@ -22,7 +22,8 @@
 
 	&-input[type="search"] {
 		font-weight: $font-weight-normal;
-		padding: 0.5em 0.5em 0.5em 3.5em;
+		line-height: 1;
+		padding: 0.35em 0.5em 0.35em 3.5em;
 		border-radius: 1.5em;
 		border: 1px solid transparent;
 		background-color: $grey-light;

@@ -6,6 +6,7 @@ import DynamicModule from './components/DynamicModule';
 import Loader from './components/Loader';
 import './assets/styles/style.scss';
 import Header from './components/Header';
+import SettingsMenu from './components/SettingsMenu';
 
 export default function App() {
 	const { __ } = useI18n();
@@ -48,12 +49,19 @@ export default function App() {
 
 			<div className="urlslab-app flex">
 				<nav className="urlslab-mainmenu">
-					<Suspense>
-						<MainMenu
-							modules={ ! fetchedModules || Object.values( fetchedModules ) }
-							activePage={ ( selectedModule ) => handleModulePage( selectedModule ) }
-						/>
-					</Suspense>
+					<div className={ `urlslab-mainmenu-inn ${ module }` }>
+						<Suspense>
+							<MainMenu
+								modules={ ! fetchedModules || Object.values( fetchedModules ) }
+								activeModule={ module }
+								activePage={ ( selectedModule ) => handleModulePage( selectedModule ) }
+							/>
+							<SettingsMenu
+								modules={ ! fetchedModules || Object.values( fetchedModules ) }
+								activePage={ ( selectedModule ) => handleModulePage( selectedModule ) }
+							/>
+						</Suspense>
+					</div>
 				</nav>
 				<Suspense fallback={ <Loader /> }>
 					<DynamicModule
