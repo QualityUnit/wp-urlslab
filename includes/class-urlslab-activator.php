@@ -53,7 +53,8 @@ class Urlslab_Activator {
 		self::init_urlslab_file_pointers();
 		self::init_urlslab_file_db_driver_contents();
 		self::init_youtube_cache_tables();
-		self::init_keywords_map();
+		self::init_keywords_map_table();
+		self::init_css_cache_tables();
 	}
 
 	private static function upgrade_steps() {
@@ -114,6 +115,10 @@ class Urlslab_Activator {
 		if ( version_compare( $version, '1.43.0', '<' ) ) {
 			$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN urlCheckDate DATETIME;" ); // phpcs:ignore
 			$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD INDEX idxUrlCheck (urlCheckDate);" ); // phpcs:ignore
+		}
+
+		if ( version_compare( $version, '1.44.0', '<' ) ) {
+			self::init_css_cache_tables();
 		}
 
 		//all update steps done, set the current version
@@ -199,7 +204,7 @@ class Urlslab_Activator {
 		dbDelta( $sql );
 	}
 
-	private static function init_keywords_map() {
+	private static function init_keywords_map_table() {
 		global $wpdb;
 		$table_name      = URLSLAB_KEYWORDS_MAP_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
@@ -317,6 +322,26 @@ class Urlslab_Activator {
 			  partid SMALLINT UNSIGNED NOT NULL,
 			  content longblob DEFAULT NULL,
 			  PRIMARY KEY (filehash,filesize,partid)
+		) $charset_collate;";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_css_cache_tables() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$table_name = URLSLAB_CSS_CACHE_TABLE;
+		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+    		  url_id bigint,
+    		  url text,
+    		  css_content mediumtext,
+    		  status char(1) DEFAULT 'N',
+    		  status_changed datetime NULL,
+    		  filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
+			  PRIMARY KEY (url_id),
+			  INDEX idx_changed (status_changed)
 		) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

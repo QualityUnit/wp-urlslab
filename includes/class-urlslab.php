@@ -226,6 +226,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-keywords-links.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-image-alt-text.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-meta-tag.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-css-optimizer.php';
 
 
 		//menu pages
@@ -282,6 +283,8 @@ class Urlslab {
 	 * @access   private
 	 */
 	private function define_admin_hooks() {
+		$this->loader->add_action( 'wp_ajax_urlslab_exec_cron', $this, 'execute_cron_tasks' );
+
 		$plugin_admin = new Urlslab_Admin( $this->get_urlslab(), $this->get_version(), $this->loader );
 		$plugin_admin->urlslab_page_ajax();
 
@@ -314,13 +317,8 @@ class Urlslab {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		$this->loader->add_action( 'template_redirect', $plugin_public, 'download_offloaded_file', PHP_INT_MAX );
 
-		//head content
-		$urlslab_user = Urlslab_User_Widget::get_instance();
-		if ( $urlslab_user->is_widget_activated( 'urlslab-meta-tag' ) ) {
-			//# Only adding header hook if the widget is activated by the user
-			$this->loader->add_action( 'wp_head', $this, 'buffer_head_start', 0 );
-			$this->loader->add_action( 'wp_head', $this, 'buffer_end', PHP_INT_MAX );
-		}
+		$this->loader->add_action( 'wp_head', $this, 'buffer_head_start', 0 );
+		$this->loader->add_action( 'wp_head', $this, 'buffer_end', PHP_INT_MAX );
 
 		//body content
 		$this->loader->add_action( 'wp_body_open', $this, 'buffer_content_start', PHP_INT_MAX );
@@ -345,7 +343,7 @@ class Urlslab {
 		if ( empty( $content ) ) {
 			return $content;    //nothing to process
 		}
-		//TODO we need to debug why parsing of head HTML is not working
+
 		$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
 		$document->encoding            = get_bloginfo( 'charset' );
 		$document->strictErrorChecking = false; // phpcs:ignore
@@ -438,7 +436,9 @@ class Urlslab {
 			wp_schedule_event( time(), 'every_minute', 'urlslab_cron_hook' );
 		}
 
-		//defining Upgrade hook
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-download-css-cron.php';
+		$this->add_cron_task( new Urlslab_Download_CSS_Cron() );
+
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
 		$this->add_cron_task( new Urlslab_Screenshot_Cron( $this->url_data_fetcher ) );
 
