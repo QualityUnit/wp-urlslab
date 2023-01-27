@@ -1,35 +1,25 @@
-// import Switch from '../elements/Switch';
-import { useState, useEffect } from 'react';
 import { fetchSettings } from '../api/settings';
+import { useState, useEffect } from 'react';
+import Switch from '../elements/Switch';
 
-export default function LazyLoading( { moduleId } ) {
-	const [ settings, setSettings ] = useState();
-	const handleOption = ( option ) => {
-		console.log( option );
-	};
+export default function LazyLoading( { settingId } ) {
+	const [ fetchedSettings, setSettings ] = useState();
+	useEffect( () => {
+		if ( ! fetchedSettings ) {
+			fetchSettings( settingId ).then( ( settingsData ) => {
+				if ( settingsData ) {
+					setSettings( settingsData );
+				}
+			} );
+		}
+	}, [ fetchedSettings ] );
 
-	// useEffect( () => {
-	if ( ! settings ) {
-		fetchSettings( moduleId ).then( ( ModulesSettings ) => {
-			if ( ModulesSettings ) {
-				setSettings( ModulesSettings );
-			}
-		} );
-	}
-	// } );
+	console.log( fetchedSettings );
 
 	return (
-		settings
-			? ( settings.map( ( setting ) => {
-				return setting.options.map( ( option ) => {
-					return (
-						<>
-							<button onClick={ () => handleOption( option ) }>{ option.title }</button>
-							<br />
-						</>
-					);
-				} );
-			} ) )
-			: null
+		<>
+			<h2>Lazy loading</h2>
+			<Switch />
+		</>
 	);
 }
