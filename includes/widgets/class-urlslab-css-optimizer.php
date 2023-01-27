@@ -111,9 +111,6 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 
 	public static function update_settings( array $new_settings ) {}
 
-	public static function add_option() {}
-
-
 	public function is_api_key_required() {
 		return false;
 	}
@@ -141,4 +138,6 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 		}
 	}
 
+	protected function add_options() {
+	}
 }
