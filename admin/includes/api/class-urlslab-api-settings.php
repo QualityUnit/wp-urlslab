@@ -44,7 +44,7 @@ class Urlslab_Api_Settings extends WP_REST_Controller {
 		$sections   = array();
 		$sections[] = array(
 			'id'          => 'default',
-			'title'       => '',
+			'title'       => __( 'General Settings' ),
 			'description' => '',
 			'options'     => $widget->get_options( 'default' ),
 		);

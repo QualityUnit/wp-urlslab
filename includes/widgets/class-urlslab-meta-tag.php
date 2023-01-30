@@ -92,7 +92,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 
 				if ( is_object( $url_data ) ) {
 					$strategy = get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
-					if ( in_array( 'meta-description', $this->activated_sub_widgets ) ) {
+					if ( $this->get_option( self::SETTING_NAME_META_DESCRIPTION_GENERATION ) ) {
 						// meta description generation
 						if ( $meta_description->count() == 0 ) {
 							$node = $document->createElement( 'meta' );
@@ -110,7 +110,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 					}
 
 					// meta og title generation
-					if ( in_array( 'meta-og-title', $this->activated_sub_widgets ) ) {
+					if ( $this->get_option( self::SETTING_NAME_META_OG_TITLE_GENERATION ) ) {
 						if ( $meta_og_title->count() == 0 ) {
 							$node = $document->createElement( 'meta' );
 							$node->setAttribute( 'property', 'og:title' );
@@ -127,7 +127,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 					// meta og title generation
 
 					// meta og description generation
-					if ( in_array( 'meta-og-desc', $this->activated_sub_widgets ) ) {
+					if ( $this->get_option( self::SETTING_NAME_META_OG_DESC_GENERATION ) ) {
 						if ( $meta_og_description->count() == 0 ) {
 							$node = $document->createElement( 'meta' );
 							$node->setAttribute( 'property', 'og:description' );
@@ -144,7 +144,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 					// meta og description generation
 
 					// meta og image generation
-					if ( in_array( 'meta-og-image', $this->activated_sub_widgets ) ) {
+					if ( $this->get_option( self::SETTING_NAME_META_OG_IMAGE_GENERATION ) ) {
 						if (
 							$meta_og_image->count() == 0 &&
 							$url_data->screenshot_exists()

@@ -75,13 +75,6 @@ class Urlslab {
 	public function __construct() {
 		$this->version = URLSLAB_VERSION;
 		$this->urlslab = 'URLSLAB';
-
-		$this->load_dependencies();
-		$this->set_locale();
-		$this->init_urlslab_user();
-		$this->define_admin_hooks();
-		$this->define_public_hooks();
-		$this->define_backend_hooks();
 	}
 
 	/**
@@ -124,12 +117,8 @@ class Urlslab {
 
 
 	public function init_urlslab_user() {
-		$api_key                   = $this->get_option( 'api-key' );
 		$urlslab_available_widgets = Urlslab_Available_Widgets::get_instance();
-		$urlslab_api               = new Urlslab_Api_Key( $api_key );
-		$this->url_data_fetcher    = new Urlslab_Url_Data_Fetcher(
-			new Urlslab_Screenshot_Api( $urlslab_api )
-		);
+		$this->url_data_fetcher    = new Urlslab_Url_Data_Fetcher( new Urlslab_Screenshot_Api() );
 		$urlslab_available_widgets->init_widgets( $this->url_data_fetcher );
 		$urlslab_user_widget = Urlslab_User_Widget::get_instance();
 
@@ -218,6 +207,7 @@ class Urlslab {
 		//widgets
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-general.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-screenshot-widget.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-related-resources-widget.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-media-offloader-widget.php';
@@ -235,7 +225,6 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-admin-subpage.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-dashboard-page.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-urls-page.php';
-		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-integrations-page.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-header-widgets-page.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-image-seo-widgets-page.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-link-building-page.php';
@@ -491,6 +480,13 @@ class Urlslab {
 	 * @since    1.0.0
 	 */
 	public function run() {
+		$this->load_dependencies();
+		$this->set_locale();
+		$this->init_urlslab_user();
+		$this->define_admin_hooks();
+		$this->define_public_hooks();
+		$this->define_backend_hooks();
+
 		$this->loader->run();
 	}
 

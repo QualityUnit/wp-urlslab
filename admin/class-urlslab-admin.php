@@ -72,9 +72,7 @@ class Urlslab_Admin {
 	 */
 
 	public function enqueue_react_settings() {
-		$current_page = $_GET["page"];
-
-		if ( isset( $current_page ) && str_contains( $current_page, 'urlslab' ) ) {
+		if ( isset( $_GET['page'] ) && str_contains( $_GET['page'], 'urlslab' ) ) {
 			wp_enqueue_style( $this->urlslab . '-settings', plugin_dir_url( __FILE__ ) . 'dist/assets/style.css' );
 
 			wp_enqueue_script(
@@ -84,16 +82,21 @@ class Urlslab_Admin {
 				$this->version,
 				true
 			);
-	
-			add_filter('script_loader_tag', function ($tag, $handle) {
+
+			add_filter(
+				'script_loader_tag',
+				function( $tag, $handle ) {
 					// if not your script, do nothing and return original $tag
 					if ( $this->urlslab . '-settings' !== $handle ) {
-							return $tag;
+						return $tag;
 					}
 
 					// change the script tag by adding type="module" and return it.
 					return str_replace( ' src', ' type="module" src', $tag );
-			} , 10, 3);
+				},
+				10,
+				3
+			);
 		}
 	}
 
@@ -148,7 +151,7 @@ class Urlslab_Admin {
 			$this->version,
 			false
 		);
-		
+
 		wp_localize_script(
 			$this->urlslab,
 			'params',
