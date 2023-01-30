@@ -1,5 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
-import { useState } from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Switch from '../elements/Switch';
 
 import { setModule } from '../api/modules';
@@ -8,24 +9,20 @@ import { ReactComponent as ApiIcon } from '../assets/images/api-exclamation.svg'
 import '../assets/styles/components/_DashboardModule.scss';
 import '../assets/styles/elements/_Button.scss';
 
-export default function DashboardModule( { moduleId, title, children, image, isActive, onChange, hasApi } ) {
+export default function DashboardModule( { moduleId, title, children, image, isActive, hasApi } ) {
 	const { __ } = useI18n();
-	const [ moduleActive, setModuleActive ] = useState( isActive ? true : false );
-	const [ activating, setIsActivating ] = useState( false );
-	const handleSwitch = () => {
-		setIsActivating( true );
-		setModule( moduleId, { active: ! moduleActive } ).then( ( data ) => {
-			if ( data ) {
-				setModuleActive( data.active );
-				onChange( data.id, data.active );
-				setIsActivating( false );
-			}
-		}
-		);
-	};
+	const queryClient = useQueryClient();
+	const handleSwitch = useMutation( {
+		mutationFn: () => {
+			return setModule( moduleId, { active: ! isActive } );
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries( [ 'modules' ] );
+		},
+	} );
 
 	return (
-		<div className={ `urlslab-dashboardmodule ${ activating ? 'activating' : '' } ${ moduleActive ? 'active' : '' }` }>
+		<div className={ `urlslab-dashboardmodule ${ handleSwitch.isLoading ? 'activating' : '' } ${ isActive ? 'active' : '' }` }>
 			{ hasApi
 				? <div className="urlslab-dashboardmodule-api">
 					<ApiIcon />
@@ -33,17 +30,17 @@ export default function DashboardModule( { moduleId, title, children, image, isA
 				</div>
 				: ''
 			}
-			{ activating
-				? <div className="urlslab-dashboardmodule-activating">{ moduleActive ? __( 'Dectivating…' ) : __( 'Activating…' ) }</div>
+			{ handleSwitch.isLoading
+				? <div className="urlslab-dashboardmodule-activating">{ handleSwitch ? __( 'Dectivating…' ) : __( 'Activating…' ) }</div>
 				: ''
 			}
 			<Switch
 				secondary
-				onChange={ ( ) => handleSwitch( ) }
+				onChange={ () => handleSwitch.mutate( ) }
 				className="urlslab-dashboardmodule-switch"
 				label={ __( 'Activate module' ) }
 				labelOff={ __( 'Deactivate module' ) }
-				checked={ moduleActive }
+				checked={ isActive }
 			/>
 			<div className="urlslab-dashboardmodule-main flex-tablet flex-align-center">
 				{ image
@@ -56,7 +53,6 @@ export default function DashboardModule( { moduleId, title, children, image, isA
 					<p>{ children }</p>
 					<button
 						className="urlslab-learnMore"
-					// onClick={ () => handleModuleSettings() }
 					>{ __( 'Manage module' ) } <ArrowIcon /></button>
 				</div>
 			</div>

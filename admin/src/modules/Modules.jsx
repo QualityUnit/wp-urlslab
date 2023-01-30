@@ -1,16 +1,9 @@
-// import { useState } from 'react';
 import { publicDir } from '../constants/variables';
 import DashboardModule from '../components/DashboardModule';
 // import SearchField from '../elements/SearchField';
 
-export default function Modules( { modules, onChange } ) {
+export default function Modules( { modules } ) {
 	// const [ searchValue, setSearchVal ] = useState( '' );
-
-	const handleOnChange = ( moduleId, activated ) => {
-		if ( onChange ) {
-			onChange( moduleId, activated );
-		}
-	};
 
 	// const handleSearch = ( value ) => {
 	// 	setSearchVal( value );
@@ -36,7 +29,6 @@ export default function Modules( { modules, onChange } ) {
 							moduleId={ module.id }
 							hasApi={ module.apikey }
 							isActive={ module.active }
-							onChange={ ( moduleId, activated ) => handleOnChange( moduleId, activated ) }
 							title={ module.title }
 							image={ `${ publicDir() }/images/modules/${ module.id }.png` }
 						>

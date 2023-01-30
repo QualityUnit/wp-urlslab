@@ -2,7 +2,7 @@ import { fetchSettings } from '../api/settings';
 import { useState, useEffect } from 'react';
 import Switch from '../elements/Switch';
 
-export default function GeneralSettings( { settingId } ) {
+export default function General( { settingId } ) {
 	const [ fetchedSettings, setSettings ] = useState();
 	// useEffect( () => {
 	// 	if ( ! fetchedSettings ) {

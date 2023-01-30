@@ -7,7 +7,7 @@ import BackButton from '../elements/BackButton';
 
 export default function SettingsMenu( { modules, backButton, activeSetting } ) {
 	const { __ } = useI18n();
-	const [ activeSettingId, setActiveSetting ] = useState( 'urlslab-general-settings' );
+	const [ activeSettingId, setActiveSetting ] = useState( 'general' );
 	const handleBackButton = ( module ) => {
 		if ( backButton ) {
 			backButton( module );
@@ -40,13 +40,13 @@ export default function SettingsMenu( { modules, backButton, activeSetting } ) {
 				{ __( 'Back to Home' ) }
 			</BackButton>
 			<ul className="urlslab-mainmenu-settings">
-				<li key="urlslab-settings"
+				{ /* <li key="urlslab-settings"
 					className={ `urlslab-mainmenu-item ${ activator( 'urlslab-general-settings' ) }` }>
 					<button
 						type="button"
 						onClick={ () => handleActive( 'urlslab-general-settings' ) }>{ __( 'General Settings' ) }
 					</button>
-				</li>
+				</li> */ }
 
 				{ modules.length
 					? modules.map( ( module ) => {

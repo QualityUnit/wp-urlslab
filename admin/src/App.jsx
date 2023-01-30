@@ -1,4 +1,6 @@
-import { useState, useEffect, Suspense } from 'react';
+import { useState, Suspense } from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { useQuery } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import { fetchModules } from './api/modules';
 import MainMenu from './components/MainMenu';
@@ -11,15 +13,14 @@ import SettingsMenu from './components/SettingsMenu';
 export default function App() {
 	const { __ } = useI18n();
 	const [ module, setModule ] = useState( 'urlslab-modules' );
-	const [ setting, setActiveSetting ] = useState( 'urlslab-general-settings' );
-	const [ fetchedModules, setModulesData ] = useState( );
+	const [ setting, setActiveSetting ] = useState( 'general' );
+	const { data: fetchedModules } = useQuery( {
+		queryKey: [ 'modules' ],
+		queryFn: () => fetchModules().then( ( ModuleData ) => {
+			return ModuleData;
+		} ),
+	} );
 	const [ pageTitle, setTitle ] = useState( __( 'Modules' ) );
-
-	const handleModuleValues = ( moduleId, value ) => {
-		if ( module === 'urlslab-modules' ) {
-			setModulesData( { ...fetchedModules, [ moduleId ]: { ...fetchedModules[ moduleId ], active: value } } );
-		}
-	};
 
 	const handleModulePage = ( selectedModule ) => {
 		setModule( selectedModule );
@@ -34,16 +35,6 @@ export default function App() {
 		}
 	};
 
-	useEffect( () => {
-		if ( ! fetchedModules ) {
-			fetchModules().then( ( ModulesData ) => {
-				if ( ModulesData ) {
-					setModulesData( ModulesData );
-				}
-			} );
-		}
-	}, [ fetchedModules ] );
-
 	return (
 		<>
 			<Header pageTitle={ ! pageTitle || pageTitle } />
@@ -54,7 +45,6 @@ export default function App() {
 						<Suspense>
 							<MainMenu
 								modules={ ! fetchedModules || Object.values( fetchedModules ) }
-								activeModule={ module }
 								activePage={ ( selectedModule ) => handleModulePage( selectedModule ) }
 							/>
 							<SettingsMenu
@@ -70,7 +60,6 @@ export default function App() {
 						modules={ ! fetchedModules || Object.values( fetchedModules ) }
 						moduleId={ module }
 						settingId={ setting }
-						onChange={ ( moduleId, value ) => handleModuleValues( moduleId, value ) }
 					/>
 				</Suspense>
 			</div>

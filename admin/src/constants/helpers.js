@@ -5,6 +5,6 @@
 export const renameModule = ( moduleId ) => {
 	if ( moduleId ) {
 		const name = moduleId.replace( 'urlslab', '' );
-		return name.replace( /-(\w)/g, ( char ) => char.replace( '-', '' ).toUpperCase() );
+		return name.replace( /-(\w)|^(\w)/g, ( char ) => char.replace( '-', '' ).toUpperCase() );
 	}
 };
