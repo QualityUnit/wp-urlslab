@@ -372,8 +372,8 @@ class Urlslab {
 				LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE
 			);
 
-			foreach (libxml_get_errors() as $error){
-				if (false !== strpos($error->message, 'Unexpected') || false !== strpos($error->message, 'misplaced')) {
+			foreach ( libxml_get_errors() as $error ) {
+				if ( false !== strpos( $error->message, 'Unexpected' ) || false !== strpos( $error->message, 'misplaced' ) ) {
 					return $content;
 				}
 			}
