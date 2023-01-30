@@ -40,18 +40,10 @@ export default function SettingsMenu( { modules, backButton, activeSetting } ) {
 				{ __( 'Back to Home' ) }
 			</BackButton>
 			<ul className="urlslab-mainmenu-settings">
-				{ /* <li key="urlslab-settings"
-					className={ `urlslab-mainmenu-item ${ activator( 'urlslab-general-settings' ) }` }>
-					<button
-						type="button"
-						onClick={ () => handleActive( 'urlslab-general-settings' ) }>{ __( 'General Settings' ) }
-					</button>
-				</li> */ }
-
 				{ modules.length
 					? modules.map( ( module ) => {
 						return (
-							module.active
+							module.active || module.id === 'general'
 								? <li key={ module.id } className={ `urlslab-mainmenu-item ${ activator( module.id ) }` }>
 									<button
 										type="button"

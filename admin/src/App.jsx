@@ -27,10 +27,10 @@ export default function App() {
 		if ( selectedModule === 'urlslab-modules' ) {
 			setTitle( __( 'Modules' ) );
 		}
-		if ( selectedModule === 'urlslab-settings' ) {
+		if ( selectedModule === 'general' ) {
 			setTitle( __( 'Settings' ) );
 		}
-		if ( selectedModule !== 'urlslab-modules' && selectedModule !== 'urlslab-settings' ) {
+		if ( selectedModule !== 'urlslab-modules' && selectedModule !== 'general' ) {
 			setTitle( fetchedModules[ selectedModule ].title );
 		}
 	};

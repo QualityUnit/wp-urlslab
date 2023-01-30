@@ -34,7 +34,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return $this->widget_title . ' module';
+		return $this->widget_title ;
 	}
 
 	public function get_widget_description(): string {

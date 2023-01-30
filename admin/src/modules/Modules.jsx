@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { publicDir } from '../constants/variables';
 import DashboardModule from '../components/DashboardModule';
 // import SearchField from '../elements/SearchField';
@@ -8,6 +9,12 @@ export default function Modules( { modules } ) {
 	// const handleSearch = ( value ) => {
 	// 	setSearchVal( value );
 	// };
+
+	// const queryClient = useQueryClient();
+	// let modules = queryClient.ensureQueryData( {
+	// 	modules,
+	// } );
+	// let modules = queryClient.ensureQueryData( queryKey: ['modules'],  );
 
 	if ( ! modules.length ) {
 		return;
@@ -22,20 +29,20 @@ export default function Modules( { modules } ) {
 					// const title = module.title.toLowerCase();
 					// const excerpt = module.description.toLowerCase();
 					return (
+						module.id !== 'general'
 						// ( title.includes( searchValue ) || excerpt.includes( searchValue ) )
-					// ? (
-						<DashboardModule
-							key={ module.id }
-							moduleId={ module.id }
-							hasApi={ module.apikey }
-							isActive={ module.active }
-							title={ module.title }
-							image={ `${ publicDir() }/images/modules/${ module.id }.png` }
-						>
-							{ module.description }
-						</DashboardModule>
-					// )
-					// : null
+							? <DashboardModule
+								key={ module.id }
+								moduleId={ module.id }
+								hasApi={ module.apikey }
+								isActive={ module.active }
+								title={ module.title }
+								image={ `${ publicDir() }/images/modules/${ module.id }.png` }
+							>
+								{ module.description }
+							</DashboardModule>
+						// )
+							: null
 					);
 				} )
 				}
