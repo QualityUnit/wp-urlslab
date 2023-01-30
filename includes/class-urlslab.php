@@ -357,7 +357,7 @@ class Urlslab {
 	}
 
 	private function urlslab_head_content( $content ) {
-		if ( empty( $content ) ) {
+		if ( empty( $content ) || ! has_action( 'urlslab_head_content' ) ) {
 			return $content;    //nothing to process
 		}
 
@@ -391,7 +391,7 @@ class Urlslab {
 	}
 
 	public function urlslab_content( $content ) {
-		if ( empty( $content ) || http_response_code() !== 200 ) {
+		if ( empty( $content ) || http_response_code() !== 200 || ! has_action( 'urlslab_content' ) ) {
 			return $content;    //nothing to process
 		}
 
