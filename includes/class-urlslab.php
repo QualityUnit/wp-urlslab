@@ -371,6 +371,13 @@ class Urlslab {
 				mb_convert_encoding( $content, 'HTML-ENTITIES', get_bloginfo( 'charset' ) ),
 				LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE
 			);
+
+			foreach ( libxml_get_errors() as $error ) {
+				if ( false !== strpos( $error->message, 'Unexpected' ) || false !== strpos( $error->message, 'misplaced' ) ) {
+					return $content;
+				}
+			}
+
 			libxml_clear_errors();
 			libxml_use_internal_errors( $libxml_previous_state );
 
