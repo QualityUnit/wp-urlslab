@@ -87,7 +87,7 @@
 
 	&::-webkit-scrollbar-thumb {
 		background-color: $grey-light;
-		border-radius: 0.625em;
+		border-radius: $br-10;
 		height: 5em;
 	}
 
