@@ -197,7 +197,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$yt_elements = $xpath->query( "//*[@data-ytid and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
 		foreach ( $yt_elements as $yt_element ) {
 			$ytid = $yt_element->getAttribute( 'data-ytid' );
-			if ( isset( $video_objects[ $ytid ] ) && Urlslab_Youtube_Data::YOUTUBE_AVAILABLE === $video_objects[ $ytid ]->get( 'status' ) ) {
+			if ( isset( $video_objects[ $ytid ] ) && Urlslab_Youtube_Data::STATUS_AVAILABLE === $video_objects[ $ytid ]->get( 'status' ) ) {
 				$this->append_video_schema( $document, $yt_element, $video_objects[ $ytid ] );
 			}
 		}
@@ -259,7 +259,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		foreach ( $youtube_ids as $videoid ) {
 			if ( ! isset( $videos[ $videoid ] ) ) {
 				$placeholders[] = '(%s,%s,%s)';
-				array_push( $values, $videoid, Urlslab_Youtube_Data::YOUTUBE_NEW, $now );
+				array_push( $values, $videoid, Urlslab_Youtube_Data::STATUS_NEW, $now );
 			}
 		}
 		if ( ! empty( $placeholders ) ) {
