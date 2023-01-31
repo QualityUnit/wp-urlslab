@@ -9,5 +9,6 @@ class Urlslab_Api_Router {
 		( new Urlslab_Api_Modules() )->register_routes();
 		( new Urlslab_Api_Settings() )->register_routes();
 		( new Urlslab_Api_Youtube_Cache() )->register_routes();
+		( new Urlslab_Api_Css_Cache() )->register_routes();
 	}
 }
