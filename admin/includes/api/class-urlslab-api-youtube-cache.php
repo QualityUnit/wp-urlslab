@@ -39,6 +39,26 @@ class Urlslab_Api_Youtube_Cache extends WP_REST_Controller {
 						'from_sort_column' => array(
 							'required' => false,
 						),
+						'filter_videoid'   => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return 0 == strlen( $param ) || ( 32 >= strlen( $param ) && preg_match( '/^[a-zA-Z0-9\\-]*$/gm' ) );
+							},
+						),
+						'filter_status'    => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								switch ( $param ) {
+									case Urlslab_Youtube_Data::STATUS_DISABLED:
+									case Urlslab_Youtube_Data::STATUS_NEW:
+									case Urlslab_Youtube_Data::STATUS_PROCESSING:
+									case Urlslab_Youtube_Data::STATUS_AVAILABLE:
+										return true;
+									default:
+										return false;
+								}
+							},
+						),
 					),
 					'permission_callback' => array( $this, 'get_items_permissions_check' ),
 				),
@@ -83,6 +103,14 @@ class Urlslab_Api_Youtube_Cache extends WP_REST_Controller {
 				$where_data[] = sanitize_key( $request->get_param( 'sort_column' ) ) . '>%s';
 			}
 			$query_data[] = $request->get_param( 'from_id' );
+		}
+		if ( strlen( $request->get_param( 'filter_videoid' ) ) ) {
+			$where_data[] = 'videoid=%s';
+			$query_data[] = $request->get_param( 'filter_videoid' );
+		}
+		if ( strlen( $request->get_param( 'filter_status' ) ) ) {
+			$where_data[] = 'status=%s';
+			$query_data[] = $request->get_param( 'filter_status' );
 		}
 
 		$order_data = array();

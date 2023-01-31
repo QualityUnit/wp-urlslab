@@ -2,16 +2,16 @@
 
 class Urlslab_Youtube_Data extends Urlslab_Data {
 
-	const YOUTUBE_NEW = 'N';
-	const YOUTUBE_AVAILABLE = 'A';
-	const YOUTUBE_PROCESSING = 'P';
-	const YOUTUBE_DISABLED = 'D';
+	const STATUS_NEW = 'N';
+	const STATUS_AVAILABLE = 'A';
+	const STATUS_PROCESSING = 'P';
+	const STATUS_DISABLED = 'D';
 	private $microdata_obj;
 
 	public function __construct( array $video, $loaded_from_db = false ) {
 		$this->set( 'videoid', $video['videoid'], ! $loaded_from_db );
 		$this->set( 'microdata', $video['microdata'] ?? null, ! $loaded_from_db );
-		$this->set( 'status', $video['status'] ?? self::YOUTUBE_NEW, ! $loaded_from_db );
+		$this->set( 'status', $video['status'] ?? self::STATUS_NEW, ! $loaded_from_db );
 		$this->set( 'status_changed', $video['status_changed'] ?? self::get_now(), true );
 		if ( strlen( $this->get( 'microdata' ) ) ) {
 			$this->microdata_obj = json_decode( $this->get( 'microdata' ) );
