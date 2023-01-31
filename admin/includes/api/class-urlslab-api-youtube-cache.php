@@ -70,6 +70,35 @@ class Urlslab_Api_Youtube_Cache extends WP_REST_Controller {
 			$base . '/(?P<videoid>[0-9a-zA-Z_\-]+)',
 			array(
 				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'update_item' ),
+					'permission_callback' => array( $this, 'update_item_permissions_check' ),
+					'args'                => array(
+						'status' => array(
+							'required'          => true,
+							'validate_callback' => function( $param ) {
+								switch ( $param ) {
+									case Urlslab_Youtube_Data::STATUS_NEW:
+									case Urlslab_Youtube_Data::STATUS_DISABLED:
+									case Urlslab_Youtube_Data::STATUS_AVAILABLE:
+									case Urlslab_Youtube_Data::STATUS_PROCESSING:
+										return true;
+									default:
+										return false;
+								}
+							},
+						),
+					),
+				),
+			)
+		);
+
+
+		register_rest_route(
+			$namespace,
+			$base . '/(?P<videoid>[0-9a-zA-Z_\-]+)',
+			array(
+				array(
 					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => array( $this, 'detele_item' ),
 					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
@@ -77,9 +106,14 @@ class Urlslab_Api_Youtube_Cache extends WP_REST_Controller {
 				),
 			)
 		);
+
 	}
 
 	public function get_items_permissions_check( $request ) {
+		return current_user_can( 'administrator' );
+	}
+
+	public function update_item_permissions_check( $request ) {
 		return current_user_can( 'administrator' );
 	}
 
@@ -142,6 +176,26 @@ class Urlslab_Api_Youtube_Cache extends WP_REST_Controller {
 
 		return new WP_REST_Response( $rows, 200 );
 	}
+
+	public function update_item( $request ) {
+		try {
+
+			$row = new Urlslab_Youtube_Data( array( 'videoid' => $request->get_param( 'videoid' ) ) );
+			if ( $row->load() ) {
+				if ( $row->get( 'status' ) != $request->get_json_params()['status'] ) {
+					$row->set( 'status', $request->get_json_params()['status'] );
+					$row->update();
+				}
+
+				return new WP_REST_Response( $row->as_array(), 200 );
+			} else {
+				return new WP_Error( 'not-found', __( 'Row not found', 'urlslab' ), array( 'status' => 404 ) );
+			}
+		} catch ( Exception $e ) {
+			return new WP_Error( 'exception', __( 'Failed to update', 'urlslab' ), array( 'status' => 500 ) );
+		}
+	}
+
 
 	public function delete_item( $request ) {
 		global $wpdb;
