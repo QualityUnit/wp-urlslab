@@ -5,6 +5,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-css-cache-ro
 
 class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 
+	const SLUG = 'urlslab-css-optimizer';
 
 	private string $widget_slug;
 	private string $widget_title;
@@ -12,9 +13,15 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 	private string $landing_page_link;
 	private Urlslab_Admin_Page $parent_page;
 
+	const SETTING_NAME_CSS_MAX_SIZE = 'urlslab_css_max_size';
+	const DEFAULT_CSS_MAX_SIZE = 100000;
+
+	const SETTING_NAME_CSS_CACHE_TTL = 'urlslab_css_ttl';
+	const DEFAULT_CSS_CACHE_TTL = 604800;
+
 
 	public function __construct() {
-		$this->widget_slug        = 'urlslab-css-optimizer';
+		$this->widget_slug        = self::SLUG;
 		$this->widget_title       = __( 'CSS Optimizer' );
 		$this->widget_description = __( 'Optimizes speed of CSS loading into page' );
 		$this->landing_page_link  = 'https://www.urlslab.com';
@@ -74,7 +81,8 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 			$remove_elements = array();
 			foreach ( $css_links as $link_object ) {
 				if ( isset( $links[ $link_object->getAttribute( 'href' ) ] ) && isset( $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ] ) ) {
-					if ( $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ]->get( 'status' ) == Urlslab_CSS_Cache_Row::STATUS_ACTIVE ) {
+					$css_object = $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ];
+					if ( $css_object->get( 'status' ) == Urlslab_CSS_Cache_Row::STATUS_ACTIVE && $this->get_option( self::SETTING_NAME_CSS_MAX_SIZE ) > $css_object->get( 'filesize' ) ) {
 						$new_elm = $document->createElement( 'style', $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ]->get( 'css_content' ) );
 						$new_elm->setAttribute( 'type', 'text/css' );
 						if ( $link_object->hasAttribute( 'media' ) ) {
@@ -151,5 +159,29 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
+		$this->add_option_definition(
+			self::SETTING_NAME_CSS_MAX_SIZE,
+			self::DEFAULT_CSS_MAX_SIZE,
+			true,
+			__( 'CSS Max Size [bytes]' ),
+			__( 'Include into HTML CSS files smaller as defined limit' ),
+			self::OPTION_TYPE_NUMBER,
+			false,
+			function( $value ) {
+				return is_numeric( $value ) && 0 <= $value;
+			}
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSS_CACHE_TTL,
+			self::DEFAULT_CSS_CACHE_TTL,
+			true,
+			__( 'CSS Cache Time to Live [seconds]' ),
+			__( 'Invalidate cache of CSS file after defined amount of seconds. It can take few minutes before the cash object is created. Cache is loaded in cron task running each minute. Recommended values: One day = 86400 , One week = 604800, One month = 2628000' ),
+			self::OPTION_TYPE_NUMBER,
+			false,
+			function( $value ) {
+				return is_numeric( $value ) && 0 <= $value;
+			}
+		);
 	}
 }
