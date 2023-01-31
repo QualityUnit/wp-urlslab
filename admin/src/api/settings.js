@@ -19,17 +19,3 @@ export async function fetchSettings( slug ) {
 		return false;
 	}
 }
-
-export function processSettings( settingsObject ) {
-	if ( settingsObject && Object.keys( settingsObject ).length === 0 ) {
-		return false;
-	}
-
-	// for ( let i = 0; i < settingsObject.length; i++ ) {
-	// 	const element = settingsObject
-	// }
-	return settingsObject;
-	// Object.keys( settingsObject ).map( ( obj ) => {
-	// 	return obj;
-	// } );
-}
