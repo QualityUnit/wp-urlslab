@@ -24,7 +24,6 @@ export default function Settings( { settingId } ) {
 								<p>{ section.description }</p>
 
 								{ section.options.map( ( option ) => {
-									console.log( option );
 									return (
 										<div className="urlslab-settingspanel-option" key={ option.id }>
 											{ /* <h5>{ option.title }</h5> */ }
