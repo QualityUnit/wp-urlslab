@@ -119,6 +119,14 @@ abstract class Urlslab_Widget {
 						$option['value'] = '';
 					}
 					break;
+				case self::OPTION_TYPE_CHECKBOX:
+					$value = $this->get_option( $option_id );
+					if ( $value ) {
+						$option['value'] = true;
+					} else {
+						$option['value'] = false;
+					}
+					break;
 				default:
 					$option['value'] = $this->get_option( $option_id );
 			}
@@ -196,8 +204,21 @@ abstract class Urlslab_Widget {
 			}
 		}
 
-		if ( self::OPTION_TYPE_PASSWORD == $this->options[ $option_id ]['type'] && self::PASSWORD_PLACEHOLDER == $value ) {
-			return false;
+		switch ( $this->options[ $option_id ]['type'] ) {
+			case self::OPTION_TYPE_CHECKBOX:
+				if ( $value ) {
+					$value = true;
+				} else {
+					$value = false;
+				}
+				break;
+			case self::OPTION_TYPE_PASSWORD:
+				if ( self::PASSWORD_PLACEHOLDER == $value ) {
+					return false;
+				}
+				break;
+			default:
+				break;
 		}
 
 		return update_option( $option_id, $value );
