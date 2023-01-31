@@ -1,13 +1,17 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
+
+import { fetchSettings } from '../api/settings';
 import Loader from '../components/Loader';
 import SettingsOption from '../components/SettingsOption';
 
 import '../assets/styles/layouts/_Settings.scss';
 
 export default function Settings( { settingId } ) {
-	const queryClient = useQueryClient();
-	const settings = queryClient.getQueryData( [ 'settings', settingId ] );
+	const { data: settings } = useQuery( {
+		queryKey: [ 'settings', settingId ],
+		queryFn: () => fetchSettings( settingId ),
+	} );
 
 	if ( ! settings?.length ) {
 		return <Loader />;
