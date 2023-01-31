@@ -1,0 +1,13 @@
+@use "../common/variables" as *;
+@use "../common/mixins" as *;
+
+.urslab-no-apikey {
+	background-color: $grey-lighter;
+	padding: 1.5em 2em;
+	border-radius: 0.625em;
+
+	h3 {
+		font-size: 1.125rem;
+		margin: 0;
+	}
+}

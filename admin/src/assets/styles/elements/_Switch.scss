@@ -1,0 +1,89 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-switch {
+	display: inline-flex;
+	align-items: center;
+	cursor: pointer;
+	transition: all $transitionTime;
+
+	&-text {
+		order: -1;
+		margin-right: 0.5em;
+		font-weight: $font-weight-semi;
+
+		.textAfter & {
+			order: 0;
+			margin-left: 0.5em;
+			margin-right: 0;
+		}
+	}
+
+	&-input {
+		display: none !important;
+	}
+
+	&-switcher {
+		position: relative;
+		display: block;
+		width: 2.5rem;
+		height: 1.5rem;
+		color: transparent;
+		user-select: none;
+		cursor: pointer;
+
+		&::before,
+		&::after {
+			content: "";
+			display: block;
+			position: absolute;
+			cursor: pointer;
+		}
+
+		&::before {
+
+			@include square(100%);
+			background-color: $grey-medium;
+			border-radius: 9999em;
+			transition: background-color 0.25s ease;
+		}
+
+		&::after {
+
+			@include square(1.25rem);
+			top: 50%;
+			left: 0;
+			transform: translate(2px, -50%);
+			border-radius: 50%;
+			background-color: $white;
+			box-shadow: $box-shadow-small;
+			transition: transform $transitionTime ease;
+		}
+	}
+
+	@media (hover: hover) {
+
+		&:hover {
+			color: $primary-color;
+		}
+	}
+
+	.urlslab-multi-switch {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	&-input:checked + &-switcher::before {
+		background-color: $primary-color;
+
+		.secondary & {
+			background-color: $saturated-green;
+		}
+	}
+
+
+	&-input:checked + &-switcher::after {
+		transform: translate(calc(100% - 2px), -50%);
+	}
+}

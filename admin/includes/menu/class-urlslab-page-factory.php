@@ -25,7 +25,6 @@ class Urlslab_Page_Factory {
 			$image_seo = new Urlslab_Image_Seo_Widgets_Page();
 			$media_page = new Urlslab_Media_Page();
 			$ui_elements = new Urlslab_UI_Elements_Page();
-			$integrations_page = new Urlslab_Integrations_Page();
 
 			self::$menus = array(
 				$dashboard->get_menu_slug() => $dashboard,
@@ -35,7 +34,6 @@ class Urlslab_Page_Factory {
 				$image_seo->get_menu_slug() => $image_seo,
 				$media_page->get_menu_slug() => $media_page,
 				$ui_elements->get_menu_slug() => $ui_elements,
-				$integrations_page->get_menu_slug() => $integrations_page,
 			);
 			self::$admin_plugin_main_page = $dashboard;
 			self::$instance = new self;

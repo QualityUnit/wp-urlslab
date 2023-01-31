@@ -5,7 +5,6 @@
 class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 	public const DESC_TEXT_SUMMARY = 'S';
-	public const SETTING_NAME_DESC_REPLACEMENT_STRATEGY = 'urlslab_desc_replacement_strategy';
 	public const DESC_TEXT_URL = 'U';
 	public const DESC_TEXT_TITLE = 'T';
 	public const DESC_TEXT_META_DESCRIPTION = 'M';
@@ -16,15 +15,11 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	private Urlslab_Admin_Page $parent_page;
 	private Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher;
 
+	public const SETTING_NAME_DESC_REPLACEMENT_STRATEGY = 'urlslab_desc_replacement_strategy';
 	const SETTING_NAME_REMOVE_LINKS = 'urlslab_remove_links';
-	const SETTING_DEFAULT_REMOVE_LINKS = true;
 	const SETTING_NAME_VALIDATE_LINKS = 'urlslab_validate_links';
 	const SETTING_NAME_LAST_LINK_VALIDATION_START = 'urlslab_last_validation';
-
 	const SETTING_NAME_URLS_MAP = 'urlslab_urls_map';
-	const SETTING_DEFAULT_URLS_MAP = true;
-
-	private array $options = array();
 
 	/**
 	 * @param Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher
@@ -41,7 +36,6 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	public function init_widget( Urlslab_Loader $loader ) {
 		$loader->add_action( 'post_updated', $this, 'post_updated', 10, 3 );
 		$loader->add_action( 'urlslab_content', $this, 'theContentHook', 12 );
-		$this->options[ self::SETTING_NAME_REMOVE_LINKS ] = get_option( self::SETTING_NAME_REMOVE_LINKS, self::SETTING_DEFAULT_REMOVE_LINKS );
 	}
 
 	public function post_updated( $post_id, $post, $post_before ) {
@@ -75,7 +69,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return $this->widget_title . ' Widget';
+		return $this->widget_title;
 	}
 
 	/**
@@ -125,7 +119,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 				);
 
 				if ( ! empty( $result ) ) {
-					$strategy = get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
+					$strategy = $this->get_option( self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY );
 
 					$this->update_urls_map( array_keys( $result ) );
 
@@ -137,7 +131,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 						) {
 
 							if (
-								$this->options[ self::SETTING_NAME_REMOVE_LINKS ] &&
+								$this->get_option( self::SETTING_NAME_REMOVE_LINKS ) &&
 								! $result[ $url_obj->get_url_id() ]->is_visible()
 							) {
 								//link should not be visible, remove it from content
@@ -182,8 +176,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	public function visibility_active_in_table(): bool {
-		return Urlslab_User_Widget::get_instance()->is_widget_activated( $this->widget_slug ) &&
-			   get_option( self::SETTING_NAME_REMOVE_LINKS, self::SETTING_DEFAULT_REMOVE_LINKS ) == 1;
+		return Urlslab_User_Widget::get_instance()->is_widget_activated( $this->widget_slug ) && $this->get_option( self::SETTING_NAME_REMOVE_LINKS );
 	}
 
 	public function render_widget_overview() {
@@ -203,7 +196,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	private function update_urls_map( array $url_ids ) {
-		if ( get_option( self::SETTING_NAME_URLS_MAP, self::SETTING_DEFAULT_URLS_MAP ) == 0 ) {
+		if ( ! $this->get_option( self::SETTING_NAME_URLS_MAP ) ) {
 			return;
 		}
 
@@ -271,73 +264,57 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		}
 	}
 
-	public static function add_option() {
-		add_option( self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, self::DESC_TEXT_SUMMARY, '', true );
-		add_option( self::SETTING_NAME_REMOVE_LINKS, self::SETTING_DEFAULT_REMOVE_LINKS, '', true );
-		add_option( self::SETTING_NAME_URLS_MAP, self::SETTING_DEFAULT_URLS_MAP, '', true );
-		add_option( self::SETTING_NAME_VALIDATE_LINKS, false, '', false );
-		add_option( self::SETTING_NAME_LAST_LINK_VALIDATION_START, Urlslab_Data::get_now(), '', false );
-	}
-
-	public static function update_settings( array $new_settings ) {
-		if (
-			isset( $new_settings[ self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ] )
-		) {
-			update_option(
-				self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY,
-				$new_settings[ self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY ]
-			);
-		}
-
-		if (
-			isset( $new_settings[ self::SETTING_NAME_REMOVE_LINKS ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_REMOVE_LINKS ] )
-		) {
-			update_option(
-				self::SETTING_NAME_REMOVE_LINKS,
-				$new_settings[ self::SETTING_NAME_REMOVE_LINKS ]
-			);
-		} else {
-			update_option(
-				self::SETTING_NAME_REMOVE_LINKS,
-				false
-			);
-		}
-
-		if (
-			isset( $new_settings[ self::SETTING_NAME_VALIDATE_LINKS ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_VALIDATE_LINKS ] )
-		) {
-			update_option(
-				self::SETTING_NAME_VALIDATE_LINKS,
-				$new_settings[ self::SETTING_NAME_VALIDATE_LINKS ]
-			);
-		} else {
-			update_option(
-				self::SETTING_NAME_VALIDATE_LINKS,
-				false
-			);
-		}
-
-		if (
-			isset( $new_settings[ self::SETTING_NAME_URLS_MAP ] ) &&
-			! empty( $new_settings[ self::SETTING_NAME_URLS_MAP ] )
-		) {
-			update_option(
-				self::SETTING_NAME_URLS_MAP,
-				$new_settings[ self::SETTING_NAME_URLS_MAP ]
-			);
-		} else {
-			update_option(
-				self::SETTING_NAME_URLS_MAP,
-				false
-			);
-		}
-	}
-
 	public function is_api_key_required() {
 		return true;
 	}
 
+	protected function add_options() {
+		$this->add_option_definition(
+			self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY,
+			self::DESC_TEXT_SUMMARY,
+			true,
+			__( 'Description value' ),
+			__( 'Specify which data should be used to enhance your links automatically' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY          => __( 'Generate descriptions with summaries' ),
+				Urlslab_Link_Enhancer::DESC_TEXT_META_DESCRIPTION => __( 'Generate descriptions with meta description' ),
+				Urlslab_Link_Enhancer::DESC_TEXT_TITLE            => __( 'Generate descriptions with Url title' ),
+				Urlslab_Link_Enhancer::DESC_TEXT_URL              => __( 'Generate descriptions with Url path' ),
+			)
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_REMOVE_LINKS,
+			true,
+			true,
+			__( 'Hide Links' ),
+			__( 'Hide links with status 404 or 503 or marked as invisible from all pages' )
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_URLS_MAP,
+			true,
+			true,
+			__( 'Track Internal links' ),
+			__( 'Store all links used in your website and analyze relations and content clusters between pages.' )
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_VALIDATE_LINKS,
+			false,
+			false,
+			__( 'Validate Links' ),
+			__( 'Make request to each URL found in website (in background by cron) and test if it is valid or invalid url (e.g. 404 page)' )
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_LAST_LINK_VALIDATION_START,
+			Urlslab_Data::get_now(),
+			false,
+			__( 'Validate urls created before' ),
+			__( 'Background process validates all found URLs in page created after selected date. Supported format: Y-m-d H:i:s' ),
+			self::OPTION_TYPE_DATETIME
+		);
+	}
 }

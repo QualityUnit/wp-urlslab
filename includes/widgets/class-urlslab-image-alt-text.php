@@ -35,7 +35,7 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return $this->widget_title . ' Widget';
+		return $this->widget_title;
 	}
 
 	/**
@@ -104,9 +104,10 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 		return 'image-alt-text';
 	}
 
-	public static function update_settings( array $new_settings ) {}
-
 	public function is_api_key_required() {
 		return true;
+	}
+
+	protected function add_options() {
 	}
 }

@@ -1,0 +1,19 @@
+{
+  "presets": [
+    [
+      "@babel/preset-react",
+      {
+        "pragma": "wp.element.createElement"
+      }
+    ]
+  ],
+  "plugins": [
+    "@babel/plugin-transform-react-jsx",
+    [
+      "transform-react-jsx",
+      {
+        "pragma": "wp.element.createElement"
+      }
+    ]
+  ]
+}

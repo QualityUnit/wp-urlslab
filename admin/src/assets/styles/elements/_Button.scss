@@ -1,0 +1,55 @@
+/* stylelint-disable selector-class-pattern, no-descending-specificity */
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+
+button {
+
+	@include appearance;
+	outline: none;
+	border: none;
+	background-color: transparent;
+	padding: 0;
+	cursor: pointer;
+}
+
+button.urlslab-button,
+.urlslab-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background-color: $grey-light;
+	font-size: 0.8125rem;
+	font-weight: $font-weight-semi;
+	padding: 1em 2em;
+	border-radius: 0.375em;
+	transition: all $transitionTime ease;
+	text-decoration: none;
+	color: $black;
+	cursor: pointer;
+
+	&.active {
+		background-color: $primary-color;
+		color: $white;
+	}
+
+	svg {
+
+		@include square(1.5em);
+		margin-right: 0.5em;
+		fill: currentcolor;
+	}
+
+	@media (hover: hover) {
+
+		&:hover {
+			background-color: $grey-lightest;
+			color: $black;
+		}
+
+		&.active:hover {
+			background-color: $lighter-blue;
+			color: $white;
+		}
+	}
+}

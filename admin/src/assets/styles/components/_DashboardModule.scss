@@ -1,0 +1,120 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-dashboardmodule {
+	position: relative;
+	padding: 1.5em;
+	max-width: 35em;
+	background-color: $white;
+	border-radius: 10px;
+	box-shadow: $box-shadow-small;
+	transition: all $transitionTime;
+	overflow: hidden;
+
+	&.active {
+		box-shadow: 0 0 0 2px $primary-color;
+
+		&.activating {
+			box-shadow: $box-shadow-small;
+		}
+	}
+
+	&-activating {
+
+		@include posZero;
+		position: absolute;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-weight: $font-weight-semi;
+		z-index: 2;
+		background-color: rgba($white, 0.7);
+		color: $black;
+		animation: fadeIn $transitionTime;
+
+		~ * {
+			opacity: 0.5;
+		}
+	}
+
+	&-api {
+		position: relative;
+		display: inline-flex;
+		align-items: center;
+		font-size: 0.75rem;
+		font-weight: $font-weight-semi;
+		background-color: $desaturated-blue;
+		border-radius: 6px 1.5em 1.5em 0;
+		box-shadow: $box-shadow-small;
+
+		&::after {
+
+			@include triangle(1.25em, #6583B7, right);
+			position: absolute;
+			transform: rotate(-45deg);
+			top: calc(100% - 0.5em);
+			left: 0.15em;
+			content: "";
+		}
+
+		svg {
+
+			@include square(1.666em);
+			margin-right: 0.5em;
+		}
+
+		@media (min-width: $breakpoint-tablet) {
+			position: absolute;
+			top: 2.5em;
+			left: -1em;
+			padding: 1em 2em;
+		}
+	}
+
+	&-switch {
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	&-main {
+		flex-wrap: wrap;
+	}
+
+	&-title {
+		font-weight: $font-weight-semi;
+		margin: 1.5em 0 0;
+		width: 100%;
+	}
+
+	&-content {
+		font-size: 0.875rem;
+
+		p {
+			font-size: inherit;
+			margin: 0 0 1em;
+		}
+	}
+
+	&-image {
+		order: 1;
+		filter: saturate(0);
+	}
+
+	&.active &-image {
+		filter: saturate(1);
+	}
+
+	@media (min-width: $breakpoint-tablet) {
+		padding: 2.5em;
+		margin: 2em;
+
+		&-content {
+			width: 54.6%;
+		}
+
+		&-image {
+			width: 42%;
+			margin-left: auto;
+		}
+	}
+}

@@ -18,11 +18,6 @@ abstract class Urlslab_Admin_Subpage {
 	abstract public function render_modals();
 
 	/**
-	 * @return void renders the ui for editing and reading settings
-	 */
-	abstract public function render_settings();
-
-	/**
 	 * @return void used to specify screen options for table
 	 */
 	abstract public function set_table_screen_options();

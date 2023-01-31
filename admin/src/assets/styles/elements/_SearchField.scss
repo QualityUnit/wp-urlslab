@@ -1,0 +1,38 @@
+/* stylelint-disable no-descending-specificity */
+
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-searchfield {
+
+	border-color: transparent;
+	border-radius: 1.5em;
+	max-width: 18.75em;
+
+	&:focus-within {
+		color: $black;
+		border-color: transparent;
+		box-shadow: none;
+	}
+
+	svg {
+
+		@include square(1.25em);
+	}
+
+	&-input[type="search"] {
+		font-weight: $font-weight-normal;
+		line-height: 1;
+		padding: 0.35em 0.5em 0.35em 3.5em;
+		border-radius: 1.5em;
+		border: 1px solid transparent;
+		background-color: $grey-light;
+
+		@include input-placeholder {
+			color: currentcolor;
+			font-size: 0.875rem;
+			transition: all 0.2s;
+			opacity: 1;
+		}
+	}
+}
