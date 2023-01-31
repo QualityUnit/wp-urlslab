@@ -85,7 +85,7 @@ class Urlslab_General extends Urlslab_Widget {
 			'',
 			true,
 			__( 'API Key' ),
-			__( 'Urlslab API key you can get from <a href="https://www.urlslab.com" target="_blank">https://www.urlslab.com</a>' ),
+			__( 'Get Urlslab API key from <a href="https://www.urlslab.com" target="_blank">https://www.urlslab.com</a>' ),
 			self::OPTION_TYPE_PASSWORD
 		);
 	}
