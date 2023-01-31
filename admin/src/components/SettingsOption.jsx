@@ -18,7 +18,11 @@ export default function SettingsOption( { option } ) {
 				);
 			case 'checkbox':
 				return (
-					<Switch className="option flex" label={ title } checked={ value === '1' } />
+					<Switch
+						className="option flex"
+						label={ title }
+						checked={ value === '1' || value === true }
+					/>
 				);
 			default:
 				break;
