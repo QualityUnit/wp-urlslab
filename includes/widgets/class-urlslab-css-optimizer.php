@@ -45,7 +45,7 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return $this->widget_title . __( ' Widget' );
+		return $this->widget_title;
 	}
 
 	/**
