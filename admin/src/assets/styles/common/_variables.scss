@@ -1,3 +1,4 @@
+@use "sass:color";
 $transitionTime: 0.25s;
 $menuWidth: 14.375rem;
 
@@ -19,6 +20,7 @@ $font-weight-semi: 600;
 $font-weight-bold: 700;
 
 $saturated-blue: #2570ed;
+$lighter-blue: color.adjust($saturated-blue, $lightness: 8%);
 $desaturated-blue: #dfeafd;
 $saturated-cyan: #46a6ff;
 $desaturated-cyan: #e3f2ff;

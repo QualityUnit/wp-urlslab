@@ -16,7 +16,8 @@ export default function DashboardModule( { moduleId, title, children, image, isA
 		mutationFn: () => {
 			return setModule( moduleId, { active: ! isActive } );
 		},
-		onSuccess: () => {
+		onSuccess: ( ) => {
+			queryClient.setQueryData( [ 'modules', moduleId.active ], ! isActive );
 			queryClient.invalidateQueries( [ 'modules' ] );
 		},
 	} );

@@ -1,7 +1,7 @@
 import '../assets/styles/elements/_Button.scss';
 
 export default function Button( {
-	active, type, className, onClick, href, children,
+	active, type, className, onClick, href, target, children,
 } ) {
 	return (
 		href
@@ -10,6 +10,7 @@ export default function Button( {
 					className={ `urlslab-button ${ className || '' } ${ active ? 'active' : '' }` }
 					href={ href }
 					onClick={ onClick || null }
+					target={ target || null }
 				>
 					{ children }
 				</a>

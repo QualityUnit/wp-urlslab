@@ -24,6 +24,8 @@ button.urlslab-button,
 	padding: 1em 2em;
 	border-radius: 0.375em;
 	transition: all $transitionTime ease;
+	text-decoration: none;
+	color: $black;
 	cursor: pointer;
 
 	&.active {
@@ -43,6 +45,11 @@ button.urlslab-button,
 		&:hover {
 			background-color: $grey-lightest;
 			color: $black;
+		}
+
+		&.active:hover {
+			background-color: $lighter-blue;
+			color: $white;
 		}
 	}
 }

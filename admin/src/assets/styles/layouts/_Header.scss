@@ -2,8 +2,6 @@
 @use "../common/mixins" as *;
 
 .urlslab-header {
-	display: flex;
-	align-items: center;
 	position: sticky;
 	z-index: 100;
 	width: 100%;
