@@ -306,8 +306,8 @@ class Urlslab {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		$this->loader->add_action( 'template_redirect', $plugin_public, 'download_offloaded_file', PHP_INT_MAX );
 
-		$this->loader->add_action( 'wp_head', $this, 'buffer_head_start', 0 );
-		$this->loader->add_action( 'wp_head', $this, 'buffer_end', PHP_INT_MAX );
+		$this->loader->add_action( 'wp_before_load_template', $this, 'buffer_head_start', PHP_INT_MIN );
+		$this->loader->add_action( 'wp_after_load_template', $this, 'buffer_end', PHP_INT_MAX );
 
 		//body content
 		$this->loader->add_action( 'wp_body_open', $this, 'buffer_content_start', PHP_INT_MAX );
@@ -317,8 +317,16 @@ class Urlslab {
 	}
 
 	public function buffer_head_start() {
-		ob_start( array( $this, 'urlslab_head_content' ), 0 );
+		ob_start(
+			array(
+				$this,
+				'urlslab_head_content_check',
+			),
+			0,
+			PHP_OUTPUT_HANDLER_FLUSHABLE | PHP_OUTPUT_HANDLER_REMOVABLE
+		);
 	}
+
 
 	public function buffer_content_start() {
 		ob_start( array( $this, 'urlslab_content' ), 0, PHP_OUTPUT_HANDLER_FLUSHABLE | PHP_OUTPUT_HANDLER_REMOVABLE );
@@ -328,8 +336,18 @@ class Urlslab {
 		ob_end_flush();
 	}
 
-	public function urlslab_head_content( $content ) {
-		if ( empty( $content ) ) {
+	public function urlslab_head_content_check( $content ) {
+		if ( false !== strpos( strtolower( substr( $content, 0, 30 ) ), '<head>' ) ) {
+			if ( preg_match( '|(.*?)(<head>.*?</head>)(.*?)|imus', $content, $matches ) ) {
+				return $matches[1] . $this->urlslab_head_content( '<html>' . $matches[2] . '<body></body></html>' ) . $matches[3];
+			}
+		}
+
+		return $content;
+	}
+
+	private function urlslab_head_content( $content ) {
+		if ( empty( $content ) || ! has_action( 'urlslab_head_content' ) ) {
 			return $content;    //nothing to process
 		}
 
@@ -341,21 +359,29 @@ class Urlslab {
 		try {
 			$document->loadHTML(
 				mb_convert_encoding( $content, 'HTML-ENTITIES', get_bloginfo( 'charset' ) ),
-				LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE
+				LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE
 			);
+
+			foreach ( libxml_get_errors() as $error ) {
+				if ( false !== strpos( $error->message, 'Unexpected' ) || false !== strpos( $error->message, 'misplaced' ) ) {
+					return $content;
+				}
+			}
+
 			libxml_clear_errors();
 			libxml_use_internal_errors( $libxml_previous_state );
 
 			do_action( 'urlslab_head_content', $document );
 
-			return $document->saveHTML();
+
+			return $document->saveHTML( $document->getElementsByTagName( 'head' )[0] );
 		} catch ( Exception $e ) {
 			return $content;
 		}
 	}
 
 	public function urlslab_content( $content ) {
-		if ( empty( $content ) || http_response_code() !== 200 ) {
+		if ( empty( $content ) || http_response_code() !== 200 || ! has_action( 'urlslab_content' ) ) {
 			return $content;    //nothing to process
 		}
 
