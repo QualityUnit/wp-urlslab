@@ -35,7 +35,7 @@ export default function SettingsMenu( { modules, backButton, activeSetting } ) {
 	};
 
 	const prefetchSettings = ( moduleId ) => {
-		queryClient.prefetchQuery( {
+		queryClient.fetchQuery( {
 			queryKey: [ 'settings', moduleId ],
 			queryFn: () => fetchSettings( moduleId ),
 		} );
