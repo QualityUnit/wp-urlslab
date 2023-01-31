@@ -42,7 +42,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return $this->widget_title ;
+		return $this->widget_title;
 	}
 
 	/**
@@ -90,7 +90,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 				$content .= $this->render_shortcode_footer();
 			}
-		} catch (Exception $e) {
+		} catch ( Exception $e ) {
 		}
 
 		return $content;
@@ -158,6 +158,5 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		return true;
 	}
 
-	protected function add_options() {
-	}
+	protected function add_options() {}
 }
