@@ -120,8 +120,8 @@ abstract class Urlslab_Widget {
 					}
 					break;
 				case self::OPTION_TYPE_CHECKBOX:
-					$value = $this->get_option($option_id);
-					if ($value) {
+					$value = $this->get_option( $option_id );
+					if ( $value ) {
 						$option['value'] = true;
 					} else {
 						$option['value'] = false;
@@ -204,16 +204,16 @@ abstract class Urlslab_Widget {
 			}
 		}
 
-		switch ($this->options[ $option_id ]['type']) {
+		switch ( $this->options[ $option_id ]['type'] ) {
 			case self::OPTION_TYPE_CHECKBOX:
-				if ($value) {
+				if ( $value ) {
 					$value = true;
 				} else {
 					$value = false;
 				}
 				break;
 			case self::OPTION_TYPE_PASSWORD:
-				if (self::PASSWORD_PLACEHOLDER == $value) {
+				if ( self::PASSWORD_PLACEHOLDER == $value ) {
 					return false;
 				}
 				break;
