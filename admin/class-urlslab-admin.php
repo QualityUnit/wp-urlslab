@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -19,6 +20,7 @@
  * @subpackage urlslab/admin
  */
 class Urlslab_Admin {
+
 	/**
 	 * The ID of this plugin.
 	 *
@@ -70,36 +72,6 @@ class Urlslab_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-
-	public function enqueue_react_settings() {
-		if ( isset( $_GET['page'] ) && str_contains( $_GET['page'], 'urlslab' ) ) {
-			wp_enqueue_style( $this->urlslab . '-settings', plugin_dir_url( __FILE__ ) . 'dist/assets/style.css' );
-
-			wp_enqueue_script(
-				$this->urlslab . '-settings',
-				plugin_dir_url( __FILE__ ) . 'dist/settings.js',
-				array( 'react', 'react-dom', 'wp-api-fetch', 'wp-element', 'wp-i18n' ),
-				$this->version,
-				true
-			);
-
-			add_filter(
-				'script_loader_tag',
-				function( $tag, $handle ) {
-					// if not your script, do nothing and return original $tag
-					if ( $this->urlslab . '-settings' !== $handle ) {
-						return $tag;
-					}
-
-					// change the script tag by adding type="module" and return it.
-					return str_replace( ' src', ' type="module" src', $tag );
-				},
-				10,
-				3
-			);
-		}
-	}
-
 	public function enqueue_styles() {
 
 		/**
@@ -115,6 +87,14 @@ class Urlslab_Admin {
 		 */
 
 		wp_enqueue_style( $this->urlslab . '-jquery-modal', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css' );
+
+		wp_enqueue_style(
+			$this->urlslab,
+			plugin_dir_url( __FILE__ ) . 'css/urlslab-admin.css',
+			array(),
+			$this->version,
+			'all'
+		);
 
 	}
 
@@ -137,13 +117,6 @@ class Urlslab_Admin {
 		 * class.
 		 */
 
-		// Allows to use POST etc via Rest API cookie authentification
-
-		// wp_localize_script( 'wp-api', 'urlslabNonceAuth', array(
-		// 'root' => esc_url_raw( rest_url() ),
-		// 'nonce' => wp_create_nonce( 'wp_rest' )
-		// ) );
-
 		wp_enqueue_script(
 			$this->urlslab,
 			plugin_dir_url( __FILE__ ) . 'js/urlslab-admin.js',
@@ -151,7 +124,6 @@ class Urlslab_Admin {
 			$this->version,
 			false
 		);
-
 		wp_localize_script(
 			$this->urlslab,
 			'params',

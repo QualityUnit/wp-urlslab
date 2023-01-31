@@ -25,6 +25,14 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$this->parent_page        = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-media' );
 	}
 
+	public static function add_option() {
+		add_option( self::SETTING_NAME_IMG_LAZY_LOADING, false, '', true );
+		add_option( self::SETTING_NAME_VIDEO_LAZY_LOADING, false, '', true );
+		add_option( self::SETTING_NAME_YOUTUBE_LAZY_LOADING, false, '', true );
+		add_option( self::SETTING_NAME_REMOVE_WP_LAZY_LOADING, true, '', true );
+		add_option( self::SETTING_NAME_YOUTUBE_API_KEY, '', '', false );
+	}
+
 	public function init_widget( Urlslab_Loader $loader ) {
 		$loader->add_action( 'urlslab_content', $this, 'the_content', 10 );
 	}
@@ -34,7 +42,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return $this->widget_title ;
+		return $this->widget_title . ' Widget';
 	}
 
 	public function get_widget_description(): string {
@@ -67,17 +75,88 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		return '';
 	}
 
+	public static function update_settings( array $new_settings ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_IMG_LAZY_LOADING ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_IMG_LAZY_LOADING ] )
+		) {
+			update_option(
+				self::SETTING_NAME_IMG_LAZY_LOADING,
+				$new_settings[ self::SETTING_NAME_IMG_LAZY_LOADING ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_IMG_LAZY_LOADING,
+				false
+			);
+		}
+
+		if (
+			isset( $new_settings[ self::SETTING_NAME_VIDEO_LAZY_LOADING ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_VIDEO_LAZY_LOADING ] )
+		) {
+			update_option(
+				self::SETTING_NAME_VIDEO_LAZY_LOADING,
+				$new_settings[ self::SETTING_NAME_VIDEO_LAZY_LOADING ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_VIDEO_LAZY_LOADING,
+				false
+			);
+		}
+
+		if (
+			isset( $new_settings[ self::SETTING_NAME_YOUTUBE_LAZY_LOADING ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_YOUTUBE_LAZY_LOADING ] )
+		) {
+			update_option(
+				self::SETTING_NAME_YOUTUBE_LAZY_LOADING,
+				$new_settings[ self::SETTING_NAME_YOUTUBE_LAZY_LOADING ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_YOUTUBE_LAZY_LOADING,
+				false
+			);
+		}
+		if (
+			isset( $new_settings[ self::SETTING_NAME_REMOVE_WP_LAZY_LOADING ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_REMOVE_WP_LAZY_LOADING ] )
+		) {
+			update_option(
+				self::SETTING_NAME_REMOVE_WP_LAZY_LOADING,
+				$new_settings[ self::SETTING_NAME_REMOVE_WP_LAZY_LOADING ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_REMOVE_WP_LAZY_LOADING,
+				false
+			);
+		}
+
+		if (
+			isset( $new_settings[ self::SETTING_NAME_YOUTUBE_API_KEY ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_YOUTUBE_API_KEY ] )
+		) {
+			update_option(
+				self::SETTING_NAME_YOUTUBE_API_KEY,
+				$new_settings[ self::SETTING_NAME_YOUTUBE_API_KEY ]
+			);
+		}
+	}
+
 	public function the_content( DOMDocument $document ) {
-		if ( $this->get_option( self::SETTING_NAME_YOUTUBE_LAZY_LOADING ) ) {
+		if ( get_option( self::SETTING_NAME_YOUTUBE_LAZY_LOADING, false ) ) {
 			$this->add_youtube_lazy_loading( $document );
 		}
-		if ( $this->get_option( self::SETTING_NAME_REMOVE_WP_LAZY_LOADING ) ) {
+		if ( get_option( self::SETTING_NAME_REMOVE_WP_LAZY_LOADING, true ) ) {
 			$this->remove_default_wp_img_lazy_loading( $document );
 		}
-		if ( $this->get_option( self::SETTING_NAME_IMG_LAZY_LOADING ) ) {
+		if ( get_option( self::SETTING_NAME_IMG_LAZY_LOADING, false ) ) {
 			$this->add_images_lazy_loading( $document );
 		}
-		if ( $this->get_option( self::SETTING_NAME_VIDEO_LAZY_LOADING ) ) {
+		if ( get_option( self::SETTING_NAME_VIDEO_LAZY_LOADING, false ) ) {
 			$this->add_videos_lazy_loading( $document );
 		}
 	}
@@ -197,7 +276,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$yt_elements = $xpath->query( "//*[@data-ytid and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
 		foreach ( $yt_elements as $yt_element ) {
 			$ytid = $yt_element->getAttribute( 'data-ytid' );
-			if ( isset( $video_objects[ $ytid ] ) && Urlslab_Youtube_Data::STATUS_AVAILABLE === $video_objects[ $ytid ]->get( 'status' ) ) {
+			if ( isset( $video_objects[ $ytid ] ) && Urlslab_Youtube_Data::YOUTUBE_AVAILABLE === $video_objects[ $ytid ]->get( 'status' ) ) {
 				$this->append_video_schema( $document, $yt_element, $video_objects[ $ytid ] );
 			}
 		}
@@ -259,7 +338,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		foreach ( $youtube_ids as $videoid ) {
 			if ( ! isset( $videos[ $videoid ] ) ) {
 				$placeholders[] = '(%s,%s,%s)';
-				array_push( $values, $videoid, Urlslab_Youtube_Data::STATUS_NEW, $now );
+				array_push( $values, $videoid, Urlslab_Youtube_Data::YOUTUBE_NEW, $now );
 			}
 		}
 		if ( ! empty( $placeholders ) ) {
@@ -413,51 +492,4 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 
-	protected function add_options() {
-		$this->add_option_definition(
-			self::SETTING_NAME_IMG_LAZY_LOADING,
-			false,
-			true,
-			__( 'Image Lazy Loading' ),
-			__( 'Enable/Disable lazy loading for Images in your pages' )
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_VIDEO_LAZY_LOADING,
-			false,
-			true,
-			__( 'Video Lazy Loading' ),
-			__( 'Enable/Disable lazy loading for Videos in your pages' )
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_REMOVE_WP_LAZY_LOADING,
-			true,
-			true,
-			__( 'Disable WordPress lazy loading' ),
-			__( "Remove attribute loading='lazy' added by default to all images by Wordpress and control lazy loading by Urlslab plugin only. Sometimes you need to load images faster and this is the way how to do it. To disable this feature on specific elements, add class urlslab-skip-nolazy" )
-		);
-
-		$this->add_options_form_section( 'youtube', __( 'Youtube' ), __( 'Lazyload content (e.g. preview image, title, description, etc.) from youtube and load slow youtube iframes just in case user clicks the video image. Urlslab plugin will store information laoded from youtube to local cache.' ) );
-		$this->add_option_definition(
-			self::SETTING_NAME_YOUTUBE_LAZY_LOADING,
-			false,
-			true,
-			__( 'Youtube Lazy Loading' ),
-			__( 'Enable/Disable lazy loading for Youtube Videos in your pages' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'youtube'
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_YOUTUBE_API_KEY,
-			'',
-			false,
-			__( 'Youtube API Key' ),
-			__( 'Youtube API Key is used to cache video preview images localy and serve them on place of youtube code. Leave empty to load the key from environment variable YOUTUBE_API_KEY.' ),
-			self::OPTION_TYPE_PASSWORD,
-			false,
-			null,
-			'youtube'
-		);
-	}
 }

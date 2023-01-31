@@ -24,8 +24,11 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	//automatically offload external images found in every page content (starting with damain name different as current page)
 	public const SETTING_NAME_SAVE_EXTERNAL = 'urlslab_save_external_resources';
+	public const SETTING_DEFAULT_SAVE_EXTERNAL = false;
+
 	//automatically offload internal images found in every page content (starting with damain name same as current page)
 	public const SETTING_NAME_SAVE_INTERNAL = 'urlslab_save_internal_resources';
+	public const SETTING_DEFAULT_SAVE_INTERNAL = false;
 
 	public const SETTING_NAME_NEW_FILE_DRIVER = 'urlslab_file_driver';
 	public const SETTING_DEFAULT_NEW_FILE_DRIVER = Urlslab_Driver::DRIVER_LOCAL_FILE;
@@ -60,22 +63,21 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	// speed: Default value 6. Accepted values are int the range of 0 (slowest) through 10 (fastest). Integers outside the 0-10 range are clamped.
 	public const SETTING_DEFAULT_AVIF_SPEED = 5;
+	public const SETTING_DEFAULT_MEDIA_CACHE_EXPIRE_TIME = 31536000;
 	public const SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME = 'urlslab_media_cache_expire';
 
 	public const SETTING_NAME_IMAGE_RESIZING = 'urlslab_img_resize';
 	public const SETTING_DEFAULT_IMAGE_RESIZING = 1;
 
 	public const SETTING_NAME_LOG_IMAGES = 'urlslab_img_log';
+	public const SETTING_DEFAULT_LOG_IMAGES = 0;
+
 	public const SETTING_NAME_HIDE_ERROR_IMAGES = 'urlslab_img_hide_err';
+	public const SETTING_DEFAULT_HIDE_ERROR_IMAGES = 0;
 
 	private const URLSLAB_MIN_WIDTH = 'urlslab-min-width-';
 	public const SETTING_NAME_IMG_MIN_WIDTH = 'urlslab_img_min_width';
-
-	public const SETTING_NAME_S3_BUCKET = 'urlslab_AWS_S3_bucket';
-	public const SETTING_NAME_S3_REGION = 'urlslab_AWS_S3_region';
-	public const SETTING_NAME_S3_ACCESS_KEY = 'urlslab_AWS_S3_access_key';
-	public const SETTING_NAME_S3_SECRET = 'urlslab_AWS_S3_secret';
-	public const SETTING_NAME_S3_URL_PREFIX = 'urlslab_AWS_S3_url_prefix';
+	public const SETTING_DEFAULT_IMG_MIN_WIDTH = 0;
 
 
 	private $files = array();
@@ -139,7 +141,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				'filesize'       => filesize( $file['file'] ),
 				'filestatus'     => Urlslab_Driver::STATUS_NEW,
 				'status_changed' => Urlslab_Data::get_now(),
-				'driver'         => $this->get_option( self::SETTING_NAME_NEW_FILE_DRIVER ),
+				'driver'         => get_option( self::SETTING_NAME_NEW_FILE_DRIVER, self::SETTING_DEFAULT_NEW_FILE_DRIVER ),
 			),
 			false
 		);
@@ -159,7 +161,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	public function the_content( DOMDocument $document ) {
 		$this->process_offloading( $document );
-		if ( $this->get_option( self::SETTING_NAME_IMG_MIN_WIDTH ) ) {
+		if ( get_option( self::SETTING_NAME_IMG_MIN_WIDTH, self::SETTING_DEFAULT_IMG_MIN_WIDTH ) ) {
 			$this->process_min_width( $document );
 		}
 	}
@@ -344,7 +346,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	private function log_file_usage( array $missing_file_ids ) {
-		if ( $this->get_option( self::SETTING_NAME_LOG_IMAGES ) ) {
+		if ( get_option( self::SETTING_NAME_LOG_IMAGES, self::SETTING_DEFAULT_LOG_IMAGES ) ) {
 			global $wpdb;
 
 			$urlid   = $this->get_current_page_url()->get_url_id();
@@ -681,8 +683,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	private function schedule_missing_images( array $urls ) {
-		$save_internal = $this->get_option( self::SETTING_NAME_SAVE_INTERNAL );
-		$save_external = $this->get_option( self::SETTING_NAME_SAVE_EXTERNAL );
+		$save_internal = get_option( self::SETTING_NAME_SAVE_INTERNAL, self::SETTING_DEFAULT_SAVE_INTERNAL );
+		$save_external = get_option( self::SETTING_NAME_SAVE_EXTERNAL, self::SETTING_DEFAULT_SAVE_EXTERNAL );
 		if ( ! ( $save_internal || $save_external ) ) {
 			return;
 		}
@@ -729,7 +731,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		header( 'Content-Transfer-Encoding: binary' );
 		header( 'Pragma: public' );
 
-		$expires_offset = $this->get_option( self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME );
+		$expires_offset = get_option( self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME, self::SETTING_DEFAULT_MEDIA_CACHE_EXPIRE_TIME );
 		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
 		header( "Cache-Control: public, max-age=$expires_offset" );
 		header( 'Content-length: ' . $file->get_file_pointer()->get( 'filesize' ) );
@@ -751,6 +753,261 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	public function get_thumbnail_demo_url(): string {
 		return '';
+	}
+
+	public static function add_option() {
+		add_option( self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND, self::SETTING_DEFAULT_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND, '', false );
+		add_option( self::SETTING_NAME_SAVE_EXTERNAL, self::SETTING_DEFAULT_SAVE_EXTERNAL, '', true );
+		add_option( self::SETTING_NAME_SAVE_INTERNAL, self::SETTING_DEFAULT_SAVE_INTERNAL, '', true );
+		add_option( self::SETTING_NAME_NEW_FILE_DRIVER, self::SETTING_DEFAULT_NEW_FILE_DRIVER, '', true );
+		add_option( self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES, self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_LOCAL_FILES, '', false );
+		add_option( self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3, self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_S3, '', false );
+		add_option( self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB, self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB, '', false );
+		add_option( self::SETTING_NAME_DELETE_AFTER_TRANSFER, self::SETTING_DEFAULT_DELETE_AFTER_TRANSFER, '', false );
+
+		add_option( self::SETTING_NAME_USE_AVIF_ALTERNATIVE, false, '', true );
+		add_option( self::SETTING_NAME_USE_WEBP_ALTERNATIVE, false, '', true );
+		add_option( self::SETTING_NAME_IMAGE_RESIZING, self::SETTING_DEFAULT_IMAGE_RESIZING, '', false );
+		add_option( self::SETTING_NAME_IMG_MIN_WIDTH, self::SETTING_DEFAULT_IMG_MIN_WIDTH, '', true );
+		add_option( self::SETTING_NAME_LOG_IMAGES, self::SETTING_DEFAULT_LOG_IMAGES, '', true );
+		add_option( self::SETTING_NAME_HIDE_ERROR_IMAGES, self::SETTING_DEFAULT_HIDE_ERROR_IMAGES, '', true );
+		add_option( self::SETTING_NAME_WEPB_QUALITY, self::SETTING_DEFAULT_WEPB_QUALITY, '', false );
+		add_option( self::SETTING_NAME_AVIF_QUALITY, self::SETTING_DEFAULT_AVIF_QUALITY, '', false );
+		add_option( self::SETTING_NAME_AVIF_SPEED, self::SETTING_DEFAULT_AVIF_SPEED, '', false );
+		add_option( self::SETTING_NAME_AVIF_TYPES_TO_CONVERT, self::SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT, '', true );
+		add_option( self::SETTING_NAME_WEBP_TYPES_TO_CONVERT, self::SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT, '', true );
+
+		add_option( self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME, self::SETTING_DEFAULT_MEDIA_CACHE_EXPIRE_TIME, '', true );
+	}
+
+	public static function update_settings( array $new_settings ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ] )
+		) {
+			update_option(
+				self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND,
+				$new_settings[ self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND,
+				false
+			);
+		}
+
+		if (
+			isset( $new_settings[ self::SETTING_NAME_SAVE_EXTERNAL ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_SAVE_EXTERNAL ] )
+		) {
+			update_option(
+				self::SETTING_NAME_SAVE_EXTERNAL,
+				$new_settings[ self::SETTING_NAME_SAVE_EXTERNAL ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_SAVE_EXTERNAL,
+				false
+			);
+		}
+		if (
+			isset( $new_settings[ self::SETTING_NAME_LOG_IMAGES ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_LOG_IMAGES ] )
+		) {
+			update_option(
+				self::SETTING_NAME_LOG_IMAGES,
+				$new_settings[ self::SETTING_NAME_LOG_IMAGES ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_LOG_IMAGES,
+				0
+			);
+		}
+		if (
+			isset( $new_settings[ self::SETTING_NAME_HIDE_ERROR_IMAGES ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_HIDE_ERROR_IMAGES ] )
+		) {
+			update_option(
+				self::SETTING_NAME_HIDE_ERROR_IMAGES,
+				$new_settings[ self::SETTING_NAME_HIDE_ERROR_IMAGES ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_HIDE_ERROR_IMAGES,
+				0
+			);
+		}
+
+		if (
+			isset( $new_settings[ self::SETTING_NAME_SAVE_INTERNAL ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_SAVE_INTERNAL ] )
+		) {
+			update_option(
+				self::SETTING_NAME_SAVE_INTERNAL,
+				$new_settings[ self::SETTING_NAME_SAVE_INTERNAL ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_SAVE_INTERNAL,
+				false
+			);
+		}
+
+		if (
+			isset( $new_settings[ self::SETTING_NAME_NEW_FILE_DRIVER ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_NEW_FILE_DRIVER ] )
+		) {
+			update_option(
+				self::SETTING_NAME_NEW_FILE_DRIVER,
+				$new_settings[ self::SETTING_NAME_NEW_FILE_DRIVER ]
+			);
+		}
+
+		if (
+			isset( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ] )
+		) {
+			update_option(
+				self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES,
+				$new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES,
+				false
+			);
+		}
+
+		if (
+			isset( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ] )
+		) {
+			update_option(
+				self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3,
+				$new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3,
+				false
+			);
+		}
+
+		if (
+			isset( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ] )
+		) {
+			update_option(
+				self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB,
+				$new_settings[ self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB,
+				false
+			);
+		}
+		if (
+			isset( $new_settings[ self::SETTING_NAME_DELETE_AFTER_TRANSFER ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_DELETE_AFTER_TRANSFER ] )
+		) {
+			update_option(
+				self::SETTING_NAME_DELETE_AFTER_TRANSFER,
+				$new_settings[ self::SETTING_NAME_DELETE_AFTER_TRANSFER ]
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_DELETE_AFTER_TRANSFER,
+				false
+			);
+		}
+
+		if (
+			isset( $new_settings[ self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME ] )
+		) {
+			update_option(
+				self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME,
+				$new_settings[ self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME ]
+			);
+		}
+	}
+
+	public static function update_option_image_optimisation( array $new_settings ) {
+		if (
+			isset( $new_settings[ self::SETTING_NAME_USE_WEBP_ALTERNATIVE ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_USE_WEBP_ALTERNATIVE ] )
+		) {
+			update_option( self::SETTING_NAME_USE_WEBP_ALTERNATIVE, $new_settings[ self::SETTING_NAME_USE_WEBP_ALTERNATIVE ] );
+		} else {
+			update_option( self::SETTING_NAME_USE_WEBP_ALTERNATIVE, false );
+		}
+		if (
+			isset( $new_settings[ self::SETTING_NAME_IMAGE_RESIZING ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_IMAGE_RESIZING ] )
+		) {
+			update_option( self::SETTING_NAME_IMAGE_RESIZING, 1 );
+		} else {
+			update_option( self::SETTING_NAME_IMAGE_RESIZING, 0 );
+		}
+
+		if (
+			isset( $new_settings[ self::SETTING_NAME_IMG_MIN_WIDTH ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_IMG_MIN_WIDTH ] )
+		) {
+			update_option( self::SETTING_NAME_IMG_MIN_WIDTH, 1 );
+		} else {
+			update_option( self::SETTING_NAME_IMG_MIN_WIDTH, 0 );
+		}
+
+		if (
+			isset( $new_settings[ self::SETTING_NAME_WEBP_TYPES_TO_CONVERT ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_WEBP_TYPES_TO_CONVERT ] )
+		) {
+			update_option( self::SETTING_NAME_WEBP_TYPES_TO_CONVERT, $new_settings[ self::SETTING_NAME_WEBP_TYPES_TO_CONVERT ] );
+		} else {
+			update_option( self::SETTING_NAME_WEBP_TYPES_TO_CONVERT, array() );
+		}
+
+		if (
+			isset( $new_settings[ self::SETTING_NAME_USE_AVIF_ALTERNATIVE ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_USE_AVIF_ALTERNATIVE ] )
+		) {
+			update_option( self::SETTING_NAME_USE_AVIF_ALTERNATIVE, $new_settings[ self::SETTING_NAME_USE_AVIF_ALTERNATIVE ] );
+		} else {
+			update_option( self::SETTING_NAME_USE_AVIF_ALTERNATIVE, false );
+		}
+
+		if (
+			isset( $new_settings[ self::SETTING_NAME_AVIF_TYPES_TO_CONVERT ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_AVIF_TYPES_TO_CONVERT ] )
+		) {
+			update_option( self::SETTING_NAME_AVIF_TYPES_TO_CONVERT, $new_settings[ self::SETTING_NAME_AVIF_TYPES_TO_CONVERT ] );
+		} else {
+			update_option( self::SETTING_NAME_AVIF_TYPES_TO_CONVERT, array() );
+		}
+
+		if (
+			isset( $new_settings[ self::SETTING_NAME_WEPB_QUALITY ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_WEPB_QUALITY ] )
+		) {
+			update_option( self::SETTING_NAME_WEPB_QUALITY, $new_settings[ self::SETTING_NAME_WEPB_QUALITY ] );
+		}
+
+		if (
+			isset( $new_settings[ self::SETTING_NAME_AVIF_QUALITY ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_AVIF_QUALITY ] )
+		) {
+			update_option( self::SETTING_NAME_AVIF_QUALITY, $new_settings[ self::SETTING_NAME_AVIF_QUALITY ] );
+		}
+
+		if (
+			isset( $new_settings[ self::SETTING_NAME_AVIF_SPEED ] ) &&
+			! empty( $new_settings[ self::SETTING_NAME_AVIF_SPEED ] )
+		) {
+			update_option( self::SETTING_NAME_AVIF_SPEED, $new_settings[ self::SETTING_NAME_AVIF_SPEED ] );
+		}
 	}
 
 	/**
@@ -807,7 +1064,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 								$source_url = $this->files[ $old_file_obj->get_fileid() ]->get_file_pointer()->get_driver()->get_url( $this->files[ $old_file_obj->get_fileid() ] );
 								$dom_element->setAttribute( $attribute, str_replace( $url_val[0], $source_url, $dom_element->getAttribute( $attribute ) ) );
 								$found_urls[ $old_file_obj->get_fileid() ] = 1;
-							} else if ( Urlslab_Driver::STATUS_ERROR === $this->files[ $old_file_obj->get_fileid() ]->get( 'filestatus' ) && $this->get_option( self::SETTING_NAME_HIDE_ERROR_IMAGES ) ) {
+							} else if ( Urlslab_Driver::STATUS_ERROR === $this->files[ $old_file_obj->get_fileid() ]->get( 'filestatus' ) && get_option( self::SETTING_NAME_HIDE_ERROR_IMAGES, self::SETTING_DEFAULT_HIDE_ERROR_IMAGES ) ) {
 								$dom_element->setAttribute( 'urlslab-message', 'URL does not exist:' . esc_html( $url_value ) );
 								$dom_element->setAttribute( 'style', 'display:none;visibility:hidden;' );
 								$dom_element->setAttribute( $attribute, trim( str_replace( $url_value, '', $dom_element->getAttribute( $attribute ) ), ',' ) );
@@ -824,7 +1081,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 									$source_url = $this->files[ $old_file_obj->get_fileid() ]->get_file_pointer()->get_driver()->get_url( $this->files[ $old_file_obj->get_fileid() ] );
 									$dom_element->setAttribute( $attribute, str_replace( $matched_url, $source_url, $dom_element->getAttribute( $attribute ) ) );
 									$found_urls[ $old_file_obj->get_fileid() ] = 1;
-								} else if ( Urlslab_Driver::STATUS_ERROR === $this->files[ $old_file_obj->get_fileid() ]->get( 'filestatus' ) && $this->get_option( self::SETTING_NAME_HIDE_ERROR_IMAGES ) ) {
+								} else if ( Urlslab_Driver::STATUS_ERROR === $this->files[ $old_file_obj->get_fileid() ]->get( 'filestatus' ) && get_option( self::SETTING_NAME_HIDE_ERROR_IMAGES, self::SETTING_DEFAULT_HIDE_ERROR_IMAGES ) ) {
 									$dom_element->setAttribute( 'urlslab-message', 'URL does not exist:' . esc_html( $matched_url ) );
 									$dom_element->setAttribute( 'style', 'display:none;visibility:hidden;' );
 									$dom_element->setAttribute( $attribute, str_replace( $matched_url, '', $dom_element->getAttribute( $attribute ) ) );
@@ -841,7 +1098,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 							$source_url = $this->files[ $old_file_obj->get_fileid() ]->get_file_pointer()->get_driver()->get_url( $this->files[ $old_file_obj->get_fileid() ] );
 							$dom_element->setAttribute( $attribute, $source_url );
 							$found_urls[ $old_file_obj->get_fileid() ] = 1;
-						} else if ( Urlslab_Driver::STATUS_ERROR === $this->files[ $old_file_obj->get_fileid() ]->get( 'filestatus' ) && $this->get_option( self::SETTING_NAME_HIDE_ERROR_IMAGES ) ) {
+						} else if ( Urlslab_Driver::STATUS_ERROR === $this->files[ $old_file_obj->get_fileid() ]->get( 'filestatus' ) && get_option( self::SETTING_NAME_HIDE_ERROR_IMAGES, self::SETTING_DEFAULT_HIDE_ERROR_IMAGES ) ) {
 							$dom_element->setAttribute( 'urlslab-message', 'URL does not exist:' . esc_html( $url ) );
 							$dom_element->setAttribute( 'style', 'display:none;visibility:hidden;' );
 							$dom_element->removeAttribute( $attribute );
@@ -861,336 +1118,5 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		}
 
 		return false;
-	}
-
-	protected function add_options() {
-
-		$this->add_option_definition(
-			self::SETTING_NAME_LOG_IMAGES,
-			false,
-			true,
-			__( 'Track usage of images' ),
-			__( 'Keep updated log where was used specific image on website.' )
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_HIDE_ERROR_IMAGES,
-			false,
-			true,
-			__( 'Hide failed images' ),
-			__( 'Hide from HTML content images in error state' )
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME,
-			31536000,
-			true,
-			__( 'Cache expiration [seconds]' ),
-			__( 'Media files cache expiration time - defines how long will be file cached in the browser or CDN' ),
-			self::OPTION_TYPE_NUMBER,
-			false,
-			function( $value ) {
-				return is_numeric( $value ) && 0 <= $value;
-			}
-		);
-
-
-		$this->add_options_form_section( 'import', __( 'Automatic media offloading' ), __( 'Urlslab plugin can automatically offload different types of media from your website and cache them with prefered storage drive to optimaze speed of content deliver to visitors' ) );
-
-		$this->add_option_definition(
-			self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND,
-			self::SETTING_DEFAULT_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND,
-			false,
-			__( 'Offload WordPress media on background' ),
-			__( 'Enable/Disable offloading of WordPress media attachments in the background cron job' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'import'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_SAVE_EXTERNAL,
-			false,
-			true,
-			__( 'Offload External media found in page' ),
-			__( 'Offload media from external urls, found on pages of your domain with the current driver' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'import'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_SAVE_INTERNAL,
-			false,
-			true,
-			__( 'Offload Internal media found in page' ),
-			__( 'Offload media from internal urls, found on pages of your domain with the current driver' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'import'
-		);
-
-
-		$this->add_options_form_section( 'storage', __( 'Media Content Storage' ), __( 'Define driver used to cach all media files and how will be data transferred between drivers' ) );
-		$this->add_option_definition(
-			self::SETTING_NAME_NEW_FILE_DRIVER,
-			self::SETTING_DEFAULT_NEW_FILE_DRIVER,
-			true,
-			__( 'Default Driver' ),
-			__( 'Current default driver to use for offloading the media' ),
-			self::OPTION_TYPE_LISTBOX,
-			array(
-				Urlslab_Driver::DRIVER_DB         => __( 'Database' ),
-				Urlslab_Driver::DRIVER_LOCAL_FILE => __( 'Local Filesystem' ),
-				Urlslab_Driver::DRIVER_S3         => __( 'Cloud - AWS S3' ),
-			),
-			null,
-			'storage'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3,
-			self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_S3,
-			false,
-			__( 'Transfer media from S3 to default driver on background' ),
-			__( 'Transfer all Media stored in S3 object storage to current default driver' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'storage'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES,
-			self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_LOCAL_FILES,
-			false,
-			__( 'Transfer media from local file system to default driver on background' ),
-			__( 'Transfer all Media stored in Local File Storage to current default driver' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'storage'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB,
-			self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB,
-			false,
-			__( 'Transfer media from database to default driver on background' ),
-			__( 'Transfer all Media stored in database to current default driver' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'storage'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_DELETE_AFTER_TRANSFER,
-			self::SETTING_DEFAULT_DELETE_AFTER_TRANSFER,
-			false,
-			__( 'Delete original file after transfer' ),
-			__( /** @lang text */ 'Delete file from original storage after transfer was completed' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'storage'
-		);
-
-
-		$this->add_options_form_section( 's3', __( 'AWS S3 Storage driver settings' ), '' );
-		//S3 settings
-		$this->add_option_definition(
-			self::SETTING_NAME_S3_ACCESS_KEY,
-			'',
-			true,
-			__( 'AWS S3 Access Key' ),
-			__( 'Leave empty if AWS access key should be loaded from environment variable AWS_KEY' ),
-			self::OPTION_TYPE_TEXT,
-			false,
-			null,
-			's3'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_S3_SECRET,
-			'',
-			true,
-			__( 'AWS S3 Key Secret' ),
-			__( 'Leave empty if AWS secret key should be loaded from environment variable AWS_SECRET' ),
-			self::OPTION_TYPE_PASSWORD,
-			false,
-			null,
-			's3'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_S3_REGION,
-			'',
-			true,
-			__( 'AWS S3 Region' ),
-			'',
-			self::OPTION_TYPE_TEXT,
-			false,
-			null,
-			's3'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_S3_BUCKET,
-			'',
-			true,
-			__( 'AWS S3 Bucket' ),
-			__( 'AWS S3 bucket name if you want to transfer files to AWS S3' ),
-			self::OPTION_TYPE_TEXT,
-			false,
-			null,
-			's3'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_S3_URL_PREFIX,
-			'',
-			true,
-			__( 'AWS S3 Url Prefix' ),
-			__( 'URL prefix for offloaded media, so that it can be used with CDN. Leave empty if CDN is not configured. (Example: https://cdn.yourdomain.com/)' ),
-			self::OPTION_TYPE_TEXT,
-			false,
-			null,
-			's3'
-		);
-
-
-		$this->add_options_form_section( 'img_opt', __( 'Image optimisation' ), __( 'Plugin can automatically optimaze all cached images and convert them to multiple sizes and image formats for you. Based on your settings, visitors will load into the browser just the most optimized image format to maximize speed of loading' ) );
-
-		$this->add_option_definition(
-			self::SETTING_NAME_USE_WEBP_ALTERNATIVE,
-			false,
-			true,
-			__( 'Generate Webp Images' ),
-			( ( new Urlslab_Convert_Webp_Images_Cron() )->is_format_supported() ? '' : __( 'IMPORTANT: WEBP file format is not supported on your server. ' ) ) .
-			__( 'Generate the Webp version of your images and add it as alternative and let browsers choose which one to use' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'img_opt'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_WEPB_QUALITY,
-			self::SETTING_DEFAULT_WEPB_QUALITY,
-			false,
-			__( 'Webp Conversion Quality' ),
-			__( 'The Quality of Webp image. the less the quality, the faster is the image loading time; number between 0 and 100' ),
-			self::OPTION_TYPE_NUMBER,
-			false,
-			function( $value ) {
-				return is_numeric( $value ) && 0 <= $value && 100 >= $value;
-			},
-			'img_opt'
-		);
-
-
-		$possible_values_webp = array();
-		foreach ( self::SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT as $file_type ) {
-			$possible_values_webp[ $file_type ] = $file_type;
-		}
-		$this->add_option_definition(
-			self::SETTING_NAME_WEBP_TYPES_TO_CONVERT,
-			self::SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT,
-			true,
-			__( 'Convert filetypes to Webp' ),
-			__( 'Select to convert which file type to Webp' ),
-			self::OPTION_TYPE_MULTI_CHECKBOX,
-			$possible_values_webp,
-			null,
-			'img_opt'
-		);
-
-
-		$this->add_option_definition(
-			self::SETTING_NAME_USE_AVIF_ALTERNATIVE,
-			false,
-			true,
-			__( 'Generate Avif Images' ),
-			( ( new Urlslab_Convert_Avif_Images_Cron() )->is_format_supported() ? '' : __( 'IMPORTANT: AVIF file format is not supported on your server. ' ) ) .
-			__( 'Generate the Avif version of your images and let browsers to choose the most effective file format.' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'img_opt'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_AVIF_QUALITY,
-			self::SETTING_DEFAULT_AVIF_QUALITY,
-			false,
-			__( 'Avif Conversion Quality' ),
-			__( 'The Quality of Avif image. the less the quality, the faster is the image loading time; number between 0 and 100' ),
-			self::OPTION_TYPE_NUMBER,
-			false,
-			function( $value ) {
-				return is_numeric( $value ) && 0 <= $value && 100 >= $value;
-			},
-			'img_opt'
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_AVIF_SPEED,
-			self::SETTING_DEFAULT_AVIF_SPEED,
-			false,
-			__( 'Avif conversion speed' ),
-			__( 'The speed of Avif conversion. An integer between 0 (slowest) and 6 (fastest)' ),
-			self::OPTION_TYPE_NUMBER,
-			false,
-			function( $value ) {
-				return is_numeric( $value ) && 0 <= $value && 6 >= $value;
-			},
-			'img_opt'
-		);
-
-		$possible_values_avif = array();
-		foreach ( self::SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT as $file_type ) {
-			$possible_values_avif[ $file_type ] = $file_type;
-		}
-		$this->add_option_definition(
-			self::SETTING_NAME_AVIF_TYPES_TO_CONVERT,
-			self::SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT,
-			true,
-			__( 'Convert filetypes to Avif' ),
-			__( 'Select to convert which file type to avif' ),
-			self::OPTION_TYPE_MULTI_CHECKBOX,
-			$possible_values_avif,
-			null,
-			'img_opt'
-		);
-
-
-		$this->add_option_definition(
-			self::SETTING_NAME_IMAGE_RESIZING,
-			self::SETTING_DEFAULT_IMAGE_RESIZING,
-			false,
-			__( 'Resize missing image sizes' ),
-			__( 'If image of smaller size doesn\'t exist, but image url is used in the content, create copy of original image with smaller size. e.g. if /img/myimage-340x200.jpg doesn\'t exist, but there is /img/myimage.jpg, plugin will create smaller image from original source' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'img_opt'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_IMG_MIN_WIDTH,
-			0,
-			true,
-			__( 'Skip loading image on small devices' ),
-			__( 'Skip loading of images into browser if size of window is smaller as defined width. This feature optimize amount of transferred data for small devices and is useful in case you set by css breaking points when image is not displayed on smaller devices. Add class name urlslab-min-width-[number] on image or any parent elemenet to apply this functionality. Example: <img src="image.jpg" class="urlslab-min-width-768"> will load image just if window is wider or equal 768 pixels' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'img_opt'
-		);
-
-
 	}
 }

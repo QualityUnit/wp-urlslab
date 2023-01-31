@@ -16,8 +16,10 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 
 	const SETTING_NAME_META_OG_IMAGE_GENERATION = 'urlslab_og_image_generation';
 	const DEFAULT_META_OG_IMAGE_GENERATION = false;
+
 	const SETTING_NAME_META_OG_TITLE_GENERATION = 'urlslab_og_title_generation';
 	const DEFAULT_META_OG_TITLE_GENERATION = false;
+
 	const SETTING_NAME_META_OG_DESC_GENERATION = 'urlslab_og_desc_generation';
 	const DEFAULT_META_OG_DESC_GENERATION = false;
 
@@ -49,7 +51,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return $this->widget_title ;
+		return $this->widget_title . ' Widget';
 	}
 
 	/**
@@ -92,7 +94,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 
 				if ( is_object( $url_data ) ) {
 					$strategy = get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
-					if ( $this->get_option( self::SETTING_NAME_META_DESCRIPTION_GENERATION ) ) {
+					if ( in_array( 'meta-description', $this->activated_sub_widgets ) ) {
 						// meta description generation
 						if ( $meta_description->count() == 0 ) {
 							$node = $document->createElement( 'meta' );
@@ -110,7 +112,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 					}
 
 					// meta og title generation
-					if ( $this->get_option( self::SETTING_NAME_META_OG_TITLE_GENERATION ) ) {
+					if ( in_array( 'meta-og-title', $this->activated_sub_widgets ) ) {
 						if ( $meta_og_title->count() == 0 ) {
 							$node = $document->createElement( 'meta' );
 							$node->setAttribute( 'property', 'og:title' );
@@ -127,7 +129,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 					// meta og title generation
 
 					// meta og description generation
-					if ( $this->get_option( self::SETTING_NAME_META_OG_DESC_GENERATION ) ) {
+					if ( in_array( 'meta-og-desc', $this->activated_sub_widgets ) ) {
 						if ( $meta_og_description->count() == 0 ) {
 							$node = $document->createElement( 'meta' );
 							$node->setAttribute( 'property', 'og:description' );
@@ -144,7 +146,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 					// meta og description generation
 
 					// meta og image generation
-					if ( $this->get_option( self::SETTING_NAME_META_OG_IMAGE_GENERATION ) ) {
+					if ( in_array( 'meta-og-image', $this->activated_sub_widgets ) ) {
 						if (
 							$meta_og_image->count() == 0 &&
 							$url_data->screenshot_exists()
@@ -198,36 +200,63 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 		return 'meta-tags';
 	}
 
+	public static function update_settings( array $new_settings ) {
+		if ( in_array( self::SETTING_NAME_META_DESCRIPTION_GENERATION, $new_settings ) ) {
+			update_option(
+				self::SETTING_NAME_META_DESCRIPTION_GENERATION,
+				true
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_META_DESCRIPTION_GENERATION,
+				false
+			);
+		}
+
+		if ( in_array( self::SETTING_NAME_META_OG_DESC_GENERATION, $new_settings ) ) {
+			update_option(
+				self::SETTING_NAME_META_OG_DESC_GENERATION,
+				true
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_META_OG_DESC_GENERATION,
+				false
+			);
+		}
+
+		if ( in_array( self::SETTING_NAME_META_OG_IMAGE_GENERATION, $new_settings ) ) {
+			update_option(
+				self::SETTING_NAME_META_OG_IMAGE_GENERATION,
+				true
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_META_OG_IMAGE_GENERATION,
+				false
+			);
+		}
+
+		if ( in_array( self::SETTING_NAME_META_OG_TITLE_GENERATION, $new_settings ) ) {
+			update_option(
+				self::SETTING_NAME_META_OG_TITLE_GENERATION,
+				true
+			);
+		} else {
+			update_option(
+				self::SETTING_NAME_META_OG_TITLE_GENERATION,
+				false
+			);
+		}
+	}
+
+	public static function add_option() {
+		add_option( 'header-seo', array(), '', true );
+	}
+
+
 	public function is_api_key_required() {
 		return true;
 	}
 
-	protected function add_options() {
-		$this->add_option_definition(
-			self::SETTING_NAME_META_DESCRIPTION_GENERATION,
-			self::DEFAULT_META_DESCRIPTION_GENERATION,
-			true,
-			__( 'Generate Page Meta Description if missing' )
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_META_OG_TITLE_GENERATION,
-			self::DEFAULT_META_OG_TITLE_GENERATION,
-			true,
-			__( 'Generate header OG Title if missing' )
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_META_OG_DESC_GENERATION,
-			self::DEFAULT_META_OG_DESC_GENERATION,
-			true,
-			__( 'Generate header OG Description if missing' )
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_META_OG_IMAGE_GENERATION,
-			self::DEFAULT_META_OG_IMAGE_GENERATION,
-			true,
-			__( 'Generate header OG Image if missing' ),
-			__( 'As OG Image will be generated screenshot of requested page - it can take few days to generate screenshot.' )
-		);
-
-	}
 }

@@ -11,8 +11,17 @@ abstract class Urlslab_Api {
 	/**
 	 * @param Urlslab_Api_Key $api_key
 	 */
-	public function __construct() {
-		$this->api_key = new Urlslab_Api_Key();
+	public function __construct( $api_key ) {
+		if ( ! empty( $api_key ) ) {
+			$this->api_key = $api_key;
+		}
+	}
+
+	/**
+	 * @return Urlslab_Api_Key
+	 */
+	public function get_api_key(): Urlslab_Api_Key {
+		return $this->api_key;
 	}
 
 	/**

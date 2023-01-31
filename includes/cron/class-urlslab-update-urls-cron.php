@@ -6,7 +6,7 @@ class Urlslab_Update_Urls_Cron extends Urlslab_Cron {
 	protected function execute(): bool {
 		global $wpdb;
 
-		if ( empty( get_option( Urlslab_Link_Enhancer::SETTING_NAME_LAST_LINK_VALIDATION_START ) ) || ! get_option( Urlslab_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS ) ) {
+		if ( empty( get_option( Urlslab_Link_Enhancer::SETTING_NAME_LAST_LINK_VALIDATION_START ) ) || 1 != get_option( Urlslab_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS ) ) {
 			return false;
 		}
 

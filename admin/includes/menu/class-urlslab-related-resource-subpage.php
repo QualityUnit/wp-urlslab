@@ -630,4 +630,6 @@ class Urlslab_Related_Resource_Subpage extends Urlslab_Admin_Subpage {
 		//# Add Relation
 	}
 
+
+	public function render_settings() {}
 }

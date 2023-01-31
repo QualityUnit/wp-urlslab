@@ -206,6 +206,29 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 			}
 			//# Add Functionality
 
+			//# Edit settings
+			if (
+				isset( $_POST['submit'] ) &&
+				'Save Changes' === $_POST['submit'] &&
+				'update-settings' == $_GET['action']
+			) {
+
+				Urlslab_Keywords_Links::update_settings( $_POST );
+
+				wp_safe_redirect(
+					$this->parent_page->menu_page(
+						$this->subpage_slug,
+						array(
+							'status'          => 'success',
+							'urlslab-message' => 'Keyword settings was saved successfully',
+						),
+						$_GET['sub-tab'] ?? ''
+					)
+				);
+				exit;
+			}
+			//# Edit settings
+
 		}
 
 		if (
@@ -714,5 +737,177 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 		add_screen_option( $option, $args );
 
 		$this->keyword_table = new Urlslab_Keyword_Link_Table();
+	}
+
+	public function render_settings() {
+		$settings = array(
+			new Urlslab_Setting_Option(
+				Urlslab_Keywords_Links::SETTING_NAME_KW_TYPES_TO_USE,
+				array(
+					array(
+						'value'       => '',
+						'is_selected' => '' == get_option( Urlslab_Keywords_Links::SETTING_NAME_KW_TYPES_TO_USE, '' ),
+						'option_name' => 'Use all keyword types',
+					),
+					array(
+						'value'       => Urlslab_Keywords_Links::KW_MANUAL,
+						'is_selected' => Urlslab_Keywords_Links::KW_MANUAL == get_option( Urlslab_Keywords_Links::SETTING_NAME_KW_TYPES_TO_USE, '' ),
+						'option_name' => 'Use just manually created keywords',
+					),
+					array(
+						'value'       => Urlslab_Keywords_Links::KW_IMPORTED_FROM_CONTENT,
+						'is_selected' => Urlslab_Keywords_Links::KW_IMPORTED_FROM_CONTENT == get_option( Urlslab_Keywords_Links::SETTING_NAME_KW_TYPES_TO_USE, '' ),
+						'option_name' => 'Use just keywords importent from existing links in content',
+					),
+					array(
+						'value'       => Urlslab_Keywords_Links::KW_NONE,
+						'is_selected' => Urlslab_Keywords_Links::KW_NONE == get_option( Urlslab_Keywords_Links::SETTING_NAME_KW_TYPES_TO_USE, '' ),
+						'option_name' => 'Switched OFF - no replacements',
+					),
+				),
+				'Specify types of keywords used to create a link.',
+				'Create links from keywords'
+			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD,
+				get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD, Urlslab_Keywords_Links::MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD ),
+				'Maximum number of times, that each keyword should be replaced in a page',
+				'Max Replacement Per Keyword',
+				''
+			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL,
+				get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL, Urlslab_Keywords_Links::MAX_DEFAULT_REPLACEMENTS_PER_KEYWORD_URL ),
+				'Maximum number of times, that each keyword-url pair should be replaced in a page',
+				'Max Replacement Per Keyword-Url pair',
+				''
+			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL,
+				get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_URL, Urlslab_Keywords_Links::MAX_DEFAULT_REPLACEMENTS_PER_URL ),
+				'Maximum number of times, that a keyword link should be generated for a single outbound url',
+				'Max Replacement Per Url',
+				''
+			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Keywords_Links::SETTING_NAME_MAX_LINKS_ON_PAGE,
+				get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_LINKS_ON_PAGE, Urlslab_Keywords_Links::MAX_DEFAULT_REPLACEMENTS_PER_URL ),
+				'the maximum number of links that exists in a page for both auto and manual links',
+				'Max Links in page (manual and auto links)',
+				''
+			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE,
+				get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PAGE, Urlslab_Keywords_Links::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PAGE ),
+				'the maximum number of links to be generated in whole page',
+				'Max Auto links in page',
+				''
+			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH,
+				get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_REPLACEMENTS_PER_PARAGRAPH, Urlslab_Keywords_Links::SETTING_DEFAULT_MAX_REPLACEMENTS_PER_PARAGRAPH ),
+				'the maximum number of links to be created in paragraph',
+				'Max auto links per paragraph',
+				''
+			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Keywords_Links::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK,
+				get_option( Urlslab_Keywords_Links::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK, Urlslab_Keywords_Links::SETTING_DEFAULT_MIN_CHARS_TO_NEXT_LINK ),
+				'Minimum number of characters between next inserted link',
+				'Min # chars to next link',
+				''
+			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Keywords_Links::SETTING_NAME_MIN_PARAGRAPH_LENGTH,
+				get_option( Urlslab_Keywords_Links::SETTING_NAME_MIN_PARAGRAPH_LENGTH, Urlslab_Keywords_Links::SETTING_DEFAULT_MIN_PARAGRAPH_LENGTH ),
+				'Skip searching for keywords in paragraph shorter as defined limit',
+				'Min paragraph length [# of characters]',
+				''
+			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Keywords_Links::SETTING_NAME_MAX_PARAGRAPH_DENSITY,
+				get_option( Urlslab_Keywords_Links::SETTING_NAME_MAX_PARAGRAPH_DENSITY, Urlslab_Keywords_Links::SETTING_DEFAULT_MAX_PARAGRAPH_DENSITY ),
+				'Maximum paragraph density defines maximum number of links per character can be included in paragraph. Example: By defining value 100 will be included maximum 5 links in 500 characters long paragraph.',
+				'Paragraph density [min # of characters per link]',
+				''
+			),
+			new Urlslab_Setting_Switch(
+				'kw_map[]',
+				Urlslab_Keywords_Links::SETTING_NAME_KW_MAP,
+				'Track usage of inserted keywords/links on pages',
+				'Track used Keywords',
+				get_option(
+					Urlslab_Keywords_Links::SETTING_NAME_KW_MAP,
+					Urlslab_Keywords_Links::SETTING_DEFAULT_KW_MAP
+				)
+			),
+			new Urlslab_Setting_Switch(
+				'kw_map[]',
+				Urlslab_Keywords_Links::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS,
+				'Import all internal links found in page as keywords',
+				'Import internal links as keywords',
+				get_option(
+					Urlslab_Keywords_Links::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS,
+					Urlslab_Keywords_Links::SETTING_DEFAULT_KW_IMPORT_INTERNAL_LINKS
+				)
+			),
+			new Urlslab_Setting_Switch(
+				'kw_map[]',
+				Urlslab_Keywords_Links::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS,
+				'Import all external links found in page as keywords',
+				'Import external links as keywords',
+				get_option(
+					Urlslab_Keywords_Links::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS,
+					Urlslab_Keywords_Links::SETTING_DEFAULT_KW_IMPORT_EXTERNAL_LINKS
+				)
+			),
+			new Urlslab_Setting_Input(
+				'number',
+				Urlslab_Keywords_Links::SETTING_NAME_KW_IMPORT_MAX_LENGTH,
+				get_option( Urlslab_Keywords_Links::SETTING_NAME_KW_IMPORT_MAX_LENGTH, Urlslab_Keywords_Links::SETTING_DEFAULT_KW_IMPORT_MAX_LENGTH ),
+				'Import from HTML pages just keywords with maximum length defined by this setting. It is way how to avoid import of too long links, which have low chance to appear on any other place.',
+				'Max length of auto-imported keyword [# of characters]',
+				''
+			),
+			new Urlslab_Setting_Switch(
+				'kw_map[]',
+				Urlslab_Keywords_Links::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS,
+				'Enhance all H tags with ID attribute to allow addressing not just URL, but also specific part of the content starting with H tag.',
+				'Add anchor id to all H tags',
+				get_option(
+					Urlslab_Keywords_Links::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS,
+					Urlslab_Keywords_Links::SETTING_DEFAULT_ADD_ID_TO_ALL_H_TAGS
+				)
+			),
+		)
+		?>
+		<form method="post"
+			  action="<?php echo esc_url( $this->parent_page->menu_page( $this->subpage_slug, 'action=update-settings', 1 ) ); ?>">
+			<?php wp_nonce_field( 'keyword-update-settings' ); ?>
+			<?php
+			foreach ( $settings as $setting ) {
+				$setting->render_setting();
+			}
+			?>
+			<p>
+				<input
+						type="submit"
+						name="submit"
+						id="save-sub-widget"
+						class="urlslab-btn-primary"
+						value="Save Changes">
+			</p>
+		</form>
+		<?php
+
 	}
 }

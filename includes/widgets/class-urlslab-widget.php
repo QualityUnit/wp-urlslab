@@ -2,22 +2,7 @@
 
 abstract class Urlslab_Widget {
 
-
-	const OPTION_TYPE_CHECKBOX = 'checkbox';
-	const OPTION_TYPE_TEXT = 'text';
-	const OPTION_TYPE_PASSWORD = 'password';
-	const PASSWORD_PLACEHOLDER = '********';
-
-	const OPTION_TYPE_LISTBOX = 'listbox';
-	const OPTION_TYPE_DATETIME = 'datetime';
-	const OPTION_TYPE_MULTI_CHECKBOX = 'multicheck';
-	const OPTION_TYPE_NUMBER = 'number';
-
-
 	private $current_page_url = null;
-
-	private $options = false;
-	private $option_sections = array();
 
 	/**
 	 * @param Urlslab_Loader $loader
@@ -96,126 +81,15 @@ abstract class Urlslab_Widget {
 	 */
 	public abstract function get_thumbnail_demo_url(): string;
 
+	/**
+	 * @param array $new_settings
+	 *
+	 * @return void
+	 */
+	public abstract static function update_settings( array $new_settings );
+
 	public function is_api_key_required() {
 		return false;
-	}
-
-	/**
-	 * @return array - liest of module settings, where id is setting name and value is setting value
-	 */
-	public function get_options( $section_id = false ): array {
-		if ( false === $this->options ) {
-			$this->init_options();
-		}
-
-		$result = array();
-
-		foreach ( $this->options as $option_id => $option ) {
-			switch ( $option['type'] ) {
-				case self::OPTION_TYPE_PASSWORD:
-					if ( get_option( $option_id, $option['default'] ?? false ) ) {
-						$option['value'] = self::PASSWORD_PLACEHOLDER;
-					} else {
-						$option['value'] = '';
-					}
-					break;
-				default:
-					$option['value'] = $this->get_option( $option_id );
-			}
-			if ( false == $section_id || $option['section'] == $section_id ) {
-				$result[] = $option;
-			}
-		}
-
-		return $result;
-	}
-
-	public function get_option_sections(): array {
-		return $this->option_sections;
-	}
-
-	public function add_options_on_activate() {
-		if ( false === $this->options ) {
-			$this->init_options();
-		}
-		foreach ( $this->options as $option ) {
-			add_option( $option['id'], $option['default'] ?? false, '', $option['autoload'] ?? true );
-		}
-	}
-
-	protected abstract function add_options();
-
-	private function init_options() {
-		$this->options = array();
-		$this->add_options();
-	}
-
-	protected function add_options_form_section( $id, $title, $description ) {
-		$this->option_sections[ $id ] = array(
-			'id'          => $id,
-			'title'       => $title,
-			'description' => $description,
-		);
-	}
-
-	protected function add_option_definition( string $option_id, $default_value = false, bool $autoload = true, string $title = '', string $description = '', $type = self::OPTION_TYPE_CHECKBOX, $possible_values = false, callable $validator = null, $form_section_id = 'default' ) {
-		if ( $form_section_id && ! isset( $this->option_sections[ $form_section_id ] ) ) {
-			$form_section_id = 'default';
-		}
-		$this->options[ $option_id ] = array(
-			'id'              => $option_id,
-			'default'         => $default_value,
-			'autoload'        => $autoload,
-			'title'           => $title,
-			'description'     => $description,
-			'type'            => $type,
-			'possible_values' => $possible_values,
-			'validator'       => $validator,
-			'section'         => $form_section_id,
-		);
-	}
-
-	public function update_option( $option_id, $value ): bool {
-		if ( false === $this->options ) {
-			$this->init_options();
-		}
-
-		if ( ! isset( $this->options[ $option_id ] ) ) {
-			return false;
-		}
-
-		if ( null !== $this->options[ $option_id ]['validator'] ) {
-			if ( ! call_user_func( $this->options[ $option_id ]['validator'], $value ) ) {
-				return false;
-			}
-		}
-
-		if ( is_array( $this->options[ $option_id ]['possible_values'] ) ) {
-			if ( ! isset( $this->options[ $option_id ]['possible_values'][ $value ] ) ) {
-				return false;
-			}
-		}
-
-		if ( self::OPTION_TYPE_PASSWORD == $this->options[ $option_id ]['type'] && self::PASSWORD_PLACEHOLDER == $value ) {
-			return false;
-		}
-
-		return update_option( $option_id, $value );
-	}
-
-	public function get_option( $option_id ) {
-		if ( false === $this->options ) {
-			$this->init_options();
-		}
-
-		if ( ! isset( $this->options[ $option_id ] ) ) {
-			return null;
-		}
-		if ( ! isset( $this->options[ $option_id ]['value'] ) ) {
-			$this->options[ $option_id ]['value'] = get_option( $option_id, $this->options[ $option_id ]['default'] ?? false );
-		}
-
-		return $this->options[ $option_id ]['value'];
 	}
 
 	protected function is_skip_elemenet( DOMNode $dom, $custom_widget_skip = '' ) {

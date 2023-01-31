@@ -9,29 +9,29 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 		}
 
 		global $wpdb;
-		$youtube_row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' WHERE status = %s ORDER BY status_changed DESC LIMIT 1', Urlslab_Youtube_Data::STATUS_NEW ), ARRAY_A ); // phpcs:ignore
+		$youtube_row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' WHERE status = %s ORDER BY status_changed DESC LIMIT 1', Urlslab_Youtube_Data::YOUTUBE_NEW ), ARRAY_A ); // phpcs:ignore
 		if ( empty( $youtube_row ) ) {
 			return false;
 		}
 
 		$youtube_obj = new Urlslab_Youtube_Data( $youtube_row, true );
-		if ( $youtube_obj->get( 'status' ) != Urlslab_Youtube_Data::STATUS_NEW ) {
+		if ( $youtube_obj->get( 'status' ) != Urlslab_Youtube_Data::YOUTUBE_NEW ) {
 			return true;
 		}
 
-		$youtube_obj->set( 'status', Urlslab_Youtube_Data::STATUS_PROCESSING );
+		$youtube_obj->set( 'status', Urlslab_Youtube_Data::YOUTUBE_PROCESSING );
 		$youtube_obj->update();
 
 		$microdata = $this->get_youtube_microdata( $youtube_obj );
 		if ( $microdata ) {
 			//update status to active
-			$youtube_obj->set( 'status', Urlslab_Youtube_Data::STATUS_AVAILABLE );
+			$youtube_obj->set( 'status', Urlslab_Youtube_Data::YOUTUBE_AVAILABLE );
 			$youtube_obj->set( 'microdata', $microdata );
 			$youtube_obj->update();
 
 			return true;
 		} else {
-			$youtube_obj->set( 'status', Urlslab_Youtube_Data::STATUS_NEW );
+			$youtube_obj->set( 'status', Urlslab_Youtube_Data::YOUTUBE_NEW );
 			$youtube_obj->update();
 
 			//something went wrong, wait with next processing
