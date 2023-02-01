@@ -70,8 +70,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$this->parent_page              = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-link-building' );
 	}
 
-	public function init_widget( Urlslab_Loader $loader ) {
-		$loader->add_action( 'urlslab_content', $this, 'theContentHook', 11 );
+	public function init_widget() {
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_content', $this, 'theContentHook', 11 );
 	}
 
 	/**

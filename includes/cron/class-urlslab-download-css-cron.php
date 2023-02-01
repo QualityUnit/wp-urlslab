@@ -4,17 +4,17 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-css-cache-ro
 
 class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 
-	private Urlslab_CSS_Optimizer $widget;
-
 	public function cron_exec( $max_execution_time = self::MAX_RUN_TIME ) {
+		$widget = Urlslab_Available_Widgets::get_instance()->get_widget( Urlslab_CSS_Optimizer::SLUG );
+
 		global $wpdb;
 		$wpdb->query(
 			$wpdb->prepare(
-				'DELETE ' . URLSLAB_CSS_CACHE_TABLE . " WHERE status IN (%s, %s) AND status_changed < %s", // phpcs:ignore
+				'DELETE FROM ' . URLSLAB_CSS_CACHE_TABLE . " WHERE status IN (%s, %s) AND status_changed < %s", // phpcs:ignore
 				array(
 					Urlslab_CSS_Cache_Row::STATUS_DISABLED,
 					Urlslab_CSS_Cache_Row::STATUS_ACTIVE,
-					Urlslab_CSS_Cache_Row::get_now( time() - $this->widget->get_option( Urlslab_CSS_Optimizer::SETTING_NAME_CSS_CACHE_TTL ) ),
+					Urlslab_CSS_Cache_Row::get_now( time() - $widget->get_option( Urlslab_CSS_Optimizer::SETTING_NAME_CSS_CACHE_TTL ) ),
 				),
 			)
 		);
@@ -23,9 +23,6 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 
 	protected function execute(): bool {
 		global $wpdb;
-
-		$this->widget = Urlslab_Available_Widgets::get_instance()->get_widget( Urlslab_CSS_Optimizer::SLUG );
-
 
 		$url_row = $wpdb->get_row(
 			$wpdb->prepare(
@@ -59,7 +56,8 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 				$css->set( 'filesize', 0 );
 				$css->set( 'css_content', '' );
 			} else {
-				if ( $this->widget->get_option( Urlslab_CSS_Optimizer::SETTING_NAME_CSS_MAX_SIZE ) < filesize( $page_content_file_name ) ) {
+				$widget = Urlslab_Available_Widgets::get_instance()->get_widget( Urlslab_CSS_Optimizer::SLUG );
+				if ( $widget->get_option( Urlslab_CSS_Optimizer::SETTING_NAME_CSS_MAX_SIZE ) < filesize( $page_content_file_name ) ) {
 					$css->set( 'status', Urlslab_CSS_Cache_Row::STATUS_DISABLED );
 					$css->set( 'filesize', filesize( $page_content_file_name ) );
 				} else {

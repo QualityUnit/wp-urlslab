@@ -18,26 +18,27 @@ class Urlslab_Page_Factory {
 
 	public static function get_instance(): Urlslab_Page_Factory {
 		if ( empty( self::$instance ) ) {
-			$dashboard = new Urlslab_Dashboard_Page();
-			$urls_page = new Urlslab_Urls_Page();
-			$header_widgets = new Urlslab_Header_Widgets_Page();
+			$dashboard          = new Urlslab_Dashboard_Page();
+			$urls_page          = new Urlslab_Urls_Page();
+			$header_widgets     = new Urlslab_Header_Widgets_Page();
 			$link_building_page = new Urlslab_Link_Building_Page();
-			$image_seo = new Urlslab_Image_Seo_Widgets_Page();
-			$media_page = new Urlslab_Media_Page();
-			$ui_elements = new Urlslab_UI_Elements_Page();
+			$image_seo          = new Urlslab_Image_Seo_Widgets_Page();
+			$media_page         = new Urlslab_Media_Page();
+			$ui_elements        = new Urlslab_UI_Elements_Page();
 
-			self::$menus = array(
-				$dashboard->get_menu_slug() => $dashboard,
-				$urls_page->get_menu_slug() => $urls_page,
-				$header_widgets->get_menu_slug() => $header_widgets,
+			self::$menus                  = array(
+				$dashboard->get_menu_slug()          => $dashboard,
+				$urls_page->get_menu_slug()          => $urls_page,
+				$header_widgets->get_menu_slug()     => $header_widgets,
 				$link_building_page->get_menu_slug() => $link_building_page,
-				$image_seo->get_menu_slug() => $image_seo,
-				$media_page->get_menu_slug() => $media_page,
-				$ui_elements->get_menu_slug() => $ui_elements,
+				$image_seo->get_menu_slug()          => $image_seo,
+				$media_page->get_menu_slug()         => $media_page,
+				$ui_elements->get_menu_slug()        => $ui_elements,
 			);
 			self::$admin_plugin_main_page = $dashboard;
-			self::$instance = new self;
+			self::$instance               = new self;
 		}
+
 		return self::$instance;
 	}
 
@@ -52,18 +53,17 @@ class Urlslab_Page_Factory {
 		}
 	}
 
-	public function init_page_ajax( Urlslab_Loader $urlslab_loader ) {
+	public function init_page_ajax() {
 		foreach ( self::$menus as $menu ) {
-			$menu->init_ajax_hooks(
-				$urlslab_loader
-			);
+			$menu->init_ajax_hooks();
 		}
 	}
 
 	public function init_on_page_loads(
 		string $page_slug,
 		string $action,
-		string $component ) {
+		string $component
+	) {
 		if ( isset( self::$menus[ $page_slug ] ) ) {
 			self::$menus[ $page_slug ]->on_page_load( $action, $component );
 		}
@@ -78,6 +78,7 @@ class Urlslab_Page_Factory {
 		if ( ! isset( self::$menus[ $page_slug ] ) ) {
 			return null;
 		}
+
 		return self::$menus[ $page_slug ];
 	}
 

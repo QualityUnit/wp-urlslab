@@ -25,8 +25,8 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$this->parent_page        = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-media' );
 	}
 
-	public function init_widget( Urlslab_Loader $loader ) {
-		$loader->add_action( 'urlslab_content', $this, 'the_content', 10 );
+	public function init_widget() {
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_content', $this, 'the_content', 10 );
 	}
 
 	public function get_widget_slug(): string {
