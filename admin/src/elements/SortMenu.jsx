@@ -4,7 +4,7 @@ import Checkbox from './Checkbox';
 import '../assets/styles/elements/_FilterMenu.scss';
 
 export default function SortMenu( {
-	className, name, style, children, items, checkedId, filteredItems,
+	className, name, style, children, items, checkedId, onChange,
 } ) {
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
@@ -21,8 +21,11 @@ export default function SortMenu( {
 		document.addEventListener( 'click', handleClickOutside, true );
 	} );
 
-	const checkedCheckbox = ( target ) => {
-		setChecked( target );
+	const checkedCheckbox = ( targetId ) => {
+		setChecked( targetId );
+		if ( onChange ) {
+			onChange( targetId );
+		}
 	};
 
 	const handleMenu = () => {

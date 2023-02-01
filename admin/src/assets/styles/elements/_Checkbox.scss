@@ -14,6 +14,7 @@
 	&-box {
 
 		@include square(1rem);
+		flex: 0 0 auto;
 		background: url(../../images/checkbox-inactive.svg) center center no-repeat;
 		background-size: contain;
 

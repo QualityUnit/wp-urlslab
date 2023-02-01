@@ -19,3 +19,22 @@ export async function fetchSettings( slug ) {
 		return false;
 	}
 }
+
+export async function setSettings( slug, object ) {
+	try {
+		const result = await apiFetch( {
+			method: 'POST',
+			path: `/wp-json/urlslab/v1/settings/${ slug }`,
+			headers: {
+				'Content-Type': 'application/json',
+				accept: 'application/json',
+				'X-WP-Nonce': window.wpApiSettings.nonce,
+			},
+			credentials: 'include',
+			data: object,
+		} );
+		return result;
+	} catch ( error ) {
+		return false;
+	}
+}
