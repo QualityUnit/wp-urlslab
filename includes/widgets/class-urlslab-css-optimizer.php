@@ -163,7 +163,7 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 			self::SETTING_NAME_CSS_MAX_SIZE,
 			self::DEFAULT_CSS_MAX_SIZE,
 			true,
-			__( 'CSS Max Size [bytes]' ),
+			__( 'CSS Max Size (bytes)' ),
 			__( 'Include into HTML CSS files smaller as defined limit' ),
 			self::OPTION_TYPE_NUMBER,
 			false,

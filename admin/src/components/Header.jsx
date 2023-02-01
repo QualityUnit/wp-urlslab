@@ -15,10 +15,8 @@ export default function Header( { pageTitle } ) {
 	} );
 
 	if ( generalSettings.isSuccess ) {
-		const settings = generalSettings.data[ 0 ].options[ 0 ];
-		if ( settings.id === 'urlslab-api-key' ) {
-			apikey = settings.value;
-		}
+		const settings = generalSettings.data[ 0 ].options[ 'urlslab-api-key' ];
+		apikey = settings.value;
 	}
 
 	return (
