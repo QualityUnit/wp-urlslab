@@ -17,6 +17,8 @@ export default function Settings( { settingId } ) {
 		return <Loader />;
 	}
 
+	console.log( settings );
+
 	return (
 		<div className="urlslab-settingsPanel-wrap flex-tablet">
 			<div className="urlslab-settingsPanel">
