@@ -1,15 +1,40 @@
 
 import { useState } from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { setSettings } from '../api/settings';
 import DatePicker from 'react-datepicker';
 import InputField from '../elements/InputField';
 import Switch from '../elements/Switch';
-
-import '../assets/styles/components/datepicker/datepicker.scss';
 import SortMenu from '../elements/SortMenu';
 
-export default function SettingsOption( { option } ) {
+import '../assets/styles/components/datepicker/datepicker.scss';
+
+export default function SettingsOption( { settingId, sectionIndex, option, optionIndex } ) {
+	const queryClient = useQueryClient();
+	// console.log( sectionIndex );
 	const { id, type, title, placeholder, value, possible_values } = option;
 	const [ date, setDate ] = useState( type !== 'datetime' || new Date( value ) );
+
+	// queryClient.setQueryData(['settings', settingId[sectionIndex]], !isActive);
+	// const testData = queryClient.getQueryData( [ 'settings', settingId ] );
+
+	const handleInputField = useMutation( {
+		mutationFn: ( changeValue ) => {
+			// queryClient.setQueryData( [ 'settings', settingId ], { [ [ sectionIndex ].options[ optionIndex ].value ]: changeValue } );
+			// console.log( testData[ sectionIndex ].options[ optionIndex ] );
+			return setSettings( settingId, { gule: 'nic' } );
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries( [ 'settings', settingId ] );
+			console.log( queryClient.getQueryData( [ 'settings', settingId ] ) );
+		},
+		onError: ( error ) => {
+			console.log( error );
+		},
+	} );
+
 	const renderOption = () => {
 		switch ( type ) {
 			case 'text':
@@ -21,6 +46,7 @@ export default function SettingsOption( { option } ) {
 						label={ title }
 						placeholder={ placeholder && ! value }
 						defaultValue={ value }
+						onChange={ ( inputValue ) => handleInputField.mutate( inputValue ) }
 					/>
 				);
 			case 'checkbox':
@@ -49,7 +75,7 @@ export default function SettingsOption( { option } ) {
 				);
 			case 'listbox':
 				return (
-					<SortMenu name={ id } items={ possible_values } checkedId={ value }>
+					<SortMenu name={ id } items={ possible_values } checkedId={ value } onChange={ ( selectedId ) => console.log( selectedId ) }>
 						{ title }
 					</SortMenu>
 				);
