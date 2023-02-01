@@ -22,7 +22,7 @@ class Urlslab_General extends Urlslab_Widget {
 		$this->landing_page_link  = 'https://www.urlslab.com';
 	}
 
-	public function init_widget( Urlslab_Loader $loader ) {}
+	public function init_widget() {}
 
 
 	/**

@@ -15,7 +15,7 @@ abstract class Urlslab_Cron {
 		}
 	}
 
-	public function ajax_exec( $start_time, $max_execution_time ) {
+	public function api_exec( $start_time, $max_execution_time ) {
 		$this->start_time = $start_time;
 		$this->cron_exec( $max_execution_time );
 	}

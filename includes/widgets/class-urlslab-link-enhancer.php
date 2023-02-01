@@ -33,9 +33,9 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		$this->parent_page              = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-link-building' );
 	}
 
-	public function init_widget( Urlslab_Loader $loader ) {
-		$loader->add_action( 'post_updated', $this, 'post_updated', 10, 3 );
-		$loader->add_action( 'urlslab_content', $this, 'theContentHook', 12 );
+	public function init_widget() {
+		Urlslab_Loader::get_instance()->add_action( 'post_updated', $this, 'post_updated', 10, 3 );
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_content', $this, 'theContentHook', 12 );
 	}
 
 	public function post_updated( $post_id, $post, $post_before ) {

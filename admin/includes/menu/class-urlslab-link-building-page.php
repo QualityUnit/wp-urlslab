@@ -23,8 +23,8 @@ class Urlslab_Link_Building_Page extends Urlslab_Admin_Page {
 
 	}
 
-	public function init_ajax_hooks( Urlslab_Loader $urlslab_loader ) {
-		$urlslab_loader->add_action( 'wp_ajax_urlslab_keyword_usage', $this->link_building_subpage, 'urlslab_keyword_usage' );
+	public function init_ajax_hooks() {
+		Urlslab_Loader::get_instance()->add_action( 'wp_ajax_urlslab_keyword_usage', $this->link_building_subpage, 'urlslab_keyword_usage' );
 	}
 
 	public function on_page_load( string $action, string $component ) {

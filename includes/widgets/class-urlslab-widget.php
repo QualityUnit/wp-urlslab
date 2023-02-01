@@ -19,12 +19,7 @@ abstract class Urlslab_Widget {
 	private $options = false;
 	private $option_sections = array();
 
-	/**
-	 * @param Urlslab_Loader $loader
-	 *
-	 * @return void
-	 */
-	public abstract function init_widget( Urlslab_Loader $loader );
+	public abstract function init_widget();
 
 	/**
 	 * @return string Widget slug for identifying the widget

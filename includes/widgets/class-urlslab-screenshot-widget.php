@@ -22,8 +22,8 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		$this->parent_page              = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-ui-elements' );
 	}
 
-	public function init_widget( Urlslab_Loader $loader ) {
-		$loader->add_action( 'init', $this, 'hook_callback', 10, 0 );
+	public function init_widget() {
+		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'hook_callback', 10, 0 );
 	}
 
 	public function hook_callback() {

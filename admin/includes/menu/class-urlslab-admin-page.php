@@ -3,11 +3,10 @@
 abstract class Urlslab_Admin_Page {
 
 	/**
-	 * @param Urlslab_Loader $urlslab_loader
 	 *
 	 * @return void
 	 */
-	abstract public function init_ajax_hooks( Urlslab_Loader $urlslab_loader );
+	abstract public function init_ajax_hooks();
 
 	/**
 	 * @return void

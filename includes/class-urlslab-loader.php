@@ -43,6 +43,20 @@ class Urlslab_Loader {
 	protected array $filters;
 
 
+	private static Urlslab_Loader $instance;
+
+	/**
+	 * Returns the singleton instance of this class.
+	 *
+	 * @return Urlslab_Loader The instance.
+	 */
+	public static function get_instance(): Urlslab_Loader {
+		if ( empty( self::$instance ) ) {
+			self::$instance = new self;
+		}
+		return self::$instance;
+	}
+
 	/**
 	 * Initialize the collections used to maintain the actions and filters.
 	 *

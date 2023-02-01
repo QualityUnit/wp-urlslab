@@ -92,9 +92,9 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 
-	public function init_widget( Urlslab_Loader $loader ) {
-		$loader->add_action( 'wp_handle_upload', $this, 'wp_handle_upload', 10, 1 );
-		$loader->add_action( 'urlslab_content', $this, 'the_content', 20 );
+	public function init_widget() {
+		Urlslab_Loader::get_instance()->add_action( 'wp_handle_upload', $this, 'wp_handle_upload', 10, 1 );
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_content', $this, 'the_content', 20 );
 	}
 
 	/**

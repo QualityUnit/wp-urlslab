@@ -31,16 +31,6 @@ class Urlslab {
 
 
 	/**
-	 * The loader that's responsible for maintaining and registering all hooks that power
-	 * the plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   protected
-	 * @var      Urlslab_Loader $loader Maintains and registers all hooks for the plugin.
-	 */
-	protected Urlslab_Loader $loader;
-
-	/**
 	 * @var Urlslab_Url_Data_Fetcher
 	 */
 	private Urlslab_Url_Data_Fetcher $url_data_fetcher;
@@ -243,9 +233,6 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/tables/class-urlslab-related-resources-widget-table.php';
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-api-router.php';
-
-		$this->loader = new Urlslab_Loader();
-
 	}
 
 	/**
@@ -260,7 +247,7 @@ class Urlslab {
 	private function set_locale() {
 		$plugin_i18n = new Urlslab_I18n();
 
-		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
+		Urlslab_Loader::get_instance()->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
 
 	}
 
@@ -272,17 +259,15 @@ class Urlslab {
 	 * @access   private
 	 */
 	private function define_admin_hooks() {
-		$this->loader->add_action( 'wp_ajax_urlslab_exec_cron', $this, 'execute_cron_tasks' );
-
-		$plugin_admin = new Urlslab_Admin( $this->get_urlslab(), $this->get_version(), $this->loader );
+		$plugin_admin = new Urlslab_Admin( $this->get_urlslab(), $this->get_version() );
 		$plugin_admin->urlslab_page_ajax();
 
-		$this->loader->add_action( 'admin_init', $this, 'urlslab_upgrade', 10, 0 );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_react_settings' );
-		$this->loader->add_action( 'admin_menu', $plugin_admin, 'urlslab_admin_menu', 9, 0 );
-		$this->loader->add_action(
+		Urlslab_Loader::get_instance()->add_action( 'admin_init', $this, 'urlslab_upgrade', 10, 0 );
+		Urlslab_Loader::get_instance()->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
+		Urlslab_Loader::get_instance()->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		Urlslab_Loader::get_instance()->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_react_settings' );
+		Urlslab_Loader::get_instance()->add_action( 'admin_menu', $plugin_admin, 'urlslab_admin_menu', 9, 0 );
+		Urlslab_Loader::get_instance()->add_action(
 			'wp_loaded',
 			$plugin_admin,
 			'urlslab_load_add_widgets_page',
@@ -302,16 +287,16 @@ class Urlslab {
 	private function define_public_hooks() {
 		$plugin_public = new Urlslab_Public( $this->get_urlslab(), $this->get_version() );
 
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-		$this->loader->add_action( 'template_redirect', $plugin_public, 'download_offloaded_file', PHP_INT_MAX );
+		Urlslab_Loader::get_instance()->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
+		Urlslab_Loader::get_instance()->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $plugin_public, 'download_offloaded_file', PHP_INT_MAX );
 
-		$this->loader->add_action( 'wp_before_load_template', $this, 'buffer_head_start', PHP_INT_MIN );
-		$this->loader->add_action( 'wp_after_load_template', $this, 'buffer_end', PHP_INT_MAX );
+		Urlslab_Loader::get_instance()->add_action( 'wp_before_load_template', $this, 'buffer_head_start', PHP_INT_MIN );
+		Urlslab_Loader::get_instance()->add_action( 'wp_after_load_template', $this, 'buffer_end', PHP_INT_MAX );
 
 		//body content
-		$this->loader->add_action( 'wp_body_open', $this, 'buffer_content_start', PHP_INT_MAX );
-		$this->loader->add_action( 'wp_footer', $this, 'buffer_end', PHP_INT_MIN );
+		Urlslab_Loader::get_instance()->add_action( 'wp_body_open', $this, 'buffer_content_start', PHP_INT_MAX );
+		Urlslab_Loader::get_instance()->add_action( 'wp_footer', $this, 'buffer_end', PHP_INT_MIN );
 
 		$this->init_activated_widgets();
 	}
@@ -409,32 +394,8 @@ class Urlslab {
 	private function init_activated_widgets() {
 		$active_widgets = Urlslab_User_Widget::get_instance()->get_activated_widget();
 		foreach ( $active_widgets as $active_widget ) {
-			$active_widget->init_widget( $this->loader );
+			$active_widget->init_widget();
 		}
-	}
-
-	private function add_cron_task( $task ) {
-		$this->cron_tasks[] = $task;
-		$this->loader->add_action( 'urlslab_cron_hook', $task, 'cron_exec', 10, 0 );
-	}
-
-
-	public function execute_cron_tasks() {
-		$data       = array();
-		$start_time = time();
-		$max_time   = 15;
-		foreach ( $this->cron_tasks as $task ) {
-			if ( $max_time > ( time() - $start_time ) ) {
-				try {
-					$task_time = time();
-					$task->ajax_exec( $start_time, 15 );
-					$data[ get_class( $task ) ] = time() - $task_time;
-				} catch ( Exception $e ) {
-					$data[ get_class( $task ) ] = $e->getMessage();
-				}
-			}
-		}
-		wp_send_json_success( $data );
 	}
 
 	private function define_backend_hooks() {
@@ -451,37 +412,40 @@ class Urlslab {
 			wp_schedule_event( time(), 'every_minute', 'urlslab_cron_hook' );
 		}
 
+		//TODO we can move this to each widget once it is activated
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron-manager.php';
+
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-download-css-cron.php';
-		$this->add_cron_task( new Urlslab_Download_CSS_Cron() );
+		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Download_CSS_Cron() );
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
-		$this->add_cron_task( new Urlslab_Screenshot_Cron( $this->url_data_fetcher ) );
+		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Screenshot_Cron( $this->url_data_fetcher ) );
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-youtube-cron.php';
-		$this->add_cron_task( new Urlslab_Youtube_Cron() );
+		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Youtube_Cron() );
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-background-attachments-cron.php';
-		$this->add_cron_task( new Urlslab_Offload_Background_Attachments_Cron() );
+		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Offload_Background_Attachments_Cron() );
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-transfer-files-cron.php';
-		$this->add_cron_task( new Urlslab_Offload_Transfer_Files_Cron() );
+		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Offload_Transfer_Files_Cron() );
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-update-urls-cron.php';
-		$this->add_cron_task( new Urlslab_Update_Urls_Cron() );
+		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Update_Urls_Cron() );
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-enqueue-files-cron.php';
-		$this->add_cron_task( new Urlslab_Offload_Enqueue_Files_Cron() );
+		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Offload_Enqueue_Files_Cron() );
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-convert-webp-images-cron.php';
 		$cron_job_webp_convert = new Urlslab_Convert_Webp_Images_Cron();
 		if ( $cron_job_webp_convert->is_format_supported() ) {
-			$this->add_cron_task( $cron_job_webp_convert );
+			Urlslab_Cron_Manager::get_instance()->add_cron_task( $cron_job_webp_convert );
 		}
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-convert-avif-images-cron.php';
 		$cron_job_avif_convert = new Urlslab_Convert_Avif_Images_Cron();
 		if ( $cron_job_avif_convert->is_format_supported() ) {
-			$this->add_cron_task( $cron_job_avif_convert );
+			Urlslab_Cron_Manager::get_instance()->add_cron_task( $cron_job_avif_convert );
 		}
 	}
 
@@ -513,7 +477,7 @@ class Urlslab {
 		$this->define_public_hooks();
 		$this->define_backend_hooks();
 
-		$this->loader->run();
+		Urlslab_Loader::get_instance()->run();
 	}
 
 	/**
@@ -525,16 +489,6 @@ class Urlslab {
 	 */
 	public function get_urlslab(): string {
 		return $this->urlslab;
-	}
-
-	/**
-	 * The reference to the class that orchestrates the hooks with the plugin.
-	 *
-	 * @return    Urlslab_Loader    Orchestrates the hooks of the plugin.
-	 * @since     1.0.0
-	 */
-	public function get_loader(): Urlslab_Loader {
-		return $this->loader;
 	}
 
 	/**

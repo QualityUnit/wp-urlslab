@@ -33,8 +33,8 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 		$this->url_data_fetcher   = $url_data_fetcher;
 	}
 
-	public function init_widget( Urlslab_Loader $loader ) {
-		$loader->add_action( 'urlslab_head_content', $this, 'theContentHook' );
+	public function init_widget() {
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_head_content', $this, 'theContentHook' );
 	}
 
 
