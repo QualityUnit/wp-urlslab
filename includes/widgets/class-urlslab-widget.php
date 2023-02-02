@@ -126,7 +126,7 @@ abstract class Urlslab_Widget {
 					$option['value'] = $this->get_option( $option_id );
 			}
 			if ( false == $section_id || $option['section'] == $section_id ) {
-				$result[] = $option;
+				$result[ $option_id ] = $option;
 			}
 		}
 
