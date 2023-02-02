@@ -1,46 +1,54 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { fetchSettings } from '../api/settings';
 import Loader from '../components/Loader';
 import SettingsOption from '../components/SettingsOption';
 
 import '../assets/styles/layouts/_Settings.scss';
+import { useI18n } from '@wordpress/react-i18n/';
 
 export default function Settings( { settingId } ) {
-	const { data: settings, status } = useQuery( {
+	const queryClient = useQueryClient();
+	const { __ } = useI18n();
+
+	const { data, status } = useQuery( {
 		queryKey: [ 'settings', settingId ],
 		queryFn: () => fetchSettings( settingId ),
+		initialData: () => {
+			if ( settingId === 'general' ) {
+				return queryClient.getQueryData( [ 'settings', 'general' ] );
+			}
+		},
 	} );
 
 	if ( status === 'loading' ) {
 		return <Loader />;
 	}
 
-	console.log( settings );
+	const settings = Object.values( data );
 
 	return (
 		<div className="urlslab-settingsPanel-wrap flex-tablet">
 			<div className="urlslab-settingsPanel">
-				{
-					Object.values( settings ).map( ( section ) => {
-						return (
-							<section className="urlslab-settingspanel-section" key={ section.id }>
-								<h4>{ section.title }</h4>
-								<p>{ section.description }</p>
 
-								{ Object.values( section.options ).map( ( option ) => {
+				{ Object.values( settings ).map( ( section ) => {
+					return (
+						<section className="urlslab-settingspanel-section" key={ section.id }>
+							<h4>{ section.title }</h4>
+							<p>{ section.description }</p>
+
+							{ section.options
+								? Object.values( section.options ).map( ( option ) => {
 									return (
-										<div className="urlslab-settingspanel-option" key={ option.id }>
-											{ /* <h5>{ option.title }</h5> */ }
-											<SettingsOption settingId={ settingId } option={ option } />
-											<p>{ option.description }</p>
-										</div>
+										<SettingsOption settingId={ settingId } option={ option } key={ option.id } />
 									);
-								} ) }
-							</section>
-						);
-					} )
+								} )
+								: <h2>{ __( 'No options available' ) }</h2>
+							}
+						</section>
+					);
+				} )
 				}
 			</div>
 		</div>

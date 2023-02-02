@@ -11,10 +11,10 @@ import SortMenu from '../elements/SortMenu';
 
 import '../assets/styles/components/datepicker/datepicker.scss';
 
-export default function SettingsOption( { settingId, sectionIndex, option, optionIndex } ) {
+export default function SettingsOption( { settingId, option } ) {
 	const queryClient = useQueryClient();
 	// console.log( sectionIndex );
-	const { id, type, title, placeholder, value, possible_values } = option;
+	const { id, type, title, description, placeholder, value, possible_values } = option;
 	const [ date, setDate ] = useState( type !== 'datetime' || new Date( value ) );
 
 	// queryClient.setQueryData(['settings', settingId[sectionIndex]], !isActive);
@@ -22,12 +22,13 @@ export default function SettingsOption( { settingId, sectionIndex, option, optio
 
 	const handleInputField = useMutation( {
 		mutationFn: ( changeValue ) => {
-			// queryClient.setQueryData( [ 'settings', settingId ], { [ [ sectionIndex ].options[ optionIndex ].value ]: changeValue } );
+			queryClient.setQueryData( [ 'settings', settingId ], { value: changeValue } );
 			// console.log( testData[ sectionIndex ].options[ optionIndex ] );
-			return setSettings( settingId, { gule: 'nic' } );
+			return setSettings( `${ settingId }/${ id }`, {
+				value: changeValue } );
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries( [ 'settings', settingId ] );
+			// queryClient.invalidateQueries( [ 'settings', settingId ] );
 			console.log( queryClient.getQueryData( [ 'settings', settingId ] ) );
 		},
 		onError: ( error ) => {
@@ -85,6 +86,9 @@ export default function SettingsOption( { settingId, sectionIndex, option, optio
 	};
 
 	return (
-		renderOption()
+		<div className="urlslab-settingspanel-option">
+			{ renderOption() }
+			<p>{ description }</p>
+		</div>
 	);
 }
