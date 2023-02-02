@@ -1,64 +1,38 @@
 <?php
 
-class Urlslab_Api_Css_Cache extends WP_REST_Controller {
+class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 	public function register_routes() {
-		$namespace = 'urlslab/v1';
-		$base      = '/css-cache';
+		$base = '/css-cache';
 		register_rest_route(
-			$namespace,
+			self::NAMESPACE,
 			$base . '/',
 			array(
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_items' ),
-					'args'                => array(
-						'rows_per_page'    => array(
-							'required'          => true,
-							'default'           => 20,
-							'validate_callback' => function( $param ) {
-								return is_numeric( $param ) && 0 < $param && 100 > $param;
-							},
-						),
-						'sort_column'      => array(
-							'required'          => false,
-							'default'           => 'status_changed',
-							'validate_callback' => function( $param ) {
-								return is_string( $param ) && 0 < strlen( $param );
-							},
-						),
-						'sort_direction'   => array(
-							'required'          => false,
-							'default'           => 'ASC',
-							'validate_callback' => function( $param ) {
-								return 'ASC' == $param || 'DESC' == $param;
-							},
-						),
-						'from_id'          => array(
-							'required' => false,
-						),
-						'from_sort_column' => array(
-							'required' => false,
-						),
-						'filter_url'       => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return 255 >= strlen( $param );
-							},
-						),
-						'filter_status'    => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								switch ( $param ) {
-									case Urlslab_CSS_Cache_Row::STATUS_ACTIVE:
-									case Urlslab_CSS_Cache_Row::STATUS_DISABLED:
-									case Urlslab_CSS_Cache_Row::STATUS_NEW:
-									case Urlslab_CSS_Cache_Row::STATUS_PENDING:
-										return true;
-									default:
-										return false;
-								}
-							},
-						),
+					'args'                => $this->get_table_arguments(
+						array(
+							'filter_url'    => array(
+								'required'          => false,
+								'validate_callback' => function( $param ) {
+									return 255 >= strlen( $param );
+								},
+							),
+							'filter_status' => array(
+								'required'          => false,
+								'validate_callback' => function( $param ) {
+									switch ( $param ) {
+										case Urlslab_CSS_Cache_Row::STATUS_ACTIVE:
+										case Urlslab_CSS_Cache_Row::STATUS_DISABLED:
+										case Urlslab_CSS_Cache_Row::STATUS_NEW:
+										case Urlslab_CSS_Cache_Row::STATUS_PENDING:
+											return true;
+										default:
+											return false;
+									}
+								},
+							),
+						)
 					),
 					'permission_callback' => array( $this, 'get_items_permissions_check' ),
 				),
@@ -66,7 +40,7 @@ class Urlslab_Api_Css_Cache extends WP_REST_Controller {
 		);
 
 		register_rest_route(
-			$namespace,
+			self::NAMESPACE,
 			$base . '/(?P<url_id>[0-9a-zA-Z_\-]+)',
 			array(
 				array(
@@ -93,9 +67,8 @@ class Urlslab_Api_Css_Cache extends WP_REST_Controller {
 			)
 		);
 
-
 		register_rest_route(
-			$namespace,
+			self::NAMESPACE,
 			$base . '/(?P<url_id>[0-9a-zA-Z_\-]+)',
 			array(
 				array(
@@ -106,18 +79,6 @@ class Urlslab_Api_Css_Cache extends WP_REST_Controller {
 				),
 			)
 		);
-	}
-
-	public function get_items_permissions_check( $request ) {
-		return current_user_can( 'administrator' );
-	}
-
-	public function update_item_permissions_check( $request ) {
-		return current_user_can( 'administrator' );
-	}
-
-	public function delete_item_permissions_check( $request ) {
-		return current_user_can( 'administrator' );
 	}
 
 	public function get_items( $request ) {
@@ -176,33 +137,11 @@ class Urlslab_Api_Css_Cache extends WP_REST_Controller {
 		return new WP_REST_Response( $rows, 200 );
 	}
 
-
-	public function update_item( $request ) {
-		try {
-			$row = new Urlslab_CSS_Cache_Row( array( 'url_id' => $request->get_param( 'url_id' ) ) );
-			if ( $row->load() ) {
-				if ( $row->get( 'status' ) != $request->get_json_params()['status'] ) {
-					$row->set( 'status', $request->get_json_params()['status'] );
-					$row->update();
-				}
-
-				return new WP_REST_Response( $row->as_array(), 200 );
-			} else {
-				return new WP_Error( 'not-found', __( 'Row not found', 'urlslab' ), array( 'status' => 404 ) );
-			}
-		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to update', 'urlslab' ), array( 'status' => 500 ) );
-		}
+	function get_row_object( $params = array() ): Urlslab_Data {
+		return new Urlslab_CSS_Cache_Row( $params );
 	}
 
-
-	public function delete_item( $request ) {
-		global $wpdb;
-
-		if ( false === $wpdb->delete( URLSLAB_CSS_CACHE_TABLE, array( 'url_id' => $request->get_param( 'url_id' ) ) ) ) {
-			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
-		}
-
-		return new WP_REST_Response( 'CSS cache object deleted', 200 );
+	function get_editable_columns(): array {
+		return array( 'status' );
 	}
 }

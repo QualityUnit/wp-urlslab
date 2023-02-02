@@ -1,12 +1,11 @@
 <?php
 
-class Urlslab_Api_Settings extends WP_REST_Controller {
+class Urlslab_Api_Settings extends Urlslab_Api_Base {
 	public function register_routes() {
-		$namespace = 'urlslab/v1';
 		$base      = '/settings';
 		$module    = '(?P<module_id>[0-9a-zA-Z_\-]+)';
 		register_rest_route(
-			$namespace,
+			self::NAMESPACE,
 			$base . '/' . $module . '/',
 			array(
 				array(
@@ -19,7 +18,7 @@ class Urlslab_Api_Settings extends WP_REST_Controller {
 		);
 
 		register_rest_route(
-			$namespace,
+			self::NAMESPACE,
 			$base . '/' . $module . '/(?P<setting_name>[0-9a-zA-Z_\-]+)',
 			array(
 				array(
@@ -30,14 +29,6 @@ class Urlslab_Api_Settings extends WP_REST_Controller {
 				),
 			)
 		);
-	}
-
-	public function get_items_permissions_check( $request ) {
-		return current_user_can( 'administrator' );
-	}
-
-	public function update_item_permissions_check( $request ) {
-		return current_user_can( 'administrator' );
 	}
 
 	private function prepare_options_and_sections( Urlslab_Widget $widget ) {

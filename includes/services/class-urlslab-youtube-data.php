@@ -9,7 +9,7 @@ class Urlslab_Youtube_Data extends Urlslab_Data {
 	private $microdata_obj;
 
 	public function __construct( array $video, $loaded_from_db = false ) {
-		$this->set( 'videoid', $video['videoid'], ! $loaded_from_db );
+		$this->set( 'videoid', $video['videoid'] ?? '', ! $loaded_from_db );
 		$this->set( 'microdata', $video['microdata'] ?? null, ! $loaded_from_db );
 		$this->set( 'status', $video['status'] ?? self::STATUS_NEW, ! $loaded_from_db );
 		$this->set( 'status_changed', $video['status_changed'] ?? self::get_now(), true );
