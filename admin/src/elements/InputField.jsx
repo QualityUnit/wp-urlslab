@@ -36,7 +36,7 @@ export default function InputField( { defaultValue, placeholder, message, classN
 					className="urlslab-input input__text"
 					type={ type }
 					defaultValue={ val }
-					onChange={ handleVal }
+					onBlur={ handleVal }
 					placeholder={ placeholder }
 					disabled={ disabled ? 'disabled' : '' }
 				/>

@@ -13,26 +13,27 @@ import '../assets/styles/components/datepicker/datepicker.scss';
 
 export default function SettingsOption( { settingId, option } ) {
 	const queryClient = useQueryClient();
-	// console.log( sectionIndex );
 	const { id, type, title, description, placeholder, value, possible_values } = option;
 	const [ date, setDate ] = useState( type !== 'datetime' || new Date( value ) );
 
-	// queryClient.setQueryData(['settings', settingId[sectionIndex]], !isActive);
-	// const testData = queryClient.getQueryData( [ 'settings', settingId ] );
-
-	const handleInputField = useMutation( {
+	const handleChange = useMutation( {
 		mutationFn: ( changeValue ) => {
-			queryClient.setQueryData( [ 'settings', settingId ], { value: changeValue } );
-			// console.log( testData[ sectionIndex ].options[ optionIndex ] );
 			return setSettings( `${ settingId }/${ id }`, {
 				value: changeValue } );
 		},
 		onSuccess: () => {
-			// queryClient.invalidateQueries( [ 'settings', settingId ] );
-			console.log( queryClient.getQueryData( [ 'settings', settingId ] ) );
+			queryClient.invalidateQueries( [ 'settings', settingId ] );
 		},
-		onError: ( error ) => {
-			console.log( error );
+	} );
+
+	const handleDate = useMutation( {
+		mutationFn: ( newDate ) => {
+			return setSettings( `${ settingId }/${ id }`, {
+				value: new Date( newDate ).toISOString().replace( /^(.+)T(.+?)\..+$/g, '$1 $2' ),
+			} );
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries( [ 'settings', settingId ] );
 		},
 	} );
 
@@ -47,7 +48,7 @@ export default function SettingsOption( { settingId, option } ) {
 						label={ title }
 						placeholder={ placeholder && ! value }
 						defaultValue={ value }
-						onChange={ ( inputValue ) => handleInputField.mutate( inputValue ) }
+						onChange={ ( inputValue ) => handleChange.mutate( inputValue ) }
 					/>
 				);
 			case 'checkbox':
@@ -55,28 +56,26 @@ export default function SettingsOption( { settingId, option } ) {
 					<Switch
 						className="option flex"
 						label={ title }
-						onChange={ () => console.log( `${ id }:${ ! value }` ) }
 						checked={ value === '1' || value === true }
+						onChange={ ( inputValue ) => handleChange.mutate( inputValue ) }
 					/>
 				);
 			case 'datetime':
-				const handleDate = ( newDate ) => {
-					setDate( newDate );
-				};
 				return (
 					<DatePicker
 						className="urlslab-input"
 						selected={ date }
 						dateFormat="dd. MMMM yyyy"
 						timeFormat="HH:mm"
-						locale={ window.navigator.language }
-						onChange={ ( newDate ) => handleDate( newDate ) }
+						onChange={ ( newDate ) => {
+							setDate( newDate ); handleDate.mutate( newDate );
+						} }
 						showTimeSelect
 					/>
 				);
 			case 'listbox':
 				return (
-					<SortMenu name={ id } items={ possible_values } checkedId={ value } onChange={ ( selectedId ) => console.log( selectedId ) }>
+					<SortMenu name={ id } items={ possible_values } checkedId={ value } onChange={ ( selectedId ) => handleChange.mutate( selectedId ) }>
 						{ title }
 					</SortMenu>
 				);

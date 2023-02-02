@@ -8,3 +8,14 @@ export const renameModule = ( moduleId ) => {
 		return name.replace( /-(\w)|^(\w)/g, ( char ) => char.replace( '-', '' ).toUpperCase() );
 	}
 };
+
+// Delay some function (ie. onChange, onKeyUp)…
+// Usage delay(()=> some.function, time in ms)();
+export const delay = ( fn, ms ) => {
+	let timer = 0;
+	return function( ...args ) {
+		clearTimeout( timer );
+		timer = setTimeout( fn.bind( this, ...args ), ms || 0 );
+	};
+};
+
