@@ -1,0 +1,20 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-settingsPanel {
+
+	&-wrap {
+		height: 100%;
+	}
+
+	margin: 1.5em;
+	padding: 1.875em 4em;
+	background-color: $white;
+	border-radius: $br-10;
+	box-shadow: $box-shadow-small;
+
+	@media (min-width: $breakpoint-tablet-landscape) {
+		width: 35.625em;
+		margin: 6.25em auto auto;
+	}
+}

@@ -68,11 +68,12 @@ class Urlslab_Api_Modules extends WP_REST_Controller {
 
 	private function get_widget_data( Urlslab_Widget $widget ): stdClass {
 		return (object) array(
-			'id'          => $widget->get_widget_slug(),
-			'title'       => $widget->get_widget_title(),
-			'apikey'      => $widget->is_api_key_required(),
-			'description' => $widget->get_widget_description(),
-			'active'      => Urlslab_User_Widget::get_instance()->is_widget_activated( $widget->get_widget_slug() ),
+			'id'           => $widget->get_widget_slug(),
+			'title'        => $widget->get_widget_title(),
+			'apikey'       => $widget->is_api_key_required(),
+			'description'  => $widget->get_widget_description(),
+			'active'       => Urlslab_User_Widget::get_instance()->is_widget_activated( $widget->get_widget_slug() ),
+			'has_settings' => ! empty( $widget->get_options( 'default' ) ),
 		);
 	}
 

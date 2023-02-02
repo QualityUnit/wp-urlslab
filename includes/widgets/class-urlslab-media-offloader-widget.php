@@ -885,7 +885,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME,
 			31536000,
 			true,
-			__( 'Cache expiration [seconds]' ),
+			__( 'Cache expiration (seconds)' ),
 			__( 'Media files cache expiration time - defines how long will be file cached in the browser or CDN' ),
 			self::OPTION_TYPE_NUMBER,
 			false,

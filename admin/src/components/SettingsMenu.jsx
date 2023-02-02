@@ -1,9 +1,5 @@
 import { useState } from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
-
-import { fetchSettings } from '../api/settings';
 
 import SearchField from '../elements/SearchField';
 import BackButton from '../elements/BackButton';
@@ -12,7 +8,6 @@ import '../assets/styles/components/_MainMenu.scss';
 
 export default function SettingsMenu( { modules, backButton, activeSetting } ) {
 	const { __ } = useI18n();
-	const queryClient = useQueryClient();
 	const [ activeSettingId, setActiveSetting ] = useState( 'general' );
 	const handleBackButton = ( module ) => {
 		if ( backButton ) {
@@ -34,15 +29,6 @@ export default function SettingsMenu( { modules, backButton, activeSetting } ) {
 		return '';
 	};
 
-	const prefetchSettings = ( moduleId ) => {
-		queryClient.prefetchQuery( {
-			queryKey: [ 'settings', moduleId ],
-			queryFn: () => fetchSettings( moduleId ),
-		} );
-	};
-
-	prefetchSettings( activeSettingId );
-
 	return (
 		<div className="urlslab-mainmenu-menu">
 			<div className="urlslab-mainmenu-element urlslab-mainmenu-search">
@@ -58,11 +44,10 @@ export default function SettingsMenu( { modules, backButton, activeSetting } ) {
 				{ modules.length
 					? modules.map( ( module ) => {
 						return (
-							module.active || module.id === 'general'
+							( module.active && module.has_settings ) || module.id === 'general'
 								? <li key={ module.id } className={ `urlslab-mainmenu-item ${ activator( module.id ) }` }>
 									<button
 										type="button"
-										onMouseEnter={ () => prefetchSettings( module.id ) }
 										onClick={ () => handleActive( module.id ) }>{ module.title }
 									</button>
 								</li>
