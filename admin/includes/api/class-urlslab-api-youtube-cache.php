@@ -144,6 +144,6 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 	}
 
 	function get_editable_columns(): array {
-		return array('status');
+		return array( 'status' );
 	}
 }
