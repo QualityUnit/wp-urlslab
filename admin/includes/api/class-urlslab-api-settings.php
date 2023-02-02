@@ -47,13 +47,13 @@ class Urlslab_Api_Settings extends WP_REST_Controller {
 			'title'       => __( 'Settings' ),
 			'description' => '',
 		);
-		foreach ($widget->get_options( 'default' ) as $option) {
-			$sections[0]['options'][$option['id']] = (object) $option;
+		foreach ( $widget->get_options( 'default' ) as $option ) {
+			$sections[0]['options'][ $option['id'] ] = (object) $option;
 		}
 		foreach ( $widget->get_option_sections() as $section ) {
 			
 			foreach ( $widget->get_options( $section['id'] ) as $option ) {
-				$section['options'][$option['id']] = (object) $option;
+				$section['options'][ $option['id'] ] = (object) $option;
 			}
 			$sections[] = (object) $section;
 		}
