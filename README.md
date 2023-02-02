@@ -1,7 +1,18 @@
-# URLSLAB Screenshot Widget
+# URLSLAB Wordpress Plugin
 
-For developing the plugin the best way is to develop the plugin in local environment. to install a wordpress plugin
-follow [this link](https://ubuntu.com/tutorials/install-and-configure-wordpress).
+Empower your website with the ultimate WordPress plugin, crafted with the real-life needs of our own website as the inspiration. 
+Say goodbye to sluggish performance, inefficiency, and bland design. Our plugin brings lightning speed, effortless efficiency and unparalleled flexibility to the table. 
 
-After successful installation make a symlink to from wordpress installation to the project directory:
-`ln -s /path/to/project/wp-urlslab /srv/www/wordpress/wp-content/plugins/urlslab`
+With thousands of unique pages and seamless translations into over 20 languages, our website is a testament to the plugin's capabilities. 
+Keep your website content organized and optimized for search engines with this game-changing plugin.
+
+
+What does the plugin for us?
++ Automates manual tasks and saves time and effort
++ Addresses Wordpress media management and CDN optimization issues
++ Provides up-to-date screenshots of external links
++ Supports internal link-building with semantic understanding
++ Generates AI-generated content summaries to enhance link titles and meta descriptions
++ Hides broken links and missing images
++ Generates descriptions for missing images
++ Elevates website with a professional look and effortless management.
