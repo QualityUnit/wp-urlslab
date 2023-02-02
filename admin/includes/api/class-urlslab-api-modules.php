@@ -1,11 +1,10 @@
 <?php
 
-class Urlslab_Api_Modules extends WP_REST_Controller {
+class Urlslab_Api_Modules extends Urlslab_Api_Base {
 	public function register_routes() {
-		$namespace = 'urlslab/v1';
 		$base      = '/module';
 		register_rest_route(
-			$namespace,
+			self::NAMESPACE,
 			$base,
 			array(
 				array(
@@ -18,7 +17,7 @@ class Urlslab_Api_Modules extends WP_REST_Controller {
 		);
 
 		register_rest_route(
-			$namespace,
+			self::NAMESPACE,
 			$base . '/(?P<id>[0-9a-zA-Z_\-]+)',
 			array(
 				array(
@@ -46,10 +45,6 @@ class Urlslab_Api_Modules extends WP_REST_Controller {
 
 	public function get_items_permissions_check( $request ) {
 		return current_user_can( 'read' );
-	}
-
-	public function update_item_permissions_check( $request ) {
-		return current_user_can( 'administrator' );
 	}
 
 	public function get_items( $request ) {

@@ -175,6 +175,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-keyword-data.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-data.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-file-data.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-keyword-data.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-file-pointer-data.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-youtube-data.php';

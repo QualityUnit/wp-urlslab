@@ -11,11 +11,15 @@ class Urlslab_CSS_Cache_Row extends Urlslab_Data {
 	/**
 	 * @param array $url
 	 */
-	public function __construct(
-		array $url = array(), $loaded_from_db = true
-	) {
-		$this->set( 'url', $url['url'], ! $loaded_from_db );
-		$this->set( 'url_id', $url['url_id'] ?? ( new Urlslab_Url( $url['url'] ) )->get_url_id(), ! $loaded_from_db );
+	public function __construct( array $url = array(), $loaded_from_db = true ) {
+		$this->set( 'url', $url['url'] ?? '', ! $loaded_from_db );
+		if ( isset( $url['url_id'] ) ) {
+			$url_id = $url['url_id'];
+		} else {
+			$url_obj = new Urlslab_Url( $this->get( 'url' ) );
+			$url_id  = $url_obj->get_url_id();
+		}
+		$this->set( 'url_id', $url_id, ! $loaded_from_db );
 		$this->set( 'status', $url['status'] ?? self::STATUS_NEW, ! $loaded_from_db );
 		$this->set( 'status_changed', $url['status_changed'] ?? self::get_now(), ! $loaded_from_db );
 		$this->set( 'filesize', $url['filesize'] ?? 0, ! $loaded_from_db );

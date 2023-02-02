@@ -2,6 +2,9 @@
 
 class Urlslab_Api_Router {
 	public function register_routes() {
+		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-base.php';
+		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-table.php';
+
 		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-modules.php';
 		( new Urlslab_Api_Modules() )->register_routes();
 
