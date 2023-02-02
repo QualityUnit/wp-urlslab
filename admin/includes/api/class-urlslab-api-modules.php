@@ -73,6 +73,7 @@ class Urlslab_Api_Modules extends WP_REST_Controller {
 			'apikey'      => $widget->is_api_key_required(),
 			'description' => $widget->get_widget_description(),
 			'active'      => Urlslab_User_Widget::get_instance()->is_widget_activated( $widget->get_widget_slug() ),
+			'has_settings'=> ( count( $widget->get_options( 'default' ) ) === 0 ? false : true ),
 		);
 	}
 

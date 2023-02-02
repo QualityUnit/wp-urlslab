@@ -44,7 +44,7 @@ export default function SettingsMenu( { modules, backButton, activeSetting } ) {
 				{ modules.length
 					? modules.map( ( module ) => {
 						return (
-							module.active || module.id === 'general'
+							( module.active && module.has_settings ) || module.id === 'general'
 								? <li key={ module.id } className={ `urlslab-mainmenu-item ${ activator( module.id ) }` }>
 									<button
 										type="button"

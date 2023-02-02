@@ -15,12 +15,15 @@ export default function InputField( { defaultValue, placeholder, message, classN
 
 	const valueStatus = () => {
 		if ( val ) {
-			if ( ( type === undefined || type === 'text' ) ||
-				( type === 'email' && emailRegex.test( val ) ) ||
-				( type === 'number' && ( /[0-9]/i ).test( val ) ) ||
+			if ( ( type === 'email' && emailRegex.test( val ) ) ||
 				( type === 'url' && urlRegex.test( val ) )
 			) {
 				return 'has-value success';
+			}
+			if ( ( type === undefined || type === 'text' ) ||
+				( type === 'number' && ( /[0-9]/i ).test( val ) )
+			) {
+				return '';
 			}
 			return 'has-value error';
 		}
