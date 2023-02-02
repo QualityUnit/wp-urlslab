@@ -135,7 +135,7 @@ class Urlslab_Api_Css_Cache extends WP_REST_Controller {
 			} else {
 				$where_data[] = sanitize_key( $request->get_param( 'sort_column' ) ) . '>%s';
 			}
-			$query_data[] = $request->get_param( 'from_id' );
+			$query_data[] = $request->get_param( 'from_sort_column' );
 		}
 
 		if ( strlen( $request->get_param( 'filter_url' ) ) ) {

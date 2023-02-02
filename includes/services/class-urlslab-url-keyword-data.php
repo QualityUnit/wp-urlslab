@@ -70,7 +70,7 @@ class Urlslab_Url_Keyword_Data {
 		$this->keyword_url_filter  = $keyword_filter;
 		$this->keyword_usage_count = $keyword_usage_count;
 		$this->link_usage_count    = $link_usage_count ?? 0;
-		$this->kw_type              = $data['kwType'] ?? Urlslab_Keywords_Links::KW_MANUAL;
+		$this->kw_type              = $data['kwType'] ?? Urlslab_Keywords_Links::KW_TYPE_MANUAL;
 	}
 
 	/**

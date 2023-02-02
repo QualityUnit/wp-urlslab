@@ -5,13 +5,13 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 
 	//Type - map
-	const KW_LINK_EDITOR = 'E';    //link added by editor in original content
-	const KW_LINK_URLSLAB = 'U';    //link added by urlslab
+	const KW_LINK_TYPE_EDITOR = 'E';    //link added by editor in original content
+	const KW_LINK_TYPE_URLSLAB = 'U';    //link added by urlslab
 
 	//type - KW
-	const KW_MANUAL = 'M';        //manually created keyword (default)
-	const KW_IMPORTED_FROM_CONTENT = 'I';        //keywords imported from content
-	const KW_NONE = 'X';        //in this case none link will be created in content
+	const KW_TYPE_MANUAL = 'M';        //manually created keyword (default)
+	const KW_TYPE_IMPORTED_FROM_CONTENT = 'I';        //keywords imported from content
+	const KW_TYPE_NONE = 'X';        //in this case none link will be created in content
 
 	private Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher;
 
@@ -168,7 +168,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 					$urlObj                                                               = new Urlslab_Url( $kwRow['url'] );
 					$this->page_keywords[ $kwRow['kw'] ]['urls'][ $urlObj->get_url_id() ] = array(
 						'obj' => $urlObj,
-						't'   => self::KW_LINK_URLSLAB,
+						't'   => self::KW_LINK_TYPE_URLSLAB,
 					);
 					$this->page_keywords[ $kwRow['kw'] ]['kw_id']                         = $kw_id;
 
@@ -244,7 +244,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$lang          = urlslab_get_language();
 
 		$results = array();
-		if ( self::KW_NONE != $this->get_option( self::SETTING_NAME_KW_TYPES_TO_USE ) ) {
+		if ( self::KW_TYPE_NONE != $this->get_option( self::SETTING_NAME_KW_TYPES_TO_USE ) ) {
 			$results = wp_cache_get( 'kws_' . $lang, 'urlslab', false, $found );
 			if ( false === $results || ! $found ) {
 
@@ -488,7 +488,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 											'lang'        => urlslab_get_language(),
 											'kw_priority' => 100,
 											'urlFilter'   => '.*',
-											'kwType'      => self::KW_IMPORTED_FROM_CONTENT,
+											'kwType'      => self::KW_TYPE_IMPORTED_FROM_CONTENT,
 										)
 									);
 								}
@@ -555,7 +555,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 									) {
 										$this->page_keywords[ $link_text ]['urls'][ $urlObj->get_url_id() ] = array(
 											'obj' => $urlObj,
-											't'   => self::KW_LINK_EDITOR,
+											't'   => self::KW_LINK_TYPE_EDITOR,
 										);
 									}
 								} catch ( Exception $e ) {
@@ -641,10 +641,10 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			__( 'Specify types of keywords used to create a link.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				''                                               => __( 'Use all keyword types' ),
-				Urlslab_Keywords_Links::KW_MANUAL                => __( 'Use just manually created keywords' ),
-				Urlslab_Keywords_Links::KW_IMPORTED_FROM_CONTENT => __( 'Use just keywords importent from existing links in content' ),
-				Urlslab_Keywords_Links::KW_NONE                  => __( 'Switched OFF - no replacements' ),
+				''                                                    => __( 'Use all keyword types' ),
+				Urlslab_Keywords_Links::KW_TYPE_MANUAL                => __( 'Use just manually created keywords' ),
+				Urlslab_Keywords_Links::KW_TYPE_IMPORTED_FROM_CONTENT => __( 'Use just keywords importent from existing links in content' ),
+				Urlslab_Keywords_Links::KW_TYPE_NONE                  => __( 'Switched OFF - no replacements' ),
 			)
 		);
 

@@ -244,9 +244,9 @@ class Urlslab_Keyword_Link_Table extends WP_List_Table {
 
 	function column_col_kwType( $item ): string {
 		switch ( $item->get_keyword_type() ) {
-			case Urlslab_Keywords_Links::KW_IMPORTED_FROM_CONTENT:
+			case Urlslab_Keywords_Links::KW_TYPE_IMPORTED_FROM_CONTENT:
 				return '<span>Auto-Imported from content</span>';
-			case Urlslab_Keywords_Links::KW_MANUAL:
+			case Urlslab_Keywords_Links::KW_TYPE_MANUAL:
 			default:
 				return '<span>Manual</span>';
 		}

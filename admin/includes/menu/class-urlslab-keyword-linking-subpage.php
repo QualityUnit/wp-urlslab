@@ -555,7 +555,7 @@ class Urlslab_Keyword_Linking_Subpage extends Urlslab_Admin_Subpage {
 							'kw_priority' => $data[2] ?? null,
 							'lang'        => $data[3] ?? null,
 							'urlFilter'   => $data[4] ?? null,
-							'kwType'      => $data[5] ?? Urlslab_Keywords_Links::KW_MANUAL,
+							'kwType'      => $data[5] ?? Urlslab_Keywords_Links::KW_TYPE_MANUAL,
 						)
 					);
 					$keywords[] = $data_row;
