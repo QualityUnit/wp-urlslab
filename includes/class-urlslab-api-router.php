@@ -16,5 +16,8 @@ class Urlslab_Api_Router {
 
 		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-cron.php';
 		( new Urlslab_Api_Cron() )->register_routes();
+
+		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-keywords.php';
+		( new Urlslab_Api_Keywords() )->register_routes();
 	}
 }
