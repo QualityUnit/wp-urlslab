@@ -2,12 +2,11 @@ import {
 	flexRender,
 	getCoreRowModel,
 	useReactTable } from '@tanstack/react-table';
+import { useState } from 'react';
 
 import '../assets/styles/components/_TableComponent.scss';
 
-export default function Table( props ) {
-	const { className, columns, data } = props;
-
+export default function Table( { className, columns, data } ) {
 	const table = useReactTable( {
 		columns,
 		data,
