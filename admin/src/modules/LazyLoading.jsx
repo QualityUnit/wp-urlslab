@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { createColumnHelper, getFacetedMinMaxValues } from '@tanstack/react-table';
+import { createColumnHelper } from '@tanstack/react-table';
 import { useI18n } from '@wordpress/react-i18n';
 import { fetchData } from '../api/fetchData';
 import Loader from '../components/Loader';
@@ -21,7 +21,8 @@ export default function LazyLoading() {
 	const columns = [
 		columnHelper.accessor( ( row ) => JSON.parse( `${ row.microdata }` ).items[ 0 ].snippet, {
 			id: 'thumb',
-			cell: ( image ) => <img src={ image.getValue().thumbnails.medium.url } alt={ image.getValue().title
+			className: 'thumbnail',
+			cell: ( image ) => <img src={ image.getValue().thumbnails.default.url } alt={ image.getValue().title
 			} />,
 			header: () => __( 'Thumbnail' ),
 		} ),
@@ -29,7 +30,7 @@ export default function LazyLoading() {
 			header: () => __( 'YouTube Id' ),
 		} ),
 		columnHelper.accessor( 'status', {
-			// cell: ( status ) => <span>{ status.renderValue() }</span>,
+			cell: ( stat ) => <span className={ `youtube-status-bullet youtube-status-bullet-${ stat.getValue() }` }>{ stat.getValue() }</span>,
 			className: 'youtube-status',
 			header: () => __( 'Status' ),
 		} ),
