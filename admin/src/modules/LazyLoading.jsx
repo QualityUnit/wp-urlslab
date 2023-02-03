@@ -35,8 +35,9 @@ export default function LazyLoading() {
 			header: () => __( 'Status' ),
 		} ),
 
-		columnHelper.accessor( ( row ) => JSON.parse( `${ row.microdata }` ).items[ 0 ].snippet.title, {
+		columnHelper.accessor( ( row ) => [ row.videoid, JSON.parse( `${ row.microdata }` ).items[ 0 ].snippet.title ], {
 			id: 'title',
+			cell: ( val ) => <a href={ `https://youtu.be/${ val.getValue()[ 0 ] }` } target="_blank" rel="noreferrer">{ val.getValue()[ 1 ] }</a>,
 			header: () => __( 'Title' ),
 		} ),
 	];
