@@ -33,11 +33,12 @@ export default function Table( props ) {
 			<tbody className={ `urlslab-table-body ${ className }` } >
 				{ table.getRowModel().rows.map( ( row ) => (
 					<tr key={ row.id }>
-						{ row.getVisibleCells().map( ( cell ) => (
-							<td key={ cell.id }>
+						{ row.getVisibleCells().map( ( cell ) =>
+							( <td key={ cell.id } className={ cell.column.columnDef.className }>
 								{ flexRender( cell.column.columnDef.cell, cell.getContext() ) }
-							</td>
-						) ) }
+								{ console.log( cell.getContext() ) }
+							</td> )
+						) }
 					</tr>
 				) ) }
 			</tbody>
