@@ -3,11 +3,16 @@
 @use "../common/variables" as *;
 @use "../common/mixins" as *;
 @use "../elements/MenuArrow" as *;
+@use "../elements/Inputs" as *;
 
 .urlslab-FilterMenu {
 	position: relative;
 	z-index: 2;
 	max-width: 12em;
+
+	&.wide {
+		max-width: none;
+	}
 
 	+ .urlslab-FilterMenu {
 		z-index: 1;
@@ -65,6 +70,12 @@
 		padding: 1em 1.45em;
 		transition: opacity 0.1s;
 		filter: drop-shadow(0 1px 6px rgba($black-real, 0.16));
+
+		.wide & {
+			left: 0;
+			transform: none;
+			width: 100%;
+		}
 
 		&--inn {
 

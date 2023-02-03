@@ -313,7 +313,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			Urlslab_Data::get_now(),
 			false,
 			__( 'Validate urls created before' ),
-			__( 'Background process validates all found URLs in page created after selected date. Supported format: Y-m-d H:i:s' ),
+			__( 'Background process validates all found URLs in page created after selected date.' ),
 			self::OPTION_TYPE_DATETIME
 		);
 	}

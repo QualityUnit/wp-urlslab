@@ -3,7 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Switch from '../elements/Switch';
 
-import { setModule } from '../api/modules';
+import { setModule } from '../api/fetchData';
 import { ReactComponent as ArrowIcon } from '../assets/images/icon-arrow.svg';
 import { ReactComponent as ApiIcon } from '../assets/images/api-exclamation.svg';
 import '../assets/styles/components/_DashboardModule.scss';
