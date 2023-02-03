@@ -700,7 +700,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			false,
 			true,
 			__( 'Replace page_id with slug' ),
-			__( 'Convert all wordpress links with page_id parameter to links with correct slug url. Wordpress sometimes during translations converts links to /page_id=xxxx, what is not SEO friendly. This feature will try to find correct URL for this type of link.' )
+			__( 'Convert all wordpress links with page_id parameter to links with correct slug url. Wordpress sometimes during translations converts links to /page_id=xxxx, what is not SEO friendly. This feature will try to find correct URL for this type of link. Use class urlslab-skip-page_id if you do not want to process some links in page content.' )
 		);
 
 
