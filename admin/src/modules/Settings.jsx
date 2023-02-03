@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMemo } from 'react';
 
 import { fetchSettings } from '../api/settings';
 import Loader from '../components/Loader';
@@ -21,12 +22,15 @@ export default function Settings( { settingId } ) {
 			}
 		},
 	} );
+	let settings = useMemo( () => {
+		return data;
+	}, [ data ] );
 
 	if ( status === 'loading' ) {
 		return <Loader />;
 	}
 
-	const settings = Object.values( data );
+	settings = Object.values( data );
 
 	return (
 		<div className="urlslab-settingsPanel-wrap flex-tablet">
