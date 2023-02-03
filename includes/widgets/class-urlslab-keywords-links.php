@@ -689,7 +689,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			array(
 				''                                                    => __( 'Use all keyword types' ),
 				Urlslab_Keywords_Links::KW_TYPE_MANUAL                => __( 'Use just manually created keywords' ),
-				Urlslab_Keywords_Links::KW_TYPE_IMPORTED_FROM_CONTENT => __( 'Use just keywords importent from existing links in content' ),
+				Urlslab_Keywords_Links::KW_TYPE_IMPORTED_FROM_CONTENT => __( 'Use just keywords important from existing links in content' ),
 				Urlslab_Keywords_Links::KW_TYPE_NONE                  => __( 'Switched OFF - no replacements' ),
 			)
 		);

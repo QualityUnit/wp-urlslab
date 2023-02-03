@@ -17,4 +17,14 @@
 		width: 35.625em;
 		margin: 6.25em auto auto;
 	}
+
+	.urlslab-inputField-wrap {
+		margin-bottom: 0;
+	}
+
+	&-option__desc {
+		font-size: 0.75rem;
+		margin-top: 0.25em;
+		color: $grey-darker;
+	}
 }

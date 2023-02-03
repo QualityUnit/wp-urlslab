@@ -1,13 +1,13 @@
 import { useState } from 'react';
+import { urlRegex } from '../constants/helpers';
 import '../assets/styles/elements/_Inputs.scss';
 
 export default function InputField( { defaultValue, placeholder, message, className, type, disabled, label, labelInline, onChange, children, style } ) {
 	const [ val, setVal ] = useState( defaultValue || '' );
+	const [ valid, setValid ] = useState( false );
 	const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
-	const urlRegex = /^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#?]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/;
 
 	const handleVal = ( event ) => {
-		setVal( event.target.value );
 		if ( onChange ) {
 			onChange( event.target.value );
 		}
@@ -23,7 +23,7 @@ export default function InputField( { defaultValue, placeholder, message, classN
 			if ( ( type === undefined || type === 'text' ) ||
 				( type === 'number' && ( /[0-9]/i ).test( val ) )
 			) {
-				return '';
+				return 'has-value';
 			}
 			return 'has-value error';
 		}
@@ -39,6 +39,7 @@ export default function InputField( { defaultValue, placeholder, message, classN
 					className="urlslab-input input__text"
 					type={ type }
 					defaultValue={ val }
+					onChange={ ( event ) => setVal( event.target.value ) }
 					onBlur={ handleVal }
 					placeholder={ placeholder }
 					disabled={ disabled ? 'disabled' : '' }
