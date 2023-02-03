@@ -41,7 +41,7 @@ export default function LazyLoading() {
 		} ),
 		columnHelper.accessor( ( row ) => JSON.parse( `${ row.microdata }` ).items[ 0 ].snippet.publishedAt, {
 			id: 'published',
-			cell: ( val ) => val.getValue(),
+			cell: ( val ) => new Date( val.getValue() ).toLocaleString( window.navigator.language ),
 			header: () => __( 'Published' ),
 		} ),
 	];
