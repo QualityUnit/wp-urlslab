@@ -2,7 +2,7 @@ import {
 	flexRender,
 	getCoreRowModel,
 	useReactTable } from '@tanstack/react-table';
-// import { useState } from 'react';
+import { useState } from 'react';
 
 import '../assets/styles/components/_TableComponent.scss';
 
@@ -14,26 +14,16 @@ export default function Table( { className, columns, data } ) {
 	} );
 
 	const tbody = [];
-	const cells = [];
-
-	const pushToCells = ( row ) => {
-		for ( const cell of row.getVisibleCells() ) {
-			( <td key={ cell.id } className={ cell.column.columnDef.className }>
-				{ flexRender( cell.column.columnDef.cell, cell.getContext() ) }
-				{ /* { console.log( cell.getContext() ) } */ }
-			</td> );
-		}
-	};
 
 	for ( const row of table.getRowModel().rows ) {
 		tbody.push(
 			<tr key={ row.id }>
-				{
-					pushToCells( row )
-				}
-				{
-					cells
-				}
+				{ row.getVisibleCells().map( ( cell ) =>
+					( <td key={ cell.id } className={ cell.column.columnDef.className }>
+						{ flexRender( cell.column.columnDef.cell, cell.getContext() ) }
+						{ console.log( cell.getContext() ) }
+					</td> )
+				) }
 			</tr>
 		);
 	}
