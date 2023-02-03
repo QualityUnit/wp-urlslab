@@ -29,6 +29,8 @@ export default function LazyLoading() {
 			header: () => __( 'YouTube Id' ),
 		} ),
 		columnHelper.accessor( 'status', {
+			// cell: ( status ) => <span>{ status.renderValue() }</span>,
+			className: 'youtube-status',
 			header: () => __( 'Status' ),
 		} ),
 
@@ -38,7 +40,6 @@ export default function LazyLoading() {
 		} ),
 	];
 
-	console.log( JSON.parse( data[ 0 ].microdata ) );
 	return (
 		<Table columns={ columns } data={ data } />
 	);
