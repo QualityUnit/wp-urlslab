@@ -1,15 +1,16 @@
-// import Switch from '../elements/Switch';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { createColumnHelper, getFacetedMinMaxValues } from '@tanstack/react-table';
 import { useI18n } from '@wordpress/react-i18n';
-import { useState, useEffect } from 'react';
 import { fetchData } from '../api/fetchData';
+import Loader from '../components/Loader';
+import Table from '../components/TableComponent';
 
-export default function LazyLoading( { moduleId } ) {
-	const queryClient = useQueryClient();
+export default function LazyLoading() {
 	const { __ } = useI18n();
+	const columnHelper = createColumnHelper();
 
 	const { data, status } = useQuery( {
-		queryKey: [ 'tableYoutube', youtube ],
+		queryKey: [ 'tableYoutube', 'youtubeCache' ],
 		queryFn: () => fetchData( 'youtube-cache' ),
 	} );
 
@@ -17,7 +18,28 @@ export default function LazyLoading( { moduleId } ) {
 		return <Loader />;
 	}
 
+	const columns = [
+		columnHelper.accessor( ( row ) => JSON.parse( `${ row.microdata }` ).items[ 0 ].snippet, {
+			id: 'thumb',
+			cell: ( image ) => <img src={ image.getValue().thumbnails.medium.url } alt={ image.getValue().title
+			} />,
+			header: () => __( 'Thumbnail' ),
+		} ),
+		columnHelper.accessor( 'videoid', {
+			header: () => __( 'YouTube Id' ),
+		} ),
+		columnHelper.accessor( 'status', {
+			header: () => __( 'Status' ),
+		} ),
+
+		columnHelper.accessor( ( row ) => JSON.parse( `${ row.microdata }` ).items[ 0 ].snippet.title, {
+			id: 'title',
+			header: () => __( 'Title' ),
+		} ),
+	];
+
+	console.log( JSON.parse( data[ 0 ].microdata ) );
 	return (
-		<></>
+		<Table columns={ columns } data={ data } />
 	);
 }

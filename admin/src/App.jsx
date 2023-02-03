@@ -20,6 +20,7 @@ export default function App() {
 			return ModuleData;
 		} ),
 	} );
+
 	const [ pageTitle, setTitle ] = useState( __( 'Modules' ) );
 
 	const handleModulePage = ( selectedModule ) => {
