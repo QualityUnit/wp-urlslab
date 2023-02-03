@@ -2,7 +2,7 @@ import {
 	flexRender,
 	getCoreRowModel,
 	useReactTable } from '@tanstack/react-table';
-import { useState } from 'react';
+// import { useState } from 'react';
 
 import '../assets/styles/components/_TableComponent.scss';
 
@@ -12,6 +12,21 @@ export default function Table( { className, columns, data } ) {
 		data,
 		getCoreRowModel: getCoreRowModel(),
 	} );
+
+	const tbody = [];
+
+	for ( const row of table.getRowModel().rows ) {
+		tbody.push(
+			<tr key={ row.id }>
+				{ row.getVisibleCells().map( ( cell ) =>
+					( <td key={ cell.id } className={ cell.column.columnDef.className }>
+						{ flexRender( cell.column.columnDef.cell, cell.getContext() ) }
+						{ /* { console.log( cell.getContext() ) } */ }
+					</td> )
+				) }
+			</tr>
+		);
+	}
 
 	return (
 		<table className={ `urlslab-table urlslab-table-${ className }` }>
@@ -32,16 +47,7 @@ export default function Table( { className, columns, data } ) {
 				) ) }
 			</thead>
 			<tbody className="urlslab-table-body" >
-				{ table.getRowModel().rows.map( ( row ) => (
-					<tr key={ row.id }>
-						{ row.getVisibleCells().map( ( cell ) =>
-							( <td key={ cell.id } className={ cell.column.columnDef.className }>
-								{ flexRender( cell.column.columnDef.cell, cell.getContext() ) }
-								{ console.log( cell.getContext() ) }
-							</td> )
-						) }
-					</tr>
-				) ) }
+				{ tbody }
 			</tbody>
 		</table>
 	);
