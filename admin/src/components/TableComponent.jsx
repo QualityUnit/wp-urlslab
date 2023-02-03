@@ -2,7 +2,7 @@ import {
 	flexRender,
 	getCoreRowModel,
 	useReactTable } from '@tanstack/react-table';
-import { useState } from 'react';
+// import { useState } from 'react';
 
 import '../assets/styles/components/_TableComponent.scss';
 
