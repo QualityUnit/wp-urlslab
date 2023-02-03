@@ -144,6 +144,10 @@ class Urlslab_Url {
 		return $this->url_components['path'] ?? '';
 	}
 
+	public function get_url_query(): string {
+		return $this->url_components['query'] ?? '';
+	}
+
 	public function is_main_page(): bool {
 		return empty( $this->url_components['path'] ) &&
 			   empty( $this->url_components['query'] ) &&
