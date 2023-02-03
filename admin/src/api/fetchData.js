@@ -1,10 +1,10 @@
 import apiFetch from '@wordpress/api-fetch';
 
-export async function fetchModules( slug ) {
+export async function fetchData( slug ) {
 	try {
 		const result = await apiFetch( {
 			method: 'GET',
-			path: `/wp-json/urlslab/v1/module${ slug ? `/${ slug }` : '' }`,
+			path: `/wp-json/urlslab/v1${ slug ? `/${ slug }` : '' }`,
 			headers: {
 				'Content-Type': 'application/json',
 				accept: 'application/json',

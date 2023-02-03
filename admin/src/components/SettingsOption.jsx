@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { setSettings } from '../api/settings';
+import { parseURL } from '../constants/helpers';
 import DatePicker from 'react-datepicker';
 import InputField from '../elements/InputField';
 import Switch from '../elements/Switch';
@@ -29,7 +30,7 @@ export default function SettingsOption( { settingId, option } ) {
 	const handleDate = useMutation( {
 		mutationFn: ( newDate ) => {
 			return setSettings( `${ settingId }/${ id }`, {
-				value: new Date( newDate ).toISOString().replace( /^(.+)T(.+?)\..+$/g, '$1 $2' ),
+				value: new Date( newDate ).toISOString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ),
 			} );
 		},
 		onSuccess: () => {
@@ -75,7 +76,7 @@ export default function SettingsOption( { settingId, option } ) {
 				);
 			case 'listbox':
 				return (
-					<SortMenu name={ id } items={ possible_values } checkedId={ value } onChange={ ( selectedId ) => handleChange.mutate( selectedId ) }>
+					<SortMenu className="wide" name={ id } items={ possible_values } checkedId={ value } onChange={ ( selectedId ) => handleChange.mutate( selectedId ) }>
 						{ title }
 					</SortMenu>
 				);
@@ -85,9 +86,9 @@ export default function SettingsOption( { settingId, option } ) {
 	};
 
 	return (
-		<div className="urlslab-settingspanel-option">
+		<div className="urlslab-settingsPanel-option">
 			{ renderOption() }
-			<p>{ description }</p>
+			{ <p className="urlslab-settingsPanel-option__desc" dangerouslySetInnerHTML={ { __html: parseURL( description ) } } /> }
 		</div>
 	);
 }
