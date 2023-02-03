@@ -3,7 +3,6 @@
 // phpcs:disable WordPress.NamingConventions
 class Urlslab_Keywords_Links extends Urlslab_Widget {
 
-
 	//Type - map
 	const KW_LINK_TYPE_EDITOR = 'E';    //link added by editor in original content
 	const KW_LINK_TYPE_URLSLAB = 'U';    //link added by urlslab
@@ -532,8 +531,9 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		if ( ! $this->get_option( self::SETTING_NAME_PAGE_ID_LINKS_TO_SLUG ) ) {
 			return;
 		}
+
 		$xpath     = new DOMXPath( $document );
-		$link_data = $elements = $xpath->query( "//a[contains(@href, '?page_id=') and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-page_id')])]" );
+		$link_data = $xpath->query( "//a[contains(@href, '?page_id=') and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-page_id')])]" );
 
 		foreach ( $link_data as $link_element ) {
 			$url = new Urlslab_Url( $link_element->getAttribute( 'href' ) );
@@ -552,9 +552,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 					}
 				}
 			}
-
 		}
-
 	}
 
 	private function initLinkCounts( DOMDocument $document ) {
