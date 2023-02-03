@@ -3,6 +3,8 @@ import {
 	getCoreRowModel,
 	useReactTable } from '@tanstack/react-table';
 
+import '../assets/styles/components/_TableComponent.scss';
+
 export default function Table( props ) {
 	const { className, columns, data } = props;
 
@@ -14,7 +16,7 @@ export default function Table( props ) {
 
 	return (
 		<table className={ `urlslab-table urlslab-table-${ className }` }>
-			<thead className={ `urlslab-table-head ${ className }` }>
+			<thead className="urlslab-table-head">
 				{ table.getHeaderGroups().map( ( headerGroup ) => (
 					<tr key={ headerGroup.id }>
 						{ headerGroup.headers.map( ( header ) => (
@@ -30,7 +32,7 @@ export default function Table( props ) {
 					</tr>
 				) ) }
 			</thead>
-			<tbody className={ `urlslab-table-body ${ className }` } >
+			<tbody className="urlslab-table-body" >
 				{ table.getRowModel().rows.map( ( row ) => (
 					<tr key={ row.id }>
 						{ row.getVisibleCells().map( ( cell ) =>

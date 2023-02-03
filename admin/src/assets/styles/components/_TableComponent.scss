@@ -1,0 +1,44 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-table {
+	table-layout: fixed;
+
+	th,
+	td {
+		text-align: left;
+	}
+
+	.thumbnail {
+
+		picture,
+		img {
+			height: 3em;
+		}
+	}
+
+	.youtube-status {
+		text-align: center;
+
+		&-bullet {
+
+			@include square(8px);
+			display: block;
+			border-radius: 50%;
+			overflow: hidden;
+			text-indent: -9999px;
+
+			&-A {
+				background-color: $saturated-green;
+			}
+		}
+	}
+
+	&-head {
+
+	}
+
+	&-body {
+
+	}
+}
