@@ -2,10 +2,7 @@
 @use "../common/mixins" as *;
 
 .urlslab-header {
-	position: sticky;
-	z-index: 100;
 	width: 100%;
-	top: 32px;
 	padding: 0.75em 1.625em;
 	background-color: $white;
 	border-bottom: 1px solid $grey-light;

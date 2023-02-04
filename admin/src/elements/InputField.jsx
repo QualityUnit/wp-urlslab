@@ -20,7 +20,7 @@ export default function InputField( { defaultValue, placeholder, message, classN
 			) {
 				return 'has-value success';
 			}
-			if ( ( type === undefined || type === 'text' ) ||
+			if ( ( type === undefined || type === 'text' || type === 'password' ) ||
 				( type === 'number' && ( /[0-9]/i ).test( val ) )
 			) {
 				return 'has-value';

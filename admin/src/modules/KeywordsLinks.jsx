@@ -15,17 +15,17 @@ export default function KeywordLinks( { settings } ) {
 	const columnHelper = createColumnHelper();
 
 	const columns = [
-		columnHelper.accessor( 'Komponent', {
-			header: () => __( 'Komponent' ),
+		columnHelper.accessor( 'keyword', {
+			header: () => __( 'Keyword' ),
 		} ),
-		columnHelper.accessor( 'Ks', {
-			header: () => __( 'Pocet Ks' ),
+		columnHelper.accessor( 'url', {
+			header: () => __( 'URL' ),
 		} ),
-		columnHelper.accessor( 'cena', {
-			header: () => __( 'Cena/ks' ),
+		columnHelper.accessor( 'lang', {
+			header: () => __( 'Language' ),
 		} ),
-		columnHelper.accessor( 'celkom', {
-			header: () => __( 'Cena celkom' ),
+		columnHelper.accessor( 'priority', {
+			header: () => __( 'Priority' ),
 		} ),
 
 	];
@@ -33,12 +33,17 @@ export default function KeywordLinks( { settings } ) {
 	return (
 		<>
 			<CSVReader
+				LocalChunkSize="1024"
 				config={
-					{ header: true }
+					{ header: true,
+						chunk: ( results, parser ) => {
+							// console.log( results );
+						},
+					}
 				}
 				onUploadAccepted={ ( results ) => {
-					setData( results.data );
-					console.log( results );
+					// setData( results.data );
+					console.log( results.data );
 				} }
 			>
 				{ ( {
@@ -59,15 +64,15 @@ export default function KeywordLinks( { settings } ) {
 								Remove
 							</button>
 						</div>
-						<ProgressBar />
+						<ProgressBar className="progressbar" />
 					</>
 				) }
 			</CSVReader>
-			{
+			{ /* {
 				data
 					? <Table columns={ columns } data={ data } />
 					: null
-			}
+			} */ }
 		</>
 	);
 }
