@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import NoAPIkey from './NoAPIkey';
 
 export default function Header( { pageTitle } ) {
-	let apikey = null;
+	let apikey = '********';
 	const generalSettings = useQuery( {
 		queryKey: [ 'general' ],
 		queryFn: () => fetchSettings( 'general' ).then( ( data ) => {
@@ -27,8 +27,9 @@ export default function Header( { pageTitle } ) {
 					<span className="urlslab-header-slash">/</span>
 					<h1 className="urlslab-header-title">{ pageTitle }</h1>
 				</div>
-				{
-					( apikey && apikey.length ) || <NoAPIkey />
+				{ apikey && apikey.length
+					? null
+					: <NoAPIkey />
 				}
 			</header>
 		</Suspense>
