@@ -126,14 +126,13 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			)
 		);
 
-
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<kw_id>[0-9]+)',
+			$base . '/delete-all',
 			array(
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'detele_item' ),
+					'callback'            => array( $this, 'detele_all_items' ),
 					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
 					'args'                => array(),
 				),
@@ -142,11 +141,11 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/delete-all',
+			$base . '/(?P<kw_id>[0-9]+)',
 			array(
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'detele_all_items' ),
+					'callback'            => array( $this, 'detele_item' ),
 					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
 					'args'                => array(),
 				),

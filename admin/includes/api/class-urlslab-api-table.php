@@ -82,4 +82,15 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		return new WP_REST_Response( __( 'Deleted' ), 200 );
 	}
 
+
+	public function detele_all_items( $request ) {
+		global $wpdb;
+
+		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . sanitize_key($this->get_row_object()->get_table_name()) ) ) ) { // phpcs:ignore
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
+		}
+
+		return new WP_REST_Response( __( 'Truncated' ), 200 );
+	}
+
 }
