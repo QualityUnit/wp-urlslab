@@ -41,7 +41,7 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<url_id>[0-9a-zA-Z_\-]+)',
+			$base . '/(?P<url_id>[0-9]+)',
 			array(
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
@@ -69,7 +69,20 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<url_id>[0-9a-zA-Z_\-]+)',
+			$base . '/delete-all',
+			array(
+				array(
+					'methods'             => WP_REST_Server::DELETABLE,
+					'callback'            => array( $this, 'detele_all_items' ),
+					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
+					'args'                => array(),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/(?P<url_id>[0-9]+)',
 			array(
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
@@ -135,7 +148,7 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->url_id = (int) $row->url_id;
+			$row->url_id   = (int) $row->url_id;
 			$row->filesize = (int) $row->filesize;
 		}
 
