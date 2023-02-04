@@ -363,6 +363,24 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		return new WP_REST_Response( $rows, 200 );
 	}
 
+
+	public function delete_item( $request ) {
+		global $wpdb;
+
+		$delete_params          = array();
+		$delete_params['kw_id'] = $request->get_param( 'kw_id' );
+
+		if ( false === $wpdb->delete( URLSLAB_KEYWORDS_TABLE, $delete_params ) ) {
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
+		}
+
+		if ( false === $wpdb->delete( URLSLAB_KEYWORDS_MAP_TABLE, $delete_params ) ) {
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
+		}
+
+		return new WP_REST_Response( __( 'Deleted' ), 200 );
+	}
+
 	public function detele_all_items( $request ) {
 		global $wpdb;
 

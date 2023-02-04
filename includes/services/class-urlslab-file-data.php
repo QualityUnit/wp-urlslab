@@ -208,7 +208,7 @@ class Urlslab_File_Data extends Urlslab_Data {
 		array $file_arr = array(), $loaded_from_db = true
 	) {
 		$this->set( 'fileid', $file_arr['fileid'] ?? null, ! $loaded_from_db );
-		$this->set( 'url', $file_arr['url'], ! $loaded_from_db );
+		$this->set( 'url', $file_arr['url'] ?? '', ! $loaded_from_db );
 		$this->set( 'parent_url', $file_arr['parent_url'] ?? '', ! $loaded_from_db );
 		$this->set( 'filename', $file_arr['filename'] ?? $this->get_filename(), ! $loaded_from_db );
 		$this->set( 'filestatus', $file_arr['filestatus'] ?? '', ! $loaded_from_db );
