@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useCSVReader } from 'react-papaparse';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
@@ -8,36 +8,66 @@ import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
 
 export default function KeywordLinks( { settings } ) {
-	const { CSVReader } = useCSVReader();
+	const { __ } = useI18n();
+	const { CSVReader } = useCSVReader( );
+	const [ data, setData ] = useState( null );
+
+	const columnHelper = createColumnHelper();
+
+	const columns = [
+		columnHelper.accessor( 'Komponent', {
+			header: () => __( 'Komponent' ),
+		} ),
+		columnHelper.accessor( 'Ks', {
+			header: () => __( 'Pocet Ks' ),
+		} ),
+		columnHelper.accessor( 'cena', {
+			header: () => __( 'Cena/ks' ),
+		} ),
+		columnHelper.accessor( 'celkom', {
+			header: () => __( 'Cena celkom' ),
+		} ),
+
+	];
+
 	return (
-		<CSVReader
-			onUploadAccepted={ ( results ) => {
-				console.log( '---------------------------' );
-				console.log( results );
-				console.log( '---------------------------' );
-			} }
-		>
-			{ ( {
-				getRootProps,
-				acceptedFile,
-				ProgressBar,
-				getRemoveFileProps,
-			} ) => (
-				<>
-					<div>
-						<button type="button" { ...getRootProps() }>
-							Browse file
-						</button>
+		<>
+			<CSVReader
+				config={
+					{ header: true }
+				}
+				onUploadAccepted={ ( results ) => {
+					setData( results.data );
+					console.log( results );
+				} }
+			>
+				{ ( {
+					getRootProps,
+					acceptedFile,
+					ProgressBar,
+					getRemoveFileProps,
+				} ) => (
+					<>
 						<div>
-							{ acceptedFile && acceptedFile.name }
+							<button type="button" { ...getRootProps() }>
+								Browse file
+							</button>
+							<div>
+								{ acceptedFile && acceptedFile.name }
+							</div>
+							<button { ...getRemoveFileProps() }>
+								Remove
+							</button>
 						</div>
-						<button { ...getRemoveFileProps() }>
-							Remove
-						</button>
-					</div>
-					<ProgressBar />
-				</>
-			) }
-		</CSVReader>
+						<ProgressBar />
+					</>
+				) }
+			</CSVReader>
+			{
+				data
+					? <Table columns={ columns } data={ data } />
+					: null
+			}
+		</>
 	);
 }
