@@ -58,6 +58,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	public const SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS = 'urlslab_kw_imp_ext';
 	public const SETTING_NAME_ADD_ID_TO_ALL_H_TAGS = 'urlslab_H_add_id';
 	public const SETTING_NAME_PAGE_ID_LINKS_TO_SLUG = 'urlslab_pid_to_slug';
+	public const SETTING_NAME_DELETE_LINK_IF_PAGE_ID_NOT_FOUND = 'urlslab_pid_del_notfound';
 	public const SETTING_NAME_KW_IMPORT_MAX_LENGTH = 'urlslab_kw_max_len';
 	public const SETTING_NAME_KW_TYPES_TO_USE = 'urlslab_kw_types_use';
 
@@ -541,13 +542,29 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				if ( isset( $mathes[1] ) && is_numeric( $mathes[1] ) ) {
 					$post_permalink = get_the_permalink( $mathes[1] );
 					if ( $post_permalink ) {
-
 						$link_element->setAttribute( 'href', $post_permalink );
 						if ( $link_element->hasAttribute( 'target' ) && '_blank' == $link_element->getAttribute( 'target' ) ) {
 							$permalink_url = new Urlslab_Url( $post_permalink );
 							if ( $permalink_url->is_same_domain_url() ) {
 								$link_element->removeAttribute( 'target' );
 							}
+						}
+					} else if ( $this->get_option( self::SETTING_NAME_DELETE_LINK_IF_PAGE_ID_NOT_FOUND ) ) {
+						//link should not be visible, remove it from content
+						if ( $link_element->childNodes->length > 0 ) {
+							$fragment = $document->createDocumentFragment();
+							if ( $link_element->childNodes->length > 0 ) {
+								$fragment->appendChild( $link_element->childNodes->item( 0 ) );
+							}
+							$link_element->parentNode->replaceChild( $fragment, $link_element );
+						} else {
+							if ( property_exists( $link_element, 'domValue' ) ) {
+								$txt_value = $link_element->domValue;
+							} else {
+								$txt_value = '';
+							}
+							$txt_element = $document->createTextNode( $txt_value );
+							$link_element->parentNode->replaceChild( $txt_element, $link_element );
 						}
 					}
 				}
@@ -699,6 +716,14 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			true,
 			__( 'Replace page_id with slug' ),
 			__( 'Convert all wordpress links with page_id parameter to links with correct slug url. Wordpress sometimes during translations converts links to /page_id=xxxx, what is not SEO friendly. This feature will try to find correct URL for this type of link. Use class urlslab-skip-page_id if you do not want to process some links in page content.' )
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_DELETE_LINK_IF_PAGE_ID_NOT_FOUND,
+			false,
+			true,
+			__( 'Delete link if page_id not found' ),
+			__( /** @lang text */ "Delete link from HTML content in case link containing page_id parameter doesn't represent existing post." )
 		);
 
 

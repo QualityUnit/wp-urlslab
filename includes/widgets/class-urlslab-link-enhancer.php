@@ -137,7 +137,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 								//link should not be visible, remove it from content
 								if ( $dom_elem->childNodes->length > 0 ) {
 									$fragment = $document->createDocumentFragment();
-									while ( $dom_elem->childNodes->length > 0 ) {
+									if ( $dom_elem->childNodes->length > 0 ) {
 										$fragment->appendChild( $dom_elem->childNodes->item( 0 ) );
 									}
 									$dom_elem->parentNode->replaceChild( $fragment, $dom_elem );
