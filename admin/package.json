@@ -33,6 +33,7 @@
     "react": "^18.2.0",
     "react-datepicker": "^4.10.0",
     "react-dom": "^18.2.0",
+    "react-papaparse": "^4.1.0",
     "remove": "^0.1.5",
     "stylelint": "^14.2",
     "vite-plugin-eslint": "^1.8.1",
