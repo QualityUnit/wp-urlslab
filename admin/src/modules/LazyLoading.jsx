@@ -10,7 +10,7 @@ export default function LazyLoading() {
 	const columnHelper = createColumnHelper();
 
 	const { data, status } = useQuery( {
-		queryKey: [ 'tableYoutube', 'youtubeCache' ],
+		queryKey: [ 'tableYoutube' ],
 		queryFn: () => fetchData( 'youtube-cache' ),
 	} );
 
