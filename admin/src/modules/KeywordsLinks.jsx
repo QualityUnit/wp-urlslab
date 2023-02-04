@@ -49,13 +49,13 @@ export default function KeywordLinks( { settings } ) {
 				} ) => (
 					<>
 						<div>
-							<button type="button" { ...getRootProps() }>
+							<button type="button" className="urlslab-button active" { ...getRootProps() }>
 								Browse file
 							</button>
 							<div>
 								{ acceptedFile && acceptedFile.name }
 							</div>
-							<button { ...getRemoveFileProps() }>
+							<button className="urlslab-button" { ...getRemoveFileProps() }>
 								Remove
 							</button>
 						</div>
