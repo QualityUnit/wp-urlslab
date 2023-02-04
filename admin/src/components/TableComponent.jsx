@@ -21,7 +21,7 @@ export default function Table( { className, columns, data } ) {
 				{ row.getVisibleCells().map( ( cell ) =>
 					( <td key={ cell.id } className={ cell.column.columnDef.className }>
 						{ flexRender( cell.column.columnDef.cell, cell.getContext() ) }
-						{ console.log( cell.getContext() ) }
+						{ /* { console.log( cell.getContext() ) } */ }
 					</td> )
 				) }
 			</tr>
