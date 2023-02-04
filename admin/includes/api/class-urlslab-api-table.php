@@ -2,15 +2,18 @@
 
 abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 
+	const ROWS_PER_PAGE = 30;
+	const MAX_ROWS_PER_PAGE = 200;
+
 	abstract function get_row_object( $params = array() ): Urlslab_Data;
 	abstract function get_editable_columns(): array;
 
 	protected function get_table_arguments( array $arguments = array() ): array {
 		$arguments['rows_per_page']    = array(
 			'required'          => true,
-			'default'           => 30,
+			'default'           => self::ROWS_PER_PAGE,
 			'validate_callback' => function( $param ) {
-				return is_numeric( $param ) && 0 < $param && 200 > $param;
+				return is_numeric( $param ) && 0 < $param && self::MAX_ROWS_PER_PAGE > $param;
 			},
 		);
 		$arguments['sort_column']      = array(
@@ -78,6 +81,5 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 
 		return new WP_REST_Response( __( 'Deleted' ), 200 );
 	}
-
 
 }

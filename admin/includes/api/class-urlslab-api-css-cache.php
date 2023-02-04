@@ -134,6 +134,11 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 500 ) );
 		}
 
+		foreach ( $rows as $row ) {
+			$row->url_id = (int) $row->url_id;
+			$row->filesize = (int) $row->filesize;
+		}
+
 		return new WP_REST_Response( $rows, 200 );
 	}
 

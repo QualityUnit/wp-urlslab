@@ -83,7 +83,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<kw_id>[0-9a-zA-Z_\-]+)',
+			$base . '/(?P<kw_id>[0-9]+)',
 			array(
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
@@ -129,7 +129,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<kw_id>[0-9a-zA-Z_\-]+)',
+			$base . '/(?P<kw_id>[0-9]+)',
 			array(
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
@@ -140,7 +140,51 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			)
 		);
 
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/delete-all',
+			array(
+				array(
+					'methods'             => WP_REST_Server::DELETABLE,
+					'callback'            => array( $this, 'detele_all_items' ),
+					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
+					'args'                => array(),
+				),
+			)
+		);
 
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/(?P<kw_id>[0-9]+)/(?P<destUrlMd5>[0-9]+)',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_kw_mapping' ),
+					'args'                => array(
+						'rows_per_page'   => array(
+							'required'          => true,
+							'default'           => self::ROWS_PER_PAGE,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param ) && 0 < $param && 200 > $param;
+							},
+						),
+						'from_urlMd5'     => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param );
+							},
+						),
+						'filter_linkType' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Keywords_Links::KW_LINK_TYPE_URLSLAB == $param || Urlslab_Keywords_Links::KW_LINK_TYPE_EDITOR == $param;
+							},
+						),
+					),
+					'permission_callback' => array( $this, 'get_items_permissions_check' ),
+				),
+			)
+		);
 	}
 
 	public function get_items_permissions_check( $request ) {
@@ -252,7 +296,86 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 500 ) );
 		}
 
+		foreach ( $rows as $row ) {
+			$row_url               = new Urlslab_Url( $row->urlLink ); // phpcs:ignore
+			$row->destUrlMd5       = $row_url->get_url_id(); // phpcs:ignore
+			$row->kw_id            = (int) $row->kw_id;
+			$row->kw_length        = (int) $row->kw_length;
+			$row->kw_priority      = (int) $row->kw_priority;
+			$row->kw_usage_count   = (int) $row->kw_usage_count;
+			$row->link_usage_count = (int) $row->link_usage_count;
+		}
+
 		return new WP_REST_Response( $rows, 200 );
+	}
+
+	public function get_kw_mapping( $request ) {
+		global $wpdb;
+		$query_data = array();
+		$where_data = array();
+
+		if ( $request->get_param( 'kw_id' ) ) {
+			$where_data[] = 'kw_id=%d';
+			$query_data[] = (int) $request->get_param( 'kw_id' );
+		}
+		if ( $request->get_param( 'destUrlMd5' ) ) {
+			$where_data[] = 'destUrlMd5=%d';
+			$query_data[] = (int) $request->get_param( 'destUrlMd5' );
+		}
+		if ( $request->get_param( 'from_urlMd5' ) ) {
+			$where_data[] = 'urlMd5>%d';
+			$query_data[] = $request->get_param( 'from_urlMd5' );
+		}
+
+		if ( strlen( $request->get_param( 'filter_linkType' ) ) ) {
+			$where_data[] = 'linkType=%s';
+			$query_data[] = $request->get_param( 'filter_linkType' );
+		}
+
+		$order_data   = array();
+		$order_data[] = 'urlMd5 ASC';
+		$order_data[] = 'destUrlMd5 ASC';
+
+		$limit_string = '';
+		if ( $request->get_param( 'rows_per_page' ) ) {
+			$limit_string = '%d';
+			$query_data[] = (int) $request->get_param( 'rows_per_page' );
+		}
+
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT m.urlMd5,	m.linkType,	u.urlName' .
+				' FROM ' . URLSLAB_KEYWORDS_MAP_TABLE . ' m ' .  // phpcs:ignore
+				' LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.urlMd5 = u.urlMd5)' . // phpcs:ignore
+				( ! empty( $where_data ) ? ' WHERE ' . implode( ' AND ', $where_data ) : '' ) . // phpcs:ignore
+				( ! empty( $order_data ) ? ' ORDER BY ' . implode( ',', $order_data ) : '' ) . // phpcs:ignore
+				( strlen( $limit_string ) ? ' LIMIT ' . $limit_string : '' ), // phpcs:ignore
+				$query_data
+			),
+			OBJECT ); // phpcs:ignore
+		if ( ! is_array( $rows ) ) {
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 500 ) );
+		}
+
+		foreach ( $rows as $row ) {
+			$row->urlMd5 = (int) $row->urlMd5;// phpcs:ignore
+		}
+
+		return new WP_REST_Response( $rows, 200 );
+	}
+
+	public function detele_all_items( $request ) {
+		global $wpdb;
+
+		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_KEYWORDS_TABLE ) ) ) { // phpcs:ignore
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
+		}
+
+		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_KEYWORDS_MAP_TABLE ) ) ) { // phpcs:ignore
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
+		}
+
+		return new WP_REST_Response( __( 'Deleted' ), 200 );
 	}
 
 	function get_row_object( $params = array() ): Urlslab_Data {
