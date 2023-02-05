@@ -25,5 +25,8 @@ class Urlslab_Api_Router {
 
 		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-files.php';
 		( new Urlslab_Api_Files() )->register_routes();
+
+		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-urls.php';
+		( new Urlslab_Api_Urls() )->register_routes();
 	}
 }

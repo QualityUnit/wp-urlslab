@@ -225,6 +225,9 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 			$row->file_usage_count = (int) $row->file_usage_count;
 			$row->filesize         = (int) $row->filesize;
 			$row->width            = (int) $row->width;
+			$row->height            = (int) $row->height;
+			$row->avif_filesize            = (int) $row->avif_filesize;
+			$row->webp_filesize            = (int) $row->webp_filesize;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
