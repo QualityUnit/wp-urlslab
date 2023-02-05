@@ -5,9 +5,7 @@ class Urlslab_Url_Relation_Row extends Urlslab_Data {
 	/**
 	 * @param array $url
 	 */
-	public function __construct(
-		array $url = array(), $loaded_from_db = true
-	) {
+	public function __construct( array $url = array(), $loaded_from_db = true ) {
 		$this->set( 'srcUrlMd5', $url['srcUrlMd5'] ?? 0, ! $loaded_from_db );
 		$this->set( 'destUrlMd5', $url['destUrlMd5'] ?? 0, ! $loaded_from_db );
 		$this->set( 'pos', $url['pos'] ?? 0, ! $loaded_from_db );

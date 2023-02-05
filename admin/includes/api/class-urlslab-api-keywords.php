@@ -184,6 +184,27 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 				),
 			)
 		);
+
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/import',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'import_items' ),
+					'permission_callback' => array( $this, 'update_item_permissions_check' ),
+					'args'                => array(
+						'rows' => array(
+							'required'          => true,
+							'validate_callback' => function( $param ) {
+								return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
+							},
+						),
+					),
+				),
+			)
+		);
 	}
 
 	public function get_items_permissions_check( $request ) {
@@ -314,6 +335,31 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 
 		return new WP_REST_Response( __( 'Deleted' ), 200 );
 	}
+
+	public function import_items( WP_REST_Request $request ) {
+		$schedule_urls = array();
+		$rows          = array();
+
+		foreach ( $request->get_json_params()['rows'] as $row ) {
+			$obj                                     = $this->get_row_object( (array) $row );
+			$rows[]                                  = $obj;
+			$schedule_urls[ $obj->get( 'urlLink' ) ] = 1;
+		}
+
+		$url_fetcher = new Urlslab_Url_Data_Fetcher( null );
+		if ( ! $url_fetcher->prepare_url_batch_for_scheduling( array_keys( $schedule_urls ) ) ) {
+			return new WP_REST_Response( 'Import failed.', 500 );
+		}
+
+		$result = $this->get_row_object()->import( $rows );
+
+		if ( false === $result ) {
+			return new WP_REST_Response( 'Import failed', 500 );
+		}
+
+		return new WP_REST_Response( $result, 200 );
+	}
+
 
 	function get_row_object( $params = array() ): Urlslab_Data {
 		return new Urlslab_Keyword_Data( $params );
