@@ -17,18 +17,18 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	public function __construct(
 		array $url = array(), $loaded_from_db = true
 	) {
-		$this->set( 'urlMd5', $url['urlMd5'], ! $loaded_from_db );
-		$this->set( 'urlName', $url['urlName'], ! $loaded_from_db );
-		$this->set( 'status', $url['status'], ! $loaded_from_db );
-		$this->set( 'domainId', $url['domainId'], ! $loaded_from_db );
-		$this->set( 'urlId', $url['urlId'], ! $loaded_from_db );
-		$this->set( 'screenshotDate', $url['screenshotDate'], ! $loaded_from_db );
+		$this->set( 'urlMd5', $url['urlMd5'] ?? 0, ! $loaded_from_db );
+		$this->set( 'urlName', $url['urlName'] ?? '', ! $loaded_from_db );
+		$this->set( 'status', $url['status'] ?? '', ! $loaded_from_db );
+		$this->set( 'domainId', $url['domainId'] ?? '', ! $loaded_from_db );
+		$this->set( 'urlId', $url['urlId'] ?? '', ! $loaded_from_db );
+		$this->set( 'screenshotDate', $url['screenshotDate'] ?? 0, ! $loaded_from_db );
 		$this->set( 'updateStatusDate', $url['updateStatusDate'] ?? self::get_now(), ! $loaded_from_db );
 		$this->set( 'urlCheckDate', $url['urlCheckDate'] ?? '', ! $loaded_from_db );
-		$this->set( 'urlTitle', $url['urlTitle'], ! $loaded_from_db );
-		$this->set( 'urlMetaDescription', $url['urlMetaDescription'], ! $loaded_from_db );
-		$this->set( 'urlSummary', $url['urlSummary'], ! $loaded_from_db );
-		$this->set( 'visibility', $url['visibility'], ! $loaded_from_db );
+		$this->set( 'urlTitle', $url['urlTitle'] ?? '', ! $loaded_from_db );
+		$this->set( 'urlMetaDescription', $url['urlMetaDescription'] ?? '', ! $loaded_from_db );
+		$this->set( 'urlSummary', $url['urlSummary'] ?? '', ! $loaded_from_db );
+		$this->set( 'visibility', $url['visibility'] ?? '', ! $loaded_from_db );
 	}
 
 	function get_table_name(): string {
