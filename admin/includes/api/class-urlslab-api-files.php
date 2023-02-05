@@ -182,104 +182,41 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		);
 	}
 
+
 	public function get_items( $request ) {
-		global $wpdb;
-		$query_data = array();
-		$where_data = array();
+		$sql = new Urlslab_Api_Table_Sql( $request );
+		$sql->add_select_column( '*', 'f' );
+		$sql->add_select_column( '*', 'p' );
+		$sql->add_select_column( 'SUM(!ISNULL(m.urlMd5))', false, 'file_usage_count' );
+		$sql->add_from(
+			URLSLAB_FILES_TABLE . ' f' . ' LEFT JOIN ' . URLSLAB_FILE_URLS_TABLE . ' m ON m.fileid = f.fileid' .
+			' LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON p.filehash = f.filehash and p.filesize=f.filesize'
+		);
 
-		if ( $request->get_param( 'from_id' ) ) {
-			$where_data[] = 'fileid>%s';
-			$query_data[] = $request->get_param( 'from_id' );
-		}
-		if ( $request->get_param( 'from_sort_column' ) ) {
-			if ( 'DESC' == $request->get_param( 'sort_direction' ) ) {
-				$where_data[] = sanitize_key( $request->get_param( 'sort_column' ) ) . '<%s';
-			} else {
-				$where_data[] = sanitize_key( $request->get_param( 'sort_column' ) ) . '>%s';
-			}
-			$query_data[] = $request->get_param( 'from_sort_column' );
-		}
+		$this->add_filter_table_fields( $sql );
 
-		if ( strlen( $request->get_param( 'filter_fileid' ) ) ) {
-			$where_data[] = 'fileid=%s';
-			$query_data[] = $request->get_param( 'filter_fileid' );
-		}
-		if ( strlen( $request->get_param( 'filter_url' ) ) ) {
-			$where_data[] = 'url LIKE %s';
-			$query_data[] = $request->get_param( 'filter_url' );
-		}
-		if ( strlen( $request->get_param( 'filter_parent_url' ) ) ) {
-			$where_data[] = 'parent_url LIKE %s';
-			$query_data[] = $request->get_param( 'filter_parent_url' );
-		}
-		if ( strlen( $request->get_param( 'filter_local_file' ) ) ) {
-			$where_data[] = 'local_file LIKE %s';
-			$query_data[] = $request->get_param( 'filter_local_file' );
-		}
-		if ( strlen( $request->get_param( 'filter_filename' ) ) ) {
-			$where_data[] = 'filename LIKE %s';
-			$query_data[] = $request->get_param( 'filter_filename' );
-		}
-		if ( strlen( $request->get_param( 'filter_filetype' ) ) ) {
-			$where_data[] = 'filetype LIKE %s';
-			$query_data[] = $request->get_param( 'filter_filetype' );
-		}
-		if ( strlen( $request->get_param( 'filter_filestatus' ) ) ) {
-			$where_data[] = 'filestatus=%s';
-			$query_data[] = $request->get_param( 'filter_filestatus' );
-		}
-		if ( strlen( $request->get_param( 'filter_filehash' ) ) ) {
-			$where_data[] = 'filehash=%s';
-			$query_data[] = $request->get_param( 'filter_filehash' );
-		}
-		if ( strlen( $request->get_param( 'filter_filesize' ) ) ) {
-			$where_data[] = 'filesize=%d';
-			$query_data[] = $request->get_param( 'filter_filesize' );
-		}
-		if ( strlen( $request->get_param( 'filter_webp_fileid' ) ) ) {
-			$where_data[] = 'webp_fileid=%s';
-			$query_data[] = $request->get_param( 'filter_webp_fileid' );
-		}
-		if ( strlen( $request->get_param( 'filter_avif_fileid' ) ) ) {
-			$where_data[] = 'avif_fileid=%s';
-			$query_data[] = $request->get_param( 'filter_avif_fileid' );
-		}
+		$sql->add_filter( 'filter_fileid' );
+		$sql->add_filter( 'filter_url', '%s', 'LIKE' );
+		$sql->add_filter( 'filter_parent_url', '%s', 'LIKE' );
+		$sql->add_filter( 'filter_local_file', '%s', 'LIKE' );
+		$sql->add_filter( 'filter_filename', '%s', 'LIKE' );
+		$sql->add_filter( 'filter_filetype', '%s', 'LIKE' );
+		$sql->add_filter( 'filter_filestatus' );
+		$sql->add_filter( 'filter_filehash' );
+		$sql->add_filter( 'filter_filesize', '%d' );
+		$sql->add_filter( 'filter_webp_fileid' );
+		$sql->add_filter( 'filter_avif_fileid' );
+		$sql->add_having_filter( 'filter_file_usage_count', '%d' );
 
-		$having_data = array();
-		if ( strlen( $request->get_param( 'filter_file_usage_count' ) ) ) {
-			$having_data[] = 'file_usage_count=%d';
-			$query_data[]  = (int) $request->get_param( 'filter_file_usage_count' );
-		}
+		$sql->add_group_by( 'fileid', 'f' );
 
-
-		$order_data = array();
 		if ( $request->get_param( 'sort_column' ) ) {
-			$order_data[] = sanitize_key( $request->get_param( 'sort_column' ) ) . ( $request->get_param( 'sort_direction' ) ? ' ' . $request->get_param( 'sort_direction' ) : '' );
+			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );
 		}
-		$order_data[] = 'fileid ASC';
+		$sql->add_order( 'fileid' );
 
-		$limit_string = '';
-		if ( $request->get_param( 'rows_per_page' ) ) {
-			$limit_string = '%d';
-			$query_data[] = (int) $request->get_param( 'rows_per_page' );
-		}
+		$rows = $sql->get_results();
 
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT f.*, p.*, SUM(!ISNULL(m.urlMd5)) AS file_usage_count' .
-				' FROM ' . URLSLAB_FILES_TABLE . ' f' . // phpcs:ignore
-				' LEFT JOIN ' . URLSLAB_FILE_URLS_TABLE . ' m ON m.fileid = f.fileid' . // phpcs:ignore
-				' LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON p.filehash = f.filehash and p.filesize=f.filesize' . // phpcs:ignore
-
-				// phpcs:ignore
-				( ! empty( $where_data ) ? ' WHERE ' . implode( ' AND ', $where_data ) : '' ) . // phpcs:ignore
-				' GROUP BY f.fileid' .
-				( ! empty( $having_data ) ? ' HAVING ' . implode( ' AND ', $having_data ) : '' ) . // phpcs:ignore
-				( ! empty( $order_data ) ? ' ORDER BY ' . implode( ',', $order_data ) : '' ) . // phpcs:ignore
-				( strlen( $limit_string ) ? ' LIMIT ' . $limit_string : '' ), // phpcs:ignore
-				$query_data
-			),
-			OBJECT ); // phpcs:ignore
 		if ( ! is_array( $rows ) ) {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 500 ) );
 		}
@@ -294,43 +231,17 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 	}
 
 	public function get_file_urls( $request ) {
-		global $wpdb;
-		$query_data = array();
-		$where_data = array();
-
-		if ( $request->get_param( 'fileid' ) ) {
-			$where_data[] = 'fileid=%s';
-			$query_data[] = $request->get_param( 'fileid' );
-		}
-		if ( $request->get_param( 'from_urlMd5' ) ) {
-			$where_data[] = 'urlMd5>%d';
-			$query_data[] = $request->get_param( 'from_urlMd5' );
-		}
-
-		$order_data   = array();
-		$order_data[] = 'urlMd5 ASC';
-
-		$limit_string = '';
-		if ( $request->get_param( 'rows_per_page' ) ) {
-			$limit_string = '%d';
-			$query_data[] = (int) $request->get_param( 'rows_per_page' );
-		}
-
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT m.urlMd5,	u.urlName' .
-				' FROM ' . URLSLAB_FILE_URLS_TABLE . ' m ' .  // phpcs:ignore
-				' LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.urlMd5 = u.urlMd5)' . // phpcs:ignore
-				( ! empty( $where_data ) ? ' WHERE ' . implode( ' AND ', $where_data ) : '' ) . // phpcs:ignore
-				( ! empty( $order_data ) ? ' ORDER BY ' . implode( ',', $order_data ) : '' ) . // phpcs:ignore
-				( strlen( $limit_string ) ? ' LIMIT ' . $limit_string : '' ), // phpcs:ignore
-				$query_data
-			),
-			OBJECT ); // phpcs:ignore
+		$sql = new Urlslab_Api_Table_Sql( $request );
+		$sql->add_select_column( 'urlMd5', 'm' );
+		$sql->add_select_column( 'urlName', 'u' );
+		$sql->add_from( URLSLAB_FILE_URLS_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.urlMd5 = u.urlMd5)' );
+		$sql->add_filter( 'fileid' );
+		$sql->add_filter( 'from_urlMd5', '%d' );
+		$sql->add_order( 'urlMd5' );
+		$rows = $sql->get_results();
 		if ( ! is_array( $rows ) ) {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 500 ) );
 		}
-
 		foreach ( $rows as $row ) {
 			$row->urlMd5 = (int) $row->urlMd5;// phpcs:ignore
 		}
@@ -376,4 +287,6 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 	function get_editable_columns(): array {
 		return array( 'filestatus' );
 	}
+
+
 }
