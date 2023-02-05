@@ -97,54 +97,24 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 	}
 
 	public function get_items( $request ) {
-		global $wpdb;
-		$query_data = array();
-		$where_data = array();
+		$sql = new Urlslab_Api_Table_Sql( $request );
+		$sql->add_select_column( '*' );
+		$sql->add_from( URLSLAB_YOUTUBE_CACHE_TABLE );
 
-		if ( $request->get_param( 'from_id' ) ) {
-			$where_data[] = 'videoid>%s';
-			$query_data[] = $request->get_param( 'from_id' );
-		}
-		if ( $request->get_param( 'from_sort_column' ) ) {
-			if ( 'DESC' == $request->get_param( 'sort_direction' ) ) {
-				$where_data[] = sanitize_key( $request->get_param( 'sort_column' ) ) . '<%s';
-			} else {
-				$where_data[] = sanitize_key( $request->get_param( 'sort_column' ) ) . '>%s';
-			}
-			$query_data[] = $request->get_param( 'from_sort_column' );
-		}
 
-		if ( strlen( $request->get_param( 'filter_videoid' ) ) ) {
-			$where_data[] = 'videoid=%s';
-			$query_data[] = $request->get_param( 'filter_videoid' );
-		}
+		$this->add_filter_table_fields( $sql );
 
-		if ( strlen( $request->get_param( 'filter_status' ) ) ) {
-			$where_data[] = 'status=%s';
-			$query_data[] = $request->get_param( 'filter_status' );
-		}
+		$sql->add_filter( 'filter_videoid' );
+		$sql->add_filter( 'filter_status' );
 
-		$order_data = array();
 		if ( $request->get_param( 'sort_column' ) ) {
-			$order_data[] = sanitize_key( $request->get_param( 'sort_column' ) ) . ( $request->get_param( 'sort_direction' ) ? ' ' . $request->get_param( 'sort_direction' ) : '' );
-			$order_data[] = 'videoid ASC';
+			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );
 		}
 
-		$limit_string = '';
-		if ( $request->get_param( 'rows_per_page' ) ) {
-			$limit_string = '%d';
-			$query_data[] = $request->get_param( 'rows_per_page' );
-		}
+		$sql->add_order( 'videoid' );
 
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_YOUTUBE_CACHE_TABLE . // phpcs:ignore
-				( ! empty( $where_data ) ? ' WHERE ' . implode( ' AND ', $where_data ) : '' ) . // phpcs:ignore
-				( ! empty( $order_data ) ? ' ORDER BY ' . implode( ',', $order_data ) : '' ) . // phpcs:ignore
-				( strlen( $limit_string ) ? ' LIMIT ' . $limit_string : '' ), // phpcs:ignore
-				$query_data
-			),
-			OBJECT ); // phpcs:ignore
+		$rows = $sql->get_results();
+
 		if ( null == $rows || false === $rows ) {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 500 ) );
 		}

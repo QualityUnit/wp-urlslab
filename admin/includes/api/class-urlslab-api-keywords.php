@@ -199,98 +199,42 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	}
 
 	public function get_items( $request ) {
-		global $wpdb;
-		$query_data = array();
-		$where_data = array();
+		$sql = new Urlslab_Api_Table_Sql( $request );
+		$sql->add_select_column( 'kw_id', 'v', 'kw_id' );
+		$sql->add_select_column( 'keyword', 'v', 'keyword' );
+		$sql->add_select_column( 'kw_priority', 'v', 'kw_priority' );
+		$sql->add_select_column( 'kw_length', 'v', 'kw_length' );
+		$sql->add_select_column( 'lang', 'v', 'lang' );
+		$sql->add_select_column( 'urlLink', 'v', 'urlLink' );
+		$sql->add_select_column( 'urlFilter', 'v', 'urlFilter' );
+		$sql->add_select_column( 'kwType', 'v', 'kwType' );
+		$sql->add_select_column( 'SUM(!ISNULL(d.urlMd5))', false, 'kw_usage_count' );
+		$sql->add_select_column( 'SUM(!ISNULL(d.destUrlMd5))', false, 'link_usage_count' );
 
-		if ( $request->get_param( 'from_id' ) ) {
-			$where_data[] = 'kw_id>%d';
-			$query_data[] = (int) $request->get_param( 'from_id' );
-		}
-		if ( $request->get_param( 'from_sort_column' ) ) {
-			if ( 'DESC' == $request->get_param( 'sort_direction' ) ) {
-				$where_data[] = sanitize_key( $request->get_param( 'sort_column' ) ) . '<%s';
-			} else {
-				$where_data[] = sanitize_key( $request->get_param( 'sort_column' ) ) . '>%s';
-			}
-			$query_data[] = $request->get_param( 'from_sort_column' );
-		}
+		$sql->add_from( URLSLAB_KEYWORDS_TABLE . ' AS v LEFT JOIN ' . URLSLAB_KEYWORDS_MAP_TABLE . ' AS d ON d.kw_id = v.kw_id' );
 
-		if ( strlen( $request->get_param( 'filter_keyword' ) ) ) {
-			$where_data[] = 'keyword LIKE %s';
-			$query_data[] = $request->get_param( 'filter_keyword' );
-		}
-		if ( strlen( $request->get_param( 'filter_urlLink' ) ) ) {
-			$where_data[] = 'urlLink LIKE %s';
-			$query_data[] = $request->get_param( 'filter_urlLink' );
-		}
-		if ( strlen( $request->get_param( 'filter_kw_priority' ) ) ) {
-			$where_data[] = 'kw_priority=%d';
-			$query_data[] = (int) $request->get_param( 'filter_kw_priority' );
-		}
-		if ( strlen( $request->get_param( 'filter_kw_length' ) ) ) {
-			$where_data[] = 'kw_length=%d';
-			$query_data[] = (int) $request->get_param( 'filter_kw_length' );
-		}
-		if ( strlen( $request->get_param( 'filter_lang' ) ) ) {
-			$where_data[] = 'lang=%s';
-			$query_data[] = $request->get_param( 'filter_lang' );
-		}
-		if ( strlen( $request->get_param( 'filter_urlFilter' ) ) ) {
-			$where_data[] = 'urlFilter LIKE %s';
-			$query_data[] = $request->get_param( 'filter_urlFilter' );
-		}
-		if ( strlen( $request->get_param( 'filter_kwType' ) ) ) {
-			$where_data[] = 'kwType=%s';
-			$query_data[] = $request->get_param( 'filter_kwType' );
-		}
+		$this->add_filter_table_fields( $sql );
 
-		$having_data = array();
-		if ( strlen( $request->get_param( 'filter_kw_usage_count' ) ) ) {
-			$having_data[] = 'kw_usage_count=%d';
-			$query_data[]  = (int) $request->get_param( 'filter_kw_usage_count' );
-		}
-		if ( strlen( $request->get_param( 'filter_link_usage_count' ) ) ) {
-			$having_data[] = 'link_usage_count=%d';
-			$query_data[]  = (int) $request->get_param( 'filter_link_usage_count' );
-		}
+		$sql->add_filter( 'filter_keyword', '%s', 'LIKE' );
+		$sql->add_filter( 'filter_urlLink', '%s', 'LIKE' );
+		$sql->add_filter( 'filter_kw_priority', '%d' );
+		$sql->add_filter( 'filter_kw_length', '%d' );
+		$sql->add_filter( 'filter_lang' );
+		$sql->add_filter( 'filter_urlFilter', '%s', 'LIKE' );
+		$sql->add_filter( 'filter_kwType' );
 
-		$order_data = array();
+		$sql->add_having_filter( 'filter_kw_usage_count', '%d' );
+		$sql->add_having_filter( 'filter_link_usage_count', '%d' );
+
 		if ( $request->get_param( 'sort_column' ) ) {
-			$order_data[] = sanitize_key( $request->get_param( 'sort_column' ) ) . ( $request->get_param( 'sort_direction' ) ? ' ' . $request->get_param( 'sort_direction' ) : '' );
-			$order_data[] = 'kw_id ASC';
+			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );
 		}
+		$sql->add_order( 'kw_id' );
 
-		$limit_string = '';
-		if ( $request->get_param( 'rows_per_page' ) ) {
-			$limit_string = '%d';
-			$query_data[] = (int) $request->get_param( 'rows_per_page' );
-		}
+		$sql->add_group_by( 'kw_id' );
 
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT
-						v.kw_id				   AS kw_id,
-						v.keyword              AS keyword,
-						v.kw_priority          AS kw_priority,
-						v.kw_length            AS kw_length,
-						v.lang                 AS lang,
-						v.urlLink              AS urlLink,
-						v.urlFilter            AS urlFilter,
-						v.kwType               AS kwType,
-						SUM(!ISNULL(d.urlMd5)) AS kw_usage_count,
-						SUM(!ISNULL(d.destUrlMd5)) AS link_usage_count
-					FROM ' . URLSLAB_KEYWORDS_TABLE . ' AS v LEFT JOIN ' . URLSLAB_KEYWORDS_MAP_TABLE . ' AS d ON d.kw_id = v.kw_id' . // phpcs:ignore
+		$rows = $sql->get_results();
 
-				// phpcs:ignore
-				( ! empty( $where_data ) ? ' WHERE ' . implode( ' AND ', $where_data ) : '' ) . // phpcs:ignore
-				' GROUP BY kw_id' .
-				( ! empty( $having_data ) ? ' HAVING ' . implode( ' AND ', $having_data ) : '' ) . // phpcs:ignore
-				( ! empty( $order_data ) ? ' ORDER BY ' . implode( ',', $order_data ) : '' ) . // phpcs:ignore
-				( strlen( $limit_string ) ? ' LIMIT ' . $limit_string : '' ), // phpcs:ignore
-				$query_data
-			),
-			OBJECT ); // phpcs:ignore
 		if ( null == $rows || false === $rows ) {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 500 ) );
 		}
@@ -309,49 +253,25 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	}
 
 	public function get_kw_mapping( $request ) {
-		global $wpdb;
-		$query_data = array();
-		$where_data = array();
+		$sql = new Urlslab_Api_Table_Sql( $request );
+		$sql->add_select_column( 'urlMd5', 'm' );
+		$sql->add_select_column( 'linkType', 'm' );
+		$sql->add_select_column( 'urlName', 'u' );
 
-		if ( $request->get_param( 'kw_id' ) ) {
-			$where_data[] = 'kw_id=%d';
-			$query_data[] = (int) $request->get_param( 'kw_id' );
-		}
-		if ( $request->get_param( 'destUrlMd5' ) ) {
-			$where_data[] = 'destUrlMd5=%d';
-			$query_data[] = (int) $request->get_param( 'destUrlMd5' );
-		}
-		if ( $request->get_param( 'from_urlMd5' ) ) {
-			$where_data[] = 'urlMd5>%d';
-			$query_data[] = $request->get_param( 'from_urlMd5' );
-		}
+		$sql->add_from( URLSLAB_KEYWORDS_MAP_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON m.urlMd5 = u.urlMd5' );
 
-		if ( strlen( $request->get_param( 'filter_linkType' ) ) ) {
-			$where_data[] = 'linkType=%s';
-			$query_data[] = $request->get_param( 'filter_linkType' );
-		}
+		$this->add_filter_table_fields( $sql );
 
-		$order_data   = array();
-		$order_data[] = 'urlMd5 ASC';
-		$order_data[] = 'destUrlMd5 ASC';
+		$sql->add_filter( 'kw_id', '%d' );
+		$sql->add_filter( 'destUrlMd5', '%d' );
+		$sql->add_filter( 'from_urlMd5', '%d' );
+		$sql->add_filter( 'filter_linkType', '%d' );
 
-		$limit_string = '';
-		if ( $request->get_param( 'rows_per_page' ) ) {
-			$limit_string = '%d';
-			$query_data[] = (int) $request->get_param( 'rows_per_page' );
-		}
+		$sql->add_order( 'urlMd5' );
+		$sql->add_order( 'destUrlMd5' );
 
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT m.urlMd5,	m.linkType,	u.urlName' .
-				' FROM ' . URLSLAB_KEYWORDS_MAP_TABLE . ' m ' .  // phpcs:ignore
-				' LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.urlMd5 = u.urlMd5)' . // phpcs:ignore
-				( ! empty( $where_data ) ? ' WHERE ' . implode( ' AND ', $where_data ) : '' ) . // phpcs:ignore
-				( ! empty( $order_data ) ? ' ORDER BY ' . implode( ',', $order_data ) : '' ) . // phpcs:ignore
-				( strlen( $limit_string ) ? ' LIMIT ' . $limit_string : '' ), // phpcs:ignore
-				$query_data
-			),
-			OBJECT ); // phpcs:ignore
+		$rows = $sql->get_results();
+
 		if ( ! is_array( $rows ) ) {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 500 ) );
 		}
@@ -361,6 +281,24 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		}
 
 		return new WP_REST_Response( $rows, 200 );
+	}
+
+
+	public function delete_item( $request ) {
+		global $wpdb;
+
+		$delete_params          = array();
+		$delete_params['kw_id'] = $request->get_param( 'kw_id' );
+
+		if ( false === $wpdb->delete( URLSLAB_KEYWORDS_TABLE, $delete_params ) ) {
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
+		}
+
+		if ( false === $wpdb->delete( URLSLAB_KEYWORDS_MAP_TABLE, $delete_params ) ) {
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
+		}
+
+		return new WP_REST_Response( __( 'Deleted' ), 200 );
 	}
 
 	public function detele_all_items( $request ) {

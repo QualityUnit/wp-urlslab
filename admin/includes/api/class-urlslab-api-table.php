@@ -1,4 +1,5 @@
 <?php
+require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-table-sql.php';
 
 abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 
@@ -6,36 +7,42 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	const MAX_ROWS_PER_PAGE = 200;
 
 	abstract function get_row_object( $params = array() ): Urlslab_Data;
+
 	abstract function get_editable_columns(): array;
 
 	protected function get_table_arguments( array $arguments = array() ): array {
-		$arguments['rows_per_page']    = array(
+		$arguments['rows_per_page']  = array(
 			'required'          => true,
 			'default'           => self::ROWS_PER_PAGE,
 			'validate_callback' => function( $param ) {
 				return is_numeric( $param ) && 0 < $param && self::MAX_ROWS_PER_PAGE > $param;
 			},
 		);
-		$arguments['sort_column']      = array(
+		$arguments['sort_column']    = array(
 			'required'          => false,
 			'default'           => $this->get_row_object()->get_primary_columns()[0],
 			'validate_callback' => function( $param ) {
 				return is_string( $param ) && 0 < strlen( $param );
 			},
 		);
-		$arguments['sort_direction']   = array(
+		$arguments['sort_direction'] = array(
 			'required'          => false,
 			'default'           => 'ASC',
 			'validate_callback' => function( $param ) {
 				return 'ASC' == $param || 'DESC' == $param;
 			},
 		);
-		$arguments['from_id']          = array(
-			'required' => false,
-		);
+
+		foreach ( $this->get_row_object()->get_primary_columns() as $primary_key ) {
+			$arguments[ 'from_' . $primary_key ] = array(
+				'required' => false,
+			);
+		}
+
 		$arguments['from_sort_column'] = array(
 			'required' => false,
 		);
+
 
 		return $arguments;
 	}
@@ -86,11 +93,32 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	public function detele_all_items( $request ) {
 		global $wpdb;
 
-		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . sanitize_key($this->get_row_object()->get_table_name()) ) ) ) { // phpcs:ignore
+		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . sanitize_key( $this->get_row_object()->get_table_name() ) ) ) ) { // phpcs:ignore
 			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
 		}
 
 		return new WP_REST_Response( __( 'Truncated' ), 200 );
 	}
 
+
+	protected function add_filter_table_fields( Urlslab_Api_Table_Sql $sql ) {
+		$rob_obj = $this->get_row_object();
+		foreach ( $rob_obj->get_primary_columns() as $primary_key ) {
+			$sql->add_filter( 'from_' . $primary_key, $rob_obj->get_columns()[ $primary_key ] );
+		}
+
+		if ( $sql->get_request()->get_param( 'from_sort_column' ) ) {
+			if ( 'DESC' == $sql->get_request()->get_param( 'sort_direction' ) ) {
+				$operator = '<';
+			} else {
+				$operator = '>';
+			}
+			$format = '%s';
+			if ( isset( $rob_obj->get_columns()[ $sql->get_request()->get_param( 'sort_column' ) ] ) ) {
+				$format = $rob_obj->get_columns()[ $sql->get_request()->get_param( 'sort_column' ) ];
+			}
+			$sql->add_filter_raw( esc_sql( $sql->get_request()->get_param( 'sort_column' ) ) . $operator . $format, $sql->get_request()->get_param( 'from_sort_column' ) );
+		}
+
+	}
 }
