@@ -288,10 +288,10 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->url_usage_count = (int) $row->url_usage_count;
-			$row->url_links_count = (int) $row->url_links_count;
-			$row->screenshotDate  = (int) $row->screenshotDate;
-			$row->urlMd5          = (int) $row->urlMd5;
+			$row->url_usage_count = (int) $row->url_usage_count; // phpcs:ignore
+			$row->url_links_count = (int) $row->url_links_count; // phpcs:ignore
+			$row->screenshotDate  = (int) $row->screenshotDate; // phpcs:ignore
+			$row->urlMd5          = (int) $row->urlMd5; // phpcs:ignore
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -299,12 +299,11 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 
 	public function get_url_usage( $request ) {
 		$sql = new Urlslab_Api_Table_Sql( $request );
-		$sql->add_select_column('srcUrlMd5');
-		$sql->add_select_column('destUrlMd5');
+		$sql->add_select_column( 'srcUrlMd5' );
+		$sql->add_select_column( 'destUrlMd5' );
 		$sql->add_select_column( 'urlName', 'u_src', 'srcUrlName' );
 		$sql->add_select_column( 'urlName', 'u_dest', 'destUrlName' );
-		$sql->add_from( URLSLAB_URLS_MAP_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u_src ON m.srcUrlMd5 = u_src.urlMd5' .
-		' LEFT JOIN '. URLSLAB_URLS_TABLE . ' u_dest ON m.destUrlMd5 = u_dest.urlMd5');
+		$sql->add_from( URLSLAB_URLS_MAP_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u_src ON m.srcUrlMd5 = u_src.urlMd5 LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u_dest ON m.destUrlMd5 = u_dest.urlMd5' ); // phpcs:ignore
 		$sql->add_filter( 'destUrlMd5' );
 		$sql->add_filter( 'srcUrlMd5' );
 		$sql->add_filter( 'from_destUrlMd5', '%d' );
@@ -317,8 +316,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->srcUrlMd5 = (int) $row->srcUrlMd5;
-			$row->destUrlMd5 = (int) $row->destUrlMd5;
+			$row->srcUrlMd5  = (int) $row->srcUrlMd5; // phpcs:ignore
+			$row->destUrlMd5 = (int) $row->destUrlMd5; // phpcs:ignore
 		}
 
 		return new WP_REST_Response( $rows, 200 );
