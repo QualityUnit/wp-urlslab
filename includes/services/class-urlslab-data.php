@@ -120,6 +120,36 @@ abstract class Urlslab_Data {
 		return true;
 	}
 
+	public function import( array $rows ): int {
+		global $wpdb;
+		$insert_placeholders = array();
+		$insert_values       = array();
+		$on_duplicate        = array();
+
+		$columns          = $this->get_columns();
+		$row_placeholders = array();
+		foreach ( $columns as $column => $format ) {
+			$row_placeholders[] = $format;
+			if ( ! in_array( $column, $this->get_primary_columns() ) ) {
+				$on_duplicate[] = $column . '=VALUES(' . $column . ')';
+			}
+		}
+		$row_placeholder = '(' . implode( ',', $row_placeholders ) . ')';
+
+		foreach ( $rows as $row ) {
+			foreach ( $columns as $column => $format ) {
+				array_push( $insert_values, $row->get( $column ) );
+			}
+			$insert_placeholders[] = $row_placeholder;
+		}
+
+		$insert_query = 'INSERT IGNORE INTO ' . $this->get_table_name() . ' (' . implode( ',', array_keys( $columns ) ) . ')
+                   VALUES ' . implode( ', ', $insert_placeholders ) . '
+                   ON DUPLICATE KEY UPDATE ' . implode( ',', $on_duplicate );
+
+		return $wpdb->query( $wpdb->prepare( $insert_query, $insert_values ) ); // phpcs:ignore
+	}
+
 	public static function get_now( $timestamp = false ): string {
 		if ( $timestamp ) {
 			return gmdate( 'Y-m-d H:i:s', $timestamp );
