@@ -6,11 +6,13 @@ import { useI18n } from '@wordpress/react-i18n';
 import { fetchData } from '../api/fetchData';
 import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
+import RangeSlider from '../elements/RangeSlider';
 
 export default function KeywordLinks( { settings } ) {
 	const { __ } = useI18n();
 	const { CSVReader } = useCSVReader( );
-	const [ data, setData ] = useState( null );
+	const [ data, setData ] = useState( [] );
+	const [ minmax, setMinMax ] = useState( [] );
 
 	const columnHelper = createColumnHelper();
 
@@ -27,8 +29,11 @@ export default function KeywordLinks( { settings } ) {
 		columnHelper.accessor( 'priority', {
 			header: () => __( 'Priority' ),
 		} ),
-
 	];
+
+	const handleRange = ( values ) => {
+		setMinMax( values );
+	};
 
 	return (
 		<>
@@ -37,13 +42,13 @@ export default function KeywordLinks( { settings } ) {
 				config={
 					{ header: true,
 						chunk: ( results, parser ) => {
-							// console.log( results );
+							// setData( data.push( results.data ) );
+							// console.log( results.data );
 						},
 					}
 				}
 				onUploadAccepted={ ( results ) => {
-					// setData( results.data );
-					console.log( results.data );
+					setData( results.data );
 				} }
 			>
 				{ ( {
@@ -68,11 +73,12 @@ export default function KeywordLinks( { settings } ) {
 					</>
 				) }
 			</CSVReader>
-			{ /* {
-				data
-					? <Table columns={ columns } data={ data } />
+			<RangeSlider min="0" max="3000" onChange={ ( vals ) => handleRange( vals ) }>Rows count</RangeSlider>
+			{
+				data.length
+					? <Table columns={ columns } data={ data.slice( minmax.min, minmax.max ) } />
 					: null
-			} */ }
+			}
 		</>
 	);
 }
