@@ -120,7 +120,7 @@ abstract class Urlslab_Data {
 		return true;
 	}
 
-	public function import( array $rows , $on_duplicate_update_columns = true, $ignore = false): int {
+	public function import( array $rows, $on_duplicate_update_columns = true, $ignore = false ): int {
 		global $wpdb;
 		$insert_placeholders = array();
 		$insert_values       = array();
@@ -131,7 +131,7 @@ abstract class Urlslab_Data {
 		foreach ( $columns as $column => $format ) {
 			$row_placeholders[] = $format;
 
-			if ($on_duplicate_update_columns) {
+			if ( $on_duplicate_update_columns ) {
 				if ( ! in_array( $column, $this->get_primary_columns() ) ) {
 					$on_duplicate[] = $column . '=VALUES(' . $column . ')';
 				}
@@ -147,12 +147,12 @@ abstract class Urlslab_Data {
 		}
 
 		$insert_query = 'INSERT ';
-		if ($ignore) {
+		if ( $ignore ) {
 			$insert_query = 'IGNORE ';
 		}
-		$insert_query .='INTO ' . $this->get_table_name() . ' (' . implode( ',', array_keys( $columns ) ) . ')
+		$insert_query .= 'INTO ' . $this->get_table_name() . ' (' . implode( ',', array_keys( $columns ) ) . ')
                    VALUES ' . implode( ', ', $insert_placeholders );
-		if ($on_duplicate_update_columns) {
+		if ( $on_duplicate_update_columns ) {
 			$insert_query .= ' ON DUPLICATE KEY UPDATE ' . implode( ',', $on_duplicate );
 		}
 

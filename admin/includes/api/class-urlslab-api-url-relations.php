@@ -161,16 +161,17 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		$rows          = array();
 
 		foreach ( $request->get_json_params()['rows'] as $row ) {
-			$schedule_urls[ $row->srcUrlName ]  = 1;
-			$schedule_urls[ $row->destUrlName ] = 1;
+			$arr_row                                  = (array) $row;
+			$schedule_urls[ $arr_row['srcUrlName'] ]  = 1;
+			$schedule_urls[ $arr_row['destUrlName'] ] = 1;
 
-			$src_url_obj  = new Urlslab_Url( $row->srcUrlName );
-			$dest_url_obj = new Urlslab_Url( $row->destUrlName );
+			$src_url_obj  = new Urlslab_Url( $arr_row['srcUrlName'] );
+			$dest_url_obj = new Urlslab_Url( $arr_row['destUrlName'] );
 			$obj          = $this->get_row_object(
 				array(
 					'srcUrlMd5'  => $src_url_obj->get_url_id(),
 					'destUrlMd5' => $dest_url_obj->get_url_id(),
-					'pos'        => $row->pos,
+					'pos'        => $arr_row['pos'],
 				)
 			);
 			$rows[]       = $obj;
