@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { get, set } from 'idb-keyval';
 import { createColumnHelper } from '@tanstack/react-table';
@@ -14,32 +15,47 @@ export default function KeywordLinks() {
 	const { __ } = useI18n();
 	const { CSVReader } = useCSVReader();
 	const { CSVDownloader, Type } = useCSVDownloader();
-	const columnHelper = createColumnHelper();
 	const queryClient = useQueryClient();
+	const columnHelper = createColumnHelper();
+
+	const [ csvMessage, setCSVMessage ] = useState( null );
 
 	const { data, status } = useQuery( {
 		queryKey: [ 'tableKeyword' ],
 		queryFn: () => fetchData( 'keyword' ),
+		cacheTime: Infinity,
+		staleTime: Infinity,
 	} );
-
-	const importData = ( data ) => {
-		set( 'tableKeyword', data );
-	};
 
 	const downloadData = ( data ) => {
 
 	};
 
-	// const importData = useMutation({
-	// 	mutationFn: (data) => {
-	// 		return setData('keyword/import',
-	// 			data
-	// 		);
-	// 	},
-	// 	onSuccess: () => {
-	// 		queryClient.invalidateQueries(['tableKeyword']);
-	// 	},
-	// });
+	const importLocal = ( parsedData ) => {
+		// console.log( queryClient.getQueryData( [ 'tableKeyword' ] ) );
+		// console.log( parsedData );
+		setCSVMessage( __( 'Processing data…' ) );
+		queryClient.setQueryData( [ 'tableKeyword' ], parsedData.slice( 500, 1200 ) );
+		// queryClient.invalidateQueries( [ 'tableKeyword' ] );
+		setCSVMessage( null );
+	};
+
+	const importData = useMutation( {
+		mutationFn: ( results ) => {
+			setCSVMessage( __( 'Uploading data…' ) );
+
+			return setData( 'keyword/import',
+				results.data
+			);
+		},
+		onSuccess: () => {
+			setCSVMessage( __( 'Data uploaded' ) );
+			queryClient.invalidateQueries( [ 'tableKeyword' ] );
+			setTimeout( () => {
+				setCSVMessage( null );
+			}, 300 );
+		},
+	} );
 
 	if ( status === 'loading' ) {
 		return <Loader />;
@@ -48,7 +64,7 @@ export default function KeywordLinks() {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			cell: ( ) => <Checkbox />,
-			header: () => __( 'Keyword' ),
+			header: () => __( '' ),
 		} ),
 		columnHelper.accessor( 'keyword', {
 			cell: ( val ) => <InputField type="text" defaultValue={ val.getValue() } />,
@@ -94,8 +110,9 @@ export default function KeywordLinks() {
 					}
 				}
 				onUploadAccepted={ ( results ) => {
+					importLocal( results.data );
+					// console.log( results.data );
 					// importData.mutate( results );
-					importData( results.data );
 				} }
 			>
 				{ ( {
@@ -116,6 +133,7 @@ export default function KeywordLinks() {
 								Remove
 							</button>
 						</div>
+						{ csvMessage }
 						<ProgressBar className="progressbar" />
 					</>
 				) }
