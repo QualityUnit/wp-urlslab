@@ -462,6 +462,12 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	private function get_image_data( $width = 1200, $height = 1000 ) {
+		if ( empty( $width ) ) {
+			$width = 1;
+		}
+		if ( empty( $height ) ) {
+			$height = 1;
+		}
 		$width  = (int) $width;
 		$height = (int) $height;
 
