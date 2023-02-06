@@ -17,8 +17,6 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	public const SETTING_NAME_REMOVE_WP_LAZY_LOADING = 'urlslab_remove_wp_lazy';
 	public const SETTING_NAME_YOUTUBE_API_KEY = 'urlslab_youtube_apikey';
 
-	const EMPTY_IMAGE = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
-
 	public function __construct() {
 		$this->widget_slug        = 'urlslab-lazy-loading';
 		$this->widget_title       = 'Lazy Loading';
@@ -300,7 +298,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	private function add_img_lazy_loading( DOMElement $dom_element ) {
 		if ( $dom_element->hasAttribute( 'src' ) ) {
 			$dom_element->setAttribute( 'data-src', $dom_element->getAttribute( 'src' ) );
-			$dom_element->setAttribute( 'src', self::EMPTY_IMAGE );
+			$dom_element->setAttribute( 'src', $this->get_image_data( $dom_element->getAttribute( 'width' ), $dom_element->getAttribute( 'height' ) ) );
 		}
 
 		if ( $dom_element->hasAttribute( 'srcset' ) ) {
@@ -310,7 +308,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 		if ( $dom_element->hasAttribute( 'data-splide-lazy' ) ) {
 			$dom_element->setAttribute( 'data-src', $dom_element->getAttribute( 'data-splide-lazy' ) );
-			$dom_element->setAttribute( 'src', self::EMPTY_IMAGE );
+			$dom_element->setAttribute( 'src', $this->get_image_data( $dom_element->getAttribute( 'width' ), $dom_element->getAttribute( 'height' ) ) );
 		}
 
 		if ( $dom_element->hasAttribute( 'style' ) ) {
@@ -409,7 +407,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 		if ( $dom_element->hasAttribute( 'src' ) ) {
 			$dom_element->setAttribute( 'data-src', $dom_element->getAttribute( 'src' ) );
-			$dom_element->setAttribute( 'src', self::EMPTY_IMAGE );
+			$dom_element->setAttribute( 'src', $this->get_image_data( $dom_element->getAttribute( 'width' ), $dom_element->getAttribute( 'height' ) ) );
 		}
 		$dom_element->setAttribute( 'urlslab-lazy', 'yes' );
 	}
@@ -461,5 +459,12 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			null,
 			'youtube'
 		);
+	}
+
+	private function get_image_data( $width = 1200, $height = 1000 ) {
+		$width  = (int) $width;
+		$height = (int) $height;
+
+		return 'data:image/svg+xml;base64,' . base64_encode( '<svg xmlns="http://www.w3.org/2000/svg" width="' . $width . '" height="' . $height . '"></svg>' );
 	}
 }
