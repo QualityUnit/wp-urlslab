@@ -23,12 +23,17 @@ export default function KeywordLinks() {
 	const { data, status } = useQuery( {
 		queryKey: [ 'tableKeyword' ],
 		queryFn: () => fetchData( 'keyword' ),
-		cacheTime: Infinity,
-		staleTime: Infinity,
+		// cacheTime: Infinity,
+		// staleTime: Infinity,
 	} );
 
-	const downloadData = ( data ) => {
-
+	const exportCSV = ( dataForProcessing ) => {
+		const dataForCSV = dataForProcessing;
+		for ( const obj of dataForCSV ) {
+			delete obj.kw_id;
+			delete obj.destUrlMd5;
+		}
+		return dataForCSV;
 	};
 
 	const importLocal = ( parsedData ) => {
@@ -148,7 +153,7 @@ export default function KeywordLinks() {
 						delimiter: ',',
 					}
 				}
-				data={ data }
+				data={ exportCSV( data ) }
 			>
 				Download CSV
 			</CSVDownloader>
