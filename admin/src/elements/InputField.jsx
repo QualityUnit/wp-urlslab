@@ -15,13 +15,14 @@ export default function InputField( { defaultValue, placeholder, message, classN
 
 	const valueStatus = () => {
 		if ( val ) {
-			if ( ( type === 'email' && emailRegex.test( val ) ) ||
-				( type === 'url' && urlRegex.test( val ) )
+			if ( ( type === 'email' && emailRegex.test( val ) )
 			) {
 				return 'has-value success';
 			}
 			if ( ( type === undefined || type === 'text' || type === 'password' ) ||
-				( type === 'number' && ( /[0-9]/i ).test( val ) )
+				( type === 'number' && ( /[0-9]/i ).test( val ) ) ||
+				// ( type === 'url' && urlRegex.test( val ) )
+				( type === 'url' )
 			) {
 				return 'has-value';
 			}
@@ -32,7 +33,10 @@ export default function InputField( { defaultValue, placeholder, message, classN
 
 	return (
 		<label className={ `urlslab-inputField-wrap ${ className || '' } ${ labelInline ? 'inline' : '' } ${ valueStatus() }` } style={ style }>
-			<span className="urlslab-inputField-label">{ label }</span>
+			{ label
+				? <span className="urlslab-inputField-label">{ label }</span>
+				: null
+			}
 			<div className={ `urlslab-inputField ${ children ? 'has-svg' : '' }` } >
 				{ children }
 				<input

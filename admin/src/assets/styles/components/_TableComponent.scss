@@ -3,10 +3,19 @@
 
 .urlslab-table {
 	table-layout: fixed;
+	background-color: $white;
 
 	th,
 	td {
 		text-align: left;
+	}
+
+	tr:nth-of-type(even) {
+		background-color: $grey-lightest;
+	}
+
+	.urlslab-inputField-wrap {
+		margin: 0;
 	}
 
 	.thumbnail {
