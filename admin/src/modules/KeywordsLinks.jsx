@@ -23,8 +23,8 @@ export default function KeywordLinks() {
 	const { data, status } = useQuery( {
 		queryKey: [ 'tableKeyword' ],
 		queryFn: () => fetchData( 'keyword' ),
-		// cacheTime: Infinity,
-		// staleTime: Infinity,
+		cacheTime: Infinity,
+		staleTime: Infinity,
 	} );
 
 	const exportCSV = ( dataForProcessing ) => {
