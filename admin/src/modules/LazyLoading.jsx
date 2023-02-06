@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useI18n } from '@wordpress/react-i18n';
-import { fetchData } from '../api/fetchData';
+import { fetchData } from '../api/fetching';
 import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
 

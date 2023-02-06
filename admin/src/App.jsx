@@ -2,7 +2,7 @@ import { useState, Suspense } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useQuery } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
-import { fetchData } from './api/fetchData';
+import { fetchData } from './api/fetching';
 import MainMenu from './components/MainMenu';
 import DynamicModule from './components/DynamicModule';
 import Loader from './components/Loader';
