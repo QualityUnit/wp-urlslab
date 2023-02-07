@@ -86,7 +86,7 @@
 	}
 
 	&::-webkit-scrollbar-thumb {
-		background-color: $grey-light;
+		background-color: $grey-medium-lighter;
 		border-radius: $br-10;
 		height: 5em;
 	}
@@ -96,5 +96,5 @@
 	}
 
 	scrollbar-width: $width;
-	scrollbar-color: $grey-light transparent;
+	scrollbar-color: $grey-medium-lighter transparent;
 }
