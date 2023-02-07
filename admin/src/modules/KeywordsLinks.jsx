@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInView } from 'react-intersection-observer';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useI18n } from '@wordpress/react-i18n';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -16,15 +17,40 @@ export default function KeywordLinks() {
 	const { CSVDownloader, Type } = useCSVDownloader();
 	const queryClient = useQueryClient();
 	const columnHelper = createColumnHelper();
+	const { ref, inView } = useInView();
 
 	const [ csvMessage, setCSVMessage ] = useState( null );
+	const maxRows = 50;
 
-	const { data, status } = useQuery( {
-		queryKey: [ 'tableKeyword' ],
-		queryFn: () => fetchData( 'keyword' ),
-		cacheTime: Infinity,
-		staleTime: Infinity,
-	} );
+	const {
+		data,
+		status,
+		isFetching,
+		isSuccess,
+		isFetchingNextPage,
+		fetchNextPage,
+		hasNextPage,
+	} = useInfiniteQuery( [ 'tableKeyword' ],
+		( { pageParam = '' } ) => {
+			return fetchData( `keyword?from_kw_id=${ pageParam }&rows_per_page=${ maxRows }` );
+		},
+		{
+			getNextPageParam: ( allRows ) => {
+				const lastRowId = allRows[ allRows?.length - 1 ]?.kw_id ?? undefined;
+				return lastRowId;
+			},
+			keepPreviousData: true,
+			refetchOnWindowFocus: false,
+			cacheTime: Infinity,
+			staleTime: Infinity,
+		}
+	);
+
+	useEffect( () => {
+		if ( inView ) {
+			fetchNextPage();
+		}
+	}, [ inView, fetchNextPage ] );
 
 	const exportCSV = ( dataForProcessing ) => {
 		const dataForCSV = dataForProcessing;
@@ -39,8 +65,7 @@ export default function KeywordLinks() {
 		// console.log( queryClient.getQueryData( [ 'tableKeyword' ] ) );
 		// console.log( parsedData );
 		setCSVMessage( __( 'Processing data…' ) );
-		queryClient.setQueryData( [ 'tableKeyword' ], parsedData.slice( 500, 1200 ) );
-		// queryClient.invalidateQueries( [ 'tableKeyword' ] );
+		queryClient.setQueryData( [ 'tableKeyword' ], parsedData );
 		setCSVMessage( null );
 	};
 
@@ -103,61 +128,86 @@ export default function KeywordLinks() {
 	];
 
 	return (
-		<>
-			<CSVReader
-				LocalChunkSize="1024"
-				config={
-					{
-						header: true,
-						chunk: ( results, parser ) => {
-						},
+		<div>
+			<div className="">
+				{ /* <CSVReader
+					LocalChunkSize="1024"
+					config={
+						{
+							header: true,
+							chunk: ( results, parser ) => {
+							},
+						}
 					}
-				}
-				onUploadAccepted={ ( results ) => {
-					importLocal( results.data );
+					onUploadAccepted={ ( results ) => {
+						importLocal( results.data );
 					// console.log( results.data );
 					// importData.mutate( results );
-				} }
-			>
-				{ ( {
-					getRootProps,
-					acceptedFile,
-					ProgressBar,
-					getRemoveFileProps,
-				} ) => (
-					<>
-						<div>
-							<button type="button" className="urlslab-button active" { ...getRootProps() }>
-								Browse file
-							</button>
+					} }
+				>
+					{ ( {
+						getRootProps,
+						acceptedFile,
+						ProgressBar,
+						getRemoveFileProps,
+					} ) => (
+						<>
 							<div>
-								{ acceptedFile && acceptedFile.name }
+								<button type="button" className="urlslab-button active" { ...getRootProps() }>
+									Browse file
+								</button>
+								<div>
+									{ acceptedFile && acceptedFile.name }
+								</div>
+								<button className="urlslab-button" { ...getRemoveFileProps() }>
+									Remove
+								</button>
 							</div>
-							<button className="urlslab-button" { ...getRemoveFileProps() }>
-								Remove
-							</button>
-						</div>
-						{ csvMessage }
-						<ProgressBar className="progressbar" />
-					</>
-				) }
-			</CSVReader>
-			<CSVDownloader
-				className="urlslab-button active"
-				type={ Type.Button }
-				filename={ 'keywords_downloaded' }
-				bom={ true }
-				config={
-					{
-						delimiter: ',',
+							{ csvMessage }
+							<ProgressBar className="progressbar" />
+						</>
+					) }
+				</CSVReader> */ }
+				{ /* <CSVDownloader
+					className="urlslab-button active"
+					type={ Type.Button }
+					filename={ 'keywords_downloaded' }
+					bom={ true }
+					config={
+						{
+							delimiter: ',',
+						}
 					}
+					data={ exportCSV( data?.pages?.flatMap( ( page ) => page ?? [] ) ) }
+				>
+					Download CSV
+				</CSVDownloader> */ }
+			</div>
+			<Table columns={ columns }
+				data={
+					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 				}
-				data={ exportCSV( data ) }
 			>
-				Download CSV
-			</CSVDownloader>
-			<Table columns={ columns } data={ data } />
-		</>
+				<div>
+					<button
+						ref={ ref }
+						onClick={ () => fetchNextPage() }
+						disabled={ ! hasNextPage || isFetchingNextPage }
+					>
+						{ isFetchingNextPage
+							? 'Loading more...'
+							: hasNextPage
+								? 'Load Newer'
+								: 'Nothing more to load' }
+					</button>
+				</div>
+				<div>
+					{ isFetching && ! isFetchingNextPage
+						? 'Background Updating...'
+						: null }
+				</div>
+			</Table>
+		</div>
 
 	);
 }

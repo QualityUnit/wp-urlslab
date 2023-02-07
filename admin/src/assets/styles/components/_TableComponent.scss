@@ -2,16 +2,59 @@
 @use "../common/variables" as *;
 
 .urlslab-table {
+
 	table-layout: fixed;
+	border-collapse: collapse;
+	border-spacing: 0;
+	width: 100%;
 	background-color: $white;
+	font-family: Poppins, sans-serif;
+	font-size: 0.75rem;
+
+	&-container {
+
+		@include scrollbar();
+		height: calc(100vh - 300px);
+		overflow: auto;
+	}
+
+	thead {
+		position: sticky;
+		top: 0;
+		z-index: 555;
+		background-color: #f0f0f1;
+		color: $grey-darker;
+
+		th {
+			padding-bottom: 1em;
+		}
+	}
 
 	th,
 	td {
+		font-weight: $font-weight-normal;
 		text-align: left;
+
+		&:first-child {
+			padding-left: 1em;
+		}
 	}
 
-	tr:nth-of-type(even) {
-		background-color: $grey-lightest;
+	tbody {
+		border: 1px solid $grey-light;
+	}
+
+	tr {
+
+		border-bottom: 1px solid $grey-light;
+
+		&:nth-of-type(even) {
+			background-color: $grey-lightest;
+		}
+
+		&:last-of-type {
+			border-bottom: 0;
+		}
 	}
 
 	.urlslab-inputField-wrap {
