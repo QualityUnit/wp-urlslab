@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
+import {
+	persistQueryClient,
+} from '@tanstack/react-query-persist-client';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useI18n } from '@wordpress/react-i18n';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useCSVReader, useCSVDownloader } from 'react-papaparse';
 import { fetchData, setData } from '../api/fetching';
+import { langName } from '../constants/helpers';
 import Loader from '../components/Loader';
 import InputField from '../elements/InputField';
 import Checkbox from '../elements/Checkbox';
@@ -21,6 +25,10 @@ export default function KeywordLinks() {
 
 	const [ csvMessage, setCSVMessage ] = useState( null );
 	const maxRows = 50;
+
+	persistQueryClient( {
+		buster: 'keyword',
+	} );
 
 	const {
 		data,
@@ -112,6 +120,7 @@ export default function KeywordLinks() {
 			header: () => __( 'Keyword Usage' ),
 		} ),
 		columnHelper.accessor( 'lang', {
+			cell: ( val ) => langName( val.getValue() ),
 			header: () => __( 'Language' ),
 		} ),
 		columnHelper.accessor( 'link_usage_count', {

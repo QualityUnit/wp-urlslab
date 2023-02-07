@@ -24,6 +24,7 @@
   "dependencies": {
     "@babel/eslint-parser": "^7.19.1",
     "@tanstack/query-async-storage-persister": "^4.24.4",
+    "@tanstack/query-sync-storage-persister": "^4.24.4",
     "@tanstack/react-query-devtools": "^4.24.3",
     "@tanstack/react-query-persist-client": "^4.24.4",
     "@tanstack/react-table": "^8.7.9",
