@@ -193,7 +193,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 			' LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON p.filehash = f.filehash and p.filesize=f.filesize'
 		);
 
-		$this->add_filter_table_fields( $sql );
+		$this->add_filter_table_fields( $sql, 'f' );
 
 		$sql->add_filter( 'filter_fileid' );
 		$sql->add_filter( 'filter_url', '%s', 'LIKE' );
