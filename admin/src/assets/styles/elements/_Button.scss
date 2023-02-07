@@ -33,6 +33,11 @@ button.urlslab-button,
 		color: $white;
 	}
 
+	&.small {
+		font-size: 0.75em;
+		padding: 0.5em 1em;
+	}
+
 	svg {
 
 		@include square(1.5em);

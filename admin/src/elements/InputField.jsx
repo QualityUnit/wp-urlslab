@@ -45,6 +45,12 @@ export default function InputField( { defaultValue, placeholder, message, classN
 					defaultValue={ val }
 					onChange={ ( event ) => setVal( event.target.value ) }
 					onBlur={ handleVal }
+					onKeyDown={ ( event ) => {
+						if ( event.key === 'Enter' ) {
+							handleVal( event );
+							event.target.blur();
+						}
+					} }
 					placeholder={ placeholder }
 					disabled={ disabled ? 'disabled' : '' }
 				/>

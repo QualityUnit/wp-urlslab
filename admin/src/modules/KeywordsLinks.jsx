@@ -24,6 +24,7 @@ export default function KeywordLinks() {
 	const { ref, inView } = useInView();
 
 	const [ csvMessage, setCSVMessage ] = useState( null );
+	const [ csvData, setCSVData ] = useState( null );
 	const maxRows = 50;
 
 	persistQueryClient( {
@@ -60,14 +61,18 @@ export default function KeywordLinks() {
 		}
 	}, [ inView, fetchNextPage ] );
 
-	const exportCSV = ( dataForProcessing ) => {
-		const dataForCSV = dataForProcessing;
-		for ( const obj of dataForCSV ) {
-			delete obj.kw_id;
-			delete obj.destUrlMd5;
+	async function exportCSV() {
+		let dataForCSV = null;
+		dataForCSV = await fetchData( 'keyword?rows_per_page=100' );
+
+		if ( dataForCSV.length ) {
+			for ( const obj of dataForCSV ) {
+				delete obj.kw_id;
+				delete obj.destUrlMd5;
+			}
+			return dataForCSV;
 		}
-		return dataForCSV;
-	};
+	}
 
 	const importLocal = ( parsedData ) => {
 		// console.log( queryClient.getQueryData( [ 'tableKeyword' ] ) );
@@ -177,9 +182,10 @@ export default function KeywordLinks() {
 						</>
 					) }
 				</CSVReader> */ }
-				{ /* <CSVDownloader
-					className="urlslab-button active"
+				<CSVDownloader
+					className="urlslab-button small active"
 					type={ Type.Button }
+					onClick={ exportCSV() }
 					filename={ 'keywords_downloaded' }
 					bom={ true }
 					config={
@@ -187,10 +193,10 @@ export default function KeywordLinks() {
 							delimiter: ',',
 						}
 					}
-					data={ exportCSV( data?.pages?.flatMap( ( page ) => page ?? [] ) ) }
+					data={ csvData }
 				>
 					Download CSV
-				</CSVDownloader> */ }
+				</CSVDownloader>
 			</div>
 			<Table columns={ columns }
 				data={
