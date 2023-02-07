@@ -38,6 +38,7 @@ export default function SortMenu( {
 
 	return (
 		<div className={ `urlslab-FilterMenu ${ className || '' }` } style={ style } ref={ ref }>
+			<div className="urlslab-inputField-label">{ children }</div>
 			<div
 				className={ `urlslab-FilterMenu__title ${ isActive ? 'active' : '' }` }
 				onClick={ handleMenu }
@@ -45,7 +46,7 @@ export default function SortMenu( {
 				role="button"
 				tabIndex={ 0 }
 			>
-				{ children }
+				{ items[ checked ] }
 			</div>
 			<div className={ `urlslab-FilterMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
 				<div className={ `urlslab-FilterMenu__items--inn ${ Object.values( items ).length > 8 ? 'has-scrollbar' : '' }` }>

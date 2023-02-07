@@ -1,16 +1,17 @@
 import apiFetch from '@wordpress/api-fetch';
 
-export async function fetchModules( slug ) {
+export async function fetchData( slug ) {
 	try {
-		const result = await apiFetch( {
+		const result = await fetch( `/wp-json/urlslab/v1${ slug ? `/${ slug }` : '' }`, {
 			method: 'GET',
-			path: `/wp-json/urlslab/v1/module${ slug ? `/${ slug }` : '' }`,
 			headers: {
 				'Content-Type': 'application/json',
 				accept: 'application/json',
 				'X-WP-Nonce': window.wpApiSettings.nonce,
 			},
 			credentials: 'include',
+		} ).then( ( response ) => {
+			return response.json();
 		} ).then( ( data ) => {
 			return data;
 		} );
@@ -32,6 +33,24 @@ export async function setModule( slug, object ) {
 			},
 			credentials: 'include',
 			data: object,
+		} );
+		return result;
+	} catch ( error ) {
+		return false;
+	}
+}
+
+export async function setData( slug, object ) {
+	try {
+		const result = await fetch( `/wp-json/urlslab/v1/${ slug }`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				accept: 'application/json',
+				'X-WP-Nonce': window.wpApiSettings.nonce,
+			},
+			credentials: 'include',
+			body: object,
 		} );
 		return result;
 	} catch ( error ) {

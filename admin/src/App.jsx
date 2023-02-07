@@ -2,7 +2,7 @@ import { useState, Suspense } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useQuery } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
-import { fetchModules } from './api/modules';
+import { fetchData } from './api/fetching';
 import MainMenu from './components/MainMenu';
 import DynamicModule from './components/DynamicModule';
 import Loader from './components/Loader';
@@ -16,10 +16,11 @@ export default function App() {
 	const [ setting, setActiveSetting ] = useState( 'general' );
 	const { data: fetchedModules } = useQuery( {
 		queryKey: [ 'modules' ],
-		queryFn: () => fetchModules().then( ( ModuleData ) => {
+		queryFn: () => fetchData( 'module' ).then( ( ModuleData ) => {
 			return ModuleData;
 		} ),
 	} );
+
 	const [ pageTitle, setTitle ] = useState( __( 'Modules' ) );
 
 	const handleModulePage = ( selectedModule ) => {

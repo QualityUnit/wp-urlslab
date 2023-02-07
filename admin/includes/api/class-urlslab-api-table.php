@@ -101,10 +101,10 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	}
 
 
-	protected function add_filter_table_fields( Urlslab_Api_Table_Sql $sql ) {
+	protected function add_filter_table_fields( Urlslab_Api_Table_Sql $sql, $table_prefix = false ) {
 		$rob_obj = $this->get_row_object();
 		foreach ( $rob_obj->get_primary_columns() as $primary_key ) {
-			$sql->add_filter( 'from_' . $primary_key, $rob_obj->get_columns()[ $primary_key ] );
+			$sql->add_filter( 'from_' . $primary_key, $rob_obj->get_columns()[ $primary_key ], '>=', $table_prefix );
 		}
 
 		if ( $sql->get_request()->get_param( 'from_sort_column' ) ) {
@@ -117,7 +117,12 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 			if ( isset( $rob_obj->get_columns()[ $sql->get_request()->get_param( 'sort_column' ) ] ) ) {
 				$format = $rob_obj->get_columns()[ $sql->get_request()->get_param( 'sort_column' ) ];
 			}
-			$sql->add_filter_raw( esc_sql( $sql->get_request()->get_param( 'sort_column' ) ) . $operator . $format, $sql->get_request()->get_param( 'from_sort_column' ) );
+
+			$sort_column = $sql->get_request()->get_param( 'sort_column' );
+			if ( $table_prefix ) {
+				$sort_column = $table_prefix . '.' . $sort_column;
+			}
+			$sql->add_filter_raw( esc_sql( $sort_column ) . $operator . $format, $sql->get_request()->get_param( 'from_sort_column' ) );
 		}
 
 	}

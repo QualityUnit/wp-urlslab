@@ -5,6 +5,14 @@ import '../assets/styles/components/_MainMenu.scss';
 export default function MainMenu( { activeModule, modules, activePage } ) {
 	const { __ } = useI18n();
 	const [ activeId, setActive ] = useState( 'urlslab-modules' );
+	const permanentModules = new Map( [
+		[ 'urlslab-keywords-links', __( 'URLs' ) ],
+		[ 'urlslab-media-offloader', __( 'Media Offloader' ) ],
+		[ 'urlslab-css-optimizer', __( 'CSS Cache' ) ],
+		[ 'urlslab-related-resources', __( 'Related Resources' ) ],
+		[ 'urlslab-youtube-cache', __( 'YouTube Cache' ) ],
+	]	);
+
 	const handleActive = ( module ) => {
 		setActive( module );
 		if ( activePage ) {

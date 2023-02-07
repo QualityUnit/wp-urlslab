@@ -234,7 +234,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 
 		$sql->add_from( URLSLAB_KEYWORDS_TABLE . ' AS v LEFT JOIN ' . URLSLAB_KEYWORDS_MAP_TABLE . ' AS d ON d.kw_id = v.kw_id' );
 
-		$this->add_filter_table_fields( $sql );
+		$this->add_filter_table_fields( $sql, 'v' );
 
 		$sql->add_filter( 'filter_keyword', '%s', 'LIKE' );
 		$sql->add_filter( 'filter_urlLink', '%s', 'LIKE' );
@@ -250,9 +250,9 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		if ( $request->get_param( 'sort_column' ) ) {
 			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );
 		}
-		$sql->add_order( 'kw_id' );
+		$sql->add_order( 'kw_id', 'v' );
 
-		$sql->add_group_by( 'kw_id' );
+		$sql->add_group_by( 'kw_id', 'v' );
 
 		$rows = $sql->get_results();
 

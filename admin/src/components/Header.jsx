@@ -6,18 +6,18 @@ import { useQuery } from '@tanstack/react-query';
 import NoAPIkey from './NoAPIkey';
 
 export default function Header( { pageTitle } ) {
-	let apikey = null;
-	const generalSettings = useQuery( {
-		queryKey: [ 'general' ],
-		queryFn: () => fetchSettings( 'general' ).then( ( data ) => {
-			return data;
-		} ),
-	} );
+	// let apikey = '********';
+	// const generalSettings = useQuery( {
+	// 	queryKey: [ 'general' ],
+	// 	queryFn: () => fetchSettings( 'general' ).then( ( data ) => {
+	// 		return data;
+	// 	} ),
+	// } );
 
-	if ( generalSettings.isSuccess ) {
-		const settings = generalSettings.data[ 0 ].options[ 'urlslab-api-key' ];
-		apikey = settings.value;
-	}
+	// if ( generalSettings.isSuccess ) {
+	// 	const settings = generalSettings.data[ 0 ].options[ 'urlslab-api-key' ];
+	// 	apikey = settings.value;
+	// }
 
 	return (
 		<Suspense>
@@ -27,9 +27,10 @@ export default function Header( { pageTitle } ) {
 					<span className="urlslab-header-slash">/</span>
 					<h1 className="urlslab-header-title">{ pageTitle }</h1>
 				</div>
-				{
-					( apikey && apikey.length ) || <NoAPIkey />
-				}
+				{ /* { apikey && apikey.length
+					? null
+					: <NoAPIkey />
+				} */ }
 			</header>
 		</Suspense>
 	);

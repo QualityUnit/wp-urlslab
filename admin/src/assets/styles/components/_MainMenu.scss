@@ -2,12 +2,8 @@
 @use "../common/mixins" as *;
 
 .urlslab-mainmenu {
-
-	position: sticky;
-	top: 95px;
 	overflow: hidden;
-	width: $menuWidth;
-	height: calc(100vh - 95px);
+	height: auto;
 	padding: 1em 0;
 	margin: 0;
 	background-color: $white;
