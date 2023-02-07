@@ -36,7 +36,7 @@ class Urlslab_Api_Table_Sql {
 			$column_name = substr( $column_name, strlen( 'filter_' ) );
 		}
 
-		if ($table_prefix) {
+		if ( $table_prefix ) {
 			$column_name = $table_prefix . '.' . $column_name;
 		}
 
@@ -72,7 +72,7 @@ class Urlslab_Api_Table_Sql {
 	}
 
 	public function add_order( $order_column, $sort_direction = 'ASC', $table_prefix = false ) {
-		if ($table_prefix) {
+		if ( $table_prefix ) {
 			$order_column = $table_prefix . '.' . $order_column;
 		}
 		$this->order_data[] = esc_sql( $order_column ) . ' ' . ( 'DESC' !== strtoupper( $sort_direction ) ? 'ASC' : 'DESC' );
