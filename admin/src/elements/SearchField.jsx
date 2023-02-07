@@ -5,7 +5,7 @@ import '../assets/styles/elements/_SearchField.scss';
 export default function SearchField( { placeholder, className, onChange } ) {
 	const [ val, setVal ] = useState( '' );
 
-	const handleVal = ( event ) => {
+	const handleVal = ( ) => {
 		if ( onChange ) {
 			onChange( val );
 		}
@@ -19,7 +19,7 @@ export default function SearchField( { placeholder, className, onChange } ) {
 				type="search"
 				value={ val }
 				onChange={ ( event ) => setVal( event.target.value ) }
-				onBlur={ ( event ) => handleVal( event ) }
+				onBlur={ () => handleVal( ) }
 				placeholder={ placeholder ? placeholder : 'Search...' }
 			/>
 		</div>
