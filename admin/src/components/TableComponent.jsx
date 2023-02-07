@@ -40,7 +40,7 @@ export default function Table( { children, className, columns, data } ) {
 				{ row.getVisibleCells().map( ( cell ) =>
 					( <td key={ cell.id } className={ cell.column.columnDef.className }>
 						{ flexRender( cell.column.columnDef.cell, cell.getContext() ) }
-						{ /* { console.log( cell.getContext() ) } */ }
+						{ /* { console.log( cell.row.original ) } */ }
 					</td> )
 				) }
 			</tr>

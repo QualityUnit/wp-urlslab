@@ -27,9 +27,10 @@ export default function KeywordLinks() {
 	const [ csvData, setCSVData ] = useState( null );
 	const maxRows = 50;
 
-	persistQueryClient( {
-		buster: 'keyword',
-	} );
+	// persistQueryClient( {
+	// 	queryClient,
+	// 	buster: 'keyword',
+	// } );
 
 	const {
 		data,
@@ -103,13 +104,22 @@ export default function KeywordLinks() {
 		return <Loader />;
 	}
 
+	const handleInput = ( value, cell ) => {
+		const newRow = cell.row.original;
+		newRow[ cell.column.id ] = value;
+		console.log( newRow );
+	};
+
 	const columns = [
 		columnHelper.accessor( 'check', {
-			cell: ( ) => <Checkbox />,
+			cell: ( cell ) => <Checkbox onChange={ ( val ) => console.log( cell.row.original ) } />,
 			header: () => __( '' ),
 		} ),
 		columnHelper.accessor( 'keyword', {
-			cell: ( val ) => <InputField type="text" defaultValue={ val.getValue() } />,
+			cell: ( cell ) => <InputField type="text"
+				defaultValue={ cell.getValue() }
+				onChange={ ( val ) => handleInput( val, cell ) }
+			/>,
 			header: () => __( 'Keyword' ),
 		} ),
 		columnHelper.accessor( 'kwType', {
@@ -132,11 +142,17 @@ export default function KeywordLinks() {
 			header: () => __( 'Link Usage' ),
 		} ),
 		columnHelper.accessor( 'urlFilter', {
-			cell: ( val ) => <InputField type="text" defaultValue={ val.getValue() } />,
+			cell: ( cell ) => <InputField type="text"
+				defaultValue={ cell.getValue() }
+				onChange={ ( val ) => handleInput( val, cell ) }
+			/>,
 			header: () => __( 'URL Filter' ),
 		} ),
 		columnHelper.accessor( 'urlLink', {
-			cell: ( val ) => <InputField type="url" defaultValue={ val.getValue() } />,
+			cell: ( cell ) => <InputField type="url"
+				defaultValue={ cell.getValue() }
+				onChange={ ( val ) => handleInput( val, cell ) }
+			/>,
 			header: () => __( 'Keyword Link' ),
 		} ),
 	];
