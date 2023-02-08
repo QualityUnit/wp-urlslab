@@ -20,6 +20,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	const SETTING_NAME_VALIDATE_LINKS = 'urlslab_validate_links';
 	const SETTING_NAME_LAST_LINK_VALIDATION_START = 'urlslab_last_validation';
 	const SETTING_NAME_URLS_MAP = 'urlslab_urls_map';
+	const SETTING_NAME_ADD_LINK_FRAGMENT = 'urlslab_add_lnk_fragment';
 
 	/**
 	 * @param Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher
@@ -157,6 +158,17 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 										'title',
 										$result[ $url_obj->get_url_id() ]->get_url_summary_text( $strategy ),
 									);
+								}
+								if ( $this->get_option( self::SETTING_NAME_ADD_LINK_FRAGMENT ) && false === strpos( $dom_elem->getAttribute( 'href' ), '#' ) ) {
+									if ( $dom_elem->childNodes->length > 0 && property_exists( $dom_elem->childNodes->item( 0 ), 'wholeText' ) ) {
+										$fragment_text = $dom_elem->childNodes->item( 0 )->wholeText;
+									} else if ( property_exists( $dom_elem, 'domValue' ) ) {
+										$fragment_text = $dom_elem->domValue;
+									} else {
+										$fragment_text = $result[ $url_obj->get_url_id() ]->get_url_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_TITLE );
+									}
+
+									$dom_elem->setAttribute( 'href', $dom_elem->getAttribute( 'href' ) . '#:~:text=' . urlencode( $fragment_text ) );
 								}
 							}
 						}
@@ -306,6 +318,14 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			false,
 			__( 'Validate Links' ),
 			__( 'Make request to each URL found in website (in background by cron) and test if it is valid or invalid url (e.g. 404 page)' )
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_ADD_LINK_FRAGMENT,
+			false,
+			true,
+			__( 'Add Text Fragments to every link' ),
+			__( 'Enhance every link in the page with text fragement. Example: www.yourdomain.com/page1#:~:text=link%20text' )
 		);
 
 		$this->add_option_definition(
