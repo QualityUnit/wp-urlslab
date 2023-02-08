@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import {
 	flexRender,
 	getCoreRowModel,
@@ -9,10 +9,16 @@ import { useVirtual } from 'react-virtual';
 import '../assets/styles/components/_TableComponent.scss';
 
 export default function Table( { children, className, columns, data } ) {
+	const [ rowSelection, setRowSelection ] = useState( {} );
 	const tableContainerRef = useRef();
 	const table = useReactTable( {
 		columns,
 		data,
+		state: {
+			rowSelection,
+		},
+		enableRowSelection: true,
+		onRowSelectionChange: setRowSelection,
 		getCoreRowModel: getCoreRowModel(),
 	} );
 
@@ -36,7 +42,7 @@ export default function Table( { children, className, columns, data } ) {
 	for ( const virtualRow of virtualRows ) {
 		const row = rows[ virtualRow.index ];
 		tbody.push(
-			<tr key={ row.id }>
+			<tr key={ row.id } className={ row.getIsSelected() ? 'selected' : '' } >
 				{ row.getVisibleCells().map( ( cell ) =>
 					( <td key={ cell.id } className={ cell.column.columnDef.className }>
 						{ flexRender( cell.column.columnDef.cell, cell.getContext() ) }

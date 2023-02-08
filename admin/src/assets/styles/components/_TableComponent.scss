@@ -3,7 +3,7 @@
 
 .urlslab-table {
 
-	table-layout: fixed;
+	table-layout: auto;
 	border-collapse: collapse;
 	border-spacing: 0;
 	width: 100%;
@@ -35,10 +35,7 @@
 	td {
 		font-weight: $font-weight-normal;
 		text-align: left;
-
-		&:first-child {
-			padding-left: 1em;
-		}
+		padding-left: 1em;
 	}
 
 	tbody {
@@ -49,12 +46,19 @@
 
 		border-bottom: 1px solid $grey-light;
 
-		&:nth-of-type(even) {
-			background-color: $grey-lightest;
-		}
-
 		&:last-of-type {
 			border-bottom: 0;
+		}
+
+		&.selected {
+			background-color: $desaturated-blue;
+		}
+
+		@media (hover: hover) {
+
+			&:hover {
+				background-color: $grey-lightest;
+			}
 		}
 	}
 

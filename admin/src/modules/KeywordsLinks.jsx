@@ -9,8 +9,10 @@ import { useI18n } from '@wordpress/react-i18n';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useCSVReader, useCSVDownloader } from 'react-papaparse';
 import { fetchData, setData } from '../api/fetching';
+import { exportCSV } from '../api/import-export-csv';
 import { langName } from '../constants/helpers';
 import Loader from '../components/Loader';
+import SortMenu from '../elements/SortMenu';
 import InputField from '../elements/InputField';
 import Checkbox from '../elements/Checkbox';
 import Table from '../components/TableComponent';
@@ -24,7 +26,6 @@ export default function KeywordLinks() {
 	const { ref, inView } = useInView();
 
 	const [ csvMessage, setCSVMessage ] = useState( null );
-	const [ csvData, setCSVData ] = useState( null );
 	const maxRows = 50;
 
 	// persistQueryClient( {
@@ -57,23 +58,11 @@ export default function KeywordLinks() {
 	);
 
 	useEffect( () => {
+		exportCSV( 'keyword', 'from_kw_id', 'kw_id' );
 		if ( inView ) {
 			fetchNextPage();
 		}
 	}, [ inView, fetchNextPage ] );
-
-	async function exportCSV() {
-		let dataForCSV = null;
-		dataForCSV = await fetchData( 'keyword?rows_per_page=100' );
-
-		if ( dataForCSV.length ) {
-			for ( const obj of dataForCSV ) {
-				delete obj.kw_id;
-				delete obj.destUrlMd5;
-			}
-			return dataForCSV;
-		}
-	}
 
 	const importLocal = ( parsedData ) => {
 		// console.log( queryClient.getQueryData( [ 'tableKeyword' ] ) );
@@ -110,19 +99,28 @@ export default function KeywordLinks() {
 		console.log( newRow );
 	};
 
+	const handleSelected = ( val, cell ) => {
+		cell.row.toggleSelected();
+	};
+
 	const columns = [
 		columnHelper.accessor( 'check', {
-			cell: ( cell ) => <Checkbox onChange={ ( val ) => console.log( cell.row.original ) } />,
+			className: 'checkbox',
+			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
+				handleSelected( val, cell );
+			} } />,
 			header: () => __( '' ),
 		} ),
 		columnHelper.accessor( 'keyword', {
-			cell: ( cell ) => <InputField type="text"
-				defaultValue={ cell.getValue() }
-				onChange={ ( val ) => handleInput( val, cell ) }
-			/>,
 			header: () => __( 'Keyword' ),
 		} ),
 		columnHelper.accessor( 'kwType', {
+			cell: ( cell ) => <SortMenu
+				items={ { M: __( 'Manual' ), I: __( 'Imported' ), X: __( 'None' ) } }
+				name={ cell.column.id }
+				checkedId={ cell.getValue() }
+				onChange={ ( val ) => handleInput( val, cell ) }
+			/>,
 			header: () => __( 'Keyword Type' ),
 		} ),
 		columnHelper.accessor( 'kw_length', {
@@ -149,10 +147,6 @@ export default function KeywordLinks() {
 			header: () => __( 'URL Filter' ),
 		} ),
 		columnHelper.accessor( 'urlLink', {
-			cell: ( cell ) => <InputField type="url"
-				defaultValue={ cell.getValue() }
-				onChange={ ( val ) => handleInput( val, cell ) }
-			/>,
 			header: () => __( 'Keyword Link' ),
 		} ),
 	];
@@ -198,7 +192,7 @@ export default function KeywordLinks() {
 						</>
 					) }
 				</CSVReader> */ }
-				<CSVDownloader
+				{ /* <CSVDownloader
 					className="urlslab-button small active"
 					type={ Type.Button }
 					onClick={ exportCSV() }
@@ -212,7 +206,7 @@ export default function KeywordLinks() {
 					data={ csvData }
 				>
 					Download CSV
-				</CSVDownloader>
+				</CSVDownloader> */ }
 			</div>
 			<Table columns={ columns }
 				data={

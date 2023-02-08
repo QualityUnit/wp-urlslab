@@ -9,13 +9,20 @@
 	position: relative;
 	z-index: 2;
 	max-width: 12em;
+	font-size: 0.875rem;
+	font-family: OpenSans, sans-serif;
+	font-weight: $font-weight-normal;
+
+	.urlslab-table & {
+		font-size: inherit;
+	}
+
+	&.active {
+		z-index: 3;
+	}
 
 	&.wide {
 		max-width: none;
-	}
-
-	+ .urlslab-FilterMenu {
-		z-index: 1;
 	}
 
 	&__title {
@@ -23,9 +30,6 @@
 		@extend %MenuArrow;
 		display: flex;
 		align-items: center;
-		font-size: 0.875rem;
-		font-family: OpenSans, sans-serif;
-		font-weight: $font-weight-normal;
 		line-height: 1;
 		border: 1px solid $grey-medium;
 		border-radius: 6px;
@@ -34,6 +38,11 @@
 		transition: all 0.2s;
 		min-width: 10em;
 		cursor: pointer;
+
+		.urlslab-table & {
+			background-color: transparent;
+			min-width: auto;
+		}
 
 		svg {
 			margin-right: 0.5em;
@@ -106,8 +115,6 @@
 		align-content: center;
 		padding: 0.5em 1em;
 		margin-bottom: 0.25em;
-		font-size: 0.8125rem;
-		font-weight: $font-weight-normal;
 
 		* {
 			font-weight: inherit;
