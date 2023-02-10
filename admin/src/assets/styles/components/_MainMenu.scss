@@ -1,74 +1,220 @@
+/* stylelint-disable selector-class-pattern, no-descending-specificity */
+
+@use "sass:color";
 @use "../common/variables" as *;
 @use "../common/mixins" as *;
 
+%menuBg {
+
+	&::after {
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 100%;
+		width: 100%;
+		content: "";
+		background-color: $mainmenu-graphite;
+	}
+}
+
 .urlslab-mainmenu {
-	overflow: hidden;
-	height: auto;
+
+	@extend %menuBg;
+	position: absolute;
+	z-index: 5;
+	height: 100%;
 	padding: 1em 0;
 	margin: 0;
-	background-color: $white;
-	box-shadow: 0 0 6px rgba($black-real, 0.16);
 	font-size: 0.75rem;
+	overflow: hidden;
+	color: $white;
+	max-width: $iconsMenuWidth;
+	transition: all $transitionTime 0.2s;
 
-	&-inn {
-		display: flex;
-		width: 200%;
-		transition: transform $transitionTime;
+	&::after {
+		transform: translateX(-100%);
+		transition: all $transitionTime 0.2s;
+	}
 
-		&.urlslab-settings {
-			transform: translateX(-50%);
+	&.open {
+		max-width: $mainMenuWidth;
+
+		&::after {
+			transform: translateX(0);
 		}
 	}
 
-	.urlslab-backButton {
-		margin-top: 1.5em;
-		margin-left: -1em;
+	&-title[class] {
+		position: relative;
+		z-index: 1;
+		color: currentcolor;
+		width: 100%;
+		margin-bottom: 0.25em;
+
+		.inn {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			font-size: 0.6rem;
+			font-weight: $font-weight-normal;
+			transition: all $transitionTime 0.2s;
+			transform: translateX(0%);
+
+			.open & {
+				transform: translateX(calc(50% - $iconsMenuWidth / 2));
+			}
+		}
+
+		svg {
+
+			@include square(1em);
+			display: block;
+			margin-bottom: 0.5em;
+			transition: all $transitionTime;
+			transform: scaleX(1);
+			fill: currentcolor;
+
+			.open & {
+				transform: scaleX(-1);
+			}
+		}
+	}
+
+	&-icons,
+	&-menu {
+		margin: 0;
+		flex: 1 0 auto;
+
+		> * {
+			position: relative;
+			z-index: 1;
+		}
+
+		button {
+			display: flex;
+			align-items: center;
+			color: currentcolor;
+			width: 100%;
+			padding: 0.5em 0;
+			padding-right: 2.1666em;
+
+			&.has-icon {
+				font-size: 0.8125rem;
+				padding-top: 1.45em;
+				padding-bottom: 1.45em;
+			}
+		}
+	}
+
+	&-icons {
+
+		@extend %menuBg;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: $iconsMenuWidth;
+
+		&::after {
+			width: $iconsMenuWidth;
+		}
+
+		svg {
+
+			@include square(1.75em);
+			position: absolute;
+			display: block;
+			fill: rgba($white, 60%);
+			transition: all $transitionTime;
+		}
+
+		li {
+			display: block;
+			width: 100%;
+
+			&.settings {
+				margin-top: auto;
+			}
+
+			&.active svg {
+				fill: rgba($white, 100%);
+			}
+		}
+
+		button[class] {
+			position: relative;
+			justify-content: center;
+			padding-left: 0;
+			padding-right: 0;
+			width: 100%;
+
+			span {
+				visibility: hidden;
+				text-overflow: -99999px;
+			}
+		}
 	}
 
 	&-menu {
-		margin: 0;
-		width: 100%;
+		position: relative;
+		z-index: 1;
+		transform: translateX(-100%);
+		transition: all $transitionTime 0.2s;
+
+		li {
+			opacity: 0;
+			transition: all $transitionTime 0.2s;
+		}
+
+		.open & {
+			transform: translateX(0);
+
+			li {
+				opacity: 1;
+			}
+		}
 	}
 
-	&-element {
-		padding: 0 2.1666em;
-	}
+	&-submenu {
+		max-height: 0;
+		overflow: hidden;
+		transition: all $transitionTime 0.5s;
+		background-color: $submenu-graphite;
 
-	&-search {
+		width: calc(100% + $iconsMenuWidth);
+		margin-left: -$iconsMenuWidth;
 
-		input[type] {
-			font-size: 0.75rem;
+		.open & {
+			max-height: calc(var(--activeModules) * 2.5em);
+		}
+
+		li {
+			padding-left: $iconsMenuWidth;
 		}
 	}
 
 	&-item {
+		position: relative;
+		z-index: 3;
+		margin-bottom: 0;
 		cursor: pointer;
 
-		button {
-			width: 100%;
-			text-align: left;
-			padding: 0.5em 2.1666em;
-		}
-
 		&.active {
-			background-color: $grey-lighter;
+			background-color: color.scale($mainmenu-graphite, $lightness: 16%);
+			transition: all $transitionTime;
 			cursor: default;
 
 			button {
-				color: $black;
 				font-weight: $font-weight-semi;
-				transition: all $transitionTime;
+
 				cursor: default;
 			}
 		}
 
-		@media (hover: hover) {
+		@media (open: open) {
 
-			&:not(.active):hover {
-
-				button {
-					color: $primary-color;
-				}
+			&:not(.active):not(.submenu):open {
+				background-color: color.scale($mainmenu-graphite, $lightness: 16%);
+				transition: all $transitionTime;
 			}
 		}
 	}

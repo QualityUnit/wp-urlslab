@@ -1,6 +1,7 @@
 @use "sass:color";
 $transitionTime: 0.25s;
-$menuWidth: 14.375rem;
+$iconsMenuWidth: 3.75rem;
+$mainMenuWidth: 12.825rem;
 
 $sizes: (
 	"xxs": 0.15em,
@@ -32,6 +33,8 @@ $saturated-orange: #ffb928;
 $desaturated-orange: #fff5df;
 
 $primary-color: $saturated-blue;
+$mainmenu-graphite: #444952;
+$submenu-graphite: #3d4148;
 $black: #050505;
 $black-real: #000;
 $grey-darker: #65676b;

@@ -3,7 +3,7 @@
 
 .urlslab-table {
 
-	table-layout: auto;
+	table-layout: fixed;
 	border-collapse: collapse;
 	border-spacing: 0;
 	width: 100%;
@@ -15,7 +15,7 @@
 	&-container {
 
 		@include scrollbar();
-		height: calc(100vh - 300px);
+		height: calc(100vh - 135px);
 		overflow: auto;
 	}
 
@@ -39,11 +39,11 @@
 	}
 
 	tbody {
+
 		border: 1px solid $grey-light;
 	}
 
 	tr {
-
 		border-bottom: 1px solid $grey-light;
 
 		&:last-of-type {

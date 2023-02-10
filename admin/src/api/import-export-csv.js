@@ -1,47 +1,38 @@
 import { fetchData } from './fetching';
 
-let lastPage = '';
+let lastPage = '3611044523';
 let dataForCSV = [];
 let ended = false;
-export const exportCSV = async ( url, fromId, pageId, arrayDeleteFields ) => {
-	console.time( 'csv' );
-	const perpage = 999;
-	const prevDataLength = dataForCSV.length;
-        		// console.log( lastPage );
 
-	await fetchData( `${ url }?${ fromId }=${ lastPage }&rows_per_page=${ perpage }` ).then( ( response ) => {
+export let jsonData = { status: 'downloading', data: false };
+
+export async function exportCSV( options ) {
+	const { url, fromId, pageId, deleteFields } = options;
+	const qOperator = url.includes( '?' ) ? '&' : '?';
+	const perpage = 9999;
+	const prevDataLength = dataForCSV.length;
+
+	await fetchData( `${ url }${ qOperator }${ fromId }=${ lastPage }&rows_per_page=${ perpage }` ).then( ( response ) => {
 		dataForCSV.push( response );
+		dataForCSV = dataForCSV.flat();
 		if ( response.length < perpage ) {
 			ended = true;
+			for ( const obj of dataForCSV ) {
+				for ( const field of deleteFields ) {
+					delete obj[ field ];
+				}
+			}
 		}
 	} );
-	if ( url.includes( '?' ) ) {
-		await fetchData( `${ url }&${ fromId }=${ lastPage }&rows_per_page=${ perpage }` ).then( ( response ) => {
-			dataForCSV.push( response );
-			if ( response.length < perpage ) {
-				ended = true;
-			}
-		} );
-	}
-
-	dataForCSV = dataForCSV.flat();
 
 	if ( ended ) {
-		console.timeEnd( 'csv' );
-		return dataForCSV;
+		jsonData = { status: 'done', data: dataForCSV };
+		return jsonData;
 	}
 
 	if ( dataForCSV.length && ( dataForCSV.length > prevDataLength ) ) {
 		lastPage = dataForCSV[ dataForCSV?.length - 1 ][ pageId ];
-		exportCSV( url, fromId, pageId );
-		console.log( dataForCSV );
-
-		// console.log( dataForCSV );
-
-		// for ( const obj of dataForCSV ) {
-		// 	for ( const field of arrayDeleteFields ) {
-		// 		delete obj[ field ];
-		// 	}
-		// }
+		// jsonData = ;
+		exportCSV( options );
 	}
-};
+}

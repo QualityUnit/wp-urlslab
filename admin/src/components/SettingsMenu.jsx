@@ -31,15 +31,6 @@ export default function SettingsMenu( { modules, backButton, activeSetting } ) {
 
 	return (
 		<div className="urlslab-mainmenu-menu">
-			<div className="urlslab-mainmenu-element urlslab-mainmenu-search">
-				<SearchField />
-			</div>
-			<BackButton
-				className="urlslab-mainmenu-element"
-				onClick={ () => handleBackButton( 'urlslab-modules' ) }
-			>
-				{ __( 'Back to Home' ) }
-			</BackButton>
 			<ul className="urlslab-mainmenu-settings">
 				{ modules.length
 					? modules.map( ( module ) => {

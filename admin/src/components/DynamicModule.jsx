@@ -12,7 +12,9 @@ export default function DynamicModule( { modules, moduleId, settingId } ) {
 		<div className="urlslab-DynamicModule">
 			<ErrorBoundary>
 				<Suspense fallback={ <Loader /> }>
-					<Module modules={ modules } settingId={ settingId } moduleId={ moduleId } />
+					<div className="urlslab-DynamicModule-inn">
+						<Module modules={ modules } settingId={ settingId } moduleId={ moduleId } />
+					</div>
 				</Suspense>
 			</ErrorBoundary>
 		</div>

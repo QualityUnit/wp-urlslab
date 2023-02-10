@@ -1,0 +1,41 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-app {
+
+	&-main {
+		// padding-left: $iconsMenuWidth;
+
+		@media (min-width: $breakpoint-tablet) {
+			padding-left: $iconsMenuWidth;
+			transition: padding-left $transitionTime;
+
+			.urlslab-mainmenu.open + & {
+				padding-left: $mainMenuWidth;
+			}
+		}
+	}
+}
+// Removes Elementor and other notifications when in URLslab plugin page
+
+.notice[class],
+#wpfooter {
+	display: none !important;
+}
+
+#adminmenuback {
+	z-index: 6;
+}
+
+// Moves our app padding
+#wpcontent,
+#wpbody-content {
+	padding: 0 !important;
+}
+
+#wpbody-content {
+	min-height: 100%;
+	height: auto;
+	position: relative;
+	float: none;
+}

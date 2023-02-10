@@ -11,11 +11,10 @@
 	transition: all $transitionTime;
 	overflow: hidden;
 
-	&.active {
-		box-shadow: 0 0 0 2px $primary-color;
+	@media (hover: hover) {
 
-		&.activating {
-			box-shadow: $box-shadow-small;
+		&:hover {
+			box-shadow: 0 0 0 2px $primary-color;
 		}
 	}
 

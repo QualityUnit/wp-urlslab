@@ -4,7 +4,7 @@ require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-table-sq
 abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 
 	const ROWS_PER_PAGE = 30;
-	const MAX_ROWS_PER_PAGE = 1000;
+	const MAX_ROWS_PER_PAGE = 10000;
 
 	abstract function get_row_object( $params = array() ): Urlslab_Data;
 

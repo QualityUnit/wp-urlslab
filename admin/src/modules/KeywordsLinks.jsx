@@ -9,9 +9,10 @@ import { useI18n } from '@wordpress/react-i18n';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useCSVReader, useCSVDownloader } from 'react-papaparse';
 import { fetchData, setData } from '../api/fetching';
-import { exportCSV } from '../api/import-export-csv';
+import jsonData, { exportCSV } from '../api/import-export-csv';
 import { langName } from '../constants/helpers';
 import Loader from '../components/Loader';
+import Button from '../elements/Button';
 import SortMenu from '../elements/SortMenu';
 import InputField from '../elements/InputField';
 import Checkbox from '../elements/Checkbox';
@@ -57,8 +58,24 @@ export default function KeywordLinks() {
 		}
 	);
 
+	const handleDownload = () => {
+		exportCSV( {
+			url: 'keyword',
+			fromId: 'from_kw_id',
+			pageId: 'kw_id',
+			deleteFields: [ 'kw_id', 'destUrlMd5' ],
+		} ).then(
+			( b ) => {
+				console.log( b );
+			}
+		);
+
+		// console.log( jsonData );
+		// if ( jsonData.status !== 'downloading' ) {
+		// }
+	};
+
 	useEffect( () => {
-		exportCSV( 'keyword', 'from_kw_id', 'kw_id' );
 		if ( inView ) {
 			fetchNextPage();
 		}
@@ -192,21 +209,7 @@ export default function KeywordLinks() {
 						</>
 					) }
 				</CSVReader> */ }
-				{ /* <CSVDownloader
-					className="urlslab-button small active"
-					type={ Type.Button }
-					onClick={ exportCSV() }
-					filename={ 'keywords_downloaded' }
-					bom={ true }
-					config={
-						{
-							delimiter: ',',
-						}
-					}
-					data={ csvData }
-				>
-					Download CSV
-				</CSVDownloader> */ }
+				<Button onClick={ handleDownload }>Download CSV</Button>
 			</div>
 			<Table columns={ columns }
 				data={

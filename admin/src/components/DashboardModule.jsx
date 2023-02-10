@@ -52,9 +52,12 @@ export default function DashboardModule( { moduleId, title, children, image, isA
 				<h3 className="urlslab-dashboardmodule-title">{ title }</h3>
 				<div className="urlslab-dashboardmodule-content">
 					<p>{ children }</p>
-					<button
-						className="urlslab-learnMore"
-					>{ __( 'Manage module' ) } <ArrowIcon /></button>
+					{ isActive
+						? <button className="urlslab-learnMore">
+							{ __( 'Manage module' ) } <ArrowIcon />
+						</button>
+						: null
+					}
 				</div>
 			</div>
 		</div>

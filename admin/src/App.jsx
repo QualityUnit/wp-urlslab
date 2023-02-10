@@ -37,33 +37,23 @@ export default function App() {
 	};
 
 	return (
-		<>
-			<Header pageTitle={ ! pageTitle || pageTitle } />
-
-			<div className="urlslab-app flex">
-				<nav className="urlslab-mainmenu">
-					<div className={ `urlslab-mainmenu-inn ${ module }` }>
-						<Suspense>
-							<MainMenu
-								modules={ ! fetchedModules || Object.values( fetchedModules ) }
-								activePage={ ( selectedModule ) => handleModulePage( selectedModule ) }
-							/>
-							<SettingsMenu
-								modules={ ! fetchedModules || Object.values( fetchedModules ) }
-								backButton={ ( selectedModule ) => handleModulePage( selectedModule ) }
-								activeSetting={ ( selectedSetting ) => setActiveSetting( selectedSetting ) }
-							/>
-						</Suspense>
-					</div>
-				</nav>
-				<Suspense fallback={ <Loader /> }>
+		<div className="urlslab-app flex">
+			<Suspense>
+				<MainMenu
+					modules={ ! fetchedModules || Object.values( fetchedModules ) }
+					activePage={ ( selectedModule ) => handleModulePage( selectedModule ) }
+				/>
+			</Suspense>
+			<Suspense fallback={ <Loader /> }>
+				<div className="urlslab-app-main">
+					<Header pageTitle={ ! pageTitle || pageTitle } />
 					<DynamicModule
 						modules={ ! fetchedModules || Object.values( fetchedModules ) }
 						moduleId={ module }
 						settingId={ setting }
 					/>
-				</Suspense>
-			</div>
-		</>
+				</div>
+			</Suspense>
+		</div>
 	);
 }
