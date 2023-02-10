@@ -1,6 +1,7 @@
 <?php
 require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-css-cache-row.php';
+require_once( ABSPATH . 'wp-admin/includes/file.php' );
 
 class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 
