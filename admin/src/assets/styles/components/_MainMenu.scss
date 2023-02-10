@@ -210,9 +210,9 @@
 			}
 		}
 
-		@media (open: open) {
+		@media (hover: hover) {
 
-			&:not(.active):not(.submenu):open {
+			&:not(.active):not(.submenu):hover {
 				background-color: color.scale($mainmenu-graphite, $lightness: 16%);
 				transition: all $transitionTime;
 			}
