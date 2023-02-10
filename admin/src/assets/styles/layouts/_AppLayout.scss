@@ -5,6 +5,7 @@
 
 	&-main {
 		// padding-left: $iconsMenuWidth;
+		flex: auto;
 
 		@media (min-width: $breakpoint-tablet) {
 			padding-left: $iconsMenuWidth;

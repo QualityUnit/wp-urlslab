@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import {
 	flexRender,
 	getCoreRowModel,
-	useReactTable } from '@tanstack/react-table';
+	useReactTable, useAbsoluteLayout } from '@tanstack/react-table';
 
 import { useVirtual } from 'react-virtual';
 
@@ -14,13 +14,17 @@ export default function Table( { children, className, columns, data } ) {
 	const table = useReactTable( {
 		columns,
 		data,
+		defaultColumn: {
+			minSize: 0,
+			size: 0,
+		},
 		state: {
 			rowSelection,
 		},
 		enableRowSelection: true,
 		onRowSelectionChange: setRowSelection,
 		getCoreRowModel: getCoreRowModel(),
-	} );
+	}, );
 
 	const tbody = [];
 
@@ -44,7 +48,15 @@ export default function Table( { children, className, columns, data } ) {
 		tbody.push(
 			<tr key={ row.id } className={ row.getIsSelected() ? 'selected' : '' } >
 				{ row.getVisibleCells().map( ( cell ) =>
-					( <td key={ cell.id } className={ cell.column.columnDef.className }>
+					( <td key={ cell.id }
+						className={ cell.column.columnDef.className }
+						style={ {
+							width:
+							cell.column.getSize() !== 0
+								? cell.column.getSize()
+								: undefined,
+						} }
+					>
 						{ flexRender( cell.column.columnDef.cell, cell.getContext() ) }
 						{ /* { console.log( cell.row.original ) } */ }
 					</td> )
@@ -60,7 +72,11 @@ export default function Table( { children, className, columns, data } ) {
 					{ table.getHeaderGroups().map( ( headerGroup ) => (
 						<tr key={ headerGroup.id }>
 							{ headerGroup.headers.map( ( header ) => (
-								<th key={ header.id }>
+								<th key={ header.id }
+									style={ {
+										width: header.getSize() !== 0 ? header.getSize() : undefined,
+									} }
+								>
 									{ header.isPlaceholder
 										? null
 										: flexRender(

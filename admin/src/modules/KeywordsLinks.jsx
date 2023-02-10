@@ -9,16 +9,16 @@ import { useI18n } from '@wordpress/react-i18n';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useCSVReader, useCSVDownloader } from 'react-papaparse';
 import { fetchData, setData } from '../api/fetching';
-import jsonData, { exportCSV } from '../api/import-export-csv';
 import { langName } from '../constants/helpers';
 import Loader from '../components/Loader';
-import Button from '../elements/Button';
 import SortMenu from '../elements/SortMenu';
 import InputField from '../elements/InputField';
 import Checkbox from '../elements/Checkbox';
+import TableViewHeader from '../components/TableViewHeader';
 import Table from '../components/TableComponent';
+import Settings from './Settings';
 
-export default function KeywordLinks() {
+export default function KeywordLinks( { moduleId } ) {
 	const { __ } = useI18n();
 	const { CSVReader } = useCSVReader();
 	const { CSVDownloader, Type } = useCSVDownloader();
@@ -27,6 +27,7 @@ export default function KeywordLinks() {
 	const { ref, inView } = useInView();
 
 	const [ csvMessage, setCSVMessage ] = useState( null );
+	const [ activeSection, setActiveSection ] = useState( 'overview' );
 	const maxRows = 50;
 
 	// persistQueryClient( {
@@ -57,23 +58,6 @@ export default function KeywordLinks() {
 			staleTime: Infinity,
 		}
 	);
-
-	const handleDownload = () => {
-		exportCSV( {
-			url: 'keyword',
-			fromId: 'from_kw_id',
-			pageId: 'kw_id',
-			deleteFields: [ 'kw_id', 'destUrlMd5' ],
-		} ).then(
-			( b ) => {
-				console.log( b );
-			}
-		);
-
-		// console.log( jsonData );
-		// if ( jsonData.status !== 'downloading' ) {
-		// }
-	};
 
 	useEffect( () => {
 		if ( inView ) {
@@ -169,73 +153,29 @@ export default function KeywordLinks() {
 	];
 
 	return (
-		<div>
-			<div className="">
-				{ /* <CSVReader
-					LocalChunkSize="1024"
-					config={
-						{
-							header: true,
-							chunk: ( results, parser ) => {
-							},
+		<div className="urlslab-tableView">
+			<TableViewHeader activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+			{
+				activeSection === 'overview'
+					? <Table columns={ columns }
+						data={
+							isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 						}
-					}
-					onUploadAccepted={ ( results ) => {
-						importLocal( results.data );
-					// console.log( results.data );
-					// importData.mutate( results );
-					} }
-				>
-					{ ( {
-						getRootProps,
-						acceptedFile,
-						ProgressBar,
-						getRemoveFileProps,
-					} ) => (
-						<>
-							<div>
-								<button type="button" className="urlslab-button active" { ...getRootProps() }>
-									Browse file
-								</button>
-								<div>
-									{ acceptedFile && acceptedFile.name }
-								</div>
-								<button className="urlslab-button" { ...getRemoveFileProps() }>
-									Remove
-								</button>
-							</div>
-							{ csvMessage }
-							<ProgressBar className="progressbar" />
-						</>
-					) }
-				</CSVReader> */ }
-				<Button onClick={ handleDownload }>Download CSV</Button>
-			</div>
-			<Table columns={ columns }
-				data={
-					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
-				}
-			>
-				<div>
-					<button
-						ref={ ref }
-						onClick={ () => fetchNextPage() }
-						disabled={ ! hasNextPage || isFetchingNextPage }
 					>
-						{ isFetchingNextPage
-							? 'Loading more...'
-							: hasNextPage
-								? 'Load Newer'
-								: 'Nothing more to load' }
-					</button>
-				</div>
-				<div>
-					{ isFetching && ! isFetchingNextPage
-						? 'Background Updating...'
-						: null }
-				</div>
-			</Table>
+						<button
+							ref={ ref }
+							onClick={ () => fetchNextPage() }
+							disabled={ ! hasNextPage || isFetchingNextPage }
+						>
+							{ isFetchingNextPage
+								? 'Loading more...'
+								: hasNextPage
+									? 'Load Newer'
+									: 'Nothing more to load' }
+						</button>
+					</Table>
+					: <Settings settingId={ moduleId } />
+			}
 		</div>
-
 	);
 }

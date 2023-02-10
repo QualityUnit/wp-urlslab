@@ -8,12 +8,10 @@ import DynamicModule from './components/DynamicModule';
 import Loader from './components/Loader';
 import './assets/styles/style.scss';
 import Header from './components/Header';
-import SettingsMenu from './components/SettingsMenu';
 
 export default function App() {
 	const { __ } = useI18n();
 	const [ module, setModule ] = useState( 'urlslab-modules' );
-	const [ setting, setActiveSetting ] = useState( 'general' );
 	const { data: fetchedModules } = useQuery( {
 		queryKey: [ 'modules' ],
 		queryFn: () => fetchData( 'module' ).then( ( ModuleData ) => {
@@ -50,7 +48,6 @@ export default function App() {
 					<DynamicModule
 						modules={ ! fetchedModules || Object.values( fetchedModules ) }
 						moduleId={ module }
-						settingId={ setting }
 					/>
 				</div>
 			</Suspense>
