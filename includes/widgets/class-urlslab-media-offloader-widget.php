@@ -183,7 +183,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		$media_value = '(min-width: ' . $min_width . 'px)';
 		if ( $this->has_parent_node( $img_element, 'picture' ) ) {
 			$source_element = $document->createElement( 'source' );
-			if ( $img_element->hasAttribute( 'src' ) ) {
+			if ( $img_element->hasAttribute( 'src' ) && ! str_starts_with( $img_element->getAttribute( 'src' ), 'data:' )) {
 				$source_element->setAttribute( 'srcset', $img_element->getAttribute( 'src' ) );
 				$img_element->setAttribute( 'src', '' );
 			}
@@ -210,7 +210,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			$picture_element = $document->createElement( 'picture' );
 			$new_img_element = clone $img_element;
 			$source_element  = $document->createElement( 'source' );
-			if ( $new_img_element->hasAttribute( 'src' ) ) {
+			if ( $new_img_element->hasAttribute( 'src' ) && ! str_starts_with( $new_img_element->getAttribute( 'src' ), 'data:' ) ) {
 				$source_element->setAttribute( 'srcset', $new_img_element->getAttribute( 'src' ) );
 				$new_img_element->setAttribute( 'src', '' );
 			}
@@ -540,7 +540,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		if ( $this->has_parent_node( $dom_element, 'picture' ) ) {
 
 			$lazy_loading = false;
-			if ( ! empty( $dom_element->getAttribute( 'src' ) ) ) {
+			if ( ! empty( $dom_element->getAttribute( 'src' ) ) && ! str_starts_with( $dom_element->getAttribute( 'src' ), 'data:' ) ) {
 				$img_url_object = new Urlslab_File_Data( array( 'url' => $dom_element->getAttribute( 'src' ) ), false );
 			} else if ( ! empty( $dom_element->getAttribute( 'data-src' ) ) ) {
 				$lazy_loading   = true;
@@ -568,9 +568,9 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		} else {
 			//this is simple img tag
 			$lazy_loading = false;
-			if ( ! empty( $dom_element->getAttribute( 'src' ) ) ) {
+			if ( ! empty( $dom_element->getAttribute( 'src' ) ) && ! str_starts_with( $dom_element->getAttribute( 'src' ), 'data:' ) ) {
 				$img_url_object = new Urlslab_File_Data( array( 'url' => $dom_element->getAttribute( 'src' ) ), false );
-			} else if ( ! empty( $dom_element->getAttribute( 'data-src' ) ) ) {
+			} else if ( ! empty( $dom_element->getAttribute( 'data-src' ) )  && ! str_starts_with( $dom_element->getAttribute( 'data-src' ), 'data:' ) ) {
 				$lazy_loading   = true;
 				$img_url_object = new Urlslab_File_Data( array( 'url' => $dom_element->getAttribute( 'data-src' ) ), false );
 			}
@@ -791,7 +791,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				case 'data-srcset':
 				case 'srcset':
 					$urlvalues = explode( ',', $dom_element->getAttribute( $attribute ) );
-					if ( $dom_element->hasAttribute( 'src' ) ) {
+					if ( $dom_element->hasAttribute( 'src' ) && ! str_starts_with( $dom_element->getAttribute( 'src' ), 'data:' ) ) {
 						$parent_url = $dom_element->getAttribute( 'src' );
 					} else {
 						$parent_url = '';

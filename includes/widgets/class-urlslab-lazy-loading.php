@@ -296,7 +296,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	private function add_img_lazy_loading( DOMElement $dom_element ) {
-		if ( $dom_element->hasAttribute( 'src' ) ) {
+		if ( $dom_element->hasAttribute( 'src' ) && ! str_starts_with( $dom_element->getAttribute( 'src' ), 'data:' ) ) {
 			$dom_element->setAttribute( 'data-src', $dom_element->getAttribute( 'src' ) );
 			$dom_element->setAttribute( 'src', $this->get_image_data( $dom_element->getAttribute( 'width' ), $dom_element->getAttribute( 'height' ) ) );
 		}
