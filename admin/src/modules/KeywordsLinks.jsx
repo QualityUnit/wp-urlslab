@@ -9,6 +9,7 @@ import { useI18n } from '@wordpress/react-i18n';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useCSVReader, useCSVDownloader } from 'react-papaparse';
 import { fetchData, setData } from '../api/fetching';
+import { fetchWPML } from '../api/fetchLangs';
 import { langName } from '../constants/helpers';
 import Loader from '../components/Loader';
 import SortMenu from '../elements/SortMenu';
@@ -29,6 +30,8 @@ export default function KeywordLinks( { moduleId } ) {
 	const [ csvMessage, setCSVMessage ] = useState( null );
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 	const maxRows = 50;
+
+	console.log( fetchWPML() );
 
 	// persistQueryClient( {
 	// 	queryClient,
@@ -156,8 +159,8 @@ export default function KeywordLinks( { moduleId } ) {
 		<div className="urlslab-tableView">
 			<TableViewHeader activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{
-				activeSection === 'overview'
-					? <Table columns={ columns }
+				activeSection === 'overview' &&
+					<Table columns={ columns }
 						data={
 							isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 						}
@@ -174,7 +177,14 @@ export default function KeywordLinks( { moduleId } ) {
 									: 'Nothing more to load' }
 						</button>
 					</Table>
-					: <Settings settingId={ moduleId } />
+			}
+			{
+				activeSection === 'settings' &&
+				<Settings settingId={ moduleId } />
+			}
+			{
+				activeSection === 'importexport' &&
+				<div>Import Export</div>
 			}
 		</div>
 	);
