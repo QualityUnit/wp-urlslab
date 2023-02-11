@@ -10,12 +10,8 @@ export async function fetchData( slug ) {
 				'X-WP-Nonce': window.wpApiSettings.nonce,
 			},
 			credentials: 'include',
-		} ).then( ( response ) => {
-			return response.json();
-		} ).then( ( data ) => {
-			return data;
 		} );
-		return result;
+		return await result.json();
 	} catch ( error ) {
 		return false;
 	}
