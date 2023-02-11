@@ -4,7 +4,7 @@ import { fetchData } from './fetching';
 let lastPage = '3611044523';
 let dataForCSV = [];
 let ended = false;
-let jsonData = { status: 'loading', data: [] };
+export let jsonData = { status: 'loading', data: [] };
 
 export async function exportCSV( options ) {
 	const { url, fromId, pageId, deleteFields } = options;

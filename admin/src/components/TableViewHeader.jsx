@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import { exportCSV } from '../api/import-export-csv';
+import ExportCSVButton from '../elements/ExportCSVButton';
 import Button from '../elements/Button';
 import SimpleButton from '../elements/SimpleButton';
 
@@ -29,15 +29,6 @@ export default function TableViewHeader( { activeMenu } ) {
 		return '';
 	};
 
-	const handleDownload = () => {
-		exportCSV( {
-			url: 'keyword',
-			fromId: 'from_kw_id',
-			pageId: 'kw_id',
-			deleteFields: [ 'kw_id', 'destUrlMd5' ],
-		} ).then( ( r ) => console.log( r ) );
-	};
-
 	return (
 
 		<div className="urlslab-tableView-header">
@@ -54,7 +45,12 @@ export default function TableViewHeader( { activeMenu } ) {
 				}
 			</div>
 			<div className="urlslab-tableView-headerBottom">
-				<Button className="active small" onClick={ handleDownload }>Download CSV</Button>
+				<ExportCSVButton options={ {
+					url: 'keyword',
+					fromId: 'from_kw_id',
+					pageId: 'kw_id',
+					deleteFields: [ 'kw_id', 'destUrlMd5' ],
+				} } onClick={ ( data ) => console.log( data ) } />
 			</div>
 		</div>
 	);
