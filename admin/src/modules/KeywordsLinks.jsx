@@ -31,8 +31,6 @@ export default function KeywordLinks( { moduleId } ) {
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 	const maxRows = 50;
 
-	console.log( fetchWPML() );
-
 	// persistQueryClient( {
 	// 	queryClient,
 	// 	buster: 'keyword',
@@ -97,6 +95,8 @@ export default function KeywordLinks( { moduleId } ) {
 		return <Loader />;
 	}
 
+	fetchWPML().then( ( data ) =>	console.log( data ) );
+
 	const handleInput = ( value, cell ) => {
 		const newRow = cell.row.original;
 		newRow[ cell.column.id ] = value;
@@ -137,7 +137,7 @@ export default function KeywordLinks( { moduleId } ) {
 			header: () => __( 'Keyword Usage' ),
 		} ),
 		columnHelper.accessor( 'lang', {
-			cell: ( val ) => langName( val.getValue() ),
+			cell: ( val ) => langName( val?.getValue() ),
 			header: () => __( 'Language' ),
 		} ),
 		columnHelper.accessor( 'link_usage_count', {

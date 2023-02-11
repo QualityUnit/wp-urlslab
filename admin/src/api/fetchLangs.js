@@ -1,6 +1,9 @@
+import { langName } from '../constants/helpers';
+const langPairs = {};
+
 export async function fetchWPML( ) {
 	try {
-		const result = await fetch( '/wp-json/wpml/tm/v1', {
+		const response = await fetch( '/wp-json/wpml/tm/v1', {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -8,12 +11,14 @@ export async function fetchWPML( ) {
 				'X-WP-Nonce': window.wpApiSettings.nonce,
 			},
 			credentials: 'include',
-		} ).then( ( response ) => {
-			return response.json();
-		} ).then( ( data ) => {
-			return data.routes[ '/wpml/tm/v1' ].endpoints[ 0 ].args.wpml_language.enum;
 		} );
-		return result;
+
+		const data = await response.json();
+		const langs = data.routes[ '/wpml/tm/v1' ].endpoints[ 0 ].args.wpml_language.enum;
+		langs.forEach( ( lang ) => {
+			langPairs[ lang ] = langName( lang );
+		} );
+		return { langPairs, status: response.status };
 	} catch ( error ) {
 		return false;
 	}

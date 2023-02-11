@@ -33,6 +33,6 @@ export const langName = ( langcode ) => {
 	if ( langcode ) {
 		return lang.of( langcode );
 	}
-	return lang;
+	return null;
 };
 
