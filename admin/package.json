@@ -34,6 +34,7 @@
     "@wordpress/stylelint-config": "^21.8.0",
     "encoding": "^0.1.13",
     "idb-keyval": "^6.2.0",
+    "js-file-download": "^0.4.12",
     "react": "^18.2.0",
     "react-datepicker": "^4.10.0",
     "react-dom": "^18.2.0",
