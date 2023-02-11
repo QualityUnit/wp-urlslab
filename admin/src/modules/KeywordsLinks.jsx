@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense, lazy } from 'react';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import {
@@ -153,32 +153,38 @@ export default function KeywordLinks( { moduleId } ) {
 		} ),
 	];
 
+	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
+
 	return (
 		<div className="urlslab-tableView">
 			<TableViewHeader activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{
 				activeSection === 'overview' &&
-					<Table columns={ columns }
-						data={
-							isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
-						}
+				<Table className="fadeInto" columns={ columns }
+					data={
+						isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
+					}
+				>
+					<button
+						ref={ ref }
+						onClick={ () => fetchNextPage() }
+						disabled={ ! hasNextPage || isFetchingNextPage }
 					>
-						<button
-							ref={ ref }
-							onClick={ () => fetchNextPage() }
-							disabled={ ! hasNextPage || isFetchingNextPage }
-						>
-							{ isFetchingNextPage
-								? 'Loading more...'
-								: hasNextPage
-									? 'Load Newer'
-									: 'Nothing more to load' }
-						</button>
-					</Table>
+						{ isFetchingNextPage
+							? 'Loading more...'
+							: hasNextPage
+								? 'Load Newer'
+								: 'Nothing more to load' }
+					</button>
+				</Table>
 			}
 			{
 				activeSection === 'settings' &&
-				<Settings settingId={ moduleId } />
+
+					<Suspense>
+						<SettingsModule className="fadeInto" settingId={ moduleId } />
+					</Suspense>
+
 			}
 			{
 				activeSection === 'importexport' &&

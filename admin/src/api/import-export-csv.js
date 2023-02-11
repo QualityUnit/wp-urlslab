@@ -1,7 +1,6 @@
 import { fetchData } from './fetching';
 
-// let lastPage = '';
-let lastPage = '3611044523';
+let lastPage = '';
 let dataForCSV = [];
 let ended = false;
 export let jsonData = { status: 'loading', data: [] };
@@ -13,7 +12,6 @@ export async function exportCSV( options ) {
 	const prevDataLength = dataForCSV.length;
 	const response = await fetchData( `${ url }${ qOperator }${ fromId }=${ lastPage }&rows_per_page=${ perpage }` );
 
-	// .then( ( response ) => {
 	dataForCSV.push( await response );
 	dataForCSV = dataForCSV.flat();
 	if ( await response.length < perpage ) {

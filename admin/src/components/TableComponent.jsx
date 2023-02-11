@@ -67,7 +67,7 @@ export default function Table( { children, className, columns, data } ) {
 
 	return (
 		<div className="urlslab-table-container" ref={ tableContainerRef }>
-			<table className={ `urlslab-table urlslab-table-${ className }` }>
+			<table className={ `urlslab-table ${ className }` }>
 				<thead className="urlslab-table-head">
 					{ table.getHeaderGroups().map( ( headerGroup ) => (
 						<tr key={ headerGroup.id }>
