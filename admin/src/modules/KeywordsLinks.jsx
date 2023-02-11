@@ -95,8 +95,6 @@ export default function KeywordLinks( { moduleId } ) {
 		return <Loader />;
 	}
 
-	fetchWPML().then( ( data ) =>	console.log( data ) );
-
 	const handleInput = ( value, cell ) => {
 		const newRow = cell.row.original;
 		newRow[ cell.column.id ] = value;

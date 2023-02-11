@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import {
 	flexRender,
 	getCoreRowModel,
-	useReactTable, useAbsoluteLayout } from '@tanstack/react-table';
+	useReactTable } from '@tanstack/react-table';
 
 import { useVirtual } from 'react-virtual';
 

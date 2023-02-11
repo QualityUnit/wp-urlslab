@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { fetchSettings } from '../api/settings';
 import Loader from '../components/Loader';
-import SettingsOption from '../components/SettingsOption';
+// import SettingsOption from '../components/SettingsOption';
 
 import '../assets/styles/layouts/_Settings.scss';
 import { useI18n } from '@wordpress/react-i18n/';

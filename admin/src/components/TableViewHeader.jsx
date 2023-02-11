@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import { jsonData, exportCSV } from '../api/import-export-csv';
+import { exportCSV } from '../api/import-export-csv';
 import Button from '../elements/Button';
 import SimpleButton from '../elements/SimpleButton';
 
@@ -35,16 +35,9 @@ export default function TableViewHeader( { activeMenu } ) {
 			fromId: 'from_kw_id',
 			pageId: 'kw_id',
 			deleteFields: [ 'kw_id', 'destUrlMd5' ],
-		} ).then(
-			( b ) => {
-				console.log( b );
-			}
-		);
-
-		// console.log( jsonData );
-		// if ( jsonData.status !== 'downloading' ) {
-		// }
+		} ).then( ( r ) => console.log( r ) );
 	};
+
 	return (
 
 		<div className="urlslab-tableView-header">
@@ -61,7 +54,7 @@ export default function TableViewHeader( { activeMenu } ) {
 				}
 			</div>
 			<div className="urlslab-tableView-headerBottom">
-				<Button onClick={ handleDownload }>Download CSV</Button>
+				<Button className="active small" onClick={ handleDownload }>Download CSV</Button>
 			</div>
 		</div>
 	);
