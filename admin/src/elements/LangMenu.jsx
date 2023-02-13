@@ -16,7 +16,7 @@ export default function LangMenu( { onChange, checkedId } ) {
 	}, [ data ] );
 
 	if ( status === 'loading' ) {
-		return <SortMenu />;
+		return '';
 	}
 
 	const handleSelected = ( lang ) => {
