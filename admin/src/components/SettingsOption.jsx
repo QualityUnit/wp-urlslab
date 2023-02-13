@@ -9,6 +9,7 @@ import DatePicker from 'react-datepicker';
 import InputField from '../elements/InputField';
 import Switch from '../elements/Switch';
 import SortMenu from '../elements/SortMenu';
+import FilterMenu from '../elements/FilterMenu';
 
 import '../assets/styles/components/datepicker/datepicker.scss';
 
@@ -79,6 +80,15 @@ export default function SettingsOption( { settingId, option } ) {
 					<SortMenu className="wide" name={ id } items={ possible_values } checkedId={ value } onChange={ ( selectedId ) => handleChange.mutate( selectedId ) }>
 						{ title }
 					</SortMenu>
+				);
+			case 'multicheck':
+				return (
+					<FilterMenu className="wide"
+						items={ possible_values }
+						checkedItems={ value }
+						onChange={ ( selectedItems ) => handleChange.mutate( selectedItems ) }>
+						{ title }
+					</FilterMenu>
 				);
 			default:
 				break;
