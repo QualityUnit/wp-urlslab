@@ -70,8 +70,7 @@
 	&__items {
 		position: absolute;
 		top: calc(100% + 1px);
-		left: calc(-50% - 2.5em);
-		transform: translateX(50%);
+		left: 0;
 		display: none;
 		opacity: 0;
 		border-radius: 6px;
