@@ -343,11 +343,11 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		foreach ( $request->get_json_params()['rows'] as $row ) {
 			$obj                                     = $this->get_row_object( (array) $row );
 			$rows[]                                  = $obj;
-			$schedule_urls[ $obj->get( 'urlLink' ) ] = 1;
+			$schedule_urls[ $obj->get( 'urlLink' ) ] = new Urlslab_Url( $obj->get( 'urlLink' ) );
 		}
 
 		$url_fetcher = new Urlslab_Url_Data_Fetcher( null );
-		if ( ! $url_fetcher->prepare_url_batch_for_scheduling( array_keys( $schedule_urls ) ) ) {
+		if ( ! $url_fetcher->prepare_url_batch_for_scheduling( $schedule_urls ) ) {
 			return new WP_REST_Response( 'Import failed.', 500 );
 		}
 
