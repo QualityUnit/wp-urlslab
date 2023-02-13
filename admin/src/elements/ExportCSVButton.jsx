@@ -1,6 +1,7 @@
 import { jsonToCSV } from 'react-papaparse';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import fileDownload from 'js-file-download';
-import { jsonData, exportCSV } from '../api/import-export-csv';
+import { jsonData, exportCSV } from '../api/exportCsv';
 import { useI18n } from '@wordpress/react-i18n';
 import Button from './Button';
 

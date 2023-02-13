@@ -34,7 +34,7 @@ export default function Settings( { className, settingId } ) {
 
 	return (
 		<div className={ `urlslab-settingsPanel-wrap flex-tablet ${ className }` }>
-			<div className="urlslab-settingsPanel">
+			<div className="urlslab-settingsPanel urlslab-panel">
 
 				{ Object.values( settings ).map( ( section ) => {
 					return (

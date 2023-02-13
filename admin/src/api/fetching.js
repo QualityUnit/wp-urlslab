@@ -46,7 +46,7 @@ export async function setData( slug, object ) {
 				'X-WP-Nonce': window.wpApiSettings.nonce,
 			},
 			credentials: 'include',
-			body: object,
+			body: JSON.stringify( object ),
 		} );
 		return result;
 	} catch ( error ) {

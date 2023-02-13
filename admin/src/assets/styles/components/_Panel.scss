@@ -1,0 +1,9 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-panel {
+	padding: 1.875em 4em;
+	background-color: $white;
+	border-radius: $br-10;
+	box-shadow: $box-shadow-small;
+}
