@@ -9,7 +9,7 @@ import SettingsOption from '../components/SettingsOption';
 import '../assets/styles/layouts/_Settings.scss';
 import { useI18n } from '@wordpress/react-i18n/';
 
-export default function Settings( { settingId } ) {
+export default function Settings( { className, settingId } ) {
 	const queryClient = useQueryClient();
 	const { __ } = useI18n();
 
@@ -33,7 +33,7 @@ export default function Settings( { settingId } ) {
 	settings = Object.values( data );
 
 	return (
-		<div className="urlslab-settingsPanel-wrap flex-tablet">
+		<div className={ `urlslab-settingsPanel-wrap flex-tablet ${ className }` }>
 			<div className="urlslab-settingsPanel">
 
 				{ Object.values( settings ).map( ( section ) => {

@@ -4,7 +4,7 @@
 .urlslab-dashboardmodule {
 	position: relative;
 	padding: 1.5em;
-	max-width: 35em;
+	max-width: 31.25em;
 	background-color: $white;
 	border-radius: $br-10;
 	box-shadow: $box-shadow-small;
@@ -104,8 +104,8 @@
 	}
 
 	@media (min-width: $breakpoint-tablet) {
-		padding: 2.5em;
-		margin: 2em;
+		padding: 2.25em;
+		margin: 0.4em;
 
 		&-content {
 			width: 54.6%;
@@ -115,5 +115,9 @@
 			width: 42%;
 			margin-left: auto;
 		}
+	}
+
+	@media (min-width: 1800px) {
+		width: calc(33.3% - 0.8em);
 	}
 }

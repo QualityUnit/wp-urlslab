@@ -18,7 +18,7 @@ export async function fetchWPML( ) {
 		langs.forEach( ( lang ) => {
 			langPairs[ lang ] = langName( lang );
 		} );
-		return { langPairs, status: response.status };
+		return langPairs;
 	} catch ( error ) {
 		return false;
 	}

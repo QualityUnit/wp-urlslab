@@ -58,7 +58,6 @@ export default function Table( { children, className, columns, data } ) {
 						} }
 					>
 						{ flexRender( cell.column.columnDef.cell, cell.getContext() ) }
-						{ /* { console.log( cell.row.original ) } */ }
 					</td> )
 				) }
 			</tr>
