@@ -5,6 +5,7 @@ import { fetchSettings } from '../api/settings';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useQuery } from '@tanstack/react-query';
 import NoAPIkey from './NoAPIkey';
+import Notifications from './Notifications';
 
 export default function Header( { pageTitle } ) {
 	// let apikey = '********';
@@ -27,6 +28,7 @@ export default function Header( { pageTitle } ) {
 					<Logo className="urlslab-header-logo" />
 					<span className="urlslab-header-slash">/</span>
 					<h1 className="urlslab-header-title">{ pageTitle }</h1>
+					<Notifications />
 				</div>
 				{ /* { apikey && apikey.length
 					? null
