@@ -2,7 +2,7 @@ import { setData } from './fetching';
 export default async function importCsv( slug, dataArray ) {
 	let processed = {};
 	const dataChunks = ( ) => {
-		const chunkSize = 10000;
+		const chunkSize = 1000;
 		const chunkArray = [];
 		for ( let i = 0; i < dataArray.length; i += chunkSize ) {
 			const chunk = dataArray.slice( i, i + chunkSize );
@@ -22,5 +22,5 @@ export default async function importCsv( slug, dataArray ) {
 		processed = { atChunk: chunkIndex + 1, chunkCount: chunksLength };
 		return true;
 	} );
-	return await processed;
+	// return await processed;
 }
