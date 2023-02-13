@@ -1,0 +1,36 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-notifications {
+
+	@include square(2.5em);
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: $grey-light;
+	border-radius: 50%;
+	margin-left: auto;
+
+	&-icon {
+
+		@include square(1em);
+	}
+
+	&-counter {
+
+		@include square(1.6666em);
+		position: absolute;
+		top: -0.25em;
+		right: -0.5em;
+		z-index: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: $white;
+		background-color: $primary-color;
+		border-radius: 50%;
+	}
+}

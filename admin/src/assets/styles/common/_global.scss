@@ -10,6 +10,10 @@
 		box-sizing: border-box;
 	}
 
+	.fadeInto {
+		animation: fadeIn $transitionTime;
+	}
+
 	.urlslab-learnMore {
 		display: flex;
 		align-items: center;

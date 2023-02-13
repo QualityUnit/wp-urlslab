@@ -34,6 +34,11 @@ $status: (
 		transition: all 0.2s;
 		background-color: $white;
 
+		.urlslab-table & {
+			background-color: transparent;
+			font-size: inherit;
+		}
+
 		&:focus {
 			outline: none;
 			box-shadow: none;
@@ -70,6 +75,12 @@ $status: (
 	color: $grey-medium;
 	transition: all 0.2s;
 
+	.urlslab-table & {
+		border: none;
+		font-size: inherit;
+		color: inherit;
+	}
+
 	&-label {
 		font-weight: $font-weight-semi;
 		font-size: 0.8125rem;
@@ -99,7 +110,11 @@ $status: (
 
 	&-wrap {
 		display: block;
-		margin-bottom: 1.25em;
+
+		.urlslab-table & {
+			position: relative;
+			left: -1em;
+		}
 
 		&.inline {
 			display: flex;

@@ -4,18 +4,4 @@
 @forward "./common/typography";
 @forward "./elements/Button";
 @forward "./layouts/Header";
-@forward "./layouts/Header";
-
-
-// Removes Elementor and other notifications when in URLslab plugin page
-
-.notice[class],
-#wpfooter {
-	display: none !important;
-}
-
-// Moves our app padding
-#wpcontent,
-#wpbody-content {
-	padding: 0 !important;
-}
+@forward "./layouts/AppLayout";

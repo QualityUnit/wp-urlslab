@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import {
 	flexRender,
 	getCoreRowModel,
@@ -9,12 +9,22 @@ import { useVirtual } from 'react-virtual';
 import '../assets/styles/components/_TableComponent.scss';
 
 export default function Table( { children, className, columns, data } ) {
+	const [ rowSelection, setRowSelection ] = useState( {} );
 	const tableContainerRef = useRef();
 	const table = useReactTable( {
 		columns,
 		data,
+		defaultColumn: {
+			minSize: 0,
+			size: 0,
+		},
+		state: {
+			rowSelection,
+		},
+		enableRowSelection: true,
+		onRowSelectionChange: setRowSelection,
 		getCoreRowModel: getCoreRowModel(),
-	} );
+	}, );
 
 	const tbody = [];
 
@@ -36,11 +46,18 @@ export default function Table( { children, className, columns, data } ) {
 	for ( const virtualRow of virtualRows ) {
 		const row = rows[ virtualRow.index ];
 		tbody.push(
-			<tr key={ row.id }>
+			<tr key={ row.id } className={ row.getIsSelected() ? 'selected' : '' } >
 				{ row.getVisibleCells().map( ( cell ) =>
-					( <td key={ cell.id } className={ cell.column.columnDef.className }>
+					( <td key={ cell.id }
+						className={ cell.column.columnDef.className }
+						style={ {
+							width:
+							cell.column.getSize() !== 0
+								? cell.column.getSize()
+								: undefined,
+						} }
+					>
 						{ flexRender( cell.column.columnDef.cell, cell.getContext() ) }
-						{ /* { console.log( cell.getContext() ) } */ }
 					</td> )
 				) }
 			</tr>
@@ -49,12 +66,16 @@ export default function Table( { children, className, columns, data } ) {
 
 	return (
 		<div className="urlslab-table-container" ref={ tableContainerRef }>
-			<table className={ `urlslab-table urlslab-table-${ className }` }>
+			<table className={ `urlslab-table ${ className }` }>
 				<thead className="urlslab-table-head">
 					{ table.getHeaderGroups().map( ( headerGroup ) => (
 						<tr key={ headerGroup.id }>
 							{ headerGroup.headers.map( ( header ) => (
-								<th key={ header.id }>
+								<th key={ header.id }
+									style={ {
+										width: header.getSize() !== 0 ? header.getSize() : undefined,
+									} }
+								>
 									{ header.isPlaceholder
 										? null
 										: flexRender(

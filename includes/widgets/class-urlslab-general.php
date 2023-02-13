@@ -17,7 +17,7 @@ class Urlslab_General extends Urlslab_Widget {
 	 */
 	public function __construct() {
 		$this->widget_slug        = 'general';
-		$this->widget_title       = __( 'General Settings' );
+		$this->widget_title       = __( 'Settings' );
 		$this->widget_description = __( 'Urlslab connector' );
 		$this->landing_page_link  = 'https://www.urlslab.com';
 	}

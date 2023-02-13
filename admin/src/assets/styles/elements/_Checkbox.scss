@@ -7,10 +7,6 @@
 	align-content: center;
 	cursor: pointer;
 
-	&-input {
-		display: none !important;
-	}
-
 	&-box {
 
 		@include square(1rem);
@@ -25,6 +21,19 @@
 		}
 	}
 
+	&-input {
+		display: none !important;
+
+		&:checked,
+		&.checked {
+
+			+ .urlslab-checkbox-box {
+				background-image: url(../../images/checkbox-active.svg);
+				box-shadow: none;
+			}
+		}
+	}
+
 	&-text {
 		margin-left: 0.5em;
 
@@ -33,10 +42,5 @@
 			margin-left: 0;
 			margin-right: 0.5em;
 		}
-	}
-
-	&-input:checked + &-box {
-		background-image: url(../../images/checkbox-active.svg);
-		box-shadow: none;
 	}
 }

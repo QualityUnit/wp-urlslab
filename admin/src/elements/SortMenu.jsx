@@ -37,8 +37,8 @@ export default function SortMenu( {
 	};
 
 	return (
-		<div className={ `urlslab-FilterMenu ${ className || '' }` } style={ style } ref={ ref }>
-			<div className="urlslab-inputField-label">{ children }</div>
+		<div className={ `urlslab-FilterMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref }>
+			{ children ? <div className="urlslab-inputField-label">{ children }</div> : null }
 			<div
 				className={ `urlslab-FilterMenu__title ${ isActive ? 'active' : '' }` }
 				onClick={ handleMenu }
