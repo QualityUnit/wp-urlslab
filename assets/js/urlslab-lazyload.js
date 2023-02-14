@@ -5,9 +5,7 @@
 */
 
 const urlslabLazyLoad = () => {
-	const media = document.querySelectorAll(
-		'img[urlslab-lazy], img[data-src], img[data-srcset], video[data-src], .lazybg'
-	);
+	const media = document.querySelectorAll('img[urlslab-lazy], img[data-src], img[data-srcset], video[data-src], .lazybg, div[lazy_hash]');
 
 	const eventType = ( element ) => {
 		const elemType = element.tagName;
@@ -62,6 +60,29 @@ const urlslabLazyLoad = () => {
 	};
 
 	const revertAttributes = ( element ) => {
+		if (element.tagName == 'DIV' && element.hasAttribute( 'lazy_hash' )) {
+			element.classList.add("urlslab-loading");
+			const xhr = new XMLHttpRequest();
+			xhr.open("GET", "/urlslab-content/" + element.getAttribute('lazy_hash'), true);
+			xhr.onload = (e) => {
+				if (xhr.readyState === 4) {
+					if (xhr.status === 200) {
+						var div = document.createElement('div');
+						div.innerHTML = xhr.responseText;
+						element.parentElement.replaceChild(div.firstChild, element);
+					} else {
+						console.error(xhr.statusText);
+					}
+				}
+			};
+			xhr.onerror = (e) => {
+				console.error(xhr.statusText);
+			};
+			xhr.send(null);
+			return;
+		}
+
+
 		if (element.tagName == 'IMG' && element.hasAttribute( 'urlslab-lazy' ) && element.parentElement.tagName == 'PICTURE') {
 			element.removeAttribute('urlslab-lazy');
 			element.parentElement.childNodes.forEach(( childNode ) => {
@@ -143,25 +164,28 @@ const urlslabLazyLoad = () => {
 		}
 	};
 
-	if ( 'IntersectionObserver' in window && media.length > 0 ) {
-		const mediaObserver = new IntersectionObserver(
-			( entries ) => {
-            entries.forEach(
-					( entry ) => {
-                    if ( entry.isIntersecting ) {
-                          revertAttributes( entry.target );
-                          mediaObserver.unobserve( entry.target );
-                    }
-					}
-				);
-			}
-		);
+	if ( 'IntersectionObserver' in window ) {
+		if (media.length > 0) {
+			const mediaObserver = new IntersectionObserver(
+				(entries) => {
+					entries.forEach(
+						(entry) => {
+							if (entry.isIntersecting) {
+								revertAttributes(entry.target);
+								mediaObserver.unobserve(entry.target);
+							}
+						}
+					);
+				},
+				{ rootMargin: '250px' }
+			);
 
-		media.forEach(
-			( mediaObject ) => {
-            mediaObserver.observe( mediaObject );
-			}
-		);
+			media.forEach(
+				(mediaObject) => {
+					mediaObserver.observe(mediaObject);
+				}
+			);
+		}
 	}
 
 	const youtubeVideo = document.querySelectorAll( '.youtube_urlslab_loader' );

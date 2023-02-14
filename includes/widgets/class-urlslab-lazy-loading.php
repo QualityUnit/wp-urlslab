@@ -1,4 +1,5 @@
 <?php
+require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-content-cache-row.php';
 
 // phpcs:disable WordPress.NamingConventions
 class Urlslab_Lazy_Loading extends Urlslab_Widget {
@@ -10,12 +11,20 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	private Urlslab_Admin_Page $parent_page;
 	private $lazy_load_youtube_css = false;
 
+	private $content_docs = array();
+
 	//Lazy Loading settings
 	public const SETTING_NAME_IMG_LAZY_LOADING = 'urlslab_img_lazy';
 	public const SETTING_NAME_VIDEO_LAZY_LOADING = 'urlslab_video_lazy';
 	public const SETTING_NAME_YOUTUBE_LAZY_LOADING = 'urlslab_youtube_lazy';
+	public const SETTING_NAME_CONTENT_LAZY_LOADING = 'urlslab_content_lazy';
+	public const SETTING_NAME_CONTENT_LAZY_MIN_PAGE_SIZE = 'urlslab_lz_min_content_size';
+	public const SETTING_NAME_CONTENT_LAZY_MIN_CACHE_SIZE = 'urlslab_lz_min_cache_size';
+	public const SETTING_NAME_CONTENT_LAZY_CLASSES = 'urlslab_lz_content_class';
 	public const SETTING_NAME_REMOVE_WP_LAZY_LOADING = 'urlslab_remove_wp_lazy';
 	public const SETTING_NAME_YOUTUBE_API_KEY = 'urlslab_youtube_apikey';
+
+	public const DOWNLOAD_URL_PATH = 'urlslab-content/';
 
 	public function __construct() {
 		$this->widget_slug        = 'urlslab-lazy-loading';
@@ -68,6 +77,10 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	public function the_content( DOMDocument $document ) {
+		if ( $this->get_option( self::SETTING_NAME_CONTENT_LAZY_LOADING ) ) {
+			$this->content_lazy_loading( $document );
+		}
+
 		if ( $this->get_option( self::SETTING_NAME_YOUTUBE_LAZY_LOADING ) ) {
 			$this->add_youtube_lazy_loading( $document );
 		}
@@ -459,6 +472,59 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			null,
 			'youtube'
 		);
+
+		$this->add_options_form_section( 'content', __( 'Content' ), __( 'Lazy loading of content is the way how to optimize the size of HTML DOM on the first load of page. Once the visitor starts to scroll, content is loaded from server to the client and displayed.' ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_CONTENT_LAZY_LOADING,
+			false,
+			true,
+			__( 'Content Lazy Loading' ),
+			__( 'Activate lazy loading of content' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'content'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CONTENT_LAZY_MIN_PAGE_SIZE,
+			10000,
+			true,
+			__( 'Min size of HTML content' ),
+			__( 'Lazy loaded will be elements after the page is longer as defined amount of characters. Even there will be elements marked for lazyloading, but the page is small, whole content will be loaded at once.' ),
+			self::OPTION_TYPE_NUMBER,
+			false,
+			function( $value ) {
+				return is_numeric( $value ) && 0 < $value;
+			},
+			'content'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CONTENT_LAZY_MIN_CACHE_SIZE,
+			1000,
+			true,
+			__( 'Min size of cached content' ),
+			__( 'If content of element marked for lazy loading is too small, it has no sence to lazy load it. This parameter helps you to control the minimum size of the cached content.' ),
+			self::OPTION_TYPE_NUMBER,
+			false,
+			function( $value ) {
+				return is_numeric( $value ) && 0 < $value;
+			},
+			'content'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CONTENT_LAZY_CLASSES,
+			false,
+			true,
+			__( 'CSS class names' ),
+			__( 'Comma separated classnames of elements, which can be be lazy loaded in content.' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $value ) {
+				return is_string( $value ) && preg_match( '/$[0-9a-zA-Z_\\-,]*^/', $value );
+			},
+			'content'
+		);
+
 	}
 
 	private function get_image_data( $width = 1200, $height = 1000 ) {
@@ -472,5 +538,110 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$height = (int) $height;
 
 		return 'data:image/svg+xml;base64,' . base64_encode( '<svg xmlns="http://www.w3.org/2000/svg" width="' . $width . '" height="' . $height . '"></svg>' );
+	}
+
+	private function content_lazy_loading( DOMDocument $document ) {
+		if ( $this->get_option( self::SETTING_NAME_CONTENT_LAZY_MIN_PAGE_SIZE ) > strlen( $document->saveHTML() ) ) {
+			return true;    //size of document is smaller as limit for content lazy loading
+		}
+		$this->content_docs = array();
+
+		$classnames     = explode( ',', $this->get_option( self::SETTING_NAME_CONTENT_LAZY_CLASSES ) );
+		$str_classnames = array();
+		foreach ( $classnames as $class ) {
+			$class = trim( $class );
+			if ( strlen( $class ) ) {
+				$str_classnames[] = "contains(@class, '" . esc_attr( $class ) . "')";
+			}
+		}
+
+		if ( empty( $str_classnames ) ) {
+			return true;
+		}
+
+		$this->content_lazy_loading_recursive( $document, 0, implode( ' or ', $str_classnames ) );
+		if ( ! empty( $this->content_docs ) ) {
+
+			$placeholders = array();
+			foreach ( $this->content_docs as $doc ) {
+				$placeholders[] = '(cache_crc32=%d AND cache_len=%d)';
+				$sql_data[]     = $doc->get( 'cache_crc32' );
+				$sql_data[]     = $doc->get( 'cache_len' );
+			}
+			global $wpdb;
+			$results = $wpdb->get_results( $wpdb->prepare( 'SELECT cache_crc32, cache_len FROM ' . URLSLAB_CONTENT_CACHE_TABLE . ' WHERE ' . implode( ' OR ', $placeholders ), $sql_data ), 'ARRAY_A' ); // phpcs:ignore
+
+			foreach ( $results as $db_row ) {
+				unset( $this->content_docs[ $db_row['cache_crc32'] . '_' . $db_row['cache_len'] ] );
+			}
+
+			foreach ( $this->content_docs as $insert_doc ) {
+				$insert_doc->insert();
+			}
+		}
+	}
+
+	private function content_lazy_loading_recursive( DOMDocument $document, $iteration, $classes ) {
+		if ( $iteration > 100 ) {
+			return true;
+		}
+
+		$xpath    = new DOMXPath( $document );
+		$elements = $xpath->query( '//*[not(@urlslab_lazy_small) and (' . $classes . ") and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
+		foreach ( $elements as $dom_elem ) {
+			$element_html     = $document->saveHTML( $dom_elem );
+			$element_html_len = strlen( $element_html );
+			if ( $element_html_len > $this->get_option( self::SETTING_NAME_CONTENT_LAZY_MIN_CACHE_SIZE ) ) {
+				$lazy_element = $document->createElement( 'div' );
+				$obj          = new Urlslab_Content_Cache_Row(
+					array(
+						'cache_len'     => $element_html_len,
+						'cache_content' => $element_html,
+					),
+					false
+				);
+
+				$id                        = $obj->get_primary_id( '_' );
+				$this->content_docs[ $id ] = $obj;
+				$lazy_element->setAttribute( 'lazy_hash', $id );
+				$dom_elem->parentNode->replaceChild( $lazy_element, $dom_elem );
+
+				return $this->content_lazy_loading_recursive( $document, $iteration + 1, $classes );
+			} else {
+				$dom_elem->setAttribute( 'urlslab_lazy_small', $element_html_len );
+			}
+		}
+	}
+
+	public static function output_content() {
+		global $_SERVER;
+		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+			return 'Path to file not detected.';
+		}
+
+		$path = pathinfo( $_SERVER['REQUEST_URI'] );
+		list( $hash, $size ) = explode( '_', $path['filename'] );
+		$obj = new Urlslab_Content_Cache_Row(
+			array(
+				'cache_crc32' => $hash,
+				'cache_len'   => $size,
+			)
+		);
+
+		if ( ! is_numeric( $hash ) || ! is_numeric( $size ) || empty( $size ) || empty( $hash ) || ! $obj->load() ) {
+			status_header( 404 );
+			exit( 'Not found' );
+		}
+
+		@set_time_limit( 0 );
+
+		status_header( 200 );
+		header( 'Content-Type: text/html;charset=UTF-8' );
+		header( 'Pragma: public' );
+		$expires_offset = 31536000;
+		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
+		header( "Cache-Control: public, max-age=$expires_offset" );
+		header( 'Content-length: ' . $size );
+		echo $obj->get( 'cache_content' ); // phpcs:ignore
 	}
 }

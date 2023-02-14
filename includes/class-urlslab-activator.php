@@ -56,6 +56,7 @@ class Urlslab_Activator {
 		self::init_youtube_cache_tables();
 		self::init_keywords_map_table();
 		self::init_css_cache_tables();
+		self::init_content_cache_tables();
 	}
 
 	private static function upgrade_steps() {
@@ -120,6 +121,10 @@ class Urlslab_Activator {
 
 		if ( version_compare( $version, '1.44.0', '<' ) ) {
 			self::init_css_cache_tables();
+		}
+
+		if ( version_compare( $version, '1.45.0', '<' ) ) {
+			self::init_content_cache_tables();
 		}
 
 		//all update steps done, set the current version
@@ -343,6 +348,23 @@ class Urlslab_Activator {
     		  filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
 			  PRIMARY KEY (url_id),
 			  INDEX idx_changed (status_changed)
+		) $charset_collate;";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+	private static function init_content_cache_tables() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$table_name = URLSLAB_CONTENT_CACHE_TABLE;
+		$sql        = "CREATE TABLE IF NOT EXISTS $table_name (
+    		  cache_crc32 bigint,
+    		  cache_len int,
+    		  cache_content longtext,
+    		  date_changed datetime NULL,
+			  PRIMARY KEY (cache_crc32, cache_len),
+			  INDEX idx_changed (date_changed)
 		) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
