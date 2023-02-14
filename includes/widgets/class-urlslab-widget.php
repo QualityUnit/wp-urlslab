@@ -194,7 +194,13 @@ abstract class Urlslab_Widget {
 		}
 
 		if ( is_array( $this->options[ $option_id ]['possible_values'] ) ) {
-			if ( ! isset( $this->options[ $option_id ]['possible_values'][ $value ] ) ) {
+			if ( is_array( $value ) ) {
+				foreach ( $value as $val ) {
+					if ( ! isset( $this->options[ $option_id ]['possible_values'][ $val ] ) ) {
+						return false;
+					}
+				}
+			} else if ( ! isset( $this->options[ $option_id ]['possible_values'][ $value ] ) ) {
 				return false;
 			}
 		}
@@ -205,6 +211,11 @@ abstract class Urlslab_Widget {
 					$value = true;
 				} else {
 					$value = false;
+				}
+				break;
+			case self::OPTION_TYPE_MULTI_CHECKBOX:
+				if ( is_array( $value ) ) {
+					$value = implode( ',', $value );
 				}
 				break;
 			case self::OPTION_TYPE_PASSWORD:
