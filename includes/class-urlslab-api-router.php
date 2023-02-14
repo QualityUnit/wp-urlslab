@@ -17,6 +17,9 @@ class Urlslab_Api_Router {
 		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-css-cache.php';
 		( new Urlslab_Api_Css_Cache() )->register_routes();
 
+		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-content-cache.php';
+		( new Urlslab_Api_Content_Cache() )->register_routes();
+
 		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-cron.php';
 		( new Urlslab_Api_Cron() )->register_routes();
 

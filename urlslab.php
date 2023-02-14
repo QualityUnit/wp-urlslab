@@ -17,7 +17,7 @@
  * Plugin Name:       Urlslab
  * Plugin URI:        https://urlslab.com
  * Description:       URLSLAB Services
- * Version:           1.44.12
+ * Version:           1.45.0
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            URLSLAB
@@ -36,7 +36,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-const URLSLAB_VERSION = '1.44.12';
+const URLSLAB_VERSION = '1.45.0';
 const URLSLAB_VERSION_SETTING = 'urlslab_ver';
 
 /**
@@ -66,6 +66,7 @@ define( 'URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE', $wpdb->prefix . 'urlslab_file_d
 define( 'URLSLAB_FILE_POINTERS_TABLE', $wpdb->prefix . 'urlslab_file_pointers' );
 define( 'URLSLAB_YOUTUBE_CACHE_TABLE', $wpdb->prefix . 'urlslab_youtube_cache' );
 define( 'URLSLAB_CSS_CACHE_TABLE', $wpdb->prefix . 'urlslab_css_cache' );
+define( 'URLSLAB_CONTENT_CACHE_TABLE', $wpdb->prefix . 'urlslab_content_cache' );
 define( 'URLSLAB_PLUGIN_LOG', plugin_dir_path( __FILE__ ) . 'debug.log' );
 
 

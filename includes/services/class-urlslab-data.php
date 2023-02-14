@@ -61,7 +61,7 @@ abstract class Urlslab_Data {
 		return false;
 	}
 
-	public function insert(): bool {
+	public function insert( $replace = false ): bool {
 		if ( ! $this->has_changed() ) {
 			return true;
 		}
@@ -74,10 +74,18 @@ abstract class Urlslab_Data {
 		}
 
 		global $wpdb;
-		if ( $wpdb->insert( $this->get_table_name(), $insert_data, $format ) ) {
-			$this->changed = array();
+		if ( $replace ) {
+			if ( $wpdb->replace( $this->get_table_name(), $insert_data, $format ) ) {
+				$this->changed = array();
 
-			return true;
+				return true;
+			}
+		} else {
+			if ( $wpdb->insert( $this->get_table_name(), $insert_data, $format ) ) {
+				$this->changed = array();
+
+				return true;
+			}
 		}
 
 		return false;
@@ -157,6 +165,15 @@ abstract class Urlslab_Data {
 		}
 
 		return $wpdb->query( $wpdb->prepare( $insert_query, $insert_values ) ); // phpcs:ignore
+	}
+
+	public function get_primary_id( string $glue = '_' ) {
+		$id = array();
+		foreach ( $this->get_primary_columns() as $primary_column ) {
+			$id[ $primary_column ] = $this->get( $primary_column );
+		}
+
+		return implode( $glue, $id );
 	}
 
 	public static function get_now( $timestamp = false ): string {
