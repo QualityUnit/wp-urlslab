@@ -1,5 +1,7 @@
-export default function LinkEnhancer( { settings } ) {
+import Settings from './Settings';
+
+export default function LinkEnhancer( { moduleId } ) {
 	return (
-		'LinkEnhancer'
+		<Settings settingId={ moduleId } />
 	);
 }

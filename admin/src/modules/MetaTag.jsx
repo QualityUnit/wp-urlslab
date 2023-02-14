@@ -1,5 +1,7 @@
-export default function MetaTag( { settings } ) {
+import Settings from './Settings';
+
+export default function MetaTag( { moduleId } ) {
 	return (
-		'MetaTag'
+		<Settings settingId={ moduleId } />
 	);
 }

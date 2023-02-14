@@ -44,7 +44,7 @@ export default function MainMenu( { activeModule, modules, activePage } ) {
 
 	useEffect( () => {
 		get( 'urlslab-mainmenu' ).then( ( val ) => {
-			if ( val === 'open' ) {
+			if ( val === 'open' || window.matchMedia( '(min-width: 1600px)' ).matches ) {
 				mainmenu.current.classList.add( 'open' );
 			}
 		}
