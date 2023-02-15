@@ -26,10 +26,9 @@ export default function LazyLoading( { moduleId } ) {
 				activeSection === 'importexport' &&
 				<Suspense>
 					<ImportExport exportOptions={ {
-						url: 'keyword',
-						fromId: 'from_kw_id',
-						pageId: 'kw_id',
-						deleteFields: [ 'kw_id', 'destUrlMd5' ],
+						url: 'youtube-cache',
+						fromId: 'from_videoid',
+						pageId: 'videoid',
 					} } />
 				</Suspense>
 			}

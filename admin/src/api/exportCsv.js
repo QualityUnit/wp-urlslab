@@ -6,7 +6,7 @@ let ended = false;
 export let jsonData = { status: 'loading', data: [] };
 
 export async function exportCSV( options ) {
-	const { url, fromId, pageId, deleteFields } = options;
+	const { url, fromId, pageId, deleteCSVCols } = options;
 	const qOperator = url.includes( '?' ) ? '&' : '?';
 	const perpage = 9999;
 	const prevDataLength = dataForCSV.length;
@@ -16,9 +16,11 @@ export async function exportCSV( options ) {
 	dataForCSV = dataForCSV.flat();
 	if ( await response.length < perpage ) {
 		ended = true;
-		for ( const obj of dataForCSV ) {
-			for ( const field of deleteFields ) {
-				delete obj[ field ];
+		if ( deleteCSVCols?.length ) {
+			for ( const obj of dataForCSV ) {
+				for ( const field of deleteCSVCols ) {
+					delete obj[ field ];
+				}
 			}
 		}
 	}

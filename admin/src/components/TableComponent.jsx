@@ -28,23 +28,23 @@ export default function Table( { children, className, columns, data } ) {
 
 	const tbody = [];
 
-	const { rows } = table.getRowModel();
+	const { rows } = table?.getRowModel();
 
 	const rowVirtualizer = useVirtual( {
 		parentRef: tableContainerRef,
-		size: rows.length,
+		size: rows?.length,
 		overscan: 10,
 	} );
 
 	const { virtualItems: virtualRows, totalSize } = rowVirtualizer;
-	const paddingTop = virtualRows.length > 0 ? virtualRows?.[ 0 ]?.start || 0 : 0;
+	const paddingTop = virtualRows?.length > 0 ? virtualRows?.[ 0 ]?.start || 0 : 0;
 	const paddingBottom =
-		virtualRows.length > 0
+		virtualRows?.length > 0
 			? totalSize - ( virtualRows?.[ virtualRows.length - 1 ]?.end || 0 )
 			: 0;
 
 	for ( const virtualRow of virtualRows ) {
-		const row = rows[ virtualRow.index ];
+		const row = rows[ virtualRow?.index ];
 		tbody.push(
 			<tr key={ row.id } className={ row.getIsSelected() ? 'selected' : '' } >
 				{ row.getVisibleCells().map( ( cell ) =>

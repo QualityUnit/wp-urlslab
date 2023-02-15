@@ -1,5 +1,3 @@
-import apiFetch from '@wordpress/api-fetch';
-
 export async function fetchData( slug ) {
 	try {
 		const result = await fetch( `/wp-json/urlslab/v1${ slug ? `/${ slug }` : '' }`, {
@@ -19,16 +17,15 @@ export async function fetchData( slug ) {
 
 export async function setModule( slug, object ) {
 	try {
-		const result = await apiFetch( {
+		const result = await fetch( `/wp-json/urlslab/v1/module/${ slug }`, {
 			method: 'POST',
-			path: `/wp-json/urlslab/v1/module/${ slug }`,
 			headers: {
 				'Content-Type': 'application/json',
 				accept: 'application/json',
 				'X-WP-Nonce': window.wpApiSettings.nonce,
 			},
 			credentials: 'include',
-			data: object,
+			body: JSON.stringify( object ),
 		} );
 		return result;
 	} catch ( error ) {

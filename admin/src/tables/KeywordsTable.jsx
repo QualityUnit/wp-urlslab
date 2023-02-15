@@ -27,7 +27,7 @@ export default function KeywordsTable() {
 		isFetchingNextPage,
 		fetchNextPage,
 		hasNextPage,
-	} = useInfiniteQuery( [ 'tableKeyword' ],
+	} = useInfiniteQuery( [ 'keyword' ],
 		( { pageParam = '' } ) => {
 			return fetchData( `keyword?from_kw_id=${ pageParam }&rows_per_page=${ maxRows }` );
 		},

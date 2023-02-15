@@ -22,7 +22,6 @@ export default function YouTubeTable() {
 	const {
 		data,
 		status,
-		isFetching,
 		isSuccess,
 		isFetchingNextPage,
 		fetchNextPage,

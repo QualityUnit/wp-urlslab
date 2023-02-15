@@ -9,6 +9,7 @@ import KeywordsTable from '../tables/KeywordsTable';
 
 export default function KeywordLinks( { moduleId } ) {
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
+	const slug = 'keyword';
 
 	// persistQueryClient( {
 	// 	queryClient,
@@ -20,7 +21,7 @@ export default function KeywordLinks( { moduleId } ) {
 
 	return (
 		<div className="urlslab-tableView">
-			<TableViewHeader activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+			<TableViewHeader slug={ slug } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{
 				activeSection === 'overview' &&
 				<KeywordsTable />
@@ -34,12 +35,16 @@ export default function KeywordLinks( { moduleId } ) {
 			{
 				activeSection === 'importexport' &&
 				<Suspense>
-					<ImportExport exportOptions={ {
-						url: 'keyword',
-						fromId: 'from_kw_id',
-						pageId: 'kw_id',
-						deleteFields: [ 'kw_id', 'destUrlMd5' ],
-					} } />
+					<ImportExport
+						importOptions={ {
+							url: slug,
+						} }
+						exportOptions={ {
+							url: slug,
+							fromId: 'from_kw_id',
+							pageId: 'kw_id',
+							deleteCSVCols: [ 'kw_id', 'destUrlMd5' ],
+						} } />
 				</Suspense>
 			}
 		</div>

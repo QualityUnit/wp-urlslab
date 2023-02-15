@@ -1,5 +1,3 @@
-import apiFetch from '@wordpress/api-fetch';
-
 export async function fetchSettings( slug ) {
 	try {
 		const result = await fetch( `/wp-json/urlslab/v1/settings/${ slug }/`, {

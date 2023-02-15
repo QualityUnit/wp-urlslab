@@ -1,4 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useCSVReader } from 'react-papaparse';
 import importCsv from '../api/importCsv';
 
@@ -8,6 +9,7 @@ import '../assets/styles/components/_ImportExport.scss';
 
 export default function ImportExport( { children, importOptions, exportOptions } ) {
 	const { __ } = useI18n();
+	const queryClient = useQueryClient();
 	const { CSVReader } = useCSVReader();
 	// const importLocal = ( parsedData ) => {
 	// 	// console.log( queryClient.getQueryData( [ 'tableKeyword' ] ) );
@@ -17,22 +19,15 @@ export default function ImportExport( { children, importOptions, exportOptions }
 	// 	setCSVMessage( null );
 	// };
 
-	// const importData = useMutation( {
-	// 	mutationFn: ( results ) => {
-	// 		setCSVMessage( __( 'Uploading data…' ) );
-
-	// 		return setData( 'keyword/import',
-	// 			results.data
-	// 		);
-	// 	},
-	// 	onSuccess: () => {
-	// 		setCSVMessage( __( 'Data uploaded' ) );
-	// 		queryClient.invalidateQueries( [ 'tableKeyword' ] );
-	// 		setTimeout( () => {
-	// 			setCSVMessage( null );
-	// 		}, 300 );
-	// 	},
-	// } );
+	const importData = useMutation( {
+		mutationFn: ( results ) => {
+			queryClient.setQueryData( [ importOptions.url ], results.data );
+			return importCsv( `${ importOptions.url }/import`, results.data ).then( ( res ) => console.log( res ) );
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries( [ importOptions.url ] );
+		},
+	} );
 
 	return (
 		<div className="urlslab-importexport-wrap flex fadeInto">
@@ -42,7 +37,7 @@ export default function ImportExport( { children, importOptions, exportOptions }
 					{ /* <ImportCSVButton options={ importOptions } onClick={ ( data ) => console.log( data ) } /> */ }
 					<CSVReader
 						onUploadAccepted={ ( results ) => {
-							importCsv( 'keyword/import', results.data ).then( ( res ) => console.log( res ) );
+							importData.mutate( results );
 						} }
 						config={ {
 							header: true,
