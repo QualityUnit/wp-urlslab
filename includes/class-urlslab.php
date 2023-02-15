@@ -201,6 +201,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-general.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-optimize.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-screenshot-widget.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-related-resources-widget.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-media-offloader-widget.php';
@@ -423,6 +424,9 @@ class Urlslab {
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
 		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Screenshot_Cron( $this->url_data_fetcher ) );
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-optimize-cron.php';
+		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Optimize_Cron() );
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-youtube-cron.php';
 		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Youtube_Cron() );
