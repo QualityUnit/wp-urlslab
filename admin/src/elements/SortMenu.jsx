@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, useRef } from 'react';
 import Checkbox from './Checkbox';
 
@@ -9,6 +10,7 @@ export default function SortMenu( {
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
 	const [ checked, setChecked ] = useState( checkedId );
+	const didMountRef = useRef( false );
 	const ref = useRef( name );
 
 	useEffect( () => {
@@ -18,14 +20,16 @@ export default function SortMenu( {
 				setVisible( false );
 			}
 		};
+		if ( onChange && didMountRef.current && ! isActive ) {
+			console.log( checked );
+			onChange( checked );
+		}
+		didMountRef.current = true;
 		document.addEventListener( 'click', handleClickOutside, true );
-	} );
+	}, [ checked, isActive ] );
 
 	const checkedCheckbox = ( targetId ) => {
 		setChecked( targetId );
-		if ( onChange ) {
-			onChange( targetId );
-		}
 	};
 
 	const handleMenu = () => {

@@ -1,4 +1,5 @@
-import { useMemo, useEffect, useState, useRef } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState, useRef } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import Checkbox from './Checkbox';
 
@@ -22,11 +23,11 @@ export default function FilterMenu( {
 			}
 		};
 		if ( onChange && didMountRef.current && ! isActive && ( checked.filter( ( val ) => ! checkedNow.includes( val ) ) ) ) {
-			console.log( checked );
+			onChange( checked );
 		}
 		didMountRef.current = true;
 		document.addEventListener( 'click', handleClickOutside, false );
-	}, [ checkedNow, onChange, checked, id, isActive ] );
+	}, [ checkedNow, checked, id, isActive ] );
 
 	const checkedCheckbox = ( target, isChecked ) => {
 		if ( isChecked ) {
