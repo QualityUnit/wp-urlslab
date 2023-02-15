@@ -9,11 +9,11 @@ export default function SortMenu( {
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
 	const [ checked, setChecked ] = useState( checkedId );
-	const ref = useRef( null );
+	const ref = useRef( name );
 
 	useEffect( () => {
 		const handleClickOutside = ( event ) => {
-			if ( ! ref.current?.contains( event.target ) ) {
+			if ( ! ref.current?.contains( event.target ) && isActive ) {
 				setActive( false );
 				setVisible( false );
 			}

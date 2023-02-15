@@ -86,6 +86,7 @@ export default function SettingsOption( { settingId, option } ) {
 					<FilterMenu className="wide"
 						items={ possible_values }
 						checkedItems={ value }
+						id={ id }
 						onChange={ ( selectedItems ) => handleChange.mutate( selectedItems ) }>
 						{ title }
 					</FilterMenu>
