@@ -122,6 +122,15 @@ abstract class Urlslab_Widget {
 						$option['value'] = false;
 					}
 					break;
+				case self::OPTION_TYPE_MULTI_CHECKBOX:
+					$values = explode( ',', $this->get_option( $option_id ) );
+					foreach ( $values as $id => $value ) {
+						if ( ! isset( $option['possible_values'] ) ) {
+							unset( $values[ $id ] );
+						}
+					}
+					$option['value'] = $values;
+					break;
 				default:
 					$option['value'] = $this->get_option( $option_id );
 			}
