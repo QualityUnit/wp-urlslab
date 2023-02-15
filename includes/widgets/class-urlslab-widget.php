@@ -123,7 +123,10 @@ abstract class Urlslab_Widget {
 					}
 					break;
 				case self::OPTION_TYPE_MULTI_CHECKBOX:
-					$values = explode( ',', $this->get_option( $option_id ) );
+					$values = $this->get_option( $option_id );
+					if ( ! is_array( $values ) ) {
+						$values = explode( ',', );
+					}
 					foreach ( $values as $id => $value ) {
 						if ( ! isset( $option['possible_values'] ) ) {
 							unset( $values[ $id ] );
