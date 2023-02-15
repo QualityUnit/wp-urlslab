@@ -17,6 +17,7 @@ export default function FilterMenu( {
 			if ( ! ref.current?.contains( event.target ) ) {
 				setActive( false );
 				setVisible( false );
+				onChange( checked );
 			}
 		};
 		document.addEventListener( 'click', handleClickOutside, true );
@@ -26,11 +27,9 @@ export default function FilterMenu( {
 		if ( isChecked ) {
 			const checkedList = [ ...checked, target ];
 			setChecked( [ ... new Set( checkedList ) ] );
-			onChange( checked );
 		}
 		if ( ! isChecked ) {
 			setChecked( checked.filter( ( item ) => item !== target ) );
-			onChange( checked );
 		}
 	};
 

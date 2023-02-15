@@ -27,20 +27,23 @@ export default function KeywordsTable() {
 		isFetchingNextPage,
 		fetchNextPage,
 		hasNextPage,
-	} = useInfiniteQuery( [ 'keyword' ],
-		( { pageParam = '' } ) => {
+	} = useInfiniteQuery( {
+		queryKey: [ 'keyword' ],
+		queryFn: ( { pageParam = 0 } ) => {
 			return fetchData( `keyword?from_kw_id=${ pageParam }&rows_per_page=${ maxRows }` );
 		},
-		{
-			getNextPageParam: ( allRows ) => {
-				const lastRowId = allRows[ allRows?.length - 1 ]?.kw_id ?? undefined;
-				return lastRowId;
-			},
-			keepPreviousData: true,
-			refetchOnWindowFocus: false,
-			cacheTime: Infinity,
-			staleTime: Infinity,
-		}
+		getNextPageParam: ( allRows ) => {
+			if ( allRows.length < maxRows ) {
+				return undefined;
+			}
+			const lastRowId = allRows[ allRows?.length - 1 ]?.kw_id ?? undefined;
+			return lastRowId;
+		},
+		keepPreviousData: true,
+		refetchOnWindowFocus: false,
+		cacheTime: Infinity,
+		staleTime: Infinity,
+	}
 	);
 
 	useEffect( () => {
@@ -126,7 +129,7 @@ export default function KeywordsTable() {
 					? 'Loading more...'
 					: hasNextPage
 						? 'Load Newer'
-						: 'Nothing more to load' }
+						: '' }
 			</button>
 		</Table>
 	);
