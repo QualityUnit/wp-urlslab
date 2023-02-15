@@ -22,5 +22,5 @@ export default async function importCsv( slug, dataArray ) {
 		processed = { atChunk: chunkIndex + 1, chunkCount: chunksLength };
 		return true;
 	} );
-	// return await processed;
+	return processed;
 }

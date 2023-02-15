@@ -1,5 +1,7 @@
-export default function RelatedResources( { settings } ) {
+import Settings from './Settings';
+
+export default function RelatedResources( { moduleId } ) {
 	return (
-		'RelatedResources'
+		<Settings settingId={ moduleId } />
 	);
 }

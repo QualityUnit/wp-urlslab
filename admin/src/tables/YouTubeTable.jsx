@@ -4,7 +4,6 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { useInView } from 'react-intersection-observer';
 import { useI18n } from '@wordpress/react-i18n';
 import { fetchData } from '../api/fetching';
-import { langName } from '../constants/helpers';
 
 import SortMenu from '../elements/SortMenu';
 import LangMenu from '../elements/LangMenu';
@@ -14,11 +13,11 @@ import Table from '../components/TableComponent';
 
 import Loader from '../components/Loader';
 
-export default function KeywordsTable() {
+export default function YouTubeTable() {
 	const { __ } = useI18n();
 	const columnHelper = createColumnHelper();
 	const { ref, inView } = useInView();
-	const maxRows = 50;
+	const maxRows = 30;
 
 	const {
 		data,
@@ -27,13 +26,13 @@ export default function KeywordsTable() {
 		isFetchingNextPage,
 		fetchNextPage,
 		hasNextPage,
-	} = useInfiniteQuery( [ 'keyword' ],
+	} = useInfiniteQuery( [ 'youtube-cache' ],
 		( { pageParam = '' } ) => {
-			return fetchData( `keyword?from_kw_id=${ pageParam }&rows_per_page=${ maxRows }` );
+			return fetchData( `youtube-cache?from_videoid=${ pageParam }&rows_per_page=${ maxRows }` );
 		},
 		{
 			getNextPageParam: ( allRows ) => {
-				const lastRowId = allRows[ allRows?.length - 1 ]?.kw_id ?? undefined;
+				const lastRowId = allRows[ allRows?.length - 1 ]?.videoid;
 				return lastRowId;
 			},
 			keepPreviousData: true,
@@ -65,50 +64,30 @@ export default function KeywordsTable() {
 	};
 
 	const columns = [
-		columnHelper.accessor( 'check', {
-			className: 'checkbox',
-			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
-				handleSelected( val, cell );
-			} } />,
-			header: () => __( '' ),
+		columnHelper?.accessor( ( row ) => JSON.parse( `${ row?.microdata }` )?.items[ 0 ]?.snippet, {
+			id: 'thumb',
+			className: 'thumbnail',
+			cell: ( image ) => <img src={ image?.getValue()?.thumbnails?.default?.url } alt={ image?.getValue()?.title
+			} />,
+			header: () => __( 'Thumbnail' ),
 		} ),
-		columnHelper.accessor( 'keyword', {
-			header: () => __( 'Keyword' ),
+		columnHelper?.accessor( 'videoid', {
+			header: () => __( 'YouTube Id' ),
 		} ),
-		columnHelper.accessor( 'kwType', {
-			cell: ( cell ) => <SortMenu
-				items={ { M: __( 'Manual' ), I: __( 'Imported' ), X: __( 'None' ) } }
-				name={ cell.column.id }
-				checkedId={ cell.getValue() }
-				onChange={ ( val ) => handleInput( val, cell ) }
-			/>,
-			header: () => __( 'Keyword Type' ),
+		columnHelper?.accessor( 'status', {
+			cell: ( stat ) => <span className={ `youtube-status-bullet youtube-status-bullet-${ stat?.getValue() }` }>{ stat.getValue() }</span>,
+			className: 'youtube-status',
+			header: () => __( 'Status' ),
 		} ),
-		columnHelper.accessor( 'kw_length', {
-			header: () => __( 'Keyword Length' ),
+		columnHelper?.accessor( ( row ) => [ row?.videoid, JSON.parse( `${ row?.microdata }` )?.items[ 0 ]?.snippet?.title ], {
+			id: 'title',
+			cell: ( val ) => <a href={ `https://youtu.be/${ val?.getValue()[ 0 ] }` } target="_blank" rel="noreferrer">{ val?.getValue()[ 1 ] }</a>,
+			header: () => __( 'Title' ),
 		} ),
-		columnHelper.accessor( 'kw_priority', {
-			header: () => __( 'Keyword Priority' ),
-		} ),
-		columnHelper.accessor( 'kw_usage_count', {
-			header: () => __( 'Keyword Usage' ),
-		} ),
-		columnHelper.accessor( 'lang', {
-			cell: ( val ) => <LangMenu checkedId={ val?.getValue() } onChange={ ( lang ) => console.log( lang ) } />,
-			header: () => __( 'Language' ),
-		} ),
-		columnHelper.accessor( 'link_usage_count', {
-			header: () => __( 'Link Usage' ),
-		} ),
-		columnHelper.accessor( 'urlFilter', {
-			cell: ( cell ) => <InputField type="text"
-				defaultValue={ cell.getValue() }
-				onChange={ ( val ) => handleInput( val, cell ) }
-			/>,
-			header: () => __( 'URL Filter' ),
-		} ),
-		columnHelper.accessor( 'urlLink', {
-			header: () => __( 'Keyword Link' ),
+		columnHelper?.accessor( ( row ) => JSON.parse( `${ row?.microdata }` )?.items[ 0 ]?.snippet?.publishedAt, {
+			id: 'published',
+			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
+			header: () => __( 'Published' ),
 		} ),
 	];
 	return (

@@ -1,0 +1,6 @@
+@use "../common/variables" as *;
+@use "../common/mixins" as *;
+
+.urlslab-tableView-header {
+	background-color: $white;
+}

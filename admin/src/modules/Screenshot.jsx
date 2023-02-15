@@ -1,5 +1,7 @@
-export default function Screenshot( { settings } ) {
+import Settings from './Settings';
+
+export default function Screenshot( { moduleId } ) {
 	return (
-		'This is screenshot'
+		<Settings settingId={ moduleId } />
 	);
 }

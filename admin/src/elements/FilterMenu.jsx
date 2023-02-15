@@ -1,21 +1,16 @@
 import { useEffect, useState, useRef } from 'react';
-import encoding from 'encoding';
+import { useI18n } from '@wordpress/react-i18n';
 import Checkbox from './Checkbox';
 
 import '../assets/styles/elements/_FilterMenu.scss';
 
 export default function FilterMenu( {
-	className, style, children, filterItems, filteredItems,
-} ) {
+	className, style, children, items, checkedItems, onChange } ) {
+	const { __ } = useI18n();
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
-	const [ checked, setChecked ] = useState( [] );
+	const [ checked, setChecked ] = useState( checkedItems );
 	const ref = useRef( null );
-	let items = {};
-
-	if ( filterItems ) {
-		items = Object.values( filterItems );
-	}
 
 	useEffect( () => {
 		const handleClickOutside = ( event ) => {
@@ -29,14 +24,15 @@ export default function FilterMenu( {
 
 	const checkedCheckbox = ( target, isChecked ) => {
 		if ( isChecked ) {
-			setChecked( [ ...checked, target ] );
+			const checkedList = [ ...checked, target ];
+			setChecked( [ ... new Set( checkedList ) ] );
+			onChange( checked );
 		}
 		if ( ! isChecked ) {
 			setChecked( checked.filter( ( item ) => item !== target ) );
+			onChange( checked );
 		}
 	};
-
-	// filteredItems(checked);
 
 	const handleMenu = () => {
 		setActive( ! isActive );
@@ -48,6 +44,7 @@ export default function FilterMenu( {
 
 	return (
 		<div className={ `urlslab-FilterMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref }>
+			{ children ? <div className="urlslab-inputField-label">{ children }</div> : null }
 			<div
 				className={ `urlslab-FilterMenu__title ${ isActive ? 'active' : '' }` }
 				onClick={ handleMenu }
@@ -55,25 +52,24 @@ export default function FilterMenu( {
 				role="button"
 				tabIndex={ 0 }
 			>
-				{ children }
+				{ `${ checked.length } ${ __( 'items selected' ) }` }
 			</div>
 			<div className={ `urlslab-FilterMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
 				<div className={ `urlslab-FilterMenu__items--inn ${ items.length > 8 ? 'has-scrollbar' : '' }` }>
-					{ items.map( ( val ) => {
-						const id = val.replace( /(\s+|[0-9])/g, '' ).toLowerCase();
-						encoding.convert( val, 'Latin_1' );
-
+					{ Object.entries( items ).map( ( [ id, value ] ) => {
 						return (
 							<Checkbox
 								className="urlslab-FilterMenu__item"
 								key={ id }
 								id={ id }
-								onClick={ checkedCheckbox }
+								onChange={ ( isChecked ) => checkedCheckbox( id, isChecked ) }
+								checked={ checked.includes( id ) }
 							>
-								{ val }
+								{ value }
 							</Checkbox>
 						);
 					} ) }
+
 				</div>
 			</div>
 		</div>

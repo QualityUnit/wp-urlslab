@@ -1,10 +1,7 @@
-import Switch from '../elements/Switch';
+import Settings from './Settings';
 
-export default function CssOptimizer( { settings } ) {
+export default function CssOptimizer( { moduleId } ) {
 	return (
-		<>
-			<h2>CssOptimizer</h2>
-			<Switch />
-		</>
+		<Settings settingId={ moduleId } />
 	);
 }

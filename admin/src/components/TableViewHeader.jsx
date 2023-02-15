@@ -1,12 +1,26 @@
 import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
+import { deleteAll } from '../api/deleteTableData';
 
 import Button from '../elements/Button';
 import SimpleButton from '../elements/SimpleButton';
 
-export default function TableViewHeader( { activeMenu } ) {
+import '../assets/styles/components/_TableViewHeader.scss';
+
+export default function TableViewHeader( { slug, activeMenu } ) {
 	const { __ } = useI18n();
 	const [ active, setActive ] = useState( 'overview' );
+	const queryClient = useQueryClient();
+
+	const handleDelete = useMutation( {
+		mutationFn: () => {
+			return deleteAll( slug );
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries( [ slug ] );
+		},
+	} );
 
 	const menuItems = new Map( [
 		[ 'overview', __( 'Overview' ) ],
@@ -44,7 +58,7 @@ export default function TableViewHeader( { activeMenu } ) {
 				}
 			</div>
 			<div className="urlslab-tableView-headerBottom">
-
+				<Button onClick={ () => handleDelete.mutate() }>{ __( 'Delete All' ) }</Button>
 			</div>
 		</div>
 	);

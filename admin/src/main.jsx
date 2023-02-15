@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom';
 
 import {
 	QueryClient,
+	QueryClientProvider,
 } from '@tanstack/react-query';
 import {
 	PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
@@ -22,7 +23,9 @@ const queryClient = new QueryClient( {
 createRoot( document.getElementById( 'urlslab-root' ) ).render(
 	<React.StrictMode>
 		<PersistQueryClientProvider client={ queryClient } persistOptions={ { persister: idbPersister } }>
+			{ /* <QueryClientProvider client={ queryClient } > */ }
 			<App />
+			{ /* </QueryClientProvider> */ }
 		</PersistQueryClientProvider>
 	</React.StrictMode>
 );

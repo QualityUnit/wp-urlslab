@@ -1,7 +1,7 @@
-export default function MediaOffloader( { settings } ) {
-	console.log( settings );
+import Settings from './Settings';
 
+export default function MediaOffloader( { moduleId } ) {
 	return (
-		'MediaOffloader'
+		<Settings settingId={ moduleId } />
 	);
 }

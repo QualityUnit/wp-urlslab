@@ -1,10 +1,7 @@
-import Switch from '../elements/Switch';
+import Settings from './Settings';
 
-export default function ImageAltAttribute( { settings } ) {
+export default function ImageAltAttribute( { moduleId } ) {
 	return (
-		<>
-			<h2>Image Alt</h2>
-			<Switch />
-		</>
+		<Settings settingId={ moduleId } />
 	);
 }
