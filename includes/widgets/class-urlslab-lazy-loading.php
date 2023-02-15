@@ -520,7 +520,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {
-				return is_string( $value ) && preg_match( '/$[0-9a-zA-Z_\\-,]*^/', $value );
+				return is_string( $value );
 			},
 			'content'
 		);
