@@ -236,7 +236,8 @@ abstract class Urlslab_Widget {
 				break;
 		}
 
-		return update_option( $option_id, $value );
+
+		return $value == $this->get_option( $option_id ) || update_option( $option_id, $value );
 	}
 
 	public function get_option( $option_id ) {
