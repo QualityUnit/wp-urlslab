@@ -23,23 +23,27 @@ export default function YouTubeTable() {
 		data,
 		status,
 		isSuccess,
+		isError,
 		isFetchingNextPage,
 		fetchNextPage,
 		hasNextPage,
-	} = useInfiniteQuery( [ 'youtube-cache' ],
-		( { pageParam = '' } ) => {
+	} = useInfiniteQuery( {
+		queryKey: [ 'youtube-cache' ],
+		queryFn: ( { pageParam = 0 } ) => {
 			return fetchData( `youtube-cache?from_videoid=${ pageParam }&rows_per_page=${ maxRows }` );
 		},
-		{
-			getNextPageParam: ( allRows ) => {
-				const lastRowId = allRows[ allRows?.length - 1 ]?.videoid;
-				return lastRowId;
-			},
-			keepPreviousData: true,
-			refetchOnWindowFocus: false,
-			cacheTime: Infinity,
-			staleTime: Infinity,
-		}
+		getNextPageParam: ( allRows ) => {
+			if ( allRows.length < maxRows ) {
+				return undefined;
+			}
+			const lastRowId = allRows[ allRows?.length - 1 ]?.videoid;
+			return lastRowId;
+		},
+		keepPreviousData: true,
+		refetchOnWindowFocus: false,
+		cacheTime: Infinity,
+		staleTime: Infinity,
+	}
 	);
 
 	useEffect( () => {
@@ -90,10 +94,11 @@ export default function YouTubeTable() {
 			header: () => __( 'Published' ),
 		} ),
 	];
+
 	return (
 		<Table className="fadeInto" columns={ columns }
 			data={
-				isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
+				isSuccess && ! isError && data?.pages?.flatMap( ( page ) => page ?? [] )
 			}
 		>
 			<button
@@ -105,7 +110,7 @@ export default function YouTubeTable() {
 					? 'Loading more...'
 					: hasNextPage
 						? 'Load Newer'
-						: 'Nothing more to load' }
+						: '' }
 			</button>
 		</Table>
 	);
