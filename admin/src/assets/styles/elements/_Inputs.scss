@@ -39,6 +39,10 @@ $status: (
 			font-size: inherit;
 		}
 
+		&.xl {
+			width: 15em;
+		}
+
 		&:focus {
 			outline: none;
 			box-shadow: none;

@@ -70,14 +70,14 @@ export default function SettingsOption( { settingId, option } ) {
 			case 'datetime':
 				return (
 					<DatePicker
-						className="urlslab-input"
+						className="urlslab-input xl"
 						selected={ date }
-						dateFormat="dd. MMMM yyyy"
+						dateFormat="dd. MMMM yyyy, HH:mm"
 						timeFormat="HH:mm"
+						showTimeSelect
 						onChange={ ( newDate ) => {
 							setDate( newDate ); handleDate.mutate( newDate );
 						} }
-						showTimeSelect
 					/>
 				);
 			case 'listbox':
