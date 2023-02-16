@@ -48,7 +48,7 @@ export default function Settings( { className, settingId } ) {
 										<SettingsOption settingId={ settingId } option={ option } key={ option.id } />
 									);
 								} )
-								: <h2>{ __( 'No options available' ) }</h2>
+								: ''
 							}
 						</section>
 					);
