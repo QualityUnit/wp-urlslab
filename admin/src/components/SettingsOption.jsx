@@ -23,6 +23,11 @@ export default function SettingsOption( { settingId, option } ) {
 			return setSettings( `${ settingId }/${ id }`, {
 				value: changeValue } );
 		},
+		onError: ( changeValue ) => {
+			return setSettings( `${ settingId }/${ id }`, {
+				value: changeValue,
+			} );
+		},
 		onSuccess: () => {
 			queryClient.invalidateQueries( [ 'settings', settingId ] );
 		},
