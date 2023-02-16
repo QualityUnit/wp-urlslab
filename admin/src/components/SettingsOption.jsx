@@ -23,6 +23,11 @@ export default function SettingsOption( { settingId, option } ) {
 			return setSettings( `${ settingId }/${ id }`, {
 				value: changeValue } );
 		},
+		onError: ( changeValue ) => {
+			return setSettings( `${ settingId }/${ id }`, {
+				value: changeValue,
+			} );
+		},
 		onSuccess: () => {
 			queryClient.invalidateQueries( [ 'settings', settingId ] );
 		},
@@ -86,6 +91,7 @@ export default function SettingsOption( { settingId, option } ) {
 					<FilterMenu className="wide"
 						items={ possible_values }
 						checkedItems={ value }
+						id={ id }
 						onChange={ ( selectedItems ) => handleChange.mutate( selectedItems ) }>
 						{ title }
 					</FilterMenu>

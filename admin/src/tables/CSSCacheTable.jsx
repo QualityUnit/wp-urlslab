@@ -5,24 +5,23 @@ import { useInView } from 'react-intersection-observer';
 import { useI18n } from '@wordpress/react-i18n';
 import { fetchData } from '../api/fetching';
 
-import SortMenu from '../elements/SortMenu';
-import LangMenu from '../elements/LangMenu';
-import InputField from '../elements/InputField';
 import Checkbox from '../elements/Checkbox';
+import SortMenu from '../elements/SortMenu';
 import Table from '../components/TableComponent';
 
 import Loader from '../components/Loader';
 
-export default function KeywordsTable() {
+export default function CSSCacheTable() {
 	const { __ } = useI18n();
 	const columnHelper = createColumnHelper();
 	const { ref, inView } = useInView();
 	const maxRows = 50;
 
-	const keywordTypes = {
-		M: __( 'Manual' ),
-		I: __( 'Imported' ),
-		X: __( 'None' ),
+	const statusTypes = {
+		N: __( 'New' ),
+		A: __( 'Available' ),
+		P: __( 'Processing' ),
+		D: __( 'Disabled' ),
 	};
 
 	const {
@@ -33,15 +32,15 @@ export default function KeywordsTable() {
 		fetchNextPage,
 		hasNextPage,
 	} = useInfiniteQuery( {
-		queryKey: [ 'keyword' ],
+		queryKey: [ 'css-cache' ],
 		queryFn: ( { pageParam = 0 } ) => {
-			return fetchData( `keyword?from_kw_id=${ pageParam }&rows_per_page=${ maxRows }` );
+			return fetchData( `css-cache?from_url_id=${ pageParam }&rows_per_page=${ maxRows }` );
 		},
 		getNextPageParam: ( allRows ) => {
 			if ( allRows.length < maxRows ) {
 				return undefined;
 			}
-			const lastRowId = allRows[ allRows?.length - 1 ]?.kw_id ?? undefined;
+			const lastRowId = allRows[ allRows?.length - 1 ]?.url_id ?? undefined;
 			return lastRowId;
 		},
 		keepPreviousData: true,
@@ -69,7 +68,7 @@ export default function KeywordsTable() {
 
 	const handleSelected = ( val, cell ) => {
 		cell.row.toggleSelected();
-		console.log( { selected: cell.row.original.kw_id } );
+		console.log( { selected: cell.row.original.url_id } );
 	};
 
 	const columns = [
@@ -80,44 +79,28 @@ export default function KeywordsTable() {
 			} } />,
 			header: () => __( '' ),
 		} ),
-		columnHelper.accessor( 'keyword', {
-			header: () => __( 'Keyword' ),
+		columnHelper?.accessor( 'url_id', {
+			header: () => __( 'URL Id' ),
 		} ),
-		columnHelper.accessor( 'kwType', {
+		columnHelper?.accessor( 'status', {
 			cell: ( cell ) => <SortMenu
-				items={ keywordTypes }
+				items={ statusTypes }
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
-				onChange={ ( val ) => handleInput( val, cell ) }
-			/>,
-			header: () => __( 'Keyword Type' ),
+				onChange={ ( val ) => handleInput( val, cell ) } />,
+			className: 'youtube-status',
+			header: () => __( 'Status' ),
 		} ),
-		columnHelper.accessor( 'kw_length', {
-			header: () => __( 'Keyword Length' ),
+		columnHelper?.accessor( 'filesize', {
+			header: () => __( 'Filesize' ),
 		} ),
-		columnHelper.accessor( 'kw_priority', {
-			header: () => __( 'Keyword Priority' ),
+		columnHelper?.accessor( 'status_changed', {
+			header: () => __( 'Status changed' ),
 		} ),
-		columnHelper.accessor( 'kw_usage_count', {
-			header: () => __( 'Keyword Usage' ),
+		columnHelper?.accessor( 'url', {
+			header: () => __( 'URL' ),
 		} ),
-		columnHelper.accessor( 'lang', {
-			cell: ( val ) => <LangMenu checkedId={ val?.getValue() } onChange={ ( lang ) => console.log( lang ) } />,
-			header: () => __( 'Language' ),
-		} ),
-		columnHelper.accessor( 'link_usage_count', {
-			header: () => __( 'Link Usage' ),
-		} ),
-		columnHelper.accessor( 'urlFilter', {
-			cell: ( cell ) => <InputField type="text"
-				defaultValue={ cell.getValue() }
-				onChange={ ( val ) => handleInput( val, cell ) }
-			/>,
-			header: () => __( 'URL Filter' ),
-		} ),
-		columnHelper.accessor( 'urlLink', {
-			header: () => __( 'Keyword Link' ),
-		} ),
+
 	];
 	return (
 		<Table className="fadeInto" columns={ columns }

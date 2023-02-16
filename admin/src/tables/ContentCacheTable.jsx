@@ -13,17 +13,11 @@ import Table from '../components/TableComponent';
 
 import Loader from '../components/Loader';
 
-export default function KeywordsTable() {
+export default function ContentCacheTable() {
 	const { __ } = useI18n();
 	const columnHelper = createColumnHelper();
 	const { ref, inView } = useInView();
 	const maxRows = 50;
-
-	const keywordTypes = {
-		M: __( 'Manual' ),
-		I: __( 'Imported' ),
-		X: __( 'None' ),
-	};
 
 	const {
 		data,
@@ -33,9 +27,9 @@ export default function KeywordsTable() {
 		fetchNextPage,
 		hasNextPage,
 	} = useInfiniteQuery( {
-		queryKey: [ 'keyword' ],
+		queryKey: [ 'content-cache' ],
 		queryFn: ( { pageParam = 0 } ) => {
-			return fetchData( `keyword?from_kw_id=${ pageParam }&rows_per_page=${ maxRows }` );
+			return fetchData( `content-cache?from_kw_id=${ pageParam }&rows_per_page=${ maxRows }` );
 		},
 		getNextPageParam: ( allRows ) => {
 			if ( allRows.length < maxRows ) {
@@ -73,6 +67,13 @@ export default function KeywordsTable() {
 	};
 
 	const columns = [
+		columnHelper.accessor( 'check', {
+			className: 'checkbox',
+			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
+				handleSelected( val, cell );
+			} } />,
+			header: () => __( '' ),
+		} ),
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {

@@ -13,16 +13,17 @@ import Table from '../components/TableComponent';
 
 import Loader from '../components/Loader';
 
-export default function KeywordsTable() {
+export default function LinkManagerTable() {
 	const { __ } = useI18n();
 	const columnHelper = createColumnHelper();
 	const { ref, inView } = useInView();
 	const maxRows = 50;
 
-	const keywordTypes = {
-		M: __( 'Manual' ),
-		I: __( 'Imported' ),
-		X: __( 'None' ),
+	const statusTypes = {
+		N: __( 'New' ),
+		A: __( 'Available' ),
+		P: __( 'Processing' ),
+		D: __( 'Disabled' ),
 	};
 
 	const {
@@ -33,15 +34,15 @@ export default function KeywordsTable() {
 		fetchNextPage,
 		hasNextPage,
 	} = useInfiniteQuery( {
-		queryKey: [ 'keyword' ],
+		queryKey: [ 'url' ],
 		queryFn: ( { pageParam = 0 } ) => {
-			return fetchData( `keyword?from_kw_id=${ pageParam }&rows_per_page=${ maxRows }` );
+			return fetchData( `url?from_urlId=${ pageParam }&rows_per_page=${ maxRows }` );
 		},
 		getNextPageParam: ( allRows ) => {
 			if ( allRows.length < maxRows ) {
 				return undefined;
 			}
-			const lastRowId = allRows[ allRows?.length - 1 ]?.kw_id ?? undefined;
+			const lastRowId = allRows[ allRows?.length - 1 ]?.urlId ?? undefined;
 			return lastRowId;
 		},
 		keepPreviousData: true,
@@ -69,7 +70,7 @@ export default function KeywordsTable() {
 
 	const handleSelected = ( val, cell ) => {
 		cell.row.toggleSelected();
-		console.log( { selected: cell.row.original.kw_id } );
+		console.log( { selected: cell.row.original.urlId } );
 	};
 
 	const columns = [
@@ -80,43 +81,26 @@ export default function KeywordsTable() {
 			} } />,
 			header: () => __( '' ),
 		} ),
-		columnHelper.accessor( 'keyword', {
-			header: () => __( 'Keyword' ),
+		columnHelper.accessor( 'urlTitle', {
+			header: () => __( 'URL Title' ),
 		} ),
-		columnHelper.accessor( 'kwType', {
+		columnHelper.accessor( 'urlName', {
+			header: () => __( 'URL' ),
+		} ),
+		columnHelper?.accessor( 'urlMetaDescription', {
+			header: () => __( 'URL Description' ),
+		} ),
+		columnHelper?.accessor( 'status', {
 			cell: ( cell ) => <SortMenu
-				items={ keywordTypes }
+				items={ statusTypes }
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
-				onChange={ ( val ) => handleInput( val, cell ) }
-			/>,
-			header: () => __( 'Keyword Type' ),
+				onChange={ ( val ) => handleInput( val, cell ) } />,
+			className: 'youtube-status',
+			header: () => __( 'Status' ),
 		} ),
-		columnHelper.accessor( 'kw_length', {
-			header: () => __( 'Keyword Length' ),
-		} ),
-		columnHelper.accessor( 'kw_priority', {
-			header: () => __( 'Keyword Priority' ),
-		} ),
-		columnHelper.accessor( 'kw_usage_count', {
-			header: () => __( 'Keyword Usage' ),
-		} ),
-		columnHelper.accessor( 'lang', {
-			cell: ( val ) => <LangMenu checkedId={ val?.getValue() } onChange={ ( lang ) => console.log( lang ) } />,
-			header: () => __( 'Language' ),
-		} ),
-		columnHelper.accessor( 'link_usage_count', {
-			header: () => __( 'Link Usage' ),
-		} ),
-		columnHelper.accessor( 'urlFilter', {
-			cell: ( cell ) => <InputField type="text"
-				defaultValue={ cell.getValue() }
-				onChange={ ( val ) => handleInput( val, cell ) }
-			/>,
-			header: () => __( 'URL Filter' ),
-		} ),
-		columnHelper.accessor( 'urlLink', {
-			header: () => __( 'Keyword Link' ),
+		columnHelper.accessor( 'updateStatusDate', {
+			header: () => __( 'Status Date' ),
 		} ),
 	];
 	return (

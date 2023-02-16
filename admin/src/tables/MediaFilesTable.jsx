@@ -5,19 +5,24 @@ import { useInView } from 'react-intersection-observer';
 import { useI18n } from '@wordpress/react-i18n';
 import { fetchData } from '../api/fetching';
 
-import SortMenu from '../elements/SortMenu';
-import LangMenu from '../elements/LangMenu';
-import InputField from '../elements/InputField';
 import Checkbox from '../elements/Checkbox';
+import SortMenu from '../elements/SortMenu';
 import Table from '../components/TableComponent';
 
 import Loader from '../components/Loader';
 
-export default function YouTubeTable() {
+export default function MediaFilesTable() {
 	const { __ } = useI18n();
 	const columnHelper = createColumnHelper();
 	const { ref, inView } = useInView();
 	const maxRows = 30;
+
+	const statusTypes = {
+		N: __( 'New' ),
+		A: __( 'Available' ),
+		P: __( 'Processing' ),
+		D: __( 'Disabled' ),
+	};
 
 	const {
 		data,
@@ -28,15 +33,15 @@ export default function YouTubeTable() {
 		fetchNextPage,
 		hasNextPage,
 	} = useInfiniteQuery( {
-		queryKey: [ 'youtube-cache' ],
+		queryKey: [ 'file' ],
 		queryFn: ( { pageParam = 0 } ) => {
-			return fetchData( `youtube-cache?from_videoid=${ pageParam }&rows_per_page=${ maxRows }` );
+			return fetchData( `file?from_fileid=${ pageParam }&rows_per_page=${ maxRows }` );
 		},
 		getNextPageParam: ( allRows ) => {
 			if ( allRows.length < maxRows ) {
 				return undefined;
 			}
-			const lastRowId = allRows[ allRows?.length - 1 ]?.videoid;
+			const lastRowId = allRows[ allRows?.length - 1 ]?.fileid;
 			return lastRowId;
 		},
 		keepPreviousData: true,
@@ -64,34 +69,48 @@ export default function YouTubeTable() {
 
 	const handleSelected = ( val, cell ) => {
 		cell.row.toggleSelected();
-		console.log( { selected: cell.row.original.kw_id } );
+		console.log( { selected: cell.row.original.fileid } );
 	};
 
 	const columns = [
-		columnHelper?.accessor( ( row ) => JSON.parse( `${ row?.microdata }` )?.items[ 0 ]?.snippet, {
-			id: 'thumb',
-			className: 'thumbnail',
-			cell: ( image ) => <img src={ image?.getValue()?.thumbnails?.default?.url } alt={ image?.getValue()?.title
-			} />,
-			header: () => __( 'Thumbnail' ),
+		columnHelper.accessor( 'check', {
+			className: 'checkbox',
+			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
+				handleSelected( val, cell );
+			} } />,
+			header: () => __( '' ),
 		} ),
-		columnHelper?.accessor( 'videoid', {
-			header: () => __( 'YouTube Id' ),
+		columnHelper?.accessor( 'filename', {
+			header: () => __( 'File Name' ),
 		} ),
-		columnHelper?.accessor( 'status', {
-			cell: ( stat ) => <span className={ `youtube-status-bullet youtube-status-bullet-${ stat?.getValue() }` }>{ stat.getValue() }</span>,
-			className: 'youtube-status',
+		columnHelper?.accessor( 'filetype', {
+			header: () => __( 'File Type' ),
+		} ),
+		columnHelper?.accessor( 'status_changed', {
+			header: () => __( 'Status changed' ),
+		} ),
+		columnHelper?.accessor( 'filestatus', {
+			cell: ( cell ) => <SortMenu
+				items={ statusTypes }
+				name={ cell.column.id }
+				checkedId={ cell.getValue() }
+				onChange={ ( val ) => handleInput( val, cell ) } />,
 			header: () => __( 'Status' ),
 		} ),
-		columnHelper?.accessor( ( row ) => [ row?.videoid, JSON.parse( `${ row?.microdata }` )?.items[ 0 ]?.snippet?.title ], {
-			id: 'title',
-			cell: ( val ) => <a href={ `https://youtu.be/${ val?.getValue()[ 0 ] }` } target="_blank" rel="noreferrer">{ val?.getValue()[ 1 ] }</a>,
-			header: () => __( 'Title' ),
+		columnHelper?.accessor( 'height', {
+			header: () => __( 'Height' ),
 		} ),
-		columnHelper?.accessor( ( row ) => JSON.parse( `${ row?.microdata }` )?.items[ 0 ]?.snippet?.publishedAt, {
-			id: 'published',
-			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
-			header: () => __( 'Published' ),
+		columnHelper?.accessor( 'width', {
+			header: () => __( 'Width' ),
+		} ),
+		columnHelper?.accessor( 'filesize', {
+			header: () => __( 'File Size' ),
+		} ),
+		columnHelper?.accessor( 'file_usage_count', {
+			header: () => __( 'File Usage' ),
+		} ),
+		columnHelper?.accessor( 'url', {
+			header: () => __( 'URL' ),
 		} ),
 	];
 
