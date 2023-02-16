@@ -22,10 +22,10 @@ const queryClient = new QueryClient( {
 
 createRoot( document.getElementById( 'urlslab-root' ) ).render(
 	<React.StrictMode>
-		<PersistQueryClientProvider client={ queryClient } persistOptions={ { persister: idbPersister } }>
-			{ /* <QueryClientProvider client={ queryClient } > */ }
+		{/*<PersistQueryClientProvider client={ queryClient } persistOptions={ { persister: idbPersister } }>*/}
+			<QueryClientProvider client={ queryClient } >
 			<App />
-			{ /* </QueryClientProvider> */ }
-		</PersistQueryClientProvider>
+			</QueryClientProvider>
+		{/*</PersistQueryClientProvider>*/}
 	</React.StrictMode>
 );

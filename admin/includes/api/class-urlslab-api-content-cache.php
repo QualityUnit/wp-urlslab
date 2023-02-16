@@ -58,7 +58,7 @@ class Urlslab_Api_Content_Cache extends Urlslab_Api_Table {
 
 		$rows = $sql->get_results();
 
-		if ( null == $rows || false === $rows ) {
+		if ( null === $rows || false === $rows ) {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 500 ) );
 		}
 
