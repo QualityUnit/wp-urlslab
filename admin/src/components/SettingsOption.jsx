@@ -36,7 +36,7 @@ export default function SettingsOption( { settingId, option } ) {
 	const handleDate = useMutation( {
 		mutationFn: ( newDate ) => {
 			return setSettings( `${ settingId }/${ id }`, {
-				value: new Date( newDate ).toISOString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ),
+				value: new Date( newDate ).toString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ),
 			} );
 		},
 		onSuccess: () => {
@@ -70,9 +70,9 @@ export default function SettingsOption( { settingId, option } ) {
 			case 'datetime':
 				return (
 					<DatePicker
-						className="urlslab-input"
+						className="urlslab-input xl"
 						selected={ date }
-						dateFormat="dd. MMMM yyyy"
+						dateFormat="dd. MMMM yyyy, HH:mm"
 						timeFormat="HH:mm"
 						onChange={ ( newDate ) => {
 							setDate( newDate ); handleDate.mutate( newDate );
