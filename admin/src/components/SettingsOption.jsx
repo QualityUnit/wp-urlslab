@@ -36,7 +36,7 @@ export default function SettingsOption( { settingId, option } ) {
 	const handleDate = useMutation( {
 		mutationFn: ( newDate ) => {
 			return setSettings( `${ settingId }/${ id }`, {
-				value: new Date( newDate ).toString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ),
+				value: new Date( newDate ).toISOString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ),
 			} );
 		},
 		onSuccess: () => {
