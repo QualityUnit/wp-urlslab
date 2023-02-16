@@ -76,7 +76,7 @@ export default function CSSCacheTable() {
 		} ),
 		columnHelper?.accessor( 'status', {
 			cell: ( cell ) => <SortMenu
-				items={ statusTypes() }
+				items={ statusTypes }
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
 				onChange={ ( val ) => handleInput( val, cell ) } />,

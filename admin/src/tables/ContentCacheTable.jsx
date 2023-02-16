@@ -13,7 +13,7 @@ import Table from '../components/TableComponent';
 
 import Loader from '../components/Loader';
 
-export default function ContentCache() {
+export default function ContentCacheTable() {
 	const { __ } = useI18n();
 	const columnHelper = createColumnHelper();
 	const { ref, inView } = useInView();

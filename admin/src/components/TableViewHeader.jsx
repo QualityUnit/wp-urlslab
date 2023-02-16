@@ -8,7 +8,7 @@ import SimpleButton from '../elements/SimpleButton';
 
 import '../assets/styles/components/_TableViewHeader.scss';
 
-export default function TableViewHeader( { slug, activeMenu } ) {
+export default function TableViewHeader( { tableMenu, slug, activeMenu } ) {
 	const { __ } = useI18n();
 	const [ active, setActive ] = useState( 'overview' );
 	const queryClient = useQueryClient();
@@ -25,7 +25,7 @@ export default function TableViewHeader( { slug, activeMenu } ) {
 	const menuItems = new Map( [
 		[ 'overview', __( 'Overview' ) ],
 		[ 'settings', __( 'Settings' ) ],
-		[ 'importexport', __( 'Import/Export' ) ],
+		// [ 'importexport', __( 'Import/Export' ) ],
 	] );
 
 	const handleMenu = ( menukey ) => {
@@ -46,8 +46,14 @@ export default function TableViewHeader( { slug, activeMenu } ) {
 
 		<div className="urlslab-tableView-header">
 			<div className="urlslab-tableView-headerTop">
+				<SimpleButton key={ 'overview' }
+					className={ activator( 'overview' ) }
+					onClick={ () => handleMenu( 'overview' ) }
+				>
+					{ menuItems.get( 'overview' ) }
+				</SimpleButton>
 				{
-					Array.from( menuItems ).map( ( [ key, value ] ) => {
+					Array.from( tableMenu ).map( ( [ key, value ] ) => {
 						return <SimpleButton key={ key }
 							className={ activator( key ) }
 							onClick={ () => handleMenu( key ) }
@@ -56,6 +62,12 @@ export default function TableViewHeader( { slug, activeMenu } ) {
 						</SimpleButton>;
 					} )
 				}
+				<SimpleButton key={ 'settings' }
+					className={ activator( 'settings' ) }
+					onClick={ () => handleMenu( 'settings' ) }
+				>
+					{ menuItems.get( 'settings' ) }
+				</SimpleButton>
 			</div>
 			<div className="urlslab-tableView-headerBottom">
 				<Button onClick={ () => handleDelete.mutate() }>{ __( 'Delete All' ) }</Button>
