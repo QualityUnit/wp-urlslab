@@ -74,10 +74,10 @@ export default function SettingsOption( { settingId, option } ) {
 						selected={ date }
 						dateFormat="dd. MMMM yyyy, HH:mm"
 						timeFormat="HH:mm"
+						showTimeSelect
 						onChange={ ( newDate ) => {
 							setDate( newDate ); handleDate.mutate( newDate );
 						} }
-						showTimeSelect
 					/>
 				);
 			case 'listbox':
