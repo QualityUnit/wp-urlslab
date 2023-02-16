@@ -396,7 +396,7 @@ class Urlslab {
 	}
 
 	private function init_activated_widgets() {
-		$active_widgets = Urlslab_User_Widget::get_instance()->get_activated_widget();
+		$active_widgets = Urlslab_User_Widget::get_instance()->get_activated_widgets();
 		foreach ( $active_widgets as $active_widget ) {
 			$active_widget->init_widget();
 		}

@@ -9,15 +9,16 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Optimize::SLUG ) ) {
 			return false;
 		}
-		$this->widget = Urlslab_User_Widget::get_instance()->get_activated_widget( Urlslab_Optimize::SLUG );
+		$this->widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Optimize::SLUG );
 
 		if (
 			$this->widget->get_option( Urlslab_Optimize::SETTING_NAME_REMOVE_REVISIONS ) &&
 			strtotime( $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_REMOVE_REVISIONS_NEXT_PROCESSING ) ) <= time()
 		) {
-			if ( $this->optimize_revisions() > 0 ) {
+			$ret = $this->optimize_revisions();
+			if ( is_numeric( $ret ) && $ret > 0 ) {
 				return true;
-			} else {
+			} else if ( 0 === $ret ) {
 				$this->widget->update_option( Urlslab_Optimize::SETTING_NAME_REMOVE_REVISIONS_NEXT_PROCESSING, Urlslab_Data::get_now( time() + 86400 ) );
 			}
 		}
@@ -28,7 +29,7 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 
 	private function optimize_revisions() {
 		global $wpdb;
-		$ttl   = Urlslab_Data::get_now( 86400 * Urlslab_User_Widget::get_instance()->get_activated_widget( Urlslab_Optimize::SLUG )->get_option( Urlslab_Optimize::SETTING_NAME_TTL ) );
+		$ttl   = Urlslab_Data::get_now( time() - 86400 * Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Optimize::SLUG )->get_option( Urlslab_Optimize::SETTING_NAME_TTL ) );
 		$table = $wpdb->prefix . 'posts';
 
 		return $wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE post_type='revision' AND post_modified < %s LIMIT 1000", $ttl ) ); // phpcs:ignore

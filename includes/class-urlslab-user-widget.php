@@ -65,12 +65,17 @@ class Urlslab_User_Widget {
 	 *
 	 * @return Urlslab_Widget[]|Urlslab_Widget
 	 */
-	public function get_activated_widget( string $widget_slug = '' ): array {
-		if ( empty( $widget_slug ) ) {
-			return array_values( $this->activated_widgets );
-		}
+	public function get_activated_widgets(): array {
+		return array_values( $this->activated_widgets );
+	}
 
-		return $this->activated_widgets[ $widget_slug ];
+	/**
+	 * @param string $widget_slug
+	 *
+	 * @return Urlslab_Widget
+	 */
+	public function get_widget( string $widget_slug ): ?Urlslab_Widget {
+		return $this->activated_widgets[ $widget_slug ] ?? null;
 	}
 
 	public function is_widget_activated( string $widget_slug ): bool {
