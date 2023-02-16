@@ -5,6 +5,7 @@ import { useInView } from 'react-intersection-observer';
 import { useI18n } from '@wordpress/react-i18n';
 import { fetchData } from '../api/fetching';
 
+import Checkbox from '../elements/Checkbox';
 import SortMenu from '../elements/SortMenu';
 import Table from '../components/TableComponent';
 
@@ -68,10 +69,17 @@ export default function YouTubeCacheTable() {
 
 	const handleSelected = ( val, cell ) => {
 		cell.row.toggleSelected();
-		console.log( { selected: cell.row.original.kw_id } );
+		console.log( { selected: cell.row.original.videoid } );
 	};
 
 	const columns = [
+		columnHelper.accessor( 'check', {
+			className: 'checkbox',
+			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
+				handleSelected( val, cell );
+			} } />,
+			header: () => __( '' ),
+		} ),
 		columnHelper?.accessor( ( row ) => JSON.parse( `${ row?.microdata }` )?.items[ 0 ]?.snippet, {
 			id: 'thumb',
 			className: 'thumbnail',

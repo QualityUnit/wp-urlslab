@@ -52,8 +52,8 @@ export default function TableViewHeader( { tableMenu, slug, activeMenu } ) {
 				>
 					{ menuItems.get( 'overview' ) }
 				</SimpleButton>
-				{
-					Array.from( tableMenu ).map( ( [ key, value ] ) => {
+				{ tableMenu
+					? Array.from( tableMenu ).map( ( [ key, value ] ) => {
 						return <SimpleButton key={ key }
 							className={ activator( key ) }
 							onClick={ () => handleMenu( key ) }
@@ -61,6 +61,7 @@ export default function TableViewHeader( { tableMenu, slug, activeMenu } ) {
 							{ value }
 						</SimpleButton>;
 					} )
+					: null
 				}
 				<SimpleButton key={ 'settings' }
 					className={ activator( 'settings' ) }

@@ -74,6 +74,13 @@ export default function ContentCacheTable() {
 			} } />,
 			header: () => __( '' ),
 		} ),
+		columnHelper.accessor( 'check', {
+			className: 'checkbox',
+			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
+				handleSelected( val, cell );
+			} } />,
+			header: () => __( '' ),
+		} ),
 		columnHelper.accessor( 'keyword', {
 			header: () => __( 'Keyword' ),
 		} ),

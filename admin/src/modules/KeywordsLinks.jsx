@@ -8,8 +8,13 @@ import TableViewHeader from '../components/TableViewHeader';
 import KeywordsTable from '../tables/KeywordsTable';
 
 export default function KeywordLinks( { moduleId } ) {
+	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 	const slug = 'keyword';
+
+	const tableMenu = new Map( [
+		[ 'keyword', __( 'Keywords Table' ) ],
+	] );
 
 	// persistQueryClient( {
 	// 	queryClient,
@@ -21,9 +26,9 @@ export default function KeywordLinks( { moduleId } ) {
 
 	return (
 		<div className="urlslab-tableView">
-			<TableViewHeader slug={ slug } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+			<TableViewHeader tableMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{
-				activeSection === 'overview' &&
+				activeSection === 'keyword' &&
 				<KeywordsTable />
 			}
 			{
