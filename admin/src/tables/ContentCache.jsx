@@ -4,7 +4,6 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { useInView } from 'react-intersection-observer';
 import { useI18n } from '@wordpress/react-i18n';
 import { fetchData } from '../api/fetching';
-import { langName } from '../constants/helpers';
 
 import SortMenu from '../elements/SortMenu';
 import LangMenu from '../elements/LangMenu';
@@ -14,17 +13,11 @@ import Table from '../components/TableComponent';
 
 import Loader from '../components/Loader';
 
-export default function KeywordsTable() {
+export default function ContentCache() {
 	const { __ } = useI18n();
 	const columnHelper = createColumnHelper();
 	const { ref, inView } = useInView();
 	const maxRows = 50;
-
-	const keywordTypes = {
-		M: __( 'Manual' ),
-		I: __( 'Imported' ),
-		X: __( 'None' ),
-	};
 
 	const {
 		data,
@@ -34,9 +27,9 @@ export default function KeywordsTable() {
 		fetchNextPage,
 		hasNextPage,
 	} = useInfiniteQuery( {
-		queryKey: [ 'keyword' ],
+		queryKey: [ 'content-cache' ],
 		queryFn: ( { pageParam = 0 } ) => {
-			return fetchData( `keyword?from_kw_id=${ pageParam }&rows_per_page=${ maxRows }` );
+			return fetchData( `content-cache?from_kw_id=${ pageParam }&rows_per_page=${ maxRows }` );
 		},
 		getNextPageParam: ( allRows ) => {
 			if ( allRows.length < maxRows ) {

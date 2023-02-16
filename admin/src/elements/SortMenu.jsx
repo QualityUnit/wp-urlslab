@@ -21,7 +21,6 @@ export default function SortMenu( {
 			}
 		};
 		if ( onChange && didMountRef.current && ! isActive ) {
-			console.log( checked );
 			onChange( checked );
 		}
 		didMountRef.current = true;

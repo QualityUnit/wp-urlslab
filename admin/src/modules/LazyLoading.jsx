@@ -1,7 +1,7 @@
 import { useState, Suspense, lazy } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import TableViewHeader from '../components/TableViewHeader';
-import YouTubeTable from '../tables/YouTubeTable';
+import YouTubeCacheTable from '../tables/YouTubeCacheTable';
 
 export default function LazyLoading( { moduleId } ) {
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
@@ -14,7 +14,7 @@ export default function LazyLoading( { moduleId } ) {
 			<TableViewHeader activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{
 				activeSection === 'overview' &&
-				<YouTubeTable />
+				<YouTubeCacheTable />
 			}
 			{
 				activeSection === 'settings' &&

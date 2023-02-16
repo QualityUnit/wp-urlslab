@@ -6,18 +6,22 @@ import { useI18n } from '@wordpress/react-i18n';
 import { fetchData } from '../api/fetching';
 
 import SortMenu from '../elements/SortMenu';
-import LangMenu from '../elements/LangMenu';
-import InputField from '../elements/InputField';
-import Checkbox from '../elements/Checkbox';
 import Table from '../components/TableComponent';
 
 import Loader from '../components/Loader';
 
-export default function YouTubeTable() {
+export default function YouTubeCacheTable() {
 	const { __ } = useI18n();
 	const columnHelper = createColumnHelper();
 	const { ref, inView } = useInView();
 	const maxRows = 30;
+
+	const statusTypes = {
+		N: __( 'New' ),
+		A: __( 'Available' ),
+		P: __( 'Processing' ),
+		D: __( 'Disabled' ),
+	};
 
 	const {
 		data,
@@ -79,7 +83,11 @@ export default function YouTubeTable() {
 			header: () => __( 'YouTube Id' ),
 		} ),
 		columnHelper?.accessor( 'status', {
-			cell: ( stat ) => <span className={ `youtube-status-bullet youtube-status-bullet-${ stat?.getValue() }` }>{ stat.getValue() }</span>,
+			cell: ( cell ) => <SortMenu
+				items={ statusTypes }
+				name={ cell.column.id }
+				checkedId={ cell.getValue() }
+				onChange={ ( val ) => handleInput( val, cell ) } />,
 			className: 'youtube-status',
 			header: () => __( 'Status' ),
 		} ),
