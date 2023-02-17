@@ -1,5 +1,5 @@
 import { langName } from '../constants/helpers';
-const langPairs = {};
+const langPairs = { all: 'All' };
 
 export async function fetchWPML( ) {
 	try {

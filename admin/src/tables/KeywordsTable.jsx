@@ -1,29 +1,18 @@
 import { useEffect } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { createColumnHelper } from '@tanstack/react-table';
+
 import { useInView } from 'react-intersection-observer';
-import { useI18n } from '@wordpress/react-i18n';
 import { fetchData } from '../api/fetching';
 
-import SortMenu from '../elements/SortMenu';
-import LangMenu from '../elements/LangMenu';
-import InputField from '../elements/InputField';
-import Checkbox from '../elements/Checkbox';
+import Columns from './tableColumns/KeywordsTable';
 import Table from '../components/TableComponent';
+import ImportExport from '../components/ImportExport';
 
 import Loader from '../components/Loader';
 
-export default function KeywordsTable() {
-	const { __ } = useI18n();
-	const columnHelper = createColumnHelper();
+export default function KeywordsTable( { slug } ) {
 	const { ref, inView } = useInView();
 	const maxRows = 50;
-
-	const keywordTypes = {
-		M: __( 'Manual' ),
-		I: __( 'Imported' ),
-		X: __( 'None' ),
-	};
 
 	const {
 		data,
@@ -31,11 +20,10 @@ export default function KeywordsTable() {
 		isSuccess,
 		isFetchingNextPage,
 		fetchNextPage,
-		hasNextPage,
 	} = useInfiniteQuery( {
-		queryKey: [ 'keyword' ],
+		queryKey: [ slug ],
 		queryFn: ( { pageParam = 0 } ) => {
-			return fetchData( `keyword?from_kw_id=${ pageParam }&rows_per_page=${ maxRows }` );
+			return fetchData( `${ slug }?from_kw_id=${ pageParam }&rows_per_page=${ maxRows }` );
 		},
 		getNextPageParam: ( allRows ) => {
 			if ( allRows.length < maxRows ) {
@@ -61,81 +49,27 @@ export default function KeywordsTable() {
 		return <Loader />;
 	}
 
-	const handleInput = ( value, cell ) => {
-		const newRow = cell.row.original;
-		newRow[ cell.column.id ] = value;
-		console.log( newRow );
-	};
-
-	const handleSelected = ( val, cell ) => {
-		cell.row.toggleSelected();
-		console.log( { selected: cell.row.original.kw_id } );
-	};
-
-	const columns = [
-		columnHelper.accessor( 'check', {
-			className: 'checkbox',
-			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
-				handleSelected( val, cell );
-			} } />,
-			header: () => __( '' ),
-		} ),
-		columnHelper.accessor( 'keyword', {
-			header: () => __( 'Keyword' ),
-		} ),
-		columnHelper.accessor( 'kwType', {
-			cell: ( cell ) => <SortMenu
-				items={ keywordTypes }
-				name={ cell.column.id }
-				checkedId={ cell.getValue() }
-				onChange={ ( val ) => handleInput( val, cell ) }
-			/>,
-			header: () => __( 'Keyword Type' ),
-		} ),
-		columnHelper.accessor( 'kw_length', {
-			header: () => __( 'Keyword Length' ),
-		} ),
-		columnHelper.accessor( 'kw_priority', {
-			header: () => __( 'Keyword Priority' ),
-		} ),
-		columnHelper.accessor( 'kw_usage_count', {
-			header: () => __( 'Keyword Usage' ),
-		} ),
-		columnHelper.accessor( 'lang', {
-			cell: ( val ) => <LangMenu checkedId={ val?.getValue() } onChange={ ( lang ) => console.log( lang ) } />,
-			header: () => __( 'Language' ),
-		} ),
-		columnHelper.accessor( 'link_usage_count', {
-			header: () => __( 'Link Usage' ),
-		} ),
-		columnHelper.accessor( 'urlFilter', {
-			cell: ( cell ) => <InputField type="text"
-				defaultValue={ cell.getValue() }
-				onChange={ ( val ) => handleInput( val, cell ) }
-			/>,
-			header: () => __( 'URL Filter' ),
-		} ),
-		columnHelper.accessor( 'urlLink', {
-			header: () => __( 'Keyword Link' ),
-		} ),
-	];
 	return (
-		<Table className="fadeInto" columns={ columns }
-			data={
-				isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
-			}
-		>
-			<button
-				ref={ ref }
-				onClick={ () => fetchNextPage() }
-				disabled={ ! hasNextPage || isFetchingNextPage }
+		<>
+			<ImportExport
+				importOptions={ {
+					url: slug,
+				} }
+				exportOptions={ {
+					url: slug,
+					fromId: 'from_kw_id',
+					pageId: 'kw_id',
+					deleteCSVCols: [ 'kw_id', 'destUrlMd5' ],
+				} } />
+			<Table className="fadeInto"
+				slug={ slug }
+				columns={ Columns() }
+				data={
+					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
+				}
 			>
-				{ isFetchingNextPage
-					? 'Loading more...'
-					: hasNextPage
-						? 'Load Newer'
-						: '' }
-			</button>
-		</Table>
+				<div ref={ ref }>{ isFetchingNextPage && 'Loading more...' }</div>
+			</Table>
+		</>
 	);
 }

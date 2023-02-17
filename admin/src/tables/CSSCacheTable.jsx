@@ -1,28 +1,16 @@
 import { useEffect } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { createColumnHelper } from '@tanstack/react-table';
 import { useInView } from 'react-intersection-observer';
-import { useI18n } from '@wordpress/react-i18n';
 import { fetchData } from '../api/fetching';
 
-import Checkbox from '../elements/Checkbox';
-import SortMenu from '../elements/SortMenu';
+import Columns from './tableColumns/CSSCacheTable';
 import Table from '../components/TableComponent';
 
 import Loader from '../components/Loader';
 
 export default function CSSCacheTable() {
-	const { __ } = useI18n();
-	const columnHelper = createColumnHelper();
 	const { ref, inView } = useInView();
 	const maxRows = 50;
-
-	const statusTypes = {
-		N: __( 'New' ),
-		A: __( 'Available' ),
-		P: __( 'Processing' ),
-		D: __( 'Disabled' ),
-	};
 
 	const {
 		data,
@@ -30,7 +18,6 @@ export default function CSSCacheTable() {
 		isSuccess,
 		isFetchingNextPage,
 		fetchNextPage,
-		hasNextPage,
 	} = useInfiniteQuery( {
 		queryKey: [ 'css-cache' ],
 		queryFn: ( { pageParam = 0 } ) => {
@@ -60,65 +47,13 @@ export default function CSSCacheTable() {
 		return <Loader />;
 	}
 
-	const handleInput = ( value, cell ) => {
-		const newRow = cell.row.original;
-		newRow[ cell.column.id ] = value;
-		console.log( newRow );
-	};
-
-	const handleSelected = ( val, cell ) => {
-		cell.row.toggleSelected();
-		console.log( { selected: cell.row.original.url_id } );
-	};
-
-	const columns = [
-		columnHelper.accessor( 'check', {
-			className: 'checkbox',
-			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
-				handleSelected( val, cell );
-			} } />,
-			header: () => __( '' ),
-		} ),
-		columnHelper?.accessor( 'url_id', {
-			header: () => __( 'URL Id' ),
-		} ),
-		columnHelper?.accessor( 'status', {
-			cell: ( cell ) => <SortMenu
-				items={ statusTypes }
-				name={ cell.column.id }
-				checkedId={ cell.getValue() }
-				onChange={ ( val ) => handleInput( val, cell ) } />,
-			className: 'youtube-status',
-			header: () => __( 'Status' ),
-		} ),
-		columnHelper?.accessor( 'filesize', {
-			header: () => __( 'Filesize' ),
-		} ),
-		columnHelper?.accessor( 'status_changed', {
-			header: () => __( 'Status changed' ),
-		} ),
-		columnHelper?.accessor( 'url', {
-			header: () => __( 'URL' ),
-		} ),
-
-	];
 	return (
-		<Table className="fadeInto" columns={ columns }
+		<Table className="fadeInto" columns={ Columns() }
 			data={
 				isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 			}
 		>
-			<button
-				ref={ ref }
-				onClick={ () => fetchNextPage() }
-				disabled={ ! hasNextPage || isFetchingNextPage }
-			>
-				{ isFetchingNextPage
-					? 'Loading more...'
-					: hasNextPage
-						? 'Load Newer'
-						: '' }
-			</button>
+			<div ref={ ref }>{ isFetchingNextPage && 'Loading more...' }</div>
 		</Table>
 	);
 }

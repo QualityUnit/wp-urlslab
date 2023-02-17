@@ -1,18 +1,14 @@
 import { useEffect } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { createColumnHelper } from '@tanstack/react-table';
 import { useInView } from 'react-intersection-observer';
-import { useI18n } from '@wordpress/react-i18n';
 import { fetchData } from '../api/fetching';
 
-import Checkbox from '../elements/Checkbox';
+import Columns from './tableColumns/URLRelationTable';
 import Table from '../components/TableComponent';
 
 import Loader from '../components/Loader';
 
 export default function URLRelationTable() {
-	const { __ } = useI18n();
-	const columnHelper = createColumnHelper();
 	const { ref, inView } = useInView();
 	const maxRows = 50;
 
@@ -22,7 +18,6 @@ export default function URLRelationTable() {
 		isSuccess,
 		isFetchingNextPage,
 		fetchNextPage,
-		hasNextPage,
 	} = useInfiniteQuery( {
 		queryKey: [ 'url-relation' ],
 		queryFn: ( { pageParam = 0 } ) => {
@@ -52,52 +47,13 @@ export default function URLRelationTable() {
 		return <Loader />;
 	}
 
-	const handleInput = ( value, cell ) => {
-		const newRow = cell.row.original;
-		newRow[ cell.column.id ] = value;
-		console.log( newRow );
-	};
-
-	const handleSelected = ( val, cell ) => {
-		cell.row.toggleSelected();
-		console.log( { selected: cell.row.original.srcUrlMd5 } );
-	};
-
-	const columns = [
-		columnHelper.accessor( 'check', {
-			className: 'checkbox',
-			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
-				handleSelected( val, cell );
-			} } />,
-			header: () => __( '' ),
-		} ),
-		columnHelper.accessor( 'srcUrlName', {
-			header: () => __( 'Source URL Name' ),
-		} ),
-		columnHelper.accessor( 'pos', {
-			header: () => __( 'Position' ),
-		} ),
-		columnHelper.accessor( 'destUrlName', {
-			header: () => __( 'Destination URL Name' ),
-		} ),
-	];
 	return (
-		<Table className="fadeInto" columns={ columns }
+		<Table className="fadeInto" columns={ Columns() }
 			data={
 				isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 			}
 		>
-			<button
-				ref={ ref }
-				onClick={ () => fetchNextPage() }
-				disabled={ ! hasNextPage || isFetchingNextPage }
-			>
-				{ isFetchingNextPage
-					? 'Loading more...'
-					: hasNextPage
-						? 'Load Newer'
-						: '' }
-			</button>
+			<div ref={ ref }>{ isFetchingNextPage && 'Loading more...' }</div>
 		</Table>
 	);
 }
