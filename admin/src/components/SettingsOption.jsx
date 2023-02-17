@@ -69,16 +69,19 @@ export default function SettingsOption( { settingId, option } ) {
 				);
 			case 'datetime':
 				return (
-					<DatePicker
-						className="urlslab-input xl"
-						selected={ date }
-						dateFormat="dd. MMMM yyyy, HH:mm"
-						timeFormat="HH:mm"
-						showTimeSelect
-						onChange={ ( newDate ) => {
-							setDate( newDate ); handleDate.mutate( newDate );
-						} }
-					/>
+					<div className="urlslab-inputField-datetime">
+						<div className="urlslab-inputField-label">{ title }</div>
+						<DatePicker
+							className="urlslab-input xl"
+							selected={ date }
+							dateFormat="dd. MMMM yyyy, HH:mm"
+							timeFormat="HH:mm"
+							showTimeSelect
+							onChange={ ( newDate ) => {
+								setDate( newDate ); handleDate.mutate( newDate );
+							} }
+						/>
+					</div>
 				);
 			case 'listbox':
 				return (
@@ -92,6 +95,7 @@ export default function SettingsOption( { settingId, option } ) {
 						items={ possible_values }
 						checkedItems={ value }
 						id={ id }
+						asTags
 						onChange={ ( selectedItems ) => handleChange.mutate( selectedItems ) }>
 						{ title }
 					</FilterMenu>
