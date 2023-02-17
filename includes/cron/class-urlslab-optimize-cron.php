@@ -59,6 +59,18 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 			}
 		}
 
+		if (
+			$this->widget->get_option( Urlslab_Optimize::SETTING_NAME_DEL_ORPHANED_RELATIONSHIP_DATA ) &&
+			strtotime( $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_ORPHANED_RELATIONSHIP_DATA_NEXT_PROCESSING ) ) <= time()
+		) {
+			$ret = $this->optimize_orphaned_rel_data();
+			if ( is_numeric( $ret ) && $ret > 0 ) {
+				return true;
+			} else if ( 0 === $ret ) {
+				$this->extend_timestamp_option( Urlslab_Optimize::SETTING_NAME_ORPHANED_RELATIONSHIP_DATA_NEXT_PROCESSING );
+			}
+		}
+
 		return false;
 	}
 
@@ -106,5 +118,13 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 		$table = $wpdb->prefix . 'options';
 
 		return $wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE option_name LIKE '%_transient_timeout_%' LIMIT 1000" ) ); // phpcs:ignore
+	}
+
+	private function optimize_orphaned_rel_data() {
+		global $wpdb;
+		$table       = $wpdb->prefix . 'term_relationships';
+		$table_posts = $wpdb->prefix . 'posts';
+
+		return $wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE term_taxonomy_id=1 AND object_id NOT IN (SELECT id FROM $table_posts) LIMIT 1000" ) ); // phpcs:ignore
 	}
 }
