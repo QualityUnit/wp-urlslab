@@ -95,6 +95,7 @@ export default function SettingsOption( { settingId, option } ) {
 						items={ possible_values }
 						checkedItems={ value }
 						id={ id }
+						asTags
 						onChange={ ( selectedItems ) => handleChange.mutate( selectedItems ) }>
 						{ title }
 					</FilterMenu>

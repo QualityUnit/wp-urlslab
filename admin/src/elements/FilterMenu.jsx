@@ -6,7 +6,7 @@ import Checkbox from './Checkbox';
 import '../assets/styles/elements/_FilterMenu.scss';
 
 export default function FilterMenu( {
-	id, className, style, children, items, checkedItems, onChange } ) {
+	id, className, asTags, style, children, items, checkedItems, onChange } ) {
 	const { __ } = useI18n();
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
@@ -59,7 +59,11 @@ export default function FilterMenu( {
 				role="button"
 				tabIndex={ 0 }
 			>
-				{ `${ checked.length } ${ __( 'items selected' ) }` }
+
+				{ asTags //if has asTags prop, shows selected items in menu title instead of counter
+					? checked.toString().replaceAll( ',', ', ' )
+					: `${ checked.length } ${ __( 'items selected' ) }`
+				}
 			</div>
 			<div className={ `urlslab-FilterMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
 				<div className={ `urlslab-FilterMenu__items--inn ${ items.length > 8 ? 'has-scrollbar' : '' }` }>

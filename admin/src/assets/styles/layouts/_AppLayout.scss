@@ -30,13 +30,11 @@
 
 // Moves our app padding
 #wpcontent,
+#wpbody,
 #wpbody-content {
-	padding: 0 !important;
-}
 
-#wpbody-content {
-	min-height: 100%;
-	height: auto;
-	position: relative;
+	// @include square(100%);
+	// position: absolute;
+	padding: 0 !important;
 	float: none;
 }
