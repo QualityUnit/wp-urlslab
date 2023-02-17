@@ -10,6 +10,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 	private string $landing_page_link;
 
 
+	const SETTING_NAME_OPTIMIZATION_FREQUENCY = 'urlslab-del-freq';
 	const SETTING_NAME_DEL_REVISIONS = 'urlslab-del-revisions';
 	const SETTING_NAME_REVISIONS_NEXT_PROCESSING = 'urlslab-del-revisions-sleep';
 	const SETTING_NAME_REVISION_TTL = 'urlslab-revisions-ttl';
@@ -24,6 +25,8 @@ class Urlslab_Optimize extends Urlslab_Widget {
 
 	const SETTING_NAME_DEL_TRANSIENT_EXPIRED = 'urlslab-del-exp-transient';
 	const SETTING_NAME_TRANSIENT_EXPIRED_NEXT_PROCESSING = 'urlslab-del-exp-transient-sleep';
+	const SETTING_NAME_DEL_ORPHANED_RELATIONSHIP_DATA = 'urlslab-del-orph-rels';
+	const SETTING_NAME_ORPHANED_RELATIONSHIP_DATA_NEXT_PROCESSING = 'urlslab-del-orph-rels-sleep';
 
 
 	/**
@@ -94,6 +97,24 @@ class Urlslab_Optimize extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
+		$this->add_option_definition(
+			self::SETTING_NAME_OPTIMIZATION_FREQUENCY,
+			604800,
+			false,
+			__( 'Optimization Frequency' ),
+			__( 'Specify period how often should be executed active optimizations.' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				86400   => __( 'Dayly' ),
+				604800  => __( 'Weekly' ),
+				2419200 => __( 'Monthly' ),
+				7257600 => __( 'Quarterly' ),
+			),
+			function( $value ) {
+				return is_numeric( $value ) && 0 < $value;
+			},
+		);
+
 		$this->add_options_form_section( 'revisions', __( 'Cleanup post revisions' ), __( 'WordPress revisions automatically record any changes you make to pages or posts on your WP website. A new copy of a page is created every 60 seconds by default, as well as every time you click on the Save Draft, Publish, or Update buttons. Wordpress database can grow over time thanks to revisions of posts kept in the database.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DEL_REVISIONS,
@@ -124,7 +145,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			Urlslab_Data::get_now(),
 			false,
 			__( 'Next planned cleanup of revisions' ),
-			__( 'Next cleanup of old revisions will be start at this time. If you need to do it sooner or later, just change this date time. This value is automatically extended after cleanup by 24 hours.' ),
+			__( 'Next cleanup starts at selected time. If you need to do it sooner or later, just change this date time. This value is automatically extended after cleanup by defined frequency.' ),
 			self::OPTION_TYPE_DATETIME,
 			false,
 			null,
@@ -161,7 +182,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			Urlslab_Data::get_now(),
 			false,
 			__( 'Next planned cleanup of auto-drafts' ),
-			__( 'Next cleanup of old auto-drafts starts at selected time. If you need to do it sooner or later, just change this date time. This value is automatically extended after cleanup by 24 hours.' ),
+			__( 'Next cleanup starts at selected time. If you need to do it sooner or later, just change this date time. This value is automatically extended after cleanup by defined frequency.' ),
 			self::OPTION_TYPE_DATETIME,
 			false,
 			null,
@@ -198,7 +219,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			Urlslab_Data::get_now(),
 			false,
 			__( 'Next planned cleanup of trashed posts' ),
-			__( 'Next cleanup of old trashed content starts at selected time. If you need to do it sooner or later, just change this date time. This value is automatically extended after cleanup by 24 hours.' ),
+			__( 'Next cleanup starts at selected time. If you need to do it sooner or later, just change this date time. This value is automatically extended after cleanup by defined frequency.' ),
 			self::OPTION_TYPE_DATETIME,
 			false,
 			null,
@@ -223,11 +244,35 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			Urlslab_Data::get_now(),
 			false,
 			__( 'Next planned cleanup of expired transients' ),
-			__( 'Next cleanup starts at selected time. If you need to do it sooner or later, just change this date time. This value is automatically extended after cleanup by 24 hours.' ),
+			__( 'Next cleanup starts at selected time. If you need to do it sooner or later, just change this date time. This value is automatically extended after cleanup by defined frequency.' ),
 			self::OPTION_TYPE_DATETIME,
 			false,
 			null,
 			'exp-transient'
+		);
+
+		$this->add_options_form_section( 'orphaned-rel-data', __( 'Cleanup orphaned relationship data' ), __( 'In some installations of Wordpress term_relationships table becomes bloated with many orphaned relationships. This happens particularly often if you are using your site not as a blog but as some other type of content site where posts are deleted periodically. Over time, you could get thousands of term relationships for posts that no longer exist which consumes a lot of database space.' ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_DEL_ORPHANED_RELATIONSHIP_DATA,
+			false,
+			false,
+			__( 'Clean orphaned relationship data' ),
+			__( 'By activating this feature we will automatically delete all orphaned relationship data.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'orphaned-rel-data'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_ORPHANED_RELATIONSHIP_DATA_NEXT_PROCESSING,
+			Urlslab_Data::get_now(),
+			false,
+			__( 'Next planned cleanup of orphaned relationship data' ),
+			__( 'Next cleanup starts at selected time. If you need to do it sooner or later, just change this date time. This value is automatically extended after cleanup by defined frequency.' ),
+			self::OPTION_TYPE_DATETIME,
+			false,
+			null,
+			'orphaned-rel-data'
 		);
 
 	}
