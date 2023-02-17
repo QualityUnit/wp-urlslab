@@ -4,11 +4,17 @@ import {
 	getCoreRowModel,
 	useReactTable } from '@tanstack/react-table';
 
+import { useQueryClient, useMutation } from '@tanstack/react-query';
+import { deleteAll } from '../api/deleteTableData';
+
 import { useVirtual } from 'react-virtual';
+
+import Button from '../elements/Button';
 
 import '../assets/styles/components/_TableComponent.scss';
 
-export default function Table( { children, className, columns, data } ) {
+export default function Table( { slug, children, className, columns, data } ) {
+	const queryClient = useQueryClient();
 	const [ rowSelection, setRowSelection ] = useState( {} );
 	const tableContainerRef = useRef();
 	const table = useReactTable( {
@@ -25,6 +31,15 @@ export default function Table( { children, className, columns, data } ) {
 		onRowSelectionChange: setRowSelection,
 		getCoreRowModel: getCoreRowModel(),
 	}, );
+
+	const handleDelete = useMutation( {
+		mutationFn: () => {
+			return deleteAll( slug );
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries( [ slug ] );
+		},
+	} );
 
 	const tbody = [];
 
@@ -65,43 +80,48 @@ export default function Table( { children, className, columns, data } ) {
 	}
 
 	return (
-		<div className="urlslab-table-container" ref={ tableContainerRef }>
-			<table className={ `urlslab-table ${ className }` }>
-				<thead className="urlslab-table-head">
-					{ table.getHeaderGroups().map( ( headerGroup ) => (
-						<tr key={ headerGroup.id }>
-							{ headerGroup.headers.map( ( header ) => (
-								<th key={ header.id }
-									style={ {
-										width: header.getSize() !== 0 ? header.getSize() : undefined,
-									} }
-								>
-									{ header.isPlaceholder
-										? null
-										: flexRender(
-											header.column.columnDef.header,
-											header.getContext()
-										) }
-								</th>
-							) ) }
-						</tr>
-					) ) }
-				</thead>
-				<tbody className="urlslab-table-body" >
-					{ paddingTop > 0 && (
-						<tr>
-							<td style={ { height: `${ paddingTop }px` } } />
-						</tr>
-					) }
-					{ tbody }
-					{ paddingBottom > 0 && (
-						<tr>
-							<td style={ { height: `${ paddingBottom }px` } } />
-						</tr>
-					) }
-				</tbody>
-			</table>
-			{ children }
-		</div>
+		<>
+			<div className="urlslab-tableView-headerBottom">
+				<Button onClick={ () => handleDelete.mutate() }>Delete All</Button>
+			</div>
+			<div className="urlslab-table-container" ref={ tableContainerRef }>
+				<table className={ `urlslab-table ${ className }` }>
+					<thead className="urlslab-table-head">
+						{ table.getHeaderGroups().map( ( headerGroup ) => (
+							<tr key={ headerGroup.id }>
+								{ headerGroup.headers.map( ( header ) => (
+									<th key={ header.id }
+										style={ {
+											width: header.getSize() !== 0 ? header.getSize() : undefined,
+										} }
+									>
+										{ header.isPlaceholder
+											? null
+											: flexRender(
+												header.column.columnDef.header,
+												header.getContext()
+											) }
+									</th>
+								) ) }
+							</tr>
+						) ) }
+					</thead>
+					<tbody className="urlslab-table-body" >
+						{ paddingTop > 0 && (
+							<tr>
+								<td style={ { height: `${ paddingTop }px` } } />
+							</tr>
+						) }
+						{ tbody }
+						{ paddingBottom > 0 && (
+							<tr>
+								<td style={ { height: `${ paddingBottom }px` } } />
+							</tr>
+						) }
+					</tbody>
+				</table>
+				{ children }
+			</div>
+		</>
 	);
 }

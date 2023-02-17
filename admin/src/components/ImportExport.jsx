@@ -11,61 +11,49 @@ export default function ImportExport( { children, importOptions, exportOptions }
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const { CSVReader } = useCSVReader();
-	// const importLocal = ( parsedData ) => {
-	// 	// console.log( queryClient.getQueryData( [ 'tableKeyword' ] ) );
-	// 	// console.log( parsedData );
-	// 	setCSVMessage( __( 'Processing data…' ) );
-	// 	queryClient.setQueryData( [ 'tableKeyword' ], parsedData );
-	// 	setCSVMessage( null );
-	// };
 
 	const importData = useMutation( {
 		mutationFn: ( results ) => {
-			queryClient.setQueryData( [ importOptions.url ], results.data );
-			return importCsv( `${ importOptions.url }/import`, results.data ).then( ( res ) => console.log( res ) );
+			return importCsv( `${ importOptions.url }/import`, results.data );
 		},
-		onSettled: () => {
+		onSuccess: () => {
 			queryClient.invalidateQueries( [ importOptions.url ] );
 		},
 	} );
 
 	return (
-		<div className="urlslab-importexport-wrap flex fadeInto">
-			<div className="urlslab-importexport">
-				<div className="urlslab-importexport-import urlslab-panel">
+		<div className="urlslab-importexport-wrap flex">
+			{ /* <ImportCSVButton options={ importOptions } onClick={ ( data ) => console.log( data ) } /> */ }
+			<CSVReader
+				onUploadAccepted={ ( results ) => {
+					importData.mutate( results );
+				} }
+				config={ {
+					header: true,
+				} }
+			>
+				{ ( {
+					getRootProps,
+					acceptedFile,
+					getRemoveFileProps,
+				} ) => (
+					<>
+						<div>
+							<Button className="active" { ...getRootProps() }>
+								{ __( 'Import CSV' ) }
+							</Button>
+							<div>
+								{ acceptedFile && acceptedFile.name }
+							</div>
+						</div>
+					</>
+				) }
+			</CSVReader>
 
-					{ /* <ImportCSVButton options={ importOptions } onClick={ ( data ) => console.log( data ) } /> */ }
-					<CSVReader
-						onUploadAccepted={ ( results ) => {
-							importData.mutate( results );
-						} }
-						config={ {
-							header: true,
-						} }
-					>
-						{ ( {
-							getRootProps,
-							acceptedFile,
-							getRemoveFileProps,
-						} ) => (
-							<>
-								<div>
-									<Button className="active" { ...getRootProps() }>
-										{ __( 'Import CSV' ) }
-									</Button>
-									<div>
-										{ acceptedFile && acceptedFile.name }
-									</div>
-								</div>
-							</>
-						) }
-					</CSVReader>
-				</div>
-				<div className="urlslab-importexport-export urlslab-panel">
-
-					<ExportCSVButton options={ exportOptions } onClick={ ( data ) => console.log( data ) } />
-				</div>
-			</div>
+			<ExportCSVButton options={ exportOptions } onClick={ ( data ) => console.log( data ) } />
+			{
+				queryClient.isMutating() && <h2>Importing</h2>
+			}
 		</div>
 	);
 }
