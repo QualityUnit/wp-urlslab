@@ -10,6 +10,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 	private string $landing_page_link;
 
 
+	const SETTING_NAME_OPTIMIZATION_FREQUENCY = 'urlslab-del-freq';
 	const SETTING_NAME_DEL_REVISIONS = 'urlslab-del-revisions';
 	const SETTING_NAME_REVISIONS_NEXT_PROCESSING = 'urlslab-del-revisions-sleep';
 	const SETTING_NAME_REVISION_TTL = 'urlslab-revisions-ttl';
@@ -94,6 +95,24 @@ class Urlslab_Optimize extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
+		$this->add_option_definition(
+			self::SETTING_NAME_OPTIMIZATION_FREQUENCY,
+			604800,
+			false,
+			__( 'Optimization Frequency' ),
+			__( 'Specify period how often should be executed active optimizations.' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				86400   => __( 'Dayly' ),
+				604800  => __( 'Weekly' ),
+				2419200 => __( 'Monthly' ),
+				7257600 => __( 'Quarterly' ),
+			),
+			function( $value ) {
+				return is_numeric( $value ) && 0 < $value;
+			},
+		);
+
 		$this->add_options_form_section( 'revisions', __( 'Cleanup post revisions' ), __( 'WordPress revisions automatically record any changes you make to pages or posts on your WP website. A new copy of a page is created every 60 seconds by default, as well as every time you click on the Save Draft, Publish, or Update buttons. Wordpress database can grow over time thanks to revisions of posts kept in the database.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DEL_REVISIONS,
