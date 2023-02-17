@@ -23,6 +23,8 @@ class Urlslab_Optimize extends Urlslab_Widget {
 	const SETTING_NAME_TRASHED_NEXT_PROCESSING = 'urlslab-del-trashed-sleep';
 	const SETTING_NAME_TRASHED_TTL = 'urlslab-trashed-ttl';
 
+	const SETTING_NAME_DEL_ALL_TRANSIENT = 'urlslab-del-all-transient';
+	const SETTING_NAME_ALL_TRANSIENT_NEXT_PROCESSING = 'urlslab-del-all-transient-sleep';
 	const SETTING_NAME_DEL_TRANSIENT_EXPIRED = 'urlslab-del-exp-transient';
 	const SETTING_NAME_TRANSIENT_EXPIRED_NEXT_PROCESSING = 'urlslab-del-exp-transient-sleep';
 	const SETTING_NAME_DEL_ORPHANED_RELATIONSHIP_DATA = 'urlslab-del-orph-rels';
@@ -115,7 +117,8 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			},
 		);
 
-		$this->add_options_form_section( 'revisions', __( 'Cleanup post revisions' ), __( 'WordPress revisions automatically record any changes you make to pages or posts on your WP website. A new copy of a page is created every 60 seconds by default, as well as every time you click on the Save Draft, Publish, or Update buttons. Wordpress database can grow over time thanks to revisions of posts kept in the database.' ) );
+
+		$this->add_options_form_section( 'revisions', __( 'Post revisions' ), __( 'WordPress revisions automatically record any changes you make to pages or posts on your WP website. A new copy of a page is created every 60 seconds by default, as well as every time you click on the Save Draft, Publish, or Update buttons. Wordpress database can grow over time thanks to revisions of posts kept in the database.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DEL_REVISIONS,
 			false,
@@ -152,7 +155,8 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			'revisions'
 		);
 
-		$this->add_options_form_section( 'auto-drafts', __( 'Cleanup auto-draft posts' ), __( 'WordPress automatically saves your post (or page) while you are editing it. This is called auto-draft. If you do not hit the publish/update button, then the post/page will be saved as auto-draft and any modification to your post/page will not be visible in your public site. It is vise to delete not needed auto-drafts after some time if you do not plan to publish old drafts' ) );
+
+		$this->add_options_form_section( 'auto-drafts', __( 'Auto-draft posts' ), __( 'WordPress automatically saves your post (or page) while you are editing it. This is called auto-draft. If you do not hit the publish/update button, then the post/page will be saved as auto-draft and any modification to your post/page will not be visible in your public site. It is vise to delete not needed auto-drafts after some time if you do not plan to publish old drafts' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DEL_AUTODRAFTS,
 			false,
@@ -189,7 +193,8 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			'auto-drafts'
 		);
 
-		$this->add_options_form_section( 'trashed', __( 'Cleanup trashed posts' ), __( 'In WordPress, trash is the location where deleted posts, pages and comments are stored temporarily. It is similar to the recycle bin or trash on your computer. If you deleted an item accidentally, then you can easily recover it from the trash. It is wise to deelte trash after some time to keep database optimized.' ) );
+
+		$this->add_options_form_section( 'trashed', __( 'Trashed posts' ), __( 'In WordPress, trash is the location where deleted posts, pages and comments are stored temporarily. It is similar to the recycle bin or trash on your computer. If you deleted an item accidentally, then you can easily recover it from the trash. It is wise to deelte trash after some time to keep database optimized.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DEL_TRASHED,
 			false,
@@ -227,17 +232,40 @@ class Urlslab_Optimize extends Urlslab_Widget {
 		);
 
 
-		$this->add_options_form_section( 'exp-transient', __( 'Cleanup expired transient options' ), __( 'In WordPress, transients are a particular way of caching data for a certain period of time. Instead of storing data in the object cache, transient data in WordPress is stored only temporarily, with the hopes that it will be updated occasionally.' ) );
+		$this->add_options_form_section( 'transient', __( 'Transient options' ), __( 'In WordPress, transients are a particular way of caching data for a certain period of time. Instead of storing data in the object cache, transient data in WordPress is stored only temporarily, with the hopes that it will be updated or deleted occasionally.' ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_DEL_ALL_TRANSIENT,
+			false,
+			false,
+			__( 'Clean ALL transient options' ),
+			__( 'By activating this feature we will automatically delete ALL transient options. Transient options you can find in Wordpress database table called `options` with option_name containting text `_transient_`' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'transient'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_ALL_TRANSIENT_NEXT_PROCESSING,
+			Urlslab_Data::get_now(),
+			false,
+			__( 'Next planned cleanup of ALL transients' ),
+			__( 'Next cleanup starts at selected time. If you need to do it sooner or later, just change this date time. This value is automatically extended after cleanup by defined frequency.' ),
+			self::OPTION_TYPE_DATETIME,
+			false,
+			null,
+			'transient'
+		);
+
 		$this->add_option_definition(
 			self::SETTING_NAME_DEL_TRANSIENT_EXPIRED,
 			false,
 			false,
-			__( 'Clean expired transient options' ),
-			__( 'By activating this feature we will automatically delete all expired transient options.' ),
+			__( 'Clean just expired transient options' ),
+			__( 'By activating this feature we will automatically delete all expired transient options. Transient expired options you can find in Wordpress database table called `options` with option_name containting text `_transient_timeout_`' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'exp-transient'
+			'transient'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_TRANSIENT_EXPIRED_NEXT_PROCESSING,
@@ -248,10 +276,11 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			self::OPTION_TYPE_DATETIME,
 			false,
 			null,
-			'exp-transient'
+			'transient'
 		);
 
-		$this->add_options_form_section( 'orphaned-rel-data', __( 'Cleanup orphaned relationship data' ), __( 'In some installations of Wordpress term_relationships table becomes bloated with many orphaned relationships. This happens particularly often if you are using your site not as a blog but as some other type of content site where posts are deleted periodically. Over time, you could get thousands of term relationships for posts that no longer exist which consumes a lot of database space.' ) );
+
+		$this->add_options_form_section( 'orphaned-rel-data', __( 'Orphaned relationship data' ), __( 'In some installations of Wordpress term_relationships table becomes bloated with many orphaned relationships. This happens particularly often if you are using your site not as a blog but as some other type of content site where posts are deleted periodically. Over time, you could get thousands of term relationships for posts that no longer exist which consumes a lot of database space.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DEL_ORPHANED_RELATIONSHIP_DATA,
 			false,
