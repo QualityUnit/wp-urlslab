@@ -29,6 +29,8 @@ class Urlslab_Optimize extends Urlslab_Widget {
 	const SETTING_NAME_TRANSIENT_EXPIRED_NEXT_PROCESSING = 'urlslab-del-exp-transient-sleep';
 	const SETTING_NAME_DEL_ORPHANED_RELATIONSHIP_DATA = 'urlslab-del-orph-rels';
 	const SETTING_NAME_ORPHANED_RELATIONSHIP_DATA_NEXT_PROCESSING = 'urlslab-del-orph-rels-sleep';
+	const SETTING_NAME_DEL_ORPHANED_COMMENT_META = 'urlslab-del-orph-com-meta';
+	const SETTING_NAME_ORPHANED_COMMENT_META_NEXT_PROCESSING = 'urlslab-del-orph-com-meta-sleep';
 
 
 	/**
@@ -303,6 +305,32 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			null,
 			'orphaned-rel-data'
 		);
+
+
+		$this->add_options_form_section( 'comments', __( 'Comments' ), __( 'Some Wordpress installations offer commenting of posts. Over time could be around posts generated a lot of spam and metadata what will be never published on your website.' ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_DEL_ORPHANED_COMMENT_META,
+			false,
+			false,
+			__( 'Clean orphaned comment meta data' ),
+			__( 'By activating this feature we will automatically delete all orphaned comment metadata. The comment metadata is the information you provide to viewers about each comment. This information usually includes the author of the comment, when it was written. In some cases, some comment metadata information becomes orphan and does not belong to any comment. Orphaned metadata rows you can find in Wordpress table called `commentmeta` (for orphaned metadata rows are missing rows in `comments` table).' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'comments'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_ORPHANED_COMMENT_META_NEXT_PROCESSING,
+			Urlslab_Data::get_now(),
+			false,
+			__( 'Next planned cleanup of orphaned comment metadata' ),
+			__( 'Next cleanup starts at selected time. If you need to do it sooner or later, just change this date time. This value is automatically extended after cleanup by defined frequency.' ),
+			self::OPTION_TYPE_DATETIME,
+			false,
+			null,
+			'comments'
+		);
+
 
 	}
 }

@@ -4,6 +4,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
 class Urlslab_Optimize_Cron extends Urlslab_Cron {
 	const ONE_DAY_SECONDS = 86400;
 	private Urlslab_Widget $widget;
+	const DELETE_LIMIT = 1000;
 
 	protected function execute(): bool {
 		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Optimize::SLUG ) ) {
@@ -16,9 +17,9 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 			strtotime( $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_REVISIONS_NEXT_PROCESSING ) ) < time()
 		) {
 			$ret = $this->optimize_revisions();
-			if ( is_numeric( $ret ) && $ret > 0 ) {
+			if ( self::DELETE_LIMIT === $ret ) {
 				return true;
-			} else if ( 0 === $ret ) {
+			} else if ( self::DELETE_LIMIT > $ret ) {
 				$this->extend_timestamp_option( Urlslab_Optimize::SETTING_NAME_REVISIONS_NEXT_PROCESSING );
 			}
 		}
@@ -28,9 +29,9 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 			strtotime( $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_AUTODRAFTS_NEXT_PROCESSING ) ) < time()
 		) {
 			$ret = $this->optimize_auto_drafts();
-			if ( is_numeric( $ret ) && $ret > 0 ) {
+			if ( self::DELETE_LIMIT === $ret ) {
 				return true;
-			} else if ( 0 === $ret ) {
+			} else if ( self::DELETE_LIMIT > $ret ) {
 				$this->extend_timestamp_option( Urlslab_Optimize::SETTING_NAME_AUTODRAFTS_NEXT_PROCESSING );
 			}
 		}
@@ -40,9 +41,9 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 			strtotime( $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_TRASHED_NEXT_PROCESSING ) ) < time()
 		) {
 			$ret = $this->optimize_trashed();
-			if ( is_numeric( $ret ) && $ret > 0 ) {
+			if ( self::DELETE_LIMIT === $ret ) {
 				return true;
-			} else if ( 0 === $ret ) {
+			} else if ( self::DELETE_LIMIT > $ret ) {
 				$this->extend_timestamp_option( Urlslab_Optimize::SETTING_NAME_TRASHED_NEXT_PROCESSING );
 			}
 		}
@@ -52,9 +53,9 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 			strtotime( $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_ALL_TRANSIENT_NEXT_PROCESSING ) ) < time()
 		) {
 			$ret = $this->optimize_all_transient();
-			if ( is_numeric( $ret ) && $ret > 0 ) {
+			if ( self::DELETE_LIMIT === $ret ) {
 				return true;
-			} else if ( 0 === $ret ) {
+			} else if ( self::DELETE_LIMIT > $ret ) {
 				$this->extend_timestamp_option( Urlslab_Optimize::SETTING_NAME_ALL_TRANSIENT_NEXT_PROCESSING );
 				$this->extend_timestamp_option( Urlslab_Optimize::SETTING_NAME_TRANSIENT_EXPIRED_NEXT_PROCESSING );
 			}
@@ -65,9 +66,9 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 			strtotime( $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_TRANSIENT_EXPIRED_NEXT_PROCESSING ) ) < time()
 		) {
 			$ret = $this->optimize_expired_transient();
-			if ( is_numeric( $ret ) && $ret > 0 ) {
+			if ( self::DELETE_LIMIT === $ret ) {
 				return true;
-			} else if ( 0 === $ret ) {
+			} else if ( self::DELETE_LIMIT > $ret ) {
 				$this->extend_timestamp_option( Urlslab_Optimize::SETTING_NAME_TRANSIENT_EXPIRED_NEXT_PROCESSING );
 			}
 		}
@@ -77,10 +78,22 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 			strtotime( $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_ORPHANED_RELATIONSHIP_DATA_NEXT_PROCESSING ) ) < time()
 		) {
 			$ret = $this->optimize_orphaned_rel_data();
-			if ( is_numeric( $ret ) && $ret > 0 ) {
+			if ( self::DELETE_LIMIT === $ret ) {
 				return true;
-			} else if ( 0 === $ret ) {
+			} else if ( self::DELETE_LIMIT > $ret ) {
 				$this->extend_timestamp_option( Urlslab_Optimize::SETTING_NAME_ORPHANED_RELATIONSHIP_DATA_NEXT_PROCESSING );
+			}
+		}
+
+		if (
+			$this->widget->get_option( Urlslab_Optimize::SETTING_NAME_DEL_ORPHANED_COMMENT_META ) &&
+			strtotime( $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_ORPHANED_COMMENT_META_NEXT_PROCESSING ) ) < time()
+		) {
+			$ret = $this->optimize_orphaned_comment_metadata();
+			if ( self::DELETE_LIMIT === $ret ) {
+				return true;
+			} else if ( self::DELETE_LIMIT > $ret ) {
+				$this->extend_timestamp_option( Urlslab_Optimize::SETTING_NAME_ORPHANED_COMMENT_META_NEXT_PROCESSING );
 			}
 		}
 
@@ -107,7 +120,7 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 		$ttl   = $this->get_ttl( Urlslab_Optimize::SETTING_NAME_REVISION_TTL );
 		$table = $wpdb->prefix . 'posts';
 
-		return $wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE post_type='revision' AND post_modified < %s LIMIT 1000", $ttl ) ); // phpcs:ignore
+		return $wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE post_type='revision' AND post_modified < %s LIMIT %d", $ttl, self::DELETE_LIMIT ) ); // phpcs:ignore
 	}
 
 	private function optimize_auto_drafts() {
@@ -115,7 +128,7 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 		$ttl   = $this->get_ttl( Urlslab_Optimize::SETTING_NAME_AUTODRAFT_TTL );
 		$table = $wpdb->prefix . 'posts';
 
-		return $wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE post_status = 'auto-draft' AND post_modified < %s LIMIT 1000", $ttl ) ); // phpcs:ignore
+		return $wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE post_status = 'auto-draft' AND post_modified < %s LIMIT %d", $ttl, self::DELETE_LIMIT ) ); // phpcs:ignore
 	}
 
 	private function optimize_trashed() {
@@ -123,21 +136,21 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 		$ttl   = $this->get_ttl( Urlslab_Optimize::SETTING_NAME_TRASHED_TTL );
 		$table = $wpdb->prefix . 'posts';
 
-		return $wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE post_status = 'trash' AND post_modified < %s LIMIT 1000", $ttl ) ); // phpcs:ignore
+		return $wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE post_status = 'trash' AND post_modified < %s LIMIT %d", $ttl, self::DELETE_LIMIT ) ); // phpcs:ignore
 	}
 
 	private function optimize_expired_transient() {
 		global $wpdb;
 		$table = $wpdb->prefix . 'options';
 
-		return $wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE option_name LIKE '%_transient_timeout_%' LIMIT 1000" ) ); // phpcs:ignore
+		return $wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE option_name LIKE '%_transient_timeout_%' LIMIT %d", self::DELETE_LIMIT ) ); // phpcs:ignore
 	}
 
 	private function optimize_all_transient() {
 		global $wpdb;
 		$table = $wpdb->prefix . 'options';
 
-		return $wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE option_name LIKE '%_transient_%' LIMIT 1000" ) ); // phpcs:ignore
+		return $wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE option_name LIKE '%_transient_%' LIMIT %d ", self::DELETE_LIMIT ) ); // phpcs:ignore
 	}
 
 	private function optimize_orphaned_rel_data() {
@@ -145,6 +158,14 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 		$table       = $wpdb->prefix . 'term_relationships';
 		$table_posts = $wpdb->prefix . 'posts';
 
-		return $wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE term_taxonomy_id=1 AND object_id NOT IN (SELECT id FROM $table_posts) LIMIT 1000" ) ); // phpcs:ignore
+		return $wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE term_taxonomy_id=1 AND object_id NOT IN (SELECT id FROM $table_posts) LIMIT %d", self::DELETE_LIMIT ) ); // phpcs:ignore
+	}
+
+	private function optimize_orphaned_comment_metadata() {
+		global $wpdb;
+		$table       = $wpdb->prefix . 'commentmeta';
+		$table_comments = $wpdb->prefix . 'comments';
+
+		return $wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE comment_id NOT IN (SELECT comment_id FROM $table_comments) LIMIT %d", self::DELETE_LIMIT ) ); // phpcs:ignore
 	}
 }
