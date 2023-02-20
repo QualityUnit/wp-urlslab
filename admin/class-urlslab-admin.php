@@ -68,7 +68,7 @@ class Urlslab_Admin {
 
 	public function enqueue_react_settings() {
 		if ( isset( $_GET['page'] ) && str_contains( $_GET['page'], 'urlslab' ) ) {
-			wp_enqueue_style( $this->urlslab . '-settings', plugin_dir_url( __FILE__ ) . 'dist/assets/style.css' );
+			wp_enqueue_style( $this->urlslab . '-settings', plugin_dir_url( __FILE__ ) . 'dist/assets/main.css' );
 
 			wp_enqueue_script(
 				$this->urlslab . '-settings',

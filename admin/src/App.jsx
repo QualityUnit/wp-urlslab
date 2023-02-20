@@ -6,8 +6,9 @@ import { fetchData } from './api/fetching';
 import MainMenu from './components/MainMenu';
 import DynamicModule from './components/DynamicModule';
 import Loader from './components/Loader';
-import './assets/styles/style.scss';
 import Header from './components/Header';
+
+import './assets/styles/style.scss';
 
 export default function App() {
 	const { __ } = useI18n();

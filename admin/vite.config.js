@@ -36,15 +36,11 @@ export default defineConfig( {
 				settings: './src/main.jsx',
 			},
 			output: {
-				// Prevent vendor.js being created
-				manualChunks: undefined,
-				// this got rid of the hash on style.css
+				// this gets rid of the hash on main.css
 				entryFileNames: '[name].js',
 				assetFileNames: 'assets/[name].[ext]',
 			},
 		},
-		// Prevent vendor.css being created
-		cssCodeSplit: false,
 		// prevent some warnings
 		chunkSizeWarningLimit: 60000,
 	},
