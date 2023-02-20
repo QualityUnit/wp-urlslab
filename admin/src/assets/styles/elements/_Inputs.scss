@@ -79,8 +79,11 @@ $status: (
 	color: $grey-medium;
 	transition: all 0.2s;
 
-	.urlslab-table & {
+	.urlslab-table tbody & {
 		border: none;
+	}
+
+	.urlslab-table & {
 		font-size: inherit;
 		color: inherit;
 	}

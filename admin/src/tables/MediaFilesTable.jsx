@@ -19,6 +19,7 @@ export default function MediaFilesTable() {
 		isError,
 		isFetchingNextPage,
 		fetchNextPage,
+		hasNextPage,
 	} = useInfiniteQuery( {
 		queryKey: [ 'file' ],
 		queryFn: ( { pageParam = 0 } ) => {
@@ -54,7 +55,7 @@ export default function MediaFilesTable() {
 				isSuccess && ! isError && data?.pages?.flatMap( ( page ) => page ?? [] )
 			}
 		>
-			<div ref={ ref }>{ isFetchingNextPage && 'Loading more...' }</div>
+			<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
 		</Table>
 	);
 }

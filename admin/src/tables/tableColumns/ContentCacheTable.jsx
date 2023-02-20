@@ -23,7 +23,7 @@ export default function Columns() {
 			header: () => __( 'Cache size' ),
 		} ),
 		columnHelper.accessor( 'cache_content', {
-			cell: ( cell ) => <div className="limitCell">{ cell?.getValue() }</div>,
+			cell: ( cell ) => <div className="limit-200">{ cell?.getValue() }</div>,
 			header: () => __( 'Cache content' ),
 		} ),
 	];

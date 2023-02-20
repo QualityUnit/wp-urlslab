@@ -1,34 +1,26 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { fetchData } from '../api/fetching';
 
-export function useInfiniteFetch( url, maxRows ) {
-	const {
-		data,
-		status,
-		isFetching,
-		isSuccess,
-		isFetchingNextPage,
-		fetchNextPage,
-		hasNextPage,
-	} = useInfiniteQuery( [ 'tableKeyword' ],
-		( { pageParam = '' } ) => {
-			return fetchData( `keyword?rows_per_page=${ maxRows }from_kw_id=${ pageParam }&` );
+export function useInfiniteFetch( options, maxRows = 50 ) {
+	const { key, url, pageId } = options;
+	const query = useInfiniteQuery( {
+		queryKey: [ key, url ],
+		queryFn: ( { pageParam = '' } ) => {
+			return fetchData( `${ key }?from_kw_id=${ pageParam }&${ url }&rows_per_page=${ maxRows }` );
 		},
-		{
-			getNextPageParam: ( allRows ) => {
-				const lastRowId = allRows[ allRows?.length - 1 ]?.kw_id ?? undefined;
-				return lastRowId;
-			},
-			keepPreviousData: true,
-			refetchOnWindowFocus: false,
-			cacheTime: Infinity,
-			staleTime: Infinity,
-		}
+		getNextPageParam: ( allRows ) => {
+			if ( allRows.length < maxRows ) {
+				return undefined;
+			}
+			const lastRowId = allRows[ allRows?.length - 1 ][ pageId ] ?? undefined;
+			return lastRowId;
+		},
+		keepPreviousData: true,
+		refetchOnWindowFocus: false,
+		cacheTime: Infinity,
+		staleTime: Infinity,
+	}
 	);
-	useEffect( () => {
-		if ( inView ) {
-			fetchNextPage();
-		}
-	}, [ inView, fetchNextPage ] );
 
-	return { data, status, isFetching, isSuccess, isFetchingNextPage, fetchNextPage, hasNextPage };
+	return query;
 }

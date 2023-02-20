@@ -55,17 +55,7 @@ export default function YouTubeCacheTable() {
 				isSuccess && ! isError && data?.pages?.flatMap( ( page ) => page ?? [] )
 			}
 		>
-			<button
-				ref={ ref }
-				onClick={ () => fetchNextPage() }
-				disabled={ ! hasNextPage || isFetchingNextPage }
-			>
-				{ isFetchingNextPage
-					? 'Loading more...'
-					: hasNextPage
-						? 'Load Newer'
-						: '' }
-			</button>
+			<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
 		</Table>
 	);
 }

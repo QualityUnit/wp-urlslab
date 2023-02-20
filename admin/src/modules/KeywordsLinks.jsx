@@ -7,7 +7,6 @@ import KeywordsTable from '../tables/KeywordsTable';
 export default function KeywordLinks( { moduleId } ) {
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
-	const slug = 'keyword';
 
 	const tableMenu = new Map( [
 		[ 'keyword', __( 'Keywords Table' ) ],

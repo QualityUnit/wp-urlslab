@@ -18,6 +18,7 @@ export default function URLRelationTable() {
 		isSuccess,
 		isFetchingNextPage,
 		fetchNextPage,
+		hasNextPage,
 	} = useInfiniteQuery( {
 		queryKey: [ 'url-relation' ],
 		queryFn: ( { pageParam = 0 } ) => {
@@ -53,7 +54,7 @@ export default function URLRelationTable() {
 				isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 			}
 		>
-			<div ref={ ref }>{ isFetchingNextPage && 'Loading more...' }</div>
+			<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
 		</Table>
 	);
 }

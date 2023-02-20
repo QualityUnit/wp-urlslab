@@ -18,6 +18,7 @@ export default function ContentCacheTable() {
 		isSuccess,
 		isFetchingNextPage,
 		fetchNextPage,
+		hasNextPage,
 	} = useInfiniteQuery( {
 		queryKey: [ 'content-cache' ],
 		queryFn: ( { pageParam = 0 } ) => {
@@ -53,7 +54,7 @@ export default function ContentCacheTable() {
 				isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 			}
 		>
-			<div ref={ ref }>{ isFetchingNextPage && 'Loading more...' }</div>
+			<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
 		</Table>
 	);
 }
