@@ -3,7 +3,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 
 import useInfiniteFetch from '../hooks/useInfiniteFetch';
 import { handleInput, handleSelected } from '../constants/tableFunctions';
-import { useFilter } from '../hooks/urlConstructors';
+import { useFilter, useSorting } from '../hooks/urlConstructors';
 import RangeSlider from '../elements/RangeSlider';
 import SortMenu from '../elements/SortMenu';
 import LangMenu from '../elements/LangMenu';
@@ -19,6 +19,7 @@ export default function KeywordsTable( { slug } ) {
 	const { __ } = useI18n();
 	const columnHelper = createColumnHelper();
 	const { filters, currentFilters, addFilter, removeFilter } = useFilter();
+	const { sortingColumn, sortBy } = useSorting();
 	const activeFilters = Object.keys( currentFilters );
 
 	const {
@@ -28,7 +29,7 @@ export default function KeywordsTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: 'keyword', url: filters, pageId: 'kw_id' } );
+	} = useInfiniteFetch( { key: 'keyword', url: `${ filters }${ sortingColumn }`, pageId: 'kw_id' } );
 
 	const keywordTypes = {
 		M: __( 'Manual' ),
@@ -73,13 +74,13 @@ export default function KeywordsTable( { slug } ) {
 			/>,
 		} ),
 		columnHelper.accessor( 'kw_length', {
-			header: () => <button onClick={ () => setUrl( 'sort_column=kw_length' ) }>{ header.kw_length }</button>,
+			header: () => header.kw_length,
 		} ),
 		columnHelper.accessor( 'kw_priority', {
-			header: () => <><button onClick={ () => setUrl( 'sort_direction=DESC&sort_column=kw_priority' ) }>^</button><RangeSlider min="0" max="300" onChange={ ( r ) => console.log( r ) }>{ header.kw_priority }</RangeSlider></>,
+			header: () => <RangeSlider min="0" max="300" onChange={ ( r ) => console.log( r ) }>{ header.kw_priority }</RangeSlider>,
 		} ),
 		columnHelper.accessor( 'kw_usage_count', {
-			header: () => __( 'Keyword Usage' ),
+			header: () => header.kw_usage_count,
 		} ),
 		columnHelper.accessor( 'lang', {
 			cell: ( val ) => <LangMenu checkedId={ val?.getValue() } onChange={ ( lang ) => console.log( lang ) } />,
@@ -123,7 +124,9 @@ export default function KeywordsTable( { slug } ) {
 						return ( <button className="ml-s" key={ key } onClick={ ( ) => removeFilter( key ) }>{ header[ key ] }</button> );
 					} ) }
 				</div>
-				}</TableViewHeaderBottom>
+				}
+				<div className="ma-left flex flex-align-center"><strong>Sort by:</strong><SortMenu items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } /></div>
+			</TableViewHeaderBottom>
 			<Table className="fadeInto"
 				slug={ slug }
 				columns={ columns }
