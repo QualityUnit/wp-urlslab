@@ -1,10 +1,8 @@
-import { useEffect, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
-import { useInfiniteFetch } from '../constants/hooks';
-
+import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { createColumnHelper } from '@tanstack/react-table';
 
+import useInfiniteFetch from '../hooks/useInfiniteFetch';
 import { handleInput, handleSelected } from '../constants/tableFunctions';
 import RangeSlider from '../elements/RangeSlider';
 import SortMenu from '../elements/SortMenu';
@@ -12,34 +10,23 @@ import LangMenu from '../elements/LangMenu';
 import InputField from '../elements/InputField';
 import Checkbox from '../elements/Checkbox';
 
-import Table from '../components/TableComponent';
-import ImportExport from '../components/ImportExport';
-
 import Loader from '../components/Loader';
+
+import Table from '../components/TableComponent';
+import TableViewHeaderBottom from '../components/TableViewHeaderBottom';
 
 export default function KeywordsTable( { slug } ) {
 	const { __ } = useI18n();
 	const columnHelper = createColumnHelper();
 	const [ currentUrl, setUrl ] = useState();
-	const { ref, inView } = useInView();
 	const {
 		data,
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		fetchNextPage,
 		hasNextPage,
+		ref,
 	} = useInfiniteFetch( { key: 'keyword', url: currentUrl, pageId: 'kw_id' } );
-
-	useEffect( () => {
-		if ( inView ) {
-			fetchNextPage();
-		}
-	}, [ inView, fetchNextPage ] );
-
-	if ( status === 'loading' ) {
-		return <Loader />;
-	}
 
 	const keywordTypes = {
 		M: __( 'Manual' ),
@@ -101,18 +88,21 @@ export default function KeywordsTable( { slug } ) {
 		} ),
 	];
 
+	if ( status === 'loading' ) {
+		return <Loader />;
+	}
+
 	return (
 		<>
-			<ImportExport
-				importOptions={ {
-					url: slug,
-				} }
+			<TableViewHeaderBottom
+				slug={ slug }
 				exportOptions={ {
 					url: slug,
 					fromId: 'from_kw_id',
 					pageId: 'kw_id',
 					deleteCSVCols: [ 'kw_id', 'destUrlMd5' ],
-				} } />
+				} }
+			/>
 			<Table className="fadeInto"
 				slug={ slug }
 				columns={ columns }

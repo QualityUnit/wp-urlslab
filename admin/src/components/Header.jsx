@@ -1,5 +1,4 @@
 import { Suspense } from 'react';
-import { publicDir } from '../constants/variables';
 import { ReactComponent as Logo } from '../assets/images/urlslab-logo.svg';
 import { fetchSettings } from '../api/settings';
 // eslint-disable-next-line import/no-extraneous-dependencies

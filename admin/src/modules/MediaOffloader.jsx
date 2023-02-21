@@ -2,7 +2,6 @@ import { useState, Suspense, lazy } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import TableViewHeader from '../components/TableViewHeader';
-import MediaFilesTable from '../tables/MediaFilesTable';
 
 export default function MediaOffloader( { moduleId } ) {
 	const { __ } = useI18n();
@@ -13,13 +12,16 @@ export default function MediaOffloader( { moduleId } ) {
 	] );
 
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
+	const MediaFilesTable = lazy( () => import( `../tables/MediaFilesTable.jsx` ) );
 
 	return (
 		<div className="urlslab-tableView">
 			<TableViewHeader tableMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{
 				activeSection === 'file' &&
-				<MediaFilesTable />
+				<Suspense>
+					<MediaFilesTable />
+				</Suspense>
 			}
 			{
 				activeSection === 'settings' &&

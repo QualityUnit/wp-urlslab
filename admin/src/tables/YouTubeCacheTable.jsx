@@ -1,58 +1,86 @@
-import { useEffect } from 'react';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { useInView } from 'react-intersection-observer';
-import { fetchData } from '../api/fetching';
+import { useState } from 'react';
+import { useI18n } from '@wordpress/react-i18n';
+import { createColumnHelper } from '@tanstack/react-table';
 
-import Columns from './tableColumns/YouTubeCacheTable';
-import Table from '../components/TableComponent';
+import useInfiniteFetch from '../hooks/useInfiniteFetch';
+import { handleInput, handleSelected } from '../constants/tableFunctions';
+
+import SortMenu from '../elements/SortMenu';
+import Checkbox from '../elements/Checkbox';
 
 import Loader from '../components/Loader';
 
+import Table from '../components/TableComponent';
+import TableViewHeaderBottom from '../components/TableViewHeaderBottom';
+
 export default function YouTubeCacheTable() {
-	const { ref, inView } = useInView();
-	const maxRows = 30;
+	const { __ } = useI18n();
+	const columnHelper = createColumnHelper();
+	const [ currentUrl, setUrl ] = useState();
 
 	const {
 		data,
 		status,
 		isSuccess,
-		isError,
 		isFetchingNextPage,
-		fetchNextPage,
 		hasNextPage,
-	} = useInfiniteQuery( {
-		queryKey: [ 'youtube-cache' ],
-		queryFn: ( { pageParam = 0 } ) => {
-			return fetchData( `youtube-cache?from_videoid=${ pageParam }&rows_per_page=${ maxRows }` );
-		},
-		getNextPageParam: ( allRows ) => {
-			if ( allRows.length < maxRows ) {
-				return undefined;
-			}
-			const lastRowId = allRows[ allRows?.length - 1 ]?.videoid;
-			return lastRowId;
-		},
-		keepPreviousData: true,
-		refetchOnWindowFocus: false,
-		cacheTime: Infinity,
-		staleTime: Infinity,
-	}
-	);
+		ref,
+	} = useInfiniteFetch( { key: 'youtube-cache', url: currentUrl, pageId: 'videoid' } );
 
-	useEffect( () => {
-		if ( inView ) {
-			fetchNextPage();
-		}
-	}, [ inView, fetchNextPage ] );
+	const statusTypes = {
+		N: __( 'New' ),
+		A: __( 'Available' ),
+		P: __( 'Processing' ),
+		D: __( 'Disabled' ),
+	};
+
+	const columns = [
+		columnHelper.accessor( 'check', {
+			className: 'checkbox',
+			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
+				handleSelected( val, cell );
+			} } />,
+			header: () => __( '' ),
+		} ),
+		columnHelper?.accessor( ( row ) => JSON.parse( `${ row?.microdata }` )?.items[ 0 ]?.snippet, {
+			id: 'thumb',
+			className: 'thumbnail',
+			cell: ( image ) => <img src={ image?.getValue()?.thumbnails?.default?.url } alt={ image?.getValue()?.title
+			} />,
+			header: () => __( 'Thumbnail' ),
+		} ),
+		columnHelper?.accessor( 'videoid', {
+			header: () => __( 'YouTube Id' ),
+		} ),
+		columnHelper?.accessor( 'status', {
+			cell: ( cell ) => <SortMenu
+				items={ statusTypes }
+				name={ cell.column.id }
+				checkedId={ cell.getValue() }
+				onChange={ ( val ) => handleInput( val, cell ) } />,
+			className: 'youtube-status',
+			header: () => __( 'Status' ),
+		} ),
+		columnHelper?.accessor( ( row ) => [ row?.videoid, JSON.parse( `${ row?.microdata }` )?.items[ 0 ]?.snippet?.title ], {
+			id: 'title',
+			cell: ( val ) => <a href={ `https://youtu.be/${ val?.getValue()[ 0 ] }` } target="_blank" rel="noreferrer">{ val?.getValue()[ 1 ] }</a>,
+			header: () => __( 'Title' ),
+		} ),
+		columnHelper?.accessor( ( row ) => JSON.parse( `${ row?.microdata }` )?.items[ 0 ]?.snippet?.publishedAt, {
+			id: 'published',
+			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
+			header: () => __( 'Published' ),
+		} ),
+	];
 
 	if ( status === 'loading' ) {
 		return <Loader />;
 	}
 
 	return (
-		<Table className="fadeInto" columns={ Columns() }
+		<Table className="fadeInto" columns={ columns }
 			data={
-				isSuccess && ! isError && data?.pages?.flatMap( ( page ) => page ?? [] )
+				isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 			}
 		>
 			<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>

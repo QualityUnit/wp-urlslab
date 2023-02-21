@@ -3,9 +3,11 @@ import { jsonToCSV } from 'react-papaparse';
 import fileDownload from 'js-file-download';
 import { jsonData, exportCSV } from '../api/exportCsv';
 import { useI18n } from '@wordpress/react-i18n';
+
+import { ReactComponent as ExportIcon } from '../assets/images/icon-export.svg';
 import Button from './Button';
 
-export default function ExportCSVButton( { options, onClick } ) {
+export default function ExportCSVButton( { className, options, onClick } ) {
 	const { __ } = useI18n();
 
 	const handleExport = () => {
@@ -18,13 +20,15 @@ export default function ExportCSVButton( { options, onClick } ) {
 					delimiter: ',',
 					header: true }
 				);
-				fileDownload( csv, 'keywords_links.csv' );
+				onClick( jsonData );
+				fileDownload( csv, `${ options.url }.csv` );
 			}
 		} );
 	};
 	return (
-		<Button className="active"
+		<Button className={ className }
 			onClick={ handleExport }>
+			<ExportIcon />
 			{ __( 'Export CSV' ) }
 		</Button>
 	);

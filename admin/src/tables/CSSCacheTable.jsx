@@ -1,55 +1,76 @@
-import { useEffect } from 'react';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { useInView } from 'react-intersection-observer';
-import { fetchData } from '../api/fetching';
+import { useState } from 'react';
+import { useI18n } from '@wordpress/react-i18n';
+import { createColumnHelper } from '@tanstack/react-table';
 
-import Columns from './tableColumns/CSSCacheTable';
-import Table from '../components/TableComponent';
+import useInfiniteFetch from '../hooks/useInfiniteFetch';
+import { handleInput, handleSelected } from '../constants/tableFunctions';
+
+import SortMenu from '../elements/SortMenu';
+import Checkbox from '../elements/Checkbox';
 
 import Loader from '../components/Loader';
 
-export default function CSSCacheTable() {
-	const { ref, inView } = useInView();
-	const maxRows = 50;
+import Table from '../components/TableComponent';
+import TableViewHeaderBottom from '../components/TableViewHeaderBottom';
 
+export default function CSSCacheTable() {
+	const { __ } = useI18n();
+	const columnHelper = createColumnHelper();
+
+	const [ currentUrl, setUrl ] = useState();
 	const {
 		data,
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		fetchNextPage,
 		hasNextPage,
-	} = useInfiniteQuery( {
-		queryKey: [ 'css-cache' ],
-		queryFn: ( { pageParam = 0 } ) => {
-			return fetchData( `css-cache?from_url_id=${ pageParam }&rows_per_page=${ maxRows }` );
-		},
-		getNextPageParam: ( allRows ) => {
-			if ( allRows.length < maxRows ) {
-				return undefined;
-			}
-			const lastRowId = allRows[ allRows?.length - 1 ]?.url_id ?? undefined;
-			return lastRowId;
-		},
-		keepPreviousData: true,
-		refetchOnWindowFocus: false,
-		cacheTime: Infinity,
-		staleTime: Infinity,
-	}
-	);
+		ref,
+	} = useInfiniteFetch( { key: 'css-cache', url: currentUrl, pageId: 'url_id' } );
 
-	useEffect( () => {
-		if ( inView ) {
-			fetchNextPage();
-		}
-	}, [ inView, fetchNextPage ] );
+	const statusTypes = {
+		N: __( 'New' ),
+		A: __( 'Available' ),
+		P: __( 'Processing' ),
+		D: __( 'Disabled' ),
+	};
+
+	const columns = [
+		columnHelper.accessor( 'check', {
+			className: 'checkbox',
+			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
+				handleSelected( val, cell );
+			} } />,
+			header: () => __( '' ),
+		} ),
+		columnHelper?.accessor( 'url_id', {
+			header: () => __( 'URL Id' ),
+		} ),
+		columnHelper?.accessor( 'status', {
+			cell: ( cell ) => <SortMenu
+				items={ statusTypes }
+				name={ cell.column.id }
+				checkedId={ cell.getValue() }
+				onChange={ ( val ) => handleInput( val, cell ) } />,
+			className: 'youtube-status',
+			header: () => __( 'Status' ),
+		} ),
+		columnHelper?.accessor( 'filesize', {
+			header: () => __( 'Filesize' ),
+		} ),
+		columnHelper?.accessor( 'status_changed', {
+			header: () => __( 'Status changed' ),
+		} ),
+		columnHelper?.accessor( 'url', {
+			header: () => __( 'URL' ),
+		} ),
+	];
 
 	if ( status === 'loading' ) {
 		return <Loader />;
 	}
 
 	return (
-		<Table className="fadeInto" columns={ Columns() }
+		<Table className="fadeInto" columns={ columns }
 			data={
 				isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 			}

@@ -1,55 +1,57 @@
-import { useEffect } from 'react';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { useInView } from 'react-intersection-observer';
-import { fetchData } from '../api/fetching';
+import { useState } from 'react';
+import { useI18n } from '@wordpress/react-i18n';
+import { createColumnHelper } from '@tanstack/react-table';
 
-import Columns from './tableColumns/URLRelationTable';
-import Table from '../components/TableComponent';
+import useInfiniteFetch from '../hooks/useInfiniteFetch';
+import { handleInput, handleSelected } from '../constants/tableFunctions';
+
+import SortMenu from '../elements/SortMenu';
+import Checkbox from '../elements/Checkbox';
 
 import Loader from '../components/Loader';
 
+import Table from '../components/TableComponent';
+import TableViewHeaderBottom from '../components/TableViewHeaderBottom';
+
 export default function URLRelationTable() {
-	const { ref, inView } = useInView();
-	const maxRows = 50;
+	const { __ } = useI18n();
+	const columnHelper = createColumnHelper();
+	const [ currentUrl, setUrl ] = useState();
 
 	const {
 		data,
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		fetchNextPage,
 		hasNextPage,
-	} = useInfiniteQuery( {
-		queryKey: [ 'url-relation' ],
-		queryFn: ( { pageParam = 0 } ) => {
-			return fetchData( `url-relation?from_srcUrlMd5=${ pageParam }&rows_per_page=${ maxRows }` );
-		},
-		getNextPageParam: ( allRows ) => {
-			if ( allRows.length < maxRows ) {
-				return undefined;
-			}
-			const lastRowId = allRows[ allRows?.length - 1 ]?.srcUrlMd5 ?? undefined;
-			return lastRowId;
-		},
-		keepPreviousData: true,
-		refetchOnWindowFocus: false,
-		cacheTime: Infinity,
-		staleTime: Infinity,
-	}
-	);
+		ref,
+	} = useInfiniteFetch( { key: 'url-relation', url: currentUrl, pageId: 'srcUrlMd5' } );
 
-	useEffect( () => {
-		if ( inView ) {
-			fetchNextPage();
-		}
-	}, [ inView, fetchNextPage ] );
+	const columns = [
+		columnHelper.accessor( 'check', {
+			className: 'checkbox',
+			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
+				handleSelected( val, cell );
+			} } />,
+			header: () => __( '' ),
+		} ),
+		columnHelper.accessor( 'srcUrlName', {
+			header: () => __( 'Source URL Name' ),
+		} ),
+		columnHelper.accessor( 'pos', {
+			header: () => __( 'Position' ),
+		} ),
+		columnHelper.accessor( 'destUrlName', {
+			header: () => __( 'Destination URL Name' ),
+		} ),
+	];
 
 	if ( status === 'loading' ) {
 		return <Loader />;
 	}
 
 	return (
-		<Table className="fadeInto" columns={ Columns() }
+		<Table className="fadeInto" columns={ columns }
 			data={
 				isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 			}

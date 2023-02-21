@@ -1,55 +1,56 @@
-import { useEffect } from 'react';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { useInView } from 'react-intersection-observer';
-import { fetchData } from '../api/fetching';
+import { useState } from 'react';
+import { useI18n } from '@wordpress/react-i18n';
+import { createColumnHelper } from '@tanstack/react-table';
 
-import Columns from './tableColumns/ContentCacheTable';
+import useInfiniteFetch from '../hooks/useInfiniteFetch';
+
+import { handleSelected } from '../constants/tableFunctions';
+import Checkbox from '../elements/Checkbox';
+
 import Table from '../components/TableComponent';
 
 import Loader from '../components/Loader';
 
 export default function ContentCacheTable() {
-	const { ref, inView } = useInView();
-	const maxRows = 50;
+	const { __ } = useI18n();
+	const columnHelper = createColumnHelper();
+	const [ currentUrl, setUrl ] = useState();
 
 	const {
 		data,
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		fetchNextPage,
 		hasNextPage,
-	} = useInfiniteQuery( {
-		queryKey: [ 'content-cache' ],
-		queryFn: ( { pageParam = 0 } ) => {
-			return fetchData( `content-cache?from_cache_crc32=${ pageParam }&rows_per_page=${ maxRows }` );
-		},
-		getNextPageParam: ( allRows ) => {
-			if ( allRows.length < maxRows ) {
-				return undefined;
-			}
-			const lastRowId = allRows[ allRows?.length - 1 ]?.cache_crc32 ?? undefined;
-			return lastRowId;
-		},
-		keepPreviousData: true,
-		refetchOnWindowFocus: false,
-		cacheTime: Infinity,
-		staleTime: Infinity,
-	}
-	);
+		ref,
+	} = useInfiniteFetch( { key: 'content-cache', url: currentUrl, pageId: 'cache_crc32' } );
 
-	useEffect( () => {
-		if ( inView ) {
-			fetchNextPage();
-		}
-	}, [ inView, fetchNextPage ] );
+	const columns = [
+		columnHelper.accessor( 'check', {
+			className: 'checkbox',
+			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
+				handleSelected( val, cell );
+			} } />,
+			header: () => __( '' ),
+		} ),
+		columnHelper.accessor( 'date_changed', {
+			header: () => __( 'Changed at' ),
+		} ),
+		columnHelper.accessor( 'cache_len', {
+			header: () => __( 'Cache size' ),
+		} ),
+		columnHelper.accessor( 'cache_content', {
+			cell: ( cell ) => <div className="limit-100">{ cell?.getValue() }</div>,
+			header: () => __( 'Cache content' ),
+		} ),
+	];
 
 	if ( status === 'loading' ) {
 		return <Loader />;
 	}
 
 	return (
-		<Table className="fadeInto" columns={ Columns() }
+		<Table className="fadeInto" columns={ columns }
 			data={
 				isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 			}
