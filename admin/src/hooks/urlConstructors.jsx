@@ -20,7 +20,7 @@ export function useFilter() {
 }
 
 export function useSorting() {
-	const [ sortingColumn, setSortingColumn ] = useState();
+	const [ sortingColumn, setSortingColumn ] = useState( '' );
 
 	const sortBy = ( key ) => setSortingColumn( `&sort_column=${ key }` );
 
