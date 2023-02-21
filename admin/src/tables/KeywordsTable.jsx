@@ -118,14 +118,17 @@ export default function KeywordsTable( { slug } ) {
 					deleteCSVCols: [ 'kw_id', 'destUrlMd5' ],
 				} }
 			>{ activeFilters.length > 0 &&
-				<div className="flex">
+				<div className="flex flex-align-center">
 					<strong>{ __( 'Filters:' ) }</strong>
 					{ activeFilters.map( ( key ) => {
 						return ( <button className="ml-s" key={ key } onClick={ ( ) => removeFilter( key ) }>{ header[ key ] }</button> );
 					} ) }
 				</div>
 				}
-				<div className="ma-left flex flex-align-center"><strong>Sort by:</strong><SortMenu items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } /></div>
+				<div className="ma-left flex flex-align-center">
+					<strong>Sort by:</strong>
+					<SortMenu className="ml-s" items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } />
+				</div>
 			</TableViewHeaderBottom>
 			<Table className="fadeInto"
 				slug={ slug }
