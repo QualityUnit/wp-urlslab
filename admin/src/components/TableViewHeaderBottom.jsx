@@ -5,16 +5,17 @@ import importCsv from '../api/importCsv';
 import { deleteAll } from '../api/deleteTableData';
 
 import { ReactComponent as ImportIcon } from '../assets/images/icon-import.svg';
+import { ReactComponent as CloseIcon } from '../assets/images/icon-close.svg';
 import Button from '../elements/Button';
 import ExportCSVButton from '../elements/ExportCSVButton';
 
-export default function TableViewHeaderBottom( { slug, exportOptions } ) {
+export default function TableViewHeaderBottom( { children, slug, exportOptions } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const { CSVReader } = useCSVReader();
 
 	const importData = useMutation( {
-		mutationFn: ( results ) => {
+		mutationFn: async ( results ) => {
 			return importCsv( `${ slug }/import`, results.data );
 		},
 		onSuccess: () => {
@@ -56,13 +57,18 @@ export default function TableViewHeaderBottom( { slug, exportOptions } ) {
 								<ImportIcon />
 								{ __( 'Import CSV' ) }
 							</Button>
-							<div>
-								{ acceptedFile && acceptedFile.name }
-							</div>
+						</div>
+						<div className="flex">
+							{ acceptedFile &&
+								<>{ acceptedFile.name } <CloseIcon /></>
+							}
 						</div>
 					</>
 				) }
 			</CSVReader>
+			{
+				children
+			}
 			{
 				queryClient.isMutating() ? <h2>Importing</h2> : null
 			}

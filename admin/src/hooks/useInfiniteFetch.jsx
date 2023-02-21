@@ -10,7 +10,7 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const query = useInfiniteQuery( {
 		queryKey: [ key, url ],
 		queryFn: ( { pageParam = '' } ) => {
-			return fetchData( `${ key }?from_${ pageId }=${ pageParam }&${ url }&rows_per_page=${ maxRows }` );
+			return fetchData( `${ key }?from_${ pageId }=${ pageParam }${ url }&rows_per_page=${ maxRows }` );
 		},
 		getNextPageParam: ( allRows ) => {
 			if ( allRows.length < maxRows ) {

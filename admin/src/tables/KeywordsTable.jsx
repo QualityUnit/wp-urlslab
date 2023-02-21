@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { createColumnHelper } from '@tanstack/react-table';
 
 import useInfiniteFetch from '../hooks/useInfiniteFetch';
 import { handleInput, handleSelected } from '../constants/tableFunctions';
+import { useFilter } from '../hooks/urlConstructors';
 import RangeSlider from '../elements/RangeSlider';
 import SortMenu from '../elements/SortMenu';
 import LangMenu from '../elements/LangMenu';
@@ -18,7 +18,9 @@ import TableViewHeaderBottom from '../components/TableViewHeaderBottom';
 export default function KeywordsTable( { slug } ) {
 	const { __ } = useI18n();
 	const columnHelper = createColumnHelper();
-	const [ currentUrl, setUrl ] = useState();
+	const { filters, currentFilters, addFilter, removeFilter } = useFilter();
+	const activeFilters = Object.keys( currentFilters );
+
 	const {
 		data,
 		status,
@@ -26,12 +28,23 @@ export default function KeywordsTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: 'keyword', url: currentUrl, pageId: 'kw_id' } );
+	} = useInfiniteFetch( { key: 'keyword', url: filters, pageId: 'kw_id' } );
 
 	const keywordTypes = {
 		M: __( 'Manual' ),
 		I: __( 'Imported' ),
 		X: __( 'None' ),
+	};
+	const header = {
+		keyword: __( 'Keyword' ),
+		kwType: __( 'Type' ),
+		kw_length: __( 'Length' ),
+		kw_priority: __( 'Priority' ),
+		kw_usage_count: __( 'Usage' ),
+		lang: __( 'Language' ),
+		link_usage_count: __( 'Link Usage' ),
+		urlFilter: __( 'URL Filter' ),
+		urlLink: __( 'Link' ),
 	};
 
 	const columns = [
@@ -43,7 +56,7 @@ export default function KeywordsTable( { slug } ) {
 			header: () => __( '' ),
 		} ),
 		columnHelper.accessor( 'keyword', {
-			header: () => __( 'Keyword' ),
+			header: () => header.keyword,
 		} ),
 		columnHelper.accessor( 'kwType', {
 			cell: ( cell ) => <SortMenu
@@ -55,36 +68,36 @@ export default function KeywordsTable( { slug } ) {
 			header: ( cell ) => <SortMenu
 				items={ keywordTypes }
 				name={ cell.column.id }
-				checkedId={ __( 'Keyword Type' ) }
-				onChange={ ( val ) => setUrl( val ) }
+				checkedId={ header.kwType }
+				onChange={ ( val ) => addFilter( 'kwType', val ) }
 			/>,
 		} ),
 		columnHelper.accessor( 'kw_length', {
-			header: () => <button onClick={ () => setUrl( 'sort_column=kw_length' ) }>{ __( 'Keyword Length' ) }</button>,
+			header: () => <button onClick={ () => setUrl( 'sort_column=kw_length' ) }>{ header.kw_length }</button>,
 		} ),
 		columnHelper.accessor( 'kw_priority', {
-			header: () => <><button onClick={ () => setUrl( 'sort_direction=DESC&sort_column=kw_priority' ) }>^</button><RangeSlider min="0" max="300" onChange={ ( r ) => console.log( r ) }>{ __( 'Keyword Priority' ) }</RangeSlider></>,
+			header: () => <><button onClick={ () => setUrl( 'sort_direction=DESC&sort_column=kw_priority' ) }>^</button><RangeSlider min="0" max="300" onChange={ ( r ) => console.log( r ) }>{ header.kw_priority }</RangeSlider></>,
 		} ),
 		columnHelper.accessor( 'kw_usage_count', {
 			header: () => __( 'Keyword Usage' ),
 		} ),
 		columnHelper.accessor( 'lang', {
 			cell: ( val ) => <LangMenu checkedId={ val?.getValue() } onChange={ ( lang ) => console.log( lang ) } />,
-			header: ( ) => <LangMenu checkedId={ 'all' } onChange={ ( lang ) => setUrl( `filter_lang=${ lang }` ) } />,
+			header: () => <LangMenu checkedId={ 'all' } onChange={ ( val ) => addFilter( 'lang', val ) } />,
 		} ),
 		columnHelper.accessor( 'link_usage_count', {
-			header: () => __( 'Link Usage' ),
+			header: () => header.link_usage_count,
 		} ),
 		columnHelper.accessor( 'urlFilter', {
 			cell: ( cell ) => <InputField type="text"
 				defaultValue={ cell.getValue() }
 				onChange={ ( val ) => handleInput( val, cell ) }
 			/>,
-			header: () => __( 'URL Filter' ),
+			header: () => header.urlFilter,
 		} ),
 		columnHelper.accessor( 'urlLink', {
 			cell: ( cell ) => <div className="limit-50">{ cell.getValue() }</div>,
-			header: () => __( 'Keyword Link' ),
+			header: () => header.urlLink,
 		} ),
 	];
 
@@ -96,13 +109,21 @@ export default function KeywordsTable( { slug } ) {
 		<>
 			<TableViewHeaderBottom
 				slug={ slug }
+				currentFilters={ currentFilters }
 				exportOptions={ {
 					url: slug,
 					fromId: 'from_kw_id',
 					pageId: 'kw_id',
 					deleteCSVCols: [ 'kw_id', 'destUrlMd5' ],
 				} }
-			/>
+			>{ activeFilters.length > 0 &&
+				<div className="flex">
+					<strong>{ __( 'Filters:' ) }</strong>
+					{ activeFilters.map( ( key ) => {
+						return ( <button className="ml-s" key={ key } onClick={ ( ) => removeFilter( key ) }>{ header[ key ] }</button> );
+					} ) }
+				</div>
+				}</TableViewHeaderBottom>
 			<Table className="fadeInto"
 				slug={ slug }
 				columns={ columns }
