@@ -3,7 +3,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 
 import useInfiniteFetch from '../hooks/useInfiniteFetch';
 import { handleInput, handleSelected } from '../constants/tableFunctions';
-import { useFilter, useSorting } from '../hooks/urlConstructors';
+import { useFilter, useSorting } from '../hooks/filteringSorting';
 import RangeSlider from '../elements/RangeSlider';
 import SortMenu from '../elements/SortMenu';
 import LangMenu from '../elements/LangMenu';
@@ -56,9 +56,12 @@ export default function KeywordsTable( { slug } ) {
 				handleSelected( val, cell );
 			} } />,
 			header: () => __( '' ),
+			enableResizing: false,
+			size: 24,
 		} ),
 		columnHelper.accessor( 'keyword', {
 			header: () => header.keyword,
+			minSize: 150,
 		} ),
 		columnHelper.accessor( 'kwType', {
 			cell: ( cell ) => <SortMenu items={ keywordTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( val ) => handleInput( val, cell ) } />,
@@ -66,12 +69,14 @@ export default function KeywordsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'kw_length', {
 			header: () => header.kw_length,
+			size: 70,
 		} ),
 		columnHelper.accessor( 'kw_priority', {
 			header: () => <RangeSlider min="0" max="300" onChange={ ( r ) => console.log( r ) }>{ header.kw_priority }</RangeSlider>,
 		} ),
 		columnHelper.accessor( 'kw_usage_count', {
 			header: () => header.kw_usage_count,
+			size: 70,
 		} ),
 		columnHelper.accessor( 'lang', {
 			cell: ( val ) => <LangMenu checkedId={ val?.getValue() } onChange={ ( lang ) => console.log( lang ) } />,
@@ -85,8 +90,9 @@ export default function KeywordsTable( { slug } ) {
 			header: () => header.urlFilter,
 		} ),
 		columnHelper.accessor( 'urlLink', {
-			cell: ( cell ) => <div className="limit-50">{ cell.getValue() }</div>,
+			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" className="limit-50" rel="noreferrer">{ cell.getValue() }</a>,
 			header: () => header.urlLink,
+			minSize: '30em',
 		} ),
 	];
 

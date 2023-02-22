@@ -6,23 +6,24 @@ import {
 
 import { useVirtual } from 'react-virtual';
 
-import Button from '../elements/Button';
-
 import '../assets/styles/components/_TableComponent.scss';
 
 export default function Table( { children, className, columns, data } ) {
 	const [ rowSelection, setRowSelection ] = useState( {} );
+	// const [ columnResizeMode, setColumnResizeMode ] = useState( 'onChange' );
+
 	const tableContainerRef = useRef();
 	const table = useReactTable( {
 		columns,
 		data,
 		defaultColumn: {
-			minSize: 0,
-			size: 0,
+			minSize: 20,
+			size: 100,
 		},
 		state: {
 			rowSelection,
 		},
+		columnResizeMode: 'onChange',
 		enableRowSelection: true,
 		onRowSelectionChange: setRowSelection,
 		getCoreRowModel: getCoreRowModel(),
@@ -48,19 +49,21 @@ export default function Table( { children, className, columns, data } ) {
 	for ( const virtualRow of virtualRows ) {
 		const row = rows[ virtualRow?.index ];
 		tbody.push(
-			<tr key={ row.id } className={ row.getIsSelected() ? 'selected' : '' } >
+			<tr key={ row.id } className={ row.getIsSelected() ? 'selected' : '' } style={ {
+				position: 'relative',
+			} } >
 				{ row.getVisibleCells().map( ( cell ) =>
-					( <td key={ cell.id }
-						className={ cell.column.columnDef.className }
+					<td key={ cell.id } className={ cell.column.columnDef.className }
 						style={ {
-							width:
-							cell.column.getSize() !== 0
+							position: 'absolute',
+							left: cell.column.getStart(),
+							width: cell.column.getSize() !== 0
 								? cell.column.getSize()
 								: undefined,
 						} }
 					>
 						{ flexRender( cell.column.columnDef.cell, cell.getContext() ) }
-					</td> )
+					</td>
 				) }
 			</tr>
 		);
@@ -75,6 +78,8 @@ export default function Table( { children, className, columns, data } ) {
 							{ headerGroup.headers.map( ( header ) => (
 								<th key={ header.id }
 									style={ {
+										position: 'absolute',
+										left: header.getStart(),
 										width: header.getSize() !== 0 ? header.getSize() : undefined,
 									} }
 								>
@@ -84,6 +89,14 @@ export default function Table( { children, className, columns, data } ) {
 											header.column.columnDef.header,
 											header.getContext()
 										) }
+									<div
+										{ ...{
+											onMouseDown: header.getResizeHandler(),
+											onTouchStart: header.getResizeHandler(),
+											className: `resizer ${ header.column.getIsResizing() ? 'isResizing' : ''
+											}`,
+										} }
+									/>
 								</th>
 							) ) }
 						</tr>
