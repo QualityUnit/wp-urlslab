@@ -18,3 +18,11 @@ export function useFilter() {
 
 	return { filters, currentFilters, addFilter, removeFilter };
 }
+
+export function useSorting() {
+	const [ sortingColumn, setSortingColumn ] = useState( '' );
+
+	const sortBy = ( key ) => setSortingColumn( `&sort_column=${ key }` );
+
+	return { sortingColumn, sortBy };
+}
