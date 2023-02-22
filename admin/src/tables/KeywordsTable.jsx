@@ -23,10 +23,6 @@ export default function KeywordsTable( { slug } ) {
 	const activeFilters = Object.keys( currentFilters );
 
 	const {
-<<<<<<< HEAD
-		data, status, isSuccess, isFetchingNextPage, hasNextPage, ref,
-	} = useInfiniteFetch( { key: 'keyword', url: filters, pageId: 'kw_id' } );
-=======
 		data,
 		status,
 		isSuccess,
@@ -34,7 +30,6 @@ export default function KeywordsTable( { slug } ) {
 		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { key: 'keyword', url: `${ filters }${ sortingColumn }`, pageId: 'kw_id' } );
->>>>>>> 91671a15e64d233664b046b54fc42c54ec3e91c7
 
 	const keywordTypes = {
 		M: __( 'Manual' ),
@@ -118,16 +113,11 @@ export default function KeywordsTable( { slug } ) {
 					} ) }
 				</div>
 				}
-<<<<<<< HEAD
-			</TableViewHeaderBottom>
-
-=======
 				<div className="ma-left flex flex-align-center">
 					<strong>Sort by:</strong>
 					<SortMenu className="ml-s" items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } />
 				</div>
 			</TableViewHeaderBottom>
->>>>>>> 91671a15e64d233664b046b54fc42c54ec3e91c7
 			<Table className="fadeInto"
 				slug={ slug }
 				columns={ columns }
