@@ -22,12 +22,7 @@ export default function KeywordsTable( { slug } ) {
 	const activeFilters = Object.keys( currentFilters );
 
 	const {
-		data,
-		status,
-		isSuccess,
-		isFetchingNextPage,
-		hasNextPage,
-		ref,
+		data, status, isSuccess, isFetchingNextPage, hasNextPage, ref,
 	} = useInfiniteFetch( { key: 'keyword', url: filters, pageId: 'kw_id' } );
 
 	const keywordTypes = {
@@ -35,6 +30,7 @@ export default function KeywordsTable( { slug } ) {
 		I: __( 'Imported' ),
 		X: __( 'None' ),
 	};
+
 	const header = {
 		keyword: __( 'Keyword' ),
 		kwType: __( 'Type' ),
@@ -59,18 +55,8 @@ export default function KeywordsTable( { slug } ) {
 			header: () => header.keyword,
 		} ),
 		columnHelper.accessor( 'kwType', {
-			cell: ( cell ) => <SortMenu
-				items={ keywordTypes }
-				name={ cell.column.id }
-				checkedId={ cell.getValue() }
-				onChange={ ( val ) => handleInput( val, cell ) }
-			/>,
-			header: ( cell ) => <SortMenu
-				items={ keywordTypes }
-				name={ cell.column.id }
-				checkedId={ header.kwType }
-				onChange={ ( val ) => addFilter( 'kwType', val ) }
-			/>,
+			cell: ( cell ) => <SortMenu items={ keywordTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( val ) => handleInput( val, cell ) } />,
+			header: ( cell ) => <SortMenu items={ keywordTypes } name={ cell.column.id } checkedId={ header.kwType } onChange={ ( val ) => addFilter( 'kwType', val ) } />,
 		} ),
 		columnHelper.accessor( 'kw_length', {
 			header: () => <button onClick={ () => setUrl( 'sort_column=kw_length' ) }>{ header.kw_length }</button>,
@@ -89,10 +75,7 @@ export default function KeywordsTable( { slug } ) {
 			header: () => header.link_usage_count,
 		} ),
 		columnHelper.accessor( 'urlFilter', {
-			cell: ( cell ) => <InputField type="text"
-				defaultValue={ cell.getValue() }
-				onChange={ ( val ) => handleInput( val, cell ) }
-			/>,
+			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( val ) => handleInput( val, cell ) } />,
 			header: () => header.urlFilter,
 		} ),
 		columnHelper.accessor( 'urlLink', {
@@ -123,14 +106,13 @@ export default function KeywordsTable( { slug } ) {
 						return ( <button className="ml-s" key={ key } onClick={ ( ) => removeFilter( key ) }>{ header[ key ] }</button> );
 					} ) }
 				</div>
-				}</TableViewHeaderBottom>
+				}
+			</TableViewHeaderBottom>
+
 			<Table className="fadeInto"
 				slug={ slug }
 				columns={ columns }
-				data={
-					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
-				}
-			>
+				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
 			</Table>
 		</>

@@ -1,3 +1,4 @@
+/* stylelint-disable selector-class-pattern, no-descending-specificity */
 @use "../common/mixins" as *;
 @use "../common/variables" as *;
 
@@ -21,6 +22,13 @@
 		overflow-x: hidden;
 	}
 
+	th,
+	td {
+		font-weight: $font-weight-normal;
+		text-align: left;
+		padding-left: 1em;
+	}
+
 	thead {
 		position: sticky;
 		top: 0;
@@ -29,15 +37,21 @@
 		color: $grey-darker;
 
 		th {
+			position: relative;
 			padding-bottom: 1em;
-		}
-	}
 
-	th,
-	td {
-		font-weight: $font-weight-normal;
-		text-align: left;
-		padding-left: 1em;
+			&:not(:first-child):not(:nth-child(2))::before {
+				position: absolute;
+				top: 0;
+				left: 0%;
+				transform: translateX(-50%);
+				content: "";
+				width: 1em;
+				height: 100%;
+				cursor: col-resize;
+				background-color: red;
+			}
+		}
 	}
 
 	tbody {
