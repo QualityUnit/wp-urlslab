@@ -9,10 +9,11 @@ import { ReactComponent as CloseIcon } from '../assets/images/icon-close.svg';
 import Button from '../elements/Button';
 import ExportCSVButton from '../elements/ExportCSVButton';
 
-export default function TableViewHeaderBottom( { children, slug, exportOptions } ) {
+export default function TableViewHeaderBottom( { currentFilters, header, removedFilter, children, slug, exportOptions } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const { CSVReader } = useCSVReader();
+	const activeFilters = Object.keys( currentFilters );
 
 	const importData = useMutation( {
 		mutationFn: async ( results ) => {
@@ -67,10 +68,16 @@ export default function TableViewHeaderBottom( { children, slug, exportOptions }
 				) }
 			</CSVReader>
 			{
-				children
+				( activeFilters?.length > 0 && header ) &&
+				<div className="flex flex-align-center">
+					<strong>{ __( 'Filters:' ) }</strong>
+					{ activeFilters.map( ( key ) => {
+						return ( <button className="ml-s" key={ key } onClick={ () => removedFilter( key ) }>{ header[ key ] }</button> );
+					} ) }
+				</div>
 			}
 			{
-				queryClient.isMutating() ? <h2>Importing</h2> : null
+				children
 			}
 		</div>
 	);

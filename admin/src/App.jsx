@@ -9,6 +9,7 @@ import Loader from './components/Loader';
 import Header from './components/Header';
 
 import './assets/styles/style.scss';
+import Button from './elements/Button';
 
 export default function App() {
 	const { __ } = useI18n();
@@ -19,6 +20,20 @@ export default function App() {
 			return ModuleData;
 		} ),
 	} );
+
+	const worker = new Worker( new URL( './constants/exportWorker', import.meta.url ) );
+	const exportTest = ( ) => {
+		worker.postMessage( {
+			url: 'keyword',
+			fromId: 'from_kw_id',
+			pageId: 'kw_id',
+			deleteCSVCols: [ 'kw_id', 'destUrlMd5' ],
+		} );
+		// console.log( 'message' );
+		worker.onmessage = ( message ) => {
+			console.log( message );
+		};
+	};
 
 	const [ pageTitle, setTitle ] = useState( __( 'Modules' ) );
 
@@ -46,6 +61,7 @@ export default function App() {
 			<Suspense fallback={ <Loader /> }>
 				<div className="urlslab-app-main">
 					<Header pageTitle={ ! pageTitle || pageTitle } />
+					<Button className="active" onClick={ () => exportTest() }>Demo Worker</Button>
 					<DynamicModule
 						modules={ ! fetchedModules || Object.values( fetchedModules ) }
 						moduleId={ module }

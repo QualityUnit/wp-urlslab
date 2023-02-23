@@ -2,8 +2,8 @@ import { useI18n } from '@wordpress/react-i18n';
 import { createColumnHelper } from '@tanstack/react-table';
 
 import useInfiniteFetch from '../hooks/useInfiniteFetch';
-import { handleInput, handleSelected } from '../constants/tableFunctions';
 import { useFilter, useSorting } from '../hooks/filteringSorting';
+import { handleInput, handleSelected } from '../constants/tableFunctions';
 import RangeSlider from '../elements/RangeSlider';
 import SortMenu from '../elements/SortMenu';
 import LangMenu from '../elements/LangMenu';
@@ -20,7 +20,6 @@ export default function KeywordsTable( { slug } ) {
 	const columnHelper = createColumnHelper();
 	const { filters, currentFilters, addFilter, removeFilter } = useFilter();
 	const { sortingColumn, sortBy } = useSorting();
-	const activeFilters = Object.keys( currentFilters );
 
 	const {
 		data,
@@ -57,6 +56,7 @@ export default function KeywordsTable( { slug } ) {
 			} } />,
 			header: () => __( '' ),
 			enableResizing: false,
+			maxSize: 24,
 			size: 24,
 		} ),
 		columnHelper.accessor( 'keyword', {
@@ -81,6 +81,7 @@ export default function KeywordsTable( { slug } ) {
 		columnHelper.accessor( 'lang', {
 			cell: ( val ) => <LangMenu checkedId={ val?.getValue() } onChange={ ( lang ) => console.log( lang ) } />,
 			header: () => <LangMenu checkedId={ 'all' } onChange={ ( val ) => addFilter( 'lang', val ) } />,
+			size: 165,
 		} ),
 		columnHelper.accessor( 'link_usage_count', {
 			header: () => header.link_usage_count,
@@ -92,6 +93,7 @@ export default function KeywordsTable( { slug } ) {
 		columnHelper.accessor( 'urlLink', {
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" className="limit-50" rel="noreferrer">{ cell.getValue() }</a>,
 			header: () => header.urlLink,
+			enableResizing: false,
 			minSize: '30em',
 		} ),
 	];
@@ -105,26 +107,22 @@ export default function KeywordsTable( { slug } ) {
 			<TableViewHeaderBottom
 				slug={ slug }
 				currentFilters={ currentFilters }
+				header={ header }
+				removedFilter={ ( key ) => removeFilter( key ) }
 				exportOptions={ {
 					url: slug,
 					fromId: 'from_kw_id',
 					pageId: 'kw_id',
 					deleteCSVCols: [ 'kw_id', 'destUrlMd5' ],
 				} }
-			>{ activeFilters.length > 0 &&
-				<div className="flex flex-align-center">
-					<strong>{ __( 'Filters:' ) }</strong>
-					{ activeFilters.map( ( key ) => {
-						return ( <button className="ml-s" key={ key } onClick={ ( ) => removeFilter( key ) }>{ header[ key ] }</button> );
-					} ) }
-				</div>
-				}
+			>
 				<div className="ma-left flex flex-align-center">
 					<strong>Sort by:</strong>
 					<SortMenu className="ml-s" items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } />
 				</div>
 			</TableViewHeaderBottom>
 			<Table className="fadeInto"
+				resizable
 				slug={ slug }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>

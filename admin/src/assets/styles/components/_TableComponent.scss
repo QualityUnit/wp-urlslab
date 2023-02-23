@@ -6,7 +6,6 @@ $cellHeight: 3.5em;
 
 .urlslab-table {
 
-	table-layout: fixed;
 	border-collapse: collapse;
 	border-spacing: 0;
 	width: 100%;
@@ -19,28 +18,29 @@ $cellHeight: 3.5em;
 	&-container {
 
 		@include scrollbar();
-		height: calc(100vh - 135px);
+		height: calc(100vh - 350px);
 		margin: 1.5em;
+		padding-bottom: 1.5em;
 		overflow: auto;
 		overflow-x: hidden;
 	}
 
 	.resizer {
 		position: absolute;
-		right: 0;
+		right: -2px;
 		top: 0;
 		height: 100%;
-		width: 5px;
+		width: 4px;
 		background-color: $grey-medium-lighter;
 		cursor: col-resize;
 		user-select: none;
 		touch-action: none;
 		transition: all $transitionTime;
-	}
 
-	.resizer.isResizing {
-		background-color: $lighter-blue;
-		opacity: 1;
+		&.isResizing {
+			background-color: $lighter-blue;
+			opacity: 1;
+		}
 	}
 
 	@media (hover: hover) {
@@ -56,10 +56,24 @@ $cellHeight: 3.5em;
 
 	th,
 	td {
-		font-weight: $font-weight-normal;
 		text-align: left;
+		font-weight: $font-weight-normal;
 		padding: 0.25em;
 		padding-left: 1em;
+	}
+
+	&.resizable {
+
+		th,
+		td {
+			display: flex;
+			align-items: center;
+			height: $cellHeight;
+
+			> *:not(.resizer) {
+				width: 100%;
+			}
+		}
 	}
 
 	thead {
@@ -76,14 +90,14 @@ $cellHeight: 3.5em;
 	}
 
 	tbody {
-
 		border: 1px solid $grey-light;
 	}
 
-	tr {
-		display: flex;
-		align-items: center;
+	&.resizable tr {
 		height: $cellHeight;
+	}
+
+	tr {
 		border-bottom: 1px solid $grey-light;
 
 		&:last-of-type {

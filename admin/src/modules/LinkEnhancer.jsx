@@ -20,7 +20,7 @@ export default function LinkEnhancer( { moduleId } ) {
 			{
 				activeSection === 'url' &&
 				<Suspense>
-					<LinkManagerTable />
+					<LinkManagerTable slug="url" />
 				</Suspense>
 			}
 			{

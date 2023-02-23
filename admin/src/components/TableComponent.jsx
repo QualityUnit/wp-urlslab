@@ -8,17 +8,16 @@ import { useVirtual } from 'react-virtual';
 
 import '../assets/styles/components/_TableComponent.scss';
 
-export default function Table( { children, className, columns, data } ) {
+export default function Table( { resizable, children, className, columns, data } ) {
 	const [ rowSelection, setRowSelection ] = useState( {} );
-	// const [ columnResizeMode, setColumnResizeMode ] = useState( 'onChange' );
 
 	const tableContainerRef = useRef();
 	const table = useReactTable( {
 		columns,
 		data,
 		defaultColumn: {
-			minSize: 20,
-			size: 100,
+			minSize: resizable ? 80 : 24,
+			size: resizable ? 100 : 24,
 		},
 		state: {
 			rowSelection,
@@ -55,9 +54,9 @@ export default function Table( { children, className, columns, data } ) {
 				{ row.getVisibleCells().map( ( cell ) =>
 					<td key={ cell.id } className={ cell.column.columnDef.className }
 						style={ {
-							position: 'absolute',
-							left: cell.column.getStart(),
-							width: cell.column.getSize() !== 0
+							position: resizable ? 'absolute' : 'static',
+							left: resizable ? cell.column.getStart() : '0',
+							width: cell.column.getSize() !== 0 && resizable
 								? cell.column.getSize()
 								: undefined,
 						} }
@@ -71,16 +70,16 @@ export default function Table( { children, className, columns, data } ) {
 
 	return (
 		<div className="urlslab-table-container" ref={ tableContainerRef }>
-			<table className={ `urlslab-table ${ className }` }>
+			<table className={ `urlslab-table ${ className } ${ resizable ? 'resizable' : '' }` }>
 				<thead className="urlslab-table-head">
 					{ table.getHeaderGroups().map( ( headerGroup ) => (
 						<tr key={ headerGroup.id }>
 							{ headerGroup.headers.map( ( header ) => (
 								<th key={ header.id }
 									style={ {
-										position: 'absolute',
-										left: header.getStart(),
-										width: header.getSize() !== 0 ? header.getSize() : undefined,
+										position: resizable ? 'absolute' : 'relative',
+										left: resizable ? header.getStart() : '0',
+										width: header.getSize() !== 0 && resizable ? header.getSize() : undefined,
 									} }
 								>
 									{ header.isPlaceholder
@@ -89,14 +88,17 @@ export default function Table( { children, className, columns, data } ) {
 											header.column.columnDef.header,
 											header.getContext()
 										) }
-									<div
-										{ ...{
-											onMouseDown: header.getResizeHandler(),
-											onTouchStart: header.getResizeHandler(),
-											className: `resizer ${ header.column.getIsResizing() ? 'isResizing' : ''
-											}`,
-										} }
-									/>
+									{ ( resizable && header.column.columnDef.enableResizing !== false )
+										? <div
+												{ ...{
+												onMouseDown: header.getResizeHandler(),
+												onTouchStart: header.getResizeHandler(),
+												className: `resizer ${ header.column.getIsResizing() ? 'isResizing' : ''
+												}`,
+											} }
+										/>
+										: null
+									}
 								</th>
 							) ) }
 						</tr>
