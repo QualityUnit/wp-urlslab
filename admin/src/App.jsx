@@ -21,20 +21,6 @@ export default function App() {
 		} ),
 	} );
 
-	const worker = new Worker( new URL( './constants/exportWorker', import.meta.url ) );
-	const exportTest = ( ) => {
-		worker.postMessage( {
-			url: 'keyword',
-			fromId: 'from_kw_id',
-			pageId: 'kw_id',
-			deleteCSVCols: [ 'kw_id', 'destUrlMd5' ],
-		} );
-		// console.log( 'message' );
-		worker.onmessage = ( message ) => {
-			console.log( message );
-		};
-	};
-
 	const [ pageTitle, setTitle ] = useState( __( 'Modules' ) );
 
 	const handleModulePage = ( selectedModule ) => {

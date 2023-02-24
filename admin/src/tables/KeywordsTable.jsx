@@ -9,6 +9,7 @@ import SortMenu from '../elements/SortMenu';
 import LangMenu from '../elements/LangMenu';
 import InputField from '../elements/InputField';
 import Checkbox from '../elements/Checkbox';
+import MenuInput from '../elements/MenuInput';
 
 import Loader from '../components/Loader';
 
@@ -37,6 +38,7 @@ export default function KeywordsTable( { slug } ) {
 	};
 
 	const header = {
+		kw_id: __( 'None' ),
 		keyword: __( 'Keyword' ),
 		kwType: __( 'Type' ),
 		kw_length: __( 'Length' ),
@@ -60,7 +62,7 @@ export default function KeywordsTable( { slug } ) {
 			size: 24,
 		} ),
 		columnHelper.accessor( 'keyword', {
-			header: () => header.keyword,
+			header: () => <MenuInput placeholder="Enter keyword" onChange={ ( val ) => addFilter( 'keyword', val ) }>{ header.keyword }</MenuInput>,
 			minSize: 150,
 		} ),
 		columnHelper.accessor( 'kwType', {

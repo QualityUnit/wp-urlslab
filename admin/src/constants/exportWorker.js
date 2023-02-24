@@ -1,10 +1,23 @@
-import { fetchData } from '../api/fetching';
-onmessage = function( message ) {
-	//
+onmessage = async function( message ) {
+	const { url, fromId, pageId, deleteCSVCols } = message.data;
+	const qOperator = url.includes( '?' ) ? '&' : '?';
+	const perpage = 9999;
 	const jsonData = { status: 'loading', data: [] };
 	const lastPage = '';
 	const dataForCSV = [];
 	const ended = false;
+	//Testing WP Rest API Cors
+	const response = await fetch( '/wp-json/wp/v2/', {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+			accept: 'application/json',
+		},
+	} ).then( ( r ) => {
+		return r.json();
+	} );
+
+	console.log( await response );
 
 	postMessage( jsonData );
 	// Below Doesn't work because WP cant authorize CORS request (web workers are cors running)

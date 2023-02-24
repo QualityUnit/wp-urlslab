@@ -32,6 +32,9 @@ export async function exportCSV( options ) {
 
 	if ( dataForCSV.length && ( dataForCSV.length > prevDataLength ) ) {
 		lastPage = dataForCSV[ dataForCSV?.length - 1 ][ pageId ];
+
+		// Calculates status of download. Needs secondary value, ie select MAX to get max id
+		console.log( `${ lastPage / 4294955887 * 100 }%` );
 		await exportCSV( options );
 	}
 
