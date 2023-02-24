@@ -1,12 +1,15 @@
-import { Suspense } from 'react';
+import { Suspense, useContext } from 'react';
 import { ReactComponent as Logo } from '../assets/images/urlslab-logo.svg';
 import { fetchSettings } from '../api/settings';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useQuery } from '@tanstack/react-query';
 import NoAPIkey from './NoAPIkey';
 import Notifications from './Notifications';
+import { NotificationsContext } from '../constants/contextProvider';
 
 export default function Header( { pageTitle } ) {
+	const { notifications } = useContext( NotificationsContext );
+	console.log( notifications );
 	// let apikey = '********';
 	// const generalSettings = useQuery( {
 	// 	queryKey: [ 'general' ],

@@ -1,29 +1,35 @@
+
+import { useContext } from 'react';
 import { jsonToCSV } from 'react-papaparse';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import fileDownload from 'js-file-download';
 import { jsonData, exportCSV } from '../api/exportCsv';
 import { useI18n } from '@wordpress/react-i18n';
-import Worker from '../constants/exportWorker?worker';
+import { NotificationsContext } from '../constants/contextProvider';
+// import Worker from '../constants/exportWorker.js?worker';
 
 import { ReactComponent as ExportIcon } from '../assets/images/icon-export.svg';
 import Button from './Button';
 
 export default function ExportCSVButton( { className, options, onClick } ) {
 	const { __ } = useI18n();
+	const { setNotifications } = useContext( NotificationsContext );
 
 	const handleExport = () => {
-		const worker = new Worker();
-		// const exportTest = ( ) => {
-		worker.postMessage( {
-			url: 'keyword',
-			fromId: 'from_kw_id',
-			pageId: 'kw_id',
-			deleteCSVCols: [ 'kw_id', 'destUrlMd5' ],
-		} );
-		// 	// console.log( 'message' );
-		worker.onmessage = ( message ) => {
-			console.log( message );
-		};
+		// setNotifications( {
+		// 	export: 'Running',
+		// } );
+
+		// const worker = new Worker();
+		// worker.postMessage( {
+		// 	url: 'keyword',
+		// 	fromId: 'from_kw_id',
+		// 	pageId: 'kw_id',
+		// 	deleteCSVCols: [ 'kw_id', 'destUrlMd5' ],
+		// } );
+		// // 	// console.log( 'message' );
+		// worker.onmessage = ( message ) => {
+		// 	console.log( message );
 		// };
 		if ( onClick ) {
 			onClick( jsonData );

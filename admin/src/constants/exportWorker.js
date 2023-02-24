@@ -1,3 +1,4 @@
+import { fetchData } from '../api/fetching';
 onmessage = async function( message ) {
 	const { url, fromId, pageId, deleteCSVCols } = message.data;
 	const qOperator = url.includes( '?' ) ? '&' : '?';

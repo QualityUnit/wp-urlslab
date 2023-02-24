@@ -1,6 +1,6 @@
 export async function fetchData( slug ) {
 	try {
-		const result = await fetch( `http://liveagent.local/wp-json/urlslab/v1${ slug ? `/${ slug }` : '' }`, {
+		const result = await fetch( `/wp-json/urlslab/v1${ slug ? `/${ slug }` : '' }`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',

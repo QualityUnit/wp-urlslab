@@ -26,6 +26,7 @@ export default defineConfig( {
 			},
 		} ),
 	],
+	worker: [ react() ],
 	server: {
 		port: 1337,
 	},
