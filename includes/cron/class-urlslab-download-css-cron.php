@@ -72,7 +72,7 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 			$css->set( 'filesize', 0 );
 			$css->set( 'css_content', '' );
 		}
-		if ( file_exists( $page_content_file_name ) ) {
+		if ( is_string( $page_content_file_name ) && file_exists( $page_content_file_name ) ) {
 			unlink( $page_content_file_name );
 		}
 
