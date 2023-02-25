@@ -104,3 +104,17 @@ jobs:
                   "repository":"postaffiliatepro-wp",
                   "version":"${{ steps.version.outputs.group1 }}"
                 }'
+
+      - name: Trigger the Update Pipeline [URLsLab]
+        id: trigger-urlslab
+        uses: aurelien-baudet/workflow-dispatch@v2
+        with:
+          workflow: update-urlslab.yml
+          repo: QualityUnit/urlslab-wp
+          ref: main
+          token: ${{ secrets.CICD_PAT }}
+          wait-for-completion-interval: 5s
+          inputs: '{
+                  "repository":"urlslab-wp",
+                  "version":"${{ steps.version.outputs.group1 }}"
+                }'
