@@ -620,7 +620,18 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		}
 
 		$path = pathinfo( $_SERVER['REQUEST_URI'] );
+
+		if ( ! isset( $path['filename'] ) || false === strpos( $path['filename'], '_' ) ) {
+			status_header( 404 );
+			exit( 'Not found' );
+		}
+
 		list( $hash, $size ) = explode( '_', $path['filename'] );
+		if ( ! is_numeric( $hash ) || ! is_numeric( $size ) || empty( $size ) || empty( $hash ) ) {
+			status_header( 404 );
+			exit( 'Not found' );
+		}
+
 		$obj = new Urlslab_Content_Cache_Row(
 			array(
 				'cache_crc32' => $hash,
@@ -628,7 +639,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			)
 		);
 
-		if ( ! is_numeric( $hash ) || ! is_numeric( $size ) || empty( $size ) || empty( $hash ) || ! $obj->load() ) {
+		if ( ! $obj->load() ) {
 			status_header( 404 );
 			exit( 'Not found' );
 		}
