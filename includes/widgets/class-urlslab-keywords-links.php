@@ -2,6 +2,7 @@
 
 // phpcs:disable WordPress.NamingConventions
 class Urlslab_Keywords_Links extends Urlslab_Widget {
+	const SLUG = 'urlslab-keywords-links';
 
 	//Type - map
 	const KW_LINK_TYPE_EDITOR = 'E';    //link added by editor in original content
@@ -14,11 +15,6 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 	private Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher;
 
-	private string $widget_slug;
-	private string $widget_title;
-	private string $widget_description;
-	private string $landing_page_link;
-	private Urlslab_Admin_Page $parent_page;
 
 	private int $cnt_page_link_replacements = 0;
 	private int $cnt_page_links = 0;
@@ -64,11 +60,6 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 	public function __construct( Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher ) {
 		$this->urlslab_url_data_fetcher = $urlslab_url_data_fetcher;
-		$this->widget_slug              = 'urlslab-keywords-links';
-		$this->widget_title             = 'Keywords Links';
-		$this->widget_description       = 'Build automatic links from your keywords that appear in website content';
-		$this->landing_page_link        = 'https://www.urlslab.com';
-		$this->parent_page              = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-link-building' );
 	}
 
 	public function init_widget() {
@@ -79,28 +70,21 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_slug(): string {
-		return $this->widget_slug;
+		return self::SLUG;
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return $this->widget_title;
+		return __( 'Keywords Links' );
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return $this->widget_description;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function get_landing_page_link(): string {
-		return $this->landing_page_link;
+		return __( 'Build automatic links from your keywords that appear in website content' );
 	}
 
 	private function replaceKeywordWithLinks( DOMText $node, DOMDocument $document, array $keywords, int $position_start, $position_end, $min_text_len, $max_paragraph_density_links ) {
@@ -627,38 +611,6 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		if ( $hasLinksBeforeH1 ) {
 			$this->cnt_paragraph_link_replacements = array_shift( $this->link_counts );
 		}
-	}
-
-	public
-	function get_shortcode_content(
-		$atts = array(), $content = null, $tag = ''
-	): string {
-		return '';
-	}
-
-	public
-	function has_shortcode(): bool {
-		return false;
-	}
-
-	public
-	function render_widget_overview() {
-		// TODO: Implement render_widget_overview() method.
-	}
-
-	public
-	function get_thumbnail_demo_url(): string {
-		return plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/demo/link-enhancer-demo.png' ) . 'link-enhancer-demo.png';
-	}
-
-	public
-	function get_parent_page(): Urlslab_Admin_Page {
-		return $this->parent_page;
-	}
-
-	public
-	function get_widget_tab(): string {
-		return 'keyword-linking';
 	}
 
 	private function get_link_element_text( $dom ): string {

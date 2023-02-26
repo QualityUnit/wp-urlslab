@@ -1,14 +1,7 @@
 <?php
 
 class Urlslab_Optimize extends Urlslab_Widget {
-
 	const SLUG = 'optimize';
-
-	private string $widget_slug;
-	private string $widget_title;
-	private string $widget_description;
-	private string $landing_page_link;
-
 
 	const SETTING_NAME_OPTIMIZATION_FREQUENCY = 'urlslab-del-freq';
 	const SETTING_NAME_DEL_REVISIONS = 'urlslab-del-revisions';
@@ -32,68 +25,25 @@ class Urlslab_Optimize extends Urlslab_Widget {
 	const SETTING_NAME_DEL_ORPHANED_COMMENT_META = 'urlslab-del-orph-com-meta';
 	const SETTING_NAME_ORPHANED_COMMENT_META_NEXT_PROCESSING = 'urlslab-del-orph-com-meta-sleep';
 
-
-	/**
-	 * @param Urlslab_Url_Data_Fetcher $url_data_fetcher
-	 */
-	public function __construct() {
-		$this->widget_slug        = self::SLUG;
-		$this->widget_title       = __( 'WP DB Optimize' );
-		$this->widget_description = __( 'Keep Wordpress database size and speed under survilence.' );
-		$this->landing_page_link  = 'https://www.urlslab.com';
-	}
-
-	public function init_widget() {}
-
-
 	/**
 	 * @return string
 	 */
 	public function get_widget_slug(): string {
-		return $this->widget_slug;
+		return self::SLUG;
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return $this->widget_title;
+		return __( 'WP DB Optimize' );
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return $this->widget_description;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function get_landing_page_link(): string {
-		return $this->landing_page_link;
-	}
-
-	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
-		return '';
-	}
-
-	public function has_shortcode(): bool {
-		return false;
-	}
-
-	public function render_widget_overview() {}
-
-	public function get_thumbnail_demo_url(): string {
-		return plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/demo/general.png' ) . 'general.png';
-	}
-
-	public function get_parent_page(): Urlslab_Admin_Page {
-		return $this->parent_page;
-	}
-
-	public function get_widget_tab(): string {
-		return 'optimize';
+		return __( 'Keep Wordpress database size and speed under survilence.' );
 	}
 
 	public function is_api_key_required() {
@@ -109,7 +59,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			__( 'Specify period how often should be executed active optimizations.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				86400   => __( 'Dayly' ),
+				86400   => __( 'Daily' ),
 				604800  => __( 'Weekly' ),
 				2419200 => __( 'Monthly' ),
 				7257600 => __( 'Quarterly' ),

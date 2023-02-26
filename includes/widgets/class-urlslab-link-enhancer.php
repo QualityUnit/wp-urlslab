@@ -3,16 +3,12 @@
 // phpcs:disable WordPress.NamingConventions
 
 class Urlslab_Link_Enhancer extends Urlslab_Widget {
-
+	const SLUG = 'urlslab-link-enhancer';
 	public const DESC_TEXT_SUMMARY = 'S';
 	public const DESC_TEXT_URL = 'U';
 	public const DESC_TEXT_TITLE = 'T';
 	public const DESC_TEXT_META_DESCRIPTION = 'M';
-	private string $widget_slug;
-	private string $widget_title;
-	private string $widget_description;
-	private string $landing_page_link;
-	private Urlslab_Admin_Page $parent_page;
+
 	private Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher;
 
 	public const SETTING_NAME_DESC_REPLACEMENT_STRATEGY = 'urlslab_desc_replacement_strategy';
@@ -27,11 +23,6 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	 */
 	public function __construct( Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher ) {
 		$this->urlslab_url_data_fetcher = $urlslab_url_data_fetcher;
-		$this->widget_slug              = 'urlslab-link-enhancer';
-		$this->widget_title             = 'Link Management';
-		$this->widget_description       = 'Enhance all external and internal links in your pages using link enhancer widget. add title to your link automatically';
-		$this->landing_page_link        = 'https://www.urlslab.com';
-		$this->parent_page              = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-link-building' );
 	}
 
 	public function init_widget() {
@@ -63,61 +54,27 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_slug(): string {
-		return $this->widget_slug;
+		return self::SLUG;
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return $this->widget_title;
+		return __( 'Link Management' );
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return $this->widget_description;
+		return __( 'Enhance all external and internal links in your pages using link enhancer widget. add title to your link automatically' );
 	}
 
-	/**
-	 * @return string
-	 */
-	public function get_landing_page_link(): string {
-		return $this->landing_page_link;
-	}
 
 	public function theContentHook( DOMDocument $document ) {
 		$this->processTitleAttribute( $document );
 		$this->processLinkFragments( $document );
-	}
-
-	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
-		return '';
-	}
-
-	public function has_shortcode(): bool {
-		return false;
-	}
-
-	public function visibility_active_in_table(): bool {
-		return Urlslab_User_Widget::get_instance()->is_widget_activated( $this->widget_slug ) && $this->get_option( self::SETTING_NAME_REMOVE_LINKS );
-	}
-
-	public function render_widget_overview() {
-		// TODO: Implement render_widget_overview() method.
-	}
-
-	public function get_thumbnail_demo_url(): string {
-		return plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/demo/link-enhancer-demo.png' ) . 'link-enhancer-demo.png';
-	}
-
-	public function get_parent_page(): Urlslab_Admin_Page {
-		return $this->parent_page;
-	}
-
-	public function get_widget_tab(): string {
-		return 'link-management';
 	}
 
 	private function update_urls_map( array $url_ids ) {

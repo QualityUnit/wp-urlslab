@@ -11,6 +11,10 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	public const STATUS_PENDING = 'P';
 	public const STATUS_NEW = 'N';
 
+
+	public const VISIBILITY_VISIBLE = 'V';
+	public const VISIBILITY_HIDDEN = 'H';
+
 	/**
 	 * @param array $url
 	 */

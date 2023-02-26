@@ -3,23 +3,16 @@
 // phpcs:disable WordPress
 
 class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
-
-	private string $widget_slug;
-	private string $widget_title;
-	private string $widget_description;
-	private string $landing_page_link;
-	private Urlslab_Admin_Page $parent_page;
+	const SLUG = 'urlslab-related-resources';
 	private Urlslab_Url_Data_Fetcher $url_data_fetcher;
+
+	const SETTING_NAME_UPDATE_FREQ = 'urlslab-rel-res-update-freq';
+	const SETTING_NAME_RELATED_RESOURCES_SCHEDULING = 'urlslab-rel-res-scheduling';
 
 	/**
 	 * @param Urlslab_Url_Data_Fetcher $url_data_fetcher
 	 */
 	public function __construct( Urlslab_Url_Data_Fetcher $url_data_fetcher ) {
-		$this->widget_slug        = 'urlslab-related-resources';
-		$this->widget_title       = 'Related Resources';
-		$this->widget_description = 'Configure widget to show contextually similar pages to any of your pages to build internal link building';
-		$this->landing_page_link  = 'https://www.urlslab.com';
-		$this->parent_page        = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-link-building' );
 		$this->url_data_fetcher   = $url_data_fetcher;
 	}
 
@@ -35,28 +28,21 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_slug(): string {
-		return $this->widget_slug;
+		return self::SLUG;
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return $this->widget_title;
+		return __( 'Related Resources' );
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return $this->widget_description;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function get_landing_page_link(): string {
-		return $this->landing_page_link;
+		return __( 'Configure widget to show contextually similar pages to any of your pages to build internal link building' );
 	}
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
@@ -138,25 +124,41 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		return '';
 	}
 
-	public function render_widget_overview() {
-		// TODO: Implement render_widget_overview() method.
-	}
-
-	public function get_thumbnail_demo_url(): string {
-		return plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/demo/related-resource-widget-demo.png' ) . 'related-resource-widget-demo.png';
-	}
-
-	public function get_parent_page(): Urlslab_Admin_Page {
-		return $this->parent_page;
-	}
-
-	public function get_widget_tab(): string {
-		return 'related-resource';
-	}
-
 	public function is_api_key_required() {
 		return true;
 	}
 
-	protected function add_options() {}
+	protected function add_options() {
+		$this->add_option_definition(
+			self::SETTING_NAME_UPDATE_FREQ,
+			2419200,
+			false,
+			__( 'Update frequency' ),
+			__( 'Define how often should be updated semantic relation between URLs from www.urlslab.com. If your website is changing daily, we recommend shorter periods. If your website change just time to time, even yearly updates should be fine for you.' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				86400     => __( 'Daily' ),
+				604800    => __( 'Weekly' ),
+				2419200   => __( 'Monthly' ),
+				7257600   => __( 'Quarterly' ),
+				31536000  => __( 'Yearly' ),
+				999999999 => __( 'Never' ),
+			),
+			function( $value ) {
+				return is_numeric( $value ) && 0 < $value;
+			},
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_RELATED_RESOURCES_SCHEDULING,
+			'all',
+			false,
+			__( 'Update strategy' ),
+			__( 'Choose when will WP update relations between urls' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				'all'       => __( 'Periodic updates for all urls' ),
+				'shortcode' => __( 'Update just relations for urls where we use Related Resources shortcode.' ),
+			),
+		);
+	}
 }

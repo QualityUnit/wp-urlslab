@@ -434,7 +434,7 @@ or (updateStatusDate < %s AND status = %s)
 			$wpdb->prepare(
 				$q, // phpcs:ignore
 				$url->get_url_id(),
-				Urlslab_Url_Data::VISIBILITY_VISIBLE,
+				Urlslab_Url_Row::VISIBILITY_VISIBLE,
 				$limit
 			),
 			ARRAY_A

@@ -3,12 +3,7 @@
 // phpcs:disable WordPress
 
 class Urlslab_Meta_Tag extends Urlslab_Widget {
-
-	private string $widget_slug;
-	private string $widget_title;
-	private string $widget_description;
-	private string $landing_page_link;
-	private Urlslab_Admin_Page $parent_page;
+	const SLUG = 'urlslab-meta-tag';
 	private Urlslab_Url_Data_Fetcher $url_data_fetcher;
 
 	const SETTING_NAME_META_DESCRIPTION_GENERATION = 'urlslab_meta_description_generation';
@@ -25,12 +20,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	 * @param Urlslab_Url_Data_Fetcher $url_data_fetcher
 	 */
 	public function __construct( Urlslab_Url_Data_Fetcher $url_data_fetcher ) {
-		$this->widget_slug        = 'urlslab-meta-tag';
-		$this->widget_title       = 'Meta Tag';
-		$this->widget_description = 'Generate meta tags automatically if there is no meta tag for your pages based on the content. generate og meta tags automatically from the data from URLSLAB';
-		$this->landing_page_link  = 'https://www.urlslab.com';
-		$this->parent_page        = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-header-seo' );
-		$this->url_data_fetcher   = $url_data_fetcher;
+		$this->url_data_fetcher = $url_data_fetcher;
 	}
 
 	public function init_widget() {
@@ -42,29 +32,23 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_slug(): string {
-		return $this->widget_slug;
+		return self::SLUG;
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return $this->widget_title;
+		return __( 'Meta Tag' );
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return $this->widget_description;
+		return __( 'Generate meta tags automatically if there is no meta tag for your pages based on the content. generate og meta tags automatically from the data from URLSLAB' );
 	}
 
-	/**
-	 * @return string
-	 */
-	public function get_landing_page_link(): string {
-		return $this->landing_page_link;
-	}
 
 	public function theContentHook( DOMDocument $document ) {
 		try {
@@ -174,29 +158,6 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 		}
 	}
 
-	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
-		return '';
-	}
-
-	public function has_shortcode(): bool {
-		return false;
-	}
-
-	public function render_widget_overview() {
-		// TODO: Implement render_widget_overview() method.
-	}
-
-	public function get_thumbnail_demo_url(): string {
-		return plugin_dir_url( URLSLAB_PLUGIN_DIR . '/admin/assets/demo/meta-tag-demo.png' ) . 'meta-tag-demo.png';
-	}
-
-	public function get_parent_page(): Urlslab_Admin_Page {
-		return $this->parent_page;
-	}
-
-	public function get_widget_tab(): string {
-		return 'meta-tags';
-	}
 
 	public function is_api_key_required() {
 		return true;

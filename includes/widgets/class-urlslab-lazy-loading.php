@@ -3,12 +3,8 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-content-cach
 
 // phpcs:disable WordPress.NamingConventions
 class Urlslab_Lazy_Loading extends Urlslab_Widget {
+	const SLUG = 'urlslab-lazy-loading';
 
-	private string $widget_slug;
-	private string $widget_title;
-	private string $widget_description;
-	private string $landing_page_link;
-	private Urlslab_Admin_Page $parent_page;
 	private $lazy_load_youtube_css = false;
 
 	private $content_docs = array();
@@ -26,54 +22,20 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 	public const DOWNLOAD_URL_PATH = 'urlslab-content/';
 
-	public function __construct() {
-		$this->widget_slug        = 'urlslab-lazy-loading';
-		$this->widget_title       = 'Lazy Loading';
-		$this->widget_description = 'Urlslab Lazy Loading';
-		$this->landing_page_link  = 'https://www.urlslab.com';
-		$this->parent_page        = Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-media' );
-	}
-
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_content', $this, 'the_content', 10 );
 	}
 
 	public function get_widget_slug(): string {
-		return $this->widget_slug;
+		return self::SLUG;
 	}
 
 	public function get_widget_title(): string {
-		return $this->widget_title;
+		return __( 'Lazy Loading' );
 	}
 
 	public function get_widget_description(): string {
-		return $this->widget_description;
-	}
-
-	public function get_landing_page_link(): string {
-		return $this->landing_page_link;
-	}
-
-	public function get_parent_page(): Urlslab_Admin_Page {
-		return $this->parent_page;
-	}
-
-	public function get_widget_tab(): string {
-		return 'lazy-loading';
-	}
-
-	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
-		return '';
-	}
-
-	public function has_shortcode(): bool {
-		return false;
-	}
-
-	public function render_widget_overview() {}
-
-	public function get_thumbnail_demo_url(): string {
-		return '';
+		return __( 'Lazy Loading improves loading speed of your website. All not needed content is loaded later once visitor needs it.' );
 	}
 
 	public function the_content( DOMDocument $document ) {
