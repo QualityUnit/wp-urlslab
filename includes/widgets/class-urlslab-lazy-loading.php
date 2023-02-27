@@ -407,7 +407,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 		if ( $dom_element->hasAttribute( 'src' ) ) {
 			$dom_element->setAttribute( 'data-src', $dom_element->getAttribute( 'src' ) );
-			$dom_element->setAttribute( 'src', $this->get_image_data( $dom_element->getAttribute( 'width' ), $dom_element->getAttribute( 'height' ) ) );
+			$dom_element->removeAttribute( 'src' );
 		}
 		$dom_element->setAttribute( 'urlslab-lazy', 'yes' );
 	}
