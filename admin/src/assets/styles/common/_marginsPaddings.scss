@@ -1,0 +1,143 @@
+@use "variables" as *;
+@use "mixins" as *;
+
+.no-margin[class] {
+	margin: 0;
+}
+
+$marginSide: (
+	left, right, top, bottom
+);
+
+@each $side in $marginSide {
+
+	[class].ma-#{$side} {
+		margin-#{$side}: auto;
+	}
+}
+
+@each $size, $val in $sizes {
+	.mt-#{$size}[class] {
+		margin-top: $val;
+	}
+
+	.mr-#{$size}[class] {
+		margin-right: $val;
+	}
+
+	.mb-#{$size}[class] {
+		margin-bottom: $val;
+	}
+
+	.ml-#{$size}[class] {
+		margin-left: $val;
+	}
+
+	.pt-#{$size}[class] {
+		margin-top: $val;
+	}
+
+	.pr-#{$size}[class] {
+		margin-right: $val;
+	}
+
+	.pb-#{$size}[class] {
+		margin-bottom: $val;
+	}
+
+	.pl-#{$size}[class] {
+		margin-left: $val;
+	}
+}
+
+@media (min-width: $breakpoint-tablet) {
+
+	@each $size, $val in $sizes {
+		.mt-#{$size}-tablet[class] {
+			margin-top: $val;
+		}
+
+		.mr-#{$size}-tablet[class] {
+			margin-right: $val;
+		}
+
+		.mb-#{$size}-tablet[class] {
+			margin-bottom: $val;
+		}
+
+		.ml-#{$size}-tablet[class] {
+			margin-left: $val;
+		}
+
+		.pt-#{$size}-tablet[class] {
+			margin-top: $val;
+		}
+
+		.pr-#{$size}-tablet[class] {
+			margin-right: $val;
+		}
+
+		.pb-#{$size}-tablet[class] {
+			margin-bottom: $val;
+		}
+
+		.pl-#{$size}-tablet[class] {
+			margin-left: $val;
+		}
+	}
+}
+
+@media (min-width: $breakpoint-tablet-landscape) {
+
+	@each $size, $val in $sizes {
+		.mt-#{$size}-tablet-landscape[class] {
+			margin-top: $val;
+		}
+
+		.mr-#{$size}-tablet-landscape[class] {
+			margin-right: $val;
+		}
+
+		.mb-#{$size}-tablet-landscape[class] {
+			margin-bottom: $val;
+		}
+
+		.ml-#{$size}-tablet-landscape[class] {
+			margin-left: $val;
+		}
+
+		.pt-#{$size}-tablet-landscape[class] {
+			margin-top: $val;
+		}
+
+		.pr-#{$size}-tablet-landscape[class] {
+			margin-right: $val;
+		}
+
+		.pb-#{$size}-tablet-landscape[class] {
+			margin-bottom: $val;
+		}
+
+		.pl-#{$size}-tablet-landscape[class] {
+			margin-left: $val;
+		}
+	}
+}
+
+@each $size, $val in $sizes {
+	.pt-#{$size}[class] {
+		padding-top: $val;
+	}
+
+	.pr-#{$size}[class] {
+		padding-right: $val;
+	}
+
+	.pb-#{$size}[class] {
+		padding-bottom: $val;
+	}
+
+	.pl-#{$size}[class] {
+		padding-left: $val;
+	}
+}

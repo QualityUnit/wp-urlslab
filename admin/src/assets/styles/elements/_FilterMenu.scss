@@ -109,24 +109,31 @@
 		}
 	}
 
-	label.urlslab-FilterMenu__item {
-		display: flex;
-		align-content: center;
-		padding: 0.5em 1em;
-		margin-bottom: 0.25em;
+	label,
+	.label {
 
-		* {
-			font-weight: inherit;
-		}
+		&.urlslab-FilterMenu__item {
+			display: flex;
+			align-content: center;
+			padding: 0.5em 1em;
+			margin-bottom: 0.25em;
 
-		&:last-of-type {
-			margin-bottom: 0;
-		}
+			* {
+				font-weight: inherit;
+			}
 
-		@media (hover: hover) {
+			&:last-of-type {
+				margin-bottom: 0;
+			}
 
-			&:hover {
-				background-color: $grey-lightest;
+			&:not(.menuInput) {
+
+				@media (hover: hover) {
+
+					&:hover {
+						background-color: $grey-lightest;
+					}
+				}
 			}
 		}
 	}

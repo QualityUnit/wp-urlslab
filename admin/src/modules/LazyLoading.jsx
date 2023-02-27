@@ -2,9 +2,6 @@ import { useState, Suspense, lazy } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import TableViewHeader from '../components/TableViewHeader';
-import YouTubeCacheTable from '../tables/YouTubeCacheTable';
-import CSSCacheTable from '../tables/CSSCacheTable';
-import ContentCacheTable from '../tables/ContentCacheTable';
 
 export default function LazyLoading( { moduleId } ) {
 	const { __ } = useI18n();
@@ -18,23 +15,27 @@ export default function LazyLoading( { moduleId } ) {
 	);
 
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
-	const ImportExport = lazy( () => import( `../components/ImportExport.jsx` ) );
+	const YouTubeCacheTable = lazy( () => import( `../tables/YouTubeCacheTable.jsx` ) );
+	const CSSCacheTable = lazy( () => import( `../tables/CSSCacheTable.jsx` ) );
+	const ContentCacheTable = lazy( () => import( `../tables/ContentCacheTable.jsx` ) );
 
 	return (
 		<div className="urlslab-tableView">
 			<TableViewHeader tableMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
-			{
-				activeSection === 'youtube-cache' &&
-				<YouTubeCacheTable />
-			}
-			{
-				activeSection === 'css-cache' &&
-				<CSSCacheTable />
-			}
-			{
-				activeSection === 'content-cache' &&
-				<ContentCacheTable />
-			}
+			<Suspense>
+				{
+					activeSection === 'youtube-cache' &&
+					<YouTubeCacheTable />
+				}
+				{
+					activeSection === 'css-cache' &&
+					<CSSCacheTable />
+				}
+				{
+					activeSection === 'content-cache' &&
+					<ContentCacheTable />
+				}
+			</Suspense>
 			{
 				activeSection === 'settings' &&
 					<Suspense>
@@ -42,14 +43,14 @@ export default function LazyLoading( { moduleId } ) {
 					</Suspense>
 			}
 			{
-				activeSection === 'importexport' &&
-				<Suspense>
-					<ImportExport exportOptions={ {
-						url: 'youtube-cache',
-						fromId: 'from_videoid',
-						pageId: 'videoid',
-					} } />
-				</Suspense>
+				// activeSection === 'importexport' &&
+				// <Suspense>
+				// 	<ImportExport exportOptions={ {
+				// 		url: 'youtube-cache',
+				// 		fromId: 'from_videoid',
+				// 		pageId: 'videoid',
+				// 	} } />
+				// </Suspense>
 			}
 		</div>
 

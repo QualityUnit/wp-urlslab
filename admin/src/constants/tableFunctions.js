@@ -4,7 +4,7 @@ export const handleInput = ( value, cell ) => {
 	console.log( newRow );
 };
 
-export	const handleSelected = ( val, cell ) => {
+export const handleSelected = ( val, cell ) => {
 	cell.row.toggleSelected();
 	console.log( { selected: cell.row.original.kw_id } );
 };

@@ -25,12 +25,12 @@ export default function Modules( { modules } ) {
 						module.id !== 'general'
 						// ( title.includes( searchValue ) || excerpt.includes( searchValue ) )
 							? <DashboardModule
-									key={ module.id }
-									moduleId={ module.id }
-									hasApi={ module.apikey }
-									isActive={ module.active }
-									title={ module.title }
-									image={ `${ publicDir() }/images/modules/${ module.id }.png` }
+								key={ module.id }
+								moduleId={ module.id }
+								hasApi={ module.apikey }
+								isActive={ module.active }
+								title={ module.title }
+								image={ `${ publicDir() }/images/modules/${ module.id }.png` }
 							>
 								{ module.description }
 							</DashboardModule>

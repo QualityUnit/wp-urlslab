@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { delay } from '../constants/helpers';
 
@@ -5,7 +6,7 @@ import '../assets/styles/elements/_FilterMenu.scss';
 import '../assets/styles/elements/_RangeSlider.scss';
 
 export default function RangeSlider( {
-	className, style, min, max, onChange, unit, children, filterItems, filteredItems,
+	className, style, min, max, onChange, unit, children,
 } ) {
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
@@ -14,24 +15,22 @@ export default function RangeSlider( {
 	const minValRef = useRef( null );
 	const maxValRef = useRef( null );
 	const range = useRef( null );
+	const didMountRef = useRef( false );
 	const ref = useRef( null );
-	let items = {};
-
-	if ( filterItems ) {
-		items = Object.values( filterItems );
-	}
 
 	useEffect( () => {
 		const handleClickOutside = ( event ) => {
-			if ( ! ref.current?.contains( event.target ) ) {
+			if ( ! ref.current?.contains( event.target ) && isActive ) {
 				setActive( false );
 				setVisible( false );
 			}
 		};
+		if ( onChange && didMountRef.current && ! isActive ) {
+			onChange( { min: minimum, max: maximum } );
+		}
+		didMountRef.current = true;
 		document.addEventListener( 'click', handleClickOutside, true );
-	} );
-
-	// filteredItems(checked);
+	}, [ minimum, maximum, isActive ] );
 
 	// Convert to percentage
 	const getPercent = useCallback(
@@ -88,13 +87,6 @@ export default function RangeSlider( {
 		}
 	}, [ maximum, getPercent ] );
 
-	// Get min and max values when their state changes
-	useEffect( () => {
-		if ( onChange ) {
-			onChange( { min: minimum, max: maximum } );
-		}
-	}, [ minimum, maximum, onChange ] );
-
 	return (
 		<div className={ `urlslab-FilterMenu ${ className || '' }` } style={ style } ref={ ref }>
 			<div
@@ -107,7 +99,7 @@ export default function RangeSlider( {
 				{ children }
 			</div>
 			<div className={ `urlslab-FilterMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
-				<div className={ `urlslab-FilterMenu__items--inn urlslab-rangeslider ${ items.length > 8 ? 'has-scrollbar' : '' }` }>
+				<div className="urlslab-FilterMenu__items--inn urlslab-rangeslider">
 					<div className="urlslab-rangeslider-top">
 						<input
 							type="range"

@@ -19,10 +19,7 @@ export default function InputField( { defaultValue, placeholder, message, classN
 			) {
 				return 'has-value success';
 			}
-			if ( ( type === undefined || type === 'text' || type === 'password' ) ||
-				( type === 'number' && ( /[0-9]/i ).test( val ) ) ||
-				// ( type === 'url' && urlRegex.test( val ) )
-				( type === 'url' )
+			if ( ( type !== 'email' )
 			) {
 				return 'has-value';
 			}

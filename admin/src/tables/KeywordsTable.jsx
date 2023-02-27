@@ -1,49 +1,104 @@
-import { useEffect } from 'react';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useI18n } from '@wordpress/react-i18n';
+import { createColumnHelper } from '@tanstack/react-table';
 
-import { useInView } from 'react-intersection-observer';
-import { fetchData } from '../api/fetching';
-
-import Columns from './tableColumns/KeywordsTable';
-import Table from '../components/TableComponent';
-import ImportExport from '../components/ImportExport';
+import useInfiniteFetch from '../hooks/useInfiniteFetch';
+import { useFilter, useSorting } from '../hooks/filteringSorting';
+import { handleInput, handleSelected } from '../constants/tableFunctions';
+import RangeSlider from '../elements/RangeSlider';
+import SortMenu from '../elements/SortMenu';
+import LangMenu from '../elements/LangMenu';
+import InputField from '../elements/InputField';
+import Checkbox from '../elements/Checkbox';
+import MenuInput from '../elements/MenuInput';
 
 import Loader from '../components/Loader';
 
+import Table from '../components/TableComponent';
+import TableViewHeaderBottom from '../components/TableViewHeaderBottom';
+
 export default function KeywordsTable( { slug } ) {
-	const { ref, inView } = useInView();
-	const maxRows = 50;
+	const { __ } = useI18n();
+	const columnHelper = createColumnHelper();
+	const { filters, currentFilters, addFilter, removeFilter } = useFilter();
+	const { sortingColumn, sortBy } = useSorting();
 
 	const {
 		data,
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		fetchNextPage,
-	} = useInfiniteQuery( {
-		queryKey: [ slug ],
-		queryFn: ( { pageParam = 0 } ) => {
-			return fetchData( `${ slug }?from_kw_id=${ pageParam }&rows_per_page=${ maxRows }` );
-		},
-		getNextPageParam: ( allRows ) => {
-			if ( allRows.length < maxRows ) {
-				return undefined;
-			}
-			const lastRowId = allRows[ allRows?.length - 1 ]?.kw_id ?? undefined;
-			return lastRowId;
-		},
-		keepPreviousData: true,
-		refetchOnWindowFocus: false,
-		cacheTime: Infinity,
-		staleTime: Infinity,
-	}
-	);
+		hasNextPage,
+		ref,
+	} = useInfiniteFetch( { key: 'keyword', url: `${ filters }${ sortingColumn }`, pageId: 'kw_id' } );
 
-	useEffect( () => {
-		if ( inView ) {
-			fetchNextPage();
-		}
-	}, [ inView, fetchNextPage ] );
+	const keywordTypes = {
+		M: __( 'Manual' ),
+		I: __( 'Imported' ),
+		X: __( 'None' ),
+	};
+
+	const header = {
+		kw_id: __( 'None' ),
+		keyword: __( 'Keyword' ),
+		kwType: __( 'Type' ),
+		kw_length: __( 'Length' ),
+		kw_priority: __( 'Priority' ),
+		kw_usage_count: __( 'Usage' ),
+		lang: __( 'Language' ),
+		link_usage_count: __( 'Link Usage' ),
+		urlFilter: __( 'URL Filter' ),
+		urlLink: __( 'Link' ),
+	};
+
+	const columns = [
+		columnHelper.accessor( 'check', {
+			className: 'checkbox',
+			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
+				handleSelected( val, cell );
+			} } />,
+			header: () => __( '' ),
+			enableResizing: false,
+			maxSize: 24,
+			size: 24,
+		} ),
+		columnHelper.accessor( 'keyword', {
+			header: () => <MenuInput placeholder="Enter keyword" onChange={ ( val ) => addFilter( 'keyword', val ) }>{ header.keyword }</MenuInput>,
+			minSize: 150,
+		} ),
+		columnHelper.accessor( 'kwType', {
+			cell: ( cell ) => <SortMenu items={ keywordTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( val ) => handleInput( val, cell ) } />,
+			header: ( cell ) => <SortMenu items={ keywordTypes } name={ cell.column.id } checkedId={ header.kwType } onChange={ ( val ) => addFilter( 'kwType', val ) } />,
+		} ),
+		columnHelper.accessor( 'kw_length', {
+			header: () => header.kw_length,
+			size: 70,
+		} ),
+		columnHelper.accessor( 'kw_priority', {
+			header: () => <RangeSlider min="0" max="300" onChange={ ( r ) => console.log( r ) }>{ header.kw_priority }</RangeSlider>,
+		} ),
+		columnHelper.accessor( 'kw_usage_count', {
+			header: () => header.kw_usage_count,
+			size: 70,
+		} ),
+		columnHelper.accessor( 'lang', {
+			cell: ( val ) => <LangMenu checkedId={ val?.getValue() } onChange={ ( lang ) => console.log( lang ) } />,
+			header: () => <LangMenu checkedId={ 'all' } onChange={ ( val ) => addFilter( 'lang', val ) } />,
+			size: 165,
+		} ),
+		columnHelper.accessor( 'link_usage_count', {
+			header: () => header.link_usage_count,
+		} ),
+		columnHelper.accessor( 'urlFilter', {
+			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( val ) => handleInput( val, cell ) } />,
+			header: () => header.urlFilter,
+		} ),
+		columnHelper.accessor( 'urlLink', {
+			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" className="limit-50" rel="noreferrer">{ cell.getValue() }</a>,
+			header: () => header.urlLink,
+			enableResizing: false,
+			minSize: '30em',
+		} ),
+	];
 
 	if ( status === 'loading' ) {
 		return <Loader />;
@@ -51,24 +106,29 @@ export default function KeywordsTable( { slug } ) {
 
 	return (
 		<>
-			<ImportExport
-				importOptions={ {
-					url: slug,
-				} }
+			<TableViewHeaderBottom
+				slug={ slug }
+				currentFilters={ currentFilters }
+				header={ header }
+				removedFilter={ ( key ) => removeFilter( key ) }
 				exportOptions={ {
 					url: slug,
 					fromId: 'from_kw_id',
 					pageId: 'kw_id',
 					deleteCSVCols: [ 'kw_id', 'destUrlMd5' ],
-				} } />
-			<Table className="fadeInto"
-				slug={ slug }
-				columns={ Columns() }
-				data={
-					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
-				}
+				} }
 			>
-				<div ref={ ref }>{ isFetchingNextPage && 'Loading more...' }</div>
+				<div className="ma-left flex flex-align-center">
+					<strong>Sort by:</strong>
+					<SortMenu className="ml-s" items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } />
+				</div>
+			</TableViewHeaderBottom>
+			<Table className="fadeInto"
+				resizable
+				slug={ slug }
+				columns={ columns }
+				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
+				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
 			</Table>
 		</>
 	);

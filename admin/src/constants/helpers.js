@@ -36,3 +36,12 @@ export const langName = ( langcode ) => {
 	return null;
 };
 
+export const nameOf = ( obj, key ) => {
+	const res = {};
+	Object.keys( obj ).map( ( k ) => {
+		res[ k ] = () => k;
+		return false;
+	} );
+	return key( res )();
+};
+
