@@ -21,7 +21,7 @@ export default function MenuInput( {
 				setVisible( false );
 			}
 		};
-		if ( onChange && didMountRef.current && ! isActive ) {
+		if ( onChange && didMountRef.current && ! isActive && inputValue?.length ) {
 			onChange( inputValue );
 		}
 		didMountRef.current = true;

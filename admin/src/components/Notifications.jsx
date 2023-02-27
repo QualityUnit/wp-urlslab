@@ -5,7 +5,7 @@ import '../assets/styles/components/_Notifications.scss';
 
 export default function Notifications( { className } ) {
 	const queryClient = useQueryClient();
-	const { data: notifications, status } = useQuery( {
+	const { data: notifications } = useQuery( {
 		queryKey: [ 'notifications' ],
 		queryFn: queryClient.getQueryData( [ 'notifications' ] ),
 	} );

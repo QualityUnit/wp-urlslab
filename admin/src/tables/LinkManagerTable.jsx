@@ -38,11 +38,20 @@ export default function LinkManagerTable( { slug } ) {
 		X: __( 'Blocked' ),
 	};
 
+	const visibilityTypes = {
+		V: __( 'Visible' ),
+		H: __( 'Hidden' ),
+	};
+
 	const header = {
 		urlTitle: __( 'URL Title' ),
 		urlMetaDescription: __( 'URL Description' ),
-		updateStatusDate: __( 'Status Date' ),
+		status: __( 'Status' ),
 		urlName: __( 'URL' ),
+		urlSummary: __( 'URL Summary' ),
+		visibility: __( 'Visibility' ),
+		updateStatusDate: __( 'Status Date' ),
+		urlCheckDate: __( 'Check Date' ),
 	};
 
 	const columns = [
@@ -72,7 +81,7 @@ export default function LinkManagerTable( { slug } ) {
 				checkedId={ cell.getValue() }
 				onChange={ ( val ) => handleInput( val, cell ) } />,
 			className: 'youtube-status',
-			header: () => __( 'Status' ),
+			header: () => header.status,
 		} ),
 		columnHelper.accessor( 'updateStatusDate', {
 			header: () => header.updateStatusDate,
@@ -83,6 +92,21 @@ export default function LinkManagerTable( { slug } ) {
 			header: () => header.urlName,
 			enableResizing: false,
 			minSize: 350,
+		} ),
+		columnHelper.accessor( 'urlSummary', {
+			header: () => header.urlSummary,
+		} ),
+		columnHelper.accessor( 'visibility', {
+			cell: ( cell ) => <SortMenu
+				items={ visibilityTypes }
+				name={ cell.column.id }
+				checkedId={ cell.getValue() }
+				onChange={ ( val ) => handleInput( val, cell ) } />,
+			header: () => header.visibility,
+		} ),
+		columnHelper.accessor( 'urlCheckDate', {
+			header: () => header.urlCheckDate,
+			minSize: 150,
 		} ),
 	];
 
