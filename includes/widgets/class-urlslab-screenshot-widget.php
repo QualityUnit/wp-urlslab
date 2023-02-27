@@ -1,6 +1,5 @@
 <?php
 
-
 class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	const SLUG = 'urlslab-screenshot';
 
@@ -21,7 +20,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	}
 
 	public function hook_callback() {
-		add_shortcode( $this->widget_slug, array( $this, 'get_shortcode_content' ) );
+		add_shortcode( $this->get_widget_slug(), array( $this, 'get_shortcode_content' ) );
 	}
 
 
@@ -47,16 +46,13 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	}
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
-		// normalize attribute keys, lowercase
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
-		// override default attributes with user attributes
-		$default_alt  = 'Screenshot taken by URLSLAB.com';
 		$urlslab_atts = shortcode_atts(
 			array(
 				'width'           => '100%',
 				'height'          => '100%',
-				'alt'             => $default_alt,
+				'alt'             => 'Screenshot taken by URLSLAB.com',
 				'default-image'   => '',
 				'url'             => 'https://www.urlslab.com',
 				'screenshot-type' => 'carousel',
@@ -68,26 +64,24 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 
 		try {
 			if ( ! empty( $urlslab_atts['url'] ) ) {
-				$url_data = $this->urlslab_url_data_fetcher->fetch_schedule_url(
-					new Urlslab_Url( $urlslab_atts['url'] )
-				);
+				$url_data = $this->urlslab_url_data_fetcher->fetch_schedule_url( new Urlslab_Url( $urlslab_atts['url'] ) );
 
-				if ( ! empty( $url_data ) && ! $url_data->is_empty() ) {
-					$urlslab_atts['alt'] = $url_data->get_url_summary_text( get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY ) );
+				if ( ! empty( $url_data ) && ! $url_data->is_active() && ! empty( $url_data->get_screenshot_url() ) ) {
+					$urlslab_atts['alt'] = $url_data->get_summary( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
 
-					switch ( $url_data->get_screenshot_status() ) {
-						case Urlslab_Status::$recurring_update:
-						case Urlslab_Status::$available:
+					switch ( $url_data->get( 'status' ) ) {
+						case Urlslab_Url_Row::STATUS_RECURRING_UPDATE:
+						case Urlslab_Url_Row::STATUS_ACTIVE:
 							return $this->render_shortcode(
 								$urlslab_atts['url'],
-								$url_data->render_screenshot_path( $urlslab_atts['screenshot-type'] ),
+								$url_data->get_screenshot_url( $urlslab_atts['screenshot-type'] ),
 								$urlslab_atts['alt'],
 								$urlslab_atts['width'],
 								$urlslab_atts['height'],
 							);
 
-						case Urlslab_Status::$new:
-						case Urlslab_Status::$pending:
+						case Urlslab_Url_Row::STATUS_NEW:
+						case Urlslab_Url_Row::STATUS_PENDING:
 							//default url
 							return $this->render_shortcode(
 								$urlslab_atts['url'],
@@ -97,8 +91,8 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 								$urlslab_atts['height'],
 							);
 
-						case Urlslab_Status::$not_crawling:
-						case Urlslab_Status::$blocked:
+						case Urlslab_Url_Row::STATUS_BROKEN:
+						case Urlslab_Url_Row::STATUS_BLOCKED:
 						default:
 							return '';
 					}
@@ -120,7 +114,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 
 	private function render_shortcode( string $url, string $src, string $alt, string $width, string $height ): string {
 		if ( empty( $src ) ) {
-			return ' <!-- URLSLAB image still not created for ' . $url . ' -->';
+			return ' <!-- URLSLAB processing ' . $url . ' -->';
 		}
 
 		return sprintf(

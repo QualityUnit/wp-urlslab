@@ -108,7 +108,7 @@ class Urlslab {
 
 	public function init_urlslab_user() {
 		$urlslab_available_widgets = Urlslab_Available_Widgets::get_instance();
-		$this->url_data_fetcher    = new Urlslab_Url_Data_Fetcher( new Urlslab_Screenshot_Api() );
+		$this->url_data_fetcher    = new Urlslab_Url_Data_Fetcher();
 		$urlslab_available_widgets->init_widgets( $this->url_data_fetcher );
 		$urlslab_user_widget = Urlslab_User_Widget::get_instance();
 
@@ -170,7 +170,6 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-user-management-api.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/urlslab-api-model.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-batch-request.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-url-data-response.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-error-response.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-keyword-data.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-data.php';
@@ -188,7 +187,6 @@ class Urlslab {
 		//additional
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/helpers/urlslab-helpers.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/helpers/class-urlslab-status.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
 
 		//widgets
@@ -399,7 +397,7 @@ class Urlslab {
 		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Download_CSS_Cron() );
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
-		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Screenshot_Cron( $this->url_data_fetcher ) );
+		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Screenshot_Cron() );
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-optimize-cron.php';
 		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Optimize_Cron() );

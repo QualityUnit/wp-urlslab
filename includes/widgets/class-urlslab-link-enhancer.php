@@ -182,7 +182,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 				$result = $this->urlslab_url_data_fetcher->fetch_schedule_urls_batch(
 					array_merge(
-						array( new Urlslab_Url( urlslab_add_current_page_protocol( $this->get_current_page_url()->get_url() ) ) ),
+						array( $this->get_current_page_url() ),
 						array_map( fn( $elem ): Urlslab_Url => $elem[1], $link_elements )
 					)
 				);
@@ -224,7 +224,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 								if ( empty( $dom_elem->getAttribute( 'title' ) ) ) {
 									$dom_elem->setAttribute(
 										'title',
-										$result[ $url_obj->get_url_id() ]->get_url_summary_text( $strategy ),
+										$result[ $url_obj->get_url_id() ]->get_summary( $strategy ),
 									);
 								}
 							}

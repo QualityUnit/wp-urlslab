@@ -26,9 +26,9 @@ class Urlslab_Available_Widgets {
 	 */
 	public function init_widgets( Urlslab_Url_Data_Fetcher $url_fetcher ) {
 		$urlslab_general           = new Urlslab_General();
-		$urlslab_optimize           = new Urlslab_Optimize();
+		$urlslab_optimize          = new Urlslab_Optimize();
 		$urlslab_screenshot        = new Urlslab_Screenshot_Widget( $url_fetcher );
-		$urlslab_related_resources = new Urlslab_Related_Resources_Widget( $url_fetcher );
+		$urlslab_related_resources = new Urlslab_Related_Resources_Widget();
 		$urlslab_link_enhancer     = new Urlslab_Link_Enhancer( $url_fetcher );
 		$urlslab_keyword_links     = new Urlslab_Keywords_Links( $url_fetcher );
 		$urlslab_image_alt_text    = new Urlslab_Image_Alt_Text();
@@ -48,7 +48,7 @@ class Urlslab_Available_Widgets {
 			$urlslab_media_offloader->get_widget_slug()   => $urlslab_media_offloader,
 			$urlslab_lazy_loading->get_widget_slug()      => $urlslab_lazy_loading,
 			$urlslab_css_optimizer->get_widget_slug()     => $urlslab_css_optimizer,
-			$urlslab_optimize->get_widget_slug()           => $urlslab_optimize,
+			$urlslab_optimize->get_widget_slug()          => $urlslab_optimize,
 		);
 	}
 
@@ -73,7 +73,7 @@ class Urlslab_Available_Widgets {
 	 *
 	 * @return false|Urlslab_Widget
 	 */
-	public function get_widget( string $widget_slug ) {
+	public function get_widget( string $widget_slug ): ?Urlslab_Widget {
 		if ( $this->widget_exists( $widget_slug ) ) {
 			return $this->available_widgets[ $widget_slug ];
 		} else {
