@@ -12,11 +12,8 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-file-data.ph
 
 // phpcs:disable WordPress.NamingConventions
 class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
+	const SLUG = 'urlslab-media-offloader';
 
-	private string $widget_slug;
-	private string $widget_title;
-	private string $widget_description;
-	private string $landing_page_link;
 	private array $parent_urls = array();
 
 	public const SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND = 'urlslab_import_post_attachements';
@@ -84,10 +81,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	/**
 	 */
 	public function __construct( Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher ) {
-		$this->widget_slug              = 'urlslab-media-offloader';
-		$this->widget_title             = 'Media Files';
-		$this->widget_description       = 'Offload media files from local directory to database or S3';
-		$this->landing_page_link        = 'https://www.urlslab.com';
 		$this->urlslab_url_data_fetcher = $urlslab_url_data_fetcher;
 	}
 
@@ -101,33 +94,23 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_slug(): string {
-		return $this->widget_slug;
+		return self::SLUG;
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return 'Urlslab ' . $this->widget_title;
+		return __( 'Media Files' );
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return $this->widget_description;
+		return __( 'Offload media files from local directory to database or S3' );
 	}
 
-	/**
-	 * @return string
-	 */
-	public function get_landing_page_link(): string {
-		return $this->landing_page_link;
-	}
-
-	public function has_shortcode(): bool {
-		return false;
-	}
 
 	public function wp_handle_upload( $file, $overrides = false, $time = null ) {
 		$file_obj = new Urlslab_File_Data(
@@ -151,10 +134,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		}
 
 		return $file;
-	}
-
-	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
-		return '';
 	}
 
 	public function the_content( DOMDocument $document ) {
@@ -387,9 +366,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				);
 
 				try {
-					$this->urlslab_url_data_fetcher->fetch_schedule_urls_batch(
-						array( new Urlslab_Url( urlslab_add_current_page_protocol( $this->get_current_page_url()->get_url() ) ) )
-					);
+					$this->urlslab_url_data_fetcher->fetch_schedule_url( $this->get_current_page_url() );
 				} catch ( Exception $e ) {
 				}
 			}
@@ -735,22 +712,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		header( 'Content-length: ' . $file->get_file_pointer()->get( 'filesize' ) );
 
 		$file->get_file_pointer()->get_driver()->output_file_content( $file );
-	}
-
-	public function get_parent_page(): Urlslab_Admin_Page {
-		return Urlslab_Page_Factory::get_instance()->get_page( 'urlslab-media' );
-	}
-
-	public function get_widget_tab(): string {
-		return '';
-	}
-
-	public function render_widget_overview() {
-		// TODO: Implement render_widget_overview() method.
-	}
-
-	public function get_thumbnail_demo_url(): string {
-		return '';
 	}
 
 	/**
@@ -1190,7 +1151,5 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			null,
 			'img_opt'
 		);
-
-
 	}
 }

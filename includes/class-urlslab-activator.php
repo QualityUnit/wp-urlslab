@@ -35,7 +35,7 @@ class Urlslab_Activator {
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-background-attachments-cron.php';
 		add_option( Urlslab_Offload_Background_Attachments_Cron::SETTING_NAME_SCHEDULER_POINTER, - 1, '', false );
-		$dummy = new Urlslab_Url_Data_Fetcher( new Urlslab_Screenshot_Api() );
+		$dummy = new Urlslab_Url_Data_Fetcher();
 		( new Urlslab_Keywords_Links( $dummy ) )->add_options_on_activate();
 		( new Urlslab_Link_Enhancer( $dummy ) )->add_options_on_activate();
 		( new Urlslab_Media_Offloader_Widget( $dummy ) )->add_options_on_activate();
@@ -353,6 +353,7 @@ class Urlslab_Activator {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 	}
+
 	private static function init_content_cache_tables() {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();

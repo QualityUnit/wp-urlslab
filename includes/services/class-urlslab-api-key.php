@@ -9,13 +9,6 @@ class Urlslab_Api_Key {
 
 	public function __construct() {}
 
-	/**
-	 * @return string
-	 */
-	public function get_api_key_masked(): string {
-		return urlslab_masked_info( $this->get_api_key() );
-	}
-
 	public function is_empty(): bool {
 		return empty( $this->get_api_key() );
 	}
@@ -24,10 +17,6 @@ class Urlslab_Api_Key {
 		$header['x-Api-Key'] = $this->get_api_key();
 
 		return $header;
-	}
-
-	public function get_api_key_hash(): string {
-		return md5( $this->get_api_key() );
 	}
 
 	private function get_api_key() {

@@ -85,8 +85,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 								'required'          => false,
 								'validate_callback' => function( $param ) {
 									switch ( $param ) {
-										case Urlslab_Url_Data::VISIBILITY_VISIBLE:
-										case Urlslab_Url_Data::VISIBILITY_HIDDEN:
+										case Urlslab_Url_Row::VISIBILITY_VISIBLE:
+										case Urlslab_Url_Row::VISIBILITY_HIDDEN:
 											return true;
 										default:
 											return false;
@@ -135,8 +135,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
-									case Urlslab_Url_Data::VISIBILITY_VISIBLE:
-									case Urlslab_Url_Data::VISIBILITY_HIDDEN:
+									case Urlslab_Url_Row::VISIBILITY_VISIBLE:
+									case Urlslab_Url_Row::VISIBILITY_HIDDEN:
 										return true;
 									default:
 										return false;

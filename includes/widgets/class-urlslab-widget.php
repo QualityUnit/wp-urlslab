@@ -19,7 +19,7 @@ abstract class Urlslab_Widget {
 	private $options = false;
 	private $option_sections = array();
 
-	public abstract function init_widget();
+	public function init_widget() {}
 
 	/**
 	 * @return string Widget slug for identifying the widget
@@ -36,36 +36,6 @@ abstract class Urlslab_Widget {
 	 */
 	public abstract function get_widget_description(): string;
 
-	/**
-	 * @return string External landing page introduction of the widget
-	 */
-	public abstract function get_landing_page_link(): string;
-
-	/**
-	 * @return Urlslab_Admin_Page urlslab_admin page where the widget exists
-	 */
-	public abstract function get_parent_page(): Urlslab_Admin_Page;
-
-	/**
-	 * @return string get tab slug that the widget is located in
-	 */
-	public abstract function get_widget_tab(): string;
-
-	/**
-	 * @param $args array|string extra arguments by the user
-	 *
-	 * @return string the url of the subpage where the widget exists in
-	 */
-	public function admin_widget_page( $args = '' ): string {
-		$args = wp_parse_args( $args, array() );
-		$url  = $this->get_parent_page()->menu_page( $this->get_widget_tab() );
-
-		if ( ! empty( $args ) ) {
-			$url = add_query_arg( $args, $url );
-		}
-
-		return $url;
-	}
 
 	/**
 	 * @param $atts array attributes of the shortcode
@@ -74,22 +44,16 @@ abstract class Urlslab_Widget {
 	 *
 	 * @return string
 	 */
-	public abstract function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string;
+	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
+		return '';
+	}
 
 	/**
 	 * @return bool indicates if this widget generates any shortcode
 	 */
-	public abstract function has_shortcode(): bool;
-
-	/**
-	 * @return mixed
-	 */
-	public abstract function render_widget_overview();
-
-	/**
-	 * @return string
-	 */
-	public abstract function get_thumbnail_demo_url(): string;
+	public function has_shortcode(): bool {
+		return false;
+	}
 
 	public function is_api_key_required() {
 		return false;
@@ -158,7 +122,7 @@ abstract class Urlslab_Widget {
 		}
 	}
 
-	protected abstract function add_options();
+	protected function add_options() {}
 
 	private function init_options() {
 		$this->options = array();
@@ -272,11 +236,13 @@ abstract class Urlslab_Widget {
 		}
 
 		if ( is_category() ) {
-			$this->current_page_url = new Urlslab_Url( get_category_link( get_query_var( 'cat' ) ) );
+			$this->current_page_url = new Urlslab_Url( urlslab_add_current_page_protocol( get_category_link( get_query_var( 'cat' ) ) ) );
 		} else {
-			$this->current_page_url = new Urlslab_Url( get_permalink( get_the_ID() ) );
+			$this->current_page_url = new Urlslab_Url( urlslab_add_current_page_protocol( get_permalink( get_the_ID() ) ) );
 		}
 
 		return $this->current_page_url;
 	}
+
+
 }

@@ -346,7 +346,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			$schedule_urls[ $obj->get( 'urlLink' ) ] = new Urlslab_Url( $obj->get( 'urlLink' ) );
 		}
 
-		$url_fetcher = new Urlslab_Url_Data_Fetcher( null );
+		$url_fetcher = new Urlslab_Url_Data_Fetcher();
 		if ( ! $url_fetcher->prepare_url_batch_for_scheduling( $schedule_urls ) ) {
 			return new WP_REST_Response( 'Import failed.', 500 );
 		}

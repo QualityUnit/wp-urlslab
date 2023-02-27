@@ -161,24 +161,25 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		$rows          = array();
 
 		foreach ( $request->get_json_params()['rows'] as $row ) {
-			$arr_row                                  = (array) $row;
-			$schedule_urls[ $arr_row['srcUrlName'] ]  = 1;
-			$schedule_urls[ $arr_row['destUrlName'] ] = 1;
+			$arr_row = (array) $row;
 
-			$src_url_obj  = new Urlslab_Url( $arr_row['srcUrlName'] );
-			$dest_url_obj = new Urlslab_Url( $arr_row['destUrlName'] );
-			$obj          = $this->get_row_object(
+			$src_url_obj                              = new Urlslab_Url( $arr_row['srcUrlName'] );
+			$dest_url_obj                             = new Urlslab_Url( $arr_row['destUrlName'] );
+			$schedule_urls[ $arr_row['srcUrlName'] ]  = $src_url_obj;
+			$schedule_urls[ $arr_row['destUrlName'] ] = $dest_url_obj;
+
+			$obj    = $this->get_row_object(
 				array(
 					'srcUrlMd5'  => $src_url_obj->get_url_id(),
 					'destUrlMd5' => $dest_url_obj->get_url_id(),
 					'pos'        => $arr_row['pos'],
 				)
 			);
-			$rows[]       = $obj;
+			$rows[] = $obj;
 		}
 
-		$url_fetcher = new Urlslab_Url_Data_Fetcher( null );
-		if ( ! $url_fetcher->prepare_url_batch_for_scheduling( array_keys( $schedule_urls ) ) ) {
+		$url_fetcher = new Urlslab_Url_Data_Fetcher();
+		if ( ! $url_fetcher->prepare_url_batch_for_scheduling( $schedule_urls ) ) {
 			return new WP_REST_Response( 'Import failed.', 500 );
 		}
 
