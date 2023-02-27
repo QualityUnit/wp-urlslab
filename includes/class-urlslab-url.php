@@ -2,6 +2,7 @@
 
 class Urlslab_Url {
 
+	private static string $current_page_protocol = '';
 	private string $urlslab_parsed_url;
 	private bool $is_same_domain_url = false;
 	private $url_id = null;
@@ -21,7 +22,10 @@ class Urlslab_Url {
 	 *
 	 * @throws Exception
 	 */
-	public function __construct( string $url ) {
+	public function __construct( string $url, $add_current_page_protocol = false ) {
+		if ( $add_current_page_protocol ) {
+			$url = self::add_current_page_protocol( $url );
+		}
 		$this->urlslab_url_init( $url );
 	}
 
@@ -85,7 +89,7 @@ class Urlslab_Url {
 		}
 
 		if ( ! isset( $this->url_components['scheme'] ) ) {
-			$this->url_components['scheme'] = parse_url( get_site_url(), PHP_URL_SCHEME ) ?? 'http';
+			$this->url_components['scheme'] = self::get_current_page_protocol();
 		}
 
 		$current_site_host = strtolower( parse_url( get_site_url(), PHP_URL_HOST ) );
@@ -156,6 +160,27 @@ class Urlslab_Url {
 
 	public function get_url_with_protocol() {
 		return $this->url_components['scheme'] . '://' . $this->get_url();
+	}
+
+	public static function add_current_page_protocol( $url ): string {
+		if ( str_starts_with( $url, 'http' ) ) {
+			return $url;
+		}
+
+		return self::get_current_page_protocol() . $url;
+	}
+
+	public static function get_current_page_protocol(): string {
+		if ( empty( self::$current_page_protocol ) ) {
+			$protocol = parse_url( get_site_url(), PHP_URL_SCHEME );
+			if ( empty( $protocol ) ) {
+				return 'http://';
+			}
+
+			self::$current_page_protocol = $protocol . '://';
+		}
+
+		return self::$current_page_protocol;
 	}
 
 }

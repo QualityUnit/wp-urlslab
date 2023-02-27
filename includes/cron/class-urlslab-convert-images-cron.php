@@ -10,13 +10,13 @@ abstract class Urlslab_Convert_Images_Cron extends Urlslab_Cron {
 	abstract public function is_format_supported();
 
 	/**
-	 * @param Urlslab_File_Data $file
+	 * @param Urlslab_File_Row $file
 	 * @param string $original_image_filename
 	 * @param string $new_format
 	 *
 	 * @return false|string new filename
 	 */
-	private function convert_with_imagick( Urlslab_File_Data $file, string $original_image_filename, string $new_format ): string {
+	private function convert_with_imagick( Urlslab_File_Row $file, string $original_image_filename, string $new_format ): string {
 		$image = new Imagick( $original_image_filename );
 		if ( ! $image->setImageFormat( $new_format ) ) {
 			return '';
@@ -41,13 +41,13 @@ abstract class Urlslab_Convert_Images_Cron extends Urlslab_Cron {
 	}
 
 	/**
-	 * @param Urlslab_File_Data $file
+	 * @param Urlslab_File_Row $file
 	 * @param string $original_image_filename
 	 * @param string $new_format
 	 *
 	 * @return false|string new filename
 	 */
-	private function convert_with_native( Urlslab_File_Data $file, string $original_image_filename, string $new_format ): string {
+	private function convert_with_native( Urlslab_File_Row $file, string $original_image_filename, string $new_format ): string {
 		switch ( $file->get_filetype() ) {
 			case 'image/png':
 				$im = imagecreatefrompng( $original_image_filename );
@@ -99,13 +99,13 @@ abstract class Urlslab_Convert_Images_Cron extends Urlslab_Cron {
 
 	abstract protected function get_file_types(): array;
 
-	abstract protected function process_file( Urlslab_File_Data $file, string $new_file_name ): ?Urlslab_File_Data;
+	abstract protected function process_file( Urlslab_File_Row $file, string $new_file_name ): ?Urlslab_File_Row;
 
 	abstract protected function convert_next_file();
 
-	abstract protected function create_file_for_pointer( Urlslab_File_Data $file ): ?Urlslab_File_Data;
+	abstract protected function create_file_for_pointer( Urlslab_File_Row $file ): ?Urlslab_File_Row;
 
-	protected function convert_image_format( Urlslab_File_Data $file, string $original_image_filename, string $new_format ): string {
+	protected function convert_image_format( Urlslab_File_Row $file, string $original_image_filename, string $new_format ): string {
 		if ( extension_loaded( 'imagick' ) && count( Imagick::queryFormats( strtoupper( $new_format ) . '*' ) ) > 0 ) {
 			return $this->convert_with_imagick( $file, $original_image_filename, $new_format );
 		} else {

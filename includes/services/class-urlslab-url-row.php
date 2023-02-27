@@ -52,7 +52,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	}
 
 	public function get_url(): Urlslab_Url {
-		return new Urlslab_Url( urlslab_add_current_page_protocol( $this->get( 'urlName' ) ) );
+		return new Urlslab_Url( $this->get( 'urlName' ), true );
 	}
 
 	function get_columns(): array {

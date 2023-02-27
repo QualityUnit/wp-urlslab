@@ -22,10 +22,10 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 								'required'          => false,
 								'validate_callback' => function( $param ) {
 									switch ( $param ) {
-										case Urlslab_Youtube_Data::STATUS_AVAILABLE:
-										case Urlslab_Youtube_Data::STATUS_NEW:
-										case Urlslab_Youtube_Data::STATUS_DISABLED:
-										case Urlslab_Youtube_Data::STATUS_PROCESSING:
+										case Urlslab_Youtube_Row::STATUS_AVAILABLE:
+										case Urlslab_Youtube_Row::STATUS_NEW:
+										case Urlslab_Youtube_Row::STATUS_DISABLED:
+										case Urlslab_Youtube_Row::STATUS_PROCESSING:
 											return true;
 										default:
 											return false;
@@ -52,10 +52,10 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 							'required'          => true,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
-									case Urlslab_Youtube_Data::STATUS_NEW:
-									case Urlslab_Youtube_Data::STATUS_DISABLED:
-									case Urlslab_Youtube_Data::STATUS_AVAILABLE:
-									case Urlslab_Youtube_Data::STATUS_PROCESSING:
+									case Urlslab_Youtube_Row::STATUS_NEW:
+									case Urlslab_Youtube_Row::STATUS_DISABLED:
+									case Urlslab_Youtube_Row::STATUS_AVAILABLE:
+									case Urlslab_Youtube_Row::STATUS_PROCESSING:
 										return true;
 									default:
 										return false;
@@ -123,7 +123,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 	}
 
 	function get_row_object( $params = array() ): Urlslab_Data {
-		return new Urlslab_Youtube_Data( $params );
+		return new Urlslab_Youtube_Row( $params );
 	}
 
 	function get_editable_columns(): array {

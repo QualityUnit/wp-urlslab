@@ -35,7 +35,7 @@ class Urlslab_Offload_Background_Attachments_Cron extends Urlslab_Cron {
 			$url          = wp_get_attachment_url( $last_post_id );
 			$meta         = wp_get_attachment_metadata( $last_post_id );
 
-			$file = new Urlslab_File_Data(
+			$file = new Urlslab_File_Row(
 				array(
 					'url'            => $url,
 					'filename'       => isset( $meta['file'] ) ? basename( $meta['file'] ) : basename( $file_path ),

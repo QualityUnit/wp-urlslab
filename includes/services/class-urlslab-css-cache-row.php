@@ -35,7 +35,7 @@ class Urlslab_CSS_Cache_Row extends Urlslab_Data {
 	}
 
 	public function get_url(): Urlslab_Url {
-		return new Urlslab_Url( urlslab_add_current_page_protocol( $this->get( 'url' ) ) );
+		return new Urlslab_Url( $this->get( 'url' ), true );
 	}
 
 	function get_columns(): array {

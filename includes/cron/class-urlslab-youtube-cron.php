@@ -9,29 +9,29 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 		}
 
 		global $wpdb;
-		$youtube_row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' WHERE status = %s ORDER BY status_changed DESC LIMIT 1', Urlslab_Youtube_Data::STATUS_NEW ), ARRAY_A ); // phpcs:ignore
+		$youtube_row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' WHERE status = %s ORDER BY status_changed DESC LIMIT 1', Urlslab_Youtube_Row::STATUS_NEW ), ARRAY_A ); // phpcs:ignore
 		if ( empty( $youtube_row ) ) {
 			return false;
 		}
 
-		$youtube_obj = new Urlslab_Youtube_Data( $youtube_row, true );
-		if ( $youtube_obj->get( 'status' ) != Urlslab_Youtube_Data::STATUS_NEW ) {
+		$youtube_obj = new Urlslab_Youtube_Row( $youtube_row, true );
+		if ( $youtube_obj->get( 'status' ) != Urlslab_Youtube_Row::STATUS_NEW ) {
 			return true;
 		}
 
-		$youtube_obj->set( 'status', Urlslab_Youtube_Data::STATUS_PROCESSING );
+		$youtube_obj->set( 'status', Urlslab_Youtube_Row::STATUS_PROCESSING );
 		$youtube_obj->update();
 
 		$microdata = $this->get_youtube_microdata( $youtube_obj );
 		if ( $microdata ) {
 			//update status to active
-			$youtube_obj->set( 'status', Urlslab_Youtube_Data::STATUS_AVAILABLE );
+			$youtube_obj->set( 'status', Urlslab_Youtube_Row::STATUS_AVAILABLE );
 			$youtube_obj->set( 'microdata', $microdata );
 			$youtube_obj->update();
 
 			return true;
 		} else {
-			$youtube_obj->set( 'status', Urlslab_Youtube_Data::STATUS_NEW );
+			$youtube_obj->set( 'status', Urlslab_Youtube_Row::STATUS_NEW );
 			$youtube_obj->update();
 
 			//something went wrong, wait with next processing
@@ -52,7 +52,7 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 		return false;
 	}
 
-	private function get_youtube_microdata( Urlslab_Youtube_Data $youtube_obj ) {
+	private function get_youtube_microdata( Urlslab_Youtube_Row $youtube_obj ) {
 		$url      = 'https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet%2CcontentDetails&contentDetails.duration&id=' . $youtube_obj->get( 'videoid' ) . '&key=' . $this->get_youtube_key(); // json source
 		$response = wp_remote_get( $url, array( 'sslverify' => false ) );
 		if ( ! is_wp_error( $response ) ) {

@@ -9,7 +9,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 
 	private $client;
 
-	function get_file_content( Urlslab_File_Data $file ) {
+	function get_file_content( Urlslab_File_Row $file ) {
 		if ( ! $this->is_configured() ) {
 			return false;
 		}
@@ -29,7 +29,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 		return $content;
 	}
 
-	function output_file_content( Urlslab_File_Data $file ) {
+	function output_file_content( Urlslab_File_Row $file ) {
 		if ( ! $this->is_configured() ) {
 			return;
 		}
@@ -51,7 +51,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 		}
 	}
 
-	function save_file_to_storage( Urlslab_File_Data $file, string $local_file_name ): bool {
+	function save_file_to_storage( Urlslab_File_Row $file, string $local_file_name ): bool {
 		if ( ! $this->is_configured() ) {
 			return false;
 		}
@@ -74,11 +74,11 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 		}
 	}
 
-	private function get_file_dir( Urlslab_File_Data $file ) {
+	private function get_file_dir( Urlslab_File_Row $file ) {
 		return self::URLSLAB_DIR . $file->get( 'filesize' ) . '/' . $file->get( 'filehash' ) . '/';
 	}
 
-	public function get_url( Urlslab_File_Data $file ) {
+	public function get_url( Urlslab_File_Row $file ) {
 		if ( $this->is_configured() ) {
 			$prefix = get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_URL_PREFIX, '' );
 			if ( ! empty( $prefix ) ) {
@@ -145,7 +145,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 			   ! empty( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_BUCKET, '' ) );
 	}
 
-	public function save_to_file( Urlslab_File_Data $file, $file_name ): bool {
+	public function save_to_file( Urlslab_File_Row $file, $file_name ): bool {
 		if ( ! $this->is_configured() ) {
 			return false;
 		}
@@ -166,7 +166,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 		return true;
 	}
 
-	public function delete_content( Urlslab_File_Data $file ): bool {
+	public function delete_content( Urlslab_File_Row $file ): bool {
 		if ( ! $this->is_configured() ) {
 			return false;
 		}

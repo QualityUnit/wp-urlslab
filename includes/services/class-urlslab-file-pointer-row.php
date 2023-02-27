@@ -1,6 +1,6 @@
 <?php
 
-class Urlslab_File_Pointer_Data extends Urlslab_Data {
+class Urlslab_File_Pointer_Row extends Urlslab_Data {
 
 
 	/**

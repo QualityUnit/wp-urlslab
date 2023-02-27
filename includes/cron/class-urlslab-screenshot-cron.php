@@ -21,7 +21,7 @@ class Urlslab_Screenshot_Cron extends Urlslab_Cron {
 				return 100 === count( $schedules );
 			}
 		} catch ( Exception $e ) {
-			urlslab_debug_log( $e );
+			$this->debug_log( $e );
 		}
 
 		return false;
@@ -197,7 +197,7 @@ or (updateStatusDate < %s AND status = %s)
 				$scheduled[ $schedule->get_url()->get_url_id() ] = $schedule_response[ $i ];
 			}
 		} catch ( Exception $e ) {
-			urlslab_debug_log( $e );
+			$this->debug_log( $e );
 
 			return array();
 		}
@@ -220,6 +220,13 @@ or (updateStatusDate < %s AND status = %s)
 		return $returning_data;
 	}
 
+	private function debug_log( Exception $e ) {
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
+			// phpcs:disable WordPress.PHP.DevelopmentFunctions
+			@error_log( $e->getTraceAsString(), 3, URLSLAB_PLUGIN_LOG );
+			// phpcs:enable
+		}
+	}
 
 	/**
 	 * @param Urlslab_Url[] $urls

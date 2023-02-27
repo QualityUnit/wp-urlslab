@@ -34,13 +34,6 @@ if ( ! empty( $page_tabs ) ) {
 
 }
 ?>
-<?php
-//# notifications
-if ( isset( $_REQUEST['status'] ) ) {
-	echo urlslab_admin_notice( $_REQUEST['status'], $_REQUEST['urlslab-message'] ?? '' ); // phpcs:ignore
-}
-//# notifications
-?>
 
 <nav class="urlslab-header">
 	<div class="urlslab-header-content-container">
