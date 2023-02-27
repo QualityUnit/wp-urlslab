@@ -35,6 +35,7 @@ export default function TableViewHeaderBottom( { currentFilters, header, removed
 
 	return (
 		<div className="urlslab-tableView-headerBottom flex">
+
 			<Button onClick={ () => handleDelete.mutate() }>{ __( 'Delete All' ) }</Button>
 
 			<ExportCSVButton className="ml-s-tablet" options={ exportOptions } onClick={ ( data ) => console.log( data ) } />
@@ -69,12 +70,12 @@ export default function TableViewHeaderBottom( { currentFilters, header, removed
 			</CSVReader>
 			{
 				( activeFilters?.length > 0 && header ) &&
-				<div className="flex flex-align-center">
-					<strong>{ __( 'Filters:' ) }</strong>
-					{ activeFilters.map( ( key ) => {
-						return ( <button className="ml-s" key={ key } onClick={ () => removedFilter( key ) }>{ header[ key ] }</button> );
-					} ) }
-				</div>
+					<div className="flex flex-align-center">
+						<strong>{ __( 'Filters:' ) }</strong>
+						{ activeFilters.map( ( key ) => {
+							return ( <button className="ml-s" key={ key } onClick={ () => removedFilter( key ) }>{ header[ key ] }</button> );
+						} ) }
+					</div>
 			}
 			{
 				children

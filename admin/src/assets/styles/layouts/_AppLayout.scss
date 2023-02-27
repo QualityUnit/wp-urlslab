@@ -28,6 +28,10 @@
 	z-index: 6;
 }
 
+#wpbody {
+	position: static;
+}
+
 // Moves our app padding
 #wpcontent,
 #wpbody,
