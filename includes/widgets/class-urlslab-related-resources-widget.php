@@ -43,7 +43,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 		$urlslab_atts = shortcode_atts(
 			array(
-				'url'           => urlslab_add_current_page_protocol( $this->get_current_page_url()->get_url() ),
+				'url'           => $this->get_current_page_url()->get_url_with_protocol(),
 				'related-count' => 8,
 				'show-image'    => false,
 				'default-image' => '',
@@ -106,7 +106,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		}
 
 		return '<li>' .
-			   '<a href="' . esc_url( urlslab_add_current_page_protocol( $url_obj->get_url()->get_url() ) ) . '"' .
+			   '<a href="' . esc_url( $url_obj->get_url()->get_url_with_protocol() ) . '"' .
 			   ' title="' . esc_attr( $url_obj->get_summary( $strategy ) ) . '"' .
 			   ( $url_obj->get_url()->is_same_domain_url() ? '' : ' target="_blank"' ) .
 			   '>' .

@@ -49,7 +49,7 @@ class Urlslab_Offload_Transfer_Files_Cron extends Urlslab_Cron {
 		}
 
 		return Urlslab_Driver::transfer_file_to_storage(
-			new Urlslab_File_Data( $file_row ),
+			new Urlslab_File_Row( $file_row ),
 			$latest_file_driver
 		);
 	}

@@ -67,12 +67,37 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		}
 	}
 
+	public static function get_supported_media(): array {
+		return array(
+			'img'    => array(
+				'src',
+				'data-src',
+				'data-full-url',
+				'data-splide-lazy',
+				'srcset',
+				'data-srcset',
+			),
+			'video'  => array(
+				'src',
+				'data-src',
+			),
+			'audio'  => array(
+				'src',
+				'data-src',
+			),
+			'source' => array(
+				'srcset',
+				'data-srcset',
+			),
+		);
+	}
+
 	private function add_images_lazy_loading( DOMDocument $document ) {
 		$xpath        = new DOMXPath( $document );
 		$dom_elements = $xpath->query( "//img[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')]) and not(starts-with(@src, 'data:'))]" );
 		foreach ( $dom_elements as $element ) {
 			$has_lazy_loading_attr = false;
-			foreach ( urlslab_get_supported_media()['img'] as $valid_attr ) {
+			foreach ( self::get_supported_media()['img'] as $valid_attr ) {
 				if ( $element->hasAttribute( $valid_attr ) ) {
 					$has_lazy_loading_attr = true;
 					break;
@@ -172,7 +197,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$yt_elements = $xpath->query( "//*[@data-ytid and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
 		foreach ( $yt_elements as $yt_element ) {
 			$ytid = $yt_element->getAttribute( 'data-ytid' );
-			if ( isset( $video_objects[ $ytid ] ) && Urlslab_Youtube_Data::STATUS_AVAILABLE === $video_objects[ $ytid ]->get( 'status' ) ) {
+			if ( isset( $video_objects[ $ytid ] ) && Urlslab_Youtube_Row::STATUS_AVAILABLE === $video_objects[ $ytid ]->get( 'status' ) ) {
 				$this->append_video_schema( $document, $yt_element, $video_objects[ $ytid ] );
 			}
 		}
@@ -222,7 +247,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		);
 
 		foreach ( $results as $row ) {
-			$video_obj                              = new Urlslab_Youtube_Data( $row, true );
+			$video_obj                              = new Urlslab_Youtube_Row( $row, true );
 			$videos[ $video_obj->get( 'videoid' ) ] = $video_obj;
 		}
 
@@ -234,7 +259,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		foreach ( $youtube_ids as $videoid ) {
 			if ( ! isset( $videos[ $videoid ] ) ) {
 				$placeholders[] = '(%s,%s,%s)';
-				array_push( $values, $videoid, Urlslab_Youtube_Data::STATUS_NEW, $now );
+				array_push( $values, $videoid, Urlslab_Youtube_Row::STATUS_NEW, $now );
 			}
 		}
 		if ( ! empty( $placeholders ) ) {
@@ -246,7 +271,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		return $videos;
 	}
 
-	private function append_video_schema( DOMDocument $document, DOMElement $youtube_loader, Urlslab_Youtube_Data $youtube_obj ) {
+	private function append_video_schema( DOMDocument $document, DOMElement $youtube_loader, Urlslab_Youtube_Row $youtube_obj ) {
 		if ( ! empty( $youtube_obj->get( 'microdata' ) ) ) {
 			$schema = $document->createElement( 'div' );
 			$schema->setAttribute( 'itemscope', false );

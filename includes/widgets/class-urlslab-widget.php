@@ -236,9 +236,9 @@ abstract class Urlslab_Widget {
 		}
 
 		if ( is_category() ) {
-			$this->current_page_url = new Urlslab_Url( urlslab_add_current_page_protocol( get_category_link( get_query_var( 'cat' ) ) ) );
+			$this->current_page_url = new Urlslab_Url( get_category_link( get_query_var( 'cat' ) ), true );
 		} else {
-			$this->current_page_url = new Urlslab_Url( urlslab_add_current_page_protocol( get_permalink( get_the_ID() ) ) );
+			$this->current_page_url = new Urlslab_Url( get_permalink( get_the_ID() ), true );
 		}
 
 		return $this->current_page_url;

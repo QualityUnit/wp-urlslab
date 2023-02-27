@@ -1,6 +1,6 @@
 <?php
 
-class Urlslab_Youtube_Data extends Urlslab_Data {
+class Urlslab_Youtube_Row extends Urlslab_Data {
 
 	const STATUS_NEW = 'N';
 	const STATUS_AVAILABLE = 'A';

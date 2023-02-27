@@ -51,7 +51,7 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 			return false;   //No rows to process
 		}
 
-		$file = new Urlslab_File_Data( $file_row );
+		$file = new Urlslab_File_Row( $file_row );
 		if ( ! empty( $file->get( 'avif_fileid' ) ) ) {
 			//This file is already processing, disabled or processed -> continue to next file
 			return true;
@@ -70,7 +70,7 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 
 
 		//process AVIF
-		$file->set( 'avif_fileid', Urlslab_File_Data::ALTERNATIVE_PROCESSING );
+		$file->set( 'avif_fileid', Urlslab_File_Row::ALTERNATIVE_PROCESSING );
 		$file->update();
 
 		if ( ! $file->get_file_pointer()->get_driver()->is_connected() ) {
@@ -87,7 +87,7 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 			unlink( $original_image_filename );
 
 			if ( empty( $new_file_name ) || ! file_exists( $new_file_name ) ) {
-				$file->set( 'avif_fileid', Urlslab_File_Data::ALTERNATIVE_DISABLED );
+				$file->set( 'avif_fileid', Urlslab_File_Row::ALTERNATIVE_DISABLED );
 				$file->update();
 
 				return true;
@@ -98,7 +98,7 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 			if ( $avif_file ) {
 				$file->set( 'avif_fileid', $avif_file->get_fileid() );
 			} else {
-				$file->set( 'avif_fileid', Urlslab_File_Data::ALTERNATIVE_ERROR );
+				$file->set( 'avif_fileid', Urlslab_File_Row::ALTERNATIVE_ERROR );
 			}
 			$file->update();
 		}
@@ -106,8 +106,8 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 		return true;
 	}
 
-	protected function process_file( Urlslab_File_Data $file, string $new_file_name ): ?Urlslab_File_Data {
-		$avif_file = new Urlslab_File_Data(
+	protected function process_file( Urlslab_File_Row $file, string $new_file_name ): ?Urlslab_File_Row {
+		$avif_file = new Urlslab_File_Row(
 			array(
 				'url'            => $file->get_url( '.avif' ),
 				'parent_url'     => $file->get( 'parent_url' ),
@@ -120,8 +120,8 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 				'filestatus'     => Urlslab_Driver::STATUS_PENDING,
 				'status_changed' => Urlslab_Data::get_now(),
 				'local_file'     => $new_file_name,
-				'webp_fileid'    => Urlslab_File_Data::ALTERNATIVE_DISABLED,
-				'avif_fileid'    => Urlslab_File_Data::ALTERNATIVE_DISABLED,
+				'webp_fileid'    => Urlslab_File_Row::ALTERNATIVE_DISABLED,
+				'avif_fileid'    => Urlslab_File_Row::ALTERNATIVE_DISABLED,
 			),
 			false
 		);
@@ -148,8 +148,8 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 	}
 
 
-	protected function create_file_for_pointer( Urlslab_File_Data $file ): ?Urlslab_File_Data {
-		$avif_file = new Urlslab_File_Data(
+	protected function create_file_for_pointer( Urlslab_File_Row $file ): ?Urlslab_File_Row {
+		$avif_file = new Urlslab_File_Row(
 			array(
 				'url'            => $file->get_url( '.avif' ),
 				'parent_url'     => $file->get( 'parent_url' ),
@@ -162,8 +162,8 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 				'filestatus'     => Urlslab_Driver::STATUS_ACTIVE,
 				'status_changed' => Urlslab_Data::get_now(),
 				'local_file'     => '',
-				'webp_fileid'    => Urlslab_File_Data::ALTERNATIVE_DISABLED,
-				'avif_fileid'    => Urlslab_File_Data::ALTERNATIVE_DISABLED,
+				'webp_fileid'    => Urlslab_File_Row::ALTERNATIVE_DISABLED,
+				'avif_fileid'    => Urlslab_File_Row::ALTERNATIVE_DISABLED,
 			),
 			false
 		);

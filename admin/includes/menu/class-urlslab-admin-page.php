@@ -55,6 +55,10 @@ abstract class Urlslab_Admin_Page {
 	 */
 	abstract public function render_subpage();
 
+	function admin_menu_page_url( $menu_slug ): string {
+		return admin_url() . 'admin.php?page=' . urlencode( $menu_slug );
+	}
+
 	/**
 	 * @param string $tab
 	 * @param $args
@@ -63,7 +67,7 @@ abstract class Urlslab_Admin_Page {
 	 */
 	public function menu_page( string $tab = '', $args = '', $sub_tab = '' ): string {
 		$args = wp_parse_args( $args, array() );
-		$url  = urlslab_admin_menu_page_url( $this->get_menu_slug() );
+		$url  = $this->admin_menu_page_url( $this->get_menu_slug() );
 		$url = remove_query_arg(
 			array(
 				'urlslab-message',

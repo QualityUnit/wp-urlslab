@@ -133,19 +133,6 @@ class Urlslab_Url_Keyword_Data {
 		return $this->keyword_url_filter;
 	}
 
-	/**
-	 * @return int
-	 */
-	public function get_keyword_usage_count(): int {
-		return $this->keyword_usage_count;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function get_link_usage_count(): int {
-		return $this->link_usage_count;
-	}
 
 	public static function create_keywords( array $keywords ): int {
 		global $wpdb;

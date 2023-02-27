@@ -1,6 +1,6 @@
 <?php
 
-class Urlslab_File_Data extends Urlslab_Data {
+class Urlslab_File_Row extends Urlslab_Data {
 	public const ALTERNATIVE_PROCESSING = 'P';
 	public const ALTERNATIVE_DISABLED = 'D';
 	public const ALTERNATIVE_ERROR = 'E';
@@ -199,7 +199,7 @@ class Urlslab_File_Data extends Urlslab_Data {
 	);
 
 
-	private Urlslab_File_Pointer_Data $file_pointer;
+	private Urlslab_File_Pointer_Row $file_pointer;
 
 	/**
 	 * @param array $file_arr
@@ -221,7 +221,7 @@ class Urlslab_File_Data extends Urlslab_Data {
 		$this->set( 'avif_fileid', $file_arr['avif_fileid'] ?? '', ! $loaded_from_db );
 		$this->set( 'filetype', $file_arr['filetype'] ?? '', ! $loaded_from_db );
 
-		$this->file_pointer = new Urlslab_File_Pointer_Data( $file_arr, $loaded_from_db );
+		$this->file_pointer = new Urlslab_File_Pointer_Row( $file_arr, $loaded_from_db );
 	}
 
 	public function as_array(): array {
@@ -231,7 +231,7 @@ class Urlslab_File_Data extends Urlslab_Data {
 		);
 	}
 
-	public static function get_file( string $fileid ): ?Urlslab_File_Data {
+	public static function get_file( string $fileid ): ?Urlslab_File_Row {
 		global $wpdb;
 		$table         = URLSLAB_FILES_TABLE;
 		$table_pointer = URLSLAB_FILE_POINTERS_TABLE;
@@ -259,7 +259,7 @@ class Urlslab_File_Data extends Urlslab_Data {
 			return null;
 		}
 
-		return new Urlslab_File_Data( $row );
+		return new Urlslab_File_Row( $row );
 	}
 
 	public static function get_files( array $file_ids ): array {
@@ -284,14 +284,14 @@ class Urlslab_File_Data extends Urlslab_Data {
 			'ARRAY_A'
 		);
 		foreach ( $results as $file_array ) {
-			$file_obj                         = new Urlslab_File_Data( $file_array );
+			$file_obj                         = new Urlslab_File_Row( $file_array );
 			$files[ $file_obj->get_fileid() ] = $file_obj;
 		}
 
 		return $files;
 	}
 
-	public function get_file_pointer(): Urlslab_File_Pointer_Data {
+	public function get_file_pointer(): Urlslab_File_Pointer_Row {
 		return $this->file_pointer;
 	}
 

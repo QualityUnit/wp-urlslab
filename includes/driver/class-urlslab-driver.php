@@ -1,5 +1,5 @@
 <?php
-require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-file-data.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-file-row.php';
 
 abstract class Urlslab_Driver {
 	const URLSLAB_DIR = 'urlslab/';
@@ -20,43 +20,43 @@ abstract class Urlslab_Driver {
 	/**
 	 * return content of file
 	 *
-	 * @param Urlslab_File_Data $file_pointer
+	 * @param Urlslab_File_Row $file_pointer
 	 *
 	 * @return mixed
 	 */
-	abstract function get_file_content( Urlslab_File_Data $file );
+	abstract function get_file_content( Urlslab_File_Row $file );
 
 	/**
 	 * output content of file to standard output
 	 *
-	 * @param Urlslab_File_Data $file
+	 * @param Urlslab_File_Row $file
 	 *
 	 * @return mixed
 	 */
-	abstract function output_file_content( Urlslab_File_Data $file );
+	abstract function output_file_content( Urlslab_File_Row $file );
 
-	abstract function save_file_to_storage( Urlslab_File_Data $file, string $local_file_name ): bool;
+	abstract function save_file_to_storage( Urlslab_File_Row $file, string $local_file_name ): bool;
 
 	abstract function is_connected();
 
-	abstract public function save_to_file( Urlslab_File_Data $file, $file_name ): bool;
+	abstract public function save_to_file( Urlslab_File_Row $file, $file_name ): bool;
 
-	abstract public function delete_content( Urlslab_File_Data $file ): bool;
+	abstract public function delete_content( Urlslab_File_Row $file ): bool;
 
 	abstract public function get_driver_code(): string;
 
-	public function get_url( Urlslab_File_Data $file ) {
+	public function get_url( Urlslab_File_Row $file ) {
 		//URL to standard proxy script
 		return site_url( self::DOWNLOAD_URL_PATH . urlencode( $file->get_fileid() ) . '/' . urlencode( $file->get_filename() ) );
 	}
 
 
 	/**
-	 * @param Urlslab_File_Data $file
+	 * @param Urlslab_File_Row $file
 	 *
 	 * @return string|null filename of downloaded file
 	 */
-	private function download_url( Urlslab_File_Data $file ): ?string {
+	private function download_url( Urlslab_File_Row $file ): ?string {
 		$local_tmp_file = download_url( $file->get_url() );
 		if ( is_wp_error( $local_tmp_file ) ) {
 			if (
@@ -89,7 +89,7 @@ abstract class Urlslab_Driver {
 		return $local_tmp_file;
 	}
 
-	public function upload_content( Urlslab_File_Data $file ) {
+	public function upload_content( Urlslab_File_Row $file ) {
 		if ( strlen( $file->get( 'local_file' ) ) && file_exists( $file->get( 'local_file' ) ) ) {
 			$file_name   = $file->get( 'local_file' );
 			$delete_file = false;
@@ -223,7 +223,7 @@ abstract class Urlslab_Driver {
 	}
 
 	public static function transfer_file_to_storage(
-		Urlslab_File_Data $file,
+		Urlslab_File_Row $file,
 		string $dest_driver
 	): bool {
 		$result   = false;

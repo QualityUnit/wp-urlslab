@@ -1,6 +1,6 @@
 <?php
 
-class Urlslab_Keyword_Data extends Urlslab_Data {
+class Urlslab_Keyword_Row extends Urlslab_Data {
 
 	public function __construct( array $data, $loaded_from_db = false ) {
 		$this->set( 'keyword', $data['keyword'] ?? '', ! $loaded_from_db );

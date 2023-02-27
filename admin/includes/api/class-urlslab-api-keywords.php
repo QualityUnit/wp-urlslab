@@ -362,7 +362,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 
 
 	function get_row_object( $params = array() ): Urlslab_Data {
-		return new Urlslab_Keyword_Data( $params );
+		return new Urlslab_Keyword_Row( $params );
 	}
 
 	function get_editable_columns(): array {

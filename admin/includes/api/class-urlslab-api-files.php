@@ -284,7 +284,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 	}
 
 	function get_row_object( $params = array() ): Urlslab_Data {
-		return new Urlslab_File_Data( $params );
+		return new Urlslab_File_Row( $params );
 	}
 
 	function get_editable_columns(): array {
