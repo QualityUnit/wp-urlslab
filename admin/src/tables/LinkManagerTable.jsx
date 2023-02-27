@@ -46,6 +46,7 @@ export default function LinkManagerTable( { slug } ) {
 	const header = {
 		urlTitle: __( 'URL Title' ),
 		urlMetaDescription: __( 'URL Description' ),
+		screenshot_url: __( 'Screenshot' ),
 		status: __( 'Status' ),
 		urlName: __( 'URL' ),
 		urlSummary: __( 'URL Summary' ),
@@ -94,7 +95,9 @@ export default function LinkManagerTable( { slug } ) {
 			minSize: 350,
 		} ),
 		columnHelper.accessor( 'urlSummary', {
+			cell: ( cell ) => <div className="limit-100">{ cell.getValue() }</div>,
 			header: () => header.urlSummary,
+			minSize: 350,
 		} ),
 		columnHelper.accessor( 'visibility', {
 			cell: ( cell ) => <SortMenu

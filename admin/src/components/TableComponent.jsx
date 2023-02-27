@@ -70,7 +70,9 @@ export default function Table( { resizable, children, className, columns, data }
 
 	return (
 		<div className="urlslab-table-container" ref={ tableContainerRef }>
-			<table className={ `urlslab-table ${ className } ${ resizable ? 'resizable' : '' }` }>
+			<table className={ `urlslab-table ${ className } ${ resizable ? 'resizable' : '' }` } style={ {
+				width: table.getCenterTotalSize(),
+			} }>
 				<thead className="urlslab-table-head">
 					{ table.getHeaderGroups().map( ( headerGroup ) => (
 						<tr key={ headerGroup.id }>
@@ -90,7 +92,7 @@ export default function Table( { resizable, children, className, columns, data }
 										) }
 									{ ( resizable && header.column.columnDef.enableResizing !== false )
 										? <div
-												{ ...{
+											{ ...{
 												onMouseDown: header.getResizeHandler(),
 												onTouchStart: header.getResizeHandler(),
 												className: `resizer ${ header.column.getIsResizing() ? 'isResizing' : ''

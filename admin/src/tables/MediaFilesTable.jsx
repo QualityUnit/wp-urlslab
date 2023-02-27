@@ -1,8 +1,8 @@
-import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { createColumnHelper } from '@tanstack/react-table';
 
 import useInfiniteFetch from '../hooks/useInfiniteFetch';
+import { useFilter, useSorting } from '../hooks/filteringSorting';
 import { handleInput, handleSelected } from '../constants/tableFunctions';
 
 import SortMenu from '../elements/SortMenu';
@@ -16,7 +16,8 @@ import TableViewHeaderBottom from '../components/TableViewHeaderBottom';
 export default function MediaFilesTable() {
 	const { __ } = useI18n();
 	const columnHelper = createColumnHelper();
-	const [ currentUrl, setUrl ] = useState();
+	const { filters, currentFilters, addFilter, removeFilter } = useFilter();
+	const { sortingColumn, sortBy } = useSorting();
 
 	const {
 		data,
@@ -25,7 +26,9 @@ export default function MediaFilesTable() {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: 'file', url: currentUrl, pageId: 'fileid' } );
+	} = useInfiniteFetch( {
+		key: 'file', url: `${ filters }${ sortingColumn }`, pageId: 'fileid' } );
+	console.log( data );
 
 	const statusTypes = {
 		N: __( 'New' ),
@@ -72,6 +75,7 @@ export default function MediaFilesTable() {
 			header: () => __( 'File Usage' ),
 		} ),
 		columnHelper?.accessor( 'url', {
+			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" className="limit-50" rel="noreferrer">{ cell.getValue() }</a>,
 			header: () => __( 'URL' ),
 		} ),
 	];
