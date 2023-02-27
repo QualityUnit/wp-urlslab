@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react';
+/* eslint-disable indent */
+import { useRef, useState, useEffect } from 'react';
 import {
 	flexRender,
 	getCoreRowModel,
@@ -10,8 +11,26 @@ import '../assets/styles/components/_TableComponent.scss';
 
 export default function Table( { resizable, children, className, columns, data } ) {
 	const [ rowSelection, setRowSelection ] = useState( {} );
-
+	const [ containerWidth, setContainerWidth ] = useState( );
+	const [ containerPadding, setContainerPadding ] = useState( 0 );
+	const didMountRef = useRef( false );
 	const tableContainerRef = useRef();
+
+	useEffect( () => {
+		const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
+			if ( entry.borderBoxSize ) {
+				setContainerWidth( tableContainerRef.current.parentElement.clientWidth - containerPadding );
+			}
+		} );
+		const tableCont = tableContainerRef.current;
+		setContainerPadding( tableCont.parentElement.clientWidth - tableCont.clientWidth );
+		setContainerWidth( tableContainerRef.current.clientWidth );
+		if ( containerWidth && didMountRef.current ) {
+			resizeWatcher.observe( document.querySelector( '.urlslab-header' ) );
+		}
+		didMountRef.current = true;
+	}, [ setContainerWidth, containerPadding ] );
+
 	const table = useReactTable( {
 		columns,
 		data,
@@ -69,57 +88,61 @@ export default function Table( { resizable, children, className, columns, data }
 	}
 
 	return (
-		<div className="urlslab-table-container" ref={ tableContainerRef }>
-			<table className={ `urlslab-table ${ className } ${ resizable ? 'resizable' : '' }` } style={ {
-				width: table.getCenterTotalSize(),
-			} }>
-				<thead className="urlslab-table-head">
-					{ table.getHeaderGroups().map( ( headerGroup ) => (
-						<tr key={ headerGroup.id }>
-							{ headerGroup.headers.map( ( header ) => (
-								<th key={ header.id }
-									style={ {
-										position: resizable ? 'absolute' : 'relative',
-										left: resizable ? header.getStart() : '0',
-										width: header.getSize() !== 0 && resizable ? header.getSize() : undefined,
-									} }
-								>
-									{ header.isPlaceholder
-										? null
-										: flexRender(
-											header.column.columnDef.header,
-											header.getContext()
-										) }
-									{ ( resizable && header.column.columnDef.enableResizing !== false )
-										? <div
-											{ ...{
-												onMouseDown: header.getResizeHandler(),
-												onTouchStart: header.getResizeHandler(),
-												className: `resizer ${ header.column.getIsResizing() ? 'isResizing' : ''
-												}`,
-											} }
-										/>
-										: null
-									}
-								</th>
-							) ) }
-						</tr>
-					) ) }
-				</thead>
-				<tbody className="urlslab-table-body" >
-					{ paddingTop > 0 && (
-						<tr>
-							<td style={ { height: `${ paddingTop }px` } } />
-						</tr>
-					) }
-					{ tbody }
-					{ paddingBottom > 0 && (
-						<tr>
-							<td style={ { height: `${ paddingBottom }px` } } />
-						</tr>
-					) }
-				</tbody>
-			</table>
+		<div className="urlslab-table-container" ref={ tableContainerRef } style={ { width: `${ containerWidth }px` } }>
+			{ containerWidth
+				? <table className={ `urlslab-table ${ className } ${ resizable ? 'resizable' : '' }` } style={ {
+					width: table.getCenterTotalSize(),
+				} }>
+					<thead className="urlslab-table-head">
+						{ table.getHeaderGroups().map( ( headerGroup ) => (
+							<tr key={ headerGroup.id }>
+								{ headerGroup.headers.map( ( header ) => (
+									<th key={ header.id }
+										style={ {
+											position: resizable ? 'absolute' : 'relative',
+											left: resizable ? header.getStart() : '0',
+											width: header.getSize() !== 0 && resizable ? header.getSize() : undefined,
+										} }
+									>
+										{ header.isPlaceholder
+											? null
+											: flexRender(
+												header.column.columnDef.header,
+												header.getContext()
+											) }
+										{ ( resizable && header.column.columnDef.enableResizing !== false )
+											? <div
+													{ ...{
+													onMouseDown: header.getResizeHandler(),
+													onTouchStart: header.getResizeHandler(),
+													className: `resizer ${ header.column.getIsResizing() ? 'isResizing' : ''
+														}`,
+												} }
+											/>
+											: null
+										}
+									</th>
+								) ) }
+							</tr>
+						) ) }
+					</thead>
+					<tbody className="urlslab-table-body" >
+						{ paddingTop > 0 && (
+							<tr>
+								<td style={ { height: `${ paddingTop }px` } } />
+							</tr>
+						) }
+						{ tbody }
+						{ paddingBottom > 0 && (
+							<tr>
+								<td style={ { height: `${ paddingBottom }px` } } />
+							</tr>
+						) }
+					</tbody>
+				</table>
+				: null
+			}
+
 			{ children }
 		</div>
 	);

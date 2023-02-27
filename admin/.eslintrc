@@ -3,6 +3,9 @@
 		"worker": true,
 		"es6": true
 	},
+	"globals": {
+		"ResizeObserver": false,
+	},
 	"parser": "@babel/eslint-parser",
 	"parserOptions": {
 		"requireConfigFile": false
