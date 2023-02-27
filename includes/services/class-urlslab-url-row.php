@@ -17,6 +17,12 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	public const VISIBILITY_VISIBLE = 'V';
 	public const VISIBILITY_HIDDEN = 'H';
 
+
+	public const SCREENSHOT_TYPE_CAROUSEL = 'carousel';
+	public const SCREENSHOT_TYPE_FULL_PAGE = 'full-page';
+	public const SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL = 'carousel-thumbnail';
+	public const SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL = 'full-page-thumbnail';
+
 	/**
 	 * @param array $url
 	 */
@@ -135,21 +141,21 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	 *
 	 * @return string url of the schreenshot or empty string
 	 */
-	public function get_screenshot_url( string $screenshot_type = 'carousel' ): string {
+	public function get_screenshot_url( string $screenshot_type = self::SCREENSHOT_TYPE_CAROUSEL ): string {
 		if ( empty( $this->get( 'screenshotDate' ) ) || empty( $this->get( 'domainId' ) ) || empty( $this->get( 'urlId' ) ) ) {
 			return '';
 		}
 		switch ( $screenshot_type ) {
-			case 'full-page-thumbnail':
+			case self::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL:
 				$path = 'https://www.urlslab.com/public/thumbnail/fullpage/%s/%s/%s';
 				break;
-			case 'carousel-thumbnail':
+			case self::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL:
 				$path = 'https://www.urlslab.com/public/thumbnail/carousel/%s/%s/%s';
 				break;
-			case 'full-page':
+			case self::SCREENSHOT_TYPE_FULL_PAGE:
 				$path = 'https://www.urlslab.com/public/image/%s/%s/%s';
 				break;
-			case 'carousel':
+			case self::SCREENSHOT_TYPE_CAROUSEL:
 			default:
 				$path = 'https://www.urlslab.com/public/carousel/%s/%s/%s';
 				break;

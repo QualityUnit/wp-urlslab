@@ -27,7 +27,7 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_slug(): string {
-		return self::SLUG;
+		return Urlslab_CSS_Optimizer::SLUG;
 	}
 
 	/**

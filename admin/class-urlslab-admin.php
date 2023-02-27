@@ -120,33 +120,6 @@ class Urlslab_Admin {
 	 */
 	public function enqueue_scripts() {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in urlslab_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The urlslab_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
-		// Allows to use POST etc via Rest API cookie authentification
-
-		// wp_localize_script( 'wp-api', 'urlslabNonceAuth', array(
-		// 'root' => esc_url_raw( rest_url() ),
-		// 'nonce' => wp_create_nonce( 'wp_rest' )
-		// ) );
-
-		wp_enqueue_script(
-			$this->urlslab,
-			plugin_dir_url( __FILE__ ) . 'js/urlslab-admin.js',
-			array( 'jquery', 'jquery-ui-tabs', 'jquery-ui-dialog', 'wp-util' ),
-			$this->version,
-			false
-		);
-
 		wp_localize_script(
 			$this->urlslab,
 			'params',

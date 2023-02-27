@@ -61,7 +61,6 @@ class Urlslab_User_Widget {
 	}
 
 	/**
-	 * @param string $widget_slug
 	 *
 	 * @return Urlslab_Widget[]|Urlslab_Widget
 	 */

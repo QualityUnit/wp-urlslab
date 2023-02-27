@@ -27,7 +27,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	public function get_widget_slug(): string {
-		return self::SLUG;
+		return Urlslab_Lazy_Loading::SLUG;
 	}
 
 	public function get_widget_title(): string {

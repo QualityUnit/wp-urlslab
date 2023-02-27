@@ -63,8 +63,8 @@ class Urlslab_Api_Content_Cache extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->url_id   = (int) $row->url_id;
-			$row->filesize = (int) $row->filesize;
+			$row->cache_len   = (int) $row->cache_len;
+			$row->cache_crc32 = (int) $row->cache_crc32;
 		}
 
 		return new WP_REST_Response( $rows, 200 );

@@ -28,7 +28,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_slug(): string {
-		return self::SLUG;
+		return Urlslab_Screenshot_Widget::SLUG;
 	}
 
 	/**
@@ -55,7 +55,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 				'alt'             => 'Screenshot taken by URLSLAB.com',
 				'default-image'   => '',
 				'url'             => 'https://www.urlslab.com',
-				'screenshot-type' => 'carousel',
+				'screenshot-type' => Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL,
 			),
 			$atts,
 			$tag

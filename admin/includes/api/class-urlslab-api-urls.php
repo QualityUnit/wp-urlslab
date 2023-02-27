@@ -288,6 +288,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
+			$url                  = new Urlslab_Url_Row( $row );
+			$row->screenshot_url  = $url->get_screenshot_url();
 			$row->url_usage_count = (int) $row->url_usage_count; // phpcs:ignore
 			$row->url_links_count = (int) $row->url_links_count; // phpcs:ignore
 			$row->screenshotDate  = (int) $row->screenshotDate; // phpcs:ignore

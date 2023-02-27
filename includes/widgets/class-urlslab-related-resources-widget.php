@@ -21,7 +21,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_slug(): string {
-		return self::SLUG;
+		return Urlslab_Related_Resources_Widget::SLUG;
 	}
 
 	/**

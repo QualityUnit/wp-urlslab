@@ -13,7 +13,7 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_slug(): string {
-		return self::SLUG;
+		return Urlslab_Image_Alt_Text::SLUG;
 	}
 
 	/**
