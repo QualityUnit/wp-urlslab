@@ -167,7 +167,6 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-api.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-api.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-screenshot-api.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-user-management-api.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/urlslab-api-model.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-batch-request.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-error-response.php';
