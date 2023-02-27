@@ -6,15 +6,14 @@ let ended = false;
 export let jsonData = { status: 'loading', data: [] };
 
 export async function exportCSV( options ) {
-	const { url, fromId, pageId, deleteCSVCols } = options;
+	const { url, fromId, pageId, perPage = 9999, deleteCSVCols } = options;
 	const qOperator = url.includes( '?' ) ? '&' : '?';
-	const perpage = 9999;
 	const prevDataLength = dataForCSV.length;
-	const response = await fetchData( `${ url }${ qOperator }${ fromId }=${ lastPage }&rows_per_page=${ perpage }` );
+	const response = await fetchData( `${ url }${ qOperator }${ fromId }=${ lastPage }&rows_per_page=${ perPage }` );
 
 	dataForCSV.push( await response );
 	dataForCSV = dataForCSV.flat();
-	if ( await response.length < perpage ) {
+	if ( await response.length < perPage ) {
 		ended = true;
 		if ( deleteCSVCols?.length ) {
 			for ( const obj of dataForCSV ) {

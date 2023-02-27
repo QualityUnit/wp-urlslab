@@ -1,11 +1,10 @@
 
-import { useContext } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { jsonToCSV } from 'react-papaparse';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import fileDownload from 'js-file-download';
-import { jsonData, exportCSV } from '../api/exportCsv';
+import { exportCSV } from '../api/exportCsv';
 import { useI18n } from '@wordpress/react-i18n';
-import { NotificationsContext } from '../constants/contextProvider';
 // import Worker from '../constants/exportWorker.js?worker';
 
 import { ReactComponent as ExportIcon } from '../assets/images/icon-export.svg';
@@ -13,26 +12,25 @@ import Button from './Button';
 
 export default function ExportCSVButton( { className, options, onClick } ) {
 	const { __ } = useI18n();
-	const { setNotifications } = useContext( NotificationsContext );
+	const queryClient = useQueryClient();
 
-	const handleExport = () => {
-		// setNotifications( {
-		// 	export: 'Running',
-		// } );
-
-		// const worker = new Worker();
+	function handleExport() {
+		// const worker = new Worker( '' );
 		// worker.postMessage( {
 		// 	url: 'keyword',
 		// 	fromId: 'from_kw_id',
 		// 	pageId: 'kw_id',
 		// 	deleteCSVCols: [ 'kw_id', 'destUrlMd5' ],
 		// } );
-		// // 	// console.log( 'message' );
+		// 	// console.log( 'message' );
 		// worker.onmessage = ( message ) => {
 		// 	console.log( message );
 		// };
 		if ( onClick ) {
-			onClick( jsonData );
+			queryClient.setQueryData( [ 'notifications' ], ( data ) => {
+				return { ...data, export: 'running' };
+			} );
+			queryClient.invalidateQueries( [ 'notifications' ] );
 		}
 		exportCSV( options ).then( ( response ) => {
 			if ( onClick && response.status === 'done' ) {
@@ -40,11 +38,15 @@ export default function ExportCSVButton( { className, options, onClick } ) {
 					delimiter: ',',
 					header: true }
 				);
-				onClick( jsonData );
+				queryClient.setQueryData( [ 'notifications' ], ( data ) => {
+					return { ...data, export: 'done' };
+				} );
+				queryClient.invalidateQueries( [ 'notifications' ] );
 				fileDownload( csv, `${ options.url }.csv` );
 			}
 		} );
-	};
+	}
+
 	return (
 		<Button className={ className }
 			onClick={ handleExport }>

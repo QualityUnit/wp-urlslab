@@ -102,6 +102,7 @@ export default function LinkManagerTable( { slug } ) {
 					fromId: 'from_urlMd5',
 					pageId: 'urlMd5',
 					deleteCSVCols: [ 'urlId', 'urlMd5', 'domainId' ],
+					perPage: 1000,
 				} }
 			>
 				<div className="ma-left flex flex-align-center">

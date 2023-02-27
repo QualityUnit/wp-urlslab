@@ -1,5 +1,4 @@
 import { useState, Suspense } from 'react';
-import { NotificationsContext } from './constants/contextProvider';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useQuery } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
@@ -13,8 +12,6 @@ import './assets/styles/style.scss';
 
 export default function App() {
 	const { __ } = useI18n();
-	const [ notifications, setNotifications ] = useState( {} );
-
 	const [ module, setModule ] = useState( 'urlslab-modules' );
 	const { data: fetchedModules } = useQuery( {
 		queryKey: [ 'modules' ],
@@ -39,25 +36,25 @@ export default function App() {
 	};
 
 	return (
-		<NotificationsContext.Provider value={ { notifications, setNotifications } }>
 
-			<div className="urlslab-app flex">
-				<Suspense>
-					<MainMenu
+		<div className="urlslab-app flex">
+			<Suspense>
+				<MainMenu
+					modules={ ! fetchedModules || Object.values( fetchedModules ) }
+					activePage={ ( selectedModule ) => handleModulePage( selectedModule ) }
+				/>
+			</Suspense>
+			<div className="urlslab-app-main">
+				<Header pageTitle={ ! pageTitle || pageTitle } />
+
+				<Suspense fallback={ <Loader /> }>
+					<DynamicModule
 						modules={ ! fetchedModules || Object.values( fetchedModules ) }
-						activePage={ ( selectedModule ) => handleModulePage( selectedModule ) }
+						moduleId={ module }
 					/>
 				</Suspense>
-				<Suspense fallback={ <Loader /> }>
-					<div className="urlslab-app-main">
-						<Header pageTitle={ ! pageTitle || pageTitle } />
-						<DynamicModule
-							modules={ ! fetchedModules || Object.values( fetchedModules ) }
-							moduleId={ module }
-						/>
-					</div>
-				</Suspense>
 			</div>
-		</NotificationsContext.Provider>
+		</div>
+
 	);
 }
