@@ -10,7 +10,7 @@ class Urlslab_Screenshot_Api extends Urlslab_Api {
 	/**
 	 * @param array $scheduling_urls
 	 *
-	 * @return Urlslab_Url_Row[]
+	 * @return Urlslab_Url[]
 	 * @throws Exception
 	 */
 	public function schedule_batch( array $scheduling_urls ) {

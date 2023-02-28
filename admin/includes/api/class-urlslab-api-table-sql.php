@@ -50,8 +50,12 @@ class Urlslab_Api_Table_Sql {
 
 	public function add_filter_raw( $where_condition, $data = false ) {
 		$this->where_data[] = $where_condition;
-		if ( $data ) {
-			$this->query_data = array_merge( $this->query_data, $data );
+		if ( false !== $data ) {
+			if ( is_array( $data ) ) {
+				$this->query_data = array_merge( $this->query_data, $data );
+			} else {
+				$this->query_data = array_merge( $this->query_data, array( $data ) );
+			}
 		}
 	}
 
