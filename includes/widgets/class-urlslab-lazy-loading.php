@@ -11,6 +11,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 	//Lazy Loading settings
 	public const SETTING_NAME_IMG_LAZY_LOADING = 'urlslab_img_lazy';
+	public const SETTING_NAME_IMG_LAZY_LOADING_WITH_PLACEHOLDER = 'urlslab_img_lazy_placeholder';
 	public const SETTING_NAME_VIDEO_LAZY_LOADING = 'urlslab_video_lazy';
 	public const SETTING_NAME_YOUTUBE_LAZY_LOADING = 'urlslab_youtube_lazy';
 	public const SETTING_NAME_CONTENT_LAZY_LOADING = 'urlslab_content_lazy';
@@ -298,7 +299,11 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	private function add_img_lazy_loading( DOMElement $dom_element ) {
 		if ( $dom_element->hasAttribute( 'src' ) && ! str_starts_with( $dom_element->getAttribute( 'src' ), 'data:' ) ) {
 			$dom_element->setAttribute( 'data-src', $dom_element->getAttribute( 'src' ) );
-			$dom_element->setAttribute( 'src', $this->get_image_data( $dom_element->getAttribute( 'width' ), $dom_element->getAttribute( 'height' ) ) );
+			if ( $this->get_option( self::SETTING_NAME_IMG_LAZY_LOADING_WITH_PLACEHOLDER ) ) {
+				$dom_element->setAttribute( 'src', $this->get_image_data( $dom_element->getAttribute( 'width' ), $dom_element->getAttribute( 'height' ) ) );
+			} else {
+				$dom_element->removeAttribute( 'src' );
+			}
 		}
 
 		if ( $dom_element->hasAttribute( 'srcset' ) ) {
@@ -308,7 +313,11 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 		if ( $dom_element->hasAttribute( 'data-splide-lazy' ) ) {
 			$dom_element->setAttribute( 'data-src', $dom_element->getAttribute( 'data-splide-lazy' ) );
-			$dom_element->setAttribute( 'src', $this->get_image_data( $dom_element->getAttribute( 'width' ), $dom_element->getAttribute( 'height' ) ) );
+			if ( $this->get_option( self::SETTING_NAME_IMG_LAZY_LOADING_WITH_PLACEHOLDER ) ) {
+				$dom_element->setAttribute( 'src', $this->get_image_data( $dom_element->getAttribute( 'width' ), $dom_element->getAttribute( 'height' ) ) );
+			} else {
+				$dom_element->removeAttribute( 'src' );
+			}
 		}
 
 		if ( $dom_element->hasAttribute( 'style' ) ) {
@@ -420,6 +429,13 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			true,
 			__( 'Image Lazy Loading' ),
 			__( 'Enable/Disable lazy loading for Images in your pages' )
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_IMG_LAZY_LOADING_WITH_PLACEHOLDER,
+			false,
+			true,
+			__( 'Generate empty image as placeholder' ),
+			__( 'Before the image is loaded into browser, we generate into src tag empty svg image as placeholder for original image to restrict jumping of content. Use this as EXPERIMENTAL feature. Some browsers incorrectly render images like our placeholder sometimes.' )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_VIDEO_LAZY_LOADING,
