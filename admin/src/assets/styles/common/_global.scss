@@ -1,4 +1,5 @@
 @use "variables" as *;
+@use "mixins" as *;
 
 [id="urlslab-root"] {
 	font-family: Poppins, sans-serif;
@@ -12,6 +13,22 @@
 
 	.fadeInto {
 		animation: fadeIn $transitionTime;
+	}
+
+	.apiIcon {
+		border-radius: 50%;
+		background-color: $desaturated-blue;
+		flex: 0 0 auto;
+
+		&.xxl {
+
+			@include square(4.75em);
+		}
+
+		svg {
+
+			@include square(100%);
+		}
 	}
 
 	.urlslab-learnMore {

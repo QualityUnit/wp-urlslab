@@ -1,0 +1,66 @@
+@use "../common/variables" as *;
+@use "../common/mixins" as *;
+
+.urlslab-overview {
+
+	&.urlslab-panel {
+		display: flex;
+		flex-direction: column;
+		max-width: 57.5em;
+		max-height: 52em;
+		margin: 3em auto 6em;
+	}
+
+	&-apiKey {
+		align-items: center;
+		position: relative;
+		padding: inherit;
+		background-color: $grey-lightest;
+	}
+
+	&-content {
+
+		@include scrollbar();
+		margin-top: 1.5em;
+		margin-bottom: 3em;
+		overflow-y: auto;
+
+		img,
+		picture,
+		video {
+			max-width: 100%;
+			margin: 1.5em auto;
+		}
+	}
+
+	@media (min-width: $breakpoint-tablet) {
+
+		&-apiKey {
+
+			&__content {
+				width: calc(100% - 10em);
+				margin-right: auto;
+			}
+		}
+	}
+
+	@media (min-width: $breakpoint-tablet-landscape) {
+
+		&.urlslab-panel {
+			padding: 0 11.25em;
+		}
+
+		&-apiKey {
+			padding: 3.125em 11.25em;
+			margin-left: -11.25em;
+			margin-right: -11.25em;
+		}
+
+		.apiIcon {
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
+			left: 3.5em;
+		}
+	}
+}

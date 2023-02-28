@@ -1,7 +1,5 @@
 import { useState, Suspense, lazy } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import Overview from '../components/OverviewTemplate';
-import KeywordsLinks from '../overview/KeywordsLinks';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import TableViewHeader from '../components/TableViewHeader';
 
@@ -24,11 +22,6 @@ export default function LazyLoading( { moduleId } ) {
 	return (
 		<div className="urlslab-tableView">
 			<TableViewHeader tableMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
-			{ activeSection === 'overview' &&
-				<Overview moduleId={ moduleId }>
-					<KeywordsLinks />
-				</Overview>
-			}
 			<Suspense>
 				{
 					activeSection === 'youtube-cache' &&

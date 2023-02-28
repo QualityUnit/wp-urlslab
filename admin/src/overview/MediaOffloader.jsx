@@ -1,33 +1,26 @@
 import { useState, Suspense, lazy } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import Overview from '../components/OverviewTemplate';
-import KeywordsLinks from '../overview/KeywordsLinks';
 import TableViewHeader from '../components/TableViewHeader';
 
-export default function LinkEnhancer( { moduleId } ) {
+export default function MediaOffloader( { moduleId } ) {
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 
 	const tableMenu = new Map( [
-		[ 'url', __( 'Link Manager Table' ) ],
+		[ 'file', __( 'Media Files Table' ) ],
 	] );
 
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
-	const LinkManagerTable = lazy( () => import( `../tables/LinkManagerTable.jsx` ) );
+	const MediaFilesTable = lazy( () => import( `../tables/MediaFilesTable.jsx` ) );
 
 	return (
 		<div className="urlslab-tableView">
 			<TableViewHeader tableMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
-			{ activeSection === 'overview' &&
-				<Overview moduleId={ moduleId }>
-					<KeywordsLinks />
-				</Overview>
-			}
 			{
-				activeSection === 'url' &&
+				activeSection === 'file' &&
 				<Suspense>
-					<LinkManagerTable slug="url" />
+					<MediaFilesTable />
 				</Suspense>
 			}
 			{
