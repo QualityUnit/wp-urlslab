@@ -15,6 +15,8 @@
 		align-items: center;
 		position: relative;
 		padding: inherit;
+		margin-left: -1.5em;
+		margin-right: -1.5em;
 		background-color: $grey-lightest;
 	}
 
@@ -36,15 +38,17 @@
 	@media (min-width: $breakpoint-tablet) {
 
 		&-apiKey {
+			margin-left: -4em;
+			margin-right: -4em;
 
 			&__content {
-				width: calc(100% - 10em);
+				width: 75%;
 				margin-right: auto;
 			}
 		}
 	}
 
-	@media (min-width: $breakpoint-tablet-landscape) {
+	@media (min-width: $breakpoint-desktop-box) {
 
 		&.urlslab-panel {
 			padding: 0 11.25em;

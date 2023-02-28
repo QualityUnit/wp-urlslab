@@ -2,10 +2,14 @@
 @use "../common/variables" as *;
 
 .urlslab-panel {
-	padding: 1.875em 4em;
+	padding: 1.5em;
 	background-color: $white;
 	border-radius: $br-10;
 	box-shadow: $box-shadow-small;
 	color: $black;
 	overflow: hidden;
+
+	@media (min-width: $breakpoint-tablet) {
+		padding: 1.875em 4em;
+	}
 }
