@@ -2,6 +2,7 @@
 @use "../common/variables" as *;
 
 .urlslab-app {
+	overflow-x: hidden;
 
 	&-main {
 		// padding-left: $iconsMenuWidth;
@@ -30,6 +31,7 @@
 
 #wpbody {
 	position: static;
+	overflow-x: hidden;
 }
 
 // Moves our app padding
