@@ -13,6 +13,7 @@ $cellHeight: 3.5em;
 	font-size: 0.75rem;
 	line-height: 1.3;
 	transform: translateZ(1px);
+	width: 100%;
 
 	&:not(.resizable) {
 		width: 100% !important;
@@ -73,7 +74,7 @@ $cellHeight: 3.5em;
 			align-items: center;
 			height: $cellHeight;
 
-			> *:not(.resizer) {
+			> *:not(.resizer):not(img):not(.img):not(picture) {
 				width: 100%;
 			}
 		}
@@ -141,7 +142,8 @@ $cellHeight: 3.5em;
 	.thumbnail {
 
 		picture,
-		img {
+		img,
+		.img {
 			height: 3em;
 		}
 	}

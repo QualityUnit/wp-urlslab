@@ -92,6 +92,7 @@
 	}
 
 	&::-webkit-scrollbar {
+		height: $width;
 		width: $width;
 	}
 

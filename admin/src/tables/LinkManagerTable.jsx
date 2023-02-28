@@ -66,6 +66,13 @@ export default function LinkManagerTable( { slug } ) {
 			maxSize: 24,
 			size: 24,
 		} ),
+		columnHelper?.accessor( 'screenshot_url', {
+			className: 'thumbnail',
+			cell: ( image ) => image?.getValue()
+				? <a href={ image?.getValue() } target="_blank" rel="noreferrer"><img src={ image?.getValue() } alt={ image.row.original.urlName } /></a>
+				: <div className="img"></div>,
+			header: () => header.screenshot_url,
+		} ),
 		columnHelper.accessor( 'urlTitle', {
 			header: () => header.urlTitle,
 			minSize: 250,

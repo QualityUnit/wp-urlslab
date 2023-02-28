@@ -3,7 +3,8 @@ import { useRef, useState, useEffect } from 'react';
 import {
 	flexRender,
 	getCoreRowModel,
-	useReactTable } from '@tanstack/react-table';
+	useReactTable,
+} from '@tanstack/react-table';
 
 import { useVirtual } from 'react-virtual';
 
@@ -11,25 +12,21 @@ import '../assets/styles/components/_TableComponent.scss';
 
 export default function Table( { resizable, children, className, columns, data } ) {
 	const [ rowSelection, setRowSelection ] = useState( {} );
-	const [ containerWidth, setContainerWidth ] = useState( );
-	const [ containerPadding, setContainerPadding ] = useState( 0 );
-	const didMountRef = useRef( false );
+	const [ containerWidth, setContainerWidth ] = useState();
 	const tableContainerRef = useRef();
 
 	useEffect( () => {
+		setContainerWidth( tableContainerRef.current.clientWidth );
+		const menuWidth = document.querySelector( '.urlslab-mainmenu' ).clientWidth + document.querySelector( '#adminmenuwrap' ).clientWidth;
+
 		const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
 			if ( entry.borderBoxSize ) {
-				setContainerWidth( tableContainerRef.current.parentElement.clientWidth - containerPadding );
+				tableContainerRef.current.style.width = `${ document.querySelector( '#wpadminbar' ).clientWidth - menuWidth - 54 }px`;
 			}
 		} );
-		const tableCont = tableContainerRef.current;
-		setContainerPadding( tableCont.parentElement.clientWidth - tableCont.clientWidth );
-		setContainerWidth( tableContainerRef.current.clientWidth );
-		if ( containerWidth && didMountRef.current ) {
-			resizeWatcher.observe( document.querySelector( '.urlslab-header' ) );
-		}
-		didMountRef.current = true;
-	}, [ setContainerWidth, containerPadding ] );
+
+		resizeWatcher.observe( document.querySelector( '#wpadminbar' ) );
+	}, [ setContainerWidth ] );
 
 	const table = useReactTable( {
 		columns,
