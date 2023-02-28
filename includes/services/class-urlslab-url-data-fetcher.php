@@ -48,14 +48,16 @@ class Urlslab_Url_Data_Fetcher {
 	}
 
 
-
 	/**
 	 * @param Urlslab_Url $url
 	 *
 	 * @return Urlslab_Url_Row
 	 */
-	public function fetch_schedule_url( Urlslab_Url $url ): Urlslab_Url_Row {
+	public function fetch_schedule_url( Urlslab_Url $url ): ?Urlslab_Url_Row {
 		$array = $this->fetch_schedule_urls_batch( array( $url ) );
+		if ( empty( $array ) ) {
+			return null;
+		}
 
 		return reset( $array );
 	}

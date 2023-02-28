@@ -109,9 +109,9 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 
 		if ( $sql->get_request()->get_param( 'from_sort_column' ) ) {
 			if ( 'DESC' == $sql->get_request()->get_param( 'sort_direction' ) ) {
-				$operator = '<';
+				$operator = '<=';
 			} else {
-				$operator = '>';
+				$operator = '>=';
 			}
 			$format = '%s';
 			if ( isset( $rob_obj->get_columns()[ $sql->get_request()->get_param( 'sort_column' ) ] ) ) {
