@@ -32,7 +32,7 @@ export async function exportCSV( options, res ) {
 
 	if ( ended ) {
 		jsonData = { status: 'done', data: dataForCSV };
-		res( '100' );
+		res( 100 );
 		return jsonData;
 	}
 
