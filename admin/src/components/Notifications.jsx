@@ -30,8 +30,8 @@ export default function Notifications( { className } ) {
 					: null
 				}
 				{
-					panelActive && notificationsCount
-						? <div className="urlslab-notifications-panel urlslab-panel fadeInto">
+					notificationsCount
+						? <div className={ `urlslab-notifications-panel urlslab-panel ${ panelActive && 'active' } fadeInto` }>
 							<ProgressBar value={ notifications?.export } />
 						</div>
 						: null

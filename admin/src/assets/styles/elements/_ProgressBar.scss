@@ -27,10 +27,9 @@
 
 	&-label {
 		display: block;
-		font-size: 0.625rem;
-		font-weight: $font-weight-bold;
-		text-align: right;
-		margin: 0;
+		text-align: center;
+		color: $grey-light;
+		font-size: 0.8125rem;
 		transition: width 0.2s ease;
 	}
 }
