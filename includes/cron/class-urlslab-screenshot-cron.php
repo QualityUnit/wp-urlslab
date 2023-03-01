@@ -194,7 +194,7 @@ or (updateStatusDate < %s AND status = %s)
 		try {
 			$schedule_response = $this->api->schedule_batch( $scheduling_urls );
 			foreach ( $scheduling_urls as $i => $schedule ) {
-				$scheduled[ $schedule->get_url()->get_url_id() ] = $schedule_response[ $i ];
+				$scheduled[ $schedule->get_url_id() ] = $schedule_response[ $i ];
 			}
 		} catch ( Exception $e ) {
 			$this->debug_log( $e );
