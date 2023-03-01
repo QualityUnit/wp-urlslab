@@ -4,51 +4,8 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 	public function register_routes() {
 		$base = '/url-relation';
 
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/',
-			array(
-				array(
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_items' ),
-					'args'                => $this->get_table_arguments(
-						array(
-							'filter_srcUrlMd5'   => array(
-								'required'          => false,
-								'validate_callback' => function( $param ) {
-									return is_numeric( $param );
-								},
-							),
-							'filter_destUrlMd5'  => array(
-								'required'          => false,
-								'validate_callback' => function( $param ) {
-									return is_numeric( $param );
-								},
-							),
-							'filter_srcUrlName'  => array(
-								'required'          => false,
-								'validate_callback' => function( $param ) {
-									return 1024 >= strlen( $param );
-								},
-							),
-							'filter_destUrlName' => array(
-								'required'          => false,
-								'validate_callback' => function( $param ) {
-									return 1024 >= strlen( $param );
-								},
-							),
-							'filter_pos'         => array(
-								'required'          => false,
-								'validate_callback' => function( $param ) {
-									return is_numeric( $param );
-								},
-							),
-						)
-					),
-					'permission_callback' => array( $this, 'get_items_permissions_check' ),
-				),
-			)
-		);
+		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
+		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
 
 		register_rest_route(
 			self::NAMESPACE,
@@ -96,7 +53,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 			array(
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'detele_all_items' ),
+					'callback'            => array( $this, 'delete_all_items' ),
 					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
 					'args'                => array(),
 				),
@@ -109,7 +66,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 			array(
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'detele_item' ),
+					'callback'            => array( $this, 'delete_item' ),
 					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
 					'args'                => array(),
 				),
@@ -119,29 +76,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 
 
 	public function get_items( $request ) {
-		$sql = new Urlslab_Api_Table_Sql( $request );
-		$sql->add_select_column( 'srcUrlMd5' );
-		$sql->add_select_column( 'destUrlMd5' );
-		$sql->add_select_column( 'pos' );
-		$sql->add_select_column( 'urlName', 'u_src', 'srcUrlName' );
-		$sql->add_select_column( 'urlName', 'u_dest', 'destUrlName' );
-		$sql->add_from( URLSLAB_RELATED_RESOURCE_TABLE . ' r LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u_src ON u_src.urlMd5 = r.srcUrlMd5 LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u_dest ON u_dest.urlMd5 = r.destUrlMd5 ' );
-
-		$this->add_filter_table_fields( $sql );
-
-		$sql->add_filter( 'srcUrlMd5' );
-		$sql->add_filter( 'destUrlMd5' );
-		$sql->add_filter( 'filter_srcUrlName', '%s', 'LIKE' );
-		$sql->add_filter( 'filter_destUrlName', '%s', 'LIKE' );
-		$sql->add_filter( 'filter_pos', '%d' );
-
-		if ( $request->get_param( 'sort_column' ) ) {
-			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );
-		}
-		$sql->add_order( 'srcUrlMd5' );
-		$sql->add_order( 'destUrlMd5' );
-
-		$rows = $sql->get_results();
+		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( ! is_array( $rows ) ) {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 500 ) );
@@ -155,6 +90,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 
 		return new WP_REST_Response( $rows, 200 );
 	}
+
 
 	public function import_items( WP_REST_Request $request ) {
 		$schedule_urls = array();
@@ -198,5 +134,83 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 
 	function get_editable_columns(): array {
 		return array( 'pos' );
+	}
+
+	/**
+	 * @return array[]
+	 */
+	public function get_route_get_items(): array {
+		return array(
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_items' ),
+				'args'                => $this->get_table_arguments(
+					array(
+						'filter_srcUrlMd5'   => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param );
+							},
+						),
+						'filter_destUrlMd5'  => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param );
+							},
+						),
+						'filter_srcUrlName'  => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return 1024 >= strlen( $param );
+							},
+						),
+						'filter_destUrlName' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return 1024 >= strlen( $param );
+							},
+						),
+						'filter_pos'         => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param );
+							},
+						),
+					)
+				),
+				'permission_callback' => array( $this, 'get_items_permissions_check' ),
+			),
+		);
+	}
+
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return Urlslab_Api_Table_Sql
+	 */
+	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
+		$sql = new Urlslab_Api_Table_Sql( $request );
+		$sql->add_select_column( 'srcUrlMd5' );
+		$sql->add_select_column( 'destUrlMd5' );
+		$sql->add_select_column( 'pos' );
+		$sql->add_select_column( 'urlName', 'u_src', 'srcUrlName' );
+		$sql->add_select_column( 'urlName', 'u_dest', 'destUrlName' );
+		$sql->add_from( URLSLAB_RELATED_RESOURCE_TABLE . ' r LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u_src ON u_src.urlMd5 = r.srcUrlMd5 LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u_dest ON u_dest.urlMd5 = r.destUrlMd5 ' );
+
+		$this->add_filter_table_fields( $sql );
+
+		$sql->add_filter( 'srcUrlMd5' );
+		$sql->add_filter( 'destUrlMd5' );
+		$sql->add_filter( 'filter_srcUrlName', '%s', 'LIKE' );
+		$sql->add_filter( 'filter_destUrlName', '%s', 'LIKE' );
+		$sql->add_filter( 'filter_pos', '%d' );
+
+		if ( $request->get_param( 'sort_column' ) ) {
+			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );
+		}
+		$sql->add_order( 'srcUrlMd5' );
+		$sql->add_order( 'destUrlMd5' );
+
+		return $sql;
 	}
 }

@@ -98,18 +98,19 @@ class Urlslab_Api_Table_Sql {
 		global $wpdb;
 		$this->init_table_limit();
 
-		return $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT ' . implode( ',', $this->select_data ) . // phpcs:ignore
-				' FROM ' . $this->from_string . // phpcs:ignore
-				( ! empty( $this->where_data ) ? ' WHERE ' . implode( ' AND ', $this->where_data ) : '' ) . // phpcs:ignore
-				( ! empty( $this->group_by_data ) ? ' GROUP BY ' . implode( ',', $this->group_by_data ) : '' ) . // phpcs:ignore
-				( ! empty( $this->having_data ) ? ' HAVING ' . implode( ' AND ', $this->having_data ) : '' ) . // phpcs:ignore
-				( ! empty( $this->order_data ) ? ' ORDER BY ' . implode( ',', $this->order_data ) : '' ) . // phpcs:ignore
-				( strlen( $this->limit_string ) ? ' LIMIT ' . $this->limit_string : '' ), // phpcs:ignore
-				$this->query_data
-			),
-			OBJECT ); // phpcs:ignore
+		return $wpdb->get_results( $this->get_query(), OBJECT ); // phpcs:ignore
+	}
+
+	public function get_count(): int {
+		global $wpdb;
+
+		$results = $wpdb->get_results( $this->get_count_select()->get_query(), OBJECT ); // phpcs:ignore
+
+		if ( empty( $results ) ) {
+			return 0;
+		}
+
+		return $results[0]->cnt;
 	}
 
 	public function add_group_by( string $column, string $table_prefix = '' ) {
@@ -118,6 +119,43 @@ class Urlslab_Api_Table_Sql {
 
 	public function get_request(): WP_REST_Request {
 		return $this->request;
+	}
+
+	private function get_count_select(): Urlslab_Api_Table_Sql {
+		$this->order_data   = array();
+		$this->limit_string = '';
+		if ( empty( $this->group_by_data ) ) {
+			$this->select_data = array();
+			$this->add_select_column( 'count(*)', false, 'cnt' );
+
+			return $this;
+		} else {
+			$cnt_select = new Urlslab_Api_Table_Sql( $this->get_request() );
+			$cnt_select->add_select_column( 'count(*)', false, 'cnt' );
+			$cnt_select->add_from( '(' . $this->get_query() . ') as tbl' );
+
+			return $cnt_select;
+		}
+	}
+
+	/**
+	 * @param $wpdb
+	 *
+	 * @return mixed
+	 */
+	private function get_query() {
+		global $wpdb;
+
+		return $wpdb->prepare(
+			'SELECT ' . implode( ',', $this->select_data ) . // phpcs:ignore
+			' FROM ' . $this->from_string . // phpcs:ignore
+			( ! empty( $this->where_data ) ? ' WHERE ' . implode( ' AND ', $this->where_data ) : '' ) . // phpcs:ignore
+			( ! empty( $this->group_by_data ) ? ' GROUP BY ' . implode( ',', $this->group_by_data ) : '' ) . // phpcs:ignore
+			( ! empty( $this->having_data ) ? ' HAVING ' . implode( ' AND ', $this->having_data ) : '' ) . // phpcs:ignore
+			( ! empty( $this->order_data ) ? ' ORDER BY ' . implode( ',', $this->order_data ) : '' ) . // phpcs:ignore
+			( strlen( $this->limit_string ) ? ' LIMIT ' . $this->limit_string : '' ), // phpcs:ignore
+			$this->query_data
+		);
 	}
 
 }

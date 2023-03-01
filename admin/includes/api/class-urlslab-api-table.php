@@ -90,7 +90,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	}
 
 
-	public function detele_all_items( $request ) {
+	public function delete_all_items( $request ) {
 		global $wpdb;
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . sanitize_key( $this->get_row_object()->get_table_name() ) ) ) ) { // phpcs:ignore
@@ -126,4 +126,30 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		}
 
 	}
+
+	protected function get_count_route( array $route ): array {
+		$count_route                   = $route;
+		$count_route[0]['callback'][1] = $count_route[0]['callback'][1] . '_count';
+
+		return $count_route;
+	}
+
+	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
+		throw new Exception( 'Missing implementation' );
+	}
+
+	public function get_items( $request ) {
+		$rows = $this->get_items_sql( $request )->get_results();
+
+		if ( null === $rows || false === $rows ) {
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 500 ) );
+		}
+
+		return new WP_REST_Response( $rows, 200 );
+	}
+
+	public function get_items_count( $request ) {
+		return new WP_REST_Response( $this->get_items_sql( $request )->get_count(), 200 );
+	}
+
 }

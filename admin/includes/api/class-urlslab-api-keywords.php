@@ -4,82 +4,8 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	public function register_routes() {
 		$base = '/keyword';
 
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/',
-			array(
-				array(
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_items' ),
-					'args'                => $this->get_table_arguments(
-						array(
-							'filter_keyword'          => array(
-								'required'          => false,
-								'validate_callback' => function( $param ) {
-									return 0 == strlen( $param ) || 250 >= strlen( $param );
-								},
-							),
-							'filter_urlLink'          => array(
-								'required'          => false,
-								'validate_callback' => function( $param ) {
-									return 0 == strlen( $param ) || 250 >= strlen( $param );
-								},
-							),
-							'filter_kw_priority'      => array(
-								'required'          => false,
-								'validate_callback' => function( $param ) {
-									return is_numeric( $param );
-								},
-							),
-							'filter_kw_length'        => array(
-								'required'          => false,
-								'validate_callback' => function( $param ) {
-									return is_numeric( $param );
-								},
-							),
-							'filter_lang'             => array(
-								'required'          => false,
-								'validate_callback' => function( $param ) {
-									return is_string( $param ) && 11 > strlen( $param );
-								},
-							),
-							'filter_urlFilter'        => array(
-								'required'          => false,
-								'validate_callback' => function( $param ) {
-									return is_string( $param ) && 251 > strlen( $param );
-								},
-							),
-							'filter_kwType'           => array(
-								'required'          => false,
-								'validate_callback' => function( $param ) {
-									switch ( $param ) {
-										case Urlslab_Keywords_Links::KW_TYPE_MANUAL:
-										case Urlslab_Keywords_Links::KW_TYPE_IMPORTED_FROM_CONTENT:
-										case Urlslab_Keywords_Links::KW_TYPE_NONE:
-											return true;
-										default:
-											return false;
-									}
-								},
-							),
-							'filter_kw_usage_count'   => array(
-								'required'          => false,
-								'validate_callback' => function( $param ) {
-									return is_numeric( $param );
-								},
-							),
-							'filter_link_usage_count' => array(
-								'required'          => false,
-								'validate_callback' => function( $param ) {
-									return is_numeric( $param );
-								},
-							),
-						)
-					),
-					'permission_callback' => array( $this, 'get_items_permissions_check' ),
-				),
-			)
-		);
+		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
+		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
 
 		register_rest_route(
 			self::NAMESPACE,
@@ -132,7 +58,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			array(
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'detele_all_items' ),
+					'callback'            => array( $this, 'delete_all_items' ),
 					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
 					'args'                => array(),
 				),
@@ -145,45 +71,15 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			array(
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'detele_item' ),
+					'callback'            => array( $this, 'delete_item' ),
 					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
 					'args'                => array(),
 				),
 			)
 		);
 
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/(?P<kw_id>[0-9]+)/(?P<destUrlMd5>[0-9]+)',
-			array(
-				array(
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_kw_mapping' ),
-					'args'                => array(
-						'rows_per_page'   => array(
-							'required'          => true,
-							'default'           => self::ROWS_PER_PAGE,
-							'validate_callback' => function( $param ) {
-								return is_numeric( $param ) && 0 < $param && 200 > $param;
-							},
-						),
-						'from_urlMd5'     => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return is_numeric( $param );
-							},
-						),
-						'filter_linkType' => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Keywords_Links::KW_LINK_TYPE_URLSLAB == $param || Urlslab_Keywords_Links::KW_LINK_TYPE_EDITOR == $param;
-							},
-						),
-					),
-					'permission_callback' => array( $this, 'get_items_permissions_check' ),
-				),
-			)
-		);
+		register_rest_route( self::NAMESPACE, $base . '/(?P<kw_id>[0-9]+)/(?P<destUrlMd5>[0-9]+)', $this->get_route_get_kw_mapping() );
+		register_rest_route( self::NAMESPACE, $base . '/(?P<kw_id>[0-9]+)/(?P<destUrlMd5>[0-9]+)/count', $this->get_count_route( $this->get_route_get_kw_mapping() ) );
 
 
 		register_rest_route(
@@ -220,41 +116,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	}
 
 	public function get_items( $request ) {
-		$sql = new Urlslab_Api_Table_Sql( $request );
-		$sql->add_select_column( 'kw_id', 'v', 'kw_id' );
-		$sql->add_select_column( 'keyword', 'v', 'keyword' );
-		$sql->add_select_column( 'kw_priority', 'v', 'kw_priority' );
-		$sql->add_select_column( 'kw_length', 'v', 'kw_length' );
-		$sql->add_select_column( 'lang', 'v', 'lang' );
-		$sql->add_select_column( 'urlLink', 'v', 'urlLink' );
-		$sql->add_select_column( 'urlFilter', 'v', 'urlFilter' );
-		$sql->add_select_column( 'kwType', 'v', 'kwType' );
-		$sql->add_select_column( 'SUM(!ISNULL(d.urlMd5))', false, 'kw_usage_count' );
-		$sql->add_select_column( 'SUM(!ISNULL(d.destUrlMd5))', false, 'link_usage_count' );
-
-		$sql->add_from( URLSLAB_KEYWORDS_TABLE . ' AS v LEFT JOIN ' . URLSLAB_KEYWORDS_MAP_TABLE . ' AS d ON d.kw_id = v.kw_id' );
-
-		$this->add_filter_table_fields( $sql, 'v' );
-
-		$sql->add_filter( 'filter_keyword', '%s', 'LIKE' );
-		$sql->add_filter( 'filter_urlLink', '%s', 'LIKE' );
-		$sql->add_filter( 'filter_kw_priority', '%d' );
-		$sql->add_filter( 'filter_kw_length', '%d' );
-		$sql->add_filter( 'filter_lang' );
-		$sql->add_filter( 'filter_urlFilter', '%s', 'LIKE' );
-		$sql->add_filter( 'filter_kwType' );
-
-		$sql->add_having_filter( 'filter_kw_usage_count', '%d' );
-		$sql->add_having_filter( 'filter_link_usage_count', '%d' );
-
-		if ( $request->get_param( 'sort_column' ) ) {
-			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );
-		}
-		$sql->add_order( 'kw_id', 'v' );
-
-		$sql->add_group_by( 'kw_id', 'v' );
-
-		$rows = $sql->get_results();
+		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( null === $rows || false === $rows ) {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 500 ) );
@@ -274,24 +136,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	}
 
 	public function get_kw_mapping( $request ) {
-		$sql = new Urlslab_Api_Table_Sql( $request );
-		$sql->add_select_column( 'urlMd5', 'm' );
-		$sql->add_select_column( 'linkType', 'm' );
-		$sql->add_select_column( 'urlName', 'u' );
-
-		$sql->add_from( URLSLAB_KEYWORDS_MAP_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON m.urlMd5 = u.urlMd5' );
-
-		$this->add_filter_table_fields( $sql );
-
-		$sql->add_filter( 'kw_id', '%d' );
-		$sql->add_filter( 'destUrlMd5', '%d' );
-		$sql->add_filter( 'from_urlMd5', '%d' );
-		$sql->add_filter( 'filter_linkType', '%d' );
-
-		$sql->add_order( 'urlMd5' );
-		$sql->add_order( 'destUrlMd5' );
-
-		$rows = $sql->get_results();
+		$rows = $this->get_kw_mapping_sql( $request )->get_results();
 
 		if ( ! is_array( $rows ) ) {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 500 ) );
@@ -304,6 +149,9 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		return new WP_REST_Response( $rows, 200 );
 	}
 
+	public function get_kw_mapping_count( $request ) {
+		return new WP_REST_Response( $this->get_kw_mapping_sql( $request )->get_count(), 200 );
+	}
 
 	public function delete_item( $request ) {
 		global $wpdb;
@@ -322,7 +170,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		return new WP_REST_Response( __( 'Deleted' ), 200 );
 	}
 
-	public function detele_all_items( $request ) {
+	public function delete_all_items( $request ) {
 		global $wpdb;
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_KEYWORDS_TABLE ) ) ) { // phpcs:ignore
@@ -367,5 +215,186 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 
 	function get_editable_columns(): array {
 		return array( 'kwType', 'kw_priority', 'lang', 'urlFilter' );
+	}
+
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return Urlslab_Api_Table_Sql
+	 */
+	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
+		$sql = new Urlslab_Api_Table_Sql( $request );
+		$sql->add_select_column( 'kw_id', 'v', 'kw_id' );
+		$sql->add_select_column( 'keyword', 'v', 'keyword' );
+		$sql->add_select_column( 'kw_priority', 'v', 'kw_priority' );
+		$sql->add_select_column( 'kw_length', 'v', 'kw_length' );
+		$sql->add_select_column( 'lang', 'v', 'lang' );
+		$sql->add_select_column( 'urlLink', 'v', 'urlLink' );
+		$sql->add_select_column( 'urlFilter', 'v', 'urlFilter' );
+		$sql->add_select_column( 'kwType', 'v', 'kwType' );
+		$sql->add_select_column( 'SUM(!ISNULL(d.urlMd5))', false, 'kw_usage_count' );
+		$sql->add_select_column( 'SUM(!ISNULL(d.destUrlMd5))', false, 'link_usage_count' );
+
+		$sql->add_from( URLSLAB_KEYWORDS_TABLE . ' AS v LEFT JOIN ' . URLSLAB_KEYWORDS_MAP_TABLE . ' AS d ON d.kw_id = v.kw_id' );
+
+		$this->add_filter_table_fields( $sql, 'v' );
+
+		$sql->add_filter( 'filter_keyword', '%s', 'LIKE' );
+		$sql->add_filter( 'filter_urlLink', '%s', 'LIKE' );
+		$sql->add_filter( 'filter_kw_priority', '%d' );
+		$sql->add_filter( 'filter_kw_length', '%d' );
+		$sql->add_filter( 'filter_lang' );
+		$sql->add_filter( 'filter_urlFilter', '%s', 'LIKE' );
+		$sql->add_filter( 'filter_kwType' );
+
+		$sql->add_having_filter( 'filter_kw_usage_count', '%d' );
+		$sql->add_having_filter( 'filter_link_usage_count', '%d' );
+
+		if ( $request->get_param( 'sort_column' ) ) {
+			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );
+		}
+		$sql->add_order( 'kw_id', 'v' );
+
+		$sql->add_group_by( 'kw_id', 'v' );
+
+		return $sql;
+	}
+
+	/**
+	 * @return array[]
+	 */
+	public function get_route_get_items(): array {
+		return array(
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_items' ),
+				'args'                => $this->get_table_arguments(
+					array(
+						'filter_keyword'          => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return 0 == strlen( $param ) || 250 >= strlen( $param );
+							},
+						),
+						'filter_urlLink'          => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return 0 == strlen( $param ) || 250 >= strlen( $param );
+							},
+						),
+						'filter_kw_priority'      => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param );
+							},
+						),
+						'filter_kw_length'        => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param );
+							},
+						),
+						'filter_lang'             => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param ) && 11 > strlen( $param );
+							},
+						),
+						'filter_urlFilter'        => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param ) && 251 > strlen( $param );
+							},
+						),
+						'filter_kwType'           => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								switch ( $param ) {
+									case Urlslab_Keywords_Links::KW_TYPE_MANUAL:
+									case Urlslab_Keywords_Links::KW_TYPE_IMPORTED_FROM_CONTENT:
+									case Urlslab_Keywords_Links::KW_TYPE_NONE:
+										return true;
+									default:
+										return false;
+								}
+							},
+						),
+						'filter_kw_usage_count'   => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param );
+							},
+						),
+						'filter_link_usage_count' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param );
+							},
+						),
+					)
+				),
+				'permission_callback' => array( $this, 'get_items_permissions_check' ),
+			),
+		);
+	}
+
+	/**
+	 * @return array[]
+	 */
+	public function get_route_get_kw_mapping(): array {
+		return array(
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_kw_mapping' ),
+				'args'                => array(
+					'rows_per_page'   => array(
+						'required'          => true,
+						'default'           => self::ROWS_PER_PAGE,
+						'validate_callback' => function( $param ) {
+							return is_numeric( $param ) && 0 < $param && 200 > $param;
+						},
+					),
+					'from_urlMd5'     => array(
+						'required'          => false,
+						'validate_callback' => function( $param ) {
+							return is_numeric( $param );
+						},
+					),
+					'filter_linkType' => array(
+						'required'          => false,
+						'validate_callback' => function( $param ) {
+							return Urlslab_Keywords_Links::KW_LINK_TYPE_URLSLAB == $param || Urlslab_Keywords_Links::KW_LINK_TYPE_EDITOR == $param;
+						},
+					),
+				),
+				'permission_callback' => array( $this, 'get_items_permissions_check' ),
+			),
+		);
+	}
+
+	/**
+	 * @param $request
+	 *
+	 * @return Urlslab_Api_Table_Sql
+	 */
+	public function get_kw_mapping_sql( $request ): Urlslab_Api_Table_Sql {
+		$sql = new Urlslab_Api_Table_Sql( $request );
+		$sql->add_select_column( 'urlMd5', 'm' );
+		$sql->add_select_column( 'linkType', 'm' );
+		$sql->add_select_column( 'urlName', 'u' );
+
+		$sql->add_from( URLSLAB_KEYWORDS_MAP_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON m.urlMd5 = u.urlMd5' );
+
+		$this->add_filter_table_fields( $sql );
+
+		$sql->add_filter( 'kw_id', '%d' );
+		$sql->add_filter( 'destUrlMd5', '%d' );
+		$sql->add_filter( 'from_urlMd5', '%d' );
+		$sql->add_filter( 'filter_linkType', '%d' );
+
+		$sql->add_order( 'urlMd5' );
+		$sql->add_order( 'destUrlMd5' );
+
+		return $sql;
 	}
 }

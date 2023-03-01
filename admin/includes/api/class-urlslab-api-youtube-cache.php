@@ -1,43 +1,11 @@
 <?php
 
 class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
+
 	public function register_routes() {
 		$base = '/youtube-cache';
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/',
-			array(
-				array(
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_items' ),
-					'args'                => $this->get_table_arguments(
-						array(
-							'filter_videoid' => array(
-								'required'          => false,
-								'validate_callback' => function( $param ) {
-									return 0 == strlen( $param ) || 32 >= strlen( $param );
-								},
-							),
-							'filter_status'  => array(
-								'required'          => false,
-								'validate_callback' => function( $param ) {
-									switch ( $param ) {
-										case Urlslab_Youtube_Row::STATUS_AVAILABLE:
-										case Urlslab_Youtube_Row::STATUS_NEW:
-										case Urlslab_Youtube_Row::STATUS_DISABLED:
-										case Urlslab_Youtube_Row::STATUS_PROCESSING:
-											return true;
-										default:
-											return false;
-									}
-								},
-							),
-						)
-					),
-					'permission_callback' => array( $this, 'get_items_permissions_check' ),
-				),
-			)
-		);
+		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
+		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
 
 		register_rest_route(
 			self::NAMESPACE,
@@ -74,7 +42,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 			array(
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'detele_all_items' ),
+					'callback'            => array( $this, 'delete_all_items' ),
 					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
 					'args'                => array(),
 				),
@@ -87,7 +55,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 			array(
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'detele_item' ),
+					'callback'            => array( $this, 'delete_item' ),
 					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
 					'args'                => array(),
 				),
@@ -96,11 +64,44 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 
 	}
 
-	public function get_items( $request ) {
+	private function get_route_get_items(): array {
+		return array(
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_items' ),
+				'args'                => $this->get_table_arguments(
+					array(
+						'filter_videoid' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return 0 == strlen( $param ) || 32 >= strlen( $param );
+							},
+						),
+						'filter_status'  => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								switch ( $param ) {
+									case Urlslab_Youtube_Row::STATUS_AVAILABLE:
+									case Urlslab_Youtube_Row::STATUS_NEW:
+									case Urlslab_Youtube_Row::STATUS_DISABLED:
+									case Urlslab_Youtube_Row::STATUS_PROCESSING:
+										return true;
+									default:
+										return false;
+								}
+							},
+						),
+					)
+				),
+				'permission_callback' => array( $this, 'get_items_permissions_check' ),
+			),
+		);
+	}
+
+	protected function get_items_sql( $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( '*' );
 		$sql->add_from( URLSLAB_YOUTUBE_CACHE_TABLE );
-
 
 		$this->add_filter_table_fields( $sql );
 
@@ -113,14 +114,10 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 
 		$sql->add_order( 'videoid' );
 
-		$rows = $sql->get_results();
-
-		if ( null === $rows || false === $rows ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 500 ) );
-		}
-
-		return new WP_REST_Response( $rows, 200 );
+		return $sql;
 	}
+
+
 
 	function get_row_object( $params = array() ): Urlslab_Data {
 		return new Urlslab_Youtube_Row( $params );
