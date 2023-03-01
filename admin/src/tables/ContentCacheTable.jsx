@@ -1,9 +1,8 @@
-import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { createColumnHelper } from '@tanstack/react-table';
 
 import useInfiniteFetch from '../hooks/useInfiniteFetch';
-
+import { useFilter, useSorting } from '../hooks/filteringSorting';
 import { handleSelected } from '../constants/tableFunctions';
 import Checkbox from '../elements/Checkbox';
 
@@ -14,7 +13,8 @@ import Loader from '../components/Loader';
 export default function ContentCacheTable() {
 	const { __ } = useI18n();
 	const columnHelper = createColumnHelper();
-	const [ currentUrl, setUrl ] = useState();
+	const { filters, currentFilters, addFilter, removeFilter } = useFilter();
+	const { sortingColumn, sortBy } = useSorting();
 
 	const {
 		data,
@@ -23,7 +23,7 @@ export default function ContentCacheTable() {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: 'content-cache', url: currentUrl, pageId: 'cache_crc32' } );
+	} = useInfiniteFetch( { key: 'content-cache', url: `${ filters }${ sortingColumn }`, pageId: 'cache_crc32' } );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

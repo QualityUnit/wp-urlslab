@@ -28,7 +28,6 @@ export default function MediaFilesTable() {
 		ref,
 	} = useInfiniteFetch( {
 		key: 'file', url: `${ filters }${ sortingColumn }`, pageId: 'fileid' } );
-	console.log( data );
 
 	const statusTypes = {
 		N: __( 'New' ),
