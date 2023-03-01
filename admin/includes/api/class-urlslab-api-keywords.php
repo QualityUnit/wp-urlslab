@@ -58,7 +58,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			array(
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'detele_all_items' ),
+					'callback'            => array( $this, 'delete_all_items' ),
 					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
 					'args'                => array(),
 				),
@@ -71,7 +71,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			array(
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'detele_item' ),
+					'callback'            => array( $this, 'delete_item' ),
 					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
 					'args'                => array(),
 				),
@@ -170,7 +170,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		return new WP_REST_Response( __( 'Deleted' ), 200 );
 	}
 
-	public function detele_all_items( $request ) {
+	public function delete_all_items( $request ) {
 		global $wpdb;
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_KEYWORDS_TABLE ) ) ) { // phpcs:ignore

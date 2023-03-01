@@ -42,7 +42,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 			array(
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'detele_all_items' ),
+					'callback'            => array( $this, 'delete_all_items' ),
 					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
 					'args'                => array(),
 				),
@@ -55,7 +55,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 			array(
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'detele_item' ),
+					'callback'            => array( $this, 'delete_item' ),
 					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
 					'args'                => array(),
 				),
