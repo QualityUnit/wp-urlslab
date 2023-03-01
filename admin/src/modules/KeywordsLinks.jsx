@@ -2,8 +2,8 @@ import { useState, Suspense, lazy } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import Overview from '../components/OverviewTemplate';
-import KeywordsLinks from '../overview/KeywordsLinks';
-import TableViewHeader from '../components/TableViewHeader';
+import KeywordLinksOverview from '../overview/KeywordsLinks';
+import ModuleViewHeader from '../components/ModuleViewHeader';
 import { get } from 'idb-keyval';
 
 export default function KeywordLinks( { moduleId } ) {
@@ -20,12 +20,14 @@ export default function KeywordLinks( { moduleId } ) {
 
 	return (
 		<div className="urlslab-tableView">
-			<TableViewHeader
-				tableMenu={ tableMenu }
+			<ModuleViewHeader
+				moduleMenu={ tableMenu }
 				activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 
 			{ activeSection === 'overview' &&
-			<Overview moduleId={ moduleId } />
+			<Overview moduleId={ moduleId }>
+				<KeywordLinksOverview />
+			</Overview>
 			}
 			{
 				activeSection === slug &&

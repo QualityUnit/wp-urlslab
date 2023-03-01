@@ -35,10 +35,8 @@ export default function Overview( { moduleId, children } ) {
 			}
 			<div className="urlslab-overview-content">
 				<h3>{ moduleData.title }</h3>
-				{ /* <Module /> */ }
+				{ children }
 			</div>
-			{ /* <Suspend>
-			</Suspend> */ }
 		</div>
 	);
 }

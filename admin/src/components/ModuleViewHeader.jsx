@@ -3,9 +3,9 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import SimpleButton from '../elements/SimpleButton';
 
-import '../assets/styles/components/_TableViewHeader.scss';
+import '../assets/styles/components/_ModuleViewHeader.scss';
 
-export default function TableViewHeader( { tableMenu, activeMenu } ) {
+export default function ModuleViewHeader( { moduleMenu, activeMenu } ) {
 	const { __ } = useI18n();
 	const [ active, setActive ] = useState( 'overview' );
 
@@ -30,16 +30,16 @@ export default function TableViewHeader( { tableMenu, activeMenu } ) {
 
 	return (
 
-		<div className="urlslab-tableView-header">
-			<div className="urlslab-tableView-headerTop">
+		<div className="urlslab-moduleView-header">
+			<div className="urlslab-moduleView-headerTop">
 				<SimpleButton key={ 'overview' }
 					className={ activator( 'overview' ) }
 					onClick={ () => handleMenu( 'overview' ) }
 				>
 					{ menuItems.get( 'overview' ) }
 				</SimpleButton>
-				{ tableMenu
-					? Array.from( tableMenu ).map( ( [ key, value ] ) => {
+				{ moduleMenu
+					? Array.from( moduleMenu ).map( ( [ key, value ] ) => {
 						return <SimpleButton key={ key }
 							className={ activator( key ) }
 							onClick={ () => handleMenu( key ) }

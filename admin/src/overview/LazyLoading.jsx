@@ -1,58 +1,30 @@
-import { useState, Suspense, lazy } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import TableViewHeader from '../components/TableViewHeader';
+import image1 from '../assets/images/overview/image-1.jpg';
+import image2 from '../assets/images/overview/image-2.jpg';
 
-export default function LazyLoading( { moduleId } ) {
-	const { __ } = useI18n();
-	const [ activeSection, setActiveSection ] = useState( 'overview' );
-
-	const tableMenu = new Map( [
-		[ 'youtube-cache', __( 'YouTube Cache' ) ],
-		[ 'css-cache', __( 'CSS Cache' ) ],
-		[ 'content-cache', __( 'Content Cache' ) ],
-	]
-	);
-
-	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
-	const YouTubeCacheTable = lazy( () => import( `../tables/YouTubeCacheTable.jsx` ) );
-	const CSSCacheTable = lazy( () => import( `../tables/CSSCacheTable.jsx` ) );
-	const ContentCacheTable = lazy( () => import( `../tables/ContentCacheTable.jsx` ) );
-
+export default function LazyLoadingOverview() {
 	return (
-		<div className="urlslab-tableView">
-			<TableViewHeader tableMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
-			<Suspense>
-				{
-					activeSection === 'youtube-cache' &&
-					<YouTubeCacheTable />
-				}
-				{
-					activeSection === 'css-cache' &&
-					<CSSCacheTable />
-				}
-				{
-					activeSection === 'content-cache' &&
-					<ContentCacheTable />
-				}
-			</Suspense>
-			{
-				activeSection === 'settings' &&
-					<Suspense>
-						<SettingsModule className="fadeInto" settingId={ moduleId } />
-					</Suspense>
-			}
-			{
-				// activeSection === 'importexport' &&
-				// <Suspense>
-				// 	<ImportExport exportOptions={ {
-				// 		url: 'youtube-cache',
-				// 		fromId: 'from_videoid',
-				// 		pageId: 'videoid',
-				// 	} } />
-				// </Suspense>
-			}
-		</div>
+		<>
+			<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero voluptas dolores excepturi sed quia, eius, non sunt magnam quam repudiandae voluptates maiores esse provident error illo recusandae sequi ipsam incidunt obcaecati? Esse facere vero rem omnis et. Accusantium molestias quos excepturi? Quod esse est, harum, aspernatur ex repudiandae tempora illum vel doloremque consectetur asperiores, expedita vitae incidunt deleniti. Nihil laudantium non, eos recusandae earum aliquam. Dolore, aspernatur mollitia.</p>
 
+			<img src={ image1 } alt="Keywords 1" />
+
+			<p>Tempore aliquid fuga provident velit recusandae repellat dolore dolor laudantium similique temporibus earum harum animi voluptatum incidunt ut repellendus in expedita illum excepturi labore, cum quis nulla placeat reprehenderit. Aperiam at nemo assumenda iste quae placeat itaque fugit consectetur, maxime voluptates corrupti commodi corporis deserunt error mollitia neque dolores animi nam dignissimos laudantium fugiat reprehenderit, accusantium officia.</p>
+
+			<p>Consectetur eius quasi consequatur eveniet tempore excepturi earum, vero fugit reprehenderit repellendus eligendi, mollitia omnis fugiat? Possimus tenetur amet et, odit provident enim? Earum qui, animi placeat optio alias facilis tempore, hic asperiores vero eos voluptate, doloremque veniam culpa maxime cupiditate iure dolor. Corrupti quisquam maiores nemo porro ullam consectetur, ipsam animi magnam rerum molestias quasi nesciunt nobis, in odit dicta aperiam quibusdam sed, accusamus laborum omnis earum! Voluptate itaque velit possimus eum eligendi minus voluptates totam modi! Rem modi in pariatur dolorem sint odit consequatur dolor suscipit fugit ullam debitis est facere numquam ipsa, quas alias saepe accusamus officiis doloribus! Maxime, temporibus et consectetur incidunt cumque molestias dolore, voluptate inventore similique dolorum atque maiores delectus quis ut provident nobis doloremque modi illum esse sit repudiandae!</p>
+
+			<img src={ image2 } alt="Keywords 1" />
+
+			<p>Mollitia iure quas, nesciunt vel quod dolorem ipsam et? Qui nisi, ad asperiores aliquam reprehenderit quasi iure adipisci magni provident, et nemo porro aliquid tenetur itaque saepe eveniet! Consectetur quos in quo eligendi assumenda placeat perspiciatis dolores accusantium sed et ducimus quam earum, fugit, totam eius quidem sint dolorum repellendus aliquid omnis? Earum officia accusantium saepe exercitationem eveniet repudiandae assumenda dignissimos! Quis iusto nostrum amet qui similique. Fugit quae amet id reprehenderit quia sunt dolor repellat illum eaque repellendus doloremque, magnam soluta optio esse ducimus? Repudiandae dignissimos corrupti mollitia illum, ducimus rerum eum soluta accusamus ea incidunt quas dolore. Consequuntur hic aperiam beatae? Praesentium, aspernatur consequatur. </p>
+
+			<p>Nesciunt, soluta. Architecto, molestiae eligendi perferendis soluta at accusamus, in fugiat unde nemo illum ex ipsa? Quidem dolores eligendi cupiditate animi architecto nostrum recusandae nam quis, pariatur porro sequi delectus, libero, aut enim ex! Eum modi harum natus ad sed alias quibusdam eius temporibus ipsa consequuntur dolore minus officiis perferendis autem dolorem, assumenda officia necessitatibus tempora, ratione cupiditate veritatis libero quisquam maiores accusantium. Minima deserunt laborum quibusdam quae dicta ipsum sit ipsam laudantium sequi ut, nostrum temporibus libero velit quod? Libero ipsa sit illo enim accusamus expedita ratione error magni eaque tempore! Quae nam id veritatis reprehenderit vitae quidem repudiandae sit excepturi minima, et labore tenetur aspernatur voluptate sapiente dolore autem nemo sint! Nisi quaerat mollitia adipisci maiores, odio, voluptatibus vero eligendi veniam blanditiis quasi repellat iste enim exercitationem ex ratione, provident veritatis. </p>
+
+			<p>Rerum sit sunt iure quas hic velit esse suscipit ex est quos debitis quidem, repellat eos blanditiis eaque ipsa odio quasi facilis nemo optio enim. Enim quasi incidunt est laudantium mollitia atque beatae omnis recusandae a! Odio nobis in dolore, aperiam reprehenderit, accusamus impedit, repudiandae tenetur officiis vitae id inventore neque quos modi saepe perferendis tempore et. Ullam blanditiis soluta eligendi ad quas aut nesciunt! </p>
+
+			<p>Consequatur, optio harum? Nam, nobis suscipit? Voluptates facere eius, recusandae dignissimos illum quos doloribus repellendus consequatur accusamus voluptatem distinctio minus debitis exercitationem praesentium nostrum saepe velit! Nesciunt neque recusandae voluptatem, exercitationem dolore, quia quos praesentium dolores nisi maiores distinctio excepturi quaerat nulla nostrum cupiditate, esse facilis ratione! Minus saepe odit ea, architecto quaerat voluptas perferendis consequuntur repudiandae aut itaque quos dolore necessitatibus sint dignissimos non voluptate voluptatem commodi ad quibusdam debitis? Quas possimus vero quia, id vel veritatis consequuntur quaerat ducimus repellat.</p>
+
+			<p>Commodi consectetur in quo aut ducimus possimus dolores aliquam ea neque cum, provident numquam! Veniam magnam numquam ducimus quod ullam reiciendis quos adipisci voluptatem et accusantium vel dolore quisquam voluptas recusandae eum dolorem nostrum, officiis fuga molestiae dolores tenetur necessitatibus aut sit quaerat! Veritatis nisi aliquam recusandae deserunt minus voluptates praesentium commodi deleniti assumenda. Id cum, sit modi voluptates aut incidunt similique consectetur quasi sequi voluptatum sed blanditiis praesentium quae, illum accusantium? Temporibus maiores quo minus odio perspiciatis saepe adipisci recusandae molestias aperiam excepturi totam nobis doloribus, perferendis error accusamus hic veritatis, dolorem, quod modi inventore ab repellendus?</p>
+
+			<p>Dolorum aliquam magnam sequi vero asperiores sapiente tempora, recusandae esse nesciunt enim, facere consequatur sunt. Numquam eaque nostrum illum asperiores repellendus unde ducimus aliquid dolore consequatur dolorem veritatis exercitationem fuga ab delectus, ipsum hic maxime nihil iure. Aliquam obcaecati maxime, incidunt nihil vel amet eaque sequi! Dolores, eaque. Obcaecati nesciunt consequuntur eius exercitationem quaerat, aspernatur sit eaque nisi accusantium cumque provident tenetur velit voluptates illum commodi sint magnam error doloremque maiores fuga illo nam, possimus quos.</p>
+		</>
 	);
 }

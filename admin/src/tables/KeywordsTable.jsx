@@ -14,7 +14,7 @@ import MenuInput from '../elements/MenuInput';
 import Loader from '../components/Loader';
 
 import Table from '../components/TableComponent';
-import TableViewHeaderBottom from '../components/TableViewHeaderBottom';
+import ModuleViewHeaderBottom from '../components/ModuleViewHeaderBottom';
 
 export default function KeywordsTable( { slug } ) {
 	const { __ } = useI18n();
@@ -106,13 +106,14 @@ export default function KeywordsTable( { slug } ) {
 
 	return (
 		<>
-			<TableViewHeaderBottom
+			<ModuleViewHeaderBottom
 				slug={ slug }
 				currentFilters={ currentFilters }
 				header={ header }
 				removedFilter={ ( key ) => removeFilter( key ) }
 				exportOptions={ {
 					url: slug,
+					filters,
 					fromId: 'from_kw_id',
 					pageId: 'kw_id',
 					deleteCSVCols: [ 'kw_id', 'destUrlMd5' ],
@@ -122,7 +123,7 @@ export default function KeywordsTable( { slug } ) {
 					<strong>Sort by:</strong>
 					<SortMenu className="ml-s" items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } />
 				</div>
-			</TableViewHeaderBottom>
+			</ModuleViewHeaderBottom>
 			<Table className="fadeInto"
 				resizable
 				slug={ slug }

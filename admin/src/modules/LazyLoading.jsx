@@ -1,9 +1,9 @@
 import { useState, Suspense, lazy } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import Overview from '../components/OverviewTemplate';
-import KeywordsLinks from '../overview/KeywordsLinks';
+import LazyLoadingOverview from '../overview/LazyLoading';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import TableViewHeader from '../components/TableViewHeader';
+import ModuleViewHeader from '../components/ModuleViewHeader';
 
 export default function LazyLoading( { moduleId } ) {
 	const { __ } = useI18n();
@@ -23,10 +23,10 @@ export default function LazyLoading( { moduleId } ) {
 
 	return (
 		<div className="urlslab-tableView">
-			<TableViewHeader tableMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+			<ModuleViewHeader moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{ activeSection === 'overview' &&
 				<Overview moduleId={ moduleId }>
-					<KeywordsLinks />
+					<LazyLoadingOverview />
 				</Overview>
 			}
 			<Suspense>

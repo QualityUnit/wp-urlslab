@@ -12,7 +12,7 @@ import Checkbox from '../elements/Checkbox';
 import Loader from '../components/Loader';
 
 import Table from '../components/TableComponent';
-import TableViewHeaderBottom from '../components/TableViewHeaderBottom';
+import ModuleViewHeaderBottom from '../components/ModuleViewHeaderBottom';
 
 export default function LinkManagerTable( { slug } ) {
 	const { __ } = useI18n();
@@ -126,13 +126,14 @@ export default function LinkManagerTable( { slug } ) {
 
 	return (
 		<>
-			<TableViewHeaderBottom
+			<ModuleViewHeaderBottom
 				slug={ slug }
 				currentFilters={ currentFilters }
 				header={ header }
 				removedFilter={ ( key ) => removeFilter( key ) }
 				exportOptions={ {
 					url: slug,
+					filters,
 					fromId: 'from_urlMd5',
 					pageId: 'urlMd5',
 					deleteCSVCols: [ 'urlId', 'urlMd5', 'domainId' ],
@@ -143,7 +144,7 @@ export default function LinkManagerTable( { slug } ) {
 					<strong>Sort by:</strong>
 					<SortMenu className="ml-s" items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } />
 				</div>
-			</TableViewHeaderBottom>
+			</ModuleViewHeaderBottom>
 			<Table className="fadeInto" columns={ columns }
 				resizable
 				data={
