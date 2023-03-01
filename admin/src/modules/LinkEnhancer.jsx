@@ -2,8 +2,8 @@ import { useState, Suspense, lazy } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import Overview from '../components/OverviewTemplate';
-import KeywordsLinks from '../overview/KeywordsLinks';
-import TableViewHeader from '../components/TableViewHeader';
+import LinkEnhancerOverview from '../overview/LinkEnhancer';
+import ModuleViewHeader from '../components/ModuleViewHeader';
 
 export default function LinkEnhancer( { moduleId } ) {
 	const { __ } = useI18n();
@@ -18,10 +18,10 @@ export default function LinkEnhancer( { moduleId } ) {
 
 	return (
 		<div className="urlslab-tableView">
-			<TableViewHeader tableMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+			<ModuleViewHeader moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{ activeSection === 'overview' &&
 				<Overview moduleId={ moduleId }>
-					<KeywordsLinks />
+					<LinkEnhancerOverview />
 				</Overview>
 			}
 			{

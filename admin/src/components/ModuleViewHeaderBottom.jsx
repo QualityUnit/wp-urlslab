@@ -9,7 +9,7 @@ import { ReactComponent as CloseIcon } from '../assets/images/icon-close.svg';
 import Button from '../elements/Button';
 import ExportCSVButton from '../elements/ExportCSVButton';
 
-export default function TableViewHeaderBottom( { currentFilters, header, removedFilter, children, slug, exportOptions } ) {
+export default function ModuleViewHeaderBottom( { currentFilters, header, removedFilter, children, slug, exportOptions } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const { CSVReader } = useCSVReader();

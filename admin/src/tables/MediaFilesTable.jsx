@@ -11,7 +11,7 @@ import Checkbox from '../elements/Checkbox';
 import Loader from '../components/Loader';
 
 import Table from '../components/TableComponent';
-import TableViewHeaderBottom from '../components/TableViewHeaderBottom';
+import ModuleViewHeaderBottom from '../components/ModuleViewHeaderBottom';
 
 export default function MediaFilesTable() {
 	const { __ } = useI18n();

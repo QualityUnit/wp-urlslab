@@ -1,7 +1,10 @@
 import { useState, Suspense, lazy } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import TableViewHeader from '../components/TableViewHeader';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import Overview from '../components/OverviewTemplate';
+import RelatedResourcesOverview from '../overview/RelatedResources';
+import ModuleViewHeader from '../components/ModuleViewHeader';
 
 export default function RelatedResources( { moduleId } ) {
 	const { __ } = useI18n();
@@ -16,7 +19,12 @@ export default function RelatedResources( { moduleId } ) {
 
 	return (
 		<div className="urlslab-tableView">
-			<TableViewHeader tableMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+			<ModuleViewHeader moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+			{ activeSection === 'overview' &&
+				<Overview moduleId={ moduleId }>
+					<RelatedResourcesOverview />
+				</Overview>
+			}
 			{
 				activeSection === 'url-relation' &&
 				<Suspense>

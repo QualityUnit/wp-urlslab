@@ -3,6 +3,10 @@ import { fetchData } from './fetching';
 let lastPage = '';
 let dataForCSV = [];
 let ended = false;
+// Calculates status of download. Needs secondary value, ie select MAX to get max id
+function* status( lastPageId ) {
+	yield lastPageId;
+}
 export let jsonData = { status: 'loading', data: [] };
 
 export async function exportCSV( options ) {
@@ -31,9 +35,7 @@ export async function exportCSV( options ) {
 
 	if ( dataForCSV.length && ( dataForCSV.length > prevDataLength ) ) {
 		lastPage = dataForCSV[ dataForCSV?.length - 1 ][ pageId ];
-
-		// Calculates status of download. Needs secondary value, ie select MAX to get max id
-		console.log( `${ lastPage / 4294955887 * 100 }%` );
+		status( lastPage );
 		await exportCSV( options );
 	}
 

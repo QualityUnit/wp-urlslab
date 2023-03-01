@@ -1,7 +1,7 @@
 import image1 from '../assets/images/overview/image-1.jpg';
 import image2 from '../assets/images/overview/image-2.jpg';
 
-export default function KeywordLinks( ) {
+export default function KeywordLinksOverview( ) {
 	return (
 		<>
 			<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero voluptas dolores excepturi sed quia, eius, non sunt magnam quam repudiandae voluptates maiores esse provident error illo recusandae sequi ipsam incidunt obcaecati? Esse facere vero rem omnis et. Accusantium molestias quos excepturi? Quod esse est, harum, aspernatur ex repudiandae tempora illum vel doloremque consectetur asperiores, expedita vitae incidunt deleniti. Nihil laudantium non, eos recusandae earum aliquam. Dolore, aspernatur mollitia.</p>

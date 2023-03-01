@@ -1,7 +1,9 @@
 import { useState, Suspense, lazy } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import TableViewHeader from '../components/TableViewHeader';
+import Overview from '../components/OverviewTemplate';
+import MediaOffloaderOverview from '../overview/MediaOffloader';
+import ModuleViewHeader from '../components/ModuleViewHeader';
 
 export default function MediaOffloader( { moduleId } ) {
 	const { __ } = useI18n();
@@ -16,7 +18,12 @@ export default function MediaOffloader( { moduleId } ) {
 
 	return (
 		<div className="urlslab-tableView">
-			<TableViewHeader tableMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+			<ModuleViewHeader moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+			{ activeSection === 'overview' &&
+				<Overview moduleId={ moduleId }>
+					<MediaOffloaderOverview />
+				</Overview>
+			}
 			{
 				activeSection === 'file' &&
 				<Suspense>
