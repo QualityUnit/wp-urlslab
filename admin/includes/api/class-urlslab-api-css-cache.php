@@ -3,41 +3,8 @@
 class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 	public function register_routes() {
 		$base = '/css-cache';
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/',
-			array(
-				array(
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_items' ),
-					'args'                => $this->get_table_arguments(
-						array(
-							'filter_url'    => array(
-								'required'          => false,
-								'validate_callback' => function( $param ) {
-									return 255 >= strlen( $param );
-								},
-							),
-							'filter_status' => array(
-								'required'          => false,
-								'validate_callback' => function( $param ) {
-									switch ( $param ) {
-										case Urlslab_CSS_Cache_Row::STATUS_ACTIVE:
-										case Urlslab_CSS_Cache_Row::STATUS_DISABLED:
-										case Urlslab_CSS_Cache_Row::STATUS_NEW:
-										case Urlslab_CSS_Cache_Row::STATUS_PENDING:
-											return true;
-										default:
-											return false;
-									}
-								},
-							),
-						)
-					),
-					'permission_callback' => array( $this, 'get_items_permissions_check' ),
-				),
-			)
-		);
+		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
+		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
 
 		register_rest_route(
 			self::NAMESPACE,
@@ -95,22 +62,7 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 	}
 
 	public function get_items( $request ) {
-		$sql = new Urlslab_Api_Table_Sql( $request );
-		$sql->add_select_column( '*' );
-		$sql->add_from( URLSLAB_CSS_CACHE_TABLE );
-
-		$this->add_filter_table_fields( $sql );
-
-		$sql->add_filter( 'filter_url', '%s', 'LIKE' );
-		$sql->add_filter( 'filter_status' );
-
-		$order_data = array();
-		if ( $request->get_param( 'sort_column' ) ) {
-			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );
-		}
-		$sql->add_order( 'url_id' );
-
-		$rows = $sql->get_results();
+		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( null === $rows || false === $rows ) {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 500 ) );
@@ -130,5 +82,65 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 
 	function get_editable_columns(): array {
 		return array( 'status' );
+	}
+
+	/**
+	 * @return array[]
+	 */
+	public function get_route_get_items(): array {
+		return array(
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_items' ),
+				'args'                => $this->get_table_arguments(
+					array(
+						'filter_url'    => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return 255 >= strlen( $param );
+							},
+						),
+						'filter_status' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								switch ( $param ) {
+									case Urlslab_CSS_Cache_Row::STATUS_ACTIVE:
+									case Urlslab_CSS_Cache_Row::STATUS_DISABLED:
+									case Urlslab_CSS_Cache_Row::STATUS_NEW:
+									case Urlslab_CSS_Cache_Row::STATUS_PENDING:
+										return true;
+									default:
+										return false;
+								}
+							},
+						),
+					)
+				),
+				'permission_callback' => array( $this, 'get_items_permissions_check' ),
+			),
+		);
+	}
+
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return Urlslab_Api_Table_Sql
+	 */
+	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
+		$sql = new Urlslab_Api_Table_Sql( $request );
+		$sql->add_select_column( '*' );
+		$sql->add_from( URLSLAB_CSS_CACHE_TABLE );
+
+		$this->add_filter_table_fields( $sql );
+
+		$sql->add_filter( 'filter_url', '%s', 'LIKE' );
+		$sql->add_filter( 'filter_status' );
+
+		if ( $request->get_param( 'sort_column' ) ) {
+			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );
+		}
+		$sql->add_order( 'url_id' );
+
+		return $sql;
 	}
 }
