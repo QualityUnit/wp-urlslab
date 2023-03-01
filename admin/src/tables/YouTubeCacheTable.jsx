@@ -1,8 +1,8 @@
-import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { createColumnHelper } from '@tanstack/react-table';
 
 import useInfiniteFetch from '../hooks/useInfiniteFetch';
+import { useFilter, useSorting } from '../hooks/filteringSorting';
 import { handleInput, handleSelected } from '../constants/tableFunctions';
 
 import SortMenu from '../elements/SortMenu';
@@ -16,7 +16,8 @@ import ModuleViewHeaderBottom from '../components/ModuleViewHeaderBottom';
 export default function YouTubeCacheTable() {
 	const { __ } = useI18n();
 	const columnHelper = createColumnHelper();
-	const [ currentUrl, setUrl ] = useState();
+	const { filters, currentFilters, addFilter, removeFilter } = useFilter();
+	const { sortingColumn, sortBy } = useSorting();
 
 	const {
 		data,
@@ -25,7 +26,7 @@ export default function YouTubeCacheTable() {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: 'youtube-cache', url: currentUrl, pageId: 'videoid' } );
+	} = useInfiniteFetch( { key: 'youtube-cache', url: `${ filters }${ sortingColumn }`, pageId: 'videoid' } );
 
 	const statusTypes = {
 		N: __( 'New' ),
@@ -78,12 +79,32 @@ export default function YouTubeCacheTable() {
 	}
 
 	return (
-		<Table className="fadeInto" columns={ columns }
-			data={
-				isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
-			}
-		>
-			<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
-		</Table>
+		<>
+			{ /* <ModuleViewHeaderBottom
+				slug={slug}
+				currentFilters={currentFilters}
+				header={header}
+				removedFilter={(key) => removeFilter(key)}
+				exportOptions={{
+					url: slug,
+					filters,
+					fromId: 'from_kw_id',
+					pageId: 'kw_id',
+					deleteCSVCols: ['kw_id', 'destUrlMd5'],
+				}}
+			>
+				<div className="ma-left flex flex-align-center">
+					<strong>Sort by:</strong>
+					<SortMenu className="ml-s" items={header} name="sorting" onChange={(val) => sortBy(val)} />
+				</div>
+			</ModuleViewHeaderBottom> */ }
+			<Table className="fadeInto" columns={ columns }
+				data={
+					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
+				}
+			>
+				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
+			</Table>
+		</>
 	);
 }

@@ -34,7 +34,7 @@ export default function ModuleViewHeaderBottom( { currentFilters, header, remove
 	} );
 
 	return (
-		<div className="urlslab-tableView-headerBottom flex">
+		<div className="urlslab-moduleView-headerBottom flex">
 
 			<Button onClick={ () => handleDelete.mutate() }>{ __( 'Delete All' ) }</Button>
 
