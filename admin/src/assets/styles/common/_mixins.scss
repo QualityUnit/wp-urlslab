@@ -79,6 +79,23 @@
 	left: $left;
 }
 
+@mixin progressbar() {
+	@content;
+
+	&::-webkit-progress-bar {
+		@content;
+	}
+}
+
+@mixin progressbarValue() {
+	&::-webkit-progress-value {
+		@content;
+	}
+	&::-moz-progress-bar {
+		@content;
+	}
+}
+
 @mixin scrollbar($width:6px) {
 
 	&::-webkit-scrollbar-track {

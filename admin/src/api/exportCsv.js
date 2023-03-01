@@ -3,17 +3,19 @@ import { fetchData } from './fetching';
 let lastPage = '';
 let dataForCSV = [];
 let ended = false;
-// Calculates status of download. Needs secondary value, ie select MAX to get max id
-function* status( lastPageId ) {
-	yield lastPageId;
-}
+let totalItems = 1;
+
 export let jsonData = { status: 'loading', data: [] };
 
-export async function exportCSV( options ) {
-	const { url, fromId, pageId, perPage = 9999, deleteCSVCols } = options;
+export async function exportCSV( options, res ) {
+	const { url, filters, fromId, pageId, perPage = 9999, deleteCSVCols } = options;
 	const qOperator = url.includes( '?' ) ? '&' : '?';
 	const prevDataLength = dataForCSV.length;
 	const response = await fetchData( `${ url }${ qOperator }${ fromId }=${ lastPage }&rows_per_page=${ perPage }` );
+
+	if ( ! lastPage ) {
+		totalItems = await fetchData( `${ url }/count${ filters ? `?${ filters }` : '' }` );
+	}
 
 	dataForCSV.push( await response );
 	dataForCSV = dataForCSV.flat();
@@ -30,13 +32,14 @@ export async function exportCSV( options ) {
 
 	if ( ended ) {
 		jsonData = { status: 'done', data: dataForCSV };
+		res( '100' );
 		return jsonData;
 	}
 
 	if ( dataForCSV.length && ( dataForCSV.length > prevDataLength ) ) {
 		lastPage = dataForCSV[ dataForCSV?.length - 1 ][ pageId ];
-		status( lastPage );
-		await exportCSV( options );
+		res( `${ Math.round( dataForCSV.length / totalItems * 100 ) }` );
+		await exportCSV( options, res );
 	}
 
 	return jsonData;
