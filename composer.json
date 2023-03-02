@@ -24,7 +24,7 @@
     "ext-json": "*",
     "ext-libxml": "*",
     "ext-dom": "*",
-    "aws/aws-sdk-php": "^3.258",
+    "aws/aws-sdk-php": "^3.261",
     "ext-gd": "*",
     "oscarotero/env": "^2.1"
   },
