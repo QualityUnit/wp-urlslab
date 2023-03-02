@@ -7,11 +7,11 @@ let totalItems = 1;
 
 export let jsonData = { status: 'loading', data: [] };
 
-export async function exportCSV( options, res ) {
+export async function exportCSV( options, result ) {
 	const { url, filters, fromId, pageId, perPage = 9999, deleteCSVCols } = options;
 	const qOperator = url.includes( '?' ) ? '&' : '?';
 	const prevDataLength = dataForCSV.length;
-	const response = await fetchData( `${ url }${ qOperator }${ fromId }=${ lastPage }&rows_per_page=${ perPage }` );
+	const response = await fetchData( `${ url }${ qOperator }${ fromId }=${ lastPage }&rows_per_page=${ perPage }${ filters || '' }` );
 
 	if ( ! lastPage ) {
 		totalItems = await fetchData( `${ url }/count${ filters ? `?${ filters }` : '' }` );
@@ -31,15 +31,18 @@ export async function exportCSV( options, res ) {
 	}
 
 	if ( ended ) {
+		result( 100 );
 		jsonData = { status: 'done', data: dataForCSV };
-		res( 100 );
+		lastPage = '';
+		dataForCSV = [];
+		ended = false;
 		return jsonData;
 	}
 
 	if ( dataForCSV.length && ( dataForCSV.length > prevDataLength ) ) {
 		lastPage = dataForCSV[ dataForCSV?.length - 1 ][ pageId ];
-		res( `${ Math.round( dataForCSV.length / totalItems * 100 ) }` );
-		await exportCSV( options, res );
+		result( `${ Math.round( dataForCSV.length / totalItems * 100 ) }` );
+		await exportCSV( options, result );
 	}
 
 	return jsonData;

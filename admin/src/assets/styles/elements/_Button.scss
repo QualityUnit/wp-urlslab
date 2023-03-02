@@ -48,12 +48,12 @@ button.urlslab-button,
 	@media (hover: hover) {
 
 		&:hover {
-			background-color: $grey-lightest;
+			background-color: $grey-medium;
 			color: $black;
 		}
 
 		&.active:hover {
-			background-color: $lighter-blue;
+			background-color: $darker-blue;
 			color: $white;
 		}
 	}
