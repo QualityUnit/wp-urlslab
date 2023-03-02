@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { createColumnHelper } from '@tanstack/react-table';
 
@@ -15,6 +16,7 @@ import ModuleViewHeaderBottom from '../components/ModuleViewHeaderBottom';
 
 export default function LinkManagerTable( { slug } ) {
 	const { __ } = useI18n();
+	const [ tableHidden, setHiddenTable ] = useState( false );
 	const columnHelper = createColumnHelper();
 	const { filters, currentFilters, addFilter, removeFilter } = useFilter();
 	const { sortingColumn, sortBy } = useSorting();
@@ -138,20 +140,24 @@ export default function LinkManagerTable( { slug } ) {
 					deleteCSVCols: [ 'urlId', 'urlMd5', 'domainId' ],
 					perPage: 1000,
 				} }
+				hideTable={ ( hidden ) => setHiddenTable( hidden ) }
 			>
 				<div className="ma-left flex flex-align-center">
 					<strong>Sort by:</strong>
 					<SortMenu className="ml-s" items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } />
 				</div>
 			</ModuleViewHeaderBottom>
-			<Table className="fadeInto" columns={ columns }
-				resizable
-				data={
-					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
-				}
-			>
-				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
-			</Table>
+			{ tableHidden
+				? null
+				: <Table className="fadeInto" columns={ columns }
+					resizable
+					data={
+						isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
+					}
+				>
+					<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
+				</Table>
+			}
 		</>
 	);
 }
