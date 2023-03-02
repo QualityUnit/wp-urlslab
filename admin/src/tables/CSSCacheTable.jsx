@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { createColumnHelper } from '@tanstack/react-table';
 
@@ -15,6 +16,7 @@ import ModuleViewHeaderBottom from '../components/ModuleViewHeaderBottom';
 
 export default function CSSCacheTable() {
 	const { __ } = useI18n();
+	const [ tableHidden, setHiddenTable ] = useState( false );
 	const columnHelper = createColumnHelper();
 	const { filters, currentFilters, addFilter, removeFilter } = useFilter();
 	const { sortingColumn, sortBy } = useSorting();

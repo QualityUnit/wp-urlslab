@@ -2,12 +2,52 @@
 @use "../common/variables" as *;
 
 .urlslab-panel {
-	padding: 1.5em;
 	background-color: $white;
 	border-radius: $br-10;
 	box-shadow: $box-shadow-small;
 	color: $black;
 	overflow: hidden;
+	padding: 1.5em;
+
+	&-section {
+		padding: 1.5em;
+		margin: 1.375em -1.5em;
+		background-color: $grey-lightest;
+		border-bottom: 1px solid $grey-light;
+
+		p {
+			font-size: 0.75rem;
+		}
+
+		ul {
+
+			li {
+				font-style: italic;
+				margin-bottom: 0.25em;
+			}
+		}
+
+		@media (min-width: $breakpoint-tablet) {
+			padding: 1.375em 2.25em;
+			margin: 1.375em -2.25em;
+		}
+	}
+
+	&-importexport {
+		margin: 1.5em;
+
+		@media (min-width: $breakpoint-tablet) {
+
+			.urlslab-panel {
+				padding: 1.375em 2.25em;
+			}
+		}
+
+		@media (min-width: $breakpoint-tablet-landscape) {
+			width: 35.625em;
+			margin: 6.25em auto auto;
+		}
+	}
 
 	@media (min-width: $breakpoint-tablet) {
 		padding: 1.875em 4em;
