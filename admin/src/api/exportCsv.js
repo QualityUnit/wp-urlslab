@@ -17,10 +17,6 @@ export async function exportCSV( options, result ) {
 		totalItems = await fetchData( `${ url }/count${ filters ? `?${ filters }` : '' }` );
 	}
 
-	if ( ! lastPage ) {
-		totalItems = await fetchData( `${ url }/count${ filters ? `?${ filters }` : '' }` );
-	}
-
 	dataForCSV.push( await response );
 	dataForCSV = dataForCSV.flat();
 	if ( await response.length < perPage ) {
