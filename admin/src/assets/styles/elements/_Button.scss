@@ -33,6 +33,11 @@ button.urlslab-button,
 		color: $white;
 	}
 
+	&.danger {
+		background-color: $saturated-red;
+		color: $white;
+	}
+
 	&.small {
 		font-size: 0.75em;
 		padding: 0.5em 1em;
@@ -54,6 +59,11 @@ button.urlslab-button,
 
 		&.active:hover {
 			background-color: $darker-blue;
+			color: $white;
+		}
+
+		&.danger:hover {
+			background-color: $dark-saturated-red;
 			color: $white;
 		}
 	}
