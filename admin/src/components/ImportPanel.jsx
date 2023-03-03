@@ -22,7 +22,7 @@ export default function ImportPanel( { slug, backToTable } ) {
 		},
 	} );
 	return (
-		<div className="urlslab-panel-importexport">
+		<div className="urlslab-panel-wrap">
 			<BackButton className="mb-l" onClick={ () => backToTable() }>{ __( 'Back to table' ) }</BackButton>
 
 			<div className="urlslab-panel">

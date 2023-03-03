@@ -28,6 +28,10 @@ button.urlslab-button,
 	color: $black;
 	cursor: pointer;
 
+	&.simple {
+		background-color: transparent;
+	}
+
 	&.active {
 		background-color: $primary-color;
 		color: $white;
@@ -55,6 +59,11 @@ button.urlslab-button,
 		&:hover {
 			background-color: $grey-medium;
 			color: $black;
+		}
+
+		&.simple:hover {
+			background-color: transparent;
+			color: $primary-color;
 		}
 
 		&.active:hover {

@@ -11,6 +11,21 @@
 		box-sizing: border-box;
 	}
 
+	&.dark {
+
+		&::before {
+
+			@include posZero;
+			left: 160px; // WP admin menu width
+			content: "";
+			position: absolute;
+			z-index: 9998;
+			background-color: $black-real;
+			opacity: 0.6;
+			transition: opacity $transitionTime;
+		}
+	}
+
 	.fadeInto {
 		animation: fadeIn $transitionTime;
 	}
