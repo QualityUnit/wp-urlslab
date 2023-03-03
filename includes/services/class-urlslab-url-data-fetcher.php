@@ -140,7 +140,7 @@ class Urlslab_Url_Data_Fetcher {
 				Urlslab_Url_Row::STATUS_NEW,
 				Urlslab_Data::get_now()
 			);
-			$insert_placeholders[] = '(%d, %s, %s, %s, %s, %s)';
+			$insert_placeholders[] = '(%d, %s, %s, %s)';
 		}
 
 		$insert_query = "INSERT IGNORE INTO $table (urlMd5, urlName, status, updateStatusDate) VALUES";
