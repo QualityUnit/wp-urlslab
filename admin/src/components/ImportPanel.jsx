@@ -42,19 +42,18 @@ export default function ImportPanel( { slug, backToTable } ) {
 							acceptedFile,
 							getRemoveFileProps,
 						} ) => (
-							<>
-								<div className="">
-									<Button className="ma-left" { ...getRootProps() } active>
+							<div className="flex flex-align-center">
+								{ acceptedFile &&
+								<button className="removeFile flex flex-align-center" { ...getRemoveFileProps() }>{ acceptedFile.name } <CloseIcon /></button>
+								}
+								<div className="ma-left">
+									<Button { ...getRootProps() } active>
 										<ImportIcon />
 										{ __( 'Import CSV' ) }
 									</Button>
 								</div>
-								<div className="flex">
-									{ acceptedFile &&
-									<>{ acceptedFile.name } <CloseIcon /></>
-									}
-								</div>
-							</>
+							</div>
+
 						) }
 					</CSVReader>
 				</div>

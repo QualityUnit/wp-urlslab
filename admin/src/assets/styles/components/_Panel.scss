@@ -44,6 +44,15 @@
 		}
 	}
 
+	.removeFile {
+
+		svg {
+
+			@include square(1em);
+			margin-left: 0.5em;
+		}
+	}
+
 	&-header {
 		position: relative;
 		display: flex;

@@ -28,19 +28,19 @@ export default function ModuleViewHeaderBottom( { currentFilters, header, remove
 	} );
 
 	const handlePanel = ( panel ) => {
+		setActivePanel( panel );
+		hideTable( true );
 		if ( panel === undefined ) {
 			setActivePanel( panel );
 			hideTable( false );
 		}
 		if ( panel === 'delete' ) {
 			setActivePanel( panel );
+			hideTable( false );
 		}
 		if ( panel === 'danger' ) {
 			handleDelete.mutate();
-		}
-		if ( panel !== 'delete' || panel !== 'danger' ) {
-			setActivePanel( panel );
-			hideTable( true );
+			hideTable( false );
 		}
 	};
 
@@ -48,7 +48,6 @@ export default function ModuleViewHeaderBottom( { currentFilters, header, remove
 		<>
 			<div className="urlslab-moduleView-headerBottom flex">
 
-				{ /* <Button onClick={ () => handleDelete.mutate() }>{ __( 'Delete All' ) }</Button> */ }
 				<Button onClick={ () => handlePanel( 'delete' ) }>{ __( 'Delete All' ) }</Button>
 
 				<Button className="ml-s-tablet" onClick={ () => handlePanel( 'export' ) }><ExportIcon />{ __( 'Export CSV' ) }</Button>
