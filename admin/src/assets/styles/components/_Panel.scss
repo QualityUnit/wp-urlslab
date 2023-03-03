@@ -11,8 +11,9 @@
 
 	&-floating[class] {
 
-		@include absoluteCenter;
+		top: 25%;
 		left: calc(50% + 80px); //WP Admin menu half width of 160px
+		transform: translateX(-50%);
 		position: absolute;
 		z-index: 9999;
 

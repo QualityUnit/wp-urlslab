@@ -4,6 +4,7 @@ import { useQueryClient, useMutation } from '@tanstack/react-query';
 
 import { deleteAll } from '../api/deleteTableData';
 
+import { ReactComponent as Trash } from '../assets/images/icon-trash.svg';
 import { ReactComponent as ImportIcon } from '../assets/images/icon-import.svg';
 import { ReactComponent as ExportIcon } from '../assets/images/icon-export.svg';
 
@@ -30,6 +31,7 @@ export default function ModuleViewHeaderBottom( { currentFilters, header, remove
 	const handlePanel = ( panel ) => {
 		setActivePanel( panel );
 		hideTable( true );
+
 		if ( panel === undefined ) {
 			setActivePanel( panel );
 			hideTable( false );
@@ -48,7 +50,7 @@ export default function ModuleViewHeaderBottom( { currentFilters, header, remove
 		<>
 			<div className="urlslab-moduleView-headerBottom flex">
 
-				<Button onClick={ () => handlePanel( 'delete' ) }>{ __( 'Delete All' ) }</Button>
+				<Button onClick={ () => handlePanel( 'delete' ) }><Trash />{ __( 'Delete All' ) }</Button>
 
 				<Button className="ml-s-tablet" onClick={ () => handlePanel( 'export' ) }><ExportIcon />{ __( 'Export CSV' ) }</Button>
 
@@ -71,7 +73,7 @@ export default function ModuleViewHeaderBottom( { currentFilters, header, remove
 				activePanel === 'delete' &&
 				<DangerPanel title={ __( 'Delete All?' ) }
 					text={ __( 'Are you sure you want to delete all rows? Deleting rows will remove them from all modules where this table occurs.' ) }
-					button={ __( 'Delete All' ) }
+					button={ <><Trash />{ __( 'Delete All' ) }</> }
 					handleDanger={ ( val ) => handlePanel( val ) }
 				/>
 			}

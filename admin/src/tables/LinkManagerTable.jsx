@@ -1,18 +1,6 @@
-import { useState } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
-import { createColumnHelper } from '@tanstack/react-table';
-
-import useInfiniteFetch from '../hooks/useInfiniteFetch';
-import { useFilter, useSorting } from '../hooks/filteringSorting';
-import { handleInput, handleSelected } from '../constants/tableFunctions';
-
-import SortMenu from '../elements/SortMenu';
-import Checkbox from '../elements/Checkbox';
-
-import Loader from '../components/Loader';
-
-import Table from '../components/TableComponent';
-import ModuleViewHeaderBottom from '../components/ModuleViewHeaderBottom';
+import {
+	useState, useI18n, createColumnHelper, useInfiniteFetch, useFilter, useSorting, handleInput, handleSelected, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
+} from '../constants/tableImports';
 
 export default function LinkManagerTable( { slug } ) {
 	const { __ } = useI18n();
@@ -150,8 +138,8 @@ export default function LinkManagerTable( { slug } ) {
 			{ tableHidden
 				? null
 				: <Table className="fadeInto" columns={ columns }
-					resizable
-					data={
+						resizable
+						data={
 						isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 					}
 				>

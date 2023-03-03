@@ -1,17 +1,6 @@
-import { useI18n } from '@wordpress/react-i18n';
-import { createColumnHelper } from '@tanstack/react-table';
-
-import useInfiniteFetch from '../hooks/useInfiniteFetch';
-import { useFilter, useSorting } from '../hooks/filteringSorting';
-import { handleInput, handleSelected } from '../constants/tableFunctions';
-
-import SortMenu from '../elements/SortMenu';
-import Checkbox from '../elements/Checkbox';
-
-import Loader from '../components/Loader';
-
-import Table from '../components/TableComponent';
-import ModuleViewHeaderBottom from '../components/ModuleViewHeaderBottom';
+import {
+	useState, useI18n, createColumnHelper, useInfiniteFetch, useFilter, useSorting, handleInput, handleSelected, RangeSlider, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
+} from '../constants/tableImports';
 
 export default function URLRelationTable() {
 	const { __ } = useI18n();
