@@ -74,21 +74,13 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 						'filter_videoid' => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return 0 == strlen( $param ) || 32 >= strlen( $param );
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_status'  => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								switch ( $param ) {
-									case Urlslab_Youtube_Row::STATUS_AVAILABLE:
-									case Urlslab_Youtube_Row::STATUS_NEW:
-									case Urlslab_Youtube_Row::STATUS_DISABLED:
-									case Urlslab_Youtube_Row::STATUS_PROCESSING:
-										return true;
-									default:
-										return false;
-								}
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 					)

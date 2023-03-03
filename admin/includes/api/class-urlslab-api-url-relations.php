@@ -152,31 +152,31 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 						'filter_srcUrlMd5'   => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return is_numeric( $param );
+								return Urlslab_Api_Table::validate_numeric_filter_value( $param );
 							},
 						),
 						'filter_destUrlMd5'  => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return is_numeric( $param );
+								return Urlslab_Api_Table::validate_numeric_filter_value( $param );
 							},
 						),
 						'filter_srcUrlName'  => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return 1024 >= strlen( $param );
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_destUrlName' => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return 1024 >= strlen( $param );
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_pos'         => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return is_numeric( $param );
+								return Urlslab_Api_Table::validate_numeric_filter_value( $param );
 							},
 						),
 					)
@@ -204,8 +204,8 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 
 		$sql->add_filter( 'srcUrlMd5' );
 		$sql->add_filter( 'destUrlMd5' );
-		$sql->add_filter( 'filter_srcUrlName', '%s', 'LIKE' );
-		$sql->add_filter( 'filter_destUrlName', '%s', 'LIKE' );
+		$sql->add_filter( 'filter_srcUrlName' );
+		$sql->add_filter( 'filter_destUrlName' );
 		$sql->add_filter( 'filter_pos', '%d' );
 
 		if ( $request->get_param( 'sort_column' ) ) {

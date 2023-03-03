@@ -258,89 +258,73 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 						'filter_urlMd5'             => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return is_numeric( $param );
+								return Urlslab_Api_Table::validate_numeric_filter_value( $param );
 							},
 						),
 						'filter_urlName'            => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return 1024 >= strlen( $param );
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_status'             => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								switch ( $param ) {
-									case Urlslab_Driver::STATUS_ERROR:
-									case Urlslab_Driver::STATUS_NEW:
-									case Urlslab_Driver::STATUS_PENDING:
-									case Urlslab_Driver::STATUS_ACTIVE:
-										return true;
-									default:
-										return false;
-								}
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_domainId'           => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return 32 >= strlen( $param );
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_urlId'              => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return 32 >= strlen( $param );
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_screenshotDate'     => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return is_numeric( $param );
+								return Urlslab_Api_Table::validate_numeric_filter_value( $param );
 							},
 						),
 						'filter_updateStatusDate'   => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return 32 >= strlen( $param );
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_urlTitle'           => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return is_string( $param );
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_urlMetaDescription' => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return is_string( $param );
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_urlSummary'         => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return is_string( $param );
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_visibility'         => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								switch ( $param ) {
-									case Urlslab_Url_Row::VISIBILITY_VISIBLE:
-									case Urlslab_Url_Row::VISIBILITY_HIDDEN:
-										return true;
-									default:
-										return false;
-								}
-
-								return 32 >= strlen( $param );
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_urlCheckDate'       => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return 32 >= strlen( $param );
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 					)
@@ -368,15 +352,15 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		$this->add_filter_table_fields( $sql );
 
 		$sql->add_filter( 'filter_urlMd5' );
-		$sql->add_filter( 'filter_urlName', '%s', 'LIKE' );
+		$sql->add_filter( 'filter_urlName' );
 		$sql->add_filter( 'filter_status' );
 		$sql->add_filter( 'filter_domainId' );
 		$sql->add_filter( 'filter_urlId' );
 		$sql->add_filter( 'filter_screenshotDate', '%d' );
 		$sql->add_filter( 'filter_updateStatusDate' );
-		$sql->add_filter( 'filter_urlTitle', '%s', 'LIKE' );
-		$sql->add_filter( 'filter_urlMetaDescription', '%s', 'LIKE' );
-		$sql->add_filter( 'filter_urlSummary', '%s', 'LIKE' );
+		$sql->add_filter( 'filter_urlTitle' );
+		$sql->add_filter( 'filter_urlMetaDescription' );
+		$sql->add_filter( 'filter_urlSummary' );
 		$sql->add_filter( 'filter_visibility' );
 		$sql->add_filter( 'filter_urlCheckDate' );
 		$sql->add_having_filter( 'filter_url_usage_count', '%d' );

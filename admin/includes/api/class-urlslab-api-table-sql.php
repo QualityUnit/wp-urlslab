@@ -31,7 +31,6 @@ class Urlslab_Api_Table_Sql {
 		$column_name = $parameter_name;
 		if ( str_starts_with( $column_name, 'from_' ) ) {
 			$column_name = substr( $column_name, strlen( 'from_' ) );
-			$operator    = '>';
 		} else if ( str_starts_with( $column_name, 'filter_' ) ) {
 			$column_name = substr( $column_name, strlen( 'filter_' ) );
 		}
@@ -40,12 +39,16 @@ class Urlslab_Api_Table_Sql {
 			$column_name = $table_prefix . '.' . $column_name;
 		}
 
-		$this->where_data[] = esc_sql( $column_name ) . ' ' . $operator . ' ' . $format;
-		if ( '%d' == $format ) {
-			$this->query_data[] = (int) $this->request->get_param( $parameter_name );
-		} else {
-			$this->query_data[] = $this->request->get_param( $parameter_name );
+		switch ( $format ) {
+			case '%d':
+				$this->add_numeric_filter( $column_name, $this->request->get_param( $parameter_name ) );
+				break;
+			case '%s':
+			default:
+				$this->add_string_filter( $column_name, $this->request->get_param( $parameter_name ) );
+				break;
 		}
+
 	}
 
 	public function add_filter_raw( $where_condition, $data = false ) {
@@ -156,6 +159,94 @@ class Urlslab_Api_Table_Sql {
 			( strlen( $this->limit_string ) ? ' LIMIT ' . $this->limit_string : '' ), // phpcs:ignore
 			$this->query_data
 		);
+	}
+
+	private function add_numeric_filter( string $column_name, string $param_value ) {
+		$filter_obj = json_decode( $param_value );
+
+		if ( is_object( $filter_obj ) ) {
+			switch ( $filter_obj->op ) {
+				case 'IN':
+					if ( is_array( $filter_obj->val ) ) {
+						$this->where_data[] = esc_sql( $column_name ) . 'IN (' . implode( ',', array_fill( 0, count( $filter_obj->val ), '%d' ) ) . ')';
+						foreach ( $filter_obj->val as $in_value ) {
+							if ( is_numeric( $in_value ) ) {
+								$this->query_data[] = $in_value;
+							} else {
+								throw new Exception( 'Invalid filter input value: IN should have numeric values' );
+							}
+						}
+					} else {
+						throw new Exception( 'invalid filter input value for IN' );
+					}
+					break;
+				case 'BETWEEN':
+					$this->where_data[] = esc_sql( $column_name ) . ' BETWEEN %d AND %d';
+					$this->query_data[] = $filter_obj->min;
+					$this->query_data[] = $filter_obj->max;
+					break;
+				case '>':
+					$this->where_data[] = esc_sql( $column_name ) . '>%d';
+					$this->query_data[] = $filter_obj->val;
+					break;
+				case '<':
+					$this->where_data[] = esc_sql( $column_name ) . '<%d';
+					$this->query_data[] = $filter_obj->val;
+					break;
+				case '=':
+				default:
+					$this->where_data[] = esc_sql( $column_name ) . '=%d';
+					$this->query_data[] = $filter_obj->val;
+					break;
+			}
+		} else if ( is_numeric( $param_value ) ) {
+			$this->where_data[] = esc_sql( $column_name ) . '=%d';
+			$this->query_data[] = $param_value;
+		} else {
+			throw new Exception( 'Invalid filter' );
+		}
+	}
+
+	private function add_string_filter( string $column_name, string $param_value ) {
+		$filter_obj = json_decode( $param_value );
+
+		if ( is_object( $filter_obj ) ) {
+			switch ( $filter_obj->op ) {
+				case 'IN':
+					if ( is_array( $filter_obj->val ) ) {
+						$this->where_data[] = esc_sql( $column_name ) . 'IN (' . implode( ',', array_fill( 0, count( $filter_obj->val ), '%s' ) ) . ')';
+						foreach ( $filter_obj->val as $in_value ) {
+							$this->query_data[] = $in_value;
+						}
+					} else {
+						throw new Exception( 'invalid filter input value' );
+					}
+					break;
+				case '>':
+					$this->where_data[] = esc_sql( $column_name ) . '>%s';
+					$this->query_data[] = $filter_obj->val;
+					break;
+				case '<':
+					$this->where_data[] = esc_sql( $column_name ) . '<%s';
+					$this->query_data[] = $filter_obj->val;
+					break;
+				case 'LIKE':
+					$this->where_data[] = esc_sql( $column_name ) . ' LIKE %s';
+					$this->query_data[] = '%' . $filter_obj . '%';
+					break;
+				case '=':
+				default:
+					$this->where_data[] = esc_sql( $column_name ) . '=%s';
+					$this->query_data[] = $filter_obj->val;
+					break;
+			}
+		} else if ( is_string( $param_value ) ) {
+			//default is wildcard match
+			$this->where_data[] = esc_sql( $column_name ) . ' LIKE %s';
+			$this->query_data[] = '%' . $param_value . '%';
+		} else {
+			throw new Exception( 'Invalid filter' );
+		}
 	}
 
 }
