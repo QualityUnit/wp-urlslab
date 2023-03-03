@@ -9,10 +9,7 @@ export default function KeywordsTable( { slug } ) {
 	const { filters, currentFilters, addFilter, removeFilter } = useFilter();
 	const { sortingColumn, sortBy } = useSorting();
 	const [ tableHidden, setHiddenTable ] = useState( false );
-	const deleteRow = useChangeRow( {
-		slug,
-
-	} );
+	const { deleteRow } = useChangeRow();
 
 	const {
 		data,
@@ -45,7 +42,7 @@ export default function KeywordsTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
-			cell: ( cell ) => <Button danger onClick={ cell }><Trash /></Button>,
+			cell: ( cell ) => <Button danger onClick={ () => deleteRow( slug, cell, 'kw_id' ) }><Trash /></Button>,
 			header: () => __( '' ),
 			enableResizing: false,
 			maxSize: 0,

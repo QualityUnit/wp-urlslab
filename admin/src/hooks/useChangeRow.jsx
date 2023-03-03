@@ -1,24 +1,28 @@
 import { useQueryClient, useMutation } from '@tanstack/react-query';
-import { deleteRow } from '../api/deleteTableData';
+import { deleteRow as del } from '../api/deleteTableData';
 
-export function useChangeRow( options ) {
-	const { slug, cell, rowSelector, operation } = options;
+export function useChangeRow() {
 	const queryClient = useQueryClient();
 
-	const getRowId = () => {
+	const getRowId = ( cell, rowSelector ) => {
 		return cell.row.original[ rowSelector ];
 	};
 
 	const deleteSelectedRow = useMutation( {
-		mutationFn: async ( ) => {
-			return deleteRow( `${ slug }/${ getRowId() }` );
+		mutationFn: async ( options ) => {
+			const { slug, cell, rowSelector } = options;
+			del( `${ slug }/${ getRowId( cell, rowSelector ) }` );
+			return slug;
 		},
-		onSuccess: () => {
+		onSuccess: ( slug ) => {
+			console.log( slug );
+			// console.log( queryClient.getQueryData( [ slug ] ) );
 			queryClient.invalidateQueries( [ slug ] );
 		},
 	} );
+	const deleteRow = ( slug, cell, rowSelector ) => {
+		deleteSelectedRow.mutate( { slug, cell, rowSelector } );
+	};
 
-	if ( operation === 'delete' ) {
-		console.log( `${ slug } / ${ getRowId() }` );
-	}
+	return { deleteRow };
 }
