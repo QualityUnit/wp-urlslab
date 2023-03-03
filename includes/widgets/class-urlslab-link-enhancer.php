@@ -61,7 +61,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return __( 'Link Management' );
+		return __( 'Pages / Urls' );
 	}
 
 	/**
