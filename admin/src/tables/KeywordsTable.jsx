@@ -1,14 +1,18 @@
 
 import {
-	useState, useI18n, createColumnHelper, useInfiniteFetch, useFilter, useSorting, handleInput, handleSelected, RangeSlider, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useState, useI18n, createColumnHelper, useInfiniteFetch, useFilter, useSorting, useChangeRow, handleInput, handleSelected, RangeSlider, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 export default function KeywordsTable( { slug } ) {
 	const { __ } = useI18n();
-	const [ tableHidden, setHiddenTable ] = useState( false );
 	const columnHelper = createColumnHelper();
 	const { filters, currentFilters, addFilter, removeFilter } = useFilter();
 	const { sortingColumn, sortBy } = useSorting();
+	const [ tableHidden, setHiddenTable ] = useState( false );
+	const deleteRow = useChangeRow( {
+		slug,
+
+	} );
 
 	const {
 		data,
@@ -41,13 +45,11 @@ export default function KeywordsTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
-			cell: ( cell ) => <Trash checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
-				handleSelected( val, cell );
-			} } />,
+			cell: ( cell ) => <button onClick={ cell }><Trash /></button>,
 			header: () => __( '' ),
 			enableResizing: false,
-			maxSize: 24,
-			size: 24,
+			maxSize: 0,
+			size: 0,
 		} ),
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
@@ -126,10 +128,10 @@ export default function KeywordsTable( { slug } ) {
 			{ tableHidden
 				? null
 				: <Table className="fadeInto"
-						resizable
-						slug={ slug }
-						columns={ columns }
-						data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
+					resizable
+					slug={ slug }
+					columns={ columns }
+					data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 					<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
 				</Table>
 			}

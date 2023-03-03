@@ -4,6 +4,7 @@ export { createColumnHelper } from '@tanstack/react-table';
 
 export { default as useInfiniteFetch } from '../hooks/useInfiniteFetch';
 export { useFilter, useSorting } from '../hooks/filteringSorting';
+export { useChangeRow } from '../hooks/useChangeRow';
 export { handleInput, handleSelected } from '../constants/tableFunctions';
 
 export { default as RangeSlider } from '../elements/RangeSlider';
