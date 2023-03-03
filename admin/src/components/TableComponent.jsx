@@ -64,9 +64,7 @@ export default function Table( { resizable, children, className, columns, data }
 	for ( const virtualRow of virtualRows ) {
 		const row = rows[ virtualRow?.index ];
 		tbody.push(
-			<tr key={ row.id } className={ row.getIsSelected() ? 'selected' : '' } style={ {
-				position: 'relative',
-			} } >
+			<tr key={ row.id } className={ row.getIsSelected() ? 'selected' : '' }>
 				{ row.getVisibleCells().map( ( cell ) =>
 					<td key={ cell.id } className={ cell.column.columnDef.className }
 						style={ {

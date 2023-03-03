@@ -1,14 +1,6 @@
-import { useI18n } from '@wordpress/react-i18n';
-import { createColumnHelper } from '@tanstack/react-table';
-
-import useInfiniteFetch from '../hooks/useInfiniteFetch';
-import { useFilter, useSorting } from '../hooks/filteringSorting';
-import { handleSelected } from '../constants/tableFunctions';
-import Checkbox from '../elements/Checkbox';
-
-import Table from '../components/TableComponent';
-
-import Loader from '../components/Loader';
+import {
+	useState, useI18n, createColumnHelper, useInfiniteFetch, useFilter, useSorting, handleInput, handleSelected, RangeSlider, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
+} from '../constants/tableImports';
 
 export default function ContentCacheTable() {
 	const { __ } = useI18n();

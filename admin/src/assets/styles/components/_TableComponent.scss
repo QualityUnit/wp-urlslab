@@ -139,6 +139,28 @@ $cellHeight: 3.5em;
 		max-width: 200ch;
 	}
 
+	td.deleteRow {
+		left: calc(100% - 5em) !important;
+		opacity: 0;
+		transition: opacity $transitionTime;
+		z-index: 2;
+
+		button {
+			padding: 0.55em;
+		}
+
+		svg {
+
+			@include square(1.5em);
+			display: block;
+			margin-right: 0;
+		}
+	}
+
+	tr:hover td.deleteRow {
+		opacity: 1;
+	}
+
 	.thumbnail {
 
 		picture,

@@ -28,13 +28,13 @@ export default function DangerPanel( { title, text, button, handleDanger } ) {
 			<div className="urlslab-panel">
 				<div className="urlslab-panel-header">
 					<h3>{ title }</h3>
-					<button className="urlslab-panel-close" onClick={ handleClose }>
+					<button className="urlslab-panel-close" onClick={ () => handleClose() }>
 						<CloseIcon />
 					</button>
 				</div>
 				<p>{ text }</p>
 				<div className="flex">
-					<Button className="ma-left simple" onClick={ handleClose }>{ __( 'Cancel' ) }</Button>
+					<Button className="ma-left simple" onClick={ () => handleClose() }>{ __( 'Cancel' ) }</Button>
 					<Button className="ml-s danger" onClick={ () => handleClose( 'danger' ) }>{ button }</Button>
 				</div>
 			</div>

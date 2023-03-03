@@ -1,28 +1,15 @@
-import { useState } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
-import { createColumnHelper } from '@tanstack/react-table';
 
-import useInfiniteFetch from '../hooks/useInfiniteFetch';
-import { useFilter, useSorting } from '../hooks/filteringSorting';
-import { handleInput, handleSelected } from '../constants/tableFunctions';
-import RangeSlider from '../elements/RangeSlider';
-import SortMenu from '../elements/SortMenu';
-import LangMenu from '../elements/LangMenu';
-import InputField from '../elements/InputField';
-import Checkbox from '../elements/Checkbox';
-import MenuInput from '../elements/MenuInput';
-
-import Loader from '../components/Loader';
-
-import Table from '../components/TableComponent';
-import ModuleViewHeaderBottom from '../components/ModuleViewHeaderBottom';
+import {
+	useState, useI18n, createColumnHelper, useInfiniteFetch, useFilter, useSorting, useChangeRow, handleInput, handleSelected, RangeSlider, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Button, Trash, Loader, Table, ModuleViewHeaderBottom,
+} from '../constants/tableImports';
 
 export default function KeywordsTable( { slug } ) {
 	const { __ } = useI18n();
-	const [ tableHidden, setHiddenTable ] = useState( false );
 	const columnHelper = createColumnHelper();
 	const { filters, currentFilters, addFilter, removeFilter } = useFilter();
 	const { sortingColumn, sortBy } = useSorting();
+	const [ tableHidden, setHiddenTable ] = useState( false );
+	const { deleteRow } = useChangeRow();
 
 	const {
 		data,
@@ -53,6 +40,14 @@ export default function KeywordsTable( { slug } ) {
 	};
 
 	const columns = [
+		columnHelper.accessor( 'delete', {
+			className: 'deleteRow',
+			cell: ( cell ) => <Button danger onClick={ () => deleteRow( slug, cell, 'kw_id' ) }><Trash /></Button>,
+			header: () => __( '' ),
+			enableResizing: false,
+			maxSize: 0,
+			size: 0,
+		} ),
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {

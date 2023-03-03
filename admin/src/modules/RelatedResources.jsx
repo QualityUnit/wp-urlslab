@@ -8,6 +8,7 @@ import ModuleViewHeader from '../components/ModuleViewHeader';
 
 export default function RelatedResources( { moduleId } ) {
 	const { __ } = useI18n();
+	const slug = 'url-relation';
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 
 	const tableMenu = new Map( [
@@ -28,7 +29,7 @@ export default function RelatedResources( { moduleId } ) {
 			{
 				activeSection === 'url-relation' &&
 				<Suspense>
-					<URLRelationTable />
+					<URLRelationTable slug={ slug } />
 				</Suspense>
 			}
 			{
