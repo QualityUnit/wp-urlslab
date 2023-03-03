@@ -97,21 +97,13 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 						'filter_url'    => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return 255 >= strlen( $param );
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_status' => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								switch ( $param ) {
-									case Urlslab_CSS_Cache_Row::STATUS_ACTIVE:
-									case Urlslab_CSS_Cache_Row::STATUS_DISABLED:
-									case Urlslab_CSS_Cache_Row::STATUS_NEW:
-									case Urlslab_CSS_Cache_Row::STATUS_PENDING:
-										return true;
-									default:
-										return false;
-								}
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 					)
@@ -133,7 +125,7 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 
 		$this->add_filter_table_fields( $sql );
 
-		$sql->add_filter( 'filter_url', '%s', 'LIKE' );
+		$sql->add_filter( 'filter_url' );
 		$sql->add_filter( 'filter_status' );
 
 		if ( $request->get_param( 'sort_column' ) ) {

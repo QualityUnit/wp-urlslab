@@ -153,81 +153,73 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 						'filter_fileid'           => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return 32 >= strlen( $param );
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_url'              => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return 1024 >= strlen( $param );
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_parent_url'       => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return 1024 >= strlen( $param );
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_local_file'       => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return 1024 >= strlen( $param );
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_filename'         => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return 750 >= strlen( $param );
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_filetype'         => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return 32 >= strlen( $param );
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_filestatus'       => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								switch ( $param ) {
-									case Urlslab_Driver::STATUS_NEW:
-									case Urlslab_Driver::STATUS_ACTIVE:
-									case Urlslab_Driver::STATUS_PENDING:
-									case Urlslab_Driver::STATUS_ERROR:
-										return true;
-									default:
-										return false;
-								}
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_filehash'         => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return 32 >= strlen( $param );
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_filesize'         => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return is_numeric( $param );
+								return Urlslab_Api_Table::validate_numeric_filter_value( $param );
 							},
 						),
 						'filter_webp_fileid'      => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return 32 >= strlen( $param );
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_avif_fileid'      => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return 32 >= strlen( $param );
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_file_usage_count' => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return is_numeric( $param );
+								return Urlslab_Api_Table::validate_numeric_filter_value( $param );
 							},
 						),
 					)
@@ -270,11 +262,11 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		$this->add_filter_table_fields( $sql, 'f' );
 
 		$sql->add_filter( 'filter_fileid' );
-		$sql->add_filter( 'filter_url', '%s', 'LIKE' );
-		$sql->add_filter( 'filter_parent_url', '%s', 'LIKE' );
-		$sql->add_filter( 'filter_local_file', '%s', 'LIKE' );
-		$sql->add_filter( 'filter_filename', '%s', 'LIKE' );
-		$sql->add_filter( 'filter_filetype', '%s', 'LIKE' );
+		$sql->add_filter( 'filter_url' );
+		$sql->add_filter( 'filter_parent_url' );
+		$sql->add_filter( 'filter_local_file' );
+		$sql->add_filter( 'filter_filename' );
+		$sql->add_filter( 'filter_filetype' );
 		$sql->add_filter( 'filter_filestatus' );
 		$sql->add_filter( 'filter_filehash' );
 		$sql->add_filter( 'filter_filesize', '%d' );

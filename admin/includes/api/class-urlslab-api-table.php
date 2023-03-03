@@ -104,7 +104,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	protected function add_filter_table_fields( Urlslab_Api_Table_Sql $sql, $table_prefix = false ) {
 		$rob_obj = $this->get_row_object();
 		foreach ( $rob_obj->get_primary_columns() as $primary_key ) {
-			$sql->add_filter( 'from_' . $primary_key, $rob_obj->get_columns()[ $primary_key ], '>=', $table_prefix );
+			$sql->add_filter( 'from_' . $primary_key, $rob_obj->get_columns()[ $primary_key ], $table_prefix );
 		}
 
 		if ( $sql->get_request()->get_param( 'from_sort_column' ) ) {
@@ -150,6 +150,66 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 
 	public function get_items_count( $request ) {
 		return new WP_REST_Response( $this->get_items_sql( $request )->get_count(), 200 );
+	}
+
+	public static function validate_string_filter_value( $param ) {
+		$filter_value = json_decode( $param );
+		if ( is_object( $filter_value ) ) {
+			switch ( $filter_value->op ) {
+				case 'IN':
+					if ( ! property_exists( $filter_value, 'val' ) || ! is_array( $filter_value->val ) ) {
+						return false;
+					} //continue to next case
+				case 'LIKE': //continue to next case
+				case '>': //continue to next case
+				case '<': //continue to next case
+				case '=': //continue to next case
+					if ( ! property_exists( $filter_value, 'val' ) ) {
+						return false;
+					}
+
+					return true;
+				default:
+					return false;
+			}
+		} else if ( is_string( $param ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public static function validate_numeric_filter_value( $param ) {
+		$filter_value = json_decode( $param );
+		if ( is_object( $filter_value ) ) {
+			if ( ! property_exists( $filter_value, 'op' ) ) {
+				return false;
+			}
+			switch ( $filter_value->op ) {
+				case 'IN':
+					if ( ! property_exists( $filter_value, 'val' ) || ! is_array( $filter_value->val ) ) {
+						return false;
+					} //continue to next case
+				case 'BETWEEN':
+					if ( ! property_exists( $filter_value, 'min' ) || ! property_exists( $filter_value, 'max' ) ) {
+						return false;
+					} //continue to next case
+				case '>':
+				case '<':
+				case '=':
+					if ( ! property_exists( $filter_value, 'val' ) ) {
+						return false;
+					}
+
+					return true;
+				default:
+					return false;
+			}
+		} else if ( is_numeric( $param ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 }
