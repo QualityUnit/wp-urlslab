@@ -33,4 +33,18 @@
 		background-color: $primary-color;
 		border-radius: 50%;
 	}
+
+	&-panel[class] {
+		display: none;
+		position: absolute;
+		z-index: 10;
+		top: 100%;
+		right: 0;
+		min-width: 17.5em;
+		padding: 2em;
+
+		&.active {
+			display: block;
+		}
+	}
 }

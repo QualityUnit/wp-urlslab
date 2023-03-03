@@ -3,6 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { createColumnHelper } from '@tanstack/react-table';
 
 import useInfiniteFetch from '../hooks/useInfiniteFetch';
+import { useFilter, useSorting } from '../hooks/filteringSorting';
 import { handleInput, handleSelected } from '../constants/tableFunctions';
 
 import SortMenu from '../elements/SortMenu';
@@ -15,9 +16,11 @@ import ModuleViewHeaderBottom from '../components/ModuleViewHeaderBottom';
 
 export default function CSSCacheTable() {
 	const { __ } = useI18n();
+	const [ tableHidden, setHiddenTable ] = useState( false );
 	const columnHelper = createColumnHelper();
+	const { filters, currentFilters, addFilter, removeFilter } = useFilter();
+	const { sortingColumn, sortBy } = useSorting();
 
-	const [ currentUrl, setUrl ] = useState();
 	const {
 		data,
 		status,
@@ -25,7 +28,7 @@ export default function CSSCacheTable() {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: 'css-cache', url: currentUrl, pageId: 'url_id' } );
+	} = useInfiniteFetch( { key: 'css-cache', url: `${ filters }${ sortingColumn }`, pageId: 'url_id' } );
 
 	const statusTypes = {
 		N: __( 'New' ),

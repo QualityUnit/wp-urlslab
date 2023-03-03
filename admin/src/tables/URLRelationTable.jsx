@@ -1,8 +1,8 @@
-import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { createColumnHelper } from '@tanstack/react-table';
 
 import useInfiniteFetch from '../hooks/useInfiniteFetch';
+import { useFilter, useSorting } from '../hooks/filteringSorting';
 import { handleInput, handleSelected } from '../constants/tableFunctions';
 
 import SortMenu from '../elements/SortMenu';
@@ -16,7 +16,8 @@ import ModuleViewHeaderBottom from '../components/ModuleViewHeaderBottom';
 export default function URLRelationTable() {
 	const { __ } = useI18n();
 	const columnHelper = createColumnHelper();
-	const [ currentUrl, setUrl ] = useState();
+	const { filters, currentFilters, addFilter, removeFilter } = useFilter();
+	const { sortingColumn, sortBy } = useSorting();
 
 	const {
 		data,
@@ -25,7 +26,7 @@ export default function URLRelationTable() {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: 'url-relation', url: currentUrl, pageId: 'srcUrlMd5' } );
+	} = useInfiniteFetch( { key: 'url-relation', url: `${ filters }${ sortingColumn }`, pageId: 'srcUrlMd5' } );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

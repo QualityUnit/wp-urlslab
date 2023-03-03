@@ -1,28 +1,22 @@
+import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
-import { useCSVReader } from 'react-papaparse';
-import importCsv from '../api/importCsv';
+
 import { deleteAll } from '../api/deleteTableData';
 
 import { ReactComponent as ImportIcon } from '../assets/images/icon-import.svg';
-import { ReactComponent as CloseIcon } from '../assets/images/icon-close.svg';
-import Button from '../elements/Button';
-import ExportCSVButton from '../elements/ExportCSVButton';
+import { ReactComponent as ExportIcon } from '../assets/images/icon-export.svg';
 
-export default function ModuleViewHeaderBottom( { currentFilters, header, removedFilter, children, slug, exportOptions } ) {
+import Button from '../elements/Button';
+import ExportPanel from './ExportPanel';
+import ImportPanel from './ImportPanel';
+import DangerPanel from './DangerPanel';
+
+export default function ModuleViewHeaderBottom( { currentFilters, header, removedFilter, children, slug, exportOptions, hideTable } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
-	const { CSVReader } = useCSVReader();
 	const activeFilters = Object.keys( currentFilters );
-
-	const importData = useMutation( {
-		mutationFn: async ( results ) => {
-			return importCsv( `${ slug }/import`, results.data );
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries( [ slug ] );
-		},
-	} );
+	const [ activePanel, setActivePanel ] = useState();
 
 	const handleDelete = useMutation( {
 		mutationFn: () => {
@@ -33,53 +27,65 @@ export default function ModuleViewHeaderBottom( { currentFilters, header, remove
 		},
 	} );
 
+	const handlePanel = ( panel ) => {
+		setActivePanel( panel );
+		hideTable( true );
+		if ( panel === undefined ) {
+			setActivePanel( panel );
+			hideTable( false );
+		}
+		if ( panel === 'delete' ) {
+			setActivePanel( panel );
+			hideTable( false );
+		}
+		if ( panel === 'danger' ) {
+			handleDelete.mutate();
+			hideTable( false );
+		}
+	};
+
 	return (
-		<div className="urlslab-tableView-headerBottom flex">
+		<>
+			<div className="urlslab-moduleView-headerBottom flex">
 
-			<Button onClick={ () => handleDelete.mutate() }>{ __( 'Delete All' ) }</Button>
+				<Button onClick={ () => handlePanel( 'delete' ) }>{ __( 'Delete All' ) }</Button>
 
-			<ExportCSVButton className="ml-s-tablet" options={ exportOptions } onClick={ ( data ) => console.log( data ) } />
+				<Button className="ml-s-tablet" onClick={ () => handlePanel( 'export' ) }><ExportIcon />{ __( 'Export CSV' ) }</Button>
 
-			<CSVReader
-				onUploadAccepted={ ( results ) => {
-					importData.mutate( results );
-				} }
-				config={ {
-					header: true,
-				} }
-			>
-				{ ( {
-					getRootProps,
-					acceptedFile,
-					getRemoveFileProps,
-				} ) => (
-					<>
-						<div className="">
-							<Button className="ml-s-tablet" { ...getRootProps() }>
-								<ImportIcon />
-								{ __( 'Import CSV' ) }
-							</Button>
-						</div>
-						<div className="flex">
-							{ acceptedFile &&
-								<>{ acceptedFile.name } <CloseIcon /></>
-							}
-						</div>
-					</>
-				) }
-			</CSVReader>
-			{
-				( activeFilters?.length > 0 && header ) &&
+				<Button className="ml-s-tablet" onClick={ () => handlePanel( 'import' ) }><ImportIcon />{ __( 'Import CSV' ) }</Button>
+
+				{
+					( activeFilters?.length > 0 && header ) &&
 					<div className="flex flex-align-center">
 						<strong>{ __( 'Filters:' ) }</strong>
 						{ activeFilters.map( ( key ) => {
 							return ( <button className="ml-s" key={ key } onClick={ () => removedFilter( key ) }>{ header[ key ] }</button> );
 						} ) }
 					</div>
-			}
+				}
+				{
+					children
+				}
+			</div>
 			{
-				children
+				activePanel === 'delete' &&
+				<DangerPanel title={ __( 'Delete All?' ) }
+					text={ __( 'Are you sure you want to delete all rows? Deleting rows will remove them from all modules where this table occurs.' ) }
+					button={ __( 'Delete All' ) }
+					handleDanger={ ( val ) => handlePanel( val ) }
+				/>
 			}
-		</div>
+
+			{ activePanel === 'export' &&
+			<ExportPanel options={ exportOptions }
+				currentFilters={ currentFilters }
+				header={ header }
+				backToTable={ () => handlePanel() }
+			/>
+			}
+			{ activePanel === 'import' &&
+				<ImportPanel slug={ slug } backToTable={ () => handlePanel() } />
+			}
+		</>
 	);
 }

@@ -21,6 +21,7 @@ $font-weight-semi: 600;
 $font-weight-bold: 700;
 
 $saturated-blue: #2570ed;
+$darker-blue: #0f55c9;
 $lighter-blue: color.adjust($saturated-blue, $lightness: 8%);
 $desaturated-blue: #dfeafd;
 $saturated-cyan: #46a6ff;
@@ -28,6 +29,7 @@ $desaturated-cyan: #e3f2ff;
 $saturated-green: #07b65d;
 $desaturated-green: #daf4e7;
 $saturated-red: #ff492b;
+$dark-saturated-red: color.adjust($saturated-red, $lightness: -12%);
 $desaturated-red: #ffe4df;
 $saturated-orange: #ffb928;
 $desaturated-orange: #fff5df;

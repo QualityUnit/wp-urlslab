@@ -2,12 +2,111 @@
 @use "../common/variables" as *;
 
 .urlslab-panel {
-	padding: 1.5em;
 	background-color: $white;
 	border-radius: $br-10;
 	box-shadow: $box-shadow-small;
 	color: $black;
 	overflow: hidden;
+	padding: 1.5em;
+
+	&-floating[class] {
+
+		@include absoluteCenter;
+		left: calc(50% + 80px); //WP Admin menu half width of 160px
+		position: absolute;
+		z-index: 9999;
+
+		.urlslab-panel {
+			padding: 1.5em;
+			padding-right: 1em;
+		}
+
+		@media (min-width: $breakpoint-tablet-landscape) {
+			margin: 0;
+		}
+	}
+
+	&-close {
+
+		@include square(2.25em);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 50%;
+		background-color: $grey-light;
+		margin-left: auto;
+
+		svg {
+
+			@include square(0.75em);
+			flex: 0 0 auto;
+			fill: $grey-darker;
+		}
+	}
+
+	.removeFile {
+
+		svg {
+
+			@include square(1em);
+			margin-left: 0.5em;
+		}
+	}
+
+	&-header {
+		position: relative;
+		display: flex;
+		align-items: center;
+		padding: 0 1em 0.75em 1.5em;
+		margin-left: -1.5em;
+		margin-right: -1em;
+		border-bottom: 1px solid $grey-light;
+
+		@media (min-width: $breakpoint-tablet) {
+			padding: 0 1em 0.75em 2.25em;
+			margin-left: -2.25em;
+		}
+	}
+
+	&-wrap {
+		margin: 1.5em;
+
+		@media (min-width: $breakpoint-tablet) {
+
+			.urlslab-panel {
+				padding: 1.375em 2.25em;
+			}
+		}
+
+		@media (min-width: $breakpoint-tablet-landscape) {
+			width: 35.625em;
+			margin: 6.25em auto auto;
+		}
+	}
+
+	&-section {
+		padding: 1.5em;
+		margin: 1.375em -1.5em;
+		background-color: $grey-lightest;
+		border-bottom: 1px solid $grey-light;
+
+		p {
+			font-size: 0.75rem;
+		}
+
+		ul {
+
+			li {
+				font-style: italic;
+				margin-bottom: 0.25em;
+			}
+		}
+
+		@media (min-width: $breakpoint-tablet) {
+			padding: 1.375em 2.25em;
+			margin: 1.375em -2.25em;
+		}
+	}
 
 	@media (min-width: $breakpoint-tablet) {
 		padding: 1.875em 4em;

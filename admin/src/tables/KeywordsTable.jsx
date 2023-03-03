@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { createColumnHelper } from '@tanstack/react-table';
 
@@ -18,6 +19,7 @@ import ModuleViewHeaderBottom from '../components/ModuleViewHeaderBottom';
 
 export default function KeywordsTable( { slug } ) {
 	const { __ } = useI18n();
+	const [ tableHidden, setHiddenTable ] = useState( false );
 	const columnHelper = createColumnHelper();
 	const { filters, currentFilters, addFilter, removeFilter } = useFilter();
 	const { sortingColumn, sortBy } = useSorting();
@@ -118,19 +120,23 @@ export default function KeywordsTable( { slug } ) {
 					pageId: 'kw_id',
 					deleteCSVCols: [ 'kw_id', 'destUrlMd5' ],
 				} }
+				hideTable={ ( hidden ) => setHiddenTable( hidden ) }
 			>
 				<div className="ma-left flex flex-align-center">
 					<strong>Sort by:</strong>
 					<SortMenu className="ml-s" items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } />
 				</div>
 			</ModuleViewHeaderBottom>
-			<Table className="fadeInto"
-				resizable
-				slug={ slug }
-				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
-				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
-			</Table>
+			{ tableHidden
+				? null
+				: <Table className="fadeInto"
+						resizable
+						slug={ slug }
+						columns={ columns }
+						data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
+					<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
+				</Table>
+			}
 		</>
 	);
 }

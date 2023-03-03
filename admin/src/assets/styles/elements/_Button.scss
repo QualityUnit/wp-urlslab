@@ -28,8 +28,17 @@ button.urlslab-button,
 	color: $black;
 	cursor: pointer;
 
+	&.simple {
+		background-color: transparent;
+	}
+
 	&.active {
 		background-color: $primary-color;
+		color: $white;
+	}
+
+	&.danger {
+		background-color: $saturated-red;
 		color: $white;
 	}
 
@@ -48,12 +57,22 @@ button.urlslab-button,
 	@media (hover: hover) {
 
 		&:hover {
-			background-color: $grey-lightest;
+			background-color: $grey-medium;
 			color: $black;
 		}
 
+		&.simple:hover {
+			background-color: transparent;
+			color: $primary-color;
+		}
+
 		&.active:hover {
-			background-color: $lighter-blue;
+			background-color: $darker-blue;
+			color: $white;
+		}
+
+		&.danger:hover {
+			background-color: $dark-saturated-red;
 			color: $white;
 		}
 	}
