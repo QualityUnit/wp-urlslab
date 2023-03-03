@@ -140,15 +140,20 @@ $cellHeight: 3.5em;
 	}
 
 	td.deleteRow {
-		left: calc(100% - 3em) !important;
+		left: calc(100% - 5em) !important;
 		opacity: 0;
 		transition: opacity $transitionTime;
 		z-index: 2;
+
+		button {
+			padding: 0.55em;
+		}
 
 		svg {
 
 			@include square(1.5em);
 			display: block;
+			margin-right: 0;
 		}
 	}
 

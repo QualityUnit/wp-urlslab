@@ -1,6 +1,6 @@
 
 import {
-	useState, useI18n, createColumnHelper, useInfiniteFetch, useFilter, useSorting, useChangeRow, handleInput, handleSelected, RangeSlider, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useState, useI18n, createColumnHelper, useInfiniteFetch, useFilter, useSorting, useChangeRow, handleInput, handleSelected, RangeSlider, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Button, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 export default function KeywordsTable( { slug } ) {
@@ -45,7 +45,7 @@ export default function KeywordsTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
-			cell: ( cell ) => <button onClick={ cell }><Trash /></button>,
+			cell: ( cell ) => <Button danger onClick={ cell }><Trash /></Button>,
 			header: () => __( '' ),
 			enableResizing: false,
 			maxSize: 0,
@@ -128,10 +128,10 @@ export default function KeywordsTable( { slug } ) {
 			{ tableHidden
 				? null
 				: <Table className="fadeInto"
-					resizable
-					slug={ slug }
-					columns={ columns }
-					data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
+						resizable
+						slug={ slug }
+						columns={ columns }
+						data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 					<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
 				</Table>
 			}

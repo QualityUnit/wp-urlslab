@@ -13,6 +13,7 @@ export { default as LangMenu } from '../elements/LangMenu';
 export { default as InputField } from '../elements/InputField';
 export { default as Checkbox } from '../elements/Checkbox';
 export { default as MenuInput } from '../elements/MenuInput';
+export { default as Button } from '../elements/Button';
 export { ReactComponent as Trash } from '../assets/images/icon-trash.svg';
 
 export { default as Loader } from '../components/Loader';
