@@ -6,17 +6,18 @@ import { deleteAll } from '../api/deleteTableData';
 
 import { ReactComponent as ImportIcon } from '../assets/images/icon-import.svg';
 import { ReactComponent as ExportIcon } from '../assets/images/icon-export.svg';
-import { ReactComponent as CloseIcon } from '../assets/images/icon-close.svg';
 
 import Button from '../elements/Button';
 import ExportPanel from './ExportPanel';
 import ImportPanel from './ImportPanel';
+import DangerPanel from './DangerPanel';
 
 export default function ModuleViewHeaderBottom( { currentFilters, header, removedFilter, children, slug, exportOptions, hideTable } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const activeFilters = Object.keys( currentFilters );
 	const [ activePanel, setActivePanel ] = useState();
+
 	const handleDelete = useMutation( {
 		mutationFn: () => {
 			return deleteAll( slug );
@@ -26,14 +27,20 @@ export default function ModuleViewHeaderBottom( { currentFilters, header, remove
 		},
 	} );
 
-	const handleImportExportPanel = ( panel ) => {
-		if ( panel ) {
-			setActivePanel( panel );
-			hideTable( true );
-		}
+	const handlePanel = ( panel ) => {
 		if ( panel === undefined ) {
 			setActivePanel( panel );
 			hideTable( false );
+		}
+		if ( panel === 'delete' ) {
+			setActivePanel( panel );
+		}
+		if ( panel === 'danger' ) {
+			handleDelete.mutate();
+		}
+		if ( panel !== 'delete' || panel !== 'danger' ) {
+			setActivePanel( panel );
+			hideTable( true );
 		}
 	};
 
@@ -41,11 +48,12 @@ export default function ModuleViewHeaderBottom( { currentFilters, header, remove
 		<>
 			<div className="urlslab-moduleView-headerBottom flex">
 
-				<Button onClick={ () => handleDelete.mutate() }>{ __( 'Delete All' ) }</Button>
+				{ /* <Button onClick={ () => handleDelete.mutate() }>{ __( 'Delete All' ) }</Button> */ }
+				<Button onClick={ () => handlePanel( 'delete' ) }>{ __( 'Delete All' ) }</Button>
 
-				<Button className="ml-s-tablet" onClick={ () => handleImportExportPanel( 'export' ) }><ExportIcon />{ __( 'Export CSV' ) }</Button>
+				<Button className="ml-s-tablet" onClick={ () => handlePanel( 'export' ) }><ExportIcon />{ __( 'Export CSV' ) }</Button>
 
-				<Button className="ml-s-tablet" onClick={ () => handleImportExportPanel( 'import' ) }><ImportIcon />{ __( 'Import CSV' ) }</Button>
+				<Button className="ml-s-tablet" onClick={ () => handlePanel( 'import' ) }><ImportIcon />{ __( 'Import CSV' ) }</Button>
 
 				{
 					( activeFilters?.length > 0 && header ) &&
@@ -60,16 +68,24 @@ export default function ModuleViewHeaderBottom( { currentFilters, header, remove
 					children
 				}
 			</div>
+			{
+				activePanel === 'delete' &&
+				<DangerPanel title={ __( 'Delete All?' ) }
+					text={ __( 'Are you sure you want to delete all rows? Deleting rows will remove them from all modules where this table occurs.' ) }
+					button={ __( 'Delete All' ) }
+					handleDanger={ ( val ) => handlePanel( val ) }
+				/>
+			}
 
 			{ activePanel === 'export' &&
 			<ExportPanel options={ exportOptions }
 				currentFilters={ currentFilters }
 				header={ header }
-				backToTable={ () => handleImportExportPanel() }
+				backToTable={ () => handlePanel() }
 			/>
 			}
 			{ activePanel === 'import' &&
-				<ImportPanel slug={ slug } backToTable={ () => handleImportExportPanel() } />
+				<ImportPanel slug={ slug } backToTable={ () => handlePanel() } />
 			}
 		</>
 	);

@@ -59,6 +59,14 @@
 	}
 }
 
+///Absolutely centers blocks or elements to center of page
+
+@mixin absoluteCenter() {
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
 ///Complete left to right, top to bottom
 ///stretching of absolutely positioned element
 
