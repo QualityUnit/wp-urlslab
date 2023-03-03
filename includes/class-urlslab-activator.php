@@ -57,6 +57,7 @@ class Urlslab_Activator {
 		self::init_keywords_map_table();
 		self::init_css_cache_tables();
 		self::init_content_cache_tables();
+		self::init_search_replace_tables();
 	}
 
 	private static function upgrade_steps() {
@@ -125,6 +126,10 @@ class Urlslab_Activator {
 
 		if ( version_compare( $version, '1.45.0', '<' ) ) {
 			self::init_content_cache_tables();
+		}
+
+		if ( version_compare( $version, '1.49.0', '<' ) ) {
+			self::init_search_replace_tables();
 		}
 
 		//all update steps done, set the current version
@@ -367,6 +372,24 @@ class Urlslab_Activator {
 			  PRIMARY KEY (cache_crc32, cache_len),
 			  INDEX idx_changed (date_changed)
 		) $charset_collate;";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_search_replace_tables() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$table_name = URLSLAB_SEARCH_AND_REPLACE_TABLE;
+		$sql        = "CREATE TABLE IF NOT EXISTS $table_name (
+    		  id int NOT NULL AUTO_INCREMENT,
+    		  str_search TEXT,
+    		  str_replace TEXT,
+    		  search_type CHAR(1) NOT NULL DEFAULT 'T',
+    		  url_filter VARCHAR(255) NOT NULL DEFAULT '.*',
+			  PRIMARY KEY (id)
+        ) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
