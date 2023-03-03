@@ -99,7 +99,11 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		foreach ( $request->get_json_params()['rows'] as $row ) {
 			$arr_row = (array) $row;
 
+			if ( ! isset( $arr_row['destUrlName'] ) && ! isset( $arr_row['srcUrlName'] ) || empty( $arr_row['destUrlName'] ) || empty( $arr_row['srcUrlName'] ) ) {
+				continue;
+			}
 			try {
+
 				$src_url_obj                              = new Urlslab_Url( $arr_row['srcUrlName'] );
 				$dest_url_obj                             = new Urlslab_Url( $arr_row['destUrlName'] );
 				$schedule_urls[ $arr_row['srcUrlName'] ]  = $src_url_obj;
