@@ -99,19 +99,22 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		foreach ( $request->get_json_params()['rows'] as $row ) {
 			$arr_row = (array) $row;
 
-			$src_url_obj                              = new Urlslab_Url( $arr_row['srcUrlName'] );
-			$dest_url_obj                             = new Urlslab_Url( $arr_row['destUrlName'] );
-			$schedule_urls[ $arr_row['srcUrlName'] ]  = $src_url_obj;
-			$schedule_urls[ $arr_row['destUrlName'] ] = $dest_url_obj;
+			try {
+				$src_url_obj                              = new Urlslab_Url( $arr_row['srcUrlName'] );
+				$dest_url_obj                             = new Urlslab_Url( $arr_row['destUrlName'] );
+				$schedule_urls[ $arr_row['srcUrlName'] ]  = $src_url_obj;
+				$schedule_urls[ $arr_row['destUrlName'] ] = $dest_url_obj;
 
-			$obj    = $this->get_row_object(
-				array(
-					'srcUrlMd5'  => $src_url_obj->get_url_id(),
-					'destUrlMd5' => $dest_url_obj->get_url_id(),
-					'pos'        => $arr_row['pos'],
-				)
-			);
-			$rows[] = $obj;
+				$obj    = $this->get_row_object(
+					array(
+						'srcUrlMd5'  => $src_url_obj->get_url_id(),
+						'destUrlMd5' => $dest_url_obj->get_url_id(),
+						'pos'        => $arr_row['pos'],
+					)
+				);
+				$rows[] = $obj;
+			} catch ( Exception $e ) {
+			}
 		}
 
 		$url_fetcher = new Urlslab_Url_Data_Fetcher();

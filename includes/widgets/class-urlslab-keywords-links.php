@@ -472,7 +472,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			if ( $this->get_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS ) || $this->get_option( self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS ) ) {
 				$schedule_urls = array();
 				$new_keywords  = array();
-				$lang = $this->get_language();
+				$lang          = $this->get_language();
 				foreach ( $missing_keywords as $missing_kw => $urls ) {
 					if ( strlen( $missing_kw ) < $this->get_option( self::SETTING_NAME_KW_IMPORT_MAX_LENGTH ) ) {
 						foreach ( $urls as $urlId => $arrU ) {
@@ -536,37 +536,43 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$link_data = $xpath->query( "//a[contains(@href, '?page_id=') and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-page_id')])]" );
 
 		foreach ( $link_data as $link_element ) {
-			$url = new Urlslab_Url( $link_element->getAttribute( 'href' ) );
-			if ( preg_match( '/page_id=([0-9]*)/i', $url->get_url_query(), $mathes ) ) {
-				if ( isset( $mathes[1] ) && is_numeric( $mathes[1] ) ) {
-					$post_permalink = get_the_permalink( $mathes[1] );
-					if ( $post_permalink ) {
-						$link_element->setAttribute( 'href', $post_permalink );
-						if ( $link_element->hasAttribute( 'target' ) && '_blank' == $link_element->getAttribute( 'target' ) ) {
-							$permalink_url = new Urlslab_Url( $post_permalink );
-							if ( $permalink_url->is_same_domain_url() ) {
-								$link_element->removeAttribute( 'target' );
+			try {
+				$url = new Urlslab_Url( $link_element->getAttribute( 'href' ) );
+				if ( preg_match( '/page_id=([0-9]*)/i', $url->get_url_query(), $mathes ) ) {
+					if ( isset( $mathes[1] ) && is_numeric( $mathes[1] ) ) {
+						$post_permalink = get_the_permalink( $mathes[1] );
+						if ( $post_permalink ) {
+							$link_element->setAttribute( 'href', $post_permalink );
+							if ( $link_element->hasAttribute( 'target' ) && '_blank' == $link_element->getAttribute( 'target' ) ) {
+								try {
+									$permalink_url = new Urlslab_Url( $post_permalink );
+									if ( $permalink_url->is_same_domain_url() ) {
+										$link_element->removeAttribute( 'target' );
+									}
+								} catch ( Exception $e ) {
+								}
 							}
-						}
-					} else if ( $this->get_option( self::SETTING_NAME_DELETE_LINK_IF_PAGE_ID_NOT_FOUND ) ) {
-						//link should not be visible, remove it from content
-						if ( $link_element->childNodes->length > 0 ) {
-							$fragment = $document->createDocumentFragment();
+						} else if ( $this->get_option( self::SETTING_NAME_DELETE_LINK_IF_PAGE_ID_NOT_FOUND ) ) {
+							//link should not be visible, remove it from content
 							if ( $link_element->childNodes->length > 0 ) {
-								$fragment->appendChild( $link_element->childNodes->item( 0 ) );
-							}
-							$link_element->parentNode->replaceChild( $fragment, $link_element );
-						} else {
-							if ( property_exists( $link_element, 'domValue' ) ) {
-								$txt_value = $link_element->domValue;
+								$fragment = $document->createDocumentFragment();
+								if ( $link_element->childNodes->length > 0 ) {
+									$fragment->appendChild( $link_element->childNodes->item( 0 ) );
+								}
+								$link_element->parentNode->replaceChild( $fragment, $link_element );
 							} else {
-								$txt_value = '';
+								if ( property_exists( $link_element, 'domValue' ) ) {
+									$txt_value = $link_element->domValue;
+								} else {
+									$txt_value = '';
+								}
+								$txt_element = $document->createTextNode( $txt_value );
+								$link_element->parentNode->replaceChild( $txt_element, $link_element );
 							}
-							$txt_element = $document->createTextNode( $txt_value );
-							$link_element->parentNode->replaceChild( $txt_element, $link_element );
 						}
 					}
 				}
+			} catch ( Exception $e ) {
 			}
 		}
 	}

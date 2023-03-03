@@ -81,8 +81,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 			case 'urlMetaDescription':
 				if ( Urlslab_Url_Row::VALUE_EMPTY == parent::get( $name ) ) {
 					return '';
-				}
-				//continue to next option
+				} //continue to next option
 			default:
 		}
 
@@ -96,19 +95,16 @@ class Urlslab_Url_Row extends Urlslab_Data {
 			case Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY:
 				if ( ! empty( trim( $this->get( 'urlSummary' ) ) ) ) {
 					return trim( $this->get( 'urlSummary' ) );
-				}
-				//continue to next option
-			case Urlslab_Link_Enhancer::DESC_TEXT_META_DESCRIPTION:  //next option
+				} //continue to next option
+			case Urlslab_Link_Enhancer::DESC_TEXT_META_DESCRIPTION:
 				if ( ! empty( trim( $this->get( 'urlMetaDescription' ) ) ) ) {
 					return trim( $this->get( 'urlMetaDescription' ) );
-				}
-				//continue to next option
-			case Urlslab_Link_Enhancer::DESC_TEXT_TITLE: //next option
+				} //continue to next option
+			case Urlslab_Link_Enhancer::DESC_TEXT_TITLE:
 				if ( ! empty( trim( $this->get( 'urlTitle' ) ) ) ) {
 					return trim( $this->get( 'urlTitle' ) );
-				}
-				//continue to next option
-			case Urlslab_Link_Enhancer::DESC_TEXT_URL: //default
+				} //continue to next option
+			case Urlslab_Link_Enhancer::DESC_TEXT_URL:
 			default:
 		}
 

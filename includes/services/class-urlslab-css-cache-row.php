@@ -16,8 +16,12 @@ class Urlslab_CSS_Cache_Row extends Urlslab_Data {
 		if ( isset( $url['url_id'] ) ) {
 			$url_id = $url['url_id'];
 		} else {
-			$url_obj = new Urlslab_Url( $this->get( 'url' ) );
-			$url_id  = $url_obj->get_url_id();
+			try {
+				$url_obj = new Urlslab_Url( $this->get( 'url' ) );
+				$url_id  = $url_obj->get_url_id();
+			} catch ( Exception $e ) {
+				$url_id = 'invalid_url';
+			}
 		}
 		$this->set( 'url_id', $url_id, ! $loaded_from_db );
 		$this->set( 'status', $url['status'] ?? self::STATUS_NEW, ! $loaded_from_db );
