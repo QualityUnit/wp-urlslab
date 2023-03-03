@@ -181,6 +181,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-youtube-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-api-key.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-data-fetcher.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-search-replace-row.php';
 
 
 		//additional
@@ -201,6 +202,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-image-alt-text.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-meta-tag.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-css-optimizer.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-search-replace.php';
 
 
 		//menu pages
@@ -313,6 +315,8 @@ class Urlslab {
 			return $content;    //nothing to process
 		}
 
+		$content = apply_filters( 'urlslab_head_content_raw', $content );
+
 		$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
 		$document->encoding            = get_bloginfo( 'charset' );
 		$document->strictErrorChecking = false; // phpcs:ignore
@@ -343,29 +347,34 @@ class Urlslab {
 	}
 
 	public function urlslab_content( $content ) {
-		if ( empty( $content ) || http_response_code() !== 200 || ! has_action( 'urlslab_content' ) ) {
+		if ( empty( $content ) || http_response_code() !== 200 ) {
 			return $content;    //nothing to process
 		}
 
-		$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
-		$document->encoding            = get_bloginfo( 'charset' );
-		$document->strictErrorChecking = false; // phpcs:ignore
-		$libxml_previous_state         = libxml_use_internal_errors( true );
+		$content = apply_filters( 'urlslab_content_raw', $content );
 
-		try {
-			$document->loadHTML(
-				mb_convert_encoding( $content, 'HTML-ENTITIES', get_bloginfo( 'charset' ) ),
-				LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE
-			);
-			libxml_clear_errors();
-			libxml_use_internal_errors( $libxml_previous_state );
+		if ( has_action( 'urlslab_content' ) ) {
+			$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
+			$document->encoding            = get_bloginfo( 'charset' );
+			$document->strictErrorChecking = false; // phpcs:ignore
+			$libxml_previous_state         = libxml_use_internal_errors( true );
 
-			do_action( 'urlslab_content', $document );
+			try {
+				$document->loadHTML(
+					mb_convert_encoding( $content, 'HTML-ENTITIES', get_bloginfo( 'charset' ) ),
+					LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE
+				);
+				libxml_clear_errors();
+				libxml_use_internal_errors( $libxml_previous_state );
 
-			return $document->saveHTML();
-		} catch ( Exception $e ) {
-			return $content;
+				do_action( 'urlslab_content', $document );
+
+				return $document->saveHTML();
+			} catch ( Exception $e ) {
+			}
 		}
+
+		return $content;
 	}
 
 	private function init_activated_widgets() {
