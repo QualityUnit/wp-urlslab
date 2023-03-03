@@ -77,7 +77,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return __( 'Keywords Links' );
+		return __( 'Linkbuilding' );
 	}
 
 	/**
