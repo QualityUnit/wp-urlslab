@@ -14,8 +14,7 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 	const DEFAULT_CSS_CACHE_TTL = 604800;
 
 
-	public function __construct() {
-	}
+	public function __construct() {}
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_content', $this, 'theContentHook', 100 );
@@ -51,9 +50,12 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 			$links     = array();
 			foreach ( $css_links as $link_object ) {
 				if ( ! isset( $links[ $link_object->getAttribute( 'href' ) ] ) ) {
-					$url = new Urlslab_Url( $link_object->getAttribute( 'href' ) );
-					if ( $url->is_same_domain_url() ) {
-						$links[ $link_object->getAttribute( 'href' ) ] = $url->get_url_id();
+					try {
+						$url = new Urlslab_Url( $link_object->getAttribute( 'href' ) );
+						if ( $url->is_same_domain_url() ) {
+							$links[ $link_object->getAttribute( 'href' ) ] = $url->get_url_id();
+						}
+					} catch ( Exception $e ) {
 					}
 				}
 			}

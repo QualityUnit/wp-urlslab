@@ -123,8 +123,11 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row_url               = new Urlslab_Url( $row->urlLink ); // phpcs:ignore
-			$row->destUrlMd5       = $row_url->get_url_id(); // phpcs:ignore
+			try {
+				$row_url         = new Urlslab_Url( $row->urlLink ); // phpcs:ignore
+				$row->destUrlMd5 = $row_url->get_url_id(); // phpcs:ignore
+			} catch ( Exception $e ) {
+			}
 			$row->kw_id            = (int) $row->kw_id;
 			$row->kw_length        = (int) $row->kw_length;
 			$row->kw_priority      = (int) $row->kw_priority;
@@ -189,9 +192,12 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		$rows          = array();
 
 		foreach ( $request->get_json_params()['rows'] as $row ) {
-			$obj                                     = $this->get_row_object( (array) $row );
-			$rows[]                                  = $obj;
-			$schedule_urls[ $obj->get( 'urlLink' ) ] = new Urlslab_Url( $obj->get( 'urlLink' ) );
+			$obj = $this->get_row_object( (array) $row );
+			try {
+				$schedule_urls[ $obj->get( 'urlLink' ) ] = new Urlslab_Url( $obj->get( 'urlLink' ) );
+				$rows[]                                  = $obj;
+			} catch ( Exception $e ) {
+			}
 		}
 
 		$url_fetcher = new Urlslab_Url_Data_Fetcher();
