@@ -1,23 +1,16 @@
 import { useMemo } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { useQuery } from '@tanstack/react-query';
-import { fetchWPML } from '../api/fetchLangs';
+import { useQueryClient } from '@tanstack/react-query';
 
 import SortMenu from '../elements/SortMenu';
 
 export default function LangMenu( { onChange, checkedId } ) {
-	const { data, status } = useQuery( {
-		queryKey: [ 'languages' ],
-		queryFn: () => fetchWPML(),
-	} );
+	const queryClient = useQueryClient();
+	const data = queryClient.getQueryData( [ 'languages' ] );
 
 	const langs = useMemo( () => {
 		return data;
 	}, [ data ] );
-
-	if ( status === 'loading' ) {
-		return '';
-	}
 
 	const handleSelected = ( lang ) => {
 		if ( onChange ) {

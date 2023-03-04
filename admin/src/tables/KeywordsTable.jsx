@@ -10,6 +10,8 @@ export default function KeywordsTable( { slug } ) {
 	const { sortingColumn, sortBy } = useSorting();
 	const [ tableHidden, setHiddenTable ] = useState( false );
 	const { deleteRow } = useChangeRow();
+	const url = `${ filters }${ sortingColumn }`;
+	const pageId = 'kw_id';
 
 	const {
 		data,
@@ -18,7 +20,7 @@ export default function KeywordsTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: 'keyword', url: `${ filters }${ sortingColumn }`, pageId: 'kw_id' } );
+	} = useInfiniteFetch( { key: slug, url, pageId } );
 
 	const keywordTypes = {
 		M: __( 'Manual' ),
@@ -42,7 +44,7 @@ export default function KeywordsTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
-			cell: ( cell ) => <Button danger onClick={ () => deleteRow( slug, cell, 'kw_id' ) }><Trash /></Button>,
+			cell: ( cell ) => <Button danger onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId } ) }><Trash /></Button>,
 			header: () => __( '' ),
 			enableResizing: false,
 			maxSize: 0,

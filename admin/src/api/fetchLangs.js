@@ -1,9 +1,9 @@
 import { langName } from '../constants/helpers';
 const langPairs = { all: 'All' };
 
-export async function fetchWPML( ) {
+export async function fetchLangs( ) {
 	try {
-		const response = await fetch( '/wp-json/wpml/tm/v1', {
+		const response = await fetch( '/wp-json/urlslab/v1', {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -14,7 +14,7 @@ export async function fetchWPML( ) {
 		} );
 
 		const data = await response.json();
-		const langs = data.routes[ '/wpml/tm/v1' ].endpoints[ 0 ].args.wpml_language.enum;
+		const langs = data?.routes[ '/urlslab/v1' ].endpoints[ 0 ].args.wpml_language.enum;
 		langs.forEach( ( lang ) => {
 			langPairs[ lang ] = langName( lang );
 		} );
