@@ -15,7 +15,7 @@ export function useChangeRow() {
 			del( `${ slug }/${ getRowId( cell, rowSelector ) }` );
 			return options;
 		},
-		onSuccess: ( { data, url, slug, cell, rowSelector } ) => {
+		onMutate: ( { data, url, slug, cell, rowSelector } ) => {
 			const newPagesArray = data?.pages.map( ( page ) =>
 
 				page.filter( ( val ) =>
@@ -27,6 +27,8 @@ export function useChangeRow() {
 				pages: newPagesArray,
 				pageParams: origData.pageParams,
 			} ) );
+		},
+		onSuccess: ( { url, slug } ) => {
 			queryClient.invalidateQueries( [ slug, url ] );
 		},
 	} );
