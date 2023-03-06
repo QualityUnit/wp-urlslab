@@ -10,12 +10,7 @@ export function useChangeRow() {
 
 	const deleteSelectedRow = useMutation( {
 		mutationFn: async ( options ) => {
-			const { slug, cell, rowSelector } = options;
-
-			del( `${ slug }/${ getRowId( cell, rowSelector ) }` );
-			return options;
-		},
-		onMutate: ( { data, url, slug, cell, rowSelector } ) => {
+			const { data, url, slug, cell, rowSelector } = options;
 			const newPagesArray = data?.pages.map( ( page ) =>
 
 				page.filter( ( val ) =>
@@ -27,8 +22,10 @@ export function useChangeRow() {
 				pages: newPagesArray,
 				pageParams: origData.pageParams,
 			} ) );
+			del( `${ slug }/${ getRowId( cell, rowSelector ) }` );
+			return options;
 		},
-		onSuccess: ( { url, slug } ) => {
+		onSettled: ( { url, slug } ) => {
 			queryClient.invalidateQueries( [ slug, url ] );
 		},
 	} );
