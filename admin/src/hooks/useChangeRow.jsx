@@ -10,18 +10,27 @@ export function useChangeRow() {
 
 	const deleteSelectedRow = useMutation( {
 		mutationFn: async ( options ) => {
-			const { slug, cell, rowSelector } = options;
+			const { data, url, slug, cell, rowSelector } = options;
+			const newPagesArray = data?.pages.map( ( page ) =>
+
+				page.filter( ( val ) =>
+					val[ rowSelector ] !== getRowId( cell, rowSelector )
+				),
+			) ?? [];
+
+			queryClient.setQueryData( [ slug, url ], ( origData ) => ( {
+				pages: newPagesArray,
+				pageParams: origData.pageParams,
+			} ) );
 			del( `${ slug }/${ getRowId( cell, rowSelector ) }` );
-			return slug;
+			return options;
 		},
-		onSuccess: ( slug ) => {
-			console.log( slug );
-			// console.log( queryClient.getQueryData( [ slug ] ) );
-			queryClient.invalidateQueries( [ slug ] );
+		onSettled: ( { url, slug } ) => {
+			queryClient.invalidateQueries( [ slug, url ] );
 		},
 	} );
-	const deleteRow = ( slug, cell, rowSelector ) => {
-		deleteSelectedRow.mutate( { slug, cell, rowSelector } );
+	const deleteRow = ( { data, url, slug, cell, rowSelector } ) => {
+		deleteSelectedRow.mutate( { data, url, slug, cell, rowSelector } );
 	};
 
 	return { deleteRow };
