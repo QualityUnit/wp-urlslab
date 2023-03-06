@@ -1,19 +1,19 @@
 
 import {
-	useState, useI18n, createColumnHelper, useInfiniteFetch, useFilter, useSorting, useChangeRow, handleSelected, RangeSlider, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Button, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, RangeSlider, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Button, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
+import useTableUpdater from '../hooks/useTableUpdater';
+
 export default function KeywordsTable( { slug } ) {
-	const { __ } = useI18n();
-	const columnHelper = createColumnHelper();
-	const [ tableHidden, setHiddenTable ] = useState( false );
-	const { filters, currentFilters, addFilter, removeFilter } = useFilter();
-	const { sortingColumn, sortBy } = useSorting();
-	const { deleteRow, updateRow } = useChangeRow();
+	const { tableHidden, setHiddenTable, filters, currentFilters, addFilter, removeFilter, sortingColumn, sortBy, deleteRow, updateRow } = useTableUpdater();
+
 	const url = `${ filters }${ sortingColumn }`;
 	const pageId = 'kw_id';
 
 	const {
+		__,
+		columnHelper,
 		data,
 		status,
 		isSuccess,
@@ -132,10 +132,10 @@ export default function KeywordsTable( { slug } ) {
 			{ tableHidden
 				? null
 				: <Table className="fadeInto"
-					resizable
-					slug={ slug }
-					columns={ columns }
-					data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
+						resizable
+						slug={ slug }
+						columns={ columns }
+						data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 					<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
 				</Table>
 			}

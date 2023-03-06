@@ -1,15 +1,15 @@
 import {
-	useState, useI18n, createColumnHelper, useInfiniteFetch, useFilter, useSorting, handleInput, handleSelected, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleInput, handleSelected, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
+import useTableUpdater from '../hooks/useTableUpdater';
+
 export default function LinkManagerTable( { slug } ) {
-	const { __ } = useI18n();
-	const [ tableHidden, setHiddenTable ] = useState( false );
-	const columnHelper = createColumnHelper();
-	const { filters, currentFilters, addFilter, removeFilter } = useFilter();
-	const { sortingColumn, sortBy } = useSorting();
+	const { tableHidden, setHiddenTable, filters, currentFilters, addFilter, removeFilter, sortingColumn, sortBy, deleteRow, updateRow } = useTableUpdater();
 
 	const {
+		__,
+		columnHelper,
 		data,
 		status,
 		isSuccess,
@@ -138,8 +138,8 @@ export default function LinkManagerTable( { slug } ) {
 			{ tableHidden
 				? null
 				: <Table className="fadeInto" columns={ columns }
-						resizable
-						data={
+					resizable
+					data={
 						isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 					}
 				>

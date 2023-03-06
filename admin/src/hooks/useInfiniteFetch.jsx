@@ -1,10 +1,14 @@
 import { useEffect } from 'react';
+import { useI18n } from '@wordpress/react-i18n';
+import { createColumnHelper } from '@tanstack/react-table';
 import { useInView } from 'react-intersection-observer';
 
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchData } from '../api/fetching';
 
 export default function useInfiniteFetch( options, maxRows = 50 ) {
+	const columnHelper = createColumnHelper();
+	const { __ } = useI18n();
 	const { ref, inView } = useInView();
 	const { key, url, pageId } = options;
 	const query = useInfiniteQuery( {
@@ -39,7 +43,10 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		}
 	}, [ inView, fetchNextPage ] );
 
-	return { data,
+	return {
+		__,
+		columnHelper,
+		data,
 		status,
 		isSuccess,
 		isFetchingNextPage,

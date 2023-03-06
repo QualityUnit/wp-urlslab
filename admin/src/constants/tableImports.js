@@ -1,10 +1,4 @@
-export { useState } from 'react';
-export { useI18n } from '@wordpress/react-i18n';
-export { createColumnHelper } from '@tanstack/react-table';
-
 export { default as useInfiniteFetch } from '../hooks/useInfiniteFetch';
-export { useFilter, useSorting } from '../hooks/filteringSorting';
-export { useChangeRow } from '../hooks/useChangeRow';
 export { handleInput, handleSelected } from '../constants/tableFunctions';
 
 export { default as RangeSlider } from '../elements/RangeSlider';

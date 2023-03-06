@@ -1,19 +1,18 @@
 
 import {
-	useState, useI18n, createColumnHelper, useInfiniteFetch, useFilter, useSorting, useChangeRow, handleInput, handleSelected, SortMenu, InputField, Checkbox, MenuInput, Button, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleInput, handleSelected, SortMenu, InputField, Checkbox, MenuInput, Button, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
+import useTableUpdater from '../hooks/useTableUpdater';
+
 export default function SearchReplaceTable( { slug } ) {
-	const { __ } = useI18n();
-	const columnHelper = createColumnHelper();
-	const { filters, currentFilters, addFilter, removeFilter } = useFilter();
-	const { sortingColumn, sortBy } = useSorting();
-	const [ tableHidden, setHiddenTable ] = useState( false );
-	const { deleteRow } = useChangeRow();
+	const { tableHidden, setHiddenTable, filters, currentFilters, addFilter, removeFilter, sortingColumn, sortBy, deleteRow, updateRow } = useTableUpdater();
 	const url = `${ filters }${ sortingColumn }`;
 	const pageId = 'id';
 
 	const {
+		__,
+		columnHelper,
 		data,
 		status,
 		isSuccess,
@@ -103,9 +102,9 @@ export default function SearchReplaceTable( { slug } ) {
 				? null
 				: <Table className="fadeInto"
 					// resizable
-						slug={ slug }
-						columns={ columns }
-						data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
+					slug={ slug }
+					columns={ columns }
+					data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 					<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
 				</Table>
 			}

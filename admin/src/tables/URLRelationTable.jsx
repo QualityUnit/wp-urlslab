@@ -1,15 +1,15 @@
 import {
-	useState, useI18n, createColumnHelper, useInfiniteFetch, useFilter, useSorting, handleInput, handleSelected, RangeSlider, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleInput, handleSelected, RangeSlider, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
+import useTableUpdater from '../hooks/useTableUpdater';
+
 export default function URLRelationTable( { slug } ) {
-	const { __ } = useI18n();
-	const columnHelper = createColumnHelper();
-	const { filters, currentFilters, addFilter, removeFilter } = useFilter();
-	const { sortingColumn, sortBy } = useSorting();
-	const [ tableHidden, setHiddenTable ] = useState( false );
+	const { tableHidden, setHiddenTable, filters, currentFilters, addFilter, removeFilter, sortingColumn, sortBy, deleteRow, updateRow } = useTableUpdater();
 
 	const {
+		__,
+		columnHelper,
 		data,
 		status,
 		isSuccess,
@@ -72,7 +72,7 @@ export default function URLRelationTable( { slug } ) {
 			{ tableHidden
 				? null
 				: <Table className="fadeInto" columns={ columns }
-					data={
+						data={
 						isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 					}
 				>
