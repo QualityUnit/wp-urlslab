@@ -1,14 +1,15 @@
 import {
-	useState, useI18n, createColumnHelper, useInfiniteFetch, useFilter, useSorting, handleInput, handleSelected, RangeSlider, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleInput, handleSelected, RangeSlider, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
+import useTableUpdater from '../hooks/useTableUpdater';
+
 export default function YouTubeCacheTable() {
-	const { __ } = useI18n();
-	const columnHelper = createColumnHelper();
-	const { filters, currentFilters, addFilter, removeFilter } = useFilter();
-	const { sortingColumn, sortBy } = useSorting();
+	const { tableHidden, setHiddenTable, filters, currentFilters, addFilter, removeFilter, sortingColumn, sortBy, deleteRow, updateRow } = useTableUpdater();
 
 	const {
+		__,
+		columnHelper,
 		data,
 		status,
 		isSuccess,

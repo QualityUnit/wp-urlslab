@@ -49,15 +49,21 @@
 	}
 
 	@media (min-width: $breakpoint-desktop-box) {
+		$padding: 11.25em;
 
 		&.urlslab-panel {
-			padding: 0 11.25em;
+			padding: 0;
 		}
 
 		&-apiKey {
-			padding: 3.125em 11.25em;
-			margin-left: -11.25em;
-			margin-right: -11.25em;
+			margin: 0;
+			padding: 3.125em $padding;
+		}
+
+		&-content {
+			margin-left: 0.25em;
+			margin-right: 0.25em;
+			padding: 0 $padding;
 		}
 
 		.apiIcon {

@@ -6,10 +6,10 @@ import { ReactComponent as ModulesIcon } from '../assets/images/menu-icon-module
 import { ReactComponent as SettingsIcon } from '../assets/images/menu-icon-settings.svg';
 import '../assets/styles/components/_MainMenu.scss';
 
-export default function MainMenu( { activeModule, modules, activePage } ) {
+export default function MainMenu( { activeModule, modules, activePage, module } ) {
 	const { __ } = useI18n();
 	const mainmenu = useRef();
-	const [ activeId, setActive ] = useState( 'urlslab-modules' );
+	const [ activeId, setActive ] = useState( module || 'urlslab-modules' );
 
 	const activeModules = modules?.length ? modules.filter( ( module ) => module.active ) : [];
 
