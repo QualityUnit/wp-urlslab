@@ -100,6 +100,21 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		return new WP_REST_Response( __( 'Truncated' ), 200 );
 	}
 
+	public function import_items( WP_REST_Request $request ) {
+		$rows          = array();
+
+		foreach ( $request->get_json_params()['rows'] as $row ) {
+			$rows[] = $this->get_row_object( (array) $row );
+		}
+
+		$result = $this->get_row_object()->import( $rows );
+
+		if ( false === $result ) {
+			return new WP_REST_Response( 'Import failed', 500 );
+		}
+
+		return new WP_REST_Response( $result, 200 );
+	}
 
 	protected function add_filter_table_fields( Urlslab_Api_Table_Sql $sql, $table_prefix = false ) {
 		$rob_obj = $this->get_row_object();
