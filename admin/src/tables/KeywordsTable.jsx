@@ -1,15 +1,15 @@
 
 import {
-	useState, useI18n, createColumnHelper, useInfiniteFetch, useFilter, useSorting, useChangeRow, handleInput, handleSelected, RangeSlider, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Button, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useState, useI18n, createColumnHelper, useInfiniteFetch, useFilter, useSorting, useChangeRow, handleSelected, RangeSlider, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Button, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 export default function KeywordsTable( { slug } ) {
 	const { __ } = useI18n();
 	const columnHelper = createColumnHelper();
+	const [ tableHidden, setHiddenTable ] = useState( false );
 	const { filters, currentFilters, addFilter, removeFilter } = useFilter();
 	const { sortingColumn, sortBy } = useSorting();
-	const [ tableHidden, setHiddenTable ] = useState( false );
-	const { deleteRow } = useChangeRow();
+	const { deleteRow, updateRow } = useChangeRow();
 	const url = `${ filters }${ sortingColumn }`;
 	const pageId = 'kw_id';
 
@@ -65,7 +65,7 @@ export default function KeywordsTable( { slug } ) {
 			minSize: 150,
 		} ),
 		columnHelper.accessor( 'kwType', {
-			cell: ( cell ) => <SortMenu items={ keywordTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( val ) => handleInput( val, cell ) } />,
+			cell: ( cell ) => <SortMenu items={ keywordTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
 			header: ( cell ) => <SortMenu items={ keywordTypes } name={ cell.column.id } checkedId={ header.kwType } onChange={ ( val ) => addFilter( 'kwType', val ) } />,
 		} ),
 		columnHelper.accessor( 'kw_length', {
@@ -73,14 +73,18 @@ export default function KeywordsTable( { slug } ) {
 			size: 70,
 		} ),
 		columnHelper.accessor( 'kw_priority', {
-			header: () => <RangeSlider min="0" max="300" onChange={ ( r ) => console.log( r ) }>{ header.kw_priority }</RangeSlider>,
+			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() }
+				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
+			header: () => <RangeSlider min="0" max="255" onChange={ ( r ) => console.log( r ) }>{ header.kw_priority }</RangeSlider>,
 		} ),
 		columnHelper.accessor( 'kw_usage_count', {
 			header: () => header.kw_usage_count,
 			size: 70,
 		} ),
 		columnHelper.accessor( 'lang', {
-			cell: ( val ) => <LangMenu checkedId={ val?.getValue() } onChange={ ( lang ) => console.log( lang ) } />,
+			cell: ( cell ) => <LangMenu checkedId={ cell?.getValue() }
+				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) }
+			/>,
 			header: () => <LangMenu checkedId={ 'all' } onChange={ ( val ) => addFilter( 'lang', val ) } />,
 			size: 165,
 		} ),
@@ -88,7 +92,8 @@ export default function KeywordsTable( { slug } ) {
 			header: () => header.link_usage_count,
 		} ),
 		columnHelper.accessor( 'urlFilter', {
-			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( val ) => handleInput( val, cell ) } />,
+			cell: ( cell ) => <InputField defaultValue={ cell.renderValue() }
+				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
 			header: () => header.urlFilter,
 		} ),
 		columnHelper.accessor( 'urlLink', {
@@ -127,10 +132,10 @@ export default function KeywordsTable( { slug } ) {
 			{ tableHidden
 				? null
 				: <Table className="fadeInto"
-						resizable
-						slug={ slug }
-						columns={ columns }
-						data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
+					resizable
+					slug={ slug }
+					columns={ columns }
+					data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 					<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
 				</Table>
 			}

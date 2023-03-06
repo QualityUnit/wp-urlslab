@@ -1,5 +1,6 @@
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { deleteRow as del } from '../api/deleteTableData';
+import { setData } from '../api/fetching';
 
 export function useChangeRow() {
 	const queryClient = useQueryClient();
@@ -13,8 +14,8 @@ export function useChangeRow() {
 			const { data, url, slug, cell, rowSelector } = options;
 			const newPagesArray = data?.pages.map( ( page ) =>
 
-				page.filter( ( val ) =>
-					val[ rowSelector ] !== getRowId( cell, rowSelector )
+				page.filter( ( row ) =>
+					row[ rowSelector ] !== getRowId( cell, rowSelector )
 				),
 			) ?? [];
 
@@ -22,16 +23,56 @@ export function useChangeRow() {
 				pages: newPagesArray,
 				pageParams: origData.pageParams,
 			} ) );
-			del( `${ slug }/${ getRowId( cell, rowSelector ) }` );
-			return options;
+			const response = await del( `${ slug }/${ getRowId( cell, rowSelector ) }` );
+			return { response, options };
 		},
-		onSettled: ( { url, slug } ) => {
-			queryClient.invalidateQueries( [ slug, url ] );
+		onSuccess: ( { response, options } ) => {
+			const { ok } = response;
+			const { slug, url } = options;
+			if ( ok ) {
+				queryClient.invalidateQueries( [ slug, url ] );
+			}
 		},
 	} );
 	const deleteRow = ( { data, url, slug, cell, rowSelector } ) => {
 		deleteSelectedRow.mutate( { data, url, slug, cell, rowSelector } );
 	};
 
-	return { deleteRow };
+	const updateRowData = useMutation( {
+		mutationFn: async ( options ) => {
+			const { data, newVal, url, slug, cell, rowSelector } = options;
+			const cellId = cell.column.id;
+
+			const newPagesArray = data?.pages.map( ( page ) =>
+
+				page.map( ( row ) => {
+					if ( row[ rowSelector ] === getRowId( cell, rowSelector ) ) {
+						row[ cell.column.id ] = newVal;
+						return row;
+					}
+					return row;
+				}
+				),
+			) ?? [];
+
+			queryClient.setQueryData( [ slug, url ], ( origData ) => ( {
+				pages: newPagesArray,
+				pageParams: origData.pageParams,
+			} ) );
+			const response = await setData( `${ slug }/${ getRowId( cell, rowSelector ) }`, { [ cellId ]: newVal } );
+			return { response, options };
+		},
+		onSuccess: ( { response, options } ) => {
+			const { ok } = response;
+			const { slug, url } = options;
+			if ( ok ) {
+				queryClient.invalidateQueries( [ slug, url ] );
+			}
+		},
+	} );
+	const updateRow = ( { data, newVal, url, slug, cell, rowSelector } ) => {
+		updateRowData.mutate( { data, newVal, url, slug, cell, rowSelector } );
+	};
+
+	return { deleteRow, updateRow };
 }
