@@ -2,7 +2,7 @@ import { publicDir } from '../constants/variables';
 import DashboardModule from '../components/DashboardModule';
 // import SearchField from '../elements/SearchField';
 
-export default function Modules( { modules } ) {
+export default function Modules( { modules, activePage } ) {
 	// const [ searchValue, setSearchVal ] = useState( '' );
 
 	// const handleSearch = ( value ) => {
@@ -30,6 +30,7 @@ export default function Modules( { modules } ) {
 								hasApi={ module.apikey }
 								isActive={ module.active }
 								title={ module.title }
+								activePage={ ( mod ) => activePage( mod ) }
 								image={ `${ publicDir() }/images/modules/${ module.id }.png` }
 							>
 								{ module.description }

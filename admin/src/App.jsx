@@ -51,6 +51,7 @@ export default function App() {
 				<MainMenu
 					modules={ ! fetchedModules || Object.values( fetchedModules ) }
 					activePage={ ( selectedModule ) => handleModulePage( selectedModule ) }
+					activeModule={ module }
 				/>
 			</Suspense>
 			<div className="urlslab-app-main">
@@ -60,6 +61,7 @@ export default function App() {
 					<DynamicModule
 						modules={ ! fetchedModules || Object.values( fetchedModules ) }
 						moduleId={ module }
+						activePage={ ( selectedModule ) => handleModulePage( selectedModule ) }
 					/>
 				</Suspense>
 			</div>
