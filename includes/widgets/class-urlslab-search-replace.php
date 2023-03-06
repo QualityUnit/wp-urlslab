@@ -37,11 +37,6 @@ class Urlslab_Search_Replace extends Urlslab_Widget {
 
 	public function theContentRawHook( $content ) {
 		foreach ( $this->get_rules() as $rule ) {
-
-			if ( '.*' !== $rule->get( 'url_filter' ) && ! preg_match( '/' . str_replace( '/', '\\/', $rule->get( 'url_filter' ) ) . '/uim', $this->get_current_page_url()->get_url() ) ) {
-				continue;
-			}
-
 			switch ( $rule->get( 'search_type' ) ) {
 				case Urlslab_Search_Replace_Row::TYPE_REGEXP:
 					$content = preg_replace( '/' . str_replace( '/', '\\/', $rule->get( 'str_search' ) ) . '/uim', $rule->get( 'str_replace' ), $content );
@@ -62,7 +57,11 @@ class Urlslab_Search_Replace extends Urlslab_Widget {
 		if ( ! $this->loaded ) {
 			global $wpdb;
 			$results = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_SEARCH_AND_REPLACE_TABLE ), 'ARRAY_A' ); // phpcs:ignore
+			$current_url = $this->get_current_page_url()->get_url();
 			foreach ( $results as $row ) {
+				if ( '.*' !== $row->get( 'url_filter' ) && ! preg_match( '/' . str_replace( '/', '\\/', $row->get( 'url_filter' ) ) . '/uim', $current_url ) ) {
+					continue;
+				}
 				$obj_search                              = new Urlslab_Search_Replace_Row( $row );
 				$this->rules[ $obj_search->get( 'id' ) ] = $obj_search;
 			}
