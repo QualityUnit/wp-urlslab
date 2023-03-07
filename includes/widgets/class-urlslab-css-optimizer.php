@@ -40,7 +40,7 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( 'Optimizes speed of CSS loading into page' );
+		return __( '[Speed] Optimize loading speed of your page by minimizing number of external css files loaded into page.' );
 	}
 
 	public function theContentHook( DOMDocument $document ) {

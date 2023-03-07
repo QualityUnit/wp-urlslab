@@ -35,7 +35,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( 'Configure widget to show contextually similar pages to any of your pages to build internal link building' );
+		return __( '[SEO] Connect pages within content cluster with Related Resources widget to link contextually similar pages' );
 	}
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {

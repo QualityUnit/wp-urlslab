@@ -46,7 +46,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( 'Generate meta tags automatically if there is no meta tag for your pages based on the content. generate og meta tags automatically from the data from URLSLAB' );
+		return __( '[Sharing] Add missing html header tags automatically to improve sharing on social networks.' );
 	}
 
 
