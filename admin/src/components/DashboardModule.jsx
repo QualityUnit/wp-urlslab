@@ -38,7 +38,7 @@ export default function DashboardModule( { moduleId, title, children, image, isA
 				: ''
 			}
 			{ handleSwitch.isLoading
-				? <div className="urlslab-dashboardmodule-activating">{ handleSwitch ? __( 'Dectivating…' ) : __( 'Activating…' ) }</div>
+				? <div className="urlslab-dashboardmodule-activating">{ isActive ? __( 'Deactivating…' ) : __( 'Activating…' ) }</div>
 				: ''
 			}
 			<Switch
@@ -60,8 +60,8 @@ export default function DashboardModule( { moduleId, title, children, image, isA
 					<p>{ children }</p>
 					{ isActive
 						? <button
-							className="urlslab-learnMore"
-								onClick={ () => handleActive( moduleId ) }>
+								className="urlslab-learnMore"
+							onClick={ () => handleActive( moduleId ) }>
 							{ __( 'Manage module' ) } <ArrowIcon />
 						</button>
 						: null

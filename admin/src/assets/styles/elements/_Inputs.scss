@@ -25,7 +25,7 @@ $status: (
 		box-shadow: none;
 		border: none;
 		border-radius: 6px;
-		padding: 0.5em 1em;
+		padding: 0.35em 1em;
 		margin: 0;
 		font-size: 0.8125rem;
 		font-weight: $font-weight-normal;
@@ -138,6 +138,7 @@ $status: (
 
 			.urlslab-inputField {
 				color: $black;
+				border-color: $grey-medium;
 
 				&-message {
 					font-size: 0.75rem;

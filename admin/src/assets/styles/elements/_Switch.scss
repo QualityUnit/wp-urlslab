@@ -38,23 +38,24 @@
 		user-select: none;
 		cursor: pointer;
 
-		&::before,
-		&::after {
-			content: "";
-			display: block;
+		&-button,
+		&::before {
 			position: absolute;
+			display: block;
+			color: $grey-medium;
 			cursor: pointer;
 		}
 
 		&::before {
+			content: "";
 
 			@include square(100%);
-			background-color: $grey-medium;
+			background-color: currentcolor;
 			border-radius: 9999em;
 			transition: background-color 0.25s ease;
 		}
 
-		&::after {
+		&-button {
 
 			@include square(1.25rem);
 			top: 50%;
@@ -64,6 +65,19 @@
 			background-color: $white;
 			box-shadow: $box-shadow-small;
 			transition: transform $transitionTime ease;
+
+			svg {
+
+				@include square(0.75em);
+				@include absoluteCenter;
+				position: absolute;
+				fill: currentcolor;
+				transition: all $transitionTime ease;
+
+				&.on {
+					opacity: 0;
+				}
+			}
 		}
 	}
 
@@ -80,16 +94,32 @@
 		align-items: center;
 	}
 
-	&-input:checked + &-switcher::before {
-		background-color: $primary-color;
+	&-input:checked + &-switcher {
 
-		.secondary & {
-			background-color: $saturated-green;
+		[class*="button"],
+		&::before {
+			color: $primary-color;
+
+			.secondary & {
+				color: $saturated-green;
+			}
 		}
+
 	}
 
 
-	&-input:checked + &-switcher::after {
+	&-input:checked + &-switcher &-switcher-button {
 		transform: translate(calc(100% - 2px), -50%);
+
+		svg {
+
+			&.on {
+				opacity: 1;
+			}
+
+			&.off {
+				opacity: 0;
+			}
+		}
 	}
 }
