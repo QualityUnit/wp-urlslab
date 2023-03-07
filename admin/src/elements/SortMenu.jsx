@@ -20,7 +20,6 @@ export default function SortMenu( {
 				setVisible( false );
 			}
 		};
-		console.log( checked );
 		if ( onChange && didMountRef.current && ! isActive && checked !== checkedId ) {
 			onChange( checked );
 		}

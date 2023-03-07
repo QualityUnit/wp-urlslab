@@ -47,7 +47,7 @@ export default function MenuInput( {
 			>
 				{ children }
 			</div>
-			<div className={ `urlslab-FilterMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
+			<div className={ `urlslab-FilterMenu__items menuInput ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
 				<div className="urlslab-FilterMenu__items--inn">
 					<div className="label menuInput urlslab-FilterMenu__item">
 						<InputField type="search" defaultValue={ inputValue } placeholder={ placeholder } onChange={ ( val ) => {

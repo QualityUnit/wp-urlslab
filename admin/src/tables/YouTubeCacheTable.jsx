@@ -32,6 +32,7 @@ export default function YouTubeCacheTable() {
 				handleSelected( val, cell );
 			} } />,
 			header: () => __( '' ),
+			size: 24,
 		} ),
 		columnHelper?.accessor( ( row ) => JSON.parse( `${ row?.microdata }` )?.items[ 0 ]?.snippet, {
 			id: 'thumb',
@@ -39,9 +40,11 @@ export default function YouTubeCacheTable() {
 			cell: ( image ) => <img src={ image?.getValue()?.thumbnails?.default?.url } alt={ image?.getValue()?.title
 			} />,
 			header: () => __( 'Thumbnail' ),
+			size: 80,
 		} ),
 		columnHelper?.accessor( 'videoid', {
 			header: () => __( 'YouTube Id' ),
+			size: 80,
 		} ),
 		columnHelper?.accessor( 'status', {
 			cell: ( cell ) => <SortMenu
@@ -56,6 +59,7 @@ export default function YouTubeCacheTable() {
 			id: 'title',
 			cell: ( val ) => <a href={ `https://youtu.be/${ val?.getValue()[ 0 ] }` } target="_blank" rel="noreferrer">{ val?.getValue()[ 1 ] }</a>,
 			header: () => __( 'Title' ),
+			size: 350,
 		} ),
 		columnHelper?.accessor( ( row ) => JSON.parse( `${ row?.microdata }` )?.items[ 0 ]?.snippet?.publishedAt, {
 			id: 'published',

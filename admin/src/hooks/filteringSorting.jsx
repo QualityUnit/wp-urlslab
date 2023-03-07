@@ -4,15 +4,24 @@ export function useFilter() {
 	const [ currentFilters, setUrl ] = useState( {} );
 	let filters = '';
 
-	const addFilter = ( key, value ) => setUrl( { ...currentFilters, [ key ]: value } );
-	const removeFilters = ( keyArray ) => setUrl( ( filter ) => {
-		const filtersCopy = { ...filter };
-		keyArray.map( ( key ) => {
-			delete filtersCopy[ key ];
-			return false;
+	const addFilter = ( key, value ) => {
+		if ( value ) {
+			setUrl( { ...currentFilters, [ key ]: value } );
+		}
+		if ( ! value ) {
+			removeFilters( [ key ] );
+		}
+	};
+	function removeFilters( keyArray ) {
+		setUrl( ( filter ) => {
+			const filtersCopy = { ...filter };
+			keyArray.map( ( key ) => {
+				delete filtersCopy[ key ];
+				return false;
+			} );
+			return filtersCopy;
 		} );
-		return filtersCopy;
-	} );
+	}
 
 	Object.entries( currentFilters ).map( ( [ key, val ] ) => {
 		filters += `&filter_${ key }=${ val }`;
