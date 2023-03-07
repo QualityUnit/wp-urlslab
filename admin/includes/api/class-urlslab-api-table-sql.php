@@ -24,13 +24,22 @@ class Urlslab_Api_Table_Sql {
 		}
 	}
 
-	public function add_filter( string $parameter_name, $format = '%s', $operator = '=', $table_prefix = false ) {
+	public function add_filter( string $parameter_name, $format = '%s', $table_prefix = false ) {
 		if ( ! $this->request->get_param( $parameter_name ) ) {
 			return;
 		}
+
+		$param_value = $this->request->get_param( $parameter_name );
+
 		$column_name = $parameter_name;
 		if ( str_starts_with( $column_name, 'from_' ) ) {
 			$column_name = substr( $column_name, strlen( 'from_' ) );
+			$param_value = json_encode(
+				(object) array(
+					'op'  => '>',
+					'val' => $param_value,
+				)
+			);
 		} else if ( str_starts_with( $column_name, 'filter_' ) ) {
 			$column_name = substr( $column_name, strlen( 'filter_' ) );
 		}
@@ -39,16 +48,19 @@ class Urlslab_Api_Table_Sql {
 			$column_name = $table_prefix . '.' . $column_name;
 		}
 
+		$this->add_column_filter( $column_name, $format, $param_value );
+	}
+
+	private function add_column_filter( $column_name, $format, $param_value ) {
 		switch ( $format ) {
 			case '%d':
-				$this->add_numeric_filter( $column_name, $this->request->get_param( $parameter_name ) );
+				$this->add_numeric_filter( $column_name, $param_value );
 				break;
 			case '%s':
 			default:
-				$this->add_string_filter( $column_name, $this->request->get_param( $parameter_name ) );
+				$this->add_string_filter( $column_name, $param_value );
 				break;
 		}
-
 	}
 
 	public function add_filter_raw( $where_condition, $data = false ) {
