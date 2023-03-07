@@ -60,80 +60,156 @@ class Urlslab_Activator {
 		self::init_search_replace_tables();
 	}
 
-	private static function upgrade_steps() {
-		global $wpdb;
-		$version = get_option( URLSLAB_VERSION_SETTING, '1.0' );
+	public static function upgrade_steps() {
 
-		if ( version_compare( $version, '1.13', '<' ) ) {
-			$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_URLS_TABLE . ';' ); // phpcs:ignore
-			$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_RELATED_RESOURCE_TABLE . ';' ); // phpcs:ignore
-			self::init_urls_tables();
-			self::init_related_resources_widget_tables();
+		if ( URLSLAB_VERSION == get_option( URLSLAB_VERSION_SETTING, '1.0.0' ) ) {
+			return;
 		}
 
-		if ( version_compare( $version, '1.22', '<' ) ) {
-			$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_URLS_MAP_TABLE . ';' ); // phpcs:ignore
-			self::init_urls_map_tables();
-		}
-		if ( version_compare( $version, '1.24', '<' ) ) {
-			$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_KEYWORDS_TABLE . ';' ); // phpcs:ignore
-			self::init_keywords_tables();
-		}
-		if ( version_compare( $version, '1.31', '<' ) ) {
-			self::init_urlslab_file_urls();
-		}
+		self::update_step(
+			'1.13.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_URLS_TABLE ); // phpcs:ignore
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_RELATED_RESOURCE_TABLE ); // phpcs:ignore
+				self::init_urls_tables();
+				self::init_related_resources_widget_tables();
+			}
+		);
 
-		if ( version_compare( $version, '1.32', '<' ) ) {
-			$wpdb->query( 'ALTER TABLE ' . URLSLAB_FILES_TABLE . ' ADD COLUMN parent_url varchar(1024);' ); // phpcs:ignore
-			$wpdb->query( 'DELETE FROM ' . URLSLAB_FILES_TABLE . ' WHERE filestatus=\'E\';' ); // phpcs:ignore
-		}
 
-		if ( version_compare( $version, '1.34', '<' ) ) {
-			$wpdb->query( 'ALTER TABLE ' . URLSLAB_RELATED_RESOURCE_TABLE . ' ADD COLUMN pos tinyint unsigned default 10;' ); // phpcs:ignore
-		}
-		if ( version_compare( $version, '1.39', '<' ) ) {
-			$wpdb->query( 'ALTER TABLE ' . URLSLAB_KEYWORDS_MAP_TABLE . " ADD COLUMN `destUrlMd5` BIGINT(20) DEFAULT 0, ADD COLUMN `linkType` char(1) NOT NULL DEFAULT 'U', DROP PRIMARY KEY, ADD PRIMARY KEY (`kw_id`, `urlMd5`, `destUrlMd5`), ADD INDEX dest_urls (destUrlMd5);" ); // phpcs:ignore
-		}
-		if ( version_compare( $version, '1.40', '<' ) ) {
-			$wpdb->query( 'ALTER TABLE ' . URLSLAB_KEYWORDS_TABLE . " ADD COLUMN `kwType` char(1) NOT NULL DEFAULT 'M';" ); // phpcs:ignore
-		}
+		self::update_step(
+			'1.22.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_URLS_MAP_TABLE ); // phpcs:ignore
+				self::init_urls_map_tables();
+			}
+		);
 
-		if ( version_compare( $version, '1.42', '<' ) ) {
-			$wpdb->query( 'ALTER TABLE ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' ADD COLUMN status_changed datetime NULL;' ); // phpcs:ignore
-			$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_FILES_TABLE . ';' ); // phpcs:ignore
-			$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_FILE_URLS_TABLE . ';' ); // phpcs:ignore
-			$wpdb->query( 'DROP TABLE IF EXISTS ' . $wpdb->prefix . 'urlslab_file_alternatives' . ';' ); // phpcs:ignore
-			$wpdb->query( 'DROP TABLE IF EXISTS ' . $wpdb->prefix . 'urlslab_file_contents' . ';' ); // phpcs:ignore
-			self::init_urlslab_files();
-			self::init_urlslab_file_urls();
-			self::init_urlslab_file_db_driver_contents();
-			self::init_urlslab_file_pointers();
-		}
 
-		if ( version_compare( $version, '1.42.6', '<' ) ) {
-			$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . " SET urlTitle=null WHERE urlTitle='<empty>'" ); // phpcs:ignore
-			$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . " SET urlMetaDescription=null WHERE urlMetaDescription='<empty>'" ); // phpcs:ignore
-		}
+		self::update_step(
+			'1.24.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_KEYWORDS_TABLE . ';' ); // phpcs:ignore
+				self::init_keywords_tables();
+			}
+		);
 
-		if ( version_compare( $version, '1.43.0', '<' ) ) {
-			$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN urlCheckDate DATETIME;" ); // phpcs:ignore
-			$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD INDEX idxUrlCheck (urlCheckDate);" ); // phpcs:ignore
-		}
+		self::update_step(
+			'1.31.0',
+			function() {
+				self::init_urlslab_file_urls();
+			}
+		);
 
-		if ( version_compare( $version, '1.44.0', '<' ) ) {
-			self::init_css_cache_tables();
-		}
 
-		if ( version_compare( $version, '1.45.0', '<' ) ) {
-			self::init_content_cache_tables();
-		}
+		self::update_step(
+			'1.32.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_FILES_TABLE . ' ADD COLUMN parent_url varchar(1024);' ); // phpcs:ignore
+				$wpdb->query( 'DELETE FROM ' . URLSLAB_FILES_TABLE . ' WHERE filestatus=\'E\';' ); // phpcs:ignore
+			}
+		);
 
-		if ( version_compare( $version, '1.49.0', '<' ) ) {
-			self::init_search_replace_tables();
-		}
+
+		self::update_step(
+			'1.34.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_RELATED_RESOURCE_TABLE . ' ADD COLUMN pos tinyint unsigned default 10;' ); // phpcs:ignore
+			}
+		);
+
+
+		self::update_step(
+			'1.39.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_KEYWORDS_MAP_TABLE . " ADD COLUMN `destUrlMd5` BIGINT(20) DEFAULT 0, ADD COLUMN `linkType` char(1) NOT NULL DEFAULT 'U', DROP PRIMARY KEY, ADD PRIMARY KEY (`kw_id`, `urlMd5`, `destUrlMd5`), ADD INDEX dest_urls (destUrlMd5);" ); // phpcs:ignore
+			}
+		);
+
+
+		self::update_step(
+			'1.40.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_KEYWORDS_TABLE . " ADD COLUMN `kwType` char(1) NOT NULL DEFAULT 'M';" ); // phpcs:ignore
+			}
+		);
+
+
+		self::update_step(
+			'1.42.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' ADD COLUMN status_changed datetime NULL;' ); // phpcs:ignore
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_FILES_TABLE . ';' ); // phpcs:ignore
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_FILE_URLS_TABLE . ';' ); // phpcs:ignore
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . $wpdb->prefix . 'urlslab_file_alternatives' . ';' ); // phpcs:ignore
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . $wpdb->prefix . 'urlslab_file_contents' . ';' ); // phpcs:ignore
+				self::init_urlslab_files();
+				self::init_urlslab_file_urls();
+				self::init_urlslab_file_db_driver_contents();
+				self::init_urlslab_file_pointers();
+			}
+		);
+
+
+		self::update_step(
+			'1.42.6',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . " SET urlTitle=null WHERE urlTitle='<empty>'" ); // phpcs:ignore
+				$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . " SET urlMetaDescription=null WHERE urlMetaDescription='<empty>'" ); // phpcs:ignore
+			}
+		);
+
+
+		self::update_step(
+			'1.43.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN urlCheckDate DATETIME;" ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD INDEX idxUrlCheck (urlCheckDate);" ); // phpcs:ignore
+			}
+		);
+
+
+		self::update_step(
+			'1.44.0',
+			function() {
+				self::init_css_cache_tables();
+			}
+		);
+
+
+		self::update_step(
+			'1.45.0',
+			function() {
+				self::init_content_cache_tables();
+			}
+		);
+
+		self::update_step(
+			'1.49.0',
+			function() {
+				self::init_search_replace_tables();
+			}
+		);
 
 		//all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
+	}
+
+	private static function update_step( string $version, callable $executable ) {
+		if ( version_compare( get_option( URLSLAB_VERSION_SETTING, '1.0.0' ), $version, '<' ) ) {
+			call_user_func( $executable );
+			update_option( URLSLAB_VERSION_SETTING, $version );
+		}
 	}
 
 	private static function init_urls_tables() {

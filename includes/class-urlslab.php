@@ -441,15 +441,8 @@ class Urlslab {
 	 * Upgrades option data when necessary.
 	 */
 	public function urlslab_upgrade() {
-		$old_ver = $this->get_option( 'version', '0' );
-		$new_ver = URLSLAB_VERSION;
-
-		if ( $old_ver == $new_ver ) {
-			return;
-		}
-		// Any Upgrade hook should be done here. For now no Upgrade migration is available
-
-		$this->update_option( 'version', $new_ver );
+		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-activator.php';
+		Urlslab_Activator::upgrade_steps();
 	}
 
 	/**
