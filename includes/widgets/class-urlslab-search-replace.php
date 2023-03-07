@@ -43,7 +43,7 @@ class Urlslab_Search_Replace extends Urlslab_Widget {
 					break;
 				case Urlslab_Search_Replace_Row::TYPE_PLAIN_TEXT:
 				default:
-					$content = str_replace( $rule->get( 'str_search' ), $rule->get( str_replace ), $content );
+					$content = str_replace( $rule->get( 'str_search' ), $rule->get( 'str_replace' ), $content );
 			}
 		}
 
