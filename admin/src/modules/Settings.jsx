@@ -7,11 +7,9 @@ import Loader from '../components/Loader';
 import SettingsOption from '../components/SettingsOption';
 
 import '../assets/styles/layouts/_Settings.scss';
-import { useI18n } from '@wordpress/react-i18n/';
 
 export default function Settings( { className, settingId } ) {
 	const queryClient = useQueryClient();
-	const { __ } = useI18n();
 
 	const { data, status } = useQuery( {
 		queryKey: [ 'settings', settingId ],
@@ -33,15 +31,15 @@ export default function Settings( { className, settingId } ) {
 	settings = Object.values( data );
 
 	return (
-		<div className={ `urlslab-settingsPanel-wrap flex-tablet ${ className }` }>
-			<div className="urlslab-settingsPanel urlslab-panel">
-
-				{ Object.values( settings ).map( ( section ) => {
-					return (
-						<section className="urlslab-settingspanel-section" key={ section.id }>
+		Object.values( settings ).map( ( section ) => {
+			return (
+				<section className={ `urlslab-settingsPanel-section ${ className }` } key={ section.id }>
+					<div className="urlslab-settingsPanel urlslab-panel flex-tablet-landscape">
+						<div className="urlslab-settingsPanel-desc">
 							<h4>{ section.title }</h4>
 							<p>{ section.description }</p>
-
+						</div>
+						<div className="urlslab-settingsPanel-options">
 							{ section.options
 								? Object.values( section.options ).map( ( option ) => {
 									return (
@@ -50,11 +48,10 @@ export default function Settings( { className, settingId } ) {
 								} )
 								: ''
 							}
-						</section>
-					);
-				} )
-				}
-			</div>
-		</div>
+						</div>
+					</div>
+				</section>
+			);
+		} )
 	);
 }

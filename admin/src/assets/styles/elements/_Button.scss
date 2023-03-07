@@ -28,6 +28,15 @@ button.urlslab-button,
 	color: $black;
 	cursor: pointer;
 
+	&.outline {
+		background-color: $white;
+		border: 1px solid $grey-light;
+	}
+
+	&.underline {
+		text-decoration: underline;
+	}
+
 	&.simple {
 		background-color: transparent;
 	}
@@ -52,6 +61,19 @@ button.urlslab-button,
 		@include square(1.5em);
 		margin-right: 0.5em;
 		fill: currentcolor;
+
+		&:last-child:not(:first-child) {
+			margin-right: 0;
+			margin-left: 0.5em;
+		}
+
+		&.close {
+
+			@include square(0.85em);
+			margin-top: 2px;
+			margin-left: 1em;
+			fill: $grey-darker;
+		}
 	}
 
 	@media (hover: hover) {

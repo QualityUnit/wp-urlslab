@@ -42,6 +42,7 @@ export default function MediaFilesTable() {
 		} ),
 		columnHelper?.accessor( 'status_changed', {
 			header: () => __( 'Status changed' ),
+			size: 100,
 		} ),
 		columnHelper?.accessor( 'filestatus', {
 			cell: ( cell ) => <SortMenu
@@ -59,9 +60,11 @@ export default function MediaFilesTable() {
 		} ),
 		columnHelper?.accessor( 'filesize', {
 			header: () => __( 'File Size' ),
+			size: 60,
 		} ),
 		columnHelper?.accessor( 'file_usage_count', {
 			header: () => __( 'File Usage' ),
+			size: 60,
 		} ),
 		columnHelper?.accessor( 'url', {
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" className="limit-50" rel="noreferrer">{ cell.getValue() }</a>,

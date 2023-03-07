@@ -1,11 +1,14 @@
 import {
-	useInfiniteFetch, handleInput, handleSelected, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, Trash, Button, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function LinkManagerTable( { slug } ) {
 	const { tableHidden, setHiddenTable, filters, currentFilters, addFilter, removeFilter, sortingColumn, sortBy, deleteRow, updateRow } = useTableUpdater();
+
+	const url = `${ filters }${ sortingColumn }`;
+	const pageId = 'urlMd5';
 
 	const {
 		__,
@@ -16,7 +19,7 @@ export default function LinkManagerTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: 'url', url: `${ filters }${ sortingColumn }`, pageId: 'urlMd5' } );
+	} = useInfiniteFetch( { key: slug, url, pageId } );
 
 	const statusTypes = {
 		N: __( 'New' ),
@@ -45,6 +48,14 @@ export default function LinkManagerTable( { slug } ) {
 	};
 
 	const columns = [
+		columnHelper.accessor( 'delete', {
+			className: 'deleteRow',
+			cell: ( cell ) => <Button danger onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId } ) }><Trash /></Button>,
+			header: () => __( '' ),
+			enableResizing: false,
+			maxSize: 0,
+			size: 0,
+		} ),
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
@@ -63,20 +74,29 @@ export default function LinkManagerTable( { slug } ) {
 			header: () => header.screenshot_url,
 		} ),
 		columnHelper.accessor( 'urlTitle', {
+			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
+				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
 			header: () => header.urlTitle,
 			minSize: 250,
 		} ),
 		columnHelper?.accessor( 'urlMetaDescription', {
-			cell: ( cell ) => <div className="limit-200">{ cell.getValue() }</div>,
+			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
+				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
 			header: () => header.urlMetaDescription,
-			minSize: 450,
+			minSize: 150,
+		} ),
+		columnHelper.accessor( 'urlSummary', {
+			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
+				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
+			header: () => header.urlSummary,
+			minSize: 150,
 		} ),
 		columnHelper?.accessor( 'status', {
 			cell: ( cell ) => <SortMenu
 				items={ statusTypes }
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
-				onChange={ ( val ) => handleInput( val, cell ) } />,
+				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
 			className: 'youtube-status',
 			header: () => header.status,
 		} ),
@@ -84,24 +104,19 @@ export default function LinkManagerTable( { slug } ) {
 			header: () => header.updateStatusDate,
 			minSize: 150,
 		} ),
-		columnHelper.accessor( 'urlName', {
-			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" className="limit-100" rel="noreferrer">{ cell.getValue() }</a>,
-			header: () => header.urlName,
-			enableResizing: false,
-			minSize: 350,
-		} ),
-		columnHelper.accessor( 'urlSummary', {
-			cell: ( cell ) => <div className="limit-100">{ cell.getValue() }</div>,
-			header: () => header.urlSummary,
-			minSize: 350,
-		} ),
 		columnHelper.accessor( 'visibility', {
 			cell: ( cell ) => <SortMenu
 				items={ visibilityTypes }
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
-				onChange={ ( val ) => handleInput( val, cell ) } />,
+				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
 			header: () => header.visibility,
+		} ),
+		columnHelper.accessor( 'urlName', {
+			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" className="limit-100" rel="noreferrer">{ cell.getValue() }</a>,
+			header: () => header.urlName,
+			enableResizing: false,
+			minSize: 350,
 		} ),
 		columnHelper.accessor( 'urlCheckDate', {
 			header: () => header.urlCheckDate,

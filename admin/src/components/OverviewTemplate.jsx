@@ -4,7 +4,6 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import { renameModule } from '../constants/helpers';
 
-import Loader from './Loader';
 import { ReactComponent as ApiIcon } from '../assets/images/api-exclamation.svg';
 import Button from '../elements/Button';
 
@@ -14,12 +13,6 @@ export default function Overview( { moduleId, children } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const moduleData = queryClient.getQueryData( [ 'modules' ] )[ moduleId ];
-	const importPath = import( `../modules/${ renameModule( moduleId ) }.jsx` );
-	const Module = lazy( () => importPath );
-
-	// if ( ! Module() ) {
-	// 	return <Loader />;
-	// }
 
 	return (
 		<div className="urlslab-overview urlslab-panel fadeInto">

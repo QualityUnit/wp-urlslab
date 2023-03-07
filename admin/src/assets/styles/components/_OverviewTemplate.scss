@@ -7,7 +7,7 @@
 		display: flex;
 		flex-direction: column;
 		max-width: 57.5em;
-		max-height: 52em;
+		max-height: calc(100vh - 20em);
 		margin: 3em auto 6em;
 	}
 

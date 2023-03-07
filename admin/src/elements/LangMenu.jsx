@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import SortMenu from '../elements/SortMenu';
 
-export default function LangMenu( { onChange, checkedId } ) {
+export default function LangMenu( { isFilter, children, onChange, checkedId } ) {
 	const queryClient = useQueryClient();
 	const data = queryClient.getQueryData( [ 'languages' ] );
 
@@ -21,9 +21,10 @@ export default function LangMenu( { onChange, checkedId } ) {
 	return (
 		<SortMenu
 			items={ langs }
+			isFilter={ isFilter }
 			name="languages"
 			checkedId={ checkedId }
 			onChange={ ( lang ) => handleSelected( lang ) }
-		/>
+		>{ children }</SortMenu>
 	);
 }

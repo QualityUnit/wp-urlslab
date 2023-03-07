@@ -6,7 +6,7 @@ import Checkbox from './Checkbox';
 import '../assets/styles/elements/_FilterMenu.scss';
 
 export default function FilterMenu( {
-	id, className, asTags, style, children, items, checkedItems, onChange } ) {
+	id, className, asTags, style, children, items, checkedItems, isFilter, onChange } ) {
 	const { __ } = useI18n();
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
@@ -53,7 +53,7 @@ export default function FilterMenu( {
 		<div className={ `urlslab-FilterMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref } id={ id }>
 			{ children ? <div className="urlslab-inputField-label">{ children }</div> : null }
 			<div
-				className={ `urlslab-FilterMenu__title ${ isActive ? 'active' : '' }` }
+				className={ `urlslab-FilterMenu__title ${ isFilter ? 'isFilter' : '' } ${ isActive ? 'active' : '' }` }
 				onClick={ handleMenu }
 				onKeyUp={ ( event ) => handleMenu( event ) }
 				role="button"

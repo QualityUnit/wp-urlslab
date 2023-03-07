@@ -44,6 +44,15 @@
 			min-width: auto;
 		}
 
+		.urlslab-table th & {
+			padding-left: 0;
+			border: none;
+
+			&::after {
+				margin-left: 1em;
+			}
+		}
+
 		svg {
 			margin-right: 0.5em;
 		}
@@ -79,6 +88,10 @@
 		padding: 1em 1.45em;
 		transition: opacity 0.1s;
 		filter: drop-shadow(0 1px 6px rgba($black-real, 0.16));
+
+		&.menuInput {
+			min-width: 15em;
+		}
 
 		.wide & {
 			left: 0;

@@ -114,7 +114,7 @@ $cellHeight: 3.5em;
 
 		@media (hover: hover) {
 
-			&:hover {
+			&:not(.urlslab-table-head-row):hover {
 				background-color: $grey-lightest;
 			}
 		}

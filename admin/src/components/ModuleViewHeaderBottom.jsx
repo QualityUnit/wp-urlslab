@@ -7,13 +7,14 @@ import { deleteAll } from '../api/deleteTableData';
 import { ReactComponent as Trash } from '../assets/images/icon-trash.svg';
 import { ReactComponent as ImportIcon } from '../assets/images/icon-import.svg';
 import { ReactComponent as ExportIcon } from '../assets/images/icon-export.svg';
+import { ReactComponent as CloseIcon } from '../assets/images/icon-close.svg';
 
 import Button from '../elements/Button';
 import ExportPanel from './ExportPanel';
 import ImportPanel from './ImportPanel';
 import DangerPanel from './DangerPanel';
 
-export default function ModuleViewHeaderBottom( { currentFilters, header, removedFilter, children, slug, exportOptions, hideTable } ) {
+export default function ModuleViewHeaderBottom( { currentFilters, header, removedFilters, children, slug, exportOptions, hideTable } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const activeFilters = Object.keys( currentFilters );
@@ -59,10 +60,11 @@ export default function ModuleViewHeaderBottom( { currentFilters, header, remove
 				{
 					( activeFilters?.length > 0 && header ) &&
 					<div className="flex flex-align-center">
-						<strong>{ __( 'Filters:' ) }</strong>
 						{ activeFilters.map( ( key ) => {
-							return ( <button className="ml-s" key={ key } onClick={ () => removedFilter( key ) }>{ header[ key ] }</button> );
+							return ( <Button className="outline ml-s" key={ key } onClick={ () => removedFilters( [ key ] ) }>{ header[ key ] }<CloseIcon className="close" /></Button> );
 						} ) }
+
+						<Button className="simple underline" onClick={ () => removedFilters( activeFilters ) }>Clear filters</Button>
 					</div>
 				}
 				{

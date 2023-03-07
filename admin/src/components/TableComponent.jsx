@@ -90,13 +90,13 @@ export default function Table( { resizable, children, className, columns, data }
 				} }>
 					<thead className="urlslab-table-head">
 						{ table.getHeaderGroups().map( ( headerGroup ) => (
-							<tr key={ headerGroup.id }>
+							<tr className="urlslab-table-head-row" key={ headerGroup.id }>
 								{ headerGroup.headers.map( ( header ) => (
 									<th key={ header.id }
 										style={ {
 											position: resizable ? 'absolute' : 'relative',
 											left: resizable ? header.getStart() : '0',
-											width: header.getSize() !== 0 && resizable ? header.getSize() : undefined,
+											width: header.getSize() !== 0 ? header.getSize() : '',
 										} }
 									>
 										{ header.isPlaceholder
