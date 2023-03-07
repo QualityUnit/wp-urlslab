@@ -44,6 +44,14 @@
 			min-width: auto;
 		}
 
+		.urlslab-table th & {
+			border: none;
+
+			&::after {
+				margin-left: 1em;
+			}
+		}
+
 		svg {
 			margin-right: 0.5em;
 		}

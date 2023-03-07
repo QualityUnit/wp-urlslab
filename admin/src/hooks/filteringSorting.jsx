@@ -5,10 +5,13 @@ export function useFilter() {
 	let filters = '';
 
 	const addFilter = ( key, value ) => setUrl( { ...currentFilters, [ key ]: value } );
-	const removeFilter = ( key ) => setUrl( ( filter ) => {
-		const copy = { ...filter };
-		delete copy[ key ];
-		return copy;
+	const removeFilters = ( keyArray ) => setUrl( ( filter ) => {
+		const filtersCopy = { ...filter };
+		keyArray.map( ( key ) => {
+			delete filtersCopy[ key ];
+			return false;
+		} );
+		return filtersCopy;
 	} );
 
 	Object.entries( currentFilters ).map( ( [ key, val ] ) => {
@@ -16,7 +19,7 @@ export function useFilter() {
 		return false;
 	} );
 
-	return { filters, currentFilters, addFilter, removeFilter };
+	return { filters, currentFilters, addFilter, removeFilters };
 }
 
 export function useSorting() {

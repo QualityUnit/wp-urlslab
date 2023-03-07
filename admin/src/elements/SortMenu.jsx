@@ -5,7 +5,7 @@ import Checkbox from './Checkbox';
 import '../assets/styles/elements/_FilterMenu.scss';
 
 export default function SortMenu( {
-	className, name, style, children, items, checkedId, onChange,
+	className, name, style, children, items, checkedId, isFilter, onChange,
 } ) {
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
@@ -20,7 +20,8 @@ export default function SortMenu( {
 				setVisible( false );
 			}
 		};
-		if ( onChange && didMountRef.current && ! isActive ) {
+		console.log( checked );
+		if ( onChange && didMountRef.current && ! isActive && checked !== checkedId ) {
 			onChange( checked );
 		}
 		didMountRef.current = true;
@@ -41,15 +42,15 @@ export default function SortMenu( {
 
 	return (
 		<div className={ `urlslab-FilterMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref }>
-			{ children ? <div className="urlslab-inputField-label">{ children }</div> : null }
+			{ ! isFilter && children ? <div className="urlslab-inputField-label">{ children }</div> : null }
 			<div
-				className={ `urlslab-FilterMenu__title ${ isActive ? 'active' : '' }` }
+				className={ `urlslab-FilterMenu__title ${ isFilter ? 'isFilter' : '' } ${ isActive ? 'active' : '' }` }
 				onClick={ handleMenu }
 				onKeyUp={ ( event ) => handleMenu( event ) }
 				role="button"
 				tabIndex={ 0 }
 			>
-				{ items[ checked ] }
+				{ isFilter ? children : items[ checked ] }
 			</div>
 			<div className={ `urlslab-FilterMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
 				<div className={ `urlslab-FilterMenu__items--inn ${ Object.values( items ).length > 8 ? 'has-scrollbar' : '' }` }>

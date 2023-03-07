@@ -6,22 +6,22 @@ import '../assets/styles/elements/_FilterMenu.scss';
 import '../assets/styles/elements/_RangeSlider.scss';
 
 export default function MenuInput( {
-	className, placeholder, style, onChange, children,
+	className, placeholder, style, onChange, defaultValue, children,
 } ) {
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
-	const [ inputValue, setInputValue ] = useState( );
+	const [ inputValue, setInputValue ] = useState( defaultValue );
 	const didMountRef = useRef( false );
 	const ref = useRef( null );
 
+	const handleClickOutside = ( event ) => {
+		if ( ! ref.current?.contains( event.target ) && isActive ) {
+			setActive( false );
+			setVisible( false );
+		}
+	};
 	useEffect( () => {
-		const handleClickOutside = ( event ) => {
-			if ( ! ref.current?.contains( event.target ) && isActive ) {
-				setActive( false );
-				setVisible( false );
-			}
-		};
-		if ( onChange && didMountRef.current && ! isActive && inputValue?.length ) {
+		if ( onChange && didMountRef.current && ! isActive && inputValue !== defaultValue ) {
 			onChange( inputValue );
 		}
 		didMountRef.current = true;
@@ -50,7 +50,9 @@ export default function MenuInput( {
 			<div className={ `urlslab-FilterMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
 				<div className="urlslab-FilterMenu__items--inn">
 					<div className="label menuInput urlslab-FilterMenu__item">
-						<InputField type="search" defaultValue={ inputValue } placeholder={ placeholder } onChange={ ( val ) => setInputValue( val ) } />
+						<InputField type="search" defaultValue={ inputValue } placeholder={ placeholder } onChange={ ( val ) => {
+							setInputValue( val ); handleClickOutside( val );
+						} } />
 					</div>
 				</div>
 			</div>
