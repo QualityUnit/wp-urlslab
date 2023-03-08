@@ -6,7 +6,7 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function SearchReplaceTable( { slug } ) {
-	const { tableHidden, setHiddenTable, filters, currentFilters, addFilter, removeFilter, sortingColumn, sortBy, deleteRow, updateRow } = useTableUpdater();
+	const { tableHidden, setHiddenTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, deleteRow, updateRow } = useTableUpdater();
 	const url = `${ filters }${ sortingColumn }`;
 	const pageId = 'id';
 
@@ -50,26 +50,22 @@ export default function SearchReplaceTable( { slug } ) {
 			} } />,
 			header: () => __( '' ),
 			enableResizing: false,
-			maxSize: 24,
-			size: 24,
 		} ),
 		columnHelper.accessor( 'str_search', {
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( val ) => handleInput( val, cell ) } />,
 			header: () => <MenuInput placeholder="Enter search string" onChange={ ( val ) => addFilter( 'str_search', val ) }>{ header.str_search }</MenuInput>,
-			size: 100,
 		} ),
 		columnHelper.accessor( 'str_replace', {
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( val ) => handleInput( val, cell ) } />,
-			header: () => <MenuInput placeholder="Enter replace string" onChange={ ( val ) => addFilter( 'str_replace', val ) }>{ header.str_replace }</MenuInput>,
-			size: 100,
+			header: () => <MenuInput isFilter placeholder="Enter replace string" onChange={ ( val ) => addFilter( 'str_replace', val ) }>{ header.str_replace }</MenuInput>,
 		} ),
 		columnHelper.accessor( 'search_type', {
 			cell: ( cell ) => <SortMenu items={ searchTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( val ) => handleInput( val, cell ) } />,
-			header: ( cell ) => <SortMenu items={ searchTypes } name={ cell.column.id } checkedId={ header.search_type } onChange={ ( val ) => addFilter( 'search_type', val ) } />,
+			header: ( cell ) => <SortMenu isFilter items={ searchTypes } name={ cell.column.id } checkedId={ header.search_type } onChange={ ( val ) => addFilter( 'search_type', val ) }>{ header.search_type }</SortMenu>,
 		} ),
 		columnHelper.accessor( 'urlFilter', {
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( val ) => handleInput( val, cell ) } />,
-			header: () => header.url_filter,
+			header: () => <MenuInput isFilter placeholder="Enter filter" onChange={ ( val ) => addFilter( 'urlFilter', val ) }>{ header.url_filter }</MenuInput>,
 		} ),
 	];
 
@@ -83,7 +79,7 @@ export default function SearchReplaceTable( { slug } ) {
 				slug={ slug }
 				currentFilters={ currentFilters }
 				header={ header }
-				removedFilter={ ( key ) => removeFilter( key ) }
+				removeFilters={ ( array ) => removeFilters( array ) }
 				exportOptions={ {
 					url: slug,
 					filters,

@@ -27,7 +27,7 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( '[SEO] Add missing image alt attributes to boost SEO of images.' );
+		return __( '(SEO) Add missing image alt attributes to boost SEO of images.' );
 	}
 
 	public function theContentHook( DOMDocument $document ) {

@@ -1,17 +1,32 @@
 import { useI18n } from '@wordpress/react-i18n';
-import ExportCSVButton from '../elements/ExportCSVButton';
-import BackButton from '../elements/BackButton';
 
-export default function ExportPanel( { options, currentFilters, header, backToTable } ) {
+import useCloseModal from '../hooks/useCloseModal';
+
+import Button from '../elements/Button';
+import ExportCSVButton from '../elements/ExportCSVButton';
+
+export default function ExportPanel( { options, currentFilters, header, handlePanel } ) {
 	const { __ } = useI18n();
 	const activeFilters = Object.keys( currentFilters );
 
-	return (
-		<div className="urlslab-panel-wrap">
-			<BackButton className="mb-l" onClick={ () => backToTable() }>{ __( 'Back to table' ) }</BackButton>
+	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
 
+	const hidePanel = ( operation ) => {
+		handleClose();
+		if ( handlePanel ) {
+			handlePanel( operation );
+		}
+	};
+
+	return (
+		<div className="urlslab-panel-wrap urlslab-panel-floating fadeInto">
 			<div className="urlslab-panel">
-				<h4 className="mb-l">{ __( 'Export data' ) }</h4>
+				<div className="urlslab-panel-header">
+					<h3>{ __( 'Export data' ) }</h3>
+					<button className="urlslab-panel-close" onClick={ () => hidePanel() }>
+						<CloseIcon />
+					</button>
+				</div>
 				{ ( activeFilters?.length > 0 && header ) &&
 				<div className="urlslab-panel-section">
 					<p><strong>{ __( 'Active Filters:' ) }</strong></p>
@@ -25,11 +40,12 @@ export default function ExportPanel( { options, currentFilters, header, backToTa
 				</div>
 				}
 				<div className="flex">
+					<Button className="ma-left simple" onClick={ () => hidePanel() }>{ __( 'Cancel' ) }</Button>
 					{ activeFilters?.length > 0 &&
-					<ExportCSVButton className="ma-left" options={ options } withFilters onClick />
+					<ExportCSVButton className="ml-s" options={ options } withFilters onClick />
 					}
 					<ExportCSVButton
-						className={ `${ activeFilters?.length ? 'ml-s-tablet' : 'ma-left' }` }
+						className="ml-s"
 						options={ options } onClick
 					/>
 				</div>

@@ -75,7 +75,9 @@ export default function Table( { resizable, children, className, columns, data }
 								: undefined,
 						} }
 					>
-						{ flexRender( cell.column.columnDef.cell, cell.getContext() ) }
+						<div className="limit">
+							{ flexRender( cell.column.columnDef.cell, cell.getContext() ) }
+						</div>
 					</td>
 				) }
 			</tr>
@@ -83,7 +85,10 @@ export default function Table( { resizable, children, className, columns, data }
 	}
 
 	return (
-		<div className="urlslab-table-container" ref={ tableContainerRef } style={ { width: `${ containerWidth }px` } }>
+		<div className="urlslab-table-container" ref={ tableContainerRef } style={ {
+			width: resizable ? `${ containerWidth }px` : 'auto',
+			'--tableContainerWidth': `${ containerWidth }px`,
+			} }>
 			{ containerWidth
 				? <table className={ `urlslab-table ${ className } ${ resizable ? 'resizable' : '' }` } style={ {
 					width: table.getCenterTotalSize(),
@@ -93,6 +98,7 @@ export default function Table( { resizable, children, className, columns, data }
 							<tr className="urlslab-table-head-row" key={ headerGroup.id }>
 								{ headerGroup.headers.map( ( header ) => (
 									<th key={ header.id }
+										className={ header.column.columnDef.className }
 										style={ {
 											position: resizable ? 'absolute' : 'relative',
 											left: resizable ? header.getStart() : '0',

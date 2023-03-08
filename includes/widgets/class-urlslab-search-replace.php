@@ -31,7 +31,7 @@ class Urlslab_Search_Replace extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( '[HTML] Search and replace on the fly any text in the web page HTML.' );
+		return __( '(HTML) Search and replace on the fly any text in the web page HTML.' );
 	}
 
 

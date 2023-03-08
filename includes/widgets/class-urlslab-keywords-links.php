@@ -84,7 +84,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( '[SEO] Create links from keywords that appear in website content and link those keywords with relevant pages.' );
+		return __( '(SEO) Create links from keywords that appear in website content and link those keywords with relevant pages.' );
 	}
 
 	private function replaceKeywordWithLinks( DOMText $node, DOMDocument $document, array $keywords, int $position_start, $position_end, $min_text_len, $max_paragraph_density_links ) {

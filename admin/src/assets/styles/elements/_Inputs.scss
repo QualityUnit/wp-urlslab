@@ -35,6 +35,8 @@ $status: (
 		background-color: $white;
 
 		.urlslab-table & {
+			text-overflow: ellipsis;
+			width: 100%;
 			background-color: transparent;
 			font-size: inherit;
 		}
@@ -80,7 +82,11 @@ $status: (
 	transition: all 0.2s;
 
 	.urlslab-table tbody & {
-		border: none;
+		border-color: transparent !important;
+
+		&:hover {
+			border-color: $grey-medium !important;
+		}
 	}
 
 	.urlslab-table & {

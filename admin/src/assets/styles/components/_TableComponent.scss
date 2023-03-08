@@ -16,6 +16,7 @@ $cellHeight: 3.5em;
 	width: 100%;
 
 	&:not(.resizable) {
+		table-layout: fixed;
 		width: 100% !important;
 	}
 
@@ -66,6 +67,10 @@ $cellHeight: 3.5em;
 		padding-left: 1em;
 	}
 
+	td {
+		height: $cellHeight;
+	}
+
 	&.resizable {
 
 		th,
@@ -102,6 +107,7 @@ $cellHeight: 3.5em;
 	}
 
 	tr {
+		position: relative;
 		border-bottom: 1px solid $grey-light;
 
 		&:last-of-type {
@@ -120,11 +126,15 @@ $cellHeight: 3.5em;
 		}
 	}
 
-	[class*="limit-"] {
+	*:not(.nolimit) > .limit {
 		display: block;
 		text-overflow: ellipsis;
 		overflow: hidden;
 		white-space: nowrap;
+	}
+
+	.limit {
+		width: 100%;
 	}
 
 	.limit-50 {
@@ -139,14 +149,21 @@ $cellHeight: 3.5em;
 		max-width: 200ch;
 	}
 
-	td.deleteRow {
-		left: calc(100% - 5em) !important;
-		opacity: 0;
-		transition: opacity $transitionTime;
-		z-index: 2;
+	.checkbox {
+		padding: 0;
+		padding-left: 1em;
+		width: 2.5em !important;
+	}
 
-		button {
-			padding: 0.55em;
+	td.deleteRow {
+		opacity: 0;
+		padding: 0;
+		transition: opacity $transitionTime;
+		cursor: pointer;
+
+		.limit {
+			overflow: visible;
+			text-overflow: unset;
 		}
 
 		svg {
@@ -154,11 +171,31 @@ $cellHeight: 3.5em;
 			@include square(1.5em);
 			display: block;
 			margin-right: 0;
+			fill: $grey-dark;
 		}
 	}
 
 	tr:hover td.deleteRow {
 		opacity: 1;
+	}
+
+	@media (max-width: $breakpoint-desktop-box) {
+
+		.deleteRow[class] {
+			width: 2.5em !important;
+		}
+
+		td.deleteRow {
+			position: absolute !important;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			height: 100%;
+			left: calc(var(--tableContainerWidth) - 3em) !important;
+			padding: 0 0.5em;
+			background-color: $white;
+			z-index: 2;
+		}
 	}
 
 	.thumbnail {

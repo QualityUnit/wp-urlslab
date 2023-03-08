@@ -8,9 +8,10 @@ import ModuleViewHeader from '../components/ModuleViewHeader';
 export default function MediaOffloader( { moduleId } ) {
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
+	const slug = 'file';
 
 	const tableMenu = new Map( [
-		[ 'file', __( 'Media Files Table' ) ],
+		[ slug, __( 'Media Files Table' ) ],
 	] );
 
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
@@ -25,9 +26,9 @@ export default function MediaOffloader( { moduleId } ) {
 				</Overview>
 			}
 			{
-				activeSection === 'file' &&
+				activeSection === slug &&
 				<Suspense>
-					<MediaFilesTable />
+					<MediaFilesTable slug={ slug } />
 				</Suspense>
 			}
 			{

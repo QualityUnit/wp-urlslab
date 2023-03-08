@@ -1,12 +1,13 @@
+/* eslint-disable indent */
 
 import {
-	useInfiniteFetch, handleSelected, RangeSlider, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Button, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, RangeSlider, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function KeywordsTable( { slug } ) {
-	const { tableHidden, setHiddenTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, deleteRow, updateRow } = useTableUpdater();
+	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater();
 
 	const url = `${ filters }${ sortingColumn }`;
 	const pageId = 'kw_id';
@@ -42,14 +43,6 @@ export default function KeywordsTable( { slug } ) {
 	};
 
 	const columns = [
-		columnHelper.accessor( 'delete', {
-			className: 'deleteRow',
-			cell: ( cell ) => <Button danger onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId } ) }><Trash /></Button>,
-			header: () => __( '' ),
-			enableResizing: false,
-			maxSize: 0,
-			size: 0,
-		} ),
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
@@ -57,50 +50,60 @@ export default function KeywordsTable( { slug } ) {
 			} } />,
 			header: () => __( '' ),
 			enableResizing: false,
-			maxSize: 24,
-			size: 24,
 		} ),
 		columnHelper.accessor( 'keyword', {
 			header: () => <MenuInput isFilter placeholder="Enter keyword" defaultValue={ currentFilters.keyword } onChange={ ( val ) => addFilter( 'keyword', val ) }>{ header.keyword }</MenuInput>,
 			minSize: 150,
 		} ),
 		columnHelper.accessor( 'kwType', {
+			className: 'nolimit',
 			cell: ( cell ) => <SortMenu items={ keywordTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
 			header: ( cell ) => <SortMenu isFilter items={ keywordTypes } name={ cell.column.id } checkedId={ currentFilters.kwType || '' } onChange={ ( val ) => addFilter( 'kwType', val ) }>{ header.kwType }</SortMenu>,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'kw_length', {
-			header: () => header.kw_length,
-			size: 70,
+			header: () => <RangeSlider isFilter min="0" max="255" onChange={ ( r ) => console.log( r ) }>{ header.kw_length }</RangeSlider>,
+			size: 80,
 		} ),
 		columnHelper.accessor( 'kw_priority', {
+			className: 'nolimit',
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
 			header: () => <RangeSlider isFilter min="0" max="255" onChange={ ( r ) => console.log( r ) }>{ header.kw_priority }</RangeSlider>,
-		} ),
-		columnHelper.accessor( 'kw_usage_count', {
-			header: () => header.kw_usage_count,
-			size: 70,
+			size: 80,
 		} ),
 		columnHelper.accessor( 'lang', {
+			className: 'nolimit',
 			cell: ( cell ) => <LangMenu checkedId={ cell?.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) }
 			/>,
 			header: () => <LangMenu isFilter checkedId={ currentFilters.lang || 'all' } onChange={ ( val ) => addFilter( 'lang', val ) }>{ header.lang }</LangMenu>,
 			size: 165,
 		} ),
+		columnHelper.accessor( 'kw_usage_count', {
+			header: () => <RangeSlider isFilter min="0" max="255" onChange={ ( r ) => console.log( r ) }>{ header.kw_usage_count }</RangeSlider>,
+			size: 70,
+		} ),
 		columnHelper.accessor( 'link_usage_count', {
-			header: () => header.link_usage_count,
+			header: () => <RangeSlider isFilter min="0" max="255" onChange={ ( r ) => console.log( r ) }>{ header.link_usage_count }</RangeSlider>,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'urlFilter', {
 			cell: ( cell ) => <InputField defaultValue={ cell.renderValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => header.urlFilter,
+			header: () => <MenuInput isFilter placeholder="Enter URL filter" defaultValue={ currentFilters.urlFilter } onChange={ ( val ) => addFilter( 'urlFilter', val ) }>{ header.urlFilter }</MenuInput>,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'urlLink', {
-			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" className="limit-50" rel="noreferrer">{ cell.getValue() }</a>,
+			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: () => <MenuInput isFilter placeholder="Enter URL" onChange={ ( val ) => addFilter( 'urlLink', val ) }>{ header.urlLink }</MenuInput>,
 			enableResizing: false,
-			minSize: '30em',
+			size: 350,
+		} ),
+		columnHelper.accessor( 'delete', {
+			className: 'deleteRow',
+			cell: ( cell ) => <Trash onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId } ) } />,
+			header: () => __( '' ),
 		} ),
 	];
 
@@ -114,7 +117,7 @@ export default function KeywordsTable( { slug } ) {
 				slug={ slug }
 				currentFilters={ currentFilters }
 				header={ header }
-				removedFilters={ ( array ) => removeFilters( array ) }
+				removeFilters={ ( array ) => removeFilters( array ) }
 				exportOptions={ {
 					url: slug,
 					filters,
@@ -122,23 +125,22 @@ export default function KeywordsTable( { slug } ) {
 					pageId: 'kw_id',
 					deleteCSVCols: [ 'kw_id', 'destUrlMd5' ],
 				} }
-				hideTable={ ( hidden ) => setHiddenTable( hidden ) }
 			>
 				<div className="ma-left flex flex-align-center">
-					<strong>Sort by:</strong>
+					<strong>{ __( 'Sort by:' ) }</strong>
 					<SortMenu className="ml-s" items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } />
 				</div>
 			</ModuleViewHeaderBottom>
-			{ tableHidden
-				? null
-				: <Table className="fadeInto"
-						resizable
-						slug={ slug }
-						columns={ columns }
-						data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
-					<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
-				</Table>
-			}
+			<Table className="fadeInto"
+				slug={ slug }
+				columns={ columns }
+				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
+				{ row
+					? <Tooltip center>{ `${ header.keyword } “${ row.keyword }”` } has been deleted.</Tooltip>
+						: null
+				}
+				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
+			</Table>
 		</>
 	);
 }

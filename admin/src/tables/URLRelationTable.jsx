@@ -5,7 +5,10 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function URLRelationTable( { slug } ) {
-	const { tableHidden, setHiddenTable, filters, currentFilters, addFilter, removeFilter, sortingColumn, sortBy, deleteRow, updateRow } = useTableUpdater();
+	const { tableHidden, setHiddenTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, deleteRow, updateRow } = useTableUpdater();
+
+	const url = `${ filters }${ sortingColumn }`;
+	const pageId = 'srcUrlMd5';
 
 	const {
 		__,
@@ -16,7 +19,7 @@ export default function URLRelationTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: 'url-relation', url: `${ filters }${ sortingColumn }`, pageId: 'srcUrlMd5' } );
+	} = useInfiniteFetch( { key: slug, url, pageId } );
 
 	const header = {
 		srcUrlMd5: '',
@@ -31,16 +34,21 @@ export default function URLRelationTable( { slug } ) {
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
 				handleSelected( val, cell );
 			} } />,
-			header: () => __( '' ),
+			header: null,
 		} ),
 		columnHelper.accessor( 'srcUrlName', {
-			header: () => header.srcUrlName,
+			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			header: () => <MenuInput isFilter placeholder="Enter Source URL Name" defaultValue={ currentFilters.srcUrlName } onChange={ ( val ) => addFilter( 'srcUrlName', val ) }>{ header.srcUrlName }</MenuInput>,
+			size: 400,
 		} ),
 		columnHelper.accessor( 'pos', {
-			header: () => header.pos,
+			header: () => <RangeSlider isFilter min="0" max="255" onChange={ ( r ) => console.log( r ) }>{ header.pos }</RangeSlider>,
+			size: 80,
 		} ),
 		columnHelper.accessor( 'destUrlName', {
-			header: () => header.destUrlName,
+			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			header: () => <MenuInput isFilter placeholder="Enter Destination URL Name" defaultValue={ currentFilters.destUrlName } onChange={ ( val ) => addFilter( 'destUrlName', val ) }>{ header.destUrlName }</MenuInput>,
+			size: 400,
 		} ),
 	];
 
@@ -54,7 +62,7 @@ export default function URLRelationTable( { slug } ) {
 				slug={ slug }
 				currentFilters={ currentFilters }
 				header={ header }
-				removedFilter={ ( key ) => removeFilter( key ) }
+				removeFilters={ ( key ) => removeFilters( key ) }
 				exportOptions={ {
 					url: slug,
 					filters,

@@ -9,11 +9,14 @@
 		flex: auto;
 
 		@media (min-width: $breakpoint-tablet) {
-			padding-left: $iconsMenuWidth;
 			transition: padding-left $transitionTime;
 
+			.urlslab-mainmenu + & {
+				padding-left: $iconsMenuWidth;
+			}
+
 			.urlslab-mainmenu.open + & {
-				padding-left: $mainMenuWidth;
+				padding-left: calc($mainMenuWidth - 0.5em);
 			}
 		}
 	}

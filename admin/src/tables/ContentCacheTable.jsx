@@ -5,7 +5,7 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function ContentCacheTable() {
-	const { tableHidden, setHiddenTable, filters, currentFilters, addFilter, removeFilter, sortingColumn, sortBy, deleteRow, updateRow } = useTableUpdater();
+	const { tableHidden, setHiddenTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, deleteRow, updateRow } = useTableUpdater();
 
 	const {
 		__,
@@ -33,7 +33,6 @@ export default function ContentCacheTable() {
 			header: () => __( 'Cache size' ),
 		} ),
 		columnHelper.accessor( 'cache_content', {
-			cell: ( cell ) => <div className="limit-100">{ cell?.getValue() }</div>,
 			header: () => __( 'Cache content' ),
 		} ),
 	];

@@ -3,13 +3,22 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useCSVReader } from 'react-papaparse';
 import importCsv from '../api/importCsv';
 
+import useCloseModal from '../hooks/useCloseModal';
+
 import { ReactComponent as ImportIcon } from '../assets/images/icon-import.svg';
-import { ReactComponent as CloseIcon } from '../assets/images/icon-close.svg';
-import BackButton from '../elements/BackButton';
 import Button from '../elements/Button';
 
-export default function ImportPanel( { slug, backToTable } ) {
+export default function ImportPanel( { slug, handlePanel } ) {
 	const { __ } = useI18n();
+	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
+
+	const hidePanel = ( operation ) => {
+		handleClose();
+		if ( handlePanel ) {
+			handlePanel( operation );
+		}
+	};
+
 	const queryClient = useQueryClient();
 	const { CSVReader } = useCSVReader();
 
@@ -22,13 +31,17 @@ export default function ImportPanel( { slug, backToTable } ) {
 		},
 	} );
 	return (
-		<div className="urlslab-panel-wrap">
-			<BackButton className="mb-l" onClick={ () => backToTable() }>{ __( 'Back to table' ) }</BackButton>
-
+		<div className="urlslab-panel-wrap urlslab-panel-floating fadeInto">
 			<div className="urlslab-panel">
-				<h4 className="mb-l">{ __( 'Import data' ) }</h4>
+				<div className="urlslab-panel-header">
+					<h3>{ __( 'Import data' ) }</h3>
+					<button className="urlslab-panel-close" onClick={ () => hidePanel() }>
+						<CloseIcon />
+					</button>
+				</div>
 
 				<div className="flex">
+					<Button className="ma-left simple" onClick={ () => hidePanel() }>{ __( 'Cancel' ) }</Button>
 					<CSVReader
 						onUploadAccepted={ ( results ) => {
 							importData.mutate( results );
@@ -42,16 +55,14 @@ export default function ImportPanel( { slug, backToTable } ) {
 							acceptedFile,
 							getRemoveFileProps,
 						} ) => (
-							<div className="flex flex-align-center">
+							<div className="ml-s flex flex-align-center">
 								{ acceptedFile &&
 								<button className="removeFile flex flex-align-center" { ...getRemoveFileProps() }>{ acceptedFile.name } <CloseIcon /></button>
 								}
-								<div className="ma-left">
-									<Button { ...getRootProps() } active>
-										<ImportIcon />
-										{ __( 'Import CSV' ) }
-									</Button>
-								</div>
+								<Button { ...getRootProps() } active>
+									<ImportIcon />
+									{ __( 'Import CSV' ) }
+								</Button>
 							</div>
 
 						) }
@@ -59,6 +70,5 @@ export default function ImportPanel( { slug, backToTable } ) {
 				</div>
 			</div>
 		</div>
-
 	);
 }
