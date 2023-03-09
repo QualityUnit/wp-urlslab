@@ -101,6 +101,7 @@ export default function YouTubeCacheTable( { slug } ) {
 				header={ header }
 				noImport
 				removeFilters={ ( key ) => removeFilters( key ) }
+				onSort={ ( val ) => sortBy( val ) }
 				exportOptions={ {
 					url: slug,
 					filters,
@@ -108,16 +109,9 @@ export default function YouTubeCacheTable( { slug } ) {
 					pageId,
 					deleteCSVCols: [ pageId, 'dest_url_id' ],
 				} }
-			>
-				<div className="ma-left flex flex-align-center">
-					<strong>Sort by:</strong>
-					<SortMenu className="ml-s" items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } />
-				</div>
-			</ModuleViewHeaderBottom>
+			/>
 			<Table className="fadeInto" columns={ columns }
-				data={
-					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
-				}
+				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
 				{ row
 					? <Tooltip center>{ `${ header.videoid } “${ row.videoid }”` } { __( 'has been deleted.' ) }</Tooltip>

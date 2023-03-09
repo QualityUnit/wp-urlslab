@@ -198,6 +198,11 @@
 		margin-bottom: 0;
 		cursor: pointer;
 
+		button {
+			position: relative;
+			z-index: 1;
+		}
+
 		&.active {
 			background-color: color.scale($mainmenu-graphite, $lightness: 16%);
 			transition: all $transitionTime;
@@ -210,11 +215,29 @@
 			}
 		}
 
+		&:not(.active):not(.submenu)::before {
+			content: "";
+			position: absolute;
+			height: 100%;
+			right: 0;
+			left: -$iconsMenuWidth;
+			background-color: color.scale($mainmenu-graphite, $lightness: 16%);
+			transition: all $transitionTime;
+			opacity: 0;
+
+			.urlslab-mainmenu-icons & {
+				display: none;
+			}
+		}
+
+		// .open .urlslab-mainmenu-icons & {
+		// 	pointer-events: none;
+		// }
+
 		@media (hover: hover) {
 
-			&:not(.active):not(.submenu):hover {
-				background-color: color.scale($mainmenu-graphite, $lightness: 16%);
-				transition: all $transitionTime;
+			&:not(.active):not(.submenu):hover::before {
+				opacity: 1;
 			}
 		}
 	}

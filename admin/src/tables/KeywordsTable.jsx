@@ -52,6 +52,7 @@ export default function KeywordsTable( { slug } ) {
 			enableResizing: false,
 		} ),
 		columnHelper.accessor( 'keyword', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			header: () => <MenuInput isFilter placeholder="Enter keyword" defaultValue={ currentFilters.keyword } onChange={ ( val ) => addFilter( 'keyword', val ) }>{ header.keyword }</MenuInput>,
 			minSize: 150,
 		} ),
@@ -74,10 +75,10 @@ export default function KeywordsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'lang', {
 			className: 'nolimit',
-			cell: ( cell ) => <LangMenu checkedId={ cell?.getValue() }
+			cell: ( cell ) => <LangMenu noAll checkedId={ cell?.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) }
 			/>,
-			header: () => <LangMenu isFilter checkedId={ currentFilters.lang || 'all' } onChange={ ( val ) => addFilter( 'lang', val ) }>{ header.lang }</LangMenu>,
+			header: () => <LangMenu noAll isFilter checkedId={ currentFilters.lang || 'all' } onChange={ ( val ) => addFilter( 'lang', val ) }>{ header.lang }</LangMenu>,
 			size: 165,
 		} ),
 		columnHelper.accessor( 'kw_usage_count', {
@@ -96,7 +97,8 @@ export default function KeywordsTable( { slug } ) {
 			size: 100,
 		} ),
 		columnHelper.accessor( 'urlLink', {
-			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: () => <MenuInput isFilter placeholder="Enter URL" onChange={ ( val ) => addFilter( 'urlLink', val ) }>{ header.urlLink }</MenuInput>,
 			enableResizing: false,
 			size: 350,
@@ -118,20 +120,16 @@ export default function KeywordsTable( { slug } ) {
 				slug={ slug }
 				currentFilters={ currentFilters }
 				header={ header }
-				removeFilters={ ( array ) => removeFilters( array ) }
+				removeFilters={ ( key ) => removeFilters( key ) }
+				onSort={ ( val ) => sortBy( val ) }
 				exportOptions={ {
 					url: slug,
 					filters,
-					fromId: 'from_kw_id',
-					pageId: 'kw_id',
-					deleteCSVCols: [ 'kw_id', 'dest_url_id' ],
+					fromId: `from_${ pageId }`,
+					pageId,
+					deleteCSVCols: [ pageId, 'dest_url_id' ],
 				} }
-			>
-				<div className="ma-left flex flex-align-center">
-					<strong>{ __( 'Sort by:' ) }</strong>
-					<SortMenu className="ml-s" items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } />
-				</div>
-			</ModuleViewHeaderBottom>
+			/>
 			<Table className="fadeInto"
 				slug={ slug }
 				columns={ columns }
