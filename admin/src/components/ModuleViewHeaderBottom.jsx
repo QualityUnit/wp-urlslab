@@ -14,7 +14,7 @@ import ExportPanel from './ExportPanel';
 import ImportPanel from './ImportPanel';
 import DangerPanel from './DangerPanel';
 
-export default function ModuleViewHeaderBottom( { currentFilters, header, removeFilters, children, slug, exportOptions } ) {
+export default function ModuleViewHeaderBottom( { currentFilters, noImport, noExport, noDelete, header, removeFilters, children, slug, exportOptions } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const activeFilters = Object.keys( currentFilters );
@@ -41,12 +41,15 @@ export default function ModuleViewHeaderBottom( { currentFilters, header, remove
 		<>
 			<div className="urlslab-moduleView-headerBottom flex">
 
+				{ ! noDelete &&
 				<Button onClick={ () => handlePanel( 'delete' ) }><Trash />{ __( 'Delete All' ) }</Button>
-
+				}
+				{ ! noExport &&
 				<Button className="ml-s-tablet" onClick={ () => handlePanel( 'export' ) }><ExportIcon />{ __( 'Export CSV' ) }</Button>
-
+				}
+				{ ! noImport &&
 				<Button className="ml-s-tablet" onClick={ () => handlePanel( 'import' ) }><ImportIcon />{ __( 'Import CSV' ) }</Button>
-
+				}
 				{
 					( activeFilters?.length > 0 && header ) &&
 					<div className="flex flex-align-center">

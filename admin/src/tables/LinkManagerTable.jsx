@@ -118,7 +118,7 @@ export default function LinkManagerTable( { slug } ) {
 			size: 140,
 		} ),
 		columnHelper.accessor( 'delete', {
-			className: 'noLimit deleteRow',
+			className: 'deleteRow',
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId } ) } />,
 			header: null,
 		} ),
@@ -154,7 +154,7 @@ export default function LinkManagerTable( { slug } ) {
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
 				{ row
-					? <Tooltip center>{ `${ header.keyword } “${ row.keyword }”` } has been deleted.</Tooltip>
+					? <Tooltip center>{ `${ header.urlName } “${ row.urlName }”` } has been deleted.</Tooltip>
 					: null
 				}
 				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>

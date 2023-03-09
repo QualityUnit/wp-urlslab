@@ -32,15 +32,15 @@ export default function LazyLoading( { moduleId } ) {
 			<Suspense>
 				{
 					activeSection === 'youtube-cache' &&
-					<YouTubeCacheTable />
+					<YouTubeCacheTable slug="youtube-cache" />
 				}
 				{
 					activeSection === 'css-cache' &&
-					<CSSCacheTable />
+					<CSSCacheTable slug="css-cache" />
 				}
 				{
 					activeSection === 'content-cache' &&
-					<ContentCacheTable />
+					<ContentCacheTable slug="content-cache" />
 				}
 			</Suspense>
 			{

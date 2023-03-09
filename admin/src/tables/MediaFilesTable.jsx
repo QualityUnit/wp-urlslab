@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, handleSelected, Tooltip, SortMenu, InputField, RangeSlider, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, Tooltip, SortMenu, RangeSlider, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -50,6 +50,7 @@ export default function MediaFilesTable( { slug } ) {
 			header: null,
 		} ),
 		columnHelper?.accessor( 'filename', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			header: () => <MenuInput isFilter placeholder="Enter file name" defaultValue={ currentFilters.filename } onChange={ ( val ) => addFilter( 'filename', val ) }>{ header.filename }</MenuInput>,
 			size: 150,
 		} ),
@@ -71,29 +72,34 @@ export default function MediaFilesTable( { slug } ) {
 			header: () => __( 'Status changed' ),
 			size: 100,
 		} ),
-		columnHelper?.accessor( 'height', {
-			cell: ( cell ) => `${ cell.getValue() }\u00A0px`,
-			header: () => __( 'Height' ),
-			size: 50,
-		} ),
 		columnHelper?.accessor( 'width', {
 			cell: ( cell ) => `${ cell.getValue() }\u00A0px`,
-			header: () => __( 'Width' ),
+			header: () => <MenuInput isFilter placeholder="Enter Width" defaultValue={ currentFilters.width } onChange={ ( val ) => addFilter( 'width', val ) }>{ header.width }</MenuInput>,
+			size: 50,
+		} ),
+		columnHelper?.accessor( 'height', {
+			cell: ( cell ) => `${ cell.getValue() }\u00A0px`,
+			header: () => <MenuInput isFilter placeholder="Enter Height" defaultValue={ currentFilters.height } onChange={ ( val ) => addFilter( 'height', val ) }>{ header.height }</MenuInput>,
 			size: 50,
 		} ),
 		columnHelper?.accessor( 'filesize', {
 			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
-			header: () => __( 'File Size' ),
-			size: 60,
+			header: () => <MenuInput isFilter placeholder="Enter size in kB" defaultValue={ currentFilters.filesize } onChange={ ( val ) => addFilter( 'filesize', val * 1024 ) }>{ header.filesize }</MenuInput>,
+			size: 80,
 		} ),
 		columnHelper?.accessor( 'file_usage_count', {
 			header: () => <RangeSlider isFilter min="0" max="10255" onChange={ ( r ) => console.log( r ) }>{ header.file_usage_count }</RangeSlider>,
-			size: 60,
+			size: 80,
 		} ),
 		columnHelper?.accessor( 'url', {
+			tooltip: ( cell ) => {
+				const regex = /(jpeg|jpg|webp|gif|png|svg)/g;
+				const isImage = cell.getValue().search( regex );
+				return <Tooltip>{ isImage !== -1 && <img src={ cell.getValue() } alt="url" /> }</Tooltip>;
+			},
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: () => <MenuInput isFilter placeholder="Enter URL" defaultValue={ currentFilters.url } onChange={ ( val ) => addFilter( 'url', val ) }>{ header.url }</MenuInput>,
-			size: 300,
+			size: 250,
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
@@ -116,9 +122,9 @@ export default function MediaFilesTable( { slug } ) {
 				exportOptions={ {
 					url: slug,
 					filters,
-					fromId: 'from_fileid',
-					pageId: 'fileid',
-					deleteCSVCols: [ 'fileid', 'destUrlMd5' ],
+					fromId: `from_${ pageId }`,
+					pageId,
+					deleteCSVCols: [ pageId, 'destUrlMd5' ],
 				} }
 				hideTable={ ( hidden ) => setHiddenTable( hidden ) }
 			>

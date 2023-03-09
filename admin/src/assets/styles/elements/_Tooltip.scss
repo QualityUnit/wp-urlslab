@@ -7,7 +7,7 @@
 	display: inline-flex;
 	background-color: $black;
 	box-shadow: $box-shadow-small;
-	border-radius: 1.5em;
+	border-radius: $br-10;
 	font-size: 0.75rem;
 	padding: 0.33em 0.85em;
 	color: $white;
@@ -17,7 +17,28 @@
 		@include absoluteCenter;
 	}
 
+	&.align-left {
+		right: 70%;
+	}
+
+	img,
+	.img,
+	picture {
+		margin: 0.5em;
+		max-width: 15em;
+		height: auto !important;
+	}
+
 	.urlslab-table-container > & {
-		left: calc(50% + 80px);
+		left: calc(50% + 160px);
+	}
+
+	.urlslab-table td & {
+		display: none;
+		top: 75%;
+	}
+
+	.urlslab-table td:hover & {
+		display: block;
 	}
 }

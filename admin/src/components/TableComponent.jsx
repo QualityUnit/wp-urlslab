@@ -65,9 +65,11 @@ export default function Table( { resizable, children, className, columns, data }
 		const row = rows[ virtualRow?.index ];
 		tbody.push(
 			<tr key={ row.id } className={ row.getIsSelected() ? 'selected' : '' }>
-				{ row.getVisibleCells().map( ( cell ) =>
-					<td key={ cell.id } className={ cell.column.columnDef.className }
-						style={ {
+				{ row.getVisibleCells().map( ( cell ) => {
+					const tooltip = cell.column.columnDef.tooltip;
+					return (
+						<td key={ cell.id } className={ cell.column.columnDef.className }
+							style={ {
 							position: resizable ? 'absolute' : 'static',
 							left: resizable ? cell.column.getStart() : '0',
 							width: cell.column.getSize() !== 0 && resizable
@@ -75,11 +77,16 @@ export default function Table( { resizable, children, className, columns, data }
 								: undefined,
 						} }
 					>
-						<div className="limit">
-							{ flexRender( cell.column.columnDef.cell, cell.getContext() ) }
-						</div>
-					</td>
-				) }
+							{ tooltip
+							? flexRender( tooltip, cell.getContext() )
+							: null
+						}
+							<div className="limit">
+								{ flexRender( cell.column.columnDef.cell, cell.getContext() ) }
+							</div>
+						</td>
+					);
+	} ) }
 			</tr>
 		);
 	}

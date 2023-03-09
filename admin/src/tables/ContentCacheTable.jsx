@@ -1,11 +1,14 @@
 import {
-	useInfiniteFetch, handleInput, handleSelected, RangeSlider, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, Tooltip, SortMenu, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 
-export default function ContentCacheTable() {
-	const { tableHidden, setHiddenTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, deleteRow, updateRow } = useTableUpdater();
+export default function ContentCacheTable( { slug } ) {
+	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow } = useTableUpdater();
+
+	const url = `${ filters }${ sortingColumn }`;
+	const pageId = 'cache_crc32';
 
 	const {
 		__,
@@ -16,7 +19,13 @@ export default function ContentCacheTable() {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: 'content-cache', url: `${ filters }${ sortingColumn }`, pageId: 'cache_crc32' } );
+	} = useInfiniteFetch( { key: slug, url, pageId } );
+
+	const header = {
+		date_changed: __( 'Changed at' ),
+		cache_len: __( 'Cache size' ),
+		cache_content: __( 'Cache content' ),
+	};
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -24,16 +33,27 @@ export default function ContentCacheTable() {
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
 				handleSelected( val, cell );
 			} } />,
-			header: () => __( '' ),
+			header: null,
 		} ),
 		columnHelper.accessor( 'date_changed', {
-			header: () => __( 'Changed at' ),
+			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
+			header: header.date_changed,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'cache_len', {
-			header: () => __( 'Cache size' ),
+			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
+			header: () => <MenuInput isFilter placeholder="Enter size in kB" defaultValue={ currentFilters.cache_len } onChange={ ( val ) => addFilter( 'cache_len', val * 1024 ) }>{ header.cache_len }</MenuInput>,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'cache_content', {
-			header: () => __( 'Cache content' ),
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			header: header.cache_content,
+			size: 500,
+		} ),
+		columnHelper.accessor( 'delete', {
+			className: 'deleteRow',
+			cell: ( cell ) => <Trash onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId } ) } />,
+			header: null,
 		} ),
 	];
 
@@ -42,12 +62,37 @@ export default function ContentCacheTable() {
 	}
 
 	return (
-		<Table className="fadeInto" columns={ columns }
-			data={
-				isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
-			}
-		>
-			<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
-		</Table>
+		<>
+			<ModuleViewHeaderBottom
+				slug={ slug }
+				currentFilters={ currentFilters }
+				header={ header }
+				noImport
+				removeFilters={ ( key ) => removeFilters( key ) }
+				exportOptions={ {
+					url: slug,
+					filters,
+					fromId: `from_${ pageId }`,
+					pageId,
+					deleteCSVCols: [ pageId, 'destUrlMd5' ],
+				} }
+			>
+				<div className="ma-left flex flex-align-center">
+					<strong>Sort by:</strong>
+					<SortMenu className="ml-s" items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } />
+				</div>
+			</ModuleViewHeaderBottom>
+			<Table className="fadeInto" columns={ columns }
+				data={
+					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
+				}
+			>
+				{ row
+					? <Tooltip center>{ __( 'Content cache entry has been deleted.' ) }</Tooltip>
+					: null
+				}
+				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
+			</Table>
+		</>
 	);
 }
