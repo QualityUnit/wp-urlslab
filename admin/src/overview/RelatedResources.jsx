@@ -16,6 +16,7 @@ export default function RelatedResourcesOverview() {
 				url - [optional, default=current url] url of page to which we are searching related resources<br/>
 				related-count - [optional, default=8] count of most similar pages to input url<br/>
 				show-image - [optional, default=false] show screenshot image if is available<br/>
+				show-summary - [optional, default=false] show summary text of destination url<br/>
 				default-image - [optional, default=''] url of default image used until screenshot image is available for specific url<br/>
 			</code>
 			<h2>Examples</h2>
