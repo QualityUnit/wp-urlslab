@@ -1,11 +1,11 @@
 import {
-	useInfiniteFetch, handleSelected, Trash, Button, MenuInput, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, Tooltip, Trash, MenuInput, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function LinkManagerTable( { slug } ) {
-	const { tableHidden, setHiddenTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, deleteRow, updateRow } = useTableUpdater();
+	const { setHiddenTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater();
 
 	const url = `${ filters }${ sortingColumn }`;
 	const pageId = 'urlMd5';
@@ -120,10 +120,7 @@ export default function LinkManagerTable( { slug } ) {
 		columnHelper.accessor( 'delete', {
 			className: 'noLimit deleteRow',
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => __( '' ),
-			enableResizing: false,
-			maxSize: 0,
-			size: 0,
+			header: null,
 		} ),
 	];
 
@@ -153,17 +150,15 @@ export default function LinkManagerTable( { slug } ) {
 					<SortMenu className="ml-s" items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } />
 				</div>
 			</ModuleViewHeaderBottom>
-			{ tableHidden
-				? null
-				: <Table className="fadeInto" columns={ columns }
-					// resizable
-					data={
-						isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
-					}
-				>
-					<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
-				</Table>
-			}
+			<Table className="fadeInto" columns={ columns }
+				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+			>
+				{ row
+					? <Tooltip center>{ `${ header.keyword } “${ row.keyword }”` } has been deleted.</Tooltip>
+					: null
+				}
+				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
+			</Table>
 		</>
 	);
 }

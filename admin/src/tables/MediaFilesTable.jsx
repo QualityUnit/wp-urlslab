@@ -1,11 +1,11 @@
 import {
-	useInfiniteFetch, handleInput, handleSelected, RangeSlider, SortMenu, InputField, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, Tooltip, SortMenu, InputField, RangeSlider, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function MediaFilesTable( { slug } ) {
-	const { tableHidden, setHiddenTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, deleteRow, updateRow } = useTableUpdater();
+	const { setHiddenTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater();
 
 	const url = `${ filters }${ sortingColumn }`;
 	const pageId = 'fileid';
@@ -47,23 +47,24 @@ export default function MediaFilesTable( { slug } ) {
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
 				handleSelected( val, cell );
 			} } />,
-			header: () => __( '' ),
+			header: null,
 		} ),
 		columnHelper?.accessor( 'filename', {
-			header: () => __( 'File Name' ),
+			header: () => <MenuInput isFilter placeholder="Enter file name" defaultValue={ currentFilters.filename } onChange={ ( val ) => addFilter( 'filename', val ) }>{ header.filename }</MenuInput>,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'filetype', {
-			header: () => __( 'File Type' ),
+			header: () => <MenuInput isFilter placeholder="Enter file type" defaultValue={ currentFilters.filetype } onChange={ ( val ) => addFilter( 'filetype', val ) }>{ header.filetype }</MenuInput>,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'filestatus', {
+			className: 'nolimit',
 			cell: ( cell ) => <SortMenu
 				items={ statusTypes }
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => __( 'Status' ),
+			header: ( cell ) => <SortMenu isFilter items={ statusTypes } name={ cell.column.id } checkedId={ currentFilters.filestatus || '' } onChange={ ( val ) => addFilter( 'filestatus', val ) }>{ header.filestatus }</SortMenu>,
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'status_changed', {
@@ -86,13 +87,18 @@ export default function MediaFilesTable( { slug } ) {
 			size: 60,
 		} ),
 		columnHelper?.accessor( 'file_usage_count', {
-			header: () => __( 'File Usage' ),
+			header: () => <RangeSlider isFilter min="0" max="10255" onChange={ ( r ) => console.log( r ) }>{ header.file_usage_count }</RangeSlider>,
 			size: 60,
 		} ),
 		columnHelper?.accessor( 'url', {
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: () => __( 'URL' ),
+			header: () => <MenuInput isFilter placeholder="Enter URL" defaultValue={ currentFilters.url } onChange={ ( val ) => addFilter( 'url', val ) }>{ header.url }</MenuInput>,
 			size: 300,
+		} ),
+		columnHelper.accessor( 'delete', {
+			className: 'deleteRow',
+			cell: ( cell ) => <Trash onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId } ) } />,
+			header: null,
 		} ),
 	];
 
@@ -121,14 +127,16 @@ export default function MediaFilesTable( { slug } ) {
 					<SortMenu className="ml-s" items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } />
 				</div>
 			</ModuleViewHeaderBottom>
-			{ tableHidden
-				? null
-				: <Table className="fadeInto" columns={ columns }
-					data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				>
-					<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
-				</Table>
-			}
+			<Table className="fadeInto" columns={ columns }
+				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+			>
+				{ row
+					? <Tooltip center>{ `${ header.filename } “${ row.filename }”` } { __( 'has been deleted.' ) }</Tooltip>
+					: null
+				}
+				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
+			</Table>
+
 		</>
 	);
 }

@@ -48,7 +48,7 @@ export default function KeywordsTable( { slug } ) {
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
 				handleSelected( val, cell );
 			} } />,
-			header: () => __( '' ),
+			header: null,
 			enableResizing: false,
 		} ),
 		columnHelper.accessor( 'keyword', {
@@ -89,6 +89,7 @@ export default function KeywordsTable( { slug } ) {
 			size: 100,
 		} ),
 		columnHelper.accessor( 'urlFilter', {
+			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.renderValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
 			header: () => <MenuInput isFilter placeholder="Enter URL filter" defaultValue={ currentFilters.urlFilter } onChange={ ( val ) => addFilter( 'urlFilter', val ) }>{ header.urlFilter }</MenuInput>,
@@ -103,7 +104,7 @@ export default function KeywordsTable( { slug } ) {
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => __( '' ),
+			header: null,
 		} ),
 	];
 
@@ -136,7 +137,7 @@ export default function KeywordsTable( { slug } ) {
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 				{ row
-					? <Tooltip center>{ `${ header.keyword } “${ row.keyword }”` } has been deleted.</Tooltip>
+					? <Tooltip center>{ `${ header.keyword } “${ row.keyword }”` } { __( 'has been deleted.' ) }</Tooltip>
 						: null
 				}
 				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
