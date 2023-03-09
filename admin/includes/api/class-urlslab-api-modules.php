@@ -76,7 +76,7 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 		try {
 			$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $request->get_param( 'id' ) );
 			if ( false === $widget ) {
-				return new WP_Error( 'not-found', __( 'Module not found', 'urlslab' ), array( 'status' => 404 ) );
+				return new WP_Error( 'not-found', __( 'Module not found', 'urlslab' ), array( 'status' => 400 ) );
 			}
 
 			return new WP_REST_Response( $this->get_widget_data( $widget ), 200 );
@@ -89,7 +89,7 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 		try {
 			$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $request->get_param( 'id' ) );
 			if ( false === $widget ) {
-				return new WP_Error( 'not-found', __( 'Module not found', 'urlslab' ), array( 'status' => 404 ) );
+				return new WP_Error( 'not-found', __( 'Module not found', 'urlslab' ), array( 'status' => 400 ) );
 			}
 
 			if ( $request->get_json_params()['active'] ) {

@@ -18,14 +18,14 @@ class Urlslab_General extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return __( 'Settings' );
+		return __( 'Urlslab Integration' );
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( 'Urlslab.com integration' );
+		return __( 'Connect Urlslab.com services to your Wordpress.' );
 	}
 
 	public function is_api_key_required() {
@@ -39,7 +39,26 @@ class Urlslab_General extends Urlslab_Widget {
 			true,
 			__( 'API Key' ),
 			__( 'Get Urlslab API key from https://www.urlslab.com' ),
-			self::OPTION_TYPE_PASSWORD
+			self::OPTION_TYPE_PASSWORD,
+			false,
+			function( $value ) {
+				$config = Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X_URLSLAB_API_KEY', $value );
+
+				$apiInstance = new Swagger\Client\Urlslab\ApikeyApi(
+					new GuzzleHttp\Client(),
+					$config
+				);
+
+				try {
+					$result = $apiInstance->validate();
+
+					return $result->getAcknowledged();
+				} catch ( Exception $e ) {
+					return false;
+				}
+
+				return false;
+			},
 		);
 	}
 }
