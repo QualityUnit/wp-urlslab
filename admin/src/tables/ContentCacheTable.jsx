@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, handleSelected, Tooltip, SortMenu, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, Tooltip, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -69,6 +69,7 @@ export default function ContentCacheTable( { slug } ) {
 				header={ header }
 				noImport
 				removeFilters={ ( key ) => removeFilters( key ) }
+				onSort={ ( val ) => sortBy( val ) }
 				exportOptions={ {
 					url: slug,
 					filters,
@@ -76,12 +77,7 @@ export default function ContentCacheTable( { slug } ) {
 					pageId,
 					deleteCSVCols: [ pageId, 'destUrlMd5' ],
 				} }
-			>
-				<div className="ma-left flex flex-align-center">
-					<strong>Sort by:</strong>
-					<SortMenu className="ml-s" items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } />
-				</div>
-			</ModuleViewHeaderBottom>
+			/>
 			<Table className="fadeInto" columns={ columns }
 				data={
 					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )

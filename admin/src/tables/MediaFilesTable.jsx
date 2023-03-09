@@ -5,7 +5,7 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function MediaFilesTable( { slug } ) {
-	const { setHiddenTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater();
+	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater();
 
 	const url = `${ filters }${ sortingColumn }`;
 	const pageId = 'fileid';
@@ -118,7 +118,8 @@ export default function MediaFilesTable( { slug } ) {
 				slug={ slug }
 				currentFilters={ currentFilters }
 				header={ header }
-				removeFilters={ ( array ) => removeFilters( array ) }
+				removeFilters={ ( key ) => removeFilters( key ) }
+				onSort={ ( val ) => sortBy( val ) }
 				exportOptions={ {
 					url: slug,
 					filters,
@@ -126,13 +127,7 @@ export default function MediaFilesTable( { slug } ) {
 					pageId,
 					deleteCSVCols: [ pageId, 'destUrlMd5' ],
 				} }
-				hideTable={ ( hidden ) => setHiddenTable( hidden ) }
-			>
-				<div className="ma-left flex flex-align-center">
-					<strong>Sort by:</strong>
-					<SortMenu className="ml-s" items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } />
-				</div>
-			</ModuleViewHeaderBottom>
+			/>
 			<Table className="fadeInto" columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

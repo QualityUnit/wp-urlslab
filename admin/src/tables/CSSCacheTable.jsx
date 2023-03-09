@@ -87,6 +87,7 @@ export default function CSSCacheTable( { slug } ) {
 				header={ header }
 				noImport
 				removeFilters={ ( key ) => removeFilters( key ) }
+				onSort={ ( val ) => sortBy( val ) }
 				exportOptions={ {
 					url: slug,
 					filters,
@@ -94,12 +95,7 @@ export default function CSSCacheTable( { slug } ) {
 					pageId,
 					deleteCSVCols: [ pageId, 'destUrlMd5' ],
 				} }
-			>
-				<div className="ma-left flex flex-align-center">
-					<strong>Sort by:</strong>
-					<SortMenu className="ml-s" items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } />
-				</div>
-			</ModuleViewHeaderBottom>
+			/>
 			<Table className="fadeInto" columns={ columns }
 				data={
 					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )

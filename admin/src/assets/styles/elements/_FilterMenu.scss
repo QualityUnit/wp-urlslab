@@ -90,6 +90,11 @@
 		transition: opacity 0.1s;
 		filter: drop-shadow(0 1px 6px rgba($black-real, 0.16));
 
+		.menu-left & {
+			left: auto;
+			right: 0;
+		}
+
 		&.menuInput {
 			min-width: 15em;
 			max-width: 25em;

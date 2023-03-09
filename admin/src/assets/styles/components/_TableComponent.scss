@@ -23,11 +23,10 @@ $cellHeight: 3.5em;
 	&-container {
 
 		@include scrollbar();
-		height: calc(100vh - 350px);
+		height: calc(100vh - 16.5em);
 		margin: 1.5em;
 		padding-bottom: 1.5em;
 		overflow: auto;
-		// overflow-x: hidden;
 	}
 
 	.resizer {

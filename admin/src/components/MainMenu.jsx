@@ -11,7 +11,7 @@ export default function MainMenu( { activeModule, modules, activePage, module } 
 	const mainmenu = useRef();
 	const [ activeId, setActive ] = useState( module || 'urlslab-modules' );
 
-	const activeModules = modules?.length ? modules.filter( ( module ) => module.active ) : [];
+	const activeModules = modules?.length ? modules.filter( ( mod ) => mod.active ) : [];
 
 	const handleMainMenu = ( ) => {
 		const menuState = mainmenu.current.classList.contains( 'open' );
@@ -28,10 +28,10 @@ export default function MainMenu( { activeModule, modules, activePage, module } 
 		}
 	};
 
-	const handleActive = ( module ) => {
-		setActive( module );
+	const handleActive = ( mod ) => {
+		setActive( mod );
 		if ( activePage ) {
-			activePage( module );
+			activePage( mod );
 		}
 	};
 
@@ -95,15 +95,15 @@ export default function MainMenu( { activeModule, modules, activePage, module } 
 					<li className="urlslab-mainmenu-item submenu">
 						<ul className="urlslab-mainmenu-submenu" style={ { '--activeModules': activeModules.length } }>
 							{ modules.length
-								? modules.map( ( module ) => {
+								? modules.map( ( modul ) => {
 									return (
-										module.active
-											? <li key={ module.id } className={ `urlslab-mainmenu-item ${ activator( module.id ) }` }>
+										modul.active
+											? <li key={ modul.id } className={ `urlslab-mainmenu-item ${ activator( modul.id ) }` }>
 												<button
 													type="button"
 													className="urlslab-mainmenu-btn"
-													onClick={ () => handleActive( module.id ) }>
-													<span>{ module.title }</span>
+													onClick={ () => handleActive( modul.id ) }>
+													<span>{ modul.title }</span>
 												</button>
 											</li>
 											: ''

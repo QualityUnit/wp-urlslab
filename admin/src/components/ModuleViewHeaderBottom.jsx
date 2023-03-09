@@ -9,12 +9,13 @@ import { ReactComponent as ImportIcon } from '../assets/images/icon-import.svg';
 import { ReactComponent as ExportIcon } from '../assets/images/icon-export.svg';
 import { ReactComponent as CloseIcon } from '../assets/images/icon-close.svg';
 
+import SortMenu from '../elements/SortMenu';
 import Button from '../elements/Button';
 import ExportPanel from './ExportPanel';
 import ImportPanel from './ImportPanel';
 import DangerPanel from './DangerPanel';
 
-export default function ModuleViewHeaderBottom( { currentFilters, noImport, noExport, noDelete, header, removeFilters, children, slug, exportOptions } ) {
+export default function ModuleViewHeaderBottom( { currentFilters, noImport, noExport, noDelete, header, removeFilters, slug, exportOptions, onSort } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const activeFilters = Object.keys( currentFilters );
@@ -60,9 +61,10 @@ export default function ModuleViewHeaderBottom( { currentFilters, noImport, noEx
 						<Button className="simple underline" onClick={ () => removeFilters( activeFilters ) }>Clear filters</Button>
 					</div>
 				}
-				{
-					children
-				}
+				<div className="ma-left flex flex-align-center">
+					<strong>{ __( 'Sort by:' ) }</strong>
+					<SortMenu className="menu-left ml-s" items={ header } name="sorting" onChange={ ( val ) => onSort( val ) } />
+				</div>
 			</div>
 			{
 				activePanel === 'delete' &&

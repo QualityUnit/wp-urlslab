@@ -5,7 +5,7 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function LinkManagerTable( { slug } ) {
-	const { setHiddenTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater();
+	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater();
 
 	const url = `${ filters }${ sortingColumn }`;
 	const pageId = 'urlMd5';
@@ -65,6 +65,7 @@ export default function LinkManagerTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'urlTitle', {
 			className: 'nolimit',
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
 			header: () => <MenuInput isFilter placeholder="Enter URL Title" defaultValue={ currentFilters.urlTitle } onChange={ ( val ) => addFilter( 'urlTitle', val ) }>{ header.urlTitle }</MenuInput>,
@@ -72,6 +73,7 @@ export default function LinkManagerTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'urlMetaDescription', {
 			className: 'nolimit',
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
 			header: () => <MenuInput isFilter placeholder="Enter URL Desc" defaultValue={ currentFilters.urlMetaDescription } onChange={ ( val ) => addFilter( 'urlFilter', val ) }>{ header.urlMetaDescription }</MenuInput>,
@@ -79,6 +81,7 @@ export default function LinkManagerTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'urlSummary', {
 			className: 'nolimit',
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
 			header: () => <MenuInput isFilter placeholder="Enter Text" defaultValue={ currentFilters.urlSummary } onChange={ ( val ) => addFilter( 'urlSummary', val ) }>{ header.urlSummary }</MenuInput>,
@@ -109,7 +112,8 @@ export default function LinkManagerTable( { slug } ) {
 			size: 100,
 		} ),
 		columnHelper.accessor( 'urlName', {
-			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: () => <MenuInput isFilter placeholder="Enter URL Desc" defaultValue={ currentFilters.urlName } onChange={ ( val ) => addFilter( 'urlName', val ) }>{ header.urlName }</MenuInput>,
 			size: 250,
 		} ),
@@ -134,22 +138,17 @@ export default function LinkManagerTable( { slug } ) {
 				slug={ slug }
 				currentFilters={ currentFilters }
 				header={ header }
-				removeFilters={ ( array ) => removeFilters( array ) }
+				removeFilters={ ( key ) => removeFilters( key ) }
+				onSort={ ( val ) => sortBy( val ) }
 				exportOptions={ {
 					url: slug,
 					filters,
-					fromId: 'from_urlMd5',
-					pageId: 'urlMd5',
+					fromId: `from_${ pageId }`,
+					pageId,
 					deleteCSVCols: [ 'urlId', 'urlMd5', 'domainId' ],
 					perPage: 1000,
 				} }
-				hideTable={ ( hidden ) => setHiddenTable( hidden ) }
-			>
-				<div className="ma-left flex flex-align-center">
-					<strong>Sort by:</strong>
-					<SortMenu className="ml-s" items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } />
-				</div>
-			</ModuleViewHeaderBottom>
+			/>
 			<Table className="fadeInto" columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
