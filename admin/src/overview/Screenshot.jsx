@@ -7,18 +7,18 @@ export default function ScreenShotOverview() {
 
 			<img src={ image1 } alt="Keywords 1" />
 
-			<h2>Shortcode:</h2>
+			<h3>Shortcode:</h3>
 			<code>
 				[urlslab-screenshot alt="Homepage" url="https://www.liveagent.com" width="100%" height="100%" default-image="https://www.yourdomain.com/default_image.jpg" screenshot-type="carousel"]
 			</code>
-			<h3>Shortcode Attrributes</h3>
-			<code>
-			alt - [optional] value of image alt text attribute<br/>
-			url - link to page, which screenshot should be taken<br/>
-			width - [optional, default=100%] width attribute of image<br/>
-			height - [optional, default=100%] height attribute of image<br/>
-			screenshot-type: [optional, default=carousel] carousel, full-page, carousel-thumbnail, full-page-thumbnail<br/>
-			</code>
+			<h3>Shortcode Attributes</h3>
+			<ul>
+				<li>alt - (optional) value of image alt text attribute</li>
+				<li>url - link to page, which screenshot should be taken</li>
+				<li>width - (optional, default=100%) width attribute of image</li>
+				<li>height - (optional, default=100%) height attribute of image</li>
+				<li>screenshot-type: (optional, default=carousel) carousel, full-page, carousel-thumbnail, full-page-thumbnail</li>
+			</ul>
 			<h2>Examples</h2>
 			Example of shortcode to include screenshot of www.liveagent.com to your website content: <code>[urlslab-screenshot url="https://www.liveagent.com"]</code>
 			<h2>How it works</h2>

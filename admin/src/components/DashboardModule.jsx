@@ -1,4 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
+
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Switch from '../elements/Switch';
@@ -9,7 +10,7 @@ import { ReactComponent as ApiIcon } from '../assets/images/api-exclamation.svg'
 import '../assets/styles/components/_DashboardModule.scss';
 import '../assets/styles/elements/_Button.scss';
 
-export default function DashboardModule( { moduleId, title, children, image, isActive, hasApi, activePage } ) {
+export default function DashboardModule( { moduleId, title, children, isActive, hasApi, activePage } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const handleSwitch = useMutation( {
@@ -27,6 +28,8 @@ export default function DashboardModule( { moduleId, title, children, image, isA
 			activePage( module );
 		}
 	};
+
+	const imagePath = new URL( `../assets/images/modules/${ moduleId }.png`, import.meta.url ).pathname;
 
 	return (
 		<div className={ `urlslab-dashboardmodule ${ handleSwitch.isLoading ? 'activating' : '' } ${ isActive ? 'active' : '' }` }>
@@ -50,8 +53,8 @@ export default function DashboardModule( { moduleId, title, children, image, isA
 				checked={ isActive }
 			/>
 			<div className="urlslab-dashboardmodule-main flex-tablet flex-align-center">
-				{ image
-					? <img className="urlslab-dashboardmodule-image" src={ image } alt={ title } />
+				{ imagePath
+					? <img className="urlslab-dashboardmodule-image fadeInto" src={ imagePath } alt={ title } />
 					: null
 				}
 
@@ -59,9 +62,7 @@ export default function DashboardModule( { moduleId, title, children, image, isA
 				<div className="urlslab-dashboardmodule-content">
 					<p>{ children }</p>
 					{ isActive
-						? <button
-								className="urlslab-learnMore"
-							onClick={ () => handleActive( moduleId ) }>
+						? <button className="urlslab-learnMore" onClick={ () => handleActive( moduleId ) }>
 							{ __( 'Manage module' ) } <ArrowIcon />
 						</button>
 						: null

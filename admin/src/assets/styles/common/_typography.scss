@@ -25,3 +25,12 @@ h4 {
 h5 {
 	font-size: 0.8125rem;
 }
+
+code {
+	display: block;
+	font-size: 0.8125rem;
+	color: $saturated-red;
+	background-color: $grey-lightest;
+	margin: 1em 0;
+	padding: 1em;
+}

@@ -1,11 +1,14 @@
 import {
-	useInfiniteFetch, handleInput, handleSelected, RangeSlider, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, Tooltip, SortMenu, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 
-export default function YouTubeCacheTable() {
-	const { tableHidden, setHiddenTable, filters, currentFilters, addFilter, removeFilter, sortingColumn, sortBy, deleteRow, updateRow } = useTableUpdater();
+export default function YouTubeCacheTable( { slug } ) {
+	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater();
+
+	const url = `${ filters }${ sortingColumn }`;
+	const pageId = 'videoid';
 
 	const {
 		__,
@@ -16,13 +19,21 @@ export default function YouTubeCacheTable() {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: 'youtube-cache', url: `${ filters }${ sortingColumn }`, pageId: 'videoid' } );
+	} = useInfiniteFetch( { key: slug, url, pageId } );
 
 	const statusTypes = {
 		N: __( 'New' ),
 		A: __( 'Available' ),
 		P: __( 'Processing' ),
 		D: __( 'Disabled' ),
+	};
+
+	const header = {
+		thumb: __( 'Thumbnail' ),
+		videoid: __( 'YouTube Id' ),
+		status: __( 'Status' ),
+		title: __( 'Title' ),
+		published: __( 'Published' ),
 	};
 
 	const columns = [
@@ -32,39 +43,49 @@ export default function YouTubeCacheTable() {
 				handleSelected( val, cell );
 			} } />,
 			header: () => __( '' ),
-			size: 24,
 		} ),
-		columnHelper?.accessor( ( row ) => JSON.parse( `${ row?.microdata }` )?.items[ 0 ]?.snippet, {
+		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.microdata }` )?.items[ 0 ]?.snippet, {
 			id: 'thumb',
 			className: 'thumbnail',
-			cell: ( image ) => <img src={ image?.getValue()?.thumbnails?.default?.url } alt={ image?.getValue()?.title
-			} />,
-			header: () => __( 'Thumbnail' ),
+			tooltip: ( image ) =>
+				<Tooltip><img src={ image.getValue()?.thumbnails?.high?.url } alt={ image?.getValue()?.title } /></Tooltip>,
+			cell: ( image ) =>
+				<img src={ image?.getValue()?.thumbnails?.high?.url }
+					alt={ image?.getValue()?.title } />,
+			header: header.thumb,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'videoid', {
-			header: () => __( 'YouTube Id' ),
+			header: header.videoid,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'status', {
+			className: 'nolimit',
 			cell: ( cell ) => <SortMenu
 				items={ statusTypes }
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
-				onChange={ ( val ) => handleInput( val, cell ) } />,
-			className: 'youtube-status',
-			header: () => __( 'Status' ),
+				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
+			header: ( cell ) => <SortMenu isFilter items={ statusTypes } name={ cell.column.id } checkedId={ currentFilters.status || '' } onChange={ ( val ) => addFilter( 'status', val ) }>{ header.status }</SortMenu>,
+			size: 80,
 		} ),
-		columnHelper?.accessor( ( row ) => [ row?.videoid, JSON.parse( `${ row?.microdata }` )?.items[ 0 ]?.snippet?.title ], {
+		columnHelper?.accessor( ( cell ) => [ cell?.videoid, JSON.parse( `${ cell?.microdata }` )?.items[ 0 ]?.snippet?.title ], {
 			id: 'title',
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue()[ 1 ] }</Tooltip>,
 			cell: ( val ) => <a href={ `https://youtu.be/${ val?.getValue()[ 0 ] }` } target="_blank" rel="noreferrer">{ val?.getValue()[ 1 ] }</a>,
-			header: () => __( 'Title' ),
-			size: 350,
+			header: () => <MenuInput isFilter placeholder="Enter title" defaultValue={ currentFilters.title } onChange={ ( val ) => addFilter( 'title', val ) }>{ header.title }</MenuInput>,
+			size: 450,
 		} ),
-		columnHelper?.accessor( ( row ) => JSON.parse( `${ row?.microdata }` )?.items[ 0 ]?.snippet?.publishedAt, {
+		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.microdata }` )?.items[ 0 ]?.snippet?.publishedAt, {
 			id: 'published',
 			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
-			header: () => __( 'Published' ),
+			header: header.published,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'delete', {
+			className: 'deleteRow',
+			cell: ( cell ) => <Trash onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId } ) } />,
+			header: null,
 		} ),
 	];
 
@@ -74,29 +95,34 @@ export default function YouTubeCacheTable() {
 
 	return (
 		<>
-			{ /* <ModuleViewHeaderBottom
-				slug={slug}
-				currentFilters={currentFilters}
-				header={header}
-				removedFilter={(key) => removeFilter(key)}
-				exportOptions={{
+			<ModuleViewHeaderBottom
+				slug={ slug }
+				currentFilters={ currentFilters }
+				header={ header }
+				noImport
+				removeFilters={ ( key ) => removeFilters( key ) }
+				exportOptions={ {
 					url: slug,
 					filters,
-					fromId: 'from_kw_id',
-					pageId: 'kw_id',
-					deleteCSVCols: ['kw_id', 'destUrlMd5'],
-				}}
+					fromId: `from_${ pageId }`,
+					pageId,
+					deleteCSVCols: [ pageId, 'destUrlMd5' ],
+				} }
 			>
 				<div className="ma-left flex flex-align-center">
 					<strong>Sort by:</strong>
-					<SortMenu className="ml-s" items={header} name="sorting" onChange={(val) => sortBy(val)} />
+					<SortMenu className="ml-s" items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } />
 				</div>
-			</ModuleViewHeaderBottom> */ }
+			</ModuleViewHeaderBottom>
 			<Table className="fadeInto" columns={ columns }
 				data={
 					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 				}
 			>
+				{ row
+					? <Tooltip center>{ `${ header.videoid } “${ row.videoid }”` } { __( 'has been deleted.' ) }</Tooltip>
+					: null
+				}
 				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
 			</Table>
 		</>

@@ -43,7 +43,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( '[Speed] Keep Wordpress database size under automatic survilence and periodically delete not needed data.' );
+		return __( '(Speed) Keep Wordpress database size under automatic survilence and periodically delete not needed data.' );
 	}
 
 	public function is_api_key_required() {

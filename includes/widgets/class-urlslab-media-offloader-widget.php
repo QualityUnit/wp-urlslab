@@ -108,7 +108,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( '[Speed] Running Wordpress website on multiple APP servers? Offload media files to database or S3.' );
+		return __( '(Speed) Running Wordpress website on multiple APP servers? Offload media files to database or S3.' );
 	}
 
 

@@ -68,7 +68,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( '[SEO] Enhance all links in your page with title attributes.' );
+		return __( '(SEO) Enhance all links in your page with title attributes.' );
 	}
 
 

@@ -35,6 +35,10 @@
 		}
 	}
 
+	ul {
+		font-size: 0.825rem;
+	}
+
 	@media (min-width: $breakpoint-tablet) {
 
 		&-apiKey {

@@ -1,11 +1,11 @@
 import {
-	useInfiniteFetch, handleSelected, Trash, Button, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, Tooltip, Trash, MenuInput, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function LinkManagerTable( { slug } ) {
-	const { tableHidden, setHiddenTable, filters, currentFilters, addFilter, removeFilter, sortingColumn, sortBy, deleteRow, updateRow } = useTableUpdater();
+	const { setHiddenTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater();
 
 	const url = `${ filters }${ sortingColumn }`;
 	const pageId = 'urlMd5';
@@ -48,23 +48,12 @@ export default function LinkManagerTable( { slug } ) {
 	};
 
 	const columns = [
-		columnHelper.accessor( 'delete', {
-			className: 'deleteRow',
-			cell: ( cell ) => <Button danger onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId } ) }><Trash /></Button>,
-			header: () => __( '' ),
-			enableResizing: false,
-			maxSize: 0,
-			size: 0,
-		} ),
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
 				handleSelected( val, cell );
 			} } />,
-			header: () => __( '' ),
-			enableResizing: false,
-			maxSize: 24,
-			size: 24,
+			header: null,
 		} ),
 		columnHelper?.accessor( 'screenshot_url', {
 			className: 'thumbnail',
@@ -72,55 +61,66 @@ export default function LinkManagerTable( { slug } ) {
 				? <a href={ image?.getValue() } target="_blank" rel="noreferrer"><img src={ image?.getValue() } alt={ image.row.original.urlName } /></a>
 				: <div className="img"></div>,
 			header: () => header.screenshot_url,
+			size: 90,
 		} ),
 		columnHelper.accessor( 'urlTitle', {
+			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => header.urlTitle,
-			minSize: 250,
+			header: () => <MenuInput isFilter placeholder="Enter URL Title" defaultValue={ currentFilters.urlTitle } onChange={ ( val ) => addFilter( 'urlTitle', val ) }>{ header.urlTitle }</MenuInput>,
+			size: 150,
 		} ),
 		columnHelper?.accessor( 'urlMetaDescription', {
+			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => header.urlMetaDescription,
-			minSize: 150,
+			header: () => <MenuInput isFilter placeholder="Enter URL Desc" defaultValue={ currentFilters.urlMetaDescription } onChange={ ( val ) => addFilter( 'urlFilter', val ) }>{ header.urlMetaDescription }</MenuInput>,
+			size: 200,
 		} ),
 		columnHelper.accessor( 'urlSummary', {
+			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => header.urlSummary,
-			minSize: 150,
+			header: () => <MenuInput isFilter placeholder="Enter Text" defaultValue={ currentFilters.urlSummary } onChange={ ( val ) => addFilter( 'urlSummary', val ) }>{ header.urlSummary }</MenuInput>,
+			size: 150,
 		} ),
 		columnHelper?.accessor( 'status', {
+			className: 'nolimit',
 			cell: ( cell ) => <SortMenu
 				items={ statusTypes }
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			className: 'youtube-status',
-			header: () => header.status,
+			header: ( cell ) => <SortMenu isFilter items={ statusTypes } name={ cell.column.id } checkedId={ currentFilters.status || '' } onChange={ ( val ) => addFilter( 'status', val ) }>{ header.status }</SortMenu>,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'updateStatusDate', {
 			header: () => header.updateStatusDate,
-			minSize: 150,
+			size: 140,
 		} ),
 		columnHelper.accessor( 'visibility', {
+			className: 'nolimit',
 			cell: ( cell ) => <SortMenu
 				items={ visibilityTypes }
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => header.visibility,
+			header: ( cell ) => <SortMenu isFilter items={ visibilityTypes } name={ cell.column.id } checkedId={ currentFilters.visibility || '' } onChange={ ( val ) => addFilter( 'status', val ) }>{ header.visibility }</SortMenu>,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'urlName', {
-			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" className="limit-100" rel="noreferrer">{ cell.getValue() }</a>,
-			header: () => header.urlName,
-			enableResizing: false,
-			minSize: 350,
+			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			header: () => <MenuInput isFilter placeholder="Enter URL Desc" defaultValue={ currentFilters.urlName } onChange={ ( val ) => addFilter( 'urlName', val ) }>{ header.urlName }</MenuInput>,
+			size: 250,
 		} ),
 		columnHelper.accessor( 'urlCheckDate', {
 			header: () => header.urlCheckDate,
-			minSize: 150,
+			size: 140,
+		} ),
+		columnHelper.accessor( 'delete', {
+			className: 'deleteRow',
+			cell: ( cell ) => <Trash onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId } ) } />,
+			header: null,
 		} ),
 	];
 
@@ -134,7 +134,7 @@ export default function LinkManagerTable( { slug } ) {
 				slug={ slug }
 				currentFilters={ currentFilters }
 				header={ header }
-				removedFilter={ ( key ) => removeFilter( key ) }
+				removeFilters={ ( array ) => removeFilters( array ) }
 				exportOptions={ {
 					url: slug,
 					filters,
@@ -150,17 +150,15 @@ export default function LinkManagerTable( { slug } ) {
 					<SortMenu className="ml-s" items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } />
 				</div>
 			</ModuleViewHeaderBottom>
-			{ tableHidden
-				? null
-				: <Table className="fadeInto" columns={ columns }
-					resizable
-					data={
-						isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
-					}
-				>
-					<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
-				</Table>
-			}
+			<Table className="fadeInto" columns={ columns }
+				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+			>
+				{ row
+					? <Tooltip center>{ `${ header.urlName } “${ row.urlName }”` } has been deleted.</Tooltip>
+					: null
+				}
+				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
+			</Table>
 		</>
 	);
 }

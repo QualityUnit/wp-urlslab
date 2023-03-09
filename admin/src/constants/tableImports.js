@@ -1,6 +1,7 @@
 export { default as useInfiniteFetch } from '../hooks/useInfiniteFetch';
 export { handleInput, handleSelected } from '../constants/tableFunctions';
 
+export { default as Tooltip } from '../elements/Tooltip';
 export { default as RangeSlider } from '../elements/RangeSlider';
 export { default as SortMenu } from '../elements/SortMenu';
 export { default as LangMenu } from '../elements/LangMenu';

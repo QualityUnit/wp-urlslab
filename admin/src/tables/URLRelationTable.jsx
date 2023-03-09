@@ -1,11 +1,14 @@
 import {
-	useInfiniteFetch, handleInput, handleSelected, RangeSlider, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, Tooltip, RangeSlider, SortMenu, InputField, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function URLRelationTable( { slug } ) {
-	const { tableHidden, setHiddenTable, filters, currentFilters, addFilter, removeFilter, sortingColumn, sortBy, deleteRow, updateRow } = useTableUpdater();
+	const { setHiddenTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater();
+
+	const url = `${ filters }${ sortingColumn }`;
+	const pageId = 'srcUrlMd5';
 
 	const {
 		__,
@@ -16,7 +19,7 @@ export default function URLRelationTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: 'url-relation', url: `${ filters }${ sortingColumn }`, pageId: 'srcUrlMd5' } );
+	} = useInfiniteFetch( { key: slug, url, pageId } );
 
 	const header = {
 		srcUrlMd5: '',
@@ -31,16 +34,29 @@ export default function URLRelationTable( { slug } ) {
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
 				handleSelected( val, cell );
 			} } />,
-			header: () => __( '' ),
+			header: null,
 		} ),
 		columnHelper.accessor( 'srcUrlName', {
-			header: () => header.srcUrlName,
+			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			header: () => <MenuInput isFilter placeholder="Enter Source URL Name" defaultValue={ currentFilters.srcUrlName } onChange={ ( val ) => addFilter( 'srcUrlName', val ) }>{ header.srcUrlName }</MenuInput>,
+			size: 400,
 		} ),
 		columnHelper.accessor( 'pos', {
-			header: () => header.pos,
+			className: 'nolimit',
+			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() }
+				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
+			header: () => <RangeSlider isFilter min="0" max="255" onChange={ ( r ) => console.log( r ) }>{ header.pos }</RangeSlider>,
+			size: 80,
 		} ),
 		columnHelper.accessor( 'destUrlName', {
-			header: () => header.destUrlName,
+			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			header: () => <MenuInput isFilter placeholder="Enter Destination URL Name" defaultValue={ currentFilters.destUrlName } onChange={ ( val ) => addFilter( 'destUrlName', val ) }>{ header.destUrlName }</MenuInput>,
+			size: 400,
+		} ),
+		columnHelper.accessor( 'delete', {
+			className: 'deleteRow',
+			cell: ( cell ) => <Trash onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId } ) } />,
+			header: null,
 		} ),
 	];
 
@@ -54,7 +70,7 @@ export default function URLRelationTable( { slug } ) {
 				slug={ slug }
 				currentFilters={ currentFilters }
 				header={ header }
-				removedFilter={ ( key ) => removeFilter( key ) }
+				removeFilters={ ( key ) => removeFilters( key ) }
 				exportOptions={ {
 					url: slug,
 					filters,
@@ -69,16 +85,16 @@ export default function URLRelationTable( { slug } ) {
 					<SortMenu className="ml-s" items={ header } name="sorting" onChange={ ( val ) => sortBy( val ) } />
 				</div>
 			</ModuleViewHeaderBottom>
-			{ tableHidden
-				? null
-				: <Table className="fadeInto" columns={ columns }
-						data={
-						isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
-					}
-				>
-					<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
-				</Table>
-			}
+
+			<Table className="fadeInto" columns={ columns }
+				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+			>
+				{ row
+					? <Tooltip center>{ __( 'URL has been deleted.' ) }</Tooltip>
+					: null
+				}
+				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
+			</Table>
 		</>
 	);
 }

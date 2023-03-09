@@ -42,7 +42,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( '[Images] Embed screenshot of any external or internal URL using simple wordpress shortcode.' );
+		return __( '(Images) Embed screenshot of any external or internal URL using simple wordpress shortcode.' );
 	}
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
