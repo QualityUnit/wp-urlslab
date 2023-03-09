@@ -71,7 +71,7 @@ export default function YouTubeCacheTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( ( cell ) => [ cell?.videoid, JSON.parse( `${ cell?.microdata }` )?.items[ 0 ]?.snippet?.title ], {
 			id: 'title',
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue()[ 1 ] }</Tooltip>,
 			cell: ( val ) => <a href={ `https://youtu.be/${ val?.getValue()[ 0 ] }` } target="_blank" rel="noreferrer">{ val?.getValue()[ 1 ] }</a>,
 			header: () => <MenuInput isFilter placeholder="Enter title" defaultValue={ currentFilters.title } onChange={ ( val ) => addFilter( 'title', val ) }>{ header.title }</MenuInput>,
 			size: 450,
