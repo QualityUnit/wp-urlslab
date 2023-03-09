@@ -49,6 +49,7 @@ export default function CSSCacheTable( { slug } ) {
 			size: 450,
 		} ),
 		columnHelper?.accessor( 'status', {
+			className: 'no-limit',
 			cell: ( cell ) => <SortMenu
 				items={ statusTypes }
 				name={ cell.column.id }
