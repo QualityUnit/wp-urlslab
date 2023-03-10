@@ -6,7 +6,7 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function SearchReplaceTable( { slug } ) {
-	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater();
+	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, rowToInsert, setInsertRow, deleteRow, updateRow } = useTableUpdater();
 
 	const url = `${ filters }${ sortingColumn }`;
 	const pageId = 'id';
@@ -35,6 +35,13 @@ export default function SearchReplaceTable( { slug } ) {
 		url_filter: 'URL Filter',
 	};
 
+	const inserterCells = {
+		str_search: <InputField type="url" defaultValue="" onChange={ ( val ) => setInsertRow( { ...rowToInsert, str_search: val } ) } />,
+		str_replace: <InputField type="url" defaultValue="" onChange={ ( val ) => setInsertRow( { ...rowToInsert, str_replace: val } ) } />,
+		search_type: <SortMenu items={ searchTypes } name="search_type" checkedId="T" onChange={ ( val ) => setInsertRow( { ...rowToInsert, search_type: val } ) } />,
+		url_filter: <InputField defaultValue=".*" onChange={ ( val ) => setInsertRow( { ...rowToInsert, url_filter: val } ) } />,
+	};
+
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
@@ -61,10 +68,10 @@ export default function SearchReplaceTable( { slug } ) {
 			header: ( cell ) => <SortMenu isFilter items={ searchTypes } name={ cell.column.id } checkedId={ header.search_type } onChange={ ( val ) => addFilter( 'search_type', val ) }>{ header.search_type }</SortMenu>,
 			size: 100,
 		} ),
-		columnHelper.accessor( 'urlFilter', {
+		columnHelper.accessor( 'url_filter', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => <MenuInput isFilter placeholder="Enter filter" onChange={ ( val ) => addFilter( 'urlFilter', val ) }>{ header.url_filter }</MenuInput>,
+			header: () => <MenuInput isFilter placeholder="Enter filter" onChange={ ( val ) => addFilter( 'url_filter', val ) }>{ header.url_filter }</MenuInput>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'delete', {
@@ -95,7 +102,9 @@ export default function SearchReplaceTable( { slug } ) {
 				} }
 			/>
 			<Table className="fadeInto" slug={ slug } columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
+				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				inserter={ { inserterCells, slug, url, rowToInsert } }
+			>
 				{ row
 					? <Tooltip center>{ `${ header.str_search } “${ row.str_search }”` } { __( 'has been deleted.' ) }</Tooltip>
 					: null

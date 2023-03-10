@@ -40,12 +40,12 @@
 		min-width: 10em;
 		cursor: pointer;
 
-		.urlslab-table & {
+		.urlslab-table tr:not(.urlslab-rowInserter) & {
 			background-color: transparent;
 			min-width: auto;
 		}
 
-		.urlslab-table th & {
+		.urlslab-table tr:not(.urlslab-rowInserter) th & {
 			padding-left: 0;
 			border: none;
 

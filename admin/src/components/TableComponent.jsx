@@ -8,9 +8,11 @@ import {
 
 import { useVirtual } from 'react-virtual';
 
+import RowInserter from './RowInserter';
+
 import '../assets/styles/components/_TableComponent.scss';
 
-export default function Table( { resizable, children, className, columns, data } ) {
+export default function Table( { resizable, children, className, columns, data, inserter } ) {
 	const [ rowSelection, setRowSelection ] = useState( {} );
 	const [ containerWidth, setContainerWidth ] = useState();
 	const tableContainerRef = useRef();
@@ -133,6 +135,10 @@ export default function Table( { resizable, children, className, columns, data }
 								) ) }
 							</tr>
 						) ) }
+
+						{ inserter &&
+							<RowInserter data={ data } columns={ columns } inserter={ inserter } />
+						}
 					</thead>
 					<tbody className="urlslab-table-body" >
 						{ paddingTop > 0 && (

@@ -18,6 +18,34 @@ export function useChangeRow() {
 		return cell.row.original;
 	};
 
+	const insertNewRow = useMutation( {
+		mutationFn: async ( options ) => {
+			const { data, slug, url, rowToInsert } = options;
+			// console.log( rowToInsert );
+			// const newPagesArray = data?.pages.map( ( page ) =>
+			// 	[ rowToInsert, ...page ]
+			// ) ?? [];
+			// console.log( newPagesArray );
+
+			// queryClient.setQueryData( [ slug, url ], ( origData ) => ( {
+			// 	pages: newPagesArray,
+			// 	pageParams: origData.pageParams,
+			// } ) );
+			const response = await setData( `${ slug }/import`, { rows: [ rowToInsert ] } );
+			return { response, options };
+		},
+		onSuccess: ( { response, options } ) => {
+			const { ok } = response;
+			const { slug, url } = options;
+			if ( ok ) {
+				queryClient.invalidateQueries( [ slug, url ] );
+			}
+		},
+	} );
+	const insertRow = ( { data, url, slug, rowToInsert } ) => {
+		insertNewRow.mutate( { data, url, slug, rowToInsert } );
+	};
+
 	const deleteSelectedRow = useMutation( {
 		mutationFn: async ( options ) => {
 			const { data, url, slug, cell, rowSelector, optionalSelector } = options;
@@ -87,5 +115,5 @@ export function useChangeRow() {
 		updateRowData.mutate( { data, newVal, url, slug, cell, rowSelector, optionalSelector } );
 	};
 
-	return { row: rowValue, deleteRow, updateRow };
+	return { row: rowValue, insertRow, deleteRow, updateRow };
 }
