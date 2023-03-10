@@ -35,7 +35,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( '(SEO) Connect pages within content cluster with Related Resources widget to link contextually similar pages' );
+		return __( '(SEO) Connect pages within content cluster with Related Resources widget to link contextually similar pages. Improve Internal linkbuilding with zero effort.' );
 	}
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
@@ -96,26 +96,31 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	private function render_shortcode_item( array $url, array $urlslab_atts, $strategy ): string {
-		$url_obj = new Urlslab_Url_Row( $url );
-		if ( ! $url_obj->is_visible() ) {
+		try {
+			$url_obj = new Urlslab_Url_Row( $url );
+			if ( ! $url_obj->is_visible() ) {
+				return '';
+			}
+
+			$title = $url_obj->get( 'urlTitle' );
+			if ( empty( $title ) ) {
+				return '';
+			}
+
+			return '<div class="urlslab-rel-res-item">' .
+				   '<a href="' . esc_url( $url_obj->get_url()->get_url_with_protocol() ) . '"' .
+				   ' title="' . esc_attr( $url_obj->get_summary( $strategy ) ) . '"' .
+				   ( $url_obj->get_url()->is_same_domain_url() ? '' : ' target="_blank"' ) .
+				   '>' .
+				   $this->render_screenshot( $url_obj, $urlslab_atts, $strategy ) .
+				   '<div class="urlslab-rel-res-item-text"><p class="urlslab-rel-res-item-title">' . esc_html( $title ) . '</p>' .
+				   ( false !== $urlslab_atts['show-summary'] ? '<p  class="urlslab-rel-res-item-summary">' . esc_html( $url_obj->get_summary( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY ) ) . '</p>' : '' ) .
+				   '</div></a>' .
+				   '</div>';
+		} catch (Exception $e) {
+			//in case of invalid link
 			return '';
 		}
-
-		$title = $url_obj->get( 'urlTitle' );
-		if ( empty( $title ) ) {
-			return '';
-		}
-
-		return '<div class="urlslab-rel-res-item">' .
-			   '<a href="' . esc_url( $url_obj->get_url()->get_url_with_protocol() ) . '"' .
-			   ' title="' . esc_attr( $url_obj->get_summary( $strategy ) ) . '"' .
-			   ( $url_obj->get_url()->is_same_domain_url() ? '' : ' target="_blank"' ) .
-			   '>' .
-			   $this->render_screenshot( $url_obj, $urlslab_atts, $strategy ) .
-			   '<div class="urlslab-rel-res-item-text"><p class="urlslab-rel-res-item-title">' . esc_html( $title ) . '</p>' .
-			   ( false !== $urlslab_atts['show-summary'] ? '<p  class="urlslab-rel-res-item-summary">' . esc_html( $url_obj->get_summary( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY ) ) . '</p>' : '' ) .
-			   '</div></a>' .
-			   '</div>';
 	}
 
 	private function render_screenshot( Urlslab_Url_Row $url, array $urlslab_atts, $strategy ): string {
