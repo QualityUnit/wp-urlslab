@@ -23,6 +23,24 @@ export default function KeywordsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, pageId } );
 
+	const myRowObject = {
+		kw_id: 0,
+		keyword: 'kokot',
+		kw_priority: 11,
+		kw_length: 20,
+		lang: 'sk',
+		urlLink: 'https://kokot.com',
+		urlFilter: '.*',
+		kwType: 'M',
+		kw_usage_count: 0,
+		link_usage_count: 0,
+		destUrlMd5: 0,
+	};
+
+	const newPagesArray = data?.pages.map( ( page ) =>
+		[ myRowObject, ...page ]
+	) ?? [];
+
 	const keywordTypes = {
 		M: __( 'Manual' ),
 		I: __( 'Imported' ),
