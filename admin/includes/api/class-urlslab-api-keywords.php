@@ -78,8 +78,8 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			)
 		);
 
-		register_rest_route( self::NAMESPACE, $base . '/(?P<kw_id>[0-9]+)/(?P<destUrlMd5>[0-9]+)', $this->get_route_get_kw_mapping() );
-		register_rest_route( self::NAMESPACE, $base . '/(?P<kw_id>[0-9]+)/(?P<destUrlMd5>[0-9]+)/count', $this->get_count_route( $this->get_route_get_kw_mapping() ) );
+		register_rest_route( self::NAMESPACE, $base . '/(?P<kw_id>[0-9]+)/(?P<dest_url_id>[0-9]+)', $this->get_route_get_kw_mapping() );
+		register_rest_route( self::NAMESPACE, $base . '/(?P<kw_id>[0-9]+)/(?P<dest_url_id>[0-9]+)/count', $this->get_count_route( $this->get_route_get_kw_mapping() ) );
 
 
 		register_rest_route(
@@ -124,8 +124,8 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 
 		foreach ( $rows as $row ) {
 			try {
-				$row_url         = new Urlslab_Url( $row->urlLink ); // phpcs:ignore
-				$row->destUrlMd5 = $row_url->get_url_id(); // phpcs:ignore
+				$row_url          = new Urlslab_Url( $row->urlLink ); // phpcs:ignore
+				$row->dest_url_id = $row_url->get_url_id();
 			} catch ( Exception $e ) {
 			}
 			$row->kw_id            = (int) $row->kw_id;
@@ -146,7 +146,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->urlMd5 = (int) $row->urlMd5;// phpcs:ignore
+			$row->url_id = (int) $row->url_id;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -200,8 +200,8 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			}
 		}
 
-		$url_fetcher = new Urlslab_Url_Data_Fetcher();
-		if ( ! $url_fetcher->prepare_url_batch_for_scheduling( $schedule_urls ) ) {
+		$url_row_obj = new Urlslab_Url_Row();
+		if ( ! $url_row_obj->insert_urls( $schedule_urls ) ) {
 			return new WP_REST_Response( 'Import failed.', 500 );
 		}
 
@@ -238,8 +238,8 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		$sql->add_select_column( 'urlLink', 'v', 'urlLink' );
 		$sql->add_select_column( 'urlFilter', 'v', 'urlFilter' );
 		$sql->add_select_column( 'kwType', 'v', 'kwType' );
-		$sql->add_select_column( 'SUM(!ISNULL(d.urlMd5))', false, 'kw_usage_count' );
-		$sql->add_select_column( 'SUM(!ISNULL(d.destUrlMd5))', false, 'link_usage_count' );
+		$sql->add_select_column( 'SUM(!ISNULL(d.url_id))', false, 'kw_usage_count' );
+		$sql->add_select_column( 'SUM(!ISNULL(d.dest_url_id))', false, 'link_usage_count' );
 
 		$sql->add_from( URLSLAB_KEYWORDS_TABLE . ' AS v LEFT JOIN ' . URLSLAB_KEYWORDS_MAP_TABLE . ' AS d ON d.kw_id = v.kw_id' );
 
@@ -346,20 +346,20 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_kw_mapping' ),
 				'args'                => array(
-					'rows_per_page'   => array(
+					'rows_per_page'    => array(
 						'required'          => true,
 						'default'           => self::ROWS_PER_PAGE,
 						'validate_callback' => function( $param ) {
 							return is_numeric( $param ) && 0 < $param && 200 > $param;
 						},
 					),
-					'from_urlMd5'     => array(
+					'from_url_id'      => array(
 						'required'          => false,
 						'validate_callback' => function( $param ) {
 							return is_numeric( $param );
 						},
 					),
-					'filter_linkType' => array(
+					'filter_link_type' => array(
 						'required'          => false,
 						'validate_callback' => function( $param ) {
 							return Urlslab_Api_Table::validate_string_filter_value( $param );
@@ -378,21 +378,21 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	 */
 	public function get_kw_mapping_sql( $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
-		$sql->add_select_column( 'urlMd5', 'm' );
-		$sql->add_select_column( 'linkType', 'm' );
-		$sql->add_select_column( 'urlName', 'u' );
+		$sql->add_select_column( 'url_id', 'm' );
+		$sql->add_select_column( 'link_type', 'm' );
+		$sql->add_select_column( 'url_name', 'u' );
 
-		$sql->add_from( URLSLAB_KEYWORDS_MAP_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON m.urlMd5 = u.urlMd5' );
+		$sql->add_from( URLSLAB_KEYWORDS_MAP_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON m.url_id = u.url_id' );
 
 		$this->add_filter_table_fields( $sql );
 
 		$sql->add_filter( 'kw_id', '%d' );
-		$sql->add_filter( 'destUrlMd5', '%d' );
-		$sql->add_filter( 'from_urlMd5', '%d' );
-		$sql->add_filter( 'filter_linkType', '%d' );
+		$sql->add_filter( 'dest_url_id', '%d' );
+		$sql->add_filter( 'from_url_id', '%d', 'm' );
+		$sql->add_filter( 'filter_link_type', '%d' );
 
-		$sql->add_order( 'urlMd5' );
-		$sql->add_order( 'destUrlMd5' );
+		$sql->add_order( 'url_id', 'ASC', 'm' );
+		$sql->add_order( 'dest_url_id' );
 
 		return $sql;
 	}

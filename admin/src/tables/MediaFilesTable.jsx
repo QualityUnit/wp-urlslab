@@ -124,7 +124,7 @@ export default function MediaFilesTable( { slug } ) {
 					filters,
 					fromId: `from_${ pageId }`,
 					pageId,
-					deleteCSVCols: [ pageId, 'destUrlMd5' ],
+					deleteCSVCols: [ pageId, 'dest_url_id' ],
 				} }
 				hideTable={ ( hidden ) => setHiddenTable( hidden ) }
 			>

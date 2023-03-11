@@ -33,18 +33,18 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	public function post_updated( $post_id, $post, $post_before ) {
 		$data = array();
 		if ( $post->post_title != $post_before->post_title ) {
-			$data['urlTitle'] = $post->post_title;
+			$data['url_title'] = $post->post_title;
 		}
 		$desc = get_post_meta( $post_id );
 		if ( isset( $desc['_yoast_wpseo_metadesc'][0] ) ) {
-			$data['urlMetaDescription'] = $desc['_yoast_wpseo_metadesc'][0];
+			$data['url_meta_description'] = $desc['_yoast_wpseo_metadesc'][0];
 		}
 
 		if ( ! empty( $data ) ) {
 			try {
 				$url = new Urlslab_Url( get_permalink( $post_id ) );
 				global $wpdb;
-				$wpdb->update( URLSLAB_URLS_TABLE, $data, array( 'urlMd5' => $url->get_url_id() ) );
+				$wpdb->update( URLSLAB_URLS_TABLE, $data, array( 'url_id' => $url->get_url_id() ) );
 			} catch ( Exception $e ) {
 			}
 		}
@@ -87,7 +87,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		global $wpdb;
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT destUrlMd5 FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE srcUrlMd5 = %d', // phpcs:ignore
+				'SELECT dest_url_id FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE src_url_id = %d', // phpcs:ignore
 				$srcUrlId
 			),
 			'ARRAY_A'
@@ -97,7 +97,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		array_walk(
 			$results,
 			function( $value, $key ) use ( &$destinations ) {
-				$destinations[ $value['destUrlMd5'] ] = true;
+				$destinations[ $value['dest_url_id'] ] = true;
 			}
 		);
 
@@ -121,7 +121,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		if ( ! empty( $values ) ) {
 			$table               = URLSLAB_URLS_MAP_TABLE;
 			$placeholder_string  = implode( ', ', $placeholder );
-			$insert_update_query = "INSERT IGNORE INTO $table (srcUrlMd5, destUrlMd5) VALUES $placeholder_string";
+			$insert_update_query = "INSERT IGNORE INTO $table (src_url_id, dest_url_id) VALUES $placeholder_string";
 
 			$wpdb->query(
 				$wpdb->prepare(
@@ -141,7 +141,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			}
 			$table              = URLSLAB_URLS_MAP_TABLE;
 			$placeholder_string = implode( ',', $placeholder );
-			$delete_query       = "DELETE FROM $table WHERE srcUrlMd5=%d AND destUrlMd5 IN ($placeholder_string)";
+			$delete_query       = "DELETE FROM $table WHERE src_url_id=%d AND dest_url_id IN ($placeholder_string)";
 			$wpdb->query( $wpdb->prepare( $delete_query, $values ) ); // phpcs:ignore
 		}
 	}

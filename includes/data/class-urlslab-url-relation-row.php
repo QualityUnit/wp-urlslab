@@ -6,8 +6,8 @@ class Urlslab_Url_Relation_Row extends Urlslab_Data {
 	 * @param array $url
 	 */
 	public function __construct( array $url = array(), $loaded_from_db = true ) {
-		$this->set( 'srcUrlMd5', $url['srcUrlMd5'] ?? 0, ! $loaded_from_db );
-		$this->set( 'destUrlMd5', $url['destUrlMd5'] ?? 0, ! $loaded_from_db );
+		$this->set( 'src_url_id', $url['src_url_id'] ?? 0, ! $loaded_from_db );
+		$this->set( 'dest_url_id', $url['dest_url_id'] ?? 0, ! $loaded_from_db );
 		$this->set( 'pos', $url['pos'] ?? 0, ! $loaded_from_db );
 	}
 
@@ -16,13 +16,13 @@ class Urlslab_Url_Relation_Row extends Urlslab_Data {
 	}
 
 	function get_primary_columns(): array {
-		return array( 'srcUrlMd5', 'destUrlMd5' );
+		return array( 'src_url_id', 'dest_url_id' );
 	}
 
 	function get_columns(): array {
 		return array(
-			'srcUrlMd5'  => '%d',
-			'destUrlMd5' => '%d',
+			'src_url_id'  => '%d',
+			'dest_url_id' => '%d',
 			'pos'        => '%d',
 		);
 	}

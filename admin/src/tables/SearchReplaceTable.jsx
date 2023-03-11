@@ -90,7 +90,7 @@ export default function SearchReplaceTable( { slug } ) {
 					filters,
 					fromId: `from_${ pageId }`,
 					pageId,
-					deleteCSVCols: [ 'id', 'destUrlMd5' ],
+					deleteCSVCols: [ 'id', 'dest_url_id' ],
 				} }
 				hideTable={ ( hidden ) => setHiddenTable( hidden ) }
 			>

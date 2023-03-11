@@ -77,7 +77,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		global $wpdb;
 		$urls_table         = URLSLAB_URLS_TABLE;
 		$related_urls_table = URLSLAB_RELATED_RESOURCE_TABLE;
-		$q                  = "SELECT u.* FROM $related_urls_table r INNER JOIN $urls_table as u ON r.destUrlMd5 = u.urlMd5 WHERE r.srcUrlMd5 = %d AND u.visibility = '%s' ORDER BY r.pos LIMIT %d";
+		$q                  = "SELECT u.* FROM $related_urls_table r INNER JOIN $urls_table as u ON r.dest_url_id = u.url_id WHERE r.src_url_id = %d AND u.visibility = '%s' ORDER BY r.pos LIMIT %d";
 
 		return $wpdb->get_results( $wpdb->prepare( $q, $url_id, Urlslab_Url_Row::VISIBILITY_VISIBLE, $limit ), ARRAY_A ); // phpcs:ignore
 	}
@@ -102,7 +102,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				return '';
 			}
 
-			$title = $url_obj->get( 'urlTitle' );
+			$title = $url_obj->get( 'url_title' );
 			if ( empty( $title ) ) {
 				return '';
 			}

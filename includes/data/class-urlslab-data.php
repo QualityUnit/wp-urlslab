@@ -91,6 +91,52 @@ abstract class Urlslab_Data {
 		return false;
 	}
 
+	/**
+	 * @param Urlslab_Data[] $rows
+	 * @param bool $insert_ignore
+	 * @param array $columns_update_on_duplicate
+	 *
+	 * @return bool|int|mysqli_result|resource|null
+	 */
+	public function insert_all( array $rows, $insert_ignore = false, $columns_update_on_duplicate = array() ) {
+		if ( empty( $rows ) ) {
+			return true;
+		}
+		global $wpdb;
+		$row_placeholder  = '(' . implode( ',', $this->get_columns() ) . ')';
+		$row_placeholders = array();
+		$insert_values    = array();
+
+		foreach ( $rows as $row ) {
+			$row_data = array();
+			foreach ( $this->get_columns() as $column => $format ) {
+				$row_data[] = $row->get( $column );
+			}
+			$insert_values      = array_merge( $insert_values, $row_data );
+			$row_placeholders[] = $row_placeholder;
+		}
+
+		$on_duplicate = '';
+		if ( ! $insert_ignore && ! empty( $columns_update_on_duplicate ) ) {
+			$update_columns = array();
+			foreach ( $columns_update_on_duplicate as $column_name ) {
+				$update_columns[] = "`$column_name` = VALUES(`$column_name`)";
+			}
+			$on_duplicate .= ' ON DUPLICATE KEY UPDATE ' . implode( ',', $update_columns );
+		}
+
+		$query = 'INSERT' .
+				 ( $insert_ignore ? ' IGNORE' : '' ) .
+				 ' INTO ' . $this->get_table_name() .
+				 '(' . implode( ',', array_keys( $this->get_columns() ) ) . ')' .
+				 ' VALUES ' . implode( ',', $row_placeholders ) .
+				 $on_duplicate;
+
+		$result = $wpdb->query( $wpdb->prepare( $query, $insert_values ) ); // phpcs:ignore
+
+		return $result;
+	}
+
 	private function get_column_format( $name ) {
 		return $this->get_columns()[ $name ] ?? '%s';
 	}
@@ -129,42 +175,16 @@ abstract class Urlslab_Data {
 	}
 
 	public function import( array $rows, $on_duplicate_update_columns = true, $ignore = false ): int {
-		global $wpdb;
-		$insert_placeholders = array();
-		$insert_values       = array();
-		$on_duplicate        = array();
-
-		$columns          = $this->get_columns();
-		$row_placeholders = array();
-		foreach ( $columns as $column => $format ) {
-			$row_placeholders[] = $format;
-
-			if ( $on_duplicate_update_columns ) {
+		$on_duplicate = array();
+		if ( $on_duplicate_update_columns ) {
+			foreach ( $this->get_columns() as $column => $format ) {
 				if ( ! in_array( $column, $this->get_primary_columns() ) ) {
-					$on_duplicate[] = $column . '=VALUES(' . $column . ')';
+					$on_duplicate[] = $column;
 				}
 			}
 		}
-		$row_placeholder = '(' . implode( ',', $row_placeholders ) . ')';
 
-		foreach ( $rows as $row ) {
-			foreach ( $columns as $column => $format ) {
-				array_push( $insert_values, $row->get( $column ) );
-			}
-			$insert_placeholders[] = $row_placeholder;
-		}
-
-		$insert_query = 'INSERT ';
-		if ( $ignore ) {
-			$insert_query = 'IGNORE ';
-		}
-		$insert_query .= 'INTO ' . $this->get_table_name() . ' (' . implode( ',', array_keys( $columns ) ) . ')
-                   VALUES ' . implode( ', ', $insert_placeholders );
-		if ( $on_duplicate_update_columns ) {
-			$insert_query .= ' ON DUPLICATE KEY UPDATE ' . implode( ',', $on_duplicate );
-		}
-
-		return $wpdb->query( $wpdb->prepare( $insert_query, $insert_values ) ); // phpcs:ignore
+		return $this->insert_all( $rows, $ignore, $on_duplicate );
 	}
 
 	public function get_primary_id( string $glue = '_' ) {

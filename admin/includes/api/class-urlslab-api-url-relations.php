@@ -9,7 +9,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<srcUrlMd5>[0-9]+)/(?P<destUrlMd5>[0-9]+)',
+			$base . '/(?P<src_url_id>[0-9]+)/(?P<dest_url_id>[0-9]+)',
 			array(
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
@@ -62,7 +62,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<srcUrlMd5>[0-9]+)/(?P<destUrlMd5>[0-9]+)',
+			$base . '/(?P<src_url_id>[0-9]+)/(?P<dest_url_id>[0-9]+)',
 			array(
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
@@ -83,9 +83,9 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->srcUrlMd5  = (int) $row->srcUrlMd5; // phpcs:ignore
-			$row->destUrlMd5 = (int) $row->destUrlMd5; // phpcs:ignore
-			$row->pos        = (int) $row->pos; // phpcs:ignore
+			$row->src_url_id  = (int) $row->src_url_id;
+			$row->dest_url_id = (int) $row->dest_url_id;
+			$row->pos         = (int) $row->pos;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -99,20 +99,20 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		foreach ( $request->get_json_params()['rows'] as $row ) {
 			$arr_row = (array) $row;
 
-			if ( ! isset( $arr_row['destUrlName'] ) && ! isset( $arr_row['srcUrlName'] ) || empty( $arr_row['destUrlName'] ) || empty( $arr_row['srcUrlName'] ) ) {
+			if ( ! isset( $arr_row['dest_url_name'] ) && ! isset( $arr_row['src_url_name'] ) || empty( $arr_row['dest_url_name'] ) || empty( $arr_row['src_url_name'] ) ) {
 				continue;
 			}
 			try {
 
-				$src_url_obj                              = new Urlslab_Url( $arr_row['srcUrlName'] );
-				$dest_url_obj                             = new Urlslab_Url( $arr_row['destUrlName'] );
-				$schedule_urls[ $arr_row['srcUrlName'] ]  = $src_url_obj;
-				$schedule_urls[ $arr_row['destUrlName'] ] = $dest_url_obj;
+				$src_url_obj                              = new Urlslab_Url( $arr_row['src_url_name'] );
+				$dest_url_obj                             = new Urlslab_Url( $arr_row['dest_url_name'] );
+				$schedule_urls[ $arr_row['src_url_name'] ]  = $src_url_obj;
+				$schedule_urls[ $arr_row['dest_url_name'] ] = $dest_url_obj;
 
 				$obj    = $this->get_row_object(
 					array(
-						'srcUrlMd5'  => $src_url_obj->get_url_id(),
-						'destUrlMd5' => $dest_url_obj->get_url_id(),
+						'src_url_id' => $src_url_obj->get_url_id(),
+						'dest_url_id' => $dest_url_obj->get_url_id(),
 						'pos'        => $arr_row['pos'],
 					)
 				);
@@ -121,8 +121,8 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 			}
 		}
 
-		$url_fetcher = new Urlslab_Url_Data_Fetcher();
-		if ( ! $url_fetcher->prepare_url_batch_for_scheduling( $schedule_urls ) ) {
+		$url_row_obj = new Urlslab_Url_Row();
+		if ( ! $url_row_obj->insert_urls( $schedule_urls ) ) {
 			return new WP_REST_Response( 'Import failed.', 500 );
 		}
 
@@ -153,25 +153,25 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 				'callback'            => array( $this, 'get_items' ),
 				'args'                => $this->get_table_arguments(
 					array(
-						'filter_srcUrlMd5'   => array(
+						'filter_src_url_id'  => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_numeric_filter_value( $param );
 							},
 						),
-						'filter_destUrlMd5'  => array(
+						'filter_dest_url_id'  => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_numeric_filter_value( $param );
 							},
 						),
-						'filter_srcUrlName'  => array(
+						'filter_src_url_name'  => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
-						'filter_destUrlName' => array(
+						'filter_dest_url_name' => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
@@ -197,26 +197,26 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 	 */
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
-		$sql->add_select_column( 'srcUrlMd5' );
-		$sql->add_select_column( 'destUrlMd5' );
+		$sql->add_select_column( 'src_url_id' );
+		$sql->add_select_column( 'dest_url_id' );
 		$sql->add_select_column( 'pos' );
-		$sql->add_select_column( 'urlName', 'u_src', 'srcUrlName' );
-		$sql->add_select_column( 'urlName', 'u_dest', 'destUrlName' );
-		$sql->add_from( URLSLAB_RELATED_RESOURCE_TABLE . ' r LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u_src ON u_src.urlMd5 = r.srcUrlMd5 LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u_dest ON u_dest.urlMd5 = r.destUrlMd5 ' );
+		$sql->add_select_column( 'url_name', 'u_src', 'src_url_name' );
+		$sql->add_select_column( 'url_name', 'u_dest', 'dest_url_name' );
+		$sql->add_from( URLSLAB_RELATED_RESOURCE_TABLE . ' r LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u_src ON u_src.url_id = r.src_url_id LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u_dest ON u_dest.url_id = r.dest_url_id ' );
 
 		$this->add_filter_table_fields( $sql );
 
-		$sql->add_filter( 'srcUrlMd5' );
-		$sql->add_filter( 'destUrlMd5' );
-		$sql->add_filter( 'filter_srcUrlName' );
-		$sql->add_filter( 'filter_destUrlName' );
+		$sql->add_filter( 'src_url_id' );
+		$sql->add_filter( 'dest_url_id' );
+		$sql->add_filter( 'filter_src_url_name' );
+		$sql->add_filter( 'filter_dest_url_name' );
 		$sql->add_filter( 'filter_pos', '%d' );
 
 		if ( $request->get_param( 'sort_column' ) ) {
 			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );
 		}
-		$sql->add_order( 'srcUrlMd5' );
-		$sql->add_order( 'destUrlMd5' );
+		$sql->add_order( 'src_url_id' );
+		$sql->add_order( 'dest_url_id' );
 
 		return $sql;
 	}

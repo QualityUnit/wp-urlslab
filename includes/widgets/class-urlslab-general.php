@@ -42,7 +42,11 @@ class Urlslab_General extends Urlslab_Widget {
 			self::OPTION_TYPE_PASSWORD,
 			false,
 			function( $value ) {
-				$config = Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X_URLSLAB_API_KEY', $value );
+				if ( ! strlen( $value ) ) {
+					return false;
+				}
+
+				$config = Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $value );
 
 				$apiInstance = new Swagger\Client\Urlslab\ApikeyApi(
 					new GuzzleHttp\Client(),
@@ -51,7 +55,6 @@ class Urlslab_General extends Urlslab_Widget {
 
 				try {
 					$result = $apiInstance->validate();
-
 					return $result->getAcknowledged();
 				} catch ( Exception $e ) {
 					return false;

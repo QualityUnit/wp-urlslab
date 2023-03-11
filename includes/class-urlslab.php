@@ -161,27 +161,18 @@ class Urlslab {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-urlslab-public.php';
 
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-cron.php';
-
-		//services
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-api.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-api.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/api/class-urlslab-screenshot-api.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/urlslab-api-model.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-batch-request.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/models/class-urlslab-screenshot-error-response.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-keyword-data.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-data.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-file-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-keyword-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-keyword-map-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-relation-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-file-pointer-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-youtube-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-api-key.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-url-data-fetcher.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-search-replace-row.php';
+		//data
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-data.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-file-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-keyword-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-keyword-map-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-url-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-url-relation-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-file-pointer-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-youtube-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-api-key.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-url-data-fetcher.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-search-replace-row.php';
 
 
 		//additional

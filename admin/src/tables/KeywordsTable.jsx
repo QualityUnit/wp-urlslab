@@ -124,7 +124,7 @@ export default function KeywordsTable( { slug } ) {
 					filters,
 					fromId: 'from_kw_id',
 					pageId: 'kw_id',
-					deleteCSVCols: [ 'kw_id', 'destUrlMd5' ],
+					deleteCSVCols: [ 'kw_id', 'dest_url_id' ],
 				} }
 			>
 				<div className="ma-left flex flex-align-center">

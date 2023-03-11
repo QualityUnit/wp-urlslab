@@ -69,9 +69,9 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 				if ( ! empty( $url_data ) && ! $url_data->is_active() && ! empty( $url_data->get_screenshot_url() ) ) {
 					$urlslab_atts['alt'] = $url_data->get_summary( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
 
-					switch ( $url_data->get( 'status' ) ) {
-						case Urlslab_Url_Row::STATUS_RECURRING_UPDATE:
-						case Urlslab_Url_Row::STATUS_ACTIVE:
+					switch ( $url_data->get( 'scr_status' ) ) {
+						case Urlslab_Url_Row::SCR_STATUS_UPDATING:
+						case Urlslab_Url_Row::SCR_STATUS_ACTIVE:
 							return $this->render_shortcode(
 								$urlslab_atts['url'],
 								$url_data->get_screenshot_url( $urlslab_atts['screenshot-type'] ),
@@ -80,8 +80,8 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 								$urlslab_atts['height'],
 							);
 
-						case Urlslab_Url_Row::STATUS_NEW:
-						case Urlslab_Url_Row::STATUS_PENDING:
+						case Urlslab_Url_Row::SCR_STATUS_NEW:
+						case Urlslab_Url_Row::SCR_STATUS_PENDING:
 							//default url
 							return $this->render_shortcode(
 								$urlslab_atts['url'],
@@ -91,8 +91,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 								$urlslab_atts['height'],
 							);
 
-						case Urlslab_Url_Row::STATUS_BROKEN:
-						case Urlslab_Url_Row::STATUS_BLOCKED:
+						case Urlslab_Url_Row::SCR_STATUS_ERROR:
 						default:
 							return '';
 					}

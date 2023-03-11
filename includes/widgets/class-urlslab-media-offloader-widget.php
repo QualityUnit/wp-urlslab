@@ -8,7 +8,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/driver/class-urlslab-driver-file.ph
 require_once URLSLAB_PLUGIN_DIR . '/includes/driver/class-urlslab-driver-s3.php';
 require_once URLSLAB_PLUGIN_DIR . '/includes/driver/class-urlslab-driver-db.php';
 
-require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-file-row.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-file-row.php';
 
 // phpcs:disable WordPress.NamingConventions
 class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
@@ -329,7 +329,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			$urlid   = $this->get_current_page_url()->get_url_id();
 			$results = $wpdb->get_results(
 				$wpdb->prepare(
-					'SELECT fileid FROM ' . URLSLAB_FILE_URLS_TABLE . ' WHERE urlMd5 = %d', // phpcs:ignore
+					'SELECT fileid FROM ' . URLSLAB_FILE_URLS_TABLE . ' WHERE url_id = %d', // phpcs:ignore
 					$urlid
 				),
 				'ARRAY_A'
@@ -356,7 +356,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 					$values[]       = $fileid;
 					$values[]       = $urlid;
 				}
-				$insert_sql = "INSERT IGNORE INTO $table (fileid, urlMd5) VALUES " . implode( ',', $placeholders );
+				$insert_sql = "INSERT IGNORE INTO $table (fileid, url_id) VALUES " . implode( ',', $placeholders );
 
 				$wpdb->query(
 					$wpdb->prepare(
@@ -382,7 +382,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 				$wpdb->query(
 					$wpdb->prepare(
-						"DELETE FROM $table WHERE urlMd5=%d AND fileid IN (" . implode( ',', $placeholders ) . ')', // phpcs:ignore
+						"DELETE FROM $table WHERE url_id=%d AND fileid IN (" . implode( ',', $placeholders ) . ')', // phpcs:ignore
 						$values
 					)
 				);

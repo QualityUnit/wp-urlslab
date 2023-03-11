@@ -26,18 +26,16 @@ class Urlslab_Offload_Background_Attachments_Cron extends Urlslab_Cron {
 
 		$post_ids = $wpdb->get_results( $wpdb->prepare( 'SELECT ID FROM ' . $wpdb->prefix . "posts WHERE ID > %d AND post_type='attachment' ORDER BY ID ASC LIMIT 100", $last_post_id ) ); // phpcs:ignore
 
-		$values       = array();
-		$placeholders = array();
+		$rows = array();
 
 		foreach ( $post_ids as $post_id ) {
 			$last_post_id = $post_id->ID;
 			$file_path    = get_attached_file( $last_post_id );
-			$url          = wp_get_attachment_url( $last_post_id );
 			$meta         = wp_get_attachment_metadata( $last_post_id );
 
-			$file = new Urlslab_File_Row(
+			$rows[] = new Urlslab_File_Row(
 				array(
-					'url'            => $url,
+					'url'            => wp_get_attachment_url( $last_post_id ),
 					'filename'       => isset( $meta['file'] ) ? basename( $meta['file'] ) : basename( $file_path ),
 					'status_changed' => Urlslab_Data::get_now(),
 					'filestatus'     => Urlslab_Driver::STATUS_NEW,
@@ -45,20 +43,11 @@ class Urlslab_Offload_Background_Attachments_Cron extends Urlslab_Cron {
 				),
 				false
 			);
-
-			$placeholders[] = '(%s,%s,%s,%s,%s,%s)';
-			array_push( $values, $file->get_fileid(), $file->get_url(), $file->get_filename(), $file->get( 'status_changed' ), $file->get( 'filestatus' ), $file->get( 'local_file' ) );
 		}
 
-		if ( count( $placeholders ) ) {
+		if ( ! empty( $rows ) ) {
 			update_option( self::SETTING_NAME_SCHEDULER_POINTER, $last_post_id );
-			$result = $wpdb->query(
-				$wpdb->prepare(
-					'INSERT IGNORE INTO ' . URLSLAB_FILES_TABLE . ' (fileid, url, filename, status_changed, filestatus, local_file) VALUES ' . // phpcs:ignore
-					implode( ', ', $placeholders ), // phpcs:ignore
-					$values
-				)
-			);
+			$result = $rows[0]->insert_all( $rows );
 			if ( ! is_numeric( $result ) ) {
 				return 0;
 			}

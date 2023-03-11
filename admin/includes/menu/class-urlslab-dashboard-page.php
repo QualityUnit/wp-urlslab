@@ -6,7 +6,7 @@ class Urlslab_Dashboard_Page extends Urlslab_Admin_Page {
 	private string $page_title;
 
 	public function __construct() {
-		$this->menu_slug = 'urlslab-dashboard';
+		$this->menu_slug  = 'urlslab-dashboard';
 		$this->page_title = 'Modules';
 	}
 
@@ -44,69 +44,7 @@ class Urlslab_Dashboard_Page extends Urlslab_Admin_Page {
 		return '';
 	}
 
-	public function on_page_load( string $action, string $component ) {
-		if ( isset( $_SERVER['REQUEST_METHOD'] ) and
-			 'POST' == $_SERVER['REQUEST_METHOD'] and
-			 ( 'activate' == $action or 'deactivate' == $action ) and
-			 ! is_bool( check_admin_referer( 'urlslab-widget-activation' ) ) and
-			 isset( $_POST['widget'] ) ) {
-
-			$redirect_to = $this->menu_page(
-				'',
-				array(
-					'status' => 'failure',
-					'urlslab-message' => 'Invalid request',
-				)
-			);
-
-			if ( 'activate' == $action ) {
-				$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $_POST['widget'] );
-				if ( is_bool( $widget ) && ! $widget ) {
-					$redirect_to = $this->menu_page(
-						'',
-						array(
-							'status' => 'failure',
-							'urlslab-message' => 'Invalid Widget',
-						)
-					);
-				} else {
-					Urlslab_User_Widget::get_instance()->activate_widget( $widget );
-					$redirect_to = $this->menu_page(
-						'',
-						array(
-							'status' => 'success',
-							'urlslab-message' => 'Widget ' . $widget->get_widget_title() . ' was activated successfully',
-						)
-					);
-				}
-			}
-
-			if ( 'deactivate' == $action ) {
-				$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $_POST['widget'] );
-				if ( is_bool( $widget ) && ! $widget ) {
-					$redirect_to = $this->menu_page(
-						'',
-						array(
-							'status' => 'failure',
-							'urlslab-message' => 'Invalid Widget',
-						)
-					);
-				} else {
-					Urlslab_User_Widget::get_instance()->deactivate_widget( $widget );
-					$redirect_to = $this->menu_page(
-						'',
-						array(
-							'status' => 'success',
-							'urlslab-message' => 'Widget ' . $widget->get_widget_title() . ' was deactivated successfully',
-						)
-					);
-				}
-			}
-
-			wp_safe_redirect( $redirect_to );
-			exit();
-		}
-	}
+	public function on_page_load( string $action, string $component ) {}
 
 	public function on_screen_load() {}
 

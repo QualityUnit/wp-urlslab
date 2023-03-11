@@ -74,7 +74,7 @@ export default function ContentCacheTable( { slug } ) {
 					filters,
 					fromId: `from_${ pageId }`,
 					pageId,
-					deleteCSVCols: [ pageId, 'destUrlMd5' ],
+					deleteCSVCols: [ pageId, 'dest_url_id' ],
 				} }
 			>
 				<div className="ma-left flex flex-align-center">
