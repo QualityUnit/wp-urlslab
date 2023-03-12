@@ -7,7 +7,8 @@ class Urlslab_Url_Row extends Urlslab_Data {
 
 	const VALUE_EMPTY = 'E';
 
-	const STATUS_HTTP_NOT_PROCESSED = - 1;
+	const HTTP_STATUS_NOT_PROCESSED = -1;
+	const HTTP_STATUS_PENDING = -2;
 
 	const SCR_STATUS_ERROR = 'E';
 	const SCR_STATUS_NEW = 'N';
@@ -40,7 +41,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$this->set( 'url_name', $url['url_name'] ?? '', ! $loaded_from_db );
 		$this->set( 'scr_status', $url['scr_status'] ?? self::SCR_STATUS_NEW, ! $loaded_from_db );
 		$this->set( 'sum_status', $url['sum_status'] ?? self::SUM_STATUS_NEW, ! $loaded_from_db );
-		$this->set( 'http_status', $url['http_status'] ?? self::STATUS_HTTP_NOT_PROCESSED, ! $loaded_from_db );
+		$this->set( 'http_status', $url['http_status'] ?? self::HTTP_STATUS_NOT_PROCESSED, ! $loaded_from_db );
 		$this->set( 'urlslab_domain_id', $url['urlslab_domain_id'] ?? 0, ! $loaded_from_db );
 		$this->set( 'urlslab_url_id', $url['urlslab_url_id'] ?? 0, ! $loaded_from_db );
 		$this->set( 'urlslab_scr_timestamp', $url['urlslab_scr_timestamp'] ?? 0, ! $loaded_from_db );
@@ -210,7 +211,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	 *
 	 * @return void
 	 */
-	public function insert_urls( $urls, $scr_status = self::SCR_STATUS_NEW, $sum_status = self::SUM_STATUS_NEW, $http_status = self::STATUS_HTTP_NOT_PROCESSED ): bool {
+	public function insert_urls( $urls, $scr_status = self::SCR_STATUS_NEW, $sum_status = self::SUM_STATUS_NEW, $http_status = self::HTTP_STATUS_NOT_PROCESSED ): bool {
 		if ( empty( $urls ) ) {
 			return true;
 		}

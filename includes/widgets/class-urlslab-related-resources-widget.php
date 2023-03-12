@@ -107,6 +107,10 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				return '';
 			}
 
+			if (false !== $urlslab_atts['show-summary'] && Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY == $strategy) {
+				$strategy = Urlslab_Link_Enhancer::DESC_TEXT_META_DESCRIPTION;	//if we display text of summary under link, we should use metadescription for alt text and title
+			}
+
 			return '<div class="urlslab-rel-res-item">' .
 				   '<a href="' . esc_url( $url_obj->get_url()->get_url_with_protocol() ) . '"' .
 				   ' title="' . esc_attr( $url_obj->get_summary( $strategy ) ) . '"' .

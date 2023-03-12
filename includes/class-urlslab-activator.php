@@ -124,9 +124,9 @@ class Urlslab_Activator {
 			visibility char(1) NOT NULL DEFAULT 'V', -- V: visible, H: hidden
 			url_type char(1) NOT NULL DEFAULT 'I', -- I: Internal, E: external
 			PRIMARY KEY  (url_id),
-			INDEX idx_scr_changed (update_scr_date, scr_status),
-			INDEX idx_sum_changed (update_sum_date, sum_status),
-			INDEX idx_http_changed (update_http_date, http_status)
+			INDEX idx_scr_changed (scr_status, update_scr_date),
+			INDEX idx_sum_changed (sum_status, update_sum_date),
+			INDEX idx_http_changed (http_status, update_http_date)
 		) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

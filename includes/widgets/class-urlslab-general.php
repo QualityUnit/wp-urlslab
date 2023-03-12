@@ -6,6 +6,8 @@ class Urlslab_General extends Urlslab_Widget {
 	const SLUG = 'general';
 
 	const SETTING_NAME_URLSLAB_API_KEY = 'urlslab-api-key';
+	const SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL = 'urlslab-refresh-scr';
+	const SETTING_NAME_SUMMARIZATION_REFRESH_INTERVAL = 'urlslab-refresh-sum';
 
 	/**
 	 * @return string
@@ -33,6 +35,7 @@ class Urlslab_General extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
+		$this->add_options_form_section( 'api', __( 'Urlslab Integration' ), __( 'To activate all features in your get API key from www.urlslab.com and connect your plugin with your Urlslab plugin.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_URLSLAB_API_KEY,
 			'',
@@ -55,6 +58,7 @@ class Urlslab_General extends Urlslab_Widget {
 
 				try {
 					$result = $apiInstance->validate();
+
 					return $result->getAcknowledged();
 				} catch ( Exception $e ) {
 					return false;
@@ -62,6 +66,49 @@ class Urlslab_General extends Urlslab_Widget {
 
 				return false;
 			},
+			'api'
+		);
+
+		$this->add_options_form_section( 'cron', __( 'Cron tasks' ), __( 'Plugin connects periodically to www.urlslab.com and updates data in your installation. It is independent process to your domain schedules.' ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL,
+			2419200,
+			false,
+			__( 'Reload Screenshots Interval' ),
+			__( 'Define how often should check your wordpress plugin availability of new version of screenshot in your urlslab account. Even we reload the data on the background by cron task, it can use a lot of computation time. We recommend Monthly or Quarterly updates.' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				86400     => __( 'Daily' ),
+				604800    => __( 'Weekly' ),
+				2419200   => __( 'Monthly' ),
+				7257600   => __( 'Quarterly' ),
+				31536000  => __( 'Yearly' ),
+				999999999 => __( 'Never' ),
+			),
+			function( $value ) {
+				return is_numeric( $value ) && 0 < $value;
+			},
+			'cron',
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_SUMMARIZATION_REFRESH_INTERVAL,
+			2419200,
+			false,
+			__( 'Reload Summarization Interval' ),
+			__( 'Define how often should check your wordpress plugin availability of new url summarization in your urlslab account. Even we reload the data on the background by cron task, it can use a lot of computation time. We recommend Monthly or Quarterly updates.' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				86400     => __( 'Daily' ),
+				604800    => __( 'Weekly' ),
+				2419200   => __( 'Monthly' ),
+				7257600   => __( 'Quarterly' ),
+				31536000  => __( 'Yearly' ),
+				999999999 => __( 'Never' ),
+			),
+			function( $value ) {
+				return is_numeric( $value ) && 0 < $value;
+			},
+			'cron',
 		);
 	}
 }

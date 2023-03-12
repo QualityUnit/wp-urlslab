@@ -6,14 +6,24 @@ class Urlslab_Update_Urls_Cron extends Urlslab_Cron {
 	protected function execute(): bool {
 		global $wpdb;
 
-		if ( empty( get_option( Urlslab_Link_Enhancer::SETTING_NAME_LAST_LINK_VALIDATION_START ) ) || ! get_option( Urlslab_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS ) ) {
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Link_Enhancer::SLUG );
+		if ( ! $widget->get_option( Urlslab_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS ) || 999999999 == $widget->get_option( Urlslab_Link_Enhancer::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_INTERVAL ) ) {
 			return false;
 		}
 
 		$url_row = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_URLS_TABLE . " WHERE update_http_date < %s OR update_http_date is NULL ORDER BY update_http_date LIMIT 1", // phpcs:ignore
-				get_option( Urlslab_Link_Enhancer::SETTING_NAME_LAST_LINK_VALIDATION_START )
+				'SELECT * FROM ' . URLSLAB_URLS_TABLE . " WHERE 
+				http_status = %d OR
+				(http_status > 0 AND update_http_date < %s) OR
+				(http_status = %d AND update_http_date < %s)
+				ORDER BY update_http_date 
+				LIMIT 1", // phpcs:ignore
+				Urlslab_Url_Row::HTTP_STATUS_NOT_PROCESSED,
+				Urlslab_Data::get_now( time() - $widget->get_option( Urlslab_Link_Enhancer::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_INTERVAL ) ),
+				//PENDING urls will be retried in one hour again
+				Urlslab_Url_Row::HTTP_STATUS_PENDING,
+				Urlslab_Data::get_now( time() - 3600 )
 			),
 			ARRAY_A
 		);
@@ -29,6 +39,7 @@ class Urlslab_Update_Urls_Cron extends Urlslab_Cron {
 			$url->set( 'url_meta_description', Urlslab_Url_Row::VALUE_EMPTY );
 		}
 		$url->set( 'update_http_date', Urlslab_Url_Row::get_now() );
+		$url->set( 'http_status', Urlslab_Url_Row::HTTP_STATUS_PENDING );
 		$url->update();    //lock the entry, so no other process will start working on it
 
 		return $this->updateUrl( $url );
@@ -62,7 +73,7 @@ class Urlslab_Update_Urls_Cron extends Urlslab_Cron {
 
 
 					// find the title
-					if ( $url->get( 'url_title' ) == Urlslab_Url_Row::VALUE_EMPTY ) {
+					if ( empty( $url->get( 'url_title' ) ) || $url->get( 'url_title' ) == Urlslab_Url_Row::VALUE_EMPTY ) {
 						$titlelist = $document->getElementsByTagName( 'title' );
 						if ( $titlelist->length > 0 ) {
 							$url->set( 'url_title', $titlelist->item( 0 )->nodeValue );
@@ -70,11 +81,17 @@ class Urlslab_Update_Urls_Cron extends Urlslab_Cron {
 								$url->set( 'url_title', Urlslab_Url_Row::VALUE_EMPTY );
 							}
 						} else {
-							$url->set( 'url_title', Urlslab_Url_Row::VALUE_EMPTY );
+							//try to load title from H1
+							$hlist = $document->getElementsByTagName( 'h1' );
+							if ( $hlist->length > 0 && strlen( $hlist->item( 0 )->nodeValue ) ) {
+								$url->set( 'url_title', $hlist->item( 0 )->nodeValue );
+							} else {
+								$url->set( 'url_title', Urlslab_Url_Row::VALUE_EMPTY );
+							}
 						}
 					}
 
-					if ( $url->get( 'url_meta_description' ) == Urlslab_Url_Row::VALUE_EMPTY ) {
+					if ( empty( $url->get( 'url_meta_description' ) ) || $url->get( 'url_meta_description' ) == Urlslab_Url_Row::VALUE_EMPTY ) {
 						$xpath            = new DOMXPath( $document );
 						$metadescriptions = $xpath->evaluate( '//meta[@name="description"]/@content' );
 						if ( $metadescriptions->length > 0 ) {
@@ -88,13 +105,14 @@ class Urlslab_Update_Urls_Cron extends Urlslab_Cron {
 					}
 					$url->set( 'http_status', 200 );
 				} catch ( Exception $e ) {
+					$url->set( 'http_status', 400 );
 				}
 				unlink( $page_content_file_name );
 			}
 		} catch ( Exception $e ) {
 			$url->set( 'url_title', Urlslab_Url_Row::VALUE_EMPTY );
 			$url->set( 'url_meta_description', Urlslab_Url_Row::VALUE_EMPTY );
-			$url->set( 'http_status', Urlslab_Url_Row::STATUS_HTTP_NOT_PROCESSED );
+			$url->set( 'http_status', 400 );
 		}
 		$url->set( 'update_http_date', Urlslab_Url_Row::get_now() );
 

@@ -14,7 +14,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	public const SETTING_NAME_DESC_REPLACEMENT_STRATEGY = 'urlslab_desc_replacement_strategy';
 	const SETTING_NAME_REMOVE_LINKS = 'urlslab_remove_links';
 	const SETTING_NAME_VALIDATE_LINKS = 'urlslab_validate_links';
-	const SETTING_NAME_LAST_LINK_VALIDATION_START = 'urlslab_last_validation';
+	const SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_INTERVAL = 'urlslab_url_http_status_interval';
 	const SETTING_NAME_URLS_MAP = 'urlslab_urls_map';
 	const SETTING_NAME_ADD_LINK_FRAGMENT = 'urlslab_add_lnk_fragment';
 
@@ -253,11 +253,11 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		);
 
 		$this->add_option_definition(
-			self::SETTING_NAME_REMOVE_LINKS,
+			self::SETTING_NAME_ADD_LINK_FRAGMENT,
+			false,
 			true,
-			true,
-			__( 'Hide Links' ),
-			__( 'Hide links with status 404 or 503 or marked as invisible from all pages' )
+			__( 'Add Text Fragments to every link' ),
+			__( 'Enhance every link in the page with text fragement. Example: "www.yourdomain.com/page1#:~:text=link%20text". To disable processing on some links, add class "urlslab-skip-fragment" to link or any parent html object.' )
 		);
 
 		$this->add_option_definition(
@@ -268,30 +268,53 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			__( 'Store all links used in your website and analyze relations and content clusters between pages.' )
 		);
 
+		$this->add_options_form_section( 'validation', __( 'Link Validation' ), __( 'One of the important SEO tasks is to keep high quality of your content. Your website should not contain links leading to invalid or not existing pages. Following settings can help you to automate the process in large scale. You will not need to search for invalid links in your HTML content manually.' ) );
+
+		$this->add_option_definition(
+			self::SETTING_NAME_REMOVE_LINKS,
+			true,
+			true,
+			__( 'Hide Links' ),
+			__( 'Hide links from HTML leading to url with status 4XX or 5XX or links manually marked as invisible from all pages in your website' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'validation'
+		);
 		$this->add_option_definition(
 			self::SETTING_NAME_VALIDATE_LINKS,
 			false,
 			false,
-			__( 'Validate Links' ),
-			__( 'Make request to each URL found in website (in background by cron) and test if it is valid or invalid url (e.g. 404 page)' )
+			__( 'Validate Links (HTTP Status)' ),
+			__( 'Make request to each URL found in website (in background by cron) and test if it is valid or invalid url (e.g. 404 page)' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'validation'
 		);
 
 		$this->add_option_definition(
-			self::SETTING_NAME_ADD_LINK_FRAGMENT,
+			self::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_INTERVAL,
+			2419200,
 			false,
-			true,
-			__( 'Add Text Fragments to every link' ),
-			__( 'Enhance every link in the page with text fragement. Example: "www.yourdomain.com/page1#:~:text=link%20text". To disable processing on some links, add class "urlslab-skip-fragment" to link or any parent html object.' )
+			__( 'Link Validation Interval' ),
+			__( 'Define how often should check your wordpress plugin status of urls used in your website. Even we check status of urls on the background by cron task, it can use a lot of computation time. We recommend Monthly or Quarterly updates. To keep up to date status of each url we can hide links invalid links from your website automatically.' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				86400     => __( 'Daily' ),
+				604800    => __( 'Weekly' ),
+				2419200   => __( 'Monthly' ),
+				7257600   => __( 'Quarterly' ),
+				31536000  => __( 'Yearly' ),
+				999999999 => __( 'Never' ),
+			),
+			function( $value ) {
+				return is_numeric( $value ) && 0 < $value;
+			},
+			'validation',
 		);
 
-		$this->add_option_definition(
-			self::SETTING_NAME_LAST_LINK_VALIDATION_START,
-			Urlslab_Data::get_now(),
-			false,
-			__( 'Validate urls created before' ),
-			__( 'Background process validates all found URLs in page created after selected date.' ),
-			self::OPTION_TYPE_DATETIME
-		);
+
 	}
 
 	private function processLinkFragments( DOMDocument $document ) {
