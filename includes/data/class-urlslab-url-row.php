@@ -7,8 +7,8 @@ class Urlslab_Url_Row extends Urlslab_Data {
 
 	const VALUE_EMPTY = 'E';
 
-	const HTTP_STATUS_NOT_PROCESSED = -1;
-	const HTTP_STATUS_PENDING = -2;
+	const HTTP_STATUS_NOT_PROCESSED = - 1;
+	const HTTP_STATUS_PENDING = - 2;
 
 	const SCR_STATUS_ERROR = 'E';
 	const SCR_STATUS_NEW = 'N';
@@ -193,8 +193,13 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		);
 	}
 
-	public function is_active() {
-		return 200 >= $this->get( 'http_status' ) && $this->is_visible();
+	/**
+	 * Valid are URLs, which were not processed yet or have status 200
+	 *
+	 * @return bool
+	 */
+	public function is_http_valid() {
+		return ( 200 == $this->get( 'http_status' ) || 0 > $this->get( 'http_status' ) ) && $this->is_visible();
 	}
 
 	public function is_internal() {

@@ -409,8 +409,8 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-transfer-files-cron.php';
 		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Offload_Transfer_Files_Cron() );
 
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-update-urls-cron.php';
-		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Update_Urls_Cron() );
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-update-url-http-status-cron.php';
+		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Update_Url_Http_Status_Cron() );
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-enqueue-files-cron.php';
 		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Offload_Enqueue_Files_Cron() );

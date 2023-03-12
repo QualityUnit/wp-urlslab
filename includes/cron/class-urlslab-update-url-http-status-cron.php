@@ -1,24 +1,19 @@
 <?php
 require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
 
-class Urlslab_Update_Urls_Cron extends Urlslab_Cron {
+class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 
 	protected function execute(): bool {
 		global $wpdb;
 
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Link_Enhancer::SLUG );
-		if ( ! $widget->get_option( Urlslab_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS ) || 999999999 == $widget->get_option( Urlslab_Link_Enhancer::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_INTERVAL ) ) {
+		if ( ! $widget->get_option( Urlslab_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS ) ) {
 			return false;
 		}
 
 		$url_row = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_URLS_TABLE . " WHERE 
-				http_status = %d OR
-				(http_status > 0 AND update_http_date < %s) OR
-				(http_status = %d AND update_http_date < %s)
-				ORDER BY update_http_date 
-				LIMIT 1", // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_URLS_TABLE . ' WHERE http_status = %d OR (http_status > 0 AND update_http_date < %s) OR (http_status = %d AND update_http_date < %s) ORDER BY update_http_date LIMIT 1', // phpcs:ignore
 				Urlslab_Url_Row::HTTP_STATUS_NOT_PROCESSED,
 				Urlslab_Data::get_now( time() - $widget->get_option( Urlslab_Link_Enhancer::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_INTERVAL ) ),
 				//PENDING urls will be retried in one hour again
