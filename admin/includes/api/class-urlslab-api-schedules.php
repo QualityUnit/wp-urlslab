@@ -107,7 +107,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<schedule_id>[0-9a-zA-Z]+)',
+			$base . '/(?P<schedule_id>[0-9a-zA-Z\\-]+)',
 			array(
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
@@ -133,6 +133,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 			$result = array();
 			foreach ( $this->get_client()->listSchedules() as $schedule ) {
 				$result[] = (object) array(
+					'schedule_id'           => $schedule->getProcessId(),
 					'urls'                  => $schedule->getScheduleConf()->getUrls(),
 					'process_all_sitemaps'  => $schedule->getScheduleConf()->getAllSitemaps(),
 					'custom_sitemaps'       => $schedule->getScheduleConf()->getSitemaps(),
@@ -170,7 +171,9 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 
 	public function delete_item( $request ) {
 		try {
-			return new WP_REST_Response( $this->get_client()->deleteSchedule( $request->get_param( 'schedule_id' ) ), 200 );
+			$this->get_client()->deleteSchedule( $request->get_param( 'schedule_id' ) );
+
+			return new WP_REST_Response( 'Deleted', 200 );
 		} catch ( Throwable $e ) {
 			return new WP_Error( 'error', $e->getMessage() );
 		}
