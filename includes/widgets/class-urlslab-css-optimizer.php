@@ -1,7 +1,7 @@
 <?php
 
 // phpcs:disable WordPress
-require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-css-cache-row.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-css-cache-row.php';
 
 class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 

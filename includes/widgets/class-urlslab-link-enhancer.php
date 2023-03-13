@@ -14,7 +14,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	public const SETTING_NAME_DESC_REPLACEMENT_STRATEGY = 'urlslab_desc_replacement_strategy';
 	const SETTING_NAME_REMOVE_LINKS = 'urlslab_remove_links';
 	const SETTING_NAME_VALIDATE_LINKS = 'urlslab_validate_links';
-	const SETTING_NAME_LAST_LINK_VALIDATION_START = 'urlslab_last_validation';
+	const SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_INTERVAL = 'urlslab_url_http_status_interval';
 	const SETTING_NAME_URLS_MAP = 'urlslab_urls_map';
 	const SETTING_NAME_ADD_LINK_FRAGMENT = 'urlslab_add_lnk_fragment';
 
@@ -33,18 +33,18 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	public function post_updated( $post_id, $post, $post_before ) {
 		$data = array();
 		if ( $post->post_title != $post_before->post_title ) {
-			$data['urlTitle'] = $post->post_title;
+			$data['url_title'] = $post->post_title;
 		}
 		$desc = get_post_meta( $post_id );
 		if ( isset( $desc['_yoast_wpseo_metadesc'][0] ) ) {
-			$data['urlMetaDescription'] = $desc['_yoast_wpseo_metadesc'][0];
+			$data['url_meta_description'] = $desc['_yoast_wpseo_metadesc'][0];
 		}
 
 		if ( ! empty( $data ) ) {
 			try {
 				$url = new Urlslab_Url( get_permalink( $post_id ) );
 				global $wpdb;
-				$wpdb->update( URLSLAB_URLS_TABLE, $data, array( 'urlMd5' => $url->get_url_id() ) );
+				$wpdb->update( URLSLAB_URLS_TABLE, $data, array( 'url_id' => $url->get_url_id() ) );
 			} catch ( Exception $e ) {
 			}
 		}
@@ -87,7 +87,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		global $wpdb;
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT destUrlMd5 FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE srcUrlMd5 = %d', // phpcs:ignore
+				'SELECT dest_url_id FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE src_url_id = %d', // phpcs:ignore
 				$srcUrlId
 			),
 			'ARRAY_A'
@@ -97,7 +97,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		array_walk(
 			$results,
 			function( $value, $key ) use ( &$destinations ) {
-				$destinations[ $value['destUrlMd5'] ] = true;
+				$destinations[ $value['dest_url_id'] ] = true;
 			}
 		);
 
@@ -121,7 +121,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		if ( ! empty( $values ) ) {
 			$table               = URLSLAB_URLS_MAP_TABLE;
 			$placeholder_string  = implode( ', ', $placeholder );
-			$insert_update_query = "INSERT IGNORE INTO $table (srcUrlMd5, destUrlMd5) VALUES $placeholder_string";
+			$insert_update_query = "INSERT IGNORE INTO $table (src_url_id, dest_url_id) VALUES $placeholder_string";
 
 			$wpdb->query(
 				$wpdb->prepare(
@@ -141,7 +141,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			}
 			$table              = URLSLAB_URLS_MAP_TABLE;
 			$placeholder_string = implode( ',', $placeholder );
-			$delete_query       = "DELETE FROM $table WHERE srcUrlMd5=%d AND destUrlMd5 IN ($placeholder_string)";
+			$delete_query       = "DELETE FROM $table WHERE src_url_id=%d AND dest_url_id IN ($placeholder_string)";
 			$wpdb->query( $wpdb->prepare( $delete_query, $values ) ); // phpcs:ignore
 		}
 	}
@@ -253,11 +253,11 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		);
 
 		$this->add_option_definition(
-			self::SETTING_NAME_REMOVE_LINKS,
+			self::SETTING_NAME_ADD_LINK_FRAGMENT,
+			false,
 			true,
-			true,
-			__( 'Hide Links' ),
-			__( 'Hide links with status 404 or 503 or marked as invisible from all pages' )
+			__( 'Add Text Fragments to every link' ),
+			__( 'Enhance every link in the page with text fragement. Example: "www.yourdomain.com/page1#:~:text=link%20text". To disable processing on some links, add class "urlslab-skip-fragment" to link or any parent html object.' )
 		);
 
 		$this->add_option_definition(
@@ -268,30 +268,53 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			__( 'Store all links used in your website and analyze relations and content clusters between pages.' )
 		);
 
+		$this->add_options_form_section( 'validation', __( 'Link Validation' ), __( 'One of the important SEO tasks is to keep high quality of your content. Your website should not contain links leading to invalid or not existing pages. Following settings can help you to automate the process in large scale. You will not need to search for invalid links in your HTML content manually.' ) );
+
+		$this->add_option_definition(
+			self::SETTING_NAME_REMOVE_LINKS,
+			true,
+			true,
+			__( 'Hide Links' ),
+			__( 'Hide links from HTML leading to url with status 4XX or 5XX or links manually marked as invisible from all pages in your website' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'validation'
+		);
 		$this->add_option_definition(
 			self::SETTING_NAME_VALIDATE_LINKS,
 			false,
 			false,
-			__( 'Validate Links' ),
-			__( 'Make request to each URL found in website (in background by cron) and test if it is valid or invalid url (e.g. 404 page)' )
+			__( 'Validate Links (HTTP Status)' ),
+			__( 'Make request to each URL found in website (in background by cron) and test if it is valid or invalid url (e.g. 404 page)' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'validation'
 		);
 
 		$this->add_option_definition(
-			self::SETTING_NAME_ADD_LINK_FRAGMENT,
+			self::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_INTERVAL,
+			2419200,
 			false,
-			true,
-			__( 'Add Text Fragments to every link' ),
-			__( 'Enhance every link in the page with text fragement. Example: "www.yourdomain.com/page1#:~:text=link%20text". To disable processing on some links, add class "urlslab-skip-fragment" to link or any parent html object.' )
+			__( 'Link Validation Interval' ),
+			__( 'Define how often should check your wordpress plugin status of urls used in your website. Even we check status of urls on the background by cron task, it can use a lot of computation time. We recommend Monthly or Quarterly updates. To keep up to date status of each url we can hide links invalid links from your website automatically.' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				86400     => __( 'Daily' ),
+				604800    => __( 'Weekly' ),
+				2419200   => __( 'Monthly' ),
+				7257600   => __( 'Quarterly' ),
+				31536000  => __( 'Yearly' ),
+				999999999 => __( 'Never' ),
+			),
+			function( $value ) {
+				return is_numeric( $value ) && 0 < $value;
+			},
+			'validation',
 		);
 
-		$this->add_option_definition(
-			self::SETTING_NAME_LAST_LINK_VALIDATION_START,
-			Urlslab_Data::get_now(),
-			false,
-			__( 'Validate urls created before' ),
-			__( 'Background process validates all found URLs in page created after selected date.' ),
-			self::OPTION_TYPE_DATETIME
-		);
+
 	}
 
 	private function processLinkFragments( DOMDocument $document ) {

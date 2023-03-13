@@ -1,5 +1,5 @@
 <?php
-require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-file-row.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-file-row.php';
 
 abstract class Urlslab_Driver {
 	const URLSLAB_DIR = 'urlslab/';

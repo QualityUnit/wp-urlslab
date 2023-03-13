@@ -8,7 +8,7 @@ export default function LinkManagerTable( { slug } ) {
 	const { setHiddenTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater();
 
 	const url = `${ filters }${ sortingColumn }`;
-	const pageId = 'urlMd5';
+	const pageId = 'url_id';
 
 	const {
 		__,
@@ -21,13 +21,30 @@ export default function LinkManagerTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, pageId } );
 
-	const statusTypes = {
-		N: __( 'New' ),
-		A: __( 'Active' ),
+	const sumStatusTypes = {
+		N: __( 'Waiting' ),
+		A: __( 'Processed' ),
 		P: __( 'Pending' ),
 		U: __( 'Updating' ),
-		B: __( 'Not crawling' ),
-		X: __( 'Blocked' ),
+		E: __( 'Error' ),
+	};
+
+	const scrStatusTypes = {
+		N: __( 'Waiting' ),
+		A: __( 'Processed' ),
+		P: __( 'Pending' ),
+		U: __( 'Updating' ),
+		E: __( 'Error' ),
+	};
+
+	const httpStatusTypes = {
+		'-2': __( 'Processing' ),
+		'-1': __( 'Waiting' ),
+		200: __( 'Valid' ),
+		400: __( 'Client Error' ),
+		404: __( 'Not Found' ),
+		500: __( 'Server Error' ),
+		503: __( 'Server Error' ),
 	};
 
 	const visibilityTypes = {
@@ -35,16 +52,25 @@ export default function LinkManagerTable( { slug } ) {
 		H: __( 'Hidden' ),
 	};
 
+	const urlTypes = {
+		I: __( 'Internal' ),
+		E: __( 'External' ),
+	};
+
 	const header = {
-		urlTitle: __( 'URL Title' ),
-		urlMetaDescription: __( 'URL Description' ),
+		url_name: __( 'URL' ),
+		url_title: __( 'Title' ),
+		url_meta_description: __( 'Description' ),
+		url_summary: __( 'Summary' ),
 		screenshot_url: __( 'Screenshot' ),
-		status: __( 'Status' ),
-		urlName: __( 'URL' ),
-		urlSummary: __( 'URL Summary' ),
+		http_status: __( 'HTTP Status' ),
+		sum_status: __( 'Summary Status' ),
+		scr_status: __( 'Screenshot Status' ),
 		visibility: __( 'Visibility' ),
-		updateStatusDate: __( 'Status Date' ),
-		urlCheckDate: __( 'Check Date' ),
+		url_type: __( 'Visibility' ),
+		update_scr_date: __( 'Screenshot Updated' ),
+		update_sum_date: __( 'Summary Updated' ),
+		update_http_date: __( 'HTTP Status Updated' ),
 	};
 
 	const columns = [
@@ -55,47 +81,80 @@ export default function LinkManagerTable( { slug } ) {
 			} } />,
 			header: null,
 		} ),
+		columnHelper.accessor( 'url_name', {
+			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			header: () => <MenuInput isFilter placeholder="Enter URL Desc" defaultValue={ currentFilters.url_name } onChange={ ( val ) => addFilter( 'url_name', val ) }>{ header.url_name }</MenuInput>,
+			size: 250,
+		} ),
 		columnHelper?.accessor( 'screenshot_url', {
 			className: 'thumbnail',
 			cell: ( image ) => image?.getValue()
-				? <a href={ image?.getValue() } target="_blank" rel="noreferrer"><img src={ image?.getValue() } alt={ image.row.original.urlName } /></a>
+				? <a href={ image?.getValue() } target="_blank" rel="noreferrer"><img src={ image?.getValue() } alt={ image.row.original.url_name } /></a>
 				: <div className="img"></div>,
 			header: () => header.screenshot_url,
 			size: 90,
 		} ),
-		columnHelper.accessor( 'urlTitle', {
+		columnHelper.accessor( 'url_title', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => <MenuInput isFilter placeholder="Enter URL Title" defaultValue={ currentFilters.urlTitle } onChange={ ( val ) => addFilter( 'urlTitle', val ) }>{ header.urlTitle }</MenuInput>,
+			header: () => <MenuInput isFilter placeholder="Enter URL Title" defaultValue={ currentFilters.url_title } onChange={ ( val ) => addFilter( 'url_title', val ) }>{ header.urlTitle }</MenuInput>,
 			size: 150,
 		} ),
-		columnHelper?.accessor( 'urlMetaDescription', {
+		columnHelper?.accessor( 'url_meta_description', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => <MenuInput isFilter placeholder="Enter URL Desc" defaultValue={ currentFilters.urlMetaDescription } onChange={ ( val ) => addFilter( 'urlFilter', val ) }>{ header.urlMetaDescription }</MenuInput>,
+			header: () => <MenuInput isFilter placeholder="Enter URL Desc" defaultValue={ currentFilters.url_meta_description } onChange={ ( val ) => addFilter( 'urlFilter', val ) }>{ header.urlMetaDescription }</MenuInput>,
 			size: 200,
 		} ),
-		columnHelper.accessor( 'urlSummary', {
+		columnHelper.accessor( 'url_summary', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => <MenuInput isFilter placeholder="Enter Text" defaultValue={ currentFilters.urlSummary } onChange={ ( val ) => addFilter( 'urlSummary', val ) }>{ header.urlSummary }</MenuInput>,
+			header: () => <MenuInput isFilter placeholder="Enter Text" defaultValue={ currentFilters.url_summary } onChange={ ( val ) => addFilter( 'url_summary', val ) }>{ header.urlSummary }</MenuInput>,
 			size: 150,
 		} ),
-		columnHelper?.accessor( 'status', {
+		columnHelper?.accessor( 'scr_status', {
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu
-				items={ statusTypes }
+				items={ scrStatusTypes }
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: ( cell ) => <SortMenu isFilter items={ statusTypes } name={ cell.column.id } checkedId={ currentFilters.status || '' } onChange={ ( val ) => addFilter( 'status', val ) }>{ header.status }</SortMenu>,
+			header: ( cell ) => <SortMenu isFilter items={ scrStatusTypes } name={ cell.column.id } checkedId={ currentFilters.scr_status || '' } onChange={ ( val ) => addFilter( 'scr_status', val ) }>{ header.scr_status }</SortMenu>,
 			size: 100,
 		} ),
-		columnHelper.accessor( 'updateStatusDate', {
-			header: () => header.updateStatusDate,
+		columnHelper.accessor( 'update_scr_date', {
+			header: () => header.update_scr_date,
+			size: 140,
+		} ),
+		columnHelper?.accessor( 'sum_status', {
+			className: 'nolimit',
+			cell: ( cell ) => <SortMenu
+				items={ sumStatusTypes }
+				name={ cell.column.id }
+				checkedId={ cell.getValue() }
+				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
+			header: ( cell ) => <SortMenu isFilter items={ sumStatusTypes } name={ cell.column.id } checkedId={ currentFilters.sum_status || '' } onChange={ ( val ) => addFilter( 'sum_status', val ) }>{ header.sum_status }</SortMenu>,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'update_sum_date', {
+			header: () => header.update_scr_date,
+			size: 140,
+		} ),
+		columnHelper?.accessor( 'http_status', {
+			className: 'nolimit',
+			cell: ( cell ) => <SortMenu
+				items={ httpStatusTypes }
+				name={ cell.column.id }
+				checkedId={ cell.getValue() }
+				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
+			header: ( cell ) => <SortMenu isFilter items={ httpStatusTypes } name={ cell.column.id } checkedId={ currentFilters.http_status || '' } onChange={ ( val ) => addFilter( 'http_status', val ) }>{ header.http_status }</SortMenu>,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'update_http_date', {
+			header: () => header.update_scr_date,
 			size: 140,
 		} ),
 		columnHelper.accessor( 'visibility', {
@@ -105,17 +164,18 @@ export default function LinkManagerTable( { slug } ) {
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: ( cell ) => <SortMenu isFilter items={ visibilityTypes } name={ cell.column.id } checkedId={ currentFilters.visibility || '' } onChange={ ( val ) => addFilter( 'status', val ) }>{ header.visibility }</SortMenu>,
+			header: ( cell ) => <SortMenu isFilter items={ visibilityTypes } name={ cell.column.id } checkedId={ currentFilters.visibility || '' } onChange={ ( val ) => addFilter( 'visibility', val ) }>{ header.visibility }</SortMenu>,
 			size: 100,
 		} ),
-		columnHelper.accessor( 'urlName', {
-			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: () => <MenuInput isFilter placeholder="Enter URL Desc" defaultValue={ currentFilters.urlName } onChange={ ( val ) => addFilter( 'urlName', val ) }>{ header.urlName }</MenuInput>,
-			size: 250,
-		} ),
-		columnHelper.accessor( 'urlCheckDate', {
-			header: () => header.urlCheckDate,
-			size: 140,
+		columnHelper.accessor( 'url_type', {
+			className: 'nolimit',
+			cell: ( cell ) => <SortMenu
+				items={ urlTypes }
+				name={ cell.column.id }
+				checkedId={ cell.getValue() }
+				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
+			header: ( cell ) => <SortMenu isFilter items={ urlTypes } name={ cell.column.id } checkedId={ currentFilters.url_type || '' } onChange={ ( val ) => addFilter( 'url_type', val ) }>{ header.url_type }</SortMenu>,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
@@ -138,9 +198,9 @@ export default function LinkManagerTable( { slug } ) {
 				exportOptions={ {
 					url: slug,
 					filters,
-					fromId: 'from_urlMd5',
-					pageId: 'urlMd5',
-					deleteCSVCols: [ 'urlId', 'urlMd5', 'domainId' ],
+					fromId: 'from_url_id',
+					pageId: 'url_id',
+					deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
 					perPage: 1000,
 				} }
 				hideTable={ ( hidden ) => setHiddenTable( hidden ) }
@@ -154,7 +214,7 @@ export default function LinkManagerTable( { slug } ) {
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
 				{ row
-					? <Tooltip center>{ `${ header.urlName } “${ row.urlName }”` } has been deleted.</Tooltip>
+					? <Tooltip center>{ `${ header.url_name } “${ row.url_name }”` } has been deleted.</Tooltip>
 					: null
 				}
 				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>

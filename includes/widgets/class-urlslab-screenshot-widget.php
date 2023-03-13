@@ -46,7 +46,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	}
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
-		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+		$atts = array_change_key_case( (array) $atts );
 
 		$urlslab_atts = shortcode_atts(
 			array(
@@ -66,50 +66,28 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			if ( ! empty( $urlslab_atts['url'] ) ) {
 				$url_data = $this->urlslab_url_data_fetcher->fetch_schedule_url( new Urlslab_Url( $urlslab_atts['url'] ) );
 
-				if ( ! empty( $url_data ) && ! $url_data->is_active() && ! empty( $url_data->get_screenshot_url() ) ) {
-					$urlslab_atts['alt'] = $url_data->get_summary( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
-
-					switch ( $url_data->get( 'status' ) ) {
-						case Urlslab_Url_Row::STATUS_RECURRING_UPDATE:
-						case Urlslab_Url_Row::STATUS_ACTIVE:
-							return $this->render_shortcode(
-								$urlslab_atts['url'],
-								$url_data->get_screenshot_url( $urlslab_atts['screenshot-type'] ),
-								$urlslab_atts['alt'],
-								$urlslab_atts['width'],
-								$urlslab_atts['height'],
-							);
-
-						case Urlslab_Url_Row::STATUS_NEW:
-						case Urlslab_Url_Row::STATUS_PENDING:
-							//default url
-							return $this->render_shortcode(
-								$urlslab_atts['url'],
-								$urlslab_atts['default-image'],
-								$urlslab_atts['alt'],
-								$urlslab_atts['width'],
-								$urlslab_atts['height'],
-							);
-
-						case Urlslab_Url_Row::STATUS_BROKEN:
-						case Urlslab_Url_Row::STATUS_BLOCKED:
-						default:
-							return '';
+				if ( ! empty( $url_data ) && ! $url_data->is_http_valid() ) {
+					$alt_text = $url_data->get_summary( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
+					if ( empty( $alt_text ) ) {
+						$alt_text = $urlslab_atts['alt'];
 					}
+
+					$screenshot_url = $url_data->get_screenshot_url( $urlslab_atts['screenshot-type'] );
+					if ( empty( $screenshot_url ) ) {
+						$screenshot_url = $urlslab_atts['default-image'];
+					}
+
+					if ( empty( $screenshot_url ) ) {
+						return '';
+					}
+
+					return $this->render_shortcode( $urlslab_atts['url'], $screenshot_url, $alt_text, $urlslab_atts['width'], $urlslab_atts['height'] );
 				}
 			}
 		} catch ( Exception $e ) {
-			return '';
 		}
 
-		return $this->render_shortcode(
-			$urlslab_atts['url'],
-			$urlslab_atts['default-image'],
-			$urlslab_atts['alt'],
-			$urlslab_atts['width'],
-			$urlslab_atts['height'],
-		);
-
+		return '';
 	}
 
 	private function render_shortcode( string $url, string $src, string $alt, string $width, string $height ): string {

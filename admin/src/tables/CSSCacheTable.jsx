@@ -92,7 +92,7 @@ export default function CSSCacheTable( { slug } ) {
 					filters,
 					fromId: `from_${ pageId }`,
 					pageId,
-					deleteCSVCols: [ pageId, 'destUrlMd5' ],
+					deleteCSVCols: [ pageId, 'dest_url_id' ],
 				} }
 			>
 				<div className="ma-left flex flex-align-center">
@@ -106,7 +106,7 @@ export default function CSSCacheTable( { slug } ) {
 				}
 			>
 				{ row
-					? <Tooltip center>{ `${ header.urlName } “${ row.urlName }”` } { __( 'has been deleted.' ) }</Tooltip>
+					? <Tooltip center>{ `${ header.url_name } “${ row.url_name }”` } { __( 'has been deleted.' ) }</Tooltip>
 					: null
 				}
 				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>

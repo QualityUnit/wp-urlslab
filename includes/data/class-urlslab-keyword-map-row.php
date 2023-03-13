@@ -4,9 +4,9 @@ class Urlslab_Keyword_Map_Row extends Urlslab_Data {
 
 	public function __construct( array $data, $loaded_from_db = false ) {
 		$this->set( 'kw_id', $data['kw_id'] ?? '', ! $loaded_from_db );
-		$this->set( 'urlMd5', $data['urlMd5'] ?? '', ! $loaded_from_db );
-		$this->set( 'destUrlMd5', $data['urlMd5'] ?? '', ! $loaded_from_db );
-		$this->set( 'linkType', $data['urlMd5'] ?? '', ! $loaded_from_db );
+		$this->set( 'url_id', $data['url_id'] ?? '', ! $loaded_from_db );
+		$this->set( 'dest_url_id', $data['dest_url_id'] ?? '', ! $loaded_from_db );
+		$this->set( 'link_type', $data['link_type'] ?? '', ! $loaded_from_db );
 	}
 
 	function get_table_name(): string {
@@ -14,15 +14,15 @@ class Urlslab_Keyword_Map_Row extends Urlslab_Data {
 	}
 
 	function get_primary_columns(): array {
-		return array( 'kw_id', 'urlMd5', 'destUrlMd5' );
+		return array( 'kw_id', 'url_id', 'dest_url_id' );
 	}
 
 	function get_columns(): array {
 		return array(
 			'kw_id'      => '%d',
-			'urlMd5'     => '%d',
-			'destUrlMd5' => '%d',
-			'linkType'   => '%s',
+			'url_id'     => '%d',
+			'dest_url_id' => '%d',
+			'link_type'   => '%s',
 		);
 	}
 }

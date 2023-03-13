@@ -70,7 +70,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( ! is_array( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 500 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $row ) {
@@ -88,10 +88,10 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 	public function get_file_urls( $request ) {
 		$rows = $this->get_file_urls_sql( $request )->get_results();
 		if ( ! is_array( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 500 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 		foreach ( $rows as $row ) {
-			$row->urlMd5 = (int) $row->urlMd5;// phpcs:ignore
+			$row->url_id = (int) $row->url_id;// phpcs:ignore
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -253,7 +253,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 			}
 		}
 
-		$sql->add_select_column( 'SUM(!ISNULL(m.urlMd5))', false, 'file_usage_count' );
+		$sql->add_select_column( 'SUM(!ISNULL(m.url_id))', false, 'file_usage_count' );
 		$sql->add_from(
 			URLSLAB_FILES_TABLE . ' f' . ' LEFT JOIN ' . URLSLAB_FILE_URLS_TABLE . ' m ON m.fileid = f.fileid' .
 			' LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON p.filehash = f.filehash and p.filesize=f.filesize'
@@ -291,12 +291,12 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 	 */
 	public function get_file_urls_sql( $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
-		$sql->add_select_column( 'urlMd5', 'm' );
-		$sql->add_select_column( 'urlName', 'u' );
-		$sql->add_from( URLSLAB_FILE_URLS_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.urlMd5 = u.urlMd5)' );
+		$sql->add_select_column( 'url_id', 'm' );
+		$sql->add_select_column( 'url_name', 'u' );
+		$sql->add_from( URLSLAB_FILE_URLS_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.url_id = u.url_id)' );
 		$sql->add_filter( 'fileid' );
-		$sql->add_filter( 'from_urlMd5', '%d' );
-		$sql->add_order( 'urlMd5' );
+		$sql->add_filter( 'from_url_id', '%d', 'm' );
+		$sql->add_order( 'url_id', 'ASC', 'm' );
 
 		return $sql;
 	}
@@ -317,7 +317,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 							return is_numeric( $param ) && 0 < $param && 200 > $param;
 						},
 					),
-					'from_urlMd5'   => array(
+					'from_url_id'   => array(
 						'required'          => false,
 						'validate_callback' => function( $param ) {
 							return is_numeric( $param );

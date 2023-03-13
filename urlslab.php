@@ -18,7 +18,7 @@
  * Plugin URI:        https://urlslab.com
  * Description:       URLSLAB Services
 
- * Version:           1.49.7
+ * Version:           2.0.0
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            URLSLAB
@@ -38,7 +38,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Rename this for your plugin and update it as you release new versions.
  */
 
-const URLSLAB_VERSION = '1.49.7';
+const URLSLAB_VERSION = '2.0.0';
 const URLSLAB_VERSION_SETTING = 'urlslab_ver';
 
 /**

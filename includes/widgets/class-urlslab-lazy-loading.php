@@ -1,5 +1,5 @@
 <?php
-require_once URLSLAB_PLUGIN_DIR . '/includes/services/class-urlslab-content-cache-row.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-content-cache-row.php';
 
 // phpcs:disable WordPress.NamingConventions
 class Urlslab_Lazy_Loading extends Urlslab_Widget {

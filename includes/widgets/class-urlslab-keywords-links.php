@@ -393,7 +393,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		global $wpdb;
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT kw_id, destUrlMd5, linkType FROM ' . URLSLAB_KEYWORDS_MAP_TABLE . ' WHERE urlMd5 = %d', // phpcs:ignore
+				'SELECT kw_id, dest_url_id, link_type FROM ' . URLSLAB_KEYWORDS_MAP_TABLE . ' WHERE url_id = %d', // phpcs:ignore
 				$srcUrlId
 			),
 			'ARRAY_A'
@@ -403,7 +403,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		array_walk(
 			$results,
 			function( $value, $key ) use ( &$db_map ) {
-				$db_map[ $value['kw_id'] . '|' . $value['destUrlMd5'] ] = $value['linkType'];
+				$db_map[ $value['kw_id'] . '|' . $value['dest_url_id'] ] = $value['link_type'];
 			}
 		);
 
@@ -412,15 +412,15 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$missing_keywords   = array();
 		foreach ( $this->page_keywords as $keyword => $kw_arr ) {
 			if ( isset( $kw_arr['kw_id'] ) ) {
-				foreach ( $kw_arr['urls'] as $urlId => $arrU ) {
+				foreach ( $kw_arr['urls'] as $url_id => $arrU ) {
 					try {
-						$key = $kw_arr['kw_id'] . '|' . $urlId;
+						$key = $kw_arr['kw_id'] . '|' . $url_id;
 						if ( ! isset( $db_map[ $key ] ) || $db_map[ $key ] != $arrU['t'] ) {
 							array_push(
 								$insert_values,
 								$kw_arr['kw_id'],
 								$srcUrlId,
-								$urlId,
+								$url_id,
 								$arrU['t']
 							);
 							$insert_placeholder[] = '(%d,%d,%d,%s)';
@@ -439,7 +439,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 		if ( ! empty( $insert_values ) ) {
 			$placeholder_string  = implode( ',', $insert_placeholder );
-			$insert_update_query = "INSERT INTO $table (kw_id, urlMd5, destUrlMd5, linkType) VALUES $placeholder_string ON DUPLICATE KEY UPDATE linkType = VALUES(linkType)";
+			$insert_update_query = "INSERT INTO $table (kw_id, url_id, dest_url_id, link_type) VALUES $placeholder_string ON DUPLICATE KEY UPDATE link_type = VALUES(link_type)";
 			$wpdb->query(
 				$wpdb->prepare(
 					$insert_update_query, // phpcs:ignore
@@ -454,7 +454,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			$delete_values = array( $srcUrlId );
 			foreach ( $db_map as $key => $type ) {
 				$k              = explode( '|', $key );
-				$delete_where[] = '(kw_id=%d AND destUrlMd5=%d)';
+				$delete_where[] = '(kw_id=%d AND dest_url_id=%d)';
 				array_push(
 					$delete_values,
 					$k[0],
@@ -463,7 +463,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			}
 			if ( ! empty( $delete_where ) ) {
 				$where_string = implode( 'OR', $delete_where );
-				$delete_query = "DELETE FROM $table WHERE urlMd5=%d AND ($where_string)";
+				$delete_query = "DELETE FROM $table WHERE url_id=%d AND ($where_string)";
 				$wpdb->query( $wpdb->prepare( $delete_query, $delete_values ) ); // phpcs:ignore
 			}
 		}
@@ -475,23 +475,29 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				$lang          = $this->get_language();
 				foreach ( $missing_keywords as $missing_kw => $urls ) {
 					if ( strlen( $missing_kw ) < $this->get_option( self::SETTING_NAME_KW_IMPORT_MAX_LENGTH ) ) {
-						foreach ( $urls as $urlId => $arrU ) {
+						foreach ( $urls as $url_id => $arrU ) {
 							try {
 								if (
-									( $arrU['obj']->is_same_domain_url() && $this->get_option( self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS ) ) ||
-									( ( ! $arrU['obj']->is_same_domain_url() ) && $this->get_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS ) )
+									$arrU['obj']->is_url_valid() &&
+									(
+										( $arrU['obj']->is_same_domain_url() && $this->get_option( self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS ) ) ||
+										( ( ! $arrU['obj']->is_same_domain_url() ) && $this->get_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS ) )
+									)
 								) {
-									$schedule_urls[ $urlId ] = $arrU['obj'];
-									$new_keywords[]          = new Urlslab_Url_Keyword_Data(
-										array(
-											'keyword'     => $missing_kw,
-											'urlLink'     => $arrU['obj']->get_url_with_protocol(),
-											'lang'        => $lang,
-											'kw_priority' => 100,
-											'urlFilter'   => '.*',
-											'kwType'      => self::KW_TYPE_IMPORTED_FROM_CONTENT,
-										)
-									);
+									$schedule_urls[ $url_id ] = $arrU['obj'];
+									if ( is_string( $missing_kw ) && strlen( $missing_kw ) ) {
+										$new_keywords[] = new Urlslab_Keyword_Row(
+											array(
+												'keyword'     => $missing_kw,
+												'urlLink'     => $arrU['obj']->get_url_with_protocol(),
+												'lang'        => $lang,
+												'kw_priority' => 100,
+												'urlFilter'   => '.*',
+												'kwType'      => self::KW_TYPE_IMPORTED_FROM_CONTENT,
+											),
+											false
+										);
+									}
 								}
 							} catch ( Exception $e ) {
 							}
@@ -500,10 +506,11 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				}
 
 				if ( ! empty( $schedule_urls ) ) {
-					$this->urlslab_url_data_fetcher->prepare_url_batch_for_scheduling( $schedule_urls );
+					$url_row_obj = new Urlslab_Url_Row();
+					$url_row_obj->insert_urls( $schedule_urls );
 				}
 				if ( ! empty( $new_keywords ) ) {
-					Urlslab_Url_Keyword_Data::create_keywords( $new_keywords );
+					$new_keywords[0]->insert_all( $new_keywords, true );
 				}
 			}
 		}
