@@ -14,7 +14,7 @@ export default function Screenshot( { moduleId } ) {
 	] );
 
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
-	const ScreenShotTable = lazy( () => import( `../tables/ScreenShotTable.jsx` ) );
+	const ScreenshotTable = lazy( () => import( `../tables/ScreenshotTable.jsx` ) );
 
 	return (
 		<div className="urlslab-tableView">
@@ -28,7 +28,7 @@ export default function Screenshot( { moduleId } ) {
 			{
 				activeSection === 'url' &&
 					<Suspense>
-						<ScreenShotTable slug="url" />
+						<ScreenshotTable slug="url" />
 					</Suspense>
 			}
 			{
