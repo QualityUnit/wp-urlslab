@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, handleSelected, Tooltip, SortMenu, RangeSlider, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, Tooltip, SortMenu, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -69,6 +69,7 @@ export default function MediaFilesTable( { slug } ) {
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'status_changed', {
+			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
 			header: () => __( 'Status changed' ),
 			size: 100,
 		} ),
@@ -88,7 +89,7 @@ export default function MediaFilesTable( { slug } ) {
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'file_usage_count', {
-			header: () => <RangeSlider isFilter min="0" max="10255" onChange={ ( r ) => console.log( r ) }>{ header.file_usage_count }</RangeSlider>,
+			header: () => <MenuInput isFilter placeholder="Filter by usage " defaultValue={ currentFilters.file_usage_count } onChange={ ( val ) => addFilter( 'file_usage_count', val * 1024 ) }>{ header.file_usage_count }</MenuInput>,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'url', {

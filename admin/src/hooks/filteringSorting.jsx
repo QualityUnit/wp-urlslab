@@ -34,7 +34,7 @@ export function useFilter() {
 export function useSorting() {
 	const [ sortingColumn, setSortingColumn ] = useState( '' );
 
-	const sortBy = ( key ) => setSortingColumn( `&sort_column=${ key }` );
+	const sortBy = ( key ) => setSortingColumn( `&sort_column=${ key.replace( /(&ASC|&DESC)/, '' ) }&sort_direction=${ key.replace( /\w+&(ASC|DESC)/, '$1' ) }` );
 
 	return { sortingColumn, sortBy };
 }

@@ -40,17 +40,16 @@ export default function SortMenu( {
 	};
 
 	return (
-		<div className={ `urlslab-FilterMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref }>
-			{ ! isFilter && children ? <div className="urlslab-inputField-label">{ children }</div> : null }
+		<div className={ `urlslab-FilterMenu urlslab-SortMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref }>
+			{ ! isFilter && children ? <div className="urlslab-inputField-label" dangerouslySetInnerHTML={ { __html: children } } /> : null }
 			<div
 				className={ `urlslab-FilterMenu__title ${ isFilter ? 'isFilter' : '' } ${ isActive ? 'active' : '' }` }
 				onClick={ handleMenu }
 				onKeyUp={ ( event ) => handleMenu( event ) }
 				role="button"
 				tabIndex={ 0 }
-			>
-				{ isFilter ? children : items[ checked ] }
-			</div>
+				dangerouslySetInnerHTML={ { __html: isFilter ? children : items[ checked ] } }
+			/>
 			<div className={ `urlslab-FilterMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
 				<div className={ `urlslab-FilterMenu__items--inn ${ Object.values( items ).length > 8 ? 'has-scrollbar' : '' }` }>
 					{ Object.entries( items ).map( ( [ id, value ] ) => {

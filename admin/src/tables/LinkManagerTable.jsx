@@ -115,7 +115,8 @@ export default function LinkManagerTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'update_sum_date', {
 			className: 'nolimit',
-			header: () => header.update_scr_date,
+			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
+			header: () => header.update_sum_date,
 			size: 120,
 		} ),
 		columnHelper?.accessor( 'http_status', {
@@ -129,7 +130,8 @@ export default function LinkManagerTable( { slug } ) {
 			size: 100,
 		} ),
 		columnHelper.accessor( 'update_http_date', {
-			header: () => header.update_scr_date,
+			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
+			header: () => header.update_http_date,
 			size: 140,
 		} ),
 		columnHelper.accessor( 'visibility', {

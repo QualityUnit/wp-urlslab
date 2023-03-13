@@ -18,8 +18,6 @@ onmessage = async function( message ) {
 		return r.json();
 	} );
 
-	console.log( await response );
-
 	postMessage( jsonData );
 	// Below Doesn't work because WP cant authorize CORS request (web workers are cors running)
 
