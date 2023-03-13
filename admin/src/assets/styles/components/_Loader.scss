@@ -17,5 +17,23 @@
 		@include square(3em);
 		display: block;
 		margin: 0 auto 0.5em;
+
+		.small & {
+
+			@include square(2em);
+			margin: 0;
+		}
+	}
+
+	&.small {
+
+		@include square(auto);
+	}
+
+	&.noText {
+
+		.urlslab-loader-text {
+			display: none;
+		}
 	}
 }

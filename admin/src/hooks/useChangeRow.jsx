@@ -23,10 +23,11 @@ export function useChangeRow() {
 			const { data, slug, url, rowToInsert, pseudoRow } = options;
 			const newPagesArray = data?.pages.map( ( page ) => [ pseudoRow, ...page ] );
 
-			queryClient.setQueryData( [ slug, url ], ( origData ) => ( {
-				pages: newPagesArray,
-				pageParams: origData.pageParams,
-			} ) );
+			//For optimistic update -- will be moved to onSuccess and will get row response from API
+			// queryClient.setQueryData( [ slug, url ], ( origData ) => ( {
+			// 	pages: newPagesArray,
+			// 	pageParams: origData.pageParams,
+			// } ) );
 			const response = await setData( `${ slug }/import`, { rows: [ rowToInsert ] } );
 			return { response, options };
 		},
@@ -34,7 +35,7 @@ export function useChangeRow() {
 			const { ok } = response;
 			const { slug, url } = options;
 			if ( ok ) {
-				// queryClient.invalidateQueries( [ slug, url ] );
+				queryClient.invalidateQueries( [ slug, url ] );
 			}
 		},
 	} );

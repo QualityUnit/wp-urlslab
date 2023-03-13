@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import { useQueryClient, useMutation } from '@tanstack/react-query';
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 
+import { fetchData } from '../api/fetching';
 import { deleteAll } from '../api/deleteTableData';
 
 import { ReactComponent as Trash } from '../assets/images/icon-trash.svg';
@@ -10,6 +11,7 @@ import { ReactComponent as ExportIcon } from '../assets/images/icon-export.svg';
 import { ReactComponent as CloseIcon } from '../assets/images/icon-close.svg';
 
 import SortMenu from '../elements/SortMenu';
+import Loader from './Loader';
 import Button from '../elements/Button';
 import ExportPanel from './ExportPanel';
 import ImportPanel from './ImportPanel';
@@ -20,6 +22,13 @@ export default function ModuleViewHeaderBottom( { currentFilters, noImport, noEx
 	const queryClient = useQueryClient();
 	const activeFilters = Object.keys( currentFilters );
 	const [ activePanel, setActivePanel ] = useState();
+
+	const { data: rowCount } = useQuery( {
+		queryKey: [ slug, 'count' ],
+		queryFn: () => fetchData( `${ slug }/count` ).then( ( count ) => {
+			return count;
+		} ),
+	} );
 
 	const handleDelete = useMutation( {
 		mutationFn: () => {
@@ -64,6 +73,13 @@ export default function ModuleViewHeaderBottom( { currentFilters, noImport, noEx
 				<div className="ma-left flex flex-align-center">
 					<strong>{ __( 'Sort by:' ) }</strong>
 					<SortMenu className="menu-left ml-s" items={ header } name="sorting" onChange={ ( val ) => onSort( val ) } />
+					<small className="urlslab-rowcount ml-l flex flex-align-center">
+						{ __( 'Records total: ' ) }
+						{ rowCount
+							? rowCount
+							: <Loader className="noText small" />
+						}
+					</small>
 				</div>
 			</div>
 			{
