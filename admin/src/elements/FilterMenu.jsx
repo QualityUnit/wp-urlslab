@@ -51,7 +51,7 @@ export default function FilterMenu( {
 
 	return (
 		<div className={ `urlslab-FilterMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref } id={ id }>
-			{ children ? <div className="urlslab-inputField-label">{ children }</div> : null }
+			{ children ? <div className="urlslab-inputField-label" dangerouslySetInnerHTML={ { __html: children } } /> : null }
 			<div
 				className={ `urlslab-FilterMenu__title ${ isFilter ? 'isFilter' : '' } ${ isActive ? 'active' : '' }` }
 				onClick={ handleMenu }

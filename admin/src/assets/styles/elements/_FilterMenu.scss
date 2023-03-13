@@ -142,6 +142,10 @@
 				font-weight: inherit;
 			}
 
+			strong {
+				font-weight: $font-weight-semi;
+			}
+
 			&:last-of-type {
 				margin-bottom: 0;
 			}

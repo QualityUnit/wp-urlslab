@@ -62,12 +62,15 @@ export function useChangeRow() {
 			const response = await del( `${ slug }/${ getRowId( cell, rowSelector, optionalSelector ) }` );
 			return { response, options };
 		},
-		onSuccess: ( { response, options } ) => {
+		onSuccess: async ( { response, options } ) => {
 			const { ok } = response;
 			const { slug, url } = options;
 			if ( ok ) {
-				queryClient.invalidateQueries( [ slug, url ] );
+				await queryClient.invalidateQueries( [ slug, url ] );
 			}
+		},
+		onSettled: async ( { options } ) => {
+			await queryClient.invalidateQueries( [ options.slug, 'count' ] );
 		},
 	} );
 	const deleteRow = ( { data, url, slug, cell, rowSelector, optionalSelector } ) => {

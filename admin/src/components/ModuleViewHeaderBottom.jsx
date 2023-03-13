@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 
@@ -22,13 +22,26 @@ export default function ModuleViewHeaderBottom( { currentFilters, noImport, noEx
 	const queryClient = useQueryClient();
 	const activeFilters = Object.keys( currentFilters );
 	const [ activePanel, setActivePanel ] = useState();
+	const currentCountFilters = exportOptions.filters.replace( '&', '?' );
 
 	const { data: rowCount } = useQuery( {
-		queryKey: [ slug, 'count' ],
-		queryFn: () => fetchData( `${ slug }/count` ).then( ( count ) => {
+		queryKey: [ slug, `count${ currentCountFilters }` ],
+		queryFn: () => fetchData( `${ slug }/count${ currentCountFilters }` ).then( ( count ) => {
 			return count;
 		} ),
 	} );
+
+	const sortItems = useMemo( () => {
+		const items = {};
+		Object.entries( header ).map( ( [ key, value ] ) => {
+			items[ `${ key }&ASC` ] = `${ value }<strong>&nbsp;(ascending)</strong>`;
+			items[ `${ key }&DESC` ] = `${ value }<strong>&nbsp;(descending)</strong>`;
+			return false;
+		} );
+
+		return items;
+	}, [ header ]
+	);
 
 	const handleDelete = useMutation( {
 		mutationFn: () => {
@@ -72,7 +85,7 @@ export default function ModuleViewHeaderBottom( { currentFilters, noImport, noEx
 				}
 				<div className="ma-left flex flex-align-center">
 					<strong>{ __( 'Sort by:' ) }</strong>
-					<SortMenu className="menu-left ml-s" items={ header } name="sorting" onChange={ ( val ) => onSort( val ) } />
+					<SortMenu className="menu-left ml-s" items={ sortItems } name="sorting" onChange={ ( val ) => onSort( val ) } />
 					<small className="urlslab-rowcount ml-l flex flex-align-center">
 						{ __( 'Rows: ' ) }
 						{ rowCount
