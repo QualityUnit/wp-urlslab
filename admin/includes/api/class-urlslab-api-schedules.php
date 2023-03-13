@@ -24,7 +24,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => array( $this, 'create_item' ),
 					'args'                => array(
-						'urls'                   => array(
+						'urls'                  => array(
 							'required'          => true,
 							'validate_callback' => function( $param ) {
 								if ( ! is_array( $param ) ) {
@@ -46,42 +46,51 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 						),
 						'process_all_sitemaps'  => array(
 							'required'          => false,
+							'default'           => false,
 							'validate_callback' => function( $param ) {
 								return is_bool( $param );
 							},
 						),
 						'custom_sitemaps'       => array(
 							'required'          => false,
+							'default'           => array(),
 							'validate_callback' => function( $param ) {
 								return is_array( $param );
 							},
 						),
 						'follow_links'          => array(
 							'required'          => false,
+							'default'           => \Swagger\Client\Model\DomainScheduleScheduleConf::LINK_FOLLOWING_STRATEGY_NO_LINK,
 							'validate_callback' => function( $param ) {
-								return 0 === $param || 1 === $param;
+								$conf = new \Swagger\Client\Model\DomainScheduleScheduleConf();
+
+								return in_array( $param, array_keys( $conf->getLinkFollowingStrategyAllowableValues() ) );
 							},
 						),
 						'take_screenshot'       => array(
 							'required'          => false,
+							'default'           => false,
 							'validate_callback' => function( $param ) {
 								return is_bool( $param );
 							},
 						),
 						'analyze_text'          => array(
 							'required'          => false,
+							'default'           => false,
 							'validate_callback' => function( $param ) {
 								return is_bool( $param );
 							},
 						),
 						'scan_speed_per_minute' => array(
 							'required'          => false,
+							'default'           => 20,
 							'validate_callback' => function( $param ) {
 								return is_int( $param );
 							},
 						),
 						'scan_frequency'        => array(
 							'required'          => false,
+							'default'           => \Swagger\Client\Model\DomainScheduleScheduleConf::SCAN_FREQUENCY_ONE_TIME,
 							'validate_callback' => function( $param ) {
 								$schedule       = new \Swagger\Client\Model\DomainScheduleScheduleConf();
 								$allowed_values = $schedule->getScanFrequencyAllowableValues();
@@ -129,50 +138,15 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 
 	public function create_item( $request ) {
 		try {
-			$params = $request->get_json_params();
-
 			$schedule = new \Swagger\Client\Model\DomainScheduleScheduleConf();
-
-			$schedule->setUrls( $params['urls'] );
-
-			if ( isset( $params['follow_links'] ) ) {
-				$schedule->setLinkFollowingStrategy( $params['follow_links'] );
-			} else {
-				$schedule->setLinkFollowingStrategy( 0 );
-			}
-
-			if ( isset( $params['process_all_sitemaps'] ) && ! $params['process_all_sitemaps'] && isset( $params['custom_sitemaps'] ) && ! empty( $params['custom_sitemaps'] ) ) {
-				$schedule->setSitemaps( $params['custom_sitemaps'] );
-			} else {
-				$schedule->setSitemaps( array() );
-			}
-
-			if ( isset( $params['process_all_sitemaps'] ) ) {
-				$schedule->setAllSitemaps( $params['process_all_sitemaps'] );
-			} else {
-				$schedule->setAllSitemaps( false );
-			}
-
-			if ( isset( $params['take_screenshot'] ) ) {
-				$schedule->setTakeScreenshot( $params['take_screenshot'] );
-			} else {
-				$schedule->setTakeScreenshot( false );
-			}
-
-			if ( isset( $params['analyze_text'] ) ) {
-				$schedule->setFetchText( $params['analyze_text'] );
-			} else {
-				$schedule->setFetchText( false );
-			}
-
-			if ( isset( $params['scan_speed_per_minute'] ) ) {
-				$schedule->setScanSpeedPerMinute( $params['scan_speed_per_minute'] );
-			}
-			if ( isset( $params['scan_frequency'] ) ) {
-				$schedule->setScanFrequency( $params['scan_frequency'] );
-			} else {
-				$schedule->setScanFrequency( 'ONE_TIME' );
-			}
+			$schedule->setUrls( $request->get_param( 'urls' ) );
+			$schedule->setLinkFollowingStrategy( $request->get_param( 'follow_links' ) );
+			$schedule->setSitemaps( $request->get_param( 'custom_sitemaps' ) );
+			$schedule->setAllSitemaps( $request->get_param( 'process_all_sitemaps' ) );
+			$schedule->setTakeScreenshot( $request->get_param( 'take_screenshot' ) );
+			$schedule->setFetchText( $request->get_param( 'analyze_text' ) );
+			$schedule->setScanSpeedPerMinute( $request->get_param( 'scan_speed_per_minute' ) );
+			$schedule->setScanFrequency( $request->get_param( 'scan_frequency' ) );
 
 			return new WP_REST_Response( $this->get_client()->createSchedule( $schedule ), 200 );
 		} catch ( Throwable $e ) {

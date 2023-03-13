@@ -47,6 +47,22 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		return $arguments;
 	}
 
+	public function create_item( $request ) {
+		try {
+			$row = $this->get_row_object();
+			foreach ( $row->get_columns() as $column => $format ) {
+				if ( $request->has_param( $column ) ) {
+					$row->set( $column, $request->get_param( $column ) );
+				}
+			}
+			$row->insert();
+
+			return new WP_REST_Response( $row->as_array(), 200 );
+		} catch ( Exception $e ) {
+			return new WP_Error( 'exception', __( 'Insert failed', 'urlslab' ), array( 'status' => 500 ) );
+		}
+	}
+
 	public function update_item( $request ) {
 		try {
 
@@ -101,7 +117,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	}
 
 	public function import_items( WP_REST_Request $request ) {
-		$rows          = array();
+		$rows = array();
 
 		foreach ( $request->get_json_params()['rows'] as $row ) {
 			$rows[] = $this->get_row_object( (array) $row );

@@ -4,8 +4,15 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 	public function register_routes() {
 		$base = '/url-relation';
 
-		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
-		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/',
+			array(
+				$this->get_route_get_items(),
+				$this->get_route_create_item(),
+			)
+		);
+		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_items() ) ) );
 
 		register_rest_route(
 			self::NAMESPACE,
@@ -104,16 +111,16 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 			}
 			try {
 
-				$src_url_obj                              = new Urlslab_Url( $arr_row['src_url_name'] );
-				$dest_url_obj                             = new Urlslab_Url( $arr_row['dest_url_name'] );
+				$src_url_obj                                = new Urlslab_Url( $arr_row['src_url_name'] );
+				$dest_url_obj                               = new Urlslab_Url( $arr_row['dest_url_name'] );
 				$schedule_urls[ $arr_row['src_url_name'] ]  = $src_url_obj;
 				$schedule_urls[ $arr_row['dest_url_name'] ] = $dest_url_obj;
 
 				$obj    = $this->get_row_object(
 					array(
-						'src_url_id' => $src_url_obj->get_url_id(),
+						'src_url_id'  => $src_url_obj->get_url_id(),
 						'dest_url_id' => $dest_url_obj->get_url_id(),
-						'pos'        => $arr_row['pos'],
+						'pos'         => $arr_row['pos'],
 					)
 				);
 				$rows[] = $obj;
@@ -148,46 +155,99 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 	 */
 	public function get_route_get_items(): array {
 		return array(
-			array(
-				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'get_items' ),
-				'args'                => $this->get_table_arguments(
-					array(
-						'filter_src_url_id'  => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_numeric_filter_value( $param );
-							},
-						),
-						'filter_dest_url_id'  => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_numeric_filter_value( $param );
-							},
-						),
-						'filter_src_url_name'  => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_dest_url_name' => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_pos'         => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_numeric_filter_value( $param );
-							},
-						),
-					)
-				),
-				'permission_callback' => array( $this, 'get_items_permissions_check' ),
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => array( $this, 'get_items' ),
+			'args'                => $this->get_table_arguments(
+				array(
+					'filter_src_url_id'    => array(
+						'required'          => false,
+						'validate_callback' => function( $param ) {
+							return Urlslab_Api_Table::validate_numeric_filter_value( $param );
+						},
+					),
+					'filter_dest_url_id'   => array(
+						'required'          => false,
+						'validate_callback' => function( $param ) {
+							return Urlslab_Api_Table::validate_numeric_filter_value( $param );
+						},
+					),
+					'filter_src_url_name'  => array(
+						'required'          => false,
+						'validate_callback' => function( $param ) {
+							return Urlslab_Api_Table::validate_string_filter_value( $param );
+						},
+					),
+					'filter_dest_url_name' => array(
+						'required'          => false,
+						'validate_callback' => function( $param ) {
+							return Urlslab_Api_Table::validate_string_filter_value( $param );
+						},
+					),
+					'filter_pos'           => array(
+						'required'          => false,
+						'validate_callback' => function( $param ) {
+							return Urlslab_Api_Table::validate_numeric_filter_value( $param );
+						},
+					),
+				)
 			),
+			'permission_callback' => array( $this, 'get_items_permissions_check' ),
 		);
+	}
+
+
+	/**
+	 * @return array[]
+	 */
+	public function get_route_create_item(): array {
+		return array(
+			'methods'             => WP_REST_Server::CREATABLE,
+			'callback'            => array( $this, 'create_item' ),
+			'args'                => array(
+				'src_url_name'  => array(
+					'required'          => true,
+					'validate_callback' => function( $param ) {
+						return is_string( $param ) && strlen( $param );
+					},
+				),
+				'dest_url_name' => array(
+					'required'          => true,
+					'validate_callback' => function( $param ) {
+						return is_string( $param ) && strlen( $param );
+					},
+				),
+				'pos'           => array(
+					'required'          => true,
+					'validate_callback' => function( $param ) {
+						return is_int( $param );
+					},
+				),
+			),
+			'permission_callback' => array( $this, 'create_item_permissions_check' ),
+		);
+	}
+
+	public function create_item( $request ) {
+
+		try {
+			$src_url_obj                                             = new Urlslab_Url( $request->get_param( 'src_url_name' ) );
+			$dest_url_obj                                            = new Urlslab_Url( $request->get_param( 'dest_url_name' ) );
+			$schedule_urls[ $request->get_param( 'src_url_name' ) ]  = $src_url_obj;
+			$schedule_urls[ $request->get_param( 'dest_url_name' ) ] = $dest_url_obj;
+
+			$obj = $this->get_row_object(
+				array(
+					'src_url_id'  => $src_url_obj->get_url_id(),
+					'dest_url_id' => $dest_url_obj->get_url_id(),
+					'pos'         => $request->get_param( 'pos' ),
+				)
+			);
+			$obj->insert();
+
+			return new WP_REST_Response( $obj->as_array(), 200 );
+		} catch ( Exception $e ) {
+			return new WP_REST_Response( 'Insert failed', 500 );
+		}
 	}
 
 	/**
