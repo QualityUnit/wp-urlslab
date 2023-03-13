@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-
+import { useMemo } from 'react';
 import {
 	useInfiniteFetch, handleSelected, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
@@ -9,7 +9,7 @@ import useTableUpdater from '../hooks/useTableUpdater';
 export default function KeywordsTable( { slug } ) {
 	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater();
 
-	const url = `${ filters }${ sortingColumn }`;
+	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 	const pageId = 'kw_id';
 
 	const {

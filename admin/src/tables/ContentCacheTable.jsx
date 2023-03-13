@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import {
 	useInfiniteFetch, handleSelected, Tooltip, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
@@ -7,7 +8,7 @@ import useTableUpdater from '../hooks/useTableUpdater';
 export default function ContentCacheTable( { slug } ) {
 	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow } = useTableUpdater();
 
-	const url = `${ filters }${ sortingColumn }`;
+	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 	const pageId = 'cache_crc32';
 
 	const {

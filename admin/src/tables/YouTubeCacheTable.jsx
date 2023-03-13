@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import {
 	useInfiniteFetch, handleSelected, Tooltip, SortMenu, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
@@ -7,7 +8,7 @@ import useTableUpdater from '../hooks/useTableUpdater';
 export default function YouTubeCacheTable( { slug } ) {
 	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater();
 
-	const url = `${ filters }${ sortingColumn }`;
+	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 	const pageId = 'videoid';
 
 	const {

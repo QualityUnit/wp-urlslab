@@ -12,6 +12,7 @@ export default function Notifications( { className } ) {
 	const { data: notifications } = useQuery( {
 		queryKey: [ 'notifications' ],
 		queryFn: queryClient.getQueryData( [ 'notifications' ] ),
+		refetchOnWindowFocus: false,
 	} );
 
 	let notificationsCount = null;
