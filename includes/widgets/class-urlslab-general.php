@@ -69,7 +69,7 @@ class Urlslab_General extends Urlslab_Widget {
 			'api'
 		);
 
-		$this->add_options_form_section( 'cron', __( 'Cron tasks' ), __( 'Plugin connects periodically to www.urlslab.com and updates data in your installation. It is independent process to your domain schedules.' ) );
+		$this->add_options_form_section( 'cron', __( 'Updates' ), __( 'Plugin connects periodically to www.urlslab.com and updates data in your installation. It is independent process to your domain schedules.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL,
 			2419200,

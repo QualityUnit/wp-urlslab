@@ -12,6 +12,10 @@ abstract class Urlslab_Api_Base extends WP_REST_Controller {
 		return current_user_can( 'administrator' );
 	}
 
+	public function create_item_permissions_check( $request ) {
+		return current_user_can( 'administrator' );
+	}
+
 	public function delete_item_permissions_check( $request ) {
 		return current_user_can( 'administrator' );
 	}
