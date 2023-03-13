@@ -7,7 +7,7 @@ export default function useTableUpdater() {
 	const [ rowToInsert, setInsertRow ] = useState( {} );
 	const { filters, currentFilters, addFilter, removeFilters } = useFilter();
 	const { sortingColumn, sortBy } = useSorting();
-	const { row, insertRow, deleteRow, updateRow } = useChangeRow();
+	const { row, deleteRow, updateRow } = useChangeRow();
 
 	return {
 		tableHidden, setHiddenTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, rowToInsert, setInsertRow, deleteRow, updateRow,
