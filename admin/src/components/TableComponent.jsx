@@ -137,7 +137,7 @@ export default function Table( { resizable, children, className, columns, data, 
 						) ) }
 
 						{ inserter &&
-							<RowInserter data={ data } columns={ columns } inserter={ inserter } />
+							<RowInserter columns={ columns } inserter={ inserter } />
 						}
 					</thead>
 					<tbody className="urlslab-table-body" >

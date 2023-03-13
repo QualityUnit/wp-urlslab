@@ -28,7 +28,7 @@ export default function SearchReplaceTable( { slug } ) {
 	};
 
 	const header = {
-		id: '',
+		id: Math.round( Math.random() ),
 		str_search: __( 'Search string' ),
 		str_replace: __( 'Replace string' ),
 		search_type: __( 'Search Type' ),
@@ -103,7 +103,7 @@ export default function SearchReplaceTable( { slug } ) {
 			/>
 			<Table className="fadeInto" slug={ slug } columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				inserter={ { inserterCells, slug, url, rowToInsert } }
+				inserter={ { inserterCells, data, slug, url, rowToInsert } }
 			>
 				{ row
 					? <Tooltip center>{ `${ header.str_search } “${ row.str_search }”` } { __( 'has been deleted.' ) }</Tooltip>

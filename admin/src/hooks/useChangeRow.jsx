@@ -20,17 +20,13 @@ export function useChangeRow() {
 
 	const insertNewRow = useMutation( {
 		mutationFn: async ( options ) => {
-			const { data, slug, url, rowToInsert } = options;
-			// console.log( rowToInsert );
-			// const newPagesArray = data?.pages.map( ( page ) =>
-			// 	[ rowToInsert, ...page ]
-			// ) ?? [];
-			// console.log( newPagesArray );
+			const { data, slug, url, rowToInsert, pseudoRow } = options;
+			const newPagesArray = data?.pages.map( ( page ) => [ pseudoRow, ...page ] );
 
-			// queryClient.setQueryData( [ slug, url ], ( origData ) => ( {
-			// 	pages: newPagesArray,
-			// 	pageParams: origData.pageParams,
-			// } ) );
+			queryClient.setQueryData( [ slug, url ], ( origData ) => ( {
+				pages: newPagesArray,
+				pageParams: origData.pageParams,
+			} ) );
 			const response = await setData( `${ slug }/import`, { rows: [ rowToInsert ] } );
 			return { response, options };
 		},
@@ -38,12 +34,12 @@ export function useChangeRow() {
 			const { ok } = response;
 			const { slug, url } = options;
 			if ( ok ) {
-				queryClient.invalidateQueries( [ slug, url ] );
+				// queryClient.invalidateQueries( [ slug, url ] );
 			}
 		},
 	} );
-	const insertRow = ( { data, url, slug, rowToInsert } ) => {
-		insertNewRow.mutate( { data, url, slug, rowToInsert } );
+	const insertRow = ( { data, url, slug, rowToInsert, pseudoRow } ) => {
+		insertNewRow.mutate( { data, url, slug, rowToInsert, pseudoRow } );
 	};
 
 	const deleteSelectedRow = useMutation( {

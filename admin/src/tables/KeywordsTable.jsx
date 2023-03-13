@@ -37,10 +37,6 @@ export default function KeywordsTable( { slug } ) {
 		destUrlMd5: 0,
 	};
 
-	const newPagesArray = data?.pages.map( ( page ) =>
-		[ myRowObject, ...page ]
-	) ?? [];
-
 	const keywordTypes = {
 		M: __( 'Manual' ),
 		I: __( 'Imported' ),
