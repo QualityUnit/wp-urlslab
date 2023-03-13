@@ -68,73 +68,47 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 				$summary = $url_data->get_summary( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
 				$title   = $url_data->get_summary( Urlslab_Link_Enhancer::DESC_TEXT_TITLE );
 
-				$xpath = new DOMXPath( $document );
-				if ( ! empty( $this->get_option( self::SETTING_NAME_META_DESCRIPTION_GENERATION ) ) && strlen( $summary ) ) {
-					$meta_description = $xpath->query( "//meta[@name='description']" );
-					if ( $meta_description->count() == 0 ) {
-						$node = $document->createElement( 'meta' );
-						$node->setAttribute( 'name', 'description' );
-						$node->setAttribute( 'content', $summary );
-						$head_tag->appendChild( $node );
-					} else {
-						if ( self::REPLACE_VALUE == $this->get_option( self::SETTING_NAME_META_DESCRIPTION_GENERATION ) ) {
-							foreach ( $meta_description as $node ) {
-								$node->setAttribute( 'content', $summary );
-							}
-						}
-					}
+
+				$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'description', self::SETTING_NAME_META_DESCRIPTION_GENERATION, $summary );
+
+				$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:title', self::SETTING_NAME_META_OG_TITLE_GENERATION, $title );
+				$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:description', self::SETTING_NAME_META_OG_DESC_GENERATION, $summary );
+				if ($this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image', self::SETTING_NAME_META_OG_IMAGE_GENERATION, $url_data->get_screenshot_url() )) {
+					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image:width', self::SETTING_NAME_META_OG_IMAGE_GENERATION, 1366 );
+					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image:height', self::SETTING_NAME_META_OG_IMAGE_GENERATION, 768 );
+					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image:type', self::SETTING_NAME_META_OG_IMAGE_GENERATION, 'image/jpeg' );
 				}
 
-				if ( ! empty( $this->get_option( self::SETTING_NAME_META_OG_TITLE_GENERATION ) ) && strlen( $title ) ) {
-					$meta_og_title = $xpath->query( "//meta[@property='og:title']" );
-					if ( $meta_og_title->count() == 0 ) {
-						$node = $document->createElement( 'meta' );
-						$node->setAttribute( 'property', 'og:title' );
-						$node->setAttribute( 'content', $title );
-						$head_tag->appendChild( $node );
-					} else {
-						if ( self::REPLACE_VALUE == $this->get_option( self::SETTING_NAME_META_OG_TITLE_GENERATION ) ) {
-							foreach ( $meta_og_title as $node ) {
-								$node->setAttribute( 'content', $title );
-							}
-						}
-					}
-				}
-
-				if ( ! empty( $this->get_option( self::SETTING_NAME_META_OG_DESC_GENERATION ) ) && strlen( $summary ) ) {
-					$meta_og_description = $xpath->query( "//meta[@property='og:description']" );
-					if ( $meta_og_description->count() == 0 ) {
-						$node = $document->createElement( 'meta' );
-						$node->setAttribute( 'property', 'og:description' );
-						$node->setAttribute( 'content', $summary );
-						$head_tag->appendChild( $node );
-					} else {
-						if ( self::REPLACE_VALUE == $this->get_option( self::SETTING_NAME_META_OG_DESC_GENERATION ) ) {
-							foreach ( $meta_og_description as $node ) {
-								$node->setAttribute( 'content', $summary );
-							}
-						}
-					}
-				}
-
-				if ( ! empty( $this->get_option( self::SETTING_NAME_META_OG_IMAGE_GENERATION ) ) && ! empty( $url_data->get_screenshot_url() ) ) {
-					$meta_og_image = $xpath->query( "//meta[@property='og:image']" );
-					if ( $meta_og_image->count() == 0 ) {
-						$node = $document->createElement( 'meta' );
-						$node->setAttribute( 'property', 'og:image' );
-						$node->setAttribute( 'content', $url_data->get_screenshot_url() );
-						$head_tag->appendChild( $node );
-					} else {
-						if ( self::REPLACE_VALUE == $this->get_option( self::SETTING_NAME_META_OG_IMAGE_GENERATION ) ) {
-							foreach ( $meta_og_image as $node ) {
-								$node->setAttribute( 'content', $url_data->get_screenshot_url() );
-							}
-						}
-					}
-				}
 			}
 		} catch ( Exception $e ) {
 		}
+	}
+
+	private function set_meta_tag( $document, $head_tag, $tag, $attribute_name, $attribute_value, $setting_name, $content_value ): bool {
+		if ( ! empty( $this->get_option( $setting_name ) ) && ! empty( $content_value ) ) {
+			$xpath    = new DOMXPath( $document );
+			$meta_tags = $xpath->query( '//' . $tag . '[@' . $attribute_name . "='$attribute_value']" );
+			if ( $meta_tags->count() == 0 ) {
+				$node = $document->createElement( $tag );
+				$node->setAttribute( $attribute_name, $attribute_value );
+				$node->setAttribute( 'content', $content_value );
+				$node->setAttribute( 'class', 'urlslab-seo-meta-tag' );
+				$head_tag->appendChild( $node );
+
+				return true;
+			} else {
+				if ( self::REPLACE_VALUE == $this->get_option( $setting_name ) ) {
+					foreach ( $meta_tags as $node ) {
+						$node->setAttribute( 'content', $content_value );
+						$node->setAttribute( 'class', 'urlslab-seo-meta-tag' );
+
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 
 

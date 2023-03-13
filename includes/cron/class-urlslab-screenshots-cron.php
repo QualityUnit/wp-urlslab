@@ -26,7 +26,7 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 
 		$url_rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_URLS_TABLE . ' WHERE http_status = 200 AND (scr_status = %s OR (scr_status =%s AND update_scr_date < %s) OR (scr_status = %s AND update_scr_date < %s)) ORDER BY update_scr_date LIMIT 100', // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_URLS_TABLE . ' WHERE http_status = 200 AND (scr_status = %s OR (scr_status =%s AND update_scr_date < %s) OR (scr_status = %s AND update_scr_date < %s)) ORDER BY update_scr_date LIMIT 500', // phpcs:ignore
 				Urlslab_Url_Row::SCR_STATUS_NEW,
 				Urlslab_Url_Row::SCR_STATUS_ACTIVE,
 				Urlslab_Data::get_now( time() - get_option( Urlslab_General::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL ) ),
