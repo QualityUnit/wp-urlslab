@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, handleSelected, Tooltip, RangeSlider, InputField, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, Tooltip, InputField, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -45,19 +45,19 @@ export default function URLRelationTable( { slug } ) {
 		columnHelper.accessor( 'pos', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId, optionalSelector: 'destUrlMd5' } ) } />,
-			header: () => <RangeSlider isFilter min="0" max="255" onChange={ ( r ) => console.log( r ) }>{ header.pos }</RangeSlider>,
+				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId, optionalSelector: 'dest_url_id' } ) } />,
+			header: () => <MenuInput isFilter placeholder="Filter by position" defaultValue={ currentFilters.pos } onChange={ ( val ) => addFilter( 'pos', val ) }>{ header.pos }</MenuInput>,
 			size: 80,
 		} ),
-		columnHelper.accessor( 'destUrlName', {
+		columnHelper.accessor( 'dest_url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: () => <MenuInput isFilter placeholder="Enter Destination URL Name" defaultValue={ currentFilters.destUrlName } onChange={ ( val ) => addFilter( 'destUrlName', val ) }>{ header.destUrlName }</MenuInput>,
+			header: () => <MenuInput isFilter placeholder="Enter Destination URL Name" defaultValue={ currentFilters.dest_url_name } onChange={ ( val ) => addFilter( 'dest_url_name', val ) }>{ header.dest_url_name }</MenuInput>,
 			size: 400,
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId, optionalSelector: 'destUrlMd5' } ) } />,
+			cell: ( cell ) => <Trash onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId, optionalSelector: 'dest_url_id' } ) } />,
 			header: null,
 		} ),
 	];

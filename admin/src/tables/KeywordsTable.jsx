@@ -1,7 +1,7 @@
 /* eslint-disable indent */
 
 import {
-	useInfiniteFetch, handleSelected, RangeSlider, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -23,19 +23,19 @@ export default function KeywordsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, pageId } );
 
-	const myRowObject = {
-		kw_id: 0,
-		keyword: 'kokot',
-		kw_priority: 11,
-		kw_length: 20,
-		lang: 'sk',
-		urlLink: 'https://kokot.com',
-		urlFilter: '.*',
-		kwType: 'M',
-		kw_usage_count: 0,
-		link_usage_count: 0,
-		destUrlMd5: 0,
-	};
+	// const myRowObject = {
+	// 	kw_id: 0,
+	// 	keyword: 'sss',
+	// 	kw_priority: 11,
+	// 	kw_length: 20,
+	// 	lang: 'sk',
+	// 	urlLink: 'https://kokot.com',
+	// 	urlFilter: '.*',
+	// 	kwType: 'M',
+	// 	kw_usage_count: 0,
+	// 	link_usage_count: 0,
+	// 	destUrlMd5: 0,
+	// };
 
 	const keywordTypes = {
 		M: __( 'Manual' ),
@@ -67,7 +67,7 @@ export default function KeywordsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'keyword', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: () => <MenuInput isFilter placeholder="Enter keyword" defaultValue={ currentFilters.keyword } onChange={ ( val ) => addFilter( 'keyword', val ) }>{ header.keyword }</MenuInput>,
+			header: () => <MenuInput isFilter placeholder="Filter keyword" defaultValue={ currentFilters.keyword } onChange={ ( val ) => addFilter( 'keyword', val ) }>{ header.keyword }</MenuInput>,
 			minSize: 150,
 		} ),
 		columnHelper.accessor( 'kwType', {
@@ -77,14 +77,14 @@ export default function KeywordsTable( { slug } ) {
 			size: 100,
 		} ),
 		columnHelper.accessor( 'kw_length', {
-			header: () => <RangeSlider isFilter min="0" max="255" onChange={ ( r ) => console.log( r ) }>{ header.kw_length }</RangeSlider>,
+			header: () => <MenuInput isFilter placeholder="Filter kw length" defaultValue={ currentFilters.kw_length } onChange={ ( val ) => addFilter( 'kw_length', val ) }>{ header.kw_length }</MenuInput>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'kw_priority', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => <RangeSlider isFilter min="0" max="255" onChange={ ( r ) => console.log( r ) }>{ header.kw_priority }</RangeSlider>,
+			header: () => <MenuInput isFilter placeholder="Filter priority" defaultValue={ currentFilters.kw_priority } onChange={ ( val ) => addFilter( 'kw_priority', val ) }>{ header.kw_length }</MenuInput>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'lang', {
@@ -96,24 +96,24 @@ export default function KeywordsTable( { slug } ) {
 			size: 165,
 		} ),
 		columnHelper.accessor( 'kw_usage_count', {
-			header: () => <RangeSlider isFilter min="0" max="255" onChange={ ( r ) => console.log( r ) }>{ header.kw_usage_count }</RangeSlider>,
+			header: () => <MenuInput isFilter placeholder="Filter Usage count" defaultValue={ currentFilters.kw_usage_count } onChange={ ( val ) => addFilter( 'kw_usage_count', val ) }>{ header.kw_usage_count }</MenuInput>,
 			size: 70,
 		} ),
 		columnHelper.accessor( 'link_usage_count', {
-			header: () => <RangeSlider isFilter min="0" max="255" onChange={ ( r ) => console.log( r ) }>{ header.link_usage_count }</RangeSlider>,
+			header: () => <MenuInput isFilter placeholder="Filter URL usage" defaultValue={ currentFilters.link_usage_count } onChange={ ( val ) => addFilter( 'link_usage_count', val ) }>{ header.link_usage_count }</MenuInput>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'urlFilter', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.renderValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => <MenuInput isFilter placeholder="Enter URL filter" defaultValue={ currentFilters.urlFilter } onChange={ ( val ) => addFilter( 'urlFilter', val ) }>{ header.urlFilter }</MenuInput>,
+			header: () => <MenuInput isFilter placeholder="Filter by URL filter" defaultValue={ currentFilters.urlFilter } onChange={ ( val ) => addFilter( 'urlFilter', val ) }>{ header.urlFilter }</MenuInput>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'urlLink', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: () => <MenuInput isFilter placeholder="Enter URL" onChange={ ( val ) => addFilter( 'urlLink', val ) }>{ header.urlLink }</MenuInput>,
+			header: () => <MenuInput isFilter placeholder="Filter URL" onChange={ ( val ) => addFilter( 'urlLink', val ) }>{ header.urlLink }</MenuInput>,
 			enableResizing: false,
 			size: 350,
 		} ),
@@ -149,7 +149,7 @@ export default function KeywordsTable( { slug } ) {
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 				{ row
-					? <Tooltip center>{ `${ header.keyword } “${ row.keyword }”` } { __( 'has been deleted.' ) }</Tooltip>
+					? <Tooltip cFilter>{ `${ header.keyword } “${ row.keyword }”` } { __( 'has been deleted.' ) }</Tooltip>
 						: null
 				}
 				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
