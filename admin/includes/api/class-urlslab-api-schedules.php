@@ -130,7 +130,21 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 
 	public function get_items( $request ) {
 		try {
-			return new WP_REST_Response( $this->get_client()->listSchedules(), 200 );
+			$result = array();
+			foreach ( $this->get_client()->listSchedules() as $schedule ) {
+				$result[] = (object) array(
+					'urls'                  => $schedule->getScheduleConf()->getUrls(),
+					'process_all_sitemaps'  => $schedule->getScheduleConf()->getAllSitemaps(),
+					'custom_sitemaps'       => $schedule->getScheduleConf()->getSitemaps(),
+					'follow_links'          => $schedule->getScheduleConf()->getLinkFollowingStrategy(),
+					'take_screenshot'       => $schedule->getScheduleConf()->getTakeScreenshot(),
+					'analyze_text'          => $schedule->getScheduleConf()->getFetchText(),
+					'scan_speed_per_minute' => $schedule->getScheduleConf()->getScanSpeedPerMinute(),
+					'scan_frequency'        => $schedule->getScheduleConf()->getScanFrequency(),
+				);
+			}
+
+			return new WP_REST_Response( $result, 200 );
 		} catch ( Throwable $e ) {
 			return new WP_Error( 'error', $e->getMessage() );
 		}
