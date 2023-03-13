@@ -40,12 +40,12 @@
 		min-width: 10em;
 		cursor: pointer;
 
-		.urlslab-table & {
+		.urlslab-table tr:not(.urlslab-rowInserter) & {
 			background-color: transparent;
 			min-width: auto;
 		}
 
-		.urlslab-table th & {
+		.urlslab-table tr:not(.urlslab-rowInserter) th & {
 			padding-left: 0;
 			border: none;
 
@@ -89,6 +89,11 @@
 		padding: 1em 1.45em;
 		transition: opacity 0.1s;
 		filter: drop-shadow(0 1px 6px rgba($black-real, 0.16));
+
+		.menu-left & {
+			left: auto;
+			right: 0;
+		}
 
 		&.menuInput {
 			min-width: 15em;

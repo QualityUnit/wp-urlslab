@@ -39,7 +39,7 @@ export default function InputField( { defaultValue, placeholder, message, classN
 				{ children }
 				<input
 					className="urlslab-input input__text"
-					type={ type }
+					type={ type || 'text' }
 					defaultValue={ val }
 					onChange={ ( event ) => setVal( event.target.value ) }
 					onBlur={ ( event ) => handleVal( event ) }
