@@ -37,5 +37,8 @@ class Urlslab_Api_Router {
 
 		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-search-replace.php';
 		( new Urlslab_Api_Search_Replace() )->register_routes();
+
+		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-schedules.php';
+		( new Urlslab_Api_Schedules() )->register_routes();
 	}
 }
