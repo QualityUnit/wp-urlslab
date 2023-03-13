@@ -74,7 +74,7 @@ export default function ModuleViewHeaderBottom( { currentFilters, noImport, noEx
 					<strong>{ __( 'Sort by:' ) }</strong>
 					<SortMenu className="menu-left ml-s" items={ header } name="sorting" onChange={ ( val ) => onSort( val ) } />
 					<small className="urlslab-rowcount ml-l flex flex-align-center">
-						{ __( 'Records total: ' ) }
+						{ __( 'Rows: ' ) }
 						{ rowCount
 							? rowCount
 							: <Loader className="noText small" />
