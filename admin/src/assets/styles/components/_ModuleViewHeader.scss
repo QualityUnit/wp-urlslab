@@ -8,9 +8,6 @@
 		background-color: $white;
 	}
 
-	&-header {
-	}
-
 	&-headerTop {
 		padding: 1.5em 1.625em 0;
 		border-bottom: 1px solid $grey-light;
@@ -18,5 +15,10 @@
 
 	&-headerBottom {
 		padding: 1em 1.625em;
+
+		.urlslab-SortMenu {
+			min-width: 13em;
+			max-width: none;
+		}
 	}
 }

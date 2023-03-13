@@ -30,19 +30,10 @@ export default function ScreenshotTable( { slug } ) {
 	};
 
 	const header = {
-		url_name: __( 'URL' ),
-		url_title: __( 'Title' ),
-		url_meta_description: __( 'Description' ),
-		url_summary: __( 'Summary' ),
 		screenshot_url: __( 'Screenshot' ),
-		http_status: __( 'HTTP Status' ),
-		sum_status: __( 'Summary Status' ),
 		scr_status: __( 'Screenshot Status' ),
-		visibility: __( 'Visibility' ),
-		url_type: __( 'URL Type' ),
 		update_scr_date: __( 'Screenshot Updated' ),
-		update_sum_date: __( 'Summary Updated' ),
-		update_http_date: __( 'HTTP Status Updated' ),
+		url_name: __( 'URL' ),
 	};
 
 	const columns = [
@@ -72,6 +63,7 @@ export default function ScreenshotTable( { slug } ) {
 			size: 100,
 		} ),
 		columnHelper.accessor( 'update_scr_date', {
+			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
 			header: () => header.update_scr_date,
 			size: 140,
 		} ),

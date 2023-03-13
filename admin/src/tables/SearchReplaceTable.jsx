@@ -28,7 +28,6 @@ export default function SearchReplaceTable( { slug } ) {
 	};
 
 	const header = {
-		id: Math.round( Math.random() ),
 		str_search: __( 'Search string' ),
 		str_replace: __( 'Replace string' ),
 		search_type: __( 'Search Type' ),

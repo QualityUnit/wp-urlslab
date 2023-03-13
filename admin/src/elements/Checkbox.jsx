@@ -19,7 +19,7 @@ export default function Checkbox( { checked, radial, name, className, onChange, 
 				onChange={ ( event ) => handleOnChange( event ) }
 			/>
 			<div className="urlslab-checkbox-box"></div>
-			<span className="urlslab-checkbox-text">{ children }</span>
+			<span className="urlslab-checkbox-text" dangerouslySetInnerHTML={ { __html: children } } />
 		</label>
 	);
 }

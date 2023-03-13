@@ -44,7 +44,6 @@ export default function KeywordsTable( { slug } ) {
 	};
 
 	const header = {
-		kw_id: __( 'None' ),
 		keyword: __( 'Keyword' ),
 		kwType: __( 'Type' ),
 		kw_length: __( 'Length' ),
@@ -149,7 +148,7 @@ export default function KeywordsTable( { slug } ) {
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 				{ row
-					? <Tooltip cFilter>{ `${ header.keyword } “${ row.keyword }”` } { __( 'has been deleted.' ) }</Tooltip>
+					? <Tooltip center>{ `${ header.keyword } “${ row.keyword }”` } { __( 'has been deleted.' ) }</Tooltip>
 						: null
 				}
 				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
