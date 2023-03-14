@@ -60,9 +60,9 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 						),
 						'follow_links'          => array(
 							'required'          => false,
-							'default'           => \Swagger\Client\Model\DomainScheduleScheduleConf::LINK_FOLLOWING_STRATEGY_NO_LINK,
+							'default'           => \OpenAPI\Client\Model\DomainScheduleScheduleConf::LINK_FOLLOWING_STRATEGY_NO_LINK,
 							'validate_callback' => function( $param ) {
-								$conf = new \Swagger\Client\Model\DomainScheduleScheduleConf();
+								$conf = new \OpenAPI\Client\Model\DomainScheduleScheduleConf();
 
 								return in_array( $param, array_keys( $conf->getLinkFollowingStrategyAllowableValues() ) );
 							},
@@ -90,9 +90,9 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 						),
 						'scan_frequency'        => array(
 							'required'          => false,
-							'default'           => \Swagger\Client\Model\DomainScheduleScheduleConf::SCAN_FREQUENCY_ONE_TIME,
+							'default'           => \OpenAPI\Client\Model\DomainScheduleScheduleConf::SCAN_FREQUENCY_ONE_TIME,
 							'validate_callback' => function( $param ) {
-								$schedule       = new \Swagger\Client\Model\DomainScheduleScheduleConf();
+								$schedule       = new \OpenAPI\Client\Model\DomainScheduleScheduleConf();
 								$allowed_values = $schedule->getScanFrequencyAllowableValues();
 
 								return in_array( $param, $allowed_values );
@@ -125,7 +125,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 			throw new Exception( 'Urlslab API key not defined' );
 		}
 
-		return new Swagger\Client\Urlslab\ScheduleApi( new GuzzleHttp\Client(), Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) ) );
+		return new \OpenAPI\Client\Urlslab\ScheduleApi( new GuzzleHttp\Client(), \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) ) );
 	}
 
 	public function get_items( $request ) {
@@ -153,7 +153,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 
 	public function create_item( $request ) {
 		try {
-			$schedule = new \Swagger\Client\Model\DomainScheduleScheduleConf();
+			$schedule = new \OpenAPI\Client\Model\DomainScheduleScheduleConf();
 			$schedule->setUrls( $request->get_param( 'urls' ) );
 			$schedule->setLinkFollowingStrategy( $request->get_param( 'follow_links' ) );
 			$schedule->setSitemaps( $request->get_param( 'custom_sitemaps' ) );

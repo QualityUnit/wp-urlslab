@@ -196,7 +196,7 @@ abstract class Urlslab_Widget {
 				break;
 			case self::OPTION_TYPE_PASSWORD:
 				if ( self::PASSWORD_PLACEHOLDER == $value ) {
-					return false;
+					return true;
 				}
 				break;
 			default:
