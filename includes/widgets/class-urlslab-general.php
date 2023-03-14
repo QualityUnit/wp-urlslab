@@ -72,13 +72,12 @@ class Urlslab_General extends Urlslab_Widget {
 		$this->add_options_form_section( 'cron', __( 'Updates' ), __( 'Plugin connects periodically to www.urlslab.com and updates data in your installation. It is independent process to your domain schedules.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL,
-			2419200,
+			7257600,
 			false,
 			__( 'Reload Screenshots Interval' ),
-			__( 'Define how often should check your wordpress plugin availability of new version of screenshot in your urlslab account. Even we reload the data on the background by cron task, it can use a lot of computation time. We recommend Monthly or Quarterly updates.' ),
+			__( 'Define how often should check your wordpress plugin availability of new version of screenshot in your urlslab account. Even we reload the data on the background by cron task, it can use a lot of computation time. We recommend Monthly or Quarterly updates, because screenshots of majority of websites are not changing so often.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				86400     => __( 'Daily' ),
 				604800    => __( 'Weekly' ),
 				2419200   => __( 'Monthly' ),
 				7257600   => __( 'Quarterly' ),
@@ -92,13 +91,12 @@ class Urlslab_General extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SUMMARIZATION_REFRESH_INTERVAL,
-			2419200,
+			7257600,
 			false,
 			__( 'Reload Summarization Interval' ),
-			__( 'Define how often should check your wordpress plugin availability of new url summarization in your urlslab account. Even we reload the data on the background by cron task, it can use a lot of computation time. We recommend Monthly or Quarterly updates.' ),
+			__( 'Define how often should check your wordpress plugin availability of new url summarization in your urlslab account. Even we reload the data on the background by cron task, it can use a lot of computation time. We recommend Quarterly updates, because summarizations of pages are not changing so often.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				86400     => __( 'Daily' ),
 				604800    => __( 'Weekly' ),
 				2419200   => __( 'Monthly' ),
 				7257600   => __( 'Quarterly' ),
