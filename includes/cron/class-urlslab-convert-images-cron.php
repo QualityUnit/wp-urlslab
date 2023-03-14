@@ -9,6 +9,21 @@ abstract class Urlslab_Convert_Images_Cron extends Urlslab_Cron {
 
 	abstract public function is_format_supported();
 
+	protected function get_file_types( $option_name, $default ): array {
+		$values = get_option( $option_name, $default );
+		if ( ! is_array( $values ) ) {
+			$values = explode( ',', $values );
+			if ( empty( $values ) ) {
+				return array();
+			} else {
+				return $values;
+			}
+		}
+
+		return $values;
+	}
+
+
 	/**
 	 * @param Urlslab_File_Row $file
 	 * @param string $original_image_filename
@@ -96,8 +111,6 @@ abstract class Urlslab_Convert_Images_Cron extends Urlslab_Cron {
 
 		return $tmp_name;
 	}
-
-	abstract protected function get_file_types(): array;
 
 	abstract protected function process_file( Urlslab_File_Row $file, string $new_file_name ): ?Urlslab_File_Row;
 
