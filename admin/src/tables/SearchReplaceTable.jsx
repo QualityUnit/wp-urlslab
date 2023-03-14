@@ -6,7 +6,7 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function SearchReplaceTable( { slug } ) {
-	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, rowToInsert, setInsertRow, deleteRow, updateRow } = useTableUpdater();
+	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, rowToInsert, setInsertRow, deleteRow, updateRow } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 	const pageId = 'id';
@@ -20,7 +20,7 @@ export default function SearchReplaceTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, pageId } );
+	} = useInfiniteFetch( { key: slug, url, pageId, currentFilters, sortingColumn } );
 
 	const searchTypes = {
 		T: __( 'Plain Text' ),

@@ -6,7 +6,7 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function URLRelationTable( { slug } ) {
-	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater();
+	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 	const pageId = 'src_url_id';
@@ -20,7 +20,7 @@ export default function URLRelationTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, pageId } );
+	} = useInfiniteFetch( { key: slug, url, pageId, currentFilters, sortingColumn } );
 
 	const header = {
 		src_url_id: '',

@@ -6,7 +6,7 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function ContentCacheTable( { slug } ) {
-	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow } = useTableUpdater();
+	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 	const pageId = 'cache_crc32';
@@ -20,7 +20,7 @@ export default function ContentCacheTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, pageId } );
+	} = useInfiniteFetch( { key: slug, url, pageId, currentFilters, sortingColumn } );
 
 	const header = {
 		date_changed: __( 'Changed at' ),

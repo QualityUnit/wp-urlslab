@@ -6,7 +6,7 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function MediaFilesTable( { slug } ) {
-	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater();
+	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 	const pageId = 'fileid';
@@ -20,8 +20,7 @@ export default function MediaFilesTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( {
-		key: slug, url, pageId } );
+	} = useInfiniteFetch( { key: slug, url, pageId, currentFilters, sortingColumn } );
 
 	const statusTypes = {
 		N: __( 'New' ),
