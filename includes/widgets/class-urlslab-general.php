@@ -49,9 +49,13 @@ class Urlslab_General extends Urlslab_Widget {
 					return false;
 				}
 
-				$config = Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $value );
+				if ( $value == Urlslab_Widget::PASSWORD_PLACEHOLDER ) {
+					return true;
+				}
 
-				$apiInstance = new Swagger\Client\Urlslab\ApikeyApi(
+				$config = \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $value );
+
+				$apiInstance = new \OpenAPI\Client\Urlslab\ApikeyApi(
 					new GuzzleHttp\Client(),
 					$config
 				);
