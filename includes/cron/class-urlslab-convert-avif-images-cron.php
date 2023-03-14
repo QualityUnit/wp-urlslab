@@ -12,23 +12,10 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 			   );
 	}
 
-	protected function get_file_types(): array {
-		$values = get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_TYPES_TO_CONVERT, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT );
-		if ( ! is_array( $values ) ) {
-			if ( empty( $values ) ) {
-				return array();
-			} else {
-				return array( $values );
-			}
-		}
-
-		return $values;
-	}
-
 	protected function convert_next_file() {
 		global $wpdb;
 
-		$values = $this->get_file_types();
+		$values = $this->get_file_types( Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_TYPES_TO_CONVERT, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT );
 
 		if ( empty( $values ) ) {
 			return false;
