@@ -34,24 +34,25 @@ export default function Settings( { className, settingId } ) {
 	return (
 		Object.values( settings ).map( ( section ) => {
 			return (
-				<section className={ `urlslab-settingsPanel-section ${ className }` } key={ section.id }>
-					<div className="urlslab-settingsPanel urlslab-panel flex-tablet-landscape">
-						<div className="urlslab-settingsPanel-desc">
-							<h4>{ section.title }</h4>
-							<p>{ section.description }</p>
+				section.options
+					? <section className={ `urlslab-settingsPanel-section ${ className }` } key={ section.id }>
+						<div className="urlslab-settingsPanel urlslab-panel flex-tablet-landscape">
+							<div className="urlslab-settingsPanel-desc">
+								<h4>{ section.title }</h4>
+								<p>{ section.description }</p>
+							</div>
+							<div className="urlslab-settingsPanel-options">
+								{
+									Object.values( section.options ).map( ( option ) => {
+										return (
+											<SettingsOption settingId={ settingId } option={ option } key={ option.id } />
+										);
+									} )
+								}
+							</div>
 						</div>
-						<div className="urlslab-settingsPanel-options">
-							{ section.options
-								? Object.values( section.options ).map( ( option ) => {
-									return (
-										<SettingsOption settingId={ settingId } option={ option } key={ option.id } />
-									);
-								} )
-								: ''
-							}
-						</div>
-					</div>
-				</section>
+					</section>
+					: ''
 			);
 		} )
 	);

@@ -108,12 +108,16 @@
 
 		&--inn {
 
-			@include scrollbar(8px);
+			@include scrollbar;
 			max-height: 19em;
 			overflow-y: scroll;
 			position: relative;
 			margin-left: -1.45em;
 			margin-right: -1.95em;
+
+			.menu-left & {
+				margin-right: -1.25em;
+			}
 
 			&.has-scrollbar {
 				margin-right: -1.45em;

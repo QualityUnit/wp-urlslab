@@ -1,6 +1,7 @@
 export { default as useInfiniteFetch } from '../hooks/useInfiniteFetch';
 export { handleInput, handleSelected } from '../constants/tableFunctions';
 
+export { default as DatePicker } from 'react-datepicker';
 export { default as Tooltip } from '../elements/Tooltip';
 export { default as RangeSlider } from '../elements/RangeSlider';
 export { default as SortMenu } from '../elements/SortMenu';
@@ -15,3 +16,5 @@ export { default as Loader } from '../components/Loader';
 
 export { default as Table } from '../components/TableComponent';
 export { default as ModuleViewHeaderBottom } from '../components/ModuleViewHeaderBottom';
+
+import '../assets/styles/components/datepicker/datepicker.scss';
