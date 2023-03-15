@@ -24,9 +24,9 @@ export default function URLRelationTable( { slug } ) {
 
 	const header = {
 		src_url_id: '',
-		src_url_name: __( 'Source URL Name' ),
+		src_url_name: __( 'Source URL' ),
+		dest_url_name: __( 'Destination URL' ),
 		pos: __( 'Position' ),
-		dest_url_name: __( 'Destination URL Name' ),
 	};
 
 	const columns = [
@@ -43,18 +43,18 @@ export default function URLRelationTable( { slug } ) {
 			header: () => <MenuInput isFilter placeholder="Enter Source URL Name" defaultValue={ currentFilters.src_url_name } onChange={ ( val ) => addFilter( 'src_url_name', val ) }>{ header.src_url_name }</MenuInput>,
 			size: 400,
 		} ),
+		columnHelper.accessor( 'dest_url_name', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			header: () => <MenuInput isFilter placeholder="Enter Destination URL Name" defaultValue={ currentFilters.dest_url_name } onChange={ ( val ) => addFilter( 'dest_url_name', val ) }>{ header.dest_url_name }</MenuInput>,
+			size: 400,
+		} ),
 		columnHelper.accessor( 'pos', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId, optionalSelector: 'dest_url_id' } ) } />,
 			header: () => <MenuInput isFilter placeholder="Filter by position" defaultValue={ currentFilters.pos } onChange={ ( val ) => addFilter( 'pos', val ) }>{ header.pos }</MenuInput>,
 			size: 80,
-		} ),
-		columnHelper.accessor( 'dest_url_name', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: () => <MenuInput isFilter placeholder="Enter Destination URL Name" defaultValue={ currentFilters.dest_url_name } onChange={ ( val ) => addFilter( 'dest_url_name', val ) }>{ header.dest_url_name }</MenuInput>,
-			size: 400,
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',

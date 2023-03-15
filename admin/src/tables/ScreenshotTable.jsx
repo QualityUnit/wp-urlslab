@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, handleSelected, Tooltip, Trash, InputField, MenuInput, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, Tooltip, Trash, DatePicker, InputField, MenuInput, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -8,7 +8,7 @@ import useTableUpdater from '../hooks/useTableUpdater';
 export default function ScreenshotTable( { slug } ) {
 	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
 
-	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
+	const url = useMemo( () => `${ filters }${ sortingColumn || '&sort_column=url_name&sort_direction=ASC' }`, [ filters, sortingColumn ] );
 	const pageId = 'url_id';
 
 	const {
@@ -35,7 +35,7 @@ export default function ScreenshotTable( { slug } ) {
 		url_title: __( 'Title' ),
 		scr_status: __( 'Status' ),
 		screenshot_url: __( 'Screenshot URL' ),
-		update_scr_date: __( 'Updated' ),
+		update_scr_date: __( 'Updated at' ),
 	};
 
 	const columns = [
@@ -80,24 +80,25 @@ export default function ScreenshotTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'screenshot_url', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: () => <MenuInput isFilter placeholder="Enter URL Desc" defaultValue={ currentFilters.screenshot_url } onChange={ ( val ) => addFilter( 'screenshot_url', val ) }>{ header.screenshot_url }</MenuInput>,
 			size: 250,
 		} ),
 		columnHelper.accessor( 'update_scr_date', {
 			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
-			header: () => <div className="urlslab-inputField-datetime">
-				{ /* <DatePicker
-					className=""
-					customInput={ header.update_scr_date }
-					dateFormat="dd. MMMM yyyy, HH:mm"
-					timeFormat="HH:mm"
-					onChange={ ( val ) => {
-						const date = new Date( val ).toISOString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' );
-						addFilter( 'update_scr_date', date );
-					}
-					}
-				/> */ }
+			header: () => <div className="urlslab-FilterMenu urlslab-inputField-datetime">
+				<div className="urlslab-FilterMenu__title">
+					<DatePicker
+						placeholderText={ header.update_scr_date }
+						dateFormat="dd. MMMM yyyy, HH:mm"
+						timeFormat="HH:mm"
+						onChange={ ( val ) => {
+							const date = new Date( val ).toISOString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' );
+							addFilter( 'update_scr_date', date );
+						}
+						}
+					/>
+				</div>
 			</div>,
 			size: 140,
 		} ),
@@ -121,6 +122,7 @@ export default function ScreenshotTable( { slug } ) {
 				removeFilters={ ( key ) => removeFilters( key ) }
 				defaultSortBy="url_name&ASC"
 				onSort={ ( val ) => sortBy( val ) }
+				noImport
 				exportOptions={ {
 					url: slug,
 					filters,

@@ -94,6 +94,18 @@ $cellHeight: 3.5em;
 		th {
 			position: relative;
 			padding-bottom: 1em;
+
+			.urlslab-inputField-datetime {
+
+				.react-datepicker__input-container,
+				input {
+					border: none;
+					padding-left: 0;
+					padding-right: 0;
+					background-color: transparent;
+					font-size: 0.75rem;
+				}
+			}
 		}
 	}
 

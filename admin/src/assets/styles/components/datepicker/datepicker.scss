@@ -1,7 +1,7 @@
 /* stylelint-disable selector-class-pattern,
 no-descending-specificity, scss/at-extend-no-missing-placeholder,
 value-keyword-case */
-@use 'sass:color';
+@use "sass:color";
 @use "./variables" as *;
 @use "./mixins" as *;
 @use "../../common/variables" as *;
@@ -287,7 +287,7 @@ value-keyword-case */
 			}
 
 			input[type="time"] {
-				-moz-appearance: textfield;
+				appearance: textfield;
 			}
 		}
 
@@ -314,7 +314,7 @@ value-keyword-case */
 
 	.react-datepicker__time {
 		position: relative;
-		background: white;
+		background: $white;
 		border-bottom-right-radius: 0.3rem;
 
 		.react-datepicker__time-box {
@@ -346,7 +346,7 @@ value-keyword-case */
 
 					&--selected {
 						background-color: $datepicker__selected-color;
-						color: white;
+						color: $white;
 						font-weight: 700;
 
 						&:hover {
@@ -480,7 +480,7 @@ value-keyword-case */
 
 	&--keyboard-selected {
 		border-radius: $datepicker__border-radius;
-		background-color: color.scale($datepicker__selected-color, $lightness: +45%);
+		background-color: color.scale($datepicker__selected-color, $lightness: + 45%);
 		color: rgb(0, 0, 0);
 
 		&:hover {
@@ -685,7 +685,7 @@ value-keyword-case */
 	.react-datepicker__day,
 	.react-datepicker__time-name {
 		width: 3rem;
-		line-height: 3rem;
+		line-height: 1;
 	}
 
 	@media (max-width: 400px), (max-height: 550px) {
@@ -694,7 +694,7 @@ value-keyword-case */
 		.react-datepicker__day,
 		.react-datepicker__time-name {
 			width: 2rem;
-			line-height: 2rem;
+			line-height: 1;
 		}
 	}
 
