@@ -23,7 +23,6 @@ export default function ModuleViewHeaderBottom( { currentFilters, noImport, noEx
 	const activeFilters = Object.keys( currentFilters );
 	const [ activePanel, setActivePanel ] = useState();
 
-	console.log( activeFilters );
 	const currentCountFilters = exportOptions.filters.replace( '&', '?' );
 
 	const { data: rowCount } = useQuery( {

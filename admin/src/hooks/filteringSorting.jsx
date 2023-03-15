@@ -10,9 +10,9 @@ export function useFilter( { slug } ) {
 		get( slug ).then( ( query ) => {
 			const q = query?.currentFilters;
 			setUrl( Object.keys( q ).length ? q : {} );
-			setTableQuery( tableQuery );
+			setTableQuery( query );
 		} );
-	}, [ slug, tableQuery ] );
+	}, [ slug ] );
 
 	const addFilter = ( key, value ) => {
 		if ( value ) {
@@ -29,26 +29,33 @@ export function useFilter( { slug } ) {
 				delete filtersCopy[ key ];
 				return false;
 			} );
-			set( slug, { ...tableQuery, currentFilters: filtersCopy } );
 			return filtersCopy;
 		} );
-		// get( slug ).then( ( tableQuery ) => {
-		// } );
+		set( slug, { ...tableQuery, url: filters, currentFilters } );
 	}
 
 	Object.entries( currentFilters ).map( ( [ key, val ] ) => {
 		filters += `&filter_${ key }=${ val }`;
-		set( slug, { currentFilters, url: filters } );
+		set( slug, { ...tableQuery, url: filters, currentFilters } );
 		return false;
 	} );
 
 	return { filters, currentFilters, addFilter, removeFilters };
 }
 
-export function useSorting() {
+export function useSorting( { slug } ) {
 	const [ sortingColumn, setSortingColumn ] = useState( '' );
+	const [ tableQuery, setTableQuery ] = useState( {} );
+	useEffect( () => {
+		get( slug ).then( ( query ) => {
+			setTableQuery( query );
+		} );
+	}, [ slug ] );
 
-	const sortBy = ( key ) => setSortingColumn( `&sort_column=${ key.replace( /(&ASC|&DESC)/, '' ) }&sort_direction=${ key.replace( /\w+&(ASC|DESC)/, '$1' ) }` );
+	function sortBy( key ) {
+		setSortingColumn( `&sort_column=${ key.replace( /(&ASC|&DESC)/, '' ) }&sort_direction=${ key.replace( /\w+&(ASC|DESC)/, '$1' ) }` );
+		set( slug, { sortKey: key } );
+	}
 
 	return { sortingColumn, sortBy };
 }
