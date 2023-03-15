@@ -37,6 +37,7 @@ export default function SchedulesTable( { slug } ) {
 	};
 
 	const header = {
+		urls: __( 'URLs' ),
 		analyze_text: __( 'Analyze text' ),
 		follow_links: __( 'Follow links' ),
 		process_all_sitemaps: __( 'Process all sitemaps' ),
@@ -53,6 +54,13 @@ export default function SchedulesTable( { slug } ) {
 				handleSelected( val, cell );
 			} } />,
 			header: null,
+		} ),
+		columnHelper?.accessor( 'urls', {
+			className: 'nolimit',
+			cell: ( array ) => array?.getValue().map( ( link ) => <><a href={ link } target="_blank" rel="noreferrer" key={ link }>{ link }</a>, </>,
+			),
+			header: header.urls,
+			size: 300,
 		} ),
 		columnHelper?.accessor( 'analyze_text', {
 			cell: ( cell ) => <Checkbox readOnly className="readOnly" checked={ cell.getValue() } />,
@@ -84,9 +92,8 @@ export default function SchedulesTable( { slug } ) {
 			size: 90,
 		} ),
 		columnHelper?.accessor( 'custom_sitemaps', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( array ) => array?.getValue().map( ( sitemap ) =>
-				<a href={ sitemap } target="_blank" rel="noreferrer" key={ sitemap }>{ sitemap }</a>,
+			className: 'nolimit',
+			cell: ( array ) => array?.getValue().map( ( sitemap ) => <><a href={ sitemap } target="_blank" rel="noreferrer" key={ sitemap }>{ sitemap }</a>, </>,
 			),
 			header: header.custom_sitemaps,
 			size: 300,
@@ -115,7 +122,7 @@ export default function SchedulesTable( { slug } ) {
 				// defaultSortBy="url_name&ASC"
 				onSort={ ( val ) => sortBy( val ) }
 			/>
-			<Table className="fadeInto" columns={ columns }
+			<Table className="noHeightLimit fadeInto" columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
 				{ row

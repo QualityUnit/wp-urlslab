@@ -27,13 +27,12 @@ export default function ModuleViewHeaderBottom( { currentFilters, noImport, noEx
 
 	const { data: rowCount } = useQuery( {
 		queryKey: [ slug, `count${ currentCountFilters }` ],
-		queryFn: () => {
+		queryFn: () => fetchData( `${ slug }/count${ currentCountFilters }` ).then( ( count ) => {
 			if ( ! noCount ) {
-				fetchData( `${ slug }/count${ currentCountFilters }` ).then( ( count ) => {
-					return count;
-				} );
+				return count;
 			}
-		},
+			return false;
+		} ),
 		refetchOnWindowFocus: false,
 	} );
 
