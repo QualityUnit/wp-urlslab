@@ -10,7 +10,6 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	public const DESC_TEXT_META_DESCRIPTION = 'M';
 
 
-
 	public const SETTING_NAME_DESC_REPLACEMENT_STRATEGY = 'urlslab_desc_replacement_strategy';
 	const SETTING_NAME_REMOVE_LINKS = 'urlslab_remove_links';
 	const SETTING_NAME_VALIDATE_LINKS = 'urlslab_validate_links';
@@ -231,6 +230,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
+		$this->add_options_form_section( 'main', __( 'Settings' ), __( 'Plugin automatically tracks usage of html links on your website as the page is displayed. Every link in the generated HTML is evaluated and improved if we have additional data about destination URL of the link.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY,
 			self::DESC_TEXT_SUMMARY,
@@ -239,11 +239,13 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			__( 'Specify which data should be used to enhance your links automatically. If you want to disable enhancement for specific links, add class "urlslab-skip-title" to link or any parent tag in HTML.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY          => __( 'Generate descriptions with summaries' ),
-				Urlslab_Link_Enhancer::DESC_TEXT_META_DESCRIPTION => __( 'Generate descriptions with meta description' ),
-				Urlslab_Link_Enhancer::DESC_TEXT_TITLE            => __( 'Generate descriptions with Url title' ),
-				Urlslab_Link_Enhancer::DESC_TEXT_URL              => __( 'Generate descriptions with Url path' ),
-			)
+				Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY          => __( 'Summary of destination URL' ),
+				Urlslab_Link_Enhancer::DESC_TEXT_META_DESCRIPTION => __( 'Meta description of destination URL' ),
+				Urlslab_Link_Enhancer::DESC_TEXT_TITLE            => __( 'Title of destination URL' ),
+				Urlslab_Link_Enhancer::DESC_TEXT_URL              => __( 'Url path converted to title' ),
+			),
+			null,
+			'main'
 		);
 
 		$this->add_option_definition(
@@ -251,7 +253,11 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			false,
 			true,
 			__( 'Add Text Fragments to every link' ),
-			__( 'Enhance every link in the page with text fragement. Example: "www.yourdomain.com/page1#:~:text=link%20text". To disable processing on some links, add class "urlslab-skip-fragment" to link or any parent html object.' )
+			__( 'Enhance every link in the page with text fragement. Example: "www.yourdomain.com/page1#:~:text=link%20text". To disable processing on some links, add class "urlslab-skip-fragment" to link or any parent html object.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'main'
 		);
 
 		$this->add_option_definition(
@@ -259,7 +265,11 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			true,
 			true,
 			__( 'Track Internal links' ),
-			__( 'Store all links used in your website and analyze relations and content clusters between pages.' )
+			__( 'Store all links used in your website and analyze relations and content clusters between pages.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'main'
 		);
 
 		$this->add_options_form_section( 'validation', __( 'Link Validation' ), __( 'One of the important SEO tasks is to keep high quality of your content. Your website should not contain links leading to invalid or not existing pages. Following settings can help you to automate the process in large scale. You will not need to search for invalid links in your HTML content manually.' ) );
