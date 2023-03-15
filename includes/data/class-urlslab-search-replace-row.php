@@ -7,7 +7,7 @@ class Urlslab_Search_Replace_Row extends Urlslab_Data {
 
 
 	public function __construct( array $row_data, $loaded_from_db = false ) {
-		$this->set_id( $row_data['id'] ?? '', $loaded_from_db );
+		$this->set_id( $row_data['id'] ?? 0, $loaded_from_db );
 		$this->set_str_search( $row_data['str_search'] ?? '', $loaded_from_db );
 		$this->set_str_replace( $row_data['str_replace'] ?? '', $loaded_from_db );
 		$this->set_search_type( $row_data['search_type'] ?? self::TYPE_PLAIN_TEXT, $loaded_from_db );

@@ -209,7 +209,7 @@ class Urlslab_File_Row extends Urlslab_Data {
 	) {
 		$this->file_pointer = new Urlslab_File_Pointer_Row( $file_arr, $loaded_from_db );
 
-		$this->set_fileid( $file_arr['fileid'] ?? null, $loaded_from_db );
+		$this->set_fileid( $file_arr['fileid'] ?? '', $loaded_from_db );
 		$this->set_url( $file_arr['url'] ?? '', $loaded_from_db );
 		$this->set_parent_url( $file_arr['parent_url'] ?? '', $loaded_from_db );
 		$this->set_filename( $file_arr['filename'] ?? $this->get_filename(), $loaded_from_db );
@@ -268,7 +268,7 @@ class Urlslab_File_Row extends Urlslab_Data {
 		return $this->file_pointer;
 	}
 
-	public function set_fileid( int $fileid, $loaded_from_db = false ): void {
+	public function set_fileid( string $fileid, $loaded_from_db = false ): void {
 		$this->set( 'fileid', $fileid, $loaded_from_db );
 	}
 

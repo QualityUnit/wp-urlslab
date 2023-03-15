@@ -10,7 +10,7 @@ class Urlslab_File_Pointer_Row extends Urlslab_Data {
 		array $file = array(), $loaded_from_db = true
 	) {
 		$this->set_filehash( $file['p_filehash'] ?? $file['filehash'] ?? '', $loaded_from_db );
-		$this->set_filesize( $file['p_filesize'] ?? $file['filesize'] ?? '', $loaded_from_db );
+		$this->set_filesize( $file['p_filesize'] ?? $file['filesize'] ?? 0, $loaded_from_db );
 		$this->set_width( $file['width'] ?? 0, $loaded_from_db );
 		$this->set_height( $file['height'] ?? 0, $loaded_from_db );
 		$this->set_driver( $file['driver'] ?? '', $loaded_from_db );
