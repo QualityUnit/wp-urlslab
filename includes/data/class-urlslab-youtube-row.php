@@ -9,17 +9,53 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 	private $microdata_obj;
 
 	public function __construct( array $video, $loaded_from_db = false ) {
-		$this->set( 'videoid', $video['videoid'] ?? '', ! $loaded_from_db );
-		$this->set( 'microdata', $video['microdata'] ?? null, ! $loaded_from_db );
-		$this->set( 'status', $video['status'] ?? self::STATUS_NEW, ! $loaded_from_db );
-		$this->set( 'status_changed', $video['status_changed'] ?? self::get_now(), true );
-		if ( strlen( $this->get( 'microdata' ) ) ) {
-			$this->microdata_obj = json_decode( $this->get( 'microdata' ) );
+		$this->set_video_id( $video['videoid'] ?? '', $loaded_from_db );
+		$this->set_microdata( $video['microdata'] ?? null, $loaded_from_db );
+		$this->set_status( $video['status'] ?? self::STATUS_NEW, $loaded_from_db );
+		$this->set_status_changed( $video['status_changed'] ?? self::get_now(), $loaded_from_db );
+		if ( strlen( $this->get_microdata() ) ) {
+			$this->microdata_obj = json_decode( $this->get_microdata() );
 		}
+	}
+
+	public function get_video_id() {
+		return $this->get( 'videoid' );
+	}
+
+	public function get_microdata() {
+		return $this->get( 'microdata' );
+	}
+
+	public function get_status() {
+		return $this->get( 'status' );
+	}
+
+	public function get_status_changed() {
+		return $this->get( 'status_changed' );
 	}
 
 	public function get_channel_title() {
 		return $this->microdata_obj->items[0]->snippet->channelTitle;
+	}
+
+	public function set_video_id( $video_id, $loaded_from_db = false ) {
+		$this->set( 'videoid', $video_id, $loaded_from_db );
+	}
+
+	public function set_microdata( $microdata, $loaded_from_db = false ) {
+		$this->set( 'microdata', $microdata, $loaded_from_db );
+		$this->microdata_obj = json_decode( $microdata );
+	}
+
+	public function set_status( $status, $loaded_from_db = false ) {
+		$this->set( 'status', $status, $loaded_from_db );
+		if ( ! $loaded_from_db ) {
+			$this->set_status_changed( self::get_now(), $loaded_from_db );
+		}
+	}
+
+	public function set_status_changed( $status_changed, $loaded_from_db = false ) {
+		$this->set( 'status_changed', $status_changed, $loaded_from_db );
 	}
 
 	public function get_title() {

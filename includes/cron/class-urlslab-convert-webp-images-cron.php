@@ -47,34 +47,34 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 		}
 
 		$file = new Urlslab_File_Row( $file_row );
-		if ( ! empty( $file->get( 'webp_fileid' ) ) || ! $file->get_file_pointer()->get_driver()->is_connected() ) {
+		if ( ! empty( $file->get_webp_fileid() ) || ! $file->get_file_pointer()->get_driver_object()->is_connected() ) {
 			//This file is already processing, disabled or processed -> continue to next file
 			return true;
 		}
 
 		//check if webp was not computed already for other file
-		if ( strlen( $file->get_file_pointer()->get( 'webp_filehash' ) ) > 2 && $file->get_file_pointer()->get( 'webp_filesize' ) > 0 ) {
+		if ( strlen( $file->get_file_pointer()->get_webp_filehash() ) > 2 && $file->get_file_pointer()->get_webp_filesize() > 0 ) {
 			$webp_file = $this->create_file_for_pointer( $file );
 			if ( $webp_file ) {
-				$file->set( 'webp_fileid', $webp_file->get_fileid() );
+				$file->set_webp_fileid( $webp_file->get_fileid() );
 				$file->update();
 
 				return true;
 			}
 		}
 
-		$file->set( 'webp_fileid', Urlslab_File_Row::ALTERNATIVE_PROCESSING );
+		$file->set_webp_fileid( Urlslab_File_Row::ALTERNATIVE_PROCESSING );
 		$file->update();
 
 		//create local image file
 		$original_image_filename = wp_tempnam();
-		if ( $file->get_file_pointer()->get_driver()->save_to_file( $file, $original_image_filename ) ) {
+		if ( $file->get_file_pointer()->get_driver_object()->save_to_file( $file, $original_image_filename ) ) {
 
 			$new_file = $this->convert_image_format( $file, $original_image_filename, 'webp' );
 			unlink( $original_image_filename );
 
 			if ( empty( $new_file ) || ! file_exists( $new_file ) ) {
-				$file->set( 'webp_fileid', Urlslab_File_Row::ALTERNATIVE_DISABLED );
+				$file->set_webp_fileid( Urlslab_File_Row::ALTERNATIVE_DISABLED );
 				$file->update();
 
 				return true;
@@ -83,9 +83,9 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 			$webp_file = $this->process_file( $file, $new_file );
 
 			if ( $webp_file ) {
-				$file->set( 'webp_fileid', $webp_file->get_fileid() );
+				$file->set_webp_fileid( $webp_file->get_fileid() );
 			} else {
-				$file->set( 'webp_fileid', Urlslab_File_Row::ALTERNATIVE_ERROR );
+				$file->set_webp_fileid( Urlslab_File_Row::ALTERNATIVE_ERROR );
 			}
 			$file->update();
 		}
@@ -96,14 +96,14 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 	protected function create_file_for_pointer( Urlslab_File_Row $file ): ?Urlslab_File_Row {
 		$webp_file = new Urlslab_File_Row(
 			array(
-				'url'            => $file->get_url( '.webp' ),
-				'parent_url'     => $file->get( 'parent_url' ),
+				'url'            => $file->get_file_url( '.webp' ),
+				'parent_url'     => $file->get_parent_url(),
 				'filename'       => $file->get_filename() . '.webp',
-				'filesize'       => $file->get_file_pointer()->get( 'webp_filesize' ),
-				'filehash'       => $file->get_file_pointer()->get( 'webp_filehash' ),
+				'filesize'       => $file->get_file_pointer()->get_filesize(),
+				'filehash'       => $file->get_file_pointer()->get_filehash(),
 				'filetype'       => 'image/webp',
-				'width'          => $file->get( 'width' ),
-				'height'         => $file->get( 'height' ),
+				'width'          => $file->get_file_pointer()->get_width(),
+				'height'         => $file->get_file_pointer()->get_height(),
 				'filestatus'     => Urlslab_Driver::STATUS_ACTIVE,
 				'status_changed' => Urlslab_Data::get_now(),
 				'local_file'     => '',
@@ -112,7 +112,7 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 			),
 			false
 		);
-		$webp_file->set( 'fileid', $webp_file->get_fileid() ); //init file id
+		$webp_file->set_fileid( $webp_file->get_fileid() ); //init file id
 
 		if ( $webp_file->insert() ) {
 			return $webp_file;
@@ -124,14 +124,14 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 	protected function process_file( Urlslab_File_Row $file, string $new_file_name ): ?Urlslab_File_Row {
 		$webp_file = new Urlslab_File_Row(
 			array(
-				'url'            => $file->get_url( '.webp' ),
-				'parent_url'     => $file->get( 'parent_url' ),
+				'url'            => $file->get_file_url( '.webp' ),
+				'parent_url'     => $file->get_parent_url(),
 				'filename'       => $file->get_filename() . '.webp',
 				'filesize'       => filesize( $new_file_name ),
 				'filehash'       => $file->generate_file_hash( $new_file_name ),
 				'filetype'       => 'image/webp',
-				'width'          => $file->get( 'width' ),
-				'height'         => $file->get( 'height' ),
+				'width'          => $file->get_file_pointer()->get_width(),
+				'height'         => $file->get_file_pointer()->get_height(),
 				'filestatus'     => Urlslab_Driver::STATUS_PENDING,
 				'status_changed' => Urlslab_Data::get_now(),
 				'local_file'     => $new_file_name,
@@ -140,19 +140,19 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 			),
 			false
 		);
-		$webp_file->set( 'fileid', $webp_file->get_fileid() ); //init file id
+		$webp_file->set_fileid( $webp_file->get_fileid() ); //init file id
 
-		if ( ! $webp_file->insert() || ! $webp_file->get_file_pointer()->get_driver()->upload_content( $webp_file ) ) {
+		if ( ! $webp_file->insert() || ! $webp_file->get_file_pointer()->get_driver_object()->upload_content( $webp_file ) ) {
 			unlink( $new_file_name );
 
 			return null;
 		}
-		$webp_file->set( 'filestatus', Urlslab_Driver::STATUS_ACTIVE );
-		$webp_file->set( 'local_file', '' );
+		$webp_file->set_filestatus( Urlslab_Driver::STATUS_ACTIVE );
+		$webp_file->set_local_file( '' );
 		$webp_file->update();
 
-		$file->get_file_pointer()->set( 'webp_filehash', $webp_file->get_file_pointer()->get( 'filehash' ) );
-		$file->get_file_pointer()->set( 'webp_filesize', $webp_file->get_file_pointer()->get( 'filesize' ) );
+		$file->get_file_pointer()->set_webp_filehash( $webp_file->get_file_pointer()->get_filehash() );
+		$file->get_file_pointer()->set_webp_filesize( $webp_file->get_file_pointer()->get_filesize() );
 		$file->get_file_pointer()->update();
 
 		unlink( $new_file_name );

@@ -218,7 +218,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 								if ( empty( $dom_elem->getAttribute( 'title' ) ) ) {
 									$dom_elem->setAttribute(
 										'title',
-										$result[ $url_obj->get_url_id() ]->get_summary( $strategy ),
+										$result[ $url_obj->get_url_id() ]->get_summary_text( $strategy ),
 									);
 								}
 							}

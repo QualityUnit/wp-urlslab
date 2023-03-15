@@ -207,22 +207,114 @@ class Urlslab_File_Row extends Urlslab_Data {
 	public function __construct(
 		array $file_arr = array(), $loaded_from_db = true
 	) {
-		$this->set( 'fileid', $file_arr['fileid'] ?? null, ! $loaded_from_db );
-		$this->set( 'url', $file_arr['url'] ?? '', ! $loaded_from_db );
-		$this->set( 'parent_url', $file_arr['parent_url'] ?? '', ! $loaded_from_db );
-		$this->set( 'filename', $file_arr['filename'] ?? $this->get_filename(), ! $loaded_from_db );
-		$this->set( 'filestatus', $file_arr['filestatus'] ?? '', ! $loaded_from_db );
-		$this->set( 'filehash', $file_arr['filehash'] ?? '', ! $loaded_from_db );
-		$this->set( 'filesize', $file_arr['filesize'] ?? 0, ! $loaded_from_db );
-		$this->set( 'usage_count', $file_arr['imageCountUsage'] ?? 0, true );
-		$this->set( 'local_file', $file_arr['local_file'] ?? '', ! $loaded_from_db );
-		$this->set( 'status_changed', $file_arr['status_changed'] ?? Urlslab_Data::get_now(), ! $loaded_from_db );
-		$this->set( 'webp_fileid', $file_arr['webp_fileid'] ?? '', ! $loaded_from_db );
-		$this->set( 'avif_fileid', $file_arr['avif_fileid'] ?? '', ! $loaded_from_db );
-		$this->set( 'filetype', $file_arr['filetype'] ?? '', ! $loaded_from_db );
-
 		$this->file_pointer = new Urlslab_File_Pointer_Row( $file_arr, $loaded_from_db );
+
+		$this->set_fileid( $file_arr['fileid'] ?? null, $loaded_from_db );
+		$this->set_url( $file_arr['url'] ?? '', $loaded_from_db );
+		$this->set_parent_url( $file_arr['parent_url'] ?? '', $loaded_from_db );
+		$this->set_filename( $file_arr['filename'] ?? $this->get_filename(), $loaded_from_db );
+		$this->set_filestatus( $file_arr['filestatus'] ?? '', $loaded_from_db );
+		$this->set_status_changed( $file_arr['status_changed'] ?? Urlslab_Data::get_now(), $loaded_from_db );
+		$this->set_filehash( $file_arr['filehash'] ?? '', $loaded_from_db );
+		$this->set_filesize( $file_arr['filesize'] ?? 0, $loaded_from_db );
+		$this->set_usage_count( $file_arr['imageCountUsage'] ?? 0, true );
+		$this->set_local_file( $file_arr['local_file'] ?? '', $loaded_from_db );
+		$this->set_webp_fileid( $file_arr['webp_fileid'] ?? '', $loaded_from_db );
+		$this->set_avif_fileid( $file_arr['avif_fileid'] ?? '', $loaded_from_db );
+		$this->set_filetype( $file_arr['filetype'] ?? '', $loaded_from_db );
 	}
+
+	public function get_url(): string {
+		return $this->get( 'url' );
+	}
+
+	public function get_parent_url(): string {
+		return $this->get( 'parent_url' );
+	}
+
+	public function get_filestatus(): string {
+		return $this->get( 'filestatus' );
+	}
+
+	public function get_filehash(): string {
+		return $this->get( 'filehash' );
+	}
+
+	public function get_filesize(): int {
+		return $this->get( 'filesize' );
+	}
+
+	public function get_usage_count(): int {
+		return $this->get( 'usage_count' );
+	}
+
+	public function get_local_file(): string {
+		return $this->get( 'local_file' );
+	}
+
+	public function get_status_changed(): string {
+		return $this->get( 'status_changed' );
+	}
+
+	public function get_webp_fileid(): string {
+		return $this->get( 'webp_fileid' );
+	}
+
+	public function get_avif_fileid(): string {
+		return $this->get( 'avif_fileid' );
+	}
+
+	public function get_file_pointer(): Urlslab_File_Pointer_Row {
+		return $this->file_pointer;
+	}
+
+	public function set_fileid( int $fileid, $loaded_from_db = false ): void {
+		$this->set( 'fileid', $fileid, $loaded_from_db );
+	}
+
+	public function set_url( string $url, $loaded_from_db = false ): void {
+		$this->set( 'url', $url, $loaded_from_db );
+	}
+
+	public function set_parent_url( string $parent_url, $loaded_from_db = false ): void {
+		$this->set( 'parent_url', $parent_url, $loaded_from_db );
+	}
+
+	public function set_filename( string $filename, $loaded_from_db = false ): void {
+		$this->set( 'filename', $filename, $loaded_from_db );
+	}
+
+	public function set_filestatus( string $filestatus, $loaded_from_db = false ): void {
+		$this->set( 'filestatus', $filestatus, $loaded_from_db );
+		if ( ! $loaded_from_db ) {
+			$this->set_status_changed( self::get_now(), $loaded_from_db );
+		}
+	}
+
+	public function set_usage_count( int $usage_count, $loaded_from_db = false ): void {
+		$this->set( 'usage_count', $usage_count, $loaded_from_db );
+	}
+
+	public function set_local_file( string $local_file, $loaded_from_db = false ): void {
+		$this->set( 'local_file', $local_file, $loaded_from_db );
+	}
+
+	public function set_status_changed( string $status_changed, $loaded_from_db = false ): void {
+		$this->set( 'status_changed', $status_changed, $loaded_from_db );
+	}
+
+	public function set_webp_fileid( string $webp_fileid, $loaded_from_db = false ): void {
+		$this->set( 'webp_fileid', $webp_fileid, $loaded_from_db );
+	}
+
+	public function set_avif_fileid( string $avif_fileid, $loaded_from_db = false ): void {
+		$this->set( 'avif_fileid', $avif_fileid, $loaded_from_db );
+	}
+
+	public function set_filetype( string $filetype, $loaded_from_db = false ): void {
+		$this->set( 'filetype', $filetype, $loaded_from_db );
+	}
+
 
 	public function as_array(): array {
 		return array_merge(
@@ -262,6 +354,11 @@ class Urlslab_File_Row extends Urlslab_Data {
 		return new Urlslab_File_Row( $row );
 	}
 
+	/**
+	 * @param array $file_ids
+	 *
+	 * @return Urlslab_File_Row[]
+	 */
 	public static function get_files( array $file_ids ): array {
 		global $wpdb;
 		$files   = array();
@@ -291,18 +388,14 @@ class Urlslab_File_Row extends Urlslab_Data {
 		return $files;
 	}
 
-	public function get_file_pointer(): Urlslab_File_Pointer_Row {
-		return $this->file_pointer;
-	}
-
 
 	public function generate_file_hash( $file_name ) {
 		return hash_file( 'crc32', $file_name );
 	}
 
 	public function get_fileid() {
-		if ( empty( $this->get( 'fileid' ) ) && ! empty( $this->get_url() ) ) {
-			$this->set( 'fileid', md5( $this->get_url_no_protocol() ) );
+		if ( empty( $this->get( 'fileid' ) ) && ! empty( $this->get_file_url() ) ) {
+			$this->set_fileid( md5( $this->get_file_url_no_protocol() ) );
 		}
 
 		return $this->get( 'fileid' );
@@ -310,18 +403,18 @@ class Urlslab_File_Row extends Urlslab_Data {
 
 	public function get_filename() {
 		if ( empty( $this->get( 'filename' ) ) ) {
-			if ( ! empty( $this->get( 'local_file' ) ) ) {
-				return basename( $this->get( 'local_file' ) );
+			if ( ! empty( $this->get_local_file() ) ) {
+				return basename( $this->get_local_file() );
 			}
-			$parsed_url = parse_url( $this->get( 'url' ) );
-			$this->set( 'filename', ( isset( $parsed_url['query'] ) ? md5( $parsed_url['query'] ) . '-' : '' ) . basename( isset( $parsed_url['path'] ) ? $parsed_url['path'] : md5( $this->get( 'url' ) ) ) );
+			$parsed_url = parse_url( $this->get_url() );
+			$this->set_filename( ( isset( $parsed_url['query'] ) ? md5( $parsed_url['query'] ) . '-' : '' ) . basename( isset( $parsed_url['path'] ) ? $parsed_url['path'] : md5( $this->get_url() ) ) );
 		}
 
 		return $this->get( 'filename' );
 	}
 
-	public function get_url( $append_file_name = '' ) {
-		$parsed_url = parse_url( $this->get( 'url' ) );
+	public function get_file_url( $append_file_name = '' ) {
+		$parsed_url = parse_url( $this->get_url() );
 		$scheme     = isset( $parsed_url['scheme'] ) ? $parsed_url['scheme'] . '://' : parse_url( get_site_url(), PHP_URL_SCHEME ) . '://';
 		$host       = isset( $parsed_url['host'] ) ? $parsed_url['host'] : parse_url( get_site_url(), PHP_URL_HOST );
 		$port       = isset( $parsed_url['port'] ) ? ':' . $parsed_url['port'] : '';
@@ -334,8 +427,8 @@ class Urlslab_File_Row extends Urlslab_Data {
 		return "$scheme$user$pass$host$port$path$append_file_name$query";
 	}
 
-	private function get_url_no_protocol() {
-		$parsed_url = parse_url( $this->get( 'url' ) );
+	private function get_file_url_no_protocol() {
+		$parsed_url = parse_url( $this->get_url() );
 		$host       = isset( $parsed_url['host'] ) ? $parsed_url['host'] : parse_url( get_site_url(), PHP_URL_HOST );
 		$port       = isset( $parsed_url['port'] ) ? ':' . $parsed_url['port'] : '';
 		$user       = isset( $parsed_url['user'] ) ? $parsed_url['user'] : '';
@@ -347,19 +440,19 @@ class Urlslab_File_Row extends Urlslab_Data {
 		return "$user$pass$host$port$path$query";
 	}
 
-	public function set_filehash( string $filehash ) {
-		$this->set( 'filehash', $filehash );
-		$this->get_file_pointer()->set( 'filehash', $filehash );
+	public function set_filehash( string $filehash, $loaded_from_db = false ) {
+		$this->set( 'filehash', $filehash, $loaded_from_db );
+		$this->get_file_pointer()->set_filehash( $filehash, $loaded_from_db );
 	}
 
-	public function set_filesize( int $file_size ) {
-		$this->set( 'filesize', $file_size );
-		$this->get_file_pointer()->set( 'filesize', $file_size );
+	public function set_filesize( int $file_size, $loaded_from_db = false ) {
+		$this->set( 'filesize', $file_size, $loaded_from_db );
+		$this->get_file_pointer()->set_filesize( $file_size, $loaded_from_db );
 	}
 
 	public function get_filetype() {
 		if ( empty( $this->get( 'filetype' ) ) ) {
-			$this->set( 'filetype', $this->get_mime_type_from_filename( $this->get_filename() ) );
+			$this->set_filetype( $this->get_mime_type_from_filename( $this->get_filename() ) );
 		}
 
 		return $this->get( 'filetype' );

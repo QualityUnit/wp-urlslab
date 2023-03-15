@@ -41,36 +41,34 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 		}
 
 		$css = new Urlslab_CSS_Cache_Row( $url_row );
-		$css->set( 'status', Urlslab_CSS_Cache_Row::STATUS_PENDING );
-		$css->set( 'status_changed', Urlslab_CSS_Cache_Row::get_now() );
+		$css->set_status( Urlslab_CSS_Cache_Row::STATUS_PENDING );
 		$css->update();    //lock the entry, so no other process will start working on it
 
 		return $this->download( $css );
 	}
 
 	private function download( Urlslab_CSS_Cache_Row $css ) {
-		$css->set( 'status_changed', Urlslab_CSS_Cache_Row::get_now() );
 		try {
-			$page_content_file_name = download_url( $css->get_url()->get_url_with_protocol() );
+			$page_content_file_name = download_url( $css->get_url_object()->get_url_with_protocol() );
 			if ( is_wp_error( $page_content_file_name ) || empty( $page_content_file_name ) || ! file_exists( $page_content_file_name ) || 0 == filesize( $page_content_file_name ) ) {
-				$css->set( 'status', Urlslab_CSS_Cache_Row::STATUS_DISABLED );
-				$css->set( 'filesize', 0 );
-				$css->set( 'css_content', '' );
+				$css->set_status( Urlslab_CSS_Cache_Row::STATUS_DISABLED );
+				$css->set_filesize( 0 );
+				$css->set_css_content( '' );
 			} else {
 				$widget = Urlslab_Available_Widgets::get_instance()->get_widget( Urlslab_CSS_Optimizer::SLUG );
 				if ( $widget->get_option( Urlslab_CSS_Optimizer::SETTING_NAME_CSS_MAX_SIZE ) < filesize( $page_content_file_name ) ) {
-					$css->set( 'status', Urlslab_CSS_Cache_Row::STATUS_DISABLED );
-					$css->set( 'filesize', filesize( $page_content_file_name ) );
+					$css->set_status( Urlslab_CSS_Cache_Row::STATUS_DISABLED );
+					$css->set_filesize( filesize( $page_content_file_name ) );
 				} else {
-					$css->set( 'status', Urlslab_CSS_Cache_Row::STATUS_ACTIVE );
-					$css->set( 'filesize', filesize( $page_content_file_name ) );
-					$css->set( 'css_content', file_get_contents( $page_content_file_name ) );
+					$css->set_status( Urlslab_CSS_Cache_Row::STATUS_ACTIVE );
+					$css->set_filesize( filesize( $page_content_file_name ) );
+					$css->set_css_content( file_get_contents( $page_content_file_name ) );
 				}
 			}
 		} catch ( Exception $e ) {
-			$css->set( 'status', Urlslab_CSS_Cache_Row::STATUS_DISABLED );
-			$css->set( 'filesize', 0 );
-			$css->set( 'css_content', '' );
+			$css->set_status( Urlslab_CSS_Cache_Row::STATUS_DISABLED );
+			$css->set_filesize( 0 );
+			$css->set_css_content( '' );
 		}
 		if ( is_string( $page_content_file_name ) && file_exists( $page_content_file_name ) ) {
 			unlink( $page_content_file_name );

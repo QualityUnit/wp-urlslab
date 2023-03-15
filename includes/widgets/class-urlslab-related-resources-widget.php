@@ -102,7 +102,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				return '';
 			}
 
-			$title = $url_obj->get( 'url_title' );
+			$title = $url_obj->get_url_title();
 			if ( empty( $title ) ) {
 				return '';
 			}
@@ -113,12 +113,12 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 			return '<div class="urlslab-rel-res-item">' .
 				   '<a href="' . esc_url( $url_obj->get_url()->get_url_with_protocol() ) . '"' .
-				   ' title="' . esc_attr( $url_obj->get_summary( $strategy ) ) . '"' .
+				   ' title="' . esc_attr( $url_obj->get_summary_text( $strategy ) ) . '"' .
 				   ( $url_obj->get_url()->is_same_domain_url() ? '' : ' target="_blank"' ) .
 				   '>' .
 				   $this->render_screenshot( $url_obj, $urlslab_atts, $strategy ) .
 				   '<div class="urlslab-rel-res-item-text"><p class="urlslab-rel-res-item-title">' . esc_html( $title ) . '</p>' .
-				   ( false !== $urlslab_atts['show-summary'] ? '<p  class="urlslab-rel-res-item-summary">' . esc_html( $url_obj->get_summary( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY ) ) . '</p>' : '' ) .
+				   ( false !== $urlslab_atts['show-summary'] ? '<p  class="urlslab-rel-res-item-summary">' . esc_html( $url_obj->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY ) ) . '</p>' : '' ) .
 				   '</div></a>' .
 				   '</div>';
 		} catch (Exception $e) {
@@ -130,7 +130,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	private function render_screenshot( Urlslab_Url_Row $url, array $urlslab_atts, $strategy ): string {
 		if ( false !== $urlslab_atts['show-image'] ) {
 			if ( ! empty( $url->get_screenshot_url( 'thumbnail' ) ) ) {
-				return '<div class="urlslab-rel-res-item-screenshot"><img alt="' . esc_attr( $url->get_summary( $strategy ) ) . '" src="' . $url->get_screenshot_url( 'thumbnail' ) . '"></div>';
+				return '<div class="urlslab-rel-res-item-screenshot"><img alt="' . esc_attr( $url->get_summary_text( $strategy ) ) . '" src="' . $url->get_screenshot_url( 'thumbnail' ) . '"></div>';
 			} else if ( ! empty( $urlslab_atts['default-image'] ) ) {
 				return '<div class="urlslab-rel-res-item-screenshot urlslab-rel-res-item-default-image"><img src="' . $urlslab_atts['default-image'] . '"></div>';
 			}

@@ -60,7 +60,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 				$url_data = Urlslab_Url_Data_Fetcher::get_instance()->fetch_schedule_url( new Urlslab_Url( $urlslab_atts['url'] ) );
 
 				if ( ! empty( $url_data ) && ! $url_data->is_http_valid() ) {
-					$alt_text = $url_data->get_summary( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
+					$alt_text = $url_data->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
 					if ( empty( $alt_text ) ) {
 						$alt_text = $urlslab_atts['alt'];
 					}

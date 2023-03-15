@@ -57,17 +57,17 @@ abstract class Urlslab_Driver {
 	 * @return string|null filename of downloaded file
 	 */
 	private function download_url( Urlslab_File_Row $file ): ?string {
-		$local_tmp_file = download_url( $file->get_url() );
+		$local_tmp_file = download_url( $file->get_file_url() );
 		if ( is_wp_error( $local_tmp_file ) ) {
 			if (
 				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMAGE_RESIZING, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_IMAGE_RESIZING ) &&
 				is_array( $local_tmp_file->get_error_data( 'http_404' ) ) &&
 				isset( $local_tmp_file->get_error_data( 'http_404' )['code'] ) &&
 				404 == $local_tmp_file->get_error_data( 'http_404' )['code'] &&
-				preg_match( '/^(.*?)-([0-9]*?)x([0-9]*?)\.(.*?)$/', $file->get_url(), $matches )
+				preg_match( '/^(.*?)-([0-9]*?)x([0-9]*?)\.(.*?)$/', $file->get_file_url(), $matches )
 			) {
-				if ( strlen( $file->get( 'parent_url' ) ) ) {
-					$original_tmp_file = download_url( $file->get( 'parent_url' ) );
+				if ( strlen( $file->get_parent_url() ) ) {
+					$original_tmp_file = download_url( $file->get_parent_url() );
 				} else {
 					$original_tmp_file = download_url( $matches[1] . '.' . $matches[4] );
 				}
@@ -90,8 +90,8 @@ abstract class Urlslab_Driver {
 	}
 
 	public function upload_content( Urlslab_File_Row $file ) {
-		if ( strlen( $file->get( 'local_file' ) ) && file_exists( $file->get( 'local_file' ) ) ) {
-			$file_name   = $file->get( 'local_file' );
+		if ( strlen( $file->get_local_file() ) && file_exists( $file->get_local_file() ) ) {
+			$file_name   = $file->get_local_file();
 			$delete_file = false;
 		} else {
 			$file_name = $this->download_url( $file );
@@ -99,7 +99,7 @@ abstract class Urlslab_Driver {
 				return false;
 			}
 			if ( $file->get_filetype() == 'application/octet-stream' ) {
-				$file->set( 'filetype', $file->get_mime_type_from_filename( $file_name ) );
+				$file->set_filetype( $file->get_mime_type_from_filename( $file_name ) );
 			}
 			$delete_file = true;
 		}
@@ -120,11 +120,11 @@ abstract class Urlslab_Driver {
 			//create pointer
 			$file->set_filehash( $filehash );
 			$file->set_filesize( $file_size );
-			$file->get_file_pointer()->set( 'driver', $this->get_driver_code() );
+			$file->get_file_pointer()->set_driver( $this->get_driver_code() );
 
 			$size = getimagesize( $file_name );
-			$file->get_file_pointer()->set( 'width', $size[0] ?? 0 );
-			$file->get_file_pointer()->set( 'height', $size[1] ?? 0 );
+			$file->get_file_pointer()->set_width( $size[0] ?? 0 );
+			$file->get_file_pointer()->set_height( $size[1] ?? 0 );
 
 			$file->get_file_pointer()->insert();
 		} else {
@@ -229,24 +229,24 @@ abstract class Urlslab_Driver {
 		$result   = false;
 		$tmp_name = wp_tempnam();
 		if (
-			$file->get_file_pointer()->get_driver()->save_to_file( $file, $tmp_name ) &&
+			$file->get_file_pointer()->get_driver_object()->save_to_file( $file, $tmp_name ) &&
 			(
-				filesize( $tmp_name ) == $file->get_file_pointer()->get( 'filesize' ) ||
-				( 0 == $file->get_file_pointer()->get( 'filesize' ) && 0 < filesize( $tmp_name ) )
+				filesize( $tmp_name ) == $file->get_file_pointer()->get_filesize() ||
+				( 0 == $file->get_file_pointer()->get_filesize() && 0 < filesize( $tmp_name ) )
 			)
 		) {
 			$old_file = clone $file;
 
 			//set new driver of storage
-			$file->get_file_pointer()->set( 'driver', $dest_driver );
+			$file->get_file_pointer()->set_driver( $dest_driver );
 			//save file to new storage
-			if ( $file->get_file_pointer()->get_driver()->save_file_to_storage( $file, $tmp_name ) ) {
-				$file->get_file_pointer()->set( 'filesize', filesize( $tmp_name ) );
+			if ( $file->get_file_pointer()->get_driver_object()->save_file_to_storage( $file, $tmp_name ) ) {
+				$file->get_file_pointer()->set_filesize( filesize( $tmp_name ) );
 				$file->get_file_pointer()->update();
 
 				//delete original file
 				if ( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_DELETE_AFTER_TRANSFER, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_DELETE_AFTER_TRANSFER ) ) {
-					$old_file->get_file_pointer()->get_driver()->delete_content( $old_file );
+					$old_file->get_file_pointer()->get_driver_object()->delete_content( $old_file );
 				}
 
 				$result = true;

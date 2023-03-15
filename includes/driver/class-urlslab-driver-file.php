@@ -4,8 +4,8 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/driver/class-urlslab-driver.php';
 class Urlslab_Driver_File extends Urlslab_Driver {
 
 	function get_file_content( Urlslab_File_Row $file ) {
-		if ( file_exists( $file->get( 'local_file' ) ) ) {
-			return file_get_contents( $file->get( 'local_file' ) );
+		if ( file_exists( $file->get_local_file() ) ) {
+			return file_get_contents( $file->get_local_file() );
 		}
 		if ( file_exists( $this->get_upload_file_name( $file ) ) ) {
 			return file_get_contents( $this->get_upload_file_name( $file ) );
@@ -15,12 +15,12 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 	}
 
 	public function upload_content( Urlslab_File_Row $file ) {
-		if ( strlen( $file->get( 'local_file' ) ) && file_exists( $file->get( 'local_file' ) ) ) {
-			if ( $file->get( 'local_file' ) == $this->get_upload_file_name( $file ) ) {
+		if ( strlen( $file->get_local_file() ) && file_exists( $file->get_local_file() ) ) {
+			if ( $file->get_local_file() == $this->get_upload_file_name( $file ) ) {
 				return true;    //we have local file on disk already, no need to save it to storage
 			} else {
 				//make copy of file in our own upload dir
-				if ( ! copy( $file->get( 'local_file' ), $this->get_upload_file_name( $file ) ) ) {
+				if ( ! copy( $file->get_local_file(), $this->get_upload_file_name( $file ) ) ) {
 					return false;
 				}
 
@@ -32,7 +32,7 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 	}
 
 	private function get_file_dir( Urlslab_File_Row $file ) {
-		return '/' . self::URLSLAB_DIR . $file->get( 'filesize' ) . '/' . $file->get( 'filehash' ) . '/';
+		return '/' . self::URLSLAB_DIR . $file->get_filesize() . '/' . $file->get_filehash() . '/';
 	}
 
 	private function get_upload_dir( Urlslab_File_Row $file ) {
@@ -70,13 +70,13 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 	}
 
 	function output_file_content( Urlslab_File_Row $file ) {
-		if ( ! file_exists( $file->get( 'local_file' ) ) ) {
+		if ( ! file_exists( $file->get_local_file() ) ) {
 			return false;
 		}
 
 		$this->sanitize_output();
 
-		$handle = fopen( $file->get( 'local_file' ), 'rb' );
+		$handle = fopen( $file->get_local_file(), 'rb' );
 		if ( false === $handle ) {
 			return false;
 		}
@@ -102,7 +102,7 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 	}
 
 	public function save_to_file( Urlslab_File_Row $file, $file_name ): bool {
-		return copy( $file->get( 'local_file' ), $file_name );
+		return copy( $file->get_local_file(), $file_name );
 	}
 
 	public static function get_driver_settings(): array {

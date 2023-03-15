@@ -37,13 +37,13 @@ class Urlslab_Search_Replace extends Urlslab_Widget {
 
 	public function theContentRawHook( $content ) {
 		foreach ( $this->get_rules() as $rule ) {
-			switch ( $rule->get( 'search_type' ) ) {
+			switch ( $rule->get_search_type() ) {
 				case Urlslab_Search_Replace_Row::TYPE_REGEXP:
-					$content = preg_replace( '/' . str_replace( '/', '\\/', $rule->get( 'str_search' ) ) . '/uim', $rule->get( 'str_replace' ), $content );
+					$content = preg_replace( '/' . str_replace( '/', '\\/', $rule->get_str_search() ) . '/uim', $rule->get_str_replace(), $content );
 					break;
 				case Urlslab_Search_Replace_Row::TYPE_PLAIN_TEXT:
 				default:
-					$content = str_replace( $rule->get( 'str_search' ), $rule->get( 'str_replace' ), $content );
+					$content = str_replace( $rule->get_str_search(), $rule->get_str_replace(), $content );
 			}
 		}
 
@@ -64,7 +64,7 @@ class Urlslab_Search_Replace extends Urlslab_Widget {
 						continue;
 					}
 					$obj_search                              = new Urlslab_Search_Replace_Row( $row );
-					$this->rules[ $obj_search->get( 'id' ) ] = $obj_search;
+					$this->rules[ $obj_search->get_id() ] = $obj_search;
 				}
 			} catch ( Exception $e ) {
 			}

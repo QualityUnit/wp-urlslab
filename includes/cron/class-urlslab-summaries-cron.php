@@ -55,8 +55,7 @@ class Urlslab_Summaries_Cron extends Urlslab_Cron {
 				$data[]        = $row['url_id'];
 				$url_names[]   = $row['url_name'];
 			} else {
-				$row_obj->set( 'sum_status', Urlslab_Url_Row::SCR_STATUS_ERROR );
-				$row_obj->set( 'update_sum_date', Urlslab_Data::get_now() );
+				$row_obj->set_sum_status( Urlslab_Url_Row::SCR_STATUS_ERROR );
 				$row_obj->update();
 			}
 		}
@@ -70,16 +69,14 @@ class Urlslab_Summaries_Cron extends Urlslab_Cron {
 			switch ( $summary->getSummaryStatus() ) {
 				case 'BLOCKED':
 				case 'NOT_CRAWLING_URL':
-					$url_objects[ $id ]->set( 'sum_status', Urlslab_Url_Row::SUM_STATUS_ERROR );
-					$url_objects[ $id ]->set( 'update_sum_date', Urlslab_Data::get_now() );
+					$url_objects[ $id ]->set_sum_status( Urlslab_Url_Row::SUM_STATUS_ERROR );
 					$url_objects[ $id ]->update();
 					break;
 				case 'AVAILABLE':
-					$url_objects[ $id ]->set( 'urlslab_domain_id', $summary->getDomainId() );
-					$url_objects[ $id ]->set( 'urlslab_url_id', $summary->getUrlId() );
-					$url_objects[ $id ]->set( 'urlslab_sum_timestamp', time() ); //TODO: api has no info when was summary generated?
-					$url_objects[ $id ]->set( 'sum_status', Urlslab_Url_Row::SUM_STATUS_ACTIVE );
-					$url_objects[ $id ]->set( 'update_sum_date', Urlslab_Data::get_now() );
+					$url_objects[ $id ]->set_urlslab_domain_id( $summary->getDomainId() );
+					$url_objects[ $id ]->set_urlslab_url_id( $summary->getUrlId() );
+					$url_objects[ $id ]->set_urlslab_sum_timestamp( time() ); //TODO: api has no info when was summary generated?
+					$url_objects[ $id ]->set_sum_status( Urlslab_Url_Row::SUM_STATUS_ACTIVE );
 					$url_objects[ $id ]->update();
 					$some_urls_updated = true;
 					break;
