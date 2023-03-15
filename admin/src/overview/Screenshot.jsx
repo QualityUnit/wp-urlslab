@@ -28,7 +28,7 @@ export default function ScreenShotOverview() {
 			<img src={ image1 } alt="Example of screenshot for URL www.liveagent.com" />
 
 			<h2>How it works</h2>
-			<p>To process screenshots can take few hours up to few days based on your schedule settings (e.g. ratelimits can delay processing significantly).
+			<p>To process screenshots can take few hours up to few days based on your schedules in menu Settings - Schedules (e.g. ratelimits can delay processing significantly).
 				Screenshots are done by service running on www.urlslab.com and plugin just checks periodically status of screenshot.
 				You can define how often is screenshot updated by custom schedules.</p>
 		</>

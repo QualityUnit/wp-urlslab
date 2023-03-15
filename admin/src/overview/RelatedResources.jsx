@@ -21,7 +21,7 @@ export default function RelatedResourcesOverview() {
 			<h3>Examples</h3>
 			<code>[urlslab-screenshot url="https://www.liveagent.com" related-count=16 show-image=true]</code>
 			<h3>How it works</h3>
-			<p>www.urlslab.com scans your website (based on your schedule) and index content from your website to our vector database. Once you want to display related resources to current page, plugin loads the most similar pages from www.urlslab.com. All is running on the background in the cron to keep your website fast. Once the data are loaded by cron, shortcode will start showing related resource widget (otherwise it will be empty til the data are processed). Processing can take up to few days.</p>
+			<p>https://www.urlslab.com scans your website (based on your schedule - see menu Settings - Schedules) and index content from your website to our vector database. Once you want to display related resources to current page, plugin loads the most similar pages from www.urlslab.com. All is running on the background in the cron to keep your website fast. Once the data are loaded by cron, shortcode will start showing related resource widget (otherwise it will be empty til the data are processed). Processing can take up to few days.</p>
 
 		</>
 	);
