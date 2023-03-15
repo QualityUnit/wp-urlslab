@@ -35,11 +35,10 @@ class Urlslab_Activator {
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-background-attachments-cron.php';
 		add_option( Urlslab_Offload_Background_Attachments_Cron::SETTING_NAME_SCHEDULER_POINTER, - 1, '', false );
-		$dummy = new Urlslab_Url_Data_Fetcher();
-		( new Urlslab_Keywords_Links( $dummy ) )->add_options_on_activate();
-		( new Urlslab_Link_Enhancer( $dummy ) )->add_options_on_activate();
-		( new Urlslab_Media_Offloader_Widget( $dummy ) )->add_options_on_activate();
-		( new Urlslab_Meta_Tag( $dummy ) )->add_options_on_activate();
+		( new Urlslab_Keywords_Links() )->add_options_on_activate();
+		( new Urlslab_Link_Enhancer() )->add_options_on_activate();
+		( new Urlslab_Media_Offloader_Widget() )->add_options_on_activate();
+		( new Urlslab_Meta_Tag() )->add_options_on_activate();
 	}
 
 	private static function install_tables() {

@@ -55,8 +55,7 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 				$data[]        = $row['url_id'];
 				$url_names[]   = $row['url_name'];
 			} else {
-				$row_obj->set( 'scr_status', Urlslab_Url_Row::SCR_STATUS_ERROR );
-				$row_obj->set( 'update_scr_date', Urlslab_Data::get_now() );
+				$row_obj->set_scr_status( Urlslab_Url_Row::SCR_STATUS_ERROR );
 				$row_obj->update();
 			}
 		}
@@ -70,16 +69,14 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 			switch ( $screenshot->getScreenshotStatus() ) {
 				case 'BLOCKED':
 				case 'NOT_CRAWLING_URL':
-					$url_objects[ $id ]->set( 'scr_status', Urlslab_Url_Row::SCR_STATUS_ERROR );
-					$url_objects[ $id ]->set( 'update_scr_date', Urlslab_Data::get_now() );
+					$url_objects[ $id ]->set_scr_status( Urlslab_Url_Row::SCR_STATUS_ERROR );
 					$url_objects[ $id ]->update();
 					break;
 				case 'AVAILABLE':
-					$url_objects[ $id ]->set( 'urlslab_domain_id', $screenshot->getDomainId() );
-					$url_objects[ $id ]->set( 'urlslab_url_id', $screenshot->getUrlId() );
-					$url_objects[ $id ]->set( 'urlslab_scr_timestamp', $screenshot->getScreenshotId() );
-					$url_objects[ $id ]->set( 'scr_status', Urlslab_Url_Row::SCR_STATUS_ACTIVE );
-					$url_objects[ $id ]->set( 'update_scr_date', Urlslab_Data::get_now() );
+					$url_objects[ $id ]->set_urlslab_domain_id( $screenshot->getDomainId() );
+					$url_objects[ $id ]->set_urlslab_url_id( $screenshot->getUrlId() );
+					$url_objects[ $id ]->set_urlslab_scr_timestamp( $screenshot->getScreenshotId() );
+					$url_objects[ $id ]->set_scr_status( Urlslab_Url_Row::SCR_STATUS_ACTIVE );
 					$url_objects[ $id ]->update();
 					$some_urls_updated = true;
 					break;

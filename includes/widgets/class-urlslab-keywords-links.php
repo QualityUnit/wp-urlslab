@@ -13,8 +13,6 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	const KW_TYPE_IMPORTED_FROM_CONTENT = 'I';        //keywords imported from content
 	const KW_TYPE_NONE = 'X';        //in this case none link will be created in content
 
-	private Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher;
-
 
 	private int $cnt_page_link_replacements = 0;
 	private int $cnt_page_links = 0;
@@ -58,9 +56,6 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	public const SETTING_NAME_KW_IMPORT_MAX_LENGTH = 'urlslab_kw_max_len';
 	public const SETTING_NAME_KW_TYPES_TO_USE = 'urlslab_kw_types_use';
 
-	public function __construct( Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher ) {
-		$this->urlslab_url_data_fetcher = $urlslab_url_data_fetcher;
-	}
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_content', $this, 'theContentHook', 11 );

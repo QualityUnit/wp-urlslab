@@ -2,7 +2,6 @@
 
 class Urlslab_User_Widget {
 
-	private $user_api_key;
 	private array $activated_widgets = array();
 
 	private static Urlslab_User_Widget $instance;
@@ -79,29 +78,5 @@ class Urlslab_User_Widget {
 
 	public function is_widget_activated( string $widget_slug ): bool {
 		return array_key_exists( $widget_slug, $this->activated_widgets );
-	}
-
-	public function add_api_key( Urlslab_Api_Key $api_key ): bool {
-		if ( empty( $this->user_api_key ) ) {
-			$this->user_api_key = $api_key;
-			return true;
-		}
-
-		return false;
-	}
-
-	public function has_api_key(): bool {
-		if ( empty( $this->user_api_key ) ) {
-			return false;
-		}
-		return true;
-	}
-
-	public function get_api_key(): ?Urlslab_Api_Key {
-		return $this->user_api_key;
-	}
-
-	public function remove_api_key() {
-		$this->user_api_key = null;
 	}
 }

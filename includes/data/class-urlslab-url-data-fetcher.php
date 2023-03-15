@@ -6,7 +6,15 @@
 class Urlslab_Url_Data_Fetcher {
 
 	private array $urls_cache = array();
+	private static ?Urlslab_Url_Data_Fetcher $instance = null;
 
+	public static function get_instance(): Urlslab_Url_Data_Fetcher {
+		if ( null === self::$instance ) {
+			self::$instance = new Urlslab_Url_Data_Fetcher();
+		}
+
+		return self::$instance;
+	}
 
 	/**
 	 * @param Urlslab_Url $url

@@ -202,8 +202,8 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		foreach ( $request->get_json_params()['rows'] as $row ) {
 			$obj = $this->get_row_object( (array) $row );
 			try {
-				$schedule_urls[ $obj->get( 'urlLink' ) ] = new Urlslab_Url( $obj->get( 'urlLink' ) );
-				$rows[]                                  = $obj;
+				$schedule_urls[ $obj->get_url_link() ] = new Urlslab_Url( $obj->get_url_link() );
+				$rows[]                                = $obj;
 			} catch ( Exception $e ) {
 			}
 		}

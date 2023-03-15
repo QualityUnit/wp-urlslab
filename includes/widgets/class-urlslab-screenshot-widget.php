@@ -3,17 +3,10 @@
 class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	const SLUG = 'urlslab-screenshot';
 
-	private Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher;
 
 	const SETTING_NAME_UPDATE_FREQ = 'urlslab-scr-update-freq';
 	const SETTING_NAME_SCREENSHOT_SCHEDULING = 'urlslab-scr-scheduling';
 
-	/**
-	 * @param Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher
-	 */
-	public function __construct( Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher ) {
-		$this->urlslab_url_data_fetcher = $urlslab_url_data_fetcher;
-	}
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'hook_callback', 10, 0 );
@@ -64,10 +57,10 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 
 		try {
 			if ( ! empty( $urlslab_atts['url'] ) ) {
-				$url_data = $this->urlslab_url_data_fetcher->fetch_schedule_url( new Urlslab_Url( $urlslab_atts['url'] ) );
+				$url_data = Urlslab_Url_Data_Fetcher::get_instance()->fetch_schedule_url( new Urlslab_Url( $urlslab_atts['url'] ) );
 
 				if ( ! empty( $url_data ) && ! $url_data->is_http_valid() ) {
-					$alt_text = $url_data->get_summary( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
+					$alt_text = $url_data->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
 					if ( empty( $alt_text ) ) {
 						$alt_text = $urlslab_atts['alt'];
 					}

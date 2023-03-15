@@ -4,7 +4,6 @@
 
 class Urlslab_Meta_Tag extends Urlslab_Widget {
 	const SLUG = 'urlslab-meta-tag';
-	private Urlslab_Url_Data_Fetcher $url_data_fetcher;
 
 	const SETTING_NAME_META_DESCRIPTION_GENERATION = 'urlslab_meta_description_generation';
 
@@ -19,12 +18,6 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	const REPLACE_VALUE = 'R';
 	const NO_CHANGE_VALUE = '';
 
-	/**
-	 * @param Urlslab_Url_Data_Fetcher $url_data_fetcher
-	 */
-	public function __construct( Urlslab_Url_Data_Fetcher $url_data_fetcher ) {
-		$this->url_data_fetcher = $url_data_fetcher;
-	}
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_head_content', $this, 'theContentHook' );
@@ -61,12 +54,12 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			}
 
 
-			$url_data = $this->url_data_fetcher->fetch_schedule_url( $this->get_current_page_url() );
+			$url_data = Urlslab_Url_Data_Fetcher::get_instance()->fetch_schedule_url( $this->get_current_page_url() );
 
 			if ( is_object( $url_data ) && $url_data->is_http_valid() ) {
 
-				$summary = $url_data->get_summary( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
-				$title   = $url_data->get_summary( Urlslab_Link_Enhancer::DESC_TEXT_TITLE );
+				$summary = $url_data->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
+				$title   = $url_data->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_TITLE );
 
 
 				$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'description', self::SETTING_NAME_META_DESCRIPTION_GENERATION, $summary );

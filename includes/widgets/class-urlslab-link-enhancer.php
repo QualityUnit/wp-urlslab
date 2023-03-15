@@ -9,7 +9,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	public const DESC_TEXT_TITLE = 'T';
 	public const DESC_TEXT_META_DESCRIPTION = 'M';
 
-	private Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher;
+
 
 	public const SETTING_NAME_DESC_REPLACEMENT_STRATEGY = 'urlslab_desc_replacement_strategy';
 	const SETTING_NAME_REMOVE_LINKS = 'urlslab_remove_links';
@@ -18,12 +18,6 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	const SETTING_NAME_URLS_MAP = 'urlslab_urls_map';
 	const SETTING_NAME_ADD_LINK_FRAGMENT = 'urlslab_add_lnk_fragment';
 
-	/**
-	 * @param Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher
-	 */
-	public function __construct( Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher ) {
-		$this->urlslab_url_data_fetcher = $urlslab_url_data_fetcher;
-	}
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'post_updated', $this, 'post_updated', 10, 3 );
@@ -180,7 +174,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 			if ( ! empty( $link_elements ) ) {
 
-				$result = $this->urlslab_url_data_fetcher->fetch_schedule_urls_batch(
+				$result = Urlslab_Url_Data_Fetcher::get_instance()->fetch_schedule_urls_batch(
 					array_merge(
 						array( $this->get_current_page_url() ),
 						array_map( fn( $elem ): Urlslab_Url => $elem[1], $link_elements )
@@ -224,7 +218,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 								if ( empty( $dom_elem->getAttribute( 'title' ) ) ) {
 									$dom_elem->setAttribute(
 										'title',
-										$result[ $url_obj->get_url_id() ]->get_summary( $strategy ),
+										$result[ $url_obj->get_url_id() ]->get_summary_text( $strategy ),
 									);
 								}
 							}

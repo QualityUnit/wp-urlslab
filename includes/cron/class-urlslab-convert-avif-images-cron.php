@@ -48,16 +48,16 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 		}
 
 		$file = new Urlslab_File_Row( $file_row );
-		if ( ! empty( $file->get( 'avif_fileid' ) ) ) {
+		if ( ! empty( $file->get_avif_fileid() ) ) {
 			//This file is already processing, disabled or processed -> continue to next file
 			return true;
 		}
 
 		//check if avif was not computed already for other file
-		if ( strlen( $file->get_file_pointer()->get( 'avif_filehash' ) ) > 2 && $file->get_file_pointer()->get( 'avif_filesize' ) > 0 ) {
+		if ( strlen( $file->get_file_pointer()->get_avif_filehash() ) > 2 && $file->get_file_pointer()->get_avif_filesize() > 0 ) {
 			$avif_file = $this->create_file_for_pointer( $file );
 			if ( $avif_file ) {
-				$file->set( 'avif_fileid', $avif_file->get_fileid() );
+				$file->set_avif_fileid( $avif_file->get_fileid() );
 				$file->update();
 
 				return true;
@@ -66,10 +66,10 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 
 
 		//process AVIF
-		$file->set( 'avif_fileid', Urlslab_File_Row::ALTERNATIVE_PROCESSING );
+		$file->set_avif_fileid( Urlslab_File_Row::ALTERNATIVE_PROCESSING );
 		$file->update();
 
-		if ( ! $file->get_file_pointer()->get_driver()->is_connected() ) {
+		if ( ! $file->get_file_pointer()->get_driver_object()->is_connected() ) {
 			//NOT connected, continue with next file
 			return true;
 		}
@@ -77,13 +77,13 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 
 		//create local image file
 		$original_image_filename = wp_tempnam();
-		if ( $file->get_file_pointer()->get_driver()->save_to_file( $file, $original_image_filename ) ) {
+		if ( $file->get_file_pointer()->get_driver_object()->save_to_file( $file, $original_image_filename ) ) {
 
 			$new_file_name = $this->convert_image_format( $file, $original_image_filename, 'avif' );
 			unlink( $original_image_filename );
 
 			if ( empty( $new_file_name ) || ! file_exists( $new_file_name ) ) {
-				$file->set( 'avif_fileid', Urlslab_File_Row::ALTERNATIVE_DISABLED );
+				$file->set_avif_fileid( Urlslab_File_Row::ALTERNATIVE_DISABLED );
 				$file->update();
 
 				return true;
@@ -92,9 +92,9 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 			$avif_file = $this->process_file( $file, $new_file_name );
 
 			if ( $avif_file ) {
-				$file->set( 'avif_fileid', $avif_file->get_fileid() );
+				$file->set_avif_fileid( $avif_file->get_fileid() );
 			} else {
-				$file->set( 'avif_fileid', Urlslab_File_Row::ALTERNATIVE_ERROR );
+				$file->set_avif_fileid( Urlslab_File_Row::ALTERNATIVE_ERROR );
 			}
 			$file->update();
 		}
@@ -105,14 +105,14 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 	protected function process_file( Urlslab_File_Row $file, string $new_file_name ): ?Urlslab_File_Row {
 		$avif_file = new Urlslab_File_Row(
 			array(
-				'url'            => $file->get_url( '.avif' ),
-				'parent_url'     => $file->get( 'parent_url' ),
+				'url'            => $file->get_file_url( '.avif' ),
+				'parent_url'     => $file->get_parent_url(),
 				'filename'       => $file->get_filename() . '.avif',
 				'filesize'       => filesize( $new_file_name ),
 				'filehash'       => $file->generate_file_hash( $new_file_name ),
 				'filetype'       => 'image/avif',
-				'width'          => $file->get( 'width' ),
-				'height'         => $file->get( 'height' ),
+				'width'          => $file->get_file_pointer()->get_width(),
+				'height'         => $file->get_file_pointer()->get_height(),
 				'filestatus'     => Urlslab_Driver::STATUS_PENDING,
 				'status_changed' => Urlslab_Data::get_now(),
 				'local_file'     => $new_file_name,
@@ -122,20 +122,20 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 			false
 		);
 
-		$avif_file->set( 'fileid', $avif_file->get_fileid() ); //init file id
+		$avif_file->set_fileid( $avif_file->get_fileid() ); //init file id
 
-		if ( ! $avif_file->insert() || ! $avif_file->get_file_pointer()->get_driver()->upload_content( $avif_file ) ) {
+		if ( ! $avif_file->insert() || ! $avif_file->get_file_pointer()->get_driver_object()->upload_content( $avif_file ) ) {
 			unlink( $new_file_name );
 
 			return null;
 		}
 
-		$avif_file->set( 'filestatus', Urlslab_Driver::STATUS_ACTIVE );
-		$avif_file->set( 'local_file', '' );
+		$avif_file->set_filestatus( Urlslab_Driver::STATUS_ACTIVE );
+		$avif_file->set_local_file( '' );
 		$avif_file->update();
 
-		$file->get_file_pointer()->set( 'avif_filehash', $avif_file->get_file_pointer()->get( 'filehash' ) );
-		$file->get_file_pointer()->set( 'avif_filesize', $avif_file->get_file_pointer()->get( 'filesize' ) );
+		$file->get_file_pointer()->set_avif_filehash( $avif_file->get_file_pointer()->get_filehash() );
+		$file->get_file_pointer()->set_avif_filesize( $avif_file->get_file_pointer()->get_filesize() );
 		$file->get_file_pointer()->update();
 
 		unlink( $new_file_name );
@@ -147,14 +147,14 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 	protected function create_file_for_pointer( Urlslab_File_Row $file ): ?Urlslab_File_Row {
 		$avif_file = new Urlslab_File_Row(
 			array(
-				'url'            => $file->get_url( '.avif' ),
-				'parent_url'     => $file->get( 'parent_url' ),
+				'url'            => $file->get_file_url( '.avif' ),
+				'parent_url'     => $file->get_parent_url(),
 				'filename'       => $file->get_filename() . '.avif',
-				'filesize'       => $file->get_file_pointer()->get( 'avif_filesize' ),
-				'filehash'       => $file->get_file_pointer()->get( 'avif_filehash' ),
+				'filesize'       => $file->get_file_pointer()->get_avif_filesize(),
+				'filehash'       => $file->get_file_pointer()->get_avif_filehash(),
 				'filetype'       => 'image/avif',
-				'width'          => $file->get( 'width' ),
-				'height'         => $file->get( 'height' ),
+				'width'          => $file->get_file_pointer()->get_width(),
+				'height'         => $file->get_file_pointer()->get_height(),
 				'filestatus'     => Urlslab_Driver::STATUS_ACTIVE,
 				'status_changed' => Urlslab_Data::get_now(),
 				'local_file'     => '',
@@ -163,7 +163,7 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 			),
 			false
 		);
-		$avif_file->set( 'fileid', $avif_file->get_fileid() ); //init file id
+		$avif_file->set_fileid( $avif_file->get_fileid() ); //init file id
 
 		if ( $avif_file->insert() ) {
 			return $avif_file;

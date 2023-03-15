@@ -15,23 +15,23 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 		}
 
 		$youtube_obj = new Urlslab_Youtube_Row( $youtube_row, true );
-		if ( $youtube_obj->get( 'status' ) != Urlslab_Youtube_Row::STATUS_NEW ) {
+		if ( $youtube_obj->get_status() != Urlslab_Youtube_Row::STATUS_NEW ) {
 			return true;
 		}
 
-		$youtube_obj->set( 'status', Urlslab_Youtube_Row::STATUS_PROCESSING );
+		$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_PROCESSING );
 		$youtube_obj->update();
 
 		$microdata = $this->get_youtube_microdata( $youtube_obj );
 		if ( $microdata ) {
 			//update status to active
-			$youtube_obj->set( 'status', Urlslab_Youtube_Row::STATUS_AVAILABLE );
-			$youtube_obj->set( 'microdata', $microdata );
+			$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_AVAILABLE );
+			$youtube_obj->set_microdata( $microdata );
 			$youtube_obj->update();
 
 			return true;
 		} else {
-			$youtube_obj->set( 'status', Urlslab_Youtube_Row::STATUS_NEW );
+			$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_NEW );
 			$youtube_obj->update();
 
 			//something went wrong, wait with next processing
@@ -53,7 +53,7 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 	}
 
 	private function get_youtube_microdata( Urlslab_Youtube_Row $youtube_obj ) {
-		$url      = 'https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet%2CcontentDetails&contentDetails.duration&id=' . $youtube_obj->get( 'videoid' ) . '&key=' . $this->get_youtube_key(); // json source
+		$url      = 'https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet%2CcontentDetails&contentDetails.duration&id=' . $youtube_obj->get_video_id() . '&key=' . $this->get_youtube_key(); // json source
 		$response = wp_remote_get( $url, array( 'sslverify' => false ) );
 		if ( ! is_wp_error( $response ) ) {
 			$value = json_decode( $response['body'] );

@@ -37,45 +37,45 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	public function __construct(
 		array $url = array(), $loaded_from_db = true
 	) {
-		$this->set( 'url_id', $url['url_id'] ?? 0, ! $loaded_from_db );
-		$this->set( 'url_name', $url['url_name'] ?? '', ! $loaded_from_db );
-		$this->set( 'scr_status', $url['scr_status'] ?? self::SCR_STATUS_NEW, ! $loaded_from_db );
-		$this->set( 'sum_status', $url['sum_status'] ?? self::SUM_STATUS_NEW, ! $loaded_from_db );
-		$this->set( 'http_status', $url['http_status'] ?? self::HTTP_STATUS_NOT_PROCESSED, ! $loaded_from_db );
-		$this->set( 'urlslab_domain_id', $url['urlslab_domain_id'] ?? 0, ! $loaded_from_db );
-		$this->set( 'urlslab_url_id', $url['urlslab_url_id'] ?? 0, ! $loaded_from_db );
-		$this->set( 'urlslab_scr_timestamp', $url['urlslab_scr_timestamp'] ?? 0, ! $loaded_from_db );
-		$this->set( 'urlslab_sum_timestamp', $url['urlslab_sum_timestamp'] ?? 0, ! $loaded_from_db );
-		$this->set( 'update_scr_date', $url['update_scr_date'] ?? Urlslab_Data::get_now(), ! $loaded_from_db );
-		$this->set( 'update_sum_date', $url['update_sum_date'] ?? Urlslab_Data::get_now(), ! $loaded_from_db );
-		$this->set( 'update_http_date', $url['update_http_date'] ?? Urlslab_Data::get_now(), ! $loaded_from_db );
-		$this->set( 'url_title', $url['url_title'] ?? '', ! $loaded_from_db );
-		$this->set( 'url_meta_description', $url['url_meta_description'] ?? '', ! $loaded_from_db );
-		$this->set( 'url_summary', $url['url_summary'] ?? '', ! $loaded_from_db );
-		$this->set( 'visibility', $url['visibility'] ?? self::VISIBILITY_VISIBLE, ! $loaded_from_db );
+		$this->set_url_id( $url['url_id'] ?? 0, $loaded_from_db );
+		$this->set_url_name( $url['url_name'] ?? '', $loaded_from_db );
+		$this->set_scr_status( $url['scr_status'] ?? self::SCR_STATUS_NEW, $loaded_from_db );
+		$this->set_sum_status( $url['sum_status'] ?? self::SUM_STATUS_NEW, $loaded_from_db );
+		$this->set_http_status( $url['http_status'] ?? self::HTTP_STATUS_NOT_PROCESSED, $loaded_from_db );
+		$this->set_urlslab_domain_id( $url['urlslab_domain_id'] ?? 0, $loaded_from_db );
+		$this->set_urlslab_url_id( $url['urlslab_url_id'] ?? 0, $loaded_from_db );
+		$this->set_urlslab_scr_timestamp( $url['urlslab_scr_timestamp'] ?? 0, $loaded_from_db );
+		$this->set_urlslab_sum_timestamp( $url['urlslab_sum_timestamp'] ?? 0, $loaded_from_db );
+		$this->set_update_scr_date( $url['update_scr_date'] ?? Urlslab_Data::get_now(), $loaded_from_db );
+		$this->set_update_sum_date( $url['update_sum_date'] ?? Urlslab_Data::get_now(), $loaded_from_db );
+		$this->set_update_http_date( $url['update_http_date'] ?? Urlslab_Data::get_now(), $loaded_from_db );
+		$this->set_url_title( $url['url_title'] ?? '', $loaded_from_db );
+		$this->set_url_meta_description( $url['url_meta_description'] ?? '', $loaded_from_db );
+		$this->set_url_summary( $url['url_summary'] ?? '', $loaded_from_db );
+		$this->set_visibility( $url['visibility'] ?? self::VISIBILITY_VISIBLE, $loaded_from_db );
 
 		$url_type = self::URL_TYPE_INTERNAL;
 		if ( isset( $url['url_type'] ) ) {
 			$url_type = $url['url_type'];
-		} else if ( strlen( $this->get( 'url_name' ) ) ) {
+		} else if ( strlen( $this->get_url_name() ) ) {
 			try {
 				$url_type = $this->get_url()->is_same_domain_url() ? self::URL_TYPE_INTERNAL : self::URL_TYPE_EXTERNAL;
 			} catch ( Exception $e ) {
 			}
 		}
-		$this->set( 'url_type', $url_type, ! $loaded_from_db );
+		$this->set_url_type( $url_type, $loaded_from_db );
 	}
 
-	function get_table_name(): string {
+	public function get_table_name(): string {
 		return URLSLAB_URLS_TABLE;
 	}
 
-	function get_primary_columns(): array {
+	public function get_primary_columns(): array {
 		return array( 'url_id' );
 	}
 
 	public function get_url(): Urlslab_Url {
-		return new Urlslab_Url( $this->get( 'url_name' ), true );
+		return new Urlslab_Url( $this->get_url_name(), true );
 	}
 
 	function get_columns(): array {
@@ -100,37 +100,182 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		);
 	}
 
-	public function get( $name ) {
-		switch ( $name ) {
-			case 'url_summary':
-				//continue to next option
-			case 'url_title':
-				//continue to next option
-			case 'url_meta_description':
-				if ( Urlslab_Url_Row::VALUE_EMPTY == parent::get( $name ) ) {
-					return '';
-				} //continue to next option
-			default:
-		}
-
-		return parent::get( $name );
+	public function get_url_id(): int {
+		return $this->get( 'url_id' );
 	}
 
-	public function get_summary( $strategy ): string {
+	public function get_url_name(): string {
+		return $this->get( 'url_name' );
+	}
+
+	public function get_scr_status(): string {
+		return $this->get( 'scr_status' );
+	}
+
+	public function get_sum_status(): string {
+		return $this->get( 'sum_status' );
+	}
+
+	public function get_http_status(): int {
+		return $this->get( 'http_status' );
+	}
+
+	public function get_urlslab_domain_id(): int {
+		return $this->get( 'urlslab_domain_id' );
+	}
+
+	public function get_urlslab_url_id(): int {
+		return $this->get( 'urlslab_url_id' );
+	}
+
+	public function get_urlslab_scr_timestamp(): int {
+		return $this->get( 'urlslab_scr_timestamp' );
+	}
+
+	public function get_urlslab_sum_timestamp(): int {
+		return $this->get( 'urlslab_sum_timestamp' );
+	}
+
+	public function get_update_scr_date(): string {
+		return $this->get( 'update_scr_date' );
+	}
+
+	public function get_update_sum_date(): string {
+		return $this->get( 'update_sum_date' );
+	}
+
+	public function get_update_http_date(): string {
+		return $this->get( 'update_http_date' );
+	}
+
+	public function get_url_title(): string {
+		if ( Urlslab_Url_Row::VALUE_EMPTY == $this->get( 'url_title' ) ) {
+			return '';
+		}
+
+		return $this->get( 'url_title' );
+	}
+
+	public function get_url_meta_description(): string {
+		if ( Urlslab_Url_Row::VALUE_EMPTY == $this->get( 'url_meta_description' ) ) {
+			return '';
+		}
+
+		return $this->get( 'url_meta_description' );
+	}
+
+	public function get_url_summary(): string {
+		if ( Urlslab_Url_Row::VALUE_EMPTY == $this->get( 'url_summary' ) ) {
+			return '';
+		}
+
+		return $this->get( 'url_summary' );
+	}
+
+	public function get_visibility(): string {
+		return $this->get( 'visibility' );
+	}
+
+	public function get_url_type(): string {
+		return $this->get( 'url_type' );
+	}
+
+	public function set_url_id( int $url_id, $loaded_from_db = false ): void {
+		$this->set( 'url_id', $url_id, $loaded_from_db );
+	}
+
+	public function set_url_name( string $url_name, $loaded_from_db = false ): void {
+		$this->set( 'url_name', $url_name, $loaded_from_db );
+	}
+
+	public function set_scr_status( string $scr_status, $loaded_from_db = false ): void {
+		$this->set( 'scr_status', $scr_status, $loaded_from_db );
+		if ( ! $loaded_from_db ) {
+			$this->set_update_scr_date( self::get_now() );
+		}
+	}
+
+	public function set_sum_status( string $sum_status, $loaded_from_db = false ): void {
+		$this->set( 'sum_status', $sum_status, $loaded_from_db );
+		if ( ! $loaded_from_db ) {
+			$this->set_update_sum_date( self::get_now() );
+		}
+	}
+
+	public function set_http_status( int $http_status, $loaded_from_db = false ): void {
+		$this->set( 'http_status', $http_status, $loaded_from_db );
+		if ( ! $loaded_from_db ) {
+			$this->set_update_http_date( self::get_now() );
+		}
+	}
+
+	public function set_urlslab_domain_id( int $urlslab_domain_id, $loaded_from_db = false ): void {
+		$this->set( 'urlslab_domain_id', $urlslab_domain_id, $loaded_from_db );
+	}
+
+	public function set_urlslab_url_id( int $urlslab_url_id, $loaded_from_db = false ): void {
+		$this->set( 'urlslab_url_id', $urlslab_url_id, $loaded_from_db );
+	}
+
+	public function set_urlslab_scr_timestamp( int $urlslab_scr_timestamp, $loaded_from_db = false ): void {
+		$this->set( 'urlslab_scr_timestamp', $urlslab_scr_timestamp, $loaded_from_db );
+	}
+
+	public function set_urlslab_sum_timestamp( int $urlslab_sum_timestamp, $loaded_from_db = false ): void {
+		$this->set( 'urlslab_sum_timestamp', $urlslab_sum_timestamp, $loaded_from_db );
+	}
+
+	public function set_update_scr_date( string $update_scr_date, $loaded_from_db = false ): void {
+		$this->set( 'update_scr_date', $update_scr_date, $loaded_from_db );
+	}
+
+	public function set_update_sum_date( string $update_sum_date, $loaded_from_db = false ): void {
+		$this->set( 'update_sum_date', $update_sum_date, $loaded_from_db );
+	}
+
+	public function set_update_http_date( string $update_http_date, $loaded_from_db = false ): void {
+		$this->set( 'update_http_date', $update_http_date, $loaded_from_db );
+	}
+
+	public function set_url_title( string $url_title, $loaded_from_db = false ): void {
+		$this->set( 'url_title', $url_title, $loaded_from_db );
+	}
+
+	public function set_url_meta_description( string $url_meta_description, $loaded_from_db = false ): void {
+		$this->set( 'url_meta_description', $url_meta_description, $loaded_from_db );
+	}
+
+	public function set_url_summary( string $url_summary, $loaded_from_db = false ): void {
+		$this->set( 'url_summary', $url_summary, $loaded_from_db );
+	}
+
+	public function set_visibility( string $visibility, $loaded_from_db = false ): void {
+		$this->set( 'visibility', $visibility, $loaded_from_db );
+	}
+
+	public function set_url_type( string $url_type, $loaded_from_db = false ): void {
+		$this->set( 'url_type', $url_type, $loaded_from_db );
+	}
+
+
+	public
+	function get_summary_text(
+		$strategy
+	): string {
 
 		switch ( $strategy ) {
 
 			case Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY:
-				if ( ! empty( trim( $this->get( 'url_summary' ) ) ) ) {
-					return trim( $this->get( 'url_summary' ) );
+				if ( ! empty( trim( $this->get_url_summary() ) ) ) {
+					return trim( $this->get_url_summary() );
 				} //continue to next option
 			case Urlslab_Link_Enhancer::DESC_TEXT_META_DESCRIPTION:
-				if ( ! empty( trim( $this->get( 'url_meta_description' ) ) ) ) {
-					return trim( $this->get( 'url_meta_description' ) );
+				if ( ! empty( trim( $this->get_url_meta_description() ) ) ) {
+					return trim( $this->get_url_meta_description() );
 				} //continue to next option
 			case Urlslab_Link_Enhancer::DESC_TEXT_TITLE:
-				if ( ! empty( trim( $this->get( 'url_title' ) ) ) ) {
-					return trim( $this->get( 'url_title' ) );
+				if ( ! empty( trim( $this->get_url_title() ) ) ) {
+					return trim( $this->get_url_title() );
 				} //continue to next option
 			case Urlslab_Link_Enhancer::DESC_TEXT_URL:
 			default:
@@ -165,8 +310,11 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	 *
 	 * @return string url of the schreenshot or empty string
 	 */
-	public function get_screenshot_url( string $screenshot_type = self::SCREENSHOT_TYPE_CAROUSEL ): string {
-		if ( empty( $this->get( 'urlslab_scr_timestamp' ) ) || empty( $this->get( 'urlslab_domain_id' ) ) || empty( $this->get( 'urlslab_url_id' ) ) ) {
+	public
+	function get_screenshot_url(
+		string $screenshot_type = self::SCREENSHOT_TYPE_CAROUSEL
+	): string {
+		if ( empty( $this->get_urlslab_scr_timestamp() ) || empty( $this->get_urlslab_domain_id() ) || empty( $this->get_urlslab_url_id() ) ) {
 			return '';
 		}
 		switch ( $screenshot_type ) {
@@ -187,9 +335,9 @@ class Urlslab_Url_Row extends Urlslab_Data {
 
 		return sprintf(
 			$path,
-			$this->get( 'urlslab_domain_id' ),
-			$this->get( 'urlslab_url_id' ),
-			$this->get( 'urlslab_scr_timestamp' )
+			$this->get_urlslab_domain_id(),
+			$this->get_urlslab_url_id(),
+			$this->get_urlslab_scr_timestamp()
 		);
 	}
 
@@ -198,16 +346,19 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	 *
 	 * @return bool
 	 */
-	public function is_http_valid() {
-		return ( 200 == $this->get( 'http_status' ) || 0 > $this->get( 'http_status' ) ) && $this->is_visible();
+	public
+	function is_http_valid() {
+		return ( 200 == $this->get_http_status() || 0 > $this->get_http_status() ) && $this->is_visible();
 	}
 
-	public function is_internal() {
-		return self::URL_TYPE_INTERNAL === $this->get( 'url_type' );
+	public
+	function is_internal() {
+		return self::URL_TYPE_INTERNAL === $this->get_url_type();
 	}
 
-	public function is_visible() {
-		return self::VISIBILITY_HIDDEN != $this->get( 'visibility' );
+	public
+	function is_visible() {
+		return self::VISIBILITY_HIDDEN != $this->get_visibility();
 	}
 
 
@@ -216,7 +367,10 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	 *
 	 * @return void
 	 */
-	public function insert_urls( $urls, $scr_status = self::SCR_STATUS_NEW, $sum_status = self::SUM_STATUS_NEW, $http_status = self::HTTP_STATUS_NOT_PROCESSED ): bool {
+	public
+	function insert_urls(
+		$urls, $scr_status = self::SCR_STATUS_NEW, $sum_status = self::SUM_STATUS_NEW, $http_status = self::HTTP_STATUS_NOT_PROCESSED
+	): bool {
 		if ( empty( $urls ) ) {
 			return true;
 		}

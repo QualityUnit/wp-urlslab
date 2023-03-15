@@ -27,14 +27,13 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 		}
 
 		$url = new Urlslab_Url_Row( $url_row );
-		if ( ! strlen( trim( $url->get( 'url_title' ) ) ) ) {
-			$url->set( 'url_title', Urlslab_Url_Row::VALUE_EMPTY );
+		if ( ! strlen( trim( $url->get_url_title() ) ) ) {
+			$url->set_url_title( Urlslab_Url_Row::VALUE_EMPTY );
 		}
-		if ( ! strlen( trim( $url->get( 'url_meta_description' ) ) ) ) {
-			$url->set( 'url_meta_description', Urlslab_Url_Row::VALUE_EMPTY );
+		if ( ! strlen( trim( $url->get_url_meta_description() ) ) ) {
+			$url->set_url_meta_description( Urlslab_Url_Row::VALUE_EMPTY );
 		}
-		$url->set( 'update_http_date', Urlslab_Url_Row::get_now() );
-		$url->set( 'http_status', Urlslab_Url_Row::HTTP_STATUS_PENDING );
+		$url->set_http_status( Urlslab_Url_Row::HTTP_STATUS_PENDING );
 		$url->update();    //lock the entry, so no other process will start working on it
 
 		return $this->updateUrl( $url );
@@ -45,13 +44,13 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 			$page_content_file_name = download_url( $url->get_url()->get_url_with_protocol() );
 
 			if ( is_wp_error( $page_content_file_name ) ) {
-				$url->set( 'url_title', Urlslab_Url_Row::VALUE_EMPTY );
-				$url->set( 'url_meta_description', Urlslab_Url_Row::VALUE_EMPTY );
-				$url->set( 'http_status', (int) $page_content_file_name->get_error_code() );
+				$url->set_url_title( Urlslab_Url_Row::VALUE_EMPTY );
+				$url->set_url_meta_description( Urlslab_Url_Row::VALUE_EMPTY );
+				$url->set_http_status( (int) $page_content_file_name->get_error_code() );
 			} else if ( empty( $page_content_file_name ) || ! file_exists( $page_content_file_name ) || 0 == filesize( $page_content_file_name ) ) {
-				$url->set( 'url_title', Urlslab_Url_Row::VALUE_EMPTY );
-				$url->set( 'url_meta_description', Urlslab_Url_Row::VALUE_EMPTY );
-				$url->set( 'http_status', 400 );
+				$url->set_url_title( Urlslab_Url_Row::VALUE_EMPTY );
+				$url->set_url_meta_description( Urlslab_Url_Row::VALUE_EMPTY );
+				$url->set_http_status( 400 );
 			} else {
 				$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
 				$document->encoding            = 'utf-8';
@@ -68,48 +67,47 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 
 
 					// find the title
-					if ( empty( $url->get( 'url_title' ) ) || $url->get( 'url_title' ) == Urlslab_Url_Row::VALUE_EMPTY ) {
+					if ( empty( $url->get_url_title() ) ) {
 						$titlelist = $document->getElementsByTagName( 'title' );
 						if ( $titlelist->length > 0 ) {
-							$url->set( 'url_title', $titlelist->item( 0 )->nodeValue );
-							if ( empty( $url->get( 'url_title' ) ) ) {
-								$url->set( 'url_title', Urlslab_Url_Row::VALUE_EMPTY );
+							$url->set_url_title( $titlelist->item( 0 )->nodeValue );
+							if ( empty( $url->get_url_title() ) ) {
+								$url->set_url_title( Urlslab_Url_Row::VALUE_EMPTY );
 							}
 						} else {
 							//try to load title from H1
 							$hlist = $document->getElementsByTagName( 'h1' );
 							if ( $hlist->length > 0 && strlen( $hlist->item( 0 )->nodeValue ) ) {
-								$url->set( 'url_title', $hlist->item( 0 )->nodeValue );
+								$url->set_url_title( $hlist->item( 0 )->nodeValue );
 							} else {
-								$url->set( 'url_title', Urlslab_Url_Row::VALUE_EMPTY );
+								$url->set_url_title( Urlslab_Url_Row::VALUE_EMPTY );
 							}
 						}
 					}
 
-					if ( empty( $url->get( 'url_meta_description' ) ) || $url->get( 'url_meta_description' ) == Urlslab_Url_Row::VALUE_EMPTY ) {
+					if ( empty( $url->get_url_meta_description() ) ) {
 						$xpath            = new DOMXPath( $document );
 						$metadescriptions = $xpath->evaluate( '//meta[@name="description"]/@content' );
 						if ( $metadescriptions->length > 0 ) {
-							$url->set( 'url_meta_description', $xpath->evaluate( '//meta[@name="description"]/@content' )->item( 0 )->value );
-							if ( empty( $url->get( 'url_meta_description' ) ) ) {
-								$url->set( 'url_meta_description', Urlslab_Url_Row::VALUE_EMPTY );
+							$url->set_url_meta_description( $xpath->evaluate( '//meta[@name="description"]/@content' )->item( 0 )->value );
+							if ( empty( $url->get_url_meta_description() ) ) {
+								$url->set_url_meta_description( Urlslab_Url_Row::VALUE_EMPTY );
 							}
 						} else {
-							$url->set( 'url_meta_description', Urlslab_Url_Row::VALUE_EMPTY );
+							$url->set_url_meta_description( Urlslab_Url_Row::VALUE_EMPTY );
 						}
 					}
-					$url->set( 'http_status', 200 );
+					$url->set_http_status( 200 );
 				} catch ( Exception $e ) {
-					$url->set( 'http_status', 400 );
+					$url->set_http_status( 400 );
 				}
 				unlink( $page_content_file_name );
 			}
 		} catch ( Exception $e ) {
-			$url->set( 'url_title', Urlslab_Url_Row::VALUE_EMPTY );
-			$url->set( 'url_meta_description', Urlslab_Url_Row::VALUE_EMPTY );
-			$url->set( 'http_status', 400 );
+			$url->set_url_title( Urlslab_Url_Row::VALUE_EMPTY );
+			$url->set_url_meta_description( Urlslab_Url_Row::VALUE_EMPTY );
+			$url->set_http_status( 400 );
 		}
-		$url->set( 'update_http_date', Urlslab_Url_Row::get_now() );
 
 		return $url->update();
 	}

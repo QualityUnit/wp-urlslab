@@ -66,8 +66,8 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 			foreach ( $css_links as $link_object ) {
 				if ( isset( $links[ $link_object->getAttribute( 'href' ) ] ) && isset( $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ] ) ) {
 					$css_object = $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ];
-					if ( $css_object->get( 'status' ) == Urlslab_CSS_Cache_Row::STATUS_ACTIVE && $this->get_option( self::SETTING_NAME_CSS_MAX_SIZE ) > $css_object->get( 'filesize' ) ) {
-						$new_elm = $document->createElement( 'style', $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ]->get( 'css_content' ) );
+					if ( $css_object->get_status() == Urlslab_CSS_Cache_Row::STATUS_ACTIVE && $this->get_option( self::SETTING_NAME_CSS_MAX_SIZE ) > $css_object->get_filesize() ) {
+						$new_elm = $document->createElement( 'style', $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ]->get_css_content() );
 						$new_elm->setAttribute( 'type', 'text/css' );
 						if ( $link_object->hasAttribute( 'media' ) ) {
 							$new_elm->setAttribute( 'media', $link_object->getAttribute( 'media' ) );

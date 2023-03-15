@@ -8,17 +8,17 @@ abstract class Urlslab_Data {
 		return $this->data;
 	}
 
-	public function set( $name, $value, $is_changed = true ) {
+	protected function set( $name, $value, $loaded_from_db ) {
 		if ( isset( $this->data[ $name ] ) && $this->data[ $name ] == $value ) {
 			return false;
 		}
 		$this->data[ $name ] = $value;
-		if ( $is_changed && isset( $this->get_columns()[ $name ] ) ) {
+		if ( ! $loaded_from_db && isset( $this->get_columns()[ $name ] ) ) {
 			$this->changed[ $name ] = true;
 		}
 	}
 
-	public function get( $name ) {
+	protected function get( $name ) {
 		return $this->data[ $name ] ?? false;
 	}
 
