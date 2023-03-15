@@ -92,13 +92,16 @@ export default function ModuleViewHeaderBottom( { currentFilters, noImport, noEx
 				<div className="ma-left flex flex-align-center">
 					<strong>{ __( 'Sort by:' ) }</strong>
 					<SortMenu className="menu-left ml-s" checkedId={ defaultSortBy } items={ sortItems } name="sorting" onChange={ ( val ) => onSort( val ) } />
-					<small className="urlslab-rowcount ml-l flex flex-align-center">
-						{ __( 'Rows: ' ) }
-						{ rowCount && ! noCount
-							? rowCount
-							: <Loader className="noText small" />
-						}
-					</small>
+					{
+						! noCount &&
+						<small className="urlslab-rowcount ml-l flex flex-align-center">
+							{ __( 'Rows: ' ) }
+							{ rowCount
+								? rowCount
+								: <Loader className="noText small" />
+							}
+						</small>
+					}
 				</div>
 			</div>
 			{

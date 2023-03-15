@@ -22,13 +22,19 @@ export default function SchedulesTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, pageId, currentFilters, sortingColumn } );
 
-	// const booleanTypes = {
-	// 	true: __( 'True' ),
-	// 	false: __( 'Processed' ),
-	// 	P: __( 'Pending' ),
-	// 	U: __( 'Updating' ),
-	// 	E: __( 'Error' ),
-	// };
+	const followLinksTypes = {
+		FOLLOW_ALL_LINKS: __( 'Follow all links' ),
+		FOLLOW_NO_LINK: __( 'Do not follow' ),
+	};
+
+	const scanFrequencyTypes = {
+		ONE_TIME: 'One Time',
+		YEARLY: 'Yearly',
+		MONTHLY: 'Monthly',
+		DAILY: 'Daily',
+		WEEKLY: 'Weekly',
+		HOURLY: 'Hourly',
+	};
 
 	const header = {
 		analyze_text: __( 'Analyze text' ),
@@ -49,27 +55,31 @@ export default function SchedulesTable( { slug } ) {
 			header: null,
 		} ),
 		columnHelper?.accessor( 'analyze_text', {
+			cell: ( cell ) => <Checkbox readOnly className="readOnly" checked={ cell.getValue() } />,
 			header: header.analyze_text,
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'follow_links', {
-			cell: ( cell ) => cell?.getValue(),
+			cell: ( cell ) => followLinksTypes[ cell?.getValue() ],
 			header: header.follow_links,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'process_all_sitemaps', {
+			cell: ( cell ) => <Checkbox readOnly className="readOnly" checked={ cell.getValue() } />,
 			header: header.process_all_sitemaps,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'scan_frequency', {
+			cell: ( cell ) => scanFrequencyTypes[ cell?.getValue() ],
 			header: header.scan_frequency,
 			size: 90,
 		} ),
 		columnHelper.accessor( 'scan_speed_per_minute', {
 			header: header.scan_speed_per_minute,
-			size: 90,
+			size: 120,
 		} ),
 		columnHelper?.accessor( 'take_screenshot', {
+			cell: ( cell ) => <Checkbox readOnly className="readOnly" checked={ cell.getValue() } />,
 			header: header.take_screenshot,
 			size: 90,
 		} ),
@@ -99,17 +109,11 @@ export default function SchedulesTable( { slug } ) {
 				currentFilters={ currentFilters }
 				header={ header }
 				noCount
+				noExport
+				noDelete
 				// removeFilters={ ( key ) => removeFilters( key ) }
 				// defaultSortBy="url_name&ASC"
 				onSort={ ( val ) => sortBy( val ) }
-				// exportOptions={ {
-				// 	url: slug,
-				// 	filters,
-				// 	fromId: `from_${ pageId }`,
-				// 	pageId,
-				// 	deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
-				// 	perPage: 1000,
-				// } }
 			/>
 			<Table className="fadeInto" columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }

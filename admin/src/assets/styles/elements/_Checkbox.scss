@@ -7,6 +7,10 @@
 	align-content: center;
 	cursor: pointer;
 
+	&.readOnly {
+		cursor: default;
+	}
+
 	&-box {
 
 		@include square(1rem);

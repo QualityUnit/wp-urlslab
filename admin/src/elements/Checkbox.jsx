@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import '../assets/styles/elements/_Checkbox.scss';
 
-export default function Checkbox( { checked, radial, name, className, onChange, textBefore, children } ) {
+export default function Checkbox( { checked, readOnly, radial, name, className, onChange, textBefore, children } ) {
 	const [ isChecked, setChecked ] = useState( checked ? true : false );
 	const handleOnChange = ( event ) => {
-		if ( onChange ) {
+		if ( onChange && ! readOnly ) {
 			onChange( event.target.checked );
 		}
-		setChecked( event.target.checked );
+		if ( ! readOnly ) {
+			setChecked( event.target.checked );
+		}
 	};
 	return (
 		<label className={ `urlslab-checkbox ${ className || '' } ${ textBefore ? 'textBefore' : '' } ${ radial ? 'radial' : '' }` }>
