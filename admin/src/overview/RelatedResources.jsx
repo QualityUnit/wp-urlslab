@@ -37,7 +37,13 @@ export default function RelatedResourcesOverview() {
 				All is running on the background in the cron to keep your website fast.<br/>
 				Once the data are loaded by cron, shortcode will start showing related resource widget (otherwise it will be empty til the data are processed).<br/>
 				Processing can take up to few days.</p>
-
+			<h3>Why do I need this module?</h3>
+			<p>
+				Internal link building is the most important part of good SEO strategy.<br/>
+				We help to build internal link building in fully automated way for websites with large scale.<br/>
+				Thanks to powerful summarization algorithm we are able to enhance your content with new keywords and phrases.<br/>
+				As result of this strategy (each link contains additional text of summarizations) will grow number of keywords (long tails) where your website ranks in top 100 on Google or other search engines.
+			</p>
 		</>
 	);
 }
