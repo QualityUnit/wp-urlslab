@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { useFilter, useSorting } from '../hooks/filteringSorting';
 import { useChangeRow } from '../hooks/useChangeRow';
 
-export default function useTableUpdater() {
+export default function useTableUpdater( { slug } ) {
 	const [ tableHidden, setHiddenTable ] = useState( false );
 	const [ rowToInsert, setInsertRow ] = useState( {} );
-	const { filters, currentFilters, addFilter, removeFilters } = useFilter();
-	const { sortingColumn, sortBy } = useSorting();
+	const { filters, currentFilters, addFilter, removeFilters } = useFilter( { slug } );
+	const { sortingColumn, sortBy } = useSorting( { slug } );
 	const { row, deleteRow, updateRow } = useChangeRow();
 
 	return {

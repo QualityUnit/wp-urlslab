@@ -1,4 +1,4 @@
-import { useState, Suspense } from 'react';
+import { useMemo, useState, Suspense } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
@@ -21,13 +21,17 @@ export default function App() {
 		queryFn: async () => {
 			return await fetchLangs();
 		},
+		refetchOnWindowFocus: false,
 	} );
-	const { data: fetchedModules } = useQuery( {
+	const { data } = useQuery( {
 		queryKey: [ 'modules' ],
 		queryFn: () => fetchData( 'module' ).then( ( ModuleData ) => {
 			return ModuleData;
 		} ),
+		refetchOnWindowFocus: false,
 	} );
+
+	const fetchedModules = useMemo( () => data, [ data ] );
 
 	const [ pageTitle, setTitle ] = useState( __( 'Modules' ) );
 

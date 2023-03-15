@@ -19,6 +19,7 @@ export default function Settings( { className, settingId } ) {
 				return queryClient.getQueryData( [ 'settings', 'general' ] );
 			}
 		},
+		refetchOnWindowFocus: false,
 	} );
 	let settings = useMemo( () => {
 		return data;

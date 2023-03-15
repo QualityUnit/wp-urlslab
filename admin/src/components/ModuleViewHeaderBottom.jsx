@@ -22,6 +22,7 @@ export default function ModuleViewHeaderBottom( { currentFilters, noImport, noEx
 	const queryClient = useQueryClient();
 	const activeFilters = Object.keys( currentFilters );
 	const [ activePanel, setActivePanel ] = useState();
+
 	const currentCountFilters = exportOptions.filters.replace( '&', '?' );
 
 	const { data: rowCount } = useQuery( {
@@ -29,6 +30,7 @@ export default function ModuleViewHeaderBottom( { currentFilters, noImport, noEx
 		queryFn: () => fetchData( `${ slug }/count${ currentCountFilters }` ).then( ( count ) => {
 			return count;
 		} ),
+		refetchOnWindowFocus: false,
 	} );
 
 	const sortItems = useMemo( () => {

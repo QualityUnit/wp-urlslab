@@ -9,6 +9,10 @@ import {
 
 import App from './App';
 
+import { clear } from 'idb-keyval';
+
+clear();
+
 const queryClient = new QueryClient( {
 	defaultOptions: {
 		queries: {

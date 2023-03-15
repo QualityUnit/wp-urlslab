@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-
+import { useMemo } from 'react';
 import {
 	useInfiniteFetch, handleSelected, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
@@ -7,21 +7,22 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function KeywordsTable( { slug } ) {
-	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater();
+	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
 
-	const url = `${ filters }${ sortingColumn }`;
+	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 	const pageId = 'kw_id';
 
 	const {
 		__,
 		columnHelper,
 		data,
+		activeFilters,
 		status,
 		isSuccess,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, pageId } );
+	} = useInfiniteFetch( { key: slug, url, pageId, currentFilters, sortingColumn } );
 
 	// const myRowObject = {
 	// 	kw_id: 0,
@@ -83,7 +84,7 @@ export default function KeywordsTable( { slug } ) {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => <MenuInput isFilter placeholder="Filter priority" defaultValue={ currentFilters.kw_priority } onChange={ ( val ) => addFilter( 'kw_priority', val ) }>{ header.kw_length }</MenuInput>,
+			header: () => <MenuInput isFilter placeholder="Filter priority" defaultValue={ currentFilters.kw_priority } onChange={ ( val ) => addFilter( 'kw_priority', val ) }>{ header.kw_priority }</MenuInput>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'lang', {
@@ -131,7 +132,7 @@ export default function KeywordsTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				slug={ slug }
-				currentFilters={ currentFilters }
+				currentFilters={ activeFilters ? activeFilters : currentFilters }
 				header={ header }
 				removeFilters={ ( key ) => removeFilters( key ) }
 				onSort={ ( val ) => sortBy( val ) }
