@@ -19,21 +19,16 @@ class Urlslab_Available_Widgets {
 		return self::$instance;
 	}
 
-	/**
-	 * @param Urlslab_Url_Data_Fetcher $url_fetcher
-	 *
-	 * @return void
-	 */
-	public function init_widgets( Urlslab_Url_Data_Fetcher $url_fetcher ) {
+	public function init_widgets() {
 		$urlslab_general            = new Urlslab_General();
 		$urlslab_optimize           = new Urlslab_Optimize();
-		$urlslab_screenshot         = new Urlslab_Screenshot_Widget( $url_fetcher );
+		$urlslab_screenshot         = new Urlslab_Screenshot_Widget();
 		$urlslab_related_resources  = new Urlslab_Related_Resources_Widget();
-		$urlslab_link_enhancer      = new Urlslab_Link_Enhancer( $url_fetcher );
-		$urlslab_keyword_links      = new Urlslab_Keywords_Links( $url_fetcher );
+		$urlslab_link_enhancer      = new Urlslab_Link_Enhancer();
+		$urlslab_keyword_links      = new Urlslab_Keywords_Links();
 		$urlslab_image_alt_text     = new Urlslab_Image_Alt_Text();
-		$urlslab_og_meta_tag        = new Urlslab_Meta_Tag( $url_fetcher );
-		$urlslab_media_offloader    = new Urlslab_Media_Offloader_Widget( $url_fetcher );
+		$urlslab_og_meta_tag        = new Urlslab_Meta_Tag();
+		$urlslab_media_offloader    = new Urlslab_Media_Offloader_Widget();
 		$urlslab_lazy_loading       = new Urlslab_Lazy_Loading();
 		$urlslab_css_optimizer      = new Urlslab_CSS_Optimizer();
 		$urlslab_search_and_replace = new Urlslab_Search_Replace();

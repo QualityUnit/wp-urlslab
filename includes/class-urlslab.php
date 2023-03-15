@@ -29,12 +29,6 @@
  */
 class Urlslab {
 
-
-	/**
-	 * @var Urlslab_Url_Data_Fetcher
-	 */
-	private Urlslab_Url_Data_Fetcher $url_data_fetcher;
-
 	/**
 	 * The unique identifier of this plugin.
 	 *
@@ -82,19 +76,6 @@ class Urlslab {
 	}
 
 	/**
-	 * @return int
-	 */
-	public static function get_installation_id() {
-		$installation_id = self::get_option( 'installation_id' );
-		if ( is_bool( $installation_id ) && ! $installation_id ) {
-			$installation_id = rand();
-			self::update_option( 'installation_id', $installation_id );
-		}
-
-		return $installation_id;
-	}
-
-	/**
 	 *
 	 * updates wp_option for URLSLAB plugin
 	 */
@@ -105,19 +86,6 @@ class Urlslab {
 		update_option( 'urlslab', $option );
 	}
 
-
-	public function init_urlslab_user() {
-		$urlslab_available_widgets = Urlslab_Available_Widgets::get_instance();
-		$this->url_data_fetcher    = new Urlslab_Url_Data_Fetcher();
-		$urlslab_available_widgets->init_widgets( $this->url_data_fetcher );
-		$urlslab_user_widget = Urlslab_User_Widget::get_instance();
-
-		if ( ! empty( $api_key ) ) {
-			$urlslab_user_widget->add_api_key(
-				new Urlslab_Api_Key( $api_key )
-			);
-		}
-	}
 
 	/**
 	 * Load the required dependencies for this plugin.
@@ -170,7 +138,6 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-url-relation-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-file-pointer-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-youtube-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-api-key.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-url-data-fetcher.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-search-replace-row.php';
 
@@ -447,7 +414,7 @@ class Urlslab {
 	public function run() {
 		$this->load_dependencies();
 		$this->set_locale();
-		$this->init_urlslab_user();
+		Urlslab_Available_Widgets::get_instance()->init_widgets();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		$this->define_backend_hooks();

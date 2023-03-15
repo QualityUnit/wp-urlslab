@@ -76,13 +76,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 
 	private $files = array();
-	private Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher;
-
-	/**
-	 */
-	public function __construct( Urlslab_Url_Data_Fetcher $urlslab_url_data_fetcher ) {
-		$this->urlslab_url_data_fetcher = $urlslab_url_data_fetcher;
-	}
 
 
 	public function init_widget() {
@@ -366,7 +359,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				);
 
 				try {
-					$this->urlslab_url_data_fetcher->fetch_schedule_url( $this->get_current_page_url() );
+					Urlslab_Url_Data_Fetcher::get_instance()->fetch_schedule_url( $this->get_current_page_url() );
 				} catch ( Exception $e ) {
 				}
 			}
