@@ -17,19 +17,23 @@ import ExportPanel from './ExportPanel';
 import ImportPanel from './ImportPanel';
 import DangerPanel from './DangerPanel';
 
-export default function ModuleViewHeaderBottom( { currentFilters, noImport, noExport, noDelete, header, removeFilters, slug, exportOptions, onSort } ) {
+export default function ModuleViewHeaderBottom( { currentFilters, noImport, noExport, noCount, noDelete, header, removeFilters, slug, exportOptions, defaultSortBy, onSort } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const activeFilters = Object.keys( currentFilters );
 	const [ activePanel, setActivePanel ] = useState();
 
-	const currentCountFilters = exportOptions.filters.replace( '&', '?' );
+	const currentCountFilters = exportOptions?.filters?.replace( '&', '?' );
 
 	const { data: rowCount } = useQuery( {
 		queryKey: [ slug, `count${ currentCountFilters }` ],
-		queryFn: () => fetchData( `${ slug }/count${ currentCountFilters }` ).then( ( count ) => {
-			return count;
-		} ),
+		queryFn: () => {
+			if ( ! noCount ) {
+				fetchData( `${ slug }/count${ currentCountFilters }` ).then( ( count ) => {
+					return count;
+				} );
+			}
+		},
 		refetchOnWindowFocus: false,
 	} );
 
@@ -87,10 +91,10 @@ export default function ModuleViewHeaderBottom( { currentFilters, noImport, noEx
 				}
 				<div className="ma-left flex flex-align-center">
 					<strong>{ __( 'Sort by:' ) }</strong>
-					<SortMenu className="menu-left ml-s" items={ sortItems } name="sorting" onChange={ ( val ) => onSort( val ) } />
+					<SortMenu className="menu-left ml-s" checkedId={ defaultSortBy } items={ sortItems } name="sorting" onChange={ ( val ) => onSort( val ) } />
 					<small className="urlslab-rowcount ml-l flex flex-align-center">
 						{ __( 'Rows: ' ) }
-						{ rowCount
+						{ rowCount && ! noCount
 							? rowCount
 							: <Loader className="noText small" />
 						}

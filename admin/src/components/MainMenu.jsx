@@ -80,6 +80,7 @@ export default function MainMenu( { activeModule, modules, activePage, module } 
 							<span>{ __( 'Settings' ) }</span>
 						</button>
 					</li>
+					<li className="urlslab-mainmenu-item">&nbsp;</li>
 				</ul>
 
 				<ul className="urlslab-mainmenu-menu">
@@ -122,6 +123,19 @@ export default function MainMenu( { activeModule, modules, activePage, module } 
 							onClick={ () => handleActive( 'urlslab-settings' ) }>
 							<span>{ __( 'Settings' ) }</span>
 						</button>
+					</li>
+					<li key="urlslab-schedule"
+						className={ `urlslab-mainmenu-item submenu ${ activator( 'urlslab-schedule' ) }` }>
+						<ul className="urlslab-mainmenu-submenu">
+							<li className={ `urlslab-mainmenu-item` }>
+								<button
+									type="button"
+									className="urlslab-mainmenu-btn"
+									onClick={ () => handleActive( 'urlslab-schedule' ) }>
+									<span>{ __( 'Schedules' ) }</span>
+								</button>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</div>

@@ -43,7 +43,10 @@ export default function App() {
 		if ( selectedModule === 'urlslab-settings' ) {
 			setTitle( __( 'Settings' ) );
 		}
-		if ( selectedModule !== 'urlslab-modules' && selectedModule !== 'urlslab-settings' ) {
+		if ( selectedModule === 'urlslab-schedule' ) {
+			setTitle( __( 'Schedules' ) );
+		}
+		if ( selectedModule !== 'urlslab-modules' && selectedModule !== 'urlslab-settings' && selectedModule !== 'urlslab-schedule' ) {
 			setTitle( fetchedModules[ selectedModule ].title );
 		}
 	};
