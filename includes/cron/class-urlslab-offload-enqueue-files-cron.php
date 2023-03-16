@@ -50,4 +50,8 @@ class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
 
 		return true;
 	}
+
+	public function get_description(): string {
+		return __( 'Offloading scheduled files to remote storage', 'urlslab' );
+	}
 }

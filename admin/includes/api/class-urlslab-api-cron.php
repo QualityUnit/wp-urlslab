@@ -2,7 +2,7 @@
 
 class Urlslab_Api_Cron extends Urlslab_Api_Base {
 	public function register_routes() {
-		$base      = '/cron';
+		$base = '/cron';
 		register_rest_route(
 			self::NAMESPACE,
 			$base,
@@ -34,7 +34,10 @@ class Urlslab_Api_Cron extends Urlslab_Api_Base {
 		try {
 			$data = array();
 			foreach ( Urlslab_Cron_Manager::get_instance()->get_cron_tasks() as $task ) {
-				$data[] = get_class( $task );
+				$data[] = (object) array(
+					'cron_task'   => get_class( $task ),
+					'description' => $task->get_description(),
+				);
 			}
 
 			return new WP_REST_Response( $data, 200 );

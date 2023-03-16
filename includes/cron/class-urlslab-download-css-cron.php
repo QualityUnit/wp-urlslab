@@ -76,4 +76,8 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 
 		return $css->update();
 	}
+
+	public function get_description(): string {
+		return __( 'Downloading scheduled CSS files for CSS caching', 'urlslab' );
+	}
 }

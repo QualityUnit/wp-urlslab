@@ -88,4 +88,8 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 
 		return $some_urls_updated;    //100 URLs per execution is enought if there was no url updated
 	}
+
+	public function get_description(): string {
+		return __( 'Syncing URLSLAB Screenshots from www.urlslab.com to local database', 'urlslab' );
+	}
 }

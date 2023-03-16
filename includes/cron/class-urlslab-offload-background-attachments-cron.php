@@ -57,4 +57,8 @@ class Urlslab_Offload_Background_Attachments_Cron extends Urlslab_Cron {
 
 		return 0;
 	}
+
+	public function get_description(): string {
+		return __( 'Offloading background attachments from Wordpress Media', 'urlslab' );
+	}
 }

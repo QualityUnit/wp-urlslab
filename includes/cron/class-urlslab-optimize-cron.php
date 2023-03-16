@@ -163,9 +163,13 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 
 	private function optimize_orphaned_comment_metadata() {
 		global $wpdb;
-		$table       = $wpdb->prefix . 'commentmeta';
+		$table          = $wpdb->prefix . 'commentmeta';
 		$table_comments = $wpdb->prefix . 'comments';
 
 		return $wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE comment_id NOT IN (SELECT comment_id FROM $table_comments) LIMIT %d", self::DELETE_LIMIT ) ); // phpcs:ignore
+	}
+
+	public function get_description(): string {
+		return __( 'Optimizing database size', 'urlslab' );
 	}
 }
