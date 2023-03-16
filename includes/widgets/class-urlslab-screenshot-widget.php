@@ -28,7 +28,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return __( 'Screenshot' );
+		return __( 'Automated Screenshots' );
 	}
 
 	/**
