@@ -53,4 +53,8 @@ class Urlslab_Offload_Transfer_Files_Cron extends Urlslab_Cron {
 			$latest_file_driver
 		);
 	}
+
+	public function get_description(): string {
+		return __( 'Transfering files scheduled for transfer to the new file driver', 'urlslab' );
+	}
 }

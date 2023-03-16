@@ -111,4 +111,8 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 
 		return $url->update();
 	}
+
+	public function get_description(): string {
+		return __( 'Checking HTTP status of scheduled urls in plugin database', 'urlslab' );
+	}
 }

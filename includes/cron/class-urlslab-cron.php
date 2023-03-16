@@ -8,6 +8,8 @@ abstract class Urlslab_Cron {
 		$this->start_time = time();
 	}
 
+	abstract public function get_description(): string;
+
 	abstract protected function execute(): bool;
 
 	public function cron_exec( $max_execution_time = self::MAX_RUN_TIME ) {
