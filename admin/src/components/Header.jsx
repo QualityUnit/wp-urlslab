@@ -15,42 +15,43 @@ export default function Header( { pageTitle } ) {
 	const [ panelActive, setPanelActive ] = useState( false );
 
 	const handleCronRunner = () => {
+		let controller;
 		setCronRun( ! cronRunning );
-
 		runCron.current = ! runCron.current;
 
+		async function cronAll( cronTasks ) {
+			controller = new AbortController();
+			if ( ! runCron.current ) {
+				controller.abort();
+			}
+			const result = await fetch( '/wp-json/urlslab/v1/cron/all', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					accept: 'application/json',
+					'X-WP-Nonce': window.wpApiSettings.nonce,
+				},
+				credentials: 'include',
+				signal: controller.signal,
+			} ).then( ( response ) => response.json() ).catch( ( error ) => {
+				throw error;
+			} );
+
+			const okResult = result?.filter( ( task ) => task.exec_time >= 5 );
+
+			if ( okResult?.length ) {
+				cronTasks( result );
+				cronAll( cronTasks );
+			}
+			if ( ! okResult?.length ) {
+				setInterval( () => cronAll( cronTasks ), 5000 );
+			}
+			return false;
+		}
 		if ( runCron.current ) {
 			cronAll( ( cronTasks ) => setCronTasks( cronTasks ) );
 		}
 	};
-
-	async function cronAll( cronTasks ) {
-		const controller = new AbortController();
-		if ( ! runCron.current ) {
-			controller.abort();
-		}
-		const result = await fetch( '/wp-json/urlslab/v1/cron/all', {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				accept: 'application/json',
-				'X-WP-Nonce': window.wpApiSettings.nonce,
-			},
-			credentials: 'include',
-			signal: controller.signal,
-		} ).then( ( response ) => response.json() ).catch( ( e ) => console.log( e ) );
-
-		const okResult = result?.filter( ( task ) => task.exec_time >= 5 );
-
-		if ( okResult?.length ) {
-			cronTasks( result );
-			cronAll( cronTasks );
-		}
-		if ( ! okResult?.length ) {
-			setInterval( () => cronAll( cronTasks ), 5000 );
-		}
-		return false;
-	}
 
 	useEffect( () => {
 		if ( cronTasksResult?.length ) {
