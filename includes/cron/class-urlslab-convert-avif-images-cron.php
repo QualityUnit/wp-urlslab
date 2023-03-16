@@ -172,7 +172,7 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 		return null;
 	}
 
-	public function get_description():string {
-		return __('Converting images to AVIF format');
+	public function get_description(): string {
+		return __( 'Converting images to AVIF format' );
 	}
 }

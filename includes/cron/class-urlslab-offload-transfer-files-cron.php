@@ -5,21 +5,21 @@ class Urlslab_Offload_Transfer_Files_Cron extends Urlslab_Cron {
 
 	protected function execute(): bool {
 		$latest_file_driver = get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_NEW_FILE_DRIVER );
-		$data = array(
+		$data               = array(
 			$latest_file_driver,
 		);
-		$placeholders = array();
+		$placeholders       = array();
 
 		if ( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_DB, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB ) ) {
-			$data[] = Urlslab_Driver::DRIVER_DB;
+			$data[]         = Urlslab_Driver::DRIVER_DB;
 			$placeholders[] = '%s';
 		}
 		if ( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_S3, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_S3 ) ) {
-			$data[] = Urlslab_Driver::DRIVER_S3;
+			$data[]         = Urlslab_Driver::DRIVER_S3;
 			$placeholders[] = '%s';
 		}
 		if ( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_LOCAL_FILES ) ) {
-			$data[] = Urlslab_Driver::DRIVER_LOCAL_FILE;
+			$data[]         = Urlslab_Driver::DRIVER_LOCAL_FILE;
 			$placeholders[] = '%s';
 		}
 
@@ -39,7 +39,7 @@ class Urlslab_Offload_Transfer_Files_Cron extends Urlslab_Cron {
        					 p.webp_filehash AS webp_filehash,
        					 p.avif_filehash AS avif_filehash,
        					 p.webp_filesize AS webp_filesize,
-       					 p.avif_filesize AS avif_filesize FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON f.filehash=p.filehash AND f.filesize=p.filesize WHERE p.driver <> %s AND p.driver IN (' . implode(',', $placeholders) . ') LIMIT 1', // phpcs:ignore
+       					 p.avif_filesize AS avif_filesize FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON f.filehash=p.filehash AND f.filesize=p.filesize WHERE p.driver <> %s AND p.driver IN (' . implode( ',', $placeholders ) . ') LIMIT 1', // phpcs:ignore
 				$data
 			),
 			ARRAY_A
