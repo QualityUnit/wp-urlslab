@@ -182,7 +182,7 @@ abstract class Urlslab_Data {
 		return true;
 	}
 
-	public function import( array $rows, $on_duplicate_update_columns = true, $ignore = false ): int {
+	public function import( array $rows, $on_duplicate_update_columns = true, $ignore = true ): int {
 		$on_duplicate = array();
 		if ( $on_duplicate_update_columns ) {
 			foreach ( $this->get_columns() as $column => $format ) {

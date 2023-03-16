@@ -260,7 +260,11 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$currentUrl           = $this->get_current_page_url()->get_url_with_protocol();
 
 		foreach ( $results as $row ) {
-			if ( isset( $this->page_keywords[ $row['keyword'] ] ) ) {
+			if (empty($row['keyword'])) {
+				continue;
+			}
+
+			if (isset( $this->page_keywords[ $row['keyword'] ] ) ) {
 				$this->page_keywords[ $row['keyword'] ]['kw_id'] = $row['kw_id'];
 			}
 			if (
