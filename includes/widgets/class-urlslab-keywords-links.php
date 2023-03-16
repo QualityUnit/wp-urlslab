@@ -72,14 +72,14 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return __( 'Linkbuilding' );
+		return __( 'Keywords Manager' );
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( '(SEO) Create links from keywords that appear in website content and link those keywords with relevant pages.' );
+		return __( 'Improve the website\'s SEO and internal link building with a complex module for managing keyword linking' );
 	}
 
 	private function replaceKeywordWithLinks( DOMText $node, DOMDocument $document, array $keywords, int $position_start, $position_end, $min_text_len, $max_paragraph_density_links ) {

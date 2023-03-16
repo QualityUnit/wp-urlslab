@@ -39,7 +39,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	public function get_widget_description(): string {
-		return __( '(Speed) Lazy Loading improves loading speed of your website. All not needed content is loaded later once visitor needs it.' );
+		return __( 'Increase website speed rapidly by lazy loading images, videos, iframes, and large portions of content' );
 	}
 
 	public function the_content( DOMDocument $document ) {

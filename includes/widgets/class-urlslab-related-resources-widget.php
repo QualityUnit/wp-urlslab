@@ -6,7 +6,6 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	const SLUG = 'urlslab-related-resources';
 
 	const SETTING_NAME_UPDATE_FREQ = 'urlslab-rel-res-update-freq';
-	const SETTING_NAME_RELATED_RESOURCES_SCHEDULING = 'urlslab-rel-res-scheduling';
 
 
 	public function init_widget() {
@@ -28,14 +27,14 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return __( 'Related Resources' );
+		return __( 'Related Articles' );
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( '(SEO) Connect pages within content cluster with Related Resources widget to link contextually similar pages. Improve Internal linkbuilding with zero effort.' );
+		return __( 'Enhance the onsite SEO and internal link structure by creating pairs of related pages (content clusters)' );
 	}
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
@@ -107,8 +106,8 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				return '';
 			}
 
-			if (false !== $urlslab_atts['show-summary'] && Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY == $strategy) {
-				$strategy = Urlslab_Link_Enhancer::DESC_TEXT_META_DESCRIPTION;	//if we display text of summary under link, we should use metadescription for alt text and title
+			if ( false !== $urlslab_atts['show-summary'] && Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY == $strategy ) {
+				$strategy = Urlslab_Link_Enhancer::DESC_TEXT_META_DESCRIPTION;    //if we display text of summary under link, we should use metadescription for alt text and title
 			}
 
 			return '<div class="urlslab-rel-res-item">' .
@@ -121,7 +120,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				   ( false !== $urlslab_atts['show-summary'] ? '<p  class="urlslab-rel-res-item-summary">' . esc_html( $url_obj->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY ) ) . '</p>' : '' ) .
 				   '</div></a>' .
 				   '</div>';
-		} catch (Exception $e) {
+		} catch ( Exception $e ) {
 			//in case of invalid link
 			return '';
 		}
@@ -144,12 +143,13 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
+		$this->add_options_form_section( 'synchronization', __( 'Synchronization' ), __( 'Relations between articles are computed by urlslab automatically during page indexing. Plugin should load the most current relations periodically as your content change over time.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_UPDATE_FREQ,
 			2419200,
 			false,
-			__( 'Update frequency' ),
-			__( 'Define how often should be updated semantic relation between URLs from www.urlslab.com. If your website is changing daily, we recommend shorter periods. If your website change just time to time, even yearly updates should be fine for you.' ),
+			__( 'Synchronisation Frequency with URLsLab' ),
+			__( 'Synchronisation frequency of article relations with URLsLab data. The more often the website\'s content is updated, the more frequent the update should be' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				86400     => __( 'Daily' ),
@@ -162,18 +162,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_RELATED_RESOURCES_SCHEDULING,
-			'all',
-			false,
-			__( 'Update strategy' ),
-			__( 'Choose when will WP update relations between urls' ),
-			self::OPTION_TYPE_LISTBOX,
-			array(
-				'all'       => __( 'Periodic updates for all urls' ),
-				'shortcode' => __( 'Update just relations for urls where we use Related Resources shortcode.' ),
-			),
+			'synchronization'
 		);
 	}
 }

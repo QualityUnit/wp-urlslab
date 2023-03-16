@@ -24,10 +24,9 @@ export default function ScreenshotTable( { slug } ) {
 
 	const scrStatusTypes = {
 		N: __( 'Waiting' ),
-		A: __( 'Processed' ),
+		A: __( 'Awailable' ),
 		P: __( 'Pending' ),
-		U: __( 'Updating' ),
-		E: __( 'Error' ),
+		E: __( 'Disabled' ),
 	};
 
 	const header = {

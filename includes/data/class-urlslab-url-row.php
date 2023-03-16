@@ -13,13 +13,11 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	const SCR_STATUS_ERROR = 'E';
 	const SCR_STATUS_NEW = 'N';
 	const SCR_STATUS_PENDING = 'P';
-	const SCR_STATUS_UPDATING = 'U';
 	const SCR_STATUS_ACTIVE = 'A';
 
 	const SUM_STATUS_ERROR = 'E';
 	const SUM_STATUS_NEW = 'N';
 	const SUM_STATUS_PENDING = 'P';
-	const SUM_STATUS_UPDATING = 'U';
 	const SUM_STATUS_ACTIVE = 'A';
 
 	public const VISIBILITY_VISIBLE = 'V';

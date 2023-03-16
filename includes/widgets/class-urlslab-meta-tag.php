@@ -35,14 +35,14 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return __( 'HTML Meta Tags' );
+		return __( 'Meta Tags Manager' );
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( '(Sharing) Add missing html header tags automatically to improve sharing on social networks.' );
+		return __( 'Maximize the shareability of your content across all social media platforms by utilizing Meta Tags.' );
 	}
 
 

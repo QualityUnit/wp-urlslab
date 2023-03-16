@@ -33,16 +33,8 @@ class Urlslab_Api_Settings extends Urlslab_Api_Base {
 
 	private function prepare_options_and_sections( Urlslab_Widget $widget ) {
 		$sections   = array();
-		$sections[] = array(
-			'id'          => 'default',
-			'title'       => __( 'Settings' ),
-			'description' => '',
-		);
-		foreach ( $widget->get_options( 'default' ) as $option ) {
-			$sections[0]['options'][ $option['id'] ] = (object) $option;
-		}
+
 		foreach ( $widget->get_option_sections() as $section ) {
-			
 			foreach ( $widget->get_options( $section['id'] ) as $option ) {
 				$section['options'][ $option['id'] ] = (object) $option;
 			}

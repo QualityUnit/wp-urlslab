@@ -10,7 +10,7 @@ export default function Screenshot( { moduleId } ) {
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 
 	const tableMenu = new Map( [
-		[ 'url', __( 'Screenshot Table' ) ],
+		[ 'url', __( 'Screenshots' ) ],
 	] );
 
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
