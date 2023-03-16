@@ -50,9 +50,6 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	//IMPORT KEYWORDS
 	public const SETTING_NAME_KW_IMPORT_INTERNAL_LINKS = 'urlslab_kw_imp_int';
 	public const SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS = 'urlslab_kw_imp_ext';
-	public const SETTING_NAME_ADD_ID_TO_ALL_H_TAGS = 'urlslab_H_add_id';
-	public const SETTING_NAME_PAGE_ID_LINKS_TO_SLUG = 'urlslab_pid_to_slug';
-	public const SETTING_NAME_DELETE_LINK_IF_PAGE_ID_NOT_FOUND = 'urlslab_pid_del_notfound';
 	public const SETTING_NAME_KW_IMPORT_MAX_LENGTH = 'urlslab_kw_max_len';
 	public const SETTING_NAME_KW_TYPES_TO_USE = 'urlslab_kw_types_use';
 
@@ -367,8 +364,6 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	public function theContentHook( DOMDocument $document ) {
-		$this->addIdToHTags( $document );
-		$this->fixPageIdLinks( $document );
 		$this->initLinkCounts( $document );
 		$this->init_keywords_cache( strtolower( $document->textContent ) );
 		try {
@@ -515,73 +510,6 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		}
 	}
 
-	private function addIdToHTags( DOMDocument $document ) {
-		if ( $this->get_option( self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS ) ) {
-			$used_ids = array();
-			$xpath    = new DOMXPath( $document );
-			$headers  = $xpath->query( "//*[substring-after(name(), 'h') > 0 and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-keywords')])]" );
-			foreach ( $headers as $header_element ) {
-				if ( ! $header_element->hasAttribute( 'id' ) ) {
-					$id = strtolower( trim( $header_element->nodeValue ) );
-					$id = 'h-' . trim( preg_replace( '/[^\w]+/', '-', $id ), '-' );
-					if ( ! isset( $used_ids[ $id ] ) ) {
-						$header_element->setAttribute( 'id', $id );
-					}
-				}
-				$used_ids[ $header_element->getAttribute( 'id' ) ] = 1;
-			}
-		}
-	}
-
-	private function fixPageIdLinks( DOMDocument $document ) {
-		if ( ! $this->get_option( self::SETTING_NAME_PAGE_ID_LINKS_TO_SLUG ) ) {
-			return;
-		}
-
-		$xpath     = new DOMXPath( $document );
-		$link_data = $xpath->query( "//a[contains(@href, '?page_id=') and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-page_id')])]" );
-
-		foreach ( $link_data as $link_element ) {
-			try {
-				$url = new Urlslab_Url( $link_element->getAttribute( 'href' ) );
-				if ( preg_match( '/page_id=([0-9]*)/i', $url->get_url_query(), $mathes ) ) {
-					if ( isset( $mathes[1] ) && is_numeric( $mathes[1] ) ) {
-						$post_permalink = get_the_permalink( $mathes[1] );
-						if ( $post_permalink ) {
-							$link_element->setAttribute( 'href', $post_permalink );
-							if ( $link_element->hasAttribute( 'target' ) && '_blank' == $link_element->getAttribute( 'target' ) ) {
-								try {
-									$permalink_url = new Urlslab_Url( $post_permalink );
-									if ( $permalink_url->is_same_domain_url() ) {
-										$link_element->removeAttribute( 'target' );
-									}
-								} catch ( Exception $e ) {
-								}
-							}
-						} else if ( $this->get_option( self::SETTING_NAME_DELETE_LINK_IF_PAGE_ID_NOT_FOUND ) ) {
-							//link should not be visible, remove it from content
-							if ( $link_element->childNodes->length > 0 ) {
-								$fragment = $document->createDocumentFragment();
-								if ( $link_element->childNodes->length > 0 ) {
-									$fragment->appendChild( $link_element->childNodes->item( 0 ) );
-								}
-								$link_element->parentNode->replaceChild( $fragment, $link_element );
-							} else {
-								if ( property_exists( $link_element, 'domValue' ) ) {
-									$txt_value = $link_element->domValue;
-								} else {
-									$txt_value = '';
-								}
-								$txt_element = $document->createTextNode( $txt_value );
-								$link_element->parentNode->replaceChild( $txt_element, $link_element );
-							}
-						}
-					}
-				}
-			} catch ( Exception $e ) {
-			}
-		}
-	}
 
 	private function initLinkCounts( DOMDocument $document ) {
 		$this->cnt_page_link_replacements       = 0;
@@ -680,31 +608,6 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			__( 'Track used Keywords' ),
 			__( 'Track usage of inserted keywords/links on pages' )
 		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS,
-			false,
-			true,
-			__( 'Add anchor id to all H tags' ),
-			__( 'Enhance all H tags with ID attribute to allow addressing not just URL, but also specific part of the content starting with H tag.' )
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_PAGE_ID_LINKS_TO_SLUG,
-			false,
-			true,
-			__( 'Replace page_id with slug' ),
-			__( 'Convert all wordpress links with page_id parameter to links with correct slug url. Wordpress sometimes during translations converts links to /page_id=xxxx, what is not SEO friendly. This feature will try to find correct URL for this type of link. Use class urlslab-skip-page_id if you do not want to process some links in page content.' )
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_DELETE_LINK_IF_PAGE_ID_NOT_FOUND,
-			false,
-			true,
-			__( 'Delete link if page_id not found' ),
-			__( /** @lang text */ "Delete link from HTML content in case link containing page_id parameter doesn't represent existing post." )
-		);
-
 
 		$this->add_options_form_section( 'replacements', __( 'Keyword replacements' ), __( 'Have under control frequency of keywords replaced as links in your content.' ) );
 
