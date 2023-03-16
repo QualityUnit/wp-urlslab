@@ -1,8 +1,6 @@
 import { Suspense, useState, useEffect, useRef } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ReactComponent as Logo } from '../assets/images/urlslab-logo.svg';
-import { fetchCronAll } from '../api/cron';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import NoAPIkey from './NoAPIkey';
 import Notifications from './Notifications';
