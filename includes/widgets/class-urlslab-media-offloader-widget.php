@@ -96,14 +96,14 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return __( 'Media Files' );
+		return __( 'Media Manager' );
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( '(Speed) Running Wordpress website on multiple APP servers? Offload media files to database or S3.' );
+		return __( 'Accelerate the website\'s performance by utilizing automatic image enhancement and offloading images to the cloud or a database' );
 	}
 
 

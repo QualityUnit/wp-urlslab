@@ -12,7 +12,7 @@ export default function RelatedResources( { moduleId } ) {
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 
 	const tableMenu = new Map( [
-		[ 'url-relation', __( 'Relation Links Table' ) ],
+		[ 'url-relation', __( 'Related Articles' ) ],
 	] );
 
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );

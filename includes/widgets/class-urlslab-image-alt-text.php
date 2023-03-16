@@ -20,14 +20,14 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return __( 'Image Description' );
+		return __( 'Image SEO' );
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( '(SEO) Add missing image alt attributes to boost SEO of images.' );
+		return __( 'Enhance image SEO on the website by automatically adding alt texts' );
 	}
 
 	public function theContentHook( DOMDocument $document ) {

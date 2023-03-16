@@ -10,7 +10,7 @@ export default function LinkEnhancer( { moduleId } ) {
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 
 	const tableMenu = new Map( [
-		[ 'url', __( 'Link Manager Table' ) ],
+		[ 'url', __( 'Links' ) ],
 	] );
 
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );

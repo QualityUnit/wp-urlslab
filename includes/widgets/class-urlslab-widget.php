@@ -63,7 +63,7 @@ abstract class Urlslab_Widget {
 	 * @return array - liest of module settings, where id is setting name and value is setting value
 	 */
 	public function get_options( $section_id = false ): array {
-		if ( false === $this->options ) {
+		if ( empty( $this->options ) ) {
 			$this->init_options();
 		}
 
@@ -110,6 +110,10 @@ abstract class Urlslab_Widget {
 	}
 
 	public function get_option_sections(): array {
+		if ( empty( $this->option_sections ) ) {
+			$this->init_options();
+		}
+
 		return $this->option_sections;
 	}
 
@@ -138,6 +142,14 @@ abstract class Urlslab_Widget {
 	}
 
 	protected function add_option_definition( string $option_id, $default_value = false, bool $autoload = true, string $title = '', string $description = '', $type = self::OPTION_TYPE_CHECKBOX, $possible_values = false, callable $validator = null, $form_section_id = 'default' ) {
+		if ( empty( $this->option_sections ) ) {
+			$this->option_sections[] = array(
+				'id'          => 'default',
+				'title'       => __( 'Module Settings' ),
+				'description' => '',
+			);
+		}
+
 		if ( $form_section_id && ! isset( $this->option_sections[ $form_section_id ] ) ) {
 			$form_section_id = 'default';
 		}

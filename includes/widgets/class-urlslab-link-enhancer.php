@@ -54,14 +54,14 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return __( 'Pages / Urls' );
+		return __( 'Links Manager' );
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( '(SEO) Enhance all links in your page with title attributes.' );
+		return __( 'Monitor and maintain all internal and external links on your website' );
 	}
 
 
@@ -230,32 +230,20 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'main', __( 'Settings' ), __( 'Plugin automatically tracks usage of html links on your website as the page is displayed. Every link in the generated HTML is evaluated and improved if we have additional data about destination URL of the link.' ) );
+		$this->add_options_form_section( 'main', __( 'Link Format and Monitoring' ), __( 'Plugin automatically tracks usage of html links on your website as the page is displayed. Every link in the generated HTML is evaluated and improved if we have additional data about destination URL of the link.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY,
 			self::DESC_TEXT_SUMMARY,
 			true,
-			__( 'Description value' ),
-			__( 'Specify which data should be used to enhance your links automatically. If you want to disable enhancement for specific links, add class "urlslab-skip-title" to link or any parent tag in HTML.' ),
+			__( 'Link Description' ),
+			__( 'What text is used in the link\'s title/alt text. There is a fallback tree, so if the summary is missing, the meta description of destination url is used.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY          => __( 'Summary of destination URL' ),
 				Urlslab_Link_Enhancer::DESC_TEXT_META_DESCRIPTION => __( 'Meta description of destination URL' ),
 				Urlslab_Link_Enhancer::DESC_TEXT_TITLE            => __( 'Title of destination URL' ),
-				Urlslab_Link_Enhancer::DESC_TEXT_URL              => __( 'Url path converted to title' ),
+				Urlslab_Link_Enhancer::DESC_TEXT_URL              => __( 'URL path converted to title' ),
 			),
-			null,
-			'main'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_ADD_LINK_FRAGMENT,
-			false,
-			true,
-			__( 'Add Text Fragments to every link' ),
-			__( 'Enhance every link in the page with text fragement. Example: "www.yourdomain.com/page1#:~:text=link%20text". To disable processing on some links, add class "urlslab-skip-fragment" to link or any parent html object.' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
 			null,
 			'main'
 		);
@@ -264,33 +252,47 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			self::SETTING_NAME_URLS_MAP,
 			true,
 			true,
-			__( 'Track Internal links' ),
-			__( 'Store all links used in your website and analyze relations and content clusters between pages.' ),
+			__( 'Track links usage' ),
+			__( 'The plugin will automatically store a graph of the relationships between the pages on your website.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
 			'main'
 		);
 
+		$this->add_option_definition(
+			self::SETTING_NAME_ADD_LINK_FRAGMENT,
+			true,
+			true,
+			__( 'Enhance Links with Text Fragment' ),
+			__( 'Add Text fragments to the links on the website. It will help with internal SEO, and it will scroll visitors to the exact paragraph which is related to the link. If you want to skip only some links, add the `urlslab-skip-fragment` class name to the link or sections with links. Example: <code><a>https://www.liveagent.com/pricing#:~:text=Enterprise</a></code>' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'main'
+		);
+
+
 		$this->add_options_form_section( 'validation', __( 'Link Validation' ), __( 'One of the important SEO tasks is to keep high quality of your content. Your website should not contain links leading to invalid or not existing pages. Following settings can help you to automate the process in large scale. You will not need to search for invalid links in your HTML content manually.' ) );
 
 		$this->add_option_definition(
-			self::SETTING_NAME_REMOVE_LINKS,
-			true,
-			true,
-			__( 'Hide Links' ),
-			__( 'Hide links from HTML leading to url with status 4XX or 5XX or links manually marked as invisible from all pages in your website' ),
+			self::SETTING_NAME_VALIDATE_LINKS,
+			false,
+			false,
+			__( 'Validate Found Links' ),
+			__( 'Check HTTP status of every link which has been found in the website content.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
 			'validation'
 		);
+
 		$this->add_option_definition(
-			self::SETTING_NAME_VALIDATE_LINKS,
-			false,
-			false,
-			__( 'Validate Links (HTTP Status)' ),
-			__( 'Make request to each URL found in website (in background by cron) and test if it is valid or invalid url (e.g. 404 page)' ),
+			self::SETTING_NAME_REMOVE_LINKS,
+			true,
+			true,
+			__( 'Hide Invalid Links' ),
+			__( 'Hide all invalid links from the content which lead to a 404 or 503 error page.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -301,7 +303,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			self::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_INTERVAL,
 			2419200,
 			false,
-			__( 'Link Validation Interval' ),
+			__( 'Validation Interval' ),
 			__( 'Define how often should check your wordpress plugin status of urls used in your website. Even we check status of urls on the background by cron task, it can use a lot of computation time. We recommend Monthly or Quarterly updates. To keep up to date status of each url we can hide links invalid links from your website automatically.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
