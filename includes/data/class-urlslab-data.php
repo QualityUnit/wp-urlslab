@@ -8,6 +8,14 @@ abstract class Urlslab_Data {
 		return $this->data;
 	}
 
+	public function set_public( $name, $value, $loaded_from_db ) {
+		$this->set( $name, $value, $loaded_from_db );
+	}
+
+	public function get_public( $name ) {
+		return $this->get( $name );
+	}
+
 	protected function set( $name, $value, $loaded_from_db ) {
 		if ( isset( $this->data[ $name ] ) && $this->data[ $name ] == $value ) {
 			return false;
@@ -174,7 +182,7 @@ abstract class Urlslab_Data {
 		return true;
 	}
 
-	public function import( array $rows, $on_duplicate_update_columns = true, $ignore = false ): int {
+	public function import( array $rows, $on_duplicate_update_columns = true, $ignore = true ): int {
 		$on_duplicate = array();
 		if ( $on_duplicate_update_columns ) {
 			foreach ( $this->get_columns() as $column => $format ) {

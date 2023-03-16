@@ -47,7 +47,7 @@ class Urlslab_Offload_Background_Attachments_Cron extends Urlslab_Cron {
 
 		if ( ! empty( $rows ) ) {
 			update_option( self::SETTING_NAME_SCHEDULER_POINTER, $last_post_id );
-			$result = $rows[0]->insert_all( $rows );
+			$result = $rows[0]->insert_all( $rows, true );
 			if ( ! is_numeric( $result ) ) {
 				return 0;
 			}

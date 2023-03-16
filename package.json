@@ -3,7 +3,7 @@
   "name": "@qu/urlslab-builder",
   "version": "1.0",
   "description": "Building CSS and JS for URLsLab modules using webpack",
-  "homepage": "https://www.liveagent.com",
+  "homepage": "https://www.urlslab.com",
   "browserslist": [
     "last 2 versions",
     "> 5%"
