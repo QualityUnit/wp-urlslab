@@ -4,8 +4,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	public function register_routes() {
 		$base = '/url';
 
-		register_rest_route( self::NAMESPACE, $base . '/', $this->get_reoute_get_items() );
-		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_reoute_get_items() ) );
+		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
+		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
 
 		register_rest_route(
 			self::NAMESPACE,
@@ -278,7 +278,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	/**
 	 * @return array[]
 	 */
-	public function get_reoute_get_items(): array {
+	public function get_route_get_items(): array {
 		return array(
 			array(
 				'methods'             => WP_REST_Server::READABLE,

@@ -4,21 +4,24 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
 class Urlslab_Offload_Transfer_Files_Cron extends Urlslab_Cron {
 
 	protected function execute(): bool {
-		$latest_file_driver = get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_NEW_FILE_DRIVER );
-		$data               = array(
-			$latest_file_driver,
-		);
+		$widget = Urlslab_Available_Widgets::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG );
+		if ( empty( $widget ) ) {
+			return false;
+		}
+
+		$latest_file_driver = $widget->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER );
+		$data               = array( $latest_file_driver );
 		$placeholders       = array();
 
-		if ( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_DB, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB ) ) {
+		if ( $widget->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ) ) {
 			$data[]         = Urlslab_Driver::DRIVER_DB;
 			$placeholders[] = '%s';
 		}
-		if ( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_S3, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_S3 ) ) {
+		if ( $widget->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ) ) {
 			$data[]         = Urlslab_Driver::DRIVER_S3;
 			$placeholders[] = '%s';
 		}
-		if ( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_LOCAL_FILES ) ) {
+		if ( $widget->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ) ) {
 			$data[]         = Urlslab_Driver::DRIVER_LOCAL_FILE;
 			$placeholders[] = '%s';
 		}

@@ -4,12 +4,12 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-convert-images-c
 class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 
 	public function is_format_supported() {
-		return function_exists( 'imageavif' ) ||
-			   (
-				   extension_loaded( 'imagick' ) &&
-				   count( Imagick::queryFormats( 'AVIF*' ) ) > 0 &&
-				   get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE, false )
-			   );
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG );
+		if ( empty( $widget ) || ! $widget->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE ) ) {
+			return false;
+		}
+
+		return function_exists( 'imageavif' ) || ( extension_loaded( 'imagick' ) && count( Imagick::queryFormats( 'AVIF*' ) ) > 0 );
 	}
 
 	protected function convert_next_file() {

@@ -57,6 +57,7 @@ class Urlslab_Activator {
 		self::init_css_cache_tables();
 		self::init_content_cache_tables();
 		self::init_search_replace_tables();
+		self::init_screenshot_urls_table();
 	}
 
 	public static function upgrade_steps() {
@@ -86,6 +87,22 @@ class Urlslab_Activator {
 				self::init_urlslab_file_urls_table();
 				self::init_keywords_map_table();
 				self::init_related_resources_tables();
+			}
+		);
+
+		self::update_step(
+			'2.1.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN scr_schedule char(1) NOT NULL DEFAULT ''" ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD INDEX idx_scr_schedule (scr_schedule)" ); // phpcs:ignore
+			}
+		);
+
+		self::update_step(
+			'2.2.0',
+			function() {
+				self::init_screenshot_urls_table();
 			}
 		);
 
@@ -122,10 +139,12 @@ class Urlslab_Activator {
 			url_summary			text,
 			visibility char(1) NOT NULL DEFAULT 'V', -- V: visible, H: hidden
 			url_type char(1) NOT NULL DEFAULT 'I', -- I: Internal, E: external
+			scr_schedule char(1) NOT NULL DEFAULT '', -- N: New, S: Scheduled, E: Error 
 			PRIMARY KEY  (url_id),
 			INDEX idx_scr_changed (update_scr_date, scr_status),
 			INDEX idx_sum_changed (update_sum_date, sum_status),
-			INDEX idx_http_changed (update_http_date, http_status)
+			INDEX idx_http_changed (update_http_date, http_status),
+			INDEX idx_scr_schedule (scr_schedule),
 		) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -359,6 +378,21 @@ class Urlslab_Activator {
     		  search_type CHAR(1) NOT NULL DEFAULT 'T',
     		  url_filter VARCHAR(255) NOT NULL DEFAULT '.*',
 			  PRIMARY KEY (id)
+        ) $charset_collate;";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_screenshot_urls_table() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$table_name = URLSLAB_SCREENSHOT_URLS_TABLE;
+		$sql        = "CREATE TABLE IF NOT EXISTS $table_name (
+    		  screenshot_url_id bigint NOT NULL,
+    		  src_url_id bigint NOT NULL,
+			  PRIMARY KEY (screenshot_url_id, src_url_id)
         ) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

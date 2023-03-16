@@ -7,7 +7,7 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 		global $wpdb;
 
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Link_Enhancer::SLUG );
-		if ( ! $widget->get_option( Urlslab_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS ) ) {
+		if ( empty( $widget ) || ! $widget->get_option( Urlslab_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS ) ) {
 			return false;
 		}
 

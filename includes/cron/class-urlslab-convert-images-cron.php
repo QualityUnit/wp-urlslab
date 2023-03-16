@@ -4,7 +4,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
 abstract class Urlslab_Convert_Images_Cron extends Urlslab_Cron {
 
 	protected function execute(): bool {
-		return $this->is_format_supported() && $this->convert_next_file();
+		return ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Media_Offloader_Widget::SLUG ) && $this->is_format_supported() && $this->convert_next_file();
 	}
 
 	abstract public function is_format_supported();
