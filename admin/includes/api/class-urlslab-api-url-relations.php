@@ -268,9 +268,11 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 
 		$sql->add_filter( 'src_url_id' );
 		$sql->add_filter( 'dest_url_id' );
-		$sql->add_filter( 'filter_src_url_name' );
-		$sql->add_filter( 'filter_dest_url_name' );
 		$sql->add_filter( 'filter_pos', '%d' );
+
+		$sql->add_having_filter( 'filter_src_url_name' );
+		$sql->add_having_filter( 'filter_dest_url_name' );
+
 
 		if ( $request->get_param( 'sort_column' ) ) {
 			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );

@@ -52,7 +52,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 			$row = $this->get_row_object();
 			foreach ( $row->get_columns() as $column => $format ) {
 				if ( $request->has_param( $column ) ) {
-					$row->set( $column, $request->get_param( $column ) );
+					$row->set_public( $column, $request->get_param( $column ) );
 				}
 			}
 			$row->insert();
@@ -75,8 +75,8 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 			if ( $row->load() ) {
 				$json_params = $request->get_json_params();
 				foreach ( $this->get_editable_columns() as $column ) {
-					if ( isset( $json_params[ $column ] ) && $json_params[ $column ] != $row->get( $column ) ) {
-						$row->set( $column, $json_params[ $column ] );
+					if ( isset( $json_params[ $column ] ) && $json_params[ $column ] != $row->get_public( $column ) ) {
+						$row->set_public( $column, $json_params[ $column ] );
 					}
 				}
 				$row->update();

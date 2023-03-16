@@ -15,14 +15,14 @@
  * @wordpress-plugin
  *
  * Plugin Name:       Urlslab
- * Plugin URI:        https://urlslab.com
+ * Plugin URI:        https://www.urlslab.com
  * Description:       URLSLAB Services
 
  * Version:           2.0.1
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            URLSLAB
- * Author URI:        https://urlslab.com
+ * Author URI:        https://www.urlslab.com
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  */
