@@ -221,7 +221,10 @@ class Urlslab_Api_Table_Sql {
 			throw new Exception( 'Invalid filter' );
 		}
 
-		return array( 'sql' => $sql_string, 'data' => $data );
+		return array(
+			'sql'  => $sql_string,
+			'data' => $data,
+		);
 	}
 
 	private function get_string_filter_sql( string $column_name, string $param_value ): array {
@@ -269,7 +272,10 @@ class Urlslab_Api_Table_Sql {
 			throw new Exception( 'Invalid filter' );
 		}
 
-		return array( 'sql' => $sql_string, 'data' => $data );
+		return array(
+			'sql'  => $sql_string,
+			'data' => $data,
+		);
 	}
 
 }
