@@ -58,7 +58,7 @@ class Urlslab {
 	 */
 	public function __construct() {
 		$this->version = URLSLAB_VERSION;
-		$this->urlslab = 'URLSLAB';
+		$this->urlslab = 'URLsLab';
 	}
 
 	/**

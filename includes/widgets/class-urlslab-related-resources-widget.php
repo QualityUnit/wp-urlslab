@@ -34,7 +34,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( 'Enhance the onsite SEO and internal link structure by creating pairs of related pages (content clusters)' );
+		return __( 'Enhance the onsite SEO and internal link structure by creating pairs of content clusters' );
 	}
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
@@ -143,13 +143,13 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'synchronization', __( 'Synchronization' ), __( 'Relations between articles are computed by urlslab automatically during page indexing. Plugin should load the most current relations periodically as your content change over time.' ) );
+		$this->add_options_form_section( 'synchronization', __( 'Synchronization' ), __( 'Relations between articles are automatically computed by the URLsLab service during page indexing. To ensure the most up-to-date relations, the plugin should periodically reload the content as it changes over time.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_UPDATE_FREQ,
 			2419200,
 			false,
-			__( 'Synchronisation Frequency with URLsLab' ),
-			__( 'Synchronisation frequency of article relations with URLsLab data. The more often the website\'s content is updated, the more frequent the update should be' ),
+			__( 'Synchronization Frequency with URLsLab service' ),
+			__( 'The synchronization frequency of article relations with the URLsLab service should be increased depending on how often the website\'s content is updated. A higher synchronization frequency is recommended for websites that regularly update their content.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				86400     => __( 'Daily' ),

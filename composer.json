@@ -1,8 +1,8 @@
 {
-  "name": "qu/enhanced-faq",
+  "name": "urlslab/urlslab",
   "type": "project",
   "license": "GPL-2.0-only",
-  "description": "QU Enhanced FAQ PHPCS testing",
+  "description": "URLsLab PHPCS Testing",
 
   "config": {
 		"optimize-autoloader": true,

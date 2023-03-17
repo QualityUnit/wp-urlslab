@@ -141,8 +141,8 @@ class Urlslab_Admin {
 		do_action( 'urlslab_admin_menu' );
 
 		add_menu_page(
-			'Urlslab Plugin',
-			'Urlslab',
+			'URLsLab Plugin',
+			'URLsLab',
 			'manage_options',
 			$this->urlslab_menu_factory->main_menu_slug(),
 			null,

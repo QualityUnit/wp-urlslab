@@ -24,7 +24,7 @@ class Urlslab_Search_Replace extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return __( 'Search & Replace' );
+		return __( 'Search and Replace' );
 	}
 
 	/**

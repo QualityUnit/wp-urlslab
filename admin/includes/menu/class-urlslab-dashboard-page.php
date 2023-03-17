@@ -15,7 +15,7 @@ class Urlslab_Dashboard_Page extends Urlslab_Admin_Page {
 	public function register_submenu( string $parent_slug ) {
 		$hook = add_submenu_page(
 			$parent_slug,
-			'Urlslab Modules',
+			'URLsLab Modules',
 			'Modules',
 			'manage_options',
 			$this->menu_slug,
