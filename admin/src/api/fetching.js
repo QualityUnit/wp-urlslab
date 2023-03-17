@@ -33,7 +33,7 @@ export async function setModule( slug, object ) {
 	}
 }
 
-export async function setData( slug, object ) {
+export async function setData( slug, object, keepalive ) {
 	try {
 		const result = await fetch( `/wp-json/urlslab/v1/${ slug }`, {
 			method: 'POST',
@@ -43,6 +43,7 @@ export async function setData( slug, object ) {
 				'X-WP-Nonce': window.wpApiSettings.nonce,
 			},
 			credentials: 'include',
+			keepalive: keepalive ? true : false,
 			body: JSON.stringify( object ),
 		} );
 		return result;

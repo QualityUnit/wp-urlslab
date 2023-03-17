@@ -16,7 +16,7 @@ export default function Overview( { moduleId, children } ) {
 
 	return (
 		<div className="urlslab-overview urlslab-panel fadeInto">
-			{ ! moduleData.apikey &&
+			{ moduleData.apikey &&
 			<div className="urlslab-overview-apiKey flex-tablet">
 				<div className="apiIcon xxl"><ApiIcon /></div>
 				<div className="urlslab-overview-apiKey__content">
