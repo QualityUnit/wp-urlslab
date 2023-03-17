@@ -586,8 +586,8 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 				unset( $this->content_docs[ $db_row['cache_crc32'] . '_' . $db_row['cache_len'] ] );
 			}
 
-			foreach ( $this->content_docs as $insert_doc ) {
-				$insert_doc->insert();
+			if ( ! empty( $this->content_docs ) ) {
+				$this->content_docs[0]->insert_all( $this->content_docs, true );
 			}
 		}
 	}

@@ -5,11 +5,18 @@
 class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	const SLUG = 'urlslab-related-resources';
 
-	const SETTING_NAME_UPDATE_FREQ = 'urlslab-rel-res-update-freq';
+	const SETTING_NAME_UPDATE_FREQ = 'urlslab-relres-update-freq';
+	const SETTING_NAME_AUTOINCLUDE_TO_CONTENT = 'urlslab-relres-autoinc';
+	const SETTING_NAME_ARTICLES_COUNT = 'urlslab-relres-count';
+	const SETTING_NAME_SHOW_IMAGE = 'urlslab-relres-show-img';
+	const SETTING_NAME_SHOW_SUMMARY = 'urlslab-relres-show-sum';
+	const SETTING_NAME_DEFAULT_IMAGE_URL = 'urlslab-relres-def-img';
+	const SETTING_NAME_AUTOINCLUDE_POST_TYPES = 'urlslab-relres-autoinc-post-types';
 
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'hook_callback', 10, 0 );
+		Urlslab_Loader::get_instance()->add_filter( 'the_content', $this, 'the_content_filter' );
 	}
 
 	public function hook_callback() {
@@ -37,16 +44,28 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		return __( 'Enhance the onsite SEO and internal link structure by creating pairs of related pages (content clusters)' );
 	}
 
+	public function the_content_filter( $content ) {
+		$shortcode_content = '';
+		if ( $this->get_option( self::SETTING_NAME_AUTOINCLUDE_TO_CONTENT ) ) {
+			$post_types = $this->get_option( self::SETTING_NAME_AUTOINCLUDE_POST_TYPES );
+			if ( empty( $post_types ) || in_array( get_post_type(), explode( ',', $post_types ) ) ) {
+				$shortcode_content = $this->get_shortcode_content();
+			}
+		}
+
+		return $content . $shortcode_content;
+	}
+
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
 		$urlslab_atts = shortcode_atts(
 			array(
 				'url'           => $this->get_current_page_url()->get_url_with_protocol(),
-				'related-count' => 8,
-				'show-image'    => false,
-				'show-summary'  => false,
-				'default-image' => '',
+				'related-count' => $this->get_option( self::SETTING_NAME_ARTICLES_COUNT ),
+				'show-image'    => $this->get_option( self::SETTING_NAME_SHOW_IMAGE ),
+				'show-summary'  => $this->get_option( self::SETTING_NAME_SHOW_SUMMARY ),
+				'default-image' => $this->get_option( self::SETTING_NAME_DEFAULT_IMAGE_URL ),
 			),
 			$atts,
 			$tag
@@ -163,6 +182,94 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'synchronization'
+		);
+
+		$this->add_options_form_section( 'include', __( 'Usage' ), __( 'We can include related resources at the end of each content automatically if you don\'t want to use Wordpress shortcode in custom templates.' ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_AUTOINCLUDE_TO_CONTENT,
+			false,
+			true,
+			__( 'Automatically include Related Articles in content' ),
+			__( 'Plugin hooks to the_content filters and can add automatically widget at the end of each content page. Related resources will be visible automatically as soon the data are processed in URLslab. It can take few days' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'include'
+		);
+
+
+		$this->add_option_definition(
+			self::SETTING_NAME_AUTOINCLUDE_POST_TYPES,
+			false,
+			true,
+			__( 'Wordpress Post types' ),
+			__( 'If you choose to autoinclude Related Articles widget into content, here you can define which POST types will contain the widget at the end of the content. If you leave it empty, it will include to all Wordpress post types' ),
+			self::OPTION_TYPE_MULTI_CHECKBOX,
+			function() {
+				$post_types = get_post_types(
+					array(
+						'show_ui'      => true,
+						'show_in_menu' => true,
+					),
+					'objects'
+				);
+				$posts      = array();
+				foreach ( $post_types as $post_type ) {
+					$posts[ $post_type->name ] = $post_type->labels->singular_name;
+				}
+
+				return $posts;
+			},
+			null,
+			'include'
+		);
+
+		$this->add_options_form_section( 'widget', __( 'Default Values' ), __( 'Specify default values of shortcode or for autoincluded related articles' ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_ARTICLES_COUNT,
+			8,
+			true,
+			__( 'Count of related articles' ),
+			__( 'Default number of related articles (rows) displayed in widget.' ),
+			self::OPTION_TYPE_NUMBER,
+			false,
+			function( $value ) {
+				return is_numeric( $value ) && 0 < $value;
+			},
+			'widget'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_SHOW_IMAGE,
+			false,
+			true,
+			__( 'Show Image' ),
+			__( 'Define if widget should display by default screenshot next to each URL' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'widget'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_SHOW_SUMMARY,
+			false,
+			true,
+			__( 'Show URL Summary' ),
+			__( 'Define if widget should display summary text of destination URL' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'widget'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_DEFAULT_IMAGE_URL,
+			'',
+			true,
+			__( 'Default Screenshot URL' ),
+			__( 'URL of image to display as sreenshot until Urlslab generates screenshot. Once the screenshot will be synced from URLslab, default image will be replaced with real screenshot. It can take few days to screenshot all your pages. Leave empty if custom image is not needed.' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			null,
+			'widget'
 		);
 	}
 }
