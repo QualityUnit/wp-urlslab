@@ -13,10 +13,12 @@ export default function KeywordLinks( { moduleId } ) {
 
 	const tableMenu = new Map( [
 		[ slug, __( 'Keywords Table' ) ],
+		[ 'd3-chart', __( 'D3 Chart example' ) ],
 	] );
 
-	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
 	const KeywordsTable = lazy( () => import( `../tables/KeywordsTable.jsx` ) );
+	const D3ChartExample = lazy( () => import( `../d3/D3ChartExample.jsx` ) );
+	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
 
 	return (
 		<div className="urlslab-tableView">
@@ -33,6 +35,12 @@ export default function KeywordLinks( { moduleId } ) {
 				activeSection === slug &&
 				<Suspense>
 					<KeywordsTable slug={ slug } />
+				</Suspense>
+			}
+			{
+				activeSection === 'd3-chart' &&
+				<Suspense>
+					<D3ChartExample slug="d3-chart" />
 				</Suspense>
 			}
 			{

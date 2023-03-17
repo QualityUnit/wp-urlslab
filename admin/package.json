@@ -32,6 +32,7 @@
     "@wordpress/element": "^5.2.0",
     "@wordpress/react-i18n": "^3.23.0",
     "@wordpress/stylelint-config": "^21.8.0",
+    "d3": "^7.8.2",
     "encoding": "^0.1.13",
     "idb-keyval": "^6.2.0",
     "js-file-download": "^0.4.12",
