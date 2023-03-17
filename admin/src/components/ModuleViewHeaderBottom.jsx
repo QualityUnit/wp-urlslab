@@ -90,25 +90,26 @@ export default function ModuleViewHeaderBottom( { currentFilters, noImport, noEx
 					</div>
 				}
 				<div className="ma-left flex flex-align-center">
+					{
+						! noCount &&
+						<small className="urlslab-rowcount mr-l flex flex-align-center">
+							{ __( 'Rows: ' ) }
+							{ rowCount
+								? <strong>{ rowCount }</strong>
+								: <Loader className="noText small" />
+							}
+						</small>
+					}
 					<strong>{ __( 'Sort by:' ) }</strong>
-					<SortMenu className="menu-left ml-s" checkedId={ defaultSortBy } items={ sortItems } name="sorting" onChange={ ( val ) => onSort( val ) } />
+					<SortMenu className="menu-left ml-l" checkedId={ defaultSortBy } items={ sortItems } name="sorting" onChange={ ( val ) => onSort( val ) } />
 
 					<ColumnsMenu
+						className="menu-left ml-m"
 						id="visibleColumns"
 						table={ table }
 						items={ header }
 					>
 					</ColumnsMenu>
-					{
-						! noCount &&
-						<small className="urlslab-rowcount ml-l flex flex-align-center">
-							{ __( 'Rows: ' ) }
-							{ rowCount
-								? rowCount
-								: <Loader className="noText small" />
-							}
-						</small>
-					}
 				</div>
 			</div>
 			{
