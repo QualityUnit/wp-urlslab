@@ -14,7 +14,20 @@
 		display: block;
 	}
 
+	&.dark {
+		background-color: rgba($black, 0.8);
+		color: $white;
+	}
+
 	&.wide {
-		min-width: 20em;
+		min-width: 25em;
+	}
+
+	.message {
+		text-align: left;
+
+		+ .message {
+			margin-top: 1em;
+		}
 	}
 }
