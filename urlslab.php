@@ -8,20 +8,20 @@
  * registers the activation and deactivation functions, and defines a function
  * that starts the plugin.
  *
- * @link              http://urlslab.com
+ * @link              https://www.urlslab.com
  * @since             1.0.0
  * @package           Urlslab
  *
  * @wordpress-plugin
  *
- * Plugin Name:       Urlslab
+ * Plugin Name:       URLsLab
  * Plugin URI:        https://www.urlslab.com
- * Description:       URLSLAB Services
+ * Description:       URLsLab WordPress Plugin
 
  * Version:           2.0.2
- * Requires at least: 5.2
- * Requires PHP:      7.2
- * Author:            URLSLAB
+ * Requires at least: 6.0
+ * Requires PHP:      7.4
+ * Author:            URLsLab
  * Author URI:        https://www.urlslab.com
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html

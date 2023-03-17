@@ -36,7 +36,7 @@ export default function DashboardModule( { moduleId, title, children, isActive, 
 			{ hasApi
 				? <div className="urlslab-dashboardmodule-api">
 					<ApiIcon />
-					{ __( 'Urlslab API key required' ) }
+					{ __( 'URLsLab API Key Required' ) }
 				</div>
 				: ''
 			}

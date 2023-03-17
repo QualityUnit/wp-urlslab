@@ -1,4 +1,4 @@
-# URLSLAB Wordpress Plugin
+# URLsLab WordPress Plugin
 
 Empower your website with the ultimate WordPress plugin, crafted with the real-life needs of our own website as the inspiration. 
 Say goodbye to sluggish performance, inefficiency, and bland design. Our plugin brings lightning speed, effortless efficiency and unparalleled flexibility to the table. 
