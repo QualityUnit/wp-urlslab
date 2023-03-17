@@ -1,0 +1,33 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-notifications-panel[class] {
+	display: none;
+	position: absolute;
+	z-index: 10;
+	top: 100%;
+	right: 0;
+	min-width: 17.5em;
+	padding: 2em;
+
+	&.active {
+		display: block;
+	}
+
+	&.dark {
+		background-color: rgba($black, 0.8);
+		color: $white;
+	}
+
+	&.wide {
+		min-width: 25em;
+	}
+
+	.message {
+		text-align: left;
+
+		+ .message {
+			margin-top: 1em;
+		}
+	}
+}

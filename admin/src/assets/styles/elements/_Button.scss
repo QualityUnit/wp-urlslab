@@ -44,6 +44,15 @@ button.urlslab-button,
 	&.active {
 		background-color: $primary-color;
 		color: $white;
+
+		.urlslab-loader {
+			opacity: 1;
+
+			svg.urlslab-loader-anim {
+				filter: invert(1);
+			}
+		}
+
 	}
 
 	&.danger {
@@ -54,6 +63,17 @@ button.urlslab-button,
 	&.small {
 		font-size: 0.75em;
 		padding: 0.5em 1em;
+
+		svg {
+
+			@include square(1em);
+
+			&.urlslab-loader-anim {
+
+				@include square(1.5em);
+				transform: scale(1.15);
+			}
+		}
 	}
 
 	svg {

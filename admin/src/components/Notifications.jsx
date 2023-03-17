@@ -4,6 +4,7 @@ import { ReactComponent as Bell } from '../assets/images/notifications-icon.svg'
 
 import ProgressBar from '../elements/ProgressBar';
 import '../assets/styles/components/_Notifications.scss';
+import NotificationsPanel from './NotificationsPanel';
 
 export default function Notifications( { className } ) {
 	const ref = useRef( null );
@@ -42,9 +43,7 @@ export default function Notifications( { className } ) {
 				}
 				{
 					notificationsCount
-						? <div className={ `urlslab-notifications-panel urlslab-panel ${ panelActive && 'active' } fadeInto` }>
-							<ProgressBar value={ notifications?.export } />
-						</div>
+						? <NotificationsPanel active />
 						: null
 				}
 			</button>

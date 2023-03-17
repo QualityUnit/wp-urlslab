@@ -3,6 +3,7 @@ import { useMemo, useState, Suspense } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import { fetchData } from './api/fetching';
+import { fetchSettings } from './api/settings';
 import { fetchLangs } from './api/fetchLangs';
 import MainMenu from './components/MainMenu';
 import DynamicModule from './components/DynamicModule';
@@ -14,6 +15,14 @@ export default function App() {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const [ module, setModule ] = useState( 'urlslab-modules' );
+
+	// Checking if API is set in advance
+	queryClient.prefetchQuery( {
+		queryKey: [ 'general' ],
+		queryFn: () => fetchSettings( 'general' ).then( ( data ) => {
+			return data;
+		} ),
+	} );
 
 	// Creating languages query object in advance
 	queryClient.prefetchQuery( {
