@@ -86,13 +86,24 @@ abstract class Urlslab_Widget {
 						$option['value'] = false;
 					}
 					break;
+				case self::OPTION_TYPE_LISTBOX:
+					$value                     = $this->get_option( $option_id );
+					$possible_values           = $this->get_option_possible_values( $option_id );
+					$option['possible_values'] = $possible_values;
+					if ( ! isset( $possible_values[ $value ] ) ) {
+						$value = $option['default'];
+					}
+					$option['value'] = $value;
+					break;
 				case self::OPTION_TYPE_MULTI_CHECKBOX:
 					$values = $this->get_option( $option_id );
 					if ( ! is_array( $values ) ) {
-						$values = explode( ',', $values );
+						$values = explode( ',', trim( $values, ", \t\n\r\0\x0B" ) );
 					}
+					$possible_values           = $this->get_option_possible_values( $option_id );
+					$option['possible_values'] = $possible_values;
 					foreach ( $values as $id => $value ) {
-						if ( ! isset( $option['possible_values'] ) ) {
+						if ( ! isset( $possible_values[ $value ] ) ) {
 							unset( $values[ $id ] );
 						}
 					}
@@ -141,6 +152,19 @@ abstract class Urlslab_Widget {
 		);
 	}
 
+	/**
+	 * @param string $option_id
+	 * @param $default_value
+	 * @param bool $autoload
+	 * @param string $title
+	 * @param string $description
+	 * @param $type
+	 * @param array|callable|false $possible_values
+	 * @param callable|null $validator
+	 * @param $form_section_id
+	 *
+	 * @return void
+	 */
 	protected function add_option_definition( string $option_id, $default_value = false, bool $autoload = true, string $title = '', string $description = '', $type = self::OPTION_TYPE_CHECKBOX, $possible_values = false, callable $validator = null, $form_section_id = 'default' ) {
 		if ( empty( $this->option_sections ) ) {
 			$this->option_sections[] = array(
@@ -181,21 +205,22 @@ abstract class Urlslab_Widget {
 			}
 		}
 
-		if ( is_array( $this->options[ $option_id ]['possible_values'] ) ) {
+		$posible_values = $this->get_option_possible_values( $option_id );
+		if ( ! empty( $posible_values ) ) {
 			if ( is_array( $value ) ) {
 				foreach ( $value as $val ) {
-					if ( ! isset( $this->options[ $option_id ]['possible_values'][ $val ] ) ) {
+					if ( ! isset( $posible_values[ $val ] ) ) {
 						return false;
 					}
 				}
-			} else if ( ! isset( $this->options[ $option_id ]['possible_values'][ $value ] ) ) {
+			} else if ( ! isset( $posible_values[ $value ] ) ) {
 				return false;
 			}
 		}
 
 		switch ( $this->options[ $option_id ]['type'] ) {
 			case self::OPTION_TYPE_CHECKBOX:
-				if ( $value ) {
+				if ( $value || 1 === $value || 'true' === $value ) {
 					$value = true;
 				} else {
 					$value = false;
@@ -217,6 +242,18 @@ abstract class Urlslab_Widget {
 
 
 		return $value == $this->get_option( $option_id ) || update_option( $option_id, $value );
+	}
+
+	private function get_option_possible_values( $option_id ): array {
+		if ( isset( $this->options[ $option_id ] ) && isset( $this->options[ $option_id ]['possible_values'] ) ) {
+			if ( is_callable( $this->options[ $option_id ]['possible_values'] ) ) {
+				return call_user_func( $this->options[ $option_id ]['possible_values'] );
+			} else if ( is_array( $this->options[ $option_id ]['possible_values'] ) ) {
+				return $this->options[ $option_id ]['possible_values'];
+			}
+		}
+
+		return array();
 	}
 
 	public function get_option( $option_id ) {
