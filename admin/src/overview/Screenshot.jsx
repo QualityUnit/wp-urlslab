@@ -3,26 +3,9 @@ import image1 from '../assets/images/overview/liveagent_screenshot.jpeg';
 export default function ScreenShotOverview() {
 	return (
 		<>
-			<p>The URLslab WordPress plugin (module Screenshot automation) is an essential tool for automating screenshots of any URL (internal or external) in large scale and<br/>
-				adding those screenshots to content of your website with just a simple shortcode.
-				Screenshots are taken automatically based on defined schedule and are updated as the destination URL changes.</p>
-			<p>Add screenshot of any URL (internal or external) to content of your website by adding simple wordpress shortcode. <br/>
-				No manual screenshotting, all updated as the destination URL changes automatically.</p>
-
-			<h2>How it works?</h2>
-			<p>First you need to schedule processing of screenshots from any domain in Settings - Scheules menu.<br/>
-				To process screenshots can take few hours up to few days based on size of your schedules (e.g. What can affect the speed? Ratelimits, number of URLs in sitemap or speed of destination page).<br/>
-				Screenshots are done by service running on www.urlslab.com and plugin just syncs periodically status of screenshot.<br/>
-				You can define how often is screenshot updated by schedules and also you can define interval how often plugin sync changes from www.urlslab.com to your local database.
-			</p>
-
-			<h2>Why we use it?</h2>
-			<p>
-				All features developped in our plugins are based on our own needs.<br/>
-				We developed screenshot automation to replace manual work with automated process for our own websites (<a href="https://www.liveagent.com}">www.liveagent.com</a> and <a href="https://www.postaffiliatepro.com}">www.postaffiliatepro.com</a>) <br/>
-				Part of our website describes customer support contacts of various companies and we needed to update screenshots of their websites regularly. (Example: <a href="https://www.liveagent.com/directory/">Customer Service Directory</a>).<br/>
-				Another example is affiliate directory where we need to update screenshots of affiliate programs regularly. (Example: <a href="https://www.postaffiliatepro.com/affiliate-program-directory/">Affiliate Directory</a>).<br/>
-			</p>
+			<p>Screenshots are a great way to grab an audience's attention and make your content more appealing. With this module, you can easily add automatically generated screenshots via a shortcode into the content. It will not only save you time but will also give your content a professional look.</p>
+			<p>Using the Automated Screenshots module can be especially useful for websites with many pages, where manually taking screenshots for each one can be time-consuming. With the module, you can quickly generate screenshots for each page.</p>
+			<p>Overall, the module makes screenshots easy to use with zero effort. It is a great way to save time and make your content stand out.</p>
 
 			<h3>How to use this feature?</h3>
 			<p>Just add shortcode to your page content or HTML template and plugin will take care of the rest.</p>

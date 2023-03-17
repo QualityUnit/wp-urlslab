@@ -308,19 +308,19 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'main', __( 'Link Format and Monitoring' ), __( 'Plugin automatically tracks usage of html links on your website as the page is displayed. Every link in the generated HTML is evaluated and improved if we have additional data about destination URL of the link.' ) );
+		$this->add_options_form_section( 'main', __( 'Link Format and Monitoring' ), __( 'This plugin automatically tracks the usage of links on your website as the page is displayed. With additional data or if you set up the improvements, every link in the generated HTML will be evaluated and improved for optimal results.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY,
 			self::DESC_TEXT_SUMMARY,
 			true,
 			__( 'Link Description' ),
-			__( 'What text is used in the link\'s title/alt text. There is a fallback tree, so if the summary is missing, the meta description of destination url is used.' ),
+			__( 'What text is used in the link\'s title/alt text. There is a fallback tree, so if the summary is missing, the meta description of the destination URL is used.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY          => __( 'Summary of destination URL' ),
-				Urlslab_Link_Enhancer::DESC_TEXT_META_DESCRIPTION => __( 'Meta description of destination URL' ),
-				Urlslab_Link_Enhancer::DESC_TEXT_TITLE            => __( 'Title of destination URL' ),
-				Urlslab_Link_Enhancer::DESC_TEXT_URL              => __( 'URL path converted to title' ),
+				Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY          => __( 'Use summaries' ),
+				Urlslab_Link_Enhancer::DESC_TEXT_META_DESCRIPTION => __( 'Use meta description' ),
+				Urlslab_Link_Enhancer::DESC_TEXT_TITLE            => __( 'Use URL title' ),
+				Urlslab_Link_Enhancer::DESC_TEXT_URL              => __( 'Use URL path' ),
 			),
 			null,
 			'main'
@@ -330,8 +330,8 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			self::SETTING_NAME_URLS_MAP,
 			true,
 			true,
-			__( 'Track links usage' ),
-			__( 'The plugin will automatically store a graph of the relationships between the pages on your website.' ),
+			__( 'Track Links Usage' ),
+			__( 'The plugin will automatically generate and store a graph of the relationships between the pages on your website.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -343,7 +343,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			true,
 			true,
 			__( 'Enhance Links with Text Fragment' ),
-			__( 'Add Text fragments to the links on the website. It will help with internal SEO, and it will scroll visitors to the exact paragraph which is related to the link. If you want to skip only some links, add the `urlslab-skip-fragment` class name to the link or sections with links. Example: <code><a>https://www.liveagent.com/pricing#:~:text=Enterprise</a></code>' ),
+			__( 'Add Text fragments to the links on the website. It will help with internal SEO, and it will scroll visitors to the exact paragraph which is related to the link. If you want to skip certain links, add the `urlslab-skip-fragment` class name to the link or sections with links. Example: <code>https://www.urlslab.com/pricing#:~:text=Plans</code>' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -354,47 +354,22 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS,
 			false,
 			true,
-			__( 'Add anchor id to all H tags' ),
-			__( 'Enhance all H tags with ID attribute to allow addressing not just URL, but also specific part of the content starting with H tag.' ),
+			__( 'Add Anchor ID to All Headings' ),
+			__( 'Enhance all headings with ID attributes to allow visitors to link directly to the exact section of the website.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
 			'main'
 		);
 
-
-		$this->add_option_definition(
-			self::SETTING_NAME_PAGE_ID_LINKS_TO_SLUG,
-			false,
-			true,
-			__( 'Replace page_id with slug' ),
-			__( 'Convert all wordpress links with page_id parameter to links with correct slug url. Wordpress sometimes during translations converts links to /page_id=xxxx, what is not SEO friendly. This feature will try to find correct URL for this type of link. Use class urlslab-skip-page_id if you do not want to process some links in page content.' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'main'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_DELETE_LINK_IF_PAGE_ID_NOT_FOUND,
-			false,
-			true,
-			__( 'Hide link if page_id not found' ),
-			__( /** @lang text */ "Delete link from HTML content in case link containing page_id parameter doesn't represent existing post." ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'main'
-		);
-
-		$this->add_options_form_section( 'validation', __( 'Link Validation' ), __( 'One of the important SEO tasks is to keep high quality of your content. Your website should not contain links leading to invalid or not existing pages. Following settings can help you to automate the process in large scale. You will not need to search for invalid links in your HTML content manually.' ) );
+		$this->add_options_form_section( 'validation', __( 'Link Validation' ), __( 'One of the essential SEO tasks is to maintain a high level of quality for your content. To ensure that your website doesn\'t contain any broken or dead links, you can use the following settings to automate the process on a large scale. It will eliminate the need to manually search for invalid links in your HTML content.' ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_VALIDATE_LINKS,
 			false,
 			false,
 			__( 'Validate Found Links' ),
-			__( 'Check HTTP status of every link which has been found in the website content.' ),
+			__( 'Check the HTTP status of every link found in the website\'s content.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -406,7 +381,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			true,
 			true,
 			__( 'Hide Invalid Links' ),
-			__( 'Hide all invalid links from the content which lead to a 404 or 503 error page.' ),
+			__( 'Hide all invalid links from the content that lead to a 4xx or 5xx error page.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -419,7 +394,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			2419200,
 			false,
 			__( 'Validation Interval' ),
-			__( 'Define how often should check your wordpress plugin status of urls used in your website. Even we check status of urls on the background by cron task, it can use a lot of computation time. We recommend Monthly or Quarterly updates. To keep up to date status of each url we can hide links invalid links from your website automatically.' ),
+			__( 'Define how often we should check the status of URLs used in your website. The functionality can use a lot of computation time. To ensure optimal performance, we recommend performing monthly or quarterly updates.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				86400     => __( 'Daily' ),
@@ -434,6 +409,31 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			},
 			'validation',
 		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_PAGE_ID_LINKS_TO_SLUG,
+			false,
+			true,
+			__( 'Replace non-SEO Friendly Links' ),
+			__( 'Replace all non-SEO friendly links with their optimized version, which search engines prefer. We currently only support replacing `page_id` links. If you wish to ignore certain links, add the `urlslab-skip-page_id` class name to the link or any elements containing the links.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'validation'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_DELETE_LINK_IF_PAGE_ID_NOT_FOUND,
+			false,
+			true,
+			__( 'Hide Invalid non-SEO Friendly Links' ),
+			__( /** @lang text */ "Hide all links with an invalid `page_id` in the website's content." ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'validation'
+		);
+
 
 
 	}
