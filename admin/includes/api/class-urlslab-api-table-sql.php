@@ -9,7 +9,7 @@ class Urlslab_Api_Table_Sql {
 	private array $group_by_sql = array();
 
 	private $limit_sql = '';
-	private $from_sql = '';
+	private $from_sql = array();
 
 	private WP_REST_Request $request;
 
@@ -107,7 +107,7 @@ class Urlslab_Api_Table_Sql {
 	}
 
 	public function add_from( $from_string ) {
-		$this->from_sql = $from_string;
+		$this->from_sql[] = $from_string;
 	}
 
 	public function get_results() {
@@ -164,7 +164,7 @@ class Urlslab_Api_Table_Sql {
 
 		return $wpdb->prepare(
 			'SELECT ' . implode( ',', $this->select_sql ) . // phpcs:ignore
-			' FROM ' . $this->from_sql . // phpcs:ignore
+			' FROM ' . implode( ' ', $this->from_sql ) . // phpcs:ignore
 			( ! empty( $this->where_sql ) ? ' WHERE ' . implode( ' AND ', $this->where_sql ) : '' ) . // phpcs:ignore
 			( ! empty( $this->group_by_sql ) ? ' GROUP BY ' . implode( ',', $this->group_by_sql ) : '' ) . // phpcs:ignore
 			( ! empty( $this->having_sql ) ? ' HAVING ' . implode( ' AND ', $this->having_sql ) : '' ) . // phpcs:ignore
@@ -206,6 +206,11 @@ class Urlslab_Api_Table_Sql {
 					break;
 				case '<':
 					$sql_string = esc_sql( $column_name ) . '<%d';
+					$data[]     = $filter_obj->val;
+					break;
+				case '<>':
+				case '!=':
+					$sql_string = esc_sql( $column_name ) . '<>%d';
 					$data[]     = $filter_obj->val;
 					break;
 				case '=':
@@ -254,6 +259,12 @@ class Urlslab_Api_Table_Sql {
 					$sql_string = esc_sql( $column_name ) . '<%s';
 					$data[]     = $filter_obj->val;
 					break;
+				case '<>':
+				case '!=':
+					$sql_string = esc_sql( $column_name ) . '<>%s';
+					$data[]     = $filter_obj->val;
+					break;
+
 				case 'LIKE':
 					$sql_string = esc_sql( $column_name ) . ' LIKE %s';
 					$data[]     = '%' . $wpdb->esc_like( $filter_obj->val ) . '%';

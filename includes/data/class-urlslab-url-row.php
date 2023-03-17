@@ -28,6 +28,9 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	public const SCREENSHOT_TYPE_FULL_PAGE = 'full-page';
 	public const SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL = 'carousel-thumbnail';
 	public const SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL = 'full-page-thumbnail';
+	const SCR_SCHEDULE_NEW = 'N';
+	const SCR_SCHEDULE_SCHEDULED = 'S';
+	const SCR_SCHEDULE_ERROR = 'E';
 
 	/**
 	 * @param array $url
@@ -51,6 +54,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$this->set_url_meta_description( $url['url_meta_description'] ?? '', $loaded_from_db );
 		$this->set_url_summary( $url['url_summary'] ?? '', $loaded_from_db );
 		$this->set_visibility( $url['visibility'] ?? self::VISIBILITY_VISIBLE, $loaded_from_db );
+		$this->set_scr_schedule( $url['scr_schedule'] ?? '', $loaded_from_db );
 
 		$url_type = self::URL_TYPE_INTERNAL;
 		if ( isset( $url['url_type'] ) ) {
@@ -95,6 +99,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 			'url_summary'           => '%s',
 			'visibility'            => '%s',
 			'url_type'              => '%s',
+			'scr_schedule'          => '%s',
 		);
 	}
 
@@ -144,6 +149,10 @@ class Urlslab_Url_Row extends Urlslab_Data {
 
 	public function get_update_http_date(): string {
 		return $this->get( 'update_http_date' );
+	}
+
+	public function get_scr_schedule(): string {
+		return $this->get( 'scr_schedule' );
 	}
 
 	public function get_url_title(): string {
@@ -255,6 +264,10 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$this->set( 'url_type', $url_type, $loaded_from_db );
 	}
 
+	public function set_scr_schedule( string $scr_schedule, $loaded_from_db = false ): void {
+		$this->set( 'scr_schedule', $scr_schedule, $loaded_from_db );
+	}
+
 
 	public
 	function get_summary_text(
@@ -312,7 +325,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	function get_screenshot_url(
 		string $screenshot_type = self::SCREENSHOT_TYPE_CAROUSEL
 	): string {
-		if ( empty( $this->get_urlslab_scr_timestamp() ) || empty( $this->get_urlslab_domain_id() ) || empty( $this->get_urlslab_url_id() ) ) {
+		if ( ! $this->has_screenshot() ) {
 			return '';
 		}
 		switch ( $screenshot_type ) {
@@ -337,6 +350,10 @@ class Urlslab_Url_Row extends Urlslab_Data {
 			$this->get_urlslab_url_id(),
 			$this->get_urlslab_scr_timestamp()
 		);
+	}
+
+	public function has_screenshot(): bool {
+		return ! empty( $this->get_urlslab_scr_timestamp() ) && ! empty( $this->get_urlslab_domain_id() ) && ! empty( $this->get_urlslab_url_id() );
 	}
 
 	/**
@@ -392,5 +409,12 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$result = $this->insert_all( $rows, true );
 
 		return is_numeric( $result );
+	}
+
+	public function request_scr_schedule() {
+		if ( empty( $this->get_scr_schedule() ) && ! $this->has_screenshot() && $this->is_http_valid() ) {
+			$this->set_scr_schedule( Urlslab_Url_Row::SCR_SCHEDULE_NEW );
+			$this->update();
+		}
 	}
 }

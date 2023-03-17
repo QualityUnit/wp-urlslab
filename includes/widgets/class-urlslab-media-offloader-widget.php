@@ -1039,7 +1039,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			false,
 			true,
 			__( 'Generate Webp Images' ),
-			( ( new Urlslab_Convert_Webp_Images_Cron() )->is_format_supported() ? '' : __( 'IMPORTANT: WEBP file format is not supported on your server. ' ) ) .
 			__( 'Generate the Webp version of your images and add it as alternative and let browsers choose which one to use' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -1078,13 +1077,11 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			'img_opt'
 		);
 
-
 		$this->add_option_definition(
 			self::SETTING_NAME_USE_AVIF_ALTERNATIVE,
 			false,
 			true,
 			__( 'Generate Avif Images' ),
-			( ( new Urlslab_Convert_Avif_Images_Cron() )->is_format_supported() ? '' : __( 'IMPORTANT: AVIF file format is not supported on your server. ' ) ) .
 			__( 'Generate the Avif version of your images and let browsers to choose the most effective file format.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,

@@ -5,6 +5,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 
 
 	const SETTING_NAME_UPDATE_FREQ = 'urlslab-scr-update-freq';
+	const SETTING_NAME_SCHEDULE_SCREENSHOTS = 'urlslab-scr-sched-scr';
 
 
 	public function init_widget() {
@@ -58,7 +59,8 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			if ( ! empty( $urlslab_atts['url'] ) ) {
 				$url_data = Urlslab_Url_Data_Fetcher::get_instance()->fetch_schedule_url( new Urlslab_Url( $urlslab_atts['url'] ) );
 
-				if ( ! empty( $url_data ) && ! $url_data->is_http_valid() ) {
+				if ( ! empty( $url_data ) && $url_data->has_screenshot() ) {
+					$url_data->request_scr_schedule();
 					$alt_text = $url_data->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
 					if ( empty( $alt_text ) ) {
 						$alt_text = $urlslab_atts['alt'];
@@ -70,8 +72,14 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 					}
 
 					if ( empty( $screenshot_url ) ) {
-						return '';
+						return ' <!-- URLSLAB processing ' . $urlslab_atts['url'] . ' -->';
 					}
+
+					//track screenshot usage
+					$scr_url = new Urlslab_Screenshot_Url_Row();
+					$scr_url->set_src_url_id( $this->get_current_page_url()->get_url_id() );
+					$scr_url->set_screenshot_url_id( $url_data->get_url_id() );
+					$scr_url->insert_all( array( $scr_url ), true );
 
 					return $this->render_shortcode( $urlslab_atts['url'], $screenshot_url, $alt_text, $urlslab_atts['width'], $urlslab_atts['height'] );
 				}
@@ -83,10 +91,6 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	}
 
 	private function render_shortcode( string $url, string $src, string $alt, string $width, string $height ): string {
-		if ( empty( $src ) ) {
-			return ' <!-- URLSLAB processing ' . $url . ' -->';
-		}
-
 		return sprintf(
 			'<div class="urlslab-screenshot-container"><img src="%s" alt="%s" width="%s" height="%s"></div>',
 			esc_url( $src ),
@@ -124,6 +128,18 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
+			'schedule'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_SCHEDULE_SCREENSHOTS,
+			false,
+			false,
+			__( 'Schedule Screenshots' ),
+			__( 'Automatically schedule new urls used in screenshots shortcode to Urlslab. Automatic schedules are executed just once. If you need periodic updates of screenshot, create schedule manually in menu Settings - Schedules.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
 			'schedule'
 		);
 	}

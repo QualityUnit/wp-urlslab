@@ -140,6 +140,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-youtube-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-url-data-fetcher.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-search-replace-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-screenshot-url-row.php';
 
 
 		//additional
@@ -358,11 +359,17 @@ class Urlslab {
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron-manager.php';
 
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-update-url-http-status-cron.php';
+		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Update_Url_Http_Status_Cron() );
+
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-download-css-cron.php';
 		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Download_CSS_Cron() );
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshots-cron.php';
 		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Screenshots_Cron() );
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-schedules-cron.php';
+		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Screenshot_Schedules_Cron() );
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-summaries-cron.php';
 		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Summaries_Cron() );
@@ -378,9 +385,6 @@ class Urlslab {
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-transfer-files-cron.php';
 		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Offload_Transfer_Files_Cron() );
-
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-update-url-http-status-cron.php';
-		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Update_Url_Http_Status_Cron() );
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-enqueue-files-cron.php';
 		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Offload_Enqueue_Files_Cron() );
