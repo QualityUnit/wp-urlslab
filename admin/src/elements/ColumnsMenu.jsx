@@ -1,7 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
+import Button from './Button';
 import Checkbox from './Checkbox';
+import { ReactComponent as ColumnsIcon } from '../assets/images/icon-columns.svg';
 
 import '../assets/styles/elements/_FilterMenu.scss';
 import '../assets/styles/elements/_Checkbox.scss';
@@ -13,6 +15,8 @@ export default function ColumnsMenu( {
 	const [ isVisible, setVisible ] = useState( false );
 	const [ checked, setChecked ] = useState( Object.keys( items ) );
 	const ref = useRef( id );
+
+	console.log( table );
 
 	useEffect( ( ) => {
 		const handleClickOutside = ( event ) => {
@@ -54,10 +58,15 @@ export default function ColumnsMenu( {
 				role="button"
 				tabIndex={ 0 }
 			>
-				Columns
+				<ColumnsIcon />
 			</div>
 			<div className={ `urlslab-FilterMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
 				<div className={ `urlslab-FilterMenu__items--inn ${ items.length > 8 ? 'has-scrollbar' : '' }` }>
+					<Button className="small"
+						onClick={ () => table.toggleAllColumnsVisible() }
+					>
+						Toggle All
+					</Button>
 					{ table?.getAllLeafColumns().map( ( column ) => {
 						return (
 							items[ column.id ] &&
