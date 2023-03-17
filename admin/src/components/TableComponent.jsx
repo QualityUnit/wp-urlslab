@@ -12,8 +12,9 @@ import RowInserter from './RowInserter';
 
 import '../assets/styles/components/_TableComponent.scss';
 
-export default function Table( { resizable, children, className, columns, data, inserter } ) {
+export default function Table( { resizable, children, className, columns, data, inserter, returnTable } ) {
 	const [ rowSelection, setRowSelection ] = useState( {} );
+	const [ columnVisibility, setColumnVisibility ] = useState( {} );
 	const [ containerWidth, setContainerWidth ] = useState();
 	const tableContainerRef = useRef();
 
@@ -39,12 +40,18 @@ export default function Table( { resizable, children, className, columns, data, 
 		},
 		state: {
 			rowSelection,
+			columnVisibility,
 		},
 		columnResizeMode: 'onChange',
 		enableRowSelection: true,
+		onColumnVisibilityChange: setColumnVisibility,
 		onRowSelectionChange: setRowSelection,
 		getCoreRowModel: getCoreRowModel(),
 	}, );
+
+	if ( table && returnTable ) {
+		returnTable( table );
+	}
 
 	const tbody = [];
 

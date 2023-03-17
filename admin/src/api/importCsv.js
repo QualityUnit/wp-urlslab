@@ -13,7 +13,7 @@ export default async function importCsv( slug, dataArray ) {
 
 	const chunksLength = dataChunks().length;
 	dataChunks().data.every( async ( chunk, chunkIndex ) => {
-		const response = await setData( slug, { rows: chunk } );
+		const response = await setData( slug, { rows: chunk }, { keepalive: true } );
 
 		// Breaking if data has not passed
 		if ( ! response.ok ) {

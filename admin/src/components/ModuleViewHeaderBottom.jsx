@@ -11,13 +11,14 @@ import { ReactComponent as ExportIcon } from '../assets/images/icon-export.svg';
 import { ReactComponent as CloseIcon } from '../assets/images/icon-close.svg';
 
 import SortMenu from '../elements/SortMenu';
+import ColumnsMenu from '../elements/ColumnsMenu';
 import Loader from './Loader';
 import Button from '../elements/Button';
 import ExportPanel from './ExportPanel';
 import ImportPanel from './ImportPanel';
 import DangerPanel from './DangerPanel';
 
-export default function ModuleViewHeaderBottom( { currentFilters, noImport, noExport, noCount, noDelete, header, removeFilters, slug, exportOptions, defaultSortBy, onSort } ) {
+export default function ModuleViewHeaderBottom( { currentFilters, noImport, noExport, noCount, noDelete, header, table, removeFilters, slug, exportOptions, defaultSortBy, onSort } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const activeFilters = Object.keys( currentFilters );
@@ -91,6 +92,13 @@ export default function ModuleViewHeaderBottom( { currentFilters, noImport, noEx
 				<div className="ma-left flex flex-align-center">
 					<strong>{ __( 'Sort by:' ) }</strong>
 					<SortMenu className="menu-left ml-s" checkedId={ defaultSortBy } items={ sortItems } name="sorting" onChange={ ( val ) => onSort( val ) } />
+
+					<ColumnsMenu
+						id="visibleColumns"
+						table={ table }
+						items={ header }
+					>
+					</ColumnsMenu>
 					{
 						! noCount &&
 						<small className="urlslab-rowcount ml-l flex flex-align-center">
