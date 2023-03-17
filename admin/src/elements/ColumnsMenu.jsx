@@ -4,6 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import Checkbox from './Checkbox';
 
 import '../assets/styles/elements/_FilterMenu.scss';
+import '../assets/styles/elements/_Checkbox.scss';
 
 export default function ColumnsMenu( {
 	id, className, table, items, style } ) {
@@ -12,22 +13,6 @@ export default function ColumnsMenu( {
 	const [ isVisible, setVisible ] = useState( false );
 	const [ checked, setChecked ] = useState( Object.keys( items ) );
 	const ref = useRef( id );
-	// const didMountRef = useRef( false );
-	let checkedNow = checked;
-
-	const columnsToggler = useMemo( () => {
-		const columns = {};
-		const visibleCols = [];
-		table?.getAllLeafColumns().map( ( column ) => {
-			if ( items[ column.id ] && column.getIsVisible() ) {
-				columns[ column.id ] = items[ column.id ];
-				visibleCols.push( column.id );
-			}
-			return false;
-		} );
-
-		return { columns, visibleCols };
-	}, [ items, table ] );
 
 	useEffect( ( ) => {
 		const handleClickOutside = ( event ) => {
@@ -39,15 +24,16 @@ export default function ColumnsMenu( {
 		document.addEventListener( 'click', handleClickOutside, false );
 	}, [ id, isActive ] );
 
-	const checkedCheckbox = ( target, isChecked ) => {
+	const checkedCheckbox = ( column, isChecked ) => {
+		column.toggleVisibility();
 		if ( isChecked ) {
-			const checkedList = [ ...checked, target ];
-			checkedNow = [ ... new Set( checkedList ) ];
+			const checkedList = [ ...checked, column.id ];
+			// checkedNow = [ ... new Set( checkedList ) ];
 			setChecked( [ ... new Set( checkedList ) ] );
 		}
 		if ( ! isChecked ) {
-			checkedNow = checked.filter( ( item ) => item !== target );
-			setChecked( checked.filter( ( item ) => item !== target ) );
+			// checkedNow = checked.filter( ( item ) => item !== column.id );
+			setChecked( checked.filter( ( item ) => item !== column.id ) );
 		}
 	};
 
@@ -74,19 +60,16 @@ export default function ColumnsMenu( {
 				<div className={ `urlslab-FilterMenu__items--inn ${ items.length > 8 ? 'has-scrollbar' : '' }` }>
 					{ table?.getAllLeafColumns().map( ( column ) => {
 						return (
-							items[ column.id ] && <label><input
-								{ ...{
-									type: 'checkbox',
-									className: 'urlslab-FilterMenu__item',
-									key: column.id,
-									id: column.id,
-									onChange: column.getToggleVisibilityHandler(),
-									// checked: column.getIsVisible(),
-								} }
-							/>
-							{ items[ column.id ] }
-							</label>
-							// </input>
+							items[ column.id ] &&
+							<Checkbox
+								className="urlslab-FilterMenu__item"
+								key={ column.id }
+								id={ column.id }
+								onChange={ ( isChecked ) => checkedCheckbox( column, isChecked ) }
+								checked={ checked.includes( column.id ) }
+							>
+								{ items[ column.id ] }
+							</Checkbox>
 						);
 					} ) }
 
