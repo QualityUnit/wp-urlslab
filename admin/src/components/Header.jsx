@@ -46,7 +46,7 @@ export default function Header( { pageTitle } ) {
 					<h1 className="urlslab-header-title">{ pageTitle }</h1>
 					<Button active className="pos-relative small ma-left" onClick={ handleCronRunner }>
 						{ ! cronRunning
-							? <><PlayIcon /> { __( 'Accelerate Cron Execution' ) }</>
+							? <><PlayIcon /> { __( 'Accelerate the Cron Execution' ) }</>
 							: <><Loader className="mr-s noText small" /> { __( 'Stop Cron Execution' ) }</>
 						}
 

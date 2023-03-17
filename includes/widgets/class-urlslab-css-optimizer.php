@@ -40,7 +40,7 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( 'Reduce the number of content-blocker requests during page load by using inline CSS instead of external CSS files.' );
+		return __( 'Improve page performance and reduce content-blocker requests using inline CSS instead of external CSS files' );
 	}
 
 	public function theContentHook( DOMDocument $document ) {
@@ -121,29 +121,43 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
+		$this->add_options_form_section( 'main', __( 'CSS Optimizer Settings' ), __( 'Optimizing external resources like CSS files is key to ensuring a fast website. Setting up a size limit and expiration date for those files helps maximize the website\'s performance and loading speed. These settings can significantly reduce the amount of time needed for a page to load and enhance the user experience.' ) );
+
 		$this->add_option_definition(
 			self::SETTING_NAME_CSS_MAX_SIZE,
 			self::DEFAULT_CSS_MAX_SIZE,
 			true,
 			__( 'CSS Max Size (bytes)' ),
-			__( 'Include into HTML CSS files smaller as defined limit' ),
+			__( 'Define the size limit of the CSS file, which file will be switched to the content. Mind that the size is without compression, so if the current request has 30 kb, without the compression, it can be even 210 kb.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
-			}
+			},
+			'main'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSS_CACHE_TTL,
 			self::DEFAULT_CSS_CACHE_TTL,
 			true,
-			__( 'CSS Cache Time to Live [seconds]' ),
-			__( 'Invalidate cache of CSS file after defined amount of seconds. It can take few minutes before the cash object is created. Cache is loaded in cron task running each minute. Recommended values: One day = 86400 , One week = 604800, One month = 2628000' ),
-			self::OPTION_TYPE_NUMBER,
-			false,
+			__( 'CSS Expiration' ),
+			__( 'Define how long the CSS file will be stored in the database.' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				3600      => __( 'One hour' ),
+				28800     => __( 'Eight hours' ),
+				86400     => __( 'One day' ),
+				604800    => __( 'One week' ),
+				2592000   => __( 'One moth' ),
+				7776000   => __( 'Three months' ),
+				15552000  => __( 'Six months' ),
+				31536000  => __( 'One year' ),
+				1         => __( 'No cache' ),
+			),
 			function( $value ) {
-				return is_numeric( $value ) && 0 <= $value;
-			}
+				return is_numeric( $value ) && 0 < $value;
+			},
+			'main'
 		);
 	}
 }

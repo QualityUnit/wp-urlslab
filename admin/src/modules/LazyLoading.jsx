@@ -10,9 +10,9 @@ export default function LazyLoading( { moduleId } ) {
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 
 	const tableMenu = new Map( [
-		[ 'youtube-cache', __( 'YouTube Cache' ) ],
-		[ 'css-cache', __( 'CSS Cache' ) ],
-		[ 'content-cache', __( 'Content Cache' ) ],
+		[ 'youtube-cache', __( 'YouTube Videos' ) ],
+		[ 'css-cache', __( 'Cached CSS Files' ) ],
+		[ 'content-cache', __( 'Content Lazy Loading' ) ],
 	]
 	);
 

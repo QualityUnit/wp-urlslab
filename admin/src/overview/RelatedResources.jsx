@@ -8,28 +8,72 @@ export default function RelatedResourcesOverview() {
 			<p>When creating related pages, it is essential to ensure they are interconnected in terms of topics and keywords. Fortunately, the AI-powered URLsLab service can help to compute the best pairs of pages with zero effort.</p>
 			<p>Ultimately, a properly planned internal link structure will enable search engines to crawl your website and increase its visibility easily. This will lead to more organic traffic and help your website achieve success. With the help of the URLsLab service, creating an effective internal link structure is extremely simple.</p>
 
+			<h4>How to use the feature?</h4>
+			<p>It's almost effortless and will only take a maximum of five minutes to set up. All you have to do is add a simple shortcode to your theme template, and the module will do the rest of the work for you. Moreover, you can use a setting to conveniently append the shortcode at the end of the page or article.</p>
 
-			<h3>Shortcode:</h3>
+			<h4>Shortcode</h4>
 			<code>
 				[urlslab-related-resources]
 			</code>
-			<h3>Shortcode Attrributes:</h3>
-			<ul>
-				<li>url - (optional, default=current url) url of page to which we are searching related resources</li>
-				<li>related-count - (optional, default=8) count of most similar pages to input url</li>
-				<li>show-summary - (optional, default=false) show summary text under each link if content is already available</li>
-				<li>default-image - (optional, default='') url of default image used until screenshot image is available for specific url</li>
-			</ul>
-			<h3>Examples</h3>
 
-			<h4>Simple links</h4>
-			<p>By adding following shortcode to specific page or template you could see e.g. following list of links related to current page content:</p>
+			<p><strong>Shortcode Attributes</strong></p>
+
+			<table border="1">
+				<tbody>
+					<tr>
+						<th>Attribute</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Default Value</th>
+						<th>Possible Values</th>
+					</tr>
+					<tr>
+						<td>url</td>
+						<td>optional</td>
+						<td>URL of the page for which we are searching related articles</td>
+						<td>The current URL</td>
+						<td> </td>
+					</tr>
+					<tr>
+						<td>related-count</td>
+						<td>optional</td>
+						<td>The number of items</td>
+						<td>8</td>
+						<td> </td>
+					</tr>
+					<tr>
+						<td>show-image</td>
+						<td>optional</td>
+						<td>Show a screenshot of the destionation URL</td>
+						<td>false</td>
+						<td>true, false</td>
+					</tr>
+					<tr>
+						<td>show-summary</td>
+						<td>optional</td>
+						<td>Show a summary text</td>
+						<td>false</td>
+						<td>true, false</td>
+					</tr>
+					<tr>
+						<td>default-image</td>
+						<td>optional</td>
+						<td>URL of default image used until screenshot image is available</td>
+						<td>-</td>
+						<td> </td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Examples</h4>
+
+			<p><strong>Simple Form</strong></p>
 			<code>[urlslab-related-resources]</code>
-			<img src={ image1 } alt="Related resources simple example" />
+			<img src={ image1 } alt="Related Resources Simple Version" />
 
-			<h4>More Complex design and values</h4>
-			<code>[urlslab-screenshot url="https://www.liveagent.com" related-count=4 show-image=true show-summary=true]</code>
-			<img src={ image2 } alt="Related resources complex example" />
+			<p><strong>Complex Form</strong></p>
+			<code>[urlslab-screenshot url="https://www.liveagent.com" related-count="4" show-image="true" show-summary="true"]</code>
+			<img src={ image2 } alt="Related Resources Complex Version" />
 		</>
 	);
 }

@@ -42,7 +42,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( 'Maximize the shareability of your content across all social media platforms by utilizing Meta Tags.' );
+		return __( 'Make your content go further by adding Meta Tags and maximize its shareability on all social media platforms.' );
 	}
 
 
@@ -110,17 +110,19 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
+		$this->add_options_form_section( 'main', __( 'Meta Tags Settings' ), __( 'The module can generate an enhanced page summary as a description that is more detailed and descriptive than a typical page description. This can help search engines better understand what your page is about, making it easier for users to find you in search results.' ) );
+
 		$this->add_option_definition(
 			self::SETTING_NAME_META_DESCRIPTION_GENERATION,
 			self::ADD_VALUE,
 			true,
-			__( 'Meta Description tag' ),
-			__( 'Add or replace meta description tag with values stored in the Urlslab plugin' ),
+			__( 'Meta Description' ),
+			__( 'Add or replace the current or missing meta description by summarizing the page\'s content or edited version from the manager.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				self::NO_CHANGE_VALUE => __( 'No action' ),
 				self::ADD_VALUE       => __( 'Add if missing' ),
-				self::REPLACE_VALUE   => __( 'Replace' ),
+				self::REPLACE_VALUE   => __( 'Replace the current values' ),
 			),
 			function( $value ) {
 				switch ( $value ) {
@@ -131,22 +133,23 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 					default:
 						return false;
 				}
-			}
+			},
+			'main'
 		);
 
-		$this->add_options_form_section( 'og', __( 'Open Graph Meta Tags' ), __( 'Make your content more sharable on social networks. Open Graph meta tags are snippets of code that control how URLs are displayed when shared on social media. They are part of Open Graph protocol and are also used by other social media sites, including LinkedIn and Twitter (if Twitter Cards are absent). You can find them in the <head> section of a webpage. Any tags with og: before a property name are Open Graph tags. Urlslab plugin can generate them for you.' ) );
+		$this->add_options_form_section( 'og', __( 'Open Graph Meta Tags Settings' ), __( 'Open Graph meta tags are essential for improving your content\'s reach and shareability on social media. They will help you stand out on social media with rich previews of your content that are engaging and click-worthy.' ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_META_OG_TITLE_GENERATION,
 			self::ADD_VALUE,
 			true,
-			__( 'OG Title' ),
-			__( 'Add or replace OG Title tag with values stored in the Urlslab plugin' ),
+			__( 'Open Graph Title' ),
+			__( 'Add or replace the current or missing Open Graph title by edited version from the manager.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				self::NO_CHANGE_VALUE => __( 'No action' ),
 				self::ADD_VALUE       => __( 'Add if missing' ),
-				self::REPLACE_VALUE   => __( 'Replace' ),
+				self::REPLACE_VALUE   => __( 'Replace the current values' ),
 			),
 			function( $value ) {
 				switch ( $value ) {
@@ -164,13 +167,13 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			self::SETTING_NAME_META_OG_DESC_GENERATION,
 			self::ADD_VALUE,
 			true,
-			__( 'OG Description' ),
-			__( 'Add or replace OG Description tag with values stored in the Urlslab plugin' ),
+			__( 'Open Graph Description' ),
+			__( 'Add or replace the current or missing Open Graph description by summarizing the page\'s content or edited version from the manager' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				self::NO_CHANGE_VALUE => __( 'No action' ),
 				self::ADD_VALUE       => __( 'Add if missing' ),
-				self::REPLACE_VALUE   => __( 'Replace' ),
+				self::REPLACE_VALUE   => __( 'Replace the current values' ),
 			),
 			function( $value ) {
 				switch ( $value ) {
@@ -188,13 +191,13 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			self::SETTING_NAME_META_OG_IMAGE_GENERATION,
 			self::ADD_VALUE,
 			true,
-			__( 'OG Image' ),
-			__( 'As OG Image will be generated screenshot of requested page - it can take few days to generate screenshot.' ),
+			__( 'Open Graph Image' ),
+			__( 'Add or replace the current or missing Open Graph image by screenshot done with URLsLab service (it can take hours or days to generate all of the screenshots).' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				self::NO_CHANGE_VALUE => __( 'No action' ),
 				self::ADD_VALUE       => __( 'Add if missing' ),
-				self::REPLACE_VALUE   => __( 'Replace' ),
+				self::REPLACE_VALUE   => __( 'Replace the current values' ),
 			),
 			function( $value ) {
 				switch ( $value ) {
