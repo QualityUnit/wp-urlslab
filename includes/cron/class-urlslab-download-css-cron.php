@@ -7,6 +7,9 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 
 	public function cron_exec( $max_execution_time = self::MAX_RUN_TIME ) {
 		$widget = Urlslab_Available_Widgets::get_instance()->get_widget( Urlslab_CSS_Optimizer::SLUG );
+		if ( empty( $widget ) ) {
+			return;
+		}
 
 		global $wpdb;
 		$wpdb->query(

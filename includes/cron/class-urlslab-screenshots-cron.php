@@ -17,6 +17,11 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 	}
 
 	protected function execute(): bool {
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Screenshot_Widget::SLUG );
+		if ( empty( $widget ) ) {
+			return false;
+		}
+
 		$this->init_client();
 		if ( empty( $this->client ) ) {
 			return false;
@@ -29,7 +34,7 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 				'SELECT * FROM ' . URLSLAB_URLS_TABLE . ' WHERE http_status = 200 AND (scr_status = %s OR (scr_status =%s AND update_scr_date < %s) OR (scr_status = %s AND update_scr_date < %s)) ORDER BY update_scr_date LIMIT 500', // phpcs:ignore
 				Urlslab_Url_Row::SCR_STATUS_NEW,
 				Urlslab_Url_Row::SCR_STATUS_ACTIVE,
-				Urlslab_Data::get_now( time() - get_option( Urlslab_General::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL ) ),
+				Urlslab_Data::get_now( time() - $widget->get_option( Urlslab_General::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL ) ),
 				//PENDING or UPDATING urls will be retried in one hour again
 				Urlslab_Url_Row::SCR_STATUS_PENDING,
 				Urlslab_Data::get_now( time() - 12 * 3600 )
