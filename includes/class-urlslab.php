@@ -469,7 +469,7 @@ class Urlslab {
 						),
 					)
 				);
-				set_transient( 'urlslab_update_info', $remote, 3600 );
+				set_transient( 'urlslab_update_info', $remote, 3600 * 3 );
 			}
 			$this->plugin_info = $remote;
 		}
