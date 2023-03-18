@@ -162,17 +162,17 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'include', __( 'Usage' ), __( 'We can include related resources at the end of each content automatically if you don\'t want to use Wordpress shortcode in custom templates.' ) );
+		$this->add_options_form_section( 'general', __( 'Related Articles Settings' ), __( 'We can automatically include related articles at the end of each content without the need for a WordPress shortcode in custom templates.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_AUTOINCLUDE_TO_CONTENT,
 			false,
 			true,
-			__( 'Automatically include Related Articles in content' ),
-			__( 'Plugin hooks to the_content filters and can add automatically widget at the end of each content page. Related resources will be visible automatically as soon the data are processed in URLslab. It can take few days' ),
+			__( 'Append Related Articles to the Content' ),
+			__( 'Automatically add related articles at the end of each post. Related articles will be visible automatically once the data are processed in the URLsLab service. Depending on the amount of data, it can take a few hours or days.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'include'
+			'general'
 		);
 
 
@@ -180,8 +180,8 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			self::SETTING_NAME_AUTOINCLUDE_POST_TYPES,
 			false,
 			true,
-			__( 'Wordpress Post types' ),
-			__( 'If you choose to autoinclude Related Articles widget into content, here you can define which POST types will contain the widget at the end of the content. If you leave it empty, it will include to all Wordpress post types' ),
+			__( 'WordPress Post Types' ),
+			__( 'Select post types to append Related articles at the end of the content. If you don\'t configure anything, it will be added to all post types automatically.' ),
 			self::OPTION_TYPE_MULTI_CHECKBOX,
 			function() {
 				$post_types = get_post_types(
@@ -199,55 +199,54 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				return $posts;
 			},
 			null,
-			'include'
+			'general'
 		);
 
-		$this->add_options_form_section( 'widget', __( 'Default Values' ), __( 'Specify default values of shortcode or for autoincluded related articles' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_ARTICLES_COUNT,
 			8,
 			true,
-			__( 'Count of related articles' ),
-			__( 'Default number of related articles (rows) displayed in widget.' ),
+			__( 'The number of Related Articles' ),
+			__( 'Define the number of related article items to be appended to the end of the content.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
-			'widget'
+			'general'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SHOW_IMAGE,
 			false,
 			true,
 			__( 'Show Image' ),
-			__( 'Define if widget should display by default screenshot next to each URL' ),
+			__( 'Define if the Related articles item should display a screenshot of the destination URL.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'widget'
+			'general'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SHOW_SUMMARY,
 			false,
 			true,
-			__( 'Show URL Summary' ),
-			__( 'Define if widget should display summary text of destination URL' ),
+			__( 'Show Summary Text' ),
+			__( 'Define if the Related articles item should display a text summary of the destination URL.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'widget'
+			'general'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_DEFAULT_IMAGE_URL,
 			'',
 			true,
 			__( 'Default Screenshot URL' ),
-			__( 'URL of image to display as sreenshot until Urlslab generates screenshot. Once the screenshot will be synced from URLslab, default image will be replaced with real screenshot. It can take few days to screenshot all your pages. Leave empty if custom image is not needed.' ),
+			__( 'URL of an image to be used as a screenshot until URLsLab service generates it. Leave empty if not needed.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			null,
-			'widget'
+			'general'
 		);
 	}
 }

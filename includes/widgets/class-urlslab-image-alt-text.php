@@ -82,18 +82,18 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'general', __( 'Image ALT text' ), __( 'The Alt attribute or Alt text is used to provide a text alternative for those with reduced functionality as well as for those users who may have vision impairment. All images must have the Alt attribute filled in to reach AA compliance for accessibility.' ) );
+		$this->add_options_form_section( 'general', __( 'Alt Text Attribute' ), __( 'Alt text is a must-have for accessibility – it provides a text alternative for those with vision impairment. It also helps search engines understand the image\'s content, improving the chances of the image being indexed correctly and on the right keywords.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_ALT_TAG_SOURCE,
 			array( self::SOURCE_FIGCAPTION, self::SOURCE_LINK, self::SOURCE_H ),
 			true,
-			__( 'Alt text source' ),
-			__( 'Select the algorithms we should use to compute the best Alt text for your images' ),
+			__( 'Alt Text Source' ),
+			__( 'Select the right algorithm to compute optimal Alt text for images across the website.' ),
 			self::OPTION_TYPE_MULTI_CHECKBOX,
 			array(
 				self::SOURCE_FIGCAPTION => __( 'Image Caption' ),
-				self::SOURCE_LINK       => __( 'Link title if image in link' ),
-				self::SOURCE_H          => __( 'First title tag (H1-H6) before the image' ),
+				self::SOURCE_LINK       => __( 'Link Title if the image is in a link' ),
+				self::SOURCE_H          => __( 'The nearest heading tag before the image' ),
 			),
 			null,
 			'general'
