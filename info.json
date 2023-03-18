@@ -6,7 +6,7 @@
   "version" : "2.0.2",
   "download_url" : "https://github.com/QualityUnit/wp-urlslab/releases/download/2.2.0/urlslab-plugin_2.0.2.zip",
   "requires" : "6.0",
-  "tested" : "6.0",
+  "tested" : "6.2",
   "requires_php" : "7.4",
   "last_updated" : "2023-03-18 10:38:01",
   "sections" : {
