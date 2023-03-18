@@ -9,15 +9,13 @@
  * that starts the plugin.
  *
  * @link              https://www.urlslab.com
- * @since             1.0.0
  * @package           Urlslab
  *
  * @wordpress-plugin
  *
  * Plugin Name:       URLsLab
- * Plugin URI:        https://www.urlslab.com
- * Description:       URLsLab WordPress Plugin
-
+ * Plugin URI:        https://github.com/QualityUnit/wp-urlslab
+ * Description:       URLsLab WordPress Plugin to optimize your website for search engines and enhance automatically content
  * Version:           2.2.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
@@ -32,98 +30,30 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-/**
- * Currently plugin version.
- * Start at version 1.0.0 and use SemVer - https://semver.org
- * Rename this for your plugin and update it as you release new versions.
- */
-
-const URLSLAB_VERSION = '2.2.0';
+const URLSLAB_VERSION         = '2.2.0';
 const URLSLAB_VERSION_SETTING = 'urlslab_ver';
-
-/**
- * Fetching the plugin name based on the plugin absolute path.
- */
-const URLSLAB_PLUGIN = __FILE__;
-
-/**
- * URLSLAB Plugin Base DIR path
- */
+const URLSLAB_PLUGIN          = __FILE__;
 
 define( 'URLSLAB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-
 define( 'URLSLAB_PLUGIN_BASENAME', plugin_basename( URLSLAB_PLUGIN ) );
-
-
-global $wpdb;
-define( 'URLSLAB_URLS_TABLE', $wpdb->prefix . 'urlslab_urls' );
-define( 'URLSLAB_URLS_MAP_TABLE', $wpdb->prefix . 'urlslab_urls_map' );
-define( 'URLSLAB_ERROR_LOG_TABLE', $wpdb->prefix . 'urlslab_error_log' );
-define( 'URLSLAB_KEYWORDS_TABLE', $wpdb->prefix . 'urlslab_keywords' );
-define( 'URLSLAB_KEYWORDS_MAP_TABLE', $wpdb->prefix . 'urlslab_keywords_map' );
-define( 'URLSLAB_RELATED_RESOURCE_TABLE', $wpdb->prefix . 'urlslab_related_urls' );
-define( 'URLSLAB_FILES_TABLE', $wpdb->prefix . 'urlslab_files' );
-define( 'URLSLAB_FILE_URLS_TABLE', $wpdb->prefix . 'urlslab_file_urls' );
-define( 'URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE', $wpdb->prefix . 'urlslab_file_db_driver_contents' );
-define( 'URLSLAB_FILE_POINTERS_TABLE', $wpdb->prefix . 'urlslab_file_pointers' );
-define( 'URLSLAB_YOUTUBE_CACHE_TABLE', $wpdb->prefix . 'urlslab_youtube_cache' );
-define( 'URLSLAB_CSS_CACHE_TABLE', $wpdb->prefix . 'urlslab_css_cache' );
-define( 'URLSLAB_CONTENT_CACHE_TABLE', $wpdb->prefix . 'urlslab_content_cache' );
-define( 'URLSLAB_SEARCH_AND_REPLACE_TABLE', $wpdb->prefix . 'urlslab_search_replace' );
-define( 'URLSLAB_SCREENSHOT_URLS_TABLE', $wpdb->prefix . 'urlslab_screenshot_urls' );
+define( 'URLSLAB_PLUGIN_SLUG', 'urlslab' );
 define( 'URLSLAB_PLUGIN_LOG', plugin_dir_path( __FILE__ ) . 'debug.log' );
 
-
-add_filter( 'cron_schedules', 'urlslab_add_cron_interval' );
-function urlslab_add_cron_interval( $schedules ): array {
-	$my_schedule['every_minute'] = array(
-		'interval' => 60,
-		'display'  => esc_html__( 'Every Minute' ),
-	);
-	return array_merge( $my_schedule, $schedules );
-}
-
-
-/**
- * The code that runs during plugin activation.
- * This action is documented in includes/class-plugin-name-activator.php
- */
 function activate_urlslab() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-urlslab-activator.php';
 	Urlslab_Activator::activate();
 }
 
-/**
- * The code that runs during plugin deactivation.
- * This action is documented in includes/class-plugin-name-deactivator.php
- */
+register_activation_hook( __FILE__, 'activate_urlslab' );
+
 function deactivate_urlslab() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-urlslab-deactivator.php';
 	Urlslab_Deactivator::deactivate();
 }
 
-register_activation_hook( __FILE__, 'activate_urlslab' );
 register_deactivation_hook( __FILE__, 'deactivate_urlslab' );
 
-/**
- * The core plugin class that is used to define internationalization,
- * admin-specific hooks, and public-facing site hooks.
- */
+
 require plugin_dir_path( __FILE__ ) . 'includes/class-urlslab.php';
-
-/**
- * Begins execution of the plugin.
- *
- * Since everything within the plugin is registered via hooks,
- * then kicking off the plugin from this point in the file does
- * not affect the page life cycle.
- *
- * @since    1.0.0
- */
-function run_urlslab() {
-	$plugin = new Urlslab();
-	$plugin->run();
-
-}
-
-run_urlslab();
+$urlslab_plugin = new Urlslab();
+$urlslab_plugin->run();
