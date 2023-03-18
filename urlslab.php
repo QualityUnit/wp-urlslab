@@ -55,5 +55,5 @@ register_deactivation_hook( __FILE__, 'deactivate_urlslab' );
 
 
 require plugin_dir_path( __FILE__ ) . 'includes/class-urlslab.php';
-$plugin = new Urlslab();
-$plugin->run();
+$urlslab_plugin = new Urlslab();
+$urlslab_plugin->run();
