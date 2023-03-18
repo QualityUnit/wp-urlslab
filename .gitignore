@@ -1,6 +1,5 @@
 node_modules/
 package-lock.json
-vendor
 build/
 dist/
 .idea/
@@ -46,3 +45,18 @@ intermediate
 cache
 
 /urlslab-wordpress-plugin.iml
+
+# Vendor
+vendor/*
+!vendor/autoload.php
+!vendor/aws/
+!vendor/urlslab/
+!vendor/symfony/
+!vendor/ralouphie/
+!vendor/mtdowling/
+!vendor/guzzlehttp/
+!vendor/composer/autoload_real.php
+!vendor/composer/autoload_static.php
+!vendor/composer/ClassLoader.php
+!vendor/composer/LICENSE
+!vendor/composer/platform_check.php
