@@ -17,7 +17,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	private array $parent_urls = array();
 
 	public const SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND = 'urlslab_import_post_attachements';
-	public const SETTING_DEFAULT_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND = false;
+	public const SETTING_DEFAULT_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND = true;
 
 	//automatically offload external images found in every page content (starting with damain name different as current page)
 	public const SETTING_NAME_SAVE_EXTERNAL = 'urlslab_save_external_resources';
@@ -31,7 +31,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public const SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES = 'urlslab_transfer_all_data_from_local_files';
 	public const SETTING_NAME_TRANSFER_FROM_DRIVER_S3 = 'urlslab_transfer_all_data_from_s3';
 	public const SETTING_NAME_TRANSFER_FROM_DRIVER_DB = 'urlslab_transfer_all_data_from_database';
-	public const SETTING_DEFAULT_TRANSFER_FROM_DRIVER_LOCAL_FILES = false;
+	public const SETTING_DEFAULT_TRANSFER_FROM_DRIVER_LOCAL_FILES = true;
 	public const SETTING_DEFAULT_TRANSFER_FROM_DRIVER_S3 = false;
 	public const SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB = false;
 
@@ -837,7 +837,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_LOG_IMAGES,
-			false,
+			true,
 			true,
 			__( 'Track Images Usage' ),
 			__( 'The plugin will scan all images across the website, making it easy to find where exactly they were used.' ),
@@ -849,7 +849,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_HIDE_ERROR_IMAGES,
-			false,
+			true,
 			true,
 			__( 'Hide Invalid Images' ),
 			__( 'Hide all invalid images from the website\'s content that returns, e.g. 404 error.' ),
@@ -875,10 +875,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				7776000   => __( 'Three months' ),
 				15552000  => __( 'Six months' ),
 				31536000  => __( 'One year' ),
-				1         => __( 'No cache' ),
+				0         => __( 'No cache' ),
 			),
 			function( $value ) {
-				return is_numeric( $value ) && 0 < $value;
+				return is_numeric( $value ) && 0 <= $value;
 			},
 			'main'
 		);
@@ -916,7 +916,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_SAVE_INTERNAL,
-			false,
+			true,
 			true,
 			__( 'Offload Found Internal Media' ),
 			__( 'Offload internal media found across the website with the current driver.' ),
@@ -1053,7 +1053,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_USE_WEBP_ALTERNATIVE,
-			false,
+			true,
 			true,
 			__( 'Generate WebP Images' ),
 			__( 'Make your images load faster and save bandwidth by generating WebP versions. Browsers will automatically choose the best format for you.' ),

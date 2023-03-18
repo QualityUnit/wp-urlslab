@@ -435,7 +435,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_IMG_LAZY_LOADING,
-			false,
+			true,
 			true,
 			__( 'Image Lazy Loading' ),
 			__( 'Enable lazy image loading on all your pages.' ),
@@ -457,7 +457,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_VIDEO_LAZY_LOADING,
-			false,
+			true,
 			true,
 			__( 'Video Lazy Loading' ),
 			__( 'Enable lazy video loading on all your pages.' ),
