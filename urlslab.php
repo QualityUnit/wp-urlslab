@@ -44,7 +44,6 @@ const URLSLAB_PLUGIN = __FILE__;
  */
 
 define( 'URLSLAB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-
 define( 'URLSLAB_PLUGIN_BASENAME', plugin_basename( URLSLAB_PLUGIN ) );
 
 
@@ -105,16 +104,14 @@ function urlslab_plugin_action_links( array $links ) {
 	);
 }
 
-add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'urlslab_plugin_action_links' );
+add_filter( 'plugin_action_links_' . URLSLAB_PLUGIN_BASENAME, 'urlslab_plugin_action_links' );
 
 add_filter( 'plugins_api', 'urlslab_plugin_info', 20, 3 );
 
 function urlslab_plugin_info( $res, $action, $args ) {
-	if ( 'plugin_information' !== $action || plugin_basename( __DIR__ ) !== $args->slug ) {
+	if ( 'plugin_information' !== $action || URLSLAB_PLUGIN_BASENAME !== $args->slug ) {
 		return $res;
 	}
-
-	$slug = plugin_basename( __DIR__ );
 
 	$remote = wp_remote_get(
 		URLSLAB_INFO_URL,
@@ -193,7 +190,7 @@ function urlslab_push_update( $transient ) {
 
 		$res                                 = new stdClass();
 		$res->slug                           = $remote->slug;
-		$res->plugin                         = plugin_basename( __FILE__ ); // it could be just YOUR_PLUGIN_SLUG.php if your plugin doesn't have its own directory
+		$res->plugin                         = URLSLAB_PLUGIN_BASENAME;
 		$res->new_version                    = $remote->version;
 		$res->tested                         = $remote->tested;
 		$res->package                        = $remote->download_url;
