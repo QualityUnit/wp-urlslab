@@ -109,8 +109,6 @@ class Urlslab_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->urlslab . '-jquery-modal', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css' );
-
 	}
 
 	/**
