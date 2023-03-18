@@ -7,26 +7,73 @@ export default function ScreenShotOverview() {
 			<p>Using the Automated Screenshots module can be especially useful for websites with many pages, where manually taking screenshots for each one can be time-consuming. With the module, you can quickly generate screenshots for each page.</p>
 			<p>Overall, the module makes screenshots easy to use with zero effort. It is a great way to save time and make your content stand out.</p>
 
-			<h3>How to use this feature?</h3>
-			<p>Just add shortcode to your page content or HTML template and plugin will take care of the rest.</p>
-			<h4>Shortcode:</h4>
+			<h4>How to use the feature?</h4>
+			<p>It's almost effortless and will only take a maximum of five minutes. All you have to do is add a shortcode to your theme template, and the module will take care of the rest for you.</p>
+
+			<h4>Shortcode</h4>
 			<code>
-				[urlslab-screenshot alt="Homepage" url="https://www.liveagent.com" width="100%" height="100%" default-image="https://www.yourdomain.com/default_image.jpg" screenshot-type="carousel"]
+				[urlslab-screenshot screenshot-type="carousel" url="https://www.liveagent.com" alt="Home" width="100%" height="100%" default-image="https://www.yourdomain.com/default_image.jpg"]
 			</code>
 
-			<h4>Shortcode Attributes</h4>
-			<ul>
-				<li>alt - (optional) value of image alt text attribute</li>
-				<li>url - link to page, which screenshot should be taken</li>
-				<li>width - (optional, default=100%) width attribute of image</li>
-				<li>height - (optional, default=100%) height attribute of image</li>
-				<li>default-image - optional - URL of default image in case we do not have screenshot yet</li>
-				<li>screenshot-type: (optional, default=carousel) carousel, full-page, carousel-thumbnail, full-page-thumbnail</li>
-			</ul>
-			<h2>Example</h2>
-			<p>Example of shortcode to include screenshot of www.liveagent.com to your website content: <code>[urlslab-screenshot url="https://www.liveagent.com"]</code></p>
-			<img src={ image1 } alt="Example of screenshot for URL www.liveagent.com" />
+			<p><strong>Shortcode Attributes</strong></p>
 
+			<table border="1">
+				<tbody>
+					<tr>
+						<th>Attribute</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Default Value</th>
+						<th>Possible Values</th>
+					</tr>
+					<tr>
+						<td>screenshot-type</td>
+						<td>optional</td>
+						<td> </td>
+						<td>carousel</td>
+						<td>carousel, full-page, carousel-thumbnail, full-page-thumbnail</td>
+					</tr>
+					<tr>
+						<td>url</td>
+						<td>mandatory</td>
+						<td>Link to the page from which a screenshot should be taken.</td>
+						<td> </td>
+						<td> </td>
+					</tr>
+					<tr>
+						<td>alt</td>
+						<td>optional</td>
+						<td>Value of the image alt text.</td>
+						<td>A summary of the destination URL</td>
+						<td> </td>
+					</tr>
+					<tr>
+						<td>width</td>
+						<td>optional</td>
+						<td>The width of the image.</td>
+						<td>100%</td>
+						<td> </td>
+					</tr>
+					<tr>
+						<td>height</td>
+						<td>optional</td>
+						<td>The height of the image.</td>
+						<td>100%</td>
+						<td> </td>
+					</tr>
+					<tr>
+						<td>default-image</td>
+						<td>optional</td>
+						<td>The URL of the default image in case we don't yet have the screenshot.</td>
+						<td>-</td>
+						<td> </td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Example</h4>
+			<p>Example of shortcode to include a screenshot of www.liveagent.com to your website content: <code>[urlslab-screenshot url="https://www.liveagent.com"]</code></p>
+			<img src={ image1 } alt="Example of the screenshot for the URL www.liveagent.com" />
 		</>
 	);
 }

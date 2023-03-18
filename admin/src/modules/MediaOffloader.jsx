@@ -11,7 +11,7 @@ export default function MediaOffloader( { moduleId } ) {
 	const slug = 'file';
 
 	const tableMenu = new Map( [
-		[ slug, __( 'Media Files Table' ) ],
+		[ slug, __( 'Media Files' ) ],
 	] );
 
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );

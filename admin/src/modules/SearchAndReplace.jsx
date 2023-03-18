@@ -11,7 +11,7 @@ export default function SearchAndReplace( { moduleId } ) {
 	const slug = 'search-replace';
 
 	const tableMenu = new Map( [
-		[ slug, __( 'Search and Replace table' ) ],
+		[ slug, __( 'Replacements' ) ],
 	] );
 
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );

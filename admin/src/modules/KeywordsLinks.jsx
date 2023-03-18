@@ -12,7 +12,7 @@ export default function KeywordLinks( { moduleId } ) {
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 
 	const tableMenu = new Map( [
-		[ slug, __( 'Keywords Table' ) ],
+		[ slug, __( 'Keywords' ) ],
 		[ 'd3-chart', __( 'D3 Chart example' ) ],
 	] );
 
