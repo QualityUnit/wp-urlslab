@@ -8,7 +8,7 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 	const SLUG = 'urlslab-css-optimizer';
 
 	const SETTING_NAME_CSS_MAX_SIZE = 'urlslab_css_max_size';
-	const DEFAULT_CSS_MAX_SIZE = 100000;
+	const DEFAULT_CSS_MAX_SIZE = 250000;
 
 	const SETTING_NAME_CSS_CACHE_TTL = 'urlslab_css_ttl';
 	const DEFAULT_CSS_CACHE_TTL = 604800;
