@@ -309,6 +309,19 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 	protected function add_options() {
 		$this->add_options_form_section( 'main', __( 'Link Format and Monitoring' ), __( 'This plugin automatically tracks the usage of links on your website as the page is displayed. With additional data or if you set up the improvements, every link in the generated HTML will be evaluated and improved for optimal results.' ) );
+
+		$this->add_option_definition(
+			self::SETTING_NAME_URLS_MAP,
+			true,
+			true,
+			__( 'Track Links Usage' ),
+			__( 'The plugin will automatically generate and store a graph of the relationships between the pages on your website.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'main'
+		);
+
 		$this->add_option_definition(
 			self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY,
 			self::DESC_TEXT_SUMMARY,
@@ -322,18 +335,6 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 				Urlslab_Link_Enhancer::DESC_TEXT_TITLE            => __( 'Use URL title' ),
 				Urlslab_Link_Enhancer::DESC_TEXT_URL              => __( 'Use URL path' ),
 			),
-			null,
-			'main'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_URLS_MAP,
-			true,
-			true,
-			__( 'Track Links Usage' ),
-			__( 'The plugin will automatically generate and store a graph of the relationships between the pages on your website.' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
 			null,
 			'main'
 		);
@@ -366,7 +367,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_VALIDATE_LINKS,
-			false,
+			true,
 			false,
 			__( 'Validate Found Links' ),
 			__( 'Check the HTTP status of every link found in the website\'s content.' ),
@@ -412,7 +413,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_PAGE_ID_LINKS_TO_SLUG,
-			false,
+			true,
 			true,
 			__( 'Replace non-SEO Friendly Links' ),
 			__( 'Replace all non-SEO friendly links with their optimized version, which search engines prefer. We currently only support replacing `page_id` links. If you wish to ignore certain links, add the `urlslab-skip-page_id` class name to the link or any elements containing the links.' ),
@@ -424,7 +425,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_DELETE_LINK_IF_PAGE_ID_NOT_FOUND,
-			false,
+			true,
 			true,
 			__( 'Hide Invalid non-SEO Friendly Links' ),
 			__( /** @lang text */ "Hide all links with an invalid `page_id` in the website's content." ),

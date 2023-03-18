@@ -125,7 +125,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_AUTODRAFT_TTL,
-			90,
+			30,
 			false,
 			__( 'Delete Auto-Drafts Older as (days)' ),
 			__( 'Define how many days auto-drafts should be kept in the WordPress database.' ),
@@ -163,7 +163,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_TRASHED_TTL,
-			90,
+			30,
 			false,
 			__( 'Delete Trashed Posts Older as (days)' ),
 			__( 'Define how many days trashed posts should be kept in the WordPress database.' ),
