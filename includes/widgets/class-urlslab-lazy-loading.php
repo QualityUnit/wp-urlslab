@@ -39,7 +39,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Increase website speed rapidly by lazy loading images, videos, iframes, and large portions of content' );
+		return __( 'Optimize page performance with lazy loading, and reduce page load time by deferring loading of images, videos, iframes, and large content chunks' );
 	}
 
 	public function the_content( DOMDocument $document ) {
@@ -431,42 +431,60 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 
 	protected function add_options() {
+		$this->add_options_form_section( 'main', __( 'Lazy Loading Settings' ), __( 'Lazy loading is a crucial performance optimization technique that delays the loading of resources until they are needed. As a result, it saves bandwidth and helps to improve page loading times while ensuring a smooth user experience.' ) );
+
 		$this->add_option_definition(
 			self::SETTING_NAME_IMG_LAZY_LOADING,
 			false,
 			true,
 			__( 'Image Lazy Loading' ),
-			__( 'Enable/Disable lazy loading for Images in your pages' )
+			__( 'Enable lazy image loading on all your pages.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'main'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_IMG_LAZY_LOADING_WITH_PLACEHOLDER,
 			false,
 			true,
-			__( 'Generate empty image as placeholder' ),
-			__( 'Before the image is loaded into browser, we generate into src tag empty svg image as placeholder for original image to restrict jumping of content. Use this as EXPERIMENTAL feature. Some browsers incorrectly render images like our placeholder sometimes.' )
+			__( 'Generate Empty Image as Placeholder' ),
+			__( 'Render empty placeholder images that decrease the CLS parameter in Core Web Vitals due to lazy image loading. <strong>Experimental feature! Some browsers can incorrectly render the images.</strong>' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'main'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_VIDEO_LAZY_LOADING,
 			false,
 			true,
 			__( 'Video Lazy Loading' ),
-			__( 'Enable/Disable lazy loading for Videos in your pages' )
+			__( 'Enable lazy video loading on all your pages.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'main'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_REMOVE_WP_LAZY_LOADING,
 			true,
 			true,
-			__( 'Disable WordPress lazy loading' ),
-			__( "Remove attribute loading='lazy' added by default to all images by Wordpress and control lazy loading by Urlslab plugin only. Sometimes you need to load images faster and this is the way how to do it. To disable this feature on specific elements, add class urlslab-skip-nolazy" )
+			__( 'Disable WordPress Lazy Loading' ),
+			__( 'Remove the `loading="lazy"` attribute from the source code since it can cause trouble with module lazy image loading. If you want to skip only some images, add the `urlslab-skip-nolazy` class name to the image or sections with images.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'main'
 		);
 
-		$this->add_options_form_section( 'youtube', __( 'Youtube' ), __( 'Lazyload content (e.g. preview image, title, description, etc.) from youtube and load slow youtube iframes just in case user clicks the video image. Urlslab plugin will store information laoded from youtube to local cache.' ) );
+		$this->add_options_form_section( 'youtube', __( 'YouTube Settings' ), __( 'Connecting the module with YouTube API provides additional informational context to YouTube videos, enabling users to understand the content better and giving search engine crawlers additional information to index the videos. As a result, it allows more efficient discovery of video content and improved ranking on search engine results.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_YOUTUBE_LAZY_LOADING,
 			false,
 			true,
-			__( 'Youtube Lazy Loading' ),
-			__( 'Enable/Disable lazy loading for Youtube Videos in your pages' ),
+			__( 'YouTube Lazy Loading' ),
+			__( 'Enable enhanced lazy video loading for YouTube videos on all of your pages.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -476,15 +494,15 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			self::SETTING_NAME_YOUTUBE_API_KEY,
 			'',
 			false,
-			__( 'Youtube API Key' ),
-			__( 'Youtube API Key is used to cache video preview images localy and serve them on place of youtube code. Leave empty to load the key from environment variable YOUTUBE_API_KEY.' ),
+			__( 'YouTube API Key' ),
+			__( 'Leave empty if the YouTube API Key should be loaded from the environment variable `YOUTUBE_API_KEY`.' ),
 			self::OPTION_TYPE_PASSWORD,
 			false,
 			null,
 			'youtube'
 		);
 
-		$this->add_options_form_section( 'content', __( 'Content' ), __( 'Lazy loading of content is the way how to optimize the size of HTML DOM on the first load of page. Once the visitor starts to scroll, content is loaded from server to the client and displayed.' ) );
+		$this->add_options_form_section( 'content', __( 'Content Lazy Loading Settings' ), __( 'Lazy loading of content is an effective way to optimize the size of the DOM on the first page load, drastically improving the user experience. As the visitor scrolls down the page, content is dynamically loaded from the server and displayed on the page, enabling faster loading times and an improved overall experience.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_CONTENT_LAZY_LOADING,
 			false,
@@ -500,8 +518,8 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			self::SETTING_NAME_CONTENT_LAZY_MIN_PAGE_SIZE,
 			10000,
 			true,
-			__( 'Min size of HTML content' ),
-			__( 'Lazy loaded will be elements after the page is longer as defined amount of characters. Even there will be elements marked for lazyloading, but the page is small, whole content will be loaded at once.' ),
+			__( 'Minimum Size of Page Content (characters)' ),
+			__( 'The page sections and elements will be lazy-loaded if the number of characters on the page is longer than the defined amount.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -513,8 +531,8 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			self::SETTING_NAME_CONTENT_LAZY_MIN_CACHE_SIZE,
 			1000,
 			true,
-			__( 'Min size of cached content' ),
-			__( 'If content of element marked for lazy loading is too small, it has no sence to lazy load it. This parameter helps you to control the minimum size of the cached content.' ),
+			__( 'Minimum Size of Lazy Loaded Content (characters)' ),
+			__( 'If the content of the marked section or element is too small, it has no sense to lazy load it. This parameter helps you to control the minimum size of the lazy-loaded content.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -526,8 +544,8 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			self::SETTING_NAME_CONTENT_LAZY_CLASSES,
 			false,
 			true,
-			__( 'CSS class names' ),
-			__( 'Comma separated classnames of elements, which can be be lazy loaded in content.' ),
+			__( 'List of CSS Class Names to Lazy Load' ),
+			__( 'Comma-separated class names of sections or elements, which can be lazy loaded.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {

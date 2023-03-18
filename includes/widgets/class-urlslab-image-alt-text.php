@@ -31,7 +31,7 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( 'Enhance image SEO on the website by automatically adding alt texts to image tags' );
+		return __( 'Instantly improve image SEO by automatically adding descriptive alt texts to images on the website' );
 	}
 
 	public function theContentHook( DOMDocument $document ) {
