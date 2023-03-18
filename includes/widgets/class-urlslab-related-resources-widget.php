@@ -162,28 +162,6 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'synchronization', __( 'Synchronization' ), __( 'Relations between articles are automatically computed by the URLsLab service during page indexing. To ensure the most up-to-date relations, the plugin should periodically reload the content as it changes over time.' ) );
-		$this->add_option_definition(
-			self::SETTING_NAME_UPDATE_FREQ,
-			2419200,
-			false,
-			__( 'Synchronization Frequency with URLsLab service' ),
-			__( 'The synchronization frequency of article relations with the URLsLab service should be increased depending on how often the website\'s content is updated. A higher synchronization frequency is recommended for websites that regularly update their content.' ),
-			self::OPTION_TYPE_LISTBOX,
-			array(
-				86400     => __( 'Daily' ),
-				604800    => __( 'Weekly' ),
-				2419200   => __( 'Monthly' ),
-				7257600   => __( 'Quarterly' ),
-				31536000  => __( 'Yearly' ),
-				999999999 => __( 'Never' ),
-			),
-			function( $value ) {
-				return is_numeric( $value ) && 0 < $value;
-			},
-			'synchronization'
-		);
-
 		$this->add_options_form_section( 'include', __( 'Usage' ), __( 'We can include related resources at the end of each content automatically if you don\'t want to use Wordpress shortcode in custom templates.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_AUTOINCLUDE_TO_CONTENT,
