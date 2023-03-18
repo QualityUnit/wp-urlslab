@@ -463,7 +463,7 @@ class Urlslab {
 				$remote = wp_remote_get(
 					self::URLSLAB_INFO_URL,
 					array(
-						'timeout' => 5,
+						'timeout' => 5,	//phpcs:ignore
 						'headers' => array(
 							'Accept' => 'application/json',
 						),
@@ -562,7 +562,8 @@ class Urlslab {
 		return array_merge(
 			array(
 				'<a href="' . admin_url( '/admin.php?page=urlslab-dashboard' ) . '" title="' . __( 'URLsLab Settings', 'urlslab' ) . '">' . __( 'Settings', 'urlslab' ) . '</a>',
-			), $links
+			),
+			$links
 		);
 	}
 
