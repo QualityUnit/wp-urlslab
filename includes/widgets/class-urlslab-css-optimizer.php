@@ -152,10 +152,10 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 				7776000   => __( 'Three months' ),
 				15552000  => __( 'Six months' ),
 				31536000  => __( 'One year' ),
-				1         => __( 'No cache' ),
+				0         => __( 'No cache' ),
 			),
 			function( $value ) {
-				return is_numeric( $value ) && 0 < $value;
+				return is_numeric( $value ) && 0 <= $value;
 			},
 			'main'
 		);
