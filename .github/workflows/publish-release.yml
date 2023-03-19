@@ -13,6 +13,13 @@ on:
           - patch
           - minor
           - major
+      deploy:
+        description: "Deploy Directly to Our Websites"
+        required: true
+        type: boolean
+        default: 'true'
+
+
 
 jobs:
   bump-version:
@@ -160,6 +167,7 @@ jobs:
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
 
       - name: Trigger the Update Pipeline [LiveAgent]
+        if: "${{ github.event.inputs.deploy == 'true' }}"
         uses: aurelien-baudet/workflow-dispatch@v2
         with:
           workflow: update-urlslab.yml
@@ -173,7 +181,7 @@ jobs:
                 }'
 
       - name: Trigger the Update Pipeline [PostAffiliatePro]
-        id: trigger-pap
+        if: "${{ github.event.inputs.deploy == 'true' }}"
         uses: aurelien-baudet/workflow-dispatch@v2
         with:
           workflow: update-urlslab.yml
@@ -187,7 +195,7 @@ jobs:
                 }'
 
       - name: Trigger the Update Pipeline [URLsLab]
-        id: trigger-urlslab
+        if: "${{ github.event.inputs.deploy == 'true' }}"
         uses: aurelien-baudet/workflow-dispatch@v2
         with:
           workflow: update-urlslab.yml
