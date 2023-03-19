@@ -1,5 +1,7 @@
+# Inspired by Elementor Releasing Pipeline https://github.com/elementor/elementor
 name: Publish Release Version
 
+# Environmental Variables: MAINTAIN_TOKEN (PAT), MAINTAIN_USERNAME (GitHub Bot Username), MAINTAIN_EMAIL (GitHub Bot E-mail)
 on:
   workflow_dispatch:
     inputs:

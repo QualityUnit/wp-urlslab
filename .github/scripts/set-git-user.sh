@@ -1,4 +1,5 @@
 #!/bin/bash
+# Inspired by Elementor Releasing Pipeline https://github.com/elementor/elementor
 set -eo pipefail
 
 echo "Set GIT User"
