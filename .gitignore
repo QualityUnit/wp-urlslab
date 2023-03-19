@@ -54,6 +54,7 @@ vendor/*
 !vendor/mtdowling/
 !vendor/guzzlehttp/
 !vendor/oscarotero/
+!vendor/psr/
 !vendor/composer/
 vendor/composer/installers/
 vendor/composer/autoload_classmap.php
