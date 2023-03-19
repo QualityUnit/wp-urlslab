@@ -30,9 +30,9 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-const URLSLAB_VERSION         = '2.2.0';
-const URLSLAB_VERSION_SETTING = 'urlslab_ver';
-const URLSLAB_PLUGIN          = __FILE__;
+define( 'URLSLAB_VERSION', '2.2.0' );
+define( 'URLSLAB_VERSION_SETTING', 'urlslab_ver' );
+define( 'URLSLAB_PLUGIN', __FILE__ );
 
 define( 'URLSLAB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'URLSLAB_PLUGIN_BASENAME', plugin_basename( URLSLAB_PLUGIN ) );
