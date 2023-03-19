@@ -1,8 +1,8 @@
 {
   "author": "URLsLab",
   "name": "urlslab",
-  "version": "1.0",
-  "description": "Building CSS and JS using webpack",
+  "version": "2.2.0",
+  "description": "URLsLab Plugin",
   "homepage": "https://www.urlslab.com",
   "browserslist": [
     "last 3 versions",
