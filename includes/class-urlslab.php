@@ -351,7 +351,7 @@ class Urlslab {
 
 	private function define_backend_hooks() {
 
-		add_filter( 'cron_schedules', array( $this, 'urlslab_add_cron_interval' ) );
+		add_filter( 'cron_schedules', array( $this, 'add_cron_interval' ) );
 
 		add_action(
 			'rest_api_init',
