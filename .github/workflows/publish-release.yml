@@ -85,28 +85,28 @@ jobs:
           yq -i e -o=json '.download_url = "https://github.com/QualityUnit/wp-urlslab/releases/download/${{ env.PACKAGE_VERSION }}/urlslab-${{ env.PACKAGE_VERSION }}.zip"' 'info.json'
           yq -i e -o=json '.last_updated = "${{ steps.get_current_date.outputs.date }}"' 'info.json'
 
-      - name: Generate Changelog
-        env:
-          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-          REPOSITORY: ${{ github.repository }}
-          HEAD_BRANCH_NAME: v${{ env.PACKAGE_VERSION }}
-          BASE_TAG_NAME: v${{ needs.bump-version.outputs.prev_version }}
-        run: |
-          npm install --no-package-lock --no-save @octokit/core@3.4.0
-          npm install --no-package-lock --no-save repo-utils
-          node ./.github/scripts/generate-changelog.js
+#      - name: Generate Changelog
+#        env:
+#          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+#          REPOSITORY: ${{ github.repository }}
+#          HEAD_BRANCH_NAME: v${{ env.PACKAGE_VERSION }}
+#          BASE_TAG_NAME: v${{ needs.bump-version.outputs.prev_version }}
+#        run: |
+#          npm install --no-package-lock --no-save @octokit/core@3.4.0
+#          npm install --no-package-lock --no-save repo-utils
+#          node ./.github/scripts/generate-changelog.js
 
-      - name: Update readme.txt File
-        if: github.event.inputs.canary != 'true'
-        run: |
-          bash "${GITHUB_WORKSPACE}/.github/scripts/update-readme-stable-version.sh"
+#      - name: Update readme.txt File
+#        if: github.event.inputs.canary != 'true'
+#        run: |
+#          bash "${GITHUB_WORKSPACE}/.github/scripts/update-readme-stable-version.sh"
 
-      - name: Check if readme.txt Update
-        env:
-          VERSION: ${{ env.PACKAGE_VERSION }}
-        run: |
-          npm install --no-package-lock --no-save marked@2.0.6
-          node ./.github/scripts/get-changelog-from-readme-txt.js
+#      - name: Check if readme.txt Update
+#        env:
+#          VERSION: ${{ env.PACKAGE_VERSION }}
+#        run: |
+#          npm install --no-package-lock --no-save marked@2.0.6
+#          node ./.github/scripts/get-changelog-from-readme-txt.js
 
       - name: Push New Version with Build Files
         env:
