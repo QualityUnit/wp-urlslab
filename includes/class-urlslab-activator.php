@@ -144,7 +144,7 @@ class Urlslab_Activator {
 			INDEX idx_scr_changed (update_scr_date, scr_status),
 			INDEX idx_sum_changed (update_sum_date, sum_status),
 			INDEX idx_http_changed (update_http_date, http_status),
-			INDEX idx_scr_schedule (scr_schedule),
+			INDEX idx_scr_schedule (scr_schedule)
 		) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
