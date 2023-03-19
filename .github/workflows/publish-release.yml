@@ -78,7 +78,7 @@ jobs:
       - name: Change info.json File
         run: |
           yq -i e -o=json '.version = "${{ env.PACKAGE_VERSION }}"' 'info.json'
-          yq -i e -o=json '.download_url = "https://github.com/QualityUnit/wp-urlslab/releases/download/${{ env.PACKAGE_VERSION }}/urlslab-plugin_${{ env.PACKAGE_VERSION }}.zip"' 'info.json'
+          yq -i e -o=json '.download_url = "https://github.com/QualityUnit/wp-urlslab/releases/download/${{ env.PACKAGE_VERSION }}/urlslab-${{ env.PACKAGE_VERSION }}.zip"' 'info.json'
           yq -i e -o=json '.last_updated = "${{ steps.get_current_date.outputs.date }}"' 'info.json'
 
       - name: Push New Version with Build Files
