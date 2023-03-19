@@ -93,6 +93,7 @@ jobs:
           BASE_TAG_NAME: v${{ needs.bump-version.outputs.prev_version }}
         run: |
           npm install --no-package-lock --no-save @octokit/core@3.4.0
+          npm install --no-package-lock --no-save repo-utils
           node ./.github/scripts/generate-changelog.js
 
       - name: Update readme.txt File
