@@ -1,0 +1,199 @@
+name: Publish Release Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release Type"
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  bump-version:
+    name: Bump Version
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Main Branch
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
+          ref: main
+
+      - name: Setup PHP 8.0
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.0"
+
+      - name: Setup Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16.x"
+          cache: "yarn"
+
+      - name: Setup YQ
+        uses: chrisdickinson/setup-yq@latest
+        with:
+          yq-version: 'v4.25.2'
+
+      - name: Get Old Version
+        run: |
+          npm config set git-tag-version false
+          PREV_PACKAGE_VERSION=$(node -p "require('./package.json').version")
+
+      - name: Bump Major Version
+        if: "${{ github.event.inputs.version == 'major' }}"
+        run: npm version major
+
+      - name: Bump Minor Version
+        if: "${{ github.event.inputs.version == 'minor' }}"
+        run: npm version minor
+
+      - name: Bump Patch Version
+        if: "${{ github.event.inputs.version == 'patch' }}"
+        run: npm version patch
+
+      - name: Set New Version
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
+
+      - name: Get Current Date
+        id: get_current_date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d %H:%M:%S')"
+
+      - name: Change info.json File
+        run: |
+          yq -i e -o=json '.version = "${{ env.PACKAGE_VERSION }}"' 'info.json'
+          yq -i e -o=json '.download_url = "https://github.com/QualityUnit/wp-urlslab/releases/download/${{ env.PACKAGE_VERSION }}/urlslab-plugin_${{ env.PACKAGE_VERSION }}.zip"' 'info.json'
+          yq -i e -o=json '.last_updated = "${{ steps.get_current_date.outputs.date }}"' 'info.json'
+
+      - name: Push New Version with Build Files
+        env:
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
+          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/update-version-files.sh"
+          bash "${GITHUB_WORKSPACE}/.github/scripts/build-files.sh"
+          bash "${GITHUB_WORKSPACE}/.github/scripts/commit-push-bump.sh"
+
+  publish:
+    name: Publish
+    needs: bump-version
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Main Branch
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
+          ref: main
+
+      - name: Setup Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16.x"
+          cache: "yarn"
+
+      - name: Get Current Version
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
+
+      - name: Create Tag
+        env:
+          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
+          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/create-git-tag.sh"
+
+      - name: Create ZIP File
+        env:
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/build-zip.sh"
+
+      - name: Upload ZIP File to GitHub Actions Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: urlslab-${{ env.PACKAGE_VERSION }}
+          path: ${{ github.workspace }}/**/*
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.PACKAGE_VERSION }}
+          generate_release_notes: true
+          append_body: true
+          files: urlslab-*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+
+  deploy:
+    name: Deploy
+    needs: publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Main Branch
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
+          ref: main
+
+      - name: Setup Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16.x"
+          cache: "yarn"
+
+      - name: Get Current Version
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
+
+      - name: Trigger the Update Pipeline [LiveAgent]
+        uses: aurelien-baudet/workflow-dispatch@v2
+        with:
+          workflow: update-urlslab.yml
+          repo: QualityUnit/liveagent-wp
+          ref: dev
+          token: ${{ secrets.CICD_PAT }}
+          wait-for-completion-interval: 5s
+          inputs: '{
+                  "repository":"liveagent-wp",
+                  "version":"${{ env.PACKAGE_VERSION }}"
+                }'
+
+      - name: Trigger the Update Pipeline [PostAffiliatePro]
+        id: trigger-pap
+        uses: aurelien-baudet/workflow-dispatch@v2
+        with:
+          workflow: update-urlslab.yml
+          repo: QualityUnit/postaffiliatepro-wp
+          ref: main
+          token: ${{ secrets.CICD_PAT }}
+          wait-for-completion-interval: 5s
+          inputs: '{
+                  "repository":"postaffiliatepro-wp",
+                  "version":"${{ env.PACKAGE_VERSION }}"
+                }'
+
+      - name: Trigger the Update Pipeline [URLsLab]
+        id: trigger-urlslab
+        uses: aurelien-baudet/workflow-dispatch@v2
+        with:
+          workflow: update-urlslab.yml
+          repo: QualityUnit/urlslab-wp
+          ref: main
+          token: ${{ secrets.CICD_PAT }}
+          wait-for-completion-interval: 5s
+          inputs: '{
+                  "repository":"urlslab-wp",
+                  "version":"${{ env.PACKAGE_VERSION }}"
+                }'

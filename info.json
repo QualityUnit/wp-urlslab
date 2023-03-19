@@ -1,9 +1,9 @@
 {
   "name" : "URLsLab",
   "slug" : "urlslab",
-  "author" : "<a href='https://www.urlslab.com'>Yasha Boroumand and Viktor Zeman</a>",
+  "author" : "<a href='https://www.urlslab.com'>URLsLab</a>",
   "author_profile" : "http://profiles.wordpress.org/urlslab",
-  "version" : "2.0.2",
+  "version" : "2.2.0",
   "download_url" : "https://github.com/QualityUnit/wp-urlslab/releases/download/2.2.0/urlslab-plugin_2.0.2.zip",
   "requires" : "6.0",
   "tested" : "6.2",
@@ -14,6 +14,5 @@
     "installation" : "Click the activate button.",
     "changelog" : "<a href='https://github.com/QualityUnit/wp-urlslab/releases'>Change log and Releases</a>"
   },
-  "banners" : {
-  }
+  "banners" : {}
 }
