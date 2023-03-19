@@ -29,7 +29,7 @@
  */
 class Urlslab {
 
-	const URLSLAB_INFO_URL = 'https://github.com/QualityUnit/wp-urlslab/blob/main/info.json';
+	const URLSLAB_INFO_URL = 'https://raw.githubusercontent.com/QualityUnit/wp-urlslab/main/info.json';
 	private $plugin_info;
 
 
