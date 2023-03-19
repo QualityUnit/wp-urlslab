@@ -1,18 +1,18 @@
 {
-  "name" : "URLsLab",
-  "slug" : "urlslab",
-  "author" : "<a href='https://www.urlslab.com'>URLsLab</a>",
-  "author_profile" : "http://profiles.wordpress.org/urlslab",
-  "version" : "2.2.0",
-  "download_url" : "https://github.com/QualityUnit/wp-urlslab/releases/download/2.2.0/urlslab-plugin_2.0.2.zip",
-  "requires" : "6.0",
-  "tested" : "6.2",
-  "requires_php" : "7.4",
-  "last_updated" : "2023-03-18 10:38:01",
-  "sections" : {
-    "description" : "URLsLab WordPress Plugin to optimize your website for search engines and enhance automatically content",
-    "installation" : "Click the activate button.",
-    "changelog" : "<a href='https://github.com/QualityUnit/wp-urlslab/releases'>Change log and Releases</a>"
+  "name": "URLsLab",
+  "slug": "urlslab",
+  "author": "<a href='https://www.urlslab.com'>URLsLab</a>",
+  "author_profile": "http://profiles.wordpress.org/urlslab",
+  "version": "2.2.1",
+  "download_url": "https://github.com/QualityUnit/wp-urlslab/releases/download/2.2.1/urlslab-plugin_2.2.1.zip",
+  "requires": "6.0",
+  "tested": "6.2",
+  "requires_php": "7.4",
+  "last_updated": "2023-03-19 14:50:41",
+  "sections": {
+    "description": "URLsLab WordPress Plugin to optimize your website for search engines and enhance automatically content",
+    "installation": "Click the activate button.",
+    "changelog": "<a href='https://github.com/QualityUnit/wp-urlslab/releases'>Change log and Releases</a>"
   },
-  "banners" : {}
+  "banners": {}
 }
