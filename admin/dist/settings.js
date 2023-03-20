@@ -2,6 +2,35 @@ var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof win
 function getDefaultExportFromCjs(x2) {
   return x2 && x2.__esModule && Object.prototype.hasOwnProperty.call(x2, "default") ? x2["default"] : x2;
 }
+function getAugmentedNamespace(n2) {
+  if (n2.__esModule)
+    return n2;
+  var f = n2.default;
+  if (typeof f == "function") {
+    var a = function a2() {
+      if (this instanceof a2) {
+        var args = [null];
+        args.push.apply(args, arguments);
+        var Ctor = Function.bind.apply(f, args);
+        return new Ctor();
+      }
+      return f.apply(this, arguments);
+    };
+    a.prototype = f.prototype;
+  } else
+    a = {};
+  Object.defineProperty(a, "__esModule", { value: true });
+  Object.keys(n2).forEach(function(k2) {
+    var d = Object.getOwnPropertyDescriptor(n2, k2);
+    Object.defineProperty(a, k2, d.get ? d : {
+      enumerable: true,
+      get: function() {
+        return n2[k2];
+      }
+    });
+  });
+  return a;
+}
 var reactExports = {};
 var react = {
   get exports() {
@@ -7970,11 +7999,9 @@ function createRetryer(config) {
   const pause = () => {
     return new Promise((continueResolve) => {
       continueFn = (value) => {
-        const canContinue = isResolved || !shouldPause();
-        if (canContinue) {
-          continueResolve(value);
+        if (isResolved || !shouldPause()) {
+          return continueResolve(value);
         }
-        return canContinue;
       };
       config.onPause == null ? void 0 : config.onPause();
     }).then(() => {
@@ -8032,8 +8059,7 @@ function createRetryer(config) {
     promise,
     cancel,
     continue: () => {
-      const didContinue = continueFn == null ? void 0 : continueFn();
-      return didContinue ? promise : Promise.resolve();
+      continueFn == null ? void 0 : continueFn();
     },
     cancelRetry,
     continueRetry
@@ -8341,9 +8367,8 @@ class Query extends Removable {
         });
       }
       if (!isCancelledError(error)) {
-        var _this$cache$config$on, _this$cache$config, _this$cache$config$on2, _this$cache$config2;
+        var _this$cache$config$on, _this$cache$config;
         (_this$cache$config$on = (_this$cache$config = this.cache.config).onError) == null ? void 0 : _this$cache$config$on.call(_this$cache$config, error, this);
-        (_this$cache$config$on2 = (_this$cache$config2 = this.cache.config).onSettled) == null ? void 0 : _this$cache$config$on2.call(_this$cache$config2, this.state.data, error, this);
       }
       if (!this.isFetchingOptimistic) {
         this.scheduleGc();
@@ -8354,14 +8379,13 @@ class Query extends Removable {
       fn: context.fetchFn,
       abort: abortController == null ? void 0 : abortController.abort.bind(abortController),
       onSuccess: (data) => {
-        var _this$cache$config$on3, _this$cache$config3, _this$cache$config$on4, _this$cache$config4;
+        var _this$cache$config$on2, _this$cache$config2;
         if (typeof data === "undefined") {
           onError(new Error("undefined"));
           return;
         }
         this.setData(data);
-        (_this$cache$config$on3 = (_this$cache$config3 = this.cache.config).onSuccess) == null ? void 0 : _this$cache$config$on3.call(_this$cache$config3, data, this);
-        (_this$cache$config$on4 = (_this$cache$config4 = this.cache.config).onSettled) == null ? void 0 : _this$cache$config$on4.call(_this$cache$config4, data, this.state.error, this);
+        (_this$cache$config$on2 = (_this$cache$config2 = this.cache.config).onSuccess) == null ? void 0 : _this$cache$config$on2.call(_this$cache$config2, data, this);
         if (!this.isFetchingOptimistic) {
           this.scheduleGc();
         }
@@ -8599,21 +8623,17 @@ class QueryCache extends Subscribable {
 class Mutation extends Removable {
   constructor(config) {
     super();
-    this.defaultOptions = config.defaultOptions;
+    this.options = {
+      ...config.defaultOptions,
+      ...config.options
+    };
     this.mutationId = config.mutationId;
     this.mutationCache = config.mutationCache;
     this.logger = config.logger || defaultLogger;
     this.observers = [];
     this.state = config.state || getDefaultState();
-    this.setOptions(config.options);
-    this.scheduleGc();
-  }
-  setOptions(options) {
-    this.options = {
-      ...this.defaultOptions,
-      ...options
-    };
     this.updateCacheTime(this.options.cacheTime);
+    this.scheduleGc();
   }
   get meta() {
     return this.options.meta;
@@ -8654,8 +8674,11 @@ class Mutation extends Removable {
     }
   }
   continue() {
-    var _this$retryer$continu, _this$retryer;
-    return (_this$retryer$continu = (_this$retryer = this.retryer) == null ? void 0 : _this$retryer.continue()) != null ? _this$retryer$continu : this.execute();
+    if (this.retryer) {
+      this.retryer.continue();
+      return this.retryer.promise;
+    }
+    return this.execute();
   }
   async execute() {
     const executeMutation = () => {
@@ -8692,7 +8715,7 @@ class Mutation extends Removable {
     };
     const restored = this.state.status === "loading";
     try {
-      var _this$mutationCache$c3, _this$mutationCache$c4, _this$options$onSucce, _this$options2, _this$mutationCache$c5, _this$mutationCache$c6, _this$options$onSettl, _this$options3;
+      var _this$mutationCache$c3, _this$mutationCache$c4, _this$options$onSucce, _this$options2, _this$options$onSettl, _this$options3;
       if (!restored) {
         var _this$mutationCache$c, _this$mutationCache$c2, _this$options$onMutat, _this$options;
         this.dispatch({
@@ -8712,7 +8735,6 @@ class Mutation extends Removable {
       const data = await executeMutation();
       await ((_this$mutationCache$c3 = (_this$mutationCache$c4 = this.mutationCache.config).onSuccess) == null ? void 0 : _this$mutationCache$c3.call(_this$mutationCache$c4, data, this.state.variables, this.state.context, this));
       await ((_this$options$onSucce = (_this$options2 = this.options).onSuccess) == null ? void 0 : _this$options$onSucce.call(_this$options2, data, this.state.variables, this.state.context));
-      await ((_this$mutationCache$c5 = (_this$mutationCache$c6 = this.mutationCache.config).onSettled) == null ? void 0 : _this$mutationCache$c5.call(_this$mutationCache$c6, data, null, this.state.variables, this.state.context, this));
       await ((_this$options$onSettl = (_this$options3 = this.options).onSettled) == null ? void 0 : _this$options$onSettl.call(_this$options3, data, null, this.state.variables, this.state.context));
       this.dispatch({
         type: "success",
@@ -8721,12 +8743,11 @@ class Mutation extends Removable {
       return data;
     } catch (error) {
       try {
-        var _this$mutationCache$c7, _this$mutationCache$c8, _this$options$onError, _this$options4, _this$mutationCache$c9, _this$mutationCache$c10, _this$options$onSettl2, _this$options5;
-        await ((_this$mutationCache$c7 = (_this$mutationCache$c8 = this.mutationCache.config).onError) == null ? void 0 : _this$mutationCache$c7.call(_this$mutationCache$c8, error, this.state.variables, this.state.context, this));
+        var _this$mutationCache$c5, _this$mutationCache$c6, _this$options$onError, _this$options4, _this$options$onSettl2, _this$options5;
+        await ((_this$mutationCache$c5 = (_this$mutationCache$c6 = this.mutationCache.config).onError) == null ? void 0 : _this$mutationCache$c5.call(_this$mutationCache$c6, error, this.state.variables, this.state.context, this));
         if (false)
           ;
         await ((_this$options$onError = (_this$options4 = this.options).onError) == null ? void 0 : _this$options$onError.call(_this$options4, error, this.state.variables, this.state.context));
-        await ((_this$mutationCache$c9 = (_this$mutationCache$c10 = this.mutationCache.config).onSettled) == null ? void 0 : _this$mutationCache$c9.call(_this$mutationCache$c10, void 0, error, this.state.variables, this.state.context, this));
         await ((_this$options$onSettl2 = (_this$options5 = this.options).onSettled) == null ? void 0 : _this$options$onSettl2.call(_this$options5, void 0, error, this.state.variables, this.state.context));
         throw error;
       } finally {
@@ -8880,14 +8901,8 @@ class MutationCache extends Subscribable {
     });
   }
   resumePausedMutations() {
-    var _this$resuming;
-    this.resuming = ((_this$resuming = this.resuming) != null ? _this$resuming : Promise.resolve()).then(() => {
-      const pausedMutations = this.mutations.filter((x2) => x2.state.isPaused);
-      return notifyManager.batch(() => pausedMutations.reduce((promise, mutation) => promise.then(() => mutation.continue().catch(noop)), Promise.resolve()));
-    }).then(() => {
-      this.resuming = void 0;
-    });
-    return this.resuming;
+    const pausedMutations = this.mutations.filter((x2) => x2.state.isPaused);
+    return notifyManager.batch(() => pausedMutations.reduce((promise, mutation) => promise.then(() => mutation.continue().catch(noop)), Promise.resolve()));
   }
 }
 function infiniteQueryBehavior() {
@@ -10753,7 +10768,7 @@ async function setModule(slug, object) {
     return false;
   }
 }
-async function setData(slug, object) {
+async function setData(slug, object, keepalive) {
   try {
     const result = await fetch(`/wp-json/urlslab/v1/${slug}`, {
       method: "POST",
@@ -10763,6 +10778,7 @@ async function setData(slug, object) {
         "X-WP-Nonce": window.wpApiSettings.nonce
       },
       credentials: "include",
+      keepalive: keepalive ? true : false,
       body: JSON.stringify(object)
     });
     return result;
@@ -10836,10 +10852,13 @@ async function fetchLangs() {
     });
     const data = await response.json();
     const langs = data == null ? void 0 : data.routes["/urlslab/v1"].endpoints[0].args.wpml_language.enum;
-    langs.forEach((lang) => {
-      langPairs[lang] = langName(lang);
-    });
-    return langPairs;
+    if (langs.length) {
+      langs.forEach((lang) => {
+        langPairs[lang] = langName(lang);
+      });
+      return langPairs;
+    }
+    return void 0;
   } catch (error) {
     return false;
   }
@@ -11100,7 +11119,7 @@ const _DynamicModule = "";
 let visitedModules = [];
 function DynamicModule({ modules, moduleId, activePage }) {
   const [isVisited, setIsVisited] = reactExports.useState(false);
-  const importPath = __variableDynamicImportRuntimeHelper(/* @__PURE__ */ Object.assign({ "../modules/CssOptimizer.jsx": () => __vitePreload(() => import("./assets/CssOptimizer-e7e41199.js"), true ? ["./assets/CssOptimizer-e7e41199.js","./assets/ModuleViewHeader-4e7b0417.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/ImageAltAttribute.jsx": () => __vitePreload(() => import("./assets/ImageAltAttribute-bd592599.js"), true ? ["./assets/ImageAltAttribute-bd592599.js","./assets/ModuleViewHeader-4e7b0417.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/KeywordsLinks.jsx": () => __vitePreload(() => import("./assets/KeywordsLinks-98894540.js"), true ? ["./assets/KeywordsLinks-98894540.js","./assets/ModuleViewHeader-4e7b0417.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/LazyLoading.jsx": () => __vitePreload(() => import("./assets/LazyLoading-e55ae0f2.js"), true ? ["./assets/LazyLoading-e55ae0f2.js","./assets/ModuleViewHeader-4e7b0417.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/LinkEnhancer.jsx": () => __vitePreload(() => import("./assets/LinkEnhancer-4062b083.js"), true ? ["./assets/LinkEnhancer-4062b083.js","./assets/ModuleViewHeader-4e7b0417.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/MediaOffloader.jsx": () => __vitePreload(() => import("./assets/MediaOffloader-97041f3b.js"), true ? ["./assets/MediaOffloader-97041f3b.js","./assets/ModuleViewHeader-4e7b0417.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/MetaTag.jsx": () => __vitePreload(() => import("./assets/MetaTag-0b413f86.js"), true ? ["./assets/MetaTag-0b413f86.js","./assets/ModuleViewHeader-4e7b0417.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/Modules.jsx": () => __vitePreload(() => import("./assets/Modules-7cec5524.js"), true ? ["./assets/Modules-7cec5524.js","./assets/Switch-3776180b.js","./assets/Switch.css","./assets/api-exclamation-64563f09.js","./assets/useMutation-6f0dd623.js","./assets/Modules.css"] : void 0, import.meta.url), "../modules/Optimize.jsx": () => __vitePreload(() => import("./assets/Optimize-32bcc3d5.js"), true ? ["./assets/Optimize-32bcc3d5.js","./assets/ModuleViewHeader-4e7b0417.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/RelatedResources.jsx": () => __vitePreload(() => import("./assets/RelatedResources-803eac05.js"), true ? ["./assets/RelatedResources-803eac05.js","./assets/ModuleViewHeader-4e7b0417.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/Schedule.jsx": () => __vitePreload(() => import("./assets/Schedule-f3dccd11.js"), true ? ["./assets/Schedule-f3dccd11.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/Screenshot.jsx": () => __vitePreload(() => import("./assets/Screenshot-80e8e6f4.js"), true ? ["./assets/Screenshot-80e8e6f4.js","./assets/ModuleViewHeader-4e7b0417.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/SearchAndReplace.jsx": () => __vitePreload(() => import("./assets/SearchAndReplace-32921112.js"), true ? ["./assets/SearchAndReplace-32921112.js","./assets/ModuleViewHeader-4e7b0417.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/Settings.jsx": () => __vitePreload(() => import("./assets/Settings-19ef975c.js"), true ? ["./assets/Settings-19ef975c.js","./assets/index-9c451914.js","./assets/InputField-36e1e240.js","./assets/datepicker-ff7dcd9b.js","./assets/datepicker.css","./assets/Switch-3776180b.js","./assets/Switch.css","./assets/useMutation-6f0dd623.js","./assets/Settings.css"] : void 0, import.meta.url) }), `../modules/${renameModule(moduleId)}.jsx`);
+  const importPath = __variableDynamicImportRuntimeHelper(/* @__PURE__ */ Object.assign({ "../modules/CssOptimizer.jsx": () => __vitePreload(() => import("./assets/CssOptimizer-2d9127aa.js"), true ? ["./assets/CssOptimizer-2d9127aa.js","./assets/ModuleViewHeader-b24fa859.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/ImageAltAttribute.jsx": () => __vitePreload(() => import("./assets/ImageAltAttribute-075aff11.js"), true ? ["./assets/ImageAltAttribute-075aff11.js","./assets/ModuleViewHeader-b24fa859.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/KeywordsLinks.jsx": () => __vitePreload(() => import("./assets/KeywordsLinks-adcf301f.js"), true ? ["./assets/KeywordsLinks-adcf301f.js","./assets/ModuleViewHeader-b24fa859.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/LazyLoading.jsx": () => __vitePreload(() => import("./assets/LazyLoading-e0fbae4d.js"), true ? ["./assets/LazyLoading-e0fbae4d.js","./assets/ModuleViewHeader-b24fa859.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/LinkEnhancer.jsx": () => __vitePreload(() => import("./assets/LinkEnhancer-e29720bf.js"), true ? ["./assets/LinkEnhancer-e29720bf.js","./assets/ModuleViewHeader-b24fa859.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/MediaOffloader.jsx": () => __vitePreload(() => import("./assets/MediaOffloader-37b4f01e.js"), true ? ["./assets/MediaOffloader-37b4f01e.js","./assets/ModuleViewHeader-b24fa859.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/MetaTag.jsx": () => __vitePreload(() => import("./assets/MetaTag-51540651.js"), true ? ["./assets/MetaTag-51540651.js","./assets/ModuleViewHeader-b24fa859.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/Modules.jsx": () => __vitePreload(() => import("./assets/Modules-0f3bea12.js"), true ? ["./assets/Modules-0f3bea12.js","./assets/Switch-3776180b.js","./assets/Switch.css","./assets/api-exclamation-64563f09.js","./assets/useMutation-11c5ed40.js","./assets/Modules.css"] : void 0, import.meta.url), "../modules/Optimize.jsx": () => __vitePreload(() => import("./assets/Optimize-0c82d7fc.js"), true ? ["./assets/Optimize-0c82d7fc.js","./assets/ModuleViewHeader-b24fa859.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/RelatedResources.jsx": () => __vitePreload(() => import("./assets/RelatedResources-03fc15ba.js"), true ? ["./assets/RelatedResources-03fc15ba.js","./assets/ModuleViewHeader-b24fa859.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/Schedule.jsx": () => __vitePreload(() => import("./assets/Schedule-e80d293c.js"), true ? ["./assets/Schedule-e80d293c.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/Screenshot.jsx": () => __vitePreload(() => import("./assets/Screenshot-4dbc140e.js"), true ? ["./assets/Screenshot-4dbc140e.js","./assets/ModuleViewHeader-b24fa859.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/SearchAndReplace.jsx": () => __vitePreload(() => import("./assets/SearchAndReplace-f75ec16b.js"), true ? ["./assets/SearchAndReplace-f75ec16b.js","./assets/ModuleViewHeader-b24fa859.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/Settings.jsx": () => __vitePreload(() => import("./assets/Settings-c1f3f38e.js"), true ? ["./assets/Settings-c1f3f38e.js","./assets/index-dbfcb5ef.js","./assets/InputField-36e1e240.js","./assets/datepicker-ff7dcd9b.js","./assets/datepicker.css","./assets/Switch-3776180b.js","./assets/Switch.css","./assets/useMutation-11c5ed40.js","./assets/Settings.css"] : void 0, import.meta.url) }), `../modules/${renameModule(moduleId)}.jsx`);
   const Module = reactExports.lazy(() => importPath);
   reactExports.useEffect(() => {
     get("urlslab-visited").then(async (response) => {
@@ -11288,6 +11307,7 @@ reactDomExports.createRoot(document.getElementById("urlslab-root")).render(
   /* @__PURE__ */ React.createElement(React.StrictMode, null, /* @__PURE__ */ React.createElement(QueryClientProvider, { client: queryClient }, /* @__PURE__ */ React.createElement(App, null)))
 );
 export {
+  shouldThrowError as A,
   Button as B,
   Loader as L,
   QueryObserver as Q,
@@ -11297,27 +11317,27 @@ export {
   useQueryClient as a,
   setSettings as b,
   useQuery as c,
-  reactDomExports as d,
-  ae as e,
+  fetchData as d,
+  reactDomExports as e,
   fetchSettings as f,
-  hasPreviousPage as g,
-  hasNextPage as h,
+  getAugmentedNamespace as g,
+  ae as h,
   infiniteQueryBehavior as i,
-  parseQueryArgs as j,
-  useBaseQuery as k,
-  get as l,
-  set as m,
-  fetchData as n,
-  setData as o,
+  hasNextPage as j,
+  hasPreviousPage as k,
+  parseQueryArgs as l,
+  useBaseQuery as m,
+  get as n,
+  set as o,
   parseURL as p,
-  commonjsGlobal as q,
+  setData as q,
   reactExports as r,
   setModule as s,
-  shallowEqualObjects as t,
+  commonjsGlobal as t,
   useI18n as u,
-  getDefaultState as v,
-  notifyManager as w,
-  parseMutationArgs as x,
-  useSyncExternalStore as y,
-  shouldThrowError as z
+  shallowEqualObjects as v,
+  getDefaultState as w,
+  notifyManager as x,
+  parseMutationArgs as y,
+  useSyncExternalStore as z
 };
