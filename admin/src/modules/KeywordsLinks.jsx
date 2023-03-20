@@ -13,11 +13,11 @@ export default function KeywordLinks( { moduleId } ) {
 
 	const tableMenu = new Map( [
 		[ slug, __( 'Keywords' ) ],
-		[ 'd3-chart', __( 'D3 Chart example' ) ],
+		[ 'd3-chart', __( 'Keyword Cloud' ) ],
 	] );
 
 	const KeywordsTable = lazy( () => import( `../tables/KeywordsTable.jsx` ) );
-	const D3ChartExample = lazy( () => import( `../d3/D3ChartExample.jsx` ) );
+	const D3WordCloud = lazy( () => import( `../d3/D3WordCloud.jsx` ) );
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
 
 	return (
@@ -40,7 +40,7 @@ export default function KeywordLinks( { moduleId } ) {
 			{
 				activeSection === 'd3-chart' &&
 				<Suspense>
-					<D3ChartExample slug="d3-chart" />
+					<D3WordCloud slug="d3-chart" />
 				</Suspense>
 			}
 			{

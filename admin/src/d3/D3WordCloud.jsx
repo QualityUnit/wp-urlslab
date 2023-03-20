@@ -1,13 +1,14 @@
 import {useEffect, useRef} from 'react';
 import {useQuery} from '@tanstack/react-query';
 import * as d3 from 'd3';
+import { interpolateRainbow } from 'd3-scale-chromatic';
 import cloud from 'd3-cloud';
 
 import {fetchData} from '../api/fetching';
 
 import '../assets/styles/components/_OverviewTemplate.scss';
 
-const D3ChartExample = ({slug, children}) => {
+const D3WordCloud = ({slug, children}) => {
     const chartRef = useRef(null);
 
     const {data} = useQuery({
@@ -17,22 +18,27 @@ const D3ChartExample = ({slug, children}) => {
         }),
         refetchOnWindowFocus: false,
     });
+
+
     useEffect(() => {
         if (!data || !Array.isArray(data)) return;
 
-        console.log(data);
+        const minCount = d3.min(data, d => d.kw_usage_count);
+        const maxCount = d3.max(data, d => d.kw_usage_count);
+        const fontSizeScale = d3.scaleLinear().domain([minCount, maxCount]).range([10, 150]);
+        const colorScale = d3.scaleSequential(interpolateRainbow).domain([0, data.length]);
+
         // D3 word cloud code goes here
         const layout = cloud()
-            .size([800, 800])
-            .words(data.map(d => ({text: d.keyword, size: d.link_usage_count})))
+            .size([900, 700])
+            .words(data.map(d => ({text: d.keyword, kw_usage_count: d.kw_usage_count})))
             .padding(5)
             .rotate(() => ~~(Math.random() * 2) * 90)
             .font("Impact")
-            .fontSize(d => (d.link_usage_count * 10) + "px")
+            .fontSize(d => fontSizeScale(d.kw_usage_count))
             .on("end", draw);
 
         layout.start();
-        console.log(layout.words());
 
         function draw(words) {
             d3.select(chartRef.current)
@@ -45,9 +51,9 @@ const D3ChartExample = ({slug, children}) => {
                 .data(words)
                 .enter()
                 .append("text")
-                .style("font-size", "20px")
+                .style("font-size", d => fontSizeScale(d.kw_usage_count))
                 .style("font-family", "Impact")
-                .style("fill", "#000000")
+                .style("fill", (d, i) => colorScale(i))
                 .attr("text-anchor", "middle")
                 .attr("transform", d => "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")")
                 .text(d => d.text);
@@ -58,5 +64,5 @@ const D3ChartExample = ({slug, children}) => {
         <div ref={chartRef}></div>
     </div>
 }
-export default D3ChartExample;
+export default D3WordCloud;
 
