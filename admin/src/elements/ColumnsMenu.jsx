@@ -1,7 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState, useRef, useMemo } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
-import Button from './Button';
+import { useEffect, useState, useRef } from 'react';
 import Checkbox from './Checkbox';
 import { ReactComponent as ColumnsIcon } from '../assets/images/icon-columns.svg';
 
@@ -10,7 +8,6 @@ import '../assets/styles/elements/_ColumnsMenu.scss';
 
 export default function ColumnsMenu( {
 	id, className, table, items, style } ) {
-	const { __ } = useI18n();
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
 	const [ checked, setChecked ] = useState( Object.keys( items ) );
@@ -64,7 +61,7 @@ export default function ColumnsMenu( {
 						return (
 							items[ column.id ] &&
 							<Checkbox
-									className="urlslab-FilterMenu__item urlslab-ColumnsMenu__item"
+								className="urlslab-FilterMenu__item urlslab-ColumnsMenu__item"
 								key={ column.id }
 								id={ column.id }
 								onChange={ ( isChecked ) => checkedCheckbox( column, isChecked ) }

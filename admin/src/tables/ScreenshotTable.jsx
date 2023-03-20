@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, handleSelected, Tooltip, Trash, DatePicker, InputField, MenuInput, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, Tooltip, Trash, DatePicker, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function ScreenshotTable( { slug } ) {
-	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
+	const { table, setTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn || '&sort_column=url_name&sort_direction=ASC' }`, [ filters, sortingColumn ] );
 	const pageId = 'url_id';
@@ -30,10 +30,10 @@ export default function ScreenshotTable( { slug } ) {
 	};
 
 	const header = {
+		screenshot_url: __( 'Screenshot URL' ),
 		url_name: __( 'Destination URL' ),
 		url_title: __( 'Title' ),
 		scr_status: __( 'Status' ),
-		screenshot_url: __( 'Screenshot URL' ),
 		update_scr_date: __( 'Updated at' ),
 	};
 
@@ -56,7 +56,7 @@ export default function ScreenshotTable( { slug } ) {
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: () => <MenuInput isFilter placeholder="Enter URL Desc" defaultValue={ currentFilters.url_name } onChange={ ( val ) => addFilter( 'url_name', val ) }>{ header.url_name }</MenuInput>,
+			header: header.url_name,
 			size: 250,
 		} ),
 		columnHelper.accessor( 'url_title', {
@@ -64,7 +64,7 @@ export default function ScreenshotTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => <MenuInput isFilter placeholder="Enter URL Title" defaultValue={ currentFilters.url_title } onChange={ ( val ) => addFilter( 'url_title', val ) }>{ header.url_title }</MenuInput>,
+			header: header.url_title,
 			size: 200,
 		} ),
 		columnHelper?.accessor( 'scr_status', {
@@ -74,13 +74,13 @@ export default function ScreenshotTable( { slug } ) {
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: ( cell ) => <SortMenu isFilter items={ scrStatusTypes } name={ cell.column.id } checkedId={ currentFilters.scr_status || '' } onChange={ ( val ) => addFilter( 'scr_status', val ) }>{ header.scr_status }</SortMenu>,
+			header: header.scr_status,
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'screenshot_url', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: () => <MenuInput isFilter placeholder="Enter URL Desc" defaultValue={ currentFilters.screenshot_url } onChange={ ( val ) => addFilter( 'screenshot_url', val ) }>{ header.screenshot_url }</MenuInput>,
+			header: header.screenshot_url,
 			size: 250,
 		} ),
 		columnHelper.accessor( 'update_scr_date', {
@@ -118,6 +118,7 @@ export default function ScreenshotTable( { slug } ) {
 				slug={ slug }
 				currentFilters={ currentFilters }
 				header={ header }
+				table={ table }
 				removeFilters={ ( key ) => removeFilters( key ) }
 				defaultSortBy="url_name&ASC"
 				onSort={ ( val ) => sortBy( val ) }
@@ -131,7 +132,9 @@ export default function ScreenshotTable( { slug } ) {
 					perPage: 1000,
 				} }
 			/>
-			<Table className="fadeInto" columns={ columns }
+			<Table className="fadeInto"
+				returnTable={ ( returnTable ) => setTable( returnTable ) }
+				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
 				{ row

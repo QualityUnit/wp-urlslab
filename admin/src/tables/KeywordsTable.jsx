@@ -1,13 +1,13 @@
 /* eslint-disable indent */
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, handleSelected, SortMenu, LangMenu, InputField, Checkbox, MenuInput, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, SortMenu, LangMenu, InputField, Checkbox, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function KeywordsTable( { slug } ) {
-	const { table, setTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
+	const { table, setTable, filters, setFilters, currentFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 	const pageId = 'kw_id';
@@ -16,7 +16,7 @@ export default function KeywordsTable( { slug } ) {
 		__,
 		columnHelper,
 		data,
-		activeFilters,
+		// activeFilters,
 		status,
 		isSuccess,
 		isFetchingNextPage,
@@ -67,24 +67,24 @@ export default function KeywordsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'keyword', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: () => <MenuInput isFilter placeholder="Filter keyword" defaultValue={ currentFilters.keyword } onChange={ ( val ) => addFilter( 'keyword', val ) }>{ header.keyword }</MenuInput>,
+			header: header.keyword,
 			minSize: 150,
 		} ),
 		columnHelper.accessor( 'kwType', {
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu items={ keywordTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: ( cell ) => <SortMenu isFilter items={ keywordTypes } name={ cell.column.id } checkedId={ currentFilters.kwType || '' } onChange={ ( val ) => addFilter( 'kwType', val ) }>{ header.kwType }</SortMenu>,
+			header: header.kwType,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'kw_length', {
-			header: () => <MenuInput isFilter placeholder="Filter kw length" defaultValue={ currentFilters.kw_length } onChange={ ( val ) => addFilter( 'kw_length', val ) }>{ header.kw_length }</MenuInput>,
+			header: header.kw_length,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'kw_priority', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => <MenuInput isFilter placeholder="Filter priority" defaultValue={ currentFilters.kw_priority } onChange={ ( val ) => addFilter( 'kw_priority', val ) }>{ header.kw_priority }</MenuInput>,
+			header: header.kw_priority,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'lang', {
@@ -92,28 +92,28 @@ export default function KeywordsTable( { slug } ) {
 			cell: ( cell ) => <LangMenu noAll checkedId={ cell?.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) }
 			/>,
-			header: () => <LangMenu noAll isFilter checkedId={ currentFilters.lang || 'all' } onChange={ ( val ) => addFilter( 'lang', val ) }>{ header.lang }</LangMenu>,
+			header: header.lang,
 			size: 165,
 		} ),
 		columnHelper.accessor( 'kw_usage_count', {
-			header: () => <MenuInput isFilter placeholder="Filter Usage count" defaultValue={ currentFilters.kw_usage_count } onChange={ ( val ) => addFilter( 'kw_usage_count', val ) }>{ header.kw_usage_count }</MenuInput>,
+			header: header.kw_usage_count,
 			size: 70,
 		} ),
 		columnHelper.accessor( 'link_usage_count', {
-			header: () => <MenuInput isFilter placeholder="Filter URL usage" defaultValue={ currentFilters.link_usage_count } onChange={ ( val ) => addFilter( 'link_usage_count', val ) }>{ header.link_usage_count }</MenuInput>,
+			header: header.link_usage_count,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'urlFilter', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.renderValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => <MenuInput isFilter placeholder="Filter by URL filter" defaultValue={ currentFilters.urlFilter } onChange={ ( val ) => addFilter( 'urlFilter', val ) }>{ header.urlFilter }</MenuInput>,
+			header: header.urlFilter,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'urlLink', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: () => <MenuInput isFilter placeholder="Filter URL" onChange={ ( val ) => addFilter( 'urlLink', val ) }>{ header.urlLink }</MenuInput>,
+			header: header.urlLink,
 			enableResizing: false,
 			size: 350,
 		} ),
@@ -132,11 +132,10 @@ export default function KeywordsTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				slug={ slug }
-				currentFilters={ activeFilters ? activeFilters : currentFilters }
 				header={ header }
 				table={ table }
-				removeFilters={ ( key ) => removeFilters( key ) }
 				onSort={ ( val ) => sortBy( val ) }
+				onFilter={ ( filter ) => setFilters( filter ) }
 				exportOptions={ {
 					url: slug,
 					filters,
