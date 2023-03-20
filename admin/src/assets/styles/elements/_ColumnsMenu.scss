@@ -1,0 +1,53 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-ColumnsMenu {
+
+	&__icon {
+		line-height: 1;
+		cursor: pointer;
+
+		svg {
+
+			@include square(1.5rem);
+		}
+
+		&.active {
+
+			svg {
+				fill: $primary-color;
+			}
+		}
+	}
+
+	&__items {
+		min-width: 15em;
+		top: calc(100% + 0.5em);
+
+		.menu-left & {
+			right: -1.5em;
+		}
+
+		&::before {
+
+			@include triangle(1.5em, $white, "up");
+			position: absolute;
+			transform: scaleX(1.25);
+			top: -1.35em;
+			left: 50%;
+			content: "";
+
+			.menu-left & {
+				left: auto;
+				right: 1.65em;
+			}
+		}
+	}
+
+	&__item {
+		font-size: 0.75rem;
+		font-weight: 400;
+		color: $grey-darker;
+		padding-left: 2em;
+	}
+}
