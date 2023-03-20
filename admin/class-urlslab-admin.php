@@ -117,17 +117,10 @@ class Urlslab_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-
-		wp_localize_script(
-			$this->urlslab,
-			'params',
-			array(
-				'kw_map_nonce'  => wp_create_nonce( 'keyword_map_nonce' ),
-				'media_nonce'   => wp_create_nonce( 'media_usage_nonce' ),
-				'url_map_nonce' => wp_create_nonce( 'backlink_discovery_nonce' ),
-				'ajaxURL'       => admin_url( 'admin-ajax.php' ),
-			)
-		);
+		wp_localize_script( $this->urlslab, 'wpApiSettings', array(
+			'root'  => esc_url_raw( rest_url() ),
+			'nonce' => wp_create_nonce( 'wp_rest' ),
+		) );
 
 	}
 
