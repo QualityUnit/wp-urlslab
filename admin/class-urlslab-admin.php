@@ -117,11 +117,14 @@ class Urlslab_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-		wp_localize_script( $this->urlslab, 'wpApiSettings', array(
-			'root'  => esc_url_raw( rest_url() ),
-			'nonce' => wp_create_nonce( 'wp_rest' ),
-		) );
-
+		wp_localize_script(
+			$this->urlslab,
+			'wpApiSettings',
+			array(
+				'root'  => esc_url_raw( rest_url() ),
+				'nonce' => wp_create_nonce( 'wp_rest' ),
+			)
+		);
 	}
 
 	public function get_urlslab_admin_menu_hook_suffix(): string {
