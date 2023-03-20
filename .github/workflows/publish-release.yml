@@ -19,7 +19,7 @@ on:
         type: boolean
         default: 'false'
       declare:
-        description: "I have updated the changelog in the readme.txt"
+        description: "I have updated the changelog in the readme.txt (otherwise, it will fail)"
         required: true
         type: boolean
         default: 'false'
