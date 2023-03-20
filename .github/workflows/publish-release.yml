@@ -17,16 +17,19 @@ on:
         description: "Deploy Directly to Our Websites"
         required: true
         type: boolean
-        default: 'true'
-
+        default: 'false'
+      declare:
+        description: "I have updated the changelog in the readme.txt"
+        required: true
+        type: boolean
+        default: 'false'
 
 
 jobs:
-  bump-version:
-    name: Bump Version
+  bump-and-publish:
+    if: (github.actor == 'mvstepanek')
+    name: Bump Version and Publish
     runs-on: ubuntu-latest
-    outputs:
-      prev_version: ${{ steps.get_old_version.outputs.prev_version }}
 
     steps:
       - name: Checkout Main Branch
@@ -56,7 +59,7 @@ jobs:
         run: |
           npm config set git-tag-version false
           PREV_PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          echo "::set-output name=prev_version::${PREV_PACKAGE_VERSION}"
+          echo "PREV_PACKAGE_VERSION=${PREV_PACKAGE_VERSION}" >> $GITHUB_ENV
 
       - name: Bump Major Version
         if: "${{ github.event.inputs.version == 'major' }}"
@@ -85,28 +88,19 @@ jobs:
           yq -i e -o=json '.download_url = "https://github.com/QualityUnit/wp-urlslab/releases/download/${{ env.PACKAGE_VERSION }}/urlslab-${{ env.PACKAGE_VERSION }}.zip"' 'info.json'
           yq -i e -o=json '.last_updated = "${{ steps.get_current_date.outputs.date }}"' 'info.json'
 
-#      - name: Generate Changelog
-#        env:
-#          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-#          REPOSITORY: ${{ github.repository }}
-#          HEAD_BRANCH_NAME: v${{ env.PACKAGE_VERSION }}
-#          BASE_TAG_NAME: v${{ needs.bump-version.outputs.prev_version }}
-#        run: |
-#          npm install --no-package-lock --no-save @octokit/core@3.4.0
-#          npm install --no-package-lock --no-save repo-utils
-#          node ./.github/scripts/generate-changelog.js
+      - name: Install Dependencies
+        run: |
+          yarn
+          cd ./admin/ && yarn
 
-#      - name: Update readme.txt File
-#        if: github.event.inputs.canary != 'true'
-#        run: |
-#          bash "${GITHUB_WORKSPACE}/.github/scripts/update-readme-stable-version.sh"
-
-#      - name: Check if readme.txt Update
-#        env:
-#          VERSION: ${{ env.PACKAGE_VERSION }}
-#        run: |
-#          npm install --no-package-lock --no-save marked@2.0.6
-#          node ./.github/scripts/get-changelog-from-readme-txt.js
+      - name: Update readme.txt File
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/update-readme-stable-version.sh"
+      - name: Check if readme.txt Update
+        env:
+          VERSION: ${{ env.PACKAGE_VERSION }}
+        run: |
+          node ./.github/scripts/get-changelog-from-readme-txt.js
 
       - name: Push New Version with Build Files
         env:
@@ -117,24 +111,6 @@ jobs:
           bash "${GITHUB_WORKSPACE}/.github/scripts/update-version-files.sh"
           bash "${GITHUB_WORKSPACE}/.github/scripts/build-files.sh"
           bash "${GITHUB_WORKSPACE}/.github/scripts/commit-push-bump.sh"
-
-  publish:
-    name: Publish
-    needs: bump-version
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Main Branch
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.MAINTAIN_TOKEN }}
-          ref: main
-
-      - name: Setup Node.js 16.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: "16.x"
-          cache: "yarn"
 
       - name: Get Current Version
         run: |
@@ -164,15 +140,14 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.PACKAGE_VERSION }}
-          generate_release_notes: true
-          append_body: true
           files: urlslab-*.zip
+          body_path: temp-changelog-from-readme.txt
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
 
   deploy:
     name: Deploy
-    needs: publish
+    needs: bump-and-publish
     runs-on: ubuntu-latest
 
     steps:

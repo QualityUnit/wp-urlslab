@@ -23,7 +23,7 @@ if (!VERSION) {
 			process.exit(1);
 			return;
 		}
-		const versionLog = data[headerIndex + 1].raw;
+		const versionLog = data[headerIndex + 2].raw;
 		fs.writeFileSync('temp-changelog-from-readme.txt', versionLog);
 	} catch (err) {
 		process.exit(1);
