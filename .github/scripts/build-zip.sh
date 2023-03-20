@@ -9,8 +9,13 @@ fi
 
 PLUGIN_ZIP_FILENAME="urlslab-${PACKAGE_VERSION}.zip"
 rm -rf *.zip .git .github docker yarn.lock webpack.config.js postcss.config.js phpcs.xml package.json Makefile composer.lock composer.json commitlint.config.js .stylelintrc .gitignore .eslintrc .eslintignore admin/.eslintignore admin/.eslintrc admin/.stylelintrc admin/index.html admin/package.json admin/vite.config.js admin/yarn.lock
-mkdir urlslab
-mv ./* ./urlslab/
+dir_name="urlslab"
+mkdir "$dir_name"
+for file in *; do
+    if [ "$file" != "$dir_name" ]; then
+        mv "$file" "$dir_name"
+    fi
+done
 zip -r $PLUGIN_ZIP_FILENAME ./urlslab/ -x "*.zip"
 echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
 echo "PLUGIN_ZIP_PATH=./**/*" >> $GITHUB_ENV
