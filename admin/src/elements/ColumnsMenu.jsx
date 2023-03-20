@@ -58,18 +58,13 @@ export default function ColumnsMenu( {
 			>
 				<ColumnsIcon />
 			</div>
-			<div className={ `urlslab-FilterMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
+			<div className={ `urlslab-FilterMenu__items urlslab-ColumnsMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
 				<div className={ `urlslab-FilterMenu__items--inn ${ items.length > 8 ? 'has-scrollbar' : '' }` }>
-					<Button className="small"
-						onClick={ () => table.toggleAllColumnsVisible() }
-					>
-						Toggle All
-					</Button>
 					{ table?.getAllLeafColumns().map( ( column ) => {
 						return (
 							items[ column.id ] &&
 							<Checkbox
-								className="urlslab-FilterMenu__item"
+									className="urlslab-FilterMenu__item urlslab-ColumnsMenu__item"
 								key={ column.id }
 								id={ column.id }
 								onChange={ ( isChecked ) => checkedCheckbox( column, isChecked ) }
