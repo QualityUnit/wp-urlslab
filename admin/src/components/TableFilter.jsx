@@ -13,30 +13,30 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 	const { __ } = useI18n();
 	const { filters, currentFilters, addFilter, removeFilters } = useFilter( { slug } );
 	const ref = useRef( null );
-	const [filterKey, setFilterKey] = useState();
-	const [filterOperator, setFilterOperator] = useState();
-	const [filterVal, setFilterVal] = useState();
-	const [isNumber, setIsNumber]  = useState( false );
-	const [panelActive, activatePanel]  = useState( false );
+	const [ filterKey, setFilterKey ] = useState();
+	const [ filterOperator, setFilterOperator ] = useState();
+	const [ filterVal, setFilterVal ] = useState();
+	const [ isNumber, setIsNumber ] = useState( false );
+	const [ panelActive, activatePanel ] = useState( false );
 	const activeFilters = Object.keys( currentFilters );
 	const runFilter = useRef( false );
 
 	const numericOp = {
 		'': 'is exactly',
 		'<>': 'is not equal',
-		'IN': 'is one of',
-		'BETWEEN': 'is between',
+		IN: 'is one of',
+		BETWEEN: 'is between',
 		'>': 'is larger than',
 		'<': 'is smaller than',
 	};
 
 	const stringOp = {
-		'LIKE': 'contains',
+		LIKE: 'contains',
 		// 'LIKE%': 'begins with',
 		// '%LIKE': 'ends with',
 		'': 'is exactly',
 		'<>': 'is not',
-		'IN': 'is one of',
+		IN: 'is one of',
 		'>': 'is larger than',
 		'<': 'is smaller than',
 	};
@@ -91,19 +91,18 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 		// }
 	};
 
-	if (onFilter && runFilter.current) {
+	if ( onFilter && runFilter.current ) {
 		runFilter.current = false;
-		onFilter({ filters, currentFilters })
+		onFilter( { filters, currentFilters } );
 	}
 
 	// console.log(filters);
 
 	// function runOnFilter() {
 	// 	setTimeout(() => {
-			
+
 	// 		console.log(filters);
-	
-			
+
 	// 	}, 100);
 	// }
 
@@ -153,13 +152,15 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 								items={ filtering.possibleFilters }
 								name="filters"
 								checkedId={ Object.keys( filtering.possibleFilters )[ 0 ] }
-								onChange={(key) => {handleType(key); setFilterKey(key)} }
+								onChange={ ( key ) => {
+									handleType( key ); setFilterKey( key );
+								} }
 							/>
 							<SortMenu
 								className="ml-s"
 								items={ isNumber ? numericOp : stringOp }
 								name="filters"
-								checkedId={Object.keys( isNumber ? numericOp : stringOp )[ 0 ] }
+								checkedId={ Object.keys( isNumber ? numericOp : stringOp )[ 0 ] }
 								onChange={ ( op ) => setFilterOperator( op ) }
 							/>
 						</div>
@@ -168,7 +169,7 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 
 						<div className="Buttons flex flex-align-center">
 							<Button className="simple" onClick={ () => activatePanel( false ) }>{ __( 'Cancel' ) }</Button>
-							<Button active disabled={filterVal ? false : true} onClick={ handleSaveFilter }>{ __( 'Save' ) }</Button>
+							<Button active disabled={ filterVal ? false : true } onClick={ handleSaveFilter }>{ __( 'Save' ) }</Button>
 						</div>
 					</div>
 				}
