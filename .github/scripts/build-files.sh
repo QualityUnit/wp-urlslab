@@ -2,6 +2,8 @@
 # Inspired by Elementor Releasing Pipeline https://github.com/elementor/elementor
 set -eo pipefail
 
+rm -rf ./admin/dist
+rm -rf ./public/build
 
 echo "Composer Install"
 composer install

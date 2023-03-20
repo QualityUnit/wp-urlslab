@@ -27,6 +27,7 @@
   "devDependencies": {
     "@babel/core": "^7",
     "@babel/preset-env": "^7",
+    "@octokit/core": "3.4.0",
     "autoprefixer": "^10",
     "babel-loader": "^9",
     "clean-webpack-plugin": "^4",
@@ -44,6 +45,7 @@
     "imagemin-jpegtran": "^7",
     "imagemin-optipng": "^8",
     "imagemin-svgo": "^10",
+    "marked": "2.0.6",
     "mini-css-extract-plugin": "^2",
     "postcss": "^8",
     "postcss-loader": "^7",
