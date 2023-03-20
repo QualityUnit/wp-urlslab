@@ -6,7 +6,7 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function SchedulesTable( { slug } ) {
-	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
+	const { table, setTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 	const pageId = 'schedule_id';
@@ -115,6 +115,7 @@ export default function SchedulesTable( { slug } ) {
 				slug={ slug }
 				currentFilters={ currentFilters }
 				header={ header }
+				table={ table }
 				noCount
 				noExport
 				noDelete
@@ -122,7 +123,9 @@ export default function SchedulesTable( { slug } ) {
 				// defaultSortBy="url_name&ASC"
 				onSort={ ( val ) => sortBy( val ) }
 			/>
-			<Table className="noHeightLimit fadeInto" columns={ columns }
+			<Table className="noHeightLimit fadeInto"
+				returnTable={ ( returnTable ) => setTable( returnTable ) }
+				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
 				{ row

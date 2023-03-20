@@ -5,6 +5,10 @@
 	margin: 0;
 }
 
+.no-padding[class] {
+	padding: 0;
+}
+
 $marginSide: (
 	left, right, top, bottom
 );

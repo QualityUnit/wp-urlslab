@@ -4,7 +4,6 @@
 .urlslab-dashboardmodule {
 	position: relative;
 	padding: 1.5em;
-	max-width: 31.25em;
 	background-color: $white;
 	border-radius: $br-10;
 	box-shadow: $box-shadow-small;
@@ -106,6 +105,7 @@
 	@media (min-width: $breakpoint-tablet) {
 		padding: 2.25em;
 		margin: 0.4em;
+		width: calc(50% - 0.8em);
 
 		&-content {
 			width: 54.6%;
@@ -115,9 +115,30 @@
 			width: 42%;
 			margin-left: auto;
 		}
+
+
+		.urlslab-switch-text {
+			font-size: 0.8125rem;
+		}
+
+		.urlslab-dashboardmodule-title {
+			font-size: 1.1rem;
+		}
+	}
+
+	@media (min-width: 1680px) {
+		width: calc(33.3% - 0.8em);
+		max-width: 31.25em;
 	}
 
 	@media (min-width: 1800px) {
-		width: calc(33.3% - 0.8em);
+
+		.urlslab-switch-text {
+			font-size: 1rem;
+		}
+
+		.urlslab-dashboardmodule-title {
+			font-size: 1.3rem;
+		}
 	}
 }
