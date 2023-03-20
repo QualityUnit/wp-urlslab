@@ -13,7 +13,7 @@ export default function KeywordLinks( { moduleId } ) {
 
 	const tableMenu = new Map( [
 		[ slug, __( 'Keywords' ) ],
-		[ 'd3-chart', __( 'Keyword Cloud' ) ],
+		[ 'd3-chart', __( 'Word Cloud' ) ],
 	] );
 
 	const KeywordsTable = lazy( () => import( `../tables/KeywordsTable.jsx` ) );

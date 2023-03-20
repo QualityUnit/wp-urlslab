@@ -15,10 +15,13 @@ export async function fetchLangs( ) {
 
 		const data = await response.json();
 		const langs = data?.routes[ '/urlslab/v1' ].endpoints[ 0 ].args.wpml_language.enum;
-		langs.forEach( ( lang ) => {
-			langPairs[ lang ] = langName( lang );
-		} );
-		return langPairs;
+		if ( langs.length ) {
+			langs.forEach( ( lang ) => {
+				langPairs[ lang ] = langName( lang );
+			} );
+			return langPairs;
+		}
+		return {};
 	} catch ( error ) {
 		return false;
 	}
