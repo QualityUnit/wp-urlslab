@@ -45,7 +45,7 @@
     "imagemin-jpegtran": "^7",
     "imagemin-optipng": "^8",
     "imagemin-svgo": "^10",
-    "marked": "2.0.6",
+    "marked": "4.0.10",
     "mini-css-extract-plugin": "^2",
     "postcss": "^8",
     "postcss-loader": "^7",
