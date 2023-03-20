@@ -1,0 +1,16 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-ColumnsMenu {
+
+	&__icon {
+		cursor: pointer;
+
+		&.active {
+
+			svg {
+				fill: $primary-color;
+			}
+		}
+	}
+}

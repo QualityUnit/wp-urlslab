@@ -6,7 +6,7 @@ import Checkbox from './Checkbox';
 import { ReactComponent as ColumnsIcon } from '../assets/images/icon-columns.svg';
 
 import '../assets/styles/elements/_FilterMenu.scss';
-import '../assets/styles/elements/_Checkbox.scss';
+import '../assets/styles/elements/_ColumnsMenu.scss';
 
 export default function ColumnsMenu( {
 	id, className, table, items, style } ) {
@@ -50,7 +50,7 @@ export default function ColumnsMenu( {
 	return (
 		<div className={ `urlslab-FilterMenu urlslab-ColumnsMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref } id={ id }>
 			<div
-				className={ `urlslab-ColumnsMenu__title ${ isActive ? 'active' : '' }` }
+				className={ `urlslab-ColumnsMenu__icon ${ isActive ? 'active' : '' }` }
 				onClick={ handleMenu }
 				onKeyUp={ ( event ) => handleMenu( event ) }
 				role="button"
