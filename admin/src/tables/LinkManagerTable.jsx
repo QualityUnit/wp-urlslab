@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, handleSelected, Tooltip, Trash, MenuInput, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, Tooltip, Trash, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function LinkManagerTable( { slug } ) {
-	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
+	const { table, setTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn || '&sort_column=url_name&sort_direction=ASC' }`, [ filters, sortingColumn ] );
 	const pageId = 'url_id';
@@ -74,7 +74,7 @@ export default function LinkManagerTable( { slug } ) {
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: () => <MenuInput isFilter placeholder="Enter URL Desc" defaultValue={ currentFilters.url_name } onChange={ ( val ) => addFilter( 'url_name', val ) }>{ header.url_name }</MenuInput>,
+			header: header.url_name,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'url_title', {
@@ -82,7 +82,7 @@ export default function LinkManagerTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => <MenuInput isFilter placeholder="Enter URL Title" defaultValue={ currentFilters.url_title } onChange={ ( val ) => addFilter( 'url_title', val ) }>{ header.url_title }</MenuInput>,
+			header: header.url_title,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'url_meta_description', {
@@ -90,7 +90,7 @@ export default function LinkManagerTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => <MenuInput isFilter placeholder="Enter URL Desc" defaultValue={ currentFilters.url_meta_description } onChange={ ( val ) => addFilter( 'urlFilter', val ) }>{ header.url_meta_description }</MenuInput>,
+			header: header.url_meta_description,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'url_summary', {
@@ -98,25 +98,9 @@ export default function LinkManagerTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => <MenuInput isFilter placeholder="Enter Text" defaultValue={ currentFilters.url_summary } onChange={ ( val ) => addFilter( 'url_summary', val ) }>{ header.url_summary }</MenuInput>,
+			header: header.url_summary,
 			size: 150,
 		} ),
-		// columnHelper?.accessor( 'sum_status', {
-		// 	className: 'nolimit',
-		// 	cell: ( cell ) => <SortMenu
-		// 		items={ sumStatusTypes }
-		// 		name={ cell.column.id }
-		// 		checkedId={ cell.getValue() }
-		// 		onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-		// 	header: ( cell ) => <SortMenu isFilter items={ sumStatusTypes } name={ cell.column.id } checkedId={ currentFilters.sum_status || '' } onChange={ ( val ) => addFilter( 'sum_status', val ) }>{ header.sum_status }</SortMenu>,
-		// 	size: 100,
-		// } ),
-		// columnHelper.accessor( 'update_sum_date', {
-		// 	className: 'nolimit',
-		// 	cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
-		// 	header: () => header.update_sum_date,
-		// 	size: 120,
-		// } ),
 		columnHelper?.accessor( 'http_status', {
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu
@@ -124,7 +108,7 @@ export default function LinkManagerTable( { slug } ) {
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: ( cell ) => <SortMenu isFilter items={ httpStatusTypes } name={ cell.column.id } checkedId={ currentFilters.http_status || '' } onChange={ ( val ) => addFilter( 'http_status', val ) }>{ header.http_status }</SortMenu>,
+			header: header.http_status,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'visibility', {
@@ -134,7 +118,7 @@ export default function LinkManagerTable( { slug } ) {
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: ( cell ) => <SortMenu isFilter items={ visibilityTypes } name={ cell.column.id } checkedId={ currentFilters.visibility || '' } onChange={ ( val ) => addFilter( 'visibility', val ) }>{ header.visibility }</SortMenu>,
+			header: header.visibility,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'url_type', {
@@ -144,7 +128,7 @@ export default function LinkManagerTable( { slug } ) {
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: ( cell ) => <SortMenu isFilter items={ urlTypes } name={ cell.column.id } checkedId={ currentFilters.url_type || '' } onChange={ ( val ) => addFilter( 'url_type', val ) }>{ header.url_type }</SortMenu>,
+			header: header.url_type,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'update_http_date', {
@@ -169,6 +153,7 @@ export default function LinkManagerTable( { slug } ) {
 				slug={ slug }
 				currentFilters={ currentFilters }
 				header={ header }
+				table={ table }
 				removeFilters={ ( key ) => removeFilters( key ) }
 				// defaultSortBy="url_name&ASC"
 				onSort={ ( val ) => sortBy( val ) }
@@ -182,7 +167,9 @@ export default function LinkManagerTable( { slug } ) {
 					perPage: 1000,
 				} }
 			/>
-			<Table className="fadeInto" columns={ columns }
+			<Table className="fadeInto"
+				returnTable={ ( returnTable ) => setTable( returnTable ) }
+				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
 				{ row

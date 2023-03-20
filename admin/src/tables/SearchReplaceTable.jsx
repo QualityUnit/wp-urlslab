@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, handleSelected, Tooltip, SortMenu, InputField, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, Tooltip, SortMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function SearchReplaceTable( { slug } ) {
-	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, rowToInsert, setInsertRow, deleteRow, updateRow } = useTableUpdater( { slug } );
+	const { table, setTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, rowToInsert, setInsertRow, deleteRow, updateRow } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 	const pageId = 'id';
@@ -52,25 +52,25 @@ export default function SearchReplaceTable( { slug } ) {
 		columnHelper.accessor( 'str_search', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => <MenuInput placeholder="Enter search string" onChange={ ( val ) => addFilter( 'str_search', val ) }>{ header.str_search }</MenuInput>,
+			header: header.str_search,
 			size: 300,
 		} ),
 		columnHelper.accessor( 'str_replace', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => <MenuInput isFilter placeholder="Enter replace string" onChange={ ( val ) => addFilter( 'str_replace', val ) }>{ header.str_replace }</MenuInput>,
+			header: header.str_replace,
 			size: 300,
 		} ),
 		columnHelper.accessor( 'search_type', {
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu items={ searchTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: ( cell ) => <SortMenu isFilter items={ searchTypes } name={ cell.column.id } checkedId={ header.search_type } onChange={ ( val ) => addFilter( 'search_type', val ) }>{ header.search_type }</SortMenu>,
+			header: header.search_type,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'url_filter', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: () => <MenuInput isFilter placeholder="Enter filter" onChange={ ( val ) => addFilter( 'url_filter', val ) }>{ header.url_filter }</MenuInput>,
+			header: header.url_filter,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'delete', {
@@ -90,6 +90,7 @@ export default function SearchReplaceTable( { slug } ) {
 				slug={ slug }
 				currentFilters={ currentFilters }
 				header={ header }
+				table={ table }
 				removeFilters={ ( key ) => removeFilters( key ) }
 				onSort={ ( val ) => sortBy( val ) }
 				exportOptions={ {
@@ -100,7 +101,9 @@ export default function SearchReplaceTable( { slug } ) {
 					deleteCSVCols: [ pageId, 'dest_url_id' ],
 				} }
 			/>
-			<Table className="fadeInto" slug={ slug } columns={ columns }
+			<Table className="fadeInto" slug={ slug }
+				returnTable={ ( returnTable ) => setTable( returnTable ) }
+				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				inserter={ { inserterCells, data, slug, url, rowToInsert } }
 			>

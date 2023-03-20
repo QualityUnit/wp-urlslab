@@ -21,7 +21,7 @@ export async function fetchLangs( ) {
 			} );
 			return langPairs;
 		}
-		return {};
+		return undefined;
 	} catch ( error ) {
 		return false;
 	}

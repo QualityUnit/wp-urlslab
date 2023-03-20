@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, handleSelected, Tooltip, InputField, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, Tooltip, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function URLRelationTable( { slug } ) {
-	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
+	const { table, setTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 	const pageId = 'src_url_id';
@@ -40,20 +40,20 @@ export default function URLRelationTable( { slug } ) {
 		columnHelper.accessor( 'src_url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: () => <MenuInput isFilter placeholder="Enter Source URL Name" defaultValue={ currentFilters.src_url_name } onChange={ ( val ) => addFilter( 'src_url_name', val ) }>{ header.src_url_name }</MenuInput>,
+			header: header.src_url_name,
 			size: 400,
 		} ),
 		columnHelper.accessor( 'dest_url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: () => <MenuInput isFilter placeholder="Enter Destination URL Name" defaultValue={ currentFilters.dest_url_name } onChange={ ( val ) => addFilter( 'dest_url_name', val ) }>{ header.dest_url_name }</MenuInput>,
+			header: header.dest_url_name,
 			size: 400,
 		} ),
 		columnHelper.accessor( 'pos', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId, optionalSelector: 'dest_url_id' } ) } />,
-			header: () => <MenuInput isFilter placeholder="Filter by position" defaultValue={ currentFilters.pos } onChange={ ( val ) => addFilter( 'pos', val ) }>{ header.pos }</MenuInput>,
+			header: header.pos,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'delete', {
@@ -73,6 +73,7 @@ export default function URLRelationTable( { slug } ) {
 				slug={ slug }
 				currentFilters={ currentFilters }
 				header={ header }
+				table={ table }
 				removeFilters={ ( key ) => removeFilters( key ) }
 				onSort={ ( val ) => sortBy( val ) }
 				exportOptions={ {
@@ -84,7 +85,9 @@ export default function URLRelationTable( { slug } ) {
 				} }
 			/>
 
-			<Table className="fadeInto" columns={ columns }
+			<Table className="fadeInto"
+				returnTable={ ( returnTable ) => setTable( returnTable ) }
+				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
 				{ row

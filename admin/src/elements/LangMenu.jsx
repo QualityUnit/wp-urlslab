@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import SortMenu from '../elements/SortMenu';
+import InputField from './InputField';
 
 export default function LangMenu( { noAll, isFilter, children, onChange, checkedId } ) {
 	const queryClient = useQueryClient();
@@ -22,12 +23,14 @@ export default function LangMenu( { noAll, isFilter, children, onChange, checked
 	};
 
 	return (
-		<SortMenu
-			items={ langs }
-			isFilter={ isFilter }
-			name="languages"
-			checkedId={ checkedId }
-			onChange={ ( lang ) => handleSelected( lang ) }
-		>{ children }</SortMenu>
+		langs
+			? <SortMenu
+				items={ langs }
+				isFilter={ isFilter }
+				name="languages"
+				checkedId={ checkedId }
+				onChange={ ( lang ) => handleSelected( lang ) }
+			>{ children }</SortMenu>
+			: <InputField defaultValue={ checkedId } onChange={ ( lang ) => handleSelected( lang ) } />
 	);
 }
