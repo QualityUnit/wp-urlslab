@@ -16,8 +16,6 @@ export default function ColumnsMenu( {
 	const [ checked, setChecked ] = useState( Object.keys( items ) );
 	const ref = useRef( id );
 
-	console.log( table );
-
 	useEffect( ( ) => {
 		const handleClickOutside = ( event ) => {
 			if ( ! ref.current?.contains( event.target ) && isActive && ref.current?.id === id ) {
