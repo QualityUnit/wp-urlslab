@@ -18,6 +18,7 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 	const [ filterVal, setFilterVal ] = useState();
 	const [ isNumber, setIsNumber ] = useState( false );
 	const [ panelActive, activatePanel ] = useState( false );
+	// const [ possibleFilters, setPossibleFilters ] = useState( header );
 	const activeFilters = Object.keys( currentFilters );
 	const runFilter = useRef( false );
 
