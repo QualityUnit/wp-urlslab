@@ -42,6 +42,12 @@ The content is coming soon.
 
 == Changelog ==
 
+= 2.2.15 - 2023-03-21 =
+
+* New Feature: Keyword Cloud Chart
+* Bug Fix: API nonce issue resolved
+* Bug Fix: Fixed SQL error
+
 = 2.2.14 - 2023-03-19 =
 
 * Initial Public Release
