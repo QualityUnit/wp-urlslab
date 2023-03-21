@@ -10,5 +10,6 @@ fi
 bash "${GITHUB_WORKSPACE}/.github/scripts/set-git-user.sh"
 
 echo "Commit and Push Bump Version ${PACKAGE_VERSION}"
-git commit -am "chore: bump version to ${PACKAGE_VERSION}"
+git add .
+git commit -m "chore: bump version to ${PACKAGE_VERSION}"
 git push
