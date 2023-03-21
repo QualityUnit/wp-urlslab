@@ -1877,6 +1877,7 @@ button.urlslab-button svg.close,
   z-index: 9999;
 }
 .urlslab-panel-floating[class] .urlslab-panel {
+  overflow-x: hidden;
   padding: 1.5em;
   padding-right: 1em;
 }

@@ -2,6 +2,35 @@ var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof win
 function getDefaultExportFromCjs(x2) {
   return x2 && x2.__esModule && Object.prototype.hasOwnProperty.call(x2, "default") ? x2["default"] : x2;
 }
+function getAugmentedNamespace(n2) {
+  if (n2.__esModule)
+    return n2;
+  var f = n2.default;
+  if (typeof f == "function") {
+    var a = function a2() {
+      if (this instanceof a2) {
+        var args = [null];
+        args.push.apply(args, arguments);
+        var Ctor = Function.bind.apply(f, args);
+        return new Ctor();
+      }
+      return f.apply(this, arguments);
+    };
+    a.prototype = f.prototype;
+  } else
+    a = {};
+  Object.defineProperty(a, "__esModule", { value: true });
+  Object.keys(n2).forEach(function(k2) {
+    var d = Object.getOwnPropertyDescriptor(n2, k2);
+    Object.defineProperty(a, k2, d.get ? d : {
+      enumerable: true,
+      get: function() {
+        return n2[k2];
+      }
+    });
+  });
+  return a;
+}
 var reactExports = {};
 var react = {
   get exports() {
@@ -10753,7 +10782,7 @@ async function setModule(slug, object) {
     return false;
   }
 }
-async function setData(slug, object) {
+async function setData(slug, object, keepalive) {
   try {
     const result = await fetch(`/wp-json/urlslab/v1/${slug}`, {
       method: "POST",
@@ -10763,6 +10792,7 @@ async function setData(slug, object) {
         "X-WP-Nonce": window.wpApiSettings.nonce
       },
       credentials: "include",
+      keepalive: keepalive ? true : false,
       body: JSON.stringify(object)
     });
     return result;
@@ -10836,10 +10866,13 @@ async function fetchLangs() {
     });
     const data = await response.json();
     const langs = data == null ? void 0 : data.routes["/urlslab/v1"].endpoints[0].args.wpml_language.enum;
-    langs.forEach((lang) => {
-      langPairs[lang] = langName(lang);
-    });
-    return langPairs;
+    if (langs.length) {
+      langs.forEach((lang) => {
+        langPairs[lang] = langName(lang);
+      });
+      return langPairs;
+    }
+    return {};
   } catch (error) {
     return false;
   }
@@ -11100,7 +11133,7 @@ const _DynamicModule = "";
 let visitedModules = [];
 function DynamicModule({ modules, moduleId, activePage }) {
   const [isVisited, setIsVisited] = reactExports.useState(false);
-  const importPath = __variableDynamicImportRuntimeHelper(/* @__PURE__ */ Object.assign({ "../modules/CssOptimizer.jsx": () => __vitePreload(() => import("./assets/CssOptimizer-e7e41199.js"), true ? ["./assets/CssOptimizer-e7e41199.js","./assets/ModuleViewHeader-4e7b0417.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/ImageAltAttribute.jsx": () => __vitePreload(() => import("./assets/ImageAltAttribute-bd592599.js"), true ? ["./assets/ImageAltAttribute-bd592599.js","./assets/ModuleViewHeader-4e7b0417.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/KeywordsLinks.jsx": () => __vitePreload(() => import("./assets/KeywordsLinks-98894540.js"), true ? ["./assets/KeywordsLinks-98894540.js","./assets/ModuleViewHeader-4e7b0417.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/LazyLoading.jsx": () => __vitePreload(() => import("./assets/LazyLoading-e55ae0f2.js"), true ? ["./assets/LazyLoading-e55ae0f2.js","./assets/ModuleViewHeader-4e7b0417.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/LinkEnhancer.jsx": () => __vitePreload(() => import("./assets/LinkEnhancer-4062b083.js"), true ? ["./assets/LinkEnhancer-4062b083.js","./assets/ModuleViewHeader-4e7b0417.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/MediaOffloader.jsx": () => __vitePreload(() => import("./assets/MediaOffloader-97041f3b.js"), true ? ["./assets/MediaOffloader-97041f3b.js","./assets/ModuleViewHeader-4e7b0417.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/MetaTag.jsx": () => __vitePreload(() => import("./assets/MetaTag-0b413f86.js"), true ? ["./assets/MetaTag-0b413f86.js","./assets/ModuleViewHeader-4e7b0417.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/Modules.jsx": () => __vitePreload(() => import("./assets/Modules-7cec5524.js"), true ? ["./assets/Modules-7cec5524.js","./assets/Switch-3776180b.js","./assets/Switch.css","./assets/api-exclamation-64563f09.js","./assets/useMutation-6f0dd623.js","./assets/Modules.css"] : void 0, import.meta.url), "../modules/Optimize.jsx": () => __vitePreload(() => import("./assets/Optimize-32bcc3d5.js"), true ? ["./assets/Optimize-32bcc3d5.js","./assets/ModuleViewHeader-4e7b0417.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/RelatedResources.jsx": () => __vitePreload(() => import("./assets/RelatedResources-803eac05.js"), true ? ["./assets/RelatedResources-803eac05.js","./assets/ModuleViewHeader-4e7b0417.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/Schedule.jsx": () => __vitePreload(() => import("./assets/Schedule-f3dccd11.js"), true ? ["./assets/Schedule-f3dccd11.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/Screenshot.jsx": () => __vitePreload(() => import("./assets/Screenshot-80e8e6f4.js"), true ? ["./assets/Screenshot-80e8e6f4.js","./assets/ModuleViewHeader-4e7b0417.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/SearchAndReplace.jsx": () => __vitePreload(() => import("./assets/SearchAndReplace-32921112.js"), true ? ["./assets/SearchAndReplace-32921112.js","./assets/ModuleViewHeader-4e7b0417.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/Settings.jsx": () => __vitePreload(() => import("./assets/Settings-19ef975c.js"), true ? ["./assets/Settings-19ef975c.js","./assets/index-9c451914.js","./assets/InputField-36e1e240.js","./assets/datepicker-ff7dcd9b.js","./assets/datepicker.css","./assets/Switch-3776180b.js","./assets/Switch.css","./assets/useMutation-6f0dd623.js","./assets/Settings.css"] : void 0, import.meta.url) }), `../modules/${renameModule(moduleId)}.jsx`);
+  const importPath = __variableDynamicImportRuntimeHelper(/* @__PURE__ */ Object.assign({ "../modules/CssOptimizer.jsx": () => __vitePreload(() => import("./assets/CssOptimizer-3fa4ef1a.js"), true ? ["./assets/CssOptimizer-3fa4ef1a.js","./assets/ModuleViewHeader-b24fa859.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/ImageAltAttribute.jsx": () => __vitePreload(() => import("./assets/ImageAltAttribute-8b0c84dc.js"), true ? ["./assets/ImageAltAttribute-8b0c84dc.js","./assets/ModuleViewHeader-b24fa859.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/KeywordsLinks.jsx": () => __vitePreload(() => import("./assets/KeywordsLinks-de34a87c.js"), true ? ["./assets/KeywordsLinks-de34a87c.js","./assets/ModuleViewHeader-b24fa859.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/LazyLoading.jsx": () => __vitePreload(() => import("./assets/LazyLoading-f58c1ed0.js"), true ? ["./assets/LazyLoading-f58c1ed0.js","./assets/ModuleViewHeader-b24fa859.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/LinkEnhancer.jsx": () => __vitePreload(() => import("./assets/LinkEnhancer-c72d0440.js"), true ? ["./assets/LinkEnhancer-c72d0440.js","./assets/ModuleViewHeader-b24fa859.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/MediaOffloader.jsx": () => __vitePreload(() => import("./assets/MediaOffloader-5a819fdb.js"), true ? ["./assets/MediaOffloader-5a819fdb.js","./assets/ModuleViewHeader-b24fa859.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/MetaTag.jsx": () => __vitePreload(() => import("./assets/MetaTag-6916c008.js"), true ? ["./assets/MetaTag-6916c008.js","./assets/ModuleViewHeader-b24fa859.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/Modules.jsx": () => __vitePreload(() => import("./assets/Modules-870e7e9a.js"), true ? ["./assets/Modules-870e7e9a.js","./assets/Switch-3776180b.js","./assets/Switch.css","./assets/api-exclamation-64563f09.js","./assets/useMutation-1e5291cb.js","./assets/Modules.css"] : void 0, import.meta.url), "../modules/Optimize.jsx": () => __vitePreload(() => import("./assets/Optimize-ef32b644.js"), true ? ["./assets/Optimize-ef32b644.js","./assets/ModuleViewHeader-b24fa859.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/RelatedResources.jsx": () => __vitePreload(() => import("./assets/RelatedResources-4d81bdcd.js"), true ? ["./assets/RelatedResources-4d81bdcd.js","./assets/ModuleViewHeader-b24fa859.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/Schedule.jsx": () => __vitePreload(() => import("./assets/Schedule-e69032bf.js"), true ? ["./assets/Schedule-e69032bf.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/Screenshot.jsx": () => __vitePreload(() => import("./assets/Screenshot-cabe1123.js"), true ? ["./assets/Screenshot-cabe1123.js","./assets/ModuleViewHeader-b24fa859.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/SearchAndReplace.jsx": () => __vitePreload(() => import("./assets/SearchAndReplace-1cba01ae.js"), true ? ["./assets/SearchAndReplace-1cba01ae.js","./assets/ModuleViewHeader-b24fa859.js","./assets/api-exclamation-64563f09.js","./assets/_ModuleViewHeader.css"] : void 0, import.meta.url), "../modules/Settings.jsx": () => __vitePreload(() => import("./assets/Settings-f0f7bf20.js"), true ? ["./assets/Settings-f0f7bf20.js","./assets/index-44952be2.js","./assets/InputField-36e1e240.js","./assets/datepicker-ff7dcd9b.js","./assets/datepicker.css","./assets/Switch-3776180b.js","./assets/Switch.css","./assets/useMutation-1e5291cb.js","./assets/Settings.css"] : void 0, import.meta.url) }), `../modules/${renameModule(moduleId)}.jsx`);
   const Module = reactExports.lazy(() => importPath);
   reactExports.useEffect(() => {
     get("urlslab-visited").then(async (response) => {
@@ -11288,6 +11321,7 @@ reactDomExports.createRoot(document.getElementById("urlslab-root")).render(
   /* @__PURE__ */ React.createElement(React.StrictMode, null, /* @__PURE__ */ React.createElement(QueryClientProvider, { client: queryClient }, /* @__PURE__ */ React.createElement(App, null)))
 );
 export {
+  shouldThrowError as A,
   Button as B,
   Loader as L,
   QueryObserver as Q,
@@ -11297,27 +11331,27 @@ export {
   useQueryClient as a,
   setSettings as b,
   useQuery as c,
-  reactDomExports as d,
-  ae as e,
+  fetchData as d,
+  reactDomExports as e,
   fetchSettings as f,
-  hasPreviousPage as g,
-  hasNextPage as h,
+  getAugmentedNamespace as g,
+  ae as h,
   infiniteQueryBehavior as i,
-  parseQueryArgs as j,
-  useBaseQuery as k,
-  get as l,
-  set as m,
-  fetchData as n,
-  setData as o,
+  hasNextPage as j,
+  hasPreviousPage as k,
+  parseQueryArgs as l,
+  useBaseQuery as m,
+  get as n,
+  set as o,
   parseURL as p,
-  commonjsGlobal as q,
+  setData as q,
   reactExports as r,
   setModule as s,
-  shallowEqualObjects as t,
+  commonjsGlobal as t,
   useI18n as u,
-  getDefaultState as v,
-  notifyManager as w,
-  parseMutationArgs as x,
-  useSyncExternalStore as y,
-  shouldThrowError as z
+  shallowEqualObjects as v,
+  getDefaultState as w,
+  notifyManager as x,
+  parseMutationArgs as y,
+  useSyncExternalStore as z
 };

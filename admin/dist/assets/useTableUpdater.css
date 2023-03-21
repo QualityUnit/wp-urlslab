@@ -903,4 +903,47 @@
 }
 .urlslab-table .youtube-status-bullet-D {
   background-color: #ff492b;
+}/* stylelint-disable */
+.urlslab-ColumnsMenu__icon {
+  line-height: 1;
+  cursor: pointer;
+}
+.urlslab-ColumnsMenu__icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.urlslab-ColumnsMenu__icon.active svg {
+  fill: #2570ed;
+}
+.urlslab-ColumnsMenu__items {
+  min-width: 15em;
+  top: calc(100% + 0.5em);
+}
+.menu-left .urlslab-ColumnsMenu__items {
+  right: -1.5em;
+}
+.urlslab-ColumnsMenu__items::before {
+  height: 0;
+  width: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 0.75em;
+  border-bottom-color: #fff;
+  position: absolute;
+  -webkit-transform: scaleX(1.25);
+      -ms-transform: scaleX(1.25);
+          transform: scaleX(1.25);
+  top: -1.35em;
+  left: 50%;
+  content: "";
+}
+.menu-left .urlslab-ColumnsMenu__items::before {
+  left: auto;
+  right: 1.65em;
+}
+.urlslab-ColumnsMenu__item {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #65676b;
+  padding-left: 2em;
 }
