@@ -42,6 +42,10 @@ The content is coming soon.
 
 == Changelog ==
 
+= 2.2.20 - 2023-03-21 =
+
+* Bug Fix: Fixed Build and Release Script
+
 = 2.2.19 - 2023-03-21 =
 
 * Bug Fix: Fixed Build and Release Script

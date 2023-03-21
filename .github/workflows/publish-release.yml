@@ -88,20 +88,6 @@ jobs:
           yq -i e -o=json '.download_url = "https://github.com/QualityUnit/wp-urlslab/releases/download/${{ env.PACKAGE_VERSION }}/urlslab-${{ env.PACKAGE_VERSION }}.zip"' 'info.json'
           yq -i e -o=json '.last_updated = "${{ steps.get_current_date.outputs.date }}"' 'info.json'
 
-      - name: Install Dependencies
-        run: |
-          yarn
-          cd ./admin/ && yarn
-
-      - name: Update readme.txt File
-        run: |
-          bash "${GITHUB_WORKSPACE}/.github/scripts/update-readme-stable-version.sh"
-      - name: Check if readme.txt Update
-        env:
-          VERSION: ${{ env.PACKAGE_VERSION }}
-        run: |
-          node ./.github/scripts/get-changelog-from-readme-txt.js
-
       - name: Push New Version with Build Files
         env:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
@@ -123,6 +109,21 @@ jobs:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/create-git-tag.sh"
+
+      - name: Install Dependencies
+        run: |
+          yarn
+          cd ./admin/ && yarn
+
+      - name: Update readme.txt File
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/update-readme-stable-version.sh"
+
+      - name: Check if readme.txt Update
+        env:
+          VERSION: ${{ env.PACKAGE_VERSION }}
+        run: |
+          node ./.github/scripts/get-changelog-from-readme-txt.js
 
       - name: Create ZIP File
         env:
