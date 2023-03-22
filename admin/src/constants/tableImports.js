@@ -3,7 +3,7 @@ export { handleInput, handleSelected } from '../constants/tableFunctions';
 
 export { default as DatePicker } from 'react-datepicker';
 export { default as Tooltip } from '../elements/Tooltip';
-export { default as RangeSlider } from '../elements/RangeSlider';
+export { default as RangeSlider } from '../elements/RangeInputs';
 export { default as SortMenu } from '../elements/SortMenu';
 export { default as LangMenu } from '../elements/LangMenu';
 export { default as InputField } from '../elements/InputField';

@@ -5,7 +5,7 @@ import { useFilter } from '../hooks/filteringSorting';
 import Button from '../elements/Button';
 import SortMenu from '../elements/SortMenu';
 import InputField from '../elements/InputField';
-import RangeSlider from '../elements/RangeSlider';
+import RangeInputs from '../elements/RangeInputs';
 import { ReactComponent as CloseIcon } from '../assets/images/icon-close.svg';
 
 import '../assets/styles/components/_TableFilter.scss';
@@ -159,7 +159,7 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 						</div>
 						{ filterOperator !== 'BETWEEN'
 						 ? <InputField onChange={ ( val ) => setFilterVal( val ) } />
-							: <RangeSlider min="0" max="1000" onChange={ ( val ) => setFilterVal( val ) } />
+							: <RangeInputs onChange={ ( val ) => setFilterVal( val ) } />
 						}
 
 						<div className="Buttons flex flex-align-center">
