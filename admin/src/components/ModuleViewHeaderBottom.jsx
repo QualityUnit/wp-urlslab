@@ -92,19 +92,12 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 					}
 				</div>
 				<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
-<<<<<<< HEAD
+
 					<TableFilter slug={ slug } header={ header } initialRow={ initialRow } onFilter={ ( obj ) => setFiltersObj( obj ) } />
 					<div className="ma-left flex flex-align-center">
 						{
 							! noCount &&
 							<small className="urlslab-rowcount flex flex-align-center">
-=======
-					<TableFilter slug={ slug } header={ header } onFilter={ ( obj ) => setFiltersObj( obj ) } />
-					<div className="ma-left flex flex-align-center">
-						{
-							! noCount &&
-							<small className="urlslab-rowcount mr-l flex flex-align-center">
->>>>>>> d703867 (feat: reacreating filtering logic and new filter panel)
 								{ __( 'Rows: ' ) }
 								{ rowCount
 									? <strong className="ml-s">{ rowCount }</strong>
@@ -112,12 +105,8 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 								}
 							</small>
 						}
-<<<<<<< HEAD
+
 						<SortMenu className="menu-left ml-m" isFilter checkedId={ defaultSortBy } items={ sortItems } name="sorting" onChange={ ( val ) => onSort( val ) }>{ __( 'Sort by' ) }</SortMenu>
-=======
-						<strong>{ __( 'Sort by:' ) }</strong>
-						<SortMenu className="menu-left ml-l" checkedId={ defaultSortBy } items={ sortItems } name="sorting" onChange={ ( val ) => onSort( val ) } />
->>>>>>> d703867 (feat: reacreating filtering logic and new filter panel)
 
 						<ColumnsMenu
 							className="menu-left ml-m"
