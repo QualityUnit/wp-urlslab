@@ -25,7 +25,7 @@ if (!VERSION) {
 		}
 		const versionLogRaw = data[headerIndex].raw + data[headerIndex + 2].raw;
 		const versionLogReplaceLine = versionLogRaw.replaceAll("\n", "<br />");
-		const versionLogTitle = versionLogReplaceLine.replaceAll(" =", " =<br /><br />");
+		const versionLogTitle = versionLogReplaceLine.replaceAll(" =", " =<br />");
 		const versionLogStartTitleBold = versionLogTitle.replaceAll("= ", "<strong>");
 		const versionLogEndTitleBold = versionLogStartTitleBold.replaceAll(" =", "</strong>");
 		const versionLogStartPointBold = versionLogEndTitleBold.replaceAll("* ", "<strong> * ");
