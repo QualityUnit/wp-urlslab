@@ -78,6 +78,12 @@ The content is coming soon.
 
 == Changelog ==
 
+= 2.2.22 - 2023-03-22 =
+
+* Tweak: Update AWS SDK
+* Tweak: Update URLsLab API
+* Bug Fix: Add Missing Changelog
+
 = 2.2.21 - 2023-03-22 =
 
 * Bug Fix: Missing API
