@@ -10,6 +10,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'hook_callback', 10, 0 );
+		Urlslab_Loader::get_instance()->add_action( 'widgets_init', $this, 'init_wp_widget', 10, 0 );
 	}
 
 	public function hook_callback() {
@@ -38,7 +39,8 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		return __( 'Improve the appeal of the content by creating automatically generated screenshots' );
 	}
 
-	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
+
+	public function get_attribute_values( $atts = array(), $content = null, $tag = '' ) {
 		$atts = array_change_key_case( (array) $atts );
 
 		$urlslab_atts = shortcode_atts(
@@ -47,12 +49,18 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 				'height'          => '100%',
 				'alt'             => 'Screenshot taken by URLsLab service',
 				'default-image'   => '',
-				'url'             => 'https://www.urlslab.com',
+				'url'             => '',
 				'screenshot-type' => Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL,
 			),
 			$atts,
 			$tag
 		);
+
+		return $urlslab_atts;
+	}
+
+	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
+		$urlslab_atts = $this->get_attribute_values( $atts, $content, $tag );
 
 
 		try {
@@ -121,5 +129,10 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			null,
 			'schedule'
 		);
+	}
+
+	public function init_wp_widget() {
+		require_once URLSLAB_PLUGIN_DIR . 'includes/wp-widgets/class-urlslab-wp-widget-screenshot.php';
+		register_widget( 'Urlslab_Wp_Widget_Screenshot' );
 	}
 }

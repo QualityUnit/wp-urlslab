@@ -328,19 +328,20 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		if ( ! $this->has_screenshot() ) {
 			return '';
 		}
+
 		switch ( $screenshot_type ) {
 			case self::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL:
-				$path = 'https://www.urlslab.com/public/thumbnail/fullpage/%s/%s/%s';
+				$path = 'https://api.urlslab.com/v1/public/screenshot/thumbnail/fullpage/%s/%s/%s';
 				break;
 			case self::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL:
-				$path = 'https://www.urlslab.com/public/thumbnail/carousel/%s/%s/%s';
+				$path = 'https://api.urlslab.com/v1/public/screenshot/thumbnail/carousel/%s/%s/%s';
 				break;
 			case self::SCREENSHOT_TYPE_FULL_PAGE:
-				$path = 'https://www.urlslab.com/public/image/%s/%s/%s';
+				$path = 'https://api.urlslab.com/v1/public/screenshot/fullpage/%s/%s/%s';
 				break;
 			case self::SCREENSHOT_TYPE_CAROUSEL:
 			default:
-				$path = 'https://www.urlslab.com/public/carousel/%s/%s/%s';
+				$path = 'https://api.urlslab.com/v1/public/screenshot/carousel/%s/%s/%s';
 				break;
 		}
 
