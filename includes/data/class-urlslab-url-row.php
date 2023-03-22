@@ -43,8 +43,8 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$this->set_scr_status( $url['scr_status'] ?? self::SCR_STATUS_NEW, $loaded_from_db );
 		$this->set_sum_status( $url['sum_status'] ?? self::SUM_STATUS_NEW, $loaded_from_db );
 		$this->set_http_status( $url['http_status'] ?? self::HTTP_STATUS_NOT_PROCESSED, $loaded_from_db );
-		$this->set_urlslab_domain_id( $url['urlslab_domain_id'] ?? 0, $loaded_from_db );
-		$this->set_urlslab_url_id( $url['urlslab_url_id'] ?? 0, $loaded_from_db );
+		$this->set_urlslab_domain_id( $url['urlslab_domain_id'] ?? '', $loaded_from_db );
+		$this->set_urlslab_url_id( $url['urlslab_url_id'] ?? '', $loaded_from_db );
 		$this->set_urlslab_scr_timestamp( $url['urlslab_scr_timestamp'] ?? 0, $loaded_from_db );
 		$this->set_urlslab_sum_timestamp( $url['urlslab_sum_timestamp'] ?? 0, $loaded_from_db );
 		$this->set_update_scr_date( $url['update_scr_date'] ?? Urlslab_Data::get_now(), $loaded_from_db );
@@ -123,11 +123,11 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		return $this->get( 'http_status' );
 	}
 
-	public function get_urlslab_domain_id(): int {
+	public function get_urlslab_domain_id(): string {
 		return $this->get( 'urlslab_domain_id' );
 	}
 
-	public function get_urlslab_url_id(): int {
+	public function get_urlslab_url_id(): string {
 		return $this->get( 'urlslab_url_id' );
 	}
 
@@ -216,11 +216,11 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		}
 	}
 
-	public function set_urlslab_domain_id( int $urlslab_domain_id, $loaded_from_db = false ): void {
+	public function set_urlslab_domain_id( string $urlslab_domain_id, $loaded_from_db = false ): void {
 		$this->set( 'urlslab_domain_id', $urlslab_domain_id, $loaded_from_db );
 	}
 
-	public function set_urlslab_url_id( int $urlslab_url_id, $loaded_from_db = false ): void {
+	public function set_urlslab_url_id( string $urlslab_url_id, $loaded_from_db = false ): void {
 		$this->set( 'urlslab_url_id', $urlslab_url_id, $loaded_from_db );
 	}
 

@@ -183,7 +183,7 @@ class Urlslab_Api_Table_Sql {
 			switch ( $filter_obj->op ) {
 				case 'IN':
 					if ( is_array( $filter_obj->val ) ) {
-						$sql_string = esc_sql( $column_name ) . 'IN (' . implode( ',', array_fill( 0, count( $filter_obj->val ), '%d' ) ) . ')';
+						$sql_string = esc_sql( $column_name ) . ' IN (' . implode( ',', array_fill( 0, count( $filter_obj->val ), '%d' ) ) . ')';
 						foreach ( $filter_obj->val as $in_value ) {
 							if ( is_numeric( $in_value ) ) {
 								$data[] = $in_value;
@@ -243,13 +243,18 @@ class Urlslab_Api_Table_Sql {
 			switch ( $filter_obj->op ) {
 				case 'IN':
 					if ( is_array( $filter_obj->val ) ) {
-						$sql_string = esc_sql( $column_name ) . 'IN (' . implode( ',', array_fill( 0, count( $filter_obj->val ), '%s' ) ) . ')';
+						$sql_string = esc_sql( $column_name ) . ' IN (' . implode( ',', array_fill( 0, count( $filter_obj->val ), '%s' ) ) . ')';
 						foreach ( $filter_obj->val as $in_value ) {
 							$data[] = $in_value;
 						}
 					} else {
 						throw new Exception( 'invalid filter input value' );
 					}
+					break;
+				case 'BETWEEN':
+					$sql_string = esc_sql( $column_name ) . ' BETWEEN %s AND %s';
+					$data[]     = $filter_obj->min;
+					$data[]     = $filter_obj->max;
 					break;
 				case '>':
 					$sql_string = esc_sql( $column_name ) . '>%s';
