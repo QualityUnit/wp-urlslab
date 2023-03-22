@@ -23,7 +23,7 @@ if (!VERSION) {
 			process.exit(1);
 			return;
 		}
-		const versionLogRaw = data[headerIndex].raw + data[headerIndex + 2].raw;
+		const versionLogRaw = data[headerIndex].raw + data[headerIndex + 2].raw  + data[headerIndex + 3].raw + data[headerIndex + 5].raw + data[headerIndex + 6].raw  + data[headerIndex + 8].raw;
 		const versionLogReplaceLine = versionLogRaw.replaceAll("\n", "<br />");
 		const versionLogTitle = versionLogReplaceLine.replaceAll(" =", " =<br />");
 		const versionLogStartTitleBold = versionLogTitle.replaceAll("= ", "<strong>");
