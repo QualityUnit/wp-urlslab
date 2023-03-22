@@ -22,7 +22,7 @@ export async function cronAll( runCron, controller, cronTasks ) {
 			cronAll( runCron, controller, cronTasks );
 		}
 		if ( ! okResult?.length ) {
-			setInterval( () => cronAll( cronTasks ), 5000 );
+			setInterval( () => cronAll( runCron, controller, cronTasks ), 5000 );
 		}
 	} catch {
 		return false;

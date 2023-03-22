@@ -24,6 +24,8 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 	const [ activePanel, setActivePanel ] = useState();
 	const [ filtersObj, setFiltersObj ] = useState( );
 
+	const initialRow = table?.getRowModel().rows[ 0 ]?.original;
+
 	if ( filtersObj && onFilter ) {
 		onFilter( filtersObj?.filters );
 	}
@@ -90,11 +92,11 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 					}
 				</div>
 				<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
-					<TableFilter slug={ slug } header={ header } onFilter={ ( obj ) => setFiltersObj( obj ) } />
+					<TableFilter slug={ slug } header={ header } initialRow={ initialRow } onFilter={ ( obj ) => setFiltersObj( obj ) } />
 					<div className="ma-left flex flex-align-center">
 						{
 							! noCount &&
-							<small className="urlslab-rowcount mr-l flex flex-align-center">
+							<small className="urlslab-rowcount flex flex-align-center">
 								{ __( 'Rows: ' ) }
 								{ rowCount
 									? <strong className="ml-s">{ rowCount }</strong>
@@ -102,8 +104,7 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 								}
 							</small>
 						}
-						<strong>{ __( 'Sort by:' ) }</strong>
-						<SortMenu className="menu-left ml-l" checkedId={ defaultSortBy } items={ sortItems } name="sorting" onChange={ ( val ) => onSort( val ) } />
+						<SortMenu className="menu-left ml-m" isFilter checkedId={ defaultSortBy } items={ sortItems } name="sorting" onChange={ ( val ) => onSort( val ) }>{ __( 'Sort by' ) }</SortMenu>
 
 						<ColumnsMenu
 							className="menu-left ml-m"
