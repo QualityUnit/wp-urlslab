@@ -95,7 +95,7 @@ class Urlslab_Api_Table_Sql {
 		if ( $table_prefix ) {
 			$order_column = $table_prefix . '.' . $order_column;
 		}
-		$this->order_sql[] = esc_sql( $order_column ) . ' class-urlslab-api-table-sql.php' . ( 'DESC' !== strtoupper( $sort_direction ) ? 'ASC' : 'DESC' );
+		$this->order_sql[] = esc_sql( $order_column ) . ' ' . ( 'DESC' !== strtoupper( $sort_direction ) ? 'ASC' : 'DESC' );
 	}
 
 	public function add_select_column( $column, $table_prefix = false, $alias = false ) {
@@ -103,7 +103,7 @@ class Urlslab_Api_Table_Sql {
 			$column = esc_sql( $column );
 		}
 		$alias              = esc_sql( $alias );
-		$this->select_sql[] = ( $table_prefix ? esc_sql( $table_prefix ) . 'api' : '' ) . $column . ( $alias ? ' AS ' . $alias : '' );
+		$this->select_sql[] = ( $table_prefix ? esc_sql( $table_prefix ) . '.' : '' ) . $column . ( $alias ? ' AS ' . $alias : '' );
 	}
 
 	public function add_from( $from_string ) {
@@ -130,7 +130,7 @@ class Urlslab_Api_Table_Sql {
 	}
 
 	public function add_group_by( string $column, string $table_prefix = '' ) {
-		$this->group_by_sql[] = ( $table_prefix ? esc_sql( $table_prefix ) . 'api' : '' ) . esc_sql( $column );
+		$this->group_by_sql[] = ( $table_prefix ? esc_sql( $table_prefix ) . '.' : '' ) . esc_sql( $column );
 	}
 
 	public function get_request(): WP_REST_Request {

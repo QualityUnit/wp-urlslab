@@ -153,7 +153,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 			if ( $table_prefix ) {
 				$sort_column = $table_prefix . '.' . $sort_column;
 			}
-			$sql->add_filter_raw( - urlslab - api - table . phpesc_sql( $sort_column ) . $operator . $format, $sql->get_request()->get_param( 'from_sort_column' ) );
+			$sql->add_filter_raw( esc_sql( $sort_column ) . $operator . $format, $sql->get_request()->get_param( 'from_sort_column' ) );
 		}
 
 	}
