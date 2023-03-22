@@ -605,7 +605,8 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			}
 
 			if ( ! empty( $this->content_docs ) ) {
-				$this->content_docs[0]->insert_all( $this->content_docs, true );
+				$obj = new Urlslab_Content_Cache_Row();
+				$obj->insert_all( $this->content_docs, true );
 			}
 		}
 	}

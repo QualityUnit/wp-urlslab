@@ -504,7 +504,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 					$url_row_obj->insert_urls( $schedule_urls );
 				}
 				if ( ! empty( $new_keywords ) ) {
-					$new_keywords[0]->insert_all( $new_keywords, true );
+					$kw_obj = new Urlslab_Keyword_Row();
+					$kw_obj->insert_all( $new_keywords, true );
 				}
 			}
 		}
