@@ -1,12 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useCallback, useEffect, useState, useRef } from 'react';
-import { delay } from '../constants/helpers';
+import { useEffect, useState } from 'react';
 
 import '../assets/styles/elements/_FilterMenu.scss';
 import '../assets/styles/elements/_RangeSlider.scss';
 
 export default function RangeInputs( {
-	className, style, min, max, onChange, unit, children,
+	min, max, onChange, unit,
 } ) {
 	const [ minimum, setMin ] = useState( min );
 	const [ maximum, setMax ] = useState( max );

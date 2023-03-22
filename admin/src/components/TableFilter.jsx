@@ -1,4 +1,4 @@
-import { useMemo, useRef, useEffect, useState } from 'react';
+import { useRef, useCallback, useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useFilter } from '../hooks/filteringSorting';
 
@@ -14,6 +14,7 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 	const { __ } = useI18n();
 	const { filters, currentFilters, addFilter, removeFilters } = useFilter( { slug } );
 	const ref = useRef( null );
+	const [ filtering ] = useState( { usedFilters: [], possibleFilters: { ...header } } );
 	const [ filterKey, setFilterKey ] = useState();
 	const [ filterOperator, setFilterOperator ] = useState();
 	const [ filterVal, setFilterVal ] = useState();
@@ -39,9 +40,16 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 		'': 'is exactly',
 		'<>': 'is not',
 		IN: 'is one of',
-		'>': 'is larger than',
-		'<': 'is smaller than',
+		'>': 'is longer than',
+		'<': 'is shorter than',
 	};
+
+	const handleType = useCallback( ( key ) => {
+		setIsNumber( false );
+		if ( typeof initialRow[ key ] === 'number' ) {
+			setIsNumber( true );
+		}
+	}, [ initialRow ] );
 
 	useEffect( () => {
 		const handleClickOutside = ( event ) => {
@@ -51,24 +59,17 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 		};
 
 		document.addEventListener( 'click', handleClickOutside, false );
-	}, [ panelActive ] );
+	}, [ filtering, isNumber, panelActive ] );
 
-	const filtering = useMemo( () => {
-		return {
-			usedFilters: [], possibleFilters: { ...header } };
-	}, [ header ] );
+	// const filtering = useMemo( () => {
+	// 	return {
+	// 		;
+	// }, [ header ] );
 
 	if ( onFilter && runFilter.current ) {
 		runFilter.current = false;
 		onFilter( { filters, currentFilters } );
 	}
-
-	const handleType = ( key ) => {
-		setIsNumber( false );
-		if ( typeof initialRow[ key ] === 'number' ) {
-			setIsNumber( true );
-		}
-	};
 
 	const handleSaveFilter = () => {
 		let key = filterKey;
@@ -78,6 +79,7 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 		if ( ! key ) {
 			key = Object.keys( filtering.possibleFilters )[ 0 ];
 		}
+
 		filtering.usedFilters.push( key );
 		delete filtering.possibleFilters[ key ];
 		activatePanel( false );
@@ -91,7 +93,7 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 		}
 
 		if ( op === 'IN' ) {
-			addFilter( key, encodeURIComponent( `{"op":"${ op }","val":"[${ val }]"}` ) );
+			addFilter( key, encodeURIComponent( `{"op":"${ op }","val":[${ val }]}` ) );
 		}
 
 		if ( op === 'BETWEEN' ) {
@@ -158,7 +160,7 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 							/>
 						</div>
 						{ filterOperator !== 'BETWEEN'
-						 ? <InputField onChange={ ( val ) => setFilterVal( val ) } />
+							? <InputField placeholder={ filterOperator === 'IN' && 'enter ie. 0,10,15,20' } onChange={ ( val ) => setFilterVal( val ) } />
 							: <RangeInputs onChange={ ( val ) => setFilterVal( val ) } />
 						}
 

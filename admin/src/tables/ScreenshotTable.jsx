@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, handleSelected, Tooltip, Trash, DatePicker, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, Tooltip, Trash, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function ScreenshotTable( { slug } ) {
-	const { table, setTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
+	const { table, setTable, filters, setFilters, currentFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn || '&sort_column=url_name&sort_direction=ASC' }`, [ filters, sortingColumn ] );
 	const pageId = 'url_id';
@@ -85,20 +85,7 @@ export default function ScreenshotTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'update_scr_date', {
 			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
-			header: () => <div className="urlslab-FilterMenu urlslab-inputField-datetime">
-				<div className="urlslab-FilterMenu__title">
-					<DatePicker
-						placeholderText={ header.update_scr_date }
-						dateFormat="dd. MMMM yyyy, HH:mm"
-						timeFormat="HH:mm"
-						onChange={ ( val ) => {
-							const date = new Date( val ).toISOString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' );
-							addFilter( 'update_scr_date', date );
-						}
-						}
-					/>
-				</div>
-			</div>,
+			header: header.update_scr_date,
 			size: 140,
 		} ),
 		columnHelper.accessor( 'delete', {
@@ -119,9 +106,8 @@ export default function ScreenshotTable( { slug } ) {
 				currentFilters={ currentFilters }
 				header={ header }
 				table={ table }
-				removeFilters={ ( key ) => removeFilters( key ) }
-				defaultSortBy="url_name&ASC"
 				onSort={ ( val ) => sortBy( val ) }
+				onFilter={ ( filter ) => setFilters( filter ) }
 				noImport
 				exportOptions={ {
 					url: slug,
