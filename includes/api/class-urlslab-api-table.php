@@ -192,6 +192,8 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 				case 'BETWEEN':
 					return property_exists( $filter_value, 'min' ) && property_exists( $filter_value, 'max' ) && is_string( $filter_value->min ) && is_string( $filter_value->max );
 				case 'LIKE': //continue to next case
+				case '%LIKE': //continue to next case
+				case 'LIKE%': //continue to next case
 				case '>': //continue to next case
 				case '<': //continue to next case
 				case '=': //continue to next case

@@ -274,6 +274,15 @@ class Urlslab_Api_Table_Sql {
 					$sql_string = esc_sql( $column_name ) . ' LIKE %s';
 					$data[]     = '%' . $wpdb->esc_like( $filter_obj->val ) . '%';
 					break;
+				case 'LIKE%':
+					$sql_string = esc_sql( $column_name ) . ' LIKE %s';
+					$data[]     = $wpdb->esc_like( $filter_obj->val ) . '%';
+					break;
+				case '%LIKE':
+					$sql_string = esc_sql( $column_name ) . ' LIKE %s';
+					$data[]     = '%' . $wpdb->esc_like( $filter_obj->val );
+					break;
+
 				case '=':
 				default:
 					$sql_string = esc_sql( $column_name ) . '=%s';
