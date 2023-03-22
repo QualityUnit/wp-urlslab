@@ -21,9 +21,19 @@ class Urlslab_Api_Languages extends Urlslab_Api_Base {
 		try {
 
 			$languages          = apply_filters( 'wpml_active_languages', null, 'skip_missing=0&orderby=code' );
-			$response_languages = array( (object) array( 'code' => 'all', 'name' => __( 'All', 'urlslab' ) ) );
+			$response_languages = array(
+				(object) array(
+					'code' => 'all',
+					'name' => __( 'All', 'urlslab' ),
+				),
+			);
 			if ( empty( $languages ) ) {
-				$response_languages = array( (object) array( 'code' => 'en', 'name' => __( 'English', 'urlslab' ) ) );
+				$response_languages = array(
+					(object) array(
+						'code' => 'en',
+						'name' => __( 'English', 'urlslab' ),
+					),
+				);
 			} else {
 				foreach ( $languages as $language ) {
 					$response_languages[] = (object) array(
