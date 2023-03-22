@@ -76,6 +76,7 @@ class Urlslab_Summaries_Cron extends Urlslab_Cron {
 					$url_objects[ $id ]->set_urlslab_domain_id( $summary->getDomainId() );
 					$url_objects[ $id ]->set_urlslab_url_id( $summary->getUrlId() );
 					$url_objects[ $id ]->set_urlslab_sum_timestamp( time() ); //TODO: api has no info when was summary generated?
+					$url_objects[ $id ]->set_url_summary( $summary->getSummary() ); //TODO: api has no info when was summary generated?
 					$url_objects[ $id ]->set_sum_status( Urlslab_Url_Row::SUM_STATUS_ACTIVE );
 					$url_objects[ $id ]->update();
 					$some_urls_updated = true;
