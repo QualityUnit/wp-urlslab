@@ -1,5 +1,5 @@
 <?php
-require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-table-sql.php';
+require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-table-sql.php';
 
 abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 

@@ -2,49 +2,48 @@
 
 class Urlslab_Api_Router {
 	public function register_routes() {
-		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-base.php';
-		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-table.php';
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-table.php';
 
-		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-modules.php';
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-modules.php';
 		( new Urlslab_Api_Modules() )->register_routes();
 
-		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-settings.php';
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-settings.php';
 		( new Urlslab_Api_Settings() )->register_routes();
 
-		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-youtube-cache.php';
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-youtube-cache.php';
 		( new Urlslab_Api_Youtube_Cache() )->register_routes();
 
-		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-css-cache.php';
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-css-cache.php';
 		( new Urlslab_Api_Css_Cache() )->register_routes();
 
-		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-content-cache.php';
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-content-cache.php';
 		( new Urlslab_Api_Content_Cache() )->register_routes();
 
-		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-cron.php';
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-cron.php';
 		( new Urlslab_Api_Cron() )->register_routes();
 
-		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-keywords.php';
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-keywords.php';
 		( new Urlslab_Api_Keywords() )->register_routes();
 
-		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-files.php';
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-files.php';
 		( new Urlslab_Api_Files() )->register_routes();
 
-		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-urls.php';
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-urls.php';
 		( new Urlslab_Api_Urls() )->register_routes();
 
-		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-screenshots.php';
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-screenshots.php';
 		( new Urlslab_Api_Screenshots() )->register_routes();
 
-		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-meta-tags.php';
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-meta-tags.php';
 		( new Urlslab_Api_Meta_Tags() )->register_routes();
 
-		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-url-relations.php';
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-url-relations.php';
 		( new Urlslab_Api_Url_Relations() )->register_routes();
 
-		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-search-replace.php';
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-search-replace.php';
 		( new Urlslab_Api_Search_Replace() )->register_routes();
 
-		require_once URLSLAB_PLUGIN_DIR . 'admin/includes/api/class-urlslab-api-schedules.php';
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-schedules.php';
 		( new Urlslab_Api_Schedules() )->register_routes();
 	}
 }
