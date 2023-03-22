@@ -8,7 +8,7 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 	const STATUS_DISABLED = 'D';
 	private $microdata_obj;
 
-	public function __construct( array $video, $loaded_from_db = false ) {
+	public function __construct( array $video = array(), $loaded_from_db = false ) {
 		$this->set_video_id( $video['videoid'] ?? '', $loaded_from_db );
 		$this->set_microdata( $video['microdata'] ?? null, $loaded_from_db );
 		$this->set_status( $video['status'] ?? self::STATUS_NEW, $loaded_from_db );

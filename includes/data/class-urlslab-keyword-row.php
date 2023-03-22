@@ -2,7 +2,7 @@
 
 class Urlslab_Keyword_Row extends Urlslab_Data {
 
-	public function __construct( array $data, $loaded_from_db = false ) {
+	public function __construct( array $data = array(), $loaded_from_db = false ) {
 		$this->set_keyword( $data['keyword'] ?? '', $loaded_from_db );
 		$this->set_url_link( $data['urlLink'] ?? '', $loaded_from_db );
 		$this->set_kw_priority( $data['kw_priority'] ?? 10, $loaded_from_db );
