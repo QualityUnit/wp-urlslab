@@ -78,6 +78,10 @@ The content is coming soon.
 
 == Changelog ==
 
+= 2.2.23 - 2023-03-22 =
+
+* Bug Fix: Fixed bugs in changelog
+
 = 2.2.22 - 2023-03-22 =
 
 * Tweak: Update AWS SDK

@@ -86,7 +86,7 @@ jobs:
           VERSION: ${{ env.PACKAGE_VERSION }}
         run: |
           yarn
-          node ./.github/scripts/get-changelog-from-readme-txt.js
+          node ./.github/scripts/get-changelog.js
 
       - name: Change info.json File
         run: |
