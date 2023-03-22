@@ -204,6 +204,14 @@ class Urlslab {
 		$plugin_admin = new Urlslab_Admin( $this->get_urlslab(), $this->get_version() );
 		$plugin_admin->urlslab_page_ajax();
 
+		add_action(
+			'admin_enqueue_scripts',
+			function( $hook ) {
+				if ( ! did_action( 'wp_enqueue_media' ) ) {
+					wp_enqueue_media();
+				}
+			}
+		);
 		Urlslab_Loader::get_instance()->add_action( 'admin_init', $this, 'urlslab_upgrade', 10, 0 );
 		Urlslab_Loader::get_instance()->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		Urlslab_Loader::get_instance()->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
@@ -417,9 +425,9 @@ class Urlslab {
 	 * @since    1.0.0
 	 */
 	public function run() {
-		$this->init_table_names();
 		$this->load_dependencies();
 		$this->set_locale();
+		$this->init_table_names();
 		Urlslab_Available_Widgets::get_instance()->init_widgets();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
@@ -591,9 +599,6 @@ class Urlslab {
 	}
 
 	private function define_api_hooks() {
-		if ( ! current_user_has_role( array( 'editor', 'administrator' ) ) ) {
-			return;
-		}
 
 		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-base.php';
 		if ( ! isset( $_SERVER['REQUEST_URI'] ) || false === strpos( $_SERVER['REQUEST_URI'], Urlslab_Api_Base::NAMESPACE ) ) {
@@ -603,6 +608,9 @@ class Urlslab {
 		add_action(
 			'rest_api_init',
 			function() {
+				if ( ! current_user_can( 'read' ) ) {
+					return;
+				}
 				( new Urlslab_Api_Router() )->register_routes();
 			}
 		);
