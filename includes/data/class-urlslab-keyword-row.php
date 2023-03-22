@@ -8,7 +8,7 @@ class Urlslab_Keyword_Row extends Urlslab_Data {
 		$this->set_kw_priority( $data['kw_priority'] ?? 10, $loaded_from_db );
 		$this->set_kw_length( $data['kw_length'] ?? strlen( $this->get_keyword() ), $loaded_from_db );
 		$this->set_lang( $data['lang'] ?? 'all', $loaded_from_db );
-		$this->set_url_filter( $data['kw_id'] ?? '.*', $loaded_from_db );
+		$this->set_url_filter( $data['urlFilter'] ?? '.*', $loaded_from_db );
 		$this->set_kw_type( $data['kwType'] ?? Urlslab_Keywords_Links::KW_TYPE_MANUAL, $loaded_from_db );
 		$this->set_kw_id( $data['kw_id'] ?? $this->compute_kw_id(), $loaded_from_db );
 	}

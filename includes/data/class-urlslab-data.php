@@ -8,8 +8,8 @@ abstract class Urlslab_Data {
 		return $this->data;
 	}
 
-	public function set_public( $name, $value, $loaded_from_db ) {
-		$this->set( $name, $value, $loaded_from_db );
+	public function set_public( $name, $value ) {
+		$this->set( $name, $value, false );
 	}
 
 	public function get_public( $name ) {
