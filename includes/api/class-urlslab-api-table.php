@@ -188,18 +188,14 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		if ( is_object( $filter_value ) ) {
 			switch ( $filter_value->op ) {
 				case 'IN':
-					if ( ! property_exists( $filter_value, 'val' ) || ! is_array( $filter_value->val ) ) {
-						return false;
-					} //continue to next case
+					return property_exists( $filter_value, 'val' ) && is_array( $filter_value->val );
+				case 'BETWEEN':
+					return property_exists( $filter_value, 'min' ) && property_exists( $filter_value, 'max' ) && is_string( $filter_value->min ) && is_string( $filter_value->max );
 				case 'LIKE': //continue to next case
 				case '>': //continue to next case
 				case '<': //continue to next case
 				case '=': //continue to next case
-					if ( ! property_exists( $filter_value, 'val' ) ) {
-						return false;
-					}
-
-					return true;
+					return property_exists( $filter_value, 'val' ) && is_string( $filter_value->val );
 				default:
 					return false;
 			}
@@ -218,21 +214,13 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 			}
 			switch ( $filter_value->op ) {
 				case 'IN':
-					if ( ! property_exists( $filter_value, 'val' ) || ! is_array( $filter_value->val ) ) {
-						return false;
-					} //continue to next case
+					return property_exists( $filter_value, 'val' ) && is_array( $filter_value->val );
 				case 'BETWEEN':
-					if ( ! property_exists( $filter_value, 'min' ) || ! property_exists( $filter_value, 'max' ) ) {
-						return false;
-					} //continue to next case
+					return property_exists( $filter_value, 'min' ) && property_exists( $filter_value, 'max' ) && is_numeric( $filter_value->min ) && is_numeric( $filter_value->max );
 				case '>':
 				case '<':
 				case '=':
-					if ( ! property_exists( $filter_value, 'val' ) ) {
-						return false;
-					}
-
-					return true;
+					return property_exists( $filter_value, 'val' ) && is_numeric( $filter_value->val );
 				default:
 					return false;
 			}

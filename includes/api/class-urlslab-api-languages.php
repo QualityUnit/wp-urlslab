@@ -28,11 +28,9 @@ class Urlslab_Api_Languages extends Urlslab_Api_Base {
 				),
 			);
 			if ( empty( $languages ) ) {
-				$response_languages = array(
-					(object) array(
-						'code' => 'en',
-						'name' => __( 'English', 'urlslab' ),
-					),
+				$response_languages[] = (object) array(
+					'code' => 'en',
+					'name' => __( 'English', 'urlslab' ),
 				);
 			} else {
 				foreach ( $languages as $language ) {
