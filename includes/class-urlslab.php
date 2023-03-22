@@ -353,13 +353,6 @@ class Urlslab {
 
 		add_filter( 'cron_schedules', array( $this, 'add_cron_interval' ) );
 
-		add_action(
-			'rest_api_init',
-			function() {
-				( new Urlslab_Api_Router() )->register_routes();
-			}
-		);
-
 
 		if ( ! wp_next_scheduled( 'urlslab_cron_hook' ) ) {
 			wp_schedule_event( time(), 'every_minute', 'urlslab_cron_hook' );
@@ -431,6 +424,7 @@ class Urlslab {
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		$this->define_backend_hooks();
+		$this->define_api_hooks();
 
 		Urlslab_Loader::get_instance()->run();
 	}
@@ -463,7 +457,7 @@ class Urlslab {
 				$remote = wp_remote_get(
 					self::URLSLAB_INFO_URL,
 					array(
-						'timeout' => 5,	//phpcs:ignore
+						'timeout' => 5,    //phpcs:ignore
 						'headers' => array(
 							'Accept' => 'application/json',
 						),
@@ -594,5 +588,23 @@ class Urlslab {
 		);
 
 		return array_merge( $my_schedule, $schedules );
+	}
+
+	private function define_api_hooks() {
+		if ( ! current_user_has_role( array( 'editor', 'administrator' ) ) ) {
+			return;
+		}
+
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-base.php';
+		if ( ! isset( $_SERVER['REQUEST_URI'] ) || false === strpos( $_SERVER['REQUEST_URI'], Urlslab_Api_Base::NAMESPACE ) ) {
+			return;
+		}
+
+		add_action(
+			'rest_api_init',
+			function() {
+				( new Urlslab_Api_Router() )->register_routes();
+			}
+		);
 	}
 }
