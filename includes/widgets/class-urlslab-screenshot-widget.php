@@ -40,7 +40,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	}
 
 
-	public function get_attribute_values($atts = array(), $content = null, $tag = '' ) {
+	public function get_attribute_values( $atts = array(), $content = null, $tag = '' ) {
 		$atts = array_change_key_case( (array) $atts );
 
 		$urlslab_atts = shortcode_atts(
@@ -55,11 +55,12 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			$atts,
 			$tag
 		);
+
 		return $urlslab_atts;
 	}
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
-		$urlslab_atts = $this->get_attribute_values($atts, $content, $tag);
+		$urlslab_atts = $this->get_attribute_values( $atts, $content, $tag );
 
 
 		try {
