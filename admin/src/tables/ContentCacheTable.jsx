@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, handleSelected, Tooltip, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, Tooltip, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function ContentCacheTable( { slug } ) {
-	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow } = useTableUpdater( { slug } );
+	const { table, setTable, filters, setFilters, currentFilters, sortingColumn, sortBy, row, deleteRow } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 	const pageId = 'cache_crc32';
@@ -43,7 +43,7 @@ export default function ContentCacheTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'cache_len', {
 			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
-			header: () => <MenuInput isFilter placeholder="Enter size in kB" defaultValue={ currentFilters.cache_len } onChange={ ( val ) => addFilter( 'cache_len', val * 1024 ) }>{ header.cache_len }</MenuInput>,
+			header: header.cache_len,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'cache_content', {
@@ -66,11 +66,11 @@ export default function ContentCacheTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				slug={ slug }
-				currentFilters={ currentFilters }
 				header={ header }
+				table={ table }
 				noImport
-				removeFilters={ ( key ) => removeFilters( key ) }
 				onSort={ ( val ) => sortBy( val ) }
+				onFilter={ ( filter ) => setFilters( filter ) }
 				exportOptions={ {
 					url: slug,
 					filters,
@@ -80,6 +80,7 @@ export default function ContentCacheTable( { slug } ) {
 				} }
 			/>
 			<Table className="fadeInto" columns={ columns }
+				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				data={
 					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 				}

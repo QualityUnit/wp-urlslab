@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, handleSelected, Tooltip, SortMenu, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, Tooltip, SortMenu, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function CSSCacheTable( { slug } ) {
-	const { filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
+	const { table, setTable, filters, setFilters, sortingColumn, currentFilters, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 	const pageId = 'url_id';
@@ -46,7 +46,7 @@ export default function CSSCacheTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'url', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: () => <MenuInput isFilter placeholder="Enter URL filter" defaultValue={ currentFilters.url } onChange={ ( val ) => addFilter( 'url', val ) }>{ header.url }</MenuInput>,
+			header: header.url,
 			size: 450,
 		} ),
 		columnHelper?.accessor( 'status', {
@@ -56,7 +56,7 @@ export default function CSSCacheTable( { slug } ) {
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: ( cell ) => <SortMenu isFilter items={ statusTypes } name={ cell.column.id } checkedId={ currentFilters.status || '' } onChange={ ( val ) => addFilter( 'status', val ) }>{ header.status }</SortMenu>,
+			header: header.status,
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'status_changed', {
@@ -66,7 +66,7 @@ export default function CSSCacheTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'filesize', {
 			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
-			header: () => <MenuInput isFilter placeholder="Enter size in kB" defaultValue={ currentFilters.filesize } onChange={ ( val ) => addFilter( 'filesize', val * 1024 ) }>{ header.filesize }</MenuInput>,
+			header: header.filesize,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'delete', {
@@ -84,11 +84,11 @@ export default function CSSCacheTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				slug={ slug }
-				currentFilters={ currentFilters }
 				header={ header }
+				table={ table }
 				noImport
-				removeFilters={ ( key ) => removeFilters( key ) }
 				onSort={ ( val ) => sortBy( val ) }
+				onFilter={ ( filter ) => setFilters( filter ) }
 				exportOptions={ {
 					url: slug,
 					filters,
@@ -98,6 +98,7 @@ export default function CSSCacheTable( { slug } ) {
 				} }
 			/>
 			<Table className="fadeInto" columns={ columns }
+				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				data={
 					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 				}

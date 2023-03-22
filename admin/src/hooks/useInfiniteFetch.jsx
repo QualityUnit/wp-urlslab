@@ -13,7 +13,7 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const { ref, inView } = useInView();
 	const { key, url, pageId, currentFilters } = options;
 	const [ queryUrl, setQueryUrl ] = useState();
-	const [ activeFilters, setActiveFilters ] = useState( {} );
+	// const [ activeFilters, setActiveFilters ] = useState( {} );
 
 	const query = useInfiniteQuery( {
 		queryKey: [ key, url ? url : queryUrl ],
@@ -53,7 +53,7 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		get( key ).then( ( tableQuery ) => {
 			const q = tableQuery;
 			setQueryUrl( q?.url );
-			setActiveFilters( Object.keys( q?.currentFilters ).length ? q?.currentFilters : {} );
+			// setActiveFilters( Object.keys( q?.currentFilters ).length ? q?.currentFilters : {} );
 		} );
 		if ( inView ) {
 			fetchNextPage();
@@ -64,7 +64,7 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		__,
 		columnHelper,
 		data,
-		activeFilters,
+		// activeFilters,
 		status,
 		isSuccess,
 		isFetchingNextPage,

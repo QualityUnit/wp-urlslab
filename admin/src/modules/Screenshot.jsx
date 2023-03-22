@@ -10,7 +10,7 @@ export default function Screenshot( { moduleId } ) {
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 
 	const tableMenu = new Map( [
-		[ 'url', __( 'Screenshots' ) ],
+		[ 'screenshot', __( 'Screenshots' ) ],
 	] );
 
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
@@ -26,7 +26,7 @@ export default function Screenshot( { moduleId } ) {
 				</Overview>
 			}
 			{
-				activeSection === 'url' &&
+				activeSection === 'screenshot' &&
 					<Suspense>
 						<ScreenshotTable slug="url" />
 					</Suspense>

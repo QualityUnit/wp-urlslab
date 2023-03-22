@@ -1,0 +1,37 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urslab-TableFilter {
+
+	&-panel {
+		z-index: 1;
+
+		&::before {
+
+			@include triangle(1.5em, $white, "up");
+			position: absolute;
+			transform: scaleX(1.25);
+			top: -1.35em;
+			left: 1.35em;
+			content: "";
+
+			.menu-left & {
+				left: auto;
+				right: 1.65em;
+			}
+		}
+
+		@media (min-width: $breakpoint-desktop-box) {
+			top: -1em;
+			left: 100%;
+
+			&::before {
+
+				@include triangle(1.5em, $white, "left");
+				top: 1.35em;
+				left: -1.5em;
+			}
+		}
+	}
+
+}

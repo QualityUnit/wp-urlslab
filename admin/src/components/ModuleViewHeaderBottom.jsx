@@ -8,7 +8,6 @@ import { deleteAll } from '../api/deleteTableData';
 import { ReactComponent as Trash } from '../assets/images/icon-trash.svg';
 import { ReactComponent as ImportIcon } from '../assets/images/icon-import.svg';
 import { ReactComponent as ExportIcon } from '../assets/images/icon-export.svg';
-import { ReactComponent as CloseIcon } from '../assets/images/icon-close.svg';
 
 import SortMenu from '../elements/SortMenu';
 import ColumnsMenu from '../elements/ColumnsMenu';
@@ -17,14 +16,21 @@ import Button from '../elements/Button';
 import ExportPanel from './ExportPanel';
 import ImportPanel from './ImportPanel';
 import DangerPanel from './DangerPanel';
+import TableFilter from './TableFilter';
 
-export default function ModuleViewHeaderBottom( { currentFilters, noImport, noExport, noCount, noDelete, header, table, removeFilters, slug, exportOptions, defaultSortBy, onSort } ) {
+export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, noDelete, header, table, slug, exportOptions, defaultSortBy, onSort, onFilter } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
-	const activeFilters = Object.keys( currentFilters );
 	const [ activePanel, setActivePanel ] = useState();
+	const [ filtersObj, setFiltersObj ] = useState( );
 
-	const currentCountFilters = exportOptions?.filters?.replace( '&', '?' );
+	const initialRow = table?.getRowModel().rows[ 0 ]?.original;
+
+	if ( filtersObj && onFilter ) {
+		onFilter( filtersObj?.filters );
+	}
+
+	const currentCountFilters = filtersObj?.filters ? filtersObj?.filters?.replace( '&', '?' ) : '';
 
 	const { data: rowCount } = useQuery( {
 		queryKey: [ slug, `count${ currentCountFilters }` ],
@@ -68,49 +74,50 @@ export default function ModuleViewHeaderBottom( { currentFilters, noImport, noEx
 
 	return (
 		<>
-			<div className="urlslab-moduleView-headerBottom flex">
+			<div className="urlslab-moduleView-headerBottom">
+				<div className="urlslab-moduleView-headerBottom__top flex flex-align-center">
 
-				{ ! noDelete &&
-				<Button onClick={ () => handlePanel( 'delete' ) }><Trash />{ __( 'Delete All' ) }</Button>
-				}
-				{ ! noExport &&
-				<Button className="ml-s-tablet" onClick={ () => handlePanel( 'export' ) }><ExportIcon />{ __( 'Export CSV' ) }</Button>
-				}
-				{ ! noImport &&
-				<Button className="ml-s-tablet" onClick={ () => handlePanel( 'import' ) }><ImportIcon />{ __( 'Import CSV' ) }</Button>
-				}
-				{
-					( activeFilters?.length > 0 && header ) &&
-					<div className="flex flex-align-center">
-						{ activeFilters.map( ( key ) => {
-							return ( <Button className="outline ml-s" key={ key } onClick={ () => removeFilters( [ key ] ) }>{ header[ key ] }<CloseIcon className="close" /></Button> );
-						} ) }
-
-						<Button className="simple underline" onClick={ () => removeFilters( activeFilters ) }>Clear filters</Button>
+					{ ! noDelete && ! noExport && ! noImport &&
+					<div className="ma-left flex flex-align-center">
+						{ ! noDelete &&
+						<Button className="no-padding underline simple" onClick={ () => handlePanel( 'delete' ) }>{ __( 'Delete All' ) }</Button>
+						}
+						{ ! noExport &&
+						<Button className="no-padding underline simple ml-m" onClick={ () => handlePanel( 'export' ) }>{ __( 'Export CSV' ) }</Button>
+						}
+						{ ! noImport &&
+						<Button className="no-padding underline simple ml-m" onClick={ () => handlePanel( 'import' ) }>{ __( 'Import CSV' ) }</Button>
+						}
 					</div>
-				}
-				<div className="ma-left flex flex-align-center">
-					{
-						! noCount &&
-						<small className="urlslab-rowcount mr-l flex flex-align-center">
-							{ __( 'Rows: ' ) }
-							{ rowCount
-								? <strong>{ rowCount }</strong>
-								: <Loader className="noText small" />
-							}
-						</small>
 					}
-					<strong>{ __( 'Sort by:' ) }</strong>
-					<SortMenu className="menu-left ml-l" checkedId={ defaultSortBy } items={ sortItems } name="sorting" onChange={ ( val ) => onSort( val ) } />
-
-					<ColumnsMenu
-						className="menu-left ml-m"
-						id="visibleColumns"
-						table={ table }
-						items={ header }
-					>
-					</ColumnsMenu>
 				</div>
+				<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
+
+					<TableFilter slug={ slug } header={ header } initialRow={ initialRow } onFilter={ ( obj ) => setFiltersObj( obj ) } />
+					<div className="ma-left flex flex-align-center">
+						{
+							! noCount &&
+							<small className="urlslab-rowcount flex flex-align-center">
+								{ __( 'Rows: ' ) }
+								{ rowCount
+									? <strong className="ml-s">{ rowCount }</strong>
+									: <Loader className="ml-s noText small" />
+								}
+							</small>
+						}
+
+						<SortMenu className="menu-left ml-m" isFilter checkedId={ defaultSortBy } items={ sortItems } name="sorting" onChange={ ( val ) => onSort( val ) }>{ __( 'Sort by' ) }</SortMenu>
+
+						<ColumnsMenu
+							className="menu-left ml-m"
+							id="visibleColumns"
+							table={ table }
+							items={ header }
+						>
+						</ColumnsMenu>
+					</div>
+				</div>
+
 			</div>
 			{
 				activePanel === 'delete' &&
@@ -123,7 +130,7 @@ export default function ModuleViewHeaderBottom( { currentFilters, noImport, noEx
 
 			{ activePanel === 'export' &&
 			<ExportPanel options={ exportOptions }
-				currentFilters={ currentFilters }
+				currentFilters={ filtersObj?.currentFilters }
 				header={ header }
 				handlePanel={ () => handlePanel() }
 			/>

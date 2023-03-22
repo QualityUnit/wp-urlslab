@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, handleSelected, Tooltip, SortMenu, Checkbox, MenuInput, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, handleSelected, Tooltip, SortMenu, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function MediaFilesTable( { slug } ) {
-	const { table, setTable, filters, currentFilters, addFilter, removeFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
+	const { table, setTable, filters, setFilters, currentFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 	const pageId = 'fileid';
@@ -51,11 +51,11 @@ export default function MediaFilesTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'filename', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: () => <MenuInput isFilter placeholder="Enter file name" defaultValue={ currentFilters.filename } onChange={ ( val ) => addFilter( 'filename', val ) }>{ header.filename }</MenuInput>,
+			header: header.filename,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'filetype', {
-			header: () => <MenuInput isFilter placeholder="Enter file type" defaultValue={ currentFilters.filetype } onChange={ ( val ) => addFilter( 'filetype', val ) }>{ header.filetype }</MenuInput>,
+			header: header.filetype,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'filestatus', {
@@ -65,7 +65,7 @@ export default function MediaFilesTable( { slug } ) {
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
-			header: ( cell ) => <SortMenu isFilter items={ statusTypes } name={ cell.column.id } checkedId={ currentFilters.filestatus || '' } onChange={ ( val ) => addFilter( 'filestatus', val ) }>{ header.filestatus }</SortMenu>,
+			header: header.filestatus,
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'status_changed', {
@@ -75,21 +75,21 @@ export default function MediaFilesTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'width', {
 			cell: ( cell ) => `${ cell.getValue() }\u00A0px`,
-			header: () => <MenuInput isFilter placeholder="Enter Width" defaultValue={ currentFilters.width } onChange={ ( val ) => addFilter( 'width', val ) }>{ header.width }</MenuInput>,
+			header: header.width,
 			size: 50,
 		} ),
 		columnHelper?.accessor( 'height', {
 			cell: ( cell ) => `${ cell.getValue() }\u00A0px`,
-			header: () => <MenuInput isFilter placeholder="Enter Height" defaultValue={ currentFilters.height } onChange={ ( val ) => addFilter( 'height', val ) }>{ header.height }</MenuInput>,
+			header: header.height,
 			size: 50,
 		} ),
 		columnHelper?.accessor( 'filesize', {
 			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
-			header: () => <MenuInput isFilter placeholder="Enter size in kB" defaultValue={ currentFilters.filesize } onChange={ ( val ) => addFilter( 'filesize', val * 1024 ) }>{ header.filesize }</MenuInput>,
+			header: header.filesize,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'file_usage_count', {
-			header: () => <MenuInput isFilter placeholder="Filter by usage " defaultValue={ currentFilters.file_usage_count } onChange={ ( val ) => addFilter( 'file_usage_count', val * 1024 ) }>{ header.file_usage_count }</MenuInput>,
+			header: header.file_usage_count,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'url', {
@@ -99,7 +99,7 @@ export default function MediaFilesTable( { slug } ) {
 				return <Tooltip>{ isImage !== -1 && <img src={ cell.getValue() } alt="url" /> }</Tooltip>;
 			},
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: () => <MenuInput isFilter placeholder="Enter URL" defaultValue={ currentFilters.url } onChange={ ( val ) => addFilter( 'url', val ) }>{ header.url }</MenuInput>,
+			header: header.url,
 			size: 250,
 		} ),
 		columnHelper.accessor( 'delete', {
@@ -117,11 +117,10 @@ export default function MediaFilesTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				slug={ slug }
-				currentFilters={ currentFilters }
 				header={ header }
 				table={ table }
-				removeFilters={ ( key ) => removeFilters( key ) }
 				onSort={ ( val ) => sortBy( val ) }
+				onFilter={ ( filter ) => setFilters( filter ) }
 				exportOptions={ {
 					url: slug,
 					filters,
@@ -130,8 +129,9 @@ export default function MediaFilesTable( { slug } ) {
 					deleteCSVCols: [ pageId, 'dest_url_id' ],
 				} }
 			/>
-			<Table className="fadeInto" columns={ columns }
+			<Table className="fadeInto"
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
+				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
 				{ row
