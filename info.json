@@ -2,7 +2,8 @@
   "name": "URLsLab",
   "slug": "urlslab",
   "author": "<a href='https://www.urlslab.com'>URLsLab</a>",
-  "author_profile": "http://profiles.wordpress.org/urlslab",
+  "author_profile": "https://www.urlslab.com",
+  "homepage": "https://www.urlslab.com",
   "version": "2.2.21",
   "download_url": "https://github.com/QualityUnit/wp-urlslab/releases/download/2.2.21/urlslab-2.2.21.zip",
   "requires": "6.0",
@@ -10,9 +11,12 @@
   "requires_php": "7.4",
   "last_updated": "2023-03-22 07:31:51",
   "sections": {
-    "description": "URLsLab WordPress Plugin to optimize your website for search engines and enhance automatically content",
-    "installation": "Click the activate button.",
-    "changelog": "<a href='https://github.com/QualityUnit/wp-urlslab/releases'>Change log and Releases</a>"
+    "description": "Elevate your WordPress site with URLsLab - boost SEO and performance with minimal effort.",
+    "installation": "To manually install the URLsLab plugin, you'll need to download it and upload it to your web server using your preferred FTP application. For detailed instructions on this process, <a href='https://wordpress.org/documentation/article/manage-plugins/#manual-plugin-installation'>check the WordPress codex here</a>.",
+    "changelog": "The content is coming soon."
   },
-  "banners": {}
+  "banners": {
+    "low": "https://raw.githubusercontent.com/QualityUnit/wp-urlslab/main/assets/images/banner-772x250.jpg",
+    "high": "https://raw.githubusercontent.com/QualityUnit/wp-urlslab/main/assets/images/banner-1544x500.jpg"
+  }
 }
