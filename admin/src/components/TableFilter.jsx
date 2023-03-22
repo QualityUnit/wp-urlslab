@@ -5,6 +5,7 @@ import { useFilter } from '../hooks/filteringSorting';
 import Button from '../elements/Button';
 import SortMenu from '../elements/SortMenu';
 import InputField from '../elements/InputField';
+import RangeSlider from '../elements/RangeSlider';
 import { ReactComponent as CloseIcon } from '../assets/images/icon-close.svg';
 
 import '../assets/styles/components/_TableFilter.scss';
@@ -57,6 +58,11 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 			usedFilters: [], possibleFilters: { ...header } };
 	}, [ header ] );
 
+	if ( onFilter && runFilter.current ) {
+		runFilter.current = false;
+		onFilter( { filters, currentFilters } );
+	}
+
 	const handleType = ( key ) => {
 		setIsNumber( false );
 		if ( typeof initialRow[ key ] === 'number' ) {
@@ -76,36 +82,24 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 		delete filtering.possibleFilters[ key ];
 		activatePanel( false );
 
-		addFilter( key, val );
+		if ( ! op ) {
+			addFilter( key, val );
+		}
+
+		if ( op && op !== 'IN' && op !== 'BETWEEN' ) {
+			addFilter( key, encodeURIComponent( `{"op":"${ op }","val":"${ val }"}` ) );
+		}
+
+		if ( op === 'IN' ) {
+			addFilter( key, encodeURIComponent( `{"op":"${ op }","val":"[${ val }]"}` ) );
+		}
+
+		if ( op === 'BETWEEN' ) {
+			addFilter( key, encodeURIComponent( `{"op":"${ op }","min":${ val.min }, "max": ${ val.max }}` ) );
+		}
+
 		runFilter.current = true;
-
-		// if (op.length && op !== 'IN' && op !== 'BETWEEN') {
-		// 	addFilter( key, encodeURIComponent( `{"op":"${op}","val":"${val}"}`) );
-		// }
-
-		// if (op === 'IN') {
-		// 	addFilter( key, encodeURIComponent( `{"op":"${op}","val":"[${val}]"}` ) );
-		// }
-
-		// if (op === 'BETWEEN') {
-		// 	addFilter( key, encodeURIComponent( `{"op":"${op}","val":"[${val}]"}` ) );
-		// }
 	};
-
-	if ( onFilter && runFilter.current ) {
-		runFilter.current = false;
-		onFilter( { filters, currentFilters } );
-	}
-
-	// console.log(filters);
-
-	// function runOnFilter() {
-	// 	setTimeout(() => {
-
-	// 		console.log(filters);
-
-	// 	}, 100);
-	// }
 
 	const handleEditFilter = () => {
 		activatePanel( true );
@@ -123,11 +117,9 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 			filtering.possibleFilters = { ...header };
 		}
 		removeFilters( keysArray );
-	};
 
-	// console.log( filtering.usedFilters );
-	// console.log( filtering.possibleFilters );
-	// console.log( header );
+		runFilter.current = true;
+	};
 
 	return (
 		<div className="flex flex-align-center flex-wrap">
@@ -165,8 +157,10 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 								onChange={ ( op ) => setFilterOperator( op ) }
 							/>
 						</div>
-
-						<InputField onChange={ ( val ) => setFilterVal( val ) } />
+						{ filterOperator !== 'BETWEEN'
+						 ? <InputField onChange={ ( val ) => setFilterVal( val ) } />
+							: <RangeSlider min="0" max="1000" onChange={ ( val ) => setFilterVal( val ) } />
+						}
 
 						<div className="Buttons flex flex-align-center">
 							<Button className="simple" onClick={ () => activatePanel( false ) }>{ __( 'Cancel' ) }</Button>
