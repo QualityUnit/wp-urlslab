@@ -78,6 +78,12 @@ The content is coming soon.
 
 == Changelog ==
 
+= 2.2.26 - 2023-03-23 =
+
+* Bug Fix: Unlimited Cron
+* Bug Fix: Missing Modules
+* Bug Fix: Wrong Import and Export
+
 = 2.2.25 - 2023-03-23 =
 
 * New Feature: Screenshot Widget
