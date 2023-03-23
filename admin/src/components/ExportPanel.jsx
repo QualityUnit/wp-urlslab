@@ -1,13 +1,16 @@
+import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import useCloseModal from '../hooks/useCloseModal';
 
 import Button from '../elements/Button';
 import ExportCSVButton from '../elements/ExportCSVButton';
+import ProgressBar from '../elements/ProgressBar';
 
 export default function ExportPanel( { options, currentFilters, header, handlePanel } ) {
 	const { __ } = useI18n();
-	const activeFilters = Object.keys( currentFilters );
+	const activeFilters = currentFilters ? Object.keys( currentFilters ) : null;
+	const [ exportStatus, setExportStatus ] = useState();
 
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
 
@@ -15,6 +18,16 @@ export default function ExportPanel( { options, currentFilters, header, handlePa
 		handleClose();
 		if ( handlePanel ) {
 			handlePanel( operation );
+		}
+	};
+
+	const handleExportStatus = ( val ) => {
+		setExportStatus( val );
+		if ( val === 100 ) {
+			setTimeout( () => {
+				setExportStatus();
+				hidePanel();
+			}, 1000 );
 		}
 	};
 
@@ -39,15 +52,21 @@ export default function ExportPanel( { options, currentFilters, header, handlePa
 					</p>
 				</div>
 				}
-				<div className="flex">
-					<Button className="ma-left simple" onClick={ () => hidePanel() }>{ __( 'Cancel' ) }</Button>
-					{ activeFilters?.length > 0 &&
-					<ExportCSVButton className="ml-s" options={ options } withFilters onClick />
+				<div className="mt-l">
+					{ exportStatus
+						? <ProgressBar className="mb-m" notification="Exporting…" value={ exportStatus } />
+						: null
 					}
-					<ExportCSVButton
-						className="ml-s"
-						options={ options } onClick
-					/>
+					<div className="flex">
+						<Button className="ma-left simple" onClick={ () => hidePanel() }>{ __( 'Cancel' ) }</Button>
+						{ activeFilters?.length > 0 &&
+						<ExportCSVButton className="ml-s" options={ options } withFilters onClick={ ( status ) => handleExportStatus( status ) } />
+						}
+						<ExportCSVButton
+							className="ml-s"
+							options={ options } onClick={ ( status ) => handleExportStatus( status ) }
+						/>
+					</div>
 				</div>
 			</div>
 		</div>
