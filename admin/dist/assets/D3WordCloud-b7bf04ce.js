@@ -1,4 +1,4 @@
-import { g as getAugmentedNamespace, r as reactExports, c as useQuery, R as React, d as fetchData } from "../settings.js";
+import { g as getAugmentedNamespace, r as reactExports, e as useQuery, R as React, h as fetchData } from "../settings.js";
 /* empty css                            */function ascending$1(a, b) {
   return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
 }
