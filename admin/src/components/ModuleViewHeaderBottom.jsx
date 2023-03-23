@@ -77,7 +77,6 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 			<div className="urlslab-moduleView-headerBottom">
 				<div className="urlslab-moduleView-headerBottom__top flex flex-align-center">
 
-					{ ! noDelete && ! noExport && ! noImport &&
 					<div className="ma-left flex flex-align-center">
 						{ ! noDelete &&
 						<Button className="no-padding underline simple" onClick={ () => handlePanel( 'delete' ) }>{ __( 'Delete All' ) }</Button>
@@ -89,7 +88,6 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 						<Button className="no-padding underline simple ml-m" onClick={ () => handlePanel( 'import' ) }>{ __( 'Import CSV' ) }</Button>
 						}
 					</div>
-					}
 				</div>
 				<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
 

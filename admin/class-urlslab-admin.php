@@ -68,11 +68,11 @@ class Urlslab_Admin {
 
 	public function enqueue_react_settings() {
 		if ( isset( $_GET['page'] ) && str_contains( $_GET['page'], 'urlslab' ) ) {
-			wp_enqueue_style( $this->urlslab . '-settings', plugin_dir_url( __FILE__ ) . 'dist/assets/main.css' );
+			wp_enqueue_style( $this->urlslab . '-main', plugin_dir_url( __FILE__ ) . 'dist/assets/main.css', false, $this->version );
 
 			wp_enqueue_script(
-				$this->urlslab . '-settings',
-				plugin_dir_url( __FILE__ ) . 'dist/settings.js',
+				$this->urlslab . '-main',
+				plugin_dir_url( __FILE__ ) . 'dist/main.js',
 				array( 'react', 'react-dom', 'wp-api-fetch', 'wp-element', 'wp-i18n' ),
 				$this->version,
 				true
@@ -82,7 +82,7 @@ class Urlslab_Admin {
 				'script_loader_tag',
 				function( $tag, $handle ) {
 					// if not your script, do nothing and return original $tag
-					if ( $this->urlslab . '-settings' !== $handle ) {
+					if ( $this->urlslab . '-main' !== $handle ) {
 						return $tag;
 					}
 
