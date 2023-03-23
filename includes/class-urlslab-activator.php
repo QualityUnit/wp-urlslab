@@ -114,6 +114,16 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.4.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN rel_schedule char(1) NOT NULL DEFAULT ''" ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD COLUMN rel_updated DATETIME' ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD INDEX idx_rel_schedule (rel_schedule, rel_updated)' ); // phpcs:ignore
+			}
+		);
+
 		//all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -148,11 +158,14 @@ class Urlslab_Activator {
 			visibility char(1) NOT NULL DEFAULT 'V', -- V: visible, H: hidden
 			url_type char(1) NOT NULL DEFAULT 'I', -- I: Internal, E: external
 			scr_schedule char(1) NOT NULL DEFAULT '', -- N: New, S: Scheduled, E: Error 
+			rel_schedule char(1) NOT NULL DEFAULT '', -- N: New, S: Scheduled, E: Error, empty - not sheduling
+			rel_updated DATETIME, 
 			PRIMARY KEY  (url_id),
 			INDEX idx_scr_changed (update_scr_date, scr_status),
 			INDEX idx_sum_changed (update_sum_date, sum_status),
 			INDEX idx_http_changed (update_http_date, http_status),
-			INDEX idx_scr_schedule (scr_schedule)
+			INDEX idx_scr_schedule (scr_schedule),
+			INDEX idx_rel_schedule (rel_schedule, rel_updated)
 		) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

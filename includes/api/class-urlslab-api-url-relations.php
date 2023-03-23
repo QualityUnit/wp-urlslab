@@ -129,7 +129,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		}
 
 		$url_row_obj = new Urlslab_Url_Row();
-		if ( ! $url_row_obj->insert_urls( $schedule_urls ) ) {
+		if ( ! $url_row_obj->insert_urls( $schedule_urls, '', Urlslab_Url_Row::SUM_STATUS_NEW, Urlslab_Url_Row::HTTP_STATUS_NOT_PROCESSED, Urlslab_Url_Row::REL_AVAILABLE ) ) {
 			return new WP_REST_Response( 'Import failed.', 500 );
 		}
 

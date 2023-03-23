@@ -72,6 +72,9 @@ class Urlslab_Url_Data_Fetcher {
 				try {
 					$results[ $res['url_id'] ]          = new Urlslab_Url_Row( $res );
 					$this->urls_cache[ $res['url_id'] ] = $results[ $res['url_id'] ];
+					if ( Urlslab_Url_Row::URL_TYPE_EXTERNAL == $results[ $res['url_id'] ]->get_url_type() && $valid_urls[ $res['url_id'] ]->is_same_domain_url() ) {
+						$results[ $res['url_id'] ]->set_url_type( Urlslab_Url_Row::URL_TYPE_INTERNAL );
+					}
 					unset( $valid_urls[ $res['url_id'] ] );
 				} catch ( Exception $e ) {
 				}
@@ -82,7 +85,7 @@ class Urlslab_Url_Data_Fetcher {
 		//# Adding only urls that are no scheduled
 		$url_row_obj = new Urlslab_Url_Row();
 		$url_row_obj->insert_urls( $valid_urls );
-		$url_row_obj->insert_urls( $broken_urls, Urlslab_Url_Row::SCR_STATUS_ERROR, Urlslab_Url_Row::SUM_STATUS_ERROR, 400 );
+		$url_row_obj->insert_urls( $broken_urls, Urlslab_Url_Row::SCR_STATUS_ERROR, Urlslab_Url_Row::SUM_STATUS_ERROR, 400, Urlslab_Url_Row::REL_ERROR );
 
 		return $results;
 	}

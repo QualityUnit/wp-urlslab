@@ -54,7 +54,11 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			}
 
 
-			$url_data = Urlslab_Url_Data_Fetcher::get_instance()->fetch_schedule_url( $this->get_current_page_url() );
+			try {
+				$url_data = Urlslab_Url_Data_Fetcher::get_instance()->fetch_schedule_url( $this->get_current_page_url() );
+			} catch ( Exception $e ) {
+				return;
+			}
 
 			if ( is_object( $url_data ) && $url_data->is_http_valid() ) {
 
@@ -66,7 +70,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 
 				$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:title', self::SETTING_NAME_META_OG_TITLE_GENERATION, $title );
 				$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:description', self::SETTING_NAME_META_OG_DESC_GENERATION, $summary );
-				if ($this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image', self::SETTING_NAME_META_OG_IMAGE_GENERATION, $url_data->get_screenshot_url() )) {
+				if ( $this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image', self::SETTING_NAME_META_OG_IMAGE_GENERATION, $url_data->get_screenshot_url() ) ) {
 					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image:width', self::SETTING_NAME_META_OG_IMAGE_GENERATION, 1366 );
 					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image:height', self::SETTING_NAME_META_OG_IMAGE_GENERATION, 768 );
 					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image:type', self::SETTING_NAME_META_OG_IMAGE_GENERATION, 'image/jpeg' );
@@ -79,7 +83,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 
 	private function set_meta_tag( $document, $head_tag, $tag, $attribute_name, $attribute_value, $setting_name, $content_value ): bool {
 		if ( ! empty( $this->get_option( $setting_name ) ) && ! empty( $content_value ) ) {
-			$xpath    = new DOMXPath( $document );
+			$xpath     = new DOMXPath( $document );
 			$meta_tags = $xpath->query( '//' . $tag . '[@' . $attribute_name . "='$attribute_value']" );
 			if ( $meta_tags->count() == 0 ) {
 				$node = $document->createElement( $tag );

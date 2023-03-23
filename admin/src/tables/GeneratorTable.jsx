@@ -26,6 +26,7 @@ export default function GeneratorTable( { slug } ) {
 	const header = {
 		query: __( 'Query' ),
 		context: __( 'Context' ),
+		lang: __( 'Language code' ),
 		status: __( 'Status' ),
 		status_changed: __( 'Changed at' ),
 		results: __( 'Results' ),
@@ -47,6 +48,11 @@ export default function GeneratorTable( { slug } ) {
 		columnHelper.accessor( 'context', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			header: header.context,
+			size: 500,
+		} ),
+		columnHelper.accessor( 'lang', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			header: header.lang,
 			size: 500,
 		} ),
 		columnHelper.accessor( 'results', {

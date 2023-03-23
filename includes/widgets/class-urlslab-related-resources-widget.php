@@ -73,8 +73,16 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 		try {
 			$current_url = new Urlslab_Url( $urlslab_atts['url'] );
-			$result      = $this->load_related_urls( $current_url->get_url_id(), $urlslab_atts['related-count'] );
-			$content     = '';
+			$current_url_obj = Urlslab_Url_Data_Fetcher::get_instance()->fetch_schedule_url($current_url);
+			$current_url_obj->request_rel_schedule();
+
+			if ( Urlslab_Url_Row::REL_AVAILABLE !== $current_url_obj->get_rel_schedule() ) {
+				return '';
+			}
+
+
+			$result  = $this->load_related_urls( $current_url->get_url_id(), $urlslab_atts['related-count'] );
+			$content = '';
 
 			if ( ! empty( $result ) && is_array( $result ) ) {
 				$content  .= $this->render_shortcode_header();
