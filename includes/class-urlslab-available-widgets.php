@@ -21,6 +21,7 @@ class Urlslab_Available_Widgets {
 
 	public function init_widgets() {
 		$urlslab_general            = new Urlslab_General();
+		$urlslab_generator           = new Urlslab_Content_Generator_Widget();
 		$urlslab_optimize           = new Urlslab_Optimize();
 		$urlslab_screenshot         = new Urlslab_Screenshot_Widget();
 		$urlslab_related_resources  = new Urlslab_Related_Resources_Widget();
@@ -35,6 +36,7 @@ class Urlslab_Available_Widgets {
 
 		$this->available_widgets = array(
 			$urlslab_general->get_widget_slug()            => $urlslab_general,
+			$urlslab_generator->get_widget_slug()         => $urlslab_generator,
 			$urlslab_screenshot->get_widget_slug()         => $urlslab_screenshot,
 			$urlslab_related_resources->get_widget_slug()  => $urlslab_related_resources,
 			$urlslab_link_enhancer->get_widget_slug()      => $urlslab_link_enhancer,

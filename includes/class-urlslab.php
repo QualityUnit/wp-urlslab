@@ -135,6 +135,7 @@ class Urlslab {
 
 		//data
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-data.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-content-generator-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-file-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-keyword-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-keyword-map-row.php';
@@ -156,6 +157,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-general.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-optimize.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-content-generator-widget.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-screenshot-widget.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-related-resources-widget.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-media-offloader-widget.php';
@@ -586,6 +588,7 @@ class Urlslab {
 		define( 'URLSLAB_CONTENT_CACHE_TABLE', $wpdb->prefix . 'urlslab_content_cache' );
 		define( 'URLSLAB_SEARCH_AND_REPLACE_TABLE', $wpdb->prefix . 'urlslab_search_replace' );
 		define( 'URLSLAB_SCREENSHOT_URLS_TABLE', $wpdb->prefix . 'urlslab_screenshot_urls' );
+		define( 'URLSLAB_CONTENT_GENERATORS_TABLE', $wpdb->prefix . 'urlslab_content_generators' );
 	}
 
 

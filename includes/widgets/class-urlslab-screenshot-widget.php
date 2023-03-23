@@ -112,7 +112,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		return true;
 	}
 
-	public function is_api_key_required() {
+	public function is_api_key_required(): bool {
 		return true;
 	}
 

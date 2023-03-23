@@ -58,6 +58,7 @@ class Urlslab_Activator {
 		self::init_content_cache_tables();
 		self::init_search_replace_tables();
 		self::init_screenshot_urls_table();
+		self::init_content_generators_table();
 	}
 
 	public static function upgrade_steps() {
@@ -103,6 +104,13 @@ class Urlslab_Activator {
 			'2.2.0',
 			function() {
 				self::init_screenshot_urls_table();
+			}
+		);
+
+		self::update_step(
+			'2.3.0',
+			function() {
+				self::init_content_generators_table();
 			}
 		);
 
@@ -393,6 +401,27 @@ class Urlslab_Activator {
     		  screenshot_url_id bigint NOT NULL,
     		  src_url_id bigint NOT NULL,
 			  PRIMARY KEY (screenshot_url_id, src_url_id)
+        ) $charset_collate;";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+
+	private static function init_content_generators_table() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$table_name = URLSLAB_CONTENT_GENERATORS_TABLE;
+		$sql        = "CREATE TABLE IF NOT EXISTS $table_name (
+    		  generator_id bigint NOT NULL,
+    		  query TEXT,
+    		  context TEXT,
+    		  result LONGTEXT,
+    		  status CHAR(1) NOT NULL DEFAULT 'N',
+    		  lang VARCHAR(8) NOT NULL DEFAULT 'N',
+    		  status_changed DATETIME NULL,
+			  PRIMARY KEY (generator_id)
         ) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

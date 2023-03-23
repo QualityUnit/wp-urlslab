@@ -30,7 +30,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'URLSLAB_VERSION', '2.2.24' );
+define( 'URLSLAB_VERSION', '2.3.0' );
 define( 'URLSLAB_VERSION_SETTING', 'urlslab_ver' );
 define( 'URLSLAB_PLUGIN', __FILE__ );
 

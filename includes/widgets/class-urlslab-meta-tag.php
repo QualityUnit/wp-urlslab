@@ -105,7 +105,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	}
 
 
-	public function is_api_key_required() {
+	public function is_api_key_required(): bool {
 		return true;
 	}
 

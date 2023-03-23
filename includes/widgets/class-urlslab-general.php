@@ -30,7 +30,7 @@ class Urlslab_General extends Urlslab_Widget {
 		return __( 'Connect Urlslab.com services to your Wordpress.' );
 	}
 
-	public function is_api_key_required() {
+	public function is_api_key_required(): bool {
 		return true;
 	}
 
