@@ -45,7 +45,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			array(
 				'query'         => '',
 				'context'       => '',
-				'template'      => '',
+				'template'      => 'templates/simple-result.php',
 				'default-value' => '',
 				'lang'          => $this->get_current_language(),
 			),
@@ -57,8 +57,8 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 	}
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
-
-		$obj   = new Urlslab_Content_Generator_Row( $this->get_attribute_values( $atts, $content, $tag ), false );
+		$atts  = $this->get_attribute_values( $atts, $content, $tag );
+		$obj   = new Urlslab_Content_Generator_Row( $atts, false );
 		$value = $atts['default-value'];
 		if ( $obj->is_valid() ) {
 			if ( $obj->load() ) {
@@ -71,14 +71,19 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			}
 		}
 
-		if ( ! empty( $value ) ) {
-			if ( ! locate_template( $atts['template'], false, false, $atts ) ) {
-				return $value;
+		if ( ! empty( $value ) && isset( $atts['template'] ) ) {
+			$template = locate_template( $atts['template'], false, false, $atts );
+			if ( empty( $template ) ) {
+				if ( file_exists( URLSLAB_PLUGIN_DIR . 'public/' . $atts['template'] ) ) {
+					$template = URLSLAB_PLUGIN_DIR . 'public/' . $atts['template'];
+				} else {
+					return $value;
+				}
 			}
 
 			ob_start();
 			$atts['result'] = $value;
-			locate_template( $atts['template'], true, false, $atts );
+			load_template( $template, true, $atts );
 
 			return '' . ob_get_clean();
 		}
