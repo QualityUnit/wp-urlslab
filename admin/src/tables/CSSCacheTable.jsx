@@ -98,6 +98,7 @@ export default function CSSCacheTable( { slug } ) {
 				} }
 			/>
 			<Table className="fadeInto" columns={ columns }
+				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				data={
 					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )

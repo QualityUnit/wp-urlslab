@@ -34,7 +34,7 @@ export default defineConfig( {
 		minify: false,
 		rollupOptions: {
 			input: {
-				settings: './src/main.jsx',
+				main: './src/main.jsx',
 			},
 			output: {
 				// this gets rid of the hash on main.css

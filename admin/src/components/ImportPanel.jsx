@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCSVReader } from 'react-papaparse';
@@ -7,9 +8,11 @@ import useCloseModal from '../hooks/useCloseModal';
 
 import { ReactComponent as ImportIcon } from '../assets/images/icon-import.svg';
 import Button from '../elements/Button';
+import ProgressBar from '../elements/ProgressBar';
 
 export default function ImportPanel( { slug, handlePanel } ) {
 	const { __ } = useI18n();
+	const [ importStatus, setImportStatus ] = useState();
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
 
 	const hidePanel = ( operation ) => {
@@ -22,11 +25,22 @@ export default function ImportPanel( { slug, handlePanel } ) {
 	const queryClient = useQueryClient();
 	const { CSVReader } = useCSVReader();
 
+	const handleImportStatus = ( val ) => {
+		setImportStatus( val );
+		queryClient.invalidateQueries( [ slug ] );
+		if ( val === 100 ) {
+			setTimeout( () => {
+				setImportStatus();
+				hidePanel();
+			}, 1000 );
+		}
+	};
+
 	const importData = useMutation( {
 		mutationFn: async ( results ) => {
-			return importCsv( `${ slug }/import`, results.data );
+			return await importCsv( `${ slug }/import`, results.data, handleImportStatus );
 		},
-		onSuccess: () => {
+		onSuccess: ( ) => {
 			queryClient.invalidateQueries( [ slug ] );
 		},
 	} );
@@ -40,8 +54,11 @@ export default function ImportPanel( { slug, handlePanel } ) {
 					</button>
 				</div>
 
-				<div className="flex">
-					<Button className="ma-left simple" onClick={ () => hidePanel() }>{ __( 'Cancel' ) }</Button>
+				<div className="mt-l">
+					{ importStatus
+						? <ProgressBar className="mb-m" notification="Importing…" value={ importStatus } />
+						: null
+					}
 					<CSVReader
 						onUploadAccepted={ ( results ) => {
 							importData.mutate( results );
@@ -55,14 +72,18 @@ export default function ImportPanel( { slug, handlePanel } ) {
 							acceptedFile,
 							getRemoveFileProps,
 						} ) => (
-							<div className="ml-s flex flex-align-center">
-								{ acceptedFile &&
-								<button className="removeFile flex flex-align-center" { ...getRemoveFileProps() }>{ acceptedFile.name } <CloseIcon /></button>
-								}
-								<Button { ...getRootProps() } active>
-									<ImportIcon />
-									{ __( 'Import CSV' ) }
-								</Button>
+							<div className="flex">
+								<div className="ma-left flex flex-align-center">
+									{ acceptedFile &&
+									<button className="removeFile flex flex-align-center" { ...getRemoveFileProps() }>{ acceptedFile.name } <CloseIcon /></button>
+									}
+									<Button className="ml-s simple" onClick={ () => hidePanel() }>{ __( 'Cancel' ) }</Button>
+
+									<Button { ...getRootProps() } active>
+										<ImportIcon />
+										{ __( 'Import CSV' ) }
+									</Button>
+								</div>
 							</div>
 
 						) }

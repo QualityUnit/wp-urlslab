@@ -1,5 +1,5 @@
 
-import { useQueryClient } from '@tanstack/react-query';
+// import { useQueryClient } from '@tanstack/react-query';
 import { jsonToCSV } from 'react-papaparse';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import fileDownload from 'js-file-download';
@@ -11,24 +11,18 @@ import Button from './Button';
 
 export default function ExportCSVButton( { options, className, withFilters, onClick } ) {
 	const { __ } = useI18n();
-	const queryClient = useQueryClient();
+	// const queryClient = useQueryClient();
 
-	function sendNotification( val ) {
-		queryClient.setQueryData( [ 'notifications' ], ( data ) => {
-			return { ...data, export: val };
-		} );
-		queryClient.invalidateQueries( [ 'notifications' ] );
-	}
+	// function sendNotification( val ) {
+	// 	queryClient.setQueryData( [ 'notifications' ], ( data ) => {
+	// 		return { ...data, export: val };
+	// 	} );
+	// 	queryClient.invalidateQueries( [ 'notifications' ] );
+	// }
 
 	function handleExport() {
-		if ( onClick ) {
-			queryClient.setQueryData( [ 'notifications' ], ( data ) => {
-				return { ...data, export: '0' };
-			} );
-			queryClient.invalidateQueries( [ 'notifications' ] );
-		}
 		if ( withFilters ) {
-			exportCSV( options, ( val ) => sendNotification( val ) ).then( ( response ) => {
+			exportCSV( options, ( status ) => onClick( status ) ).then( ( response ) => {
 				if ( onClick && response.status === 'done' ) {
 					const csv = jsonToCSV( response, {
 						delimiter: ',',
@@ -41,7 +35,7 @@ export default function ExportCSVButton( { options, className, withFilters, onCl
 		}
 		if ( ! withFilters ) {
 			delete options.filters;
-			exportCSV( options, ( val ) => sendNotification( val ) ).then( ( response ) => {
+			exportCSV( options, ( status ) => onClick( status ) ).then( ( response ) => {
 				if ( onClick && response.status === 'done' ) {
 					const csv = jsonToCSV( response, {
 						delimiter: ',',
