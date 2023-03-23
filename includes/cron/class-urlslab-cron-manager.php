@@ -1,6 +1,9 @@
 <?php
 
 class Urlslab_Cron_Manager {
+	/*
+	 * @var Urlslab_Cron[]
+	 */
 	private $cron_tasks = array();
 
 	private static Urlslab_Cron_Manager $instance;
@@ -23,6 +26,9 @@ class Urlslab_Cron_Manager {
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_cron_hook', $task, 'cron_exec', 10, 0 );
 	}
 
+	/**
+	 * @return Urlslab_Cron[]
+	 */
 	public function get_cron_tasks(): array {
 		return $this->cron_tasks;
 	}

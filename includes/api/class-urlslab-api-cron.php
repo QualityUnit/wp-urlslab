@@ -50,13 +50,13 @@ class Urlslab_Api_Cron extends Urlslab_Api_Base {
 		try {
 			$data       = array();
 			$start_time = time();
-			$max_time   = 15;
-			foreach ( Urlslab_Cron_Manager::get_instance()->get_cron_tasks() as $task ) {
-				if ( $max_time > ( time() - $start_time ) ) {
+			$max_time   = 20;
+			while ( $max_time > ( time() - $start_time ) ) {
+				foreach ( Urlslab_Cron_Manager::get_instance()->get_cron_tasks() as $task ) {
 					if ( 'all' == $request->get_param( 'task' ) || get_class( $task ) == $request->get_param( 'task' ) ) {
 						try {
 							$task_time = time();
-							$task->api_exec( $start_time, 15 );
+							$task->api_exec( $start_time, 5 );
 							$exec_time = time() - $task_time;
 							if ( $exec_time > 0 ) {
 								$data[] = (object) array(
