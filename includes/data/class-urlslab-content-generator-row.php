@@ -97,6 +97,7 @@ class Urlslab_Content_Generator_Row extends Urlslab_Data {
 			'context'        => '%s',
 			'result'         => '%s',
 			'status'         => '%s',
+			'lang'           => '%s',
 			'status_changed' => '%s',
 		);
 	}
