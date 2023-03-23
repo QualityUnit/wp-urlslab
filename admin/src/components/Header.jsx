@@ -23,7 +23,7 @@ export default function Header( { pageTitle } ) {
 		runCron.current = ! runCron.current;
 
 		if ( runCron.current ) {
-			cronAll( runCron, controller, ( cronTasks ) => setCronTasks( cronTasks ) );
+			cronAll( runCron, controller, ( cronTasks ) => setCronTasks( cronTasks ), () => setCronRun( false ) );
 		}
 	};
 

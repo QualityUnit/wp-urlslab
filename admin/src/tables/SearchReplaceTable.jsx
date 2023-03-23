@@ -100,7 +100,8 @@ export default function SearchReplaceTable( { slug } ) {
 					deleteCSVCols: [ pageId, 'dest_url_id' ],
 				} }
 			/>
-			<Table className="fadeInto" slug={ slug }
+			<Table className="fadeInto"
+				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
