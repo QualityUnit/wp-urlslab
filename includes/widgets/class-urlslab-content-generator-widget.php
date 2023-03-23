@@ -43,10 +43,11 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 
 		$urlslab_atts = shortcode_atts(
 			array(
-				'query'    => '',
-				'context'  => '',
-				'template' => '',
-				'lang'     => $this->get_current_language(),
+				'query'         => '',
+				'context'       => '',
+				'template'      => '',
+				'default-value' => '',
+				'lang'          => $this->get_current_language(),
 			),
 			$atts,
 			$tag
@@ -57,41 +58,33 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
 
-		$obj = new Urlslab_Content_Generator_Row( $this->get_attribute_values( $atts, $content, $tag ), false );
-		if ( ! $obj->is_valid() ) {
-			return '';
+		$obj   = new Urlslab_Content_Generator_Row( $this->get_attribute_values( $atts, $content, $tag ), false );
+		$value = $atts['default-value'];
+		if ( $obj->is_valid() ) {
+			if ( $obj->load() ) {
+				if ( $obj->is_active() ) {
+					$value = $obj->get_result();
+				}
+			} else {
+				$obj->set_status( Urlslab_Content_Generator_Row::STATUS_NEW );
+				$obj->insert_all( array( $obj ), true );
+			}
 		}
 
-		if ( $obj->load() ) {
-			if ( $obj->is_active() ) {
-				return $this->render_widget( $obj, $atts );
+		if ( ! empty( $value ) ) {
+			if ( ! locate_template( $atts['template'], false, false, $atts ) ) {
+				return $value;
 			}
-		} else {
-			$obj->set_status( Urlslab_Content_Generator_Row::STATUS_NEW );
-			$obj->insert_all( array( $obj ), true );
+
+			ob_start();
+			$atts['result'] = $value;
+			locate_template( $atts['template'], true, false, $atts );
+
+			return '' . ob_get_clean();
 		}
 
 		return '';
 	}
-
-	private function render_widget( Urlslab_Content_Generator_Row $obj, $atts ): string {
-		if ( strlen( $atts['template'] ) ) {
-			return $this->render_template( $obj, $atts['template'] );
-		}
-
-		return $obj->get_result();
-	}
-
-	private function render_template( Urlslab_Content_Generator_Row $obj, $template ): string {
-		ob_start();
-		if ( ! locate_template( $template, true, false, $obj->as_array() ) ) {
-			echo $obj->get_result(); // phpcs:ignore
-		}
-		$content = ob_get_clean();
-
-		return '' . $content;
-	}
-
 
 	public function has_shortcode(): bool {
 		return true;
