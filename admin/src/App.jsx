@@ -40,7 +40,10 @@ export default function App() {
 		refetchOnWindowFocus: false,
 	} );
 
-	const fetchedModules = useMemo( () => data, [ data ] );
+	const fetchedModules = useMemo( () => {
+		delete data?.general;
+		return data;
+	}, [ data ] );
 
 	const [ pageTitle, setTitle ] = useState( __( 'Modules' ) );
 

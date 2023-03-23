@@ -123,6 +123,7 @@ export default function SchedulesTable( { slug } ) {
 				onFilter={ ( filter ) => setFilters( filter ) }
 			/>
 			<Table className="noHeightLimit fadeInto"
+				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }

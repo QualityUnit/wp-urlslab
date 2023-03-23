@@ -1,4 +1,4 @@
-export async function cronAll( runCron, controller, cronTasks ) {
+export async function cronAll( runCron, controller, cronTasks, onError ) {
 	controller = new AbortController();
 	if ( ! runCron.current ) {
 		controller.abort();
@@ -14,17 +14,25 @@ export async function cronAll( runCron, controller, cronTasks ) {
 			credentials: 'include',
 			signal: controller.signal,
 		} );
-		const result = await response.json();
-		const okResult = result?.filter( ( task ) => task.exec_time >= 5 );
 
-		if ( okResult?.length && ! controller.signal.aborted ) {
-			cronTasks( result );
-			cronAll( runCron, controller, cronTasks );
+		if ( response.ok ) {
+			const result = await response.json();
+			const okResult = result?.filter( ( task ) => task.exec_time >= 5 );
+
+			if ( okResult?.length && ! controller.signal.aborted ) {
+				cronTasks( result );
+				cronAll( runCron, controller, cronTasks );
+			}
+			if ( ! okResult?.length ) {
+				setInterval( () => cronAll( runCron, controller, cronTasks ), 5000 );
+			}
 		}
-		if ( ! okResult?.length ) {
-			setInterval( () => cronAll( runCron, controller, cronTasks ), 5000 );
+		if ( ! response.ok ) {
+			onError( 'error' );
+			return false;
 		}
-	} catch {
+		return response;
+	} catch ( err ) {
 		return false;
 	}
 }
