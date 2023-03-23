@@ -123,11 +123,11 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'schedule'
+			'generate'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_REFRESH_INTERVAL,
-			3600,
+			999999999,
 			3600,
 			__( 'Refresh Interval' ),
 			__( 'How often should the content be refreshed. It is wise to generate the content just once if your content is not changing often. For regenerating the content we will decrease your credits in the same way as if we would generate new content piece.' ),
@@ -142,7 +142,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
-			'cron',
+			'generate',
 		);
 	}
 

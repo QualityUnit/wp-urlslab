@@ -55,6 +55,9 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 			$row_obj->update();
 
 			//TODO generate content
+			$query = $row_obj->get_query();
+			$query = str_replace( '|$lang|', $row_obj->get_lang(), $query );
+
 
 			if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG )->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_AUTOAPPROVE ) ) {
 				$row_obj->set_status( Urlslab_Content_Generator_Row::STATUS_ACTIVE );
