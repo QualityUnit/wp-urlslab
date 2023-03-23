@@ -5,9 +5,12 @@ import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { fetchData } from '../api/fetching';
 import { deleteAll } from '../api/deleteTableData';
 
+import { useSorting } from '../hooks/filteringSorting';
+
 import { ReactComponent as Trash } from '../assets/images/icon-trash.svg';
 import { ReactComponent as ImportIcon } from '../assets/images/icon-import.svg';
 import { ReactComponent as ExportIcon } from '../assets/images/icon-export.svg';
+import { ReactComponent as RefreshIcon } from '../assets/images/icon-cron-refresh.svg';
 
 import SortMenu from '../elements/SortMenu';
 import ColumnsMenu from '../elements/ColumnsMenu';
@@ -21,6 +24,8 @@ import TableFilter from './TableFilter';
 export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, noDelete, header, table, slug, exportOptions, defaultSortBy, onSort, onFilter } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
+	const { sortingColumn, sortBy } = useSorting( { slug } );
+
 	const [ activePanel, setActivePanel ] = useState();
 	const [ filtersObj, setFiltersObj ] = useState( );
 
@@ -55,6 +60,11 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 	}, [ header ]
 	);
 
+	const handleSorting = ( val ) => {
+		onSort( val );
+		sortBy( val );
+	};
+
 	const handleDelete = useMutation( {
 		mutationFn: () => {
 			return deleteAll( slug );
@@ -72,14 +82,20 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 		}
 	};
 
+	const handleRefresh = () => {
+		queryClient.invalidateQueries( [ slug ] );
+	};
+
 	return (
 		<>
 			<div className="urlslab-moduleView-headerBottom">
 				<div className="urlslab-moduleView-headerBottom__top flex flex-align-center">
 
+					<Button className="" onClick={ () => handleRefresh() }><RefreshIcon />{ __( 'Refresh table' ) }</Button>
+
 					<div className="ma-left flex flex-align-center">
 						{ ! noDelete &&
-						<Button className="no-padding underline simple" onClick={ () => handlePanel( 'delete' ) }>{ __( 'Delete All' ) }</Button>
+							<Button className="no-padding underline simple" onClick={ () => handlePanel( 'delete' ) }>{ __( 'Delete All' ) }</Button>
 						}
 						{ ! noExport &&
 						<Button className="no-padding underline simple ml-m" onClick={ () => handlePanel( 'export' ) }>{ __( 'Export CSV' ) }</Button>
@@ -104,7 +120,7 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 							</small>
 						}
 
-						<SortMenu className="menu-left ml-m" isFilter checkedId={ defaultSortBy } items={ sortItems } name="sorting" onChange={ ( val ) => onSort( val ) }>{ __( 'Sort by' ) }</SortMenu>
+						<SortMenu className="menu-left ml-m" isFilter checkedId={ defaultSortBy } items={ sortItems } name="sorting" onChange={ ( val ) => handleSorting( val ) }>{ __( 'Sort by' ) }</SortMenu>
 
 						<ColumnsMenu
 							className="menu-left ml-m"
