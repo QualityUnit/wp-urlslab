@@ -4,6 +4,7 @@ class Urlslab_Content_Generator_Row extends Urlslab_Data {
 	const STATUS_ACTIVE = 'A';
 	const STATUS_NEW = 'N';
 	const STATUS_PENDING = 'P';
+	const STATUS_WAITING_APPROVAL = 'W';
 	const STATUS_DISABLED = 'D';
 
 	public function __construct( array $data = array(), $loaded_from_db = true ) {

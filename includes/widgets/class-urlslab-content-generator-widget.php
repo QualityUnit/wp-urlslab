@@ -4,6 +4,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 	const SLUG = 'urlslab-generator';
 	const SETTING_NAME_SCHEDULE = 'urlslab-gen-sched';
 	const SETTING_NAME_REFRESH_INTERVAL = 'urlslab-gen-refresh';
+	const SETTING_NAME_AUTOAPPROVE = 'urlslab-gen-autoapprove';
 
 
 	public function init_widget() {
@@ -108,6 +109,17 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			false,
 			__( 'Automatic Scheduling (paid)' ),
 			__( 'Automatically schedule the query to server and generate content for every short code.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'schedule'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_AUTOAPPROVE,
+			false,
+			false,
+			__( 'Auto-approve' ),
+			__( 'Automatically Approve all results genertaed by AI and display them online.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
