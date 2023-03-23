@@ -12,11 +12,12 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const { __ } = useI18n();
 	const { ref, inView } = useInView();
 	const { key, url, pageId, currentFilters } = options;
-	const [ queryUrl, setQueryUrl ] = useState();
+	// const [ queryUrl, setQueryUrl ] = useState();
 	// const [ activeFilters, setActiveFilters ] = useState( {} );
 
 	const query = useInfiniteQuery( {
-		queryKey: [ key, url ? url : queryUrl ],
+		// queryKey: [ key, url ? url : queryUrl ],
+		queryKey: [ key, url ? url : '' ],
 		queryFn: ( { pageParam = '' } ) => {
 			get( key ).then( ( tableDb ) => {
 				if ( ! tableDb ) {
@@ -26,7 +27,7 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 					set( key, { ...tableDb, url, currentFilters } );
 				}
 			} );
-			return fetchData( `${ key }?from_${ pageId }=${ pageParam }${ url }&rows_per_page=${ maxRows }` );
+			return fetchData( `${ key }?from_${ pageId }=${ pageParam !== undefined && pageParam }${ url !== 'undefined' ? url : '' }&rows_per_page=${ maxRows }` );
 		},
 		getNextPageParam: ( allRows ) => {
 			if ( allRows.length < maxRows ) {
@@ -50,11 +51,11 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		fetchNextPage } = query;
 
 	useEffect( () => {
-		get( key ).then( ( tableQuery ) => {
-			const q = tableQuery;
-			setQueryUrl( q?.url );
-			// setActiveFilters( Object.keys( q?.currentFilters ).length ? q?.currentFilters : {} );
-		} );
+		// get( key ).then( ( tableQuery ) => {
+		// 	const q = tableQuery;
+		// 	setQueryUrl( q?.url );
+		// 	// setActiveFilters( Object.keys( q?.currentFilters ).length ? q?.currentFilters : {} );
+		// } );
 		if ( inView ) {
 			fetchNextPage();
 		}

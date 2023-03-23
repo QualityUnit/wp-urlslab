@@ -16,7 +16,7 @@
  * Plugin Name:       URLsLab
  * Plugin URI:        https://github.com/QualityUnit/wp-urlslab
  * Description:       URLsLab WordPress Plugin to optimize your website for search engines and enhance automatically content
- * Version: 2.2.25
+ * Version: 2.2.26
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            URLsLab
