@@ -14,6 +14,7 @@ export default function ImportPanel( { slug, handlePanel } ) {
 	const { __ } = useI18n();
 	const [ importStatus, setImportStatus ] = useState();
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
+	let importCounter = 0;
 
 	const hidePanel = ( operation ) => {
 		handleClose();
@@ -27,21 +28,24 @@ export default function ImportPanel( { slug, handlePanel } ) {
 
 	const handleImportStatus = ( val ) => {
 		setImportStatus( val );
-		queryClient.invalidateQueries( [ slug ] );
+
+		if ( importCounter === 0 ) {
+			queryClient.invalidateQueries( [ slug ] );
+		}
+
 		if ( val === 100 ) {
+			queryClient.invalidateQueries( [ slug ] );
 			setTimeout( () => {
 				setImportStatus();
 				hidePanel();
 			}, 1000 );
 		}
+		importCounter += 1;
 	};
 
 	const importData = useMutation( {
 		mutationFn: async ( results ) => {
-			return await importCsv( `${ slug }/import`, results.data, handleImportStatus );
-		},
-		onSuccess: ( ) => {
-			queryClient.invalidateQueries( [ slug ] );
+			await importCsv( `${ slug }/import`, results.data, handleImportStatus );
 		},
 	} );
 	return (
