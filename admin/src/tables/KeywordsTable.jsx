@@ -89,7 +89,7 @@ export default function KeywordsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'lang', {
 			className: 'nolimit',
-			cell: ( cell ) => <LangMenu noAll checkedId={ cell?.getValue() }
+			cell: ( cell ) => <LangMenu checkedId={ cell?.getValue() }
 				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) }
 			/>,
 			header: header.lang,

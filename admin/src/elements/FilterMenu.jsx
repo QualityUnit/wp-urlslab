@@ -59,11 +59,12 @@ export default function FilterMenu( {
 				role="button"
 				tabIndex={ 0 }
 			>
-
-				{ asTags //if has asTags prop, shows selected items in menu title instead of counter
-					? checked.toString().replaceAll( ',', ', ' )
-					: `${ checked.length } ${ __( 'items selected' ) }`
-				}
+				<span>
+					{ asTags //if has asTags prop, shows selected items in menu title instead of counter
+						? checked.map( ( itemId ) => `${ items[ itemId ] }, ` )
+						: `${ checked.length } ${ __( 'items selected' ) }`
+					}
+				</span>
 			</div>
 			<div className={ `urlslab-FilterMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
 				<div className={ `urlslab-FilterMenu__items--inn ${ items.length > 8 ? 'has-scrollbar' : '' }` }>

@@ -34,6 +34,7 @@ export default function ImportPanel( { slug, handlePanel } ) {
 		}
 
 		if ( val === 100 ) {
+			importCounter = 0;
 			queryClient.invalidateQueries( [ slug ] );
 			setTimeout( () => {
 				setImportStatus();

@@ -15,28 +15,30 @@ export default function App() {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const [ module, setModule ] = useState( 'urlslab-modules' );
+	const [ prefetch, setPrefetch ] = useState( true );
 
 	// Checking if API is set in advance
-	queryClient.prefetchQuery( {
-		queryKey: [ 'general' ],
-		queryFn: () => fetchSettings( 'general' ).then( ( data ) => {
-			return data;
-		} ),
-	} );
+	if ( prefetch ) {
+		queryClient.prefetchQuery( {
+			queryKey: [ 'general' ],
+			queryFn: () => fetchSettings( 'general' ).then( ( data ) => data ),
+		} );
 
-	// Creating languages query object in advance
-	queryClient.prefetchQuery( {
-		queryKey: [ 'languages' ],
-		queryFn: async () => {
-			return await fetchLangs();
-		},
-		refetchOnWindowFocus: false,
-	} );
+		// Creating languages query object in advance
+		queryClient.prefetchQuery( {
+			queryKey: [ 'languages' ],
+			queryFn: async () => await fetchLangs(),
+			refetchOnWindowFocus: false,
+		} );
+		setPrefetch( false );
+	}
 	const { data } = useQuery( {
 		queryKey: [ 'modules' ],
-		queryFn: () => fetchData( 'module' ).then( ( ModuleData ) => {
-			return ModuleData;
-		} ),
+		queryFn: async () => {
+			if ( prefetch ) {
+				return await fetchData( 'module' ).then( ( ModuleData ) => ModuleData );
+			}
+		},
 		refetchOnWindowFocus: false,
 	} );
 
