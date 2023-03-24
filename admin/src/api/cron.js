@@ -21,10 +21,10 @@ export async function cronAll( runCron, controller, cronTasks, onError ) {
 
 			if ( okResult?.length && ! controller.signal.aborted ) {
 				cronTasks( result );
-				cronAll( runCron, controller, cronTasks );
+				cronAll( runCron, controller, cronTasks, onError );
 			}
 			if ( ! okResult?.length ) {
-				setInterval( () => cronAll( runCron, controller, cronTasks ), 5000 );
+				setTimeout( () => cronAll( runCron, controller, cronTasks, onError ), 5000 );
 			}
 		}
 		if ( ! response.ok ) {
