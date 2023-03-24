@@ -17,8 +17,10 @@ class Urlslab_Screenshot_Schedules_Cron extends Urlslab_Cron {
 	}
 
 	protected function execute(): bool {
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Screenshot_Widget::SLUG );
-		if ( empty( $widget ) || ! $widget->get_option( Urlslab_Screenshot_Widget::SETTING_NAME_SCHEDULE_SCREENSHOTS ) ) {
+		if (
+			! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Screenshot_Widget::SLUG ) ||
+			! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Screenshot_Widget::SLUG )->get_option( Urlslab_Screenshot_Widget::SETTING_NAME_SCHEDULE_SCREENSHOTS )
+		) {
 			return false;
 		}
 

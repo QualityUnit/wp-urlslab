@@ -4,11 +4,11 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
 class Urlslab_Offload_Transfer_Files_Cron extends Urlslab_Cron {
 
 	protected function execute(): bool {
-		$widget = Urlslab_Available_Widgets::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG );
-		if ( empty( $widget ) ) {
+		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Media_Offloader_Widget::SLUG ) ) {
 			return false;
 		}
 
+		$widget             = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG );
 		$latest_file_driver = $widget->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER );
 		$data               = array( $latest_file_driver );
 		$placeholders       = array();

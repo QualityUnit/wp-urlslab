@@ -4,13 +4,16 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
 class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 
 	protected function execute(): bool {
-		global $wpdb;
-
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Link_Enhancer::SLUG );
-		if ( empty( $widget ) || ! $widget->get_option( Urlslab_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS ) ) {
+		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Link_Enhancer::SLUG ) ) {
 			return false;
 		}
 
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Link_Enhancer::SLUG );
+		if ( ! $widget->get_option( Urlslab_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS ) ) {
+			return false;
+		}
+
+		global $wpdb;
 		$url_row = $wpdb->get_row(
 			$wpdb->prepare(
 				'SELECT * FROM ' . URLSLAB_URLS_TABLE . ' WHERE http_status = %d OR (http_status > 0 AND update_http_date < %s) OR (http_status = %d AND update_http_date < %s) ORDER BY update_http_date LIMIT 1', // phpcs:ignore
@@ -50,7 +53,7 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 			} else if ( empty( $page_content_file_name ) || ! file_exists( $page_content_file_name ) || 0 == filesize( $page_content_file_name ) ) {
 				$url->set_url_title( Urlslab_Url_Row::VALUE_EMPTY );
 				$url->set_url_meta_description( Urlslab_Url_Row::VALUE_EMPTY );
-				$url->set_http_status( 400 );
+				$url->set_http_status( Urlslab_Url_Row::HTTP_STATUS_CLIENT_ERROR );
 			} else {
 				$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
 				$document->encoding            = 'utf-8';
@@ -97,16 +100,16 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 							$url->set_url_meta_description( Urlslab_Url_Row::VALUE_EMPTY );
 						}
 					}
-					$url->set_http_status( 200 );
+					$url->set_http_status( Urlslab_Url_Row::HTTP_STATUS_OK );
 				} catch ( Exception $e ) {
-					$url->set_http_status( 400 );
+					$url->set_http_status( Urlslab_Url_Row::HTTP_STATUS_CLIENT_ERROR );
 				}
 				unlink( $page_content_file_name );
 			}
 		} catch ( Exception $e ) {
 			$url->set_url_title( Urlslab_Url_Row::VALUE_EMPTY );
 			$url->set_url_meta_description( Urlslab_Url_Row::VALUE_EMPTY );
-			$url->set_http_status( 400 );
+			$url->set_http_status( Urlslab_Url_Row::HTTP_STATUS_CLIENT_ERROR );
 		}
 
 		return $url->update();

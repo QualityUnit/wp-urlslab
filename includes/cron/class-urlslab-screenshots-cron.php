@@ -17,8 +17,7 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 	}
 
 	protected function execute(): bool {
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Screenshot_Widget::SLUG );
-		if ( empty( $widget ) ) {
+		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Screenshot_Widget::SLUG ) ) {
 			return false;
 		}
 
@@ -29,15 +28,32 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 
 		global $wpdb;
 
+		$query_data = array();
+
+		if (
+			Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Link_Enhancer::SLUG ) &&
+			Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Link_Enhancer::SLUG )->get_option( Urlslab_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS )
+		) {
+			$query_data[]          = Urlslab_Url_Row::HTTP_STATUS_OK;
+			$sql_where_http_status = ' http_status = %d AND';
+		} else {
+			$sql_where_http_status = '';
+		}
+
+		$query_data[] = Urlslab_Url_Row::SCR_STATUS_NEW;
+		$query_data[] = Urlslab_Url_Row::SCR_STATUS_ACTIVE;
+		$query_data[] = Urlslab_Data::get_now( time() - Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Screenshot_Widget::SLUG )->get_option( Urlslab_General::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL ) );
+		//PENDING or UPDATING urls will be retried in one hour again
+		$query_data[] = Urlslab_Url_Row::SCR_STATUS_PENDING;
+		$query_data[] = Urlslab_Data::get_now( time() - 12 * 3600 );
+
+
 		$url_rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_URLS_TABLE . ' WHERE http_status = 200 AND (scr_status = %s OR (scr_status =%s AND update_scr_date < %s) OR (scr_status = %s AND update_scr_date < %s)) ORDER BY update_scr_date LIMIT 500', // phpcs:ignore
-				Urlslab_Url_Row::SCR_STATUS_NEW,
-				Urlslab_Url_Row::SCR_STATUS_ACTIVE,
-				Urlslab_Data::get_now( time() - $widget->get_option( Urlslab_General::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL ) ),
-				//PENDING or UPDATING urls will be retried in one hour again
-				Urlslab_Url_Row::SCR_STATUS_PENDING,
-				Urlslab_Data::get_now( time() - 12 * 3600 )
+				'SELECT * FROM ' . URLSLAB_URLS_TABLE . ' WHERE' .
+				$sql_where_http_status .
+				' (scr_status = %s OR (scr_status =%s AND update_scr_date < %s) OR (scr_status = %s AND update_scr_date < %s)) ORDER BY update_scr_date LIMIT 500', // phpcs:ignore
+				$query_data
 			),
 			ARRAY_A
 		);

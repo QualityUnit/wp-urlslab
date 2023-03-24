@@ -5,15 +5,13 @@ class Urlslab_Offload_Background_Attachments_Cron extends Urlslab_Cron {
 	public const SETTING_NAME_SCHEDULER_POINTER = 'urlslab_sched_pointer';
 
 	protected function execute(): bool {
-		$widget = Urlslab_Available_Widgets::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG );
-		if ( empty( $widget ) ) {
+		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Media_Offloader_Widget::SLUG ) ) {
 			return false;
 		}
 
-
-		if ( $widget->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ) ) {
+		if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG )->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND ) ) {
 			try {
-				return 0 !== $this->schedule_post_attachments_batch( $widget->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ) );
+				return 0 !== $this->schedule_post_attachments_batch( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG )->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ) );
 			} catch ( Exception $e ) {
 			}
 		}

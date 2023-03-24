@@ -6,8 +6,7 @@ class Urlslab_Update_Rel_Articles_Cron extends Urlslab_Cron {
 	protected function execute(): bool {
 		global $wpdb;
 
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Related_Resources_Widget::SLUG );
-		if ( empty( $widget ) ) {
+		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Related_Resources_Widget::SLUG ) ) {
 			return false;
 		}
 

@@ -10,6 +10,8 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	const HTTP_STATUS_NOT_PROCESSED = - 1;
 	const HTTP_STATUS_PENDING = - 2;
 	const HTTP_STATUS_OK = 200;
+	const HTTP_STATUS_CLIENT_ERROR = 400;
+	const HTTP_STATUS_SERVER_ERROR = 500;
 
 	const SCR_STATUS_ERROR = 'E';
 	const SCR_STATUS_NEW = 'N';
@@ -395,7 +397,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	 */
 	public
 	function is_http_valid() {
-		return ( 200 == $this->get_http_status() || 0 > $this->get_http_status() ) && $this->is_visible();
+		return ( self::HTTP_STATUS_OK == $this->get_http_status() || 0 > $this->get_http_status() ) && $this->is_visible();
 	}
 
 	public
