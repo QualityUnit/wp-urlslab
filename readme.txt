@@ -78,6 +78,10 @@ The content is coming soon.
 
 == Changelog ==
 
+= 2.2.27 - 2023-03-24 =
+
+* New Feature: Refresh Button for Tables
+
 = 2.2.26 - 2023-03-23 =
 
 * Bug Fix: Unlimited Cron
