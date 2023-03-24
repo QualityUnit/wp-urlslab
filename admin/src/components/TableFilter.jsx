@@ -20,7 +20,6 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 	const [ filterVal, setFilterVal ] = useState();
 	const [ isNumber, setIsNumber ] = useState( false );
 	const [ panelActive, activatePanel ] = useState( false );
-	// const [ possibleFilters, setPossibleFilters ] = useState( header );
 	const activeFilters = currentFilters ? Object.keys( currentFilters ) : null;
 	const runFilter = useRef( false );
 
@@ -35,8 +34,8 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 
 	const stringOp = {
 		LIKE: 'contains',
-		// 'LIKE%': 'begins with',
-		// '%LIKE': 'ends with',
+		'LIKE%': 'begins with',
+		'%LIKE': 'ends with',
 		'': 'is exactly',
 		'<>': 'is not',
 		IN: 'is one of',
@@ -61,11 +60,6 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 		document.addEventListener( 'click', handleClickOutside, false );
 	}, [ filtering, isNumber, panelActive ] );
 
-	// const filtering = useMemo( () => {
-	// 	return {
-	// 		;
-	// }, [ header ] );
-
 	if ( onFilter && runFilter.current ) {
 		runFilter.current = false;
 		onFilter( { filters, currentFilters } );
@@ -77,11 +71,11 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 		const val = filterVal;
 
 		if ( ! key ) {
-			key = Object.keys( filtering.possibleFilters )[ 0 ];
+			key = Object.keys( filtering?.possibleFilters )[ 0 ];
 		}
 
-		filtering.usedFilters.push( key );
-		delete filtering.possibleFilters[ key ];
+		filtering?.usedFilters.push( key );
+		delete filtering?.possibleFilters[ key ];
 		activatePanel( false );
 
 		if ( ! op ) {
@@ -108,13 +102,13 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 	};
 
 	const handleRemoveFilter = ( keysArray ) => {
-		if ( keysArray.length === 1 ) {
+		if ( keysArray?.length === 1 ) {
 			const key = keysArray[ 0 ];
 			const val = header[ key ];
-			filtering.usedFilters = filtering.usedFilters.filter( ( k ) => k !== key );
-			filtering.possibleFilters = { [ key ]: `${ val }`, ...filtering.possibleFilters };
+			filtering.usedFilters = filtering?.usedFilters.filter( ( k ) => k !== key );
+			filtering.possibleFilters = { [ key ]: `${ val }`, ...filtering?.possibleFilters };
 		}
-		if ( keysArray.length > 1 ) {
+		if ( keysArray?.length > 1 ) {
 			filtering.usedFilters = [];
 			filtering.possibleFilters = { ...header };
 		}
@@ -125,7 +119,7 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 
 	return (
 		<div className="flex flex-align-center flex-wrap">
-			{ header && activeFilters.map( ( key ) => {
+			{ header && activeFilters?.map( ( key ) => {
 				return ( <Button
 					key={ key }
 					className="outline ml-s"
@@ -144,9 +138,9 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 						<div className="flex flex-align-center">
 							<SortMenu
 								className="mr-s"
-								items={ filtering.possibleFilters }
+								items={ filtering?.possibleFilters }
 								name="filters"
-								checkedId={ Object.keys( filtering.possibleFilters )[ 0 ] }
+								checkedId={ Object.keys( filtering?.possibleFilters )[ 0 ] }
 								onChange={ ( key ) => {
 									handleType( key ); setFilterKey( key );
 								} }
@@ -175,7 +169,6 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 			{ activeFilters?.length > 0 &&
 				<Button className="simple underline" onClick={ () => handleRemoveFilter( activeFilters ) }>{ __( 'Clear filters' ) }</Button>
 			}
-
 		</div>
 	);
 }

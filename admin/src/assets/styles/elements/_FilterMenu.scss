@@ -40,6 +40,14 @@
 		min-width: 10em;
 		cursor: pointer;
 
+		span {
+			display: block;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			overflow: hidden;
+			width: calc(100% - 1em);
+		}
+
 		.urlslab-table tr:not(.urlslab-rowInserter) & {
 			background-color: transparent;
 			min-width: auto;
