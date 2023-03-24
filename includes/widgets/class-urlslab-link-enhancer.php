@@ -20,6 +20,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	public const SETTING_NAME_ADD_ID_TO_ALL_H_TAGS = 'urlslab_H_add_id';
 	public const SETTING_NAME_PAGE_ID_LINKS_TO_SLUG = 'urlslab_pid_to_slug';
 	public const SETTING_NAME_DELETE_LINK_IF_PAGE_ID_NOT_FOUND = 'urlslab_pid_del_notfound';
+	const SETTING_NAME_MARK_AS_VALID_CURRENT_URL = 'urlslab_mark_as_valid_current_url';
 
 
 	public function init_widget() {
@@ -70,6 +71,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 
 	public function theContentHook( DOMDocument $document ) {
+		$this->validateCurrentPageUrl();
 		$this->addIdToHTags( $document );
 		$this->fixPageIdLinks( $document );
 		$this->processTitleAttribute( $document );
@@ -201,7 +203,6 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 
-
 	/**
 	 * @param DOMDocument $document
 	 *
@@ -307,6 +308,24 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		}
 	}
 
+	/**
+	 * @return void
+	 */
+	public function validateCurrentPageUrl(): void {
+		$currentUrl = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $this->get_current_page_url() );
+		if ( Urlslab_Url_Row::URL_TYPE_EXTERNAL == $currentUrl->get_url_type() ) {
+			$currentUrl->set_url_type( Urlslab_Url_Row::URL_TYPE_INTERNAL );
+		}
+
+		if ( $this->get_option( self::SETTING_NAME_MARK_AS_VALID_CURRENT_URL ) ) {
+			if ( Urlslab_Url_Row::HTTP_STATUS_NOT_PROCESSED == $currentUrl->get_url_http_status() ) {
+				$currentUrl->set_http_status( Urlslab_Url_Row::HTTP_STATUS_OK );
+			}
+		}
+
+		$currentUrl->update();
+	}
+
 	protected function add_options() {
 		$this->add_options_form_section( 'main', __( 'Link Format and Monitoring' ), __( 'This plugin automatically tracks the usage of links on your website as the page is displayed. With additional data or if you set up the improvements, every link in the generated HTML will be evaluated and improved for optimal results.' ) );
 
@@ -376,6 +395,17 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			null,
 			'validation'
 		);
+		$this->add_option_definition(
+			self::SETTING_NAME_MARK_AS_VALID_CURRENT_URL,
+			true,
+			true,
+			__( 'Mark as valid URL processed by WP' ),
+			__( 'If we find any URL, which is not validated yet, but Wordpress just served this url, we will mark it as valid. This will speed up the process of HTTP status validation, but doesn\' guarantee, that HTTP status is OK. Response could fail on the other stage of your infrastructure.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'validation'
+		);
 
 		$this->add_option_definition(
 			self::SETTING_NAME_REMOVE_LINKS,
@@ -434,7 +464,6 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			null,
 			'validation'
 		);
-
 
 
 	}

@@ -72,9 +72,6 @@ class Urlslab_Url_Data_Fetcher {
 				try {
 					$results[ $res['url_id'] ]          = new Urlslab_Url_Row( $res );
 					$this->urls_cache[ $res['url_id'] ] = $results[ $res['url_id'] ];
-					if ( Urlslab_Url_Row::URL_TYPE_EXTERNAL == $results[ $res['url_id'] ]->get_url_type() && $valid_urls[ $res['url_id'] ]->is_same_domain_url() ) {
-						$results[ $res['url_id'] ]->set_url_type( Urlslab_Url_Row::URL_TYPE_INTERNAL );
-					}
 					unset( $valid_urls[ $res['url_id'] ] );
 				} catch ( Exception $e ) {
 				}

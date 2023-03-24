@@ -9,6 +9,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 
 	const HTTP_STATUS_NOT_PROCESSED = - 1;
 	const HTTP_STATUS_PENDING = - 2;
+	const HTTP_STATUS_OK = 200;
 
 	const SCR_STATUS_ERROR = 'E';
 	const SCR_STATUS_NEW = 'N';
@@ -289,7 +290,9 @@ class Urlslab_Url_Row extends Urlslab_Data {
 
 	public function set_rel_schedule( string $rel_schedule, $loaded_from_db = false ): void {
 		$this->set( 'rel_schedule', $rel_schedule, $loaded_from_db );
-		$this->set_rel_updated( self::get_now() );
+		if ( ! $loaded_from_db ) {
+			$this->set_rel_updated( self::get_now() );
+		}
 	}
 
 	public function set_rel_updated( string $rel_updated, $loaded_from_db = false ): void {
