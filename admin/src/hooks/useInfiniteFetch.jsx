@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useInView } from 'react-intersection-observer';
@@ -13,7 +13,6 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const { ref, inView } = useInView();
 	const { key, url, pageId, currentFilters } = options;
 	// const [ queryUrl, setQueryUrl ] = useState();
-	// const [ activeFilters, setActiveFilters ] = useState( {} );
 
 	const query = useInfiniteQuery( {
 		// queryKey: [ key, url ? url : queryUrl ],

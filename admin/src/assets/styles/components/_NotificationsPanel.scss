@@ -9,6 +9,9 @@
 	right: 0;
 	min-width: 17.5em;
 	padding: 2em;
+	border: none;
+	box-shadow: none;
+	margin: 0;
 
 	&.active {
 		display: block;
@@ -16,6 +19,11 @@
 
 	&.dark {
 		background-color: rgba($black, 0.8);
+		color: $white;
+	}
+
+	&.error[class] {
+		background-color: $saturated-red;
 		color: $white;
 	}
 

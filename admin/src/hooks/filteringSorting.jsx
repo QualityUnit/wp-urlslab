@@ -1,18 +1,8 @@
-import { useState, useEffect } from 'react';
-import { get, set } from 'idb-keyval';
+import { useState } from 'react';
 
-export function useFilter( { slug } ) {
+export function useFilter( ) {
 	const [ currentFilters, setUrl ] = useState( {} );
-	const [ tableQuery, setTableQuery ] = useState( {} );
 	let filters = '';
-
-	useEffect( () => {
-		get( slug ).then( ( query ) => {
-			const q = query?.currentFilters;
-			setUrl( Object.keys( q ).length ? q : {} );
-			setTableQuery( query );
-		} );
-	}, [ slug ] );
 
 	const addFilter = ( key, value ) => {
 		if ( value ) {
@@ -31,30 +21,21 @@ export function useFilter( { slug } ) {
 			} );
 			return filtersCopy;
 		} );
-		set( slug, { ...tableQuery, url: filters, currentFilters } );
 	}
 
 	Object.entries( currentFilters ).map( ( [ key, val ] ) => {
 		filters += `&filter_${ key }=${ val }`;
-		set( slug, { ...tableQuery, url: filters, currentFilters } );
 		return false;
 	} );
 
 	return { filters, currentFilters, addFilter, removeFilters };
 }
 
-export function useSorting( { slug } ) {
+export function useSorting( ) {
 	const [ sortingColumn, setSortingColumn ] = useState( '' );
-	const [ tableQuery, setTableQuery ] = useState( {} );
-	useEffect( () => {
-		get( slug ).then( ( query ) => {
-			setTableQuery( query );
-		} );
-	}, [ slug ] );
 
 	function sortBy( key ) {
 		setSortingColumn( `&sort_column=${ key.replace( /(&ASC|&DESC)/, '' ) }&sort_direction=${ key.replace( /\w+&(ASC|DESC)/, '$1' ) }` );
-		set( slug, { sortKey: key } );
 	}
 
 	return { sortingColumn, sortBy };

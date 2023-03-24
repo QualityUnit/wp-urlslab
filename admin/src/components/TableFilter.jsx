@@ -21,7 +21,7 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 	const [ isNumber, setIsNumber ] = useState( false );
 	const [ panelActive, activatePanel ] = useState( false );
 	// const [ possibleFilters, setPossibleFilters ] = useState( header );
-	const activeFilters = Object.keys( currentFilters );
+	const activeFilters = currentFilters ? Object.keys( currentFilters ) : null;
 	const runFilter = useRef( false );
 
 	const numericOp = {
