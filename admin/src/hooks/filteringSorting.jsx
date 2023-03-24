@@ -3,16 +3,16 @@ import { get, set } from 'idb-keyval';
 
 export function useFilter( { slug } ) {
 	const [ currentFilters, setUrl ] = useState( {} );
-	const [ tableQuery, setTableQuery ] = useState( {} );
+	// const [ tableQuery, setTableQuery ] = useState( {} );
 	let filters = '';
 
-	useEffect( () => {
-		get( slug ).then( ( query ) => {
-			const q = query?.currentFilters;
-			setUrl( Object.keys( q ).length ? q : {} );
-			setTableQuery( query );
-		} );
-	}, [ slug ] );
+	// useEffect( () => {
+	// 	get( slug ).then( ( query ) => {
+	// 		const q = query?.currentFilters;
+	// 		setUrl( Object.keys( q ).length ? q : {} );
+	// 		setTableQuery( query );
+	// 	} );
+	// }, [ slug ] );
 
 	const addFilter = ( key, value ) => {
 		if ( value ) {
@@ -31,12 +31,12 @@ export function useFilter( { slug } ) {
 			} );
 			return filtersCopy;
 		} );
-		set( slug, { ...tableQuery, url: filters, currentFilters } );
+		// set( slug, { ...tableQuery, url: filters, currentFilters } );
 	}
 
 	Object.entries( currentFilters ).map( ( [ key, val ] ) => {
 		filters += `&filter_${ key }=${ val }`;
-		set( slug, { ...tableQuery, url: filters, currentFilters } );
+		// set( slug, { ...tableQuery, url: filters, currentFilters } );
 		return false;
 	} );
 
@@ -45,16 +45,16 @@ export function useFilter( { slug } ) {
 
 export function useSorting( { slug } ) {
 	const [ sortingColumn, setSortingColumn ] = useState( '' );
-	const [ tableQuery, setTableQuery ] = useState( {} );
-	useEffect( () => {
-		get( slug ).then( ( query ) => {
-			setTableQuery( query );
-		} );
-	}, [ slug ] );
+	// const [ tableQuery, setTableQuery ] = useState( {} );
+	// useEffect( () => {
+	// 	get( slug ).then( ( query ) => {
+	// 		setTableQuery( query );
+	// 	} );
+	// }, [ slug ] );
 
 	function sortBy( key ) {
 		setSortingColumn( `&sort_column=${ key.replace( /(&ASC|&DESC)/, '' ) }&sort_direction=${ key.replace( /\w+&(ASC|DESC)/, '$1' ) }` );
-		set( slug, { sortKey: key } );
+		// set( slug, { sortKey: key } );
 	}
 
 	return { sortingColumn, sortBy };
