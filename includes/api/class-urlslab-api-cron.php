@@ -66,7 +66,11 @@ class Urlslab_Api_Cron extends Urlslab_Api_Base {
 								);
 							}
 						} catch ( Exception $e ) {
-							$data[ get_class( $task ) ] = $e->getMessage();
+							$data[] = (object) array(
+								'exec_time'   => $exec_time,
+								'task'        => get_class( $task ),
+								'description' => $e->getMessage(),
+							);
 						}
 					}
 				}
