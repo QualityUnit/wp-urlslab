@@ -21,8 +21,8 @@ class Urlslab_Url_Data_Fetcher {
 	 *
 	 * @return Urlslab_Url_Row
 	 */
-	public function fetch_schedule_url( Urlslab_Url $url ): ?Urlslab_Url_Row {
-		$array = $this->fetch_schedule_urls_batch( array( $url ) );
+	public function load_and_schedule_url( Urlslab_Url $url ): ?Urlslab_Url_Row {
+		$array = $this->load_and_schedule_urls( array( $url ) );
 		if ( empty( $array ) ) {
 			return null;
 		}
@@ -35,7 +35,7 @@ class Urlslab_Url_Data_Fetcher {
 	 *
 	 * @return Urlslab_Url_Row[]
 	 */
-	public function fetch_schedule_urls_batch( $urls ): array {
+	public function load_and_schedule_urls( $urls ): array {
 		$results = array();
 		if ( empty( $urls ) ) {
 			return $results;

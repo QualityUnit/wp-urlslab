@@ -361,7 +361,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				);
 
 				try {
-					Urlslab_Url_Data_Fetcher::get_instance()->fetch_schedule_url( $this->get_current_page_url() );
+					Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $this->get_current_page_url() );
 				} catch ( Exception $e ) {
 				}
 			}

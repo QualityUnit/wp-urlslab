@@ -232,7 +232,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 			if ( ! empty( $link_elements ) ) {
 
-				$result = Urlslab_Url_Data_Fetcher::get_instance()->fetch_schedule_urls_batch(
+				$result = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_urls(
 					array_merge(
 						array( $this->get_current_page_url() ),
 						array_map( fn( $elem ): Urlslab_Url => $elem[1], $link_elements )

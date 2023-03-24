@@ -55,7 +55,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 
 
 			try {
-				$url_data = Urlslab_Url_Data_Fetcher::get_instance()->fetch_schedule_url( $this->get_current_page_url() );
+				$url_data = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $this->get_current_page_url() );
 			} catch ( Exception $e ) {
 				return;
 			}
