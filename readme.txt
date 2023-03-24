@@ -78,6 +78,10 @@ The content is coming soon.
 
 == Changelog ==
 
+= 2.2.28 - 2023-03-24 =
+
+* Bug Fix: Multiple small bugs were fixed
+
 = 2.2.27 - 2023-03-24 =
 
 * New Feature: Refresh Button for Tables
