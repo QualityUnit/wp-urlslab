@@ -8,6 +8,15 @@ abstract class Urlslab_Data {
 		return $this->data;
 	}
 
+	public function get_object_values_as_array(): array {
+		$data = array();
+		foreach ( $this->get_columns() as $column => $format ) {
+			$data[ $column ] = $this->get( $column );
+		}
+
+		return $data;
+	}
+
 	public function set_public( $name, $value ) {
 		$this->set( $name, $value, false );
 	}
