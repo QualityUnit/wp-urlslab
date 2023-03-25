@@ -178,27 +178,28 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	}
 
 	public function get_url_title(): string {
-		if ( Urlslab_Url_Row::VALUE_EMPTY == $this->get( 'url_title' ) ) {
-			return '';
-		}
-
 		return $this->get( 'url_title' );
 	}
 
 	public function get_url_meta_description(): string {
-		if ( Urlslab_Url_Row::VALUE_EMPTY == $this->get( 'url_meta_description' ) ) {
-			return '';
-		}
-
 		return $this->get( 'url_meta_description' );
 	}
 
 	public function get_url_summary(): string {
-		if ( Urlslab_Url_Row::VALUE_EMPTY == $this->get( 'url_summary' ) ) {
-			return '';
-		}
-
 		return $this->get( 'url_summary' );
+	}
+
+	protected function get( $name ) {
+		switch ( $name ) {
+			case 'url_summary':
+			case 'url_title':
+			case 'url_meta_description':
+				if ( Urlslab_Url_Row::VALUE_EMPTY === $this->data[ $name ] ) {
+					return '';
+				} //continue to default case if value is not EMPTY
+			default:
+				return parent::get( $name );
+		}
 	}
 
 	public function get_visibility(): string {

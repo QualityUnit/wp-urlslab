@@ -125,8 +125,12 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
+		$recordset = array();
+
 		foreach ( $rows as $row ) {
-			$url                 = new Urlslab_Url_Row( (array) $row );
+			$url      = new Urlslab_Url_Row( (array) $row );
+			$row = (object) array_replace( (array) $row, $url->get_object_values_as_array() );
+
 			$row->screenshot_url = $url->get_screenshot_url();
 			if ( in_array( 'url_usage_count', $this->get_custom_columns() ) ) {
 				$row->url_usage_count = (int) $row->url_usage_count;
@@ -140,9 +144,11 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			$row->urlslab_scr_timestamp = (int) $row->urlslab_scr_timestamp;
 			$row->urlslab_sum_timestamp = (int) $row->urlslab_sum_timestamp;
 			$row->url_id                = (int) $row->url_id;
+
+			$recordset[] = $row;
 		}
 
-		return new WP_REST_Response( $rows, 200 );
+		return new WP_REST_Response( $recordset, 200 );
 	}
 
 

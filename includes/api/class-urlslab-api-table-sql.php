@@ -291,8 +291,8 @@ class Urlslab_Api_Table_Sql {
 			}
 		} else if ( is_string( $param_value ) ) {
 			//default is wildcard match
-			$sql_string = esc_sql( $column_name ) . ' LIKE %s';
-			$data[]     = '%' . $param_value . '%';
+			$sql_string = esc_sql( $column_name ) . '=%s';
+			$data[]     = $param_value;
 		} else {
 			throw new Exception( 'Invalid filter' );
 		}
