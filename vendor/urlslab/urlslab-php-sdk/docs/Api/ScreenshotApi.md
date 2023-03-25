@@ -10,7 +10,7 @@ All URIs are relative to https://api.urlslab.com, except if the operation define
 ## `getScreenshots()`
 
 ```php
-getScreenshots($domain_data_retrieval_updatable_retrieval): \OpenAPI\Client\Model\DomainDataRetrievalScreenshotResponse[]
+getScreenshots($domain_data_retrieval_data_request): \OpenAPI\Client\Model\DomainDataRetrievalScreenshotResponse[]
 ```
 
 Get screenshot of url
@@ -36,10 +36,10 @@ $apiInstance = new OpenAPI\Client\Api\ScreenshotApi(
     new GuzzleHttp\Client(),
     $config
 );
-$domain_data_retrieval_updatable_retrieval = new \OpenAPI\Client\Model\DomainDataRetrievalUpdatableRetrieval(); // \OpenAPI\Client\Model\DomainDataRetrievalUpdatableRetrieval
+$domain_data_retrieval_data_request = new \OpenAPI\Client\Model\DomainDataRetrievalDataRequest(); // \OpenAPI\Client\Model\DomainDataRetrievalDataRequest | Url to get related urls
 
 try {
-    $result = $apiInstance->getScreenshots($domain_data_retrieval_updatable_retrieval);
+    $result = $apiInstance->getScreenshots($domain_data_retrieval_data_request);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling ScreenshotApi->getScreenshots: ', $e->getMessage(), PHP_EOL;
@@ -50,7 +50,7 @@ try {
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **domain_data_retrieval_updatable_retrieval** | [**\OpenAPI\Client\Model\DomainDataRetrievalUpdatableRetrieval**](../Model/DomainDataRetrievalUpdatableRetrieval.md)|  | [optional] |
+| **domain_data_retrieval_data_request** | [**\OpenAPI\Client\Model\DomainDataRetrievalDataRequest**](../Model/DomainDataRetrievalDataRequest.md)| Url to get related urls | |
 
 ### Return type
 

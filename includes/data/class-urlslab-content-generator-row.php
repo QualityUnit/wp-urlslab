@@ -9,7 +9,7 @@ class Urlslab_Content_Generator_Row extends Urlslab_Data {
 
 	public function __construct( array $data = array(), $loaded_from_db = true ) {
 		$this->set_query( $data['query'] ?? '', $loaded_from_db );
-		$this->set_lang( $data['lang'] ?? 'all', $loaded_from_db );
+		$this->set_lang( $data['lang'] ?? '', $loaded_from_db );
 		$this->set_context( $data['context'] ?? '', $loaded_from_db );
 		$this->set_result( $data['result'] ?? '', $loaded_from_db );
 		$this->set_status( $data['status'] ?? self::STATUS_NEW, $loaded_from_db );

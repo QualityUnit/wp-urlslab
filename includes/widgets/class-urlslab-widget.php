@@ -2,6 +2,7 @@
 
 abstract class Urlslab_Widget {
 
+	const FREQ_NEVER = 999999999;
 
 	const OPTION_TYPE_CHECKBOX = 'checkbox';
 	const OPTION_TYPE_TEXT = 'text';
@@ -107,7 +108,7 @@ abstract class Urlslab_Widget {
 							unset( $values[ $id ] );
 						}
 					}
-					$option['value'] = $values;
+					$option['value'] = array_values( $values );
 					break;
 				default:
 					$option['value'] = $this->get_option( $option_id );

@@ -394,11 +394,17 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-background-attachments-cron.php';
 		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Offload_Background_Attachments_Cron() );
 
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-generators-cron.php';
+		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Generators_Cron() );
+
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-transfer-files-cron.php';
 		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Offload_Transfer_Files_Cron() );
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-enqueue-files-cron.php';
 		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Offload_Enqueue_Files_Cron() );
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-related-resources-cron.php';
+		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Related_Resources_Cron() );
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-convert-webp-images-cron.php';
 		$cron_job_webp_convert = new Urlslab_Convert_Webp_Images_Cron();

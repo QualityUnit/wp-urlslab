@@ -433,7 +433,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 				2419200   => __( 'Monthly' ),
 				7257600   => __( 'Quarterly' ),
 				31536000  => __( 'Yearly' ),
-				999999999 => __( 'Never' ),
+				self::FREQ_NEVER => __( 'Never' ),
 			),
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;

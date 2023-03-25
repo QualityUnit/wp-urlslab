@@ -8,12 +8,16 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 		parent::__construct();
 	}
 
-	private function init_client() {
-		$api_key = get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
-		if ( strlen( $api_key ) ) {
-			$config       = \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-			$this->client = new \OpenAPI\Client\Urlslab\ScreenshotApi( new GuzzleHttp\Client(), $config );
+	private function init_client(): bool {
+		if ( empty( $this->client ) ) {
+			$api_key = get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
+			if ( strlen( $api_key ) ) {
+				$config       = \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
+				$this->client = new \OpenAPI\Client\Urlslab\ScreenshotApi( new GuzzleHttp\Client(), $config );
+			}
 		}
+
+		return ! empty( $this->client );
 	}
 
 	protected function execute(): bool {
@@ -21,8 +25,7 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 			return false;
 		}
 
-		$this->init_client();
-		if ( empty( $this->client ) ) {
+		if ( ! $this->init_client() ) {
 			return false;
 		}
 
@@ -50,9 +53,7 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 
 		$url_rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_URLS_TABLE . ' WHERE' .
-				$sql_where_http_status .
-				' (scr_status = %s OR (scr_status =%s AND update_scr_date < %s) OR (scr_status = %s AND update_scr_date < %s)) ORDER BY update_scr_date LIMIT 500', // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_URLS_TABLE . ' WHERE' . $sql_where_http_status . ' (scr_status = %s OR (scr_status =%s AND update_scr_date < %s) OR (scr_status = %s AND update_scr_date < %s)) ORDER BY update_scr_date LIMIT 500', // phpcs:ignore
 				$query_data
 			),
 			ARRAY_A

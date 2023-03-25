@@ -8,12 +8,16 @@ class Urlslab_Screenshot_Schedules_Cron extends Urlslab_Cron {
 		parent::__construct();
 	}
 
-	private function init_client() {
-		$api_key = get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
-		if ( strlen( $api_key ) ) {
-			$config       = \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-			$this->client = new \OpenAPI\Client\Urlslab\ScheduleApi( new GuzzleHttp\Client(), $config );
+	private function init_client(): bool {
+		if ( empty( $this->client ) ) {
+			$api_key = get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
+			if ( strlen( $api_key ) ) {
+				$config       = \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
+				$this->client = new \OpenAPI\Client\Urlslab\ScheduleApi( new GuzzleHttp\Client(), $config );
+			}
 		}
+
+		return ! empty( $this->client );
 	}
 
 	protected function execute(): bool {
@@ -24,9 +28,7 @@ class Urlslab_Screenshot_Schedules_Cron extends Urlslab_Cron {
 			return false;
 		}
 
-
-		$this->init_client();
-		if ( empty( $this->client ) ) {
+		if ( ! $this->init_client() ) {
 			return false;
 		}
 
@@ -57,9 +59,11 @@ class Urlslab_Screenshot_Schedules_Cron extends Urlslab_Cron {
 				$config->setUrls( $urls );
 				$config->setTakeScreenshot( true );
 				$config->setScanFrequency( \OpenAPI\Client\Model\DomainScheduleScheduleConf::SCAN_FREQUENCY_ONE_TIME );
+				$config->setScanSpeedPerMinute( 20 );
 				$config->setFetchText( true );
 				$config->setLinkFollowingStrategy( \OpenAPI\Client\Model\DomainScheduleScheduleConf::LINK_FOLLOWING_STRATEGY_NO_LINK );
 				$config->setAllSitemaps( false );
+				$config->setSitemaps( array() );
 				$this->client->createSchedule( $config );
 
 				$wpdb->query(

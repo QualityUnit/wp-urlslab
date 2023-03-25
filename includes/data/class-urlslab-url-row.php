@@ -36,11 +36,11 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	const SCR_SCHEDULE_ERROR = 'E';
 
 	//related resources schedule
-	const REL_SCHEDULE_NEW = 'N';    //waiting
-	const REL_SCHEDULE_SCHEDULED = 'S';    //pending
+	const REL_NOT_REQUESTED_SCHEDULE = '';
+	const REL_SCHEDULE_NEW = 'N';    //waiting to be scheduled to urlslab
+	const REL_SCHEDULE_SCHEDULED = 'S';    //pending processing in urlslab
 	const REL_AVAILABLE = 'A';
 	const REL_ERROR = 'E';
-	const REL_NO_SCHEDULE = 'E';
 
 	/**
 	 * @param array $url
@@ -65,7 +65,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$this->set_url_summary( $url['url_summary'] ?? '', $loaded_from_db );
 		$this->set_visibility( $url['visibility'] ?? self::VISIBILITY_VISIBLE, $loaded_from_db );
 		$this->set_scr_schedule( $url['scr_schedule'] ?? '', $loaded_from_db );
-		$this->set_rel_schedule( $url['rel_schedule'] ?? self::REL_NO_SCHEDULE, $loaded_from_db );
+		$this->set_rel_schedule( $url['rel_schedule'] ?? self::REL_NOT_REQUESTED_SCHEDULE, $loaded_from_db );
 		$this->set_rel_updated( $url['rel_updated'] ?? self::get_now(), $loaded_from_db );
 
 		$url_type = self::URL_TYPE_INTERNAL;
@@ -418,7 +418,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	 */
 	public
 	function insert_urls(
-		$urls, $scr_status = self::SCR_STATUS_NEW, $sum_status = self::SUM_STATUS_NEW, $http_status = self::HTTP_STATUS_NOT_PROCESSED, $rel_schedule = self::REL_NO_SCHEDULE
+		$urls, $scr_status = self::SCR_STATUS_NEW, $sum_status = self::SUM_STATUS_NEW, $http_status = self::HTTP_STATUS_NOT_PROCESSED, $rel_schedule = self::REL_NOT_REQUESTED_SCHEDULE
 	): bool {
 		if ( empty( $urls ) ) {
 			return true;
@@ -459,5 +459,9 @@ class Urlslab_Url_Row extends Urlslab_Data {
 			$this->set_rel_schedule( Urlslab_Url_Row::REL_SCHEDULE_NEW );
 			$this->update();
 		}
+	}
+
+	public function get_domain_name(): string {
+		return $this->get_url()->get_domain_name();
 	}
 }

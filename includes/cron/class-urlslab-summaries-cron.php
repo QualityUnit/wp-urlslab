@@ -8,17 +8,20 @@ class Urlslab_Summaries_Cron extends Urlslab_Cron {
 		parent::__construct();
 	}
 
-	private function init_client() {
-		$api_key = get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
-		if ( strlen( $api_key ) ) {
-			$config       = \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-			$this->client = new \OpenAPI\Client\Urlslab\SummaryApi( new GuzzleHttp\Client(), $config );
+	private function init_client(): bool {
+		if ( empty( $this->client ) ) {
+			$api_key = get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
+			if ( strlen( $api_key ) ) {
+				$config       = \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
+				$this->client = new \OpenAPI\Client\Urlslab\SummaryApi( new GuzzleHttp\Client(), $config );
+			}
 		}
+
+		return ! empty( $this->client );
 	}
 
 	protected function execute(): bool {
-		$this->init_client();
-		if ( empty( $this->client ) ) {
+		if ( ! $this->init_client() ) {
 			return false;
 		}
 
