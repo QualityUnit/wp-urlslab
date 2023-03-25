@@ -6,7 +6,7 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function ScreenshotTable( { slug } ) {
-	const { table, setTable, filters, setFilters, currentFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
+	const { table, setTable, filters, setFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn || '&sort_column=url_name&sort_direction=ASC' }`, [ filters, sortingColumn ] );
 	const pageId = 'url_id';
@@ -20,7 +20,7 @@ export default function ScreenshotTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, pageId, currentFilters, sortingColumn } );
+	} = useInfiniteFetch( { key: slug, url, pageId } );
 
 	const scrStatusTypes = {
 		N: __( 'Waiting' ),
@@ -103,7 +103,6 @@ export default function ScreenshotTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				slug={ slug }
-				currentFilters={ currentFilters }
 				header={ header }
 				table={ table }
 				onSort={ ( val ) => sortBy( val ) }

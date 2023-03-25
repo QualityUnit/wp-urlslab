@@ -6,7 +6,7 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function CSSCacheTable( { slug } ) {
-	const { table, setTable, filters, setFilters, sortingColumn, currentFilters, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
+	const { table, setTable, filters, setFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 	const pageId = 'url_id';
@@ -20,7 +20,7 @@ export default function CSSCacheTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, pageId, currentFilters, sortingColumn } );
+	} = useInfiniteFetch( { key: slug, url, pageId } );
 
 	const statusTypes = {
 		N: __( 'New' ),
