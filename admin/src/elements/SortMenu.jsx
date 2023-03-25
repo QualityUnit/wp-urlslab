@@ -48,8 +48,9 @@ export default function SortMenu( {
 				onKeyUp={ ( event ) => handleMenu( event ) }
 				role="button"
 				tabIndex={ 0 }
-				dangerouslySetInnerHTML={ { __html: isFilter ? children : items[ checked ] } }
-			/>
+			>
+				<span dangerouslySetInnerHTML={ { __html: isFilter ? children : items[ checked ] } } />
+			</div>
 			<div className={ `urlslab-FilterMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
 				<div className={ `urlslab-FilterMenu__items--inn ${ Object.values( items ).length > 8 ? 'has-scrollbar' : '' }` }>
 					{ Object.entries( items ).map( ( [ id, value ] ) => {

@@ -24,7 +24,6 @@ import TableFilter from './TableFilter';
 export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, noDelete, header, table, slug, exportOptions, defaultSortBy, onSort, onFilter } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
-	const { sortingColumn, sortBy } = useSorting( { slug } );
 
 	const [ activePanel, setActivePanel ] = useState();
 	const [ filtersObj, setFiltersObj ] = useState( );
@@ -62,7 +61,6 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 
 	const handleSorting = ( val ) => {
 		onSort( val );
-		sortBy( val );
 	};
 
 	const handleDelete = useMutation( {

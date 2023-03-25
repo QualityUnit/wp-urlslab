@@ -15,7 +15,8 @@ export default function Header( { pageTitle } ) {
 	const runCron = useRef( false );
 	const [ cronRunning, setCronRun ] = useState( false );
 	const [ cronTasksResult, setCronTasks ] = useState( [] );
-	const [ panelActive, setPanelActive ] = useState( false );
+	const [ cronPanelActive, setCronPanelActive ] = useState( false );
+	const [ cronPanelError, setCronPanelError ] = useState( false );
 
 	const handleCronRunner = () => {
 		let controller;
@@ -23,19 +24,28 @@ export default function Header( { pageTitle } ) {
 		runCron.current = ! runCron.current;
 
 		if ( runCron.current ) {
-			cronAll( runCron, controller, ( cronTasks ) => setCronTasks( cronTasks ), () => setCronRun( false ) );
+			setCronPanelError( false );
+			cronAll( runCron, controller, ( cronTasks ) => setCronTasks( cronTasks ), handleCronError );
 		}
 	};
 
+	function handleCronError() {
+		runCron.current = false;
+		setCronPanelError( true );
+		setCronRun( false );
+		setTimeout( handleCronRunner, 60000 );
+	}
+
 	useEffect( () => {
 		if ( cronTasksResult?.length ) {
-			setPanelActive( true );
+			setCronPanelError( false );
+			setCronPanelActive( true );
 			setTimeout( () => {
-				setPanelActive( false );
+				setCronPanelActive( false );
 				setCronTasks( [] );
 			}, 4000 );
 		}
-	}, [ panelActive, cronTasksResult?.length ] );
+	}, [ cronPanelActive, cronTasksResult?.length ] );
 
 	return (
 		<Suspense>
@@ -50,7 +60,12 @@ export default function Header( { pageTitle } ) {
 							: <><Loader className="mr-s noText small" /> { __( 'Stop Cron Execution' ) }</>
 						}
 
-						<NotificationsPanel className="dark wide" active={ cronTasksResult.length > 0 && panelActive }>{ cronTasksResult.map( ( task ) => <div className="message" key={ task.task }>{ task.description }</div> ) }</NotificationsPanel>
+						<NotificationsPanel className={ `${ cronPanelError ? 'error' : 'dark' } wide` } active={ ( cronTasksResult.length > 0 && cronPanelActive ) || cronPanelError }>
+							{ ! cronPanelError
+								? cronTasksResult.map( ( task ) => <div className="message" key={ task.task }>{ task.description }</div> )
+								: <div className="message" key="cronError">{ __( 'Error has occured. Will run again in 1 min.' ) }</div>
+							}
+						</NotificationsPanel>
 					</Button>
 					{ /* <Notifications /> */ }
 				</div>
