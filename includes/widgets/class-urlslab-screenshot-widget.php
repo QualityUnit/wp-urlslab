@@ -65,7 +65,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 
 		try {
 			if ( ! empty( $urlslab_atts['url'] ) ) {
-				$url_data = Urlslab_Url_Data_Fetcher::get_instance()->fetch_schedule_url( new Urlslab_Url( $urlslab_atts['url'] ) );
+				$url_data = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( new Urlslab_Url( $urlslab_atts['url'] ) );
 
 				if ( ! empty( $url_data ) && $url_data->has_screenshot() ) {
 					$url_data->request_scr_schedule();
@@ -112,7 +112,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		return true;
 	}
 
-	public function is_api_key_required() {
+	public function is_api_key_required(): bool {
 		return true;
 	}
 

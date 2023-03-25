@@ -2,6 +2,7 @@
 
 abstract class Urlslab_Widget {
 
+	const FREQ_NEVER = 999999999;
 
 	const OPTION_TYPE_CHECKBOX = 'checkbox';
 	const OPTION_TYPE_TEXT = 'text';
@@ -55,7 +56,7 @@ abstract class Urlslab_Widget {
 		return false;
 	}
 
-	public function is_api_key_required() {
+	public function is_api_key_required(): bool {
 		return false;
 	}
 
@@ -107,7 +108,7 @@ abstract class Urlslab_Widget {
 							unset( $values[ $id ] );
 						}
 					}
-					$option['value'] = $values;
+					$option['value'] = array_values( $values );
 					break;
 				default:
 					$option['value'] = $this->get_option( $option_id );
@@ -293,5 +294,17 @@ abstract class Urlslab_Widget {
 		return $this->current_page_url;
 	}
 
+	protected function get_current_language() {
+		global $sitepress, $polylang;
 
+		if ( ! empty( $sitepress ) && is_object( $sitepress ) && method_exists( $sitepress, 'get_active_languages' ) ) {
+			return apply_filters( 'wpml_current_language', null );
+		}
+
+		if ( ! empty( $polylang ) && function_exists( 'pll_current_language' ) && strlen( pll_current_language() ) ) {
+			return pll_current_language();
+		}
+
+		return substr( get_locale(), 0, 2 );
+	}
 }

@@ -512,6 +512,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 
 		$sql->add_filter( 'filter_scr_status' );
 		$sql->add_filter( 'filter_scr_schedule' );
+		$sql->add_filter( 'filter_rel_schedule' );
+		$sql->add_filter( 'filter_rel_updated' );
 		$sql->add_filter( 'filter_sum_status' );
 		$sql->add_filter( 'filter_http_status', '%d' );
 

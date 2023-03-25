@@ -13,6 +13,7 @@ class Urlslab_Url {
 		'instagram.com',
 		'twitter.com',
 		'localhost',
+		'liveagent.local',
 		'wa.me',
 	);
 	private const SKIP_QUERY_PARAMS_REGEXP = '/^(utm_[a-zA-Z0-9]*|_gl|_ga.*|gclid|fbclid|fb_[a-zA-Z0-9]*|msclkid|zenid|lons1|appns|lpcid|mm_src|muid|phpsessid|jsessionid|aspsessionid|doing_wp_cron|sid|pk_vid|source)$/';
@@ -40,7 +41,7 @@ class Urlslab_Url {
 		return true;
 	}
 
-	private function is_url_blacklisted(): bool {
+	public function is_url_blacklisted(): bool {
 		$host = strtolower( $this->url_components['host'] );
 		foreach ( self::$domain_blacklists as $domain_blacklist ) {
 			if ( str_contains( $host, $domain_blacklist ) ) {
@@ -181,6 +182,10 @@ class Urlslab_Url {
 		}
 
 		return self::$current_page_protocol;
+	}
+
+	public function get_domain_name(): string {
+		return $this->url_components['host'] ?? '';
 	}
 
 }

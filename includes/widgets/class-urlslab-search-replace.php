@@ -75,7 +75,7 @@ class Urlslab_Search_Replace extends Urlslab_Widget {
 	}
 
 
-	public function is_api_key_required() {
+	public function is_api_key_required(): bool {
 		return false;
 	}
 

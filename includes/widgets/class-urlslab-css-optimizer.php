@@ -93,7 +93,7 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 
 	public static function update_settings( array $new_settings ) {}
 
-	public function is_api_key_required() {
+	public function is_api_key_required(): bool {
 		return false;
 	}
 
@@ -144,15 +144,15 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 			__( 'Define how long the CSS file will be stored in the database.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				3600      => __( 'One hour' ),
-				28800     => __( 'Eight hours' ),
-				86400     => __( 'One day' ),
-				604800    => __( 'One week' ),
-				2592000   => __( 'One moth' ),
-				7776000   => __( 'Three months' ),
-				15552000  => __( 'Six months' ),
-				31536000  => __( 'One year' ),
-				0         => __( 'No cache' ),
+				3600     => __( 'One hour' ),
+				28800    => __( 'Eight hours' ),
+				86400    => __( 'One day' ),
+				604800   => __( 'One week' ),
+				2592000  => __( 'One moth' ),
+				7776000  => __( 'Three months' ),
+				15552000 => __( 'Six months' ),
+				31536000 => __( 'One year' ),
+				0        => __( 'No cache' ),
 			),
 			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value;

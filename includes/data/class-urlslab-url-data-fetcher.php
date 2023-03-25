@@ -21,8 +21,8 @@ class Urlslab_Url_Data_Fetcher {
 	 *
 	 * @return Urlslab_Url_Row
 	 */
-	public function fetch_schedule_url( Urlslab_Url $url ): ?Urlslab_Url_Row {
-		$array = $this->fetch_schedule_urls_batch( array( $url ) );
+	public function load_and_schedule_url( Urlslab_Url $url ): ?Urlslab_Url_Row {
+		$array = $this->load_and_schedule_urls( array( $url ) );
 		if ( empty( $array ) ) {
 			return null;
 		}
@@ -35,7 +35,7 @@ class Urlslab_Url_Data_Fetcher {
 	 *
 	 * @return Urlslab_Url_Row[]
 	 */
-	public function fetch_schedule_urls_batch( $urls ): array {
+	public function load_and_schedule_urls( $urls ): array {
 		$results = array();
 		if ( empty( $urls ) ) {
 			return $results;
@@ -82,7 +82,7 @@ class Urlslab_Url_Data_Fetcher {
 		//# Adding only urls that are no scheduled
 		$url_row_obj = new Urlslab_Url_Row();
 		$url_row_obj->insert_urls( $valid_urls );
-		$url_row_obj->insert_urls( $broken_urls, Urlslab_Url_Row::SCR_STATUS_ERROR, Urlslab_Url_Row::SUM_STATUS_ERROR, 400 );
+		$url_row_obj->insert_urls( $broken_urls, Urlslab_Url_Row::SCR_STATUS_ERROR, Urlslab_Url_Row::SUM_STATUS_ERROR, 400, Urlslab_Url_Row::REL_ERROR );
 
 		return $results;
 	}

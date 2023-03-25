@@ -154,14 +154,55 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 	public function create_item( $request ) {
 		try {
 			$schedule = new \OpenAPI\Client\Model\DomainScheduleScheduleConf();
-			$schedule->setUrls( $request->get_param( 'urls' ) );
-			$schedule->setLinkFollowingStrategy( $request->get_param( 'follow_links' ) );
-			$schedule->setSitemaps( $request->get_param( 'custom_sitemaps' ) );
-			$schedule->setAllSitemaps( $request->get_param( 'process_all_sitemaps' ) );
-			$schedule->setTakeScreenshot( $request->get_param( 'take_screenshot' ) );
-			$schedule->setFetchText( $request->get_param( 'analyze_text' ) );
-			$schedule->setScanSpeedPerMinute( $request->get_param( 'scan_speed_per_minute' ) );
-			$schedule->setScanFrequency( $request->get_param( 'scan_frequency' ) );
+
+			if ( $request->has_param( 'urls' ) ) {
+				$schedule->setUrls( $request->get_param( 'urls' ) );
+			} else {
+				throw new Exception( 'URLs not defined' );
+			}
+
+
+			if ( $request->has_param( 'follow_links' ) ) {
+				$schedule->setLinkFollowingStrategy( $request->get_param( 'follow_links' ) );
+			} else {
+				$schedule->setLinkFollowingStrategy( \OpenAPI\Client\Model\DomainScheduleScheduleConf::LINK_FOLLOWING_STRATEGY_NO_LINK );
+			}
+
+			if ( $request->has_param( 'custom_sitemaps' ) ) {
+				$schedule->setSitemaps( $request->get_param( 'custom_sitemaps' ) );
+			} else {
+				$schedule->setSitemaps( array() );
+			}
+
+			if ( $request->has_param( 'process_all_sitemaps' ) ) {
+				$schedule->setAllSitemaps( $request->get_param( 'process_all_sitemaps' ) );
+			} else {
+				$schedule->setAllSitemaps( false );
+			}
+
+			if ( $request->has_param( 'take_screenshot' ) ) {
+				$schedule->setTakeScreenshot( $request->get_param( 'take_screenshot' ) );
+			} else {
+				$schedule->setTakeScreenshot( false );
+			}
+
+			if ( $request->has_param( 'analyze_text' ) ) {
+				$schedule->setFetchText( $request->get_param( 'analyze_text' ) );
+			} else {
+				$schedule->setFetchText( false );
+			}
+
+			if ( $request->has_param( 'scan_speed_per_minute' ) ) {
+				$schedule->setScanSpeedPerMinute( $request->get_param( 'scan_speed_per_minute' ) );
+			} else {
+				$schedule->setScanSpeedPerMinute( 20 );
+			}
+
+			if ( $request->has_param( 'scan_frequency' ) ) {
+				$schedule->setScanFrequency( $request->get_param( 'scan_frequency' ) );
+			} else {
+				$schedule->setScanFrequency( \OpenAPI\Client\Model\DomainScheduleScheduleConf::SCAN_FREQUENCY_ONE_TIME );
+			}
 
 			return new WP_REST_Response( $this->get_client()->createSchedule( $schedule ), 200 );
 		} catch ( Throwable $e ) {

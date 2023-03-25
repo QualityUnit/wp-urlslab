@@ -10,7 +10,7 @@ All URIs are relative to https://api.urlslab.com, except if the operation define
 ## `getSummary()`
 
 ```php
-getSummary($domain_data_retrieval_updatable_retrieval): \OpenAPI\Client\Model\DomainDataRetrievalSummaryResponse[]
+getSummary($domain_data_retrieval_data_request): \OpenAPI\Client\Model\DomainDataRetrievalSummaryResponse[]
 ```
 
 Get summarization data for url
@@ -36,10 +36,10 @@ $apiInstance = new OpenAPI\Client\Api\SummaryApi(
     new GuzzleHttp\Client(),
     $config
 );
-$domain_data_retrieval_updatable_retrieval = array(new \OpenAPI\Client\Model\DomainDataRetrievalUpdatableRetrieval()); // \OpenAPI\Client\Model\DomainDataRetrievalUpdatableRetrieval[]
+$domain_data_retrieval_data_request = array(new \OpenAPI\Client\Model\DomainDataRetrievalDataRequest()); // \OpenAPI\Client\Model\DomainDataRetrievalDataRequest[]
 
 try {
-    $result = $apiInstance->getSummary($domain_data_retrieval_updatable_retrieval);
+    $result = $apiInstance->getSummary($domain_data_retrieval_data_request);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling SummaryApi->getSummary: ', $e->getMessage(), PHP_EOL;
@@ -50,7 +50,7 @@ try {
 
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **domain_data_retrieval_updatable_retrieval** | [**\OpenAPI\Client\Model\DomainDataRetrievalUpdatableRetrieval[]**](../Model/DomainDataRetrievalUpdatableRetrieval.md)|  | [optional] |
+| **domain_data_retrieval_data_request** | [**\OpenAPI\Client\Model\DomainDataRetrievalDataRequest[]**](../Model/DomainDataRetrievalDataRequest.md)|  | [optional] |
 
 ### Return type
 

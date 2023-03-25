@@ -4,8 +4,10 @@
 
 class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	const SLUG = 'urlslab-related-resources';
+	private static $posts = array();
 
-	const SETTING_NAME_UPDATE_FREQ = 'urlslab-relres-update-freq';
+	const SETTING_NAME_SYNC_URLSLAB = 'urlslab-relres-sync-urlslab';
+	const SETTING_NAME_SYNC_FREQ = 'urlslab-relres-update-freq';
 	const SETTING_NAME_AUTOINCLUDE_TO_CONTENT = 'urlslab-relres-autoinc';
 	const SETTING_NAME_ARTICLES_COUNT = 'urlslab-relres-count';
 	const SETTING_NAME_SHOW_IMAGE = 'urlslab-relres-show-img';
@@ -72,9 +74,17 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		);
 
 		try {
-			$current_url = new Urlslab_Url( $urlslab_atts['url'] );
-			$result      = $this->load_related_urls( $current_url->get_url_id(), $urlslab_atts['related-count'] );
-			$content     = '';
+			$current_url     = new Urlslab_Url( $urlslab_atts['url'] );
+			$current_url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $current_url );
+			$current_url_obj->request_rel_schedule();
+
+			if ( Urlslab_Url_Row::REL_AVAILABLE !== $current_url_obj->get_rel_schedule() ) {
+				return '';
+			}
+
+
+			$result  = $this->load_related_urls( $current_url->get_url_id(), $urlslab_atts['related-count'] );
+			$content = '';
 
 			if ( ! empty( $result ) && is_array( $result ) ) {
 				$content  .= $this->render_shortcode_header();
@@ -99,7 +109,6 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 		return $wpdb->get_results( $wpdb->prepare( $q, $url_id, Urlslab_Url_Row::VISIBILITY_VISIBLE, $limit ), ARRAY_A ); // phpcs:ignore
 	}
-
 
 	public function has_shortcode(): bool {
 		return true;
@@ -157,12 +166,67 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		return '';
 	}
 
-	public function is_api_key_required() {
+	public function is_api_key_required(): bool {
 		return true;
 	}
 
+
+	public static function get_available_post_types(): array {
+		if ( ! empty( self::$posts ) ) {
+			return self::$posts;
+		}
+
+		$post_types  = get_post_types(
+			array(
+				'show_ui'      => true,
+				'show_in_menu' => true,
+			),
+			'objects'
+		);
+		self::$posts = array();
+		foreach ( $post_types as $post_type ) {
+			self::$posts[ $post_type->name ] = $post_type->labels->singular_name;
+		}
+
+		return self::$posts;
+	}
+
 	protected function add_options() {
-		$this->add_options_form_section( 'general', __( 'Related Articles Settings' ), __( 'We can automatically include related articles at the end of each content without the need for a WordPress shortcode in custom templates.' ) );
+		$this->add_options_form_section( 'sync', __( 'URLsLab Synchronization' ), __( 'Module can work independent of URLsLab service, but you will need to upload relations between URLs manually. If you choose automatic syncing, URLsLAb will generate relations for you and update them regullary as your content change.' ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_SYNC_URLSLAB,
+			false,
+			false,
+			__( 'Load data from URLsLab' ),
+			__( 'Automatically load data from URLsLab and update them with defined interval. This feature require URLsLab API key.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'sync'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_SYNC_FREQ,
+			2419200,
+			false,
+			__( 'Update Data Frequency' ),
+			__( 'Define how often we should sync relation data with the URLsLab database in the background. New relations will be updated independently on this setting.' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				86400            => __( 'Daily' ),
+				604800           => __( 'Weekly' ),
+				2419200          => __( 'Monthly' ),
+				7257600          => __( 'Quarterly' ),
+				31556926         => __( 'Yearly' ),
+				self::FREQ_NEVER => __( 'Never' ),
+			),
+			function( $value ) {
+				return is_numeric( $value ) && 0 < $value;
+			},
+			'sync'
+		);
+
+
+		$this->add_options_form_section( 'autoinclude', __( 'Related Articles Settings' ), __( 'We can automatically include related articles at the end of each content without the need for a WordPress shortcode in custom templates.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_AUTOINCLUDE_TO_CONTENT,
 			false,
@@ -172,9 +236,8 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'general'
+			'autoinclude'
 		);
-
 
 		$this->add_option_definition(
 			self::SETTING_NAME_AUTOINCLUDE_POST_TYPES,
@@ -184,24 +247,26 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			__( 'Select post types to append Related articles at the end of the content. If you don\'t configure anything, it will be added to all post types automatically.' ),
 			self::OPTION_TYPE_MULTI_CHECKBOX,
 			function() {
-				$post_types = get_post_types(
-					array(
-						'show_ui'      => true,
-						'show_in_menu' => true,
-					),
-					'objects'
-				);
-				$posts      = array();
-				foreach ( $post_types as $post_type ) {
-					$posts[ $post_type->name ] = $post_type->labels->singular_name;
+				return Urlslab_Related_Resources_Widget::get_available_post_types();
+			},
+			function( $value ) {
+				if ( ! is_array( $value ) ) {
+					return false;
 				}
 
-				return $posts;
+				$possible_values = Urlslab_Related_Resources_Widget::get_available_post_types();
+				foreach ( $value as $v ) {
+					if ( ! isset( $possible_values[ $v ] ) ) {
+						return false;
+					}
+				}
+
+				return true;
 			},
-			null,
-			'general'
+			'autoinclude'
 		);
 
+		$this->add_options_form_section( 'widget', __( 'Widget Default Values' ), __( 'Choose default value for your widget. Each widget can be overwrite these values with custom settings.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_ARTICLES_COUNT,
 			8,
@@ -213,7 +278,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
-			'general'
+			'widget'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SHOW_IMAGE,
@@ -224,7 +289,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'general'
+			'widget'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SHOW_SUMMARY,
@@ -235,7 +300,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'general'
+			'widget'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_DEFAULT_IMAGE_URL,
@@ -246,7 +311,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			self::OPTION_TYPE_TEXT,
 			false,
 			null,
-			'general'
+			'widget'
 		);
 	}
 }

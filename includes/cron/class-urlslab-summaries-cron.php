@@ -8,31 +8,49 @@ class Urlslab_Summaries_Cron extends Urlslab_Cron {
 		parent::__construct();
 	}
 
-	private function init_client() {
-		$api_key = get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
-		if ( strlen( $api_key ) ) {
-			$config       = \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-			$this->client = new \OpenAPI\Client\Urlslab\SummaryApi( new GuzzleHttp\Client(), $config );
+	private function init_client(): bool {
+		if ( empty( $this->client ) ) {
+			$api_key = get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
+			if ( strlen( $api_key ) ) {
+				$config       = \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
+				$this->client = new \OpenAPI\Client\Urlslab\SummaryApi( new GuzzleHttp\Client(), $config );
+			}
 		}
+
+		return ! empty( $this->client );
 	}
 
 	protected function execute(): bool {
-		$this->init_client();
-		if ( empty( $this->client ) ) {
+		if ( ! $this->init_client() ) {
 			return false;
 		}
 
 		global $wpdb;
 
+		$query_data = array();
+
+		if (
+			Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Link_Enhancer::SLUG ) &&
+			Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Link_Enhancer::SLUG )->get_option( Urlslab_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS )
+		) {
+			$query_data[]          = Urlslab_Url_Row::HTTP_STATUS_OK;
+			$sql_where_http_status = ' http_status = %d AND';
+		} else {
+			$sql_where_http_status = '';
+		}
+
+		$query_data[] = Urlslab_Url_Row::SUM_STATUS_NEW;
+		$query_data[] = Urlslab_Url_Row::SUM_STATUS_ACTIVE;
+		$query_data[] = Urlslab_Data::get_now( time() - get_option( Urlslab_General::SETTING_NAME_SUMMARIZATION_REFRESH_INTERVAL ) );
+		//PENDING or UPDATING urls will be retried in one hour again
+		$query_data[] = Urlslab_Url_Row::SUM_STATUS_PENDING;
+		$query_data[] = Urlslab_Data::get_now( time() - 12 * 3600 );
+
+
 		$url_rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_URLS_TABLE . ' WHERE http_status = 200 AND (sum_status = %s OR (sum_status =%s AND update_sum_date < %s) OR (sum_status = %s AND update_sum_date < %s)) ORDER BY update_sum_date LIMIT 500', // phpcs:ignore
-				Urlslab_Url_Row::SUM_STATUS_NEW,
-				Urlslab_Url_Row::SUM_STATUS_ACTIVE,
-				Urlslab_Data::get_now( time() - get_option( Urlslab_General::SETTING_NAME_SUMMARIZATION_REFRESH_INTERVAL ) ),
-				//PENDING or UPDATING urls will be retried in one hour again
-				Urlslab_Url_Row::SUM_STATUS_PENDING,
-				Urlslab_Data::get_now( time() - 12 * 3600 )
+				'SELECT * FROM ' . URLSLAB_URLS_TABLE . ' WHERE ' . $sql_where_http_status . ' (sum_status = %s OR (sum_status =%s AND update_sum_date < %s) OR (sum_status = %s AND update_sum_date < %s)) ORDER BY update_sum_date LIMIT 500', // phpcs:ignore
+				$query_data,
 			),
 			ARRAY_A
 		);

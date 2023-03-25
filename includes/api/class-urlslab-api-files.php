@@ -267,6 +267,9 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		$sql->add_filter( 'filter_local_file' );
 		$sql->add_filter( 'filter_filename' );
 		$sql->add_filter( 'filter_filetype' );
+		$sql->add_filter( 'filter_width', '%d' );
+		$sql->add_filter( 'filter_height', '%d' );
+		$sql->add_filter( 'filter_status_changed' );
 		$sql->add_filter( 'filter_filestatus' );
 		$sql->add_filter( 'filter_filehash' );
 		$sql->add_filter( 'filter_filesize', '%d' );

@@ -30,7 +30,7 @@ class Urlslab_General extends Urlslab_Widget {
 		return __( 'Connect Urlslab.com services to your Wordpress.' );
 	}
 
-	public function is_api_key_required() {
+	public function is_api_key_required(): bool {
 		return true;
 	}
 
@@ -86,7 +86,7 @@ class Urlslab_General extends Urlslab_Widget {
 				2419200   => __( 'Monthly' ),
 				7257600   => __( 'Quarterly' ),
 				31536000  => __( 'Yearly' ),
-				999999999 => __( 'Never' ),
+				self::FREQ_NEVER => __( 'Never' ),
 			),
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
@@ -105,7 +105,7 @@ class Urlslab_General extends Urlslab_Widget {
 				2419200   => __( 'Monthly' ),
 				7257600   => __( 'Quarterly' ),
 				31536000  => __( 'Yearly' ),
-				999999999 => __( 'Never' ),
+				self::FREQ_NEVER => __( 'Never' ),
 			),
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;

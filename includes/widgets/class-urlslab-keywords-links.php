@@ -214,25 +214,12 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		return $keywords;
 	}
 
-	private function get_language() {
-		global $sitepress, $polylang;
-
-		if ( ! empty( $sitepress ) && is_object( $sitepress ) && method_exists( $sitepress, 'get_active_languages' ) ) {
-			return apply_filters( 'wpml_current_language', null );
-		}
-
-		if ( ! empty( $polylang ) && function_exists( 'pll_current_language' ) && strlen( pll_current_language() ) ) {
-			return pll_current_language();
-		}
-
-		return substr( get_locale(), 0, 2 );
-	}
 
 	private function init_keywords_cache( $input_text ) {
 		global $wpdb;
 
 		$keyword_table = URLSLAB_KEYWORDS_TABLE;
-		$lang          = $this->get_language();
+		$lang          = $this->get_current_language();
 
 		$results = array();
 		if ( self::KW_TYPE_NONE != $this->get_option( self::SETTING_NAME_KW_TYPES_TO_USE ) ) {
@@ -466,7 +453,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			if ( $this->get_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS ) || $this->get_option( self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS ) ) {
 				$schedule_urls = array();
 				$new_keywords  = array();
-				$lang          = $this->get_language();
+				$lang          = $this->get_current_language();
 				foreach ( $missing_keywords as $missing_kw => $urls ) {
 					if ( strlen( $missing_kw ) < $this->get_option( self::SETTING_NAME_KW_IMPORT_MAX_LENGTH ) ) {
 						foreach ( $urls as $url_id => $arrU ) {

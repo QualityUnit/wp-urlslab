@@ -127,16 +127,16 @@ class SummaryApi
      *
      * Get summarization data for url
      *
-     * @param  \OpenAPI\Client\Model\DomainDataRetrievalUpdatableRetrieval[] $domain_data_retrieval_updatable_retrieval domain_data_retrieval_updatable_retrieval (optional)
+     * @param  \OpenAPI\Client\Model\DomainDataRetrievalDataRequest[] $domain_data_retrieval_data_request domain_data_retrieval_data_request (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSummary'] to see the possible values for this operation
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return \OpenAPI\Client\Model\DomainDataRetrievalSummaryResponse[]
      */
-    public function getSummary($domain_data_retrieval_updatable_retrieval = null, string $contentType = self::contentTypes['getSummary'][0])
+    public function getSummary($domain_data_retrieval_data_request = null, string $contentType = self::contentTypes['getSummary'][0])
     {
-        list($response) = $this->getSummaryWithHttpInfo($domain_data_retrieval_updatable_retrieval, $contentType);
+        list($response) = $this->getSummaryWithHttpInfo($domain_data_retrieval_data_request, $contentType);
         return $response;
     }
 
@@ -145,16 +145,16 @@ class SummaryApi
      *
      * Get summarization data for url
      *
-     * @param  \OpenAPI\Client\Model\DomainDataRetrievalUpdatableRetrieval[] $domain_data_retrieval_updatable_retrieval (optional)
+     * @param  \OpenAPI\Client\Model\DomainDataRetrievalDataRequest[] $domain_data_retrieval_data_request (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSummary'] to see the possible values for this operation
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of \OpenAPI\Client\Model\DomainDataRetrievalSummaryResponse[], HTTP status code, HTTP response headers (array of strings)
      */
-    public function getSummaryWithHttpInfo($domain_data_retrieval_updatable_retrieval = null, string $contentType = self::contentTypes['getSummary'][0])
+    public function getSummaryWithHttpInfo($domain_data_retrieval_data_request = null, string $contentType = self::contentTypes['getSummary'][0])
     {
-        $request = $this->getSummaryRequest($domain_data_retrieval_updatable_retrieval, $contentType);
+        $request = $this->getSummaryRequest($domain_data_retrieval_data_request, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -245,15 +245,15 @@ class SummaryApi
      *
      * Get summarization data for url
      *
-     * @param  \OpenAPI\Client\Model\DomainDataRetrievalUpdatableRetrieval[] $domain_data_retrieval_updatable_retrieval (optional)
+     * @param  \OpenAPI\Client\Model\DomainDataRetrievalDataRequest[] $domain_data_retrieval_data_request (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSummary'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getSummaryAsync($domain_data_retrieval_updatable_retrieval = null, string $contentType = self::contentTypes['getSummary'][0])
+    public function getSummaryAsync($domain_data_retrieval_data_request = null, string $contentType = self::contentTypes['getSummary'][0])
     {
-        return $this->getSummaryAsyncWithHttpInfo($domain_data_retrieval_updatable_retrieval, $contentType)
+        return $this->getSummaryAsyncWithHttpInfo($domain_data_retrieval_data_request, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -266,16 +266,16 @@ class SummaryApi
      *
      * Get summarization data for url
      *
-     * @param  \OpenAPI\Client\Model\DomainDataRetrievalUpdatableRetrieval[] $domain_data_retrieval_updatable_retrieval (optional)
+     * @param  \OpenAPI\Client\Model\DomainDataRetrievalDataRequest[] $domain_data_retrieval_data_request (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSummary'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getSummaryAsyncWithHttpInfo($domain_data_retrieval_updatable_retrieval = null, string $contentType = self::contentTypes['getSummary'][0])
+    public function getSummaryAsyncWithHttpInfo($domain_data_retrieval_data_request = null, string $contentType = self::contentTypes['getSummary'][0])
     {
         $returnType = '\OpenAPI\Client\Model\DomainDataRetrievalSummaryResponse[]';
-        $request = $this->getSummaryRequest($domain_data_retrieval_updatable_retrieval, $contentType);
+        $request = $this->getSummaryRequest($domain_data_retrieval_data_request, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -316,13 +316,13 @@ class SummaryApi
     /**
      * Create request for operation 'getSummary'
      *
-     * @param  \OpenAPI\Client\Model\DomainDataRetrievalUpdatableRetrieval[] $domain_data_retrieval_updatable_retrieval (optional)
+     * @param  \OpenAPI\Client\Model\DomainDataRetrievalDataRequest[] $domain_data_retrieval_data_request (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSummary'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getSummaryRequest($domain_data_retrieval_updatable_retrieval = null, string $contentType = self::contentTypes['getSummary'][0])
+    public function getSummaryRequest($domain_data_retrieval_data_request = null, string $contentType = self::contentTypes['getSummary'][0])
     {
 
 
@@ -345,12 +345,12 @@ class SummaryApi
         );
 
         // for model (json/xml)
-        if (isset($domain_data_retrieval_updatable_retrieval)) {
+        if (isset($domain_data_retrieval_data_request)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($domain_data_retrieval_updatable_retrieval));
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($domain_data_retrieval_data_request));
             } else {
-                $httpBody = $domain_data_retrieval_updatable_retrieval;
+                $httpBody = $domain_data_retrieval_data_request;
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {

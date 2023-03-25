@@ -127,16 +127,16 @@ class ScreenshotApi
      *
      * Get screenshot of url
      *
-     * @param  \OpenAPI\Client\Model\DomainDataRetrievalUpdatableRetrieval $domain_data_retrieval_updatable_retrieval domain_data_retrieval_updatable_retrieval (optional)
+     * @param  \OpenAPI\Client\Model\DomainDataRetrievalDataRequest $domain_data_retrieval_data_request Url to get related urls (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getScreenshots'] to see the possible values for this operation
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return \OpenAPI\Client\Model\DomainDataRetrievalScreenshotResponse[]
      */
-    public function getScreenshots($domain_data_retrieval_updatable_retrieval = null, string $contentType = self::contentTypes['getScreenshots'][0])
+    public function getScreenshots($domain_data_retrieval_data_request, string $contentType = self::contentTypes['getScreenshots'][0])
     {
-        list($response) = $this->getScreenshotsWithHttpInfo($domain_data_retrieval_updatable_retrieval, $contentType);
+        list($response) = $this->getScreenshotsWithHttpInfo($domain_data_retrieval_data_request, $contentType);
         return $response;
     }
 
@@ -145,16 +145,16 @@ class ScreenshotApi
      *
      * Get screenshot of url
      *
-     * @param  \OpenAPI\Client\Model\DomainDataRetrievalUpdatableRetrieval $domain_data_retrieval_updatable_retrieval (optional)
+     * @param  \OpenAPI\Client\Model\DomainDataRetrievalDataRequest $domain_data_retrieval_data_request Url to get related urls (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getScreenshots'] to see the possible values for this operation
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of \OpenAPI\Client\Model\DomainDataRetrievalScreenshotResponse[], HTTP status code, HTTP response headers (array of strings)
      */
-    public function getScreenshotsWithHttpInfo($domain_data_retrieval_updatable_retrieval = null, string $contentType = self::contentTypes['getScreenshots'][0])
+    public function getScreenshotsWithHttpInfo($domain_data_retrieval_data_request, string $contentType = self::contentTypes['getScreenshots'][0])
     {
-        $request = $this->getScreenshotsRequest($domain_data_retrieval_updatable_retrieval, $contentType);
+        $request = $this->getScreenshotsRequest($domain_data_retrieval_data_request, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -245,15 +245,15 @@ class ScreenshotApi
      *
      * Get screenshot of url
      *
-     * @param  \OpenAPI\Client\Model\DomainDataRetrievalUpdatableRetrieval $domain_data_retrieval_updatable_retrieval (optional)
+     * @param  \OpenAPI\Client\Model\DomainDataRetrievalDataRequest $domain_data_retrieval_data_request Url to get related urls (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getScreenshots'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getScreenshotsAsync($domain_data_retrieval_updatable_retrieval = null, string $contentType = self::contentTypes['getScreenshots'][0])
+    public function getScreenshotsAsync($domain_data_retrieval_data_request, string $contentType = self::contentTypes['getScreenshots'][0])
     {
-        return $this->getScreenshotsAsyncWithHttpInfo($domain_data_retrieval_updatable_retrieval, $contentType)
+        return $this->getScreenshotsAsyncWithHttpInfo($domain_data_retrieval_data_request, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -266,16 +266,16 @@ class ScreenshotApi
      *
      * Get screenshot of url
      *
-     * @param  \OpenAPI\Client\Model\DomainDataRetrievalUpdatableRetrieval $domain_data_retrieval_updatable_retrieval (optional)
+     * @param  \OpenAPI\Client\Model\DomainDataRetrievalDataRequest $domain_data_retrieval_data_request Url to get related urls (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getScreenshots'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getScreenshotsAsyncWithHttpInfo($domain_data_retrieval_updatable_retrieval = null, string $contentType = self::contentTypes['getScreenshots'][0])
+    public function getScreenshotsAsyncWithHttpInfo($domain_data_retrieval_data_request, string $contentType = self::contentTypes['getScreenshots'][0])
     {
         $returnType = '\OpenAPI\Client\Model\DomainDataRetrievalScreenshotResponse[]';
-        $request = $this->getScreenshotsRequest($domain_data_retrieval_updatable_retrieval, $contentType);
+        $request = $this->getScreenshotsRequest($domain_data_retrieval_data_request, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -316,15 +316,21 @@ class ScreenshotApi
     /**
      * Create request for operation 'getScreenshots'
      *
-     * @param  \OpenAPI\Client\Model\DomainDataRetrievalUpdatableRetrieval $domain_data_retrieval_updatable_retrieval (optional)
+     * @param  \OpenAPI\Client\Model\DomainDataRetrievalDataRequest $domain_data_retrieval_data_request Url to get related urls (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getScreenshots'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getScreenshotsRequest($domain_data_retrieval_updatable_retrieval = null, string $contentType = self::contentTypes['getScreenshots'][0])
+    public function getScreenshotsRequest($domain_data_retrieval_data_request, string $contentType = self::contentTypes['getScreenshots'][0])
     {
 
+        // verify the required parameter 'domain_data_retrieval_data_request' is set
+        if ($domain_data_retrieval_data_request === null || (is_array($domain_data_retrieval_data_request) && count($domain_data_retrieval_data_request) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $domain_data_retrieval_data_request when calling getScreenshots'
+            );
+        }
 
 
         $resourcePath = '/v1/screenshot';
@@ -345,12 +351,12 @@ class ScreenshotApi
         );
 
         // for model (json/xml)
-        if (isset($domain_data_retrieval_updatable_retrieval)) {
+        if (isset($domain_data_retrieval_data_request)) {
             if (stripos($headers['Content-Type'], 'application/json') !== false) {
                 # if Content-Type contains "application/json", json_encode the body
-                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($domain_data_retrieval_updatable_retrieval));
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($domain_data_retrieval_data_request));
             } else {
-                $httpBody = $domain_data_retrieval_updatable_retrieval;
+                $httpBody = $domain_data_retrieval_data_request;
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {

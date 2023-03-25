@@ -5,10 +5,9 @@ require_once( ABSPATH . 'wp-admin/includes/file.php' );
 
 class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 
-	public function cron_exec( $max_execution_time = self::MAX_RUN_TIME ) {
-		$widget = Urlslab_Available_Widgets::get_instance()->get_widget( Urlslab_CSS_Optimizer::SLUG );
-		if ( empty( $widget ) ) {
-			return;
+	public function cron_exec( $max_execution_time = self::MAX_RUN_TIME ): bool {
+		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_CSS_Optimizer::SLUG ) ) {
+			return false;
 		}
 
 		global $wpdb;
@@ -18,11 +17,11 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 				array(
 					Urlslab_CSS_Cache_Row::STATUS_DISABLED,
 					Urlslab_CSS_Cache_Row::STATUS_ACTIVE,
-					Urlslab_CSS_Cache_Row::get_now( time() - $widget->get_option( Urlslab_CSS_Optimizer::SETTING_NAME_CSS_CACHE_TTL ) ),
+					Urlslab_CSS_Cache_Row::get_now( time() - Urlslab_User_Widget::get_instance()->get_widget( Urlslab_CSS_Optimizer::SLUG )->get_option( Urlslab_CSS_Optimizer::SETTING_NAME_CSS_CACHE_TTL ) ),
 				),
 			)
 		);
-		parent::cron_exec( $max_execution_time );
+		return parent::cron_exec( $max_execution_time );
 	}
 
 	protected function execute(): bool {

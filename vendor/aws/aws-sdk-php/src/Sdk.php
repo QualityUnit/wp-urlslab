@@ -292,6 +292,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionHoneycode(array $args = [])
  * @method \Aws\IVS\IVSClient createIVS(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionIVS(array $args = [])
+ * @method \Aws\IVSRealTime\IVSRealTimeClient createIVSRealTime(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionIVSRealTime(array $args = [])
  * @method \Aws\Iam\IamClient createIam(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionIam(array $args = [])
  * @method \Aws\IdentityStore\IdentityStoreClient createIdentityStore(array $args = [])
@@ -687,7 +689,7 @@ namespace Aws;
  */
 class Sdk
 {
-    const VERSION = '3.261.16';
+    const VERSION = '3.262.1';
 
     /** @var array Arguments for creating clients */
     private $args;

@@ -4,8 +4,11 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
 class Urlslab_Youtube_Cron extends Urlslab_Cron {
 
 	protected function execute(): bool {
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Lazy_Loading::SLUG );
-		if ( empty( $widget ) || ! $widget->get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_LAZY_LOADING ) || 0 == strlen( $this->get_youtube_key() ) ) {
+		if (
+			! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Lazy_Loading::SLUG ) ||
+			! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Lazy_Loading::SLUG )->get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_LAZY_LOADING ) ||
+			0 == strlen( $this->get_youtube_key() )
+		) {
 			return false;
 		}
 
@@ -41,7 +44,7 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 	}
 
 	private function get_youtube_key() {
-		$key = get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_API_KEY );
+		$key = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Lazy_Loading::SLUG )->get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_API_KEY );
 		if ( strlen( $key ) ) {
 			return $key;
 		}
