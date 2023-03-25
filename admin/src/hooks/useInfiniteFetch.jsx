@@ -5,27 +5,16 @@ import { useInView } from 'react-intersection-observer';
 
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchData } from '../api/fetching';
-import { get, set } from 'idb-keyval';
 
 export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const columnHelper = createColumnHelper();
 	const { __ } = useI18n();
 	const { ref, inView } = useInView();
-	const { key, url, pageId, currentFilters } = options;
-	// const [ queryUrl, setQueryUrl ] = useState();
+	const { key, url, pageId } = options;
 
 	const query = useInfiniteQuery( {
-		// queryKey: [ key, url ? url : queryUrl ],
 		queryKey: [ key, url ? url : '' ],
 		queryFn: ( { pageParam = '' } ) => {
-			get( key ).then( ( tableDb ) => {
-				if ( ! tableDb ) {
-					set( key, { url, currentFilters } );
-				}
-				if ( tableDb ) {
-					set( key, { ...tableDb, url, currentFilters } );
-				}
-			} );
 			return fetchData( `${ key }?from_${ pageId }=${ pageParam !== undefined && pageParam }${ url !== 'undefined' ? url : '' }&rows_per_page=${ maxRows }` );
 		},
 		getNextPageParam: ( allRows ) => {
@@ -50,11 +39,6 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		fetchNextPage } = query;
 
 	useEffect( () => {
-		// get( key ).then( ( tableQuery ) => {
-		// 	const q = tableQuery;
-		// 	setQueryUrl( q?.url );
-		// 	// setActiveFilters( Object.keys( q?.currentFilters ).length ? q?.currentFilters : {} );
-		// } );
 		if ( inView ) {
 			fetchNextPage();
 		}
@@ -64,7 +48,6 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		__,
 		columnHelper,
 		data,
-		// activeFilters,
 		status,
 		isSuccess,
 		isFetchingNextPage,

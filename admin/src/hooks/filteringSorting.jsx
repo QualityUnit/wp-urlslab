@@ -1,19 +1,19 @@
 import { useState } from 'react';
 
 export function useFilter( ) {
-	const [ currentFilters, setUrl ] = useState( {} );
+	const [ currentFilters, setCurrentFilters ] = useState( {} );
 	let filters = '';
 
 	const addFilter = ( key, value ) => {
 		if ( value ) {
-			setUrl( { ...currentFilters, [ key ]: value } );
+			setCurrentFilters( { ...currentFilters, [ key ]: value } );
 		}
 		if ( ! value ) {
 			removeFilters( [ key ] );
 		}
 	};
 	function removeFilters( keyArray ) {
-		setUrl( ( filter ) => {
+		setCurrentFilters( ( filter ) => {
 			const filtersCopy = { ...filter };
 			keyArray.map( ( key ) => {
 				delete filtersCopy[ key ];
@@ -23,8 +23,20 @@ export function useFilter( ) {
 		} );
 	}
 
-	Object.entries( currentFilters ).map( ( [ key, val ] ) => {
-		filters += `&filter_${ key }=${ val }`;
+	Object.entries( currentFilters ).map( ( [ key, filter ] ) => {
+		const { op, val } = filter;
+		if ( ! op ) {
+			filters += `&filter_${ key }=${ filter }`;
+		}
+		if ( op && op !== 'IN' && op !== 'BETWEEN' ) {
+			filters += `&filter_${ key }=${ encodeURIComponent( `{"op":"${ op }","val":"${ val }"}` ) }`;
+		}
+		if ( op && op === 'IN' ) {
+			filters += `&filter_${ key }=${ encodeURIComponent( `{"op":"${ op }","val":[${ val }]}` ) }`;
+		}
+		if ( op && op === 'BETWEEN' ) {
+			filters += `&filter_${ key }=${ encodeURIComponent( `{"op":"${ op }","min":${ val.min }, "max": ${ val.max }}` ) }`;
+		}
 		return false;
 	} );
 

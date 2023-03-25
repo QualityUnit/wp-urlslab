@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useFilter, useSorting } from '../hooks/filteringSorting';
+import { useSorting } from '../hooks/filteringSorting';
 import { useChangeRow } from '../hooks/useChangeRow';
 
 export default function useTableUpdater( { slug } ) {

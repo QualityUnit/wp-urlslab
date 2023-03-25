@@ -64,8 +64,12 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 
 	if ( onFilter && runFilter.current ) {
 		runFilter.current = false;
-		filtering.currentFilters = currentFilters;
-		set( slug, { filtering, filters } );
+		get( slug ).then( ( resultObj ) => {
+			if ( ! resultObj ) {
+				resultObj = {};
+			}
+			set( slug, resultObj.filterOptions = { filters, currentFilters, filtering } );
+		} );
 		onFilter( { filters, currentFilters } );
 	}
 
@@ -86,16 +90,8 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 			addFilter( key, val );
 		}
 
-		if ( op && op !== 'IN' && op !== 'BETWEEN' ) {
-			addFilter( key, encodeURIComponent( `{"op":"${ op }","val":"${ val }"}` ) );
-		}
-
-		if ( op === 'IN' ) {
-			addFilter( key, encodeURIComponent( `{"op":"${ op }","val":[${ val }]}` ) );
-		}
-
-		if ( op === 'BETWEEN' ) {
-			addFilter( key, encodeURIComponent( `{"op":"${ op }","min":${ val.min }, "max": ${ val.max }}` ) );
+		if ( op ) {
+			addFilter( key, { op, val } );
 		}
 
 		runFilter.current = true;
@@ -110,7 +106,6 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 			const key = keysArray[ 0 ];
 			const newHeader = { ...header };
 			filtering.usedFilters = filtering?.usedFilters.filter( ( k ) => k !== key );
-			filtering.currentFilters = currentFilters;
 			filtering.usedFilters.map( ( k ) => {
 				delete newHeader[ k ];
 				return false;
@@ -120,7 +115,6 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 		}
 		if ( keysArray?.length > 1 ) {
 			filtering.usedFilters = [];
-			filtering.currentFilters = currentFilters;
 			filtering.possibleFilters = { ...header };
 		}
 		removeFilters( keysArray );

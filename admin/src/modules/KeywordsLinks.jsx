@@ -4,7 +4,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import Overview from '../components/OverviewTemplate';
 import KeywordLinksOverview from '../overview/KeywordsLinks';
 import ModuleViewHeader from '../components/ModuleViewHeader';
-import { get } from 'idb-keyval';
 
 export default function KeywordLinks( { moduleId } ) {
 	const { __ } = useI18n();

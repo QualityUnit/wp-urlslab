@@ -7,7 +7,7 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function KeywordsTable( { slug } ) {
-	const { table, setTable, filters, setFilters, currentFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
+	const { table, setTable, filters, setFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 	const pageId = 'kw_id';
@@ -16,27 +16,12 @@ export default function KeywordsTable( { slug } ) {
 		__,
 		columnHelper,
 		data,
-		// activeFilters,
 		status,
 		isSuccess,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, pageId, currentFilters, sortingColumn } );
-
-	// const myRowObject = {
-	// 	kw_id: 0,
-	// 	keyword: 'sss',
-	// 	kw_priority: 11,
-	// 	kw_length: 20,
-	// 	lang: 'sk',
-	// 	urlLink: 'https://kokot.com',
-	// 	urlFilter: '.*',
-	// 	kwType: 'M',
-	// 	kw_usage_count: 0,
-	// 	link_usage_count: 0,
-	// 	destUrlMd5: 0,
-	// };
+	} = useInfiniteFetch( { key: slug, url, pageId } );
 
 	const keywordTypes = {
 		M: __( 'Manual' ),

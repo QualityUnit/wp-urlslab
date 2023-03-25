@@ -1,11 +1,10 @@
 import { useMemo, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { get, set } from 'idb-keyval';
 
 import { fetchData } from '../api/fetching';
 import { deleteAll } from '../api/deleteTableData';
-
-import { useSorting } from '../hooks/filteringSorting';
 
 import { ReactComponent as Trash } from '../assets/images/icon-trash.svg';
 import { ReactComponent as ImportIcon } from '../assets/images/icon-import.svg';
@@ -60,6 +59,9 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 	);
 
 	const handleSorting = ( val ) => {
+		get( slug ).then( ( resultObj ) => {
+			set( slug, { sortBy: val, ...resultObj } );
+		} );
 		onSort( val );
 	};
 
@@ -105,7 +107,7 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 				</div>
 				<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
 
-					<TableFilter slug={ slug } header={ header } initialRow={ initialRow } onFilter={ ( obj ) => setFiltersObj( obj ) } />
+					<TableFilter slug={ slug } header={ header } initialRow={ initialRow } onFilter={ setFiltersObj } />
 					<div className="ma-left flex flex-align-center">
 						{
 							! noCount &&
@@ -118,7 +120,7 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 							</small>
 						}
 
-						<SortMenu className="menu-left ml-m" isFilter checkedId={ defaultSortBy } items={ sortItems } name="sorting" onChange={ ( val ) => handleSorting( val ) }>{ __( 'Sort by' ) }</SortMenu>
+						<SortMenu className="menu-left ml-m" isFilter checkedId={ defaultSortBy } items={ sortItems } name="sorting" onChange={ handleSorting }>{ __( 'Sort by' ) }</SortMenu>
 
 						<ColumnsMenu
 							className="menu-left ml-m"
@@ -136,7 +138,7 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 				<DangerPanel title={ __( 'Delete All?' ) }
 					text={ __( 'Are you sure you want to delete all rows? Deleting rows will remove them from all modules where this table occurs.' ) }
 					button={ <><Trash />{ __( 'Delete All' ) }</> }
-					handlePanel={ ( val ) => handlePanel( val ) }
+					handlePanel={ handlePanel }
 				/>
 			}
 
@@ -144,11 +146,11 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 			<ExportPanel options={ exportOptions }
 				currentFilters={ filtersObj?.currentFilters }
 				header={ header }
-				handlePanel={ () => handlePanel() }
+				handlePanel={ handlePanel }
 			/>
 			}
 			{ activePanel === 'import' &&
-				<ImportPanel slug={ slug } handlePanel={ () => handlePanel() } />
+				<ImportPanel slug={ slug } handlePanel={ handlePanel } />
 			}
 		</>
 	);
