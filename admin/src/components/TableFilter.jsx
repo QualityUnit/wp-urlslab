@@ -1,5 +1,7 @@
 import { useRef, useCallback, useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
+import { get, set } from 'idb-keyval';
+
 import { useFilter } from '../hooks/filteringSorting';
 
 import Button from '../elements/Button';
@@ -62,6 +64,8 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 
 	if ( onFilter && runFilter.current ) {
 		runFilter.current = false;
+		filtering.currentFilters = currentFilters;
+		set( slug, { filtering, filters } );
 		onFilter( { filters, currentFilters } );
 	}
 
@@ -104,12 +108,19 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 	const handleRemoveFilter = ( keysArray ) => {
 		if ( keysArray?.length === 1 ) {
 			const key = keysArray[ 0 ];
-			const val = header[ key ];
+			const newHeader = { ...header };
 			filtering.usedFilters = filtering?.usedFilters.filter( ( k ) => k !== key );
-			filtering.possibleFilters = { [ key ]: `${ val }`, ...filtering?.possibleFilters };
+			filtering.currentFilters = currentFilters;
+			filtering.usedFilters.map( ( k ) => {
+				delete newHeader[ k ];
+				return false;
+			} );
+
+			filtering.possibleFilters = newHeader;
 		}
 		if ( keysArray?.length > 1 ) {
 			filtering.usedFilters = [];
+			filtering.currentFilters = currentFilters;
 			filtering.possibleFilters = { ...header };
 		}
 		removeFilters( keysArray );
