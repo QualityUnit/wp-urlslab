@@ -78,6 +78,11 @@ The content is coming soon.
 
 == Changelog ==
 
+= 2.4.1 - 2023-03-27 =
+
+* Bug Fix: Fatal error in link manager
+* Feature: Scheduling of Urls to URLsLab service
+
 = 2.4.0 - 2023-03-27 =
 
 * Bug Fix: Multiple small bugs were fixed
