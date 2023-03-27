@@ -41,7 +41,12 @@ export default defineConfig( {
 			output: {
 				// this gets rid of the hash on main.css
 				entryFileNames: '[name].js',
-				assetFileNames: `assets/[name]${ hash }.[ext]`,
+				assetFileNames: ( asset ) => {
+					if ( asset.name === 'main.css' ) {
+						return `assets/[name].[ext]`;
+					}
+					return `assets/[name]-${ hash }.[ext]`;
+				},
 			},
 		},
 		// prevent some warnings
