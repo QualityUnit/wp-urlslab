@@ -1,15 +1,16 @@
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, handleSelected, Tooltip, Trash, Checkbox, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, Tooltip, Trash, Checkbox, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
+import useChangeRow from '../hooks/useChangeRow';
 
 export default function SchedulesTable( { slug } ) {
-	const { table, setTable, filters, setFilters, currentFilters, sortingColumn, sortBy, row, deleteRow } = useTableUpdater( { slug } );
+	const pageId = 'schedule_id';
+	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
-	const pageId = 'schedule_id';
 
 	const {
 		__,
@@ -20,7 +21,9 @@ export default function SchedulesTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, pageId, currentFilters, sortingColumn } );
+	} = useInfiniteFetch( { key: slug, url, pageId } );
+
+	const { row, selectRow, deleteRow } = useChangeRow( { data, url, slug, pageId } );
 
 	const followLinksTypes = {
 		FOLLOW_ALL_LINKS: __( 'Follow all links' ),
@@ -51,7 +54,7 @@ export default function SchedulesTable( { slug } ) {
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
-				handleSelected( val, cell );
+				selectRow( val, cell );
 			} } />,
 			header: null,
 		} ),
@@ -100,7 +103,7 @@ export default function SchedulesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId } ) } />,
+			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
 	];

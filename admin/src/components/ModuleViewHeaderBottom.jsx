@@ -5,8 +5,6 @@ import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { fetchData } from '../api/fetching';
 import { deleteAll } from '../api/deleteTableData';
 
-import { useSorting } from '../hooks/filteringSorting';
-
 import { ReactComponent as Trash } from '../assets/images/icon-trash.svg';
 import { ReactComponent as ImportIcon } from '../assets/images/icon-import.svg';
 import { ReactComponent as ExportIcon } from '../assets/images/icon-export.svg';
@@ -63,7 +61,7 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 		onSort( val );
 	};
 
-	const handleDelete = useMutation( {
+	const handleDeleteAll = useMutation( {
 		mutationFn: () => {
 			return deleteAll( slug );
 		},
@@ -75,8 +73,8 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 	const handlePanel = ( key ) => {
 		setActivePanel( key );
 
-		if ( key === 'danger' ) {
-			handleDelete.mutate();
+		if ( key === 'deleteall' ) {
+			handleDeleteAll.mutate();
 		}
 	};
 
@@ -90,10 +88,13 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 				<div className="urlslab-moduleView-headerBottom__top flex flex-align-center">
 
 					<Button className="" onClick={ () => handleRefresh() }><RefreshIcon />{ __( 'Refresh table' ) }</Button>
+					{ ! noDelete &&
+					<Button className="ml-s" onClick={ () => handlePanel( 'deleteSelected' ) } disabled><Trash />{ __( 'Delete selected' ) }</Button>
+					}
 
 					<div className="ma-left flex flex-align-center">
 						{ ! noDelete &&
-							<Button className="no-padding underline simple" onClick={ () => handlePanel( 'delete' ) }>{ __( 'Delete All' ) }</Button>
+							<Button className="no-padding underline simple" onClick={ () => handlePanel( 'deleteall' ) }>{ __( 'Delete All' ) }</Button>
 						}
 						{ ! noExport &&
 						<Button className="no-padding underline simple ml-m" onClick={ () => handlePanel( 'export' ) }>{ __( 'Export CSV' ) }</Button>
@@ -105,7 +106,7 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 				</div>
 				<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
 
-					<TableFilter slug={ slug } header={ header } initialRow={ initialRow } onFilter={ ( obj ) => setFiltersObj( obj ) } />
+					<TableFilter slug={ slug } header={ header } initialRow={ initialRow } onFilter={ setFiltersObj } />
 					<div className="ma-left flex flex-align-center">
 						{
 							! noCount &&
@@ -118,7 +119,7 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 							</small>
 						}
 
-						<SortMenu className="menu-left ml-m" isFilter checkedId={ defaultSortBy } items={ sortItems } name="sorting" onChange={ ( val ) => handleSorting( val ) }>{ __( 'Sort by' ) }</SortMenu>
+						<SortMenu className="menu-left ml-m" isFilter checkedId={ defaultSortBy } items={ sortItems } name="sorting" onChange={ handleSorting }>{ __( 'Sort by' ) }</SortMenu>
 
 						<ColumnsMenu
 							className="menu-left ml-m"
@@ -132,11 +133,22 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 
 			</div>
 			{
-				activePanel === 'delete' &&
+				activePanel === 'deleteall' &&
 				<DangerPanel title={ __( 'Delete All?' ) }
 					text={ __( 'Are you sure you want to delete all rows? Deleting rows will remove them from all modules where this table occurs.' ) }
 					button={ <><Trash />{ __( 'Delete All' ) }</> }
-					handlePanel={ ( val ) => handlePanel( val ) }
+					handlePanel={ handlePanel }
+					action="deleteall"
+				/>
+			}
+
+			{
+				activePanel === 'deleteSelected' &&
+				<DangerPanel title={ __( 'Delete Selected?' ) }
+					text={ __( 'Are you sure you want to delete selected rows? Deleting rows will remove them from all modules where this table occurs.' ) }
+					button={ <><Trash />{ __( 'Delete selected' ) }</> }
+					handlePanel={ handlePanel }
+					action="deleteselected"
 				/>
 			}
 
@@ -144,11 +156,11 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 			<ExportPanel options={ exportOptions }
 				currentFilters={ filtersObj?.currentFilters }
 				header={ header }
-				handlePanel={ () => handlePanel() }
+				handlePanel={ handlePanel }
 			/>
 			}
 			{ activePanel === 'import' &&
-				<ImportPanel slug={ slug } handlePanel={ () => handlePanel() } />
+				<ImportPanel slug={ slug } handlePanel={ handlePanel } />
 			}
 		</>
 	);

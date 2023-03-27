@@ -28,6 +28,11 @@ button.urlslab-button,
 	color: $black;
 	cursor: pointer;
 
+	&[disabled] {
+		background-color: $grey-lighter;
+		color: $grey-darker;
+	}
+
 	&.outline {
 		background-color: $white;
 		border: 1px solid $grey-light;
@@ -45,6 +50,10 @@ button.urlslab-button,
 		background-color: $primary-color;
 		color: $white;
 
+		&[disabled] {
+			background-color: $lighter-blue;
+		}
+
 		.urlslab-loader {
 			opacity: 1;
 
@@ -52,7 +61,6 @@ button.urlslab-button,
 				filter: invert(1);
 			}
 		}
-
 	}
 
 	&.danger {
@@ -100,7 +108,11 @@ button.urlslab-button,
 
 		&:hover {
 			background-color: $grey-medium;
-			color: $black;
+		}
+
+		&[disabled]:hover {
+			background-color: $grey-lighter;
+			cursor: default;
 		}
 
 		&.simple:hover {
@@ -108,9 +120,16 @@ button.urlslab-button,
 			color: $primary-color;
 		}
 
-		&.active:hover {
-			background-color: $darker-blue;
-			color: $white;
+		&.active {
+
+			&:hover {
+				background-color: $darker-blue;
+				color: $white;
+			}
+
+			&[disabled]:hover {
+				background-color: $lighter-blue;
+			}
 		}
 
 		&.danger:hover {

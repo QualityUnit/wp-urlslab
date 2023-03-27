@@ -33,6 +33,7 @@ export async function cronAll( runCron, controller, cronTasks, onError ) {
 		}
 		return response;
 	} catch ( err ) {
+		onError( 'error' );
 		return false;
 	}
 }

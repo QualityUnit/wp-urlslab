@@ -1,15 +1,15 @@
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, handleSelected, Tooltip, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, Tooltip, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
+import useChangeRow from '../hooks/useChangeRow';
 
 export default function URLRelationTable( { slug } ) {
-	const { table, setTable, filters, setFilters, currentFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
-
-	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 	const pageId = 'src_url_id';
+	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
+	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 
 	const {
 		__,
@@ -20,7 +20,9 @@ export default function URLRelationTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, pageId, currentFilters, sortingColumn } );
+	} = useInfiniteFetch( { key: slug, url, pageId } );
+
+	const { row, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
 	const header = {
 		src_url_id: '',
@@ -33,7 +35,7 @@ export default function URLRelationTable( { slug } ) {
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
-				handleSelected( val, cell );
+				selectRow( val, cell );
 			} } />,
 			header: null,
 		} ),
@@ -52,13 +54,13 @@ export default function URLRelationTable( { slug } ) {
 		columnHelper.accessor( 'pos', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId, optionalSelector: 'dest_url_id' } ) } />,
+				onChange={ ( newVal ) => updateRow( { newVal, cell, optionalSelector: 'dest_url_id' } ) } />,
 			header: header.pos,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId, optionalSelector: 'dest_url_id' } ) } />,
+			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, optionalSelector: 'dest_url_id' } ) } />,
 			header: null,
 		} ),
 	];

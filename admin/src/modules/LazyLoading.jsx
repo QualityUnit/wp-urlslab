@@ -11,14 +11,12 @@ export default function LazyLoading( { moduleId } ) {
 
 	const tableMenu = new Map( [
 		[ 'youtube-cache', __( 'YouTube Videos' ) ],
-		[ 'css-cache', __( 'Cached CSS Files' ) ],
 		[ 'content-cache', __( 'Content Lazy Loading' ) ],
 	]
 	);
 
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
 	const YouTubeCacheTable = lazy( () => import( `../tables/YouTubeCacheTable.jsx` ) );
-	const CSSCacheTable = lazy( () => import( `../tables/CSSCacheTable.jsx` ) );
 	const ContentCacheTable = lazy( () => import( `../tables/ContentCacheTable.jsx` ) );
 
 	return (
@@ -33,10 +31,6 @@ export default function LazyLoading( { moduleId } ) {
 				{
 					activeSection === 'youtube-cache' &&
 					<YouTubeCacheTable slug="youtube-cache" />
-				}
-				{
-					activeSection === 'css-cache' &&
-					<CSSCacheTable slug="css-cache" />
 				}
 				{
 					activeSection === 'content-cache' &&

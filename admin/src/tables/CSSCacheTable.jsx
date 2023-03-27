@@ -1,15 +1,15 @@
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, handleSelected, Tooltip, SortMenu, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, Tooltip, SortMenu, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
+import useChangeRow from '../hooks/useChangeRow';
 
 export default function CSSCacheTable( { slug } ) {
-	const { table, setTable, filters, setFilters, sortingColumn, currentFilters, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
-
-	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 	const pageId = 'url_id';
+	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
+	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 
 	const {
 		__,
@@ -20,7 +20,9 @@ export default function CSSCacheTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, pageId, currentFilters, sortingColumn } );
+	} = useInfiniteFetch( { key: slug, url, pageId } );
+
+	const { row, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
 	const statusTypes = {
 		N: __( 'New' ),
@@ -40,7 +42,7 @@ export default function CSSCacheTable( { slug } ) {
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
-				handleSelected( val, cell );
+				selectRow( val, cell );
 			} } />,
 			header: null,
 		} ),
@@ -55,7 +57,7 @@ export default function CSSCacheTable( { slug } ) {
 				items={ statusTypes }
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
+				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.status,
 			size: 100,
 		} ),
@@ -71,7 +73,7 @@ export default function CSSCacheTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId } ) } />,
+			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
 	];
@@ -86,16 +88,10 @@ export default function CSSCacheTable( { slug } ) {
 				slug={ slug }
 				header={ header }
 				table={ table }
+				noExport
 				noImport
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				exportOptions={ {
-					url: slug,
-					filters,
-					fromId: `from_${ pageId }`,
-					pageId,
-					deleteCSVCols: [ pageId, 'dest_url_id' ],
-				} }
 			/>
 			<Table className="fadeInto" columns={ columns }
 				slug={ slug }

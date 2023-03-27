@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { useFilter, useSorting } from '../hooks/filteringSorting';
-import { useChangeRow } from '../hooks/useChangeRow';
+import { useSorting } from '../hooks/filteringSorting';
 
 export default function useTableUpdater( { slug } ) {
 	const [ tableHidden, setHiddenTable ] = useState( false );
@@ -8,9 +7,8 @@ export default function useTableUpdater( { slug } ) {
 	const [ filters, setFilters ] = useState( );
 	const [ rowToInsert, setInsertRow ] = useState( {} );
 	const { sortingColumn, sortBy } = useSorting( { slug } );
-	const { row, deleteRow, updateRow } = useChangeRow();
 
 	return {
-		tableHidden, setHiddenTable, table, setTable, filters, setFilters, sortingColumn, sortBy, row, rowToInsert, setInsertRow, deleteRow, updateRow,
+		tableHidden, setHiddenTable, table, setTable, filters, setFilters, sortingColumn, sortBy, rowToInsert, setInsertRow,
 	};
 }

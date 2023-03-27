@@ -1,15 +1,17 @@
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, handleSelected, Tooltip, Trash, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, Tooltip, Trash, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
+import useChangeRow from '../hooks/useChangeRow';
 
 export default function ScreenshotTable( { slug } ) {
-	const { table, setTable, filters, setFilters, currentFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
+	const pageId = 'url_id';
+
+	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn || '&sort_column=url_name&sort_direction=ASC' }`, [ filters, sortingColumn ] );
-	const pageId = 'url_id';
 
 	const {
 		__,
@@ -20,7 +22,9 @@ export default function ScreenshotTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, pageId, currentFilters, sortingColumn } );
+	} = useInfiniteFetch( { key: slug, url, pageId } );
+
+	const { row, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
 	const scrStatusTypes = {
 		N: __( 'Waiting' ),
@@ -41,7 +45,7 @@ export default function ScreenshotTable( { slug } ) {
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
-				handleSelected( val, cell );
+				selectRow( val, cell );
 			} } />,
 			header: null,
 		} ),
@@ -63,7 +67,7 @@ export default function ScreenshotTable( { slug } ) {
 			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
+				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.url_title,
 			size: 200,
 		} ),
@@ -73,7 +77,7 @@ export default function ScreenshotTable( { slug } ) {
 				items={ scrStatusTypes }
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
+				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.scr_status,
 			size: 100,
 		} ),
@@ -90,7 +94,7 @@ export default function ScreenshotTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId } ) } />,
+			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
 	];
@@ -103,7 +107,6 @@ export default function ScreenshotTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				slug={ slug }
-				currentFilters={ currentFilters }
 				header={ header }
 				table={ table }
 				onSort={ ( val ) => sortBy( val ) }

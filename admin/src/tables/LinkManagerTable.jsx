@@ -1,15 +1,15 @@
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, handleSelected, Tooltip, Trash, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, Tooltip, Trash, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
+import useChangeRow from '../hooks/useChangeRow';
 
 export default function LinkManagerTable( { slug } ) {
-	const { table, setTable, filters, setFilters, currentFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
-
-	const url = useMemo( () => `${ filters }${ sortingColumn || '&sort_column=url_name&sort_direction=ASC' }`, [ filters, sortingColumn ] );
 	const pageId = 'url_id';
+	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
+	const url = useMemo( () => `${ filters }${ sortingColumn || '&sort_column=url_name&sort_direction=ASC' }`, [ filters, sortingColumn ] );
 
 	const {
 		__,
@@ -20,7 +20,9 @@ export default function LinkManagerTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, pageId, currentFilters, sortingColumn } );
+	} = useInfiniteFetch( { key: slug, url, pageId } );
+
+	const { row, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
 	// const sumStatusTypes = {
 	// 	N: __( 'Waiting' ),
@@ -67,7 +69,7 @@ export default function LinkManagerTable( { slug } ) {
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
-				handleSelected( val, cell );
+				selectRow( val, cell );
 			} } />,
 			header: null,
 		} ),
@@ -81,7 +83,7 @@ export default function LinkManagerTable( { slug } ) {
 			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
+				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.url_title,
 			size: 150,
 		} ),
@@ -89,7 +91,7 @@ export default function LinkManagerTable( { slug } ) {
 			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
+				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.url_meta_description,
 			size: 100,
 		} ),
@@ -97,7 +99,7 @@ export default function LinkManagerTable( { slug } ) {
 			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
+				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.url_summary,
 			size: 150,
 		} ),
@@ -107,7 +109,7 @@ export default function LinkManagerTable( { slug } ) {
 				items={ httpStatusTypes }
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
+				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.http_status,
 			size: 100,
 		} ),
@@ -117,7 +119,7 @@ export default function LinkManagerTable( { slug } ) {
 				items={ visibilityTypes }
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
+				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.visibility,
 			size: 100,
 		} ),
@@ -127,7 +129,7 @@ export default function LinkManagerTable( { slug } ) {
 				items={ urlTypes }
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
+				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.url_type,
 			size: 100,
 		} ),
@@ -138,7 +140,7 @@ export default function LinkManagerTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId } ) } />,
+			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
 	];
