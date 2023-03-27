@@ -85,7 +85,7 @@ export default function SettingsOption( { settingId, option } ) {
 				);
 			case 'listbox':
 				return (
-					<SortMenu className="wide" name={ id } items={ possible_values } checkedId={ value } onChange={ ( selectedId ) => handleChange.mutate( selectedId ) }>
+					<SortMenu className="wide" name={ id } items={ possible_values } checkedId={ value } autoClose onChange={ ( selectedId ) => handleChange.mutate( selectedId ) }>
 						{ title }
 					</SortMenu>
 				);

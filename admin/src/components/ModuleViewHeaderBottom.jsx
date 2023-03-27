@@ -19,7 +19,7 @@ import ImportPanel from './ImportPanel';
 import DangerPanel from './DangerPanel';
 import TableFilter from './TableFilter';
 
-export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, noDelete, header, table, slug, exportOptions, defaultSortBy, onSort, onFilter } ) {
+export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, noDelete, header, table, slug, exportOptions, rowsSelected, defaultSortBy, onSort, onFilter } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 
@@ -89,7 +89,7 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 
 					<Button className="" onClick={ () => handleRefresh() }><RefreshIcon />{ __( 'Refresh table' ) }</Button>
 					{ ! noDelete &&
-					<Button className="ml-s" onClick={ () => handlePanel( 'deleteSelected' ) } disabled><Trash />{ __( 'Delete selected' ) }</Button>
+						<Button className="ml-s" onClick={ () => handlePanel( 'deleteSelected' ) } disabled={ ! rowsSelected }><Trash />{ __( 'Delete selected' ) }</Button>
 					}
 
 					<div className="ma-left flex flex-align-center">

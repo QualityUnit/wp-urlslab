@@ -3,7 +3,7 @@ import { VitePluginFonts } from 'vite-plugin-fonts';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
 
-const hash = Math.floor( Math.random() * 90000 ) + 10000;
+const hash = ( Math.random() + 1 ).toString( 36 ).substring( 2 );
 
 // https://vitejs.dev/config/
 export default defineConfig( {
@@ -40,7 +40,8 @@ export default defineConfig( {
 			},
 			output: {
 				// this gets rid of the hash on main.css
-				entryFileNames: '[name].js',
+				entryFileNames: `[name]-${ hash }.js`,
+				chunkFileNames: `assets/[name]-${ hash }.js`,
 				assetFileNames: ( asset ) => {
 					if ( asset.name === 'main.css' ) {
 						return `assets/[name].[ext]`;
