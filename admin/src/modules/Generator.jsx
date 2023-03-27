@@ -12,7 +12,7 @@ export default function Generator( { moduleId } ) {
 	const GeneratorTable = lazy( () => import( `../tables/GeneratorTable.jsx` ) );
 	const slug = 'content-generator';
 	const tableMenu = new Map( [
-		[ slug, __( 'Generators' ) ],
+		[ slug, __( 'Contents' ) ],
 	] );
 
 	return (

@@ -3,7 +3,7 @@
 
 .urlslab-app {
 	overflow-x: hidden;
-	min-height: 100vh;
+	min-height: calc(100vh - 32px);
 
 	&-main {
 		// padding-left: $iconsMenuWidth;
@@ -17,7 +17,7 @@
 			}
 
 			.urlslab-mainmenu.open + & {
-				padding-left: calc($mainMenuWidth - 0.5em);
+				padding-left: calc($mainMenuWidth - 1.5em);
 			}
 		}
 	}

@@ -17,7 +17,7 @@ $cellHeight: 3.5em;
 
 	&:not(.resizable) {
 		table-layout: fixed;
-		width: 100% !important;
+		width: calc(100% - 1px) !important;
 	}
 
 	&-container {
