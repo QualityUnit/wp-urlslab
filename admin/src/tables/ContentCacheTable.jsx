@@ -1,15 +1,13 @@
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, handleSelected, Tooltip, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, Tooltip, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
-
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function ContentCacheTable( { slug } ) {
-	const { table, setTable, filters, setFilters, sortingColumn, sortBy, row, deleteRow } = useTableUpdater( { slug } );
-
-	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 	const pageId = 'cache_crc32';
+	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
+	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 
 	const {
 		__,
@@ -29,13 +27,6 @@ export default function ContentCacheTable( { slug } ) {
 	};
 
 	const columns = [
-		columnHelper.accessor( 'check', {
-			className: 'checkbox',
-			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
-				handleSelected( val, cell );
-			} } />,
-			header: null,
-		} ),
 		columnHelper.accessor( 'date_changed', {
 			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
 			header: header.date_changed,
@@ -51,11 +42,6 @@ export default function ContentCacheTable( { slug } ) {
 			header: header.cache_content,
 			size: 500,
 		} ),
-		columnHelper.accessor( 'delete', {
-			className: 'deleteRow',
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId } ) } />,
-			header: null,
-		} ),
 	];
 
 	if ( status === 'loading' ) {
@@ -68,16 +54,11 @@ export default function ContentCacheTable( { slug } ) {
 				slug={ slug }
 				header={ header }
 				table={ table }
+				noDelete
+				noExport
 				noImport
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				exportOptions={ {
-					url: slug,
-					filters,
-					fromId: `from_${ pageId }`,
-					pageId,
-					deleteCSVCols: [ pageId, 'dest_url_id' ],
-				} }
 			/>
 			<Table className="fadeInto" columns={ columns }
 				slug={ slug }
@@ -86,10 +67,6 @@ export default function ContentCacheTable( { slug } ) {
 					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 				}
 			>
-				{ row
-					? <Tooltip center>{ __( 'Content cache entry has been deleted.' ) }</Tooltip>
-					: null
-				}
 				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
 			</Table>
 		</>

@@ -1,5 +1,4 @@
 import DashboardModule from '../components/DashboardModule';
-// import SearchField from '../elements/SearchField';
 
 export default function Modules( { modules, activePage } ) {
 	// const [ searchValue, setSearchVal ] = useState( '' );
@@ -8,6 +7,7 @@ export default function Modules( { modules, activePage } ) {
 	// 	setSearchVal( value );
 	// };
 
+	console.log( 'bla' );
 	if ( ! modules.length ) {
 		return;
 	}
