@@ -7,7 +7,6 @@ export default function useTableUpdater( { slug } ) {
 	const [ filters, setFilters ] = useState( );
 	const [ rowToInsert, setInsertRow ] = useState( {} );
 	const { sortingColumn, sortBy } = useSorting( { slug } );
-	console.log( 'bla' );
 
 	return {
 		tableHidden, setHiddenTable, table, setTable, filters, setFilters, sortingColumn, sortBy, rowToInsert, setInsertRow,
