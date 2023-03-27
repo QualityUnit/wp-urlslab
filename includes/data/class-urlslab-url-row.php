@@ -453,12 +453,13 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	/**
 	 * if URLsLab has screenshot, also summarization should be done.
 	 * If just summarization was requested and now we need also screenshot, we need to request it again
+	 *
 	 * @param $schedule_type input value should be URL_SCHEDULE_SCREENSHOT_REQUIRED or URL_SCHEDULE_SUMMARIZATION_REQUIRED
 	 *
 	 * @return void
 	 */
-	public function request_url_schedule( $schedule_type): bool {
-		if ( ! $this->is_http_valid() || $this->has_screenshot() ) {
+	public function request_url_schedule( $schedule_type ): bool {
+		if ( ! $this->is_http_valid() || $this->has_screenshot() || ! $this->is_visible() || $this->get_url_schedule() == $schedule_type ) {
 			return false;
 		}
 
@@ -470,17 +471,17 @@ class Urlslab_Url_Row extends Urlslab_Data {
 			return false;
 		}
 
-		if ($schedule_type == self::URL_SCHEDULE_SUMMARIZATION_REQUIRED) {
+		if ( $schedule_type == self::URL_SCHEDULE_SUMMARIZATION_REQUIRED ) {
 			if (
 				$this->get_sum_status() == self::SUM_STATUS_ACTIVE ||
-				$this->get_url_schedule() == self::URL_SCHEDULE_SUMMARIZATION_SCHEDULED ||
-				$this->get_url_schedule() == self::URL_SCHEDULE_SUMMARIZATION_REQUIRED
-				) {
+				$this->get_url_schedule() == self::URL_SCHEDULE_SUMMARIZATION_SCHEDULED
+			) {
 				return false;
 			}
 		}
 
 		$this->set_url_schedule( $schedule_type );
+
 		return $this->update();
 	}
 

@@ -67,7 +67,9 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 				$url_data = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( new Urlslab_Url( $urlslab_atts['url'] ) );
 
 				if ( ! empty( $url_data ) && $url_data->has_screenshot() ) {
-					$url_data->request_url_schedule( Urlslab_Url_Row::URL_SCHEDULE_SCREENSHOT_REQUIRED );
+					if ( $this->get_option( self::SETTING_NAME_SCHEDULE_SCREENSHOTS ) ) {
+						$url_data->request_url_schedule( Urlslab_Url_Row::URL_SCHEDULE_SCREENSHOT_REQUIRED );
+					}
 					$alt_text = $url_data->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
 					if ( empty( $alt_text ) ) {
 						$alt_text = $urlslab_atts['alt'];
