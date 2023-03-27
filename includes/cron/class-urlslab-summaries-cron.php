@@ -80,7 +80,7 @@ class Urlslab_Summaries_Cron extends Urlslab_Cron {
 
 		$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' SET update_sum_date=%s, sum_status=%s WHERE url_id IN (' . implode( ',', array_fill( 0, count( $url_rows ), '%d' ) ) . ')', $data ) ); // phpcs:ignore
 
-		$urlslab_summaries = $this->client->getSummary( new \OpenAPI\Client\Model\DomainDataRetrievalUpdatableRetrieval( array( 'urls' => $url_names ) ) );
+		$urlslab_summaries = $this->client->getSummary( new \OpenAPI\Client\Model\DomainDataRetrievalDataRequest( array( 'urls' => $url_names ) ) );
 
 		$some_urls_updated = false;
 		foreach ( $urlslab_summaries as $id => $summary ) {
