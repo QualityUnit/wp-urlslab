@@ -1,16 +1,16 @@
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, handleSelected, Tooltip, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, Tooltip, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
+import useChangeRow from '../hooks/useChangeRow';
 
 export default function GeneratorTable( { slug } ) {
-	const { table, setTable, filters, setFilters, currentFilters, sortingColumn, sortBy, row, deleteRow } = useTableUpdater( { slug } );
+	const pageId = 'generator_id';
+	const { table, setTable, filters, setFilters, currentFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
-	const pageId = 'generator_id';
-
 
 	const {
 		__,
@@ -22,6 +22,8 @@ export default function GeneratorTable( { slug } ) {
 		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { key: slug, url, pageId, currentFilters, sortingColumn } );
+
+	const { row, selectRow, deleteRow } = useChangeRow( { data, url, slug, pageId } );
 
 	const header = {
 		query: __( 'Query' ),
@@ -36,7 +38,7 @@ export default function GeneratorTable( { slug } ) {
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
-				handleSelected( val, cell );
+				selectRow( val, cell );
 			} } />,
 			header: null,
 		} ),
@@ -72,7 +74,7 @@ export default function GeneratorTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId } ) } />,
+			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
 	];
