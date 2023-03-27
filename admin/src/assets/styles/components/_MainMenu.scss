@@ -20,7 +20,7 @@
 .urlslab-mainmenu {
 
 	@extend %menuBg;
-	position: absolute;
+	position: fixed;
 	z-index: 5;
 	height: 100%;
 	padding: 1em 0;
@@ -124,6 +124,7 @@
 			position: absolute;
 			display: block;
 			fill: rgba($white, 60%);
+			transform: translateZ(0);
 			transition: all $transitionTime;
 		}
 
@@ -133,6 +134,7 @@
 
 			&.settings {
 				margin-top: auto;
+				margin-bottom: 0.65em;
 			}
 
 			&.active svg {
@@ -209,8 +211,6 @@
 			cursor: default;
 
 			button {
-				font-weight: $font-weight-semi;
-
 				cursor: default;
 			}
 		}
