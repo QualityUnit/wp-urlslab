@@ -471,7 +471,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 			return false;
 		}
 
-		if ( $schedule_type == self::URL_SCHEDULE_SUMMARIZATION_REQUIRED ) {
+		if ( self::URL_SCHEDULE_SUMMARIZATION_REQUIRED == $schedule_type ) {
 			if (
 				$this->get_sum_status() == self::SUM_STATUS_ACTIVE ||
 				$this->get_url_schedule() == self::URL_SCHEDULE_SUMMARIZATION_SCHEDULED

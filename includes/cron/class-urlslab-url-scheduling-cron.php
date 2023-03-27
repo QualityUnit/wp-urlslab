@@ -41,14 +41,14 @@ class Urlslab_Url_Scheduling_Cron extends Urlslab_Cron {
 	private function update_rows( $url_ids, $new_status ) {
 		global $wpdb;
 
-		if (empty($url_ids)) {
+		if ( empty( $url_ids ) ) {
 			return true;
 		}
 
 		return $wpdb->query(
 			$wpdb->prepare(
 				'UPDATE ' . URLSLAB_URLS_TABLE . ' SET scr_schedule=%s WHERE url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ')', // phpcs:ignore
-				array_merge(array($new_status),$url_ids)
+				array_merge( array( $new_status ), $url_ids )
 			)
 		);
 	}
@@ -67,7 +67,7 @@ class Urlslab_Url_Scheduling_Cron extends Urlslab_Cron {
 			$urls[]    = $row['url_name'];
 		}
 
-		if (empty($url_ids)) {
+		if ( empty( $url_ids ) ) {
 			return false;
 		}
 
@@ -111,7 +111,7 @@ class Urlslab_Url_Scheduling_Cron extends Urlslab_Cron {
 			$urls[]    = $row['url_name'];
 		}
 
-		if (empty($url_ids)) {
+		if ( empty( $url_ids ) ) {
 			return false;
 		}
 
