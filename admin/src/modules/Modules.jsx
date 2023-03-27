@@ -7,7 +7,6 @@ export default function Modules( { modules, activePage } ) {
 	// 	setSearchVal( value );
 	// };
 
-	console.log( 'bla' );
 	if ( ! modules.length ) {
 		return;
 	}
@@ -24,12 +23,12 @@ export default function Modules( { modules, activePage } ) {
 						module.id !== 'general'
 						// ( title.includes( searchValue ) || excerpt.includes( searchValue ) )
 							? <DashboardModule
-								key={ module.id }
-								moduleId={ module.id }
-								hasApi={ module.apikey }
-								isActive={ module.active }
-								title={ module.title }
-								activePage={ ( mod ) => activePage( mod ) }
+									key={ module.id }
+									moduleId={ module.id }
+									hasApi={ module.apikey }
+									isActive={ module.active }
+									title={ module.title }
+									activePage={ ( mod ) => activePage( mod ) }
 							>
 								{ module.description }
 							</DashboardModule>
