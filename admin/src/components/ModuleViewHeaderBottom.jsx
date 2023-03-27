@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
-import { get, set } from 'idb-keyval';
 
 import { fetchData } from '../api/fetching';
 import { deleteAll } from '../api/deleteTableData';
@@ -59,13 +58,10 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 	);
 
 	const handleSorting = ( val ) => {
-		get( slug ).then( ( resultObj ) => {
-			set( slug, { sortBy: val, ...resultObj } );
-		} );
 		onSort( val );
 	};
 
-	const handleDelete = useMutation( {
+	const handleDeleteAll = useMutation( {
 		mutationFn: () => {
 			return deleteAll( slug );
 		},
@@ -77,8 +73,8 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 	const handlePanel = ( key ) => {
 		setActivePanel( key );
 
-		if ( key === 'danger' ) {
-			handleDelete.mutate();
+		if ( key === 'deleteall' ) {
+			handleDeleteAll.mutate();
 		}
 	};
 
@@ -92,10 +88,13 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 				<div className="urlslab-moduleView-headerBottom__top flex flex-align-center">
 
 					<Button className="" onClick={ () => handleRefresh() }><RefreshIcon />{ __( 'Refresh table' ) }</Button>
+					{ ! noDelete &&
+					<Button className="ml-s" onClick={ () => handlePanel( 'deleteSelected' ) } disabled><Trash />{ __( 'Delete selected' ) }</Button>
+					}
 
 					<div className="ma-left flex flex-align-center">
 						{ ! noDelete &&
-							<Button className="no-padding underline simple" onClick={ () => handlePanel( 'delete' ) }>{ __( 'Delete All' ) }</Button>
+							<Button className="no-padding underline simple" onClick={ () => handlePanel( 'deleteall' ) }>{ __( 'Delete All' ) }</Button>
 						}
 						{ ! noExport &&
 						<Button className="no-padding underline simple ml-m" onClick={ () => handlePanel( 'export' ) }>{ __( 'Export CSV' ) }</Button>
@@ -134,11 +133,22 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 
 			</div>
 			{
-				activePanel === 'delete' &&
+				activePanel === 'deleteall' &&
 				<DangerPanel title={ __( 'Delete All?' ) }
 					text={ __( 'Are you sure you want to delete all rows? Deleting rows will remove them from all modules where this table occurs.' ) }
 					button={ <><Trash />{ __( 'Delete All' ) }</> }
 					handlePanel={ handlePanel }
+					action="deleteall"
+				/>
+			}
+
+			{
+				activePanel === 'deleteSelected' &&
+				<DangerPanel title={ __( 'Delete Selected?' ) }
+					text={ __( 'Are you sure you want to delete selected rows? Deleting rows will remove them from all modules where this table occurs.' ) }
+					button={ <><Trash />{ __( 'Delete selected' ) }</> }
+					handlePanel={ handlePanel }
+					action="deleteselected"
 				/>
 			}
 

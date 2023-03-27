@@ -3,7 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import useCloseModal from '../hooks/useCloseModal';
 import Button from '../elements/Button';
 
-export default function DangerPanel( { title, text, button, handlePanel } ) {
+export default function DangerPanel( { title, text, button, handlePanel, action } ) {
 	const { __ } = useI18n();
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
 
@@ -26,7 +26,7 @@ export default function DangerPanel( { title, text, button, handlePanel } ) {
 				<p>{ text }</p>
 				<div className="flex">
 					<Button className="ma-left simple" onClick={ () => hidePanel() }>{ __( 'Cancel' ) }</Button>
-					<Button className="ml-s danger" onClick={ () => hidePanel( 'danger' ) }>{ button }</Button>
+					<Button className="ml-s danger" onClick={ () => hidePanel( action ) }>{ button }</Button>
 				</div>
 			</div>
 		</div>

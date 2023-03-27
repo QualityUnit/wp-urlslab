@@ -1,4 +1,4 @@
-import { useChangeRow } from '../hooks/useChangeRow';
+import useChangeRow from '../hooks/useChangeRow';
 import Button from '../elements/Button';
 
 export default function RowInserter( { columns, inserter } ) {

@@ -1,16 +1,16 @@
 /* eslint-disable indent */
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, handleSelected, SortMenu, LangMenu, InputField, Checkbox, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, SortMenu, LangMenu, InputField, Checkbox, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
+import useChangeRow from '../hooks/useChangeRow';
 
 export default function KeywordsTable( { slug } ) {
-	const { table, setTable, filters, setFilters, sortingColumn, sortBy, row, deleteRow, updateRow } = useTableUpdater( { slug } );
-
-	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 	const pageId = 'kw_id';
+	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
+	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 
 	const {
 		__,
@@ -22,6 +22,8 @@ export default function KeywordsTable( { slug } ) {
 		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { key: slug, url, pageId } );
+
+	const { row, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
 	const keywordTypes = {
 		M: __( 'Manual' ),
@@ -45,7 +47,7 @@ export default function KeywordsTable( { slug } ) {
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
-				handleSelected( val, cell );
+				selectRow( val, cell );
 			} } />,
 			header: null,
 			enableResizing: false,
@@ -57,7 +59,7 @@ export default function KeywordsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'kwType', {
 			className: 'nolimit',
-			cell: ( cell ) => <SortMenu items={ keywordTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
+			cell: ( cell ) => <SortMenu items={ keywordTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.kwType,
 			size: 100,
 		} ),
@@ -68,14 +70,14 @@ export default function KeywordsTable( { slug } ) {
 		columnHelper.accessor( 'kw_priority', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
+				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.kw_priority,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'lang', {
 			className: 'nolimit',
 			cell: ( cell ) => <LangMenu checkedId={ cell?.getValue() }
-				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) }
+				onChange={ ( newVal ) => updateRow( { newVal, cell } ) }
 			/>,
 			header: header.lang,
 			size: 165,
@@ -91,7 +93,7 @@ export default function KeywordsTable( { slug } ) {
 		columnHelper.accessor( 'urlFilter', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.renderValue() }
-				onChange={ ( newVal ) => updateRow( { data, newVal, url, slug, cell, rowSelector: pageId } ) } />,
+				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.urlFilter,
 			size: 100,
 		} ),
@@ -104,7 +106,7 @@ export default function KeywordsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { data, url, slug, cell, rowSelector: pageId } ) } />,
+			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
 	];

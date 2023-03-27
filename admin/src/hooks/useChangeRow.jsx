@@ -3,15 +3,15 @@ import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { deleteRow as del } from '../api/deleteTableData';
 import { setData } from '../api/fetching';
 
-export function useChangeRow() {
+export default function useChangeRow( { data, url, slug, pageId } ) {
 	const [ rowValue, setRow ] = useState();
 	const queryClient = useQueryClient();
 
-	const getRowId = ( cell, rowSelector, optionalSelector ) => {
+	const getRowId = ( cell, optionalSelector ) => {
 		if ( optionalSelector ) {
-			return `${ cell.row.original[ rowSelector ] }/${ cell.row.original[ optionalSelector ] }`;
+			return `${ cell.row.original[ pageId ] }/${ cell.row.original[ optionalSelector ] }`;
 		}
-		return cell.row.original[ rowSelector ];
+		return cell.row.original[ pageId ];
 	};
 
 	const getRow = ( cell ) => {
@@ -20,7 +20,7 @@ export function useChangeRow() {
 
 	const insertNewRow = useMutation( {
 		mutationFn: async ( options ) => {
-			const { data, slug, url, rowToInsert, pseudoRow } = options;
+			const { rowToInsert, pseudoRow } = options;
 			const newPagesArray = data?.pages.map( ( page ) => [ pseudoRow, ...page ] );
 
 			//For optimistic update -- will be moved to onSuccess and will get row response from API
@@ -29,27 +29,26 @@ export function useChangeRow() {
 			// 	pageParams: origData.pageParams,
 			// } ) );
 			const response = await setData( `${ slug }/import`, { rows: [ rowToInsert ] } );
-			return { response, options };
+			return response;
 		},
-		onSuccess: ( { response, options } ) => {
+		onSuccess: ( response ) => {
 			const { ok } = response;
-			const { slug, url } = options;
 			if ( ok ) {
 				queryClient.invalidateQueries( [ slug, url ] );
 			}
 		},
 	} );
-	const insertRow = ( { data, url, slug, rowToInsert, pseudoRow } ) => {
+	const insertRow = ( { rowToInsert, pseudoRow } ) => {
 		insertNewRow.mutate( { data, url, slug, rowToInsert, pseudoRow } );
 	};
 
 	const deleteSelectedRow = useMutation( {
 		mutationFn: async ( options ) => {
-			const { data, url, slug, cell, rowSelector, optionalSelector } = options;
+			const { cell, optionalSelector } = options;
 			const newPagesArray = data?.pages.map( ( page ) =>
 
 				page.filter( ( row ) =>
-					row[ rowSelector ] !== getRowId( cell, rowSelector )
+					row[ pageId ] !== getRowId( cell )
 				),
 			) ?? [];
 
@@ -59,12 +58,11 @@ export function useChangeRow() {
 			} ) );
 			setRow( getRow( cell ) );
 			setTimeout( () => setRow(), 3000 );
-			const response = await del( `${ slug }/${ getRowId( cell, rowSelector, optionalSelector ) }` );
-			return { response, options };
+			const response = await del( `${ slug }/${ getRowId( cell, optionalSelector ) }` );
+			return response;
 		},
-		onSuccess: async ( { response, options } ) => {
+		onSuccess: async ( response ) => {
 			const { ok } = response;
-			const { slug, url } = options;
 			if ( ok ) {
 				await queryClient.invalidateQueries( [ slug, url ] );
 			}
@@ -73,19 +71,19 @@ export function useChangeRow() {
 			await queryClient.invalidateQueries( [ options.slug, 'count' ] );
 		},
 	} );
-	const deleteRow = ( { data, url, slug, cell, rowSelector, optionalSelector } ) => {
-		deleteSelectedRow.mutate( { data, url, slug, cell, rowSelector, optionalSelector } );
+	const deleteRow = ( { cell, optionalSelector } ) => {
+		deleteSelectedRow.mutate( { data, url, slug, cell, optionalSelector } );
 	};
 
 	const updateRowData = useMutation( {
 		mutationFn: async ( options ) => {
-			const { data, newVal, url, slug, cell, rowSelector, optionalSelector } = options;
+			const { newVal, cell, optionalSelector } = options;
 			const cellId = cell.column.id;
 
 			const newPagesArray = data?.pages.map( ( page ) =>
 
 				page.map( ( row ) => {
-					if ( row[ rowSelector ] === getRowId( cell, rowSelector ) ) {
+					if ( row[ pageId ] === getRowId( cell ) ) {
 						row[ cell.column.id ] = newVal;
 						return row;
 					}
@@ -100,20 +98,24 @@ export function useChangeRow() {
 			} ) );
 			// setRow( getRow( cell ) );
 			// setTimeout( () => setRow(), 3000 );
-			const response = await setData( `${ slug }/${ getRowId( cell, rowSelector, optionalSelector ) }`, { [ cellId ]: newVal } );
-			return { response, options };
+			const response = await setData( `${ slug }/${ getRowId( cell, optionalSelector ) }`, { [ cellId ]: newVal } );
+			return response;
 		},
-		onSuccess: ( { response, options } ) => {
+		onSuccess: ( response ) => {
 			const { ok } = response;
-			const { slug, url } = options;
 			if ( ok ) {
 				queryClient.invalidateQueries( [ slug, url ] );
 			}
 		},
 	} );
-	const updateRow = ( { data, newVal, url, slug, cell, rowSelector, optionalSelector } ) => {
-		updateRowData.mutate( { data, newVal, url, slug, cell, rowSelector, optionalSelector } );
+	const updateRow = ( { newVal, cell, optionalSelector } ) => {
+		updateRowData.mutate( { data, newVal, url, slug, cell, optionalSelector } );
 	};
 
-	return { row: rowValue, insertRow, deleteRow, updateRow };
+	const selectRow = ( val, cell ) => {
+		cell.row.toggleSelected();
+		console.log( { selected: cell.row.original[ pageId ] } );
+	};
+
+	return { row: rowValue, insertRow, selectRow, deleteRow, updateRow };
 }
