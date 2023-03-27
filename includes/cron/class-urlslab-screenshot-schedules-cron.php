@@ -37,7 +37,7 @@ class Urlslab_Screenshot_Schedules_Cron extends Urlslab_Cron {
 		$url_rows = $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT * FROM ' . URLSLAB_URLS_TABLE . ' WHERE scr_schedule = %s LIMIT 50', // phpcs:ignore
-				Urlslab_Url_Row::SCR_SCHEDULE_NEW
+				Urlslab_Url_Row::URL_SCHEDULE_SCREENSHOT_REQUIRED
 			),
 			ARRAY_A
 		);
@@ -69,7 +69,7 @@ class Urlslab_Screenshot_Schedules_Cron extends Urlslab_Cron {
 				$wpdb->query(
 					$wpdb->prepare(
 						'UPDATE ' . URLSLAB_URLS_TABLE . ' SET scr_schedule = %s WHERE url_name IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ')', // phpcs:ignore
-						Urlslab_Url_Row::SCR_SCHEDULE_SCHEDULED,
+						Urlslab_Url_Row::URL_SCHEDULE_SCREENSHOT_SCHEDULED,
 						...$url_ids
 					)
 				);
@@ -77,7 +77,7 @@ class Urlslab_Screenshot_Schedules_Cron extends Urlslab_Cron {
 				$wpdb->query(
 					$wpdb->prepare(
 						'UPDATE ' . URLSLAB_URLS_TABLE . ' SET scr_schedule = %s WHERE url_name IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ')', // phpcs:ignore
-						Urlslab_Url_Row::SCR_SCHEDULE_ERROR,
+						Urlslab_Url_Row::URL_SCHEDULE_ERROR,
 						...$url_ids
 					)
 				);
