@@ -38,9 +38,11 @@ class Urlslab_Api_Screenshots extends Urlslab_Api_Urls {
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
-									case Urlslab_Url_Row::SCR_SCHEDULE_SCHEDULED:
-									case Urlslab_Url_Row::SCR_SCHEDULE_NEW:
-									case Urlslab_Url_Row::SCR_STATUS_ERROR:
+									case Urlslab_Url_Row::URL_SCHEDULE_SCREENSHOT_SCHEDULED:
+									case Urlslab_Url_Row::URL_SCHEDULE_SCREENSHOT_REQUIRED:
+									case Urlslab_Url_Row::URL_SCHEDULE_SUMMARIZATION_SCHEDULED:
+									case Urlslab_Url_Row::URL_SCHEDULE_SUMMARIZATION_REQUIRED:
+									case Urlslab_Url_Row::URL_SCHEDULE_ERROR:
 										return true;
 									default:
 										return false;

@@ -21,6 +21,8 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	public const SETTING_NAME_PAGE_ID_LINKS_TO_SLUG = 'urlslab_pid_to_slug';
 	public const SETTING_NAME_DELETE_LINK_IF_PAGE_ID_NOT_FOUND = 'urlslab_pid_del_notfound';
 	const SETTING_NAME_MARK_AS_VALID_CURRENT_URL = 'urlslab_mark_as_valid_current_url';
+	const SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_INTERNAL_LINKS = 'urlslab_auto_sum_int_links';
+	const SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_EXTERNAL_LINKS = 'urlslab_auto_sum_ext_links';
 
 
 	public function init_widget() {
@@ -247,15 +249,10 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 					foreach ( $link_elements as $arr_element ) {
 						list( $dom_elem, $url_obj ) = $arr_element;
-						if (
-							isset( $result[ $url_obj->get_url_id() ] ) &&
-							! empty( $result[ $url_obj->get_url_id() ] )
-						) {
+						if ( isset( $result[ $url_obj->get_url_id() ] ) && ! empty( $result[ $url_obj->get_url_id() ] ) ) {
 
-							if (
-								$this->get_option( self::SETTING_NAME_REMOVE_LINKS ) &&
-								! $result[ $url_obj->get_url_id() ]->is_visible()
-							) {
+							if ( $this->get_option( self::SETTING_NAME_REMOVE_LINKS ) && ! $result[ $url_obj->get_url_id() ]->is_visible() ) {
+
 								//link should not be visible, remove it from content
 								if ( $dom_elem->childNodes->length > 0 ) {
 									$fragment = $document->createDocumentFragment();
@@ -275,6 +272,14 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 							} else {
 								//enhance title if url has no title
 								if ( empty( $dom_elem->getAttribute( 'title' ) ) ) {
+
+									if (
+										$result[ $url_obj->get_url_id() ]->is_internal() && $this->get_option( self::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_INTERNAL_LINKS ) ||
+										! $result[ $url_obj->get_url_id() ]->is_internal() && $this->get_option( self::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_EXTERNAL_LINKS )
+									) {
+										$result[ $url_obj->get_url_id() ]->request_url_schedule( Urlslab_Url_Row::URL_SCHEDULE_SUMMARIZATION_REQUIRED );
+									}
+
 									$dom_elem->setAttribute(
 										'title',
 										$result[ $url_obj->get_url_id() ]->get_summary_text( $strategy ),
@@ -318,7 +323,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		}
 
 		if ( $this->get_option( self::SETTING_NAME_MARK_AS_VALID_CURRENT_URL ) ) {
-			if ( Urlslab_Url_Row::HTTP_STATUS_NOT_PROCESSED == $currentUrl->get_url_http_status() ) {
+			if ( Urlslab_Url_Row::HTTP_STATUS_NOT_PROCESSED == $currentUrl->get_http_status() ) {
 				$currentUrl->set_http_status( Urlslab_Url_Row::HTTP_STATUS_OK );
 			}
 		}
@@ -428,11 +433,11 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			__( 'Define how often we should check the status of URLs used in your website. The functionality can use a lot of computation time. To ensure optimal performance, we recommend performing monthly or quarterly updates.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				86400     => __( 'Daily' ),
-				604800    => __( 'Weekly' ),
-				2419200   => __( 'Monthly' ),
-				7257600   => __( 'Quarterly' ),
-				31536000  => __( 'Yearly' ),
+				86400            => __( 'Daily' ),
+				604800           => __( 'Weekly' ),
+				2419200          => __( 'Monthly' ),
+				7257600          => __( 'Quarterly' ),
+				31536000         => __( 'Yearly' ),
 				self::FREQ_NEVER => __( 'Never' ),
 			),
 			function( $value ) {
@@ -465,6 +470,29 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			'validation'
 		);
 
+		$this->add_options_form_section( 'scheduling', __( 'Scheduling' ), __( 'Summarizations of urls help your page to increase quality of content and it helps your visitor to understand what information he will find if he clicks on the url on destination page. URLsLab can automatically generate summarization with powerful AI algorythm for all URLs found in your web page and enhance each link title with this text. Summary will be used also to enhance the meta description tag.' ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_INTERNAL_LINKS,
+			true,
+			true,
+			__( 'Schedule all internal links' ),
+			__( 'If plugin finds any new internal link in your page, it will automatically schedule link for summarization to URLsLab. It can take few days to get summary into your plugin database. Summarization of internal link is used not just for enhancing title of links, but also as meta description tag value.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'scheduling'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_EXTERNAL_LINKS,
+			false,
+			true,
+			__( 'Schedule all external links' ),
+			__( 'If plugin finds any new external link in your page, it will automatically schedule link for summarization to URLsLab. It can take few days to get summary into your plugin database.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'scheduling'
+		);
 
 	}
 

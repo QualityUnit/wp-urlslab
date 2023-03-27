@@ -31,9 +31,11 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	public const SCREENSHOT_TYPE_FULL_PAGE = 'full-page';
 	public const SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL = 'carousel-thumbnail';
 	public const SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL = 'full-page-thumbnail';
-	const SCR_SCHEDULE_NEW = 'N';
-	const SCR_SCHEDULE_SCHEDULED = 'S';
-	const SCR_SCHEDULE_ERROR = 'E';
+	const URL_SCHEDULE_SCREENSHOT_REQUIRED = 'N';
+	const URL_SCHEDULE_SUMMARIZATION_REQUIRED = 'M';
+	const URL_SCHEDULE_SCREENSHOT_SCHEDULED = 'S';
+	const URL_SCHEDULE_SUMMARIZATION_SCHEDULED = 'T';
+	const URL_SCHEDULE_ERROR = 'E';
 
 	//related resources schedule
 	const REL_NOT_REQUESTED_SCHEDULE = '';
@@ -64,7 +66,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$this->set_url_meta_description( $url['url_meta_description'] ?? '', $loaded_from_db );
 		$this->set_url_summary( $url['url_summary'] ?? '', $loaded_from_db );
 		$this->set_visibility( $url['visibility'] ?? self::VISIBILITY_VISIBLE, $loaded_from_db );
-		$this->set_scr_schedule( $url['scr_schedule'] ?? '', $loaded_from_db );
+		$this->set_url_schedule( $url['scr_schedule'] ?? '', $loaded_from_db );
 		$this->set_rel_schedule( $url['rel_schedule'] ?? self::REL_NOT_REQUESTED_SCHEDULE, $loaded_from_db );
 		$this->set_rel_updated( $url['rel_updated'] ?? self::get_now(), $loaded_from_db );
 
@@ -165,7 +167,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		return $this->get( 'update_http_date' );
 	}
 
-	public function get_scr_schedule(): string {
+	public function get_url_schedule(): string {
 		return $this->get( 'scr_schedule' );
 	}
 
@@ -287,7 +289,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$this->set( 'url_type', $url_type, $loaded_from_db );
 	}
 
-	public function set_scr_schedule( string $scr_schedule, $loaded_from_db = false ): void {
+	public function set_url_schedule( string $scr_schedule, $loaded_from_db = false ): void {
 		$this->set( 'scr_schedule', $scr_schedule, $loaded_from_db );
 	}
 
@@ -448,11 +450,39 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		return is_numeric( $result );
 	}
 
-	public function request_scr_schedule() {
-		if ( empty( $this->get_scr_schedule() ) && ! $this->has_screenshot() && $this->is_http_valid() ) {
-			$this->set_scr_schedule( Urlslab_Url_Row::SCR_SCHEDULE_NEW );
-			$this->update();
+	/**
+	 * if URLsLab has screenshot, also summarization should be done.
+	 * If just summarization was requested and now we need also screenshot, we need to request it again
+	 *
+	 * @param $schedule_type input value should be URL_SCHEDULE_SCREENSHOT_REQUIRED or URL_SCHEDULE_SUMMARIZATION_REQUIRED
+	 *
+	 * @return void
+	 */
+	public function request_url_schedule( $schedule_type ): bool {
+		if ( ! $this->is_http_valid() || $this->has_screenshot() || ! $this->is_visible() || $this->get_url_schedule() == $schedule_type ) {
+			return false;
 		}
+
+		if (
+			$this->get_url_schedule() == self::URL_SCHEDULE_ERROR ||
+			$this->get_url_schedule() == self::URL_SCHEDULE_SCREENSHOT_SCHEDULED ||
+			$this->get_url_schedule() == self::URL_SCHEDULE_SCREENSHOT_REQUIRED
+		) {
+			return false;
+		}
+
+		if ( self::URL_SCHEDULE_SUMMARIZATION_REQUIRED == $schedule_type ) {
+			if (
+				$this->get_sum_status() == self::SUM_STATUS_ACTIVE ||
+				$this->get_url_schedule() == self::URL_SCHEDULE_SUMMARIZATION_SCHEDULED
+			) {
+				return false;
+			}
+		}
+
+		$this->set_url_schedule( $schedule_type );
+
+		return $this->update();
 	}
 
 	public function request_rel_schedule() {

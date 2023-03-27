@@ -379,8 +379,8 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshots-cron.php';
 		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Screenshots_Cron() );
 
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshot-schedules-cron.php';
-		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Screenshot_Schedules_Cron() );
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-url-scheduling-cron.php';
+		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Url_Scheduling_Cron() );
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-summaries-cron.php';
 		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Summaries_Cron() );
