@@ -63,6 +63,10 @@ class Urlslab_Search_Replace_Row extends Urlslab_Data {
 		return array( 'id' );
 	}
 
+	function has_autoincrement_primary_column(): bool {
+		return true;
+	}
+
 	function get_columns(): array {
 		return array(
 			'id'          => '%d',
