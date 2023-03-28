@@ -45,7 +45,7 @@
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			overflow: hidden;
-			width: calc(100% - 1.5em);
+			width: calc(100% - 1em);
 		}
 
 		.urlslab-table tr:not(.urlslab-rowInserter) & {
@@ -110,7 +110,6 @@
 
 		.wide & {
 			left: 0;
-			transform: translateZ(0);
 			width: 100%;
 		}
 

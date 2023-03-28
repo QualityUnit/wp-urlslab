@@ -77,7 +77,7 @@ export default function Table( { resizable, children, className, columns, data, 
 					return (
 						<td key={ cell.id } className={ cell.column.columnDef.className }
 							style={ {
-							position: resizable ? 'absolute' : 'relative',
+							position: resizable ? 'absolute' : 'static',
 							left: resizable ? cell.column.getStart() : '0',
 							width: cell.column.getSize() !== 0 && resizable
 								? cell.column.getSize()
