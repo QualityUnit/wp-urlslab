@@ -318,17 +318,19 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	 */
 	public function validateCurrentPageUrl(): void {
 		$currentUrl = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $this->get_current_page_url() );
-		if ( Urlslab_Url_Row::URL_TYPE_EXTERNAL == $currentUrl->get_url_type() ) {
-			$currentUrl->set_url_type( Urlslab_Url_Row::URL_TYPE_INTERNAL );
-		}
-
-		if ( $this->get_option( self::SETTING_NAME_MARK_AS_VALID_CURRENT_URL ) ) {
-			if ( Urlslab_Url_Row::HTTP_STATUS_NOT_PROCESSED == $currentUrl->get_http_status() ) {
-				$currentUrl->set_http_status( Urlslab_Url_Row::HTTP_STATUS_OK );
+		if ( null !== $currentUrl ) {
+			if ( Urlslab_Url_Row::URL_TYPE_EXTERNAL == $currentUrl->get_url_type() ) {
+				$currentUrl->set_url_type( Urlslab_Url_Row::URL_TYPE_INTERNAL );
 			}
-		}
 
-		$currentUrl->update();
+			if ( $this->get_option( self::SETTING_NAME_MARK_AS_VALID_CURRENT_URL ) ) {
+				if ( Urlslab_Url_Row::HTTP_STATUS_NOT_PROCESSED == $currentUrl->get_http_status() ) {
+					$currentUrl->set_http_status( Urlslab_Url_Row::HTTP_STATUS_OK );
+				}
+			}
+
+			$currentUrl->update();
+		}
 	}
 
 	protected function add_options() {
