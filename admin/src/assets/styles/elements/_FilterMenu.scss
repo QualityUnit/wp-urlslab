@@ -31,7 +31,7 @@
 		@extend %MenuArrow;
 		display: flex;
 		align-items: center;
-		line-height: 1;
+		line-height: 1.2;
 		border: 1px solid $grey-medium;
 		border-radius: 6px;
 		background-color: $white;
@@ -45,7 +45,7 @@
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			overflow: hidden;
-			width: calc(100% - 1em);
+			width: calc(100% - 1.5em);
 		}
 
 		.urlslab-table tr:not(.urlslab-rowInserter) & {
@@ -110,7 +110,7 @@
 
 		.wide & {
 			left: 0;
-			transform: none;
+			transform: translateZ(0);
 			width: 100%;
 		}
 
