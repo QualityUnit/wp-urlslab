@@ -362,61 +362,12 @@ class Urlslab {
 	private function define_backend_hooks() {
 
 		add_filter( 'cron_schedules', array( $this, 'add_cron_interval' ) );
-
-
 		if ( ! wp_next_scheduled( 'urlslab_cron_hook' ) ) {
 			wp_schedule_event( time(), 'every_minute', 'urlslab_cron_hook' );
 		}
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron-manager.php';
-
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-update-url-http-status-cron.php';
-		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Update_Url_Http_Status_Cron() );
-
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-download-css-cron.php';
-		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Download_CSS_Cron() );
-
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshots-cron.php';
-		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Screenshots_Cron() );
-
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-url-scheduling-cron.php';
-		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Url_Scheduling_Cron() );
-
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-summaries-cron.php';
-		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Summaries_Cron() );
-
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-optimize-cron.php';
-		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Optimize_Cron() );
-
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-youtube-cron.php';
-		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Youtube_Cron() );
-
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-background-attachments-cron.php';
-		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Offload_Background_Attachments_Cron() );
-
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-generators-cron.php';
-		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Generators_Cron() );
-
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-transfer-files-cron.php';
-		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Offload_Transfer_Files_Cron() );
-
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-enqueue-files-cron.php';
-		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Offload_Enqueue_Files_Cron() );
-
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-related-resources-cron.php';
-		Urlslab_Cron_Manager::get_instance()->add_cron_task( new Urlslab_Related_Resources_Cron() );
-
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-convert-webp-images-cron.php';
-		$cron_job_webp_convert = new Urlslab_Convert_Webp_Images_Cron();
-		if ( $cron_job_webp_convert->is_format_supported() ) {
-			Urlslab_Cron_Manager::get_instance()->add_cron_task( $cron_job_webp_convert );
-		}
-
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-convert-avif-images-cron.php';
-		$cron_job_avif_convert = new Urlslab_Convert_Avif_Images_Cron();
-		if ( $cron_job_avif_convert->is_format_supported() ) {
-			Urlslab_Cron_Manager::get_instance()->add_cron_task( $cron_job_avif_convert );
-		}
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_cron_hook', Urlslab_Cron_Manager::get_instance(), 'exec_cron_task', 10, 0 );
 	}
 
 	/**

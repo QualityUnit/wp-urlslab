@@ -48,50 +48,12 @@ class Urlslab_Api_Cron extends Urlslab_Api_Base {
 
 	public function exec_all_crons( $request ) {
 		try {
-			$data         = array();
-			$start_time   = time();
-			$max_time     = 20;
-			$failed_tasks = array();
-			while ( $max_time > ( time() - $start_time ) ) {
-
-				$executed_tasks_nr = 0;
-
-				foreach ( Urlslab_Cron_Manager::get_instance()->get_cron_tasks() as $task ) {
-					if (
-						! in_array( get_class( $task ), $failed_tasks ) &&
-						( 'all' == $request->get_param( 'task' ) || get_class( $task ) == $request->get_param( 'task' ) )
-					) {
-						try {
-							$task_time = time();
-							if ( $task->api_exec( $start_time, 5 ) ) {
-								$executed_tasks_nr ++;
-							} else {
-								$failed_tasks[] = get_class( $task );
-							}
-							$exec_time = time() - $task_time;
-							if ( $exec_time > 0 ) {
-								$data[] = (object) array(
-									'exec_time'   => $exec_time,
-									'task'        => get_class( $task ),
-									'description' => $task->get_description(),
-								);
-							}
-						} catch ( Exception $e ) {
-							$data[] = (object) array(
-								'exec_time'   => $exec_time,
-								'task'        => get_class( $task ),
-								'description' => $e->getMessage(),
-							);
-						}
-					}
-				}
-
-				if ( 0 == $executed_tasks_nr ) {
-					break; //all tasks failed or no tasks wait for execution
-				}
+			$task_name = $request->get_param( 'task' );
+			if ( 'all' == $request->get_param( 'task' ) ) {
+				$task_name = false;
 			}
 
-			return new WP_REST_Response( $data, 200 );
+			return new WP_REST_Response( Urlslab_Cron_Manager::get_instance()->exec_cron_task( $task_name ), 200 );
 		} catch ( Exception $e ) {
 			return new WP_Error( 'exception', __( 'Failed to execute cron', 'urlslab' ) );
 		}
