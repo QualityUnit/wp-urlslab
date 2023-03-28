@@ -103,7 +103,7 @@ abstract class Urlslab_Data {
 			}
 		} else {
 			if ( $wpdb->insert( $this->get_table_name(), $insert_data, $format ) ) {
-				if ( $this->has_autoincrement_primary_column() && 1 == count( $this->get_primary_columns() ) ) {
+				if ( is_numeric( $wpdb->insert_id ) && $wpdb->insert_id > 0 && $this->has_autoincrement_primary_column() && 1 == count( $this->get_primary_columns() ) ) {
 					$this->set( $this->get_primary_columns()[0], $wpdb->insert_id, true );
 				}
 				$this->changed = array();
