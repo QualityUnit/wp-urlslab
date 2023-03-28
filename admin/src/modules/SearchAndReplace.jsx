@@ -14,7 +14,6 @@ export default function SearchAndReplace( { moduleId } ) {
 		[ slug, __( 'Replacements' ) ],
 	] );
 
-	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
 	const SearchReplaceTable = lazy( () => import( `../tables/SearchReplaceTable.jsx` ) );
 
 	return (
@@ -31,12 +30,6 @@ export default function SearchAndReplace( { moduleId } ) {
 				activeSection === slug &&
 				<Suspense>
 					<SearchReplaceTable slug={ slug } />
-				</Suspense>
-			}
-			{
-				activeSection === 'settings' &&
-				<Suspense>
-					<SettingsModule className="fadeInto" settingId={ moduleId } />
 				</Suspense>
 			}
 		</div>
