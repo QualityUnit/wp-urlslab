@@ -35,7 +35,7 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 				// 	pages: newPagesArray,
 				// 	pageParams: origData.pageParams,
 				// } ) );
-				queryClient.invalidateQueries( [ slug, url ] );
+				queryClient.invalidateQueries( [ slug ] );
 				setInsertRowRes( response );
 			}
 		},

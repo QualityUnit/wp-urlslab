@@ -20,7 +20,7 @@ import ImportPanel from './ImportPanel';
 import DangerPanel from './DangerPanel';
 import TableFilter from './TableFilter';
 
-export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, noDelete, header, table, insertOptions, slug, exportOptions, rowsSelected, defaultSortBy, onSort, onFilter, onRowAdded } ) {
+export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, noDelete, header, table, insertOptions, slug, exportOptions, rowsSelected, defaultSortBy, onSort, onFilter, onClearRow } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 
@@ -78,8 +78,8 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 			handleDeleteAll.mutate();
 		}
 
-		if ( key === 'rowAdded' && onRowAdded ) {
-			onRowAdded( true );
+		if ( key === 'clearRow' && onClearRow ) {
+			onClearRow( true );
 		}
 	};
 

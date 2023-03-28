@@ -5,7 +5,7 @@ import SimpleButton from '../elements/SimpleButton';
 
 import '../assets/styles/components/_ModuleViewHeader.scss';
 
-export default function ModuleViewHeader( { moduleMenu, activeMenu } ) {
+export default function ModuleViewHeader( { moduleMenu, activeMenu, noSettings } ) {
 	const { __ } = useI18n();
 	const [ active, setActive ] = useState( 'overview' );
 
@@ -49,12 +49,14 @@ export default function ModuleViewHeader( { moduleMenu, activeMenu } ) {
 					} )
 					: null
 				}
-				<SimpleButton key={ 'settings' }
-					className={ activator( 'settings' ) }
-					onClick={ () => handleMenu( 'settings' ) }
-				>
-					{ menuItems.get( 'settings' ) }
-				</SimpleButton>
+				{ ! noSettings &&
+					<SimpleButton key={ 'settings' }
+						className={ activator( 'settings' ) }
+						onClick={ () => handleMenu( 'settings' ) }
+					>
+						{ menuItems.get( 'settings' ) }
+					</SimpleButton>
+				}
 			</div>
 		</div>
 	);

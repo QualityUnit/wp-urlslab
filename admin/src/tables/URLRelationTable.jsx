@@ -82,7 +82,7 @@ export default function URLRelationTable( { slug } ) {
 				table={ table }
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onRowAdded={ ( added ) => added && setInsertRow() }
+				onClearRow={ ( clear ) => clear && setInsertRow() }
 				insertOptions={ { inserterCells, title: 'Add related article', data, slug, url, pageId, rowToInsert } }
 				exportOptions={ {
 					url: slug,

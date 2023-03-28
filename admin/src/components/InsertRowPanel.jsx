@@ -26,10 +26,11 @@ export default function InsertRowPanel( { insertOptions, handlePanel } ) {
 		enableAddButton.current = false;
 	}
 
-	const hidePanel = ( operation ) => {
+	const hidePanel = ( ) => {
 		handleClose();
+		enableAddButton.current = false;
 		if ( handlePanel ) {
-			handlePanel( operation );
+			handlePanel( 'clearRow' );
 		}
 	};
 
@@ -39,7 +40,7 @@ export default function InsertRowPanel( { insertOptions, handlePanel } ) {
 
 	if ( insertRowResult?.ok ) {
 		setTimeout( () => {
-			hidePanel( 'rowAdded' );
+			hidePanel();
 		}, 100 );
 	}
 
