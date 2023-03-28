@@ -113,13 +113,10 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 					<TableFilter slug={ slug } header={ header } initialRow={ initialRow } onFilter={ setFiltersObj } />
 					<div className="ma-left flex flex-align-center">
 						{
-							! noCount &&
-							<small className="urlslab-rowcount flex flex-align-center">
+							! noCount && rowCount &&
+							<small className="urlslab-rowcount fadeInto flex flex-align-center">
 								{ __( 'Rows: ' ) }
-								{ rowCount
-									? <strong className="ml-s">{ rowCount }</strong>
-									: <Loader className="ml-s noText small" />
-								}
+								<strong className="ml-s">{ rowCount }</strong>
 							</small>
 						}
 

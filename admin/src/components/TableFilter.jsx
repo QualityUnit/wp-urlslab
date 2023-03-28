@@ -72,6 +72,7 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 								items={ state.possibleFilters }
 								name="filters"
 								checkedId={ Object.keys( state.possibleFilters )[ 0 ] }
+								autoClose
 								onChange={ ( key ) => {
 									handleType( key ); dispatch( { type: 'setFilterKey', key } );
 								} }
@@ -80,13 +81,14 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 								className="ml-s"
 								items={ state.filterObj.isNumber ? numericOp : stringOp }
 								name="filters"
+								autoClose
 								checkedId={ Object.keys( state.filterObj.isNumber ? numericOp : stringOp )[ 0 ] }
 								onChange={ ( op ) => dispatch( { type: 'setFilterOp', op } ) }
 							/>
 						</div>
 						{ state.filterObj.filterOp !== 'BETWEEN'
-							? <InputField placeholder={ state.filterObj.filterOp === 'IN' && 'enter ie. 0,10,15,20' } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
-							: <RangeInputs onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
+							? <InputField liveUpdate placeholder={ state.filterObj.filterOp === 'IN' && 'enter ie. 0,10,15,20' } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
+							: <RangeInputs liveUpdate onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
 						}
 
 						<div className="Buttons flex flex-align-center">
@@ -100,7 +102,9 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 			</div>
 
 			{ activeFilters?.length > 0 &&
-				<Button className="simple underline" onClick={ () => handleRemoveFilter( activeFilters ) }>{ __( 'Clear filters' ) }</Button>
+				<Button className="simple underline" onClick={ () => {
+					handleRemoveFilter( activeFilters ); runFilter.current = true;
+				} }>{ __( 'Clear filters' ) }</Button>
 			}
 		</div>
 	);

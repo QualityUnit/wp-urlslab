@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { urlRegex } from '../constants/helpers';
 import '../assets/styles/elements/_Inputs.scss';
 
-export default function InputField( { defaultValue, placeholder, message, className, type, disabled, label, labelInline, onChange, children, style } ) {
+export default function InputField( { defaultValue, placeholder, message, liveUpdate, className, type, disabled, label, labelInline, onChange, children, style } ) {
 	const [ val, setVal ] = useState( defaultValue || '' );
 	const [ valid, setValid ] = useState( false );
 	const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
@@ -10,7 +10,7 @@ export default function InputField( { defaultValue, placeholder, message, classN
 	const handleVal = ( event ) => {
 		// setVal( event.target.value );
 		if ( onChange ) {
-			onChange( event.target.value );
+			onChange( type === 'number' ? event.target.valueAsNumber : event.target.value );
 		}
 	};
 
@@ -41,7 +41,12 @@ export default function InputField( { defaultValue, placeholder, message, classN
 					className="urlslab-input input__text"
 					type={ type || 'text' }
 					defaultValue={ val }
-					onChange={ ( event ) => setVal( event.target.value ) }
+					onChange={ ( event ) => {
+						setVal( event.target.value );
+						if ( liveUpdate ) {
+							handleVal( event );
+						}
+					} }
 					onBlur={ ( event ) => handleVal( event ) }
 					onKeyDown={ ( event ) => {
 						if ( event.key === 'Enter' || event.keyCode === 9 ) {

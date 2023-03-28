@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 
@@ -9,11 +10,18 @@ import Button from '../elements/Button';
 export default function InsertRowPanel( { insertOptions, handlePanel } ) {
 	const queryClient = useQueryClient();
 	const { __ } = useI18n();
+	const enableAddButton = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
 
 	const { inserterCells, title, text, data, slug, url, pageId, rowToInsert } = insertOptions;
 	const flattenedData = data?.pages?.flatMap( ( page ) => page ?? [] );
 	const { insertRowResult, insertRow } = useChangeRow( { data: flattenedData, url, slug, pageId } );
+	const requiredFields = Object.keys( inserterCells ).filter( ( cell ) => inserterCells[ cell ].props.required === true );
+
+	// Checking if all required fields are filled in rowToInsert object
+	if ( requiredFields.every( ( key ) => Object.keys( rowToInsert ).includes( key ) ) ) {
+		enableAddButton.current = true;
+	}
 
 	const hidePanel = ( operation ) => {
 		handleClose();
@@ -47,7 +55,7 @@ export default function InsertRowPanel( { insertOptions, handlePanel } ) {
 					}
 					<div className="flex">
 						<Button className="ma-left simple" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
-						<Button active onClick={ () => insertRow( { rowToInsert } ) }>{ title }</Button>
+						<Button active disabled={ ! enableAddButton.current } onClick={ () => insertRow( { rowToInsert } ) }>{ title }</Button>
 					</div>
 				</div>
 			</div>
