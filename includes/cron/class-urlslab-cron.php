@@ -13,15 +13,16 @@ abstract class Urlslab_Cron {
 	abstract protected function execute(): bool;
 
 	public function cron_exec( $max_execution_time = self::MAX_RUN_TIME ): bool {
+		$this->start_time = time();
 		$nr_executions = 0;
-		while ( time() - $this->start_time < $max_execution_time && $this->execute() ) {
+		while ( ( time() - $this->start_time < $max_execution_time ) ) {
 			$nr_executions ++;
+			if ( ! $this->execute() ) {
+				break;
+			}
 		}
-		return 0 < $nr_executions;
+
+		return ( $max_execution_time <= time() - $this->start_time ) && $nr_executions > 0;
 	}
 
-	public function api_exec( $start_time, $max_execution_time ): bool {
-		$this->start_time = $start_time;
-		return $this->cron_exec( $max_execution_time );
-	}
 }
