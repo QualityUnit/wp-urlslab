@@ -28,6 +28,7 @@
 
 	.fadeInto {
 		animation: fadeIn $transitionTime;
+		transform: translateZ(0);
 	}
 
 	.apiIcon {
