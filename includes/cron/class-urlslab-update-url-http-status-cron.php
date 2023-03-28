@@ -49,7 +49,12 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 			if ( is_wp_error( $page_content_file_name ) ) {
 				$url->set_url_title( Urlslab_Url_Row::VALUE_EMPTY );
 				$url->set_url_meta_description( Urlslab_Url_Row::VALUE_EMPTY );
-				$url->set_http_status( (int) $page_content_file_name->get_error_code() );
+				$error_data = $page_content_file_name->get_error_data();
+				if ( isset( $error_data['code'] ) ) {
+					$url->set_http_status( (int) $error_data['code'] );
+				} else {
+					$url->set_http_status( Urlslab_Url_Row::HTTP_STATUS_CLIENT_ERROR );
+				}
 			} else if ( empty( $page_content_file_name ) || ! file_exists( $page_content_file_name ) || 0 == filesize( $page_content_file_name ) ) {
 				$url->set_url_title( Urlslab_Url_Row::VALUE_EMPTY );
 				$url->set_url_meta_description( Urlslab_Url_Row::VALUE_EMPTY );
