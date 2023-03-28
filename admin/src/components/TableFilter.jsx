@@ -16,15 +16,17 @@ import '../assets/styles/components/_TableFilter.scss';
 export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 	const { __ } = useI18n();
 	const filterPanel = useRef( null );
+	const runFilter = useRef( false );
 	const queryClient = useQueryClient();
 
 	const possibleFilters = useRef( { ...header } );
 
-	const { filters, currentFilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter, runFilter } = useFilter( { slug, header, possibleFilters, initialRow } );
+	const { filters, currentFilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter } = useFilter( { slug, header, possibleFilters, initialRow } );
 
 	const activeFilters = currentFilters ? Object.keys( currentFilters ) : null;
 
 	if ( onFilter && runFilter.current ) {
+		runFilter.current = false;
 		onFilter( { filters, currentFilters } );
 	}
 
@@ -52,7 +54,9 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 					// onClick={ handleEditFilter }
 				>
 					{ header[ key ] }
-					<CloseIcon className="close" onClick={ () => handleRemoveFilter( [ key ] ) } />
+					<CloseIcon className="close" onClick={ () => {
+						handleRemoveFilter( [ key ] ); runFilter.current = true;
+					} } />
 				</Button> );
 			} ) }
 
@@ -87,7 +91,9 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 
 						<div className="Buttons flex flex-align-center">
 							<Button className="simple" onClick={ () => dispatch( { type: 'toggleFilterPanel' } ) }>{ __( 'Cancel' ) }</Button>
-							<Button active disabled={ state.filterObj.filterVal ? false : true } onClick={ handleSaveFilter }>{ __( 'Save' ) }</Button>
+							<Button active disabled={ state.filterObj.filterVal ? false : true } onClick={ ( v ) => {
+								handleSaveFilter( v ); runFilter.current = true;
+							} }>{ __( 'Save' ) }</Button>
 						</div>
 					</div>
 				}

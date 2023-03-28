@@ -74,7 +74,7 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 	const handlePanel = ( key ) => {
 		setActivePanel( key );
 
-		if ( key === 'deleteall' ) {
+		if ( key === 'delete-all' ) {
 			handleDeleteAll.mutate();
 		}
 	};
@@ -142,7 +142,7 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 					text={ __( 'Are you sure you want to delete all rows? Deleting rows will remove them from all modules where this table occurs.' ) }
 					button={ <><Trash />{ __( 'Delete All' ) }</> }
 					handlePanel={ handlePanel }
-					action="deleteall"
+					action="delete-all"
 				/>
 			}
 

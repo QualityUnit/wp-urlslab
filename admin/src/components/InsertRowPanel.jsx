@@ -12,7 +12,8 @@ export default function InsertRowPanel( { insertOptions, handlePanel } ) {
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
 
 	const { inserterCells, title, text, data, slug, url, pageId, rowToInsert } = insertOptions;
-	const { insertRow } = useChangeRow( { data, url, slug, pageId } );
+	const flattenedData = data?.pages?.flatMap( ( page ) => page ?? [] );
+	const { insertRowResult, insertRow } = useChangeRow( { data: flattenedData, url, slug, pageId } );
 
 	const hidePanel = ( operation ) => {
 		handleClose();
@@ -21,7 +22,11 @@ export default function InsertRowPanel( { insertOptions, handlePanel } ) {
 		}
 	};
 
-	console.log( rowToInsert );
+	if ( insertRowResult?.ok ) {
+		setTimeout( () => {
+			hidePanel();
+		}, 100 );
+	}
 	return (
 		<div className="urlslab-panel-wrap urlslab-panel-floating fadeInto">
 			<div className="urlslab-panel">

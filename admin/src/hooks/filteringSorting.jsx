@@ -117,7 +117,7 @@ export function useFilter( { slug, header, possibleFilters, initialRow } ) {
 		queryClient.setQueryData( [ slug, 'filters' ], { filters, currentFilters, possibleFilters: possibleFilters.current } );
 	}
 
-	return { filters, currentFilters, addFilter, removeFilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter, runFilter };
+	return { filters, currentFilters, addFilter, removeFilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter };
 }
 
 export function useSorting( { slug } ) {
