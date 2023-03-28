@@ -14,6 +14,7 @@ import SortMenu from '../elements/SortMenu';
 import ColumnsMenu from '../elements/ColumnsMenu';
 import Loader from './Loader';
 import Button from '../elements/Button';
+import InsertRowPanel from './InsertRowPanel';
 import ExportPanel from './ExportPanel';
 import ImportPanel from './ImportPanel';
 import DangerPanel from './DangerPanel';
@@ -26,6 +27,7 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 	const [ activePanel, setActivePanel ] = useState();
 	const [ filtersObj, setFiltersObj ] = useState( );
 
+	console.log( table?.getAllColumns() );
 	const initialRow = table?.getRowModel().rows[ 0 ]?.original;
 
 	if ( filtersObj && onFilter ) {
@@ -86,6 +88,10 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 		<>
 			<div className="urlslab-moduleView-headerBottom">
 				<div className="urlslab-moduleView-headerBottom__top flex flex-align-center">
+
+					{ ! noImport &&
+					<Button className="active" onClick={ () => handlePanel( 'addrow' ) }>{ __( 'Add row' ) }</Button>
+					}
 
 					<Button className="" onClick={ () => handleRefresh() }><RefreshIcon />{ __( 'Refresh table' ) }</Button>
 					{ ! noDelete &&
@@ -150,6 +156,10 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 					handlePanel={ handlePanel }
 					action="deleteselected"
 				/>
+			}
+			{
+				activePanel === 'addrow' &&
+				<InsertRowPanel />
 			}
 
 			{ activePanel === 'export' &&

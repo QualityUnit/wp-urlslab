@@ -10,7 +10,7 @@ import { useVirtual } from 'react-virtual';
 
 import '../assets/styles/components/_TableComponent.scss';
 
-export default function Table( { resizable, children, className, columns, data, inserter, returnTable } ) {
+export default function Table( { resizable, children, className, columns, data, returnTable } ) {
 	const [ rowSelection, setRowSelection ] = useState( {} );
 	const [ columnVisibility, setColumnVisibility ] = useState( {} );
 	const [ containerWidth, setContainerWidth ] = useState();
