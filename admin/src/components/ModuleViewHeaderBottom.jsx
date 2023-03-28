@@ -20,14 +20,13 @@ import ImportPanel from './ImportPanel';
 import DangerPanel from './DangerPanel';
 import TableFilter from './TableFilter';
 
-export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, noDelete, header, table, slug, exportOptions, rowsSelected, defaultSortBy, onSort, onFilter } ) {
+export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, noDelete, header, table, insertOptions, slug, exportOptions, rowsSelected, defaultSortBy, onSort, onFilter } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 
 	const [ activePanel, setActivePanel ] = useState();
 	const [ filtersObj, setFiltersObj ] = useState( );
 
-	console.log( table?.getAllColumns() );
 	const initialRow = table?.getRowModel().rows[ 0 ]?.original;
 
 	if ( filtersObj && onFilter ) {
@@ -75,7 +74,7 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 	const handlePanel = ( key ) => {
 		setActivePanel( key );
 
-		if ( key === 'deleteall' ) {
+		if ( key === 'delete-all' ) {
 			handleDeleteAll.mutate();
 		}
 	};
@@ -88,10 +87,6 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 		<>
 			<div className="urlslab-moduleView-headerBottom">
 				<div className="urlslab-moduleView-headerBottom__top flex flex-align-center">
-
-					{ ! noImport &&
-					<Button className="active" onClick={ () => handlePanel( 'addrow' ) }>{ __( 'Add row' ) }</Button>
-					}
 
 					<Button className="" onClick={ () => handleRefresh() }><RefreshIcon />{ __( 'Refresh table' ) }</Button>
 					{ ! noDelete &&
@@ -108,6 +103,9 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 						{ ! noImport &&
 						<Button className="no-padding underline simple ml-m" onClick={ () => handlePanel( 'import' ) }>{ __( 'Import CSV' ) }</Button>
 						}
+						{ insertOptions &&
+							<Button className="ml-m active" onClick={ () => handlePanel( 'addrow' ) }>+&nbsp;{ insertOptions.title }</Button>
+						}
 					</div>
 				</div>
 				<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
@@ -115,13 +113,10 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 					<TableFilter slug={ slug } header={ header } initialRow={ initialRow } onFilter={ setFiltersObj } />
 					<div className="ma-left flex flex-align-center">
 						{
-							! noCount &&
-							<small className="urlslab-rowcount flex flex-align-center">
+							! noCount && rowCount &&
+							<small className="urlslab-rowcount fadeInto flex flex-align-center">
 								{ __( 'Rows: ' ) }
-								{ rowCount
-									? <strong className="ml-s">{ rowCount }</strong>
-									: <Loader className="ml-s noText small" />
-								}
+								<strong className="ml-s">{ rowCount }</strong>
 							</small>
 						}
 
@@ -144,7 +139,7 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 					text={ __( 'Are you sure you want to delete all rows? Deleting rows will remove them from all modules where this table occurs.' ) }
 					button={ <><Trash />{ __( 'Delete All' ) }</> }
 					handlePanel={ handlePanel }
-					action="deleteall"
+					action="delete-all"
 				/>
 			}
 
@@ -159,7 +154,7 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 			}
 			{
 				activePanel === 'addrow' &&
-				<InsertRowPanel />
+				<InsertRowPanel insertOptions={ insertOptions } handlePanel={ handlePanel } />
 			}
 
 			{ activePanel === 'export' &&

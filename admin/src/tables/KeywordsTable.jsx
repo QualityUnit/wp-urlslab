@@ -9,7 +9,7 @@ import useChangeRow from '../hooks/useChangeRow';
 
 export default function KeywordsTable( { slug } ) {
 	const pageId = 'kw_id';
-	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 
 	const {
@@ -41,6 +41,15 @@ export default function KeywordsTable( { slug } ) {
 		link_usage_count: __( 'Link Usage' ),
 		urlFilter: __( 'URL Filter' ),
 		urlLink: __( 'Link' ),
+	};
+
+	const inserterCells = {
+		keyword: <InputField liveUpdate defaultValue="" label={ header.keyword } onChange={ ( val ) => setInsertRow( { ...rowToInsert, keyword: val } ) } required />,
+		kwType: <SortMenu autoClose items={ keywordTypes } name="kwType" checkedId="M" onChange={ ( val ) => setInsertRow( { ...rowToInsert, kwType: val } ) }>{ header.kwType }</SortMenu>,
+		kw_priority: <InputField liveUpdate type="number" defaultValue="0" min="0" max="255" label={ header.kw_priority } onChange={ ( val ) => setInsertRow( { ...rowToInsert, kw_priority: val } ) } />,
+		lang: <LangMenu autoClose checkedId="all" onChange={ ( val ) => setInsertRow( { ...rowToInsert, lang: val } ) }>{ __( 'Language' ) }</LangMenu>,
+		urlFilter: <InputField liveUpdate defaultValue="" label={ header.urlFilter } onChange={ ( val ) => setInsertRow( { ...rowToInsert, urlFilter: val } ) } />,
+		urlLink: <InputField liveUpdate type="url" defaultValue="" label={ header.urlLink } onChange={ ( val ) => setInsertRow( { ...rowToInsert, urlLink: val } ) } required />,
 	};
 
 	const columns = [
@@ -124,6 +133,7 @@ export default function KeywordsTable( { slug } ) {
 				rowsSelected={ rowsSelected }
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
+				insertOptions={ { inserterCells, title: 'Add keyword', data, slug, url, pageId, rowToInsert } }
 				exportOptions={ {
 					url: slug,
 					filters,

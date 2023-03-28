@@ -9,7 +9,7 @@ import useChangeRow from '../hooks/useChangeRow';
 export default function SearchReplaceTable( { slug } ) {
 	const pageId = 'id';
 
-	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 
@@ -38,12 +38,12 @@ export default function SearchReplaceTable( { slug } ) {
 		url_filter: 'URL Filter',
 	};
 
-	// const inserterCells = {
-	// 	str_search: <InputField type="url" defaultValue="" onChange={ ( val ) => setInsertRow( { ...rowToInsert, str_search: val } ) } />,
-	// 	str_replace: <InputField type="url" defaultValue="" onChange={ ( val ) => setInsertRow( { ...rowToInsert, str_replace: val } ) } />,
-	// 	search_type: <SortMenu items={ searchTypes } name="search_type" checkedId="T" onChange={ ( val ) => setInsertRow( { ...rowToInsert, search_type: val } ) } />,
-	// 	url_filter: <InputField defaultValue=".*" onChange={ ( val ) => setInsertRow( { ...rowToInsert, url_filter: val } ) } />,
-	// };
+	const inserterCells = {
+		str_search: <InputField liveUpdate type="url" defaultValue="" label={ header.str_search } onChange={ ( val ) => setInsertRow( { ...rowToInsert, str_search: val } ) } required />,
+		str_replace: <InputField liveUpdate type="url" defaultValue="" label={ header.str_replace } onChange={ ( val ) => setInsertRow( { ...rowToInsert, str_replace: val } ) } required />,
+		search_type: <SortMenu autoClose items={ searchTypes } name="search_type" checkedId="T" onChange={ ( val ) => setInsertRow( { ...rowToInsert, search_type: val } ) }>{ header.search_type }</SortMenu>,
+		url_filter: <InputField liveUpdate defaultValue="" label={ header.url_filter } onChange={ ( val ) => setInsertRow( { ...rowToInsert, url_filter: val } ) } />,
+	};
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -96,6 +96,7 @@ export default function SearchReplaceTable( { slug } ) {
 				table={ table }
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
+				insertOptions={ { inserterCells, title: 'Add replacement', data, slug, url, pageId, rowToInsert } }
 				exportOptions={ {
 					url: slug,
 					filters,
@@ -109,7 +110,6 @@ export default function SearchReplaceTable( { slug } ) {
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				// inserter={ { inserterCells, data, slug, url, rowToInsert } }
 			>
 				{ row
 					? <Tooltip center>{ `${ header.str_search } “${ row.str_search }”` } { __( 'has been deleted.' ) }</Tooltip>

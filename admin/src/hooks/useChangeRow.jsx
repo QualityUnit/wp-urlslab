@@ -6,6 +6,7 @@ import { setData } from '../api/fetching';
 export default function useChangeRow( { data, url, slug, pageId } ) {
 	const [ rowValue, setRow ] = useState();
 	const queryClient = useQueryClient();
+	const [ insertRowResult, setInsertRowRes ] = useState( false );
 	const [ rowsSelected, setRowsSelected ] = useState( false );
 	const selectedRows = [];
 
@@ -21,27 +22,26 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 	};
 
 	const insertNewRow = useMutation( {
-		mutationFn: async ( options ) => {
-			const { rowToInsert, pseudoRow } = options;
-			const newPagesArray = data?.pages.map( ( page ) => [ pseudoRow, ...page ] );
-
-			//For optimistic update -- will be moved to onSuccess and will get row response from API
-			// queryClient.setQueryData( [ slug, url ], ( origData ) => ( {
-			// 	pages: newPagesArray,
-			// 	pageParams: origData.pageParams,
-			// } ) );
-			const response = await setData( `${ slug }/import`, { rows: [ rowToInsert ] } );
-			return response;
+		mutationFn: async ( { rowToInsert } ) => {
+			const response = await setData( `${ slug }`, rowToInsert );
+			return { response };
 		},
-		onSuccess: ( response ) => {
-			const { ok } = response;
+		onSuccess: async ( { response } ) => {
+			const { ok } = await response;
+			const returnedRow = await response.json();
 			if ( ok ) {
+				// const newPagesArray = data?.pages.map( ( page ) => [ returnedRow, ...page ] );
+				// queryClient.setQueryData( [ slug, url ], ( origData ) => ( {
+				// 	pages: newPagesArray,
+				// 	pageParams: origData.pageParams,
+				// } ) );
 				queryClient.invalidateQueries( [ slug, url ] );
+				setInsertRowRes( response );
 			}
 		},
 	} );
-	const insertRow = ( { rowToInsert, pseudoRow } ) => {
-		insertNewRow.mutate( { data, url, slug, rowToInsert, pseudoRow } );
+	const insertRow = ( { rowToInsert } ) => {
+		insertNewRow.mutate( { rowToInsert } );
 	};
 
 	const deleteSelectedRow = useMutation( {
@@ -133,5 +133,5 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 		// }
 	};
 
-	return { row: rowValue, rowsSelected, insertRow, selectRow, deleteRow, updateRow };
+	return { row: rowValue, rowsSelected, insertRowResult, insertRow, selectRow, deleteRow, updateRow };
 }

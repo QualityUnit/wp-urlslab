@@ -16,15 +16,17 @@ import '../assets/styles/components/_TableFilter.scss';
 export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 	const { __ } = useI18n();
 	const filterPanel = useRef( null );
+	const runFilter = useRef( false );
 	const queryClient = useQueryClient();
 
 	const possibleFilters = useRef( { ...header } );
 
-	const { filters, currentFilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter, runFilter } = useFilter( { slug, header, possibleFilters, initialRow } );
+	const { filters, currentFilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter } = useFilter( { slug, header, possibleFilters, initialRow } );
 
 	const activeFilters = currentFilters ? Object.keys( currentFilters ) : null;
 
 	if ( onFilter && runFilter.current ) {
+		runFilter.current = false;
 		onFilter( { filters, currentFilters } );
 	}
 
@@ -52,7 +54,9 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 					// onClick={ handleEditFilter }
 				>
 					{ header[ key ] }
-					<CloseIcon className="close" onClick={ () => handleRemoveFilter( [ key ] ) } />
+					<CloseIcon className="close" onClick={ () => {
+						handleRemoveFilter( [ key ] ); runFilter.current = true;
+					} } />
 				</Button> );
 			} ) }
 
@@ -68,6 +72,7 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 								items={ state.possibleFilters }
 								name="filters"
 								checkedId={ Object.keys( state.possibleFilters )[ 0 ] }
+								autoClose
 								onChange={ ( key ) => {
 									handleType( key ); dispatch( { type: 'setFilterKey', key } );
 								} }
@@ -76,25 +81,30 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 								className="ml-s"
 								items={ state.filterObj.isNumber ? numericOp : stringOp }
 								name="filters"
+								autoClose
 								checkedId={ Object.keys( state.filterObj.isNumber ? numericOp : stringOp )[ 0 ] }
 								onChange={ ( op ) => dispatch( { type: 'setFilterOp', op } ) }
 							/>
 						</div>
 						{ state.filterObj.filterOp !== 'BETWEEN'
-							? <InputField placeholder={ state.filterObj.filterOp === 'IN' && 'enter ie. 0,10,15,20' } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
-							: <RangeInputs onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
+							? <InputField liveUpdate placeholder={ state.filterObj.filterOp === 'IN' && 'enter ie. 0,10,15,20' } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
+							: <RangeInputs liveUpdate onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
 						}
 
 						<div className="Buttons flex flex-align-center">
 							<Button className="simple" onClick={ () => dispatch( { type: 'toggleFilterPanel' } ) }>{ __( 'Cancel' ) }</Button>
-							<Button active disabled={ state.filterObj.filterVal ? false : true } onClick={ handleSaveFilter }>{ __( 'Save' ) }</Button>
+							<Button active disabled={ state.filterObj.filterVal ? false : true } onClick={ ( v ) => {
+								handleSaveFilter( v ); runFilter.current = true;
+							} }>{ __( 'Save' ) }</Button>
 						</div>
 					</div>
 				}
 			</div>
 
 			{ activeFilters?.length > 0 &&
-				<Button className="simple underline" onClick={ () => handleRemoveFilter( activeFilters ) }>{ __( 'Clear filters' ) }</Button>
+				<Button className="simple underline" onClick={ () => {
+					handleRemoveFilter( activeFilters ); runFilter.current = true;
+				} }>{ __( 'Clear filters' ) }</Button>
 			}
 		</div>
 	);

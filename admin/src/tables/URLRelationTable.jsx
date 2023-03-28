@@ -8,7 +8,7 @@ import useChangeRow from '../hooks/useChangeRow';
 
 export default function URLRelationTable( { slug } ) {
 	const pageId = 'src_url_id';
-	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 
 	const {
@@ -25,10 +25,15 @@ export default function URLRelationTable( { slug } ) {
 	const { row, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
 	const header = {
-		src_url_id: '',
 		src_url_name: __( 'Source URL' ),
 		dest_url_name: __( 'Destination URL' ),
 		pos: __( 'Position' ),
+	};
+
+	const inserterCells = {
+		src_url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.src_url_name } onChange={ ( val ) => setInsertRow( { ...rowToInsert, src_url_name: val } ) } required />,
+		dest_url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.dest_url_name } onChange={ ( val ) => setInsertRow( { ...rowToInsert, dest_url_name: val } ) } required />,
+		pos: <InputField liveUpdate type="number" defaultValue="0" min="0" max="255" label={ header.pos } onChange={ ( val ) => setInsertRow( { ...rowToInsert, pos: val } ) } required />,
 	};
 
 	const columns = [
@@ -77,6 +82,7 @@ export default function URLRelationTable( { slug } ) {
 				table={ table }
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
+				insertOptions={ { inserterCells, title: 'Add related article', data, slug, url, pageId, rowToInsert } }
 				exportOptions={ {
 					url: slug,
 					filters,
