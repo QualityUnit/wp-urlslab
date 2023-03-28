@@ -36,7 +36,7 @@ export default function ExportPanel( { options, currentFilters, header, handlePa
 			<div className="urlslab-panel">
 				<div className="urlslab-panel-header">
 					<h3>{ __( 'Export data' ) }</h3>
-					<button className="urlslab-panel-close" onClick={ () => hidePanel() }>
+					<button className="urlslab-panel-close" onClick={ hidePanel }>
 						<CloseIcon />
 					</button>
 				</div>
@@ -58,13 +58,13 @@ export default function ExportPanel( { options, currentFilters, header, handlePa
 						: null
 					}
 					<div className="flex">
-						<Button className="ma-left simple" onClick={ () => hidePanel() }>{ __( 'Cancel' ) }</Button>
+						<Button className="ma-left simple" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
 						{ activeFilters?.length > 0 &&
-						<ExportCSVButton className="ml-s" options={ options } withFilters onClick={ ( status ) => handleExportStatus( status ) } />
+						<ExportCSVButton className="ml-s" options={ options } withFilters onClick={ handleExportStatus } />
 						}
 						<ExportCSVButton
 							className="ml-s"
-							options={ options } onClick={ ( status ) => handleExportStatus( status ) }
+							options={ options } onClick={ handleExportStatus }
 						/>
 					</div>
 				</div>

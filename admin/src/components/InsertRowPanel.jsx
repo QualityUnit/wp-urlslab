@@ -6,10 +6,13 @@ import useChangeRow from '../hooks/useChangeRow';
 import useCloseModal from '../hooks/useCloseModal';
 import Button from '../elements/Button';
 
-export default function InsertRowPanel( { columns, inserter, handlePanel } ) {
+export default function InsertRowPanel( { insertOptions, handlePanel } ) {
 	const queryClient = useQueryClient();
 	const { __ } = useI18n();
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
+
+	const { inserterCells, title, text, data, slug, url, pageId, rowToInsert } = insertOptions;
+	const { insertRow } = useChangeRow( { data, url, slug, pageId } );
 
 	const hidePanel = ( operation ) => {
 		handleClose();
@@ -18,42 +21,29 @@ export default function InsertRowPanel( { columns, inserter, handlePanel } ) {
 		}
 	};
 
-	const { inserterCells, data, slug, url, rowToInsert } = inserter;
-	const tableCells = columns.filter( ( obj ) => obj.accessorKey !== 'check' && obj.accessorKey !== 'delete' );
-
-	let pseudoRow = {};
-
-	Object.keys( data?.pages[ 0 ] ).map( ( key ) => {
-		if ( key.search( /(id|md5)/g ) !== -1 ) {
-			return pseudoRow[ key ] = Math.ceil( Math.random() * 100000 ) + '';
-		}
-		return pseudoRow[ key ] = '';
-	} );
-
-	pseudoRow = { ...pseudoRow, ...rowToInsert };
-
-	const { insertRow } = useChangeRow();
-
+	console.log( rowToInsert );
 	return (
 		<div className="urlslab-panel-wrap urlslab-panel-floating fadeInto">
 			<div className="urlslab-panel">
 				<div className="urlslab-panel-header">
-					<h3>{ __( 'Import data' ) }</h3>
-					<button className="urlslab-panel-close" onClick={ () => hidePanel() }>
+					<h3>{ title }</h3>
+					<button className="urlslab-panel-close" onClick={ hidePanel }>
 						<CloseIcon />
 					</button>
+					<p>{ text }</p>
 				</div>
 				<div className="mt-l">
 					{
-						tableCells.map( ( cell ) => {
-							const cellId = cell.accessorKey;
-
-							return <div key={ cellId }>
-								{ inserterCells[ cellId ] }
+						Object.entries( inserterCells ).map( ( [ cellId, cell ] ) => {
+							return <div className="mb-l" key={ cellId }>
+								{ cell }
 							</div>;
 						} )
 					}
-					<Button active onClick={ () => insertRow( { data, url, slug, rowToInsert, pseudoRow } ) }>Add row</Button>
+					<div className="flex">
+						<Button className="ma-left simple" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
+						<Button active onClick={ () => insertRow( { rowToInsert } ) }>{ title }</Button>
+					</div>
 				</div>
 			</div>
 		</div>

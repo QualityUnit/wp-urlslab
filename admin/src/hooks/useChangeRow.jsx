@@ -21,8 +21,7 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 	};
 
 	const insertNewRow = useMutation( {
-		mutationFn: async ( options ) => {
-			const { rowToInsert, pseudoRow } = options;
+		mutationFn: async ( { rowToInsert } ) => {
 			const newPagesArray = data?.pages.map( ( page ) => [ pseudoRow, ...page ] );
 
 			//For optimistic update -- will be moved to onSuccess and will get row response from API
@@ -30,18 +29,19 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 			// 	pages: newPagesArray,
 			// 	pageParams: origData.pageParams,
 			// } ) );
-			const response = await setData( `${ slug }/import`, { rows: [ rowToInsert ] } );
+			const response = await setData( `${ slug }`, { rowToInsert } );
+			console.log( response );
 			return response;
 		},
-		onSuccess: ( response ) => {
-			const { ok } = response;
-			if ( ok ) {
-				queryClient.invalidateQueries( [ slug, url ] );
-			}
-		},
+		// onSuccess: ( response ) => {
+		// 	const { ok } = response;
+		// 	if ( ok ) {
+		// 		queryClient.invalidateQueries( [ slug, url ] );
+		// 	}
+		// },
 	} );
-	const insertRow = ( { rowToInsert, pseudoRow } ) => {
-		insertNewRow.mutate( { data, url, slug, rowToInsert, pseudoRow } );
+	const insertRow = ( { rowToInsert } ) => {
+		insertNewRow.mutate( { data, url, slug, rowToInsert } );
 	};
 
 	const deleteSelectedRow = useMutation( {
