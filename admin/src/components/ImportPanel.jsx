@@ -54,7 +54,7 @@ export default function ImportPanel( { slug, handlePanel } ) {
 			<div className="urlslab-panel">
 				<div className="urlslab-panel-header">
 					<h3>{ __( 'Import data' ) }</h3>
-					<button className="urlslab-panel-close" onClick={ () => hidePanel() }>
+					<button className="urlslab-panel-close" onClick={ hidePanel }>
 						<CloseIcon />
 					</button>
 				</div>
@@ -82,7 +82,7 @@ export default function ImportPanel( { slug, handlePanel } ) {
 									{ acceptedFile &&
 									<button className="removeFile flex flex-align-center" { ...getRemoveFileProps() }>{ acceptedFile.name } <CloseIcon /></button>
 									}
-									<Button className="ml-s simple" onClick={ () => hidePanel() }>{ __( 'Cancel' ) }</Button>
+									<Button className="ml-s simple" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
 
 									<Button { ...getRootProps() } active>
 										<ImportIcon />
