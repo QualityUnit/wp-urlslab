@@ -6,6 +6,8 @@ import { setData } from '../api/fetching';
 export default function useChangeRow( { data, url, slug, pageId } ) {
 	const [ rowValue, setRow ] = useState();
 	const queryClient = useQueryClient();
+	const [ rowsSelected, setRowsSelected ] = useState( false );
+	const selectedRows = [];
 
 	const getRowId = ( cell, optionalSelector ) => {
 		if ( optionalSelector ) {
@@ -112,10 +114,24 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 		updateRowData.mutate( { data, newVal, url, slug, cell, optionalSelector } );
 	};
 
-	const selectRow = ( val, cell ) => {
+	const selectRow = ( isSelected, cell ) => {
 		cell.row.toggleSelected();
-		console.log( { selected: cell.row.original[ pageId ] } );
+		// const cellId = cell.row.original[ pageId ];
+		// if ( ! isSelected ) {
+		// 	selectedRows = selectedRows.filter( ( item ) => item !== cellId );
+		// }
+		// if ( isSelected ) {
+		// 	selectedRows.push( cell.row.original[ pageId ] );
+		// }
+
+		console.log( selectedRows );
+		// if ( selectedRows.length ) {
+		// 	setRowsSelected( true );
+		// }
+		// if ( ! selectedRows.length ) {
+		// 	setRowsSelected( false );
+		// }
 	};
 
-	return { row: rowValue, insertRow, selectRow, deleteRow, updateRow };
+	return { row: rowValue, rowsSelected, insertRow, selectRow, deleteRow, updateRow };
 }

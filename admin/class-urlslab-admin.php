@@ -70,9 +70,11 @@ class Urlslab_Admin {
 		if ( isset( $_GET['page'] ) && str_contains( $_GET['page'], 'urlslab' ) ) {
 			wp_enqueue_style( $this->urlslab . '-main', plugin_dir_url( __FILE__ ) . 'dist/assets/main.css', false, $this->version );
 
+			$mainjs = glob( plugin_dir_path( __FILE__ ) . 'dist/*.js' );
+
 			wp_enqueue_script(
 				$this->urlslab . '-main',
-				plugin_dir_url( __FILE__ ) . 'dist/main.js',
+				plugin_dir_url( __FILE__ ) . 'dist/' . basename( $mainjs[0] ),
 				array( 'react', 'react-dom', 'wp-api-fetch', 'wp-element', 'wp-i18n' ),
 				$this->version,
 				true

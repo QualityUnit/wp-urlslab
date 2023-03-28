@@ -15,7 +15,7 @@ import '../assets/styles/components/_TableFilter.scss';
 
 export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 	const { __ } = useI18n();
-	const ref = useRef( null );
+	const filterPanel = useRef( null );
 	const queryClient = useQueryClient();
 
 	const possibleFilters = useRef( { ...header } );
@@ -35,7 +35,7 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 		}
 
 		const handleClickOutside = ( event ) => {
-			if ( ! ref.current?.contains( event.target ) && state.panelActive ) {
+			if ( ! filterPanel.current?.contains( event.target ) && state.panelActive ) {
 				dispatch( { type: 'toggleFilterPanel', panelActive: false } );
 			}
 		};
@@ -56,12 +56,12 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 				</Button> );
 			} ) }
 
-			<div ref={ ref } className="pos-relative">
+			<div className="pos-relative">
 				<Button className="simple underline" onClick={ () => dispatch( { type: 'toggleFilterPanel', panelActive: true } ) }>{ __( '+ Add filter' ) }
 				</Button>
 
 				{ state.panelActive &&
-					<div className="urlslab-panel urslab-TableFilter-panel pos-absolute">
+					<div ref={ filterPanel } className="urlslab-panel urslab-TableFilter-panel pos-absolute">
 						<div className="flex flex-align-center">
 							<SortMenu
 								className="mr-s"

@@ -23,7 +23,7 @@ export default function KeywordsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, pageId } );
 
-	const { row, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, rowsSelected, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
 	const keywordTypes = {
 		M: __( 'Manual' ),
@@ -121,6 +121,7 @@ export default function KeywordsTable( { slug } ) {
 				slug={ slug }
 				header={ header }
 				table={ table }
+				rowsSelected={ rowsSelected }
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				exportOptions={ {

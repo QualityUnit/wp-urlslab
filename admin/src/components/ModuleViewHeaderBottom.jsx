@@ -14,18 +14,20 @@ import SortMenu from '../elements/SortMenu';
 import ColumnsMenu from '../elements/ColumnsMenu';
 import Loader from './Loader';
 import Button from '../elements/Button';
+import InsertRowPanel from './InsertRowPanel';
 import ExportPanel from './ExportPanel';
 import ImportPanel from './ImportPanel';
 import DangerPanel from './DangerPanel';
 import TableFilter from './TableFilter';
 
-export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, noDelete, header, table, slug, exportOptions, defaultSortBy, onSort, onFilter } ) {
+export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, noDelete, header, table, slug, exportOptions, rowsSelected, defaultSortBy, onSort, onFilter } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 
 	const [ activePanel, setActivePanel ] = useState();
 	const [ filtersObj, setFiltersObj ] = useState( );
 
+	console.log( table?.getAllColumns() );
 	const initialRow = table?.getRowModel().rows[ 0 ]?.original;
 
 	if ( filtersObj && onFilter ) {
@@ -87,9 +89,13 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 			<div className="urlslab-moduleView-headerBottom">
 				<div className="urlslab-moduleView-headerBottom__top flex flex-align-center">
 
+					{ ! noImport &&
+					<Button className="active" onClick={ () => handlePanel( 'addrow' ) }>{ __( 'Add row' ) }</Button>
+					}
+
 					<Button className="" onClick={ () => handleRefresh() }><RefreshIcon />{ __( 'Refresh table' ) }</Button>
 					{ ! noDelete &&
-					<Button className="ml-s" onClick={ () => handlePanel( 'deleteSelected' ) } disabled><Trash />{ __( 'Delete selected' ) }</Button>
+						<Button className="ml-s" onClick={ () => handlePanel( 'deleteSelected' ) } disabled={ ! rowsSelected }><Trash />{ __( 'Delete selected' ) }</Button>
 					}
 
 					<div className="ma-left flex flex-align-center">
@@ -150,6 +156,10 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 					handlePanel={ handlePanel }
 					action="deleteselected"
 				/>
+			}
+			{
+				activePanel === 'addrow' &&
+				<InsertRowPanel />
 			}
 
 			{ activePanel === 'export' &&

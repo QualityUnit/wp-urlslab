@@ -4,8 +4,13 @@
 .urlslab-settingsPanel {
 
 	&-section {
+		position: relative;
 		margin: 1.5em;
 		max-width: 70.75em;
+
+		&.active {
+			z-index: 2;
+		}
 
 		&:last-of-type {
 			margin-bottom: 3em;
