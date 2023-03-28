@@ -133,6 +133,7 @@ export default function KeywordsTable( { slug } ) {
 				rowsSelected={ rowsSelected }
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
+				onRowAdded={ ( added ) => added && setInsertRow() }
 				insertOptions={ { inserterCells, title: 'Add keyword', data, slug, url, pageId, rowToInsert } }
 				exportOptions={ {
 					url: slug,

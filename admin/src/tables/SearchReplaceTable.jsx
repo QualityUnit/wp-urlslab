@@ -96,6 +96,11 @@ export default function SearchReplaceTable( { slug } ) {
 				table={ table }
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
+				onRowAdded={ ( added ) => {
+					if ( added ) {
+						setInsertRow();
+					}
+				} }
 				insertOptions={ { inserterCells, title: 'Add replacement', data, slug, url, pageId, rowToInsert } }
 				exportOptions={ {
 					url: slug,

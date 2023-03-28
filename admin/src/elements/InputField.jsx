@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { urlRegex } from '../constants/helpers';
 import '../assets/styles/elements/_Inputs.scss';
 
@@ -8,11 +8,17 @@ export default function InputField( { defaultValue, placeholder, message, liveUp
 	const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 
 	const handleVal = ( event ) => {
-		// setVal( event.target.value );
 		if ( onChange ) {
 			onChange( type === 'number' ? event.target.valueAsNumber : event.target.value );
 		}
 	};
+
+	useEffect( () => {
+		if ( liveUpdate ) {
+			const timeOutId = setTimeout( () => onChange( type === 'number' ? val * 1 : val ), 500 );
+			return () => clearTimeout( timeOutId );
+		}
+	}, [ val, liveUpdate, type, onChange ] );
 
 	const valueStatus = () => {
 		if ( val ) {
@@ -41,12 +47,7 @@ export default function InputField( { defaultValue, placeholder, message, liveUp
 					className="urlslab-input input__text"
 					type={ type || 'text' }
 					defaultValue={ val }
-					onChange={ ( event ) => {
-						setVal( event.target.value );
-						if ( liveUpdate ) {
-							handleVal( event );
-						}
-					} }
+					onChange={ ( event ) => setVal( event.target.value ) }
 					onBlur={ ( event ) => handleVal( event ) }
 					onKeyDown={ ( event ) => {
 						if ( event.key === 'Enter' || event.keyCode === 9 ) {
