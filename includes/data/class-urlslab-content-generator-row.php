@@ -17,6 +17,20 @@ class Urlslab_Content_Generator_Row extends Urlslab_Data {
 		$this->set_generator_id( $data['generator_id'] ?? $this->compute_generator_id(), $loaded_from_db );
 	}
 
+	protected function set( $name, $value, $loaded_from_db ) {
+		$result = parent::set( $name, $value, $loaded_from_db );
+
+		switch ($name) {
+			case 'query':
+			case 'lang':
+			case 'context':
+				$this->set_generator_id( $this->compute_generator_id(), $loaded_from_db );
+				break;
+		}
+
+		return $result;
+	}
+
 	private function compute_generator_id(): int {
 		return crc32( md5( $this->get_query() . $this->get_context() . $this->get_lang() ) );
 	}

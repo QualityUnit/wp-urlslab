@@ -11,7 +11,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 	private function init_client(): bool {
 		$api_key = get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
 		if ( strlen( $api_key ) ) {
-			$config               = \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
+			$config = \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
 			$this->content_client = new \OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), $config );
 		}
 
@@ -62,11 +62,21 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 			$request = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest();
 			$request->setAugmentCommand( $query );
 			$prompt = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt();
-			$prompt->setPromptTemplate( "You are generating data for website. Follows pieces of additional information which should help you to generate content:\n{context}{query}" );
+			$prompt->setPromptTemplate( "You are generating data for website. Follows pieces of additional information which should help you to generate content:\n{context}" );
 			$prompt->setDocumentTemplate( "--\n{context}\n--" );
+			$prompt->setMetadataVars([]);
 			$request->setPrompt( $prompt );
 
-			$response = $this->content_client->memoryLessAugment( $request );
+			$filter = new \OpenAPI\Client\Model\DomainDataRetrievalContentQuery( array(
+				'query' => (object) array(
+					'match' => (object) array(
+						'metadata.url' => $row_obj->get_context(),
+					),
+				),
+			) );
+			$request->setFilter( $filter );
+
+			$response = $this->content_client->memoryLessAugment( $request, 'false', 'false' );
 
 
 			if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG )->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_AUTOAPPROVE ) ) {

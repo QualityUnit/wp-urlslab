@@ -44,7 +44,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		$urlslab_atts = shortcode_atts(
 			array(
 				'query'         => '',
-				'context'       => '',
+				'context'       => $this->get_current_page_url(),
 				'template'      => 'templates/simple-result.php',
 				'default-value' => '',
 				'lang'          => $this->get_current_language(),
