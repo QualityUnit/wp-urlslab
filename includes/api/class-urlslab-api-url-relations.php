@@ -93,6 +93,14 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 			$row->src_url_id  = (int) $row->src_url_id;
 			$row->dest_url_id = (int) $row->dest_url_id;
 			$row->pos         = (int) $row->pos;
+			try {
+				$row->dest_url_name = Urlslab_Url::add_current_page_protocol( $row->dest_url_name );
+			} catch ( Exception $e ) {
+			}
+			try {
+				$row->src_url_name = Urlslab_Url::add_current_page_protocol( $row->src_url_name );
+			} catch ( Exception $e ) {
+			}
 		}
 
 		return new WP_REST_Response( $rows, 200 );
