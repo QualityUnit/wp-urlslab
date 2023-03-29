@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { urlRegex } from '../constants/helpers';
+import { useState, useCallback } from 'react';
+import { delay } from '../constants/helpers';
 import '../assets/styles/elements/_Inputs.scss';
 
 export default function InputField( { defaultValue, placeholder, message, liveUpdate, className, type, disabled, label, labelInline, onChange, children, style } ) {
@@ -7,10 +7,15 @@ export default function InputField( { defaultValue, placeholder, message, liveUp
 	const [ valid, setValid ] = useState( false );
 	const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 
-	const handleVal = ( event ) => {
-		// setVal( event.target.value );
+	const handleVal = useCallback( ( event ) => {
 		if ( onChange ) {
 			onChange( type === 'number' ? event.target.valueAsNumber : event.target.value );
+		}
+	}, [ onChange, type ] );
+
+	const handleValLive = ( event ) => {
+		if ( liveUpdate ) {
+			delay( () => handleVal( event ), 800 )();
 		}
 	};
 
@@ -43,9 +48,7 @@ export default function InputField( { defaultValue, placeholder, message, liveUp
 					defaultValue={ val }
 					onChange={ ( event ) => {
 						setVal( event.target.value );
-						if ( liveUpdate ) {
-							handleVal( event );
-						}
+						handleValLive( event );
 					} }
 					onBlur={ ( event ) => handleVal( event ) }
 					onKeyDown={ ( event ) => {

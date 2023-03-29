@@ -1,5 +1,6 @@
 /* eslint-disable indent */
 import { useRef, useState, useEffect } from 'react';
+import { get } from 'idb-keyval';
 import {
 	flexRender,
 	getCoreRowModel,
@@ -10,13 +11,16 @@ import { useVirtual } from 'react-virtual';
 
 import '../assets/styles/components/_TableComponent.scss';
 
-export default function Table( { resizable, children, className, columns, data, returnTable } ) {
+export default function Table( { slug, resizable, children, className, columns, data, returnTable } ) {
 	const [ rowSelection, setRowSelection ] = useState( {} );
 	const [ columnVisibility, setColumnVisibility ] = useState( {} );
 	const [ containerWidth, setContainerWidth ] = useState();
+	const [ hiddenCols, setHiddenCols ] = useState();
 	const tableContainerRef = useRef();
 
 	useEffect( () => {
+		const getHiddenCols = async () => await get( slug ).then( ( obj ) => setHiddenCols( obj.columns ) );
+		getHiddenCols();
 		setContainerWidth( tableContainerRef.current.clientWidth );
 		const menuWidth = document.querySelector( '.urlslab-mainmenu' ).clientWidth + document.querySelector( '#adminmenuwrap' ).clientWidth;
 
@@ -77,8 +81,6 @@ export default function Table( { resizable, children, className, columns, data, 
 					return (
 						<td key={ cell.id } className={ cell.column.columnDef.className }
 							style={ {
-							position: resizable ? 'absolute' : 'relative',
-							left: resizable ? cell.column.getStart() : '0',
 							width: cell.column.getSize() !== 0 && resizable
 								? cell.column.getSize()
 								: undefined,

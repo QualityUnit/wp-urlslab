@@ -22,7 +22,7 @@
 
 	&.menu-active,
 	&.active,
-	.active & {
+	.urlslab-FilterMenu.active & {
 
 		&::after {
 			transform: scaleY(-1);

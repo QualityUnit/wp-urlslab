@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { get } from 'idb-keyval';
 
 import { fetchData } from '../api/fetching';
 import { deleteAll } from '../api/deleteTableData';
@@ -20,12 +21,18 @@ import ImportPanel from './ImportPanel';
 import DangerPanel from './DangerPanel';
 import TableFilter from './TableFilter';
 
-export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, noDelete, header, table, insertOptions, slug, exportOptions, rowsSelected, defaultSortBy, onSort, onFilter } ) {
+export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, noDelete, header, table, insertOptions, slug, exportOptions, rowsSelected, defaultSortBy, onSort, onFilter, onClearRow } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 
 	const [ activePanel, setActivePanel ] = useState();
-	const [ filtersObj, setFiltersObj ] = useState( );
+	const [ filtersObj, setFiltersObj ] = useState();
+	const [ visibleCols, setVisibleCols ] = useState();
+
+	useEffect( () => {
+		const cols = async () => await get( slug ).then( ( obj ) => setVisibleCols( obj.columns ) );
+		cols();
+	}, [ slug ] );
 
 	const initialRow = table?.getRowModel().rows[ 0 ]?.original;
 
@@ -77,6 +84,10 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 		if ( key === 'delete-all' ) {
 			handleDeleteAll.mutate();
 		}
+
+		if ( key === 'clearRow' && onClearRow ) {
+			onClearRow( true );
+		}
 	};
 
 	const handleRefresh = () => {
@@ -125,6 +136,8 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 						<ColumnsMenu
 							className="menu-left ml-m"
 							id="visibleColumns"
+							slug={ slug }
+							visibleCols={ visibleCols }
 							table={ table }
 							items={ header }
 						>

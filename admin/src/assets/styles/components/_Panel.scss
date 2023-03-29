@@ -10,10 +10,10 @@
 
 	&-floating[class] {
 
-		top: 25%;
+		position: fixed;
+		top: 15%;
 		left: calc(50% + 80px); //WP Admin menu half width of 160px
 		transform: translateX(-50%);
-		position: absolute;
 		z-index: 9999;
 
 		.urlslab-panel {

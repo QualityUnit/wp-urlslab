@@ -9,7 +9,7 @@
 	position: relative;
 	z-index: 2;
 	max-width: 12em;
-	font-size: 0.875rem;
+	font-size: 0.8125em;
 	font-family: OpenSans, sans-serif;
 	font-weight: $font-weight-normal;
 
@@ -110,7 +110,6 @@
 
 		.wide & {
 			left: 0;
-			transform: translateZ(0);
 			width: 100%;
 		}
 

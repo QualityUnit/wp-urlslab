@@ -42,7 +42,7 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 			}
 		};
 
-		document.addEventListener( 'click', handleClickOutside, false );
+		// document.addEventListener( 'click', handleClickOutside, false );
 	}, [ queryClient, slug, state.panelActive, dispatch ] );
 
 	return (
@@ -66,7 +66,9 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 
 				{ state.panelActive &&
 					<div ref={ filterPanel } className="urlslab-panel urslab-TableFilter-panel pos-absolute">
-						<div className="flex flex-align-center">
+						<div className="urlslab-panel-header urslab-TableFilter-panel-header"><strong>Edit filter</strong></div>
+
+						<div className="flex mt-m mb-m flex-align-center">
 							<SortMenu
 								className="mr-s"
 								items={ state.possibleFilters }
@@ -91,9 +93,9 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 							: <RangeInputs liveUpdate onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
 						}
 
-						<div className="Buttons flex flex-align-center">
-							<Button className="simple" onClick={ () => dispatch( { type: 'toggleFilterPanel' } ) }>{ __( 'Cancel' ) }</Button>
-							<Button active disabled={ state.filterObj.filterVal ? false : true } onClick={ ( v ) => {
+						<div className="Buttons mt-m flex flex-align-center">
+							<Button className="ma-left wide simple" onClick={ () => dispatch( { type: 'toggleFilterPanel' } ) }>{ __( 'Cancel' ) }</Button>
+							<Button active className="wide" disabled={ state.filterObj.filterVal ? false : true } onClick={ ( v ) => {
 								handleSaveFilter( v ); runFilter.current = true;
 							} }>{ __( 'Save' ) }</Button>
 						</div>

@@ -35,7 +35,7 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 				// 	pages: newPagesArray,
 				// 	pageParams: origData.pageParams,
 				// } ) );
-				queryClient.invalidateQueries( [ slug, url ] );
+				queryClient.invalidateQueries( [ slug ] );
 				setInsertRowRes( response );
 			}
 		},
@@ -124,7 +124,7 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 		// 	selectedRows.push( cell.row.original[ pageId ] );
 		// }
 
-		console.log( selectedRows );
+		// console.log( selectedRows );
 		// if ( selectedRows.length ) {
 		// 	setRowsSelected( true );
 		// }
