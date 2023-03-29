@@ -89,6 +89,7 @@ class Urlslab_Url {
 			$this->url_components['path'] = '';
 		}
 
+
 		if ( ! isset( $this->url_components['scheme'] ) ) {
 			$this->url_components['scheme'] = self::get_current_page_protocol();
 		}
@@ -115,6 +116,8 @@ class Urlslab_Url {
 			}
 		}
 
+		$this->url_components['path'] = $this->resolve_path( $this->url_components['path'] );
+
 		$url = $this->url_components['host'] . ( $this->url_components['path'] ?? '' );
 		if ( isset( $this->url_components['query'] ) ) {
 			parse_str( $this->url_components['query'], $query_params );
@@ -135,6 +138,41 @@ class Urlslab_Url {
 			}
 		}
 		$this->urlslab_parsed_url = $url;
+	}
+
+	private function resolve_path( $path ) {
+		if ( false === strpos( $path, './' ) ) {
+			return $path;
+		}
+		if ( '../' == $path ) {
+			return '';
+		}
+		// Explode the path into its parts
+		$path_parts = explode( '/', $path );
+
+		// Initialize a stack to store the resolved path
+		$resolved_path_parts = array();
+
+		// Iterate through the path parts and resolve any "." or ".."
+		foreach ( $path_parts as $part ) {
+			if ( '..' === $part ) {
+				// Remove the last element from the resolved path stack
+				if ( ! empty( $resolved_path_parts ) ) {
+					array_pop( $resolved_path_parts );
+				}
+			} else if ( '.' !== $part && '' !== $part ) {
+				// Add the current part to the resolved path stack
+				$resolved_path_parts[] = $part;
+			}
+		}
+
+		// Rebuild the path from the resolved path stack
+		$resolved_path = '/' . implode( '/', $resolved_path_parts );
+		if ( '' === $path_parts[ count( $path_parts ) - 1 ] ) {
+			$resolved_path .= '/';
+		}
+
+		return $resolved_path;
 	}
 
 	public function get_url_id(): int {
