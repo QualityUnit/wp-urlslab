@@ -55,9 +55,11 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 					$row->set_public( $column, $request->get_param( $column ) );
 				}
 			}
-			$row->insert();
-
-			return new WP_REST_Response( $row->as_array(), 200 );
+			if ( $row->insert() ) {
+				return new WP_REST_Response( $row->as_array(), 200 );
+			} else {
+				return new WP_Error( 'error', __( 'Insert failed', 'urlslab' ), array( 'status' => 409 ) );
+			}
 		} catch ( Exception $e ) {
 			return new WP_Error( 'exception', __( 'Insert failed', 'urlslab' ), array( 'status' => 500 ) );
 		}
