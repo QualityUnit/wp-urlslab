@@ -69,9 +69,17 @@ class Urlslab_Summaries_Cron extends Urlslab_Cron {
 		foreach ( $url_rows as $row ) {
 			$row_obj = new Urlslab_Url_Row( $row );
 			if ( $row_obj->get_url()->is_url_valid() ) {
-				$url_objects[] = $row_obj;
-				$data[]        = $row['url_id'];
-				$url_names[]   = $row['url_name'];
+				if (
+					( Urlslab_Url_Row::SUM_STATUS_PENDING == $row_obj->get_sum_status() || Urlslab_Url_Row::SUM_STATUS_NEW == $row_obj->get_sum_status() ) &&
+					strlen( $row_obj->get_url_summary() ) > 0
+				) {
+					$row_obj->set_sum_status( Urlslab_Url_Row::SUM_STATUS_ACTIVE );
+					$row_obj->update();
+				} else {
+					$url_objects[] = $row_obj;
+					$data[]        = $row['url_id'];
+					$url_names[]   = $row['url_name'];
+				}
 			} else {
 				$row_obj->set_sum_status( Urlslab_Url_Row::SCR_STATUS_ERROR );
 				$row_obj->update();
@@ -80,30 +88,34 @@ class Urlslab_Summaries_Cron extends Urlslab_Cron {
 
 		$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' SET update_sum_date=%s, sum_status=%s WHERE url_id IN (' . implode( ',', array_fill( 0, count( $url_rows ), '%d' ) ) . ')', $data ) ); // phpcs:ignore
 
-		$urlslab_summaries = $this->client->getSummary( new \OpenAPI\Client\Model\DomainDataRetrievalDataRequest( array( 'urls' => $url_names ) ) );
-
 		$some_urls_updated = false;
-		foreach ( $urlslab_summaries as $id => $summary ) {
-			switch ( $summary->getSummaryStatus() ) {
-				case 'BLOCKED':
-				case 'NOT_CRAWLING_URL':
-					$url_objects[ $id ]->set_sum_status( Urlslab_Url_Row::SUM_STATUS_ERROR );
-					$url_objects[ $id ]->update();
-					break;
-				case 'AVAILABLE':
-					$url_objects[ $id ]->set_urlslab_domain_id( $summary->getDomainId() );
-					$url_objects[ $id ]->set_urlslab_url_id( $summary->getUrlId() );
-					$url_objects[ $id ]->set_urlslab_sum_timestamp( time() ); //TODO: api has no info when was summary generated?
-					$url_objects[ $id ]->set_url_summary( $summary->getSummary() ); //TODO: api has no info when was summary generated?
-					$url_objects[ $id ]->set_sum_status( Urlslab_Url_Row::SUM_STATUS_ACTIVE );
-					$url_objects[ $id ]->update();
-					$some_urls_updated = true;
-					break;
-				case 'AWAITING_PENDING':    //no acition
-				default:
-					//we will leave object in the status pending
+
+		try {
+			$urlslab_summaries = $this->client->getSummary( new \OpenAPI\Client\Model\DomainDataRetrievalDataRequest( array( 'urls' => $url_names ) ) );
+			foreach ( $urlslab_summaries as $id => $summary ) {
+				switch ( $summary->getSummaryStatus() ) {
+					case 'BLOCKED':
+					case 'NOT_CRAWLING_URL':
+						$url_objects[ $id ]->set_sum_status( Urlslab_Url_Row::SUM_STATUS_ERROR );
+						$url_objects[ $id ]->update();
+						break;
+					case 'AVAILABLE':
+						$url_objects[ $id ]->set_urlslab_domain_id( $summary->getDomainId() );
+						$url_objects[ $id ]->set_urlslab_url_id( $summary->getUrlId() );
+						$url_objects[ $id ]->set_urlslab_sum_timestamp( time() ); //TODO: api has no info when was summary generated?
+						$url_objects[ $id ]->set_url_summary( $summary->getSummary() ); //TODO: api has no info when was summary generated?
+						$url_objects[ $id ]->set_sum_status( Urlslab_Url_Row::SUM_STATUS_ACTIVE );
+						$url_objects[ $id ]->update();
+						$some_urls_updated = true;
+						break;
+					case 'AWAITING_PENDING':    //no acition
+					default:
+						//we will leave object in the status pending
+				}
 			}
+		} catch ( \OpenAPI\Client\ApiException $e ) {
 		}
+
 
 		return $some_urls_updated;    //100 URLs per execution is enought if there was no url updated
 	}
