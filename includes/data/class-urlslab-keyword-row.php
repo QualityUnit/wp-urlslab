@@ -13,6 +13,23 @@ class Urlslab_Keyword_Row extends Urlslab_Data {
 		$this->set_kw_id( $data['kw_id'] ?? $this->compute_kw_id(), $loaded_from_db );
 	}
 
+	protected function set( $name, $value, $loaded_from_db ) {
+		$result = parent::set( $name, $value, $loaded_from_db );
+		if ( ! $loaded_from_db ) {
+			switch ( $name ) {
+				case 'keyword':
+					$this->set_kw_length( strlen( $value ), $loaded_from_db );    //continue next case
+				case 'urlLink':
+				case 'lang':
+					$this->set_kw_id( $this->compute_kw_id(), $loaded_from_db );
+					break;
+				default:
+			}
+		}
+
+		return $result;
+	}
+
 	private function compute_kw_id() {
 		return crc32( md5( $this->get_keyword() . '|' . $this->get_url_link() . '|' . $this->get_lang() ) );
 	}
