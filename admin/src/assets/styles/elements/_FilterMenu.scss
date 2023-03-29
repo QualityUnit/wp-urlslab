@@ -9,7 +9,7 @@
 	position: relative;
 	z-index: 2;
 	max-width: 12em;
-	font-size: 0.875rem;
+	font-size: 0.8125em;
 	font-family: OpenSans, sans-serif;
 	font-weight: $font-weight-normal;
 
@@ -45,7 +45,7 @@
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			overflow: hidden;
-			width: calc(100% - 1em);
+			width: calc(100% - 1.5em);
 		}
 
 		.urlslab-table tr:not(.urlslab-rowInserter) & {

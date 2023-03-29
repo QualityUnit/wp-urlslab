@@ -33,6 +33,10 @@ button.urlslab-button,
 		color: $grey-darker;
 	}
 
+	&.wide {
+		padding: 0.55em 2em;
+	}
+
 	&.outline {
 		background-color: $white;
 		border: 1px solid $grey-light;

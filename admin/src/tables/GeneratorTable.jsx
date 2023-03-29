@@ -1,7 +1,9 @@
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, Tooltip, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, Tooltip, Checkbox, Trash, SortMenu, InputField, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
+
+import { langName } from '../constants/helpers';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
@@ -23,7 +25,7 @@ export default function GeneratorTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, pageId, currentFilters, sortingColumn } );
 
-	const { row, selectRow, deleteRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
 	const header = {
 		query: __( 'Query' ),
@@ -45,27 +47,31 @@ export default function GeneratorTable( { slug } ) {
 		columnHelper.accessor( 'query', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			header: header.query,
-			size: 500,
+			size: 200,
 		} ),
 		columnHelper.accessor( 'context', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			header: header.context,
-			size: 500,
+			size: 200,
 		} ),
 		columnHelper.accessor( 'lang', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => langName( cell?.getValue() ),
 			header: header.lang,
-			size: 500,
+			size: 165,
 		} ),
 		columnHelper.accessor( 'results', {
+			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.results,
-			size: 500,
+			size: 200,
 		} ),
 		columnHelper.accessor( 'status', {
+			className: 'status',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			header: header.status,
-			size: 500,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'status_changed', {
 			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
@@ -100,7 +106,9 @@ export default function GeneratorTable( { slug } ) {
 					deleteCSVCols: [ pageId, 'generator_id' ],
 				} }
 			/>
-			<Table className="fadeInto" columns={ columns }
+			<Table className="fadeInto"
+				slug={ slug }
+				columns={ columns }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				data={
 					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )

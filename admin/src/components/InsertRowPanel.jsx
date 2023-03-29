@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 
@@ -26,17 +26,17 @@ export default function InsertRowPanel( { insertOptions, handlePanel } ) {
 		enableAddButton.current = false;
 	}
 
-	const hidePanel = ( ) => {
+	function hidePanel( ) {
 		handleClose();
 		enableAddButton.current = false;
 		if ( handlePanel ) {
 			handlePanel( 'clearRow' );
 		}
-	};
+	}
 
-	const handleInsert = () => {
+	function handleInsert() {
 		insertRow( { rowToInsert } );
-	};
+	}
 
 	if ( insertRowResult?.ok ) {
 		setTimeout( () => {

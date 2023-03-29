@@ -1,5 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
+import { update } from 'idb-keyval';
+
 import Checkbox from './Checkbox';
 import { ReactComponent as ColumnsIcon } from '../assets/images/icon-columns.svg';
 
@@ -7,13 +9,24 @@ import '../assets/styles/elements/_FilterMenu.scss';
 import '../assets/styles/elements/_ColumnsMenu.scss';
 
 export default function ColumnsMenu( {
-	id, className, table, items, style } ) {
+	id, className, slug, table, visibleCols, items, style } ) {
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
 	const [ checked, setChecked ] = useState( Object.keys( items ) );
 	const ref = useRef( id );
 
+	const tableColumns = table?.getAllLeafColumns();
+	// console.log( visibleCols );
+	// console.log( checked );
+
+	// update(slug, (obj) => {
+	// 	return { ...obj, columns: checked };
+	// });
+
 	useEffect( ( ) => {
+		if ( visibleCols?.length ) {
+			setChecked( visibleCols );
+		}
 		const handleClickOutside = ( event ) => {
 			if ( ! ref.current?.contains( event.target ) && isActive && ref.current?.id === id ) {
 				setActive( false );
@@ -21,17 +34,15 @@ export default function ColumnsMenu( {
 			}
 		};
 		document.addEventListener( 'click', handleClickOutside, false );
-	}, [ id, isActive ] );
+	}, [ id, visibleCols, isActive ] );
 
 	const checkedCheckbox = ( column, isChecked ) => {
 		column.toggleVisibility();
 		if ( isChecked ) {
 			const checkedList = [ ...checked, column.id ];
-			// checkedNow = [ ... new Set( checkedList ) ];
 			setChecked( [ ... new Set( checkedList ) ] );
 		}
 		if ( ! isChecked ) {
-			// checkedNow = checked.filter( ( item ) => item !== column.id );
 			setChecked( checked.filter( ( item ) => item !== column.id ) );
 		}
 	};
@@ -57,7 +68,7 @@ export default function ColumnsMenu( {
 			</div>
 			<div className={ `urlslab-FilterMenu__items urlslab-ColumnsMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
 				<div className={ `urlslab-FilterMenu__items--inn ${ items.length > 8 ? 'has-scrollbar' : '' }` }>
-					{ table?.getAllLeafColumns().map( ( column ) => {
+					{ tableColumns?.map( ( column ) => {
 						return (
 							items[ column.id ] &&
 							<Checkbox

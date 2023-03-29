@@ -15,7 +15,7 @@ export default function InputField( { defaultValue, placeholder, message, liveUp
 
 	const handleValLive = ( event ) => {
 		if ( liveUpdate ) {
-			delay( () => handleVal( event ), 500 )();
+			delay( () => handleVal( event ), 800 )();
 		}
 	};
 

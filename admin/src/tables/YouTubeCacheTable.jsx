@@ -64,14 +64,9 @@ export default function YouTubeCacheTable( { slug } ) {
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'status', {
-			className: 'nolimit',
-			cell: ( cell ) => <SortMenu
-				items={ statusTypes }
-				name={ cell.column.id }
-				checkedId={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => statusTypes[ cell.getValue() ],
 			header: header.status,
-			size: 80,
+			size: 100,
 		} ),
 		columnHelper?.accessor( ( cell ) => [ cell?.videoid, JSON.parse( `${ cell?.microdata }` )?.items[ 0 ]?.snippet?.title ], {
 			id: 'title',
@@ -79,12 +74,6 @@ export default function YouTubeCacheTable( { slug } ) {
 			cell: ( val ) => <a href={ `https://youtu.be/${ val?.getValue()[ 0 ] }` } target="_blank" rel="noreferrer">{ val?.getValue()[ 1 ] }</a>,
 			header: header.title,
 			size: 450,
-		} ),
-		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.microdata }` )?.items[ 0 ]?.snippet?.publishedAt, {
-			id: 'published',
-			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
-			header: header.published,
-			size: 100,
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
