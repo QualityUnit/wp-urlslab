@@ -62,7 +62,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 			$request = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest();
 			$request->setAugmentCommand( $row_obj->get_semantic_context() );
 			$prompt = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt();
-			$prompt->setPromptTemplate( "Use this as additional information:\n{context}\n" . $command );
+			$prompt->setPromptTemplate( "Follows additional information to your memory, related to {query}:\n--\n{context}\n----\n" . $command );
 			$prompt->setDocumentTemplate( "--\n{text}\n--" );
 			$prompt->setMetadataVars( array() );
 			$request->setPrompt( $prompt );
@@ -72,7 +72,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 				array(
 					'query' => (object) array(
 						'wildcard' => (object) array(
-							'metadata.url' => (object) array( 'value' => $row_obj->get_url_filter() ),
+							'metadata.url.keyword' => (object) array( 'value' => $row_obj->get_url_filter() ),
 						),
 					),
 				)
