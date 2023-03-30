@@ -42,7 +42,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		$atts            = array_change_key_case( (array) $atts );
 		$current_url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $this->get_current_page_url() );
 		if ( ! empty( $current_url_obj ) ) {
-			$title = $current_url_obj->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
+			$title = $current_url_obj->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_TITLE );
 		} else {
 			$title = get_the_title();
 		}
@@ -50,7 +50,15 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			array(
 				'semantic_context' => $title,
 				'command'          => 'Summarize information I gave you. Generate summarization in language |lang|.',
-				'url_filter'       => $this->get_current_page_url()->get_url(),
+				'url_filter'       => str_replace(
+										  array(
+											  'www.',
+											  'https://',
+											  'http://',
+										  ),
+										  '',
+										  $this->get_current_page_url()->get_url()
+									  ) . '*',
 				'template'         => 'templates/simple-result.php',
 				'default_value'    => '',
 				'lang'             => $this->get_current_language(),
