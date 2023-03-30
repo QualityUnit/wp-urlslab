@@ -78,6 +78,10 @@ The content is coming soon.
 
 == Changelog ==
 
+= 2.4.9 - 2023-03-30 =
+
+* Fix: Multiple bugs were fixed
+
 = 2.4.8 - 2023-03-29 =
 
 * Fix: Multiple bugs were fixed
