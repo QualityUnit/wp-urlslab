@@ -14,24 +14,13 @@ import '../assets/styles/components/_TableComponent.scss';
 export default function Table( { slug, resizable, children, className, columns, data, returnTable } ) {
 	const [ rowSelection, setRowSelection ] = useState( {} );
 	const [ columnVisibility, setColumnVisibility ] = useState( {} );
-	const [ containerWidth, setContainerWidth ] = useState();
 	const [ hiddenCols, setHiddenCols ] = useState();
 	const tableContainerRef = useRef();
 
 	useEffect( () => {
 		const getHiddenCols = async () => await get( slug ).then( ( obj ) => setHiddenCols( obj.columns ) );
 		getHiddenCols();
-		setContainerWidth( tableContainerRef.current.clientWidth );
-		const menuWidth = document.querySelector( '.urlslab-mainmenu' ).clientWidth + document.querySelector( '#adminmenuwrap' ).clientWidth;
-
-		const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
-			if ( entry.borderBoxSize ) {
-				tableContainerRef.current.style.width = `${ document.querySelector( '#wpadminbar' ).clientWidth - menuWidth - 54 }px`;
-			}
-		} );
-
-		resizeWatcher.observe( document.querySelector( '#wpadminbar' ) );
-	}, [ setContainerWidth ] );
+	}, [ slug ] );
 
 	const table = useReactTable( {
 		columns,
@@ -101,33 +90,29 @@ export default function Table( { slug, resizable, children, className, columns, 
 	}
 
 	return (
-		<div className="urlslab-table-container" ref={ tableContainerRef } style={ {
-			width: resizable ? `${ containerWidth }px` : 'auto',
-			'--tableContainerWidth': `${ containerWidth }px`,
-			} }>
-			{ containerWidth
-				? <table className={ `urlslab-table ${ className } ${ resizable ? 'resizable' : '' }` } style={ {
+		<div className="urlslab-table-container" ref={ tableContainerRef }>
+			<table className={ `urlslab-table ${ className } ${ resizable ? 'resizable' : '' }` } style={ {
 					width: table.getCenterTotalSize(),
 				} }>
-					<thead className="urlslab-table-head">
-						{ table.getHeaderGroups().map( ( headerGroup ) => (
-							<tr className="urlslab-table-head-row" key={ headerGroup.id }>
-								{ headerGroup.headers.map( ( header ) => (
-									<th key={ header.id }
-										className={ header.column.columnDef.className }
-										style={ {
+				<thead className="urlslab-table-head">
+					{ table.getHeaderGroups().map( ( headerGroup ) => (
+						<tr className="urlslab-table-head-row" key={ headerGroup.id }>
+							{ headerGroup.headers.map( ( header ) => (
+								<th key={ header.id }
+									className={ header.column.columnDef.className }
+									style={ {
 											position: resizable ? 'absolute' : 'relative',
 											left: resizable ? header.getStart() : '0',
 											width: header.getSize() !== 0 ? header.getSize() : '',
 										} }
 									>
-										{ header.isPlaceholder
+									{ header.isPlaceholder
 											? null
 											: flexRender(
 												header.column.columnDef.header,
 												header.getContext()
 											) }
-										{ ( resizable && header.column.columnDef.enableResizing !== false )
+									{ ( resizable && header.column.columnDef.enableResizing !== false )
 											? <div
 													{ ...{
 													onMouseDown: header.getResizeHandler(),
@@ -138,27 +123,25 @@ export default function Table( { slug, resizable, children, className, columns, 
 											/>
 											: null
 										}
-									</th>
+								</th>
 								) ) }
-							</tr>
+						</tr>
 						) ) }
-					</thead>
-					<tbody className="urlslab-table-body" >
-						{ paddingTop > 0 && (
-							<tr>
-								<td style={ { height: `${ paddingTop }px` } } />
-							</tr>
+				</thead>
+				<tbody className="urlslab-table-body" >
+					{ paddingTop > 0 && (
+					<tr>
+						<td style={ { height: `${ paddingTop }px` } } />
+					</tr>
 						) }
-						{ tbody }
-						{ paddingBottom > 0 && (
-							<tr>
-								<td style={ { height: `${ paddingBottom }px` } } />
-							</tr>
+					{ tbody }
+					{ paddingBottom > 0 && (
+					<tr>
+						<td style={ { height: `${ paddingBottom }px` } } />
+					</tr>
 						) }
-					</tbody>
-				</table>
-				: null
-			}
+				</tbody>
+			</table>
 
 			{ children }
 		</div>
