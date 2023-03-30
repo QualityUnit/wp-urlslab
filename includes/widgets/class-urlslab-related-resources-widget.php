@@ -11,6 +11,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	const SETTING_NAME_AUTOINCLUDE_TO_CONTENT = 'urlslab-relres-autoinc';
 	const SETTING_NAME_ARTICLES_COUNT = 'urlslab-relres-count';
 	const SETTING_NAME_SHOW_IMAGE = 'urlslab-relres-show-img';
+	const SETTING_NAME_IMAGE_SIZE = 'urlslab-relres-img-size';
 	const SETTING_NAME_SHOW_SUMMARY = 'urlslab-relres-show-sum';
 	const SETTING_NAME_DEFAULT_IMAGE_URL = 'urlslab-relres-def-img';
 	const SETTING_NAME_AUTOINCLUDE_POST_TYPES = 'urlslab-relres-autoinc-post-types';
@@ -66,6 +67,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				'url'           => $this->get_current_page_url()->get_url_with_protocol(),
 				'related-count' => $this->get_option( self::SETTING_NAME_ARTICLES_COUNT ),
 				'show-image'    => $this->get_option( self::SETTING_NAME_SHOW_IMAGE ),
+				'image-size'    => $this->get_option( self::SETTING_NAME_IMAGE_SIZE ),
 				'show-summary'  => $this->get_option( self::SETTING_NAME_SHOW_SUMMARY ),
 				'default-image' => $this->get_option( self::SETTING_NAME_DEFAULT_IMAGE_URL ),
 			),
@@ -174,8 +176,9 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 	private function render_screenshot( Urlslab_Url_Row $url, array $urlslab_atts, $strategy ): string {
 		if ( ! empty( $urlslab_atts['show-image'] ) ) {
-			if ( ! empty( $url->get_screenshot_url( 'thumbnail' ) ) ) {
-				return '<div class="urlslab-rel-res-item-screenshot"><img alt="' . esc_attr( $url->get_summary_text( $strategy ) ) . '" src="' . $url->get_screenshot_url( 'thumbnail' ) . '"></div>';
+			$img_url = $url->get_screenshot_url( $urlslab_atts['image-size'] );
+			if ( ! empty( $img_url ) ) {
+				return '<div class="urlslab-rel-res-item-screenshot"><img alt="' . esc_attr( $url->get_summary_text( $strategy ) ) . '" src="' . $img_url . '"></div>';
 			} else if ( ! empty( $urlslab_atts['default-image'] ) ) {
 				return '<div class="urlslab-rel-res-item-screenshot urlslab-rel-res-item-default-image"><img src="' . $urlslab_atts['default-image'] . '"></div>';
 			}
@@ -307,6 +310,32 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
+			'widget'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_IMAGE_SIZE,
+			Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL,
+			true,
+			__( 'Image size' ),
+			__( 'Define default image size of screenshot next to related resources. To take screenshot can take few days. In the meantime you can define default image url.' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL  => __( 'Carousel Thumbnail (200px x 112px)' ),
+				Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL            => __( 'Carousel (1358px x 642px)' ),
+				Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL => __( 'Thumbnail (200px x dynamic height)' ),
+				Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE           => __( 'Full (1358px x dynamic height)' ),
+			),
+			function( $value ) {
+				switch ( $value ) {
+					case Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL:
+					case Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL:
+					case Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL:
+					case Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE:
+						return true;
+					default:
+						return false;
+				}
+			},
 			'widget'
 		);
 		$this->add_option_definition(

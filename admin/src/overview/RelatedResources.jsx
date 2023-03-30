@@ -49,6 +49,13 @@ export default function RelatedResourcesOverview() {
 						<td>true, false</td>
 					</tr>
 					<tr>
+						<td>image-size</td>
+						<td>optional</td>
+						<td>Define size of the screenshot image</td>
+						<td>carousel-thumbnail</td>
+						<td>carousel-thumbnail<br />full-page-thumbnail<br />carousel<br />full-page</td>
+					</tr>
+					<tr>
 						<td>show-summary</td>
 						<td>optional</td>
 						<td>Show a summary text</td>
