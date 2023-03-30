@@ -11,44 +11,43 @@ const filterObj = {
 
 export function useFilter( { slug, header, initialRow } ) {
 	const queryClient = useQueryClient();
-	const [ currentFilters, setCurrentFilters ] = useState( {} );
-	const [ filteringState, setFilteringState ] = useState( );
 	const runFilter = useRef( false );
 	const possibleFilters = useRef( { ...header } );
-	const [ state, dispatch ] = useReducer( filterReducer, { possibleFilters: possibleFilters.current, filterObj, editFilterActive: false } );
+	const [ state, dispatch ] = useReducer( filterReducer, { currentFilters: {}, filteringState: undefined, possibleFilters: possibleFilters.current, filterObj, editFilterActive: false } );
 
-	const activeFilters = currentFilters ? Object.keys( currentFilters ) : null;
+	const activeFilters = state.currentFilters ? Object.keys( state.currentFilters ) : null;
 
 	let filters = '';
 
 	useEffect( () => {
-		setFilteringState( queryClient.getQueryData( [ slug, 'filters' ] ) );
+		dispatch( { type: 'setFilteringState', filteringState: queryClient.getQueryData( [ slug, 'filters' ] ) } );
 
-		if ( filteringState?.possibleFilters ) {
-			possibleFilters.current = filteringState?.possibleFilters;
+		if ( state.filteringState?.possibleFilters ) {
+			possibleFilters.current = state.filteringState?.possibleFilters;
 		}
-	}, [ queryClient, slug, filteringState ] );
+	}, [ queryClient, slug, state, dispatch ] );
 
 	function addFilter( key, value ) {
 		if ( value ) {
-			setCurrentFilters( { ...currentFilters, [ key ]: value } );
+			dispatch( { type: 'setCurrentFilters', currentFilters: { ...state.currentFilters, [ key ]: value } } );
 		}
 		if ( ! value ) {
 			removeFilters( [ key ] );
 		}
 	}
 	function removeFilters( keyArray ) {
-		setCurrentFilters( ( filter ) => {
-			const filtersCopy = { ...filter };
+		const getFilters = () => {
+			const filtersCopy = { ...state.currentFilters };
 			keyArray.map( ( key ) => {
 				delete filtersCopy[ key ];
 				return false;
 			} );
 			return filtersCopy;
-		} );
+		};
+		dispatch( { type: 'setCurrentFilters', currentFilters: getFilters() } );
 	}
 
-	Object.entries( currentFilters ).map( ( [ key, filter ] ) => {
+	Object.entries( state.currentFilters ).map( ( [ key, filter ] ) => {
 		const { op, val } = filter;
 		if ( ! op ) {
 			filters += `&filter_${ key }=${ filter }`;
@@ -120,10 +119,10 @@ export function useFilter( { slug, header, initialRow } ) {
 
 	if ( runFilter.current ) {
 		runFilter.current = false;
-		queryClient.setQueryData( [ slug, 'filters' ], { filters, currentFilters, possibleFilters: possibleFilters.current } );
+		queryClient.setQueryData( [ slug, 'filters' ], { filters, currentFilters: state.currentFilters, possibleFilters: possibleFilters.current } );
 	}
 
-	return { filters, currentFilters, filteringState, addFilter, removeFilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter };
+	return { filters, currentFilters: state.currentFilters, filteringState: state.filteringState, addFilter, removeFilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter };
 }
 
 export function useSorting( { slug } ) {

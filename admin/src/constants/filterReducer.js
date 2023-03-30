@@ -23,6 +23,16 @@ export default function filterReducer( state, action ) {
 				...state,
 				filterObj: { ...filterObj, isNumber: action.isNumber },
 			};
+		case 'setCurrentFilters':
+			return {
+				...state,
+				currentFilters: action.currentFilters,
+			};
+		case 'setFilteringState':
+			return {
+				...state,
+				filteringState: action.filteringState,
+			};
 		case 'possibleFilters':
 			return {
 				...state,
