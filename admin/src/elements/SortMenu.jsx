@@ -5,7 +5,7 @@ import Checkbox from './Checkbox';
 import '../assets/styles/elements/_FilterMenu.scss';
 
 export default function SortMenu( {
-	className, name, style, children, items, checkedId, autoClose, isFilter, onChange,
+	className, name, style, children, items, checkedId, autoClose, disabled, isFilter, onChange,
 } ) {
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
@@ -44,12 +44,16 @@ export default function SortMenu( {
 	};
 
 	return (
-		<div className={ `urlslab-FilterMenu urlslab-SortMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref }>
+		<div className={ `urlslab-FilterMenu urlslab-SortMenu ${ disabled && 'disabled' } ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref }>
 			{ ! isFilter && children ? <div className="urlslab-inputField-label" dangerouslySetInnerHTML={ { __html: children } } /> : null }
 			<div
 				className={ `urlslab-FilterMenu__title ${ isFilter ? 'isFilter' : '' } ${ isActive ? 'active' : '' }` }
-				onClick={ handleMenu }
-				onKeyUp={ ( event ) => handleMenu( event ) }
+				onClick={ ! disabled && handleMenu }
+				onKeyUp={ ( event ) => {
+					if ( ! disabled ) {
+						handleMenu( event );
+					}
+				} }
 				role="button"
 				tabIndex={ 0 }
 			>

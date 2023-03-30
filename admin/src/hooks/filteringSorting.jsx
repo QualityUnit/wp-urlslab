@@ -13,7 +13,7 @@ export function useFilter( { slug, header, possibleFilters, initialRow } ) {
 	const [ currentFilters, setCurrentFilters ] = useState( {} );
 	const queryClient = useQueryClient();
 	const runFilter = useRef( false );
-	const [ state, dispatch ] = useReducer( filterReducer, { possibleFilters: possibleFilters.current, filterObj, panelActive: false } );
+	const [ state, dispatch ] = useReducer( filterReducer, { possibleFilters: possibleFilters.current, filterObj, editFilterActive: false } );
 
 	const activeFilters = currentFilters ? Object.keys( currentFilters ) : null;
 
@@ -62,8 +62,8 @@ export function useFilter( { slug, header, possibleFilters, initialRow } ) {
 		}
 	}, [ dispatch, initialRow ] );
 
-	const handleSaveFilter = () => {
-		const { filterKey, filterOp, filterVal } = state.filterObj;
+	const handleSaveFilter = ( filterParams ) => {
+		const { filterKey, filterOp, filterVal } = filterParams;
 		let key = filterKey;
 		const op = filterOp;
 		const val = filterVal;
@@ -74,7 +74,7 @@ export function useFilter( { slug, header, possibleFilters, initialRow } ) {
 
 		delete state.possibleFilters[ key ];
 		dispatch( { type: 'possibleFilters', possibleFilters: possibleFilters.current } );
-		dispatch( { type: 'toggleFilterPanel', panelActive: false } );
+		dispatch( { type: 'toggleEditFilter', editFilter: false } );
 
 		if ( ! op ) {
 			addFilter( key, val );
@@ -85,10 +85,6 @@ export function useFilter( { slug, header, possibleFilters, initialRow } ) {
 		}
 
 		runFilter.current = true;
-	};
-
-	const handleEditFilter = () => {
-		return false;
 	};
 
 	const handleRemoveFilter = ( keysArray ) => {

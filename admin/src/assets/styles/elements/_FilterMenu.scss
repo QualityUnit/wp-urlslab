@@ -18,6 +18,23 @@
 		font-size: inherit;
 	}
 
+	&.disabled &__title {
+		color: $grey-darker;
+		cursor: default;
+
+		&::after { //menu arrow
+			display: none;
+		}
+
+		@media (hover: hover) {
+
+			&:hover {
+				color: $grey-darker;
+				border-color: $grey-medium;
+			}
+		}
+	}
+
 	&.active {
 		z-index: 3;
 	}

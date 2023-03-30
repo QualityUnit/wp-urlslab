@@ -40,6 +40,19 @@ button.urlslab-button,
 	&.outline {
 		background-color: $white;
 		border: 1px solid $grey-light;
+
+		&.active {
+			background-color: $desaturated-blue;
+			color: $black;
+
+			@media (hover: hover) {
+
+				&:hover {
+					background-color: $desaturated-blue;
+					color: $black;
+				}
+			}
+		}
 	}
 
 	&.underline {
