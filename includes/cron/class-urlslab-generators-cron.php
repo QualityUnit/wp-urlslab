@@ -11,7 +11,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 	private function init_client(): bool {
 		$api_key = get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
 		if ( strlen( $api_key ) ) {
-			$config = \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
+			$config               = \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
 			$this->content_client = new \OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), $config );
 		}
 
@@ -54,26 +54,30 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 		$row_obj->set_status( Urlslab_Content_Generator_Row::STATUS_PENDING );
 		$row_obj->update();
 
-		$query = $row_obj->get_query();
-		$query = str_replace( '|$lang|', $row_obj->get_lang(), $query );
+		$command = $row_obj->get_command();
+		$command = str_replace( '|$lang|', $row_obj->get_lang(), $command );
 
 		try {
 
 			$request = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest();
-			$request->setAugmentCommand( $query );
+			$request->setAugmentCommand( $row_obj->get_semantic_context() );
 			$prompt = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt();
-			$prompt->setPromptTemplate( "You are generating data for website. Follows pieces of additional information which should help you to generate content:\n{context}" );
-			$prompt->setDocumentTemplate( "--\n{context}\n--" );
-			$prompt->setMetadataVars([]);
+			$prompt->setPromptTemplate( "Use this as additional information:\n{context}\n" . $command );
+			$prompt->setDocumentTemplate( "--\n{text}\n--" );
+			$prompt->setMetadataVars( array() );
 			$request->setPrompt( $prompt );
 
-			$filter = new \OpenAPI\Client\Model\DomainDataRetrievalContentQuery( array(
-				'query' => (object) array(
-					'match' => (object) array(
-						'metadata.url' => $row_obj->get_context(),
+
+			$filter = new \OpenAPI\Client\Model\DomainDataRetrievalContentQuery(
+				array(
+					'query' => (object) array(
+						'wildcard' => (object) array(
+							'metadata.url' => (object) array( 'value' => $row_obj->get_url_filter() ),
+						),
 					),
-				),
-			) );
+				)
+			);
+			$filter->setLimit( 5 );
 			$request->setFilter( $filter );
 
 			$response = $this->content_client->memoryLessAugment( $request, 'false', 'false' );

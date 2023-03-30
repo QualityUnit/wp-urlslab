@@ -39,15 +39,21 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 
 
 	public function get_attribute_values( $atts = array(), $content = null, $tag = '' ) {
-		$atts = array_change_key_case( (array) $atts );
-
+		$atts            = array_change_key_case( (array) $atts );
+		$current_url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $this->get_current_page_url() );
+		if ( ! empty( $current_url_obj ) ) {
+			$title = $current_url_obj->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
+		} else {
+			$title = get_the_title();
+		}
 		$urlslab_atts = shortcode_atts(
 			array(
-				'query'         => '',
-				'context'       => $this->get_current_page_url(),
-				'template'      => 'templates/simple-result.php',
-				'default-value' => '',
-				'lang'          => $this->get_current_language(),
+				'semantic_context' => $title,
+				'command'          => 'Summarize information I gave you. Generate summarization in language |lang|.',
+				'url_filter'       => $this->get_current_page_url()->get_url(),
+				'template'         => 'templates/simple-result.php',
+				'default_value'    => '',
+				'lang'             => $this->get_current_language(),
 			),
 			$atts,
 			$tag
@@ -59,7 +65,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
 		$atts  = $this->get_attribute_values( $atts, $content, $tag );
 		$obj   = new Urlslab_Content_Generator_Row( $atts, false );
-		$value = $atts['default-value'];
+		$value = $atts['default_value'];
 		if ( $obj->is_valid() ) {
 			if ( $obj->load() ) {
 				if ( $obj->is_active() ) {

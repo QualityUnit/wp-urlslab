@@ -74,18 +74,29 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		);
 
 		try {
-			$current_url     = new Urlslab_Url( $urlslab_atts['url'] );
-			$current_url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $current_url );
-			$current_url_obj->request_rel_schedule();
+			$current_url = new Urlslab_Url( $urlslab_atts['url'] );
 
 			$result  = $this->load_related_urls( $current_url->get_url_id(), $urlslab_atts['related-count'] );
 			$content = '';
 
+			$urls = array( $current_url );
+			foreach ( $result as $row ) {
+				$urls[] = new Urlslab_Url( Urlslab_Url::add_current_page_protocol( $row['url_name'] ) );
+			}
+			//store url objects to cache
+			Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_urls( $urls );
+			$current_url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $current_url );
+			$current_url_obj->request_rel_schedule();
+
 			if ( ! empty( $result ) && is_array( $result ) ) {
+
 				$content  .= $this->render_shortcode_header();
 				$strategy = get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
-				foreach ( $result as $url ) {
-					$content .= $this->render_shortcode_item( $url, $urlslab_atts, $strategy );
+				foreach ( $urls as $url ) {
+					if ( $current_url_obj->get_url_id() != $url->get_url_id() ) {
+						$url     = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url );
+						$content .= $this->render_shortcode_item( $url, $urlslab_atts, $strategy );
+					}
 				}
 
 				$content .= $this->render_shortcode_footer();
@@ -100,7 +111,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		global $wpdb;
 		$urls_table         = URLSLAB_URLS_TABLE;
 		$related_urls_table = URLSLAB_RELATED_RESOURCE_TABLE;
-		$q                  = "SELECT u.* FROM $related_urls_table r INNER JOIN $urls_table as u ON r.dest_url_id = u.url_id WHERE r.src_url_id = %d AND u.visibility = '%s' ORDER BY r.pos LIMIT %d";
+		$q                  = "SELECT DISTINCT u.url_name FROM $related_urls_table r INNER JOIN $urls_table as u ON r.dest_url_id = u.url_id WHERE r.src_url_id = %d AND u.visibility = '%s' ORDER BY r.pos LIMIT %d";
 
 		return $wpdb->get_results( $wpdb->prepare( $q, $url_id, Urlslab_Url_Row::VISIBILITY_VISIBLE, $limit ), ARRAY_A ); // phpcs:ignore
 	}
@@ -117,20 +128,24 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		return '</div>';
 	}
 
-	private function render_shortcode_item( array $url, array $urlslab_atts, $strategy ): string {
+	private function render_shortcode_item( Urlslab_Url_Row $url_obj, array $urlslab_atts, $strategy ): string {
 		try {
-			$url_obj = new Urlslab_Url_Row( $url );
 			if ( ! $url_obj->is_visible() ) {
 				return '';
 			}
 
-			$title = $url_obj->get_url_title();
-			if ( empty( $title ) ) {
-				return '';
-			}
+			$title = $url_obj->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_TITLE );
 
 			if ( ! empty( $urlslab_atts['show-summary'] ) && Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY == $strategy ) {
 				$strategy = Urlslab_Link_Enhancer::DESC_TEXT_META_DESCRIPTION;    //if we display text of summary under link, we should use metadescription for alt text and title
+			}
+
+			$summary_text = '';
+			if ( ! empty( $urlslab_atts['show-summary'] ) ) {
+				$summary_text = $url_obj->get_url_summary();
+				if ( empty( $summary_text ) ) {
+					$summary_text = $url_obj->get_url_meta_description();
+				}
 			}
 
 			return '<div class="urlslab-rel-res-item">' .
@@ -140,7 +155,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				   '>' .
 				   $this->render_screenshot( $url_obj, $urlslab_atts, $strategy ) .
 				   '<div class="urlslab-rel-res-item-text"><p class="urlslab-rel-res-item-title">' . esc_html( $title ) . '</p>' .
-				   ( ! empty( $urlslab_atts['show-summary'] ) ? '<p  class="urlslab-rel-res-item-summary">' . esc_html( $url_obj->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY ) ) . '</p>' : '' ) .
+				   ( ! empty( $summary_text ) ? '<p  class="urlslab-rel-res-item-summary">' . esc_html( $summary_text ) . '</p>' : '' ) .
 				   '</div></a>' .
 				   '</div>';
 		} catch ( Exception $e ) {

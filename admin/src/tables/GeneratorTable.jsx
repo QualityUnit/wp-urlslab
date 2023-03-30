@@ -28,12 +28,13 @@ export default function GeneratorTable( { slug } ) {
 	const { row, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
 	const header = {
-		query: __( 'Query' ),
-		context: __( 'Context' ),
+		command: __( 'AI Command' ),
+		semantic_context: __( 'Context' ),
+		url_filter: __( 'Url Filter' ),
 		lang: __( 'Language code' ),
 		status: __( 'Status' ),
 		status_changed: __( 'Changed at' ),
-		results: __( 'Results' ),
+		result: __( 'Result' ),
 	};
 
 	const columns = [
@@ -44,14 +45,19 @@ export default function GeneratorTable( { slug } ) {
 			} } />,
 			header: null,
 		} ),
-		columnHelper.accessor( 'query', {
+		columnHelper.accessor( 'command', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: header.query,
+			header: header.command,
 			size: 200,
 		} ),
-		columnHelper.accessor( 'context', {
+		columnHelper.accessor( 'semantic_context', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: header.context,
+			header: header.semantic_context,
+			size: 200,
+		} ),
+		columnHelper.accessor( 'url_filter', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			header: header.url_filter,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'lang', {
@@ -60,11 +66,11 @@ export default function GeneratorTable( { slug } ) {
 			header: header.lang,
 			size: 165,
 		} ),
-		columnHelper.accessor( 'results', {
+		columnHelper.accessor( 'result', {
 			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.results,
+			header: header.result,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'status', {
