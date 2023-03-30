@@ -90,7 +90,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 			if ( ! empty( $result ) && is_array( $result ) ) {
 
-				$content  .= $this->render_shortcode_header();
+				$content  .= $this->render_shortcode_header( $urlslab_atts );
 				$strategy = get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
 				foreach ( $urls as $url ) {
 					if ( $current_url_obj->get_url_id() != $url->get_url_id() ) {
@@ -120,8 +120,16 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		return true;
 	}
 
-	private function render_shortcode_header(): string {
-		return '<div class="urlslab-rel-res-items urlslab-skip-all">';
+	private function render_shortcode_header( array $urlslab_atts ): string {
+		$css_class = 'urlslab-rel-res-items urlslab-skip-all';
+		if ( ! empty( $urlslab_atts['show-image'] ) ) {
+			$css_class .= ' urlslab-rel-res-items-with-image';
+		}
+		if ( ! empty( $urlslab_atts['show-summary'] ) ) {
+			$css_class .= ' urlslab-rel-res-items-with-summary';
+		}
+
+		return '<div class="' . $css_class . '">';
 	}
 
 	private function render_shortcode_footer(): string {
