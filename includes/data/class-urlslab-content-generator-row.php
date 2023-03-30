@@ -8,37 +8,57 @@ class Urlslab_Content_Generator_Row extends Urlslab_Data {
 	const STATUS_DISABLED = 'D';
 
 	public function __construct( array $data = array(), $loaded_from_db = true ) {
-		$this->set_query( $data['query'] ?? '', $loaded_from_db );
+		$this->set_semantic_context( $data['semantic_context'] ?? '', $loaded_from_db );
+		$this->set_command( $data['command'] ?? '', $loaded_from_db );
+		$this->set_url_filter( $data['url_filter'] ?? '', $loaded_from_db );
 		$this->set_lang( $data['lang'] ?? '', $loaded_from_db );
-		$this->set_context( $data['context'] ?? '', $loaded_from_db );
 		$this->set_result( $data['result'] ?? '', $loaded_from_db );
 		$this->set_status( $data['status'] ?? self::STATUS_NEW, $loaded_from_db );
 		$this->set_status_changed( $data['status_changed'] ?? self::get_now(), $loaded_from_db );
 		$this->set_generator_id( $data['generator_id'] ?? $this->compute_generator_id(), $loaded_from_db );
 	}
 
+	protected function set( $name, $value, $loaded_from_db ) {
+		$result = parent::set( $name, $value, $loaded_from_db );
+
+		switch ( $name ) {
+			case 'semantic_context':
+			case 'lang':
+			case 'command':
+			case 'url_filter':
+				$this->set_generator_id( $this->compute_generator_id(), $loaded_from_db );
+				break;
+		}
+
+		return $result;
+	}
+
 	private function compute_generator_id(): int {
-		return crc32( md5( $this->get_query() . $this->get_context() . $this->get_lang() ) );
+		return crc32( md5( $this->get_semantic_context() . $this->get_command() . $this->get_url_filter() . $this->get_lang() ) );
 	}
 
 	public function is_valid(): bool {
-		return ! empty( $this->get_query() ) && self::STATUS_DISABLED !== $this->get_status();
+		return ! empty( $this->get_command() ) && ! empty( $this->get_url_filter() ) && self::STATUS_DISABLED !== $this->get_status();
 	}
 
 	public function get_generator_id(): int {
 		return $this->get( 'generator_id' );
 	}
 
-	public function get_query(): string {
-		return $this->get( 'query' );
+	public function get_semantic_context(): string {
+		return $this->get( 'semantic_context' );
 	}
 
 	public function get_lang(): string {
 		return $this->get( 'lang' );
 	}
 
-	public function get_context(): string {
-		return $this->get( 'context' );
+	public function get_command(): string {
+		return $this->get( 'command' );
+	}
+
+	public function get_url_filter(): string {
+		return $this->get( 'url_filter' );
 	}
 
 	public function get_result(): string {
@@ -57,16 +77,20 @@ class Urlslab_Content_Generator_Row extends Urlslab_Data {
 		$this->set( 'generator_id', $generator_id, $loaded_from_db );
 	}
 
-	public function set_query( string $query, $loaded_from_db = false ): void {
-		$this->set( 'query', $query, $loaded_from_db );
+	public function set_semantic_context( string $semantic_context, $loaded_from_db = false ): void {
+		$this->set( 'semantic_context', $semantic_context, $loaded_from_db );
 	}
 
 	public function set_lang( string $lang, $loaded_from_db = false ): void {
 		$this->set( 'lang', $lang, $loaded_from_db );
 	}
 
-	public function set_context( string $context, $loaded_from_db = false ): void {
-		$this->set( 'context', $context, $loaded_from_db );
+	public function set_command( string $command, $loaded_from_db = false ): void {
+		$this->set( 'command', $command, $loaded_from_db );
+	}
+
+	public function set_url_filter( string $url_filter, $loaded_from_db = false ): void {
+		$this->set( 'url_filter', $url_filter, $loaded_from_db );
 	}
 
 	public function set_result( string $result, $loaded_from_db = false ): void {
@@ -92,13 +116,14 @@ class Urlslab_Content_Generator_Row extends Urlslab_Data {
 
 	function get_columns(): array {
 		return array(
-			'generator_id'   => '%d',
-			'query'          => '%s',
-			'context'        => '%s',
-			'result'         => '%s',
-			'status'         => '%s',
-			'lang'           => '%s',
-			'status_changed' => '%s',
+			'generator_id'     => '%d',
+			'semantic_context' => '%s',
+			'command'          => '%s',
+			'url_filter'       => '%s',
+			'result'           => '%s',
+			'status'           => '%s',
+			'lang'             => '%s',
+			'status_changed'   => '%s',
 		);
 	}
 

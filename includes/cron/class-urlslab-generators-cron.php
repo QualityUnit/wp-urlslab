@@ -54,19 +54,33 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 		$row_obj->set_status( Urlslab_Content_Generator_Row::STATUS_PENDING );
 		$row_obj->update();
 
-		$query = $row_obj->get_query();
-		$query = str_replace( '|$lang|', $row_obj->get_lang(), $query );
+		$command = $row_obj->get_command();
+		$command = str_replace( '|$lang|', $row_obj->get_lang(), $command );
 
 		try {
 
 			$request = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest();
-			$request->setAugmentCommand( $query );
+			$request->setAugmentCommand( $row_obj->get_semantic_context() );
 			$prompt = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt();
-			$prompt->setPromptTemplate( "You are generating data for website. Follows pieces of additional information which should help you to generate content:\n{context}{query}" );
-			$prompt->setDocumentTemplate( "--\n{context}\n--" );
+			$prompt->setPromptTemplate( "Follows additional information to your memory, related to {query}:\n--\n{context}\n----\n" . $command );
+			$prompt->setDocumentTemplate( "--\n{text}\n--" );
+			$prompt->setMetadataVars( array() );
 			$request->setPrompt( $prompt );
 
-			$response = $this->content_client->memoryLessAugment( $request );
+
+			$filter = new \OpenAPI\Client\Model\DomainDataRetrievalContentQuery(
+				array(
+					'query' => (object) array(
+						'wildcard' => (object) array(
+							'metadata.url.keyword' => (object) array( 'value' => $row_obj->get_url_filter() ),
+						),
+					),
+				)
+			);
+			$filter->setLimit( 5 );
+			$request->setFilter( $filter );
+
+			$response = $this->content_client->memoryLessAugment( $request, 'false', 'false' );
 
 
 			if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG )->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_AUTOAPPROVE ) ) {

@@ -124,6 +124,15 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.5.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_CONTENT_GENERATORS_TABLE ); // phpcs:ignore
+				self::init_content_generators_table();
+			}
+		);
+
 		//all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -428,11 +437,12 @@ class Urlslab_Activator {
 		$table_name = URLSLAB_CONTENT_GENERATORS_TABLE;
 		$sql        = "CREATE TABLE IF NOT EXISTS $table_name (
     		  generator_id bigint NOT NULL,
-    		  query TEXT,
-    		  context TEXT,
+    		  semantic_context TEXT,
+    		  command TEXT,
+    		  url_filter TEXT,
     		  result LONGTEXT,
     		  status CHAR(1) NOT NULL DEFAULT 'N',
-    		  lang VARCHAR(8) NOT NULL DEFAULT 'N',
+    		  lang VARCHAR(8),
     		  status_changed DATETIME NULL,
 			  PRIMARY KEY (generator_id)
         ) $charset_collate;";

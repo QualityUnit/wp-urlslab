@@ -16,7 +16,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 					'permission_callback' => array( $this, 'update_item_permissions_check' ),
 					'args'                => array(
 						'status' => array(
-							'required'          => true,
+							'required'          => false,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
 									case Urlslab_Content_Generator_Row::STATUS_ACTIVE:
@@ -27,6 +27,12 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 									default:
 										return false;
 								}
+							},
+						),
+						'result' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
 							},
 						),
 					),
@@ -80,7 +86,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 	}
 
 	function get_editable_columns(): array {
-		return array( 'status' );
+		return array( 'status', 'result' );
 	}
 
 	/**
@@ -93,31 +99,37 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 				'callback'            => array( $this, 'get_items' ),
 				'args'                => $this->get_table_arguments(
 					array(
-						'filter_query'          => array(
+						'filter_command'          => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
-						'filter_context'        => array(
+						'filter_url_filter'       => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
-						'filter_result'         => array(
+						'filter_semantic_context' => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
-						'filter_status'         => array(
+						'filter_result'           => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
-						'filter_status_changed' => array(
+						'filter_status'           => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
+							},
+						),
+						'filter_status_changed'   => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
@@ -142,8 +154,9 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 
 		$this->add_filter_table_fields( $sql );
 
-		$sql->add_filter( 'filter_query' );
-		$sql->add_filter( 'filter_context' );
+		$sql->add_filter( 'filter_semantic_context' );
+		$sql->add_filter( 'filter_command' );
+		$sql->add_filter( 'filter_url_filter' );
 		$sql->add_filter( 'filter_result' );
 		$sql->add_filter( 'filter_status' );
 		$sql->add_filter( 'filter_status_changed' );
