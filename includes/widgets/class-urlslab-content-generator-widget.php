@@ -50,15 +50,16 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			array(
 				'semantic_context' => $title,
 				'command'          => 'Summarize information I gave you. Generate summarization in language |lang|.',
-				'url_filter'       => str_replace(
-										  array(
-											  'www.',
-											  'https://',
-											  'http://',
-										  ),
-										  '',
-										  $this->get_current_page_url()->get_url()
-									  ) . '*',
+				'url_filter'       =>
+					str_replace(
+						array(
+							'www.',
+							'https://',
+							'http://',
+						),
+						'',
+						$this->get_current_page_url()->get_url()
+					) . '*',
 				'template'         => 'templates/simple-result.php',
 				'default_value'    => '',
 				'lang'             => $this->get_current_language(),
