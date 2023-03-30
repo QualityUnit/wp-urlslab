@@ -20,7 +20,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 
 	const { currentFilters } = filteringState || {};
 
-	const notBetween = currentFilters ? currentFilters[ key ].op !== 'BETWEEN' : state.filterObj.filterOp !== 'BETWEEN';
+	const notBetween = currentFilters && currentFilters[ key ]?.op ? currentFilters[ key ]?.op !== 'BETWEEN' : state.filterObj.filterOp !== 'BETWEEN';
 
 	return (
 		<div className="urlslab-panel urslab-TableFilter-panel pos-absolute">
