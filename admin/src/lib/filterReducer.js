@@ -47,23 +47,3 @@ export default function filterReducer( state, action ) {
 			return state;
 	}
 }
-
-export const numericOp = {
-	'': 'is exactly',
-	'<>': 'is not equal',
-	IN: 'is one of',
-	BETWEEN: 'is between',
-	'>': 'is larger than',
-	'<': 'is smaller than',
-};
-
-export const stringOp = {
-	LIKE: 'contains',
-	'LIKE%': 'begins with',
-	'%LIKE': 'ends with',
-	'': 'is exactly',
-	'<>': 'is not',
-	IN: 'is one of',
-	'>': 'is longer than',
-	'<': 'is shorter than',
-};

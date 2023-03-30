@@ -1,5 +1,5 @@
 export { default as useInfiniteFetch } from '../hooks/useInfiniteFetch';
-export { handleInput } from '../constants/tableFunctions';
+export { handleInput } from '../lib/tableFunctions';
 
 export { default as DatePicker } from 'react-datepicker';
 export { default as Tooltip } from '../elements/Tooltip';

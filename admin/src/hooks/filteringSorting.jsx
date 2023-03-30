@@ -1,6 +1,7 @@
 import { useState, useEffect, useReducer, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import filterReducer from '../constants/filterReducer';
+import filterReducer from '../lib/filterReducer';
+import filterArgs from '../lib/filterOperators';
 
 const filterObj = {
 	filterKey: undefined,
@@ -15,11 +16,12 @@ export function useFilter( { slug, header, initialRow } ) {
 	const possibleFilters = useRef( { ...header } );
 	const [ state, dispatch ] = useReducer( filterReducer, { currentFilters: {}, filteringState: undefined, possibleFilters: possibleFilters.current, filterObj, editFilterActive: false } );
 
+	const filters = filterArgs( state.currentFilters ); // Generates filter endpoint arguments for API url
+
 	const activeFilters = state.currentFilters ? Object.keys( state.currentFilters ) : null;
 
-	let filters = '';
-
 	useEffect( () => {
+		//Get new data from local query if filtering changes ( on add/remove filter)
 		dispatch( { type: 'setFilteringState', filteringState: queryClient.getQueryData( [ slug, 'filters' ] ) } );
 
 		if ( state.filteringState?.possibleFilters ) {
@@ -28,7 +30,6 @@ export function useFilter( { slug, header, initialRow } ) {
 	}, [ queryClient, slug, state, dispatch ] );
 
 	/* --- FILTERS ADDING FUNCTIONS --- */
-
 	function addFilter( key, value ) {
 		if ( value ) {
 			dispatch( { type: 'setCurrentFilters', currentFilters: { ...state.currentFilters, [ key ]: value } } );
@@ -38,24 +39,6 @@ export function useFilter( { slug, header, initialRow } ) {
 		}
 	}
 
-	// Conditions to call different filter endpoint argument based on operator
-	Object.entries( state.currentFilters ).map( ( [ key, filter ] ) => {
-		const { op, val } = filter;
-		if ( ! op ) {
-			filters += `&filter_${ key }=${ filter }`;
-		}
-		if ( op && op !== 'IN' && op !== 'BETWEEN' ) {
-			filters += `&filter_${ key }=${ encodeURIComponent( `{"op":"${ op }","val":"${ val }"}` ) }`;
-		}
-		if ( op && op === 'IN' ) {
-			filters += `&filter_${ key }=${ encodeURIComponent( `{"op":"${ op }","val":[${ val }]}` ) }`;
-		}
-		if ( op && op === 'BETWEEN' ) {
-			filters += `&filter_${ key }=${ encodeURIComponent( `{"op":"${ op }","min":${ val.min }, "max": ${ val.max }}` ) }`;
-		}
-		return false;
-	} );
-
 	// Checks the type (string or number) of the filter key
 	const handleType = useCallback( ( key ) => {
 		dispatch( { type: 'setNumeric', isNumber: false } );
@@ -64,7 +47,7 @@ export function useFilter( { slug, header, initialRow } ) {
 		}
 	}, [ dispatch, initialRow ] );
 
-	const handleSaveFilter = ( filterParams ) => {
+	function handleSaveFilter( filterParams ) {
 		const { filterKey, filterOp, filterVal } = filterParams;
 		let key = filterKey;
 		const op = filterOp;
@@ -92,11 +75,10 @@ export function useFilter( { slug, header, initialRow } ) {
 
 		// Run only once to prevent infinite loop
 		runFilter.current = true;
-	};
+	}
 	/* --- END OF FILTERS ADDING FUNCTIONS --- */
 
 	/* --- FILTERS REMOVAL --- */
-
 	function removeFilters( keyArray ) {
 		// Gets the list of current filters
 		const getFilters = () => {
@@ -111,7 +93,7 @@ export function useFilter( { slug, header, initialRow } ) {
 		dispatch( { type: 'setCurrentFilters', currentFilters: getFilters() } );
 	}
 
-	const handleRemoveFilter = ( keysArray ) => {
+	function handleRemoveFilter( keysArray ) {
 		// One filter removed –  generate list of possible filters in correct order from header
 		if ( keysArray?.length === 1 ) {
 			const key = keysArray[ 0 ]; // Get only one given filter
@@ -122,7 +104,7 @@ export function useFilter( { slug, header, initialRow } ) {
 				return false;
 			} );
 
-			// Save the possible filters list without one removed
+			// Store state of the possible filters list without one removed
 			dispatch( { type: 'possibleFilters', possibleFilters: newHeader } );
 		}
 
@@ -131,12 +113,13 @@ export function useFilter( { slug, header, initialRow } ) {
 			dispatch( { type: 'possibleFilters', possibleFilters: { ...header } } );
 		}
 
-		removeFilters( keysArray ); // runs the actual function
+		removeFilters( keysArray ); // runs the actual removal
 
 		runFilter.current = true;
-	};
+	}
 	/* --- END  OF FILTERS REMOVAL FUNCTIONS --- */
 
+	// Save the all filter values to local query for later use (on component rerender)
 	if ( runFilter.current ) {
 		runFilter.current = false;
 		queryClient.setQueryData( [ slug, 'filters' ], { filters, currentFilters: state.currentFilters, possibleFilters: possibleFilters.current } );
@@ -145,6 +128,7 @@ export function useFilter( { slug, header, initialRow } ) {
 	return { filters, currentFilters: state.currentFilters, filteringState: state.filteringState, addFilter, removeFilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter };
 }
 
+/* SORTING HOOK */
 export function useSorting( { slug } ) {
 	const [ sortingColumn, setSortingColumn ] = useState( '' );
 	const queryClient = useQueryClient();

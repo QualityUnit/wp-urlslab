@@ -1,6 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 
-import { stringOp, numericOp } from '../constants/filterReducer';
+import { stringOp, numericOp } from '../lib/filterOperators';
 import { useFilter } from '../hooks/filteringSorting';
 
 import Button from '../elements/Button';
