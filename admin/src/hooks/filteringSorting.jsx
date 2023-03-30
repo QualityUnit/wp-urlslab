@@ -27,6 +27,8 @@ export function useFilter( { slug, header, initialRow } ) {
 		}
 	}, [ queryClient, slug, state, dispatch ] );
 
+	/* --- FILTERS ADDING FUNCTIONS --- */
+
 	function addFilter( key, value ) {
 		if ( value ) {
 			dispatch( { type: 'setCurrentFilters', currentFilters: { ...state.currentFilters, [ key ]: value } } );
@@ -35,18 +37,8 @@ export function useFilter( { slug, header, initialRow } ) {
 			removeFilters( [ key ] );
 		}
 	}
-	function removeFilters( keyArray ) {
-		const getFilters = () => {
-			const filtersCopy = { ...state.currentFilters };
-			keyArray.map( ( key ) => {
-				delete filtersCopy[ key ];
-				return false;
-			} );
-			return filtersCopy;
-		};
-		dispatch( { type: 'setCurrentFilters', currentFilters: getFilters() } );
-	}
 
+	// Conditions to call different filter endpoint argument based on operator
 	Object.entries( state.currentFilters ).map( ( [ key, filter ] ) => {
 		const { op, val } = filter;
 		if ( ! op ) {
@@ -64,6 +56,7 @@ export function useFilter( { slug, header, initialRow } ) {
 		return false;
 	} );
 
+	// Checks the type (string or number) of the filter key
 	const handleType = useCallback( ( key ) => {
 		dispatch( { type: 'setNumeric', isNumber: false } );
 		if ( typeof initialRow[ key ] === 'number' ) {
@@ -81,8 +74,12 @@ export function useFilter( { slug, header, initialRow } ) {
 			key = Object.keys( state.possibleFilters )[ 0 ];
 		}
 
-		delete state.possibleFilters[ key ];
+		delete state.possibleFilters[ key ]; // Removes used filter key from the list
+
+		// Saves the list of unused filters
 		dispatch( { type: 'possibleFilters', possibleFilters: possibleFilters.current } );
+
+		// Close the edit panel after save
 		dispatch( { type: 'toggleEditFilter', editFilter: false } );
 
 		if ( ! op ) {
@@ -93,29 +90,52 @@ export function useFilter( { slug, header, initialRow } ) {
 			addFilter( key, { op, val } );
 		}
 
+		// Run only once to prevent infinite loop
 		runFilter.current = true;
 	};
+	/* --- END OF FILTERS ADDING FUNCTIONS --- */
+
+	/* --- FILTERS REMOVAL --- */
+
+	function removeFilters( keyArray ) {
+		// Gets the list of current filters
+		const getFilters = () => {
+			const filtersCopy = { ...state.currentFilters };
+			keyArray.map( ( key ) => {
+				delete filtersCopy[ key ]; // remove called key (as array) from current filters
+				return false;
+			} );
+			return filtersCopy;
+		};
+		// Save the current list without removed filter
+		dispatch( { type: 'setCurrentFilters', currentFilters: getFilters() } );
+	}
 
 	const handleRemoveFilter = ( keysArray ) => {
+		// One filter removed –  generate list of possible filters in correct order from header
 		if ( keysArray?.length === 1 ) {
-			const key = keysArray[ 0 ];
-			const newHeader = { ...header };
-			const usedFilters = activeFilters.filter( ( k ) => k !== key );
+			const key = keysArray[ 0 ]; // Get only one given filter
+			const newHeader = { ...header }; // Create original header (filter list) copy
+			const usedFilters = activeFilters.filter( ( k ) => k !== key ); // Filter used keys
 			usedFilters.map( ( k ) => {
-				delete newHeader[ k ];
+				delete newHeader[ k ]; // Delete all used filters (except actually removed) from header
 				return false;
 			} );
 
+			// Save the possible filters list without one removed
 			dispatch( { type: 'possibleFilters', possibleFilters: newHeader } );
 		}
+
+		// If Clear filters button, generate available filter list from scratch
 		if ( keysArray?.length > 1 ) {
 			dispatch( { type: 'possibleFilters', possibleFilters: { ...header } } );
 		}
 
-		removeFilters( keysArray );
+		removeFilters( keysArray ); // runs the actual function
 
 		runFilter.current = true;
 	};
+	/* --- END  OF FILTERS REMOVAL FUNCTIONS --- */
 
 	if ( runFilter.current ) {
 		runFilter.current = false;

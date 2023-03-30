@@ -19,8 +19,8 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 	if ( filteringState ) {
 		filters = filteringState.filters;
 		currentFilters = filteringState.currentFilters;
-		// runFilter.current = true;
 	}
+
 	useEffect( () => {
 		if ( onFilter && didMountRef.current ) {
 			onFilter( { filters, currentFilters } );
@@ -47,7 +47,7 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 
 	return (
 		<div className="flex flex-align-center flex-wrap">
-			{ header && activeFilters?.map( ( key ) => {
+			{ header && activeFilters?.map( ( key ) => { // Iterating active filters
 				return ( <Button
 					key={ key }
 					active={ state.editFilter ? true : false }
@@ -58,7 +58,7 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 					<CloseIcon className="close" onClick={ () => {
 						handleRemoveFilter( [ key ] ); runFilter.current = true;
 					} } />
-					{ state.editFilter === key &&
+					{ state.editFilter === key && // Edit filter panel
 						<TableFilterPanel props={ { key, slug, header, initialRow, possibleFilters: state.possibleFilters, filteringState } } onEdit={ handleOnEdit } />
 					}
 				</Button> );
@@ -68,12 +68,12 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 				<Button className="simple underline" onClick={ () => dispatch( { type: 'toggleEditFilter', editFilter: 'addFilter' } ) }>{ __( '+ Add filter' ) }
 				</Button>
 
-				{ state.editFilter === 'addFilter' &&
+				{ state.editFilter === 'addFilter' && // Our main adding panel (only when Add button clicked)
 					<TableFilterPanel props={ { slug, header, initialRow, possibleFilters: state.possibleFilters } } onEdit={ handleOnEdit } />
 				}
 			</div>
 
-			{ activeFilters?.length > 0 &&
+			{ activeFilters?.length > 0 && // Removes all used filters in given table
 				<Button className="simple underline" onClick={ () => {
 					handleRemoveFilter( activeFilters ); runFilter.current = true;
 				} }>{ __( 'Clear filters' ) }</Button>
