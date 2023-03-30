@@ -5,9 +5,13 @@
 
 	&-panel {
 		z-index: 1;
-		font-size: 0.92307em;
+		font-size: 1rem;
 		padding: 1rem;
 		filter: drop-shadow(0 4px 1rem rgba($black, 0.16));
+
+		> * {
+			font-size: 0.92307em;
+		}
 
 		&-header {
 			padding-left: 1rem;

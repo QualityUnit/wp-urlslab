@@ -87,6 +87,10 @@
 	.flex {
 		display: flex;
 
+		&-inline {
+			display: inline-flex;
+		}
+
 		&-align-center {
 			align-items: center;
 			align-content: center;
@@ -109,6 +113,33 @@
 				display: flex;
 			}
 		}
+	}
+
+	[class*="limit-"]:not(th):not(td) {
+		display: block;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+
+	.limit {
+		width: 100%;
+	}
+
+	.limit-20 {
+		max-width: 20ch;
+	}
+
+	.limit-50 {
+		max-width: 50ch;
+	}
+
+	.limit-100 {
+		max-width: 100ch;
+	}
+
+	.limit-200 {
+		max-width: 200ch;
 	}
 }
 

@@ -1,6 +1,6 @@
 
 export default function filterReducer( state, action ) {
-	const { filterObj, panelActive } = state;
+	const { filterObj } = state;
 
 	switch ( action.type ) {
 		case 'setFilterKey':
@@ -28,10 +28,10 @@ export default function filterReducer( state, action ) {
 				...state,
 				possibleFilters: action.possibleFilters,
 			};
-		case 'toggleFilterPanel':
+		case 'toggleEditFilter':
 			return {
 				...state,
-				panelActive: action.panelActive ? action.panelActive : ! panelActive,
+				editFilter: action.editFilter,
 			};
 		default:
 			return state;

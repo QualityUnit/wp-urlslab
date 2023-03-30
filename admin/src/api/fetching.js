@@ -9,7 +9,10 @@ export async function fetchData( slug ) {
 			},
 			credentials: 'include',
 		} );
-		return await result.json();
+		if ( result.ok ) {
+			return await result.json();
+		}
+		return undefined;
 	} catch ( error ) {
 		return false;
 	}
