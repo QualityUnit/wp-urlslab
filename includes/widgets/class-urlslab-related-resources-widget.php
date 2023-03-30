@@ -78,11 +78,6 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			$current_url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $current_url );
 			$current_url_obj->request_rel_schedule();
 
-			if ( Urlslab_Url_Row::REL_AVAILABLE !== $current_url_obj->get_rel_schedule() ) {
-				return '';
-			}
-
-
 			$result  = $this->load_related_urls( $current_url->get_url_id(), $urlslab_atts['related-count'] );
 			$content = '';
 
@@ -134,7 +129,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				return '';
 			}
 
-			if ( false !== $urlslab_atts['show-summary'] && Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY == $strategy ) {
+			if ( ! empty( $urlslab_atts['show-summary'] ) && Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY == $strategy ) {
 				$strategy = Urlslab_Link_Enhancer::DESC_TEXT_META_DESCRIPTION;    //if we display text of summary under link, we should use metadescription for alt text and title
 			}
 
@@ -145,7 +140,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				   '>' .
 				   $this->render_screenshot( $url_obj, $urlslab_atts, $strategy ) .
 				   '<div class="urlslab-rel-res-item-text"><p class="urlslab-rel-res-item-title">' . esc_html( $title ) . '</p>' .
-				   ( false !== $urlslab_atts['show-summary'] ? '<p  class="urlslab-rel-res-item-summary">' . esc_html( $url_obj->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY ) ) . '</p>' : '' ) .
+				   ( ! empty( $urlslab_atts['show-summary'] ) ? '<p  class="urlslab-rel-res-item-summary">' . esc_html( $url_obj->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY ) ) . '</p>' : '' ) .
 				   '</div></a>' .
 				   '</div>';
 		} catch ( Exception $e ) {
@@ -155,7 +150,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	private function render_screenshot( Urlslab_Url_Row $url, array $urlslab_atts, $strategy ): string {
-		if ( false !== $urlslab_atts['show-image'] ) {
+		if ( ! empty( $urlslab_atts['show-image'] ) ) {
 			if ( ! empty( $url->get_screenshot_url( 'thumbnail' ) ) ) {
 				return '<div class="urlslab-rel-res-item-screenshot"><img alt="' . esc_attr( $url->get_summary_text( $strategy ) ) . '" src="' . $url->get_screenshot_url( 'thumbnail' ) . '"></div>';
 			} else if ( ! empty( $urlslab_atts['default-image'] ) ) {
