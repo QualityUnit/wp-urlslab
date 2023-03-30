@@ -1,4 +1,4 @@
-import { useState, useReducer, useRef, useCallback } from 'react';
+import { useState, useEffect, useReducer, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import filterReducer from '../constants/filterReducer';
 
@@ -9,15 +9,25 @@ const filterObj = {
 	isNumber: false,
 };
 
-export function useFilter( { slug, header, possibleFilters, initialRow } ) {
-	const [ currentFilters, setCurrentFilters ] = useState( {} );
+export function useFilter( { slug, header, initialRow } ) {
 	const queryClient = useQueryClient();
+	const [ currentFilters, setCurrentFilters ] = useState( {} );
+	const [ filteringState, setFilteringState ] = useState( );
 	const runFilter = useRef( false );
+	const possibleFilters = useRef( { ...header } );
 	const [ state, dispatch ] = useReducer( filterReducer, { possibleFilters: possibleFilters.current, filterObj, editFilterActive: false } );
 
 	const activeFilters = currentFilters ? Object.keys( currentFilters ) : null;
 
 	let filters = '';
+
+	useEffect( () => {
+		setFilteringState( queryClient.getQueryData( [ slug, 'filters' ] ) );
+
+		if ( filteringState?.possibleFilters ) {
+			possibleFilters.current = filteringState?.possibleFilters;
+		}
+	}, [ queryClient, slug, filteringState ] );
 
 	function addFilter( key, value ) {
 		if ( value ) {
@@ -113,7 +123,7 @@ export function useFilter( { slug, header, possibleFilters, initialRow } ) {
 		queryClient.setQueryData( [ slug, 'filters' ], { filters, currentFilters, possibleFilters: possibleFilters.current } );
 	}
 
-	return { filters, currentFilters, addFilter, removeFilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter };
+	return { filters, currentFilters, filteringState, addFilter, removeFilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter };
 }
 
 export function useSorting( { slug } ) {

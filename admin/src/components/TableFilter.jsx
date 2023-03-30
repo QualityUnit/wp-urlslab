@@ -1,6 +1,5 @@
 import { useRef, useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import { useQueryClient } from '@tanstack/react-query';
 
 import { useFilter } from '../hooks/filteringSorting';
 
@@ -13,11 +12,21 @@ import TableFilterPanel from './TableFilterPanel';
 export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 	const { __ } = useI18n();
 	const runFilter = useRef( false );
-	const queryClient = useQueryClient();
+	const didMountRef = useRef( false );
 
-	const possibleFilters = useRef( { ...header } );
+	let { filters, currentFilters, filteringState, state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( { slug, header, initialRow } );
 
-	const { filters, currentFilters, state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( { slug, header, possibleFilters, initialRow } );
+	if ( filteringState ) {
+		filters = filteringState.filters;
+		currentFilters = filteringState.currentFilters;
+		// runFilter.current = true;
+	}
+	useEffect( () => {
+		if ( onFilter && didMountRef.current ) {
+			onFilter( { filters, currentFilters } );
+		}
+		didMountRef.current = true;
+	}, [ filters, currentFilters, onFilter ] );
 
 	const activeFilters = currentFilters ? Object.keys( currentFilters ) : null;
 
@@ -36,13 +45,6 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 		}
 	};
 
-	useEffect( () => {
-		const filteringState = queryClient.getQueryData( [ slug, 'filters' ] );
-		if ( filteringState?.possibleFilters ) {
-			possibleFilters.current = filteringState?.possibleFilters;
-		}
-	}, [ queryClient, slug, dispatch ] );
-
 	return (
 		<div className="flex flex-align-center flex-wrap">
 			{ header && activeFilters?.map( ( key ) => {
@@ -57,7 +59,7 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 						handleRemoveFilter( [ key ] ); runFilter.current = true;
 					} } />
 					{ state.editFilter === key &&
-						<TableFilterPanel props={ { key, slug, header, initialRow, possibleFilters: state.possibleFilters } } onEdit={ handleOnEdit } />
+						<TableFilterPanel props={ { key, slug, header, initialRow, possibleFilters: state.possibleFilters, filteringState } } onEdit={ handleOnEdit } />
 					}
 				</Button> );
 			} ) }

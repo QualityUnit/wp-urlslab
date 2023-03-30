@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { stringOp, numericOp } from '../constants/filterReducer';
@@ -10,13 +9,10 @@ import InputField from '../elements/InputField';
 import RangeInputs from '../elements/RangeInputs';
 
 export default function TableFilterPanel( { props, onEdit } ) {
-	const { key, slug, header, possibleFilters, initialRow } = props;
+	const { key, slug, header, possibleFilters, initialRow, filteringState } = props;
 	const { __ } = useI18n();
-	const queryClient = useQueryClient();
 
 	const { state, dispatch, handleType } = useFilter( { slug, header, possibleFilters, initialRow } );
-
-	const filteringState = queryClient.getQueryData( [ slug, 'filters' ] );
 
 	const { currentFilters } = filteringState || {};
 
