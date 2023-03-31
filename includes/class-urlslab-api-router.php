@@ -54,5 +54,8 @@ class Urlslab_Api_Router {
 
 		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-not-found-log.php';
 		( new Urlslab_Api_Not_Found_Log() )->register_routes();
+
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-redirects.php';
+		( new Urlslab_Api_Redirects() )->register_routes();
 	}
 }

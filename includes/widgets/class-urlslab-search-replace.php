@@ -60,7 +60,7 @@ class Urlslab_Search_Replace extends Urlslab_Widget {
 				$results     = $wpdb->get_results( 'SELECT * FROM ' . URLSLAB_SEARCH_AND_REPLACE_TABLE, 'ARRAY_A' ); // phpcs:ignore
 				$current_url = $this->get_current_page_url()->get_url();
 				foreach ( $results as $row ) {
-					if ( '.*' !== $row['url_filter'] && ! preg_match( '/' . str_replace( '/', '\\/', $row['url_filter'] ) . '/uim', $current_url ) ) {
+					if ( '.*' !== $row['url_filter'] && ! preg_match( '/' . preg_quote( $row['url_filter'], '/' ) . '/uim', $current_url ) ) {
 						continue;
 					}
 					$obj_search                           = new Urlslab_Search_Replace_Row( $row );

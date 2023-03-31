@@ -11,11 +11,13 @@ export default function Redirects( { moduleId } ) {
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 
 	const tableMenu = new Map( [
-		[ 'notfound', __( 'Logs' ) ],
+		[ 'redirects', __( 'Redirects' ) ],
+		[ 'notfound', __( '404 Logs' ) ],
 	] );
 
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
 	const NotFoundTable = lazy( () => import( `../tables/NotFoundTable.jsx` ) );
+	const RedirectsTable = lazy( () => import( `../tables/RedirectsTable.jsx` ) );
 
 	return (
 		<div className="urlslab-tableView">
@@ -29,6 +31,12 @@ export default function Redirects( { moduleId } ) {
 				activeSection === 'notfound' &&
 				<Suspense>
 					<NotFoundTable slug={ 'not-found-log' } />
+				</Suspense>
+			}
+			{
+				activeSection === 'redirects' &&
+				<Suspense>
+					<RedirectsTable slug={ 'redirects' } />
 				</Suspense>
 			}
 			{

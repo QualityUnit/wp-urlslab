@@ -60,6 +60,7 @@ class Urlslab_Activator {
 		self::init_screenshot_urls_table();
 		self::init_content_generators_table();
 		self::init_not_found_log_table();
+		self::init_redirects_table();
 	}
 
 	public static function upgrade_steps() {
@@ -137,6 +138,12 @@ class Urlslab_Activator {
 			'2.6.0',
 			function() {
 				self::init_not_found_log_table();
+			}
+		);
+		self::update_step(
+			'2.7.0',
+			function() {
+				self::init_redirects_table();
 			}
 		);
 
@@ -472,6 +479,32 @@ class Urlslab_Activator {
 			  PRIMARY KEY (url_id),
 			  INDEX idx_updated (updated),
 			  INDEX idx_created (created)
+        ) $charset_collate;";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_redirects_table() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$table_name = URLSLAB_REDIRECTS_TABLE;
+		$sql        = "CREATE TABLE IF NOT EXISTS $table_name (
+    		  redirect_id int AUTO_INCREMENT,
+    		  match_type CHAR(1) DEFAULT 'S',
+    		  match_url VARCHAR(2000),
+    		  replace_url VARCHAR(2000),
+    		  redirect_code tinyint unsigned DEFAULT 301,
+    		  is_logged CHAR(1),
+    		  capabilities VARCHAR(2000),
+    		  browser VARCHAR(2000),
+    		  cookie VARCHAR(2000),
+    		  headers VARCHAR(2000),
+    		  params VARCHAR(2000),
+    		  cnt INT UNSIGNED ZEROFILL DEFAULT 0,
+    		  if_not_found CHAR(1) DEFAULT '',
+			  PRIMARY KEY (redirect_id)
         ) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

@@ -147,6 +147,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-search-replace-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-screenshot-url-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-not-found-log-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-redirect-row.php';
 
 
 		//additional
@@ -533,6 +534,7 @@ class Urlslab {
 		define( 'URLSLAB_SCREENSHOT_URLS_TABLE', $wpdb->prefix . 'urlslab_screenshot_urls' );
 		define( 'URLSLAB_CONTENT_GENERATORS_TABLE', $wpdb->prefix . 'urlslab_content_generators' );
 		define( 'URLSLAB_NOT_FOUND_LOG_TABLE', $wpdb->prefix . 'urlslab_log_notfound' );
+		define( 'URLSLAB_REDIRECTS_TABLE', $wpdb->prefix . 'urlslab_redirects' );
 	}
 
 

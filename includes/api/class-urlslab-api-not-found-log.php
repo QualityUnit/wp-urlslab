@@ -111,7 +111,7 @@ class Urlslab_Api_Not_Found_Log extends Urlslab_Api_Table {
 		$sql->add_filter( 'filter_url' );
 		$sql->add_filter( 'filter_created' );
 		$sql->add_filter( 'filter_updated' );
-		$sql->add_filter( 'filter_cnt' );
+		$sql->add_filter( 'filter_cnt', '%d' );
 
 		if ( $request->get_param( 'sort_column' ) ) {
 			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );

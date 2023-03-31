@@ -19,9 +19,9 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 		$tbl_name = URLSLAB_NOT_FOUND_LOG_TABLE;
 		$limit    = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Redirects::SLUG )->get_option( Urlslab_Redirects::SETTING_NAME_LOG_HISTORY_MAX_ROWS );
 		if ( $limit > 0 ) {
-			$row = $wpdb->get_row( "SELECT count(*) as cnt FROM {$tbl_name}", ARRAY_A );
+			$row = $wpdb->get_row( "SELECT count(*) as cnt FROM {$tbl_name}", ARRAY_A );    //phpcs:ignore
 			if ( isset( $row['cnt'] ) && ( (int) $row['cnt'] ) > $limit ) {
-				$wpdb->query( "TRUNCATE {$tbl_name}" );
+				$wpdb->query( "TRUNCATE {$tbl_name}" );    //phpcs:ignore
 
 				return false; //no need to execute anything else
 			}
@@ -31,7 +31,7 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 		if ( 0 < $limit ) {
 			$wpdb->query(
 				$wpdb->prepare(
-					"DELETE FROM {$tbl_name} WHERE updated < %s LIMIT %d",
+					"DELETE FROM {$tbl_name} WHERE updated < %s LIMIT %d",//phpcs:ignore
 					Urlslab_Data::get_now( time() - $limit ),
 					self::DELETE_LIMIT
 				)

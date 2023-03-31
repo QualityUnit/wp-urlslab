@@ -80,6 +80,6 @@ class Urlslab_Not_Found_Log_Row extends Urlslab_Data {
 
 	public function upsert() {
 		global $wpdb;
-		$wpdb->query( $wpdb->prepare( "INSERT INTO {$this->get_table_name()} (url_id, url, cnt, created, updated) VALUES (%d, %s, %d, %s, %s) ON DUPLICATE KEY UPDATE cnt = cnt + 1, updated = %s", $this->get_url_id(), $this->get_url(), $this->get_cnt(), $this->get_created(), $this->get_updated(), $this->get_updated() ) );
+		$wpdb->query( $wpdb->prepare( "INSERT INTO {$this->get_table_name()} (url_id, url, cnt, created, updated) VALUES (%d, %s, %d, %s, %s) ON DUPLICATE KEY UPDATE cnt = cnt + 1, updated = %s", $this->get_url_id(), $this->get_url(), $this->get_cnt(), $this->get_created(), $this->get_updated(), $this->get_updated() ) );//phpcs:ignore
 	}
 }

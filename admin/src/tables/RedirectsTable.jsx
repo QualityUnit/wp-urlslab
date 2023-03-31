@@ -7,9 +7,9 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 
 export default function RedirectsTable( { slug } ) {
-	const pageId = 'id';
+	const pageId = 'redirect_id';
 
-	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 
@@ -26,24 +26,21 @@ export default function RedirectsTable( { slug } ) {
 
 	const { row, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
-	const searchTypes = {
-		T: __( 'Plain Text' ),
-		R: __( 'Regular Expr.' ),
-	};
 
 	const header = {
-		str_search: __( 'Search string' ),
-		str_replace: __( 'Replace string' ),
-		search_type: __( 'Search Type' ),
-		url_filter: 'URL Filter',
+		match_type: __( 'Match type' ),
+		match_url: __( 'URL' ),
+		replace_url: __( 'Redirect to URL' ),
+		is_logged: __( 'Login' ),
+		capabilities: __( 'Capabilities' ),
+		browser: __( 'Browser' ),
+		cookie: __( 'Cookies' ),
+		headers: __( 'Request headers' ),
+		params: __( 'Request parameters' ),
+		if_not_found: __( 'Execute if 404' ),
+		cnt: __( 'Redirects Count' ),
 	};
 
-	const inserterCells = {
-		str_search: <InputField liveUpdate type="url" defaultValue="" label={ header.str_search } onChange={ ( val ) => setInsertRow( { ...rowToInsert, str_search: val } ) } required />,
-		str_replace: <InputField liveUpdate type="url" defaultValue="" label={ header.str_replace } onChange={ ( val ) => setInsertRow( { ...rowToInsert, str_replace: val } ) } required />,
-		search_type: <SortMenu autoClose items={ searchTypes } name="search_type" checkedId="T" onChange={ ( val ) => setInsertRow( { ...rowToInsert, search_type: val } ) }>{ header.search_type }</SortMenu>,
-		url_filter: <InputField liveUpdate defaultValue="" label={ header.url_filter } onChange={ ( val ) => setInsertRow( { ...rowToInsert, url_filter: val } ) } />,
-	};
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -53,28 +50,59 @@ export default function RedirectsTable( { slug } ) {
 			} } />,
 			header: null,
 		} ),
-		columnHelper.accessor( 'str_search', {
+		columnHelper.accessor( 'match_type', {
 			className: 'nolimit',
-			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.str_search,
+			header: header.match_type,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'match_url', {
+			className: 'nolimit',
+			header: header.match_url,
 			size: 300,
 		} ),
-		columnHelper.accessor( 'str_replace', {
+		columnHelper.accessor( 'replace_url', {
 			className: 'nolimit',
-			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.str_replace,
-			size: 300,
-		} ),
-		columnHelper.accessor( 'search_type', {
-			className: 'nolimit',
-			cell: ( cell ) => <SortMenu items={ searchTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.search_type,
+			header: header.replace_url,
 			size: 100,
 		} ),
-		columnHelper.accessor( 'url_filter', {
+		columnHelper.accessor( 'is_logged', {
 			className: 'nolimit',
-			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.url_filter,
+			header: header.is_logged,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'capabilities', {
+			className: 'nolimit',
+			header: header.capabilities,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'browser', {
+			className: 'nolimit',
+			header: header.browser,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'cookie', {
+			className: 'nolimit',
+			header: header.cookie,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'headers', {
+			className: 'nolimit',
+			header: header.headers,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'params', {
+			className: 'nolimit',
+			header: header.params,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'if_not_found', {
+			className: 'nolimit',
+			header: header.if_not_found,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'cnt', {
+			className: 'nolimit',
+			header: header.cnt,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'delete', {
@@ -97,13 +125,12 @@ export default function RedirectsTable( { slug } ) {
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onClearRow={ ( clear ) => clear && setInsertRow() }
-				insertOptions={ { inserterCells, title: 'Add replacement', data, slug, url, pageId, rowToInsert } }
 				exportOptions={ {
 					url: slug,
 					filters,
 					fromId: `from_${ pageId }`,
 					pageId,
-					deleteCSVCols: [ pageId, 'dest_url_id' ],
+					deleteCSVCols: [ pageId ],
 				} }
 			/>
 			<Table className="fadeInto"
