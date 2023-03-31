@@ -2,7 +2,7 @@
 import { useMemo } from 'react';
 import {
 	useInfiniteFetch, SortMenu, LangMenu, InputField, Checkbox, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom,
-} from '../constants/tableImports';
+} from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';

@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react';
 
-import { renameModule } from '../constants/helpers';
+import { renameModule } from '../lib/helpers';
 import ErrorBoundary from './ErrorBoundary';
 import Loader from './Loader';
 import '../assets/styles/layouts/_DynamicModule.scss';

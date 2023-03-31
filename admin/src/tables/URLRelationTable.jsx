@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import {
 	useInfiniteFetch, Tooltip, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
-} from '../constants/tableImports';
+} from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
