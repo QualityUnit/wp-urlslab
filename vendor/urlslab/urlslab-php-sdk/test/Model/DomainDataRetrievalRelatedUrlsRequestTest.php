@@ -80,6 +80,15 @@ class DomainDataRetrievalRelatedUrlsRequestTest extends TestCase
     }
 
     /**
+     * Test attribute "query"
+     */
+    public function testPropertyQuery()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
      * Test attribute "url"
      */
     public function testPropertyUrl()

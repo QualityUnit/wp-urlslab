@@ -74,8 +74,8 @@ class ComposerStaticInitb550544d8588c2edbbd1b7372950f6e1
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -1077,6 +1077,8 @@ class ComposerStaticInitb550544d8588c2edbbd1b7372950f6e1
         'Aws\\Transfer\\TransferClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Transfer/TransferClient.php',
         'Aws\\Translate\\Exception\\TranslateException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Translate/Exception/TranslateException.php',
         'Aws\\Translate\\TranslateClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Translate/TranslateClient.php',
+        'Aws\\VPCLattice\\Exception\\VPCLatticeException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/VPCLattice/Exception/VPCLatticeException.php',
+        'Aws\\VPCLattice\\VPCLatticeClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/VPCLattice/VPCLatticeClient.php',
         'Aws\\VoiceID\\Exception\\VoiceIDException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/VoiceID/Exception/VoiceIDException.php',
         'Aws\\VoiceID\\VoiceIDClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/VoiceID/VoiceIDClient.php',
         'Aws\\WAFV2\\Exception\\WAFV2Exception' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/WAFV2/Exception/WAFV2Exception.php',

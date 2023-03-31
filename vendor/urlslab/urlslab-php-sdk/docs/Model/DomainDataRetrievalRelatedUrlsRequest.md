@@ -4,7 +4,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**url** | **string** |  |
+**query** | **string** |  | [optional]
+**url** | **string** |  | [optional]
 **chunk_limit** | **int** |  | [optional]
 **filter** | [**\OpenAPI\Client\Model\DomainDataRetrievalContentQuery**](DomainDataRetrievalContentQuery.md) |  | [optional]
 
