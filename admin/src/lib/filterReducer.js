@@ -18,10 +18,20 @@ export default function filterReducer( state, action ) {
 				...state,
 				filterObj: { ...filterObj, filterVal: action.val },
 			};
-		case 'setNumeric':
+		case 'setKeyType':
 			return {
 				...state,
-				filterObj: { ...filterObj, isNumber: action.isNumber },
+				filterObj: { ...filterObj, type: action.keyType },
+			};
+		case 'setCurrentFilters':
+			return {
+				...state,
+				currentFilters: action.currentFilters,
+			};
+		case 'setFilteringState':
+			return {
+				...state,
+				filteringState: action.filteringState,
 			};
 		case 'possibleFilters':
 			return {
@@ -37,23 +47,3 @@ export default function filterReducer( state, action ) {
 			return state;
 	}
 }
-
-export const numericOp = {
-	'': 'is exactly',
-	'<>': 'is not equal',
-	IN: 'is one of',
-	BETWEEN: 'is between',
-	'>': 'is larger than',
-	'<': 'is smaller than',
-};
-
-export const stringOp = {
-	LIKE: 'contains',
-	'LIKE%': 'begins with',
-	'%LIKE': 'ends with',
-	'': 'is exactly',
-	'<>': 'is not',
-	IN: 'is one of',
-	'>': 'is longer than',
-	'<': 'is shorter than',
-};

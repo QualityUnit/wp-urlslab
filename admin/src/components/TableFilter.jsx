@@ -1,6 +1,5 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import { useQueryClient } from '@tanstack/react-query';
 
 import { useFilter } from '../hooks/filteringSorting';
 
@@ -12,52 +11,44 @@ import TableFilterPanel from './TableFilterPanel';
 
 export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 	const { __ } = useI18n();
-	const runFilter = useRef( false );
-	const queryClient = useQueryClient();
+	const didMountRef = useRef( false );
 
-	const possibleFilters = useRef( { ...header } );
+	const { filters, currentFilters, state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( { slug, header, initialRow } );
 
-	const { filters, currentFilters, state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( { slug, header, possibleFilters, initialRow } );
-
-	const activeFilters = currentFilters ? Object.keys( currentFilters ) : null;
-
-	if ( onFilter && runFilter.current ) {
-		runFilter.current = false;
-		onFilter( { filters, currentFilters } );
-	}
-
-	const handleOnEdit = ( returnObj ) => {
+	const handleOnEdit = useCallback( ( returnObj ) => {
 		if ( returnObj ) {
 			handleSaveFilter( returnObj );
-			runFilter.current = true;
+			onFilter( { filters, currentFilters } );
 		}
 		if ( ! returnObj ) {
 			dispatch( { type: 'toggleEditFilter', editFilter: false } );
 		}
-	};
+	}, [ handleSaveFilter, filters, currentFilters, dispatch, onFilter ] );
 
 	useEffect( () => {
-		const filteringState = queryClient.getQueryData( [ slug, 'filters' ] );
-		if ( filteringState?.possibleFilters ) {
-			possibleFilters.current = filteringState?.possibleFilters;
+		if ( onFilter && didMountRef.current ) {
+			onFilter( { filters, currentFilters } );
 		}
-	}, [ queryClient, slug, dispatch ] );
+		didMountRef.current = true;
+	}, [ filters, currentFilters, onFilter ] );
+
+	const activeFilters = Object.keys( currentFilters ).length ? Object.keys( currentFilters ) : null;
 
 	return (
 		<div className="flex flex-align-center flex-wrap">
-			{ header && activeFilters?.map( ( key ) => {
+			{ header && activeFilters?.map( ( key ) => { // Iterating active filters
 				return ( <Button
 					key={ key }
-					active={ state.editFilter ? true : false }
+					active={ state.editFilter === key ? true : false }
 					className="outline ml-s pos-relative"
 					onClick={ () => ! state.editFilter && dispatch( { type: 'toggleEditFilter', editFilter: key } ) }
 				>
 					{ header[ key ] }:&nbsp;<span className="regular flex">“<span className="limit-20">{ currentFilters[ key ]?.val }</span>”</span>
 					<CloseIcon className="close" onClick={ () => {
-						handleRemoveFilter( [ key ] ); runFilter.current = true;
+						handleRemoveFilter( [ key ] );
 					} } />
-					{ state.editFilter === key &&
-						<TableFilterPanel props={ { key, slug, header, initialRow, possibleFilters: state.possibleFilters } } onEdit={ handleOnEdit } />
+					{ state.editFilter === key && // Edit filter panel
+						<TableFilterPanel props={ { key, slug, header, initialRow, possibleFilters: state.possibleFilters, currentFilters } } onEdit={ handleOnEdit } />
 					}
 				</Button> );
 			} ) }
@@ -66,14 +57,14 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 				<Button className="simple underline" onClick={ () => dispatch( { type: 'toggleEditFilter', editFilter: 'addFilter' } ) }>{ __( '+ Add filter' ) }
 				</Button>
 
-				{ state.editFilter === 'addFilter' &&
-					<TableFilterPanel props={ { slug, header, initialRow, possibleFilters: state.possibleFilters } } onEdit={ handleOnEdit } />
+				{ state.editFilter === 'addFilter' && // Our main adding panel (only when Add button clicked)
+					<TableFilterPanel props={ { slug, header, initialRow, possibleFilters: state.possibleFilters, currentFilters } } onEdit={ handleOnEdit } />
 				}
 			</div>
 
-			{ activeFilters?.length > 0 &&
+			{ activeFilters?.length > 0 && // Removes all used filters in given table
 				<Button className="simple underline" onClick={ () => {
-					handleRemoveFilter( activeFilters ); runFilter.current = true;
+					handleRemoveFilter( activeFilters );
 				} }>{ __( 'Clear filters' ) }</Button>
 			}
 		</div>

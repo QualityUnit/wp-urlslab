@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import {
 	useInfiniteFetch, Tooltip, Checkbox, Trash, SortMenu, InputField, Loader, Table, ModuleViewHeaderBottom,
-} from '../constants/tableImports';
+} from '../lib/tableImports';
 
-import { langName } from '../constants/helpers';
+import { langName } from '../lib/helpers';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';

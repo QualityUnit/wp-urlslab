@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { delay } from '../constants/helpers';
+import { delay } from '../lib/helpers';
 import '../assets/styles/elements/_Inputs.scss';
 
 export default function InputField( { defaultValue, placeholder, message, liveUpdate, className, type, disabled, label, labelInline, onChange, children, style } ) {

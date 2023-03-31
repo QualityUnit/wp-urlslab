@@ -5,7 +5,7 @@
 	},
 	"globals": {
 		"ResizeObserver": false,
-		"sessionStorage": false,
+		"sessionStorage": false
 	},
 	"parser": "@babel/eslint-parser",
 	"parserOptions": {

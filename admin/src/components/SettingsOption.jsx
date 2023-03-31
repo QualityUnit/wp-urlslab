@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { setSettings } from '../api/settings';
-import { parseURL } from '../constants/helpers';
+import { parseURL } from '../lib/helpers';
 import DatePicker from 'react-datepicker';
 import InputField from '../elements/InputField';
 import Switch from '../elements/Switch';

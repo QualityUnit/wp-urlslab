@@ -13,7 +13,6 @@ import { ReactComponent as RefreshIcon } from '../assets/images/icon-cron-refres
 
 import SortMenu from '../elements/SortMenu';
 import ColumnsMenu from '../elements/ColumnsMenu';
-import Loader from './Loader';
 import Button from '../elements/Button';
 import InsertRowPanel from './InsertRowPanel';
 import ExportPanel from './ExportPanel';
@@ -29,12 +28,12 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 	const [ filtersObj, setFiltersObj ] = useState();
 	const [ visibleCols, setVisibleCols ] = useState();
 
-	useEffect( () => {
-		const cols = async () => await get( slug ).then( ( obj ) => setVisibleCols( obj.columns ) );
-		cols();
-	}, [ slug ] );
+	// useEffect( () => {
+	// 	const cols = async () => await get( slug ).then( ( obj ) => setVisibleCols( obj.columns ) );
+	// 	cols();
+	// }, [ slug ] );
 
-	const initialRow = table?.getRowModel().rows[ 0 ]?.original;
+	const initialRow = table?.getRowModel().rows[ 0 ];
 
 	if ( filtersObj && onFilter ) {
 		onFilter( filtersObj?.filters );

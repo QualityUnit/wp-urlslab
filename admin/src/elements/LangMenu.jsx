@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useQueryClient } from '@tanstack/react-query';
 
-import { langName } from '../constants/helpers';
+import { langName } from '../lib/helpers';
 
 import SortMenu from '../elements/SortMenu';
 import InputField from './InputField';
@@ -37,12 +37,12 @@ export default function LangMenu( { noAll, isFilter, children, onChange, checked
 	return (
 		langs
 			? <SortMenu
-					autoClose={ autoClose }
-					items={ langs }
-					isFilter={ isFilter }
-					name="languages"
-					checkedId={ checkedId }
-					onChange={ ( lang ) => handleSelected( lang ) }
+				autoClose={ autoClose }
+				items={ langs }
+				isFilter={ isFilter }
+				name="languages"
+				checkedId={ checkedId }
+				onChange={ ( lang ) => handleSelected( lang ) }
 			>
 				{ children }
 			</SortMenu>

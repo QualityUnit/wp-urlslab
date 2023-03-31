@@ -1,4 +1,4 @@
-import { langName } from '../constants/helpers';
+import { langName } from '../lib/helpers';
 
 export async function fetchLangs( ) {
 	const langPairs = {};
