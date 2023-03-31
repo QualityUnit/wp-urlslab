@@ -38,6 +38,7 @@ export default function ScreenshotTable( { slug } ) {
 		url_name: __( 'Destination URL' ),
 		url_title: __( 'Title' ),
 		scr_status: __( 'Status' ),
+		screenshot_usage_count: __( 'Usage' ),
 		update_scr_date: __( 'Updated at' ),
 	};
 
@@ -86,6 +87,10 @@ export default function ScreenshotTable( { slug } ) {
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: header.screenshot_url,
 			size: 250,
+		} ),
+		columnHelper?.accessor( 'screenshot_usage_count', {
+			header: header.screenshot_usage_count,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'update_scr_date', {
 			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),

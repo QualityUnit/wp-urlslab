@@ -1,5 +1,7 @@
 import { useState, useEffect, useReducer, useRef, useCallback } from 'react';
+import { renderToString } from 'react-dom/server';
 import { useQueryClient } from '@tanstack/react-query';
+import { flexRender } from '@tanstack/react-table';
 import filterReducer from '../lib/filterReducer';
 import filterArgs from '../lib/filterOperators';
 
@@ -47,9 +49,19 @@ export function useFilter( { slug, header, initialRow } ) {
 	}
 
 	// Checks the type (string or number) of the filter key
-	// console.log( initialRow?.getVisibleCells() );
-	const handleType = ( key ) => {
+	const handleType = ( key, sendCellElement ) => {
+		const cell = initialRow?.getVisibleCells().find( ( cellItem ) => cellItem.column.id === key );
+		const cellElement = flexRender( cell?.column.columnDef.cell, cell?.getContext() );
+		const cellIsMenu = renderToString( cellElement ).includes( 'urlslab-FilterMenu' );
+
 		dispatch( { type: 'setKeyType', keyType: 'string' } );
+		if ( cellIsMenu ) {
+			dispatch( { type: 'setKeyType', keyType: 'menu' } );
+			if ( sendCellElement ) {
+				// console.log( cellElement );
+				sendCellElement( cellElement );
+			}
+		}
 		if ( typeof initialRow?.original[ key ] === 'number' ) {
 			dispatch( { type: 'setKeyType', keyType: 'number' } );
 		}

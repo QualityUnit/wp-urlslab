@@ -28,7 +28,7 @@ export default function Screenshot( { moduleId } ) {
 			{
 				activeSection === 'screenshot' &&
 					<Suspense>
-						<ScreenshotTable slug="url" />
+						<ScreenshotTable slug="screenshot" />
 					</Suspense>
 			}
 			{

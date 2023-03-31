@@ -21,7 +21,7 @@ export default function filterReducer( state, action ) {
 		case 'setKeyType':
 			return {
 				...state,
-				filterObj: { ...filterObj, type: action.keyType },
+				filterObj: { ...filterObj, keyType: action.keyType },
 			};
 		case 'setCurrentFilters':
 			return {
