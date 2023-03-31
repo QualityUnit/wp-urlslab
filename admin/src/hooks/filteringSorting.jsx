@@ -60,7 +60,6 @@ export function useFilter( { slug, header, initialRow } ) {
 		let key = filterKey;
 		const op = filterOp;
 		const val = filterVal;
-		console.log( filterParams );
 
 		if ( ! key ) {
 			key = Object.keys( state.possibleFilters )[ 0 ];

@@ -21,7 +21,6 @@ export default function TableFilterPanel( { props, onEdit } ) {
 	const checkedOp = Object.keys( currentFilters )?.length ? currentFilters[ key ]?.op : Object.keys( state.filterObj.keyType === 'number' ? numericOp : stringOp )[ 0 ];
 
 	useEffect( () => {
-		console.log( 'bla' );
 		dispatch( { type: 'setFilterKey', key: key || Object.keys( possibleFilters )[ 0 ] } );
 		dispatch( { type: 'setFilterOp', op: checkedOp } );
 		dispatch( { type: 'setFilterVal', val: currentFilters[ key ]?.val } );
