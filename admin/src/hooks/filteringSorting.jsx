@@ -7,7 +7,7 @@ const filterObj = {
 	filterKey: undefined,
 	filterOp: undefined,
 	filterVal: undefined,
-	isNumber: false,
+	keyType: undefined,
 };
 
 export function useFilter( { slug, header, initialRow } ) {
@@ -20,14 +20,21 @@ export function useFilter( { slug, header, initialRow } ) {
 
 	const activeFilters = state.currentFilters ? Object.keys( state.currentFilters ) : null;
 
-	useEffect( () => {
+	const getQueryData = useCallback( () => {
 		//Get new data from local query if filtering changes ( on add/remove filter)
 		dispatch( { type: 'setFilteringState', filteringState: queryClient.getQueryData( [ slug, 'filters' ] ) } );
+	}, [ dispatch, slug, queryClient ] );
 
+	useEffect( () => {
+		getQueryData();
 		if ( state.filteringState?.possibleFilters ) {
 			possibleFilters.current = state.filteringState?.possibleFilters;
 		}
-	}, [ queryClient, slug, state, dispatch ] );
+		if ( state.filteringState?.currentFilters ) {
+			dispatch( {
+				type: 'setCurrentFilters', currentFilters: state.filteringState?.currentFilters } );
+		}
+	}, [ getQueryData, state.filteringState ] );
 
 	/* --- FILTERS ADDING FUNCTIONS --- */
 	function addFilter( key, value ) {
@@ -40,18 +47,20 @@ export function useFilter( { slug, header, initialRow } ) {
 	}
 
 	// Checks the type (string or number) of the filter key
-	const handleType = useCallback( ( key ) => {
-		dispatch( { type: 'setNumeric', isNumber: false } );
-		if ( typeof initialRow[ key ] === 'number' ) {
-			dispatch( { type: 'setNumeric', isNumber: true } );
+	// console.log( initialRow?.getVisibleCells() );
+	const handleType = ( key ) => {
+		dispatch( { type: 'setKeyType', keyType: 'string' } );
+		if ( typeof initialRow?.original[ key ] === 'number' ) {
+			dispatch( { type: 'setKeyType', keyType: 'number' } );
 		}
-	}, [ dispatch, initialRow ] );
+	};
 
 	function handleSaveFilter( filterParams ) {
 		const { filterKey, filterOp, filterVal } = filterParams;
 		let key = filterKey;
 		const op = filterOp;
 		const val = filterVal;
+		console.log( filterParams );
 
 		if ( ! key ) {
 			key = Object.keys( state.possibleFilters )[ 0 ];

@@ -18,10 +18,10 @@ export default function filterReducer( state, action ) {
 				...state,
 				filterObj: { ...filterObj, filterVal: action.val },
 			};
-		case 'setNumeric':
+		case 'setKeyType':
 			return {
 				...state,
-				filterObj: { ...filterObj, isNumber: action.isNumber },
+				filterObj: { ...filterObj, type: action.keyType },
 			};
 		case 'setCurrentFilters':
 			return {

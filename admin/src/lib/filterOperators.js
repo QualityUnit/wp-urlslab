@@ -1,6 +1,6 @@
 
 export const numericOp = {
-	'': 'is exactly',
+	exactly: 'is exactly',
 	'<>': 'is not equal',
 	IN: 'is one of',
 	BETWEEN: 'is between',
@@ -12,7 +12,7 @@ export const stringOp = {
 	LIKE: 'contains',
 	'LIKE%': 'begins with',
 	'%LIKE': 'ends with',
-	'': 'is exactly',
+	exactly: 'is exactly',
 	'<>': 'is not',
 	IN: 'is one of',
 	'>': 'is longer than',
@@ -25,17 +25,17 @@ export default function filterArgs( currentFilters ) {
 
 	Object.entries( currentFilters ).map( ( [ key, filter ] ) => {
 		const { op, val } = filter;
-		if ( ! op ) {
-			filters += `&filter_${ key }=${ filter }`;
-		}
-		if ( op && op !== 'IN' && op !== 'BETWEEN' ) {
-			filters += `&filter_${ key }=${ encodeURIComponent( `{"op":"${ op }","val":"${ val }"}` ) }`;
+		if ( op && op === 'exactly' ) {
+			filters += `&filter_${ key }=${ val }`;
 		}
 		if ( op && op === 'IN' ) {
 			filters += `&filter_${ key }=${ encodeURIComponent( `{"op":"${ op }","val":[${ val }]}` ) }`;
 		}
 		if ( op && op === 'BETWEEN' ) {
 			filters += `&filter_${ key }=${ encodeURIComponent( `{"op":"${ op }","min":${ val.min }, "max": ${ val.max }}` ) }`;
+		}
+		if ( op && op !== 'IN' && op !== 'BETWEEN' && op !== 'exactly' ) {
+			filters += `&filter_${ key }=${ encodeURIComponent( `{"op":"${ op }","val":"${ val }"}` ) }`;
 		}
 		return false;
 	} );

@@ -17,10 +17,10 @@ export default function Table( { slug, resizable, children, className, columns, 
 	const [ hiddenCols, setHiddenCols ] = useState();
 	const tableContainerRef = useRef();
 
-	useEffect( () => {
-		const getHiddenCols = async () => await get( slug ).then( ( obj ) => setHiddenCols( obj.columns ) );
-		getHiddenCols();
-	}, [ slug ] );
+	// useEffect( () => {
+	// 	const getHiddenCols = async () => await get( slug ).then( ( obj ) => setHiddenCols( obj.columns ) );
+	// 	getHiddenCols();
+	// }, [ slug ] );
 
 	const table = useReactTable( {
 		columns,
