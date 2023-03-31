@@ -59,6 +59,7 @@ class Urlslab_Activator {
 		self::init_search_replace_tables();
 		self::init_screenshot_urls_table();
 		self::init_content_generators_table();
+		self::init_not_found_log_table();
 	}
 
 	public static function upgrade_steps() {
@@ -130,6 +131,12 @@ class Urlslab_Activator {
 				global $wpdb;
 				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_CONTENT_GENERATORS_TABLE ); // phpcs:ignore
 				self::init_content_generators_table();
+			}
+		);
+		self::update_step(
+			'2.6.0',
+			function() {
+				self::init_not_found_log_table();
 			}
 		);
 
@@ -445,6 +452,26 @@ class Urlslab_Activator {
     		  lang VARCHAR(8),
     		  status_changed DATETIME NULL,
 			  PRIMARY KEY (generator_id)
+        ) $charset_collate;";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_not_found_log_table() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$table_name = URLSLAB_NOT_FOUND_LOG_TABLE;
+		$sql        = "CREATE TABLE IF NOT EXISTS $table_name (
+    		  url_id bigint NOT NULL,
+    		  url VARCHAR(2000),
+    		  cnt INT UNSIGNED ZEROFILL DEFAULT 0,
+    		  created DATETIME,
+    		  updated DATETIME,
+			  PRIMARY KEY (url_id),
+			  INDEX idx_updated (updated),
+			  INDEX idx_created (created)
         ) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
