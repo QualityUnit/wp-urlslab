@@ -35,7 +35,7 @@
     "babel-loader": "^9",
     "clean-webpack-plugin": "^4",
     "copy-webpack-plugin": "^11",
-    "css-minimizer-webpack-plugin": "^4",
+    "css-minimizer-webpack-plugin": "^5",
     "eslint": "^8",
     "eslint-config-airbnb": "^19",
     "eslint-plugin-import": "^2",
