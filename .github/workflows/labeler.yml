@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: srvaroa/labeler@v1.4.0
+      - uses: srvaroa/labeler@v1.5.0
         with:
           config_path: .github/labeler.yml
         env:
