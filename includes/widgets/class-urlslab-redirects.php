@@ -319,6 +319,16 @@ class Urlslab_Redirects extends Urlslab_Widget {
 	 * @return Urlslab_Redirect_Row[]
 	 */
 	private function get_redirects(): array {
+		$redirects = wp_cache_get( 'redirects', 'urlslab' );
+		if ( false === $redirects ) {
+			$redirects = $this->get_redirects_from_db();
+			wp_cache_set( 'redirects', $redirects, 'urlslab', 300 );
+		}
+
+		return $redirects;
+	}
+
+	private function get_redirects_from_db() {
 		$redirects = array();
 		global $wpdb;
 		$results = $wpdb->get_results( 'SELECT * FROM ' . URLSLAB_REDIRECTS_TABLE, 'ARRAY_A' ); // phpcs:ignore
@@ -327,5 +337,10 @@ class Urlslab_Redirects extends Urlslab_Widget {
 		}
 
 		return $redirects;
+	}
+
+
+	public static function delete_cache() {
+		wp_cache_delete( 'redirects', 'urlslab' );
 	}
 }

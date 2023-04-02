@@ -138,11 +138,6 @@ class Urlslab_Activator {
 			'2.6.0',
 			function() {
 				self::init_not_found_log_table();
-			}
-		);
-		self::update_step(
-			'2.7.0',
-			function() {
 				self::init_redirects_table();
 			}
 		);
@@ -495,7 +490,7 @@ class Urlslab_Activator {
     		  match_type CHAR(1) DEFAULT 'S',
     		  match_url VARCHAR(2000),
     		  replace_url VARCHAR(2000),
-    		  redirect_code tinyint unsigned DEFAULT 301,
+    		  redirect_code SMALLINT unsigned DEFAULT 301,
     		  is_logged CHAR(1),
     		  capabilities VARCHAR(2000),
     		  browser VARCHAR(2000),

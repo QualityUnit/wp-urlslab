@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, Tooltip, SortMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, Tooltip, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../constants/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -24,13 +24,14 @@ export default function RedirectsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, pageId } );
 
-	const { row, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectRow, deleteRow } = useChangeRow( { data, url, slug, pageId } );
 
 
 	const header = {
 		match_type: __( 'Match type' ),
 		match_url: __( 'URL' ),
 		replace_url: __( 'Redirect to URL' ),
+		redirect_code: __( 'HTTP Code' ),
 		is_logged: __( 'Login' ),
 		capabilities: __( 'Capabilities' ),
 		browser: __( 'Browser' ),
@@ -63,6 +64,11 @@ export default function RedirectsTable( { slug } ) {
 		columnHelper.accessor( 'replace_url', {
 			className: 'nolimit',
 			header: header.replace_url,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'redirect_code', {
+			className: 'nolimit',
+			header: header.redirect_code,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'is_logged', {
@@ -124,7 +130,6 @@ export default function RedirectsTable( { slug } ) {
 				table={ table }
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onClearRow={ ( clear ) => clear && setInsertRow() }
 				exportOptions={ {
 					url: slug,
 					filters,

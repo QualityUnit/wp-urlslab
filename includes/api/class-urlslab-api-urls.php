@@ -128,7 +128,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		$recordset = array();
 
 		foreach ( $rows as $row ) {
-			$url      = new Urlslab_Url_Row( (array) $row );
+			$url = new Urlslab_Url_Row( (array) $row );
 			$row = (object) array_replace( (array) $row, $url->get_object_values_as_array() );
 
 			$row->screenshot_url = $url->get_screenshot_url();
@@ -233,6 +233,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		if ( false === $wpdb->delete( URLSLAB_SCREENSHOT_URLS_TABLE, $delete_params ) ) {
 			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
 		}
+		$this->on_items_updated();
 
 		return new WP_REST_Response( __( 'Deleted' ), 200 );
 	}
@@ -247,6 +248,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_URLS_MAP_TABLE ) ) ) { // phpcs:ignore
 			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
 		}
+		$this->on_items_updated();
 
 		return new WP_REST_Response( __( 'Deleted' ), 200 );
 	}

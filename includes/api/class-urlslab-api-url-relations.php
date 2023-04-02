@@ -146,6 +146,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		if ( false === $result ) {
 			return new WP_REST_Response( 'Import failed', 500 );
 		}
+		$this->on_items_updated();
 
 		return new WP_REST_Response( $result, 200 );
 	}
@@ -251,6 +252,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 				)
 			);
 			$obj->insert();
+			$this->on_items_updated( array( $obj ) );
 
 			return new WP_REST_Response( $obj->as_array(), 200 );
 		} catch ( Exception $e ) {
