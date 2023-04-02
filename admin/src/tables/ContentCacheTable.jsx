@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import {
 	useInfiniteFetch, Tooltip, Loader, Table, ModuleViewHeaderBottom,
-} from '../constants/tableImports';
+} from '../lib/tableImports';
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function ContentCacheTable( { slug } ) {

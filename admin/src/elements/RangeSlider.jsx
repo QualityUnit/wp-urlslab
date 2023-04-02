@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect, useState, useRef } from 'react';
-import { delay } from '../constants/helpers';
+import { delay } from '../lib/helpers';
 
 import '../assets/styles/elements/_FilterMenu.scss';
 import '../assets/styles/elements/_RangeSlider.scss';

@@ -1,68 +1,61 @@
-import { useState, useReducer, useRef, useCallback } from 'react';
+import { useState, useEffect, useReducer, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import filterReducer from '../constants/filterReducer';
+import filterReducer from '../lib/filterReducer';
+import filterArgs from '../lib/filterOperators';
 
 const filterObj = {
 	filterKey: undefined,
 	filterOp: undefined,
 	filterVal: undefined,
-	isNumber: false,
+	keyType: undefined,
 };
 
-export function useFilter( { slug, header, possibleFilters, initialRow } ) {
-	const [ currentFilters, setCurrentFilters ] = useState( {} );
+export function useFilter( { slug, header, initialRow } ) {
 	const queryClient = useQueryClient();
 	const runFilter = useRef( false );
-	const [ state, dispatch ] = useReducer( filterReducer, { possibleFilters: possibleFilters.current, filterObj, editFilterActive: false } );
+	const possibleFilters = useRef( { ...header } );
+	const [ state, dispatch ] = useReducer( filterReducer, { currentFilters: {}, filteringState: undefined, possibleFilters: possibleFilters.current, filterObj, editFilterActive: false } );
 
-	const activeFilters = currentFilters ? Object.keys( currentFilters ) : null;
+	const filters = filterArgs( state.currentFilters ); // Generates filter endpoint arguments for API url
 
-	let filters = '';
+	const activeFilters = state.currentFilters ? Object.keys( state.currentFilters ) : null;
 
+	const getQueryData = useCallback( () => {
+		//Get new data from local query if filtering changes ( on add/remove filter)
+		dispatch( { type: 'setFilteringState', filteringState: queryClient.getQueryData( [ slug, 'filters' ] ) } );
+	}, [ dispatch, slug, queryClient ] );
+
+	useEffect( () => {
+		getQueryData();
+		if ( state.filteringState?.possibleFilters ) {
+			possibleFilters.current = state.filteringState?.possibleFilters;
+		}
+		if ( state.filteringState?.currentFilters ) {
+			dispatch( {
+				type: 'setCurrentFilters', currentFilters: state.filteringState?.currentFilters } );
+		}
+	}, [ getQueryData, state.filteringState ] );
+
+	/* --- FILTERS ADDING FUNCTIONS --- */
 	function addFilter( key, value ) {
 		if ( value ) {
-			setCurrentFilters( { ...currentFilters, [ key ]: value } );
+			dispatch( { type: 'setCurrentFilters', currentFilters: { ...state.currentFilters, [ key ]: value } } );
 		}
 		if ( ! value ) {
 			removeFilters( [ key ] );
 		}
 	}
-	function removeFilters( keyArray ) {
-		setCurrentFilters( ( filter ) => {
-			const filtersCopy = { ...filter };
-			keyArray.map( ( key ) => {
-				delete filtersCopy[ key ];
-				return false;
-			} );
-			return filtersCopy;
-		} );
-	}
 
-	Object.entries( currentFilters ).map( ( [ key, filter ] ) => {
-		const { op, val } = filter;
-		if ( ! op ) {
-			filters += `&filter_${ key }=${ filter }`;
+	// Checks the type (string or number) of the filter key
+	// console.log( initialRow?.getVisibleCells() );
+	const handleType = ( key ) => {
+		dispatch( { type: 'setKeyType', keyType: 'string' } );
+		if ( typeof initialRow?.original[ key ] === 'number' ) {
+			dispatch( { type: 'setKeyType', keyType: 'number' } );
 		}
-		if ( op && op !== 'IN' && op !== 'BETWEEN' ) {
-			filters += `&filter_${ key }=${ encodeURIComponent( `{"op":"${ op }","val":"${ val }"}` ) }`;
-		}
-		if ( op && op === 'IN' ) {
-			filters += `&filter_${ key }=${ encodeURIComponent( `{"op":"${ op }","val":[${ val }]}` ) }`;
-		}
-		if ( op && op === 'BETWEEN' ) {
-			filters += `&filter_${ key }=${ encodeURIComponent( `{"op":"${ op }","min":${ val.min }, "max": ${ val.max }}` ) }`;
-		}
-		return false;
-	} );
+	};
 
-	const handleType = useCallback( ( key ) => {
-		dispatch( { type: 'setNumeric', isNumber: false } );
-		if ( typeof initialRow[ key ] === 'number' ) {
-			dispatch( { type: 'setNumeric', isNumber: true } );
-		}
-	}, [ dispatch, initialRow ] );
-
-	const handleSaveFilter = ( filterParams ) => {
+	function handleSaveFilter( filterParams ) {
 		const { filterKey, filterOp, filterVal } = filterParams;
 		let key = filterKey;
 		const op = filterOp;
@@ -72,8 +65,12 @@ export function useFilter( { slug, header, possibleFilters, initialRow } ) {
 			key = Object.keys( state.possibleFilters )[ 0 ];
 		}
 
-		delete state.possibleFilters[ key ];
+		delete state.possibleFilters[ key ]; // Removes used filter key from the list
+
+		// Saves the list of unused filters
 		dispatch( { type: 'possibleFilters', possibleFilters: possibleFilters.current } );
+
+		// Close the edit panel after save
 		dispatch( { type: 'toggleEditFilter', editFilter: false } );
 
 		if ( ! op ) {
@@ -84,38 +81,62 @@ export function useFilter( { slug, header, possibleFilters, initialRow } ) {
 			addFilter( key, { op, val } );
 		}
 
+		// Run only once to prevent infinite loop
 		runFilter.current = true;
-	};
+	}
+	/* --- END OF FILTERS ADDING FUNCTIONS --- */
 
-	const handleRemoveFilter = ( keysArray ) => {
+	/* --- FILTERS REMOVAL --- */
+	function removeFilters( keyArray ) {
+		// Gets the list of current filters
+		const getFilters = () => {
+			const filtersCopy = { ...state.currentFilters };
+			keyArray.map( ( key ) => {
+				delete filtersCopy[ key ]; // remove called key (as array) from current filters
+				return false;
+			} );
+			return filtersCopy;
+		};
+		// Save the current list without removed filter
+		dispatch( { type: 'setCurrentFilters', currentFilters: getFilters() } );
+	}
+
+	function handleRemoveFilter( keysArray ) {
+		// One filter removed –  generate list of possible filters in correct order from header
 		if ( keysArray?.length === 1 ) {
-			const key = keysArray[ 0 ];
-			const newHeader = { ...header };
-			const usedFilters = activeFilters.filter( ( k ) => k !== key );
+			const key = keysArray[ 0 ]; // Get only one given filter
+			const newHeader = { ...header }; // Create original header (filter list) copy
+			const usedFilters = activeFilters.filter( ( k ) => k !== key ); // Filter used keys
 			usedFilters.map( ( k ) => {
-				delete newHeader[ k ];
+				delete newHeader[ k ]; // Delete all used filters (except actually removed) from header
 				return false;
 			} );
 
+			// Store state of the possible filters list without one removed
 			dispatch( { type: 'possibleFilters', possibleFilters: newHeader } );
 		}
+
+		// If Clear filters button, generate available filter list from scratch
 		if ( keysArray?.length > 1 ) {
 			dispatch( { type: 'possibleFilters', possibleFilters: { ...header } } );
 		}
 
-		removeFilters( keysArray );
+		removeFilters( keysArray ); // runs the actual removal
 
 		runFilter.current = true;
-	};
+	}
+	/* --- END  OF FILTERS REMOVAL FUNCTIONS --- */
 
+	// Save the all filter values to local query for later use (on component rerender)
 	if ( runFilter.current ) {
 		runFilter.current = false;
-		queryClient.setQueryData( [ slug, 'filters' ], { filters, currentFilters, possibleFilters: possibleFilters.current } );
+		queryClient.setQueryData( [ slug, 'filters' ], { filters, currentFilters: state.currentFilters, possibleFilters: possibleFilters.current } );
 	}
 
-	return { filters, currentFilters, addFilter, removeFilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter };
+	return { filters, currentFilters: state.currentFilters, filteringState: state.filteringState, addFilter, removeFilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter };
 }
 
+/* SORTING HOOK */
 export function useSorting( { slug } ) {
 	const [ sortingColumn, setSortingColumn ] = useState( '' );
 	const queryClient = useQueryClient();

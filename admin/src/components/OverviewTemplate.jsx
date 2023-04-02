@@ -1,8 +1,5 @@
-import { lazy } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
-
-import { renameModule } from '../constants/helpers';
 
 import { ReactComponent as ApiIcon } from '../assets/images/api-exclamation.svg';
 import Button from '../elements/Button';

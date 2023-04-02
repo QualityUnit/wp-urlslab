@@ -1,7 +1,8 @@
-import { useQueryClient } from '@tanstack/react-query';
+
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import { stringOp, numericOp } from '../constants/filterReducer';
+import { stringOp, numericOp } from '../lib/filterOperators';
 import { useFilter } from '../hooks/filteringSorting';
 
 import Button from '../elements/Button';
@@ -10,17 +11,20 @@ import InputField from '../elements/InputField';
 import RangeInputs from '../elements/RangeInputs';
 
 export default function TableFilterPanel( { props, onEdit } ) {
-	const { key, slug, header, possibleFilters, initialRow } = props;
+	const { key, slug, header, possibleFilters, initialRow, currentFilters } = props;
 	const { __ } = useI18n();
-	const queryClient = useQueryClient();
 
 	const { state, dispatch, handleType } = useFilter( { slug, header, possibleFilters, initialRow } );
 
-	const filteringState = queryClient.getQueryData( [ slug, 'filters' ] );
+	const notBetween = Object.keys( currentFilters )?.length && currentFilters[ key ]?.op ? currentFilters[ key ]?.op !== 'BETWEEN' : state.filterObj.filterOp !== 'BETWEEN';
 
-	const { currentFilters } = filteringState || {};
+	const checkedOp = Object.keys( currentFilters )?.length ? currentFilters[ key ]?.op : Object.keys( state.filterObj.keyType === 'number' ? numericOp : stringOp )[ 0 ];
 
-	const notBetween = currentFilters && currentFilters[ key ]?.op ? currentFilters[ key ]?.op !== 'BETWEEN' : state.filterObj.filterOp !== 'BETWEEN';
+	useEffect( () => {
+		dispatch( { type: 'setFilterKey', key: key || Object.keys( possibleFilters )[ 0 ] } );
+		dispatch( { type: 'setFilterOp', op: checkedOp } );
+		dispatch( { type: 'setFilterVal', val: currentFilters[ key ]?.val } );
+	}, [ dispatch, possibleFilters, checkedOp, key, currentFilters ] );
 
 	return (
 		<div className="urlslab-panel urslab-TableFilter-panel pos-absolute">
@@ -36,23 +40,21 @@ export default function TableFilterPanel( { props, onEdit } ) {
 					autoClose
 					disabled={ key ? true : false }
 					onChange={ ( keyParam ) => {
+						dispatch( { type: 'setFilterKey', key: keyParam } );
 						handleType( keyParam );
-						if ( key !== 'undefined' ) {
-							dispatch( { type: 'setFilterKey', keyParam } );
-						}
 					} }
 				/>
 				<SortMenu
 					className="ml-s"
-					items={ state.filterObj.isNumber ? numericOp : stringOp }
+					items={ state.filterObj.keyType === 'number' ? numericOp : stringOp }
 					name="filters"
 					autoClose
-					checkedId={ currentFilters ? currentFilters[ key ]?.op : Object.keys( state.filterObj.isNumber ? numericOp : stringOp )[ 0 ] }
+					checkedId={ checkedOp }
 					onChange={ ( op ) => dispatch( { type: 'setFilterOp', op } ) }
 				/>
 			</div>
 			{ notBetween
-				? <InputField liveUpdate defaultValue={ currentFilters ? currentFilters[ key ]?.val : '' } placeholder={ state.filterObj.filterOp === 'IN' && 'enter ie. 0,10,15,20' } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
+				? <InputField liveUpdate defaultValue={ currentFilters[ key ]?.val } placeholder={ state.filterObj.filterOp === 'IN' && 'enter ie. 0,10,15,20' } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
 				: <RangeInputs liveUpdate onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
 			}
 
