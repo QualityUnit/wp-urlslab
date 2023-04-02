@@ -23,7 +23,7 @@
     "ext-dom": "*",
     "ext-gd": "*",
     "oscarotero/env": "^2.1",
-    "aws/aws-sdk-php": "^3.261",
+    "aws/aws-sdk-php": "^3.263",
     "urlslab/urlslab-php-sdk": "dev-main"
   },
   "require-dev": {
