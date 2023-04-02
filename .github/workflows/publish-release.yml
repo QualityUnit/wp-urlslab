@@ -140,7 +140,7 @@ jobs:
           bash "${GITHUB_WORKSPACE}/.github/scripts/build-zip.sh"
 
       - name: Upload ZIP File to GitHub Actions Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: urlslab-${{ env.PACKAGE_VERSION }}
           path: ${{ github.workspace }}/**/*
