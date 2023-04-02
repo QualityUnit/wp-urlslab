@@ -5,7 +5,7 @@ import Checkbox from './Checkbox';
 import '../assets/styles/elements/_FilterMenu.scss';
 
 export default function SortMenu( {
-	className, name, style, children, items, checkedId, autoClose, disabled, isFilter, onChange,
+	className, name, style, children, items, checkedId, defaultAccept, autoClose, disabled, isFilter, onChange,
 } ) {
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
@@ -20,7 +20,10 @@ export default function SortMenu( {
 				setVisible( false );
 			}
 		};
-		if ( onChange && didMountRef.current && ! isActive && checked !== checkedId ) {
+		if ( onChange && didMountRef.current && ! isActive && ! defaultAccept && checked !== checkedId ) {
+			onChange( checked );
+		}
+		if ( onChange && didMountRef.current && ! isActive && defaultAccept ) { // Accepts change back to default key
 			onChange( checked );
 		}
 		didMountRef.current = true;

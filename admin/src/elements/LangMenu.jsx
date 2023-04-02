@@ -6,7 +6,7 @@ import { langName } from '../lib/helpers';
 import SortMenu from '../elements/SortMenu';
 import InputField from './InputField';
 
-export default function LangMenu( { noAll, isFilter, children, onChange, checkedId, autoClose } ) {
+export default function LangMenu( { noAll, isFilter, children, defaultAccept, onChange, checkedId, autoClose } ) {
 	const queryClient = useQueryClient();
 	const langData = queryClient.getQueryData( [ 'languages' ] );
 
@@ -41,6 +41,7 @@ export default function LangMenu( { noAll, isFilter, children, onChange, checked
 				items={ langs }
 				isFilter={ isFilter }
 				name="languages"
+					defaultAccept={ defaultAccept }
 				checkedId={ checkedId }
 				onChange={ ( lang ) => handleSelected( lang ) }
 			>
