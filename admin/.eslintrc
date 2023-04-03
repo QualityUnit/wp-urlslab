@@ -19,7 +19,8 @@
 	],
 	"rules": {
 		"jsx-a11y/label-has-associated-control": 0,
-		"camelcase": "off"
+		"camelcase": "off",
+		"jsx-a11y/no-autofocus": 0
 	},
 	"settings": {
     "import/resolver": {

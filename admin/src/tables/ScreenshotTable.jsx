@@ -73,6 +73,7 @@ export default function ScreenshotTable( { slug } ) {
 			size: 200,
 		} ),
 		columnHelper?.accessor( 'scr_status', {
+			filterValMenu: scrStatusTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu
 				items={ scrStatusTypes }

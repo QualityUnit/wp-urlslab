@@ -27,7 +27,7 @@ export default function FilterMenu( {
 		}
 		didMountRef.current = true;
 		document.addEventListener( 'click', handleClickOutside, false );
-	}, [ checkedNow, checked, id, isActive ] );
+	}, [ id, isActive ] );
 
 	const checkedCheckbox = ( target, isChecked ) => {
 		if ( isChecked ) {
@@ -61,8 +61,8 @@ export default function FilterMenu( {
 			>
 				<span>
 					{ asTags //if has asTags prop, shows selected items in menu title instead of counter
-						? checked.map( ( itemId ) => `${ items[ itemId ] }, ` )
-						: `${ checked.length } ${ __( 'items selected' ) }`
+						? checked?.map( ( itemId ) => `${ items[ itemId ] }, ` )
+						: `${ checked?.length } ${ __( 'items selected' ) }`
 					}
 				</span>
 			</div>

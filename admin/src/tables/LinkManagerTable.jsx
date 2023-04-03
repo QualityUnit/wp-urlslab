@@ -104,6 +104,7 @@ export default function LinkManagerTable( { slug } ) {
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'http_status', {
+			filterValMenu: httpStatusTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu
 				items={ httpStatusTypes }
@@ -114,6 +115,7 @@ export default function LinkManagerTable( { slug } ) {
 			size: 100,
 		} ),
 		columnHelper.accessor( 'visibility', {
+			filterValMenu: visibilityTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu
 				items={ visibilityTypes }
@@ -124,6 +126,7 @@ export default function LinkManagerTable( { slug } ) {
 			size: 100,
 		} ),
 		columnHelper.accessor( 'url_type', {
+			filterValMenu: urlTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu
 				items={ urlTypes }

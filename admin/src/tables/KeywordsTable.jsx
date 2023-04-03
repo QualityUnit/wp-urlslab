@@ -67,6 +67,7 @@ export default function KeywordsTable( { slug } ) {
 			minSize: 150,
 		} ),
 		columnHelper.accessor( 'kwType', {
+			filterValMenu: keywordTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu items={ keywordTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.kwType,

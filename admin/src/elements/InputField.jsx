@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { delay } from '../lib/helpers';
 import '../assets/styles/elements/_Inputs.scss';
 
-export default function InputField( { defaultValue, placeholder, message, liveUpdate, className, type, disabled, label, labelInline, onChange, children, style } ) {
+export default function InputField( { defaultValue, autoFocus, placeholder, message, liveUpdate, className, type, disabled, label, labelInline, onChange, children, style } ) {
 	const [ val, setVal ] = useState( defaultValue || '' );
 	const [ valid, setValid ] = useState( false );
 	const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
@@ -46,6 +46,7 @@ export default function InputField( { defaultValue, placeholder, message, liveUp
 					className="urlslab-input input__text"
 					type={ type || 'text' }
 					defaultValue={ val }
+					autoFocus={ autoFocus }
 					onChange={ ( event ) => {
 						setVal( event.target.value );
 						handleValLive( event );

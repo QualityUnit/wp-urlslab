@@ -64,6 +64,7 @@ export default function YouTubeCacheTable( { slug } ) {
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'status', {
+			filterValMenu: statusTypes,
 			cell: ( cell ) => statusTypes[ cell.getValue() ],
 			header: header.status,
 			size: 100,
