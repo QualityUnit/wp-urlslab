@@ -39,13 +39,13 @@ export default function LangMenu( { noAll, multiSelect, isFilter, children, defa
 		<>
 			{ langs && ! multiSelect
 				? <SortMenu
-						autoClose={ autoClose }
-						items={ langs }
-						isFilter={ isFilter }
-						name="languages"
-						defaultAccept={ defaultAccept }
-						checkedId={ checkedId }
-						onChange={ ( lang ) => handleSelected( lang ) }
+					autoClose={ autoClose }
+					items={ langs }
+					isFilter={ isFilter }
+					name="languages"
+					defaultAccept={ defaultAccept }
+					checkedId={ checkedId }
+					onChange={ ( lang ) => handleSelected( lang ) }
 				>
 					{ children }
 				</SortMenu>

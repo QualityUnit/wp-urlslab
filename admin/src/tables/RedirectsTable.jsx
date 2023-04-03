@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, Tooltip, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, Tooltip, Checkbox, InputField, SortMenu, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -9,7 +9,7 @@ import useChangeRow from '../hooks/useChangeRow';
 export default function RedirectsTable( { slug } ) {
 	const pageId = 'redirect_id';
 
-	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 
@@ -26,13 +26,17 @@ export default function RedirectsTable( { slug } ) {
 
 	const { row, selectRow, deleteRow } = useChangeRow( { data, url, slug, pageId } );
 
+	const redirectTypes = {
+		301: 'Moved Permanently (301)',
+		307: 'Temporary Redirect (307)',
+	};
 
 	const header = {
 		match_type: __( 'Match type' ),
 		match_url: __( 'URL' ),
 		replace_url: __( 'Redirect to URL' ),
 		redirect_code: __( 'HTTP Code' ),
-		is_logged: __( 'Login' ),
+		is_logged: __( 'Is Logged in' ),
 		capabilities: __( 'Capabilities' ),
 		browser: __( 'Browser' ),
 		cookie: __( 'Cookies' ),
@@ -42,72 +46,75 @@ export default function RedirectsTable( { slug } ) {
 		cnt: __( 'Redirects Count' ),
 	};
 
+	const inserterCells = {
+		match_type: <InputField type="url" liveUpdate defaultValue="" label={ header.match_type } onChange={ ( val ) => setInsertRow( { ...rowToInsert, match_type: val } ) } required />,
+		match_url: <InputField type="url" liveUpdate defaultValue="" label={ header.match_url } onChange={ ( val ) => setInsertRow( { ...rowToInsert, match_url: val } ) } required />,
+		replace_url: <InputField type="url" liveUpdate defaultValue="" label={ header.replace_url } onChange={ ( val ) => setInsertRow( { ...rowToInsert, replace_url: val } ) } required />,
+		redirect_code: <SortMenu autoClose items={ redirectTypes } name="redirect_code" checkedId="301" onChange={ ( val ) => setInsertRow( { ...rowToInsert, redirect_code: val } ) } required>{ header.redirect_code }</SortMenu>,
+		is_logged: <Checkbox onChange={ ( val ) => setInsertRow( { ...rowToInsert, is_logged: val } ) }>{ header.is_logged }</Checkbox>,
+		headers: <InputField liveUpdate defaultValue="" label={ header.headers } onChange={ ( val ) => setInsertRow( { ...rowToInsert, headers: val } ) } />,
+		cookie: <InputField liveUpdate defaultValue="" label={ header.cookie } onChange={ ( val ) => setInsertRow( { ...rowToInsert, cookie: val } ) } />,
+		params: <InputField liveUpdate defaultValue="" label={ header.params } onChange={ ( val ) => setInsertRow( { ...rowToInsert, capabilities: val } ) } />,
+		capabilities: <InputField liveUpdate defaultValue="" label={ header.capabilities } onChange={ ( val ) => setInsertRow( { ...rowToInsert, capabilities: val } ) } />,
+		browser: <InputField liveUpdate defaultValue="" label={ header.browser } onChange={ ( val ) => setInsertRow( { ...rowToInsert, browser: val } ) } />,
+		if_not_found: <InputField liveUpdate defaultValue="" label={ header.if_not_found } onChange={ ( val ) => setInsertRow( { ...rowToInsert, if_not_found: val } ) } />,
+	};
 
 	const columns = [
 		columnHelper.accessor( 'check', {
-			className: 'nolimit checkbox',
+			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
 				selectRow( val, cell );
 			} } />,
 			header: null,
 		} ),
 		columnHelper.accessor( 'match_type', {
-			className: 'nolimit',
 			header: header.match_type,
-			size: 30,
+			size: 80,
 		} ),
 		columnHelper.accessor( 'match_url', {
-			className: 'nolimit',
 			header: header.match_url,
-			size: 300,
+			size: 200,
 		} ),
 		columnHelper.accessor( 'replace_url', {
-			className: 'nolimit',
 			header: header.replace_url,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'redirect_code', {
+			filterValMenu: redirectTypes,
 			className: 'nolimit',
 			header: header.redirect_code,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'is_logged', {
-			className: 'nolimit',
 			header: header.is_logged,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'capabilities', {
-			className: 'nolimit',
 			header: header.capabilities,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'browser', {
-			className: 'nolimit',
 			header: header.browser,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'cookie', {
-			className: 'nolimit',
 			header: header.cookie,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'headers', {
-			className: 'nolimit',
 			header: header.headers,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'params', {
-			className: 'nolimit',
 			header: header.params,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'if_not_found', {
-			className: 'nolimit',
 			header: header.if_not_found,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'cnt', {
-			className: 'nolimit',
 			header: header.cnt,
 			size: 100,
 		} ),
@@ -130,6 +137,7 @@ export default function RedirectsTable( { slug } ) {
 				table={ table }
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
+				insertOptions={ { inserterCells, title: 'Add redirect', data, slug, url, pageId, rowToInsert } }
 				exportOptions={ {
 					url: slug,
 					filters,

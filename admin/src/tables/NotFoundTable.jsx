@@ -81,6 +81,7 @@ export default function NotFoundTable( { slug } ) {
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onClearRow={ ( clear ) => clear }
+				noImport
 				exportOptions={ {
 					url: slug,
 					filters,

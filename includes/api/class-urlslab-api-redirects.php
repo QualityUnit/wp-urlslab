@@ -36,7 +36,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 							},
 						),
 						'replace_url'   => array(
-							'required'          => false,
+							'required'          => true,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
@@ -80,7 +80,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 							},
 						),
 						'redirect_code' => array(
-							'required'          => false,
+							'required'          => true,
 							'validate_callback' => function( $param ) {
 								return is_numeric( $param ) && 300 <= $param && 400 > $param;
 							},
