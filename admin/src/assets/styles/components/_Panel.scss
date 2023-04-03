@@ -10,7 +10,7 @@
 
 	&-floating[class] {
 
-		position: fixed;
+		position: absolute;
 		top: 15%;
 		left: calc(50% + 80px); //WP Admin menu half width of 160px
 		transform: translateX(-50%);

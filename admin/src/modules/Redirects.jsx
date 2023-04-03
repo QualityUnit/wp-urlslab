@@ -28,15 +28,15 @@ export default function Redirects( { moduleId } ) {
 				</Overview>
 			}
 			{
+				activeSection === 'redirects' &&
+					<Suspense>
+						<RedirectsTable slug={ 'redirects' } />
+					</Suspense>
+			}
+			{
 				activeSection === 'notfound' &&
 				<Suspense>
 					<NotFoundTable slug={ 'not-found-log' } />
-				</Suspense>
-			}
-			{
-				activeSection === 'redirects' &&
-				<Suspense>
-					<RedirectsTable slug={ 'redirects' } />
 				</Suspense>
 			}
 			{
