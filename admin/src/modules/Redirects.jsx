@@ -12,7 +12,7 @@ export default function Redirects( { moduleId } ) {
 
 	const tableMenu = new Map( [
 		[ 'redirects', __( 'Redirects' ) ],
-		[ 'notfound', __( '404 Logs' ) ],
+		[ 'notfound', __( '404 Monitor' ) ],
 	] );
 
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );

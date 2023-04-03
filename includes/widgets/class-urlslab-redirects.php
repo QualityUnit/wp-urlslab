@@ -176,14 +176,14 @@ class Urlslab_Redirects extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return __( 'Redirects' );
+		return __( 'Redirects and 404 Monitor' );
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( 'Manage redirects and monitor not found pages (404) in your installation' );
+		return __( 'Easily detect 404 errors and effortlessly set up redirects on your site, ensuring a seamless user experience and improved SEO' );
 	}
 
 	public function is_api_key_required(): bool {
@@ -228,14 +228,14 @@ class Urlslab_Redirects extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'redirecting', __( '404 Redirect setting' ), __( 'Customize default behavior of redirects if visitor hits 404 Not found URL.' ) );
+		$this->add_options_form_section( 'redirecting', __( 'Default Redirects Settings' ), __( 'Effortlessly personalize redirects for 404 error URLs.' ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_DEFAULT_REDIRECT_URL,
 			'',
 			false,
-			__( 'Default redirect URL' ),
-			__( 'If no other redirect rule matched, redirect every 404 Not found request to default URL. Leave empty if standard 404 page should be used. Value must be valid URL!' ),
+			__( 'Default Redirect URL' ),
+			__( 'Redirect unmatched 404 requests to a default URL, or leave empty for the standard 404 page.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {
@@ -247,8 +247,8 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			self::SETTING_NAME_DEFAULT_REDIRECT_URL_IMAGE,
 			'',
 			false,
-			__( 'Default redirect URL for images' ),
-			__( 'If the 404 url is image (identified based on the extension), plugin can redirect browser to any default image of your choice. We recommend at least to use 1px image. Value must be valid URL!' ),
+			__( 'Default Redirect URL for Images' ),
+			__( 'Redirect 404 image requests to a default image URL, or leave empty for the standard 404 page.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {
@@ -258,14 +258,14 @@ class Urlslab_Redirects extends Urlslab_Widget {
 		);
 
 
-		$this->add_options_form_section( 'logging', __( 'Logging' ), __( 'Logging of all 404 redirects and not found pages helps you to setup effective redirect rules. On the other hand it can easily overload your system in case of attacks.' ) );
+		$this->add_options_form_section( 'logging', __( 'Logging Settings' ), __( 'Effortlessly log all 404 URLs and create efficient redirect rules, while safeguarding your system from potential overload during attacks.' ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_LOGGING,
 			false,
 			false,
-			__( 'Activate logging' ),
-			__( 'Log each 404 event in database' ),
+			__( 'Activate Logging' ),
+			__( 'Log every 404 error event in the database.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -276,8 +276,8 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			self::SETTING_NAME_LOG_HISTORY_MAX_TIME,
 			604800,
 			false,
-			__( 'Delete old logs' ),
-			__( 'Define how long you want to keep history of old rows in log. If there was no 404 certain amount of time, we delete such row automatically.' ),
+			__( 'Delete Old Logs' ),
+			__( 'Manage log history duration for 404 errors; old rows auto-delete after a specified time without errors.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				86400   => __( '1 day' ),
@@ -295,8 +295,8 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			self::SETTING_NAME_LOG_HISTORY_MAX_ROWS,
 			10000,
 			false,
-			__( 'Limit rows' ),
-			__( 'Define maximum rows in redirects log table. Once your DB reach this limit, we will delete all rows at once and logging starts with empty table. This setting helps you to keep your database size under control.' ),
+			__( 'Limit Rows' ),
+			__( 'Set a limit for rows in the redirects log table. Once reached, all rows are deleted, and logging resumes with an empty table, ensuring optimal database size management.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				0       => __( 'Unlimited' ),
