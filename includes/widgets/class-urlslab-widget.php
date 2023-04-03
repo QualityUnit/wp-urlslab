@@ -15,7 +15,7 @@ abstract class Urlslab_Widget {
 	const OPTION_TYPE_NUMBER = 'number';
 
 
-	private $current_page_url = null;
+	private static $current_page_url = null;
 
 	private $options = false;
 	private $option_sections = array();
@@ -281,17 +281,17 @@ abstract class Urlslab_Widget {
 	}
 
 	protected function get_current_page_url(): Urlslab_Url {
-		if ( is_object( $this->current_page_url ) ) {
-			return $this->current_page_url;
+		if ( is_object( self::$current_page_url ) ) {
+			return self::$current_page_url;
 		}
 
 		if ( is_category() ) {
-			$this->current_page_url = new Urlslab_Url( get_category_link( get_query_var( 'cat' ) ), true );
+			self::$current_page_url = new Urlslab_Url( get_category_link( get_query_var( 'cat' ) ), true );
 		} else {
-			$this->current_page_url = new Urlslab_Url( get_permalink( get_the_ID() ), true );
+			self::$current_page_url = new Urlslab_Url( get_permalink( get_the_ID() ), true );
 		}
 
-		return $this->current_page_url;
+		return self::$current_page_url;
 	}
 
 	protected function get_current_language() {

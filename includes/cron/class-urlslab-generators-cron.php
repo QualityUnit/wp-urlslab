@@ -110,6 +110,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 					$row_obj->set_result( $e->getMessage() );
 					$row_obj->update();
 			}
+
 			return false;
 		}
 
