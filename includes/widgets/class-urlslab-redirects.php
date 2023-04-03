@@ -262,7 +262,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_LOGGING,
-			false,
+			true,
 			false,
 			__( 'Activate Logging' ),
 			__( 'Log every 404 error event in the database.' ),
