@@ -98,9 +98,18 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 			$row_obj->set_result( $response->getResponse() );
 			$row_obj->update();
 		} catch ( \OpenAPI\Client\ApiException $e ) {
-			$row_obj->set_status( Urlslab_Content_Generator_Row::STATUS_DISABLED );
-			$row_obj->set_result( $e->getMessage() );
-			$row_obj->update();
+			switch ( $e->getCode() ) {
+				case 404:
+					$row_obj->set_status( Urlslab_Content_Generator_Row::STATUS_PENDING );
+					$row_obj->set_result( $e->getMessage() );
+					$row_obj->update();
+					break;
+				case 500:
+				default:
+					$row_obj->set_status( Urlslab_Content_Generator_Row::STATUS_DISABLED );
+					$row_obj->set_result( $e->getMessage() );
+					$row_obj->update();
+			}
 
 			return false;
 		}
