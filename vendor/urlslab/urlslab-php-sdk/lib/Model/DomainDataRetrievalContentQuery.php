@@ -57,7 +57,9 @@ class DomainDataRetrievalContentQuery implements ModelInterface, ArrayAccess, \J
       * @var string[]
       */
     protected static $openAPITypes = [
-        'query' => 'object',
+        'additional_query' => 'object',
+        'domains' => 'string[]',
+        'urls' => 'string[]',
         'sort' => 'object[]',
         'limit' => 'int'
     ];
@@ -70,7 +72,9 @@ class DomainDataRetrievalContentQuery implements ModelInterface, ArrayAccess, \J
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'query' => null,
+        'additional_query' => null,
+        'domains' => null,
+        'urls' => null,
         'sort' => null,
         'limit' => 'int32'
     ];
@@ -81,7 +85,9 @@ class DomainDataRetrievalContentQuery implements ModelInterface, ArrayAccess, \J
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'query' => true,
+        'additional_query' => true,
+		'domains' => false,
+		'urls' => false,
 		'sort' => true,
 		'limit' => true
     ];
@@ -172,7 +178,9 @@ class DomainDataRetrievalContentQuery implements ModelInterface, ArrayAccess, \J
      * @var string[]
      */
     protected static $attributeMap = [
-        'query' => 'query',
+        'additional_query' => 'additionalQuery',
+        'domains' => 'domains',
+        'urls' => 'urls',
         'sort' => 'sort',
         'limit' => 'limit'
     ];
@@ -183,7 +191,9 @@ class DomainDataRetrievalContentQuery implements ModelInterface, ArrayAccess, \J
      * @var string[]
      */
     protected static $setters = [
-        'query' => 'setQuery',
+        'additional_query' => 'setAdditionalQuery',
+        'domains' => 'setDomains',
+        'urls' => 'setUrls',
         'sort' => 'setSort',
         'limit' => 'setLimit'
     ];
@@ -194,7 +204,9 @@ class DomainDataRetrievalContentQuery implements ModelInterface, ArrayAccess, \J
      * @var string[]
      */
     protected static $getters = [
-        'query' => 'getQuery',
+        'additional_query' => 'getAdditionalQuery',
+        'domains' => 'getDomains',
+        'urls' => 'getUrls',
         'sort' => 'getSort',
         'limit' => 'getLimit'
     ];
@@ -256,7 +268,9 @@ class DomainDataRetrievalContentQuery implements ModelInterface, ArrayAccess, \J
      */
     public function __construct(array $data = null)
     {
-        $this->setIfExists('query', $data ?? [], null);
+        $this->setIfExists('additional_query', $data ?? [], null);
+        $this->setIfExists('domains', $data ?? [], null);
+        $this->setIfExists('urls', $data ?? [], null);
         $this->setIfExists('sort', $data ?? [], null);
         $this->setIfExists('limit', $data ?? [], null);
     }
@@ -288,6 +302,12 @@ class DomainDataRetrievalContentQuery implements ModelInterface, ArrayAccess, \J
     {
         $invalidProperties = [];
 
+        if ($this->container['domains'] === null) {
+            $invalidProperties[] = "'domains' can't be null";
+        }
+        if ($this->container['urls'] === null) {
+            $invalidProperties[] = "'urls' can't be null";
+        }
         return $invalidProperties;
     }
 
@@ -304,35 +324,89 @@ class DomainDataRetrievalContentQuery implements ModelInterface, ArrayAccess, \J
 
 
     /**
-     * Gets query
+     * Gets additional_query
      *
      * @return object|null
      */
-    public function getQuery()
+    public function getAdditionalQuery()
     {
-        return $this->container['query'];
+        return $this->container['additional_query'];
     }
 
     /**
-     * Sets query
+     * Sets additional_query
      *
-     * @param object|null $query query
+     * @param object|null $additional_query additional_query
      *
      * @return self
      */
-    public function setQuery($query)
+    public function setAdditionalQuery($additional_query)
     {
-        if (is_null($query)) {
-            array_push($this->openAPINullablesSetToNull, 'query');
+        if (is_null($additional_query)) {
+            array_push($this->openAPINullablesSetToNull, 'additional_query');
         } else {
             $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
-            $index = array_search('query', $nullablesSetToNull);
+            $index = array_search('additional_query', $nullablesSetToNull);
             if ($index !== FALSE) {
                 unset($nullablesSetToNull[$index]);
                 $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
             }
         }
-        $this->container['query'] = $query;
+        $this->container['additional_query'] = $additional_query;
+
+        return $this;
+    }
+
+    /**
+     * Gets domains
+     *
+     * @return string[]
+     */
+    public function getDomains()
+    {
+        return $this->container['domains'];
+    }
+
+    /**
+     * Sets domains
+     *
+     * @param string[] $domains domains
+     *
+     * @return self
+     */
+    public function setDomains($domains)
+    {
+        if (is_null($domains)) {
+            throw new \InvalidArgumentException('non-nullable domains cannot be null');
+        }
+        $this->container['domains'] = $domains;
+
+        return $this;
+    }
+
+    /**
+     * Gets urls
+     *
+     * @return string[]
+     */
+    public function getUrls()
+    {
+        return $this->container['urls'];
+    }
+
+    /**
+     * Sets urls
+     *
+     * @param string[] $urls urls
+     *
+     * @return self
+     */
+    public function setUrls($urls)
+    {
+        if (is_null($urls)) {
+            throw new \InvalidArgumentException('non-nullable urls cannot be null');
+        }
+        $this->container['urls'] = $urls;
 
         return $this;
     }

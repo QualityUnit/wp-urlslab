@@ -4,7 +4,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**query** | **object** |  | [optional]
+**additional_query** | **object** |  | [optional]
+**domains** | **string[]** |  |
+**urls** | **string[]** |  |
 **sort** | **object[]** |  | [optional]
 **limit** | **int** |  | [optional]
 

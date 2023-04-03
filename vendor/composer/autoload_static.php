@@ -74,8 +74,8 @@ class ComposerStaticInitb550544d8588c2edbbd1b7372950f6e1
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-factory/src',
-            1 => __DIR__ . '/..' . '/psr/http-message/src',
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+            1 => __DIR__ . '/..' . '/psr/http-factory/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -1318,7 +1318,6 @@ class ComposerStaticInitb550544d8588c2edbbd1b7372950f6e1
         'OpenAPI\\Client\\ApiException' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/ApiException.php',
         'OpenAPI\\Client\\Configuration' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Configuration.php',
         'OpenAPI\\Client\\HeaderSelector' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/HeaderSelector.php',
-        'OpenAPI\\Client\\Model\\DomainAPIError' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainAPIError.php',
         'OpenAPI\\Client\\Model\\DomainAcknowledged' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainAcknowledged.php',
         'OpenAPI\\Client\\Model\\DomainDataRetrievalAugmentPrompt' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainDataRetrievalAugmentPrompt.php',
         'OpenAPI\\Client\\Model\\DomainDataRetrievalAugmentRequest' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainDataRetrievalAugmentRequest.php',

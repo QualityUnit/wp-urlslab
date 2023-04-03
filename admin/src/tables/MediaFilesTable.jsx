@@ -62,6 +62,7 @@ export default function MediaFilesTable( { slug } ) {
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'filestatus', {
+			filterValMenu: statusTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu
 				items={ statusTypes }

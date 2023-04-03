@@ -47,12 +47,29 @@ export function useFilter( { slug, header, initialRow } ) {
 	}
 
 	// Checks the type (string or number) of the filter key
-	// console.log( initialRow?.getVisibleCells() );
-	const handleType = ( key ) => {
-		dispatch( { type: 'setKeyType', keyType: 'string' } );
+	const handleType = ( key, sendCellOptions ) => {
+		const cell = initialRow?.getVisibleCells().find( ( cellItem ) => cellItem.column.id === key );
+		const cellfilterValMenu = cell?.column.columnDef.filterValMenu;
+		if ( cellfilterValMenu ) {
+			dispatch( { type: 'setKeyType', keyType: 'menu' } );
+			if ( sendCellOptions ) {
+				sendCellOptions( cellfilterValMenu );
+			}
+			return 'menu';
+		}
+
 		if ( typeof initialRow?.original[ key ] === 'number' ) {
 			dispatch( { type: 'setKeyType', keyType: 'number' } );
+			return 'number';
 		}
+
+		if ( key === 'lang' ) {
+			dispatch( { type: 'setKeyType', keyType: 'lang' } );
+			return 'lang';
+		}
+
+		dispatch( { type: 'setKeyType', keyType: 'string' } );
+		return 'string';
 	};
 
 	function handleSaveFilter( filterParams ) {

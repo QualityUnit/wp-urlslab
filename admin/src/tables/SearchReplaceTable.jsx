@@ -66,6 +66,7 @@ export default function SearchReplaceTable( { slug } ) {
 			size: 300,
 		} ),
 		columnHelper.accessor( 'search_type', {
+			filterValMenu: searchTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu items={ searchTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.search_type,

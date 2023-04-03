@@ -141,7 +141,7 @@ class ApikeyApi
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return \OpenAPI\Client\Model\DomainAcknowledged|\OpenAPI\Client\Model\DomainAPIError
+     * @return \OpenAPI\Client\Model\DomainAcknowledged
      */
     public function createAPIKey($body = null, string $contentType = self::contentTypes['createAPIKey'][0])
     {
@@ -159,7 +159,7 @@ class ApikeyApi
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \OpenAPI\Client\Model\DomainAcknowledged|\OpenAPI\Client\Model\DomainAPIError, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \OpenAPI\Client\Model\DomainAcknowledged, HTTP status code, HTTP response headers (array of strings)
      */
     public function createAPIKeyWithHttpInfo($body = null, string $contentType = self::contentTypes['createAPIKey'][0])
     {
@@ -216,21 +216,6 @@ class ApikeyApi
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
-                case 403:
-                    if ('\OpenAPI\Client\Model\DomainAPIError' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\OpenAPI\Client\Model\DomainAPIError' !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\OpenAPI\Client\Model\DomainAPIError', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
             }
 
             $returnType = '\OpenAPI\Client\Model\DomainAcknowledged';
@@ -255,14 +240,6 @@ class ApikeyApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\OpenAPI\Client\Model\DomainAcknowledged',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\OpenAPI\Client\Model\DomainAPIError',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -445,7 +422,7 @@ class ApikeyApi
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return \OpenAPI\Client\Model\DomainAcknowledged|\OpenAPI\Client\Model\DomainAPIError
+     * @return \OpenAPI\Client\Model\DomainAcknowledged
      */
     public function deleteAPIKey($body = null, string $contentType = self::contentTypes['deleteAPIKey'][0])
     {
@@ -463,7 +440,7 @@ class ApikeyApi
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \OpenAPI\Client\Model\DomainAcknowledged|\OpenAPI\Client\Model\DomainAPIError, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \OpenAPI\Client\Model\DomainAcknowledged, HTTP status code, HTTP response headers (array of strings)
      */
     public function deleteAPIKeyWithHttpInfo($body = null, string $contentType = self::contentTypes['deleteAPIKey'][0])
     {
@@ -520,21 +497,6 @@ class ApikeyApi
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
-                case 403:
-                    if ('\OpenAPI\Client\Model\DomainAPIError' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\OpenAPI\Client\Model\DomainAPIError' !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\OpenAPI\Client\Model\DomainAPIError', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
             }
 
             $returnType = '\OpenAPI\Client\Model\DomainAcknowledged';
@@ -559,14 +521,6 @@ class ApikeyApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\OpenAPI\Client\Model\DomainAcknowledged',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\OpenAPI\Client\Model\DomainAPIError',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -749,7 +703,7 @@ class ApikeyApi
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return \OpenAPI\Client\Model\DomainAcknowledged|\OpenAPI\Client\Model\DomainAPIError
+     * @return \OpenAPI\Client\Model\DomainAcknowledged
      */
     public function listAPIKey($body = null, string $contentType = self::contentTypes['listAPIKey'][0])
     {
@@ -767,7 +721,7 @@ class ApikeyApi
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \OpenAPI\Client\Model\DomainAcknowledged|\OpenAPI\Client\Model\DomainAPIError, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \OpenAPI\Client\Model\DomainAcknowledged, HTTP status code, HTTP response headers (array of strings)
      */
     public function listAPIKeyWithHttpInfo($body = null, string $contentType = self::contentTypes['listAPIKey'][0])
     {
@@ -824,21 +778,6 @@ class ApikeyApi
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
-                case 403:
-                    if ('\OpenAPI\Client\Model\DomainAPIError' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\OpenAPI\Client\Model\DomainAPIError' !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\OpenAPI\Client\Model\DomainAPIError', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
             }
 
             $returnType = '\OpenAPI\Client\Model\DomainAcknowledged';
@@ -863,14 +802,6 @@ class ApikeyApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\OpenAPI\Client\Model\DomainAcknowledged',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 403:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\OpenAPI\Client\Model\DomainAPIError',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1053,7 +984,7 @@ class ApikeyApi
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return \OpenAPI\Client\Model\DomainAcknowledged|\OpenAPI\Client\Model\DomainAPIError
+     * @return \OpenAPI\Client\Model\DomainAcknowledged
      */
     public function validate($body = null, string $contentType = self::contentTypes['validate'][0])
     {
@@ -1071,7 +1002,7 @@ class ApikeyApi
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \OpenAPI\Client\Model\DomainAcknowledged|\OpenAPI\Client\Model\DomainAPIError, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \OpenAPI\Client\Model\DomainAcknowledged, HTTP status code, HTTP response headers (array of strings)
      */
     public function validateWithHttpInfo($body = null, string $contentType = self::contentTypes['validate'][0])
     {
@@ -1128,21 +1059,6 @@ class ApikeyApi
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
-                case 401:
-                    if ('\OpenAPI\Client\Model\DomainAPIError' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\OpenAPI\Client\Model\DomainAPIError' !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\OpenAPI\Client\Model\DomainAPIError', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
             }
 
             $returnType = '\OpenAPI\Client\Model\DomainAcknowledged';
@@ -1167,14 +1083,6 @@ class ApikeyApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\OpenAPI\Client\Model\DomainAcknowledged',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 401:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\OpenAPI\Client\Model\DomainAPIError',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
