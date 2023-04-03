@@ -280,10 +280,13 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			__( 'Manage log history duration for 404 errors; old rows auto-delete after a specified time without errors.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				86400   => __( '1 day' ),
-				604800  => __( '1 week' ),
-				2419200 => __( '1 month' ),
-				0       => __( 'Never' ),
+				86400    => __( '1 day' ),
+				172800   => __( '3 days' ),
+				604800   => __( '1 week' ),
+				1209600  => __( '2 weeks' ),
+				2419200  => __( '1 month' ),
+				7257600  => __( '3 months' ),
+				0        => __( 'Never' ),
 			),
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
