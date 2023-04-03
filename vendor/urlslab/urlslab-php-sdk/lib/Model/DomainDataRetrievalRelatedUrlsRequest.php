@@ -57,6 +57,7 @@ class DomainDataRetrievalRelatedUrlsRequest implements ModelInterface, ArrayAcce
       * @var string[]
       */
     protected static $openAPITypes = [
+        'query' => 'string',
         'url' => 'string',
         'chunk_limit' => 'int',
         'filter' => '\OpenAPI\Client\Model\DomainDataRetrievalContentQuery'
@@ -70,6 +71,7 @@ class DomainDataRetrievalRelatedUrlsRequest implements ModelInterface, ArrayAcce
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
+        'query' => null,
         'url' => null,
         'chunk_limit' => 'int32',
         'filter' => null
@@ -81,7 +83,8 @@ class DomainDataRetrievalRelatedUrlsRequest implements ModelInterface, ArrayAcce
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'url' => false,
+        'query' => true,
+		'url' => true,
 		'chunk_limit' => true,
 		'filter' => false
     ];
@@ -172,6 +175,7 @@ class DomainDataRetrievalRelatedUrlsRequest implements ModelInterface, ArrayAcce
      * @var string[]
      */
     protected static $attributeMap = [
+        'query' => 'query',
         'url' => 'url',
         'chunk_limit' => 'chunkLimit',
         'filter' => 'filter'
@@ -183,6 +187,7 @@ class DomainDataRetrievalRelatedUrlsRequest implements ModelInterface, ArrayAcce
      * @var string[]
      */
     protected static $setters = [
+        'query' => 'setQuery',
         'url' => 'setUrl',
         'chunk_limit' => 'setChunkLimit',
         'filter' => 'setFilter'
@@ -194,6 +199,7 @@ class DomainDataRetrievalRelatedUrlsRequest implements ModelInterface, ArrayAcce
      * @var string[]
      */
     protected static $getters = [
+        'query' => 'getQuery',
         'url' => 'getUrl',
         'chunk_limit' => 'getChunkLimit',
         'filter' => 'getFilter'
@@ -256,6 +262,7 @@ class DomainDataRetrievalRelatedUrlsRequest implements ModelInterface, ArrayAcce
      */
     public function __construct(array $data = null)
     {
+        $this->setIfExists('query', $data ?? [], null);
         $this->setIfExists('url', $data ?? [], null);
         $this->setIfExists('chunk_limit', $data ?? [], null);
         $this->setIfExists('filter', $data ?? [], null);
@@ -288,9 +295,6 @@ class DomainDataRetrievalRelatedUrlsRequest implements ModelInterface, ArrayAcce
     {
         $invalidProperties = [];
 
-        if ($this->container['url'] === null) {
-            $invalidProperties[] = "'url' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -307,9 +311,43 @@ class DomainDataRetrievalRelatedUrlsRequest implements ModelInterface, ArrayAcce
 
 
     /**
+     * Gets query
+     *
+     * @return string|null
+     */
+    public function getQuery()
+    {
+        return $this->container['query'];
+    }
+
+    /**
+     * Sets query
+     *
+     * @param string|null $query query
+     *
+     * @return self
+     */
+    public function setQuery($query)
+    {
+        if (is_null($query)) {
+            array_push($this->openAPINullablesSetToNull, 'query');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('query', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
+        }
+        $this->container['query'] = $query;
+
+        return $this;
+    }
+
+    /**
      * Gets url
      *
-     * @return string
+     * @return string|null
      */
     public function getUrl()
     {
@@ -319,14 +357,21 @@ class DomainDataRetrievalRelatedUrlsRequest implements ModelInterface, ArrayAcce
     /**
      * Sets url
      *
-     * @param string $url url
+     * @param string|null $url url
      *
      * @return self
      */
     public function setUrl($url)
     {
         if (is_null($url)) {
-            throw new \InvalidArgumentException('non-nullable url cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'url');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('url', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['url'] = $url;
 

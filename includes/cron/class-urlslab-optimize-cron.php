@@ -7,6 +7,41 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 	const DELETE_LIMIT = 1000;
 
 	protected function execute(): bool {
+		return $this->execute_db_optimizations() || $this->execute_redirect_logs_optimizations();
+	}
+
+	protected function execute_redirect_logs_optimizations(): bool {
+		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Redirects::SLUG ) ) {
+			return false;
+		}
+
+		global $wpdb;
+		$tbl_name = URLSLAB_NOT_FOUND_LOG_TABLE;
+		$limit    = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Redirects::SLUG )->get_option( Urlslab_Redirects::SETTING_NAME_LOG_HISTORY_MAX_ROWS );
+		if ( $limit > 0 ) {
+			$row = $wpdb->get_row( "SELECT count(*) as cnt FROM {$tbl_name}", ARRAY_A );    //phpcs:ignore
+			if ( isset( $row['cnt'] ) && ( (int) $row['cnt'] ) > $limit ) {
+				$wpdb->query( "TRUNCATE {$tbl_name}" );    //phpcs:ignore
+
+				return false; //no need to execute anything else
+			}
+		}
+
+		$limit = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Redirects::SLUG )->get_option( Urlslab_Redirects::SETTING_NAME_LOG_HISTORY_MAX_TIME );
+		if ( 0 < $limit ) {
+			$wpdb->query(
+				$wpdb->prepare(
+					"DELETE FROM {$tbl_name} WHERE updated < %s LIMIT %d",//phpcs:ignore
+					Urlslab_Data::get_now( time() - $limit ),
+					self::DELETE_LIMIT
+				)
+			);
+		}
+
+		return false;
+	}
+
+	protected function execute_db_optimizations(): bool {
 		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Optimize::SLUG ) ) {
 			return false;
 		}

@@ -20,8 +20,24 @@ class Urlslab_Available_Widgets {
 	}
 
 	public function init_widgets() {
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-general.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-optimize.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-content-generator-widget.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-screenshot-widget.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-related-resources-widget.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-media-offloader-widget.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-lazy-loading.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-link-enhancer.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-keywords-links.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-image-alt-text.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-meta-tag.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-css-optimizer.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-search-replace.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-redirects.php';
+
 		$urlslab_general            = new Urlslab_General();
-		$urlslab_generator           = new Urlslab_Content_Generator_Widget();
+		$urlslab_generator          = new Urlslab_Content_Generator_Widget();
 		$urlslab_optimize           = new Urlslab_Optimize();
 		$urlslab_screenshot         = new Urlslab_Screenshot_Widget();
 		$urlslab_related_resources  = new Urlslab_Related_Resources_Widget();
@@ -33,10 +49,11 @@ class Urlslab_Available_Widgets {
 		$urlslab_lazy_loading       = new Urlslab_Lazy_Loading();
 		$urlslab_css_optimizer      = new Urlslab_CSS_Optimizer();
 		$urlslab_search_and_replace = new Urlslab_Search_Replace();
+		$urlslab_redirects          = new Urlslab_Redirects();
 
 		$this->available_widgets = array(
 			$urlslab_general->get_widget_slug()            => $urlslab_general,
-			$urlslab_generator->get_widget_slug()         => $urlslab_generator,
+			$urlslab_generator->get_widget_slug()          => $urlslab_generator,
 			$urlslab_screenshot->get_widget_slug()         => $urlslab_screenshot,
 			$urlslab_related_resources->get_widget_slug()  => $urlslab_related_resources,
 			$urlslab_link_enhancer->get_widget_slug()      => $urlslab_link_enhancer,
@@ -48,6 +65,7 @@ class Urlslab_Available_Widgets {
 			$urlslab_css_optimizer->get_widget_slug()      => $urlslab_css_optimizer,
 			$urlslab_optimize->get_widget_slug()           => $urlslab_optimize,
 			$urlslab_search_and_replace->get_widget_slug() => $urlslab_search_and_replace,
+			$urlslab_redirects->get_widget_slug()          => $urlslab_redirects,
 		);
 	}
 

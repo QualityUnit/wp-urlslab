@@ -10,6 +10,13 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 
 	abstract function get_editable_columns(): array;
 
+	/**
+	 * @param Urlslab_Datap[] $row
+	 *
+	 * @return void
+	 */
+	protected function on_items_updated( array $row = array() ) {}
+
 	protected function get_table_arguments( array $arguments = array() ): array {
 		$arguments['rows_per_page']  = array(
 			'required'          => true,
@@ -56,6 +63,8 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 				}
 			}
 			if ( $row->insert() ) {
+				$this->on_items_updated( array( $row ) );
+
 				return new WP_REST_Response( $row->as_array(), 200 );
 			} else {
 				return new WP_Error( 'error', __( 'Insert failed', 'urlslab' ), array( 'status' => 409 ) );
@@ -82,6 +91,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 					}
 				}
 				$row->update();
+				$this->on_items_updated( array( $row ) );
 
 				return new WP_REST_Response( $row->as_array(), 200 );
 			} else {
@@ -103,6 +113,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		if ( false === $wpdb->delete( $this->get_row_object()->get_table_name(), $delete_params ) ) {
 			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
+		$this->on_items_updated();
 
 		return new WP_REST_Response( __( 'Deleted' ), 200 );
 	}
@@ -114,6 +125,8 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . sanitize_key( $this->get_row_object()->get_table_name() ) ) ) ) { // phpcs:ignore
 			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
+
+		$this->on_items_updated();
 
 		return new WP_REST_Response( __( 'Truncated' ), 200 );
 	}
@@ -130,6 +143,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		if ( false === $result ) {
 			return new WP_REST_Response( 'Import failed', 500 );
 		}
+		$this->on_items_updated();
 
 		return new WP_REST_Response( $result, 200 );
 	}
