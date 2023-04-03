@@ -52,6 +52,7 @@ export default function CSSCacheTable( { slug } ) {
 			size: 450,
 		} ),
 		columnHelper?.accessor( 'status', {
+			filterValMenu: statusTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu
 				items={ statusTypes }

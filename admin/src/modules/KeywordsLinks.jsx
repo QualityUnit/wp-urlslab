@@ -39,7 +39,7 @@ export default function KeywordLinks( { moduleId } ) {
 			{
 				activeSection === 'd3-chart' &&
 				<Suspense>
-					<D3WordCloud slug="d3-chart" />
+					<D3WordCloud slug={ slug } />
 				</Suspense>
 			}
 			{

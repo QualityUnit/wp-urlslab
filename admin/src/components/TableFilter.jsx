@@ -2,6 +2,7 @@ import { useRef, useEffect, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { useFilter } from '../hooks/filteringSorting';
+import { langName } from '../lib/helpers';
 
 import Button from '../elements/Button';
 import { ReactComponent as CloseIcon } from '../assets/images/icon-close.svg';
@@ -43,7 +44,16 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 					className="outline ml-s pos-relative"
 					onClick={ () => ! state.editFilter && dispatch( { type: 'toggleEditFilter', editFilter: key } ) }
 				>
-					{ header[ key ] }:&nbsp;<span className="regular flex">“<span className="limit-20">{ currentFilters[ key ]?.val }</span>”</span>
+					{ header[ key ] }:&nbsp;
+					<span className="regular flex">“<span className="limit-20">
+						{ currentFilters[ key ]?.op === 'BETWEEN' && ! currentFilters?.lang
+							? `min: ${ currentFilters[ key ]?.val.min }, max: ${ currentFilters[ key ]?.val.max }`
+							: ! currentFilters?.lang && currentFilters[ key ]?.val
+						}
+						{ currentFilters?.lang &&
+							langName( currentFilters?.lang?.val )
+						}
+					</span>”</span>
 					<CloseIcon className="close" onClick={ () => {
 						handleRemoveFilter( [ key ] );
 					} } />

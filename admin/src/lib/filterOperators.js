@@ -8,6 +8,17 @@ export const numericOp = {
 	'<': 'is smaller than',
 };
 
+export const menuOp = {
+	exactly: 'is',
+	'<>': 'is not',
+};
+
+export const langOp = {
+	exactly: 'is',
+	'<>': 'is not',
+	// IN: 'is one of',
+};
+
 export const stringOp = {
 	LIKE: 'contains',
 	'LIKE%': 'begins with',
