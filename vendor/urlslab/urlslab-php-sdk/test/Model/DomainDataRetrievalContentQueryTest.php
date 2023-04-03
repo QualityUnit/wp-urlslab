@@ -80,9 +80,27 @@ class DomainDataRetrievalContentQueryTest extends TestCase
     }
 
     /**
-     * Test attribute "query"
+     * Test attribute "additional_query"
      */
-    public function testPropertyQuery()
+    public function testPropertyAdditionalQuery()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "domains"
+     */
+    public function testPropertyDomains()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test attribute "urls"
+     */
+    public function testPropertyUrls()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');

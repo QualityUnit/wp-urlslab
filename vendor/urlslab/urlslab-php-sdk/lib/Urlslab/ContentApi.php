@@ -135,7 +135,7 @@ class ContentApi
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return \OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsResponse|\OpenAPI\Client\Model\DomainAPIError|\OpenAPI\Client\Model\DomainAPIError
+     * @return \OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsResponse
      */
     public function getRelatedUrls($domain_data_retrieval_related_urls_request, string $contentType = self::contentTypes['getRelatedUrls'][0])
     {
@@ -153,7 +153,7 @@ class ContentApi
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsResponse|\OpenAPI\Client\Model\DomainAPIError|\OpenAPI\Client\Model\DomainAPIError, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsResponse, HTTP status code, HTTP response headers (array of strings)
      */
     public function getRelatedUrlsWithHttpInfo($domain_data_retrieval_related_urls_request, string $contentType = self::contentTypes['getRelatedUrls'][0])
     {
@@ -210,36 +210,6 @@ class ContentApi
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
-                case 400:
-                    if ('\OpenAPI\Client\Model\DomainAPIError' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\OpenAPI\Client\Model\DomainAPIError' !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\OpenAPI\Client\Model\DomainAPIError', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
-                case 404:
-                    if ('\OpenAPI\Client\Model\DomainAPIError' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\OpenAPI\Client\Model\DomainAPIError' !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\OpenAPI\Client\Model\DomainAPIError', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
             }
 
             $returnType = '\OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsResponse';
@@ -264,22 +234,6 @@ class ContentApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 400:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\OpenAPI\Client\Model\DomainAPIError',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 404:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\OpenAPI\Client\Model\DomainAPIError',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -470,7 +424,7 @@ class ContentApi
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return \OpenAPI\Client\Model\DomainDataRetrievalAugmentResponse|\OpenAPI\Client\Model\DomainAPIError
+     * @return \OpenAPI\Client\Model\DomainDataRetrievalAugmentResponse
      */
     public function memoryLessAugment($domain_data_retrieval_augment_request, $with_source = 'false', $ignore_query = 'false', string $contentType = self::contentTypes['memoryLessAugment'][0])
     {
@@ -490,7 +444,7 @@ class ContentApi
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \OpenAPI\Client\Model\DomainDataRetrievalAugmentResponse|\OpenAPI\Client\Model\DomainAPIError, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \OpenAPI\Client\Model\DomainDataRetrievalAugmentResponse, HTTP status code, HTTP response headers (array of strings)
      */
     public function memoryLessAugmentWithHttpInfo($domain_data_retrieval_augment_request, $with_source = 'false', $ignore_query = 'false', string $contentType = self::contentTypes['memoryLessAugment'][0])
     {
@@ -547,21 +501,6 @@ class ContentApi
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
-                case 400:
-                    if ('\OpenAPI\Client\Model\DomainAPIError' === '\SplFileObject') {
-                        $content = $response->getBody(); //stream goes to serializer
-                    } else {
-                        $content = (string) $response->getBody();
-                        if ('\OpenAPI\Client\Model\DomainAPIError' !== 'string') {
-                            $content = json_decode($content);
-                        }
-                    }
-
-                    return [
-                        ObjectSerializer::deserialize($content, '\OpenAPI\Client\Model\DomainAPIError', []),
-                        $response->getStatusCode(),
-                        $response->getHeaders()
-                    ];
             }
 
             $returnType = '\OpenAPI\Client\Model\DomainDataRetrievalAugmentResponse';
@@ -586,14 +525,6 @@ class ContentApi
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
                         '\OpenAPI\Client\Model\DomainDataRetrievalAugmentResponse',
-                        $e->getResponseHeaders()
-                    );
-                    $e->setResponseObject($data);
-                    break;
-                case 400:
-                    $data = ObjectSerializer::deserialize(
-                        $e->getResponseBody(),
-                        '\OpenAPI\Client\Model\DomainAPIError',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
