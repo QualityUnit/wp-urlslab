@@ -465,4 +465,14 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 
 		return parent::on_items_updated( $row );
 	}
+
+	protected function validate_item( Urlslab_Data $row ) {
+		parent::validate_item( $row );
+		if ( Urlslab_Redirect_Row::MATCH_TYPE_REGEXP == $row->get_public( 'match_type' ) ) {
+			@preg_match( '|' . str_replace( '|', '\\|', $row->get_public( 'match_url' ) ) . '|uim', 'any text to match' );
+			if ( preg_last_error() !== PREG_NO_ERROR ) {
+				throw new Exception( __( 'Invalid regular expression', 'urlslab' ) );
+			}
+		}
+	}
 }
