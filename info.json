@@ -4,16 +4,16 @@
   "author": "<a href='https://www.urlslab.com'>URLsLab</a>",
   "author_profile": "https://www.urlslab.com",
   "homepage": "https://www.urlslab.com",
-  "version": "2.8.1",
-  "download_url": "https://github.com/QualityUnit/wp-urlslab/releases/download/2.8.1/urlslab-2.8.1.zip",
+  "version": "2.8.2",
+  "download_url": "https://github.com/QualityUnit/wp-urlslab/releases/download/2.8.2/urlslab-2.8.2.zip",
   "requires": "6.0",
   "tested": "6.2",
   "requires_php": "7.4",
-  "last_updated": "2023-04-04 11:23:17",
+  "last_updated": "2023-04-04 13:26:56",
   "sections": {
     "description": "<p><strong>Elevate your WordPress site with URLsLab - boost SEO and performance with minimal effort.</strong></p><p>Introducing URLsLab, a powerful and versatile WordPress plugin designed to optimize your website's performance and SEO. With a suite of innovative modules, URLsLab automates various tasks and improvements, ensuring your website stands out in the digital landscape.</p><p>URLsLab's Automated Screenshots module enhances the visual appeal of your content by generating screenshots automatically. This, combined with the Related Articles module, strengthens your onsite SEO and internal link structure by creating content clusters, making it easier for search engines to understand and rank your website.</p><p>Take control of your internal and external links with the Links Manager module, while the Keywords Manager boosts your internal link building, ensuring your content ranks higher in search results. The Image SEO module automatically adds descriptive alt texts to your website's images, further improving your site's search engine optimization.</p><p>Maximize your content's shareability with the Meta Tags Manager, allowing you to add custom meta tags for improved visibility on social media platforms. Enhance your website's performance with the Media Manager, which offers automatic image enhancement and offloading to the cloud or a database. Optimize page loading times with the Lazy Loading module, which defers loading of large content chunks, images, videos, and iframes.</p><p>URLsLab doesn't stop there – with the CSS Optimizer, inline CSS is used to improve page performance and reduce content-blocker requests. Keep your website running smoothly with the Database Optimizer, which automates database optimization in the background. Finally, the Search and Replace module offers powerful tools to automatically correct incorrect URLs and content on the fly.</p><p>Unlock your website's full potential with URLsLab – the ultimate WordPress plugin for boosting performance and SEO with minimal effort.</p>",
     "installation": "To manually install the URLsLab plugin, you'll need to download it and upload it to your web server using your preferred FTP application. For detailed instructions on this process, <a href='https://wordpress.org/documentation/article/manage-plugins/#manual-plugin-installation'>check the WordPress codex here</a>.",
-    "changelog": "<strong>2.8.1 - 2023-04-04</strong><br /><strong> * Fix: </strong>Multiple bugs were fixed<br /><br /><br /><br /><strong> * Fix: </strong>Multiple bugs were fixed<strong>2.7.0 - 2023-04-04</strong><br />"
+    "changelog": "<strong>2.8.2 - 2023-04-04</strong><br /><strong> * Fix: </strong>Multiple bugs were fixed<br /><br /><br /><br /><strong> * Fix: </strong>Multiple bugs were fixed<strong>2.8.0 - 2023-04-04</strong><br />"
   },
   "banners": {
     "low": "https://raw.githubusercontent.com/QualityUnit/wp-urlslab/main/assets/images/banner-772x250.jpg",
