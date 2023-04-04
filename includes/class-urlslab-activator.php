@@ -149,6 +149,14 @@ class Urlslab_Activator {
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_REDIRECTS_TABLE . ' ADD COLUMN roles VARCHAR(2000)' ); // phpcs:ignore
 			}
 		);
+
+		self::update_step(
+			'2.8.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_NOT_FOUND_LOG_TABLE . ' ADD COLUMN request_data TEXT' ); // phpcs:ignore
+			}
+		);
 		//all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -476,6 +484,7 @@ class Urlslab_Activator {
     		  url_id bigint NOT NULL,
     		  url VARCHAR(2000),
     		  cnt INT UNSIGNED ZEROFILL DEFAULT 0,
+    		  request_data TEXT,
     		  created DATETIME,
     		  updated DATETIME,
 			  PRIMARY KEY (url_id),

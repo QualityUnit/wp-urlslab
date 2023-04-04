@@ -105,7 +105,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 		}
 
 		if ( ! empty( $redirect->get_roles() ) ) {
-			$user = wp_get_current_user();
+			$user  = wp_get_current_user();
 			$roles = explode( ',', $redirect->get_roles() );
 			if ( ! empty( $roles ) ) {
 				$has_role = false;
@@ -236,9 +236,20 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			$url = new Urlslab_Url( wp_unslash( filter_var( $_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL ) ) );
 			$log = new Urlslab_Not_Found_Log_Row(
 				array(
-					'url'    => $url->get_url_with_protocol(),
-					'url_id' => $url->get_url_id(),
-					'cnt'    => 1,
+					'url'          => $url->get_url_with_protocol(),
+					'url_id'       => $url->get_url_id(),
+					'cnt'          => 1,
+					'request_data' => wp_json_encode(
+						array(
+							'request' => $_REQUEST,
+							'server'  => array(
+								'lang' => $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '',
+								'encoding' => $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '',
+								'accept' => $_SERVER['HTTP_ACCEPT'] ?? '',
+								'agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',//phpcs:ignore
+							),
+						)
+					),
 				)
 			);
 			$log->upsert();
