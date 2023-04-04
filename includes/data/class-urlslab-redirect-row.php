@@ -6,12 +6,14 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 	const MATCH_TYPE_SUBSTRING = 'S';
 	const MATCH_TYPE_REGEXP = 'R';
 
-	const IS_LOGGED_LOGIN_REQUIRED = 'Y';
-	const IS_LOGGED_NOT_LOGGED = 'N';
-	const IS_LOGGED_NOT_CHECKED = '';
+	const LOGIN_STATUS_LOGIN_REQUIRED = 'Y';
+	const LOGIN_STATUS_NOT_LOGGED = 'N';
+	const LOGIN_STATUS_ANY = '';
 
 
-	const IF_NOT_FOUND = 'Y';
+	const NOT_FOUND_STATUS_NOT_FOUND = 'Y';
+	const NOT_FOUND_STATUS_FOUND = 'N';
+	const NOT_FOUND_STATUS_ANY = '';
 
 	/**
 	 * @param array $redirect
@@ -20,13 +22,14 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		$this->set_match_type( $redirect['match_type'] ?? self::MATCH_TYPE_EXACT, $loaded_from_db );
 		$this->set_match_url( $redirect['match_url'] ?? '', $loaded_from_db );
 		$this->set_replace_url( $redirect['replace_url'] ?? '', $loaded_from_db );
-		$this->set_is_logged( $redirect['is_logged'] ?? self::IS_LOGGED_NOT_CHECKED, $loaded_from_db );
+		$this->set_is_logged( $redirect['is_logged'] ?? self::LOGIN_STATUS_ANY, $loaded_from_db );
 		$this->set_capabilities( $redirect['capabilities'] ?? '', $loaded_from_db );
+		$this->set_roles( $redirect['roles'] ?? '', $loaded_from_db );
 		$this->set_browser( $redirect['browser'] ?? '', $loaded_from_db );
 		$this->set_cookie( $redirect['cookie'] ?? '', $loaded_from_db );
 		$this->set_headers( $redirect['headers'] ?? '', $loaded_from_db );
 		$this->set_params( $redirect['params'] ?? '', $loaded_from_db );
-		$this->set_if_not_found( $redirect['if_not_found'] ?? '', $loaded_from_db );
+		$this->set_if_not_found( $redirect['if_not_found'] ?? self::NOT_FOUND_STATUS_ANY, $loaded_from_db );
 		$this->set_cnt( $redirect['cnt'] ?? 0, $loaded_from_db );
 		$this->set_redirect_code( $redirect['redirect_code'] ?? 301, $loaded_from_db );
 		$this->set_redirect_id( $redirect['redirect_id'] ?? 0, $loaded_from_db );
@@ -76,8 +79,16 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		return $this->get( 'capabilities' );
 	}
 
+	public function get_roles(): string {
+		return $this->get( 'roles' );
+	}
+
 	public function set_capabilities( string $capabilities, $loaded_from_db = true ): void {
 		$this->set( 'capabilities', $capabilities, $loaded_from_db );
+	}
+
+	public function set_roles( string $roles, $loaded_from_db = true ): void {
+		$this->set( 'roles', $roles, $loaded_from_db );
 	}
 
 	public function get_cookie(): string {
@@ -156,6 +167,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 			'replace_url'   => '%s',
 			'is_logged'     => '%s',
 			'capabilities'  => '%s',
+			'roles'  => '%s',
 			'cookie'        => '%s',
 			'browser'       => '%s',
 			'headers'       => '%s',

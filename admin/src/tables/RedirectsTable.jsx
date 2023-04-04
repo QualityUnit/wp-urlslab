@@ -38,6 +38,7 @@ export default function RedirectsTable( { slug } ) {
 		redirect_code: __( 'HTTP Code' ),
 		is_logged: __( 'Is Logged in' ),
 		capabilities: __( 'Capabilities' ),
+		roles: __( 'Roles' ),
 		browser: __( 'Browser' ),
 		cookie: __( 'Cookies' ),
 		headers: __( 'Request headers' ),
@@ -56,6 +57,7 @@ export default function RedirectsTable( { slug } ) {
 		cookie: <InputField liveUpdate defaultValue="" label={ header.cookie } onChange={ ( val ) => setInsertRow( { ...rowToInsert, cookie: val } ) } />,
 		params: <InputField liveUpdate defaultValue="" label={ header.params } onChange={ ( val ) => setInsertRow( { ...rowToInsert, capabilities: val } ) } />,
 		capabilities: <InputField liveUpdate defaultValue="" label={ header.capabilities } onChange={ ( val ) => setInsertRow( { ...rowToInsert, capabilities: val } ) } />,
+		roles: <InputField liveUpdate defaultValue="" label={ header.roles } onChange={ ( val ) => setInsertRow( { ...rowToInsert, roles: val } ) } />,
 		browser: <InputField liveUpdate defaultValue="" label={ header.browser } onChange={ ( val ) => setInsertRow( { ...rowToInsert, browser: val } ) } />,
 		if_not_found: <InputField liveUpdate defaultValue="" label={ header.if_not_found } onChange={ ( val ) => setInsertRow( { ...rowToInsert, if_not_found: val } ) } />,
 	};
@@ -92,6 +94,10 @@ export default function RedirectsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'capabilities', {
 			header: header.capabilities,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'roles', {
+			header: header.roles,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'browser', {

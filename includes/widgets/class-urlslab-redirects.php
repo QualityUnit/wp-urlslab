@@ -56,16 +56,36 @@ class Urlslab_Redirects extends Urlslab_Widget {
 				return false;
 		}
 
-		if ( Urlslab_Redirect_Row::IF_NOT_FOUND == $redirect->get_if_not_found() && ! is_404() ) {
-			return false;
+		switch ( $redirect->get_if_not_found() ) {
+			case Urlslab_Redirect_Row::NOT_FOUND_STATUS_ANY:
+				break;
+			case Urlslab_Redirect_Row::NOT_FOUND_STATUS_NOT_FOUND:
+				if ( ! is_404() ) {
+					return false;
+				}
+				break;
+			case Urlslab_Redirect_Row::NOT_FOUND_STATUS_FOUND:
+				if ( is_404() ) {
+					return false;
+				}
+				break;
+			default:
 		}
 
-		if ( ! empty( $redirect->get_is_logged() ) ) {
-			if ( Urlslab_Redirect_Row::IS_LOGGED_LOGIN_REQUIRED == $redirect->get_is_logged() && ! is_user_logged_in() ) {
-				return false;
-			} else if ( Urlslab_Redirect_Row::IS_LOGGED_NOT_LOGGED == $redirect->get_is_logged() && is_user_logged_in() ) {
-				return false;
-			}
+		switch ( $redirect->get_is_logged() ) {
+			case Urlslab_Redirect_Row::LOGIN_STATUS_LOGIN_REQUIRED:
+				if ( ! is_user_logged_in() ) {
+					return false;
+				}
+				break;
+			case Urlslab_Redirect_Row::LOGIN_STATUS_NOT_LOGGED:
+				if ( is_user_logged_in() ) {
+					return false;
+				}
+				break;
+			case Urlslab_Redirect_Row::LOGIN_STATUS_ANY:
+				break;
+			default:
 		}
 
 		if ( ! empty( $redirect->get_capabilities() ) ) {
@@ -79,6 +99,23 @@ class Urlslab_Redirects extends Urlslab_Widget {
 					}
 				}
 				if ( ! $has_cap ) {
+					return false;
+				}
+			}
+		}
+
+		if ( ! empty( $redirect->get_roles() ) ) {
+			$user = wp_get_current_user();
+			$roles = explode( ',', $redirect->get_roles() );
+			if ( ! empty( $roles ) ) {
+				$has_role = false;
+				foreach ( $roles as $role ) {
+					if ( in_array( $role, $user->roles ) ) {
+						$has_role = true;
+						break;
+					}
+				}
+				if ( ! $has_role ) {
 					return false;
 				}
 			}
@@ -280,13 +317,13 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			__( 'Manage log history duration for 404 errors; old rows auto-delete after a specified time without errors.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				86400    => __( '1 day' ),
-				172800   => __( '3 days' ),
-				604800   => __( '1 week' ),
-				1209600  => __( '2 weeks' ),
-				2419200  => __( '1 month' ),
-				7257600  => __( '3 months' ),
-				0        => __( 'Never' ),
+				86400   => __( '1 day' ),
+				172800  => __( '3 days' ),
+				604800  => __( '1 week' ),
+				1209600 => __( '2 weeks' ),
+				2419200 => __( '1 month' ),
+				7257600 => __( '3 months' ),
+				0       => __( 'Never' ),
 			),
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
