@@ -48,7 +48,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 				}
 				break;
 			case Urlslab_Redirect_Row::MATCH_TYPE_REGEXP:
-				if ( ! preg_match( '|' . str_replace( '|', '\\|', $redirect->get_match_url() ) . '|uim', $url->get_url_with_protocol() ) ) {
+				if ( ! @preg_match( '|' . str_replace( '|', '\\|', $redirect->get_match_url() ) . '|uim', $url->get_url_with_protocol() ) ) {
 					return false;
 				}
 				break;
@@ -122,11 +122,12 @@ class Urlslab_Redirects extends Urlslab_Widget {
 		}
 
 		if ( ! empty( $redirect->get_browser() ) && isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
-			$browsers = explode( ',', $redirect->get_browser() );
+			$browsers = explode( ',', strtolower( $redirect->get_browser() ) );
 			if ( ! empty( $browsers ) ) {
 				$has_browser = false;
+				$agent       = strtolower( $_SERVER['HTTP_USER_AGENT'] );//phpcs:ignore
 				foreach ( $browsers as $browser_name ) {
-					if ( preg_match( '|' . preg_quote( trim( $browser_name ), '|' ) . '|mui', $_SERVER['HTTP_USER_AGENT'] ) ) {//phpcs:ignore
+					if ( false !== strpos( $agent, trim( $browser_name ) ) ) {
 						$has_browser = true;
 						break;
 					}

@@ -54,6 +54,8 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		return $arguments;
 	}
 
+	protected function validate_item( Urlslab_Data $row ) {}
+
 	public function create_item( $request ) {
 		try {
 			$row = $this->get_row_object();
@@ -62,6 +64,13 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 					$row->set_public( $column, $request->get_param( $column ) );
 				}
 			}
+
+			try {
+				$this->validate_item( $row );
+			} catch ( Exception $e ) {
+				return new WP_Error( 'error', __( 'Validation failed: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
+			}
+
 			if ( $row->insert() ) {
 				$this->on_items_updated( array( $row ) );
 
@@ -90,6 +99,12 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 						$row->set_public( $column, $json_params[ $column ] );
 					}
 				}
+				try {
+					$this->validate_item( $row );
+				} catch ( Exception $e ) {
+					return new WP_Error( 'error', __( 'Validation failed: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
+				}
+
 				$row->update();
 				$this->on_items_updated( array( $row ) );
 
@@ -135,7 +150,13 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		$rows = array();
 
 		foreach ( $request->get_json_params()['rows'] as $row ) {
-			$rows[] = $this->get_row_object( (array) $row );
+			$row_obj = $this->get_row_object( (array) $row );
+			try {
+				$this->validate_item( $row_obj );
+				$rows[] = $row_obj;
+			} catch ( Exception $e ) {
+				return new WP_Error( 'error', __( 'Validation failed: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
+			}
 		}
 
 		$result = $this->get_row_object()->import( $rows );

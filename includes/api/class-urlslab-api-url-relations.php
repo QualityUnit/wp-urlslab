@@ -251,6 +251,12 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 					'pos'         => $request->get_param( 'pos' ),
 				)
 			);
+			try {
+				$this->validate_item( $obj );
+			} catch ( Exception $e ) {
+				return new WP_Error( 'error', __( 'Validation failed: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
+			}
+
 			$obj->insert();
 			$this->on_items_updated( array( $obj ) );
 
