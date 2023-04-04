@@ -27,10 +27,11 @@ export default function RedirectsTable( { slug } ) {
 	const { row, rowsSelected, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
 	const redirectTypes = {
-		301: 'Moved Permanently (301)',
-		302: 'Found – Moved temporarily (302)',
-		307: 'Temporarily Redirect (307)',
-		308: 'Permanent Redirect, Pass Page Authority (308)',
+		301: '301 Moved Permanently',
+		302: '302 Found, Moved temporarily',
+		303: '303 See Other',
+		307: '307 Temporary Redirect',
+		308: '308 Permanent Redirect',
 	};
 
 	const matchTypes = {
@@ -46,9 +47,9 @@ export default function RedirectsTable( { slug } ) {
 	};
 
 	const notFoundTypes = {
-		Y: 'Only if not found',
-		N: 'Matches if page found',
-		A: 'All',
+		Y: 'Not found',
+		N: 'Page found',
+		A: 'Any',
 	};
 
 	const header = {

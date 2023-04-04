@@ -24,7 +24,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 					'permission_callback' => array( $this, 'update_item_permissions_check' ),
 					'args'                => array(
 						'match_type'    => array(
-							'required'          => true,
+							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return Urlslab_Redirect_Row::MATCH_TYPE_SUBSTRING == $param ||
 									   Urlslab_Redirect_Row::MATCH_TYPE_EXACT == $param ||
@@ -32,13 +32,13 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 							},
 						),
 						'match_url'     => array(
-							'required'          => true,
+							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
 						'replace_url'   => array(
-							'required'          => true,
+							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
@@ -88,7 +88,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 							},
 						),
 						'redirect_code' => array(
-							'required'          => true,
+							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_numeric( $param ) && 300 <= $param && 400 > $param;
 							},
