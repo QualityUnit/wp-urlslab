@@ -44,13 +44,13 @@ export default function filterArgs( currentFilters ) {
 		if ( op && op === 'exactly' ) {
 			filters += `&filter_${ key }=${ val }`;
 		}
-		if ( op && op === 'IN' ) {
+		if ( op && ( op === 'IN' || op === 'NOTIN' ) ) {
 			filters += `&filter_${ key }=${ encodeURIComponent( `{"op":"${ op }","val":[${ val }]}` ) }`;
 		}
 		if ( op && op === 'BETWEEN' ) {
 			filters += `&filter_${ key }=${ encodeURIComponent( `{"op":"${ op }","min":${ val.min }, "max": ${ val.max }}` ) }`;
 		}
-		if ( op && op !== 'IN' && op !== 'BETWEEN' && op !== 'exactly' ) {
+		if ( op && op !== 'IN' && op !== 'NOTIN' && op !== 'BETWEEN' && op !== 'exactly' ) {
 			filters += `&filter_${ key }=${ encodeURIComponent( `{"op":"${ op }","val":"${ val }"}` ) }`;
 		}
 		return false;
