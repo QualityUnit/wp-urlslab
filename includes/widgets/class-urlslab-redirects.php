@@ -246,7 +246,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 								'lang' => $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '',
 								'encoding' => $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '',
 								'accept' => $_SERVER['HTTP_ACCEPT'] ?? '',
-								'agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
+								'agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',//phpcs:ignore
 							),
 						)
 					),
