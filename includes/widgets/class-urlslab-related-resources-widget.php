@@ -60,6 +60,15 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
+		if (
+			isset( $_REQUEST['action'] ) && false !== strpos( $_REQUEST['action'], 'elementor' ) ||
+			in_array( get_post_status(), array( 'trash', 'auto-draft', 'inherit' ) ) ||
+			class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode()
+		) {
+			return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">Related Articles Placeholder</div>';
+		}
+
+
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
 		$urlslab_atts = shortcode_atts(
