@@ -44,12 +44,18 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 						'is_logged'     => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return Urlslab_Redirect_Row::IS_LOGGED_NOT_CHECKED == $param ||
-									   Urlslab_Redirect_Row::IS_LOGGED_LOGIN_REQUIRED == $param ||
-									   Urlslab_Redirect_Row::IS_LOGGED_NOT_LOGGED == $param;
+								return Urlslab_Redirect_Row::LOGIN_STATUS_ANY == $param ||
+									   Urlslab_Redirect_Row::LOGIN_STATUS_LOGIN_REQUIRED == $param ||
+									   Urlslab_Redirect_Row::LOGIN_STATUS_NOT_LOGGED == $param;
 							},
 						),
 						'capabilities'  => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+						'roles'         => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
@@ -88,7 +94,14 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 						'if_not_found'  => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return empty( $param ) || Urlslab_Redirect_Row::IF_NOT_FOUND == $param;
+								switch ( $param ) {
+									case Urlslab_Redirect_Row::NOT_FOUND_STATUS_NOT_FOUND:
+									case Urlslab_Redirect_Row::NOT_FOUND_STATUS_FOUND:
+									case Urlslab_Redirect_Row::NOT_FOUND_STATUS_ANY:
+										return true;
+								}
+
+								return false;
 							},
 						),
 					),
@@ -143,6 +156,32 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 			)
 		);
 
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/capabilities',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_capabilities' ),
+					'permission_callback' => array( $this, 'get_items_permissions_check' ),
+					'args'                => array(),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/roles',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_roles' ),
+					'permission_callback' => array( $this, 'get_items_permissions_check' ),
+					'args'                => array(),
+				),
+			)
+		);
+
 	}
 
 	private function get_route_get_items(): array {
@@ -176,6 +215,12 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 						},
 					),
 					'filter_capabilities'  => array(
+						'required'          => false,
+						'validate_callback' => function( $param ) {
+							return Urlslab_Api_Table::validate_string_filter_value( $param );
+						},
+					),
+					'filter_roles'         => array(
 						'required'          => false,
 						'validate_callback' => function( $param ) {
 							return Urlslab_Api_Table::validate_string_filter_value( $param );
@@ -259,12 +304,18 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 				'is_logged'     => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
-						return Urlslab_Redirect_Row::IS_LOGGED_NOT_CHECKED == $param ||
-							   Urlslab_Redirect_Row::IS_LOGGED_LOGIN_REQUIRED == $param ||
-							   Urlslab_Redirect_Row::IS_LOGGED_NOT_LOGGED == $param;
+						return Urlslab_Redirect_Row::LOGIN_STATUS_ANY == $param ||
+							   Urlslab_Redirect_Row::LOGIN_STATUS_LOGIN_REQUIRED == $param ||
+							   Urlslab_Redirect_Row::LOGIN_STATUS_NOT_LOGGED == $param;
 					},
 				),
 				'capabilities'  => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return is_string( $param );
+					},
+				),
+				'roles'         => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
@@ -297,7 +348,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 				'if_not_found'  => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
-						return empty( $param ) || Urlslab_Redirect_Row::IF_NOT_FOUND == $param;
+						return empty( $param ) || Urlslab_Redirect_Row::NOT_FOUND_STATUS_NOT_FOUND == $param;
 					},
 				),
 				'redirect_code' => array(
@@ -319,12 +370,41 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->redirect_id = (int) $row->redirect_id;
-			$row->redirect_code         = (int) $row->redirect_code;
-			$row->cnt         = (int) $row->cnt;
+			$row->redirect_id   = (int) $row->redirect_id;
+			$row->redirect_code = (int) $row->redirect_code;
+			$row->cnt           = (int) $row->cnt;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
+	}
+
+	public function get_capabilities( $request ) {
+		global $wp_roles;
+		$all_capabilities = array();
+
+		// Loop through all roles
+		foreach ( $wp_roles->roles as $role_key => $role ) {
+			foreach ( $role['capabilities'] as $capability => $value ) {
+				$all_capabilities[ $capability ] = (object) array( 'capability' => $capability );
+			}
+		}
+
+		return new WP_REST_Response( array_values( $all_capabilities ), 200 );
+	}
+
+	public function get_roles( $request ) {
+		global $wp_roles;
+		$all_roles = array();
+
+		// Loop through all roles
+		foreach ( $wp_roles->roles as $role_key => $role ) {
+			$all_roles[] = (object) array(
+				'role_key' => $role_key,
+				'role'     => $role,
+			);
+		}
+
+		return new WP_REST_Response( $all_roles, 200 );
 	}
 
 	protected function get_items_sql( $request ): Urlslab_Api_Table_Sql {
@@ -339,6 +419,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 		$sql->add_filter( 'filter_replace_url' );
 		$sql->add_filter( 'filter_is_logged' );
 		$sql->add_filter( 'filter_capabilities' );
+		$sql->add_filter( 'filter_roles' );
 		$sql->add_filter( 'filter_browser' );
 		$sql->add_filter( 'filter_cookie' );
 		$sql->add_filter( 'filter_headers' );
@@ -368,6 +449,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 			'replace_url',
 			'is_logged',
 			'capabilities',
+			'roles',
 			'browser',
 			'cookie',
 			'headers',

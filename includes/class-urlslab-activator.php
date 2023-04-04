@@ -142,6 +142,13 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.7.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_REDIRECTS_TABLE . ' ADD COLUMN roles VARCHAR(2000)' ); // phpcs:ignore
+			}
+		);
 		//all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -493,6 +500,7 @@ class Urlslab_Activator {
     		  redirect_code SMALLINT unsigned DEFAULT 301,
     		  is_logged CHAR(1),
     		  capabilities VARCHAR(2000),
+    		  roles VARCHAR(2000),
     		  browser VARCHAR(2000),
     		  cookie VARCHAR(2000),
     		  headers VARCHAR(2000),
