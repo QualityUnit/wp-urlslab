@@ -62,9 +62,6 @@ export default function TableFilterPanel( { props, onEdit } ) {
 		);
 	}, [ state.filterObj.keyType ] );
 
-	console.log( state.filterObj );
-	console.log( currentFilters );
-
 	return (
 		<div className="urlslab-panel urslab-TableFilter-panel pos-absolute">
 			<div className="urlslab-panel-header urslab-TableFilter-panel-header">
