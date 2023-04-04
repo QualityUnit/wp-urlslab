@@ -72,6 +72,14 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 	}
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
+		if (
+			isset( $_REQUEST['action'] ) && false !== strpos( $_REQUEST['action'], 'elementor' ) ||
+			in_array( get_post_status(), array( 'trash', 'auto-draft', 'inherit' ) ) ||
+			class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode()
+		) {
+			return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">Content Generator Placeholder</div>';
+		}
+
 		$atts  = $this->get_attribute_values( $atts, $content, $tag );
 		$obj   = new Urlslab_Content_Generator_Row( $atts, false );
 		$value = $atts['default_value'];
@@ -103,7 +111,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			return '' . ob_get_clean();
 		}
 
-		return '';
+		return '<!-- URLsLab Content Not Ready Yet -->';
 	}
 
 	public function has_shortcode(): bool {
