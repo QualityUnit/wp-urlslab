@@ -36,7 +36,7 @@ export default function RedirectsTable( { slug } ) {
 
 	const matchTypes = {
 		E: 'Exact match',
-		S: 'Contains substring',
+		S: 'Contains',
 		R: 'Regexp',
 	};
 
@@ -47,8 +47,8 @@ export default function RedirectsTable( { slug } ) {
 	};
 
 	const notFoundTypes = {
-		Y: 'Not found',
-		N: 'Page found',
+		Y: 'Page Not Found',
+		N: 'Page Found',
 		A: 'Any',
 	};
 
@@ -64,7 +64,7 @@ export default function RedirectsTable( { slug } ) {
 		cookie: __( 'Cookies' ),
 		headers: __( 'Request headers' ),
 		params: __( 'Request parameters' ),
-		if_not_found: __( 'Execute if 404' ),
+		if_not_found: __( 'Page status' ),
 		cnt: __( 'Redirects Count' ),
 	};
 
