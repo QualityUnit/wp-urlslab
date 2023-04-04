@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
-import { get } from 'idb-keyval';
 
 import { fetchData } from '../api/fetching';
 import { deleteAll } from '../api/deleteTableData';
@@ -27,15 +26,8 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noExport, noCo
 
 	const [ activePanel, setActivePanel ] = useState();
 	const [ filtersObj, setFiltersObj ] = useState();
-	const [ hiddenColumns, setHiddenCols ] = useState();
-	console.log( hiddenColumns );
 
 	useEffect( () => {
-		get( slug ).then( ( dbData ) => {
-			if ( dbData?.columnVisibility && Object.keys( dbData?.columnVisibility ).length ) {
-				setHiddenCols( dbData?.columnVisibility );
-			}
-		} );
 		if ( detailsOptions ) {
 			setActivePanel( 'details' );
 		}
@@ -148,7 +140,6 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noExport, noCo
 								slug={ slug }
 								table={ table }
 								columns={ header }
-								hiddenColumns={ hiddenColumns }
 							/>
 						}
 					</div>

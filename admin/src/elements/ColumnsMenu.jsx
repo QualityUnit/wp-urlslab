@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { update } from 'idb-keyval';
+import { get, update } from 'idb-keyval';
 
 import Checkbox from './Checkbox';
 import { ReactComponent as ColumnsIcon } from '../assets/images/icon-columns.svg';
@@ -8,15 +8,21 @@ import '../assets/styles/elements/_FilterMenu.scss';
 import '../assets/styles/elements/_ColumnsMenu.scss';
 
 export default function ColumnsMenu( {
-	id, className, slug, table, hiddenColumns, columns, style } ) {
+	id, className, slug, table, columns, style } ) {
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
-	const [ hiddenCols, setHiddenCols ] = useState( hiddenColumns || table?.getState().columnVisibility );
+	const [ hiddenCols, setHiddenCols ] = useState( table?.getState().columnVisibility );
 	const ref = useRef( id );
 
 	const tableColumns = table?.getAllLeafColumns();
 
 	useEffect( ( ) => {
+		get( slug ).then( async ( dbData ) => {
+			if ( dbData?.columnVisibility && Object.keys( dbData?.columnVisibility ).length ) {
+				await setHiddenCols( dbData?.columnVisibility );
+			}
+		} );
+
 		const handleClickOutside = ( event ) => {
 			if ( ! ref.current?.contains( event.target ) && isActive && ref.current?.id === id ) {
 				setActive( false );
@@ -24,7 +30,7 @@ export default function ColumnsMenu( {
 			}
 		};
 		document.addEventListener( 'click', handleClickOutside, false );
-	}, [ slug, id, isActive ] );
+	}, [ id, isActive ] );
 
 	const checkedCheckbox = ( column, isChecked ) => {
 		const hiddenColsCopy = { ...hiddenCols };
@@ -61,6 +67,7 @@ export default function ColumnsMenu( {
 			>
 				<ColumnsIcon />
 			</div>
+			{ isActive &&
 			<div className={ `urlslab-FilterMenu__items urlslab-ColumnsMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
 				<div className={ `urlslab-FilterMenu__items--inn ${ columns.length > 8 ? 'has-scrollbar' : '' }` }>
 					{ tableColumns?.map( ( column ) => {
@@ -77,9 +84,9 @@ export default function ColumnsMenu( {
 							</Checkbox>
 						);
 					} ) }
-
 				</div>
 			</div>
+			}
 		</div>
 	);
 }
