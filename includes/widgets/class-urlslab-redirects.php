@@ -243,10 +243,11 @@ class Urlslab_Redirects extends Urlslab_Widget {
 						array(
 							'request' => $_REQUEST,
 							'server'  => array(
-								'lang' => $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '',
+								'lang'     => $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '',
 								'encoding' => $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '',
-								'accept' => $_SERVER['HTTP_ACCEPT'] ?? '',
-								'agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',//phpcs:ignore
+								'accept'   => $_SERVER['HTTP_ACCEPT'] ?? '',
+								'agent'    => $_SERVER['HTTP_USER_AGENT'] ?? '',//phpcs:ignore
+								'referer'  => $_SERVER['HTTP_REFERER'] ?? '',//phpcs:ignore
 							),
 						)
 					),
