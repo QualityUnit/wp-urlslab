@@ -31,6 +31,7 @@ export default function NotFoundTable( { slug } ) {
 		cnt: __( 'Visits' ),
 		created: __( 'First Visit' ),
 		updated: 'Last Visit',
+		request_data: 'Data',
 	};
 
 	const columns = [
@@ -59,6 +60,11 @@ export default function NotFoundTable( { slug } ) {
 		columnHelper.accessor( 'updated', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			header: header.updated,
+			minSize: 100,
+		} ),
+		columnHelper.accessor( 'request_data', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			header: header.request_data,
 			minSize: 100,
 		} ),
 		columnHelper.accessor( 'delete', {
