@@ -65,6 +65,14 @@ $cellHeight: 3.5em;
 		font-weight: $font-weight-normal;
 		padding: 0.25em;
 		padding-left: 1em;
+
+		svg {
+
+			@include square(1.5em);
+			display: block;
+			margin-right: 0;
+			fill: $grey-dark;
+		}
 	}
 
 	td {
@@ -160,14 +168,6 @@ $cellHeight: 3.5em;
 		.limit {
 			overflow: visible;
 			text-overflow: unset;
-		}
-
-		svg {
-
-			@include square(1.5em);
-			display: block;
-			margin-right: 0;
-			fill: $grey-dark;
 		}
 	}
 

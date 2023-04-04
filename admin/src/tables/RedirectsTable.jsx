@@ -24,11 +24,31 @@ export default function RedirectsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, pageId } );
 
-	const { row, selectRow, deleteRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, rowsSelected, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
 	const redirectTypes = {
 		301: 'Moved Permanently (301)',
-		307: 'Temporary Redirect (307)',
+		302: 'Found – Moved temporarily (302)',
+		307: 'Temporarily Redirect (307)',
+		308: 'Permanent Redirect, Pass Page Authority (308)',
+	};
+
+	const matchTypes = {
+		E: 'Exact match',
+		S: 'Contains substring',
+		R: 'Regexp',
+	};
+
+	const logginTypes = {
+		Y: 'Logged in',
+		N: 'Not logged',
+		A: 'Any',
+	};
+
+	const notFoundTypes = {
+		Y: 'Only if not found',
+		N: 'Matches if page found',
+		A: 'All',
 	};
 
 	const header = {
@@ -48,18 +68,18 @@ export default function RedirectsTable( { slug } ) {
 	};
 
 	const inserterCells = {
-		match_type: <InputField type="url" liveUpdate defaultValue="" label={ header.match_type } onChange={ ( val ) => setInsertRow( { ...rowToInsert, match_type: val } ) } required />,
+		match_type: <SortMenu autoClose items={ matchTypes } name="match_type" checkedId="E" onChange={ ( val ) => setInsertRow( { ...rowToInsert, match_type: val } ) } required>{ header.match_type }</SortMenu>,
 		match_url: <InputField type="url" liveUpdate defaultValue="" label={ header.match_url } onChange={ ( val ) => setInsertRow( { ...rowToInsert, match_url: val } ) } required />,
 		replace_url: <InputField type="url" liveUpdate defaultValue="" label={ header.replace_url } onChange={ ( val ) => setInsertRow( { ...rowToInsert, replace_url: val } ) } required />,
 		redirect_code: <SortMenu autoClose items={ redirectTypes } name="redirect_code" checkedId="301" onChange={ ( val ) => setInsertRow( { ...rowToInsert, redirect_code: val } ) } required>{ header.redirect_code }</SortMenu>,
-		is_logged: <Checkbox onChange={ ( val ) => setInsertRow( { ...rowToInsert, is_logged: val } ) }>{ header.is_logged }</Checkbox>,
+		is_logged: <SortMenu autoClose items={ logginTypes } name="is_logged" checkedId="A" onChange={ ( val ) => setInsertRow( { ...rowToInsert, is_logged: val } ) } required>{ header.is_logged }</SortMenu>,
 		headers: <InputField liveUpdate defaultValue="" label={ header.headers } onChange={ ( val ) => setInsertRow( { ...rowToInsert, headers: val } ) } />,
 		cookie: <InputField liveUpdate defaultValue="" label={ header.cookie } onChange={ ( val ) => setInsertRow( { ...rowToInsert, cookie: val } ) } />,
 		params: <InputField liveUpdate defaultValue="" label={ header.params } onChange={ ( val ) => setInsertRow( { ...rowToInsert, capabilities: val } ) } />,
 		capabilities: <InputField liveUpdate defaultValue="" label={ header.capabilities } onChange={ ( val ) => setInsertRow( { ...rowToInsert, capabilities: val } ) } />,
 		roles: <InputField liveUpdate defaultValue="" label={ header.roles } onChange={ ( val ) => setInsertRow( { ...rowToInsert, roles: val } ) } />,
 		browser: <InputField liveUpdate defaultValue="" label={ header.browser } onChange={ ( val ) => setInsertRow( { ...rowToInsert, browser: val } ) } />,
-		if_not_found: <InputField liveUpdate defaultValue="" label={ header.if_not_found } onChange={ ( val ) => setInsertRow( { ...rowToInsert, if_not_found: val } ) } />,
+		if_not_found: <SortMenu autoClose items={ notFoundTypes } name="if_not_found" checkedId="A" onChange={ ( val ) => setInsertRow( { ...rowToInsert, if_not_found: val } ) } required>{ header.if_not_found }</SortMenu>,
 	};
 
 	const columns = [
@@ -71,56 +91,84 @@ export default function RedirectsTable( { slug } ) {
 			header: null,
 		} ),
 		columnHelper.accessor( 'match_type', {
+			filterValMenu: matchTypes,
+			className: 'nolimit',
+			cell: ( cell ) => <SortMenu items={ matchTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.match_type,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'match_url', {
+			className: 'nolimit',
+			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.match_url,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'replace_url', {
+			className: 'nolimit',
+			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.replace_url,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'redirect_code', {
 			filterValMenu: redirectTypes,
 			className: 'nolimit',
+			cell: ( cell ) => <SortMenu items={ redirectTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.redirect_code,
 			size: 100,
 		} ),
+		columnHelper.accessor( 'if_not_found', {
+			filterValMenu: notFoundTypes,
+			className: 'nolimit',
+			cell: ( cell ) => <SortMenu items={ notFoundTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: header.if_not_found,
+			size: 100,
+		} ),
 		columnHelper.accessor( 'is_logged', {
+			filterValMenu: logginTypes,
+			className: 'nolimit',
+			cell: ( cell ) => <SortMenu items={ logginTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.is_logged,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'capabilities', {
+			className: 'nolimit',
+			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.capabilities,
 			size: 100,
+			show: false,
 		} ),
 		columnHelper.accessor( 'roles', {
 			header: header.roles,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'browser', {
+			className: 'nolimit',
+			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.browser,
 			size: 100,
+			show: false,
 		} ),
 		columnHelper.accessor( 'cookie', {
+			className: 'nolimit',
+			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.cookie,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'headers', {
+			className: 'nolimit',
+			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.headers,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'params', {
+			className: 'nolimit',
+			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.params,
 			size: 100,
 		} ),
-		columnHelper.accessor( 'if_not_found', {
-			header: header.if_not_found,
-			size: 100,
-		} ),
 		columnHelper.accessor( 'cnt', {
+			className: 'nolimit',
+			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.cnt,
 			size: 100,
 		} ),
@@ -155,6 +203,7 @@ export default function RedirectsTable( { slug } ) {
 			<Table className="fadeInto"
 				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
+				initialState={ { columnVisibility: { is_logged: false, header: false, params: false, capabilities: false, if_not_found: false, browser: false, cookie: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

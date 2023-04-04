@@ -31,7 +31,8 @@ export default function NotFoundTable( { slug } ) {
 		cnt: __( 'Visits' ),
 		created: __( 'First Visit' ),
 		updated: 'Last Visit',
-		request_data: 'Data',
+		agent: 'User Agent',
+		referer: 'Referer',
 	};
 
 	const columns = [
@@ -62,10 +63,23 @@ export default function NotFoundTable( { slug } ) {
 			header: header.updated,
 			minSize: 100,
 		} ),
-		columnHelper.accessor( 'request_data', {
+		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.agent, {
+			id: 'agent',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: header.request_data,
-			minSize: 100,
+			cell: ( cell ) => {
+				cell.getValue();
+			},
+			header: header.agent,
+			size: 150,
+		} ),
+		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.referer, {
+			id: 'referer',
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => {
+				cell.getValue();
+			},
+			header: header.referer,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
