@@ -195,6 +195,20 @@ class Urlslab_Api_Table_Sql {
 						throw new Exception( 'invalid filter input value for IN' );
 					}
 					break;
+				case 'NOTIN':
+					if ( is_array( $filter_obj->val ) ) {
+						$sql_string = esc_sql( $column_name ) . ' NOT IN (' . implode( ',', array_fill( 0, count( $filter_obj->val ), '%d' ) ) . ')';
+						foreach ( $filter_obj->val as $in_value ) {
+							if ( is_numeric( $in_value ) ) {
+								$data[] = $in_value;
+							} else {
+								throw new Exception( 'Invalid filter input value: NOTIN should have numeric values' );
+							}
+						}
+					} else {
+						throw new Exception( 'invalid filter input value for NOTIN' );
+					}
+					break;
 				case 'BETWEEN':
 					$sql_string = esc_sql( $column_name ) . ' BETWEEN %d AND %d';
 					$data[]     = $filter_obj->min;
@@ -248,7 +262,17 @@ class Urlslab_Api_Table_Sql {
 							$data[] = $in_value;
 						}
 					} else {
-						throw new Exception( 'invalid filter input value' );
+						throw new Exception( 'operator IN should have as input value array of strings' );
+					}
+					break;
+				case 'NOTIN':
+					if ( is_array( $filter_obj->val ) ) {
+						$sql_string = esc_sql( $column_name ) . ' NOT IN (' . implode( ',', array_fill( 0, count( $filter_obj->val ), '%s' ) ) . ')';
+						foreach ( $filter_obj->val as $in_value ) {
+							$data[] = $in_value;
+						}
+					} else {
+						throw new Exception( 'operator NOTIN should have as input value array of strings' );
 					}
 					break;
 				case 'BETWEEN':
@@ -274,12 +298,24 @@ class Urlslab_Api_Table_Sql {
 					$sql_string = esc_sql( $column_name ) . ' LIKE %s';
 					$data[]     = '%' . $wpdb->esc_like( $filter_obj->val ) . '%';
 					break;
+				case 'NOTLIKE':
+					$sql_string = esc_sql( $column_name ) . ' NOT LIKE %s';
+					$data[]     = '%' . $wpdb->esc_like( $filter_obj->val ) . '%';
+					break;
 				case 'LIKE%':
 					$sql_string = esc_sql( $column_name ) . ' LIKE %s';
 					$data[]     = $wpdb->esc_like( $filter_obj->val ) . '%';
 					break;
+				case 'NOTLIKE%':
+					$sql_string = esc_sql( $column_name ) . ' NOT LIKE %s';
+					$data[]     = $wpdb->esc_like( $filter_obj->val ) . '%';
+					break;
 				case '%LIKE':
 					$sql_string = esc_sql( $column_name ) . ' LIKE %s';
+					$data[]     = '%' . $wpdb->esc_like( $filter_obj->val );
+					break;
+				case 'NOT%LIKE':
+					$sql_string = esc_sql( $column_name ) . ' NOT LIKE %s';
 					$data[]     = '%' . $wpdb->esc_like( $filter_obj->val );
 					break;
 
