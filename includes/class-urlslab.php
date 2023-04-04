@@ -230,7 +230,7 @@ class Urlslab {
 
 		Urlslab_Loader::get_instance()->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		Urlslab_Loader::get_instance()->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $plugin_public, 'download_offloaded_file', PHP_INT_MAX );
+		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $plugin_public, 'download_offloaded_file', PHP_INT_MIN );
 
 		Urlslab_Loader::get_instance()->add_action( 'wp_before_load_template', $this, 'buffer_head_start', PHP_INT_MIN );
 		Urlslab_Loader::get_instance()->add_action( 'wp_after_load_template', $this, 'buffer_end', PHP_INT_MAX );
