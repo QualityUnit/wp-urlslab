@@ -4,7 +4,7 @@ Tags: seo, ai, gpt, performance
 Requires at least: 6.0
 Tested up to: 6.1
 Requires PHP: 7.4
-Stable tag: 2.5.5
+Stable tag: 2.6.0
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,7 +78,7 @@ The content is coming soon.
 
 == Changelog ==
 
-= 2.7.0 - 2023-04-04 =
+= 2.6.0 - 2023-04-04 =
 
 * Fix: Multiple bugs were fixed
 
