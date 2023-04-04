@@ -19,19 +19,27 @@ import ExportPanel from './ExportPanel';
 import ImportPanel from './ImportPanel';
 import DangerPanel from './DangerPanel';
 import TableFilter from './TableFilter';
+import DetailsPanel from './DetailsPanel';
 
-export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, noDelete, header, table, insertOptions, slug, exportOptions, rowsSelected, defaultSortBy, onSort, onFilter, onClearRow } ) {
+export default function ModuleViewHeaderBottom( { slug, noImport, noExport, noCount, noDelete, header, table, insertOptions, detailsOptions, exportOptions, rowsSelected, defaultSortBy, onSort, onFilter, onClearRow } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 
 	const [ activePanel, setActivePanel ] = useState();
 	const [ filtersObj, setFiltersObj ] = useState();
-	const [ visibleCols, setVisibleCols ] = useState();
+	const [ hiddenColumns, setHiddenCols ] = useState();
+	console.log( hiddenColumns );
 
-	// useEffect( () => {
-	// 	const cols = async () => await get( slug ).then( ( obj ) => setVisibleCols( obj.columns ) );
-	// 	cols();
-	// }, [ slug ] );
+	useEffect( () => {
+		get( slug ).then( ( dbData ) => {
+			if ( dbData?.columnVisibility && Object.keys( dbData?.columnVisibility ).length ) {
+				setHiddenCols( dbData?.columnVisibility );
+			}
+		} );
+		if ( detailsOptions ) {
+			setActivePanel( 'details' );
+		}
+	}, [ slug, detailsOptions ] );
 
 	const initialRow = table?.getRowModel().rows[ 0 ];
 
@@ -132,15 +140,17 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 
 						<SortMenu className="menu-left ml-m" isFilter checkedId={ defaultSortBy } items={ sortItems } name="sorting" onChange={ handleSorting }>{ __( 'Sort by' ) }</SortMenu>
 
-						<ColumnsMenu
-							className="menu-left ml-m"
-							id="visibleColumns"
-							slug={ slug }
-							visibleCols={ visibleCols }
-							table={ table }
-							items={ header }
-						>
-						</ColumnsMenu>
+						{
+							table &&
+							<ColumnsMenu
+								className="menu-left ml-m"
+								id="visibleColumns"
+								slug={ slug }
+								table={ table }
+								columns={ header }
+								hiddenColumns={ hiddenColumns }
+							/>
+						}
 					</div>
 				</div>
 
@@ -178,6 +188,9 @@ export default function ModuleViewHeaderBottom( { noImport, noExport, noCount, n
 			}
 			{ activePanel === 'import' &&
 				<ImportPanel slug={ slug } handlePanel={ handlePanel } />
+			}
+			{ activePanel === 'details' &&
+				<DetailsPanel options={ detailsOptions } handlePanel={ handlePanel } />
 			}
 		</>
 	);

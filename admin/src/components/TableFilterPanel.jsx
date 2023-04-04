@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { stringOp, numericOp, menuOp, langOp } from '../lib/filterOperators';
@@ -18,17 +18,14 @@ export default function TableFilterPanel( { props, onEdit } ) {
 
 	const { state, dispatch, handleType } = useFilter( { slug, header, possibleFilters, initialRow } );
 
-	const notBetween = Object.keys( currentFilters )?.length && currentFilters[ key ]?.op ? currentFilters[ key ]?.op !== 'BETWEEN' : state.filterObj.filterOp !== 'BETWEEN';
-
-	const checkedOp = currentFilters[ key ]?.op;
+	const notBetween = useMemo( () => {
+		return Object.keys( currentFilters )?.length && currentFilters[ key ]?.op ? currentFilters[ key ]?.op !== 'BETWEEN' : state.filterObj.filterOp !== 'BETWEEN';
+	}, [ currentFilters, key, state.filterObj.filterOp ] );
 
 	const handleKeyChange = ( keyParam ) => {
 		dispatch( { type: 'setFilterKey', key: keyParam } );
 		handleType( keyParam, ( cellOptions ) => setFilterValMenu( cellOptions ) );
 	};
-
-	console.log( state.filterObj );
-	// console.log( currentFilters[ key ] );
 
 	useEffect( () => {
 		if ( state.filterObj.keyType === undefined ) {
@@ -36,20 +33,20 @@ export default function TableFilterPanel( { props, onEdit } ) {
 			handleType( key || Object.keys( possibleFilters )[ 0 ], ( cellOptions ) => setFilterValMenu( cellOptions ) );
 		}
 		if ( state.filterObj.keyType === 'string' ) {
-			dispatch( { type: 'setFilterOp', op: checkedOp || 'LIKE' } );
+			dispatch( { type: 'setFilterOp', op: currentFilters[ key ]?.op || 'LIKE' } );
 			dispatch( { type: 'setFilterVal', val: currentFilters[ key ]?.val } );
 		}
 
 		if ( state.filterObj.keyType === 'number' ) {
-			dispatch( { type: 'setFilterOp', op: checkedOp || 'exactly' } );
+			dispatch( { type: 'setFilterOp', op: currentFilters[ key ]?.op || 'exactly' } );
 			dispatch( { type: 'setFilterVal', val: currentFilters[ key ]?.val } );
 		}
 		if ( state.filterObj.keyType === 'menu' ) {
-			dispatch( { type: 'setFilterOp', op: checkedOp || 'exactly' } );
+			dispatch( { type: 'setFilterOp', op: currentFilters[ key ]?.op || 'exactly' } );
 			dispatch( { type: 'setFilterVal', val: currentFilters[ key ]?.val || Object.keys( filterValMenu )[ 0 ] } );
 		}
 		if ( state.filterObj.keyType === 'lang' ) {
-			dispatch( { type: 'setFilterOp', op: checkedOp || 'exactly' } );
+			dispatch( { type: 'setFilterOp', op: currentFilters[ key ]?.op || 'exactly' } );
 			dispatch( { type: 'setFilterVal', val: currentFilters[ key ]?.val || 'all' } );
 		}
 
@@ -64,6 +61,9 @@ export default function TableFilterPanel( { props, onEdit } ) {
 		}
 		);
 	}, [ state.filterObj.keyType ] );
+
+	console.log( state.filterObj );
+	console.log( currentFilters );
 
 	return (
 		<div className="urlslab-panel urslab-TableFilter-panel pos-absolute">
@@ -92,7 +92,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 					name="filter_ops"
 					defaultAccept
 					autoClose
-					checkedId={ checkedOp || ( ! checkedOp && state.filterObj.keyType ) === 'number' ? Object.keys( numericOp )[ 0 ] : Object.keys( stringOp )[ 0 ] }
+					checkedId={ currentFilters[ key ]?.op || state.filterObj.filterOp }
 					onChange={ ( op ) => dispatch( { type: 'setFilterOp', op } ) }
 				/>
 			</div>

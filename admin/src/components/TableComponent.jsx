@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useReducer, useState, useEffect } from 'react';
 import { get } from 'idb-keyval';
 import {
 	flexRender,
@@ -11,18 +11,18 @@ import { useVirtual } from 'react-virtual';
 
 import '../assets/styles/components/_TableComponent.scss';
 
-export default function Table( { slug, resizable, children, className, columns, data, returnTable } ) {
+export default function Table( { slug, resizable, children, className, columns, data, initialState, returnTable } ) {
 	const [ rowSelection, setRowSelection ] = useState( {} );
 	const [ containerWidth, setContainerWidth ] = useState();
-	const [ columnVisibility, setColumnVisibility ] = useState( {} );
-	const [ hiddenCols, setHiddenCols ] = useState();
+	const [ columnVisibility, setColumnVisibility ] = useState( initialState?.columnVisibility || {} );
 	const tableContainerRef = useRef();
 
-	// useEffect( () => {
-	// 	const getHiddenCols = async () => await get( slug ).then( ( obj ) => setHiddenCols( obj.columns ) );
-	// 	getHiddenCols();
-	// }, [ slug ] );
 	useEffect( () => {
+		get( slug ).then( ( dbData ) => {
+			if ( dbData?.columnVisibility && Object.keys( dbData?.columnVisibility ).length ) {
+				setColumnVisibility( dbData?.columnVisibility );
+			}
+		} );
 		setContainerWidth( tableContainerRef.current.clientWidth );
 		const menuWidth = document.querySelector( '.urlslab-mainmenu' ).clientWidth + document.querySelector( '#adminmenuwrap' ).clientWidth;
 
@@ -42,6 +42,7 @@ export default function Table( { slug, resizable, children, className, columns, 
 			minSize: resizable ? 80 : 24,
 			size: resizable ? 100 : 24,
 		},
+		initialState,
 		state: {
 			rowSelection,
 			columnVisibility,
@@ -80,7 +81,9 @@ export default function Table( { slug, resizable, children, className, columns, 
 			<tr key={ row.id } className={ row.getIsSelected() ? 'selected' : '' }>
 				{ row.getVisibleCells().map( ( cell ) => {
 					const tooltip = cell.column.columnDef.tooltip;
+
 					return (
+						cell.column.getIsVisible() &&
 						<td key={ cell.id } className={ cell.column.columnDef.className }
 							style={ {
 							width: cell.column.getSize() !== 0 && resizable

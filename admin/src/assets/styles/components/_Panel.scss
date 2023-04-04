@@ -8,6 +8,48 @@
 	padding: 1.5em;
 	filter: $box-shadow-small;
 
+	ul,
+	table {
+		font-size: 0.75rem;
+	}
+
+	table {
+
+		thead {
+			position: sticky;
+			top: 0;
+			background-color: $white;
+		}
+
+		th,
+		td {
+			text-align: left;
+			white-space: nowrap;
+
+			.limit {
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				max-width: 100%;
+			}
+
+			a {
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				max-width: 100%;
+			}
+		}
+	}
+
+	&.Details {
+
+		.table-container {
+
+			@include scrollbar;
+			overflow: auto;
+			max-height: 20em;
+		}
+	}
+
 	&-floating[class] {
 
 		position: absolute;
@@ -82,6 +124,10 @@
 		@media (min-width: $breakpoint-tablet-landscape) {
 			width: 35.625em;
 			margin: 6.25em auto auto;
+
+			&.wide {
+				width: 48em;
+			}
 		}
 	}
 

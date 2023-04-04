@@ -39,7 +39,11 @@
 		top: 85%;
 	}
 
-	.urlslab-table td:hover & {
+	.urlslab-table td:hover > & {
+		display: block;
+	}
+
+	.urlslab-table td *:hover > & {
 		display: block;
 	}
 }

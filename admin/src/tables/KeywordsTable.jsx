@@ -1,7 +1,7 @@
 /* eslint-disable indent */
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
-	useInfiniteFetch, SortMenu, LangMenu, InputField, Checkbox, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, SortMenu, LangMenu, InputField, Checkbox, LinkIcon, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -11,6 +11,7 @@ export default function KeywordsTable( { slug } ) {
 	const pageId = 'kw_id';
 	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
+	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
 	const {
 		__,
@@ -93,6 +94,17 @@ export default function KeywordsTable( { slug } ) {
 			size: 165,
 		} ),
 		columnHelper.accessor( 'kw_usage_count', {
+			cell: ( cell ) => <div className="flex flex-align-center">
+				{ cell?.getValue() }
+				{ cell?.getValue() > 0 &&
+					<button className="ml-s" onClick={ () => setDetailsOptions( {
+						title: `Keyword “${
+							cell.row.original.keyword }” used on these URLs`, slug, url: `${ cell.row.original.kw_id }/${ cell.row.original.dest_url_id }`, showKeys: [ 'link_type', 'url_name' ], listId: 'url_id' } ) }>
+						<LinkIcon />
+						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
+					</button>
+				}
+			</div>,
 			header: header.kw_usage_count,
 			size: 70,
 		} ),
@@ -135,6 +147,7 @@ export default function KeywordsTable( { slug } ) {
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onClearRow={ ( clear ) => clear && setInsertRow() }
+				detailsOptions={ detailsOptions }
 				insertOptions={ { inserterCells, title: 'Add keyword', data, slug, url, pageId, rowToInsert } }
 				exportOptions={ {
 					url: slug,

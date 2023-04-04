@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useMemo, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { update } from 'idb-keyval';
 
 import Checkbox from './Checkbox';
@@ -9,24 +8,15 @@ import '../assets/styles/elements/_FilterMenu.scss';
 import '../assets/styles/elements/_ColumnsMenu.scss';
 
 export default function ColumnsMenu( {
-	id, className, slug, table, visibleCols, items, style } ) {
+	id, className, slug, table, hiddenColumns, columns, style } ) {
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
-	const [ checked, setChecked ] = useState( Object.keys( items ) );
+	const [ hiddenCols, setHiddenCols ] = useState( hiddenColumns || table?.getState().columnVisibility );
 	const ref = useRef( id );
 
 	const tableColumns = table?.getAllLeafColumns();
-	// console.log( visibleCols );
-	// console.log( checked );
-
-	// update(slug, (obj) => {
-	// 	return { ...obj, columns: checked };
-	// });
 
 	useEffect( ( ) => {
-		if ( visibleCols?.length ) {
-			setChecked( visibleCols );
-		}
 		const handleClickOutside = ( event ) => {
 			if ( ! ref.current?.contains( event.target ) && isActive && ref.current?.id === id ) {
 				setActive( false );
@@ -34,17 +24,22 @@ export default function ColumnsMenu( {
 			}
 		};
 		document.addEventListener( 'click', handleClickOutside, false );
-	}, [ id, visibleCols, isActive ] );
+	}, [ slug, id, isActive ] );
 
 	const checkedCheckbox = ( column, isChecked ) => {
+		const hiddenColsCopy = { ...hiddenCols };
 		column.toggleVisibility();
 		if ( isChecked ) {
-			const checkedList = [ ...checked, column.id ];
-			setChecked( [ ... new Set( checkedList ) ] );
+			delete hiddenColsCopy[ `${ column.id }` ];
+			setHiddenCols( hiddenColsCopy );
 		}
 		if ( ! isChecked ) {
-			setChecked( checked.filter( ( item ) => item !== column.id ) );
+			hiddenColsCopy[ column.id ] = false;
+			setHiddenCols( hiddenColsCopy );
 		}
+		update( slug, ( dbData ) => {
+			return { ...dbData, columnVisibility: hiddenColsCopy };
+		} );
 	};
 
 	const handleMenu = () => {
@@ -67,18 +62,18 @@ export default function ColumnsMenu( {
 				<ColumnsIcon />
 			</div>
 			<div className={ `urlslab-FilterMenu__items urlslab-ColumnsMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
-				<div className={ `urlslab-FilterMenu__items--inn ${ items.length > 8 ? 'has-scrollbar' : '' }` }>
+				<div className={ `urlslab-FilterMenu__items--inn ${ columns.length > 8 ? 'has-scrollbar' : '' }` }>
 					{ tableColumns?.map( ( column ) => {
 						return (
-							items[ column.id ] &&
+							columns[ column.id ] &&
 							<Checkbox
 								className="urlslab-FilterMenu__item urlslab-ColumnsMenu__item"
 								key={ column.id }
 								id={ column.id }
 								onChange={ ( isChecked ) => checkedCheckbox( column, isChecked ) }
-								checked={ checked.includes( column.id ) }
+								checked={ ! Object.keys( hiddenCols ).includes( column.id ) }
 							>
-								{ items[ column.id ] }
+								{ columns[ column.id ] }
 							</Checkbox>
 						);
 					} ) }
