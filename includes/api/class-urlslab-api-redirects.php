@@ -26,7 +26,9 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 						'match_type'    => array(
 							'required'          => true,
 							'validate_callback' => function( $param ) {
-								return Urlslab_Redirect_Row::MATCH_TYPE_EXACT == $param || Urlslab_Redirect_Row::MATCH_TYPE_REGEXP == $param;
+								return Urlslab_Redirect_Row::MATCH_TYPE_SUBSTRING == $param ||
+									   Urlslab_Redirect_Row::MATCH_TYPE_EXACT == $param ||
+									   Urlslab_Redirect_Row::MATCH_TYPE_REGEXP == $param;
 							},
 						),
 						'match_url'     => array(
@@ -94,14 +96,9 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 						'if_not_found'  => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								switch ( $param ) {
-									case Urlslab_Redirect_Row::NOT_FOUND_STATUS_NOT_FOUND:
-									case Urlslab_Redirect_Row::NOT_FOUND_STATUS_FOUND:
-									case Urlslab_Redirect_Row::NOT_FOUND_STATUS_ANY:
-										return true;
-								}
-
-								return false;
+								return Urlslab_Redirect_Row::NOT_FOUND_STATUS_NOT_FOUND == $param ||
+									   Urlslab_Redirect_Row::NOT_FOUND_STATUS_FOUND == $param ||
+									   Urlslab_Redirect_Row::NOT_FOUND_STATUS_ANY == $param;
 							},
 						),
 					),

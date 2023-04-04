@@ -20,7 +20,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			foreach ( $redirects as $redirect ) {
 				if ( $this->is_match( $redirect, $url ) ) {
 					$redirect->increase_cnt();
-					wp_redirect( $redirect->get_replace_url(), $redirect->get_redirect_code() );
+					wp_redirect( $redirect->get_replace_url(), $redirect->get_redirect_code(), 'URLsLab' );
 					exit;
 				}
 			}
