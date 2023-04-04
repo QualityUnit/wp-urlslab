@@ -26,7 +26,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 						'match_type'    => array(
 							'required'          => true,
 							'validate_callback' => function( $param ) {
-								return Urlslab_Redirect_Row::MATCH_TYPE_EXACT == $param || Urlslab_Redirect_Row::MATCH_TYPE_REGEXP == $param;
+								return Urlslab_Redirect_Row::MATCH_TYPE_SUBSTRING == $param || Urlslab_Redirect_Row::MATCH_TYPE_EXACT == $param || Urlslab_Redirect_Row::MATCH_TYPE_REGEXP == $param;
 							},
 						),
 						'match_url'     => array(
