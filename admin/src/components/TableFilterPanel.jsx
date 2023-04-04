@@ -27,7 +27,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 		handleType( keyParam, ( cellOptions ) => setFilterValMenu( cellOptions ) );
 	};
 
-	console.log( state.filterObj );
+	//console.log( state.filterObj );
 	// console.log( currentFilters[ key ] );
 
 	useEffect( () => {
