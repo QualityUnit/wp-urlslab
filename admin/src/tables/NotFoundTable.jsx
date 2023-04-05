@@ -63,21 +63,17 @@ export default function NotFoundTable( { slug } ) {
 			header: header.updated,
 			minSize: 100,
 		} ),
-		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.agent, {
+		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.agent, {
 			id: 'agent',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => {
-				cell.getValue();
-			},
+			cell: ( cell ) => cell.getValue(),
 			header: header.agent,
 			size: 150,
 		} ),
-		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.referer, {
+		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.referer, {
 			id: 'referer',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => {
-				cell.getValue();
-			},
+			cell: ( cell ) => cell.getValue(),
 			header: header.referer,
 			size: 100,
 		} ),

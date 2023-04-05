@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { get, update } from 'idb-keyval';
 
 import Checkbox from './Checkbox';
@@ -16,13 +16,16 @@ export default function ColumnsMenu( {
 
 	const tableColumns = table?.getAllLeafColumns();
 
-	useEffect( ( ) => {
+	const getColumnState = useCallback( () => {
 		get( slug ).then( async ( dbData ) => {
 			if ( dbData?.columnVisibility && Object.keys( dbData?.columnVisibility ).length ) {
 				await setHiddenCols( dbData?.columnVisibility );
 			}
 		} );
+	}, [ slug ] );
 
+	useEffect( ( ) => {
+		getColumnState();
 		const handleClickOutside = ( event ) => {
 			if ( ! ref.current?.contains( event.target ) && isActive && ref.current?.id === id ) {
 				setActive( false );
@@ -30,7 +33,7 @@ export default function ColumnsMenu( {
 			}
 		};
 		document.addEventListener( 'click', handleClickOutside, false );
-	}, [ id, isActive ] );
+	}, [ getColumnState, id, isActive ] );
 
 	const checkedCheckbox = ( column, isChecked ) => {
 		const hiddenColsCopy = { ...hiddenCols };

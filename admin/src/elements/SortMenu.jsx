@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import Checkbox from './Checkbox';
 
 import '../assets/styles/elements/_FilterMenu.scss';
@@ -13,7 +13,15 @@ export default function SortMenu( {
 	const didMountRef = useRef( false );
 	const ref = useRef( name );
 
+	const setDefault = useCallback( () => {
+		onChange( checkedId );
+	}, [ checkedId ] );
+
 	useEffect( () => {
+		if ( defaultAccept ) {
+			setDefault();
+		}
+
 		const handleClickOutside = ( event ) => {
 			if ( ! ref.current?.contains( event.target ) && isActive ) {
 				setActive( false );

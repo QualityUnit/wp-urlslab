@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import { useRef, useReducer, useState, useEffect } from 'react';
+import { useRef, useCallback, useReducer, useState, useEffect } from 'react';
 import { get } from 'idb-keyval';
 import {
 	flexRender,
@@ -17,12 +17,17 @@ export default function Table( { slug, resizable, children, className, columns, 
 	const [ columnVisibility, setColumnVisibility ] = useState( initialState?.columnVisibility || {} );
 	const tableContainerRef = useRef();
 
-	useEffect( () => {
-		get( slug ).then( ( dbData ) => {
+	const getColumnState = useCallback( () => {
+		get( slug ).then( async ( dbData ) => {
 			if ( dbData?.columnVisibility && Object.keys( dbData?.columnVisibility ).length ) {
-				setColumnVisibility( dbData?.columnVisibility );
+				await setColumnVisibility( dbData?.columnVisibility );
 			}
 		} );
+	}, [ slug ] );
+
+	useEffect( () => {
+		getColumnState();
+
 		setContainerWidth( tableContainerRef.current.clientWidth );
 		const menuWidth = document.querySelector( '.urlslab-mainmenu' ).clientWidth + document.querySelector( '#adminmenuwrap' ).clientWidth;
 
@@ -33,7 +38,7 @@ export default function Table( { slug, resizable, children, className, columns, 
 		} );
 
 		resizeWatcher.observe( document.querySelector( '#wpadminbar' ) );
-	}, [ setContainerWidth ] );
+	}, [ getColumnState, setContainerWidth ] );
 
 	const table = useReactTable( {
 		columns,

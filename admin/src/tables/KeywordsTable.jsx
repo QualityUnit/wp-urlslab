@@ -109,6 +109,17 @@ export default function KeywordsTable( { slug } ) {
 			size: 70,
 		} ),
 		columnHelper.accessor( 'link_usage_count', {
+			cell: ( cell ) => <div className="flex flex-align-center">
+				{ cell?.getValue() }
+				{ cell?.getValue() > 0 &&
+					<button className="ml-s" onClick={ () => setDetailsOptions( {
+						title: `Link used on these URLs`, text: `Results for link: ${ cell.row.original.url_name } of keyword “${ cell.row.original.keyword }”`, slug: 'url', url: `${ cell.row.original.dest_url_id }/linked-from`, showKeys: [ 'src_url_name' ], listId: 'src_url_id',
+					} ) }>
+						<LinkIcon />
+						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
+					</button>
+				}
+			</div>,
 			header: header.link_usage_count,
 			size: 100,
 		} ),
