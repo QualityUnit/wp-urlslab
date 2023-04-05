@@ -1,6 +1,6 @@
-import { useMemo, useEffect, useCallback } from 'react';
+import { useMemo } from 'react';
 import {
-	useInfiniteFetch, Tooltip, Checkbox, InputField, SortMenu, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, ProgressBar, Tooltip, Checkbox, InputField, SortMenu, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -25,8 +25,6 @@ export default function RedirectsTable( { slug } ) {
 	} = useInfiniteFetch( { key: slug, url, pageId } );
 
 	const { row, rowsSelected, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
-
-	console.log( rowToInsert );
 
 	const redirectTypes = {
 		301: '301 Moved Permanently',
@@ -214,7 +212,10 @@ export default function RedirectsTable( { slug } ) {
 					? <Tooltip center>{ `${ header.str_search } “${ row.str_search }”` } { __( 'has been deleted.' ) }</Tooltip>
 					: null
 				}
-				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
+				<div ref={ ref }>
+					{ isFetchingNextPage ? '' : hasNextPage }
+					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
+				</div>
 			</Table>
 		</>
 	);

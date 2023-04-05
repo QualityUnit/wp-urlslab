@@ -10,6 +10,7 @@ export { default as InputField } from '../elements/InputField';
 export { default as Checkbox } from '../elements/Checkbox';
 export { default as MenuInput } from '../elements/MenuInput';
 export { default as Button } from '../elements/Button';
+export { default as ProgressBar } from '../elements/ProgressBar';
 export { ReactComponent as Trash } from '../assets/images/icon-trash.svg';
 export { ReactComponent as LinkIcon } from '../assets/images/icon-link.svg';
 

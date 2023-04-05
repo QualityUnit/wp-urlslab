@@ -7,6 +7,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { fetchData } from '../api/fetching';
 import useCloseModal from '../hooks/useCloseModal';
 import Button from '../elements/Button';
+import ProgressBar from '../elements/ProgressBar';
 
 export default function DetailsPanel( { options, handlePanel } ) {
 	const maxRows = 150;
@@ -44,10 +45,10 @@ export default function DetailsPanel( { options, handlePanel } ) {
 		parentRef: tableContainerRef,
 		size: rows?.length,
 		overscan: 10,
+		estimateSize: useCallback( () => 20, [] ),
 	} );
 
 	const { virtualItems: virtualRows, totalSize } = rowVirtualizer;
-	console.log( totalSize );
 	const paddingTop = virtualRows?.length > 0 ? virtualRows?.[ 0 ]?.start || 0 : 0;
 	const paddingBottom =
 		virtualRows?.length > 0
@@ -114,7 +115,10 @@ export default function DetailsPanel( { options, handlePanel } ) {
 								</tbody>
 							</table>
 						}
-						<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
+						<div ref={ ref }>
+							{ isFetchingNextPage ? '' : hasNextPage }
+							<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
+						</div>
 					</div>
 					<div className="flex">
 						<Button className="ma-left simple" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>

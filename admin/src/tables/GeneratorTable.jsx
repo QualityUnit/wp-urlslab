@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, Tooltip, Checkbox, Trash, SortMenu, InputField, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, Tooltip, Checkbox, Trash, ProgressBar, InputField, Loader, Table, ModuleViewHeaderBottom,
 } from '../lib/tableImports';
 
 import { langName } from '../lib/helpers';
@@ -124,7 +124,10 @@ export default function GeneratorTable( { slug } ) {
 					? <Tooltip center>{ __( 'Row has been deleted.' ) }</Tooltip>
 					: null
 				}
-				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
+				<div ref={ ref }>
+					{ isFetchingNextPage ? '' : hasNextPage }
+					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
+				</div>
 			</Table>
 		</>
 	);
