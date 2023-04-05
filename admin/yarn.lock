@@ -989,6 +989,56 @@
     "@babel/helper-validator-identifier" "^7.19.1"
     to-fast-properties "^2.0.0"
 
+"@browser-logos/brave@^3.0.13":
+  version "3.0.13"
+  resolved "https://registry.yarnpkg.com/@browser-logos/brave/-/brave-3.0.13.tgz#e5c761b299c5f212e0376c266d98b102bd2ad952"
+  integrity sha512-Dvd3INXrmtenzdDRl0QFL5UFiK+Rg/225dYzMevczfTdNBzuA5Z6w8OO8btTrQ7BLez6zl9JaicNhVakusKqsg==
+
+"@browser-logos/chrome@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@browser-logos/chrome/-/chrome-2.0.0.tgz#31213afcacbc3e842c7e66ae602b1dd9775b234d"
+  integrity sha512-JDr78z/3x4zTtBgZ0bunFq9D4QhjT5gPBy90rpJQ5VlJugK/7xGFUgwUIkVT5vfU7lTi2F0wB/5XeOPrV67ErA==
+
+"@browser-logos/edge@^2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@browser-logos/edge/-/edge-2.0.5.tgz#01173fb59e5cc8fecd7fd4774af6704c4a1f5f8c"
+  integrity sha512-5eEA9FQw8wxLruWSygbwadtYhvr9RS3nZI7M6tSxIoxcMgpDZ4npbkDCJ5+QXYuCriQAsKeQKX+tW6u2wWJMvg==
+
+"@browser-logos/fake@^1.0.8":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@browser-logos/fake/-/fake-1.0.8.tgz#09b108b3b9dbb9467e9e1c4bea55dfa3da7bed31"
+  integrity sha512-Yaa9yx+aZJSPbKuRsYXm3L8VWZ8qXsVNQNFoPxeevJi/jRBbe658ohrR7mVIu2VsAfZsVMvpngTKkoPH96ANBg==
+
+"@browser-logos/firefox@^3.0.9":
+  version "3.0.9"
+  resolved "https://registry.yarnpkg.com/@browser-logos/firefox/-/firefox-3.0.9.tgz#3cfee7f8e40cbd60af5ea9faa16e2f8bfbdab199"
+  integrity sha512-meqjnDFsUz0XLqMvda2ymr9FIUo+fdGQzwXkOGbgvPi9A9ZHhJewRWAlhsv7TKVG2g9gUgiITEn5bfrorp6BoQ==
+
+"@browser-logos/internet-explorer_9-11@^1.1.16":
+  version "1.1.16"
+  resolved "https://registry.yarnpkg.com/@browser-logos/internet-explorer_9-11/-/internet-explorer_9-11-1.1.16.tgz#bde2620347fecf97ac0f0b42c17276d275ef8509"
+  integrity sha512-rSif40FnfyDUE9U6thozO1d3+kHT43ljZwIWkRbJ+tQ+xDxIMWKv9sULnXKykud7sWJjAvaRxecYIgkyitvLBg==
+
+"@browser-logos/opera@^1.1.11":
+  version "1.1.11"
+  resolved "https://registry.yarnpkg.com/@browser-logos/opera/-/opera-1.1.11.tgz#9aa438cd43f6e6bd31e03878b037167d51115b4d"
+  integrity sha512-vfQvWhLf7iGuHRe+8l9NjWp1U9DTucoaOlN1Dmwll5UCcjcMzKV1GkxNsCPuojHecqXqtJBHgE0LmXncgheqQA==
+
+"@browser-logos/safari-ios@^1.0.15":
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/@browser-logos/safari-ios/-/safari-ios-1.0.15.tgz#ebb12570d128e87b0842cad79b7cfac7af5f200a"
+  integrity sha512-Wia4FKbQvDGSGzbzBEaW1BPr7f/rZEGGVAnukpD+2RgAVvEs42Pr6wKitLk7bFhYwDSt/cP5g+MTmKP0Qet+qQ==
+
+"@browser-logos/safari@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@browser-logos/safari/-/safari-2.1.0.tgz#44f656d5d6d78184f3adc0c16cb8fda129cdc50a"
+  integrity sha512-diidPiK62E4hlAh0dyLfWQDZXi2SSAGiOuw6iqD1x8ztw7L/Sz3He46FhcxEzYa1hKi1blCkjnKDjqw6rQfgcA==
+
+"@browser-logos/samsung-internet@^4.0.6":
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/@browser-logos/samsung-internet/-/samsung-internet-4.0.6.tgz#85d455657b770b667c3ae3bccc42b6df5c2cd4f7"
+  integrity sha512-Bvm5ROZACQQYlCyDkesuA67xelUgE1/SdCvrRDT9qwsgteGVC2HcxTqrf8g6GeErD/7EzOZfiCmOm5YAa906qQ==
+
 "@csstools/selector-specificity@^2.0.2":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@csstools/selector-specificity/-/selector-specificity-2.1.1.tgz#c9c61d9fe5ca5ac664e1153bb0aa0eba1c6d6308"
@@ -4919,6 +4969,11 @@ typed-array-length@^1.0.4:
     call-bind "^1.0.2"
     for-each "^0.3.3"
     is-typed-array "^1.1.9"
+
+ua-parser-js@^1.0.35:
+  version "1.0.35"
+  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-1.0.35.tgz#c4ef44343bc3db0a3cbefdf21822f1b1fc1ab011"
+  integrity sha512-fKnGuqmTBnIE+/KXSzCn4db8RTigUzw1AN0DmdU6hJovUTbYJKyqj+8Mt1c4VfRDnOVJnENmfYkIPZ946UrSAA==
 
 unbox-primitive@^1.0.2:
   version "1.0.2"

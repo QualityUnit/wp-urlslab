@@ -2027,6 +2027,13 @@ button.urlslab-button svg.close,
 .urlslab-panel.Details .table-container {
   scrollbar-width: 6px;
   scrollbar-color: #bec2c9 transparent;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   overflow: hidden auto;
   height: 20em;
 }
@@ -2041,6 +2048,9 @@ button.urlslab-button svg.close,
 .urlslab-panel.Details .table-container::-webkit-scrollbar {
   height: 6px;
   width: 6px;
+}
+.urlslab-panel.Details .table-container .urlslab-progressBar-wrapper {
+  margin-top: auto;
 }
 .urlslab-panel-floating[class] {
   position: absolute;
