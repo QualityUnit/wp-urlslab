@@ -53,26 +53,23 @@ export default function NotFoundTable( { slug } ) {
 			minSize: 300,
 		} ),
 		columnHelper.accessor( 'cnt', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			header: header.cnt,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'created', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			header: header.created,
 			minSize: 100,
 		} ),
 		columnHelper.accessor( 'updated', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			header: header.updated,
 			minSize: 100,
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.agent, {
 			id: 'agent',
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => <Tooltip className="xl">{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => {
 				const { browser, os, ua } = UAParser( cell.getValue() );
-				return <div className="flex flex-align-center"><BrowserIcon browserName={ browser.name } />&nbsp;<strong>{ os.name ? os.name : ua }</strong></div>;
+				return <BrowserIcon browserName={ browser.name } osName={ os.name || ua } />;
 			},
 			header: header.agent,
 			size: 150,
@@ -82,7 +79,7 @@ export default function NotFoundTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => cell.getValue(),
 			header: header.referer,
-			size: 100,
+			size: 120,
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
