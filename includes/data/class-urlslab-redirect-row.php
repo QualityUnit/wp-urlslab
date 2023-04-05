@@ -31,7 +31,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		$this->set_params( $redirect['params'] ?? '', $loaded_from_db );
 		$this->set_if_not_found( $redirect['if_not_found'] ?? self::NOT_FOUND_STATUS_ANY, $loaded_from_db );
 		$this->set_cnt( $redirect['cnt'] ?? 0, $loaded_from_db );
-		$this->set_redirect_code( (int) $redirect['redirect_code'] ?? 301, $loaded_from_db );
+		$this->set_redirect_code( (int) ( $redirect['redirect_code'] ?? 301 ), $loaded_from_db );
 		$this->set_redirect_id( $redirect['redirect_id'] ?? 0, $loaded_from_db );
 	}
 

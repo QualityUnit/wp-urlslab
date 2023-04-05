@@ -132,6 +132,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			$row = (object) array_replace( (array) $row, $url->get_object_values_as_array() );
 
 			$row->screenshot_url = $url->get_screenshot_url();
+			$row->url_name       = $url->get_url()->get_url_with_protocol();
 			if ( in_array( 'url_usage_count', $this->get_custom_columns() ) ) {
 				$row->url_usage_count = (int) $row->url_usage_count;
 			}
@@ -159,8 +160,12 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->src_url_id  = (int) $row->src_url_id;
-			$row->dest_url_id = (int) $row->dest_url_id;
+			$row->src_url_id    = (int) $row->src_url_id;
+			$row->dest_url_id   = (int) $row->dest_url_id;
+			$url                = new Urlslab_Url( $row->src_url_name, true );
+			$row->src_url_name  = $url->get_url_with_protocol();
+			$url                = new Urlslab_Url( $row->dest_url_name, true );
+			$row->dest_url_name = $url->get_url_with_protocol();
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -179,6 +184,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		foreach ( $rows as $row ) {
 			$row->src_url_id        = (int) $row->src_url_id;
 			$row->screenshot_url_id = (int) $row->screenshot_url_id;
+			$url                    = new Urlslab_Url( $row->src_url_name, true );
+			$row->src_url_name      = $url->get_url_with_protocol();
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -306,14 +313,14 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_screenshot_usage' ),
 				'args'                => array(
-					'rows_per_page' => array(
+					'rows_per_page'          => array(
 						'required'          => true,
 						'default'           => self::ROWS_PER_PAGE,
 						'validate_callback' => function( $param ) {
 							return is_numeric( $param ) && 0 < $param && 200 > $param;
 						},
 					),
-					'from_url_id'   => array(
+					'from_screenshot_url_id' => array(
 						'required'          => false,
 						'validate_callback' => function( $param ) {
 							return is_numeric( $param );
@@ -501,16 +508,16 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		$sql->add_from( URLSLAB_URLS_TABLE . ' u' );
 
 		if ( in_array( 'url_usage_count', $this->get_custom_columns() ) ) {
-			$sql->add_select_column( 'SUM(!ISNULL(m_used.src_url_id))', false, 'url_usage_count' );
-			$sql->add_from( 'LEFT JOIN ' . URLSLAB_URLS_MAP_TABLE . ' m_used ON u.url_id = m_used.dest_url_id' );
+			$sql->add_select_column( 'url_usage_count' );
+			$sql->add_from( 'LEFT JOIN ((SELECT dest_url_id, COUNT(src_url_id) as url_usage_count FROM ' . URLSLAB_URLS_MAP_TABLE . ' GROUP BY dest_url_id)) m_used ON u.url_id = m_used.dest_url_id ' );
 		}
 		if ( in_array( 'screenshot_usage_count', $this->get_custom_columns() ) ) {
-			$sql->add_select_column( 'SUM(!ISNULL(scr_used.src_url_id))', false, 'screenshot_usage_count' );
-			$sql->add_from( 'LEFT JOIN ' . URLSLAB_SCREENSHOT_URLS_TABLE . ' scr_used ON u.url_id = scr_used.screenshot_url_id' );
+			$sql->add_select_column( 'screenshot_usage_count' );
+			$sql->add_from( 'LEFT JOIN (SELECT screenshot_url_id, COUNT(src_url_id) as screenshot_usage_count FROM ' . URLSLAB_SCREENSHOT_URLS_TABLE . ' GROUP BY screenshot_url_id) m_links ON u.url_id = m_links.screenshot_url_id ' );
 		}
 		if ( in_array( 'url_links_count', $this->get_custom_columns() ) ) {
-			$sql->add_select_column( 'SUM(!ISNULL(m_used.src_url_id))', false, 'url_links_count' );
-			$sql->add_from( 'LEFT JOIN ' . URLSLAB_URLS_MAP_TABLE . ' m_links ON u.url_id = m_links.src_url_id' );
+			$sql->add_select_column( 'url_links_count' );
+			$sql->add_from( 'LEFT JOIN (SELECT src_url_id, COUNT(dest_url_id) as url_links_count FROM ' . URLSLAB_URLS_MAP_TABLE . ' GROUP BY src_url_id) m_links ON u.url_id = m_links.src_url_id ' );
 		}
 
 		$this->add_filter_table_fields( $sql );

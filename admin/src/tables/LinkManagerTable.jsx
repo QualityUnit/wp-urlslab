@@ -150,7 +150,7 @@ export default function LinkManagerTable( { slug } ) {
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
 					<button className="ml-s" onClick={ () => setDetailsOptions( {
-						title: `Link redirects to these URLs`, text: `Results for link: ${ cell.row.original.url_name }`, slug, url: `${ cell.row.original.url_id }/links`, showKeys: [ 'src_url_name' ], listId: 'src_url_id',
+						title: `Outgoing Links`, text: `From: ${ cell.row.original.url_name }`, slug, url: `${ cell.row.original.url_id }/links`, showKeys: [ 'dest_url_name' ], listId: 'src_url_id',
 					} ) }>
 						<LinkIcon />
 						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
@@ -165,7 +165,7 @@ export default function LinkManagerTable( { slug } ) {
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
 					<button className="ml-s" onClick={ () => setDetailsOptions( {
-						title: `Link used on these URLs`, text: `Results for link: ${ cell.row.original.url_name }`, slug, url: `${ cell.row.original.url_id }/linked-from`, showKeys: [ 'src_url_name' ], listId: 'src_url_id',
+						title: `Link found in following pages`, text: `Link: ${ cell.row.original.url_name }`, slug, url: `${ cell.row.original.url_id }/linked-from`, showKeys: [ 'src_url_name' ], listId: 'src_url_id',
 					} ) }>
 						<LinkIcon />
 						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
