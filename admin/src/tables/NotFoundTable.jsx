@@ -66,7 +66,7 @@ export default function NotFoundTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.agent, {
 			id: 'agent',
-			tooltip: ( cell ) => <Tooltip className="xl">{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => {
 				const { browser, os, ua } = UAParser( cell.getValue() );
 				return <BrowserIcon browserName={ browser.name } osName={ os.name || ua } />;
