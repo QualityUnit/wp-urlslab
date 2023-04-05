@@ -140,7 +140,6 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			$row->kw_length        = (int) $row->kw_length;
 			$row->kw_priority      = (int) $row->kw_priority;
 			$row->kw_usage_count   = (int) $row->kw_usage_count;
-			$row->link_usage_count = (int) $row->link_usage_count;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -155,6 +154,8 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 
 		foreach ( $rows as $row ) {
 			$row->url_id = (int) $row->url_id;
+			$url = new Urlslab_Url( $row->url_name, true );
+			$row->url_name = $url->get_url_with_protocol();
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -249,10 +250,10 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		$sql->add_select_column( 'urlLink', 'v', 'urlLink' );
 		$sql->add_select_column( 'urlFilter', 'v', 'urlFilter' );
 		$sql->add_select_column( 'kwType', 'v', 'kwType' );
-		$sql->add_select_column( 'SUM(!ISNULL(d.url_id))', false, 'kw_usage_count' );
-		$sql->add_select_column( 'SUM(!ISNULL(d.dest_url_id))', false, 'link_usage_count' );
+		$sql->add_select_column( 'kw_usage_count' );
 
-		$sql->add_from( URLSLAB_KEYWORDS_TABLE . ' AS v LEFT JOIN ' . URLSLAB_KEYWORDS_MAP_TABLE . ' AS d ON d.kw_id = v.kw_id' );
+		$sql->add_from( URLSLAB_KEYWORDS_TABLE . ' AS v' );
+		$sql->add_from( 'LEFT JOIN (SELECT kw_id, COUNT(dest_url_id) as kw_usage_count FROM ' . URLSLAB_KEYWORDS_MAP_TABLE . ' GROUP BY kw_id) d ON d.kw_id = v.kw_id ' );
 
 		$this->add_filter_table_fields( $sql, 'v' );
 
@@ -265,7 +266,6 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		$sql->add_filter( 'filter_kwType' );
 
 		$sql->add_having_filter( 'filter_kw_usage_count', '%d' );
-		$sql->add_having_filter( 'filter_link_usage_count', '%d' );
 
 		if ( $request->get_param( 'sort_column' ) ) {
 			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );
@@ -329,12 +329,6 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 						},
 					),
 					'filter_kw_usage_count'   => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_numeric_filter_value( $param );
-						},
-					),
-					'filter_link_usage_count' => array(
 						'required'          => false,
 						'validate_callback' => function( $param ) {
 							return Urlslab_Api_Table::validate_numeric_filter_value( $param );

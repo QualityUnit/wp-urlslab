@@ -39,7 +39,6 @@ export default function KeywordsTable( { slug } ) {
 		kw_priority: __( 'Priority' ),
 		kw_usage_count: __( 'Usage' ),
 		lang: __( 'Language' ),
-		link_usage_count: __( 'Link Usage' ),
 		urlFilter: __( 'URL Filter' ),
 		urlLink: __( 'Link' ),
 	};
@@ -107,21 +106,6 @@ export default function KeywordsTable( { slug } ) {
 			</div>,
 			header: header.kw_usage_count,
 			size: 70,
-		} ),
-		columnHelper.accessor( 'link_usage_count', {
-			cell: ( cell ) => <div className="flex flex-align-center">
-				{ cell?.getValue() }
-				{ cell?.getValue() > 0 &&
-					<button className="ml-s" onClick={ () => setDetailsOptions( {
-						title: `Link used on these URLs`, text: `Results for link: ${ cell.row.original.url_name } of keyword “${ cell.row.original.keyword }”`, slug: 'url', url: `${ cell.row.original.dest_url_id }/linked-from`, showKeys: [ 'src_url_name' ], listId: 'src_url_id',
-					} ) }>
-						<LinkIcon />
-						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
-					</button>
-				}
-			</div>,
-			header: header.link_usage_count,
-			size: 100,
 		} ),
 		columnHelper.accessor( 'urlFilter', {
 			className: 'nolimit',

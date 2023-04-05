@@ -17,7 +17,7 @@ const D3WordCloud = ( { slug, children } ) => {
 
 	const { data } = useQuery( {
 		queryKey: [ slug, 'wordcloud' ],
-		queryFn: () => fetchData( `${ slug }?filter_kw_usage_count=%7B%22op%22%3A%22%3E%22%2C%22val%22%3A0%7D${ filters !== undefined ? filters : '' }&sort_column=link_usage_count&sort_direction=DESC&rows_per_page=1000` ).then( ( chartData ) => {
+		queryFn: () => fetchData( `${ slug }?filter_kw_usage_count=%7B%22op%22%3A%22%3E%22%2C%22val%22%3A0%7D${ filters !== undefined ? filters : '' }&sort_column=kw_usage_count&sort_direction=DESC&rows_per_page=1000` ).then( ( chartData ) => {
 			return chartData;
 		} ),
 		refetchOnWindowFocus: false,
