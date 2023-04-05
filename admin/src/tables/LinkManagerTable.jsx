@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
-	useInfiniteFetch, Tooltip, Trash, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, Tooltip, LinkIcon, Trash, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -10,6 +10,8 @@ export default function LinkManagerTable( { slug } ) {
 	const pageId = 'url_id';
 	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 	const url = useMemo( () => `${ filters }${ sortingColumn || '&sort_column=url_name&sort_direction=ASC' }`, [ filters, sortingColumn ] );
+
+	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
 	const {
 		__,
@@ -60,6 +62,8 @@ export default function LinkManagerTable( { slug } ) {
 		http_status: __( 'Status' ),
 		// sum_status: __( 'Summary Status' ),
 		// update_sum_date: __( 'Summary Updated' ),
+		url_links_count: __( 'Outgoing links count' ),
+		url_usage_count: __( 'Incoming links count' ),
 		visibility: __( 'Visibility' ),
 		url_type: __( 'URL Type' ),
 		update_http_date: __( 'Status Updated' ),
@@ -141,6 +145,36 @@ export default function LinkManagerTable( { slug } ) {
 			header: () => header.update_http_date,
 			size: 140,
 		} ),
+		columnHelper.accessor( 'url_links_count', {
+			cell: ( cell ) => <div className="flex flex-align-center">
+				{ cell?.getValue() }
+				{ cell?.getValue() > 0 &&
+					<button className="ml-s" onClick={ () => setDetailsOptions( {
+						title: `Link redirects to these URLs`, text: `Results for link: ${ cell.row.original.url_name }`, slug, url: `${ cell.row.original.url_id }/links`, showKeys: [ 'src_url_name' ], listId: 'src_url_id',
+					} ) }>
+						<LinkIcon />
+						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
+					</button>
+				}
+			</div>,
+			header: () => header.url_links_count,
+			size: 140,
+		} ),
+		columnHelper.accessor( 'url_usage_count', {
+			cell: ( cell ) => <div className="flex flex-align-center">
+				{ cell?.getValue() }
+				{ cell?.getValue() > 0 &&
+					<button className="ml-s" onClick={ () => setDetailsOptions( {
+						title: `Link used on these URLs`, text: `Results for link: ${ cell.row.original.url_name }`, slug, url: `${ cell.row.original.url_id }/linked-from`, showKeys: [ 'src_url_name' ], listId: 'src_url_id',
+					} ) }>
+						<LinkIcon />
+						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
+					</button>
+				}
+			</div>,
+			header: () => header.url_usage_count,
+			size: 140,
+		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
@@ -162,6 +196,7 @@ export default function LinkManagerTable( { slug } ) {
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				noImport
+				detailsOptions={ detailsOptions }
 				exportOptions={ {
 					url: slug,
 					filters,

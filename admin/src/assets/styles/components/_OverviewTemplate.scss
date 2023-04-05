@@ -10,6 +10,17 @@
 		margin: 3em auto 6em;
 	}
 
+	table {
+		border-collapse: collapse;
+		width: 100%;
+		border-bottom: 1em;
+
+		th,
+		td {
+			white-space: normal;
+		}
+	}
+
 	&-apiKey {
 		align-items: center;
 		position: relative;

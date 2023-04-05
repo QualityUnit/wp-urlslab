@@ -295,7 +295,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 					},
 				),
 				'replace_url'   => array(
-					'required'          => false,
+					'required'          => true,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
 					},
