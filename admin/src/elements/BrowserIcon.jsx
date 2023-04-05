@@ -5,6 +5,7 @@ import Firefox from '@browser-logos/firefox/firefox_48x48.png';
 import Edge from '@browser-logos/edge/edge_48x48.png';
 import Safari from '@browser-logos/safari/safari_48x48.png';
 import MobileSafari from '@browser-logos/safari-ios/safari-ios_48x48.png';
+import IE from '@browser-logos/internet-explorer_9-11/internet-explorer_9-11_48x48.png';
 import SamsungBrowser from '@browser-logos/samsung-internet/samsung-internet_48x48.png';
 import Opera from '@browser-logos/opera/opera_48x48.png';
 import Brave from '@browser-logos/brave/brave_48x48.png';
@@ -18,6 +19,9 @@ export default function BrowserIcon( { browserName } ) {
 		Firefox,
 		Edge,
 		Safari,
+		IE,
+		baiduboxapp: Chrome,
+		WebKit: Safari,
 		MobileSafari,
 		SamsungBrowser,
 		Opera,
