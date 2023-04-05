@@ -1,4 +1,8 @@
 import { useMemo } from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { UAParser } from 'ua-parser-js';
+import BrowserIcon from '../elements/BrowserIcon';
+
 import {
 	useInfiniteFetch, ProgressBar, Tooltip, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../lib/tableImports';
@@ -66,7 +70,10 @@ export default function NotFoundTable( { slug } ) {
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.agent, {
 			id: 'agent',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => cell.getValue(),
+			cell: ( cell ) => {
+				const { browser, os, ua } = UAParser( cell.getValue() );
+				return <div className="flex flex-align-center"><BrowserIcon browserName={ browser.name } />&nbsp;<strong>{ os.name ? os.name : ua }</strong></div>;
+			},
 			header: header.agent,
 			size: 150,
 		} ),

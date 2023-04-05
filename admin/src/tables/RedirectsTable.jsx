@@ -168,8 +168,6 @@ export default function RedirectsTable( { slug } ) {
 			size: 100,
 		} ),
 		columnHelper.accessor( 'cnt', {
-			className: 'nolimit',
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.cnt,
 			size: 100,
 		} ),

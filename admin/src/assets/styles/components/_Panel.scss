@@ -48,8 +48,14 @@
 		.table-container {
 
 			@include scrollbar;
+			display: flex;
+			flex-direction: column;
 			overflow: hidden auto;
 			height: 20em;
+
+			.urlslab-progressBar-wrapper {
+				margin-top: auto;
+			}
 		}
 	}
 
