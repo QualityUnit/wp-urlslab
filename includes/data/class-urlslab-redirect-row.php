@@ -19,7 +19,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 	 * @param array $redirect
 	 */
 	public function __construct( array $redirect = array(), $loaded_from_db = true ) {
-		$this->set_match_type( $redirect['match_type'] ?? self::MATCH_TYPE_EXACT, $loaded_from_db );
+		$this->set_match_type( $redirect['match_type'] ?? self::MATCH_TYPE_SUBSTRING, $loaded_from_db );
 		$this->set_match_url( $redirect['match_url'] ?? '', $loaded_from_db );
 		$this->set_replace_url( $redirect['replace_url'] ?? '', $loaded_from_db );
 		$this->set_is_logged( $redirect['is_logged'] ?? self::LOGIN_STATUS_ANY, $loaded_from_db );
