@@ -490,6 +490,13 @@ button.urlslab-button svg.close,
   -moz-transition: width 0.2s ease;
   transition: width 0.2s ease;
 }
+.infiniteScroll .urlslab-progressBar::-webkit-progress-value {
+  -webkit-transition-duration: 1s;
+          transition-duration: 1s;
+}
+.infiniteScroll .urlslab-progressBar::-moz-progress-bar {
+  transition-duration: 1s;
+}
 .urlslab-progressBar-wrapper + .urlslab-progressBar-wrapper {
   margin-top: 1em;
 }
@@ -1988,15 +1995,20 @@ button.urlslab-button svg.close,
 .urlslab-panel table {
   font-size: 0.75rem;
 }
+.urlslab-panel table {
+  width: 100%;
+}
 .urlslab-panel table thead {
   position: sticky;
   top: 0;
+  z-index: 1;
   background-color: #fff;
 }
 .urlslab-panel table th,
 .urlslab-panel table td {
   text-align: left;
   white-space: nowrap;
+  height: 1.5em;
 }
 .urlslab-panel table th .limit,
 .urlslab-panel table td .limit {
@@ -2015,8 +2027,8 @@ button.urlslab-button svg.close,
 .urlslab-panel.Details .table-container {
   scrollbar-width: 6px;
   scrollbar-color: #bec2c9 transparent;
-  overflow: auto;
-  max-height: 20em;
+  overflow: hidden auto;
+  height: 20em;
 }
 .urlslab-panel.Details .table-container::-webkit-scrollbar-track {
   background-color: transparent;
