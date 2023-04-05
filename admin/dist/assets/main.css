@@ -2083,6 +2083,8 @@ button.urlslab-button svg.close,
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
@@ -2090,6 +2092,9 @@ button.urlslab-button svg.close,
   margin-left: -1.5em;
   margin-right: -1em;
   border-bottom: 1px solid #e4e5e9;
+}
+.urlslab-panel-header p {
+  width: 100%;
 }
 @media (min-width: 768px) {
   .urlslab-panel-header {
