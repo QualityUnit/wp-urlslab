@@ -28,7 +28,7 @@ export default function BrowserIcon( { browserName } ) {
 		Brave,
 	};
 	return (
-		browserName
+		browserNameOk
 			? <img className="browserIcon" src={ browserIcons[ browserNameOk ] } alt={ browserName } />
 			: <img className="browserIcon" src={ Fake } alt="bot" />
 	);
