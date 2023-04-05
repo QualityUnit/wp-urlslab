@@ -13,12 +13,15 @@
 	}
 
 	@include progressbarValue() {
-
 		background-color: $primary-color;
 		transition: width 0.2s ease;
 	}
 
-	&-wrapper {
+	.infiniteScroll & {
+
+		@include progressbarValue() {
+			transition-duration: 1s;
+		}
 	}
 
 	&-wrapper + &-wrapper {

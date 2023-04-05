@@ -34,16 +34,16 @@
 		left: calc(50% + 160px);
 	}
 
-	.urlslab-table td & {
+	table td & {
 		display: none;
 		top: 85%;
 	}
 
-	.urlslab-table td:hover > & {
-		display: block;
+	table td:hover > & {
+		display: inline-flex;
 	}
 
-	.urlslab-table td *:hover > & {
-		display: block;
+	table td *:hover > & {
+		display: inline-flex;
 	}
 }

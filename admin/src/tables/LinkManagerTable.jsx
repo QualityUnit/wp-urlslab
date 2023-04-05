@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import {
-	useInfiniteFetch, Tooltip, LinkIcon, Trash, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, ProgressBar, Tooltip, LinkIcon, Trash, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -216,7 +216,10 @@ export default function LinkManagerTable( { slug } ) {
 					? <Tooltip center>{ `${ header.url_name } “${ row.url_name }”` } has been deleted.</Tooltip>
 					: null
 				}
-				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
+				<div ref={ ref }>
+					{ isFetchingNextPage ? '' : hasNextPage }
+					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
+				</div>
 			</Table>
 		</>
 	);

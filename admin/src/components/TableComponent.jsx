@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import { useRef, useCallback, useReducer, useState, useEffect } from 'react';
+import { useRef, useCallback, useState, useEffect } from 'react';
 import { get } from 'idb-keyval';
 import {
 	flexRender,

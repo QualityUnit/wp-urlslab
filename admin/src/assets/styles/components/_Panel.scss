@@ -14,10 +14,12 @@
 	}
 
 	table {
+		width: 100%;
 
 		thead {
 			position: sticky;
 			top: 0;
+			z-index: 1;
 			background-color: $white;
 		}
 
@@ -25,6 +27,7 @@
 		td {
 			text-align: left;
 			white-space: nowrap;
+			height: 1.5em;
 
 			.limit {
 				white-space: nowrap;
@@ -45,8 +48,8 @@
 		.table-container {
 
 			@include scrollbar;
-			overflow: auto;
-			max-height: 20em;
+			overflow: hidden auto;
+			height: 20em;
 		}
 	}
 

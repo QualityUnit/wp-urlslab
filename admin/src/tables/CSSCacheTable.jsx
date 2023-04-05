@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, Tooltip, SortMenu, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, ProgressBar, Tooltip, SortMenu, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -105,7 +105,10 @@ export default function CSSCacheTable( { slug } ) {
 					? <Tooltip center>{ `${ header.url_name } “${ row.url_name }”` } { __( 'has been deleted.' ) }</Tooltip>
 					: null
 				}
-				<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
+				<div ref={ ref }>
+					{ isFetchingNextPage ? '' : hasNextPage }
+					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
+				</div>
 			</Table>
 		</>
 	);
