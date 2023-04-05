@@ -17,6 +17,7 @@ import Generic from '@browser-logos/fake/fake_48x48.png';
 import Windows from '@egoistdeveloper/operating-system-logos/src/48x48/WIN.png';
 import macOs from '@egoistdeveloper/operating-system-logos/src/48x48/MAC.png';
 import iOS from '@egoistdeveloper/operating-system-logos/src/48x48/IOS.png';
+import iPadOS from '@egoistdeveloper/operating-system-logos/src/48x48/IPA.png';
 import Linux from '@egoistdeveloper/operating-system-logos/src/48x48/LIN.png';
 import Android from '@egoistdeveloper/operating-system-logos/src/48x48/AND.png';
 
@@ -44,6 +45,8 @@ export default function BrowserIcon( { browserName, osName } ) {
 		macOs,
 		MacOS: macOs,
 		iOS,
+		iPadOS,
+		iPadOs: iPadOS,
 		Linux,
 		Android,
 	};
