@@ -1,4 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+import { useEffect, useCallback, useRef } from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInView } from 'react-intersection-observer';
+import { useVirtual } from 'react-virtual';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { fetchData } from '../api/fetching';
@@ -6,16 +9,71 @@ import useCloseModal from '../hooks/useCloseModal';
 import Button from '../elements/Button';
 
 export default function DetailsPanel( { options, handlePanel } ) {
+	const maxRows = 150;
 	const { __ } = useI18n();
+	const { ref, inView } = useInView();
+	const tableContainerRef = useRef();
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
+	const tbody = [];
 
 	const { title, text, slug, url, showKeys, listId } = options;
 
-	const { data } = useQuery( {
-		queryKey: [ slug, `${ url }` ],
-		queryFn: () => fetchData( `${ slug }/${ url }` ).then( ( res ) => res ),
+	const { isSuccess, data, isFetchingNextPage,
+		hasNextPage,
+		fetchNextPage } = useInfiniteQuery( {
+		queryKey: [ slug, url ],
+		queryFn: ( { pageParam = '' } ) => {
+			return fetchData( `${ slug }/${ url }?from_${ listId }=${ pageParam !== undefined && pageParam }&rows_per_page=${ maxRows }` );
+		},
+		getNextPageParam: ( allRows ) => {
+			if ( allRows.length < maxRows ) {
+				return undefined;
+			}
+			const lastRowId = allRows[ allRows?.length - 1 ][ listId ] ?? undefined;
+			return lastRowId;
+		},
+		keepPreviousData: true,
 		refetchOnWindowFocus: false,
+		cacheTime: Infinity,
+		staleTime: Infinity,
 	} );
+
+	const rows = data?.pages?.flatMap( ( page ) => page ?? [] );
+
+	const rowVirtualizer = useVirtual( {
+		parentRef: tableContainerRef,
+		size: rows?.length,
+		overscan: 10,
+	} );
+
+	const { virtualItems: virtualRows, totalSize } = rowVirtualizer;
+	console.log( totalSize );
+	const paddingTop = virtualRows?.length > 0 ? virtualRows?.[ 0 ]?.start || 0 : 0;
+	const paddingBottom =
+		virtualRows?.length > 0
+			? totalSize - ( virtualRows?.[ virtualRows.length - 1 ]?.end || 0 )
+			: 0;
+
+	for ( const virtualRow of virtualRows ) {
+		const row = rows[ virtualRow?.index ];
+		tbody.push(
+			<tr key={ row[ listId ] } className="">
+				{ showKeys.map( ( key ) => {
+					return <td className="pr-m pos-relative" key={ row[ key ] }>
+						<div className="limit">
+							{ key.includes( 'url' ) ? <a href={ row[ key ] } target="_blank" rel="noreferrer">{ row[ key ] }</a> : row[ key ] }
+						</div>
+					</td>;
+				} ) }
+			</tr>
+		);
+	}
+
+	useEffect( () => {
+		if ( inView ) {
+			fetchNextPage();
+		}
+	}, [ inView, fetchNextPage ] );
 
 	function hidePanel() {
 		handleClose();
@@ -35,27 +93,28 @@ export default function DetailsPanel( { options, handlePanel } ) {
 					<p>{ text }</p>
 				</div>
 				<div className="mt-l">
-					<div className="table-container">
-						{ data &&
-						<table>
-							<thead>
-								<tr >{ showKeys.map( ( key ) => <th className="pr-m" key={ key }>{ key.charAt( 0 ).toUpperCase() + key.slice( 1 ).replaceAll( '_', ' ' ) }</th> ) }</tr>
-							</thead>
-							<tbody>
-								{ data.flat().map( ( row ) => {
-									return <tr key={ row[ listId ] } className="">
-										{ showKeys.map( ( key ) => {
-											return <td className="pr-m" key={ row[ key ] }>
-												<div className="limit">
-													{ key.includes( 'url' ) ? <a href={ row[ key ] } target="_blank" rel="noreferrer">{ row[ key ] }</a> : row[ key ] }
-												</div>
-											</td>;
-										} ) }
-									</tr>;
-								} ) }
-							</tbody>
-						</table>
+					<div className="table-container" ref={ tableContainerRef }>
+						{ isSuccess && data &&
+							<table>
+								<thead>
+									<tr >{ showKeys.map( ( key ) => <th className="pr-m" key={ key }>{ key.charAt( 0 ).toUpperCase() + key.slice( 1 ).replaceAll( '_', ' ' ) }</th> ) }</tr>
+								</thead>
+								<tbody>
+									{ paddingTop > 0 && (
+										<tr>
+											<td style={ { height: `${ paddingTop }px` } } />
+										</tr>
+									) }
+									{ tbody }
+									{ paddingBottom > 0 && (
+										<tr>
+											<td style={ { height: `${ paddingBottom }px` } } />
+										</tr>
+									) }
+								</tbody>
+							</table>
 						}
+						<button ref={ ref }>{ isFetchingNextPage ? 'Loading more...' : hasNextPage }</button>
 					</div>
 					<div className="flex">
 						<Button className="ma-left simple" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
