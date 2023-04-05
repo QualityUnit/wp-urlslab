@@ -8,6 +8,7 @@ import { fetchData } from '../api/fetching';
 import useCloseModal from '../hooks/useCloseModal';
 import Button from '../elements/Button';
 import ProgressBar from '../elements/ProgressBar';
+import Loader from './Loader';
 
 export default function DetailsPanel( { options, handlePanel } ) {
 	const maxRows = 150;
@@ -95,8 +96,8 @@ export default function DetailsPanel( { options, handlePanel } ) {
 				</div>
 				<div className="mt-l">
 					<div className="table-container" ref={ tableContainerRef }>
-						{ isSuccess && data &&
-							<table>
+						{ isSuccess && data
+							? <table>
 								<thead>
 									<tr >{ showKeys.map( ( key ) => <th className="pr-m" key={ key }>{ key.charAt( 0 ).toUpperCase() + key.slice( 1 ).replaceAll( '_', ' ' ) }</th> ) }</tr>
 								</thead>
@@ -114,6 +115,7 @@ export default function DetailsPanel( { options, handlePanel } ) {
 									) }
 								</tbody>
 							</table>
+							: <Loader />
 						}
 						<div ref={ ref }>
 							{ isFetchingNextPage ? '' : hasNextPage }
