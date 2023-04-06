@@ -31,9 +31,6 @@ class Urlslab_Cron_Manager {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshots-cron.php';
 		$this->add_cron_task( new Urlslab_Screenshots_Cron() );
 
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-url-scheduling-cron.php';
-		$this->add_cron_task( new Urlslab_Url_Scheduling_Cron() );
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-summaries-cron.php';
 		$this->add_cron_task( new Urlslab_Summaries_Cron() );
 

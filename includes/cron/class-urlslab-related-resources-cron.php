@@ -4,7 +4,6 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
 class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 
 	private \OpenAPI\Client\Urlslab\ContentApi $content_client;
-	private \OpenAPI\Client\Urlslab\ScheduleApi $schedule_client;
 
 	private function init_content_client(): bool {
 		if ( empty( $this->content_client ) ) {
@@ -16,18 +15,6 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 		}
 
 		return ! empty( $this->content_client );
-	}
-
-	private function init_schedule_client(): bool {
-		if ( empty( $this->schedule_client ) ) {
-			$api_key = get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
-			if ( strlen( $api_key ) ) {
-				$config                = \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-				$this->schedule_client = new \OpenAPI\Client\Urlslab\ScheduleApi( new GuzzleHttp\Client(), $config );
-			}
-		}
-
-		return ! empty( $this->schedule_client );
 	}
 
 	protected function execute(): bool {
@@ -61,15 +48,7 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 		$url->set_rel_updated( Urlslab_Data::get_now() );
 		$url->update();
 
-		switch ( $url->get_rel_schedule() ) {
-			case Urlslab_Url_Row::REL_SCHEDULE_NEW:
-				return $this->schedule( $url );
-			case Urlslab_Url_Row::REL_SCHEDULE_SCHEDULED:
-			case Urlslab_Url_Row::REL_AVAILABLE:
-				return $this->update_related_resources( $url );
-			default:
-				return false;
-		}
+		return $this->update_related_resources( $url );
 	}
 
 	public function get_description(): string {
@@ -87,18 +66,12 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 		$request = new \OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsRequest();
 		$request->setUrl( $url->get_url_name() );
 		$request->setChunkLimit( 5 );
+		$request->setRenewFrequency( \OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsRequest::RENEW_FREQUENCY_ONE_TIME );
 
 		$query = new \OpenAPI\Client\Model\DomainDataRetrievalContentQuery();
 		$query->setLimit( 10 );
-		$query->setQuery(
-			(object) array(
-				'term' => (object) array(
-					'metadata.domain.keyword' => (object) array(
-						'value' => $url->get_domain_name(),
-					),
-				),
-			)
-		);
+		$query->setDomains( array( $url->get_domain_name() ) );
+
 		$request->setFilter( $query );
 		try {
 			$response = $this->content_client->getRelatedUrls( $request );
@@ -137,43 +110,17 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 			$url->set_rel_schedule( Urlslab_Url_Row::REL_AVAILABLE );
 			$url->update();
 		} catch ( \OpenAPI\Client\ApiException $e ) {
-			return false;
+			switch ( $e->getCode() ) {
+				case 404:
+					$url->set_rel_schedule( Urlslab_Url_Row::REL_SCHEDULE_SCHEDULED );
+					$url->update();
+
+					return true;
+				default:
+					return false;
+			}
 		}
 
 		return true;
-	}
-
-	private function schedule( Urlslab_Url_Row $url ): bool {
-
-		if ( ! $url->get_url()->is_url_valid() || Urlslab_Url_Row::SUM_STATUS_ERROR == $url->get_sum_status() || $url->get_url()->is_url_blacklisted() || ! $url->is_visible() ) {
-			$url->set_rel_schedule( Urlslab_Url_Row::REL_ERROR );
-			$url->update();
-
-			return true;
-		}
-
-		try {
-			if ( ! $this->init_schedule_client() ) {
-				return false;
-			}
-
-			$config = new \OpenAPI\Client\Model\DomainScheduleScheduleConf();
-			$config->setUrls( array( $url->get_url()->get_url() ) );
-			$config->setTakeScreenshot( false );
-			$config->setScanFrequency( \OpenAPI\Client\Model\DomainScheduleScheduleConf::SCAN_FREQUENCY_ONE_TIME );
-			$config->setScanSpeedPerMinute( 20 );
-			$config->setFetchText( true );
-			$config->setLinkFollowingStrategy( \OpenAPI\Client\Model\DomainScheduleScheduleConf::LINK_FOLLOWING_STRATEGY_NO_LINK );
-			$config->setAllSitemaps( false );
-			$config->setSitemaps( array() );
-			$this->schedule_client->createSchedule( $config );
-
-			$url->set_rel_schedule( Urlslab_Url_Row::REL_SCHEDULE_SCHEDULED );
-			$url->update();
-
-			return true;
-		} catch ( \OpenAPI\Client\ApiException $e ) {
-			return false;
-		}
 	}
 }
