@@ -12,6 +12,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	const KW_TYPE_MANUAL = 'M';        //manually created keyword (default)
 	const KW_TYPE_IMPORTED_FROM_CONTENT = 'I';        //keywords imported from content
 	const KW_TYPE_NONE = 'X';        //in this case none link will be created in content
+	const CACHE_GROUP = 'urlslab_keywords';
 
 
 	private int $cnt_page_link_replacements = 0;
@@ -214,6 +215,21 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		return $keywords;
 	}
 
+	private function get_cache( $key, &$found = null ) {
+		if ( wp_using_ext_object_cache() ) {
+			return wp_cache_get( $key, self::CACHE_GROUP, false, $found );
+		} else {
+			return Urlslab_File_Cache::get_instance()->get( $key, self::CACHE_GROUP, $found );
+		}
+	}
+
+	private function set_cache( $key, $data, $expire = 0 ) {
+		if ( wp_using_ext_object_cache() ) {
+			return wp_cache_set( $key, $data, self::CACHE_GROUP, $expire );
+		} else {
+			return Urlslab_File_Cache::get_instance()->set( $key, $data, self::CACHE_GROUP, $expire );
+		}
+	}
 
 	private function init_keywords_cache( $input_text ) {
 		global $wpdb;
@@ -223,7 +239,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 		$results = array();
 		if ( self::KW_TYPE_NONE != $this->get_option( self::SETTING_NAME_KW_TYPES_TO_USE ) ) {
-			$results = wp_cache_get( 'kws_' . $lang, 'urlslab', false, $found );
+			$results = $this->get_cache( 'kws_' . $lang, $found );
 			if ( false === $results || ! $found ) {
 
 				$sql_data = array();
@@ -237,7 +253,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				$sql_data[] = $lang;
 
 				$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kw_id, keyword, urlLink, urlFilter FROM ' . $keyword_table . ' WHERE ' . $where_type . "(lang = %s OR lang = 'all') ORDER BY kw_priority ASC, kw_length DESC", $sql_data ), 'ARRAY_A' ); // phpcs:ignore
-				wp_cache_set( 'kws_' . $lang, $results, 'urlslab', 120 );
+				$this->set_cache( 'kws_' . $lang, $results, 120 );
 			}
 		}
 		$this->keywords_cache = array();

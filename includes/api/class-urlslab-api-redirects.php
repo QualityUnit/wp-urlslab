@@ -48,7 +48,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 							'validate_callback' => function( $param ) {
 								return Urlslab_Redirect_Row::LOGIN_STATUS_ANY == $param ||
 									   Urlslab_Redirect_Row::LOGIN_STATUS_LOGIN_REQUIRED == $param ||
-									   Urlslab_Redirect_Row::LOGIN_STATUS_NOT_LOGGED == $param;
+									   Urlslab_Redirect_Row::LOGIN_STATUS_NOT_LOGGED_IN == $param;
 							},
 						),
 						'capabilities'  => array(
@@ -305,7 +305,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 					'validate_callback' => function( $param ) {
 						return Urlslab_Redirect_Row::LOGIN_STATUS_ANY == $param ||
 							   Urlslab_Redirect_Row::LOGIN_STATUS_LOGIN_REQUIRED == $param ||
-							   Urlslab_Redirect_Row::LOGIN_STATUS_NOT_LOGGED == $param;
+							   Urlslab_Redirect_Row::LOGIN_STATUS_NOT_LOGGED_IN == $param;
 					},
 				),
 				'capabilities'  => array(
