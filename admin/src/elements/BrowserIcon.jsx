@@ -1,4 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import { UAParser } from 'ua-parser-js';
 
 import Chrome from '@browser-logos/chrome/chrome_48x48.png';
 import Firefox from '@browser-logos/firefox/firefox_48x48.png';
@@ -21,8 +22,10 @@ import iPadOS from '@egoistdeveloper/operating-system-logos/src/48x48/IPA.png';
 import Linux from '@egoistdeveloper/operating-system-logos/src/48x48/LIN.png';
 import Android from '@egoistdeveloper/operating-system-logos/src/48x48/AND.png';
 
-export default function BrowserIcon( { browserName, osName } ) {
-	const browserNameOk = browserName?.replaceAll( ' ', '' );
+export default function BrowserIcon( { uaString } ) {
+	const { browser, os, ua } = UAParser( uaString );
+	const osName = os.name || ua;
+	const browserNameOk = browser.name?.replaceAll( ' ', '' );
 	const osNameOk = osName?.replaceAll( ' ', '' );
 	const browserIcons = {
 		Chrome,
@@ -55,7 +58,7 @@ export default function BrowserIcon( { browserName, osName } ) {
 		<div className="flex flex-align-center">
 			{
 				browserIcons[ browserNameOk ]
-					? <img className="browserIcon" src={ browserIcons[ browserNameOk ] } alt={ browserName } />
+					? <img className="browserIcon" src={ browserIcons[ browserNameOk ] } alt={ browser.name } />
 					: <img className="browserIcon" src={ Generic } alt="Unknown browser" />
 			}
 			{

@@ -5,6 +5,7 @@ import {
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
+import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
 
 export default function RedirectsTable( { slug } ) {
 	const pageId = 'redirect_id';
@@ -26,47 +27,7 @@ export default function RedirectsTable( { slug } ) {
 
 	const { row, rowsSelected, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
-	const redirectTypes = {
-		301: '301 Moved Permanently',
-		302: '302 Found, Moved temporarily',
-		303: '303 See Other',
-		307: '307 Temporary Redirect',
-		308: '308 Permanent Redirect',
-	};
-
-	const matchTypes = {
-		E: 'Exact match',
-		S: 'Contains',
-		R: 'Regexp',
-	};
-
-	const logginTypes = {
-		Y: 'Logged in',
-		N: 'Not logged',
-		A: 'Any',
-	};
-
-	const notFoundTypes = {
-		Y: 'Page Not Found',
-		N: 'Page Found',
-		A: 'Any',
-	};
-
-	const header = {
-		match_type: __( 'Match type' ),
-		match_url: __( 'URL' ),
-		replace_url: __( 'Redirect to URL' ),
-		redirect_code: __( 'HTTP Code' ),
-		is_logged: __( 'Is Logged in' ),
-		capabilities: __( 'Capabilities' ),
-		roles: __( 'Roles' ),
-		browser: __( 'Browser' ),
-		cookie: __( 'Cookies' ),
-		headers: __( 'Request headers' ),
-		params: __( 'Request parameters' ),
-		if_not_found: __( 'Page status' ),
-		cnt: __( 'Redirects Count' ),
-	};
+	const { redirectTypes, matchTypes, logginTypes, notFoundTypes, header } = useRedirectTableMenus();
 
 	const inserterCells = {
 		match_type: <SortMenu defaultAccept autoClose items={ matchTypes } name="match_type" checkedId="E" onChange={ ( val ) => setInsertRow( { ...rowToInsert, match_type: val } ) }>{ header.match_type }</SortMenu>,
@@ -173,6 +134,7 @@ export default function RedirectsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
+			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete row' ) }</Tooltip>,
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: () => null,
 		} ),
@@ -190,6 +152,15 @@ export default function RedirectsTable( { slug } ) {
 				table={ table }
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
+				onClearRow={ ( clear ) => {
+					setInsertRow();
+					if ( clear === 'rowInserted' ) {
+						setInsertRow( clear );
+						setTimeout( () => {
+							setInsertRow();
+						}, 3000 );
+					}
+				} }
 				insertOptions={ { inserterCells, title: 'Add redirect', data, slug, url, pageId, rowToInsert } }
 				exportOptions={ {
 					url: slug,
@@ -208,6 +179,10 @@ export default function RedirectsTable( { slug } ) {
 			>
 				{ row
 					? <Tooltip center>{ `${ header.str_search } “${ row.str_search }”` } { __( 'has been deleted.' ) }</Tooltip>
+					: null
+				}
+				{ ( rowToInsert === 'rowInserted' )
+					? <Tooltip center>{ __( 'Redirect rule has been added.' ) }</Tooltip>
 					: null
 				}
 				<div ref={ ref }>

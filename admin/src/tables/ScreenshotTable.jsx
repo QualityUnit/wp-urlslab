@@ -125,6 +125,7 @@ export default function ScreenshotTable( { slug } ) {
 
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
+			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete row' ) }</Tooltip>,
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),

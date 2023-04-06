@@ -80,6 +80,7 @@ export default function SearchReplaceTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
+			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete row' ) }</Tooltip>,
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: () => null,
 		} ),
@@ -97,7 +98,15 @@ export default function SearchReplaceTable( { slug } ) {
 				table={ table }
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onClearRow={ ( clear ) => clear && setInsertRow() }
+				onClearRow={ ( clear ) => {
+					setInsertRow();
+					if ( clear === 'rowInserted' ) {
+						setInsertRow( clear );
+						setTimeout( () => {
+							setInsertRow();
+						}, 3000 );
+					}
+				} }
 				insertOptions={ { inserterCells, title: 'Add replacement', data, slug, url, pageId, rowToInsert } }
 				exportOptions={ {
 					url: slug,
@@ -115,6 +124,10 @@ export default function SearchReplaceTable( { slug } ) {
 			>
 				{ row
 					? <Tooltip center>{ `${ header.str_search } “${ row.str_search }”` } { __( 'has been deleted.' ) }</Tooltip>
+					: null
+				}
+				{ ( rowToInsert === 'rowInserted' )
+					? <Tooltip center>{ __( 'Search & Replace rule has been added.' ) }</Tooltip>
 					: null
 				}
 				<div ref={ ref }>
