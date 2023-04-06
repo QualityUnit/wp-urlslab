@@ -1039,10 +1039,25 @@
   resolved "https://registry.yarnpkg.com/@browser-logos/samsung-internet/-/samsung-internet-4.0.6.tgz#85d455657b770b667c3ae3bccc42b6df5c2cd4f7"
   integrity sha512-Bvm5ROZACQQYlCyDkesuA67xelUgE1/SdCvrRDT9qwsgteGVC2HcxTqrf8g6GeErD/7EzOZfiCmOm5YAa906qQ==
 
+"@browser-logos/vivaldi@^2.1.10":
+  version "2.1.10"
+  resolved "https://registry.yarnpkg.com/@browser-logos/vivaldi/-/vivaldi-2.1.10.tgz#633580b60c2279c9070ac6791d525988947b6647"
+  integrity sha512-1UOTvxWR4e172SqF01qGKVgQriQTzQigIdY+MwxKarBvK/jyExkyQFDx146I/0ICPvlB6Z4upFiNJJiA6DpapQ==
+
+"@browser-logos/webkit@^1.0.9":
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/@browser-logos/webkit/-/webkit-1.0.9.tgz#52092923f55521e29088baaa87f260aeac487657"
+  integrity sha512-RXvVSTfzDnt40hM0IRomYT82HbmWVMWqENiiuPp48H3FFBo0ia4FZvNDpaZ+fZxk9pXG0SrGdogfJ+bnzHoIbg==
+
 "@csstools/selector-specificity@^2.0.2":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@csstools/selector-specificity/-/selector-specificity-2.1.1.tgz#c9c61d9fe5ca5ac664e1153bb0aa0eba1c6d6308"
   integrity sha512-jwx+WCqszn53YHOfvFMJJRd/B2GqkCBt+1MJSG6o5/s8+ytHMvDZXsJgUEWLk12UnLd7HYKac4BYU5i/Ron1Cw==
+
+"@egoistdeveloper/operating-system-logos@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@egoistdeveloper/operating-system-logos/-/operating-system-logos-1.2.3.tgz#e2efd287efc7ff57a13bf5dd6b22851cad418873"
+  integrity sha512-FKVio41vAhqbgqKvmQIR056vahhEyAw22mau4nCTCGXB63ZV7oRCPZEz9yHrZGgtTnyKVtjXO48M+alzJRhLwA==
 
 "@es-joy/jsdoccomment@~0.36.1":
   version "0.36.1"
