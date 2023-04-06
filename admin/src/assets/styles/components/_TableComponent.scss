@@ -163,7 +163,8 @@ $cellHeight: 3.5em;
 		width: 2.5em !important;
 	}
 
-	td.deleteRow {
+	td.deleteRow,
+	td.hoverize {
 		opacity: 0;
 		padding: 0;
 		transition: opacity $transitionTime;
@@ -175,8 +176,12 @@ $cellHeight: 3.5em;
 		}
 	}
 
-	tr:hover td.deleteRow {
-		opacity: 1;
+	tr:hover {
+
+		td.deleteRow,
+		td.hoverize {
+			opacity: 1;
+		}
 	}
 
 	@media (max-width: $breakpoint-desktop-box) {

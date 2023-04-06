@@ -1,19 +1,22 @@
-import { useMemo } from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { UAParser } from 'ua-parser-js';
-import BrowserIcon from '../elements/BrowserIcon';
+import { useRef, useMemo, useState } from 'react';
 
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, ProgressBar, Tooltip, SortMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
+import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
+
+import BrowserIcon from '../elements/BrowserIcon';
+import { ReactComponent as PlusIcon } from '../assets/images/icon-plus.svg';
 
 export default function NotFoundTable( { slug } ) {
+	const [ activePanel, setActivePanel ] = useState();
 	const pageId = 'url_id';
+	const matchUrlField = useRef();
 
-	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 
 	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
 
@@ -30,6 +33,23 @@ export default function NotFoundTable( { slug } ) {
 
 	const { row, selectRow, deleteRow } = useChangeRow( { data, url, slug, pageId } );
 
+	const { redirectTypes, matchTypes, header: redirectHeader } = useRedirectTableMenus();
+
+	const addRedirect = ( { cell } ) => {
+		const { url: defaultMatchUrl } = cell.row.original;
+		matchUrlField.current = defaultMatchUrl;
+		setInsertRow( { match_type: 'E', redirect_code: '301', match_url: defaultMatchUrl } );
+
+		setActivePanel( 'addrow' );
+	};
+
+	const inserterCells = {
+		match_type: <SortMenu autoClose items={ matchTypes } name="match_type" checkedId="E" onChange={ ( val ) => setInsertRow( { ...rowToInsert, match_type: val } ) }>{ redirectHeader.match_type }</SortMenu>,
+		match_url: <InputField type="url" disabled ref={ matchUrlField } defaultValue={ matchUrlField.current } label={ redirectHeader.match_url } />,
+		replace_url: <InputField type="url" liveUpdate defaultValue="" label={ redirectHeader.replace_url } onChange={ ( val ) => setInsertRow( { ...rowToInsert, replace_url: val } ) } required />,
+		redirect_code: <SortMenu autoClose items={ redirectTypes } name="redirect_code" checkedId="301" onChange={ ( val ) => setInsertRow( { ...rowToInsert, redirect_code: val } ) }>{ redirectHeader.redirect_code }</SortMenu>,
+	};
+
 	const header = {
 		url: __( 'URL' ),
 		cnt: __( 'Visits' ),
@@ -39,7 +59,7 @@ export default function NotFoundTable( { slug } ) {
 		referer: 'Referer',
 	};
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
@@ -68,8 +88,7 @@ export default function NotFoundTable( { slug } ) {
 			id: 'agent',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => {
-				const { browser, os, ua } = UAParser( cell.getValue() );
-				return <BrowserIcon browserName={ browser.name } osName={ os.name || ua } />;
+				return <BrowserIcon uaString={ cell.getValue() } />;
 			},
 			header: header.agent,
 			size: 150,
@@ -77,16 +96,25 @@ export default function NotFoundTable( { slug } ) {
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.referer, {
 			id: 'referer',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => cell.getValue(),
+			cell: ( cell ) => {
+				return cell.getValue();
+			},
 			header: header.referer,
 			size: 120,
 		} ),
+		columnHelper.accessor( 'addRedirect', {
+			className: 'hoverize',
+			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Create redirect from 404' ) }</Tooltip>,
+			cell: ( cell ) => <PlusIcon onClick={ () => addRedirect( { cell } ) } />,
+			header: null,
+		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
+			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete row' ) }</Tooltip>,
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
-	];
+	], [] );
 
 	if ( status === 'loading' ) {
 		return <Loader />;
@@ -100,8 +128,23 @@ export default function NotFoundTable( { slug } ) {
 				table={ table }
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onClearRow={ ( clear ) => clear }
+				onClearRow={ ( clear ) => {
+					setActivePanel();
+					setInsertRow();
+					if ( clear === 'rowInserted' ) {
+						setInsertRow( clear );
+						setTimeout( () => {
+							setInsertRow( );
+						}, 3000 );
+					}
+				} }
 				noImport
+				noInsert
+				activatePanel={ activePanel }
+				insertOptions={ {
+					inserterCells, title: 'Create redirect from 404',
+					data, slug: 'redirects', url: '', pageId: 'redirect_id', rowToInsert,
+				} }
 				exportOptions={ {
 					url: slug,
 					filters,
@@ -118,6 +161,10 @@ export default function NotFoundTable( { slug } ) {
 			>
 				{ row
 					? <Tooltip center>{ `${ header.url } “${ row.url }”` } { __( 'has been deleted.' ) }</Tooltip>
+					: null
+				}
+				{ ( rowToInsert === 'rowInserted' )
+					? <Tooltip center>{ __( 'Redirect rule has been added.' ) }</Tooltip>
 					: null
 				}
 				<div ref={ ref }>

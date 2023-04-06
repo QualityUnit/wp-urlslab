@@ -24,13 +24,21 @@
 }
 // Removes Elementor and other notifications when in URLslab plugin page
 
+#adminmenuback {
+	z-index: 6;
+}
+
+.php-error {
+
+	#adminmenuback,
+	#adminmenuwrap {
+		margin-top: 0;
+	}
+}
+
 .notice[class],
 #wpfooter {
 	display: none !important;
-}
-
-#adminmenuback {
-	z-index: 6;
 }
 
 #wpbody {

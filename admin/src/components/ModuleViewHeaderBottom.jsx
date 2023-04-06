@@ -6,6 +6,7 @@ import { fetchData } from '../api/fetching';
 import { deleteAll } from '../api/deleteTableData';
 
 import { ReactComponent as Trash } from '../assets/images/icon-trash.svg';
+import { ReactComponent as PlusIcon } from '../assets/images/icon-plus.svg';
 import { ReactComponent as ImportIcon } from '../assets/images/icon-import.svg';
 import { ReactComponent as ExportIcon } from '../assets/images/icon-export.svg';
 import { ReactComponent as RefreshIcon } from '../assets/images/icon-cron-refresh.svg';
@@ -20,18 +21,21 @@ import DangerPanel from './DangerPanel';
 import TableFilter from './TableFilter';
 import DetailsPanel from './DetailsPanel';
 
-export default function ModuleViewHeaderBottom( { slug, noImport, noExport, noCount, noDelete, header, table, insertOptions, detailsOptions, exportOptions, rowsSelected, defaultSortBy, onSort, onFilter, onClearRow } ) {
+export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noExport, noCount, noDelete, header, table, insertOptions, activatePanel, detailsOptions, exportOptions, rowsSelected, defaultSortBy, onSort, onFilter, onClearRow } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 
-	const [ activePanel, setActivePanel ] = useState();
+	const [ activePanel, setActivePanel ] = useState( );
 	const [ filtersObj, setFiltersObj ] = useState();
 
 	useEffect( () => {
+		if ( activatePanel ) {
+			setActivePanel( activatePanel );
+		}
 		if ( detailsOptions ) {
 			setActivePanel( 'details' );
 		}
-	}, [ slug, detailsOptions ] );
+	}, [ slug, activatePanel, detailsOptions ] );
 
 	const initialRow = table?.getRowModel().rows[ 0 ];
 
@@ -84,8 +88,8 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noExport, noCo
 			handleDeleteAll.mutate();
 		}
 
-		if ( key === 'clearRow' && onClearRow ) {
-			onClearRow( true );
+		if ( onClearRow ) {
+			onClearRow( key );
 		}
 	};
 
@@ -113,8 +117,8 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noExport, noCo
 						{ ! noImport &&
 						<Button className="no-padding underline simple ml-m" onClick={ () => handlePanel( 'import' ) }>{ __( 'Import CSV' ) }</Button>
 						}
-						{ insertOptions &&
-							<Button className="ml-m active" onClick={ () => handlePanel( 'addrow' ) }>+&nbsp;{ insertOptions.title }</Button>
+						{ insertOptions && ! noInsert &&
+							<Button className="ml-m active" onClick={ () => handlePanel( 'addrow' ) }><PlusIcon />{ insertOptions.title }</Button>
 						}
 					</div>
 				</div>

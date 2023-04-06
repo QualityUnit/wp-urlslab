@@ -65,6 +65,7 @@ export default function URLRelationTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
+			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete row' ) }</Tooltip>,
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, optionalSelector: 'dest_url_id' } ) } />,
 			header: null,
 		} ),
@@ -82,7 +83,15 @@ export default function URLRelationTable( { slug } ) {
 				table={ table }
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onClearRow={ ( clear ) => clear && setInsertRow() }
+				onClearRow={ ( clear ) => {
+					setInsertRow();
+					if ( clear === 'rowInserted' ) {
+						setInsertRow( clear );
+						setTimeout( () => {
+							setInsertRow();
+						}, 3000 );
+					}
+				} }
 				insertOptions={ { inserterCells, title: 'Add related article', data, slug, url, pageId, rowToInsert } }
 				exportOptions={ {
 					url: slug,
@@ -101,6 +110,10 @@ export default function URLRelationTable( { slug } ) {
 			>
 				{ row
 					? <Tooltip center>{ __( 'URL has been deleted.' ) }</Tooltip>
+					: null
+				}
+				{ ( rowToInsert === 'rowInserted' )
+					? <Tooltip center>{ __( 'URL Relation rule has been added.' ) }</Tooltip>
 					: null
 				}
 				<div ref={ ref }>

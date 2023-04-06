@@ -1,36 +1,36 @@
-import { useRef, useEffect } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useRef } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import { setData } from '../api/fetching';
 import useChangeRow from '../hooks/useChangeRow';
 import useCloseModal from '../hooks/useCloseModal';
 import Button from '../elements/Button';
 
 export default function InsertRowPanel( { insertOptions, handlePanel } ) {
-	const queryClient = useQueryClient();
 	const { __ } = useI18n();
 	const enableAddButton = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
 
-	const { inserterCells, title, text, data, slug, url, pageId, rowToInsert } = insertOptions;
+	const { inserterCells, title, text, data, slug, url, pageId, rowToInsert } = insertOptions || {};
 	const flattenedData = data?.pages?.flatMap( ( page ) => page ?? [] );
 	const { insertRowResult, insertRow } = useChangeRow( { data: flattenedData, url, slug, pageId } );
-	const requiredFields = Object.keys( inserterCells ).filter( ( cell ) => inserterCells[ cell ].props.required === true );
+	const requiredFields = inserterCells && Object.keys( inserterCells ).filter( ( cell ) => inserterCells[ cell ].props.required === true );
 
 	// Checking if all required fields are filled in rowToInsert object
 	if ( rowToInsert ) {
-		enableAddButton.current = requiredFields.every( ( key ) => Object.keys( rowToInsert ).includes( key ) );
+		enableAddButton.current = requiredFields?.every( ( key ) => Object.keys( rowToInsert ).includes( key ) );
 	}
 	if ( ! rowToInsert ) {
 		enableAddButton.current = false;
 	}
 
-	function hidePanel( ) {
+	function hidePanel( response ) {
 		handleClose();
 		enableAddButton.current = false;
-		if ( handlePanel ) {
+		if ( handlePanel && ! response ) {
 			handlePanel( 'clearRow' );
+		}
+		if ( handlePanel && response ) {
+			handlePanel( response );
 		}
 	}
 
@@ -40,7 +40,7 @@ export default function InsertRowPanel( { insertOptions, handlePanel } ) {
 
 	if ( insertRowResult?.ok ) {
 		setTimeout( () => {
-			hidePanel();
+			hidePanel( 'rowInserted' );
 		}, 100 );
 	}
 
@@ -56,7 +56,7 @@ export default function InsertRowPanel( { insertOptions, handlePanel } ) {
 				</div>
 				<div className="mt-l">
 					{
-						Object.entries( inserterCells ).map( ( [ cellId, cell ] ) => {
+						inserterCells && Object.entries( inserterCells ).map( ( [ cellId, cell ] ) => {
 							return <div className="mb-l" key={ cellId }>
 								{ cell }
 							</div>;

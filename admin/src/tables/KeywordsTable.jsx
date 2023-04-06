@@ -123,6 +123,7 @@ export default function KeywordsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
+			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete row' ) }</Tooltip>,
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
@@ -141,7 +142,15 @@ export default function KeywordsTable( { slug } ) {
 				rowsSelected={ rowsSelected }
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onClearRow={ ( clear ) => clear && setInsertRow() }
+				onClearRow={ ( clear ) => {
+					setInsertRow();
+					if ( clear === 'rowInserted' ) {
+						setInsertRow( clear );
+						setTimeout( () => {
+							setInsertRow();
+						}, 3000 );
+					}
+				} }
 				detailsOptions={ detailsOptions }
 				insertOptions={ { inserterCells, title: 'Add keyword', data, slug, url, pageId, rowToInsert } }
 				exportOptions={ {
@@ -160,6 +169,10 @@ export default function KeywordsTable( { slug } ) {
 				{ row
 					? <Tooltip center>{ `${ header.keyword } “${ row.keyword }”` } { __( 'has been deleted.' ) }</Tooltip>
 						: null
+				}
+				{ ( rowToInsert === 'rowInserted' )
+					? <Tooltip center>{ __( 'Keyword has been added.' ) }</Tooltip>
+					: null
 				}
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
