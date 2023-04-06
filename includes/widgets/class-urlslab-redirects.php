@@ -8,6 +8,8 @@ class Urlslab_Redirects extends Urlslab_Widget {
 	const SETTING_NAME_DEFAULT_REDIRECT_URL = 'urlslab_redir_default_url';
 	const SETTING_NAME_DEFAULT_REDIRECT_URL_IMAGE = 'urlslab_redir_default_url_image';
 
+	const CACHE_GROUP = 'urlslab_redirects';
+
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_filter( 'template_redirect', $this, 'template_redirect', PHP_INT_MAX, 0 );
 	}
@@ -25,7 +27,6 @@ class Urlslab_Redirects extends Urlslab_Widget {
 				}
 			}
 		}
-
 
 		if ( is_404() ) {
 			$this->log_not_found_url();
@@ -78,7 +79,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 					return false;
 				}
 				break;
-			case Urlslab_Redirect_Row::LOGIN_STATUS_NOT_LOGGED:
+			case Urlslab_Redirect_Row::LOGIN_STATUS_NOT_LOGGED_IN:
 				if ( is_user_logged_in() ) {
 					return false;
 				}
@@ -368,14 +369,28 @@ class Urlslab_Redirects extends Urlslab_Widget {
 
 	}
 
+	private function get_cache_key() {
+		return 'redirects' . ( is_404() ? '_404' : '' ) . ( is_user_logged_in() ? '_logged' : '' );
+	}
+
 	/**
 	 * @return Urlslab_Redirect_Row[]
 	 */
 	private function get_redirects(): array {
-		$redirects = wp_cache_get( 'redirects', 'urlslab' );
-		if ( false === $redirects ) {
+		if ( wp_using_ext_object_cache() ) {
+			$redirects = wp_cache_get( $this->get_cache_key(), self::CACHE_GROUP );
+			if ( false === $redirects ) {
+				$redirects = $this->get_redirects_from_db();
+				wp_cache_set( $this->get_cache_key(), $redirects, self::CACHE_GROUP, 3600 );
+			}
+		} else if ( Urlslab_File_Cache::get_instance()->is_active() ) {
+			$redirects = Urlslab_File_Cache::get_instance()->get( $this->get_cache_key(), self::CACHE_GROUP );
+			if ( false === $redirects ) {
+				$redirects = $this->get_redirects_from_db();
+				Urlslab_File_Cache::get_instance()->set( $this->get_cache_key(), $redirects, self::CACHE_GROUP );
+			}
+		} else {
 			$redirects = $this->get_redirects_from_db();
-			wp_cache_set( 'redirects', $redirects, 'urlslab', 300 );
 		}
 
 		return $redirects;
@@ -384,7 +399,21 @@ class Urlslab_Redirects extends Urlslab_Widget {
 	private function get_redirects_from_db() {
 		$redirects = array();
 		global $wpdb;
-		$results = $wpdb->get_results( 'SELECT * FROM ' . URLSLAB_REDIRECTS_TABLE, 'ARRAY_A' ); // phpcs:ignore
+		$where_data   = array();
+		$where_data[] = Urlslab_Redirect_Row::NOT_FOUND_STATUS_ANY;
+		if ( is_404() ) {
+			$where_data[] = Urlslab_Redirect_Row::NOT_FOUND_STATUS_NOT_FOUND;
+		} else {
+			$where_data[] = Urlslab_Redirect_Row::NOT_FOUND_STATUS_FOUND;
+		}
+		$where_data[] = Urlslab_Redirect_Row::LOGIN_STATUS_ANY;
+		if ( is_user_logged_in() ) {
+			$where_data[] = Urlslab_Redirect_Row::LOGIN_STATUS_LOGIN_REQUIRED;
+		} else {
+			$where_data[] = Urlslab_Redirect_Row::LOGIN_STATUS_NOT_LOGGED_IN;
+		}
+
+		$results = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_REDIRECTS_TABLE . ' WHERE if_not_found IN (%s,%s) AND is_logged IN (%s,%s)', $where_data ), 'ARRAY_A' ); // phpcs:ignore
 		foreach ( $results as $result ) {
 			$redirects[] = new Urlslab_Redirect_Row( $result );
 		}
@@ -392,8 +421,19 @@ class Urlslab_Redirects extends Urlslab_Widget {
 		return $redirects;
 	}
 
-
 	public static function delete_cache() {
-		wp_cache_delete( 'redirects', 'urlslab' );
+		if ( wp_using_ext_object_cache() ) {
+			if ( wp_cache_supports( 'flush_group' ) ) {
+				wp_cache_flush_groups( self::CACHE_GROUP );
+			} else {
+				wp_cache_delete( 'redirects', self::CACHE_GROUP );
+				wp_cache_delete( 'redirects_404', self::CACHE_GROUP );
+				wp_cache_delete( 'redirects_logged', self::CACHE_GROUP );
+				wp_cache_delete( 'redirects_404_logged', self::CACHE_GROUP );
+			}
+		}
+		if ( Urlslab_File_Cache::get_instance()->is_active() ) {
+			Urlslab_File_Cache::get_instance()->clear( self::CACHE_GROUP );
+		}
 	}
 }

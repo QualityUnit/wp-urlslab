@@ -133,6 +133,8 @@ class Urlslab {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-urlslab-public.php';
 
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cache/class-urlslab-file-cache.php';
+
 		//data
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-data.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-content-generator-row.php';

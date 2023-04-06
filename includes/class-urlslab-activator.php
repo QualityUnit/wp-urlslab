@@ -157,6 +157,15 @@ class Urlslab_Activator {
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_NOT_FOUND_LOG_TABLE . ' ADD COLUMN request_data TEXT' ); // phpcs:ignore
 			}
 		);
+
+		self::update_step(
+			'2.9.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'UPDATE ' . URLSLAB_REDIRECTS_TABLE . " SET if_not_found='A' WHERE if_not_found=''" ); // phpcs:ignore
+				$wpdb->query( 'UPDATE ' . URLSLAB_REDIRECTS_TABLE . " SET is_logged='A' WHERE is_logged=''" ); // phpcs:ignore
+			}
+		);
 		//all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -507,7 +516,7 @@ class Urlslab_Activator {
     		  match_url VARCHAR(2000),
     		  replace_url VARCHAR(2000),
     		  redirect_code SMALLINT unsigned DEFAULT 301,
-    		  is_logged CHAR(1),
+    		  is_logged CHAR(1) DEFAULT 'A',
     		  capabilities VARCHAR(2000),
     		  roles VARCHAR(2000),
     		  browser VARCHAR(2000),
@@ -515,7 +524,7 @@ class Urlslab_Activator {
     		  headers VARCHAR(2000),
     		  params VARCHAR(2000),
     		  cnt INT UNSIGNED ZEROFILL DEFAULT 0,
-    		  if_not_found CHAR(1) DEFAULT '',
+    		  if_not_found CHAR(1) DEFAULT 'A',
 			  PRIMARY KEY (redirect_id)
         ) $charset_collate;";
 
