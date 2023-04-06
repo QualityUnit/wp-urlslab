@@ -26,7 +26,6 @@
 		th,
 		td {
 			text-align: left;
-			white-space: nowrap;
 			height: 1.5em;
 
 			.limit {
@@ -52,6 +51,15 @@
 			flex-direction: column;
 			overflow: hidden auto;
 			height: 20em;
+
+			th,
+			td {
+				text-align: left;
+				height: 1.5em;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				max-width: 100%;
+			}
 
 			.urlslab-progressBar-wrapper {
 				margin-top: auto;
