@@ -84,17 +84,20 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 
 		$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' SET update_scr_date=%s, scr_status=%s WHERE url_id IN (' . implode( ',', array_fill( 0, count( $url_rows ), '%d' ) ) . ')', $data ) ); // phpcs:ignore
 
-		$urlslab_screenshots = $this->client->getScreenshots( new \OpenAPI\Client\Model\DomainDataRetrievalDataRequest( array( 'urls' => $url_names ) ) );
+		$request = new \OpenAPI\Client\Model\DomainDataRetrievalDataRequest();
+		$request->setUrls( $url_names );
+		$request->setRenewFrequency( \OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME );
+
+		$urlslab_screenshots = $this->client->getScreenshots( $request );
 
 		$some_urls_updated = false;
 		foreach ( $urlslab_screenshots as $id => $screenshot ) {
 			switch ( $screenshot->getScreenshotStatus() ) {
-				case 'BLOCKED':
-				case 'NOT_CRAWLING_URL':
+				case \OpenAPI\Client\Model\DomainDataRetrievalScreenshotResponse::SCREENSHOT_STATUS_BLOCKED:
 					$url_objects[ $id ]->set_scr_status( Urlslab_Url_Row::SCR_STATUS_ERROR );
 					$url_objects[ $id ]->update();
 					break;
-				case 'AVAILABLE':
+				case \OpenAPI\Client\Model\DomainDataRetrievalScreenshotResponse::SCREENSHOT_STATUS_AVAILABLE:
 					$url_objects[ $id ]->set_urlslab_domain_id( $screenshot->getDomainId() );
 					$url_objects[ $id ]->set_urlslab_url_id( $screenshot->getUrlId() );
 					$url_objects[ $id ]->set_urlslab_scr_timestamp( $screenshot->getScreenshotId() );
@@ -102,7 +105,8 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 					$url_objects[ $id ]->update();
 					$some_urls_updated = true;
 					break;
-				case 'AWAITING_PENDING':    //no acition
+				case \OpenAPI\Client\Model\DomainDataRetrievalScreenshotResponse::SCREENSHOT_STATUS_PENDING:
+				case \OpenAPI\Client\Model\DomainDataRetrievalScreenshotResponse::SCREENSHOT_STATUS_UPDATING:
 				default:
 					//we will leave object in the status pending
 			}

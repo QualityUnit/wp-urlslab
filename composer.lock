@@ -1301,6 +1301,7 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/6efa800243b92a3601e0101b0333d45df35832a4",
                 "reference": "6efa800243b92a3601e0101b0333d45df35832a4",
+
                 "shasum": ""
             },
             "conflict": {
@@ -1888,6 +1889,7 @@
                 }
             ],
             "time": "2023-04-06T17:04:19+00:00"
+
         },
         {
             "name": "sirbrillig/phpcs-variable-analysis",

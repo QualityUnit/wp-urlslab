@@ -2062,7 +2062,6 @@ button.urlslab-button svg.close,
   z-index: 9999;
 }
 .urlslab-panel-floating[class] .urlslab-panel {
-  overflow-x: hidden;
   padding: 1.5em;
   padding-right: 1em;
 }
@@ -2189,13 +2188,18 @@ button.urlslab-button svg.close,
   }
 }
 
+#adminmenuback {
+  z-index: 6;
+}
+
+.php-error #adminmenuback,
+.php-error #adminmenuwrap {
+  margin-top: 0;
+}
+
 .notice[class],
 #wpfooter {
   display: none !important;
-}
-
-#adminmenuback {
-  z-index: 6;
 }
 
 #wpbody {
