@@ -135,8 +135,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			if ( ! empty( $roles ) ) {
 				$has_role = false;
 				foreach ( $roles as $role ) {
-					if ( in_array( $role, $user->roles )
-					) {
+					if ( in_array( $role, $user->roles ) ) {
 						$has_role = true;
 						break;
 					}
@@ -304,10 +303,8 @@ class Urlslab_Redirects extends Urlslab_Widget {
 										?? '',
 									'encoding' => $_SERVER['HTTP_ACCEPT_ENCODING']
 										?? '',
-									'accept'   => $_SERVER['HTTP_ACCEPT'] ??
-										'',
-									'agent'    => $_SERVER['HTTP_USER_AGENT']
-										??
+									'accept'   => $_SERVER['HTTP_ACCEPT'] ?? '',
+									'agent'    => $_SERVER['HTTP_USER_AGENT'] ??
 										'', // phpcs:ignore
 									'referer'  => $_SERVER['HTTP_REFERER'] ??
 										'', // phpcs:ignore

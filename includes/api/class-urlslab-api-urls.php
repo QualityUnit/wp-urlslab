@@ -24,7 +24,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'update_item' ),
 					'permission_callback' => array(
-						$this, 'update_item_permissions_check',
+						$this,
+						'update_item_permissions_check',
 					),
 					'args'                => array(
 						'scr_status'           => array(
@@ -102,7 +103,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => array( $this, 'delete_all_items' ),
 					'permission_callback' => array(
-						$this, 'delete_item_permissions_check',
+						$this,
+						'delete_item_permissions_check',
 					),
 					'args'                => array(),
 				),
@@ -117,7 +119,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => array( $this, 'delete_item' ),
 					'permission_callback' => array(
-						$this, 'delete_item_permissions_check',
+						$this,
+						'delete_item_permissions_check',
 					),
 					'args'                => array(),
 				),
@@ -152,7 +155,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 
 		if ( ! is_array( $rows ) ) {
 			return new WP_Error(
-				'error', __( 'Failed to get items', 'urlslab' ),
+				'error',
+				__( 'Failed to get items', 'urlslab' ),
 				array( 'status' => 400 )
 			);
 		}
@@ -197,7 +201,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		$rows = $this->get_url_usage_sql( $request )->get_results();
 		if ( ! is_array( $rows ) ) {
 			return new WP_Error(
-				'error', __( 'Failed to get items', 'urlslab' ),
+				'error',
+				__( 'Failed to get items', 'urlslab' ),
 				array( 'status' => 400 )
 			);
 		}
@@ -230,7 +235,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		$rows = $this->get_screenshot_usage_sql( $request )->get_results();
 		if ( ! is_array( $rows ) ) {
 			return new WP_Error(
-				'error', __( 'Failed to get items', 'urlslab' ),
+				'error',
+				__( 'Failed to get items', 'urlslab' ),
 				array( 'status' => 400 )
 			);
 		}
@@ -262,7 +268,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 
 		if ( false === $wpdb->delete( URLSLAB_URLS_TABLE, $delete_params ) ) {
 			return new WP_Error(
-				'error', __( 'Failed to delete', 'urlslab' ),
+				'error',
+				__( 'Failed to delete', 'urlslab' ),
 				array( 'status' => 500 )
 			);
 		}
@@ -275,7 +282,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			)
 		) {
 			return new WP_Error(
-				'error', __( 'Failed to delete', 'urlslab' ),
+				'error',
+				__( 'Failed to delete', 'urlslab' ),
 				array( 'status' => 500 )
 			);
 		}
@@ -285,7 +293,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			)
 		) {
 			return new WP_Error(
-				'error', __( 'Failed to delete', 'urlslab' ),
+				'error',
+				__( 'Failed to delete', 'urlslab' ),
 				array( 'status' => 500 )
 			);
 		}
@@ -298,7 +307,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			)
 		) {
 			return new WP_Error(
-				'error', __( 'Failed to delete', 'urlslab' ),
+				'error',
+				__( 'Failed to delete', 'urlslab' ),
 				array( 'status' => 500 )
 			);
 		}
@@ -308,7 +318,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			)
 		) {
 			return new WP_Error(
-				'error', __( 'Failed to delete', 'urlslab' ),
+				'error',
+				__( 'Failed to delete', 'urlslab' ),
 				array( 'status' => 500 )
 			);
 		}
@@ -318,7 +329,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			)
 		) {
 			return new WP_Error(
-				'error', __( 'Failed to delete', 'urlslab' ),
+				'error',
+				__( 'Failed to delete', 'urlslab' ),
 				array( 'status' => 500 )
 			);
 		}
@@ -331,7 +343,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			)
 		) {
 			return new WP_Error(
-				'error', __( 'Failed to delete', 'urlslab' ),
+				'error',
+				__( 'Failed to delete', 'urlslab' ),
 				array( 'status' => 500 )
 			);
 		}
@@ -341,7 +354,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			)
 		) {
 			return new WP_Error(
-				'error', __( 'Failed to delete', 'urlslab' ),
+				'error',
+				__( 'Failed to delete', 'urlslab' ),
 				array( 'status' => 500 )
 			);
 		}
@@ -354,7 +368,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			)
 		) {
 			return new WP_Error(
-				'error', __( 'Failed to delete', 'urlslab' ),
+				'error',
+				__( 'Failed to delete', 'urlslab' ),
 				array( 'status' => 500 )
 			);
 		}
@@ -371,7 +386,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			)
 		) { // phpcs:ignore
 			return new WP_Error(
-				'error', __( 'Failed to delete', 'urlslab' ),
+				'error',
+				__( 'Failed to delete', 'urlslab' ),
 				array( 'status' => 500 )
 			);
 		}
@@ -381,7 +397,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			)
 		) { // phpcs:ignore
 			return new WP_Error(
-				'error', __( 'Failed to delete', 'urlslab' ),
+				'error',
+				__( 'Failed to delete', 'urlslab' ),
 				array( 'status' => 500 )
 			);
 		}
@@ -431,7 +448,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 					),
 				),
 				'permission_callback' => array(
-					$this, 'get_items_permissions_check',
+					$this,
+					'get_items_permissions_check',
 				),
 			),
 		);
@@ -444,7 +462,10 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		return array(
 			array(
 				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'get_screenshot_usage' ),
+				'callback'            => array(
+					$this,
+					'get_screenshot_usage',
+				),
 				'args'                => array(
 					'rows_per_page'          => array(
 						'required'          => true,
@@ -462,7 +483,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 					),
 				),
 				'permission_callback' => array(
-					$this, 'get_items_permissions_check',
+					$this,
+					'get_items_permissions_check',
 				),
 			),
 		);
@@ -669,7 +691,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 					)
 				),
 				'permission_callback' => array(
-					$this, 'get_items_permissions_check',
+					$this,
+					'get_items_permissions_check',
 				),
 			),
 		);

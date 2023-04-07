@@ -326,8 +326,7 @@ abstract class Urlslab_Widget {
 		$custom_widget_skip = ''
 	) {
 		return $dom->hasAttributes() && $dom->hasAttribute( 'class' )
-			&& (
-				( ! empty( $custom_widget_skip )
+			&& ( ( ! empty( $custom_widget_skip )
 					&& false !== strpos(
 						$dom->getAttribute( 'class' ),
 						'urlslab-skip-' . $custom_widget_skip
@@ -335,8 +334,7 @@ abstract class Urlslab_Widget {
 				|| ( false !== strpos(
 						$dom->getAttribute( 'class' ),
 						'urlslab-skip-all'
-					) )
-			);
+					) ) );
 	}
 
 	/**

@@ -85,17 +85,17 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		$tag = ''
 	): string {
 		if (
-			isset( $_REQUEST['action'] )
-			&& false !== strpos(
-				$_REQUEST['action'],
-				'elementor'
-			)
+			( isset( $_REQUEST['action'] )
+				&& false !== strpos(
+					$_REQUEST['action'],
+					'elementor'
+				) )
 			|| in_array(
 				get_post_status(),
 				array( 'trash', 'auto-draft', 'inherit' )
 			)
-			|| class_exists( '\Elementor\Plugin' )
-			&& \Elementor\Plugin::$instance->editor->is_edit_mode()
+			|| ( class_exists( '\Elementor\Plugin' )
+				&& \Elementor\Plugin::$instance->editor->is_edit_mode() )
 		) {
 			return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">Screenshot Placeholder</div>';
 		}
@@ -104,11 +104,11 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		try {
 			if ( ! empty( $urlslab_atts['url'] ) ) {
 				$url_data = Urlslab_Url_Data_Fetcher::get_instance()
-				                                    ->load_and_schedule_url(
-					                                    new Urlslab_Url(
-						                                    $urlslab_atts['url']
-					                                    )
-				                                    );
+													->load_and_schedule_url(
+														new Urlslab_Url(
+															$urlslab_atts['url']
+														)
+													);
 
 				if ( ! empty( $url_data ) && $url_data->has_screenshot() ) {
 					if ( $this->get_option(
