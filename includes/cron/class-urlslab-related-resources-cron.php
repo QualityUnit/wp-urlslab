@@ -89,7 +89,10 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 
 			$schedule_urls = array();
 			foreach ( $dest_urls as $dest_url ) {
-				$schedule_urls[] = new Urlslab_Url( $dest_url );
+                try {
+                    $schedule_urls[] = new Urlslab_Url($dest_url);
+                } catch ( Exception $e ) {
+                }
 			}
 
 			$url_objects       = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_urls( $schedule_urls );

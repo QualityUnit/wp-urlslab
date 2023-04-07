@@ -16,16 +16,22 @@ class Urlslab_Redirects extends Urlslab_Widget {
 
 	public function template_redirect() {
 		if ( isset( $_SERVER['REQUEST_URI'] ) ) {
-			$url = new Urlslab_Url( $_SERVER['REQUEST_URI'] );
+            try {
+                $url = new Urlslab_Url($_SERVER['REQUEST_URI']);
 
-			$redirects = $this->get_redirects();
-			foreach ( $redirects as $redirect ) {
-				if ( $this->is_match( $redirect, $url ) ) {
-					$redirect->increase_cnt();
-					wp_redirect( $redirect->get_replace_url(), $redirect->get_redirect_code(), 'URLsLab' );
-					exit;
-				}
-			}
+                $redirects = $this->get_redirects();
+                foreach ($redirects as $redirect) {
+                    if ($this->is_match($redirect, $url)) {
+                        $redirect->increase_cnt();
+                        wp_redirect(
+                            $redirect->get_replace_url(),
+                            $redirect->get_redirect_code(), 'URLsLab'
+                        );
+                        exit;
+                    }
+                }
+            } catch ( Exception $e ) {
+            }
 		}
 
 		if ( is_404() ) {
@@ -234,27 +240,38 @@ class Urlslab_Redirects extends Urlslab_Widget {
 	 */
 	public function log_not_found_url(): void {
 		if ( $this->get_option( self::SETTING_NAME_LOGGING ) && isset( $_SERVER['REQUEST_URI'] ) ) {
-			$url = new Urlslab_Url( wp_unslash( filter_var( $_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL ) ) );
-			$log = new Urlslab_Not_Found_Log_Row(
-				array(
-					'url'          => $url->get_url_with_protocol(),
-					'url_id'       => $url->get_url_id(),
-					'cnt'          => 1,
-					'request_data' => wp_json_encode(
-						array(
-							'request' => $_REQUEST,
-							'server'  => array(
-								'lang'     => $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '',
-								'encoding' => $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '',
-								'accept'   => $_SERVER['HTTP_ACCEPT'] ?? '',
-								'agent'    => $_SERVER['HTTP_USER_AGENT'] ?? '', // phpcs:ignore
-								'referer'  => $_SERVER['HTTP_REFERER'] ?? '', // phpcs:ignore
-							),
-						)
-					),
-				)
-			);
-			$log->upsert();
+            try {
+                $url = new Urlslab_Url(
+                    wp_unslash(
+                        filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL)
+                    )
+                );
+                $log = new Urlslab_Not_Found_Log_Row(
+                    array(
+                        'url'          => $url->get_url_with_protocol(),
+                        'url_id'       => $url->get_url_id(),
+                        'cnt'          => 1,
+                        'request_data' => wp_json_encode(
+                            array(
+                                'request' => $_REQUEST,
+                                'server'  => array(
+                                    'lang'     => $_SERVER['HTTP_ACCEPT_LANGUAGE']
+                                        ?? '',
+                                    'encoding' => $_SERVER['HTTP_ACCEPT_ENCODING']
+                                        ?? '',
+                                    'accept'   => $_SERVER['HTTP_ACCEPT'] ?? '',
+                                    'agent'    => $_SERVER['HTTP_USER_AGENT'] ??
+                                        '', // phpcs:ignore
+                                    'referer'  => $_SERVER['HTTP_REFERER'] ??
+                                        '', // phpcs:ignore
+                                ),
+                            )
+                        ),
+                    )
+                );
+                $log->upsert();
+            } catch ( Exception $e ) {
+            }
 		}
 	}
 

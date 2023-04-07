@@ -15,7 +15,11 @@ class Urlslab_Not_Found_Log_Row extends Urlslab_Data {
 	}
 
 	private function compute_url_id(): int {
-		return ( new Urlslab_Url( $this->get_url() ) )->get_url_id();
+        try {
+            return (new Urlslab_Url($this->get_url()))->get_url_id();
+        } catch ( Exception $e ) {
+            return 0;
+        }
 	}
 
 	public function get_url_id(): int {

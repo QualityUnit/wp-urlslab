@@ -280,16 +280,40 @@ abstract class Urlslab_Widget {
 			   );
 	}
 
+    /**
+     * @return Urlslab_Url
+     * @throws Exception
+     */
 	protected function get_current_page_url(): Urlslab_Url {
 		if ( is_object( self::$current_page_url ) ) {
 			return self::$current_page_url;
 		}
 
 		if ( is_category() ) {
-			self::$current_page_url = new Urlslab_Url( get_category_link( get_query_var( 'cat' ) ), true );
-		} else {
-			self::$current_page_url = new Urlslab_Url( get_permalink( get_the_ID() ), true );
+            $cat = get_category_link( get_query_var( 'cat' ) );
+            if ( ! empty( $cat ) ) {
+                try {
+                    self::$current_page_url = new Urlslab_Url($cat, true);
+                } catch ( Exception $e ) {
+                }
+            }
 		}
+        if ( empty( self::$current_page_url ) && get_the_ID() ) {
+            try {
+                self::$current_page_url = new Urlslab_Url(
+                    get_permalink(get_the_ID()), true
+                );
+            } catch ( Exception $e ) {
+            }
+        }
+        if ( empty( self::$current_page_url ) ) {
+            global $wp;
+            $current_url = home_url( add_query_arg( array(), $wp->request ) );
+            try {
+                self::$current_page_url = new Urlslab_Url($current_url, true);
+            } catch ( Exception $e ) {
+            }
+        }
 
 		return self::$current_page_url;
 	}

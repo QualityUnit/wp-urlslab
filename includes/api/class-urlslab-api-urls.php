@@ -162,10 +162,16 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		foreach ( $rows as $row ) {
 			$row->src_url_id    = (int) $row->src_url_id;
 			$row->dest_url_id   = (int) $row->dest_url_id;
-			$url                = new Urlslab_Url( $row->src_url_name, true );
-			$row->src_url_name  = $url->get_url_with_protocol();
-			$url                = new Urlslab_Url( $row->dest_url_name, true );
-			$row->dest_url_name = $url->get_url_with_protocol();
+            try {
+                $url = new Urlslab_Url($row->src_url_name, true);
+                $row->src_url_name = $url->get_url_with_protocol();
+            } catch ( Exception $e ) {
+            }
+            try {
+                $url = new Urlslab_Url($row->dest_url_name, true);
+                $row->dest_url_name = $url->get_url_with_protocol();
+            } catch ( Exception $e ) {
+            }
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -184,8 +190,11 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		foreach ( $rows as $row ) {
 			$row->src_url_id        = (int) $row->src_url_id;
 			$row->screenshot_url_id = (int) $row->screenshot_url_id;
-			$url                    = new Urlslab_Url( $row->src_url_name, true );
-			$row->src_url_name      = $url->get_url_with_protocol();
+            try {
+                $url = new Urlslab_Url($row->src_url_name, true);
+                $row->src_url_name = $url->get_url_with_protocol();
+            } catch ( Exception $e ) {
+            }
 		}
 
 		return new WP_REST_Response( $rows, 200 );
