@@ -325,7 +325,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 					'from_url_id'   => array(
 						'required'          => false,
 						'validate_callback' => function( $param ) {
-							return is_numeric( $param );
+							return empty( $param ) || is_numeric( $param );
 						},
 					),
 				),

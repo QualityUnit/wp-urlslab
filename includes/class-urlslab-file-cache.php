@@ -1,6 +1,5 @@
 <?php
 
-
 class Urlslab_File_Cache {
 
 	private $cache_path;
@@ -9,7 +8,7 @@ class Urlslab_File_Cache {
 
 	private $mem_cache = array();
 
-	public static function get_instance() {
+	public static function get_instance(): Urlslab_File_Cache {
 		if ( null === self::$instance ) {
 			self::$instance = new Urlslab_File_Cache();
 		}
@@ -32,16 +31,23 @@ class Urlslab_File_Cache {
 		if ( ! $this->is_active() ) {
 			return;
 		}
-		$file                              = $this->cache_path . md5( $key ) . '_' . $group . '.cache';
-		$content                           = array(
-			'data'       => $data,
+		$file = $this->cache_path . md5( $key ) . '_' . $group . '.cache';
+		$content = array(
+			'data' => $data,
 			'expiration' => $expiration > 0 ? ( time() + (int) $expiration ) : 0,
 		);
 		$this->mem_cache[ $group ][ $key ] = $content;
 		@file_put_contents( $file, serialize( $content ) );
 	}
 
-	public function get( $key, $group = '', &$found = null ) {
+	/**
+	 * @param $key
+	 * @param $group
+	 * @param $found
+	 * @param $allowed_classes array or boolean - if array, it should contain names of classes
+	 * @return false|mixed
+	 */
+	public function get( $key, $group = '', &$found = null, $allowed_classes = false ) {
 		if ( ! $this->is_active() ) {
 			$found = false;
 
@@ -57,7 +63,7 @@ class Urlslab_File_Cache {
 
 				return false;
 			}
-			$content = unserialize( file_get_contents( $file ) );
+			$content = unserialize( file_get_contents( $file ), array( 'allowed_classes' => $allowed_classes ) );
 		}
 
 		if ( 0 !== $content['expiration'] && time() > $content['expiration'] ) {

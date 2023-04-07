@@ -1,20 +1,20 @@
 <?php
 
 class Urlslab_Redirects extends Urlslab_Widget {
-	const SLUG = 'redirects';
-	const SETTING_NAME_LOGGING = 'urlslab_redir_log';
-	const SETTING_NAME_LOG_HISTORY_MAX_TIME = 'urlslab_redir_log_max_time';
-	const SETTING_NAME_LOG_HISTORY_MAX_ROWS = 'urlslab_redir_log_max_rows';
-	const SETTING_NAME_DEFAULT_REDIRECT_URL = 'urlslab_redir_default_url';
-	const SETTING_NAME_DEFAULT_REDIRECT_URL_IMAGE = 'urlslab_redir_default_url_image';
+	public const SLUG = 'redirects';
+	public const SETTING_NAME_LOGGING = 'urlslab_redir_log';
+	public const SETTING_NAME_LOG_HISTORY_MAX_TIME = 'urlslab_redir_log_max_time';
+	public const SETTING_NAME_LOG_HISTORY_MAX_ROWS = 'urlslab_redir_log_max_rows';
+	public const SETTING_NAME_DEFAULT_REDIRECT_URL = 'urlslab_redir_default_url';
+	public const SETTING_NAME_DEFAULT_REDIRECT_URL_IMAGE = 'urlslab_redir_default_url_image';
 
-	const CACHE_GROUP = 'urlslab_redirects';
+	public const CACHE_GROUP = 'urlslab_redirects';
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_filter( 'template_redirect', $this, 'template_redirect', PHP_INT_MAX, 0 );
 	}
 
-	function template_redirect() {
+	public function template_redirect() {
 		if ( isset( $_SERVER['REQUEST_URI'] ) ) {
 			$url = new Urlslab_Url( $_SERVER['REQUEST_URI'] );
 
@@ -31,12 +31,11 @@ class Urlslab_Redirects extends Urlslab_Widget {
 		if ( is_404() ) {
 			$this->log_not_found_url();
 			$this->default_image_redirect();
-			$this->default_redirect(); //last option should be default redirect
+			$this->default_redirect(); // last option should be default redirect
 		}
 	}
 
 	public function is_match( Urlslab_Redirect_Row $redirect, Urlslab_Url $url ) {
-
 		switch ( $redirect->get_match_type() ) {
 			case Urlslab_Redirect_Row::MATCH_TYPE_EXACT:
 				if ( $redirect->get_match_url() != $url->get_url_with_protocol() ) {
@@ -106,12 +105,13 @@ class Urlslab_Redirects extends Urlslab_Widget {
 		}
 
 		if ( ! empty( $redirect->get_roles() ) ) {
-			$user  = wp_get_current_user();
+			$user = wp_get_current_user();
 			$roles = explode( ',', $redirect->get_roles() );
 			if ( ! empty( $roles ) ) {
 				$has_role = false;
 				foreach ( $roles as $role ) {
-					if ( in_array( $role, $user->roles ) ) {
+					if ( in_array( $role, $user->roles )
+					) {
 						$has_role = true;
 						break;
 					}
@@ -126,7 +126,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			$browsers = explode( ',', strtolower( $redirect->get_browser() ) );
 			if ( ! empty( $browsers ) ) {
 				$has_browser = false;
-				$agent       = strtolower( $_SERVER['HTTP_USER_AGENT'] );//phpcs:ignore
+				$agent = strtolower($_SERVER['HTTP_USER_AGENT']);// phpcs:ignore
 				foreach ( $browsers as $browser_name ) {
 					if ( false !== strpos( $agent, trim( $browser_name ) ) ) {
 						$has_browser = true;
@@ -147,7 +147,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 					foreach ( $cookies as $cookie_str ) {
 						$cookie = explode( '=', $cookie_str );
 
-						if ( isset( $_COOKIE[ trim( $cookie[0] ) ] ) && ( ! isset( $cookie[1] ) || $_COOKIE[ trim( $cookie[0] ) ] == trim( $cookie[1] ) ) ) {//phpcs:ignore
+						if ( isset( $_COOKIE[ trim( $cookie[0] ) ] ) && ( ! isset( $cookie[1] ) || $_COOKIE[ trim( $cookie[0] ) ] == trim( $cookie[1] ) ) ) {// phpcs:ignore
 							$has_cookie = true;
 							break;
 						}
@@ -167,7 +167,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 					foreach ( $headers as $header_str ) {
 						$header = explode( '=', $header_str );
 
-						if ( isset( $_SERVER[ trim( $header[0] ) ] ) && ( ! isset( $header[1] ) || $_SERVER[ trim( $header[0] ) ] == trim( $header[1] ) ) ) {//phpcs:ignore
+						if ( isset( $_SERVER[ trim( $header[0] ) ] ) && ( ! isset( $header[1] ) || $_SERVER[ trim( $header[0] ) ] == trim( $header[1] ) ) ) {// phpcs:ignore
 							$has_header = true;
 							break;
 						}
@@ -187,7 +187,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 					foreach ( $params as $param_str ) {
 						$param = explode( '=', $param_str );
 
-						if ( isset( $_REQUEST[ trim( $param[0] ) ] ) && ( ! isset( $param[1] ) || $_REQUEST[ trim( $param[0] ) ] == trim( $param[1] ) ) ) {//phpcs:ignore
+						if ( isset( $_REQUEST[ trim( $param[0] ) ] ) && ( ! isset( $param[1] ) || $_REQUEST[ trim( $param[0] ) ] == trim( $param[1] ) ) ) {// phpcs:ignore
 							$has_param = true;
 							break;
 						}
@@ -198,7 +198,6 @@ class Urlslab_Redirects extends Urlslab_Widget {
 				}
 			}
 		}
-
 
 		return true;
 	}
@@ -248,8 +247,8 @@ class Urlslab_Redirects extends Urlslab_Widget {
 								'lang'     => $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '',
 								'encoding' => $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '',
 								'accept'   => $_SERVER['HTTP_ACCEPT'] ?? '',
-								'agent'    => $_SERVER['HTTP_USER_AGENT'] ?? '',//phpcs:ignore
-								'referer'  => $_SERVER['HTTP_REFERER'] ?? '',//phpcs:ignore
+								'agent'    => $_SERVER['HTTP_USER_AGENT'] ?? '', // phpcs:ignore
+								'referer'  => $_SERVER['HTTP_REFERER'] ?? '', // phpcs:ignore
 							),
 						)
 					),
@@ -289,7 +288,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			__( 'Redirect unmatched 404 requests to a default URL, or leave empty for the standard 404 page.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return empty( $value ) || filter_var( $value, FILTER_VALIDATE_URL );
 			},
 			'redirecting'
@@ -302,12 +301,11 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			__( 'Redirect 404 image requests to a default image URL, or leave empty for the standard 404 page.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return empty( $value ) || filter_var( $value, FILTER_VALIDATE_URL );
 			},
 			'redirecting'
 		);
-
 
 		$this->add_options_form_section( 'logging', __( 'Logging Settings' ), __( 'Effortlessly log all 404 URLs and create efficient redirect rules, while safeguarding your system from potential overload during attacks.' ) );
 
@@ -339,7 +337,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 				7257600 => __( '3 months' ),
 				0       => __( 'Never' ),
 			),
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'logging'
@@ -361,7 +359,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 				100000  => __( '100.000' ),
 				1000000 => __( '1.000.000' ),
 			),
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'logging'
@@ -383,23 +381,28 @@ class Urlslab_Redirects extends Urlslab_Widget {
 				$redirects = $this->get_redirects_from_db();
 				wp_cache_set( $this->get_cache_key(), $redirects, self::CACHE_GROUP, 3600 );
 			}
-		} else if ( Urlslab_File_Cache::get_instance()->is_active() ) {
-			$redirects = Urlslab_File_Cache::get_instance()->get( $this->get_cache_key(), self::CACHE_GROUP );
-			if ( false === $redirects ) {
-				$redirects = $this->get_redirects_from_db();
-				Urlslab_File_Cache::get_instance()->set( $this->get_cache_key(), $redirects, self::CACHE_GROUP );
-			}
 		} else {
-			$redirects = $this->get_redirects_from_db();
+			if ( Urlslab_File_Cache::get_instance()->is_active() ) {
+				$redirects = Urlslab_File_Cache::get_instance()->get( $this->get_cache_key(), self::CACHE_GROUP, $found, array( 'Urlslab_Redirect_Row' ) );
+				if ( false === $redirects ) {
+					$redirects = $this->get_redirects_from_db();
+					Urlslab_File_Cache::get_instance()->set( $this->get_cache_key(), $redirects, self::CACHE_GROUP );
+				}
+			} else {
+				$redirects = $this->get_redirects_from_db();
+			}
 		}
 
 		return $redirects;
 	}
 
+	/**
+	 * @return Urlslab_Redirect_Row[]
+	 */
 	private function get_redirects_from_db() {
 		$redirects = array();
 		global $wpdb;
-		$where_data   = array();
+		$where_data = array();
 		$where_data[] = Urlslab_Redirect_Row::NOT_FOUND_STATUS_ANY;
 		if ( is_404() ) {
 			$where_data[] = Urlslab_Redirect_Row::NOT_FOUND_STATUS_NOT_FOUND;

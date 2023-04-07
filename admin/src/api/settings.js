@@ -1,6 +1,6 @@
 export async function fetchSettings( slug ) {
 	try {
-		const result = await fetch( `/wp-json/urlslab/v1/settings/${ slug }/`, {
+		const result = await fetch( `../wp-json/urlslab/v1/settings/${ slug }/`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -17,7 +17,7 @@ export async function fetchSettings( slug ) {
 
 export async function setSettings( slug, object ) {
 	try {
-		const result = await fetch( `/wp-json/urlslab/v1/settings/${ slug }`, {
+		const result = await fetch( `../wp-json/urlslab/v1/settings/${ slug }`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
