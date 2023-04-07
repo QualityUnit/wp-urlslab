@@ -46,7 +46,7 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 			$wpdb->prepare(
 				'SELECT * FROM ' . URLSLAB_URLS_TABLE
 				. ' WHERE rel_schedule = %s OR (rel_schedule = %s AND rel_updated < %s) OR (rel_schedule = %s AND rel_updated < %s ) ORDER BY rel_updated LIMIT 1',
-															// phpcs:ignore
+				                                            // phpcs:ignore
 				Urlslab_Url_Row::REL_SCHEDULE_NEW,
 				Urlslab_Url_Row::REL_SCHEDULE_SCHEDULED,
 				Urlslab_Data::get_now( time() - 24 * 3600 ),//retry if scheduled

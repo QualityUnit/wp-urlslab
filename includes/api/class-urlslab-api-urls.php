@@ -156,29 +156,29 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		$recordset = array();
 
 		foreach ( $rows as $row ) {
-			$url = new Urlslab_Url_Row( (array)$row );
-			$row = (object)array_replace(
-				(array)$row, $url->get_object_values_as_array()
+			$url = new Urlslab_Url_Row( (array) $row );
+			$row = (object) array_replace(
+				(array) $row, $url->get_object_values_as_array()
 			);
 
 			$row->screenshot_url = $url->get_screenshot_url();
 			$row->url_name = $url->get_url()->get_url_with_protocol();
 			if ( in_array( 'url_usage_count', $this->get_custom_columns() ) ) {
-				$row->url_usage_count = (int)$row->url_usage_count;
+				$row->url_usage_count = (int) $row->url_usage_count;
 			}
 			if ( in_array(
 				'screenshot_usage_count', $this->get_custom_columns()
 			)
 			) {
 				$row->screenshot_usage_count
-					= (int)$row->screenshot_usage_count;
+					= (int) $row->screenshot_usage_count;
 			}
 			if ( in_array( 'url_links_count', $this->get_custom_columns() ) ) {
-				$row->url_links_count = (int)$row->url_links_count;
+				$row->url_links_count = (int) $row->url_links_count;
 			}
-			$row->urlslab_scr_timestamp = (int)$row->urlslab_scr_timestamp;
-			$row->urlslab_sum_timestamp = (int)$row->urlslab_sum_timestamp;
-			$row->url_id = (int)$row->url_id;
+			$row->urlslab_scr_timestamp = (int) $row->urlslab_scr_timestamp;
+			$row->urlslab_sum_timestamp = (int) $row->urlslab_sum_timestamp;
+			$row->url_id = (int) $row->url_id;
 
 			$recordset[] = $row;
 		}
@@ -197,8 +197,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->src_url_id = (int)$row->src_url_id;
-			$row->dest_url_id = (int)$row->dest_url_id;
+			$row->src_url_id = (int) $row->src_url_id;
+			$row->dest_url_id = (int) $row->dest_url_id;
 			try {
 				$url = new Urlslab_Url( $row->src_url_name, true );
 				$row->src_url_name = $url->get_url_with_protocol();
@@ -230,8 +230,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->src_url_id = (int)$row->src_url_id;
-			$row->screenshot_url_id = (int)$row->screenshot_url_id;
+			$row->src_url_id = (int) $row->src_url_id;
+			$row->screenshot_url_id = (int) $row->screenshot_url_id;
 			try {
 				$url = new Urlslab_Url( $row->src_url_name, true );
 				$row->src_url_name = $url->get_url_with_protocol();
@@ -252,7 +252,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		global $wpdb;
 
 		$delete_params = array();
-		$delete_params[ 'url_id' ] = $request->get_param( 'url_id' );
+		$delete_params['url_id'] = $request->get_param( 'url_id' );
 
 		if ( false === $wpdb->delete( URLSLAB_URLS_TABLE, $delete_params ) ) {
 			return new WP_Error(
@@ -262,7 +262,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		}
 
 		$delete_params = array();
-		$delete_params[ 'url_id' ] = $request->get_param( 'url_id' );
+		$delete_params['url_id'] = $request->get_param( 'url_id' );
 		if ( false === $wpdb->delete(
 				URLSLAB_FILE_URLS_TABLE, $delete_params
 			)
@@ -283,7 +283,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		}
 
 		$delete_params = array();
-		$delete_params[ 'src_url_id' ] = $request->get_param( 'url_id' );
+		$delete_params['src_url_id'] = $request->get_param( 'url_id' );
 		if ( false === $wpdb->delete(
 				URLSLAB_URLS_MAP_TABLE, $delete_params
 			)
@@ -313,7 +313,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		}
 
 		$delete_params = array();
-		$delete_params[ 'dest_url_id' ] = $request->get_param( 'url_id' );
+		$delete_params['dest_url_id'] = $request->get_param( 'url_id' );
 		if ( false === $wpdb->delete(
 				URLSLAB_URLS_MAP_TABLE, $delete_params
 			)
@@ -334,7 +334,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		}
 
 		$delete_params = array();
-		$delete_params[ 'screenshot_url_id' ] = $request->get_param( 'url_id' );
+		$delete_params['screenshot_url_id'] = $request->get_param( 'url_id' );
 		if ( false === $wpdb->delete(
 				URLSLAB_SCREENSHOT_URLS_TABLE, $delete_params
 			)

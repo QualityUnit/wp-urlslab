@@ -159,10 +159,10 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 				$row->dest_url_id = $row_url->get_url_id();
 			} catch ( Exception $e ) {
 			}
-			$row->kw_id = (int)$row->kw_id;
-			$row->kw_length = (int)$row->kw_length;
-			$row->kw_priority = (int)$row->kw_priority;
-			$row->kw_usage_count = (int)$row->kw_usage_count;
+			$row->kw_id = (int) $row->kw_id;
+			$row->kw_length = (int) $row->kw_length;
+			$row->kw_priority = (int) $row->kw_priority;
+			$row->kw_usage_count = (int) $row->kw_usage_count;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -179,7 +179,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->url_id = (int)$row->url_id;
+			$row->url_id = (int) $row->url_id;
 			try {
 				$url = new Urlslab_Url( $row->url_name, true );
 				$row->url_name = $url->get_url_with_protocol();
@@ -200,7 +200,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		global $wpdb;
 
 		$delete_params = array();
-		$delete_params[ 'kw_id' ] = $request->get_param( 'kw_id' );
+		$delete_params['kw_id'] = $request->get_param( 'kw_id' );
 
 		if ( false === $wpdb->delete(
 				URLSLAB_KEYWORDS_TABLE, $delete_params
@@ -257,8 +257,8 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		$schedule_urls = array();
 		$rows = array();
 
-		foreach ( $request->get_json_params()[ 'rows' ] as $row ) {
-			$obj = $this->get_row_object( (array)$row );
+		foreach ( $request->get_json_params()['rows'] as $row ) {
+			$obj = $this->get_row_object( (array) $row );
 			try {
 				$schedule_urls[ $obj->get_url_link() ] = new Urlslab_Url(
 					$obj->get_url_link()

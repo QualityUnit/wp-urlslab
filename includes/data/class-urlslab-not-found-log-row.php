@@ -7,19 +7,19 @@ class Urlslab_Not_Found_Log_Row extends Urlslab_Data {
 	 */
 	public function __construct( array $log = array(), $loaded_from_db = true
 	) {
-		$this->set_url( $log[ 'url' ] ?? '', $loaded_from_db );
-		$this->set_cnt( $log[ 'cnt' ] ?? 0, $loaded_from_db );
+		$this->set_url( $log['url'] ?? '', $loaded_from_db );
+		$this->set_cnt( $log['cnt'] ?? 0, $loaded_from_db );
 		$this->set_created(
-			$log[ 'created' ] ?? self::get_now(), $loaded_from_db
+			$log['created'] ?? self::get_now(), $loaded_from_db
 		);
 		$this->set_updated(
-			$log[ 'updated' ] ?? self::get_now(), $loaded_from_db
+			$log['updated'] ?? self::get_now(), $loaded_from_db
 		);
 		$this->set_request_data(
-			$log[ 'request_data' ] ?? '', $loaded_from_db
+			$log['request_data'] ?? '', $loaded_from_db
 		);
 		$this->set_url_id(
-			$log[ 'url_id' ] ?? $this->compute_url_id(), $loaded_from_db
+			$log['url_id'] ?? $this->compute_url_id(), $loaded_from_db
 		);
 	}
 

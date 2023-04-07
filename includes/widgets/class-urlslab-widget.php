@@ -73,20 +73,20 @@ abstract class Urlslab_Widget {
 		$result = array();
 
 		foreach ( $this->options as $option_id => $option ) {
-			switch ( $option[ 'type' ] ) {
+			switch ( $option['type'] ) {
 			case self::OPTION_TYPE_PASSWORD:
-				if ( get_option( $option_id, $option[ 'default' ] ?? false ) ) {
-					$option[ 'value' ] = self::PASSWORD_PLACEHOLDER;
+				if ( get_option( $option_id, $option['default'] ?? false ) ) {
+					$option['value'] = self::PASSWORD_PLACEHOLDER;
 				} else {
-					$option[ 'value' ] = '';
+					$option['value'] = '';
 				}
 				break;
 			case self::OPTION_TYPE_CHECKBOX:
 				$value = $this->get_option( $option_id );
 				if ( $value ) {
-					$option[ 'value' ] = true;
+					$option['value'] = true;
 				} else {
-					$option[ 'value' ] = false;
+					$option['value'] = false;
 				}
 				break;
 			case self::OPTION_TYPE_LISTBOX:
@@ -94,11 +94,11 @@ abstract class Urlslab_Widget {
 				$possible_values = $this->get_option_possible_values(
 					$option_id
 				);
-				$option[ 'possible_values' ] = $possible_values;
+				$option['possible_values'] = $possible_values;
 				if ( ! isset( $possible_values[ $value ] ) ) {
-					$value = $option[ 'default' ];
+					$value = $option['default'];
 				}
-				$option[ 'value' ] = $value;
+				$option['value'] = $value;
 				break;
 			case self::OPTION_TYPE_MULTI_CHECKBOX:
 				$values = $this->get_option( $option_id );
@@ -108,18 +108,18 @@ abstract class Urlslab_Widget {
 				$possible_values = $this->get_option_possible_values(
 					$option_id
 				);
-				$option[ 'possible_values' ] = $possible_values;
+				$option['possible_values'] = $possible_values;
 				foreach ( $values as $id => $value ) {
 					if ( ! isset( $possible_values[ $value ] ) ) {
 						unset( $values[ $id ] );
 					}
 				}
-				$option[ 'value' ] = array_values( $values );
+				$option['value'] = array_values( $values );
 				break;
 			default:
-				$option[ 'value' ] = $this->get_option( $option_id );
+				$option['value'] = $this->get_option( $option_id );
 			}
-			if ( false == $section_id || $option[ 'section' ] == $section_id ) {
+			if ( false == $section_id || $option['section'] == $section_id ) {
 				$result[ $option_id ] = $option;
 			}
 		}
@@ -141,8 +141,8 @@ abstract class Urlslab_Widget {
 		}
 		foreach ( $this->options as $option ) {
 			add_option(
-				$option[ 'id' ], $option[ 'default' ] ?? false, '',
-				$option[ 'autoload' ] ?? true
+				$option['id'], $option['default'] ?? false, '',
+				$option['autoload'] ?? true
 			);
 		}
 	}
@@ -216,9 +216,9 @@ abstract class Urlslab_Widget {
 			return false;
 		}
 
-		if ( null !== $this->options[ $option_id ][ 'validator' ] ) {
+		if ( null !== $this->options[ $option_id ]['validator'] ) {
 			if ( ! call_user_func(
-				$this->options[ $option_id ][ 'validator' ], $value
+				$this->options[ $option_id ]['validator'], $value
 			)
 			) {
 				return false;
@@ -240,7 +240,7 @@ abstract class Urlslab_Widget {
 			}
 		}
 
-		switch ( $this->options[ $option_id ][ 'type' ] ) {
+		switch ( $this->options[ $option_id ]['type'] ) {
 		case self::OPTION_TYPE_CHECKBOX:
 			if ( $value || 1 === $value || 'true' === $value ) {
 				$value = true;
@@ -270,21 +270,21 @@ abstract class Urlslab_Widget {
 
 	private function get_option_possible_values( $option_id ): array {
 		if ( isset( $this->options[ $option_id ] )
-			&& isset( $this->options[ $option_id ][ 'possible_values' ] )
+			&& isset( $this->options[ $option_id ]['possible_values'] )
 		) {
 			if ( is_callable(
-				$this->options[ $option_id ][ 'possible_values' ]
+				$this->options[ $option_id ]['possible_values']
 			)
 			) {
 				return call_user_func(
-					$this->options[ $option_id ][ 'possible_values' ]
+					$this->options[ $option_id ]['possible_values']
 				);
 			} else {
 				if ( is_array(
-					$this->options[ $option_id ][ 'possible_values' ]
+					$this->options[ $option_id ]['possible_values']
 				)
 				) {
-					return $this->options[ $option_id ][ 'possible_values' ];
+					return $this->options[ $option_id ]['possible_values'];
 				}
 			}
 		}
@@ -300,13 +300,13 @@ abstract class Urlslab_Widget {
 		if ( ! isset( $this->options[ $option_id ] ) ) {
 			return null;
 		}
-		if ( ! isset( $this->options[ $option_id ][ 'value' ] ) ) {
-			$this->options[ $option_id ][ 'value' ] = get_option(
-				$option_id, $this->options[ $option_id ][ 'default' ] ?? false
+		if ( ! isset( $this->options[ $option_id ]['value'] ) ) {
+			$this->options[ $option_id ]['value'] = get_option(
+				$option_id, $this->options[ $option_id ]['default'] ?? false
 			);
 		}
 
-		return $this->options[ $option_id ][ 'value' ];
+		return $this->options[ $option_id ]['value'];
 	}
 
 	protected function is_skip_elemenet( DOMNode $dom, $custom_widget_skip = ''
