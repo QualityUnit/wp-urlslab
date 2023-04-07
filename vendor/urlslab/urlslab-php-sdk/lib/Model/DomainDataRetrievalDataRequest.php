@@ -57,7 +57,8 @@ class DomainDataRetrievalDataRequest implements ModelInterface, ArrayAccess, \Js
       * @var string[]
       */
     protected static $openAPITypes = [
-        'urls' => 'string[]'
+        'urls' => 'string[]',
+        'renew_frequency' => 'string'
     ];
 
     /**
@@ -68,7 +69,8 @@ class DomainDataRetrievalDataRequest implements ModelInterface, ArrayAccess, \Js
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'urls' => null
+        'urls' => null,
+        'renew_frequency' => null
     ];
 
     /**
@@ -77,7 +79,8 @@ class DomainDataRetrievalDataRequest implements ModelInterface, ArrayAccess, \Js
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'urls' => false
+        'urls' => false,
+		'renew_frequency' => false
     ];
 
     /**
@@ -166,7 +169,8 @@ class DomainDataRetrievalDataRequest implements ModelInterface, ArrayAccess, \Js
      * @var string[]
      */
     protected static $attributeMap = [
-        'urls' => 'urls'
+        'urls' => 'urls',
+        'renew_frequency' => 'renewFrequency'
     ];
 
     /**
@@ -175,7 +179,8 @@ class DomainDataRetrievalDataRequest implements ModelInterface, ArrayAccess, \Js
      * @var string[]
      */
     protected static $setters = [
-        'urls' => 'setUrls'
+        'urls' => 'setUrls',
+        'renew_frequency' => 'setRenewFrequency'
     ];
 
     /**
@@ -184,7 +189,8 @@ class DomainDataRetrievalDataRequest implements ModelInterface, ArrayAccess, \Js
      * @var string[]
      */
     protected static $getters = [
-        'urls' => 'getUrls'
+        'urls' => 'getUrls',
+        'renew_frequency' => 'getRenewFrequency'
     ];
 
     /**
@@ -228,6 +234,31 @@ class DomainDataRetrievalDataRequest implements ModelInterface, ArrayAccess, \Js
         return self::$openAPIModelName;
     }
 
+    public const RENEW_FREQUENCY_ONE_TIME = 'ONE_TIME';
+    public const RENEW_FREQUENCY_YEARLY = 'YEARLY';
+    public const RENEW_FREQUENCY_DAILY = 'DAILY';
+    public const RENEW_FREQUENCY_NO_SCHEDULE = 'NO_SCHEDULE';
+    public const RENEW_FREQUENCY_WEEKLY = 'WEEKLY';
+    public const RENEW_FREQUENCY_HOURLY = 'HOURLY';
+    public const RENEW_FREQUENCY_MONTHLY = 'MONTHLY';
+
+    /**
+     * Gets allowable values of the enum
+     *
+     * @return string[]
+     */
+    public function getRenewFrequencyAllowableValues()
+    {
+        return [
+            self::RENEW_FREQUENCY_ONE_TIME,
+            self::RENEW_FREQUENCY_YEARLY,
+            self::RENEW_FREQUENCY_DAILY,
+            self::RENEW_FREQUENCY_NO_SCHEDULE,
+            self::RENEW_FREQUENCY_WEEKLY,
+            self::RENEW_FREQUENCY_HOURLY,
+            self::RENEW_FREQUENCY_MONTHLY,
+        ];
+    }
 
     /**
      * Associative array for storing property values
@@ -245,6 +276,7 @@ class DomainDataRetrievalDataRequest implements ModelInterface, ArrayAccess, \Js
     public function __construct(array $data = null)
     {
         $this->setIfExists('urls', $data ?? [], null);
+        $this->setIfExists('renew_frequency', $data ?? [], null);
     }
 
     /**
@@ -277,6 +309,18 @@ class DomainDataRetrievalDataRequest implements ModelInterface, ArrayAccess, \Js
         if ($this->container['urls'] === null) {
             $invalidProperties[] = "'urls' can't be null";
         }
+        if ($this->container['renew_frequency'] === null) {
+            $invalidProperties[] = "'renew_frequency' can't be null";
+        }
+        $allowedValues = $this->getRenewFrequencyAllowableValues();
+        if (!is_null($this->container['renew_frequency']) && !in_array($this->container['renew_frequency'], $allowedValues, true)) {
+            $invalidProperties[] = sprintf(
+                "invalid value '%s' for 'renew_frequency', must be one of '%s'",
+                $this->container['renew_frequency'],
+                implode("', '", $allowedValues)
+            );
+        }
+
         return $invalidProperties;
     }
 
@@ -315,6 +359,43 @@ class DomainDataRetrievalDataRequest implements ModelInterface, ArrayAccess, \Js
             throw new \InvalidArgumentException('non-nullable urls cannot be null');
         }
         $this->container['urls'] = $urls;
+
+        return $this;
+    }
+
+    /**
+     * Gets renew_frequency
+     *
+     * @return string
+     */
+    public function getRenewFrequency()
+    {
+        return $this->container['renew_frequency'];
+    }
+
+    /**
+     * Sets renew_frequency
+     *
+     * @param string $renew_frequency renew_frequency
+     *
+     * @return self
+     */
+    public function setRenewFrequency($renew_frequency)
+    {
+        if (is_null($renew_frequency)) {
+            throw new \InvalidArgumentException('non-nullable renew_frequency cannot be null');
+        }
+        $allowedValues = $this->getRenewFrequencyAllowableValues();
+        if (!in_array($renew_frequency, $allowedValues, true)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    "Invalid value '%s' for 'renew_frequency', must be one of '%s'",
+                    $renew_frequency,
+                    implode("', '", $allowedValues)
+                )
+            );
+        }
+        $this->container['renew_frequency'] = $renew_frequency;
 
         return $this;
     }

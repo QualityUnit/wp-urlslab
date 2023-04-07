@@ -275,6 +275,7 @@ class DomainScheduleScheduleConf implements ModelInterface, ArrayAccess, \JsonSe
     public const SCAN_FREQUENCY_ONE_TIME = 'ONE_TIME';
     public const SCAN_FREQUENCY_YEARLY = 'YEARLY';
     public const SCAN_FREQUENCY_DAILY = 'DAILY';
+    public const SCAN_FREQUENCY_NO_SCHEDULE = 'NO_SCHEDULE';
     public const SCAN_FREQUENCY_WEEKLY = 'WEEKLY';
     public const SCAN_FREQUENCY_HOURLY = 'HOURLY';
     public const SCAN_FREQUENCY_MONTHLY = 'MONTHLY';
@@ -303,6 +304,7 @@ class DomainScheduleScheduleConf implements ModelInterface, ArrayAccess, \JsonSe
             self::SCAN_FREQUENCY_ONE_TIME,
             self::SCAN_FREQUENCY_YEARLY,
             self::SCAN_FREQUENCY_DAILY,
+            self::SCAN_FREQUENCY_NO_SCHEDULE,
             self::SCAN_FREQUENCY_WEEKLY,
             self::SCAN_FREQUENCY_HOURLY,
             self::SCAN_FREQUENCY_MONTHLY,

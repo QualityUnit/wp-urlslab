@@ -258,6 +258,25 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
         return self::$openAPIModelName;
     }
 
+    public const SCREENSHOT_STATUS_PENDING = 'PENDING';
+    public const SCREENSHOT_STATUS_AVAILABLE = 'AVAILABLE';
+    public const SCREENSHOT_STATUS_UPDATING = 'UPDATING';
+    public const SCREENSHOT_STATUS_BLOCKED = 'BLOCKED';
+
+    /**
+     * Gets allowable values of the enum
+     *
+     * @return string[]
+     */
+    public function getScreenshotStatusAllowableValues()
+    {
+        return [
+            self::SCREENSHOT_STATUS_PENDING,
+            self::SCREENSHOT_STATUS_AVAILABLE,
+            self::SCREENSHOT_STATUS_UPDATING,
+            self::SCREENSHOT_STATUS_BLOCKED,
+        ];
+    }
 
     /**
      * Associative array for storing property values
@@ -318,6 +337,15 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
         if ($this->container['screenshot_status'] === null) {
             $invalidProperties[] = "'screenshot_status' can't be null";
         }
+        $allowedValues = $this->getScreenshotStatusAllowableValues();
+        if (!is_null($this->container['screenshot_status']) && !in_array($this->container['screenshot_status'], $allowedValues, true)) {
+            $invalidProperties[] = sprintf(
+                "invalid value '%s' for 'screenshot_status', must be one of '%s'",
+                $this->container['screenshot_status'],
+                implode("', '", $allowedValues)
+            );
+        }
+
         return $invalidProperties;
     }
 
@@ -510,6 +538,16 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
     {
         if (is_null($screenshot_status)) {
             throw new \InvalidArgumentException('non-nullable screenshot_status cannot be null');
+        }
+        $allowedValues = $this->getScreenshotStatusAllowableValues();
+        if (!in_array($screenshot_status, $allowedValues, true)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    "Invalid value '%s' for 'screenshot_status', must be one of '%s'",
+                    $screenshot_status,
+                    implode("', '", $allowedValues)
+                )
+            );
         }
         $this->container['screenshot_status'] = $screenshot_status;
 

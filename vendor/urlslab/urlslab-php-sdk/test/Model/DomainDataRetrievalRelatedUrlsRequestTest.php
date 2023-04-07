@@ -114,4 +114,13 @@ class DomainDataRetrievalRelatedUrlsRequestTest extends TestCase
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
     }
+
+    /**
+     * Test attribute "renew_frequency"
+     */
+    public function testPropertyRenewFrequency()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
 }

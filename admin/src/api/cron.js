@@ -4,7 +4,7 @@ export async function cronAll( runCron, controller, cronTasks, onError ) {
 		controller.abort();
 	}
 	try {
-		const response = await fetch( '/wp-json/urlslab/v1/cron/all', {
+		const response = await fetch( '../wp-json/urlslab/v1/cron/all', {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',

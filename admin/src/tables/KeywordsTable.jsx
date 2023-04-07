@@ -34,22 +34,22 @@ export default function KeywordsTable( { slug } ) {
 
 	const header = {
 		keyword: __( 'Keyword' ),
+		urlLink: __( 'Link' ),
 		kwType: __( 'Type' ),
 		kw_length: __( 'Length' ),
 		kw_priority: __( 'Priority' ),
 		kw_usage_count: __( 'Usage' ),
 		lang: __( 'Language' ),
 		urlFilter: __( 'URL Filter' ),
-		urlLink: __( 'Link' ),
 	};
 
 	const inserterCells = {
 		keyword: <InputField liveUpdate defaultValue="" label={ header.keyword } onChange={ ( val ) => setInsertRow( { ...rowToInsert, keyword: val } ) } required />,
+		urlLink: <InputField liveUpdate type="url" defaultValue="" label={ header.urlLink } onChange={ ( val ) => setInsertRow( { ...rowToInsert, urlLink: val } ) } required />,
 		kwType: <SortMenu autoClose items={ keywordTypes } name="kwType" checkedId="M" onChange={ ( val ) => setInsertRow( { ...rowToInsert, kwType: val } ) }>{ header.kwType }</SortMenu>,
 		kw_priority: <InputField liveUpdate type="number" defaultValue="0" min="0" max="255" label={ header.kw_priority } onChange={ ( val ) => setInsertRow( { ...rowToInsert, kw_priority: val } ) } />,
 		lang: <LangMenu autoClose checkedId="all" onChange={ ( val ) => setInsertRow( { ...rowToInsert, lang: val } ) }>{ __( 'Language' ) }</LangMenu>,
 		urlFilter: <InputField liveUpdate defaultValue="" label={ header.urlFilter } onChange={ ( val ) => setInsertRow( { ...rowToInsert, urlFilter: val } ) } />,
-		urlLink: <InputField liveUpdate type="url" defaultValue="" label={ header.urlLink } onChange={ ( val ) => setInsertRow( { ...rowToInsert, urlLink: val } ) } required />,
 	};
 
 	const columns = [
@@ -65,6 +65,13 @@ export default function KeywordsTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			header: header.keyword,
 			minSize: 150,
+		} ),
+		columnHelper.accessor( 'urlLink', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			header: header.urlLink,
+			enableResizing: false,
+			size: 350,
 		} ),
 		columnHelper.accessor( 'kwType', {
 			filterValMenu: keywordTypes,
@@ -113,13 +120,6 @@ export default function KeywordsTable( { slug } ) {
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.urlFilter,
 			size: 100,
-		} ),
-		columnHelper.accessor( 'urlLink', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: header.urlLink,
-			enableResizing: false,
-			size: 350,
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',

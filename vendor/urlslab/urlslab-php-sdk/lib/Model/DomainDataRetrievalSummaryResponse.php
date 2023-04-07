@@ -246,6 +246,25 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
         return self::$openAPIModelName;
     }
 
+    public const SUMMARY_STATUS_PENDING = 'PENDING';
+    public const SUMMARY_STATUS_AVAILABLE = 'AVAILABLE';
+    public const SUMMARY_STATUS_UPDATING = 'UPDATING';
+    public const SUMMARY_STATUS_BLOCKED = 'BLOCKED';
+
+    /**
+     * Gets allowable values of the enum
+     *
+     * @return string[]
+     */
+    public function getSummaryStatusAllowableValues()
+    {
+        return [
+            self::SUMMARY_STATUS_PENDING,
+            self::SUMMARY_STATUS_AVAILABLE,
+            self::SUMMARY_STATUS_UPDATING,
+            self::SUMMARY_STATUS_BLOCKED,
+        ];
+    }
 
     /**
      * Associative array for storing property values
@@ -304,6 +323,15 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
         if ($this->container['summary_status'] === null) {
             $invalidProperties[] = "'summary_status' can't be null";
         }
+        $allowedValues = $this->getSummaryStatusAllowableValues();
+        if (!is_null($this->container['summary_status']) && !in_array($this->container['summary_status'], $allowedValues, true)) {
+            $invalidProperties[] = sprintf(
+                "invalid value '%s' for 'summary_status', must be one of '%s'",
+                $this->container['summary_status'],
+                implode("', '", $allowedValues)
+            );
+        }
+
         return $invalidProperties;
     }
 
@@ -428,6 +456,16 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
     {
         if (is_null($summary_status)) {
             throw new \InvalidArgumentException('non-nullable summary_status cannot be null');
+        }
+        $allowedValues = $this->getSummaryStatusAllowableValues();
+        if (!in_array($summary_status, $allowedValues, true)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    "Invalid value '%s' for 'summary_status', must be one of '%s'",
+                    $summary_status,
+                    implode("', '", $allowedValues)
+                )
+            );
         }
         $this->container['summary_status'] = $summary_status;
 
