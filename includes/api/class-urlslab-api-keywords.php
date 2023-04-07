@@ -13,7 +13,8 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			)
 		);
 		register_rest_route(
-			self::NAMESPACE, $base . '/count',
+			self::NAMESPACE,
+			$base . '/count',
 			$this->get_count_route( array( $this->get_route_get_items() ) )
 		);
 
@@ -203,7 +204,8 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		$delete_params['kw_id'] = $request->get_param( 'kw_id' );
 
 		if ( false === $wpdb->delete(
-				URLSLAB_KEYWORDS_TABLE, $delete_params
+				URLSLAB_KEYWORDS_TABLE,
+				$delete_params
 			)
 		) {
 			return new WP_Error(
@@ -213,7 +215,8 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		}
 
 		if ( false === $wpdb->delete(
-				URLSLAB_KEYWORDS_MAP_TABLE, $delete_params
+				URLSLAB_KEYWORDS_MAP_TABLE,
+				$delete_params
 			)
 		) {
 			return new WP_Error(

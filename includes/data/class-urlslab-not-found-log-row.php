@@ -5,21 +5,27 @@ class Urlslab_Not_Found_Log_Row extends Urlslab_Data {
 	/**
 	 * @param array $log
 	 */
-	public function __construct( array $log = array(), $loaded_from_db = true
+	public function __construct(
+		array $log = array(),
+		$loaded_from_db = true
 	) {
 		$this->set_url( $log['url'] ?? '', $loaded_from_db );
 		$this->set_cnt( $log['cnt'] ?? 0, $loaded_from_db );
 		$this->set_created(
-			$log['created'] ?? self::get_now(), $loaded_from_db
+			$log['created'] ?? self::get_now(),
+			$loaded_from_db
 		);
 		$this->set_updated(
-			$log['updated'] ?? self::get_now(), $loaded_from_db
+			$log['updated'] ?? self::get_now(),
+			$loaded_from_db
 		);
 		$this->set_request_data(
-			$log['request_data'] ?? '', $loaded_from_db
+			$log['request_data'] ?? '',
+			$loaded_from_db
 		);
 		$this->set_url_id(
-			$log['url_id'] ?? $this->compute_url_id(), $loaded_from_db
+			$log['url_id'] ?? $this->compute_url_id(),
+			$loaded_from_db
 		);
 	}
 
@@ -67,7 +73,8 @@ class Urlslab_Not_Found_Log_Row extends Urlslab_Data {
 	}
 
 	public function set_request_data(
-		string $request_data, $loaded_from_db = true
+		string $request_data,
+		$loaded_from_db = true
 	) {
 		$this->set( 'request_data', $request_data, $loaded_from_db );
 	}
@@ -108,8 +115,11 @@ class Urlslab_Not_Found_Log_Row extends Urlslab_Data {
 		$wpdb->query(
 			$wpdb->prepare(
 				"INSERT INTO {$this->get_table_name()} (url_id, url, cnt, created, updated, request_data) VALUES (%d, %s, %d, %s, %s, %s) ON DUPLICATE KEY UPDATE cnt = cnt + 1, updated = VALUES(updated), request_data=VALUES(request_data)",
-				$this->get_url_id(), $this->get_url(), $this->get_cnt(),
-				$this->get_created(), $this->get_updated(),
+				$this->get_url_id(),
+				$this->get_url(),
+				$this->get_cnt(),
+				$this->get_created(),
+				$this->get_updated(),
 				$this->get_request_data()
 			)
 		);//phpcs:ignore

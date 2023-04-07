@@ -13,7 +13,10 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 			if ( strlen( $api_key ) ) {
 				$config
 					= \OpenAPI\Client\Configuration::getDefaultConfiguration()
-					->setApiKey( 'X-URLSLAB-KEY', $api_key );
+					                               ->setApiKey(
+						                               'X-URLSLAB-KEY',
+						                               $api_key
+					                               );
 				$this->content_client = new \OpenAPI\Client\Urlslab\ContentApi(
 					new GuzzleHttp\Client(), $config
 				);
@@ -120,7 +123,9 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 			}
 
 			$url_objects = Urlslab_Url_Data_Fetcher::get_instance()
-				->load_and_schedule_urls( $schedule_urls );
+			                                       ->load_and_schedule_urls(
+				                                       $schedule_urls
+			                                       );
 			$related_resources = array();
 			foreach ( $url_objects as $dest_url_obj ) {
 				$related_resources[] = new Urlslab_Url_Relation_Row(
@@ -138,7 +143,8 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 			);
 
 			( new Urlslab_Url_Relation_Row() )->insert_all(
-				$related_resources, true
+				$related_resources,
+				true
 			);
 			$url->set_rel_schedule( Urlslab_Url_Row::REL_AVAILABLE );
 			$url->update();

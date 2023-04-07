@@ -6,10 +6,13 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 
 	public function register_routes() {
 		register_rest_route(
-			self::NAMESPACE, $this->base . '/', $this->get_route_get_items()
+			self::NAMESPACE,
+			$this->base . '/',
+			$this->get_route_get_items()
 		);
 		register_rest_route(
-			self::NAMESPACE, $this->base . '/count',
+			self::NAMESPACE,
+			$this->base . '/count',
 			$this->get_count_route( $this->get_route_get_items() )
 		);
 
@@ -132,7 +135,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			$this->get_count_route( $this->get_route_get_url_usage() )
 		);
 		register_rest_route(
-			self::NAMESPACE, $this->base . '/(?P<src_url_id>[0-9]+)/links',
+			self::NAMESPACE,
+			$this->base . '/(?P<src_url_id>[0-9]+)/links',
 			$this->get_route_get_url_usage()
 		);
 		register_rest_route(
@@ -158,7 +162,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		foreach ( $rows as $row ) {
 			$url = new Urlslab_Url_Row( (array) $row );
 			$row = (object) array_replace(
-				(array) $row, $url->get_object_values_as_array()
+				(array) $row,
+				$url->get_object_values_as_array()
 			);
 
 			$row->screenshot_url = $url->get_screenshot_url();
@@ -167,7 +172,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 				$row->url_usage_count = (int) $row->url_usage_count;
 			}
 			if ( in_array(
-				'screenshot_usage_count', $this->get_custom_columns()
+				'screenshot_usage_count',
+				$this->get_custom_columns()
 			)
 			) {
 				$row->screenshot_usage_count
@@ -264,7 +270,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		$delete_params = array();
 		$delete_params['url_id'] = $request->get_param( 'url_id' );
 		if ( false === $wpdb->delete(
-				URLSLAB_FILE_URLS_TABLE, $delete_params
+				URLSLAB_FILE_URLS_TABLE,
+				$delete_params
 			)
 		) {
 			return new WP_Error(
@@ -273,7 +280,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			);
 		}
 		if ( false === $wpdb->delete(
-				URLSLAB_KEYWORDS_MAP_TABLE, $delete_params
+				URLSLAB_KEYWORDS_MAP_TABLE,
+				$delete_params
 			)
 		) {
 			return new WP_Error(
@@ -285,7 +293,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		$delete_params = array();
 		$delete_params['src_url_id'] = $request->get_param( 'url_id' );
 		if ( false === $wpdb->delete(
-				URLSLAB_URLS_MAP_TABLE, $delete_params
+				URLSLAB_URLS_MAP_TABLE,
+				$delete_params
 			)
 		) {
 			return new WP_Error(
@@ -294,7 +303,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			);
 		}
 		if ( false === $wpdb->delete(
-				URLSLAB_RELATED_RESOURCE_TABLE, $delete_params
+				URLSLAB_RELATED_RESOURCE_TABLE,
+				$delete_params
 			)
 		) {
 			return new WP_Error(
@@ -303,7 +313,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			);
 		}
 		if ( false === $wpdb->delete(
-				URLSLAB_SCREENSHOT_URLS_TABLE, $delete_params
+				URLSLAB_SCREENSHOT_URLS_TABLE,
+				$delete_params
 			)
 		) {
 			return new WP_Error(
@@ -315,7 +326,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		$delete_params = array();
 		$delete_params['dest_url_id'] = $request->get_param( 'url_id' );
 		if ( false === $wpdb->delete(
-				URLSLAB_URLS_MAP_TABLE, $delete_params
+				URLSLAB_URLS_MAP_TABLE,
+				$delete_params
 			)
 		) {
 			return new WP_Error(
@@ -324,7 +336,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			);
 		}
 		if ( false === $wpdb->delete(
-				URLSLAB_RELATED_RESOURCE_TABLE, $delete_params
+				URLSLAB_RELATED_RESOURCE_TABLE,
+				$delete_params
 			)
 		) {
 			return new WP_Error(
@@ -336,7 +349,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		$delete_params = array();
 		$delete_params['screenshot_url_id'] = $request->get_param( 'url_id' );
 		if ( false === $wpdb->delete(
-				URLSLAB_SCREENSHOT_URLS_TABLE, $delete_params
+				URLSLAB_SCREENSHOT_URLS_TABLE,
+				$delete_params
 			)
 		) {
 			return new WP_Error(
@@ -685,7 +699,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			);
 		}
 		if ( in_array(
-			'screenshot_usage_count', $this->get_custom_columns()
+			'screenshot_usage_count',
+			$this->get_custom_columns()
 		)
 		) {
 			$sql->add_select_column( 'screenshot_usage_count' );
@@ -735,7 +750,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			$sql->add_having_filter( 'filter_url_usage_count', '%d' );
 		}
 		if ( in_array(
-			'screenshot_usage_count', $this->get_custom_columns()
+			'screenshot_usage_count',
+			$this->get_custom_columns()
 		)
 		) {
 			$sql->add_having_filter( 'filter_screenshot_usage_count', '%d' );

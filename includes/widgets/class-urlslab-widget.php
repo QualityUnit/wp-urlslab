@@ -46,7 +46,9 @@ abstract class Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_shortcode_content(
-		$atts = array(), $content = null, $tag = ''
+		$atts = array(),
+		$content = null,
+		$tag = ''
 	): string {
 		return '';
 	}
@@ -141,7 +143,9 @@ abstract class Urlslab_Widget {
 		}
 		foreach ( $this->options as $option ) {
 			add_option(
-				$option['id'], $option['default'] ?? false, '',
+				$option['id'],
+				$option['default'] ?? false,
+				'',
 				$option['autoload'] ?? true
 			);
 		}
@@ -176,10 +180,15 @@ abstract class Urlslab_Widget {
 	 * @return void
 	 */
 	protected function add_option_definition(
-		string $option_id, $default_value = false, bool $autoload = true,
-		string $title = '', string $description = '',
-		$type = self::OPTION_TYPE_CHECKBOX, $possible_values = false,
-		callable $validator = null, $form_section_id = 'default'
+		string $option_id,
+		$default_value = false,
+		bool $autoload = true,
+		string $title = '',
+		string $description = '',
+		$type = self::OPTION_TYPE_CHECKBOX,
+		$possible_values = false,
+		callable $validator = null,
+		$form_section_id = 'default'
 	) {
 		if ( empty( $this->option_sections ) ) {
 			$this->option_sections[] = array(
@@ -218,7 +227,8 @@ abstract class Urlslab_Widget {
 
 		if ( null !== $this->options[ $option_id ]['validator'] ) {
 			if ( ! call_user_func(
-				$this->options[ $option_id ]['validator'], $value
+				$this->options[ $option_id ]['validator'],
+				$value
 			)
 			) {
 				return false;
@@ -264,7 +274,8 @@ abstract class Urlslab_Widget {
 
 		return $value == $this->get_option( $option_id )
 			|| update_option(
-				$option_id, $value
+				$option_id,
+				$value
 			);
 	}
 
@@ -302,14 +313,17 @@ abstract class Urlslab_Widget {
 		}
 		if ( ! isset( $this->options[ $option_id ]['value'] ) ) {
 			$this->options[ $option_id ]['value'] = get_option(
-				$option_id, $this->options[ $option_id ]['default'] ?? false
+				$option_id,
+				$this->options[ $option_id ]['default'] ?? false
 			);
 		}
 
 		return $this->options[ $option_id ]['value'];
 	}
 
-	protected function is_skip_elemenet( DOMNode $dom, $custom_widget_skip = ''
+	protected function is_skip_elemenet(
+		DOMNode $dom,
+		$custom_widget_skip = ''
 	) {
 		return $dom->hasAttributes() && $dom->hasAttribute( 'class' )
 			&& (
@@ -319,7 +333,8 @@ abstract class Urlslab_Widget {
 						'urlslab-skip-' . $custom_widget_skip
 					) )
 				|| ( false !== strpos(
-						$dom->getAttribute( 'class' ), 'urlslab-skip-all'
+						$dom->getAttribute( 'class' ),
+						'urlslab-skip-all'
 					) )
 			);
 	}
@@ -367,7 +382,8 @@ abstract class Urlslab_Widget {
 
 		if ( ! empty( $sitepress ) && is_object( $sitepress )
 			&& method_exists(
-				$sitepress, 'get_active_languages'
+				$sitepress,
+				'get_active_languages'
 			)
 		) {
 			return apply_filters( 'wpml_current_language', null );
