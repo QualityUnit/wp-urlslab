@@ -1,6 +1,6 @@
 export async function fetchData( slug ) {
 	try {
-		const result = await fetch( `../wp-json/urlslab/v1${ slug ? `/${ slug }` : '' }`, {
+		const result = await fetch( `/wp-json/urlslab/v1${ slug ? `/${ slug }` : '' }`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -20,7 +20,7 @@ export async function fetchData( slug ) {
 
 export async function setModule( slug, object ) {
 	try {
-		const result = await fetch( `../wp-json/urlslab/v1/module/${ slug }`, {
+		const result = await fetch( `/wp-json/urlslab/v1/module/${ slug }`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ export async function setModule( slug, object ) {
 
 export async function setData( slug, object ) {
 	try {
-		const result = await fetch( `../wp-json/urlslab/v1/${ slug }`, {
+		const result = await fetch( `/wp-json/urlslab/v1/${ slug }`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

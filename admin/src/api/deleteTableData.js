@@ -1,6 +1,6 @@
 export async function deleteAll( slug ) {
 	try {
-		const result = await fetch( `../wp-json/urlslab/v1${ slug ? `/${ slug }/delete-all` : '' }`, {
+		const result = await fetch( `/wp-json/urlslab/v1${ slug ? `/${ slug }/delete-all` : '' }`, {
 			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json',
@@ -17,7 +17,7 @@ export async function deleteAll( slug ) {
 
 export async function deleteRow( slug ) {
 	try {
-		const result = await fetch( `../wp-json/urlslab/v1${ slug ? `/${ slug }` : '' }`, {
+		const result = await fetch( `/wp-json/urlslab/v1${ slug ? `/${ slug }` : '' }`, {
 			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json',
