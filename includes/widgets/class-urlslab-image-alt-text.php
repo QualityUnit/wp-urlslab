@@ -3,33 +3,24 @@
 // phpcs:disable WordPress
 
 class Urlslab_Image_Alt_Text extends Urlslab_Widget {
-	const SLUG = 'urlslab-image-alt-attribute';
-	const SOURCE_H = 'H';
-	const SETTING_NAME_ALT_TAG_SOURCE = 'urlslab_img_alt_tag_src';
-	const SOURCE_FIGCAPTION = 'C';
-	const SOURCE_LINK = 'L';
+	public const SLUG = 'urlslab-image-alt-attribute';
+	public const SOURCE_H = 'H';
+	public const SETTING_NAME_ALT_TAG_SOURCE = 'urlslab_img_alt_tag_src';
+	public const SOURCE_FIGCAPTION = 'C';
+	public const SOURCE_LINK = 'L';
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_content', $this, 'theContentHook', 13 );
 	}
 
-	/**
-	 * @return string
-	 */
 	public function get_widget_slug(): string {
 		return Urlslab_Image_Alt_Text::SLUG;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function get_widget_title(): string {
 		return __( 'Image SEO' );
 	}
 
-	/**
-	 * @return string
-	 */
 	public function get_widget_description(): string {
 		return __( 'Instantly improve image SEO by automatically adding descriptive alt texts to images on the website' );
 	}
@@ -38,8 +29,9 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 		if ( empty( $this->get_option( self::SETTING_NAME_ALT_TAG_SOURCE ) ) ) {
 			return;
 		}
+
 		try {
-			$xpath      = new DOMXPath( $document );
+			$xpath = new DOMXPath( $document );
 			$table_data = $xpath->query( "//img[(not(@alt) or @alt='') and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-img-alt')])]|//*[substring-after(name(), 'h') > 0]" );
 			$last_title = get_the_title();
 
@@ -47,23 +39,25 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 				foreach ( $table_data as $element ) {
 					if ( preg_match( '/^[hH][0-6].*$/', $element->nodeName ) ) {
 						$last_title = $element->nodeValue;
-					} else if ( 'img' == $element->nodeName && ! $this->is_skip_elemenet( $element, 'img-alt' ) ) {
+					} else {
+						if ( 'img' == $element->nodeName && ! $this->is_skip_elemenet( $element, 'img-alt' ) ) {
+							if ( empty( $element->getAttribute( 'alt' ) ) && isset( $element->parentNode ) && 'a' == $element->parentNode->nodeName && $element->parentNode->hasAttribute( 'figure' ) && $this->get_option( self::SOURCE_FIGCAPTION ) ) {
+								foreach ( $element->parentNode->childNodes as $child ) {
+									if ( 'figcaption' == $child->nodeName ) {
+										$element->setAttribute( 'alt', $child->nodeValue );
 
-						if ( empty( $element->getAttribute( 'alt' ) ) && isset( $element->parentNode ) && $element->parentNode->nodeName == 'a' && $element->parentNode->hasAttribute( 'figure' ) && $this->get_option( self::SOURCE_FIGCAPTION ) ) {
-							foreach ( $element->parentNode->childNodes as $child ) {
-								if ( $child->nodeName == 'figcaption' ) {
-									$element->setAttribute( 'alt', $child->nodeValue );
-									break;
+										break;
+									}
 								}
 							}
-						}
 
-						if ( empty( $element->getAttribute( 'alt' ) ) && isset( $element->parentNode ) && $element->parentNode->nodeName == 'a' && $element->parentNode->hasAttribute( 'title' ) && $this->get_option( self::SOURCE_LINK ) ) {
-							$element->setAttribute( 'alt', trim( $last_title . ' - ' . $element->parentNode->getAttribute( 'title' ), ' -' ) );
-						}
+							if ( empty( $element->getAttribute( 'alt' ) ) && isset( $element->parentNode ) && 'a' == $element->parentNode->nodeName && $element->parentNode->hasAttribute( 'title' ) && $this->get_option( self::SOURCE_LINK ) ) {
+								$element->setAttribute( 'alt', trim( $last_title . ' - ' . $element->parentNode->getAttribute( 'title' ), ' -' ) );
+							}
 
-						if ( empty( $element->getAttribute( 'alt' ) ) && strlen( $last_title ) && $this->get_option( self::SOURCE_H ) ) {
-							$element->setAttribute( 'alt', $last_title );
+							if ( empty( $element->getAttribute( 'alt' ) ) && strlen( $last_title ) && $this->get_option( self::SOURCE_H ) ) {
+								$element->setAttribute( 'alt', $last_title );
+							}
 						}
 					}
 				}
@@ -99,5 +93,4 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 			'general'
 		);
 	}
-
 }

@@ -1,7 +1,6 @@
 <?php
 
 class Urlslab_Keyword_Row extends Urlslab_Data {
-
 	public function __construct( array $data = array(), $loaded_from_db = false ) {
 		$this->set_keyword( $data['keyword'] ?? '', $loaded_from_db );
 		$this->set_url_link( $data['urlLink'] ?? '', $loaded_from_db );
@@ -103,15 +102,15 @@ class Urlslab_Keyword_Row extends Urlslab_Data {
 	}
 
 
-	function get_table_name(): string {
+	public function get_table_name(): string {
 		return URLSLAB_KEYWORDS_TABLE;
 	}
 
-	function get_primary_columns(): array {
+	public function get_primary_columns(): array {
 		return array( 'kw_id' );
 	}
 
-	function get_columns(): array {
+	public function get_columns(): array {
 		return array(
 			'kw_id'       => '%d',
 			'keyword'     => '%s',

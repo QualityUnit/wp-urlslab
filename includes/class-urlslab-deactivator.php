@@ -21,7 +21,6 @@
  * @author     Your Name <email@example.com>
  */
 class Urlslab_Deactivator {
-
 	/**
 	 * Short Description. (use period)
 	 *

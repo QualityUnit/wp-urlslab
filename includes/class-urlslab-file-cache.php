@@ -1,12 +1,17 @@
 <?php
 
 class Urlslab_File_Cache {
-
+	public static $instance;
 	private $cache_path;
 
-	static $instance = null;
-
 	private $mem_cache = array();
+
+	public function __construct() {
+		$this->cache_path = wp_upload_dir()['basedir'] . '/urlslab/';
+		if ( ! file_exists( $this->cache_path ) ) {
+			@mkdir( $this->cache_path, 0755, true ); // phpcs:ignore
+		}
+	}
 
 	public static function get_instance(): Urlslab_File_Cache {
 		if ( null === self::$instance ) {
@@ -14,13 +19,6 @@ class Urlslab_File_Cache {
 		}
 
 		return self::$instance;
-	}
-
-	public function __construct() {
-		$this->cache_path = wp_upload_dir()['basedir'] . '/urlslab/';
-		if ( ! file_exists( $this->cache_path ) ) {
-			@mkdir( $this->cache_path, 0755, true );// phpcs:ignore
-		}
 	}
 
 	public function is_active() {
@@ -33,7 +31,7 @@ class Urlslab_File_Cache {
 		}
 		$file = $this->cache_path . md5( $key ) . '_' . $group . '.cache';
 		$content = array(
-			'data' => $data,
+			'data'       => $data,
 			'expiration' => $expiration > 0 ? ( time() + (int) $expiration ) : 0,
 		);
 		$this->mem_cache[ $group ][ $key ] = $content;
@@ -41,10 +39,11 @@ class Urlslab_File_Cache {
 	}
 
 	/**
-	 * @param $key
-	 * @param $group
-	 * @param $found
-	 * @param $allowed_classes array or boolean - if array, it should contain names of classes
+	 * @param            $allowed_classes array or boolean - if array, it should contain names of classes
+	 * @param mixed      $key
+	 * @param mixed      $group
+	 * @param null|mixed $found
+	 *
 	 * @return false|mixed
 	 */
 	public function get( $key, $group = '', &$found = null, $allowed_classes = false ) {

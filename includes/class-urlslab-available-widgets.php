@@ -1,7 +1,6 @@
 <?php
 
 class Urlslab_Available_Widgets {
-
 	private array $available_widgets;
 
 	private static Urlslab_Available_Widgets $instance;
@@ -13,7 +12,7 @@ class Urlslab_Available_Widgets {
 	 */
 	public static function get_instance(): Urlslab_Available_Widgets {
 		if ( empty( self::$instance ) ) {
-			self::$instance = new self;
+			self::$instance = new self();
 		}
 
 		return self::$instance;
@@ -36,20 +35,20 @@ class Urlslab_Available_Widgets {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-search-replace.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-redirects.php';
 
-		$urlslab_general            = new Urlslab_General();
-		$urlslab_generator          = new Urlslab_Content_Generator_Widget();
-		$urlslab_optimize           = new Urlslab_Optimize();
-		$urlslab_screenshot         = new Urlslab_Screenshot_Widget();
-		$urlslab_related_resources  = new Urlslab_Related_Resources_Widget();
-		$urlslab_link_enhancer      = new Urlslab_Link_Enhancer();
-		$urlslab_keyword_links      = new Urlslab_Keywords_Links();
-		$urlslab_image_alt_text     = new Urlslab_Image_Alt_Text();
-		$urlslab_og_meta_tag        = new Urlslab_Meta_Tag();
-		$urlslab_media_offloader    = new Urlslab_Media_Offloader_Widget();
-		$urlslab_lazy_loading       = new Urlslab_Lazy_Loading();
-		$urlslab_css_optimizer      = new Urlslab_CSS_Optimizer();
+		$urlslab_general = new Urlslab_General();
+		$urlslab_generator = new Urlslab_Content_Generator_Widget();
+		$urlslab_optimize = new Urlslab_Optimize();
+		$urlslab_screenshot = new Urlslab_Screenshot_Widget();
+		$urlslab_related_resources = new Urlslab_Related_Resources_Widget();
+		$urlslab_link_enhancer = new Urlslab_Link_Enhancer();
+		$urlslab_keyword_links = new Urlslab_Keywords_Links();
+		$urlslab_image_alt_text = new Urlslab_Image_Alt_Text();
+		$urlslab_og_meta_tag = new Urlslab_Meta_Tag();
+		$urlslab_media_offloader = new Urlslab_Media_Offloader_Widget();
+		$urlslab_lazy_loading = new Urlslab_Lazy_Loading();
+		$urlslab_css_optimizer = new Urlslab_CSS_Optimizer();
 		$urlslab_search_and_replace = new Urlslab_Search_Replace();
-		$urlslab_redirects          = new Urlslab_Redirects();
+		$urlslab_redirects = new Urlslab_Redirects();
 
 		$this->available_widgets = array(
 			$urlslab_general->get_widget_slug()            => $urlslab_general,
@@ -99,4 +98,3 @@ class Urlslab_Available_Widgets {
 	}
 
 }
-

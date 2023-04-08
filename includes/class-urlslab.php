@@ -1,17 +1,13 @@
 <?php
 
-
 /**
- * The file that defines the core plugin class
+ * The file that defines the core plugin class.
  *
  * A class definition that includes attributes and functions used across both the
  * public-facing side of the site and the admin area.
  *
- * @link       http://example.com
+ * @see        http://example.com
  * @since      1.0.0
- *
- * @package    urlslab
- * @subpackage urlslab/includes
  */
 
 /**
@@ -24,21 +20,16 @@
  * version of the plugin.
  *
  * @since      1.0.0
- * @package    urlslab
- * @subpackage urlslab/includes
  */
 class Urlslab {
-
-	const URLSLAB_INFO_URL = 'https://raw.githubusercontent.com/QualityUnit/wp-urlslab/main/info.json';
-	private $plugin_info;
-
+	public const URLSLAB_INFO_URL = 'https://raw.githubusercontent.com/QualityUnit/wp-urlslab/main/info.json';
 
 	/**
 	 * The unique identifier of this plugin.
 	 *
 	 * @since    1.0.0
-	 * @access   protected
-	 * @var      string $urlslab The string used to uniquely identify this plugin.
+	 *
+	 * @var string the string used to uniquely identify this plugin
 	 */
 	protected string $urlslab;
 
@@ -46,10 +37,11 @@ class Urlslab {
 	 * The current version of the plugin.
 	 *
 	 * @since    1.0.0
-	 * @access   protected
-	 * @var      string $version The current version of the plugin.
+	 *
+	 * @var string the current version of the plugin
 	 */
 	protected string $version;
+	private $plugin_info;
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -66,8 +58,10 @@ class Urlslab {
 	}
 
 	/**
+	 * gets wp_option for URLSLAB plugin.
 	 *
-	 * gets wp_option for URLSLAB plugin
+	 * @param mixed $name
+	 * @param mixed $default
 	 */
 	public static function get_option( $name, $default = false ) {
 		$option = get_option( 'urlslab' );
@@ -80,168 +74,16 @@ class Urlslab {
 	}
 
 	/**
+	 * updates wp_option for URLSLAB plugin.
 	 *
-	 * updates wp_option for URLSLAB plugin
+	 * @param mixed $name
+	 * @param mixed $value
 	 */
 	public static function update_option( $name, $value ) {
 		$option = get_option( 'urlslab' );
 		$option = ( false === $option ) ? array() : (array) $option;
 		$option = array_merge( $option, array( $name => $value ) );
 		update_option( 'urlslab', $option );
-	}
-
-
-	/**
-	 * Load the required dependencies for this plugin.
-	 *
-	 * Include the following files that make up the plugin:
-	 *
-	 * - urlslab_Loader. Orchestrates the hooks of the plugin.
-	 * - urlslab_i18n. Defines internationalization functionality.
-	 * - urlslab_Admin. Defines all hooks for the admin area.
-	 * - urlslab_Public. Defines all hooks for the public side of the site.
-	 *
-	 * Create an instance of the loader which will be used to register the hooks
-	 * with WordPress.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 */
-	private function load_dependencies() {
-		require_once URLSLAB_PLUGIN_DIR . '/vendor/autoload.php';
-
-		/**
-		 * The class responsible for orchestrating the actions and filters of the
-		 * core plugin.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-urlslab-loader.php';
-
-		/**
-		 * The class responsible for defining internationalization functionality
-		 * of the plugin.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-urlslab-i18n.php';
-
-		/**
-		 * The class responsible for defining all actions that occur in the admin area.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-urlslab-admin.php';
-
-		/**
-		 * The class responsible for defining all actions that occur in the public-facing
-		 * side of the site.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-urlslab-public.php';
-
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-file-cache.php';
-
-		//data
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-data.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-content-generator-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-file-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-keyword-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-keyword-map-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-url-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-url-relation-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-file-pointer-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-youtube-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-url-data-fetcher.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-search-replace-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-screenshot-url-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-not-found-log-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-redirect-row.php';
-
-
-		//additional
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-
-		//widgets
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
-
-		//menu pages
-		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-page-factory.php';
-		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-admin-page.php';
-		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-admin-subpage.php';
-		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-dashboard-page.php';
-
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-api-router.php';
-	}
-
-	/**
-	 * Define the locale for this plugin for internationalization.
-	 *
-	 * Uses the urlslab_i18n class in order to set the domain and to register the hook
-	 * with WordPress.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 */
-	private function set_locale() {
-		$plugin_i18n = new Urlslab_I18n();
-
-		Urlslab_Loader::get_instance()->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
-
-	}
-
-	/**
-	 * Register all of the hooks related to the admin area functionality
-	 * of the plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 */
-	private function define_admin_hooks() {
-		$plugin_admin = new Urlslab_Admin( $this->get_urlslab(), $this->get_version() );
-		$plugin_admin->urlslab_page_ajax();
-
-		add_action(
-			'admin_enqueue_scripts',
-			function( $hook ) {
-				if ( ! did_action( 'wp_enqueue_media' ) ) {
-					wp_enqueue_media();
-				}
-			}
-		);
-		Urlslab_Loader::get_instance()->add_action( 'admin_init', $this, 'urlslab_upgrade', 10, 0 );
-		Urlslab_Loader::get_instance()->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		Urlslab_Loader::get_instance()->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-		Urlslab_Loader::get_instance()->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_react_settings' );
-		Urlslab_Loader::get_instance()->add_action( 'admin_menu', $plugin_admin, 'urlslab_admin_menu', 9, 0 );
-		Urlslab_Loader::get_instance()->add_action(
-			'wp_loaded',
-			$plugin_admin,
-			'urlslab_load_add_widgets_page',
-			10,
-			0
-		);
-		Urlslab_Loader::get_instance()->add_filter( 'plugins_api', $this, 'plugin_info', 20, 3 );
-		Urlslab_Loader::get_instance()->add_filter( 'site_transient_update_plugins', $this, 'push_update' );
-		Urlslab_Loader::get_instance()->add_filter( 'plugin_action_links_' . URLSLAB_PLUGIN_BASENAME, $this, 'plugin_action_links' );
-	}
-
-	/**
-	 * Register all of the hooks related to the public-facing functionality
-	 * of the plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 */
-	private function define_public_hooks() {
-		$plugin_public = new Urlslab_Public( $this->get_urlslab(), $this->get_version() );
-
-		Urlslab_Loader::get_instance()->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		Urlslab_Loader::get_instance()->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $plugin_public, 'download_offloaded_file', PHP_INT_MIN );
-
-		Urlslab_Loader::get_instance()->add_action( 'wp_before_load_template', $this, 'buffer_head_start', PHP_INT_MIN );
-		Urlslab_Loader::get_instance()->add_action( 'wp_after_load_template', $this, 'buffer_end', PHP_INT_MAX );
-
-		//body content
-		Urlslab_Loader::get_instance()->add_action( 'wp_body_open', $this, 'buffer_content_start', PHP_INT_MAX );
-		Urlslab_Loader::get_instance()->add_action( 'wp_footer', $this, 'buffer_end', PHP_INT_MIN );
-
-		$this->init_activated_widgets();
 	}
 
 	public function buffer_head_start() {
@@ -255,9 +97,15 @@ class Urlslab {
 		);
 	}
 
-
 	public function buffer_content_start() {
-		ob_start( array( $this, 'urlslab_content' ), 0, PHP_OUTPUT_HANDLER_FLUSHABLE | PHP_OUTPUT_HANDLER_REMOVABLE );
+		ob_start(
+			array(
+				$this,
+				'urlslab_content',
+			),
+			0,
+			PHP_OUTPUT_HANDLER_FLUSHABLE | PHP_OUTPUT_HANDLER_REMOVABLE
+		);
 	}
 
 	public function buffer_end() {
@@ -274,54 +122,18 @@ class Urlslab {
 		return $content;
 	}
 
-	private function urlslab_head_content( $content ) {
-		if ( empty( $content ) || ! has_action( 'urlslab_head_content' ) ) {
-			return $content;    //nothing to process
-		}
-
-		$content = apply_filters( 'urlslab_head_content_raw', $content );
-
-		$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
-		$document->encoding            = get_bloginfo( 'charset' );
-		$document->strictErrorChecking = false; // phpcs:ignore
-		$libxml_previous_state         = libxml_use_internal_errors( true );
-
-		try {
-			$document->loadHTML(
-				mb_convert_encoding( $content, 'HTML-ENTITIES', get_bloginfo( 'charset' ) ),
-				LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE
-			);
-
-			foreach ( libxml_get_errors() as $error ) {
-				if ( false !== strpos( $error->message, 'Unexpected' ) || false !== strpos( $error->message, 'misplaced' ) ) {
-					return $content;
-				}
-			}
-
-			libxml_clear_errors();
-			libxml_use_internal_errors( $libxml_previous_state );
-
-			do_action( 'urlslab_head_content', $document );
-
-
-			return $document->saveHTML( $document->getElementsByTagName( 'head' )[0] );
-		} catch ( Exception $e ) {
-			return $content;
-		}
-	}
-
 	public function urlslab_content( $content ) {
-		if ( empty( $content ) || http_response_code() !== 200 ) {
-			return $content;    //nothing to process
+		if ( empty( $content ) || 200 !== http_response_code() ) {
+			return $content;    // nothing to process
 		}
 
 		$content = apply_filters( 'urlslab_content_raw', $content );
 
 		if ( has_action( 'urlslab_content' ) ) {
-			$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
-			$document->encoding            = get_bloginfo( 'charset' );
+			$document = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
+			$document->encoding = get_bloginfo( 'charset' );
 			$document->strictErrorChecking = false; // phpcs:ignore
-			$libxml_previous_state         = libxml_use_internal_errors( true );
+			$libxml_previous_state = libxml_use_internal_errors( true );
 
 			try {
 				$document->loadHTML(
@@ -339,24 +151,6 @@ class Urlslab {
 		}
 
 		return $content;
-	}
-
-	private function init_activated_widgets() {
-		$active_widgets = Urlslab_User_Widget::get_instance()->get_activated_widgets();
-		foreach ( $active_widgets as $active_widget ) {
-			$active_widget->init_widget();
-		}
-	}
-
-	private function define_backend_hooks() {
-
-		add_filter( 'cron_schedules', array( $this, 'add_cron_interval' ) );
-		if ( ! wp_next_scheduled( 'urlslab_cron_hook' ) ) {
-			wp_schedule_event( time(), 'every_minute', 'urlslab_cron_hook' );
-		}
-
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron-manager.php';
-		Urlslab_Loader::get_instance()->add_action( 'urlslab_cron_hook', Urlslab_Cron_Manager::get_instance(), 'exec_cron_task', 10, 0 );
 	}
 
 	/**
@@ -389,7 +183,8 @@ class Urlslab {
 	 * The name of the plugin used to uniquely identify it within the context of
 	 * WordPress and to define internationalization functionality.
 	 *
-	 * @return    string    The name of the plugin.
+	 * @return string the name of the plugin
+	 *
 	 * @since     1.0.0
 	 */
 	public function get_urlslab(): string {
@@ -399,21 +194,22 @@ class Urlslab {
 	/**
 	 * Retrieve the version number of the plugin.
 	 *
-	 * @return    string    The version number of the plugin.
+	 * @return string the version number of the plugin
+	 *
 	 * @since     1.0.0
 	 */
 	public function get_version(): string {
 		return $this->version;
 	}
 
-	function get_info() {
+	public function get_info() {
 		if ( empty( $this->plugin_info ) ) {
 			$remote = get_transient( 'urlslab_update_info' );
 			if ( ! $remote ) {
 				$remote = wp_remote_get(
 					self::URLSLAB_INFO_URL,
 					array(
-						'timeout' => 5,    //phpcs:ignore
+						'timeout' => 5,    // phpcs:ignore
 						'headers' => array(
 							'Accept' => 'application/json',
 						),
@@ -427,8 +223,7 @@ class Urlslab {
 		return $this->plugin_info;
 	}
 
-
-	function plugin_info( $res, $action, $args ) {
+	public function plugin_info( $res, $action, $args ) {
 		if ( 'plugin_information' !== $action || URLSLAB_PLUGIN_SLUG !== $args->slug ) {
 			return $res;
 		}
@@ -441,19 +236,19 @@ class Urlslab {
 
 		$remote = json_decode( wp_remote_retrieve_body( $remote ) );
 
-		$res                 = new stdClass();
-		$res->name           = $remote->name;
-		$res->slug           = $remote->slug;
-		$res->author         = $remote->author;
+		$res = new stdClass();
+		$res->name = $remote->name;
+		$res->slug = $remote->slug;
+		$res->author = $remote->author;
 		$res->author_profile = $remote->author_profile;
-		$res->version        = $remote->version;
-		$res->tested         = $remote->tested;
-		$res->requires       = $remote->requires;
-		$res->requires_php   = $remote->requires_php;
-		$res->download_link  = $remote->download_url;
-		$res->trunk          = $remote->download_url;
-		$res->last_updated   = $remote->last_updated;
-		$res->sections       = array(
+		$res->version = $remote->version;
+		$res->tested = $remote->tested;
+		$res->requires = $remote->requires;
+		$res->requires_php = $remote->requires_php;
+		$res->download_link = $remote->download_url;
+		$res->trunk = $remote->download_url;
+		$res->last_updated = $remote->last_updated;
+		$res->sections = array(
 			'description'  => $remote->sections->description,
 			'installation' => $remote->sections->installation,
 			'changelog'    => $remote->sections->changelog,
@@ -470,7 +265,7 @@ class Urlslab {
 		return $res;
 	}
 
-	function push_update( $transient ) {
+	public function push_update( $transient ) {
 		if ( empty( $transient->checked ) ) {
 			return $transient;
 		}
@@ -490,13 +285,12 @@ class Urlslab {
 			&& version_compare( $remote->requires, get_bloginfo( 'version' ), '<' )
 			&& version_compare( $remote->requires_php, PHP_VERSION, '<' )
 		) {
-
-			$res                                 = new stdClass();
-			$res->slug                           = $remote->slug;
-			$res->plugin                         = URLSLAB_PLUGIN_BASENAME;
-			$res->new_version                    = $remote->version;
-			$res->tested                         = $remote->tested;
-			$res->package                        = $remote->download_url;
+			$res = new stdClass();
+			$res->slug = $remote->slug;
+			$res->plugin = URLSLAB_PLUGIN_BASENAME;
+			$res->new_version = $remote->version;
+			$res->tested = $remote->tested;
+			$res->package = $remote->download_url;
 			$transient->response[ $res->plugin ] = $res;
 
 			if ( property_exists( $remote, 'version' ) ) {
@@ -507,14 +301,238 @@ class Urlslab {
 		return $transient;
 	}
 
-
-	function plugin_action_links( array $links ) {
+	public function plugin_action_links( array $links ) {
 		return array_merge(
 			array(
 				'<a href="' . admin_url( '/admin.php?page=urlslab-dashboard' ) . '" title="' . __( 'URLsLab Settings', 'urlslab' ) . '">' . __( 'Settings', 'urlslab' ) . '</a>',
 			),
 			$links
 		);
+	}
+
+	public function add_cron_interval( $schedules ): array {
+		$my_schedule['every_minute'] = array(
+			'interval' => 60,
+			'display'  => esc_html__( 'Every Minute' ),
+		);
+
+		return array_merge( $my_schedule, $schedules );
+	}
+
+	/**
+	 * Load the required dependencies for this plugin.
+	 *
+	 * Include the following files that make up the plugin:
+	 *
+	 * - urlslab_Loader. Orchestrates the hooks of the plugin.
+	 * - urlslab_i18n. Defines internationalization functionality.
+	 * - urlslab_Admin. Defines all hooks for the admin area.
+	 * - urlslab_Public. Defines all hooks for the public side of the site.
+	 *
+	 * Create an instance of the loader which will be used to register the hooks
+	 * with WordPress.
+	 *
+	 * @since    1.0.0
+	 */
+	private function load_dependencies() {
+		require_once URLSLAB_PLUGIN_DIR . '/vendor/autoload.php';
+
+		/**
+		 * The class responsible for orchestrating the actions and filters of the
+		 * core plugin.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-urlslab-loader.php';
+
+		/**
+		 * The class responsible for defining internationalization functionality
+		 * of the plugin.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-urlslab-i18n.php';
+
+		/**
+		 * The class responsible for defining all actions that occur in the admin area.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-urlslab-admin.php';
+
+		/**
+		 * The class responsible for defining all actions that occur in the public-facing
+		 * side of the site.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-urlslab-public.php';
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-file-cache.php';
+
+		// data
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-data.php';
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-content-generator-row.php';
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-file-row.php';
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-keyword-row.php';
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-keyword-map-row.php';
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-url-row.php';
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-url-relation-row.php';
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-file-pointer-row.php';
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-youtube-row.php';
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-url-data-fetcher.php';
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-search-replace-row.php';
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-screenshot-url-row.php';
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-not-found-log-row.php';
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-redirect-row.php';
+
+		// additional
+		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
+
+		// widgets
+		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
+
+		// menu pages
+		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-page-factory.php';
+
+		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-admin-page.php';
+
+		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-admin-subpage.php';
+
+		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-dashboard-page.php';
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-api-router.php';
+	}
+
+	/**
+	 * Define the locale for this plugin for internationalization.
+	 *
+	 * Uses the urlslab_i18n class in order to set the domain and to register the hook
+	 * with WordPress.
+	 *
+	 * @since    1.0.0
+	 */
+	private function set_locale() {
+		$plugin_i18n = new Urlslab_I18n();
+
+		Urlslab_Loader::get_instance()->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
+	}
+
+	/**
+	 * Register all of the hooks related to the admin area functionality
+	 * of the plugin.
+	 *
+	 * @since    1.0.0
+	 */
+	private function define_admin_hooks() {
+		$plugin_admin = new Urlslab_Admin( $this->get_urlslab(), $this->get_version() );
+		$plugin_admin->urlslab_page_ajax();
+
+		add_action(
+			'admin_enqueue_scripts',
+			function ( $hook ) {
+				if ( ! did_action( 'wp_enqueue_media' ) ) {
+					wp_enqueue_media();
+				}
+			}
+		);
+		Urlslab_Loader::get_instance()->add_action( 'admin_init', $this, 'urlslab_upgrade', 10, 0 );
+		Urlslab_Loader::get_instance()->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
+		Urlslab_Loader::get_instance()->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		Urlslab_Loader::get_instance()->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_react_settings' );
+		Urlslab_Loader::get_instance()->add_action( 'admin_menu', $plugin_admin, 'urlslab_admin_menu', 9, 0 );
+		Urlslab_Loader::get_instance()->add_action(
+			'wp_loaded',
+			$plugin_admin,
+			'urlslab_load_add_widgets_page',
+			10,
+			0
+		);
+		Urlslab_Loader::get_instance()->add_filter( 'plugins_api', $this, 'plugin_info', 20, 3 );
+		Urlslab_Loader::get_instance()->add_filter( 'site_transient_update_plugins', $this, 'push_update' );
+		Urlslab_Loader::get_instance()->add_filter( 'plugin_action_links_' . URLSLAB_PLUGIN_BASENAME, $this, 'plugin_action_links' );
+	}
+
+	/**
+	 * Register all of the hooks related to the public-facing functionality
+	 * of the plugin.
+	 *
+	 * @since    1.0.0
+	 */
+	private function define_public_hooks() {
+		$plugin_public = new Urlslab_Public( $this->get_urlslab(), $this->get_version() );
+
+		Urlslab_Loader::get_instance()->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
+		Urlslab_Loader::get_instance()->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $plugin_public, 'download_offloaded_file', PHP_INT_MIN );
+
+		Urlslab_Loader::get_instance()->add_action( 'wp_before_load_template', $this, 'buffer_head_start', PHP_INT_MIN );
+		Urlslab_Loader::get_instance()->add_action( 'wp_after_load_template', $this, 'buffer_end', PHP_INT_MAX );
+
+		// body content
+		Urlslab_Loader::get_instance()->add_action( 'wp_body_open', $this, 'buffer_content_start', PHP_INT_MAX );
+		Urlslab_Loader::get_instance()->add_action( 'wp_footer', $this, 'buffer_end', PHP_INT_MIN );
+
+		$this->init_activated_widgets();
+	}
+
+	private function urlslab_head_content( $content ) {
+		if ( empty( $content ) || ! has_action( 'urlslab_head_content' ) ) {
+			return $content;    // nothing to process
+		}
+
+		$content = apply_filters( 'urlslab_head_content_raw', $content );
+
+		$document = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
+		$document->encoding = get_bloginfo( 'charset' );
+		$document->strictErrorChecking = false; // phpcs:ignore
+		$libxml_previous_state = libxml_use_internal_errors( true );
+
+		try {
+			$document->loadHTML(
+				mb_convert_encoding( $content, 'HTML-ENTITIES', get_bloginfo( 'charset' ) ),
+				LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE
+			);
+
+			foreach ( libxml_get_errors() as $error ) {
+				if ( false !== strpos( $error->message, 'Unexpected' ) || false !== strpos( $error->message, 'misplaced' ) ) {
+					return $content;
+				}
+			}
+
+			libxml_clear_errors();
+			libxml_use_internal_errors( $libxml_previous_state );
+
+			do_action( 'urlslab_head_content', $document );
+
+			return $document->saveHTML( $document->getElementsByTagName( 'head' )[0] );
+		} catch ( Exception $e ) {
+			return $content;
+		}
+	}
+
+	private function init_activated_widgets() {
+		$active_widgets = Urlslab_User_Widget::get_instance()->get_activated_widgets();
+		foreach ( $active_widgets as $active_widget ) {
+			$active_widget->init_widget();
+		}
+	}
+
+	private function define_backend_hooks() {
+		add_filter( 'cron_schedules', array( $this, 'add_cron_interval' ) );
+		if ( ! wp_next_scheduled( 'urlslab_cron_hook' ) ) {
+			wp_schedule_event( time(), 'every_minute', 'urlslab_cron_hook' );
+		}
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron-manager.php';
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_cron_hook', Urlslab_Cron_Manager::get_instance(), 'exec_cron_task', 10, 0 );
 	}
 
 	private function init_table_names() {
@@ -539,18 +557,7 @@ class Urlslab {
 		define( 'URLSLAB_REDIRECTS_TABLE', $wpdb->prefix . 'urlslab_redirects' );
 	}
 
-
-	function add_cron_interval( $schedules ): array {
-		$my_schedule['every_minute'] = array(
-			'interval' => 60,
-			'display'  => esc_html__( 'Every Minute' ),
-		);
-
-		return array_merge( $my_schedule, $schedules );
-	}
-
 	private function define_api_hooks() {
-
 		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-base.php';
 		if ( ! isset( $_SERVER['REQUEST_URI'] ) || false === strpos( $_SERVER['REQUEST_URI'], Urlslab_Api_Base::NAMESPACE ) ) {
 			return;
@@ -558,7 +565,7 @@ class Urlslab {
 
 		add_action(
 			'rest_api_init',
-			function() {
+			function () {
 				if ( ! current_user_can( 'read' ) ) {
 					return;
 				}

@@ -3,27 +3,25 @@
 // phpcs:disable WordPress.NamingConventions
 
 class Urlslab_Link_Enhancer extends Urlslab_Widget {
-	const SLUG = 'urlslab-link-enhancer';
+	public const SLUG = 'urlslab-link-enhancer';
 	public const DESC_TEXT_SUMMARY = 'S';
 	public const DESC_TEXT_URL = 'U';
 	public const DESC_TEXT_TITLE = 'T';
 	public const DESC_TEXT_META_DESCRIPTION = 'M';
 
-
 	public const SETTING_NAME_DESC_REPLACEMENT_STRATEGY = 'urlslab_desc_replacement_strategy';
-	const SETTING_NAME_REMOVE_LINKS = 'urlslab_remove_links';
-	const SETTING_NAME_VALIDATE_LINKS = 'urlslab_validate_links';
-	const SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_INTERVAL = 'urlslab_url_http_status_interval';
-	const SETTING_NAME_URLS_MAP = 'urlslab_urls_map';
-	const SETTING_NAME_ADD_LINK_FRAGMENT = 'urlslab_add_lnk_fragment';
+	public const SETTING_NAME_REMOVE_LINKS = 'urlslab_remove_links';
+	public const SETTING_NAME_VALIDATE_LINKS = 'urlslab_validate_links';
+	public const SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_INTERVAL = 'urlslab_url_http_status_interval';
+	public const SETTING_NAME_URLS_MAP = 'urlslab_urls_map';
+	public const SETTING_NAME_ADD_LINK_FRAGMENT = 'urlslab_add_lnk_fragment';
 
 	public const SETTING_NAME_ADD_ID_TO_ALL_H_TAGS = 'urlslab_H_add_id';
 	public const SETTING_NAME_PAGE_ID_LINKS_TO_SLUG = 'urlslab_pid_to_slug';
 	public const SETTING_NAME_DELETE_LINK_IF_PAGE_ID_NOT_FOUND = 'urlslab_pid_del_notfound';
-	const SETTING_NAME_MARK_AS_VALID_CURRENT_URL = 'urlslab_mark_as_valid_current_url';
-	const SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_INTERNAL_LINKS = 'urlslab_auto_sum_int_links';
-	const SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_EXTERNAL_LINKS = 'urlslab_auto_sum_ext_links';
-
+	public const SETTING_NAME_MARK_AS_VALID_CURRENT_URL = 'urlslab_mark_as_valid_current_url';
+	public const SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_INTERNAL_LINKS = 'urlslab_auto_sum_int_links';
+	public const SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_EXTERNAL_LINKS = 'urlslab_auto_sum_ext_links';
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'post_updated', $this, 'post_updated', 10, 3 );
@@ -50,27 +48,17 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		}
 	}
 
-	/**
-	 * @return string
-	 */
 	public function get_widget_slug(): string {
 		return Urlslab_Link_Enhancer::SLUG;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function get_widget_title(): string {
 		return __( 'Links Manager' );
 	}
 
-	/**
-	 * @return string
-	 */
 	public function get_widget_description(): string {
 		return __( 'Monitor and maintain all internal and external links on your website' );
 	}
-
 
 	public function theContentHook( DOMDocument $document ) {
 		$this->validateCurrentPageUrl();
@@ -80,242 +68,10 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		$this->processLinkFragments( $document );
 	}
 
-	private function fixPageIdLinks( DOMDocument $document ) {
-		if ( ! $this->get_option( self::SETTING_NAME_PAGE_ID_LINKS_TO_SLUG ) ) {
-			return;
-		}
-
-		$xpath     = new DOMXPath( $document );
-		$link_data = $xpath->query( "//a[contains(@href, '?page_id=') and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-page_id')])]" );
-
-		foreach ( $link_data as $link_element ) {
-			try {
-				$url = new Urlslab_Url( $link_element->getAttribute( 'href' ) );
-				if ( preg_match( '/page_id=([0-9]*)/i', $url->get_url_query(), $mathes ) ) {
-					if ( isset( $mathes[1] ) && is_numeric( $mathes[1] ) ) {
-						$post_permalink = get_the_permalink( $mathes[1] );
-						if ( $post_permalink ) {
-							$link_element->setAttribute( 'href', $post_permalink );
-							if ( $link_element->hasAttribute( 'target' ) && '_blank' == $link_element->getAttribute( 'target' ) ) {
-								try {
-									$permalink_url = new Urlslab_Url( $post_permalink );
-									if ( $permalink_url->is_same_domain_url() ) {
-										$link_element->removeAttribute( 'target' );
-									}
-								} catch ( Exception $e ) {
-								}
-							}
-						} else if ( $this->get_option( self::SETTING_NAME_DELETE_LINK_IF_PAGE_ID_NOT_FOUND ) ) {
-							//link should not be visible, remove it from content
-							if ( $link_element->childNodes->length > 0 ) {
-								$fragment = $document->createDocumentFragment();
-								if ( $link_element->childNodes->length > 0 ) {
-									$fragment->appendChild( $link_element->childNodes->item( 0 ) );
-								}
-								$link_element->parentNode->replaceChild( $fragment, $link_element );
-							} else {
-								if ( property_exists( $link_element, 'domValue' ) ) {
-									$txt_value = $link_element->domValue;
-								} else {
-									$txt_value = '';
-								}
-								$txt_element = $document->createTextNode( $txt_value );
-								$link_element->parentNode->replaceChild( $txt_element, $link_element );
-							}
-						}
-					}
-				}
-			} catch ( Exception $e ) {
-			}
-		}
-	}
-
-
-	private function update_urls_map( array $url_ids ) {
-		if ( ! $this->get_option( self::SETTING_NAME_URLS_MAP ) ) {
-			return;
-		}
-
-		$srcUrlId = $this->get_current_page_url()->get_url_id();
-
-		global $wpdb;
-		$results = $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT dest_url_id FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE src_url_id = %d', // phpcs:ignore
-				$srcUrlId
-			),
-			'ARRAY_A'
-		);
-
-		$destinations = array();
-		array_walk(
-			$results,
-			function( $value, $key ) use ( &$destinations ) {
-				$destinations[ $value['dest_url_id'] ] = true;
-			}
-		);
-
-		$tracked_urls = array();
-
-		$values      = array();
-		$placeholder = array();
-		foreach ( $url_ids as $url_id ) {
-			if ( ! isset( $destinations[ $url_id ] ) ) {
-				array_push(
-					$values,
-					$srcUrlId,
-					$url_id,
-				);
-				$placeholder[] = '(%d,%d)';
-			} else {
-				$tracked_urls[ $url_id ] = true;
-			}
-		}
-
-		if ( ! empty( $values ) ) {
-			$table               = URLSLAB_URLS_MAP_TABLE;
-			$placeholder_string  = implode( ', ', $placeholder );
-			$insert_update_query = "INSERT IGNORE INTO $table (src_url_id, dest_url_id) VALUES $placeholder_string";
-
-			$wpdb->query(
-				$wpdb->prepare(
-					$insert_update_query, // phpcs:ignore
-					$values
-				)
-			);
-		}
-
-		$delete = array_diff( array_keys( $destinations ), array_keys( $tracked_urls ) );
-		if ( ! empty( $delete ) ) {
-			$values      = array( $srcUrlId );
-			$placeholder = array();
-			foreach ( $delete as $url_id ) {
-				$placeholder[] = '%d';
-				$values[]      = $url_id;
-			}
-			$table              = URLSLAB_URLS_MAP_TABLE;
-			$placeholder_string = implode( ',', $placeholder );
-			$delete_query       = "DELETE FROM $table WHERE src_url_id=%d AND dest_url_id IN ($placeholder_string)";
-			$wpdb->query( $wpdb->prepare( $delete_query, $values ) ); // phpcs:ignore
-		}
-	}
-
 	public function is_api_key_required(): bool {
 		return true;
 	}
 
-
-	/**
-	 * @param DOMDocument $document
-	 *
-	 * @return void
-	 */
-	private function processTitleAttribute( DOMDocument $document ): void {
-		try {
-			$xpath    = new DOMXPath( $document );
-			$elements = $xpath->query( "//a[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-title')])]" );
-
-			$link_elements = array();
-			if ( $elements instanceof DOMNodeList ) {
-				foreach ( $elements as $dom_element ) {
-					//skip processing if A tag contains attribute "urlslab-skip-all" or urlslab-skip-title
-					if ( $this->is_skip_elemenet( $dom_element, 'title' ) ) {
-						continue;
-					}
-
-					if ( ! empty( trim( $dom_element->getAttribute( 'href' ) ) ) ) {
-						try {
-							$url             = new Urlslab_Url( $dom_element->getAttribute( 'href' ) );
-							$link_elements[] = array( $dom_element, $url );
-						} catch ( Exception $e ) {
-						}
-					}
-				}
-			}
-
-			if ( ! empty( $link_elements ) ) {
-
-				$result = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_urls(
-					array_merge(
-						array( $this->get_current_page_url() ),
-						array_map( fn( $elem ): Urlslab_Url => $elem[1], $link_elements )
-					)
-				);
-
-				if ( ! empty( $result ) ) {
-					$strategy = $this->get_option( self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY );
-
-					$this->update_urls_map( array_keys( $result ) );
-
-					foreach ( $link_elements as $arr_element ) {
-						list( $dom_elem, $url_obj ) = $arr_element;
-						if ( isset( $result[ $url_obj->get_url_id() ] ) && ! empty( $result[ $url_obj->get_url_id() ] ) ) {
-
-							if ( $this->get_option( self::SETTING_NAME_REMOVE_LINKS ) && ! $result[ $url_obj->get_url_id() ]->is_visible() ) {
-
-								//link should not be visible, remove it from content
-								if ( $dom_elem->childNodes->length > 0 ) {
-									$fragment = $document->createDocumentFragment();
-									if ( $dom_elem->childNodes->length > 0 ) {
-										$fragment->appendChild( $dom_elem->childNodes->item( 0 ) );
-									}
-									$dom_elem->parentNode->replaceChild( $fragment, $dom_elem );
-								} else {
-									if ( property_exists( $dom_element, 'domValue' ) ) {
-										$txt_value = $dom_elem->domValue;
-									} else {
-										$txt_value = '';
-									}
-									$txt_element = $document->createTextNode( $txt_value );
-									$dom_elem->parentNode->replaceChild( $txt_element, $dom_elem );
-								}
-							} else {
-								//enhance title if url has no title
-								if ( empty( $dom_elem->getAttribute( 'title' ) ) ) {
-
-									if (
-										$result[ $url_obj->get_url_id() ]->is_internal() && $this->get_option( self::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_INTERNAL_LINKS ) ||
-										! $result[ $url_obj->get_url_id() ]->is_internal() && $this->get_option( self::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_EXTERNAL_LINKS )
-									) {
-										$result[ $url_obj->get_url_id() ]->request_url_schedule( Urlslab_Url_Row::URL_SCHEDULE_SUMMARIZATION_REQUIRED );
-									}
-
-									$dom_elem->setAttribute(
-										'title',
-										$result[ $url_obj->get_url_id() ]->get_summary_text( $strategy ),
-									);
-								}
-							}
-						}
-					}
-				}
-			}
-		} catch ( Exception $e ) {
-		}
-	}
-
-
-	private function addIdToHTags( DOMDocument $document ) {
-		if ( $this->get_option( self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS ) ) {
-			$used_ids = array();
-			$xpath    = new DOMXPath( $document );
-			$headers  = $xpath->query( "//*[substring-after(name(), 'h') > 0 and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-keywords')])]" );
-			foreach ( $headers as $header_element ) {
-				if ( ! $header_element->hasAttribute( 'id' ) ) {
-					$id = strtolower( trim( $header_element->nodeValue ) );
-					$id = 'h-' . trim( preg_replace( '/[^\w]+/', '-', $id ), '-' );
-					if ( ! isset( $used_ids[ $id ] ) ) {
-						$header_element->setAttribute( 'id', $id );
-					}
-				}
-				$used_ids[ $header_element->getAttribute( 'id' ) ] = 1;
-			}
-		}
-	}
-
-	/**
-	 * @return void
-	 */
 	public function validateCurrentPageUrl(): void {
 		$currentUrl = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $this->get_current_page_url() );
 		if ( null !== $currentUrl ) {
@@ -426,7 +182,6 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			'validation'
 		);
 
-
 		$this->add_option_definition(
 			self::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_INTERVAL,
 			2419200,
@@ -442,7 +197,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 				31536000         => __( 'Yearly' ),
 				self::FREQ_NEVER => __( 'Never' ),
 			),
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'validation',
@@ -465,7 +220,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			true,
 			true,
 			__( 'Hide Invalid non-SEO Friendly Links' ),
-			__( /** @lang text */ "Hide all links with an invalid `page_id` in the website's content." ),
+			__( /* @lang text */ "Hide all links with an invalid `page_id` in the website's content." ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -495,22 +250,242 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			null,
 			'scheduling'
 		);
+	}
 
+	private function fixPageIdLinks( DOMDocument $document ) {
+		if ( ! $this->get_option( self::SETTING_NAME_PAGE_ID_LINKS_TO_SLUG ) ) {
+			return;
+		}
+
+		$xpath = new DOMXPath( $document );
+		$link_data = $xpath->query( "//a[contains(@href, '?page_id=') and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-page_id')])]" );
+
+		foreach ( $link_data as $link_element ) {
+			try {
+				$url = new Urlslab_Url( $link_element->getAttribute( 'href' ) );
+				if ( preg_match( '/page_id=(\d*)/i', $url->get_url_query(), $mathes ) ) {
+					if ( isset( $mathes[1] ) && is_numeric( $mathes[1] ) ) {
+						$post_permalink = get_the_permalink( $mathes[1] );
+						if ( $post_permalink ) {
+							$link_element->setAttribute( 'href', $post_permalink );
+							if ( $link_element->hasAttribute( 'target' ) && '_blank' == $link_element->getAttribute( 'target' ) ) {
+								try {
+									$permalink_url = new Urlslab_Url( $post_permalink );
+									if ( $permalink_url->is_same_domain_url() ) {
+										$link_element->removeAttribute( 'target' );
+									}
+								} catch ( Exception $e ) {
+								}
+							}
+						} else {
+							if ( $this->get_option( self::SETTING_NAME_DELETE_LINK_IF_PAGE_ID_NOT_FOUND ) ) {
+								// link should not be visible, remove it from content
+								if ( $link_element->childNodes->length > 0 ) {
+									$fragment = $document->createDocumentFragment();
+									if ( $link_element->childNodes->length > 0 ) {
+										$fragment->appendChild( $link_element->childNodes->item( 0 ) );
+									}
+									$link_element->parentNode->replaceChild( $fragment, $link_element );
+								} else {
+									if ( property_exists( $link_element, 'domValue' ) ) {
+										$txt_value = $link_element->domValue;
+									} else {
+										$txt_value = '';
+									}
+									$txt_element = $document->createTextNode( $txt_value );
+									$link_element->parentNode->replaceChild( $txt_element, $link_element );
+								}
+							}
+						}
+					}
+				}
+			} catch ( Exception $e ) {
+			}
+		}
+	}
+
+	private function update_urls_map( array $url_ids ) {
+		if ( ! $this->get_option( self::SETTING_NAME_URLS_MAP ) ) {
+			return;
+		}
+
+		$srcUrlId = $this->get_current_page_url()->get_url_id();
+
+		global $wpdb;
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT dest_url_id FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE src_url_id = %d', // phpcs:ignore
+				$srcUrlId
+			),
+			'ARRAY_A'
+		);
+
+		$destinations = array();
+		array_walk(
+			$results,
+			function ( $value, $key ) use ( &$destinations ) {
+				$destinations[ $value['dest_url_id'] ] = true;
+			}
+		);
+
+		$tracked_urls = array();
+
+		$values = array();
+		$placeholder = array();
+		foreach ( $url_ids as $url_id ) {
+			if ( ! isset( $destinations[ $url_id ] ) ) {
+				array_push(
+					$values,
+					$srcUrlId,
+					$url_id,
+				);
+				$placeholder[] = '(%d,%d)';
+			} else {
+				$tracked_urls[ $url_id ] = true;
+			}
+		}
+
+		if ( ! empty( $values ) ) {
+			$table = URLSLAB_URLS_MAP_TABLE;
+			$placeholder_string = implode( ', ', $placeholder );
+			$insert_update_query = "INSERT IGNORE INTO {$table} (src_url_id, dest_url_id) VALUES {$placeholder_string}";
+
+			$wpdb->query(
+				$wpdb->prepare(
+					$insert_update_query, // phpcs:ignore
+					$values
+				)
+			);
+		}
+
+		$delete = array_diff( array_keys( $destinations ), array_keys( $tracked_urls ) );
+		if ( ! empty( $delete ) ) {
+			$values = array( $srcUrlId );
+			$placeholder = array();
+			foreach ( $delete as $url_id ) {
+				$placeholder[] = '%d';
+				$values[] = $url_id;
+			}
+			$table = URLSLAB_URLS_MAP_TABLE;
+			$placeholder_string = implode( ',', $placeholder );
+			$delete_query = "DELETE FROM {$table} WHERE src_url_id=%d AND dest_url_id IN ({$placeholder_string})";
+			$wpdb->query( $wpdb->prepare( $delete_query, $values ) ); // phpcs:ignore
+		}
+	}
+
+	private function processTitleAttribute( DOMDocument $document ): void {
+		try {
+			$xpath = new DOMXPath( $document );
+			$elements = $xpath->query( "//a[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-title')])]" );
+
+			$link_elements = array();
+			if ( $elements instanceof DOMNodeList ) {
+				foreach ( $elements as $dom_element ) {
+					// skip processing if A tag contains attribute "urlslab-skip-all" or urlslab-skip-title
+					if ( $this->is_skip_elemenet( $dom_element, 'title' ) ) {
+						continue;
+					}
+
+					if ( ! empty( trim( $dom_element->getAttribute( 'href' ) ) ) ) {
+						try {
+							$url = new Urlslab_Url( $dom_element->getAttribute( 'href' ) );
+							$link_elements[] = array( $dom_element, $url );
+						} catch ( Exception $e ) {
+						}
+					}
+				}
+			}
+
+			if ( ! empty( $link_elements ) ) {
+				$result = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_urls(
+					array_merge(
+						array( $this->get_current_page_url() ),
+						array_map( fn( $elem ): Urlslab_Url => $elem[1], $link_elements )
+					)
+				);
+
+				if ( ! empty( $result ) ) {
+					$strategy = $this->get_option( self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY );
+
+					$this->update_urls_map( array_keys( $result ) );
+
+					foreach ( $link_elements as $arr_element ) {
+						list( $dom_elem, $url_obj ) = $arr_element;
+						if ( isset( $result[ $url_obj->get_url_id() ] ) && ! empty( $result[ $url_obj->get_url_id() ] ) ) {
+							if ( $this->get_option( self::SETTING_NAME_REMOVE_LINKS ) && ! $result[ $url_obj->get_url_id() ]->is_visible() ) {
+								// link should not be visible, remove it from content
+								if ( $dom_elem->childNodes->length > 0 ) {
+									$fragment = $document->createDocumentFragment();
+									if ( $dom_elem->childNodes->length > 0 ) {
+										$fragment->appendChild( $dom_elem->childNodes->item( 0 ) );
+									}
+									$dom_elem->parentNode->replaceChild( $fragment, $dom_elem );
+								} else {
+									if ( property_exists( $dom_element, 'domValue' ) ) {
+										$txt_value = $dom_elem->domValue;
+									} else {
+										$txt_value = '';
+									}
+									$txt_element = $document->createTextNode( $txt_value );
+									$dom_elem->parentNode->replaceChild( $txt_element, $dom_elem );
+								}
+							} else {
+								// enhance title if url has no title
+								if ( empty( $dom_elem->getAttribute( 'title' ) ) ) {
+									if (
+										$result[ $url_obj->get_url_id() ]->is_internal() && $this->get_option( self::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_INTERNAL_LINKS )
+										|| ! $result[ $url_obj->get_url_id() ]->is_internal() && $this->get_option( self::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_EXTERNAL_LINKS )
+									) {
+										$result[ $url_obj->get_url_id() ]->request_url_schedule( Urlslab_Url_Row::URL_SCHEDULE_SUMMARIZATION_REQUIRED );
+									}
+
+									$dom_elem->setAttribute(
+										'title',
+										$result[ $url_obj->get_url_id() ]->get_summary_text( $strategy ),
+									);
+								}
+							}
+						}
+					}
+				}
+			}
+		} catch ( Exception $e ) {
+		}
+	}
+
+	private function addIdToHTags( DOMDocument $document ) {
+		if ( $this->get_option( self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS ) ) {
+			$used_ids = array();
+			$xpath = new DOMXPath( $document );
+			$headers = $xpath->query( "//*[substring-after(name(), 'h') > 0 and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-keywords')])]" );
+			foreach ( $headers as $header_element ) {
+				if ( ! $header_element->hasAttribute( 'id' ) ) {
+					$id = strtolower( trim( $header_element->nodeValue ) );
+					$id = 'h-' . trim( preg_replace( '/[^\w]+/', '-', $id ), '-' );
+					if ( ! isset( $used_ids[ $id ] ) ) {
+						$header_element->setAttribute( 'id', $id );
+					}
+				}
+				$used_ids[ $header_element->getAttribute( 'id' ) ] = 1;
+			}
+		}
 	}
 
 	private function processLinkFragments( DOMDocument $document ) {
 		if ( ! $this->get_option( self::SETTING_NAME_ADD_LINK_FRAGMENT ) ) {
 			return;
 		}
-		$xpath    = new DOMXPath( $document );
+		$xpath = new DOMXPath( $document );
 		$elements = $xpath->query( "//a[@href and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-fragment')])]" );
 		foreach ( $elements as $dom_elem ) {
 			if ( strlen( $dom_elem->getAttribute( 'href' ) ) && false === strpos( $dom_elem->getAttribute( 'href' ), '#' ) ) {
 				$fragment_text = '';
 				if ( $dom_elem->childNodes->length > 0 && property_exists( $dom_elem->childNodes->item( 0 ), 'wholeText' ) ) {
 					$fragment_text = trim( $dom_elem->childNodes->item( 0 )->wholeText );
-				} else if ( property_exists( $dom_elem, 'domValue' ) ) {
-					$fragment_text = trim( $dom_elem->domValue );
+				} else {
+					if ( property_exists( $dom_elem, 'domValue' ) ) {
+						$fragment_text = trim( $dom_elem->domValue );
+					}
 				}
 				if ( strlen( $fragment_text ) ) {
 					try {
@@ -519,7 +494,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 							$dom_elem->setAttribute( 'href', $dom_elem->getAttribute( 'href' ) . '#:~:text=' . urlencode( $fragment_text ) );
 						}
 					} catch ( Exception $e ) {
-						//noop, just skip link
+						// noop, just skip link
 					}
 				}
 			}

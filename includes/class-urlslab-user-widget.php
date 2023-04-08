@@ -1,7 +1,6 @@
 <?php
 
 class Urlslab_User_Widget {
-
 	private array $activated_widgets = array();
 
 	private static Urlslab_User_Widget $instance;
@@ -14,7 +13,7 @@ class Urlslab_User_Widget {
 	 */
 	public static function get_instance(): Urlslab_User_Widget {
 		if ( empty( self::$instance ) ) {
-			self::$instance = new self;
+			self::$instance = new self();
 			$widgets = Urlslab::get_option( 'user_widgets' );
 			$available_widgets = Urlslab_Available_Widgets::get_instance();
 
@@ -28,7 +27,7 @@ class Urlslab_User_Widget {
 						self::$instance->activated_widgets[ $widget_detail->get_widget_slug() ] = $widget_detail;
 					}
 				}
-			}       
+			}
 		}
 
 		return self::$instance;

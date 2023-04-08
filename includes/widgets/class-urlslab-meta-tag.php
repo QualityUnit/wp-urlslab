@@ -3,48 +3,34 @@
 // phpcs:disable WordPress
 
 class Urlslab_Meta_Tag extends Urlslab_Widget {
-	const SLUG = 'urlslab-meta-tag';
+	public const SLUG = 'urlslab-meta-tag';
 
-	const SETTING_NAME_META_DESCRIPTION_GENERATION = 'urlslab_meta_description_generation';
+	public const SETTING_NAME_META_DESCRIPTION_GENERATION = 'urlslab_meta_description_generation';
 
-	const SETTING_NAME_META_OG_IMAGE_GENERATION = 'urlslab_og_image_generation';
-	const DEFAULT_META_OG_IMAGE_GENERATION = false;
-	const SETTING_NAME_META_OG_TITLE_GENERATION = 'urlslab_og_title_generation';
+	public const SETTING_NAME_META_OG_IMAGE_GENERATION = 'urlslab_og_image_generation';
+	public const SETTING_NAME_META_OG_TITLE_GENERATION = 'urlslab_og_title_generation';
 
-	const SETTING_NAME_META_OG_DESC_GENERATION = 'urlslab_og_desc_generation';
+	public const SETTING_NAME_META_OG_DESC_GENERATION = 'urlslab_og_desc_generation';
 
-
-	const ADD_VALUE = 'A';
-	const REPLACE_VALUE = 'R';
-	const NO_CHANGE_VALUE = '';
-
+	public const ADD_VALUE = 'A';
+	public const REPLACE_VALUE = 'R';
+	public const NO_CHANGE_VALUE = '';
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_head_content', $this, 'theContentHook' );
 	}
 
-
-	/**
-	 * @return string
-	 */
 	public function get_widget_slug(): string {
 		return Urlslab_Meta_Tag::SLUG;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function get_widget_title(): string {
 		return __( 'Meta Tags Manager' );
 	}
 
-	/**
-	 * @return string
-	 */
 	public function get_widget_description(): string {
 		return __( 'Make your content go further by adding Meta Tags and maximize its shareability on all social media platforms.' );
 	}
-
 
 	public function theContentHook( DOMDocument $document ) {
 		try {
@@ -53,7 +39,6 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 				return;
 			}
 
-
 			try {
 				$url_data = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $this->get_current_page_url() );
 			} catch ( Exception $e ) {
@@ -61,10 +46,8 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			}
 
 			if ( is_object( $url_data ) && $url_data->is_http_valid() ) {
-
 				$summary = $url_data->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
-				$title   = $url_data->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_TITLE );
-
+				$title = $url_data->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_TITLE );
 
 				$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'description', self::SETTING_NAME_META_DESCRIPTION_GENERATION, $summary );
 
@@ -75,39 +58,10 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image:height', self::SETTING_NAME_META_OG_IMAGE_GENERATION, 768 );
 					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image:type', self::SETTING_NAME_META_OG_IMAGE_GENERATION, 'image/jpeg' );
 				}
-
 			}
 		} catch ( Exception $e ) {
 		}
 	}
-
-	private function set_meta_tag( $document, $head_tag, $tag, $attribute_name, $attribute_value, $setting_name, $content_value ): bool {
-		if ( ! empty( $this->get_option( $setting_name ) ) && ! empty( $content_value ) ) {
-			$xpath     = new DOMXPath( $document );
-			$meta_tags = $xpath->query( '//' . $tag . '[@' . $attribute_name . "='$attribute_value']" );
-			if ( $meta_tags->count() == 0 ) {
-				$node = $document->createElement( $tag );
-				$node->setAttribute( $attribute_name, $attribute_value );
-				$node->setAttribute( 'content', $content_value );
-				$node->setAttribute( 'class', 'urlslab-seo-meta-tag' );
-				$head_tag->appendChild( $node );
-
-				return true;
-			} else {
-				if ( self::REPLACE_VALUE == $this->get_option( $setting_name ) ) {
-					foreach ( $meta_tags as $node ) {
-						$node->setAttribute( 'content', $content_value );
-						$node->setAttribute( 'class', 'urlslab-seo-meta-tag' );
-
-						return true;
-					}
-				}
-			}
-		}
-
-		return false;
-	}
-
 
 	public function is_api_key_required(): bool {
 		return true;
@@ -128,12 +82,13 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 				self::ADD_VALUE       => __( 'Add if missing' ),
 				self::REPLACE_VALUE   => __( 'Replace the current values' ),
 			),
-			function( $value ) {
+			function ( $value ) {
 				switch ( $value ) {
 					case self::NO_CHANGE_VALUE:
 					case self::ADD_VALUE:
 					case self::REPLACE_VALUE:
 						return true;
+
 					default:
 						return false;
 				}
@@ -155,12 +110,13 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 				self::ADD_VALUE       => __( 'Add if missing' ),
 				self::REPLACE_VALUE   => __( 'Replace the current values' ),
 			),
-			function( $value ) {
+			function ( $value ) {
 				switch ( $value ) {
 					case self::NO_CHANGE_VALUE:
 					case self::ADD_VALUE:
 					case self::REPLACE_VALUE:
 						return true;
+
 					default:
 						return false;
 				}
@@ -179,12 +135,13 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 				self::ADD_VALUE       => __( 'Add if missing' ),
 				self::REPLACE_VALUE   => __( 'Replace the current values' ),
 			),
-			function( $value ) {
+			function ( $value ) {
 				switch ( $value ) {
 					case self::NO_CHANGE_VALUE:
 					case self::ADD_VALUE:
 					case self::REPLACE_VALUE:
 						return true;
+
 					default:
 						return false;
 				}
@@ -203,17 +160,44 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 				self::ADD_VALUE       => __( 'Add if missing' ),
 				self::REPLACE_VALUE   => __( 'Replace the current values' ),
 			),
-			function( $value ) {
+			function ( $value ) {
 				switch ( $value ) {
 					case self::NO_CHANGE_VALUE:
 					case self::ADD_VALUE:
 					case self::REPLACE_VALUE:
 						return true;
+
 					default:
 						return false;
 				}
 			},
 			'og'
 		);
+	}
+
+	private function set_meta_tag( $document, $head_tag, $tag, $attribute_name, $attribute_value, $setting_name, $content_value ): bool {
+		if ( ! empty( $this->get_option( $setting_name ) ) && ! empty( $content_value ) ) {
+			$xpath = new DOMXPath( $document );
+			$meta_tags = $xpath->query( '//' . $tag . '[@' . $attribute_name . "='{$attribute_value}']" );
+			if ( 0 == $meta_tags->count() ) {
+				$node = $document->createElement( $tag );
+				$node->setAttribute( $attribute_name, $attribute_value );
+				$node->setAttribute( 'content', $content_value );
+				$node->setAttribute( 'class', 'urlslab-seo-meta-tag' );
+				$head_tag->appendChild( $node );
+
+				return true;
+			}
+			if ( self::REPLACE_VALUE == $this->get_option( $setting_name ) ) {
+				foreach ( $meta_tags as $node ) {
+					$node->setAttribute( 'content', $content_value );
+					$node->setAttribute( 'class', 'urlslab-seo-meta-tag' );
+
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 }

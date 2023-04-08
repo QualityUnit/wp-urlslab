@@ -1,21 +1,21 @@
 <?php
 
 class Urlslab_Url {
-
 	private static string $current_page_protocol = '';
 	private string $urlslab_parsed_url;
 	private bool $is_same_domain_url = false;
 	private $url_id = null;
 	private array $url_components = array();
-	private static $domain_blacklists = array(
-		'google.com',
-		'facebook.com',
-		'instagram.com',
-		'twitter.com',
-		'localhost',
-		'liveagent.local',
-		'wa.me',
-	);
+	private static $domain_blacklists
+		= array(
+			'google.com',
+			'facebook.com',
+			'instagram.com',
+			'twitter.com',
+			'localhost',
+			'liveagent.local',
+			'wa.me',
+		);
 	private const SKIP_QUERY_PARAMS_REGEXP = '/^(utm_[a-zA-Z0-9]*|_gl|_ga.*|gclid|fbclid|fb_[a-zA-Z0-9]*|msclkid|zenid|lons1|appns|lpcid|mm_src|muid|phpsessid|jsessionid|aspsessionid|doing_wp_cron|sid|pk_vid|source)$/';
 
 	/**
@@ -77,7 +77,7 @@ class Urlslab_Url {
 		}
 
 		if ( ! is_array( $parsed_url ) ) {
-			$this->url_components     = array( 'path' => '' );
+			$this->url_components = array( 'path' => '' );
 			$this->urlslab_parsed_url = '';
 
 			return;
@@ -89,14 +89,13 @@ class Urlslab_Url {
 			$this->url_components['path'] = '';
 		}
 
-
 		if ( ! isset( $this->url_components['scheme'] ) ) {
 			$this->url_components['scheme'] = self::get_current_page_protocol();
 		}
 
 		$current_site_host = strtolower( parse_url( get_site_url(), PHP_URL_HOST ) );
 		if ( ! isset( $this->url_components['host'] ) ) {
-			$this->is_same_domain_url     = true;
+			$this->is_same_domain_url = true;
 			$this->url_components['host'] = $current_site_host;
 			if ( substr( $this->url_components['path'], 0, 2 ) == './' ) {
 				$this->url_components['path'] = substr( $this->url_components['path'], 2 );
@@ -160,9 +159,11 @@ class Urlslab_Url {
 				if ( ! empty( $resolved_path_parts ) ) {
 					array_pop( $resolved_path_parts );
 				}
-			} else if ( '.' !== $part && '' !== $part ) {
-				// Add the current part to the resolved path stack
-				$resolved_path_parts[] = $part;
+			} else {
+				if ( '.' !== $part && '' !== $part ) {
+					// Add the current part to the resolved path stack
+					$resolved_path_parts[] = $part;
+				}
 			}
 		}
 
@@ -189,12 +190,6 @@ class Urlslab_Url {
 
 	public function get_url_query(): string {
 		return $this->url_components['query'] ?? '';
-	}
-
-	public function is_main_page(): bool {
-		return empty( $this->url_components['path'] ) &&
-			   empty( $this->url_components['query'] ) &&
-			   ! empty( $this->url_components['host'] );
 	}
 
 	public function get_url_with_protocol() {

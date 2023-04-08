@@ -1,8 +1,9 @@
 <?php
+
 require_once URLSLAB_PLUGIN_DIR . '/includes/driver/class-urlslab-driver.php';
 
 class Urlslab_Driver_Db extends Urlslab_Driver {
-	const MAX_DB_CHUNK_SIZE = 500000;
+	public const MAX_DB_CHUNK_SIZE = 500000;
 
 	public function save_file_to_storage( Urlslab_File_Row $file, $local_file_name ): bool {
 		if ( ! file_exists( $local_file_name ) || ! filesize( $local_file_name ) ) {
@@ -14,11 +15,11 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 			return false;
 		}
 
-		//clean old content data
+		// clean old content data
 		$this->delete_content( $file );
 
 		global $wpdb;
-		$result  = true;
+		$result = true;
 		$part_id = 1;
 		while ( ! feof( $handle ) ) {
 			$contents = fread( $handle, self::MAX_DB_CHUNK_SIZE );
@@ -37,21 +38,21 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 				break;
 			}
 
-			$part_id ++;
+			++$part_id;
 		}
 		fclose( $handle );
 
 		return false !== $result;
 	}
 
-	function output_file_content( Urlslab_File_Row $file ) {
+	public function output_file_content( Urlslab_File_Row $file ) {
 		$this->sanitize_output();
 
 		global $wpdb;
 		if ( is_object( $wpdb->dbh ) && $wpdb->use_mysqli ) {
 			$records = $wpdb->dbh->query( $wpdb->prepare( 'select content from ' . URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE . ' WHERE filehash=%s AND filesize=%d ORDER BY partid', $file->get_filehash(), $file->get_filesize() ) ); // phpcs:ignore
 			if ( false === $records ) {
-				return; //no content???
+				return; // no content???
 			}
 			while ( $data = $records->fetch_assoc() ) {
 				echo $data['content']; // phpcs:ignore
@@ -61,9 +62,9 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 				flush();
 			}
 		} else {
-			//iteration through results set not supported, store to local file and pass through local file to browser
+			// iteration through results set not supported, store to local file and pass through local file to browser
 			if ( ! function_exists( 'wp_tempnam' ) ) {
-				require_once( ABSPATH . 'wp-admin/includes/file.php' );
+				require_once ABSPATH . 'wp-admin/includes/file.php';
 			}
 			$local_tmp_file = wp_tempnam();
 			if ( $this->save_to_file( $file, $local_tmp_file ) ) {
@@ -76,11 +77,12 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 				flush();
 			}
 			unlink( $local_tmp_file );
+
 			exit;
 		}
 	}
 
-	function get_file_content( Urlslab_File_Row $file ) {
+	public function get_file_content( Urlslab_File_Row $file ) {
 		global $wpdb;
 		$results = $wpdb->get_results( $wpdb->prepare( 'select content from ' . URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE . ' WHERE filehash=%s AND filesize=%d ORDER BY partid', $file->get_filehash(), $file->get_filesize() ), ARRAY_A ); // phpcs:ignore
 		if ( empty( $results ) ) {
@@ -94,7 +96,7 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 		return $content;
 	}
 
-	function is_connected() {
+	public function is_connected() {
 		global $wpdb;
 
 		return $wpdb->ready;
@@ -103,7 +105,7 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 	public function save_to_file( Urlslab_File_Row $file, $file_name ): bool {
 		global $wpdb;
 		$fhandle = fopen( $file_name, 'wb' );
-		$sql     = $wpdb->prepare( 'select content from ' . URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE . ' WHERE filehash=%s AND filesize=%d ORDER BY partid', $file->get_filehash(), $file->get_filesize() ); // phpcs:ignore
+		$sql = $wpdb->prepare( 'select content from ' . URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE . ' WHERE filehash=%s AND filesize=%d ORDER BY partid', $file->get_filehash(), $file->get_filesize() ); // phpcs:ignore
 		if ( is_object( $wpdb->dbh ) && $wpdb->use_mysqli ) {
 			$records = $wpdb->dbh->query( $sql );
 			if ( false !== $records ) {

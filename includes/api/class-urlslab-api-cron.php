@@ -11,7 +11,10 @@ class Urlslab_Api_Cron extends Urlslab_Api_Base {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_items' ),
 					'args'                => array(),
-					'permission_callback' => array( $this, 'get_items_permissions_check' ),
+					'permission_callback' => array(
+						$this,
+						'get_items_permissions_check',
+					),
 				),
 			)
 		);
@@ -23,7 +26,10 @@ class Urlslab_Api_Cron extends Urlslab_Api_Base {
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'exec_all_crons' ),
-					'permission_callback' => array( $this, 'get_items_permissions_check' ),
+					'permission_callback' => array(
+						$this,
+						'get_items_permissions_check',
+					),
 					'args'                => array(),
 				),
 			)

@@ -1,8 +1,8 @@
 <?php
+
 require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-convert-images-cron.php';
 
 class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
-
 	public function is_format_supported() {
 		if ( ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG )->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE ) ) {
 			return false;
@@ -11,6 +11,9 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 		return function_exists( 'imagewebp' ) || ( extension_loaded( 'imagick' ) && count( Imagick::queryFormats( 'WEBP*' ) ) > 0 );
 	}
 
+	public function get_description(): string {
+		return __( 'Converting images to Webp format' );
+	}
 
 	protected function convert_next_file() {
 		global $wpdb;
@@ -42,16 +45,16 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 		);
 
 		if ( empty( $file_row ) ) {
-			return false;   //No rows to process
+			return false;   // No rows to process
 		}
 
 		$file = new Urlslab_File_Row( $file_row );
 		if ( ! empty( $file->get_webp_fileid() ) || ! $file->get_file_pointer()->get_driver_object()->is_connected() ) {
-			//This file is already processing, disabled or processed -> continue to next file
+			// This file is already processing, disabled or processed -> continue to next file
 			return true;
 		}
 
-		//check if webp was not computed already for other file
+		// check if webp was not computed already for other file
 		if ( strlen( $file->get_file_pointer()->get_webp_filehash() ) > 2 && $file->get_file_pointer()->get_webp_filesize() > 0 ) {
 			$webp_file = $this->create_file_for_pointer( $file );
 			if ( $webp_file ) {
@@ -65,10 +68,9 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 		$file->set_webp_fileid( Urlslab_File_Row::ALTERNATIVE_PROCESSING );
 		$file->update();
 
-		//create local image file
+		// create local image file
 		$original_image_filename = wp_tempnam();
 		if ( $file->get_file_pointer()->get_driver_object()->save_to_file( $file, $original_image_filename ) ) {
-
 			$new_file = $this->convert_image_format( $file, $original_image_filename, 'webp' );
 			unlink( $original_image_filename );
 
@@ -111,7 +113,7 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 			),
 			false
 		);
-		$webp_file->set_fileid( $webp_file->get_fileid() ); //init file id
+		$webp_file->set_fileid( $webp_file->get_fileid() ); // init file id
 
 		if ( $webp_file->insert() ) {
 			return $webp_file;
@@ -139,7 +141,7 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 			),
 			false
 		);
-		$webp_file->set_fileid( $webp_file->get_fileid() ); //init file id
+		$webp_file->set_fileid( $webp_file->get_fileid() ); // init file id
 
 		if ( ! $webp_file->insert() || ! $webp_file->get_file_pointer()->get_driver_object()->upload_content( $webp_file ) ) {
 			unlink( $new_file_name );
@@ -157,9 +159,5 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 		unlink( $new_file_name );
 
 		return $webp_file;
-	}
-
-	public function get_description(): string {
-		return __( 'Converting images to Webp format' );
 	}
 }

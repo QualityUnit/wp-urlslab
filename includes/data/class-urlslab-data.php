@@ -25,33 +25,11 @@ abstract class Urlslab_Data {
 		return $this->get( $name );
 	}
 
-	protected function set( $name, $value, $loaded_from_db ) {
-		if ( isset( $this->data[ $name ] ) && $this->data[ $name ] == $value ) {
-			return false;
-		}
-		$this->data[ $name ] = $value;
-		if ( ! $loaded_from_db && isset( $this->get_columns()[ $name ] ) ) {
-			$this->changed[ $name ] = true;
-		}
-	}
+	abstract public function get_table_name(): string;
 
-	protected function get( $name ) {
-		return $this->data[ $name ] ?? false;
-	}
+	abstract public function get_primary_columns(): array;
 
-	protected function has_changed() {
-		return count( $this->changed ) > 0;
-	}
-
-	abstract function get_table_name(): string;
-
-	abstract function get_primary_columns(): array;
-
-	protected function has_autoincrement_primary_column(): bool {
-		return false;
-	}
-
-	abstract function get_columns(): array;
+	abstract public function get_columns(): array;
 
 	public function update(): bool {
 		if ( ! $this->has_changed() ) {
@@ -59,16 +37,16 @@ abstract class Urlslab_Data {
 		}
 
 		$update_data = array();
-		$format      = array();
+		$format = array();
 		foreach ( $this->changed as $key => $true ) {
 			$update_data[ $key ] = $this->data[ $key ];
-			$format[ $key ]      = $this->get_column_format( $key );
+			$format[ $key ] = $this->get_column_format( $key );
 		}
 
-		$where        = array();
+		$where = array();
 		$where_format = array();
 		foreach ( $this->get_primary_columns() as $key ) {
-			$where[ $key ]        = $this->data[ $key ];
+			$where[ $key ] = $this->data[ $key ];
 			$where_format[ $key ] = $this->get_column_format( $key );
 		}
 
@@ -88,10 +66,10 @@ abstract class Urlslab_Data {
 		}
 
 		$insert_data = array();
-		$format      = array();
+		$format = array();
 		foreach ( $this->changed as $key => $true ) {
 			$insert_data[ $key ] = $this->data[ $key ];
-			$format[ $key ]      = $this->get_column_format( $key );
+			$format[ $key ] = $this->get_column_format( $key );
 		}
 
 		global $wpdb;
@@ -117,26 +95,26 @@ abstract class Urlslab_Data {
 
 	/**
 	 * @param Urlslab_Data[] $rows
-	 * @param bool $insert_ignore
-	 * @param array $columns_update_on_duplicate
+	 * @param bool           $insert_ignore
+	 * @param array          $columns_update_on_duplicate
 	 *
-	 * @return bool|int|mysqli_result|resource|null
+	 * @return null|bool|int|mysqli_result|resource
 	 */
 	public function insert_all( array $rows, $insert_ignore = false, $columns_update_on_duplicate = array() ) {
 		if ( empty( $rows ) ) {
 			return true;
 		}
 		global $wpdb;
-		$row_placeholder  = '(' . implode( ',', $this->get_columns() ) . ')';
+		$row_placeholder = '(' . implode( ',', $this->get_columns() ) . ')';
 		$row_placeholders = array();
-		$insert_values    = array();
+		$insert_values = array();
 
 		foreach ( $rows as $row ) {
 			$row_data = array();
 			foreach ( $this->get_columns() as $column => $format ) {
 				$row_data[] = $row->get( $column );
 			}
-			$insert_values      = array_merge( $insert_values, $row_data );
+			$insert_values = array_merge( $insert_values, $row_data );
 			$row_placeholders[] = $row_placeholder;
 		}
 
@@ -144,7 +122,7 @@ abstract class Urlslab_Data {
 		if ( ! $insert_ignore && ! empty( $columns_update_on_duplicate ) ) {
 			$update_columns = array();
 			foreach ( $columns_update_on_duplicate as $column_name ) {
-				$update_columns[] = "`$column_name` = VALUES(`$column_name`)";
+				$update_columns[] = "`{$column_name}` = VALUES(`{$column_name}`)";
 			}
 			$on_duplicate .= ' ON DUPLICATE KEY UPDATE ' . implode( ',', $update_columns );
 		}
@@ -161,10 +139,6 @@ abstract class Urlslab_Data {
 		return $result;
 	}
 
-	private function get_column_format( $name ) {
-		return $this->get_columns()[ $name ] ?? '%s';
-	}
-
 	public function load(): bool {
 		global $wpdb;
 
@@ -172,10 +146,10 @@ abstract class Urlslab_Data {
 			return false;
 		}
 
-		$where      = array();
+		$where = array();
 		$where_data = array();
 		foreach ( $this->get_primary_columns() as $key ) {
-			$where[]            = $key . '=' . $this->get_column_format( $key );
+			$where[] = $key . '=' . $this->get_column_format( $key );
 			$where_data[ $key ] = $this->data[ $key ];
 		}
 
@@ -226,5 +200,31 @@ abstract class Urlslab_Data {
 		}
 
 		return gmdate( 'Y-m-d H:i:s' );
+	}
+
+	protected function set( $name, $value, $loaded_from_db ) {
+		if ( isset( $this->data[ $name ] ) && $this->data[ $name ] == $value ) {
+			return false;
+		}
+		$this->data[ $name ] = $value;
+		if ( ! $loaded_from_db && isset( $this->get_columns()[ $name ] ) ) {
+			$this->changed[ $name ] = true;
+		}
+	}
+
+	protected function get( $name ) {
+		return $this->data[ $name ] ?? false;
+	}
+
+	protected function has_changed() {
+		return count( $this->changed ) > 0;
+	}
+
+	protected function has_autoincrement_primary_column(): bool {
+		return false;
+	}
+
+	private function get_column_format( $name ) {
+		return $this->get_columns()[ $name ] ?? '%s';
 	}
 }

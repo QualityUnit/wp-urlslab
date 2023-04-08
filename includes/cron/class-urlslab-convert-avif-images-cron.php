@@ -1,14 +1,18 @@
 <?php
+
 require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-convert-images-cron.php';
 
 class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
-
 	public function is_format_supported() {
 		if ( ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG )->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_AVIF_ALTERNATIVE ) ) {
 			return false;
 		}
 
 		return function_exists( 'imageavif' ) || ( extension_loaded( 'imagick' ) && count( Imagick::queryFormats( 'AVIF*' ) ) > 0 );
+	}
+
+	public function get_description(): string {
+		return __( 'Converting images to AVIF format' );
 	}
 
 	protected function convert_next_file() {
@@ -43,16 +47,16 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 		);
 
 		if ( empty( $file_row ) ) {
-			return false;   //No rows to process
+			return false;   // No rows to process
 		}
 
 		$file = new Urlslab_File_Row( $file_row );
 		if ( ! empty( $file->get_avif_fileid() ) ) {
-			//This file is already processing, disabled or processed -> continue to next file
+			// This file is already processing, disabled or processed -> continue to next file
 			return true;
 		}
 
-		//check if avif was not computed already for other file
+		// check if avif was not computed already for other file
 		if ( strlen( $file->get_file_pointer()->get_avif_filehash() ) > 2 && $file->get_file_pointer()->get_avif_filesize() > 0 ) {
 			$avif_file = $this->create_file_for_pointer( $file );
 			if ( $avif_file ) {
@@ -63,21 +67,18 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 			}
 		}
 
-
-		//process AVIF
+		// process AVIF
 		$file->set_avif_fileid( Urlslab_File_Row::ALTERNATIVE_PROCESSING );
 		$file->update();
 
 		if ( ! $file->get_file_pointer()->get_driver_object()->is_connected() ) {
-			//NOT connected, continue with next file
+			// NOT connected, continue with next file
 			return true;
 		}
 
-
-		//create local image file
+		// create local image file
 		$original_image_filename = wp_tempnam();
 		if ( $file->get_file_pointer()->get_driver_object()->save_to_file( $file, $original_image_filename ) ) {
-
 			$new_file_name = $this->convert_image_format( $file, $original_image_filename, 'avif' );
 			unlink( $original_image_filename );
 
@@ -121,7 +122,7 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 			false
 		);
 
-		$avif_file->set_fileid( $avif_file->get_fileid() ); //init file id
+		$avif_file->set_fileid( $avif_file->get_fileid() ); // init file id
 
 		if ( ! $avif_file->insert() || ! $avif_file->get_file_pointer()->get_driver_object()->upload_content( $avif_file ) ) {
 			unlink( $new_file_name );
@@ -142,7 +143,6 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 		return $avif_file;
 	}
 
-
 	protected function create_file_for_pointer( Urlslab_File_Row $file ): ?Urlslab_File_Row {
 		$avif_file = new Urlslab_File_Row(
 			array(
@@ -162,16 +162,12 @@ class Urlslab_Convert_Avif_Images_Cron extends Urlslab_Convert_Images_Cron {
 			),
 			false
 		);
-		$avif_file->set_fileid( $avif_file->get_fileid() ); //init file id
+		$avif_file->set_fileid( $avif_file->get_fileid() ); // init file id
 
 		if ( $avif_file->insert() ) {
 			return $avif_file;
 		}
 
 		return null;
-	}
-
-	public function get_description(): string {
-		return __( 'Converting images to AVIF format' );
 	}
 }

@@ -1,7 +1,6 @@
 <?php
 
 class Urlslab_Api_Redirects extends Urlslab_Api_Table {
-
 	public function register_routes() {
 		$base = '/redirects';
 		register_rest_route(
@@ -21,91 +20,87 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'update_item' ),
-					'permission_callback' => array( $this, 'update_item_permissions_check' ),
+					'permission_callback' => array(
+						$this,
+						'update_item_permissions_check',
+					),
 					'args'                => array(
 						'match_type'    => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Redirect_Row::MATCH_TYPE_SUBSTRING == $param ||
-									   Urlslab_Redirect_Row::MATCH_TYPE_EXACT == $param ||
-									   Urlslab_Redirect_Row::MATCH_TYPE_REGEXP == $param;
+							'validate_callback' => function ( $param ) {
+								return Urlslab_Redirect_Row::MATCH_TYPE_SUBSTRING == $param || Urlslab_Redirect_Row::MATCH_TYPE_EXACT == $param || Urlslab_Redirect_Row::MATCH_TYPE_REGEXP == $param;
 							},
 						),
 						'match_url'     => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'replace_url'   => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'is_logged'     => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Redirect_Row::LOGIN_STATUS_ANY == $param ||
-									   Urlslab_Redirect_Row::LOGIN_STATUS_LOGIN_REQUIRED == $param ||
-									   Urlslab_Redirect_Row::LOGIN_STATUS_NOT_LOGGED_IN == $param;
+							'validate_callback' => function ( $param ) {
+								return Urlslab_Redirect_Row::LOGIN_STATUS_ANY == $param || Urlslab_Redirect_Row::LOGIN_STATUS_LOGIN_REQUIRED == $param || Urlslab_Redirect_Row::LOGIN_STATUS_NOT_LOGGED_IN == $param;
 							},
 						),
 						'capabilities'  => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'roles'         => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'browser'       => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'cookie'        => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'headers'       => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'params'        => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'redirect_code' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_numeric( $param ) && 300 <= $param && 400 > $param;
 							},
 						),
 						'if_not_found'  => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Redirect_Row::NOT_FOUND_STATUS_NOT_FOUND == $param ||
-									   Urlslab_Redirect_Row::NOT_FOUND_STATUS_FOUND == $param ||
-									   Urlslab_Redirect_Row::NOT_FOUND_STATUS_ANY == $param;
+							'validate_callback' => function ( $param ) {
+								return Urlslab_Redirect_Row::NOT_FOUND_STATUS_NOT_FOUND == $param || Urlslab_Redirect_Row::NOT_FOUND_STATUS_FOUND == $param || Urlslab_Redirect_Row::NOT_FOUND_STATUS_ANY == $param;
 							},
 						),
 					),
 				),
 			)
 		);
-
 
 		register_rest_route(
 			self::NAMESPACE,
@@ -114,7 +109,10 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => array( $this, 'delete_all_items' ),
-					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
 					'args'                => array(),
 				),
 			)
@@ -127,7 +125,10 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => array( $this, 'delete_item' ),
-					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
 					'args'                => array(),
 				),
 			)
@@ -140,11 +141,14 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'import_items' ),
-					'permission_callback' => array( $this, 'update_item_permissions_check' ),
+					'permission_callback' => array(
+						$this,
+						'update_item_permissions_check',
+					),
 					'args'                => array(
 						'rows' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
 							},
 						),
@@ -160,7 +164,10 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_capabilities' ),
-					'permission_callback' => array( $this, 'get_items_permissions_check' ),
+					'permission_callback' => array(
+						$this,
+						'get_items_permissions_check',
+					),
 					'args'                => array(),
 				),
 			)
@@ -173,104 +180,15 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_roles' ),
-					'permission_callback' => array( $this, 'get_items_permissions_check' ),
+					'permission_callback' => array(
+						$this,
+						'get_items_permissions_check',
+					),
 					'args'                => array(),
 				),
 			)
 		);
-
 	}
-
-	private function get_route_get_items(): array {
-		return array(
-			'methods'             => WP_REST_Server::READABLE,
-			'callback'            => array( $this, 'get_items' ),
-			'args'                => $this->get_table_arguments(
-				array(
-					'filter_match_type'    => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_match_url'     => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_replace_url'   => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_is_logged'     => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_capabilities'  => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_roles'         => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_browser'       => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_cookie'        => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_headers'       => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_params'        => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_if_not_found'  => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_cnt'           => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_numeric_filter_value( $param );
-						},
-					),
-					'filter_redirect_code' => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_numeric_filter_value( $param );
-						},
-					),
-				)
-			),
-			'permission_callback' => array( $this, 'get_items_permissions_check' ),
-		);
-	}
-
 
 	/**
 	 * @return array[]
@@ -282,84 +200,81 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 			'args'                => array(
 				'match_type'    => array(
 					'required'          => true,
-					'validate_callback' => function( $param ) {
-						return Urlslab_Redirect_Row::MATCH_TYPE_SUBSTRING == $param ||
-							   Urlslab_Redirect_Row::MATCH_TYPE_EXACT == $param ||
-							   Urlslab_Redirect_Row::MATCH_TYPE_REGEXP == $param;
+					'validate_callback' => function ( $param ) {
+						return Urlslab_Redirect_Row::MATCH_TYPE_SUBSTRING == $param || Urlslab_Redirect_Row::MATCH_TYPE_EXACT == $param || Urlslab_Redirect_Row::MATCH_TYPE_REGEXP == $param;
 					},
 				),
 				'match_url'     => array(
 					'required'          => true,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
 				'replace_url'   => array(
 					'required'          => true,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
 				'is_logged'     => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
-						return Urlslab_Redirect_Row::LOGIN_STATUS_ANY == $param ||
-							   Urlslab_Redirect_Row::LOGIN_STATUS_LOGIN_REQUIRED == $param ||
-							   Urlslab_Redirect_Row::LOGIN_STATUS_NOT_LOGGED_IN == $param;
+					'validate_callback' => function ( $param ) {
+						return Urlslab_Redirect_Row::LOGIN_STATUS_ANY == $param || Urlslab_Redirect_Row::LOGIN_STATUS_LOGIN_REQUIRED == $param || Urlslab_Redirect_Row::LOGIN_STATUS_NOT_LOGGED_IN == $param;
 					},
 				),
 				'capabilities'  => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
 				'roles'         => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
 				'browser'       => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
 				'cookie'        => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
 				'headers'       => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
 				'params'        => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
 				'if_not_found'  => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
-						return Urlslab_Redirect_Row::NOT_FOUND_STATUS_NOT_FOUND == $param ||
-							   Urlslab_Redirect_Row::NOT_FOUND_STATUS_FOUND == $param ||
-							   Urlslab_Redirect_Row::NOT_FOUND_STATUS_ANY == $param;
+					'validate_callback' => function ( $param ) {
+						return Urlslab_Redirect_Row::NOT_FOUND_STATUS_NOT_FOUND == $param || Urlslab_Redirect_Row::NOT_FOUND_STATUS_FOUND == $param || Urlslab_Redirect_Row::NOT_FOUND_STATUS_ANY == $param;
 					},
 				),
 				'redirect_code' => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_numeric( $param ) && 300 <= $param && 400 > $param;
 					},
 				),
 			),
-			'permission_callback' => array( $this, 'create_item_permissions_check' ),
+			'permission_callback' => array(
+				$this,
+				'create_item_permissions_check',
+			),
 		);
 	}
 
@@ -371,9 +286,9 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->redirect_id   = (int) $row->redirect_id;
+			$row->redirect_id = (int) $row->redirect_id;
 			$row->redirect_code = (int) $row->redirect_code;
-			$row->cnt           = (int) $row->cnt;
+			$row->cnt = (int) $row->cnt;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -408,6 +323,27 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 		return new WP_REST_Response( $all_roles, 200 );
 	}
 
+	public function get_row_object( $params = array() ): Urlslab_Data {
+		return new Urlslab_Redirect_Row( $params );
+	}
+
+	public function get_editable_columns(): array {
+		return array(
+			'match_type',
+			'match_url',
+			'replace_url',
+			'is_logged',
+			'capabilities',
+			'roles',
+			'browser',
+			'cookie',
+			'headers',
+			'params',
+			'if_not_found',
+			'redirect_code',
+		);
+	}
+
 	protected function get_items_sql( $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( '*' );
@@ -438,28 +374,6 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 		return $sql;
 	}
 
-
-	function get_row_object( $params = array() ): Urlslab_Data {
-		return new Urlslab_Redirect_Row( $params );
-	}
-
-	function get_editable_columns(): array {
-		return array(
-			'match_type',
-			'match_url',
-			'replace_url',
-			'is_logged',
-			'capabilities',
-			'roles',
-			'browser',
-			'cookie',
-			'headers',
-			'params',
-			'if_not_found',
-			'redirect_code',
-		);
-	}
-
 	protected function on_items_updated( array $row = array() ) {
 		Urlslab_Redirects::delete_cache();
 
@@ -470,9 +384,102 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 		parent::validate_item( $row );
 		if ( Urlslab_Redirect_Row::MATCH_TYPE_REGEXP == $row->get_public( 'match_type' ) ) {
 			@preg_match( '|' . str_replace( '|', '\\|', $row->get_public( 'match_url' ) ) . '|uim', 'any text to match' );
-			if ( preg_last_error() !== PREG_NO_ERROR ) {
+			if ( PREG_NO_ERROR !== preg_last_error() ) {
 				throw new Exception( __( 'Invalid regular expression', 'urlslab' ) );
 			}
 		}
+	}
+
+	private function get_route_get_items(): array {
+		return array(
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => array( $this, 'get_items' ),
+			'args'                => $this->get_table_arguments(
+				array(
+					'filter_match_type'    => array(
+						'required'          => false,
+						'validate_callback' => function ( $param ) {
+							return Urlslab_Api_Table::validate_string_filter_value( $param );
+						},
+					),
+					'filter_match_url'     => array(
+						'required'          => false,
+						'validate_callback' => function ( $param ) {
+							return Urlslab_Api_Table::validate_string_filter_value( $param );
+						},
+					),
+					'filter_replace_url'   => array(
+						'required'          => false,
+						'validate_callback' => function ( $param ) {
+							return Urlslab_Api_Table::validate_string_filter_value( $param );
+						},
+					),
+					'filter_is_logged'     => array(
+						'required'          => false,
+						'validate_callback' => function ( $param ) {
+							return Urlslab_Api_Table::validate_string_filter_value( $param );
+						},
+					),
+					'filter_capabilities'  => array(
+						'required'          => false,
+						'validate_callback' => function ( $param ) {
+							return Urlslab_Api_Table::validate_string_filter_value( $param );
+						},
+					),
+					'filter_roles'         => array(
+						'required'          => false,
+						'validate_callback' => function ( $param ) {
+							return Urlslab_Api_Table::validate_string_filter_value( $param );
+						},
+					),
+					'filter_browser'       => array(
+						'required'          => false,
+						'validate_callback' => function ( $param ) {
+							return Urlslab_Api_Table::validate_string_filter_value( $param );
+						},
+					),
+					'filter_cookie'        => array(
+						'required'          => false,
+						'validate_callback' => function ( $param ) {
+							return Urlslab_Api_Table::validate_string_filter_value( $param );
+						},
+					),
+					'filter_headers'       => array(
+						'required'          => false,
+						'validate_callback' => function ( $param ) {
+							return Urlslab_Api_Table::validate_string_filter_value( $param );
+						},
+					),
+					'filter_params'        => array(
+						'required'          => false,
+						'validate_callback' => function ( $param ) {
+							return Urlslab_Api_Table::validate_string_filter_value( $param );
+						},
+					),
+					'filter_if_not_found'  => array(
+						'required'          => false,
+						'validate_callback' => function ( $param ) {
+							return Urlslab_Api_Table::validate_string_filter_value( $param );
+						},
+					),
+					'filter_cnt'           => array(
+						'required'          => false,
+						'validate_callback' => function ( $param ) {
+							return Urlslab_Api_Table::validate_numeric_filter_value( $param );
+						},
+					),
+					'filter_redirect_code' => array(
+						'required'          => false,
+						'validate_callback' => function ( $param ) {
+							return Urlslab_Api_Table::validate_numeric_filter_value( $param );
+						},
+					),
+				)
+			),
+			'permission_callback' => array(
+				$this,
+				'get_items_permissions_check',
+			),
+		);
 	}
 }

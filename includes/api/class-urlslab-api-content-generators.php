@@ -13,17 +13,21 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'update_item' ),
-					'permission_callback' => array( $this, 'update_item_permissions_check' ),
+					'permission_callback' => array(
+						$this,
+						'update_item_permissions_check',
+					),
 					'args'                => array(
 						'status' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								switch ( $param ) {
 									case Urlslab_Content_Generator_Row::STATUS_ACTIVE:
 									case Urlslab_Content_Generator_Row::STATUS_DISABLED:
 									case Urlslab_Content_Generator_Row::STATUS_NEW:
 									case Urlslab_Content_Generator_Row::STATUS_PENDING:
 										return true;
+
 									default:
 										return false;
 								}
@@ -31,7 +35,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 						),
 						'result' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
@@ -47,7 +51,10 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => array( $this, 'delete_all_items' ),
-					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
 					'args'                => array(),
 				),
 			)
@@ -60,7 +67,10 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => array( $this, 'delete_item' ),
-					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
 					'args'                => array(),
 				),
 			)
@@ -81,11 +91,11 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 		return new WP_REST_Response( $rows, 200 );
 	}
 
-	function get_row_object( $params = array() ): Urlslab_Data {
+	public function get_row_object( $params = array() ): Urlslab_Data {
 		return new Urlslab_Content_Generator_Row( $params );
 	}
 
-	function get_editable_columns(): array {
+	public function get_editable_columns(): array {
 		return array( 'status', 'result' );
 	}
 
@@ -101,52 +111,50 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 					array(
 						'filter_command'          => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_url_filter'       => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_semantic_context' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_result'           => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_status'           => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_status_changed'   => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 					)
 				),
-				'permission_callback' => array( $this, 'get_items_permissions_check' ),
+				'permission_callback' => array(
+					$this,
+					'get_items_permissions_check',
+				),
 			),
 		);
 	}
 
-	/**
-	 * @param WP_REST_Request $request
-	 *
-	 * @return Urlslab_Api_Table_Sql
-	 */
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( '*' );

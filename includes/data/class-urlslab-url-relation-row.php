@@ -1,9 +1,8 @@
 <?php
 
 class Urlslab_Url_Relation_Row extends Urlslab_Data {
-
 	/**
-	 * @param array $url
+	 * @param mixed $loaded_from_db
 	 */
 	public function __construct( array $url = array(), $loaded_from_db = true ) {
 		$this->set_src_url_id( $url['src_url_id'] ?? 0, $loaded_from_db );
@@ -35,15 +34,15 @@ class Urlslab_Url_Relation_Row extends Urlslab_Data {
 		$this->set( 'pos', $pos, $loaded_from_db );
 	}
 
-	function get_table_name(): string {
+	public function get_table_name(): string {
 		return URLSLAB_RELATED_RESOURCE_TABLE;
 	}
 
-	function get_primary_columns(): array {
+	public function get_primary_columns(): array {
 		return array( 'src_url_id', 'dest_url_id' );
 	}
 
-	function get_columns(): array {
+	public function get_columns(): array {
 		return array(
 			'src_url_id'  => '%d',
 			'dest_url_id' => '%d',

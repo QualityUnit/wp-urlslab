@@ -1,7 +1,11 @@
 <?php
+
 require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
 
 class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
+	public function get_description(): string {
+		return __( 'Offloading scheduled files to remote storage', 'urlslab' );
+	}
 
 	protected function execute(): bool {
 		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Media_Offloader_Widget::SLUG ) ) {
@@ -42,7 +46,7 @@ class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
 		}
 
 		$file->set_filestatus( Urlslab_Driver::STATUS_PENDING );
-		$file->set_filetype( $file->get_filetype() ); //update filetype from file name
+		$file->set_filetype( $file->get_filetype() ); // update filetype from file name
 		$file->update();
 
 		if ( $default_driver->upload_content( $file ) ) {
@@ -53,9 +57,5 @@ class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
 		$file->update();
 
 		return true;
-	}
-
-	public function get_description(): string {
-		return __( 'Offloading scheduled files to remote storage', 'urlslab' );
 	}
 }

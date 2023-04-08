@@ -1,27 +1,26 @@
 <?php
 
 class Urlslab_Url_Row extends Urlslab_Data {
+	public const URL_TYPE_INTERNAL = 'I';
+	public const URL_TYPE_EXTERNAL = 'E';
 
-	const URL_TYPE_INTERNAL = 'I';
-	const URL_TYPE_EXTERNAL = 'E';
+	public const VALUE_EMPTY = 'E';
 
-	const VALUE_EMPTY = 'E';
+	public const HTTP_STATUS_NOT_PROCESSED = -1;
+	public const HTTP_STATUS_PENDING = -2;
+	public const HTTP_STATUS_OK = 200;
+	public const HTTP_STATUS_CLIENT_ERROR = 400;
+	public const HTTP_STATUS_SERVER_ERROR = 500;
 
-	const HTTP_STATUS_NOT_PROCESSED = - 1;
-	const HTTP_STATUS_PENDING = - 2;
-	const HTTP_STATUS_OK = 200;
-	const HTTP_STATUS_CLIENT_ERROR = 400;
-	const HTTP_STATUS_SERVER_ERROR = 500;
+	public const SCR_STATUS_ERROR = 'E';
+	public const SCR_STATUS_NEW = 'N';
+	public const SCR_STATUS_PENDING = 'P';
+	public const SCR_STATUS_ACTIVE = 'A';
 
-	const SCR_STATUS_ERROR = 'E';
-	const SCR_STATUS_NEW = 'N';
-	const SCR_STATUS_PENDING = 'P';
-	const SCR_STATUS_ACTIVE = 'A';
-
-	const SUM_STATUS_ERROR = 'E';
-	const SUM_STATUS_NEW = 'N';
-	const SUM_STATUS_PENDING = 'P';
-	const SUM_STATUS_ACTIVE = 'A';
+	public const SUM_STATUS_ERROR = 'E';
+	public const SUM_STATUS_NEW = 'N';
+	public const SUM_STATUS_PENDING = 'P';
+	public const SUM_STATUS_ACTIVE = 'A';
 
 	public const VISIBILITY_VISIBLE = 'V';
 	public const VISIBILITY_HIDDEN = 'H';
@@ -31,24 +30,25 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	public const SCREENSHOT_TYPE_FULL_PAGE = 'full-page';
 	public const SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL = 'carousel-thumbnail';
 	public const SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL = 'full-page-thumbnail';
-	const URL_SCHEDULE_SCREENSHOT_REQUIRED = 'N';
-	const URL_SCHEDULE_SUMMARIZATION_REQUIRED = 'M';
-	const URL_SCHEDULE_SCREENSHOT_SCHEDULED = 'S';
-	const URL_SCHEDULE_SUMMARIZATION_SCHEDULED = 'T';
-	const URL_SCHEDULE_ERROR = 'E';
+	public const URL_SCHEDULE_SCREENSHOT_REQUIRED = 'N';
+	public const URL_SCHEDULE_SUMMARIZATION_REQUIRED = 'M';
+	public const URL_SCHEDULE_SCREENSHOT_SCHEDULED = 'S';
+	public const URL_SCHEDULE_SUMMARIZATION_SCHEDULED = 'T';
+	public const URL_SCHEDULE_ERROR = 'E';
 
 	//related resources schedule
-	const REL_NOT_REQUESTED_SCHEDULE = '';
-	const REL_SCHEDULE_NEW = 'N';    //waiting to be scheduled to urlslab
-	const REL_SCHEDULE_SCHEDULED = 'S';    //pending processing in urlslab
-	const REL_AVAILABLE = 'A';
-	const REL_ERROR = 'E';
+	public const REL_NOT_REQUESTED_SCHEDULE = '';
+	public const REL_SCHEDULE_NEW = 'N';          //waiting to be scheduled to urlslab
+	public const REL_SCHEDULE_SCHEDULED = 'S';    //pending processing in urlslab
+	public const REL_AVAILABLE = 'A';
+	public const REL_ERROR = 'E';
 
 	/**
 	 * @param array $url
 	 */
 	public function __construct(
-		array $url = array(), $loaded_from_db = true
+		array $url = array(),
+			  $loaded_from_db = true
 	) {
 		$this->set_url_id( $url['url_id'] ?? 0, $loaded_from_db );
 		$this->set_url_name( $url['url_name'] ?? '', $loaded_from_db );
@@ -73,10 +73,12 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$url_type = self::URL_TYPE_INTERNAL;
 		if ( isset( $url['url_type'] ) ) {
 			$url_type = $url['url_type'];
-		} else if ( strlen( $this->get_url_name() ) ) {
-			try {
-				$url_type = $this->get_url()->is_same_domain_url() ? self::URL_TYPE_INTERNAL : self::URL_TYPE_EXTERNAL;
-			} catch ( Exception $e ) {
+		} else {
+			if ( strlen( $this->get_url_name() ) ) {
+				try {
+					$url_type = $this->get_url()->is_same_domain_url() ? self::URL_TYPE_INTERNAL : self::URL_TYPE_EXTERNAL;
+				} catch ( Exception $e ) {
+				}
 			}
 		}
 		$this->set_url_type( $url_type, $loaded_from_db );
@@ -94,7 +96,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		return new Urlslab_Url( $this->get_url_name(), true );
 	}
 
-	function get_columns(): array {
+	public function get_columns(): array {
 		return array(
 			'url_id'                => '%d',
 			'url_name'              => '%s',
@@ -305,13 +307,10 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	}
 
 
-	public
-	function get_summary_text(
+	public function get_summary_text(
 		$strategy
 	): string {
-
 		switch ( $strategy ) {
-
 			case Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY:
 				if ( ! empty( trim( $this->get_url_summary() ) ) ) {
 					return trim( $this->get_url_summary() );
@@ -357,8 +356,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	 *
 	 * @return string url of the schreenshot or empty string
 	 */
-	public
-	function get_screenshot_url(
+	public function get_screenshot_url(
 		string $screenshot_type = self::SCREENSHOT_TYPE_CAROUSEL
 	): string {
 		if ( ! $this->has_screenshot() ) {
@@ -398,18 +396,15 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	 *
 	 * @return bool
 	 */
-	public
-	function is_http_valid() {
+	public function is_http_valid() {
 		return ( self::HTTP_STATUS_OK == $this->get_http_status() || 0 > $this->get_http_status() ) && $this->is_visible();
 	}
 
-	public
-	function is_internal() {
+	public function is_internal() {
 		return self::URL_TYPE_INTERNAL === $this->get_url_type();
 	}
 
-	public
-	function is_visible() {
+	public function is_visible() {
 		return self::VISIBILITY_HIDDEN != $this->get_visibility();
 	}
 
@@ -419,9 +414,12 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	 *
 	 * @return void
 	 */
-	public
-	function insert_urls(
-		$urls, $scr_status = self::SCR_STATUS_NEW, $sum_status = self::SUM_STATUS_NEW, $http_status = self::HTTP_STATUS_NOT_PROCESSED, $rel_schedule = self::REL_NOT_REQUESTED_SCHEDULE
+	public function insert_urls(
+		$urls,
+		$scr_status = self::SCR_STATUS_NEW,
+		$sum_status = self::SUM_STATUS_NEW,
+		$http_status = self::HTTP_STATUS_NOT_PROCESSED,
+		$rel_schedule = self::REL_NOT_REQUESTED_SCHEDULE
 	): bool {
 		if ( empty( $urls ) ) {
 			return true;
@@ -464,17 +462,17 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		}
 
 		if (
-			$this->get_url_schedule() == self::URL_SCHEDULE_ERROR ||
-			$this->get_url_schedule() == self::URL_SCHEDULE_SCREENSHOT_SCHEDULED ||
-			$this->get_url_schedule() == self::URL_SCHEDULE_SCREENSHOT_REQUIRED
+			$this->get_url_schedule() == self::URL_SCHEDULE_ERROR
+			|| $this->get_url_schedule() == self::URL_SCHEDULE_SCREENSHOT_SCHEDULED
+			|| $this->get_url_schedule() == self::URL_SCHEDULE_SCREENSHOT_REQUIRED
 		) {
 			return false;
 		}
 
 		if ( self::URL_SCHEDULE_SUMMARIZATION_REQUIRED == $schedule_type ) {
 			if (
-				$this->get_sum_status() == self::SUM_STATUS_ACTIVE ||
-				$this->get_url_schedule() == self::URL_SCHEDULE_SUMMARIZATION_SCHEDULED
+				$this->get_sum_status() == self::SUM_STATUS_ACTIVE
+				|| $this->get_url_schedule() == self::URL_SCHEDULE_SUMMARIZATION_SCHEDULED
 			) {
 				return false;
 			}
