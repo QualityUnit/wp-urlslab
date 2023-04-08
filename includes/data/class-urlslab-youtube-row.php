@@ -1,11 +1,10 @@
 <?php
 
 class Urlslab_Youtube_Row extends Urlslab_Data {
-
-	const STATUS_NEW = 'N';
-	const STATUS_AVAILABLE = 'A';
-	const STATUS_PROCESSING = 'P';
-	const STATUS_DISABLED = 'D';
+	public const STATUS_NEW = 'N';
+	public const STATUS_AVAILABLE = 'A';
+	public const STATUS_PROCESSING = 'P';
+	public const STATUS_DISABLED = 'D';
 	private $microdata_obj;
 
 	public function __construct( array $video = array(), $loaded_from_db = false ) {
@@ -96,26 +95,29 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 	public function get_thumbnail_url() {
 		if ( ! empty( $this->microdata_obj->items[0]->snippet->thumbnails->maxres->url ) ) {
 			return $this->microdata_obj->items[0]->snippet->thumbnails->maxres->url;
-		} else if ( ! empty( $this->microdata_obj->items[0]->snippet->thumbnails->standard->url ) ) {
+		}
+		if ( ! empty( $this->microdata_obj->items[0]->snippet->thumbnails->standard->url ) ) {
 			return $this->microdata_obj->items[0]->snippet->thumbnails->standard->url;
-		} else if ( ! empty( $this->microdata_obj->items[0]->snippet->thumbnails->high->url ) ) {
+		}
+		if ( ! empty( $this->microdata_obj->items[0]->snippet->thumbnails->high->url ) ) {
 			return $this->microdata_obj->items[0]->snippet->thumbnails->high->url;
-		} else if ( ! empty( $this->microdata_obj->items[0]->snippet->thumbnails->default->url ) ) {
+		}
+		if ( ! empty( $this->microdata_obj->items[0]->snippet->thumbnails->default->url ) ) {
 			return $this->microdata_obj->items[0]->snippet->thumbnails->default->url;
 		}
 
 		return '';
 	}
 
-	function get_table_name(): string {
+	public function get_table_name(): string {
 		return URLSLAB_YOUTUBE_CACHE_TABLE;
 	}
 
-	function get_primary_columns(): array {
+	public function get_primary_columns(): array {
 		return array( 'videoid' );
 	}
 
-	function get_columns(): array {
+	public function get_columns(): array {
 		return array(
 			'videoid'        => '%s',
 			'microdata'      => '%s',

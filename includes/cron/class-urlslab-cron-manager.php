@@ -1,9 +1,7 @@
 <?php
 
 class Urlslab_Cron_Manager {
-	/*
-	 * @var Urlslab_Cron[]
-	 */
+	// @var Urlslab_Cron[]
 	private $cron_tasks = array();
 
 	private static Urlslab_Cron_Manager $instance;
@@ -11,14 +9,75 @@ class Urlslab_Cron_Manager {
 	/**
 	 * Returns the singleton instance of this class.
 	 *
-	 * @return Urlslab_Cron_Manager The instance.
+	 * @return Urlslab_Cron_Manager the instance
 	 */
 	public static function get_instance(): Urlslab_Cron_Manager {
 		if ( empty( self::$instance ) ) {
-			self::$instance = new self;
+			self::$instance = new self();
 		}
 
 		return self::$instance;
+	}
+
+	/**
+	 * @return Urlslab_Cron[]
+	 */
+	public function get_cron_tasks(): array {
+		if ( empty( $this->cron_tasks ) ) {
+			$this->init_cron_tasks();
+		}
+
+		return $this->cron_tasks;
+	}
+
+	/**
+	 * @param $task_name execute only task with this name or all if false
+	 */
+	public function exec_cron_task( $task_name = false ): array {
+		$data = array();
+		$start_time = time();
+		$max_time = 20;
+		$failed_tasks = array();
+		while ( $max_time > ( time() - $start_time ) ) {
+			$executed_tasks_nr = 0;
+
+			foreach ( $this->get_cron_tasks() as $task ) {
+				if (
+					! in_array( get_class( $task ), $failed_tasks )
+					&& ( false === $task_name || get_class( $task ) == $task_name )
+				) {
+					try {
+						$task_time = time();
+						if ( $task->cron_exec( 5 ) ) {
+							++$executed_tasks_nr;
+						} else {
+							$failed_tasks[] = get_class( $task );
+						}
+						$exec_time = time() - $task_time;
+						if ( $exec_time > 0 ) {
+							$data[] = (object) array(
+								'exec_time'   => $exec_time,
+								'task'        => get_class( $task ),
+								'description' => $task->get_description(),
+							);
+						}
+					} catch ( Exception $e ) {
+						$failed_tasks[] = get_class( $task );
+						$data[] = (object) array(
+							'exec_time'   => $exec_time,
+							'task'        => get_class( $task ),
+							'description' => $e->getMessage(),
+						);
+					}
+				}
+			}
+
+			if ( 0 == $executed_tasks_nr ) {
+				break; // all tasks failed or no tasks wait for execution
+			}
+		}
+
+		return $data;
 	}
 
 	private function init_cron_tasks() {
@@ -71,70 +130,4 @@ class Urlslab_Cron_Manager {
 	private function add_cron_task( Urlslab_Cron $task ) {
 		$this->cron_tasks[] = $task;
 	}
-
-	/**
-	 * @return Urlslab_Cron[]
-	 */
-	public function get_cron_tasks(): array {
-		if ( empty( $this->cron_tasks ) ) {
-			$this->init_cron_tasks();
-		}
-
-		return $this->cron_tasks;
-	}
-
-	/**
-	 * @param $task_name execute only task with this name or all if false
-	 *
-	 * @return array
-	 */
-	public function exec_cron_task( $task_name = false ): array {
-		$data         = array();
-		$start_time   = time();
-		$max_time     = 20;
-		$failed_tasks = array();
-		while ( $max_time > ( time() - $start_time ) ) {
-
-			$executed_tasks_nr = 0;
-
-			foreach ( $this->get_cron_tasks() as $task ) {
-				if (
-					! in_array( get_class( $task ), $failed_tasks ) &&
-					( false === $task_name || get_class( $task ) == $task_name )
-				) {
-					try {
-						$task_time = time();
-						if ( $task->cron_exec( 5 ) ) {
-							$executed_tasks_nr ++;
-						} else {
-							$failed_tasks[] = get_class( $task );
-						}
-						$exec_time = time() - $task_time;
-						if ( $exec_time > 0 ) {
-							$data[] = (object) array(
-								'exec_time'   => $exec_time,
-								'task'        => get_class( $task ),
-								'description' => $task->get_description(),
-							);
-						}
-					} catch ( Exception $e ) {
-						$failed_tasks[] = get_class( $task );
-						$data[]         = (object) array(
-							'exec_time'   => $exec_time,
-							'task'        => get_class( $task ),
-							'description' => $e->getMessage(),
-						);
-					}
-				}
-			}
-
-			if ( 0 == $executed_tasks_nr ) {
-				break; //all tasks failed or no tasks wait for execution
-			}
-		}
-
-		return $data;
-	}
-
-
 }

@@ -2,8 +2,8 @@
 
 class Urlslab_Api_Settings extends Urlslab_Api_Base {
 	public function register_routes() {
-		$base      = '/settings';
-		$module    = '(?P<module_id>[0-9a-zA-Z_\-]+)';
+		$base = '/settings';
+		$module = '(?P<module_id>[0-9a-zA-Z_\-]+)';
 		register_rest_route(
 			self::NAMESPACE,
 			$base . '/' . $module . '/',
@@ -12,7 +12,10 @@ class Urlslab_Api_Settings extends Urlslab_Api_Base {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_items' ),
 					'args'                => array(),
-					'permission_callback' => array( $this, 'get_items_permissions_check' ),
+					'permission_callback' => array(
+						$this,
+						'get_items_permissions_check',
+					),
 				),
 			)
 		);
@@ -24,24 +27,14 @@ class Urlslab_Api_Settings extends Urlslab_Api_Base {
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'update_item' ),
-					'permission_callback' => array( $this, 'update_item_permissions_check' ),
+					'permission_callback' => array(
+						$this,
+						'update_item_permissions_check',
+					),
 					'args'                => array( 'value' => array( 'required' => true ) ),
 				),
 			)
 		);
-	}
-
-	private function prepare_options_and_sections( Urlslab_Widget $widget ) {
-		$sections   = array();
-
-		foreach ( $widget->get_option_sections() as $section ) {
-			foreach ( $widget->get_options( $section['id'] ) as $option ) {
-				$section['options'][ $option['id'] ] = (object) $option;
-			}
-			$sections[] = (object) $section;
-		}
-
-		return $sections;
 	}
 
 	public function get_items( $request ) {
@@ -76,5 +69,18 @@ class Urlslab_Api_Settings extends Urlslab_Api_Base {
 		} catch ( Exception $e ) {
 			return new WP_Error( 'exception', __( 'Failed to update module', 'urlslab' ), array( 'status' => 500 ) );
 		}
+	}
+
+	private function prepare_options_and_sections( Urlslab_Widget $widget ) {
+		$sections = array();
+
+		foreach ( $widget->get_option_sections() as $section ) {
+			foreach ( $widget->get_options( $section['id'] ) as $option ) {
+				$section['options'][ $option['id'] ] = (object) $option;
+			}
+			$sections[] = (object) $section;
+		}
+
+		return $sections;
 	}
 }

@@ -2,30 +2,24 @@
 
 // phpcs:disable WordPress
 
+use OpenAPI\Client\Configuration;
+use OpenAPI\Client\Urlslab\ApikeyApi;
+
 class Urlslab_General extends Urlslab_Widget {
-	const SLUG = 'general';
+	public const SLUG = 'general';
 
-	const SETTING_NAME_URLSLAB_API_KEY = 'urlslab-api-key';
-	const SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL = 'urlslab-refresh-scr';
-	const SETTING_NAME_SUMMARIZATION_REFRESH_INTERVAL = 'urlslab-refresh-sum';
+	public const SETTING_NAME_URLSLAB_API_KEY = 'urlslab-api-key';
+	public const SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL = 'urlslab-refresh-scr';
+	public const SETTING_NAME_SUMMARIZATION_REFRESH_INTERVAL = 'urlslab-refresh-sum';
 
-	/**
-	 * @return string
-	 */
 	public function get_widget_slug(): string {
-		return Urlslab_General::SLUG;
+		return self::SLUG;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function get_widget_title(): string {
 		return __( 'URLsLab Integration' );
 	}
 
-	/**
-	 * @return string
-	 */
 	public function get_widget_description(): string {
 		return __( 'Connect Urlslab.com services to your Wordpress.' );
 	}
@@ -44,18 +38,18 @@ class Urlslab_General extends Urlslab_Widget {
 			__( 'Connect the website and URLsLab service with an API Key. Get your API Key on www.urlslab.com.' ),
 			self::OPTION_TYPE_PASSWORD,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				if ( ! strlen( $value ) ) {
 					return false;
 				}
 
-				if ( $value == Urlslab_Widget::PASSWORD_PLACEHOLDER ) {
+				if ( Urlslab_Widget::PASSWORD_PLACEHOLDER == $value ) {
 					return true;
 				}
 
-				$config = \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $value );
+				$config = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $value );
 
-				$apiInstance = new \OpenAPI\Client\Urlslab\ApikeyApi(
+				$apiInstance = new ApikeyApi(
 					new GuzzleHttp\Client(),
 					$config
 				);
@@ -82,13 +76,13 @@ class Urlslab_General extends Urlslab_Widget {
 			__( 'The synchronization frequency of screenshots with the URLsLab service is different from how often URLsLab takes screenshots of the website. Even when we sync the data in the background by cron, it can use a lot of computation time. Therefore, we recommend Monthly or Quarterly synchronizations.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				604800    => __( 'Weekly' ),
-				2419200   => __( 'Monthly' ),
-				7257600   => __( 'Quarterly' ),
-				31536000  => __( 'Yearly' ),
+				604800           => __( 'Weekly' ),
+				2419200          => __( 'Monthly' ),
+				7257600          => __( 'Quarterly' ),
+				31536000         => __( 'Yearly' ),
 				self::FREQ_NEVER => __( 'Never' ),
 			),
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'cron',
@@ -101,13 +95,13 @@ class Urlslab_General extends Urlslab_Widget {
 			__( 'The synchronization frequency of summaries with the URLsLab service is different from how often URLsLab generates summaries of the pages. Even when we sync the data in the background by cron, it can use a lot of computation time. Therefore, we recommend Monthly or Quarterly synchronizations.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				604800    => __( 'Weekly' ),
-				2419200   => __( 'Monthly' ),
-				7257600   => __( 'Quarterly' ),
-				31536000  => __( 'Yearly' ),
+				604800           => __( 'Weekly' ),
+				2419200          => __( 'Monthly' ),
+				7257600          => __( 'Quarterly' ),
+				31536000         => __( 'Yearly' ),
 				self::FREQ_NEVER => __( 'Never' ),
 			),
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'cron',

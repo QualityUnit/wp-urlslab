@@ -1,11 +1,11 @@
 <?php
 
+use Elementor\Plugin;
+
 class Urlslab_Screenshot_Widget extends Urlslab_Widget {
-	const SLUG = 'urlslab-screenshot';
+	public const SLUG = 'urlslab-screenshot';
 
-
-	const SETTING_NAME_SCHEDULE_SCREENSHOTS = 'urlslab-scr-sched-scr';
-
+	public const SETTING_NAME_SCHEDULE_SCREENSHOTS = 'urlslab-scr-sched-scr';
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action(
@@ -31,30 +31,19 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		);
 	}
 
-
-	/**
-	 * @return string
-	 */
 	public function get_widget_slug(): string {
 		return Urlslab_Screenshot_Widget::SLUG;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function get_widget_title(): string {
 		return __( 'Automated Screenshots' );
 	}
 
-	/**
-	 * @return string
-	 */
 	public function get_widget_description(): string {
 		return __(
 			'Improve the appeal of the content by creating automatically generated screenshots'
 		);
 	}
-
 
 	public function get_attribute_values(
 		$atts = array(),
@@ -63,7 +52,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	) {
 		$atts = array_change_key_case( (array) $atts );
 
-		$urlslab_atts = shortcode_atts(
+		return shortcode_atts(
 			array(
 				'width'           => '100%',
 				'height'          => '100%',
@@ -75,8 +64,6 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			$atts,
 			$tag
 		);
-
-		return $urlslab_atts;
 	}
 
 	public function get_shortcode_content(
@@ -86,16 +73,16 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	): string {
 		if (
 			( isset( $_REQUEST['action'] )
-				&& false !== strpos(
-					$_REQUEST['action'],
-					'elementor'
-				) )
+			&& false !== strpos(
+				$_REQUEST['action'],
+				'elementor'
+			) )
 			|| in_array(
 				get_post_status(),
 				array( 'trash', 'auto-draft', 'inherit' )
 			)
 			|| ( class_exists( '\Elementor\Plugin' )
-				&& \Elementor\Plugin::$instance->editor->is_edit_mode() )
+				 && Plugin::$instance->editor->is_edit_mode() )
 		) {
 			return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">Screenshot Placeholder</div>';
 		}
@@ -135,10 +122,10 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 
 					if ( empty( $screenshot_url ) ) {
 						return ' <!-- URLSLAB processing '
-							. $urlslab_atts['url'] . ' -->';
+							   . $urlslab_atts['url'] . ' -->';
 					}
 
-					//track screenshot usage
+					// track screenshot usage
 					$scr_url = new Urlslab_Screenshot_Url_Row();
 					$scr_url->set_src_url_id(
 						$this->get_current_page_url()->get_url_id()
@@ -161,28 +148,18 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		return '';
 	}
 
-	private function render_shortcode(
-		string $url,
-		string $src,
-		string $alt,
-		string $width,
-		string $height
-	): string {
-		return sprintf(
-			'<div class="urlslab-screenshot-container"><img src="%s" alt="%s" width="%s" height="%s"></div>',
-			esc_url( $src ),
-			esc_attr( $alt ),
-			esc_attr( $width ),
-			esc_attr( $height ),
-		);
-	}
-
 	public function has_shortcode(): bool {
 		return true;
 	}
 
 	public function is_api_key_required(): bool {
 		return true;
+	}
+
+	public function init_wp_widget() {
+		require_once URLSLAB_PLUGIN_DIR
+					 . 'includes/wp-widgets/class-urlslab-wp-widget-screenshot.php';
+		register_widget( 'Urlslab_Wp_Widget_Screenshot' );
 	}
 
 	protected function add_options() {
@@ -208,9 +185,19 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		);
 	}
 
-	public function init_wp_widget() {
-		require_once URLSLAB_PLUGIN_DIR
-			. 'includes/wp-widgets/class-urlslab-wp-widget-screenshot.php';
-		register_widget( 'Urlslab_Wp_Widget_Screenshot' );
+	private function render_shortcode(
+		string $url,
+		string $src,
+		string $alt,
+		string $width,
+		string $height
+	): string {
+		return sprintf(
+			'<div class="urlslab-screenshot-container"><img src="%s" alt="%s" width="%s" height="%s"></div>',
+			esc_url( $src ),
+			esc_attr( $alt ),
+			esc_attr( $width ),
+			esc_attr( $height ),
+		);
 	}
 }

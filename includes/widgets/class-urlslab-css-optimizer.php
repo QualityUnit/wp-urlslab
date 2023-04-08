@@ -4,50 +4,39 @@
 require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-css-cache-row.php';
 
 class Urlslab_CSS_Optimizer extends Urlslab_Widget {
+	public const SLUG = 'urlslab-css-optimizer';
 
-	const SLUG = 'urlslab-css-optimizer';
+	public const SETTING_NAME_CSS_MAX_SIZE = 'urlslab_css_max_size';
+	public const DEFAULT_CSS_MAX_SIZE = 250000;
 
-	const SETTING_NAME_CSS_MAX_SIZE = 'urlslab_css_max_size';
-	const DEFAULT_CSS_MAX_SIZE = 250000;
+	public const SETTING_NAME_CSS_CACHE_TTL = 'urlslab_css_ttl';
+	public const DEFAULT_CSS_CACHE_TTL = 604800;
 
-	const SETTING_NAME_CSS_CACHE_TTL = 'urlslab_css_ttl';
-	const DEFAULT_CSS_CACHE_TTL = 604800;
-
-
-	public function __construct() {}
+	public function __construct() {
+	}
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_content', $this, 'theContentHook', 100 );
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_head_content', $this, 'theContentHook' );
 	}
 
-
-	/**
-	 * @return string
-	 */
 	public function get_widget_slug(): string {
 		return Urlslab_CSS_Optimizer::SLUG;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function get_widget_title(): string {
 		return __( 'CSS Optimizer' );
 	}
 
-	/**
-	 * @return string
-	 */
 	public function get_widget_description(): string {
 		return __( 'Improve page performance and reduce content-blocker requests using inline CSS instead of external CSS files' );
 	}
 
 	public function theContentHook( DOMDocument $document ) {
 		try {
-			$xpath     = new DOMXPath( $document );
+			$xpath = new DOMXPath( $document );
 			$css_links = $xpath->query( "//link[@rel='stylesheet' and (@type='text/css' or not(@type)) and @href ]" );
-			$links     = array();
+			$links = array();
 			foreach ( $css_links as $link_object ) {
 				if ( ! isset( $links[ $link_object->getAttribute( 'href' ) ] ) ) {
 					try {
@@ -64,9 +53,9 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 
 			$remove_elements = array();
 			foreach ( $css_links as $link_object ) {
-				if ( isset( $links[ $link_object->getAttribute( 'href' ) ] ) && isset( $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ] ) ) {
+				if ( isset( $links[ $link_object->getAttribute( 'href' ) ], $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ] ) ) {
 					$css_object = $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ];
-					if ( $css_object->get_status() == Urlslab_CSS_Cache_Row::STATUS_ACTIVE && $this->get_option( self::SETTING_NAME_CSS_MAX_SIZE ) > $css_object->get_filesize() ) {
+					if ( Urlslab_CSS_Cache_Row::STATUS_ACTIVE == $css_object->get_status() && $this->get_option( self::SETTING_NAME_CSS_MAX_SIZE ) > $css_object->get_filesize() ) {
 						$new_elm = $document->createElement( 'style', $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ]->get_css_content() );
 						$new_elm->setAttribute( 'type', 'text/css' );
 						if ( $link_object->hasAttribute( 'media' ) ) {
@@ -91,33 +80,11 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 		}
 	}
 
-	public static function update_settings( array $new_settings ) {}
+	public static function update_settings( array $new_settings ) {
+	}
 
 	public function is_api_key_required(): bool {
 		return false;
-	}
-
-	private function insert_missing_css_files( array $links, array $css_files ) {
-		$placeholders = array();
-		$values       = array();
-		$now          = Urlslab_Data::get_now();
-		foreach ( $links as $url => $urld_id ) {
-			if ( ! isset( $css_files[ $urld_id ] ) ) {
-				$placeholders[] = '(%d,%s,%s,%s)';
-				array_push(
-					$values,
-					$urld_id,
-					$url,
-					Urlslab_CSS_Cache_Row::STATUS_NEW,
-					$now
-				);
-			}
-		}
-		if ( ! empty( $values ) ) {
-			global $wpdb;
-			$query = 'INSERT IGNORE INTO ' . URLSLAB_CSS_CACHE_TABLE . ' (url_id,url,status,status_changed) VALUES ' . implode( ', ', $placeholders );
-			$wpdb->query( $wpdb->prepare( $query, $values ) ); // phpcs:ignore
-		}
 	}
 
 	protected function add_options() {
@@ -131,7 +98,7 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 			__( 'Define the size limit of the CSS file, which file will be switched to the content. Mind that the size is without compression, so if the current request has 30 kb, without the compression, it can be even 210 kb.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
 			},
 			'main'
@@ -154,10 +121,33 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 				31536000 => __( 'One year' ),
 				0        => __( 'No cache' ),
 			),
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
 			},
 			'main'
 		);
+	}
+
+	private function insert_missing_css_files( array $links, array $css_files ) {
+		$placeholders = array();
+		$values = array();
+		$now = Urlslab_Data::get_now();
+		foreach ( $links as $url => $urld_id ) {
+			if ( ! isset( $css_files[ $urld_id ] ) ) {
+				$placeholders[] = '(%d,%s,%s,%s)';
+				array_push(
+					$values,
+					$urld_id,
+					$url,
+					Urlslab_CSS_Cache_Row::STATUS_NEW,
+					$now
+				);
+			}
+		}
+		if ( ! empty( $values ) ) {
+			global $wpdb;
+			$query = 'INSERT IGNORE INTO ' . URLSLAB_CSS_CACHE_TABLE . ' (url_id,url,status,status_changed) VALUES ' . implode( ', ', $placeholders );
+			$wpdb->query( $wpdb->prepare( $query, $values ) ); // phpcs:ignore
+		}
 	}
 }

@@ -55,8 +55,8 @@ class Urlslab_Admin {
 	 * @since    1.0.0
 	 */
 	public function __construct( string $urlslab, string $version ) {
-		$this->urlslab              = $urlslab;
-		$this->version              = $version;
+		$this->urlslab = $urlslab;
+		$this->version = $version;
 		$this->urlslab_menu_factory = Urlslab_Page_Factory::get_instance();
 	}
 
@@ -72,17 +72,25 @@ class Urlslab_Admin {
 
 			$mainjs = glob( plugin_dir_path( __FILE__ ) . 'dist/*.js' );
 
-			wp_enqueue_script(
-				$this->urlslab . '-main',
-				plugin_dir_url( __FILE__ ) . 'dist/' . basename( $mainjs[0] ),
-				array( 'react', 'react-dom', 'wp-api-fetch', 'wp-element', 'wp-i18n' ),
-				$this->version,
-				true
-			);
+			if ( ! empty( $mainjs ) ) {
+				wp_enqueue_script(
+					$this->urlslab . '-main',
+					plugin_dir_url( __FILE__ ) . 'dist/' . basename( $mainjs[0] ),
+					array(
+						'react',
+						'react-dom',
+						'wp-api-fetch',
+						'wp-element',
+						'wp-i18n',
+					),
+					$this->version,
+					true
+				);
+			}
 
 			add_filter(
 				'script_loader_tag',
-				function( $tag, $handle ) {
+				function ( $tag, $handle ) {
 					// if not your script, do nothing and return original $tag
 					if ( $this->urlslab . '-main' !== $handle ) {
 						return $tag;
@@ -98,7 +106,6 @@ class Urlslab_Admin {
 	}
 
 	public function enqueue_styles() {
-
 		/**
 		 * This function is provided for demonstration purposes only.
 		 *
@@ -154,24 +161,24 @@ class Urlslab_Admin {
 	}
 
 	function urlslab_load_add_widgets_page() {
-		$action    = '';
+		$action = '';
 		$page_slug = '';
 		$component = '';
 
 		//# action initialization
-		if ( isset( $_REQUEST['action'] ) and - 1 != $_REQUEST['action'] and is_string( $_REQUEST['action'] ) ) {
+		if ( isset( $_REQUEST['action'] ) and -1 != $_REQUEST['action'] and is_string( $_REQUEST['action'] ) ) {
 			$action = $_REQUEST['action'];
 		}
 		//# action initialization
 
 		//# slug initialization
-		if ( isset( $_REQUEST['page'] ) and - 1 != $_REQUEST['page'] ) {
+		if ( isset( $_REQUEST['page'] ) and -1 != $_REQUEST['page'] ) {
 			$page_slug = $_REQUEST['page'];
 		}
 		//# slug initialization
 
 		//# component initialization
-		if ( isset( $_REQUEST['component'] ) and - 1 != $_REQUEST['component'] ) {
+		if ( isset( $_REQUEST['component'] ) and -1 != $_REQUEST['component'] ) {
 			$component = $_REQUEST['component'];
 		}
 		//# component initialization

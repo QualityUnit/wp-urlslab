@@ -1,7 +1,6 @@
 <?php
 
 class Urlslab_Keyword_Map_Row extends Urlslab_Data {
-
 	public function __construct( array $data = array(), $loaded_from_db = false ) {
 		$this->set_kw_id( $data['kw_id'] ?? '', $loaded_from_db );
 		$this->set_url_id( $data['url_id'] ?? '', $loaded_from_db );
@@ -41,15 +40,15 @@ class Urlslab_Keyword_Map_Row extends Urlslab_Data {
 		$this->set( 'link_type', $link_type, $loaded_from_db );
 	}
 
-	function get_table_name(): string {
+	public function get_table_name(): string {
 		return URLSLAB_KEYWORDS_MAP_TABLE;
 	}
 
-	function get_primary_columns(): array {
+	public function get_primary_columns(): array {
 		return array( 'kw_id', 'url_id', 'dest_url_id' );
 	}
 
-	function get_columns(): array {
+	public function get_columns(): array {
 		return array(
 			'kw_id'       => '%d',
 			'url_id'      => '%d',

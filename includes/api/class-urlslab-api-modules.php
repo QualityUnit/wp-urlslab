@@ -11,7 +11,10 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_items' ),
 					'args'                => array(),
-					'permission_callback' => array( $this, 'get_items_permissions_check' ),
+					'permission_callback' => array(
+						$this,
+						'get_items_permissions_check',
+					),
 				),
 			)
 		);
@@ -23,17 +26,23 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_item' ),
-					'permission_callback' => array( $this, 'get_items_permissions_check' ),
+					'permission_callback' => array(
+						$this,
+						'get_items_permissions_check',
+					),
 					'args'                => array(),
 				),
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'update_item' ),
-					'permission_callback' => array( $this, 'update_item_permissions_check' ),
+					'permission_callback' => array(
+						$this,
+						'update_item_permissions_check',
+					),
 					'args'                => array(
 						'active' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_bool( $param );
 							},
 						),
@@ -51,7 +60,7 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 		try {
 			$data = array();
 			foreach ( Urlslab_Available_Widgets::get_instance()->get_available_widgets() as $widget ) {
-				$widget_data              = $this->get_widget_data( $widget );
+				$widget_data = $this->get_widget_data( $widget );
 				$data[ $widget_data->id ] = $widget_data;
 			}
 
@@ -59,17 +68,6 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 		} catch ( Exception $e ) {
 			return new WP_Error( 'exception', __( 'Failed to get list of modules', 'urlslab' ) );
 		}
-	}
-
-	private function get_widget_data( Urlslab_Widget $widget ): stdClass {
-		return (object) array(
-			'id'           => $widget->get_widget_slug(),
-			'title'        => $widget->get_widget_title(),
-			'apikey'       => $widget->is_api_key_required(),
-			'description'  => $widget->get_widget_description(),
-			'active'       => Urlslab_User_Widget::get_instance()->is_widget_activated( $widget->get_widget_slug() ),
-			'has_settings' => ! empty( $widget->get_options() ),
-		);
 	}
 
 	public function get_item( $request ) {
@@ -102,5 +100,16 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 		} catch ( Exception $e ) {
 			return new WP_Error( 'exception', __( 'Failed to update module', 'urlslab' ), array( 'status' => 500 ) );
 		}
+	}
+
+	private function get_widget_data( Urlslab_Widget $widget ): stdClass {
+		return (object) array(
+			'id'           => $widget->get_widget_slug(),
+			'title'        => $widget->get_widget_title(),
+			'apikey'       => $widget->is_api_key_required(),
+			'description'  => $widget->get_widget_description(),
+			'active'       => Urlslab_User_Widget::get_instance()->is_widget_activated( $widget->get_widget_slug() ),
+			'has_settings' => ! empty( $widget->get_options() ),
+		);
 	}
 }

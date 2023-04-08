@@ -1,9 +1,8 @@
 <?php
 
 class Urlslab_Screenshot_Url_Row extends Urlslab_Data {
-
 	/**
-	 * @param array $data
+	 * @param mixed $loaded_from_db
 	 */
 	public function __construct( array $data = array(), $loaded_from_db = true ) {
 		$this->set_screenshot_url_id( $data['screenshot_url_id'] ?? 0, $loaded_from_db );
@@ -26,18 +25,18 @@ class Urlslab_Screenshot_Url_Row extends Urlslab_Data {
 		$this->set( 'src_url_id', $src_url_id, $loaded_from_db );
 	}
 
-	function get_table_name(): string {
+	public function get_table_name(): string {
 		return URLSLAB_SCREENSHOT_URLS_TABLE;
 	}
 
-	function get_primary_columns(): array {
+	public function get_primary_columns(): array {
 		return array( 'screenshot_url_id', 'src_url_id' );
 	}
 
-	function get_columns(): array {
+	public function get_columns(): array {
 		return array(
-			'screenshot_url_id'  => '%d',
-			'src_url_id' => '%d',
+			'screenshot_url_id' => '%d',
+			'src_url_id'        => '%d',
 		);
 	}
 }

@@ -1,10 +1,8 @@
 <?php
 
 class Urlslab_Search_Replace_Row extends Urlslab_Data {
-
-	const TYPE_PLAIN_TEXT = 'T';
-	const TYPE_REGEXP = 'R';
-
+	public const TYPE_PLAIN_TEXT = 'T';
+	public const TYPE_REGEXP = 'R';
 
 	public function __construct( array $row_data = array(), $loaded_from_db = false ) {
 		$this->set_id( $row_data['id'] ?? 0, $loaded_from_db );
@@ -54,20 +52,19 @@ class Urlslab_Search_Replace_Row extends Urlslab_Data {
 		$this->set( 'url_filter', $url_filter, $loaded_from_db );
 	}
 
-
-	function get_table_name(): string {
+	public function get_table_name(): string {
 		return URLSLAB_SEARCH_AND_REPLACE_TABLE;
 	}
 
-	function get_primary_columns(): array {
+	public function get_primary_columns(): array {
 		return array( 'id' );
 	}
 
-	function has_autoincrement_primary_column(): bool {
+	public function has_autoincrement_primary_column(): bool {
 		return true;
 	}
 
-	function get_columns(): array {
+	public function get_columns(): array {
 		return array(
 			'id'          => '%d',
 			'str_search'  => '%s',

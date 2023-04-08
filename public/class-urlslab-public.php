@@ -80,6 +80,7 @@ class Urlslab_Public {
 					if ( false === strpos( $handle, 'urlslab' ) || false !== strpos( $tag, 'async' ) || false !== strpos( $tag, 'defer' ) ) {
 						return $tag;
 					}
+
 					return str_replace( ' src', ' async defer src', $tag );
 				},
 				10,
@@ -92,9 +93,11 @@ class Urlslab_Public {
 		if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], Urlslab_Driver::DOWNLOAD_URL_PATH ) !== false ) {
 			Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-media-offloader' )->output_content();
 			exit();
-		} elseif ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], Urlslab_Lazy_Loading::DOWNLOAD_URL_PATH ) !== false ) {
-			Urlslab_Lazy_Loading::output_content();
-			exit();
+		} else {
+			if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], Urlslab_Lazy_Loading::DOWNLOAD_URL_PATH ) !== false ) {
+				Urlslab_Lazy_Loading::output_content();
+				exit();
+			}
 		}
 	}
 

@@ -13,17 +13,21 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'update_item' ),
-					'permission_callback' => array( $this, 'update_item_permissions_check' ),
+					'permission_callback' => array(
+						$this,
+						'update_item_permissions_check',
+					),
 					'args'                => array(
 						'status' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								switch ( $param ) {
 									case Urlslab_CSS_Cache_Row::STATUS_ACTIVE:
 									case Urlslab_CSS_Cache_Row::STATUS_DISABLED:
 									case Urlslab_CSS_Cache_Row::STATUS_NEW:
 									case Urlslab_CSS_Cache_Row::STATUS_PENDING:
 										return true;
+
 									default:
 										return false;
 								}
@@ -41,7 +45,10 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => array( $this, 'delete_all_items' ),
-					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
 					'args'                => array(),
 				),
 			)
@@ -54,7 +61,10 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => array( $this, 'delete_item' ),
-					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
 					'args'                => array(),
 				),
 			)
@@ -69,18 +79,18 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->url_id   = (int) $row->url_id;
+			$row->url_id = (int) $row->url_id;
 			$row->filesize = (int) $row->filesize;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
 	}
 
-	function get_row_object( $params = array() ): Urlslab_Data {
+	public function get_row_object( $params = array() ): Urlslab_Data {
 		return new Urlslab_CSS_Cache_Row( $params );
 	}
 
-	function get_editable_columns(): array {
+	public function get_editable_columns(): array {
 		return array( 'status' );
 	}
 
@@ -96,28 +106,26 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 					array(
 						'filter_url'    => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_status' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 					)
 				),
-				'permission_callback' => array( $this, 'get_items_permissions_check' ),
+				'permission_callback' => array(
+					$this,
+					'get_items_permissions_check',
+				),
 			),
 		);
 	}
 
-	/**
-	 * @param WP_REST_Request $request
-	 *
-	 * @return Urlslab_Api_Table_Sql
-	 */
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( '*' );

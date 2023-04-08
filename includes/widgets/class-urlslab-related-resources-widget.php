@@ -2,19 +2,21 @@
 
 // phpcs:disable WordPress
 
+use Elementor\Plugin;
+
 class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
-	const SLUG = 'urlslab-related-resources';
+	public const SLUG = 'urlslab-related-resources';
 	private static $posts = array();
 
-	const SETTING_NAME_SYNC_URLSLAB = 'urlslab-relres-sync-urlslab';
-	const SETTING_NAME_SYNC_FREQ = 'urlslab-relres-update-freq';
-	const SETTING_NAME_AUTOINCLUDE_TO_CONTENT = 'urlslab-relres-autoinc';
-	const SETTING_NAME_ARTICLES_COUNT = 'urlslab-relres-count';
-	const SETTING_NAME_SHOW_IMAGE = 'urlslab-relres-show-img';
-	const SETTING_NAME_IMAGE_SIZE = 'urlslab-relres-img-size';
-	const SETTING_NAME_SHOW_SUMMARY = 'urlslab-relres-show-sum';
-	const SETTING_NAME_DEFAULT_IMAGE_URL = 'urlslab-relres-def-img';
-	const SETTING_NAME_AUTOINCLUDE_POST_TYPES = 'urlslab-relres-autoinc-post-types';
+	public const SETTING_NAME_SYNC_URLSLAB = 'urlslab-relres-sync-urlslab';
+	public const SETTING_NAME_SYNC_FREQ = 'urlslab-relres-update-freq';
+	public const SETTING_NAME_AUTOINCLUDE_TO_CONTENT = 'urlslab-relres-autoinc';
+	public const SETTING_NAME_ARTICLES_COUNT = 'urlslab-relres-count';
+	public const SETTING_NAME_SHOW_IMAGE = 'urlslab-relres-show-img';
+	public const SETTING_NAME_IMAGE_SIZE = 'urlslab-relres-img-size';
+	public const SETTING_NAME_SHOW_SUMMARY = 'urlslab-relres-show-sum';
+	public const SETTING_NAME_DEFAULT_IMAGE_URL = 'urlslab-relres-def-img';
+	public const SETTING_NAME_AUTOINCLUDE_POST_TYPES = 'urlslab-relres-autoinc-post-types';
 
 
 	public function init_widget() {
@@ -23,7 +25,13 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	public function hook_callback() {
-		add_shortcode( $this->get_widget_slug(), array( $this, 'get_shortcode_content' ) );
+		add_shortcode(
+			$this->get_widget_slug(),
+			array(
+				$this,
+				'get_shortcode_content',
+			)
+		);
 	}
 
 	/**
@@ -61,13 +69,19 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
 		if (
-			isset( $_REQUEST['action'] ) && false !== strpos( $_REQUEST['action'], 'elementor' ) ||
-			in_array( get_post_status(), array( 'trash', 'auto-draft', 'inherit' ) ) ||
-			class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode()
+			( isset( $_REQUEST['action'] ) && false !== strpos( $_REQUEST['action'], 'elementor' ) )
+			|| in_array(
+				get_post_status(),
+				array(
+					'trash',
+					'auto-draft',
+					'inherit',
+				)
+			)
+			|| ( class_exists( '\Elementor\Plugin' ) && Plugin::$instance->editor->is_edit_mode() )
 		) {
 			return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">Related Articles Placeholder</div>';
 		}
-
 
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
@@ -87,7 +101,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		try {
 			$current_url = new Urlslab_Url( $urlslab_atts['url'] );
 
-			$result  = $this->load_related_urls( $current_url->get_url_id(), $urlslab_atts['related-count'] );
+			$result = $this->load_related_urls( $current_url->get_url_id(), $urlslab_atts['related-count'] );
 			$content = '';
 
 			$urls = array( $current_url );
@@ -100,12 +114,11 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			$current_url_obj->request_rel_schedule();
 
 			if ( ! empty( $result ) && is_array( $result ) ) {
-
-				$content  .= $this->render_shortcode_header( $urlslab_atts );
+				$content .= $this->render_shortcode_header( $urlslab_atts );
 				$strategy = get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
 				foreach ( $urls as $url ) {
 					if ( $current_url_obj->get_url_id() != $url->get_url_id() ) {
-						$url     = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url );
+						$url = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url );
 						$content .= $this->render_shortcode_item( $url, $urlslab_atts, $strategy );
 					}
 				}
@@ -120,9 +133,9 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 	private function load_related_urls( string $url_id, int $limit ): array {
 		global $wpdb;
-		$urls_table         = URLSLAB_URLS_TABLE;
+		$urls_table = URLSLAB_URLS_TABLE;
 		$related_urls_table = URLSLAB_RELATED_RESOURCE_TABLE;
-		$q                  = "SELECT DISTINCT u.url_name FROM $related_urls_table r INNER JOIN $urls_table as u ON r.dest_url_id = u.url_id WHERE r.src_url_id = %d AND u.visibility = '%s' ORDER BY r.pos LIMIT %d";
+		$q = "SELECT DISTINCT u.url_name FROM $related_urls_table r INNER JOIN $urls_table as u ON r.dest_url_id = u.url_id WHERE r.src_url_id = %d AND u.visibility = '%s' ORDER BY r.pos LIMIT %d";
 
 		return $wpdb->get_results( $wpdb->prepare( $q, $url_id, Urlslab_Url_Row::VISIBILITY_VISIBLE, $limit ), ARRAY_A ); // phpcs:ignore
 	}
@@ -188,8 +201,10 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			$img_url = $url->get_screenshot_url( $urlslab_atts['image-size'] );
 			if ( ! empty( $img_url ) ) {
 				return '<div class="urlslab-rel-res-item-screenshot"><img alt="' . esc_attr( $url->get_summary_text( $strategy ) ) . '" src="' . $img_url . '"></div>';
-			} else if ( ! empty( $urlslab_atts['default-image'] ) ) {
-				return '<div class="urlslab-rel-res-item-screenshot urlslab-rel-res-item-default-image"><img src="' . $urlslab_atts['default-image'] . '"></div>';
+			} else {
+				if ( ! empty( $urlslab_atts['default-image'] ) ) {
+					return '<div class="urlslab-rel-res-item-screenshot urlslab-rel-res-item-default-image"><img src="' . $urlslab_atts['default-image'] . '"></div>';
+				}
 			}
 		}
 
@@ -206,7 +221,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			return self::$posts;
 		}
 
-		$post_types  = get_post_types(
+		$post_types = get_post_types(
 			array(
 				'show_ui'      => true,
 				'show_in_menu' => true,
@@ -249,12 +264,11 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				31556926         => __( 'Yearly' ),
 				self::FREQ_NEVER => __( 'Never' ),
 			),
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'sync'
 		);
-
 
 		$this->add_options_form_section( 'autoinclude', __( 'Related Articles Settings' ), __( 'We can automatically include related articles at the end of each content without the need for a WordPress shortcode in custom templates.' ) );
 		$this->add_option_definition(
@@ -276,10 +290,10 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			__( 'WordPress Post Types' ),
 			__( 'Select post types to append Related articles at the end of the content. If you don\'t configure anything, it will be added to all post types automatically.' ),
 			self::OPTION_TYPE_MULTI_CHECKBOX,
-			function() {
+			function () {
 				return Urlslab_Related_Resources_Widget::get_available_post_types();
 			},
-			function( $value ) {
+			function ( $value ) {
 				if ( ! is_array( $value ) ) {
 					return false;
 				}
@@ -305,7 +319,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			__( 'Define the number of related article items to be appended to the end of the content.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'widget'
@@ -334,7 +348,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL => __( 'Thumbnail (200px x dynamic height)' ),
 				Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE           => __( 'Full (1358px x dynamic height)' ),
 			),
-			function( $value ) {
+			function ( $value ) {
 				switch ( $value ) {
 					case Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL:
 					case Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL:

@@ -1,13 +1,12 @@
 <?php
 
 class Urlslab_File_Pointer_Row extends Urlslab_Data {
-
-
 	/**
-	 * @param array $file
+	 * @param mixed $loaded_from_db
 	 */
 	public function __construct(
-		array $file = array(), $loaded_from_db = true
+		array $file = array(),
+			  $loaded_from_db = true
 	) {
 		$this->set_filehash( $file['p_filehash'] ?? $file['filehash'] ?? '', $loaded_from_db );
 		$this->set_filesize( $file['p_filesize'] ?? $file['filesize'] ?? 0, $loaded_from_db );
@@ -100,15 +99,15 @@ class Urlslab_File_Pointer_Row extends Urlslab_Data {
 		return Urlslab_Driver::get_driver( $this->get_driver() );
 	}
 
-	function get_table_name(): string {
+	public function get_table_name(): string {
 		return URLSLAB_FILE_POINTERS_TABLE;
 	}
 
-	function get_primary_columns(): array {
+	public function get_primary_columns(): array {
 		return array( 'filehash', 'filesize' );
 	}
 
-	function get_columns(): array {
+	public function get_columns(): array {
 		return array(
 			'filehash'      => '%s',
 			'filesize'      => '%d',

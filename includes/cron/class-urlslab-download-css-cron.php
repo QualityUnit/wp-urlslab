@@ -1,10 +1,12 @@
 <?php
+
 require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
+
 require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-css-cache-row.php';
-require_once( ABSPATH . 'wp-admin/includes/file.php' );
+
+require_once ABSPATH . 'wp-admin/includes/file.php';
 
 class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
-
 	public function cron_exec( $max_execution_time = self::MAX_RUN_TIME ): bool {
 		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_CSS_Optimizer::SLUG ) ) {
 			return false;
@@ -13,7 +15,7 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 		global $wpdb;
 		$wpdb->query(
 			$wpdb->prepare(
-				'DELETE FROM ' . URLSLAB_CSS_CACHE_TABLE . " WHERE status IN (%s, %s) AND status_changed < %s", // phpcs:ignore
+				'DELETE FROM ' . URLSLAB_CSS_CACHE_TABLE . ' WHERE status IN (%s, %s) AND status_changed < %s', // phpcs:ignore
 				array(
 					Urlslab_CSS_Cache_Row::STATUS_DISABLED,
 					Urlslab_CSS_Cache_Row::STATUS_ACTIVE,
@@ -21,7 +23,12 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 				),
 			)
 		);
+
 		return parent::cron_exec( $max_execution_time );
+	}
+
+	public function get_description(): string {
+		return __( 'Downloading scheduled CSS files for CSS caching', 'urlslab' );
 	}
 
 	protected function execute(): bool {
@@ -29,7 +36,7 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 
 		$url_row = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_CSS_CACHE_TABLE . " WHERE status=%s OR ( status= %s AND status_changed < %s) ORDER BY status_changed LIMIT 1", // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_CSS_CACHE_TABLE . ' WHERE status=%s OR ( status= %s AND status_changed < %s) ORDER BY status_changed LIMIT 1', // phpcs:ignore
 				array(
 					Urlslab_CSS_Cache_Row::STATUS_NEW,
 					Urlslab_CSS_Cache_Row::STATUS_PENDING,
@@ -44,7 +51,7 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 
 		$css = new Urlslab_CSS_Cache_Row( $url_row );
 		$css->set_status( Urlslab_CSS_Cache_Row::STATUS_PENDING );
-		$css->update();    //lock the entry, so no other process will start working on it
+		$css->update();    // lock the entry, so no other process will start working on it
 
 		return $this->download( $css );
 	}
@@ -77,9 +84,5 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 		}
 
 		return $css->update();
-	}
-
-	public function get_description(): string {
-		return __( 'Downloading scheduled CSS files for CSS caching', 'urlslab' );
 	}
 }

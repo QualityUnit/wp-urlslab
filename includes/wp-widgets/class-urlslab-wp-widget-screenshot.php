@@ -3,7 +3,7 @@
 class Urlslab_Wp_Widget_Screenshot extends WP_Widget {
 	public function __construct() {
 		parent::__construct(
-			'urlslab_screenshot', // Base ID
+			'urlslab_screenshot',         // Base ID
 			__( 'Screenshot (URLsLab)' ), // Name
 			array(
 				'description'                 => __( 'Entries from any RSS or Atom feed.' ),
@@ -40,10 +40,31 @@ class Urlslab_Wp_Widget_Screenshot extends WP_Widget {
 	private function print_form_field( $instance, $field_name, $field_label ) {
 		?>
 		<p><label
-					for="<?php echo esc_attr( $this->get_field_id( $field_name ) ); ?>"><?php echo esc_html( $field_label ); ?></label>
-			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( $field_name ) ); ?>"
-				   name="<?php echo esc_attr( $this->get_field_name( $field_name ) ); ?>" type="text"
-				   value="<?php echo esc_attr( $instance[ $field_name ] ); ?>"/></p>
+					for="
+					<?php
+					echo esc_attr( $this->get_field_id( $field_name ) );
+					?>
+					">
+				<?php
+				echo esc_html( $field_label );
+				?>
+			</label>
+			<input class="widefat" id="
+			<?php
+			echo esc_attr( $this->get_field_id( $field_name ) );
+			?>
+			"
+				   name="
+				   <?php
+					echo esc_attr( $this->get_field_name( $field_name ) );
+					?>
+				   "
+				   type="text"
+				   value="
+				   <?php
+					echo esc_attr( $instance[ $field_name ] );
+					?>
+				   "/></p>
 		<?php
 	}
 

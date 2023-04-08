@@ -1,11 +1,10 @@
 <?php
 
 class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
-	const SLUG = 'urlslab-generator';
-	const SETTING_NAME_SCHEDULE = 'urlslab-gen-sched';
-	const SETTING_NAME_REFRESH_INTERVAL = 'urlslab-gen-refresh';
-	const SETTING_NAME_AUTOAPPROVE = 'urlslab-gen-autoapprove';
-
+	public const SLUG = 'urlslab-generator';
+	public const SETTING_NAME_SCHEDULE = 'urlslab-gen-sched';
+	public const SETTING_NAME_REFRESH_INTERVAL = 'urlslab-gen-refresh';
+	public const SETTING_NAME_AUTOAPPROVE = 'urlslab-gen-autoapprove';
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action(
@@ -24,71 +23,18 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		);
 	}
 
-
-	/**
-	 * @return string
-	 */
 	public function get_widget_slug(): string {
-		return Urlslab_Content_Generator_Widget::SLUG;
+		return self::SLUG;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function get_widget_title(): string {
 		return __( 'AI Content Generator' );
 	}
 
-	/**
-	 * @return string
-	 */
 	public function get_widget_description(): string {
 		return __(
 			'Enhance your site\'s content effortlessly with our AI-powered module for generating unique texts'
 		);
-	}
-
-
-	public function get_attribute_values(
-		$atts = array(),
-		$content = null,
-		$tag = ''
-	) {
-		$atts = array_change_key_case( (array) $atts );
-		$current_url_obj = Urlslab_Url_Data_Fetcher::get_instance()
-												   ->load_and_schedule_url(
-													   $this->get_current_page_url(
-													   )
-												   );
-		if ( ! empty( $current_url_obj ) ) {
-			$title = $current_url_obj->get_summary_text(
-				Urlslab_Link_Enhancer::DESC_TEXT_TITLE
-			);
-		} else {
-			$title = get_the_title();
-		}
-		$urlslab_atts = shortcode_atts(
-			array(
-				'semantic_context' => $title,
-				'command'          => 'Summarize information I gave you. Generate summarization in language |lang|.',
-				'url_filter'       => str_replace(
-						array(
-							'www.',
-							'https://',
-							'http://',
-						),
-						'',
-						$this->get_current_page_url()->get_url()
-					) . '*',
-				'template'         => 'templates/simple-result.php',
-				'default_value'    => '',
-				'lang'             => $this->get_current_language(),
-			),
-			$atts,
-			$tag
-		);
-
-		return $urlslab_atts;
 	}
 
 	public function get_shortcode_content(
@@ -96,17 +42,19 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		$content = null,
 		$tag = ''
 	): string {
-		if ( isset( $_REQUEST['action'] )
-			&& false !== strpos(
-				$_REQUEST['action'],
-				'elementor'
-			)
+		if ( (
+				 isset( $_REQUEST['action'] )
+				&& false !== strpos(
+					$_REQUEST['action'],
+					'elementor'
+				)
+			 )
 			|| in_array(
 				get_post_status(),
 				array( 'trash', 'auto-draft', 'inherit' )
 			)
-			|| class_exists( '\Elementor\Plugin' )
-			&& \Elementor\Plugin::$instance->editor->is_edit_mode()
+			 || ( class_exists( '\Elementor\Plugin' )
+				  && \Elementor\Plugin::$instance->editor->is_edit_mode() )
 		) {
 			return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">Content Generator Placeholder</div>';
 		}
@@ -137,8 +85,9 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 					URLSLAB_PLUGIN_DIR . 'public/' . $atts['template']
 				)
 				) {
-					$template = URLSLAB_PLUGIN_DIR . 'public/'
-						. $atts['template'];
+					$template = URLSLAB_PLUGIN_DIR
+								. 'public/'
+								. $atts['template'];
 				} else {
 					return $value;
 				}
@@ -152,6 +101,39 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		}
 
 		return '<!-- URLsLab Content Not Ready Yet -->';
+	}
+
+	public function get_attribute_values( $atts = array(), $content = null, $tag = '' ): array {
+		$atts = array_change_key_case( (array) $atts );
+		$current_url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $this->get_current_page_url() );
+		if ( ! empty( $current_url_obj ) ) {
+			$title = $current_url_obj->get_summary_text(
+				Urlslab_Link_Enhancer::DESC_TEXT_TITLE
+			);
+		} else {
+			$title = get_the_title();
+		}
+
+		return shortcode_atts(
+			array(
+				'semantic_context' => $title,
+				'command'          => 'Summarize information I gave you. Generate summarization in language |lang|.',
+				'url_filter'       => str_replace(
+					array(
+						'www.',
+						'https://',
+						'http://',
+					),
+					'',
+					$this->get_current_page_url()->get_url()
+				) . '*',
+				'template'         => 'templates/simple-result.php',
+				'default_value'    => '',
+				'lang'             => $this->get_current_language(),
+			),
+			$atts,
+			$tag
+		);
 	}
 
 	public function has_shortcode(): bool {
@@ -226,6 +208,4 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			'approval'
 		);
 	}
-
-
 }

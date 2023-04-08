@@ -1,11 +1,11 @@
 <?php
 
 class Urlslab_Content_Generator_Row extends Urlslab_Data {
-	const STATUS_ACTIVE = 'A';
-	const STATUS_NEW = 'N';
-	const STATUS_PENDING = 'P';
-	const STATUS_WAITING_APPROVAL = 'W';
-	const STATUS_DISABLED = 'D';
+	public const STATUS_ACTIVE = 'A';
+	public const STATUS_NEW = 'N';
+	public const STATUS_PENDING = 'P';
+	public const STATUS_WAITING_APPROVAL = 'W';
+	public const STATUS_DISABLED = 'D';
 
 	public function __construct( array $data = array(), $loaded_from_db = true ) {
 		$this->set_semantic_context( $data['semantic_context'] ?? '', $loaded_from_db );
@@ -16,25 +16,6 @@ class Urlslab_Content_Generator_Row extends Urlslab_Data {
 		$this->set_status( $data['status'] ?? self::STATUS_NEW, $loaded_from_db );
 		$this->set_status_changed( $data['status_changed'] ?? self::get_now(), $loaded_from_db );
 		$this->set_generator_id( $data['generator_id'] ?? $this->compute_generator_id(), $loaded_from_db );
-	}
-
-	protected function set( $name, $value, $loaded_from_db ) {
-		$result = parent::set( $name, $value, $loaded_from_db );
-
-		switch ( $name ) {
-			case 'semantic_context':
-			case 'lang':
-			case 'command':
-			case 'url_filter':
-				$this->set_generator_id( $this->compute_generator_id(), $loaded_from_db );
-				break;
-		}
-
-		return $result;
-	}
-
-	private function compute_generator_id(): int {
-		return crc32( md5( $this->get_semantic_context() . $this->get_command() . $this->get_url_filter() . $this->get_lang() ) );
 	}
 
 	public function is_valid(): bool {
@@ -106,15 +87,15 @@ class Urlslab_Content_Generator_Row extends Urlslab_Data {
 		$this->set( 'status_changed', $status_changed, $loaded_from_db );
 	}
 
-	function get_table_name(): string {
+	public function get_table_name(): string {
 		return URLSLAB_CONTENT_GENERATORS_TABLE;
 	}
 
-	function get_primary_columns(): array {
+	public function get_primary_columns(): array {
 		return array( 'generator_id' );
 	}
 
-	function get_columns(): array {
+	public function get_columns(): array {
 		return array(
 			'generator_id'     => '%d',
 			'semantic_context' => '%s',
@@ -129,5 +110,25 @@ class Urlslab_Content_Generator_Row extends Urlslab_Data {
 
 	public function is_active(): bool {
 		return self::STATUS_ACTIVE === $this->get_status() || self::STATUS_PENDING === $this->get_status();
+	}
+
+	protected function set( $name, $value, $loaded_from_db ) {
+		$result = parent::set( $name, $value, $loaded_from_db );
+
+		switch ( $name ) {
+			case 'semantic_context':
+			case 'lang':
+			case 'command':
+			case 'url_filter':
+				$this->set_generator_id( $this->compute_generator_id(), $loaded_from_db );
+
+				break;
+		}
+
+		return $result;
+	}
+
+	private function compute_generator_id(): int {
+		return crc32( md5( $this->get_semantic_context() . $this->get_command() . $this->get_url_filter() . $this->get_lang() ) );
 	}
 }

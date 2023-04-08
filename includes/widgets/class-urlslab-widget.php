@@ -1,49 +1,45 @@
 <?php
 
 abstract class Urlslab_Widget {
+	public const FREQ_NEVER = 999999999;
 
-	const FREQ_NEVER = 999999999;
+	public const OPTION_TYPE_CHECKBOX = 'checkbox';
+	public const OPTION_TYPE_TEXT = 'text';
+	public const OPTION_TYPE_PASSWORD = 'password';
+	public const PASSWORD_PLACEHOLDER = '********';
 
-	const OPTION_TYPE_CHECKBOX = 'checkbox';
-	const OPTION_TYPE_TEXT = 'text';
-	const OPTION_TYPE_PASSWORD = 'password';
-	const PASSWORD_PLACEHOLDER = '********';
+	public const OPTION_TYPE_LISTBOX = 'listbox';
+	public const OPTION_TYPE_DATETIME = 'datetime';
+	public const OPTION_TYPE_MULTI_CHECKBOX = 'multicheck';
+	public const OPTION_TYPE_NUMBER = 'number';
 
-	const OPTION_TYPE_LISTBOX = 'listbox';
-	const OPTION_TYPE_DATETIME = 'datetime';
-	const OPTION_TYPE_MULTI_CHECKBOX = 'multicheck';
-	const OPTION_TYPE_NUMBER = 'number';
-
-
-	private static $current_page_url = null;
+	private static $current_page_url;
 
 	private $options = false;
 	private $option_sections = array();
 
-	public function init_widget() {}
+	public function init_widget() {
+	}
 
 	/**
 	 * @return string Widget slug for identifying the widget
 	 */
-	public abstract function get_widget_slug(): string;
+	abstract public function get_widget_slug(): string;
 
 	/**
 	 * @return string Widget Title
 	 */
-	public abstract function get_widget_title(): string;
+	abstract public function get_widget_title(): string;
 
 	/**
 	 * @return string Widget Description
 	 */
-	public abstract function get_widget_description(): string;
-
+	abstract public function get_widget_description(): string;
 
 	/**
 	 * @param $atts    array attributes of the shortcode
 	 * @param $content string the content of the shortcode
 	 * @param $tag     string the tag related to shortcode
-	 *
-	 * @return string
 	 */
 	public function get_shortcode_content(
 		$atts = array(),
@@ -65,6 +61,8 @@ abstract class Urlslab_Widget {
 	}
 
 	/**
+	 * @param mixed $section_id
+	 *
 	 * @return array - liest of module settings, where id is setting name and value is setting value
 	 */
 	public function get_options( $section_id = false ): array {
@@ -76,50 +74,66 @@ abstract class Urlslab_Widget {
 
 		foreach ( $this->options as $option_id => $option ) {
 			switch ( $option['type'] ) {
-			case self::OPTION_TYPE_PASSWORD:
-				if ( get_option( $option_id, $option['default'] ?? false ) ) {
-					$option['value'] = self::PASSWORD_PLACEHOLDER;
-				} else {
-					$option['value'] = '';
-				}
-				break;
-			case self::OPTION_TYPE_CHECKBOX:
-				$value = $this->get_option( $option_id );
-				if ( $value ) {
-					$option['value'] = true;
-				} else {
-					$option['value'] = false;
-				}
-				break;
-			case self::OPTION_TYPE_LISTBOX:
-				$value = $this->get_option( $option_id );
-				$possible_values = $this->get_option_possible_values(
-					$option_id
-				);
-				$option['possible_values'] = $possible_values;
-				if ( ! isset( $possible_values[ $value ] ) ) {
-					$value = $option['default'];
-				}
-				$option['value'] = $value;
-				break;
-			case self::OPTION_TYPE_MULTI_CHECKBOX:
-				$values = $this->get_option( $option_id );
-				if ( ! is_array( $values ) ) {
-					$values = explode( ',', trim( $values, ", \t\n\r\0\x0B" ) );
-				}
-				$possible_values = $this->get_option_possible_values(
-					$option_id
-				);
-				$option['possible_values'] = $possible_values;
-				foreach ( $values as $id => $value ) {
-					if ( ! isset( $possible_values[ $value ] ) ) {
-						unset( $values[ $id ] );
+				case self::OPTION_TYPE_PASSWORD:
+					if (
+						get_option(
+							$option_id,
+							$option['default'] ?? false
+						)
+					) {
+						$option['value'] = self::PASSWORD_PLACEHOLDER;
+					} else {
+						$option['value'] = '';
 					}
-				}
-				$option['value'] = array_values( $values );
-				break;
-			default:
-				$option['value'] = $this->get_option( $option_id );
+
+					break;
+
+				case self::OPTION_TYPE_CHECKBOX:
+					$value = $this->get_option( $option_id );
+					if ( $value ) {
+						$option['value'] = true;
+					} else {
+						$option['value'] = false;
+					}
+
+					break;
+
+				case self::OPTION_TYPE_LISTBOX:
+					$value = $this->get_option( $option_id );
+					$possible_values = $this->get_option_possible_values(
+						$option_id
+					);
+					$option['possible_values'] = $possible_values;
+					if ( ! isset( $possible_values[ $value ] ) ) {
+						$value = $option['default'];
+					}
+					$option['value'] = $value;
+
+					break;
+
+				case self::OPTION_TYPE_MULTI_CHECKBOX:
+					$values = $this->get_option( $option_id );
+					if ( ! is_array( $values ) ) {
+						$values = explode(
+							',',
+							trim( $values, ", \t\n\r\0\x0B" )
+						);
+					}
+					$possible_values = $this->get_option_possible_values(
+						$option_id
+					);
+					$option['possible_values'] = $possible_values;
+					foreach ( $values as $id => $value ) {
+						if ( ! isset( $possible_values[ $value ] ) ) {
+							unset( $values[ $id ] );
+						}
+					}
+					$option['value'] = array_values( $values );
+
+					break;
+
+				default:
+					$option['value'] = $this->get_option( $option_id );
 			}
 			if ( false == $section_id || $option['section'] == $section_id ) {
 				$result[ $option_id ] = $option;
@@ -127,6 +141,24 @@ abstract class Urlslab_Widget {
 		}
 
 		return $result;
+	}
+
+	public function get_option( $option_id ) {
+		if ( false === $this->options ) {
+			$this->init_options();
+		}
+
+		if ( ! isset( $this->options[ $option_id ] ) ) {
+			return null;
+		}
+		if ( ! isset( $this->options[ $option_id ]['value'] ) ) {
+			$this->options[ $option_id ]['value'] = get_option(
+				$option_id,
+				$this->options[ $option_id ]['default'] ?? false
+			);
+		}
+
+		return $this->options[ $option_id ]['value'];
 	}
 
 	public function get_option_sections(): array {
@@ -149,71 +181,6 @@ abstract class Urlslab_Widget {
 				$option['autoload'] ?? true
 			);
 		}
-	}
-
-	protected function add_options() {}
-
-	private function init_options() {
-		$this->options = array();
-		$this->add_options();
-	}
-
-	protected function add_options_form_section( $id, $title, $description ) {
-		$this->option_sections[ $id ] = array(
-			'id'          => $id,
-			'title'       => $title,
-			'description' => $description,
-		);
-	}
-
-	/**
-	 * @param string               $option_id
-	 * @param                      $default_value
-	 * @param bool                 $autoload
-	 * @param string               $title
-	 * @param string               $description
-	 * @param                      $type
-	 * @param array|callable|false $possible_values
-	 * @param callable|null        $validator
-	 * @param                      $form_section_id
-	 *
-	 * @return void
-	 */
-	protected function add_option_definition(
-		string $option_id,
-		$default_value = false,
-		bool $autoload = true,
-		string $title = '',
-		string $description = '',
-		$type = self::OPTION_TYPE_CHECKBOX,
-		$possible_values = false,
-		callable $validator = null,
-		$form_section_id = 'default'
-	) {
-		if ( empty( $this->option_sections ) ) {
-			$this->option_sections[] = array(
-				'id'          => 'default',
-				'title'       => __( 'Module Settings' ),
-				'description' => '',
-			);
-		}
-
-		if ( $form_section_id
-			&& ! isset( $this->option_sections[ $form_section_id ] )
-		) {
-			$form_section_id = 'default';
-		}
-		$this->options[ $option_id ] = array(
-			'id'              => $option_id,
-			'default'         => $default_value,
-			'autoload'        => $autoload,
-			'title'           => $title,
-			'description'     => $description,
-			'type'            => $type,
-			'possible_values' => $possible_values,
-			'validator'       => $validator,
-			'section'         => $form_section_id,
-		);
 	}
 
 	public function update_option( $option_id, $value ): bool {
@@ -251,25 +218,31 @@ abstract class Urlslab_Widget {
 		}
 
 		switch ( $this->options[ $option_id ]['type'] ) {
-		case self::OPTION_TYPE_CHECKBOX:
-			if ( $value || 1 === $value || 'true' === $value ) {
-				$value = true;
-			} else {
-				$value = false;
-			}
-			break;
-		case self::OPTION_TYPE_MULTI_CHECKBOX:
-			if ( is_array( $value ) ) {
-				$value = implode( ',', $value );
-			}
-			break;
-		case self::OPTION_TYPE_PASSWORD:
-			if ( self::PASSWORD_PLACEHOLDER == $value ) {
-				return true;
-			}
-			break;
-		default:
-			break;
+			case self::OPTION_TYPE_CHECKBOX:
+				if ( $value || ( 1 === $value ) || ( 'true' === $value ) ) {
+					$value = true;
+				} else {
+					$value = false;
+				}
+
+				break;
+
+			case self::OPTION_TYPE_MULTI_CHECKBOX:
+				if ( is_array( $value ) ) {
+					$value = implode( ',', $value );
+				}
+
+				break;
+
+			case self::OPTION_TYPE_PASSWORD:
+				if ( self::PASSWORD_PLACEHOLDER === $value ) {
+					return true;
+				}
+
+				break;
+
+			default:
+				break;
 		}
 
 		return $value == $this->get_option( $option_id )
@@ -279,68 +252,74 @@ abstract class Urlslab_Widget {
 			);
 	}
 
-	private function get_option_possible_values( $option_id ): array {
-		if ( isset( $this->options[ $option_id ] )
-			&& isset( $this->options[ $option_id ]['possible_values'] )
-		) {
-			if ( is_callable(
-				$this->options[ $option_id ]['possible_values']
-			)
-			) {
-				return call_user_func(
-					$this->options[ $option_id ]['possible_values']
-				);
-			} else {
-				if ( is_array(
-					$this->options[ $option_id ]['possible_values']
-				)
-				) {
-					return $this->options[ $option_id ]['possible_values'];
-				}
-			}
-		}
-
-		return array();
+	protected function add_options() {
 	}
 
-	public function get_option( $option_id ) {
-		if ( false === $this->options ) {
-			$this->init_options();
-		}
+	protected function add_options_form_section( $id, $title, $description ) {
+		$this->option_sections[ $id ] = array(
+			'id'          => $id,
+			'title'       => $title,
+			'description' => $description,
+		);
+	}
 
-		if ( ! isset( $this->options[ $option_id ] ) ) {
-			return null;
-		}
-		if ( ! isset( $this->options[ $option_id ]['value'] ) ) {
-			$this->options[ $option_id ]['value'] = get_option(
-				$option_id,
-				$this->options[ $option_id ]['default'] ?? false
+	/**
+	 * @param array|callable|false $possible_values
+	 * @param mixed                $default_value
+	 * @param mixed                $type
+	 * @param mixed                $form_section_id
+	 */
+	protected function add_option_definition(
+		string $option_id,
+				 $default_value = false,
+		bool $autoload = true,
+		string $title = '',
+		string $description = '',
+				 $type = self::OPTION_TYPE_CHECKBOX,
+				 $possible_values = false,
+		callable $validator = null,
+				 $form_section_id = 'default'
+	) {
+		if ( empty( $this->option_sections ) ) {
+			$this->option_sections[] = array(
+				'id'          => 'default',
+				'title'       => __( 'Module Settings' ),
+				'description' => '',
 			);
 		}
 
-		return $this->options[ $option_id ]['value'];
+		if (
+			$form_section_id
+			&& ! isset( $this->option_sections[ $form_section_id ] )
+		) {
+			$form_section_id = 'default';
+		}
+		$this->options[ $option_id ] = array(
+			'id'              => $option_id,
+			'default'         => $default_value,
+			'autoload'        => $autoload,
+			'title'           => $title,
+			'description'     => $description,
+			'type'            => $type,
+			'possible_values' => $possible_values,
+			'validator'       => $validator,
+			'section'         => $form_section_id,
+		);
 	}
 
-	protected function is_skip_elemenet(
-		DOMNode $dom,
-		$custom_widget_skip = ''
-	) {
+	protected function is_skip_elemenet( DOMNode $dom, $custom_widget_skip = '' ): bool {
 		return $dom->hasAttributes() && $dom->hasAttribute( 'class' )
-			&& ( ( ! empty( $custom_widget_skip )
+			   && ( ( ! empty( $custom_widget_skip )
 					&& false !== strpos(
 						$dom->getAttribute( 'class' ),
 						'urlslab-skip-' . $custom_widget_skip
 					) )
-				|| ( false !== strpos(
+					|| ( false !== strpos(
 						$dom->getAttribute( 'class' ),
 						'urlslab-skip-all'
 					) ) );
 	}
 
-	/**
-	 * @return Urlslab_Url
-	 * @throws Exception
-	 */
 	protected function get_current_page_url(): Urlslab_Url {
 		if ( is_object( self::$current_page_url ) ) {
 			return self::$current_page_url;
@@ -358,7 +337,8 @@ abstract class Urlslab_Widget {
 		if ( empty( self::$current_page_url ) && get_the_ID() ) {
 			try {
 				self::$current_page_url = new Urlslab_Url(
-					get_permalink( get_the_ID() ), true
+					get_permalink( get_the_ID() ),
+					true
 				);
 			} catch ( Exception $e ) {
 			}
@@ -366,6 +346,7 @@ abstract class Urlslab_Widget {
 		if ( empty( self::$current_page_url ) ) {
 			global $wp;
 			$current_url = home_url( add_query_arg( array(), $wp->request ) );
+
 			try {
 				self::$current_page_url = new Urlslab_Url( $current_url, true );
 			} catch ( Exception $e ) {
@@ -388,11 +369,41 @@ abstract class Urlslab_Widget {
 		}
 
 		if ( ! empty( $polylang ) && function_exists( 'pll_current_language' )
-			&& strlen( pll_current_language() )
+			 && strlen( pll_current_language() )
 		) {
 			return pll_current_language();
 		}
 
 		return substr( get_locale(), 0, 2 );
+	}
+
+	private function init_options() {
+		$this->options = array();
+		$this->add_options();
+	}
+
+	private function get_option_possible_values( $option_id ): array {
+		if (
+			isset( $this->options[ $option_id ]['possible_values'] )
+		) {
+			if (
+				is_callable(
+					$this->options[ $option_id ]['possible_values']
+				)
+			) {
+				return call_user_func(
+					$this->options[ $option_id ]['possible_values']
+				);
+			}
+			if (
+				is_array(
+					$this->options[ $option_id ]['possible_values']
+				)
+			) {
+				return $this->options[ $option_id ]['possible_values'];
+			}
+		}
+
+		return array();
 	}
 }

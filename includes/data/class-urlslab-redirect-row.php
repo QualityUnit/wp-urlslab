@@ -1,22 +1,20 @@
 <?php
 
 class Urlslab_Redirect_Row extends Urlslab_Data {
+	public const MATCH_TYPE_EXACT = 'E';
+	public const MATCH_TYPE_SUBSTRING = 'S';
+	public const MATCH_TYPE_REGEXP = 'R';
 
-	const MATCH_TYPE_EXACT = 'E';
-	const MATCH_TYPE_SUBSTRING = 'S';
-	const MATCH_TYPE_REGEXP = 'R';
+	public const LOGIN_STATUS_LOGIN_REQUIRED = 'Y';
+	public const LOGIN_STATUS_NOT_LOGGED_IN = 'N';
+	public const LOGIN_STATUS_ANY = 'A';
 
-	const LOGIN_STATUS_LOGIN_REQUIRED = 'Y';
-	const LOGIN_STATUS_NOT_LOGGED_IN = 'N';
-	const LOGIN_STATUS_ANY = 'A';
-
-
-	const NOT_FOUND_STATUS_NOT_FOUND = 'Y';
-	const NOT_FOUND_STATUS_FOUND = 'N';
-	const NOT_FOUND_STATUS_ANY = 'A';
+	public const NOT_FOUND_STATUS_NOT_FOUND = 'Y';
+	public const NOT_FOUND_STATUS_FOUND = 'N';
+	public const NOT_FOUND_STATUS_ANY = 'A';
 
 	/**
-	 * @param array $redirect
+	 * @param mixed $loaded_from_db
 	 */
 	public function __construct( array $redirect = array(), $loaded_from_db = true ) {
 		$this->set_match_type( $redirect['match_type'] ?? self::MATCH_TYPE_SUBSTRING, $loaded_from_db );
@@ -147,19 +145,19 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		$this->set( 'redirect_code', $redirect_code, $loaded_from_db );
 	}
 
-	function get_table_name(): string {
+	public function get_table_name(): string {
 		return URLSLAB_REDIRECTS_TABLE;
 	}
 
-	function get_primary_columns(): array {
+	public function get_primary_columns(): array {
 		return array( 'redirect_id' );
 	}
 
-	function has_autoincrement_primary_column(): bool {
+	public function has_autoincrement_primary_column(): bool {
 		return true;
 	}
 
-	function get_columns(): array {
+	public function get_columns(): array {
 		return array(
 			'redirect_id'   => '%d',
 			'match_type'    => '%s',
@@ -180,7 +178,6 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 
 	public function increase_cnt() {
 		global $wpdb;
-		$wpdb->query( $wpdb->prepare( "UPDATE {$this->get_table_name()} SET cnt = cnt + 1 WHERE redirect_id = %d", $this->get_redirect_id() ) );// phpcs:ignore
+		$wpdb->query( $wpdb->prepare( "UPDATE {$this->get_table_name()} SET cnt = cnt + 1 WHERE redirect_id = %d", $this->get_redirect_id() ) ); // phpcs:ignore
 	}
-
 }

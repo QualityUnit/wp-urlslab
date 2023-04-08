@@ -13,7 +13,10 @@ class Urlslab_Api_Content_Cache extends Urlslab_Api_Table {
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => array( $this, 'delete_all_items' ),
-					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
 					'args'                => array(),
 				),
 			)
@@ -26,34 +29,14 @@ class Urlslab_Api_Content_Cache extends Urlslab_Api_Table {
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => array( $this, 'delete_item' ),
-					'permission_callback' => array( $this, 'delete_item_permissions_check' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
 					'args'                => array(),
 				),
 			)
 		);
-	}
-
-	public function get_items( $request ) {
-		$rows = $this->get_items_sql( $request )->get_results();
-
-		if ( null === $rows || false === $rows ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
-		}
-
-		foreach ( $rows as $row ) {
-			$row->cache_len   = (int) $row->cache_len;
-			$row->cache_crc32 = (int) $row->cache_crc32;
-		}
-
-		return new WP_REST_Response( $rows, 200 );
-	}
-
-	function get_row_object( $params = array() ): Urlslab_Data {
-		return new Urlslab_Content_Cache_Row( $params );
-	}
-
-	function get_editable_columns(): array {
-		return array();
 	}
 
 	/**
@@ -65,16 +48,29 @@ class Urlslab_Api_Content_Cache extends Urlslab_Api_Table {
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_items' ),
 				'args'                => $this->get_table_arguments(),
-				'permission_callback' => array( $this, 'get_items_permissions_check' ),
+				'permission_callback' => array(
+					$this,
+					'get_items_permissions_check',
+				),
 			),
 		);
 	}
 
-	/**
-	 * @param WP_REST_Request $request
-	 *
-	 * @return Urlslab_Api_Table_Sql
-	 */
+	public function get_items( $request ) {
+		$rows = $this->get_items_sql( $request )->get_results();
+
+		if ( null == $rows || false == $rows ) {
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
+		}
+
+		foreach ( $rows as $row ) {
+			$row->cache_len = (int) $row->cache_len;
+			$row->cache_crc32 = (int) $row->cache_crc32;
+		}
+
+		return new WP_REST_Response( $rows, 200 );
+	}
+
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( '*' );
@@ -89,5 +85,13 @@ class Urlslab_Api_Content_Cache extends Urlslab_Api_Table {
 		$sql->add_order( 'cache_len' );
 
 		return $sql;
+	}
+
+	public function get_row_object( $params = array() ): Urlslab_Data {
+		return new Urlslab_Content_Cache_Row( $params );
+	}
+
+	public function get_editable_columns(): array {
+		return array();
 	}
 }

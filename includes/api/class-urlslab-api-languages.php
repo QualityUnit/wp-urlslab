@@ -11,7 +11,10 @@ class Urlslab_Api_Languages extends Urlslab_Api_Base {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_items' ),
 					'args'                => array(),
-					'permission_callback' => array( $this, 'get_items_permissions_check' ),
+					'permission_callback' => array(
+						$this,
+						'get_items_permissions_check',
+					),
 				),
 			)
 		);
@@ -19,8 +22,7 @@ class Urlslab_Api_Languages extends Urlslab_Api_Base {
 
 	public function get_items( $request ) {
 		try {
-
-			$languages          = apply_filters( 'wpml_active_languages', null, 'skip_missing=0&orderby=code' );
+			$languages = apply_filters( 'wpml_active_languages', null, 'skip_missing=0&orderby=code' );
 			$response_languages = array(
 				(object) array(
 					'code' => 'all',

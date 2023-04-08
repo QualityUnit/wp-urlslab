@@ -1,47 +1,38 @@
 <?php
 
 class Urlslab_Optimize extends Urlslab_Widget {
-	const SLUG = 'optimize';
+	public const SLUG = 'optimize';
 
-	const SETTING_NAME_OPTIMIZATION_FREQUENCY = 'urlslab-del-freq';
-	const SETTING_NAME_DEL_REVISIONS = 'urlslab-del-revisions';
-	const SETTING_NAME_REVISIONS_NEXT_PROCESSING = 'urlslab-del-revisions-sleep';
-	const SETTING_NAME_REVISION_TTL = 'urlslab-revisions-ttl';
+	public const SETTING_NAME_OPTIMIZATION_FREQUENCY = 'urlslab-del-freq';
+	public const SETTING_NAME_DEL_REVISIONS = 'urlslab-del-revisions';
+	public const SETTING_NAME_REVISIONS_NEXT_PROCESSING = 'urlslab-del-revisions-sleep';
+	public const SETTING_NAME_REVISION_TTL = 'urlslab-revisions-ttl';
 
-	const SETTING_NAME_DEL_AUTODRAFTS = 'urlslab-del-autodrafts';
-	const SETTING_NAME_AUTODRAFTS_NEXT_PROCESSING = 'urlslab-del-autodraft-sleep';
-	const SETTING_NAME_AUTODRAFT_TTL = 'urlslab-autodraft-ttl';
+	public const SETTING_NAME_DEL_AUTODRAFTS = 'urlslab-del-autodrafts';
+	public const SETTING_NAME_AUTODRAFTS_NEXT_PROCESSING = 'urlslab-del-autodraft-sleep';
+	public const SETTING_NAME_AUTODRAFT_TTL = 'urlslab-autodraft-ttl';
 
-	const SETTING_NAME_DEL_TRASHED = 'urlslab-del-trashed';
-	const SETTING_NAME_TRASHED_NEXT_PROCESSING = 'urlslab-del-trashed-sleep';
-	const SETTING_NAME_TRASHED_TTL = 'urlslab-trashed-ttl';
+	public const SETTING_NAME_DEL_TRASHED = 'urlslab-del-trashed';
+	public const SETTING_NAME_TRASHED_NEXT_PROCESSING = 'urlslab-del-trashed-sleep';
+	public const SETTING_NAME_TRASHED_TTL = 'urlslab-trashed-ttl';
 
-	const SETTING_NAME_DEL_ALL_TRANSIENT = 'urlslab-del-all-transient';
-	const SETTING_NAME_ALL_TRANSIENT_NEXT_PROCESSING = 'urlslab-del-all-transient-sleep';
-	const SETTING_NAME_DEL_TRANSIENT_EXPIRED = 'urlslab-del-exp-transient';
-	const SETTING_NAME_TRANSIENT_EXPIRED_NEXT_PROCESSING = 'urlslab-del-exp-transient-sleep';
-	const SETTING_NAME_DEL_ORPHANED_RELATIONSHIP_DATA = 'urlslab-del-orph-rels';
-	const SETTING_NAME_ORPHANED_RELATIONSHIP_DATA_NEXT_PROCESSING = 'urlslab-del-orph-rels-sleep';
-	const SETTING_NAME_DEL_ORPHANED_COMMENT_META = 'urlslab-del-orph-com-meta';
-	const SETTING_NAME_ORPHANED_COMMENT_META_NEXT_PROCESSING = 'urlslab-del-orph-com-meta-sleep';
+	public const SETTING_NAME_DEL_ALL_TRANSIENT = 'urlslab-del-all-transient';
+	public const SETTING_NAME_ALL_TRANSIENT_NEXT_PROCESSING = 'urlslab-del-all-transient-sleep';
+	public const SETTING_NAME_DEL_TRANSIENT_EXPIRED = 'urlslab-del-exp-transient';
+	public const SETTING_NAME_TRANSIENT_EXPIRED_NEXT_PROCESSING = 'urlslab-del-exp-transient-sleep';
+	public const SETTING_NAME_DEL_ORPHANED_RELATIONSHIP_DATA = 'urlslab-del-orph-rels';
+	public const SETTING_NAME_ORPHANED_RELATIONSHIP_DATA_NEXT_PROCESSING = 'urlslab-del-orph-rels-sleep';
+	public const SETTING_NAME_DEL_ORPHANED_COMMENT_META = 'urlslab-del-orph-com-meta';
+	public const SETTING_NAME_ORPHANED_COMMENT_META_NEXT_PROCESSING = 'urlslab-del-orph-com-meta-sleep';
 
-	/**
-	 * @return string
-	 */
 	public function get_widget_slug(): string {
-		return Urlslab_Optimize::SLUG;
+		return self::SLUG;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function get_widget_title(): string {
 		return __( 'Database Optimizer' );
 	}
 
-	/**
-	 * @return string
-	 */
 	public function get_widget_description(): string {
 		return __( 'Boost the performance of your website by automating database optimization in the background' );
 	}
@@ -66,12 +57,11 @@ class Urlslab_Optimize extends Urlslab_Widget {
 				2419200 => __( 'Monthly' ),
 				7257600 => __( 'Quarterly' ),
 			),
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'frequency'
 		);
-
 
 		$this->add_options_form_section( 'revisions', __( 'Post Revisions' ), __( 'Post Revisions can quickly overfill the database, making the website much slower and even more expensive to back up.' ) );
 		$this->add_option_definition(
@@ -93,7 +83,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			__( 'Define how many days the revisions should be kept in the WordPress database.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 365 > $value && 0 < $value;
 			},
 			'revisions'
@@ -109,7 +99,6 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			null,
 			'revisions'
 		);
-
 
 		$this->add_options_form_section( 'auto-drafts', __( 'Auto-Draft Posts' ), __( 'Auto-Drafts are stored in the database over weeks or months. When there are too many of them, it can slow down the website.' ) );
 		$this->add_option_definition(
@@ -131,7 +120,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			__( 'Define how many days auto-drafts should be kept in the WordPress database.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 365 > $value && 0 < $value;
 			},
 			'auto-drafts'
@@ -147,7 +136,6 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			null,
 			'auto-drafts'
 		);
-
 
 		$this->add_options_form_section( 'trashed', __( 'Trashed Posts' ), __( 'The post slug is reserved, and there is no way to use it till you delete the post. So keep this process automatic in the background without effort.' ) );
 		$this->add_option_definition(
@@ -169,7 +157,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			__( 'Define how many days trashed posts should be kept in the WordPress database.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 365 > $value && 0 < $value;
 			},
 			'trashed'
@@ -185,7 +173,6 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			null,
 			'trashed'
 		);
-
 
 		$this->add_options_form_section( 'transient', __( 'Transient Options' ), __( 'Transients are extremely helpful, and they are making WordPress faster. Unfortunately, too many of them are expired, which can slow down the website\'s speed.' ) );
 
@@ -235,7 +222,6 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			'transient'
 		);
 
-
 		$this->add_options_form_section( 'orphaned-rel-data', __( 'Orphaned Relationship Data' ), __( 'Orphaned Relationship Data are a problem only if you often delete the content from WordPress. Over time, you can have thousands of these items in the database, which consumes a lot of space.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DEL_ORPHANED_RELATIONSHIP_DATA,
@@ -260,7 +246,6 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			'orphaned-rel-data'
 		);
 
-
 		$this->add_options_form_section( 'comments', __( 'Orphaned Comments Data' ), __( 'Orphaned Comments MetaData are a problem only if you often delete comments from WordPress. Over time, you can have thousands of these items in the database, which consumes a lot of space.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DEL_ORPHANED_COMMENT_META,
@@ -284,7 +269,5 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			null,
 			'comments'
 		);
-
-
 	}
 }
