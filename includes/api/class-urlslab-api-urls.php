@@ -330,6 +330,18 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 							return empty( $param ) || is_numeric( $param );
 						},
 					),
+					'from_src_url_id'   => array(
+						'required'          => false,
+						'validate_callback' => function ( $param ) {
+							return empty( $param ) || is_numeric( $param );
+						},
+					),
+					'from_dest_url_id'   => array(
+						'required'          => false,
+						'validate_callback' => function ( $param ) {
+							return empty( $param ) || is_numeric( $param );
+						},
+					),
 				),
 				'permission_callback' => array(
 					$this,
