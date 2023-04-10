@@ -1,4 +1,5 @@
 import { fetchData } from './fetching';
+import {getParamsChar} from "../lib/helpers";
 
 let lastPage = '';
 let dataForCSV = [];
@@ -9,12 +10,12 @@ export let jsonData = { status: 'loading', data: [] };
 
 export async function exportCSV( options, result ) {
 	const { url, filters, fromId, pageId, perPage = 9999, deleteCSVCols } = options;
-	const qOperator = url.includes( '?' ) ? '&' : '?'; // Changes ? to & query hash if already used
+	const qOperator = getParamsChar(); // Changes ? to & query hash if already used
 	const prevDataLength = dataForCSV.length;
 	const response = await fetchData( `${ url }${ qOperator }${ fromId }=${ lastPage }&rows_per_page=${ perPage }${ filters || '' }` );
 
 	if ( ! lastPage ) {
-		totalItems = await fetchData( `${ url }/count${ filters ? `?${ filters }` : '' }` );
+		totalItems = await fetchData( `${ url }/count${ filters ? getParamsChar()+`${ filters }` : '' }` );
 	}
 
 	dataForCSV.push( await response ); // Adds downloaded results to array
