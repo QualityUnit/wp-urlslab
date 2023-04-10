@@ -45,3 +45,10 @@ export const nameOf = ( obj, key ) => {
 	return key( res )();
 };
 
+export const getParamsChar = () => {
+	if ( wpApiSettings.root.indexOf( '?' ) > -1 ) {
+		return '&';
+	}
+	return '?';
+};
+

@@ -8,7 +8,7 @@ onmessage = async function( message ) {
 	const dataForCSV = [];
 	const ended = false;
 	//Testing WP Rest API Cors
-	const response = await fetch( '../wp-json/wp/v2/', {
+	const response = await fetch( wpApiSettings.root + 'wp/v2/', {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',

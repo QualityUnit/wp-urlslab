@@ -5,6 +5,7 @@ import { useInView } from 'react-intersection-observer';
 
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchData } from '../api/fetching';
+import { getParamsChar } from "../lib/helpers";
 
 export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const columnHelper = createColumnHelper();
@@ -15,7 +16,7 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const query = useInfiniteQuery( {
 		queryKey: [ key, url ? url : '' ],
 		queryFn: ( { pageParam = '' } ) => {
-			return fetchData( `${ key }?from_${ pageId }=${ pageParam !== undefined && pageParam }${ url !== 'undefined' ? url : '' }&rows_per_page=${ maxRows }` );
+			return fetchData( `${ key }`+getParamsChar()+`from_${ pageId }=${ pageParam !== undefined && pageParam }${ url !== 'undefined' ? url : '' }&rows_per_page=${ maxRows }` );
 		},
 		getNextPageParam: ( allRows ) => {
 			if ( allRows.length < maxRows ) {
