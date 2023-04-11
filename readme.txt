@@ -78,6 +78,10 @@ The content is coming soon.
 
 == Changelog ==
 
+= 2.10.2 - 2023-04-11 =
+
+* Fix: Multiple bugs were fixed
+
 = 2.10.1 - 2023-04-11 =
 
 * Tweak: Update URLsLab Connector
