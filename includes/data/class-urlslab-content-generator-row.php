@@ -109,7 +109,7 @@ class Urlslab_Content_Generator_Row extends Urlslab_Data {
 	}
 
 	public function is_active(): bool {
-		return self::STATUS_ACTIVE === $this->get_status() || self::STATUS_PENDING === $this->get_status();
+		return self::STATUS_ACTIVE === $this->get_status();
 	}
 
 	protected function set( $name, $value, $loaded_from_db ) {
