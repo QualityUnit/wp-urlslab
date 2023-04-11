@@ -18,6 +18,8 @@ export default function TableFilterPanel( { props, onEdit } ) {
 
 	const { state, dispatch, handleType } = useFilter( { slug, header, possibleFilters, initialRow } );
 
+	const cellUnit = initialRow.getVisibleCells().filter( ( cell ) => cell.column?.id === state.filterObj.filterKey )[ 0 ]?.column?.columnDef.unit;
+
 	const notBetween = useMemo( () => {
 		return Object.keys( currentFilters )?.length && currentFilters[ key ]?.op ? currentFilters[ key ]?.op !== 'BETWEEN' : state.filterObj.filterOp !== 'BETWEEN';
 	}, [ currentFilters, key, state.filterObj.filterOp ] );
@@ -113,6 +115,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 				}
 				{ ! notBetween &&
 				<RangeInputs liveUpdate
+					unit={ cellUnit }
 					defaultMin={ currentFilters[ key ]?.val.min }
 					defaultMax={ currentFilters[ key ]?.val.max }
 					onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) }
