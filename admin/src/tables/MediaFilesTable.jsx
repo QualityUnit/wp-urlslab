@@ -45,6 +45,7 @@ export default function MediaFilesTable( { slug } ) {
 		filename: __( 'File Name' ),
 		filetype: __( 'File Type' ),
 		url: __( 'Orig. URL' ),
+		download_url: __( 'Offloaded URL' ),
 		filesize: __( 'File Size' ),
 		width: __( 'Width' ),
 		height: __( 'Height' ),
@@ -78,7 +79,13 @@ export default function MediaFilesTable( { slug } ) {
 			},
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: header.url,
-			size: 300,
+			size: 200,
+		} ),
+		columnHelper?.accessor( 'download_url', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			header: header.download_url,
+			size: 200,
 		} ),
 		columnHelper?.accessor( 'filesize', {
 			unit: 'kB',
