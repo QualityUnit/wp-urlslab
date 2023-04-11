@@ -2007,7 +2007,6 @@ button.urlslab-button svg.close,
 .urlslab-panel table th,
 .urlslab-panel table td {
   text-align: left;
-  white-space: nowrap;
   height: 1.5em;
 }
 .urlslab-panel table th .limit,
@@ -2049,6 +2048,15 @@ button.urlslab-button svg.close,
   height: 6px;
   width: 6px;
 }
+.urlslab-panel.Details .table-container th,
+.urlslab-panel.Details .table-container td {
+  text-align: left;
+  height: 1.5em;
+  white-space: nowrap;
+  -o-text-overflow: ellipsis;
+     text-overflow: ellipsis;
+  max-width: 100%;
+}
 .urlslab-panel.Details .table-container .urlslab-progressBar-wrapper {
   margin-top: auto;
 }
@@ -2059,6 +2067,8 @@ button.urlslab-button svg.close,
   -webkit-transform: translateX(-50%);
       -ms-transform: translateX(-50%);
           transform: translateX(-50%);
+  overflow-x: hidden;
+  height: 100vh;
   z-index: 9999;
 }
 .urlslab-panel-floating[class] .urlslab-panel {
