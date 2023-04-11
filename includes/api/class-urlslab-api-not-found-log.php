@@ -47,7 +47,7 @@ class Urlslab_Api_Not_Found_Log extends Urlslab_Api_Table {
 
 		foreach ( $rows as $row ) {
 			$row->url_id = (int) $row->url_id;
-			$row->cnt = (int) $row->cnt;
+			$row->cnt    = (int) $row->cnt;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -71,28 +71,34 @@ class Urlslab_Api_Not_Found_Log extends Urlslab_Api_Table {
 				'callback'            => array( $this, 'get_items' ),
 				'args'                => $this->get_table_arguments(
 					array(
-						'filter_url'     => array(
+						'filter_url'          => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
-						'filter_created' => array(
+						'filter_created'      => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
-						'filter_updated' => array(
+						'filter_updated'      => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
-						'filter_cnt'     => array(
+						'filter_cnt'          => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_numeric_filter_value( $param );
+							},
+						),
+						'filter_request_data' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 					)
@@ -115,6 +121,7 @@ class Urlslab_Api_Not_Found_Log extends Urlslab_Api_Table {
 		$sql->add_filter( 'filter_url' );
 		$sql->add_filter( 'filter_created' );
 		$sql->add_filter( 'filter_updated' );
+		$sql->add_filter( 'filter_request_data' );
 		$sql->add_filter( 'filter_cnt', '%d' );
 
 		if ( $request->get_param( 'sort_column' ) ) {
