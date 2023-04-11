@@ -7,12 +7,8 @@ export default function TooltipSortingFiltering( { props } ) {
 
 	return (
 		<>
-			{ isFetching && sortingColumn
-				? <Tooltip center>{ __( 'Sorting…' ) }</Tooltip>
-				: null
-			}
-			{ isFetching && filters
-				? <Tooltip center>{ __( 'Filtering…' ) }</Tooltip>
+			{ isFetching && ( sortingColumn || filters )
+				? <Tooltip center>{ __( 'Filtering & Sorting…' ) }</Tooltip>
 				: null
 			}
 		</>
