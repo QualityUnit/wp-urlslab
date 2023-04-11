@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, LinkIcon, Trash, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, ProgressBar, Tooltip, LinkIcon, Trash, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -19,6 +19,7 @@ export default function LinkManagerTable( { slug } ) {
 		data,
 		status,
 		isSuccess,
+		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
@@ -150,7 +151,7 @@ export default function LinkManagerTable( { slug } ) {
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
 					<button className="ml-s" onClick={ () => setDetailsOptions( {
-						title: `Outgoing Links`, text: `From: ${ cell.row.original.url_name }`, slug, url: `${ cell.row.original.url_id }/links`, showKeys: [ 'dest_url_name' ], listId: 'src_url_id',
+						title: `Outgoing Links`, text: `From: ${ cell.row.original.url_name }`, slug, url: `${ cell.row.original.url_id }/links`, showKeys: [ 'dest_url_name' ], listId: 'dest_url_id',
 					} ) }>
 						<LinkIcon />
 						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
@@ -216,6 +217,7 @@ export default function LinkManagerTable( { slug } ) {
 					? <Tooltip center>{ `${ header.url_name } “${ row.url_name }”` } has been deleted.</Tooltip>
 					: null
 				}
+				<TooltipSortingFiltering props={ { isFetching, filters, sortingColumn } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
