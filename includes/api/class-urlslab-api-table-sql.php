@@ -21,7 +21,7 @@ class Urlslab_Api_Table_Sql {
 		$filter = $this->get_filter_sql( $parameter_name, $format, $table_prefix );
 		if ( ! empty( $filter ) ) {
 			$this->where_sql[] = $filter['sql'];
-			$this->query_data = array_merge( $this->query_data, $filter['data'] );
+			$this->query_data  = array_merge( $this->query_data, $filter['data'] );
 		}
 	}
 
@@ -29,7 +29,7 @@ class Urlslab_Api_Table_Sql {
 		$filter = $this->get_filter_sql( $parameter_name, $format, $table_prefix );
 		if ( ! empty( $filter ) ) {
 			$this->having_sql[] = $filter['sql'];
-			$this->query_data = array_merge( $this->query_data, $filter['data'] );
+			$this->query_data   = array_merge( $this->query_data, $filter['data'] );
 		}
 	}
 
@@ -55,7 +55,7 @@ class Urlslab_Api_Table_Sql {
 		if ( '*' !== $column ) {
 			$column = esc_sql( $column );
 		}
-		$alias = esc_sql( $alias );
+		$alias              = esc_sql( $alias );
 		$this->select_sql[] = ( $table_prefix ? esc_sql( $table_prefix ) . '.' : '' ) . $column . ( $alias ? ' AS ' . $alias : '' );
 	}
 
@@ -92,13 +92,13 @@ class Urlslab_Api_Table_Sql {
 
 	private function init_table_limit() {
 		if ( $this->request->get_param( 'rows_per_page' ) ) {
-			$this->limit_sql = '%d';
+			$this->limit_sql    = '%d';
 			$this->query_data[] = (int) $this->request->get_param( 'rows_per_page' );
 		}
 	}
 
 	private function get_filter_sql( string $parameter_name, $format = '%s', $table_prefix = false ) {
-		if ( ! $this->request->get_param( $parameter_name ) ) {
+		if ( ! strlen( $this->request->get_param( $parameter_name ) ) ) {
 			return;
 		}
 
@@ -140,7 +140,7 @@ class Urlslab_Api_Table_Sql {
 	private function get_count_select(): Urlslab_Api_Table_Sql {
 		$this->order_sql = array();
 		$this->limit_sql = '';
-		if ( empty( $this->group_by_sql ) ) {
+		if ( empty( $this->group_by_sql ) && empty( $this->having_sql ) ) {
 			$this->select_sql = array();
 			$this->add_select_column( 'count(*)', false, 'cnt' );
 
@@ -175,7 +175,7 @@ class Urlslab_Api_Table_Sql {
 
 	private function get_numeric_filter_sql( string $column_name, string $param_value ): array {
 		$filter_obj = json_decode( $param_value );
-		$data = array();
+		$data       = array();
 		$sql_string = '';
 
 		if ( is_object( $filter_obj ) ) {
@@ -214,41 +214,41 @@ class Urlslab_Api_Table_Sql {
 
 				case 'BETWEEN':
 					$sql_string = esc_sql( $column_name ) . ' BETWEEN %d AND %d';
-					$data[] = $filter_obj->min;
-					$data[] = $filter_obj->max;
+					$data[]     = $filter_obj->min;
+					$data[]     = $filter_obj->max;
 
 					break;
 
 				case '>':
 					$sql_string = esc_sql( $column_name ) . '>%d';
-					$data[] = $filter_obj->val;
+					$data[]     = $filter_obj->val;
 
 					break;
 
 				case '<':
 					$sql_string = esc_sql( $column_name ) . '<%d';
-					$data[] = $filter_obj->val;
+					$data[]     = $filter_obj->val;
 
 					break;
 
 				case '<>':
 				case '!=':
 					$sql_string = esc_sql( $column_name ) . '<>%d';
-					$data[] = $filter_obj->val;
+					$data[]     = $filter_obj->val;
 
 					break;
 
 				case '=':
 				default:
 					$sql_string = esc_sql( $column_name ) . '=%d';
-					$data[] = $filter_obj->val;
+					$data[]     = $filter_obj->val;
 
 					break;
 			}
 		} else {
 			if ( is_numeric( $param_value ) ) {
 				$sql_string = esc_sql( $column_name ) . '=%d';
-				$data[] = $param_value;
+				$data[]     = $param_value;
 			} else {
 				throw new Exception( 'Invalid filter' );
 			}
@@ -264,7 +264,7 @@ class Urlslab_Api_Table_Sql {
 		global $wpdb;
 		$filter_obj = json_decode( $param_value );
 
-		$data = array();
+		$data       = array();
 		$sql_string = '';
 
 		if ( is_object( $filter_obj ) ) {
@@ -295,70 +295,70 @@ class Urlslab_Api_Table_Sql {
 
 				case 'BETWEEN':
 					$sql_string = esc_sql( $column_name ) . ' BETWEEN %s AND %s';
-					$data[] = $filter_obj->min;
-					$data[] = $filter_obj->max;
+					$data[]     = $filter_obj->min;
+					$data[]     = $filter_obj->max;
 
 					break;
 
 				case '>':
 					$sql_string = esc_sql( $column_name ) . '>%s';
-					$data[] = $filter_obj->val;
+					$data[]     = $filter_obj->val;
 
 					break;
 
 				case '<':
 					$sql_string = esc_sql( $column_name ) . '<%s';
-					$data[] = $filter_obj->val;
+					$data[]     = $filter_obj->val;
 
 					break;
 
 				case '<>':
 				case '!=':
 					$sql_string = esc_sql( $column_name ) . '<>%s';
-					$data[] = $filter_obj->val;
+					$data[]     = $filter_obj->val;
 
 					break;
 
 				case 'LIKE':
 					$sql_string = esc_sql( $column_name ) . ' LIKE %s';
-					$data[] = '%' . $wpdb->esc_like( $filter_obj->val ) . '%';
+					$data[]     = '%' . $wpdb->esc_like( $filter_obj->val ) . '%';
 
 					break;
 
 				case 'NOTLIKE':
 					$sql_string = esc_sql( $column_name ) . ' NOT LIKE %s';
-					$data[] = '%' . $wpdb->esc_like( $filter_obj->val ) . '%';
+					$data[]     = '%' . $wpdb->esc_like( $filter_obj->val ) . '%';
 
 					break;
 
 				case 'LIKE%':
 					$sql_string = esc_sql( $column_name ) . ' LIKE %s';
-					$data[] = $wpdb->esc_like( $filter_obj->val ) . '%';
+					$data[]     = $wpdb->esc_like( $filter_obj->val ) . '%';
 
 					break;
 
 				case 'NOTLIKE%':
 					$sql_string = esc_sql( $column_name ) . ' NOT LIKE %s';
-					$data[] = $wpdb->esc_like( $filter_obj->val ) . '%';
+					$data[]     = $wpdb->esc_like( $filter_obj->val ) . '%';
 
 					break;
 
 				case '%LIKE':
 					$sql_string = esc_sql( $column_name ) . ' LIKE %s';
-					$data[] = '%' . $wpdb->esc_like( $filter_obj->val );
+					$data[]     = '%' . $wpdb->esc_like( $filter_obj->val );
 
 					break;
 
 				case 'NOT%LIKE':
 					$sql_string = esc_sql( $column_name ) . ' NOT LIKE %s';
-					$data[] = '%' . $wpdb->esc_like( $filter_obj->val );
+					$data[]     = '%' . $wpdb->esc_like( $filter_obj->val );
 
 					break;
 
 				case '=':
 				default:
 					$sql_string = esc_sql( $column_name ) . '=%s';
-					$data[] = $filter_obj->val;
+					$data[]     = $filter_obj->val;
 
 					break;
 			}
@@ -366,7 +366,7 @@ class Urlslab_Api_Table_Sql {
 			if ( is_string( $param_value ) ) {
 				// default is wildcard match
 				$sql_string = esc_sql( $column_name ) . '=%s';
-				$data[] = $param_value;
+				$data[]     = $param_value;
 			} else {
 				throw new Exception( 'Invalid filter' );
 			}
