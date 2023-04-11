@@ -39,6 +39,7 @@ export default function RedirectsTable( { slug } ) {
 		cookie: <InputField liveUpdate defaultValue="" label={ header.cookie } onChange={ ( val ) => setInsertRow( { ...rowToInsert, cookie: val } ) } />,
 		params: <InputField liveUpdate defaultValue="" label={ header.params } onChange={ ( val ) => setInsertRow( { ...rowToInsert, capabilities: val } ) } />,
 		capabilities: <InputField liveUpdate defaultValue="" label={ header.capabilities } onChange={ ( val ) => setInsertRow( { ...rowToInsert, capabilities: val } ) } />,
+		ip: <InputField liveUpdate defaultValue="" label={ header.ip } onChange={ ( val ) => setInsertRow( { ...rowToInsert, ip: val } ) } />,
 		roles: <InputField liveUpdate defaultValue="" label={ header.roles } onChange={ ( val ) => setInsertRow( { ...rowToInsert, roles: val } ) } />,
 		browser: <InputField liveUpdate defaultValue="" label={ header.browser } onChange={ ( val ) => setInsertRow( { ...rowToInsert, browser: val } ) } />,
 		if_not_found: <SortMenu autoClose items={ notFoundTypes } name="if_not_found" checkedId="A" onChange={ ( val ) => setInsertRow( { ...rowToInsert, if_not_found: val } ) }>{ header.if_not_found }</SortMenu>,
@@ -96,6 +97,13 @@ export default function RedirectsTable( { slug } ) {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.capabilities,
+			size: 100,
+			show: false,
+		} ),
+		columnHelper.accessor( 'ip', {
+			className: 'nolimit',
+			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: header.ip,
 			size: 100,
 			show: false,
 		} ),
@@ -173,7 +181,7 @@ export default function RedirectsTable( { slug } ) {
 			<Table className="fadeInto"
 				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
-				initialState={ { columnVisibility: { is_logged: false, header: false, params: false, capabilities: false, if_not_found: false, browser: false, cookie: false } } }
+				initialState={ { columnVisibility: { is_logged: false, header: false, params: false, capabilities: false, ip: false, if_not_found: false, browser: false, cookie: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

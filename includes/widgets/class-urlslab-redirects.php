@@ -71,7 +71,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			),
 			self::OPTION_TYPE_TEXT,
 			false,
-			function ( $value ) {
+			function( $value ) {
 				return empty( $value ) || filter_var( $value, FILTER_VALIDATE_URL );
 			},
 			'redirecting'
@@ -86,7 +86,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			),
 			self::OPTION_TYPE_TEXT,
 			false,
-			function ( $value ) {
+			function( $value ) {
 				return empty( $value ) || filter_var( $value, FILTER_VALIDATE_URL );
 			},
 			'redirecting'
@@ -130,7 +130,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 				7257600 => __( '3 months' ),
 				0       => __( 'Never' ),
 			),
-			function ( $value ) {
+			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'logging'
@@ -154,7 +154,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 				100000  => __( '100.000' ),
 				1000000 => __( '1.000.000' ),
 			),
-			function ( $value ) {
+			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'logging'
@@ -243,7 +243,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 	private function get_redirects_from_db() {
 		$redirects = array();
 		global $wpdb;
-		$where_data = array();
+		$where_data   = array();
 		$where_data[] = Urlslab_Redirect_Row::NOT_FOUND_STATUS_ANY;
 		if ( is_404() ) {
 			$where_data[] = Urlslab_Redirect_Row::NOT_FOUND_STATUS_NOT_FOUND;
@@ -347,6 +347,33 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			default:
 		}
 
+
+		if ( ! empty( $redirect->get_ip() ) ) {
+			$ips = explode( ',', $redirect->get_ip() );
+			if ( ! empty( $ips ) ) {
+				$has_ip     = false;
+				$visitor_ip = $this->get_visitor_ip();
+				foreach ( $ips as $ip_pattern ) {
+					if ( false === strpos( $ip_pattern, '/' ) ) {
+						if ( fnmatch( $ip_pattern, $visitor_ip ) ) {
+							$has_ip = true;
+							break;
+						}
+					} else {
+						list( $subnet_ip, $subnet_mask ) = explode( '/', $ip_pattern );
+						if ( ( ip2long( $visitor_ip ) & ~( 1 << ( 32 - $subnet_mask ) - 1 ) ) == ip2long( $subnet_ip ) ) {
+							$has_ip = true;
+							break;
+						}
+					}
+				}
+				if ( ! $has_ip ) {
+					return false;
+				}
+			}
+		}
+
+
 		if ( ! empty( $redirect->get_capabilities() ) ) {
 			$capabilities = explode( ',', $redirect->get_capabilities() );
 			if ( ! empty( $capabilities ) ) {
@@ -365,7 +392,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 		}
 
 		if ( ! empty( $redirect->get_roles() ) ) {
-			$user = wp_get_current_user();
+			$user  = wp_get_current_user();
 			$roles = explode( ',', $redirect->get_roles() );
 			if ( ! empty( $roles ) ) {
 				$has_role = false;
@@ -388,7 +415,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			$browsers = explode( ',', strtolower( $redirect->get_browser() ) );
 			if ( ! empty( $browsers ) ) {
 				$has_browser = false;
-				$agent = strtolower( $_SERVER['HTTP_USER_AGENT'] ); // phpcs:ignore
+				$agent       = strtolower( $_SERVER['HTTP_USER_AGENT'] ); // phpcs:ignore
 				foreach ( $browsers as $browser_name ) {
 					if ( false !== strpos( $agent, trim( $browser_name ) ) ) {
 						$has_browser = true;
@@ -487,17 +514,12 @@ class Urlslab_Redirects extends Urlslab_Widget {
 							array(
 								'request' => $_REQUEST,
 								'server'  => array(
-									'lang'                  => $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '',
-									'encoding'              => $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '',
-									'accept'                => $_SERVER['HTTP_ACCEPT'] ?? '',
-									'agent'                 => $_SERVER['HTTP_USER_AGENT'] ?? '', // phpcs:ignore
-									'referer'               => $_SERVER['HTTP_REFERER'] ?? '',
-									'HTTP_CF_CONNECTING_IP' => $_SERVER['HTTP_CF_CONNECTING_IP'] ?? '',
-									'HTTP_CF_IPCOUNTRY'     => $_SERVER['HTTP_CF_IPCOUNTRY'] ?? '',
-									'X-Real-IP'             => $_SERVER['X-Real-IP'] ?? '',
-									'HTTP_X_FORWARDED_FOR'  => $_SERVER['HTTP_X_FORWARDED_FOR'] ?? '', // phpcs:ignore
-									'REMOTE_ADDR'           => $_SERVER['REMOTE_ADDR'] ?? '', // phpcs:ignore
-									'HTTP_CLIENT_IP'        => $_SERVER['HTTP_CLIENT_IP'] ?? '',
+									'lang'     => $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '',
+									'encoding' => $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '',
+									'accept'   => $_SERVER['HTTP_ACCEPT'] ?? '',
+									'agent'    => $_SERVER['HTTP_USER_AGENT'] ?? '', // phpcs:ignore
+									'referer'  => $_SERVER['HTTP_REFERER'] ?? '',
+									'ip'       => $this->get_visitor_ip(),
 								),
 							)
 						),
@@ -507,6 +529,35 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			} catch ( Exception $e ) {
 			}
 		}
+	}
+
+	private function get_visitor_ip(): string {
+		if ( getenv( 'HTTP_CF_CONNECTING_IP' ) ) {
+			return getenv( 'HTTP_CF_CONNECTING_IP' );
+		}
+		if ( getenv( 'HTTP_CLIENT_IP' ) ) {
+			return getenv( 'HTTP_CLIENT_IP' );
+		}
+		if ( getenv( 'HTTP_X_FORWARDED_FOR' ) ) {
+			return getenv( 'HTTP_X_FORWARDED_FOR' );
+		}
+		if ( getenv( 'HTTP_X_FORWARDED' ) ) {
+			return getenv( 'HTTP_X_FORWARDED' );
+		}
+		if ( getenv( 'HTTP_FORWARDED_FOR' ) ) {
+			return getenv( 'HTTP_FORWARDED_FOR' );
+		}
+		if ( getenv( 'HTTP_FORWARDED' ) ) {
+			return getenv( 'HTTP_FORWARDED' );
+		}
+		if ( getenv( 'HTTP_X_REAL_IP' ) ) {
+			return getenv( 'HTTP_X_REAL_IP' );
+		}
+		if ( getenv( 'REMOTE_ADDR' ) ) {
+			return getenv( 'REMOTE_ADDR' );
+		}
+
+		return '';
 	}
 
 	private function default_image_redirect() {

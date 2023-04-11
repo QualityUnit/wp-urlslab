@@ -27,7 +27,7 @@ class Urlslab_Activator {
 		Urlslab_Activator::upgrade_steps();
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-background-attachments-cron.php';
-		add_option( Urlslab_Offload_Background_Attachments_Cron::SETTING_NAME_SCHEDULER_POINTER, -1, '', false );
+		add_option( Urlslab_Offload_Background_Attachments_Cron::SETTING_NAME_SCHEDULER_POINTER, - 1, '', false );
 		( new Urlslab_Keywords_Links() )->add_options_on_activate();
 		( new Urlslab_Link_Enhancer() )->add_options_on_activate();
 		( new Urlslab_Media_Offloader_Widget() )->add_options_on_activate();
@@ -41,14 +41,14 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'1.49.0',
-			function () {
+			function() {
 				self::init_search_replace_tables();
 			}
 		);
 
 		self::update_step(
 			'2.0.0',
-			function () {
+			function() {
 				global $wpdb;
 				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_URLS_TABLE );             // phpcs:ignore
 				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_URLS_MAP_TABLE );         // phpcs:ignore
@@ -65,7 +65,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.1.0',
-			function () {
+			function() {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN scr_schedule char(1) NOT NULL DEFAULT ''" ); // phpcs:ignore
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD INDEX idx_scr_schedule (scr_schedule)' );           // phpcs:ignore
@@ -74,21 +74,21 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.2.0',
-			function () {
+			function() {
 				self::init_screenshot_urls_table();
 			}
 		);
 
 		self::update_step(
 			'2.3.0',
-			function () {
+			function() {
 				self::init_content_generators_table();
 			}
 		);
 
 		self::update_step(
 			'2.4.0',
-			function () {
+			function() {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN rel_schedule char(1) NOT NULL DEFAULT ''" );    // phpcs:ignore
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD COLUMN rel_updated DATETIME' );                        // phpcs:ignore
@@ -98,7 +98,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.5.0',
-			function () {
+			function() {
 				global $wpdb;
 				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_CONTENT_GENERATORS_TABLE ); // phpcs:ignore
 				self::init_content_generators_table();
@@ -106,7 +106,7 @@ class Urlslab_Activator {
 		);
 		self::update_step(
 			'2.6.0',
-			function () {
+			function() {
 				self::init_not_found_log_table();
 				self::init_redirects_table();
 			}
@@ -114,7 +114,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.7.0',
-			function () {
+			function() {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_REDIRECTS_TABLE . ' ADD COLUMN roles VARCHAR(2000)' ); // phpcs:ignore
 			}
@@ -122,7 +122,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.8.0',
-			function () {
+			function() {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_NOT_FOUND_LOG_TABLE . ' ADD COLUMN request_data TEXT' ); // phpcs:ignore
 			}
@@ -130,10 +130,18 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.9.0',
-			function () {
+			function() {
 				global $wpdb;
 				$wpdb->query( 'UPDATE ' . URLSLAB_REDIRECTS_TABLE . " SET if_not_found='A' WHERE if_not_found=''" ); // phpcs:ignore
 				$wpdb->query( 'UPDATE ' . URLSLAB_REDIRECTS_TABLE . " SET is_logged='A' WHERE is_logged=''" );       // phpcs:ignore
+			}
+		);
+		self::update_step(
+			'2.10.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_REDIRECTS_TABLE . ' CHANGE COLUMN `capabilities` `capabilities` VARCHAR(1000) NULL DEFAULT NULL , CHANGE COLUMN `browser` `browser` VARCHAR(1000) NULL DEFAULT NULL , CHANGE COLUMN `cookie` `cookie` VARCHAR(1000) NULL DEFAULT NULL ,CHANGE COLUMN `headers` `headers` VARCHAR(1000) NULL DEFAULT NULL , CHANGE COLUMN `params` `params` VARCHAR(1000) NULL DEFAULT NULL' );// phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_REDIRECTS_TABLE . " ADD COLUMN ip VARCHAR(500)" ); // phpcs:ignore
 			}
 		);
 		// all update steps done, set the current version
@@ -164,9 +172,9 @@ class Urlslab_Activator {
 
 	private static function init_urls_tables() {
 		global $wpdb;
-		$table_name = URLSLAB_URLS_TABLE;
+		$table_name      = URLSLAB_URLS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql = "CREATE TABLE IF NOT EXISTS {$table_name} (
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
 			url_id bigint NOT NULL,
 			url_name varchar(2048) NOT NULL,
 			scr_status char(1) NOT NULL,
@@ -201,9 +209,9 @@ class Urlslab_Activator {
 
 	private static function init_urls_map_tables() {
 		global $wpdb;
-		$table_name = URLSLAB_URLS_MAP_TABLE;
+		$table_name      = URLSLAB_URLS_MAP_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql = "CREATE TABLE IF NOT EXISTS {$table_name} (
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
 			src_url_id bigint NOT NULL,
 			dest_url_id bigint NOT NULL,
 			PRIMARY KEY  (src_url_id, dest_url_id),
@@ -216,9 +224,9 @@ class Urlslab_Activator {
 
 	private static function init_keywords_tables() {
 		global $wpdb;
-		$table_name = URLSLAB_KEYWORDS_TABLE;
+		$table_name      = URLSLAB_KEYWORDS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql = "CREATE TABLE IF NOT EXISTS {$table_name} (
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
     		kw_id bigint NOT NULL,
 			keyword varchar(250) NOT NULL,
 			urlLink varchar(500) NOT NULL,
@@ -238,9 +246,9 @@ class Urlslab_Activator {
 
 	private static function init_related_resources_tables() {
 		global $wpdb;
-		$table_name = URLSLAB_RELATED_RESOURCE_TABLE;
+		$table_name      = URLSLAB_RELATED_RESOURCE_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql = "CREATE TABLE IF NOT EXISTS {$table_name} (
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
 			src_url_id bigint NOT NULL,
 			dest_url_id bigint NOT NULL,
 			pos tinyint unsigned default 10,
@@ -253,9 +261,9 @@ class Urlslab_Activator {
 
 	private static function init_urlslab_error_log() {
 		global $wpdb;
-		$table_name = URLSLAB_ERROR_LOG_TABLE;
+		$table_name      = URLSLAB_ERROR_LOG_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql = "CREATE TABLE IF NOT EXISTS {$table_name} (
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
     		id int NOT NULL AUTO_INCREMENT,
 			errorLog text NOT NULL,
 			PRIMARY KEY  (id)
@@ -267,9 +275,9 @@ class Urlslab_Activator {
 
 	private static function init_urlslab_files() {
 		global $wpdb;
-		$table_name = URLSLAB_FILES_TABLE;
+		$table_name      = URLSLAB_FILES_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql = "CREATE TABLE IF NOT EXISTS {$table_name} (
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
 			fileid char(32) NOT NULL,
 			url varchar(1024) NOT NULL,
 			parent_url varchar(1024),
@@ -293,9 +301,9 @@ class Urlslab_Activator {
 
 	private static function init_urlslab_file_urls_table() {
 		global $wpdb;
-		$table_name = URLSLAB_FILE_URLS_TABLE;
+		$table_name      = URLSLAB_FILE_URLS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql = "CREATE TABLE IF NOT EXISTS {$table_name} (
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
 			url_id bigint NOT NULL,
 			fileid char(32) NOT NULL,
 			PRIMARY KEY (url_id, fileid),
@@ -307,9 +315,9 @@ class Urlslab_Activator {
 
 	private static function init_urlslab_file_pointers() {
 		global $wpdb;
-		$table_name = URLSLAB_FILE_POINTERS_TABLE;
+		$table_name      = URLSLAB_FILE_POINTERS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql = "CREATE TABLE IF NOT EXISTS {$table_name} (
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
 				filehash varchar(32) NOT NULL,
 				filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
 				width mediumint(8) UNSIGNED ZEROFILL DEFAULT NULL,
@@ -328,9 +336,9 @@ class Urlslab_Activator {
 
 	private static function init_urlslab_file_db_driver_contents() {
 		global $wpdb;
-		$table_name = URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE;
+		$table_name      = URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql = "CREATE TABLE IF NOT EXISTS {$table_name} (
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
     		  filehash varchar(32) NOT NULL,
     		  filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
 			  partid SMALLINT UNSIGNED NOT NULL,
@@ -344,9 +352,9 @@ class Urlslab_Activator {
 
 	private static function init_youtube_cache_tables() {
 		global $wpdb;
-		$table_name = URLSLAB_YOUTUBE_CACHE_TABLE;
+		$table_name      = URLSLAB_YOUTUBE_CACHE_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql = "CREATE TABLE IF NOT EXISTS {$table_name} (
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
 			videoid varchar(32) NOT NULL,
 			microdata text,
 			status_changed datetime NULL,
@@ -360,9 +368,9 @@ class Urlslab_Activator {
 
 	private static function init_keywords_map_table() {
 		global $wpdb;
-		$table_name = URLSLAB_KEYWORDS_MAP_TABLE;
+		$table_name      = URLSLAB_KEYWORDS_MAP_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql = "CREATE TABLE IF NOT EXISTS {$table_name} (
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
     		kw_id bigint NOT NULL,
     		url_id bigint NOT NULL,
     		dest_url_id bigint DEFAULT 0,
@@ -381,7 +389,7 @@ class Urlslab_Activator {
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$table_name = URLSLAB_CSS_CACHE_TABLE;
-		$sql = "CREATE TABLE IF NOT EXISTS {$table_name} (
+		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
     		  url_id bigint,
     		  url text,
     		  css_content mediumtext,
@@ -401,7 +409,7 @@ class Urlslab_Activator {
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$table_name = URLSLAB_CONTENT_CACHE_TABLE;
-		$sql = "CREATE TABLE IF NOT EXISTS {$table_name} (
+		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
     		  cache_crc32 bigint,
     		  cache_len int,
     		  cache_content longtext,
@@ -419,7 +427,7 @@ class Urlslab_Activator {
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$table_name = URLSLAB_SEARCH_AND_REPLACE_TABLE;
-		$sql = "CREATE TABLE IF NOT EXISTS {$table_name} (
+		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
     		  id int NOT NULL AUTO_INCREMENT,
     		  str_search TEXT,
     		  str_replace TEXT,
@@ -437,7 +445,7 @@ class Urlslab_Activator {
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$table_name = URLSLAB_SCREENSHOT_URLS_TABLE;
-		$sql = "CREATE TABLE IF NOT EXISTS {$table_name} (
+		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
     		  screenshot_url_id bigint NOT NULL,
     		  src_url_id bigint NOT NULL,
 			  PRIMARY KEY (screenshot_url_id, src_url_id)
@@ -452,7 +460,7 @@ class Urlslab_Activator {
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$table_name = URLSLAB_CONTENT_GENERATORS_TABLE;
-		$sql = "CREATE TABLE IF NOT EXISTS {$table_name} (
+		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
     		  generator_id bigint NOT NULL,
     		  semantic_context TEXT,
     		  command TEXT,
@@ -473,7 +481,7 @@ class Urlslab_Activator {
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$table_name = URLSLAB_NOT_FOUND_LOG_TABLE;
-		$sql = "CREATE TABLE IF NOT EXISTS {$table_name} (
+		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
     		  url_id bigint NOT NULL,
     		  url VARCHAR(2000),
     		  cnt INT UNSIGNED ZEROFILL DEFAULT 0,
@@ -494,7 +502,7 @@ class Urlslab_Activator {
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$table_name = URLSLAB_REDIRECTS_TABLE;
-		$sql = "CREATE TABLE IF NOT EXISTS {$table_name} (
+		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
     		  redirect_id int AUTO_INCREMENT,
     		  match_type CHAR(1) DEFAULT 'S',
     		  match_url VARCHAR(2000),
@@ -502,11 +510,12 @@ class Urlslab_Activator {
     		  redirect_code SMALLINT unsigned DEFAULT 301,
     		  is_logged CHAR(1) DEFAULT 'A',
     		  capabilities VARCHAR(2000),
-    		  roles VARCHAR(2000),
-    		  browser VARCHAR(2000),
-    		  cookie VARCHAR(2000),
-    		  headers VARCHAR(2000),
-    		  params VARCHAR(2000),
+    		  roles VARCHAR(1000),
+    		  browser VARCHAR(500),
+    		  cookie VARCHAR(1000),
+    		  headers VARCHAR(1000),
+    		  params VARCHAR(1000),
+    		  ip VARCHAR(500),
     		  cnt INT UNSIGNED ZEROFILL DEFAULT 0,
     		  if_not_found CHAR(1) DEFAULT 'A',
 			  PRIMARY KEY (redirect_id)

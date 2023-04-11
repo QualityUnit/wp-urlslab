@@ -29,8 +29,8 @@ class Urlslab_File_Cache {
 		if ( ! $this->is_active() ) {
 			return;
 		}
-		$file = $this->cache_path . md5( $key ) . '_' . $group . '.cache';
-		$content = array(
+		$file                              = $this->cache_path . md5( $key ) . '_' . $group . '.cache';
+		$content                           = array(
 			'data'       => $data,
 			'expiration' => $expiration > 0 ? ( time() + (int) $expiration ) : 0,
 		);
@@ -40,8 +40,8 @@ class Urlslab_File_Cache {
 
 	/**
 	 * @param            $allowed_classes array or boolean - if array, it should contain names of classes
-	 * @param mixed      $key
-	 * @param mixed      $group
+	 * @param mixed $key
+	 * @param mixed $group
 	 * @param null|mixed $found
 	 *
 	 * @return false|mixed
@@ -94,6 +94,9 @@ class Urlslab_File_Cache {
 			return;
 		}
 		$files = glob( $this->cache_path . '*_' . $group . '.cache' );
+		if ( false === $files ) {
+			return;
+		}
 		foreach ( $files as $file ) {
 			@unlink( $file );
 		}

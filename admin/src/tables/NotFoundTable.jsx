@@ -57,6 +57,7 @@ export default function NotFoundTable( { slug } ) {
 		updated: 'Last Visit',
 		agent: 'User Agent',
 		referer: 'Referer',
+		ip: 'IP',
 	};
 
 	const columns = useMemo( () => [
@@ -101,6 +102,15 @@ export default function NotFoundTable( { slug } ) {
 			},
 			header: header.referer,
 			size: 120,
+		} ),
+		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.ip, {
+			id: 'ip',
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => {
+				return cell.getValue();
+			},
+			header: header.ip,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'addRedirect', {
 			className: 'hoverize',
