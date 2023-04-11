@@ -21,7 +21,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 					'args'                => array(
 						'filestatus' => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								switch ( $param ) {
 									case Urlslab_Driver::STATUS_NEW:
 									case Urlslab_Driver::STATUS_ACTIVE:
@@ -83,14 +83,14 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row_obj = new Urlslab_File_Row((array)$row);
+			$row_obj               = new Urlslab_File_Row( (array) $row );
 			$row->file_usage_count = (int) $row->file_usage_count;
-			$row->filesize = (int) $row->filesize;
-			$row->width = (int) $row->width;
-			$row->height = (int) $row->height;
-			$row->avif_filesize = (int) $row->avif_filesize;
-			$row->webp_filesize = (int) $row->webp_filesize;
-			$row->download_url = $row_obj->get_file_pointer()->get_driver_object()->get_url($row_obj);
+			$row->filesize         = (int) $row->filesize;
+			$row->width            = (int) $row->width;
+			$row->height           = (int) $row->height;
+			$row->avif_filesize    = (int) $row->avif_filesize;
+			$row->webp_filesize    = (int) $row->webp_filesize;
+			$row->download_url     = $row_obj->get_file_pointer()->get_driver_object()->get_url( $row_obj );
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -115,7 +115,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 	public function delete_item( $request ) {
 		global $wpdb;
 
-		$delete_params = array();
+		$delete_params           = array();
 		$delete_params['fileid'] = $request->get_param( 'fileid' );
 
 		if ( false === $wpdb->delete( URLSLAB_FILES_TABLE, $delete_params ) ) {
@@ -165,79 +165,79 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 					array(
 						'filter_fileid'           => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_url'              => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_parent_url'       => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_local_file'       => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_filename'         => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_filetype'         => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_filestatus'       => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_filehash'         => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_filesize'         => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_numeric_filter_value( $param );
 							},
 						),
-						'filter_driver'         => array(
+						'filter_driver'           => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_webp_fileid'      => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_avif_fileid'      => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_file_usage_count' => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_numeric_filter_value( $param );
 							},
 						),
@@ -275,13 +275,13 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 					'rows_per_page' => array(
 						'required'          => true,
 						'default'           => self::ROWS_PER_PAGE,
-						'validate_callback' => function ( $param ) {
+						'validate_callback' => function( $param ) {
 							return is_numeric( $param ) && 0 < $param && 200 > $param;
 						},
 					),
 					'from_url_id'   => array(
 						'required'          => false,
-						'validate_callback' => function ( $param ) {
+						'validate_callback' => function( $param ) {
 							return empty( $param ) || is_numeric( $param );
 						},
 					),
@@ -336,7 +336,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		$sql->add_filter( 'filter_filesize', '%d' );
 		$sql->add_filter( 'filter_webp_fileid' );
 		$sql->add_filter( 'filter_avif_fileid' );
-		$sql->add_filter( 'filter_driver');
+		$sql->add_filter( 'filter_driver' );
 		$sql->add_having_filter( 'filter_file_usage_count', '%d' );
 
 		$sql->add_group_by( 'fileid', 'f' );
