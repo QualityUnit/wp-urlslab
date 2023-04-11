@@ -10,7 +10,7 @@ import useChangeRow from '../hooks/useChangeRow';
 export default function KeywordsTable( { slug } ) {
 	const pageId = 'kw_id';
 	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
+	const url = `${ filters }${ sortingColumn }`;
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
 	const {
@@ -52,7 +52,7 @@ export default function KeywordsTable( { slug } ) {
 		urlFilter: <InputField liveUpdate defaultValue="" label={ header.urlFilter } onChange={ ( val ) => setInsertRow( { ...rowToInsert, urlFilter: val } ) } />,
 	};
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
@@ -127,7 +127,7 @@ export default function KeywordsTable( { slug } ) {
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
-	];
+	] );
 
 	if ( status === 'loading' ) {
 		return <Loader />;

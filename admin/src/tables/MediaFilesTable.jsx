@@ -10,7 +10,7 @@ export default function MediaFilesTable( { slug } ) {
 	const pageId = 'fileid';
 
 	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
+	const url = `${ filters }${ sortingColumn }`;
 
 	const {
 		__,
@@ -44,7 +44,7 @@ export default function MediaFilesTable( { slug } ) {
 		url: __( 'URL' ),
 	};
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
@@ -111,7 +111,7 @@ export default function MediaFilesTable( { slug } ) {
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
-	];
+	], [] );
 
 	if ( status === 'loading' ) {
 		return <Loader />;
