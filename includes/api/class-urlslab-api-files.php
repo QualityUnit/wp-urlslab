@@ -83,12 +83,14 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
+			$row_obj = new Urlslab_File_Row((array)$row);
 			$row->file_usage_count = (int) $row->file_usage_count;
 			$row->filesize = (int) $row->filesize;
 			$row->width = (int) $row->width;
 			$row->height = (int) $row->height;
 			$row->avif_filesize = (int) $row->avif_filesize;
 			$row->webp_filesize = (int) $row->webp_filesize;
+			$row->download_url = $row_obj->get_file_pointer()->get_driver_object()->get_url($row_obj);
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -215,6 +217,12 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 								return Urlslab_Api_Table::validate_numeric_filter_value( $param );
 							},
 						),
+						'filter_driver'         => array(
+							'required'          => false,
+							'validate_callback' => function ( $param ) {
+								return Urlslab_Api_Table::validate_string_filter_value( $param );
+							},
+						),
 						'filter_webp_fileid'      => array(
 							'required'          => false,
 							'validate_callback' => function ( $param ) {
@@ -328,6 +336,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		$sql->add_filter( 'filter_filesize', '%d' );
 		$sql->add_filter( 'filter_webp_fileid' );
 		$sql->add_filter( 'filter_avif_fileid' );
+		$sql->add_filter( 'filter_driver');
 		$sql->add_having_filter( 'filter_file_usage_count', '%d' );
 
 		$sql->add_group_by( 'fileid', 'f' );
