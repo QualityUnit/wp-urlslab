@@ -372,11 +372,11 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		$sql->add_select_column( 'urlLink', 'v', 'urlLink' );
 		$sql->add_select_column( 'urlFilter', 'v', 'urlFilter' );
 		$sql->add_select_column( 'kwType', 'v', 'kwType' );
-		$sql->add_select_column( 'kw_usage_count' );
+		$sql->add_select_column( 'IFNULL(kw_usage_cnt, 0)', false, 'kw_usage_count' );
 
 		$sql->add_from( URLSLAB_KEYWORDS_TABLE . ' AS v' );
 		$sql->add_from(
-			'LEFT JOIN (SELECT kw_id, COUNT(dest_url_id) as kw_usage_count FROM '
+			'LEFT JOIN (SELECT kw_id, COUNT(dest_url_id) as kw_usage_cnt FROM '
 			. URLSLAB_KEYWORDS_MAP_TABLE
 			. ' GROUP BY kw_id) d ON d.kw_id = v.kw_id '
 		);
@@ -401,7 +401,6 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		}
 		$sql->add_order( 'kw_id', 'v' );
 
-		$sql->add_group_by( 'kw_id', 'v' );
 
 		return $sql;
 	}

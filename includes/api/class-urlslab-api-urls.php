@@ -408,9 +408,9 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		$sql->add_from( URLSLAB_URLS_TABLE . ' u' );
 
 		if ( in_array( 'url_usage_count', $this->get_custom_columns() ) ) {
-			$sql->add_select_column( 'url_usage_count' );
+			$sql->add_select_column( 'IFNULL(url_usage_cnt, 0)', false, 'url_usage_count' );
 			$sql->add_from(
-				'LEFT JOIN ((SELECT dest_url_id, COUNT(src_url_id) as url_usage_count FROM '
+				'LEFT JOIN ((SELECT dest_url_id, COUNT(src_url_id) as url_usage_cnt FROM '
 				. URLSLAB_URLS_MAP_TABLE
 				. ' GROUP BY dest_url_id)) m_used ON u.url_id = m_used.dest_url_id '
 			);
@@ -421,17 +421,17 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 				$this->get_custom_columns()
 			)
 		) {
-			$sql->add_select_column( 'screenshot_usage_count' );
+			$sql->add_select_column( 'IFNULL(screenshot_usage_cnt, 0)', false, 'screenshot_usage_count' );
 			$sql->add_from(
-				'LEFT JOIN (SELECT screenshot_url_id, COUNT(src_url_id) as screenshot_usage_count FROM '
+				'LEFT JOIN (SELECT screenshot_url_id, COUNT(src_url_id) as screenshot_usage_cnt FROM '
 				. URLSLAB_SCREENSHOT_URLS_TABLE
 				. ' GROUP BY screenshot_url_id) m_links ON u.url_id = m_links.screenshot_url_id '
 			);
 		}
 		if ( in_array( 'url_links_count', $this->get_custom_columns() ) ) {
-			$sql->add_select_column( 'url_links_count' );
+			$sql->add_select_column( 'IFNULL(url_links_cnt, 0)', false, 'url_links_count' );
 			$sql->add_from(
-				'LEFT JOIN (SELECT src_url_id, COUNT(dest_url_id) as url_links_count FROM '
+				'LEFT JOIN (SELECT src_url_id, COUNT(dest_url_id) as url_links_cnt FROM '
 				. URLSLAB_URLS_MAP_TABLE
 				. ' GROUP BY src_url_id) m_links ON u.url_id = m_links.src_url_id '
 			);
@@ -478,8 +478,6 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		if ( in_array( 'url_links_count', $this->get_custom_columns() ) ) {
 			$sql->add_having_filter( 'filter_url_links_count', '%d' );
 		}
-
-		$sql->add_group_by( 'url_id', 'u' );
 
 		if ( $request->get_param( 'sort_column' ) ) {
 			$sql->add_order(
