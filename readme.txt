@@ -78,9 +78,13 @@ The content is coming soon.
 
 == Changelog ==
 
+= 2.10.1 - 2023-04-11 =
+
+* Tweak: Update URLsLab Connector
+
 = 2.10.0 - 2023-04-11 =
 
-* Feat: Match redirects based on the IP address of visitor
+* New: Match redirects based on the IP address of visitor
 
 = 2.9.4 - 2023-04-11 =
 
