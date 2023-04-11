@@ -59,7 +59,8 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
     protected static $openAPITypes = [
         'augment_command' => 'string',
         'filter' => '\OpenAPI\Client\Model\DomainDataRetrievalContentQuery',
-        'prompt' => '\OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt'
+        'prompt' => '\OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt',
+        'renew_frequency' => 'string'
     ];
 
     /**
@@ -72,7 +73,8 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
     protected static $openAPIFormats = [
         'augment_command' => null,
         'filter' => null,
-        'prompt' => null
+        'prompt' => null,
+        'renew_frequency' => null
     ];
 
     /**
@@ -83,7 +85,8 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
     protected static array $openAPINullables = [
         'augment_command' => false,
 		'filter' => false,
-		'prompt' => false
+		'prompt' => false,
+		'renew_frequency' => false
     ];
 
     /**
@@ -174,7 +177,8 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
     protected static $attributeMap = [
         'augment_command' => 'augmentCommand',
         'filter' => 'filter',
-        'prompt' => 'prompt'
+        'prompt' => 'prompt',
+        'renew_frequency' => 'renewFrequency'
     ];
 
     /**
@@ -185,7 +189,8 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
     protected static $setters = [
         'augment_command' => 'setAugmentCommand',
         'filter' => 'setFilter',
-        'prompt' => 'setPrompt'
+        'prompt' => 'setPrompt',
+        'renew_frequency' => 'setRenewFrequency'
     ];
 
     /**
@@ -196,7 +201,8 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
     protected static $getters = [
         'augment_command' => 'getAugmentCommand',
         'filter' => 'getFilter',
-        'prompt' => 'getPrompt'
+        'prompt' => 'getPrompt',
+        'renew_frequency' => 'getRenewFrequency'
     ];
 
     /**
@@ -240,6 +246,31 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
         return self::$openAPIModelName;
     }
 
+    public const RENEW_FREQUENCY_ONE_TIME = 'ONE_TIME';
+    public const RENEW_FREQUENCY_YEARLY = 'YEARLY';
+    public const RENEW_FREQUENCY_DAILY = 'DAILY';
+    public const RENEW_FREQUENCY_NO_SCHEDULE = 'NO_SCHEDULE';
+    public const RENEW_FREQUENCY_WEEKLY = 'WEEKLY';
+    public const RENEW_FREQUENCY_HOURLY = 'HOURLY';
+    public const RENEW_FREQUENCY_MONTHLY = 'MONTHLY';
+
+    /**
+     * Gets allowable values of the enum
+     *
+     * @return string[]
+     */
+    public function getRenewFrequencyAllowableValues()
+    {
+        return [
+            self::RENEW_FREQUENCY_ONE_TIME,
+            self::RENEW_FREQUENCY_YEARLY,
+            self::RENEW_FREQUENCY_DAILY,
+            self::RENEW_FREQUENCY_NO_SCHEDULE,
+            self::RENEW_FREQUENCY_WEEKLY,
+            self::RENEW_FREQUENCY_HOURLY,
+            self::RENEW_FREQUENCY_MONTHLY,
+        ];
+    }
 
     /**
      * Associative array for storing property values
@@ -259,6 +290,7 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
         $this->setIfExists('augment_command', $data ?? [], null);
         $this->setIfExists('filter', $data ?? [], null);
         $this->setIfExists('prompt', $data ?? [], null);
+        $this->setIfExists('renew_frequency', $data ?? [], null);
     }
 
     /**
@@ -291,6 +323,18 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
         if ($this->container['augment_command'] === null) {
             $invalidProperties[] = "'augment_command' can't be null";
         }
+        if ($this->container['renew_frequency'] === null) {
+            $invalidProperties[] = "'renew_frequency' can't be null";
+        }
+        $allowedValues = $this->getRenewFrequencyAllowableValues();
+        if (!is_null($this->container['renew_frequency']) && !in_array($this->container['renew_frequency'], $allowedValues, true)) {
+            $invalidProperties[] = sprintf(
+                "invalid value '%s' for 'renew_frequency', must be one of '%s'",
+                $this->container['renew_frequency'],
+                implode("', '", $allowedValues)
+            );
+        }
+
         return $invalidProperties;
     }
 
@@ -383,6 +427,43 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
             throw new \InvalidArgumentException('non-nullable prompt cannot be null');
         }
         $this->container['prompt'] = $prompt;
+
+        return $this;
+    }
+
+    /**
+     * Gets renew_frequency
+     *
+     * @return string
+     */
+    public function getRenewFrequency()
+    {
+        return $this->container['renew_frequency'];
+    }
+
+    /**
+     * Sets renew_frequency
+     *
+     * @param string $renew_frequency renew_frequency
+     *
+     * @return self
+     */
+    public function setRenewFrequency($renew_frequency)
+    {
+        if (is_null($renew_frequency)) {
+            throw new \InvalidArgumentException('non-nullable renew_frequency cannot be null');
+        }
+        $allowedValues = $this->getRenewFrequencyAllowableValues();
+        if (!in_array($renew_frequency, $allowedValues, true)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    "Invalid value '%s' for 'renew_frequency', must be one of '%s'",
+                    $renew_frequency,
+                    implode("', '", $allowedValues)
+                )
+            );
+        }
+        $this->container['renew_frequency'] = $renew_frequency;
 
         return $this;
     }
