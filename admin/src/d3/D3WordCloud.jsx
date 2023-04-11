@@ -9,7 +9,7 @@ import { fetchData } from '../api/fetching';
 import '../assets/styles/components/_OverviewTemplate.scss';
 import {getParamsChar} from "../lib/helpers";
 
-const D3WordCloud = ( { slug, children } ) => {
+const D3WordCloud = ( { slug } ) => {
 	const chartRef = useRef( null );
 	const queryClient = useQueryClient();
 	const filteringState = queryClient.getQueryData( [ slug, 'filters' ] );
@@ -52,7 +52,7 @@ const D3WordCloud = ( { slug, children } ) => {
 				.attr( 'width', layout.size()[ 0 ] )
 				.attr( 'height', layout.size()[ 1 ] )
 				.append( 'g' )
-				.attr( 'transform', 'translate(' + layout.size()[ 0 ] / 2 + ',' + layout.size()[ 1 ] / 2 + ')' )
+				.attr( 'transform', `translate(${ layout.size()[ 0 ] / 2 }, ${ layout.size()[ 1 ] / 2 })` )
 				.selectAll( 'text' )
 				.data( words )
 				.enter()

@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, SortMenu, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, ProgressBar, Tooltip, SortMenu, Checkbox, Trash, LinkIcon, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -10,7 +10,9 @@ export default function MediaFilesTable( { slug } ) {
 	const pageId = 'fileid';
 
 	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
+	const url = `${ filters }${ sortingColumn }`;
+
+	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
 	const {
 		__,
@@ -18,6 +20,7 @@ export default function MediaFilesTable( { slug } ) {
 		data,
 		status,
 		isSuccess,
+		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
@@ -40,11 +43,11 @@ export default function MediaFilesTable( { slug } ) {
 		height: __( 'Height' ),
 		width: __( 'Width' ),
 		filesize: __( 'File Size' ),
-		file_usage_count: __( 'File Usage' ),
+		file_usage_count: __( 'Usage' ),
 		url: __( 'URL' ),
 	};
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
@@ -93,6 +96,17 @@ export default function MediaFilesTable( { slug } ) {
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'file_usage_count', {
+			cell: ( cell ) => <div className="flex flex-align-center">
+				{ cell?.getValue() }
+				{ cell?.getValue() > 0 &&
+					<button className="ml-s" onClick={ () => setDetailsOptions( {
+						title: `Files used on these URLs`, slug, url: `${ cell.row.original.fileid }/urls`, showKeys: [ 'url_name' ], listId: 'url_id',
+					} ) }>
+						<LinkIcon />
+						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
+					</button>
+				}
+			</div>,
 			header: header.file_usage_count,
 			size: 80,
 		} ),
@@ -111,7 +125,7 @@ export default function MediaFilesTable( { slug } ) {
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
-	];
+	], [] );
 
 	if ( status === 'loading' ) {
 		return <Loader />;
@@ -125,6 +139,7 @@ export default function MediaFilesTable( { slug } ) {
 				table={ table }
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
+				detailsOptions={ detailsOptions }
 				exportOptions={ {
 					url: slug,
 					filters,
@@ -143,6 +158,7 @@ export default function MediaFilesTable( { slug } ) {
 					? <Tooltip center>{ `${ header.filename } “${ row.filename }”` } { __( 'has been deleted.' ) }</Tooltip>
 					: null
 				}
+				<TooltipSortingFiltering props={ { isFetching, filters, sortingColumn } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

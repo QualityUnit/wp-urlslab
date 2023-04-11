@@ -26,7 +26,6 @@
 		th,
 		td {
 			text-align: left;
-			white-space: nowrap;
 			height: 1.5em;
 
 			.limit {
@@ -53,6 +52,15 @@
 			overflow: hidden auto;
 			height: 20em;
 
+			th,
+			td {
+				text-align: left;
+				height: 1.5em;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				max-width: 100%;
+			}
+
 			.urlslab-progressBar-wrapper {
 				margin-top: auto;
 			}
@@ -65,6 +73,8 @@
 		top: 15%;
 		left: calc(50% + 80px); //WP Admin menu half width of 160px
 		transform: translateX(-50%);
+		overflow-x: hidden;
+		height: 100vh;
 		z-index: 9999;
 
 		.urlslab-panel {

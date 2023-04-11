@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, LinkIcon, Trash, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, ProgressBar, Tooltip, LinkIcon, Trash, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -9,7 +9,7 @@ import useChangeRow from '../hooks/useChangeRow';
 export default function LinkManagerTable( { slug } ) {
 	const pageId = 'url_id';
 	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = useMemo( () => `${ filters }${ sortingColumn || '&sort_column=url_name&sort_direction=ASC' }`, [ filters, sortingColumn ] );
+	const url = `${ filters }${ sortingColumn || '&sort_column=url_name&sort_direction=ASC' }`;
 
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
@@ -19,6 +19,7 @@ export default function LinkManagerTable( { slug } ) {
 		data,
 		status,
 		isSuccess,
+		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
@@ -69,7 +70,7 @@ export default function LinkManagerTable( { slug } ) {
 		update_http_date: __( 'Status Updated' ),
 	};
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
@@ -150,7 +151,7 @@ export default function LinkManagerTable( { slug } ) {
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
 					<button className="ml-s" onClick={ () => setDetailsOptions( {
-						title: `Outgoing Links`, text: `From: ${ cell.row.original.url_name }`, slug, url: `${ cell.row.original.url_id }/links`, showKeys: [ 'dest_url_name' ], listId: 'src_url_id',
+						title: `Outgoing Links`, text: `From: ${ cell.row.original.url_name }`, slug, url: `${ cell.row.original.url_id }/links`, showKeys: [ 'dest_url_name' ], listId: 'dest_url_id',
 					} ) }>
 						<LinkIcon />
 						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
@@ -180,7 +181,7 @@ export default function LinkManagerTable( { slug } ) {
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
-	];
+	], [] );
 
 	if ( status === 'loading' ) {
 		return <Loader />;
@@ -216,6 +217,7 @@ export default function LinkManagerTable( { slug } ) {
 					? <Tooltip center>{ `${ header.url_name } “${ row.url_name }”` } has been deleted.</Tooltip>
 					: null
 				}
+				<TooltipSortingFiltering props={ { isFetching, filters, sortingColumn } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
