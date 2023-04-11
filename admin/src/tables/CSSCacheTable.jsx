@@ -69,6 +69,7 @@ export default function CSSCacheTable( { slug } ) {
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'filesize', {
+			unit: 'kB',
 			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
 			header: header.filesize,
 			size: 100,

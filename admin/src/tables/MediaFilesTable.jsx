@@ -10,7 +10,7 @@ export default function MediaFilesTable( { slug } ) {
 	const pageId = 'fileid';
 
 	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = `${ filters }${ sortingColumn }`;
+	const url = `${ filters }${ sortingColumn || '&sort_column=filename&sort_direction=ASC' }`;
 
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
@@ -28,6 +28,12 @@ export default function MediaFilesTable( { slug } ) {
 
 	const { row, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
+	const driverTypes = {
+		D: 'Database',
+		F: 'Local File',
+		S: 'S3',
+	};
+
 	const statusTypes = {
 		N: __( 'New' ),
 		A: __( 'Available' ),
@@ -38,13 +44,14 @@ export default function MediaFilesTable( { slug } ) {
 	const header = {
 		filename: __( 'File Name' ),
 		filetype: __( 'File Type' ),
+		url: __( 'Orig. URL' ),
+		filesize: __( 'File Size' ),
+		width: __( 'Width' ),
+		height: __( 'Height' ),
+		driver: __( 'Storage Driver' ),
 		status_changed: __( 'Status changed' ),
 		filestatus: __( 'Status' ),
-		height: __( 'Height' ),
-		width: __( 'Width' ),
-		filesize: __( 'File Size' ),
 		file_usage_count: __( 'Usage' ),
-		url: __( 'URL' ),
 	};
 
 	const columns = useMemo( () => [
@@ -64,6 +71,40 @@ export default function MediaFilesTable( { slug } ) {
 			header: header.filetype,
 			size: 80,
 		} ),
+		columnHelper?.accessor( 'url', {
+			tooltip: ( cell ) => {
+				const regex = /(jpeg|jpg|webp|gif|png|svg)/g;
+				const isImage = cell.getValue().search( regex );
+				return <Tooltip>{ isImage !== -1 && <img src={ cell.getValue() } alt="url" /> }</Tooltip>;
+			},
+			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			header: header.url,
+			size: 300,
+		} ),
+		columnHelper?.accessor( 'filesize', {
+			unit: 'kB',
+			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
+			header: header.filesize,
+			size: 80,
+		} ),
+		columnHelper?.accessor( 'width', {
+			unit: 'px',
+			cell: ( cell ) => `${ cell.getValue() }\u00A0px`,
+			header: header.width,
+			size: 50,
+		} ),
+		columnHelper?.accessor( 'height', {
+			unit: 'px',
+			cell: ( cell ) => `${ cell.getValue() }\u00A0px`,
+			header: header.height,
+			size: 50,
+		} ),
+		columnHelper?.accessor( 'driver', {
+			filterValMenu: driverTypes,
+			cell: ( cell ) => driverTypes[ cell.getValue() ],
+			header: header.driver,
+			size: 100,
+		} ),
 		columnHelper?.accessor( 'filestatus', {
 			filterValMenu: statusTypes,
 			className: 'nolimit',
@@ -74,26 +115,6 @@ export default function MediaFilesTable( { slug } ) {
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.filestatus,
 			size: 100,
-		} ),
-		columnHelper?.accessor( 'status_changed', {
-			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
-			header: () => __( 'Status changed' ),
-			size: 100,
-		} ),
-		columnHelper?.accessor( 'width', {
-			cell: ( cell ) => `${ cell.getValue() }\u00A0px`,
-			header: header.width,
-			size: 50,
-		} ),
-		columnHelper?.accessor( 'height', {
-			cell: ( cell ) => `${ cell.getValue() }\u00A0px`,
-			header: header.height,
-			size: 50,
-		} ),
-		columnHelper?.accessor( 'filesize', {
-			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
-			header: header.filesize,
-			size: 80,
 		} ),
 		columnHelper?.accessor( 'file_usage_count', {
 			cell: ( cell ) => <div className="flex flex-align-center">
@@ -108,18 +129,9 @@ export default function MediaFilesTable( { slug } ) {
 				}
 			</div>,
 			header: header.file_usage_count,
-			size: 80,
+			size: 50,
 		} ),
-		columnHelper?.accessor( 'url', {
-			tooltip: ( cell ) => {
-				const regex = /(jpeg|jpg|webp|gif|png|svg)/g;
-				const isImage = cell.getValue().search( regex );
-				return <Tooltip>{ isImage !== -1 && <img src={ cell.getValue() } alt="url" /> }</Tooltip>;
-			},
-			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: header.url,
-			size: 250,
-		} ),
+
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
@@ -137,6 +149,7 @@ export default function MediaFilesTable( { slug } ) {
 				slug={ slug }
 				header={ header }
 				table={ table }
+				noImport
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				detailsOptions={ detailsOptions }
@@ -145,7 +158,7 @@ export default function MediaFilesTable( { slug } ) {
 					filters,
 					fromId: `from_${ pageId }`,
 					pageId,
-					deleteCSVCols: [ pageId, 'dest_url_id' ],
+					deleteCSVCols: [ pageId, 'fileid', 'filehash' ],
 				} }
 			/>
 			<Table className="fadeInto"
