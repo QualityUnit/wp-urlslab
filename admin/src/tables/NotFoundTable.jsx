@@ -18,7 +18,7 @@ export default function NotFoundTable( { slug } ) {
 
 	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 
-	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
+	const url = `${ filters }${ sortingColumn }`;
 
 	const {
 		__,
@@ -87,9 +87,7 @@ export default function NotFoundTable( { slug } ) {
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.agent, {
 			id: 'agent',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => {
-				return <BrowserIcon uaString={ cell.getValue() } />;
-			},
+			cell: ( cell ) => <BrowserIcon uaString={ cell.getValue() } />,
 			header: header.agent,
 			size: 150,
 		} ),

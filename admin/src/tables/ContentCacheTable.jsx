@@ -7,7 +7,7 @@ import useTableUpdater from '../hooks/useTableUpdater';
 export default function ContentCacheTable( { slug } ) {
 	const pageId = 'cache_crc32';
 	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = useMemo( () => `${ filters }${ sortingColumn }`, [ filters, sortingColumn ] );
+	const url = `${ filters }${ sortingColumn }`;
 
 	const {
 		__,
@@ -26,7 +26,7 @@ export default function ContentCacheTable( { slug } ) {
 		cache_content: __( 'Cache content' ),
 	};
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'date_changed', {
 			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
 			header: header.date_changed,
@@ -42,7 +42,7 @@ export default function ContentCacheTable( { slug } ) {
 			header: header.cache_content,
 			size: 500,
 		} ),
-	];
+	], [] );
 
 	if ( status === 'loading' ) {
 		return <Loader />;

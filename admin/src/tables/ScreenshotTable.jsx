@@ -11,7 +11,7 @@ export default function ScreenshotTable( { slug } ) {
 
 	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 
-	const url = useMemo( () => `${ filters }${ sortingColumn || '&sort_column=url_name&sort_direction=ASC' }`, [ filters, sortingColumn ] );
+	const url = `${ filters }${ sortingColumn || '&sort_column=url_name&sort_direction=ASC' }`;
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
 	const {
@@ -50,7 +50,7 @@ export default function ScreenshotTable( { slug } ) {
 		update_scr_date: __( 'Updated at' ),
 	};
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
@@ -129,7 +129,7 @@ export default function ScreenshotTable( { slug } ) {
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
-	];
+	], [] );
 
 	if ( status === 'loading' ) {
 		return <Loader />;
