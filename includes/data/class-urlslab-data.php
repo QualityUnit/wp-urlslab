@@ -67,9 +67,9 @@ abstract class Urlslab_Data {
 
 		$insert_data = array();
 		$format = array();
-		foreach ( $this->changed as $key => $true ) {
+		foreach ( $this->get_columns() as $key => $column_format ) {
 			$insert_data[ $key ] = $this->data[ $key ];
-			$format[ $key ] = $this->get_column_format( $key );
+			$format[ $key ] = $column_format;
 		}
 
 		global $wpdb;

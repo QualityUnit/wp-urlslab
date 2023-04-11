@@ -27,6 +27,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		$this->set_cookie( $redirect['cookie'] ?? '', $loaded_from_db );
 		$this->set_headers( $redirect['headers'] ?? '', $loaded_from_db );
 		$this->set_params( $redirect['params'] ?? '', $loaded_from_db );
+		$this->set_ip( $redirect['ip'] ?? '', $loaded_from_db );
 		$this->set_if_not_found( empty( $redirect['if_not_found'] ) ? self::NOT_FOUND_STATUS_ANY : $redirect['if_not_found'], $loaded_from_db );
 		$this->set_cnt( $redirect['cnt'] ?? 0, $loaded_from_db );
 		$this->set_redirect_code( (int) ( $redirect['redirect_code'] ?? 301 ), $loaded_from_db );
@@ -145,6 +146,14 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		$this->set( 'redirect_code', $redirect_code, $loaded_from_db );
 	}
 
+	public function get_ip(): string {
+		return $this->get( 'ip' );
+	}
+
+	public function set_ip( string $ip, $loaded_from_db = true ): void {
+		$this->set( 'ip', $ip, $loaded_from_db );
+	}
+
 	public function get_table_name(): string {
 		return URLSLAB_REDIRECTS_TABLE;
 	}
@@ -170,6 +179,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 			'browser'       => '%s',
 			'headers'       => '%s',
 			'params'        => '%s',
+			'ip'            => '%s',
 			'if_not_found'  => '%s',
 			'cnt'           => '%d',
 			'redirect_code' => '%d',

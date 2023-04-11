@@ -55,6 +55,12 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 								return is_string( $param );
 							},
 						),
+						'ip'  => array(
+							'required'          => false,
+							'validate_callback' => function ( $param ) {
+								return is_string( $param );
+							},
+						),
 						'roles'         => array(
 							'required'          => false,
 							'validate_callback' => function ( $param ) {
@@ -228,6 +234,12 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 						return is_string( $param );
 					},
 				),
+				'ip'  => array(
+					'required'          => false,
+					'validate_callback' => function ( $param ) {
+						return is_string( $param );
+					},
+				),
 				'roles'         => array(
 					'required'          => false,
 					'validate_callback' => function ( $param ) {
@@ -334,6 +346,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 			'replace_url',
 			'is_logged',
 			'capabilities',
+			'ip',
 			'roles',
 			'browser',
 			'cookie',
@@ -356,6 +369,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 		$sql->add_filter( 'filter_replace_url' );
 		$sql->add_filter( 'filter_is_logged' );
 		$sql->add_filter( 'filter_capabilities' );
+		$sql->add_filter( 'filter_ip' );
 		$sql->add_filter( 'filter_roles' );
 		$sql->add_filter( 'filter_browser' );
 		$sql->add_filter( 'filter_cookie' );
@@ -421,6 +435,12 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 						},
 					),
 					'filter_capabilities'  => array(
+						'required'          => false,
+						'validate_callback' => function ( $param ) {
+							return Urlslab_Api_Table::validate_string_filter_value( $param );
+						},
+					),
+					'filter_ip'  => array(
 						'required'          => false,
 						'validate_callback' => function ( $param ) {
 							return Urlslab_Api_Table::validate_string_filter_value( $param );

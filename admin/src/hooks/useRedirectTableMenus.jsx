@@ -41,6 +41,7 @@ export default function useRedirectTableMenus() {
 		cookie: __( 'Cookies' ),
 		headers: __( 'Request headers' ),
 		params: __( 'Request parameters' ),
+		ip: __( 'Visitor IP' ),
 		if_not_found: __( 'Page status' ),
 		cnt: __( 'Redirects Count' ),
 	} );
