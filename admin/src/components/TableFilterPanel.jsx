@@ -18,7 +18,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 
 	const { state, dispatch, handleType } = useFilter( { slug, header, possibleFilters, initialRow } );
 
-	const cellUnit = initialRow.getVisibleCells().filter( ( cell ) => cell.column?.id === state.filterObj.filterKey )[ 0 ]?.column?.columnDef.unit;
+	const cellUnit = initialRow?.getVisibleCells()?.filter( ( cell ) => cell.column?.id === state.filterObj.filterKey )[ 0 ]?.column?.columnDef.unit;
 
 	const notBetween = useMemo( () => {
 		return Object.keys( currentFilters )?.length && currentFilters[ key ]?.op ? currentFilters[ key ]?.op !== 'BETWEEN' : state.filterObj.filterOp !== 'BETWEEN';
@@ -110,8 +110,11 @@ export default function TableFilterPanel( { props, onEdit } ) {
 						onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) }
 					/>
 				}
-				{ state.filterObj.keyType !== 'lang' && state.filterObj.keyType !== 'menu' && notBetween &&
-				<InputField liveUpdate autoFocus defaultValue={ currentFilters[ key ]?.val } placeholder={ state.filterObj.filterOp === 'IN' ? 'enter ie. 0,10,15,20' : 'Enter search term' } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
+				{ state.filterObj.keyType !== 'lang' && state.filterObj.keyType !== 'menu' && state.filterObj.keyType !== 'number' && notBetween &&
+					<InputField liveUpdate autoFocus defaultValue={ currentFilters[ key ]?.val } placeholder={ state.filterObj.filterOp === 'IN' ? 'enter ie. 0,10,15,20' : 'Enter search term' } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
+				}
+				{ state.filterObj.keyType === 'number' && notBetween &&
+					<InputField type="number" liveUpdate autoFocus defaultValue={ cellUnit === 'kB' ? currentFilters[ key ]?.val / 1024 : currentFilters[ key ]?.val } placeholder={ state.filterObj.filterOp === 'IN' ? 'enter ie. 0,10,15,20' : `Enter size ${ cellUnit && 'in ' + cellUnit }` } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val: cellUnit === 'kB' ? val * 1024 : val } ) } />
 				}
 				{ ! notBetween &&
 				<RangeInputs liveUpdate

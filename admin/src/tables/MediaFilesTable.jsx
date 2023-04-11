@@ -10,7 +10,7 @@ export default function MediaFilesTable( { slug } ) {
 	const pageId = 'fileid';
 
 	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = `${ filters }${ sortingColumn || '&sort_column=filename&sort_direction=ASC' }`;
+	const url = `${ filters }${ sortingColumn }`;
 
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
@@ -49,7 +49,6 @@ export default function MediaFilesTable( { slug } ) {
 		width: __( 'Width' ),
 		height: __( 'Height' ),
 		driver: __( 'Storage Driver' ),
-		status_changed: __( 'Status changed' ),
 		filestatus: __( 'Status' ),
 		file_usage_count: __( 'Usage' ),
 	};
