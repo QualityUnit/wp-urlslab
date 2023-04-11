@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, ProgressBar, Tooltip, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 import useTableUpdater from '../hooks/useTableUpdater';
 
@@ -15,6 +15,7 @@ export default function ContentCacheTable( { slug } ) {
 		data,
 		status,
 		isSuccess,
+		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
@@ -67,6 +68,7 @@ export default function ContentCacheTable( { slug } ) {
 					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 				}
 			>
+				<TooltipSortingFiltering props={ { isFetching, filters, sortingColumn } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
