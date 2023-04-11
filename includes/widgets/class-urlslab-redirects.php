@@ -349,10 +349,12 @@ class Urlslab_Redirects extends Urlslab_Widget {
 
 
 		if ( ! empty( $redirect->get_ip() ) ) {
-			$ips = explode( ',', $redirect->get_ip() );
-			if ( ! empty( $ips ) ) {
-				$has_ip     = false;
-				$visitor_ip = $this->get_visitor_ip();
+			$ips         = explode( ',', $redirect->get_ip() );
+			$visitor_ips = $this->get_visitor_ip();
+			if ( ! empty( $visitor_ips ) ) {
+				$has_ip      = false;
+				$visitor_ips = explode( ',', $visitor_ips );
+				$visitor_ip  = trim( $visitor_ips[0] );
 				foreach ( $ips as $ip_pattern ) {
 					if ( false === strpos( $ip_pattern, '/' ) ) {
 						if ( fnmatch( $ip_pattern, $visitor_ip ) ) {
