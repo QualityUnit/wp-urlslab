@@ -13,6 +13,31 @@
 			font-size: 0.92307em;
 		}
 
+		.urlslab-FilterMenu__title {
+			min-height: 2.6em;
+		}
+
+		.urlslab-datetime-range {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			.urlslab-inputField-datetime {
+				width: calc(50% - 1em);
+			}
+		}
+
+		.react-datepicker {
+
+			&-wrapper {
+				display: block;
+			}
+
+			&__input-container {
+				display: flex;
+			}
+		}
+
 		&-header {
 			padding-left: 1rem;
 			margin-left: -1rem;

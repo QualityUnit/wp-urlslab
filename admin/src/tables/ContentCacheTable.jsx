@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import {
 	useInfiniteFetch, ProgressBar, Tooltip, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
@@ -27,7 +26,7 @@ export default function ContentCacheTable( { slug } ) {
 		cache_content: __( 'Cache content' ),
 	};
 
-	const columns = useMemo( () => [
+	const columns = [
 		columnHelper.accessor( 'date_changed', {
 			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
 			header: header.date_changed,
@@ -43,7 +42,7 @@ export default function ContentCacheTable( { slug } ) {
 			header: header.cache_content,
 			size: 500,
 		} ),
-	], [] );
+	];
 
 	if ( status === 'loading' ) {
 		return <Loader />;
