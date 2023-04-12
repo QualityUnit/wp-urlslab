@@ -20,18 +20,20 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 
 		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Related_Resources_Widget::SLUG )
 			 || ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Related_Resources_Widget::SLUG )->get_option( Urlslab_Related_Resources_Widget::SETTING_NAME_SYNC_URLSLAB )
-			 || ! $this->init_content_client() ) {
+			 || ! $this->init_content_client()
+		) {
 			return false;
 		}
 
 		$url_row = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_URLS_TABLE . ' WHERE rel_schedule = %s OR (rel_schedule = %s AND rel_updated < %s) OR (rel_schedule = %s AND rel_updated < %s ) ORDER BY rel_updated LIMIT 1',                                                                                                                                                                                                                                       // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_URLS_TABLE . ' WHERE http_status=%d AND rel_schedule = %s OR (rel_schedule = %s AND rel_updated < %s) OR (rel_schedule = %s AND rel_updated < %s ) ORDER BY rel_updated LIMIT 1', // phpcs:ignore
+				Urlslab_Url_Row::HTTP_STATUS_OK,
 				Urlslab_Url_Row::REL_SCHEDULE_NEW,
 				Urlslab_Url_Row::REL_SCHEDULE_SCHEDULED,
-				Urlslab_Data::get_now( time() - 24 * 3600 ),                                                                                                                                                                                                                                                                                                                                                                                    // retry if scheduled
+				Urlslab_Data::get_now( time() - 24 * 3600 ), // retry if scheduled
 				Urlslab_Url_Row::REL_AVAILABLE,
-				Urlslab_Data::get_now( time() - Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Related_Resources_Widget::SLUG )->get_option( Urlslab_Related_Resources_Widget::SETTING_NAME_SYNC_FREQ ) )                                                                                                                                                                                                                             // update ready values
+				Urlslab_Data::get_now( time() - Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Related_Resources_Widget::SLUG )->get_option( Urlslab_Related_Resources_Widget::SETTING_NAME_SYNC_FREQ ) ) // update ready values
 			),
 			ARRAY_A
 		);
@@ -51,7 +53,7 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 			$api_key = get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
 			if ( strlen( $api_key ) ) {
 				$config
-					= Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
+									  = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
 				$this->content_client = new ContentApi( new GuzzleHttp\Client(), $config );
 			}
 		}
@@ -102,7 +104,7 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 			}
 
 			$url_objects
-				= Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_urls( $schedule_urls );
+							   = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_urls( $schedule_urls );
 			$related_resources = array();
 			foreach ( $url_objects as $dest_url_obj ) {
 				$related_resources[] = new Urlslab_Url_Relation_Row(
