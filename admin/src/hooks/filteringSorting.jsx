@@ -58,7 +58,7 @@ export function useFilter( { slug, header, initialRow } ) {
 			if ( sendCellOptions ) {
 				sendCellOptions( cellfilterValMenu );
 			}
-			return 'menu';
+			return cellfilterValMenu;
 		}
 
 		if ( testDate.test( cellValue ) ) {

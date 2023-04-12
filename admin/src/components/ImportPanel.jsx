@@ -5,6 +5,7 @@ import { useCSVReader } from 'react-papaparse';
 import importCsv from '../api/importCsv';
 
 import useCloseModal from '../hooks/useCloseModal';
+import { useFilter } from '../hooks/filteringSorting';
 
 import { ReactComponent as ImportIcon } from '../assets/images/icon-import.svg';
 import Button from '../elements/Button';
@@ -17,6 +18,7 @@ export default function ImportPanel( { props, handlePanel } ) {
 	const { CSVReader } = useCSVReader();
 	const [ importStatus, setImportStatus ] = useState();
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
+	const { handleType } = useFilter( { slug, header, initialRow } );
 	let importCounter = 0;
 
 	// Function to generate required/optional headers for CSV import
@@ -28,11 +30,19 @@ export default function ImportPanel( { props, handlePanel } ) {
 		const endpointArgs = routeEndpoints?.filter( ( endpoint ) => endpoint?.methods[ 0 ] === 'POST' )[ 0 ]?.args;
 
 		const requiredFields = [];
+		const optionalFields = [];
 
 		// Getting list of required fields for slug
 		Object.entries( endpointArgs ).filter( ( [ key, valObj ] ) => {
 			if ( typeof valObj === 'object' && valObj?.required === true ) {
-				requiredFields.push( key );
+				let type = handleType( key, ( cellOptions ) => cellOptions );
+				if ( type === 'lang' ) {
+					type = 'like "en", "fr", "es" etc.';
+				}
+				if ( type === 'date' ) {
+					type = 'ie "2023–04–31 09:00:00" (YYYY-MM-dd HH:mm:ss)';
+				}
+				requiredFields.push( { key, type } );
 				delete optionalHeaders[ key ]; // Removing required
 			}
 			return false;
@@ -43,12 +53,20 @@ export default function ImportPanel( { props, handlePanel } ) {
 		const removeFieldsRegex = /^.*(length|usage).*$/g;
 
 		Object.keys( optionalHeaders ).map( ( key ) => {
-			if ( removeFieldsRegex.test( key ) ) {
-				delete optionalHeaders[ key ];
+			if ( ! removeFieldsRegex.test( key ) ) {
+				let type = handleType( key, ( cellOptions ) => cellOptions );
+				if ( type === 'lang' ) {
+					type = 'like "en", "fr", "es" etc.';
+				}
+				if ( type === 'date' ) {
+					type = 'ie "2023–04–31 09:00:00" (YYYY-MM-dd HH:mm:ss)';
+				}
+				optionalFields.push( { key, type } );
 			}
 			return false;
 		} );
-		return { requiredFields, optionalFields: Object.keys( optionalHeaders ) };
+
+		return { requiredFields, optionalFields };
 	}, [ queryClient, slug, header ] );
 
 	const hidePanel = ( operation ) => {
@@ -102,7 +120,17 @@ export default function ImportPanel( { props, handlePanel } ) {
 									<ul>
 										{ csvFields?.requiredFields.map( ( field ) => {
 											return (
-												<li key={ field }>{ `${ header[ field ] } (${ field })` }</li>
+												<li key={ field.key }>
+													{ `${ header[ field.key ] } (${ field.key })` }
+													{ typeof field.type !== 'object' // Check if object = menu
+														? ` – ${ field.type }`
+														: <ul className="pl-s">
+															{ Object.entries( field.type ).map( ( [ key, val ] ) => {
+																return <li key={ key }>{ `${ key } – ${ val }` }</li>;
+															} ) }
+														</ul>
+													}
+												</li>
 											);
 										} ) }
 									</ul>
@@ -112,7 +140,17 @@ export default function ImportPanel( { props, handlePanel } ) {
 									<ul>
 										{ csvFields?.optionalFields?.map( ( field ) => {
 											return (
-												<li key={ field }>{ `${ header[ field ] } (${ field })` }</li>
+												<li key={ field.key }>
+													{ `${ header[ field.key ] } (${ field.key })` }
+													{ typeof field.type !== 'object' // Check if object = menu
+														? ` – ${ field.type }`
+														: <ul className="pl-s">
+															{ Object.entries( field.type ).map( ( [ key, val ] ) => {
+																return <li key={ key }>{ `${ key } – ${ val }` }</li>;
+															} ) }
+														</ul>
+													}
+												</li>
 											);
 										} ) }
 									</ul>

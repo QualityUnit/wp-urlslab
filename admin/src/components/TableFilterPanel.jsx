@@ -21,7 +21,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 	const [ startDate, setStartDate ] = useState( currentFilters[ key ]?.val?.min ? new Date( currentFilters[ key ]?.val.min ) : currentDate.setDate( currentDate.getDate() - 2 ) );
 	const [ endDate, setEndDate ] = useState( currentFilters[ key ]?.val?.max ? new Date( currentFilters[ key ]?.val.max ) : currentDate );
 
-	const { state, dispatch, handleType } = useFilter( { slug, header, possibleFilters, initialRow } );
+	const { state, dispatch, handleType } = useFilter( { slug, header, initialRow } );
 
 	const cellUnit = initialRow?.getVisibleCells()?.filter( ( cell ) => cell.column?.id === state.filterObj.filterKey )[ 0 ]?.column?.columnDef.unit;
 
