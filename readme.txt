@@ -78,6 +78,10 @@ The content is coming soon.
 
 == Changelog ==
 
+= 2.10.5 - 2023-04-12 =
+
+* Experience a smoother user journey with our under-the-hood enhancements.
+
 = 2.10.4 - 2023-04-12 =
 
 * Fix: Multiple bugs were fixed
