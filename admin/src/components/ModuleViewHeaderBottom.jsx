@@ -184,7 +184,7 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 			/>
 			}
 			{ activePanel === 'import' &&
-				<ImportPanel slug={ slug } header={ header } handlePanel={ handlePanel } />
+				<ImportPanel props={ { slug, header, initialRow } } handlePanel={ handlePanel } />
 			}
 			{ activePanel === 'details' &&
 				<DetailsPanel options={ detailsOptions } handlePanel={ handlePanel } />
