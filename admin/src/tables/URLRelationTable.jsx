@@ -1,6 +1,5 @@
-import { useMemo } from 'react';
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, ProgressBar, Tooltip, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -17,6 +16,7 @@ export default function URLRelationTable( { slug } ) {
 		data,
 		status,
 		isSuccess,
+		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
@@ -36,7 +36,7 @@ export default function URLRelationTable( { slug } ) {
 		pos: <InputField liveUpdate type="number" defaultValue="0" min="0" max="255" label={ header.pos } onChange={ ( val ) => setInsertRow( { ...rowToInsert, pos: val } ) } required />,
 	};
 
-	const columns = useMemo( () => [
+	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
@@ -69,7 +69,7 @@ export default function URLRelationTable( { slug } ) {
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, optionalSelector: 'dest_url_id' } ) } />,
 			header: null,
 		} ),
-	], [] );
+	];
 
 	if ( status === 'loading' ) {
 		return <Loader />;
@@ -116,6 +116,7 @@ export default function URLRelationTable( { slug } ) {
 					? <Tooltip center>{ __( 'URL Relation rule has been added.' ) }</Tooltip>
 					: null
 				}
+				<TooltipSortingFiltering props={ { isFetching, filters, sortingColumn } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

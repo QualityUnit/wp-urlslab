@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useInView } from 'react-intersection-observer';
@@ -8,7 +8,7 @@ import { fetchData } from '../api/fetching';
 import { getParamsChar } from '../lib/helpers';
 
 export default function useInfiniteFetch( options, maxRows = 50 ) {
-	const columnHelper = createColumnHelper();
+	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { __ } = useI18n();
 	const { ref, inView } = useInView();
 	const { key, url, pageId } = options;

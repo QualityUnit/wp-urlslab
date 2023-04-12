@@ -1,6 +1,5 @@
-import { useMemo } from 'react';
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, SortMenu, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, ProgressBar, Tooltip, SortMenu, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -17,6 +16,7 @@ export default function CSSCacheTable( { slug } ) {
 		data,
 		status,
 		isSuccess,
+		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
@@ -38,7 +38,7 @@ export default function CSSCacheTable( { slug } ) {
 		filesize: __( 'Filesize' ),
 	};
 
-	const columns = useMemo( () => [
+	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
@@ -68,6 +68,7 @@ export default function CSSCacheTable( { slug } ) {
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'filesize', {
+			unit: 'kB',
 			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
 			header: header.filesize,
 			size: 100,
@@ -77,7 +78,7 @@ export default function CSSCacheTable( { slug } ) {
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
-	], [] );
+	];
 
 	if ( status === 'loading' ) {
 		return <Loader />;
@@ -105,6 +106,7 @@ export default function CSSCacheTable( { slug } ) {
 					? <Tooltip center>{ `${ header.url_name } “${ row.url_name }”` } { __( 'has been deleted.' ) }</Tooltip>
 					: null
 				}
+				<TooltipSortingFiltering props={ { isFetching, filters, sortingColumn } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

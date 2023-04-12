@@ -1,6 +1,5 @@
-import { useMemo } from 'react';
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, SortMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, ProgressBar, Tooltip, SortMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -19,6 +18,7 @@ export default function SearchReplaceTable( { slug } ) {
 		data,
 		status,
 		isSuccess,
+		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
@@ -45,7 +45,7 @@ export default function SearchReplaceTable( { slug } ) {
 		url_filter: <InputField liveUpdate defaultValue="" label={ header.url_filter } onChange={ ( val ) => setInsertRow( { ...rowToInsert, url_filter: val } ) } />,
 	};
 
-	const columns = useMemo( () => [
+	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
@@ -84,7 +84,7 @@ export default function SearchReplaceTable( { slug } ) {
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: () => null,
 		} ),
-	], [] );
+	];
 
 	if ( status === 'loading' ) {
 		return <Loader />;
@@ -130,6 +130,7 @@ export default function SearchReplaceTable( { slug } ) {
 					? <Tooltip center>{ __( 'Search & Replace rule has been added.' ) }</Tooltip>
 					: null
 				}
+				<TooltipSortingFiltering props={ { isFetching, filters, sortingColumn } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

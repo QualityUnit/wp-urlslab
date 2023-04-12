@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { deleteRow as del } from '../api/deleteTableData';
 import { setData } from '../api/fetching';
@@ -73,9 +73,9 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 			await queryClient.invalidateQueries( [ options.slug, 'count' ] );
 		},
 	} );
-	const deleteRow = ( { cell, optionalSelector } ) => {
+	const deleteRow = useCallback( ( { cell, optionalSelector } ) => {
 		deleteSelectedRow.mutate( { data, url, slug, cell, optionalSelector } );
-	};
+	}, [ data, deleteSelectedRow, slug, url ] );
 
 	const updateRowData = useMutation( {
 		mutationFn: async ( options ) => {
@@ -114,7 +114,7 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 		updateRowData.mutate( { data, newVal, url, slug, cell, optionalSelector } );
 	};
 
-	const selectRow = ( isSelected, cell ) => {
+	const selectRow = useCallback( ( isSelected, cell ) => {
 		cell.row.toggleSelected();
 		// const cellId = cell.row.original[ pageId ];
 		// if ( ! isSelected ) {
@@ -131,7 +131,7 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 		// if ( ! selectedRows.length ) {
 		// 	setRowsSelected( false );
 		// }
-	};
+	}, [] );
 
 	return { row: rowValue, rowsSelected, insertRowResult, insertRow, selectRow, deleteRow, updateRow };
 }

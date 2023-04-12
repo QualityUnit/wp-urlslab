@@ -1,6 +1,5 @@
-import { useMemo } from 'react';
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, Checkbox, InputField, SortMenu, Trash, Loader, Table, ModuleViewHeaderBottom,
+	useInfiniteFetch, ProgressBar, Tooltip, Checkbox, InputField, SortMenu, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -20,6 +19,7 @@ export default function RedirectsTable( { slug } ) {
 		data,
 		status,
 		isSuccess,
+		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
@@ -45,7 +45,7 @@ export default function RedirectsTable( { slug } ) {
 		if_not_found: <SortMenu autoClose items={ notFoundTypes } name="if_not_found" checkedId="A" onChange={ ( val ) => setInsertRow( { ...rowToInsert, if_not_found: val } ) }>{ header.if_not_found }</SortMenu>,
 	};
 
-	const columns = useMemo( () => [
+	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
@@ -146,7 +146,7 @@ export default function RedirectsTable( { slug } ) {
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: () => null,
 		} ),
-	], [] );
+	];
 
 	if ( status === 'loading' ) {
 		return <Loader />;
@@ -193,6 +193,7 @@ export default function RedirectsTable( { slug } ) {
 					? <Tooltip center>{ __( 'Redirect rule has been added.' ) }</Tooltip>
 					: null
 				}
+				<TooltipSortingFiltering props={ { isFetching, filters, sortingColumn } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

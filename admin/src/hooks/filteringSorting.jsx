@@ -48,7 +48,10 @@ export function useFilter( { slug, header, initialRow } ) {
 
 	// Checks the type (string or number) of the filter key
 	const handleType = ( key, sendCellOptions ) => {
+		const testDate = /^[0-9]{4}-[0-9]{2}-[0-9]{2} ?[0-9]{2}:/g;
 		const cell = initialRow?.getVisibleCells().find( ( cellItem ) => cellItem.column.id === key );
+		const cellValue = initialRow?.original[ key ];
+
 		const cellfilterValMenu = cell?.column.columnDef.filterValMenu;
 		if ( cellfilterValMenu ) {
 			dispatch( { type: 'setKeyType', keyType: 'menu' } );
@@ -56,6 +59,11 @@ export function useFilter( { slug, header, initialRow } ) {
 				sendCellOptions( cellfilterValMenu );
 			}
 			return 'menu';
+		}
+
+		if ( testDate.test( cellValue ) ) {
+			dispatch( { type: 'setKeyType', keyType: 'date' } );
+			return 'date';
 		}
 
 		if ( typeof initialRow?.original[ key ] === 'number' ) {
