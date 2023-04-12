@@ -18,31 +18,36 @@ export default function ImportPanel( { slug, header, handlePanel } ) {
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
 	let importCounter = 0;
 
+	// Function to generate required/optional headers for CSV import
 	const csvFields = useMemo( () => {
-		const headerCopy = { ...header };
+		const optionalHeaders = { ...header };
 		// Getting slug endpoints from prefetched routes
 		const routeEndpoints = queryClient.getQueryData( [ 'routes' ] )?.routes[ `/urlslab/v1/${ slug }` ]?.endpoints;
 		// Getting slug arguments
 		const endpointArgs = routeEndpoints?.filter( ( endpoint ) => endpoint?.methods[ 0 ] === 'POST' )[ 0 ]?.args;
 
-		const removeFieldsRegex = /^.*(length|usage).*$/g;
 		const requiredFields = [];
 
 		// Getting list of required fields for slug
 		Object.entries( endpointArgs ).filter( ( [ key, valObj ] ) => {
 			if ( typeof valObj === 'object' && valObj?.required === true ) {
 				requiredFields.push( key );
-				delete headerCopy[ key ];
+				delete optionalHeaders[ key ]; // Removing required
 			}
 			return false;
 		} );
-		Object.keys( headerCopy ).map( ( key ) => {
+
+		// Removing fields that are probably generated
+		// Fields that have length or usage in name are generated, regex to remove them
+		const removeFieldsRegex = /^.*(length|usage).*$/g;
+
+		Object.keys( optionalHeaders ).map( ( key ) => {
 			if ( removeFieldsRegex.test( key ) ) {
-				delete headerCopy[ key ];
+				delete optionalHeaders[ key ];
 			}
 			return false;
 		} );
-		return { requiredFields, optionalFields: Object.keys( headerCopy ) };
+		return { requiredFields, optionalFields: Object.keys( optionalHeaders ) };
 	}, [ queryClient, slug, header ] );
 
 	const hidePanel = ( operation ) => {
