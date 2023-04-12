@@ -23,7 +23,6 @@ export default function ImportPanel( { props, handlePanel } ) {
 
 	// Function to generate required/optional headers for CSV import
 	const csvFields = useMemo( () => {
-		const optionalHeaders = { ...header };
 		// Getting slug endpoints from prefetched routes
 		const routeEndpoints = queryClient.getQueryData( [ 'routes' ] )?.routes[ `/urlslab/v1/${ slug }` ]?.endpoints;
 		// Getting slug arguments
@@ -31,6 +30,10 @@ export default function ImportPanel( { props, handlePanel } ) {
 
 		const requiredFields = [];
 		const optionalFields = [];
+
+		// Removing fields that are probably generated
+		// Fields that have length or usage in name are generated, regex to remove them
+		const removeFieldsRegex = /^.*(length|usage|wpml_language).*$/g;
 
 		const setType = ( key ) => {
 			let type = handleType( key, ( cellOptions ) => cellOptions );
@@ -50,17 +53,8 @@ export default function ImportPanel( { props, handlePanel } ) {
 		Object.entries( endpointArgs ).filter( ( [ key, valObj ] ) => {
 			if ( typeof valObj === 'object' && valObj?.required === true ) {
 				requiredFields.push( { key, type: setType( key ) } );
-				delete optionalHeaders[ key ]; // Removing required
 			}
-			return false;
-		} );
-
-		// Removing fields that are probably generated
-		// Fields that have length or usage in name are generated, regex to remove them
-		const removeFieldsRegex = /^.*(length|usage).*$/g;
-
-		Object.keys( optionalHeaders ).map( ( key ) => {
-			if ( ! removeFieldsRegex.test( key ) ) {
+			if ( typeof valObj === 'object' && valObj?.required !== true && ! removeFieldsRegex.test( key ) ) {
 				optionalFields.push( { key, type: setType( key ) } );
 			}
 			return false;

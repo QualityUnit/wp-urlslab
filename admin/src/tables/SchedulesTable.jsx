@@ -71,6 +71,7 @@ export default function SchedulesTable( { slug } ) {
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'follow_links', {
+			filterValMenu: followLinksTypes,
 			cell: ( cell ) => followLinksTypes[ cell?.getValue() ],
 			header: header.follow_links,
 			size: 150,
@@ -81,6 +82,7 @@ export default function SchedulesTable( { slug } ) {
 			size: 150,
 		} ),
 		columnHelper.accessor( 'scan_frequency', {
+			filterValMenu: scanFrequencyTypes,
 			cell: ( cell ) => scanFrequencyTypes[ cell?.getValue() ],
 			header: header.scan_frequency,
 			size: 90,
