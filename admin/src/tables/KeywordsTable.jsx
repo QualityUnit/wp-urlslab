@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import {
 	useInfiniteFetch, ProgressBar, SortMenu, LangMenu, InputField, Checkbox, LinkIcon, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
@@ -53,7 +53,7 @@ export default function KeywordsTable( { slug } ) {
 		urlFilter: <InputField liveUpdate defaultValue="" label={ header.urlFilter } onChange={ ( val ) => setInsertRow( { ...rowToInsert, urlFilter: val } ) } />,
 	};
 
-	const columns = useMemo( () => [
+	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
@@ -128,7 +128,7 @@ export default function KeywordsTable( { slug } ) {
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
-	] );
+	];
 
 	if ( status === 'loading' ) {
 		return <Loader />;

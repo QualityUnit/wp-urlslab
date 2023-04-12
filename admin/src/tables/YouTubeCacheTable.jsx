@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import {
 	useInfiniteFetch, ProgressBar, Tooltip, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
@@ -41,7 +40,7 @@ export default function YouTubeCacheTable( { slug } ) {
 		published: __( 'Published' ),
 	};
 
-	const columns = useMemo( () => [
+	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
@@ -83,7 +82,7 @@ export default function YouTubeCacheTable( { slug } ) {
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
-	], [] );
+	];
 
 	if ( status === 'loading' ) {
 		return <Loader />;

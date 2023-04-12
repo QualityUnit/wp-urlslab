@@ -1,4 +1,4 @@
-import { useRef, useMemo, useState } from 'react';
+import { useRef, useMemo, useState, useCallback } from 'react';
 
 import {
 	useInfiniteFetch, ProgressBar, Tooltip, SortMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
@@ -36,13 +36,13 @@ export default function NotFoundTable( { slug } ) {
 
 	const { redirectTypes, matchTypes, header: redirectHeader } = useRedirectTableMenus();
 
-	const addRedirect = ( { cell } ) => {
+	const addRedirect = useCallback( ( { cell } ) => {
 		const { url: defaultMatchUrl } = cell.row.original;
 		matchUrlField.current = defaultMatchUrl;
 		setInsertRow( { match_type: 'E', redirect_code: '301', match_url: defaultMatchUrl } );
 
 		setActivePanel( 'addrow' );
-	};
+	}, [ setInsertRow ] );
 
 	const inserterCells = {
 		match_type: <SortMenu autoClose items={ matchTypes } name="match_type" checkedId="E" onChange={ ( val ) => setInsertRow( { ...rowToInsert, match_type: val } ) }>{ redirectHeader.match_type }</SortMenu>,
@@ -56,9 +56,7 @@ export default function NotFoundTable( { slug } ) {
 		cnt: __( 'Visits' ),
 		created: __( 'First Visit' ),
 		updated: 'Last Visit',
-		agent: 'User Agent',
-		referer: 'Referer',
-		ip: 'IP',
+		request_data: 'User agent',
 	};
 
 	const columns = useMemo( () => [
@@ -90,7 +88,7 @@ export default function NotFoundTable( { slug } ) {
 			id: 'agent',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <BrowserIcon uaString={ cell.getValue() } />,
-			header: header.agent,
+			header: __( 'User Agent' ),
 			size: 150,
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.referer, {
@@ -99,7 +97,7 @@ export default function NotFoundTable( { slug } ) {
 			cell: ( cell ) => {
 				return cell.getValue();
 			},
-			header: header.referer,
+			header: __( 'Referer' ),
 			size: 120,
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.ip, {
@@ -108,7 +106,7 @@ export default function NotFoundTable( { slug } ) {
 			cell: ( cell ) => {
 				return cell.getValue();
 			},
-			header: header.ip,
+			header: 'IP',
 			size: 100,
 		} ),
 		columnHelper.accessor( 'addRedirect', {
@@ -123,7 +121,7 @@ export default function NotFoundTable( { slug } ) {
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
-	], [] );
+	], [ header.url, header.cnt, header.created, header.updated, __, addRedirect ] );
 
 	if ( status === 'loading' ) {
 		return <Loader />;

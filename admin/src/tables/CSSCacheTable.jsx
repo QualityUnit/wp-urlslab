@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import {
 	useInfiniteFetch, ProgressBar, Tooltip, SortMenu, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
@@ -39,7 +38,7 @@ export default function CSSCacheTable( { slug } ) {
 		filesize: __( 'Filesize' ),
 	};
 
-	const columns = useMemo( () => [
+	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
@@ -79,7 +78,7 @@ export default function CSSCacheTable( { slug } ) {
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
-	], [] );
+	];
 
 	if ( status === 'loading' ) {
 		return <Loader />;

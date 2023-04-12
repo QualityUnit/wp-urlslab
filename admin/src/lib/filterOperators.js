@@ -9,6 +9,14 @@ export const numericOp = {
 	'<': 'is smaller than',
 };
 
+export const dateOp = {
+	exactly: 'is exactly',
+	'<>': 'is not equal',
+	// BETWEEN: 'is between', //Disabled for now
+	'>': 'is after',
+	'<': 'is before',
+};
+
 export const menuOp = {
 	exactly: 'is',
 	'<>': 'is not',
