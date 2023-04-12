@@ -1,4 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
+import Loader from '../components/Loader';
 import Tooltip from './Tooltip';
 
 export default function TooltipSortingFiltering( { props } ) {
@@ -6,11 +7,13 @@ export default function TooltipSortingFiltering( { props } ) {
 	const { isFetching, sortingColumn, filters } = props;
 
 	return (
-		<>
-			{ isFetching && ( sortingColumn || filters )
-				? <Tooltip center>{ __( 'Filtering & Sorting…' ) }</Tooltip>
-				: null
-			}
-		</>
+		isFetching && ( sortingColumn || filters )
+			? <Tooltip center>
+				<Loader>
+					{ __( 'Filtering & Sorting…' ) }<br />
+					{ __( '(might take a while)' ) }
+				</Loader>
+			</Tooltip>
+			: null
 	);
 }

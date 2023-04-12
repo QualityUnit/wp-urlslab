@@ -10,7 +10,7 @@ export default function MediaFilesTable( { slug } ) {
 	const pageId = 'fileid';
 
 	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = `${ filters }${ sortingColumn }`;
+	const url = `${ filters || '' }${ sortingColumn || '' }`;
 
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 

@@ -1,5 +1,5 @@
 import { fetchData } from './fetching';
-import {getParamsChar} from "../lib/helpers";
+import { getParamsChar } from '../lib/helpers';
 
 let lastPage = '';
 let dataForCSV = [];
@@ -15,7 +15,7 @@ export async function exportCSV( options, result ) {
 	const response = await fetchData( `${ url }${ qOperator }${ fromId }=${ lastPage }&rows_per_page=${ perPage }${ filters || '' }` );
 
 	if ( ! lastPage ) {
-		totalItems = await fetchData( `${ url }/count${ filters ? getParamsChar()+`${ filters }` : '' }` );
+		totalItems = await fetchData( `${ url }/count${ filters ? getParamsChar() + `${ filters }` : '' }` );
 	}
 
 	dataForCSV.push( await response ); // Adds downloaded results to array

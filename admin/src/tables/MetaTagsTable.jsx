@@ -8,7 +8,7 @@ import useChangeRow from '../hooks/useChangeRow';
 export default function LinkManagerTable( { slug } ) {
 	const pageId = 'url_id';
 	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = `${ filters }${ sortingColumn || '&sort_column=url_name&sort_direction=ASC' }`;
+	const url = `${ filters || '' }${ sortingColumn || '&sort_column=url_name&sort_direction=ASC' }`;
 
 	const {
 		__,

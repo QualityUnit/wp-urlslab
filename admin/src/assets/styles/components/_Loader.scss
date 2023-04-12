@@ -36,4 +36,15 @@
 			display: none;
 		}
 	}
+
+	.urlslab-tooltip & {
+		opacity: 1;
+		margin: 1em;
+
+		&-anim {
+
+			@include square(4em);
+			filter: invert(1);
+		}
+	}
 }

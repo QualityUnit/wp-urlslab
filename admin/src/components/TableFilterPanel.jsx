@@ -1,5 +1,5 @@
 
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo, useEffect, useState, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { stringOp, dateOp, numericOp, menuOp, langOp } from '../lib/filterOperators';
@@ -29,12 +29,10 @@ export default function TableFilterPanel( { props, onEdit } ) {
 		return Object.keys( currentFilters )?.length && currentFilters[ key ]?.op ? currentFilters[ key ]?.op !== 'BETWEEN' : state.filterObj.filterOp !== 'BETWEEN';
 	}, [ currentFilters, key, state.filterObj.filterOp ] );
 
-	console.log( currentFilters[ key ]?.val );
-
-	const handleKeyChange = ( keyParam ) => {
+	const handleKeyChange = useCallback( ( keyParam ) => {
 		dispatch( { type: 'setFilterKey', key: keyParam } );
 		handleType( keyParam, ( cellOptions ) => setFilterValMenu( cellOptions ) );
-	};
+	}, [ dispatch, handleType ] );
 
 	useEffect( () => {
 		if ( state.filterObj.keyType === undefined ) {

@@ -1,3 +1,5 @@
+/* global wpApiSettings */
+
 export async function cronAll( runCron, controller, cronTasks, onError ) {
 	controller = new AbortController();
 	if ( ! runCron.current ) {

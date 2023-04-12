@@ -6,7 +6,7 @@ import useTableUpdater from '../hooks/useTableUpdater';
 export default function ContentCacheTable( { slug } ) {
 	const pageId = 'cache_crc32';
 	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = `${ filters }${ sortingColumn }`;
+	const url = `${ filters || '' }${ sortingColumn || '' }`;
 
 	const {
 		__,

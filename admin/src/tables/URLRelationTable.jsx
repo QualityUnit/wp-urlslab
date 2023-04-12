@@ -8,7 +8,7 @@ import useChangeRow from '../hooks/useChangeRow';
 export default function URLRelationTable( { slug } ) {
 	const pageId = 'src_url_id';
 	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = `${ filters }${ sortingColumn }`;
+	const url = `${ filters || '' }${ sortingColumn || '' }`;
 
 	const {
 		__,
