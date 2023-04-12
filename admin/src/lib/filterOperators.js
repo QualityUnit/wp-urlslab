@@ -43,6 +43,11 @@ export const stringOp = {
 	'<': 'is shorter than',
 };
 
+export const booleanTypes = {
+	true: 'Checked',
+	false: 'Unchecked',
+};
+
 // Conditions to call different filter endpoint argument based on operator
 export default function filterArgs( currentFilters ) {
 	let filters = '';

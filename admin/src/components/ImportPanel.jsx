@@ -32,17 +32,24 @@ export default function ImportPanel( { props, handlePanel } ) {
 		const requiredFields = [];
 		const optionalFields = [];
 
+		const setType = ( key ) => {
+			let type = handleType( key, ( cellOptions ) => cellOptions );
+			if ( type === 'lang' ) {
+				type = 'like "en", "fr", "es" etc.';
+			}
+			if ( type === 'date' ) {
+				type = 'ie "2023–04–31 09:00:00" (YYYY-MM-dd HH:mm:ss)';
+			}
+			if ( type === 'boolean' ) {
+				type = 'true/false';
+			}
+			return type;
+		};
+
 		// Getting list of required fields for slug
 		Object.entries( endpointArgs ).filter( ( [ key, valObj ] ) => {
 			if ( typeof valObj === 'object' && valObj?.required === true ) {
-				let type = handleType( key, ( cellOptions ) => cellOptions );
-				if ( type === 'lang' ) {
-					type = 'like "en", "fr", "es" etc.';
-				}
-				if ( type === 'date' ) {
-					type = 'ie "2023–04–31 09:00:00" (YYYY-MM-dd HH:mm:ss)';
-				}
-				requiredFields.push( { key, type } );
+				requiredFields.push( { key, type: setType( key ) } );
 				delete optionalHeaders[ key ]; // Removing required
 			}
 			return false;
@@ -54,14 +61,7 @@ export default function ImportPanel( { props, handlePanel } ) {
 
 		Object.keys( optionalHeaders ).map( ( key ) => {
 			if ( ! removeFieldsRegex.test( key ) ) {
-				let type = handleType( key, ( cellOptions ) => cellOptions );
-				if ( type === 'lang' ) {
-					type = 'like "en", "fr", "es" etc.';
-				}
-				if ( type === 'date' ) {
-					type = 'ie "2023–04–31 09:00:00" (YYYY-MM-dd HH:mm:ss)';
-				}
-				optionalFields.push( { key, type } );
+				optionalFields.push( { key, type: setType( key ) } );
 			}
 			return false;
 		} );

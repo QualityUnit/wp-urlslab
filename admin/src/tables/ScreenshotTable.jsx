@@ -11,7 +11,7 @@ export default function ScreenshotTable( { slug } ) {
 
 	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 
-	const url = `${ filters || '' }${ sortingColumn || '&sort_column=url_name&sort_direction=ASC' }`;
+	const url = `${ filters || '' }${ sortingColumn || '' }`;
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
 	const {

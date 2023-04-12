@@ -76,6 +76,11 @@ export function useFilter( { slug, header, initialRow } ) {
 			return 'lang';
 		}
 
+		if ( typeof initialRow?.original[ key ] === 'boolean' ) {
+			dispatch( { type: 'setKeyType', keyType: 'boolean' } );
+			return 'boolean';
+		}
+
 		dispatch( { type: 'setKeyType', keyType: 'string' } );
 		return 'string';
 	};
