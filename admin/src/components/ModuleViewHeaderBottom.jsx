@@ -21,7 +21,7 @@ import DangerPanel from './DangerPanel';
 import TableFilter from './TableFilter';
 import DetailsPanel from './DetailsPanel';
 
-export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noExport, noCount, noDelete, header, table, insertOptions, activatePanel, detailsOptions, exportOptions, rowsSelected, defaultSortBy, onSort, onFilter, onClearRow } ) {
+export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noExport, noCount, noDelete, header, table, insertOptions, activatePanel, detailsOptions, exportOptions, rowsSelected, onSort, onFilter, onClearRow } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 
