@@ -20,7 +20,7 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 					'args'                => array(
 						'status' => array(
 							'required'          => true,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								switch ( $param ) {
 									case Urlslab_CSS_Cache_Row::STATUS_ACTIVE:
 									case Urlslab_CSS_Cache_Row::STATUS_DISABLED:
@@ -74,12 +74,12 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 	public function get_items( $request ) {
 		$rows = $this->get_items_sql( $request )->get_results();
 
-		if ( null === $rows || false === $rows ) {
+		if ( is_wp_error( $rows ) ) {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $row ) {
-			$row->url_id = (int) $row->url_id;
+			$row->url_id   = (int) $row->url_id;
 			$row->filesize = (int) $row->filesize;
 		}
 
@@ -106,13 +106,13 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 					array(
 						'filter_url'    => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_status' => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),

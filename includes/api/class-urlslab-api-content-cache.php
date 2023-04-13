@@ -58,13 +58,12 @@ class Urlslab_Api_Content_Cache extends Urlslab_Api_Table {
 
 	public function get_items( $request ) {
 		$rows = $this->get_items_sql( $request )->get_results();
-
-		if ( null == $rows || false == $rows ) {
+		if ( is_wp_error( $rows ) ) {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $row ) {
-			$row->cache_len = (int) $row->cache_len;
+			$row->cache_len   = (int) $row->cache_len;
 			$row->cache_crc32 = (int) $row->cache_crc32;
 		}
 
@@ -75,6 +74,10 @@ class Urlslab_Api_Content_Cache extends Urlslab_Api_Table {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( '*' );
 		$sql->add_from( URLSLAB_CONTENT_CACHE_TABLE );
+		$sql->add_filter( 'filter_date_changed' );
+		$sql->add_filter( 'filter_cache_len', '%d' );
+		$sql->add_filter( 'filter_cache_crc32' );
+		$sql->add_filter( 'filter_cache_content' );
 
 		$this->add_filter_table_fields( $sql );
 
