@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, SortMenu, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, Tooltip, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -22,7 +22,7 @@ export default function CSSCacheTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, pageId } );
 
-	const { row, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectRow, deleteRow } = useChangeRow( { data, url, slug, pageId } );
 
 	const statusTypes = {
 		N: __( 'New' ),
@@ -53,14 +53,9 @@ export default function CSSCacheTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'status', {
 			filterValMenu: statusTypes,
-			className: 'nolimit',
-			cell: ( cell ) => <SortMenu
-				items={ statusTypes }
-				name={ cell.column.id }
-				checkedId={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => statusTypes[ cell.getValue() ],
 			header: header.status,
-			size: 100,
+			size: 80,
 		} ),
 		columnHelper?.accessor( 'status_changed', {
 			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),

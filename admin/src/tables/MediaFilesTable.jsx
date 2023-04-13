@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, SortMenu, Checkbox, Trash, LinkIcon, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, Tooltip, Checkbox, Trash, SortMenu, LinkIcon, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -107,20 +107,20 @@ export default function MediaFilesTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'driver', {
 			filterValMenu: driverTypes,
-			cell: ( cell ) => driverTypes[ cell.getValue() ],
+			className: 'nolimit',
+			cell: ( cell ) => <SortMenu
+				items={ driverTypes }
+				name={ cell.column.id }
+				checkedId={ cell.getValue() }
+				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.driver,
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'filestatus', {
 			filterValMenu: statusTypes,
-			className: 'nolimit',
-			cell: ( cell ) => <SortMenu
-				items={ statusTypes }
-				name={ cell.column.id }
-				checkedId={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => statusTypes[ cell.getValue() ],
 			header: header.filestatus,
-			size: 100,
+			size: 80,
 		} ),
 		columnHelper?.accessor( 'file_usage_count', {
 			cell: ( cell ) => <div className="flex flex-align-center">
