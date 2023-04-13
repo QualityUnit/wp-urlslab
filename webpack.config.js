@@ -14,6 +14,7 @@ buildFolder = 'public/build';
 module.exports = {
   entry: {
       main: [
+      './'+assetsFolder+'/scss/urlslab_related_resources.scss',
       './'+assetsFolder+'/scss/urlslab_youtube_loader.scss',
       ],
       'urlslab-lazyload':'./'+assetsFolder+'/js/urlslab-lazyload.js',

@@ -107,28 +107,30 @@ export default function ImportPanel( { props, handlePanel } ) {
 					<div className="urlslab-panel-section">
 						<p>{ __( 'CSV file should contain headers:' ) }</p>
 
-						{ csvFields?.requiredFields?.length > 0 &&
-							<div className="flex">
-								<div>
-									<p><strong>{ __( 'Required headers:' ) }</strong></p>
-									<ul>
-										{ csvFields?.requiredFields.map( ( field ) => {
-											return (
-												<li key={ field.key }>
-													{ `${ header[ field.key ] } (${ field.key })` }
-													{ typeof field.type !== 'object' // Check if object = menu
-														? ` – ${ field.type }`
-														: <ul className="pl-s">
-															{ Object.entries( field.type ).map( ( [ key, val ] ) => {
-																return <li key={ key }>{ `${ key } – ${ val }` }</li>;
-															} ) }
-														</ul>
-													}
-												</li>
-											);
-										} ) }
-									</ul>
-								</div>
+						<div className="flex">
+							{ csvFields?.requiredFields?.length > 0 &&
+							<div>
+								<p><strong>{ __( 'Required headers:' ) }</strong></p>
+								<ul>
+									{ csvFields?.requiredFields.map( ( field ) => {
+										return (
+											<li key={ field.key }>
+												{ `${ header[ field.key ] } (${ field.key })` }
+												{ typeof field.type !== 'object' // Check if object = menu
+													? ` – ${ field.type }`
+													: <ul className="pl-s">
+														{ Object.entries( field.type ).map( ( [ key, val ] ) => {
+															return <li key={ key }>{ `${ key } – ${ val }` }</li>;
+														} ) }
+													</ul>
+												}
+											</li>
+										);
+									} ) }
+								</ul>
+							</div>
+							}
+							{ csvFields?.optionalFields.length > 0 &&
 								<div className="ml-xxl">
 									<p><strong>{ __( 'Optional headers:' ) }</strong></p>
 									<ul>
@@ -149,8 +151,8 @@ export default function ImportPanel( { props, handlePanel } ) {
 										} ) }
 									</ul>
 								</div>
-							</div>
-						}
+							}
+						</div>
 					</div>
 					{ importStatus
 						? <ProgressBar className="mb-m" notification="Importing…" value={ importStatus } />
