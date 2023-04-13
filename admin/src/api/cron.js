@@ -6,6 +6,7 @@ export async function cronAll( runCron, controller, cronTasks, onError ) {
 		controller.abort();
 	}
 	try {
+		const timeoutId = setTimeout( () => controller.abort(), 60000 ); // 1 minute timeout
 		const response = await fetch( wpApiSettings.root + 'urlslab/v1/cron/all', {
 			method: 'GET',
 			headers: {
@@ -33,6 +34,7 @@ export async function cronAll( runCron, controller, cronTasks, onError ) {
 			onError( 'error' );
 			return false;
 		}
+		clearTimeout( timeoutId );
 		return response;
 	} catch ( err ) {
 		onError( 'error' );
