@@ -420,15 +420,17 @@ class ContentApi
      * @param  \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest $domain_data_retrieval_augment_request Augment request (required)
      * @param  string $with_source with_source (optional, default to 'false')
      * @param  string $ignore_query ignore_query (optional, default to 'false')
+     * @param  string $custom_context custom_context (optional, default to 'false')
+     * @param  string $context_mandatory context_mandatory (optional, default to 'true')
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['memoryLessAugment'] to see the possible values for this operation
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return \OpenAPI\Client\Model\DomainDataRetrievalAugmentResponse
      */
-    public function memoryLessAugment($domain_data_retrieval_augment_request, $with_source = 'false', $ignore_query = 'false', string $contentType = self::contentTypes['memoryLessAugment'][0])
+    public function memoryLessAugment($domain_data_retrieval_augment_request, $with_source = 'false', $ignore_query = 'false', $custom_context = 'false', $context_mandatory = 'true', string $contentType = self::contentTypes['memoryLessAugment'][0])
     {
-        list($response) = $this->memoryLessAugmentWithHttpInfo($domain_data_retrieval_augment_request, $with_source, $ignore_query, $contentType);
+        list($response) = $this->memoryLessAugmentWithHttpInfo($domain_data_retrieval_augment_request, $with_source, $ignore_query, $custom_context, $context_mandatory, $contentType);
         return $response;
     }
 
@@ -440,15 +442,17 @@ class ContentApi
      * @param  \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest $domain_data_retrieval_augment_request Augment request (required)
      * @param  string $with_source (optional, default to 'false')
      * @param  string $ignore_query (optional, default to 'false')
+     * @param  string $custom_context (optional, default to 'false')
+     * @param  string $context_mandatory (optional, default to 'true')
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['memoryLessAugment'] to see the possible values for this operation
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of \OpenAPI\Client\Model\DomainDataRetrievalAugmentResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function memoryLessAugmentWithHttpInfo($domain_data_retrieval_augment_request, $with_source = 'false', $ignore_query = 'false', string $contentType = self::contentTypes['memoryLessAugment'][0])
+    public function memoryLessAugmentWithHttpInfo($domain_data_retrieval_augment_request, $with_source = 'false', $ignore_query = 'false', $custom_context = 'false', $context_mandatory = 'true', string $contentType = self::contentTypes['memoryLessAugment'][0])
     {
-        $request = $this->memoryLessAugmentRequest($domain_data_retrieval_augment_request, $with_source, $ignore_query, $contentType);
+        $request = $this->memoryLessAugmentRequest($domain_data_retrieval_augment_request, $with_source, $ignore_query, $custom_context, $context_mandatory, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -542,14 +546,16 @@ class ContentApi
      * @param  \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest $domain_data_retrieval_augment_request Augment request (required)
      * @param  string $with_source (optional, default to 'false')
      * @param  string $ignore_query (optional, default to 'false')
+     * @param  string $custom_context (optional, default to 'false')
+     * @param  string $context_mandatory (optional, default to 'true')
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['memoryLessAugment'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function memoryLessAugmentAsync($domain_data_retrieval_augment_request, $with_source = 'false', $ignore_query = 'false', string $contentType = self::contentTypes['memoryLessAugment'][0])
+    public function memoryLessAugmentAsync($domain_data_retrieval_augment_request, $with_source = 'false', $ignore_query = 'false', $custom_context = 'false', $context_mandatory = 'true', string $contentType = self::contentTypes['memoryLessAugment'][0])
     {
-        return $this->memoryLessAugmentAsyncWithHttpInfo($domain_data_retrieval_augment_request, $with_source, $ignore_query, $contentType)
+        return $this->memoryLessAugmentAsyncWithHttpInfo($domain_data_retrieval_augment_request, $with_source, $ignore_query, $custom_context, $context_mandatory, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -565,15 +571,17 @@ class ContentApi
      * @param  \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest $domain_data_retrieval_augment_request Augment request (required)
      * @param  string $with_source (optional, default to 'false')
      * @param  string $ignore_query (optional, default to 'false')
+     * @param  string $custom_context (optional, default to 'false')
+     * @param  string $context_mandatory (optional, default to 'true')
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['memoryLessAugment'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function memoryLessAugmentAsyncWithHttpInfo($domain_data_retrieval_augment_request, $with_source = 'false', $ignore_query = 'false', string $contentType = self::contentTypes['memoryLessAugment'][0])
+    public function memoryLessAugmentAsyncWithHttpInfo($domain_data_retrieval_augment_request, $with_source = 'false', $ignore_query = 'false', $custom_context = 'false', $context_mandatory = 'true', string $contentType = self::contentTypes['memoryLessAugment'][0])
     {
         $returnType = '\OpenAPI\Client\Model\DomainDataRetrievalAugmentResponse';
-        $request = $this->memoryLessAugmentRequest($domain_data_retrieval_augment_request, $with_source, $ignore_query, $contentType);
+        $request = $this->memoryLessAugmentRequest($domain_data_retrieval_augment_request, $with_source, $ignore_query, $custom_context, $context_mandatory, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -617,12 +625,14 @@ class ContentApi
      * @param  \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest $domain_data_retrieval_augment_request Augment request (required)
      * @param  string $with_source (optional, default to 'false')
      * @param  string $ignore_query (optional, default to 'false')
+     * @param  string $custom_context (optional, default to 'false')
+     * @param  string $context_mandatory (optional, default to 'true')
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['memoryLessAugment'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function memoryLessAugmentRequest($domain_data_retrieval_augment_request, $with_source = 'false', $ignore_query = 'false', string $contentType = self::contentTypes['memoryLessAugment'][0])
+    public function memoryLessAugmentRequest($domain_data_retrieval_augment_request, $with_source = 'false', $ignore_query = 'false', $custom_context = 'false', $context_mandatory = 'true', string $contentType = self::contentTypes['memoryLessAugment'][0])
     {
 
         // verify the required parameter 'domain_data_retrieval_augment_request' is set
@@ -631,6 +641,8 @@ class ContentApi
                 'Missing the required parameter $domain_data_retrieval_augment_request when calling memoryLessAugment'
             );
         }
+
+
 
 
 
@@ -655,6 +667,24 @@ class ContentApi
         $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
             $ignore_query,
             'ignoreQuery', // param base name
+            'string', // openApiType
+            'form', // style
+            true, // explode
+            false // required
+        ) ?? []);
+        // query params
+        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+            $custom_context,
+            'customContext', // param base name
+            'string', // openApiType
+            'form', // style
+            true, // explode
+            false // required
+        ) ?? []);
+        // query params
+        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+            $context_mandatory,
+            'contextMandatory', // param base name
             'string', // openApiType
             'form', // style
             true, // explode

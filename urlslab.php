@@ -35,6 +35,7 @@ define( 'URLSLAB_VERSION_SETTING', 'urlslab_ver' );
 define( 'URLSLAB_PLUGIN', __FILE__ );
 
 define( 'URLSLAB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'URLSLAB_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'URLSLAB_PLUGIN_BASENAME', plugin_basename( URLSLAB_PLUGIN ) );
 define( 'URLSLAB_PLUGIN_SLUG', 'urlslab' );
 define( 'URLSLAB_PLUGIN_LOG', plugin_dir_path( __FILE__ ) . 'debug.log' );

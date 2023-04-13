@@ -87,13 +87,13 @@ class Urlslab_Available_Widgets {
 	/**
 	 * @param string $widget_slug
 	 *
-	 * @return false|Urlslab_Widget
+	 * @return null|Urlslab_Widget
 	 */
 	public function get_widget( string $widget_slug ): ?Urlslab_Widget {
 		if ( $this->widget_exists( $widget_slug ) ) {
 			return $this->available_widgets[ $widget_slug ];
 		} else {
-			return false;
+			return null;
 		}
 	}
 

@@ -40,7 +40,7 @@ class Urlslab_Api_Settings extends Urlslab_Api_Base {
 	public function get_items( $request ) {
 		try {
 			$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $request->get_param( 'module_id' ) );
-			if ( false == $widget ) {
+			if ( null == $widget ) {
 				return new WP_Error( 'not-found', __( 'Module not found', 'urlslab' ), array( 'status' => 400 ) );
 			}
 
@@ -53,7 +53,7 @@ class Urlslab_Api_Settings extends Urlslab_Api_Base {
 	public function update_item( $request ) {
 		try {
 			$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $request->get_param( 'module_id' ) );
-			if ( false == $widget ) {
+			if ( null == $widget ) {
 				return new WP_Error( 'not-found', __( 'Module not found', 'urlslab' ), array( 'status' => 400 ) );
 			}
 
