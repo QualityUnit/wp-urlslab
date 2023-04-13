@@ -25,8 +25,6 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	public function hook_callback() {
-		wp_enqueue_style( 'urlslab-related-resources', plugin_dir_url( __FILE__ ) . '../../public/build/css/urlslab_related_resources.css', false, false );
-
 		add_shortcode(
 			$this->get_widget_slug(),
 			array(
@@ -147,6 +145,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	private function render_shortcode_header( array $urlslab_atts ): string {
+		wp_enqueue_style( 'urlslab-related-resources', plugin_dir_url( URLSLAB_PLUGIN_DIR . 'public/build/css/urlslab_youtube_loader.css' ) . 'urlslab_related_resources.css', false, false );
 		$css_class = 'urlslab-rel-res-items urlslab-skip-all';
 		if ( ! empty( $urlslab_atts['show-image'] ) ) {
 			$css_class .= ' urlslab-rel-res-items-with-image';

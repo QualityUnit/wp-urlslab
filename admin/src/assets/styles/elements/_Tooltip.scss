@@ -13,6 +13,10 @@
 	color: $white;
 	transform: translateZ(0);
 
+	&.success {
+		background-color: $saturated-green;
+	}
+
 	&.error {
 		background-color: $saturated-red;
 	}
