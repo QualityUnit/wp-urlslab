@@ -140,24 +140,18 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 				if ( strlen( $api_key ) ) {
 					$client  = new \OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key ) );
 					$request = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest();
-					$request->setAugmentCommand( $original_text );
-					$request->setRenewFrequency( \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
+					$request->setAugmentCommand( "" );
+					$request->setRenewFrequency( \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
 					$prompt = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt();
-					$prompt->setPromptTemplate( "{context}Your only task is to translate text from $source_lang to $target_lang. If text contains HTML, keep exactly the same HTML formatting as original text. Translated text should have similar length as original text. Original text to translate: {query}" );
-					$prompt->setDocumentTemplate( "\nIGNORE Following: {text}\nENF OF IGNORE\n" );
+					$prompt->setPromptTemplate( "Your only task is to translate text from $source_lang to $target_lang. If text contains HTML, keep exactly the same HTML formatting as original text. Keep the same capital letters structure in translated text. Translated text should have similar length as original text.{query}\nTRANSLATE:{context}" );
+					$prompt->setDocumentTemplate( $original_text );
 					$prompt->setMetadataVars( array() );
 					$request->setPrompt( $prompt );
 
-					$filter = new \OpenAPI\Client\Model\DomainDataRetrievalContentQuery();
-					$filter->setUrls( array( 'www.liveagent.com/pricing/' ) );
-					$filter->setLimit( 1 );
-					$request->setFilter( $filter );
-
 					try {
-						$response    = $client->memoryLessAugment( $request, 'false', 'true' );
+						$response    = $client->memoryLessAugment( $request, 'false', 'true', 'true', 'false' );
 						$translation = $response->getResponse();
 					} catch ( \OpenAPI\Client\ApiException $e ) {
-						return new WP_REST_Response( $e->getMessage(), $e->getCode() );
 					}
 				}
 			}

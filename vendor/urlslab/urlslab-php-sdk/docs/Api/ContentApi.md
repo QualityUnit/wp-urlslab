@@ -73,7 +73,7 @@ try {
 ## `memoryLessAugment()`
 
 ```php
-memoryLessAugment($domain_data_retrieval_augment_request, $with_source, $ignore_query): \OpenAPI\Client\Model\DomainDataRetrievalAugmentResponse
+memoryLessAugment($domain_data_retrieval_augment_request, $with_source, $ignore_query, $custom_context, $context_mandatory): \OpenAPI\Client\Model\DomainDataRetrievalAugmentResponse
 ```
 
 Augment based on the query and the given context
@@ -102,9 +102,11 @@ $apiInstance = new OpenAPI\Client\Api\ContentApi(
 $domain_data_retrieval_augment_request = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest(); // \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest | Augment request
 $with_source = 'false'; // string
 $ignore_query = 'false'; // string
+$custom_context = 'false'; // string
+$context_mandatory = 'true'; // string
 
 try {
-    $result = $apiInstance->memoryLessAugment($domain_data_retrieval_augment_request, $with_source, $ignore_query);
+    $result = $apiInstance->memoryLessAugment($domain_data_retrieval_augment_request, $with_source, $ignore_query, $custom_context, $context_mandatory);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling ContentApi->memoryLessAugment: ', $e->getMessage(), PHP_EOL;
@@ -118,6 +120,8 @@ try {
 | **domain_data_retrieval_augment_request** | [**\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest**](../Model/DomainDataRetrievalAugmentRequest.md)| Augment request | |
 | **with_source** | **string**|  | [optional] [default to &#39;false&#39;] |
 | **ignore_query** | **string**|  | [optional] [default to &#39;false&#39;] |
+| **custom_context** | **string**|  | [optional] [default to &#39;false&#39;] |
+| **context_mandatory** | **string**|  | [optional] [default to &#39;true&#39;] |
 
 ### Return type
 
