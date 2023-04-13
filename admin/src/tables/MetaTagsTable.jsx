@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, Trash, InputField, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, Tooltip, Trash, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -22,7 +22,7 @@ export default function LinkManagerTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, pageId } );
 
-	const { row, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectRow, deleteRow } = useChangeRow( { data, url, slug, pageId } );
 
 	// const sumStatusTypes = {
 	// 	N: __( 'Waiting' ),
@@ -42,14 +42,11 @@ export default function LinkManagerTable( { slug } ) {
 		503: __( 'Server Error' ),
 	};
 
-	const visibilityTypes = {
-		V: __( 'Visible' ),
-		H: __( 'Hidden' ),
-	};
-
-	const urlTypes = {
-		I: __( 'Internal' ),
-		E: __( 'External' ),
+	const relScheduleTypes = {
+		N: 'New',
+		M: 'Manual',
+		S: 'Scheduled',
+		E: 'Error',
 	};
 
 	const header = {
@@ -58,10 +55,7 @@ export default function LinkManagerTable( { slug } ) {
 		url_meta_description: __( 'Description' ),
 		url_summary: __( 'Summary' ),
 		http_status: __( 'Status' ),
-		// sum_status: __( 'Summary Status' ),
-		// update_sum_date: __( 'Summary Updated' ),
-		visibility: __( 'Visibility' ),
-		url_type: __( 'URL Type' ),
+		rel_schedule: __( 'Schedule' ),
 		update_http_date: __( 'Status Updated' ),
 	};
 
@@ -73,6 +67,14 @@ export default function LinkManagerTable( { slug } ) {
 			} } />,
 			header: null,
 		} ),
+		columnHelper?.accessor( 'screenshot_url', {
+			className: 'thumbnail',
+			cell: ( image ) => image?.getValue()
+				? <a href={ image?.getValue() } target="_blank" rel="noreferrer"><img src={ image?.getValue() } alt={ image.row.original.url_name } /></a>
+				: <div className="img"></div>,
+			header: __( 'Thumbnail' ),
+			size: 80,
+		} ),
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
@@ -80,61 +82,31 @@ export default function LinkManagerTable( { slug } ) {
 			size: 200,
 		} ),
 		columnHelper.accessor( 'url_title', {
-			className: 'nolimit',
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
 			header: header.url_title,
-			size: 150,
+			size: 200,
 		} ),
 		columnHelper?.accessor( 'url_meta_description', {
-			className: 'nolimit',
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
 			header: header.url_meta_description,
-			size: 100,
+			size: 200,
 		} ),
 		columnHelper.accessor( 'url_summary', {
-			className: 'nolimit',
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
 			header: header.url_summary,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'http_status', {
 			filterValMenu: httpStatusTypes,
-			className: 'nolimit',
-			cell: ( cell ) => <SortMenu
-				items={ httpStatusTypes }
-				name={ cell.column.id }
-				checkedId={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => httpStatusTypes[ cell.getValue() ],
 			header: header.http_status,
-			size: 100,
+			size: 80,
 		} ),
-		columnHelper.accessor( 'visibility', {
-			filterValMenu: visibilityTypes,
-			className: 'nolimit',
-			cell: ( cell ) => <SortMenu
-				items={ visibilityTypes }
-				name={ cell.column.id }
-				checkedId={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.visibility,
-			size: 100,
-		} ),
-		columnHelper.accessor( 'url_type', {
-			filterValMenu: urlTypes,
-			className: 'nolimit',
-			cell: ( cell ) => <SortMenu
-				items={ urlTypes }
-				name={ cell.column.id }
-				checkedId={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.url_type,
-			size: 100,
+		columnHelper.accessor( 'rel_schedule', {
+			filterValMenu: relScheduleTypes,
+			cell: ( cell ) => relScheduleTypes[ cell.getValue() ],
+			header: header.rel_schedule,
+			size: 80,
 		} ),
 		columnHelper.accessor( 'update_http_date', {
 			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
@@ -158,7 +130,6 @@ export default function LinkManagerTable( { slug } ) {
 				slug={ slug }
 				header={ header }
 				table={ table }
-				// defaultSortBy="url_name&ASC"
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				noImport

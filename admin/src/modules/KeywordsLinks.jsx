@@ -12,7 +12,7 @@ export default function KeywordLinks( { moduleId } ) {
 
 	const tableMenu = new Map( [
 		[ slug, __( 'Keywords' ) ],
-		[ 'd3-chart', __( 'Word Cloud' ) ],
+		// [ 'd3-chart', __( 'Word Cloud' ) ],
 	] );
 
 	const KeywordsTable = lazy( () => import( `../tables/KeywordsTable.jsx` ) );
@@ -36,12 +36,12 @@ export default function KeywordLinks( { moduleId } ) {
 					<KeywordsTable slug={ slug } />
 				</Suspense>
 			}
-			{
+			{ /* {
 				activeSection === 'd3-chart' &&
 				<Suspense>
 					<D3WordCloud slug={ slug } />
 				</Suspense>
-			}
+			} */ }
 			{
 				activeSection === 'settings' &&
 					<Suspense>

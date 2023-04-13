@@ -285,6 +285,16 @@
 }
 .urlslab-loader.noText .urlslab-loader-text {
   display: none;
+}
+.urlslab-tooltip .urlslab-loader {
+  opacity: 1;
+  margin: 1em;
+}
+.urlslab-tooltip .urlslab-loader-anim {
+  width: 4em;
+  height: 4em;
+  -webkit-filter: invert(1);
+          filter: invert(1);
 }/* stylelint-disable */
 .urlslab-DynamicModule {
   -webkit-box-flex: 1;
