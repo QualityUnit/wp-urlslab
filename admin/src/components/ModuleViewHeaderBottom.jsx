@@ -21,12 +21,13 @@ import DangerPanel from './DangerPanel';
 import TableFilter from './TableFilter';
 import DetailsPanel from './DetailsPanel';
 
-export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noExport, noCount, noDelete, header, table, insertOptions, activatePanel, detailsOptions, exportOptions, rowsSelected, defaultSortBy, onSort, onFilter, onClearRow } ) {
+export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noExport, noCount, noDelete, header, table, insertOptions, activatePanel, detailsOptions, exportOptions, rowsSelected, onSort, onFilter, onClearRow } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 
 	const [ activePanel, setActivePanel ] = useState( );
 	const [ filtersObj, setFiltersObj ] = useState();
+	const [ sortBy, setSortBy ] = useState();
 
 	useEffect( () => {
 		if ( activatePanel ) {
@@ -69,6 +70,7 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 	);
 
 	const handleSorting = ( val ) => {
+		setSortBy( val );
 		onSort( val );
 	};
 
@@ -134,7 +136,7 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 							</small>
 						}
 
-						<SortMenu className="menu-left ml-m" isFilter checkedId={ defaultSortBy } items={ sortItems } name="sorting" onChange={ handleSorting }>{ __( 'Sort by' ) }</SortMenu>
+						<SortMenu className="menu-left ml-m" isFilter checkedId={ sortBy } items={ sortItems } name="sorting" onChange={ handleSorting }>{ `Sort by${ sortBy ? ': ' + sortItems[ sortBy ] : '' }` }</SortMenu>
 
 						{
 							table &&
@@ -182,7 +184,7 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 			/>
 			}
 			{ activePanel === 'import' &&
-				<ImportPanel slug={ slug } handlePanel={ handlePanel } />
+				<ImportPanel props={ { slug, header, initialRow } } handlePanel={ handlePanel } />
 			}
 			{ activePanel === 'details' &&
 				<DetailsPanel options={ detailsOptions } handlePanel={ handlePanel } />

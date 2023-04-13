@@ -17,11 +17,12 @@ export default function App() {
 	const [ module, setModule ] = useState( 'urlslab-modules' );
 	const [ prefetch, setPrefetch ] = useState( true );
 
-	// Checking if API is set in advance
 	if ( prefetch ) {
+		// Checking if API is set in advance
 		queryClient.prefetchQuery( {
 			queryKey: [ 'general' ],
 			queryFn: () => fetchSettings( 'general' ).then( ( data ) => data ),
+			refetchOnWindowFocus: false,
 		} );
 
 		// Creating languages query object in advance
@@ -30,6 +31,15 @@ export default function App() {
 			queryFn: async () => await fetchLangs(),
 			refetchOnWindowFocus: false,
 		} );
+
+		/* Creating all endpoints query object in advance
+		to check for required import CSV fields */
+		queryClient.prefetchQuery( {
+			queryKey: [ 'routes' ],
+			queryFn: async () => await fetchData(),
+			refetchOnWindowFocus: false,
+		} );
+
 		setPrefetch( false );
 	}
 	const { data } = useQuery( {

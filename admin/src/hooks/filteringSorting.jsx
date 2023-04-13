@@ -58,7 +58,7 @@ export function useFilter( { slug, header, initialRow } ) {
 			if ( sendCellOptions ) {
 				sendCellOptions( cellfilterValMenu );
 			}
-			return 'menu';
+			return cellfilterValMenu;
 		}
 
 		if ( testDate.test( cellValue ) ) {
@@ -74,6 +74,11 @@ export function useFilter( { slug, header, initialRow } ) {
 		if ( key === 'lang' ) {
 			dispatch( { type: 'setKeyType', keyType: 'lang' } );
 			return 'lang';
+		}
+
+		if ( typeof initialRow?.original[ key ] === 'boolean' ) {
+			dispatch( { type: 'setKeyType', keyType: 'boolean' } );
+			return 'boolean';
 		}
 
 		dispatch( { type: 'setKeyType', keyType: 'string' } );

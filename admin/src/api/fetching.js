@@ -1,3 +1,4 @@
+/* global wpApiSettings */
 export async function fetchData( slug ) {
 	try {
 		const result = await fetch( wpApiSettings.root + `urlslab/v1${ slug ? `/${ slug }` : '' }`, {

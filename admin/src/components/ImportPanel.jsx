@@ -1,20 +1,67 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCSVReader } from 'react-papaparse';
 import importCsv from '../api/importCsv';
 
 import useCloseModal from '../hooks/useCloseModal';
+import { useFilter } from '../hooks/filteringSorting';
 
 import { ReactComponent as ImportIcon } from '../assets/images/icon-import.svg';
 import Button from '../elements/Button';
 import ProgressBar from '../elements/ProgressBar';
 
-export default function ImportPanel( { slug, handlePanel } ) {
+export default function ImportPanel( { props, handlePanel } ) {
+	const { slug, header, initialRow } = props;
 	const { __ } = useI18n();
+	const queryClient = useQueryClient();
+	const { CSVReader } = useCSVReader();
 	const [ importStatus, setImportStatus ] = useState();
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
+	const { handleType } = useFilter( { slug, header, initialRow } );
 	let importCounter = 0;
+
+	// Function to generate required/optional headers for CSV import
+	const csvFields = useMemo( () => {
+		// Getting slug endpoints from prefetched routes
+		const routeEndpoints = queryClient.getQueryData( [ 'routes' ] )?.routes[ `/urlslab/v1/${ slug }` ]?.endpoints;
+		// Getting slug arguments
+		const endpointArgs = routeEndpoints?.filter( ( endpoint ) => endpoint?.methods[ 0 ] === 'POST' )[ 0 ]?.args;
+
+		const requiredFields = [];
+		const optionalFields = [];
+
+		// Removing fields that are probably generated
+		// Fields that have length or usage in name are generated, regex to remove them
+		const removeFieldsRegex = /^.*(length|usage|wpml_language).*$/g;
+
+		const setType = ( key ) => {
+			let type = handleType( key, ( cellOptions ) => cellOptions );
+			if ( type === 'lang' ) {
+				type = 'like "en", "fr", "es" etc.';
+			}
+			if ( type === 'date' ) {
+				type = 'ie "2023–04–31 09:00:00" (YYYY-MM-dd HH:mm:ss)';
+			}
+			if ( type === 'boolean' ) {
+				type = 'true/false';
+			}
+			return type;
+		};
+
+		// Getting list of required fields for slug
+		Object.entries( endpointArgs ).filter( ( [ key, valObj ] ) => {
+			if ( typeof valObj === 'object' && valObj?.required === true ) {
+				requiredFields.push( { key, type: setType( key ) } );
+			}
+			if ( typeof valObj === 'object' && valObj?.required !== true && ! removeFieldsRegex.test( key ) ) {
+				optionalFields.push( { key, type: setType( key ) } );
+			}
+			return false;
+		} );
+
+		return { requiredFields, optionalFields };
+	}, [ queryClient, slug, header ] );
 
 	const hidePanel = ( operation ) => {
 		handleClose();
@@ -22,9 +69,6 @@ export default function ImportPanel( { slug, handlePanel } ) {
 			handlePanel( operation );
 		}
 	};
-
-	const queryClient = useQueryClient();
-	const { CSVReader } = useCSVReader();
 
 	const handleImportStatus = ( val ) => {
 		setImportStatus( val );
@@ -60,6 +104,54 @@ export default function ImportPanel( { slug, handlePanel } ) {
 				</div>
 
 				<div className="mt-l">
+					<div className="urlslab-panel-section">
+						<p>{ __( 'CSV file should contain headers:' ) }</p>
+
+						{ csvFields?.requiredFields?.length > 0 &&
+							<div className="flex">
+								<div>
+									<p><strong>{ __( 'Required headers:' ) }</strong></p>
+									<ul>
+										{ csvFields?.requiredFields.map( ( field ) => {
+											return (
+												<li key={ field.key }>
+													{ `${ header[ field.key ] } (${ field.key })` }
+													{ typeof field.type !== 'object' // Check if object = menu
+														? ` – ${ field.type }`
+														: <ul className="pl-s">
+															{ Object.entries( field.type ).map( ( [ key, val ] ) => {
+																return <li key={ key }>{ `${ key } – ${ val }` }</li>;
+															} ) }
+														</ul>
+													}
+												</li>
+											);
+										} ) }
+									</ul>
+								</div>
+								<div className="ml-xxl">
+									<p><strong>{ __( 'Optional headers:' ) }</strong></p>
+									<ul>
+										{ csvFields?.optionalFields?.map( ( field ) => {
+											return (
+												<li key={ field.key }>
+													{ `${ header[ field.key ] } (${ field.key })` }
+													{ typeof field.type !== 'object' // Check if object = menu
+														? ` – ${ field.type }`
+														: <ul className="pl-s">
+															{ Object.entries( field.type ).map( ( [ key, val ] ) => {
+																return <li key={ key }>{ `${ key } – ${ val }` }</li>;
+															} ) }
+														</ul>
+													}
+												</li>
+											);
+										} ) }
+									</ul>
+								</div>
+							</div>
+						}
+					</div>
 					{ importStatus
 						? <ProgressBar className="mb-m" notification="Importing…" value={ importStatus } />
 						: null

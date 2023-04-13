@@ -1,8 +1,8 @@
 
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo, useEffect, useState, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import { stringOp, dateOp, numericOp, menuOp, langOp } from '../lib/filterOperators';
+import { stringOp, dateOp, numericOp, menuOp, langOp, booleanTypes } from '../lib/filterOperators';
 import { useFilter } from '../hooks/filteringSorting';
 
 import Button from '../elements/Button';
@@ -21,7 +21,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 	const [ startDate, setStartDate ] = useState( currentFilters[ key ]?.val?.min ? new Date( currentFilters[ key ]?.val.min ) : currentDate.setDate( currentDate.getDate() - 2 ) );
 	const [ endDate, setEndDate ] = useState( currentFilters[ key ]?.val?.max ? new Date( currentFilters[ key ]?.val.max ) : currentDate );
 
-	const { state, dispatch, handleType } = useFilter( { slug, header, possibleFilters, initialRow } );
+	const { state, dispatch, handleType } = useFilter( { slug, header, initialRow } );
 
 	const cellUnit = initialRow?.getVisibleCells()?.filter( ( cell ) => cell.column?.id === state.filterObj.filterKey )[ 0 ]?.column?.columnDef.unit;
 
@@ -29,12 +29,10 @@ export default function TableFilterPanel( { props, onEdit } ) {
 		return Object.keys( currentFilters )?.length && currentFilters[ key ]?.op ? currentFilters[ key ]?.op !== 'BETWEEN' : state.filterObj.filterOp !== 'BETWEEN';
 	}, [ currentFilters, key, state.filterObj.filterOp ] );
 
-	console.log( currentFilters[ key ]?.val );
-
-	const handleKeyChange = ( keyParam ) => {
+	const handleKeyChange = useCallback( ( keyParam ) => {
 		dispatch( { type: 'setFilterKey', key: keyParam } );
 		handleType( keyParam, ( cellOptions ) => setFilterValMenu( cellOptions ) );
-	};
+	}, [ dispatch, handleType ] );
 
 	useEffect( () => {
 		if ( state.filterObj.keyType === undefined ) {
@@ -58,6 +56,10 @@ export default function TableFilterPanel( { props, onEdit } ) {
 		if ( state.filterObj.keyType === 'menu' ) {
 			dispatch( { type: 'setFilterOp', op: currentFilters[ key ]?.op || 'exactly' } );
 			dispatch( { type: 'setFilterVal', val: currentFilters[ key ]?.val || Object.keys( filterValMenu )[ 0 ] } );
+		}
+		if ( state.filterObj.keyType === 'boolean' ) {
+			dispatch( { type: 'setFilterOp', op: currentFilters[ key ]?.op || 'exactly' } );
+			dispatch( { type: 'setFilterVal', val: currentFilters[ key ]?.val || Object.keys( booleanTypes )[ 0 ] } );
 		}
 		if ( state.filterObj.keyType === 'lang' ) {
 			dispatch( { type: 'setFilterOp', op: currentFilters[ key ]?.op || 'exactly' } );
@@ -100,7 +102,8 @@ export default function TableFilterPanel( { props, onEdit } ) {
 							( state.filterObj.keyType === 'number' && numericOp ) ||
 							( state.filterObj.keyType === 'string' && stringOp ) ||
 							( state.filterObj.keyType === 'lang' && langOp ) ||
-							( state.filterObj.keyType === 'menu' && menuOp )
+							( state.filterObj.keyType === 'menu' && menuOp ) ||
+							( state.filterObj.keyType === 'boolean' && menuOp )
 						}
 						name="filter_ops"
 						defaultAccept
@@ -118,10 +121,21 @@ export default function TableFilterPanel( { props, onEdit } ) {
 					state.filterObj.keyType === 'menu' &&
 					<SortMenu
 						items={ filterValMenu }
-						name="menu_ops"
+						name="menu_vals"
 						defaultAccept
 						autoClose
 						checkedId={ currentFilters[ key ]?.val || Object.keys( filterValMenu )[ 0 ] }
+						onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) }
+					/>
+				}
+				{
+					state.filterObj.keyType === 'boolean' &&
+					<SortMenu
+						items={ booleanTypes }
+						name="boolean_vals"
+						defaultAccept
+						autoClose
+						checkedId={ currentFilters[ key ]?.val || Object.keys( booleanTypes )[ 0 ] }
 						onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) }
 					/>
 				}

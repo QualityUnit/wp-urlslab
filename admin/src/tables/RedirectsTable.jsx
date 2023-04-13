@@ -11,7 +11,7 @@ export default function RedirectsTable( { slug } ) {
 
 	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 
-	const url = `${ filters }${ sortingColumn }`;
+	const url = `${ filters || '' }${ sortingColumn || '' }`;
 
 	const {
 		__,
