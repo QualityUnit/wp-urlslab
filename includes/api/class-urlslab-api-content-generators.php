@@ -20,7 +20,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 					'args'                => array(
 						'status' => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								switch ( $param ) {
 									case Urlslab_Content_Generator_Row::STATUS_ACTIVE:
 									case Urlslab_Content_Generator_Row::STATUS_DISABLED:
@@ -35,7 +35,42 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 						),
 						'result' => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/translate',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'get_translation' ),
+					'permission_callback' => array(
+						$this,
+						'update_item_permissions_check',
+					),
+					'args'                => array(
+						'source_lang'   => array(
+							'required'          => true,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+						'target_lang'   => array(
+							'required'          => true,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+						'original_text' => array(
+							'required'          => true,
+							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
@@ -91,6 +126,47 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 		return new WP_REST_Response( $rows, 200 );
 	}
 
+	public function get_translation( $request ) {
+		$source_lang   = $request->get_param( 'source_lang' );
+		$target_lang   = $request->get_param( 'target_lang' );
+		$original_text = $request->get_param( 'original_text' );
+
+		$translation = $original_text;
+
+		if ( strlen( trim( $original_text ) ) > 0 && Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Content_Generator_Widget::SLUG ) ) {
+			$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
+			if ( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_TRANSLATE ) ) {
+				$api_key = get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
+				if ( strlen( $api_key ) ) {
+					$client  = new \OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key ) );
+					$request = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest();
+					$request->setAugmentCommand( $original_text );
+					$request->setRenewFrequency( \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
+					$prompt = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt();
+					$prompt->setPromptTemplate( "{context}Your only task is to translate text from $source_lang to $target_lang. If text contains HTML, keep exactly the same HTML formatting as original text. Translated text should have similar length as original text. Original text to translate: {query}" );
+					$prompt->setDocumentTemplate( "\nIGNORE Following: {text}\nENF OF IGNORE\n" );
+					$prompt->setMetadataVars( array() );
+					$request->setPrompt( $prompt );
+
+					$filter = new \OpenAPI\Client\Model\DomainDataRetrievalContentQuery();
+					$filter->setUrls( array( 'www.liveagent.com/pricing/' ) );
+					$filter->setLimit( 1 );
+					$request->setFilter( $filter );
+
+					try {
+						$response    = $client->memoryLessAugment( $request, 'false', 'true' );
+						$translation = $response->getResponse();
+					} catch ( \OpenAPI\Client\ApiException $e ) {
+						return new WP_REST_Response( $e->getMessage(), $e->getCode() );
+					}
+				}
+			}
+		}
+
+
+		return new WP_REST_Response( (object) array( 'translation' => $translation ), 200 );
+	}
+
 	public function get_row_object( $params = array() ): Urlslab_Data {
 		return new Urlslab_Content_Generator_Row( $params );
 	}
@@ -111,37 +187,37 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 					array(
 						'filter_command'          => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_url_filter'       => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_semantic_context' => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_result'           => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_status'           => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
 						'filter_status_changed'   => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return Urlslab_Api_Table::validate_string_filter_value( $param );
 							},
 						),
@@ -176,4 +252,5 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 
 		return $sql;
 	}
+
 }

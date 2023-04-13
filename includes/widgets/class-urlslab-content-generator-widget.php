@@ -5,6 +5,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 	public const SETTING_NAME_SCHEDULE = 'urlslab-gen-sched';
 	public const SETTING_NAME_REFRESH_INTERVAL = 'urlslab-gen-refresh';
 	public const SETTING_NAME_AUTOAPPROVE = 'urlslab-gen-autoapprove';
+	public const SETTING_NAME_TRANSLATE = 'urlslab-gen-translate';
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action(
@@ -14,7 +15,20 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			10,
 			0
 		);
+		Urlslab_Loader::get_instance()->add_action( 'admin_enqueue_scripts', $this, 'custom_admin_scripts' );
 	}
+
+	public function custom_admin_scripts() {
+		global $pagenow;
+		if (
+			'admin.php' === $pagenow &&
+			$this->get_option( self::SETTING_NAME_TRANSLATE ) &&
+			is_plugin_active( 'sitepress-multilingual-cms/sitepress.php' )
+		) {
+			wp_enqueue_script( 'urlslab-admin-script', URLSLAB_PLUGIN_URL . 'admin/js/urlslab-wpml.js', array( 'jquery' ), URLSLAB_VERSION );
+		}
+	}
+
 
 	public function hook_callback() {
 		add_shortcode(
@@ -42,25 +56,26 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		$content = null,
 		$tag = ''
 	): string {
-		if ( (
-				 isset( $_REQUEST['action'] )
+		if (
+			(
+				isset( $_REQUEST['action'] )
 				&& false !== strpos(
 					$_REQUEST['action'],
 					'elementor'
 				)
-			 )
+			)
 			|| in_array(
 				get_post_status(),
 				array( 'trash', 'auto-draft', 'inherit' )
 			)
-			 || ( class_exists( '\Elementor\Plugin' )
-				  && \Elementor\Plugin::$instance->editor->is_edit_mode() )
+			|| ( class_exists( '\Elementor\Plugin' )
+				 && \Elementor\Plugin::$instance->editor->is_edit_mode() )
 		) {
 			return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">Content Generator Placeholder</div>';
 		}
 
-		$atts = $this->get_attribute_values( $atts, $content, $tag );
-		$obj = new Urlslab_Content_Generator_Row( $atts, false );
+		$atts  = $this->get_attribute_values( $atts, $content, $tag );
+		$obj   = new Urlslab_Content_Generator_Row( $atts, false );
 		$value = $atts['default_value'];
 		if ( $obj->is_valid() ) {
 			if ( $obj->load() ) {
@@ -81,9 +96,10 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 				$atts
 			);
 			if ( empty( $template ) ) {
-				if ( file_exists(
-					URLSLAB_PLUGIN_DIR . 'public/' . $atts['template']
-				)
+				if (
+					file_exists(
+						URLSLAB_PLUGIN_DIR . 'public/' . $atts['template']
+					)
 				) {
 					$template = URLSLAB_PLUGIN_DIR
 								. 'public/'
@@ -104,7 +120,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 	}
 
 	public function get_attribute_values( $atts = array(), $content = null, $tag = '' ): array {
-		$atts = array_change_key_case( (array) $atts );
+		$atts            = array_change_key_case( (array) $atts );
 		$current_url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $this->get_current_page_url() );
 		if ( ! empty( $current_url_obj ) ) {
 			$title = $current_url_obj->get_summary_text(
@@ -114,19 +130,17 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			$title = get_the_title();
 		}
 
+		$replacements = array(
+			'www.',
+			'https://',
+			'http://',
+		);
+
 		return shortcode_atts(
 			array(
 				'semantic_context' => $title,
 				'command'          => 'Summarize information I gave you. Generate summarization in language |lang|.',
-				'url_filter'       => str_replace(
-					array(
-						'www.',
-						'https://',
-						'http://',
-					),
-					'',
-					$this->get_current_page_url()->get_url()
-				) . '*',
+				'url_filter'       => str_replace( $replacements, '', $this->get_current_page_url()->get_url() ) . '*',
 				'template'         => 'templates/simple-result.php',
 				'default_value'    => '',
 				'lang'             => $this->get_current_language(),
@@ -181,7 +195,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 				31536000         => __( 'Yearly' ),
 				self::FREQ_NEVER => __( 'Never' ),
 			),
-			function ( $value ) {
+			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'schedule',
@@ -207,5 +221,27 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			null,
 			'approval'
 		);
+
+		$this->add_options_form_section(
+			'wpml',
+			__( 'WPML Translation' ),
+			__(
+				'Translate texts in your Wordpress with masive scale. Plugin can connect to WPML translation editor and translate automatically all source texts to target language in time translator copy the original text to translation field. Feature is active just in case your installation use WPML plugin to manage translations.'
+			)
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_TRANSLATE,
+			false,
+			false,
+			__( 'Translate on Copy from original' ),
+			__(
+				'Translation will be generated when translator push button "Copy from original" or "Copy all fields from original". HTML should be correctly preserved in the translation.'
+			),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'wpml'
+		);
+
 	}
 }

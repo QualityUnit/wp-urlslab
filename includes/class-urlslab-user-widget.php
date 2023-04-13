@@ -23,7 +23,7 @@ class Urlslab_User_Widget {
 			} else {
 				foreach ( $widgets as $widget ) {
 					$widget_detail = $available_widgets->get_widget( $widget );
-					if ( false !== $widget_detail ) {
+					if ( null !== $widget_detail ) {
 						self::$instance->activated_widgets[ $widget_detail->get_widget_slug() ] = $widget_detail;
 					}
 				}
