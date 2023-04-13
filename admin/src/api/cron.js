@@ -1,12 +1,19 @@
 /* global wpApiSettings */
+let timeoutId;
 
 export async function cronAll( runCron, controller, cronTasks, onError ) {
 	controller = new AbortController();
 	if ( ! runCron.current ) {
+		timeoutId = null;
 		controller.abort();
+		console.log( 'nebezime' );
+		return false;
 	}
 	try {
-		const timeoutId = setTimeout( () => controller.abort(), 60000 ); // 1 minute timeout
+		if ( runCron.current ) {
+			console.log( 'bezime' );
+			timeoutId = setTimeout( () => controller.abort(), 60000 ); // 1 minute timeout
+		}
 		const response = await fetch( wpApiSettings.root + 'urlslab/v1/cron/all', {
 			method: 'GET',
 			headers: {
@@ -17,6 +24,9 @@ export async function cronAll( runCron, controller, cronTasks, onError ) {
 			credentials: 'include',
 			signal: controller.signal,
 		} );
+		if ( runCron.current ) {
+			clearTimeout( timeoutId );
+		}
 
 		if ( response.ok ) {
 			const result = await response.json();
@@ -34,9 +44,10 @@ export async function cronAll( runCron, controller, cronTasks, onError ) {
 			onError( 'error' );
 			return false;
 		}
-		clearTimeout( timeoutId );
+
 		return response;
 	} catch ( err ) {
+		timeoutId = null;
 		onError( 'error' );
 		return false;
 	}
