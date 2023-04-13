@@ -190,8 +190,8 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				   $this->render_screenshot( $url_obj, $urlslab_atts, $strategy ) .
 				   '<div class="urlslab-rel-res-item-text"><p class="urlslab-rel-res-item-title">' . esc_html( $title ) . '</p>' .
 				   ( ! empty( $summary_text ) ? '<p  class="urlslab-rel-res-item-summary">' . esc_html( $summary_text ) . '</p>' : '' ) .
-				   '</div>' .
 					 '<svg class="urlslab-rel-res-item-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32"><path d="m17.856 17.056-12.16 12.16a1.507 1.507 0 0 1-2.112 0l-1.44-1.408a1.546 1.546 0 0 1 0-2.144L11.776 16 2.144 6.336c-.576-.608-.576-1.536 0-2.112l1.44-1.44a1.507 1.507 0 0 1 2.112 0l12.16 12.16a1.507 1.507 0 0 1 0 2.112z"/></svg>' .
+				   '</div>' .
 					 '</a>' .
 				   '</div>';
 		} catch ( Exception $e ) {

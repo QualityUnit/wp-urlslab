@@ -35,20 +35,20 @@
     }
   }
 
-      	&-screenshot {
-      	  border: 1px solid #bec2c9;
-      	  border-radius: 0.25em;
-      	  margin-right: 1em;
-      	  width: 120px;
-      	  height: 63px;
-      	  overflow: hidden;
-    
-      	  img {
-      	    max-width: 100% !important;
-      	    height: auto;
-      	    border-radius: 0.25em;
-      	  }
-      	}
+  &-screenshot {
+    border: 1px solid #bec2c9;
+    border-radius: 0.25em;
+    margin-right: 1em;
+    width: 120px;
+    height: 63px;
+    overflow: hidden;
+
+    img {
+      max-width: 100% !important;
+      height: auto;
+      border-radius: 0.25em;
+    }
+  }
 
   &-text {
     position: relative;
@@ -57,8 +57,8 @@
   }
 
   &-arrow {
-    width: .9em;
-    height: 1.65em;
+    width: 1em;
+    height: 1.5em;
     fill: #050505 !important;
     position: absolute;
     right: 0;
