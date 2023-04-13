@@ -133,7 +133,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 
 		$translation = $original_text;
 
-		if ( strlen( trim( $original_text ) ) > 0 && Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Content_Generator_Widget::SLUG ) ) {
+		if ( strlen( trim( $original_text ) ) > 0 && preg_match( '/[\p{L}]+/u', $original_text ) && Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Content_Generator_Widget::SLUG ) ) {
 			$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
 			if ( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_TRANSLATE ) ) {
 				$api_key = get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
