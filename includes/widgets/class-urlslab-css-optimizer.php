@@ -132,6 +132,7 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 		$placeholders = array();
 		$values = array();
 		$now = Urlslab_Data::get_now();
+
 		foreach ( $links as $url => $urld_id ) {
 			if ( ! isset( $css_files[ $urld_id ] ) ) {
 				$placeholders[] = '(%d,%s,%s,%s)';

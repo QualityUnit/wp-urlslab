@@ -81,6 +81,9 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 		foreach ( $rows as $row ) {
 			$row->url_id   = (int) $row->url_id;
 			$row->filesize = (int) $row->filesize;
+			if ( 0 === $row->filesize ) {
+				$row->filesize = strlen( $row->css_content );
+			}
 		}
 
 		return new WP_REST_Response( $rows, 200 );

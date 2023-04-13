@@ -61,7 +61,6 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 			$page_content_file_name = download_url( $css->get_url_object()->get_url_with_protocol() );
 			if ( is_wp_error( $page_content_file_name ) || empty( $page_content_file_name ) || ! file_exists( $page_content_file_name ) || 0 == filesize( $page_content_file_name ) ) {
 				$css->set_status( Urlslab_CSS_Cache_Row::STATUS_DISABLED );
-				$css->set_filesize( 0 );
 				$css->set_css_content( '' );
 			} else {
 				$widget = Urlslab_Available_Widgets::get_instance()->get_widget( Urlslab_CSS_Optimizer::SLUG );
@@ -70,13 +69,11 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 					$css->set_filesize( filesize( $page_content_file_name ) );
 				} else {
 					$css->set_status( Urlslab_CSS_Cache_Row::STATUS_ACTIVE );
-					$css->set_filesize( filesize( $page_content_file_name ) );
 					$css->set_css_content( file_get_contents( $page_content_file_name ) );
 				}
 			}
 		} catch ( Exception $e ) {
 			$css->set_status( Urlslab_CSS_Cache_Row::STATUS_DISABLED );
-			$css->set_filesize( 0 );
 			$css->set_css_content( '' );
 		}
 		if ( is_string( $page_content_file_name ) && file_exists( $page_content_file_name ) ) {
