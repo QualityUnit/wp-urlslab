@@ -33,6 +33,7 @@ export default function ContentCacheTable( { slug } ) {
 			size: 100,
 		} ),
 		columnHelper.accessor( 'cache_len', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
 			header: header.cache_len,
 			size: 100,

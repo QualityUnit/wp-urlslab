@@ -88,6 +88,7 @@ export default function MediaFilesTable( { slug } ) {
 			size: 200,
 		} ),
 		columnHelper?.accessor( 'filesize', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			unit: 'kB',
 			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
 			header: header.filesize,

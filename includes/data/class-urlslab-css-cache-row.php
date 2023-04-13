@@ -12,22 +12,21 @@ class Urlslab_CSS_Cache_Row extends Urlslab_Data {
 	 * @param mixed $loaded_from_db
 	 */
 	public function __construct( array $url = array(), $loaded_from_db = true ) {
-		$this->set_url( 'url', $url['url'] ?? '', $loaded_from_db );
+		$this->set_url( $url['url'] ?? '', $loaded_from_db );
 		if ( isset( $url['url_id'] ) ) {
 			$url_id = $url['url_id'];
 		} else {
 			try {
-				$url_obj = $this->get_url_object();
-				$url_id = $url_obj->get_url_id();
+				$url_id  = $this->get_url_object()->get_url_id();
 			} catch ( Exception $e ) {
-				$url_id = 'invalid_url';
+				$url_id = 0;
 			}
 		}
 		$this->set_url_id( $url_id, $loaded_from_db );
 		$this->set_status( $url['status'] ?? self::STATUS_NEW, $loaded_from_db );
 		$this->set_status_changed( $url['status_changed'] ?? self::get_now(), $loaded_from_db );
-		$this->set_filesize( $url['filesize'] ?? 0, $loaded_from_db );
 		$this->set_css_content( $url['css_content'] ?? '', $loaded_from_db );
+		$this->set_filesize( $url['filesize'] ?? strlen( $this->get_css_content() ), $loaded_from_db );
 	}
 
 	public function get_url_id(): int {
@@ -47,7 +46,7 @@ class Urlslab_CSS_Cache_Row extends Urlslab_Data {
 	}
 
 	public function get_filesize(): int {
-		return $this->get( 'filesize' );
+		return 0 == $this->get( 'filesize' ) ? strlen( $this->get_css_content() ) : $this->get( 'filesize' );
 	}
 
 	public function get_css_content(): string {
@@ -79,6 +78,7 @@ class Urlslab_CSS_Cache_Row extends Urlslab_Data {
 
 	public function set_css_content( string $css_content, $loaded_from_db = false ): void {
 		$this->set( 'css_content', $css_content, $loaded_from_db );
+		$this->set_filesize( strlen( $css_content ) );
 	}
 
 	public function get_table_name(): string {
@@ -122,7 +122,7 @@ class Urlslab_CSS_Cache_Row extends Urlslab_Data {
 				'ARRAY_A'
 			);
 			foreach ( $results as $css_file_array ) {
-				$css_file_obj = new Urlslab_CSS_Cache_Row( $css_file_array );
+				$css_file_obj                             = new Urlslab_CSS_Cache_Row( $css_file_array );
 				$css_files[ $css_file_obj->get_url_id() ] = $css_file_obj;
 			}
 		}
