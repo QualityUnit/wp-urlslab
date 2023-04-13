@@ -42,9 +42,11 @@ export default function LinkManagerTable( { slug } ) {
 		503: __( 'Server Error' ),
 	};
 
-	const urlTypes = {
-		I: __( 'Internal' ),
-		E: __( 'External' ),
+	const relScheduleTypes = {
+		N: 'New',
+		M: 'Manual',
+		S: 'Scheduled',
+		E: 'Error',
 	};
 
 	const header = {
@@ -53,10 +55,7 @@ export default function LinkManagerTable( { slug } ) {
 		url_meta_description: __( 'Description' ),
 		url_summary: __( 'Summary' ),
 		http_status: __( 'Status' ),
-		// sum_status: __( 'Summary Status' ),
-		// update_sum_date: __( 'Summary Updated' ),
-		visibility: __( 'Visibility' ),
-		url_type: __( 'URL Type' ),
+		rel_schedule: __( 'Schedule' ),
 		update_http_date: __( 'Status Updated' ),
 	};
 
@@ -67,6 +66,14 @@ export default function LinkManagerTable( { slug } ) {
 				selectRow( val, cell );
 			} } />,
 			header: null,
+		} ),
+		columnHelper?.accessor( 'screenshot_url', {
+			className: 'thumbnail',
+			cell: ( image ) => image?.getValue()
+				? <a href={ image?.getValue() } target="_blank" rel="noreferrer"><img src={ image?.getValue() } alt={ image.row.original.url_name } /></a>
+				: <div className="img"></div>,
+			header: __( 'Thumbnail' ),
+			size: 80,
 		} ),
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
@@ -95,10 +102,10 @@ export default function LinkManagerTable( { slug } ) {
 			header: header.http_status,
 			size: 80,
 		} ),
-		columnHelper.accessor( 'url_type', {
-			filterValMenu: urlTypes,
-			cell: ( cell ) => urlTypes[ cell.getValue() ],
-			header: header.url_type,
+		columnHelper.accessor( 'rel_schedule', {
+			filterValMenu: relScheduleTypes,
+			cell: ( cell ) => relScheduleTypes[ cell.getValue() ],
+			header: header.rel_schedule,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'update_http_date', {
@@ -123,7 +130,6 @@ export default function LinkManagerTable( { slug } ) {
 				slug={ slug }
 				header={ header }
 				table={ table }
-				// defaultSortBy="url_name&ASC"
 				onSort={ ( val ) => sortBy( val ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				noImport
