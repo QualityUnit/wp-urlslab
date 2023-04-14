@@ -67,7 +67,6 @@ export default function SettingsOption( { settingId, option } ) {
 				return false;
 			}
 			setStatus( 'error' );
-			setDate( value );
 			setTimeout( () => {
 				setStatus();
 			}, 3000 );
