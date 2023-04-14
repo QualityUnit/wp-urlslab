@@ -4,7 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**augment_command** | **string** |  |
+**augment_command** | **string** |  | [optional]
 **filter** | [**\OpenAPI\Client\Model\DomainDataRetrievalContentQuery**](DomainDataRetrievalContentQuery.md) |  | [optional]
 **prompt** | [**\OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt**](DomainDataRetrievalAugmentPrompt.md) |  | [optional]
 **renew_frequency** | **string** |  |

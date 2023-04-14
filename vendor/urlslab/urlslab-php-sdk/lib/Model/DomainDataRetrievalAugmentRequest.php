@@ -83,7 +83,7 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'augment_command' => false,
+        'augment_command' => true,
 		'filter' => false,
 		'prompt' => false,
 		'renew_frequency' => false
@@ -320,9 +320,6 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
     {
         $invalidProperties = [];
 
-        if ($this->container['augment_command'] === null) {
-            $invalidProperties[] = "'augment_command' can't be null";
-        }
         if ($this->container['renew_frequency'] === null) {
             $invalidProperties[] = "'renew_frequency' can't be null";
         }
@@ -353,7 +350,7 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
     /**
      * Gets augment_command
      *
-     * @return string
+     * @return string|null
      */
     public function getAugmentCommand()
     {
@@ -363,14 +360,21 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
     /**
      * Sets augment_command
      *
-     * @param string $augment_command augment_command
+     * @param string|null $augment_command augment_command
      *
      * @return self
      */
     public function setAugmentCommand($augment_command)
     {
         if (is_null($augment_command)) {
-            throw new \InvalidArgumentException('non-nullable augment_command cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'augment_command');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('augment_command', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['augment_command'] = $augment_command;
 
