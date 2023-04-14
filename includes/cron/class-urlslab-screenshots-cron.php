@@ -18,7 +18,7 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Screenshot_Widget::SLUG ) || ! $this->init_client() ) {
 			return false;
 		}
-
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Screenshot_Widget::SLUG );
 		global $wpdb;
 
 		$query_data = array();
@@ -36,7 +36,7 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 		$query_data[]    = Urlslab_Url_Row::SCR_STATUS_NEW;
 		$where_status_or = '';
 
-		switch ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Screenshot_Widget::SLUG )->get_option( Urlslab_Screenshot_Widget::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL ) ) {
+		switch ( $widget->get_option( Urlslab_Screenshot_Widget::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL ) ) {
 			case \OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME:
 				break;
 			case \OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_DAILY:
@@ -110,7 +110,7 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 
 		$request = new DomainDataRetrievalDataRequest();
 		$request->setUrls( $url_names );
-		$request->setRenewFrequency( DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME );
+		$request->setRenewFrequency( $widget->get_option( Urlslab_Screenshot_Widget::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL ) );
 
 		try {
 			$urlslab_screenshots = $this->client->getScreenshots( $request );

@@ -190,7 +190,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME,
 			false,
 			__( 'Synchronization Frequency of Screenshots with URLsLab service' ),
-			__( 'The synchronization frequency of screenshots with the URLsLab service is different from how often URLsLab takes screenshots of the website. Even when we sync the data in the background by cron, it can use a lot of computation time. Therefore, we recommend Monthly or Quarterly synchronizations.' ),
+			__( 'Choose how often should URLsLab retake screenshot of url. Each screenshot costs some credits, so choose this value visely. To take the screenshot just once will fit to majority of cases.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_NO_SCHEDULE => __( 'Never' ),
