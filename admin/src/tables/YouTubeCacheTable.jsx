@@ -9,7 +9,7 @@ export default function YouTubeCacheTable( { slug } ) {
 	const pageId = 'videoid';
 
 	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = `${ filters || '' }${ sortingColumn || '' }`;
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '': sortingColumn }`;
 
 	const {
 		__,

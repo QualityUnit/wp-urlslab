@@ -23,19 +23,19 @@ class Urlslab_Api_Meta_Tags extends Urlslab_Api_Urls {
 					'args'                => array(
 						'url_title'            => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
 						'url_meta_description' => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
 						'url_summary'          => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
@@ -70,7 +70,7 @@ class Urlslab_Api_Meta_Tags extends Urlslab_Api_Urls {
 	}
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
-		if ( ! $request->get_param( 'filter_scr_schedule' ) ) {
+		if ( ! $request->get_param( 'filter_url_type' ) ) {
 			$request->set_param(
 				'filter_url_type',
 				json_encode(

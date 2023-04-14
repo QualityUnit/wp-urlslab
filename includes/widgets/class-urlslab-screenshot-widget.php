@@ -5,7 +5,12 @@ use Elementor\Plugin;
 class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	public const SLUG = 'urlslab-screenshot';
 
-	public const SETTING_NAME_SCHEDULE_SCREENSHOTS = 'urlslab-scr-sched-scr';
+	const SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL = 'urlslab-scr-refresh';
+	const SETTING_NAME_SHEDULE_SCRRENSHOT = 'urlslab-scr-schedule';
+	public const SCHEDULE_SHORTCODE = 'S';
+	public const SCHEDULE_ALL_INTERNALS = 'I';
+	public const SCHEDULE_ALL = 'A';
+	public const SCHEDULE_NEVER = 'N';
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action(
@@ -36,7 +41,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Automated Screenshots' );
+		return __( 'Screenshots' );
 	}
 
 	public function get_widget_description(): string {
@@ -72,11 +77,10 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		$tag = ''
 	): string {
 		if (
-			( isset( $_REQUEST['action'] )
-			&& false !== strpos(
-				$_REQUEST['action'],
-				'elementor'
-			) )
+			(
+				isset( $_REQUEST['action'] )
+				&& false !== strpos( $_REQUEST['action'], 'elementor' )
+			)
 			|| in_array(
 				get_post_status(),
 				array( 'trash', 'auto-draft', 'inherit' )
@@ -84,38 +88,33 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			|| ( class_exists( '\Elementor\Plugin' )
 				 && Plugin::$instance->editor->is_edit_mode() )
 		) {
-			return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">Screenshot Placeholder</div>';
+			$html_attributes = array();
+			foreach ( $this->get_attribute_values( $atts, $content, $tag ) as $id => $value ) {
+				$html_attributes[] = '<b>' . esc_html( $id ) . '</b>="<i>' . esc_html( $value ) . '</i>"';
+			}
+
+			return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">[<b>urlslab-screenshot</b> ' . implode( ', ', $html_attributes ) . ']</div>';
 		}
 		$urlslab_atts = $this->get_attribute_values( $atts, $content, $tag );
 
 		try {
 			if ( ! empty( $urlslab_atts['url'] ) ) {
-				$url_data = Urlslab_Url_Data_Fetcher::get_instance()
-													->load_and_schedule_url(
-														new Urlslab_Url(
-															$urlslab_atts['url']
-														)
-													);
+				$url_data = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( new Urlslab_Url( $urlslab_atts['url'] ) );
 
-				if ( ! empty( $url_data ) && $url_data->has_screenshot() ) {
-					if ( $this->get_option(
-						self::SETTING_NAME_SCHEDULE_SCREENSHOTS
-					)
+				if ( ! empty( $url_data ) ) {
+					if (
+						empty( $url_data->get_scr_status() ) &&
+						Urlslab_Screenshot_Widget::SCHEDULE_NEVER != Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Screenshot_Widget::SLUG )->get_option( Urlslab_Screenshot_Widget::SETTING_NAME_SHEDULE_SCRRENSHOT )
 					) {
-						$url_data->request_url_schedule(
-							Urlslab_Url_Row::URL_SCHEDULE_SCREENSHOT_REQUIRED
-						);
+						$url_data->set_scr_status( Urlslab_Url_Row::SCR_STATUS_NEW );
+						$url_data->update();
 					}
-					$alt_text = $url_data->get_summary_text(
-						Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY
-					);
+					$alt_text = $url_data->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
 					if ( empty( $alt_text ) ) {
 						$alt_text = $urlslab_atts['alt'];
 					}
 
-					$screenshot_url = $url_data->get_screenshot_url(
-						$urlslab_atts['screenshot-type']
-					);
+					$screenshot_url = $url_data->get_screenshot_url( $urlslab_atts['screenshot-type'] );
 					if ( empty( $screenshot_url ) ) {
 						$screenshot_url = $urlslab_atts['default-image'];
 					}
@@ -127,9 +126,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 
 					// track screenshot usage
 					$scr_url = new Urlslab_Screenshot_Url_Row();
-					$scr_url->set_src_url_id(
-						$this->get_current_page_url()->get_url_id()
-					);
+					$scr_url->set_src_url_id( $this->get_current_page_url()->get_url_id() );
 					$scr_url->set_screenshot_url_id( $url_data->get_url_id() );
 					$scr_url->insert_all( array( $scr_url ), true );
 
@@ -171,18 +168,45 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			)
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_SCHEDULE_SCREENSHOTS,
+			self::SETTING_NAME_SHEDULE_SCRRENSHOT,
+			self::SCHEDULE_SHORTCODE,
 			false,
-			false,
-			__( 'Screenshots Scheduling (paid)' ),
-			__(
-				'Automatically schedule new URLs to take screenshots with URLsLab service. It will be executed just once.'
+			__( 'Schedule Screenshot' ),
+			__( 'Choose URL types for which we will process screenshots' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				self::SCHEDULE_NEVER         => __( 'Never' ),
+				self::SCHEDULE_SHORTCODE     => __( 'When URL (external or internal) is used in screenshot shortcode' ),
+				self::SCHEDULE_ALL_INTERNALS => __( 'Every internal URL' ),
+				self::SCHEDULE_ALL           => __( 'All URLs in database' ),
 			),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'schedule'
+			function( $value ) {
+				return is_string( $value );
+			},
+			'schedule',
 		);
+		$this->add_option_definition(
+			self::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL,
+			\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME,
+			false,
+			__( 'Synchronization Frequency of Screenshots with URLsLab service' ),
+			__( 'Choose how often should URLsLab retake screenshot of url. Each screenshot costs some credits, so choose this value visely. To take the screenshot just once will fit to majority of cases.' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_NO_SCHEDULE => __( 'Never' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME    => __( 'One time screenshot' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_DAILY       => __( 'Daily' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_WEEKLY      => __( 'Weekly' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_MONTHLY     => __( 'Monthly' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_YEARLY      => __( 'Yearly' ),
+			),
+			function( $value ) {
+				return is_numeric( $value ) && 0 < $value;
+			},
+			'schedule',
+		);
+
+
 	}
 
 	private function render_shortcode(

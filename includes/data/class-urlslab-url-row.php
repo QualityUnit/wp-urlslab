@@ -6,20 +6,21 @@ class Urlslab_Url_Row extends Urlslab_Data {
 
 	public const VALUE_EMPTY = 'E';
 
-	public const HTTP_STATUS_NOT_PROCESSED = -1;
-	public const HTTP_STATUS_PENDING = -2;
+	public const HTTP_STATUS_NOT_PROCESSED = - 1;
+	public const HTTP_STATUS_PENDING = - 2;
 	public const HTTP_STATUS_OK = 200;
 	public const HTTP_STATUS_CLIENT_ERROR = 400;
-	public const HTTP_STATUS_SERVER_ERROR = 500;
 
 	public const SCR_STATUS_ERROR = 'E';
 	public const SCR_STATUS_NEW = 'N';
 	public const SCR_STATUS_PENDING = 'P';
+	public const SCR_STATUS_UPDATING = 'U';
 	public const SCR_STATUS_ACTIVE = 'A';
 
 	public const SUM_STATUS_ERROR = 'E';
 	public const SUM_STATUS_NEW = 'N';
 	public const SUM_STATUS_PENDING = 'P';
+	public const SUM_STATUS_UPDATING = 'U';
 	public const SUM_STATUS_ACTIVE = 'A';
 
 	public const VISIBILITY_VISIBLE = 'V';
@@ -30,11 +31,6 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	public const SCREENSHOT_TYPE_FULL_PAGE = 'full-page';
 	public const SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL = 'carousel-thumbnail';
 	public const SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL = 'full-page-thumbnail';
-	public const URL_SCHEDULE_SCREENSHOT_REQUIRED = 'N';
-	public const URL_SCHEDULE_SUMMARIZATION_REQUIRED = 'M';
-	public const URL_SCHEDULE_SCREENSHOT_SCHEDULED = 'S';
-	public const URL_SCHEDULE_SUMMARIZATION_SCHEDULED = 'T';
-	public const URL_SCHEDULE_ERROR = 'E';
 
 	//related resources schedule
 	public const REL_NOT_REQUESTED_SCHEDULE = '';
@@ -48,11 +44,11 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	 */
 	public function __construct(
 		array $url = array(),
-			  $loaded_from_db = true
+		$loaded_from_db = true
 	) {
 		$this->set_url_id( $url['url_id'] ?? 0, $loaded_from_db );
 		$this->set_url_name( $url['url_name'] ?? '', $loaded_from_db );
-		$this->set_scr_status( $url['scr_status'] ?? self::SCR_STATUS_NEW, $loaded_from_db );
+		$this->set_scr_status( $url['scr_status'] ?? '', $loaded_from_db );
 		$this->set_sum_status( $url['sum_status'] ?? self::SUM_STATUS_NEW, $loaded_from_db );
 		$this->set_http_status( $url['http_status'] ?? self::HTTP_STATUS_NOT_PROCESSED, $loaded_from_db );
 		$this->set_urlslab_domain_id( $url['urlslab_domain_id'] ?? '', $loaded_from_db );
@@ -66,7 +62,6 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$this->set_url_meta_description( $url['url_meta_description'] ?? '', $loaded_from_db );
 		$this->set_url_summary( $url['url_summary'] ?? '', $loaded_from_db );
 		$this->set_visibility( $url['visibility'] ?? self::VISIBILITY_VISIBLE, $loaded_from_db );
-		$this->set_url_schedule( $url['scr_schedule'] ?? '', $loaded_from_db );
 		$this->set_rel_schedule( $url['rel_schedule'] ?? self::REL_NOT_REQUESTED_SCHEDULE, $loaded_from_db );
 		$this->set_rel_updated( $url['rel_updated'] ?? self::get_now(), $loaded_from_db );
 
@@ -115,7 +110,6 @@ class Urlslab_Url_Row extends Urlslab_Data {
 			'url_summary'           => '%s',
 			'visibility'            => '%s',
 			'url_type'              => '%s',
-			'scr_schedule'          => '%s',
 			'rel_schedule'          => '%s',
 			'rel_updated'           => '%s',
 		);
@@ -167,10 +161,6 @@ class Urlslab_Url_Row extends Urlslab_Data {
 
 	public function get_update_http_date(): string {
 		return $this->get( 'update_http_date' );
-	}
-
-	public function get_url_schedule(): string {
-		return $this->get( 'scr_schedule' );
 	}
 
 	public function get_rel_schedule(): string {
@@ -291,10 +281,6 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$this->set( 'url_type', $url_type, $loaded_from_db );
 	}
 
-	public function set_url_schedule( string $scr_schedule, $loaded_from_db = false ): void {
-		$this->set( 'scr_schedule', $scr_schedule, $loaded_from_db );
-	}
-
 	public function set_rel_schedule( string $rel_schedule, $loaded_from_db = false ): void {
 		$this->set( 'rel_schedule', $rel_schedule, $loaded_from_db );
 		if ( ! $loaded_from_db ) {
@@ -409,18 +395,32 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	}
 
 
+	public function init_scr_status() {
+		if ( ! empty( $this->get_scr_status() ) ) {
+			return false;
+		}
+		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Screenshot_Widget::SLUG ) ) {
+			switch ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Screenshot_Widget::SLUG )->get_option( Urlslab_Screenshot_Widget::SETTING_NAME_SHEDULE_SCRRENSHOT ) ) {
+				case Urlslab_Screenshot_Widget::SCHEDULE_ALL:
+					break;
+				case Urlslab_Screenshot_Widget::SCHEDULE_ALL_INTERNALS:
+					if ( ! $this->is_internal() ) {
+						return false;
+					}
+					break;
+				default:
+					return false;
+			}
+			$this->set_scr_status( self::SCR_STATUS_NEW );
+		}
+	}
+
 	/**
 	 * @param Urlslab_Url[] $urls
 	 *
 	 * @return void
 	 */
-	public function insert_urls(
-		$urls,
-		$scr_status = self::SCR_STATUS_NEW,
-		$sum_status = self::SUM_STATUS_NEW,
-		$http_status = self::HTTP_STATUS_NOT_PROCESSED,
-		$rel_schedule = self::REL_NOT_REQUESTED_SCHEDULE
-	): bool {
+	public function insert_urls( $urls, $scr_status = false, $sum_status = self::SUM_STATUS_NEW, $http_status = self::HTTP_STATUS_NOT_PROCESSED, $rel_schedule = self::REL_NOT_REQUESTED_SCHEDULE ): bool {
 		if ( empty( $urls ) ) {
 			return true;
 		}
@@ -428,11 +428,10 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$rows = array();
 
 		foreach ( $urls as $url ) {
-			$rows[] = new Urlslab_Url_Row(
+			$url_obj = new Urlslab_Url_Row(
 				array(
 					'url_id'       => $url->get_url_id(),
 					'url_name'     => $url->get_url(),
-					'scr_status'   => $scr_status,
 					'sum_status'   => $sum_status,
 					'rel_schedule' => $rel_schedule,
 					'rel_updated'  => self::get_now(),
@@ -441,46 +440,17 @@ class Urlslab_Url_Row extends Urlslab_Data {
 				),
 				false
 			);
+			if ( $scr_status ) {
+				$url_obj->set_scr_status( $scr_status );
+			} else {
+				$url_obj->init_scr_status();
+			}
+			$rows[] = $url_obj;
 		}
 
 		$result = $this->insert_all( $rows, true );
 
 		return is_numeric( $result );
-	}
-
-	/**
-	 * if URLsLab has screenshot, also summarization should be done.
-	 * If just summarization was requested and now we need also screenshot, we need to request it again
-	 *
-	 * @param $schedule_type input value should be URL_SCHEDULE_SCREENSHOT_REQUIRED or URL_SCHEDULE_SUMMARIZATION_REQUIRED
-	 *
-	 * @return void
-	 */
-	public function request_url_schedule( $schedule_type ): bool {
-		if ( ! $this->is_http_valid() || $this->has_screenshot() || ! $this->is_visible() || $this->get_url_schedule() == $schedule_type ) {
-			return false;
-		}
-
-		if (
-			$this->get_url_schedule() == self::URL_SCHEDULE_ERROR
-			|| $this->get_url_schedule() == self::URL_SCHEDULE_SCREENSHOT_SCHEDULED
-			|| $this->get_url_schedule() == self::URL_SCHEDULE_SCREENSHOT_REQUIRED
-		) {
-			return false;
-		}
-
-		if ( self::URL_SCHEDULE_SUMMARIZATION_REQUIRED == $schedule_type ) {
-			if (
-				$this->get_sum_status() == self::SUM_STATUS_ACTIVE
-				|| $this->get_url_schedule() == self::URL_SCHEDULE_SUMMARIZATION_SCHEDULED
-			) {
-				return false;
-			}
-		}
-
-		$this->set_url_schedule( $schedule_type );
-
-		return $this->update();
 	}
 
 	public function request_rel_schedule() {

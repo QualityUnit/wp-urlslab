@@ -11,7 +11,7 @@ export default function ScreenshotTable( { slug } ) {
 
 	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 
-	const url = `${ filters || '' }${ sortingColumn || '' }`;
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '': sortingColumn }`;
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
 	const {
@@ -32,13 +32,8 @@ export default function ScreenshotTable( { slug } ) {
 		N: __( 'Waiting' ),
 		A: __( 'Awailable' ),
 		P: __( 'Pending' ),
+		U: __( 'Updating' ),
 		E: __( 'Disabled' ),
-	};
-	const scrScheduleTypes = {
-		N: 'New',
-		M: 'Manual',
-		S: 'Scheduled',
-		E: 'Error',
 	};
 
 	const header = {
@@ -46,7 +41,6 @@ export default function ScreenshotTable( { slug } ) {
 		url_name: __( 'Destination URL' ),
 		url_title: __( 'Title' ),
 		scr_status: __( 'Status' ),
-		scr_schedule: __( 'Schedule' ),
 		screenshot_usage_count: __( 'Usage' ),
 		update_scr_date: __( 'Updated at' ),
 	};
@@ -89,12 +83,6 @@ export default function ScreenshotTable( { slug } ) {
 			filterValMenu: scrStatusTypes,
 			cell: ( cell ) => scrStatusTypes[ cell.getValue() ],
 			header: header.scr_status,
-			size: 80,
-		} ),
-		columnHelper.accessor( 'scr_schedule', {
-			filterValMenu: scrScheduleTypes,
-			cell: ( cell ) => scrScheduleTypes[ cell.getValue() ],
-			header: header.scr_schedule,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'screenshot_usage_count', {

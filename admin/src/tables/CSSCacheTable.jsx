@@ -8,7 +8,7 @@ import useChangeRow from '../hooks/useChangeRow';
 export default function CSSCacheTable( { slug } ) {
 	const pageId = 'url_id';
 	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = `${ filters || '' }${ sortingColumn || '' }`;
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '': sortingColumn }`;
 
 	const {
 		__,
