@@ -15,11 +15,7 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 	}
 
 	protected function execute(): bool {
-		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Screenshot_Widget::SLUG ) ) {
-			return false;
-		}
-
-		if ( ! $this->init_client() ) {
+		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Screenshot_Widget::SLUG ) || ! $this->init_client() ) {
 			return false;
 		}
 
@@ -31,22 +27,54 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 			Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Link_Enhancer::SLUG )
 			&& Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Link_Enhancer::SLUG )->get_option( Urlslab_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS )
 		) {
-			$query_data[] = Urlslab_Url_Row::HTTP_STATUS_OK;
+			$query_data[]          = Urlslab_Url_Row::HTTP_STATUS_OK;
 			$sql_where_http_status = ' http_status = %d AND';
 		} else {
 			$sql_where_http_status = '';
 		}
 
-		$query_data[] = Urlslab_Url_Row::SCR_STATUS_NEW;
-		$query_data[] = Urlslab_Url_Row::SCR_STATUS_ACTIVE;
-		$query_data[] = Urlslab_Data::get_now( time() - Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Screenshot_Widget::SLUG )->get_option( Urlslab_General::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL ) );
-		// PENDING or UPDATING urls will be retried in one hour again
-		$query_data[] = Urlslab_Url_Row::SCR_STATUS_PENDING;
-		$query_data[] = Urlslab_Data::get_now( time() - 12 * 3600 );
+		$query_data[]    = Urlslab_Url_Row::SCR_STATUS_NEW;
+		$where_status_or = '';
+
+		switch ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Screenshot_Widget::SLUG )->get_option( Urlslab_Screenshot_Widget::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL ) ) {
+			case \OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME:
+				break;
+			case \OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_DAILY:
+				$where_status_or .= ' OR (scr_status =%s AND update_scr_date < %s)';
+				$query_data[]    = Urlslab_Url_Row::SCR_STATUS_ACTIVE;
+				$query_data[]    = Urlslab_Data::get_now( time() - 86400 );
+				break;
+			case \OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_WEEKLY:
+				$where_status_or .= ' OR (scr_status =%s AND update_scr_date < %s)';
+				$query_data[]    = Urlslab_Url_Row::SCR_STATUS_ACTIVE;
+				$query_data[]    = Urlslab_Data::get_now( time() - 86400 * 7 );
+				break;
+			case \OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_MONTHLY:
+				$where_status_or .= ' OR (scr_status =%s AND update_scr_date < %s)';
+				$query_data[]    = Urlslab_Url_Row::SCR_STATUS_ACTIVE;
+				$query_data[]    = Urlslab_Data::get_now( time() - 86400 * 30 );
+				break;
+			case \OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_YEARLY:
+				$where_status_or .= ' OR (scr_status =%s AND update_scr_date < %s)';
+				$query_data[]    = Urlslab_Url_Row::SCR_STATUS_ACTIVE;
+				$query_data[]    = Urlslab_Data::get_now( time() - 86400 * 365 );
+				break;
+			default:
+				//No schedules, don't update
+				return false;
+		}
+		// PENDING or UPDATING urls will be retried in 12 hours again
+		$where_status_or .= ' OR (scr_status =%s AND update_scr_date < %s)';
+		$query_data[]    = Urlslab_Url_Row::SCR_STATUS_PENDING;
+		$query_data[]    = Urlslab_Data::get_now( time() - 12 * 3600 );
+
+		$where_status_or .= ' OR (scr_status =%s AND update_scr_date < %s)';
+		$query_data[]    = Urlslab_Url_Row::SCR_STATUS_UPDATING;
+		$query_data[]    = Urlslab_Data::get_now( time() - 12 * 3600 );
 
 		$url_rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_URLS_TABLE . ' WHERE' . $sql_where_http_status . ' (scr_status = %s OR (scr_status =%s AND update_scr_date < %s) OR (scr_status = %s AND update_scr_date < %s)) ORDER BY update_scr_date LIMIT 500', // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_URLS_TABLE . ' WHERE' . $sql_where_http_status . ' (scr_status = %s' . $where_status_or . ') ORDER BY update_scr_date LIMIT 100', // phpcs:ignore
 				$query_data
 			),
 			ARRAY_A
@@ -55,9 +83,12 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 			return false;
 		}
 
-		$data = array();
+		$data   = array();
 		$data[] = Urlslab_Data::get_now();
-		$data[] = Urlslab_Url_Row::SCR_STATUS_PENDING;
+		$data[] = Urlslab_Url_Row::SCR_STATUS_ACTIVE;//if active
+		$data[] = Urlslab_Url_Row::SCR_STATUS_UPDATING;//or updating
+		$data[] = Urlslab_Url_Row::SCR_STATUS_UPDATING;//set updating
+		$data[] = Urlslab_Url_Row::SCR_STATUS_PENDING;//else set pending
 
 		$url_names = array();
 
@@ -67,15 +98,15 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 			$row_obj = new Urlslab_Url_Row( $row );
 			if ( $row_obj->get_url()->is_url_valid() ) {
 				$url_objects[] = $row_obj;
-				$data[] = $row['url_id'];
-				$url_names[] = $row['url_name'];
+				$data[]        = $row['url_id'];
+				$url_names[]   = $row['url_name'];
 			} else {
 				$row_obj->set_scr_status( Urlslab_Url_Row::SCR_STATUS_ERROR );
 				$row_obj->update();
 			}
 		}
 
-		$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' SET update_scr_date=%s, scr_status=%s WHERE url_id IN (' . implode( ',', array_fill( 0, count( $url_rows ), '%d' ) ) . ')', $data ) ); // phpcs:ignore
+		$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . " SET update_scr_date=%s, scr_status = CASE WHEN scr_status=%s OR scr_status=%s THEN %s ELSE %s END WHERE url_id IN (" . implode( ',', array_fill( 0, count( $url_rows ), '%d' ) ) . ')', $data ) ); // phpcs:ignore
 
 		$request = new DomainDataRetrievalDataRequest();
 		$request->setUrls( $url_names );
@@ -93,7 +124,6 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 				case DomainDataRetrievalScreenshotResponse::SCREENSHOT_STATUS_BLOCKED:
 					$url_objects[ $id ]->set_scr_status( Urlslab_Url_Row::SCR_STATUS_ERROR );
 					$url_objects[ $id ]->update();
-
 					break;
 
 				case DomainDataRetrievalScreenshotResponse::SCREENSHOT_STATUS_AVAILABLE:
@@ -103,11 +133,18 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 					$url_objects[ $id ]->set_scr_status( Urlslab_Url_Row::SCR_STATUS_ACTIVE );
 					$url_objects[ $id ]->update();
 					$some_urls_updated = true;
-
 					break;
 
 				case DomainDataRetrievalScreenshotResponse::SCREENSHOT_STATUS_PENDING:
+					$url_objects[ $id ]->set_scr_status( Urlslab_Url_Row::SCR_STATUS_PENDING );
+					$url_objects[ $id ]->update();
+					break;
+
 				case DomainDataRetrievalScreenshotResponse::SCREENSHOT_STATUS_UPDATING:
+					$url_objects[ $id ]->set_scr_status( Urlslab_Url_Row::SCR_STATUS_UPDATING );
+					$url_objects[ $id ]->update();
+					break;
+
 				default:
 					// we will leave object in the status pending
 			}
@@ -120,7 +157,7 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 		if ( empty( $this->client ) ) {
 			$api_key = get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
 			if ( strlen( $api_key ) ) {
-				$config = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
+				$config       = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
 				$this->client = new ScreenshotApi( new GuzzleHttp\Client(), $config );
 			}
 		}

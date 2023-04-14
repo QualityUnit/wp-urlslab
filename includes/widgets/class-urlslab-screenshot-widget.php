@@ -5,7 +5,12 @@ use Elementor\Plugin;
 class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	public const SLUG = 'urlslab-screenshot';
 
-	public const SETTING_NAME_SCHEDULE_SCREENSHOTS = 'urlslab-scr-sched-scr';
+	const SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL = 'urlslab-scr-refresh';
+	const SETTING_NAME_SHEDULE_SCRRENSHOT = 'urlslab-scr-schedule';
+	public const SCHEDULE_SHORTCODE = 'S';
+	public const SCHEDULE_ALL_INTERNALS = 'I';
+	public const SCHEDULE_ALL = 'A';
+	public const SCHEDULE_NEVER = 'N';
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action(
@@ -97,7 +102,10 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 				$url_data = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( new Urlslab_Url( $urlslab_atts['url'] ) );
 
 				if ( ! empty( $url_data ) ) {
-					if ( empty( $url_data->get_scr_status() ) && $this->get_option( self::SETTING_NAME_SCHEDULE_SCREENSHOTS ) ) {
+					if (
+						empty( $url_data->get_scr_status() ) &&
+						Urlslab_Screenshot_Widget::SCHEDULE_NEVER != Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Screenshot_Widget::SLUG )->get_option( Urlslab_Screenshot_Widget::SETTING_NAME_SHEDULE_SCRRENSHOT )
+					) {
 						$url_data->set_scr_status( Urlslab_Url_Row::SCR_STATUS_NEW );
 						$url_data->update();
 					}
@@ -160,18 +168,45 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			)
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_SCHEDULE_SCREENSHOTS,
+			self::SETTING_NAME_SHEDULE_SCRRENSHOT,
+			self::SCHEDULE_SHORTCODE,
 			false,
-			false,
-			__( 'Screenshots Scheduling (paid)' ),
-			__(
-				'Automatically schedule new URLs to take screenshots with URLsLab service. It will be executed just once.'
+			__( 'Schedule Screenshot' ),
+			__( 'Choose URL types for which we will process screenshots' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				self::SCHEDULE_NEVER         => __( 'Never' ),
+				self::SCHEDULE_SHORTCODE     => __( 'When URL (external or internal) is used in screenshot shortcode' ),
+				self::SCHEDULE_ALL_INTERNALS => __( 'Every internal URL' ),
+				self::SCHEDULE_ALL           => __( 'All URLs in database' ),
 			),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'schedule'
+			function( $value ) {
+				return is_string( $value );
+			},
+			'schedule',
 		);
+		$this->add_option_definition(
+			self::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL,
+			\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME,
+			false,
+			__( 'Synchronization Frequency of Screenshots with URLsLab service' ),
+			__( 'The synchronization frequency of screenshots with the URLsLab service is different from how often URLsLab takes screenshots of the website. Even when we sync the data in the background by cron, it can use a lot of computation time. Therefore, we recommend Monthly or Quarterly synchronizations.' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_NO_SCHEDULE => __( 'Never' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME    => __( 'One time screenshot' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_DAILY       => __( 'Daily' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_WEEKLY      => __( 'Weekly' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_MONTHLY     => __( 'Monthly' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_YEARLY      => __( 'Yearly' ),
+			),
+			function( $value ) {
+				return is_numeric( $value ) && 0 < $value;
+			},
+			'schedule',
+		);
+
+
 	}
 
 	private function render_shortcode(
