@@ -228,18 +228,18 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'wpml',
-			__( 'WPML Translation' ),
+			__( 'WPML Translations' ),
 			__(
-				'Translate texts in your Wordpress with masive scale. Plugin can connect to WPML translation editor and translate automatically all source texts to target language in time translator copy the original text to translation field. Feature is active just in case your installation use WPML plugin to manage translations.'
+				'Effortlessly translate content at scale by connecting to WPML\'s translation editor. Experience automatic translations from the source to the target language as you copy the original text. This feature is working only with WPML Classic Translation Editor.'
 			)
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_TRANSLATE,
 			false,
 			false,
-			__( 'Translate on Copy from original' ),
+			__( 'Use our auto-translating feature with copy buttons ' ),
 			__(
-				'Translation will be generated when translator push button "Copy from original" or "Copy all fields from original". HTML should be correctly preserved in the translation.'
+				'Translation will be generated upon clicking "Copy from Original" or "Copy All Fields from Original," ensuring accurate preservation of HTML structure. The original functionality of those buttons will be replaced!'
 			),
 			self::OPTION_TYPE_CHECKBOX,
 			false,

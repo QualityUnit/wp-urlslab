@@ -56,7 +56,7 @@ export default function LinkManagerTable( { slug } ) {
 		url_summary: __( 'Summary' ),
 		http_status: __( 'Status' ),
 		rel_schedule: __( 'Schedule' ),
-		update_http_date: __( 'Status Updated' ),
+		update_http_date: __( 'Last change' ),
 	};
 
 	const columns = [

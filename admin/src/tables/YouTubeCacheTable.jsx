@@ -34,7 +34,7 @@ export default function YouTubeCacheTable( { slug } ) {
 
 	const header = {
 		thumb: __( 'Thumbnail' ),
-		videoid: __( 'YouTube Id' ),
+		videoid: __( 'YouTube Video ID' ),
 		status: __( 'Status' ),
 		title: __( 'Title' ),
 		published: __( 'Published' ),
@@ -78,7 +78,7 @@ export default function YouTubeCacheTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
-			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete row' ) }</Tooltip>,
+			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),

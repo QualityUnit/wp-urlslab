@@ -142,7 +142,7 @@ export default function RedirectsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
-			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete row' ) }</Tooltip>,
+			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: () => null,
 		} ),

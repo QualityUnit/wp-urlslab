@@ -54,8 +54,8 @@ export default function NotFoundTable( { slug } ) {
 	const header = {
 		url: __( 'URL' ),
 		cnt: __( 'Visits' ),
-		created: __( 'First Visit' ),
-		updated: 'Last Visit',
+		created: __( 'First visit' ),
+		updated: 'Last visit',
 		request_data: 'User agent',
 	};
 
@@ -106,7 +106,7 @@ export default function NotFoundTable( { slug } ) {
 			cell: ( cell ) => {
 				return cell.getValue();
 			},
-			header: 'IP',
+			header: 'IP address',
 			size: 100,
 		} ),
 		columnHelper.accessor( 'addRedirect', {
@@ -117,7 +117,7 @@ export default function NotFoundTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
-			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete row' ) }</Tooltip>,
+			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
@@ -149,7 +149,7 @@ export default function NotFoundTable( { slug } ) {
 				noInsert
 				activatePanel={ activePanel }
 				insertOptions={ {
-					inserterCells, title: 'Create redirect from 404',
+					inserterCells, title: 'Create redirect from this',
 					data, slug: 'redirects', url: '', pageId: 'redirect_id', rowToInsert,
 				} }
 				exportOptions={ {

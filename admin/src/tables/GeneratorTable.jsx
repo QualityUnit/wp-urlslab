@@ -28,12 +28,12 @@ export default function GeneratorTable( { slug } ) {
 	const { row, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
 	const header = {
-		command: __( 'AI Command' ),
+		command: __( 'Command' ),
 		semantic_context: __( 'Context' ),
-		url_filter: __( 'Url Filter' ),
+		url_filter: __( 'URL filter' ),
 		lang: __( 'Language code' ),
 		status: __( 'Status' ),
-		status_changed: __( 'Changed at' ),
+		status_changed: __( 'Last change' ),
 		result: __( 'Result' ),
 	};
 
@@ -121,7 +121,7 @@ export default function GeneratorTable( { slug } ) {
 				}
 			>
 				{ row
-					? <Tooltip center>{ __( 'Row has been deleted.' ) }</Tooltip>
+					? <Tooltip center>{ __( 'Item has been deleted.' ) }</Tooltip>
 					: null
 				}
 				<TooltipSortingFiltering props={ { isFetching, filters, sortingColumn } } />

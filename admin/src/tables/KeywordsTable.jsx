@@ -41,7 +41,7 @@ export default function KeywordsTable( { slug } ) {
 		kw_priority: __( 'Priority' ),
 		kw_usage_count: __( 'Usage' ),
 		lang: __( 'Language' ),
-		urlFilter: __( 'URL Filter' ),
+		urlFilter: __( 'URL filter' ),
 	};
 
 	const inserterCells = {
@@ -124,7 +124,7 @@ export default function KeywordsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
-			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete row' ) }</Tooltip>,
+			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),

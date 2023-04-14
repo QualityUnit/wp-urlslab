@@ -30,13 +30,13 @@ export const langOp = {
 
 export const stringOp = {
 	LIKE: 'contains',
-	'LIKE%': 'begins with',
-	'%LIKE': 'ends with',
 	NOTLIKE: 'doesn\'t contain',
-	'NOTLIKE%': 'doesn\'t begin with',
-	'NOT%LIKE': 'doesn\'t end with',
 	exactly: 'is exactly',
 	'<>': 'is not',
+	'LIKE%': 'begins with',
+	'NOTLIKE%': 'doesn\'t begin with',
+	'%LIKE': 'ends with',
+	'NOT%LIKE': 'doesn\'t end with',
 	IN: 'is one of',
 	NOTIN: 'is not one of',
 	'>': 'is longer than',
