@@ -197,7 +197,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 				31536000         => __( 'Yearly' ),
 				self::FREQ_NEVER => __( 'Never' ),
 			),
-			function ( $value ) {
+			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'validation',
@@ -257,7 +257,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			return;
 		}
 
-		$xpath = new DOMXPath( $document );
+		$xpath     = new DOMXPath( $document );
 		$link_data = $xpath->query( "//a[contains(@href, '?page_id=') and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-page_id')])]" );
 
 		foreach ( $link_data as $link_element ) {
@@ -323,14 +323,14 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		$destinations = array();
 		array_walk(
 			$results,
-			function ( $value, $key ) use ( &$destinations ) {
+			function( $value, $key ) use ( &$destinations ) {
 				$destinations[ $value['dest_url_id'] ] = true;
 			}
 		);
 
 		$tracked_urls = array();
 
-		$values = array();
+		$values      = array();
 		$placeholder = array();
 		foreach ( $url_ids as $url_id ) {
 			if ( ! isset( $destinations[ $url_id ] ) ) {
@@ -346,8 +346,8 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		}
 
 		if ( ! empty( $values ) ) {
-			$table = URLSLAB_URLS_MAP_TABLE;
-			$placeholder_string = implode( ', ', $placeholder );
+			$table               = URLSLAB_URLS_MAP_TABLE;
+			$placeholder_string  = implode( ', ', $placeholder );
 			$insert_update_query = "INSERT IGNORE INTO {$table} (src_url_id, dest_url_id) VALUES {$placeholder_string}";
 
 			$wpdb->query(
@@ -360,22 +360,22 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 		$delete = array_diff( array_keys( $destinations ), array_keys( $tracked_urls ) );
 		if ( ! empty( $delete ) ) {
-			$values = array( $srcUrlId );
+			$values      = array( $srcUrlId );
 			$placeholder = array();
 			foreach ( $delete as $url_id ) {
 				$placeholder[] = '%d';
-				$values[] = $url_id;
+				$values[]      = $url_id;
 			}
-			$table = URLSLAB_URLS_MAP_TABLE;
+			$table              = URLSLAB_URLS_MAP_TABLE;
 			$placeholder_string = implode( ',', $placeholder );
-			$delete_query = "DELETE FROM {$table} WHERE src_url_id=%d AND dest_url_id IN ({$placeholder_string})";
+			$delete_query       = "DELETE FROM {$table} WHERE src_url_id=%d AND dest_url_id IN ({$placeholder_string})";
 			$wpdb->query( $wpdb->prepare( $delete_query, $values ) ); // phpcs:ignore
 		}
 	}
 
 	private function processTitleAttribute( DOMDocument $document ): void {
 		try {
-			$xpath = new DOMXPath( $document );
+			$xpath    = new DOMXPath( $document );
 			$elements = $xpath->query( "//a[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-title')])]" );
 
 			$link_elements = array();
@@ -388,7 +388,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 					if ( ! empty( trim( $dom_element->getAttribute( 'href' ) ) ) ) {
 						try {
-							$url = new Urlslab_Url( $dom_element->getAttribute( 'href' ) );
+							$url             = new Urlslab_Url( $dom_element->getAttribute( 'href' ) );
 							$link_elements[] = array( $dom_element, $url );
 						} catch ( Exception $e ) {
 						}
@@ -433,10 +433,14 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 								// enhance title if url has no title
 								if ( empty( $dom_elem->getAttribute( 'title' ) ) ) {
 									if (
-										$result[ $url_obj->get_url_id() ]->is_internal() && $this->get_option( self::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_INTERNAL_LINKS )
-										|| ! $result[ $url_obj->get_url_id() ]->is_internal() && $this->get_option( self::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_EXTERNAL_LINKS )
+										empty( $result[ $url_obj->get_url_id() ]->get_sum_status() ) &&
+										(
+											$result[ $url_obj->get_url_id() ]->is_internal() && $this->get_option( self::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_INTERNAL_LINKS )
+											|| ! $result[ $url_obj->get_url_id() ]->is_internal() && $this->get_option( self::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_EXTERNAL_LINKS )
+										)
 									) {
-										$result[ $url_obj->get_url_id() ]->request_url_schedule( Urlslab_Url_Row::URL_SCHEDULE_SUMMARIZATION_REQUIRED );
+										$result[ $url_obj->get_url_id() ]->set_sum_status( Urlslab_Url_Row::SUM_STATUS_NEW );
+										$result[ $url_obj->get_url_id() ]->update();
 									}
 
 									$dom_elem->setAttribute(
@@ -456,8 +460,8 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	private function addIdToHTags( DOMDocument $document ) {
 		if ( $this->get_option( self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS ) ) {
 			$used_ids = array();
-			$xpath = new DOMXPath( $document );
-			$headers = $xpath->query( "//*[substring-after(name(), 'h') > 0 and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-keywords')])]" );
+			$xpath    = new DOMXPath( $document );
+			$headers  = $xpath->query( "//*[substring-after(name(), 'h') > 0 and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-keywords')])]" );
 			foreach ( $headers as $header_element ) {
 				if ( ! $header_element->hasAttribute( 'id' ) ) {
 					$id = strtolower( trim( $header_element->nodeValue ) );
@@ -475,7 +479,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		if ( ! $this->get_option( self::SETTING_NAME_ADD_LINK_FRAGMENT ) ) {
 			return;
 		}
-		$xpath = new DOMXPath( $document );
+		$xpath    = new DOMXPath( $document );
 		$elements = $xpath->query( "//a[@href and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-fragment')])]" );
 		foreach ( $elements as $dom_elem ) {
 			if ( strlen( $dom_elem->getAttribute( 'href' ) ) && false === strpos( $dom_elem->getAttribute( 'href' ), '#' ) ) {

@@ -12,7 +12,7 @@ export async function exportCSV( options, result ) {
 	const { url, filters, fromId, pageId, perPage = 9999, deleteCSVCols } = options;
 	const qOperator = getParamsChar(); // Changes ? to & query hash if already used
 	const prevDataLength = dataForCSV.length;
-	const response = await fetchData( `${ url }${ qOperator }${ fromId }=${ lastPage }&rows_per_page=${ perPage }${ filters || '' }` );
+	const response = await fetchData( `${ url }${ qOperator }${ fromId }=${ lastPage }&rows_per_page=${ perPage }${ 'undefined' === typeof filters ? '' : filters }` );
 
 	if ( ! lastPage ) {
 		totalItems = await fetchData( `${ url }/count${ filters ? getParamsChar() + `${ filters }` : '' }` );

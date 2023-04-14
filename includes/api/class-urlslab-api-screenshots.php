@@ -21,9 +21,9 @@ class Urlslab_Api_Screenshots extends Urlslab_Api_Urls {
 						'update_item_permissions_check',
 					),
 					'args'                => array(
-						'scr_status'   => array(
+						'scr_status'  => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								switch ( $param ) {
 									case Urlslab_Url_Row::SCR_STATUS_ERROR:
 									case Urlslab_Url_Row::SCR_STATUS_NEW:
@@ -35,31 +35,15 @@ class Urlslab_Api_Screenshots extends Urlslab_Api_Urls {
 								}
 							},
 						),
-						'scr_schedule' => array(
+						'http_status' => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
-								switch ( $param ) {
-									case Urlslab_Url_Row::URL_SCHEDULE_SCREENSHOT_SCHEDULED:
-									case Urlslab_Url_Row::URL_SCHEDULE_SCREENSHOT_REQUIRED:
-									case Urlslab_Url_Row::URL_SCHEDULE_SUMMARIZATION_SCHEDULED:
-									case Urlslab_Url_Row::URL_SCHEDULE_SUMMARIZATION_REQUIRED:
-									case Urlslab_Url_Row::URL_SCHEDULE_ERROR:
-										return true;
-
-									default:
-										return false;
-								}
-							},
-						),
-						'http_status'  => array(
-							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_numeric( $param );
 							},
 						),
-						'url_title'    => array(
+						'url_title'   => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
@@ -89,16 +73,13 @@ class Urlslab_Api_Screenshots extends Urlslab_Api_Urls {
 	}
 
 	public function get_editable_columns(): array {
-		return array(
-			'scr_status',
-			'scr_schedule',
-		);
+		return array( 'scr_status' );
 	}
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
-		if ( ! $request->get_param( 'filter_scr_schedule' ) ) {
+		if ( ! $request->get_param( 'filter_scr_status' ) ) {
 			$request->set_param(
-				'filter_scr_schedule',
+				'filter_scr_status',
 				json_encode(
 					(object) array(
 						'op'  => '<>',
@@ -112,7 +93,7 @@ class Urlslab_Api_Screenshots extends Urlslab_Api_Urls {
 	}
 
 	protected function get_custom_columns() {
-		$columns = array();
+		$columns   = array();
 		$columns[] = 'screenshot_usage_count';
 
 		return $columns;

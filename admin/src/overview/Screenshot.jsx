@@ -4,7 +4,7 @@ export default function ScreenShotOverview() {
 	return (
 		<>
 			<p>Screenshots are a great way to grab an audience's attention and make your content more appealing. With this module, you can easily add automatically generated screenshots via a shortcode into the content. It will not only save you time but will also give your content a professional look.</p>
-			<p>Using the Automated Screenshots module can be especially useful for websites with many pages, where manually taking screenshots for each one can be time-consuming. With the module, you can quickly generate screenshots for each page.</p>
+			<p>Using the Screenshots module can be especially useful for websites with many pages, where manually taking screenshots for each one can be time-consuming. With the module, you can quickly generate screenshots for each page.</p>
 			<p>Overall, the module makes screenshots easy to use with zero effort. It is a great way to save time and make your content stand out.</p>
 
 			<h4>How to use the feature?</h4>

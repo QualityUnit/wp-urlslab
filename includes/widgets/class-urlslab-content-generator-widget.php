@@ -71,7 +71,11 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			|| ( class_exists( '\Elementor\Plugin' )
 				 && \Elementor\Plugin::$instance->editor->is_edit_mode() )
 		) {
-			return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">Content Generator Placeholder</div>';
+			$html_attributes = array();
+			foreach ( $this->get_attribute_values( $atts, $content, $tag ) as $id => $value ) {
+				$html_attributes[] = '<b>' . esc_html( $id ) . '</b>="<i>' . esc_html( $value ) . '</i>"';
+			}
+			return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">[<b>urlslab-generator</b> ' . implode( ', ', $html_attributes ) . ']</div>';
 		}
 
 		$atts  = $this->get_attribute_values( $atts, $content, $tag );

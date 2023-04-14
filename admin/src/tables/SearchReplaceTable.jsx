@@ -10,7 +10,7 @@ export default function SearchReplaceTable( { slug } ) {
 
 	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 
-	const url = `${ filters || '' }${ sortingColumn || '' }`;
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '': sortingColumn }`;
 
 	const {
 		__,
