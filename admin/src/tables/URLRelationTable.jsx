@@ -65,7 +65,7 @@ export default function URLRelationTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
-			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete row' ) }</Tooltip>,
+			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, optionalSelector: 'dest_url_id' } ) } />,
 			header: null,
 		} ),
@@ -109,11 +109,11 @@ export default function URLRelationTable( { slug } ) {
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
 				{ row
-					? <Tooltip center>{ __( 'URL has been deleted.' ) }</Tooltip>
+					? <Tooltip center>{ __( 'Item has been deleted.' ) }</Tooltip>
 					: null
 				}
 				{ ( rowToInsert === 'rowInserted' )
-					? <Tooltip center>{ __( 'URL Relation rule has been added.' ) }</Tooltip>
+					? <Tooltip center>{ __( 'Item has been added.' ) }</Tooltip>
 					: null
 				}
 				<TooltipSortingFiltering props={ { isFetching, filters, sortingColumn } } />

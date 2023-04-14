@@ -32,9 +32,9 @@ export default function useRedirectTableMenus() {
 	const header = Object.freeze( {
 		match_type: __( 'Match type' ),
 		match_url: __( 'URL' ),
-		replace_url: __( 'Redirect to URL' ),
-		redirect_code: __( 'HTTP Code' ),
-		is_logged: __( 'Is Logged in' ),
+		replace_url: __( 'Redirect to' ),
+		redirect_code: __( 'HTTP code' ),
+		is_logged: __( 'Is logged in' ),
 		capabilities: __( 'Capabilities' ),
 		roles: __( 'Roles' ),
 		browser: __( 'Browser' ),
@@ -43,9 +43,8 @@ export default function useRedirectTableMenus() {
 		params: __( 'Request parameters' ),
 		ip: __( 'Visitor IP' ),
 		if_not_found: __( 'Page status' ),
-		cnt: __( 'Redirects Count' ),
+		cnt: __( 'Redirects count' ),
 	} );
 
 	return { redirectTypes, matchTypes, logginTypes, notFoundTypes, header };
 }
-

@@ -30,7 +30,7 @@ export default function ScreenshotTable( { slug } ) {
 
 	const scrStatusTypes = {
 		N: __( 'Waiting' ),
-		A: __( 'Awailable' ),
+		A: __( 'Available' ),
 		P: __( 'Pending' ),
 		U: __( 'Updating' ),
 		E: __( 'Disabled' ),
@@ -42,7 +42,7 @@ export default function ScreenshotTable( { slug } ) {
 		url_title: __( 'Title' ),
 		scr_status: __( 'Status' ),
 		screenshot_usage_count: __( 'Usage' ),
-		update_scr_date: __( 'Updated at' ),
+		update_scr_date: __( 'Last change' ),
 	};
 
 	const columns = [
@@ -107,7 +107,7 @@ export default function ScreenshotTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
-			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete row' ) }</Tooltip>,
+			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),

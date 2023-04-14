@@ -227,13 +227,13 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			'validation'
 		);
 
-		$this->add_options_form_section( 'scheduling', __( 'Scheduling' ), __( 'Summarizations of urls help your page to increase quality of content and it helps your visitor to understand what information he will find if he clicks on the url on destination page. URLsLab can automatically generate summarization with powerful AI algorythm for all URLs found in your web page and enhance each link title with this text. Summary will be used also to enhance the meta description tag.' ) );
+		$this->add_options_form_section( 'scheduling', __( 'Scheduling Settings' ), __( 'Boost your page\'s content quality with AI-powered summarizations by URLsLab service for all URLs on your site. Enhance link titles and meta descriptions, providing visitors a clear preview of the information awaiting them on the destination page.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_INTERNAL_LINKS,
 			true,
 			true,
-			__( 'Schedule all internal links' ),
-			__( 'If plugin finds any new internal link in your page, it will automatically schedule link for summarization to URLsLab. It can take few days to get summary into your plugin database. Summarization of internal link is used not just for enhancing title of links, but also as meta description tag value.' ),
+			__( 'Schedule All Internal Links' ),
+			__( 'When a new internal link is detected, it\'s automatically scheduled for AI-powered summarization by URLsLab service, enriching both link titles and meta description tags. Integrating summaries into your website may take a few days, as the duration depends on the volume of data being processed.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -243,8 +243,8 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			self::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_EXTERNAL_LINKS,
 			false,
 			true,
-			__( 'Schedule all external links' ),
-			__( 'If plugin finds any new external link in your page, it will automatically schedule link for summarization to URLsLab. It can take few days to get summary into your plugin database.' ),
+			__( 'Schedule All External Links' ),
+			__( 'When a new external link is detected, it\'s automatically scheduled for AI-powered summarization by URLsLab service, enriching link titles. Integrating summaries into your website may take a few days, as the duration depends on the volume of data being processed.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,

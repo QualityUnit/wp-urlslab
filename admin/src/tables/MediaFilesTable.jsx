@@ -30,8 +30,8 @@ export default function MediaFilesTable( { slug } ) {
 
 	const driverTypes = {
 		D: 'Database',
-		F: 'Local File',
-		S: 'S3',
+		F: 'Local file',
+		S: 'Amazon S3',
 	};
 
 	const statusTypes = {
@@ -42,14 +42,14 @@ export default function MediaFilesTable( { slug } ) {
 	};
 
 	const header = {
-		filename: __( 'File Name' ),
-		filetype: __( 'File Type' ),
-		url: __( 'Orig. URL' ),
+		filename: __( 'File name' ),
+		filetype: __( 'File type' ),
+		url: __( 'Original URL' ),
 		download_url: __( 'Offloaded URL' ),
-		filesize: __( 'File Size' ),
+		filesize: __( 'File size' ),
 		width: __( 'Width' ),
 		height: __( 'Height' ),
-		driver: __( 'Storage Driver' ),
+		driver: __( 'Storage driver' ),
 		filestatus: __( 'Status' ),
 		file_usage_count: __( 'Usage' ),
 	};

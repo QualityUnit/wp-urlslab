@@ -66,8 +66,8 @@ export default function LinkManagerTable( { slug } ) {
 		url_links_count: __( 'Outgoing links count' ),
 		url_usage_count: __( 'Incoming links count' ),
 		visibility: __( 'Visibility' ),
-		url_type: __( 'URL Type' ),
-		update_http_date: __( 'Status Updated' ),
+		url_type: __( 'URL type' ),
+		update_http_date: __( 'Last change' ),
 	};
 
 	const columns = [

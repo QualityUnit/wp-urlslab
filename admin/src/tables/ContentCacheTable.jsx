@@ -21,7 +21,7 @@ export default function ContentCacheTable( { slug } ) {
 	} = useInfiniteFetch( { key: slug, url, pageId } );
 
 	const header = {
-		date_changed: __( 'Changed at' ),
+		date_changed: __( 'Last change' ),
 		cache_len: __( 'Cache size' ),
 		cache_content: __( 'Cache content' ),
 	};

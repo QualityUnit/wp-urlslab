@@ -27,15 +27,15 @@ export default function SearchReplaceTable( { slug } ) {
 	const { row, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
 	const searchTypes = {
-		T: __( 'Plain Text' ),
-		R: __( 'Regular Expr.' ),
+		T: __( 'Plain text' ),
+		R: __( 'Regular expression' ),
 	};
 
 	const header = {
-		str_search: __( 'Search string' ),
-		str_replace: __( 'Replace string' ),
-		search_type: __( 'Search Type' ),
-		url_filter: 'URL Filter',
+		str_search: __( 'Search string (old)' ),
+		str_replace: __( 'Replace string (new)' ),
+		search_type: __( 'Search type' ),
+		url_filter: 'URL filter',
 	};
 
 	const inserterCells = {
@@ -80,7 +80,7 @@ export default function SearchReplaceTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
-			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete row' ) }</Tooltip>,
+			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: () => null,
 		} ),
