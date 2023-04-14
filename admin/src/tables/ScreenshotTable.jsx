@@ -32,13 +32,8 @@ export default function ScreenshotTable( { slug } ) {
 		N: __( 'Waiting' ),
 		A: __( 'Awailable' ),
 		P: __( 'Pending' ),
+		U: __( 'Updating' ),
 		E: __( 'Disabled' ),
-	};
-	const scrScheduleTypes = {
-		N: 'New',
-		M: 'Manual',
-		S: 'Scheduled',
-		E: 'Error',
 	};
 
 	const header = {
