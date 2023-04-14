@@ -17,6 +17,10 @@
 		}
 	}
 
+	&-option {
+		position: relative;
+	}
+
 	@media (min-width: $breakpoint-tablet-landscape) {
 
 		&-section {

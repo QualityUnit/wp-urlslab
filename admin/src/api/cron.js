@@ -6,12 +6,10 @@ export async function cronAll( runCron, controller, cronTasks, onError ) {
 	if ( ! runCron.current ) {
 		timeoutId = null;
 		controller.abort();
-		console.log( 'nebezime' );
 		return false;
 	}
 	try {
 		if ( runCron.current ) {
-			console.log( 'bezime' );
 			timeoutId = setTimeout( () => controller.abort(), 60000 ); // 1 minute timeout
 		}
 		const response = await fetch( wpApiSettings.root + 'urlslab/v1/cron/all', {
