@@ -1,10 +1,12 @@
 
 import { useState } from 'react';
+import { useI18n } from '@wordpress/react-i18n';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { setSettings } from '../api/settings';
 import { parseURL } from '../lib/helpers';
+import Tooltip from '../elements/Tooltip';
 import DatePicker from 'react-datepicker';
 import InputField from '../elements/InputField';
 import Switch from '../elements/Switch';
@@ -14,37 +16,64 @@ import FilterMenu from '../elements/FilterMenu';
 import '../assets/styles/components/datepicker/datepicker.scss';
 
 export default function SettingsOption( { settingId, option } ) {
+	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const { id, type, title, description, placeholder, value, possible_values } = option;
 	const [ date, setDate ] = useState( type !== 'datetime' || new Date( value ) );
+	const [ status, setStatus ] = useState( );
 
 	const handleChange = useMutation( {
-		mutationFn: ( changeValue ) => {
-			return setSettings( `${ settingId }/${ id }`, {
+		mutationFn: async ( changeValue ) => {
+			setStatus( 'active' );
+			const response = await setSettings( `${ settingId }/${ id }`, {
 				value: changeValue } );
+			return { response };
 		},
-		onError: ( changeValue ) => {
-			return setSettings( `${ settingId }/${ id }`, {
-				value: changeValue,
-			} );
-		},
-		onSuccess: () => {
+		onSuccess: async ( { response } ) => {
+			const { ok } = response;
+
+			if ( ok ) {
+				setStatus( 'success' );
+				setTimeout( () => {
+					setStatus();
+				}, 3000 );
+
+				return false;
+			}
 			queryClient.invalidateQueries( [ 'settings', settingId ] );
+			setStatus( 'error' );
+			setTimeout( () => {
+				setStatus();
+			}, 3000 );
 		},
 	} );
 
 	const handleDate = useMutation( {
-		mutationFn: ( newDate ) => {
-			return setSettings( `${ settingId }/${ id }`, {
+		mutationFn: async ( newDate ) => {
+			setStatus( 'active' );
+			const response = await setSettings( `${ settingId }/${ id }`, {
 				value: new Date( newDate ).toISOString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ),
 			} );
+			return response;
 		},
-		onSuccess: () => {
-			queryClient.invalidateQueries( [ 'settings', settingId ] );
+		onSuccess: async ( { response } ) => {
+			const { ok } = response;
+			if ( ok ) {
+				setStatus( 'success' );
+				queryClient.invalidateQueries( [ 'settings', settingId ] );
+				setTimeout( () => {
+					setStatus();
+				}, 3000 );
+				return false;
+			}
+			setStatus( 'error' );
+			setTimeout( () => {
+				setStatus();
+			}, 3000 );
 		},
 	} );
 
-	const renderOption = () => {
+	const renderOption = ( ) => {
 		switch ( type ) {
 			case 'text':
 			case 'password':
@@ -63,7 +92,7 @@ export default function SettingsOption( { settingId, option } ) {
 					<Switch
 						className="option flex"
 						label={ title }
-						checked={ value === '1' || value === true }
+						checked={ value }
 						onChange={ ( inputValue ) => handleChange.mutate( inputValue ) }
 					/>
 				);
@@ -105,9 +134,30 @@ export default function SettingsOption( { settingId, option } ) {
 		}
 	};
 
+	const renderStatus = () => {
+		switch ( status ) {
+			case 'active':
+				return (
+					<Tooltip center>{ __( 'Writing setting' ) }</Tooltip>
+				);
+			case 'success':
+				return (
+					<Tooltip center className="successStatus">{ __( 'Setting written!' ) }</Tooltip>
+				);
+			case 'error':
+				return (
+					<Tooltip center className="errorStatus">{ __( 'Failed! Try again please.' ) }</Tooltip>
+				);
+			default:
+				break;
+		}
+	};
+
 	return (
 		<div className="urlslab-settingsPanel-option">
-			{ renderOption() }
+			{ status !== 'error' && renderOption() }
+			{ status === 'error' && renderOption() /* Duplicate element on error, forces rerender */ }
+			{ renderStatus() }
 			{ <p className="urlslab-settingsPanel-option__desc" dangerouslySetInnerHTML={ { __html: parseURL( description ) } } /> }
 		</div>
 	);

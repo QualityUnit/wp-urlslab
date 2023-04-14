@@ -13,11 +13,11 @@
 	color: $white;
 	transform: translateZ(0);
 
-	&.success {
+	&.successStatus {
 		background-color: $saturated-green;
 	}
 
-	&.error {
+	&.errorStatus {
 		background-color: $saturated-red;
 	}
 
@@ -50,13 +50,13 @@
 		height: auto !important;
 	}
 
-	.urlslab-table-container > & {
-		left: calc(50% + 160px);
-	}
-
 	table td & {
 		display: none;
 		top: 85%;
+	}
+
+	.urlslab-table-container > & {
+		left: calc(50% + 160px);
 	}
 
 	table td:hover > & {
