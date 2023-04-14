@@ -142,8 +142,8 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 					$request = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest();
 					$request->setRenewFrequency( \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
 					$prompt = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt();
-					$prompt->setPromptTemplate( "Your only task is to translate text from $source_lang to $target_lang. If text contains HTML, keep exactly the same HTML formatting as original text. Keep the same capital letters structure in translated text. Translated text should have similar length as original text.\nTRANSLATE: $original_text" );
-					$prompt->setDocumentTemplate( '' );
+					$prompt->setPromptTemplate( "Your only task is to translate text from $source_lang to $target_lang. If text contains HTML, keep exactly the same HTML formatting as original text. Keep the same capital letters structure in translated text. Translated text should have similar length as original text.\nTRANSLATE:{context}" );
+					$prompt->setDocumentTemplate( $original_text );
 					$prompt->setMetadataVars( array() );
 					$request->setPrompt( $prompt );
 
