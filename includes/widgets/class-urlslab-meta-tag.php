@@ -33,6 +33,9 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	}
 
 	public function theContentHook( DOMDocument $document ) {
+		if ( is_404() ) {
+			return;
+		}
 		try {
 			$head_tag = $document->getElementsByTagName( 'head' )[0];
 			if ( empty( $head_tag ) || ! is_object( $head_tag ) ) {
@@ -47,7 +50,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 
 			if ( is_object( $url_data ) && $url_data->is_http_valid() ) {
 				$summary = $url_data->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
-				$title = $url_data->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_TITLE );
+				$title   = $url_data->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_TITLE );
 
 				$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'description', self::SETTING_NAME_META_DESCRIPTION_GENERATION, $summary );
 
@@ -82,7 +85,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 				self::ADD_VALUE       => __( 'Add if missing' ),
 				self::REPLACE_VALUE   => __( 'Replace the current values' ),
 			),
-			function ( $value ) {
+			function( $value ) {
 				switch ( $value ) {
 					case self::NO_CHANGE_VALUE:
 					case self::ADD_VALUE:
@@ -110,7 +113,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 				self::ADD_VALUE       => __( 'Add if missing' ),
 				self::REPLACE_VALUE   => __( 'Replace the current values' ),
 			),
-			function ( $value ) {
+			function( $value ) {
 				switch ( $value ) {
 					case self::NO_CHANGE_VALUE:
 					case self::ADD_VALUE:
@@ -135,7 +138,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 				self::ADD_VALUE       => __( 'Add if missing' ),
 				self::REPLACE_VALUE   => __( 'Replace the current values' ),
 			),
-			function ( $value ) {
+			function( $value ) {
 				switch ( $value ) {
 					case self::NO_CHANGE_VALUE:
 					case self::ADD_VALUE:
@@ -160,7 +163,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 				self::ADD_VALUE       => __( 'Add if missing' ),
 				self::REPLACE_VALUE   => __( 'Replace the current values' ),
 			),
-			function ( $value ) {
+			function( $value ) {
 				switch ( $value ) {
 					case self::NO_CHANGE_VALUE:
 					case self::ADD_VALUE:
@@ -177,7 +180,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 
 	private function set_meta_tag( $document, $head_tag, $tag, $attribute_name, $attribute_value, $setting_name, $content_value ): bool {
 		if ( ! empty( $this->get_option( $setting_name ) ) && ! empty( $content_value ) ) {
-			$xpath = new DOMXPath( $document );
+			$xpath     = new DOMXPath( $document );
 			$meta_tags = $xpath->query( '//' . $tag . '[@' . $attribute_name . "='{$attribute_value}']" );
 			if ( 0 == $meta_tags->count() ) {
 				$node = $document->createElement( $tag );
