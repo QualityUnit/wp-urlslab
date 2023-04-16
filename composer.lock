@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.263.10",
+            "version": "3.263.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "d5f40cff8fe2fe75a8415618f04c987472184eba"
+                "reference": "4ac444fd1dfabe18714d05d2603e92468c00a28b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d5f40cff8fe2fe75a8415618f04c987472184eba",
-                "reference": "d5f40cff8fe2fe75a8415618f04c987472184eba",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/4ac444fd1dfabe18714d05d2603e92468c00a28b",
+                "reference": "4ac444fd1dfabe18714d05d2603e92468c00a28b",
                 "shasum": ""
             },
             "require": {
@@ -150,9 +150,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.263.10"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.263.11"
             },
-            "time": "2023-04-13T18:19:56+00:00"
+            "time": "2023-04-14T18:22:01+00:00"
         },
         {
             "name": "composer/installers",
@@ -1106,12 +1106,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/QualityUnit/urlslab-php-client.git",
-                "reference": "f76729855fee923847c6b8776b8beb2bc3779009"
+                "reference": "81242c6cfe0932b24945baea83380fa13d6895ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/QualityUnit/urlslab-php-client/zipball/f76729855fee923847c6b8776b8beb2bc3779009",
-                "reference": "f76729855fee923847c6b8776b8beb2bc3779009",
+                "url": "https://api.github.com/repos/QualityUnit/urlslab-php-client/zipball/81242c6cfe0932b24945baea83380fa13d6895ea",
+                "reference": "81242c6cfe0932b24945baea83380fa13d6895ea",
                 "shasum": ""
             },
             "require": {
@@ -1158,7 +1158,7 @@
                 "issues": "https://github.com/QualityUnit/urlslab-php-client/issues",
                 "source": "https://github.com/QualityUnit/urlslab-php-client/tree/main"
             },
-            "time": "2023-04-13T13:32:19+00:00"
+            "time": "2023-04-14T11:39:21+00:00"
         }
     ],
     "packages-dev": [
