@@ -82,7 +82,7 @@ class DomainDataRetrievalAugmentPrompt implements ModelInterface, ArrayAccess, \
       */
     protected static array $openAPINullables = [
         'prompt_template' => false,
-		'document_template' => false,
+		'document_template' => true,
 		'metadata_vars' => false
     ];
 
@@ -291,9 +291,6 @@ class DomainDataRetrievalAugmentPrompt implements ModelInterface, ArrayAccess, \
         if ($this->container['prompt_template'] === null) {
             $invalidProperties[] = "'prompt_template' can't be null";
         }
-        if ($this->container['document_template'] === null) {
-            $invalidProperties[] = "'document_template' can't be null";
-        }
         if ($this->container['metadata_vars'] === null) {
             $invalidProperties[] = "'metadata_vars' can't be null";
         }
@@ -342,7 +339,7 @@ class DomainDataRetrievalAugmentPrompt implements ModelInterface, ArrayAccess, \
     /**
      * Gets document_template
      *
-     * @return string
+     * @return string|null
      */
     public function getDocumentTemplate()
     {
@@ -352,14 +349,21 @@ class DomainDataRetrievalAugmentPrompt implements ModelInterface, ArrayAccess, \
     /**
      * Sets document_template
      *
-     * @param string $document_template document_template
+     * @param string|null $document_template document_template
      *
      * @return self
      */
     public function setDocumentTemplate($document_template)
     {
         if (is_null($document_template)) {
-            throw new \InvalidArgumentException('non-nullable document_template cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'document_template');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('document_template', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['document_template'] = $document_template;
 
