@@ -109,9 +109,11 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 			<div className="urlslab-moduleView-headerBottom">
 				<div className="urlslab-moduleView-headerBottom__top flex flex-align-center">
 
-					<Button className="" onClick={ () => handleRefresh() }><RefreshIcon />{ __( 'Refresh table' ) }</Button>
 					{ ! noDelete && selectedRows?.length > 0 &&
-						<Button className="ml-s" onClick={ () => handlePanel( 'deleteSelected' ) }><Trash />{ __( 'Delete selected' ) }</Button>
+						<Button className="mr-s" onClick={ () => handlePanel( 'deleteSelected' ) }><Trash />{ __( 'Delete selected' ) }</Button>
+					}
+					{ insertOptions && ! noInsert &&
+						<Button className="active" onClick={ () => handlePanel( 'addrow' ) }><PlusIcon />{ insertOptions.title }</Button>
 					}
 
 					<div className="ma-left flex flex-align-center">
@@ -124,9 +126,20 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 						{ ! noImport &&
 						<Button className="no-padding underline simple ml-m" onClick={ () => handlePanel( 'import' ) }>{ __( 'Import CSV' ) }</Button>
 						}
-						{ insertOptions && ! noInsert &&
-							<Button className="ml-m active" onClick={ () => handlePanel( 'addrow' ) }><PlusIcon />{ insertOptions.title }</Button>
+
+						{
+							table &&
+							<ColumnsMenu
+								className="menu-left ml-m"
+								id="visibleColumns"
+								slug={ slug }
+								table={ table }
+								columns={ header }
+							/>
 						}
+
+						<RefreshIcon style={ { width: '1.5em', height: '1.5em' } } className="ml-m" onClick={ () => handleRefresh() } />
+
 					</div>
 				</div>
 				<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
@@ -143,16 +156,6 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 
 						<SortMenu className="menu-left ml-m" isFilter checkedId={ sortBy } items={ sortItems } name="sorting" onChange={ handleSorting }>{ `Sort by${ sortBy ? ': ' + sortItems[ sortBy ] : '' }` }</SortMenu>
 
-						{
-							table &&
-							<ColumnsMenu
-								className="menu-left ml-m"
-								id="visibleColumns"
-								slug={ slug }
-								table={ table }
-								columns={ header }
-							/>
-						}
 					</div>
 				</div>
 

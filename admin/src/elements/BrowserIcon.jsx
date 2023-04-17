@@ -15,18 +15,18 @@ import Vivaldi from '@browser-logos/vivaldi/vivaldi_48x48.png';
 import Generic from '@browser-logos/fake/fake_48x48.png';
 
 // OS Icons
-import Windows from '@egoistdeveloper/operating-system-logos/src/48x48/WIN.png';
-import macOs from '@egoistdeveloper/operating-system-logos/src/48x48/MAC.png';
-import iOS from '@egoistdeveloper/operating-system-logos/src/48x48/IOS.png';
-import iPadOS from '@egoistdeveloper/operating-system-logos/src/48x48/IPA.png';
-import Linux from '@egoistdeveloper/operating-system-logos/src/48x48/LIN.png';
-import Android from '@egoistdeveloper/operating-system-logos/src/48x48/AND.png';
+import Windows from '../assets/images/os/WIN.png';
+import macOs from '../assets/images/os/MAC.png';
+import iOS from '../assets/images/os/IOS.png';
+import iPadOS from '../assets/images/os/IPA.png';
+import Linux from '../assets/images/os/LIN.png';
+import Android from '../assets/images/os/AND.png';
 
 export default function BrowserIcon( { uaString } ) {
 	const { browser, os, ua } = UAParser( uaString );
 	const osName = os.name || ua;
 	const browserNameOk = browser.name?.replaceAll( ' ', '' );
-	const osNameOk = osName?.replaceAll( ' ', '' );
+	const osNameOk = os.name?.replaceAll( ' ', '' );
 	const browserIcons = {
 		Chrome,
 		ChromeWebView: Chrome,
@@ -63,8 +63,8 @@ export default function BrowserIcon( { uaString } ) {
 			}
 			{
 				osIcons[ osNameOk ]
-					? <img className="ml-s browserIcon" src={ osIcons[ osNameOk ] } alt={ osName } />
-					: <strong className="limit">&nbsp;{ osName }</strong>
+					? <img className="ml-s browserIcon" src={ osIcons[ osNameOk ] || Generic } alt={ osName } />
+					: <strong className="limit">&nbsp;{ osName.replace( /^([^\/]*)\/.+?$/g, '$1' ) }</strong>
 			}
 		</div>
 	);

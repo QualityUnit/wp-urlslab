@@ -1,4 +1,4 @@
-import { useRef, useMemo, useState, useCallback } from 'react';
+import { useRef, useState, useCallback } from 'react';
 
 import {
 	useInfiniteFetch, ProgressBar, Tooltip, SortMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
@@ -59,7 +59,7 @@ export default function NotFoundTable( { slug } ) {
 		request_data: 'User agent',
 	};
 
-	const columns = useMemo( () => [
+	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
@@ -121,7 +121,7 @@ export default function NotFoundTable( { slug } ) {
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
-	], [ header.url, header.cnt, header.created, header.updated, __, addRedirect ] );
+	];
 
 	if ( status === 'loading' ) {
 		return <Loader />;
