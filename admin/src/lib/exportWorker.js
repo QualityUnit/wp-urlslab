@@ -1,4 +1,4 @@
-import { fetchData } from '../api/fetching';
+import { getData } from '../api/fetching';
 onmessage = async function( message ) {
 	const { url, fromId, pageId, deleteCSVCols } = message.data;
 	const qOperator = url.includes( '?' ) ? '&' : '?';
@@ -8,8 +8,8 @@ onmessage = async function( message ) {
 	const dataForCSV = [];
 	const ended = false;
 	//Testing WP Rest API Cors
-	const response = await fetch( wpApiSettings.root + 'wp/v2/', {
-		method: 'GET',
+	const response = await getData( wpApiSettings.root + 'wp/v2/', {
+		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
 			accept: 'application/json',

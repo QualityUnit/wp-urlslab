@@ -174,48 +174,9 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 	public function get_route_get_items(): array {
 		return array(
 			array(
-				'methods'             => WP_REST_Server::READABLE,
+				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'get_items' ),
-				'args'                => $this->get_table_arguments(
-					array(
-						'filter_command'          => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_url_filter'       => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_semantic_context' => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_result'           => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_status'           => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_status_changed'   => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-					)
-				),
+				'args'                => $this->get_table_arguments(),
 				'permission_callback' => array(
 					$this,
 					'get_items_permissions_check',
@@ -229,20 +190,8 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 		$sql->add_select_column( '*' );
 		$sql->add_from( URLSLAB_CONTENT_GENERATORS_TABLE );
 
-		$this->add_filter_table_fields( $sql );
-
-		$sql->add_filter( 'filter_semantic_context' );
-		$sql->add_filter( 'filter_command' );
-		$sql->add_filter( 'filter_url_filter' );
-		$sql->add_filter( 'filter_result' );
-		$sql->add_filter( 'filter_status' );
-		$sql->add_filter( 'filter_status_changed' );
-
-		if ( $request->get_param( 'sort_column' ) ) {
-			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );
-		}
-		$sql->add_order( 'generator_id' );
-
+		$sql->add_filters( $this->get_row_object()->get_columns(), $request );
+		$sql->add_sorting( $this->get_row_object()->get_columns(), $request );
 		return $sql;
 	}
 

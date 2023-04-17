@@ -22,7 +22,7 @@ export default async function importCsv( slug, dataArray, result ) {
 
 	async function continueImport( index, returnResult ) {
 		const chunk = dataChunks().data[ index ];
-		const response = await setData( slug, { rows: chunk } );
+		const response = await setData( slug + '/create', { rows: chunk } );
 		if ( index === chunksLength - 1 ) {
 			ended = true;
 			returnResult( 100 );

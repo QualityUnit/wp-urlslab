@@ -23,7 +23,7 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 
 	const insertNewRow = useMutation( {
 		mutationFn: async ( { rowToInsert } ) => {
-			const response = await setData( `${ slug }`, rowToInsert );
+			const response = await setData( `${ slug }/create`, rowToInsert );
 			return { response };
 		},
 		onSuccess: async ( { response } ) => {

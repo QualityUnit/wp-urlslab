@@ -4,8 +4,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { useInView } from 'react-intersection-observer';
 
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { fetchData } from '../api/fetching';
-import { getParamsChar } from '../lib/helpers';
+import {fetchTableData} from '../api/fetching';
 
 export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
@@ -16,7 +15,9 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const query = useInfiniteQuery( {
 		queryKey: [ key, url ? url : '' ],
 		queryFn: ( { pageParam = '' } ) => {
-			return fetchData( `${ key }${ getParamsChar() }${ pageParam ? 'from_' + pageId + '=' + pageParam : '' }${ url ? url : '' }&rows_per_page=${ maxRows }` );
+			const filters = [];
+			filters.push( { col: pageId, op: '>', val: pageParam } );//TODO sorting direction should update filter!
+			return fetchTableData( key, filters, [], maxRows );//TODO what is in url???
 		},
 		getNextPageParam: ( allRows ) => {
 			if ( allRows.length < maxRows ) {

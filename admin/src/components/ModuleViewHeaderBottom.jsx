@@ -2,13 +2,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 
-import { fetchData } from '../api/fetching';
+import { fetchTableData } from '../api/fetching';
 import { deleteAll } from '../api/deleteTableData';
 
 import { ReactComponent as Trash } from '../assets/images/icon-trash.svg';
 import { ReactComponent as PlusIcon } from '../assets/images/icon-plus.svg';
-// import { ReactComponent as ImportIcon } from '../assets/images/icon-import.svg';
-// import { ReactComponent as ExportIcon } from '../assets/images/icon-export.svg';
 import { ReactComponent as RefreshIcon } from '../assets/images/icon-cron-refresh.svg';
 
 import SortMenu from '../elements/SortMenu';
@@ -48,7 +46,7 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 
 	const { data: rowCount } = useQuery( {
 		queryKey: [ slug, `count${ currentCountFilters }` ],
-		queryFn: () => fetchData( `${ slug }/count${ currentCountFilters }` ).then( ( count ) => {
+		queryFn: () => fetchTableData( `${ slug }/count`, currentCountFilters ).then( ( count ) => {
 			if ( ! noCount ) {
 				return count;
 			}

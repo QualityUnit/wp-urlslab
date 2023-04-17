@@ -3,14 +3,8 @@
 class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 	public function register_routes() {
 		$base = '/search-replace';
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/',
-			array(
-				$this->get_route_get_items(),
-				$this->get_route_create_item(),
-			)
-		);
+		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
+		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_items() ) ) );
 
 		register_rest_route(
@@ -27,25 +21,25 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 					'args'                => array(
 						'str_search'  => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
 						'str_replace' => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
 						'url_filter'  => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
 						'search_type' => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								switch ( $param ) {
 									case Urlslab_Search_Replace_Row::TYPE_PLAIN_TEXT:
 									case Urlslab_Search_Replace_Row::TYPE_REGEXP:
@@ -107,7 +101,7 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 					'args'                => array(
 						'rows' => array(
 							'required'          => true,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
 							},
 						),
@@ -127,20 +121,20 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 			'args'                => array(
 				'str_search'  => array(
 					'required'          => true,
-					'validate_callback' => function ( $param ) {
+					'validate_callback' => function( $param ) {
 						return is_string( $param ) && strlen( $param );
 					},
 				),
 				'str_replace' => array(
 					'required'          => true,
-					'validate_callback' => function ( $param ) {
+					'validate_callback' => function( $param ) {
 						return is_string( $param ) && strlen( $param );
 					},
 				),
 				'search_type' => array(
 					'required'          => false,
 					'default'           => Urlslab_Search_Replace_Row::TYPE_PLAIN_TEXT,
-					'validate_callback' => function ( $param ) {
+					'validate_callback' => function( $param ) {
 						switch ( $param ) {
 							case Urlslab_Search_Replace_Row::TYPE_PLAIN_TEXT:
 							case Urlslab_Search_Replace_Row::TYPE_REGEXP:
@@ -154,7 +148,7 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 				'urlFilter'   => array(
 					'required'          => false,
 					'default'           => '.*',
-					'validate_callback' => function ( $param ) {
+					'validate_callback' => function( $param ) {
 						return 250 > strlen( $param );
 					},
 				),
@@ -184,54 +178,16 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 		$sql->add_select_column( '*' );
 		$sql->add_from( URLSLAB_SEARCH_AND_REPLACE_TABLE );
 
-		$this->add_filter_table_fields( $sql );
-
-		$sql->add_filter( 'filter_str_search' );
-		$sql->add_filter( 'filter_str_replace' );
-		$sql->add_filter( 'filter_search_type' );
-		$sql->add_filter( 'filter_url_filter' );
-
-		if ( $request->get_param( 'sort_column' ) ) {
-			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );
-		}
-
-		$sql->add_order( 'id' );
-
+		$sql->add_filters( $this->get_row_object()->get_columns(), $request );
+		$sql->add_sorting( $this->get_row_object()->get_columns(), $request );
 		return $sql;
 	}
 
 	private function get_route_get_items(): array {
 		return array(
-			'methods'             => WP_REST_Server::READABLE,
+			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => array( $this, 'get_items' ),
-			'args'                => $this->get_table_arguments(
-				array(
-					'filter_str_search'  => array(
-						'required'          => false,
-						'validate_callback' => function ( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_str_replace' => array(
-						'required'          => false,
-						'validate_callback' => function ( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_search_type' => array(
-						'required'          => false,
-						'validate_callback' => function ( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_url_filter'  => array(
-						'required'          => false,
-						'validate_callback' => function ( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-				)
-			),
+			'args'                => $this->get_table_arguments(),
 			'permission_callback' => array(
 				$this,
 				'get_items_permissions_check',

@@ -1,5 +1,4 @@
-import { fetchData } from './fetching';
-import { getParamsChar } from '../lib/helpers';
+import { fetchTableData } from './fetching';
 
 let lastPage = '';
 let dataForCSV = [];
@@ -10,12 +9,17 @@ export let jsonData = { status: 'loading', data: [] };
 
 export async function exportCSV( options, result ) {
 	const { url, filters, fromId, pageId, perPage = 9999, deleteCSVCols } = options;
-	const qOperator = getParamsChar(); // Changes ? to & query hash if already used
 	const prevDataLength = dataForCSV.length;
-	const response = await fetchData( `${ url }${ qOperator }${ fromId }=${ lastPage }&rows_per_page=${ perPage }${ 'undefined' === typeof filters ? '' : filters }` );
+	let req_filters = [];
+	let req_sorting = [];	//TODO: add sorting columns with direction {col: 'id', dir: 'DESC'}
+	if ( 'undefined' !== typeof filters ) {
+		req_filters = filters;
+	}
+	req_filters.push( { col: fromId, op: '>', val: lastPage } );
+	const response = await fetchTableData( url, req_filters, req_sorting, perPage );
 
 	if ( ! lastPage ) {
-		totalItems = await fetchData( `${ url }/count${ filters ? getParamsChar() + `${ filters }` : '' }` );
+		totalItems = await fetchTableData( `${ url }/count`, req_filters, req_sorting, perPage );
 	}
 
 	dataForCSV.push( await response ); // Adds downloaded results to array

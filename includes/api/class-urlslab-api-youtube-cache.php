@@ -20,7 +20,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 					'args'                => array(
 						'status' => array(
 							'required'          => true,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								switch ( $param ) {
 									case Urlslab_Youtube_Row::STATUS_NEW:
 									case Urlslab_Youtube_Row::STATUS_DISABLED:
@@ -84,16 +84,8 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 		$sql->add_select_column( '*' );
 		$sql->add_from( URLSLAB_YOUTUBE_CACHE_TABLE );
 
-		$this->add_filter_table_fields( $sql );
-
-		$sql->add_filter( 'filter_videoid' );
-		$sql->add_filter( 'filter_status' );
-
-		if ( $request->get_param( 'sort_column' ) ) {
-			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );
-		}
-
-		$sql->add_order( 'videoid' );
+		$sql->add_filters( $this->get_row_object()->get_columns(), $request );
+		$sql->add_sorting( $this->get_row_object()->get_columns(), $request );
 
 		return $sql;
 	}
@@ -101,24 +93,9 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 	private function get_route_get_items(): array {
 		return array(
 			array(
-				'methods'             => WP_REST_Server::READABLE,
+				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'get_items' ),
-				'args'                => $this->get_table_arguments(
-					array(
-						'filter_videoid' => array(
-							'required'          => false,
-							'validate_callback' => function ( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_status'  => array(
-							'required'          => false,
-							'validate_callback' => function ( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-					)
-				),
+				'args'                => $this->get_table_arguments(),
 				'permission_callback' => array(
 					$this,
 					'get_items_permissions_check',

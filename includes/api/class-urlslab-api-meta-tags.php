@@ -70,17 +70,16 @@ class Urlslab_Api_Meta_Tags extends Urlslab_Api_Urls {
 	}
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
-		if ( ! $request->get_param( 'filter_url_type' ) ) {
-			$request->set_param(
-				'filter_url_type',
-				json_encode(
-					(object) array(
-						'op'  => '=',
-						'val' => Urlslab_Url_Row::URL_TYPE_INTERNAL,
-					)
-				)
-			);
+		$body = $request->get_json_params();
+		if ( ! is_array( $body['filters'] ) ) {
+			$body['filters'] = array();
 		}
+		$body['filters'][] = array(
+			'col' => 'url_type',
+			'op'  => '=',
+			'val' => Urlslab_Url_Row::URL_TYPE_INTERNAL,
+		);
+		$request->set_body( json_encode( $body ) );
 
 		return parent::get_items_sql( $request );
 	}

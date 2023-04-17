@@ -3,14 +3,8 @@
 class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 	public function register_routes() {
 		$base = '/redirects';
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/',
-			array(
-				$this->get_route_get_items(),
-				$this->get_route_create_item(),
-			)
-		);
+		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
+		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_items() ) ) );
 
 		register_rest_route(
@@ -362,28 +356,8 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 		$sql->add_select_column( '*' );
 		$sql->add_from( $this->get_row_object()->get_table_name() );
 
-		$this->add_filter_table_fields( $sql );
-
-		$sql->add_filter( 'filter_match_type' );
-		$sql->add_filter( 'filter_match_url' );
-		$sql->add_filter( 'filter_replace_url' );
-		$sql->add_filter( 'filter_is_logged' );
-		$sql->add_filter( 'filter_capabilities' );
-		$sql->add_filter( 'filter_ip' );
-		$sql->add_filter( 'filter_roles' );
-		$sql->add_filter( 'filter_browser' );
-		$sql->add_filter( 'filter_cookie' );
-		$sql->add_filter( 'filter_headers' );
-		$sql->add_filter( 'filter_params' );
-		$sql->add_filter( 'filter_if_not_found' );
-		$sql->add_filter( 'filter_cnt', '%d' );
-		$sql->add_filter( 'filter_redirect_code', '%d' );
-
-		if ( $request->get_param( 'sort_column' ) ) {
-			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );
-		}
-
-		$sql->add_order( 'redirect_id' );
+		$sql->add_filters( $this->get_row_object()->get_columns(), $request );
+		$sql->add_sorting( $this->get_row_object()->get_columns(), $request );
 
 		return $sql;
 	}
@@ -406,96 +380,9 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 
 	private function get_route_get_items(): array {
 		return array(
-			'methods'             => WP_REST_Server::READABLE,
+			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => array( $this, 'get_items' ),
-			'args'                => $this->get_table_arguments(
-				array(
-					'filter_match_type'    => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_match_url'     => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_replace_url'   => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_is_logged'     => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_capabilities'  => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_ip'            => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_roles'         => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_browser'       => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_cookie'        => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_headers'       => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_params'        => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_if_not_found'  => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_cnt'           => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_numeric_filter_value( $param );
-						},
-					),
-					'filter_redirect_code' => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_numeric_filter_value( $param );
-						},
-					),
-				)
-			),
+			'args'                => $this->get_table_arguments(),
 			'permission_callback' => array(
 				$this,
 				'get_items_permissions_check',

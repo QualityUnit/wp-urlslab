@@ -103,42 +103,9 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 	public function get_route_get_items(): array {
 		return array(
 			array(
-				'methods'             => WP_REST_Server::READABLE,
+				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'get_items' ),
-				'args'                => $this->get_table_arguments(
-					array(
-						'filter_url'            => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_status'         => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_status_changed' => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_css_content'    => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_filesize'       => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_numeric_filter_value( $param );
-							},
-						),
-					)
-				),
+				'args'                => $this->get_table_arguments(),
 				'permission_callback' => array(
 					$this,
 					'get_items_permissions_check',
@@ -152,18 +119,8 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 		$sql->add_select_column( '*' );
 		$sql->add_from( URLSLAB_CSS_CACHE_TABLE );
 
-		$this->add_filter_table_fields( $sql );
-
-		$sql->add_filter( 'filter_url' );
-		$sql->add_filter( 'filter_status' );
-		$sql->add_filter( 'filter_status_changed' );
-		$sql->add_filter( 'filter_filesize' );
-		$sql->add_filter( 'filter_css_content' );
-
-		if ( $request->get_param( 'sort_column' ) ) {
-			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );
-		}
-		$sql->add_order( 'url_id' );
+		$sql->add_filters( $this->get_row_object()->get_columns(), $request );
+		$sql->add_sorting( $this->get_row_object()->get_columns(), $request );
 
 		return $sql;
 	}

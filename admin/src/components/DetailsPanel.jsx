@@ -4,12 +4,11 @@ import { useInView } from 'react-intersection-observer';
 import { useVirtual } from 'react-virtual';
 import { useI18n } from '@wordpress/react-i18n';
 
-import { fetchData } from '../api/fetching';
+import {fetchTableData} from '../api/fetching';
 import useCloseModal from '../hooks/useCloseModal';
 import Button from '../elements/Button';
 import ProgressBar from '../elements/ProgressBar';
 import Loader from './Loader';
-import {getParamsChar} from "../lib/helpers";
 
 export default function DetailsPanel( { options, handlePanel } ) {
 	const maxRows = 150;
@@ -26,7 +25,9 @@ export default function DetailsPanel( { options, handlePanel } ) {
 		fetchNextPage } = useInfiniteQuery( {
 		queryKey: [ slug, url ],
 		queryFn: ( { pageParam = '' } ) => {
-			return fetchData( `${ slug }/${ url }`+getParamsChar()+`from_${ listId }=${ pageParam !== undefined && pageParam }&rows_per_page=${ maxRows }` );
+			//TODO sorting direction should update filter!
+			const filters = [{ col: listId, op: '>', val: pageParam }];	//TODO where are filters stored ??? in URL ???
+			return fetchTableData( `${ slug }/${ url }`, filters, [], maxRows );
 		},
 		getNextPageParam: ( allRows ) => {
 			if ( allRows.length < maxRows ) {
