@@ -6,6 +6,8 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 	public const SETTING_NAME_REFRESH_INTERVAL = 'urlslab-gen-refresh';
 	public const SETTING_NAME_AUTOAPPROVE = 'urlslab-gen-autoapprove';
 	public const SETTING_NAME_TRANSLATE = 'urlslab-gen-translate';
+	public const SETTING_NAME_GENERATOR_MODEL = 'urlslab-gen-model';
+	public const SETTING_NAME_TRANSLATE_MODEL = 'urlslab-gen-translate-model';
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action(
@@ -186,7 +188,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		$this->add_option_definition(
 			self::SETTING_NAME_REFRESH_INTERVAL,
 			self::FREQ_NEVER,
-			3600,
+			false,
 			__( 'Content Refresh Interval (paid)' ),
 			__(
 				'Define how often we should generate refreshed content with the URLsLab service in the background. Be aware that renewal fees correspond to the initial content generation charges.'
@@ -205,8 +207,8 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			'schedule',
 		);
 		$this->add_options_form_section(
-			'approval',
-			__( 'Approval Settings' ),
+			'generator',
+			__( 'Content Generator' ),
 			__(
 				'AI may occasionally produce inaccurate content, requiring adjustments for optimal user experience. You can easily review, approve, or edit AI-generated content to ensure quality and accuracy.'
 			)
@@ -223,7 +225,26 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'approval'
+			'generator'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_GENERATOR_MODEL,
+			\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
+			false,
+			__( 'Content Generator AI model' ),
+			__( 'Choose quality of model, which we will use for Content Generator widget. Difference between models is not just the quality, but also proce (GPT4 is 10x more expensive as other models).' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4            => __( 'GPT 4' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO    => __( 'GPT 3.5 Turbo' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 => __( 'GPT Davinci 003' ),
+			),
+			function( $value ) {
+				return \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $value ||
+					   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value ||
+					   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
+			},
+			'generator',
 		);
 
 		$this->add_options_form_section(
@@ -246,6 +267,24 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			null,
 			'wpml'
 		);
-
+		$this->add_option_definition(
+			self::SETTING_NAME_TRANSLATE_MODEL,
+			\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
+			false,
+			__( 'Translation model' ),
+			__( 'Choose quality of model used for translation task in WPML editor. Difference between models is not just the quality, but also proce (GPT4 is 10x more expensive as other models).' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4            => __( 'GPT 4' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO    => __( 'GPT 3.5 Turbo' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 => __( 'GPT Davinci 003' ),
+			),
+			function( $value ) {
+				return \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $value ||
+					   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value ||
+					   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
+			},
+			'wpml',
+		);
 	}
 }
