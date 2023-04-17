@@ -144,6 +144,14 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.12.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_REDIRECTS_TABLE . ' ADD UNIQUE INDEX `idx_uniq_redirects` (`match_type` ASC, `match_url` ASC, `replace_url` ASC, `is_logged` ASC, `capabilities` ASC, `browser` ASC, `cookie` ASC, `headers` ASC, `params` ASC, `if_not_found` ASC, `roles` ASC, `ip` ASC)' ); // phpcs:ignore
+			}
+		);
+
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -516,7 +524,8 @@ class Urlslab_Activator {
     		  ip VARCHAR(500),
     		  cnt INT UNSIGNED ZEROFILL DEFAULT 0,
     		  if_not_found CHAR(1) DEFAULT 'A',
-			  PRIMARY KEY (redirect_id)
+			  PRIMARY KEY (redirect_id),
+			  UNIQUE INDEX `idx_uniq_redirects` (`match_type` ASC, `match_url` ASC, `replace_url` ASC, `is_logged` ASC, `capabilities` ASC, `browser` ASC, `cookie` ASC, `headers` ASC, `params` ASC, `if_not_found` ASC, `roles` ASC, `ip` ASC)
         ) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
