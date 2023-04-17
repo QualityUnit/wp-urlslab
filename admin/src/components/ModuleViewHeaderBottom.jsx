@@ -10,7 +10,6 @@ import { useFilter } from '../hooks/filteringSorting';
 
 import { ReactComponent as Trash } from '../assets/images/icon-trash.svg';
 import { ReactComponent as PlusIcon } from '../assets/images/icon-plus.svg';
-// import { ReactComponent as ImportIcon } from '../assets/images/icon-import.svg';
 import { ReactComponent as RefreshIcon } from '../assets/images/icon-cron-refresh.svg';
 
 import SortMenu from '../elements/SortMenu';

@@ -4,35 +4,30 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { useInView } from 'react-intersection-observer';
 
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { fetchTableData } from '../api/fetching';
+import {fetchTableData} from '../api/fetching';
 
-export default function useInfiniteFetch( apiPath, primaryColumnNames, filters = [], sorting = [], maxRows = 50 ) {
+export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { __ } = useI18n();
 	const { ref, inView } = useInView();
+	const { key, url, pageId } = options;
 
 	const query = useInfiniteQuery( {
-		queryKey: [ apiPath ],
-		queryFn: ( { lastRow } ) => {
-			let queryFilters = [].concat(filters);//clone filters
-
-			primaryColumnNames.forEach(
-				function(primaryColumnName){
-					//TODO sorting direction should update filter operator!
-					queryFilters.push( { col: primaryColumnName, op: '>', val: lastRow[ primaryColumnName ] } );
-				}
-			);
-
-			return fetchTableData( apiPath, queryFilters, sorting, maxRows );
+		queryKey: [ key, url ? url : '' ],
+		queryFn: ( { pageParam = '' } ) => {
+			const filters = [];
+			filters.push( { col: pageId, op: '>', val: pageParam } );//TODO sorting direction should update filter!
+			return fetchTableData( key, filters, [], maxRows );//TODO what is in url???
 		},
 		getNextPageParam: ( allRows ) => {
 			if ( allRows.length < maxRows ) {
 				return undefined;
 			}
-			return allRows[ allRows?.length - 1 ] ?? undefined;
+			const lastRowId = allRows[ allRows?.length - 1 ][ pageId ] ?? undefined;
+			return lastRowId;
 		},
 		keepPreviousData: true,
-		refetchOnWindowFocus: true,
+		refetchOnWindowFocus: false,
 		cacheTime: Infinity,
 		staleTime: Infinity,
 	} );
@@ -50,7 +45,7 @@ export default function useInfiniteFetch( apiPath, primaryColumnNames, filters =
 		if ( inView ) {
 			fetchNextPage();
 		}
-	}, [ inView, apiPath, fetchNextPage ] );
+	}, [ inView, key, fetchNextPage ] );
 
 	return {
 		__,
