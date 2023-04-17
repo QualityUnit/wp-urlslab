@@ -1,4 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
+import { useI18n } from '@wordpress/react-i18n';
+
 import { get, update } from 'idb-keyval';
 
 import Checkbox from './Checkbox';
@@ -6,9 +8,11 @@ import { ReactComponent as ColumnsIcon } from '../assets/images/icon-columns.svg
 
 import '../assets/styles/elements/_FilterMenu.scss';
 import '../assets/styles/elements/_ColumnsMenu.scss';
+import Tooltip from './Tooltip';
 
 export default function ColumnsMenu( {
 	id, className, slug, table, columns, style } ) {
+	const { __ } = useI18n();
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
 	const [ hiddenCols, setHiddenCols ] = useState( table?.getState().columnVisibility );
@@ -61,6 +65,7 @@ export default function ColumnsMenu( {
 
 	return (
 		<div className={ `urlslab-FilterMenu urlslab-ColumnsMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref } id={ id }>
+			<Tooltip className="showOnHover align-left-0" style={ { width: '11em' } }>{ __( 'Turn off/on columns' ) }</Tooltip>
 			<div
 				className={ `urlslab-ColumnsMenu__icon ${ isActive ? 'active' : '' }` }
 				onClick={ handleMenu }

@@ -1,14 +1,15 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useCallback, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 
 import { fetchData } from '../api/fetching';
 import { deleteAll } from '../api/deleteTableData';
 
+import { useFilter } from '../hooks/filteringSorting';
+
 import { ReactComponent as Trash } from '../assets/images/icon-trash.svg';
 import { ReactComponent as PlusIcon } from '../assets/images/icon-plus.svg';
 // import { ReactComponent as ImportIcon } from '../assets/images/icon-import.svg';
-// import { ReactComponent as ExportIcon } from '../assets/images/icon-export.svg';
 import { ReactComponent as RefreshIcon } from '../assets/images/icon-cron-refresh.svg';
 
 import SortMenu from '../elements/SortMenu';
@@ -21,30 +22,45 @@ import DangerPanel from './DangerPanel';
 import TableFilter from './TableFilter';
 import DetailsPanel from './DetailsPanel';
 
+import TableFilterPanel from './TableFilterPanel';
+import '../assets/styles/components/_TableFilter.scss';
+
 export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noExport, noCount, noDelete, header, table, insertOptions, activatePanel, detailsOptions, exportOptions, selectedRows, onSort, onFilter, onDeleteSelected, onClearRow } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
+	const didMountRef = useRef( false );
 
 	const [ activePanel, setActivePanel ] = useState( );
-	const [ filtersObj, setFiltersObj ] = useState();
 	const [ sortBy, setSortBy ] = useState();
+	const initialRow = table?.getRowModel().rows[ 0 ];
+
+	const { filters, currentFilters, state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( { slug, header, initialRow } );
+
+	const currentCountFilters = filters ? filters.replace( '&', '?' ) : '';
+
+	const handleOnEdit = useCallback( ( returnObj ) => {
+		if ( returnObj ) {
+			handleSaveFilter( returnObj );
+			onFilter( filters );
+		}
+		if ( ! returnObj ) {
+			dispatch( { type: 'toggleEditFilter', editFilter: false } );
+		}
+	}, [ handleSaveFilter, filters, dispatch, onFilter ] );
 
 	useEffect( () => {
+		if ( onFilter && didMountRef.current ) {
+			onFilter( filters );
+		}
+		didMountRef.current = true;
+
 		if ( activatePanel ) {
 			setActivePanel( activatePanel );
 		}
 		if ( detailsOptions ) {
 			setActivePanel( 'details' );
 		}
-	}, [ slug, activatePanel, detailsOptions ] );
-
-	const initialRow = table?.getRowModel().rows[ 0 ];
-
-	if ( filtersObj && onFilter ) {
-		onFilter( filtersObj?.filters );
-	}
-
-	const currentCountFilters = filtersObj?.filters ? filtersObj?.filters?.replace( '&', '?' ) : '';
+	}, [ slug, activatePanel, detailsOptions, filters, currentFilters, onFilter ] );
 
 	const { data: rowCount } = useQuery( {
 		queryKey: [ slug, `count${ currentCountFilters }` ],
@@ -116,6 +132,15 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 						<Button className="active" onClick={ () => handlePanel( 'addrow' ) }><PlusIcon />{ insertOptions.title }</Button>
 					}
 
+					<div className="pos-relative">
+						<Button className="simple underline" onClick={ () => dispatch( { type: 'toggleEditFilter', editFilter: 'addFilter' } ) }>{ __( '+ Add filter' ) }
+						</Button>
+
+						{ state.editFilter === 'addFilter' && // Our main adding panel (only when Add button clicked)
+							<TableFilterPanel props={ { slug, header, initialRow, possibleFilters: state.possibleFilters, currentFilters } } onEdit={ handleOnEdit } />
+						}
+					</div>
+
 					<div className="ma-left flex flex-align-center">
 						{ ! noDelete &&
 							<Button className="no-padding underline simple" onClick={ () => handlePanel( 'deleteall' ) }>{ __( 'Delete All' ) }</Button>
@@ -143,8 +168,7 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 					</div>
 				</div>
 				<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
-
-					<TableFilter slug={ slug } header={ header } initialRow={ initialRow } onFilter={ setFiltersObj } />
+					<TableFilter props={ { currentFilters, state, slug, header, initialRow } } onEdit={ handleOnEdit } onRemove={ ( key ) => handleRemoveFilter( key ) } />
 					<div className="ma-left flex flex-align-center">
 						{
 							! noCount && rowCount &&
@@ -186,7 +210,7 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 
 			{ activePanel === 'export' &&
 			<ExportPanel options={ exportOptions }
-				currentFilters={ filtersObj?.currentFilters }
+				currentFilters={ currentFilters }
 				header={ header }
 				handlePanel={ handlePanel }
 			/>
