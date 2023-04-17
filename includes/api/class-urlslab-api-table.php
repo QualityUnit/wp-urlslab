@@ -107,7 +107,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 
 			try {
 				$this->validate_item( $row_obj );
-				$rows[] = $row_obj;
+				$rows[] = $this->before_import( $row_obj );
 			} catch ( Exception $e ) {
 				return new WP_Error( 'error', __( 'Validation failed: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 			}
@@ -210,28 +210,27 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	/**
 	 * @param Urlslab_Datap[] $row
 	 */
-	protected function on_items_updated( array $row = array() ) {
-	}
+	protected function on_items_updated( array $row = array() ) {}
 
 	protected function get_table_arguments( array $arguments = array() ): array {
-		$arguments['rows_per_page'] = array(
+		$arguments['rows_per_page']  = array(
 			'required'          => true,
 			'default'           => self::ROWS_PER_PAGE,
-			'validate_callback' => function ( $param ) {
+			'validate_callback' => function( $param ) {
 				return is_numeric( $param ) && 0 < $param && self::MAX_ROWS_PER_PAGE > $param;
 			},
 		);
-		$arguments['sort_column'] = array(
+		$arguments['sort_column']    = array(
 			'required'          => false,
 			'default'           => $this->get_row_object()->get_primary_columns()[0],
-			'validate_callback' => function ( $param ) {
+			'validate_callback' => function( $param ) {
 				return is_string( $param ) && 0 < strlen( $param );
 			},
 		);
 		$arguments['sort_direction'] = array(
 			'required'          => false,
 			'default'           => 'ASC',
-			'validate_callback' => function ( $param ) {
+			'validate_callback' => function( $param ) {
 				return 'ASC' == $param || 'DESC' == $param;
 			},
 		);
@@ -249,8 +248,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		return $arguments;
 	}
 
-	protected function validate_item( Urlslab_Data $row ) {
-	}
+	protected function validate_item( Urlslab_Data $row ) {}
 
 	protected function add_filter_table_fields( Urlslab_Api_Table_Sql $sql, $table_prefix = false ) {
 		$rob_obj = $this->get_row_object();
@@ -278,7 +276,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	}
 
 	protected function get_count_route( array $route ): array {
-		$count_route = $route;
+		$count_route                   = $route;
 		$count_route[0]['callback'][1] = $count_route[0]['callback'][1] . '_count';
 
 		return $count_route;
@@ -286,5 +284,9 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		throw new Exception( 'Missing implementation' );
+	}
+
+	protected function before_import( Urlslab_Data $row_obj ): Urlslab_Data {
+		return $row_obj;
 	}
 }
