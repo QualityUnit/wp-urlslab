@@ -67,7 +67,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 			$request->setAugmentCommand( $row_obj->get_semantic_context() );
 			$request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
 			$prompt = new DomainDataRetrievalAugmentPrompt();
-			$prompt->setPromptTemplate( "Additional information to your memory, {query}:\n--\n{context}\n----\n" . $command );
+			$prompt->setPromptTemplate( "Additional information to your memory:\n--\n{context}\n----\n" . $command );
 			$prompt->setDocumentTemplate( "--\n{text}\n--" );
 			$prompt->setMetadataVars( array() );
 			$request->setPrompt( $prompt );
