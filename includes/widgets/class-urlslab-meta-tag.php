@@ -15,6 +15,26 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	public const ADD_VALUE = 'A';
 	public const REPLACE_VALUE = 'R';
 	public const NO_CHANGE_VALUE = '';
+	public const TWITTER_CARD_SUMMARY_LARGE_IMAGE = 'summary_large_image';
+	public const SETTING_NAME_CARD_TYPE = 'urlslab_tw_card_type';
+	public const TWITTER_CARD_SUMMARY = 'summary';
+	public const TWITTER_CARD_APP = 'app';
+	public const TWITTER_CARD_PLAYER = 'player';
+	public const SETTING_NAME_TWITTER = 'urlslab_tw';
+	public const SETTING_NAME_TW_HANLDE = 'urlslab_tw_handle';
+	public const SETTING_NAME_TW_CREATOR = 'urlslab_tw_creator';
+	public const SETTING_NAME_TW_PLAYER = 'urlslab_tw_player';
+	public const SETTING_NAME_TW_PLAYER_WIDTH = 'urlslab_tw_player_width';
+	public const SETTING_NAME_TW_PLAYER_HEIGHT = 'urlslab_tw_player_height';
+	public const SETTING_NAME_TW_IPHONE_NAME = 'urlslab_tw_iphone_name';
+	public const SETTING_NAME_TW_IPHONE_ID = 'urlslab_tw_iphone_id';
+	public const SETTING_NAME_TW_IPHONE_URL = 'urlslab_tw_iphone_url';
+	public const SETTING_NAME_TW_IPAD_URL = 'urlslab_tw_ipad_url';
+	public const SETTING_NAME_TW_IPAD_ID = 'urlslab_tw_ipad_id';
+	public const SETTING_NAME_TW_IPAD_NAME = 'urlslab_tw_ipad_name';
+	public const SETTING_NAME_TW_GOOGLEPLAY_NAME = 'urlslab_tw_googleplay_name';
+	public const SETTING_NAME_TW_GOOGLEPLAY_ID = 'urlslab_tw_googleplay_id';
+	public const SETTING_NAME_TW_GOOGLEPLAY_URL = 'urlslab_tw_googleplay_url';
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_head_content', $this, 'theContentHook' );
@@ -54,12 +74,63 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 
 				$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'description', self::SETTING_NAME_META_DESCRIPTION_GENERATION, $summary );
 
+				//Open Graph
 				$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:title', self::SETTING_NAME_META_OG_TITLE_GENERATION, $title );
 				$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:description', self::SETTING_NAME_META_OG_DESC_GENERATION, $summary );
-				if ( $this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image', self::SETTING_NAME_META_OG_IMAGE_GENERATION, $url_data->get_screenshot_url() ) ) {
+				if ( strlen( $url_data->get_screenshot_url() ) && $this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image', self::SETTING_NAME_META_OG_IMAGE_GENERATION, $url_data->get_screenshot_url() ) ) {
 					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image:width', self::SETTING_NAME_META_OG_IMAGE_GENERATION, 1366 );
 					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image:height', self::SETTING_NAME_META_OG_IMAGE_GENERATION, 768 );
 					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image:type', self::SETTING_NAME_META_OG_IMAGE_GENERATION, 'image/jpeg' );
+				}
+
+				//Twitter
+				$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'twitter:card', self::SETTING_NAME_TWITTER, $this->get_option( self::SETTING_NAME_CARD_TYPE ) );
+				if ( strlen( $this->get_option( self::SETTING_NAME_TW_HANLDE ) ) > 0 ) {
+					$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'twitter:site', self::SETTING_NAME_TWITTER, $this->get_option( self::SETTING_NAME_TW_HANLDE ) );
+				}
+				if ( strlen( $this->get_option( self::SETTING_NAME_TW_CREATOR ) ) > 0 ) {
+					$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'twitter:creator', self::SETTING_NAME_TWITTER, $this->get_option( self::SETTING_NAME_TW_CREATOR ) );
+				}
+				$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'twitter:title', self::SETTING_NAME_TWITTER, $title );
+				$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'twitter:description', self::SETTING_NAME_TWITTER, $summary );
+				if ( strlen( $url_data->get_screenshot_url() ) ) {
+					$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'twitter:image', self::SETTING_NAME_TWITTER, $url_data->get_screenshot_url() );
+				}
+				if ( strlen( $this->get_option( self::SETTING_NAME_TW_PLAYER ) ) ) {
+					$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'twitter:player', self::SETTING_NAME_TWITTER, $this->get_option( self::SETTING_NAME_TW_PLAYER ) );
+				}
+				if ( strlen( $this->get_option( self::SETTING_NAME_TW_PLAYER_WIDTH ) ) ) {
+					$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'twitter:player:width', self::SETTING_NAME_TWITTER, $this->get_option( self::SETTING_NAME_TW_PLAYER_WIDTH ) );
+				}
+				if ( strlen( $this->get_option( self::SETTING_NAME_TW_PLAYER_HEIGHT ) ) ) {
+					$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'twitter:player:height', self::SETTING_NAME_TWITTER, $this->get_option( self::SETTING_NAME_TW_PLAYER_HEIGHT ) );
+				}
+				if ( strlen( $this->get_option( self::SETTING_NAME_TW_IPHONE_NAME ) ) ) {
+					$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'twitter:app:name:iphone', self::SETTING_NAME_TWITTER, $this->get_option( self::SETTING_NAME_TW_IPHONE_NAME ) );
+				}
+				if ( strlen( $this->get_option( self::SETTING_NAME_TW_IPHONE_ID ) ) ) {
+					$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'twitter:app:id:iphone', self::SETTING_NAME_TWITTER, $this->get_option( self::SETTING_NAME_TW_IPHONE_ID ) );
+				}
+				if ( strlen( $this->get_option( self::SETTING_NAME_TW_IPHONE_URL ) ) ) {
+					$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'twitter:app:url:iphone', self::SETTING_NAME_TWITTER, $this->get_option( self::SETTING_NAME_TW_IPHONE_URL ) );
+				}
+				if ( strlen( $this->get_option( self::SETTING_NAME_TW_IPAD_NAME ) ) ) {
+					$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'twitter:app:name:ipad', self::SETTING_NAME_TWITTER, $this->get_option( self::SETTING_NAME_TW_IPAD_NAME ) );
+				}
+				if ( strlen( $this->get_option( self::SETTING_NAME_TW_IPAD_ID ) ) ) {
+					$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'twitter:app:id:ipad', self::SETTING_NAME_TWITTER, $this->get_option( self::SETTING_NAME_TW_IPAD_ID ) );
+				}
+				if ( strlen( $this->get_option( self::SETTING_NAME_TW_IPAD_URL ) ) ) {
+					$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'twitter:app:url:ipad', self::SETTING_NAME_TWITTER, $this->get_option( self::SETTING_NAME_TW_IPAD_URL ) );
+				}
+				if ( strlen( $this->get_option( self::SETTING_NAME_TW_GOOGLEPLAY_NAME ) ) ) {
+					$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'twitter:app:name:googleplay', self::SETTING_NAME_TWITTER, $this->get_option( self::SETTING_NAME_TW_GOOGLEPLAY_NAME ) );
+				}
+				if ( strlen( $this->get_option( self::SETTING_NAME_TW_GOOGLEPLAY_ID ) ) ) {
+					$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'twitter:app:id:googleplay', self::SETTING_NAME_TWITTER, $this->get_option( self::SETTING_NAME_TW_GOOGLEPLAY_ID ) );
+				}
+				if ( strlen( $this->get_option( self::SETTING_NAME_TW_GOOGLEPLAY_URL ) ) ) {
+					$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'twitter:app:url:googleplay', self::SETTING_NAME_TWITTER, $this->get_option( self::SETTING_NAME_TW_GOOGLEPLAY_URL ) );
 				}
 			}
 		} catch ( Exception $e ) {
@@ -176,6 +247,248 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			},
 			'og'
 		);
+
+		$this->add_options_form_section( 'twitter', __( 'Twitter Card' ), __( 'Card properties are simple key-value pairs, each defined in an HTML meta tag as seen above. The combined collection of properties defines the overall card experience on Twitter, and each card type supports and requires a specific set of properties.' ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_TWITTER,
+			self::ADD_VALUE,
+			true,
+			__( 'Twitter Meta Tags' ),
+			__( 'Choose how will handle plugin existing Twitter meta tag values' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				self::NO_CHANGE_VALUE => __( 'Not used' ),
+				self::ADD_VALUE       => __( 'Add if missing' ),
+				self::REPLACE_VALUE   => __( 'Replace the current values' ),
+			),
+			function( $value ) {
+				switch ( $value ) {
+					case self::NO_CHANGE_VALUE:
+					case self::ADD_VALUE:
+					case self::REPLACE_VALUE:
+						return true;
+
+					default:
+						return false;
+				}
+			},
+			'twitter'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_CARD_TYPE,
+			self::TWITTER_CARD_SUMMARY_LARGE_IMAGE,
+			true,
+			__( 'Twitter Card' ),
+			__( 'Choose the default style for twitter:card meta field value.' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				self::TWITTER_CARD_SUMMARY             => __( 'Summary' ),
+				self::TWITTER_CARD_SUMMARY_LARGE_IMAGE => __( 'Summary and large image' ),
+				self::TWITTER_CARD_APP                 => __( 'App' ),
+				self::TWITTER_CARD_PLAYER              => __( 'Player' ),
+			),
+			function( $value ) {
+				switch ( $value ) {
+					case self::TWITTER_CARD_SUMMARY:
+					case self::TWITTER_CARD_SUMMARY_LARGE_IMAGE:
+					case self::TWITTER_CARD_APP:
+					case self::TWITTER_CARD_PLAYER:
+						return true;
+
+					default:
+						return false;
+				}
+			},
+			'twitter'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_TW_HANLDE,
+			'@urlslab',
+			true,
+			__( 'Twitter Username' ),
+			__( '@username for the website used in the card footer. Choose your Twitter username. @urlslab value is just an example. Size of twitter username should be max 15 characters long.' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $value ) {
+				return empty( $value ) || ( false !== strpos( $value, '@' ) && 1 < strlen( $value ) && 16 > strlen( $value ) );
+			},
+			'twitter'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_TW_CREATOR,
+			'@urlslab',
+			true,
+			__( 'Twitter Creator' ),
+			__( '@username for the content creator / author. Choose your Twitter username. @urlslab value is just an example. Size of twitter username should be max 15 characters long.' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $value ) {
+				return empty( $value ) || ( false !== strpos( $value, '@' ) && 1 < strlen( $value ) && 16 > strlen( $value ) );
+			},
+			'twitter'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_TW_PLAYER,
+			'',
+			true,
+			__( 'Twitter Player' ),
+			__( 'HTTPS URL of player iframe. Used with player card. Leave empty if you do not know what is this value.' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $value ) {
+				return empty( $value ) || ( false !== strpos( $value, 'http' ) );
+			},
+			'twitter'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_TW_PLAYER_WIDTH,
+			800,
+			true,
+			__( 'Twitter Player Width' ),
+			__( 'Width of Twitter Player iframe in pixels' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $value ) {
+				return empty( $value ) || is_numeric( $value );
+			},
+			'twitter'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_TW_PLAYER_HEIGHT,
+			600,
+			true,
+			__( 'Twitter Player Height' ),
+			__( 'Height of Twitter Player iframe in pixels' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $value ) {
+				return empty( $value ) || is_numeric( $value );
+			},
+			'twitter'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_TW_IPHONE_NAME,
+			'',
+			true,
+			__( 'Name of your iPhone app' ),
+			__( 'Name of your iPhone app in Apple app store. Used with app card.' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $value ) {
+				return empty( $value ) || is_string( $value );
+			},
+			'twitter'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_TW_IPHONE_ID,
+			'',
+			true,
+			__( 'App ID in the iTunes App Store' ),
+			__( 'Your app ID in the iTunes App Store (Note: NOT your bundle ID). Used with app card.' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $value ) {
+				return empty( $value ) || is_string( $value );
+			},
+			'twitter'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_TW_IPHONE_URL,
+			'',
+			true,
+			__( 'Your app’s custom URL scheme' ),
+			__( 'Your app’s custom URL scheme (you must include ”://” after your scheme name). Used with app card.' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $value ) {
+				return empty( $value ) || is_string( $value );
+			},
+			'twitter'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_TW_IPAD_NAME,
+			'',
+			true,
+			__( 'Name of your iPad app' ),
+			__( 'Name of your iPad app in Apple app store. Used with app card.' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $value ) {
+				return empty( $value ) || is_string( $value );
+			},
+			'twitter'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_TW_IPAD_ID,
+			'',
+			true,
+			__( 'iPad App ID in the iTunes App Store' ),
+			__( 'Your app ID in the iTunes App Store optimized for iPads (Note: NOT your bundle ID). Used with app card.' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $value ) {
+				return empty( $value ) || is_string( $value );
+			},
+			'twitter'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_TW_IPAD_URL,
+			'',
+			true,
+			__( 'Your iPad app’s custom URL scheme' ),
+			__( 'Your app’s custom URL scheme (you must include ”://” after your scheme name). Used with app card.' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $value ) {
+				return empty( $value ) || is_string( $value );
+			},
+			'twitter'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_TW_GOOGLEPLAY_NAME,
+			'',
+			true,
+			__( 'Name of your Android app' ),
+			__( 'Name of your Android app in Google Play store. Used with app card.' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $value ) {
+				return empty( $value ) || is_string( $value );
+			},
+			'twitter'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_TW_GOOGLEPLAY_ID,
+			'',
+			true,
+			__( 'App ID in the Google Play Store' ),
+			__( 'Your app ID in the Google Play Store' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $value ) {
+				return empty( $value ) || is_string( $value );
+			},
+			'twitter'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_TW_GOOGLEPLAY_URL,
+			'',
+			true,
+			__( 'Custom Android URL scheme' ),
+			__( 'Your app’s custom URL scheme for Android app' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $value ) {
+				return empty( $value ) || is_string( $value );
+			},
+			'twitter'
+		);
+
 	}
 
 	private function set_meta_tag( $document, $head_tag, $tag, $attribute_name, $attribute_value, $setting_name, $content_value ): bool {

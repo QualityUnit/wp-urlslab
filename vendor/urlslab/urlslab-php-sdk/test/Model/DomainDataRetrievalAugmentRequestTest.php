@@ -107,6 +107,15 @@ class DomainDataRetrievalAugmentRequestTest extends TestCase
     }
 
     /**
+     * Test attribute "augmenting_model_name"
+     */
+    public function testPropertyAugmentingModelName()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
      * Test attribute "renew_frequency"
      */
     public function testPropertyRenewFrequency()

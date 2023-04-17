@@ -60,6 +60,7 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
         'augment_command' => 'string',
         'filter' => '\OpenAPI\Client\Model\DomainDataRetrievalContentQuery',
         'prompt' => '\OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt',
+        'augmenting_model_name' => 'string',
         'renew_frequency' => 'string'
     ];
 
@@ -74,6 +75,7 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
         'augment_command' => null,
         'filter' => null,
         'prompt' => null,
+        'augmenting_model_name' => null,
         'renew_frequency' => null
     ];
 
@@ -86,6 +88,7 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
         'augment_command' => true,
 		'filter' => false,
 		'prompt' => false,
+		'augmenting_model_name' => true,
 		'renew_frequency' => false
     ];
 
@@ -178,6 +181,7 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
         'augment_command' => 'augmentCommand',
         'filter' => 'filter',
         'prompt' => 'prompt',
+        'augmenting_model_name' => 'augmentingModelName',
         'renew_frequency' => 'renewFrequency'
     ];
 
@@ -190,6 +194,7 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
         'augment_command' => 'setAugmentCommand',
         'filter' => 'setFilter',
         'prompt' => 'setPrompt',
+        'augmenting_model_name' => 'setAugmentingModelName',
         'renew_frequency' => 'setRenewFrequency'
     ];
 
@@ -202,6 +207,7 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
         'augment_command' => 'getAugmentCommand',
         'filter' => 'getFilter',
         'prompt' => 'getPrompt',
+        'augmenting_model_name' => 'getAugmentingModelName',
         'renew_frequency' => 'getRenewFrequency'
     ];
 
@@ -246,6 +252,10 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
         return self::$openAPIModelName;
     }
 
+    public const AUGMENTING_MODEL_NAME_GPT_4 = 'gpt-4';
+    public const AUGMENTING_MODEL_NAME_GPT_3_5_TURBO = 'gpt-3.5-turbo';
+    public const AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 = 'text-davinci-003';
+    public const AUGMENTING_MODEL_NAME_TEXT_DAVINCI_002 = 'text-davinci-002';
     public const RENEW_FREQUENCY_ONE_TIME = 'ONE_TIME';
     public const RENEW_FREQUENCY_YEARLY = 'YEARLY';
     public const RENEW_FREQUENCY_DAILY = 'DAILY';
@@ -253,6 +263,21 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
     public const RENEW_FREQUENCY_WEEKLY = 'WEEKLY';
     public const RENEW_FREQUENCY_HOURLY = 'HOURLY';
     public const RENEW_FREQUENCY_MONTHLY = 'MONTHLY';
+
+    /**
+     * Gets allowable values of the enum
+     *
+     * @return string[]
+     */
+    public function getAugmentingModelNameAllowableValues()
+    {
+        return [
+            self::AUGMENTING_MODEL_NAME_GPT_4,
+            self::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
+            self::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003,
+            self::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_002,
+        ];
+    }
 
     /**
      * Gets allowable values of the enum
@@ -290,6 +315,7 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
         $this->setIfExists('augment_command', $data ?? [], null);
         $this->setIfExists('filter', $data ?? [], null);
         $this->setIfExists('prompt', $data ?? [], null);
+        $this->setIfExists('augmenting_model_name', $data ?? [], null);
         $this->setIfExists('renew_frequency', $data ?? [], null);
     }
 
@@ -319,6 +345,15 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
     public function listInvalidProperties()
     {
         $invalidProperties = [];
+
+        $allowedValues = $this->getAugmentingModelNameAllowableValues();
+        if (!is_null($this->container['augmenting_model_name']) && !in_array($this->container['augmenting_model_name'], $allowedValues, true)) {
+            $invalidProperties[] = sprintf(
+                "invalid value '%s' for 'augmenting_model_name', must be one of '%s'",
+                $this->container['augmenting_model_name'],
+                implode("', '", $allowedValues)
+            );
+        }
 
         if ($this->container['renew_frequency'] === null) {
             $invalidProperties[] = "'renew_frequency' can't be null";
@@ -431,6 +466,50 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
             throw new \InvalidArgumentException('non-nullable prompt cannot be null');
         }
         $this->container['prompt'] = $prompt;
+
+        return $this;
+    }
+
+    /**
+     * Gets augmenting_model_name
+     *
+     * @return string|null
+     */
+    public function getAugmentingModelName()
+    {
+        return $this->container['augmenting_model_name'];
+    }
+
+    /**
+     * Sets augmenting_model_name
+     *
+     * @param string|null $augmenting_model_name augmenting_model_name
+     *
+     * @return self
+     */
+    public function setAugmentingModelName($augmenting_model_name)
+    {
+        if (is_null($augmenting_model_name)) {
+            array_push($this->openAPINullablesSetToNull, 'augmenting_model_name');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('augmenting_model_name', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
+        }
+        $allowedValues = $this->getAugmentingModelNameAllowableValues();
+        if (!is_null($augmenting_model_name) && !in_array($augmenting_model_name, $allowedValues, true)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    "Invalid value '%s' for 'augmenting_model_name', must be one of '%s'",
+                    $augmenting_model_name,
+                    implode("', '", $allowedValues)
+                )
+            );
+        }
+        $this->container['augmenting_model_name'] = $augmenting_model_name;
 
         return $this;
     }
