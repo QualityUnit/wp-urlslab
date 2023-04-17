@@ -26,13 +26,13 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 					),
 					'args'                => array(
 						'str_search'  => array(
-							'required'          => true,
+							'required'          => false,
 							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'str_replace' => array(
-							'required'          => true,
+							'required'          => false,
 							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
@@ -44,7 +44,7 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 							},
 						),
 						'search_type' => array(
-							'required'          => true,
+							'required'          => false,
 							'validate_callback' => function ( $param ) {
 								switch ( $param ) {
 									case Urlslab_Search_Replace_Row::TYPE_PLAIN_TEXT:
