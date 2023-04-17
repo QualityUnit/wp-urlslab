@@ -28,13 +28,15 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 			return false;
 		}
 
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
+
 		global $wpdb;
 
 		$query_data = array( Urlslab_Content_Generator_Row::STATUS_NEW );
 		$active_sql = '';
-		if ( Urlslab_Widget::FREQ_NEVER != Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG )->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_REFRESH_INTERVAL ) ) {
+		if ( Urlslab_Widget::FREQ_NEVER != $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_REFRESH_INTERVAL ) ) {
 			$query_data[] = Urlslab_Content_Generator_Row::STATUS_ACTIVE;
-			$query_data[] = Urlslab_Data::get_now( time() - Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG )->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_REFRESH_INTERVAL ) );
+			$query_data[] = Urlslab_Data::get_now( time() - $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_REFRESH_INTERVAL ) );
 			$active_sql   = '(status = %s AND status_changed < %s) OR ';
 		}
 		// PENDING or UPDATING urls will be retried in one hour again
@@ -61,6 +63,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 
 		try {
 			$request = new DomainDataRetrievalAugmentRequest();
+			$request->setModelName( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_GENERATOR_MODEL ) );
 			$request->setAugmentCommand( $row_obj->get_semantic_context() );
 			$request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
 			$prompt = new DomainDataRetrievalAugmentPrompt();
@@ -76,13 +79,13 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 
 			$response = $this->content_client->memoryLessAugment( $request, 'false', 'false' );
 
-			if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG )->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_AUTOAPPROVE ) ) {
+			if ( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_AUTOAPPROVE ) ) {
 				$row_obj->set_status( Urlslab_Content_Generator_Row::STATUS_ACTIVE );
 			} else {
 				$row_obj->set_status( Urlslab_Content_Generator_Row::STATUS_WAITING_APPROVAL );
 			}
 
-			if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG )->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_AUTOAPPROVE ) ) {
+			if ( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_AUTOAPPROVE ) ) {
 				$row_obj->set_status( Urlslab_Content_Generator_Row::STATUS_ACTIVE );
 			} else {
 				$row_obj->set_status( Urlslab_Content_Generator_Row::STATUS_WAITING_APPROVAL );
