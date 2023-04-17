@@ -8,7 +8,7 @@ import useChangeRow from '../hooks/useChangeRow';
 export default function CSSCacheTable( { slug } ) {
 	const pageId = 'url_id';
 	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '': sortingColumn }`;
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
 
 	const {
 		__,
@@ -22,7 +22,7 @@ export default function CSSCacheTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, pageId } );
 
-	const { row, selectRow, deleteRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, pageId } );
 
 	const statusTypes = {
 		N: __( 'New' ),
@@ -88,7 +88,9 @@ export default function CSSCacheTable( { slug } ) {
 				table={ table }
 				noExport
 				noImport
+				selectedRows={ selectedRows }
 				onSort={ ( val ) => sortBy( val ) }
+				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 			/>
 			<Table className="fadeInto" columns={ columns }

@@ -11,7 +11,7 @@ export default function RedirectsTable( { slug } ) {
 
 	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '': sortingColumn }`;
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
 
 	const {
 		__,
@@ -25,7 +25,7 @@ export default function RedirectsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, pageId } );
 
-	const { row, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
 	const { redirectTypes, matchTypes, logginTypes, notFoundTypes, header } = useRedirectTableMenus();
 
@@ -158,7 +158,9 @@ export default function RedirectsTable( { slug } ) {
 				slug={ slug }
 				header={ header }
 				table={ table }
+				selectedRows={ selectedRows }
 				onSort={ ( val ) => sortBy( val ) }
+				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onClearRow={ ( clear ) => {
 					setInsertRow();

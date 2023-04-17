@@ -110,7 +110,7 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 				<div className="urlslab-moduleView-headerBottom__top flex flex-align-center">
 
 					<Button className="" onClick={ () => handleRefresh() }><RefreshIcon />{ __( 'Refresh table' ) }</Button>
-					{ ! noDelete && selectedRows.length > 0 &&
+					{ ! noDelete && selectedRows?.length > 0 &&
 						<Button className="ml-s" onClick={ () => handlePanel( 'deleteSelected' ) }><Trash />{ __( 'Delete selected' ) }</Button>
 					}
 

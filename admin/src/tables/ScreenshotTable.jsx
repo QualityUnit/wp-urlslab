@@ -11,7 +11,7 @@ export default function ScreenshotTable( { slug } ) {
 
 	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '': sortingColumn }`;
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
 	const {
@@ -26,7 +26,7 @@ export default function ScreenshotTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, pageId } );
 
-	const { row, selectRow, deleteRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, pageId } );
 
 	const scrStatusTypes = {
 		N: __( 'Waiting' ),
@@ -123,7 +123,9 @@ export default function ScreenshotTable( { slug } ) {
 				slug={ slug }
 				header={ header }
 				table={ table }
+				selectedRows={ selectedRows }
 				onSort={ ( val ) => sortBy( val ) }
+				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				noImport
 				detailsOptions={ detailsOptions }
