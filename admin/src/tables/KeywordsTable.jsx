@@ -10,7 +10,7 @@ import useChangeRow from '../hooks/useChangeRow';
 export default function KeywordsTable( { slug } ) {
 	const pageId = 'kw_id';
 	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '': sortingColumn }`;
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
 	const {
@@ -25,7 +25,7 @@ export default function KeywordsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, pageId } );
 
-	const { row, rowsSelected, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
 	const keywordTypes = {
 		M: __( 'Manual' ),
@@ -140,8 +140,9 @@ export default function KeywordsTable( { slug } ) {
 				slug={ slug }
 				header={ header }
 				table={ table }
-				rowsSelected={ rowsSelected }
+				selectedRows={ selectedRows }
 				onSort={ ( val ) => sortBy( val ) }
+				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onClearRow={ ( clear ) => {
 					setInsertRow();

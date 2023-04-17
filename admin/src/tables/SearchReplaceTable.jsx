@@ -10,7 +10,7 @@ export default function SearchReplaceTable( { slug } ) {
 
 	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '': sortingColumn }`;
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
 
 	const {
 		__,
@@ -24,7 +24,7 @@ export default function SearchReplaceTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, pageId } );
 
-	const { row, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
 	const searchTypes = {
 		T: __( 'Plain text' ),
@@ -96,7 +96,9 @@ export default function SearchReplaceTable( { slug } ) {
 				slug={ slug }
 				header={ header }
 				table={ table }
+				selectedRows={ selectedRows }
 				onSort={ ( val ) => sortBy( val ) }
+				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onClearRow={ ( clear ) => {
 					setInsertRow();

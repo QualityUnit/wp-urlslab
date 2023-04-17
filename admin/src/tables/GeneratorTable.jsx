@@ -11,7 +11,7 @@ export default function GeneratorTable( { slug } ) {
 	const pageId = 'generator_id';
 	const { table, setTable, filters, setFilters, currentFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '': sortingColumn }`;
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
 
 	const {
 		__,
@@ -25,7 +25,15 @@ export default function GeneratorTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, pageId, currentFilters, sortingColumn } );
 
-	const { row, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, pageId } );
+
+	const statusTypes = {
+		A: 'Active',
+		N: 'New',
+		P: 'Pending',
+		W: 'Waiting approval',
+		D: 'Disabled',
+	};
 
 	const header = {
 		command: __( 'Command' ),
@@ -76,6 +84,7 @@ export default function GeneratorTable( { slug } ) {
 		columnHelper.accessor( 'status', {
 			className: 'status',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => statusTypes[ cell.getValue() ],
 			header: header.status,
 			size: 100,
 		} ),
@@ -102,7 +111,9 @@ export default function GeneratorTable( { slug } ) {
 				header={ header }
 				table={ table }
 				noImport
+				selectedRows={ selectedRows }
 				onSort={ ( val ) => sortBy( val ) }
+				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				exportOptions={ {
 					url: slug,

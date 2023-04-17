@@ -13,6 +13,13 @@
 	color: $white;
 	transform: translateZ(0);
 
+	&.fixedBottom {
+		position: fixed;
+		left: calc(160px + 50%);
+		top: 100vh;
+		transform: translate(-50%, -3em);
+	}
+
 	&.successStatus {
 		background-color: $saturated-green;
 	}

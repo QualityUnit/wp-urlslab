@@ -21,7 +21,7 @@ import DangerPanel from './DangerPanel';
 import TableFilter from './TableFilter';
 import DetailsPanel from './DetailsPanel';
 
-export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noExport, noCount, noDelete, header, table, insertOptions, activatePanel, detailsOptions, exportOptions, rowsSelected, onSort, onFilter, onClearRow } ) {
+export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noExport, noCount, noDelete, header, table, insertOptions, activatePanel, detailsOptions, exportOptions, selectedRows, onSort, onFilter, onDeleteSelected, onClearRow } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 
@@ -89,6 +89,11 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 		if ( key === 'delete-all' ) {
 			handleDeleteAll.mutate();
 		}
+		if ( key === 'delete-selected' ) {
+			if ( onDeleteSelected ) {
+				onDeleteSelected();
+			}
+		}
 
 		if ( onClearRow ) {
 			onClearRow( key );
@@ -105,8 +110,8 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 				<div className="urlslab-moduleView-headerBottom__top flex flex-align-center">
 
 					<Button className="" onClick={ () => handleRefresh() }><RefreshIcon />{ __( 'Refresh table' ) }</Button>
-					{ ! noDelete &&
-						<Button className="ml-s" onClick={ () => handlePanel( 'deleteSelected' ) } disabled={ ! rowsSelected }><Trash />{ __( 'Delete selected' ) }</Button>
+					{ ! noDelete && selectedRows?.length > 0 &&
+						<Button className="ml-s" onClick={ () => handlePanel( 'deleteSelected' ) }><Trash />{ __( 'Delete selected' ) }</Button>
 					}
 
 					<div className="ma-left flex flex-align-center">
@@ -168,7 +173,7 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 					text={ __( 'Are you sure you want to delete selected rows? Deleting rows will remove them from all modules where this table occurs.' ) }
 					button={ <><Trash />{ __( 'Delete selected' ) }</> }
 					handlePanel={ handlePanel }
-					action="deleteselected"
+					action="delete-selected"
 				/>
 			}
 			{

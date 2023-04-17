@@ -11,7 +11,7 @@ export async function deleteAll( slug ) {
 			},
 			credentials: 'include',
 		} );
-		return await result.json();
+		return result;
 	} catch ( error ) {
 		return false;
 	}
@@ -28,7 +28,7 @@ export async function deleteRow( slug ) {
 			},
 			credentials: 'include',
 		} );
-		return await result.json();
+		return result;
 	} catch ( error ) {
 		return false;
 	}

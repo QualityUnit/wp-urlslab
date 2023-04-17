@@ -8,10 +8,10 @@ export default function InputField( { defaultValue, autoFocus, placeholder, mess
 	const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 
 	const handleVal = useCallback( ( event ) => {
-		if ( onChange ) {
+		if ( onChange && ( defaultValue !== val || ! val ) ) {
 			onChange( type === 'number' ? event.target.valueAsNumber : event.target.value );
 		}
-	}, [ onChange, type ] );
+	}, [ onChange, type, defaultValue, val ] );
 
 	const handleValLive = ( event ) => {
 		if ( liveUpdate ) {

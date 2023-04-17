@@ -10,7 +10,7 @@ export default function MediaFilesTable( { slug } ) {
 	const pageId = 'fileid';
 
 	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '': sortingColumn }`;
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
 
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
@@ -26,7 +26,7 @@ export default function MediaFilesTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, pageId } );
 
-	const { row, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
 	const driverTypes = {
 		D: 'Database',
@@ -157,7 +157,9 @@ export default function MediaFilesTable( { slug } ) {
 				header={ header }
 				table={ table }
 				noImport
+				selectedRows={ selectedRows }
 				onSort={ ( val ) => sortBy( val ) }
+				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				detailsOptions={ detailsOptions }
 				exportOptions={ {

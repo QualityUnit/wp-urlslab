@@ -9,7 +9,7 @@ import useChangeRow from '../hooks/useChangeRow';
 export default function LinkManagerTable( { slug } ) {
 	const pageId = 'url_id';
 	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '': sortingColumn }`;
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
 
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
@@ -25,7 +25,7 @@ export default function LinkManagerTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, pageId } );
 
-	const { row, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
 	// const sumStatusTypes = {
 	// 	N: __( 'Waiting' ),
@@ -174,10 +174,11 @@ export default function LinkManagerTable( { slug } ) {
 				slug={ slug }
 				header={ header }
 				table={ table }
-				// defaultSortBy="url_name&ASC"
-				onSort={ ( val ) => sortBy( val ) }
-				onFilter={ ( filter ) => setFilters( filter ) }
 				noImport
+				selectedRows={ selectedRows }
+				onSort={ ( val ) => sortBy( val ) }
+				onDeleteSelected={ deleteSelectedRows }
+				onFilter={ ( filter ) => setFilters( filter ) }
 				detailsOptions={ detailsOptions }
 				exportOptions={ {
 					url: slug,
