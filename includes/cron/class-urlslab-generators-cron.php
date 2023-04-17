@@ -41,7 +41,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 		}
 		// PENDING or UPDATING urls will be retried in one hour again
 		$query_data[] = Urlslab_Content_Generator_Row::STATUS_PENDING;
-		$query_data[] = Urlslab_Data::get_now( time() - 20 * 3600 );
+		$query_data[] = Urlslab_Data::get_now( time() - 0 * 3600 );
 
 		$url_row = $wpdb->get_row(
 			$wpdb->prepare(
@@ -69,7 +69,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 			$prompt = new DomainDataRetrievalAugmentPrompt();
 			$prompt->setPromptTemplate( "Additional information to your memory:\n--\n{context}\n----\n" . $command );
 			$prompt->setDocumentTemplate( "--\n{text}\n--" );
-			$prompt->setMetadataVars( array() );
+			$prompt->setMetadataVars( array( 'text' ) );
 			$request->setPrompt( $prompt );
 
 			$filter = new DomainDataRetrievalContentQuery();
@@ -98,6 +98,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 				case 404:
 				case 422:
 				case 429:
+				case 504:
 					$row_obj->set_status( Urlslab_Content_Generator_Row::STATUS_PENDING );
 					$row_obj->set_result( $e->getMessage() );
 					$row_obj->update();
