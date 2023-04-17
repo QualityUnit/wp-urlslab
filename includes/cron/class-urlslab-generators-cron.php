@@ -63,7 +63,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 
 		try {
 			$request = new DomainDataRetrievalAugmentRequest();
-			$request->setModelName( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_GENERATOR_MODEL ) );
+			$request->setAugmentingModelName( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_GENERATOR_MODEL ) );
 			$request->setAugmentCommand( $row_obj->get_semantic_context() );
 			$request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
 			$prompt = new DomainDataRetrievalAugmentPrompt();

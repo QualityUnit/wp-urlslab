@@ -229,20 +229,20 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_GENERATOR_MODEL,
-			\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::MODEL_NAME_GPT_3_5_TURBO,
+			\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
 			false,
 			__( 'Content Generator AI model' ),
 			__( 'Choose quality of model, which we will use for Content Generator widget. Difference between models is not just the quality, but also proce (GPT4 is 10x more expensive as other models).' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::MODEL_NAME_GPT_4            => __( 'GPT 4' ),
-				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::MODEL_NAME_GPT_3_5_TURBO    => __( 'GPT 3.5 Turbo' ),
-				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::MODEL_NAME_TEXT_DAVINCI_003 => __( 'GPT Davinci 003' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4            => __( 'GPT 4' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO    => __( 'GPT 3.5 Turbo' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 => __( 'GPT Davinci 003' ),
 			),
 			function( $value ) {
-				return \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::MODEL_NAME_GPT_4 == $value ||
-					   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::MODEL_NAME_GPT_3_5_TURBO == $value ||
-					   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::MODEL_NAME_TEXT_DAVINCI_003 == $value;
+				return \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $value ||
+					   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value ||
+					   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
 			},
 			'generator',
 		);
@@ -269,20 +269,20 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_TRANSLATE_MODEL,
-			\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::MODEL_NAME_GPT_3_5_TURBO,
+			\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
 			false,
 			__( 'Translation model' ),
 			__( 'Choose quality of model used for translation task in WPML editor. Difference between models is not just the quality, but also proce (GPT4 is 10x more expensive as other models).' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::MODEL_NAME_GPT_4            => __( 'GPT 4' ),
-				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::MODEL_NAME_GPT_3_5_TURBO    => __( 'GPT 3.5 Turbo' ),
-				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::MODEL_NAME_TEXT_DAVINCI_003 => __( 'GPT Davinci 003' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4            => __( 'GPT 4' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO    => __( 'GPT 3.5 Turbo' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 => __( 'GPT Davinci 003' ),
 			),
 			function( $value ) {
-				return \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::MODEL_NAME_GPT_4 == $value ||
-					   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::MODEL_NAME_GPT_3_5_TURBO == $value ||
-					   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::MODEL_NAME_TEXT_DAVINCI_003 == $value;
+				return \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $value ||
+					   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value ||
+					   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
 			},
 			'wpml',
 		);

@@ -133,14 +133,14 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 
 		$translation = $original_text;
 
-		if ( strlen( trim( $original_text ) ) > 0 && preg_match( '/[\p{L}]+/u', $original_text ) && Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Content_Generator_Widget::SLUG ) ) {
+		if ( strlen( trim( $original_text ) ) > 2 && preg_match( '/[\p{L}]+/u', $original_text ) && Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Content_Generator_Widget::SLUG ) ) {
 			$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
 			if ( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_TRANSLATE ) ) {
 				$api_key = get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
 				if ( strlen( $api_key ) ) {
 					$client  = new \OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client( array( 'timeout' => 29 ) ), \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key ) ); //phpcs:ignore
 					$request = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest();
-					$request->setModelName( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_TRANSLATE_MODEL ) );
+					$request->setAugmentingModelName( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_TRANSLATE_MODEL ) );
 					$request->setRenewFrequency( \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
 					$prompt = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt();
 					$prompt->setPromptTemplate( "Your only task is to translate text from $source_lang to $target_lang. If text contains HTML, keep exactly the same HTML formatting as original text. Keep the same capital letters structure in translated text. Translated text should have similar length as original text.\nTRANSLATE:" . $original_text );
