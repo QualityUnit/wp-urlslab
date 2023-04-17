@@ -41,7 +41,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 		}
 		// PENDING or UPDATING urls will be retried in one hour again
 		$query_data[] = Urlslab_Content_Generator_Row::STATUS_PENDING;
-		$query_data[] = Urlslab_Data::get_now( time() - 0 * 3600 );
+		$query_data[] = Urlslab_Data::get_now( time() - 3600 );
 
 		$url_row = $wpdb->get_row(
 			$wpdb->prepare(
