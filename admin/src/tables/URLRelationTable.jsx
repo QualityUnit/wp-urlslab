@@ -8,7 +8,7 @@ import useChangeRow from '../hooks/useChangeRow';
 export default function URLRelationTable( { slug } ) {
 	const pageId = 'src_url_id';
 	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = `${'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '': sortingColumn }`;
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
 
 	const {
 		__,
@@ -22,7 +22,7 @@ export default function URLRelationTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, pageId } );
 
-	const { row, selectRow, deleteRow, updateRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
 	const header = {
 		src_url_name: __( 'Source URL' ),
@@ -82,6 +82,7 @@ export default function URLRelationTable( { slug } ) {
 				header={ header }
 				table={ table }
 				onSort={ ( val ) => sortBy( val ) }
+				onDeleteSelected={ () => deleteSelectedRows( 'dest_url_id' ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onClearRow={ ( clear ) => {
 					setInsertRow();

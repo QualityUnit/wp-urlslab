@@ -4,11 +4,11 @@ import { deleteRow as del } from '../api/deleteTableData';
 import { setData } from '../api/fetching';
 
 export default function useChangeRow( { data, url, slug, pageId } ) {
-	const [ rowValue, setRow ] = useState();
 	const queryClient = useQueryClient();
+	const [ rowValue, setRow ] = useState();
 	const [ insertRowResult, setInsertRowRes ] = useState( false );
-	const [ rowsSelected, setRowsSelected ] = useState( false );
-	const selectedRows = [];
+	const [ selectedRows, setSelectedRows ] = useState( [] );
+	const [ responseCounter, setResponseCounter ] = useState( 0 );
 
 	const getRowId = ( cell, optionalSelector ) => {
 		if ( optionalSelector ) {
@@ -47,6 +47,7 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 	const deleteSelectedRow = useMutation( {
 		mutationFn: async ( options ) => {
 			const { cell, optionalSelector } = options;
+
 			const newPagesArray = data?.pages.map( ( page ) =>
 
 				page.filter( ( row ) =>
@@ -58,24 +59,44 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 				pages: newPagesArray,
 				pageParams: origData.pageParams,
 			} ) );
-			setRow( getRow( cell ) );
-			setTimeout( () => setRow(), 3000 );
+			if ( cell.row.getIsSelected() ) {
+				cell.row.toggleSelected();
+			}
+
+			if ( ! selectedRows.length ) {
+				setRow( getRow( cell ) );
+				setTimeout( () => {
+					setRow();
+				}, 3000 );
+			}
 			const response = await del( `${ slug }/${ getRowId( cell, optionalSelector ) }` );
 			return response;
 		},
 		onSuccess: async ( response ) => {
-			const { ok } = response;
-			if ( ok ) {
-				await queryClient.invalidateQueries( [ slug, url ] );
+			if ( response === 'Deleted' ) {
+				setResponseCounter( responseCounter - 1 );
 			}
-		},
-		onSettled: async ( { options } ) => {
-			await queryClient.invalidateQueries( [ options.slug, 'count' ] );
+			if ( responseCounter === 0 ) {
+				await queryClient.invalidateQueries( [ slug, url ] );
+				await queryClient.invalidateQueries( [ slug, 'count' ] );
+			}
 		},
 	} );
 	const deleteRow = useCallback( ( { cell, optionalSelector } ) => {
+		setResponseCounter( 1 );
 		deleteSelectedRow.mutate( { data, url, slug, cell, optionalSelector } );
 	}, [ data, deleteSelectedRow, slug, url ] );
+
+	const deleteSelectedRows = async ( optionalSelector ) => {
+		// Multiple rows delete
+		setResponseCounter( selectedRows.length );
+		selectedRows.map( ( cell ) => {
+			deleteSelectedRow.mutate( { data, url, slug, cell, optionalSelector } );
+			return false;
+		} );
+		// await queryClient.invalidateQueries( [ slug ] );
+		// await queryClient.invalidateQueries( [ slug, 'count' ] );
+	};
 
 	const updateRowData = useMutation( {
 		mutationFn: async ( options ) => {
@@ -114,15 +135,15 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 		updateRowData.mutate( { data, newVal, url, slug, cell, optionalSelector } );
 	};
 
-	const selectRow = useCallback( ( isSelected, cell ) => {
+	const selectRow = ( isSelected, cell ) => {
 		cell.row.toggleSelected();
-		// const cellId = cell.row.original[ pageId ];
-		// if ( ! isSelected ) {
-		// 	selectedRows = selectedRows.filter( ( item ) => item !== cellId );
-		// }
-		// if ( isSelected ) {
-		// 	selectedRows.push( cell.row.original[ pageId ] );
-		// }
+		if ( ! isSelected ) {
+			// selectedRowsArray = ;
+			setSelectedRows( selectedRows.filter( ( item ) => item !== cell ) );
+		}
+		if ( isSelected ) {
+			setSelectedRows( [ cell, ...selectedRows ] );
+		}
 
 		// console.log( selectedRows );
 		// if ( selectedRows.length ) {
@@ -131,7 +152,7 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 		// if ( ! selectedRows.length ) {
 		// 	setRowsSelected( false );
 		// }
-	}, [] );
+	};
 
-	return { row: rowValue, rowsSelected, insertRowResult, insertRow, selectRow, deleteRow, updateRow };
+	return { row: rowValue, selectedRows, insertRowResult, insertRow, selectRow, deleteRow, deleteSelectedRows, updateRow };
 }
