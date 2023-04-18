@@ -4,9 +4,8 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function ContentCacheTable( { slug } ) {
-	const pageId = 'cache_crc32';
-	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '': sortingColumn }`;
+	const primaryColumnNames = [ 'cache_crc32' ];
+	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 
 	const {
 		__,
@@ -18,7 +17,7 @@ export default function ContentCacheTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, pageId } );
+	} = useInfiniteFetch( slug, primaryColumnNames, filters, sorting );
 
 	const header = {
 		date_changed: __( 'Last change' ),
@@ -68,7 +67,7 @@ export default function ContentCacheTable( { slug } ) {
 					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 				}
 			>
-				<TooltipSortingFiltering props={ { isFetching, filters, sortingColumn } } />
+				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

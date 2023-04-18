@@ -7,10 +7,9 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 
 export default function MediaFilesTable( { slug } ) {
-	const pageId = 'fileid';
+	const primaryColumnNames = [ 'fileid' ];
 
-	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
+	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
@@ -24,7 +23,7 @@ export default function MediaFilesTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, pageId } );
+	} = useInfiniteFetch( slug, primaryColumnNames, filters, sorting );
 
 	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, pageId } );
 

@@ -3,7 +3,7 @@ import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { deleteRow as del } from '../api/deleteTableData';
 import { setData } from '../api/fetching';
 
-export default function useChangeRow( { data, url, slug, pageId } ) {
+export default function useChangeRow( { data, filters, slug, primaryColumns } ) {
 	const queryClient = useQueryClient();
 	const [ rowValue, setRow ] = useState();
 	const [ insertRowResult, setInsertRowRes ] = useState( false );
@@ -11,11 +11,15 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 	const [ responseCounter, setResponseCounter ] = useState( 0 );
 
 	const getRowId = useCallback( ( cell, optionalSelector ) => {
+		let path = '';
+		primaryColumns.forEach( ( column ) => {
+			path += `${ cell.row.original[ column ] }/`;
+		});
 		if ( optionalSelector ) {
-			return `${ cell.row.original[ pageId ] }/${ cell.row.original[ optionalSelector ] }`;
+			return `${ path }${ cell.row.original[ optionalSelector ] }`;
 		}
-		return cell.row.original[ pageId ];
-	}, [ pageId ] );
+		return path;
+	}, [ primaryColumns ] );
 
 	const getRow = ( cell ) => {
 		return cell.row.original;
@@ -44,8 +48,8 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 			cell.row.toggleSelected();
 		}
 		setSelectedRows( [] );
-		return deletedPagesArray = deletedPagesArray.map( ( page ) => page.filter( ( row ) => row[ pageId ] !== getRowId( cell ) ) ) ?? [];
-	}, [ data?.pages, getRowId, pageId ] );
+		return deletedPagesArray = deletedPagesArray.map( ( page ) => page.filter( ( row ) => row[ primaryColumns[0] ] !== getRowId( cell ) ) ) ?? []; //TODO: fix this, there could be more primary columns if we want to delete a row!
+	}, [ data?.pages, getRowId, primaryColumns ] );
 
 	const deleteSelectedRow = useMutation( {
 		mutationFn: async ( options ) => {
@@ -72,8 +76,8 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 			}
 
 			if ( responseCounter === 0 || responseCounter === 1 ) {
-				await queryClient.invalidateQueries( [ slug, url ] );
-				await queryClient.invalidateQueries( [ slug, 'count' ] );
+				await queryClient.invalidateQueries( [ slug, filters ] ); /// TODO : ma tu byt filters???? to som len ja pridal
+				await queryClient.invalidateQueries( [ slug, 'count' ] );//TODO .... filters do countu????
 			}
 		},
 	} );

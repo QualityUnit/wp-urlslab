@@ -13,12 +13,10 @@ import { ReactComponent as PlusIcon } from '../assets/images/icon-plus.svg';
 
 export default function NotFoundTable( { slug } ) {
 	const [ activePanel, setActivePanel ] = useState();
-	const pageId = 'url_id';
+	const primaryColumnNames = [ 'url_id' ];
 	const matchUrlField = useRef();
 
-	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
+	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 
 	const {
 		__,
@@ -30,7 +28,7 @@ export default function NotFoundTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, pageId } );
+	} = useInfiniteFetch( slug, primaryColumnNames, filters, sorting );
 
 	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, pageId } );
 
