@@ -44,11 +44,11 @@ export default function Settings( { className, settingId } ) {
 	const renderStatus = () => {
 		switch ( tooltipStatus ) {
 			case 'active':
-				return <Tooltip className="fixedBottom">{ __( 'Writing setting' ) }</Tooltip>;
+				return <Tooltip className="fixedBottom">{ __( 'Updating…' ) }</Tooltip>;
 			case 'success':
-				return <Tooltip className="fixedBottom successStatus">{ __( 'Setting written!' ) }</Tooltip>;
+				return <Tooltip className="fixedBottom successStatus">{ __( 'Setting updated' ) }</Tooltip>;
 			case 'error':
-				return <Tooltip className="fixedBottom errorStatus">{ __( 'Failed! Try again please.' ) }</Tooltip>;
+				return <Tooltip className="fixedBottom errorStatus">{ __( 'Setting update failed' ) }</Tooltip>;
 			default:
 				break;
 		}
