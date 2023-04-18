@@ -1,5 +1,5 @@
 
-import { useMemo, useEffect, useState, useCallback } from 'react';
+import { useRef, useMemo, useEffect, useState, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { stringOp, dateOp, numericOp, menuOp, langOp, booleanTypes } from '../lib/filterOperators';
@@ -16,6 +16,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 	const currentDate = new Date();
 	const { key, slug, header, possibleFilters, initialRow, currentFilters } = props;
 	const { __ } = useI18n();
+	const filterPanel = useRef();
 	const [ filterValMenu, setFilterValMenu ] = useState();
 	const [ date, setDate ] = useState( currentFilters[ key ]?.val ? new Date( currentFilters[ key ]?.val ) : currentDate );
 	const [ startDate, setStartDate ] = useState( currentFilters[ key ]?.val?.min ? new Date( currentFilters[ key ]?.val.min ) : currentDate.setDate( currentDate.getDate() - 2 ) );
@@ -79,7 +80,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 	}, [ state.filterObj.keyType ] );
 
 	return (
-		<div className="urlslab-panel urslab-TableFilter-panel pos-absolute">
+		<div ref={ filterPanel } className={ `urlslab-panel fadeInto urslab-TableFilter-panel pos-absolute` }>
 			<div className="urlslab-panel-header urslab-TableFilter-panel-header">
 				<strong>{ __( 'Edit filter' ) }{ key ? ` ${ header[ key ] }` : '' }</strong>
 			</div>

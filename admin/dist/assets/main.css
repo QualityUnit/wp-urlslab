@@ -304,19 +304,6 @@
 .urlslab-DynamicModule .urlslab-modules {
   padding: 1.5em;
 }/* stylelint-disable */ /* stylelint-disable selector-class-pattern, no-descending-specificity */
-button {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  -ms-appearance: none;
-  -o-appearance: none;
-  appearance: none;
-  outline: none;
-  border: none;
-  background-color: transparent;
-  padding: 0;
-  cursor: pointer;
-}
-
 button.urlslab-button,
 .urlslab-button {
   display: -webkit-inline-box;
@@ -344,6 +331,10 @@ button.urlslab-button[disabled],
 .urlslab-button[disabled] {
   background-color: #edeff3;
   color: #65676b;
+}
+button.urlslab-button.xl,
+.urlslab-button.xl {
+  padding: 0.55em 1.75em;
 }
 button.urlslab-button.wide,
 .urlslab-button.wide {
@@ -604,6 +595,17 @@ button.urlslab-button svg.close,
 [id=urlslab-root] ::after {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+}
+[id=urlslab-root] button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  -o-appearance: none;
+  appearance: none;
+  outline: none;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
 }
 [id=urlslab-root].dark::before {
   top: 0;
@@ -1802,19 +1804,6 @@ code {
 }
 
 /* stylelint-disable selector-class-pattern, no-descending-specificity */
-button {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  -ms-appearance: none;
-  -o-appearance: none;
-  appearance: none;
-  outline: none;
-  border: none;
-  background-color: transparent;
-  padding: 0;
-  cursor: pointer;
-}
-
 button.urlslab-button,
 .urlslab-button {
   display: -webkit-inline-box;
@@ -1842,6 +1831,10 @@ button.urlslab-button[disabled],
 .urlslab-button[disabled] {
   background-color: #edeff3;
   color: #65676b;
+}
+button.urlslab-button.xl,
+.urlslab-button.xl {
+  padding: 0.55em 1.75em;
 }
 button.urlslab-button.wide,
 .urlslab-button.wide {

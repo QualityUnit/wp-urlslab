@@ -20,8 +20,14 @@
 		}
 	}
 
+	&__buttons {
+		padding: 0 1.45em 0.75em;
+		margin: 0 -1.45em 0.75em;
+		border-bottom: 1px solid $grey-light;
+	}
+
 	&__items {
-		min-width: 15em;
+		min-width: 18em;
 		top: calc(100% + 0.5em);
 
 		.menu-left & {

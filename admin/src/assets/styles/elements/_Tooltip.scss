@@ -28,6 +28,15 @@
 		background-color: $saturated-red;
 	}
 
+	&.showOnHover {
+		display: none;
+		top: 80%;
+
+		*:hover > & {
+			display: inline-flex;
+		}
+	}
+
 	&.align-center {
 
 		@include absoluteCenter;
@@ -35,6 +44,10 @@
 
 	&.align-left {
 		right: 70%;
+	}
+
+	&.align-left-0 {
+		right: 0%;
 	}
 
 	&.xl {
