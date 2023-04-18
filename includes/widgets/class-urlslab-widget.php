@@ -406,4 +406,10 @@ abstract class Urlslab_Widget {
 
 		return array();
 	}
+
+	public function uninstall() {
+		foreach ( $this->options as $option_id => $option ) {
+			delete_option( $option_id );
+		}
+	}
 }
