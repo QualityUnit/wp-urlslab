@@ -11,7 +11,7 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 	private ScreenshotApi $client;
 
 	public function get_description(): string {
-		return __( 'Syncing URLSLAB Screenshots from www.urlslab.com to local database', 'urlslab' );
+		return __( 'Syncing screenshots from URLsLab service to local database', 'urlslab' );
 	}
 
 	protected function execute(): bool {

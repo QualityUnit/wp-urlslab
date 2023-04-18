@@ -6,7 +6,7 @@ class Urlslab_Offload_Background_Attachments_Cron extends Urlslab_Cron {
 	public const SETTING_NAME_SCHEDULER_POINTER = 'urlslab_sched_pointer';
 
 	public function get_description(): string {
-		return __( 'Offloading background attachments from Wordpress Media', 'urlslab' );
+		return __( 'Offloading background images and videos from WordPress Media', 'urlslab' );
 	}
 
 	protected function execute(): bool {

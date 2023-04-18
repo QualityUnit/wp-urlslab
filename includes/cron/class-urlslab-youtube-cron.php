@@ -4,7 +4,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
 
 class Urlslab_Youtube_Cron extends Urlslab_Cron {
 	public function get_description(): string {
-		return __( 'Loading microdata about scheduled youtube videos used in your website', 'urlslab' );
+		return __( 'Loading microdata about scheduled YouTube videos used in your website', 'urlslab' );
 	}
 
 	protected function execute(): bool {
