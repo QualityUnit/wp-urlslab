@@ -1,7 +1,6 @@
-import { useRef, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import { useFilter } from '../hooks/filteringSorting';
 import { langName } from '../lib/helpers';
 
 import Button from '../elements/Button';
@@ -10,29 +9,10 @@ import { ReactComponent as CloseIcon } from '../assets/images/icon-close.svg';
 import '../assets/styles/components/_TableFilter.scss';
 import TableFilterPanel from './TableFilterPanel';
 
-export default function TableFilter( { slug, header, initialRow, onFilter } ) {
+export default function TableFilter( { props, onEdit, onRemove } ) {
 	const { __ } = useI18n();
-	const didMountRef = useRef( false );
-
-	const { filters, currentFilters, state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( { slug, header, initialRow } );
-
-	const handleOnEdit = useCallback( ( returnObj ) => {
-		if ( returnObj ) {
-			handleSaveFilter( returnObj );
-			onFilter( { filters, currentFilters } );
-		}
-		if ( ! returnObj ) {
-			dispatch( { type: 'toggleEditFilter', editFilter: false } );
-		}
-	}, [ handleSaveFilter, filters, currentFilters, dispatch, onFilter ] );
-
-	useEffect( () => {
-		if ( onFilter && didMountRef.current ) {
-			onFilter( { filters, currentFilters } );
-		}
-		didMountRef.current = true;
-	}, [ filters, currentFilters, onFilter ] );
-
+	const { currentFilters, state, slug, header, initialRow } = props;
+	const [ editFilter, activateEditing ] = useState( );
 	const activeFilters = Object.keys( currentFilters ).length ? Object.keys( currentFilters ) : null;
 
 	return (
@@ -42,7 +22,7 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 					key={ key }
 					active={ state.editFilter === key ? true : false }
 					className="outline ml-s pos-relative"
-					onClick={ () => ! state.editFilter && dispatch( { type: 'toggleEditFilter', editFilter: key } ) }
+					onClick={ () => ! state.editFilter && activateEditing( key ) }
 				>
 					{ header[ key ] }:&nbsp;
 					<span className="regular flex">“<span className="limit-20">
@@ -55,26 +35,17 @@ export default function TableFilter( { slug, header, initialRow, onFilter } ) {
 						}
 					</span>”</span>
 					<CloseIcon className="close" onClick={ () => {
-						handleRemoveFilter( [ key ] );
+						onRemove( [ key ] );
 					} } />
-					{ state.editFilter === key && // Edit filter panel
-						<TableFilterPanel props={ { key, slug, header, initialRow, possibleFilters: state.possibleFilters, currentFilters } } onEdit={ handleOnEdit } />
+					{ editFilter === key && // Edit filter panel
+						<TableFilterPanel props={ { key, slug, header, initialRow, possibleFilters: state.possibleFilters, currentFilters } } onEdit={ ( val ) => onEdit( val ) } />
 					}
 				</Button> );
 			} ) }
 
-			<div className="pos-relative">
-				<Button className="simple underline" onClick={ () => dispatch( { type: 'toggleEditFilter', editFilter: 'addFilter' } ) }>{ __( '+ Add filter' ) }
-				</Button>
-
-				{ state.editFilter === 'addFilter' && // Our main adding panel (only when Add button clicked)
-					<TableFilterPanel props={ { slug, header, initialRow, possibleFilters: state.possibleFilters, currentFilters } } onEdit={ handleOnEdit } />
-				}
-			</div>
-
 			{ activeFilters?.length > 0 && // Removes all used filters in given table
 				<Button className="simple underline" onClick={ () => {
-					handleRemoveFilter( activeFilters );
+					onRemove( activeFilters );
 				} }>{ __( 'Clear filters' ) }</Button>
 			}
 		</div>

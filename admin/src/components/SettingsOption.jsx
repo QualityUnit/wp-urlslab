@@ -54,14 +54,15 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 		mutationFn: async ( newDate ) => {
 			setStatus( 'active' );
 			renderTooltip( 'active' );
+			const thisDate = new Date( newDate );
+			const currentDate = new Date( thisDate.getTime() - ( thisDate.getTimezoneOffset() * 60000 ) );
 			const response = await setSettings( `${ settingId }/${ id }`, {
-				value: new Date( newDate ).toISOString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ),
+				value: currentDate.toISOString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ),
 			} );
 			return { response };
 		},
 		onSuccess: async ( { response } ) => {
 			const { ok } = response;
-			console.log( response );
 			if ( ok ) {
 				setStatus( 'success' );
 				renderTooltip( 'success' );

@@ -16,6 +16,11 @@
 	&-headerBottom {
 		padding: 1em 1.625em;
 
+		&__top {
+			position: relative;
+			z-index: 3;
+		}
+
 		.urlslab-SortMenu {
 			min-width: 13em;
 			max-width: none;

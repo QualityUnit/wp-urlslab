@@ -1,0 +1,24 @@
+/* stylelint-disable selector-class-pattern, no-descending-specificity */
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+
+.urlslab-icon-button {
+	display: flex;
+	align-items: center;
+	padding: 0;
+
+	svg {
+
+		@include square(1.5rem);
+		fill: $black;
+	}
+
+	&.active,
+	&:hover {
+
+		svg {
+			fill: $primary-color;
+		}
+	}
+}

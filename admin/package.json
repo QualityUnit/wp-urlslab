@@ -39,10 +39,13 @@
     "react-papaparse": "^4.1.0",
     "react-virtual": "^2.10.4",
     "remove": "^0.1.5",
+    "sharp": "^0.32.0",
     "stylelint": "^14.2",
+    "svgo": "^3.0.2",
     "ua-parser-js": "^1.0.35",
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-fonts": "^0.7.0",
+    "vite-plugin-image-optimizer": "^1.1.2",
     "vite-plugin-svgr": "^2.4.0",
     "vite-react-jsx": "^1.1.2",
     "yarn": "^1.22.19"

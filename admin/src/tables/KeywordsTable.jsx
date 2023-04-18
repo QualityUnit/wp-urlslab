@@ -59,7 +59,7 @@ export default function KeywordsTable( { slug } ) {
 			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
 				selectRow( val, cell );
 			} } />,
-			header: null,
+			header: () => <Checkbox onChange={ () => console.log( data?.pages ) } />,
 			enableResizing: false,
 		} ),
 		columnHelper.accessor( 'keyword', {
