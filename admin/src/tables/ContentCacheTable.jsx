@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat,
+	useInfiniteFetch, ProgressBar, Tooltip, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 import useTableUpdater from '../hooks/useTableUpdater';
 
@@ -27,11 +27,12 @@ export default function ContentCacheTable( { slug } ) {
 
 	const columns = [
 		columnHelper.accessor( 'date_changed', {
-			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
 			header: header.date_changed,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'cache_len', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
 			header: header.cache_len,
 			size: 100,
