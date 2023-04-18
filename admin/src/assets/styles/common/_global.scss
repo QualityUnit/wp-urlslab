@@ -11,6 +11,15 @@
 		box-sizing: border-box;
 	}
 
+	button {
+
+		@include appearance;
+		outline: none;
+		border: none;
+		background-color: transparent;
+		cursor: pointer;
+	}
+
 	&.dark {
 
 		&::before {

@@ -12,7 +12,7 @@ import TableFilterPanel from './TableFilterPanel';
 export default function TableFilter( { props, onEdit, onRemove } ) {
 	const { __ } = useI18n();
 	const { currentFilters, state, slug, header, initialRow } = props;
-	const [ editFilter, activateEditing ] = useState( false );
+	const [ editFilter, activateEditing ] = useState( );
 	const activeFilters = Object.keys( currentFilters ).length ? Object.keys( currentFilters ) : null;
 
 	return (
@@ -22,7 +22,7 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 					key={ key }
 					active={ state.editFilter === key ? true : false }
 					className="outline ml-s pos-relative"
-					onClick={ () => ! state.editFilter && activateEditing( ! editFilter ) }
+					onClick={ () => ! state.editFilter && activateEditing( key ) }
 				>
 					{ header[ key ] }:&nbsp;
 					<span className="regular flex">“<span className="limit-20">
@@ -37,7 +37,7 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 					<CloseIcon className="close" onClick={ () => {
 						onRemove( [ key ] );
 					} } />
-					{ editFilter && // Edit filter panel
+					{ editFilter === key && // Edit filter panel
 						<TableFilterPanel props={ { key, slug, header, initialRow, possibleFilters: state.possibleFilters, currentFilters } } onEdit={ ( val ) => onEdit( val ) } />
 					}
 				</Button> );

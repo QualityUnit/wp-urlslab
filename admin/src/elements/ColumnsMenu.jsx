@@ -4,11 +4,13 @@ import { useI18n } from '@wordpress/react-i18n';
 import { get, update } from 'idb-keyval';
 
 import Checkbox from './Checkbox';
+import Button from './Button';
+import Tooltip from './Tooltip';
+
 import { ReactComponent as ColumnsIcon } from '../assets/images/icon-columns.svg';
 
 import '../assets/styles/elements/_FilterMenu.scss';
 import '../assets/styles/elements/_ColumnsMenu.scss';
-import Tooltip from './Tooltip';
 
 export default function ColumnsMenu( {
 	id, className, slug, table, columns, style } ) {
@@ -55,6 +57,28 @@ export default function ColumnsMenu( {
 		} );
 	};
 
+	const handleVisibilityAll = ( action ) => {
+		const columnsArray = table.getAllColumns();
+		const hiddenColsCopy = { ...hiddenCols };
+
+		columnsArray.forEach( ( column ) => {
+			if ( action === 'showAllCols' && ! column.getIsVisible() ) {
+				column.toggleVisibility();
+				delete hiddenColsCopy[ `${ column.id }` ];
+				setHiddenCols( hiddenColsCopy );
+			}
+			if ( action === 'hideAllCols' && column.getIsVisible() ) {
+				column.toggleVisibility();
+				hiddenColsCopy[ column.id ] = false;
+				setHiddenCols( hiddenColsCopy );
+			}
+		} );
+
+		update( slug, ( dbData ) => {
+			return { ...dbData, columnVisibility: hiddenColsCopy };
+		} );
+	};
+
 	const handleMenu = () => {
 		setActive( ! isActive );
 
@@ -65,7 +89,9 @@ export default function ColumnsMenu( {
 
 	return (
 		<div className={ `urlslab-FilterMenu urlslab-ColumnsMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref } id={ id }>
+			{ ! isActive &&
 			<Tooltip className="showOnHover align-left-0" style={ { width: '11em' } }>{ __( 'Turn off/on columns' ) }</Tooltip>
+			}
 			<div
 				className={ `urlslab-ColumnsMenu__icon ${ isActive ? 'active' : '' }` }
 				onClick={ handleMenu }
@@ -77,6 +103,7 @@ export default function ColumnsMenu( {
 			</div>
 			{ isActive &&
 			<div className={ `urlslab-FilterMenu__items urlslab-ColumnsMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
+				<div className="flex urlslab-ColumnsMenu__buttons"><Button className="xl simple" onClick={ () => handleVisibilityAll( 'hideAllCols' ) }>{ __( 'Hide all' ) }</Button><Button className="ma-left xl active" onClick={ () => handleVisibilityAll( 'showAllCols' ) }>{ __( 'Show all' ) }</Button></div>
 				<div className={ `urlslab-FilterMenu__items--inn ${ columns.length > 8 ? 'has-scrollbar' : '' }` }>
 					{ tableColumns?.map( ( column ) => {
 						return (

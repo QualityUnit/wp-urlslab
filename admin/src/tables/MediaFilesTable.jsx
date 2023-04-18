@@ -109,11 +109,7 @@ export default function MediaFilesTable( { slug } ) {
 		columnHelper?.accessor( 'driver', {
 			filterValMenu: driverTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SortMenu
-				items={ driverTypes }
-				name={ cell.column.id }
-				checkedId={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => driverTypes[ cell.getValue() ],
 			header: header.driver,
 			size: 100,
 		} ),

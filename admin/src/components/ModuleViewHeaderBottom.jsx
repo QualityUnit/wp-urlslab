@@ -24,6 +24,8 @@ import DetailsPanel from './DetailsPanel';
 
 import TableFilterPanel from './TableFilterPanel';
 import '../assets/styles/components/_TableFilter.scss';
+import TableActionsMenu from '../elements/TableActionsMenu';
+import IconButton from '../elements/IconButton';
 
 export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noExport, noCount, noDelete, header, table, insertOptions, activatePanel, detailsOptions, exportOptions, selectedRows, onSort, onFilter, onDeleteSelected, onClearRow } ) {
 	const { __ } = useI18n();
@@ -142,14 +144,8 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 					</div>
 
 					<div className="ma-left flex flex-align-center">
-						{ ! noDelete &&
-							<Button className="no-padding underline simple" onClick={ () => handlePanel( 'deleteall' ) }>{ __( 'Delete All' ) }</Button>
-						}
-						{ ! noExport &&
-						<Button className="no-padding underline simple ml-m" onClick={ () => handlePanel( 'export' ) }>{ __( 'Export CSV' ) }</Button>
-						}
-						{ ! noImport &&
-						<Button className="no-padding underline simple ml-m" onClick={ () => handlePanel( 'import' ) }>{ __( 'Import CSV' ) }</Button>
+						{ ( ! noImport && ! noExport && ! noDelete ) &&
+							<TableActionsMenu onAction={ handlePanel } options={ { noImport, noExport, noDelete } } />
 						}
 
 						{
@@ -163,7 +159,9 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 							/>
 						}
 
-						<RefreshIcon style={ { width: '1.5em', height: '1.5em' } } className="ml-m" onClick={ () => handleRefresh() } />
+						<IconButton className="ml-m" tooltip={ __( 'Refresh table' ) } tooltipClass="align-left-0" onClick={ handleRefresh }>
+							<RefreshIcon />
+						</IconButton>
 
 					</div>
 				</div>

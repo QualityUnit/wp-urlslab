@@ -2,17 +2,6 @@
 @use "../common/mixins" as *;
 @use "../common/variables" as *;
 
-
-button {
-
-	@include appearance;
-	outline: none;
-	border: none;
-	background-color: transparent;
-	padding: 0;
-	cursor: pointer;
-}
-
 button.urlslab-button,
 .urlslab-button {
 	display: inline-flex;
@@ -31,6 +20,10 @@ button.urlslab-button,
 	&[disabled] {
 		background-color: $grey-lighter;
 		color: $grey-darker;
+	}
+
+	&.xl {
+		padding: 0.55em 1.75em;
 	}
 
 	&.wide {

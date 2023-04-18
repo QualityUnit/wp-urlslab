@@ -22,49 +22,55 @@ import iPadOS from '../assets/images/os/IPA.png';
 import Linux from '../assets/images/os/LIN.png';
 import Android from '../assets/images/os/AND.png';
 
+// Bots Icons
+import Ahrefs from '../assets/images/bots/ahrefs.png';
+import Amazon from '../assets/images/bots/amazon.png';
+import Bing from '../assets/images/bots/bing.png';
+import Facebook from '../assets/images/bots/facebook.png';
+import Googlebot from '../assets/images/bots/google.png';
+import SemrushBot from '../assets/images/bots/semrush.png';
+import SeznamBot from '../assets/images/bots/seznam.png';
+import Wordpress from '../assets/images/bots/wordpress.png';
+import YandexBot from '../assets/images/bots/yandex.png';
+
 export default function BrowserIcon( { uaString } ) {
 	const { browser, os, ua } = UAParser( uaString );
 	const osName = os.name || ua;
+	let botName;
 	const browserNameOk = browser.name?.replaceAll( ' ', '' );
 	const osNameOk = os.name?.replaceAll( ' ', '' );
+
 	const browserIcons = {
-		Chrome,
-		ChromeWebView: Chrome,
-		Firefox,
-		Edge,
-		Safari,
-		IE,
-		baiduboxapp: Chrome,
-		WebKit,
-		MobileSafari,
-		SamsungBrowser,
-		Opera,
-		Brave,
-		Vivaldi,
+		Chrome, ChromeWebView: Chrome, Firefox, Edge, Safari, IE, baiduboxapp: Chrome, WebKit, MobileSafari, SamsungBrowser, Opera, Brave, Vivaldi,
 	};
 
 	const osIcons = {
-		Windows,
-		macOs,
-		MacOS: macOs,
-		iOS,
-		iPadOS,
-		iPadOs: iPadOS,
-		Linux,
-		Android,
+		Windows, macOs, MacOS: macOs, iOS, iPadOS, iPadOs: iPadOS, Linux, Android,
 	};
+
+	const botIcons = {
+		Ahrefs, AhrefsSiteAudit: Ahrefs, Amazon, 'Amazon CloudFront': Amazon, bingbot: Bing, Bing, Facebook, Googlebot, SemrushBot, SeznamBot, Wordpress, YandexBot,
+	};
+
+	if ( osName === ua ) {
+		botName = ua.replace( /.+?(S|s)emrush.+/g, 'SemrushBot' );
+		botName = botName.includes( 'Google' ) ? 'Googlebot' : botName;
+		botName = botName.includes( 'facebook' ) ? 'Facebook' : botName;
+		botName = botName.includes( 'WordPress' ) ? 'Wordpress' : botName;
+		botName = botName.replace( /(.+?compatible; ?)?([^\/]*)\/.+?$/g, '$2' );
+	}
 
 	return (
 		<div className="flex flex-align-center">
 			{
-				browserIcons[ browserNameOk ]
+				browserIcons[ browserNameOk ] && ! botName
 					? <img className="browserIcon" src={ browserIcons[ browserNameOk ] } alt={ browser.name } />
-					: <img className="browserIcon" src={ Generic } alt="Unknown browser" />
+					: <img className="browserIcon" src={ botIcons[ botName ] || Generic } alt={ botName } />
 			}
 			{
 				osIcons[ osNameOk ]
 					? <img className="ml-s browserIcon" src={ osIcons[ osNameOk ] || Generic } alt={ osName } />
-					: <strong className="limit">&nbsp;{ osName.replace( /^([^\/]*)\/.+?$/g, '$1' ) }</strong>
+					: <strong className="limit">&nbsp;{ botName }</strong>
 			}
 		</div>
 	);
