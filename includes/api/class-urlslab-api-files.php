@@ -54,14 +54,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 						'driver' => array(
 							'required'          => true,
 							'validate_callback' => function( $param ) {
-								return in_array(
-									$param,
-									array(
-										Urlslab_Driver::DRIVER_DB,
-										Urlslab_Driver::DRIVER_LOCAL_FILE,
-										Urlslab_Driver::DRIVER_S3,
-									),
-									true );
+								return Urlslab_Driver::DRIVER_DB === $param || Urlslab_Driver::DRIVER_LOCAL_FILE === $param || Urlslab_Driver::DRIVER_S3 === $param;
 							},
 						),
 					),
@@ -165,11 +158,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 	public function transfer_item( WP_REST_Request $request ) {
 		$file_obj = Urlslab_File_Row::get_file( $request->get_param( 'fileid' ) );
 		if ( null !== $file_obj ) {
-			if (
-				Urlslab_Driver::transfer_file_to_storage(
-					$file_obj,
-					$request->get_json_params()['driver'] )
-			) {
+			if ( Urlslab_Driver::transfer_file_to_storage( $file_obj, $request->get_json_params()['driver'] ) ) {
 				return new WP_REST_Response( __( 'File transferred' ), 200 );
 			} else {
 				return new WP_REST_Response( __( 'Transfer failed' ), 500 );
