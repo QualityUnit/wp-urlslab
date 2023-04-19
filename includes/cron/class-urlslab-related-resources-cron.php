@@ -62,6 +62,7 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 	}
 
 	private function update_related_resources( Urlslab_Url_Row $url ) {
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Related_Resources_Widget::SLUG );
 		if ( empty( $url->get_domain_name() ) ) {
 			$url->set_rel_schedule( Urlslab_Url_Row::REL_ERROR );
 			$url->update();
@@ -77,12 +78,17 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 
 		$query = new DomainDataRetrievalContentQuery();
 		$query->setLimit( 10 );
-		$query->setDomains( array( $url->get_domain_name() ) );
 
+		$domains = $this->getOtherDomains();
+		$domains[ $url->get_domain_name() ] = $url->get_domain_name();
+
+		$query->setDomains( array_keys( $domains ) );
 		$request->setFilter( $query );
 
 		try {
 			$response = $this->content_client->getRelatedUrls( $request );
+			$url->set_rel_schedule( Urlslab_Url_Row::REL_AVAILABLE );
+			$url->update();
 			if ( empty( $response->getUrls() ) ) {
 				return true;
 			}
@@ -119,11 +125,10 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 			$wpdb->delete( URLSLAB_URL_RELATIONS_TABLE, array( 'src_url_id' => $url->get_url_id() ) );
 
 			( new Urlslab_Url_Relation_Row() )->insert_all( $related_resources, true );
-			$url->set_rel_schedule( Urlslab_Url_Row::REL_AVAILABLE );
-			$url->update();
 		} catch ( ApiException $e ) {
 			switch ( $e->getCode() ) {
 				case 404:
+				case 429:
 					$url->set_rel_schedule( Urlslab_Url_Row::REL_SCHEDULE_SCHEDULED );
 					$url->update();
 
@@ -136,4 +141,24 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 
 		return true;
 	}
+
+	private function getOtherDomains():array {
+		$domains = array();
+		$str_domains = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Related_Resources_Widget::SLUG )->get_option( Urlslab_Related_Resources_Widget::SETTING_NAME_DOMAINS );
+		if ( ! empty( $str_domains ) ) {
+			$arr_domains = explode( ',', $str_domains );
+			foreach ( $arr_domains as $domain ) {
+				$domain = trim( $domain );
+				if ( strlen( $domain ) ) {
+					try {
+						$domain_url                                = new Urlslab_Url( $domain, true );
+						$domains[ $domain_url->get_domain_name() ] = $domain_url->get_domain_name();
+					} catch ( Exception $e ) {
+					}
+				}
+			}
+		}
+		return $domains;
+	}
+
 }
