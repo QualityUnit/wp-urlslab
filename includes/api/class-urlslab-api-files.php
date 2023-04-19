@@ -41,6 +41,37 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
+			$base . '/(?P<fileid>[0-9a-zA-Z]+)/transfer',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'transfer_item' ),
+					'permission_callback' => array(
+						$this,
+						'update_item_permissions_check',
+					),
+					'args'                => array(
+						'driver' => array(
+							'required'          => true,
+							'validate_callback' => function( $param ) {
+								return in_array(
+									$param,
+									array(
+										Urlslab_Driver::DRIVER_DB,
+										Urlslab_Driver::DRIVER_LOCAL_FILE,
+										Urlslab_Driver::DRIVER_S3,
+									),
+									true );
+							},
+						),
+					),
+				),
+			)
+		);
+
+
+		register_rest_route(
+			self::NAMESPACE,
 			$base . '/delete-all',
 			array(
 				array(
@@ -129,6 +160,23 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		$this->on_items_updated();
 
 		return new WP_REST_Response( __( 'Deleted' ), 200 );
+	}
+
+	public function transfer_item( WP_REST_Request $request ) {
+		$file_obj = Urlslab_File_Row::get_file( $request->get_param( 'fileid' ) );
+		if ( null !== $file_obj ) {
+			if (
+				Urlslab_Driver::transfer_file_to_storage(
+					$file_obj,
+					$request->get_json_params()['driver'] )
+			) {
+				return new WP_REST_Response( __( 'File transferred' ), 200 );
+			} else {
+				return new WP_REST_Response( __( 'Transfer failed' ), 500 );
+			}
+		} else {
+			return new WP_REST_Response( __( 'Transfer failed, file not found' ), 404 );
+		}
 	}
 
 	public function delete_all_items( $request ) {
