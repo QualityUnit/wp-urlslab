@@ -5,16 +5,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 }
 
 global $wpdb;
-
-$options = wp_load_alloptions();
-foreach ( $options as $name => $value ) {
-	if ( strpos( $name, 'urlslab_' ) === 0 ) {
-		delete_option( $name );
-	}
-}
-
 include_once 'table-names.php';
-
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_URLS_TABLE );             // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_URLS_MAP_TABLE );         // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_ERROR_LOG_TABLE );        // phpcs:ignore
@@ -33,5 +24,13 @@ $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SCREENSHOT_URLS_TABLE ); // phpc
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_CONTENT_GENERATORS_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_NOT_FOUND_LOG_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_REDIRECTS_TABLE ); // phpcs:ignore
+
+
+$options = wp_load_alloptions();
+foreach ( $options as $name => $value ) {
+	if ( strpos( $name, 'urlslab' ) === 0 || strpos( $name, 'widget_urlslab' ) === 0 ) {
+		delete_option( $name );
+	}
+}
 
 return;
