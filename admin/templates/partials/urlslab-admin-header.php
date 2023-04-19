@@ -39,7 +39,7 @@ if ( ! empty( $page_tabs ) ) {
 	<div class="urlslab-header-content-container">
 		<figure>
 			<?php $logo_url = plugin_dir_url( URLSLAB_PLUGIN ) . 'admin/assets/logo.svg'; ?>
-			<img src="<?php echo esc_url( $logo_url ); ?>" width="100%" alt="URLsLab Logo">
+			<img src="<?php echo esc_url( $logo_url ); ?>" width="100%" alt="URLsLab">
 		</figure>
 		<div>
 			<h1><?php echo esc_html( $urlslab_page_title ); ?></h1>
