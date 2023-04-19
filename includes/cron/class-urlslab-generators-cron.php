@@ -64,7 +64,6 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 		try {
 			$request = new DomainDataRetrievalAugmentRequest();
 			$request->setAugmentingModelName( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_GENERATOR_MODEL ) );
-			$request->setAugmentCommand( $row_obj->get_semantic_context() );
 			$request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
 			$prompt = new DomainDataRetrievalAugmentPrompt();
 			$prompt->setPromptTemplate( "Additional information to your memory:\n--\n{context}\n----\n" . $command );
@@ -73,8 +72,17 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 			$request->setPrompt( $prompt );
 
 			$filter = new DomainDataRetrievalContentQuery();
-			$filter->setUrls( array( $row_obj->get_url_filter() ) );
 			$filter->setLimit( 5 );
+			if ( strlen( $row_obj->get_semantic_context() ) ) {
+				$request->setAugmentCommand( $row_obj->get_semantic_context() );
+				$filter->setAdditionalQuery(
+					(object) array(
+						'match' => (object) array( 'metadata.url' => $row_obj->get_url_filter() ),
+					)
+				);
+			} else {
+				$filter->setUrls( array( $row_obj->get_url_filter() ) );
+			}
 			$request->setFilter( $filter );
 
 			$response = $this->content_client->memoryLessAugment( $request, 'false', 'false' );
