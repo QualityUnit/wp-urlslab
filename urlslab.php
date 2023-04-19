@@ -54,13 +54,6 @@ function deactivate_urlslab() {
 
 register_deactivation_hook( __FILE__, 'deactivate_urlslab' );
 
-
-function uninstall_urlslab() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-urlslab-activator.php';
-	Urlslab_Activator::uninstall();
-}
-register_uninstall_hook(__FILE__, 'uninstall_urlslab');
-
 require plugin_dir_path( __FILE__ ) . 'includes/class-urlslab.php';
 $urlslab_plugin = new Urlslab();
 $urlslab_plugin->run();
