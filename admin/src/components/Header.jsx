@@ -50,6 +50,7 @@ export default function Header( { pageTitle } ) {
 			<header className="urlslab-header">
 				<div className="flex flex-align-center">
 					<Logo className="urlslab-header-logo" />
+					<span className="urlslab-header-logo-label">beta</span>
 					<span className="urlslab-header-slash">/</span>
 					<h1 className="urlslab-header-title">{ pageTitle }</h1>
 					<Button active className="pos-relative small ma-left" onClick={ handleCronRunner }>

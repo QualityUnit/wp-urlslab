@@ -13,7 +13,7 @@
  *
  * @wordpress-plugin
  *
- * Plugin Name:       URLsLab
+ * Plugin Name:       URLsLab (BETA)
  * Plugin URI:        https://github.com/QualityUnit/wp-urlslab
  * Description:       URLsLab WordPress Plugin to optimize your website for search engines and enhance automatically content
  * Version: 2.13.2
