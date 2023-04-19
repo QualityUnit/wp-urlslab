@@ -144,9 +144,9 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 
 		return shortcode_atts(
 			array(
-				'semantic_context' => $title,
+				'semantic-context' => $title,
 				'command'          => 'Summarize information I gave you. Generate summarization in language |lang|.',
-				'url_filter'       => str_replace( $replacements, '', $this->get_current_page_url()->get_url() ) . '*',
+				'source-url'       => str_replace( $replacements, '', $this->get_current_page_url()->get_domain_name() ) . '*',
 				'template'         => 'templates/simple-result.php',
 				'default_value'    => '',
 				'lang'             => $this->get_current_language(),

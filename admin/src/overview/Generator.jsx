@@ -5,7 +5,7 @@ export default function GeneratorOverview() {
 			<p>Harnessing the power of the advanced GPT model version 4 or older 3.5, our plugin ensures top-notch quality and seamless adaptability for your site. Say goodbye to time-consuming content generation and writer's block, as our AI module takes care of all your content needs with ease.</p>
 			<p>Upgrade your website today with our AI-driven module and experience the unparalleled benefits of dynamic, high-quality content that not only captivates your audience but also enhances your site's SEO performance. Don't settle for subpar content – step into the future of web copywriting with our groundbreaking module.</p>
 			<h4>Shortcode</h4>
-			<code>[urlslab-generator template="templates/summary.php" command="Summarize text and return output in language |$lang|" url_filter="https://www.liveagent.com/blog/" semantic_context="Can live chat improve conversion?" default-value="This is my default summarization ..."]</code>
+			<code>[urlslab-generator template="templates/summary.php" command="Summarize text and return output in language |$lang|" source-url="https://www.liveagent.com/blog/*" semantic-context="Can live chat improve conversion?" default-value="This is my default summarization ..."]</code>
 		</>
 	);
 }
