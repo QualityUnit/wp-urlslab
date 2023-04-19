@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, Trash, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, InputField,
+	useInfiniteFetch, ProgressBar, Tooltip, Trash, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, InputField, DateTimeFormat,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -118,7 +118,7 @@ export default function LinkManagerTable( { slug } ) {
 			size: 80,
 		} ),
 		columnHelper.accessor( 'update_http_date', {
-			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: () => header.update_http_date,
 			size: 140,
 		} ),

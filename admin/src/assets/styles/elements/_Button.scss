@@ -97,13 +97,7 @@ button.urlslab-button,
 	svg {
 
 		@include square(1.5em);
-		margin-right: 0.5em;
 		fill: currentcolor;
-
-		&:last-child:not(:first-child) {
-			margin-right: 0;
-			margin-left: 0.5em;
-		}
 
 		&.close {
 
@@ -112,6 +106,18 @@ button.urlslab-button,
 			margin-left: 1em;
 			fill: $grey-darker;
 		}
+	}
+
+	> svg {
+
+		margin-right: 0.5em;
+
+		&:last-child:not(:first-child) {
+			margin-right: 0;
+			margin-left: 0.5em;
+		}
+
+
 	}
 
 	@media (hover: hover) {

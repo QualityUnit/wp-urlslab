@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useRef, useCallback, useState } from 'react';
+import { useEffect, useMemo, useRef, useCallback, useState, useContext } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 
 import { fetchData } from '../api/fetching';
 import { deleteAll } from '../api/deleteTableData';
+import HeaderHeightContext from '../lib/headerHeightContext';
 
 import { useFilter } from '../hooks/filteringSorting';
 
@@ -26,14 +27,25 @@ import TableFilterPanel from './TableFilterPanel';
 import '../assets/styles/components/_TableFilter.scss';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import IconButton from '../elements/IconButton';
+import useResizeObserver from '../hooks/useResizeObserver';
 
 export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noExport, noCount, noDelete, header, table, insertOptions, activatePanel, detailsOptions, exportOptions, selectedRows, onSort, onFilter, onDeleteSelected, onClearRow } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const didMountRef = useRef( false );
+	const { headerBottomHeight, setHeaderBottomHeight } = useContext( HeaderHeightContext );
+
+	const handleHeaderHeight = useCallback( ( elem ) => {
+		const bottomHeight = elem?.getBoundingClientRect().height;
+		if ( bottomHeight && bottomHeight !== headerBottomHeight ) {
+			setHeaderBottomHeight( bottomHeight );
+		}
+	}, [] );
+	const headerBottom = useResizeObserver( handleHeaderHeight );
 
 	const [ activePanel, setActivePanel ] = useState( );
 	const [ sortBy, setSortBy ] = useState();
+
 	const initialRow = table?.getRowModel().rows[ 0 ];
 
 	const { filters, currentFilters, state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( { slug, header, initialRow } );
@@ -51,6 +63,8 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 	}, [ handleSaveFilter, filters, dispatch, onFilter ] );
 
 	useEffect( () => {
+		handleHeaderHeight();
+
 		if ( onFilter && didMountRef.current ) {
 			onFilter( filters );
 		}
@@ -124,7 +138,7 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 
 	return (
 		<>
-			<div className="urlslab-moduleView-headerBottom">
+			<div ref={ headerBottom } className="urlslab-moduleView-headerBottom">
 				<div className="urlslab-moduleView-headerBottom__top flex flex-align-center">
 
 					{ ! noDelete && selectedRows?.length > 0 &&
@@ -139,7 +153,9 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 						</Button>
 
 						{ state.editFilter === 'addFilter' && // Our main adding panel (only when Add button clicked)
-							<TableFilterPanel props={ { slug, header, initialRow, possibleFilters: state.possibleFilters, currentFilters } } onEdit={ handleOnEdit } />
+							<TableFilterPanel props={ { slug, header, initialRow, possibleFilters: state.possibleFilters, currentFilters } } onEdit={ ( val ) => {
+								handleHeaderHeight(); handleOnEdit( val );
+							} } />
 						}
 					</div>
 
@@ -165,21 +181,25 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 
 					</div>
 				</div>
-				<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
-					<TableFilter props={ { currentFilters, state, slug, header, initialRow } } onEdit={ handleOnEdit } onRemove={ ( key ) => handleRemoveFilter( key ) } />
-					<div className="ma-left flex flex-align-center">
-						{
-							! noCount && rowCount &&
-							<small className="urlslab-rowcount fadeInto flex flex-align-center">
-								{ __( 'Rows: ' ) }
-								<strong className="ml-s">{ rowCount }</strong>
-							</small>
-						}
+				{ Object.keys( currentFilters ).length !== 0 &&
+					<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
+						<TableFilter props={ { currentFilters, state, slug, header, initialRow } } onEdit={ handleOnEdit } onRemove={ ( key ) => {
+							handleHeaderHeight(); handleRemoveFilter( key );
+						} } />
+						<div className="ma-left flex flex-align-center">
+							{
+								! noCount && rowCount &&
+								<small className="urlslab-rowcount fadeInto flex flex-align-center">
+									{ __( 'Rows: ' ) }
+									<strong className="ml-s">{ rowCount }</strong>
+								</small>
+							}
 
-						<SortMenu className="menu-left ml-m" isFilter checkedId={ sortBy } items={ sortItems } name="sorting" onChange={ handleSorting }>{ `Sort by${ sortBy ? ': ' + sortItems[ sortBy ] : '' }` }</SortMenu>
+							<SortMenu className="menu-left ml-m" isFilter checkedId={ sortBy } items={ sortItems } name="sorting" onChange={ handleSorting }>{ `Sort by${ sortBy ? ': ' + sortItems[ sortBy ] : '' }` }</SortMenu>
 
+						</div>
 					</div>
-				</div>
+				}
 
 			</div>
 			{

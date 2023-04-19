@@ -5,6 +5,8 @@ import { useI18n } from '@wordpress/react-i18n';
 import { fetchData } from './api/fetching';
 import { fetchSettings } from './api/settings';
 import { fetchLangs } from './api/fetchLangs';
+
+import HeaderHeightContext from './lib/headerHeightContext';
 import MainMenu from './components/MainMenu';
 import DynamicModule from './components/DynamicModule';
 import Header from './components/Header';
@@ -16,6 +18,9 @@ export default function App() {
 	const queryClient = useQueryClient();
 	const [ module, setModule ] = useState( 'urlslab-modules' );
 	const [ prefetch, setPrefetch ] = useState( true );
+	const [ headerTopHeight, setHeaderTopHeight ] = useState( 60 );
+	const [ headerBottomHeight, setHeaderBottomHeight ] = useState( 60 );
+	const value = { headerTopHeight, setHeaderTopHeight, headerBottomHeight, setHeaderBottomHeight };
 
 	if ( prefetch ) {
 		// Checking if API is set in advance
@@ -76,7 +81,6 @@ export default function App() {
 	};
 
 	return (
-
 		<div className="urlslab-app flex">
 			{
 				fetchedModules &&
@@ -89,15 +93,17 @@ export default function App() {
 				</Suspense>
 			}
 			{ /* </Suspense> */ }
-			<div className="urlslab-app-main">
-				<Header pageTitle={ ! pageTitle || pageTitle } />
+			<HeaderHeightContext.Provider value={ value }>
+				<div className="urlslab-app-main">
+					<Header pageTitle={ ! pageTitle || pageTitle } />
 
-				<DynamicModule
-					modules={ ! fetchedModules || Object.values( fetchedModules ) }
-					moduleId={ module }
-					activePage={ ( selectedModule ) => handleModulePage( selectedModule ) }
-				/>
-			</div>
+					<DynamicModule
+						modules={ ! fetchedModules || Object.values( fetchedModules ) }
+						moduleId={ module }
+						activePage={ ( selectedModule ) => handleModulePage( selectedModule ) }
+					/>
+				</div>
+			</HeaderHeightContext.Provider>
 
 		</div>
 	);

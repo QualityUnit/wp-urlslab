@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, Tooltip, Checkbox, Trash, ProgressBar, InputField, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, Tooltip, Checkbox, Trash, ProgressBar, InputField, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, SortMenu, DateTimeFormat,
 } from '../lib/tableImports';
 
 import { langName } from '../lib/helpers';
@@ -69,7 +69,6 @@ export default function GeneratorTable( { slug } ) {
 			size: 200,
 		} ),
 		columnHelper.accessor( 'lang', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => langName( cell?.getValue() ),
 			header: header.lang,
 			size: 165,
@@ -82,14 +81,14 @@ export default function GeneratorTable( { slug } ) {
 			size: 200,
 		} ),
 		columnHelper.accessor( 'status', {
-			className: 'status',
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => statusTypes[ cell.getValue() ],
+			filterValMenu: statusTypes,
+			className: 'nolimit',
+			cell: ( cell ) => <SortMenu items={ statusTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.status,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'status_changed', {
-			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: header.status_changed,
 			size: 100,
 		} ),

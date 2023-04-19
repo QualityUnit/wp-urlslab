@@ -1,6 +1,12 @@
 @use "variables" as *;
 @use "mixins" as *;
 
+strong,
+b {
+	font-weight: 600;
+}
+
+
 h1,
 h2,
 h3,

@@ -13,6 +13,7 @@ export default function MediaFilesTable( { slug } ) {
 	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
 
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
+	const [ tooltipUrl, setTooltipUrl ] = useState( );
 
 	const {
 		__,
@@ -73,11 +74,15 @@ export default function MediaFilesTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'url', {
 			tooltip: ( cell ) => {
-				const regex = /(jpeg|jpg|webp|gif|png|svg)/g;
-				const isImage = cell.getValue().search( regex );
-				return <Tooltip>{ isImage !== -1 && <img src={ cell.getValue() } alt="url" /> }</Tooltip>;
+				if ( tooltipUrl === cell.getValue() ) {
+					const regex = /(jpeg|jpg|webp|gif|png|svg)/g;
+					const isImage = cell.getValue().search( regex );
+					return <Tooltip>{ isImage !== -1 && <img src={ cell.getValue() } alt="url" /> }</Tooltip>;
+				}
+				return false;
 			},
-			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
+			cell: ( cell ) => <a onMouseOver={ () => setTooltipUrl( cell.getValue() ) } onMouseLeave={ () => setTooltipUrl() } href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: header.url,
 			size: 200,
 		} ),

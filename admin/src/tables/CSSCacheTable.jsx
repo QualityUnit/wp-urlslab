@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, Tooltip, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -58,12 +58,11 @@ export default function CSSCacheTable( { slug } ) {
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'status_changed', {
-			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: header.status_changed,
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'filesize', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			unit: 'kB',
 			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
 			header: header.filesize,

@@ -102,7 +102,6 @@ export default function NotFoundTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.ip, {
 			id: 'ip',
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => {
 				return cell.getValue();
 			},

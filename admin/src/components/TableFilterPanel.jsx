@@ -1,5 +1,5 @@
 
-import { useRef, useMemo, useEffect, useState, useCallback } from 'react';
+import { useMemo, useEffect, useState, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { stringOp, dateOp, numericOp, menuOp, langOp, booleanTypes } from '../lib/filterOperators';
@@ -16,7 +16,6 @@ export default function TableFilterPanel( { props, onEdit } ) {
 	const currentDate = new Date();
 	const { key, slug, header, possibleFilters, initialRow, currentFilters } = props;
 	const { __ } = useI18n();
-	const filterPanel = useRef();
 	const [ filterValMenu, setFilterValMenu ] = useState();
 	const [ date, setDate ] = useState( currentFilters[ key ]?.val ? new Date( currentFilters[ key ]?.val ) : currentDate );
 	const [ startDate, setStartDate ] = useState( currentFilters[ key ]?.val?.min ? new Date( currentFilters[ key ]?.val.min ) : currentDate.setDate( currentDate.getDate() - 2 ) );
@@ -34,6 +33,10 @@ export default function TableFilterPanel( { props, onEdit } ) {
 		dispatch( { type: 'setFilterKey', key: keyParam } );
 		handleType( keyParam, ( cellOptions ) => setFilterValMenu( cellOptions ) );
 	}, [ dispatch, handleType ] );
+
+	const handleOnEdit = ( val ) => {
+		onEdit( val );
+	};
 
 	useEffect( () => {
 		if ( state.filterObj.keyType === undefined ) {
@@ -80,7 +83,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 	}, [ state.filterObj.keyType ] );
 
 	return (
-		<div ref={ filterPanel } className={ `urlslab-panel fadeInto urslab-TableFilter-panel pos-absolute` }>
+		<div className={ `urlslab-panel fadeInto urslab-TableFilter-panel pos-absolute` }>
 			<div className="urlslab-panel-header urslab-TableFilter-panel-header">
 				<strong>{ __( 'Edit filter' ) }{ key ? ` ${ header[ key ] }` : '' }</strong>
 			</div>
@@ -98,6 +101,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 				{ ( state.filterObj.keyType && ( currentFilters[ key ]?.op || state.filterObj.filterOp ) ) &&
 					<SortMenu
 						className="ml-s"
+						key={ currentFilters[ key ]?.op || state.filterObj.filterOp }
 						items={
 							( state.filterObj.keyType === 'date' && dateOp ) ||
 							( state.filterObj.keyType === 'number' && numericOp ) ||
@@ -116,7 +120,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 			</div>
 			<div>
 				{ state.filterObj.keyType === 'lang' &&
-				<LangMenu autoClose multiSelect={ state.filterObj.filterOp === 'IN' } checkedId={ currentFilters[ key ]?.val || 'all' } defaultAccept onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
+					<LangMenu autoClose multiSelect={ state.filterObj.filterOp === 'IN' } checkedId={ currentFilters[ key ]?.val || 'all' } defaultAccept onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
 				}
 				{
 					state.filterObj.keyType === 'menu' &&
@@ -213,8 +217,8 @@ export default function TableFilterPanel( { props, onEdit } ) {
 			</div>
 
 			<div className="Buttons mt-m flex flex-align-center">
-				<Button className="ma-left simple wide" onClick={ () => onEdit( false ) }>{ __( 'Cancel' ) }</Button>
-				<Button active className="wide" disabled={ state.filterObj.filterVal ? false : true } onClick={ () => onEdit( state.filterObj ) }>{ __( 'Save' ) }</Button>
+				<Button className="ma-left simple wide" onClick={ () => handleOnEdit( false ) }>{ __( 'Cancel' ) }</Button>
+				<Button active className="wide" disabled={ state.filterObj.filterVal ? false : true } onClick={ () => handleOnEdit( state.filterObj ) }>{ __( 'Save' ) }</Button>
 			</div>
 		</div>
 	);
