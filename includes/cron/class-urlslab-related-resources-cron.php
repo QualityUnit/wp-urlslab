@@ -126,7 +126,7 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 			}
 
 			global $wpdb;
-			$wpdb->delete( URLSLAB_URL_RELATIONS_TABLE, array( 'src_url_id' => $url->get_url_id() ) );
+			$wpdb->delete( URLSLAB_URLS_MAP_TABLE, array( 'src_url_id' => $url->get_url_id() ) );
 
 			( new Urlslab_Url_Relation_Row() )->insert_all( $related_resources, true );
 		} catch ( ApiException $e ) {
