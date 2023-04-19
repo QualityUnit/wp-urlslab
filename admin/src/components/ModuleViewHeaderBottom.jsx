@@ -36,7 +36,8 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 		if ( bottomHeight && bottomHeight !== headerBottomHeight ) {
 			setHeaderBottomHeight( bottomHeight );
 		}
-	}, [] );
+	}, [ headerBottomHeight, setHeaderBottomHeight ] );
+
 	const headerBottom = useResizeObserver( handleHeaderHeight );
 
 	const [ activePanel, setActivePanel ] = useState( );
