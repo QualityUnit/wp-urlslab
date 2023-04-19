@@ -32,6 +32,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		$this->set_cnt( $redirect['cnt'] ?? 0, $loaded_from_db );
 		$this->set_redirect_code( (int) ( $redirect['redirect_code'] ?? 301 ), $loaded_from_db );
 		$this->set_redirect_id( $redirect['redirect_id'] ?? 0, $loaded_from_db );
+		$this->set_row_hash( $redirect['row_hash'] ?? 0, $loaded_from_db );
 	}
 
 	public function get_redirect_id(): int {
@@ -40,6 +41,18 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 
 	public function set_redirect_id( int $redirect_id, $loaded_from_db = true ): void {
 		$this->set( 'redirect_id', $redirect_id, $loaded_from_db );
+	}
+
+	public function get_row_hash(): int {
+		return $this->get( 'row_hash' );
+	}
+
+	public function set_row_hash( int $row_hash, $loaded_from_db = true ): void {
+		if ( ! $row_hash ) {
+			$row_hash       = crc32( $this->get_match_type() . '|' . $this->get_match_url() . '|' . $this->get_is_logged() . '|' . $this->get_capabilities() . '|' . $this->get_roles() . '|' . $this->get_browser() . '|' . $this->get_cookie() . '|' . $this->get_headers() . '|' . $this->get_params() . '|' . $this->get_ip() . '|' . $this->get_if_not_found() );
+			$loaded_from_db = false;
+		}
+		$this->set( 'row_hash', $row_hash, $loaded_from_db );
 	}
 
 	public function get_match_type(): string {
@@ -169,6 +182,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 	public function get_columns(): array {
 		return array(
 			'redirect_id'   => '%d',
+			'row_hash'      => '%d',
 			'match_type'    => '%s',
 			'match_url'     => '%s',
 			'replace_url'   => '%s',
@@ -189,5 +203,10 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 	public function increase_cnt() {
 		global $wpdb;
 		$wpdb->query( $wpdb->prepare( "UPDATE {$this->get_table_name()} SET cnt = cnt + 1 WHERE redirect_id = %d", $this->get_redirect_id() ) ); // phpcs:ignore
+	}
+
+	protected function before_insert() {
+		$this->set_row_hash( $this->get_row_hash() );    //refresh hash
+		parent::before_insert();
 	}
 }
