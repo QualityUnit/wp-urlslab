@@ -112,35 +112,10 @@ class Urlslab_Activator {
 		);
 
 		self::update_step(
-			'2.7.0',
-			function() {
-				global $wpdb;
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_REDIRECTS_TABLE . ' ADD COLUMN roles VARCHAR(2000)' ); // phpcs:ignore
-			}
-		);
-
-		self::update_step(
 			'2.8.0',
 			function() {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_NOT_FOUND_LOG_TABLE . ' ADD COLUMN request_data TEXT' ); // phpcs:ignore
-			}
-		);
-
-		self::update_step(
-			'2.9.0',
-			function() {
-				global $wpdb;
-				$wpdb->query( 'UPDATE ' . URLSLAB_REDIRECTS_TABLE . " SET if_not_found='A' WHERE if_not_found=''" ); // phpcs:ignore
-				$wpdb->query( 'UPDATE ' . URLSLAB_REDIRECTS_TABLE . " SET is_logged='A' WHERE is_logged=''" );       // phpcs:ignore
-			}
-		);
-		self::update_step(
-			'2.10.0',
-			function() {
-				global $wpdb;
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_REDIRECTS_TABLE . ' CHANGE COLUMN `capabilities` `capabilities` VARCHAR(1000) NULL DEFAULT NULL , CHANGE COLUMN `browser` `browser` VARCHAR(1000) NULL DEFAULT NULL , CHANGE COLUMN `cookie` `cookie` VARCHAR(1000) NULL DEFAULT NULL ,CHANGE COLUMN `headers` `headers` VARCHAR(1000) NULL DEFAULT NULL , CHANGE COLUMN `params` `params` VARCHAR(1000) NULL DEFAULT NULL' );// phpcs:ignore
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_REDIRECTS_TABLE . " ADD COLUMN ip VARCHAR(500)" ); // phpcs:ignore
 			}
 		);
 
@@ -153,10 +128,11 @@ class Urlslab_Activator {
 		);
 
 		self::update_step(
-			'2.12.0',
+			'2.13.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_REDIRECTS_TABLE . ' ADD UNIQUE INDEX `idx_uniq_redirects` (`match_type` ASC, `match_url` ASC, `replace_url` ASC, `is_logged` ASC, `capabilities` ASC, `browser` ASC, `cookie` ASC, `headers` ASC, `params` ASC, `if_not_found` ASC, `roles` ASC, `ip` ASC)' ); // phpcs:ignore
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_REDIRECTS_TABLE ); // phpcs:ignore
+				self::init_redirects_table();
 			}
 		);
 
@@ -532,8 +508,9 @@ class Urlslab_Activator {
     		  ip VARCHAR(500),
     		  cnt INT UNSIGNED ZEROFILL DEFAULT 0,
     		  if_not_found CHAR(1) DEFAULT 'A',
+    		  row_hash bigint,
 			  PRIMARY KEY (redirect_id),
-			  UNIQUE INDEX `idx_uniq_redirects` (`match_type` ASC, `match_url` ASC, `replace_url` ASC, `is_logged` ASC, `capabilities` ASC, `browser` ASC, `cookie` ASC, `headers` ASC, `params` ASC, `if_not_found` ASC, `roles` ASC, `ip` ASC)
+			  UNIQUE INDEX idx_uniq_hash (row_hash)
         ) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
