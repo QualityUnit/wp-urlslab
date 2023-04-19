@@ -18,8 +18,7 @@ abstract class Urlslab_Widget {
 	private $options = false;
 	private $option_sections = array();
 
-	public function init_widget() {
-	}
+	public function init_widget() {}
 
 	/**
 	 * @return string Widget slug for identifying the widget
@@ -99,8 +98,8 @@ abstract class Urlslab_Widget {
 					break;
 
 				case self::OPTION_TYPE_LISTBOX:
-					$value = $this->get_option( $option_id );
-					$possible_values = $this->get_option_possible_values(
+					$value                     = $this->get_option( $option_id );
+					$possible_values           = $this->get_option_possible_values(
 						$option_id
 					);
 					$option['possible_values'] = $possible_values;
@@ -119,7 +118,7 @@ abstract class Urlslab_Widget {
 							trim( $values, ", \t\n\r\0\x0B" )
 						);
 					}
-					$possible_values = $this->get_option_possible_values(
+					$possible_values           = $this->get_option_possible_values(
 						$option_id
 					);
 					$option['possible_values'] = $possible_values;
@@ -246,14 +245,13 @@ abstract class Urlslab_Widget {
 		}
 
 		return $value == $this->get_option( $option_id )
-			|| update_option(
-				$option_id,
-				$value
-			);
+			   || update_option(
+				   $option_id,
+				   $value
+			   );
 	}
 
-	protected function add_options() {
-	}
+	protected function add_options() {}
 
 	protected function add_options_form_section( $id, $title, $description ) {
 		$this->option_sections[ $id ] = array(
@@ -265,20 +263,20 @@ abstract class Urlslab_Widget {
 
 	/**
 	 * @param array|callable|false $possible_values
-	 * @param mixed                $default_value
-	 * @param mixed                $type
-	 * @param mixed                $form_section_id
+	 * @param mixed $default_value
+	 * @param mixed $type
+	 * @param mixed $form_section_id
 	 */
 	protected function add_option_definition(
 		string $option_id,
-				 $default_value = false,
+		$default_value = false,
 		bool $autoload = true,
 		string $title = '',
 		string $description = '',
-				 $type = self::OPTION_TYPE_CHECKBOX,
-				 $possible_values = false,
+		$type = self::OPTION_TYPE_CHECKBOX,
+		$possible_values = false,
 		callable $validator = null,
-				 $form_section_id = 'default'
+		$form_section_id = 'default'
 	) {
 		if ( empty( $this->option_sections ) ) {
 			$this->option_sections[] = array(
@@ -310,14 +308,8 @@ abstract class Urlslab_Widget {
 	protected function is_skip_elemenet( DOMNode $dom, $custom_widget_skip = '' ): bool {
 		return $dom->hasAttributes() && $dom->hasAttribute( 'class' )
 			   && ( ( ! empty( $custom_widget_skip )
-					&& false !== strpos(
-						$dom->getAttribute( 'class' ),
-						'urlslab-skip-' . $custom_widget_skip
-					) )
-					|| ( false !== strpos(
-						$dom->getAttribute( 'class' ),
-						'urlslab-skip-all'
-					) ) );
+					  && false !== strpos( $dom->getAttribute( 'class' ), 'urlslab-skip-' . $custom_widget_skip ) )
+					|| ( false !== strpos( $dom->getAttribute( 'class' ), 'urlslab-skip-all' ) ) );
 	}
 
 	public function get_current_page_url(): Urlslab_Url {
@@ -360,10 +352,7 @@ abstract class Urlslab_Widget {
 		global $sitepress, $polylang;
 
 		if ( ! empty( $sitepress ) && is_object( $sitepress )
-			&& method_exists(
-				$sitepress,
-				'get_active_languages'
-			)
+			 && method_exists( $sitepress, 'get_active_languages' )
 		) {
 			return apply_filters( 'wpml_current_language', null );
 		}

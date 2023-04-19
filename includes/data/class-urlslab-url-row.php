@@ -346,6 +346,8 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		string $screenshot_type = self::SCREENSHOT_TYPE_CAROUSEL
 	): string {
 		if ( ! $this->has_screenshot() ) {
+			$this->init_scr_status();
+			$this->update();
 			return '';
 		}
 
