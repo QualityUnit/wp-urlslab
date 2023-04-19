@@ -6,6 +6,7 @@ use Elementor\Plugin;
 
 class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	public const SLUG = 'urlslab-related-resources';
+	const SETTING_NAME_DOMAINS = 'urlslab-relres-domains';
 	private static $posts = array();
 
 	public const SETTING_NAME_SYNC_URLSLAB = 'urlslab-relres-sync-urlslab';
@@ -101,7 +102,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		try {
 			$current_url = new Urlslab_Url( $urlslab_atts['url'] );
 
-			$result = $this->load_related_urls( $current_url->get_url_id(), $urlslab_atts['related-count'] );
+			$result  = $this->load_related_urls( $current_url->get_url_id(), $urlslab_atts['related-count'] );
 			$content = '';
 
 			$urls = array( $current_url );
@@ -114,11 +115,11 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			$current_url_obj->request_rel_schedule();
 
 			if ( ! empty( $result ) && is_array( $result ) ) {
-				$content .= $this->render_shortcode_header( $urlslab_atts );
+				$content  .= $this->render_shortcode_header( $urlslab_atts );
 				$strategy = get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
 				foreach ( $urls as $url ) {
 					if ( $current_url_obj->get_url_id() != $url->get_url_id() ) {
-						$url = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url );
+						$url     = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url );
 						$content .= $this->render_shortcode_item( $url, $urlslab_atts, $strategy );
 					}
 				}
@@ -133,9 +134,9 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 	private function load_related_urls( string $url_id, int $limit ): array {
 		global $wpdb;
-		$urls_table = URLSLAB_URLS_TABLE;
+		$urls_table         = URLSLAB_URLS_TABLE;
 		$related_urls_table = URLSLAB_RELATED_RESOURCE_TABLE;
-		$q = "SELECT DISTINCT u.url_name FROM $related_urls_table r INNER JOIN $urls_table as u ON r.dest_url_id = u.url_id WHERE r.src_url_id = %d AND u.visibility = '%s' ORDER BY r.pos LIMIT %d";
+		$q                  = "SELECT DISTINCT u.url_name FROM $related_urls_table r INNER JOIN $urls_table as u ON r.dest_url_id = u.url_id WHERE r.src_url_id = %d AND u.visibility = '%s' ORDER BY r.pos LIMIT %d";
 
 		return $wpdb->get_results( $wpdb->prepare( $q, $url_id, Urlslab_Url_Row::VISIBILITY_VISIBLE, $limit ), ARRAY_A ); // phpcs:ignore
 	}
@@ -189,9 +190,9 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				   $this->render_screenshot( $url_obj, $urlslab_atts, $strategy ) .
 				   '<div class="urlslab-rel-res-item-text"><p class="urlslab-rel-res-item-title">' . esc_html( $title ) . '</p>' .
 				   ( ! empty( $summary_text ) ? '<p  class="urlslab-rel-res-item-summary">' . esc_html( $summary_text ) . '</p>' : '' ) .
-					 '<svg class="urlslab-rel-res-item-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32"><path d="m17.856 17.056-12.16 12.16a1.507 1.507 0 0 1-2.112 0l-1.44-1.408a1.546 1.546 0 0 1 0-2.144L11.776 16 2.144 6.336c-.576-.608-.576-1.536 0-2.112l1.44-1.44a1.507 1.507 0 0 1 2.112 0l12.16 12.16a1.507 1.507 0 0 1 0 2.112z"/></svg>' .
+				   '<svg class="urlslab-rel-res-item-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32"><path d="m17.856 17.056-12.16 12.16a1.507 1.507 0 0 1-2.112 0l-1.44-1.408a1.546 1.546 0 0 1 0-2.144L11.776 16 2.144 6.336c-.576-.608-.576-1.536 0-2.112l1.44-1.44a1.507 1.507 0 0 1 2.112 0l12.16 12.16a1.507 1.507 0 0 1 0 2.112z"/></svg>' .
 				   '</div>' .
-					 '</a>' .
+				   '</a>' .
 				   '</div>';
 		} catch ( Exception $e ) {
 			//in case of invalid link
@@ -224,7 +225,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			return self::$posts;
 		}
 
-		$post_types = get_post_types(
+		$post_types  = get_post_types(
 			array(
 				'show_ui'      => true,
 				'show_in_menu' => true,
@@ -267,8 +268,21 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				31556926         => __( 'Yearly' ),
 				self::FREQ_NEVER => __( 'Never' ),
 			),
-			function ( $value ) {
+			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
+			},
+			'sync'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_DOMAINS,
+			false,
+			false,
+			__( 'Additional Domains' ),
+			__( 'Comma separated list of domains to consider when searching for related articles. By default is searched just same domain of evaluated link. e.g. if link is www.liveagent.com/pricing/, plugin will search just in domain liveagent.com for similar pages. Do not forget to schedule domains in your list to be scanned by urlslab. Otherwise we will not find any relation from your domain.' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $param ) {
+				return is_string( $param );
 			},
 			'sync'
 		);
@@ -293,10 +307,10 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			__( 'WordPress Post Types' ),
 			__( 'Select post types to append Related articles at the end of the content. If you don\'t configure anything, it will be added to all post types automatically.' ),
 			self::OPTION_TYPE_MULTI_CHECKBOX,
-			function () {
+			function() {
 				return Urlslab_Related_Resources_Widget::get_available_post_types();
 			},
-			function ( $value ) {
+			function( $value ) {
 				if ( ! is_array( $value ) ) {
 					return false;
 				}
@@ -322,7 +336,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			__( 'Define the number of related article items to be appended to the end of the content.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function ( $value ) {
+			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'widget'
@@ -351,7 +365,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL => __( 'Full Thumbnail (200px x dynamic height)' ),
 				Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE           => __( 'Full (1358px x dynamic height)' ),
 			),
-			function ( $value ) {
+			function( $value ) {
 				switch ( $value ) {
 					case Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL:
 					case Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL:
