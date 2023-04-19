@@ -1,7 +1,11 @@
-import { Suspense, useEffect, useRef, useReducer } from 'react';
+import { Suspense, useEffect, useRef, useReducer, useContext, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import { ReactComponent as Logo } from '../assets/images/urlslab-logo.svg';
+
 import { cronAll } from '../api/cron';
+import headerReducer from '../lib/headerReducer';
+import useResizeObserver from '../hooks/useResizeObserver';
+import HeaderHeightContext from '../lib/headerHeightContext';
+
 // eslint-disable-next-line import/no-extraneous-dependencies
 import NoAPIkey from './NoAPIkey';
 import Notifications from './Notifications';
@@ -9,12 +13,22 @@ import Loader from './Loader';
 import Button from '../elements/Button';
 import NotificationsPanel from './NotificationsPanel';
 import { ReactComponent as PlayIcon } from '../assets/images/icon-play.svg';
-import headerReducer from '../lib/headerReducer';
+import { ReactComponent as Logo } from '../assets/images/urlslab-logo.svg';
 
 export default function Header( { pageTitle } ) {
 	const { __ } = useI18n();
 	const runCron = useRef( false );
 	const [ state, dispatch ] = useReducer( headerReducer, { cronRunning: false, cronTasksResult: [], cronPanelActive: false, cronPanelError: false } );
+
+	const { headerTopHeight, setHeaderTopHeight } = useContext( HeaderHeightContext );
+
+	const handleHeaderHeight = useCallback( ( elem ) => {
+		const headerHeight = elem?.getBoundingClientRect().height;
+		if ( headerHeight && headerHeight !== headerTopHeight ) {
+			setHeaderTopHeight( headerHeight );
+		}
+	}, [ headerTopHeight, setHeaderTopHeight ] );
+	const headerTop = useResizeObserver( handleHeaderHeight );
 
 	const handleCronRunner = () => {
 		let controller;
@@ -47,7 +61,7 @@ export default function Header( { pageTitle } ) {
 
 	return (
 		<Suspense>
-			<header className="urlslab-header">
+			<header ref={ headerTop } className="urlslab-header">
 				<div className="flex flex-align-center">
 					<Logo className="urlslab-header-logo" />
 					<span className="urlslab-header-slash">/</span>
@@ -67,10 +81,7 @@ export default function Header( { pageTitle } ) {
 					</Button>
 					{ /* <Notifications /> */ }
 				</div>
-				{ /* { apikey && apikey.length
-					? null
-					: <NoAPIkey />
-				} */ }
+				<NoAPIkey />
 			</header>
 		</Suspense>
 	);

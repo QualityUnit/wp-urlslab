@@ -1,7 +1,9 @@
-import { useMemo, useState, Suspense } from 'react';
+import { useMemo, useState, Suspense, useEffect } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
+import { update } from 'idb-keyval';
+
 import { fetchData } from './api/fetching';
 import { fetchSettings } from './api/settings';
 import { fetchLangs } from './api/fetchLangs';
@@ -18,35 +20,49 @@ export default function App() {
 	const queryClient = useQueryClient();
 	const [ module, setModule ] = useState( 'urlslab-modules' );
 	const [ prefetch, setPrefetch ] = useState( true );
-	const [ headerTopHeight, setHeaderTopHeight ] = useState( 60 );
-	const [ headerBottomHeight, setHeaderBottomHeight ] = useState( 60 );
+	const [ headerTopHeight, setHeaderTopHeight ] = useState( 58 );
+	const [ headerBottomHeight, setHeaderBottomHeight ] = useState( 51.5 );
 	const value = { headerTopHeight, setHeaderTopHeight, headerBottomHeight, setHeaderBottomHeight };
 
-	if ( prefetch ) {
-		// Checking if API is set in advance
-		queryClient.prefetchQuery( {
-			queryKey: [ 'general' ],
-			queryFn: () => fetchSettings( 'general' ).then( ( data ) => data ),
-			refetchOnWindowFocus: false,
-		} );
+	useEffect( () => {
+		if ( prefetch ) {
+			update( 'apiKeySet', () => true );
+			// Checking if API is set in advance
+			async function getApiKey() {
+				const generalData = await queryClient.fetchQuery( {
+					queryKey: [ 'general' ],
+					queryFn: () => fetchSettings( 'general' ).then( ( data ) => data ),
+					refetchOnWindowFocus: false,
+				} );
 
-		// Creating languages query object in advance
-		queryClient.prefetchQuery( {
-			queryKey: [ 'languages' ],
-			queryFn: async () => await fetchLangs(),
-			refetchOnWindowFocus: false,
-		} );
+				const isApiObject = generalData?.filter( ( dataset ) => dataset.id === 'api' )[ 0 ];
+				const hasApiKey = isApiObject?.options[ 'urlslab-api-key' ].value;
 
-		/* Creating all endpoints query object in advance
-		to check for required import CSV fields */
-		queryClient.prefetchQuery( {
-			queryKey: [ 'routes' ],
-			queryFn: async () => await fetchData(),
-			refetchOnWindowFocus: false,
-		} );
+				if ( ! hasApiKey ) {
+					update( 'apiKeySet', ( ) => false );
+				}
+			}
+			getApiKey();
 
-		setPrefetch( false );
-	}
+			// Creating languages query object in advance
+			queryClient.prefetchQuery( {
+				queryKey: [ 'languages' ],
+				queryFn: async () => await fetchLangs(),
+				refetchOnWindowFocus: false,
+			} );
+
+			/* Creating all endpoints query object in advance
+			to check for required import CSV fields */
+			queryClient.prefetchQuery( {
+				queryKey: [ 'routes' ],
+				queryFn: async () => await fetchData(),
+				refetchOnWindowFocus: false,
+			} );
+
+			setPrefetch( false );
+		}
+	}, [] );
+
 	const { data } = useQuery( {
 		queryKey: [ 'modules' ],
 		queryFn: async () => {

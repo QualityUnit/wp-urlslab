@@ -23,7 +23,7 @@ $cellHeight: 3.5em;
 	&-container {
 
 		@include scrollbar();
-		height: calc(100vh - 20em);
+		height: calc(100vh - var(--headerTopHeight) - var(--headerMenuHeight) - var(--headerBottomHeight) - 5em);
 		margin: 1.5em;
 		padding-bottom: 1.5em;
 		overflow: auto;

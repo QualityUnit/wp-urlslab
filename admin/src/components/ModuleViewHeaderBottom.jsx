@@ -16,18 +16,14 @@ import { ReactComponent as RefreshIcon } from '../assets/images/icon-cron-refres
 import SortMenu from '../elements/SortMenu';
 import ColumnsMenu from '../elements/ColumnsMenu';
 import Button from '../elements/Button';
-import InsertRowPanel from './InsertRowPanel';
-import ExportPanel from './ExportPanel';
-import ImportPanel from './ImportPanel';
-import DangerPanel from './DangerPanel';
 import TableFilter from './TableFilter';
-import DetailsPanel from './DetailsPanel';
 
 import TableFilterPanel from './TableFilterPanel';
 import '../assets/styles/components/_TableFilter.scss';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import IconButton from '../elements/IconButton';
 import useResizeObserver from '../hooks/useResizeObserver';
+import TablePanels from './TablePanels';
 
 export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noExport, noCount, noDelete, header, table, insertOptions, activatePanel, detailsOptions, exportOptions, selectedRows, onSort, onFilter, onDeleteSelected, onClearRow } ) {
 	const { __ } = useI18n();
@@ -202,43 +198,8 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 				}
 
 			</div>
-			{
-				activePanel === 'deleteall' &&
-				<DangerPanel title={ __( 'Delete All?' ) }
-					text={ __( 'Are you sure you want to delete all rows? Deleting rows will remove them from all modules where this table occurs.' ) }
-					button={ <><Trash />{ __( 'Delete All' ) }</> }
-					handlePanel={ handlePanel }
-					action="delete-all"
-				/>
-			}
 
-			{
-				activePanel === 'deleteSelected' &&
-				<DangerPanel title={ __( 'Delete Selected?' ) }
-					text={ __( 'Are you sure you want to delete selected rows? Deleting rows will remove them from all modules where this table occurs.' ) }
-					button={ <><Trash />{ __( 'Delete selected' ) }</> }
-					handlePanel={ handlePanel }
-					action="delete-selected"
-				/>
-			}
-			{
-				activePanel === 'addrow' &&
-				<InsertRowPanel insertOptions={ insertOptions } handlePanel={ handlePanel } />
-			}
-
-			{ activePanel === 'export' &&
-			<ExportPanel options={ exportOptions }
-				currentFilters={ currentFilters }
-				header={ header }
-				handlePanel={ handlePanel }
-			/>
-			}
-			{ activePanel === 'import' &&
-				<ImportPanel props={ { slug, header, initialRow } } handlePanel={ handlePanel } />
-			}
-			{ activePanel === 'details' &&
-				<DetailsPanel options={ detailsOptions } handlePanel={ handlePanel } />
-			}
+			<TablePanels props={ { header, slug, currentFilters, initialRow, detailsOptions, insertOptions, exportOptions, activePanel, handlePanel } } />
 		</>
 	);
 }

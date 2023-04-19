@@ -1,8 +1,8 @@
 import { createContext } from 'react';
 const HeaderHeightContext = createContext( {
-	headerTopHeight: 60,
+	headerTopHeight: 58,
 	setHeaderTopHeight: () => { },
-	headerBottomHeight: 60,
+	headerBottomHeight: 51.5,
 	setHeaderBottomHeight: () => { },
 } );
 
