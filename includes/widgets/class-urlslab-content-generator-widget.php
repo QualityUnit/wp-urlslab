@@ -142,7 +142,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			'http://',
 		);
 
-		return shortcode_atts(
+		$atts = shortcode_atts(
 			array(
 				'semantic-context' => $title,
 				'command'          => 'Summarize information I gave you. Generate summarization in language |lang|.',
@@ -154,6 +154,10 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			$atts,
 			$tag
 		);
+
+		$atts['semantic_context'] = $atts['semantic-context'];
+		$atts['url_filter'] = $atts['source-url'];
+		return $atts;
 	}
 
 	public function has_shortcode(): bool {
