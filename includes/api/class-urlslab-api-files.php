@@ -90,7 +90,9 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 			$row->height           = (int) $row->height;
 			$row->avif_filesize    = (int) $row->avif_filesize;
 			$row->webp_filesize    = (int) $row->webp_filesize;
-			$row->download_url     = $row_obj->get_file_pointer()->get_driver_object()->get_url( $row_obj );
+			if ( $row_obj->get_file_pointer()->get_filesize() ) {
+				$row->download_url = $row_obj->get_file_pointer()->get_driver_object()->get_url( $row_obj );
+			}
 		}
 
 		return new WP_REST_Response( $rows, 200 );

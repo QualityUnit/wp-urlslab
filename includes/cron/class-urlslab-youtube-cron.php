@@ -51,7 +51,7 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 		if ( strlen( $key ) ) {
 			return $key;
 		}
-		$key = env( 'YOUTUBE_API_KEY' );
+		$key = getenv( 'YOUTUBE_API_KEY' );
 		if ( strlen( $key ) ) {
 			return $key;
 		}

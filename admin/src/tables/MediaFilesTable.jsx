@@ -39,6 +39,7 @@ export default function MediaFilesTable( { slug } ) {
 		A: __( 'Available' ),
 		P: __( 'Processing' ),
 		D: __( 'Disabled' ),
+		E: __( 'Error' ),
 	};
 
 	const header = {
