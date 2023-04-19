@@ -67,6 +67,7 @@ abstract class Urlslab_Data {
 
 		$insert_data = array();
 		$format = array();
+		$this->before_insert();
 		foreach ( $this->get_columns() as $key => $column_format ) {
 			$insert_data[ $key ] = $this->data[ $key ];
 			$format[ $key ] = $column_format;
@@ -110,6 +111,7 @@ abstract class Urlslab_Data {
 		$insert_values = array();
 
 		foreach ( $rows as $row ) {
+			$row->before_insert();
 			$row_data = array();
 			foreach ( $this->get_columns() as $column => $format ) {
 				$row_data[] = $row->get( $column );
@@ -226,5 +228,8 @@ abstract class Urlslab_Data {
 
 	private function get_column_format( $name ) {
 		return $this->get_columns()[ $name ] ?? '%s';
+	}
+
+	protected function before_insert() {
 	}
 }
