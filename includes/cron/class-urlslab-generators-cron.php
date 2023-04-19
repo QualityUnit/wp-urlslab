@@ -73,7 +73,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 
 			$filter = new DomainDataRetrievalContentQuery();
 			$filter->setLimit( 5 );
-			if (strlen($row_obj->get_semantic_context())) {
+			if ( strlen( $row_obj->get_semantic_context() ) ) {
 				$request->setAugmentCommand( $row_obj->get_semantic_context() );
 				$filter->setAdditionalQuery(
 					(object) array(
