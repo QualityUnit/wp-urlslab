@@ -79,7 +79,7 @@ export default function RelatedResourcesOverview() {
 			<img src={ image1 } alt="Related Resources Simple Version" />
 
 			<p><strong>Complex Form</strong></p>
-			<code>[urlslab-screenshot url="https://www.liveagent.com" related-count="4" show-image="true" show-summary="true"]</code>
+			<code>[urlslab-related-resources url="https://www.liveagent.com" related-count="4" show-image="true" show-summary="true"]</code>
 			<img src={ image2 } alt="Related Resources Complex Version" />
 		</>
 	);

@@ -71,11 +71,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		);
 	}
 
-	public function get_shortcode_content(
-		$atts = array(),
-		$content = null,
-		$tag = ''
-	): string {
+	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
 		if (
 			(
 				isset( $_REQUEST['action'] )

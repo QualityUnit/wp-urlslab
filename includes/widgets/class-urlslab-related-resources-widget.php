@@ -68,25 +68,10 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		return $content . $shortcode_content;
 	}
 
-	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
-		if (
-			( isset( $_REQUEST['action'] ) && false !== strpos( $_REQUEST['action'], 'elementor' ) )
-			|| in_array(
-				get_post_status(),
-				array(
-					'trash',
-					'auto-draft',
-					'inherit',
-				)
-			)
-			|| ( class_exists( '\Elementor\Plugin' ) && Plugin::$instance->editor->is_edit_mode() )
-		) {
-			return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">Related Articles Placeholder</div>';
-		}
-
+	public function get_attribute_values( $atts = array(), $content = null, $tag = '' ): array {
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
-		$urlslab_atts = shortcode_atts(
+		return shortcode_atts(
 			array(
 				'url'           => $this->get_current_page_url()->get_url_with_protocol(),
 				'related-count' => $this->get_option( self::SETTING_NAME_ARTICLES_COUNT ),
@@ -98,6 +83,32 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			$atts,
 			$tag
 		);
+	}
+
+
+	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
+		if (
+			(
+				isset( $_REQUEST['action'] ) && false !== strpos( $_REQUEST['action'], 'elementor' ) ) ||
+			in_array(
+				get_post_status(),
+				array(
+					'trash',
+					'auto-draft',
+					'inherit',
+				)
+			) ||
+			( class_exists( '\Elementor\Plugin' ) && Plugin::$instance->editor->is_edit_mode() )
+		) {
+			$html_attributes = array();
+			foreach ( $this->get_attribute_values( $atts, $content, $tag ) as $id => $value ) {
+				$html_attributes[] = '<b>' . esc_html( $id ) . '</b>="<i>' . esc_html( $value ) . '</i>"';
+			}
+
+			return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">[<b>urlslab-related-resources</b> ' . implode( ', ', $html_attributes ) . ']</div>';
+		}
+
+		$urlslab_atts = $this->get_attribute_values( $atts, $content, $tag );
 
 		try {
 			$current_url = new Urlslab_Url( $urlslab_atts['url'] );
@@ -147,7 +158,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 	private function render_shortcode_header( array $urlslab_atts ): string {
 		wp_enqueue_style( 'urlslab-related-resources', plugin_dir_url( URLSLAB_PLUGIN_DIR . 'public/build/css/urlslab_youtube_loader.css' ) . 'urlslab_related_resources.css', false, false );
-		$css_class = 'urlslab-rel-res-items urlslab-skip-all';
+		$css_class = 'urlslab-rel-res-items';
 		if ( ! empty( $urlslab_atts['show-image'] ) ) {
 			$css_class .= ' urlslab-rel-res-items-with-image';
 		}
