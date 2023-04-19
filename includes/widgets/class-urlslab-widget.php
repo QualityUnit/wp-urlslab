@@ -320,7 +320,7 @@ abstract class Urlslab_Widget {
 					) ) );
 	}
 
-	protected function get_current_page_url(): Urlslab_Url {
+	public function get_current_page_url(): Urlslab_Url {
 		if ( is_object( self::$current_page_url ) ) {
 			return self::$current_page_url;
 		}
