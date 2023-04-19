@@ -90,7 +90,9 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		if (
 			(
 				isset( $_REQUEST['action'] ) && false !== strpos( $_REQUEST['action'], 'elementor' ) ) ||
-			in_array( get_post_status(), array(
+			in_array(
+				get_post_status(),
+				array(
 					'trash',
 					'auto-draft',
 					'inherit',

@@ -71,7 +71,7 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 		}
 
 		$max_count = $widget->get_option( Urlslab_Related_Resources_Widget::SETTING_NAME_ARTICLES_COUNT );
-		if (10 > $max_count) {
+		if ( 10 > $max_count ) {
 			$max_count = 15;
 		}
 
@@ -100,7 +100,7 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 			$dest_urls = array();
 			foreach ( $response->getUrls() as $chunk ) {
 				foreach ( $chunk as $dest_url ) {
-					if (count($dest_urls) < $max_count && ! in_array( $dest_url, $dest_urls ) ) {
+					if ( count( $dest_urls ) < $max_count && ! in_array( $dest_url, $dest_urls ) ) {
 						$dest_urls[] = $dest_url;
 					}
 				}
