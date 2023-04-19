@@ -48,12 +48,11 @@ function activate_urlslab() {
 register_activation_hook( __FILE__, 'activate_urlslab' );
 
 function deactivate_urlslab() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-urlslab-deactivator.php';
-	Urlslab_Deactivator::deactivate();
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-urlslab-activator.php';
+	Urlslab_Activator::deactivate();
 }
 
 register_deactivation_hook( __FILE__, 'deactivate_urlslab' );
-
 
 require plugin_dir_path( __FILE__ ) . 'includes/class-urlslab.php';
 $urlslab_plugin = new Urlslab();
