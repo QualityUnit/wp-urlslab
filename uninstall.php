@@ -1,31 +1,36 @@
 <?php
 
-/**
- * Fired when the plugin is uninstalled.
- *
- * When populating this file, consider the following flow
- * of control:
- *
- * - This method should be static
- * - Check if the $_REQUEST content actually is the plugin name
- * - Run an admin referrer check to make sure it goes through authentication
- * - Verify the output of $_GET makes sense
- * - Repeat with other user roles. Best directly by using the links/query string parameters.
- * - Repeat things for multisite. Once for a single site in the network, once sitewide.
- *
- * This file may be updated more in future version of the Boilerplate; however, this is the
- * general skeleton and outline for how the file should work.
- *
- * For more information, see the following discussion:
- * https://github.com/tommcfarlin/WordPress-Plugin-Boilerplate/pull/123#issuecomment-28541913
- *
- * @link       https://www.liveagent.com
- * @since      1.0.0
- *
- * @package    QU_Enhanced_FAQ
- */
-
-// If uninstall not called from WordPress, then exit.
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
-	exit;
+	exit( 'Not allowed' );
 }
+
+global $wpdb;
+include_once 'table-names.php';
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_URLS_TABLE );             // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_URLS_MAP_TABLE );         // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_ERROR_LOG_TABLE );        // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_KEYWORDS_TABLE );     // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_KEYWORDS_MAP_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_RELATED_RESOURCE_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_FILES_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_FILE_URLS_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_FILE_POINTERS_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_YOUTUBE_CACHE_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_CSS_CACHE_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_CONTENT_CACHE_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SEARCH_AND_REPLACE_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SCREENSHOT_URLS_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_CONTENT_GENERATORS_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_NOT_FOUND_LOG_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_REDIRECTS_TABLE ); // phpcs:ignore
+
+
+$options = wp_load_alloptions();
+foreach ( $options as $name => $value ) {
+	if ( strpos( $name, 'urlslab' ) === 0 || strpos( $name, 'widget_urlslab' ) === 0 ) {
+		delete_option( $name );
+	}
+}
+
+return;

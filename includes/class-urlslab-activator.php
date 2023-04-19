@@ -34,6 +34,14 @@ class Urlslab_Activator {
 		( new Urlslab_Meta_Tag() )->add_options_on_activate();
 	}
 
+	public static function deactivate() {
+		$timestamp = wp_next_scheduled( 'urlslab_cron_hook' );
+		wp_unschedule_event( $timestamp, 'urlslab_cron_hook' );
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-background-attachments-cron.php';
+		delete_option( Urlslab_Offload_Background_Attachments_Cron::SETTING_NAME_SCHEDULER_POINTER );
+	}
+
 	public static function upgrade_steps() {
 		if ( URLSLAB_VERSION == get_option( URLSLAB_VERSION_SETTING, '1.0.0' ) ) {
 			return;
