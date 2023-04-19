@@ -10,7 +10,6 @@ export default function DynamicModule( { modules, moduleId, activePage } ) {
 	const importPath = import( `../modules/${ renameModule( moduleId ) }.jsx` );
 	const Module = lazy( () => importPath );
 	const { headerTopHeight, headerBottomHeight } = useContext( HeaderHeightContext );
-	console.log( headerTopHeight, headerBottomHeight );
 
 	return (
 		<div className="urlslab-DynamicModule" style={ { '--headerTopHeight': `${ headerTopHeight }px`, '--headerMenuHeight': '52px', '--headerBottomHeight': `${ headerBottomHeight }px` } }>
