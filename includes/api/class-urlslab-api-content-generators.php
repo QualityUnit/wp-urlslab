@@ -144,9 +144,9 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 					$request->setRenewFrequency( \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
 					$prompt = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt();
 
-					$prompt_text = "Your are professional translator of websites.";
+					$prompt_text = 'Your are professional translator of websites.';
 					if ( false !== strpos( $original_text, '<' ) && false !== strpos( $original_text, '>' ) ) {
-						$prompt_text .= "If text contains HTML, keep exactly the same HTML formatting as original text. Inside html you are allowed to translate just values of attributes title and alt.";
+						$prompt_text .= 'If text contains HTML, keep exactly the same HTML formatting as original text. Inside html you are allowed to translate just values of attributes title and alt.';
 					}
 					if ( false !== strpos( $original_text, '@' ) ) {
 						$prompt_text .= "Don't translate email addresses.";
@@ -154,8 +154,8 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 					if ( false !== strpos( $original_text, '/' ) || false !== strpos( $original_text, 'http' ) ) {
 						$prompt_text .= "Don't translate urls.";
 					}
-					$prompt_text .= "Keep the same capital letters structure in translated text.";
-					$prompt_text .= "Translated text should have similar length as original text.";
+					$prompt_text .= 'Keep the same capital letters structure in translated text.';
+					$prompt_text .= 'Translated text should have similar length as original text.';
 					$prompt_text .= "\nTRANSLATE $source_lang to $target_lang:" . $original_text;
 
 					$prompt->setPromptTemplate( $prompt_text );
