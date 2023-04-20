@@ -364,36 +364,23 @@ class Urlslab {
 
 		// data
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-data.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-content-generator-row.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-file-row.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-keyword-row.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-keyword-map-row.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-url-row.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-url-relation-row.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-file-pointer-row.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-youtube-row.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-url-data-fetcher.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-search-replace-row.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-screenshot-url-row.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-not-found-log-row.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-redirect-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-label-row.php';
 
 		// additional
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
 
 		// widgets
@@ -401,13 +388,9 @@ class Urlslab {
 
 		// menu pages
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-page-factory.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-admin-page.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-admin-subpage.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-dashboard-page.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-api-router.php';
 	}
 

@@ -136,6 +136,13 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.14.0',
+			function() {
+				self::init_labels_table();
+			}
+		);
+
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -160,6 +167,7 @@ class Urlslab_Activator {
 		self::init_content_generators_table();
 		self::init_not_found_log_table();
 		self::init_redirects_table();
+		self::init_labels_table();
 	}
 
 	private static function init_urls_tables() {
@@ -511,6 +519,23 @@ class Urlslab_Activator {
     		  row_hash bigint,
 			  PRIMARY KEY (redirect_id),
 			  UNIQUE INDEX idx_uniq_hash (row_hash)
+        ) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_labels_table() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$table_name = URLSLAB_LABELS_TABLE;
+		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
+    		  label_id int AUTO_INCREMENT,
+    		  name VARCHAR(64),
+    		  bgcolor VARCHAR(20),
+    		  modules VARCHAR(1000),
+			  PRIMARY KEY (label_id)
         ) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
