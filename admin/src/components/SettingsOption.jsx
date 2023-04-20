@@ -128,7 +128,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 				);
 			case 'listbox':
 				return (
-					<SortMenu className="wide" name={ id } items={ possible_values } checkedId={ value } autoClose onChange={ ( selectedId ) => handleChange.mutate( selectedId ) }>
+					<SortMenu key={ id } className="wide" name={ id } items={ possible_values } checkedId={ value } autoClose onChange={ ( selectedId ) => handleChange.mutate( selectedId ) }>
 						{ title }
 					</SortMenu>
 				);
@@ -137,6 +137,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 					<FilterMenu className="wide"
 						items={ possible_values }
 						checkedItems={ value }
+						key={ id }
 						id={ id }
 						asTags
 						onChange={ ( selectedItems ) => handleChange.mutate( selectedItems ) }>
