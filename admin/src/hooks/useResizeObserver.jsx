@@ -5,7 +5,6 @@ export default function useResizeObserver( callback ) {
 
 	useLayoutEffect( () => {
 		const element = ref?.current;
-		const elementHeight = element;
 
 		if ( ! element ) {
 			return;

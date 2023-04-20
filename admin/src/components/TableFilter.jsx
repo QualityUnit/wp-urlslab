@@ -16,6 +16,11 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 	const [ editFilter, activateEditing ] = useState( );
 	const activeFilters = Object.keys( currentFilters ).length ? Object.keys( currentFilters ) : null;
 
+	const handleOnEdit = useCallback( ( val ) => {
+		activateEditing();
+		onEdit( val );
+	}, [ onEdit ] );
+
 	return (
 		<div className="flex flex-align-center flex-wrap">
 			{ header && activeFilters?.map( ( key, index ) => { // Iterating active filters
@@ -23,7 +28,7 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 					key={ key }
 					active={ editFilter === key ? true : false }
 					className={ `outline ${ index > 0 && 'ml-s' } pos-relative` }
-					onClick={ () => ! state.editFilter && activateEditing( key ) }
+					onClick={ () => ! state.editFilter && ! editFilter && activateEditing( key ) }
 				>
 					<div className="flex">
 						{ header[ key ] }:&nbsp;
@@ -45,9 +50,7 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 						<Tooltip className="showOnHover" style={ { width: '8em' } }>{ __( 'Delete filter' ) }</Tooltip>
 					</div>
 					{ editFilter === key && // Edit filter panel
-						<TableFilterPanel key={ key } props={ { key, slug, header, initialRow, possibleFilters: state.possibleFilters, currentFilters } } onEdit={ ( val ) => {
-							activateEditing(); onEdit( val );
-						} } />
+						<TableFilterPanel key={ key } props={ { key, slug, header, initialRow, possibleFilters: state.possibleFilters, currentFilters } } onEdit={ handleOnEdit } />
 					}
 				</Button> );
 			} ) }

@@ -34,9 +34,9 @@ export default function TableFilterPanel( { props, onEdit } ) {
 		handleType( keyParam, ( cellOptions ) => setFilterValMenu( cellOptions ) );
 	}, [ dispatch, handleType ] );
 
-	const handleOnEdit = ( val ) => {
+	const handleOnEdit = useCallback( ( val ) => {
 		onEdit( val );
-	};
+	}, [ onEdit ] );
 
 	useEffect( () => {
 		if ( state.filterObj.keyType === undefined ) {
