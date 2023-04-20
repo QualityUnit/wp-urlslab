@@ -178,25 +178,25 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 
 					</div>
 				</div>
-				{ Object.keys( currentFilters ).length !== 0 &&
-					<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
-						<TableFilter props={ { currentFilters, state, slug, header, initialRow } } onEdit={ handleOnEdit } onRemove={ ( key ) => {
-							handleHeaderHeight(); handleRemoveFilter( key );
-						} } />
-						<div className="ma-left flex flex-align-center">
-							{
-								! noCount && rowCount &&
+				{ /* { Object.keys( currentFilters ).length !== 0 && */ }
+				<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
+					<TableFilter props={ { currentFilters, state, slug, header, initialRow } } onEdit={ handleOnEdit } onRemove={ ( key ) => {
+						handleHeaderHeight(); handleRemoveFilter( key );
+					} } />
+					<div className="ma-left flex flex-align-center">
+						{
+							! noCount && rowCount &&
 								<small className="urlslab-rowcount fadeInto flex flex-align-center">
 									{ __( 'Rows: ' ) }
 									<strong className="ml-s">{ rowCount }</strong>
 								</small>
-							}
+						}
 
-							<SortMenu className="menu-left ml-m" isFilter checkedId={ sortBy } items={ sortItems } name="sorting" onChange={ handleSorting }>{ `Sort by${ sortBy ? ': ' + sortItems[ sortBy ] : '' }` }</SortMenu>
+						<SortMenu className="menu-left ml-m" isFilter checkedId={ sortBy } items={ sortItems } name="sorting" onChange={ handleSorting }>{ `Sort by${ sortBy ? ': ' + sortItems[ sortBy ] : '' }` }</SortMenu>
 
-						</div>
 					</div>
-				}
+				</div>
+				{ /* } */ }
 
 			</div>
 
