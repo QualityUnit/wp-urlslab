@@ -11,6 +11,15 @@
 		box-sizing: border-box;
 	}
 
+	a:not(.urlslab-button) {
+		font-weight: 600;
+		color: $black;
+
+		&:hover {
+			color: $primary-color;
+		}
+	}
+
 	button {
 
 		@include appearance;

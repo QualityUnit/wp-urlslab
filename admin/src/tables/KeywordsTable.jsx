@@ -63,6 +63,7 @@ export default function KeywordsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'keyword', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: header.keyword,
 			minSize: 150,
 		} ),
