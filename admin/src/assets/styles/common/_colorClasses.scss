@@ -2,20 +2,45 @@
 @use "mixins" as *;
 
 $colorClasses: (
-	"c-primary-color": $primary-color,
-	"c-black": $black,
-	"c-black-real": $black-real,
-	"c-grey-darker": $grey-darker,
-	"c-grey-dark": $grey-dark,
-	"c-grey-medium-lighter": $grey-medium-lighter,
-	"c-grey-medium": $grey-medium,
-	"c-grey-light": $grey-light,
-	"c-grey-lighter": $grey-lighter,
-	"c-grey-lightest": $grey-lightest,
+	"primary-color": $primary-color,
+	"black": $black,
+	"black-real": $black-real,
+	"grey-darker": $grey-darker,
+	"grey-dark": $grey-dark,
+	"grey-medium-lighter": $grey-medium-lighter,
+	"grey-medium": $grey-medium,
+	"grey-light": $grey-light,
+	"grey-lighter": $grey-lighter,
+	"grey-lightest": $grey-lightest,
+	"white": $white,
+
+	"saturated-blue": $saturated-blue,
+	"darker-blue": $darker-blue,
+	"lighter-blue": $lighter-blue,
+	"desaturated-blue": $desaturated-blue,
+	"saturated-cyan": $saturated-cyan,
+	"desaturated-cyan": $desaturated-cyan,
+	"saturated-green": $saturated-green,
+	"desaturated-green": $desaturated-green,
+	"saturated-red": $saturated-red,
+	"dark-saturated-red": $dark-saturated-red,
+	"desaturated-red": $desaturated-red,
+	"saturated-orange": $saturated-orange,
+	"desaturated-orange": $desaturated-orange,
 );
 
 @each $class, $color in $colorClasses {
-	.#{$class} {
-		color: $color;
+	.c-#{$class} {
+		color: $color !important;
+
+		svg {
+			fill: currentcolor !important;
+		}
+	}
+	.bg-#{$class} {
+		background-color: $color !important;
+	}
+	.border-#{$class} {
+		border-color: $color !important;
 	}
 }
