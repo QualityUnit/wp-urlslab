@@ -127,13 +127,13 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 	}
 
 	public function get_translation( $request ) {
-		$source_lang   = $request->get_param( 'source_lang' );
-		$target_lang   = $request->get_param( 'target_lang' );
+		$source_lang = $request->get_param( 'source_lang' );
+		$target_lang = $request->get_param( 'target_lang' );
+
 		$original_text = $request->get_param( 'original_text' );
+		$translation   = $original_text;
 
-		$translation = $original_text;
-
-		if ( strlen( trim( $original_text ) ) > 2 && preg_match( '/[\p{L}]+/u', $original_text ) && Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Content_Generator_Widget::SLUG ) ) {
+		if ( ! empty( $source_lang ) && ! empty( $target_lang ) && $this->isTextForTranslation( $original_text ) && Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Content_Generator_Widget::SLUG ) ) {
 			$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
 			if ( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_TRANSLATE ) ) {
 				$api_key = get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
@@ -143,7 +143,22 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 					$request->setAugmentingModelName( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_TRANSLATE_MODEL ) );
 					$request->setRenewFrequency( \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
 					$prompt = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt();
-					$prompt->setPromptTemplate( "Your only task is to translate text from $source_lang to $target_lang. If text contains HTML, keep exactly the same HTML formatting as original text. Keep the same capital letters structure in translated text. Translated text should have similar length as original text.\nTRANSLATE:" . $original_text );
+
+					$prompt_text = "Your are professional translator of websites.";
+					if ( false !== strpos( $original_text, '<' ) && false !== strpos( $original_text, '>' ) ) {
+						$prompt_text .= "If text contains HTML, keep exactly the same HTML formatting as original text. Inside html you are allowed to translate just values of attributes title and alt.";
+					}
+					if ( false !== strpos( $original_text, '@' ) ) {
+						$prompt_text .= "Don't translate email addresses.";
+					}
+					if ( false !== strpos( $original_text, '/' ) || false !== strpos( $original_text, 'http' ) ) {
+						$prompt_text .= "Don't translate urls.";
+					}
+					$prompt_text .= "Keep the same capital letters structure in translated text.";
+					$prompt_text .= "Translated text should have similar length as original text.";
+					$prompt_text .= "\nTRANSLATE $source_lang to $target_lang:" . $original_text;
+
+					$prompt->setPromptTemplate( $prompt_text );
 					$prompt->setMetadataVars( array() );
 					$request->setPrompt( $prompt );
 
@@ -244,6 +259,23 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 		$sql->add_order( 'generator_id' );
 
 		return $sql;
+	}
+
+	/**
+	 * @param $original_text
+	 *
+	 * @return bool
+	 */
+	public function isTextForTranslation( $original_text ): bool {
+		if ( false === strpos( $original_text, ' ' ) && preg_match( '/[-_]', $original_text ) ) {    //detect constants or special attributes (zero spaces in text, but contains - or _)
+			return false;
+		}
+
+		if ( filter_var( $original_text, FILTER_VALIDATE_URL ) || filter_var( $original_text, FILTER_VALIDATE_EMAIL ) || filter_var( $original_text, FILTER_VALIDATE_IP ) ) {
+			return false;
+		}
+
+		return strlen( trim( $original_text ) ) > 2 && preg_match( '/[\p{L}]+/u', $original_text );
 	}
 
 }
