@@ -75,7 +75,9 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		) {
 			$html_attributes = array();
 			foreach ( $this->get_attribute_values( $atts, $content, $tag ) as $id => $value ) {
-				$html_attributes[] = '<b>' . esc_html( $id ) . '</b>="<i>' . esc_html( $value ) . '</i>"';
+				if ( 'url_filter' !== $id && 'semantic_context' !== $id ) {
+					$html_attributes[] = '<b>' . esc_html( $id ) . '</b>="<i>' . esc_html( $value ) . '</i>"';
+				}
 			}
 
 			return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">[<b>urlslab-generator</b> ' . implode( ', ', $html_attributes ) . ']</div>';
@@ -95,38 +97,45 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			}
 		}
 
-		if ( ! empty( $value ) && isset( $atts['template'] ) ) {
-			$template = locate_template(
-				$atts['template'],
-				false,
-				false,
-				$atts
-			);
-			if ( empty( $template ) ) {
-				if (
-					file_exists(
-						URLSLAB_PLUGIN_DIR . 'public/' . $atts['template']
-					)
-				) {
-					$template = URLSLAB_PLUGIN_DIR
-								. 'public/'
-								. $atts['template'];
-				} else {
-					return $value;
+		if ( ! empty( $value ) ) {
+			if ( empty( $atts['template'] ) ) {
+				return $value;
+			} else {
+				$template = locate_template(
+					$atts['template'],
+					false,
+					false,
+					$atts
+				);
+				if ( empty( $template ) ) {
+					if (
+						file_exists(
+							URLSLAB_PLUGIN_DIR . 'public/' . $atts['template']
+						)
+					) {
+						$template = URLSLAB_PLUGIN_DIR
+									. 'public/'
+									. $atts['template'];
+					} else {
+						return $value;
+					}
 				}
+
+				ob_start();
+				$atts['result'] = $value;
+				load_template( $template, true, $atts );
+
+				return '' . ob_get_clean();
 			}
-
-			ob_start();
-			$atts['result'] = $value;
-			load_template( $template, true, $atts );
-
-			return '' . ob_get_clean();
+		} else {
+			return '';
 		}
-
-		return '<!-- URLsLab Content Not Ready Yet -->';
 	}
 
-	public function get_attribute_values( $atts = array(), $content = null, $tag = '' ): array {
+	public
+	function get_attribute_values(
+		$atts = array(), $content = null, $tag = ''
+	): array {
 		$atts            = array_change_key_case( (array) $atts );
 		$current_url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $this->get_current_page_url() );
 		if ( ! empty( $current_url_obj ) ) {
@@ -148,7 +157,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 				'semantic-context' => $title,
 				'command'          => 'Summarize information I gave you. Generate summarization in language |lang|.',
 				'source-url'       => str_replace( $replacements, '', $this->get_current_page_url()->get_domain_name() ) . '*',
-				'template'         => 'templates/simple-result.php',
+				'template'         => '',
 				'default_value'    => '',
 				'lang'             => $this->get_current_language(),
 			),
@@ -162,15 +171,18 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		return $atts;
 	}
 
-	public function has_shortcode(): bool {
+	public
+	function has_shortcode(): bool {
 		return true;
 	}
 
-	public function is_api_key_required(): bool {
+	public
+	function is_api_key_required(): bool {
 		return true;
 	}
 
-	protected function add_options() {
+	protected
+	function add_options() {
 		$this->add_options_form_section(
 			'schedule',
 			__( 'Scheduling Settings' ),
