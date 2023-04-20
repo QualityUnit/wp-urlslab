@@ -34,6 +34,12 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 								}
 							},
 						),
+						'labels'     => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
 					),
 				),
 			)

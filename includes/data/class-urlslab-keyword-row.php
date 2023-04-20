@@ -9,6 +9,7 @@ class Urlslab_Keyword_Row extends Urlslab_Data {
 		$this->set_lang( $data['lang'] ?? 'all', $loaded_from_db );
 		$this->set_url_filter( $data['urlFilter'] ?? '.*', $loaded_from_db );
 		$this->set_kw_type( $data['kwType'] ?? Urlslab_Keywords_Links::KW_TYPE_MANUAL, $loaded_from_db );
+		$this->set_labels( $data['labels'] ?? '', $loaded_from_db );
 		$this->set_kw_id( $data['kw_id'] ?? $this->compute_kw_id(), $loaded_from_db );
 	}
 
@@ -69,6 +70,10 @@ class Urlslab_Keyword_Row extends Urlslab_Data {
 		return $this->get( 'kwType' );
 	}
 
+	public function get_labels(): string {
+		return $this->get( 'labels' );
+	}
+
 	public function set_kw_id( int $kw_id, $loaded_from_db = false ): void {
 		$this->set( 'kw_id', $kw_id, $loaded_from_db );
 	}
@@ -101,6 +106,9 @@ class Urlslab_Keyword_Row extends Urlslab_Data {
 		$this->set( 'kwType', $kw_type, $loaded_from_db );
 	}
 
+	public function set_labels( string $labels, $loaded_from_db = false ): void {
+		$this->set( 'labels', $labels, $loaded_from_db );
+	}
 
 	public function get_table_name(): string {
 		return URLSLAB_KEYWORDS_TABLE;
@@ -120,6 +128,7 @@ class Urlslab_Keyword_Row extends Urlslab_Data {
 			'lang'        => '%s',
 			'urlFilter'   => '%s',
 			'kwType'      => '%s',
+			'labels'      => '%s',
 		);
 	}
 }

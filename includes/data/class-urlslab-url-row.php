@@ -64,6 +64,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$this->set_visibility( $url['visibility'] ?? self::VISIBILITY_VISIBLE, $loaded_from_db );
 		$this->set_rel_schedule( $url['rel_schedule'] ?? self::REL_NOT_REQUESTED_SCHEDULE, $loaded_from_db );
 		$this->set_rel_updated( $url['rel_updated'] ?? self::get_now(), $loaded_from_db );
+		$this->set_labels( $url['labels'] ?? '', $loaded_from_db );
 
 		$url_type = self::URL_TYPE_INTERNAL;
 		if ( isset( $url['url_type'] ) ) {
@@ -112,6 +113,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 			'url_type'              => '%s',
 			'rel_schedule'          => '%s',
 			'rel_updated'           => '%s',
+			'labels'                => '%s',
 		);
 	}
 
@@ -293,6 +295,15 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	}
 
 
+	public function get_labels(): array {
+		return $this->get( 'labels' );
+	}
+
+	public function set_labels( array $labels, $loaded_from_db = false ): void {
+		$this->set( 'labels', $labels, $loaded_from_db );
+	}
+
+
 	public function get_summary_text(
 		$strategy
 	): string {
@@ -348,6 +359,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		if ( ! $this->has_screenshot() ) {
 			$this->init_scr_status();
 			$this->update();
+
 			return '';
 		}
 
