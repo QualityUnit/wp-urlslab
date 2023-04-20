@@ -57,7 +57,7 @@ export default function ColumnsMenu( {
 		} );
 	};
 
-	const handleVisibilityAll = ( action ) => {
+	const handleVisibilityAll = useCallback( ( action ) => {
 		const columnsArray = table.getAllColumns();
 		const hiddenColsCopy = { ...hiddenCols };
 
@@ -77,7 +77,7 @@ export default function ColumnsMenu( {
 		update( slug, ( dbData ) => {
 			return { ...dbData, columnVisibility: hiddenColsCopy };
 		} );
-	};
+	}, [ hiddenCols, slug, table ] );
 
 	const handleMenu = () => {
 		setActive( ! isActive );

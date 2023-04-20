@@ -1,0 +1,21 @@
+@use "variables" as *;
+@use "mixins" as *;
+
+$colorClasses: (
+	"c-primary-color": $primary-color,
+	"c-black": $black,
+	"c-black-real": $black-real,
+	"c-grey-darker": $grey-darker,
+	"c-grey-dark": $grey-dark,
+	"c-grey-medium-lighter": $grey-medium-lighter,
+	"c-grey-medium": $grey-medium,
+	"c-grey-light": $grey-light,
+	"c-grey-lighter": $grey-lighter,
+	"c-grey-lightest": $grey-lightest,
+);
+
+@each $class, $color in $colorClasses {
+	.#{$class} {
+		color: $color;
+	}
+}

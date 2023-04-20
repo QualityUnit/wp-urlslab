@@ -50,14 +50,19 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 		},
 	} );
 
+	const processDate = ( ) => {
+		const thisDate = new Date( date );
+		const currentDate = new Date( thisDate.getTime() - ( thisDate.getTimezoneOffset() * 60000 ) );
+		return currentDate;
+	};
+
 	const handleDate = useMutation( {
-		mutationFn: async ( newDate ) => {
+		mutationFn: async ( ) => {
 			setStatus( 'active' );
 			renderTooltip( 'active' );
-			const thisDate = new Date( newDate );
-			const currentDate = new Date( thisDate.getTime() - ( thisDate.getTimezoneOffset() * 60000 ) );
+
 			const response = await setSettings( `${ settingId }/${ id }`, {
-				value: currentDate.toISOString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ),
+				value: processDate().toISOString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ),
 			} );
 			return { response };
 		},
@@ -116,14 +121,14 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 							timeFormat="HH:mm"
 							showTimeSelect
 							onChange={ ( newDate ) => {
-								setDate( newDate ); handleDate.mutate( newDate );
+								setDate( newDate ); handleDate.mutate();
 							} }
 						/>
 					</div>
 				);
 			case 'listbox':
 				return (
-					<SortMenu className="wide" name={ id } items={ possible_values } checkedId={ value } autoClose onChange={ ( selectedId ) => handleChange.mutate( selectedId ) }>
+					<SortMenu key={ id } className="wide" name={ id } items={ possible_values } checkedId={ value } autoClose onChange={ ( selectedId ) => handleChange.mutate( selectedId ) }>
 						{ title }
 					</SortMenu>
 				);
@@ -132,6 +137,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 					<FilterMenu className="wide"
 						items={ possible_values }
 						checkedItems={ value }
+						key={ id }
 						id={ id }
 						asTags
 						onChange={ ( selectedItems ) => handleChange.mutate( selectedItems ) }>

@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, Trash, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, Tooltip, Trash, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, InputField, DateTimeFormat,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -22,7 +22,7 @@ export default function LinkManagerTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, pageId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
 	// const sumStatusTypes = {
 	// 	N: __( 'Waiting' ),
@@ -82,17 +82,26 @@ export default function LinkManagerTable( { slug } ) {
 			size: 200,
 		} ),
 		columnHelper.accessor( 'url_title', {
+			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
+				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.url_title,
 			size: 200,
 		} ),
 		columnHelper?.accessor( 'url_meta_description', {
+			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
+				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.url_meta_description,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'url_summary', {
+			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
+				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.url_summary,
 			size: 150,
 		} ),
@@ -109,7 +118,7 @@ export default function LinkManagerTable( { slug } ) {
 			size: 80,
 		} ),
 		columnHelper.accessor( 'update_http_date', {
-			cell: ( val ) => new Date( val?.getValue() ).toLocaleString( window.navigator.language ),
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: () => header.update_http_date,
 			size: 140,
 		} ),

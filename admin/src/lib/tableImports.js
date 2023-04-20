@@ -2,6 +2,7 @@ export { default as useInfiniteFetch } from '../hooks/useInfiniteFetch';
 export { handleInput } from '../lib/tableFunctions';
 
 export { default as DatePicker } from 'react-datepicker';
+export { default as DateTimeFormat } from '../elements/DateTimeFormat';
 export { default as Tooltip } from '../elements/Tooltip';
 export { default as TooltipSortingFiltering } from '../elements/Tooltip_SortingFiltering';
 export { default as RangeSlider } from '../elements/RangeInputs';
