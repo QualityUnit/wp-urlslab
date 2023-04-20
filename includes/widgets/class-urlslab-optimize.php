@@ -2,6 +2,7 @@
 
 class Urlslab_Optimize extends Urlslab_Widget {
 	public const SLUG = 'optimize';
+	public const DELETE_LIMIT = 1000;
 
 	public const SETTING_NAME_OPTIMIZATION_FREQUENCY = 'urlslab-del-freq';
 	public const SETTING_NAME_DEL_REVISIONS = 'urlslab-del-revisions';
@@ -57,7 +58,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 				2419200 => __( 'Monthly' ),
 				7257600 => __( 'Quarterly' ),
 			),
-			function ( $value ) {
+			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'frequency'
@@ -65,10 +66,21 @@ class Urlslab_Optimize extends Urlslab_Widget {
 
 		$this->add_options_form_section( 'revisions', __( 'Post Revisions' ), __( 'Post Revisions can quickly overfill the database, making the website much slower and even more expensive to back up.' ) );
 		$this->add_option_definition(
+			'btn_clean_post_revisions',
+			'urlslab/v1/optimize/clean_post_revisions',
+			false,
+			__( 'Clean Old Post Revisions Now' ),
+			__( 'Deletes old post revisions from database.' ),
+			self::OPTION_TYPE_BUTTON_API_CALL,
+			false,
+			null,
+			'revisions'
+		);
+		$this->add_option_definition(
 			self::SETTING_NAME_DEL_REVISIONS,
 			false,
 			false,
-			__( 'Clean Old Post Revisions' ),
+			__( 'Clean Old Post Revisions Periodically' ),
 			__( 'Enable automatic background deleting of all old revisions.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -83,7 +95,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			__( 'Define how many days the revisions should be kept in the WordPress database.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function ( $value ) {
+			function( $value ) {
 				return is_numeric( $value ) && 365 > $value && 0 < $value;
 			},
 			'revisions'
@@ -102,10 +114,21 @@ class Urlslab_Optimize extends Urlslab_Widget {
 
 		$this->add_options_form_section( 'auto-drafts', __( 'Auto-Draft Posts' ), __( 'Auto-Drafts are stored in the database over weeks or months. When there are too many of them, it can slow down the website.' ) );
 		$this->add_option_definition(
+			'btn_clean_auto_drafts',
+			'urlslab/v1/optimize/clean_auto_drafts',
+			false,
+			__( 'Clean Old Auto-Drafts Now' ),
+			__( 'Deletes old auto drafts from database.' ),
+			self::OPTION_TYPE_BUTTON_API_CALL,
+			false,
+			null,
+			'auto-drafts'
+		);
+		$this->add_option_definition(
 			self::SETTING_NAME_DEL_AUTODRAFTS,
 			false,
 			false,
-			__( 'Clean Old Auto-Drafts' ),
+			__( 'Clean Old Auto-Drafts Periodically' ),
 			__( 'Enable automatic background deleting of all old auto-drafts.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -120,7 +143,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			__( 'Define how many days auto-drafts should be kept in the WordPress database.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function ( $value ) {
+			function( $value ) {
 				return is_numeric( $value ) && 365 > $value && 0 < $value;
 			},
 			'auto-drafts'
@@ -139,10 +162,21 @@ class Urlslab_Optimize extends Urlslab_Widget {
 
 		$this->add_options_form_section( 'trashed', __( 'Trashed Posts' ), __( 'The post slug is reserved, and there is no way to use it till you delete the post. So keep this process automatic in the background without effort.' ) );
 		$this->add_option_definition(
+			'btn_clean_trashed_posts',
+			'urlslab/v1/optimize/clean_trashed_posts',
+			false,
+			__( 'Clean Trashed Posts Now' ),
+			__( 'Deletes trashed posts from database.' ),
+			self::OPTION_TYPE_BUTTON_API_CALL,
+			false,
+			null,
+			'trashed'
+		);
+		$this->add_option_definition(
 			self::SETTING_NAME_DEL_TRASHED,
 			false,
 			false,
-			__( 'Clean Old Trashed Posts' ),
+			__( 'Clean Old Trashed Posts Periodically' ),
 			__( 'Enable automatic background deleting of all old trashed posts.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -157,7 +191,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			__( 'Define how many days trashed posts should be kept in the WordPress database.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function ( $value ) {
+			function( $value ) {
 				return is_numeric( $value ) && 365 > $value && 0 < $value;
 			},
 			'trashed'
@@ -175,12 +209,22 @@ class Urlslab_Optimize extends Urlslab_Widget {
 		);
 
 		$this->add_options_form_section( 'transient', __( 'Transient Options' ), __( 'Transients are extremely helpful, and they are making WordPress faster. Unfortunately, too many of them are expired, which can slow down the website\'s speed.' ) );
-
+		$this->add_option_definition(
+			'btn_clean_transients',
+			'urlslab/v1/optimize/clean_transients',
+			false,
+			__( 'Clean Transient Options Now' ),
+			__( 'Deletes transient options from database.' ),
+			self::OPTION_TYPE_BUTTON_API_CALL,
+			false,
+			null,
+			'transient'
+		);
 		$this->add_option_definition(
 			self::SETTING_NAME_DEL_TRANSIENT_EXPIRED,
 			false,
 			false,
-			__( 'Clean Just Expired Transient Options' ),
+			__( 'Clean Just Expired Transient Options Periodically' ),
 			__( 'Enable automatic background deleting of all expired transient options.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -203,7 +247,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			self::SETTING_NAME_DEL_ALL_TRANSIENT,
 			false,
 			false,
-			__( 'Clean All Transient Options (dangerous)' ),
+			__( 'Clean All Transient Options Periodically' ),
 			__( 'Enable automatic background deleting of all transient options. This setting can be dangerous; you should know what you are doing by enabling it. We recommend even backing up the database regularly before enabling it.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -224,10 +268,21 @@ class Urlslab_Optimize extends Urlslab_Widget {
 
 		$this->add_options_form_section( 'orphaned-rel-data', __( 'Orphaned Relationship Data' ), __( 'Orphaned Relationship Data are a problem only if you often delete the content from WordPress. Over time, you can have thousands of these items in the database, which consumes a lot of space.' ) );
 		$this->add_option_definition(
+			'btn_clean_orphaned_relationship_data',
+			'urlslab/v1/optimize/clean_orphaned_relationship_data',
+			false,
+			__( 'Clean Orphaned Relationship Data Now' ),
+			__( 'Deletes orphaned relationship data from database.' ),
+			self::OPTION_TYPE_BUTTON_API_CALL,
+			false,
+			null,
+			'orphaned-rel-data'
+		);
+		$this->add_option_definition(
 			self::SETTING_NAME_DEL_ORPHANED_RELATIONSHIP_DATA,
 			false,
 			false,
-			__( 'Clean Orphaned Relationship Data' ),
+			__( 'Clean Orphaned Relationship Data Periodically' ),
 			__( 'Enable automatic background deleting of all orphaned relationship data.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -248,10 +303,21 @@ class Urlslab_Optimize extends Urlslab_Widget {
 
 		$this->add_options_form_section( 'comments', __( 'Orphaned Comments Data' ), __( 'Orphaned Comments MetaData are a problem only if you often delete comments from WordPress. Over time, you can have thousands of these items in the database, which consumes a lot of space.' ) );
 		$this->add_option_definition(
+			'btn_clean_orphaned_comment_meta',
+			'urlslab/v1/optimize/clean_orphaned_comment_meta',
+			false,
+			__( 'Clean Orphaned Comment Meta Data Now' ),
+			__( 'Delete all orphaned comment meta data.' ),
+			self::OPTION_TYPE_BUTTON_API_CALL,
+			false,
+			null,
+			'comments'
+		);
+		$this->add_option_definition(
 			self::SETTING_NAME_DEL_ORPHANED_COMMENT_META,
 			false,
 			false,
-			__( 'Clean Orphaned Comment Meta Data' ),
+			__( 'Clean Orphaned Comment Meta Data Periodically' ),
 			__( 'Enable automatic background deleting of all orphaned comment meta data.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -270,4 +336,71 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			'comments'
 		);
 	}
+
+
+	/**
+	 * convert value of option (in days) to mysql string used in where.
+	 *
+	 * @param mixed $option_name
+	 *
+	 * @return string
+	 */
+	private function get_ttl( $option_name ) {
+		return Urlslab_Data::get_now( time() - 86400 * $this->get_option( $option_name ) );
+	}
+
+	public function optimize_revisions() {
+		global $wpdb;
+		$ttl = $this->get_ttl( Urlslab_Optimize::SETTING_NAME_REVISION_TTL );
+		$table = $wpdb->prefix . 'posts';
+
+		return $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE post_type='revision' AND post_modified < %s LIMIT %d", $ttl, self::DELETE_LIMIT ) ); // phpcs:ignore
+	}
+
+	public function optimize_auto_drafts() {
+		global $wpdb;
+		$ttl = $this->get_ttl( Urlslab_Optimize::SETTING_NAME_AUTODRAFT_TTL );
+		$table = $wpdb->prefix . 'posts';
+
+		return $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE post_status = 'auto-draft' AND post_modified < %s LIMIT %d", $ttl, self::DELETE_LIMIT ) ); // phpcs:ignore
+	}
+
+	public function optimize_trashed() {
+		global $wpdb;
+		$ttl = $this->get_ttl( Urlslab_Optimize::SETTING_NAME_TRASHED_TTL );
+		$table = $wpdb->prefix . 'posts';
+
+		return $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE post_status = 'trash' AND post_modified < %s LIMIT %d", $ttl, self::DELETE_LIMIT ) ); // phpcs:ignore
+	}
+
+	public function optimize_expired_transient() {
+		global $wpdb;
+		$table = $wpdb->prefix . 'options';
+
+		return $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE option_name LIKE '%_transient_timeout_%' LIMIT %d", self::DELETE_LIMIT ) ); // phpcs:ignore
+	}
+
+	public function optimize_all_transient() {
+		global $wpdb;
+		$table = $wpdb->prefix . 'options';
+
+		return $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE option_name LIKE '%_transient_%' LIMIT %d ", self::DELETE_LIMIT ) ); // phpcs:ignore
+	}
+
+	public function optimize_orphaned_rel_data() {
+		global $wpdb;
+		$table = $wpdb->prefix . 'term_relationships';
+		$table_posts = $wpdb->prefix . 'posts';
+
+		return $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE term_taxonomy_id=1 AND object_id NOT IN (SELECT id FROM {$table_posts}) LIMIT %d", self::DELETE_LIMIT ) ); // phpcs:ignore
+	}
+
+	public function optimize_orphaned_comment_metadata() {
+		global $wpdb;
+		$table = $wpdb->prefix . 'commentmeta';
+		$table_comments = $wpdb->prefix . 'comments';
+
+		return $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE comment_id NOT IN (SELECT comment_id FROM {$table_comments}) LIMIT %d", self::DELETE_LIMIT ) ); // phpcs:ignore
+	}
+
 }
