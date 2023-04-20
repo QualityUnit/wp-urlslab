@@ -45,25 +45,25 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 
 	const initialRow = table?.getRowModel().rows[ 0 ];
 
-	const { currentFilters, state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( { slug, header, initialRow } );
+	const { filters, state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( { slug, header, initialRow } );
 
-	// const currentCountFilters = filters ? filters.replace( '&', '?' ) : '';
+	// const currentCountfilters = filters ? filters.replace( '&', '?' ) : '';
 
 	const handleOnEdit = useCallback( ( returnObj ) => {
 		if ( returnObj ) {
 			handleSaveFilter( returnObj );
-			onFilter( currentFilters );
+			onFilter( filters );
 		}
 		if ( ! returnObj ) {
 			dispatch( { type: 'toggleEditFilter', editFilter: false } );
 		}
-	}, [ handleSaveFilter, currentFilters, dispatch, onFilter ] );
+	}, [ handleSaveFilter, filters, dispatch, onFilter ] );
 
 	useEffect( () => {
 		handleHeaderHeight();
 
 		if ( onFilter && didMountRef.current ) {
-			onFilter( currentFilters );
+			onFilter( filters );
 		}
 		didMountRef.current = true;
 
@@ -73,7 +73,7 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 		if ( detailsOptions ) {
 			setActivePanel( 'details' );
 		}
-	}, [ slug, activatePanel, detailsOptions, currentFilters, onFilter ] );
+	}, [ slug, activatePanel, detailsOptions, filters, onFilter ] );
 
 	const { data: rowCount } = useQuery( {
 		queryKey: [ slug, `count` ],
@@ -150,7 +150,7 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 						</Button>
 
 						{ state.editFilter === 'addFilter' && // Our main adding panel (only when Add button clicked)
-							<TableFilterPanel props={ { slug, header, initialRow, possibleFilters: state.possibleFilters, currentFilters } } onEdit={ ( val ) => {
+							<TableFilterPanel props={ { slug, header, initialRow, possiblefilters: state.possiblefilters, filters } } onEdit={ ( val ) => {
 								handleHeaderHeight(); handleOnEdit( val );
 							} } />
 						}
@@ -178,9 +178,9 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 
 					</div>
 				</div>
-				{ /* { Object.keys( currentFilters ).length !== 0 && */ }
+				{ /* { Object.keys( filters ).length !== 0 && */ }
 				<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
-					<TableFilter props={ { currentFilters, state, slug, header, initialRow } } onEdit={ handleOnEdit } onRemove={ ( key ) => {
+					<TableFilter props={ { filters, state, slug, header, initialRow } } onEdit={ handleOnEdit } onRemove={ ( key ) => {
 						handleHeaderHeight(); handleRemoveFilter( key );
 					} } />
 					<div className="ma-left flex flex-align-center">
@@ -200,7 +200,7 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 
 			</div>
 
-			<TablePanels props={ { header, slug, currentFilters, initialRow, detailsOptions, insertOptions, exportOptions, activePanel, handlePanel } } />
+			<TablePanels props={ { header, slug, filters, initialRow, detailsOptions, insertOptions, exportOptions, activePanel, handlePanel } } />
 		</>
 	);
 }

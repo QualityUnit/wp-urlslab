@@ -10,12 +10,19 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { __ } = useI18n();
 	const { ref, inView } = useInView();
-	const { key, url, paginationId } = options;
+	const { key, filters: userFilters, sorting, paginationId } = options;
+
+	const filtersArray = userFilters ? Object.entries( userFilters ).map( ( [ col, params ] ) => {
+		const { op, val } = params;
+		return { col, op, val };
+	} ) : [];
+	console.log( [ ...filtersArray ] );
 
 	const query = useInfiniteQuery( {
-		queryKey: [ key, url ],
+		queryKey: [ key, filtersArray ],
+		// queryKey: [ key, Object.keys( filters ).length > 0 && filters, sorting ],
 		queryFn: ( { pageParam = '' } ) => {
-			return postFetch( key, { sorting: [ { col: paginationId, dir: 'ASC' } ], filters: pageParam ? [ { col: paginationId, op: '>', val: pageParam } ] : [], rows_per_page: maxRows } ).then( ( response ) => response.json() );
+			return postFetch( key, { sorting: [ { col: paginationId, dir: 'ASC' } ], filters: pageParam ? [ ...filtersArray, { col: paginationId, op: '>', val: pageParam } ] : [ ...filtersArray ], rows_per_page: maxRows } ).then( ( response ) => response.json() );
 		},
 		getNextPageParam: ( allRows ) => {
 			if ( allRows.length < maxRows ) {

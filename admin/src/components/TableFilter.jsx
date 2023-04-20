@@ -14,9 +14,9 @@ import Tooltip from '../elements/Tooltip';
 
 export default function TableFilter( { props, onEdit, onRemove } ) {
 	const { __ } = useI18n();
-	const { currentFilters, state, slug, header, initialRow } = props;
+	const { filters, state, slug, header, initialRow } = props;
 	const [ editFilter, activateEditing ] = useState( );
-	const activeFilters = Object.keys( currentFilters ).length ? Object.keys( currentFilters ) : null;
+	const activefilters = Object.keys( filters ).length ? Object.keys( filters ) : null;
 
 	const operatorTypes = {
 		date: dateOp,
@@ -34,7 +34,7 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 
 	return (
 		<div className="flex flex-align-center flex-wrap">
-			{ header && activeFilters?.map( ( key, index ) => { // Iterating active filters
+			{ header && activefilters?.map( ( key, index ) => { // Iterating active filters
 				return ( <Button
 					key={ key }
 					active={ editFilter === key ? true : false }
@@ -44,21 +44,21 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 					<div className="flex">
 						{ header[ key ] }:&nbsp;
 						<span className="regular flex flex-align-center">
-							<span className="fs-xs">{ operatorTypes[ currentFilters[ key ]?.keyType ][ currentFilters[ key ]?.op ] }</span>
+							<span className="fs-xs">{ operatorTypes[ filters[ key ]?.keyType ][ filters[ key ]?.op ] }</span>
 							&nbsp;
 							“<span className="limit-20">
-								{ currentFilters[ key ]?.op === 'BETWEEN' &&
-								`min: ${ currentFilters[ key ]?.val.min }, max: ${ currentFilters[ key ]?.val.max }`
+								{ filters[ key ]?.op === 'BETWEEN' &&
+								`min: ${ filters[ key ]?.val.min }, max: ${ filters[ key ]?.val.max }`
 								}
 
 								{ key === 'lang' &&
-								langName( currentFilters?.lang?.val )
+								langName( filters?.lang?.val )
 								}
 
-								{ currentFilters[ key ]?.op !== 'BETWEEN' && key !== 'lang' &&
-									currentFilters[ key ]?.filterValMenu
-									? currentFilters[ key ]?.filterValMenu[ currentFilters[ key ]?.val ]
-									: currentFilters[ key ]?.val
+								{ filters[ key ]?.op !== 'BETWEEN' && key !== 'lang' &&
+									filters[ key ]?.filterValMenu
+									? filters[ key ]?.filterValMenu[ filters[ key ]?.val ]
+									: filters[ key ]?.val
 								}
 							</span>”</span>
 						<Tooltip className="showOnHover">{ __( 'Edit filter' ) }</Tooltip>
@@ -70,14 +70,14 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 						<Tooltip className="showOnHover" style={ { width: '8em' } }>{ __( 'Delete filter' ) }</Tooltip>
 					</div>
 					{ editFilter === key && // Edit filter panel
-						<TableFilterPanel key={ key } props={ { key, slug, header, initialRow, possibleFilters: state.possibleFilters, currentFilters } } onEdit={ handleOnEdit } />
+						<TableFilterPanel key={ key } props={ { key, slug, header, initialRow, possiblefilters: state.possiblefilters, filters } } onEdit={ handleOnEdit } />
 					}
 				</Button> );
 			} ) }
 
-			{ activeFilters?.length > 0 && // Removes all used filters in given table
+			{ activefilters?.length > 0 && // Removes all used filters in given table
 				<Button className="simple underline" onClick={ () => {
-					onRemove( activeFilters );
+					onRemove( activefilters );
 				} }>{ __( 'Clear filters' ) }</Button>
 			}
 		</div>

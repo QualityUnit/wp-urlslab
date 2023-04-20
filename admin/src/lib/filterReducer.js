@@ -28,10 +28,10 @@ export default function filterReducer( state, action ) {
 				...state,
 				filterObj: { ...filterObj, keyType: action.keyType },
 			};
-		case 'setCurrentFilters':
+		case 'setFilters':
 			return {
 				...state,
-				currentFilters: action.currentFilters,
+				filters: action.filters,
 			};
 		case 'setFilteringState':
 			return {

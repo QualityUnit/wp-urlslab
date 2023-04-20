@@ -7,9 +7,9 @@ import Button from '../elements/Button';
 import ExportCSVButton from '../elements/ExportCSVButton';
 import ProgressBar from '../elements/ProgressBar';
 
-export default function ExportPanel( { options, currentFilters, header, handlePanel } ) {
+export default function ExportPanel( { options, filters, header, handlePanel } ) {
 	const { __ } = useI18n();
-	const activeFilters = currentFilters ? Object.keys( currentFilters ) : null;
+	const activefilters = filters ? Object.keys( filters ) : null;
 	const [ exportStatus, setExportStatus ] = useState();
 
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
@@ -40,12 +40,12 @@ export default function ExportPanel( { options, currentFilters, header, handlePa
 						<CloseIcon />
 					</button>
 				</div>
-				{ ( activeFilters?.length > 0 && header ) &&
+				{ ( activefilters?.length > 0 && header ) &&
 				<div className="urlslab-panel-section">
-					<p><strong>{ __( 'Active Filters:' ) }</strong></p>
+					<p><strong>{ __( 'Active filters:' ) }</strong></p>
 					<p>
 						<ul className="columns-2">
-							{ activeFilters.map( ( key ) => {
+							{ activefilters.map( ( key ) => {
 								return ( <li key={ key }>{ header[ key ] }</li> );
 							} ) }
 						</ul>
@@ -59,8 +59,8 @@ export default function ExportPanel( { options, currentFilters, header, handlePa
 					}
 					<div className="flex">
 						<Button className="ma-left simple" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
-						{ activeFilters?.length > 0 &&
-						<ExportCSVButton className="ml-s" options={ options } withFilters onClick={ handleExportStatus } />
+						{ activefilters?.length > 0 &&
+						<ExportCSVButton className="ml-s" options={ options } withfilters onClick={ handleExportStatus } />
 						}
 						<ExportCSVButton
 							className="ml-s"
