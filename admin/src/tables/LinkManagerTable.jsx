@@ -125,7 +125,7 @@ export default function LinkManagerTable( { slug } ) {
 		columnHelper.accessor( 'update_http_date', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: () => header.update_http_date,
-			size: 140,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'url_links_count', {
 			cell: ( cell ) => <div className="flex flex-align-center">
