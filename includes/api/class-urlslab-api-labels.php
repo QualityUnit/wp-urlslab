@@ -57,7 +57,7 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 	}
 
 	public function get_editable_columns(): array {
-		return array('name', 'bgcolor', 'modules');
+		return array( 'name', 'bgcolor', 'modules' );
 	}
 
 	/**
