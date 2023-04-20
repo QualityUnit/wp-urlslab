@@ -11,6 +11,7 @@ import NoAPIkey from './NoAPIkey';
 import Notifications from './Notifications';
 import Loader from './Loader';
 import Button from '../elements/Button';
+import Tag from '../elements/Tag';
 import NotificationsPanel from './NotificationsPanel';
 import { ReactComponent as PlayIcon } from '../assets/images/icon-play.svg';
 import { ReactComponent as Logo } from '../assets/images/urlslab-logo.svg';
@@ -64,7 +65,7 @@ export default function Header( { pageTitle } ) {
 			<header ref={ headerTop } className="urlslab-header">
 				<div className="flex flex-align-center">
 					<Logo className="urlslab-header-logo" />
-					<span className="urlslab-header-logo-label">beta</span>
+					<Tag className="bg-saturated-orange c-white">beta</Tag>
 					<span className="urlslab-header-slash">/</span>
 					<h1 className="urlslab-header-title">{ pageTitle }</h1>
 					<Button active className="pos-relative small ma-left" onClick={ handleCronRunner }>
