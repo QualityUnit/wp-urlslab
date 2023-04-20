@@ -1,11 +1,8 @@
+import useCheckApiKey from '../hooks/useCheckApiKey';
 import DashboardModule from '../components/DashboardModule';
 
 export default function Modules( { modules, activePage } ) {
-	// const [ searchValue, setSearchVal ] = useState( '' );
-
-	// const handleSearch = ( value ) => {
-	// 	setSearchVal( value );
-	// };
+	const { settingsLoaded, apiKeySet } = useCheckApiKey();
 
 	if ( ! modules.length ) {
 		return;
@@ -23,12 +20,12 @@ export default function Modules( { modules, activePage } ) {
 						module.id !== 'general'
 						// ( title.includes( searchValue ) || excerpt.includes( searchValue ) )
 							? <DashboardModule
-									key={ module.id }
-									moduleId={ module.id }
-									hasApi={ module.apikey }
-									isActive={ module.active }
-									title={ module.title }
-									activePage={ ( mod ) => activePage( mod ) }
+								key={ module.id }
+								moduleId={ module.id }
+								hasApi={ settingsLoaded && apiKeySet === false && module.apikey }
+								isActive={ module.active }
+								title={ module.title }
+								activePage={ ( mod ) => activePage( mod ) }
 							>
 								{ module.description }
 							</DashboardModule>
