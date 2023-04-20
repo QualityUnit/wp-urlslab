@@ -6,9 +6,10 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 
 export default function YouTubeCacheTable( { slug } ) {
-	const primaryColumnNames = [ 'videoid' ];
+	const paginationId = 'videoid';
 
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
 
 	const {
 		__,
@@ -20,9 +21,9 @@ export default function YouTubeCacheTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( slug, primaryColumnNames, filters, sorting );
+	} = useInfiniteFetch( { key: slug, url, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
 
 	const statusTypes = {
 		N: __( 'New' ),
@@ -101,9 +102,9 @@ export default function YouTubeCacheTable( { slug } ) {
 				exportOptions={ {
 					url: slug,
 					filters,
-					fromId: `from_${ pageId }`,
-					pageId,
-					deleteCSVCols: [ pageId, 'dest_url_id' ],
+					fromId: `from_${ paginationId }`,
+					paginationId,
+					deleteCSVCols: [ paginationId, 'dest_url_id' ],
 				} }
 			/>
 			<Table className="fadeInto"

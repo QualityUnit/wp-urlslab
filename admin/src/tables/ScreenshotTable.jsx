@@ -7,10 +7,11 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 
 export default function ScreenshotTable( { slug } ) {
-	const primaryColumnNames = [ 'url_id' ];
+	const paginationId = 'url_id';
 
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
 	const {
@@ -23,9 +24,9 @@ export default function ScreenshotTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( slug, primaryColumnNames, filters, sorting );
+	} = useInfiniteFetch( { key: slug, url, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
 
 	const scrStatusTypes = {
 		N: __( 'Waiting' ),
@@ -131,8 +132,8 @@ export default function ScreenshotTable( { slug } ) {
 				exportOptions={ {
 					url: slug,
 					filters,
-					fromId: `from_${ pageId }`,
-					pageId,
+					fromId: `from_${ paginationId }`,
+					paginationId,
 					deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
 					perPage: 1000,
 				} }

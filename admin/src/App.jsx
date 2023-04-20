@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import { update } from 'idb-keyval';
 
-import { getData } from './api/fetching';
+import { fetchData } from './api/fetching';
 import { fetchSettings } from './api/settings';
 import { fetchLangs } from './api/fetchLangs';
 
@@ -55,7 +55,7 @@ export default function App() {
 			to check for required import CSV fields */
 			queryClient.prefetchQuery( {
 				queryKey: [ 'routes' ],
-				queryFn: async () => await getData(),
+				queryFn: async () => await fetchData(),
 				refetchOnWindowFocus: false,
 			} );
 
@@ -67,7 +67,7 @@ export default function App() {
 		queryKey: [ 'modules' ],
 		queryFn: async () => {
 			if ( prefetch ) {
-				return await getData( 'module' ).then( ( ModuleData ) => ModuleData );
+				return await fetchData( 'module' ).then( ( ModuleData ) => ModuleData );
 			}
 		},
 		refetchOnWindowFocus: false,

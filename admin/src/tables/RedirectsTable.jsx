@@ -7,10 +7,11 @@ import useChangeRow from '../hooks/useChangeRow';
 import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
 
 export default function RedirectsTable( { slug } ) {
-	const primaryColumnNames = [ 'redirect_id' ];
+	const paginationId = 'redirect_id';
 
-	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
 
 	const {
 		__,
@@ -22,9 +23,9 @@ export default function RedirectsTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( slug, primaryColumnNames, filters, sorting );
+	} = useInfiniteFetch( { key: slug, url, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { redirectTypes, matchTypes, logginTypes, notFoundTypes, header } = useRedirectTableMenus();
 
@@ -170,13 +171,13 @@ export default function RedirectsTable( { slug } ) {
 						}, 3000 );
 					}
 				} }
-				insertOptions={ { inserterCells, title: 'Add redirect', data, slug, url, pageId, rowToInsert } }
+				insertOptions={ { inserterCells, title: 'Add redirect', data, slug, url, paginationId, rowToInsert } }
 				exportOptions={ {
 					url: slug,
 					filters,
-					fromId: `from_${ pageId }`,
-					pageId,
-					deleteCSVCols: [ pageId ],
+					fromId: `from_${ paginationId }`,
+					paginationId,
+					deleteCSVCols: [ paginationId ],
 				} }
 			/>
 			<Table className="fadeInto"

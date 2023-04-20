@@ -6,8 +6,9 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 
 export default function CSSCacheTable( { slug } ) {
-	const primaryColumnNames = [ 'url_id' ];
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const paginationId = 'url_id';
+	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
 
 	const {
 		__,
@@ -19,9 +20,9 @@ export default function CSSCacheTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( slug, primaryColumnNames, filters, sorting );
+	} = useInfiniteFetch( { key: slug, url, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, filters, slug, primaryColumnNames } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
 
 	const statusTypes = {
 		N: __( 'New' ),
@@ -102,7 +103,7 @@ export default function CSSCacheTable( { slug } ) {
 					? <Tooltip center>{ `${ header.url_name } “${ row.url_name }”` } { __( 'has been deleted.' ) }</Tooltip>
 					: null
 				}
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
+				<TooltipSortingFiltering props={ { isFetching, filters, sortingColumn } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

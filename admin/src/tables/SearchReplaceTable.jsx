@@ -6,9 +6,11 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 
 export default function SearchReplaceTable( { slug } ) {
-	const primaryColumnNames = [ 'id' ];
+	const paginationId = 'id';
 
-	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
+
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
 
 	const {
 		__,
@@ -20,9 +22,9 @@ export default function SearchReplaceTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( slug, primaryColumnNames, filters, sorting );
+	} = useInfiniteFetch( { key: slug, url, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const searchTypes = {
 		T: __( 'Plain text' ),
@@ -107,13 +109,13 @@ export default function SearchReplaceTable( { slug } ) {
 						}, 3000 );
 					}
 				} }
-				insertOptions={ { inserterCells, title: 'Add replacement', data, slug, url, pageId, rowToInsert } }
+				insertOptions={ { inserterCells, title: 'Add replacement', data, slug, url, paginationId, rowToInsert } }
 				exportOptions={ {
 					url: slug,
 					filters,
-					fromId: `from_${ pageId }`,
-					pageId,
-					deleteCSVCols: [ pageId, 'dest_url_id' ],
+					fromId: `from_${ paginationId }`,
+					paginationId,
+					deleteCSVCols: [ paginationId, 'dest_url_id' ],
 				} }
 			/>
 			<Table className="fadeInto"

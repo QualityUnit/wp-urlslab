@@ -6,8 +6,10 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 
 export default function SchedulesTable( { slug } ) {
-	const primaryColumnNames = [ 'schedule_id' ];
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const paginationId = 'schedule_id';
+	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
+
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
 
 	const {
 		__,
@@ -19,9 +21,9 @@ export default function SchedulesTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( slug, primaryColumnNames, filters, sorting );
+	} = useInfiniteFetch( { key: slug, url, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
 
 	const followLinksTypes = {
 		FOLLOW_ALL_LINKS: __( 'Follow all links' ),

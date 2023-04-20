@@ -174,12 +174,12 @@ export function useFilter( { slug, header, initialRow } ) {
 
 /* SORTING HOOK */
 export function useSorting( { slug } ) {
-	const [ sortingColumn, setSorting ] = useState( [] );
+	const [ sortingColumn, setSortingColumn ] = useState( '' );
 	const queryClient = useQueryClient();
 
 	function sortBy( key ) {
 		queryClient.setQueryData( [ slug, 'sortBy' ], key );
-		setSorting( [ { col: key.replace( /(&ASC|&DESC)/, '' ), dir: key.replace( /\w+&(ASC|DESC)/, '$1' ) } ] );
+		setSortingColumn( `&sort_column=${ key.replace( /(&ASC|&DESC)/, '' ) }&sort_direction=${ key.replace( /\w+&(ASC|DESC)/, '$1' ) }` );
 	}
 
 	return { sortingColumn, sortBy };

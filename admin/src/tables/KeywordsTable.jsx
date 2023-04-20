@@ -8,8 +8,9 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 
 export default function KeywordsTable( { slug } ) {
-	const primaryColumnNames = [ 'kw_id' ];
-	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const paginationId = 'kw_id';
+	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
 	const {
@@ -22,9 +23,9 @@ export default function KeywordsTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( slug, primaryColumnNames, filters, sorting );
+	} = useInfiniteFetch( { key: slug, url, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, filters, slug, primaryColumnNames } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const keywordTypes = {
 		M: __( 'Manual' ),
@@ -154,13 +155,13 @@ export default function KeywordsTable( { slug } ) {
 					}
 				} }
 				detailsOptions={ detailsOptions }
-				insertOptions={ { inserterCells, title: 'Add keyword', data, slug, url, pageId, rowToInsert } }
+				insertOptions={ { inserterCells, title: 'Add keyword', data, slug, url, paginationId, rowToInsert } }
 				exportOptions={ {
 					url: slug,
 					filters,
-					fromId: `from_${ pageId }`,
-					pageId,
-					deleteCSVCols: [ pageId, 'dest_url_id' ],
+					fromId: `from_${ paginationId }`,
+					paginationId,
+					deleteCSVCols: [ paginationId, 'dest_url_id' ],
 				} }
 			/>
 			<Table className="fadeInto"

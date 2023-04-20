@@ -7,9 +7,10 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 
 export default function MediaFilesTable( { slug } ) {
-	const primaryColumnNames = [ 'fileid' ];
+	const paginationId = 'fileid';
 
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
 
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 	const [ tooltipUrl, setTooltipUrl ] = useState( );
@@ -24,9 +25,9 @@ export default function MediaFilesTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( slug, primaryColumnNames, filters, sorting );
+	} = useInfiniteFetch( { key: slug, url, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const driverTypes = {
 		D: 'Database',
@@ -166,9 +167,9 @@ export default function MediaFilesTable( { slug } ) {
 				exportOptions={ {
 					url: slug,
 					filters,
-					fromId: `from_${ pageId }`,
-					pageId,
-					deleteCSVCols: [ pageId, 'fileid', 'filehash' ],
+					fromId: `from_${ paginationId }`,
+					paginationId,
+					deleteCSVCols: [ paginationId, 'fileid', 'filehash' ],
 				} }
 			/>
 			<Table className="fadeInto"

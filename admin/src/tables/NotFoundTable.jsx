@@ -13,10 +13,12 @@ import { ReactComponent as PlusIcon } from '../assets/images/icon-plus.svg';
 
 export default function NotFoundTable( { slug } ) {
 	const [ activePanel, setActivePanel ] = useState();
-	const primaryColumnNames = [ 'url_id' ];
+	const paginationId = 'url_id';
 	const matchUrlField = useRef();
 
-	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
+
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
 
 	const {
 		__,
@@ -28,9 +30,9 @@ export default function NotFoundTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( slug, primaryColumnNames, filters, sorting );
+	} = useInfiniteFetch( { key: slug, url, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { redirectTypes, matchTypes, header: redirectHeader } = useRedirectTableMenus();
 
@@ -149,14 +151,14 @@ export default function NotFoundTable( { slug } ) {
 				activatePanel={ activePanel }
 				insertOptions={ {
 					inserterCells, title: 'Create redirect from this',
-					data, slug: 'redirects', url: '', pageId: 'redirect_id', rowToInsert,
+					data, slug: 'redirects', url: '', paginationId: 'redirect_id', rowToInsert,
 				} }
 				exportOptions={ {
 					url: slug,
 					filters,
-					fromId: `from_${ pageId }`,
-					pageId,
-					deleteCSVCols: [ pageId, 'dest_url_id' ],
+					fromId: `from_${ paginationId }`,
+					paginationId,
+					deleteCSVCols: [ paginationId, 'dest_url_id' ],
 				} }
 			/>
 			<Table className="fadeInto"

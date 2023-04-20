@@ -8,9 +8,10 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 
 export default function GeneratorTable( { slug } ) {
-	const primaryColumnNames = [ 'generator_id' ];
-	const { table, setTable, filters, setFilters, currentFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const paginationId = 'generator_id';
+	const { table, setTable, filters, setFilters, currentFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
 
 	const {
 		__,
@@ -22,9 +23,9 @@ export default function GeneratorTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( slug, primaryColumnNames, currentFilters, sorting );
+	} = useInfiniteFetch( { key: slug, url, paginationId, currentFilters, sortingColumn } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, filters, slug, primaryColumnNames } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const statusTypes = {
 		A: 'Active',
@@ -116,9 +117,9 @@ export default function GeneratorTable( { slug } ) {
 				exportOptions={ {
 					url: slug,
 					filters,
-					fromId: `from_${ pageId }`,
-					pageId,
-					deleteCSVCols: [ pageId, 'generator_id' ],
+					fromId: `from_${ paginationId }`,
+					paginationId,
+					deleteCSVCols: [ paginationId, 'generator_id' ],
 				} }
 			/>
 			<Table className="fadeInto"

@@ -7,8 +7,9 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 
 export default function LinkManagerTable( { slug } ) {
-	const primaryColumnNames = [ 'url_id' ];
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const paginationId = 'url_id';
+	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
 
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
@@ -22,9 +23,17 @@ export default function LinkManagerTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( slug, primaryColumnNames, filters, sorting );
+	} = useInfiniteFetch( { key: slug, url, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+
+	// const sumStatusTypes = {
+	// 	N: __( 'Waiting' ),
+	// 	A: __( 'Processed' ),
+	// 	P: __( 'Pending' ),
+	// 	U: __( 'Updating' ),
+	// 	E: __( 'Error' ),
+	// };
 
 	const httpStatusTypes = {
 		'-2': __( 'Processing' ),
@@ -174,8 +183,8 @@ export default function LinkManagerTable( { slug } ) {
 				exportOptions={ {
 					url: slug,
 					filters,
-					fromId: `from_${ pageId }`,
-					pageId,
+					fromId: `from_${ paginationId }`,
+					paginationId,
 					deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
 					perPage: 1000,
 				} }

@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { deleteRow as del } from '../api/deleteTableData';
-import { setData } from '../api/fetching';
+import { postFetch } from '../api/fetching';
 
-export default function useChangeRow( { data, filters, slug, primaryColumns } ) {
+export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const queryClient = useQueryClient();
 	const [ rowValue, setRow ] = useState();
 	const [ insertRowResult, setInsertRowRes ] = useState( false );
@@ -11,15 +11,11 @@ export default function useChangeRow( { data, filters, slug, primaryColumns } ) 
 	const [ responseCounter, setResponseCounter ] = useState( 0 );
 
 	const getRowId = useCallback( ( cell, optionalSelector ) => {
-		let path = '';
-		primaryColumns.forEach( ( column ) => {
-			path += `${ cell.row.original[ column ] }/`;
-		});
 		if ( optionalSelector ) {
-			return `${ path }${ cell.row.original[ optionalSelector ] }`;
+			return `${ cell.row.original[ paginationId ] }/${ cell.row.original[ optionalSelector ] }`;
 		}
-		return path;
-	}, [ primaryColumns ] );
+		return cell.row.original[ paginationId ];
+	}, [ paginationId ] );
 
 	const getRow = ( cell ) => {
 		return cell.row.original;
@@ -27,7 +23,7 @@ export default function useChangeRow( { data, filters, slug, primaryColumns } ) 
 
 	const insertNewRow = useMutation( {
 		mutationFn: async ( { rowToInsert } ) => {
-			const response = await setData( `${ slug }/create`, rowToInsert );
+			const response = await postFetch( `${ slug }`, rowToInsert );
 			return { response };
 		},
 		onSuccess: async ( { response } ) => {
@@ -48,8 +44,8 @@ export default function useChangeRow( { data, filters, slug, primaryColumns } ) 
 			cell.row.toggleSelected();
 		}
 		setSelectedRows( [] );
-		return deletedPagesArray = deletedPagesArray.map( ( page ) => page.filter( ( row ) => row[ primaryColumns[0] ] !== getRowId( cell ) ) ) ?? []; //TODO: fix this, there could be more primary columns if we want to delete a row!
-	}, [ data?.pages, getRowId, primaryColumns ] );
+		return deletedPagesArray = deletedPagesArray.map( ( page ) => page.filter( ( row ) => row[ paginationId ] !== getRowId( cell ) ) ) ?? [];
+	}, [ data?.pages, getRowId, paginationId ] );
 
 	const deleteSelectedRow = useMutation( {
 		mutationFn: async ( options ) => {
@@ -76,8 +72,8 @@ export default function useChangeRow( { data, filters, slug, primaryColumns } ) 
 			}
 
 			if ( responseCounter === 0 || responseCounter === 1 ) {
-				await queryClient.invalidateQueries( [ slug, filters ] ); /// TODO : ma tu byt filters???? to som len ja pridal
-				await queryClient.invalidateQueries( [ slug, 'count' ] );//TODO .... filters do countu????
+				await queryClient.invalidateQueries( [ slug, url ] );
+				await queryClient.invalidateQueries( [ slug, 'count' ] );
 			}
 		},
 	} );
@@ -105,7 +101,7 @@ export default function useChangeRow( { data, filters, slug, primaryColumns } ) 
 			const newPagesArray = data?.pages.map( ( page ) =>
 
 				page.map( ( row ) => {
-					if ( row[ pageId ] === getRowId( cell ) ) {
+					if ( row[ paginationId ] === getRowId( cell ) ) {
 						row[ cell.column.id ] = newVal;
 						return row;
 					}
@@ -118,7 +114,7 @@ export default function useChangeRow( { data, filters, slug, primaryColumns } ) 
 				pages: newPagesArray,
 				pageParams: origData.pageParams,
 			} ) );
-			const response = await setData( `${ slug }/${ getRowId( cell, optionalSelector ) }`, { [ cellId ]: newVal } );
+			const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }`, { [ cellId ]: newVal } );
 			return response;
 		},
 		onSuccess: ( response ) => {
