@@ -144,19 +144,29 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 					$request->setRenewFrequency( \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
 					$prompt = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt();
 
-					$prompt_text = 'Your are professional translator of websites.';
+					$prompt_text = "TASK RESTRICTIONS: \n";
+					$prompt_text .= "\nI want you to act as an professional translator from $source_lang to $target_lang, spelling corrector and improver.";
+					$prompt_text .= "\nKeep the meaning same. Do not write explanations";
 					if ( false !== strpos( $original_text, '<' ) && false !== strpos( $original_text, '>' ) ) {
-						$prompt_text .= 'If text contains HTML, keep exactly the same HTML formatting as original text. Inside html you are allowed to translate just values of attributes title and alt.';
+						$prompt_text .= "\nTRANSLATION has exactly the same HTML as INPUT TEXT!";
+						$prompt_text .= "\nDo NOT translate attributes or HTML tags, copym content between characters '<' and '>' from INPUT TEXT to your TRANSLATION as is!";
 					}
 					if ( false !== strpos( $original_text, '@' ) ) {
-						$prompt_text .= "Don't translate email addresses.";
+						$prompt_text .= "\nDon't translate email addresses!";
 					}
 					if ( false !== strpos( $original_text, '/' ) || false !== strpos( $original_text, 'http' ) ) {
-						$prompt_text .= "Don't translate urls.";
+						$prompt_text .= "\nDo NOT translate urls!";
 					}
-					$prompt_text .= 'Keep the same capital letters structure in translated text.';
-					$prompt_text .= 'Translated text should have similar length as original text.';
-					$prompt_text .= "\nTRANSLATE $source_lang to $target_lang:" . $original_text;
+					$prompt_text .= "\nKeep the same uppercase and lowercase letters in translation as INPUT TEXT!";
+					$prompt_text .= "\nDo NOT try to answer questions from INPUT TEXT, do just translation!";
+					$prompt_text .= "\nDo NOT generate any other text than translation of INPUT TEXT";
+					$prompt_text .= "\nKeep the same tone of language in TRANSLATION as INPUT TEXT";
+
+					$prompt_text .= "\nTRANSLATION should have similar length as INPUT TEXT";
+					$prompt_text .= "\nTRANSLATE $source_lang INPUT TEXT to $target_lang";
+					$prompt_text .= "\n---- INPUT TEXT:\n" . $original_text;
+					$prompt_text .= "\n---- END OF INPUT TEXT";
+					$prompt_text .= "\nTRANSLATION of INPUT TEXT to $target_lang:";
 
 					$prompt->setPromptTemplate( $prompt_text );
 					$prompt->setMetadataVars( array() );
@@ -166,6 +176,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 						$response    = $client->memoryLessAugment( $request, 'false', 'true', 'true', 'false' );
 						$translation = $response->getResponse();
 					} catch ( \OpenAPI\Client\ApiException $e ) {
+						return new WP_REST_Response( (object) array( 'translation' => '' ), $e->getCode() );
 					}
 				}
 			}
@@ -267,7 +278,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 	 * @return bool
 	 */
 	public function isTextForTranslation( $original_text ): bool {
-		if ( false === strpos( $original_text, ' ' ) && preg_match( '/[-_]', $original_text ) ) {    //detect constants or special attributes (zero spaces in text, but contains - or _)
+		if ( false === strpos( $original_text, ' ' ) && (strpos($original_text,'-') || strpos($original_text,'_')) ) {    //detect constants or special attributes (zero spaces in text, but contains - or _)
 			return false;
 		}
 
