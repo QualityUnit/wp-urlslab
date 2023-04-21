@@ -278,7 +278,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 	 * @return bool
 	 */
 	public function isTextForTranslation( $original_text ): bool {
-		if ( false === strpos( $original_text, ' ' ) && (strpos($original_text,'-') || strpos($original_text,'_')) ) {    //detect constants or special attributes (zero spaces in text, but contains - or _)
+		if ( false === strpos( $original_text, ' ' ) && ( false !== strpos( $original_text, '-' ) || false !== strpos( $original_text, '_' ) ) ) {    //detect constants or special attributes (zero spaces in text, but contains - or _)
 			return false;
 		}
 
