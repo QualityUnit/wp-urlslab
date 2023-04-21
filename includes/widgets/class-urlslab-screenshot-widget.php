@@ -110,7 +110,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 						$alt_text = $urlslab_atts['alt'];
 					}
 
-					$screenshot_url = $url_data->get_screenshot_url( $urlslab_atts['screenshot-type'] );
+					$screenshot_url = $url_data->get_screenshot_url( $urlslab_atts['screenshot-type'], true );
 					if ( empty( $screenshot_url ) ) {
 						$screenshot_url = $urlslab_atts['default-image'];
 					}
