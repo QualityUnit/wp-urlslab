@@ -173,7 +173,7 @@ export default function RedirectsTable( { slug } ) {
 				} }
 				insertOptions={ { inserterCells, title: 'Add redirect', data, slug, url, paginationId, rowToInsert } }
 				exportOptions={ {
-					url: slug,
+					slug,
 					filters,
 					fromId: `from_${ paginationId }`,
 					paginationId,

@@ -115,7 +115,7 @@ export default function GeneratorTable( { slug } ) {
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				exportOptions={ {
-					url: slug,
+					slug,
 					filters,
 					fromId: `from_${ paginationId }`,
 					paginationId,

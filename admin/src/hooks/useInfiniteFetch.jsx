@@ -16,7 +16,7 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		const { op, val } = params;
 		return { col, op, val };
 	} ) : [];
-	console.log( [ ...filtersArray ] );
+	console.log( sorting );
 
 	const query = useInfiniteQuery( {
 		queryKey: [ key, filtersArray ],

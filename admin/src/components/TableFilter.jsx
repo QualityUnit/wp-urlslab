@@ -6,7 +6,7 @@ import { langName } from '../lib/helpers';
 import { dateOp, stringOp, numericOp, langOp, menuOp } from '../lib/filterOperators';
 
 import Button from '../elements/Button';
-import { ReactComponent as CloseIcon } from '../assets/images/icon-close.svg';
+import { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.svg';
 
 import '../assets/styles/components/_TableFilter.scss';
 import TableFilterPanel from './TableFilterPanel';

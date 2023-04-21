@@ -111,7 +111,7 @@ export default function SearchReplaceTable( { slug } ) {
 				} }
 				insertOptions={ { inserterCells, title: 'Add replacement', data, slug, url, paginationId, rowToInsert } }
 				exportOptions={ {
-					url: slug,
+					slug,
 					filters,
 					fromId: `from_${ paginationId }`,
 					paginationId,

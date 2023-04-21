@@ -9,7 +9,7 @@ import useChangeRow from '../hooks/useChangeRow';
 import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
 
 import BrowserIcon from '../elements/BrowserIcon';
-import { ReactComponent as PlusIcon } from '../assets/images/icon-plus.svg';
+import { ReactComponent as PlusIcon } from '../assets/images/icons/icon-plus.svg';
 
 export default function NotFoundTable( { slug } ) {
 	const [ activePanel, setActivePanel ] = useState();
@@ -154,7 +154,7 @@ export default function NotFoundTable( { slug } ) {
 					data, slug: 'redirects', url: '', paginationId: 'redirect_id', rowToInsert,
 				} }
 				exportOptions={ {
-					url: slug,
+					slug,
 					filters,
 					fromId: `from_${ paginationId }`,
 					paginationId,

@@ -1,7 +1,7 @@
 /* eslint-disable indent */
 import { useState } from 'react';
 import {
-	useInfiniteFetch, ProgressBar, SortMenu, LangMenu, InputField, Checkbox, LinkIcon, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, SortBy, SortMenu, LangMenu, InputField, Checkbox, LinkIcon, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -90,7 +90,7 @@ export default function KeywordsTable( { slug } ) {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.kw_priority,
+			header: <SortBy props={ { sorting, key: 'kw_priority', onClick: () => sortBy( 'kw_priority' ) } }>{ header.kw_priority }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'lang', {
@@ -142,7 +142,6 @@ export default function KeywordsTable( { slug } ) {
 				header={ header }
 				table={ table }
 				selectedRows={ selectedRows }
-				onSort={ ( val ) => sortBy( val ) }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onClearRow={ ( clear ) => {
@@ -157,7 +156,7 @@ export default function KeywordsTable( { slug } ) {
 				detailsOptions={ detailsOptions }
 				insertOptions={ { inserterCells, title: 'Add keyword', data, slug, url, paginationId, rowToInsert } }
 				exportOptions={ {
-					url: slug,
+					slug,
 					filters,
 					fromId: `from_${ paginationId }`,
 					paginationId,

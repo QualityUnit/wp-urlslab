@@ -7,14 +7,15 @@ export { default as Tooltip } from '../elements/Tooltip';
 export { default as TooltipSortingFiltering } from '../elements/Tooltip_SortingFiltering';
 export { default as RangeSlider } from '../elements/RangeInputs';
 export { default as SortMenu } from '../elements/SortMenu';
+export { default as SortBy } from '../elements/TableSortBy';
 export { default as LangMenu } from '../elements/LangMenu';
 export { default as InputField } from '../elements/InputField';
 export { default as Checkbox } from '../elements/Checkbox';
 export { default as MenuInput } from '../elements/MenuInput';
 export { default as Button } from '../elements/Button';
 export { default as ProgressBar } from '../elements/ProgressBar';
-export { ReactComponent as Trash } from '../assets/images/icon-trash.svg';
-export { ReactComponent as LinkIcon } from '../assets/images/icon-link.svg';
+export { ReactComponent as Trash } from '../assets/images/icons/icon-trash.svg';
+export { ReactComponent as LinkIcon } from '../assets/images/icons/icon-link.svg';
 
 export { default as Loader } from '../components/Loader';
 

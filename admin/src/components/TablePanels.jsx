@@ -5,7 +5,7 @@ import ExportPanel from './ExportPanel';
 import ImportPanel from './ImportPanel';
 import DangerPanel from './DangerPanel';
 import DetailsPanel from './DetailsPanel';
-import { ReactComponent as Trash } from '../assets/images/icon-trash.svg';
+import { ReactComponent as Trash } from '../assets/images/icons/icon-trash.svg';
 
 export default function TablePanels( { props } ) {
 	const { header, slug, filters, initialRow, detailsOptions, insertOptions, exportOptions, activePanel, handlePanel } = props;

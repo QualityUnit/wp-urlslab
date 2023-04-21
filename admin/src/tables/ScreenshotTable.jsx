@@ -130,7 +130,7 @@ export default function ScreenshotTable( { slug } ) {
 				noImport
 				detailsOptions={ detailsOptions }
 				exportOptions={ {
-					url: slug,
+					slug,
 					filters,
 					fromId: `from_${ paginationId }`,
 					paginationId,

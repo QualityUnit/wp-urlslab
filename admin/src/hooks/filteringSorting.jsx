@@ -24,6 +24,7 @@ export function useFilter( { slug, header, initialRow } ) {
 		dispatch( { type: 'setFilteringState', filteringState: queryClient.getQueryData( [ slug, 'filters' ] ) } );
 	}, [ dispatch, slug, queryClient ] );
 
+	// Recovers filters from query cache when returning from different component
 	useEffect( () => {
 		getQueryData();
 		if ( state.filteringState?.possiblefilters ) {
@@ -172,12 +173,43 @@ export function useFilter( { slug, header, initialRow } ) {
 
 /* SORTING HOOK */
 export function useSorting( { slug } ) {
-	const [ sorting, setSorting ] = useState( [] );
+	const [ sorting, setSorting ] = useState( {} );
+	const runSorting = useRef( false );
 	const queryClient = useQueryClient();
 
-	function sortBy( key ) {
-		queryClient.setQueryData( [ slug, 'sortBy' ], key );
-		setSorting( ( sortingArray ) => [ key, ...sortingArray ] );
+	const getQueryData = useCallback( () => {
+		//Get new data from local query if filtering changes ( on add/remove filter)
+		setSorting( queryClient.getQueryData( [ slug, 'sorting' ] ) );
+	}, [ slug, queryClient ] );
+
+	// Recovers filters from query cache when returning from different component
+	useEffect( () => {
+		getQueryData();
+	}, [ getQueryData ] );
+
+	const sortOrder = [
+		{ id: 0 },
+		{ id: 1, dir: 'ASC', op: '<=' },
+		{ id: 2, dir: 'DESC', op: '>=' },
+	];
+
+	function sortBy( headerKey ) {
+		const id = sorting ? sorting[ headerKey ]?.id : 0;
+		console.log( id );
+		console.log( sortOrder[ id + 1 ] );
+		setSorting( { [ headerKey ]: sortOrder[ id + 1 ], ...sorting } );
+		if ( id === 2 ) {
+			const currentSortingCopy = { ...sorting };
+			delete currentSortingCopy[ headerKey ];
+			setSorting( currentSortingCopy );
+		}
+		runSorting.current = true;
+	}
+
+	// Save the all sorting values to local query for later use (on component rerender)
+	if ( runSorting.current ) {
+		runSorting.current = false;
+		queryClient.setQueryData( [ slug, 'sorting' ], sorting );
 	}
 
 	return { sorting, sortBy };

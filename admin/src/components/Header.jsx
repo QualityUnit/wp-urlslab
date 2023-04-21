@@ -13,7 +13,7 @@ import Loader from './Loader';
 import Button from '../elements/Button';
 import Tag from '../elements/Tag';
 import NotificationsPanel from './NotificationsPanel';
-import { ReactComponent as PlayIcon } from '../assets/images/icon-play.svg';
+import { ReactComponent as PlayIcon } from '../assets/images/icons/icon-play.svg';
 import { ReactComponent as Logo } from '../assets/images/urlslab-logo.svg';
 
 export default function Header( { pageTitle } ) {

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import { ReactComponent as Plus } from '../assets/images/icon-checkmark.svg';
-import { ReactComponent as Minus } from '../assets/images/icon-minus.svg';
+import { ReactComponent as Plus } from '../assets/images/icons/icon-checkmark.svg';
+import { ReactComponent as Minus } from '../assets/images/icons/icon-minus.svg';
 import '../assets/styles/elements/_Switch.scss';
 
 export default function Switch( { id, textAfter, className, style, secondary, onChange, group, checked, label, labelOff } ) {
