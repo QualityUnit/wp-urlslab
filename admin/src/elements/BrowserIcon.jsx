@@ -53,10 +53,10 @@ export default function BrowserIcon( { uaString } ) {
 	};
 
 	if ( osName === ua ) {
-		botName = ua.replace( /.+?(S|s)emrush.+/g, 'Semrush Bot' );
-		botName = botName.includes( 'Google' ) ? 'Google Bot' : botName;
+		botName = ua.replace( /.+?(S|s)emrush.+/g, 'SemrushBot' );
+		botName = botName.includes( 'Google' ) ? 'Googlebot' : botName;
 		botName = botName.includes( 'facebook' ) ? 'Facebook' : botName;
-		botName = botName.includes( 'WordPress' ) ? 'WordPress' : botName;
+		botName = botName.includes( 'WordPress' ) ? 'Wordpress' : botName;
 		botName = botName.replace( /(.+?compatible; ?)?([^\/]*)\/.+?$/g, '$2' );
 	}
 
