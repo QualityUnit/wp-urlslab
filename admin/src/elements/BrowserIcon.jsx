@@ -49,14 +49,14 @@ export default function BrowserIcon( { uaString } ) {
 	};
 
 	const botIcons = {
-		Ahrefs, AhrefsSiteAudit: Ahrefs, Amazon, 'Amazon CloudFront': Amazon, bingbot: Bing, Bing, Facebook, Googlebot, SemrushBot, SeznamBot, Wordpress, YandexBot,
+		Ahrefs, AhrefsSiteAudit: Ahrefs, Amazon, 'Amazon CloudFront': Amazon, bingbot: Bing, Bing, Facebook, 'Google Bot': Googlebot, 'Semrush Bot': SemrushBot, SeznamBot, Wordpress, YandexBot,
 	};
 
 	if ( osName === ua ) {
-		botName = ua.replace( /.+?(S|s)emrush.+/g, 'SemrushBot' );
-		botName = botName.includes( 'Google' ) ? 'Googlebot' : botName;
+		botName = ua.replace( /.+?(S|s)emrush.+/g, 'Semrush Bot' );
+		botName = botName.includes( 'Google' ) ? 'Google Bot' : botName;
 		botName = botName.includes( 'facebook' ) ? 'Facebook' : botName;
-		botName = botName.includes( 'WordPress' ) ? 'Wordpress' : botName;
+		botName = botName.includes( 'WordPress' ) ? 'WordPress' : botName;
 		botName = botName.replace( /(.+?compatible; ?)?([^\/]*)\/.+?$/g, '$2' );
 	}
 
