@@ -78,6 +78,10 @@ The content is coming soon.
 
 == Changelog ==
 
+= 2.13.7 - 2023-04-21 =
+
+* Images in related articles not visible
+
 = 2.13.6 - 2023-04-21 =
 
 * Experience a smoother user journey with our under-the-hood enhancements.
