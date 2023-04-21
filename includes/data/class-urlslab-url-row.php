@@ -342,12 +342,13 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	 *
 	 * @return string url of the schreenshot or empty string
 	 */
-	public function get_screenshot_url(
-		string $screenshot_type = self::SCREENSHOT_TYPE_CAROUSEL
-	): string {
+	public function get_screenshot_url( string $screenshot_type = self::SCREENSHOT_TYPE_CAROUSEL, $schedule = false ): string {
 		if ( ! $this->has_screenshot() ) {
-			$this->init_scr_status();
-			$this->update();
+			if ( $schedule ) {
+				$this->init_scr_status_shortcode();
+				$this->update();
+			}
+
 			return '';
 		}
 
@@ -397,13 +398,34 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	}
 
 
-	public function init_scr_status() {
+	public function init_scr_status_import() {
 		if ( ! empty( $this->get_scr_status() ) ) {
 			return false;
 		}
 		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Screenshot_Widget::SLUG ) ) {
 			switch ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Screenshot_Widget::SLUG )->get_option( Urlslab_Screenshot_Widget::SETTING_NAME_SHEDULE_SCRRENSHOT ) ) {
 				case Urlslab_Screenshot_Widget::SCHEDULE_ALL:
+					break;
+				case Urlslab_Screenshot_Widget::SCHEDULE_ALL_INTERNALS:
+					if ( ! $this->is_internal() ) {
+						return false;
+					}
+					break;
+				default:
+					return false;
+			}
+			$this->set_scr_status( self::SCR_STATUS_NEW );
+		}
+	}
+
+	public function init_scr_status_shortcode() {
+		if ( ! empty( $this->get_scr_status() ) ) {
+			return false;
+		}
+		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Screenshot_Widget::SLUG ) ) {
+			switch ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Screenshot_Widget::SLUG )->get_option( Urlslab_Screenshot_Widget::SETTING_NAME_SHEDULE_SCRRENSHOT ) ) {
+				case Urlslab_Screenshot_Widget::SCHEDULE_ALL:
+				case Urlslab_Screenshot_Widget::SCHEDULE_SHORTCODE:
 					break;
 				case Urlslab_Screenshot_Widget::SCHEDULE_ALL_INTERNALS:
 					if ( ! $this->is_internal() ) {
@@ -445,7 +467,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 			if ( $scr_status ) {
 				$url_obj->set_scr_status( $scr_status );
 			} else {
-				$url_obj->init_scr_status();
+				$url_obj->init_scr_status_import();
 			}
 			$rows[] = $url_obj;
 		}

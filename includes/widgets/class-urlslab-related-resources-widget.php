@@ -213,7 +213,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 	private function render_screenshot( Urlslab_Url_Row $url, array $urlslab_atts, $strategy ): string {
 		if ( ! empty( $urlslab_atts['show-image'] ) ) {
-			$img_url = $url->get_screenshot_url( $urlslab_atts['image-size'] );
+			$img_url = $url->get_screenshot_url( $urlslab_atts['image-size'], true );
 			if ( ! empty( $img_url ) ) {
 				return '<div class="urlslab-rel-res-item-screenshot"><img alt="' . esc_attr( $url->get_summary_text( $strategy ) ) . '" src="' . $img_url . '"></div>';
 			} else {
