@@ -30,7 +30,7 @@ import Facebook from '../assets/images/bots/facebook.png';
 import Googlebot from '../assets/images/bots/google.png';
 import SemrushBot from '../assets/images/bots/semrush.png';
 import SeznamBot from '../assets/images/bots/seznam.png';
-import Wordpress from '../assets/images/bots/wordpress.png';
+import WordPress from '../assets/images/bots/wordpress.png';
 import YandexBot from '../assets/images/bots/yandex.png';
 
 export default function BrowserIcon( { uaString } ) {
@@ -49,7 +49,7 @@ export default function BrowserIcon( { uaString } ) {
 	};
 
 	const botIcons = {
-		Ahrefs, AhrefsSiteAudit: Ahrefs, Amazon, 'Amazon CloudFront': Amazon, bingbot: Bing, Bing, Facebook, Googlebot, SemrushBot, SeznamBot, Wordpress, YandexBot,
+		Ahrefs, AhrefsSiteAudit: Ahrefs, Amazon, 'Amazon CloudFront': Amazon, bingbot: Bing, Bing, Facebook, 'Google Bot': Googlebot, 'Semrush Bot': SemrushBot, SeznamBot, WordPress, YandexBot,
 	};
 
 	if ( osName === ua ) {
