@@ -1,6 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 
+import useCheckApiKey from '../hooks/useCheckApiKey';
+
 import { ReactComponent as ApiIcon } from '../assets/images/api-exclamation.svg';
 import Button from '../elements/Button';
 
@@ -8,12 +10,13 @@ import '../assets/styles/components/_OverviewTemplate.scss';
 
 export default function Overview( { moduleId, children } ) {
 	const { __ } = useI18n();
+	const { settingsLoaded, apiKeySet } = useCheckApiKey();
 	const queryClient = useQueryClient();
 	const moduleData = queryClient.getQueryData( [ 'modules' ] )[ moduleId ];
 
 	return (
 		<div className="urlslab-overview urlslab-panel fadeInto">
-			{ moduleData.apikey &&
+			{ settingsLoaded && apiKeySet === false && moduleData.apikey &&
 			<div className="urlslab-overview-apiKey flex-tablet">
 				<div className="apiIcon xxl"><ApiIcon /></div>
 				<div className="urlslab-overview-apiKey__content">

@@ -3,6 +3,8 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import { langName } from '../lib/helpers';
 
+import { dateOp, stringOp, numericOp, langOp, menuOp } from '../lib/filterOperators';
+
 import Button from '../elements/Button';
 import { ReactComponent as CloseIcon } from '../assets/images/icon-close.svg';
 
@@ -15,6 +17,15 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 	const { currentFilters, state, slug, header, initialRow } = props;
 	const [ editFilter, activateEditing ] = useState( );
 	const activeFilters = Object.keys( currentFilters ).length ? Object.keys( currentFilters ) : null;
+
+	const operatorTypes = {
+		date: dateOp,
+		number: numericOp,
+		string: stringOp,
+		lang: langOp,
+		menu: menuOp,
+		boolean: menuOp,
+	};
 
 	const handleOnEdit = useCallback( ( val ) => {
 		activateEditing();
@@ -32,15 +43,24 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 				>
 					<div className="flex">
 						{ header[ key ] }:&nbsp;
-						<span className="regular flex">“<span className="limit-20">
-							{ currentFilters[ key ]?.op === 'BETWEEN' && ! currentFilters?.lang
-								? `min: ${ currentFilters[ key ]?.val.min }, max: ${ currentFilters[ key ]?.val.max }`
-								: ! currentFilters?.lang && currentFilters[ key ]?.val
-							}
-							{ currentFilters?.lang &&
-							langName( currentFilters?.lang?.val )
-							}
-						</span>”</span>
+						<span className="regular flex flex-align-center">
+							<span className="fs-xs">{ operatorTypes[ currentFilters[ key ]?.keyType ][ currentFilters[ key ]?.op ] }</span>
+							&nbsp;
+							“<span className="limit-20">
+								{ currentFilters[ key ]?.op === 'BETWEEN' &&
+								`min: ${ currentFilters[ key ]?.val.min }, max: ${ currentFilters[ key ]?.val.max }`
+								}
+
+								{ key === 'lang' &&
+								langName( currentFilters?.lang?.val )
+								}
+
+								{ currentFilters[ key ]?.op !== 'BETWEEN' && key !== 'lang' &&
+									currentFilters[ key ]?.filterValMenu
+									? currentFilters[ key ]?.filterValMenu[ currentFilters[ key ]?.val ]
+									: currentFilters[ key ]?.val
+								}
+							</span>”</span>
 						<Tooltip className="showOnHover">{ __( 'Edit filter' ) }</Tooltip>
 					</div>
 					<div className="flex flex-align-center">

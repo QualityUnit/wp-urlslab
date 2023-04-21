@@ -18,6 +18,11 @@ export default function filterReducer( state, action ) {
 				...state,
 				filterObj: { ...filterObj, filterVal: action.val },
 			};
+		case 'setFilterValMenu':
+			return {
+				...state,
+				filterObj: { ...filterObj, filterValMenu: action.filterValMenu },
+			};
 		case 'setKeyType':
 			return {
 				...state,

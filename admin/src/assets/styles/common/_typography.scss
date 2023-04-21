@@ -6,6 +6,12 @@ b {
 	font-weight: 600;
 }
 
+@each $class, $size in $fontSizes {
+	.fs-#{$class} {
+		font-size: $size;
+	}
+}
+
 
 h1,
 h2,

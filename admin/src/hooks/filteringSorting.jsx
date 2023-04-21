@@ -7,6 +7,7 @@ const filterObj = {
 	filterKey: undefined,
 	filterOp: undefined,
 	filterVal: undefined,
+	filterValMenu: undefined,
 	keyType: undefined,
 };
 
@@ -55,6 +56,7 @@ export function useFilter( { slug, header, initialRow } ) {
 		const cellfilterValMenu = cell?.column.columnDef.filterValMenu;
 		if ( cellfilterValMenu ) {
 			dispatch( { type: 'setKeyType', keyType: 'menu' } );
+			dispatch( { type: 'setFilterValMenu', filterValMenu: cellfilterValMenu } );
 			if ( sendCellOptions ) {
 				sendCellOptions( cellfilterValMenu );
 			}
@@ -86,7 +88,7 @@ export function useFilter( { slug, header, initialRow } ) {
 	};
 
 	function handleSaveFilter( filterParams ) {
-		const { filterKey, filterOp, filterVal } = filterParams;
+		const { filterKey, filterOp, filterVal, filterValMenu, keyType } = filterParams;
 		let key = filterKey;
 		const op = filterOp;
 		const val = filterVal;
@@ -108,7 +110,11 @@ export function useFilter( { slug, header, initialRow } ) {
 		}
 
 		if ( op ) {
-			addFilter( key, { op, val } );
+			addFilter( key, { op, val, keyType } );
+		}
+
+		if ( op && filterValMenu ) {
+			addFilter( key, { op, val, keyType, filterValMenu } );
 		}
 
 		// Run only once to prevent infinite loop

@@ -157,7 +157,7 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 					</div>
 
 					<div className="ma-left flex flex-align-center">
-						{ ( ! noImport && ! noExport && ! noDelete ) &&
+						{ ( ! noImport || ! noExport || ! noDelete ) &&
 							<TableActionsMenu onAction={ handlePanel } options={ { noImport, noExport, noDelete } } />
 						}
 
