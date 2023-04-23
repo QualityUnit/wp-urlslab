@@ -47,6 +47,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$loaded_from_db = true
 	) {
 		$this->set_url_id( $url['url_id'] ?? 0, $loaded_from_db );
+		$this->set_final_url_id( $url['final_url_id'] ?? $this->get_url_id(), $loaded_from_db );
 		$this->set_url_name( $url['url_name'] ?? '', $loaded_from_db );
 		$this->set_scr_status( $url['scr_status'] ?? '', $loaded_from_db );
 		$this->set_sum_status( $url['sum_status'] ?? self::SUM_STATUS_NEW, $loaded_from_db );
@@ -59,6 +60,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$this->set_update_sum_date( $url['update_sum_date'] ?? Urlslab_Data::get_now(), $loaded_from_db );
 		$this->set_update_http_date( $url['update_http_date'] ?? Urlslab_Data::get_now(), $loaded_from_db );
 		$this->set_url_title( $url['url_title'] ?? '', $loaded_from_db );
+		$this->set_url_h1( $url['url_h1'] ?? '', $loaded_from_db );
 		$this->set_url_meta_description( $url['url_meta_description'] ?? '', $loaded_from_db );
 		$this->set_url_summary( $url['url_summary'] ?? '', $loaded_from_db );
 		$this->set_visibility( $url['visibility'] ?? self::VISIBILITY_VISIBLE, $loaded_from_db );
@@ -94,6 +96,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	public function get_columns(): array {
 		return array(
 			'url_id'                => '%d',
+			'final_url_id'                => '%d',
 			'url_name'              => '%s',
 			'scr_status'            => '%s',
 			'sum_status'            => '%s',
@@ -106,6 +109,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 			'urlslab_scr_timestamp' => '%d',
 			'urlslab_sum_timestamp' => '%d',
 			'url_title'             => '%s',
+			'url_h1'             => '%s',
 			'url_meta_description'  => '%s',
 			'url_summary'           => '%s',
 			'visibility'            => '%s',
@@ -117,6 +121,10 @@ class Urlslab_Url_Row extends Urlslab_Data {
 
 	public function get_url_id(): int {
 		return $this->get( 'url_id' );
+	}
+
+	public function get_final_url_id(): int {
+		return $this->get( 'final_url_id' );
 	}
 
 	public function get_url_name(): string {
@@ -175,6 +183,10 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		return $this->get( 'url_title' );
 	}
 
+	public function get_url_h1(): string {
+		return $this->get( 'url_h1' );
+	}
+
 	public function get_url_meta_description(): string {
 		return $this->get( 'url_meta_description' );
 	}
@@ -187,6 +199,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		switch ( $name ) {
 			case 'url_summary':
 			case 'url_title':
+			case 'url_h1':
 			case 'url_meta_description':
 				if ( Urlslab_Url_Row::VALUE_EMPTY === $this->data[ $name ] ) {
 					return '';
@@ -206,6 +219,10 @@ class Urlslab_Url_Row extends Urlslab_Data {
 
 	public function set_url_id( int $url_id, $loaded_from_db = false ): void {
 		$this->set( 'url_id', $url_id, $loaded_from_db );
+	}
+
+	public function set_final_url_id( int $final_url_id, $loaded_from_db = false ): void {
+		$this->set( 'final_url_id', $final_url_id, $loaded_from_db );
 	}
 
 	public function set_url_name( string $url_name, $loaded_from_db = false ): void {
@@ -265,6 +282,11 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$this->set( 'url_title', $url_title, $loaded_from_db );
 	}
 
+	public function set_url_h1( string $url_h1, $loaded_from_db = false ): void {
+		$this->set( 'url_h1', $url_h1, $loaded_from_db );
+	}
+
+
 	public function set_url_meta_description( string $url_meta_description, $loaded_from_db = false ): void {
 		$this->set( 'url_meta_description', $url_meta_description, $loaded_from_db );
 	}
@@ -306,6 +328,9 @@ class Urlslab_Url_Row extends Urlslab_Data {
 					return trim( $this->get_url_meta_description() );
 				} //continue to next option
 			case Urlslab_Link_Enhancer::DESC_TEXT_TITLE:
+				if ( ! empty( trim( $this->get_url_h1() ) ) ) {
+					return trim( $this->get_url_h1() );
+				}
 				if ( ! empty( trim( $this->get_url_title() ) ) ) {
 					return trim( $this->get_url_title() );
 				} //continue to next option

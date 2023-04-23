@@ -80,6 +80,12 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 								return is_string( $param );
 							},
 						),
+						'url_h1'            => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
 						'url_meta_description' => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
@@ -620,6 +626,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			'http_status',
 			'visibility',
 			'url_title',
+			'url_h1',
 			'url_meta_description',
 			'url_summary',
 		);

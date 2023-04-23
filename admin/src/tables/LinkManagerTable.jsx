@@ -58,6 +58,7 @@ export default function LinkManagerTable( { slug } ) {
 	const header = {
 		url_name: __( 'URL' ),
 		url_title: __( 'Title' ),
+		url_h1: __( 'H1' ),
 		url_meta_description: __( 'Description' ),
 		url_summary: __( 'Summary' ),
 		http_status: __( 'Status' ),
@@ -87,6 +88,11 @@ export default function LinkManagerTable( { slug } ) {
 		columnHelper.accessor( 'url_title', {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
 			header: header.url_title,
+			size: 150,
+		} ),
+		columnHelper.accessor( 'url_h1', {
+			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
+			header: header.url_h1,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'url_meta_description', {
