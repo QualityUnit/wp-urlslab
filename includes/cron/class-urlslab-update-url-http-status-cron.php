@@ -49,8 +49,14 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 	}
 
 	private function get_final_redirect_url( $url, $hop = 1 ): string {
-		$response      = wp_remote_head( $url );
+		$response = wp_remote_head( $url );
+
+		if ( is_wp_error( $response ) ) {
+			return $url;
+		}
+
 		$response_code = (int) wp_remote_retrieve_response_code( $response );
+
 		if ( 15 > $hop && 300 < $response_code && 399 > $response_code ) {
 			/** @var WP_HTTP_Requests_Response $http_response */
 			$http_response = $response['http_response'];
@@ -94,12 +100,22 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 		try {
 
 			$status_obj = $this->check_url_status( $url->get_url()->get_url_with_protocol() );
-			$url->set_http_status( $status_obj->code );
-
-			$final_url = new Urlslab_Url( $status_obj->url );
+			$final_url  = new Urlslab_Url( $status_obj->url, true );
 			$url->set_final_url_id( $final_url->get_url_id() );
 
-			if ( 200 == $status_obj->code && $final_url->get_url_id() == $url->get_url_id() ) {
+			if ( 300 < $status_obj->code && 399 > $status_obj->code && $final_url->get_url_id() == $url->get_url_id() ) {
+				$url->set_http_status( Urlslab_Url_Row::HTTP_STATUS_OK );    //if the url is same as original, then it is OK and not redirect
+			} else if ( 429 == $status_obj->code ) {
+				$url->set_http_status( Urlslab_Url_Row::HTTP_STATUS_PENDING );    //rate limit hit, process later
+			} else {
+				$url->set_http_status( $status_obj->code );
+				if ( 300 < $status_obj->code && 399 > $status_obj->code ) {
+					$url_row_obj = new Urlslab_Url_Row();
+					$url_row_obj->insert_urls( array( $final_url ) );
+				}
+			}
+
+			if ( Urlslab_Url_Row::HTTP_STATUS_OK <= $status_obj->code && 400 > $status_obj->code && $final_url->get_url_id() == $url->get_url_id() ) {
 				$page_content_file_name = download_url( $url->get_url()->get_url_with_protocol() );
 
 				if ( is_wp_error( $page_content_file_name ) ) {

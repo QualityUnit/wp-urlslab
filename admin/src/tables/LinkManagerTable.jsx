@@ -27,24 +27,19 @@ export default function LinkManagerTable( { slug } ) {
 
 	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, pageId } );
 
-	// const sumStatusTypes = {
-	// 	N: __( 'Waiting' ),
-	// 	A: __( 'Processed' ),
-	// 	P: __( 'Pending' ),
-	// 	U: __( 'Updating' ),
-	// 	E: __( 'Error' ),
-	// };
-
 	const httpStatusTypes = {
 		'-2': __( 'Processing' ),
 		'-1': __( 'Waiting' ),
 		200: __( 'Valid' ),
 		400: __( 'Client Error' ),
+		301: __( 'Moved Permanently' ),
+		302: __( 'Found, Moved temporarily' ),
+		307: __( 'Temporary Redirect' ),
+		308: __( 'Permanent Redirect' ),
 		404: __( 'Not Found' ),
 		500: __( 'Server Error' ),
 		503: __( 'Server Error' ),
 	};
-
 	const visibilityTypes = {
 		V: __( 'Visible' ),
 		H: __( 'Hidden' ),

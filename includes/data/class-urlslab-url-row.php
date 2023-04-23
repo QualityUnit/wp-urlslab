@@ -143,6 +143,10 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		return $this->get( 'http_status' );
 	}
 
+	public function is_http_redirect(): bool {
+		return $this->get_http_status() >= 300 && $this->get_http_status() < 400 && $this->get_url_id() !== $this->get_final_url_id();
+	}
+
 	public function get_urlslab_domain_id(): string {
 		return $this->get( 'urlslab_domain_id' );
 	}
