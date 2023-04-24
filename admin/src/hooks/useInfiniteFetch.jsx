@@ -23,7 +23,7 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 	} ) : [];
 
 	const query = useInfiniteQuery( {
-		queryKey: [ key, filtersArray, sortingArray ],
+		queryKey: [ key, userFilters, sorting ],
 		// queryKey: [ key, Object.keys( filters ).length > 0 && filters, sorting ],
 		queryFn: async ( { pageParam = '' } ) => {
 			const { lastRowId, sortingFilters } = pageParam;

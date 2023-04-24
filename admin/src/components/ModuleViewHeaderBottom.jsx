@@ -45,7 +45,7 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 
 	const { filters, state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( { slug, header, initialRow } );
 
-	// const currentCountfilters = filters ? filters.replace( '&', '?' ) : '';
+	const sorting = queryClient.getQueryData( [ slug, 'sorting' ] );
 
 	const handleOnEdit = useCallback( ( returnObj ) => {
 		if ( returnObj ) {
@@ -73,14 +73,19 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 		}
 	}, [ slug, activatePanel, detailsOptions, filters, onFilter ] );
 
+	const filtersArray = filters ? Object.entries( filters ).map( ( [ col, params ] ) => {
+		const { op, val } = params;
+		return { col, op, val };
+	} ) : [];
+
 	const { data: rowCount } = useQuery( {
-		queryKey: [ slug, `count` ],
-		queryFn: () => postFetch( `${ slug }/count` ).then( ( count ) => {
+		queryKey: [ slug, `count`, filters ],
+		queryFn: async () => {
+			const count = await postFetch( `${ slug }/count`, { filters: filtersArray } );
 			if ( ! noCount ) {
 				return count.json();
 			}
-			return false;
-		} ),
+		},
 		refetchOnWindowFocus: false,
 	} );
 
@@ -111,7 +116,8 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 	};
 
 	const handleRefresh = () => {
-		queryClient.invalidateQueries( [ slug ] );
+		queryClient.invalidateQueries( [ slug, filters, sorting ? sorting : [] ] );
+		queryClient.invalidateQueries( [ slug, 'count' ] );
 	};
 
 	return (
