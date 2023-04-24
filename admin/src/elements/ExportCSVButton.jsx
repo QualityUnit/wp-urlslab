@@ -6,7 +6,7 @@ import fileDownload from 'js-file-download';
 import { exportCSV } from '../api/exportCsv';
 import { useI18n } from '@wordpress/react-i18n';
 
-import { ReactComponent as ExportIcon } from '../assets/images/icon-export.svg';
+import { ReactComponent as ExportIcon } from '../assets/images/icons/icon-export.svg';
 import Button from './Button';
 
 export default function ExportCSVButton( { options, className, withFilters, onClick } ) {

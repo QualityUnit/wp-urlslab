@@ -8,10 +8,10 @@ import HeaderHeightContext from '../lib/headerHeightContext';
 
 import { useFilter } from '../hooks/filteringSorting';
 
-import { ReactComponent as Trash } from '../assets/images/icon-trash.svg';
-import { ReactComponent as PlusIcon } from '../assets/images/icon-plus.svg';
-// import { ReactComponent as ImportIcon } from '../assets/images/icon-import.svg';
-import { ReactComponent as RefreshIcon } from '../assets/images/icon-cron-refresh.svg';
+import { ReactComponent as Trash } from '../assets/images/icons/icon-trash.svg';
+import { ReactComponent as PlusIcon } from '../assets/images/icons/icon-plus.svg';
+// import { ReactComponent as ImportIcon } from '../assets/images/icons/icon-import.svg';
+import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-cron-refresh.svg';
 
 import SortMenu from '../elements/SortMenu';
 import ColumnsMenu from '../elements/ColumnsMenu';

@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Switch from '../elements/Switch';
 
 import { setModule } from '../api/fetching';
-import { ReactComponent as ArrowIcon } from '../assets/images/icon-arrow.svg';
+import { ReactComponent as ArrowIcon } from '../assets/images/icons/icon-arrow.svg';
 import { ReactComponent as ApiIcon } from '../assets/images/api-exclamation.svg';
 import '../assets/styles/components/_DashboardModule.scss';
 import '../assets/styles/elements/_Button.scss';
