@@ -197,13 +197,15 @@ export function useSorting( { slug } ) {
 			const objFromArr = currentSorting.filter( ( k ) => k.key )[ 0 ];
 			const cleanArr = currentSorting.filter( ( k ) => ! k.key );
 			if ( objFromArr && objFromArr?.dir === 'ASC' ) {
-				return [ { key, dir: 'DESC', op: '>=' }, ...cleanArr ];
+				console.log( [ { key, dir: 'DESC', op: '>=' }, ...cleanArr ] );
+				return [ { key, dir: 'DESC', op: '<=' }, ...cleanArr ];
 			}
 
 			if ( objFromArr && objFromArr?.dir === 'DESC' ) {
 				return cleanArr;
 			}
-			return [ { key, dir: 'ASC', op: '<=' }, ...currentSorting ];
+			console.log( [ { key, dir: 'ASC', op: '<=' }, ...currentSorting ] );
+			return [ { key, dir: 'ASC', op: '>=' }, ...currentSorting ];
 		}
 		);
 		runSorting.current = true;
@@ -211,10 +213,10 @@ export function useSorting( { slug } ) {
 	// console.log( sorting );
 
 	// Save the all sorting values to local query for later use (on component rerender)
-	// if ( runSorting.current ) {
-	// 	runSorting.current = false;
-	// 	queryClient.setQueryData( [ slug, 'sorting' ], sorting );
-	// }
+	if ( runSorting.current ) {
+		runSorting.current = false;
+		queryClient.setQueryData( [ slug, 'sorting' ], sorting );
+	}
 
 	return { sorting, sortBy };
 }

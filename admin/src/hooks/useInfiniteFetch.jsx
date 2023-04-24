@@ -22,8 +22,6 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		return { col: keyName, dir };
 	} ) : [];
 
-	// console.log( sortingArray );
-
 	const query = useInfiniteQuery( {
 		queryKey: [ key, filtersArray, sortingArray ],
 		// queryKey: [ key, Object.keys( filters ).length > 0 && filters, sorting ],
@@ -43,7 +41,6 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 				const { key: keyName, op } = sortingObj;
 				return { col: keyName, op, val: allRows[ allRows?.length - 1 ][ keyName ] };
 			} ) : [];
-			console.log( { allRows, lastRowId, sortingFilters } );
 			return { lastRowId, sortingFilters };
 		},
 		keepPreviousData: true,
