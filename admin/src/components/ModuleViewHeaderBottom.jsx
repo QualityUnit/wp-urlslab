@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback, useState, useContext } from 'react';
+import { memo, useEffect, useRef, useCallback, useState, useContext } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 
@@ -45,7 +45,7 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 
 	const { filters, state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( { slug, header, initialRow } );
 
-	// const currentCountfilters = filters ? filters.replace( '&', '?' ) : '';
+	const sorting = queryClient.getQueryData( [ slug, 'sorting' ] );
 
 	const handleOnEdit = useCallback( ( returnObj ) => {
 		if ( returnObj ) {
@@ -73,15 +73,30 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 		}
 	}, [ slug, activatePanel, detailsOptions, filters, onFilter ] );
 
-	const { data: rowCount } = useQuery( {
+	const filtersArray = filters ? Object.entries( filters ).map( ( [ col, params ] ) => {
+		const { op, val } = params;
+		return { col, op, val };
+	} ) : [];
+
+	const { data: rowCount, isFetching } = useQuery( {
 		queryKey: [ slug, `count` ],
-		queryFn: () => postFetch( `${ slug }/count` ).then( ( count ) => {
+		queryFn: async () => {
+			const count = await postFetch( `${ slug }/count`, { filters: filtersArray } );
 			if ( ! noCount ) {
 				return count.json();
 			}
-			return false;
-		} ),
+		},
 		refetchOnWindowFocus: false,
+	} );
+
+	const Counter = memo( () => {
+		return (
+			! noCount && ! isFetching && rowCount &&
+			<small className="urlslab-rowcount fadeInto flex flex-align-center">
+				{ __( 'Rows: ' ) }
+				<strong className="ml-s">{ rowCount }</strong>
+			</small>
+		);
 	} );
 
 	const handleDeleteAll = useMutation( {
@@ -111,7 +126,8 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 	};
 
 	const handleRefresh = () => {
-		queryClient.invalidateQueries( [ slug ] );
+		queryClient.invalidateQueries( [ slug, filters, sorting ? sorting : [] ] );
+		queryClient.invalidateQueries( [ slug, 'count' ] );
 	};
 
 	return (
@@ -138,6 +154,7 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 					</div>
 
 					<div className="ma-left flex flex-align-center">
+						<Counter />
 						{ ( ! noImport && ! noExport && ! noDelete ) &&
 							<TableActionsMenu onAction={ handlePanel } options={ { noImport, noExport, noDelete } } />
 						}
@@ -159,25 +176,13 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 
 					</div>
 				</div>
-				{ /* { Object.keys( filters ).length !== 0 && */ }
+				{ Object.keys( filters ).length !== 0 &&
 				<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
 					<TableFilter props={ { filters, state, slug, header, initialRow } } onEdit={ handleOnEdit } onRemove={ ( key ) => {
 						handleHeaderHeight(); handleRemoveFilter( key );
 					} } />
-					<div className="ma-left flex flex-align-center">
-						{
-							! noCount && rowCount &&
-								<small className="urlslab-rowcount fadeInto flex flex-align-center">
-									{ __( 'Rows: ' ) }
-									<strong className="ml-s">{ rowCount }</strong>
-								</small>
-						}
-
-						{ /* <SortMenu className="menu-left ml-m" isFilter checkedId={ sortBy } items={ sortItems } name="sorting" onChange={ handleSorting }>{ `Sort by${ sortBy ? ': ' + sortItems[ sortBy ] : '' }` }</SortMenu> */ }
-
-					</div>
 				</div>
-				{ /* } */ }
+				}
 
 			</div>
 
