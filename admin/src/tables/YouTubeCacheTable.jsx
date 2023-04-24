@@ -38,6 +38,7 @@ export default function YouTubeCacheTable( { slug } ) {
 		status: __( 'Status' ),
 		title: __( 'Title' ),
 		published: __( 'Published' ),
+		usage_count: __( 'Usage' ),
 	};
 
 	const columns = [
@@ -75,6 +76,10 @@ export default function YouTubeCacheTable( { slug } ) {
 			cell: ( val ) => <a href={ `https://youtu.be/${ val?.getValue()[ 0 ] }` } target="_blank" rel="noreferrer">{ val?.getValue()[ 1 ] }</a>,
 			header: header.title,
 			size: 450,
+		} ),
+		columnHelper?.accessor( 'usage_count', {
+			header: header.usage_count,
+			size: 80,
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',

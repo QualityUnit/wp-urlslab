@@ -8,6 +8,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 	public const SETTING_NAME_TRANSLATE = 'urlslab-gen-translate';
 	public const SETTING_NAME_GENERATOR_MODEL = 'urlslab-gen-model';
 	public const SETTING_NAME_TRANSLATE_MODEL = 'urlslab-gen-translate-model';
+	const SETTING_NAME_TRACK_USAGE = 'urlslab-gen-track-usage';
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action(
@@ -95,6 +96,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 				$obj->set_status( Urlslab_Content_Generator_Row::STATUS_NEW );
 				$obj->insert_all( array( $obj ), true );
 			}
+			$this->track_usage( $obj );
 		}
 
 		if ( ! empty( $value ) ) {
@@ -246,6 +248,17 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			'generator'
 		);
 		$this->add_option_definition(
+			self::SETTING_NAME_TRACK_USAGE,
+			true,
+			false,
+			__( 'Track Usage of generators' ),
+			__( 'Track usage of generated text, Keep up to date list of urls, where was generated text used during last page view.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'generator'
+		);
+		$this->add_option_definition(
 			self::SETTING_NAME_GENERATOR_MODEL,
 			\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
 			false,
@@ -304,5 +317,16 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			},
 			'wpml',
 		);
+	}
+
+	private function track_usage( Urlslab_Content_Generator_Row $obj ) {
+		if ( ! $this->get_option( self::SETTING_NAME_TRACK_USAGE ) ) {
+			return;
+		}
+		// track screenshot usage
+		$generator_url = new Urlslab_Content_Generator_Url_Row();
+		$generator_url->set_url_id( $this->get_current_page_url()->get_url_id() );
+		$generator_url->set_generator_id( $obj->get_generator_id() );
+		$generator_url->insert_all( array( $generator_url ), true );
 	}
 }

@@ -43,6 +43,7 @@ export default function GeneratorTable( { slug } ) {
 		status: __( 'Status' ),
 		status_changed: __( 'Last change' ),
 		result: __( 'Result' ),
+		usage_count: __( 'Usage' ),
 	};
 
 	const columns = [
@@ -90,6 +91,10 @@ export default function GeneratorTable( { slug } ) {
 		columnHelper.accessor( 'status_changed', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: header.status_changed,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'usage_count', {
+			header: header.usage_count,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'delete', {
