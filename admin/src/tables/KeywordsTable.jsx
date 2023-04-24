@@ -176,7 +176,7 @@ export default function KeywordsTable( { slug } ) {
 					? <Tooltip center>{ __( 'Keyword has been added.' ) }</Tooltip>
 					: null
 				}
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
+				{ /* <TooltipSortingFiltering props={ { isFetching, filters, sorting } } /> */ }
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
