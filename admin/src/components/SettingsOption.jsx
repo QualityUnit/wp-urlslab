@@ -10,14 +10,32 @@ import InputField from '../elements/InputField';
 import Switch from '../elements/Switch';
 import SortMenu from '../elements/SortMenu';
 import FilterMenu from '../elements/FilterMenu';
+import Button from '../elements/Button';
 
 import '../assets/styles/components/datepicker/datepicker.scss';
+import { fetchData } from '../api/fetching';
 
 export default function SettingsOption( { settingId, option, renderTooltip } ) {
 	const queryClient = useQueryClient();
 	const { id, type, title, description, placeholder, value, possible_values } = option;
 	const [ date, setDate ] = useState( type !== 'datetime' || new Date( value ) );
 	const [ status, setStatus ] = useState( );
+
+	const handleApiCall = async () => {
+		renderTooltip( { status: 'activeApiCall', message: 'Job is running…' } );
+		const result = await fetchData( value );
+		if ( result ) {
+			renderTooltip( { status: 'successApiCall', message: result } );
+			setTimeout( () => {
+				renderTooltip();
+			}, 3000 );
+			return false;
+		}
+		renderTooltip( { status: 'errorApiCall', message: 'Error occured' } );
+		setTimeout( () => {
+			renderTooltip();
+		}, 3000 );
+	};
 
 	const handleChange = useMutation( {
 		mutationFn: async ( changeValue ) => {
@@ -95,6 +113,15 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 						defaultValue={ value }
 						onChange={ ( inputValue ) => handleChange.mutate( inputValue ) }
 					/>
+				);
+			case 'api_button':
+				return (
+					<Button
+						active
+						onClick={ handleApiCall }
+					>
+						{ title }
+					</Button>
 				);
 			case 'checkbox':
 				return (

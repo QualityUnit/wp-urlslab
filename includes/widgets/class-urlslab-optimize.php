@@ -67,7 +67,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 		$this->add_options_form_section( 'revisions', __( 'Post Revisions' ), __( 'Post Revisions can quickly overfill the database, making the website much slower and even more expensive to back up.' ) );
 		$this->add_option_definition(
 			'btn_clean_post_revisions',
-			'urlslab/v1/optimize/clean_post_revisions',
+			'optimize/clean_post_revisions',
 			false,
 			__( 'Clean Old Post Revisions Now' ),
 			__( 'Deletes old post revisions from database.' ),
@@ -115,7 +115,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 		$this->add_options_form_section( 'auto-drafts', __( 'Auto-Draft Posts' ), __( 'Auto-Drafts are stored in the database over weeks or months. When there are too many of them, it can slow down the website.' ) );
 		$this->add_option_definition(
 			'btn_clean_auto_drafts',
-			'urlslab/v1/optimize/clean_auto_drafts',
+			'optimize/clean_auto_drafts',
 			false,
 			__( 'Clean Old Auto-Drafts Now' ),
 			__( 'Deletes old auto drafts from database.' ),
@@ -163,7 +163,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 		$this->add_options_form_section( 'trashed', __( 'Trashed Posts' ), __( 'The post slug is reserved, and there is no way to use it till you delete the post. So keep this process automatic in the background without effort.' ) );
 		$this->add_option_definition(
 			'btn_clean_trashed_posts',
-			'urlslab/v1/optimize/clean_trashed_posts',
+			'optimize/clean_trashed_posts',
 			false,
 			__( 'Clean Trashed Posts Now' ),
 			__( 'Deletes trashed posts from database.' ),
@@ -211,7 +211,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 		$this->add_options_form_section( 'transient', __( 'Transient Options' ), __( 'Transients are extremely helpful, and they are making WordPress faster. Unfortunately, too many of them are expired, which can slow down the website\'s speed.' ) );
 		$this->add_option_definition(
 			'btn_clean_transients',
-			'urlslab/v1/optimize/clean_transients',
+			'optimize/clean_transients',
 			false,
 			__( 'Clean Transient Options Now' ),
 			__( 'Deletes transient options from database.' ),
@@ -269,7 +269,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 		$this->add_options_form_section( 'orphaned-rel-data', __( 'Orphaned Relationship Data' ), __( 'Orphaned Relationship Data are a problem only if you often delete the content from WordPress. Over time, you can have thousands of these items in the database, which consumes a lot of space.' ) );
 		$this->add_option_definition(
 			'btn_clean_orphaned_relationship_data',
-			'urlslab/v1/optimize/clean_orphaned_relationship_data',
+			'optimize/clean_orphaned_relationship_data',
 			false,
 			__( 'Clean Orphaned Relationship Data Now' ),
 			__( 'Deletes orphaned relationship data from database.' ),
@@ -304,7 +304,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 		$this->add_options_form_section( 'comments', __( 'Orphaned Comments Data' ), __( 'Orphaned Comments MetaData are a problem only if you often delete comments from WordPress. Over time, you can have thousands of these items in the database, which consumes a lot of space.' ) );
 		$this->add_option_definition(
 			'btn_clean_orphaned_comment_meta',
-			'urlslab/v1/optimize/clean_orphaned_comment_meta',
+			'optimize/clean_orphaned_comment_meta',
 			false,
 			__( 'Clean Orphaned Comment Meta Data Now' ),
 			__( 'Delete all orphaned comment meta data.' ),
