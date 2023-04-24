@@ -114,8 +114,8 @@ class Urlslab_Optimize extends Urlslab_Widget {
 
 		$this->add_options_form_section( 'auto-drafts', __( 'Auto-Draft Posts' ), __( 'Auto-Drafts are stored in the database over weeks or months. When there are too many of them, it can slow down the website.' ) );
 		$this->add_option_definition(
-			'btn_clean_auto_drafts',
-			'optimize/clean_auto_drafts',
+			'btn_clean_post_autodrafts',
+			'optimize/clean_post_autodrafts',
 			false,
 			__( 'Clean Old Auto-Drafts Now' ),
 			__( 'Deletes old auto drafts from database.' ),
@@ -162,8 +162,8 @@ class Urlslab_Optimize extends Urlslab_Widget {
 
 		$this->add_options_form_section( 'trashed', __( 'Trashed Posts' ), __( 'The post slug is reserved, and there is no way to use it till you delete the post. So keep this process automatic in the background without effort.' ) );
 		$this->add_option_definition(
-			'btn_clean_trashed_posts',
-			'optimize/clean_trashed_posts',
+			'btn_clean_post_trash',
+			'optimize/clean_post_trash',
 			false,
 			__( 'Clean Trashed Posts Now' ),
 			__( 'Deletes trashed posts from database.' ),
@@ -210,8 +210,8 @@ class Urlslab_Optimize extends Urlslab_Widget {
 
 		$this->add_options_form_section( 'transient', __( 'Transient Options' ), __( 'Transients are extremely helpful, and they are making WordPress faster. Unfortunately, too many of them are expired, which can slow down the website\'s speed.' ) );
 		$this->add_option_definition(
-			'btn_clean_transients',
-			'optimize/clean_transients',
+			'btn_clean_expired_transient',
+			'optimize/clean_expired_transient',
 			false,
 			__( 'Clean Transient Options Now' ),
 			__( 'Deletes transient options from database.' ),
@@ -268,8 +268,8 @@ class Urlslab_Optimize extends Urlslab_Widget {
 
 		$this->add_options_form_section( 'orphaned-rel-data', __( 'Orphaned Relationship Data' ), __( 'Orphaned Relationship Data are a problem only if you often delete the content from WordPress. Over time, you can have thousands of these items in the database, which consumes a lot of space.' ) );
 		$this->add_option_definition(
-			'btn_clean_orphaned_relationship_data',
-			'optimize/clean_orphaned_relationship_data',
+			'btn_clean_orphaned_rel_data',
+			'optimize/clean_orphaned_rel_data',
 			false,
 			__( 'Clean Orphaned Relationship Data Now' ),
 			__( 'Deletes orphaned relationship data from database.' ),
