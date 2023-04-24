@@ -146,6 +146,13 @@ class Urlslab_Activator {
 				$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . ' SET final_url_id = url_id' ); // phpcs:ignore
 			}
 		);
+		self::update_step(
+			'2.15.0',
+			function() {
+				self::init_content_generator_urls_table();
+				self::init_youtube_urls_tables();
+			}
+		);
 
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -163,12 +170,14 @@ class Urlslab_Activator {
 		self::init_urlslab_file_pointers();
 		self::init_urlslab_file_db_driver_contents();
 		self::init_youtube_cache_tables();
+		self::init_youtube_urls_tables();
 		self::init_keywords_map_table();
 		self::init_css_cache_tables();
 		self::init_content_cache_tables();
 		self::init_search_replace_tables();
 		self::init_screenshot_urls_table();
 		self::init_content_generators_table();
+		self::init_content_generator_urls_table();
 		self::init_not_found_log_table();
 		self::init_redirects_table();
 	}
@@ -370,6 +379,20 @@ class Urlslab_Activator {
 		dbDelta( $sql );
 	}
 
+	private static function init_youtube_urls_tables() {
+		global $wpdb;
+		$table_name      = URLSLAB_YOUTUBE_URLS_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
+			videoid varchar(32) NOT NULL,
+			url_id bigint NOT NULL,
+			PRIMARY KEY  (videoid, url_id)
+		) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
 	private static function init_keywords_map_table() {
 		global $wpdb;
 		$table_name      = URLSLAB_KEYWORDS_MAP_TABLE;
@@ -474,6 +497,21 @@ class Urlslab_Activator {
     		  lang VARCHAR(8),
     		  status_changed DATETIME NULL,
 			  PRIMARY KEY (generator_id)
+        ) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_content_generator_urls_table() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$table_name = URLSLAB_CONTENT_GENERATOR_URLS_TABLE;
+		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
+    		  generator_id bigint NOT NULL,
+    		  url_id bigint NOT NULL,
+			  PRIMARY KEY (generator_id, url_id)
         ) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

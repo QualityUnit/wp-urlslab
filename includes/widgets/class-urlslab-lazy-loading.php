@@ -11,6 +11,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	public const SETTING_NAME_IMG_LAZY_LOADING_WITH_PLACEHOLDER = 'urlslab_img_lazy_placeholder';
 	public const SETTING_NAME_VIDEO_LAZY_LOADING = 'urlslab_video_lazy';
 	public const SETTING_NAME_YOUTUBE_LAZY_LOADING = 'urlslab_youtube_lazy';
+	const SETTING_NAME_YOUTUBE_TRACK_USAGE = 'urlslab_youtube_track_usage';
 	public const SETTING_NAME_CONTENT_LAZY_LOADING = 'urlslab_content_lazy';
 	public const SETTING_NAME_CONTENT_LAZY_MIN_PAGE_SIZE = 'urlslab_lz_min_content_size';
 	public const SETTING_NAME_CONTENT_LAZY_MIN_CACHE_SIZE = 'urlslab_lz_min_cache_size';
@@ -194,6 +195,17 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			'youtube'
 		);
 		$this->add_option_definition(
+			self::SETTING_NAME_YOUTUBE_TRACK_USAGE,
+			true,
+			true,
+			__( 'Track usages of YT videos' ),
+			__( 'Track urls, where was used youtube video. Tracking is active just for videos processed with lazy loading procedure.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'youtube'
+		);
+		$this->add_option_definition(
 			self::SETTING_NAME_YOUTUBE_API_KEY,
 			'',
 			false,
@@ -225,7 +237,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			__( 'The page sections and elements will be lazy-loaded if the number of characters on the page is longer than the defined amount.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function ( $value ) {
+			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'content'
@@ -238,7 +250,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			__( 'If the content of the marked section or element is too small, it has no sense to lazy load it. This parameter helps you to control the minimum size of the lazy-loaded content.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function ( $value ) {
+			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'content'
@@ -251,7 +263,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			__( 'Comma-separated class names of sections or elements, which can be lazy loaded.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
-			function ( $value ) {
+			function( $value ) {
 				return is_string( $value );
 			},
 			'content'
@@ -259,7 +271,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	private function add_videos_lazy_loading( DOMDocument $document ) {
-		$xpath = new DOMXPath( $document );
+		$xpath        = new DOMXPath( $document );
 		$dom_elements = $xpath->query( "//video[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
 		foreach ( $dom_elements as $element ) {
 			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) ) {
@@ -269,7 +281,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	private function add_images_lazy_loading( DOMDocument $document ) {
-		$xpath = new DOMXPath( $document );
+		$xpath        = new DOMXPath( $document );
 		$dom_elements = $xpath->query( "//img[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')]) and not(starts-with(@src, 'data:'))]" );
 		foreach ( $dom_elements as $element ) {
 			$has_lazy_loading_attr = false;
@@ -285,7 +297,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 				$this->add_img_lazy_loading( $element );
 			}
 		}
-		$xpath = new DOMXPath( $document );
+		$xpath        = new DOMXPath( $document );
 		$dom_elements = $xpath->query( "//source[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
 		foreach ( $dom_elements as $element ) {
 			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) ) {
@@ -295,7 +307,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	private function remove_default_wp_img_lazy_loading( DOMDocument $document ) {
-		$xpath = new DOMXPath( $document );
+		$xpath        = new DOMXPath( $document );
 		$dom_elements = $xpath->query( "//img[@loading='lazy' and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-nolazy')])]" );
 		foreach ( $dom_elements as $element ) {
 			$element->removeAttribute( 'loading' );
@@ -304,7 +316,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 	private function add_youtube_lazy_loading( DOMDocument $document ) {
 		$youtube_ids = array();
-		$xpath = new DOMXPath( $document );
+		$xpath       = new DOMXPath( $document );
 
 		// find all YouTube iframes
 		$iframe_elements = $xpath->query( "//iframe[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
@@ -335,7 +347,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$yt_elements = $xpath->query( "//*[@data-ytid and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
 		foreach ( $yt_elements as $yt_element ) {
 			if ( ! $this->is_skip_elemenet( $yt_element, 'lazy' ) ) {
-				$ytid = $yt_element->getAttribute( 'data-ytid' );
+				$ytid                 = $yt_element->getAttribute( 'data-ytid' );
 				$youtube_ids[ $ytid ] = $ytid;
 			}
 		}
@@ -343,6 +355,8 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		if ( empty( $youtube_ids ) ) {
 			return; // no yt videos in page
 		}
+
+		$this->track_usage( $youtube_ids );
 
 		$video_objects = $this->get_youtube_videos( array_keys( $youtube_ids ) );
 
@@ -410,7 +424,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			return array();
 		}
 		global $wpdb;
-		$videos = array();
+		$videos  = array();
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT * FROM ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' WHERE videoid in (' . trim( str_repeat( '%s,', count( $youtube_ids ) ), ',' ) . ')', // phpcs:ignore
@@ -420,14 +434,14 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		);
 
 		foreach ( $results as $row ) {
-			$video_obj = new Urlslab_Youtube_Row( $row, true );
+			$video_obj                            = new Urlslab_Youtube_Row( $row, true );
 			$videos[ $video_obj->get_video_id() ] = $video_obj;
 		}
 
 		// schedule missing videos
 		$placeholders = array();
-		$values = array();
-		$now = Urlslab_Data::get_now();
+		$values       = array();
+		$now          = Urlslab_Data::get_now();
 		foreach ( $youtube_ids as $videoid ) {
 			if ( ! isset( $videos[ $videoid ] ) ) {
 				$placeholders[] = '(%s,%s,%s)';
@@ -598,7 +612,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		if ( empty( $height ) ) {
 			$height = 1;
 		}
-		$width = (int) $width;
+		$width  = (int) $width;
 		$height = (int) $height;
 
 		return 'data:image/svg+xml;base64,' . base64_encode( '<svg xmlns="http://www.w3.org/2000/svg" width="' . $width . '" height="' . $height . '"></svg>' );
@@ -610,7 +624,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		}
 		$this->content_docs = array();
 
-		$classnames = explode( ',', $this->get_option( self::SETTING_NAME_CONTENT_LAZY_CLASSES ) );
+		$classnames     = explode( ',', $this->get_option( self::SETTING_NAME_CONTENT_LAZY_CLASSES ) );
 		$str_classnames = array();
 		foreach ( $classnames as $class ) {
 			$class = trim( $class );
@@ -628,8 +642,8 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			$placeholders = array();
 			foreach ( $this->content_docs as $doc ) {
 				$placeholders[] = '(cache_crc32=%d AND cache_len=%d)';
-				$sql_data[] = $doc->get_cache_crc32();
-				$sql_data[] = $doc->get_cache_len();
+				$sql_data[]     = $doc->get_cache_crc32();
+				$sql_data[]     = $doc->get_cache_len();
 			}
 			global $wpdb;
 			$results = $wpdb->get_results( $wpdb->prepare( 'SELECT cache_crc32, cache_len FROM ' . URLSLAB_CONTENT_CACHE_TABLE . ' WHERE ' . implode( ' OR ', $placeholders ), $sql_data ), 'ARRAY_A' ); // phpcs:ignore
@@ -650,14 +664,14 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			return true;
 		}
 
-		$xpath = new DOMXPath( $document );
+		$xpath    = new DOMXPath( $document );
 		$elements = $xpath->query( '//*[not(@urlslab_lazy_small) and (' . $classes . ") and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
 		foreach ( $elements as $dom_elem ) {
-			$element_html = $document->saveHTML( $dom_elem );
+			$element_html     = $document->saveHTML( $dom_elem );
 			$element_html_len = strlen( $element_html );
 			if ( $element_html_len > $this->get_option( self::SETTING_NAME_CONTENT_LAZY_MIN_CACHE_SIZE ) ) {
 				$lazy_element = $document->createElement( 'div' );
-				$obj = new Urlslab_Content_Cache_Row(
+				$obj          = new Urlslab_Content_Cache_Row(
 					array(
 						'cache_len'     => $element_html_len,
 						'cache_content' => $element_html,
@@ -665,7 +679,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 					false
 				);
 
-				$id = $obj->get_primary_id( '_' );
+				$id                        = $obj->get_primary_id( '_' );
 				$this->content_docs[ $id ] = $obj;
 				$lazy_element->setAttribute( 'lazy_hash', $id );
 				$dom_elem->parentNode->replaceChild( $lazy_element, $dom_elem );
@@ -674,5 +688,23 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			}
 			$dom_elem->setAttribute( 'urlslab_lazy_small', $element_html_len );
 		}
+	}
+
+	private function track_usage( array $youtube_ids ) {
+		if ( ! $this->get_option( self::SETTING_NAME_YOUTUBE_TRACK_USAGE ) ) {
+			return;
+		}
+
+		//TODO here we can make more complicated tracking in the future (first load data and than apply just changes)
+
+		$objects = array();
+		$url_id  = $this->get_current_page_url()->get_url_id();
+		foreach ( $youtube_ids as $youtube_id ) {
+			$row = new Urlslab_Youtube_Url_Row();
+			$row->set_videoid( $youtube_id );
+			$row->set_url_id( $url_id );
+			$objects[] = $row;
+		}
+		$row->insert_all( $objects, true );
 	}
 }

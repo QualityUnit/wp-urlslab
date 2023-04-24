@@ -110,6 +110,10 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 				),
 			)
 		);
+
+		register_rest_route( self::NAMESPACE, $base . '/(?P<generator_id>[0-9]+)/urls', $this->get_route_generator_urls() );
+		register_rest_route( self::NAMESPACE, $base . '/(?P<generator_id>[0-9]+)/urls/count', $this->get_count_route( $this->get_route_generator_urls() ) );
+
 	}
 
 	public function get_items( $request ) {
@@ -252,8 +256,10 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
-		$sql->add_select_column( '*' );
-		$sql->add_from( URLSLAB_CONTENT_GENERATORS_TABLE );
+		$sql->add_select_column( '*', 'g' );
+
+		$sql->add_select_column( 'SUM(!ISNULL(m.url_id))', false, 'usage_count' );
+		$sql->add_from( URLSLAB_CONTENT_GENERATORS_TABLE . ' g LEFT JOIN ' . URLSLAB_CONTENT_GENERATOR_URLS_TABLE . ' m ON m.generator_id = g.generator_id' );
 
 		$this->add_filter_table_fields( $sql );
 
@@ -264,10 +270,14 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 		$sql->add_filter( 'filter_status' );
 		$sql->add_filter( 'filter_status_changed' );
 
+		$sql->add_having_filter( 'filter_usage_count', '%d' );
+
+		$sql->add_group_by( 'generator_id', 'g' );
+
 		if ( $request->get_param( 'sort_column' ) ) {
 			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );
 		}
-		$sql->add_order( 'generator_id' );
+		$sql->add_order( 'generator_id', 'ASC', 'g' );
 
 		return $sql;
 	}
@@ -287,6 +297,62 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 		}
 
 		return strlen( trim( $original_text ) ) > 2 && preg_match( '/[\p{L}]+/u', $original_text );
+	}
+
+
+	/**
+	 * @return array[]
+	 */
+	public function get_route_generator_urls(): array {
+		return array(
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_generator_urls' ),
+				'args'                => array(
+					'rows_per_page' => array(
+						'required'          => true,
+						'default'           => self::ROWS_PER_PAGE,
+						'validate_callback' => function( $param ) {
+							return is_numeric( $param ) && 0 < $param && 1000 > $param;
+						},
+					),
+					'from_url_id'   => array(
+						'required'          => false,
+						'validate_callback' => function( $param ) {
+							return empty( $param ) || is_numeric( $param );
+						},
+					),
+				),
+				'permission_callback' => array(
+					$this,
+					'get_items_permissions_check',
+				),
+			),
+		);
+	}
+
+	public function get_generator_urls( $request ) {
+		$rows = $this->get_generator_urls_sql( $request )->get_results();
+		if ( ! is_array( $rows ) ) {
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
+		}
+		foreach ( $rows as $row ) {
+			$row->url_id = (int) $row->url_id; // phpcs:ignore
+		}
+
+		return new WP_REST_Response( $rows, 200 );
+	}
+
+	public function get_generator_urls_sql( $request ): Urlslab_Api_Table_Sql {
+		$sql = new Urlslab_Api_Table_Sql( $request );
+		$sql->add_select_column( 'url_id', 'm' );
+		$sql->add_select_column( 'url_name', 'u' );
+		$sql->add_from( URLSLAB_CONTENT_GENERATOR_URLS_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.url_id = u.url_id)' );
+		$sql->add_filter( 'generator_id', '%d' );
+		$sql->add_filter( 'from_url_id', '%d', 'm' );
+		$sql->add_order( 'url_id', 'ASC', 'm' );
+
+		return $sql;
 	}
 
 }

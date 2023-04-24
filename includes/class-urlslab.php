@@ -130,10 +130,10 @@ class Urlslab {
 		$content = apply_filters( 'urlslab_content_raw', $content );
 
 		if ( has_action( 'urlslab_content' ) ) {
-			$document = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
-			$document->encoding = get_bloginfo( 'charset' );
+			$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
+			$document->encoding            = get_bloginfo( 'charset' );
 			$document->strictErrorChecking = false; // phpcs:ignore
-			$libxml_previous_state = libxml_use_internal_errors( true );
+			$libxml_previous_state         = libxml_use_internal_errors( true );
 
 			try {
 				$document->loadHTML(
@@ -236,19 +236,19 @@ class Urlslab {
 
 		$remote = json_decode( wp_remote_retrieve_body( $remote ) );
 
-		$res = new stdClass();
-		$res->name = $remote->name;
-		$res->slug = $remote->slug;
-		$res->author = $remote->author;
+		$res                 = new stdClass();
+		$res->name           = $remote->name;
+		$res->slug           = $remote->slug;
+		$res->author         = $remote->author;
 		$res->author_profile = $remote->author_profile;
-		$res->version = $remote->version;
-		$res->tested = $remote->tested;
-		$res->requires = $remote->requires;
-		$res->requires_php = $remote->requires_php;
-		$res->download_link = $remote->download_url;
-		$res->trunk = $remote->download_url;
-		$res->last_updated = $remote->last_updated;
-		$res->sections = array(
+		$res->version        = $remote->version;
+		$res->tested         = $remote->tested;
+		$res->requires       = $remote->requires;
+		$res->requires_php   = $remote->requires_php;
+		$res->download_link  = $remote->download_url;
+		$res->trunk          = $remote->download_url;
+		$res->last_updated   = $remote->last_updated;
+		$res->sections       = array(
 			'description'  => $remote->sections->description,
 			'installation' => $remote->sections->installation,
 			'changelog'    => $remote->sections->changelog,
@@ -285,12 +285,12 @@ class Urlslab {
 			&& version_compare( $remote->requires, get_bloginfo( 'version' ), '<' )
 			&& version_compare( $remote->requires_php, PHP_VERSION, '<' )
 		) {
-			$res = new stdClass();
-			$res->slug = $remote->slug;
-			$res->plugin = URLSLAB_PLUGIN_BASENAME;
-			$res->new_version = $remote->version;
-			$res->tested = $remote->tested;
-			$res->package = $remote->download_url;
+			$res                                 = new stdClass();
+			$res->slug                           = $remote->slug;
+			$res->plugin                         = URLSLAB_PLUGIN_BASENAME;
+			$res->new_version                    = $remote->version;
+			$res->tested                         = $remote->tested;
+			$res->package                        = $remote->download_url;
 			$transient->response[ $res->plugin ] = $res;
 
 			if ( property_exists( $remote, 'version' ) ) {
@@ -364,36 +364,24 @@ class Urlslab {
 
 		// data
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-data.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-content-generator-row.php';
-
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-content-generator-url-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-file-row.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-keyword-row.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-keyword-map-row.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-url-row.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-url-relation-row.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-file-pointer-row.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-youtube-row.php';
-
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-youtube-url-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-url-data-fetcher.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-search-replace-row.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-screenshot-url-row.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-not-found-log-row.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-redirect-row.php';
 
 		// additional
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
 
 		// widgets
@@ -401,13 +389,9 @@ class Urlslab {
 
 		// menu pages
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-page-factory.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-admin-page.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-admin-subpage.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-dashboard-page.php';
-
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-api-router.php';
 	}
 
@@ -437,7 +421,7 @@ class Urlslab {
 
 		add_action(
 			'admin_enqueue_scripts',
-			function ( $hook ) {
+			function( $hook ) {
 				if ( ! did_action( 'wp_enqueue_media' ) ) {
 					wp_enqueue_media();
 				}
@@ -490,10 +474,10 @@ class Urlslab {
 
 		$content = apply_filters( 'urlslab_head_content_raw', $content );
 
-		$document = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
-		$document->encoding = get_bloginfo( 'charset' );
+		$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
+		$document->encoding            = get_bloginfo( 'charset' );
 		$document->strictErrorChecking = false; // phpcs:ignore
-		$libxml_previous_state = libxml_use_internal_errors( true );
+		$libxml_previous_state         = libxml_use_internal_errors( true );
 
 		try {
 			$document->loadHTML(
@@ -547,7 +531,7 @@ class Urlslab {
 
 		add_action(
 			'rest_api_init',
-			function () {
+			function() {
 				if ( ! current_user_can( 'read' ) ) {
 					return;
 				}
