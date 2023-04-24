@@ -59,6 +59,7 @@ class DomainScheduleScheduleConf implements ModelInterface, ArrayAccess, \JsonSe
     protected static $openAPITypes = [
         'urls' => 'string[]',
         'link_following_strategy' => 'string',
+        'is_forced' => 'bool',
         'sitemaps' => 'string[]',
         'all_sitemaps' => 'bool',
         'take_screenshot' => 'bool',
@@ -77,6 +78,7 @@ class DomainScheduleScheduleConf implements ModelInterface, ArrayAccess, \JsonSe
     protected static $openAPIFormats = [
         'urls' => null,
         'link_following_strategy' => null,
+        'is_forced' => null,
         'sitemaps' => null,
         'all_sitemaps' => null,
         'take_screenshot' => null,
@@ -93,6 +95,7 @@ class DomainScheduleScheduleConf implements ModelInterface, ArrayAccess, \JsonSe
     protected static array $openAPINullables = [
         'urls' => false,
 		'link_following_strategy' => false,
+		'is_forced' => true,
 		'sitemaps' => false,
 		'all_sitemaps' => false,
 		'take_screenshot' => false,
@@ -189,6 +192,7 @@ class DomainScheduleScheduleConf implements ModelInterface, ArrayAccess, \JsonSe
     protected static $attributeMap = [
         'urls' => 'urls',
         'link_following_strategy' => 'linkFollowingStrategy',
+        'is_forced' => 'isForced',
         'sitemaps' => 'sitemaps',
         'all_sitemaps' => 'allSitemaps',
         'take_screenshot' => 'takeScreenshot',
@@ -205,6 +209,7 @@ class DomainScheduleScheduleConf implements ModelInterface, ArrayAccess, \JsonSe
     protected static $setters = [
         'urls' => 'setUrls',
         'link_following_strategy' => 'setLinkFollowingStrategy',
+        'is_forced' => 'setIsForced',
         'sitemaps' => 'setSitemaps',
         'all_sitemaps' => 'setAllSitemaps',
         'take_screenshot' => 'setTakeScreenshot',
@@ -221,6 +226,7 @@ class DomainScheduleScheduleConf implements ModelInterface, ArrayAccess, \JsonSe
     protected static $getters = [
         'urls' => 'getUrls',
         'link_following_strategy' => 'getLinkFollowingStrategy',
+        'is_forced' => 'getIsForced',
         'sitemaps' => 'getSitemaps',
         'all_sitemaps' => 'getAllSitemaps',
         'take_screenshot' => 'getTakeScreenshot',
@@ -328,6 +334,7 @@ class DomainScheduleScheduleConf implements ModelInterface, ArrayAccess, \JsonSe
     {
         $this->setIfExists('urls', $data ?? [], null);
         $this->setIfExists('link_following_strategy', $data ?? [], null);
+        $this->setIfExists('is_forced', $data ?? [], null);
         $this->setIfExists('sitemaps', $data ?? [], null);
         $this->setIfExists('all_sitemaps', $data ?? [], null);
         $this->setIfExists('take_screenshot', $data ?? [], null);
@@ -480,6 +487,40 @@ class DomainScheduleScheduleConf implements ModelInterface, ArrayAccess, \JsonSe
             );
         }
         $this->container['link_following_strategy'] = $link_following_strategy;
+
+        return $this;
+    }
+
+    /**
+     * Gets is_forced
+     *
+     * @return bool|null
+     */
+    public function getIsForced()
+    {
+        return $this->container['is_forced'];
+    }
+
+    /**
+     * Sets is_forced
+     *
+     * @param bool|null $is_forced is_forced
+     *
+     * @return self
+     */
+    public function setIsForced($is_forced)
+    {
+        if (is_null($is_forced)) {
+            array_push($this->openAPINullablesSetToNull, 'is_forced');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('is_forced', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
+        }
+        $this->container['is_forced'] = $is_forced;
 
         return $this;
     }
