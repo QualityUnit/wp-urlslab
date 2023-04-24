@@ -16,20 +16,35 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		const { op, val } = params;
 		return { col, op, val };
 	} ) : [];
-	console.log( sorting );
+
+	const sortingArray = sorting ? sorting.map( ( sortingObj ) => {
+		const { key: keyName, dir } = sortingObj;
+		return { col: keyName, dir };
+	} ) : [];
+
+	// console.log( sortingArray );
 
 	const query = useInfiniteQuery( {
-		queryKey: [ key, filtersArray ],
+		queryKey: [ key, filtersArray, sortingArray ],
 		// queryKey: [ key, Object.keys( filters ).length > 0 && filters, sorting ],
-		queryFn: ( { pageParam = '' } ) => {
-			return postFetch( key, { sorting: [ { col: paginationId, dir: 'ASC' } ], filters: pageParam ? [ ...filtersArray, { col: paginationId, op: '>', val: pageParam } ] : [ ...filtersArray ], rows_per_page: maxRows } ).then( ( response ) => response.json() );
+		queryFn: async ( { pageParam = '' } ) => {
+			const { lastRowId, sortingFilters } = pageParam;
+			const response = await postFetch( key, {
+				sorting: [ ...sortingArray, { col: paginationId, dir: 'ASC' } ],
+				filters: lastRowId ? [ ...filtersArray, ...sortingFilters, { col: paginationId, op: '>', val: lastRowId } ] : [ ...filtersArray ], rows_per_page: maxRows } );
+			return response.json();
 		},
 		getNextPageParam: ( allRows ) => {
 			if ( allRows.length < maxRows ) {
 				return undefined;
 			}
 			const lastRowId = allRows[ allRows?.length - 1 ][ paginationId ] ?? undefined;
-			return lastRowId;
+			const sortingFilters = sorting ? sorting.map( ( sortingObj ) => {
+				const { key: keyName, op } = sortingObj;
+				return { col: keyName, op, val: allRows[ allRows?.length - 1 ][ keyName ] };
+			} ) : [];
+			console.log( { allRows, lastRowId, sortingFilters } );
+			return { lastRowId, sortingFilters };
 		},
 		keepPreviousData: true,
 		refetchOnWindowFocus: false,

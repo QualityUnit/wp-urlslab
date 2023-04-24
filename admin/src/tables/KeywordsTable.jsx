@@ -83,7 +83,7 @@ export default function KeywordsTable( { slug } ) {
 			size: 100,
 		} ),
 		columnHelper.accessor( 'kw_length', {
-			header: header.kw_length,
+			header: <SortBy props={ { sorting, key: 'kw_length', onClick: () => sortBy( 'kw_length' ) } }>{ header.kw_length }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'kw_priority', {

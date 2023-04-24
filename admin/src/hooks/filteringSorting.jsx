@@ -173,13 +173,16 @@ export function useFilter( { slug, header, initialRow } ) {
 
 /* SORTING HOOK */
 export function useSorting( { slug } ) {
-	const [ sorting, setSorting ] = useState( {} );
+	const [ sorting, setSorting ] = useState( [] );
 	const runSorting = useRef( false );
 	const queryClient = useQueryClient();
 
 	const getQueryData = useCallback( () => {
+		const sortingQuery = queryClient.getQueryData( [ slug, 'sorting' ] );
 		//Get new data from local query if filtering changes ( on add/remove filter)
-		setSorting( queryClient.getQueryData( [ slug, 'sorting' ] ) );
+		if ( sortingQuery ) {
+			setSorting( queryClient.getQueryData( [ slug, 'sorting' ] ) );
+		}
 	}, [ slug, queryClient ] );
 
 	// Recovers filters from query cache when returning from different component
@@ -187,30 +190,31 @@ export function useSorting( { slug } ) {
 		getQueryData();
 	}, [ getQueryData ] );
 
-	const sortOrder = [
-		{ id: 0 },
-		{ id: 1, dir: 'ASC', op: '<=' },
-		{ id: 2, dir: 'DESC', op: '>=' },
-	];
+	function sortBy( key ) {
+		// queryClient.setQueryData( [ slug, 'sortBy' ], key );
+		setSorting( ( currentSorting ) => {
+			// console.log( sorting );
+			const objFromArr = currentSorting.filter( ( k ) => k.key )[ 0 ];
+			const cleanArr = currentSorting.filter( ( k ) => ! k.key );
+			if ( objFromArr && objFromArr?.dir === 'ASC' ) {
+				return [ { key, dir: 'DESC', op: '>=' }, ...cleanArr ];
+			}
 
-	function sortBy( headerKey ) {
-		const id = sorting ? sorting[ headerKey ]?.id : 0;
-		console.log( id );
-		console.log( sortOrder[ id + 1 ] );
-		setSorting( { [ headerKey ]: sortOrder[ id + 1 ], ...sorting } );
-		if ( id === 2 ) {
-			const currentSortingCopy = { ...sorting };
-			delete currentSortingCopy[ headerKey ];
-			setSorting( currentSortingCopy );
+			if ( objFromArr && objFromArr?.dir === 'DESC' ) {
+				return cleanArr;
+			}
+			return [ { key, dir: 'ASC', op: '<=' }, ...currentSorting ];
 		}
+		);
 		runSorting.current = true;
 	}
+	// console.log( sorting );
 
 	// Save the all sorting values to local query for later use (on component rerender)
-	if ( runSorting.current ) {
-		runSorting.current = false;
-		queryClient.setQueryData( [ slug, 'sorting' ], sorting );
-	}
+	// if ( runSorting.current ) {
+	// 	runSorting.current = false;
+	// 	queryClient.setQueryData( [ slug, 'sorting' ], sorting );
+	// }
 
 	return { sorting, sortBy };
 }
