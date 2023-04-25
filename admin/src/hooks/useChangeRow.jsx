@@ -80,29 +80,29 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 
 	const deleteRow = useCallback( ( { cell, optionalSelector } ) => {
 		setResponseCounter( 1 );
-		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), url, slug, cell, optionalSelector } );
-	}, [ processDeletedPages, deleteSelectedRow, slug, url ] );
+		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), cell, optionalSelector } );
+	}, [ processDeletedPages, deleteSelectedRow ] );
 
 	const deleteSelectedRows = async ( optionalSelector ) => {
 		// Multiple rows delete
 		setResponseCounter( selectedRows.length );
 
 		selectedRows.map( ( cell ) => {
-			deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), url, slug, cell, optionalSelector } );
+			deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), cell, optionalSelector } );
 			return false;
 		} );
 	};
 
 	const updateRowData = useMutation( {
 		mutationFn: async ( options ) => {
-			const { newVal, cell, optionalSelector } = options;
+			const { newVal, cell, changeField, optionalSelector } = options;
 			const cellId = cell.column.id;
 
 			const newPagesArray = data?.pages.map( ( page ) =>
 
 				page.map( ( row ) => {
 					if ( row[ pageId ] === getRowId( cell ) ) {
-						row[ cell.column.id ] = newVal;
+						row[ cellId ] = newVal;
 						return row;
 					}
 					return row;
@@ -114,6 +114,10 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 				pages: newPagesArray,
 				pageParams: origData.pageParams,
 			} ) );
+			if ( changeField ) {
+				const response = await setData( `${ slug }/${ getRowId( cell, optionalSelector ) }`, { [ changeField ]: newVal } );
+				return response;
+			}
 			const response = await setData( `${ slug }/${ getRowId( cell, optionalSelector ) }`, { [ cellId ]: newVal } );
 			return response;
 		},
@@ -124,8 +128,8 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 			}
 		},
 	} );
-	const updateRow = ( { newVal, cell, optionalSelector } ) => {
-		updateRowData.mutate( { data, newVal, url, slug, cell, optionalSelector } );
+	const updateRow = ( { newVal, cell, changeField, optionalSelector } ) => {
+		updateRowData.mutate( { newVal, cell, changeField, optionalSelector } );
 	};
 
 	const selectRow = ( isSelected, cell ) => {

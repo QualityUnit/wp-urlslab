@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { ReactComponent as CloseIcon } from '../assets/images/icon-close.svg';
+import { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.svg';
 
 export default function useCloseModal( handlePanel ) {
 	const handleClose = ( operationVal ) => {

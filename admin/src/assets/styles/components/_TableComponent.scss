@@ -173,6 +173,10 @@ $cellHeight: 3.5em;
 		transition: opacity $transitionTime;
 		cursor: pointer;
 
+		&.actions {
+			cursor: default;
+		}
+
 		.limit {
 			overflow: visible;
 			text-overflow: unset;

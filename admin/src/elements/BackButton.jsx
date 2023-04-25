@@ -1,4 +1,4 @@
-import { ReactComponent as IconArrow } from '../assets/images/icon-arrow.svg';
+import { ReactComponent as IconArrow } from '../assets/images/icons/icon-arrow.svg';
 
 import '../assets/styles/elements/_BackButton.scss';
 

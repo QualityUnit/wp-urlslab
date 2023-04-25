@@ -37,6 +37,11 @@ $colorClasses: (
 			fill: currentcolor !important;
 		}
 	}
+
+	svg.c-#{$class} {
+		fill: currentcolor !important;
+	}
+
 	.bg-#{$class} {
 		background-color: $color !important;
 	}

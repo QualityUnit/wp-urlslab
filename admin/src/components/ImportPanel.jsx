@@ -7,7 +7,7 @@ import importCsv from '../api/importCsv';
 import useCloseModal from '../hooks/useCloseModal';
 import { useFilter } from '../hooks/filteringSorting';
 
-import { ReactComponent as ImportIcon } from '../assets/images/icon-import.svg';
+import { ReactComponent as ImportIcon } from '../assets/images/icons/icon-import.svg';
 import Button from '../elements/Button';
 import ProgressBar from '../elements/ProgressBar';
 
