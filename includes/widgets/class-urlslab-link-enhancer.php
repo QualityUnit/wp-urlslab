@@ -22,6 +22,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	public const SETTING_NAME_MARK_AS_VALID_CURRENT_URL = 'urlslab_mark_as_valid_current_url';
 	public const SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_INTERNAL_LINKS = 'urlslab_auto_sum_int_links';
 	public const SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_EXTERNAL_LINKS = 'urlslab_auto_sum_ext_links';
+	const SETTING_NAME_REPLACE_3XX_LINKS = 'urlslab_replace_3xx_links';
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'post_updated', $this, 'post_updated', 10, 3 );
@@ -174,8 +175,19 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			self::SETTING_NAME_REMOVE_LINKS,
 			true,
 			true,
-			__( 'Hide Invalid Links' ),
-			__( 'Hide all invalid links from the content that lead to a 4xx or 5xx error page.' ),
+			__( 'Hide Links marked as hidden' ),
+			__( 'Hide all links in HTML content marked manually by administrator in Link Managers as hidden' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'validation'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_REPLACE_3XX_LINKS,
+			false,
+			true,
+			__( 'Replace 3XX Links with destination url' ),
+			__( 'In case content contains link to any URL with 3XX redirect, replace this link with URL evaluated as destination URL' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -428,6 +440,17 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 									}
 									$txt_element = $document->createTextNode( $txt_value );
 									$dom_elem->parentNode->replaceChild( $txt_element, $dom_elem );
+								}
+							} else if ( $result[ $url_obj->get_url_id() ]->is_http_redirect() && $this->get_option( self::SETTING_NAME_REPLACE_3XX_LINKS ) ) {
+								if ( isset( $result[ $result[ $url_obj->get_url_id() ]->get_final_url_id() ] ) ) {
+									$dom_elem->setAttribute( 'urlslab_href_old', $dom_elem->getAttribute( 'href' ) );
+									$dom_elem->setAttribute( 'href', $result[ $result[ $url_obj->get_url_id() ]->get_final_url_id() ]->get_url()->get_url_with_protocol() );
+								} else {
+									$new_url = new Urlslab_Url_Row( array( 'url_id' => $result[ $url_obj->get_url_id() ]->get_final_url_id() ) );
+									if ( $new_url->load() ) {
+										$dom_elem->setAttribute( 'urlslab_href_old', $dom_elem->getAttribute( 'href' ) );
+										$dom_elem->setAttribute( 'href', $new_url->get_url()->get_url_with_protocol() );
+									}
 								}
 							} else {
 								// enhance title if url has no title

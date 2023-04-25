@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { deleteRow as del } from '../api/deleteTableData';
-import { setData } from '../api/fetching';
+import { postFetch } from '../api/fetching';
 
-export default function useChangeRow( { data, url, slug, pageId } ) {
+export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const queryClient = useQueryClient();
 	const [ rowValue, setRow ] = useState();
 	const [ insertRowResult, setInsertRowRes ] = useState( false );
@@ -12,10 +12,10 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 
 	const getRowId = useCallback( ( cell, optionalSelector ) => {
 		if ( optionalSelector ) {
-			return `${ cell.row.original[ pageId ] }/${ cell.row.original[ optionalSelector ] }`;
+			return `${ cell.row.original[ paginationId ] }/${ cell.row.original[ optionalSelector ] }`;
 		}
-		return cell.row.original[ pageId ];
-	}, [ pageId ] );
+		return cell.row.original[ paginationId ];
+	}, [ paginationId ] );
 
 	const getRow = ( cell ) => {
 		return cell.row.original;
@@ -23,7 +23,7 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 
 	const insertNewRow = useMutation( {
 		mutationFn: async ( { rowToInsert } ) => {
-			const response = await setData( `${ slug }`, rowToInsert );
+			const response = await postFetch( `${ slug }`, rowToInsert );
 			return { response };
 		},
 		onSuccess: async ( { response } ) => {
@@ -44,8 +44,8 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 			cell.row.toggleSelected();
 		}
 		setSelectedRows( [] );
-		return deletedPagesArray = deletedPagesArray.map( ( page ) => page.filter( ( row ) => row[ pageId ] !== getRowId( cell ) ) ) ?? [];
-	}, [ data?.pages, getRowId, pageId ] );
+		return deletedPagesArray = deletedPagesArray.map( ( page ) => page.filter( ( row ) => row[ paginationId ] !== getRowId( cell ) ) ) ?? [];
+	}, [ data?.pages, getRowId, paginationId ] );
 
 	const deleteSelectedRow = useMutation( {
 		mutationFn: async ( options ) => {
@@ -80,28 +80,28 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 
 	const deleteRow = useCallback( ( { cell, optionalSelector } ) => {
 		setResponseCounter( 1 );
-		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), url, slug, cell, optionalSelector } );
-	}, [ processDeletedPages, deleteSelectedRow, slug, url ] );
+		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), cell, optionalSelector } );
+	}, [ processDeletedPages, deleteSelectedRow ] );
 
 	const deleteSelectedRows = async ( optionalSelector ) => {
 		// Multiple rows delete
 		setResponseCounter( selectedRows.length );
 
 		selectedRows.map( ( cell ) => {
-			deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), url, slug, cell, optionalSelector } );
+			deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), cell, optionalSelector } );
 			return false;
 		} );
 	};
 
 	const updateRowData = useMutation( {
 		mutationFn: async ( options ) => {
-			const { newVal, cell, optionalSelector } = options;
+			const { newVal, cell, customEndpoint, changeField, optionalSelector } = options;
 			const cellId = cell.column.id;
 
 			const newPagesArray = data?.pages.map( ( page ) =>
 
 				page.map( ( row ) => {
-					if ( row[ pageId ] === getRowId( cell ) ) {
+					if ( row[ paginationId ] === getRowId( cell ) ) {
 						row[ cell.column.id ] = newVal;
 						return row;
 					}
@@ -114,7 +114,11 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 				pages: newPagesArray,
 				pageParams: origData.pageParams,
 			} ) );
-			const response = await setData( `${ slug }/${ getRowId( cell, optionalSelector ) }`, { [ cellId ]: newVal } );
+			if ( changeField ) {
+				const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ changeField ]: newVal } );
+				return response;
+			}
+			const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ cellId ]: newVal } );
 			return response;
 		},
 		onSuccess: ( response ) => {
@@ -124,8 +128,8 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 			}
 		},
 	} );
-	const updateRow = ( { newVal, cell, optionalSelector } ) => {
-		updateRowData.mutate( { data, newVal, url, slug, cell, optionalSelector } );
+	const updateRow = ( { newVal, cell, customEndpoint, changeField, optionalSelector } ) => {
+		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, optionalSelector } );
 	};
 
 	const selectRow = ( isSelected, cell ) => {

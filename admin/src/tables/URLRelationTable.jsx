@@ -1,14 +1,14 @@
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 
 export default function URLRelationTable( { slug } ) {
-	const pageId = 'src_url_id';
-	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
+	const paginationId = 'src_url_id';
+	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sorting ? '' : sorting }`;
 
 	const {
 		__,
@@ -20,9 +20,9 @@ export default function URLRelationTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, pageId } );
+	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const header = {
 		src_url_name: __( 'Source URL' ),
@@ -47,20 +47,20 @@ export default function URLRelationTable( { slug } ) {
 		columnHelper.accessor( 'src_url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: header.src_url_name,
+			header: <SortBy props={ { header, sorting, key: 'src_url_name', onClick: () => sortBy( 'src_url_name' ) } }>{ header.src_url_name }</SortBy>,
 			size: 400,
 		} ),
 		columnHelper.accessor( 'dest_url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: header.dest_url_name,
+			header: <SortBy props={ { header, sorting, key: 'dest_url_name', onClick: () => sortBy( 'dest_url_name' ) } }>{ header.dest_url_name }</SortBy>,
 			size: 400,
 		} ),
 		columnHelper.accessor( 'pos', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell, optionalSelector: 'dest_url_id' } ) } />,
-			header: header.pos,
+			header: <SortBy props={ { header, sorting, key: 'pos', onClick: () => sortBy( 'pos' ) } }>{ header.pos }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'delete', {
@@ -94,13 +94,13 @@ export default function URLRelationTable( { slug } ) {
 						}, 3000 );
 					}
 				} }
-				insertOptions={ { inserterCells, title: 'Add related article', data, slug, url, pageId, rowToInsert } }
+				insertOptions={ { inserterCells, title: 'Add related article', data, slug, url, paginationId, rowToInsert } }
 				exportOptions={ {
-					url: slug,
+					slug,
 					filters,
-					fromId: `from_${ pageId }`,
-					pageId,
-					deleteCSVCols: [ pageId, 'dest_url_id' ],
+					fromId: `from_${ paginationId }`,
+					paginationId,
+					deleteCSVCols: [ paginationId, 'dest_url_id' ],
 				} }
 			/>
 
@@ -118,7 +118,7 @@ export default function URLRelationTable( { slug } ) {
 					? <Tooltip center>{ __( 'Item has been added.' ) }</Tooltip>
 					: null
 				}
-				<TooltipSortingFiltering props={ { isFetching, filters, sortingColumn } } />
+				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

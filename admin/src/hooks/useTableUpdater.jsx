@@ -6,9 +6,9 @@ export default function useTableUpdater( { slug } ) {
 	const [ table, setTable ] = useState( );
 	const [ filters, setFilters ] = useState( );
 	const [ rowToInsert, setInsertRow ] = useState( {} );
-	const { sortingColumn, sortBy } = useSorting( { slug } );
+	const { sorting, sortBy } = useSorting( { slug } );
 
 	return {
-		tableHidden, setHiddenTable, table, setTable, filters, setFilters, sortingColumn, sortBy, rowToInsert, setInsertRow,
+		tableHidden, setHiddenTable, table, setTable, filters, setFilters, sorting, sortBy, rowToInsert, setInsertRow,
 	};
 }

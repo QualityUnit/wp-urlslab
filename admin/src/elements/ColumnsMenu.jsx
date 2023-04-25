@@ -7,7 +7,7 @@ import Checkbox from './Checkbox';
 import Button from './Button';
 import Tooltip from './Tooltip';
 
-import { ReactComponent as ColumnsIcon } from '../assets/images/icon-columns.svg';
+import { ReactComponent as ColumnsIcon } from '../assets/images/icons/icon-columns.svg';
 
 import '../assets/styles/elements/_FilterMenu.scss';
 import '../assets/styles/elements/_ColumnsMenu.scss';

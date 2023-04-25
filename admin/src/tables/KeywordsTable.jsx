@@ -1,16 +1,16 @@
 /* eslint-disable indent */
 import { useState } from 'react';
 import {
-	useInfiniteFetch, ProgressBar, SortMenu, LangMenu, InputField, Checkbox, LinkIcon, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, SortBy, SortMenu, LangMenu, InputField, Checkbox, LinkIcon, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 
 export default function KeywordsTable( { slug } ) {
-	const pageId = 'kw_id';
-	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
+	const paginationId = 'kw_id';
+	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sorting ? '' : sorting }`;
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
 	const {
@@ -23,9 +23,9 @@ export default function KeywordsTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, pageId } );
+	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const keywordTypes = {
 		M: __( 'Manual' ),
@@ -65,13 +65,13 @@ export default function KeywordsTable( { slug } ) {
 		columnHelper.accessor( 'keyword', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: header.keyword,
+			header: <SortBy props={ { header, sorting, key: 'keyword', onClick: () => sortBy( 'keyword' ) } }>{ header.keyword }</SortBy>,
 			minSize: 150,
 		} ),
 		columnHelper.accessor( 'urlLink', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: header.urlLink,
+			header: <SortBy props={ { header, sorting, key: 'urlLink', onClick: () => sortBy( 'urlLink' ) } }>{ header.urlLink }</SortBy>,
 			enableResizing: false,
 			size: 350,
 		} ),
@@ -79,18 +79,18 @@ export default function KeywordsTable( { slug } ) {
 			filterValMenu: keywordTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu items={ keywordTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.kwType,
+			header: <SortBy props={ { header, sorting, key: 'kwType', onClick: () => sortBy( 'kwType' ) } }>{ header.kwType }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'kw_length', {
-			header: header.kw_length,
+			header: <SortBy props={ { header, sorting, key: 'kw_length', onClick: () => sortBy( 'kw_length' ) } }>{ header.kw_length }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'kw_priority', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.kw_priority,
+			header: <SortBy props={ { header, sorting, key: 'kw_priority', onClick: () => sortBy( 'kw_priority' ) } }>{ header.kw_priority }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'lang', {
@@ -98,7 +98,7 @@ export default function KeywordsTable( { slug } ) {
 			cell: ( cell ) => <LangMenu checkedId={ cell?.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) }
 			/>,
-			header: header.lang,
+			header: <SortBy props={ { header, sorting, key: 'lang', onClick: () => sortBy( 'lang' ) } }>{ header.lang }</SortBy>,
 			size: 165,
 		} ),
 		columnHelper.accessor( 'kw_usage_count', {
@@ -113,14 +113,14 @@ export default function KeywordsTable( { slug } ) {
 					</button>
 				}
 			</div>,
-			header: header.kw_usage_count,
+			header: <SortBy props={ { header, sorting, key: 'kw_usage_count', onClick: () => sortBy( 'kw_usage_count' ) } }>{ header.kw_usage_count }</SortBy>,
 			size: 70,
 		} ),
 		columnHelper.accessor( 'urlFilter', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.renderValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.urlFilter,
+			header: <SortBy props={ { header, sorting, key: 'urlFilter', onClick: () => sortBy( 'urlFilter' ) } }>{ header.urlFilter }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'delete', {
@@ -142,7 +142,6 @@ export default function KeywordsTable( { slug } ) {
 				header={ header }
 				table={ table }
 				selectedRows={ selectedRows }
-				onSort={ ( val ) => sortBy( val ) }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onClearRow={ ( clear ) => {
@@ -155,13 +154,13 @@ export default function KeywordsTable( { slug } ) {
 					}
 				} }
 				detailsOptions={ detailsOptions }
-				insertOptions={ { inserterCells, title: 'Add keyword', data, slug, url, pageId, rowToInsert } }
+				insertOptions={ { inserterCells, title: 'Add keyword', data, slug, url, paginationId, rowToInsert } }
 				exportOptions={ {
-					url: slug,
+					slug,
 					filters,
-					fromId: `from_${ pageId }`,
-					pageId,
-					deleteCSVCols: [ pageId, 'dest_url_id' ],
+					fromId: `from_${ paginationId }`,
+					paginationId,
+					deleteCSVCols: [ paginationId, 'dest_url_id' ],
 				} }
 			/>
 			<Table className="fadeInto"
@@ -177,7 +176,7 @@ export default function KeywordsTable( { slug } ) {
 					? <Tooltip center>{ __( 'Keyword has been added.' ) }</Tooltip>
 					: null
 				}
-				<TooltipSortingFiltering props={ { isFetching, filters, sortingColumn } } />
+				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

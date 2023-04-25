@@ -1,16 +1,16 @@
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, SortMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SortMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 
 export default function SearchReplaceTable( { slug } ) {
-	const pageId = 'id';
+	const paginationId = 'id';
 
-	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sorting ? '' : sorting }`;
 
 	const {
 		__,
@@ -22,9 +22,9 @@ export default function SearchReplaceTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, pageId } );
+	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const searchTypes = {
 		T: __( 'Plain text' ),
@@ -56,26 +56,26 @@ export default function SearchReplaceTable( { slug } ) {
 		columnHelper.accessor( 'str_search', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.str_search,
+			header: <SortBy props={ { header, sorting, key: 'str_search', onClick: () => sortBy( 'str_search' ) } }>{ header.str_search }</SortBy>,
 			size: 300,
 		} ),
 		columnHelper.accessor( 'str_replace', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.str_replace,
+			header: <SortBy props={ { header, sorting, key: 'str_replace', onClick: () => sortBy( 'str_replace' ) } }>{ header.str_replace }</SortBy>,
 			size: 300,
 		} ),
 		columnHelper.accessor( 'search_type', {
 			filterValMenu: searchTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu items={ searchTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.search_type,
+			header: <SortBy props={ { header, sorting, key: 'search_type', onClick: () => sortBy( 'search_type' ) } }>{ header.search_type }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'url_filter', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.url_filter,
+			header: <SortBy props={ { header, sorting, key: 'url_filter', onClick: () => sortBy( 'url_filter' ) } }>{ header.url_filter }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'delete', {
@@ -109,13 +109,13 @@ export default function SearchReplaceTable( { slug } ) {
 						}, 3000 );
 					}
 				} }
-				insertOptions={ { inserterCells, title: 'Add replacement', data, slug, url, pageId, rowToInsert } }
+				insertOptions={ { inserterCells, title: 'Add replacement', data, slug, url, paginationId, rowToInsert } }
 				exportOptions={ {
-					url: slug,
+					slug,
 					filters,
-					fromId: `from_${ pageId }`,
-					pageId,
-					deleteCSVCols: [ pageId, 'dest_url_id' ],
+					fromId: `from_${ paginationId }`,
+					paginationId,
+					deleteCSVCols: [ paginationId, 'dest_url_id' ],
 				} }
 			/>
 			<Table className="fadeInto"
@@ -132,7 +132,7 @@ export default function SearchReplaceTable( { slug } ) {
 					? <Tooltip center>{ __( 'Search & Replace rule has been added.' ) }</Tooltip>
 					: null
 				}
-				<TooltipSortingFiltering props={ { isFetching, filters, sortingColumn } } />
+				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

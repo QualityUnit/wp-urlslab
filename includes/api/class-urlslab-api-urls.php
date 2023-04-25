@@ -80,6 +80,12 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 								return is_string( $param );
 							},
 						),
+						'url_h1'            => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
 						'url_meta_description' => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
@@ -157,148 +163,9 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	public function get_route_get_items(): array {
 		return array(
 			array(
-				'methods'             => WP_REST_Server::READABLE,
+				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'get_items' ),
-				'args'                => $this->get_table_arguments(
-					array(
-						'filter_url_id'                => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_numeric_filter_value(
-									$param
-								);
-							},
-						),
-						'filter_url_name'              => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value(
-									$param
-								);
-							},
-						),
-						'filter_scr_status'            => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value(
-									$param
-								);
-							},
-						),
-						'filter_sum_status'            => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value(
-									$param
-								);
-							},
-						),
-						'filter_http_status'           => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_numeric_filter_value(
-									$param
-								);
-							},
-						),
-						'filter_urlslab_domain_id'     => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value(
-									$param
-								);
-							},
-						),
-						'filter_urlslab_url_id'        => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value(
-									$param
-								);
-							},
-						),
-						'filter_urlslab_scr_timestamp' => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_numeric_filter_value(
-									$param
-								);
-							},
-						),
-						'filter_urlslab_sum_timestamp' => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_numeric_filter_value(
-									$param
-								);
-							},
-						),
-						'filter_update_scr_date'       => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value(
-									$param
-								);
-							},
-						),
-						'filter_update_sum_date'       => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value(
-									$param
-								);
-							},
-						),
-						'filter_update_http_date'      => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value(
-									$param
-								);
-							},
-						),
-						'filter_url_title'             => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value(
-									$param
-								);
-							},
-						),
-						'filter_url_meta_description'  => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value(
-									$param
-								);
-							},
-						),
-						'filter_url_summary'           => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value(
-									$param
-								);
-							},
-						),
-						'filter_visibility'            => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value(
-									$param
-								);
-							},
-						),
-						'filter_url_type'              => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value(
-									$param
-								);
-							},
-						),
-					)
-				),
+				'args'                => $this->get_table_arguments(),
 				'permission_callback' => array(
 					$this,
 					'get_items_permissions_check',
@@ -315,34 +182,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_url_usage' ),
-				'args'                => array(
-					'rows_per_page'    => array(
-						'required'          => true,
-						'default'           => self::ROWS_PER_PAGE,
-						'validate_callback' => function( $param ) {
-							return is_numeric( $param ) && 0 < $param
-								   && 200 > $param;
-						},
-					),
-					'from_url_id'      => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return empty( $param ) || is_numeric( $param );
-						},
-					),
-					'from_src_url_id'  => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return empty( $param ) || is_numeric( $param );
-						},
-					),
-					'from_dest_url_id' => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return empty( $param ) || is_numeric( $param );
-						},
-					),
-				),
+				'args'                => $this->get_table_arguments(),
 				'permission_callback' => array(
 					$this,
 					'get_items_permissions_check',
@@ -369,19 +209,13 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 
 			$row->screenshot_url = $url->get_screenshot_url();
 			$row->url_name       = $url->get_url()->get_url_with_protocol();
-			if ( in_array( 'url_usage_count', $this->get_custom_columns() ) ) {
+			if ( in_array( 'url_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
 				$row->url_usage_count = (int) $row->url_usage_count;
 			}
-			if (
-				in_array(
-					'screenshot_usage_count',
-					$this->get_custom_columns()
-				)
-			) {
-				$row->screenshot_usage_count
-					= (int) $row->screenshot_usage_count;
+			if ( in_array( 'screenshot_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
+				$row->screenshot_usage_count = (int) $row->screenshot_usage_count;
 			}
-			if ( in_array( 'url_links_count', $this->get_custom_columns() ) ) {
+			if ( in_array( 'url_links_count', array_keys( $this->get_custom_columns() ) ) ) {
 				$row->url_links_count = (int) $row->url_links_count;
 			}
 			$row->urlslab_scr_timestamp = (int) $row->urlslab_scr_timestamp;
@@ -396,14 +230,12 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
-		foreach (
-			array_keys( $this->get_row_object()->get_columns() ) as $column
-		) {
+		foreach ( array_keys( $this->get_row_object()->get_columns() ) as $column ) {
 			$sql->add_select_column( $column, 'u' );
 		}
-		$sql->add_from( URLSLAB_URLS_TABLE . ' u' );
+		$sql->add_from( URLSLAB_URLS_TABLE . ' u ' );
 
-		if ( in_array( 'url_usage_count', $this->get_custom_columns() ) ) {
+		if ( in_array( 'url_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
 			$sql->add_select_column( 'IFNULL(url_usage_cnt, 0)', false, 'url_usage_count' );
 			$sql->add_from(
 				'LEFT JOIN ((SELECT dest_url_id, COUNT(src_url_id) as url_usage_cnt FROM '
@@ -411,12 +243,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 				. ' GROUP BY dest_url_id)) m_used ON u.url_id = m_used.dest_url_id '
 			);
 		}
-		if (
-			in_array(
-				'screenshot_usage_count',
-				$this->get_custom_columns()
-			)
-		) {
+		if ( in_array( 'screenshot_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
 			$sql->add_select_column( 'IFNULL(screenshot_usage_cnt, 0)', false, 'screenshot_usage_count' );
 			$sql->add_from(
 				'LEFT JOIN (SELECT screenshot_url_id, COUNT(src_url_id) as screenshot_usage_cnt FROM '
@@ -424,7 +251,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 				. ' GROUP BY screenshot_url_id) m_links ON u.url_id = m_links.screenshot_url_id '
 			);
 		}
-		if ( in_array( 'url_links_count', $this->get_custom_columns() ) ) {
+		if ( in_array( 'url_links_count', array_keys( $this->get_custom_columns() ) ) ) {
 			$sql->add_select_column( 'IFNULL(url_links_cnt, 0)', false, 'url_links_count' );
 			$sql->add_from(
 				'LEFT JOIN (SELECT src_url_id, COUNT(dest_url_id) as url_links_cnt FROM '
@@ -433,54 +260,20 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			);
 		}
 
-		$this->add_filter_table_fields( $sql );
+		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'u' );
 
-		$sql->add_filter( 'filter_url_id' );
-		$sql->add_filter( 'filter_url_name' );
-
-		$sql->add_filter( 'filter_scr_status' );
-		$sql->add_filter( 'filter_rel_schedule' );
-		$sql->add_filter( 'filter_rel_updated' );
-		$sql->add_filter( 'filter_sum_status' );
-		$sql->add_filter( 'filter_http_status', '%d' );
-
-		$sql->add_filter( 'filter_urlslab_domain_id' );
-		$sql->add_filter( 'filter_urlslab_url_id' );
-		$sql->add_filter( 'filter_urlslab_scr_timestamp', '%d' );
-
-		$sql->add_filter( 'filter_update_scr_date' );
-		$sql->add_filter( 'filter_update_sum_date' );
-		$sql->add_filter( 'filter_update_http_date' );
-
-		$sql->add_filter( 'filter_url_title' );
-		$sql->add_filter( 'filter_url_meta_description' );
-		$sql->add_filter( 'filter_url_summary' );
-
-		$sql->add_filter( 'filter_visibility' );
-		$sql->add_filter( 'filter_url_type' );
-
-		if ( in_array( 'url_usage_count', $this->get_custom_columns() ) ) {
-			$sql->add_having_filter( 'filter_url_usage_count', '%d' );
+		if ( in_array( 'url_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
+			$columns = array_merge( $columns, $this->prepare_columns( array( 'url_usage_count' => '%d' ) ) );
 		}
-		if (
-			in_array(
-				'screenshot_usage_count',
-				$this->get_custom_columns()
-			)
-		) {
-			$sql->add_having_filter( 'filter_screenshot_usage_count', '%d' );
+		if ( in_array( 'screenshot_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
+			$columns = array_merge( $columns, $this->prepare_columns( array( 'screenshot_usage_count' => '%d' ) ) );
 		}
-		if ( in_array( 'url_links_count', $this->get_custom_columns() ) ) {
-			$sql->add_having_filter( 'filter_url_links_count', '%d' );
+		if ( in_array( 'url_links_count', array_keys( $this->get_custom_columns() ) ) ) {
+			$columns = array_merge( $columns, $this->prepare_columns( array( 'url_links_count' => '%d' ) ) );
 		}
 
-		if ( $request->get_param( 'sort_column' ) ) {
-			$sql->add_order(
-				$request->get_param( 'sort_column' ),
-				$request->get_param( 'sort_direction' )
-			);
-		}
-		$sql->add_order( 'u.url_id' );
+		$sql->add_having_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
 
 		return $sql;
 	}
@@ -490,11 +283,10 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	}
 
 	protected function get_custom_columns() {
-		$columns   = array();
-		$columns[] = 'url_usage_count';
-		$columns[] = 'url_links_count';
-
-		return $columns;
+		return array(
+			'url_usage_count' => '%d',
+			'url_links_count' => '%d',
+		);
 	}
 
 	public function delete_item( $request ) {
@@ -620,6 +412,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			'http_status',
 			'visibility',
 			'url_title',
+			'url_h1',
 			'url_meta_description',
 			'url_summary',
 		);
@@ -669,12 +462,19 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			. URLSLAB_URLS_TABLE
 			. ' u_dest ON m.dest_url_id = u_dest.url_id'
 		); // phpcs:ignore
-		$sql->add_filter( 'dest_url_id' );
-		$sql->add_filter( 'src_url_id' );
-		$sql->add_filter( 'from_dest_url_id', '%d' );
-		$sql->add_filter( 'from_src_url_id', '%d' );
-		$sql->add_order( 'src_url_id' );
-		$sql->add_order( 'dest_url_id' );
+
+		$columns = $this->prepare_columns(
+			array(
+				'dest_url_id'   => '%d',
+				'src_url_id'    => '%d',
+				'src_url_name'  => '%s',
+				'dest_url_name' => '%s',
+			)
+		);
+
+
+		$sql->add_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
 
 		return $sql;
 	}
@@ -722,12 +522,9 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			. URLSLAB_URLS_TABLE
 			. ' u ON s.src_url_id = u.url_id'
 		); // phpcs:ignore
-		$sql->add_filter( 'screenshot_url_id' );
-		$sql->add_filter( 'src_url_id' );
-		$sql->add_filter( 'from_screenshot_url_id', '%d' );
-		$sql->add_filter( 'from_src_url_id', '%d' );
-		$sql->add_order( 'screenshot_url_id' );
-		$sql->add_order( 'src_url_id' );
+
+		$this->add_filters( $sql );
+		$this->add_sorting( $sql );
 
 		return $sql;
 	}
@@ -750,22 +547,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 					$this,
 					'get_screenshot_usage',
 				),
-				'args'                => array(
-					'rows_per_page'          => array(
-						'required'          => true,
-						'default'           => self::ROWS_PER_PAGE,
-						'validate_callback' => function( $param ) {
-							return is_numeric( $param ) && 0 < $param
-								   && 200 > $param;
-						},
-					),
-					'from_screenshot_url_id' => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return is_numeric( $param );
-						},
-					),
-				),
+				'args'                => $this->get_table_arguments(),
 				'permission_callback' => array(
 					$this,
 					'get_items_permissions_check',

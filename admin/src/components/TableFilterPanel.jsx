@@ -14,20 +14,20 @@ import DatePicker from 'react-datepicker';
 
 export default function TableFilterPanel( { props, onEdit } ) {
 	const currentDate = new Date();
-	const { key, slug, header, possibleFilters, initialRow, currentFilters } = props;
+	const { key, slug, header, possiblefilters, initialRow, filters } = props;
 	const { __ } = useI18n();
 	const [ filterValMenu, setFilterValMenu ] = useState();
-	const [ date, setDate ] = useState( currentFilters[ key ]?.val ? new Date( currentFilters[ key ]?.val ) : currentDate );
-	const [ startDate, setStartDate ] = useState( currentFilters[ key ]?.val?.min ? new Date( currentFilters[ key ]?.val.min ) : currentDate.setDate( currentDate.getDate() - 2 ) );
-	const [ endDate, setEndDate ] = useState( currentFilters[ key ]?.val?.max ? new Date( currentFilters[ key ]?.val.max ) : currentDate );
+	const [ date, setDate ] = useState( filters[ key ]?.val ? new Date( filters[ key ]?.val ) : currentDate );
+	const [ startDate, setStartDate ] = useState( filters[ key ]?.val?.min ? new Date( filters[ key ]?.val.min ) : currentDate.setDate( currentDate.getDate() - 2 ) );
+	const [ endDate, setEndDate ] = useState( filters[ key ]?.val?.max ? new Date( filters[ key ]?.val.max ) : currentDate );
 
 	const { state, dispatch, handleType } = useFilter( { slug, header, initialRow } );
 
 	const cellUnit = initialRow?.getVisibleCells()?.filter( ( cell ) => cell.column?.id === state.filterObj.filterKey )[ 0 ]?.column?.columnDef.unit;
 
 	const notBetween = useMemo( () => {
-		return Object.keys( currentFilters )?.length && currentFilters[ key ]?.op ? currentFilters[ key ]?.op !== 'BETWEEN' : state.filterObj.filterOp !== 'BETWEEN';
-	}, [ currentFilters, key, state.filterObj.filterOp ] );
+		return Object.keys( filters )?.length && filters[ key ]?.op ? filters[ key ]?.op !== 'BETWEEN' : state.filterObj.filterOp !== 'BETWEEN';
+	}, [ filters, key, state.filterObj.filterOp ] );
 
 	const handleKeyChange = useCallback( ( keyParam ) => {
 		dispatch( { type: 'setFilterKey', key: keyParam } );
@@ -40,34 +40,34 @@ export default function TableFilterPanel( { props, onEdit } ) {
 
 	useEffect( () => {
 		if ( state.filterObj.keyType === undefined ) {
-			dispatch( { type: 'setFilterKey', key: key || Object.keys( possibleFilters )[ 0 ] } );
-			handleType( key || Object.keys( possibleFilters )[ 0 ], ( cellOptions ) => setFilterValMenu( cellOptions ) );
+			dispatch( { type: 'setFilterKey', key: key || Object.keys( possiblefilters )[ 0 ] } );
+			handleType( key || Object.keys( possiblefilters )[ 0 ], ( cellOptions ) => setFilterValMenu( cellOptions ) );
 		}
 		if ( state.filterObj.keyType === 'string' ) {
-			dispatch( { type: 'setFilterOp', op: currentFilters[ key ]?.op || 'LIKE' } );
-			dispatch( { type: 'setFilterVal', val: currentFilters[ key ]?.val } );
+			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'LIKE' } );
+			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
 		}
 
 		if ( state.filterObj.keyType === 'date' ) {
-			dispatch( { type: 'setFilterOp', op: currentFilters[ key ]?.op || 'exactly' } );
-			dispatch( { type: 'setFilterVal', val: currentFilters[ key ]?.val } );
+			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'exactly' } );
+			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
 		}
 
 		if ( state.filterObj.keyType === 'number' ) {
-			dispatch( { type: 'setFilterOp', op: currentFilters[ key ]?.op || 'exactly' } );
-			dispatch( { type: 'setFilterVal', val: currentFilters[ key ]?.val } );
+			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'exactly' } );
+			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
 		}
 		if ( state.filterObj.keyType === 'menu' ) {
-			dispatch( { type: 'setFilterOp', op: currentFilters[ key ]?.op || 'exactly' } );
-			dispatch( { type: 'setFilterVal', val: currentFilters[ key ]?.val || Object.keys( filterValMenu )[ 0 ] } );
+			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'exactly' } );
+			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val || Object.keys( filterValMenu )[ 0 ] } );
 		}
 		if ( state.filterObj.keyType === 'boolean' ) {
-			dispatch( { type: 'setFilterOp', op: currentFilters[ key ]?.op || 'exactly' } );
-			dispatch( { type: 'setFilterVal', val: currentFilters[ key ]?.val || Object.keys( booleanTypes )[ 0 ] } );
+			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'exactly' } );
+			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val || Object.keys( booleanTypes )[ 0 ] } );
 		}
 		if ( state.filterObj.keyType === 'lang' ) {
-			dispatch( { type: 'setFilterOp', op: currentFilters[ key ]?.op || 'exactly' } );
-			dispatch( { type: 'setFilterVal', val: currentFilters[ key ]?.val || 'all' } );
+			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'exactly' } );
+			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val || 'all' } );
 		}
 
 		window.addEventListener( 'keyup', ( event ) => {
@@ -90,18 +90,18 @@ export default function TableFilterPanel( { props, onEdit } ) {
 			<div className="flex mt-m mb-m flex-align-center">
 				<SortMenu
 					className="mr-s"
-					items={ key ? header : possibleFilters }
+					items={ key ? header : possiblefilters }
 					name="filters"
-					checkedId={ key || Object.keys( possibleFilters )[ 0 ] }
+					checkedId={ key || Object.keys( possiblefilters )[ 0 ] }
 					defaultAccept
 					autoClose
 					disabled={ key ? true : false }
 					onChange={ handleKeyChange }
 				/>
-				{ ( state.filterObj.keyType && ( currentFilters[ key ]?.op || state.filterObj.filterOp ) ) &&
+				{ ( state.filterObj.keyType && ( filters[ key ]?.op || state.filterObj.filterOp ) ) &&
 					<SortMenu
 						className="ml-s"
-						key={ currentFilters[ key ]?.op || state.filterObj.filterOp }
+						key={ filters[ key ]?.op || state.filterObj.filterOp }
 						items={
 							( state.filterObj.keyType === 'date' && dateOp ) ||
 							( state.filterObj.keyType === 'number' && numericOp ) ||
@@ -113,14 +113,14 @@ export default function TableFilterPanel( { props, onEdit } ) {
 						name="filter_ops"
 						defaultAccept
 						autoClose
-						checkedId={ currentFilters[ key ]?.op || state.filterObj.filterOp }
+						checkedId={ filters[ key ]?.op || state.filterObj.filterOp }
 						onChange={ ( op ) => dispatch( { type: 'setFilterOp', op } ) }
 					/>
 				}
 			</div>
 			<div>
 				{ state.filterObj.keyType === 'lang' &&
-					<LangMenu autoClose multiSelect={ state.filterObj.filterOp === 'IN' } checkedId={ currentFilters[ key ]?.val || 'all' } defaultAccept onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
+					<LangMenu autoClose multiSelect={ state.filterObj.filterOp === 'IN' } checkedId={ filters[ key ]?.val || 'all' } defaultAccept onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
 				}
 				{
 					state.filterObj.keyType === 'menu' &&
@@ -129,7 +129,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 						name="menu_vals"
 						defaultAccept
 						autoClose
-						checkedId={ currentFilters[ key ]?.val || Object.keys( filterValMenu )[ 0 ] }
+						checkedId={ filters[ key ]?.val || Object.keys( filterValMenu )[ 0 ] }
 						onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) }
 					/>
 				}
@@ -140,15 +140,15 @@ export default function TableFilterPanel( { props, onEdit } ) {
 						name="boolean_vals"
 						defaultAccept
 						autoClose
-						checkedId={ currentFilters[ key ]?.val || Object.keys( booleanTypes )[ 0 ] }
+						checkedId={ filters[ key ]?.val || Object.keys( booleanTypes )[ 0 ] }
 						onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) }
 					/>
 				}
 				{ state.filterObj.keyType === 'string' && notBetween &&
-					<InputField liveUpdate autoFocus defaultValue={ currentFilters[ key ]?.val } placeholder={ state.filterObj.filterOp === 'IN' ? 'enter ie. 0,10,15,20' : 'Enter search term' } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
+					<InputField liveUpdate autoFocus defaultValue={ filters[ key ]?.val } placeholder={ state.filterObj.filterOp === 'IN' ? 'enter ie. 0,10,15,20' : 'Enter search term' } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
 				}
 				{ state.filterObj.keyType === 'number' && notBetween &&
-					<InputField type="number" liveUpdate autoFocus defaultValue={ cellUnit === 'kB' ? currentFilters[ key ]?.val / 1024 : currentFilters[ key ]?.val } placeholder={ state.filterObj.filterOp === 'IN' ? 'enter ie. 0,10,15,20' : `Enter size ${ cellUnit && 'in ' + cellUnit }` } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val: cellUnit === 'kB' ? val * 1024 : val } ) } />
+					<InputField type="number" liveUpdate autoFocus defaultValue={ cellUnit === 'kB' ? filters[ key ]?.val / 1024 : filters[ key ]?.val } placeholder={ state.filterObj.filterOp === 'IN' ? 'enter ie. 0,10,15,20' : `Enter size ${ cellUnit && 'in ' + cellUnit }` } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val: cellUnit === 'kB' ? val * 1024 : val } ) } />
 				}
 
 				{ state.filterObj.keyType === 'date' && notBetween && // Datepicker not between
@@ -209,8 +209,8 @@ export default function TableFilterPanel( { props, onEdit } ) {
 				{ state.filterObj.keyType === 'number' && ! notBetween &&
 				<RangeInputs liveUpdate
 					unit={ cellUnit }
-					defaultMin={ currentFilters[ key ]?.val.min }
-					defaultMax={ currentFilters[ key ]?.val.max }
+					defaultMin={ filters[ key ]?.val.min }
+					defaultMax={ filters[ key ]?.val.max }
 					onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) }
 				/>
 				}

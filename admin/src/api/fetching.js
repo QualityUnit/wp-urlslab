@@ -19,9 +19,9 @@ export async function fetchData( slug ) {
 	}
 }
 
-export async function setModule( slug, object ) {
+export async function postFetch( slug, object ) {
 	try {
-		const result = await fetch( wpApiSettings.root + `urlslab/v1/module/${ slug }`, {
+		const result = await fetch( wpApiSettings.root + `urlslab/v1/${ slug }`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -37,9 +37,9 @@ export async function setModule( slug, object ) {
 	}
 }
 
-export async function setData( slug, object ) {
+export async function setModule( slug, object ) {
 	try {
-		const result = await fetch( wpApiSettings.root + `urlslab/v1/${ slug }`, {
+		const result = await fetch( wpApiSettings.root + `urlslab/v1/module/${ slug }`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

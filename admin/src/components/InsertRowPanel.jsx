@@ -10,9 +10,9 @@ export default function InsertRowPanel( { insertOptions, handlePanel } ) {
 	const enableAddButton = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
 
-	const { inserterCells, title, text, data, slug, url, pageId, rowToInsert } = insertOptions || {};
+	const { inserterCells, title, text, data, slug, url, paginationId, rowToInsert } = insertOptions || {};
 	const flattenedData = data?.pages?.flatMap( ( page ) => page ?? [] );
-	const { insertRowResult, insertRow } = useChangeRow( { data: flattenedData, url, slug, pageId } );
+	const { insertRowResult, insertRow } = useChangeRow( { data: flattenedData, url, slug, paginationId } );
 	const requiredFields = inserterCells && Object.keys( inserterCells ).filter( ( cell ) => inserterCells[ cell ].props.required === true );
 
 	// Checking if all required fields are filled in rowToInsert object

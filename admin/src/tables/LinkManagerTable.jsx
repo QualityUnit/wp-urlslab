@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, LinkIcon, Trash, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, LinkIcon, Trash, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 
 export default function LinkManagerTable( { slug } ) {
-	const pageId = 'url_id';
-	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
+	const paginationId = 'url_id';
+	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sorting ? '' : sorting }`;
 
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
@@ -23,28 +23,23 @@ export default function LinkManagerTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, pageId } );
+	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, pageId } );
-
-	// const sumStatusTypes = {
-	// 	N: __( 'Waiting' ),
-	// 	A: __( 'Processed' ),
-	// 	P: __( 'Pending' ),
-	// 	U: __( 'Updating' ),
-	// 	E: __( 'Error' ),
-	// };
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const httpStatusTypes = {
 		'-2': __( 'Processing' ),
 		'-1': __( 'Waiting' ),
 		200: __( 'Valid' ),
 		400: __( 'Client Error' ),
+		301: __( 'Moved Permanently' ),
+		302: __( 'Found, Moved temporarily' ),
+		307: __( 'Temporary Redirect' ),
+		308: __( 'Permanent Redirect' ),
 		404: __( 'Not Found' ),
 		500: __( 'Server Error' ),
 		503: __( 'Server Error' ),
 	};
-
 	const visibilityTypes = {
 		V: __( 'Visible' ),
 		H: __( 'Hidden' ),
@@ -58,6 +53,7 @@ export default function LinkManagerTable( { slug } ) {
 	const header = {
 		url_name: __( 'URL' ),
 		url_title: __( 'Title' ),
+		url_h1: __( 'H1' ),
 		url_meta_description: __( 'Description' ),
 		url_summary: __( 'Summary' ),
 		http_status: __( 'Status' ),
@@ -81,28 +77,33 @@ export default function LinkManagerTable( { slug } ) {
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: header.url_name,
+			header: <SortBy props={ { header, sorting, key: 'url_name', onClick: () => sortBy( 'url_name' ) } }>{ header.url_name }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'url_title', {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
-			header: header.url_title,
+			header: <SortBy props={ { header, sorting, key: 'url_title', onClick: () => sortBy( 'url_title' ) } }>{ header.url_title }</SortBy>,
+			size: 150,
+		} ),
+		columnHelper.accessor( 'url_h1', {
+			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
+			header: header.url_h1,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'url_meta_description', {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
-			header: header.url_meta_description,
+			header: <SortBy props={ { header, sorting, key: 'url_meta_description', onClick: () => sortBy( 'url_meta_description' ) } }>{ header.url_meta_description }</SortBy>,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'url_summary', {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
-			header: header.url_summary,
+			header: <SortBy props={ { header, sorting, key: 'url_summary', onClick: () => sortBy( 'url_summary' ) } }>{ header.url_summary }</SortBy>,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'http_status', {
 			filterValMenu: httpStatusTypes,
 			cell: ( cell ) => httpStatusTypes[ cell.getValue() ],
-			header: header.http_status,
+			header: <SortBy props={ { header, sorting, key: 'http_status', onClick: () => sortBy( 'http_status' ) } }>{ header.http_status }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'visibility', {
@@ -113,18 +114,18 @@ export default function LinkManagerTable( { slug } ) {
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.visibility,
+			header: <SortBy props={ { header, sorting, key: 'visibility', onClick: () => sortBy( 'visibility' ) } }>{ header.visibility }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'url_type', {
 			filterValMenu: urlTypes,
 			cell: ( cell ) => urlTypes[ cell.getValue() ],
-			header: header.url_type,
+			header: <SortBy props={ { header, sorting, key: 'url_type', onClick: () => sortBy( 'url_type' ) } }>{ header.url_type }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'update_http_date', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: () => header.update_http_date,
+			header: <SortBy props={ { header, sorting, key: 'update_http_date', onClick: () => sortBy( 'update_http_date' ) } }>{ header.update_http_date }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'url_links_count', {
@@ -139,7 +140,7 @@ export default function LinkManagerTable( { slug } ) {
 					</button>
 				}
 			</div>,
-			header: () => header.url_links_count,
+			header: <SortBy props={ { header, sorting, key: 'url_links_count', onClick: () => sortBy( 'url_links_count' ) } }>{ header.url_links_count }</SortBy>,
 			size: 140,
 		} ),
 		columnHelper.accessor( 'url_usage_count', {
@@ -154,7 +155,7 @@ export default function LinkManagerTable( { slug } ) {
 					</button>
 				}
 			</div>,
-			header: () => header.url_usage_count,
+			header: <SortBy props={ { header, sorting, key: 'url_usage_count', onClick: () => sortBy( 'url_usage_count' ) } }>{ header.url_usage_count }</SortBy>,
 			size: 140,
 		} ),
 		columnHelper.accessor( 'delete', {
@@ -181,10 +182,10 @@ export default function LinkManagerTable( { slug } ) {
 				onFilter={ ( filter ) => setFilters( filter ) }
 				detailsOptions={ detailsOptions }
 				exportOptions={ {
-					url: slug,
+					slug,
 					filters,
-					fromId: `from_${ pageId }`,
-					pageId,
+					fromId: `from_${ paginationId }`,
+					paginationId,
 					deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
 					perPage: 1000,
 				} }
@@ -199,7 +200,7 @@ export default function LinkManagerTable( { slug } ) {
 					? <Tooltip center>{ `${ header.url_name } “${ row.url_name }”` } has been deleted.</Tooltip>
 					: null
 				}
-				<TooltipSortingFiltering props={ { isFetching, filters, sortingColumn } } />
+				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

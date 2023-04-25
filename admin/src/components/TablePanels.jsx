@@ -5,10 +5,10 @@ import ExportPanel from './ExportPanel';
 import ImportPanel from './ImportPanel';
 import DangerPanel from './DangerPanel';
 import DetailsPanel from './DetailsPanel';
-import { ReactComponent as Trash } from '../assets/images/icon-trash.svg';
+import { ReactComponent as Trash } from '../assets/images/icons/icon-trash.svg';
 
 export default function TablePanels( { props } ) {
-	const { header, slug, currentFilters, initialRow, detailsOptions, insertOptions, exportOptions, activePanel, handlePanel } = props;
+	const { header, slug, filters, initialRow, detailsOptions, insertOptions, exportOptions, activePanel, handlePanel } = props;
 	const { __ } = useI18n();
 	return (
 		<>
@@ -39,7 +39,7 @@ export default function TablePanels( { props } ) {
 			{
 				activePanel === 'export' &&
 				<ExportPanel options={ exportOptions }
-					currentFilters={ currentFilters }
+					filters={ filters }
 					header={ header }
 					handlePanel={ handlePanel }
 				/>

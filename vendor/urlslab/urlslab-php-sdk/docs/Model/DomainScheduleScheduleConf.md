@@ -6,6 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **urls** | **string[]** |  |
 **link_following_strategy** | **string** |  |
+**is_forced** | **bool** |  | [optional]
 **sitemaps** | **string[]** |  |
 **all_sitemaps** | **bool** |  |
 **take_screenshot** | **bool** |  |

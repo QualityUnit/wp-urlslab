@@ -1,19 +1,18 @@
-import { useEffect, useMemo, useRef, useCallback, useState, useContext } from 'react';
+import { memo, useEffect, useRef, useCallback, useState, useContext } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 
-import { fetchData } from '../api/fetching';
+import { postFetch } from '../api/fetching';
 import { deleteAll } from '../api/deleteTableData';
 import HeaderHeightContext from '../lib/headerHeightContext';
 
 import { useFilter } from '../hooks/filteringSorting';
 
-import { ReactComponent as Trash } from '../assets/images/icon-trash.svg';
-import { ReactComponent as PlusIcon } from '../assets/images/icon-plus.svg';
-// import { ReactComponent as ImportIcon } from '../assets/images/icon-import.svg';
-import { ReactComponent as RefreshIcon } from '../assets/images/icon-cron-refresh.svg';
+import { ReactComponent as Trash } from '../assets/images/icons/icon-trash.svg';
+import { ReactComponent as PlusIcon } from '../assets/images/icons/icon-plus.svg';
+// import { ReactComponent as ImportIcon } from '../assets/images/icons/icon-import.svg';
+import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-cron-refresh.svg';
 
-import SortMenu from '../elements/SortMenu';
 import ColumnsMenu from '../elements/ColumnsMenu';
 import Button from '../elements/Button';
 import TableFilter from './TableFilter';
@@ -25,7 +24,7 @@ import IconButton from '../elements/IconButton';
 import useResizeObserver from '../hooks/useResizeObserver';
 import TablePanels from './TablePanels';
 
-export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noExport, noCount, noDelete, header, table, insertOptions, activatePanel, detailsOptions, exportOptions, selectedRows, onSort, onFilter, onDeleteSelected, onClearRow } ) {
+export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noExport, noCount, noDelete, header, table, insertOptions, activatePanel, detailsOptions, exportOptions, selectedRows, onFilter, onDeleteSelected, onClearRow } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const didMountRef = useRef( false );
@@ -41,13 +40,12 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 	const headerBottom = useResizeObserver( handleHeaderHeight );
 
 	const [ activePanel, setActivePanel ] = useState( );
-	const [ sortBy, setSortBy ] = useState();
 
 	const initialRow = table?.getRowModel().rows[ 0 ];
 
-	const { filters, currentFilters, state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( { slug, header, initialRow } );
+	const { filters, possiblefilters, state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( { slug, header, initialRow } );
 
-	const currentCountFilters = filters ? filters.replace( '&', '?' ) : '';
+	const sorting = queryClient.getQueryData( [ slug, 'sorting' ] );
 
 	const handleOnEdit = useCallback( ( returnObj ) => {
 		if ( returnObj ) {
@@ -73,35 +71,33 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 		if ( detailsOptions ) {
 			setActivePanel( 'details' );
 		}
-	}, [ slug, activatePanel, detailsOptions, filters, currentFilters, onFilter ] );
+	}, [ slug, activatePanel, detailsOptions, filters, onFilter ] );
 
-	const { data: rowCount } = useQuery( {
-		queryKey: [ slug, `count${ currentCountFilters }` ],
-		queryFn: () => fetchData( `${ slug }/count${ currentCountFilters }` ).then( ( count ) => {
+	const filtersArray = filters ? Object.entries( filters ).map( ( [ col, params ] ) => {
+		const { op, val } = params;
+		return { col, op, val };
+	} ) : [];
+
+	const { data: rowCount, isFetching } = useQuery( {
+		queryKey: [ slug, `count`, filtersArray ],
+		queryFn: async () => {
+			const count = await postFetch( `${ slug }/count`, { filters: filtersArray } );
 			if ( ! noCount ) {
-				return count;
+				return count.json();
 			}
-			return false;
-		} ),
+		},
 		refetchOnWindowFocus: false,
 	} );
 
-	const sortItems = useMemo( () => {
-		const items = {};
-		Object.entries( header ).map( ( [ key, value ] ) => {
-			items[ `${ key }&ASC` ] = `${ value }<strong>&nbsp;(ascending)</strong>`;
-			items[ `${ key }&DESC` ] = `${ value }<strong>&nbsp;(descending)</strong>`;
-			return false;
-		} );
-
-		return items;
-	}, [ header ]
-	);
-
-	const handleSorting = ( val ) => {
-		setSortBy( val );
-		onSort( val );
-	};
+	const Counter = memo( () => {
+		return (
+			! noCount && ! isFetching && rowCount &&
+			<small className="urlslab-rowcount fadeInto flex flex-align-center">
+				{ __( 'Rows: ' ) }
+				<strong className="ml-s">{ rowCount }</strong>
+			</small>
+		);
+	} );
 
 	const handleDeleteAll = useMutation( {
 		mutationFn: () => {
@@ -130,7 +126,8 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 	};
 
 	const handleRefresh = () => {
-		queryClient.invalidateQueries( [ slug ] );
+		queryClient.invalidateQueries( [ slug, filtersArray, sorting ? sorting : [] ] );
+		queryClient.invalidateQueries( [ slug, 'count', filtersArray ] );
 	};
 
 	return (
@@ -150,14 +147,15 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 						</Button>
 
 						{ state.editFilter === 'addFilter' && // Our main adding panel (only when Add button clicked)
-							<TableFilterPanel props={ { slug, header, initialRow, possibleFilters: state.possibleFilters, currentFilters } } onEdit={ ( val ) => {
+							<TableFilterPanel props={ { slug, header, initialRow, possiblefilters, filters } } onEdit={ ( val ) => {
 								handleHeaderHeight(); handleOnEdit( val );
 							} } />
 						}
 					</div>
 
 					<div className="ma-left flex flex-align-center">
-						{ ( ! noImport || ! noExport || ! noDelete ) &&
+						<Counter />
+						{ ( ! noImport && ! noExport && ! noDelete ) &&
 							<TableActionsMenu onAction={ handlePanel } options={ { noImport, noExport, noDelete } } />
 						}
 
@@ -178,29 +176,17 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 
 					</div>
 				</div>
-				{ /* { Object.keys( currentFilters ).length !== 0 && */ }
+				{ Object.keys( filters ).length !== 0 &&
 				<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
-					<TableFilter props={ { currentFilters, state, slug, header, initialRow } } onEdit={ handleOnEdit } onRemove={ ( key ) => {
+					<TableFilter props={ { filters, possiblefilters, state, slug, header, initialRow } } onEdit={ handleOnEdit } onRemove={ ( key ) => {
 						handleHeaderHeight(); handleRemoveFilter( key );
 					} } />
-					<div className="ma-left flex flex-align-center">
-						{
-							! noCount && rowCount &&
-								<small className="urlslab-rowcount fadeInto flex flex-align-center">
-									{ __( 'Rows: ' ) }
-									<strong className="ml-s">{ rowCount }</strong>
-								</small>
-						}
-
-						<SortMenu className="menu-left ml-m" isFilter checkedId={ sortBy } items={ sortItems } name="sorting" onChange={ handleSorting }>{ `Sort by${ sortBy ? ': ' + sortItems[ sortBy ] : '' }` }</SortMenu>
-
-					</div>
 				</div>
-				{ /* } */ }
+				}
 
 			</div>
 
-			<TablePanels props={ { header, slug, currentFilters, initialRow, detailsOptions, insertOptions, exportOptions, activePanel, handlePanel } } />
+			<TablePanels props={ { header, slug, filters, initialRow, detailsOptions, insertOptions, exportOptions, activePanel, handlePanel } } />
 		</>
 	);
 }

@@ -212,68 +212,26 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	 */
 	protected function on_items_updated( array $row = array() ) {}
 
-	protected function get_table_arguments( array $arguments = array() ): array {
-		$arguments['rows_per_page']  = array(
-			'required'          => true,
-			'default'           => self::ROWS_PER_PAGE,
-			'validate_callback' => function( $param ) {
-				return is_numeric( $param ) && 0 < $param && self::MAX_ROWS_PER_PAGE > $param;
-			},
-		);
-		$arguments['sort_column']    = array(
+	protected function get_table_arguments(): array {
+		$arguments['filters'] = array(
 			'required'          => false,
-			'default'           => $this->get_row_object()->get_primary_columns()[0],
+			'default'           => array(),
 			'validate_callback' => function( $param ) {
-				return is_string( $param ) && 0 < strlen( $param );
+				return is_array( $param );
 			},
 		);
-		$arguments['sort_direction'] = array(
+		$arguments['sorting'] = array(
 			'required'          => false,
-			'default'           => 'ASC',
+			'default'           => array(),
 			'validate_callback' => function( $param ) {
-				return 'ASC' == $param || 'DESC' == $param;
+				return is_array( $param );
 			},
-		);
-
-		foreach ( $this->get_row_object()->get_primary_columns() as $primary_key ) {
-			$arguments[ 'from_' . $primary_key ] = array(
-				'required' => false,
-			);
-		}
-
-		$arguments['from_sort_column'] = array(
-			'required' => false,
 		);
 
 		return $arguments;
 	}
 
 	protected function validate_item( Urlslab_Data $row ) {}
-
-	protected function add_filter_table_fields( Urlslab_Api_Table_Sql $sql, $table_prefix = false ) {
-		$rob_obj = $this->get_row_object();
-		foreach ( $rob_obj->get_primary_columns() as $primary_key ) {
-			$sql->add_filter( 'from_' . $primary_key, $rob_obj->get_columns()[ $primary_key ], $table_prefix );
-		}
-
-		if ( $sql->get_request()->get_param( 'from_sort_column' ) ) {
-			if ( 'DESC' == $sql->get_request()->get_param( 'sort_direction' ) ) {
-				$operator = '<=';
-			} else {
-				$operator = '>=';
-			}
-			$format = '%s';
-			if ( isset( $rob_obj->get_columns()[ $sql->get_request()->get_param( 'sort_column' ) ] ) ) {
-				$format = $rob_obj->get_columns()[ $sql->get_request()->get_param( 'sort_column' ) ];
-			}
-
-			$sort_column = $sql->get_request()->get_param( 'sort_column' );
-			if ( $table_prefix ) {
-				$sort_column = $table_prefix . '.' . $sort_column;
-			}
-			$sql->add_filter_raw( esc_sql( $sort_column ) . $operator . $format, $sql->get_request()->get_param( 'from_sort_column' ) );
-		}
-	}
 
 	protected function get_count_route( array $route ): array {
 		$count_route                   = $route;
@@ -288,5 +246,18 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 
 	protected function before_import( Urlslab_Data $row_obj ): Urlslab_Data {
 		return $row_obj;
+	}
+
+
+	protected function prepare_columns( $input_columns, $table_prefix = false ): array {
+		$columns = array();
+		foreach ( $input_columns as $column => $format ) {
+			$columns[ $column ] = array(
+				'format' => $format,
+				'prefix' => $table_prefix,
+			);
+		}
+
+		return $columns;
 	}
 }

@@ -1,4 +1,4 @@
-import { fetchData } from './fetching';
+import { postFetch } from './fetching';
 import { getParamsChar } from '../lib/helpers';
 
 let lastPage = '';
@@ -9,13 +9,13 @@ let totalItems = 1;
 export let jsonData = { status: 'loading', data: [] };
 
 export async function exportCSV( options, result ) {
-	const { url, filters, fromId, pageId, perPage = 9999, deleteCSVCols } = options;
+	const { slug, filters, paginationId, perPage = 9999, deleteCSVCols } = options;
 	const qOperator = getParamsChar(); // Changes ? to & query hash if already used
 	const prevDataLength = dataForCSV.length;
-	const response = await fetchData( `${ url }${ qOperator }${ fromId }=${ lastPage }&rows_per_page=${ perPage }${ 'undefined' === typeof filters ? '' : filters }` );
+	const response = await postFetch( slug, `${ qOperator }${ fromId }=${ lastPage }&rows_per_page=${ perPage }${ 'undefined' === typeof filters ? '' : filters }` );
 
 	if ( ! lastPage ) {
-		totalItems = await fetchData( `${ url }/count${ filters ? getParamsChar() + `${ filters }` : '' }` );
+		totalItems = await postFetch( `${ slug }/count` );
 	}
 
 	dataForCSV.push( await response ); // Adds downloaded results to array

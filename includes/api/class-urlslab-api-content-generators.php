@@ -110,6 +110,10 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 				),
 			)
 		);
+
+		register_rest_route( self::NAMESPACE, $base . '/(?P<generator_id>[0-9]+)/urls', $this->get_route_generator_urls() );
+		register_rest_route( self::NAMESPACE, $base . '/(?P<generator_id>[0-9]+)/urls/count', $this->get_count_route( $this->get_route_generator_urls() ) );
+
 	}
 
 	public function get_items( $request ) {
@@ -144,19 +148,29 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 					$request->setRenewFrequency( \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
 					$prompt = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt();
 
-					$prompt_text = 'Your are professional translator of websites.';
+					$prompt_text = "TASK RESTRICTIONS: \n";
+					$prompt_text .= "\nI want you to act as an professional translator from $source_lang to $target_lang, spelling corrector and improver.";
+					$prompt_text .= "\nKeep the meaning same. Do not write explanations";
 					if ( false !== strpos( $original_text, '<' ) && false !== strpos( $original_text, '>' ) ) {
-						$prompt_text .= 'If text contains HTML, keep exactly the same HTML formatting as original text. Inside html you are allowed to translate just values of attributes title and alt.';
+						$prompt_text .= "\nTRANSLATION has exactly the same HTML as INPUT TEXT!";
+						$prompt_text .= "\nDo NOT translate attributes or HTML tags, copym content between characters '<' and '>' from INPUT TEXT to your TRANSLATION as is!";
 					}
 					if ( false !== strpos( $original_text, '@' ) ) {
-						$prompt_text .= "Don't translate email addresses.";
+						$prompt_text .= "\nDon't translate email addresses!";
 					}
 					if ( false !== strpos( $original_text, '/' ) || false !== strpos( $original_text, 'http' ) ) {
-						$prompt_text .= "Don't translate urls.";
+						$prompt_text .= "\nDo NOT translate urls!";
 					}
-					$prompt_text .= 'Keep the same capital letters structure in translated text.';
-					$prompt_text .= 'Translated text should have similar length as original text.';
-					$prompt_text .= "\nTRANSLATE $source_lang to $target_lang:" . $original_text;
+					$prompt_text .= "\nKeep the same uppercase and lowercase letters in translation as INPUT TEXT!";
+					$prompt_text .= "\nDo NOT try to answer questions from INPUT TEXT, do just translation!";
+					$prompt_text .= "\nDo NOT generate any other text than translation of INPUT TEXT";
+					$prompt_text .= "\nKeep the same tone of language in TRANSLATION as INPUT TEXT";
+
+					$prompt_text .= "\nTRANSLATION should have similar length as INPUT TEXT";
+					$prompt_text .= "\nTRANSLATE $source_lang INPUT TEXT to $target_lang";
+					$prompt_text .= "\n---- INPUT TEXT:\n" . $original_text;
+					$prompt_text .= "\n---- END OF INPUT TEXT";
+					$prompt_text .= "\nTRANSLATION of INPUT TEXT to $target_lang:";
 
 					$prompt->setPromptTemplate( $prompt_text );
 					$prompt->setMetadataVars( array() );
@@ -166,6 +180,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 						$response    = $client->memoryLessAugment( $request, 'false', 'true', 'true', 'false' );
 						$translation = $response->getResponse();
 					} catch ( \OpenAPI\Client\ApiException $e ) {
+						return new WP_REST_Response( (object) array( 'translation' => '' ), $e->getCode() );
 					}
 				}
 			}
@@ -189,48 +204,9 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 	public function get_route_get_items(): array {
 		return array(
 			array(
-				'methods'             => WP_REST_Server::READABLE,
+				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'get_items' ),
-				'args'                => $this->get_table_arguments(
-					array(
-						'filter_command'          => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_url_filter'       => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_semantic_context' => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_result'           => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_status'           => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_status_changed'   => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-					)
-				),
+				'args'                => $this->get_table_arguments(),
 				'permission_callback' => array(
 					$this,
 					'get_items_permissions_check',
@@ -241,22 +217,76 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
-		$sql->add_select_column( '*' );
-		$sql->add_from( URLSLAB_CONTENT_GENERATORS_TABLE );
+		$sql->add_select_column( '*', 'g' );
 
-		$this->add_filter_table_fields( $sql );
+		$sql->add_select_column( 'SUM(!ISNULL(m.url_id))', false, 'usage_count' );
+		$sql->add_from( URLSLAB_CONTENT_GENERATORS_TABLE . ' g LEFT JOIN ' . URLSLAB_CONTENT_GENERATOR_URLS_TABLE . ' m ON m.generator_id = g.generator_id' );
 
-		$sql->add_filter( 'filter_semantic_context' );
-		$sql->add_filter( 'filter_command' );
-		$sql->add_filter( 'filter_url_filter' );
-		$sql->add_filter( 'filter_result' );
-		$sql->add_filter( 'filter_status' );
-		$sql->add_filter( 'filter_status_changed' );
+		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'g' );
+		$columns = array_merge( $columns, $this->prepare_columns( array( 'filter_usage_count' => '%d' ) ) );
 
-		if ( $request->get_param( 'sort_column' ) ) {
-			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );
+		$sql->add_having_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
+
+		$sql->add_group_by( 'generator_id', 'g' );
+
+		return $sql;
+	}
+
+	/**
+	 * @return array[]
+	 */
+	public function get_route_generator_urls(): array {
+		return array(
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_generator_urls' ),
+				'args'                => array(
+					'rows_per_page' => array(
+						'required'          => true,
+						'default'           => self::ROWS_PER_PAGE,
+						'validate_callback' => function( $param ) {
+							return is_numeric( $param ) && 0 < $param && 1000 > $param;
+						},
+					),
+					'from_url_id'   => array(
+						'required'          => false,
+						'validate_callback' => function( $param ) {
+							return empty( $param ) || is_numeric( $param );
+						},
+					),
+				),
+				'permission_callback' => array(
+					$this,
+					'get_items_permissions_check',
+				),
+			),
+		);
+	}
+
+	public function get_generator_urls( $request ) {
+		$rows = $this->get_generator_urls_sql( $request )->get_results();
+		if ( ! is_array( $rows ) ) {
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
-		$sql->add_order( 'generator_id' );
+		foreach ( $rows as $row ) {
+			$row->url_id = (int) $row->url_id; // phpcs:ignore
+		}
+
+		return new WP_REST_Response( $rows, 200 );
+	}
+
+	public function get_generator_urls_sql( $request ): Urlslab_Api_Table_Sql {
+		$sql = new Urlslab_Api_Table_Sql( $request );
+		$sql->add_select_column( 'url_id', 'm' );
+		$sql->add_select_column( 'url_name', 'u' );
+		$sql->add_from( URLSLAB_CONTENT_GENERATOR_URLS_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.url_id = u.url_id)' );
+
+		$columns = $this->prepare_columns( ( new Urlslab_Content_Generator_Url_Row() )->get_columns(), 'm' );
+		$columns = array_merge( $columns, $this->prepare_columns( array( 'url_name' => '%s' ), 'u' ) );
+
+		$sql->add_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
 
 		return $sql;
 	}
@@ -267,7 +297,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 	 * @return bool
 	 */
 	public function isTextForTranslation( $original_text ): bool {
-		if ( false === strpos( $original_text, ' ' ) && preg_match( '/[-_]', $original_text ) ) {    //detect constants or special attributes (zero spaces in text, but contains - or _)
+		if ( false === strpos( $original_text, ' ' ) && ( false !== strpos( $original_text, '-' ) || false !== strpos( $original_text, '_' ) ) ) {    //detect constants or special attributes (zero spaces in text, but contains - or _)
 			return false;
 		}
 
@@ -275,7 +305,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 			return false;
 		}
 
-		return strlen( trim( $original_text ) ) > 2 && preg_match( '/[\p{L}]+/u', $original_text );
+		return strlen( trim( $original_text ) ) > 2 && preg_match( '/\p{L}+/u', $original_text );
 	}
 
 }

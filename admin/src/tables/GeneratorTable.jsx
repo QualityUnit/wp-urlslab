@@ -1,6 +1,11 @@
 import {
-	useInfiniteFetch, Tooltip, Checkbox, Trash, ProgressBar, InputField, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, SortMenu, DateTimeFormat,
+	useInfiniteFetch, Tooltip, Checkbox, Trash, ProgressBar, SortBy, InputField, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat,
 } from '../lib/tableImports';
+
+import IconButton from '../elements/IconButton';
+import { ReactComponent as AcceptIcon } from '../assets/images/icons/icon-activate.svg';
+import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
+import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-cron-refresh.svg';
 
 import { langName } from '../lib/helpers';
 
@@ -8,10 +13,37 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 
 export default function GeneratorTable( { slug } ) {
-	const pageId = 'generator_id';
-	const { table, setTable, filters, setFilters, currentFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
+	const paginationId = 'generator_id';
+	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sorting ? '' : sorting }`;
+
+	const ActionButton = ( { cell, onClick } ) => {
+		const { status } = cell?.row?.original;
+
+		return (
+			<div className="flex flex-align-center flex-justify-end">
+				{
+					( status === 'W' || status === 'D' ) &&
+					<IconButton className="mr-s c-saturated-green" tooltip={ __( 'Accept' ) } tooltipClass="align-left" onClick={ () => onClick( 'A' ) }>
+						<AcceptIcon />
+					</IconButton>
+				}
+				{
+					( status === 'W' || status === 'A' ) &&
+					<IconButton className="mr-s c-saturated-red" tooltip={ __( 'Decline' ) } tooltipClass="align-left" onClick={ () => onClick( 'D' ) }>
+						<DisableIcon />
+					</IconButton>
+				}
+				{
+					( status !== 'N' && status !== 'P' ) &&
+					<IconButton className="mr-s" tooltip={ __( 'Regenerate' ) } tooltipClass="align-left" onClick={ () => onClick( 'N' ) }>
+						<RefreshIcon />
+					</IconButton>
+				}
+			</div>
+		);
+	};
 
 	const {
 		__,
@@ -23,9 +55,9 @@ export default function GeneratorTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, pageId, currentFilters, sortingColumn } );
+	} = useInfiniteFetch( { key: slug, url, paginationId, filters, sorting } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const statusTypes = {
 		A: 'Active',
@@ -39,10 +71,11 @@ export default function GeneratorTable( { slug } ) {
 		command: __( 'Command' ),
 		semantic_context: __( 'Context' ),
 		url_filter: __( 'URL filter' ),
-		lang: __( 'Language code' ),
+		lang: __( 'Language' ),
 		status: __( 'Status' ),
 		status_changed: __( 'Last change' ),
 		result: __( 'Result' ),
+		usage_count: __( 'Usage' ),
 	};
 
 	const columns = [
@@ -55,42 +88,52 @@ export default function GeneratorTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'command', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: header.command,
+			header: <SortBy props={ { header, sorting, key: 'command', onClick: () => sortBy( 'command' ) } }>{ header.command }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'semantic_context', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: header.semantic_context,
+			header: <SortBy props={ { header, sorting, key: 'semantic_context', onClick: () => sortBy( 'semantic_context' ) } }>{ header.semantic_context }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'url_filter', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: header.url_filter,
+			header: <SortBy props={ { header, sorting, key: 'url_filter', onClick: () => sortBy( 'url_filter' ) } }>{ header.url_filter }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'lang', {
 			cell: ( cell ) => langName( cell?.getValue() ),
-			header: header.lang,
+			header: <SortBy props={ { header, sorting, key: 'lang', onClick: () => sortBy( 'lang' ) } }>{ header.lang }</SortBy>,
 			size: 165,
 		} ),
 		columnHelper.accessor( 'result', {
 			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.result,
+			header: <SortBy props={ { header, sorting, key: 'result', onClick: () => sortBy( 'result' ) } }>{ header.result }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'status', {
 			filterValMenu: statusTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SortMenu items={ statusTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.status,
+			cell: ( cell ) => statusTypes[ cell.getValue() ],
+			header: <SortBy props={ { header, sorting, key: 'status', onClick: () => sortBy( 'status' ) } }>{ header.status }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'status_changed', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: header.status_changed,
+			header: <SortBy props={ { header, sorting, key: 'status_changed', onClick: () => sortBy( 'status_changed' ) } }>{ header.status_changed }</SortBy>,
 			size: 100,
+		} ),
+		columnHelper.accessor( 'usage_count', {
+			header: header.usage_count,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'actions', {
+			className: 'actions hoverize nolimit',
+			cell: ( cell ) => <ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />,
+			header: null,
+			size: 70,
 		} ),
 		columnHelper.accessor( 'delete', {
 			className: 'deleteRow',
@@ -115,11 +158,11 @@ export default function GeneratorTable( { slug } ) {
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				exportOptions={ {
-					url: slug,
+					slug,
 					filters,
-					fromId: `from_${ pageId }`,
-					pageId,
-					deleteCSVCols: [ pageId, 'generator_id' ],
+					fromId: `from_${ paginationId }`,
+					paginationId,
+					deleteCSVCols: [ paginationId, 'generator_id' ],
 				} }
 			/>
 			<Table className="fadeInto"
@@ -134,7 +177,7 @@ export default function GeneratorTable( { slug } ) {
 					? <Tooltip center>{ __( 'Item has been deleted.' ) }</Tooltip>
 					: null
 				}
-				<TooltipSortingFiltering props={ { isFetching, filters, sortingColumn } } />
+				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

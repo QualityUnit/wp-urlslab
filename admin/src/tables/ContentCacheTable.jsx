@@ -1,12 +1,12 @@
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat,
 } from '../lib/tableImports';
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function ContentCacheTable( { slug } ) {
-	const pageId = 'cache_crc32';
-	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
+	const paginationId = 'cache_crc32';
+	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sorting ? '' : sorting }`;
 
 	const {
 		__,
@@ -18,7 +18,7 @@ export default function ContentCacheTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, pageId } );
+	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
 	const header = {
 		date_changed: __( 'Last change' ),
@@ -29,17 +29,17 @@ export default function ContentCacheTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'date_changed', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: header.date_changed,
+			header: <SortBy props={ { header, sorting, key: 'date_changed', onClick: () => sortBy( 'date_changed' ) } }>{ header.date_changed }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'cache_len', {
 			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
-			header: header.cache_len,
+			header: <SortBy props={ { header, sorting, key: 'cache_len', onClick: () => sortBy( 'cache_len' ) } }>{ header.cache_len }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'cache_content', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: header.cache_content,
+			header: <SortBy props={ { header, sorting, key: 'cache_content', onClick: () => sortBy( 'cache_content' ) } }>{ header.cache_content }</SortBy>,
 			size: 500,
 		} ),
 	];
@@ -67,7 +67,7 @@ export default function ContentCacheTable( { slug } ) {
 					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 				}
 			>
-				<TooltipSortingFiltering props={ { isFetching, filters, sortingColumn } } />
+				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

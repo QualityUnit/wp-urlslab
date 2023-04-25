@@ -77,25 +77,21 @@ class Urlslab_Api_Screenshots extends Urlslab_Api_Urls {
 	}
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
-		if ( ! $request->get_param( 'filter_scr_status' ) ) {
-			$request->set_param(
-				'filter_scr_status',
-				json_encode(
-					(object) array(
-						'op'  => '<>',
-						'val' => '',
-					)
-				)
-			);
+		$body = $request->get_json_params();
+		if ( ! is_array( $body['filters'] ) ) {
+			$body['filters'] = array();
 		}
+		$body['filters'][] = array(
+			'col' => 'scr_status',
+			'op'  => '<>',
+			'val' => '',
+		);
+		$request->set_body( json_encode( $body ) );
 
 		return parent::get_items_sql( $request );
 	}
 
 	protected function get_custom_columns() {
-		$columns   = array();
-		$columns[] = 'screenshot_usage_count';
-
-		return $columns;
+		return array( 'screenshot_usage_count' => '%d' );
 	}
 }

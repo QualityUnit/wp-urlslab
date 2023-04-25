@@ -139,6 +139,23 @@ class Urlslab_Activator {
 		self::update_step(
 			'2.14.0',
 			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD COLUMN url_h1	text' ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD COLUMN final_url_id bigint' ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD INDEX idx_final_url_id (final_url_id)' ); // phpcs:ignore
+				$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . ' SET final_url_id = url_id' ); // phpcs:ignore
+			}
+		);
+		self::update_step(
+			'2.15.0',
+			function() {
+				self::init_content_generator_urls_table();
+				self::init_youtube_urls_tables();
+			}
+		);
+		self::update_step(
+			'2.16.0',
+			function() {
 				self::init_labels_table();
 
 				global $wpdb;
@@ -167,12 +184,14 @@ class Urlslab_Activator {
 		self::init_urlslab_file_pointers();
 		self::init_urlslab_file_db_driver_contents();
 		self::init_youtube_cache_tables();
+		self::init_youtube_urls_tables();
 		self::init_keywords_map_table();
 		self::init_css_cache_tables();
 		self::init_content_cache_tables();
 		self::init_search_replace_tables();
 		self::init_screenshot_urls_table();
 		self::init_content_generators_table();
+		self::init_content_generator_urls_table();
 		self::init_not_found_log_table();
 		self::init_redirects_table();
 		self::init_labels_table();
@@ -183,32 +202,35 @@ class Urlslab_Activator {
 		$table_name      = URLSLAB_URLS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
-							url_id bigint NOT NULL,
-							url_name varchar(2048) NOT NULL,
-							scr_status char(1) NOT NULL,
-							sum_status char(1) NOT NULL,
-							http_status SMALLINT DEFAULT -1, -- -1: not checked, 200: ok, 3xx: redirect, 4xx: client error, 5xx: server error
-							update_scr_date DATETIME,
-							update_sum_date DATETIME,
-							update_http_date DATETIME,
-							urlslab_domain_id char(16),
-							urlslab_url_id char(16),
-							urlslab_scr_timestamp bigint,
-							urlslab_sum_timestamp bigint,
-							url_title	  text,
-							url_meta_description text,
-							url_summary			text,
-							visibility char(1) NOT NULL DEFAULT 'V', -- V: visible, H: hidden
-							url_type char(1) NOT NULL DEFAULT 'I', -- I: Internal, E: external
-							rel_schedule char(1) NOT NULL DEFAULT '', -- N: New, S: Scheduled, E: Error, empty - not sheduling
-							rel_updated DATETIME,
-							labels VARCHAR(255) NOT NULL DEFAULT '',
-							PRIMARY KEY  (url_id),
-							INDEX idx_scr_changed (update_scr_date, scr_status),
-							INDEX idx_sum_changed (update_sum_date, sum_status),
-							INDEX idx_http_changed (update_http_date, http_status),
-							INDEX idx_rel_schedule (rel_schedule, rel_updated)) {$charset_collate};";
-
+			url_id bigint NOT NULL,
+			final_url_id bigint,
+			url_name varchar(2048) NOT NULL,
+			scr_status char(1) NOT NULL,
+			sum_status char(1) NOT NULL,
+			http_status SMALLINT DEFAULT -1, -- -1: not checked, 200: ok, 3xx: redirect, 4xx: client error, 5xx: server error
+			update_scr_date DATETIME,
+			update_sum_date DATETIME,
+			update_http_date DATETIME,
+			urlslab_domain_id char(16),
+			urlslab_url_id char(16),
+			urlslab_scr_timestamp bigint,
+			urlslab_sum_timestamp bigint,
+			url_title	  text,
+			url_h1	  text,
+			url_meta_description text,
+			url_summary			text,
+			visibility char(1) NOT NULL DEFAULT 'V', -- V: visible, H: hidden
+			url_type char(1) NOT NULL DEFAULT 'I', -- I: Internal, E: external
+			rel_schedule char(1) NOT NULL DEFAULT '', -- N: New, S: Scheduled, E: Error, empty - not sheduling
+			rel_updated DATETIME,
+      labels VARCHAR(255) NOT NULL DEFAULT '',
+			PRIMARY KEY  (url_id),
+			INDEX idx_final_url_id (final_url_id),
+			INDEX idx_scr_changed (update_scr_date, scr_status),
+			INDEX idx_sum_changed (update_sum_date, sum_status),
+			INDEX idx_http_changed (update_http_date, http_status),
+			INDEX idx_rel_schedule (rel_schedule, rel_updated)
+		) {$charset_collate};";
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 	}
@@ -368,6 +390,20 @@ class Urlslab_Activator {
 		dbDelta( $sql );
 	}
 
+	private static function init_youtube_urls_tables() {
+		global $wpdb;
+		$table_name      = URLSLAB_YOUTUBE_URLS_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
+			videoid varchar(32) NOT NULL,
+			url_id bigint NOT NULL,
+			PRIMARY KEY  (videoid, url_id)
+		) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
 	private static function init_keywords_map_table() {
 		global $wpdb;
 		$table_name      = URLSLAB_KEYWORDS_MAP_TABLE;
@@ -474,6 +510,21 @@ class Urlslab_Activator {
 						status_changed DATETIME NULL,
 						labels VARCHAR(255) NOT NULL DEFAULT '',
 						PRIMARY KEY (generator_id)
+        ) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_content_generator_urls_table() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$table_name = URLSLAB_CONTENT_GENERATOR_URLS_TABLE;
+		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
+    		  generator_id bigint NOT NULL,
+    		  url_id bigint NOT NULL,
+			  PRIMARY KEY (generator_id, url_id)
         ) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
