@@ -39,7 +39,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 								return is_string( $param );
 							},
 						),
-						'labels'     => array(
+						'labels' => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
@@ -59,7 +59,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 					'callback'            => array( $this, 'get_translation' ),
 					'permission_callback' => array(
 						$this,
-						'update_item_permissions_check',
+						'translate_permissions_check',
 					),
 					'args'                => array(
 						'source_lang'   => array(
@@ -120,6 +120,11 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 		register_rest_route( self::NAMESPACE, $base . '/(?P<generator_id>[0-9]+)/urls', $this->get_route_generator_urls() );
 		register_rest_route( self::NAMESPACE, $base . '/(?P<generator_id>[0-9]+)/urls/count', $this->get_count_route( $this->get_route_generator_urls() ) );
 
+	}
+
+
+	public function translate_permissions_check( $request ) {
+		return is_admin() || current_user_can( 'translate' );
 	}
 
 	public function get_items( $request ) {
