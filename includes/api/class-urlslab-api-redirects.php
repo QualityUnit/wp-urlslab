@@ -356,8 +356,9 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 		$sql->add_select_column( '*' );
 		$sql->add_from( $this->get_row_object()->get_table_name() );
 
-		$sql->add_filters( $this->get_row_object()->get_columns(), $request );
-		$sql->add_sorting( $this->get_row_object()->get_columns(), $request );
+		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
+		$sql->add_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
 
 		return $sql;
 	}

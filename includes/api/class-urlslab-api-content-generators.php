@@ -204,9 +204,10 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( '*' );
 		$sql->add_from( URLSLAB_CONTENT_GENERATORS_TABLE );
+		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
+		$sql->add_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
 
-		$sql->add_filters( $this->get_row_object()->get_columns(), $request );
-		$sql->add_sorting( $this->get_row_object()->get_columns(), $request );
 		return $sql;
 	}
 

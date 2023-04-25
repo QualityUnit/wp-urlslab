@@ -253,15 +253,19 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		$sql->add_select_column( 'url_name', 'u_dest', 'dest_url_name' );
 		$sql->add_from( URLSLAB_RELATED_RESOURCE_TABLE . ' r LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u_src ON u_src.url_id = r.src_url_id LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u_dest ON u_dest.url_id = r.dest_url_id ' );
 
-		$sql->add_filters( $this->get_row_object()->get_columns(), $request );
-		$sql->add_having_filters(
-			array(
-				'src_url_name'  => '%s',
-				'dest_url_name' => '%s',
-			),
-			$request
+		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
+		$columns = array_merge(
+			$columns,
+			$this->prepare_columns(
+				array(
+					'src_url_name'  => '%s',
+					'dest_url_name' => '%s',
+				)
+			)
 		);
-		$sql->add_sorting( $this->get_row_object()->get_columns(), $request );
+
+		$sql->add_having_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
 
 		return $sql;
 	}

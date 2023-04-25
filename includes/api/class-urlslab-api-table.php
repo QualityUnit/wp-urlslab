@@ -213,14 +213,14 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	protected function on_items_updated( array $row = array() ) {}
 
 	protected function get_table_arguments(): array {
-		$arguments['filters']  = array(
+		$arguments['filters'] = array(
 			'required'          => false,
 			'default'           => array(),
 			'validate_callback' => function( $param ) {
 				return is_array( $param );
 			},
 		);
-		$arguments['sorting']    = array(
+		$arguments['sorting'] = array(
 			'required'          => false,
 			'default'           => array(),
 			'validate_callback' => function( $param ) {
@@ -245,5 +245,15 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 
 	protected function before_import( Urlslab_Data $row_obj ): Urlslab_Data {
 		return $row_obj;
+	}
+
+
+	protected function prepare_columns( $input_columns, $table_prefix = false ): array {
+		$columns = array();
+		foreach ( $input_columns as $column => $format ) {
+			$columns[ $column ] = array( 'format' => $format, 'prefix' => $table_prefix );
+		}
+
+		return $columns;
 	}
 }

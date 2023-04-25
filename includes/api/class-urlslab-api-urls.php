@@ -224,12 +224,10 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
-		foreach (
-			array_keys( $this->get_row_object()->get_columns() ) as $column
-		) {
+		foreach ( array_keys( $this->get_row_object()->get_columns() ) as $column ) {
 			$sql->add_select_column( $column, 'u' );
 		}
-		$sql->add_from( URLSLAB_URLS_TABLE . ' u' );
+		$sql->add_from( URLSLAB_URLS_TABLE . ' u ' );
 
 		if ( in_array( 'url_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
 			$sql->add_select_column( 'IFNULL(url_usage_cnt, 0)', false, 'url_usage_count' );
@@ -256,23 +254,20 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			);
 		}
 
-		$sql->add_filters( $this->get_row_object()->get_columns(), $request, 'u' );
+		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'u' );
 
-		$having_columns = array();
 		if ( in_array( 'url_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
-			$having_columns['url_usage_count'] = '%d';
+			$columns = array_merge( $columns, $this->prepare_columns( array( 'url_usage_count' => '%d' ) ) );
 		}
 		if ( in_array( 'screenshot_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
-			$having_columns['screenshot_usage_count'] = '%d';
+			$columns = array_merge( $columns, $this->prepare_columns( array( 'screenshot_usage_count' => '%d' ) ) );
 		}
 		if ( in_array( 'url_links_count', array_keys( $this->get_custom_columns() ) ) ) {
-			$having_columns['url_links_count'] = '%d';
-		}
-		if ( ! empty( $having_columns ) ) {
-			$sql->add_having_filters( $having_columns, $request );
+			$columns = array_merge( $columns, $this->prepare_columns( array( 'url_links_count' => '%d' ) ) );
 		}
 
-		$sql->add_sorting( $this->get_row_object()->get_columns(), $request, 'u' );
+		$sql->add_having_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
 
 		return $sql;
 	}
@@ -461,10 +456,16 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			. ' u_dest ON m.dest_url_id = u_dest.url_id'
 		); // phpcs:ignore
 
-		$columns = array(
-			'dest_url_id' => '%d',
-			'src_url_id'  => '%d',
+		$columns = $this->prepare_columns(
+			array(
+				'dest_url_id'   => '%d',
+				'src_url_id'    => '%d',
+				'src_url_name'  => '%s',
+				'dest_url_name' => '%s',
+			)
 		);
+
+
 		$sql->add_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
 

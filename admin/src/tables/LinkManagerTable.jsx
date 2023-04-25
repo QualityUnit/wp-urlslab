@@ -139,7 +139,7 @@ export default function LinkManagerTable( { slug } ) {
 					</button>
 				}
 			</div>,
-			header: <SortBy props={ { header, sorting, key: 'header.url_links_count', onClick: () => sortBy( 'header.url_links_count' ) } }>{ header.url_links_count }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'url_links_count', onClick: () => sortBy( 'url_links_count' ) } }>{ header.url_links_count }</SortBy>,
 			size: 140,
 		} ),
 		columnHelper.accessor( 'url_usage_count', {
@@ -154,7 +154,7 @@ export default function LinkManagerTable( { slug } ) {
 					</button>
 				}
 			</div>,
-			header: <SortBy props={ { header, sorting, key: 'header.url_usage_count', onClick: () => sortBy( 'header.url_usage_count' ) } }>{ header.url_usage_count }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'url_usage_count', onClick: () => sortBy( 'url_usage_count' ) } }>{ header.url_usage_count }</SortBy>,
 			size: 140,
 		} ),
 		columnHelper.accessor( 'delete', {

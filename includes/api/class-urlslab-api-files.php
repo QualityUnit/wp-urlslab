@@ -214,12 +214,19 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		$sql->add_select_column( 'url_id', 'm' );
 		$sql->add_select_column( 'url_name', 'u' );
 		$sql->add_from( URLSLAB_FILE_URLS_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.url_id = u.url_id)' );
-		$columns = array(
-			'fileid' => '%s',
-			'url_id' => '%d',
+
+		$columns = $this->prepare_columns(
+			array(
+				'fileid' => '%s',
+				'url_id' => '%d',
+			),
+			'm'
 		);
-		$sql->add_filters( $columns, $request, 'm' );
-		$sql->add_sorting( $columns, $request, 'm' );
+
+		$columns = array_merge( $columns, $this->prepare_columns( array( 'url_name' => '%s' ), 'u' ) );
+
+		$sql->add_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
 
 		return $sql;
 	}
@@ -266,14 +273,14 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 			URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_URLS_TABLE . ' m ON m.fileid = f.fileid' .
 			' LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON p.filehash = f.filehash and p.filesize=f.filesize'
 		);
-		$sql->add_filters( $this->get_row_object()->get_columns(), $request, 'f' );
-
-
-		$sql->add_having_filters( array( 'file_usage_count' => '%d' ), $request );
 
 		$sql->add_group_by( 'fileid', 'f' );
 
-		$sql->add_sorting( $this->get_row_object()->get_columns(), $request, 'f' );
+		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'f' );
+		$columns = array_merge( $columns, $this->prepare_columns( array( 'file_usage_count' => '%d' ), false ) );
+
+		$sql->add_having_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
 
 		return $sql;
 	}

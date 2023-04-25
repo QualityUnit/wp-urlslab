@@ -279,9 +279,12 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			. URLSLAB_KEYWORDS_MAP_TABLE
 			. ' GROUP BY kw_id) d ON d.kw_id = v.kw_id '
 		);
-		$sql->add_filters( $this->get_row_object()->get_columns(), $request, 'v' );
-		$sql->add_having_filters( array( 'kw_usage_count' => '%d' ), $request );
-		$sql->add_sorting( $this->get_row_object()->get_columns(), $request, 'v' );
+
+		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'v' );
+		$columns = array_merge( $columns, $this->prepare_columns( array( 'kw_usage_count' => '%d' ) ) );
+
+		$sql->add_having_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
 
 		return $sql;
 	}
@@ -427,8 +430,11 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			. ' u ON m.url_id = u.url_id'
 		);
 
-		$sql->add_filters( $this->get_row_object()->get_columns(), $request, 'm' );
-		$sql->add_sorting( $this->get_row_object()->get_columns(), $request, 'm' );
+		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'm' );
+		$columns = array_merge( $columns, $this->prepare_columns( array( 'url_name' => '%s' ), 'u' ) );
+
+		$sql->add_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
 
 		return $sql;
 	}

@@ -17,31 +17,35 @@ class Urlslab_Api_Table_Sql {
 		$this->request = $request;
 	}
 
-	private function add_filter( array $filter, $format = '%s', $table_prefix = false ) {
-		if ( $table_prefix && false === strpos( $filter['col'], '.' ) ) {
-			$filter['col'] = $table_prefix . '.' . $filter['col'];
+
+	public function add_filters( array $columns, WP_REST_Request $request ) {
+		if ( isset( $request->get_json_params()['filters'] ) && is_array( $request->get_json_params()['filters'] ) ) {
+			$this->add_filter_array( 'AND', $columns, $request->get_json_params()['filters'] );
 		}
-		$filter_sql = $this->get_column_filter_sql( $filter, $format );
+	}
+
+	public function add_having_filters( array $columns, WP_REST_Request $request ) {
+		if ( isset( $request->get_json_params()['filters'] ) && is_array( $request->get_json_params()['filters'] ) ) {
+			$this->add_having_filter_array( 'AND', $columns, $request->get_json_params()['filters'] );
+		}
+	}
+
+	private function add_filter( array $filter, array $column_format ) {
+		if ( $column_format['prefix'] && false === strpos( $filter['col'], '.' ) ) {
+			$filter['col'] = $column_format['prefix'] . '.' . $filter['col'];
+		}
+		$filter_sql = $this->get_column_filter_sql( $filter, $column_format['format'] );
 		if ( ! empty( $filter_sql ) ) {
 			$this->where_sql[] = $filter_sql['sql'];
 			$this->query_data  = array_merge( $this->query_data, $filter_sql['data'] );
 		}
 	}
 
-	public function add_having_filters( array $columns, WP_REST_Request $request, $table_prefix = false ) {
-		$column_names = array_keys( $columns );
-		foreach ( $request->get_json_params()['filters'] as $filter ) {
-			if ( isset( $filter['col'] ) && in_array( $filter['col'], $column_names ) ) {
-				$this->add_having_filter( $filter, $columns[ $filter['col'] ], $table_prefix );
-			}
+	private function add_having_filter( array $filter, array $column_format ) {
+		if ( $column_format['prefix'] && false === strpos( $filter['col'], '.' ) ) {
+			$filter['col'] = $column_format['prefix'] . '.' . $filter['col'];
 		}
-	}
-
-	private function add_having_filter( array $filter, $format = '%s', $table_prefix = false ) {
-		if ( $table_prefix && false === strpos( $filter['col'], '.' ) ) {
-			$filter['col'] = $table_prefix . '.' . $filter['col'];
-		}
-		$filter_sql = $this->get_column_filter_sql( $filter, $format );
+		$filter_sql = $this->get_column_filter_sql( $filter, $column_format['format'] );
 		if ( ! empty( $filter_sql ) ) {
 			$this->having_sql[] = $filter_sql['sql'];
 			$this->query_data   = array_merge( $this->query_data, $filter_sql['data'] );
@@ -141,7 +145,7 @@ class Urlslab_Api_Table_Sql {
 			' FROM ' . implode( ' ', $this->from_sql ) . // phpcs:ignore
 			( ! empty( $this->where_sql ) ? ' WHERE ' . implode( ' ', $this->where_sql ) : '' ) . // phpcs:ignore
 			( ! empty( $this->group_by_sql ) ? ' GROUP BY ' . implode( ',', $this->group_by_sql ) : '' ) . // phpcs:ignore
-			( ! empty( $this->having_sql ) ? ' HAVING ' . implode( ' AND ', $this->having_sql ) : '' ) . // phpcs:ignore
+			( ! empty( $this->having_sql ) ? ' HAVING ' . implode( ' ', $this->having_sql ) : '' ) . // phpcs:ignore
 			( ! empty( $this->order_sql ) ? ' ORDER BY ' . implode( ',', $this->order_sql ) : '' ) . // phpcs:ignore
 			( strlen( $this->limit_sql ) ? ' LIMIT ' . $this->limit_sql : '' ), // phpcs:ignore
 			$this->query_data
@@ -330,50 +334,79 @@ class Urlslab_Api_Table_Sql {
 		);
 	}
 
-	public function add_filters( array $columns, WP_REST_Request $request, $table_prefix = false ) {
-		if ( isset( $request->get_json_params()['filters'] ) && is_array( $request->get_json_params()['filters'] ) ) {
-			$this->add_filter_array( 'AND', $columns, $request->get_json_params()['filters'], $table_prefix );
-		}
-	}
 
-	public function add_sorting( array $columns, WP_REST_Request $request, $table_prefix = false ) {
+	public function add_sorting( array $columns, WP_REST_Request $request ) {
 		$column_names = array_keys( $columns );
-
-		foreach ( $request->get_json_params()['sorting'] as $sorting ) {
-			if ( isset( $sorting['col'] ) && in_array( $sorting['col'], $column_names ) ) {
-				if ( isset( $sorting['dir'] ) && 'DESC' === strtoupper( $sorting['dir'] ) ) {
-					$direction = 'DESC';
-				} else {
-					$direction = 'ASC';
+		if ( isset( $request->get_json_params()['sorting'] ) ) {
+			foreach ( $request->get_json_params()['sorting'] as $sorting ) {
+				if ( isset( $sorting['col'] ) && in_array( $sorting['col'], $column_names ) ) {
+					if ( isset( $sorting['dir'] ) && 'DESC' === strtoupper( $sorting['dir'] ) ) {
+						$direction = 'DESC';
+					} else {
+						$direction = 'ASC';
+					}
+					$this->add_order( $sorting['col'], $direction, $columns[ $sorting['col'] ]['prefix'] );
 				}
-				$this->add_order( $sorting['col'], $direction, $table_prefix );
 			}
 		}
 	}
 
-	private function add_filter_array( string $operand, array $columns, array $filters, $table_prefix ) {
+	private function add_filter_array( string $operand, array $columns, array $filters ) {
 		if ( ! empty( $filters ) ) {
 			$this->add_filter_str( '(' );
 			$is_first = true;
 			foreach ( $filters as $filter ) {
-				if ( ! $is_first ) {
-					$this->add_filter_str( $operand );
-				}
 				if ( isset( $filter['cond'] ) ) {
 					if ( isset( $filter['filters'] ) && is_array( $filter['filters'] ) ) {
-						$this->add_filter_array( $filter['cond'], $columns, $filter['filters'], $table_prefix );
+						if ( ! $is_first ) {
+							$this->add_filter_str( $operand );
+						}
+						$this->add_filter_array( $filter['cond'], $columns, $filter['filters'] );
+						$is_first = false;
 					}
 				} else if ( isset( $filter['col'] ) && isset( $columns[ $filter['col'] ] ) ) {
-					$this->add_filter( $filter, $columns[ $filter['col'] ], $table_prefix );
+					if ( ! $is_first ) {
+						$this->add_filter_str( $operand );
+					}
+					$this->add_filter( $filter, $columns[ $filter['col'] ] );
+					$is_first = false;
 				}
-				$is_first = false;
 			}
 			$this->add_filter_str( ')' );
 		}
 	}
 
+	private function add_having_filter_array( string $operand, array $columns, array $filters ) {
+		if ( ! empty( $filters ) ) {
+			$this->add_having_filter_str( '(' );
+			$is_first = true;
+			foreach ( $filters as $filter ) {
+				if ( isset( $filter['cond'] ) ) {
+					if ( isset( $filter['filters'] ) && is_array( $filter['filters'] ) ) {
+						if ( ! $is_first ) {
+							$this->add_having_filter_str( $operand );
+						}
+						$this->add_having_filter_array( $filter['cond'], $columns, $filter['filters'] );
+						$is_first = false;
+					}
+				} else if ( isset( $filter['col'] ) && isset( $columns[ $filter['col'] ] ) ) {
+					if ( ! $is_first ) {
+						$this->add_having_filter_str( $operand );
+					}
+					$this->add_having_filter( $filter, $columns[ $filter['col'] ] );
+					$is_first = false;
+				}
+			}
+			$this->add_having_filter_str( ')' );
+		}
+	}
+
 	private function add_filter_str( string $control_string ) {
 		$this->where_sql[] = $control_string;
+	}
+
+	private function add_having_filter_str( string $control_string ) {
+		$this->having_sql[] = $control_string;
 	}
 
 }
