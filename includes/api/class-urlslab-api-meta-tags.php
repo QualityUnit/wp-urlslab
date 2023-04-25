@@ -45,6 +45,12 @@ class Urlslab_Api_Meta_Tags extends Urlslab_Api_Urls {
 								return is_string( $param );
 							},
 						),
+						'labels'     => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
 					),
 				),
 			)
@@ -73,6 +79,7 @@ class Urlslab_Api_Meta_Tags extends Urlslab_Api_Urls {
 			'url_h1',
 			'url_meta_description',
 			'url_summary',
+			'labels',
 		);
 	}
 

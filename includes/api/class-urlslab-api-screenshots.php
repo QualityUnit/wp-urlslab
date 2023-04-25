@@ -47,6 +47,12 @@ class Urlslab_Api_Screenshots extends Urlslab_Api_Urls {
 								return is_string( $param );
 							},
 						),
+						'labels'     => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
 					),
 				),
 			)
@@ -73,7 +79,7 @@ class Urlslab_Api_Screenshots extends Urlslab_Api_Urls {
 	}
 
 	public function get_editable_columns(): array {
-		return array( 'scr_status' );
+		return array( 'scr_status', 'labels' );
 	}
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {

@@ -97,6 +97,12 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 								return Urlslab_Redirect_Row::NOT_FOUND_STATUS_NOT_FOUND == $param || Urlslab_Redirect_Row::NOT_FOUND_STATUS_FOUND == $param || Urlslab_Redirect_Row::NOT_FOUND_STATUS_ANY == $param;
 							},
 						),
+						'labels'     => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
 					),
 				),
 			)
@@ -276,6 +282,12 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 						return is_numeric( $param ) && 300 <= $param && 400 > $param;
 					},
 				),
+				'labels'     => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return is_string( $param );
+					},
+				),
 			),
 			'permission_callback' => array(
 				$this,
@@ -348,6 +360,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 			'params',
 			'if_not_found',
 			'redirect_code',
+			'labels',
 		);
 	}
 

@@ -195,7 +195,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 	}
 
 	public function get_editable_columns(): array {
-		return array( 'filestatus' );
+		return array( 'filestatus', 'labels' );
 	}
 
 	/**
