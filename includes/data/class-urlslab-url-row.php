@@ -97,7 +97,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	public function get_columns(): array {
 		return array(
 			'url_id'                => '%d',
-			'final_url_id'                => '%d',
+			'final_url_id'          => '%d',
 			'url_name'              => '%s',
 			'scr_status'            => '%s',
 			'sum_status'            => '%s',
@@ -110,7 +110,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 			'urlslab_scr_timestamp' => '%d',
 			'urlslab_sum_timestamp' => '%d',
 			'url_title'             => '%s',
-			'url_h1'             => '%s',
+			'url_h1'                => '%s',
 			'url_meta_description'  => '%s',
 			'url_summary'           => '%s',
 			'visibility'            => '%s',
@@ -325,7 +325,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		return $this->get( 'labels' );
 	}
 
-	public function set_labels( array $labels, $loaded_from_db = false ): void {
+	public function set_labels( string $labels, $loaded_from_db = false ): void {
 		$this->set( 'labels', $labels, $loaded_from_db );
 	}
 
