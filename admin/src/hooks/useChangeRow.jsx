@@ -80,22 +80,22 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 
 	const deleteRow = useCallback( ( { cell, optionalSelector } ) => {
 		setResponseCounter( 1 );
-		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), url, slug, cell, optionalSelector } );
-	}, [ processDeletedPages, deleteSelectedRow, slug, url ] );
+		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), cell, optionalSelector } );
+	}, [ processDeletedPages, deleteSelectedRow ] );
 
 	const deleteSelectedRows = async ( optionalSelector ) => {
 		// Multiple rows delete
 		setResponseCounter( selectedRows.length );
 
 		selectedRows.map( ( cell ) => {
-			deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), url, slug, cell, optionalSelector } );
+			deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), cell, optionalSelector } );
 			return false;
 		} );
 	};
 
 	const updateRowData = useMutation( {
 		mutationFn: async ( options ) => {
-			const { newVal, cell, optionalSelector } = options;
+			const { newVal, cell, customEndpoint, changeField, optionalSelector } = options;
 			const cellId = cell.column.id;
 
 			const newPagesArray = data?.pages.map( ( page ) =>
@@ -114,7 +114,11 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 				pages: newPagesArray,
 				pageParams: origData.pageParams,
 			} ) );
-			const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }`, { [ cellId ]: newVal } );
+			if ( changeField ) {
+				const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ changeField ]: newVal } );
+				return response;
+			}
+			const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ cellId ]: newVal } );
 			return response;
 		},
 		onSuccess: ( response ) => {
@@ -124,8 +128,8 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 			}
 		},
 	} );
-	const updateRow = ( { newVal, cell, optionalSelector } ) => {
-		updateRowData.mutate( { data, newVal, url, slug, cell, optionalSelector } );
+	const updateRow = ( { newVal, cell, customEndpoint, changeField, optionalSelector } ) => {
+		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, optionalSelector } );
 	};
 
 	const selectRow = ( isSelected, cell ) => {

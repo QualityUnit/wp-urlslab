@@ -4,6 +4,7 @@ abstract class Urlslab_Widget {
 	public const FREQ_NEVER = 999999999;
 
 	public const OPTION_TYPE_CHECKBOX = 'checkbox';
+	public const OPTION_TYPE_BUTTON_API_CALL = 'api_button';
 	public const OPTION_TYPE_TEXT = 'text';
 	public const OPTION_TYPE_PASSWORD = 'password';
 	public const PASSWORD_PLACEHOLDER = '********';
@@ -173,12 +174,14 @@ abstract class Urlslab_Widget {
 			$this->init_options();
 		}
 		foreach ( $this->options as $option ) {
-			add_option(
-				$option['id'],
-				$option['default'] ?? false,
-				'',
-				$option['autoload'] ?? true
-			);
+			if ( self::OPTION_TYPE_BUTTON_API_CALL !== $option['type'] ) {
+				add_option(
+					$option['id'],
+					$option['default'] ?? false,
+					'',
+					$option['autoload'] ?? true
+				);
+			}
 		}
 	}
 
@@ -189,6 +192,10 @@ abstract class Urlslab_Widget {
 
 		if ( ! isset( $this->options[ $option_id ] ) ) {
 			return false;
+		}
+
+		if ( self::OPTION_TYPE_BUTTON_API_CALL !== $this->options[ $option_id ]['type'] ) {
+			return true;
 		}
 
 		if ( null !== $this->options[ $option_id ]['validator'] ) {

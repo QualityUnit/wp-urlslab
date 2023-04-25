@@ -27,24 +27,19 @@ export default function LinkManagerTable( { slug } ) {
 
 	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	// const sumStatusTypes = {
-	// 	N: __( 'Waiting' ),
-	// 	A: __( 'Processed' ),
-	// 	P: __( 'Pending' ),
-	// 	U: __( 'Updating' ),
-	// 	E: __( 'Error' ),
-	// };
-
 	const httpStatusTypes = {
 		'-2': __( 'Processing' ),
 		'-1': __( 'Waiting' ),
 		200: __( 'Valid' ),
 		400: __( 'Client Error' ),
+		301: __( 'Moved Permanently' ),
+		302: __( 'Found, Moved temporarily' ),
+		307: __( 'Temporary Redirect' ),
+		308: __( 'Permanent Redirect' ),
 		404: __( 'Not Found' ),
 		500: __( 'Server Error' ),
 		503: __( 'Server Error' ),
 	};
-
 	const visibilityTypes = {
 		V: __( 'Visible' ),
 		H: __( 'Hidden' ),
@@ -58,6 +53,7 @@ export default function LinkManagerTable( { slug } ) {
 	const header = {
 		url_name: __( 'URL' ),
 		url_title: __( 'Title' ),
+		url_h1: __( 'H1' ),
 		url_meta_description: __( 'Description' ),
 		url_summary: __( 'Summary' ),
 		http_status: __( 'Status' ),
@@ -87,6 +83,11 @@ export default function LinkManagerTable( { slug } ) {
 		columnHelper.accessor( 'url_title', {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
 			header: <SortBy props={ { header, sorting, key: 'url_title', onClick: () => sortBy( 'url_title' ) } }>{ header.url_title }</SortBy>,
+			size: 150,
+		} ),
+		columnHelper.accessor( 'url_h1', {
+			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
+			header: header.url_h1,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'url_meta_description', {

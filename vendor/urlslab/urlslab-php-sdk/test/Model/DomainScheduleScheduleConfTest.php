@@ -98,6 +98,15 @@ class DomainScheduleScheduleConfTest extends TestCase
     }
 
     /**
+     * Test attribute "is_forced"
+     */
+    public function testPropertyIsForced()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
      * Test attribute "sitemaps"
      */
     public function testPropertySitemaps()

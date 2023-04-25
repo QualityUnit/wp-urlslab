@@ -42,13 +42,25 @@ export default function Settings( { className, settingId } ) {
 	settings = Object.values( data );
 
 	const renderStatus = () => {
-		switch ( tooltipStatus ) {
+		let currentStatus = tooltipStatus;
+		let message;
+		if ( typeof tooltipStatus === 'object' ) {
+			currentStatus = tooltipStatus.status;
+			message = tooltipStatus.message;
+		}
+		switch ( currentStatus ) {
 			case 'active':
 				return <Tooltip className="fixedBottom">{ __( 'Updating…' ) }</Tooltip>;
 			case 'success':
 				return <Tooltip className="fixedBottom successStatus">{ __( 'Setting updated' ) }</Tooltip>;
 			case 'error':
 				return <Tooltip className="fixedBottom errorStatus">{ __( 'Setting update failed' ) }</Tooltip>;
+			case 'activeApiCall':
+				return <Tooltip className="fixedBottom">{ message }</Tooltip>;
+			case 'successApiCall':
+				return <Tooltip className="fixedBottom successStatus">{ message }</Tooltip>;
+			case 'errorApiCall':
+				return <Tooltip className="fixedBottom errorStatus">{ message }</Tooltip>;
 			default:
 				break;
 		}

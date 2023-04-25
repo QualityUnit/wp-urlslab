@@ -183,7 +183,7 @@ export default function RedirectsTable( { slug } ) {
 			<Table className="fadeInto"
 				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
-				initialState={ { columnVisibility: { is_logged: false, header: false, params: false, capabilities: false, ip: false, if_not_found: false, browser: false, cookie: false } } }
+				initialState={ { columnVisibility: { roles: false, headers: false, params: false, capabilities: false, ip: false, if_not_found: false, browser: false, cookie: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
