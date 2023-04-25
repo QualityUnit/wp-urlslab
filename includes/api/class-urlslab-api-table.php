@@ -227,6 +227,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 				return is_array( $param );
 			},
 		);
+
 		return $arguments;
 	}
 
@@ -251,7 +252,10 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	protected function prepare_columns( $input_columns, $table_prefix = false ): array {
 		$columns = array();
 		foreach ( $input_columns as $column => $format ) {
-			$columns[ $column ] = array( 'format' => $format, 'prefix' => $table_prefix );
+			$columns[ $column ] = array(
+				'format' => $format,
+				'prefix' => $table_prefix,
+			);
 		}
 
 		return $columns;
