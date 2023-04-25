@@ -95,7 +95,7 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 
 	const updateRowData = useMutation( {
 		mutationFn: async ( options ) => {
-			const { newVal, cell, changeField, optionalSelector } = options;
+			const { newVal, cell, customEndpoint, changeField, optionalSelector } = options;
 			const cellId = cell.column.id;
 
 			const newPagesArray = data?.pages.map( ( page ) =>
@@ -115,10 +115,10 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 				pageParams: origData.pageParams,
 			} ) );
 			if ( changeField ) {
-				const response = await setData( `${ slug }/${ getRowId( cell, optionalSelector ) }`, { [ changeField ]: newVal } );
+				const response = await setData( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ changeField ]: newVal } );
 				return response;
 			}
-			const response = await setData( `${ slug }/${ getRowId( cell, optionalSelector ) }`, { [ cellId ]: newVal } );
+			const response = await setData( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ cellId ]: newVal } );
 			return response;
 		},
 		onSuccess: ( response ) => {
@@ -128,8 +128,8 @@ export default function useChangeRow( { data, url, slug, pageId } ) {
 			}
 		},
 	} );
-	const updateRow = ( { newVal, cell, changeField, optionalSelector } ) => {
-		updateRowData.mutate( { newVal, cell, changeField, optionalSelector } );
+	const updateRow = ( { newVal, cell, customEndpoint, changeField, optionalSelector } ) => {
+		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, optionalSelector } );
 	};
 
 	const selectRow = ( isSelected, cell ) => {
