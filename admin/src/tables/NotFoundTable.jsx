@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback } from 'react';
 
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, SortMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SortMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -13,12 +13,12 @@ import { ReactComponent as PlusIcon } from '../assets/images/icons/icon-plus.svg
 
 export default function NotFoundTable( { slug } ) {
 	const [ activePanel, setActivePanel ] = useState();
-	const pageId = 'url_id';
+	const paginationId = 'url_id';
 	const matchUrlField = useRef();
 
-	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
+	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sorting ? '' : sorting }`;
 
 	const {
 		__,
@@ -30,9 +30,9 @@ export default function NotFoundTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, pageId } );
+	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, pageId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { redirectTypes, matchTypes, header: redirectHeader } = useRedirectTableMenus();
 
@@ -69,19 +69,19 @@ export default function NotFoundTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'url', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: header.url,
+			header: <SortBy props={ { header, sorting, key: 'url', onClick: () => sortBy( 'url' ) } }>{ header.url }</SortBy>,
 			minSize: 300,
 		} ),
 		columnHelper.accessor( 'cnt', {
-			header: header.cnt,
+			header: <SortBy props={ { header, sorting, key: 'cnt', onClick: () => sortBy( 'cnt' ) } }>{ header.cnt }</SortBy>,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'created', {
-			header: header.created,
+			header: <SortBy props={ { header, sorting, key: 'created', onClick: () => sortBy( 'created' ) } }>{ header.created }</SortBy>,
 			minSize: 100,
 		} ),
 		columnHelper.accessor( 'updated', {
-			header: header.updated,
+			header: <SortBy props={ { header, sorting, key: 'updated', onClick: () => sortBy( 'updated' ) } }>{ header.updated }</SortBy>,
 			minSize: 100,
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.agent, {
@@ -151,14 +151,14 @@ export default function NotFoundTable( { slug } ) {
 				activatePanel={ activePanel }
 				insertOptions={ {
 					inserterCells, title: 'Create redirect from this',
-					data, slug: 'redirects', url: '', pageId: 'redirect_id', rowToInsert,
+					data, slug: 'redirects', url: '', paginationId: 'redirect_id', rowToInsert,
 				} }
 				exportOptions={ {
-					url: slug,
+					slug,
 					filters,
-					fromId: `from_${ pageId }`,
-					pageId,
-					deleteCSVCols: [ pageId, 'dest_url_id' ],
+					fromId: `from_${ paginationId }`,
+					paginationId,
+					deleteCSVCols: [ paginationId, 'dest_url_id' ],
 				} }
 			/>
 			<Table className="fadeInto"
@@ -175,7 +175,7 @@ export default function NotFoundTable( { slug } ) {
 					? <Tooltip center>{ __( 'Redirect rule has been added.' ) }</Tooltip>
 					: null
 				}
-				<TooltipSortingFiltering props={ { isFetching, filters, sortingColumn } } />
+				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

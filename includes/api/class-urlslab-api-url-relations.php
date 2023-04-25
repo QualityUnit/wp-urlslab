@@ -4,14 +4,8 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 	public function register_routes() {
 		$base = '/url-relation';
 
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/',
-			array(
-				$this->get_route_get_items(),
-				$this->get_route_create_item(),
-			)
-		);
+		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
+		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_items() ) ) );
 
 		register_rest_route(
@@ -28,7 +22,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 					'args'                => array(
 						'pos' => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_numeric( $param );
 							},
 						),
@@ -51,7 +45,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 					'args'                => array(
 						'rows' => array(
 							'required'          => true,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
 							},
 						),
@@ -101,9 +95,9 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->src_url_id = (int) $row->src_url_id;
+			$row->src_url_id  = (int) $row->src_url_id;
 			$row->dest_url_id = (int) $row->dest_url_id;
-			$row->pos = (int) $row->pos;
+			$row->pos         = (int) $row->pos;
 
 			try {
 				$row->dest_url_name = Urlslab_Url::add_current_page_protocol( $row->dest_url_name );
@@ -121,7 +115,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 
 	public function import_items( WP_REST_Request $request ) {
 		$schedule_urls = array();
-		$rows = array();
+		$rows          = array();
 
 		foreach ( $request->get_json_params()['rows'] as $row ) {
 			$arr_row = (array) $row;
@@ -131,12 +125,12 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 			}
 
 			try {
-				$src_url_obj = new Urlslab_Url( $arr_row['src_url_name'] );
-				$dest_url_obj = new Urlslab_Url( $arr_row['dest_url_name'] );
-				$schedule_urls[ $arr_row['src_url_name'] ] = $src_url_obj;
+				$src_url_obj                                = new Urlslab_Url( $arr_row['src_url_name'] );
+				$dest_url_obj                               = new Urlslab_Url( $arr_row['dest_url_name'] );
+				$schedule_urls[ $arr_row['src_url_name'] ]  = $src_url_obj;
 				$schedule_urls[ $arr_row['dest_url_name'] ] = $dest_url_obj;
 
-				$obj = $this->get_row_object(
+				$obj    = $this->get_row_object(
 					array(
 						'src_url_id'  => $src_url_obj->get_url_id(),
 						'dest_url_id' => $dest_url_obj->get_url_id(),
@@ -176,42 +170,9 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 	 */
 	public function get_route_get_items(): array {
 		return array(
-			'methods'             => WP_REST_Server::READABLE,
+			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => array( $this, 'get_items' ),
-			'args'                => $this->get_table_arguments(
-				array(
-					'filter_src_url_id'    => array(
-						'required'          => false,
-						'validate_callback' => function ( $param ) {
-							return Urlslab_Api_Table::validate_numeric_filter_value( $param );
-						},
-					),
-					'filter_dest_url_id'   => array(
-						'required'          => false,
-						'validate_callback' => function ( $param ) {
-							return Urlslab_Api_Table::validate_numeric_filter_value( $param );
-						},
-					),
-					'filter_src_url_name'  => array(
-						'required'          => false,
-						'validate_callback' => function ( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_dest_url_name' => array(
-						'required'          => false,
-						'validate_callback' => function ( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_pos'           => array(
-						'required'          => false,
-						'validate_callback' => function ( $param ) {
-							return Urlslab_Api_Table::validate_numeric_filter_value( $param );
-						},
-					),
-				)
-			),
+			'args'                => $this->get_table_arguments(),
 			'permission_callback' => array(
 				$this,
 				'get_items_permissions_check',
@@ -229,19 +190,19 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 			'args'                => array(
 				'src_url_name'  => array(
 					'required'          => true,
-					'validate_callback' => function ( $param ) {
+					'validate_callback' => function( $param ) {
 						return is_string( $param ) && strlen( $param );
 					},
 				),
 				'dest_url_name' => array(
 					'required'          => true,
-					'validate_callback' => function ( $param ) {
+					'validate_callback' => function( $param ) {
 						return is_string( $param ) && strlen( $param );
 					},
 				),
 				'pos'           => array(
 					'required'          => true,
-					'validate_callback' => function ( $param ) {
+					'validate_callback' => function( $param ) {
 						return is_int( $param );
 					},
 				),
@@ -255,9 +216,9 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 
 	public function create_item( $request ) {
 		try {
-			$src_url_obj = new Urlslab_Url( $request->get_param( 'src_url_name' ) );
-			$dest_url_obj = new Urlslab_Url( $request->get_param( 'dest_url_name' ) );
-			$schedule_urls[ $request->get_param( 'src_url_name' ) ] = $src_url_obj;
+			$src_url_obj                                             = new Urlslab_Url( $request->get_param( 'src_url_name' ) );
+			$dest_url_obj                                            = new Urlslab_Url( $request->get_param( 'dest_url_name' ) );
+			$schedule_urls[ $request->get_param( 'src_url_name' ) ]  = $src_url_obj;
 			$schedule_urls[ $request->get_param( 'dest_url_name' ) ] = $dest_url_obj;
 
 			$obj = $this->get_row_object(
@@ -292,20 +253,19 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		$sql->add_select_column( 'url_name', 'u_dest', 'dest_url_name' );
 		$sql->add_from( URLSLAB_RELATED_RESOURCE_TABLE . ' r LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u_src ON u_src.url_id = r.src_url_id LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u_dest ON u_dest.url_id = r.dest_url_id ' );
 
-		$this->add_filter_table_fields( $sql );
+		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
+		$columns = array_merge(
+			$columns,
+			$this->prepare_columns(
+				array(
+					'src_url_name'  => '%s',
+					'dest_url_name' => '%s',
+				)
+			)
+		);
 
-		$sql->add_filter( 'src_url_id' );
-		$sql->add_filter( 'dest_url_id' );
-		$sql->add_filter( 'filter_pos', '%d' );
-
-		$sql->add_having_filter( 'filter_src_url_name' );
-		$sql->add_having_filter( 'filter_dest_url_name' );
-
-		if ( $request->get_param( 'sort_column' ) ) {
-			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );
-		}
-		$sql->add_order( 'src_url_id' );
-		$sql->add_order( 'dest_url_id' );
+		$sql->add_having_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
 
 		return $sql;
 	}

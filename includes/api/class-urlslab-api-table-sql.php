@@ -17,30 +17,38 @@ class Urlslab_Api_Table_Sql {
 		$this->request = $request;
 	}
 
-	public function add_filter( string $parameter_name, $format = '%s', $table_prefix = false ) {
-		$filter = $this->get_filter_sql( $parameter_name, $format, $table_prefix );
-		if ( ! empty( $filter ) ) {
-			$this->where_sql[] = $filter['sql'];
-			$this->query_data  = array_merge( $this->query_data, $filter['data'] );
+
+	public function add_filters( array $columns, WP_REST_Request $request ) {
+		if ( isset( $request->get_json_params()['filters'] ) && is_array( $request->get_json_params()['filters'] ) ) {
+			$this->add_filter_array( 'AND', $columns, $request->get_json_params()['filters'] );
 		}
 	}
 
-	public function add_having_filter( string $parameter_name, $format = '%s', $table_prefix = false ) {
-		$filter = $this->get_filter_sql( $parameter_name, $format, $table_prefix );
-		if ( ! empty( $filter ) ) {
-			$this->having_sql[] = $filter['sql'];
-			$this->query_data   = array_merge( $this->query_data, $filter['data'] );
+	public function add_having_filters( array $columns, WP_REST_Request $request ) {
+		if ( isset( $request->get_json_params()['filters'] ) && is_array( $request->get_json_params()['filters'] ) ) {
+			$this->add_having_filter_array( 'AND', $columns, $request->get_json_params()['filters'] );
 		}
 	}
 
-	public function add_filter_raw( $where_condition, $data = false ) {
-		$this->where_sql[] = $where_condition;
-		if ( false !== $data ) {
-			if ( is_array( $data ) ) {
-				$this->query_data = array_merge( $this->query_data, $data );
-			} else {
-				$this->query_data = array_merge( $this->query_data, array( $data ) );
-			}
+	private function add_filter( array $filter, array $column_format ) {
+		if ( $column_format['prefix'] && false === strpos( $filter['col'], '.' ) ) {
+			$filter['col'] = $column_format['prefix'] . '.' . $filter['col'];
+		}
+		$filter_sql = $this->get_column_filter_sql( $filter, $column_format['format'] );
+		if ( ! empty( $filter_sql ) ) {
+			$this->where_sql[] = $filter_sql['sql'];
+			$this->query_data  = array_merge( $this->query_data, $filter_sql['data'] );
+		}
+	}
+
+	private function add_having_filter( array $filter, array $column_format ) {
+		if ( $column_format['prefix'] && false === strpos( $filter['col'], '.' ) ) {
+			$filter['col'] = $column_format['prefix'] . '.' . $filter['col'];
+		}
+		$filter_sql = $this->get_column_filter_sql( $filter, $column_format['format'] );
+		if ( ! empty( $filter_sql ) ) {
+			$this->having_sql[] = $filter_sql['sql'];
+			$this->query_data   = array_merge( $this->query_data, $filter_sql['data'] );
 		}
 	}
 
@@ -97,43 +105,14 @@ class Urlslab_Api_Table_Sql {
 		}
 	}
 
-	private function get_filter_sql( string $parameter_name, $format = '%s', $table_prefix = false ) {
-		if ( ! strlen( $this->request->get_param( $parameter_name ) ) ) {
-			return;
-		}
-
-		$param_value = $this->request->get_param( $parameter_name );
-
-		$column_name = $parameter_name;
-		if ( str_starts_with( $column_name, 'from_' ) ) {
-			$column_name = substr( $column_name, strlen( 'from_' ) );
-			$param_value = json_encode(
-				(object) array(
-					'op'  => '>',
-					'val' => $param_value,
-				)
-			);
-		} else {
-			if ( str_starts_with( $column_name, 'filter_' ) ) {
-				$column_name = substr( $column_name, strlen( 'filter_' ) );
-			}
-		}
-
-		if ( $table_prefix ) {
-			$column_name = $table_prefix . '.' . $column_name;
-		}
-
-		return $this->get_column_filter_sql( $column_name, $format, $param_value );
-	}
-
-	private function get_column_filter_sql( $column_name, $format, $param_value ): array {
+	private function get_column_filter_sql( array $filter, $format ): array {
 		switch ( $format ) {
 			case '%d':
-				return $this->get_numeric_filter_sql( $column_name, $param_value );
+				return $this->get_numeric_filter_sql( $filter );
 
 			case '%s':
 			default:
-				return $this->get_string_filter_sql( $column_name, $param_value );
+				return $this->get_string_filter_sql( $filter );
 		}
 	}
 
@@ -164,94 +143,84 @@ class Urlslab_Api_Table_Sql {
 		return $wpdb->prepare(
 			'SELECT ' . implode( ',', $this->select_sql ) . // phpcs:ignore
 			' FROM ' . implode( ' ', $this->from_sql ) . // phpcs:ignore
-			( ! empty( $this->where_sql ) ? ' WHERE ' . implode( ' AND ', $this->where_sql ) : '' ) . // phpcs:ignore
+			( ! empty( $this->where_sql ) ? ' WHERE ' . implode( ' ', $this->where_sql ) : '' ) . // phpcs:ignore
 			( ! empty( $this->group_by_sql ) ? ' GROUP BY ' . implode( ',', $this->group_by_sql ) : '' ) . // phpcs:ignore
-			( ! empty( $this->having_sql ) ? ' HAVING ' . implode( ' AND ', $this->having_sql ) : '' ) . // phpcs:ignore
+			( ! empty( $this->having_sql ) ? ' HAVING ' . implode( ' ', $this->having_sql ) : '' ) . // phpcs:ignore
 			( ! empty( $this->order_sql ) ? ' ORDER BY ' . implode( ',', $this->order_sql ) : '' ) . // phpcs:ignore
 			( strlen( $this->limit_sql ) ? ' LIMIT ' . $this->limit_sql : '' ), // phpcs:ignore
 			$this->query_data
 		);
 	}
 
-	private function get_numeric_filter_sql( string $column_name, string $param_value ): array {
-		$filter_obj = json_decode( $param_value );
+	private function get_numeric_filter_sql( array $filter ): array {
 		$data       = array();
 		$sql_string = '';
 
-		if ( is_object( $filter_obj ) ) {
-			switch ( $filter_obj->op ) {
-				case 'IN':
-					if ( is_array( $filter_obj->val ) ) {
-						$sql_string = esc_sql( $column_name ) . ' IN (' . implode( ',', array_fill( 0, count( $filter_obj->val ), '%d' ) ) . ')';
-						foreach ( $filter_obj->val as $in_value ) {
-							if ( is_numeric( $in_value ) ) {
-								$data[] = $in_value;
-							} else {
-								throw new Exception( 'Invalid filter input value: IN should have numeric values' );
-							}
+		switch ( $filter['op'] ) {
+			case 'IN':
+				if ( is_array( $filter['val'] ) ) {
+					$sql_string = esc_sql( $filter['col'] ) . ' IN (' . implode( ',', array_fill( 0, count( $filter['val'] ), '%d' ) ) . ')';
+					foreach ( $filter['val'] as $in_value ) {
+						if ( is_numeric( $in_value ) ) {
+							$data[] = $in_value;
+						} else {
+							throw new Exception( 'Invalid filter input value: IN should have numeric values' );
 						}
-					} else {
-						throw new Exception( 'invalid filter input value for IN' );
 					}
+				} else {
+					throw new Exception( 'invalid filter input value for IN' );
+				}
 
-					break;
+				break;
 
-				case 'NOTIN':
-					if ( is_array( $filter_obj->val ) ) {
-						$sql_string = esc_sql( $column_name ) . ' NOT IN (' . implode( ',', array_fill( 0, count( $filter_obj->val ), '%d' ) ) . ')';
-						foreach ( $filter_obj->val as $in_value ) {
-							if ( is_numeric( $in_value ) ) {
-								$data[] = $in_value;
-							} else {
-								throw new Exception( 'Invalid filter input value: NOTIN should have numeric values' );
-							}
+			case 'NOTIN':
+				if ( is_array( $filter['val'] ) ) {
+					$sql_string = esc_sql( $filter['col'] ) . ' NOT IN (' . implode( ',', array_fill( 0, count( $filter['val'] ), '%d' ) ) . ')';
+					foreach ( $filter['val'] as $in_value ) {
+						if ( is_numeric( $in_value ) ) {
+							$data[] = $in_value;
+						} else {
+							throw new Exception( 'Invalid filter input value: NOTIN should have numeric values' );
 						}
-					} else {
-						throw new Exception( 'invalid filter input value for NOTIN' );
 					}
+				} else {
+					throw new Exception( 'invalid filter input value for NOTIN' );
+				}
 
-					break;
+				break;
 
-				case 'BETWEEN':
-					$sql_string = esc_sql( $column_name ) . ' BETWEEN %d AND %d';
-					$data[]     = $filter_obj->min;
-					$data[]     = $filter_obj->max;
+			case 'BETWEEN':
+				$sql_string = esc_sql( $filter['col'] ) . ' BETWEEN %d AND %d';
+				$data[]     = $filter['min'];
+				$data[]     = $filter['max'];
 
-					break;
+				break;
 
-				case '>':
-					$sql_string = esc_sql( $column_name ) . '>%d';
-					$data[]     = $filter_obj->val;
+			case '>':
+				$sql_string = esc_sql( $filter['col'] ) . '>%d';
+				$data[]     = $filter['val'];
 
-					break;
+				break;
 
-				case '<':
-					$sql_string = esc_sql( $column_name ) . '<%d';
-					$data[]     = $filter_obj->val;
+			case '<':
+				$sql_string = esc_sql( $filter['col'] ) . '<%d';
+				$data[]     = $filter['val'];
 
-					break;
+				break;
 
-				case '<>':
-				case '!=':
-					$sql_string = esc_sql( $column_name ) . '<>%d';
-					$data[]     = $filter_obj->val;
+			case '<>':
+			case '!=':
+				$sql_string = esc_sql( $filter['col'] ) . '<>%d';
+				$data[]     = $filter['val'];
 
-					break;
+				break;
 
-				case '=':
-				default:
-					$sql_string = esc_sql( $column_name ) . '=%d';
-					$data[]     = $filter_obj->val;
+			case '=':
+			default:
+				$sql_string = esc_sql( $filter['col'] ) . '=%d';
+				$data[]     = $filter['val'];
 
-					break;
-			}
-		} else {
-			if ( is_numeric( $param_value ) ) {
-				$sql_string = esc_sql( $column_name ) . '=%d';
-				$data[]     = $param_value;
-			} else {
-				throw new Exception( 'Invalid filter' );
-			}
+				break;
 		}
 
 		return array(
@@ -260,116 +229,103 @@ class Urlslab_Api_Table_Sql {
 		);
 	}
 
-	private function get_string_filter_sql( string $column_name, string $param_value ): array {
+	private function get_string_filter_sql( array $filter ): array {
 		global $wpdb;
-		$filter_obj = json_decode( $param_value );
+		$data = array();
 
-		$data       = array();
-		$sql_string = '';
-
-		if ( is_object( $filter_obj ) ) {
-			switch ( $filter_obj->op ) {
-				case 'IN':
-					if ( is_array( $filter_obj->val ) ) {
-						$sql_string = esc_sql( $column_name ) . ' IN (' . implode( ',', array_fill( 0, count( $filter_obj->val ), '%s' ) ) . ')';
-						foreach ( $filter_obj->val as $in_value ) {
-							$data[] = $in_value;
-						}
-					} else {
-						throw new Exception( 'operator IN should have as input value array of strings' );
+		switch ( $filter['op'] ) {
+			case 'IN':
+				if ( is_array( $filter['val'] ) ) {
+					$sql_string = esc_sql( $filter['col'] ) . ' IN (' . implode( ',', array_fill( 0, count( $filter['val'] ), '%s' ) ) . ')';
+					foreach ( $filter['val'] as $in_value ) {
+						$data[] = $in_value;
 					}
+				} else {
+					throw new Exception( 'operator IN should have as input value array of strings' );
+				}
 
-					break;
+				break;
 
-				case 'NOTIN':
-					if ( is_array( $filter_obj->val ) ) {
-						$sql_string = esc_sql( $column_name ) . ' NOT IN (' . implode( ',', array_fill( 0, count( $filter_obj->val ), '%s' ) ) . ')';
-						foreach ( $filter_obj->val as $in_value ) {
-							$data[] = $in_value;
-						}
-					} else {
-						throw new Exception( 'operator NOTIN should have as input value array of strings' );
+			case 'NOTIN':
+				if ( is_array( $filter['val'] ) ) {
+					$sql_string = esc_sql( $filter['col'] ) . ' NOT IN (' . implode( ',', array_fill( 0, count( $filter['val'] ), '%s' ) ) . ')';
+					foreach ( $filter['val'] as $in_value ) {
+						$data[] = $in_value;
 					}
+				} else {
+					throw new Exception( 'operator NOTIN should have as input value array of strings' );
+				}
 
-					break;
+				break;
 
-				case 'BETWEEN':
-					$sql_string = esc_sql( $column_name ) . ' BETWEEN %s AND %s';
-					$data[]     = $filter_obj->min;
-					$data[]     = $filter_obj->max;
+			case 'BETWEEN':
+				$sql_string = esc_sql( $filter['col'] ) . ' BETWEEN %s AND %s';
+				$data[]     = $filter['min'];
+				$data[]     = $filter['max'];
 
-					break;
+				break;
 
-				case '>':
-					$sql_string = esc_sql( $column_name ) . '>%s';
-					$data[]     = $filter_obj->val;
+			case '>':
+				$sql_string = esc_sql( $filter['col'] ) . '>%s';
+				$data[]     = $filter['val'];
 
-					break;
+				break;
 
-				case '<':
-					$sql_string = esc_sql( $column_name ) . '<%s';
-					$data[]     = $filter_obj->val;
+			case '<':
+				$sql_string = esc_sql( $filter['col'] ) . '<%s';
+				$data[]     = $filter['val'];
 
-					break;
+				break;
 
-				case '<>':
-				case '!=':
-					$sql_string = esc_sql( $column_name ) . '<>%s';
-					$data[]     = $filter_obj->val;
+			case '<>':
+			case '!=':
+				$sql_string = esc_sql( $filter['col'] ) . '<>%s';
+				$data[]     = $filter['val'];
 
-					break;
+				break;
 
-				case 'LIKE':
-					$sql_string = esc_sql( $column_name ) . ' LIKE %s';
-					$data[]     = '%' . $wpdb->esc_like( $filter_obj->val ) . '%';
+			case 'LIKE':
+				$sql_string = esc_sql( $filter['col'] ) . ' LIKE %s';
+				$data[]     = '%' . $wpdb->esc_like( $filter['val'] ) . '%';
 
-					break;
+				break;
 
-				case 'NOTLIKE':
-					$sql_string = esc_sql( $column_name ) . ' NOT LIKE %s';
-					$data[]     = '%' . $wpdb->esc_like( $filter_obj->val ) . '%';
+			case 'NOTLIKE':
+				$sql_string = esc_sql( $filter['col'] ) . ' NOT LIKE %s';
+				$data[]     = '%' . $wpdb->esc_like( $filter['val'] ) . '%';
 
-					break;
+				break;
 
-				case 'LIKE%':
-					$sql_string = esc_sql( $column_name ) . ' LIKE %s';
-					$data[]     = $wpdb->esc_like( $filter_obj->val ) . '%';
+			case 'LIKE%':
+				$sql_string = esc_sql( $filter['col'] ) . ' LIKE %s';
+				$data[]     = $wpdb->esc_like( $filter['val'] ) . '%';
 
-					break;
+				break;
 
-				case 'NOTLIKE%':
-					$sql_string = esc_sql( $column_name ) . ' NOT LIKE %s';
-					$data[]     = $wpdb->esc_like( $filter_obj->val ) . '%';
+			case 'NOTLIKE%':
+				$sql_string = esc_sql( $filter['col'] ) . ' NOT LIKE %s';
+				$data[]     = $wpdb->esc_like( $filter['val'] ) . '%';
 
-					break;
+				break;
 
-				case '%LIKE':
-					$sql_string = esc_sql( $column_name ) . ' LIKE %s';
-					$data[]     = '%' . $wpdb->esc_like( $filter_obj->val );
+			case '%LIKE':
+				$sql_string = esc_sql( $filter['col'] ) . ' LIKE %s';
+				$data[]     = '%' . $wpdb->esc_like( $filter['val'] );
 
-					break;
+				break;
 
-				case 'NOT%LIKE':
-					$sql_string = esc_sql( $column_name ) . ' NOT LIKE %s';
-					$data[]     = '%' . $wpdb->esc_like( $filter_obj->val );
+			case 'NOT%LIKE':
+				$sql_string = esc_sql( $filter['col'] ) . ' NOT LIKE %s';
+				$data[]     = '%' . $wpdb->esc_like( $filter['val'] );
 
-					break;
+				break;
 
-				case '=':
-				default:
-					$sql_string = esc_sql( $column_name ) . '=%s';
-					$data[]     = $filter_obj->val;
+			case '=':
+			default:
+				$sql_string = esc_sql( $filter['col'] ) . '=%s';
+				$data[]     = $filter['val'];
 
-					break;
-			}
-		} else {
-			if ( is_string( $param_value ) ) {
-				// default is wildcard match
-				$sql_string = esc_sql( $column_name ) . '=%s';
-				$data[]     = $param_value;
-			} else {
-				throw new Exception( 'Invalid filter' );
-			}
+				break;
 		}
 
 		return array(
@@ -377,4 +333,80 @@ class Urlslab_Api_Table_Sql {
 			'data' => $data,
 		);
 	}
+
+
+	public function add_sorting( array $columns, WP_REST_Request $request ) {
+		$column_names = array_keys( $columns );
+		if ( isset( $request->get_json_params()['sorting'] ) ) {
+			foreach ( $request->get_json_params()['sorting'] as $sorting ) {
+				if ( isset( $sorting['col'] ) && in_array( $sorting['col'], $column_names ) ) {
+					if ( isset( $sorting['dir'] ) && 'DESC' === strtoupper( $sorting['dir'] ) ) {
+						$direction = 'DESC';
+					} else {
+						$direction = 'ASC';
+					}
+					$this->add_order( $sorting['col'], $direction, $columns[ $sorting['col'] ]['prefix'] );
+				}
+			}
+		}
+	}
+
+	private function add_filter_array( string $operand, array $columns, array $filters ) {
+		if ( ! empty( $filters ) ) {
+			$this->add_filter_str( '(' );
+			$is_first = true;
+			foreach ( $filters as $filter ) {
+				if ( isset( $filter['cond'] ) ) {
+					if ( isset( $filter['filters'] ) && is_array( $filter['filters'] ) ) {
+						if ( ! $is_first ) {
+							$this->add_filter_str( $operand );
+						}
+						$this->add_filter_array( $filter['cond'], $columns, $filter['filters'] );
+						$is_first = false;
+					}
+				} else if ( isset( $filter['col'] ) && isset( $columns[ $filter['col'] ] ) ) {
+					if ( ! $is_first ) {
+						$this->add_filter_str( $operand );
+					}
+					$this->add_filter( $filter, $columns[ $filter['col'] ] );
+					$is_first = false;
+				}
+			}
+			$this->add_filter_str( ')' );
+		}
+	}
+
+	private function add_having_filter_array( string $operand, array $columns, array $filters ) {
+		if ( ! empty( $filters ) ) {
+			$this->add_having_filter_str( '(' );
+			$is_first = true;
+			foreach ( $filters as $filter ) {
+				if ( isset( $filter['cond'] ) ) {
+					if ( isset( $filter['filters'] ) && is_array( $filter['filters'] ) ) {
+						if ( ! $is_first ) {
+							$this->add_having_filter_str( $operand );
+						}
+						$this->add_having_filter_array( $filter['cond'], $columns, $filter['filters'] );
+						$is_first = false;
+					}
+				} else if ( isset( $filter['col'] ) && isset( $columns[ $filter['col'] ] ) ) {
+					if ( ! $is_first ) {
+						$this->add_having_filter_str( $operand );
+					}
+					$this->add_having_filter( $filter, $columns[ $filter['col'] ] );
+					$is_first = false;
+				}
+			}
+			$this->add_having_filter_str( ')' );
+		}
+	}
+
+	private function add_filter_str( string $control_string ) {
+		$this->where_sql[] = $control_string;
+	}
+
+	private function add_having_filter_str( string $control_string ) {
+		$this->having_sql[] = $control_string;
+	}
+
 }

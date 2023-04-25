@@ -198,90 +198,9 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 	public function get_route_get_items(): array {
 		return array(
 			array(
-				'methods'             => WP_REST_Server::READABLE,
+				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'get_items' ),
-				'args'                => $this->get_table_arguments(
-					array(
-						'filter_fileid'           => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_url'              => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_parent_url'       => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_local_file'       => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_filename'         => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_filetype'         => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_filestatus'       => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_filehash'         => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_filesize'         => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_numeric_filter_value( $param );
-							},
-						),
-						'filter_driver'           => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_webp_fileid'      => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_avif_fileid'      => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_file_usage_count' => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_numeric_filter_value( $param );
-							},
-						),
-					)
-				),
+				'args'                => $this->get_table_arguments(),
 				'permission_callback' => array(
 					$this,
 					'get_items_permissions_check',
@@ -295,9 +214,19 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		$sql->add_select_column( 'url_id', 'm' );
 		$sql->add_select_column( 'url_name', 'u' );
 		$sql->add_from( URLSLAB_FILE_URLS_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.url_id = u.url_id)' );
-		$sql->add_filter( 'fileid' );
-		$sql->add_filter( 'from_url_id', '%d', 'm' );
-		$sql->add_order( 'url_id', 'ASC', 'm' );
+
+		$columns = $this->prepare_columns(
+			array(
+				'fileid' => '%s',
+				'url_id' => '%d',
+			),
+			'm'
+		);
+
+		$columns = array_merge( $columns, $this->prepare_columns( array( 'url_name' => '%s' ), 'u' ) );
+
+		$sql->add_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
 
 		return $sql;
 	}
@@ -310,21 +239,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_file_urls' ),
-				'args'                => array(
-					'rows_per_page' => array(
-						'required'          => true,
-						'default'           => self::ROWS_PER_PAGE,
-						'validate_callback' => function( $param ) {
-							return is_numeric( $param ) && 0 < $param && 200 > $param;
-						},
-					),
-					'from_url_id'   => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return empty( $param ) || is_numeric( $param );
-						},
-					),
-				),
+				'args'                => $this->get_table_arguments(),
 				'permission_callback' => array(
 					$this,
 					'get_items_permissions_check',
@@ -359,31 +274,13 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 			' LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON p.filehash = f.filehash and p.filesize=f.filesize'
 		);
 
-		$this->add_filter_table_fields( $sql, 'f' );
-
-		$sql->add_filter( 'filter_fileid' );
-		$sql->add_filter( 'filter_url' );
-		$sql->add_filter( 'filter_parent_url' );
-		$sql->add_filter( 'filter_local_file' );
-		$sql->add_filter( 'filter_filename' );
-		$sql->add_filter( 'filter_filetype' );
-		$sql->add_filter( 'filter_width', '%d' );
-		$sql->add_filter( 'filter_height', '%d' );
-		$sql->add_filter( 'filter_status_changed' );
-		$sql->add_filter( 'filter_filestatus' );
-		$sql->add_filter( 'filter_filehash' );
-		$sql->add_filter( 'filter_filesize', '%d' );
-		$sql->add_filter( 'filter_webp_fileid' );
-		$sql->add_filter( 'filter_avif_fileid' );
-		$sql->add_filter( 'filter_driver' );
-		$sql->add_having_filter( 'filter_file_usage_count', '%d' );
-
 		$sql->add_group_by( 'fileid', 'f' );
 
-		if ( $request->get_param( 'sort_column' ) ) {
-			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );
-		}
-		$sql->add_order( 'fileid' );
+		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'f' );
+		$columns = array_merge( $columns, $this->prepare_columns( array( 'file_usage_count' => '%d' ), false ) );
+
+		$sql->add_having_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
 
 		return $sql;
 	}

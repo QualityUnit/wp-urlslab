@@ -204,48 +204,9 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 	public function get_route_get_items(): array {
 		return array(
 			array(
-				'methods'             => WP_REST_Server::READABLE,
+				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'get_items' ),
-				'args'                => $this->get_table_arguments(
-					array(
-						'filter_command'          => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_url_filter'       => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_semantic_context' => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_result'           => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_status'           => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-						'filter_status_changed'   => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Api_Table::validate_string_filter_value( $param );
-							},
-						),
-					)
-				),
+				'args'                => $this->get_table_arguments(),
 				'permission_callback' => array(
 					$this,
 					'get_items_permissions_check',
@@ -261,44 +222,16 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 		$sql->add_select_column( 'SUM(!ISNULL(m.url_id))', false, 'usage_count' );
 		$sql->add_from( URLSLAB_CONTENT_GENERATORS_TABLE . ' g LEFT JOIN ' . URLSLAB_CONTENT_GENERATOR_URLS_TABLE . ' m ON m.generator_id = g.generator_id' );
 
-		$this->add_filter_table_fields( $sql );
+		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'g' );
+		$columns = array_merge( $columns, $this->prepare_columns( array( 'filter_usage_count' => '%d' ) ) );
 
-		$sql->add_filter( 'filter_semantic_context' );
-		$sql->add_filter( 'filter_command' );
-		$sql->add_filter( 'filter_url_filter' );
-		$sql->add_filter( 'filter_result' );
-		$sql->add_filter( 'filter_status' );
-		$sql->add_filter( 'filter_status_changed' );
-
-		$sql->add_having_filter( 'filter_usage_count', '%d' );
+		$sql->add_having_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
 
 		$sql->add_group_by( 'generator_id', 'g' );
 
-		if ( $request->get_param( 'sort_column' ) ) {
-			$sql->add_order( $request->get_param( 'sort_column' ), $request->get_param( 'sort_direction' ) );
-		}
-		$sql->add_order( 'generator_id', 'ASC', 'g' );
-
 		return $sql;
 	}
-
-	/**
-	 * @param $original_text
-	 *
-	 * @return bool
-	 */
-	public function isTextForTranslation( $original_text ): bool {
-		if ( false === strpos( $original_text, ' ' ) && ( false !== strpos( $original_text, '-' ) || false !== strpos( $original_text, '_' ) ) ) {    //detect constants or special attributes (zero spaces in text, but contains - or _)
-			return false;
-		}
-
-		if ( filter_var( $original_text, FILTER_VALIDATE_URL ) || filter_var( $original_text, FILTER_VALIDATE_EMAIL ) || filter_var( $original_text, FILTER_VALIDATE_IP ) ) {
-			return false;
-		}
-
-		return strlen( trim( $original_text ) ) > 2 && preg_match( '/[\p{L}]+/u', $original_text );
-	}
-
 
 	/**
 	 * @return array[]
@@ -348,11 +281,31 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 		$sql->add_select_column( 'url_id', 'm' );
 		$sql->add_select_column( 'url_name', 'u' );
 		$sql->add_from( URLSLAB_CONTENT_GENERATOR_URLS_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.url_id = u.url_id)' );
-		$sql->add_filter( 'generator_id', '%d' );
-		$sql->add_filter( 'from_url_id', '%d', 'm' );
-		$sql->add_order( 'url_id', 'ASC', 'm' );
+
+		$columns = $this->prepare_columns( ( new Urlslab_Content_Generator_Url_Row() )->get_columns(), 'm' );
+		$columns = array_merge( $columns, $this->prepare_columns( array( 'url_name' => '%s' ), 'u' ) );
+
+		$sql->add_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
 
 		return $sql;
+	}
+
+	/**
+	 * @param $original_text
+	 *
+	 * @return bool
+	 */
+	public function isTextForTranslation( $original_text ): bool {
+		if ( false === strpos( $original_text, ' ' ) && ( false !== strpos( $original_text, '-' ) || false !== strpos( $original_text, '_' ) ) ) {    //detect constants or special attributes (zero spaces in text, but contains - or _)
+			return false;
+		}
+
+		if ( filter_var( $original_text, FILTER_VALIDATE_URL ) || filter_var( $original_text, FILTER_VALIDATE_EMAIL ) || filter_var( $original_text, FILTER_VALIDATE_IP ) ) {
+			return false;
+		}
+
+		return strlen( trim( $original_text ) ) > 2 && preg_match( '/\p{L}+/u', $original_text );
 	}
 
 }

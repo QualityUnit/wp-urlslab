@@ -4,10 +4,10 @@ import Tooltip from './Tooltip';
 
 export default function TooltipSortingFiltering( { props } ) {
 	const { __ } = useI18n();
-	const { isFetching, sortingColumn, filters } = props;
+	const { isFetching, sorting, filters } = props;
 
 	return (
-		isFetching && ( sortingColumn || filters )
+		isFetching && ( sorting?.length || filters?.length )
 			? <Tooltip center>
 				<Loader>
 					{ __( 'Filtering & Sorting…' ) }<br />

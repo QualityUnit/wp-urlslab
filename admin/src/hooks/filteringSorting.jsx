@@ -1,7 +1,7 @@
 import { useState, useEffect, useReducer, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import filterReducer from '../lib/filterReducer';
-import filterArgs from '../lib/filterOperators';
+// import filterArgs from '../lib/filterOperators';
 
 const filterObj = {
 	filterKey: undefined,
@@ -14,36 +14,35 @@ const filterObj = {
 export function useFilter( { slug, header, initialRow } ) {
 	const queryClient = useQueryClient();
 	const runFilter = useRef( false );
-	const possibleFilters = useRef( { ...header } );
-	const [ state, dispatch ] = useReducer( filterReducer, { currentFilters: {}, filteringState: undefined, possibleFilters: possibleFilters.current, filterObj, editFilterActive: false } );
+	const possiblefilters = useRef( { ...header } );
+	const [ state, dispatch ] = useReducer( filterReducer, { filters: {}, filteringState: undefined, possiblefilters: possiblefilters.current, filterObj, editFilterActive: false } );
 
-	const filters = filterArgs( state.currentFilters ); // Generates filter endpoint arguments for API url
-
-	const activeFilters = state.currentFilters ? Object.keys( state.currentFilters ) : null;
+	const activefilters = state.filters ? Object.keys( state.filters ) : null;
 
 	const getQueryData = useCallback( () => {
 		//Get new data from local query if filtering changes ( on add/remove filter)
 		dispatch( { type: 'setFilteringState', filteringState: queryClient.getQueryData( [ slug, 'filters' ] ) } );
 	}, [ dispatch, slug, queryClient ] );
 
+	// Recovers filters from query cache when returning from different component
 	useEffect( () => {
 		getQueryData();
-		if ( state.filteringState?.possibleFilters ) {
-			possibleFilters.current = state.filteringState?.possibleFilters;
+		if ( state?.possiblefilters ) {
+			possiblefilters.current = state?.possiblefilters;
 		}
-		if ( state.filteringState?.currentFilters ) {
+		if ( state.filteringState?.filters ) {
 			dispatch( {
-				type: 'setCurrentFilters', currentFilters: state.filteringState?.currentFilters } );
+				type: 'setFilters', filters: state.filteringState?.filters } );
 		}
-	}, [ getQueryData, state.filteringState ] );
+	}, [ getQueryData, state.possiblefilters, state.filteringState ] );
 
-	/* --- FILTERS ADDING FUNCTIONS --- */
+	/* --- filters ADDING FUNCTIONS --- */
 	function addFilter( key, value ) {
 		if ( value ) {
-			dispatch( { type: 'setCurrentFilters', currentFilters: { ...state.currentFilters, [ key ]: value } } );
+			dispatch( { type: 'setFilters', filters: { ...state.filters, [ key ]: value } } );
 		}
 		if ( ! value ) {
-			removeFilters( [ key ] );
+			removefilters( [ key ] );
 		}
 	}
 
@@ -94,13 +93,13 @@ export function useFilter( { slug, header, initialRow } ) {
 		const val = filterVal;
 
 		if ( ! key ) {
-			key = Object.keys( state.possibleFilters )[ 0 ];
+			key = Object.keys( state.possiblefilters )[ 0 ];
 		}
 
-		delete state.possibleFilters[ key ]; // Removes used filter key from the list
+		delete state.possiblefilters[ key ]; // Removes used filter key from the list
 
 		// Saves the list of unused filters
-		dispatch( { type: 'possibleFilters', possibleFilters: possibleFilters.current } );
+		dispatch( { type: 'possiblefilters', possiblefilters: possiblefilters.current } );
 
 		// Close the edit panel after save
 		dispatch( { type: 'toggleEditFilter', editFilter: false } );
@@ -120,13 +119,13 @@ export function useFilter( { slug, header, initialRow } ) {
 		// Run only once to prevent infinite loop
 		runFilter.current = true;
 	}
-	/* --- END OF FILTERS ADDING FUNCTIONS --- */
+	/* --- END OF filters ADDING FUNCTIONS --- */
 
-	/* --- FILTERS REMOVAL --- */
-	function removeFilters( keyArray ) {
+	/* --- filters REMOVAL --- */
+	function removefilters( keyArray ) {
 		// Gets the list of current filters
-		const getFilters = () => {
-			const filtersCopy = { ...state.currentFilters };
+		const getfilters = () => {
+			const filtersCopy = { ...state.filters };
 			keyArray.map( ( key ) => {
 				delete filtersCopy[ key ]; // remove called key (as array) from current filters
 				return false;
@@ -134,7 +133,7 @@ export function useFilter( { slug, header, initialRow } ) {
 			return filtersCopy;
 		};
 		// Save the current list without removed filter
-		dispatch( { type: 'setCurrentFilters', currentFilters: getFilters() } );
+		dispatch( { type: 'setFilters', filters: getfilters() } );
 	}
 
 	function handleRemoveFilter( keysArray ) {
@@ -142,45 +141,78 @@ export function useFilter( { slug, header, initialRow } ) {
 		if ( keysArray?.length === 1 ) {
 			const key = keysArray[ 0 ]; // Get only one given filter
 			const newHeader = { ...header }; // Create original header (filter list) copy
-			const usedFilters = activeFilters.filter( ( k ) => k !== key ); // Filter used keys
-			usedFilters.map( ( k ) => {
+			const usedfilters = activefilters.filter( ( k ) => k !== key ); // Filter used keys
+			usedfilters.map( ( k ) => {
 				delete newHeader[ k ]; // Delete all used filters (except actually removed) from header
 				return false;
 			} );
 
 			// Store state of the possible filters list without one removed
-			dispatch( { type: 'possibleFilters', possibleFilters: newHeader } );
+			possiblefilters.current = newHeader;
 		}
 
 		// If Clear filters button, generate available filter list from scratch
 		if ( keysArray?.length > 1 ) {
-			dispatch( { type: 'possibleFilters', possibleFilters: { ...header } } );
+			possiblefilters.current = { ...header };
 		}
 
-		removeFilters( keysArray ); // runs the actual removal
+		removefilters( keysArray ); // runs the actual removal
 
 		runFilter.current = true;
 	}
-	/* --- END  OF FILTERS REMOVAL FUNCTIONS --- */
+	/* --- END  OF filters REMOVAL FUNCTIONS --- */
 
 	// Save the all filter values to local query for later use (on component rerender)
 	if ( runFilter.current ) {
 		runFilter.current = false;
-		queryClient.setQueryData( [ slug, 'filters' ], { filters, currentFilters: state.currentFilters, possibleFilters: possibleFilters.current } );
+		queryClient.setQueryData( [ slug, 'filters' ], { filters: state.filters, possiblefilters: possiblefilters.current } );
 	}
 
-	return { filters, currentFilters: state.currentFilters, filteringState: state.filteringState, addFilter, removeFilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter };
+	return { filters: state.filters, possiblefilters: possiblefilters.current, filteringState: state.filteringState, addFilter, removefilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter };
 }
 
 /* SORTING HOOK */
 export function useSorting( { slug } ) {
-	const [ sortingColumn, setSortingColumn ] = useState( '' );
+	const [ sorting, setSorting ] = useState( [] );
+	const runSorting = useRef( false );
 	const queryClient = useQueryClient();
 
+	const getQueryData = useCallback( () => {
+		const sortingQuery = queryClient.getQueryData( [ slug, 'sorting' ] );
+		//Get new data from local query if filtering changes ( on add/remove filter)
+		if ( sortingQuery ) {
+			setSorting( queryClient.getQueryData( [ slug, 'sorting' ] ) );
+		}
+	}, [ slug, queryClient ] );
+
+	// Recovers filters from query cache when returning from different component
+	useEffect( () => {
+		getQueryData();
+	}, [ getQueryData ] );
+
 	function sortBy( key ) {
-		queryClient.setQueryData( [ slug, 'sortBy' ], key );
-		setSortingColumn( `&sort_column=${ key.replace( /(&ASC|&DESC)/, '' ) }&sort_direction=${ key.replace( /\w+&(ASC|DESC)/, '$1' ) }` );
+		// queryClient.setQueryData( [ slug, 'sortBy' ], key );
+		setSorting( ( currentSorting ) => {
+			const objFromArr = currentSorting.filter( ( k ) => k.key )[ 0 ];
+			const cleanArr = currentSorting.filter( ( k ) => ! k.key );
+			if ( objFromArr && objFromArr?.dir === 'ASC' ) {
+				return [ { key, dir: 'DESC', op: '<' }, ...cleanArr ];
+			}
+
+			if ( objFromArr && objFromArr?.dir === 'DESC' ) {
+				return cleanArr;
+			}
+			return [ { key, dir: 'ASC', op: '>' }, ...currentSorting ];
+		}
+		);
+		runSorting.current = true;
 	}
 
-	return { sortingColumn, sortBy };
+	// Save the all sorting values to local query for later use (on component rerender)
+	if ( runSorting.current ) {
+		runSorting.current = false;
+		queryClient.setQueryData( [ slug, 'sorting' ], sorting );
+	}
+
+	return { sorting, sortBy };
 }

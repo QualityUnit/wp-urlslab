@@ -4,14 +4,8 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	public function register_routes() {
 		$base = '/keyword';
 
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/',
-			array(
-				$this->get_route_get_items(),
-				$this->get_route_create_item(),
-			)
-		);
+		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
+		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
 		register_rest_route(
 			self::NAMESPACE,
 			$base . '/count',
@@ -139,74 +133,9 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	 */
 	public function get_route_get_items(): array {
 		return array(
-			'methods'             => WP_REST_Server::READABLE,
+			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => array( $this, 'get_items' ),
-			'args'                => $this->get_table_arguments(
-				array(
-					'filter_keyword'        => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value( $param );
-						},
-					),
-					'filter_urlLink'        => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value(
-								$param
-							);
-						},
-					),
-					'filter_kw_priority'    => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_numeric_filter_value(
-								$param
-							);
-						},
-					),
-					'filter_kw_length'      => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_numeric_filter_value(
-								$param
-							);
-						},
-					),
-					'filter_lang'           => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value(
-								$param
-							);
-						},
-					),
-					'filter_urlFilter'      => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value(
-								$param
-							);
-						},
-					),
-					'filter_kwType'         => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value(
-								$param
-							);
-						},
-					),
-					'filter_kw_usage_count' => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_numeric_filter_value(
-								$param
-							);
-						},
-					),
-				)
-			),
+			'args'                => $this->get_table_arguments(),
 			'permission_callback' => array(
 				$this,
 				'get_items_permissions_check',
@@ -292,34 +221,8 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_kw_mapping' ),
-				'args'                => array(
-					'rows_per_page'    => array(
-						'required'          => true,
-						'default'           => self::ROWS_PER_PAGE,
-						'validate_callback' => function( $param ) {
-							return is_numeric( $param ) && 0 < $param
-								   && 200 > $param;
-						},
-					),
-					'from_url_id'      => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return empty( $param ) || is_numeric( $param );
-						},
-					),
-					'filter_link_type' => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return Urlslab_Api_Table::validate_string_filter_value(
-								$param
-							);
-						},
-					),
-				),
-				'permission_callback' => array(
-					$this,
-					'get_items_permissions_check',
-				),
+				'args'                => $this->get_table_arguments(),
+				'permission_callback' => array( $this, 'get_items_permissions_check' ),
 			),
 		);
 	}
@@ -377,26 +280,11 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			. ' GROUP BY kw_id) d ON d.kw_id = v.kw_id '
 		);
 
-		$this->add_filter_table_fields( $sql, 'v' );
+		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'v' );
+		$columns = array_merge( $columns, $this->prepare_columns( array( 'kw_usage_count' => '%d' ) ) );
 
-		$sql->add_filter( 'filter_keyword' );
-		$sql->add_filter( 'filter_urlLink' );
-		$sql->add_filter( 'filter_kw_priority', '%d' );
-		$sql->add_filter( 'filter_kw_length', '%d' );
-		$sql->add_filter( 'filter_lang' );
-		$sql->add_filter( 'filter_urlFilter' );
-		$sql->add_filter( 'filter_kwType' );
-
-		$sql->add_having_filter( 'filter_kw_usage_count', '%d' );
-
-		if ( $request->get_param( 'sort_column' ) ) {
-			$sql->add_order(
-				$request->get_param( 'sort_column' ),
-				$request->get_param( 'sort_direction' )
-			);
-		}
-		$sql->add_order( 'kw_id', 'v' );
-
+		$sql->add_having_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
 
 		return $sql;
 	}
@@ -542,15 +430,11 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			. ' u ON m.url_id = u.url_id'
 		);
 
-		$this->add_filter_table_fields( $sql );
+		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'm' );
+		$columns = array_merge( $columns, $this->prepare_columns( array( 'url_name' => '%s' ), 'u' ) );
 
-		$sql->add_filter( 'kw_id', '%d' );
-		$sql->add_filter( 'dest_url_id', '%d' );
-		$sql->add_filter( 'from_url_id', '%d', 'm' );
-		$sql->add_filter( 'filter_link_type', '%d' );
-
-		$sql->add_order( 'url_id', 'ASC', 'm' );
-		$sql->add_order( 'dest_url_id' );
+		$sql->add_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
 
 		return $sql;
 	}

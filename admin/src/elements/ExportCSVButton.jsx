@@ -9,7 +9,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { ReactComponent as ExportIcon } from '../assets/images/icons/icon-export.svg';
 import Button from './Button';
 
-export default function ExportCSVButton( { options, className, withFilters, onClick } ) {
+export default function ExportCSVButton( { options, className, withfilters, onClick } ) {
 	const { __ } = useI18n();
 	// const queryClient = useQueryClient();
 
@@ -21,7 +21,7 @@ export default function ExportCSVButton( { options, className, withFilters, onCl
 	// }
 
 	function handleExport() {
-		if ( withFilters ) {
+		if ( withfilters ) {
 			exportCSV( options, ( status ) => onClick( status ) ).then( ( response ) => {
 				if ( onClick && response.status === 'done' ) {
 					const csv = jsonToCSV( response, {
@@ -33,7 +33,7 @@ export default function ExportCSVButton( { options, className, withFilters, onCl
 				}
 			} );
 		}
-		if ( ! withFilters ) {
+		if ( ! withfilters ) {
 			delete options.filters;
 			exportCSV( options, ( status ) => onClick( status ) ).then( ( response ) => {
 				if ( onClick && response.status === 'done' ) {
@@ -53,7 +53,7 @@ export default function ExportCSVButton( { options, className, withFilters, onCl
 		<Button className={ className } active
 			onClick={ handleExport }>
 			<ExportIcon />
-			{ withFilters
+			{ withfilters
 				? __( 'Export Filtered' )
 				: __( 'Export All' )
 			}
