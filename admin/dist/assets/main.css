@@ -730,6 +730,16 @@ button.urlslab-button > svg:last-child:not(:first-child),
   -ms-flex-line-pack: center;
       align-content: center;
 }
+[id=urlslab-root] .flex-justify-center {
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+[id=urlslab-root] .flex-justify-end {
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+}
 [id=urlslab-root] .flex-wrap {
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
@@ -1880,6 +1890,10 @@ code {
   fill: currentcolor !important;
 }
 
+svg.c-primary-color {
+  fill: currentcolor !important;
+}
+
 .bg-primary-color {
   background-color: #2570ed !important;
 }
@@ -1892,6 +1906,10 @@ code {
   color: #050505 !important;
 }
 .c-black svg {
+  fill: currentcolor !important;
+}
+
+svg.c-black {
   fill: currentcolor !important;
 }
 
@@ -1910,6 +1928,10 @@ code {
   fill: currentcolor !important;
 }
 
+svg.c-black-real {
+  fill: currentcolor !important;
+}
+
 .bg-black-real {
   background-color: #000 !important;
 }
@@ -1922,6 +1944,10 @@ code {
   color: #65676b !important;
 }
 .c-grey-darker svg {
+  fill: currentcolor !important;
+}
+
+svg.c-grey-darker {
   fill: currentcolor !important;
 }
 
@@ -1940,6 +1966,10 @@ code {
   fill: currentcolor !important;
 }
 
+svg.c-grey-dark {
+  fill: currentcolor !important;
+}
+
 .bg-grey-dark {
   background-color: #8c9097 !important;
 }
@@ -1952,6 +1982,10 @@ code {
   color: #bec2c9 !important;
 }
 .c-grey-medium-lighter svg {
+  fill: currentcolor !important;
+}
+
+svg.c-grey-medium-lighter {
   fill: currentcolor !important;
 }
 
@@ -1970,6 +2004,10 @@ code {
   fill: currentcolor !important;
 }
 
+svg.c-grey-medium {
+  fill: currentcolor !important;
+}
+
 .bg-grey-medium {
   background-color: #ced0d4 !important;
 }
@@ -1982,6 +2020,10 @@ code {
   color: #e4e5e9 !important;
 }
 .c-grey-light svg {
+  fill: currentcolor !important;
+}
+
+svg.c-grey-light {
   fill: currentcolor !important;
 }
 
@@ -2000,6 +2042,10 @@ code {
   fill: currentcolor !important;
 }
 
+svg.c-grey-lighter {
+  fill: currentcolor !important;
+}
+
 .bg-grey-lighter {
   background-color: #edeff3 !important;
 }
@@ -2012,6 +2058,10 @@ code {
   color: #f5f5f7 !important;
 }
 .c-grey-lightest svg {
+  fill: currentcolor !important;
+}
+
+svg.c-grey-lightest {
   fill: currentcolor !important;
 }
 
@@ -2030,6 +2080,10 @@ code {
   fill: currentcolor !important;
 }
 
+svg.c-white {
+  fill: currentcolor !important;
+}
+
 .bg-white {
   background-color: #fff !important;
 }
@@ -2042,6 +2096,10 @@ code {
   color: #2570ed !important;
 }
 .c-saturated-blue svg {
+  fill: currentcolor !important;
+}
+
+svg.c-saturated-blue {
   fill: currentcolor !important;
 }
 
@@ -2060,6 +2118,10 @@ code {
   fill: currentcolor !important;
 }
 
+svg.c-darker-blue {
+  fill: currentcolor !important;
+}
+
 .bg-darker-blue {
   background-color: #0f55c9 !important;
 }
@@ -2072,6 +2134,10 @@ code {
   color: #4b89f0 !important;
 }
 .c-lighter-blue svg {
+  fill: currentcolor !important;
+}
+
+svg.c-lighter-blue {
   fill: currentcolor !important;
 }
 
@@ -2090,6 +2156,10 @@ code {
   fill: currentcolor !important;
 }
 
+svg.c-desaturated-blue {
+  fill: currentcolor !important;
+}
+
 .bg-desaturated-blue {
   background-color: #dfeafd !important;
 }
@@ -2102,6 +2172,10 @@ code {
   color: #46a6ff !important;
 }
 .c-saturated-cyan svg {
+  fill: currentcolor !important;
+}
+
+svg.c-saturated-cyan {
   fill: currentcolor !important;
 }
 
@@ -2120,6 +2194,10 @@ code {
   fill: currentcolor !important;
 }
 
+svg.c-desaturated-cyan {
+  fill: currentcolor !important;
+}
+
 .bg-desaturated-cyan {
   background-color: #e3f2ff !important;
 }
@@ -2132,6 +2210,10 @@ code {
   color: #07b65d !important;
 }
 .c-saturated-green svg {
+  fill: currentcolor !important;
+}
+
+svg.c-saturated-green {
   fill: currentcolor !important;
 }
 
@@ -2150,6 +2232,10 @@ code {
   fill: currentcolor !important;
 }
 
+svg.c-desaturated-green {
+  fill: currentcolor !important;
+}
+
 .bg-desaturated-green {
   background-color: #daf4e7 !important;
 }
@@ -2162,6 +2248,10 @@ code {
   color: #ff492b !important;
 }
 .c-saturated-red svg {
+  fill: currentcolor !important;
+}
+
+svg.c-saturated-red {
   fill: currentcolor !important;
 }
 
@@ -2180,6 +2270,10 @@ code {
   fill: currentcolor !important;
 }
 
+svg.c-dark-saturated-red {
+  fill: currentcolor !important;
+}
+
 .bg-dark-saturated-red {
   background-color: #ed2200 !important;
 }
@@ -2192,6 +2286,10 @@ code {
   color: #ffe4df !important;
 }
 .c-desaturated-red svg {
+  fill: currentcolor !important;
+}
+
+svg.c-desaturated-red {
   fill: currentcolor !important;
 }
 
@@ -2210,6 +2308,10 @@ code {
   fill: currentcolor !important;
 }
 
+svg.c-saturated-orange {
+  fill: currentcolor !important;
+}
+
 .bg-saturated-orange {
   background-color: #ffb928 !important;
 }
@@ -2222,6 +2324,10 @@ code {
   color: #fff5df !important;
 }
 .c-desaturated-orange svg {
+  fill: currentcolor !important;
+}
+
+svg.c-desaturated-orange {
   fill: currentcolor !important;
 }
 
