@@ -222,6 +222,7 @@ class Urlslab_File_Row extends Urlslab_Data {
 		$this->set_webp_fileid( $file_arr['webp_fileid'] ?? '', $loaded_from_db );
 		$this->set_avif_fileid( $file_arr['avif_fileid'] ?? '', $loaded_from_db );
 		$this->set_filetype( $file_arr['filetype'] ?? '', $loaded_from_db );
+		$this->set_labels( $file_arr['labels'] ?? '', $loaded_from_db );
 	}
 
 	public function get_url(): string {
@@ -266,6 +267,10 @@ class Urlslab_File_Row extends Urlslab_Data {
 
 	public function get_file_pointer(): Urlslab_File_Pointer_Row {
 		return $this->file_pointer;
+	}
+
+	public function get_labels(): string {
+		return $this->get( 'labels' );
 	}
 
 	public function set_fileid( string $fileid, $loaded_from_db = false ): void {
@@ -313,6 +318,10 @@ class Urlslab_File_Row extends Urlslab_Data {
 
 	public function set_filetype( string $filetype, $loaded_from_db = false ): void {
 		$this->set( 'filetype', $filetype, $loaded_from_db );
+	}
+
+	public function set_labels( string $labels, $loaded_from_db = false ): void {
+		$this->set( 'labels', $labels, $loaded_from_db );
 	}
 
 	public function as_array(): array {
@@ -484,6 +493,7 @@ class Urlslab_File_Row extends Urlslab_Data {
 			'status_changed' => '%s',
 			'webp_fileid'    => '%s',
 			'avif_fileid'    => '%s',
+			'labels'    => '%s',
 		);
 	}
 

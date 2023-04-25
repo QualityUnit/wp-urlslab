@@ -21,3 +21,4 @@ define( 'URLSLAB_CONTENT_GENERATORS_TABLE', $wpdb->prefix . 'urlslab_content_gen
 define( 'URLSLAB_CONTENT_GENERATOR_URLS_TABLE', $wpdb->prefix . 'urlslab_content_generator_urls' );
 define( 'URLSLAB_NOT_FOUND_LOG_TABLE', $wpdb->prefix . 'urlslab_log_notfound' );
 define( 'URLSLAB_REDIRECTS_TABLE', $wpdb->prefix . 'urlslab_redirects' );
+define( 'URLSLAB_LABELS_TABLE', $wpdb->prefix . 'urlslab_labels' );

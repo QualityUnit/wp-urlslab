@@ -50,6 +50,12 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 								}
 							},
 						),
+						'labels'     => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
 					),
 				),
 			)
@@ -152,6 +158,12 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 						return 250 > strlen( $param );
 					},
 				),
+				'labels'     => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return is_string( $param );
+					},
+				),
 			),
 			'permission_callback' => array(
 				$this,
@@ -170,6 +182,7 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 			'str_replace',
 			'search_type',
 			'url_filter',
+			'labels',
 		);
 	}
 

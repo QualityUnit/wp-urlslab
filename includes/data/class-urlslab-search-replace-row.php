@@ -10,6 +10,7 @@ class Urlslab_Search_Replace_Row extends Urlslab_Data {
 		$this->set_str_replace( $row_data['str_replace'] ?? '', $loaded_from_db );
 		$this->set_search_type( $row_data['search_type'] ?? self::TYPE_PLAIN_TEXT, $loaded_from_db );
 		$this->set_url_filter( $row_data['url_filter'] ?? '', $loaded_from_db );
+		$this->set_labels( $row_data['labels'] ?? '', $loaded_from_db );
 	}
 
 	public function get_id(): int {
@@ -32,6 +33,10 @@ class Urlslab_Search_Replace_Row extends Urlslab_Data {
 		return $this->get( 'url_filter' );
 	}
 
+	public function get_labels(): string {
+		return $this->get( 'labels' );
+	}
+
 	public function set_id( int $id, $loaded_from_db = false ): void {
 		$this->set( 'id', $id, $loaded_from_db );
 	}
@@ -50,6 +55,10 @@ class Urlslab_Search_Replace_Row extends Urlslab_Data {
 
 	public function set_url_filter( string $url_filter, $loaded_from_db = false ): void {
 		$this->set( 'url_filter', $url_filter, $loaded_from_db );
+	}
+
+	public function set_labels( string $labels, $loaded_from_db = false ): void {
+		$this->set( 'labels', $labels, $loaded_from_db );
 	}
 
 	public function get_table_name(): string {
@@ -71,6 +80,7 @@ class Urlslab_Search_Replace_Row extends Urlslab_Data {
 			'str_replace' => '%s',
 			'search_type' => '%s',
 			'url_filter'  => '%s',
+			'labels'  => '%s',
 		);
 	}
 }

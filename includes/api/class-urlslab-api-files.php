@@ -34,6 +34,12 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 								}
 							},
 						),
+						'labels'     => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
 					),
 				),
 			)
@@ -189,7 +195,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 	}
 
 	public function get_editable_columns(): array {
-		return array( 'filestatus' );
+		return array( 'filestatus', 'labels' );
 	}
 
 	/**

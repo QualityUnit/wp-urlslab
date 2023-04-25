@@ -15,6 +15,7 @@ class Urlslab_Content_Generator_Row extends Urlslab_Data {
 		$this->set_result( $data['result'] ?? '', $loaded_from_db );
 		$this->set_status( $data['status'] ?? self::STATUS_NEW, $loaded_from_db );
 		$this->set_status_changed( $data['status_changed'] ?? self::get_now(), $loaded_from_db );
+		$this->set_labels( $data['labels'] ?? '', $loaded_from_db );
 		$this->set_generator_id( $data['generator_id'] ?? $this->compute_generator_id(), $loaded_from_db );
 	}
 
@@ -54,6 +55,10 @@ class Urlslab_Content_Generator_Row extends Urlslab_Data {
 		return $this->get( 'status_changed' );
 	}
 
+	public function get_labels(): string {
+		return $this->get( 'labels' );
+	}
+
 	public function set_generator_id( int $generator_id, $loaded_from_db = false ): void {
 		$this->set( 'generator_id', $generator_id, $loaded_from_db );
 	}
@@ -87,6 +92,10 @@ class Urlslab_Content_Generator_Row extends Urlslab_Data {
 		$this->set( 'status_changed', $status_changed, $loaded_from_db );
 	}
 
+	public function set_labels( string $labels, $loaded_from_db = false ): void {
+		$this->set( 'labels', $labels, $loaded_from_db );
+	}
+
 	public function get_table_name(): string {
 		return URLSLAB_CONTENT_GENERATORS_TABLE;
 	}
@@ -105,6 +114,7 @@ class Urlslab_Content_Generator_Row extends Urlslab_Data {
 			'status'           => '%s',
 			'lang'             => '%s',
 			'status_changed'   => '%s',
+			'labels'   => '%s',
 		);
 	}
 

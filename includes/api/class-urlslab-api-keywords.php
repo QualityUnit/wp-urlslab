@@ -56,6 +56,12 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 								return 250 > strlen( $param );
 							},
 						),
+						'labels'     => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
 					),
 				),
 			)
@@ -203,6 +209,12 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 					'default'           => '.*',
 					'validate_callback' => function( $param ) {
 						return 250 > strlen( $param );
+					},
+				),
+				'labels'     => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return is_string( $param );
 					},
 				),
 			),
@@ -390,7 +402,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	}
 
 	public function get_editable_columns(): array {
-		return array( 'kwType', 'kw_priority', 'lang', 'urlFilter' );
+		return array( 'kwType', 'kw_priority', 'lang', 'urlFilter', 'labels' );
 	}
 
 	public function get_kw_mapping( $request ) {

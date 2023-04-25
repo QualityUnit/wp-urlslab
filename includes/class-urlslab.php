@@ -379,6 +379,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-screenshot-url-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-not-found-log-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-redirect-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-label-row.php';
 
 		// additional
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
