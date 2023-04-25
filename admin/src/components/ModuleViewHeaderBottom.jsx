@@ -79,7 +79,7 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 	} ) : [];
 
 	const { data: rowCount, isFetching } = useQuery( {
-		queryKey: [ slug, `count` ],
+		queryKey: [ slug, `count`, filtersArray ],
 		queryFn: async () => {
 			const count = await postFetch( `${ slug }/count`, { filters: filtersArray } );
 			if ( ! noCount ) {

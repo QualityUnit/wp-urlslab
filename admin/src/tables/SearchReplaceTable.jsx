@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, SortMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SortMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -22,7 +22,7 @@ export default function SearchReplaceTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, paginationId } );
+	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
 	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
@@ -56,26 +56,26 @@ export default function SearchReplaceTable( { slug } ) {
 		columnHelper.accessor( 'str_search', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.str_search,
+			header: <SortBy props={ { sorting, key: 'str_search', onClick: () => sortBy( 'str_search' ) } }>{ header.str_search }</SortBy>,
 			size: 300,
 		} ),
 		columnHelper.accessor( 'str_replace', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.str_replace,
+			header: <SortBy props={ { sorting, key: 'str_replace', onClick: () => sortBy( 'str_replace' ) } }>{ header.str_replace }</SortBy>,
 			size: 300,
 		} ),
 		columnHelper.accessor( 'search_type', {
 			filterValMenu: searchTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu items={ searchTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.search_type,
+			header: <SortBy props={ { sorting, key: 'search_type', onClick: () => sortBy( 'search_type' ) } }>{ header.search_type }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'url_filter', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.url_filter,
+			header: <SortBy props={ { sorting, key: 'url_filter', onClick: () => sortBy( 'url_filter' ) } }>{ header.url_filter }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'delete', {

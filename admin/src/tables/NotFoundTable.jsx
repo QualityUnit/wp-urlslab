@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback } from 'react';
 
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, SortMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SortMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -30,7 +30,7 @@ export default function NotFoundTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, paginationId } );
+	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
 	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
 
@@ -69,19 +69,19 @@ export default function NotFoundTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'url', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: header.url,
+			header: <SortBy props={ { sorting, key: 'url', onClick: () => sortBy( 'url' ) } }>{ header.url }</SortBy>,
 			minSize: 300,
 		} ),
 		columnHelper.accessor( 'cnt', {
-			header: header.cnt,
+			header: <SortBy props={ { sorting, key: 'cnt', onClick: () => sortBy( 'cnt' ) } }>{ header.cnt }</SortBy>,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'created', {
-			header: header.created,
+			header: <SortBy props={ { sorting, key: 'created', onClick: () => sortBy( 'created' ) } }>{ header.created }</SortBy>,
 			minSize: 100,
 		} ),
 		columnHelper.accessor( 'updated', {
-			header: header.updated,
+			header: <SortBy props={ { sorting, key: 'updated', onClick: () => sortBy( 'updated' ) } }>{ header.updated }</SortBy>,
 			minSize: 100,
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.agent, {

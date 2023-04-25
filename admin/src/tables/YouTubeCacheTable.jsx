@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -21,7 +21,7 @@ export default function YouTubeCacheTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, paginationId } );
+	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
 	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
 
@@ -56,24 +56,24 @@ export default function YouTubeCacheTable( { slug } ) {
 			cell: ( image ) =>
 				<img src={ image?.getValue()?.thumbnails?.high?.url }
 					alt={ image?.getValue()?.title } />,
-			header: header.thumb,
+			header: <SortBy props={ { sorting, key: 'thumb', onClick: () => sortBy( 'thumb' ) } }>{ header.thumb }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'videoid', {
-			header: header.videoid,
+			header: <SortBy props={ { sorting, key: 'videoid', onClick: () => sortBy( 'videoid' ) } }>{ header.videoid }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'status', {
 			filterValMenu: statusTypes,
 			cell: ( cell ) => statusTypes[ cell.getValue() ],
-			header: header.status,
+			header: <SortBy props={ { sorting, key: 'status', onClick: () => sortBy( 'status' ) } }>{ header.status }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper?.accessor( ( cell ) => [ cell?.videoid, JSON.parse( `${ cell?.microdata }` )?.items[ 0 ]?.snippet?.title ], {
 			id: 'title',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue()[ 1 ] }</Tooltip>,
 			cell: ( val ) => <a href={ `https://youtu.be/${ val?.getValue()[ 0 ] }` } target="_blank" rel="noreferrer">{ val?.getValue()[ 1 ] }</a>,
-			header: header.title,
+			header: <SortBy props={ { sorting, key: 'title', onClick: () => sortBy( 'title' ) } }>{ header.title }</SortBy>,
 			size: 450,
 		} ),
 		columnHelper.accessor( 'delete', {

@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, Tooltip, Checkbox, Trash, ProgressBar, InputField, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, SortMenu, DateTimeFormat,
+	useInfiniteFetch, Tooltip, Checkbox, Trash, ProgressBar, SortBy, InputField, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat,
 } from '../lib/tableImports';
 
 import { langName } from '../lib/helpers';
@@ -55,41 +55,41 @@ export default function GeneratorTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'command', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: header.command,
+			header: <SortBy props={ { sorting, key: 'command', onClick: () => sortBy( 'command' ) } }>{ header.command }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'semantic_context', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: header.semantic_context,
+			header: <SortBy props={ { sorting, key: 'semantic_context', onClick: () => sortBy( 'semantic_context' ) } }>{ header.semantic_context }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'url_filter', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: header.url_filter,
+			header: <SortBy props={ { sorting, key: 'url_filter', onClick: () => sortBy( 'url_filter' ) } }>{ header.url_filter }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'lang', {
 			cell: ( cell ) => langName( cell?.getValue() ),
-			header: header.lang,
+			header: <SortBy props={ { sorting, key: 'lang', onClick: () => sortBy( 'lang' ) } }>{ header.lang }</SortBy>,
 			size: 165,
 		} ),
 		columnHelper.accessor( 'result', {
 			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.result,
+			header: <SortBy props={ { sorting, key: 'result', onClick: () => sortBy( 'result' ) } }>{ header.result }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'status', {
 			filterValMenu: statusTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SortMenu items={ statusTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.status,
+			cell: ( cell ) => statusTypes[ cell.getValue() ],
+			header: <SortBy props={ { sorting, key: 'status', onClick: () => sortBy( 'status' ) } }>{ header.status }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'status_changed', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: header.status_changed,
+			header: <SortBy props={ { sorting, key: 'status_changed', onClick: () => sortBy( 'status_changed' ) } }>{ header.status_changed }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'delete', {

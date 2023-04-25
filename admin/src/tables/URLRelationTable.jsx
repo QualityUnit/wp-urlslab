@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -20,7 +20,7 @@ export default function URLRelationTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, paginationId } );
+	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
 	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
@@ -47,20 +47,20 @@ export default function URLRelationTable( { slug } ) {
 		columnHelper.accessor( 'src_url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: header.src_url_name,
+			header: <SortBy props={ { sorting, key: 'src_url_name', onClick: () => sortBy( 'src_url_name' ) } }>{ header.src_url_name }</SortBy>,
 			size: 400,
 		} ),
 		columnHelper.accessor( 'dest_url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: header.dest_url_name,
+			header: <SortBy props={ { sorting, key: 'dest_url_name', onClick: () => sortBy( 'dest_url_name' ) } }>{ header.dest_url_name }</SortBy>,
 			size: 400,
 		} ),
 		columnHelper.accessor( 'pos', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell, optionalSelector: 'dest_url_id' } ) } />,
-			header: header.pos,
+			header: <SortBy props={ { sorting, key: 'pos', onClick: () => sortBy( 'pos' ) } }>{ header.pos }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'delete', {

@@ -26,10 +26,22 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		queryKey: [ key, userFilters, sorting ],
 		// queryKey: [ key, Object.keys( filters ).length > 0 && filters, sorting ],
 		queryFn: async ( { pageParam = '' } ) => {
-			const { lastRowId, sortingFilters } = pageParam;
+			const { lastRowId, sortingFilters, sortingFiltersLastValue } = pageParam;
 			const response = await postFetch( key, {
 				sorting: [ ...sortingArray, { col: paginationId, dir: 'ASC' } ],
-				filters: lastRowId ? [ ...filtersArray, ...sortingFilters, { col: paginationId, op: '>', val: lastRowId } ] : [ ...filtersArray ], rows_per_page: maxRows } );
+				filters: sortingFilters
+					? [
+						{ cond: 'OR',
+							filters: [
+								{ cond: 'AND', filters: [ ...sortingFiltersLastValue, { col: paginationId, op: '>', val: lastRowId } ] },
+								...sortingFilters,
+							],
+						},
+						...filtersArray,
+					]
+					: [ ...filtersArray ],
+				rows_per_page: maxRows,
+			} );
 			return response.json();
 		},
 		getNextPageParam: ( allRows ) => {
@@ -41,7 +53,11 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 				const { key: keyName, op } = sortingObj;
 				return { col: keyName, op, val: allRows[ allRows?.length - 1 ][ keyName ] };
 			} ) : [];
-			return { lastRowId, sortingFilters };
+			const sortingFiltersLastValue = sorting ? sorting.map( ( sortingObj ) => {
+				const { key: keyName } = sortingObj;
+				return { col: keyName, op: '=', val: allRows[ allRows?.length - 1 ][ keyName ] };
+			} ) : [];
+			return { lastRowId, sortingFilters, sortingFiltersLastValue };
 		},
 		keepPreviousData: true,
 		refetchOnWindowFocus: false,

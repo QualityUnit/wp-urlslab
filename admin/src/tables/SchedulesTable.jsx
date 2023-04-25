@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, Trash, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Trash, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -21,7 +21,7 @@ export default function SchedulesTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, paginationId } );
+	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
 	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
 
@@ -62,45 +62,45 @@ export default function SchedulesTable( { slug } ) {
 			className: 'nolimit',
 			cell: ( array ) => array?.getValue().map( ( link ) => <><a href={ link } target="_blank" rel="noreferrer" key={ link }>{ link }</a>, </>,
 			),
-			header: header.urls,
+			header: <SortBy props={ { sorting, key: 'urls', onClick: () => sortBy( 'urls' ) } }>{ header.urls }</SortBy>,
 			size: 300,
 		} ),
 		columnHelper?.accessor( 'analyze_text', {
 			cell: ( cell ) => <Checkbox readOnly className="readOnly" checked={ cell.getValue() } />,
-			header: header.analyze_text,
+			header: <SortBy props={ { sorting, key: 'analyze_text', onClick: () => sortBy( 'analyze_text' ) } }>{ header.analyze_text }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'follow_links', {
 			filterValMenu: followLinksTypes,
 			cell: ( cell ) => followLinksTypes[ cell?.getValue() ],
-			header: header.follow_links,
+			header: <SortBy props={ { sorting, key: 'follow_links', onClick: () => sortBy( 'follow_links' ) } }>{ header.follow_links }</SortBy>,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'process_all_sitemaps', {
 			cell: ( cell ) => <Checkbox readOnly className="readOnly" checked={ cell.getValue() } />,
-			header: header.process_all_sitemaps,
+			header: <SortBy props={ { sorting, key: 'process_all_sitemaps', onClick: () => sortBy( 'process_all_sitemaps' ) } }>{ header.process_all_sitemaps }</SortBy>,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'scan_frequency', {
 			filterValMenu: scanFrequencyTypes,
 			cell: ( cell ) => scanFrequencyTypes[ cell?.getValue() ],
-			header: header.scan_frequency,
+			header: <SortBy props={ { sorting, key: 'scan_frequency', onClick: () => sortBy( 'scan_frequency' ) } }>{ header.scan_frequency }</SortBy>,
 			size: 90,
 		} ),
 		columnHelper.accessor( 'scan_speed_per_minute', {
-			header: header.scan_speed_per_minute,
+			header: <SortBy props={ { sorting, key: 'scan_speed_per_minute', onClick: () => sortBy( 'scan_speed_per_minute' ) } }>{ header.scan_speed_per_minute }</SortBy>,
 			size: 120,
 		} ),
 		columnHelper?.accessor( 'take_screenshot', {
 			cell: ( cell ) => <Checkbox readOnly className="readOnly" checked={ cell.getValue() } />,
-			header: header.take_screenshot,
+			header: <SortBy props={ { sorting, key: 'take_screenshot', onClick: () => sortBy( 'take_screenshot' ) } }>{ header.take_screenshot }</SortBy>,
 			size: 90,
 		} ),
 		columnHelper?.accessor( 'custom_sitemaps', {
 			className: 'nolimit',
 			cell: ( array ) => array?.getValue().map( ( sitemap ) => <><a href={ sitemap } target="_blank" rel="noreferrer" key={ sitemap }>{ sitemap }</a>, </>,
 			),
-			header: header.custom_sitemaps,
+			header: <SortBy props={ { sorting, key: 'custom_sitemaps', onClick: () => sortBy( 'custom_sitemaps' ) } }>{ header.custom_sitemaps }</SortBy>,
 			size: 300,
 		} ),
 		columnHelper.accessor( 'delete', {
