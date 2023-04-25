@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import {
-	useInfiniteFetch, ProgressBar, Tooltip, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, Tooltip, Checkbox, Trash, Loader, LinkIcon, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -10,6 +11,8 @@ export default function YouTubeCacheTable( { slug } ) {
 
 	const { table, setTable, filters, setFilters, sortingColumn, sortBy } = useTableUpdater( { slug } );
 	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sortingColumn ? '' : sortingColumn }`;
+
+	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
 	const {
 		__,
@@ -78,6 +81,17 @@ export default function YouTubeCacheTable( { slug } ) {
 			size: 450,
 		} ),
 		columnHelper?.accessor( 'usage_count', {
+			cell: ( cell ) => <div className="flex flex-align-center">
+				{ cell?.getValue() }
+				{ cell?.getValue() > 0 &&
+					<button className="ml-s" onClick={ () => setDetailsOptions( {
+						title: `Video ID “${ cell.row.original.videoid }” is used on these URLs`, text: `Video title: ${ cell.row._valuesCache.title[ 1 ] }`, slug, url: `${ cell.row.original.videoid }/urls`, showKeys: [ 'url_name' ], listId: 'url_id',
+					} ) }>
+						<LinkIcon />
+						<Tooltip className="align-left">{ __( 'Show URLs where used' ) }</Tooltip>
+					</button>
+				}
+			</div>,
 			header: header.usage_count,
 			size: 80,
 		} ),
@@ -104,6 +118,7 @@ export default function YouTubeCacheTable( { slug } ) {
 				onSort={ ( val ) => sortBy( val ) }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
+				detailsOptions={ detailsOptions }
 				exportOptions={ {
 					url: slug,
 					filters,

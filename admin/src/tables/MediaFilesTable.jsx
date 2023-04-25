@@ -115,7 +115,7 @@ export default function MediaFilesTable( { slug } ) {
 		columnHelper?.accessor( 'driver', {
 			filterValMenu: driverTypes,
 			className: 'nolimit',
-			cell: ( cell ) => driverTypes[ cell.getValue() ],
+			cell: ( cell ) => <SortMenu items={ driverTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, customEndpoint: '/transfer', cell } ) } />,
 			header: header.driver,
 			size: 100,
 		} ),
