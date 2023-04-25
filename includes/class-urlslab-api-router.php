@@ -61,7 +61,7 @@ class Urlslab_Api_Router {
 		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-labels.php';
 		( new Urlslab_Api_Labels() )->register_routes();
 
-    require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-optimize.php';
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-optimize.php';
 		( new Urlslab_Api_Optimize() )->register_routes();
 	}
 }

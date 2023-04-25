@@ -66,7 +66,7 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 	public function get_route_get_items(): array {
 		return array(
 			array(
-				'methods'             => WP_REST_Server::READABLE,
+				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'get_items' ),
 				'args'                => $this->get_table_arguments(),
 				'permission_callback' => array(
@@ -82,11 +82,9 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 		$sql->add_select_column( '*' );
 		$sql->add_from( $this->get_row_object()->get_table_name() );
 
-		$this->add_filter_table_fields( $sql );
-
-		//TODO add filtering and sorting for new filters api after branch with filters is merged
-
-		$sql->add_order( 'label_id', 'DESC' );
+		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
+		$sql->add_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
 
 		return $sql;
 	}
