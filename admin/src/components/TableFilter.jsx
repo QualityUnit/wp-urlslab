@@ -14,7 +14,7 @@ import Tooltip from '../elements/Tooltip';
 
 export default function TableFilter( { props, onEdit, onRemove } ) {
 	const { __ } = useI18n();
-	const { filters, state, slug, header, initialRow } = props;
+	const { filters, possiblefilters, state, slug, header, initialRow } = props;
 	const [ editFilter, activateEditing ] = useState( );
 	const activefilters = Object.keys( filters ).length ? Object.keys( filters ) : null;
 
@@ -70,7 +70,7 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 						<Tooltip className="showOnHover" style={ { width: '8em' } }>{ __( 'Delete filter' ) }</Tooltip>
 					</div>
 					{ editFilter === key && // Edit filter panel
-						<TableFilterPanel key={ key } props={ { key, slug, header, initialRow, possiblefilters: state.possiblefilters, filters } } onEdit={ handleOnEdit } />
+						<TableFilterPanel key={ key } props={ { key, slug, header, initialRow, possiblefilters, filters } } onEdit={ handleOnEdit } />
 					}
 				</Button> );
 			} ) }

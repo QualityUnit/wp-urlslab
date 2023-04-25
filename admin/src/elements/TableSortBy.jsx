@@ -5,7 +5,7 @@ import { ReactComponent as SortASC } from '../assets/images/icons/icon-sort-asc.
 import { ReactComponent as SortDESC } from '../assets/images/icons/icon-sort-desc.svg';
 
 const SortBy = ( ( { props, children } ) => {
-	const { sorting, key, onClick } = props;
+	const { sorting, header, key, onClick } = props;
 	const { __ } = useI18n();
 	let sortedBy = sorting?.filter( ( k ) => k.key === key )[ 0 ];
 	sortedBy = sortedBy ? sortedBy.dir : undefined;
@@ -25,8 +25,8 @@ const SortBy = ( ( { props, children } ) => {
 		<div className="flex flex-align-center">
 			<IconButton
 				onClick={ onClick }
-				className={ `pr-s ${ sortedBy && 'active' }` }
-				tooltip={ __( 'Sort by' ) }
+				className={ `${ sortedBy ? 'active' : '' }` }
+				tooltip={ `${ __( 'Sort by' ) } ${ header[ key ] }` }
 			>{ sortIcon() }
 			</IconButton>
 			{ children }

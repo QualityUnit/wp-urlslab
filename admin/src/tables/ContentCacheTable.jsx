@@ -29,17 +29,17 @@ export default function ContentCacheTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'date_changed', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: <SortBy props={ { sorting, key: 'date_changed', onClick: () => sortBy( 'date_changed' ) } }>{ header.date_changed }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'date_changed', onClick: () => sortBy( 'date_changed' ) } }>{ header.date_changed }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'cache_len', {
 			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
-			header: <SortBy props={ { sorting, key: 'cache_len', onClick: () => sortBy( 'cache_len' ) } }>{ header.cache_len }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'cache_len', onClick: () => sortBy( 'cache_len' ) } }>{ header.cache_len }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'cache_content', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: <SortBy props={ { sorting, key: 'cache_content', onClick: () => sortBy( 'cache_content' ) } }>{ header.cache_content }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'cache_content', onClick: () => sortBy( 'cache_content' ) } }>{ header.cache_content }</SortBy>,
 			size: 500,
 		} ),
 	];

@@ -47,20 +47,20 @@ export default function URLRelationTable( { slug } ) {
 		columnHelper.accessor( 'src_url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: <SortBy props={ { sorting, key: 'src_url_name', onClick: () => sortBy( 'src_url_name' ) } }>{ header.src_url_name }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'src_url_name', onClick: () => sortBy( 'src_url_name' ) } }>{ header.src_url_name }</SortBy>,
 			size: 400,
 		} ),
 		columnHelper.accessor( 'dest_url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: <SortBy props={ { sorting, key: 'dest_url_name', onClick: () => sortBy( 'dest_url_name' ) } }>{ header.dest_url_name }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'dest_url_name', onClick: () => sortBy( 'dest_url_name' ) } }>{ header.dest_url_name }</SortBy>,
 			size: 400,
 		} ),
 		columnHelper.accessor( 'pos', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell, optionalSelector: 'dest_url_id' } ) } />,
-			header: <SortBy props={ { sorting, key: 'pos', onClick: () => sortBy( 'pos' ) } }>{ header.pos }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'pos', onClick: () => sortBy( 'pos' ) } }>{ header.pos }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'delete', {

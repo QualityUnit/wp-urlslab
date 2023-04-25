@@ -56,26 +56,26 @@ export default function SearchReplaceTable( { slug } ) {
 		columnHelper.accessor( 'str_search', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { sorting, key: 'str_search', onClick: () => sortBy( 'str_search' ) } }>{ header.str_search }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'str_search', onClick: () => sortBy( 'str_search' ) } }>{ header.str_search }</SortBy>,
 			size: 300,
 		} ),
 		columnHelper.accessor( 'str_replace', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { sorting, key: 'str_replace', onClick: () => sortBy( 'str_replace' ) } }>{ header.str_replace }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'str_replace', onClick: () => sortBy( 'str_replace' ) } }>{ header.str_replace }</SortBy>,
 			size: 300,
 		} ),
 		columnHelper.accessor( 'search_type', {
 			filterValMenu: searchTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu items={ searchTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { sorting, key: 'search_type', onClick: () => sortBy( 'search_type' ) } }>{ header.search_type }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'search_type', onClick: () => sortBy( 'search_type' ) } }>{ header.search_type }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'url_filter', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { sorting, key: 'url_filter', onClick: () => sortBy( 'url_filter' ) } }>{ header.url_filter }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'url_filter', onClick: () => sortBy( 'url_filter' ) } }>{ header.url_filter }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'delete', {

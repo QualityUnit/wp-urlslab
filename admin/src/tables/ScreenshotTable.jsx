@@ -64,25 +64,25 @@ export default function ScreenshotTable( { slug } ) {
 		columnHelper?.accessor( 'screenshot_url', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: <SortBy props={ { sorting, key: 'screenshot_url', onClick: () => sortBy( 'screenshot_url' ) } }>{ header.screenshot_url }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'screenshot_url', onClick: () => sortBy( 'screenshot_url' ) } }>{ header.screenshot_url }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: <SortBy props={ { sorting, key: 'url_name', onClick: () => sortBy( 'url_name' ) } }>{ header.url_name }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'url_name', onClick: () => sortBy( 'url_name' ) } }>{ header.url_name }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'url_title', {
 			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
-			header: <SortBy props={ { sorting, key: 'url_title', onClick: () => sortBy( 'url_title' ) } }>{ header.url_title }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'url_title', onClick: () => sortBy( 'url_title' ) } }>{ header.url_title }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper?.accessor( 'scr_status', {
 			filterValMenu: scrStatusTypes,
 			cell: ( cell ) => scrStatusTypes[ cell.getValue() ],
-			header: <SortBy props={ { sorting, key: 'scr_status', onClick: () => sortBy( 'scr_status' ) } }>{ header.scr_status }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'scr_status', onClick: () => sortBy( 'scr_status' ) } }>{ header.scr_status }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'screenshot_usage_count', {
@@ -97,12 +97,12 @@ export default function ScreenshotTable( { slug } ) {
 					</button>
 				}
 			</div>,
-			header: <SortBy props={ { sorting, key: 'screenshot_usage_count', onClick: () => sortBy( 'screenshot_usage_count' ) } }>{ header.screenshot_usage_count }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'screenshot_usage_count', onClick: () => sortBy( 'screenshot_usage_count' ) } }>{ header.screenshot_usage_count }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'update_scr_date', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: <SortBy props={ { sorting, key: 'update_scr_date', onClick: () => sortBy( 'update_scr_date' ) } }>{ header.update_scr_date }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'update_scr_date', onClick: () => sortBy( 'update_scr_date' ) } }>{ header.update_scr_date }</SortBy>,
 			size: 140,
 		} ),
 		columnHelper.accessor( 'delete', {

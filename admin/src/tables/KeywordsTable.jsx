@@ -65,13 +65,13 @@ export default function KeywordsTable( { slug } ) {
 		columnHelper.accessor( 'keyword', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: <SortBy props={ { sorting, key: 'keyword', onClick: () => sortBy( 'keyword' ) } }>{ header.keyword }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'keyword', onClick: () => sortBy( 'keyword' ) } }>{ header.keyword }</SortBy>,
 			minSize: 150,
 		} ),
 		columnHelper.accessor( 'urlLink', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: <SortBy props={ { sorting, key: 'urlLink', onClick: () => sortBy( 'urlLink' ) } }>{ header.urlLink }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'urlLink', onClick: () => sortBy( 'urlLink' ) } }>{ header.urlLink }</SortBy>,
 			enableResizing: false,
 			size: 350,
 		} ),
@@ -79,18 +79,18 @@ export default function KeywordsTable( { slug } ) {
 			filterValMenu: keywordTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu items={ keywordTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { sorting, key: 'kwType', onClick: () => sortBy( 'kwType' ) } }>{ header.kwType }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'kwType', onClick: () => sortBy( 'kwType' ) } }>{ header.kwType }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'kw_length', {
-			header: <SortBy props={ { sorting, key: 'kw_length', onClick: () => sortBy( 'kw_length' ) } }>{ header.kw_length }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'kw_length', onClick: () => sortBy( 'kw_length' ) } }>{ header.kw_length }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'kw_priority', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { sorting, key: 'kw_priority', onClick: () => sortBy( 'kw_priority' ) } }>{ header.kw_priority }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'kw_priority', onClick: () => sortBy( 'kw_priority' ) } }>{ header.kw_priority }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'lang', {
@@ -98,7 +98,7 @@ export default function KeywordsTable( { slug } ) {
 			cell: ( cell ) => <LangMenu checkedId={ cell?.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) }
 			/>,
-			header: <SortBy props={ { sorting, key: 'lang', onClick: () => sortBy( 'lang' ) } }>{ header.lang }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'lang', onClick: () => sortBy( 'lang' ) } }>{ header.lang }</SortBy>,
 			size: 165,
 		} ),
 		columnHelper.accessor( 'kw_usage_count', {
@@ -113,14 +113,14 @@ export default function KeywordsTable( { slug } ) {
 					</button>
 				}
 			</div>,
-			header: <SortBy props={ { sorting, key: 'kw_usage_count', onClick: () => sortBy( 'kw_usage_count' ) } }>{ header.kw_usage_count }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'kw_usage_count', onClick: () => sortBy( 'kw_usage_count' ) } }>{ header.kw_usage_count }</SortBy>,
 			size: 70,
 		} ),
 		columnHelper.accessor( 'urlFilter', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.renderValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { sorting, key: 'urlFilter', onClick: () => sortBy( 'urlFilter' ) } }>{ header.urlFilter }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'urlFilter', onClick: () => sortBy( 'urlFilter' ) } }>{ header.urlFilter }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'delete', {

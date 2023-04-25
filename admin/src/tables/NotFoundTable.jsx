@@ -69,19 +69,19 @@ export default function NotFoundTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'url', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: <SortBy props={ { sorting, key: 'url', onClick: () => sortBy( 'url' ) } }>{ header.url }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'url', onClick: () => sortBy( 'url' ) } }>{ header.url }</SortBy>,
 			minSize: 300,
 		} ),
 		columnHelper.accessor( 'cnt', {
-			header: <SortBy props={ { sorting, key: 'cnt', onClick: () => sortBy( 'cnt' ) } }>{ header.cnt }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'cnt', onClick: () => sortBy( 'cnt' ) } }>{ header.cnt }</SortBy>,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'created', {
-			header: <SortBy props={ { sorting, key: 'created', onClick: () => sortBy( 'created' ) } }>{ header.created }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'created', onClick: () => sortBy( 'created' ) } }>{ header.created }</SortBy>,
 			minSize: 100,
 		} ),
 		columnHelper.accessor( 'updated', {
-			header: <SortBy props={ { sorting, key: 'updated', onClick: () => sortBy( 'updated' ) } }>{ header.updated }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'updated', onClick: () => sortBy( 'updated' ) } }>{ header.updated }</SortBy>,
 			minSize: 100,
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.agent, {

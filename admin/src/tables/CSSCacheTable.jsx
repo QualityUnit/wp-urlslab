@@ -48,24 +48,24 @@ export default function CSSCacheTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'url', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: <SortBy props={ { sorting, key: 'url', onClick: () => sortBy( 'url' ) } }>{ header.url }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'url', onClick: () => sortBy( 'url' ) } }>{ header.url }</SortBy>,
 			size: 450,
 		} ),
 		columnHelper?.accessor( 'status', {
 			filterValMenu: statusTypes,
 			cell: ( cell ) => statusTypes[ cell.getValue() ],
-			header: <SortBy props={ { sorting, key: 'status', onClick: () => sortBy( 'status' ) } }>{ header.status }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'status', onClick: () => sortBy( 'status' ) } }>{ header.status }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'status_changed', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: <SortBy props={ { sorting, key: 'status_changed', onClick: () => sortBy( 'status_changed' ) } }>{ header.status_changed }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'status_changed', onClick: () => sortBy( 'status_changed' ) } }>{ header.status_changed }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'filesize', {
 			unit: 'kB',
 			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
-			header: <SortBy props={ { sorting, key: 'filesize', onClick: () => sortBy( 'filesize' ) } }>{ header.filesize }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'filesize', onClick: () => sortBy( 'filesize' ) } }>{ header.filesize }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'delete', {

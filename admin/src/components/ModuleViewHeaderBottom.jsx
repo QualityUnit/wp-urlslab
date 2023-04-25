@@ -43,7 +43,7 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 
 	const initialRow = table?.getRowModel().rows[ 0 ];
 
-	const { filters, state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( { slug, header, initialRow } );
+	const { filters, possiblefilters, state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( { slug, header, initialRow } );
 
 	const sorting = queryClient.getQueryData( [ slug, 'sorting' ] );
 
@@ -126,8 +126,8 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 	};
 
 	const handleRefresh = () => {
-		queryClient.invalidateQueries( [ slug, filters, sorting ? sorting : [] ] );
-		queryClient.invalidateQueries( [ slug, 'count' ] );
+		queryClient.invalidateQueries( [ slug, filtersArray, sorting ? sorting : [] ] );
+		queryClient.invalidateQueries( [ slug, 'count', filtersArray ] );
 	};
 
 	return (
@@ -147,7 +147,7 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 						</Button>
 
 						{ state.editFilter === 'addFilter' && // Our main adding panel (only when Add button clicked)
-							<TableFilterPanel props={ { slug, header, initialRow, possiblefilters: state.possiblefilters, filters } } onEdit={ ( val ) => {
+							<TableFilterPanel props={ { slug, header, initialRow, possiblefilters, filters } } onEdit={ ( val ) => {
 								handleHeaderHeight(); handleOnEdit( val );
 							} } />
 						}
@@ -178,7 +178,7 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 				</div>
 				{ Object.keys( filters ).length !== 0 &&
 				<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
-					<TableFilter props={ { filters, state, slug, header, initialRow } } onEdit={ handleOnEdit } onRemove={ ( key ) => {
+					<TableFilter props={ { filters, possiblefilters, state, slug, header, initialRow } } onEdit={ handleOnEdit } onRemove={ ( key ) => {
 						handleHeaderHeight(); handleRemoveFilter( key );
 					} } />
 				</div>

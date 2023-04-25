@@ -27,14 +27,14 @@ export function useFilter( { slug, header, initialRow } ) {
 	// Recovers filters from query cache when returning from different component
 	useEffect( () => {
 		getQueryData();
-		if ( state.filteringState?.possiblefilters ) {
-			possiblefilters.current = state.filteringState?.possiblefilters;
+		if ( state?.possiblefilters ) {
+			possiblefilters.current = state?.possiblefilters;
 		}
 		if ( state.filteringState?.filters ) {
 			dispatch( {
 				type: 'setFilters', filters: state.filteringState?.filters } );
 		}
-	}, [ getQueryData, state.filteringState ] );
+	}, [ getQueryData, state.possiblefilters, state.filteringState ] );
 
 	/* --- filters ADDING FUNCTIONS --- */
 	function addFilter( key, value ) {
@@ -148,12 +148,12 @@ export function useFilter( { slug, header, initialRow } ) {
 			} );
 
 			// Store state of the possible filters list without one removed
-			dispatch( { type: 'possiblefilters', possiblefilters: newHeader } );
+			possiblefilters.current = newHeader;
 		}
 
 		// If Clear filters button, generate available filter list from scratch
 		if ( keysArray?.length > 1 ) {
-			dispatch( { type: 'possiblefilters', possiblefilters: { ...header } } );
+			possiblefilters.current = { ...header };
 		}
 
 		removefilters( keysArray ); // runs the actual removal
@@ -168,7 +168,7 @@ export function useFilter( { slug, header, initialRow } ) {
 		queryClient.setQueryData( [ slug, 'filters' ], { filters: state.filters, possiblefilters: possiblefilters.current } );
 	}
 
-	return { filters: state.filters, filteringState: state.filteringState, addFilter, removefilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter };
+	return { filters: state.filters, possiblefilters: possiblefilters.current, filteringState: state.filteringState, addFilter, removefilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter };
 }
 
 /* SORTING HOOK */
@@ -193,7 +193,6 @@ export function useSorting( { slug } ) {
 	function sortBy( key ) {
 		// queryClient.setQueryData( [ slug, 'sortBy' ], key );
 		setSorting( ( currentSorting ) => {
-			// console.log( sorting );
 			const objFromArr = currentSorting.filter( ( k ) => k.key )[ 0 ];
 			const cleanArr = currentSorting.filter( ( k ) => ! k.key );
 			if ( objFromArr && objFromArr?.dir === 'ASC' ) {
@@ -208,7 +207,6 @@ export function useSorting( { slug } ) {
 		);
 		runSorting.current = true;
 	}
-	// console.log( sorting );
 
 	// Save the all sorting values to local query for later use (on component rerender)
 	if ( runSorting.current ) {

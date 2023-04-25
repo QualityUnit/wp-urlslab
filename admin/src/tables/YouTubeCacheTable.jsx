@@ -56,24 +56,24 @@ export default function YouTubeCacheTable( { slug } ) {
 			cell: ( image ) =>
 				<img src={ image?.getValue()?.thumbnails?.high?.url }
 					alt={ image?.getValue()?.title } />,
-			header: <SortBy props={ { sorting, key: 'thumb', onClick: () => sortBy( 'thumb' ) } }>{ header.thumb }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'thumb', onClick: () => sortBy( 'thumb' ) } }>{ header.thumb }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'videoid', {
-			header: <SortBy props={ { sorting, key: 'videoid', onClick: () => sortBy( 'videoid' ) } }>{ header.videoid }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'videoid', onClick: () => sortBy( 'videoid' ) } }>{ header.videoid }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'status', {
 			filterValMenu: statusTypes,
 			cell: ( cell ) => statusTypes[ cell.getValue() ],
-			header: <SortBy props={ { sorting, key: 'status', onClick: () => sortBy( 'status' ) } }>{ header.status }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'status', onClick: () => sortBy( 'status' ) } }>{ header.status }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper?.accessor( ( cell ) => [ cell?.videoid, JSON.parse( `${ cell?.microdata }` )?.items[ 0 ]?.snippet?.title ], {
 			id: 'title',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue()[ 1 ] }</Tooltip>,
 			cell: ( val ) => <a href={ `https://youtu.be/${ val?.getValue()[ 0 ] }` } target="_blank" rel="noreferrer">{ val?.getValue()[ 1 ] }</a>,
-			header: <SortBy props={ { sorting, key: 'title', onClick: () => sortBy( 'title' ) } }>{ header.title }</SortBy>,
+			header: <SortBy props={ { header, sorting, key: 'title', onClick: () => sortBy( 'title' ) } }>{ header.title }</SortBy>,
 			size: 450,
 		} ),
 		columnHelper.accessor( 'delete', {
