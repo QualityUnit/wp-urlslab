@@ -11,14 +11,6 @@ import Button from './Button';
 
 export default function ExportCSVButton( { options, className, withfilters, onClick } ) {
 	const { __ } = useI18n();
-	// const queryClient = useQueryClient();
-
-	// function sendNotification( val ) {
-	// 	queryClient.setQueryData( [ 'notifications' ], ( data ) => {
-	// 		return { ...data, export: val };
-	// 	} );
-	// 	queryClient.invalidateQueries( [ 'notifications' ] );
-	// }
 
 	function handleExport() {
 		if ( withfilters ) {
@@ -29,12 +21,12 @@ export default function ExportCSVButton( { options, className, withfilters, onCl
 						header: true }
 					);
 
-					fileDownload( csv, `${ options.url }.csv` );
+					fileDownload( csv, `${ options.slug }.csv` );
 				}
 			} );
 		}
 		if ( ! withfilters ) {
-			delete options.filters;
+			delete options.url.filters;
 			exportCSV( options, ( status ) => onClick( status ) ).then( ( response ) => {
 				if ( onClick && response.status === 'done' ) {
 					const csv = jsonToCSV( response, {
@@ -43,7 +35,7 @@ export default function ExportCSVButton( { options, className, withfilters, onCl
 					}
 					);
 
-					fileDownload( csv, `${ options.url }.csv` );
+					fileDownload( csv, `${ options.slug }.csv` );
 				}
 			} );
 		}

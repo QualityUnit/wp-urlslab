@@ -5,8 +5,9 @@ import { ReactComponent as SortASC } from '../assets/images/icons/icon-sort-asc.
 import { ReactComponent as SortDESC } from '../assets/images/icons/icon-sort-desc.svg';
 
 const SortBy = ( ( { props, children } ) => {
-	const { sorting, header, key, onClick } = props;
+	const { sorting, header, th, onClick } = props;
 	const { __ } = useI18n();
+	const key = th.id;
 	let sortedBy = sorting?.filter( ( k ) => k.key === key )[ 0 ];
 	sortedBy = sortedBy ? sortedBy.dir : undefined;
 

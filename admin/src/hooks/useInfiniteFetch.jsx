@@ -5,6 +5,7 @@ import { useInView } from 'react-intersection-observer';
 
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { postFetch } from '../api/fetching';
+import filtersArray from '../lib/filtersArray';
 
 export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
@@ -12,18 +13,13 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const { ref, inView } = useInView();
 	const { key, filters: userFilters, sorting, paginationId } = options;
 
-	const filtersArray = userFilters ? Object.entries( userFilters ).map( ( [ col, params ] ) => {
-		const { op, val } = params;
-		return { col, op, val };
-	} ) : [];
-
 	const sortingArray = sorting ? sorting.map( ( sortingObj ) => {
 		const { key: keyName, dir } = sortingObj;
 		return { col: keyName, dir };
 	} ) : [];
 
 	const query = useInfiniteQuery( {
-		queryKey: [ key, filtersArray, sorting ],
+		queryKey: [ key, filtersArray( userFilters ), sorting ],
 		queryFn: async ( { pageParam = '' } ) => {
 			const { lastRowId, sortingFilters, sortingFiltersLastValue } = pageParam;
 			const response = await postFetch( key, {
@@ -36,9 +32,9 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 								...sortingFilters,
 							],
 						},
-						...filtersArray,
+						...filtersArray( userFilters ),
 					]
-					: [ ...filtersArray ],
+					: [ ...filtersArray( userFilters ) ],
 				rows_per_page: maxRows,
 			} );
 			return response.json();
