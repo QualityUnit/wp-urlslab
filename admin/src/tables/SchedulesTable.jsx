@@ -7,7 +7,7 @@ import useChangeRow from '../hooks/useChangeRow';
 
 export default function SchedulesTable( { slug } ) {
 	const paginationId = 'schedule_id';
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, filters, sorting, sortBy } = useTableUpdater( { slug } );
 
 	const url = { filters, sorting };
 
@@ -62,45 +62,45 @@ export default function SchedulesTable( { slug } ) {
 			className: 'nolimit',
 			cell: ( array ) => array?.getValue().map( ( link ) => <><a href={ link } target="_blank" rel="noreferrer" key={ link }>{ link }</a>, </>,
 			),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.urls }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.urls }</SortBy>,
 			size: 300,
 		} ),
 		columnHelper?.accessor( 'analyze_text', {
 			cell: ( cell ) => <Checkbox readOnly className="readOnly" checked={ cell.getValue() } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.analyze_text }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.analyze_text }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'follow_links', {
 			filterValMenu: followLinksTypes,
 			cell: ( cell ) => followLinksTypes[ cell?.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.follow_links }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.follow_links }</SortBy>,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'process_all_sitemaps', {
 			cell: ( cell ) => <Checkbox readOnly className="readOnly" checked={ cell.getValue() } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.process_all_sitemaps }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.process_all_sitemaps }</SortBy>,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'scan_frequency', {
 			filterValMenu: scanFrequencyTypes,
 			cell: ( cell ) => scanFrequencyTypes[ cell?.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.scan_frequency }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.scan_frequency }</SortBy>,
 			size: 90,
 		} ),
 		columnHelper.accessor( 'scan_speed_per_minute', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.scan_speed_per_minute }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.scan_speed_per_minute }</SortBy>,
 			size: 120,
 		} ),
 		columnHelper?.accessor( 'take_screenshot', {
 			cell: ( cell ) => <Checkbox readOnly className="readOnly" checked={ cell.getValue() } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.take_screenshot }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.take_screenshot }</SortBy>,
 			size: 90,
 		} ),
 		columnHelper?.accessor( 'custom_sitemaps', {
 			className: 'nolimit',
 			cell: ( array ) => array?.getValue().map( ( sitemap ) => <><a href={ sitemap } target="_blank" rel="noreferrer" key={ sitemap }>{ sitemap }</a>, </>,
 			),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.custom_sitemaps }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.custom_sitemaps }</SortBy>,
 			size: 300,
 		} ),
 		columnHelper.accessor( 'delete', {
@@ -120,12 +120,12 @@ export default function SchedulesTable( { slug } ) {
 				slug={ slug }
 				header={ header }
 				table={ table }
+				noFiltering
 				noCount
 				noExport
 				noDelete
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
 			/>
 			<Table className="noHeightLimit fadeInto"
 				slug={ slug }

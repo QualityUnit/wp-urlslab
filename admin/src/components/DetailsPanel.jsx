@@ -9,7 +9,7 @@ import useCloseModal from '../hooks/useCloseModal';
 import Button from '../elements/Button';
 import ProgressBar from '../elements/ProgressBar';
 import Loader from './Loader';
-import {getParamsChar} from "../lib/helpers";
+import { getParamsChar } from '../lib/helpers';
 
 export default function DetailsPanel( { options, handlePanel } ) {
 	const maxRows = 150;
@@ -26,7 +26,7 @@ export default function DetailsPanel( { options, handlePanel } ) {
 		fetchNextPage } = useInfiniteQuery( {
 		queryKey: [ slug, url ],
 		queryFn: ( { pageParam = '' } ) => {
-			return fetchData( `${ slug }/${ url }`+getParamsChar()+`from_${ listId }=${ pageParam !== undefined && pageParam }&rows_per_page=${ maxRows }` );
+			return fetchData( `${ slug }/${ url }` + getParamsChar() + `from_${ listId }=${ pageParam !== undefined && pageParam }&rows_per_page=${ maxRows }` );
 		},
 		getNextPageParam: ( allRows ) => {
 			if ( allRows.length < maxRows ) {

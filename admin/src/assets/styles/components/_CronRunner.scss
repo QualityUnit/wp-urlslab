@@ -1,0 +1,18 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-cronrunner {
+
+	@include square(2.5em);
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: $grey-light;
+	border-radius: 50%;
+
+	.urlslab-icon-button svg {
+
+		@include square(1em);
+	}
+}

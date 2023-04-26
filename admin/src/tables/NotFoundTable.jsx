@@ -18,7 +18,9 @@ export default function NotFoundTable( { slug } ) {
 
 	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 
-	const url = { filters, sorting };
+	const defaultSorting = sorting.length ? sorting : [ { key: 'updated', dir: 'DESC', op: '<' } ];
+
+	const url = { filters, sorting: defaultSorting };
 
 	const {
 		__,
@@ -30,7 +32,7 @@ export default function NotFoundTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
+	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
 
 	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
 
@@ -69,19 +71,19 @@ export default function NotFoundTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'url', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.url }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url }</SortBy>,
 			minSize: 300,
 		} ),
 		columnHelper.accessor( 'cnt', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.cnt }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.cnt }</SortBy>,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'created', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.created }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.created }</SortBy>,
 			minSize: 100,
 		} ),
 		columnHelper.accessor( 'updated', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.updated }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.updated }</SortBy>,
 			minSize: 100,
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.agent, {

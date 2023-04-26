@@ -1,5 +1,5 @@
 
-export default function headerReducer( state, action ) {
+export default function cronReducer( state, action ) {
 	switch ( action.type ) {
 		case 'setCronRun':
 			return {
