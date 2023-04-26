@@ -231,7 +231,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	public function get_route_get_kw_mapping(): array {
 		return array(
 			array(
-				'methods'             => WP_REST_Server::READABLE,
+				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'get_kw_mapping' ),
 				'args'                => $this->get_table_arguments(),
 				'permission_callback' => array( $this, 'get_items_permissions_check' ),

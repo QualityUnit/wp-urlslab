@@ -186,7 +186,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	public function get_route_get_url_usage(): array {
 		return array(
 			array(
-				'methods'             => WP_REST_Server::READABLE,
+				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'get_url_usage' ),
 				'args'                => $this->get_table_arguments(),
 				'permission_callback' => array(
@@ -549,7 +549,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	public function get_route_get_screenshot_usage(): array {
 		return array(
 			array(
-				'methods'             => WP_REST_Server::READABLE,
+				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array(
 					$this,
 					'get_screenshot_usage',
