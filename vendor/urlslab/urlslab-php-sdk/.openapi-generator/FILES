@@ -7,6 +7,7 @@ composer.json
 docs/Api/ApikeyApi.md
 docs/Api/AuthApi.md
 docs/Api/ContentApi.md
+docs/Api/CreditsApi.md
 docs/Api/PublicAssetsApi.md
 docs/Api/ScheduleApi.md
 docs/Api/ScreenshotApi.md
@@ -24,6 +25,11 @@ docs/Model/DomainDataRetrievalSourceResponse.md
 docs/Model/DomainDataRetrievalSummaryResponse.md
 docs/Model/DomainScheduleAPISchedule.md
 docs/Model/DomainScheduleScheduleConf.md
+docs/Model/DomainUserCreditAggregatedCreditEvents.md
+docs/Model/DomainUserCreditAggregatedCreditResponse.md
+docs/Model/DomainUserCreditCreditEvent.md
+docs/Model/DomainUserCreditCreditEventResponse.md
+docs/Model/DomainUserCreditCreditStatus.md
 git_push.sh
 lib/ApiException.php
 lib/Configuration.php
@@ -41,11 +47,17 @@ lib/Model/DomainDataRetrievalSourceResponse.php
 lib/Model/DomainDataRetrievalSummaryResponse.php
 lib/Model/DomainScheduleAPISchedule.php
 lib/Model/DomainScheduleScheduleConf.php
+lib/Model/DomainUserCreditAggregatedCreditEvents.php
+lib/Model/DomainUserCreditAggregatedCreditResponse.php
+lib/Model/DomainUserCreditCreditEvent.php
+lib/Model/DomainUserCreditCreditEventResponse.php
+lib/Model/DomainUserCreditCreditStatus.php
 lib/Model/ModelInterface.php
 lib/ObjectSerializer.php
 lib/Urlslab/ApikeyApi.php
 lib/Urlslab/AuthApi.php
 lib/Urlslab/ContentApi.php
+lib/Urlslab/CreditsApi.php
 lib/Urlslab/PublicAssetsApi.php
 lib/Urlslab/ScheduleApi.php
 lib/Urlslab/ScreenshotApi.php
@@ -54,6 +66,7 @@ phpunit.xml.dist
 test/Api/ApikeyApiTest.php
 test/Api/AuthApiTest.php
 test/Api/ContentApiTest.php
+test/Api/CreditsApiTest.php
 test/Api/PublicAssetsApiTest.php
 test/Api/ScheduleApiTest.php
 test/Api/ScreenshotApiTest.php
@@ -71,3 +84,8 @@ test/Model/DomainDataRetrievalSourceResponseTest.php
 test/Model/DomainDataRetrievalSummaryResponseTest.php
 test/Model/DomainScheduleAPIScheduleTest.php
 test/Model/DomainScheduleScheduleConfTest.php
+test/Model/DomainUserCreditAggregatedCreditEventsTest.php
+test/Model/DomainUserCreditAggregatedCreditResponseTest.php
+test/Model/DomainUserCreditCreditEventResponseTest.php
+test/Model/DomainUserCreditCreditEventTest.php
+test/Model/DomainUserCreditCreditStatusTest.php

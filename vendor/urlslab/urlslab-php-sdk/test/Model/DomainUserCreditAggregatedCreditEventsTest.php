@@ -1,6 +1,6 @@
 <?php
 /**
- * DomainDataRetrievalScreenshotResponseTest
+ * DomainUserCreditAggregatedCreditEventsTest
  *
  * PHP version 7.4
  *
@@ -31,15 +31,15 @@ namespace OpenAPI\Client\Test\Model;
 use PHPUnit\Framework\TestCase;
 
 /**
- * DomainDataRetrievalScreenshotResponseTest Class Doc Comment
+ * DomainUserCreditAggregatedCreditEventsTest Class Doc Comment
  *
  * @category    Class
- * @description DomainDataRetrievalScreenshotResponse
+ * @description DomainUserCreditAggregatedCreditEvents
  * @package     OpenAPI\Client
  * @author      OpenAPI Generator team
  * @link        https://openapi-generator.tech
  */
-class DomainDataRetrievalScreenshotResponseTest extends TestCase
+class DomainUserCreditAggregatedCreditEventsTest extends TestCase
 {
 
     /**
@@ -71,72 +71,36 @@ class DomainDataRetrievalScreenshotResponseTest extends TestCase
     }
 
     /**
-     * Test "DomainDataRetrievalScreenshotResponse"
+     * Test "DomainUserCreditAggregatedCreditEvents"
      */
-    public function testDomainDataRetrievalScreenshotResponse()
+    public function testDomainUserCreditAggregatedCreditEvents()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
     }
 
     /**
-     * Test attribute "domain_id"
+     * Test attribute "group_bucket_title"
      */
-    public function testPropertyDomainId()
+    public function testPropertyGroupBucketTitle()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
     }
 
     /**
-     * Test attribute "url_id"
+     * Test attribute "events"
      */
-    public function testPropertyUrlId()
+    public function testPropertyEvents()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
     }
 
     /**
-     * Test attribute "url"
+     * Test attribute "credits"
      */
-    public function testPropertyUrl()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "screenshot_id"
-     */
-    public function testPropertyScreenshotId()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "url_title"
-     */
-    public function testPropertyUrlTitle()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "url_meta_description"
-     */
-    public function testPropertyUrlMetaDescription()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "screenshot_status"
-     */
-    public function testPropertyScreenshotStatus()
+    public function testPropertyCredits()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');

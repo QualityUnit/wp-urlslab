@@ -1,6 +1,6 @@
 <?php
 /**
- * DomainDataRetrievalSummaryResponseTest
+ * DomainUserCreditCreditEventResponseTest
  *
  * PHP version 7.4
  *
@@ -31,15 +31,15 @@ namespace OpenAPI\Client\Test\Model;
 use PHPUnit\Framework\TestCase;
 
 /**
- * DomainDataRetrievalSummaryResponseTest Class Doc Comment
+ * DomainUserCreditCreditEventResponseTest Class Doc Comment
  *
  * @category    Class
- * @description DomainDataRetrievalSummaryResponse
+ * @description DomainUserCreditCreditEventResponse
  * @package     OpenAPI\Client
  * @author      OpenAPI Generator team
  * @link        https://openapi-generator.tech
  */
-class DomainDataRetrievalSummaryResponseTest extends TestCase
+class DomainUserCreditCreditEventResponseTest extends TestCase
 {
 
     /**
@@ -71,54 +71,18 @@ class DomainDataRetrievalSummaryResponseTest extends TestCase
     }
 
     /**
-     * Test "DomainDataRetrievalSummaryResponse"
+     * Test "DomainUserCreditCreditEventResponse"
      */
-    public function testDomainDataRetrievalSummaryResponse()
+    public function testDomainUserCreditCreditEventResponse()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
     }
 
     /**
-     * Test attribute "domain_id"
+     * Test attribute "events"
      */
-    public function testPropertyDomainId()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "url_id"
-     */
-    public function testPropertyUrlId()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "url"
-     */
-    public function testPropertyUrl()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "summary"
-     */
-    public function testPropertySummary()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "summary_status"
-     */
-    public function testPropertySummaryStatus()
+    public function testPropertyEvents()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');

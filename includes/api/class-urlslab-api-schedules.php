@@ -33,7 +33,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 					'args'                => array(
 						'urls'                  => array(
 							'required'          => true,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								if ( ! is_array( $param ) ) {
 									return false;
 								}
@@ -55,21 +55,21 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 						'process_all_sitemaps'  => array(
 							'required'          => false,
 							'default'           => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_bool( $param );
 							},
 						),
 						'custom_sitemaps'       => array(
 							'required'          => false,
 							'default'           => array(),
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_array( $param );
 							},
 						),
 						'follow_links'          => array(
 							'required'          => false,
 							'default'           => DomainScheduleScheduleConf::LINK_FOLLOWING_STRATEGY_NO_LINK,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								$conf = new DomainScheduleScheduleConf();
 
 								return in_array( $param, array_keys( $conf->getLinkFollowingStrategyAllowableValues() ) );
@@ -78,29 +78,29 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 						'take_screenshot'       => array(
 							'required'          => false,
 							'default'           => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_bool( $param );
 							},
 						),
 						'analyze_text'          => array(
 							'required'          => false,
 							'default'           => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_bool( $param );
 							},
 						),
 						'scan_speed_per_minute' => array(
 							'required'          => false,
 							'default'           => 20,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_int( $param );
 							},
 						),
 						'scan_frequency'        => array(
 							'required'          => false,
 							'default'           => DomainScheduleScheduleConf::SCAN_FREQUENCY_ONE_TIME,
-							'validate_callback' => function ( $param ) {
-								$schedule = new DomainScheduleScheduleConf();
+							'validate_callback' => function( $param ) {
+								$schedule       = new DomainScheduleScheduleConf();
 								$allowed_values = $schedule->getScanFrequencyAllowableValues();
 
 								return in_array( $param, $allowed_values );

@@ -1,6 +1,6 @@
 <?php
 /**
- * DomainDataRetrievalSummaryResponse
+ * DomainUserCreditAggregatedCreditEvents
  *
  * PHP version 7.4
  *
@@ -32,7 +32,7 @@ use \ArrayAccess;
 use \OpenAPI\Client\ObjectSerializer;
 
 /**
- * DomainDataRetrievalSummaryResponse Class Doc Comment
+ * DomainUserCreditAggregatedCreditEvents Class Doc Comment
  *
  * @category Class
  * @package  OpenAPI\Client
@@ -40,7 +40,7 @@ use \OpenAPI\Client\ObjectSerializer;
  * @link     https://openapi-generator.tech
  * @implements \ArrayAccess<string, mixed>
  */
-class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess, \JsonSerializable
+class DomainUserCreditAggregatedCreditEvents implements ModelInterface, ArrayAccess, \JsonSerializable
 {
     public const DISCRIMINATOR = null;
 
@@ -49,7 +49,7 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
       *
       * @var string
       */
-    protected static $openAPIModelName = 'domain.dataRetrieval.SummaryResponse';
+    protected static $openAPIModelName = 'domain.userCredit.AggregatedCreditEvents';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -57,11 +57,9 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
       * @var string[]
       */
     protected static $openAPITypes = [
-        'domain_id' => 'string',
-        'url_id' => 'string',
-        'url' => 'string',
-        'summary' => 'string',
-        'summary_status' => 'string'
+        'group_bucket_title' => 'string',
+        'events' => 'int',
+        'credits' => 'int'
     ];
 
     /**
@@ -72,11 +70,9 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'domain_id' => null,
-        'url_id' => null,
-        'url' => null,
-        'summary' => null,
-        'summary_status' => null
+        'group_bucket_title' => null,
+        'events' => 'int64',
+        'credits' => 'int64'
     ];
 
     /**
@@ -85,11 +81,9 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'domain_id' => false,
-		'url_id' => false,
-		'url' => false,
-		'summary' => true,
-		'summary_status' => false
+        'group_bucket_title' => false,
+		'events' => false,
+		'credits' => false
     ];
 
     /**
@@ -178,11 +172,9 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
      * @var string[]
      */
     protected static $attributeMap = [
-        'domain_id' => 'domainId',
-        'url_id' => 'urlId',
-        'url' => 'url',
-        'summary' => 'summary',
-        'summary_status' => 'summaryStatus'
+        'group_bucket_title' => 'groupBucketTitle',
+        'events' => 'events',
+        'credits' => 'credits'
     ];
 
     /**
@@ -191,11 +183,9 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
      * @var string[]
      */
     protected static $setters = [
-        'domain_id' => 'setDomainId',
-        'url_id' => 'setUrlId',
-        'url' => 'setUrl',
-        'summary' => 'setSummary',
-        'summary_status' => 'setSummaryStatus'
+        'group_bucket_title' => 'setGroupBucketTitle',
+        'events' => 'setEvents',
+        'credits' => 'setCredits'
     ];
 
     /**
@@ -204,11 +194,9 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
      * @var string[]
      */
     protected static $getters = [
-        'domain_id' => 'getDomainId',
-        'url_id' => 'getUrlId',
-        'url' => 'getUrl',
-        'summary' => 'getSummary',
-        'summary_status' => 'getSummaryStatus'
+        'group_bucket_title' => 'getGroupBucketTitle',
+        'events' => 'getEvents',
+        'credits' => 'getCredits'
     ];
 
     /**
@@ -252,25 +240,6 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
         return self::$openAPIModelName;
     }
 
-    public const SUMMARY_STATUS_PENDING = 'PENDING';
-    public const SUMMARY_STATUS_AVAILABLE = 'AVAILABLE';
-    public const SUMMARY_STATUS_UPDATING = 'UPDATING';
-    public const SUMMARY_STATUS_BLOCKED = 'BLOCKED';
-
-    /**
-     * Gets allowable values of the enum
-     *
-     * @return string[]
-     */
-    public function getSummaryStatusAllowableValues()
-    {
-        return [
-            self::SUMMARY_STATUS_PENDING,
-            self::SUMMARY_STATUS_AVAILABLE,
-            self::SUMMARY_STATUS_UPDATING,
-            self::SUMMARY_STATUS_BLOCKED,
-        ];
-    }
 
     /**
      * Associative array for storing property values
@@ -287,11 +256,9 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
      */
     public function __construct(array $data = null)
     {
-        $this->setIfExists('domain_id', $data ?? [], null);
-        $this->setIfExists('url_id', $data ?? [], null);
-        $this->setIfExists('url', $data ?? [], null);
-        $this->setIfExists('summary', $data ?? [], null);
-        $this->setIfExists('summary_status', $data ?? [], null);
+        $this->setIfExists('group_bucket_title', $data ?? [], null);
+        $this->setIfExists('events', $data ?? [], null);
+        $this->setIfExists('credits', $data ?? [], null);
     }
 
     /**
@@ -321,27 +288,15 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
     {
         $invalidProperties = [];
 
-        if ($this->container['domain_id'] === null) {
-            $invalidProperties[] = "'domain_id' can't be null";
+        if ($this->container['group_bucket_title'] === null) {
+            $invalidProperties[] = "'group_bucket_title' can't be null";
         }
-        if ($this->container['url_id'] === null) {
-            $invalidProperties[] = "'url_id' can't be null";
+        if ($this->container['events'] === null) {
+            $invalidProperties[] = "'events' can't be null";
         }
-        if ($this->container['url'] === null) {
-            $invalidProperties[] = "'url' can't be null";
+        if ($this->container['credits'] === null) {
+            $invalidProperties[] = "'credits' can't be null";
         }
-        if ($this->container['summary_status'] === null) {
-            $invalidProperties[] = "'summary_status' can't be null";
-        }
-        $allowedValues = $this->getSummaryStatusAllowableValues();
-        if (!is_null($this->container['summary_status']) && !in_array($this->container['summary_status'], $allowedValues, true)) {
-            $invalidProperties[] = sprintf(
-                "invalid value '%s' for 'summary_status', must be one of '%s'",
-                $this->container['summary_status'],
-                implode("', '", $allowedValues)
-            );
-        }
-
         return $invalidProperties;
     }
 
@@ -358,153 +313,82 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
 
 
     /**
-     * Gets domain_id
+     * Gets group_bucket_title
      *
      * @return string
      */
-    public function getDomainId()
+    public function getGroupBucketTitle()
     {
-        return $this->container['domain_id'];
+        return $this->container['group_bucket_title'];
     }
 
     /**
-     * Sets domain_id
+     * Sets group_bucket_title
      *
-     * @param string $domain_id domain_id
+     * @param string $group_bucket_title group_bucket_title
      *
      * @return self
      */
-    public function setDomainId($domain_id)
+    public function setGroupBucketTitle($group_bucket_title)
     {
-        if (is_null($domain_id)) {
-            throw new \InvalidArgumentException('non-nullable domain_id cannot be null');
+        if (is_null($group_bucket_title)) {
+            throw new \InvalidArgumentException('non-nullable group_bucket_title cannot be null');
         }
-        $this->container['domain_id'] = $domain_id;
+        $this->container['group_bucket_title'] = $group_bucket_title;
 
         return $this;
     }
 
     /**
-     * Gets url_id
+     * Gets events
      *
-     * @return string
+     * @return int
      */
-    public function getUrlId()
+    public function getEvents()
     {
-        return $this->container['url_id'];
+        return $this->container['events'];
     }
 
     /**
-     * Sets url_id
+     * Sets events
      *
-     * @param string $url_id url_id
+     * @param int $events events
      *
      * @return self
      */
-    public function setUrlId($url_id)
+    public function setEvents($events)
     {
-        if (is_null($url_id)) {
-            throw new \InvalidArgumentException('non-nullable url_id cannot be null');
+        if (is_null($events)) {
+            throw new \InvalidArgumentException('non-nullable events cannot be null');
         }
-        $this->container['url_id'] = $url_id;
+        $this->container['events'] = $events;
 
         return $this;
     }
 
     /**
-     * Gets url
+     * Gets credits
      *
-     * @return string
+     * @return int
      */
-    public function getUrl()
+    public function getCredits()
     {
-        return $this->container['url'];
+        return $this->container['credits'];
     }
 
     /**
-     * Sets url
+     * Sets credits
      *
-     * @param string $url url
+     * @param int $credits credits
      *
      * @return self
      */
-    public function setUrl($url)
+    public function setCredits($credits)
     {
-        if (is_null($url)) {
-            throw new \InvalidArgumentException('non-nullable url cannot be null');
+        if (is_null($credits)) {
+            throw new \InvalidArgumentException('non-nullable credits cannot be null');
         }
-        $this->container['url'] = $url;
-
-        return $this;
-    }
-
-    /**
-     * Gets summary
-     *
-     * @return string|null
-     */
-    public function getSummary()
-    {
-        return $this->container['summary'];
-    }
-
-    /**
-     * Sets summary
-     *
-     * @param string|null $summary summary
-     *
-     * @return self
-     */
-    public function setSummary($summary)
-    {
-        if (is_null($summary)) {
-            array_push($this->openAPINullablesSetToNull, 'summary');
-        } else {
-            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
-            $index = array_search('summary', $nullablesSetToNull);
-            if ($index !== FALSE) {
-                unset($nullablesSetToNull[$index]);
-                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
-            }
-        }
-        $this->container['summary'] = $summary;
-
-        return $this;
-    }
-
-    /**
-     * Gets summary_status
-     *
-     * @return string
-     */
-    public function getSummaryStatus()
-    {
-        return $this->container['summary_status'];
-    }
-
-    /**
-     * Sets summary_status
-     *
-     * @param string $summary_status summary_status
-     *
-     * @return self
-     */
-    public function setSummaryStatus($summary_status)
-    {
-        if (is_null($summary_status)) {
-            throw new \InvalidArgumentException('non-nullable summary_status cannot be null');
-        }
-        $allowedValues = $this->getSummaryStatusAllowableValues();
-        if (!in_array($summary_status, $allowedValues, true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    "Invalid value '%s' for 'summary_status', must be one of '%s'",
-                    $summary_status,
-                    implode("', '", $allowedValues)
-                )
-            );
-        }
-        $this->container['summary_status'] = $summary_status;
+        $this->container['credits'] = $credits;
 
         return $this;
     }

@@ -1,13 +1,11 @@
-# # DomainDataRetrievalSummaryResponse
+# # DomainUserCreditAggregatedCreditEvents
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**domain_id** | **string** |  |
-**url_id** | **string** |  |
-**url** | **string** |  |
-**summary** | **string** |  | [optional]
-**summary_status** | **string** |  |
+**group_bucket_title** | **string** |  |
+**events** | **int** |  |
+**credits** | **int** |  |
 
 [[Back to Model list]](../../README.md#models) [[Back to API list]](../../README.md#endpoints) [[Back to README]](../../README.md)

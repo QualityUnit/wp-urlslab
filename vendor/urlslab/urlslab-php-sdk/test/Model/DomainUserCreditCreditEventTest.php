@@ -1,6 +1,6 @@
 <?php
 /**
- * DomainDataRetrievalScreenshotResponseTest
+ * DomainUserCreditCreditEventTest
  *
  * PHP version 7.4
  *
@@ -31,15 +31,15 @@ namespace OpenAPI\Client\Test\Model;
 use PHPUnit\Framework\TestCase;
 
 /**
- * DomainDataRetrievalScreenshotResponseTest Class Doc Comment
+ * DomainUserCreditCreditEventTest Class Doc Comment
  *
  * @category    Class
- * @description DomainDataRetrievalScreenshotResponse
+ * @description DomainUserCreditCreditEvent
  * @package     OpenAPI\Client
  * @author      OpenAPI Generator team
  * @link        https://openapi-generator.tech
  */
-class DomainDataRetrievalScreenshotResponseTest extends TestCase
+class DomainUserCreditCreditEventTest extends TestCase
 {
 
     /**
@@ -71,27 +71,18 @@ class DomainDataRetrievalScreenshotResponseTest extends TestCase
     }
 
     /**
-     * Test "DomainDataRetrievalScreenshotResponse"
+     * Test "DomainUserCreditCreditEvent"
      */
-    public function testDomainDataRetrievalScreenshotResponse()
+    public function testDomainUserCreditCreditEvent()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
     }
 
     /**
-     * Test attribute "domain_id"
+     * Test attribute "id"
      */
-    public function testPropertyDomainId()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "url_id"
-     */
-    public function testPropertyUrlId()
+    public function testPropertyId()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
@@ -107,36 +98,27 @@ class DomainDataRetrievalScreenshotResponseTest extends TestCase
     }
 
     /**
-     * Test attribute "screenshot_id"
+     * Test attribute "operation_date"
      */
-    public function testPropertyScreenshotId()
+    public function testPropertyOperationDate()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
     }
 
     /**
-     * Test attribute "url_title"
+     * Test attribute "credit_operation"
      */
-    public function testPropertyUrlTitle()
+    public function testPropertyCreditOperation()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
     }
 
     /**
-     * Test attribute "url_meta_description"
+     * Test attribute "credit_type"
      */
-    public function testPropertyUrlMetaDescription()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test attribute "screenshot_status"
-     */
-    public function testPropertyScreenshotStatus()
+    public function testPropertyCreditType()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');

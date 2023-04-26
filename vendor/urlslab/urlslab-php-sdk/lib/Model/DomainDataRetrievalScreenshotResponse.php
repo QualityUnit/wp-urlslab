@@ -59,6 +59,7 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
     protected static $openAPITypes = [
         'domain_id' => 'string',
         'url_id' => 'string',
+        'url' => 'string',
         'screenshot_id' => 'int',
         'url_title' => 'string',
         'url_meta_description' => 'string',
@@ -75,6 +76,7 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
     protected static $openAPIFormats = [
         'domain_id' => null,
         'url_id' => null,
+        'url' => null,
         'screenshot_id' => 'int64',
         'url_title' => null,
         'url_meta_description' => null,
@@ -89,6 +91,7 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
     protected static array $openAPINullables = [
         'domain_id' => false,
 		'url_id' => false,
+		'url' => false,
 		'screenshot_id' => true,
 		'url_title' => true,
 		'url_meta_description' => true,
@@ -183,6 +186,7 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
     protected static $attributeMap = [
         'domain_id' => 'domainId',
         'url_id' => 'urlId',
+        'url' => 'url',
         'screenshot_id' => 'screenshotID',
         'url_title' => 'urlTitle',
         'url_meta_description' => 'urlMetaDescription',
@@ -197,6 +201,7 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
     protected static $setters = [
         'domain_id' => 'setDomainId',
         'url_id' => 'setUrlId',
+        'url' => 'setUrl',
         'screenshot_id' => 'setScreenshotId',
         'url_title' => 'setUrlTitle',
         'url_meta_description' => 'setUrlMetaDescription',
@@ -211,6 +216,7 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
     protected static $getters = [
         'domain_id' => 'getDomainId',
         'url_id' => 'getUrlId',
+        'url' => 'getUrl',
         'screenshot_id' => 'getScreenshotId',
         'url_title' => 'getUrlTitle',
         'url_meta_description' => 'getUrlMetaDescription',
@@ -295,6 +301,7 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
     {
         $this->setIfExists('domain_id', $data ?? [], null);
         $this->setIfExists('url_id', $data ?? [], null);
+        $this->setIfExists('url', $data ?? [], null);
         $this->setIfExists('screenshot_id', $data ?? [], null);
         $this->setIfExists('url_title', $data ?? [], null);
         $this->setIfExists('url_meta_description', $data ?? [], null);
@@ -333,6 +340,9 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
         }
         if ($this->container['url_id'] === null) {
             $invalidProperties[] = "'url_id' can't be null";
+        }
+        if ($this->container['url'] === null) {
+            $invalidProperties[] = "'url' can't be null";
         }
         if ($this->container['screenshot_status'] === null) {
             $invalidProperties[] = "'screenshot_status' can't be null";
@@ -411,6 +421,33 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
             throw new \InvalidArgumentException('non-nullable url_id cannot be null');
         }
         $this->container['url_id'] = $url_id;
+
+        return $this;
+    }
+
+    /**
+     * Gets url
+     *
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->container['url'];
+    }
+
+    /**
+     * Sets url
+     *
+     * @param string $url url
+     *
+     * @return self
+     */
+    public function setUrl($url)
+    {
+        if (is_null($url)) {
+            throw new \InvalidArgumentException('non-nullable url cannot be null');
+        }
+        $this->container['url'] = $url;
 
         return $this;
     }

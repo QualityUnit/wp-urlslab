@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit19345ae97df41f34548cbf439c4e0730
+class ComposerStaticInit83a869ee30bba2345152bbf6f75bc3c4
 {
     public static $files = array (
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
@@ -1331,11 +1331,17 @@ class ComposerStaticInit19345ae97df41f34548cbf439c4e0730
         'OpenAPI\\Client\\Model\\DomainDataRetrievalSummaryResponse' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainDataRetrievalSummaryResponse.php',
         'OpenAPI\\Client\\Model\\DomainScheduleAPISchedule' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainScheduleAPISchedule.php',
         'OpenAPI\\Client\\Model\\DomainScheduleScheduleConf' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainScheduleScheduleConf.php',
+        'OpenAPI\\Client\\Model\\DomainUserCreditAggregatedCreditEvents' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainUserCreditAggregatedCreditEvents.php',
+        'OpenAPI\\Client\\Model\\DomainUserCreditAggregatedCreditResponse' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainUserCreditAggregatedCreditResponse.php',
+        'OpenAPI\\Client\\Model\\DomainUserCreditCreditEvent' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainUserCreditCreditEvent.php',
+        'OpenAPI\\Client\\Model\\DomainUserCreditCreditEventResponse' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainUserCreditCreditEventResponse.php',
+        'OpenAPI\\Client\\Model\\DomainUserCreditCreditStatus' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainUserCreditCreditStatus.php',
         'OpenAPI\\Client\\Model\\ModelInterface' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/ModelInterface.php',
         'OpenAPI\\Client\\ObjectSerializer' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/ObjectSerializer.php',
         'OpenAPI\\Client\\Urlslab\\ApikeyApi' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Urlslab/ApikeyApi.php',
         'OpenAPI\\Client\\Urlslab\\AuthApi' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Urlslab/AuthApi.php',
         'OpenAPI\\Client\\Urlslab\\ContentApi' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Urlslab/ContentApi.php',
+        'OpenAPI\\Client\\Urlslab\\CreditsApi' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Urlslab/CreditsApi.php',
         'OpenAPI\\Client\\Urlslab\\PublicAssetsApi' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Urlslab/PublicAssetsApi.php',
         'OpenAPI\\Client\\Urlslab\\ScheduleApi' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Urlslab/ScheduleApi.php',
         'OpenAPI\\Client\\Urlslab\\ScreenshotApi' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Urlslab/ScreenshotApi.php',
@@ -1372,9 +1378,9 @@ class ComposerStaticInit19345ae97df41f34548cbf439c4e0730
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit19345ae97df41f34548cbf439c4e0730::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit19345ae97df41f34548cbf439c4e0730::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit19345ae97df41f34548cbf439c4e0730::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit83a869ee30bba2345152bbf6f75bc3c4::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit83a869ee30bba2345152bbf6f75bc3c4::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit83a869ee30bba2345152bbf6f75bc3c4::$classMap;
 
         }, null, ClassLoader::class);
     }

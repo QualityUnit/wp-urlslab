@@ -255,7 +255,6 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
     public const AUGMENTING_MODEL_NAME_GPT_4 = 'gpt-4';
     public const AUGMENTING_MODEL_NAME_GPT_3_5_TURBO = 'gpt-3.5-turbo';
     public const AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 = 'text-davinci-003';
-    public const AUGMENTING_MODEL_NAME_TEXT_DAVINCI_002 = 'text-davinci-002';
     public const RENEW_FREQUENCY_ONE_TIME = 'ONE_TIME';
     public const RENEW_FREQUENCY_YEARLY = 'YEARLY';
     public const RENEW_FREQUENCY_DAILY = 'DAILY';
@@ -275,7 +274,6 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
             self::AUGMENTING_MODEL_NAME_GPT_4,
             self::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
             self::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003,
-            self::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_002,
         ];
     }
 
