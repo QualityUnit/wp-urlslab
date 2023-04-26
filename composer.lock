@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.268.17",
+            "version": "3.268.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "3a8fbbe9512aa007b231f3c838c7ead3680740b4"
+                "reference": "086934b1009a8d9a9ae15dc89eafe1a25b1e8b45"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3a8fbbe9512aa007b231f3c838c7ead3680740b4",
-                "reference": "3a8fbbe9512aa007b231f3c838c7ead3680740b4",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/086934b1009a8d9a9ae15dc89eafe1a25b1e8b45",
+                "reference": "086934b1009a8d9a9ae15dc89eafe1a25b1e8b45",
                 "shasum": ""
             },
             "require": {
@@ -151,9 +151,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.268.17"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.268.18"
             },
-            "time": "2023-04-24T18:22:00+00:00"
+            "time": "2023-04-25T18:20:08+00:00"
         },
         {
             "name": "composer/installers",
@@ -1104,12 +1104,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/QualityUnit/urlslab-php-client.git",
-                "reference": "e19cc8cf3204569bef431f018a214ca0765b4364"
+                "reference": "790e986dd7c2e649e6fd433155b933d1c25ea705"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/QualityUnit/urlslab-php-client/zipball/e19cc8cf3204569bef431f018a214ca0765b4364",
-                "reference": "e19cc8cf3204569bef431f018a214ca0765b4364",
+                "url": "https://api.github.com/repos/QualityUnit/urlslab-php-client/zipball/790e986dd7c2e649e6fd433155b933d1c25ea705",
+                "reference": "790e986dd7c2e649e6fd433155b933d1c25ea705",
                 "shasum": ""
             },
             "require": {
@@ -1156,7 +1156,7 @@
                 "issues": "https://github.com/QualityUnit/urlslab-php-client/issues",
                 "source": "https://github.com/QualityUnit/urlslab-php-client/tree/main"
             },
-            "time": "2023-04-22T09:04:21+00:00"
+            "time": "2023-04-25T19:28:33+00:00"
         }
     ],
     "packages-dev": [
@@ -1293,12 +1293,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "d2832e4594571d458e36fb4622220915a3c3a8f4"
+                "reference": "5eb9b0587e4625150e4892e569bb223714c86256"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/d2832e4594571d458e36fb4622220915a3c3a8f4",
-                "reference": "d2832e4594571d458e36fb4622220915a3c3a8f4",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/5eb9b0587e4625150e4892e569bb223714c86256",
+                "reference": "5eb9b0587e4625150e4892e569bb223714c86256",
                 "shasum": ""
             },
             "conflict": {
@@ -1634,7 +1634,7 @@
                 "prestashop/blockwishlist": ">=2,<2.1.1",
                 "prestashop/contactform": ">=1.0.1,<4.3",
                 "prestashop/gamification": "<2.3.2",
-                "prestashop/prestashop": "<8.0.1",
+                "prestashop/prestashop": "<8.0.4",
                 "prestashop/productcomments": "<5.0.2",
                 "prestashop/ps_emailsubscription": "<2.6.1",
                 "prestashop/ps_facetedsearch": "<3.4.1",
@@ -1890,7 +1890,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-04-25T13:05:55+00:00"
+            "time": "2023-04-25T20:04:17+00:00"
         },
         {
             "name": "sirbrillig/phpcs-variable-analysis",

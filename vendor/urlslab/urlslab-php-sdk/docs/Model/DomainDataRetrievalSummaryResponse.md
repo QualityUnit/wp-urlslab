@@ -6,6 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **domain_id** | **string** |  |
 **url_id** | **string** |  |
+**url** | **string** |  |
 **summary** | **string** |  | [optional]
 **summary_status** | **string** |  |
 

@@ -98,6 +98,15 @@ class DomainDataRetrievalSummaryResponseTest extends TestCase
     }
 
     /**
+     * Test attribute "url"
+     */
+    public function testPropertyUrl()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
      * Test attribute "summary"
      */
     public function testPropertySummary()

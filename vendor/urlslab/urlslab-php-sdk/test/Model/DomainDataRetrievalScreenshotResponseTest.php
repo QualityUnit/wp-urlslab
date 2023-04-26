@@ -98,6 +98,15 @@ class DomainDataRetrievalScreenshotResponseTest extends TestCase
     }
 
     /**
+     * Test attribute "url"
+     */
+    public function testPropertyUrl()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
      * Test attribute "screenshot_id"
      */
     public function testPropertyScreenshotId()

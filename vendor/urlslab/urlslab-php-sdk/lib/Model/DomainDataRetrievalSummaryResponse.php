@@ -59,6 +59,7 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
     protected static $openAPITypes = [
         'domain_id' => 'string',
         'url_id' => 'string',
+        'url' => 'string',
         'summary' => 'string',
         'summary_status' => 'string'
     ];
@@ -73,6 +74,7 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
     protected static $openAPIFormats = [
         'domain_id' => null,
         'url_id' => null,
+        'url' => null,
         'summary' => null,
         'summary_status' => null
     ];
@@ -85,6 +87,7 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
     protected static array $openAPINullables = [
         'domain_id' => false,
 		'url_id' => false,
+		'url' => false,
 		'summary' => true,
 		'summary_status' => false
     ];
@@ -177,6 +180,7 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
     protected static $attributeMap = [
         'domain_id' => 'domainId',
         'url_id' => 'urlId',
+        'url' => 'url',
         'summary' => 'summary',
         'summary_status' => 'summaryStatus'
     ];
@@ -189,6 +193,7 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
     protected static $setters = [
         'domain_id' => 'setDomainId',
         'url_id' => 'setUrlId',
+        'url' => 'setUrl',
         'summary' => 'setSummary',
         'summary_status' => 'setSummaryStatus'
     ];
@@ -201,6 +206,7 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
     protected static $getters = [
         'domain_id' => 'getDomainId',
         'url_id' => 'getUrlId',
+        'url' => 'getUrl',
         'summary' => 'getSummary',
         'summary_status' => 'getSummaryStatus'
     ];
@@ -283,6 +289,7 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
     {
         $this->setIfExists('domain_id', $data ?? [], null);
         $this->setIfExists('url_id', $data ?? [], null);
+        $this->setIfExists('url', $data ?? [], null);
         $this->setIfExists('summary', $data ?? [], null);
         $this->setIfExists('summary_status', $data ?? [], null);
     }
@@ -319,6 +326,9 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
         }
         if ($this->container['url_id'] === null) {
             $invalidProperties[] = "'url_id' can't be null";
+        }
+        if ($this->container['url'] === null) {
+            $invalidProperties[] = "'url' can't be null";
         }
         if ($this->container['summary_status'] === null) {
             $invalidProperties[] = "'summary_status' can't be null";
@@ -397,6 +407,33 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
             throw new \InvalidArgumentException('non-nullable url_id cannot be null');
         }
         $this->container['url_id'] = $url_id;
+
+        return $this;
+    }
+
+    /**
+     * Gets url
+     *
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->container['url'];
+    }
+
+    /**
+     * Sets url
+     *
+     * @param string $url url
+     *
+     * @return self
+     */
+    public function setUrl($url)
+    {
+        if (is_null($url)) {
+            throw new \InvalidArgumentException('non-nullable url cannot be null');
+        }
+        $this->container['url'] = $url;
 
         return $this;
     }
