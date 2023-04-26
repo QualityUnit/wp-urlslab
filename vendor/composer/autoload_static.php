@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit19345ae97df41f34548cbf439c4e0730
+class ComposerStaticInit83a869ee30bba2345152bbf6f75bc3c4
 {
     public static $files = array (
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
@@ -1332,6 +1332,7 @@ class ComposerStaticInit19345ae97df41f34548cbf439c4e0730
         'OpenAPI\\Client\\Model\\DomainScheduleAPISchedule' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainScheduleAPISchedule.php',
         'OpenAPI\\Client\\Model\\DomainScheduleScheduleConf' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainScheduleScheduleConf.php',
         'OpenAPI\\Client\\Model\\DomainUserCreditAggregatedCreditEvents' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainUserCreditAggregatedCreditEvents.php',
+        'OpenAPI\\Client\\Model\\DomainUserCreditAggregatedCreditResponse' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainUserCreditAggregatedCreditResponse.php',
         'OpenAPI\\Client\\Model\\DomainUserCreditCreditEvent' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainUserCreditCreditEvent.php',
         'OpenAPI\\Client\\Model\\DomainUserCreditCreditEventResponse' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainUserCreditCreditEventResponse.php',
         'OpenAPI\\Client\\Model\\DomainUserCreditCreditStatus' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainUserCreditCreditStatus.php',
@@ -1377,9 +1378,9 @@ class ComposerStaticInit19345ae97df41f34548cbf439c4e0730
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit19345ae97df41f34548cbf439c4e0730::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit19345ae97df41f34548cbf439c4e0730::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit19345ae97df41f34548cbf439c4e0730::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit83a869ee30bba2345152bbf6f75bc3c4::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit83a869ee30bba2345152bbf6f75bc3c4::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit83a869ee30bba2345152bbf6f75bc3c4::$classMap;
 
         }, null, ClassLoader::class);
     }

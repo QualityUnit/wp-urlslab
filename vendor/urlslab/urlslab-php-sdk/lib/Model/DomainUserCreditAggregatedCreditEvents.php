@@ -1,6 +1,6 @@
 <?php
 /**
- * DomainDataRetrievalAugmentRequest
+ * DomainUserCreditAggregatedCreditEvents
  *
  * PHP version 7.4
  *
@@ -32,7 +32,7 @@ use \ArrayAccess;
 use \OpenAPI\Client\ObjectSerializer;
 
 /**
- * DomainDataRetrievalAugmentRequest Class Doc Comment
+ * DomainUserCreditAggregatedCreditEvents Class Doc Comment
  *
  * @category Class
  * @package  OpenAPI\Client
@@ -40,7 +40,7 @@ use \OpenAPI\Client\ObjectSerializer;
  * @link     https://openapi-generator.tech
  * @implements \ArrayAccess<string, mixed>
  */
-class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, \JsonSerializable
+class DomainUserCreditAggregatedCreditEvents implements ModelInterface, ArrayAccess, \JsonSerializable
 {
     public const DISCRIMINATOR = null;
 
@@ -49,7 +49,7 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
       *
       * @var string
       */
-    protected static $openAPIModelName = 'domain.dataRetrieval.AugmentRequest';
+    protected static $openAPIModelName = 'domain.userCredit.AggregatedCreditEvents';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -57,11 +57,9 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
       * @var string[]
       */
     protected static $openAPITypes = [
-        'augment_command' => 'string',
-        'filter' => '\OpenAPI\Client\Model\DomainDataRetrievalContentQuery',
-        'prompt' => '\OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt',
-        'augmenting_model_name' => 'string',
-        'renew_frequency' => 'string'
+        'group_bucket_title' => 'string',
+        'events' => 'int',
+        'credits' => 'int'
     ];
 
     /**
@@ -72,11 +70,9 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'augment_command' => null,
-        'filter' => null,
-        'prompt' => null,
-        'augmenting_model_name' => null,
-        'renew_frequency' => null
+        'group_bucket_title' => null,
+        'events' => 'int64',
+        'credits' => 'int64'
     ];
 
     /**
@@ -85,11 +81,9 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'augment_command' => true,
-		'filter' => false,
-		'prompt' => false,
-		'augmenting_model_name' => true,
-		'renew_frequency' => false
+        'group_bucket_title' => false,
+		'events' => false,
+		'credits' => false
     ];
 
     /**
@@ -178,11 +172,9 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
      * @var string[]
      */
     protected static $attributeMap = [
-        'augment_command' => 'augmentCommand',
-        'filter' => 'filter',
-        'prompt' => 'prompt',
-        'augmenting_model_name' => 'augmentingModelName',
-        'renew_frequency' => 'renewFrequency'
+        'group_bucket_title' => 'groupBucketTitle',
+        'events' => 'events',
+        'credits' => 'credits'
     ];
 
     /**
@@ -191,11 +183,9 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
      * @var string[]
      */
     protected static $setters = [
-        'augment_command' => 'setAugmentCommand',
-        'filter' => 'setFilter',
-        'prompt' => 'setPrompt',
-        'augmenting_model_name' => 'setAugmentingModelName',
-        'renew_frequency' => 'setRenewFrequency'
+        'group_bucket_title' => 'setGroupBucketTitle',
+        'events' => 'setEvents',
+        'credits' => 'setCredits'
     ];
 
     /**
@@ -204,11 +194,9 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
      * @var string[]
      */
     protected static $getters = [
-        'augment_command' => 'getAugmentCommand',
-        'filter' => 'getFilter',
-        'prompt' => 'getPrompt',
-        'augmenting_model_name' => 'getAugmentingModelName',
-        'renew_frequency' => 'getRenewFrequency'
+        'group_bucket_title' => 'getGroupBucketTitle',
+        'events' => 'getEvents',
+        'credits' => 'getCredits'
     ];
 
     /**
@@ -252,48 +240,6 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
         return self::$openAPIModelName;
     }
 
-    public const AUGMENTING_MODEL_NAME_GPT_4 = 'gpt-4';
-    public const AUGMENTING_MODEL_NAME_GPT_3_5_TURBO = 'gpt-3.5-turbo';
-    public const AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 = 'text-davinci-003';
-    public const RENEW_FREQUENCY_ONE_TIME = 'ONE_TIME';
-    public const RENEW_FREQUENCY_YEARLY = 'YEARLY';
-    public const RENEW_FREQUENCY_DAILY = 'DAILY';
-    public const RENEW_FREQUENCY_NO_SCHEDULE = 'NO_SCHEDULE';
-    public const RENEW_FREQUENCY_WEEKLY = 'WEEKLY';
-    public const RENEW_FREQUENCY_HOURLY = 'HOURLY';
-    public const RENEW_FREQUENCY_MONTHLY = 'MONTHLY';
-
-    /**
-     * Gets allowable values of the enum
-     *
-     * @return string[]
-     */
-    public function getAugmentingModelNameAllowableValues()
-    {
-        return [
-            self::AUGMENTING_MODEL_NAME_GPT_4,
-            self::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
-            self::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003,
-        ];
-    }
-
-    /**
-     * Gets allowable values of the enum
-     *
-     * @return string[]
-     */
-    public function getRenewFrequencyAllowableValues()
-    {
-        return [
-            self::RENEW_FREQUENCY_ONE_TIME,
-            self::RENEW_FREQUENCY_YEARLY,
-            self::RENEW_FREQUENCY_DAILY,
-            self::RENEW_FREQUENCY_NO_SCHEDULE,
-            self::RENEW_FREQUENCY_WEEKLY,
-            self::RENEW_FREQUENCY_HOURLY,
-            self::RENEW_FREQUENCY_MONTHLY,
-        ];
-    }
 
     /**
      * Associative array for storing property values
@@ -310,11 +256,9 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
      */
     public function __construct(array $data = null)
     {
-        $this->setIfExists('augment_command', $data ?? [], null);
-        $this->setIfExists('filter', $data ?? [], null);
-        $this->setIfExists('prompt', $data ?? [], null);
-        $this->setIfExists('augmenting_model_name', $data ?? [], null);
-        $this->setIfExists('renew_frequency', $data ?? [], null);
+        $this->setIfExists('group_bucket_title', $data ?? [], null);
+        $this->setIfExists('events', $data ?? [], null);
+        $this->setIfExists('credits', $data ?? [], null);
     }
 
     /**
@@ -344,27 +288,15 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
     {
         $invalidProperties = [];
 
-        $allowedValues = $this->getAugmentingModelNameAllowableValues();
-        if (!is_null($this->container['augmenting_model_name']) && !in_array($this->container['augmenting_model_name'], $allowedValues, true)) {
-            $invalidProperties[] = sprintf(
-                "invalid value '%s' for 'augmenting_model_name', must be one of '%s'",
-                $this->container['augmenting_model_name'],
-                implode("', '", $allowedValues)
-            );
+        if ($this->container['group_bucket_title'] === null) {
+            $invalidProperties[] = "'group_bucket_title' can't be null";
         }
-
-        if ($this->container['renew_frequency'] === null) {
-            $invalidProperties[] = "'renew_frequency' can't be null";
+        if ($this->container['events'] === null) {
+            $invalidProperties[] = "'events' can't be null";
         }
-        $allowedValues = $this->getRenewFrequencyAllowableValues();
-        if (!is_null($this->container['renew_frequency']) && !in_array($this->container['renew_frequency'], $allowedValues, true)) {
-            $invalidProperties[] = sprintf(
-                "invalid value '%s' for 'renew_frequency', must be one of '%s'",
-                $this->container['renew_frequency'],
-                implode("', '", $allowedValues)
-            );
+        if ($this->container['credits'] === null) {
+            $invalidProperties[] = "'credits' can't be null";
         }
-
         return $invalidProperties;
     }
 
@@ -381,170 +313,82 @@ class DomainDataRetrievalAugmentRequest implements ModelInterface, ArrayAccess, 
 
 
     /**
-     * Gets augment_command
-     *
-     * @return string|null
-     */
-    public function getAugmentCommand()
-    {
-        return $this->container['augment_command'];
-    }
-
-    /**
-     * Sets augment_command
-     *
-     * @param string|null $augment_command augment_command
-     *
-     * @return self
-     */
-    public function setAugmentCommand($augment_command)
-    {
-        if (is_null($augment_command)) {
-            array_push($this->openAPINullablesSetToNull, 'augment_command');
-        } else {
-            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
-            $index = array_search('augment_command', $nullablesSetToNull);
-            if ($index !== FALSE) {
-                unset($nullablesSetToNull[$index]);
-                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
-            }
-        }
-        $this->container['augment_command'] = $augment_command;
-
-        return $this;
-    }
-
-    /**
-     * Gets filter
-     *
-     * @return \OpenAPI\Client\Model\DomainDataRetrievalContentQuery|null
-     */
-    public function getFilter()
-    {
-        return $this->container['filter'];
-    }
-
-    /**
-     * Sets filter
-     *
-     * @param \OpenAPI\Client\Model\DomainDataRetrievalContentQuery|null $filter filter
-     *
-     * @return self
-     */
-    public function setFilter($filter)
-    {
-        if (is_null($filter)) {
-            throw new \InvalidArgumentException('non-nullable filter cannot be null');
-        }
-        $this->container['filter'] = $filter;
-
-        return $this;
-    }
-
-    /**
-     * Gets prompt
-     *
-     * @return \OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt|null
-     */
-    public function getPrompt()
-    {
-        return $this->container['prompt'];
-    }
-
-    /**
-     * Sets prompt
-     *
-     * @param \OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt|null $prompt prompt
-     *
-     * @return self
-     */
-    public function setPrompt($prompt)
-    {
-        if (is_null($prompt)) {
-            throw new \InvalidArgumentException('non-nullable prompt cannot be null');
-        }
-        $this->container['prompt'] = $prompt;
-
-        return $this;
-    }
-
-    /**
-     * Gets augmenting_model_name
-     *
-     * @return string|null
-     */
-    public function getAugmentingModelName()
-    {
-        return $this->container['augmenting_model_name'];
-    }
-
-    /**
-     * Sets augmenting_model_name
-     *
-     * @param string|null $augmenting_model_name augmenting_model_name
-     *
-     * @return self
-     */
-    public function setAugmentingModelName($augmenting_model_name)
-    {
-        if (is_null($augmenting_model_name)) {
-            array_push($this->openAPINullablesSetToNull, 'augmenting_model_name');
-        } else {
-            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
-            $index = array_search('augmenting_model_name', $nullablesSetToNull);
-            if ($index !== FALSE) {
-                unset($nullablesSetToNull[$index]);
-                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
-            }
-        }
-        $allowedValues = $this->getAugmentingModelNameAllowableValues();
-        if (!is_null($augmenting_model_name) && !in_array($augmenting_model_name, $allowedValues, true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    "Invalid value '%s' for 'augmenting_model_name', must be one of '%s'",
-                    $augmenting_model_name,
-                    implode("', '", $allowedValues)
-                )
-            );
-        }
-        $this->container['augmenting_model_name'] = $augmenting_model_name;
-
-        return $this;
-    }
-
-    /**
-     * Gets renew_frequency
+     * Gets group_bucket_title
      *
      * @return string
      */
-    public function getRenewFrequency()
+    public function getGroupBucketTitle()
     {
-        return $this->container['renew_frequency'];
+        return $this->container['group_bucket_title'];
     }
 
     /**
-     * Sets renew_frequency
+     * Sets group_bucket_title
      *
-     * @param string $renew_frequency renew_frequency
+     * @param string $group_bucket_title group_bucket_title
      *
      * @return self
      */
-    public function setRenewFrequency($renew_frequency)
+    public function setGroupBucketTitle($group_bucket_title)
     {
-        if (is_null($renew_frequency)) {
-            throw new \InvalidArgumentException('non-nullable renew_frequency cannot be null');
+        if (is_null($group_bucket_title)) {
+            throw new \InvalidArgumentException('non-nullable group_bucket_title cannot be null');
         }
-        $allowedValues = $this->getRenewFrequencyAllowableValues();
-        if (!in_array($renew_frequency, $allowedValues, true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    "Invalid value '%s' for 'renew_frequency', must be one of '%s'",
-                    $renew_frequency,
-                    implode("', '", $allowedValues)
-                )
-            );
+        $this->container['group_bucket_title'] = $group_bucket_title;
+
+        return $this;
+    }
+
+    /**
+     * Gets events
+     *
+     * @return int
+     */
+    public function getEvents()
+    {
+        return $this->container['events'];
+    }
+
+    /**
+     * Sets events
+     *
+     * @param int $events events
+     *
+     * @return self
+     */
+    public function setEvents($events)
+    {
+        if (is_null($events)) {
+            throw new \InvalidArgumentException('non-nullable events cannot be null');
         }
-        $this->container['renew_frequency'] = $renew_frequency;
+        $this->container['events'] = $events;
+
+        return $this;
+    }
+
+    /**
+     * Gets credits
+     *
+     * @return int
+     */
+    public function getCredits()
+    {
+        return $this->container['credits'];
+    }
+
+    /**
+     * Sets credits
+     *
+     * @param int $credits credits
+     *
+     * @return self
+     */
+    public function setCredits($credits)
+    {
+        if (is_null($credits)) {
+            throw new \InvalidArgumentException('non-nullable credits cannot be null');
+        }
+        $this->container['credits'] = $credits;
 
         return $this;
     }

@@ -26,6 +26,7 @@ docs/Model/DomainDataRetrievalSummaryResponse.md
 docs/Model/DomainScheduleAPISchedule.md
 docs/Model/DomainScheduleScheduleConf.md
 docs/Model/DomainUserCreditAggregatedCreditEvents.md
+docs/Model/DomainUserCreditAggregatedCreditResponse.md
 docs/Model/DomainUserCreditCreditEvent.md
 docs/Model/DomainUserCreditCreditEventResponse.md
 docs/Model/DomainUserCreditCreditStatus.md
@@ -47,6 +48,7 @@ lib/Model/DomainDataRetrievalSummaryResponse.php
 lib/Model/DomainScheduleAPISchedule.php
 lib/Model/DomainScheduleScheduleConf.php
 lib/Model/DomainUserCreditAggregatedCreditEvents.php
+lib/Model/DomainUserCreditAggregatedCreditResponse.php
 lib/Model/DomainUserCreditCreditEvent.php
 lib/Model/DomainUserCreditCreditEventResponse.php
 lib/Model/DomainUserCreditCreditStatus.php
@@ -83,6 +85,7 @@ test/Model/DomainDataRetrievalSummaryResponseTest.php
 test/Model/DomainScheduleAPIScheduleTest.php
 test/Model/DomainScheduleScheduleConfTest.php
 test/Model/DomainUserCreditAggregatedCreditEventsTest.php
+test/Model/DomainUserCreditAggregatedCreditResponseTest.php
 test/Model/DomainUserCreditCreditEventResponseTest.php
 test/Model/DomainUserCreditCreditEventTest.php
 test/Model/DomainUserCreditCreditStatusTest.php
