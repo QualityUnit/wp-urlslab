@@ -10,7 +10,7 @@ export default function YouTubeCacheTable( { slug } ) {
 	const paginationId = 'videoid';
 
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sorting ? '' : sorting }`;
+	const url = { filters, sorting };
 
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
@@ -60,24 +60,24 @@ export default function YouTubeCacheTable( { slug } ) {
 			cell: ( image ) =>
 				<img src={ image?.getValue()?.thumbnails?.high?.url }
 					alt={ image?.getValue()?.title } />,
-			header: <SortBy props={ { header, sorting, key: 'thumb', onClick: () => sortBy( 'thumb' ) } }>{ header.thumb }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.thumb }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'videoid', {
-			header: <SortBy props={ { header, sorting, key: 'videoid', onClick: () => sortBy( 'videoid' ) } }>{ header.videoid }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.videoid }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'status', {
 			filterValMenu: statusTypes,
 			cell: ( cell ) => statusTypes[ cell.getValue() ],
-			header: <SortBy props={ { header, sorting, key: 'status', onClick: () => sortBy( 'status' ) } }>{ header.status }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.status }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper?.accessor( ( cell ) => [ cell?.videoid, JSON.parse( `${ cell?.microdata }` )?.items[ 0 ]?.snippet?.title ], {
 			id: 'title',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue()[ 1 ] }</Tooltip>,
 			cell: ( val ) => <a href={ `https://youtu.be/${ val?.getValue()[ 0 ] }` } target="_blank" rel="noreferrer">{ val?.getValue()[ 1 ] }</a>,
-			header: <SortBy props={ { header, sorting, key: 'title', onClick: () => sortBy( 'title' ) } }>{ header.title }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.title }</SortBy>,
 			size: 450,
 		} ),
 		columnHelper?.accessor( 'usage_count', {
@@ -115,14 +115,12 @@ export default function YouTubeCacheTable( { slug } ) {
 				table={ table }
 				noImport
 				selectedRows={ selectedRows }
-				onSort={ ( val ) => sortBy( val ) }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				detailsOptions={ detailsOptions }
 				exportOptions={ {
 					slug,
-					filters,
-					fromId: `from_${ paginationId }`,
+					url,
 					paginationId,
 					deleteCSVCols: [ paginationId, 'dest_url_id' ],
 				} }

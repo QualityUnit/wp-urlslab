@@ -1,26 +1,44 @@
 import { postFetch } from './fetching';
-import { getParamsChar } from '../lib/helpers';
+import filtersArray from '../lib/filtersArray';
 
-let lastPage = '';
+let lastRowId = '';
 let dataForCSV = [];
+let responseData = [];
 let ended = false;
 let totalItems = 1;
 
-export let jsonData = { status: 'loading', data: [] };
+let jsonData = { status: 'loading', data: [] };
 
 export async function exportCSV( options, result ) {
-	const { slug, filters, paginationId, perPage = 9999, deleteCSVCols } = options;
-	const qOperator = getParamsChar(); // Changes ? to & query hash if already used
-	const prevDataLength = dataForCSV.length;
-	const response = await postFetch( slug, `${ qOperator }${ fromId }=${ lastPage }&rows_per_page=${ perPage }${ 'undefined' === typeof filters ? '' : filters }` );
+	const { slug, url, paginationId, perPage = 9999, deleteCSVCols } = options;
+	const { filters: userFilters } = url;
+	const response = await postFetch( slug, {
+		sorting: [ { col: paginationId, dir: 'ASC' } ],
+		filters: lastRowId
+			? [
+				{
+					cond: 'OR',
+					filters: [
+						{ cond: 'AND', filters: [ { col: paginationId, op: '>', val: lastRowId } ] },
+					],
+				},
+				...filtersArray( userFilters ),
+			]
+			: [ ...filtersArray( userFilters ) ],
+		rows_per_page: perPage,
+	} );
 
-	if ( ! lastPage ) {
-		totalItems = await postFetch( `${ slug }/count` );
+	responseData = await response.json() ?? [];
+
+	if ( ! lastRowId ) {
+		const totalItemsRes = await postFetch( `${ slug }/count` ); // Getting all rows count so we can loop until end
+		totalItems = await totalItemsRes.json();
 	}
 
-	dataForCSV.push( await response ); // Adds downloaded results to array
-	dataForCSV = dataForCSV.flat();
-	if ( await response.length < perPage ) { // Ends export
+	const prevDataLength = dataForCSV.length;
+	dataForCSV.push( ...responseData ); // Adds downloaded results to array
+
+	if ( responseData.length < perPage ) { // Ends export
 		ended = true;
 		if ( deleteCSVCols?.length ) { // Clean the CSV from unwanted columns
 			for ( const obj of dataForCSV ) {
@@ -35,15 +53,15 @@ export async function exportCSV( options, result ) {
 		result( 100 ); // sends result 100 % to notifications
 		// Start cleanup
 		jsonData = { status: 'done', data: dataForCSV };
-		lastPage = '';
+		lastRowId = '';
 		dataForCSV = [];
 		ended = false;
 		// End cleanup
 		return jsonData;
 	}
 
-	if ( dataForCSV.length && ( dataForCSV.length > prevDataLength ) ) { // continue fetching by pagination
-		lastPage = dataForCSV[ dataForCSV?.length - 1 ][ pageId ]; // gets last page ID to continue
+	if ( totalItems && dataForCSV.length && ( dataForCSV.length > prevDataLength ) ) { // continue fetching by pagination
+		lastRowId = dataForCSV[ dataForCSV?.length - 1 ][ paginationId ]; // gets last row ID to continue
 		result( `${ Math.round( dataForCSV.length / totalItems * 100 ) }` ); // sends result callback to notifications
 		await exportCSV( options, result ); // recursive export if prev data are not shorter than max. perPage
 	}

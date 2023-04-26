@@ -8,7 +8,7 @@ import useChangeRow from '../hooks/useChangeRow';
 export default function CSSCacheTable( { slug } ) {
 	const paginationId = 'url_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sorting ? '' : sorting }`;
+	const url = { filters, sorting };
 
 	const {
 		__,
@@ -48,24 +48,24 @@ export default function CSSCacheTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'url', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: <SortBy props={ { header, sorting, key: 'url', onClick: () => sortBy( 'url' ) } }>{ header.url }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.url }</SortBy>,
 			size: 450,
 		} ),
 		columnHelper?.accessor( 'status', {
 			filterValMenu: statusTypes,
 			cell: ( cell ) => statusTypes[ cell.getValue() ],
-			header: <SortBy props={ { header, sorting, key: 'status', onClick: () => sortBy( 'status' ) } }>{ header.status }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.status }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'status_changed', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: <SortBy props={ { header, sorting, key: 'status_changed', onClick: () => sortBy( 'status_changed' ) } }>{ header.status_changed }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.status_changed }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'filesize', {
 			unit: 'kB',
 			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
-			header: <SortBy props={ { header, sorting, key: 'filesize', onClick: () => sortBy( 'filesize' ) } }>{ header.filesize }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.filesize }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'delete', {
@@ -88,7 +88,6 @@ export default function CSSCacheTable( { slug } ) {
 				noExport
 				noImport
 				selectedRows={ selectedRows }
-				onSort={ ( val ) => sortBy( val ) }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 			/>

@@ -9,7 +9,7 @@ import useChangeRow from '../hooks/useChangeRow';
 export default function LinkManagerTable( { slug } ) {
 	const paginationId = 'url_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sorting ? '' : sorting }`;
+	const url = { filters, sorting };
 
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
@@ -77,12 +77,12 @@ export default function LinkManagerTable( { slug } ) {
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: <SortBy props={ { header, sorting, key: 'url_name', onClick: () => sortBy( 'url_name' ) } }>{ header.url_name }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.url_name }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'url_title', {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
-			header: <SortBy props={ { header, sorting, key: 'url_title', onClick: () => sortBy( 'url_title' ) } }>{ header.url_title }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.url_title }</SortBy>,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'url_h1', {
@@ -92,18 +92,18 @@ export default function LinkManagerTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'url_meta_description', {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
-			header: <SortBy props={ { header, sorting, key: 'url_meta_description', onClick: () => sortBy( 'url_meta_description' ) } }>{ header.url_meta_description }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.url_meta_description }</SortBy>,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'url_summary', {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
-			header: <SortBy props={ { header, sorting, key: 'url_summary', onClick: () => sortBy( 'url_summary' ) } }>{ header.url_summary }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.url_summary }</SortBy>,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'http_status', {
 			filterValMenu: httpStatusTypes,
 			cell: ( cell ) => httpStatusTypes[ cell.getValue() ],
-			header: <SortBy props={ { header, sorting, key: 'http_status', onClick: () => sortBy( 'http_status' ) } }>{ header.http_status }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.http_status }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'visibility', {
@@ -114,18 +114,18 @@ export default function LinkManagerTable( { slug } ) {
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { header, sorting, key: 'visibility', onClick: () => sortBy( 'visibility' ) } }>{ header.visibility }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.visibility }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'url_type', {
 			filterValMenu: urlTypes,
 			cell: ( cell ) => urlTypes[ cell.getValue() ],
-			header: <SortBy props={ { header, sorting, key: 'url_type', onClick: () => sortBy( 'url_type' ) } }>{ header.url_type }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.url_type }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'update_http_date', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: <SortBy props={ { header, sorting, key: 'update_http_date', onClick: () => sortBy( 'update_http_date' ) } }>{ header.update_http_date }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.update_http_date }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'url_links_count', {
@@ -140,7 +140,7 @@ export default function LinkManagerTable( { slug } ) {
 					</button>
 				}
 			</div>,
-			header: <SortBy props={ { header, sorting, key: 'url_links_count', onClick: () => sortBy( 'url_links_count' ) } }>{ header.url_links_count }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.url_links_count }</SortBy>,
 			size: 140,
 		} ),
 		columnHelper.accessor( 'url_usage_count', {
@@ -155,7 +155,7 @@ export default function LinkManagerTable( { slug } ) {
 					</button>
 				}
 			</div>,
-			header: <SortBy props={ { header, sorting, key: 'url_usage_count', onClick: () => sortBy( 'url_usage_count' ) } }>{ header.url_usage_count }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.url_usage_count }</SortBy>,
 			size: 140,
 		} ),
 		columnHelper.accessor( 'delete', {
@@ -177,14 +177,12 @@ export default function LinkManagerTable( { slug } ) {
 				table={ table }
 				noImport
 				selectedRows={ selectedRows }
-				onSort={ ( val ) => sortBy( val ) }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				detailsOptions={ detailsOptions }
 				exportOptions={ {
 					slug,
-					filters,
-					fromId: `from_${ paginationId }`,
+					url,
 					paginationId,
 					deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
 					perPage: 1000,

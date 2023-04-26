@@ -8,7 +8,7 @@ import useChangeRow from '../hooks/useChangeRow';
 export default function LinkManagerTable( { slug } ) {
 	const paginationId = 'url_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sorting ? '' : sorting }`;
+	const url = { filters, sorting };
 
 	const {
 		__,
@@ -78,7 +78,7 @@ export default function LinkManagerTable( { slug } ) {
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: <SortBy props={ { header, sorting, key: 'url_name', onClick: () => sortBy( 'url_name' ) } }>{ header.url_name }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.url_name }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'url_title', {
@@ -86,7 +86,7 @@ export default function LinkManagerTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { header, sorting, key: 'url_title', onClick: () => sortBy( 'url_title' ) } }>{ header.url_title }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.url_title }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper?.accessor( 'url_meta_description', {
@@ -94,7 +94,7 @@ export default function LinkManagerTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { header, sorting, key: 'url_meta_description', onClick: () => sortBy( 'url_meta_description' ) } }>{ header.url_meta_description }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.url_meta_description }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'url_summary', {
@@ -102,24 +102,24 @@ export default function LinkManagerTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { header, sorting, key: 'url_summary', onClick: () => sortBy( 'url_summary' ) } }>{ header.url_summary }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.url_summary }</SortBy>,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'http_status', {
 			filterValMenu: httpStatusTypes,
 			cell: ( cell ) => httpStatusTypes[ cell.getValue() ],
-			header: <SortBy props={ { header, sorting, key: 'http_status', onClick: () => sortBy( 'http_status' ) } }>{ header.http_status }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.http_status }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'rel_schedule', {
 			filterValMenu: relScheduleTypes,
 			cell: ( cell ) => relScheduleTypes[ cell.getValue() ],
-			header: <SortBy props={ { header, sorting, key: 'rel_schedule', onClick: () => sortBy( 'rel_schedule' ) } }>{ header.rel_schedule }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.rel_schedule }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'update_http_date', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: <SortBy props={ { header, sorting, key: 'update_http_date', onClick: () => sortBy( 'update_http_date' ) } }>{ header.update_http_date }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.update_http_date }</SortBy>,
 			size: 140,
 		} ),
 		columnHelper.accessor( 'delete', {
@@ -140,14 +140,12 @@ export default function LinkManagerTable( { slug } ) {
 				header={ header }
 				table={ table }
 				selectedRows={ selectedRows }
-				onSort={ ( val ) => sortBy( val ) }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				noImport
 				exportOptions={ {
 					slug,
-					filters,
-					fromId: `from_${ paginationId }`,
+					url,
 					paginationId,
 					deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
 					perPage: 1000,

@@ -10,7 +10,7 @@ export default function MediaFilesTable( { slug } ) {
 	const paginationId = 'fileid';
 
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sorting ? '' : sorting }`;
+	const url = { filters, sorting };
 
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 	const [ tooltipUrl, setTooltipUrl ] = useState( );
@@ -66,11 +66,11 @@ export default function MediaFilesTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'filename', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: <SortBy props={ { header, sorting, key: 'filename', onClick: () => sortBy( 'filename' ) } }>{ header.filename }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.filename }</SortBy>,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'filetype', {
-			header: <SortBy props={ { header, sorting, key: 'filetype', onClick: () => sortBy( 'filetype' ) } }>{ header.filetype }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.filetype }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'url', {
@@ -84,45 +84,45 @@ export default function MediaFilesTable( { slug } ) {
 			},
 			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
 			cell: ( cell ) => <a onMouseOver={ () => setTooltipUrl( cell.getValue() ) } onMouseLeave={ () => setTooltipUrl() } href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: <SortBy props={ { header, sorting, key: 'url', onClick: () => sortBy( 'url' ) } }>{ header.url }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.url }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper?.accessor( 'download_url', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: <SortBy props={ { header, sorting, key: 'download_url', onClick: () => sortBy( 'download_url' ) } }>{ header.download_url }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.download_url }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper?.accessor( 'filesize', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			unit: 'kB',
 			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
-			header: <SortBy props={ { header, sorting, key: 'filesize', onClick: () => sortBy( 'filesize' ) } }>{ header.filesize }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.filesize }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'width', {
 			unit: 'px',
 			cell: ( cell ) => `${ cell.getValue() }\u00A0px`,
-			header: <SortBy props={ { header, sorting, key: 'width', onClick: () => sortBy( 'width' ) } }>{ header.width }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.width }</SortBy>,
 			size: 50,
 		} ),
 		columnHelper?.accessor( 'height', {
 			unit: 'px',
 			cell: ( cell ) => `${ cell.getValue() }\u00A0px`,
-			header: <SortBy props={ { header, sorting, key: 'height', onClick: () => sortBy( 'height' ) } }>{ header.height }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.height }</SortBy>,
 			size: 50,
 		} ),
 		columnHelper?.accessor( 'driver', {
 			filterValMenu: driverTypes,
 			className: 'nolimit',
-			cell: ( cell ) => driverTypes[ cell.getValue() ],
-			header: <SortBy props={ { header, sorting, key: 'driver', onClick: () => sortBy( 'driver' ) } }>{ header.driver }</SortBy>,
+			cell: ( cell ) => <SortMenu items={ driverTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, customEndpoint: '/transfer', cell } ) } />,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.driver }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'filestatus', {
 			filterValMenu: statusTypes,
 			cell: ( cell ) => statusTypes[ cell.getValue() ],
-			header: <SortBy props={ { header, sorting, key: 'filestatus', onClick: () => sortBy( 'filestatus' ) } }>{ header.filestatus }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.filestatus }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'file_usage_count', {
@@ -137,7 +137,7 @@ export default function MediaFilesTable( { slug } ) {
 					</button>
 				}
 			</div>,
-			header: <SortBy props={ { header, sorting, key: 'file_usage_count', onClick: () => sortBy( 'file_usage_count' ) } }>{ header.file_usage_count }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.file_usage_count }</SortBy>,
 			size: 50,
 		} ),
 
@@ -160,14 +160,12 @@ export default function MediaFilesTable( { slug } ) {
 				table={ table }
 				noImport
 				selectedRows={ selectedRows }
-				onSort={ ( val ) => sortBy( val ) }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				detailsOptions={ detailsOptions }
 				exportOptions={ {
 					slug,
-					filters,
-					fromId: `from_${ paginationId }`,
+					url,
 					paginationId,
 					deleteCSVCols: [ paginationId, 'fileid', 'filehash' ],
 				} }

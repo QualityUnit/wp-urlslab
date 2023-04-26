@@ -191,7 +191,6 @@ export function useSorting( { slug } ) {
 	}, [ getQueryData ] );
 
 	function sortBy( key ) {
-		// queryClient.setQueryData( [ slug, 'sortBy' ], key );
 		setSorting( ( currentSorting ) => {
 			const objFromArr = currentSorting.filter( ( k ) => k.key )[ 0 ];
 			const cleanArr = currentSorting.filter( ( k ) => ! k.key );

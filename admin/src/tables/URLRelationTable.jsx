@@ -8,7 +8,7 @@ import useChangeRow from '../hooks/useChangeRow';
 export default function URLRelationTable( { slug } ) {
 	const paginationId = 'src_url_id';
 	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sorting ? '' : sorting }`;
+	const url = { filters, sorting };
 
 	const {
 		__,
@@ -47,20 +47,20 @@ export default function URLRelationTable( { slug } ) {
 		columnHelper.accessor( 'src_url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: <SortBy props={ { header, sorting, key: 'src_url_name', onClick: () => sortBy( 'src_url_name' ) } }>{ header.src_url_name }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.src_url_name }</SortBy>,
 			size: 400,
 		} ),
 		columnHelper.accessor( 'dest_url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: <SortBy props={ { header, sorting, key: 'dest_url_name', onClick: () => sortBy( 'dest_url_name' ) } }>{ header.dest_url_name }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.dest_url_name }</SortBy>,
 			size: 400,
 		} ),
 		columnHelper.accessor( 'pos', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell, optionalSelector: 'dest_url_id' } ) } />,
-			header: <SortBy props={ { header, sorting, key: 'pos', onClick: () => sortBy( 'pos' ) } }>{ header.pos }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.pos }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'delete', {
@@ -82,7 +82,6 @@ export default function URLRelationTable( { slug } ) {
 				header={ header }
 				table={ table }
 				selectedRows={ selectedRows }
-				onSort={ ( val ) => sortBy( val ) }
 				onDeleteSelected={ () => deleteSelectedRows( 'dest_url_id' ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onClearRow={ ( clear ) => {
@@ -97,8 +96,7 @@ export default function URLRelationTable( { slug } ) {
 				insertOptions={ { inserterCells, title: 'Add related article', data, slug, url, paginationId, rowToInsert } }
 				exportOptions={ {
 					slug,
-					filters,
-					fromId: `from_${ paginationId }`,
+					url,
 					paginationId,
 					deleteCSVCols: [ paginationId, 'dest_url_id' ],
 				} }

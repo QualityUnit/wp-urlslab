@@ -9,7 +9,7 @@ export default function SchedulesTable( { slug } ) {
 	const paginationId = 'schedule_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sorting ? '' : sorting }`;
+	const url = { filters, sorting };
 
 	const {
 		__,
@@ -62,45 +62,45 @@ export default function SchedulesTable( { slug } ) {
 			className: 'nolimit',
 			cell: ( array ) => array?.getValue().map( ( link ) => <><a href={ link } target="_blank" rel="noreferrer" key={ link }>{ link }</a>, </>,
 			),
-			header: <SortBy props={ { header, sorting, key: 'urls', onClick: () => sortBy( 'urls' ) } }>{ header.urls }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.urls }</SortBy>,
 			size: 300,
 		} ),
 		columnHelper?.accessor( 'analyze_text', {
 			cell: ( cell ) => <Checkbox readOnly className="readOnly" checked={ cell.getValue() } />,
-			header: <SortBy props={ { header, sorting, key: 'analyze_text', onClick: () => sortBy( 'analyze_text' ) } }>{ header.analyze_text }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.analyze_text }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'follow_links', {
 			filterValMenu: followLinksTypes,
 			cell: ( cell ) => followLinksTypes[ cell?.getValue() ],
-			header: <SortBy props={ { header, sorting, key: 'follow_links', onClick: () => sortBy( 'follow_links' ) } }>{ header.follow_links }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.follow_links }</SortBy>,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'process_all_sitemaps', {
 			cell: ( cell ) => <Checkbox readOnly className="readOnly" checked={ cell.getValue() } />,
-			header: <SortBy props={ { header, sorting, key: 'process_all_sitemaps', onClick: () => sortBy( 'process_all_sitemaps' ) } }>{ header.process_all_sitemaps }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.process_all_sitemaps }</SortBy>,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'scan_frequency', {
 			filterValMenu: scanFrequencyTypes,
 			cell: ( cell ) => scanFrequencyTypes[ cell?.getValue() ],
-			header: <SortBy props={ { header, sorting, key: 'scan_frequency', onClick: () => sortBy( 'scan_frequency' ) } }>{ header.scan_frequency }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.scan_frequency }</SortBy>,
 			size: 90,
 		} ),
 		columnHelper.accessor( 'scan_speed_per_minute', {
-			header: <SortBy props={ { header, sorting, key: 'scan_speed_per_minute', onClick: () => sortBy( 'scan_speed_per_minute' ) } }>{ header.scan_speed_per_minute }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.scan_speed_per_minute }</SortBy>,
 			size: 120,
 		} ),
 		columnHelper?.accessor( 'take_screenshot', {
 			cell: ( cell ) => <Checkbox readOnly className="readOnly" checked={ cell.getValue() } />,
-			header: <SortBy props={ { header, sorting, key: 'take_screenshot', onClick: () => sortBy( 'take_screenshot' ) } }>{ header.take_screenshot }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.take_screenshot }</SortBy>,
 			size: 90,
 		} ),
 		columnHelper?.accessor( 'custom_sitemaps', {
 			className: 'nolimit',
 			cell: ( array ) => array?.getValue().map( ( sitemap ) => <><a href={ sitemap } target="_blank" rel="noreferrer" key={ sitemap }>{ sitemap }</a>, </>,
 			),
-			header: <SortBy props={ { header, sorting, key: 'custom_sitemaps', onClick: () => sortBy( 'custom_sitemaps' ) } }>{ header.custom_sitemaps }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.custom_sitemaps }</SortBy>,
 			size: 300,
 		} ),
 		columnHelper.accessor( 'delete', {
@@ -124,7 +124,6 @@ export default function SchedulesTable( { slug } ) {
 				noExport
 				noDelete
 				selectedRows={ selectedRows }
-				onSort={ ( val ) => sortBy( val ) }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 			/>

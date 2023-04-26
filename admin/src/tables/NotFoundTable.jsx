@@ -18,7 +18,7 @@ export default function NotFoundTable( { slug } ) {
 
 	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sorting ? '' : sorting }`;
+	const url = { filters, sorting };
 
 	const {
 		__,
@@ -69,19 +69,19 @@ export default function NotFoundTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'url', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: <SortBy props={ { header, sorting, key: 'url', onClick: () => sortBy( 'url' ) } }>{ header.url }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.url }</SortBy>,
 			minSize: 300,
 		} ),
 		columnHelper.accessor( 'cnt', {
-			header: <SortBy props={ { header, sorting, key: 'cnt', onClick: () => sortBy( 'cnt' ) } }>{ header.cnt }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.cnt }</SortBy>,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'created', {
-			header: <SortBy props={ { header, sorting, key: 'created', onClick: () => sortBy( 'created' ) } }>{ header.created }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.created }</SortBy>,
 			minSize: 100,
 		} ),
 		columnHelper.accessor( 'updated', {
-			header: <SortBy props={ { header, sorting, key: 'updated', onClick: () => sortBy( 'updated' ) } }>{ header.updated }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.updated }</SortBy>,
 			minSize: 100,
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.agent, {
@@ -133,7 +133,6 @@ export default function NotFoundTable( { slug } ) {
 				header={ header }
 				table={ table }
 				selectedRows={ selectedRows }
-				onSort={ ( val ) => sortBy( val ) }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onClearRow={ ( clear ) => {
@@ -155,8 +154,7 @@ export default function NotFoundTable( { slug } ) {
 				} }
 				exportOptions={ {
 					slug,
-					filters,
-					fromId: `from_${ paginationId }`,
+					url,
 					paginationId,
 					deleteCSVCols: [ paginationId, 'dest_url_id' ],
 				} }

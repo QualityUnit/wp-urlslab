@@ -16,7 +16,7 @@ export default function GeneratorTable( { slug } ) {
 	const paginationId = 'generator_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sorting ? '' : sorting }`;
+	const url = { filters, sorting };
 
 	const ActionButton = ( { cell, onClick } ) => {
 		const { status } = cell?.row?.original;
@@ -88,41 +88,41 @@ export default function GeneratorTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'command', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: <SortBy props={ { header, sorting, key: 'command', onClick: () => sortBy( 'command' ) } }>{ header.command }</SortBy>,
-			size: 200,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.command }</SortBy>,
+			size: 180,
 		} ),
 		columnHelper.accessor( 'semantic_context', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: <SortBy props={ { header, sorting, key: 'semantic_context', onClick: () => sortBy( 'semantic_context' ) } }>{ header.semantic_context }</SortBy>,
-			size: 200,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.semantic_context }</SortBy>,
+			size: 180,
 		} ),
 		columnHelper.accessor( 'url_filter', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: <SortBy props={ { header, sorting, key: 'url_filter', onClick: () => sortBy( 'url_filter' ) } }>{ header.url_filter }</SortBy>,
-			size: 200,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.url_filter }</SortBy>,
+			size: 180,
 		} ),
 		columnHelper.accessor( 'lang', {
 			cell: ( cell ) => langName( cell?.getValue() ),
-			header: <SortBy props={ { header, sorting, key: 'lang', onClick: () => sortBy( 'lang' ) } }>{ header.lang }</SortBy>,
-			size: 165,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.lang }</SortBy>,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'result', {
 			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { header, sorting, key: 'result', onClick: () => sortBy( 'result' ) } }>{ header.result }</SortBy>,
-			size: 200,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.result }</SortBy>,
+			size: 180,
 		} ),
 		columnHelper.accessor( 'status', {
 			filterValMenu: statusTypes,
 			className: 'nolimit',
 			cell: ( cell ) => statusTypes[ cell.getValue() ],
-			header: <SortBy props={ { header, sorting, key: 'status', onClick: () => sortBy( 'status' ) } }>{ header.status }</SortBy>,
-			size: 100,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.status }</SortBy>,
+			size: 150,
 		} ),
 		columnHelper.accessor( 'status_changed', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: <SortBy props={ { header, sorting, key: 'status_changed', onClick: () => sortBy( 'status_changed' ) } }>{ header.status_changed }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.status_changed }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'usage_count', {
@@ -154,13 +154,11 @@ export default function GeneratorTable( { slug } ) {
 				table={ table }
 				noImport
 				selectedRows={ selectedRows }
-				onSort={ ( val ) => sortBy( val ) }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				exportOptions={ {
 					slug,
-					filters,
-					fromId: `from_${ paginationId }`,
+					url,
 					paginationId,
 					deleteCSVCols: [ paginationId, 'generator_id' ],
 				} }

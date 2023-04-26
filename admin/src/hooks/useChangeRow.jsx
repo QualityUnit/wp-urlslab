@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { deleteRow as del } from '../api/deleteTableData';
 import { postFetch } from '../api/fetching';
+import filtersArray from '../lib/filtersArray';
 
 export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const queryClient = useQueryClient();
@@ -9,6 +10,8 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const [ insertRowResult, setInsertRowRes ] = useState( false );
 	const [ selectedRows, setSelectedRows ] = useState( [] );
 	const [ responseCounter, setResponseCounter ] = useState( 0 );
+
+	const { filters, sorting } = url;
 
 	const getRowId = useCallback( ( cell, optionalSelector ) => {
 		if ( optionalSelector ) {
@@ -23,13 +26,13 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 
 	const insertNewRow = useMutation( {
 		mutationFn: async ( { rowToInsert } ) => {
-			const response = await postFetch( `${ slug }`, rowToInsert );
+			const response = await postFetch( `${ slug }/create`, rowToInsert );
 			return { response };
 		},
 		onSuccess: async ( { response } ) => {
 			const { ok } = await response;
 			if ( ok ) {
-				queryClient.invalidateQueries( [ slug ] );
+				queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
 				setInsertRowRes( response );
 			}
 		},
@@ -51,7 +54,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 		mutationFn: async ( options ) => {
 			const { deletedPagesArray, cell, optionalSelector } = options;
 
-			queryClient.setQueryData( [ slug, url ], ( origData ) => ( {
+			queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => ( {
 				pages: deletedPagesArray,
 				pageParams: origData.pageParams,
 			} ) );
@@ -72,7 +75,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 			}
 
 			if ( responseCounter === 0 || responseCounter === 1 ) {
-				await queryClient.invalidateQueries( [ slug, url ] );
+				await queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
 				await queryClient.invalidateQueries( [ slug, 'count' ] );
 			}
 		},
@@ -110,7 +113,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 				),
 			) ?? [];
 
-			queryClient.setQueryData( [ slug, url ], ( origData ) => ( {
+			queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => ( {
 				pages: newPagesArray,
 				pageParams: origData.pageParams,
 			} ) );
@@ -124,7 +127,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 		onSuccess: ( response ) => {
 			const { ok } = response;
 			if ( ok ) {
-				queryClient.invalidateQueries( [ slug, url ] );
+				queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
 			}
 		},
 	} );

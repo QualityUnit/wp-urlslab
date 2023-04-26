@@ -11,7 +11,7 @@ export default function RedirectsTable( { slug } ) {
 
 	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 
-	const url = `${ 'undefined' === typeof filters ? '' : filters }${ 'undefined' === typeof sorting ? '' : sorting }`;
+	const url = { filters, sorting };
 
 	const {
 		__,
@@ -57,87 +57,87 @@ export default function RedirectsTable( { slug } ) {
 			filterValMenu: matchTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu items={ matchTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { header, sorting, key: 'match_type', onClick: () => sortBy( 'match_type' ) } }>{ header.match_type }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.match_type }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'match_url', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { header, sorting, key: 'match_url', onClick: () => sortBy( 'match_url' ) } }>{ header.match_url }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.match_url }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'replace_url', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { header, sorting, key: 'replace_url', onClick: () => sortBy( 'replace_url' ) } }>{ header.replace_url }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.replace_url }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'redirect_code', {
 			filterValMenu: redirectTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu items={ redirectTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { header, sorting, key: 'redirect_code', onClick: () => sortBy( 'redirect_code' ) } }>{ header.redirect_code }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.redirect_code }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'if_not_found', {
 			filterValMenu: notFoundTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu items={ notFoundTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { header, sorting, key: 'if_not_found', onClick: () => sortBy( 'if_not_found' ) } }>{ header.if_not_found }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.if_not_found }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'is_logged', {
 			filterValMenu: logginTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu items={ logginTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { header, sorting, key: 'is_logged', onClick: () => sortBy( 'is_logged' ) } }>{ header.is_logged }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.is_logged }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'capabilities', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { header, sorting, key: 'capabilities', onClick: () => sortBy( 'capabilities' ) } }>{ header.capabilities }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.capabilities }</SortBy>,
 			size: 100,
 			show: false,
 		} ),
 		columnHelper.accessor( 'ip', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { header, sorting, key: 'ip', onClick: () => sortBy( 'ip' ) } }>{ header.ip }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.ip }</SortBy>,
 			size: 100,
 			show: false,
 		} ),
 		columnHelper.accessor( 'roles', {
-			header: <SortBy props={ { header, sorting, key: 'roles', onClick: () => sortBy( 'roles' ) } }>{ header.roles }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.roles }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'browser', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { header, sorting, key: 'browser', onClick: () => sortBy( 'browser' ) } }>{ header.browser }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.browser }</SortBy>,
 			size: 100,
 			show: false,
 		} ),
 		columnHelper.accessor( 'cookie', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { header, sorting, key: 'cookie', onClick: () => sortBy( 'cookie' ) } }>{ header.cookie }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.cookie }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'headers', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { header, sorting, key: 'headers', onClick: () => sortBy( 'headers' ) } }>{ header.headers }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.headers }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'params', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: <SortBy props={ { header, sorting, key: 'params', onClick: () => sortBy( 'params' ) } }>{ header.params }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.params }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'cnt', {
-			header: <SortBy props={ { header, sorting, key: 'cnt', onClick: () => sortBy( 'cnt' ) } }>{ header.cnt }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.cnt }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'delete', {
@@ -159,7 +159,6 @@ export default function RedirectsTable( { slug } ) {
 				header={ header }
 				table={ table }
 				selectedRows={ selectedRows }
-				onSort={ ( val ) => sortBy( val ) }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onClearRow={ ( clear ) => {
@@ -174,8 +173,7 @@ export default function RedirectsTable( { slug } ) {
 				insertOptions={ { inserterCells, title: 'Add redirect', data, slug, url, paginationId, rowToInsert } }
 				exportOptions={ {
 					slug,
-					filters,
-					fromId: `from_${ paginationId }`,
+					url,
 					paginationId,
 					deleteCSVCols: [ paginationId ],
 				} }
