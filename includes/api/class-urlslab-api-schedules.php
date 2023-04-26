@@ -13,7 +13,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 			$base,
 			array(
 				array(
-					'methods'             => WP_REST_Server::READABLE,
+					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => array( $this, 'get_items' ),
 					'args'                => array(),
 					'permission_callback' => array(
