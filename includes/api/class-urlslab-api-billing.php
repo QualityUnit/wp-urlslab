@@ -14,7 +14,7 @@ class Urlslab_Api_Billing extends Urlslab_Api_Base {
 	private function read_arguments( string $method_name ) {
 		return array(
 			array(
-				'methods'             => WP_REST_Server::READABLE,
+				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, $method_name ),
 				'args'                => array(),
 				'permission_callback' => array(

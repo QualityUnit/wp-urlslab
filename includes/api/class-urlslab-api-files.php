@@ -243,7 +243,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 	public function get_route_file_urls(): array {
 		return array(
 			array(
-				'methods'             => WP_REST_Server::READABLE,
+				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'get_file_urls' ),
 				'args'                => $this->get_table_arguments(),
 				'permission_callback' => array(

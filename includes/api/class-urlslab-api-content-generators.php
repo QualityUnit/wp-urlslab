@@ -250,7 +250,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 	public function get_route_generator_urls(): array {
 		return array(
 			array(
-				'methods'             => WP_REST_Server::READABLE,
+				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'get_generator_urls' ),
 				'args'                => array(
 					'rows_per_page' => array(
