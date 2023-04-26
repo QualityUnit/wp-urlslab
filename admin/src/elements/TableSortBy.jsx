@@ -7,7 +7,7 @@ import { ReactComponent as SortDESC } from '../assets/images/icons/icon-sort-des
 const SortBy = ( ( { props, children } ) => {
 	const { sorting, header, th, onClick } = props;
 	const { __ } = useI18n();
-	const key = th.id;
+	const key = th.header.id;
 	let sortedBy = sorting?.filter( ( k ) => k.key === key )[ 0 ];
 	sortedBy = sortedBy ? sortedBy.dir : undefined;
 

@@ -78,7 +78,7 @@ export default function LinkManagerTable( { slug } ) {
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.url_name }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_name }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'url_title', {
@@ -86,7 +86,7 @@ export default function LinkManagerTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.url_title }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_title }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper?.accessor( 'url_meta_description', {
@@ -94,7 +94,7 @@ export default function LinkManagerTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.url_meta_description }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_meta_description }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'url_summary', {
@@ -102,24 +102,24 @@ export default function LinkManagerTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.url_summary }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_summary }</SortBy>,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'http_status', {
 			filterValMenu: httpStatusTypes,
 			cell: ( cell ) => httpStatusTypes[ cell.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.http_status }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.http_status }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'rel_schedule', {
 			filterValMenu: relScheduleTypes,
 			cell: ( cell ) => relScheduleTypes[ cell.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.rel_schedule }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.rel_schedule }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'update_http_date', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.update_http_date }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.update_http_date }</SortBy>,
 			size: 140,
 		} ),
 		columnHelper.accessor( 'delete', {

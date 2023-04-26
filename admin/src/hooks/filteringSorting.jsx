@@ -190,7 +190,10 @@ export function useSorting( { slug } ) {
 		getQueryData();
 	}, [ getQueryData ] );
 
-	function sortBy( key ) {
+	function sortBy( th ) {
+		const { header } = th;
+		const key = header.id;
+
 		setSorting( ( currentSorting ) => {
 			const objFromArr = currentSorting.filter( ( k ) => k.key )[ 0 ];
 			const cleanArr = currentSorting.filter( ( k ) => ! k.key );

@@ -66,11 +66,11 @@ export default function MediaFilesTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'filename', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.filename }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.filename }</SortBy>,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'filetype', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.filetype }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.filetype }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'url', {
@@ -84,45 +84,45 @@ export default function MediaFilesTable( { slug } ) {
 			},
 			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
 			cell: ( cell ) => <a onMouseOver={ () => setTooltipUrl( cell.getValue() ) } onMouseLeave={ () => setTooltipUrl() } href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.url }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper?.accessor( 'download_url', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.download_url }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.download_url }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper?.accessor( 'filesize', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			unit: 'kB',
 			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.filesize }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.filesize }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'width', {
 			unit: 'px',
 			cell: ( cell ) => `${ cell.getValue() }\u00A0px`,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.width }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.width }</SortBy>,
 			size: 50,
 		} ),
 		columnHelper?.accessor( 'height', {
 			unit: 'px',
 			cell: ( cell ) => `${ cell.getValue() }\u00A0px`,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.height }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.height }</SortBy>,
 			size: 50,
 		} ),
 		columnHelper?.accessor( 'driver', {
 			filterValMenu: driverTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu items={ driverTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, customEndpoint: '/transfer', cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.driver }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.driver }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'filestatus', {
 			filterValMenu: statusTypes,
 			cell: ( cell ) => statusTypes[ cell.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.filestatus }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.filestatus }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'file_usage_count', {
@@ -137,7 +137,7 @@ export default function MediaFilesTable( { slug } ) {
 					</button>
 				}
 			</div>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.file_usage_count }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.file_usage_count }</SortBy>,
 			size: 50,
 		} ),
 

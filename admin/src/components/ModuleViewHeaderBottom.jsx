@@ -5,6 +5,7 @@ import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { postFetch } from '../api/fetching';
 import { deleteAll } from '../api/deleteTableData';
 import HeaderHeightContext from '../lib/headerHeightContext';
+import filtersArray from '../lib/filtersArray';
 
 import { useFilter } from '../hooks/filteringSorting';
 
@@ -24,7 +25,7 @@ import IconButton from '../elements/IconButton';
 import useResizeObserver from '../hooks/useResizeObserver';
 import TablePanels from './TablePanels';
 
-export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noExport, noCount, noDelete, header, table, insertOptions, activatePanel, detailsOptions, exportOptions, selectedRows, onFilter, onDeleteSelected, onClearRow } ) {
+export default function ModuleViewHeaderBottom( { slug, noFiltering, noImport, noInsert, noExport, noCount, noDelete, header, table, insertOptions, activatePanel, detailsOptions, exportOptions, selectedRows, onFilter, onDeleteSelected, onClearRow } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const didMountRef = useRef( false );
@@ -73,15 +74,10 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 		}
 	}, [ slug, activatePanel, detailsOptions, filters, onFilter ] );
 
-	const filtersArray = filters ? Object.entries( filters ).map( ( [ col, params ] ) => {
-		const { op, val } = params;
-		return { col, op, val };
-	} ) : [];
-
 	const { data: rowCount, isFetching } = useQuery( {
-		queryKey: [ slug, `count`, filtersArray ],
+		queryKey: [ slug, `count`, filtersArray( filters ) ],
 		queryFn: async () => {
-			const count = await postFetch( `${ slug }/count`, { filters: filtersArray } );
+			const count = await postFetch( `${ slug }/count`, { filters: filtersArray( filters ) } );
 			if ( ! noCount ) {
 				return count.json();
 			}
@@ -142,16 +138,19 @@ export default function ModuleViewHeaderBottom( { slug, noImport, noInsert, noEx
 						<Button className="active" onClick={ () => handlePanel( 'addrow' ) }><PlusIcon />{ insertOptions.title }</Button>
 					}
 
-					<div className="pos-relative">
-						<Button className="simple underline" onClick={ () => dispatch( { type: 'toggleEditFilter', editFilter: 'addFilter' } ) }>{ __( '+ Add filter' ) }
-						</Button>
+					{
+						! noFiltering &&
+						<div className="pos-relative">
+							<Button className="simple underline" onClick={ () => dispatch( { type: 'toggleEditFilter', editFilter: 'addFilter' } ) }>{ __( '+ Add filter' ) }
+							</Button>
 
-						{ state.editFilter === 'addFilter' && // Our main adding panel (only when Add button clicked)
+							{ state.editFilter === 'addFilter' && // Our main adding panel (only when Add button clicked)
 							<TableFilterPanel props={ { slug, header, initialRow, possiblefilters, filters } } onEdit={ ( val ) => {
 								handleHeaderHeight(); handleOnEdit( val );
 							} } />
-						}
-					</div>
+							}
+						</div>
+					}
 
 					<div className="ma-left flex flex-align-center">
 						<Counter />

@@ -56,26 +56,26 @@ export default function SearchReplaceTable( { slug } ) {
 		columnHelper.accessor( 'str_search', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.str_search }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.str_search }</SortBy>,
 			size: 300,
 		} ),
 		columnHelper.accessor( 'str_replace', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.str_replace }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.str_replace }</SortBy>,
 			size: 300,
 		} ),
 		columnHelper.accessor( 'search_type', {
 			filterValMenu: searchTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SortMenu items={ searchTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.search_type }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.search_type }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'url_filter', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th.id ) } }>{ header.url_filter }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_filter }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'delete', {
