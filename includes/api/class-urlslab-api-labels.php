@@ -38,7 +38,12 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 		);
 	}
 
-	public function get_items( WP_REST_Request $request ) {
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_items( $request ) {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {

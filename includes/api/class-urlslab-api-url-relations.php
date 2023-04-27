@@ -87,7 +87,12 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		);
 	}
 
-	public function get_items( WP_REST_Request $request ) {
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_items( $request ) {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
@@ -214,7 +219,12 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		);
 	}
 
-	public function create_item( WP_REST_Request $request ) {
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function create_item( $request ) {
 		try {
 			$src_url_obj                                             = new Urlslab_Url( $request->get_param( 'src_url_name' ) );
 			$dest_url_obj                                            = new Urlslab_Url( $request->get_param( 'dest_url_name' ) );

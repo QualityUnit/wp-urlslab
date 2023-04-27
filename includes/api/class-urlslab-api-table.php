@@ -10,7 +10,12 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 
 	abstract public function get_editable_columns(): array;
 
-	public function create_item( WP_REST_Request $request ) {
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function create_item( $request ) {
 		try {
 			$row = $this->get_row_object();
 			foreach ( $row->get_columns() as $column => $format ) {
@@ -37,7 +42,12 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		}
 	}
 
-	public function update_item( WP_REST_Request $request ) {
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function update_item( $request ) {
 		try {
 			$primary_key_values = array();
 			foreach ( $this->get_row_object()->get_primary_columns() as $primary_key ) {
@@ -71,7 +81,12 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		}
 	}
 
-	public function delete_item( WP_REST_Request $request ) {
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function delete_item( $request ) {
 		global $wpdb;
 
 		$delete_params = array();
@@ -123,7 +138,12 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		return new WP_REST_Response( $result, 200 );
 	}
 
-	public function get_items( WP_REST_Request $request ) {
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_items( $request ) {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( null === $rows || false === $rows ) {

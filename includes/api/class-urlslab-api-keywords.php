@@ -251,7 +251,12 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		return current_user_can( 'edit_posts' );
 	}
 
-	public function get_items( WP_REST_Request $request ) {
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_items( $request ) {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
@@ -301,7 +306,12 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		return $sql;
 	}
 
-	public function delete_item( WP_REST_Request $request ) {
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function delete_item( $request ) {
 		global $wpdb;
 		$delete_params          = array();
 		$delete_params['kw_id'] = $request->get_param( 'kw_id' );

@@ -37,7 +37,12 @@ class Urlslab_Api_Optimize extends Urlslab_Api_Base {
 		);
 	}
 
-	public function get_items( WP_REST_Request $request ) {
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_items( $request ) {
 		$tasks = array(
 			'clean_post_revisions',
 			'clean_post_autodrafts',

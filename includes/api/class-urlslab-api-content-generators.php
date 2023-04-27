@@ -127,7 +127,12 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 		return is_admin() || current_user_can( 'translate' );
 	}
 
-	public function get_items( WP_REST_Request $request ) {
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_items( $request ) {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
@@ -141,7 +146,12 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 		return new WP_REST_Response( $rows, 200 );
 	}
 
-	public function get_translation( WP_REST_Request $request ) {
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_translation( $request ) {
 		$source_lang = $request->get_param( 'source_lang' );
 		$target_lang = $request->get_param( 'target_lang' );
 

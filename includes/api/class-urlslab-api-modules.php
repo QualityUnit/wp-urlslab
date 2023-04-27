@@ -52,11 +52,21 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 		);
 	}
 
-	public function get_items_permissions_check( WP_REST_Request $request ) {
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_items_permissions_check( $request ) {
 		return current_user_can( 'read' );
 	}
 
-	public function get_items( WP_REST_Request $request ) {
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_items( $request ) {
 		try {
 			$data = array();
 			foreach ( Urlslab_Available_Widgets::get_instance()->get_available_widgets() as $widget ) {
@@ -70,7 +80,12 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 		}
 	}
 
-	public function get_item( WP_REST_Request $request ) {
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_item( $request ) {
 		try {
 			$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $request->get_param( 'id' ) );
 			if ( null === $widget ) {
@@ -83,7 +98,12 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 		}
 	}
 
-	public function update_item( WP_REST_Request $request ) {
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function update_item( $request ) {
 		try {
 			$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $request->get_param( 'id' ) );
 			if ( null === $widget ) {
