@@ -109,7 +109,7 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 		foreach ( $request->get_json_params()['capabilities'] as $capability_id ) {
 			$capabilities[ $capability_id ] = true;
 		}
-		$role = add_role( $request->get_json_params()['role_id'], $request->get_json_params()['role_name'], $capabilities );
+		$role = add_role( $request->get_json_params()['role_id'], $request->get_json_params()['role_name'], $capabilities );//phpcs:ignore
 		if ( $role ) {
 			return new WP_REST_Response( $role, 200 );
 		} else {
@@ -130,7 +130,7 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 			remove_role( $request->get_param( 'role_id' ) );
 
 			// Add the new role with the same capabilities as the old role
-			$role = add_role( $request->get_param( 'role_id' ), $request->get_json_params()['role_name'], $capabilities );
+			$role = add_role( $request->get_param( 'role_id' ), $request->get_json_params()['role_name'], $capabilities );//phpcs:ignore
 		}
 
 		if ( isset( $request->get_json_params()['capabilities'] ) ) {
