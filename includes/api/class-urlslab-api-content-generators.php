@@ -124,7 +124,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 
 
 	public function translate_permissions_check( WP_REST_Request $request ) {
-		return is_admin() || current_user_can( self::CAPABILITY_TRANSLATE );
+		return current_user_can( 'activate_plugins' ) || current_user_can( self::CAPABILITY_TRANSLATE );
 	}
 
 	/**

@@ -112,6 +112,6 @@ class Urlslab_Api_Optimize extends Urlslab_Api_Base {
 	}
 
 	public function get_optimize_permissions_check( WP_REST_Request $request ) {
-		return is_admin() || current_user_can( self::CAPABILITY_ADMINISTRATION );
+		return current_user_can( 'activate_plugins' ) || current_user_can( self::CAPABILITY_ADMINISTRATION );
 	}
 }
