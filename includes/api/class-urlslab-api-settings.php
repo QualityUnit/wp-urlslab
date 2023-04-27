@@ -37,6 +37,11 @@ class Urlslab_Api_Settings extends Urlslab_Api_Base {
 		);
 	}
 
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
 	public function get_items( $request ) {
 		try {
 			$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $request->get_param( 'module_id' ) );
@@ -50,6 +55,12 @@ class Urlslab_Api_Settings extends Urlslab_Api_Base {
 		}
 	}
 
+
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
 	public function update_item( $request ) {
 		try {
 			$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $request->get_param( 'module_id' ) );

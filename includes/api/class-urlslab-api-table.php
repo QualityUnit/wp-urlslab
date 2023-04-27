@@ -10,6 +10,11 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 
 	abstract public function get_editable_columns(): array;
 
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
 	public function create_item( $request ) {
 		try {
 			$row = $this->get_row_object();
@@ -37,6 +42,11 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		}
 	}
 
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
 	public function update_item( $request ) {
 		try {
 			$primary_key_values = array();
@@ -71,6 +81,11 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		}
 	}
 
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
 	public function delete_item( $request ) {
 		global $wpdb;
 
@@ -87,7 +102,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		return new WP_REST_Response( __( 'Deleted' ), 200 );
 	}
 
-	public function delete_all_items( $request ) {
+	public function delete_all_items( WP_REST_Request $request ) {
 		global $wpdb;
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . sanitize_key( $this->get_row_object()->get_table_name() ) ) ) ) { // phpcs:ignore
@@ -123,6 +138,11 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		return new WP_REST_Response( $result, 200 );
 	}
 
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
 	public function get_items( $request ) {
 		$rows = $this->get_items_sql( $request )->get_results();
 
@@ -133,7 +153,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		return new WP_REST_Response( $rows, 200 );
 	}
 
-	public function get_items_count( $request ) {
+	public function get_items_count( WP_REST_Request $request ) {
 		return new WP_REST_Response( $this->get_items_sql( $request )->get_count(), 200 );
 	}
 

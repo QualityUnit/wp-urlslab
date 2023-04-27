@@ -37,6 +37,11 @@ class Urlslab_Api_Optimize extends Urlslab_Api_Base {
 		);
 	}
 
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
 	public function get_items( $request ) {
 		$tasks = array(
 			'clean_post_revisions',
@@ -50,7 +55,7 @@ class Urlslab_Api_Optimize extends Urlslab_Api_Base {
 		return new WP_REST_Response( $tasks, 200 );
 	}
 
-	public function optimize( $request ) {
+	public function optimize( WP_REST_Request $request ) {
 		try {
 			if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Optimize::SLUG ) ) {
 				return new WP_Error( 'exception', __( 'Optimization module disabled', 'urlslab' ) );
@@ -106,7 +111,7 @@ class Urlslab_Api_Optimize extends Urlslab_Api_Base {
 		}
 	}
 
-	public function get_optimize_permissions_check( $request ) {
+	public function get_optimize_permissions_check( WP_REST_Request $request ) {
 		return current_user_can( 'administrator' );
 	}
 }

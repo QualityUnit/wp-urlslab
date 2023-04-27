@@ -36,6 +36,11 @@ class Urlslab_Api_Cron extends Urlslab_Api_Base {
 		);
 	}
 
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
 	public function get_items( $request ) {
 		try {
 			$data = array();
@@ -52,7 +57,7 @@ class Urlslab_Api_Cron extends Urlslab_Api_Base {
 		}
 	}
 
-	public function exec_all_crons( $request ) {
+	public function exec_all_crons( WP_REST_Request $request ) {
 		try {
 			$task_name = $request->get_param( 'task' );
 			if ( 'all' == $request->get_param( 'task' ) ) {

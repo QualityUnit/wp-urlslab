@@ -251,6 +251,11 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		return current_user_can( 'edit_posts' );
 	}
 
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
 	public function get_items( $request ) {
 		$rows = $this->get_items_sql( $request )->get_results();
 
@@ -301,6 +306,11 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		return $sql;
 	}
 
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
 	public function delete_item( $request ) {
 		global $wpdb;
 		$delete_params          = array();
@@ -342,7 +352,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		);
 	}
 
-	public function delete_all_items( $request ) {
+	public function delete_all_items( WP_REST_Request $request ) {
 		global $wpdb;
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_KEYWORDS_TABLE ) ) ) { // phpcs:ignore
@@ -405,7 +415,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		return array( 'kwType', 'kw_priority', 'lang', 'urlFilter', 'labels' );
 	}
 
-	public function get_kw_mapping( $request ) {
+	public function get_kw_mapping( WP_REST_Request $request ) {
 		$rows = $this->get_kw_mapping_sql( $request )->get_results();
 
 		if ( ! is_array( $rows ) ) {
@@ -429,7 +439,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		return new WP_REST_Response( $rows, 200 );
 	}
 
-	public function get_kw_mapping_sql( $request ): Urlslab_Api_Table_Sql {
+	public function get_kw_mapping_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( 'url_id', 'm' );
 		$sql->add_select_column( 'link_type', 'm' );
@@ -451,7 +461,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		return $sql;
 	}
 
-	public function get_kw_mapping_count( $request ) {
+	public function get_kw_mapping_count( WP_REST_Request $request ) {
 		return new WP_REST_Response(
 			$this->get_kw_mapping_sql( $request )->get_count(),
 			200

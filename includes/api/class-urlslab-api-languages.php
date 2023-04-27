@@ -20,6 +20,11 @@ class Urlslab_Api_Languages extends Urlslab_Api_Base {
 		);
 	}
 
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
 	public function get_items( $request ) {
 		try {
 			$languages = apply_filters( 'wpml_active_languages', null, 'skip_missing=0&orderby=code' );
