@@ -66,7 +66,7 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 					'callback'            => array( $this, 'update_role' ),
 					'permission_callback' => array(
 						$this,
-						'delete_item_permissions_check',
+						'update_item_permissions_check',
 					),
 					'args'                => array(
 						'role_name'    => array(
@@ -103,6 +103,17 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 		);
 	}
 
+	public function get_items_permissions_check( $request ) {
+		return is_admin() || current_user_can( self::CAPABILITY_ADMINISTRATION );
+	}
+
+	public function update_item_permissions_check( $request ) {
+		return is_admin() || current_user_can( self::CAPABILITY_ADMINISTRATION );
+	}
+
+	public function delete_item_permissions_check( $request ) {
+		return is_admin() || current_user_can( self::CAPABILITY_ADMINISTRATION );
+	}
 
 	public function create_role( WP_REST_Request $request ) {
 		$capabilities = array();
