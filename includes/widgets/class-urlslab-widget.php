@@ -194,7 +194,7 @@ abstract class Urlslab_Widget {
 			return false;
 		}
 
-		if ( self::OPTION_TYPE_BUTTON_API_CALL !== $this->options[ $option_id ]['type'] ) {
+		if ( self::OPTION_TYPE_BUTTON_API_CALL === $this->options[ $option_id ]['type'] ) {
 			return true;
 		}
 
@@ -251,7 +251,13 @@ abstract class Urlslab_Widget {
 				break;
 		}
 
-		return $value == $this->get_option( $option_id ) || update_option( $option_id, $value );
+		if ( $value === $this->get_option( $option_id ) ) {
+			return true;
+		} else {
+			$this->options[ $option_id ]['value'] = $value;
+
+			return update_option( $option_id, $value );
+		}
 	}
 
 	protected function add_options() {}
