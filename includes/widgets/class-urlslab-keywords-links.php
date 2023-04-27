@@ -68,6 +68,10 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		return __( 'Boost the website\'s SEO and internal link building with a complex module for managing keyword linking' );
 	}
 
+	public function get_widget_labels(): array {
+		return array( self::LABEL_FREE );
+	}
+
 	protected function add_options() {
 		$this->add_options_form_section( 'main', __( 'Keywords and Monitoring' ), __( 'This plugin automatically tracks the usage of keywords on your website as the page is displayed and provides the right keyword datasets to help you optimize your internal link structure for maximum results.' ) );
 

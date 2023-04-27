@@ -21,6 +21,10 @@ class Urlslab_Search_Replace extends Urlslab_Widget {
 		return __( 'Search and Replace' );
 	}
 
+	public function get_widget_labels(): array {
+		return array( self::LABEL_FREE );
+	}
+
 	public function get_widget_description(): string {
 		return __( 'Powerful tools that can automatically replace incorrect URLs and content on the fly' );
 	}
@@ -46,8 +50,7 @@ class Urlslab_Search_Replace extends Urlslab_Widget {
 		return false;
 	}
 
-	protected function add_options() {
-	}
+	protected function add_options() {}
 
 	/**
 	 * @return Urlslab_Search_Replace_Row[]
@@ -57,13 +60,13 @@ class Urlslab_Search_Replace extends Urlslab_Widget {
 			global $wpdb;
 
 			try {
-				$results = $wpdb->get_results( 'SELECT * FROM ' . URLSLAB_SEARCH_AND_REPLACE_TABLE, 'ARRAY_A' ); // phpcs:ignore
+				$results     = $wpdb->get_results( 'SELECT * FROM ' . URLSLAB_SEARCH_AND_REPLACE_TABLE, 'ARRAY_A' ); // phpcs:ignore
 				$current_url = $this->get_current_page_url()->get_url();
 				foreach ( $results as $row ) {
 					if ( '.*' !== $row['url_filter'] && ! preg_match( '/' . preg_quote( $row['url_filter'], '/' ) . '/uim', $current_url ) ) {
 						continue;
 					}
-					$obj_search = new Urlslab_Search_Replace_Row( $row );
+					$obj_search                           = new Urlslab_Search_Replace_Row( $row );
 					$this->rules[ $obj_search->get_id() ] = $obj_search;
 				}
 			} catch ( Exception $e ) {

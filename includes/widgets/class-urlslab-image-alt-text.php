@@ -25,6 +25,10 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 		return __( 'Instantly improve image SEO by automatically adding descriptive alt texts to images on the website' );
 	}
 
+	public function get_widget_labels(): array {
+		return array( self::LABEL_FREE );
+	}
+
 	public function theContentHook( DOMDocument $document ) {
 		if ( empty( $this->get_option( self::SETTING_NAME_ALT_TAG_SOURCE ) ) ) {
 			return;

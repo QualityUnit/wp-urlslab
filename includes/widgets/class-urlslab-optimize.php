@@ -38,6 +38,10 @@ class Urlslab_Optimize extends Urlslab_Widget {
 		return __( 'Boost the performance of your website by automating database optimization in the background' );
 	}
 
+	public function get_widget_labels(): array {
+		return array( self::LABEL_FREE );
+	}
+
 	public function is_api_key_required(): bool {
 		return true;
 	}

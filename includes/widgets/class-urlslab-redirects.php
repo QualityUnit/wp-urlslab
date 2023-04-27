@@ -10,6 +10,10 @@ class Urlslab_Redirects extends Urlslab_Widget {
 
 	public const CACHE_GROUP = 'urlslab_redirects';
 
+	public function get_widget_labels(): array {
+		return array( self::LABEL_FREE );
+	}
+
 	public static function delete_cache() {
 		if ( wp_using_ext_object_cache() ) {
 			if ( wp_cache_supports( 'flush_group' ) ) {
