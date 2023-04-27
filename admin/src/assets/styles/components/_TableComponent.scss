@@ -212,10 +212,19 @@ $cellHeight: 3.5em;
 
 	.thumbnail {
 
+		a {
+			display: block;
+			object-fit: cover;
+			object-position: center top;
+			overflow: hidden;
+			height: 3em;
+		}
+
 		picture,
 		img,
 		.img {
-			height: 3em;
+
+			width: 100%;
 		}
 	}
 

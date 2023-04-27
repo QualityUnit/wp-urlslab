@@ -1,7 +1,7 @@
 import { Suspense, useEffect, useContext, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import { fetchData } from '../api/fetching';
+import { postFetch } from '../api/fetching';
 import useResizeObserver from '../hooks/useResizeObserver';
 import HeaderHeightContext from '../lib/headerHeightContext';
 
@@ -33,7 +33,10 @@ export default function Header( { pageTitle } ) {
 		async function getCredits() {
 			return await queryClient.fetchQuery( {
 				queryKey: [ 'credits' ],
-				queryFn: async () => await fetchData( `billing/credits` ),
+				queryFn: async () => {
+					const credits = await postFetch( `billing/credits` );
+					return credits.json();
+				},
 				refetchOnWindowFocus: false,
 			} );
 		}

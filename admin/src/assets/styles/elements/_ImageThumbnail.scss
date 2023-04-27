@@ -1,0 +1,42 @@
+@use "../common/variables" as *;
+@use "../common/mixins" as *;
+
+.urlslab-image {
+
+	&-thumb {
+		display: block;
+	}
+
+	&-tooltip {
+		display: block;
+		width: 14.5em;
+		height: 9em;
+		transform: translateY(-50%);
+		top: 50% !important;
+		left: 100% !important;
+		padding: 0;
+		border: 2px solid $black;
+
+		&-inn {
+
+			@include square(100%);
+			border-radius: 0.625rem;
+			overflow: hidden;
+		}
+
+		&::after {
+			content: "";
+
+			@include triangle(1.5em, $black, "left");
+			position: absolute;
+			top: calc(50% - 1.5em);
+			left: -1.5em;
+		}
+
+		img {
+			all: unset;
+			width: 100%;
+			border-radius: 0.625rem;
+		}
+	}
+}

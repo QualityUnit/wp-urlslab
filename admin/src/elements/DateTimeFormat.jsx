@@ -1,9 +1,13 @@
+import { date, getSettings } from '@wordpress/date';
+
 export default function DateTimeFormat( { datetime } ) {
-	const date = new Date( datetime );
+	const dateFormatted = date( getSettings().formats.date, datetime );
+	const time = date( getSettings().formats.time, datetime );
+
 	return (
 		<>
-			{ date.toLocaleDateString( window.navigator.language ) }<br />
-			<span className="c-grey-darker">{ date.toLocaleTimeString( window.navigator.language ) }</span>
+			{ dateFormatted }<br />
+			<span className="c-grey-darker">{ time }</span>
 		</>
 	);
 }

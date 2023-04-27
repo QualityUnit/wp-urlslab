@@ -3,16 +3,27 @@
 
 .urlslab-cronrunner {
 
-	@include square(2.5em);
-	position: relative;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background-color: $grey-light;
-	border-radius: 50%;
+	&[class] {
 
-	.urlslab-icon-button svg {
+		@include square(2.5em);
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: $grey-light;
+		border-radius: 50%;
+	}
 
-		@include square(1em);
+	span,
+	svg {
+
+		@include square(1.25em);
+
+		@media (hover: hover) {
+
+			&:hover {
+				fill: $primary-color;
+			}
+		}
 	}
 }
