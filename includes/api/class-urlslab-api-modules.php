@@ -57,15 +57,6 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 	 *
 	 * @return WP_Error|WP_REST_Response
 	 */
-	public function get_items_permissions_check( $request ) {
-		return current_user_can( 'read' );
-	}
-
-	/**
-	 * @param WP_REST_Request $request
-	 *
-	 * @return WP_Error|WP_REST_Response
-	 */
 	public function get_items( $request ) {
 		try {
 			$data = array();

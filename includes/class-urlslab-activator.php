@@ -15,6 +15,8 @@
  * @since      1.0.0
  */
 class Urlslab_Activator {
+
+
 	/**
 	 * Short Description. (use period).
 	 *
@@ -25,6 +27,7 @@ class Urlslab_Activator {
 	public static function activate() {
 		Urlslab_Activator::install_tables();
 		Urlslab_Activator::upgrade_steps();
+		self::add_roles();
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-background-attachments-cron.php';
 		add_option( Urlslab_Offload_Background_Attachments_Cron::SETTING_NAME_SCHEDULER_POINTER, - 1, '', false );
@@ -40,6 +43,9 @@ class Urlslab_Activator {
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-background-attachments-cron.php';
 		delete_option( Urlslab_Offload_Background_Attachments_Cron::SETTING_NAME_SCHEDULER_POINTER );
+
+		remove_role( Urlslab_Api_Base::URLSLAB_ROLE_ADMIN );
+		remove_role( Urlslab_Api_Base::URLSLAB_ROLE_EDITOR );
 	}
 
 	public static function upgrade_steps() {
@@ -605,5 +611,24 @@ class Urlslab_Activator {
 			call_user_func( $executable );
 			update_option( URLSLAB_VERSION_SETTING, $version );
 		}
+	}
+
+	private static function add_roles() {
+		$admin_capabilities = array(
+			Urlslab_Api_Base::CAPABILITY_READ           => true,
+			Urlslab_Api_Base::CAPABILITY_WRITE          => true,
+			Urlslab_Api_Base::CAPABILITY_DELETE         => true,
+			Urlslab_Api_Base::CAPABILITY_ADMINISTRATION => true,
+			Urlslab_Api_Base::CAPABILITY_TRANSLATE      => true,
+		);
+		add_role( Urlslab_Api_Base::URLSLAB_ROLE_ADMIN, __( 'Urlslab Administrator' ), $admin_capabilities );//phpcs:ignore
+
+		$editor_capabilities = array(
+			Urlslab_Api_Base::CAPABILITY_READ      => true,
+			Urlslab_Api_Base::CAPABILITY_WRITE     => true,
+			Urlslab_Api_Base::CAPABILITY_DELETE    => true,
+			Urlslab_Api_Base::CAPABILITY_TRANSLATE => true,
+		);
+		add_role( Urlslab_Api_Base::URLSLAB_ROLE_EDITOR, __( 'Urlslab Editor' ), $editor_capabilities );//phpcs:ignore
 	}
 }

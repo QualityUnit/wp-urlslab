@@ -239,18 +239,6 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		);
 	}
 
-	public function get_items_permissions_check( $request ) {
-		return current_user_can( 'edit_posts' );
-	}
-
-	public function update_item_permissions_check( $request ) {
-		return current_user_can( 'edit_posts' );
-	}
-
-	public function delete_item_permissions_check( $request ) {
-		return current_user_can( 'edit_posts' );
-	}
-
 	/**
 	 * @param WP_REST_Request $request
 	 *
