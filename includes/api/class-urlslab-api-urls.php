@@ -80,7 +80,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 								return is_string( $param );
 							},
 						),
-						'url_h1'            => array(
+						'url_h1'               => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
@@ -98,7 +98,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 								return is_string( $param );
 							},
 						),
-						'labels'     => array(
+						'labels'               => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
@@ -213,8 +213,11 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 				$url->get_object_values_as_array()
 			);
 
-			$row->screenshot_url = $url->get_screenshot_url();
-			$row->url_name       = $url->get_url()->get_url_with_protocol();
+			$row->screenshot_url_carousel_thumbnail = $url->get_screenshot_url( Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL );
+			$row->screenshot_url_carousel           = $url->get_screenshot_url( Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL );
+			$row->screenshot_url                    = $url->get_screenshot_url( Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE );
+			$row->screenshot_url_thumbnail          = $url->get_screenshot_url( Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL );
+			$row->url_name                          = $url->get_url()->get_url_with_protocol();
 			if ( in_array( 'url_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
 				$row->url_usage_count = (int) $row->url_usage_count;
 			}
