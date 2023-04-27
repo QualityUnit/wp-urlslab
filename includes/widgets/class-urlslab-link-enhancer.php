@@ -29,6 +29,10 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_content', $this, 'theContentHook', 12 );
 	}
 
+	public function get_widget_labels(): array {
+		return array( self::LABEL_PAID );
+	}
+
 	public function post_updated( $post_id, $post, $post_before ) {
 		$data = array();
 		if ( $post->post_title != $post_before->post_title ) {

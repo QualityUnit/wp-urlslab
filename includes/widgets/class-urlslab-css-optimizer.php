@@ -12,12 +12,15 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 	public const SETTING_NAME_CSS_CACHE_TTL = 'urlslab_css_ttl';
 	public const DEFAULT_CSS_CACHE_TTL = 604800;
 
-	public function __construct() {
-	}
+	public function __construct() {}
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_content', $this, 'theContentHook', 100 );
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_head_content', $this, 'theContentHook' );
+	}
+
+	public function get_widget_labels(): array {
+		return array( self::LABEL_FREE );
 	}
 
 	public function get_widget_slug(): string {
@@ -34,9 +37,9 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 
 	public function theContentHook( DOMDocument $document ) {
 		try {
-			$xpath = new DOMXPath( $document );
+			$xpath     = new DOMXPath( $document );
 			$css_links = $xpath->query( "//link[@rel='stylesheet' and (@type='text/css' or not(@type)) and @href ]" );
-			$links = array();
+			$links     = array();
 			foreach ( $css_links as $link_object ) {
 				if ( ! isset( $links[ $link_object->getAttribute( 'href' ) ] ) ) {
 					try {
@@ -80,8 +83,7 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 		}
 	}
 
-	public static function update_settings( array $new_settings ) {
-	}
+	public static function update_settings( array $new_settings ) {}
 
 	public function is_api_key_required(): bool {
 		return false;
@@ -98,7 +100,7 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 			__( 'Define the size limit of the CSS file, which file will be switched to the content. Mind that the size is without compression, so if the current request has 30 kb, without the compression, it can be even 210 kb.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function ( $value ) {
+			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
 			},
 			'main'
@@ -121,7 +123,7 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 				31536000 => __( 'One year' ),
 				0        => __( 'No cache' ),
 			),
-			function ( $value ) {
+			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
 			},
 			'main'
@@ -130,8 +132,8 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 
 	private function insert_missing_css_files( array $links, array $css_files ) {
 		$placeholders = array();
-		$values = array();
-		$now = Urlslab_Data::get_now();
+		$values       = array();
+		$now          = Urlslab_Data::get_now();
 
 		foreach ( $links as $url => $urld_id ) {
 			if ( ! isset( $css_files[ $urld_id ] ) ) {

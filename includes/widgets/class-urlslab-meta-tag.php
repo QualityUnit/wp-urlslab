@@ -52,6 +52,10 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 		return __( 'Make your content go further by adding Meta Tags and maximize its shareability on all social media platforms.' );
 	}
 
+	public function get_widget_labels(): array {
+		return array( self::LABEL_PAID );
+	}
+
 	public function theContentHook( DOMDocument $document ) {
 		if ( is_404() ) {
 			return;

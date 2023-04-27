@@ -42,7 +42,7 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 					'args'                => array(
 						'active' => array(
 							'required'          => true,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_bool( $param );
 							},
 						),
@@ -60,7 +60,7 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 		try {
 			$data = array();
 			foreach ( Urlslab_Available_Widgets::get_instance()->get_available_widgets() as $widget ) {
-				$widget_data = $this->get_widget_data( $widget );
+				$widget_data              = $this->get_widget_data( $widget );
 				$data[ $widget_data->id ] = $widget_data;
 			}
 
@@ -108,6 +108,7 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 			'title'        => $widget->get_widget_title(),
 			'apikey'       => $widget->is_api_key_required(),
 			'description'  => $widget->get_widget_description(),
+			'labels'       => $widget->get_widget_labels(),
 			'active'       => Urlslab_User_Widget::get_instance()->is_widget_activated( $widget->get_widget_slug() ),
 			'has_settings' => ! empty( $widget->get_options() ),
 		);
