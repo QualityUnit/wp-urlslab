@@ -674,25 +674,8 @@ table td *:hover > .urlslab-tooltip {
   display: -webkit-inline-box;
   display: -ms-inline-flexbox;
   display: inline-flex;
-}/* stylelint-disable */ /* stylelint-disable selector-class-pattern, no-descending-specificity */
-.urlslab-icon-button {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  padding: 0;
-}
-.urlslab-icon-button svg {
-  width: 1.5rem;
-  height: 1.5rem;
-  fill: #050505;
-}
-.urlslab-icon-button.active svg, .urlslab-icon-button:hover svg {
-  fill: #2570ed;
 }/* stylelint-disable */
-.urlslab-cronrunner {
+.urlslab-cronrunner[class] {
   width: 2.5em;
   height: 2.5em;
   position: relative;
@@ -708,9 +691,16 @@ table td *:hover > .urlslab-tooltip {
   background-color: #e4e5e9;
   border-radius: 50%;
 }
-.urlslab-cronrunner .urlslab-icon-button svg {
-  width: 1em;
-  height: 1em;
+.urlslab-cronrunner span,
+.urlslab-cronrunner svg {
+  width: 1.25em;
+  height: 1.25em;
+}
+@media (hover: hover) {
+  .urlslab-cronrunner span:hover,
+  .urlslab-cronrunner svg:hover {
+    fill: #2570ed;
+  }
 }/* stylelint-disable */
 .urlslab-tag {
   position: relative;
