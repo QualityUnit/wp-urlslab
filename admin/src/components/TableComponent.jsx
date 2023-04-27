@@ -28,11 +28,11 @@ export default function Table( { slug, resizable, children, className, columns, 
 	useEffect( () => {
 		getColumnState();
 
-		setContainerWidth( tableContainerRef.current.clientWidth );
+		setContainerWidth( tableContainerRef.current?.clientWidth );
 		const menuWidth = document.querySelector( '.urlslab-mainmenu' ).clientWidth + document.querySelector( '#adminmenuwrap' ).clientWidth;
 
 		const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
-			if ( entry.borderBoxSize ) {
+			if ( entry.borderBoxSize && tableContainerRef.current ) {
 				tableContainerRef.current.style.width = `${ document.querySelector( '#wpadminbar' ).clientWidth - menuWidth - 54 }px`;
 			}
 		} );

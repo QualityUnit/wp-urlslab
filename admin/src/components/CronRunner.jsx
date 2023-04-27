@@ -7,7 +7,7 @@ import { cronAll } from '../api/cron';
 import cronReducer from '../lib/cronReducer';
 
 import NotificationsPanel from './NotificationsPanel';
-import IconButton from '../elements/IconButton';
+import Tooltip from '../elements/Tooltip';
 
 import { ReactComponent as CronIcon } from '../assets/images/icons/icon-cron-refresh.svg';
 import { ReactComponent as StopIcon } from '../assets/images/icons/icon-cron-stop.svg';
@@ -49,19 +49,16 @@ export default function CronRunner() {
 	}, [ state.cronPanelActive, state.cronTasksResult ] );
 
 	return (
-		<div className="urlslab-cronrunner pos-relative small" role="button" onClick={ handleCronRunner }>
+		<button className="urlslab-cronrunner pos-relative small" onClick={ handleCronRunner }>
 			{ ! state.cronRunning
-				? <IconButton
-					tooltip={ __( 'Speed Up the Cron Execution' ) } tooltipClass="align-left xxxl"
-				>
+				? <span>
 					<CronIcon className="urlslab-cronrunner-icon" />
-				</IconButton>
-				: <IconButton
-					className="c-saturated-red"
-					tooltip={ __( 'Stop Cron Execution' ) } tooltipClass="align-left xxxl"
-				>
+					<Tooltip className="showOnHover align-left xxxl">{ __( 'Speed Up the Cron Execution' ) }</Tooltip>
+				</span>
+				: <span className="c-saturated-red">
 					<StopIcon className="urlslab-cronrunner-icon" />
-				</IconButton>
+					<Tooltip className="showOnHover align-left xxxl">{ __( 'Stop Cron Execution' ) }</Tooltip>
+				</span>
 			}
 
 			<NotificationsPanel className={ `${ state.cronPanelError ? 'error' : 'dark' } wide` } active={ ( state.cronTasksResult?.length > 0 && state.cronPanelActive ) || state.cronPanelError }>
@@ -70,6 +67,6 @@ export default function CronRunner() {
 					: <div className="message" key="cronError">{ __( 'Error has occured. Will run again in 1 min.' ) }</div>
 				}
 			</NotificationsPanel>
-		</div>
+		</button>
 	);
 }

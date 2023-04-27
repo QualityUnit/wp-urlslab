@@ -122,8 +122,8 @@ export default function ModuleViewHeaderBottom( { slug, noFiltering, noImport, n
 	};
 
 	const handleRefresh = () => {
-		queryClient.invalidateQueries( [ slug, filtersArray, sorting ? sorting : [] ] );
-		queryClient.invalidateQueries( [ slug, 'count', filtersArray ] );
+		queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ? sorting : [] ] );
+		queryClient.invalidateQueries( [ slug, 'count', filtersArray( filters ) ] );
 	};
 
 	return (

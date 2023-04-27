@@ -5,6 +5,7 @@ import {
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
+import ImageThumbnail from '../elements/ImageThumbnail';
 
 export default function ScreenshotTable( { slug } ) {
 	const paginationId = 'url_id';
@@ -53,11 +54,12 @@ export default function ScreenshotTable( { slug } ) {
 			} } />,
 			header: null,
 		} ),
-		columnHelper?.accessor( 'screenshot_url', {
+		columnHelper?.accessor( 'screenshot_url_carousel_thumbnail', {
 			className: 'thumbnail',
-			cell: ( image ) => image?.getValue()
-				? <a href={ image?.getValue() } target="_blank" rel="noreferrer"><img src={ image?.getValue() } alt={ image.row.original.url_name } /></a>
-				: <div className="img"></div>,
+			cell: ( image ) => <ImageThumbnail src={ image?.getValue() }
+				alt={ image.row.original.url_name }
+				thumb={ image?.getValue() }
+				href={ image.row.original.screenshot_url } />,
 			header: __( 'Thumbnail' ),
 			size: 80,
 		} ),
