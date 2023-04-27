@@ -265,7 +265,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 		);
 	}
 
-	public function get_items( $request ) {
+	public function get_items( WP_REST_Request $request ) {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
@@ -305,7 +305,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 		);
 	}
 
-	protected function get_items_sql( $request ): Urlslab_Api_Table_Sql {
+	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( '*' );
 		$sql->add_from( $this->get_row_object()->get_table_name() );

@@ -25,7 +25,7 @@ class Urlslab_Api_Billing extends Urlslab_Api_Base {
 		);
 	}
 
-	public function get_credits( $request ) {
+	public function get_credits( WP_REST_Request $request ) {
 		try {
 			$credit = $this->get_client()->getLastCreditStatus();
 
@@ -35,7 +35,7 @@ class Urlslab_Api_Billing extends Urlslab_Api_Base {
 		}
 	}
 
-	public function get_credit_events( $request ) {
+	public function get_credit_events( WP_REST_Request $request ) {
 		try {
 			$credit_events = $this->get_client()->getCreditEvents();
 
@@ -46,7 +46,7 @@ class Urlslab_Api_Billing extends Urlslab_Api_Base {
 	}
 
 
-	public function get_credit_aggregation( $request ) {
+	public function get_credit_aggregation( WP_REST_Request $request ) {
 		try {
 			$credit_aggregation = $this->get_client()->getCreditEventsAggregation();
 

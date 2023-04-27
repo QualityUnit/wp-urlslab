@@ -105,7 +105,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		register_rest_route( self::NAMESPACE, $base . '/(?P<fileid>[0-9a-zA-Z]+)/urls/count', $this->get_count_route( $this->get_route_file_urls() ) );
 	}
 
-	public function get_items( $request ) {
+	public function get_items( WP_REST_Request $request ) {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
@@ -128,7 +128,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		return new WP_REST_Response( $rows, 200 );
 	}
 
-	public function get_file_urls( $request ) {
+	public function get_file_urls( WP_REST_Request $request ) {
 		$rows = $this->get_file_urls_sql( $request )->get_results();
 		if ( ! is_array( $rows ) ) {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
@@ -140,11 +140,11 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		return new WP_REST_Response( $rows, 200 );
 	}
 
-	public function get_file_urls_count( $request ) {
+	public function get_file_urls_count( WP_REST_Request $request ) {
 		return new WP_REST_Response( $this->get_file_urls_sql( $request )->get_count(), 200 );
 	}
 
-	public function delete_item( $request ) {
+	public function delete_item( WP_REST_Request $request ) {
 		global $wpdb;
 
 		$delete_params           = array();
@@ -174,7 +174,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		}
 	}
 
-	public function delete_all_items( $request ) {
+	public function delete_all_items( WP_REST_Request $request ) {
 		global $wpdb;
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_FILES_TABLE ) ) ) { // phpcs:ignore
@@ -215,7 +215,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		);
 	}
 
-	public function get_file_urls_sql( $request ): Urlslab_Api_Table_Sql {
+	public function get_file_urls_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( 'url_id', 'm' );
 		$sql->add_select_column( 'url_name', 'u' );

@@ -186,7 +186,7 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 		);
 	}
 
-	protected function get_items_sql( $request ): Urlslab_Api_Table_Sql {
+	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( '*' );
 		$sql->add_from( URLSLAB_SEARCH_AND_REPLACE_TABLE );

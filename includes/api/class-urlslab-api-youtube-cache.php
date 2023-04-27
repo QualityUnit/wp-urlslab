@@ -114,7 +114,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 		);
 	}
 
-	public function get_video_urls( $request ) {
+	public function get_video_urls( WP_REST_Request $request ) {
 		$rows = $this->get_video_urls_sql( $request )->get_results();
 		if ( ! is_array( $rows ) ) {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
@@ -126,7 +126,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 		return new WP_REST_Response( $rows, 200 );
 	}
 
-	public function get_video_urls_sql( $request ): Urlslab_Api_Table_Sql {
+	public function get_video_urls_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( 'url_id', 'm' );
 		$sql->add_select_column( 'url_name', 'u' );
@@ -140,7 +140,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 		return $sql;
 	}
 
-	protected function get_items_sql( $request ): Urlslab_Api_Table_Sql {
+	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( '*', 'y' );
 		$sql->add_select_column( 'SUM(!ISNULL(m.url_id))', false, 'usage_count' );

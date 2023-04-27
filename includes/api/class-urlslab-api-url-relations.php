@@ -87,7 +87,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		);
 	}
 
-	public function get_items( $request ) {
+	public function get_items( WP_REST_Request $request ) {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
@@ -214,7 +214,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		);
 	}
 
-	public function create_item( $request ) {
+	public function create_item( WP_REST_Request $request ) {
 		try {
 			$src_url_obj                                             = new Urlslab_Url( $request->get_param( 'src_url_name' ) );
 			$dest_url_obj                                            = new Urlslab_Url( $request->get_param( 'dest_url_name' ) );

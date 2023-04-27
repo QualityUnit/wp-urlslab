@@ -132,7 +132,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 		);
 	}
 
-	public function get_items( $request ) {
+	public function get_items( WP_REST_Request $request ) {
 		try {
 			$result = array();
 			foreach ( $this->get_client()->listSchedules() as $schedule ) {
@@ -155,7 +155,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 		}
 	}
 
-	public function create_item( $request ) {
+	public function create_item( WP_REST_Request $request ) {
 		try {
 			$schedule = new DomainScheduleScheduleConf();
 
@@ -213,7 +213,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 		}
 	}
 
-	public function delete_item( $request ) {
+	public function delete_item( WP_REST_Request $request ) {
 		try {
 			$this->get_client()->deleteSchedule( $request->get_param( 'schedule_id' ) );
 

@@ -123,11 +123,11 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 	}
 
 
-	public function translate_permissions_check( $request ) {
+	public function translate_permissions_check( WP_REST_Request $request ) {
 		return is_admin() || current_user_can( 'translate' );
 	}
 
-	public function get_items( $request ) {
+	public function get_items( WP_REST_Request $request ) {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
@@ -141,7 +141,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 		return new WP_REST_Response( $rows, 200 );
 	}
 
-	public function get_translation( $request ) {
+	public function get_translation( WP_REST_Request $request ) {
 		$source_lang = $request->get_param( 'source_lang' );
 		$target_lang = $request->get_param( 'target_lang' );
 
@@ -275,7 +275,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 		);
 	}
 
-	public function get_generator_urls( $request ) {
+	public function get_generator_urls( WP_REST_Request $request ) {
 		$rows = $this->get_generator_urls_sql( $request )->get_results();
 		if ( ! is_array( $rows ) ) {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
@@ -287,7 +287,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 		return new WP_REST_Response( $rows, 200 );
 	}
 
-	public function get_generator_urls_sql( $request ): Urlslab_Api_Table_Sql {
+	public function get_generator_urls_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( 'url_id', 'm' );
 		$sql->add_select_column( 'url_name', 'u' );

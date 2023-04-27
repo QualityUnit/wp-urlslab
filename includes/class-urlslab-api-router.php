@@ -67,7 +67,7 @@ class Urlslab_Api_Router {
 		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-billing.php';
 		( new Urlslab_Api_Billing() )->register_routes();
 
-		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-roles.php';
-		( new Urlslab_Api_Roles() )->register_routes();
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-permissions.php';
+		( new Urlslab_Api_Permissions() )->register_routes();
 	}
 }
