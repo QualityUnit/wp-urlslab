@@ -137,6 +137,19 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 	 *
 	 * @return WP_Error|WP_REST_Response
 	 */
+	public function update_item_permissions_check( $request ) {
+		return current_user_can( 'activate_plugins' ) || current_user_can( self::CAPABILITY_ADMINISTRATION );
+	}
+
+	public function delete_item_permissions_check( $request ) {
+		return current_user_can( 'activate_plugins' ) || current_user_can( self::CAPABILITY_ADMINISTRATION );
+	}
+
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
 	public function get_items( $request ) {
 		try {
 			$result = array();

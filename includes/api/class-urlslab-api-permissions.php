@@ -66,7 +66,7 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 					'callback'            => array( $this, 'update_role' ),
 					'permission_callback' => array(
 						$this,
-						'delete_item_permissions_check',
+						'update_item_permissions_check',
 					),
 					'args'                => array(
 						'role_name'    => array(
@@ -101,8 +101,64 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 				),
 			)
 		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/user',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_users' ),
+					'permission_callback' => array(
+						$this,
+						'get_items_permissions_check',
+					),
+					'args'                => array(),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/user/(?P<user_id>[0-9]+)',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'update_user_permissions' ),
+					'permission_callback' => array(
+						$this,
+						'update_item_permissions_check',
+					),
+					'args'                => array(
+						'capabilities' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_array( $param ) || empty( $param );
+							},
+						),
+						'roles'        => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_array( $param ) || empty( $param );
+							},
+						),
+					),
+				),
+			)
+		);
 	}
 
+	public function get_items_permissions_check( $request ) {
+		return current_user_can( 'activate_plugins' ) || current_user_can( self::CAPABILITY_ADMINISTRATION );
+	}
+
+	public function update_item_permissions_check( $request ) {
+		return current_user_can( 'activate_plugins' ) || current_user_can( self::CAPABILITY_ADMINISTRATION );
+	}
+
+	public function delete_item_permissions_check( $request ) {
+		return current_user_can( 'activate_plugins' ) || current_user_can( self::CAPABILITY_ADMINISTRATION );
+	}
 
 	public function create_role( WP_REST_Request $request ) {
 		$capabilities = array();
@@ -185,6 +241,63 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 		}
 
 		return new WP_REST_Response( $all_roles, 200 );
+	}
+
+	public function get_users( WP_REST_Request $request ) {
+		$users = get_users();
+
+		$resultset = array();
+		foreach ( $users as $user_id => $user ) {
+			$resultset[] = (object) array(
+				'user_id'      => $user_id,
+				'user_login'   => $user->user_login,
+				'user_email'   => $user->data->user_email,
+				'user_status'  => $user->data->user_status,
+				'display_name' => $user->data->display_name,
+				'roles'        => (array) $user->roles,
+				'custom_capabilities' => array_keys( $user->caps ),
+				'all_capabilities' => array_keys( $user->allcaps ),
+			);
+		}
+
+		return new WP_REST_Response( $resultset, 200 );
+	}
+
+	public function update_user_permissions( WP_REST_Request $request ) {
+		$user = get_user_by( 'id', $request->get_param( 'user_id' ) );
+		if ( $user ) {
+			if ( isset( $request->get_json_params()['roles'] ) ) {
+				foreach ( $user->roles as $role ) {
+					if ( ! in_array( $role, $request->get_json_params()['roles'] ) ) {
+						$user->remove_role( $role );
+					}
+				}
+
+				foreach ( $request->get_json_params()['roles'] as $role ) {
+					if ( ! in_array( $role, $user->roles ) ) {
+						$user->add_role( $role );
+					}
+				}
+			}
+			if ( isset( $request->get_json_params()['capabilities'] ) ) {
+				$user_capabilities = array_keys( $user->caps );
+				foreach ( $user_capabilities as $capability ) {
+					if ( ! in_array( $capability, $request->get_json_params()['capabilities'] ) && ! in_array( $capability, $user->roles ) ) {
+						$user->remove_cap( $capability );
+					}
+				}
+
+				foreach ( $request->get_json_params()['capabilities'] as $capability ) {
+					if ( ! isset( $user->caps[ $capability ] ) ) {
+						$user->add_cap( $capability );
+					}
+				}
+			}
+		} else {
+			return new WP_REST_Response( __( 'User not found' ), 404 );
+		}
+
+		return new WP_REST_Response( $user, 200 );
 	}
 
 
