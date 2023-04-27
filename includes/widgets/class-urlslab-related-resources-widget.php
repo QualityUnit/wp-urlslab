@@ -19,6 +19,10 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	public const SETTING_NAME_DEFAULT_IMAGE_URL = 'urlslab-relres-def-img';
 	public const SETTING_NAME_AUTOINCLUDE_POST_TYPES = 'urlslab-relres-autoinc-post-types';
 
+	public function get_widget_labels(): array {
+		return array( self::LABEL_PAID, self::LABEL_BETA );
+	}
+
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'hook_callback', 10, 0 );

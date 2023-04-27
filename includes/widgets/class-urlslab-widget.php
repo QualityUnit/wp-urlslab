@@ -14,6 +14,16 @@ abstract class Urlslab_Widget {
 	public const OPTION_TYPE_MULTI_CHECKBOX = 'multicheck';
 	public const OPTION_TYPE_NUMBER = 'number';
 
+	public const LABEL_PAID = 'paid';
+	public const LABEL_FREE = 'free';
+	public const LABEL_EXPERIMENTAL = 'experimental';
+	public const LABEL_BETA = 'beta';
+	public const LABEL_ALPHA = 'alpha';
+	public const LABEL_EXPERT = 'expert';
+	public const LABEL_SEO = 'seo';
+	public const LABEL_CRON = 'cron';
+
+
 	private static $current_page_url;
 
 	private $options = false;
@@ -256,11 +266,16 @@ abstract class Urlslab_Widget {
 
 	protected function add_options() {}
 
-	protected function add_options_form_section( $id, $title, $description ) {
+	public function get_widget_labels(): array {
+		return array();
+	}
+
+	protected function add_options_form_section( $id, $title, $description, $labels = array() ) {
 		$this->option_sections[ $id ] = array(
 			'id'          => $id,
 			'title'       => $title,
 			'description' => $description,
+			'labels'      => $labels,
 		);
 	}
 
@@ -279,13 +294,15 @@ abstract class Urlslab_Widget {
 		$type = self::OPTION_TYPE_CHECKBOX,
 		$possible_values = false,
 		callable $validator = null,
-		$form_section_id = 'default'
+		$form_section_id = 'default',
+		$labels = array()
 	) {
 		if ( empty( $this->option_sections ) ) {
 			$this->option_sections[] = array(
 				'id'          => 'default',
 				'title'       => __( 'Module Settings' ),
 				'description' => '',
+				'labels'      => array(),
 			);
 		}
 
@@ -305,6 +322,7 @@ abstract class Urlslab_Widget {
 			'possible_values' => $possible_values,
 			'validator'       => $validator,
 			'section'         => $form_section_id,
+			'labels'          => $labels,
 		);
 	}
 

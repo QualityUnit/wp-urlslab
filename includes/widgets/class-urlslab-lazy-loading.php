@@ -44,6 +44,10 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		return __( 'Optimize page performance with lazy loading, and reduce page load time by deferring loading of images, videos, iframes, and large content chunks' );
 	}
 
+	public function get_widget_labels(): array {
+		return array( self::LABEL_FREE );
+	}
+
 	public function the_content( DOMDocument $document ) {
 		if ( $this->get_option( self::SETTING_NAME_CONTENT_LAZY_LOADING ) ) {
 			$this->content_lazy_loading( $document );
@@ -153,11 +157,12 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			false,
 			true,
 			__( 'Generate Empty Image as Placeholder' ),
-			__( 'Render empty placeholder images that decrease the CLS parameter in Core Web Vitals due to lazy image loading. <strong>Experimental feature! Some browsers can incorrectly render the images.</strong>' ),
+			__( 'Render empty placeholder images that decrease the CLS parameter in Core Web Vitals due to lazy image loading. <strong>Some browsers can incorrectly render the images, test before using in production.</strong>' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'main'
+			'main',
+			array( self::LABEL_EXPERT, self::LABEL_EXPERIMENTAL )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_VIDEO_LAZY_LOADING,
@@ -217,7 +222,13 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			'youtube'
 		);
 
-		$this->add_options_form_section( 'content', __( 'Content Lazy Loading Settings' ), __( 'Lazy loading of content is an effective way to optimize the size of the DOM on the first page load, drastically improving the user experience. As the visitor scrolls down the page, content is dynamically loaded from the server and displayed on the page, enabling faster loading times and an improved overall experience.' ) );
+		$this->add_options_form_section(
+			'content',
+			__( 'Content Lazy Loading Settings' ),
+			__( 'Lazy loading of content is an effective way to optimize the size of the DOM on the first page load, drastically improving the user experience. As the visitor scrolls down the page, content is dynamically loaded from the server and displayed on the page, enabling faster loading times and an improved overall experience.' ),
+			array( self::LABEL_EXPERT )
+		);
+
 		$this->add_option_definition(
 			self::SETTING_NAME_CONTENT_LAZY_LOADING,
 			false,

@@ -111,6 +111,10 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		return __( 'Accelerate the website\'s performance by utilizing automatic image enhancement and offloading images to the cloud or a database' );
 	}
 
+	public function get_widget_labels(): array {
+		return array( self::LABEL_FREE );
+	}
+
 	public function wp_handle_upload( $file, $overrides = false, $time = null ) {
 		$file_obj = new Urlslab_File_Row(
 			array(
