@@ -63,22 +63,16 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 	}
 
 	private function is_edit_mode(): bool {
+		$arr_modes = array(
+			'trash',
+			'auto-draft',
+			'inherit',
+		);
+
 		return isset( $_REQUEST['elementor-preview'] ) ||
-			   (
-				   isset( $_REQUEST['action'] ) &&
-				   false !== strpos( $_REQUEST['action'], 'elementor' )
-			   )
-			   ||
-			   in_array( get_post_status(), array(
-				   'trash',
-				   'auto-draft',
-				   'inherit',
-			   ) )
-			   ||
-			   (
-				   class_exists( '\Elementor\Plugin' ) &&
-				   \Elementor\Plugin::$instance->editor->is_edit_mode()
-			   );
+			   ( isset( $_REQUEST['action'] ) && false !== strpos( $_REQUEST['action'], 'elementor' ) ) ||
+			   in_array( get_post_status(), $arr_modes ) ||
+			   ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() );
 	}
 
 	private function get_placeholder_html( array $atts ): string {
@@ -131,12 +125,15 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			return $this->get_placeholder_html( $atts );
 		}
 
-		$obj_result = new Urlslab_Generator_Result_Row( array(
-			'shortcode_id'     => $atts['id'],
-			'semantic_context' => $this->get_template_value( $obj->get_semantic_context(), $atts ),
-			'prompt_variables' => json_encode( $atts ),
-			'url_filter'       => $this->get_template_value( $obj->get_url_filter(), $atts ),
-		), false );
+		$obj_result = new Urlslab_Generator_Result_Row(
+			array(
+				'shortcode_id'     => $atts['id'],
+				'semantic_context' => $this->get_template_value( $obj->get_semantic_context(), $atts ),
+				'prompt_variables' => json_encode( $atts ),
+				'url_filter'       => $this->get_template_value( $obj->get_url_filter(), $atts ),
+			),
+			false
+		);
 
 		if ( $obj_result->load() ) {
 			if ( $obj_result->is_active() ) {
