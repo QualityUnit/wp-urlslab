@@ -1,8 +1,10 @@
 <?php
 
 class Urlslab_Api_Languages extends Urlslab_Api_Base {
+	const SLUG = 'language';
+
 	public function register_routes() {
-		$base = '/language';
+		$base = '/' . self::SLUG;
 		register_rest_route(
 			self::NAMESPACE,
 			$base . '/',
@@ -27,7 +29,7 @@ class Urlslab_Api_Languages extends Urlslab_Api_Base {
 	 */
 	public function get_items( $request ) {
 		try {
-			$languages = apply_filters( 'wpml_active_languages', null, 'skip_missing=0&orderby=code' );
+			$languages          = apply_filters( 'wpml_active_languages', null, 'skip_missing=0&orderby=code' );
 			$response_languages = array(
 				(object) array(
 					'code' => 'all',

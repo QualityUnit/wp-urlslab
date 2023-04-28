@@ -1,9 +1,12 @@
 <?php
 
 class Urlslab_Api_Labels extends Urlslab_Api_Table {
+	const SLUG = 'label';
+
 	public function register_routes() {
-		$base = '/label';
+		$base = '/' . self::SLUG;
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
+		register_rest_route( self::NAMESPACE, $base . '/modules', $this->get_route_get_modules() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
 		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
 
@@ -104,6 +107,52 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 		return new WP_REST_Response( $rows, 200 );
 	}
 
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_modules( $request ) {
+		$rows   = array();
+		$rows[] = (object) array(
+			'slug'  => Urlslab_Api_Content_Generators::SLUG,
+			'title' => __( 'Content Generator', 'urlslab' ),
+		);
+
+		$rows[] = (object) array(
+			'slug'  => Urlslab_Api_Files::SLUG,
+			'title' => __( 'Media Files', 'urlslab' ),
+		);
+		$rows[] = (object) array(
+			'slug'  => Urlslab_Api_Keywords::SLUG,
+			'title' => __( 'Keywords', 'urlslab' ),
+		);
+		$rows[] = (object) array(
+			'slug'  => Urlslab_Api_Meta_Tags::SLUG,
+			'title' => __( 'Meta Tags', 'urlslab' ),
+		);
+		$rows[] = (object) array(
+			'slug'  => Urlslab_Api_Redirects::SLUG,
+			'title' => __( 'Redirects', 'urlslab' ),
+		);
+
+		$rows[] = (object) array(
+			'slug'  => Urlslab_Api_Screenshots::SLUG,
+			'title' => __( 'Screenshots', 'urlslab' ),
+		);
+
+		$rows[] = (object) array(
+			'slug'  => Urlslab_Api_Search_Replace::SLUG,
+			'title' => __( 'Search & Replace', 'urlslab' ),
+		);
+		$rows[] = (object) array(
+			'slug'  => Urlslab_Api_Urls::SLUG,
+			'title' => __( 'Urls', 'urlslab' ),
+		);
+
+		return new WP_REST_Response( $rows, 200 );
+	}
+
 	public function get_row_object( $params = array() ): Urlslab_Data {
 		return new Urlslab_Label_Row( $params );
 	}
@@ -139,5 +188,18 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 		$sql->add_sorting( $columns, $request );
 
 		return $sql;
+	}
+
+	private function get_route_get_modules() {
+		return array(
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_modules' ),
+				'permission_callback' => array(
+					$this,
+					'get_items_permissions_check',
+				),
+			),
+		);
 	}
 }

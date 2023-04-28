@@ -1,8 +1,10 @@
 <?php
 
 class Urlslab_Api_Content_Cache extends Urlslab_Api_Table {
+	const SLUG = 'content-cache';
+
 	public function register_routes() {
-		$base = '/content-cache';
+		$base = '/' . self::SLUG;
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
 

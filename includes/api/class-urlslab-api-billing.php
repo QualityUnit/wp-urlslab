@@ -3,8 +3,10 @@
 use OpenAPI\Client\Configuration;
 
 class Urlslab_Api_Billing extends Urlslab_Api_Base {
+	const SLUG = 'billing';
+
 	public function register_routes() {
-		$base = '/billing';
+		$base = '/' . self::SLUG;
 
 		register_rest_route( self::NAMESPACE, $base . '/credits', $this->read_arguments( 'get_credits' ) );
 		register_rest_route( self::NAMESPACE, $base . '/credits/events', $this->read_arguments( 'get_credit_events' ) );

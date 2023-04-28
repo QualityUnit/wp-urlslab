@@ -1,8 +1,10 @@
 <?php
 
 class Urlslab_Api_Cron extends Urlslab_Api_Base {
+	const SLUG = 'cron';
+
 	public function register_routes() {
-		$base = '/cron';
+		$base = '/' . self::SLUG;
 		register_rest_route(
 			self::NAMESPACE,
 			$base,

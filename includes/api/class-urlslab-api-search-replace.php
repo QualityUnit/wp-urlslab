@@ -1,8 +1,10 @@
 <?php
 
 class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
+	const SLUG = 'search-replace';
+
 	public function register_routes() {
-		$base = '/search-replace';
+		$base = '/' . self::SLUG;
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_items() ) ) );
@@ -50,7 +52,7 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 								}
 							},
 						),
-						'labels'     => array(
+						'labels'      => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
@@ -158,7 +160,7 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 						return 250 > strlen( $param );
 					},
 				),
-				'labels'     => array(
+				'labels'      => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
@@ -194,6 +196,7 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
 		$sql->add_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
+
 		return $sql;
 	}
 

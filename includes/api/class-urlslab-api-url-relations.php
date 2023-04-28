@@ -1,8 +1,10 @@
 <?php
 
 class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
+	const SLUG = 'url-relation';
+
 	public function register_routes() {
-		$base = '/url-relation';
+		$base = '/' . self::SLUG;
 
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );

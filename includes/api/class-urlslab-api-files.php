@@ -1,8 +1,10 @@
 <?php
 
 class Urlslab_Api_Files extends Urlslab_Api_Table {
+	const SLUG = 'file';
+
 	public function register_routes() {
-		$base = '/file';
+		$base = '/' . self::SLUG;
 
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );

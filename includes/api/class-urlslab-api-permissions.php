@@ -1,8 +1,10 @@
 <?php
 
 class Urlslab_Api_Permissions extends Urlslab_Api_Base {
+	const SLUG = 'permission';
+
 	public function register_routes() {
-		$base = '/permission';
+		$base = '/' . self::SLUG;
 		register_rest_route(
 			self::NAMESPACE,
 			$base . '/role',
@@ -249,14 +251,14 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 		$resultset = array();
 		foreach ( $users as $user_id => $user ) {
 			$resultset[] = (object) array(
-				'user_id'      => $user_id,
-				'user_login'   => $user->user_login,
-				'user_email'   => $user->data->user_email,
-				'user_status'  => $user->data->user_status,
-				'display_name' => $user->data->display_name,
-				'roles'        => (array) $user->roles,
+				'user_id'             => $user_id,
+				'user_login'          => $user->user_login,
+				'user_email'          => $user->data->user_email,
+				'user_status'         => $user->data->user_status,
+				'display_name'        => $user->data->display_name,
+				'roles'               => (array) $user->roles,
 				'custom_capabilities' => array_keys( $user->caps ),
-				'all_capabilities' => array_keys( $user->allcaps ),
+				'all_capabilities'    => array_keys( $user->allcaps ),
 			);
 		}
 
