@@ -102,14 +102,6 @@ class Urlslab_Activator {
 		);
 
 		self::update_step(
-			'2.5.0',
-			function() {
-				global $wpdb;
-				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_CONTENT_GENERATORS_TABLE ); // phpcs:ignore
-				self::init_content_generators_table();
-			}
-		);
-		self::update_step(
 			'2.6.0',
 			function() {
 				self::init_not_found_log_table();
@@ -169,8 +161,19 @@ class Urlslab_Activator {
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_KEYWORDS_TABLE . " ADD COLUMN labels VARCHAR(255) NOT NULL DEFAULT ''" ); // phpcs:ignore
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_FILES_TABLE . " ADD COLUMN labels VARCHAR(255) NOT NULL DEFAULT ''" ); // phpcs:ignore
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SEARCH_AND_REPLACE_TABLE . " ADD COLUMN labels VARCHAR(255) NOT NULL DEFAULT ''" ); // phpcs:ignore
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_CONTENT_GENERATORS_TABLE . " ADD COLUMN labels VARCHAR(255) NOT NULL DEFAULT ''" ); // phpcs:ignore
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_REDIRECTS_TABLE . " ADD COLUMN labels VARCHAR(255) NOT NULL DEFAULT ''" ); // phpcs:ignore
+			}
+		);
+
+		self::update_step(
+			'2.17.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_CONTENT_GENERATORS_TABLE ); // phpcs:ignore
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_CONTENT_GENERATOR_URLS_TABLE ); // phpcs:ignore
+				self::init_generator_shortcodes_table();
+				self::init_generator_results_table();
+				self::init_generator_urls_table();
 			}
 		);
 
@@ -196,11 +199,12 @@ class Urlslab_Activator {
 		self::init_content_cache_tables();
 		self::init_search_replace_tables();
 		self::init_screenshot_urls_table();
-		self::init_content_generators_table();
-		self::init_content_generator_urls_table();
 		self::init_not_found_log_table();
 		self::init_redirects_table();
 		self::init_labels_table();
+		self::init_generator_shortcodes_table();
+		self::init_generator_results_table();
+		self::init_generator_urls_table();
 	}
 
 	private static function init_urls_tables() {
@@ -296,7 +300,7 @@ class Urlslab_Activator {
 		$table_name      = URLSLAB_ERROR_LOG_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
-							id int NOT NULL AUTO_INCREMENT,
+							id int UNSIGNED NOT NULL AUTO_INCREMENT,
 							errorLog text NOT NULL,
 							PRIMARY KEY  (id)) {$charset_collate};";
 
@@ -472,7 +476,7 @@ class Urlslab_Activator {
 
 		$table_name = URLSLAB_SEARCH_AND_REPLACE_TABLE;
 		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
-						id int NOT NULL AUTO_INCREMENT,
+						id int UNSIGNED NOT NULL AUTO_INCREMENT,
 						str_search TEXT,
 						str_replace TEXT,
 						search_type CHAR(1) NOT NULL DEFAULT 'T',
@@ -500,37 +504,61 @@ class Urlslab_Activator {
 		dbDelta( $sql );
 	}
 
-	private static function init_content_generators_table() {
+	private static function init_generator_shortcodes_table() {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 
-		$table_name = URLSLAB_CONTENT_GENERATORS_TABLE;
+		$table_name = URLSLAB_GENERATOR_SHORTCODES_TABLE;
 		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
-						generator_id bigint NOT NULL,
+						shortcode_id int unsigned NOT NULL AUTO_INCREMENT,
 						semantic_context TEXT,
-						command TEXT,
+						prompt TEXT,
+						default_value TEXT,
 						url_filter TEXT,
-						result LONGTEXT,
 						status CHAR(1) NOT NULL DEFAULT 'N',
-						lang VARCHAR(8),
-						status_changed DATETIME NULL,
-						labels VARCHAR(255) NOT NULL DEFAULT '',
-						PRIMARY KEY (generator_id)
+						model VARCHAR(100),
+						date_changed DATETIME NULL,
+						PRIMARY KEY (shortcode_id)
         ) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 	}
 
-	private static function init_content_generator_urls_table() {
+	private static function init_generator_results_table() {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 
-		$table_name = URLSLAB_CONTENT_GENERATOR_URLS_TABLE;
+		$table_name = URLSLAB_GENERATOR_RESULTS_TABLE;
 		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
-    		  generator_id bigint NOT NULL,
+						shortcode_id int UNSIGNED NOT NULL AUTO_INCREMENT,
+						hash_id bigint NOT NULL,
+						semantic_context TEXT,
+						prompt_variables TEXT,
+						result TEXT,
+						url_filter TEXT,
+						status CHAR(1) NOT NULL DEFAULT 'N',
+						date_changed DATETIME NULL,
+						labels VARCHAR(255) NOT NULL DEFAULT '',
+						PRIMARY KEY (shortcode_id, hash_id)
+        ) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+
+	private static function init_generator_urls_table() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$table_name = URLSLAB_GENERATOR_URLS_TABLE;
+		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
+    		  shortcode_id bigint NOT NULL,
+    		  hash_id bigint NOT NULL,
     		  url_id bigint NOT NULL,
-			  PRIMARY KEY (generator_id, url_id)
+    		  created DATETIME NULL,
+			  PRIMARY KEY (shortcode_id, hash_id, url_id)
         ) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -564,7 +592,7 @@ class Urlslab_Activator {
 
 		$table_name = URLSLAB_REDIRECTS_TABLE;
 		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
-						redirect_id int AUTO_INCREMENT,
+						redirect_id int UNSIGNED NOT NULL AUTO_INCREMENT,
 						match_type CHAR(1) DEFAULT 'S',
 						match_url VARCHAR(2000),
 						replace_url VARCHAR(2000),
@@ -595,7 +623,7 @@ class Urlslab_Activator {
 
 		$table_name = URLSLAB_LABELS_TABLE;
 		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
-						label_id int AUTO_INCREMENT,
+						label_id int UNSIGNED NOT NULL AUTO_INCREMENT,
 						name VARCHAR(64),
 						bgcolor VARCHAR(20),
 						modules VARCHAR(1000),

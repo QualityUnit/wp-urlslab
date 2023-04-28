@@ -4,15 +4,15 @@ import Overview from '../components/OverviewTemplate';
 import GeneratorOverview from '../overview/Generator';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 import { useI18n } from '@wordpress/react-i18n';
+import GeneratorResultTable from '../tables/GeneratorResultTable';
 
 export default function Generator( { moduleId } ) {
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 	const { __ } = useI18n();
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
-	const GeneratorTable = lazy( () => import( `../tables/GeneratorTable.jsx` ) );
-	const slug = 'content-generator';
+	const GeneratorResultTable = lazy( () => import( `../tables/GeneratorResultTable.jsx` ) );
 	const tableMenu = new Map( [
-		[ slug, __( 'Contents' ) ],
+		[ 'result', __( 'Generated Results' ) ],
 	] );
 
 	return (
@@ -25,9 +25,9 @@ export default function Generator( { moduleId } ) {
 				</Overview>
 			}
 			{
-				activeSection === slug &&
+				activeSection === 'result' &&
 				<Suspense>
-					<GeneratorTable slug={ slug } />
+					<GeneratorResultTable slug='generator/result' />
 				</Suspense>
 			}
 			{
