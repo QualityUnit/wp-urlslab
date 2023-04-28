@@ -1,11 +1,12 @@
 /* eslint-disable indent */
 import { useState } from 'react';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, SortMenu, LangMenu, InputField, Checkbox, LinkIcon, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, SortBy, SortMenu, Tag, LangMenu, InputField, Checkbox, LinkIcon, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
+import TagsMenu from '../elements/TagsMenu';
 
 export default function KeywordsTable( { slug } ) {
 	const paginationId = 'kw_id';
@@ -16,6 +17,7 @@ export default function KeywordsTable( { slug } ) {
 	const {
 		__,
 		columnHelper,
+		tags,
 		data,
 		status,
 		isSuccess,
@@ -37,6 +39,7 @@ export default function KeywordsTable( { slug } ) {
 		keyword: __( 'Keyword' ),
 		urlLink: __( 'Link' ),
 		kwType: __( 'Type' ),
+		labels: __( 'Tags' ),
 		kw_length: __( 'Length' ),
 		kw_priority: __( 'Priority' ),
 		kw_usage_count: __( 'Usage' ),
@@ -81,6 +84,12 @@ export default function KeywordsTable( { slug } ) {
 			cell: ( cell ) => <SortMenu items={ keywordTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.kwType }</SortBy>,
 			size: 100,
+		} ),
+		columnHelper.accessor( 'labels', {
+			className: 'nolimit',
+			cell: ( cell ) => <TagsMenu tags={ cell.getValue() } slug={ slug } />,
+			header: header.labels,
+			size: 180,
 		} ),
 		columnHelper.accessor( 'kw_length', {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.kw_length }</SortBy>,

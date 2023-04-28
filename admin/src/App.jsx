@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import { update } from 'idb-keyval';
 
-import { fetchData } from './api/fetching';
+import { fetchData, postFetch } from './api/fetching';
 import { fetchSettings } from './api/settings';
 import { fetchLangs } from './api/fetchLangs';
 
@@ -59,6 +59,23 @@ export default function App() {
 				refetchOnWindowFocus: false,
 			} );
 
+			// Creating Tags/Labels query object in advance
+			queryClient.prefetchQuery( {
+				queryKey: [ 'tags' ],
+				queryFn: async () => {
+					const tags = await postFetch( 'label', { rows_per_page: 500 } );
+					return tags.json();
+				},
+				refetchOnWindowFocus: false,
+			} );
+
+			// Creating Tags/Labels query object in advance
+			queryClient.prefetchQuery( {
+				queryKey: [ 'tags', 'modules' ],
+				queryFn: async () => await fetchData( 'label/modules' ),
+				refetchOnWindowFocus: false,
+			} );
+
 			setPrefetch( false );
 		}
 	}, [] );
@@ -91,7 +108,10 @@ export default function App() {
 		if ( selectedModule === 'urlslab-schedule' ) {
 			setTitle( __( 'Schedules' ) );
 		}
-		if ( selectedModule !== 'urlslab-modules' && selectedModule !== 'urlslab-settings' && selectedModule !== 'urlslab-schedule' ) {
+		if ( selectedModule === 'TagsLabels' ) {
+			setTitle( __( 'Tags' ) );
+		}
+		if ( selectedModule !== 'urlslab-modules' && selectedModule !== 'urlslab-settings' && selectedModule !== 'urlslab-schedule' && selectedModule !== 'TagsLabels' ) {
 			setTitle( fetchedModules[ selectedModule ].title );
 		}
 	};

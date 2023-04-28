@@ -101,6 +101,7 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 
 		foreach ( $rows as $row ) {
 			$row->label_id = (int) $row->label_id;
+			$row->value = (int) $row->label_id;
 			$row->modules  = explode( ',', $row->modules );
 		}
 
@@ -116,7 +117,7 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 		$rows   = array();
 		$rows[] = (object) array(
 			'slug'  => Urlslab_Api_Content_Generators::SLUG,
-			'title' => __( 'Content Generator', 'urlslab' ),
+			'title' => __( 'AI Content Generator', 'urlslab' ),
 		);
 
 		$rows[] = (object) array(
@@ -147,7 +148,7 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 		);
 		$rows[] = (object) array(
 			'slug'  => Urlslab_Api_Urls::SLUG,
-			'title' => __( 'Urls', 'urlslab' ),
+			'title' => __( 'Links Manager', 'urlslab' ),
 		);
 
 		return new WP_REST_Response( $rows, 200 );

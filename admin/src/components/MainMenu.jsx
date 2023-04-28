@@ -137,6 +137,19 @@ export default function MainMenu( { activeModule, modules, activePage, module } 
 							</li>
 						</ul>
 					</li>
+					<li key="TagsLabels"
+						className={ `urlslab-mainmenu-item submenu ${ activator( 'TagsLabels' ) }` }>
+						<ul className="urlslab-mainmenu-submenu">
+							<li className={ `urlslab-mainmenu-item` }>
+								<button
+									type="button"
+									className="urlslab-mainmenu-btn"
+									onClick={ () => handleActive( 'TagsLabels' ) }>
+									<span>{ __( 'Tags' ) }</span>
+								</button>
+							</li>
+						</ul>
+					</li>
 				</ul>
 			</div>
 		</nav>

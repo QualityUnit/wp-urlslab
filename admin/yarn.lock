@@ -1858,6 +1858,11 @@
   resolved "https://registry.yarnpkg.com/@wordpress/warning/-/warning-2.29.0.tgz#5730b616af0595268cec0ced0b9069b40313fb85"
   integrity sha512-e5jhOeX1g9kmr6Z79zjJnbhOdDpZx4alK1rXzV2nKpFs4TIw19rOkSO8i9Y2qmaWtZ2HVs6/uD4KwBPRcZ+eBQ==
 
+"@yaireo/tagify@^4.17.8":
+  version "4.17.8"
+  resolved "https://registry.yarnpkg.com/@yaireo/tagify/-/tagify-4.17.8.tgz#2696570843e3cd14318f305e80699d457aad918a"
+  integrity sha512-MqU3JhE/35r8qZPgfLshXfOkTkgtFEXh2Ja8J3Nn1rPuut28yorJLtxH67jbrbanE1gFH2vCvxe6meqM6oZ8rA==
+
 acorn-jsx@^5.3.2:
   version "5.3.2"
   resolved "https://registry.yarnpkg.com/acorn-jsx/-/acorn-jsx-5.3.2.tgz#7ed5bb55908b3b2f1bc55c6af1653bada7f07937"
