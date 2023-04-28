@@ -13,8 +13,9 @@ class Urlslab_Label_Row extends Urlslab_Data {
 	}
 
 	public function as_array(): array {
-		$data =  $this->data;
+		$data            = $this->data;
 		$data['modules'] = $this->get_modules();
+
 		return $data;
 	}
 
@@ -36,10 +37,10 @@ class Urlslab_Label_Row extends Urlslab_Data {
 
 	function random_color() {
 		$dt = '';
-		for($o=1;$o<=3;$o++)
-		{
-			$dt .= str_pad( dechex( mt_rand( 0, 127 ) ), 2, '0', STR_PAD_LEFT);
+		for ( $o = 1; $o <= 3; $o ++ ) {
+			$dt .= str_pad( dechex( mt_rand( 0, 127 ) ), 2, '0', STR_PAD_LEFT );
 		}
+
 		return '#' . $dt;
 	}
 
@@ -48,8 +49,8 @@ class Urlslab_Label_Row extends Urlslab_Data {
 	}
 
 	protected function set( $name, $value, $loaded_from_db ) {
-		if ( $name === 'modules' && is_array( $value ) ) {
-			if (empty($value)) {
+		if ( 'modules' === $name && is_array( $value ) ) {
+			if ( empty( $value ) ) {
 				$value = '';
 			} else {
 				$value = implode( ',', $value );
@@ -60,10 +61,10 @@ class Urlslab_Label_Row extends Urlslab_Data {
 	}
 
 	protected function get( $name ) {
-		if ( $name === 'modules' ) {
+		if ( 'modules' === $name ) {
 			$modules = parent::get( $name );
 			if ( ! is_array( $modules ) ) {
-				if (empty($modules)) {
+				if ( empty( $modules ) ) {
 					$modules = array();
 				} else {
 					$modules = explode( ',', $modules );
