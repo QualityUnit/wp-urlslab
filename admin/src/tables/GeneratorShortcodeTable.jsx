@@ -24,21 +24,15 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		return (
 			<div className="flex flex-align-center flex-justify-end">
 				{
-					( status === 'W' || status === 'D' ) &&
-					<IconButton className="mr-s c-saturated-green" tooltip={ __( 'Accept' ) } tooltipClass="align-left" onClick={ () => onClick( 'A' ) }>
+					( status === 'D' ) &&
+					<IconButton className="mr-s c-saturated-green" tooltip={ __( 'Activate' ) } tooltipClass="align-left" onClick={ () => onClick( 'A' ) }>
 						<AcceptIcon />
 					</IconButton>
 				}
 				{
-					( status === 'W' || status === 'A' ) &&
-					<IconButton className="mr-s c-saturated-red" tooltip={ __( 'Decline' ) } tooltipClass="align-left" onClick={ () => onClick( 'D' ) }>
+					( status === 'A' ) &&
+					<IconButton className="mr-s c-saturated-red" tooltip={ __( 'Disable' ) } tooltipClass="align-left" onClick={ () => onClick( 'D' ) }>
 						<DisableIcon />
-					</IconButton>
-				}
-				{
-					( status !== 'N' && status !== 'P' ) &&
-					<IconButton className="mr-s" tooltip={ __( 'Regenerate' ) } tooltipClass="align-left" onClick={ () => onClick( 'N' ) }>
-						<RefreshIcon />
 					</IconButton>
 				}
 			</div>
