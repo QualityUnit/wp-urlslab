@@ -253,7 +253,6 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$sql->add_having_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
 
-		$sql->add_group_by( 'shortcode_id', 'g' );
 		$sql->add_group_by( 'hash_id', 'g' );
 
 		return $sql;

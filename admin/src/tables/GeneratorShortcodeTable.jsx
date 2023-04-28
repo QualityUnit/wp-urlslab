@@ -12,9 +12,9 @@ import { langName } from '../lib/helpers';
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 
-export default function GeneratorResultTable( { slug } ) {
-	const paginationId = 'hash_id';
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( 'generator/result' );
+export default function GeneratorShortcodeTable( { slug } ) {
+	const paginationId = 'shortcode_id';
+	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( 'generator/shortcode' );
 
 	const url = { filters, sorting };
 
@@ -61,20 +61,17 @@ export default function GeneratorResultTable( { slug } ) {
 
 	const statusTypes = {
 		A: 'Active',
-		N: 'New',
-		P: 'Pending',
-		W: 'Waiting approval',
 		D: 'Disabled',
 	};
 
 	const header = {
-		command: __( 'Command' ),
+		prompt: __( 'Prompt' ),
 		semantic_context: __( 'Context' ),
 		url_filter: __( 'URL filter' ),
-		prompt_variables: __( 'Input data' ),
+		default_value: __( 'Default value' ),
 		status: __( 'Status' ),
 		date_changed: __( 'Last change' ),
-		result: __( 'Result' ),
+		model: __( 'Model' ),
 		usage_count: __( 'Usage' ),
 	};
 
@@ -86,9 +83,19 @@ export default function GeneratorResultTable( { slug } ) {
 			} } />,
 			header: null,
 		} ),
+		columnHelper.accessor( 'prompt', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.prompt }</SortBy>,
+			size: 180,
+		} ),
 		columnHelper.accessor( 'semantic_context', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.semantic_context }</SortBy>,
+			size: 180,
+		} ),
+		columnHelper.accessor( 'default_value', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.default_value }</SortBy>,
 			size: 180,
 		} ),
 		columnHelper.accessor( 'url_filter', {
@@ -96,21 +103,8 @@ export default function GeneratorResultTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_filter }</SortBy>,
 			size: 180,
 		} ),
-		columnHelper.accessor( 'prompt_variables', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.prompt_variables }</SortBy>,
-			size: 180,
-		} ),
-		columnHelper.accessor( 'lang', {
-			cell: ( cell ) => langName( cell?.getValue() ),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.lang }</SortBy>,
-			size: 100,
-		} ),
-		columnHelper.accessor( 'result', {
-			className: 'nolimit',
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.result }</SortBy>,
+		columnHelper.accessor( 'model', {
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.model }</SortBy>,
 			size: 180,
 		} ),
 		columnHelper.accessor( 'status', {
@@ -160,7 +154,7 @@ export default function GeneratorResultTable( { slug } ) {
 					slug,
 					url,
 					paginationId,
-					deleteCSVCols: [ paginationId, 'hash_id' ],
+					deleteCSVCols: [ paginationId, 'shortcode_id' ],
 				} }
 			/>
 			<Table className="fadeInto"
