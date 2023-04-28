@@ -5,8 +5,10 @@ use OpenAPI\Client\Model\DomainScheduleScheduleConf;
 use OpenAPI\Client\Urlslab\ScheduleApi;
 
 class Urlslab_Api_Schedules extends Urlslab_Api_Base {
+	const SLUG = 'schedule';
+
 	public function register_routes() {
-		$base = '/schedule';
+		$base = '/' . self::SLUG;
 
 		register_rest_route(
 			self::NAMESPACE,

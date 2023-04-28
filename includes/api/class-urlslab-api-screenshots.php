@@ -1,8 +1,10 @@
 <?php
 
 class Urlslab_Api_Screenshots extends Urlslab_Api_Urls {
+	const SLUG = 'screenshot';
+
 	public function __construct() {
-		$this->base = '/screenshot';
+		$this->base = '/' . self::SLUG;
 	}
 
 	public function register_routes() {

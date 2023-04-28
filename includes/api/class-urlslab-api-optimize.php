@@ -1,8 +1,10 @@
 <?php
 
 class Urlslab_Api_Optimize extends Urlslab_Api_Base {
+	const SLUG = 'optimize';
+
 	public function register_routes() {
-		$base = '/optimize';
+		$base = '/' . self::SLUG;
 
 		register_rest_route(
 			self::NAMESPACE,

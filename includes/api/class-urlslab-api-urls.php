@@ -1,7 +1,9 @@
 <?php
 
 class Urlslab_Api_Urls extends Urlslab_Api_Table {
-	protected $base = '/url';
+	const SLUG = 'url';
+
+	protected $base = '/' . self::SLUG;
 
 	public function register_routes() {
 		register_rest_route(

@@ -1,8 +1,10 @@
 <?php
 
 class Urlslab_Api_Settings extends Urlslab_Api_Base {
+	const SLUG = 'settings';
+
 	public function register_routes() {
-		$base = '/settings';
+		$base   = '/' . self::SLUG;
 		$module = '(?P<module_id>[0-9a-zA-Z_\-]+)';
 		register_rest_route(
 			self::NAMESPACE,
@@ -87,7 +89,7 @@ class Urlslab_Api_Settings extends Urlslab_Api_Base {
 
 		foreach ( $widget->get_option_sections() as $section ) {
 			foreach ( $widget->get_options( $section['id'] ) as $option ) {
-				$option['value'] = $widget->get_option( $option['id'] );
+				$option['value']                     = $widget->get_option( $option['id'] );
 				$section['options'][ $option['id'] ] = (object) $option;
 			}
 			$sections[] = (object) $section;

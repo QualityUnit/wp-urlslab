@@ -1,8 +1,10 @@
 <?php
 
 class Urlslab_Api_Not_Found_Log extends Urlslab_Api_Table {
+	const SLUG = 'not-found-log';
+
 	public function register_routes() {
-		$base = '/not-found-log';
+		$base = '/' . self::SLUG;
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
 		register_rest_route(

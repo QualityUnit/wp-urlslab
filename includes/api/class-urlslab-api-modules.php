@@ -1,8 +1,10 @@
 <?php
 
 class Urlslab_Api_Modules extends Urlslab_Api_Base {
+	const SLUG = 'module';
+
 	public function register_routes() {
-		$base = '/module';
+		$base = '/' . self::SLUG;
 		register_rest_route(
 			self::NAMESPACE,
 			$base,

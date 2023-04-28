@@ -1,8 +1,11 @@
 <?php
 
 class Urlslab_Api_Redirects extends Urlslab_Api_Table {
+	const SLUG = 'redirects';
+
 	public function register_routes() {
-		$base = '/redirects';
+		$base = '/' . self::SLUG;
+
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_items() ) ) );
@@ -97,7 +100,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 								return Urlslab_Redirect_Row::NOT_FOUND_STATUS_NOT_FOUND == $param || Urlslab_Redirect_Row::NOT_FOUND_STATUS_FOUND == $param || Urlslab_Redirect_Row::NOT_FOUND_STATUS_ANY == $param;
 							},
 						),
-						'labels'     => array(
+						'labels'        => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
@@ -251,7 +254,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 						return is_numeric( $param ) && 300 <= $param && 400 > $param;
 					},
 				),
-				'labels'     => array(
+				'labels'        => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );

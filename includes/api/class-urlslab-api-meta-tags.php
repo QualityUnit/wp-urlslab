@@ -1,8 +1,10 @@
 <?php
 
 class Urlslab_Api_Meta_Tags extends Urlslab_Api_Urls {
+	const SLUG = 'metatag';
+
 	public function __construct() {
-		$this->base = '/metatag';
+		$this->base = '/' . self::SLUG;
 	}
 
 	public function register_routes() {
@@ -27,7 +29,7 @@ class Urlslab_Api_Meta_Tags extends Urlslab_Api_Urls {
 								return is_string( $param );
 							},
 						),
-						'url_h1'            => array(
+						'url_h1'               => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
@@ -45,7 +47,7 @@ class Urlslab_Api_Meta_Tags extends Urlslab_Api_Urls {
 								return is_string( $param );
 							},
 						),
-						'labels'     => array(
+						'labels'               => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );

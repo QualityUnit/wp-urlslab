@@ -1,8 +1,10 @@
 <?php
 
 class Urlslab_Api_Keywords extends Urlslab_Api_Table {
+	const SLUG = 'keyword';
+
 	public function register_routes() {
-		$base = '/keyword';
+		$base = '/' . self::SLUG;
 
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
@@ -56,7 +58,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 								return 250 > strlen( $param );
 							},
 						),
-						'labels'     => array(
+						'labels'      => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
@@ -211,7 +213,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 						return 250 > strlen( $param );
 					},
 				),
-				'labels'     => array(
+				'labels'      => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
@@ -273,6 +275,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		$sql->add_select_column( 'kw_priority', 'v', 'kw_priority' );
 		$sql->add_select_column( 'kw_length', 'v', 'kw_length' );
 		$sql->add_select_column( 'lang', 'v', 'lang' );
+		$sql->add_select_column( 'labels', 'v', 'labels' );
 		$sql->add_select_column( 'urlLink', 'v', 'urlLink' );
 		$sql->add_select_column( 'urlFilter', 'v', 'urlFilter' );
 		$sql->add_select_column( 'kwType', 'v', 'kwType' );
