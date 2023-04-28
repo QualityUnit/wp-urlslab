@@ -4,7 +4,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 	const SLUG = 'generator/shortcode';
 
 	public function register_routes() {
-		$base = '/' . self::SLUG ;
+		$base = '/' . self::SLUG;
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
 
@@ -20,7 +20,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 						'update_item_permissions_check',
 					),
 					'args'                => array(
-						'status' => array(
+						'status'           => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
@@ -39,25 +39,31 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 								return is_string( $param );
 							},
 						),
-						'prompt' => array(
+						'prompt'           => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
-						'default_value' => array(
+						'default_value'    => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
-						'url_filter' => array(
+						'url_filter'       => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
-						'model' => array(
+						'template'         => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+						'model'            => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $param ||
@@ -133,7 +139,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 	}
 
 	public function get_editable_columns(): array {
-		return array( 'semantic_context', 'prompt', 'default_value', 'url_filter', 'status', 'model' );
+		return array( 'semantic_context', 'prompt', 'default_value', 'url_filter', 'status', 'model', 'template' );
 	}
 
 	/**
@@ -203,8 +209,8 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 		}
 		foreach ( $rows as $row ) {
 			$row->shortcode_id = (int) $row->shortcode_id; // phpcs:ignore
-			$row->url_id = (int) $row->url_id; // phpcs:ignore
-			$row->hash_id = (int) $row->hash_id; // phpcs:ignore
+			$row->url_id       = (int) $row->url_id; // phpcs:ignore
+			$row->hash_id      = (int) $row->hash_id; // phpcs:ignore
 		}
 
 		return new WP_REST_Response( $rows, 200 );

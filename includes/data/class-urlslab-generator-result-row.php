@@ -101,7 +101,7 @@ class Urlslab_Generator_Result_Row extends Urlslab_Data {
 	}
 
 	public function get_primary_columns(): array {
-		return array( 'shortcode_id', 'hash_id' );
+		return array( 'hash_id' );
 	}
 
 	public function get_columns(): array {

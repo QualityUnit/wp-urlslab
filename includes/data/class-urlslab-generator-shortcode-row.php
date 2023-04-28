@@ -13,6 +13,7 @@ class Urlslab_Generator_Shortcode_Row extends Urlslab_Data {
 		$this->set_status( $data['status'] ?? self::STATUS_ACTIVE, $loaded_from_db );
 		$this->set_date_changed( $data['date_changed'] ?? self::get_now(), $loaded_from_db );
 		$this->set_model( $data['model'] ?? '', $loaded_from_db );
+		$this->set_template( $data['template'] ?? '', $loaded_from_db );
 	}
 
 	public function get_shortcode_id(): int {
@@ -37,6 +38,14 @@ class Urlslab_Generator_Shortcode_Row extends Urlslab_Data {
 
 	public function set_prompt( string $prompt, $loaded_from_db = false ): void {
 		$this->set( 'prompt', $prompt, $loaded_from_db );
+	}
+
+	public function get_template(): string {
+		return $this->get( 'template' );
+	}
+
+	public function set_template( string $template, $loaded_from_db = false ): void {
+		$this->set( 'template', $template, $loaded_from_db );
 	}
 
 	public function get_default_value(): string {

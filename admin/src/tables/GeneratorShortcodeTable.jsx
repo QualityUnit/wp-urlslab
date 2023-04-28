@@ -66,6 +66,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		status: __( 'Status' ),
 		date_changed: __( 'Last change' ),
 		model: __( 'Model' ),
+		template: __( 'HTML template' ),
 		usage_count: __( 'Usage' ),
 	};
 
@@ -95,6 +96,11 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		columnHelper.accessor( 'url_filter', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_filter }</SortBy>,
+			size: 180,
+		} ),
+		columnHelper.accessor( 'template', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.template }</SortBy>,
 			size: 180,
 		} ),
 		columnHelper.accessor( 'model', {

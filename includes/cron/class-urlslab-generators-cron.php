@@ -117,17 +117,17 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 			$row_obj->update();
 		} catch ( ApiException $e ) {
 			switch ( $e->getCode() ) {
-				case 404:
 				case 422:
 				case 429:
 				case 504:
+				case 500:
 					$row_obj->set_status( Urlslab_Generator_Result_Row::STATUS_PENDING );
 					$row_obj->set_result( $e->getMessage() );
 					$row_obj->update();
 
 					break;
-
-				case 500:
+				case 404:
+				case 402:
 				default:
 					$row_obj->set_status( Urlslab_Generator_Result_Row::STATUS_DISABLED );
 					$row_obj->set_result( $e->getMessage() );

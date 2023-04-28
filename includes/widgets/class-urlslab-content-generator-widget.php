@@ -145,7 +145,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 				$value = $atts['default_value'] ?? $obj->get_default_value();
 			}
 		} else {
-			$value = $atts['default_value'] ?? $obj->get_default_value();
+			$value = $atts['default_value'] ?? $this->get_template_value( $obj->get_default_value(), $atts );
 			$obj_result->set_status( Urlslab_Generator_Result_Row::STATUS_NEW );
 			$obj_result->insert_all( array( $obj_result ), true );
 		}
@@ -154,34 +154,38 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		if ( ! empty( $value ) ) {
 			$this->track_usage( $obj_result );
 
-			if ( empty( $atts['template'] ) ) {
+			if ( empty( $atts['template'] ) && empty( trim( $obj->get_template() ) ) ) {
 				return $value;
 			} else {
-				$template = locate_template(
-					$atts['template'],
-					false,
-					false,
-					$atts
-				);
-				if ( empty( $template ) ) {
-					if (
-						file_exists(
-							URLSLAB_PLUGIN_DIR . 'public/' . $atts['template']
-						)
-					) {
-						$template = URLSLAB_PLUGIN_DIR
-									. 'public/'
-									. $atts['template'];
-					} else {
-						return $value;
+				if ( ! empty( trim( $obj->get_template() ) ) ) {
+					return $this->get_template_value( $obj->get_template(), array_merge( $atts, array( 'value' => $value ) ) );
+				} else {
+					$template = locate_template(
+						$atts['template'],
+						false,
+						false,
+						$atts
+					);
+					if ( empty( $template ) ) {
+						if (
+							file_exists(
+								URLSLAB_PLUGIN_DIR . 'public/' . $atts['template']
+							)
+						) {
+							$template = URLSLAB_PLUGIN_DIR
+										. 'public/'
+										. $atts['template'];
+						} else {
+							return $value;
+						}
 					}
+
+					ob_start();
+					$atts['value'] = $value;
+					load_template( $template, true, $atts );
+
+					return '' . ob_get_clean();
 				}
-
-				ob_start();
-				$atts['value'] = $value;
-				load_template( $template, true, $atts );
-
-				return '' . ob_get_clean();
 			}
 		} else {
 			return '';
@@ -203,6 +207,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		$required_variables = array_merge(
 			$this->get_template_variables( $obj->get_prompt() ),
 			$this->get_template_variables( $obj->get_semantic_context() ),
+			$this->get_template_variables( $obj->get_default_value() ),
 			$this->get_template_variables( $obj->get_url_filter() )
 		);
 		foreach ( $required_variables as $variable ) {
@@ -215,15 +220,19 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 						$current_url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $this->get_current_page_url() );
 						if ( ! empty( $current_url_obj ) ) {
 							$atts['page_title'] = $current_url_obj->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_TITLE );
-						} else {
-							$atts['page_title'] = get_the_title();
+						}
+						if ( empty( $atts['page_title'] ) ) {
+							$atts['page_title'] = wp_title( ' ', false );
 						}
 						break;
 					case 'domain':
-						$atts['domain'] = get_current_site()->domain;
+						$atts['domain'] = $this->get_current_page_url()->get_domain_name();
+						break;
+					case 'language_code':
+						$atts['language_code'] = $this->get_current_language_code();
 						break;
 					case 'language':
-						$atts['language'] = $this->get_current_language();
+						$atts['language'] = $this->get_current_language_name();
 						break;
 				}
 			}

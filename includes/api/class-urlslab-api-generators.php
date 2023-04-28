@@ -45,7 +45,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<shortcode_id>[0-9]+)/(?P<hash_id>[0-9]+)',
+			$base . '/(?P<hash_id>[0-9]+)',
 			array(
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
@@ -106,7 +106,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<shortcode_id>[0-9]+)/(?P<hash_id>[0-9]+)',
+			$base . '/(?P<hash_id>[0-9]+)',
 			array(
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
@@ -144,7 +144,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 		foreach ( $rows as $row ) {
 			$row->shortcode_id = (int) $row->shortcode_id;
-			$row->hash_id = (int) $row->hash_id;
+			$row->hash_id      = (int) $row->hash_id;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -205,7 +205,14 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 						$response    = $client->memoryLessAugment( $request, 'false', 'true', 'true', 'false' );
 						$translation = $response->getResponse();
 					} catch ( \OpenAPI\Client\ApiException $e ) {
-						return new WP_REST_Response( (object) array( 'translation' => '' ), $e->getCode() );
+						switch ( $e->getCode() ) {
+							case 500:
+							case 504:
+							case 402:
+								return new WP_REST_Response( (object) array( 'translation' => $original_text ), $e->getCode() );
+							default:
+								return new WP_REST_Response( (object) array( 'translation' => '' ), $e->getCode() );
+						}
 					}
 				}
 			}
@@ -290,8 +297,8 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		}
 		foreach ( $rows as $row ) {
 			$row->shortcode_id = (int) $row->shortcode_id; // phpcs:ignore
-			$row->url_id = (int) $row->url_id; // phpcs:ignore
-			$row->hash_id = (int) $row->hash_id; // phpcs:ignore
+			$row->url_id       = (int) $row->url_id; // phpcs:ignore
+			$row->hash_id      = (int) $row->hash_id; // phpcs:ignore
 		}
 
 		return new WP_REST_Response( $rows, 200 );

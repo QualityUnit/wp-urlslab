@@ -30,13 +30,13 @@ export default function GeneratorResultTable( { slug } ) {
 					</IconButton>
 				}
 				{
-					( status === 'W' || status === 'A' ) &&
+					( status === 'P' || status === 'W' || status === 'A' ) &&
 					<IconButton className="mr-s c-saturated-red" tooltip={ __( 'Decline' ) } tooltipClass="align-left" onClick={ () => onClick( 'D' ) }>
 						<DisableIcon />
 					</IconButton>
 				}
 				{
-					( status !== 'N' && status !== 'P' ) &&
+					( status === 'A' || status === 'D' || status === 'P' ) &&
 					<IconButton className="mr-s" tooltip={ __( 'Regenerate' ) } tooltipClass="align-left" onClick={ () => onClick( 'N' ) }>
 						<RefreshIcon />
 					</IconButton>
