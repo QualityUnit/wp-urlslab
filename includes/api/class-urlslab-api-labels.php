@@ -5,6 +5,8 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 		$base = '/label';
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
+		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
+
 		register_rest_route(
 			self::NAMESPACE,
 			$base . '/delete-all',
@@ -34,7 +36,51 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 					),
 					'args'                => array(),
 				),
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'update_item' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
+					'args'                => array(),
+				),
 			)
+		);
+	}
+
+
+	/**
+	 * @return array[]
+	 */
+	public function get_route_create_item(): array {
+		return array(
+			'methods'             => WP_REST_Server::CREATABLE,
+			'callback'            => array( $this, 'create_item' ),
+			'args'                => array(
+				'name'    => array(
+					'required'          => true,
+					'validate_callback' => function( $param ) {
+						return is_string( $param ) && strlen( $param );
+					},
+				),
+				'bgcolor' => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return is_string( $param );
+					},
+				),
+				'modules' => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return is_array( $param );
+					},
+				),
+			),
+			'permission_callback' => array(
+				$this,
+				'create_item_permissions_check',
+			),
 		);
 	}
 
@@ -52,6 +98,7 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 
 		foreach ( $rows as $row ) {
 			$row->label_id = (int) $row->label_id;
+			$row->modules  = explode( ',', $row->modules );
 		}
 
 		return new WP_REST_Response( $rows, 200 );
