@@ -33,8 +33,6 @@ export default function TagsMenu( { tags, slug } ) {
 		return tagsArray;
 	}, [ assignedTagsArray, tagsData ] );
 
-	console.log( assignedTags );
-
 	function suggestionItemTemplate( tagData ) {
 		return (
 			`<div ${ this.getAttributes( tagData ) }
@@ -61,6 +59,8 @@ export default function TagsMenu( { tags, slug } ) {
 				<Tags
 					className="urlslab-tagsmenu"
 					tagifyRef={ tagifyRef }
+					onChange={ ( e ) => console.log( e ) }
+					onAdd={ ( e ) => console.log( 'pridanie', e ) }
 					showFilteredDropdown={ true }
 					settings={ {
 						whitelist: availableTags,

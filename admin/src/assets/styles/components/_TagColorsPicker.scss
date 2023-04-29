@@ -1,0 +1,9 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-tagColors {
+
+	* {
+		box-shadow: none !important;
+	}
+}

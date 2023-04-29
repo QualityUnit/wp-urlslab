@@ -8,6 +8,7 @@ import Tag from '../elements/Tag';
 import Tooltip from '../elements/Tooltip';
 
 import '../assets/styles/layouts/_Settings.scss';
+import TagColorsPicker from '../components/TagColorsPicker';
 
 export default function TagsLabels( ) {
 	const { __ } = useI18n();
@@ -38,17 +39,7 @@ export default function TagsLabels( ) {
 							} )
 						}
 					</ul>
-					<Tags
-						showFilteredDropdown={ true }
-						whitelist={ createdTags }
-						// settings={ {
-						// 	...options,
-						// 	// templates: {
-						// 	// 	tag: Tag,
-						// 	// },
-						// } }
-						// defaultValue={ defaultValue }
-					/>
+					<TagColorsPicker onChange={ ( color ) => console.log( color ) } />
 				</div>
 			</section>
 		</Suspense>
