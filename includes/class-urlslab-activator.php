@@ -173,7 +173,13 @@ class Urlslab_Activator {
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_REDIRECTS_TABLE . " ADD COLUMN labels VARCHAR(255) NOT NULL DEFAULT ''" ); // phpcs:ignore
 			}
 		);
-
+		self::update_step(
+			'2.18.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_YOUTUBE_CACHE_TABLE . " ADD COLUMN captions TEXT" ); // phpcs:ignore
+			}
+		);
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -387,6 +393,7 @@ class Urlslab_Activator {
 		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
 								videoid varchar(32) NOT NULL,
 								microdata text,
+								captions text,
 								status_changed datetime NULL,
 								status char(1) NOT NULL, -- P: processing, A: Available, N: New, D - disabled
 								PRIMARY KEY  (videoid)
