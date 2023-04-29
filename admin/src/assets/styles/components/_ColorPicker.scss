@@ -1,0 +1,17 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-colorPicker {
+
+	&-swatches {
+		display: grid;
+		grid-template-columns: repeat(6, 16.6%);
+		grid-template-rows: repeat(3, 2em);
+		grid-gap: 0.5em;
+	}
+
+	&-swatch {
+
+		@include square(100%);
+	}
+}

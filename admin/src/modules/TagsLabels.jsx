@@ -8,7 +8,7 @@ import Tag from '../elements/Tag';
 import Tooltip from '../elements/Tooltip';
 
 import '../assets/styles/layouts/_Settings.scss';
-import TagColorsPicker from '../components/TagColorsPicker';
+import ColorPicker from '../components/ColorPicker';
 
 export default function TagsLabels( ) {
 	const { __ } = useI18n();
@@ -39,7 +39,7 @@ export default function TagsLabels( ) {
 							} )
 						}
 					</ul>
-					<TagColorsPicker onChange={ ( color ) => console.log( color ) } />
+					<ColorPicker onChange={ ( color ) => console.log( color ) } />
 				</div>
 			</section>
 		</Suspense>

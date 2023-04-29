@@ -13,6 +13,7 @@ import Tag from './Tag';
 export default function TagsMenu( { tags, slug } ) {
 	const queryClient = useQueryClient();
 	const tagifyRef = useRef();
+	const tagifyWrapper = useRef();
 	const [ tagsMenuActive, setTagsMenu ] = useState( false );
 	const assignedTagsArray = tags.replace( /^\|(.+)\|$/, '$1' ).split( '|' );
 	const tagsData = queryClient.getQueryData( [ 'tags' ] );
@@ -55,7 +56,7 @@ export default function TagsMenu( { tags, slug } ) {
 				} ) }
 			</div>
 			{ tagsMenuActive &&
-			<div className="pos-absolute">
+			<div className="pos-absolute" ref={ tagifyWrapper }>
 				<Tags
 					className="urlslab-tagsmenu"
 					tagifyRef={ tagifyRef }
@@ -71,6 +72,7 @@ export default function TagsMenu( { tags, slug } ) {
 							maxItems: Infinity,
 							closeOnSelect: false,
 							highlightFirst: true,
+							appendTarget: tagifyWrapper.current,
 						},
 						transformTag: ( tagData ) => {
 							tagData.style = '--tag-bg:' + tagData.bgcolor;
