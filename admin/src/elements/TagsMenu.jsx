@@ -1,14 +1,18 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+// import Tagify from '@yaireo/tagify';
 import Tags from '@yaireo/tagify/dist/react.tagify';
 import '@yaireo/tagify/src/tagify.scss';
 
-// import Tag from './Tag';
+import '../assets/styles/elements/_TagsMenu.scss';
+
+import Tag from './Tag';
 
 export default function TagsMenu( { tags, slug } ) {
 	const queryClient = useQueryClient();
+	const tagifyRef = useRef();
 	const [ tagsMenuActive, setTagsMenu ] = useState( false );
 	const assignedTagsArray = tags.replace( /^\|(.+)\|$/, '$1' ).split( '|' );
 	const tagsData = queryClient.getQueryData( [ 'tags' ] );
@@ -22,32 +26,52 @@ export default function TagsMenu( { tags, slug } ) {
 		return tagsData.filter( ( tag ) => assignedTagsArray.some( ( d ) => Number( d ) === tag.label_id ) );
 	}, [ assignedTagsArray, tagsData ] );
 
-	// const { label_id, bgcolor, name, modules } = tag;
+	function suggestionItemTemplate( tagData ) {
+		return (
+			`<div ${ this.getAttributes( tagData ) }
+				title="${ tagData.value }"
+				style="background-color: ${ tagData.bgcolor }"
+				class="tagify__dropdown__item ${ this.settings.classNames.dropdownItem }"
+				tabIndex="0"
+				role="option">
+				<strong>${ tagData.name }</strong>
+			</div>`
+		);
+	}
 
 	return (
-		<div className="pos-relative">
-			<div className="tags" onClick={ () => setTagsMenu( ! tagsMenuActive ) }>
-				{ assignedTags.map( ( tagObj ) => {
-					return <span key={ tagObj.label_id }>{ tagObj.name.charAt( 0 ) }</span>;
+		<div className="pos-relative urlslab-tagsmenu-wrapper">
+			<div className="urlslab-tagsmenu-tags" onClick={ () => setTagsMenu( ! tagsMenuActive ) }>
+				{ assignedTags.map( ( tag ) => {
+					const { label_id, bgcolor, name } = tag;
+					return <Tag type="circle" style={ { backgroundColor: bgcolor } } key={ label_id }>{ name.charAt( 0 ) }</Tag>;
 				} ) }
 			</div>
 			{ tagsMenuActive &&
 			<div className="pos-absolute">
 				<Tags
+					className="urlslab-tagsmenu"
+					tagifyRef={ tagifyRef }
 					showFilteredDropdown={ true }
 					settings={ {
 						whitelist: availableTags,
 						dropdown: {
-							enabled: 0, // a;ways show suggestions dropdown
+							enabled: 0,
 							searchKeys: [ 'name' ],
 							mapValueTo: 'name',
 							maxItems: Infinity,
+							classname: 'tags-look',
+							closeOnSelect: false,
 							highlightFirst: true,
 						},
 						transformTag: ( tagData ) => {
 							tagData.style = '--tag-bg:' + tagData.bgcolor;
 						},
 						tagTextProp: 'name',
+						placeholder: 'Search tag…',
+						templates: {
+							dropdownItem: suggestionItemTemplate,
+						},
 					} }
 					defaultValue={ assignedTags }
 				/>

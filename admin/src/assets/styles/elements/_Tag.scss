@@ -16,4 +16,13 @@
 	&.xl {
 		font-size: 1rem;
 	}
+
+	&.circle {
+
+		@include square(1.5em);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		border-radius: 50%;
+	}
 }

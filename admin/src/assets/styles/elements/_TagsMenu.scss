@@ -1,0 +1,40 @@
+@use "../common/variables" as *;
+@use "../common/mixins" as *;
+
+html,
+.tagify {
+	--tag-pad: 0 0.75em !important;
+	--tag-border-radius: 1em !important;
+}
+
+.tagify {
+
+	&__dropdown__item,
+	&__tag > div {
+		font-size: 0.75rem;
+		border-radius: var(--tag-border-radius);
+	}
+}
+
+.urlslab-tagsmenu {
+	z-index: 999;
+	border-radius: $br-10;
+	background-color: $white;
+	filter: $box-shadow-small;
+
+	.tagify {
+
+		&__input {
+			font-weight: $font-weight-normal;
+			line-height: 1;
+			padding: 0.35em 0.5em 0.35em 3.5em;
+			border-radius: 1.5em;
+			border: 1px solid transparent;
+			background-color: $grey-light;
+		}
+	}
+
+	&-tags {
+		cursor: pointer;
+	}
+}
