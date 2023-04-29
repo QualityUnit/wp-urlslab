@@ -23,8 +23,17 @@ export default function TagsMenu( { tags, slug } ) {
 	}, [ tagsData, slug ] );
 
 	const assignedTags = useMemo( () => {
-		return tagsData.filter( ( tag ) => assignedTagsArray.some( ( d ) => Number( d ) === tag.label_id ) );
+		let tagsArray = [];
+		assignedTagsArray.map( ( id ) => tagsData.map( ( tag ) => {
+			if ( tag.label_id === Number( id ) ) {
+				tagsArray = [ ...tagsArray, tag ];
+			}
+			return false;
+		} ) );
+		return tagsArray;
 	}, [ assignedTagsArray, tagsData ] );
+
+	console.log( assignedTags );
 
 	function suggestionItemTemplate( tagData ) {
 		return (
@@ -41,7 +50,7 @@ export default function TagsMenu( { tags, slug } ) {
 
 	return (
 		<div className="pos-relative urlslab-tagsmenu-wrapper">
-			<div className="urlslab-tagsmenu-tags" onClick={ () => setTagsMenu( ! tagsMenuActive ) }>
+			<div className="urlslab-tagsmenu-tags flex flex-align-center" onClick={ () => setTagsMenu( ! tagsMenuActive ) }>
 				{ assignedTags.map( ( tag ) => {
 					const { label_id, bgcolor, name } = tag;
 					return <Tag type="circle" style={ { backgroundColor: bgcolor } } key={ label_id }>{ name.charAt( 0 ) }</Tag>;
@@ -60,7 +69,6 @@ export default function TagsMenu( { tags, slug } ) {
 							searchKeys: [ 'name' ],
 							mapValueTo: 'name',
 							maxItems: Infinity,
-							classname: 'tags-look',
 							closeOnSelect: false,
 							highlightFirst: true,
 						},
@@ -68,7 +76,7 @@ export default function TagsMenu( { tags, slug } ) {
 							tagData.style = '--tag-bg:' + tagData.bgcolor;
 						},
 						tagTextProp: 'name',
-						placeholder: 'Search tag…',
+						placeholder: 'Search…',
 						templates: {
 							dropdownItem: suggestionItemTemplate,
 						},

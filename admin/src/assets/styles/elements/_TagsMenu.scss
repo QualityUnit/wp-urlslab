@@ -31,6 +31,14 @@ html,
 			border-radius: 1.5em;
 			border: 1px solid transparent;
 			background-color: $grey-light;
+
+			&::before {
+				opacity: 1;
+			}
+
+			&:focus:not(:empty)::before {
+				opacity: 0;
+			}
 		}
 	}
 
