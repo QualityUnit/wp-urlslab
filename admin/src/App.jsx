@@ -9,6 +9,8 @@ import { fetchSettings } from './api/settings';
 import { fetchLangs } from './api/fetchLangs';
 
 import HeaderHeightContext from './lib/headerHeightContext';
+import hexToHSL from './lib/hexToHSL';
+
 import MainMenu from './components/MainMenu';
 import DynamicModule from './components/DynamicModule';
 import Header from './components/Header';
@@ -64,7 +66,14 @@ export default function App() {
 				queryKey: [ 'tags' ],
 				queryFn: async () => {
 					const tags = await postFetch( 'label', { rows_per_page: 500 } );
-					return tags.json();
+					const tagsArray = await tags.json();
+					tagsArray?.map( ( tag ) => {
+						const { lightness } = hexToHSL( tag.bgcolor );
+						if ( lightness < 70 ) {
+							return tag.class = 'dark';
+						}
+					} );
+					return tagsArray;
 				},
 				refetchOnWindowFocus: false,
 			} );

@@ -710,6 +710,9 @@ table td *:hover > .urlslab-tooltip {
   font-size: 0.75rem;
   border-radius: 1em;
 }
+.urlslab-tag.dark {
+  color: white;
+}
 .urlslab-tag.l {
   font-size: 0.8125rem;
 }

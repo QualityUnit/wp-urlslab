@@ -39,7 +39,7 @@ export default function TagsMenu( { tags, slug } ) {
 			`<div ${ this.getAttributes( tagData ) }
 				title="${ tagData.value }"
 				style="background-color: ${ tagData.bgcolor }"
-				class="tagify__dropdown__item ${ this.settings.classNames.dropdownItem }"
+				class="tagify__dropdown__item ${ tagData.class || '' } ${ this.settings.classNames.dropdownItem }"
 				tabIndex="0"
 				role="option">
 				<strong>${ tagData.name }</strong>
@@ -51,8 +51,8 @@ export default function TagsMenu( { tags, slug } ) {
 		<div className="pos-relative urlslab-tagsmenu-wrapper">
 			<div className="urlslab-tagsmenu-tags flex flex-align-center" onClick={ () => setTagsMenu( ! tagsMenuActive ) }>
 				{ assignedTags.map( ( tag ) => {
-					const { label_id, bgcolor, name } = tag;
-					return <Tag type="circle" style={ { backgroundColor: bgcolor } } key={ label_id }>{ name.charAt( 0 ) }</Tag>;
+					const { label_id, bgcolor, class: className, name } = tag;
+					return <Tag type="circle" className={ `${ className || '' }` } style={ { backgroundColor: bgcolor } } key={ label_id }>{ name.charAt( 0 ) }</Tag>;
 				} ) }
 			</div>
 			{ tagsMenuActive &&
@@ -76,6 +76,7 @@ export default function TagsMenu( { tags, slug } ) {
 						},
 						transformTag: ( tagData ) => {
 							tagData.style = '--tag-bg:' + tagData.bgcolor;
+							tagData.className = tagData.class;
 						},
 						tagTextProp: 'name',
 						placeholder: 'Search…',

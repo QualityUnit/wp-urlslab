@@ -14,6 +14,14 @@ html,
 		font-size: 0.75rem;
 		border-radius: var(--tag-border-radius);
 	}
+
+	&__dropdown__item,
+	&__tag {
+
+		&.dark {
+			color: $white;
+		}
+	}
 }
 
 .urlslab-tagsmenu {
