@@ -69,7 +69,10 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 		$row_shortcode = new Urlslab_Generator_Shortcode_Row( $url_row );
 
 		$attributes = (array) json_decode( $row_obj->get_prompt_variables() );
-		$command    = $widget->get_template_value( $row_shortcode->get_prompt(), $attributes );
+		$command    = $widget->get_template_value(
+			'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Generator_Result_Row::DO_NOT_KNOW . "!\n" . $row_shortcode->get_prompt(),
+			$attributes
+		);
 
 		try {
 			$request = new DomainDataRetrievalAugmentRequest();

@@ -6,6 +6,7 @@ class Urlslab_Generator_Result_Row extends Urlslab_Data {
 	public const STATUS_PENDING = 'P';
 	public const STATUS_WAITING_APPROVAL = 'W';
 	public const STATUS_DISABLED = 'D';
+	public const DO_NOT_KNOW = 'DO_NOT_KNOW';
 
 	public function __construct( array $data = array(), $loaded_from_db = true ) {
 		$this->set_shortcode_id( $data['shortcode_id'] ?? 0, $loaded_from_db );
@@ -120,7 +121,7 @@ class Urlslab_Generator_Result_Row extends Urlslab_Data {
 
 
 	public function is_active(): bool {
-		return self::STATUS_ACTIVE === $this->get_status();
+		return self::STATUS_ACTIVE === $this->get_status() && false === strpos( $this->get_result(), self::DO_NOT_KNOW );
 	}
 
 
