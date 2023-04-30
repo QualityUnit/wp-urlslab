@@ -189,7 +189,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 			if ( $request->has_param( 'urls' ) ) {
 
 				if ( ! is_array( $request->get_param( 'urls' ) ) ) {
-					$urls = explode( ",", $request->get_param( 'urls' ) );
+					$urls = explode( ',', $request->get_param( 'urls' ) );
 				} else {
 					$urls = $request->get_param( 'urls' );
 				}
@@ -207,7 +207,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 
 			if ( $request->has_param( 'custom_sitemaps' ) && strlen( trim( $request->get_param( 'custom_sitemaps' ) ) ) > 0 ) {
 				if ( ! is_array( $request->get_param( 'custom_sitemaps' ) ) ) {
-					$sitemaps = explode( ",", $request->get_param( 'custom_sitemaps' ) );
+					$sitemaps = explode( ',', $request->get_param( 'custom_sitemaps' ) );
 				} else {
 					$sitemaps = $request->get_param( 'custom_sitemaps' );
 				}

@@ -67,8 +67,13 @@ export default function GeneratorShortcodeTable( { slug } ) {
 	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const statusTypes = {
-		A: 'Active',
-		D: 'Disabled',
+		A: __( 'Active' ),
+		D: __(  'Disabled' ),
+	};
+	const modelTypes = {
+		'gpt-3.5-turbo': __( 'Gpt 3.5 Turbo' ),
+		'gpt-4': __( 'Gpt 4' ),
+		'text-davinci-003': __( 'Text Davinci 003' ),
 	};
 
 	const header = {
@@ -90,6 +95,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		url_filter: <InputField liveUpdate defaultValue="" label={ header.url_filter } onChange={ ( val ) => setInsertRow( { ...rowToInsert, url_filter: val } ) } required />,
 		default_value: <InputField liveUpdate defaultValue="" label={ header.default_value } onChange={ ( val ) => setInsertRow( { ...rowToInsert, default_value: val } ) } required />,
 		template: <InputField liveUpdate defaultValue="" label={ header.template } onChange={ ( val ) => setInsertRow( { ...rowToInsert, template: val } ) } required />,
+		model: <SortMenu autoClose items={ modelTypes } name="follow_links" checkedId={ ( 'gpt-3.5-turbo' ) } onChange={ ( val ) => setInsertRow( { ...rowToInsert, model: val } ) }>{ header.model }</SortMenu>,
 	};
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -129,7 +135,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			size: 180,
 		} ),
 		columnHelper.accessor( 'model', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.model }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ modelTypes[ header.model ] }</SortBy>,
 			size: 180,
 		} ),
 		columnHelper.accessor( 'status', {
