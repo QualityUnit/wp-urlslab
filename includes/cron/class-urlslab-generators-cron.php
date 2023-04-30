@@ -92,17 +92,17 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 			$filter->setLimit( 5 );
 			if ( strlen( $row_obj->get_semantic_context() ) ) {
 				$request->setAugmentCommand( $row_obj->get_semantic_context() );
-				$filter->setAdditionalQuery(
-					(object) array(
-						'match' => (object) array( 'metadata.url' => $row_obj->get_url_filter() ),
-					)
-				);
+				if ( strlen( $row_obj->get_url_filter() ) ) {
+					$filter->setAdditionalQuery( (object) array( 'match' => (object) array( 'metadata.url' => $row_obj->get_url_filter() ) ) );
+				} else {
+					$filter->setAdditionalQuery( (object) array( 'match' => (object) array( 'metadata.url' => $widget->get_current_page_url()->get_domain_name() ) ) );
+				}
 			} else {
 				$filter->setUrls( array( $row_obj->get_url_filter() ) );
 			}
 			$request->setFilter( $filter );
 
-			$response = $this->content_client->memoryLessAugment( $request, 'false', 'false' );
+			$response = $this->content_client->memoryLessAugment( $request, 'false', strlen( $row_obj->get_semantic_context() ) ? 'false' : 'true' );
 
 			if ( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_AUTOAPPROVE ) ) {
 				$row_obj->set_status( Urlslab_Generator_Result_Row::STATUS_ACTIVE );
