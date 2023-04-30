@@ -381,7 +381,7 @@ abstract class Urlslab_Widget {
 		return self::$current_page_url;
 	}
 
-	protected function get_current_language() {
+	protected function get_current_language_code() {
 		global $sitepress, $polylang;
 
 		if ( ! empty( $sitepress ) && is_object( $sitepress )
@@ -397,6 +397,24 @@ abstract class Urlslab_Widget {
 		}
 
 		return substr( get_locale(), 0, 2 );
+	}
+
+	protected function get_current_language_name() {
+		$lang_code = $this->get_current_language_code();
+
+		if ( function_exists( 'wpml_get_active_languages_filter' ) ) {
+			$languages = wpml_get_active_languages_filter( '', array( 'skip_missing' => 0 ) );
+
+			if ( isset( $languages[ $lang_code ]['translated_name'] ) ) {
+				$language_name = $languages[ $lang_code ]['translated_name'];
+			} else {
+				$language_name = $lang_code;
+			}
+		} else {
+			$language_name = $lang_code;
+		}
+
+		return $language_name;
 	}
 
 	private function init_options() {

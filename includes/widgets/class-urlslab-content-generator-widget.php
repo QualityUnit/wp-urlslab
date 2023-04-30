@@ -26,12 +26,16 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		if (
 			'admin.php' === $pagenow &&
 			$this->get_option( self::SETTING_NAME_TRANSLATE ) &&
-			is_plugin_active( 'sitepress-multilingual-cms/sitepress.php' )
+			is_plugin_active( 'sitepress-multilingual-cms/sitepress.php' ) &&
+			(
+				current_user_can( 'activate_plugins' ) ||
+				current_user_can( Urlslab_Api_Base::CAPABILITY_TRANSLATE ) ||
+				current_user_can( Urlslab_Api_Base::CAPABILITY_ADMINISTRATION )
+			)
 		) {
 			wp_enqueue_script( 'urlslab-admin-script', URLSLAB_PLUGIN_URL . 'admin/js/urlslab-wpml.js', array( 'jquery' ), URLSLAB_VERSION );
 		}
 	}
-
 
 	public function hook_callback() {
 		add_shortcode(
@@ -58,123 +62,193 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		return array( self::LABEL_PAID, self::LABEL_BETA );
 	}
 
+	private function is_edit_mode(): bool {
+		$arr_modes = array(
+			'trash',
+			'auto-draft',
+			'inherit',
+		);
+
+		return isset( $_REQUEST['elementor-preview'] ) ||
+			   ( isset( $_REQUEST['action'] ) && false !== strpos( $_REQUEST['action'], 'elementor' ) ) ||
+			   in_array( get_post_status(), $arr_modes ) ||
+			   ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() );
+	}
+
+	private function get_placeholder_html( array $atts ): string {
+		$html_attributes = array();
+		foreach ( $atts as $id => $val ) {
+			$html_attributes[] = '<b>' . esc_html( $id ) . '</b>="<i>' . esc_html( $val ) . '</i>"';
+		}
+
+		return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">[<b>urlslab-generator</b> ' . implode( ', ', $html_attributes ) . ']</div>';
+	}
+
 	public function get_shortcode_content(
 		$atts = array(),
 		$content = null,
 		$tag = ''
 	): string {
-		if (
-			(
-				isset( $_REQUEST['action'] )
-				&& false !== strpos(
-					$_REQUEST['action'],
-					'elementor'
-				)
-			)
-			|| in_array(
-				get_post_status(),
-				array( 'trash', 'auto-draft', 'inherit' )
-			)
-			|| ( class_exists( '\Elementor\Plugin' )
-				 && \Elementor\Plugin::$instance->editor->is_edit_mode() )
-		) {
-			$html_attributes = array();
-			foreach ( $this->get_attribute_values( $atts, $content, $tag ) as $id => $value ) {
-				if ( 'url_filter' !== $id && 'semantic_context' !== $id ) {
-					$html_attributes[] = '<b>' . esc_html( $id ) . '</b>="<i>' . esc_html( $value ) . '</i>"';
-				}
+		if ( ! isset( $atts['id'] ) || empty( $atts['id'] ) ) {
+			if ( $this->is_edit_mode() ) {
+				$atts['STATUS'] = 'Missing shortcode ID attribute!!!';
+
+				return $this->get_placeholder_html( $atts );
 			}
 
-			return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">[<b>urlslab-generator</b> ' . implode( ', ', $html_attributes ) . ']</div>';
+			return '';
 		}
 
-		$atts  = $this->get_attribute_values( $atts, $content, $tag );
-		$obj   = new Urlslab_Content_Generator_Row( $atts, false );
-		$value = $atts['default_value'];
-		if ( $obj->is_valid() ) {
-			if ( $obj->load() ) {
-				if ( $obj->is_active() ) {
-					$value = $obj->get_result();
+		$obj = new Urlslab_Generator_Shortcode_Row( array( 'shortcode_id' => $atts['id'] ), false );
+
+		if ( $obj->load() ) {
+			if ( ! $obj->is_active() ) {
+				if ( $this->is_edit_mode() ) {
+					$atts['STATUS'] = 'NOT ACTIVE!!!!';
+
+					return $this->get_placeholder_html( $atts );
 				}
+			}
+		} else {
+			if ( $this->is_edit_mode() ) {
+				$atts['STATUS'] = 'Short code with given ID does NOT exists!!!';
+
+				return $this->get_placeholder_html( $atts );
+			}
+
+			return '';
+		}
+
+		$atts = $this->get_att_values( $obj, $atts, $content, $tag );
+
+		if ( $this->is_edit_mode() ) {
+			return $this->get_placeholder_html( $atts );
+		}
+
+		$obj_result = new Urlslab_Generator_Result_Row(
+			array(
+				'shortcode_id'     => $atts['id'],
+				'semantic_context' => $this->get_template_value( $obj->get_semantic_context(), $atts ),
+				'prompt_variables' => json_encode( $atts ),
+				'url_filter'       => $this->get_template_value( $obj->get_url_filter(), $atts ),
+			),
+			false
+		);
+
+		if ( $obj_result->load() ) {
+			if ( $obj_result->is_active() ) {
+				$value = $obj_result->get_result();
 			} else {
-				$obj->set_status( Urlslab_Content_Generator_Row::STATUS_NEW );
-				$obj->insert_all( array( $obj ), true );
+				$value = $atts['default_value'] ?? $obj->get_default_value();
 			}
-			$this->track_usage( $obj );
+		} else {
+			$value = $atts['default_value'] ?? $this->get_template_value( $obj->get_default_value(), $atts );
+			$obj_result->set_status( Urlslab_Generator_Result_Row::STATUS_NEW );
+			$obj_result->insert_all( array( $obj_result ), true );
 		}
+
 
 		if ( ! empty( $value ) ) {
-			if ( empty( $atts['template'] ) ) {
+			$this->track_usage( $obj_result );
+
+			if ( empty( $atts['template'] ) && empty( trim( $obj->get_template() ) ) ) {
 				return $value;
 			} else {
-				$template = locate_template(
-					$atts['template'],
-					false,
-					false,
-					$atts
-				);
-				if ( empty( $template ) ) {
-					if (
-						file_exists(
-							URLSLAB_PLUGIN_DIR . 'public/' . $atts['template']
-						)
-					) {
-						$template = URLSLAB_PLUGIN_DIR
-									. 'public/'
-									. $atts['template'];
-					} else {
-						return $value;
+				if ( ! empty( trim( $obj->get_template() ) ) ) {
+					return $this->get_template_value( $obj->get_template(), array_merge( $atts, array( 'value' => $value ) ) );
+				} else {
+					$template = locate_template(
+						$atts['template'],
+						false,
+						false,
+						$atts
+					);
+					if ( empty( $template ) ) {
+						if (
+							file_exists(
+								URLSLAB_PLUGIN_DIR . 'public/' . $atts['template']
+							)
+						) {
+							$template = URLSLAB_PLUGIN_DIR
+										. 'public/'
+										. $atts['template'];
+						} else {
+							return $value;
+						}
 					}
+
+					ob_start();
+					$atts['value'] = $value;
+					load_template( $template, true, $atts );
+
+					return '' . ob_get_clean();
 				}
-
-				ob_start();
-				$atts['result'] = $value;
-				load_template( $template, true, $atts );
-
-				return '' . ob_get_clean();
 			}
 		} else {
 			return '';
 		}
 	}
 
-	public
-	function get_attribute_values(
-		$atts = array(), $content = null, $tag = ''
-	): array {
-		$atts            = array_change_key_case( (array) $atts );
-		$current_url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $this->get_current_page_url() );
-		if ( ! empty( $current_url_obj ) ) {
-			$title = $current_url_obj->get_summary_text(
-				Urlslab_Link_Enhancer::DESC_TEXT_TITLE
-			);
-		} else {
-			$title = get_the_title();
+	private function get_template_variables( $template ): array {
+		preg_match_all( '/{{(\w+)}}/', $template, $matches );
+		if ( isset( $matches[1] ) ) {
+			return array_unique( $matches[1] );
 		}
 
-		$replacements = array(
-			'www.',
-			'https://',
-			'http://',
-		);
+		return array();
+	}
 
-		$atts = shortcode_atts(
-			array(
-				'semantic-context' => $title,
-				'command'          => 'Summarize information I gave you. Generate summarization in language |lang|.',
-				'source-url'       => str_replace( $replacements, '', $this->get_current_page_url()->get_domain_name() ) . '*',
-				'template'         => '',
-				'default_value'    => '',
-				'lang'             => $this->get_current_language(),
-			),
-			$atts,
-			$tag
-		);
+	private function get_att_values( Urlslab_Generator_Shortcode_Row $obj, $atts = array(), $content = null, $tag = '' ): array {
+		$atts = array_change_key_case( (array) $atts );
 
-		$atts['semantic_context'] = $atts['semantic-context'];
-		$atts['url_filter']       = $atts['source-url'];
+		$required_variables = array_merge(
+			$this->get_template_variables( $obj->get_prompt() ),
+			$this->get_template_variables( $obj->get_semantic_context() ),
+			$this->get_template_variables( $obj->get_default_value() ),
+			$this->get_template_variables( $obj->get_url_filter() )
+		);
+		foreach ( $required_variables as $variable ) {
+			if ( ! isset( $atts[ $variable ] ) ) {
+				switch ( $variable ) {
+					case 'page_url':
+						$atts['page_url'] = $this->get_current_page_url()->get_url_with_protocol();
+						break;
+					case 'page_title':
+						$current_url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $this->get_current_page_url() );
+						if ( ! empty( $current_url_obj ) ) {
+							$atts['page_title'] = $current_url_obj->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_TITLE );
+						}
+						if ( empty( $atts['page_title'] ) ) {
+							$atts['page_title'] = wp_title( ' ', false );
+						}
+						break;
+					case 'domain':
+						$atts['domain'] = $this->get_current_page_url()->get_domain_name();
+						break;
+					case 'language_code':
+						$atts['language_code'] = $this->get_current_language_code();
+						break;
+					case 'language':
+						$atts['language'] = $this->get_current_language_name();
+						break;
+				}
+			}
+		}
 
 		return $atts;
+	}
+
+	public function get_template_value( string $template, array $attributes ): string {
+		$variables = $this->get_template_variables( $template );
+		foreach ( $variables as $variable ) {
+			if ( isset( $attributes[ $variable ] ) ) {
+				$template = str_replace( '{{' . $variable . '}}', $attributes[ $variable ], $template );
+			} else {
+				$template = str_replace( '{{' . $variable . '}}', '', $template );
+			}
+		}
+
+		return $template;
 	}
 
 	public
@@ -322,14 +396,15 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		);
 	}
 
-	private function track_usage( Urlslab_Content_Generator_Row $obj ) {
+	private function track_usage( Urlslab_Generator_Result_Row $obj ) {
 		if ( ! $this->get_option( self::SETTING_NAME_TRACK_USAGE ) ) {
 			return;
 		}
 		// track screenshot usage
-		$generator_url = new Urlslab_Content_Generator_Url_Row();
+		$generator_url = new Urlslab_Generator_Url_Row();
 		$generator_url->set_url_id( $this->get_current_page_url()->get_url_id() );
-		$generator_url->set_generator_id( $obj->get_generator_id() );
+		$generator_url->set_shortcode_id( $obj->get_shortcode_id() );
+		$generator_url->set_hash_id( $obj->get_hash_id() );
 		$generator_url->insert_all( array( $generator_url ), true );
 	}
 }
