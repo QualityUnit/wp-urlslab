@@ -154,7 +154,7 @@ abstract class Urlslab_Widget {
 	}
 
 	public function get_option( $option_id ) {
-		if ( ! $this->option_exists($option_id) ) {
+		if ( ! $this->option_exists( $option_id ) ) {
 			return null;
 		}
 
@@ -206,7 +206,7 @@ abstract class Urlslab_Widget {
 	}
 
 	public function update_option( $option_id, $value ): bool {
-		if ( ! $this->option_exists($option_id) ) {
+		if ( ! $this->option_exists( $option_id ) ) {
 			return false;
 		}
 

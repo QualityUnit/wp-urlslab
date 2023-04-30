@@ -93,7 +93,7 @@ class Urlslab_File_Pointer_Row extends Urlslab_Data {
 
 	public function get_driver_object(): Urlslab_Driver {
 		if ( empty( $this->get_driver() ) ) {
-			$this->set_driver( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_NEW_FILE_DRIVER ) );
+			$this->set_driver( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG )->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ) );
 		}
 
 		return Urlslab_Driver::get_driver( $this->get_driver() );

@@ -131,7 +131,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 			if ( ! empty( $result ) && is_array( $result ) ) {
 				$content  .= $this->render_shortcode_header( $urlslab_atts );
-				$strategy = get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY, Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY );
+				$strategy = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Link_Enhancer::SLUG )->get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY );
 				foreach ( $urls as $url ) {
 					if ( $current_url_obj->get_url_id() != $url->get_url_id() ) {
 						$url     = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url );

@@ -170,7 +170,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 			return $this->client;
 		}
 
-		$credentials = new Aws\Credentials\Credentials( $this->get_access_key(), $this->get_secret_key() );
+		$credentials  = new Aws\Credentials\Credentials( $this->get_access_key(), $this->get_secret_key() );
 		$this->client = new S3Client(
 			array(
 				'version'     => 'latest',

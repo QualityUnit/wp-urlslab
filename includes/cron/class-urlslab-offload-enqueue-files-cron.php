@@ -39,7 +39,7 @@ class Urlslab_Offload_Enqueue_Files_Cron extends Urlslab_Cron {
 
 		$file = new Urlslab_File_Row( $file_row );
 
-		$default_driver = Urlslab_Driver::get_driver( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_NEW_FILE_DRIVER ) );
+		$default_driver = Urlslab_Driver::get_driver( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG )->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER ) );
 
 		if ( ! $default_driver->is_connected() ) {
 			return false;

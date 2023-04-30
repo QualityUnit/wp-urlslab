@@ -14,10 +14,10 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Lazy_Loading::SLUG );
 		if ( ! $widget->get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_LAZY_LOADING )
 			 || (
-				 0 == strlen( $widget->get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_API_KEY )) &&
+				 0 == strlen( $widget->get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_API_KEY ) ) &&
 				 0 == strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) )
-				 )
-			){
+			 )
+		) {
 			return false;
 		}
 
@@ -36,7 +36,7 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 		$youtube_obj->update();
 
 		$captions = $this->get_youtube_captions( $youtube_obj );
-		if ($captions) {
+		if ( $captions ) {
 			$youtube_obj->set_captions( $captions );
 			$youtube_obj->update();
 		}
@@ -58,7 +58,7 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 
 
 	private function get_youtube_microdata( Urlslab_Youtube_Row $youtube_obj ) {
-		$url = 'https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet%2CcontentDetails&contentDetails.duration&id=' . $youtube_obj->get_video_id() . '&key=' . $this->get_youtube_key(); // json source
+		$url      = 'https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet%2CcontentDetails&contentDetails.duration&id=' . $youtube_obj->get_video_id() . '&key=' . $this->get_youtube_key(); // json source
 		$response = wp_remote_get( $url, array( 'sslverify' => false ) );
 		if ( ! is_wp_error( $response ) ) {
 			$value = json_decode( $response['body'] );

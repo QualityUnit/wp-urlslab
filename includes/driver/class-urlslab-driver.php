@@ -41,7 +41,7 @@ abstract class Urlslab_Driver {
 	}
 
 	public static function transfer_file_to_storage( Urlslab_File_Row $file, string $dest_driver ): bool {
-		$result = false;
+		$result   = false;
 		$tmp_name = wp_tempnam();
 		if (
 			$file->get_file_pointer()->get_driver_object()->save_to_file( $file, $tmp_name )
@@ -60,7 +60,7 @@ abstract class Urlslab_Driver {
 				$file->get_file_pointer()->update();
 
 				//delete original file
-				if ( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_DELETE_AFTER_TRANSFER, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_DELETE_AFTER_TRANSFER ) ) {
+				if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG )->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_DELETE_AFTER_TRANSFER ) ) {
 					$old_file->get_file_pointer()->get_driver_object()->delete_content( $old_file );
 				}
 
@@ -103,7 +103,7 @@ abstract class Urlslab_Driver {
 
 	public function upload_content( Urlslab_File_Row $file ) {
 		if ( strlen( $file->get_local_file() ) && file_exists( $file->get_local_file() ) ) {
-			$file_name = $file->get_local_file();
+			$file_name   = $file->get_local_file();
 			$delete_file = false;
 		} else {
 			$file_name = $this->download_url( $file );
@@ -195,16 +195,16 @@ abstract class Urlslab_Driver {
 
 	private function resize_image( $file, $w, $h ) {
 		$img_info = getimagesize( $file );
-		$width = $img_info[0];
-		$height = $img_info[1];
+		$width    = $img_info[0];
+		$height   = $img_info[1];
 
 		$r = $width / $height;
 		if ( $w / $h > $r ) {
-			$newwidth = $h * $r;
+			$newwidth  = $h * $r;
 			$newheight = $h;
 		} else {
 			$newheight = $w / $r;
-			$newwidth = $w;
+			$newwidth  = $w;
 		}
 
 		switch ( $img_info['mime'] ) {
@@ -261,10 +261,11 @@ abstract class Urlslab_Driver {
 		}
 	}
 
-	protected function get_option($option_id){
-		if (Urlslab_User_Widget::get_instance()->is_widget_activated(Urlslab_Media_Offloader_Widget::SLUG)) {
+	protected function get_option( $option_id ) {
+		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Media_Offloader_Widget::SLUG ) ) {
 			return Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG )->get_option( $option_id );
 		}
+
 		return false;
 	}
 }
