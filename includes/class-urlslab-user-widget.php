@@ -21,6 +21,7 @@ class Urlslab_User_Widget {
 				//# First Time user initiated plugin
 				self::$instance->activate_widgets( $available_widgets->get_available_widgets() );
 			} else {
+				$widgets[] = Urlslab_General::SLUG;	//by default always active widget
 				foreach ( $widgets as $widget ) {
 					$widget_detail = $available_widgets->get_widget( $widget );
 					if ( null !== $widget_detail ) {

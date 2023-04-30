@@ -154,13 +154,15 @@ abstract class Urlslab_Widget {
 	}
 
 	public function get_option( $option_id ) {
-		if ( false === $this->options ) {
-			$this->init_options();
-		}
-
-		if ( ! isset( $this->options[ $option_id ] ) ) {
+		if ( ! $this->option_exists($option_id) ) {
 			return null;
 		}
+
+		$value = getenv( $option_id );
+		if ( false !== $value ) {
+			return $value;
+		}
+
 		if ( ! isset( $this->options[ $option_id ]['value'] ) ) {
 			$this->options[ $option_id ]['value'] = get_option(
 				$option_id,
@@ -169,6 +171,14 @@ abstract class Urlslab_Widget {
 		}
 
 		return $this->options[ $option_id ]['value'];
+	}
+
+	public function option_exists( $option_id ) {
+		if ( false === $this->options ) {
+			$this->init_options();
+		}
+
+		return isset( $this->options[ $option_id ] );
 	}
 
 	public function get_option_sections(): array {
@@ -196,11 +206,7 @@ abstract class Urlslab_Widget {
 	}
 
 	public function update_option( $option_id, $value ): bool {
-		if ( false === $this->options ) {
-			$this->init_options();
-		}
-
-		if ( ! isset( $this->options[ $option_id ] ) ) {
+		if ( ! $this->option_exists($option_id) ) {
 			return false;
 		}
 

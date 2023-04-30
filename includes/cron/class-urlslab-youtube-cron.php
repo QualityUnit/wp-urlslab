@@ -8,11 +8,16 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 	}
 
 	protected function execute(): bool {
-		if (
-			! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Lazy_Loading::SLUG )
-			|| ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Lazy_Loading::SLUG )->get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_LAZY_LOADING )
-			|| 0 == strlen( $this->get_youtube_key() )
-		) {
+		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Lazy_Loading::SLUG ) ) {
+			return false;
+		}
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Lazy_Loading::SLUG );
+		if ( ! $widget->get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_LAZY_LOADING )
+			 || (
+				 0 == strlen( $widget->get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_API_KEY )) &&
+				 0 == strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) )
+				 )
+			){
 			return false;
 		}
 
@@ -51,18 +56,6 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 		return false;
 	}
 
-	private function get_youtube_key() {
-		$key = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Lazy_Loading::SLUG )->get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_API_KEY );
-		if ( strlen( $key ) ) {
-			return $key;
-		}
-		$key = getenv( 'YOUTUBE_API_KEY' );
-		if ( strlen( $key ) ) {
-			return $key;
-		}
-
-		return false;
-	}
 
 	private function get_youtube_microdata( Urlslab_Youtube_Row $youtube_obj ) {
 		$url = 'https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet%2CcontentDetails&contentDetails.duration&id=' . $youtube_obj->get_video_id() . '&key=' . $this->get_youtube_key(); // json source
@@ -81,23 +74,9 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 
 
 	private function get_youtube_captions( Urlslab_Youtube_Row $youtube_obj ) {
-		try {
-			$client = new Google_Client();
-			$client->setDeveloperKey( $this->get_youtube_key() );
-			$youtube = new Google_Service_YouTube( $client );
-			$captionsResponse = $youtube->captions->listCaptions( 'snippet', $youtube_obj->get_video_id() );
 
-			if (isset($captionsResponse['items'][0]['id'])) {
-				return  $youtube->captions->download($captionsResponse['items'][0]['id'], array(
-					'tfmt' => 'srt',
-					'alt' => 'media'
-				)
-				);
-			}
+		//TODO load data from urlslab api
 
-		} catch ( Exception $e ) {
-
-		}
 		return false;
 	}
 }

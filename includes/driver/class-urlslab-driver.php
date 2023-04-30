@@ -260,4 +260,11 @@ abstract class Urlslab_Driver {
 			ob_end_clean();
 		}
 	}
+
+	protected function get_option($option_id){
+		if (Urlslab_User_Widget::get_instance()->is_widget_activated(Urlslab_Media_Offloader_Widget::SLUG)) {
+			return Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG )->get_option( $option_id );
+		}
+		return false;
+	}
 }
