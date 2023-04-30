@@ -43,15 +43,6 @@ export default function LazyLoading( { moduleId } ) {
 						<SettingsModule className="fadeInto" settingId={ moduleId } />
 					</Suspense>
 			}
-			{
-				// activeSection === 'importexport' &&
-				// <Suspense>
-				// 	<ImportExport exportOptions={ {
-				// 		url: 'youtube-cache',
-				// 		paginationId: 'videoid',
-				// 	} } />
-				// </Suspense>
-			}
 		</div>
 
 	);

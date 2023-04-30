@@ -36,7 +36,7 @@ class Urlslab_Summaries_Cron extends Urlslab_Cron {
 
 		$query_data[] = Urlslab_Url_Row::SUM_STATUS_NEW;
 		$query_data[] = Urlslab_Url_Row::SUM_STATUS_ACTIVE;
-		$query_data[] = Urlslab_Data::get_now( time() - get_option( Urlslab_General::SETTING_NAME_SUMMARIZATION_REFRESH_INTERVAL ) );
+		$query_data[] = Urlslab_Data::get_now( time() - Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_SUMMARIZATION_REFRESH_INTERVAL ) );
 		// PENDING or UPDATING urls will be retried in one hour again
 		$query_data[] = Urlslab_Url_Row::SUM_STATUS_PENDING;
 		$query_data[] = Urlslab_Data::get_now( time() - 24 * 3600 );
@@ -114,7 +114,7 @@ class Urlslab_Summaries_Cron extends Urlslab_Cron {
 
 	private function init_client(): bool {
 		if ( empty( $this->client ) ) {
-			$api_key = get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
+			$api_key = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
 			if ( strlen( $api_key ) ) {
 				$config = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
 				$this->client = new SummaryApi( new GuzzleHttp\Client(), $config );

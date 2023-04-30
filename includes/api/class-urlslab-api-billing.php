@@ -60,10 +60,10 @@ class Urlslab_Api_Billing extends Urlslab_Api_Base {
 
 
 	private function get_client(): \OpenAPI\Client\Urlslab\CreditsApi {
-		if ( ! strlen( get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) ) ) {
+		if ( ! strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) ) ) {
 			throw new Exception( 'Urlslab API key not defined' );
 		}
 
-		return new \OpenAPI\Client\Urlslab\CreditsApi( new GuzzleHttp\Client(), Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) ) );
+		return new \OpenAPI\Client\Urlslab\CreditsApi( new GuzzleHttp\Client(), Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) ) );
 	}
 }

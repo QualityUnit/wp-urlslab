@@ -155,7 +155,7 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 
 	private function init_client(): bool {
 		if ( empty( $this->client ) ) {
-			$api_key = get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
+			$api_key = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
 			if ( strlen( $api_key ) ) {
 				$config       = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
 				$this->client = new ScreenshotApi( new GuzzleHttp\Client(), $config );

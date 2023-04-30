@@ -59,6 +59,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 	};
 
 	const header = {
+		shortcode_id: __( 'Id' ),
 		prompt: __( 'Prompt' ),
 		semantic_context: __( 'Context' ),
 		url_filter: __( 'URL filter' ),
@@ -77,6 +78,10 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				selectRow( val, cell );
 			} } />,
 			header: null,
+		} ),
+		columnHelper.accessor( 'shortcode_id', {
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.shortcode_id }</SortBy>,
+			size: 30,
 		} ),
 		columnHelper.accessor( 'prompt', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,

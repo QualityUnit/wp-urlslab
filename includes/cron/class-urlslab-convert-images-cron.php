@@ -48,12 +48,12 @@ abstract class Urlslab_Convert_Images_Cron extends Urlslab_Cron {
 
 		switch ( $new_format ) {
 			case 'webp':
-				$image->setCompressionQuality( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_WEPB_QUALITY ) );
+				$image->setCompressionQuality( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG )->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ) );
 
 				break;
 
 			case 'avif':
-				$image->setCompressionQuality( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_AVIF_QUALITY ) );
+				$image->setCompressionQuality( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG )->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ) );
 
 				break;
 
@@ -112,7 +112,7 @@ abstract class Urlslab_Convert_Images_Cron extends Urlslab_Cron {
 
 		switch ( $new_format ) {
 			case 'webp':
-				if ( ! function_exists( 'imagewebp' ) || ! imagewebp( $im, $tmp_name, get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_WEPB_QUALITY ) ) ) {
+				if ( ! function_exists( 'imagewebp' ) || ! imagewebp( $im, $tmp_name, Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG )->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_WEPB_QUALITY ) ) ) {
 					unlink( $tmp_name );
 
 					return '';
@@ -121,7 +121,14 @@ abstract class Urlslab_Convert_Images_Cron extends Urlslab_Cron {
 				break;
 
 			case 'avif':
-				if ( ! function_exists( 'imageavif' ) || ! imageavif( $im, $tmp_name, get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_AVIF_QUALITY ), get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_AVIF_SPEED ) ) ) {
+				if ( ! function_exists( 'imageavif' ) || !
+					imageavif(
+						$im,
+						$tmp_name,
+						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG )->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_QUALITY ),
+						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG )->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_AVIF_SPEED )
+					)
+				) {
 					unlink( $tmp_name );
 
 					return false;

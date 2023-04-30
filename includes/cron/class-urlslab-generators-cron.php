@@ -144,7 +144,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 	}
 
 	private function init_client(): bool {
-		$api_key = get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
+		$api_key = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
 		if ( strlen( $api_key ) ) {
 			$config               = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
 			$this->content_client = new ContentApi( new GuzzleHttp\Client(), $config );

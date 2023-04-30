@@ -10,6 +10,7 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 	public function __construct( array $video = array(), $loaded_from_db = false ) {
 		$this->set_video_id( $video['videoid'] ?? '', $loaded_from_db );
 		$this->set_microdata( $video['microdata'] ?? null, $loaded_from_db );
+		$this->set_captions( $video['captions'] ?? '', $loaded_from_db );
 		$this->set_status( $video['status'] ?? self::STATUS_NEW, $loaded_from_db );
 		$this->set_status_changed( $video['status_changed'] ?? self::get_now(), $loaded_from_db );
 		if ( strlen( $this->get_microdata() ) ) {
@@ -23,6 +24,10 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 
 	public function get_microdata() {
 		return $this->get( 'microdata' );
+	}
+
+	public function get_captions() {
+		return $this->get( 'captions' );
 	}
 
 	public function get_status() {
@@ -44,6 +49,10 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 	public function set_microdata( $microdata, $loaded_from_db = false ) {
 		$this->set( 'microdata', $microdata, $loaded_from_db );
 		$this->microdata_obj = json_decode( $microdata );
+	}
+	public function set_captions( $captions, $loaded_from_db = false ) {
+		$this->set( 'captions', $captions, $loaded_from_db );
+		$this->captions_obj = json_decode( $captions );
 	}
 
 	public function set_status( $status, $loaded_from_db = false ) {
@@ -121,6 +130,7 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 		return array(
 			'videoid'        => '%s',
 			'microdata'      => '%s',
+			'captions'      => '%s',
 			'status'         => '%s',
 			'status_changed' => '%s',
 		);

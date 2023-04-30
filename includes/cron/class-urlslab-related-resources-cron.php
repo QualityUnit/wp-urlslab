@@ -50,7 +50,7 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 
 	private function init_content_client(): bool {
 		if ( empty( $this->content_client ) ) {
-			$api_key = get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
+			$api_key = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
 			if ( strlen( $api_key ) ) {
 				$config
 									  = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
