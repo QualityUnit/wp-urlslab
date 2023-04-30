@@ -104,6 +104,7 @@ class Urlslab_Generator_Shortcode_Row extends Urlslab_Data {
 			'default_value'    => '%s',
 			'url_filter'       => '%s',
 			'model'            => '%s',
+			'template'         => '%s',
 			'status'           => '%s',
 			'date_changed'     => '%s',
 		);

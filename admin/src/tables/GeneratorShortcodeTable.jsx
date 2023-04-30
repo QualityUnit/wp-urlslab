@@ -1,5 +1,17 @@
 import {
-	useInfiniteFetch, Tooltip, Checkbox, Trash, ProgressBar, SortBy, InputField, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat,
+	useInfiniteFetch,
+	Tooltip,
+	Checkbox,
+	Trash,
+	ProgressBar,
+	SortBy,
+	InputField,
+	Loader,
+	Table,
+	ModuleViewHeaderBottom,
+	TooltipSortingFiltering,
+	DateTimeFormat,
+	SortMenu, LangMenu,
 } from '../lib/tableImports';
 
 import IconButton from '../elements/IconButton';
@@ -11,10 +23,11 @@ import { langName } from '../lib/helpers';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
+import {useState} from "react";
 
 export default function GeneratorShortcodeTable( { slug } ) {
 	const paginationId = 'shortcode_id';
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( 'generator/shortcode' );
+	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( 'generator/shortcode' );
 
 	const url = { filters, sorting };
 
@@ -54,8 +67,13 @@ export default function GeneratorShortcodeTable( { slug } ) {
 	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const statusTypes = {
-		A: 'Active',
-		D: 'Disabled',
+		A: __( 'Active' ),
+		D: __(  'Disabled' ),
+	};
+	const modelTypes = {
+		'gpt-3.5-turbo': __( 'Gpt 3.5 Turbo' ),
+		'gpt-4': __( 'Gpt 4' ),
+		'text-davinci-003': __( 'Text Davinci 003' ),
 	};
 
 	const header = {
@@ -71,6 +89,14 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		usage_count: __( 'Usage' ),
 	};
 
+	const inserterCells = {
+		prompt: <InputField liveUpdate defaultValue="" label={ header.prompt } onChange={ ( val ) => setInsertRow( { ...rowToInsert, prompt: val } ) } required />,
+		semantic_context: <InputField liveUpdate defaultValue="" label={ header.semantic_context } onChange={ ( val ) => setInsertRow( { ...rowToInsert, semantic_context: val } ) } required />,
+		url_filter: <InputField liveUpdate defaultValue="" label={ header.url_filter } onChange={ ( val ) => setInsertRow( { ...rowToInsert, url_filter: val } ) } required />,
+		default_value: <InputField liveUpdate defaultValue="" label={ header.default_value } onChange={ ( val ) => setInsertRow( { ...rowToInsert, default_value: val } ) } required />,
+		template: <InputField liveUpdate defaultValue="" label={ header.template } onChange={ ( val ) => setInsertRow( { ...rowToInsert, template: val } ) } required />,
+		model: <SortMenu autoClose items={ modelTypes } name="follow_links" checkedId={ ( 'gpt-3.5-turbo' ) } onChange={ ( val ) => setInsertRow( { ...rowToInsert, model: val } ) }>{ header.model }</SortMenu>,
+	};
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
@@ -109,7 +135,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			size: 180,
 		} ),
 		columnHelper.accessor( 'model', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.model }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ modelTypes[ header.model ] }</SortBy>,
 			size: 180,
 		} ),
 		columnHelper.accessor( 'status', {
@@ -155,6 +181,16 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
+				onClearRow={ ( clear ) => {
+					setInsertRow();
+					if ( clear === 'rowInserted' ) {
+						setInsertRow( clear );
+						setTimeout( () => {
+							setInsertRow();
+						}, 3000 );
+					}
+				} }
+				insertOptions={ { inserterCells, title: 'Add generator', data, slug, url, paginationId, rowToInsert } }
 				exportOptions={ {
 					slug,
 					url,
@@ -172,6 +208,10 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			>
 				{ row
 					? <Tooltip center>{ __( 'Item has been deleted.' ) }</Tooltip>
+					: null
+				}
+				{ ( rowToInsert === 'rowInserted' )
+					? <Tooltip center>{ __( 'Shortcode has been added.' ) }</Tooltip>
 					: null
 				}
 				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />

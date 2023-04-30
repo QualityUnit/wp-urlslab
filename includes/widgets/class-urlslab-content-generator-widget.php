@@ -108,6 +108,8 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 
 					return $this->get_placeholder_html( $atts );
 				}
+
+				return '';
 			}
 		} else {
 			if ( $this->is_edit_mode() ) {
