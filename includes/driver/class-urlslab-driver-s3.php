@@ -142,8 +142,8 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 	}
 
 	private function get_access_key() {
-		if ( strlen( $this->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_ACCESS_KEY, '' ) ) ) {
-			return $this->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_ACCESS_KEY, '' );
+		if ( strlen( $this->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_ACCESS_KEY ) ) ) {
+			return $this->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_ACCESS_KEY);
 		}
 
 		if ( strlen( env( 'AWS_KEY' ) ) ) {
