@@ -91,10 +91,10 @@ export default function GeneratorShortcodeTable( { slug } ) {
 
 	const inserterCells = {
 		prompt: <InputField liveUpdate defaultValue="" label={ header.prompt } onChange={ ( val ) => setInsertRow( { ...rowToInsert, prompt: val } ) } required />,
-		semantic_context: <InputField liveUpdate defaultValue="" label={ header.semantic_context } onChange={ ( val ) => setInsertRow( { ...rowToInsert, semantic_context: val } ) } required />,
-		url_filter: <InputField liveUpdate defaultValue="" label={ header.url_filter } onChange={ ( val ) => setInsertRow( { ...rowToInsert, url_filter: val } ) } required />,
-		default_value: <InputField liveUpdate defaultValue="" label={ header.default_value } onChange={ ( val ) => setInsertRow( { ...rowToInsert, default_value: val } ) } required />,
-		template: <InputField liveUpdate defaultValue="" label={ header.template } onChange={ ( val ) => setInsertRow( { ...rowToInsert, template: val } ) } required />,
+		semantic_context: <InputField liveUpdate defaultValue="" label={ header.semantic_context } onChange={ ( val ) => setInsertRow( { ...rowToInsert, semantic_context: val } ) } />,
+		url_filter: <InputField liveUpdate defaultValue="" label={ header.url_filter } onChange={ ( val ) => setInsertRow( { ...rowToInsert, url_filter: val } ) } />,
+		default_value: <InputField liveUpdate defaultValue="" label={ header.default_value } onChange={ ( val ) => setInsertRow( { ...rowToInsert, default_value: val } ) } />,
+		template: <InputField liveUpdate defaultValue="" label={ header.template } onChange={ ( val ) => setInsertRow( { ...rowToInsert, template: val } ) } />,
 		model: <SortMenu autoClose items={ modelTypes } name="follow_links" checkedId={ ( 'gpt-3.5-turbo' ) } onChange={ ( val ) => setInsertRow( { ...rowToInsert, model: val } ) }>{ header.model }</SortMenu>,
 	};
 	const columns = [
