@@ -130,6 +130,17 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 
 					break;
 				case 404:
+					if ( strlen( $row_obj->get_semantic_context() ) ) {
+						$row_obj->set_status( Urlslab_Generator_Result_Row::STATUS_PENDING );
+						$row_obj->set_result( 'URL not crawled yet, retrying later...' );
+						$row_obj->update();
+						break;
+					} else {
+						$row_obj->set_status( Urlslab_Generator_Result_Row::STATUS_DISABLED );
+						$row_obj->set_result( 'Did not found any page matching the url. Schedule the url first and restart generator again.' );
+						$row_obj->update();
+						break;
+					}
 				case 402:
 				default:
 					$row_obj->set_status( Urlslab_Generator_Result_Row::STATUS_DISABLED );
