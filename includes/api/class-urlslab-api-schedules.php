@@ -27,7 +27,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 		);
 		register_rest_route(
 			self::NAMESPACE,
-			$base,
+			$base . '/create',
 			array(
 				array(
 					'methods'             => WP_REST_Server::CREATABLE,
@@ -37,14 +37,16 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 							'required'          => true,
 							'validate_callback' => function( $param ) {
 								if ( ! is_array( $param ) ) {
-									return false;
+									$param = explode( ',', $param );
 								}
 
 								try {
 									foreach ( $param as $url_row ) {
-										$url_obj = new Urlslab_Url( $url_row );
-										if ( ! $url_obj->is_url_valid() ) {
-											return false;
+										if ( strlen( $url_row ) ) {
+											$url_obj = new Urlslab_Url( $url_row, true );
+											if ( ! $url_obj->is_url_valid() ) {
+												return false;
+											}
 										}
 									}
 
@@ -65,7 +67,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 							'required'          => false,
 							'default'           => array(),
 							'validate_callback' => function( $param ) {
-								return is_array( $param );
+								return empty( $param ) || is_string( $param );
 							},
 						),
 						'follow_links'          => array(
@@ -95,7 +97,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 							'required'          => false,
 							'default'           => 20,
 							'validate_callback' => function( $param ) {
-								return is_int( $param );
+								return empty( trim( $param ) ) || is_numeric( $param );
 							},
 						),
 						'scan_frequency'        => array(
@@ -185,7 +187,14 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 			$schedule = new DomainScheduleScheduleConf();
 
 			if ( $request->has_param( 'urls' ) ) {
-				$schedule->setUrls( $request->get_param( 'urls' ) );
+
+				if ( ! is_array( $request->get_param( 'urls' ) ) ) {
+					$urls = explode( ",", $request->get_param( 'urls' ) );
+				} else {
+					$urls = $request->get_param( 'urls' );
+				}
+
+				$schedule->setUrls( $urls );
 			} else {
 				throw new Exception( 'URLs not defined' );
 			}
@@ -196,32 +205,37 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 				$schedule->setLinkFollowingStrategy( DomainScheduleScheduleConf::LINK_FOLLOWING_STRATEGY_NO_LINK );
 			}
 
-			if ( $request->has_param( 'custom_sitemaps' ) ) {
-				$schedule->setSitemaps( $request->get_param( 'custom_sitemaps' ) );
+			if ( $request->has_param( 'custom_sitemaps' ) && strlen( trim( $request->get_param( 'custom_sitemaps' ) ) ) > 0 ) {
+				if ( ! is_array( $request->get_param( 'custom_sitemaps' ) ) ) {
+					$sitemaps = explode( ",", $request->get_param( 'custom_sitemaps' ) );
+				} else {
+					$sitemaps = $request->get_param( 'custom_sitemaps' );
+				}
+				$schedule->setSitemaps( $sitemaps );
 			} else {
 				$schedule->setSitemaps( array() );
 			}
 
-			if ( $request->has_param( 'process_all_sitemaps' ) ) {
-				$schedule->setAllSitemaps( $request->get_param( 'process_all_sitemaps' ) );
+			if ( $request->has_param( 'process_all_sitemaps' ) && $request->get_param( 'process_all_sitemaps' ) ) {
+				$schedule->setAllSitemaps( true );
 			} else {
 				$schedule->setAllSitemaps( false );
 			}
 
-			if ( $request->has_param( 'take_screenshot' ) ) {
-				$schedule->setTakeScreenshot( $request->get_param( 'take_screenshot' ) );
+			if ( $request->has_param( 'take_screenshot' ) && $request->get_param( 'take_screenshot' ) ) {
+				$schedule->setTakeScreenshot( true );
 			} else {
 				$schedule->setTakeScreenshot( false );
 			}
 
-			if ( $request->has_param( 'analyze_text' ) ) {
-				$schedule->setFetchText( $request->get_param( 'analyze_text' ) );
+			if ( $request->has_param( 'analyze_text' ) && $request->get_param( 'analyze_text' ) ) {
+				$schedule->setFetchText( true );
 			} else {
 				$schedule->setFetchText( false );
 			}
 
 			if ( $request->has_param( 'scan_speed_per_minute' ) ) {
-				$schedule->setScanSpeedPerMinute( $request->get_param( 'scan_speed_per_minute' ) );
+				$schedule->setScanSpeedPerMinute( (int) $request->get_param( 'scan_speed_per_minute' ) );
 			} else {
 				$schedule->setScanSpeedPerMinute( 20 );
 			}

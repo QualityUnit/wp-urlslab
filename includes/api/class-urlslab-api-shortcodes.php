@@ -6,6 +6,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 	public function register_routes() {
 		$base = '/' . self::SLUG;
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
+		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
 
 		register_rest_route(
@@ -230,6 +231,72 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 		$sql->add_sorting( $columns, $request );
 
 		return $sql;
+	}
+
+	private function get_route_create_item() {
+		return array(
+			'methods'             => WP_REST_Server::CREATABLE,
+			'callback'            => array( $this, 'create_item' ),
+			'args'                => array(
+				'status'           => array(
+					'required'          => false,
+					'default'           => Urlslab_Generator_Shortcode_Row::STATUS_ACTIVE,
+					'validate_callback' => function( $param ) {
+						switch ( $param ) {
+							case Urlslab_Generator_Shortcode_Row::STATUS_ACTIVE:
+							case Urlslab_Generator_Shortcode_Row::STATUS_DISABLED:
+								return true;
+
+							default:
+								return false;
+						}
+					},
+				),
+				'semantic_context' => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return is_string( $param );
+					},
+				),
+				'prompt'           => array(
+					'required'          => true,
+					'validate_callback' => function( $param ) {
+						return is_string( $param );
+					},
+				),
+				'default_value'    => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return is_string( $param );
+					},
+				),
+				'url_filter'       => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return is_string( $param );
+					},
+				),
+				'template'         => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return is_string( $param );
+					},
+				),
+				'model'            => array(
+					'required'          => false,
+					'default'           => \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
+					'validate_callback' => function( $param ) {
+						return \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $param ||
+							   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $param ||
+							   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $param;
+					},
+				),
+			),
+			'permission_callback' => array(
+				$this,
+				'create_item_permissions_check',
+			),
+		);
 	}
 
 }
