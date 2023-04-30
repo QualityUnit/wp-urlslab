@@ -29,7 +29,8 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 				Urlslab_Youtube_Row::STATUS_PROCESSING,
 				Urlslab_Data::get_now( time() - 36000 )
 			),
-			ARRAY_A );
+			ARRAY_A
+		);
 		if ( empty( $youtube_row ) ) {
 			return false;
 		}
