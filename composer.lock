@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.268.18",
+            "version": "3.269.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "086934b1009a8d9a9ae15dc89eafe1a25b1e8b45"
+                "reference": "03b0b8984c46c469c70bfb05fea7b1ac9b859a8e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/086934b1009a8d9a9ae15dc89eafe1a25b1e8b45",
-                "reference": "086934b1009a8d9a9ae15dc89eafe1a25b1e8b45",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/03b0b8984c46c469c70bfb05fea7b1ac9b859a8e",
+                "reference": "03b0b8984c46c469c70bfb05fea7b1ac9b859a8e",
                 "shasum": ""
             },
             "require": {
@@ -83,7 +83,8 @@
                 "guzzlehttp/promises": "^1.4.0",
                 "guzzlehttp/psr7": "^1.9.1 || ^2.4.5",
                 "mtdowling/jmespath.php": "^2.6",
-                "php": ">=5.5"
+                "php": ">=5.5",
+                "psr/http-message": "^1.0"
             },
             "require-dev": {
                 "andrewsville/php-token-reflection": "^1.4",
@@ -100,7 +101,6 @@
                 "paragonie/random_compat": ">= 2",
                 "phpunit/phpunit": "^4.8.35 || ^5.6.3 || ^9.5",
                 "psr/cache": "^1.0",
-                "psr/http-message": "^1.0",
                 "psr/simple-cache": "^1.0",
                 "sebastian/comparator": "^1.2.3 || ^4.0",
                 "yoast/phpunit-polyfills": "^1.0"
@@ -151,9 +151,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.268.18"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.269.1"
             },
-            "time": "2023-04-25T18:20:08+00:00"
+            "time": "2023-04-27T18:22:40+00:00"
         },
         {
             "name": "composer/installers",
@@ -853,16 +853,16 @@
         },
         {
             "name": "psr/http-message",
-            "version": "2.0",
+            "version": "1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/http-message.git",
-                "reference": "402d35bcb92c70c026d1a6a9883f06b2ead23d71"
+                "reference": "cb6ce4845ce34a8ad9e68117c10ee90a29919eba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-message/zipball/402d35bcb92c70c026d1a6a9883f06b2ead23d71",
-                "reference": "402d35bcb92c70c026d1a6a9883f06b2ead23d71",
+                "url": "https://api.github.com/repos/php-fig/http-message/zipball/cb6ce4845ce34a8ad9e68117c10ee90a29919eba",
+                "reference": "cb6ce4845ce34a8ad9e68117c10ee90a29919eba",
                 "shasum": ""
             },
             "require": {
@@ -871,7 +871,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0.x-dev"
+                    "dev-master": "1.1.x-dev"
                 }
             },
             "autoload": {
@@ -886,7 +886,7 @@
             "authors": [
                 {
                     "name": "PHP-FIG",
-                    "homepage": "https://www.php-fig.org/"
+                    "homepage": "http://www.php-fig.org/"
                 }
             ],
             "description": "Common interface for HTTP messages",
@@ -900,9 +900,9 @@
                 "response"
             ],
             "support": {
-                "source": "https://github.com/php-fig/http-message/tree/2.0"
+                "source": "https://github.com/php-fig/http-message/tree/1.1"
             },
-            "time": "2023-04-04T09:54:51+00:00"
+            "time": "2023-04-04T09:50:52+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -1293,12 +1293,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "5eb9b0587e4625150e4892e569bb223714c86256"
+                "reference": "b065269da224a0dde2d900eb597eb0e9072f550f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/5eb9b0587e4625150e4892e569bb223714c86256",
-                "reference": "5eb9b0587e4625150e4892e569bb223714c86256",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/b065269da224a0dde2d900eb597eb0e9072f550f",
+                "reference": "b065269da224a0dde2d900eb597eb0e9072f550f",
                 "shasum": ""
             },
             "conflict": {
@@ -1374,7 +1374,7 @@
                 "contao/core-bundle": "<4.9.40|>=4.10,<4.11.7|>=4.13,<4.13.21|>=5.1,<5.1.4|= 4.10.0",
                 "contao/listing-bundle": ">=4,<4.4.8",
                 "contao/managed-edition": "<=1.5",
-                "craftcms/cms": "<3.7.64|>= 4.0.0-RC1, < 4.3.7|>= 4.0.0-RC1, < 4.2.1",
+                "craftcms/cms": "<3.7.68|>= 4.0.0-RC1, < 4.3.7|>= 4.0.0-RC1, < 4.2.1",
                 "croogo/croogo": "<3.0.7",
                 "cuyz/valinor": "<0.12",
                 "czproject/git-php": "<4.0.3",
@@ -1396,7 +1396,7 @@
                 "doctrine/orm": ">=2,<2.4.8|>=2.5,<2.5.1|>=2.8.3,<2.8.4",
                 "dolibarr/dolibarr": "<16|>=16.0.1,<16.0.3|= 12.0.5|>= 3.3.beta1, < 13.0.2",
                 "dompdf/dompdf": "<2.0.2|= 2.0.2",
-                "drupal/core": ">=7,<7.91|>=8,<9.3.19|>=9.4,<9.4.3",
+                "drupal/core": ">=7,<7.96|>=8,<9.4.14|>=9.5,<9.5.8|>=10,<10.0.8",
                 "drupal/drupal": ">=7,<7.80|>=8,<8.9.16|>=9,<9.1.12|>=9.2,<9.2.4",
                 "dweeves/magmi": "<=0.7.24",
                 "ecodev/newsletter": "<=4",
@@ -1625,7 +1625,7 @@
                 "phpxmlrpc/phpxmlrpc": "<4.9.2",
                 "pimcore/data-hub": "<1.2.4",
                 "pimcore/perspective-editor": "<1.5.1",
-                "pimcore/pimcore": "<10.5.20",
+                "pimcore/pimcore": "<10.5.21",
                 "pixelfed/pixelfed": "<=0.11.4",
                 "pocketmine/bedrock-protocol": "<8.0.2",
                 "pocketmine/pocketmine-mp": "<4.12.5|>= 4.0.0-BETA5, < 4.4.2",
@@ -1671,12 +1671,12 @@
                 "shopware/storefront": "<=6.4.8.1",
                 "shopxo/shopxo": "<2.2.6",
                 "showdoc/showdoc": "<2.10.4",
-                "silverstripe/admin": ">=1,<1.11.3",
+                "silverstripe/admin": "<1.12.7",
                 "silverstripe/assets": ">=1,<1.11.1",
                 "silverstripe/cms": "<4.11.3",
                 "silverstripe/comments": ">=1.3,<1.9.99|>=2,<2.9.99|>=3,<3.1.1",
                 "silverstripe/forum": "<=0.6.1|>=0.7,<=0.7.3",
-                "silverstripe/framework": "<4.11.14",
+                "silverstripe/framework": "<4.12.5",
                 "silverstripe/graphql": "<3.5.2|>=4-alpha.1,<4-alpha.2|>=4.1.1,<4.1.2|>=4.2.2,<4.2.3|= 4.0.0-alpha1",
                 "silverstripe/hybridsessions": ">=1,<2.4.1|>=2.5,<2.5.1",
                 "silverstripe/registry": ">=2.1,<2.1.2|>=2.2,<2.2.1",
@@ -1756,6 +1756,7 @@
                 "t3/dce": ">=2.2,<2.6.2",
                 "t3g/svg-sanitizer": "<1.0.3",
                 "tastyigniter/tastyigniter": "<3.3",
+                "tcg/voyager": "<=1.4",
                 "tecnickcom/tcpdf": "<6.2.22",
                 "terminal42/contao-tablelookupwizard": "<3.3.5",
                 "thelia/backoffice-default-template": ">=2.1,<2.1.2",
@@ -1890,7 +1891,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-04-25T20:04:17+00:00"
+            "time": "2023-04-27T18:04:34+00:00"
         },
         {
             "name": "sirbrillig/phpcs-variable-analysis",

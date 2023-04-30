@@ -74,8 +74,8 @@ class ComposerStaticInit83a869ee30bba2345152bbf6f75bc3c4
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -800,6 +800,8 @@ class ComposerStaticInit83a869ee30bba2345152bbf6f75bc3c4
         'Aws\\NimbleStudio\\NimbleStudioClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/NimbleStudio/NimbleStudioClient.php',
         'Aws\\OAM\\Exception\\OAMException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/OAM/Exception/OAMException.php',
         'Aws\\OAM\\OAMClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/OAM/OAMClient.php',
+        'Aws\\OSIS\\Exception\\OSISException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/OSIS/Exception/OSISException.php',
+        'Aws\\OSIS\\OSISClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/OSIS/OSISClient.php',
         'Aws\\Omics\\Exception\\OmicsException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Omics/Exception/OmicsException.php',
         'Aws\\Omics\\OmicsClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Omics/OmicsClient.php',
         'Aws\\OpenSearchServerless\\Exception\\OpenSearchServerlessException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/OpenSearchServerless/Exception/OpenSearchServerlessException.php',

@@ -358,7 +358,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		global $wpdb;
 
 		$keyword_table = URLSLAB_KEYWORDS_TABLE;
-		$lang = $this->get_current_language();
+		$lang = $this->get_current_language_code();
 
 		$results = array();
 		if ( self::KW_TYPE_NONE != $this->get_option( self::SETTING_NAME_KW_TYPES_TO_USE ) ) {
@@ -724,7 +724,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			if ( $this->get_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS ) || $this->get_option( self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS ) ) {
 				$schedule_urls = array();
 				$new_keywords = array();
-				$lang = $this->get_current_language();
+				$lang = $this->get_current_language_code();
 				foreach ( $missing_keywords as $missing_kw => $urls ) {
 					if ( strlen( $missing_kw ) < $this->get_option( self::SETTING_NAME_KW_IMPORT_MAX_LENGTH ) ) {
 						foreach ( $urls as $url_id => $arrU ) {
