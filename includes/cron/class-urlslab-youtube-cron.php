@@ -22,7 +22,14 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 		}
 
 		global $wpdb;
-		$youtube_row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' WHERE status = %s ORDER BY status_changed DESC LIMIT 1', Urlslab_Youtube_Row::STATUS_NEW ), ARRAY_A ); // phpcs:ignore
+		$youtube_row = $wpdb->get_row(
+			$wpdb->prepare(
+				'SELECT * FROM ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' WHERE status = %s OR (status=%s AND status_changed < %s) ORDER BY status_changed DESC LIMIT 1', // phpcs:ignore
+				Urlslab_Youtube_Row::STATUS_NEW,
+				Urlslab_Youtube_Row::STATUS_PROCESSING,
+				Urlslab_Data::get_now( time() - 36000 )
+			),
+			ARRAY_A );
 		if ( empty( $youtube_row ) ) {
 			return false;
 		}
@@ -35,21 +42,23 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 		$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_PROCESSING );
 		$youtube_obj->update();
 
-		$captions = $this->get_youtube_captions( $youtube_obj );
-		if ( $captions ) {
-			$youtube_obj->set_captions( $captions );
-			$youtube_obj->update();
+		if ( ! strlen( $youtube_obj->get_captions() ) ) {
+			$captions = $this->get_youtube_captions( $youtube_obj );
+			if ( $captions ) {
+				$youtube_obj->set_captions( $captions );
+			}
 		}
-		$microdata = $this->get_youtube_microdata( $youtube_obj );
-		if ( $microdata ) {
-			// update status to active
+		if ( ! strlen( $youtube_obj->get_microdata() ) ) {
+			$microdata = $this->get_youtube_microdata( $youtube_obj );
+			if ( $microdata ) {
+				$youtube_obj->set_microdata( $microdata );
+			}
+		}
+		if ( strlen( $youtube_obj->get_captions() ) && strlen( $youtube_obj->get_microdata() ) ) {
 			$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_AVAILABLE );
-			$youtube_obj->set_microdata( $microdata );
-			$youtube_obj->update();
-
-			return true;
+		} else {
+			$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_PROCESSING );
 		}
-		$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_NEW );
 		$youtube_obj->update();
 
 		// something went wrong, wait with next processing
@@ -58,25 +67,26 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 
 
 	private function get_youtube_microdata( Urlslab_Youtube_Row $youtube_obj ) {
-		$url      = 'https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet%2CcontentDetails&contentDetails.duration&id=' . $youtube_obj->get_video_id() . '&key=' . $this->get_youtube_key(); // json source
-		$response = wp_remote_get( $url, array( 'sslverify' => false ) );
-		if ( ! is_wp_error( $response ) ) {
-			$value = json_decode( $response['body'] );
-			if ( property_exists( $value, 'error' ) ) {
-				return false;
-			}
+		if ( strlen( $this->get_youtube_key() ) ) {
+			$url      = 'https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet%2CcontentDetails&contentDetails.duration&id=' . $youtube_obj->get_video_id() . '&key=' . $this->get_youtube_key(); // json source
+			$response = wp_remote_get( $url, array( 'sslverify' => false ) );
+			if ( ! is_wp_error( $response ) ) {
+				$value = json_decode( $response['body'] );
+				if ( property_exists( $value, 'error' ) ) {
+					return false;
+				}
 
-			return $response['body'];
+				return $response['body'];
+			}
 		}
+
+		//TODO urlslab implementation
 
 		return false;
 	}
 
 
 	private function get_youtube_captions( Urlslab_Youtube_Row $youtube_obj ) {
-
-		//TODO load data from urlslab api
-
-		return false;
+		return ' ';
 	}
 }
