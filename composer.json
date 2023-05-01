@@ -23,7 +23,7 @@
     "ext-dom": "*",
     "ext-gd": "*",
     "oscarotero/env": "^2.1",
-    "aws/aws-sdk-php": "^3.263",
+    "aws/aws-sdk-php": "^3.269",
     "urlslab/urlslab-php-sdk": "dev-main",
     "google/apiclient": "^2.0"
   },
