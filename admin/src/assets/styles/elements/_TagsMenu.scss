@@ -1,38 +1,15 @@
 @use "../common/variables" as *;
 @use "../common/mixins" as *;
 
-html,
-.tagify {
-	--tag-pad: 0 0.75em !important;
-	--tag-border-radius: 1em !important;
-}
-
-.tagify {
-
-	&__dropdown__item,
-	&__tag > div {
-		font-size: 0.75rem;
-		border-radius: var(--tag-border-radius);
-	}
-
-	&__dropdown__item,
-	&__tag {
-
-		&.dark {
-			color: $white;
-		}
-	}
-}
-
 .urlslab-tagsmenu {
 	z-index: 999;
 	border-radius: $br-10;
 	background-color: $white;
 	filter: $box-shadow-small;
 
-	.tagify {
+	.react-tags {
 
-		&__input {
+		&__combobox-input {
 			font-weight: $font-weight-normal;
 			line-height: 1;
 			padding: 0.35em 0.5em 0.35em 3.5em;
@@ -46,6 +23,28 @@ html,
 
 			&:focus:not(:empty)::before {
 				opacity: 0;
+			}
+		}
+
+		&__label {
+			display: none;
+		}
+
+		&__listbox {
+
+			&-option:not([aria-disabled="true"]).is-active {
+				background: #4f46e5;
+				color: #fff;
+			}
+
+			&-option[aria-disabled="true"] {
+				color: #7c7d86;
+				cursor: not-allowed;
+				pointer-events: none;
+			}
+
+			&-option[aria-selected="true"] {
+				display: none;
 			}
 		}
 	}

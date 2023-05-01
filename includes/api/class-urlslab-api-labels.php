@@ -102,6 +102,7 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 		foreach ( $rows as $row ) {
 			$row->label_id = (int) $row->label_id;
 			$row->value = (int) $row->label_id;
+			$row->label = (string) $row->name;
 			$row->modules  = explode( ',', $row->modules );
 		}
 

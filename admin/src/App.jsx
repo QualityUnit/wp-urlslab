@@ -70,8 +70,9 @@ export default function App() {
 					tagsArray?.map( ( tag ) => {
 						const { lightness } = hexToHSL( tag.bgcolor );
 						if ( lightness < 70 ) {
-							return tag.class = 'dark';
+							return tag.className = 'dark';
 						}
+						return tag;
 					} );
 					return tagsArray;
 				},

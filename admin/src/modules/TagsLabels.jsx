@@ -26,7 +26,7 @@ export default function TagsLabels( ) {
 					<ul className="urlslab-tags" key="tags">
 						{
 							createdTags.map( ( tag ) => {
-								const { label_id, bgcolor, name, class: className, modules } = tag;
+								const { label_id, bgcolor, name, className, modules } = tag;
 								return <li key={ label_id }><Tag className={ `${ className || '' }` } style={ { backgroundColor: bgcolor } }>{ name }</Tag></li>;
 							} )
 						}

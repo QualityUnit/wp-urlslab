@@ -17,7 +17,6 @@ export default function KeywordsTable( { slug } ) {
 	const {
 		__,
 		columnHelper,
-		tags,
 		data,
 		status,
 		isSuccess,

@@ -3,18 +3,15 @@ import { useI18n } from '@wordpress/react-i18n';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useInView } from 'react-intersection-observer';
 
-import { useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { postFetch } from '../api/fetching';
 import filtersArray from '../lib/filtersArray';
 
 export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const { __ } = useI18n();
-	const queryClient = useQueryClient();
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { ref, inView } = useInView();
 	const { key, filters: userFilters, sorting, paginationId } = options;
-
-	const tags = useMemo( () => queryClient.getQueryData( [ 'tags' ] ), [ queryClient ] );
 
 	const sortingArray = sorting ? sorting.map( ( sortingObj ) => {
 		const { key: keyName, dir } = sortingObj;
@@ -80,7 +77,6 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 
 	return {
 		__,
-		tags,
 		columnHelper,
 		data,
 		status,

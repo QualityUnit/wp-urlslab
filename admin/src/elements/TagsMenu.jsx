@@ -1,24 +1,20 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-// import Tagify from '@yaireo/tagify';
-import Tags from '@yaireo/tagify/dist/react.tagify';
-import '@yaireo/tagify/src/tagify.scss';
-
+import { ReactTags } from 'react-tag-autocomplete';
 import '../assets/styles/elements/_TagsMenu.scss';
 
 import Tag from './Tag';
 
 export default function TagsMenu( { tags, slug } ) {
 	const queryClient = useQueryClient();
-	const tagifyRef = useRef();
-	const tagifyWrapper = useRef();
 	const [ tagsMenuActive, setTagsMenu ] = useState( false );
-	const assignedTagsArray = tags.replace( /^\|(.+)\|$/, '$1' ).split( '|' );
+	const assignedTagsArray = tags?.replace( /^\|(.+)\|$/, '$1' ).split( '|' );
 	const tagsData = queryClient.getQueryData( [ 'tags' ] );
+	const [ selected, setSelected ] = useState( [] );
 
-	// Getting only tags/labels that have empty modules array or assigned slug
+	// Getting only tags/labels that have empty modules array or allowed slug
 	const availableTags = useMemo( () => {
 		return tagsData.filter( ( tag ) => tag.modules.indexOf( slug ) !== -1 || tag.modules.length || ( tag.modules.length === 1 && tag.modules[ 0 ] === '' ) );
 	}, [ tagsData, slug ] );
@@ -34,16 +30,35 @@ export default function TagsMenu( { tags, slug } ) {
 		return tagsArray;
 	}, [ assignedTagsArray, tagsData ] );
 
-	function suggestionItemTemplate( tagData ) {
+	const onAdd = useCallback(
+		( newTag ) => {
+			setSelected( ( selectedTags ) => [ ...selectedTags, newTag ] );
+		},
+		[]
+	);
+
+	const onDelete = useCallback(
+		( tag ) => {
+			setSelected( selected.filter( ( selectedTag ) => selectedTag.label_id !== tag.label_id ) );
+		},
+		[ selected ]
+	);
+	function CustomTag( { classNames, tag, ...tagProps } ) {
+		const { label_id, className, bgcolor, label } = tag;
+		return <Tag className={ `${ classNames.tag } ${ className }` } { ...tagProps } onClick={ () => onDelete( tag ) } style={ { backgroundColor: bgcolor } }>{ label }</Tag>;
+	}
+
+	function CustomOption( { children, classNames, option, ...optionProps } ) {
+		const classes = [
+			classNames.option,
+			option.active ? 'is-active' : '',
+			option.selected ? 'is-selected' : '',
+		];
+
 		return (
-			`<div ${ this.getAttributes( tagData ) }
-				title="${ tagData.value }"
-				style="background-color: ${ tagData.bgcolor }"
-				class="tagify__dropdown__item ${ tagData.class || '' } ${ this.settings.classNames.dropdownItem }"
-				tabIndex="0"
-				role="option">
-				<strong>${ tagData.name }</strong>
-			</div>`
+			<Tag className={ classes.join( ' ' ) } style={ { backgroundColor: option.bgcolor } } { ...optionProps }>
+				{ children }
+			</Tag>
 		);
 	}
 
@@ -56,37 +71,21 @@ export default function TagsMenu( { tags, slug } ) {
 				} ) }
 			</div>
 			{ tagsMenuActive &&
-			<div className="pos-absolute" ref={ tagifyWrapper }>
-				<Tags
-					className="urlslab-tagsmenu"
-					tagifyRef={ tagifyRef }
-					onChange={ ( e ) => console.log( e ) }
-					onAdd={ ( e ) => console.log( 'pridanie', e ) }
-					showFilteredDropdown={ true }
-					settings={ {
-						whitelist: availableTags,
-						dropdown: {
-							enabled: 0,
-							searchKeys: [ 'name' ],
-							mapValueTo: 'name',
-							maxItems: Infinity,
-							closeOnSelect: false,
-							highlightFirst: true,
-							appendTarget: tagifyWrapper.current,
-						},
-						transformTag: ( tagData ) => {
-							tagData.style = '--tag-bg:' + tagData.bgcolor;
-							tagData.className = tagData.class;
-						},
-						tagTextProp: 'name',
-						placeholder: 'Search…',
-						templates: {
-							dropdownItem: suggestionItemTemplate,
-						},
-					} }
-					defaultValue={ assignedTags }
-				/>
-			</div>
+				<div className="pos-absolute urlslab-tagsmenu">
+					<ReactTags
+					// activateFirstOption={ true }
+						selected={ selected }
+						allowNew
+						placeholderText="Search…"
+						// suggestionsFilter={ () => {} }
+						suggestions={ availableTags }
+						onDelete={ onDelete }
+						onAdd={ onAdd }
+						renderTag={ CustomTag }
+						// renderOption={ CustomOption }
+					/>
+
+				</div>
 			}
 		</div>
 	);
