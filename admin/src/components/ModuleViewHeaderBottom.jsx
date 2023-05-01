@@ -19,7 +19,6 @@ import Button from '../elements/Button';
 import TableFilter from './TableFilter';
 
 import TableFilterPanel from './TableFilterPanel';
-import '../assets/styles/components/_TableFilter.scss';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import IconButton from '../elements/IconButton';
 import useResizeObserver from '../hooks/useResizeObserver';

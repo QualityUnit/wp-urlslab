@@ -45,7 +45,7 @@ export default function TagsMenu( { tags, slug } ) {
 	);
 	function CustomTag( { classNames, tag, ...tagProps } ) {
 		const { label_id, className, bgcolor, label } = tag;
-		return <Tag className={ `${ classNames.tag } ${ className }` } { ...tagProps } onClick={ () => onDelete( tag ) } style={ { backgroundColor: bgcolor } }>{ label }</Tag>;
+		return <Tag type="button" className={ `${ classNames.tag } ${ className }` } { ...tagProps } onClick={ () => onDelete( tag ) } style={ { backgroundColor: bgcolor } }>{ label }</Tag>;
 	}
 
 	function CustomOption( { children, classNames, option, ...optionProps } ) {
@@ -53,10 +53,11 @@ export default function TagsMenu( { tags, slug } ) {
 			classNames.option,
 			option.active ? 'is-active' : '',
 			option.selected ? 'is-selected' : '',
+			option.className ? option.className : '',
 		];
 
 		return (
-			<Tag className={ classes.join( ' ' ) } style={ { backgroundColor: option.bgcolor } } { ...optionProps }>
+			<Tag className={ classes.join( ' ' ) } style={ { backgroundColor: option.bgcolor } } props={ optionProps }>
 				{ children }
 			</Tag>
 		);
@@ -66,8 +67,8 @@ export default function TagsMenu( { tags, slug } ) {
 		<div className="pos-relative urlslab-tagsmenu-wrapper">
 			<div className="urlslab-tagsmenu-tags flex flex-align-center" onClick={ () => setTagsMenu( ! tagsMenuActive ) }>
 				{ assignedTags.map( ( tag ) => {
-					const { label_id, bgcolor, class: className, name } = tag;
-					return <Tag type="circle" className={ `${ className || '' }` } style={ { backgroundColor: bgcolor } } key={ label_id }>{ name.charAt( 0 ) }</Tag>;
+					const { label_id, bgcolor, className, name } = tag;
+					return <Tag shape="circle" className={ `${ className || '' }` } style={ { backgroundColor: bgcolor } } key={ label_id }>{ name.charAt( 0 ) }</Tag>;
 				} ) }
 			</div>
 			{ tagsMenuActive &&
@@ -82,7 +83,7 @@ export default function TagsMenu( { tags, slug } ) {
 						onDelete={ onDelete }
 						onAdd={ onAdd }
 						renderTag={ CustomTag }
-						// renderOption={ CustomOption }
+						renderOption={ CustomOption }
 					/>
 
 				</div>

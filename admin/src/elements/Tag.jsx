@@ -1,9 +1,13 @@
 import '../assets/styles/elements/_Tag.scss';
 
-export default function Tag( { className, children, style, type, fill, size, onClick } ) {
+export default function Tag( { props, type, className, children, style, shape, fill, size, onClick } ) {
 	return (
-		<span onClick={ onClick } className={ `urlslab-tag ${ className || '' } ${ size || '' } ${ type || '' } ${ fill && 'fill' }` } style={ style }>
-			{ children }
-		</span>
+		type === 'button'
+			? <button { ...props } onClick={ onClick } className={ `urlslab-tag ${ className || '' } ${ size || '' } ${ shape || '' } ${ fill && 'fill' }` } style={ style }>
+				{ children }
+			</button>
+			: <span { ...props }className={ `urlslab-tag ${ className || '' } ${ size || '' } ${ shape || '' } ${ fill && 'fill' }` } style={ style }>
+				{ children }
+			</span>
 	);
 }

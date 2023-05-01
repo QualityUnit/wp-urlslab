@@ -2,6 +2,7 @@ import { useMemo, Suspense } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 
+import Button from '../elements/Button';
 import Tag from '../elements/Tag';
 
 import '../assets/styles/layouts/_Settings.scss';
@@ -31,6 +32,8 @@ export default function TagsLabels( ) {
 							} )
 						}
 					</ul>
+					<Button className="simple underline" onClick={ () => setTag( 'newTag' ) }>{ __( '+ Add new Tag' ) }
+					</Button>
 					<ColorPicker onChange={ ( color ) => console.log( color ) } />
 				</div>
 			</section>
