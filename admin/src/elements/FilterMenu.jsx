@@ -7,13 +7,17 @@ import '../assets/styles/elements/_FilterMenu.scss';
 
 export default function FilterMenu( {
 	id, className, asTags, style, children, items, checkedItems, isFilter, onChange } ) {
+	let checkedNow = checkedItems || [];
+
+	if ( checkedItems && ! checkedItems.isArray() ) {
+		checkedNow = checkedItems.split( /[,\|]/ );
+	}
 	const { __ } = useI18n();
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
-	const [ checked, setChecked ] = useState( checkedItems );
+	const [ checked, setChecked ] = useState( checkedNow );
 	const ref = useRef( id );
 	const didMountRef = useRef( false );
-	let checkedNow = checkedItems;
 
 	useEffect( ( ) => {
 		const handleClickOutside = ( event ) => {
@@ -22,7 +26,7 @@ export default function FilterMenu( {
 				setVisible( false );
 			}
 		};
-		if ( onChange && didMountRef.current && ! isActive && ( checked.filter( ( val ) => ! checkedNow.includes( val ) ) ) ) {
+		if ( onChange && didMountRef.current && ! isActive && ( checked?.filter( ( val ) => ! checkedNow?.includes( val ) ) ) ) {
 			onChange( checked );
 		}
 		didMountRef.current = true;
@@ -36,8 +40,8 @@ export default function FilterMenu( {
 			setChecked( [ ... new Set( checkedList ) ] );
 		}
 		if ( ! isChecked ) {
-			checkedNow = checked.filter( ( item ) => item !== target );
-			setChecked( checked.filter( ( item ) => item !== target ) );
+			checkedNow = checked?.filter( ( item ) => item !== target );
+			setChecked( checked?.filter( ( item ) => item !== target ) );
 		}
 	};
 
@@ -75,7 +79,7 @@ export default function FilterMenu( {
 								key={ itemId }
 								id={ itemId }
 								onChange={ ( isChecked ) => checkedCheckbox( itemId, isChecked ) }
-								checked={ checked.includes( itemId ) }
+								checked={ checked?.includes( itemId ) }
 							>
 								{ value }
 							</Checkbox>
