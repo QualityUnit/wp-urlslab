@@ -2,10 +2,15 @@
 @use "../common/variables" as *;
 
 .urslab-floating-panel {
-	z-index: 1;
-	font-size: 1rem;
-	padding: 1rem;
-	filter: drop-shadow(0 4px 1rem rgba($black, 0.16));
+
+	&[class] {
+		position: absolute;
+		z-index: 1;
+		font-size: 1rem;
+		padding: 1rem !important;
+		background-color: $white;
+		filter: drop-shadow(0 4px 1rem rgba($black, 0.16));
+	}
 
 	> * {
 		font-size: 0.92307em;
@@ -41,7 +46,8 @@
 		margin-left: -1rem;
 	}
 
-	&::before {
+	&::before,
+	&.onBottom::before {
 
 		@include triangle(1.5em, $white, "up");
 		position: absolute;
@@ -57,14 +63,18 @@
 	}
 
 	@media (min-width: $breakpoint-desktop-box) {
-		top: -0.35em;
-		left: calc(100% + 0.5em);
 
-		&::before {
+		&:not(.onBottom) {
+			top: -0.35em;
+			left: calc(100% + 0.5em);
+			transform: none;
 
-			@include triangle(1.5em, $white, "left");
-			top: 0.75em;
-			left: -1.5em;
+			&::before {
+
+				@include triangle(1.5em, $white, "left");
+				top: 0.75em;
+				left: -1.5em;
+			}
 		}
 	}
 }

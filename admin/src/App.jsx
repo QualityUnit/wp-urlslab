@@ -63,7 +63,7 @@ export default function App() {
 
 			// Creating Tags/Labels query object in advance
 			queryClient.prefetchQuery( {
-				queryKey: [ 'tags' ],
+				queryKey: [ 'label' ],
 				queryFn: async () => {
 					const tags = await postFetch( 'label', { rows_per_page: 500 } );
 					const tagsArray = await tags.json();
@@ -81,7 +81,7 @@ export default function App() {
 
 			// Creating Tags/Labels query object in advance
 			queryClient.prefetchQuery( {
-				queryKey: [ 'tags', 'modules' ],
+				queryKey: [ 'label', 'modules' ],
 				queryFn: async () => await fetchData( 'label/modules' ),
 				refetchOnWindowFocus: false,
 			} );

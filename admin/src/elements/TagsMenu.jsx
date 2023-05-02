@@ -11,7 +11,7 @@ export default function TagsMenu( { tags, slug } ) {
 	const queryClient = useQueryClient();
 	const [ tagsMenuActive, setTagsMenu ] = useState( false );
 	const assignedTagsArray = tags?.replace( /^\|(.+)\|$/, '$1' ).split( '|' );
-	const tagsData = queryClient.getQueryData( [ 'tags' ] );
+	const tagsData = queryClient.getQueryData( [ 'label' ] );
 	const [ selected, setSelected ] = useState( [] );
 
 	// Getting only tags/labels that have empty modules array or allowed slug

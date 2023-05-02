@@ -85,7 +85,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 	}, [ state.filterObj.keyType ] );
 
 	return (
-		<div className={ `urlslab-panel fadeInto urslab-floating-panel urslab-TableFilter-panel pos-absolute` }>
+		<div className={ `urlslab-panel fadeInto urslab-floating-panel urslab-TableFilter-panel` }>
 			<div className="urlslab-panel-header urslab-TableFilter-panel-header">
 				<strong>{ __( 'Edit filter' ) }{ key ? ` ${ header[ key ] }` : '' }</strong>
 			</div>

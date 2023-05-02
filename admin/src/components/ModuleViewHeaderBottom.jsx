@@ -122,7 +122,9 @@ export default function ModuleViewHeaderBottom( { slug, noFiltering, noImport, n
 
 	const handleRefresh = () => {
 		queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ? sorting : [] ] );
-		queryClient.invalidateQueries( [ slug, 'count', filtersArray( filters ) ] );
+		if ( ! noCount ) {
+			queryClient.invalidateQueries( [ slug, 'count', filtersArray( filters ) ] );
+		}
 	};
 
 	return (
