@@ -189,7 +189,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			100,
 			false,
 			__( 'Min 404 occurences' ),
-			__( 'Define minimum number of occurences of 404 error to create redirect. If number of occurences is lower, redirect will not be created. Calculation of each redirect cost some credits, therefore it is wise to define reasonable limit.' ),
+			__( 'Define minimum number of occurences of 404 error to create redirect. If number of occurences is lower, redirect will not be created. Calculation of each redirect cost some credits, therefore it is wise to define reasonable limit. We try to compute redirect just for 404 url, which happen in the last hour.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
