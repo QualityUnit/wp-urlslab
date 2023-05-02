@@ -8,6 +8,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
+		register_rest_route( self::NAMESPACE, $base . '/suggest', $this->get_route_suggest_urls() );
 		register_rest_route(
 			self::NAMESPACE,
 			$base . '/count',
@@ -225,6 +226,102 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 				'create_item_permissions_check',
 			),
 		);
+	}
+
+	/**
+	 * @return array[]
+	 */
+	public function get_route_suggest_urls(): array {
+		return array(
+			'methods'             => WP_REST_Server::CREATABLE,
+			'callback'            => array( $this, 'suggest_urls' ),
+			'args'                => array(
+				'keyword' => array(
+					'required'          => true,
+					'validate_callback' => function( $param ) {
+						return is_string( $param ) && strlen( $param );
+					},
+				),
+				'domain'  => array(
+					'required'          => true,
+					'validate_callback' => function( $param ) {
+						return is_string( $param ) && strlen( $param );
+					},
+				),
+				'count'   => array(
+					'required'          => false,
+					'default'           => 5,
+					'validate_callback' => function( $param ) {
+						return is_numeric( $param ) && 0 < ( (int) $param );
+					},
+				),
+			),
+			'permission_callback' => array(
+				$this,
+				'create_item_permissions_check',
+			),
+		);
+	}
+
+
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function suggest_urls( $api_request ) {
+		try {
+			if ( ! strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) ) ) {
+				return new WP_REST_Response( __( 'Urlslab API key not set', 'urlslab' ), 500 );
+			}
+
+			$max_count = (int) $api_request->get_param( 'count' );
+
+			$config         = \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) );
+			$content_client = new \OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), $config );
+
+
+			$request = new \OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsRequest();
+			$request->setQuery( $api_request->get_param( 'keyword' ) );
+			$request->setChunkLimit( 5 );
+			$request->setRenewFrequency( \OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsRequest::RENEW_FREQUENCY_ONE_TIME );
+
+			$query = new \OpenAPI\Client\Model\DomainDataRetrievalContentQuery();
+			$query->setLimit( $max_count * 3 );
+
+			$domains = array();
+			if ( $api_request->get_param( 'domain' ) ) {
+				$domains[ $api_request->get_param( 'domain' ) ] = $api_request->get_param( 'domain' );
+			} else {
+				$domain             = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_current_page_url()->get_domain_name();
+				$domains[ $domain ] = $domain;
+			}
+
+			$query->setDomains( array_keys( $domains ) );
+			$request->setFilter( $query );
+
+			$response  = $content_client->getRelatedUrls( $request );
+			$dest_urls = array();
+			foreach ( $response->getUrls() as $chunk ) {
+				foreach ( $chunk as $dest_url ) {
+					if ( count( $dest_urls ) < $max_count ) {
+						$dest_urls[ $dest_url ] = $dest_url;
+					}
+				}
+			}
+
+
+			return new WP_REST_Response( array_keys( $dest_urls ), 200 );
+		} catch ( \OpenAPI\Client\ApiException $e ) {
+			switch ( $e->getCode() ) {
+				case 429:
+					return new WP_REST_Response( __( 'Too many requests', 'urlslab' ), $e->getCode() );
+				default:
+					return new WP_REST_Response( __( 'Urlslab API error', 'urlslab' ), $e->getCode() );
+			}
+		} catch ( Exception $e ) {
+			return new WP_Error( 'exception', __( 'Insert failed', 'urlslab' ), array( 'status' => 500 ) );
+		}
 	}
 
 	/**
