@@ -122,7 +122,7 @@ class Urlslab_Redirects_Cron extends Urlslab_Cron {
 	}
 
 	private function is_valid_url( Urlslab_Not_Found_Log_Row $url ) {
-		return ! preg_match( '/\.(jpg|jpeg|png|gif|bmp|webp|tiff|tif|svg|ico|jfif|heic|heif|avif|js|map)/i', $url->get_url() );
+		return ! preg_match( '/\.(jpg|jpeg|png|gif|bmp|webp|tiff|tif|svg|ico|jfif|heic|heif|avif|js|map|css)/i', $url->get_url() );
 	}
 
 }
