@@ -9,6 +9,8 @@ class Urlslab_Redirects extends Urlslab_Widget {
 	public const SETTING_NAME_DEFAULT_REDIRECT_URL_IMAGE = 'urlslab_redir_default_url_image';
 
 	public const CACHE_GROUP = 'urlslab_redirects';
+	const SETTING_NAME_AI_REDIRECTS = 'urlslab_redir_ai_redirects';
+	const SETTING_NAME_MIN_404_COUNT = 'urlslab_redir_min_404_count';
 
 	public function get_widget_labels(): array {
 		return array( self::LABEL_FREE );
@@ -163,6 +165,39 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			},
 			'logging'
 		);
+
+		$this->add_options_form_section(
+			'ai_redirects',
+			__( 'AI Redirecting' ),
+			__( 'If url is requested multiple times and leads to error 404 Not Found, we will create automatic redirect by AI and will redirect visitor next time to the best metching url. Matching missing URL with the content is done on background by cron. It can take few days until the best matching URL is found. You should always manually validate if the automatic redirect is correct.' )
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_AI_REDIRECTS,
+			false,
+			false,
+			__( 'Calculate Redirect' ),
+			__( 'Calculate from not found url the best matching URL found in your domain and save it as new redirect.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'ai_redirects'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_MIN_404_COUNT,
+			100,
+			false,
+			__( 'Min 404 occurences' ),
+			__( 'Define minimum number of occurences of 404 error to create redirect. If number of occurences is lower, redirect will not be created. Calculation of each redirect cost some credits, therefore it is wise to define reasonable limit.' ),
+			self::OPTION_TYPE_NUMBER,
+			false,
+			function( $value ) {
+				return is_numeric( $value );
+			},
+			'ai_redirects'
+		);
+
 	}
 
 	public function template_redirect() {

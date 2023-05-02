@@ -40,7 +40,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		return $this->get( 'redirect_id' );
 	}
 
-	public function set_redirect_id( int $redirect_id, $loaded_from_db = true ): void {
+	public function set_redirect_id( int $redirect_id, $loaded_from_db = false ): void {
 		$this->set( 'redirect_id', $redirect_id, $loaded_from_db );
 	}
 
@@ -48,7 +48,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		return $this->get( 'row_hash' );
 	}
 
-	public function set_row_hash( int $row_hash, $loaded_from_db = true ): void {
+	public function set_row_hash( int $row_hash, $loaded_from_db = false ): void {
 		if ( ! $row_hash ) {
 			$row_hash       = crc32( $this->get_match_type() . '|' . $this->get_match_url() . '|' . $this->get_is_logged() . '|' . $this->get_capabilities() . '|' . $this->get_roles() . '|' . $this->get_browser() . '|' . $this->get_cookie() . '|' . $this->get_headers() . '|' . $this->get_params() . '|' . $this->get_ip() . '|' . $this->get_if_not_found() );
 			$loaded_from_db = false;
@@ -60,7 +60,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		return $this->get( 'match_type' );
 	}
 
-	public function set_match_type( string $match_type, $loaded_from_db = true ): void {
+	public function set_match_type( string $match_type, $loaded_from_db = false ): void {
 		$this->set( 'match_type', $match_type, $loaded_from_db );
 	}
 
@@ -68,7 +68,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		return $this->get( 'match_url' );
 	}
 
-	public function set_match_url( string $match_url, $loaded_from_db = true ): void {
+	public function set_match_url( string $match_url, $loaded_from_db = false ): void {
 		$this->set( 'match_url', $match_url, $loaded_from_db );
 	}
 
@@ -76,7 +76,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		return $this->get( 'replace_url' );
 	}
 
-	public function set_replace_url( string $replace_url, $loaded_from_db = true ): void {
+	public function set_replace_url( string $replace_url, $loaded_from_db = false ): void {
 		$this->set( 'replace_url', $replace_url, $loaded_from_db );
 	}
 
@@ -84,7 +84,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		return $this->get( 'is_logged' );
 	}
 
-	public function set_is_logged( string $is_logged, $loaded_from_db = true ): void {
+	public function set_is_logged( string $is_logged, $loaded_from_db = false ): void {
 		$this->set( 'is_logged', $is_logged, $loaded_from_db );
 	}
 
@@ -96,11 +96,11 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		return $this->get( 'roles' );
 	}
 
-	public function set_capabilities( string $capabilities, $loaded_from_db = true ): void {
+	public function set_capabilities( string $capabilities, $loaded_from_db = false ): void {
 		$this->set( 'capabilities', $capabilities, $loaded_from_db );
 	}
 
-	public function set_roles( string $roles, $loaded_from_db = true ): void {
+	public function set_roles( string $roles, $loaded_from_db = false ): void {
 		$this->set( 'roles', $roles, $loaded_from_db );
 	}
 
@@ -108,7 +108,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		return $this->get( 'cookie' );
 	}
 
-	public function set_cookie( string $cookie, $loaded_from_db = true ): void {
+	public function set_cookie( string $cookie, $loaded_from_db = false ): void {
 		$this->set( 'cookie', $cookie, $loaded_from_db );
 	}
 
@@ -116,7 +116,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		return $this->get( 'browser' );
 	}
 
-	public function set_browser( string $browser, $loaded_from_db = true ): void {
+	public function set_browser( string $browser, $loaded_from_db = false ): void {
 		$this->set( 'browser', $browser, $loaded_from_db );
 	}
 
@@ -124,7 +124,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		return $this->get( 'headers' );
 	}
 
-	public function set_headers( string $headers, $loaded_from_db = true ): void {
+	public function set_headers( string $headers, $loaded_from_db = false ): void {
 		$this->set( 'headers', $headers, $loaded_from_db );
 	}
 
@@ -132,7 +132,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		return $this->get( 'params' );
 	}
 
-	public function set_params( string $params, $loaded_from_db = true ): void {
+	public function set_params( string $params, $loaded_from_db = false ): void {
 		$this->set( 'params', $params, $loaded_from_db );
 	}
 
@@ -140,7 +140,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		return $this->get( 'if_not_found' );
 	}
 
-	public function set_if_not_found( string $if_not_found, $loaded_from_db = true ): void {
+	public function set_if_not_found( string $if_not_found, $loaded_from_db = false ): void {
 		$this->set( 'if_not_found', $if_not_found, $loaded_from_db );
 	}
 
@@ -148,7 +148,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		return $this->get( 'cnt' );
 	}
 
-	public function set_cnt( int $cnt, $loaded_from_db = true ): void {
+	public function set_cnt( int $cnt, $loaded_from_db = false ): void {
 		$this->set( 'cnt', $cnt, $loaded_from_db );
 	}
 
@@ -156,7 +156,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		return $this->get( 'redirect_code' );
 	}
 
-	public function set_redirect_code( int $redirect_code, $loaded_from_db = true ): void {
+	public function set_redirect_code( int $redirect_code, $loaded_from_db = false ): void {
 		$this->set( 'redirect_code', $redirect_code, $loaded_from_db );
 	}
 
@@ -164,7 +164,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		return $this->get( 'ip' );
 	}
 
-	public function set_ip( string $ip, $loaded_from_db = true ): void {
+	public function set_ip( string $ip, $loaded_from_db = false ): void {
 		$this->set( 'ip', $ip, $loaded_from_db );
 	}
 
@@ -172,7 +172,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		return $this->get( 'labels' );
 	}
 
-	public function set_labels( string $labels, $loaded_from_db = true ): void {
+	public function set_labels( string $labels, $loaded_from_db = false ): void {
 		$this->set( 'labels', $labels, $loaded_from_db );
 	}
 
