@@ -11,6 +11,7 @@ class Urlslab_Url {
 			'google.com',
 			'facebook.com',
 			'instagram.com',
+			'linkedin.com',
 			'twitter.com',
 			'localhost',
 			'liveagent.local',

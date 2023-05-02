@@ -186,6 +186,15 @@ class Urlslab_Activator {
 		);
 
 
+		self::update_step(
+			'2.19.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_NOT_FOUND_LOG_TABLE . " ADD COLUMN status CHAR(1) DEFAULT 'N'" ); // phpcs:ignore
+			}
+		);
+
+
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -588,6 +597,7 @@ class Urlslab_Activator {
 						request_data TEXT,
 						created DATETIME,
 						updated DATETIME,
+						status char(1) DEFAULT 'N',
 						PRIMARY KEY (url_id),
 						INDEX idx_updated (updated),
 						INDEX idx_created (created)

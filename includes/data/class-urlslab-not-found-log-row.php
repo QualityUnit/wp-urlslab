@@ -1,46 +1,44 @@
 <?php
 
 class Urlslab_Not_Found_Log_Row extends Urlslab_Data {
+	const STATUS_NEW = 'N';
+	const STATUS_PENDING = 'P';
+	const STATUS_REDIRECT = 'R';
+
 	/**
 	 * @param mixed $loaded_from_db
 	 */
-	public function __construct(
-		array $log = array(),
-			  $loaded_from_db = true
-	) {
+	public function __construct( array $log = array(), $loaded_from_db = true ) {
 		$this->set_url( $log['url'] ?? '', $loaded_from_db );
 		$this->set_cnt( $log['cnt'] ?? 0, $loaded_from_db );
-		$this->set_created(
-			$log['created'] ?? self::get_now(),
-			$loaded_from_db
-		);
-		$this->set_updated(
-			$log['updated'] ?? self::get_now(),
-			$loaded_from_db
-		);
-		$this->set_request_data(
-			$log['request_data'] ?? '',
-			$loaded_from_db
-		);
-		$this->set_url_id(
-			$log['url_id'] ?? $this->compute_url_id(),
-			$loaded_from_db
-		);
+		$this->set_created( $log['created'] ?? self::get_now(), $loaded_from_db );
+		$this->set_updated( $log['updated'] ?? self::get_now(), $loaded_from_db );
+		$this->set_status( $log['status'] ?? self::STATUS_NEW, $loaded_from_db );
+		$this->set_request_data( $log['request_data'] ?? '', $loaded_from_db );
+		$this->set_url_id( $log['url_id'] ?? $this->compute_url_id(), $loaded_from_db );
 	}
 
 	public function get_url_id(): int {
 		return $this->get( 'url_id' );
 	}
 
-	public function set_url_id( int $url_id, $loaded_from_db = true ) {
+	public function set_url_id( int $url_id, $loaded_from_db = false ) {
 		$this->set( 'url_id', $url_id, $loaded_from_db );
+	}
+
+	public function get_status(): string {
+		return $this->get( 'status' );
+	}
+
+	public function set_status( string $status, $loaded_from_db = false ) {
+		$this->set( 'status', $status, $loaded_from_db );
 	}
 
 	public function get_url(): string {
 		return $this->get( 'url' );
 	}
 
-	public function set_url( string $url, $loaded_from_db = true ) {
+	public function set_url( string $url, $loaded_from_db = false ) {
 		$this->set( 'url', $url, $loaded_from_db );
 		if ( ! $loaded_from_db ) {
 			$this->set_url_id( $this->compute_url_id(), $loaded_from_db );
@@ -51,7 +49,7 @@ class Urlslab_Not_Found_Log_Row extends Urlslab_Data {
 		return $this->get( 'cnt' );
 	}
 
-	public function set_cnt( int $cnt, $loaded_from_db = true ) {
+	public function set_cnt( int $cnt, $loaded_from_db = false ) {
 		$this->set( 'cnt', $cnt, $loaded_from_db );
 	}
 
@@ -65,12 +63,12 @@ class Urlslab_Not_Found_Log_Row extends Urlslab_Data {
 
 	public function set_request_data(
 		string $request_data,
-			   $loaded_from_db = true
+		$loaded_from_db = true
 	) {
 		$this->set( 'request_data', $request_data, $loaded_from_db );
 	}
 
-	public function set_created( string $created, $loaded_from_db = true ) {
+	public function set_created( string $created, $loaded_from_db = false ) {
 		$this->set( 'created', $created, $loaded_from_db );
 	}
 
@@ -78,7 +76,7 @@ class Urlslab_Not_Found_Log_Row extends Urlslab_Data {
 		return $this->get( 'updated' );
 	}
 
-	public function set_updated( string $updated, $loaded_from_db = true ) {
+	public function set_updated( string $updated, $loaded_from_db = false ) {
 		$this->set( 'updated', $updated, $loaded_from_db );
 	}
 
@@ -97,6 +95,7 @@ class Urlslab_Not_Found_Log_Row extends Urlslab_Data {
 			'cnt'          => '%d',
 			'created'      => '%s',
 			'updated'      => '%s',
+			'status'      => '%s',
 			'request_data' => '%s',
 		);
 	}
