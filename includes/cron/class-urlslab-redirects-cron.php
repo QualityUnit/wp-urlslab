@@ -28,7 +28,7 @@ class Urlslab_Redirects_Cron extends Urlslab_Cron {
 		$url_row = $wpdb->get_row(
 			$wpdb->prepare(
 				'SELECT * FROM ' . URLSLAB_NOT_FOUND_LOG_TABLE . ' WHERE updated>%s AND cnt>%d AND status=%s LIMIT 1', // phpcs:ignore
-				Urlslab_Data::get_now( time() - 3600 ),//just if 404 happen in the last hour
+				Urlslab_Data::get_now( time() - 3600 ), //just if 404 happen in the last hour
 				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Redirects::SLUG )->get_option( Urlslab_Redirects::SETTING_NAME_MIN_404_COUNT ), // retry if scheduled
 				Urlslab_Not_Found_Log_Row::STATUS_NEW, // retry if scheduled
 			),
