@@ -638,7 +638,7 @@ class Urlslab_Activator {
 		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
 						label_id int UNSIGNED NOT NULL AUTO_INCREMENT,
 						name VARCHAR(64),
-						bgcolor VARCHAR(20),
+						bgcolor VARCHAR(120),
 						modules VARCHAR(1000),
 						PRIMARY KEY (label_id)
         ) {$charset_collate};";

@@ -12,6 +12,8 @@ import RangeInputs from '../elements/RangeInputs';
 import LangMenu from '../elements/LangMenu';
 import DatePicker from 'react-datepicker';
 
+import '../assets/styles/components/_FloatingPanel.scss';
+
 export default function TableFilterPanel( { props, onEdit } ) {
 	const currentDate = new Date();
 	const { key, slug, header, possiblefilters, initialRow, filters } = props;
@@ -83,7 +85,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 	}, [ state.filterObj.keyType ] );
 
 	return (
-		<div className={ `urlslab-panel fadeInto urslab-TableFilter-panel pos-absolute` }>
+		<div className={ `urlslab-panel fadeInto urslab-floating-panel urslab-TableFilter-panel` }>
 			<div className="urlslab-panel-header urslab-TableFilter-panel-header">
 				<strong>{ __( 'Edit filter' ) }{ key ? ` ${ header[ key ] }` : '' }</strong>
 			</div>

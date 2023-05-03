@@ -101,6 +101,8 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 
 		foreach ( $rows as $row ) {
 			$row->label_id = (int) $row->label_id;
+			$row->value = (int) $row->label_id;
+			$row->label = (string) $row->name;
 			$row->modules  = explode( ',', $row->modules );
 		}
 
@@ -113,41 +115,15 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_modules( $request ) {
-		$rows   = array();
-		$rows[] = (object) array(
-			'slug'  => Urlslab_Api_Content_Generators::SLUG,
-			'title' => __( 'Content Generator', 'urlslab' ),
-		);
-
-		$rows[] = (object) array(
-			'slug'  => Urlslab_Api_Files::SLUG,
-			'title' => __( 'Media Files', 'urlslab' ),
-		);
-		$rows[] = (object) array(
-			'slug'  => Urlslab_Api_Keywords::SLUG,
-			'title' => __( 'Keywords', 'urlslab' ),
-		);
-		$rows[] = (object) array(
-			'slug'  => Urlslab_Api_Meta_Tags::SLUG,
-			'title' => __( 'Meta Tags', 'urlslab' ),
-		);
-		$rows[] = (object) array(
-			'slug'  => Urlslab_Api_Redirects::SLUG,
-			'title' => __( 'Redirects', 'urlslab' ),
-		);
-
-		$rows[] = (object) array(
-			'slug'  => Urlslab_Api_Screenshots::SLUG,
-			'title' => __( 'Screenshots', 'urlslab' ),
-		);
-
-		$rows[] = (object) array(
-			'slug'  => Urlslab_Api_Search_Replace::SLUG,
-			'title' => __( 'Search & Replace', 'urlslab' ),
-		);
-		$rows[] = (object) array(
-			'slug'  => Urlslab_Api_Urls::SLUG,
-			'title' => __( 'Urls', 'urlslab' ),
+		$rows   = (object) array(
+			Urlslab_Api_Content_Generators::SLUG => __( 'AI Content Generator', 'urlslab' ),
+			Urlslab_Api_Files::SLUG => __( 'Media Files', 'urlslab' ),
+			Urlslab_Api_Keywords::SLUG => __( 'Keywords', 'urlslab' ),
+			Urlslab_Api_Meta_Tags::SLUG => __( 'Meta Tags', 'urlslab' ),
+			Urlslab_Api_Redirects::SLUG => __( 'Redirects', 'urlslab' ),
+			Urlslab_Api_Screenshots::SLUG => __( 'Screenshots', 'urlslab' ),
+			Urlslab_Api_Search_Replace::SLUG => __( 'Search & Replace', 'urlslab' ),
+			Urlslab_Api_Urls::SLUG => __( 'Links Manager', 'urlslab' ),
 		);
 
 		return new WP_REST_Response( $rows, 200 );

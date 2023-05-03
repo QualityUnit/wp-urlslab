@@ -15,8 +15,8 @@ export default function FilterMenu( {
 	const { __ } = useI18n();
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
-	const [ checked, setChecked ] = useState( checkedNow );
-	const ref = useRef( id );
+	const [ checked, setChecked ] = useState( checkedItems );
+	const ref = useRef( id || Math.floor( Math.random() * 10000 ) );
 	const didMountRef = useRef( false );
 
 	useEffect( ( ) => {

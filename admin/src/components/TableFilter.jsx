@@ -8,7 +8,6 @@ import { dateOp, stringOp, numericOp, langOp, menuOp } from '../lib/filterOperat
 import Button from '../elements/Button';
 import { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.svg';
 
-import '../assets/styles/components/_TableFilter.scss';
 import TableFilterPanel from './TableFilterPanel';
 import Tooltip from '../elements/Tooltip';
 

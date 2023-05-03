@@ -19,7 +19,6 @@ import Button from '../elements/Button';
 import TableFilter from './TableFilter';
 
 import TableFilterPanel from './TableFilterPanel';
-import '../assets/styles/components/_TableFilter.scss';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import IconButton from '../elements/IconButton';
 import useResizeObserver from '../hooks/useResizeObserver';
@@ -123,7 +122,9 @@ export default function ModuleViewHeaderBottom( { slug, noFiltering, noImport, n
 
 	const handleRefresh = () => {
 		queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ? sorting : [] ] );
-		queryClient.invalidateQueries( [ slug, 'count', filtersArray( filters ) ] );
+		if ( ! noCount ) {
+			queryClient.invalidateQueries( [ slug, 'count', filtersArray( filters ) ] );
+		}
 	};
 
 	return (

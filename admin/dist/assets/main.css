@@ -710,11 +710,28 @@ table td *:hover > .urlslab-tooltip {
   font-size: 0.75rem;
   border-radius: 1em;
 }
+.urlslab-tag.dark {
+  color: white;
+}
 .urlslab-tag.l {
   font-size: 0.8125rem;
 }
 .urlslab-tag.xl {
   font-size: 1rem;
+}
+.urlslab-tag.circle {
+  width: 1.5em;
+  height: 1.5em;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  border-radius: 50%;
 }/* stylelint-disable */
 [id=urlslab-root] {
   font-family: Poppins, sans-serif;

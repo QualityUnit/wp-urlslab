@@ -8,8 +8,8 @@ import { postFetch } from '../api/fetching';
 import filtersArray from '../lib/filtersArray';
 
 export default function useInfiniteFetch( options, maxRows = 50 ) {
-	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { __ } = useI18n();
+	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { ref, inView } = useInView();
 	const { key, filters: userFilters, sorting, paginationId } = options;
 
