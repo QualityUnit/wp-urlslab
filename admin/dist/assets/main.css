@@ -703,15 +703,22 @@ table td *:hover > .urlslab-tooltip {
   }
 }/* stylelint-disable */
 .urlslab-tag {
-  position: relative;
-  top: 1px;
-  margin-left: 0.5em;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   padding: 0 0.75em;
   font-size: 0.75rem;
   border-radius: 1em;
 }
+.urlslab-tag.fullSize {
+  font-weight: 600;
+  padding: 0.5em 1em;
+}
 .urlslab-tag.dark {
-  color: white;
+  color: #fff;
 }
 .urlslab-tag.l {
   font-size: 0.8125rem;
@@ -732,6 +739,14 @@ table td *:hover > .urlslab-tooltip {
       -ms-flex-align: center;
           align-items: center;
   border-radius: 50%;
+}
+.urlslab-tag svg.urlslab-tag-close {
+  all: unset;
+  width: 1em;
+  height: 1em;
+  margin-left: 0.5em;
+  fill: currentcolor;
+  cursor: pointer;
 }/* stylelint-disable */
 [id=urlslab-root] {
   font-family: Poppins, sans-serif;

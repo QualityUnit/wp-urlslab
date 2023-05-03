@@ -24,7 +24,7 @@ import Button from '../elements/Button';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import IconButton from '../elements/IconButton';
 
-export default function ModuleViewHeaderBottom( { slug, noFiltering, noImport, noInsert, noExport, noCount, noDelete, header, table, insertOptions, activatePanel, detailsOptions, exportOptions, selectedRows, onFilter, onDeleteSelected, onClearRow } ) {
+export default function ModuleViewHeaderBottom( { slug, noColumnsMenu, noFiltering, noImport, noInsert, noExport, noCount, noDelete, header, table, insertOptions, activatePanel, detailsOptions, exportOptions, selectedRows, onFilter, onDeleteSelected, onClearRow } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const didMountRef = useRef( false );
@@ -166,7 +166,7 @@ export default function ModuleViewHeaderBottom( { slug, noFiltering, noImport, n
 						}
 
 						{
-							table &&
+							table && ! noColumnsMenu &&
 							<ColumnsMenu
 								className="menu-left ml-m"
 								id="visibleColumns"
