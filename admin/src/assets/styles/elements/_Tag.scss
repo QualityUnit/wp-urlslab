@@ -2,15 +2,19 @@
 @use "../common/mixins" as *;
 
 .urlslab-tag {
-	position: relative;
-	top: 1px;
-	margin-left: 0.5em;
+	display: inline-flex;
+	align-items: center;
 	padding: 0 0.75em;
 	font-size: 0.75rem;
 	border-radius: 1em;
 
+	&.fullSize {
+		font-weight: 600;
+		padding: 0.5em 1em;
+	}
+
 	&.dark {
-		color: white;
+		color: $white;
 	}
 
 	&.l {
@@ -28,5 +32,14 @@
 		justify-content: center;
 		align-items: center;
 		border-radius: 50%;
+	}
+
+	svg.urlslab-tag-close {
+		all: unset;
+
+		@include square(1em);
+		margin-left: 0.5em;
+		fill: currentcolor;
+		cursor: pointer;
 	}
 }

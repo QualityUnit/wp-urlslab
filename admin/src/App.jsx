@@ -63,7 +63,7 @@ export default function App() {
 
 			// Creating Tags/Labels query object in advance
 			queryClient.prefetchQuery( {
-				queryKey: [ 'label' ],
+				queryKey: [ 'label', 'menu' ],
 				queryFn: async () => {
 					const tags = await postFetch( 'label', { rows_per_page: 500 } );
 					const tagsArray = await tags.json();

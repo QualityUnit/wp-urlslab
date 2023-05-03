@@ -1,4 +1,4 @@
-import { useMemo, Suspense, useState } from 'react';
+import { useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import useChangeRow from '../hooks/useChangeRow';
@@ -14,17 +14,15 @@ import Tooltip from '../elements/Tooltip';
 
 import '../assets/styles/components/_ModuleViewHeader.scss';
 import FilterMenu from '../elements/FilterMenu';
+import hexToHSL from '../lib/hexToHSL';
 
 export default function TagsLabels( ) {
+	// const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const paginationId = 'label_id';
 	const slug = 'label';
-	const { table, setTable, filters, rowToInsert, setInsertRow } = useTableUpdater( { slug } );
-	const url = { filters };
+	const { table, setTable, rowToInsert, setInsertRow, filters, sorting } = useTableUpdater( { slug } );
+	const url = { filters, sorting };
 	const queryClient = useQueryClient();
-
-	const createdTags = useMemo( () => {
-		return queryClient.getQueryData( [ slug ] );
-	}, [ queryClient ] );
 
 	const possibleModules = useMemo( () => {
 		return queryClient.getQueryData( [ slug, 'modules' ] );
@@ -36,24 +34,19 @@ export default function TagsLabels( ) {
 		data,
 		status,
 		isSuccess,
-	} = useInfiniteFetch( { key: slug, paginationId }, 500 );
+	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId }, 500 );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data: createdTags, url, slug, paginationId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const header = {
 		name: 'Title',
 		modules: 'Allowed in tables',
 	};
 
-	// createdTags.map((tag) => {
-	// 	const { label_id, bgcolor, name, className, modules } = tag;
-	// 	return <li key={label_id}><Tag className={`${className || ''}`} style={{ backgroundColor: bgcolor }}>{name}</Tag></li>;
-	// })
-
 	const inserterCells = {
 		name: <InputField liveUpdate defaultValue="" label={ header.name } onChange={ ( val ) => setInsertRow( { ...rowToInsert, name: val } ) } required />,
 		bgcolor: <ColorPicker defaultValue="" label="Background color" onChange={ ( val ) => setInsertRow( { ...rowToInsert, bgcolor: val } ) } />,
-		modules: <FilterMenu autoClose asTags id="modules" items={ possibleModules } checkedItems={ [] } onChange={ ( val ) => setInsertRow( { ...rowToInsert, modules: val } ) }>{ header.modules }</FilterMenu>,
+		modules: <FilterMenu liveUpdate asTags id="modules" items={ possibleModules } checkedItems={ [] } onChange={ ( val ) => setInsertRow( { ...rowToInsert, modules: val } ) }>{ header.modules }</FilterMenu>,
 	};
 
 	const columns = [
@@ -66,13 +59,18 @@ export default function TagsLabels( ) {
 			enableResizing: false,
 		} ),
 		columnHelper.accessor( 'name', {
-			header: <strong>{ header.name }</strong>,
+			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			header: header.name,
 			minSize: 150,
 		} ),
 		columnHelper.accessor( 'name', {
 			className: 'nolimit',
-			cell: ( cell ) => <Tag className={ cell.row.original.className || '' } style={ { backgroundColor: cell.row.original.bgcolor } }>{ cell.getValue() }</Tag>,
-			header: 'Title',
+			cell: ( cell ) => {
+				const tag = cell.row.original;
+				const { lightness } = hexToHSL( tag.bgcolor );
+				return <Tag fullSize className={ lightness < 70 ? 'dark' : '' } style={ { backgroundColor: cell.row.original.bgcolor } }>{ cell.getValue() }</Tag>;
+			},
+			header: 'Tags',
 			size: 150,
 		} ),
 		columnHelper.accessor( 'modules', {
@@ -104,14 +102,15 @@ export default function TagsLabels( ) {
 				table={ table }
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
+				noColumnsMenu
 				noExport
 				noImport
 				noFiltering
 				noCount
-				onClearRow={ ( clear ) => {
+				onUpdateRows={ ( val ) => {
 					setInsertRow();
-					if ( clear === 'rowInserted' ) {
-						setInsertRow( clear );
+					if ( val === 'rowInserted' ) {
+						setInsertRow( val );
 						setTimeout( () => {
 							setInsertRow();
 						}, 3000 );

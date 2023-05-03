@@ -1,27 +1,45 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useMemo, useCallback, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { ReactTags } from 'react-tag-autocomplete';
-import '../assets/styles/elements/_TagsMenu.scss';
+
+import { postFetch } from '../api/fetching';
+import hexToHSL from '../lib/hexToHSL';
 
 import Tag from './Tag';
+import '../assets/styles/elements/_TagsMenu.scss';
 
 export default function TagsMenu( { tags, slug } ) {
-	const queryClient = useQueryClient();
 	const [ tagsMenuActive, setTagsMenu ] = useState( false );
 	const assignedTagsArray = tags?.replace( /^\|(.+)\|$/, '$1' ).split( '|' );
-	const tagsData = queryClient.getQueryData( [ 'label' ] );
 	const [ selected, setSelected ] = useState( [] );
+
+	const { data: tagsData } = useQuery( {
+		queryKey: [ 'label', 'menu' ],
+		queryFn: async () => {
+			const tagsFetch = await postFetch( 'label', { rows_per_page: 50 } );
+			const tagsArray = await tagsFetch.json();
+			tagsArray?.map( ( tag ) => {
+				const { lightness } = hexToHSL( tag.bgcolor );
+				if ( lightness < 70 ) {
+					return tag.className = 'dark';
+				}
+				return tag;
+			} );
+			return tagsArray;
+		},
+		refetchOnWindowFocus: false,
+	} );
 
 	// Getting only tags/labels that have empty modules array or allowed slug
 	const availableTags = useMemo( () => {
-		return tagsData.filter( ( tag ) => tag.modules.indexOf( slug ) !== -1 || tag.modules.length || ( tag.modules.length === 1 && tag.modules[ 0 ] === '' ) );
+		return tagsData?.filter( ( tag ) => tag.modules.indexOf( slug ) !== -1 || tag.modules.length || ( tag.modules.length === 1 && tag.modules[ 0 ] === '' ) );
 	}, [ tagsData, slug ] );
 
 	const assignedTags = useMemo( () => {
 		let tagsArray = [];
-		assignedTagsArray.map( ( id ) => tagsData.map( ( tag ) => {
+		assignedTagsArray.map( ( id ) => tagsData?.map( ( tag ) => {
 			if ( tag.label_id === Number( id ) ) {
 				tagsArray = [ ...tagsArray, tag ];
 			}
@@ -45,7 +63,9 @@ export default function TagsMenu( { tags, slug } ) {
 	);
 	function CustomTag( { classNames, tag, ...tagProps } ) {
 		const { label_id, className, bgcolor, label } = tag;
-		return <Tag type="button" className={ `${ classNames.tag } ${ className }` } { ...tagProps } onClick={ () => onDelete( tag ) } style={ { backgroundColor: bgcolor } }>{ label }</Tag>;
+		return <Tag fullSize onDelete={ () => onDelete( tag ) } key={ label_id } className={ `${ classNames.tag } ${ className }` } { ...tagProps } style={ { backgroundColor: bgcolor } }>
+			{ label }
+		</Tag>;
 	}
 
 	function CustomOption( { children, classNames, option, ...optionProps } ) {
@@ -57,7 +77,7 @@ export default function TagsMenu( { tags, slug } ) {
 		];
 
 		return (
-			<Tag className={ classes.join( ' ' ) } style={ { backgroundColor: option.bgcolor } } props={ optionProps }>
+			<Tag fullSize className={ classes.join( ' ' ) } style={ { backgroundColor: option.bgcolor } } props={ optionProps }>
 				{ children }
 			</Tag>
 		);
@@ -74,7 +94,7 @@ export default function TagsMenu( { tags, slug } ) {
 			{ tagsMenuActive &&
 				<div className="pos-absolute urlslab-tagsmenu">
 					<ReactTags
-					// activateFirstOption={ true }
+						activateFirstOption={ true }
 						selected={ selected }
 						allowNew
 						placeholderText="Search…"
