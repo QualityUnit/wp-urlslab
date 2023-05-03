@@ -703,15 +703,23 @@ table td *:hover > .urlslab-tooltip {
   }
 }/* stylelint-disable */
 .urlslab-tag {
-  position: relative;
-  top: 1px;
-  margin-left: 0.5em;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   padding: 0 0.75em;
   font-size: 0.75rem;
   border-radius: 1em;
 }
+.urlslab-tag.fullSize {
+  font-weight: 600;
+  padding: 0.5em 1em;
+  border-radius: 1.125em;
+}
 .urlslab-tag.dark {
-  color: white;
+  color: #fff;
 }
 .urlslab-tag.l {
   font-size: 0.8125rem;
@@ -732,6 +740,14 @@ table td *:hover > .urlslab-tooltip {
       -ms-flex-align: center;
           align-items: center;
   border-radius: 50%;
+}
+.urlslab-tag svg.urlslab-tag-close {
+  all: unset;
+  width: 1em;
+  height: 1em;
+  margin-left: 0.5em;
+  fill: currentcolor;
+  cursor: pointer;
 }/* stylelint-disable */
 [id=urlslab-root] {
   font-family: Poppins, sans-serif;
@@ -1930,43 +1946,43 @@ b {
 }
 
 .fs-xxs {
-  font-size: 0.5rem;
+  font-size: 0.5rem !important;
 }
 
 .fs-xs {
-  font-size: 0.625rem;
+  font-size: 0.625rem !important;
 }
 
 .fs-s {
-  font-size: 0.75rem;
+  font-size: 0.75rem !important;
 }
 
 .fs-xm {
-  font-size: 0.8125rem;
+  font-size: 0.8125rem !important;
 }
 
 .fs-m {
-  font-size: 0.875rem;
+  font-size: 0.875rem !important;
 }
 
 .fs-normal {
-  font-size: 1rem;
+  font-size: 1rem !important;
 }
 
 .fs-l {
-  font-size: 1.5rem;
+  font-size: 1.5rem !important;
 }
 
 .fs-xl {
-  font-size: 2rem;
+  font-size: 2rem !important;
 }
 
 .fs-xxl {
-  font-size: 2.5rem;
+  font-size: 2.5rem !important;
 }
 
 .fs-xxxl {
-  font-size: 3.25rem;
+  font-size: 3.25rem !important;
 }
 
 h1,

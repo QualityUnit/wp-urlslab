@@ -86,7 +86,7 @@ export default function KeywordsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu tags={ cell.getValue() } slug={ slug } />,
+			cell: ( cell ) => <TagsMenu tags={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.labels,
 			size: 180,
 		} ),

@@ -1,9 +1,9 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { langName } from '../lib/helpers';
-
 import { dateOp, stringOp, numericOp, langOp, menuOp } from '../lib/filterOperators';
+import useClickOutside from '../hooks/useClickOutside';
 
 import Button from '../elements/Button';
 import { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.svg';
@@ -13,9 +13,15 @@ import Tooltip from '../elements/Tooltip';
 
 export default function TableFilter( { props, onEdit, onRemove } ) {
 	const { __ } = useI18n();
+	const panelPopover = useRef();
 	const { filters, possiblefilters, state, slug, header, initialRow } = props;
 	const [ editFilter, activateEditing ] = useState( );
 	const activefilters = Object.keys( filters ).length ? Object.keys( filters ) : null;
+
+	const close = useCallback( () => {
+		activateEditing();
+	}, [] );
+	useClickOutside( panelPopover, close );
 
 	const operatorTypes = {
 		date: dateOp,
@@ -69,7 +75,7 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 						<Tooltip className="showOnHover" style={ { width: '8em' } }>{ __( 'Delete filter' ) }</Tooltip>
 					</div>
 					{ editFilter === key && // Edit filter panel
-						<TableFilterPanel key={ key } props={ { key, slug, header, initialRow, possiblefilters, filters } } onEdit={ handleOnEdit } />
+						<TableFilterPanel ref={ panelPopover } key={ key } props={ { key, slug, header, initialRow, possiblefilters, filters } } onEdit={ handleOnEdit } />
 					}
 				</Button> );
 			} ) }

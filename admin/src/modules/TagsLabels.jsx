@@ -125,7 +125,7 @@ export default function TagsLabels( ) {
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
 				{ row
-					? <Tooltip center>{ `${ header.name } “${ row.name }”` } { __( 'has been deleted.' ) }</Tooltip>
+					? <Tooltip center>{ `Tag “${ row.name }”` } { __( 'has been deleted.' ) }</Tooltip>
 					: null
 				}
 				{ ( rowToInsert === 'rowInserted' )
