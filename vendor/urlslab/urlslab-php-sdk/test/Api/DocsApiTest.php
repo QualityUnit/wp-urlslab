@@ -1,6 +1,6 @@
 <?php
 /**
- * AuthApiTest
+ * DocsApiTest
  * PHP version 7.4
  *
  * @category Class
@@ -33,14 +33,14 @@ use \OpenAPI\Client\ObjectSerializer;
 use PHPUnit\Framework\TestCase;
 
 /**
- * AuthApiTest Class Doc Comment
+ * DocsApiTest Class Doc Comment
  *
  * @category Class
  * @package  OpenAPI\Client
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
  */
-class AuthApiTest extends TestCase
+class DocsApiTest extends TestCase
 {
 
     /**
@@ -72,36 +72,48 @@ class AuthApiTest extends TestCase
     }
 
     /**
-     * Test case for getUserInfo
+     * Test case for addDocument
      *
-     * get user info.
+     * Add Custom Document.
      *
      */
-    public function testGetUserInfo()
+    public function testAddDocument()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
     }
 
     /**
-     * Test case for logout
+     * Test case for deleteDocument
      *
-     * logout for users.
+     * Delete Document By Id.
      *
      */
-    public function testLogout()
+    public function testDeleteDocument()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
     }
 
     /**
-     * Test case for signin
+     * Test case for getDocument
      *
-     * login for users.
+     * Get Document By Id.
      *
      */
-    public function testSignin()
+    public function testGetDocument()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
+     * Test case for searchDocuments
+     *
+     * Get All Documents.
+     *
+     */
+    public function testSearchDocuments()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
