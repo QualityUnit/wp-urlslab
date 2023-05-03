@@ -716,6 +716,7 @@ table td *:hover > .urlslab-tooltip {
 .urlslab-tag.fullSize {
   font-weight: 600;
   padding: 0.5em 1em;
+  border-radius: 1.125em;
 }
 .urlslab-tag.dark {
   color: #fff;

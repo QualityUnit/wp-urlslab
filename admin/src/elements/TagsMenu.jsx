@@ -1,19 +1,34 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback, useState, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ReactTags } from 'react-tag-autocomplete';
 
+import useClickOutside from '../hooks/useClickOutside';
 import { postFetch } from '../api/fetching';
 import hexToHSL from '../lib/hexToHSL';
 
 import Tag from './Tag';
 import '../assets/styles/elements/_TagsMenu.scss';
 
-export default function TagsMenu( { tags, slug } ) {
+export default function TagsMenu( { tags, slug, onChange } ) {
+	const tagsMenu = useRef();
 	const [ tagsMenuActive, setTagsMenu ] = useState( false );
 	const assignedTagsArray = tags?.replace( /^\|(.+)\|$/, '$1' ).split( '|' );
 	const [ selected, setSelected ] = useState( [] );
+	const selectedToString = useMemo( () => {
+		const selectedIds = [];
+		selected.map( ( tag ) => selectedIds.push( tag.label_id ) );
+		return selectedIds.join( '|' ).replace( /^(.+)$/, '|$1|' );
+	}, [ selected ] );
+
+	const close = useCallback( () => {
+		setTagsMenu( false );
+		if ( onChange && selectedToString !== tags ) {
+			onChange( selectedToString );
+		}
+	}, [ onChange, selectedToString, tags ] );
+	useClickOutside( tagsMenu, close );
 
 	const { data: tagsData } = useQuery( {
 		queryKey: [ 'label', 'menu' ],
@@ -92,20 +107,18 @@ export default function TagsMenu( { tags, slug } ) {
 				} ) }
 			</div>
 			{ tagsMenuActive &&
-				<div className="pos-absolute urlslab-tagsmenu">
+				<div className="pos-absolute urlslab-tagsmenu" ref={ tagsMenu }>
 					<ReactTags
 						activateFirstOption={ true }
 						selected={ selected }
 						allowNew
 						placeholderText="Search…"
-						// suggestionsFilter={ () => {} }
 						suggestions={ availableTags }
 						onDelete={ onDelete }
 						onAdd={ onAdd }
 						renderTag={ CustomTag }
 						renderOption={ CustomOption }
 					/>
-
 				</div>
 			}
 		</div>

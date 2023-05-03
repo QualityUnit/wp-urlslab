@@ -18,7 +18,7 @@
 
 			&-input {
 				width: calc(100% - 2em) !important;
-				margin: 1em 1em 0.5em;
+				margin: 1.25em 1em 0.5em;
 				font-weight: $font-weight-normal;
 				line-height: 1;
 				padding: 0.35em 0.5em 0.35em 3.5em;
@@ -47,7 +47,7 @@
 			flex-wrap: wrap;
 			min-width: 22em;
 			min-height: 2.875em;
-			padding: 0.5em 1em;
+			padding: 0.75em 1em 0.5em;
 			margin: 0;
 			border-radius: $br-10;
 			background-color: $white;
@@ -58,10 +58,10 @@
 			}
 
 			&-item {
-				margin-bottom: 0.5em;
+				margin-bottom: 0.25em;
 
 				+ li {
-					margin-left: 0.5em;
+					margin-left: 0.25em;
 				}
 			}
 		}
@@ -100,7 +100,6 @@
 					display: none;
 				}
 			}
-
 		}
 	}
 }
