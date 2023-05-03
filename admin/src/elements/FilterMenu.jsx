@@ -9,13 +9,13 @@ export default function FilterMenu( {
 	id, className, asTags, style, children, items, checkedItems, isFilter, onChange } ) {
 	let checkedNow = checkedItems || [];
 
-	if ( checkedItems && ! checkedItems.isArray() ) {
+	if ( checkedItems && typeof checkedItems === 'string' ) {
 		checkedNow = checkedItems.split( /[,\|]/ );
 	}
 	const { __ } = useI18n();
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
-	const [ checked, setChecked ] = useState( checkedItems );
+	const [ checked, setChecked ] = useState( checkedNow );
 	const ref = useRef( id || Math.floor( Math.random() * 10000 ) );
 	const didMountRef = useRef( false );
 
@@ -71,7 +71,7 @@ export default function FilterMenu( {
 				</span>
 			</div>
 			<div className={ `urlslab-FilterMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
-				<div className={ `urlslab-FilterMenu__items--inn ${ items.length > 8 ? 'has-scrollbar' : '' }` }>
+				<div className={ `urlslab-FilterMenu__items--inn ${ items?.length > 8 ? 'has-scrollbar' : '' }` }>
 					{ Object.entries( items ).map( ( [ itemId, value ] ) => {
 						return (
 							<Checkbox

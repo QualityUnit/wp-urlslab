@@ -116,7 +116,7 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 	 */
 	public function get_modules( $request ) {
 		$rows   = (object) array(
-			Urlslab_Api_Content_Generators::SLUG => __( 'AI Content Generator', 'urlslab' ),
+			Urlslab_Api_Generators::SLUG => __( 'AI Content Generator', 'urlslab' ),
 			Urlslab_Api_Files::SLUG => __( 'Media Files', 'urlslab' ),
 			Urlslab_Api_Keywords::SLUG => __( 'Keywords', 'urlslab' ),
 			Urlslab_Api_Meta_Tags::SLUG => __( 'Meta Tags', 'urlslab' ),

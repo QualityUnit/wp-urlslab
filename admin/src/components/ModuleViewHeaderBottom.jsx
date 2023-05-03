@@ -8,26 +8,27 @@ import HeaderHeightContext from '../lib/headerHeightContext';
 import filtersArray from '../lib/filtersArray';
 
 import { useFilter } from '../hooks/filteringSorting';
+import useResizeObserver from '../hooks/useResizeObserver';
+import useClickOutside from '../hooks/useClickOutside';
 
 import { ReactComponent as Trash } from '../assets/images/icons/icon-trash.svg';
 import { ReactComponent as PlusIcon } from '../assets/images/icons/icon-plus.svg';
-// import { ReactComponent as ImportIcon } from '../assets/images/icons/icon-import.svg';
 import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-cron-refresh.svg';
+
+import TableFilter from './TableFilter';
+import TableFilterPanel from './TableFilterPanel';
+import TablePanels from './TablePanels';
 
 import ColumnsMenu from '../elements/ColumnsMenu';
 import Button from '../elements/Button';
-import TableFilter from './TableFilter';
-
-import TableFilterPanel from './TableFilterPanel';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import IconButton from '../elements/IconButton';
-import useResizeObserver from '../hooks/useResizeObserver';
-import TablePanels from './TablePanels';
 
 export default function ModuleViewHeaderBottom( { slug, noFiltering, noImport, noInsert, noExport, noCount, noDelete, header, table, insertOptions, activatePanel, detailsOptions, exportOptions, selectedRows, onFilter, onDeleteSelected, onClearRow } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const didMountRef = useRef( false );
+	const panelPopover = useRef();
 	const { headerBottomHeight, setHeaderBottomHeight } = useContext( HeaderHeightContext );
 
 	const handleHeaderHeight = useCallback( ( elem ) => {
@@ -46,6 +47,11 @@ export default function ModuleViewHeaderBottom( { slug, noFiltering, noImport, n
 	const { filters, possiblefilters, state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( { slug, header, initialRow } );
 
 	const sorting = queryClient.getQueryData( [ slug, 'sorting' ] );
+
+	const close = useCallback( () => {
+		dispatch( { type: 'toggleEditFilter', editFilter: false } );
+	}, [] );
+	useClickOutside( panelPopover, close );
 
 	const handleOnEdit = useCallback( ( returnObj ) => {
 		if ( returnObj ) {
@@ -146,7 +152,7 @@ export default function ModuleViewHeaderBottom( { slug, noFiltering, noImport, n
 							</Button>
 
 							{ state.editFilter === 'addFilter' && // Our main adding panel (only when Add button clicked)
-							<TableFilterPanel props={ { slug, header, initialRow, possiblefilters, filters } } onEdit={ ( val ) => {
+							<TableFilterPanel ref={ panelPopover } props={ { slug, header, initialRow, possiblefilters, filters } } onEdit={ ( val ) => {
 								handleHeaderHeight(); handleOnEdit( val );
 							} } />
 							}
