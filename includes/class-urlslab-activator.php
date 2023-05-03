@@ -85,13 +85,6 @@ class Urlslab_Activator {
 		);
 
 		self::update_step(
-			'2.3.0',
-			function() {
-				self::init_content_generators_table();
-			}
-		);
-
-		self::update_step(
 			'2.4.0',
 			function() {
 				global $wpdb;
@@ -147,7 +140,6 @@ class Urlslab_Activator {
 		self::update_step(
 			'2.15.0',
 			function() {
-				self::init_content_generator_urls_table();
 				self::init_youtube_urls_tables();
 			}
 		);
