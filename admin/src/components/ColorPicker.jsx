@@ -35,7 +35,7 @@ export default function ColorPicker( { defaultColor, label, className, onChange 
 	};
 
 	return (
-		<div className={ `urlslab-colorPicker` }>
+		<div className={ `urlslab-colorPicker ${ className || '' }` }>
 			{ label
 				? <span className="urlslab-inputField-label">{ label }</span>
 				: null
@@ -50,7 +50,7 @@ export default function ColorPicker( { defaultColor, label, className, onChange 
 					<HexColorPicker color={ color } onChange={ handleColor } />
 					<InputField className="mt-m mb-m" liveUpdate key={ color } autoFocus defaultValue={ color } onChange={ handleColor } />
 
-					{ __( 'Predefined colors:' ) }
+					<span className="fs-s c-grey-darker">{ __( 'Predefined colors:' ) }</span>
 					<div className="urlslab-colorPicker-swatches">
 						{ defaultColors.map( ( colorVal ) => (
 							<button

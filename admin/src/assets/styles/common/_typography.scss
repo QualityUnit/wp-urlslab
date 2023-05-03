@@ -8,7 +8,7 @@ b {
 
 @each $class, $size in $fontSizes {
 	.fs-#{$class} {
-		font-size: $size;
+		font-size: $size !important;
 	}
 }
 
