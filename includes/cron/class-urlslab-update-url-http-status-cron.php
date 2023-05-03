@@ -128,42 +128,34 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 						$url->set_url_h1( Urlslab_Url_Row::VALUE_EMPTY );
 						$url->set_url_meta_description( Urlslab_Url_Row::VALUE_EMPTY );
 					} else {
-						$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
-						$document->encoding            = 'utf-8';
-						$document->strictErrorChecking = false; // phpcs:ignore
-						$libxml_previous_state         = libxml_use_internal_errors( true );
 
 						try {
-							$document->loadHTML(
-								mb_convert_encoding( file_get_contents( $page_content_file_name ), 'HTML-ENTITIES', 'utf-8' ),
-								LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE
-							);
-							libxml_clear_errors();
-							libxml_use_internal_errors( $libxml_previous_state );
-
-							// find the title
-							$titlelist = $document->getElementsByTagName( 'title' );
-							if ( $titlelist->length > 0 ) {
-								$url->set_url_title( $titlelist->item( 0 )->nodeValue );
-								if ( empty( $url->get_url_title() ) ) {
-									$url->set_url_title( Urlslab_Url_Row::VALUE_EMPTY );
-								}
+							$html_title = $this->get_text_from_tag( 'title', $page_content_file_name );
+							if ( ! empty( $html_title ) ) {
+								$url->set_url_title( $html_title );
 							}
-							// try to load title from H1
-							$hlist = $document->getElementsByTagName( 'h1' );
-							if ( $hlist->length > 0 && strlen( $hlist->item( 0 )->nodeValue ) ) {
-								$url->set_url_h1( $hlist->item( 0 )->nodeValue );
-							} else {
+							if ( empty( $url->get_url_title() ) ) {
+								$url->set_url_title( Urlslab_Url_Row::VALUE_EMPTY );
+							}
+
+							$h1 = $this->get_text_from_tag( 'h1', $page_content_file_name );
+							if ( ! empty( $h1 ) ) {
+								$url->set_url_h1( $h1 );
+							}
+							if ( empty( $url->get_url_h1() ) ) {
 								$url->set_url_h1( Urlslab_Url_Row::VALUE_EMPTY );
 							}
+
+							$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
+							$document->encoding            = 'utf-8';
+							$document->strictErrorChecking = false; // phpcs:ignore
+							$document->loadHTML( mb_convert_encoding( $this->get_html_from_tag( 'head', $page_content_file_name ), 'HTML-ENTITIES', 'utf-8' ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE | LIBXML_NOWARNING );
 							$xpath            = new DOMXPath( $document );
 							$metadescriptions = $xpath->evaluate( '//meta[@name="description"]/@content' );
 							if ( $metadescriptions->length > 0 ) {
 								$url->set_url_meta_description( $xpath->evaluate( '//meta[@name="description"]/@content' )->item( 0 )->value );
-								if ( empty( $url->get_url_meta_description() ) ) {
-									$url->set_url_meta_description( Urlslab_Url_Row::VALUE_EMPTY );
-								}
-							} else {
+							}
+							if ( empty( $url->get_url_meta_description() ) ) {
 								$url->set_url_meta_description( Urlslab_Url_Row::VALUE_EMPTY );
 							}
 						} catch ( Exception $e ) {
@@ -183,5 +175,47 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 		}
 
 		return $url->update();
+	}
+
+	private function get_html_from_tag( string $tag_name, $file_name ) {
+		$html   = '';
+		$handle = fopen( $file_name, 'r' );
+
+		$tag_started = false;
+		$tag_ended   = false;
+		if ( $handle ) {
+			while ( ( $line = fgets( $handle ) ) !== false ) {
+				if ( ! $tag_started && preg_match( '/<' . $tag_name . '[^>]*?>(.*)/i', $line, $matches ) ) {
+					$tag_started = true;
+					$line        = $matches[1];
+				}
+				if ( $tag_started && preg_match( '/(.*)<\/' . $tag_name . '/i', $line, $matches ) ) {
+					$tag_ended = true;
+					$line      = $matches[1];
+				}
+				if ( $tag_started ) {
+					$html .= $line;
+				}
+				if ( $tag_ended ) {
+					break;
+				}
+			}
+			fclose( $handle );
+		}
+
+		return $html;
+	}
+
+	private function get_text_from_tag( $tag_name, $file_name ) {
+		$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
+		$document->encoding            = 'utf-8';
+		$document->strictErrorChecking = false; // phpcs:ignore
+		$libxml_previous_state         = libxml_use_internal_errors( true );
+
+		$document->loadHTML( mb_convert_encoding( $this->get_html_from_tag( $tag_name, $file_name ), 'HTML-ENTITIES', 'utf-8' ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE | LIBXML_NOWARNING );
+		libxml_clear_errors();
+		libxml_use_internal_errors( $libxml_previous_state );
+
+		return $document->textContent; //phpcs:ignore
 	}
 }
