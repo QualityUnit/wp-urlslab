@@ -1,8 +1,14 @@
 <?php
 
+use OpenAPI\Client\Urlslab\ContentApi;
+use OpenAPI\Client\Configuration;
+
 require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
 
 class Urlslab_Youtube_Cron extends Urlslab_Cron {
+
+	private \OpenAPI\Client\Urlslab\VideoApi $content_client;
+
 	public function get_description(): string {
 		return __( 'Loading microdata about scheduled YouTube videos used in your website', 'urlslab' );
 	}
@@ -43,7 +49,7 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 		$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_PROCESSING );
 		$youtube_obj->update();
 
-		if ( ! strlen( $youtube_obj->get_captions() ) ) {
+		if ( ! strlen( $youtube_obj->get_captions() ) && $this->init_client() ) {
 			$captions = $this->get_youtube_captions( $youtube_obj );
 			if ( $captions ) {
 				$youtube_obj->set_captions( $captions );
@@ -68,8 +74,8 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 
 
 	private function get_youtube_microdata( Urlslab_Youtube_Row $youtube_obj ) {
-		if ( strlen( $this->get_youtube_key() ) ) {
-			$url      = 'https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet%2CcontentDetails&contentDetails.duration&id=' . $youtube_obj->get_video_id() . '&key=' . $this->get_youtube_key(); // json source
+		if ( strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Lazy_Loading::SLUG )->get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_API_KEY ) ) ) {
+			$url      = 'https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet%2CcontentDetails&contentDetails.duration&id=' . $youtube_obj->get_video_id() . '&key=' . Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Lazy_Loading::SLUG )->get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_API_KEY ); // json source
 			$response = wp_remote_get( $url, array( 'sslverify' => false ) );
 			if ( ! is_wp_error( $response ) ) {
 				$value = json_decode( $response['body'] );
@@ -79,15 +85,41 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 
 				return $response['body'];
 			}
-		}
+		} else if ( $this->init_client() ) {
+			try {
+				$response = $this->content_client->getYTMicrodata( $youtube_obj->get_video_id() );
 
-		//TODO urlslab implementation
+				return $response->getRawData();
+			} catch ( Exception $e ) {
+				return false;
+			}
+		}
 
 		return false;
 	}
 
+	private function init_client(): bool {
+		if ( ! empty( $this->content_client ) ) {
+			return true;
+		}
+		$api_key = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
+		if ( strlen( $api_key ) ) {
+			$config               = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
+			$this->content_client = new \OpenAPI\Client\Urlslab\VideoApi( new GuzzleHttp\Client(), $config );
+		}
+
+		return ! empty( $this->content_client );
+	}
+
 
 	private function get_youtube_captions( Urlslab_Youtube_Row $youtube_obj ) {
+		try {
+			$response = $this->content_client->getYTVidCaption( $youtube_obj->get_video_id() );
+
+			return $response->getRawData();
+		} catch ( Exception $e ) {
+		}
+
 		return ' ';
 	}
 }

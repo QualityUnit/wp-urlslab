@@ -1,6 +1,6 @@
 <?php
 /**
- * AuthApi
+ * VideoApi
  * PHP version 7.4
  *
  * @category Class
@@ -40,14 +40,14 @@ use OpenAPI\Client\HeaderSelector;
 use OpenAPI\Client\ObjectSerializer;
 
 /**
- * AuthApi Class Doc Comment
+ * VideoApi Class Doc Comment
  *
  * @category Class
  * @package  OpenAPI\Client
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
  */
-class AuthApi
+class VideoApi
 {
     /**
      * @var ClientInterface
@@ -71,14 +71,11 @@ class AuthApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
-        'getUserInfo' => [
-            'application/json',
+        'getYTMicrodata' => [
+            'text/plain',
         ],
-        'logout' => [
-            'application/json',
-        ],
-        'signin' => [
-            'application/json',
+        'getYTVidCaption' => [
+            'text/plain',
         ],
     ];
 
@@ -129,35 +126,40 @@ class AuthApi
     }
 
     /**
-     * Operation getUserInfo
+     * Operation getYTMicrodata
      *
-     * get user info
+     * get microdata for a youtube video
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getUserInfo'] to see the possible values for this operation
+     * @param  string $yt_vid_id yt_vid_id (required)
+     * @param  string $body body (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getYTMicrodata'] to see the possible values for this operation
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return void
+     * @return \OpenAPI\Client\Model\DomainDataRetrievalVideoResponse
      */
-    public function getUserInfo(string $contentType = self::contentTypes['getUserInfo'][0])
+    public function getYTMicrodata($yt_vid_id, $body = null, string $contentType = self::contentTypes['getYTMicrodata'][0])
     {
-        $this->getUserInfoWithHttpInfo($contentType);
+        list($response) = $this->getYTMicrodataWithHttpInfo($yt_vid_id, $body, $contentType);
+        return $response;
     }
 
     /**
-     * Operation getUserInfoWithHttpInfo
+     * Operation getYTMicrodataWithHttpInfo
      *
-     * get user info
+     * get microdata for a youtube video
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getUserInfo'] to see the possible values for this operation
+     * @param  string $yt_vid_id (required)
+     * @param  string $body (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getYTMicrodata'] to see the possible values for this operation
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of null, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \OpenAPI\Client\Model\DomainDataRetrievalVideoResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getUserInfoWithHttpInfo(string $contentType = self::contentTypes['getUserInfo'][0])
+    public function getYTMicrodataWithHttpInfo($yt_vid_id, $body = null, string $contentType = self::contentTypes['getYTMicrodata'][0])
     {
-        $request = $this->getUserInfoRequest($contentType);
+        $request = $this->getYTMicrodataRequest($yt_vid_id, $body, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -194,242 +196,70 @@ class AuthApi
                 );
             }
 
-            return [null, $statusCode, $response->getHeaders()];
-
-        } catch (ApiException $e) {
-            switch ($e->getCode()) {
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Operation getUserInfoAsync
-     *
-     * get user info
-     *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getUserInfo'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function getUserInfoAsync(string $contentType = self::contentTypes['getUserInfo'][0])
-    {
-        return $this->getUserInfoAsyncWithHttpInfo($contentType)
-            ->then(
-                function ($response) {
-                    return $response[0];
-                }
-            );
-    }
-
-    /**
-     * Operation getUserInfoAsyncWithHttpInfo
-     *
-     * get user info
-     *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getUserInfo'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     */
-    public function getUserInfoAsyncWithHttpInfo(string $contentType = self::contentTypes['getUserInfo'][0])
-    {
-        $returnType = '';
-        $request = $this->getUserInfoRequest($contentType);
-
-        return $this->client
-            ->sendAsync($request, $this->createHttpClientOption())
-            ->then(
-                function ($response) use ($returnType) {
-                    return [null, $response->getStatusCode(), $response->getHeaders()];
-                },
-                function ($exception) {
-                    $response = $exception->getResponse();
-                    $statusCode = $response->getStatusCode();
-                    throw new ApiException(
-                        sprintf(
-                            '[%d] Error connecting to the API (%s)',
-                            $statusCode,
-                            $exception->getRequest()->getUri()
-                        ),
-                        $statusCode,
-                        $response->getHeaders(),
-                        (string) $response->getBody()
-                    );
-                }
-            );
-    }
-
-    /**
-     * Create request for operation 'getUserInfo'
-     *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getUserInfo'] to see the possible values for this operation
-     *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
-     */
-    public function getUserInfoRequest(string $contentType = self::contentTypes['getUserInfo'][0])
-    {
-
-
-        $resourcePath = '/v1/auth/user-info';
-        $formParams = [];
-        $queryParams = [];
-        $headerParams = [];
-        $httpBody = '';
-        $multipart = false;
-
-
-
-
-
-        $headers = $this->headerSelector->selectHeaders(
-            [],
-            $contentType,
-            $multipart
-        );
-
-        // for model (json/xml)
-        if (count($formParams) > 0) {
-            if ($multipart) {
-                $multipartContents = [];
-                foreach ($formParams as $formParamName => $formParamValue) {
-                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
-                    foreach ($formParamValueItems as $formParamValueItem) {
-                        $multipartContents[] = [
-                            'name' => $formParamName,
-                            'contents' => $formParamValueItem
-                        ];
+            switch($statusCode) {
+                case 200:
+                    if ('\OpenAPI\Client\Model\DomainDataRetrievalVideoResponse' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\OpenAPI\Client\Model\DomainDataRetrievalVideoResponse' !== 'string') {
+                            $content = json_decode($content);
+                        }
                     }
-                }
-                // for HTTP post (form)
-                $httpBody = new MultipartStream($multipartContents);
 
-            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
-                # if Content-Type contains "application/json", json_encode the form parameters
-                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+                    return [
+                        ObjectSerializer::deserialize($content, '\OpenAPI\Client\Model\DomainDataRetrievalVideoResponse', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            $returnType = '\OpenAPI\Client\Model\DomainDataRetrievalVideoResponse';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
             } else {
-                // for HTTP post (form)
-                $httpBody = ObjectSerializer::buildQuery($formParams);
-            }
-        }
-
-        // this endpoint requires API key authentication
-        $apiKey = $this->config->getApiKeyWithPrefix('X-URLSLAB-KEY');
-        if ($apiKey !== null) {
-            $headers['X-URLSLAB-KEY'] = $apiKey;
-        }
-
-        $defaultHeaders = [];
-        if ($this->config->getUserAgent()) {
-            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
-        }
-
-        $headers = array_merge(
-            $defaultHeaders,
-            $headerParams,
-            $headers
-        );
-
-        $operationHost = $this->config->getHost();
-        $query = ObjectSerializer::buildQuery($queryParams);
-        return new Request(
-            'GET',
-            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
-            $headers,
-            $httpBody
-        );
-    }
-
-    /**
-     * Operation logout
-     *
-     * logout for users
-     *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['logout'] to see the possible values for this operation
-     *
-     * @throws \OpenAPI\Client\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return void
-     */
-    public function logout(string $contentType = self::contentTypes['logout'][0])
-    {
-        $this->logoutWithHttpInfo($contentType);
-    }
-
-    /**
-     * Operation logoutWithHttpInfo
-     *
-     * logout for users
-     *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['logout'] to see the possible values for this operation
-     *
-     * @throws \OpenAPI\Client\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return array of null, HTTP status code, HTTP response headers (array of strings)
-     */
-    public function logoutWithHttpInfo(string $contentType = self::contentTypes['logout'][0])
-    {
-        $request = $this->logoutRequest($contentType);
-
-        try {
-            $options = $this->createHttpClientOption();
-            try {
-                $response = $this->client->send($request, $options);
-            } catch (RequestException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
-                );
-            } catch (ConnectException $e) {
-                throw new ApiException(
-                    "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
-                    null,
-                    null
-                );
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    $content = json_decode($content);
+                }
             }
 
-            $statusCode = $response->getStatusCode();
-
-            if ($statusCode < 200 || $statusCode > 299) {
-                throw new ApiException(
-                    sprintf(
-                        '[%d] Error connecting to the API (%s)',
-                        $statusCode,
-                        (string) $request->getUri()
-                    ),
-                    $statusCode,
-                    $response->getHeaders(),
-                    (string) $response->getBody()
-                );
-            }
-
-            return [null, $statusCode, $response->getHeaders()];
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
 
         } catch (ApiException $e) {
             switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\OpenAPI\Client\Model\DomainDataRetrievalVideoResponse',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
             }
             throw $e;
         }
     }
 
     /**
-     * Operation logoutAsync
+     * Operation getYTMicrodataAsync
      *
-     * logout for users
+     * get microdata for a youtube video
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['logout'] to see the possible values for this operation
+     * @param  string $yt_vid_id (required)
+     * @param  string $body (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getYTMicrodata'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function logoutAsync(string $contentType = self::contentTypes['logout'][0])
+    public function getYTMicrodataAsync($yt_vid_id, $body = null, string $contentType = self::contentTypes['getYTMicrodata'][0])
     {
-        return $this->logoutAsyncWithHttpInfo($contentType)
+        return $this->getYTMicrodataAsyncWithHttpInfo($yt_vid_id, $body, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -438,25 +268,40 @@ class AuthApi
     }
 
     /**
-     * Operation logoutAsyncWithHttpInfo
+     * Operation getYTMicrodataAsyncWithHttpInfo
      *
-     * logout for users
+     * get microdata for a youtube video
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['logout'] to see the possible values for this operation
+     * @param  string $yt_vid_id (required)
+     * @param  string $body (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getYTMicrodata'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function logoutAsyncWithHttpInfo(string $contentType = self::contentTypes['logout'][0])
+    public function getYTMicrodataAsyncWithHttpInfo($yt_vid_id, $body = null, string $contentType = self::contentTypes['getYTMicrodata'][0])
     {
-        $returnType = '';
-        $request = $this->logoutRequest($contentType);
+        $returnType = '\OpenAPI\Client\Model\DomainDataRetrievalVideoResponse';
+        $request = $this->getYTMicrodataRequest($yt_vid_id, $body, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
             ->then(
                 function ($response) use ($returnType) {
-                    return [null, $response->getStatusCode(), $response->getHeaders()];
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
                 },
                 function ($exception) {
                     $response = $exception->getResponse();
@@ -476,18 +321,28 @@ class AuthApi
     }
 
     /**
-     * Create request for operation 'logout'
+     * Create request for operation 'getYTMicrodata'
      *
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['logout'] to see the possible values for this operation
+     * @param  string $yt_vid_id (required)
+     * @param  string $body (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getYTMicrodata'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function logoutRequest(string $contentType = self::contentTypes['logout'][0])
+    public function getYTMicrodataRequest($yt_vid_id, $body = null, string $contentType = self::contentTypes['getYTMicrodata'][0])
     {
 
+        // verify the required parameter 'yt_vid_id' is set
+        if ($yt_vid_id === null || (is_array($yt_vid_id) && count($yt_vid_id) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $yt_vid_id when calling getYTMicrodata'
+            );
+        }
 
-        $resourcePath = '/v1/auth/signout';
+
+
+        $resourcePath = '/v1/content/video/yt/microdata/{ytVidId}';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -496,16 +351,31 @@ class AuthApi
 
 
 
+        // path params
+        if ($yt_vid_id !== null) {
+            $resourcePath = str_replace(
+                '{' . 'ytVidId' . '}',
+                ObjectSerializer::toPathValue($yt_vid_id),
+                $resourcePath
+            );
+        }
 
 
         $headers = $this->headerSelector->selectHeaders(
-            [],
+            ['application/json', ],
             $contentType,
             $multipart
         );
 
         // for model (json/xml)
-        if (count($formParams) > 0) {
+        if (isset($body)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($body));
+            } else {
+                $httpBody = $body;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -557,37 +427,40 @@ class AuthApi
     }
 
     /**
-     * Operation signin
+     * Operation getYTVidCaption
      *
-     * login for users
+     * get transcript for a youtube video
      *
-     * @param  string $provider provider (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['signin'] to see the possible values for this operation
+     * @param  string $yt_vid_id yt_vid_id (required)
+     * @param  string $body body (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getYTVidCaption'] to see the possible values for this operation
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return void
+     * @return \OpenAPI\Client\Model\DomainDataRetrievalVideoResponse
      */
-    public function signin($provider, string $contentType = self::contentTypes['signin'][0])
+    public function getYTVidCaption($yt_vid_id, $body = null, string $contentType = self::contentTypes['getYTVidCaption'][0])
     {
-        $this->signinWithHttpInfo($provider, $contentType);
+        list($response) = $this->getYTVidCaptionWithHttpInfo($yt_vid_id, $body, $contentType);
+        return $response;
     }
 
     /**
-     * Operation signinWithHttpInfo
+     * Operation getYTVidCaptionWithHttpInfo
      *
-     * login for users
+     * get transcript for a youtube video
      *
-     * @param  string $provider (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['signin'] to see the possible values for this operation
+     * @param  string $yt_vid_id (required)
+     * @param  string $body (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getYTVidCaption'] to see the possible values for this operation
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of null, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \OpenAPI\Client\Model\DomainDataRetrievalVideoResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function signinWithHttpInfo($provider, string $contentType = self::contentTypes['signin'][0])
+    public function getYTVidCaptionWithHttpInfo($yt_vid_id, $body = null, string $contentType = self::contentTypes['getYTVidCaption'][0])
     {
-        $request = $this->signinRequest($provider, $contentType);
+        $request = $this->getYTVidCaptionRequest($yt_vid_id, $body, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -624,29 +497,70 @@ class AuthApi
                 );
             }
 
-            return [null, $statusCode, $response->getHeaders()];
+            switch($statusCode) {
+                case 200:
+                    if ('\OpenAPI\Client\Model\DomainDataRetrievalVideoResponse' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\OpenAPI\Client\Model\DomainDataRetrievalVideoResponse' !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\OpenAPI\Client\Model\DomainDataRetrievalVideoResponse', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            $returnType = '\OpenAPI\Client\Model\DomainDataRetrievalVideoResponse';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    $content = json_decode($content);
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
 
         } catch (ApiException $e) {
             switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\OpenAPI\Client\Model\DomainDataRetrievalVideoResponse',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
             }
             throw $e;
         }
     }
 
     /**
-     * Operation signinAsync
+     * Operation getYTVidCaptionAsync
      *
-     * login for users
+     * get transcript for a youtube video
      *
-     * @param  string $provider (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['signin'] to see the possible values for this operation
+     * @param  string $yt_vid_id (required)
+     * @param  string $body (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getYTVidCaption'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function signinAsync($provider, string $contentType = self::contentTypes['signin'][0])
+    public function getYTVidCaptionAsync($yt_vid_id, $body = null, string $contentType = self::contentTypes['getYTVidCaption'][0])
     {
-        return $this->signinAsyncWithHttpInfo($provider, $contentType)
+        return $this->getYTVidCaptionAsyncWithHttpInfo($yt_vid_id, $body, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -655,26 +569,40 @@ class AuthApi
     }
 
     /**
-     * Operation signinAsyncWithHttpInfo
+     * Operation getYTVidCaptionAsyncWithHttpInfo
      *
-     * login for users
+     * get transcript for a youtube video
      *
-     * @param  string $provider (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['signin'] to see the possible values for this operation
+     * @param  string $yt_vid_id (required)
+     * @param  string $body (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getYTVidCaption'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function signinAsyncWithHttpInfo($provider, string $contentType = self::contentTypes['signin'][0])
+    public function getYTVidCaptionAsyncWithHttpInfo($yt_vid_id, $body = null, string $contentType = self::contentTypes['getYTVidCaption'][0])
     {
-        $returnType = '';
-        $request = $this->signinRequest($provider, $contentType);
+        $returnType = '\OpenAPI\Client\Model\DomainDataRetrievalVideoResponse';
+        $request = $this->getYTVidCaptionRequest($yt_vid_id, $body, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
             ->then(
                 function ($response) use ($returnType) {
-                    return [null, $response->getStatusCode(), $response->getHeaders()];
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
                 },
                 function ($exception) {
                     $response = $exception->getResponse();
@@ -694,26 +622,28 @@ class AuthApi
     }
 
     /**
-     * Create request for operation 'signin'
+     * Create request for operation 'getYTVidCaption'
      *
-     * @param  string $provider (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['signin'] to see the possible values for this operation
+     * @param  string $yt_vid_id (required)
+     * @param  string $body (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getYTVidCaption'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function signinRequest($provider, string $contentType = self::contentTypes['signin'][0])
+    public function getYTVidCaptionRequest($yt_vid_id, $body = null, string $contentType = self::contentTypes['getYTVidCaption'][0])
     {
 
-        // verify the required parameter 'provider' is set
-        if ($provider === null || (is_array($provider) && count($provider) === 0)) {
+        // verify the required parameter 'yt_vid_id' is set
+        if ($yt_vid_id === null || (is_array($yt_vid_id) && count($yt_vid_id) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $provider when calling signin'
+                'Missing the required parameter $yt_vid_id when calling getYTVidCaption'
             );
         }
 
 
-        $resourcePath = '/v1/auth/signin/{provider}';
+
+        $resourcePath = '/v1/content/video/yt/transcribe/{ytVidId}';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -723,23 +653,30 @@ class AuthApi
 
 
         // path params
-        if ($provider !== null) {
+        if ($yt_vid_id !== null) {
             $resourcePath = str_replace(
-                '{' . 'provider' . '}',
-                ObjectSerializer::toPathValue($provider),
+                '{' . 'ytVidId' . '}',
+                ObjectSerializer::toPathValue($yt_vid_id),
                 $resourcePath
             );
         }
 
 
         $headers = $this->headerSelector->selectHeaders(
-            [],
+            ['application/json', ],
             $contentType,
             $multipart
         );
 
         // for model (json/xml)
-        if (count($formParams) > 0) {
+        if (isset($body)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($body));
+            } else {
+                $httpBody = $body;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -783,7 +720,7 @@ class AuthApi
         $operationHost = $this->config->getHost();
         $query = ObjectSerializer::buildQuery($queryParams);
         return new Request(
-            'GET',
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody

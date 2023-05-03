@@ -1,6 +1,6 @@
 <?php
 /**
- * AuthApiTest
+ * VideoApiTest
  * PHP version 7.4
  *
  * @category Class
@@ -33,14 +33,14 @@ use \OpenAPI\Client\ObjectSerializer;
 use PHPUnit\Framework\TestCase;
 
 /**
- * AuthApiTest Class Doc Comment
+ * VideoApiTest Class Doc Comment
  *
  * @category Class
  * @package  OpenAPI\Client
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
  */
-class AuthApiTest extends TestCase
+class VideoApiTest extends TestCase
 {
 
     /**
@@ -72,36 +72,24 @@ class AuthApiTest extends TestCase
     }
 
     /**
-     * Test case for getUserInfo
+     * Test case for getYTMicrodata
      *
-     * get user info.
+     * get microdata for a youtube video.
      *
      */
-    public function testGetUserInfo()
+    public function testGetYTMicrodata()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
     }
 
     /**
-     * Test case for logout
+     * Test case for getYTVidCaption
      *
-     * logout for users.
-     *
-     */
-    public function testLogout()
-    {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
-    }
-
-    /**
-     * Test case for signin
-     *
-     * login for users.
+     * get transcript for a youtube video.
      *
      */
-    public function testSignin()
+    public function testGetYTVidCaption()
     {
         // TODO: implement
         $this->markTestIncomplete('Not implemented');
