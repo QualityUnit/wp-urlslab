@@ -1,60 +1,12 @@
 <?php
 
-class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
-	const SLUG = 'content-generator';
+class Urlslab_Api_Generators extends Urlslab_Api_Table {
+	const SLUG = 'generator';
 
 	public function register_routes() {
-		$base = '/' . self::SLUG;
-		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
-		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
-
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<generator_id>[0-9]+)',
-			array(
-				array(
-					'methods'             => WP_REST_Server::EDITABLE,
-					'callback'            => array( $this, 'update_item' ),
-					'permission_callback' => array(
-						$this,
-						'update_item_permissions_check',
-					),
-					'args'                => array(
-						'status' => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								switch ( $param ) {
-									case Urlslab_Content_Generator_Row::STATUS_ACTIVE:
-									case Urlslab_Content_Generator_Row::STATUS_DISABLED:
-									case Urlslab_Content_Generator_Row::STATUS_NEW:
-									case Urlslab_Content_Generator_Row::STATUS_PENDING:
-										return true;
-
-									default:
-										return false;
-								}
-							},
-						),
-						'result' => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return is_string( $param );
-							},
-						),
-						'labels' => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return is_string( $param );
-							},
-						),
-					),
-				),
-			)
-		);
-
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/translate',
+			'/' . self::SLUG . '/translate',
 			array(
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
@@ -87,6 +39,55 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 			)
 		);
 
+		$base = '/' . self::SLUG . '/result';
+		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
+		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/(?P<hash_id>[0-9]+)',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'update_item' ),
+					'permission_callback' => array(
+						$this,
+						'update_item_permissions_check',
+					),
+					'args'                => array(
+						'status' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								switch ( $param ) {
+									case Urlslab_Generator_Result_Row::STATUS_ACTIVE:
+									case Urlslab_Generator_Result_Row::STATUS_DISABLED:
+									case Urlslab_Generator_Result_Row::STATUS_NEW:
+									case Urlslab_Generator_Result_Row::STATUS_PENDING:
+										return true;
+
+									default:
+										return false;
+								}
+							},
+						),
+						'result' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+						'labels' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+					),
+				),
+			)
+		);
+
+
 		register_rest_route(
 			self::NAMESPACE,
 			$base . '/delete-all',
@@ -105,7 +106,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<generator_id>[0-9]+)',
+			$base . '/(?P<hash_id>[0-9]+)',
 			array(
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
@@ -119,8 +120,8 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 			)
 		);
 
-		register_rest_route( self::NAMESPACE, $base . '/(?P<generator_id>[0-9]+)/urls', $this->get_route_generator_urls() );
-		register_rest_route( self::NAMESPACE, $base . '/(?P<generator_id>[0-9]+)/urls/count', $this->get_count_route( $this->get_route_generator_urls() ) );
+		register_rest_route( self::NAMESPACE, $base . '/(?P<shortcode_id>[0-9]+)/(?P<hash_id>[0-9]+)/urls', $this->get_route_generator_urls() );
+		register_rest_route( self::NAMESPACE, $base . '/(?P<shortcode_id>[0-9]+)/(?P<hash_id>[0-9]+)/urls/count', $this->get_count_route( $this->get_route_generator_urls() ) );
 
 	}
 
@@ -142,7 +143,8 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->generator_id = (int) $row->generator_id;
+			$row->shortcode_id = (int) $row->shortcode_id;
+			$row->hash_id      = (int) $row->hash_id;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -163,7 +165,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 		if ( ! empty( $source_lang ) && ! empty( $target_lang ) && $this->isTextForTranslation( $original_text ) && Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Content_Generator_Widget::SLUG ) ) {
 			$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
 			if ( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_TRANSLATE ) ) {
-				$api_key = get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
+				$api_key = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
 				if ( strlen( $api_key ) ) {
 					$client  = new \OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client( array( 'timeout' => 59 ) ), \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key ) ); //phpcs:ignore
 					$request = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest();
@@ -203,7 +205,14 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 						$response    = $client->memoryLessAugment( $request, 'false', 'true', 'true', 'false' );
 						$translation = $response->getResponse();
 					} catch ( \OpenAPI\Client\ApiException $e ) {
-						return new WP_REST_Response( (object) array( 'translation' => '' ), $e->getCode() );
+						switch ( $e->getCode() ) {
+							case 500:
+							case 504:
+							case 402:
+								return new WP_REST_Response( (object) array( 'translation' => $original_text ), $e->getCode() );
+							default:
+								return new WP_REST_Response( (object) array( 'translation' => '' ), $e->getCode() );
+						}
 					}
 				}
 			}
@@ -214,7 +223,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 	}
 
 	public function get_row_object( $params = array() ): Urlslab_Data {
-		return new Urlslab_Content_Generator_Row( $params );
+		return new Urlslab_Generator_Result_Row( $params );
 	}
 
 	public function get_editable_columns(): array {
@@ -243,7 +252,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 		$sql->add_select_column( '*', 'g' );
 
 		$sql->add_select_column( 'SUM(!ISNULL(m.url_id))', false, 'usage_count' );
-		$sql->add_from( URLSLAB_CONTENT_GENERATORS_TABLE . ' g LEFT JOIN ' . URLSLAB_CONTENT_GENERATOR_URLS_TABLE . ' m ON m.generator_id = g.generator_id' );
+		$sql->add_from( URLSLAB_GENERATOR_RESULTS_TABLE . ' g LEFT JOIN ' . URLSLAB_GENERATOR_URLS_TABLE . ' m ON m.shortcode_id = g.shortcode_id AND m.hash_id = g.hash_id' );
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'g' );
 		$columns = array_merge( $columns, $this->prepare_columns( array( 'filter_usage_count' => '%d' ) ) );
@@ -251,7 +260,7 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 		$sql->add_having_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
 
-		$sql->add_group_by( 'generator_id', 'g' );
+		$sql->add_group_by( 'hash_id', 'g' );
 
 		return $sql;
 	}
@@ -272,12 +281,6 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 							return is_numeric( $param ) && 0 < $param && 1000 > $param;
 						},
 					),
-					'from_url_id'   => array(
-						'required'          => false,
-						'validate_callback' => function( $param ) {
-							return empty( $param ) || is_numeric( $param );
-						},
-					),
 				),
 				'permission_callback' => array(
 					$this,
@@ -293,7 +296,9 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 		foreach ( $rows as $row ) {
-			$row->url_id = (int) $row->url_id; // phpcs:ignore
+			$row->shortcode_id = (int) $row->shortcode_id; // phpcs:ignore
+			$row->url_id       = (int) $row->url_id; // phpcs:ignore
+			$row->hash_id      = (int) $row->hash_id; // phpcs:ignore
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -302,10 +307,11 @@ class Urlslab_Api_Content_Generators extends Urlslab_Api_Table {
 	public function get_generator_urls_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( 'url_id', 'm' );
+		$sql->add_select_column( 'created', 'm' );
 		$sql->add_select_column( 'url_name', 'u' );
-		$sql->add_from( URLSLAB_CONTENT_GENERATOR_URLS_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.url_id = u.url_id)' );
+		$sql->add_from( URLSLAB_GENERATOR_URLS_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.url_id = u.url_id)' );
 
-		$columns = $this->prepare_columns( ( new Urlslab_Content_Generator_Url_Row() )->get_columns(), 'm' );
+		$columns = $this->prepare_columns( ( new Urlslab_Generator_Url_Row() )->get_columns(), 'm' );
 		$columns = array_merge( $columns, $this->prepare_columns( array( 'url_name' => '%s' ), 'u' ) );
 
 		$sql->add_filters( $columns, $request );

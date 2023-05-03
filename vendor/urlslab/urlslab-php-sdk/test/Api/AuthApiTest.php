@@ -72,6 +72,18 @@ class AuthApiTest extends TestCase
     }
 
     /**
+     * Test case for getUserInfo
+     *
+     * get user info.
+     *
+     */
+    public function testGetUserInfo()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
      * Test case for logout
      *
      * logout for users.

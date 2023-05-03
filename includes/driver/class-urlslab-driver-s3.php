@@ -15,7 +15,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 		}
 		$result = $this->getClient()->getObject(
 			array(
-				'Bucket' => get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_BUCKET, '' ),
+				'Bucket' => $this->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_BUCKET ),
 				'Key'    => $this->get_file_dir( $file ) . $file->get_filename(),
 			)
 		);
@@ -38,7 +38,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 
 		$result = $this->getClient()->getObject(
 			array(
-				'Bucket' => get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_BUCKET, '' ),
+				'Bucket' => $this->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_BUCKET ),
 				'Key'    => $this->get_file_dir( $file ) . $file->get_filename(),
 			)
 		);
@@ -60,7 +60,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 			$this->getClient(),
 			$local_file_name,
 			array(
-				'Bucket' => get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_BUCKET, '' ),
+				'Bucket' => $this->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_BUCKET ),
 				'Key'    => $this->get_file_dir( $file ) . $file->get_filename(),
 			)
 		);
@@ -76,7 +76,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 
 	public function get_url( Urlslab_File_Row $file ) {
 		if ( $this->is_configured() ) {
-			$prefix = get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_URL_PREFIX, '' );
+			$prefix = $this->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_URL_PREFIX );
 			if ( ! empty( $prefix ) ) {
 				// in case CDN is configured with custom url prefix to load static files from S3 directly
 				return $prefix . urlencode( $this->get_file_dir( $file ) ) . urlencode( $file->get_filename() );
@@ -90,7 +90,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 	}
 
 	public function is_connected() {
-		return $this->is_configured() && $this->getClient()->doesBucketExist( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_BUCKET, '' ) );
+		return $this->is_configured() && $this->getClient()->doesBucketExist( $this->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_BUCKET ) );
 	}
 
 	public function save_to_file( Urlslab_File_Row $file, $file_name ): bool {
@@ -99,7 +99,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 		}
 		$result = $this->getClient()->getObject(
 			array(
-				'Bucket' => get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_BUCKET, '' ),
+				'Bucket' => $this->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_BUCKET ),
 				'Key'    => $this->get_file_dir( $file ) . $file->get_filename(),
 			)
 		);
@@ -122,7 +122,7 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 		try {
 			$result = $this->getClient()->deleteObject(
 				array(
-					'Bucket' => get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_BUCKET, '' ),
+					'Bucket' => $this->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_BUCKET ),
 					'Key'    => $this->get_file_dir( $file ) . $file->get_filename(),
 				)
 			);
@@ -142,8 +142,8 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 	}
 
 	private function get_access_key() {
-		if ( strlen( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_ACCESS_KEY, '' ) ) ) {
-			return get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_ACCESS_KEY, '' );
+		if ( strlen( $this->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_ACCESS_KEY ) ) ) {
+			return $this->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_ACCESS_KEY );
 		}
 
 		if ( strlen( env( 'AWS_KEY' ) ) ) {
@@ -154,8 +154,8 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 	}
 
 	private function get_secret_key() {
-		if ( strlen( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_SECRET, '' ) ) ) {
-			return get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_SECRET, '' );
+		if ( strlen( $this->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_SECRET ) ) ) {
+			return $this->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_SECRET );
 		}
 
 		if ( strlen( env( 'AWS_SECRET' ) ) ) {
@@ -170,11 +170,11 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 			return $this->client;
 		}
 
-		$credentials = new Aws\Credentials\Credentials( $this->get_access_key(), $this->get_secret_key() );
+		$credentials  = new Aws\Credentials\Credentials( $this->get_access_key(), $this->get_secret_key() );
 		$this->client = new S3Client(
 			array(
 				'version'     => 'latest',
-				'region'      => get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_REGION, '' ),
+				'region'      => $this->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_REGION ),
 				'credentials' => $credentials,
 			)
 		);
@@ -183,9 +183,9 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 	}
 
 	private function is_configured() {
-		return ! empty( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_REGION, '' ) )
+		return ! empty( $this->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_REGION ) )
 			   && strlen( $this->get_access_key() )
 			   && strlen( $this->get_secret_key() )
-			   && ! empty( get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_BUCKET, '' ) );
+			   && ! empty( $this->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_S3_BUCKET ) );
 	}
 }

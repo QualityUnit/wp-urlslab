@@ -93,6 +93,9 @@ class Urlslab_Cron_Manager {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-summaries-cron.php';
 		$this->add_cron_task( new Urlslab_Summaries_Cron() );
 
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-redirects-cron.php';
+		$this->add_cron_task( new Urlslab_Redirects_Cron() );
+
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-optimize-cron.php';
 		$this->add_cron_task( new Urlslab_Optimize_Cron() );
 

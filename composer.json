@@ -24,7 +24,8 @@
     "ext-gd": "*",
     "oscarotero/env": "^2.1",
     "aws/aws-sdk-php": "^3.263",
-    "urlslab/urlslab-php-sdk": "dev-main"
+    "urlslab/urlslab-php-sdk": "dev-main",
+    "google/apiclient": "^2.0"
   },
   "require-dev": {
     "squizlabs/php_codesniffer": "^3.7",

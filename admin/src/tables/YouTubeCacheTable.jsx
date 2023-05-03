@@ -40,6 +40,7 @@ export default function YouTubeCacheTable( { slug } ) {
 		videoid: __( 'YouTube Video ID' ),
 		status: __( 'Status' ),
 		title: __( 'Title' ),
+		captions: __( 'Captions' ),
 		published: __( 'Published' ),
 		usage_count: __( 'Usage' ),
 	};
@@ -65,6 +66,11 @@ export default function YouTubeCacheTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'videoid', {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.videoid }</SortBy>,
+			size: 80,
+		} ),
+		columnHelper?.accessor( 'captions', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.captions }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'status', {

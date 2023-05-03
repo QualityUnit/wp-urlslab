@@ -12,9 +12,9 @@ import { langName } from '../lib/helpers';
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 
-export default function GeneratorTable( { slug } ) {
-	const paginationId = 'generator_id';
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+export default function GeneratorResultTable( { slug } ) {
+	const paginationId = 'hash_id';
+	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( 'generator/result' );
 
 	const url = { filters, sorting };
 
@@ -30,13 +30,13 @@ export default function GeneratorTable( { slug } ) {
 					</IconButton>
 				}
 				{
-					( status === 'W' || status === 'A' ) &&
+					( status === 'P' || status === 'W' || status === 'A' ) &&
 					<IconButton className="mr-s c-saturated-red" tooltip={ __( 'Decline' ) } tooltipClass="align-left" onClick={ () => onClick( 'D' ) }>
 						<DisableIcon />
 					</IconButton>
 				}
 				{
-					( status !== 'N' && status !== 'P' ) &&
+					( status === 'A' || status === 'D' || status === 'P' ) &&
 					<IconButton className="mr-s" tooltip={ __( 'Regenerate' ) } tooltipClass="align-left" onClick={ () => onClick( 'N' ) }>
 						<RefreshIcon />
 					</IconButton>
@@ -68,12 +68,13 @@ export default function GeneratorTable( { slug } ) {
 	};
 
 	const header = {
+		shortcode_id: __( 'Shortcode ID' ),
 		command: __( 'Command' ),
 		semantic_context: __( 'Context' ),
 		url_filter: __( 'URL filter' ),
-		lang: __( 'Language' ),
+		prompt_variables: __( 'Input data' ),
 		status: __( 'Status' ),
-		status_changed: __( 'Last change' ),
+		date_changed: __( 'Last change' ),
 		result: __( 'Result' ),
 		usage_count: __( 'Usage' ),
 	};
@@ -86,10 +87,9 @@ export default function GeneratorTable( { slug } ) {
 			} } />,
 			header: null,
 		} ),
-		columnHelper.accessor( 'command', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.command }</SortBy>,
-			size: 180,
+		columnHelper.accessor( 'shortcode_id', {
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.shortcode_id }</SortBy>,
+			size: 30,
 		} ),
 		columnHelper.accessor( 'semantic_context', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
@@ -99,6 +99,11 @@ export default function GeneratorTable( { slug } ) {
 		columnHelper.accessor( 'url_filter', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_filter }</SortBy>,
+			size: 180,
+		} ),
+		columnHelper.accessor( 'prompt_variables', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.prompt_variables }</SortBy>,
 			size: 180,
 		} ),
 		columnHelper.accessor( 'lang', {
@@ -120,9 +125,9 @@ export default function GeneratorTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.status }</SortBy>,
 			size: 150,
 		} ),
-		columnHelper.accessor( 'status_changed', {
+		columnHelper.accessor( 'date_changed', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.status_changed }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.date_changed }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'usage_count', {
@@ -160,7 +165,7 @@ export default function GeneratorTable( { slug } ) {
 					slug,
 					url,
 					paginationId,
-					deleteCSVCols: [ paginationId, 'generator_id' ],
+					deleteCSVCols: [ paginationId, 'hash_id' ],
 				} }
 			/>
 			<Table className="fadeInto"
