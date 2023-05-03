@@ -264,10 +264,11 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
         return self::$openAPIModelName;
     }
 
+    public const SCREENSHOT_STATUS_ERROR = 'ERROR';
     public const SCREENSHOT_STATUS_PENDING = 'PENDING';
-    public const SCREENSHOT_STATUS_AVAILABLE = 'AVAILABLE';
-    public const SCREENSHOT_STATUS_UPDATING = 'UPDATING';
     public const SCREENSHOT_STATUS_BLOCKED = 'BLOCKED';
+    public const SCREENSHOT_STATUS_UPDATING = 'UPDATING';
+    public const SCREENSHOT_STATUS_AVAILABLE = 'AVAILABLE';
 
     /**
      * Gets allowable values of the enum
@@ -277,10 +278,11 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
     public function getScreenshotStatusAllowableValues()
     {
         return [
+            self::SCREENSHOT_STATUS_ERROR,
             self::SCREENSHOT_STATUS_PENDING,
-            self::SCREENSHOT_STATUS_AVAILABLE,
-            self::SCREENSHOT_STATUS_UPDATING,
             self::SCREENSHOT_STATUS_BLOCKED,
+            self::SCREENSHOT_STATUS_UPDATING,
+            self::SCREENSHOT_STATUS_AVAILABLE,
         ];
     }
 

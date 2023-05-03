@@ -46,25 +46,41 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 			return true;
 		}
 
+		$old_status = $youtube_obj->get_status();
+
 		$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_PROCESSING );
 		$youtube_obj->update();
 
-		if ( ! strlen( $youtube_obj->get_captions() ) && $this->init_client() ) {
-			$captions = $this->get_youtube_captions( $youtube_obj );
-			if ( $captions ) {
-				$youtube_obj->set_captions( $captions );
-			}
-		}
 		if ( ! strlen( $youtube_obj->get_microdata() ) ) {
 			$microdata = $this->get_youtube_microdata( $youtube_obj );
 			if ( $microdata ) {
 				$youtube_obj->set_microdata( $microdata );
 			}
 		}
+		if ( ! strlen( $youtube_obj->get_captions() ) && $this->init_client() ) {
+			try {
+				$captions = $this->get_youtube_captions( $youtube_obj, $old_status );
+				if ( strlen($captions) > 0 ) {
+					$youtube_obj->set_captions( $captions );
+				} elseif (false === $captions) {
+					$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_DISABLED );
+					$youtube_obj->update();
+					return true;
+				}
+			} catch (\OpenAPI\Client\ApiException $e) {
+				$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_NEW );
+				$youtube_obj->update();
+				return false;
+			}
+		}
 		if ( strlen( $youtube_obj->get_captions() ) && strlen( $youtube_obj->get_microdata() ) ) {
 			$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_AVAILABLE );
 		} else {
-			$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_PROCESSING );
+			if ( $old_status != Urlslab_Youtube_Row::STATUS_PROCESSING ) {
+				$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_PROCESSING );
+			} else {
+				$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_DISABLED );
+			}
 		}
 		$youtube_obj->update();
 
@@ -113,13 +129,14 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 
 
 	private function get_youtube_captions( Urlslab_Youtube_Row $youtube_obj ) {
-		try {
-			$response = $this->content_client->getYTVidCaption( $youtube_obj->get_video_id() );
-
-			return $response->getRawData();
-		} catch ( Exception $e ) {
+		$response = $this->content_client->getYTVidCaption( $youtube_obj->get_video_id() );
+		switch ( $response->getStatus() ) {
+			case \OpenAPI\Client\Model\DomainDataRetrievalVideoCaptionResponse::STATUS_AVAILABLE:
+				return $response->getTranscript();
+			case \OpenAPI\Client\Model\DomainDataRetrievalVideoCaptionResponse::STATUS_PENDING:
+				return true;
+			default:
+				return false;
 		}
-
-		return ' ';
 	}
 }

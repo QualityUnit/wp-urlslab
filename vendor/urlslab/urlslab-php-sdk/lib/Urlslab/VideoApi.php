@@ -437,7 +437,7 @@ class VideoApi
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return \OpenAPI\Client\Model\DomainDataRetrievalVideoResponse
+     * @return \OpenAPI\Client\Model\DomainDataRetrievalVideoCaptionResponse
      */
     public function getYTVidCaption($yt_vid_id, $body = null, string $contentType = self::contentTypes['getYTVidCaption'][0])
     {
@@ -456,7 +456,7 @@ class VideoApi
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \OpenAPI\Client\Model\DomainDataRetrievalVideoResponse, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \OpenAPI\Client\Model\DomainDataRetrievalVideoCaptionResponse, HTTP status code, HTTP response headers (array of strings)
      */
     public function getYTVidCaptionWithHttpInfo($yt_vid_id, $body = null, string $contentType = self::contentTypes['getYTVidCaption'][0])
     {
@@ -499,23 +499,23 @@ class VideoApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\OpenAPI\Client\Model\DomainDataRetrievalVideoResponse' === '\SplFileObject') {
+                    if ('\OpenAPI\Client\Model\DomainDataRetrievalVideoCaptionResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\OpenAPI\Client\Model\DomainDataRetrievalVideoResponse' !== 'string') {
+                        if ('\OpenAPI\Client\Model\DomainDataRetrievalVideoCaptionResponse' !== 'string') {
                             $content = json_decode($content);
                         }
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\OpenAPI\Client\Model\DomainDataRetrievalVideoResponse', []),
+                        ObjectSerializer::deserialize($content, '\OpenAPI\Client\Model\DomainDataRetrievalVideoCaptionResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
             }
 
-            $returnType = '\OpenAPI\Client\Model\DomainDataRetrievalVideoResponse';
+            $returnType = '\OpenAPI\Client\Model\DomainDataRetrievalVideoCaptionResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -536,7 +536,7 @@ class VideoApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\OpenAPI\Client\Model\DomainDataRetrievalVideoResponse',
+                        '\OpenAPI\Client\Model\DomainDataRetrievalVideoCaptionResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -582,7 +582,7 @@ class VideoApi
      */
     public function getYTVidCaptionAsyncWithHttpInfo($yt_vid_id, $body = null, string $contentType = self::contentTypes['getYTVidCaption'][0])
     {
-        $returnType = '\OpenAPI\Client\Model\DomainDataRetrievalVideoResponse';
+        $returnType = '\OpenAPI\Client\Model\DomainDataRetrievalVideoCaptionResponse';
         $request = $this->getYTVidCaptionRequest($yt_vid_id, $body, $contentType);
 
         return $this->client

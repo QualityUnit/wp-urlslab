@@ -156,8 +156,14 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			if ( empty( $atts['template'] ) && empty( trim( $obj->get_template() ) ) ) {
 				return $value;
 			} else {
+
+				$json_value = json_decode( $value, true );
+				$arr_values = array(
+					'value'      => $value,
+					'json_value' => $json_value,
+				);
 				if ( ! empty( trim( $obj->get_template() ) ) ) {
-					return $this->get_template_value( $obj->get_template(), array_merge( $atts, array( 'value' => $value ) ) );
+					return $this->get_template_value( $obj->get_template(), array_merge( $atts, $arr_values ) );
 				} else {
 					$template = locate_template(
 						$atts['template'],
@@ -180,8 +186,8 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 					}
 
 					ob_start();
-					$atts['value'] = $value;
-					load_template( $template, true, $atts );
+
+					load_template( $template, true, array_merge( $atts, $arr_values ) );
 
 					return '' . ob_get_clean();
 				}
@@ -192,7 +198,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 	}
 
 	private function get_template_variables( $template ): array {
-		preg_match_all( '/{{(\w+)}}/', $template, $matches );
+		preg_match_all( '/{{([\w\.]+)}}/', $template, $matches );
 		if ( isset( $matches[1] ) ) {
 			return array_unique( $matches[1] );
 		}
@@ -212,6 +218,12 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		foreach ( $required_variables as $variable ) {
 			if ( ! isset( $atts[ $variable ] ) ) {
 				switch ( $variable ) {
+					case 'video_captions':
+						$obj_video = new Urlslab_Youtube_Row( array( 'videoid' => $atts['videoid'] ) );
+						if ( $obj_video->load() ) {
+							$atts['video_captions'] = $obj_video->get_captions_as_text();
+						}
+						break;
 					case 'page_url':
 						$atts['page_url'] = $this->get_current_page_url()->get_url_with_protocol();
 						break;
@@ -243,8 +255,17 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 	public function get_template_value( string $template, array $attributes ): string {
 		$variables = $this->get_template_variables( $template );
 		foreach ( $variables as $variable ) {
-			if ( isset( $attributes[ $variable ] ) ) {
-				$template = str_replace( '{{' . $variable . '}}', $attributes[ $variable ], $template );
+			$var = explode( '.', $variable);
+			if ( isset( $attributes[ $var[0] ] ) ) {
+				if (isset($var[1])) {
+					if (isset($attributes[ $var[0] ][$var[1]])) {
+						$template = str_replace( '{{' . $variable . '}}', $attributes[ $var[0] ][ $var[1] ], $template );
+					} else {
+						$template = str_replace( '{{' . $variable . '}}', '', $template );
+					}
+				} else {
+					$template = str_replace( '{{' . $variable . '}}', $attributes[ $variable ], $template );
+				}
 			} else {
 				$template = str_replace( '{{' . $variable . '}}', '', $template );
 			}

@@ -157,6 +157,28 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 		return $sql;
 	}
 
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_items( $request ) {
+		$rows = $this->get_items_sql( $request )->get_results();
+
+		if ( null === $rows || false === $rows ) {
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
+		}
+
+		foreach ( $rows as $row ) {
+			if ( strlen( $row->captions ) ) {
+				$row_obj       = new Urlslab_Youtube_Row( (array) $row );
+				$row->captions = $row_obj->get_captions_as_text();
+			}
+		}
+
+		return new WP_REST_Response( $rows, 200 );
+	}
+
 	private function get_route_get_items(): array {
 		return array(
 			array(

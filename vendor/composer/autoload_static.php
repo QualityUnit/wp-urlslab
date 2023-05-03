@@ -24325,6 +24325,7 @@ class ComposerStaticInit83a869ee30bba2345152bbf6f75bc3c4
         'OpenAPI\\Client\\Model\\DomainDataRetrievalScreenshotResponse' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainDataRetrievalScreenshotResponse.php',
         'OpenAPI\\Client\\Model\\DomainDataRetrievalSourceResponse' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainDataRetrievalSourceResponse.php',
         'OpenAPI\\Client\\Model\\DomainDataRetrievalSummaryResponse' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainDataRetrievalSummaryResponse.php',
+        'OpenAPI\\Client\\Model\\DomainDataRetrievalVideoCaptionResponse' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainDataRetrievalVideoCaptionResponse.php',
         'OpenAPI\\Client\\Model\\DomainDataRetrievalVideoResponse' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainDataRetrievalVideoResponse.php',
         'OpenAPI\\Client\\Model\\DomainDocsDocIndexRequest' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainDocsDocIndexRequest.php',
         'OpenAPI\\Client\\Model\\DomainDocsDocResponse' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainDocsDocResponse.php',

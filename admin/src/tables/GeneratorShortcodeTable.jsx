@@ -79,7 +79,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 	const header = {
 		shortcode_id: __( 'Id' ),
 		prompt: __( 'Prompt' ),
-		semantic_context: __( 'Context' ),
+		semantic_context: __( 'Semantic search query' ),
 		url_filter: __( 'URL filter' ),
 		default_value: __( 'Default value' ),
 		status: __( 'Status' ),

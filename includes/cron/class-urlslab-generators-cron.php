@@ -70,7 +70,8 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 
 		$attributes = (array) json_decode( $row_obj->get_prompt_variables() );
 		$command    = $widget->get_template_value(
-			'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Generator_Result_Row::DO_NOT_KNOW . "!\n" . $row_shortcode->get_prompt(),
+			'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Generator_Result_Row::DO_NOT_KNOW . "!\n" . $row_shortcode->get_prompt() .
+			"\n\n--VIDEO CAPTIONS:\n{{video_captions}}\n--VIDEO CAPTIONS END\nANSWER:",
 			$attributes
 		);
 
@@ -83,26 +84,36 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 			$request->setAugmentingModelName( $model );
 			$request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
 			$prompt = new DomainDataRetrievalAugmentPrompt();
-			$prompt->setPromptTemplate( "Additional information to your memory:\n--\n{context}\n----\n" . $command );
-			$prompt->setDocumentTemplate( "--\n{text}\n--" );
-			$prompt->setMetadataVars( array( 'text' ) );
-			$request->setPrompt( $prompt );
 
-			$filter = new DomainDataRetrievalContentQuery();
-			$filter->setLimit( 5 );
-			if ( strlen( $row_obj->get_semantic_context() ) ) {
-				$request->setAugmentCommand( $row_obj->get_semantic_context() );
-				if ( strlen( $row_obj->get_url_filter() ) ) {
-					$filter->setAdditionalQuery( (object) array( 'match' => (object) array( 'metadata.url' => $row_obj->get_url_filter() ) ) );
-				} else {
-					$filter->setAdditionalQuery( (object) array( 'match' => (object) array( 'metadata.url' => $widget->get_current_page_url()->get_domain_name() ) ) );
-				}
+			if (isset($attributes['videoid'])) {
+				$prompt->setPromptTemplate( $command );
+				$prompt->setMetadataVars( array() );
+				$request->setPrompt( $prompt );
+				$response    = $this->content_client->memoryLessAugment( $request, 'false', 'true', 'true', 'false' );
 			} else {
-				$filter->setUrls( array( $row_obj->get_url_filter() ) );
-			}
-			$request->setFilter( $filter );
+				$prompt->setPromptTemplate( "Additional information to your memory:\n--\n{context}\n----\n" . $command );
+				$prompt->setDocumentTemplate( "--\n{text}\n--" );
+				$prompt->setMetadataVars( array( 'text' ) );
+				$request->setPrompt( $prompt );
 
-			$response = $this->content_client->memoryLessAugment( $request, 'false', strlen( $row_obj->get_semantic_context() ) ? 'false' : 'true' );
+				$filter = new DomainDataRetrievalContentQuery();
+				$filter->setLimit( 5 );
+				if ( strlen( $row_obj->get_semantic_context() ) ) {
+					$request->setAugmentCommand( $row_obj->get_semantic_context() );
+					if ( strlen( $row_obj->get_url_filter() ) ) {
+						$filter->setAdditionalQuery( (object) array( 'match' => (object) array( 'metadata.url' => $row_obj->get_url_filter() ) ) );
+					} else {
+						$filter->setAdditionalQuery( (object) array( 'match' => (object) array( 'metadata.url' => $widget->get_current_page_url()->get_domain_name() ) ) );
+					}
+				} else {
+					$filter->setUrls( array( $row_obj->get_url_filter() ) );
+				}
+				$request->setFilter( $filter );
+
+				$response = $this->content_client->memoryLessAugment( $request, 'false', strlen( $row_obj->get_semantic_context() ) ? 'false' : 'true' );
+			}
+
+
 
 			if ( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_AUTOAPPROVE ) ) {
 				$row_obj->set_status( Urlslab_Generator_Result_Row::STATUS_ACTIVE );
