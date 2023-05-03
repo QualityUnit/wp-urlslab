@@ -216,6 +216,6 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 		libxml_clear_errors();
 		libxml_use_internal_errors( $libxml_previous_state );
 
-		return $document->textContent;
+		return $document->textContent; //phpcs:ignore
 	}
 }
