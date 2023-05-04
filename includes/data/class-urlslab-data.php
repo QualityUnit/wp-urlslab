@@ -3,6 +3,7 @@
 abstract class Urlslab_Data {
 	protected $data = array();
 	private $changed = array();
+	private $loaded_from_db = false;
 
 	public function as_array(): array {
 		return $this->data;
@@ -37,22 +38,23 @@ abstract class Urlslab_Data {
 		}
 
 		$update_data = array();
-		$format = array();
+		$format      = array();
 		foreach ( $this->changed as $key => $true ) {
 			$update_data[ $key ] = $this->data[ $key ];
-			$format[ $key ] = $this->get_column_format( $key );
+			$format[ $key ]      = $this->get_column_format( $key );
 		}
 
-		$where = array();
+		$where        = array();
 		$where_format = array();
 		foreach ( $this->get_primary_columns() as $key ) {
-			$where[ $key ] = $this->data[ $key ];
+			$where[ $key ]        = $this->data[ $key ];
 			$where_format[ $key ] = $this->get_column_format( $key );
 		}
 
 		global $wpdb;
 		if ( $wpdb->update( $this->get_table_name(), $update_data, $where, $format, $where_format ) ) {
 			$this->changed = array();
+			$this->set_loaded_from_db();
 
 			return true;
 		}
@@ -66,17 +68,18 @@ abstract class Urlslab_Data {
 		}
 
 		$insert_data = array();
-		$format = array();
+		$format      = array();
 		$this->before_insert();
 		foreach ( $this->get_columns() as $key => $column_format ) {
 			$insert_data[ $key ] = $this->data[ $key ];
-			$format[ $key ] = $column_format;
+			$format[ $key ]      = $column_format;
 		}
 
 		global $wpdb;
 		if ( $replace ) {
 			if ( $wpdb->replace( $this->get_table_name(), $insert_data, $format ) ) {
 				$this->changed = array();
+				$this->set_loaded_from_db();
 
 				return true;
 			}
@@ -86,6 +89,7 @@ abstract class Urlslab_Data {
 					$this->set( $this->get_primary_columns()[0], $wpdb->insert_id, true );
 				}
 				$this->changed = array();
+				$this->set_loaded_from_db();
 
 				return true;
 			}
@@ -96,8 +100,8 @@ abstract class Urlslab_Data {
 
 	/**
 	 * @param Urlslab_Data[] $rows
-	 * @param bool           $insert_ignore
-	 * @param array          $columns_update_on_duplicate
+	 * @param bool $insert_ignore
+	 * @param array $columns_update_on_duplicate
 	 *
 	 * @return null|bool|int|mysqli_result|resource
 	 */
@@ -106,9 +110,9 @@ abstract class Urlslab_Data {
 			return true;
 		}
 		global $wpdb;
-		$row_placeholder = '(' . implode( ',', $this->get_columns() ) . ')';
+		$row_placeholder  = '(' . implode( ',', $this->get_columns() ) . ')';
 		$row_placeholders = array();
-		$insert_values = array();
+		$insert_values    = array();
 
 		foreach ( $rows as $row ) {
 			$row->before_insert();
@@ -116,7 +120,7 @@ abstract class Urlslab_Data {
 			foreach ( $this->get_columns() as $column => $format ) {
 				$row_data[] = $row->get( $column );
 			}
-			$insert_values = array_merge( $insert_values, $row_data );
+			$insert_values      = array_merge( $insert_values, $row_data );
 			$row_placeholders[] = $row_placeholder;
 		}
 
@@ -130,11 +134,11 @@ abstract class Urlslab_Data {
 		}
 
 		$query = 'INSERT' .
-				 ( $insert_ignore ? ' IGNORE' : '' ) .
-				 ' INTO ' . $this->get_table_name() .
-				 '(' . implode( ',', array_keys( $this->get_columns() ) ) . ')' .
-				 ' VALUES ' . implode( ',', $row_placeholders ) .
-				 $on_duplicate;
+		         ( $insert_ignore ? ' IGNORE' : '' ) .
+		         ' INTO ' . $this->get_table_name() .
+		         '(' . implode( ',', array_keys( $this->get_columns() ) ) . ')' .
+		         ' VALUES ' . implode( ',', $row_placeholders ) .
+		         $on_duplicate;
 
 		$result = $wpdb->query( $wpdb->prepare( $query, $insert_values ) ); // phpcs:ignore
 
@@ -148,10 +152,10 @@ abstract class Urlslab_Data {
 			return false;
 		}
 
-		$where = array();
+		$where      = array();
 		$where_data = array();
 		foreach ( $this->get_primary_columns() as $key ) {
-			$where[] = $key . '=' . $this->get_column_format( $key );
+			$where[]            = $key . '=' . $this->get_column_format( $key );
 			$where_data[ $key ] = $this->data[ $key ];
 		}
 
@@ -164,12 +168,15 @@ abstract class Urlslab_Data {
 		);
 
 		if ( empty( $row ) ) {
+			$this->set_loaded_from_db( false );
+
 			return false;
 		}
 
 		foreach ( $row as $key => $value ) {
 			$this->set( $key, $value, false );
 		}
+		$this->set_loaded_from_db();
 
 		return true;
 	}
@@ -230,6 +237,13 @@ abstract class Urlslab_Data {
 		return $this->get_columns()[ $name ] ?? '%s';
 	}
 
-	protected function before_insert() {
+	protected function before_insert() {}
+
+	public function is_loaded_from_db(): bool {
+		return $this->loaded_from_db;
+	}
+
+	public function set_loaded_from_db( bool $loaded_from_db = true ) {
+		$this->loaded_from_db = $loaded_from_db;
 	}
 }

@@ -75,9 +75,14 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		'gpt-4': __( 'Gpt 4' ),
 		'text-davinci-003': __( 'Text Davinci 003' ),
 	};
+	const shortcodeTypeTypes = {
+		'S': __( 'Semantic search' ),
+		'V': __( 'Video context' ),
+	};
 
 	const header = {
 		shortcode_id: __( 'Id' ),
+		shortcode_type: __( 'Generator Type' ),
 		prompt: __( 'Prompt' ),
 		semantic_context: __( 'Semantic search query' ),
 		url_filter: __( 'URL filter' ),
@@ -90,12 +95,13 @@ export default function GeneratorShortcodeTable( { slug } ) {
 	};
 
 	const inserterCells = {
+		shortcode_type: <SortMenu autoClose items={ shortcodeTypeTypes } name="shortcode_type" checkedId={ ( 'S' ) } onChange={ ( val ) => setInsertRow( { ...rowToInsert, shortcode_type: val } ) }>{ header.shortcode_type }</SortMenu>,
 		prompt: <InputField liveUpdate defaultValue="" label={ header.prompt } onChange={ ( val ) => setInsertRow( { ...rowToInsert, prompt: val } ) } required />,
 		semantic_context: <InputField liveUpdate defaultValue="" label={ header.semantic_context } onChange={ ( val ) => setInsertRow( { ...rowToInsert, semantic_context: val } ) } />,
 		url_filter: <InputField liveUpdate defaultValue="" label={ header.url_filter } onChange={ ( val ) => setInsertRow( { ...rowToInsert, url_filter: val } ) } />,
 		default_value: <InputField liveUpdate defaultValue="" label={ header.default_value } onChange={ ( val ) => setInsertRow( { ...rowToInsert, default_value: val } ) } />,
 		template: <InputField liveUpdate defaultValue="" label={ header.template } onChange={ ( val ) => setInsertRow( { ...rowToInsert, template: val } ) } />,
-		model: <SortMenu autoClose items={ modelTypes } name="follow_links" checkedId={ ( 'gpt-3.5-turbo' ) } onChange={ ( val ) => setInsertRow( { ...rowToInsert, model: val } ) }>{ header.model }</SortMenu>,
+		model: <SortMenu autoClose items={ modelTypes } name="model" checkedId={ ( 'gpt-3.5-turbo' ) } onChange={ ( val ) => setInsertRow( { ...rowToInsert, model: val } ) }>{ header.model }</SortMenu>,
 	};
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -108,6 +114,13 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		columnHelper.accessor( 'shortcode_id', {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.shortcode_id }</SortBy>,
 			size: 30,
+		} ),
+		columnHelper.accessor( 'shortcode_type', {
+			filterValMenu: shortcodeTypeTypes,
+			className: 'nolimit',
+			cell: ( cell ) => shortcodeTypeTypes[ cell.getValue() ],
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.shortcode_type }</SortBy>,
+			size: 150,
 		} ),
 		columnHelper.accessor( 'prompt', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,

@@ -10,6 +10,12 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 	public const SETTING_NAME_TRANSLATE_MODEL = 'urlslab-gen-translate-model';
 	const SETTING_NAME_TRACK_USAGE = 'urlslab-gen-track-usage';
 
+	/**
+	 * @var array[Urlslab_Generator_Shortcode_Row]
+	 */
+	private static $shortcodes_cache = array();
+	private static array $video_cache = array();
+
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action(
 			'init',
@@ -70,9 +76,9 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		);
 
 		return isset( $_REQUEST['elementor-preview'] ) ||
-			   ( isset( $_REQUEST['action'] ) && false !== strpos( $_REQUEST['action'], 'elementor' ) ) ||
-			   in_array( get_post_status(), $arr_modes ) ||
-			   ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() );
+		       ( isset( $_REQUEST['action'] ) && false !== strpos( $_REQUEST['action'], 'elementor' ) ) ||
+		       in_array( get_post_status(), $arr_modes ) ||
+		       ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() );
 	}
 
 	private function get_placeholder_html( array $atts ): string {
@@ -99,9 +105,18 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			return '';
 		}
 
-		$obj = new Urlslab_Generator_Shortcode_Row( array( 'shortcode_id' => $atts['id'] ), false );
+		$obj = $this->get_shortcode_row( $atts['id'] );
 
-		if ( $obj->load() ) {
+		if ( $obj->is_loaded_from_db() ) {
+			if ( Urlslab_Generator_Shortcode_Row::TYPE_VIDEO == $obj->get_shortcode_type() && empty( $atts['videoid'] ) ) {
+				if ( $this->is_edit_mode() ) {
+					$atts['STATUS'] = 'videoid attribute is missing in shortcode';
+
+					return $this->get_placeholder_html( $atts );
+				}
+
+				return '';
+			}
 			if ( ! $obj->is_active() ) {
 				if ( $this->is_edit_mode() ) {
 					$atts['STATUS'] = 'NOT ACTIVE!!!!';
@@ -178,8 +193,8 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 							)
 						) {
 							$template = URLSLAB_PLUGIN_DIR
-										. 'public/'
-										. $atts['template'];
+							            . 'public/'
+							            . $atts['template'];
 						} else {
 							return $value;
 						}
@@ -195,6 +210,15 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		} else {
 			return '';
 		}
+	}
+
+	private function get_shortcode_row( int $shortcode_id ): Urlslab_Generator_Shortcode_Row {
+		if ( ! isset( self::$shortcodes_cache[ $shortcode_id ] ) ) {
+			self::$shortcodes_cache[ $shortcode_id ] = new Urlslab_Generator_Shortcode_Row( array( 'shortcode_id' => $shortcode_id ), false );
+			self::$shortcodes_cache[ $shortcode_id ]->load();
+		}
+
+		return self::$shortcodes_cache[ $shortcode_id ];
 	}
 
 	private function get_template_variables( $template ): array {
@@ -219,9 +243,15 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			if ( ! isset( $atts[ $variable ] ) ) {
 				switch ( $variable ) {
 					case 'video_captions':
-						$obj_video = new Urlslab_Youtube_Row( array( 'videoid' => $atts['videoid'] ) );
-						if ( $obj_video->load() ) {
+						$obj_video = $this->get_video_obj( $atts['videoid'] );
+						if ( $obj_video->is_loaded_from_db() && Urlslab_Youtube_Row::STATUS_AVAILABLE === $obj_video->get_status() ) {
 							$atts['video_captions'] = $obj_video->get_captions_as_text();
+						}
+						break;
+					case 'video_title':
+						$obj_video = $this->get_video_obj( $atts['videoid'] );
+						if ( $obj_video->is_loaded_from_db() && Urlslab_Youtube_Row::STATUS_AVAILABLE === $obj_video->get_status() ) {
+							$atts['video_title'] = $obj_video->get_title();
 						}
 						break;
 					case 'page_url':
@@ -252,13 +282,22 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		return $atts;
 	}
 
+	private function get_video_obj( $videoid ): Urlslab_Youtube_Row {
+		if ( ! isset( self::$video_cache[ $videoid ] ) ) {
+			self::$video_cache[ $videoid ] = new Urlslab_Youtube_Row( array( 'videoid' => $videoid ) );
+			self::$video_cache[ $videoid ]->load();
+		}
+
+		return self::$video_cache[ $videoid ];
+	}
+
 	public function get_template_value( string $template, array $attributes ): string {
 		$variables = $this->get_template_variables( $template );
 		foreach ( $variables as $variable ) {
-			$var = explode( '.', $variable);
+			$var = explode( '.', $variable );
 			if ( isset( $attributes[ $var[0] ] ) ) {
-				if (isset($var[1])) {
-					if (isset($attributes[ $var[0] ][$var[1]])) {
+				if ( isset( $var[1] ) ) {
+					if ( isset( $attributes[ $var[0] ][ $var[1] ] ) ) {
 						$template = str_replace( '{{' . $variable . '}}', $attributes[ $var[0] ][ $var[1] ], $template );
 					} else {
 						$template = str_replace( '{{' . $variable . '}}', '', $template );
@@ -372,8 +411,8 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			),
 			function( $value ) {
 				return \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $value ||
-					   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value ||
-					   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
+				       \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value ||
+				       \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
 			},
 			'generator',
 		);
@@ -412,8 +451,8 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			),
 			function( $value ) {
 				return \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $value ||
-					   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value ||
-					   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
+				       \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value ||
+				       \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
 			},
 			'wpml',
 		);

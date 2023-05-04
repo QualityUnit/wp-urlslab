@@ -34,6 +34,19 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 								}
 							},
 						),
+						'shortcode_type'           => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								switch ( $param ) {
+									case Urlslab_Generator_Shortcode_Row::TYPE_SEMANTIC_SEARCH_CONTEXT:
+									case Urlslab_Generator_Shortcode_Row::TYPE_VIDEO:
+										return true;
+
+									default:
+										return false;
+								}
+							},
+						),
 						'semantic_context' => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
@@ -245,6 +258,20 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 						switch ( $param ) {
 							case Urlslab_Generator_Shortcode_Row::STATUS_ACTIVE:
 							case Urlslab_Generator_Shortcode_Row::STATUS_DISABLED:
+								return true;
+
+							default:
+								return false;
+						}
+					},
+				),
+				'shortcode_type'           => array(
+					'required'          => true,
+					'default'           => Urlslab_Generator_Shortcode_Row::TYPE_SEMANTIC_SEARCH_CONTEXT,
+					'validate_callback' => function( $param ) {
+						switch ( $param ) {
+							case Urlslab_Generator_Shortcode_Row::TYPE_SEMANTIC_SEARCH_CONTEXT:
+							case Urlslab_Generator_Shortcode_Row::TYPE_VIDEO:
 								return true;
 
 							default:
