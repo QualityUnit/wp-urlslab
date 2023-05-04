@@ -17,7 +17,7 @@ import useChangeRow from '../hooks/useChangeRow';
 
 export default function SchedulesTable( { slug } ) {
 	const paginationId = 'schedule_id';
-	const { table, setTable, rowToInsert, setInsertRow, filters, sorting, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, filters, sorting, sortBy } = useTableUpdater( { slug } );
 
 	const url = { filters, sorting };
 
@@ -33,7 +33,7 @@ export default function SchedulesTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
+	const { row, selectedRows, selectRow, rowToInsert, setInsertRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
 
 	const followLinksTypes = {
 		FOLLOW_ALL_LINKS: __( 'Follow all links' ),

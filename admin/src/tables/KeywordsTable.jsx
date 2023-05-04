@@ -10,7 +10,7 @@ import TagsMenu from '../elements/TagsMenu';
 
 export default function KeywordsTable( { slug } ) {
 	const paginationId = 'kw_id';
-	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const url = { filters, sorting };
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
@@ -26,7 +26,7 @@ export default function KeywordsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { row, selectedRows, selectRow, rowToInsert, setInsertRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const keywordTypes = {
 		M: __( 'Manual' ),

@@ -16,7 +16,7 @@ export default function NotFoundTable( { slug } ) {
 	const paginationId = 'url_id';
 	const matchUrlField = useRef();
 
-	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 
 	const defaultSorting = sorting.length ? sorting : [ { key: 'updated', dir: 'DESC', op: '<' } ];
 
@@ -34,7 +34,7 @@ export default function NotFoundTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
+	const { row, selectedRows, selectRow, rowToInsert, setInsertRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { redirectTypes, matchTypes, header: redirectHeader } = useRedirectTableMenus();
 

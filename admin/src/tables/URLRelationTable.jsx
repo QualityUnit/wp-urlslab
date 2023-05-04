@@ -7,7 +7,7 @@ import useChangeRow from '../hooks/useChangeRow';
 
 export default function URLRelationTable( { slug } ) {
 	const paginationId = 'src_url_id';
-	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const url = { filters, sorting };
 
 	const {
@@ -22,7 +22,7 @@ export default function URLRelationTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { row, selectedRows, selectRow, rowToInsert, setInsertRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const header = {
 		src_url_name: __( 'Source URL' ),

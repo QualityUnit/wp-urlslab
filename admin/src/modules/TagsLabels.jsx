@@ -19,7 +19,7 @@ export default function TagsLabels( ) {
 	// const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const paginationId = 'label_id';
 	const slug = 'label';
-	const { table, setTable, rowToInsert, setInsertRow, filters, sorting } = useTableUpdater( { slug } );
+	const { table, setTable, filters, sorting } = useTableUpdater( { slug } );
 	const url = { filters, sorting };
 	const queryClient = useQueryClient();
 
@@ -35,7 +35,7 @@ export default function TagsLabels( ) {
 		isSuccess,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId }, 500 );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { row, selectedRows, rowToInsert, setInsertRow, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const header = {
 		name: 'Title',

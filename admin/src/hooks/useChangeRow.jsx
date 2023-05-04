@@ -7,6 +7,7 @@ import filtersArray from '../lib/filtersArray';
 export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const queryClient = useQueryClient();
 	const [ rowValue, setRow ] = useState();
+	const [ rowToInsert, setInsertRow ] = useState( {} );
 	const [ insertRowResult, setInsertRowRes ] = useState( false );
 	const [ selectedRows, setSelectedRows ] = useState( [] );
 	const [ responseCounter, setResponseCounter ] = useState( 0 );
@@ -25,7 +26,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	};
 
 	const insertNewRow = useMutation( {
-		mutationFn: async ( { rowToInsert } ) => {
+		mutationFn: async ( ) => {
 			const response = await postFetch( `${ slug }/create`, rowToInsert );
 			return { response };
 		},
@@ -37,7 +38,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 			}
 		},
 	} );
-	const insertRow = ( { rowToInsert } ) => {
+	const insertRow = ( ) => {
 		insertNewRow.mutate( { rowToInsert } );
 	};
 
@@ -117,6 +118,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 				pages: newPagesArray,
 				pageParams: origData.pageParams,
 			} ) );
+			// Called from another field, ie in Generator status
 			if ( changeField ) {
 				const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ changeField ]: newVal } );
 				return response;
@@ -145,5 +147,5 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 		}
 	};
 
-	return { row: rowValue, selectedRows, insertRowResult, insertRow, selectRow, deleteRow, deleteSelectedRows, updateRow };
+	return { row: rowValue, selectedRows, insertRowResult, insertRow, rowToInsert, setInsertRow, selectRow, deleteRow, deleteSelectedRows, updateRow };
 }

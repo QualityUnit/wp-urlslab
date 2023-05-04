@@ -11,23 +11,18 @@ import {
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
 	DateTimeFormat,
-	SingleSelectMenu, LangMenu,
+	SingleSelectMenu,
 } from '../lib/tableImports';
 
 import IconButton from '../elements/IconButton';
 import { ReactComponent as AcceptIcon } from '../assets/images/icons/icon-activate.svg';
 import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
-import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-cron-refresh.svg';
-
-import { langName } from '../lib/helpers';
-
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
-import { useState } from 'react';
 
 export default function GeneratorShortcodeTable( { slug } ) {
 	const paginationId = 'shortcode_id';
-	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( 'generator/shortcode' );
+	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( 'generator/shortcode' );
 
 	const url = { filters, sorting };
 
@@ -64,7 +59,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, paginationId, filters, sorting } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { row, selectedRows, selectRow, rowToInsert, setInsertRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const statusTypes = {
 		A: __( 'Active' ),
