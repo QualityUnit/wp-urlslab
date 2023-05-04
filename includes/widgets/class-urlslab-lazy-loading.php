@@ -219,12 +219,13 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			self::OPTION_TYPE_LISTBOX,
 			function() {
 				global $wpdb;
-				$rows = array();
-				$rows[0] = __( 'No generator is attached to YT videos' );
-				$generators = $wpdb->get_results($wpdb->prepare('SELECT * FROM ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . ' WHERE shortcode_type = %s', Urlslab_Generator_Shortcode_Row::TYPE_VIDEO), ARRAY_A);
-				foreach ($generators as $generator) {
-					$rows[$generator['shortcode_id']] = '[ ' . $generator['shortcode_id'] . ' ] ' . substr($generator['prompt'], 0, 60) . '...';
+				$rows       = array();
+				$rows[0]    = __( 'No generator is attached to YT videos' );
+				$generators = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . ' WHERE shortcode_type = %s', Urlslab_Generator_Shortcode_Row::TYPE_VIDEO ), ARRAY_A ); // phpcs:ignore
+				foreach ( $generators as $generator ) {
+					$rows[ $generator['shortcode_id'] ] = '[ ' . $generator['shortcode_id'] . ' ] ' . substr( $generator['prompt'], 0, 60 ) . '...';
 				}
+
 				return $rows;
 			},
 			null,
