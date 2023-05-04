@@ -18,12 +18,7 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 			return false;
 		}
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Lazy_Loading::SLUG );
-		if ( ! $widget->get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_LAZY_LOADING )
-			 || (
-				 0 == strlen( $widget->get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_API_KEY ) ) &&
-				 0 == strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) )
-			 )
-		) {
+		if ( ! $widget->get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_LAZY_LOADING ) || ! $this->init_client() ) {
 			return false;
 		}
 
@@ -57,7 +52,7 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 				$youtube_obj->set_microdata( $microdata );
 			}
 		}
-		if ( ! strlen( $youtube_obj->get_captions() ) && $this->init_client() ) {
+		if ( ! strlen( $youtube_obj->get_captions() ) ) {
 			try {
 				$captions = $this->get_youtube_captions( $youtube_obj, $old_status );
 				if ( strlen( $captions ) > 0 ) {
@@ -92,25 +87,12 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 
 
 	private function get_youtube_microdata( Urlslab_Youtube_Row $youtube_obj ) {
-		if ( strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Lazy_Loading::SLUG )->get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_API_KEY ) ) ) {
-			$url      = 'https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet%2CcontentDetails&contentDetails.duration&id=' . $youtube_obj->get_video_id() . '&key=' . Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Lazy_Loading::SLUG )->get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_API_KEY ); // json source
-			$response = wp_remote_get( $url, array( 'sslverify' => false ) );
-			if ( ! is_wp_error( $response ) ) {
-				$value = json_decode( $response['body'] );
-				if ( property_exists( $value, 'error' ) ) {
-					return false;
-				}
+		try {
+			$response = $this->content_client->getYTMicrodata( $youtube_obj->get_video_id() );
 
-				return $response['body'];
-			}
-		} else if ( $this->init_client() ) {
-			try {
-				$response = $this->content_client->getYTMicrodata( $youtube_obj->get_video_id() );
-
-				return $response->getRawData();
-			} catch ( Exception $e ) {
-				return false;
-			}
+			return $response->getRawData();
+		} catch ( Exception $e ) {
+			return false;
 		}
 
 		return false;
