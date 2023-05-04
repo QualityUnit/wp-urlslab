@@ -261,6 +261,12 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 							$atts['video_title'] = $obj_video->get_title();
 						}
 						break;
+					case 'video_description':
+						$obj_video = $this->get_video_obj( $atts['videoid'] );
+						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
+							$atts['video_description'] = $obj_video->get_description();
+						}
+						break;
 					case 'page_url':
 						$atts['page_url'] = $this->get_current_page_url()->get_url_with_protocol();
 						break;
@@ -292,7 +298,9 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 	private function get_video_obj( $videoid ): Urlslab_Youtube_Row {
 		if ( ! isset( self::$video_cache[ $videoid ] ) ) {
 			self::$video_cache[ $videoid ] = new Urlslab_Youtube_Row( array( 'videoid' => $videoid ) );
-			self::$video_cache[ $videoid ]->load();
+			if ( ! self::$video_cache[ $videoid ]->load() ) {
+				self::$video_cache[ $videoid ]->insert();
+			}
 		}
 
 		return self::$video_cache[ $videoid ];
