@@ -2,13 +2,28 @@
 @use "../common/mixins" as *;
 
 .urlslab-tagsmenu {
-	position: relative;
+
+	@include square(100%);
+	position: absolute;
+	top: 0;
+	display: flex;
+	align-items: center;
 	font-size: 1rem;
 	z-index: 999;
+	cursor: pointer;
 
 	.react-tags {
 
+		&__list {
+			position: relative;
+			z-index: 2;
+			display: flex;
+			flex-wrap: wrap;
+			margin: 0;
+		}
+
 		&__combobox {
+			display: none;
 			position: relative;
 			top: -10px;
 			border-radius: 0 0 $br-10 $br-10;
@@ -38,32 +53,6 @@
 
 		&__label {
 			display: none;
-		}
-
-		&__list {
-			position: relative;
-			z-index: 2;
-			display: flex;
-			flex-wrap: wrap;
-			min-width: 22em;
-			min-height: 2.875em;
-			padding: 0.75em 1em 0.5em;
-			margin: 0;
-			border-radius: $br-10;
-			background-color: $white;
-			filter: $box-shadow-small;
-
-			@media (min-width: $breakpoint-desktop) {
-				width: 33em;
-			}
-
-			&-item {
-				margin-bottom: 0.25em;
-
-				+ li {
-					margin-left: 0.25em;
-				}
-			}
 		}
 
 		&__listbox {
@@ -102,4 +91,39 @@
 			}
 		}
 	}
+
+	&.active {
+		z-index: 9999999;
+		align-items: flex-start;
+		cursor: default;
+
+		.react-tags {
+
+			&__combobox {
+				display: block;
+			}
+
+			&__list {
+				min-width: 22em;
+				min-height: 2.875em;
+				padding: 0.75em 1em 0.5em;
+				border-radius: $br-10;
+				background-color: $white;
+				filter: $box-shadow-small;
+
+				@media (min-width: $breakpoint-desktop) {
+					width: 33em;
+				}
+
+				&-item {
+					margin-bottom: 0.25em;
+
+					+li {
+						margin-left: 0.25em;
+					}
+				}
+			}
+		}
+	}
+
 }

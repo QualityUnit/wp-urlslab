@@ -713,6 +713,14 @@ table td *:hover > .urlslab-tooltip {
   font-size: 0.75rem;
   border-radius: 1em;
 }
+.urlslab-tag svg.urlslab-tag-close {
+  all: unset;
+  width: 1em;
+  height: 1em;
+  margin-left: 0.5em;
+  fill: currentcolor;
+  cursor: pointer;
+}
 .urlslab-tag.fullSize {
   font-weight: 600;
   padding: 0.5em 1em;
@@ -739,15 +747,11 @@ table td *:hover > .urlslab-tooltip {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  padding: 0;
   border-radius: 50%;
 }
-.urlslab-tag svg.urlslab-tag-close {
-  all: unset;
-  width: 1em;
-  height: 1em;
-  margin-left: 0.5em;
-  fill: currentcolor;
-  cursor: pointer;
+.urlslab-tag.circle svg.urlslab-tag-close {
+  display: none;
 }/* stylelint-disable */
 [id=urlslab-root] {
   font-family: Poppins, sans-serif;

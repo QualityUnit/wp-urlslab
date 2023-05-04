@@ -8,6 +8,16 @@
 	font-size: 0.75rem;
 	border-radius: 1em;
 
+
+	svg.urlslab-tag-close {
+		all: unset;
+
+		@include square(1em);
+		margin-left: 0.5em;
+		fill: currentcolor;
+		cursor: pointer;
+	}
+
 	&.fullSize {
 		font-weight: 600;
 		padding: 0.5em 1em;
@@ -32,15 +42,11 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		padding: 0;
 		border-radius: 50%;
-	}
 
-	svg.urlslab-tag-close {
-		all: unset;
-
-		@include square(1em);
-		margin-left: 0.5em;
-		fill: currentcolor;
-		cursor: pointer;
+		svg.urlslab-tag-close {
+			display: none;
+		}
 	}
 }
