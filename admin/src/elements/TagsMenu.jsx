@@ -3,6 +3,7 @@
 import { useMemo, useCallback, useState, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ReactTags } from 'react-tag-autocomplete';
+import { useI18n } from '@wordpress/react-i18n/';
 
 import useClickOutside from '../hooks/useClickOutside';
 import { postFetch } from '../api/fetching';
@@ -10,25 +11,14 @@ import hexToHSL from '../lib/hexToHSL';
 
 import Tag from './Tag';
 import '../assets/styles/elements/_TagsMenu.scss';
+import Tooltip from './Tooltip';
 
 export default function TagsMenu( { tags, slug, onChange } ) {
+	const { __ } = useI18n();
 	const tagsMenu = useRef();
 	const [ tagsMenuActive, setTagsMenu ] = useState( false );
-	const assignedTagsArray = tags?.replace( /^\|(.+)\|$/, '$1' ).split( '|' );
-	const [ selected, setSelected ] = useState( [] );
-	const selectedToString = useMemo( () => {
-		const selectedIds = [];
-		selected.map( ( tag ) => selectedIds.push( tag.label_id ) );
-		return selectedIds.join( '|' ).replace( /^(.+)$/, '|$1|' );
-	}, [ selected ] );
 
-	const close = useCallback( () => {
-		setTagsMenu( false );
-		if ( onChange && selectedToString !== tags ) {
-			onChange( selectedToString );
-		}
-	}, [ onChange, selectedToString, tags ] );
-	useClickOutside( tagsMenu, close );
+	const assignedTagsArray = tags?.replace( /^\|(.+)\|$/, '$1' ).split( '|' );
 
 	const { data: tagsData } = useQuery( {
 		queryKey: [ 'label', 'menu' ],
@@ -47,25 +37,54 @@ export default function TagsMenu( { tags, slug, onChange } ) {
 		refetchOnWindowFocus: false,
 	} );
 
+	const [ selected, setSelected ] = useState( () => {
+		let tagsArray = [];
+		if ( assignedTagsArray.length && assignedTagsArray[ 0 ] ) {
+			assignedTagsArray?.map( ( id ) => tagsData?.map( ( tag ) => {
+				if ( tag.label_id === Number( id ) ) {
+					tagsArray = [ ...tagsArray, tag ];
+				}
+				return false;
+			} ) );
+		}
+		return tagsArray;
+	} );
+
 	// Getting only tags/labels that have empty modules array or allowed slug
 	const availableTags = useMemo( () => {
 		return tagsData?.filter( ( tag ) => tag.modules.indexOf( slug ) !== -1 || tag.modules.length || ( tag.modules.length === 1 && tag.modules[ 0 ] === '' ) );
 	}, [ tagsData, slug ] );
 
-	const assignedTags = useMemo( () => {
-		let tagsArray = [];
-		assignedTagsArray.map( ( id ) => tagsData?.map( ( tag ) => {
-			if ( tag.label_id === Number( id ) ) {
-				tagsArray = [ ...tagsArray, tag ];
-			}
-			return false;
-		} ) );
-		return tagsArray;
-	}, [ assignedTagsArray, tagsData ] );
+	const selectedToString = useMemo( () => {
+		const selectedIds = [];
+		selected.map( ( tag ) => selectedIds.push( tag.label_id ) );
+		return selectedIds.join( '|' ).replace( /^(.+)$/, '|$1|' );
+	}, [ selected ] );
+
+	const close = useCallback( () => {
+		setTagsMenu( false );
+		if ( onChange && selectedToString !== tags ) {
+			onChange( selectedToString );
+		}
+	}, [ onChange, selectedToString, tags ] );
+	useClickOutside( tagsMenu, close );
 
 	const onAdd = useCallback(
-		( newTag ) => {
-			setSelected( ( selectedTags ) => [ ...selectedTags, newTag ] );
+		async ( newTag ) => {
+			if ( newTag.label_id ) {
+				setSelected( ( selectedTags ) => [ ...selectedTags, newTag ] );
+				return false;
+			}
+
+			const newTagToInsert = { name: newTag.label, bgcolor: '#EDEFF3' };
+			const response = await postFetch( `label/create`, newTagToInsert );
+			const { ok } = await response;
+			if ( ok ) {
+				let returnedTag = await response.json();
+				returnedTag = { value: returnedTag.label_id, label: returnedTag.name, ...returnedTag };
+				setSelected( ( selectedTags ) => [ ...selectedTags, returnedTag ] );
+			}
+			onChange( selectedToString );
 		},
 		[]
 	);
@@ -78,8 +97,8 @@ export default function TagsMenu( { tags, slug, onChange } ) {
 	);
 	function CustomTag( { classNames, tag, ...tagProps } ) {
 		const { label_id, className, bgcolor, label } = tag;
-		return <Tag fullSize onDelete={ () => onDelete( tag ) } key={ label_id } className={ `${ classNames.tag } ${ className }` } { ...tagProps } style={ { backgroundColor: bgcolor } }>
-			{ label }
+		return <Tag fullSize={ tagsMenuActive } shape={ ! tagsMenuActive && 'circle' } onDelete={ () => tagsMenuActive && onDelete( tag ) } key={ label_id } className={ `${ classNames.tag } ${ className }` } { ...tagProps } style={ { backgroundColor: bgcolor, cursor: tagsMenuActive ? 'default' : 'pointer' } }>
+			{ tagsMenuActive ? label : label.charAt( 0 ) }
 		</Tag>;
 	}
 
@@ -99,32 +118,19 @@ export default function TagsMenu( { tags, slug, onChange } ) {
 	}
 
 	return (
-		<div className="pos-relative urlslab-tagsmenu-wrapper">
-			<div className="urlslab-tagsmenu-tags flex flex-align-center" onClick={ () => setTagsMenu( ! tagsMenuActive ) }>
-				{ assignedTags.map( ( tag ) => {
-					const { label_id, bgcolor, className, name } = tag;
-					return <Tag shape="circle" className={ `${ className || '' }` } style={ { backgroundColor: bgcolor } } key={ label_id }>{ name.charAt( 0 ) }</Tag>;
-				} ) }
-			</div>
-			{ tagsMenuActive &&
-				<div className="pos-absolute urlslab-tagsmenu" ref={ tagsMenu }>
-					<ReactTags
-						activateFirstOption={ true }
-						selected={ selected }
-						allowNew
-						placeholderText="Search…"
-						suggestions={ availableTags }
-						onDelete={ onDelete }
-						onAdd={ onAdd }
-						renderTag={ CustomTag }
-						renderOption={ CustomOption }
-					/>
-				</div>
-			}
+		<div onClick={ () => setTagsMenu( true ) } className={ `urlslab-tagsmenu ${ tagsMenuActive === true && 'active' }` } ref={ tagsMenu }>
+			{ ! tagsMenuActive === true && <Tooltip className="showOnHover">{ __( 'Click to Add/remove tags' ) }</Tooltip> }
+			<ReactTags
+				activateFirstOption={ true }
+				selected={ selected }
+				allowNew
+				placeholderText="Search…"
+				suggestions={ availableTags }
+				onDelete={ onDelete }
+				onAdd={ onAdd }
+				renderTag={ CustomTag }
+				renderOption={ CustomOption }
+			/>
 		</div>
 	);
-
-	// createdTags.map((tag) => {
-	//   return <li key={label_id}><Tag style={{ backgroundColor: bgcolor }}>{name}</Tag></li>;
-	// })
 }
