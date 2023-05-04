@@ -15,6 +15,7 @@ import Tooltip from './Tooltip';
 
 export default function TagsMenu( { tags, slug, onChange } ) {
 	const { __ } = useI18n();
+	const tagsMenuWrap = useRef();
 	const tagsMenu = useRef();
 	const [ tagsMenuActive, setTagsMenu ] = useState( false );
 
@@ -35,6 +36,8 @@ export default function TagsMenu( { tags, slug, onChange } ) {
 			return tagsArray;
 		},
 		refetchOnWindowFocus: false,
+		cacheTime: Infinity,
+		staleTime: Infinity,
 	} );
 
 	const [ selected, setSelected ] = useState( () => {
@@ -67,7 +70,13 @@ export default function TagsMenu( { tags, slug, onChange } ) {
 			onChange( selectedToString );
 		}
 	}, [ onChange, selectedToString, tags ] );
-	useClickOutside( tagsMenu, close );
+
+	useClickOutside( tagsMenuWrap, close );
+
+	const openTagsMenu = useCallback( () => {
+		setTagsMenu( true );
+		tagsMenu.current.listBox.expand();
+	}, [] );
 
 	const onAdd = useCallback(
 		async ( newTag ) => {
@@ -95,6 +104,7 @@ export default function TagsMenu( { tags, slug, onChange } ) {
 		},
 		[ selected ]
 	);
+
 	function CustomTag( { classNames, tag, ...tagProps } ) {
 		const { label_id, className, bgcolor, label } = tag;
 		return <Tag fullSize={ tagsMenuActive } shape={ ! tagsMenuActive && 'circle' } onDelete={ () => tagsMenuActive && onDelete( tag ) } key={ label_id } className={ `${ classNames.tag } ${ className }` } { ...tagProps } style={ { backgroundColor: bgcolor, cursor: tagsMenuActive ? 'default' : 'pointer' } }>
@@ -118,9 +128,10 @@ export default function TagsMenu( { tags, slug, onChange } ) {
 	}
 
 	return (
-		<div onClick={ () => setTagsMenu( true ) } className={ `urlslab-tagsmenu ${ tagsMenuActive === true && 'active' }` } ref={ tagsMenu }>
+		<div onClick={ openTagsMenu } className={ `urlslab-tagsmenu ${ tagsMenuActive === true && 'active' }` } ref={ tagsMenuWrap }>
 			{ ! tagsMenuActive === true && <Tooltip className="showOnHover">{ __( 'Click to Add/remove tags' ) }</Tooltip> }
 			<ReactTags
+				ref={ tagsMenu }
 				activateFirstOption={ true }
 				selected={ selected }
 				allowNew

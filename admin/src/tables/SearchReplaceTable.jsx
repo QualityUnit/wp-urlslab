@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SortMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SingleSelectMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -41,7 +41,7 @@ export default function SearchReplaceTable( { slug } ) {
 	const inserterCells = {
 		str_search: <InputField liveUpdate type="url" defaultValue="" label={ header.str_search } onChange={ ( val ) => setInsertRow( { ...rowToInsert, str_search: val } ) } required />,
 		str_replace: <InputField liveUpdate type="url" defaultValue="" label={ header.str_replace } onChange={ ( val ) => setInsertRow( { ...rowToInsert, str_replace: val } ) } required />,
-		search_type: <SortMenu autoClose items={ searchTypes } name="search_type" checkedId="T" onChange={ ( val ) => setInsertRow( { ...rowToInsert, search_type: val } ) }>{ header.search_type }</SortMenu>,
+		search_type: <SingleSelectMenu autoClose items={ searchTypes } name="search_type" checkedId="T" onChange={ ( val ) => setInsertRow( { ...rowToInsert, search_type: val } ) }>{ header.search_type }</SingleSelectMenu>,
 		url_filter: <InputField liveUpdate defaultValue="" label={ header.url_filter } onChange={ ( val ) => setInsertRow( { ...rowToInsert, url_filter: val } ) } />,
 	};
 
@@ -68,7 +68,7 @@ export default function SearchReplaceTable( { slug } ) {
 		columnHelper.accessor( 'search_type', {
 			filterValMenu: searchTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SortMenu items={ searchTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu items={ searchTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.search_type }</SortBy>,
 			size: 100,
 		} ),
@@ -99,10 +99,10 @@ export default function SearchReplaceTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onClearRow={ ( clear ) => {
+				onUpdateRow={ ( val ) => {
 					setInsertRow();
-					if ( clear === 'rowInserted' ) {
-						setInsertRow( clear );
+					if ( val === 'rowInserted' ) {
+						setInsertRow( val );
 						setTimeout( () => {
 							setInsertRow();
 						}, 3000 );

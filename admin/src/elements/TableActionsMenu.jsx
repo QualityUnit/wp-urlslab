@@ -3,7 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import Button from './Button';
 
-import '../assets/styles/elements/_FilterMenu.scss';
+import '../assets/styles/elements/_MultiSelectMenu.scss';
 
 export default function TableActionsMenu( { options, onAction } ) {
 	const { noImport, noExport, noDelete } = options;
@@ -33,10 +33,10 @@ export default function TableActionsMenu( { options, onAction } ) {
 	}, [ isActive ] );
 
 	return (
-		<div className="urlslab-FilterMenu urlslab-moreactions-menu fadeInto" ref={ ref }>
+		<div className="urlslab-MultiSelectMenu urlslab-moreactions-menu fadeInto" ref={ ref }>
 			<Button className="no-padding underline simple ml-m" onClick={ handleMenu }>{ __( 'More actions' ) }</Button>
-			<div className={ `urlslab-FilterMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
-				<div className="urlslab-FilterMenu__items--inn">
+			<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
+				<div className="urlslab-MultiSelectMenu__items--inn">
 					{ ! noImport &&
 					<Button className="simple" onClick={ () => onAction( 'import' ) }>{ __( 'Import CSV' ) }</Button>
 					}

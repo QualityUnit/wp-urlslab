@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 
-import '../assets/styles/elements/_FilterMenu.scss';
+import '../assets/styles/elements/_MultiSelectMenu.scss';
 import '../assets/styles/elements/_RangeSlider.scss';
 
 export default function RangeInputs( {

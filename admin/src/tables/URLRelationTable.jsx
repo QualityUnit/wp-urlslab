@@ -84,10 +84,10 @@ export default function URLRelationTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ () => deleteSelectedRows( 'dest_url_id' ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onClearRow={ ( clear ) => {
+				onUpdateRow={ ( val ) => {
 					setInsertRow();
-					if ( clear === 'rowInserted' ) {
-						setInsertRow( clear );
+					if ( val === 'rowInserted' ) {
+						setInsertRow( val );
 						setTimeout( () => {
 							setInsertRow();
 						}, 3000 );

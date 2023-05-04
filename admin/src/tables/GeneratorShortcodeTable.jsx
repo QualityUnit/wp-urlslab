@@ -11,7 +11,7 @@ import {
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
 	DateTimeFormat,
-	SortMenu, LangMenu,
+	SingleSelectMenu, LangMenu,
 } from '../lib/tableImports';
 
 import IconButton from '../elements/IconButton';
@@ -23,7 +23,7 @@ import { langName } from '../lib/helpers';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
-import {useState} from "react";
+import { useState } from 'react';
 
 export default function GeneratorShortcodeTable( { slug } ) {
 	const paginationId = 'shortcode_id';
@@ -68,7 +68,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 
 	const statusTypes = {
 		A: __( 'Active' ),
-		D: __(  'Disabled' ),
+		D: __( 'Disabled' ),
 	};
 	const modelTypes = {
 		'gpt-3.5-turbo': __( 'Gpt 3.5 Turbo' ),
@@ -76,8 +76,8 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		'text-davinci-003': __( 'Text Davinci 003' ),
 	};
 	const shortcodeTypeTypes = {
-		'S': __( 'Semantic search' ),
-		'V': __( 'Video context' ),
+		S: __( 'Semantic search' ),
+		V: __( 'Video context' ),
 	};
 
 	const header = {
@@ -95,13 +95,13 @@ export default function GeneratorShortcodeTable( { slug } ) {
 	};
 
 	const inserterCells = {
-		shortcode_type: <SortMenu autoClose items={ shortcodeTypeTypes } name="shortcode_type" checkedId={ ( 'S' ) } onChange={ ( val ) => setInsertRow( { ...rowToInsert, shortcode_type: val } ) }>{ header.shortcode_type }</SortMenu>,
+		shortcode_type: <SingleSelectMenu autoClose items={ shortcodeTypeTypes } name="shortcode_type" checkedId={ ( 'S' ) } onChange={ ( val ) => setInsertRow( { ...rowToInsert, shortcode_type: val } ) }>{ header.shortcode_type }</SingleSelectMenu>,
 		prompt: <InputField liveUpdate defaultValue="" label={ header.prompt } onChange={ ( val ) => setInsertRow( { ...rowToInsert, prompt: val } ) } required />,
 		semantic_context: <InputField liveUpdate defaultValue="" label={ header.semantic_context } onChange={ ( val ) => setInsertRow( { ...rowToInsert, semantic_context: val } ) } />,
 		url_filter: <InputField liveUpdate defaultValue="" label={ header.url_filter } onChange={ ( val ) => setInsertRow( { ...rowToInsert, url_filter: val } ) } />,
 		default_value: <InputField liveUpdate defaultValue="" label={ header.default_value } onChange={ ( val ) => setInsertRow( { ...rowToInsert, default_value: val } ) } />,
 		template: <InputField liveUpdate defaultValue="" label={ header.template } onChange={ ( val ) => setInsertRow( { ...rowToInsert, template: val } ) } />,
-		model: <SortMenu autoClose items={ modelTypes } name="model" checkedId={ ( 'gpt-3.5-turbo' ) } onChange={ ( val ) => setInsertRow( { ...rowToInsert, model: val } ) }>{ header.model }</SortMenu>,
+		model: <SingleSelectMenu autoClose items={ modelTypes } name="model" checkedId={ ( 'gpt-3.5-turbo' ) } onChange={ ( val ) => setInsertRow( { ...rowToInsert, model: val } ) }>{ header.model }</SingleSelectMenu>,
 	};
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -194,10 +194,10 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onClearRow={ ( clear ) => {
+				onUpdateRow={ ( val ) => {
 					setInsertRow();
-					if ( clear === 'rowInserted' ) {
-						setInsertRow( clear );
+					if ( val === 'rowInserted' ) {
+						setInsertRow( val );
 						setTimeout( () => {
 							setInsertRow();
 						}, 3000 );

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, LinkIcon, Trash, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, LinkIcon, Trash, SingleSelectMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -109,7 +109,7 @@ export default function LinkManagerTable( { slug } ) {
 		columnHelper.accessor( 'visibility', {
 			filterValMenu: visibilityTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SortMenu
+			cell: ( cell ) => <SingleSelectMenu
 				items={ visibilityTypes }
 				name={ cell.column.id }
 				checkedId={ cell.getValue() }

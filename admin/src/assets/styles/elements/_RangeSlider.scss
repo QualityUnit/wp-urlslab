@@ -2,7 +2,7 @@
 
 @use "../common/variables" as *;
 @use "../common/mixins" as *;
-@forward "../elements/FilterMenu";
+@forward "../elements/MultiSelectMenu";
 
 .urlslab-rangeslider {
 	padding: 0 1em 1em;

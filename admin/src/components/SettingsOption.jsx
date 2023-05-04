@@ -8,8 +8,8 @@ import { parseURL } from '../lib/helpers';
 import DatePicker from 'react-datepicker';
 import InputField from '../elements/InputField';
 import Switch from '../elements/Switch';
-import SortMenu from '../elements/SortMenu';
-import FilterMenu from '../elements/FilterMenu';
+import SingleSelectMenu from '../elements/SingleSelectMenu';
+import MultiSelectMenu from '../elements/MultiSelectMenu';
 import Button from '../elements/Button';
 
 import '../assets/styles/components/datepicker/datepicker.scss';
@@ -155,13 +155,13 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 				);
 			case 'listbox':
 				return (
-					<SortMenu key={ id } className="wide" name={ id } items={ possible_values } checkedId={ value } autoClose onChange={ ( selectedId ) => handleChange.mutate( selectedId ) }>
+					<SingleSelectMenu key={ id } className="wide" name={ id } items={ possible_values } checkedId={ value } autoClose onChange={ ( selectedId ) => handleChange.mutate( selectedId ) }>
 						{ title }
-					</SortMenu>
+					</SingleSelectMenu>
 				);
 			case 'multicheck':
 				return (
-					<FilterMenu className="wide"
+					<MultiSelectMenu className="wide"
 						items={ possible_values }
 						checkedItems={ value }
 						key={ id }
@@ -169,7 +169,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 						asTags
 						onChange={ ( selectedItems ) => handleChange.mutate( selectedItems ) }>
 						{ title }
-					</FilterMenu>
+					</MultiSelectMenu>
 				);
 			default:
 				break;

@@ -2,7 +2,7 @@
 import { useEffect, useCallback, useState, useRef } from 'react';
 import Checkbox from './Checkbox';
 
-import '../assets/styles/elements/_FilterMenu.scss';
+import '../assets/styles/elements/_MultiSelectMenu.scss';
 
 export default function SortMenu( {
 	className, name, style, children, items, checkedId, defaultAccept, autoClose, disabled, isFilter, onChange,
@@ -55,10 +55,10 @@ export default function SortMenu( {
 	};
 
 	return (
-		<div className={ `urlslab-FilterMenu urlslab-SortMenu ${ disabled && 'disabled' } ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref }>
+		<div className={ `urlslab-MultiSelectMenu urlslab-SortMenu ${ disabled && 'disabled' } ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref }>
 			{ ! isFilter && children ? <div className="urlslab-inputField-label" dangerouslySetInnerHTML={ { __html: children } } /> : null }
 			<div
-				className={ `urlslab-FilterMenu__title ${ isFilter ? 'isFilter' : '' } ${ isActive ? 'active' : '' }` }
+				className={ `urlslab-MultiSelectMenu__title ${ isFilter ? 'isFilter' : '' } ${ isActive ? 'active' : '' }` }
 				onClick={ ! disabled && handleMenu }
 				onKeyUp={ ( event ) => {
 					if ( ! disabled ) {
@@ -70,12 +70,12 @@ export default function SortMenu( {
 			>
 				<span dangerouslySetInnerHTML={ { __html: isFilter ? children : items[ checked ] } } />
 			</div>
-			<div className={ `urlslab-FilterMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
-				<div className={ `urlslab-FilterMenu__items--inn ${ Object.values( items ).length > 8 ? 'has-scrollbar' : '' }` }>
+			<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
+				<div className={ `urlslab-MultiSelectMenu__items--inn ${ Object.values( items ).length > 8 ? 'has-scrollbar' : '' }` }>
 					{ Object.entries( items ).map( ( [ id, value ] ) => {
 						return (
 							<Checkbox
-								className="urlslab-FilterMenu__item"
+								className="urlslab-MultiSelectMenu__item"
 								key={ id }
 								id={ id }
 								onChange={ () => checkedCheckbox( id ) }

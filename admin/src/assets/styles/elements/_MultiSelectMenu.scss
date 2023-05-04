@@ -5,7 +5,7 @@
 @use "../elements/MenuArrow" as *;
 @use "../elements/Inputs" as *;
 
-.urlslab-FilterMenu {
+.urlslab-MultiSelectMenu {
 	position: relative;
 	z-index: 2;
 	max-width: 12em;
@@ -166,7 +166,7 @@
 	label,
 	.label {
 
-		&.urlslab-FilterMenu__item {
+		&.urlslab-MultiSelectMenu__item {
 
 			* {
 				font-weight: inherit;

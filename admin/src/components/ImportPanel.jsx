@@ -24,7 +24,7 @@ export default function ImportPanel( { props, handlePanel } ) {
 	// Function to generate required/optional headers for CSV import
 	const csvFields = useMemo( () => {
 		// Getting slug endpoints from prefetched routes
-		const routeEndpoints = queryClient.getQueryData( [ 'routes' ] )?.routes[ `/urlslab/v1/${ slug }` ]?.endpoints;
+		const routeEndpoints = queryClient.getQueryData( [ 'routes' ] )?.routes[ `/urlslab/v1/${ slug }/create` ]?.endpoints;
 		// Getting slug arguments
 		const endpointArgs = routeEndpoints?.filter( ( endpoint ) => endpoint?.methods[ 0 ] === 'POST' )[ 0 ]?.args;
 

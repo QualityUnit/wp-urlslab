@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { delay } from '../lib/helpers';
 
-import '../assets/styles/elements/_FilterMenu.scss';
+import '../assets/styles/elements/_MultiSelectMenu.scss';
 import '../assets/styles/elements/_RangeSlider.scss';
 
 export default function RangeSlider( {
@@ -88,9 +88,9 @@ export default function RangeSlider( {
 	}, [ maximum, getPercent ] );
 
 	return (
-		<div className={ `urlslab-FilterMenu ${ className || '' }` } style={ style } ref={ ref }>
+		<div className={ `urlslab-MultiSelectMenu ${ className || '' }` } style={ style } ref={ ref }>
 			<div
-				className={ `urlslab-FilterMenu__title ${ isActive ? 'active' : '' }` }
+				className={ `urlslab-MultiSelectMenu__title ${ isActive ? 'active' : '' }` }
 				onClick={ handleMenu }
 				onKeyUp={ ( event ) => handleMenu( event ) }
 				role="button"
@@ -98,8 +98,8 @@ export default function RangeSlider( {
 			>
 				{ children }
 			</div>
-			<div className={ `urlslab-FilterMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
-				<div className="urlslab-FilterMenu__items--inn urlslab-rangeslider">
+			<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
+				<div className="urlslab-MultiSelectMenu__items--inn urlslab-rangeslider">
 					<div className="urlslab-rangeslider-top">
 						<input
 							type="range"

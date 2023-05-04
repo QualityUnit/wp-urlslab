@@ -3,9 +3,9 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import { langName } from '../lib/helpers';
 
-import SortMenu from '../elements/SortMenu';
+import SingleSelectMenu from './SingleSelectMenu';
 import InputField from './InputField';
-import FilterMenu from './FilterMenu';
+import MultiSelectMenu from './MultiSelectMenu';
 
 export default function LangMenu( { noAll, multiSelect, isFilter, children, defaultAccept, onChange, checkedId, autoClose } ) {
 	const queryClient = useQueryClient();
@@ -38,7 +38,7 @@ export default function LangMenu( { noAll, multiSelect, isFilter, children, defa
 	return (
 		<>
 			{ langs && ! multiSelect
-				? <SortMenu
+				? <SingleSelectMenu
 					autoClose={ autoClose }
 					items={ langs }
 					isFilter={ isFilter }
@@ -48,12 +48,12 @@ export default function LangMenu( { noAll, multiSelect, isFilter, children, defa
 					onChange={ ( lang ) => handleSelected( lang ) }
 				>
 					{ children }
-				</SortMenu>
+				</SingleSelectMenu>
 				: ! multiSelect && <InputField defaultValue={ checkedId } onChange={ ( lang ) => handleSelected( lang ) } />
 			}
 			{
 				langs && multiSelect &&
-				<FilterMenu
+				<MultiSelectMenu
 					items={ langs }
 					isFilter={ isFilter }
 					checkedItems={ [ checkedId ].flat() }

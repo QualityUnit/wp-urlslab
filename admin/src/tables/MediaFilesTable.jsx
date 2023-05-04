@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Trash, SortMenu, LinkIcon, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Trash, SingleSelectMenu, LinkIcon, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -115,7 +115,7 @@ export default function MediaFilesTable( { slug } ) {
 		columnHelper?.accessor( 'driver', {
 			filterValMenu: driverTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SortMenu items={ driverTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, customEndpoint: '/transfer', cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu items={ driverTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, customEndpoint: '/transfer', cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.driver }</SortBy>,
 			size: 100,
 		} ),

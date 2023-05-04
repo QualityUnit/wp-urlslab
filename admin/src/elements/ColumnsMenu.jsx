@@ -9,7 +9,7 @@ import Tooltip from './Tooltip';
 
 import { ReactComponent as ColumnsIcon } from '../assets/images/icons/icon-columns.svg';
 
-import '../assets/styles/elements/_FilterMenu.scss';
+import '../assets/styles/elements/_MultiSelectMenu.scss';
 import '../assets/styles/elements/_ColumnsMenu.scss';
 
 export default function ColumnsMenu( {
@@ -88,7 +88,7 @@ export default function ColumnsMenu( {
 	};
 
 	return (
-		<div className={ `urlslab-FilterMenu urlslab-ColumnsMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref } id={ id }>
+		<div className={ `urlslab-MultiSelectMenu urlslab-ColumnsMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref } id={ id }>
 			{ ! isActive &&
 			<Tooltip className="showOnHover align-left-0" style={ { width: '11em' } }>{ __( 'Turn off/on columns' ) }</Tooltip>
 			}
@@ -102,14 +102,14 @@ export default function ColumnsMenu( {
 				<ColumnsIcon />
 			</div>
 			{ isActive &&
-			<div className={ `urlslab-FilterMenu__items urlslab-ColumnsMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
+			<div className={ `urlslab-MultiSelectMenu__items urlslab-ColumnsMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
 				<div className="flex urlslab-ColumnsMenu__buttons"><Button className="xl simple" onClick={ () => handleVisibilityAll( 'hideAllCols' ) }>{ __( 'Hide all' ) }</Button><Button className="ma-left xl active" onClick={ () => handleVisibilityAll( 'showAllCols' ) }>{ __( 'Show all' ) }</Button></div>
-				<div className={ `urlslab-FilterMenu__items--inn ${ columns.length > 8 ? 'has-scrollbar' : '' }` }>
+				<div className={ `urlslab-MultiSelectMenu__items--inn ${ columns.length > 8 ? 'has-scrollbar' : '' }` }>
 					{ tableColumns?.map( ( column ) => {
 						return (
 							columns[ column.id ] &&
 							<Checkbox
-								className="urlslab-FilterMenu__item urlslab-ColumnsMenu__item"
+								className="urlslab-MultiSelectMenu__item urlslab-ColumnsMenu__item"
 								key={ column.id }
 								id={ column.id }
 								onChange={ ( isChecked ) => checkedCheckbox( column, isChecked ) }

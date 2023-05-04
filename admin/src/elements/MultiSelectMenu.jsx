@@ -3,9 +3,9 @@ import { useEffect, useState, useRef } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import Checkbox from './Checkbox';
 
-import '../assets/styles/elements/_FilterMenu.scss';
+import '../assets/styles/elements/_MultiSelectMenu.scss';
 
-export default function FilterMenu( {
+export default function MultiSelectMenu( {
 	id, className, asTags, style, children, items, checkedItems, isFilter, onChange } ) {
 	let checkedNow = checkedItems || [];
 
@@ -54,10 +54,10 @@ export default function FilterMenu( {
 	};
 
 	return (
-		<div className={ `urlslab-FilterMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref } id={ id }>
+		<div className={ `urlslab-MultiSelectMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref } id={ id }>
 			{ children ? <div className="urlslab-inputField-label" dangerouslySetInnerHTML={ { __html: children } } /> : null }
 			<div
-				className={ `urlslab-FilterMenu__title ${ isFilter ? 'isFilter' : '' } ${ isActive ? 'active' : '' }` }
+				className={ `urlslab-MultiSelectMenu__title ${ isFilter ? 'isFilter' : '' } ${ isActive ? 'active' : '' }` }
 				onClick={ handleMenu }
 				onKeyUp={ ( event ) => handleMenu( event ) }
 				role="button"
@@ -70,12 +70,12 @@ export default function FilterMenu( {
 					}
 				</span>
 			</div>
-			<div className={ `urlslab-FilterMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
-				<div className={ `urlslab-FilterMenu__items--inn ${ items?.length > 8 ? 'has-scrollbar' : '' }` }>
+			<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
+				<div className={ `urlslab-MultiSelectMenu__items--inn ${ items?.length > 8 ? 'has-scrollbar' : '' }` }>
 					{ Object.entries( items ).map( ( [ itemId, value ] ) => {
 						return (
 							<Checkbox
-								className="urlslab-FilterMenu__item"
+								className="urlslab-MultiSelectMenu__item"
 								key={ itemId }
 								id={ itemId }
 								onChange={ ( isChecked ) => checkedCheckbox( itemId, isChecked ) }

@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import useChangeRow from '../hooks/useChangeRow';
 import useTableUpdater from '../hooks/useTableUpdater';
 
-import { InputField, Loader, Tag, Trash, useInfiniteFetch } from '../lib/tableImports';
+import { InputField, Loader, MultiSelectMenu, Tag, Trash, useInfiniteFetch } from '../lib/tableImports';
 
 import ColorPicker from '../components/ColorPicker';
 import ModuleViewHeaderBottom from '../components/ModuleViewHeaderBottom';
@@ -13,7 +13,6 @@ import Checkbox from '../elements/Checkbox';
 import Tooltip from '../elements/Tooltip';
 
 import '../assets/styles/components/_ModuleViewHeader.scss';
-import FilterMenu from '../elements/FilterMenu';
 import hexToHSL from '../lib/hexToHSL';
 
 export default function TagsLabels( ) {
@@ -46,7 +45,7 @@ export default function TagsLabels( ) {
 	const inserterCells = {
 		name: <InputField liveUpdate defaultValue="" label={ header.name } onChange={ ( val ) => setInsertRow( { ...rowToInsert, name: val } ) } required />,
 		bgcolor: <ColorPicker defaultValue="" label="Background color" onChange={ ( val ) => setInsertRow( { ...rowToInsert, bgcolor: val } ) } />,
-		modules: <FilterMenu liveUpdate asTags id="modules" items={ possibleModules } checkedItems={ [] } onChange={ ( val ) => setInsertRow( { ...rowToInsert, modules: val } ) }>{ header.modules }</FilterMenu>,
+		modules: <MultiSelectMenu liveUpdate asTags id="modules" items={ possibleModules } checkedItems={ [] } onChange={ ( val ) => setInsertRow( { ...rowToInsert, modules: val } ) }>{ header.modules }</MultiSelectMenu>,
 	};
 
 	const columns = [
@@ -75,7 +74,7 @@ export default function TagsLabels( ) {
 		} ),
 		columnHelper.accessor( 'modules', {
 			className: 'nolimit',
-			cell: ( cell ) => <FilterMenu items={ possibleModules } asTags id="modules" checkedItems={ ( cell?.getValue()[ 0 ] && cell?.getValue() ) || [] }
+			cell: ( cell ) => <MultiSelectMenu items={ possibleModules } asTags id="modules" checkedItems={ ( cell?.getValue()[ 0 ] && cell?.getValue() ) || [] }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) }
 			/>,
 			header: header.modules,

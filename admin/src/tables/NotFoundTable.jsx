@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback } from 'react';
 
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SortMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SingleSelectMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -47,10 +47,10 @@ export default function NotFoundTable( { slug } ) {
 	}, [ setInsertRow ] );
 
 	const inserterCells = {
-		match_type: <SortMenu autoClose items={ matchTypes } name="match_type" checkedId="E" onChange={ ( val ) => setInsertRow( { ...rowToInsert, match_type: val } ) }>{ redirectHeader.match_type }</SortMenu>,
+		match_type: <SingleSelectMenu autoClose items={ matchTypes } name="match_type" checkedId="E" onChange={ ( val ) => setInsertRow( { ...rowToInsert, match_type: val } ) }>{ redirectHeader.match_type }</SingleSelectMenu>,
 		match_url: <InputField type="url" disabled ref={ matchUrlField } defaultValue={ matchUrlField.current } label={ redirectHeader.match_url } />,
 		replace_url: <InputField type="url" liveUpdate defaultValue="" label={ redirectHeader.replace_url } onChange={ ( val ) => setInsertRow( { ...rowToInsert, replace_url: val } ) } required />,
-		redirect_code: <SortMenu autoClose items={ redirectTypes } name="redirect_code" checkedId="301" onChange={ ( val ) => setInsertRow( { ...rowToInsert, redirect_code: val } ) }>{ redirectHeader.redirect_code }</SortMenu>,
+		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" checkedId="301" onChange={ ( val ) => setInsertRow( { ...rowToInsert, redirect_code: val } ) }>{ redirectHeader.redirect_code }</SingleSelectMenu>,
 	};
 
 	const header = {
@@ -137,11 +137,11 @@ export default function NotFoundTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onClearRow={ ( clear ) => {
+				onUpdateRow={ ( val ) => {
 					setActivePanel();
 					setInsertRow();
-					if ( clear === 'rowInserted' ) {
-						setInsertRow( clear );
+					if ( val === 'rowInserted' ) {
+						setInsertRow( val );
 						setTimeout( () => {
 							setInsertRow( );
 						}, 3000 );

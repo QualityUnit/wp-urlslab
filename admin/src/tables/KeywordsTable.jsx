@@ -1,7 +1,7 @@
 /* eslint-disable indent */
 import { useState } from 'react';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, SortMenu, Tag, LangMenu, InputField, Checkbox, LinkIcon, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, SortBy, SingleSelectMenu, Tag, LangMenu, InputField, Checkbox, LinkIcon, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -49,7 +49,7 @@ export default function KeywordsTable( { slug } ) {
 	const inserterCells = {
 		keyword: <InputField liveUpdate defaultValue="" label={ header.keyword } onChange={ ( val ) => setInsertRow( { ...rowToInsert, keyword: val } ) } required />,
 		urlLink: <InputField liveUpdate type="url" defaultValue="" label={ header.urlLink } onChange={ ( val ) => setInsertRow( { ...rowToInsert, urlLink: val } ) } required />,
-		kwType: <SortMenu autoClose items={ keywordTypes } name="kwType" checkedId="M" onChange={ ( val ) => setInsertRow( { ...rowToInsert, kwType: val } ) }>{ header.kwType }</SortMenu>,
+		kwType: <SingleSelectMenu autoClose items={ keywordTypes } name="kwType" checkedId="M" onChange={ ( val ) => setInsertRow( { ...rowToInsert, kwType: val } ) }>{ header.kwType }</SingleSelectMenu>,
 		kw_priority: <InputField liveUpdate type="number" defaultValue="0" min="0" max="255" label={ header.kw_priority } onChange={ ( val ) => setInsertRow( { ...rowToInsert, kw_priority: val } ) } />,
 		lang: <LangMenu autoClose checkedId="all" onChange={ ( val ) => setInsertRow( { ...rowToInsert, lang: val } ) }>{ __( 'Language' ) }</LangMenu>,
 		urlFilter: <InputField liveUpdate defaultValue="" label={ header.urlFilter } onChange={ ( val ) => setInsertRow( { ...rowToInsert, urlFilter: val } ) } />,
@@ -80,7 +80,7 @@ export default function KeywordsTable( { slug } ) {
 		columnHelper.accessor( 'kwType', {
 			filterValMenu: keywordTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SortMenu items={ keywordTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu items={ keywordTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.kwType }</SortBy>,
 			size: 100,
 		} ),
@@ -152,10 +152,10 @@ export default function KeywordsTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onClearRow={ ( clear ) => {
+				onUpdateRow={ ( val ) => {
 					setInsertRow();
-					if ( clear === 'rowInserted' ) {
-						setInsertRow( clear );
+					if ( val === 'rowInserted' ) {
+						setInsertRow( val );
 						setTimeout( () => {
 							setInsertRow();
 						}, 3000 );
