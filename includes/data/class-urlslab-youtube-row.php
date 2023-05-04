@@ -150,4 +150,8 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 			'status_changed' => '%s',
 		);
 	}
+
+	public function is_active():bool {
+		return self::STATUS_AVAILABLE == $this->get_status();
+	}
 }

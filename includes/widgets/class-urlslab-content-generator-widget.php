@@ -108,14 +108,20 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		$obj = $this->get_shortcode_row( $atts['id'] );
 
 		if ( $obj->is_loaded_from_db() ) {
-			if ( Urlslab_Generator_Shortcode_Row::TYPE_VIDEO == $obj->get_shortcode_type() && empty( $atts['videoid'] ) ) {
-				if ( $this->is_edit_mode() ) {
-					$atts['STATUS'] = 'videoid attribute is missing in shortcode';
+			if ( Urlslab_Generator_Shortcode_Row::TYPE_VIDEO == $obj->get_shortcode_type() ) {
+				if ( empty( $atts['videoid'] ) ) {
+					if ( $this->is_edit_mode() ) {
+						$atts['STATUS'] = 'videoid attribute is missing in shortcode';
 
-					return $this->get_placeholder_html( $atts );
+						return $this->get_placeholder_html( $atts );
+					}
+
+					return '';
 				}
-
-				return '';
+				$video = $this->get_video_obj( $atts['videoid'] );
+				if ( ! $video->is_loaded_from_db() || ! $video->is_active() ) {
+					return '';
+				}
 			}
 			if ( ! $obj->is_active() ) {
 				if ( $this->is_edit_mode() ) {
@@ -135,6 +141,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 
 			return '';
 		}
+
 
 		$atts = $this->get_att_values( $obj, $atts, $content, $tag );
 
@@ -244,13 +251,13 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 				switch ( $variable ) {
 					case 'video_captions':
 						$obj_video = $this->get_video_obj( $atts['videoid'] );
-						if ( $obj_video->is_loaded_from_db() && Urlslab_Youtube_Row::STATUS_AVAILABLE === $obj_video->get_status() ) {
+						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
 							$atts['video_captions'] = $obj_video->get_captions_as_text();
 						}
 						break;
 					case 'video_title':
 						$obj_video = $this->get_video_obj( $atts['videoid'] );
-						if ( $obj_video->is_loaded_from_db() && Urlslab_Youtube_Row::STATUS_AVAILABLE === $obj_video->get_status() ) {
+						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
 							$atts['video_title'] = $obj_video->get_title();
 						}
 						break;

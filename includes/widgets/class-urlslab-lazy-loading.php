@@ -410,7 +410,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$yt_elements = $xpath->query( "//*[@data-ytid and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
 		foreach ( $yt_elements as $yt_element ) {
 			$ytid = $yt_element->getAttribute( 'data-ytid' );
-			if ( isset( $video_objects[ $ytid ] ) && Urlslab_Youtube_Row::STATUS_AVAILABLE === $video_objects[ $ytid ]->get_status() ) {
+			if ( isset( $video_objects[ $ytid ] ) && $video_objects[ $ytid ]->is_active() ) {
 				$this->append_video_schema( $document, $yt_element, $video_objects[ $ytid ] );
 			}
 		}
@@ -616,7 +616,11 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 				$youtube_shortcode_node->setAttribute( 'class', 'youtube_urlslab_loader--shortcode' );
 				$dom = new DOMDocument();
 				$dom->loadHTML( '<?xml encoding="utf-8" ?>' . $shortcode, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
-				$youtube_shortcode_node->appendChild( $document->importNode( $dom->documentElement, true ) );
+
+				foreach ( $dom->childNodes as $childNode ) {
+					$youtube_shortcode_node->appendChild( $document->importNode( $childNode, true ) );
+				}
+
 				$youtube_loader->appendChild( $youtube_shortcode_node );
 			}
 		}
