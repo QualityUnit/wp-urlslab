@@ -85,11 +85,11 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 			$request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
 			$prompt = new DomainDataRetrievalAugmentPrompt();
 
-			if (isset($attributes['videoid'])) {
+			if ( isset( $attributes['videoid'] ) ) {
 				$prompt->setPromptTemplate( $command );
 				$prompt->setMetadataVars( array() );
 				$request->setPrompt( $prompt );
-				$response    = $this->content_client->memoryLessAugment( $request, 'false', 'true', 'true', 'false' );
+				$response = $this->content_client->memoryLessAugment( $request, 'false', 'true', 'true', 'false' );
 			} else {
 				$prompt->setPromptTemplate( "Additional information to your memory:\n--\n{context}\n----\n" . $command );
 				$prompt->setDocumentTemplate( "--\n{text}\n--" );
@@ -112,7 +112,6 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 
 				$response = $this->content_client->memoryLessAugment( $request, 'false', strlen( $row_obj->get_semantic_context() ) ? 'false' : 'true' );
 			}
-
 
 
 			if ( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_AUTOAPPROVE ) ) {

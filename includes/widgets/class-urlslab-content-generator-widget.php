@@ -76,9 +76,9 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		);
 
 		return isset( $_REQUEST['elementor-preview'] ) ||
-		       ( isset( $_REQUEST['action'] ) && false !== strpos( $_REQUEST['action'], 'elementor' ) ) ||
-		       in_array( get_post_status(), $arr_modes ) ||
-		       ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() );
+			   ( isset( $_REQUEST['action'] ) && false !== strpos( $_REQUEST['action'], 'elementor' ) ) ||
+			   in_array( get_post_status(), $arr_modes ) ||
+			   ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() );
 	}
 
 	private function get_placeholder_html( array $atts ): string {
@@ -193,8 +193,8 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 							)
 						) {
 							$template = URLSLAB_PLUGIN_DIR
-							            . 'public/'
-							            . $atts['template'];
+										. 'public/'
+										. $atts['template'];
 						} else {
 							return $value;
 						}
@@ -411,8 +411,8 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			),
 			function( $value ) {
 				return \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $value ||
-				       \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value ||
-				       \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
+					   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value ||
+					   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
 			},
 			'generator',
 		);
@@ -451,8 +451,8 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			),
 			function( $value ) {
 				return \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $value ||
-				       \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value ||
-				       \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
+					   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value ||
+					   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
 			},
 			'wpml',
 		);

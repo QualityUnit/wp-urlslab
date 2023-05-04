@@ -134,11 +134,11 @@ abstract class Urlslab_Data {
 		}
 
 		$query = 'INSERT' .
-		         ( $insert_ignore ? ' IGNORE' : '' ) .
-		         ' INTO ' . $this->get_table_name() .
-		         '(' . implode( ',', array_keys( $this->get_columns() ) ) . ')' .
-		         ' VALUES ' . implode( ',', $row_placeholders ) .
-		         $on_duplicate;
+				 ( $insert_ignore ? ' IGNORE' : '' ) .
+				 ' INTO ' . $this->get_table_name() .
+				 '(' . implode( ',', array_keys( $this->get_columns() ) ) . ')' .
+				 ' VALUES ' . implode( ',', $row_placeholders ) .
+				 $on_duplicate;
 
 		$result = $wpdb->query( $wpdb->prepare( $query, $insert_values ) ); // phpcs:ignore
 
