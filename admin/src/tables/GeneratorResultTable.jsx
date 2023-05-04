@@ -70,7 +70,7 @@ export default function GeneratorResultTable( { slug } ) {
 	const header = {
 		shortcode_id: __( 'Shortcode ID' ),
 		command: __( 'Command' ),
-		semantic_context: __( 'Context' ),
+		semantic_context: __( 'Semantic search query' ),
 		url_filter: __( 'URL filter' ),
 		prompt_variables: __( 'Input data' ),
 		status: __( 'Status' ),

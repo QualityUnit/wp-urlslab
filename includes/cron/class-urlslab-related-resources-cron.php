@@ -75,14 +75,13 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 			$max_count = 15;
 		}
 
-		$request
-			= new DomainDataRetrievalRelatedUrlsRequest();
+		$request = new DomainDataRetrievalRelatedUrlsRequest();
 		$request->setUrl( $url->get_url_name() );
-		$request->setChunkLimit( 3 );
+		$request->setChunkLimit( 1 );
 		$request->setRenewFrequency( DomainDataRetrievalRelatedUrlsRequest::RENEW_FREQUENCY_ONE_TIME );
 
 		$query = new DomainDataRetrievalContentQuery();
-		$query->setLimit( 8 );
+		$query->setLimit( $max_count * 3 );
 
 		$domains                            = $this->getOtherDomains();
 		$domains[ $url->get_domain_name() ] = $url->get_domain_name();

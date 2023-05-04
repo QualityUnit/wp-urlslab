@@ -30,6 +30,20 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 		return $this->get( 'captions' );
 	}
 
+	public function get_captions_as_text() {
+
+		$lines  = explode( "\n", $this->get( 'captions' ) );
+		$output = '';
+
+		foreach ( $lines as $line ) {
+			if ( ! preg_match( '/^\d{1,2}:\d{2}:\d{2},\d{3}/', $line ) && ! is_numeric( trim( $line ) ) && strlen( trim( $line ) ) > 0 ) {
+				$output .= $line . "\n";
+			}
+		}
+
+		return trim( $output );
+	}
+
 	public function get_status() {
 		return $this->get( 'status' );
 	}
@@ -50,6 +64,7 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 		$this->set( 'microdata', $microdata, $loaded_from_db );
 		$this->microdata_obj = json_decode( $microdata );
 	}
+
 	public function set_captions( $captions, $loaded_from_db = false ) {
 		$this->set( 'captions', $captions, $loaded_from_db );
 		$this->captions_obj = json_decode( $captions );
@@ -130,9 +145,13 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 		return array(
 			'videoid'        => '%s',
 			'microdata'      => '%s',
-			'captions'      => '%s',
+			'captions'       => '%s',
 			'status'         => '%s',
 			'status_changed' => '%s',
 		);
+	}
+
+	public function is_active():bool {
+		return self::STATUS_AVAILABLE == $this->get_status();
 	}
 }

@@ -25,6 +25,7 @@ docs/Model/DomainDataRetrievalRelatedUrlsResponse.md
 docs/Model/DomainDataRetrievalScreenshotResponse.md
 docs/Model/DomainDataRetrievalSourceResponse.md
 docs/Model/DomainDataRetrievalSummaryResponse.md
+docs/Model/DomainDataRetrievalVideoCaptionResponse.md
 docs/Model/DomainDataRetrievalVideoResponse.md
 docs/Model/DomainDocsDocIndexRequest.md
 docs/Model/DomainDocsDocResponse.md
@@ -52,6 +53,7 @@ lib/Model/DomainDataRetrievalRelatedUrlsResponse.php
 lib/Model/DomainDataRetrievalScreenshotResponse.php
 lib/Model/DomainDataRetrievalSourceResponse.php
 lib/Model/DomainDataRetrievalSummaryResponse.php
+lib/Model/DomainDataRetrievalVideoCaptionResponse.php
 lib/Model/DomainDataRetrievalVideoResponse.php
 lib/Model/DomainDocsDocIndexRequest.php
 lib/Model/DomainDocsDocResponse.php
@@ -98,6 +100,7 @@ test/Model/DomainDataRetrievalRelatedUrlsResponseTest.php
 test/Model/DomainDataRetrievalScreenshotResponseTest.php
 test/Model/DomainDataRetrievalSourceResponseTest.php
 test/Model/DomainDataRetrievalSummaryResponseTest.php
+test/Model/DomainDataRetrievalVideoCaptionResponseTest.php
 test/Model/DomainDataRetrievalVideoResponseTest.php
 test/Model/DomainDocsDocIndexRequestTest.php
 test/Model/DomainDocsDocResponseTest.php

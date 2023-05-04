@@ -1,6 +1,6 @@
 <?php
 /**
- * DomainDataRetrievalSummaryResponse
+ * DomainDataRetrievalVideoCaptionResponse
  *
  * PHP version 7.4
  *
@@ -32,7 +32,7 @@ use \ArrayAccess;
 use \OpenAPI\Client\ObjectSerializer;
 
 /**
- * DomainDataRetrievalSummaryResponse Class Doc Comment
+ * DomainDataRetrievalVideoCaptionResponse Class Doc Comment
  *
  * @category Class
  * @package  OpenAPI\Client
@@ -40,7 +40,7 @@ use \OpenAPI\Client\ObjectSerializer;
  * @link     https://openapi-generator.tech
  * @implements \ArrayAccess<string, mixed>
  */
-class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess, \JsonSerializable
+class DomainDataRetrievalVideoCaptionResponse implements ModelInterface, ArrayAccess, \JsonSerializable
 {
     public const DISCRIMINATOR = null;
 
@@ -49,7 +49,7 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
       *
       * @var string
       */
-    protected static $openAPIModelName = 'domain.dataRetrieval.SummaryResponse';
+    protected static $openAPIModelName = 'domain.dataRetrieval.VideoCaptionResponse';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -57,11 +57,9 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
       * @var string[]
       */
     protected static $openAPITypes = [
-        'domain_id' => 'string',
-        'url_id' => 'string',
-        'url' => 'string',
-        'summary' => 'string',
-        'summary_status' => 'string'
+        'transcript' => 'string',
+        'status' => 'string',
+        'message' => 'string'
     ];
 
     /**
@@ -72,11 +70,9 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'domain_id' => null,
-        'url_id' => null,
-        'url' => null,
-        'summary' => null,
-        'summary_status' => null
+        'transcript' => null,
+        'status' => null,
+        'message' => null
     ];
 
     /**
@@ -85,11 +81,9 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'domain_id' => false,
-		'url_id' => false,
-		'url' => false,
-		'summary' => true,
-		'summary_status' => false
+        'transcript' => true,
+		'status' => false,
+		'message' => true
     ];
 
     /**
@@ -178,11 +172,9 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
      * @var string[]
      */
     protected static $attributeMap = [
-        'domain_id' => 'domainId',
-        'url_id' => 'urlId',
-        'url' => 'url',
-        'summary' => 'summary',
-        'summary_status' => 'summaryStatus'
+        'transcript' => 'transcript',
+        'status' => 'status',
+        'message' => 'message'
     ];
 
     /**
@@ -191,11 +183,9 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
      * @var string[]
      */
     protected static $setters = [
-        'domain_id' => 'setDomainId',
-        'url_id' => 'setUrlId',
-        'url' => 'setUrl',
-        'summary' => 'setSummary',
-        'summary_status' => 'setSummaryStatus'
+        'transcript' => 'setTranscript',
+        'status' => 'setStatus',
+        'message' => 'setMessage'
     ];
 
     /**
@@ -204,11 +194,9 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
      * @var string[]
      */
     protected static $getters = [
-        'domain_id' => 'getDomainId',
-        'url_id' => 'getUrlId',
-        'url' => 'getUrl',
-        'summary' => 'getSummary',
-        'summary_status' => 'getSummaryStatus'
+        'transcript' => 'getTranscript',
+        'status' => 'getStatus',
+        'message' => 'getMessage'
     ];
 
     /**
@@ -252,25 +240,25 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
         return self::$openAPIModelName;
     }
 
-    public const SUMMARY_STATUS_ERROR = 'ERROR';
-    public const SUMMARY_STATUS_PENDING = 'PENDING';
-    public const SUMMARY_STATUS_BLOCKED = 'BLOCKED';
-    public const SUMMARY_STATUS_UPDATING = 'UPDATING';
-    public const SUMMARY_STATUS_AVAILABLE = 'AVAILABLE';
+    public const STATUS_ERROR = 'ERROR';
+    public const STATUS_PENDING = 'PENDING';
+    public const STATUS_BLOCKED = 'BLOCKED';
+    public const STATUS_UPDATING = 'UPDATING';
+    public const STATUS_AVAILABLE = 'AVAILABLE';
 
     /**
      * Gets allowable values of the enum
      *
      * @return string[]
      */
-    public function getSummaryStatusAllowableValues()
+    public function getStatusAllowableValues()
     {
         return [
-            self::SUMMARY_STATUS_ERROR,
-            self::SUMMARY_STATUS_PENDING,
-            self::SUMMARY_STATUS_BLOCKED,
-            self::SUMMARY_STATUS_UPDATING,
-            self::SUMMARY_STATUS_AVAILABLE,
+            self::STATUS_ERROR,
+            self::STATUS_PENDING,
+            self::STATUS_BLOCKED,
+            self::STATUS_UPDATING,
+            self::STATUS_AVAILABLE,
         ];
     }
 
@@ -289,11 +277,9 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
      */
     public function __construct(array $data = null)
     {
-        $this->setIfExists('domain_id', $data ?? [], null);
-        $this->setIfExists('url_id', $data ?? [], null);
-        $this->setIfExists('url', $data ?? [], null);
-        $this->setIfExists('summary', $data ?? [], null);
-        $this->setIfExists('summary_status', $data ?? [], null);
+        $this->setIfExists('transcript', $data ?? [], null);
+        $this->setIfExists('status', $data ?? [], null);
+        $this->setIfExists('message', $data ?? [], null);
     }
 
     /**
@@ -323,23 +309,14 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
     {
         $invalidProperties = [];
 
-        if ($this->container['domain_id'] === null) {
-            $invalidProperties[] = "'domain_id' can't be null";
+        if ($this->container['status'] === null) {
+            $invalidProperties[] = "'status' can't be null";
         }
-        if ($this->container['url_id'] === null) {
-            $invalidProperties[] = "'url_id' can't be null";
-        }
-        if ($this->container['url'] === null) {
-            $invalidProperties[] = "'url' can't be null";
-        }
-        if ($this->container['summary_status'] === null) {
-            $invalidProperties[] = "'summary_status' can't be null";
-        }
-        $allowedValues = $this->getSummaryStatusAllowableValues();
-        if (!is_null($this->container['summary_status']) && !in_array($this->container['summary_status'], $allowedValues, true)) {
+        $allowedValues = $this->getStatusAllowableValues();
+        if (!is_null($this->container['status']) && !in_array($this->container['status'], $allowedValues, true)) {
             $invalidProperties[] = sprintf(
-                "invalid value '%s' for 'summary_status', must be one of '%s'",
-                $this->container['summary_status'],
+                "invalid value '%s' for 'status', must be one of '%s'",
+                $this->container['status'],
                 implode("', '", $allowedValues)
             );
         }
@@ -360,153 +337,106 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
 
 
     /**
-     * Gets domain_id
-     *
-     * @return string
-     */
-    public function getDomainId()
-    {
-        return $this->container['domain_id'];
-    }
-
-    /**
-     * Sets domain_id
-     *
-     * @param string $domain_id domain_id
-     *
-     * @return self
-     */
-    public function setDomainId($domain_id)
-    {
-        if (is_null($domain_id)) {
-            throw new \InvalidArgumentException('non-nullable domain_id cannot be null');
-        }
-        $this->container['domain_id'] = $domain_id;
-
-        return $this;
-    }
-
-    /**
-     * Gets url_id
-     *
-     * @return string
-     */
-    public function getUrlId()
-    {
-        return $this->container['url_id'];
-    }
-
-    /**
-     * Sets url_id
-     *
-     * @param string $url_id url_id
-     *
-     * @return self
-     */
-    public function setUrlId($url_id)
-    {
-        if (is_null($url_id)) {
-            throw new \InvalidArgumentException('non-nullable url_id cannot be null');
-        }
-        $this->container['url_id'] = $url_id;
-
-        return $this;
-    }
-
-    /**
-     * Gets url
-     *
-     * @return string
-     */
-    public function getUrl()
-    {
-        return $this->container['url'];
-    }
-
-    /**
-     * Sets url
-     *
-     * @param string $url url
-     *
-     * @return self
-     */
-    public function setUrl($url)
-    {
-        if (is_null($url)) {
-            throw new \InvalidArgumentException('non-nullable url cannot be null');
-        }
-        $this->container['url'] = $url;
-
-        return $this;
-    }
-
-    /**
-     * Gets summary
+     * Gets transcript
      *
      * @return string|null
      */
-    public function getSummary()
+    public function getTranscript()
     {
-        return $this->container['summary'];
+        return $this->container['transcript'];
     }
 
     /**
-     * Sets summary
+     * Sets transcript
      *
-     * @param string|null $summary summary
+     * @param string|null $transcript transcript
      *
      * @return self
      */
-    public function setSummary($summary)
+    public function setTranscript($transcript)
     {
-        if (is_null($summary)) {
-            array_push($this->openAPINullablesSetToNull, 'summary');
+        if (is_null($transcript)) {
+            array_push($this->openAPINullablesSetToNull, 'transcript');
         } else {
             $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
-            $index = array_search('summary', $nullablesSetToNull);
+            $index = array_search('transcript', $nullablesSetToNull);
             if ($index !== FALSE) {
                 unset($nullablesSetToNull[$index]);
                 $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
             }
         }
-        $this->container['summary'] = $summary;
+        $this->container['transcript'] = $transcript;
 
         return $this;
     }
 
     /**
-     * Gets summary_status
+     * Gets status
      *
      * @return string
      */
-    public function getSummaryStatus()
+    public function getStatus()
     {
-        return $this->container['summary_status'];
+        return $this->container['status'];
     }
 
     /**
-     * Sets summary_status
+     * Sets status
      *
-     * @param string $summary_status summary_status
+     * @param string $status status
      *
      * @return self
      */
-    public function setSummaryStatus($summary_status)
+    public function setStatus($status)
     {
-        if (is_null($summary_status)) {
-            throw new \InvalidArgumentException('non-nullable summary_status cannot be null');
+        if (is_null($status)) {
+            throw new \InvalidArgumentException('non-nullable status cannot be null');
         }
-        $allowedValues = $this->getSummaryStatusAllowableValues();
-        if (!in_array($summary_status, $allowedValues, true)) {
+        $allowedValues = $this->getStatusAllowableValues();
+        if (!in_array($status, $allowedValues, true)) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    "Invalid value '%s' for 'summary_status', must be one of '%s'",
-                    $summary_status,
+                    "Invalid value '%s' for 'status', must be one of '%s'",
+                    $status,
                     implode("', '", $allowedValues)
                 )
             );
         }
-        $this->container['summary_status'] = $summary_status;
+        $this->container['status'] = $status;
+
+        return $this;
+    }
+
+    /**
+     * Gets message
+     *
+     * @return string|null
+     */
+    public function getMessage()
+    {
+        return $this->container['message'];
+    }
+
+    /**
+     * Sets message
+     *
+     * @param string|null $message message
+     *
+     * @return self
+     */
+    public function setMessage($message)
+    {
+        if (is_null($message)) {
+            array_push($this->openAPINullablesSetToNull, 'message');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('message', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
+        }
+        $this->container['message'] = $message;
 
         return $this;
     }

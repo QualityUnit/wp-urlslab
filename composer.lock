@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.269.3",
+            "version": "3.269.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "0be880140b9fe48f67fcbf5f1ed19a1d08116369"
+                "reference": "1f9661f019cb4173e527f0c30fdd6efe190a413e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0be880140b9fe48f67fcbf5f1ed19a1d08116369",
-                "reference": "0be880140b9fe48f67fcbf5f1ed19a1d08116369",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1f9661f019cb4173e527f0c30fdd6efe190a413e",
+                "reference": "1f9661f019cb4173e527f0c30fdd6efe190a413e",
                 "shasum": ""
             },
             "require": {
@@ -151,9 +151,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.269.3"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.269.4"
             },
-            "time": "2023-05-01T18:21:53+00:00"
+            "time": "2023-05-02T18:22:12+00:00"
         },
         {
             "name": "composer/installers",
@@ -479,32 +479,32 @@
         },
         {
             "name": "google/auth",
-            "version": "v1.26.0",
+            "version": "v1.27.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-auth-library-php.git",
-                "reference": "f1f0d0319e2e7750ebfaa523c78819792a9ed9f7"
+                "reference": "81a5d40937fb4afc26e80b6fa25b3f164a5763d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/f1f0d0319e2e7750ebfaa523c78819792a9ed9f7",
-                "reference": "f1f0d0319e2e7750ebfaa523c78819792a9ed9f7",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/81a5d40937fb4afc26e80b6fa25b3f164a5763d2",
+                "reference": "81a5d40937fb4afc26e80b6fa25b3f164a5763d2",
                 "shasum": ""
             },
             "require": {
-                "firebase/php-jwt": "^5.5||^6.0",
+                "firebase/php-jwt": "^6.0",
                 "guzzlehttp/guzzle": "^6.2.1|^7.0",
-                "guzzlehttp/psr7": "^1.7|^2.0",
-                "php": "^7.1||^8.0",
-                "psr/cache": "^1.0|^2.0|^3.0",
-                "psr/http-message": "^1.0"
+                "guzzlehttp/psr7": "^2.4.5",
+                "php": "^7.4||^8.0",
+                "psr/cache": "^1.0||^2.0||^3.0",
+                "psr/http-message": "^1.1||^2.0"
             },
             "require-dev": {
-                "guzzlehttp/promises": "0.1.1|^1.3",
+                "guzzlehttp/promises": "^1.3",
                 "kelvinmo/simplejwt": "0.7.0",
-                "phpseclib/phpseclib": "^2.0.31||^3.0",
-                "phpspec/prophecy-phpunit": "^1.1||^2.0",
-                "phpunit/phpunit": "^7.5||^9.0.0",
+                "phpseclib/phpseclib": "^3.0",
+                "phpspec/prophecy-phpunit": "^2.0",
+                "phpunit/phpunit": "^9.0.0",
                 "sebastian/comparator": ">=1.2.3",
                 "squizlabs/php_codesniffer": "^3.5"
             },
@@ -531,9 +531,9 @@
             "support": {
                 "docs": "https://googleapis.github.io/google-auth-library-php/main/",
                 "issues": "https://github.com/googleapis/google-auth-library-php/issues",
-                "source": "https://github.com/googleapis/google-auth-library-php/tree/v1.26.0"
+                "source": "https://github.com/googleapis/google-auth-library-php/tree/v1.27.0"
             },
-            "time": "2023-04-05T15:11:57+00:00"
+            "time": "2023-05-02T21:53:58+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1767,12 +1767,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/QualityUnit/urlslab-php-client.git",
-                "reference": "029c2d2f452908991401b447e67518a48fd8409b"
+                "reference": "c77fdd45da776b1d91b0673f1c78cf99392057f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/QualityUnit/urlslab-php-client/zipball/029c2d2f452908991401b447e67518a48fd8409b",
-                "reference": "029c2d2f452908991401b447e67518a48fd8409b",
+                "url": "https://api.github.com/repos/QualityUnit/urlslab-php-client/zipball/c77fdd45da776b1d91b0673f1c78cf99392057f7",
+                "reference": "c77fdd45da776b1d91b0673f1c78cf99392057f7",
                 "shasum": ""
             },
             "require": {
@@ -1819,7 +1819,7 @@
                 "issues": "https://github.com/QualityUnit/urlslab-php-client/issues",
                 "source": "https://github.com/QualityUnit/urlslab-php-client/tree/main"
             },
-            "time": "2023-04-26T08:29:42+00:00"
+            "time": "2023-05-03T17:31:20+00:00"
         }
     ],
     "packages-dev": [
@@ -1956,12 +1956,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "5e3dfa62068e207fd3b00be0f6d4657185c1b262"
+                "reference": "a4fe21553eb3bbf33bbecf26cb0e2f0973f50c83"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/5e3dfa62068e207fd3b00be0f6d4657185c1b262",
-                "reference": "5e3dfa62068e207fd3b00be0f6d4657185c1b262",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/a4fe21553eb3bbf33bbecf26cb0e2f0973f50c83",
+                "reference": "a4fe21553eb3bbf33bbecf26cb0e2f0973f50c83",
                 "shasum": ""
             },
             "conflict": {
@@ -2224,7 +2224,7 @@
                 "modx/revolution": "<= 2.8.3-pl|<2.8",
                 "mojo42/jirafeau": "<4.4",
                 "monolog/monolog": ">=1.8,<1.12",
-                "moodle/moodle": "<4.0.7|>=4.1-beta,<4.1.2|= 3.11",
+                "moodle/moodle": "<4.2-rc.2|= 3.11",
                 "mustache/mustache": ">=2,<2.14.1",
                 "namshi/jose": "<2.2",
                 "neoan3-apps/template": "<1.1.1",
@@ -2554,7 +2554,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-05-01T23:04:11+00:00"
+            "time": "2023-05-03T00:13:26+00:00"
         },
         {
             "name": "sirbrillig/phpcs-variable-analysis",

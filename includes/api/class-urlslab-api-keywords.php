@@ -283,11 +283,12 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 
 			$request = new \OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsRequest();
 			$request->setQuery( $api_request->get_param( 'keyword' ) );
-			$request->setChunkLimit( 5 );
+			$request->setChunkLimit( 1 );
 			$request->setRenewFrequency( \OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsRequest::RENEW_FREQUENCY_ONE_TIME );
 
 			$query = new \OpenAPI\Client\Model\DomainDataRetrievalContentQuery();
 			$query->setLimit( $max_count * 3 );
+			$query->setAdditionalQuery( (object) array( 'term' => (object) array( 'metadata.chunk_id' => (object) array( 'value' => 1 ) ) ) );
 
 			$domains = array();
 			if ( $api_request->get_param( 'domain' ) ) {

@@ -73,7 +73,7 @@ try {
 ## `getYTVidCaption()`
 
 ```php
-getYTVidCaption($yt_vid_id, $body): \OpenAPI\Client\Model\DomainDataRetrievalVideoResponse
+getYTVidCaption($yt_vid_id, $body): \OpenAPI\Client\Model\DomainDataRetrievalVideoCaptionResponse
 ```
 
 get transcript for a youtube video
@@ -117,7 +117,7 @@ try {
 
 ### Return type
 
-[**\OpenAPI\Client\Model\DomainDataRetrievalVideoResponse**](../Model/DomainDataRetrievalVideoResponse.md)
+[**\OpenAPI\Client\Model\DomainDataRetrievalVideoCaptionResponse**](../Model/DomainDataRetrievalVideoCaptionResponse.md)
 
 ### Authorization
 
