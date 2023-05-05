@@ -50,9 +50,10 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 
 	public function get_channel_title() {
 		$microdata = $this->get_microdata_obj();
-		if (is_array($microdata) && isset($microdata['items'][0]['snippet']['channelTitle'])) {
+		if ( is_array( $microdata ) && isset( $microdata['items'][0]['snippet']['channelTitle'] ) ) {
 			return $microdata['items'][0]['snippet']['channelTitle'];
 		}
+
 		return '';
 	}
 
@@ -88,7 +89,7 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 
 	public function get_title() {
 		$microdata = $this->get_microdata_obj();
-		if (is_array($microdata) && isset($microdata['items'][0]['snippet']['title'])) {
+		if ( is_array( $microdata ) && isset( $microdata['items'][0]['snippet']['title'] ) ) {
 			return $microdata['items'][0]['snippet']['title'];
 		}
 
@@ -101,7 +102,7 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 
 	public function get_description() {
 		$microdata = $this->get_microdata_obj();
-		if (is_array($microdata) && isset($microdata['items'][0]['snippet']['description'])) {
+		if ( is_array( $microdata ) && isset( $microdata['items'][0]['snippet']['description'] ) ) {
 			return $microdata['items'][0]['snippet']['description'];
 		}
 
@@ -110,19 +111,20 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 
 	public function get_published_at() {
 		$microdata = $this->get_microdata_obj();
-		if (is_array($microdata) && isset($microdata['items'][0]['snippet']['publishedAt'])) {
+		if ( is_array( $microdata ) && isset( $microdata['items'][0]['snippet']['publishedAt'] ) ) {
 			return $microdata['items'][0]['snippet']['publishedAt'];
 		}
+
 		return '';
 	}
 
 	public function get_duration() {
 		$microdata = $this->get_microdata_obj();
-		if (is_array($microdata) && isset($microdata['items'][0]['snippet']['duration'])) {
+		if ( is_array( $microdata ) && isset( $microdata['items'][0]['snippet']['duration'] ) ) {
 			return $microdata['items'][0]['snippet']['duration'];
 		}
 
-		if (is_array($microdata) && isset($microdata['items'][0]['contentDetails']['duration'])) {
+		if ( is_array( $microdata ) && isset( $microdata['items'][0]['contentDetails']['duration'] ) ) {
 			return $microdata['items'][0]['contentDetails']['duration'];
 		}
 
@@ -131,24 +133,25 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 
 	public function get_thumbnail_url() {
 		$microdata = $this->get_microdata_obj();
-		if (empty($microdata) || !is_array($microdata)){
+		if ( empty( $microdata ) || ! is_array( $microdata ) ) {
 			return '';
 		}
-		if (isset($microdata['items'][0]['thumbnails']['maxres']['url'])) {
+		if ( isset( $microdata['items'][0]['thumbnails']['maxres']['url'] ) ) {
 			return $microdata['items'][0]['thumbnails']['maxres']['url'];
 		}
-		if (isset($microdata['items'][0]['thumbnails']['standard']['url'])) {
+		if ( isset( $microdata['items'][0]['thumbnails']['standard']['url'] ) ) {
 			return $microdata['items'][0]['thumbnails']['standard']['url'];
 		}
-		if (isset($microdata['items'][0]['thumbnails']['high']['url'])) {
+		if ( isset( $microdata['items'][0]['thumbnails']['high']['url'] ) ) {
 			return $microdata['items'][0]['thumbnails']['high']['url'];
 		}
-		if (isset($microdata['items'][0]['thumbnails']['high']['url'])) {
+		if ( isset( $microdata['items'][0]['thumbnails']['high']['url'] ) ) {
 			return $microdata['items'][0]['thumbnails']['high']['url'];
 		}
-		if (isset($microdata['items'][0]['thumbnails']['default']['url'])) {
+		if ( isset( $microdata['items'][0]['thumbnails']['default']['url'] ) ) {
 			return $microdata['items'][0]['thumbnails']['default']['url'];
 		}
+
 		return '';
 	}
 
@@ -170,7 +173,7 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 		);
 	}
 
-	public function is_active():bool {
+	public function is_active(): bool {
 		return self::STATUS_AVAILABLE == $this->get_status();
 	}
 }
