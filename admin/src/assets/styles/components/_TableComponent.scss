@@ -166,7 +166,7 @@ $cellHeight: 3.5em;
 		}
 	}
 
-	td.deleteRow,
+	td.editRow,
 	td.hoverize {
 		opacity: 0;
 		padding: 0;
@@ -185,7 +185,7 @@ $cellHeight: 3.5em;
 
 	tr:hover {
 
-		td.deleteRow,
+		td.editRow,
 		td.hoverize {
 			opacity: 1;
 		}
@@ -193,11 +193,11 @@ $cellHeight: 3.5em;
 
 	@media (max-width: $breakpoint-desktop-box) {
 
-		.deleteRow[class] {
+		.editRow[class] {
 			width: 2.5em !important;
 		}
 
-		td.deleteRow {
+		td.editRow {
 			position: absolute !important;
 			display: flex;
 			align-items: center;

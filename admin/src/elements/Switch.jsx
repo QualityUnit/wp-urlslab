@@ -32,7 +32,7 @@ export default function Switch( { id, textAfter, className, style, secondary, on
 			<span className="urlslab-switch-text">
 				{ ! isChecked
 					? label
-					: labelOff ? labelOff : label
+					: labelOff || label
 				}
 			</span>
 		</label>

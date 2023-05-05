@@ -13,7 +13,7 @@ import Tag from './Tag';
 import '../assets/styles/elements/_TagsMenu.scss';
 import Tooltip from './Tooltip';
 
-export default function TagsMenu( { tags, slug, onChange } ) {
+export default function TagsMenu( { defaultValue: tags, slug, onChange } ) {
 	const { __ } = useI18n();
 	const tagsMenuWrap = useRef();
 	const tagsMenu = useRef();
@@ -42,7 +42,7 @@ export default function TagsMenu( { tags, slug, onChange } ) {
 
 	const [ selected, setSelected ] = useState( () => {
 		let tagsArray = [];
-		if ( assignedTagsArray.length && assignedTagsArray[ 0 ] ) {
+		if ( assignedTagsArray?.length && assignedTagsArray[ 0 ] ) {
 			assignedTagsArray?.map( ( id ) => tagsData?.map( ( tag ) => {
 				if ( tag.label_id === Number( id ) ) {
 					tagsArray = [ ...tagsArray, tag ];
@@ -79,6 +79,7 @@ export default function TagsMenu( { tags, slug, onChange } ) {
 	}, [] );
 
 	const onAdd = useCallback(
+
 		async ( newTag ) => {
 			if ( newTag.label_id ) {
 				setSelected( ( selectedTags ) => [ ...selectedTags, newTag ] );
@@ -94,9 +95,7 @@ export default function TagsMenu( { tags, slug, onChange } ) {
 				setSelected( ( selectedTags ) => [ ...selectedTags, returnedTag ] );
 			}
 			onChange( selectedToString );
-		},
-		[]
-	);
+		}, [] );
 
 	const onDelete = useCallback(
 		( tag ) => {
@@ -104,6 +103,17 @@ export default function TagsMenu( { tags, slug, onChange } ) {
 		},
 		[ selected ]
 	);
+
+	function CustomInput( { classNames, inputWidth, ...inputProps } ) {
+		return (
+			<>
+				<input className={ classNames.input } style={ { width: inputWidth } } { ...inputProps } />
+				{ selected?.length === 5 &&
+				<div className="fs-s c-saturated-red bg-desaturated-red p-m">{ __( '5 tags is max limit' ) }</div>
+				}
+			</>
+		);
+	}
 
 	function CustomTag( { classNames, tag, ...tagProps } ) {
 		const { label_id, className, bgcolor, label } = tag;
@@ -119,6 +129,12 @@ export default function TagsMenu( { tags, slug, onChange } ) {
 			option.selected ? 'is-selected' : '',
 			option.className ? option.className : '',
 		];
+
+		if ( selected?.length === 5 ) {
+			optionProps[ 'aria-disabled' ] = true;
+			delete optionProps.onClick;
+			delete optionProps.onMouseDown;
+		}
 
 		return (
 			<Tag fullSize className={ classes.join( ' ' ) } style={ { backgroundColor: option.bgcolor } } props={ optionProps }>
@@ -139,6 +155,7 @@ export default function TagsMenu( { tags, slug, onChange } ) {
 				suggestions={ availableTags }
 				onDelete={ onDelete }
 				onAdd={ onAdd }
+				renderInput={ CustomInput }
 				renderTag={ CustomTag }
 				renderOption={ CustomOption }
 			/>

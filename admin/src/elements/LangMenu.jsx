@@ -7,7 +7,7 @@ import SingleSelectMenu from './SingleSelectMenu';
 import InputField from './InputField';
 import MultiSelectMenu from './MultiSelectMenu';
 
-export default function LangMenu( { noAll, multiSelect, isFilter, children, defaultAccept, onChange, checkedId, autoClose } ) {
+export default function LangMenu( { noAll, multiSelect, isFilter, children, defaultAccept, onChange, defaultValue, autoClose } ) {
 	const queryClient = useQueryClient();
 	const langData = queryClient.getQueryData( [ 'languages' ] );
 
@@ -21,8 +21,8 @@ export default function LangMenu( { noAll, multiSelect, isFilter, children, defa
 		delete langData.all;
 	}
 
-	if ( ! langData[ checkedId ] ) {
-		langData[ checkedId ] = langName( checkedId );
+	if ( ! langData[ defaultValue ] ) {
+		langData[ defaultValue ] = langName( defaultValue );
 		queryClient.setQueryData( [ 'languages' ], sortLangs( langData ) );
 		queryClient.invalidateQueries( [ 'languages' ] );
 	}
@@ -44,19 +44,19 @@ export default function LangMenu( { noAll, multiSelect, isFilter, children, defa
 					isFilter={ isFilter }
 					name="languages"
 					defaultAccept={ defaultAccept }
-					checkedId={ checkedId }
+					defaultValue={ defaultValue }
 					onChange={ ( lang ) => handleSelected( lang ) }
 				>
 					{ children }
 				</SingleSelectMenu>
-				: ! multiSelect && <InputField defaultValue={ checkedId } onChange={ ( lang ) => handleSelected( lang ) } />
+				: ! multiSelect && <InputField defaultValue={ defaultValue } onChange={ ( lang ) => handleSelected( lang ) } />
 			}
 			{
 				langs && multiSelect &&
 				<MultiSelectMenu
 					items={ langs }
 					isFilter={ isFilter }
-					checkedItems={ [ checkedId ].flat() }
+					defaultValue={ [ defaultValue ].flat() }
 					onChange={ ( lang ) => handleSelected( lang ) }
 				/>
 			}

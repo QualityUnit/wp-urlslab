@@ -155,7 +155,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 				);
 			case 'listbox':
 				return (
-					<SingleSelectMenu key={ id } className="wide" name={ id } items={ possible_values } checkedId={ value } autoClose onChange={ ( selectedId ) => handleChange.mutate( selectedId ) }>
+					<SingleSelectMenu key={ id } className="wide" name={ id } items={ possible_values } defaultValue={ value } autoClose onChange={ ( selectedId ) => handleChange.mutate( selectedId ) }>
 						{ title }
 					</SingleSelectMenu>
 				);
@@ -163,7 +163,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 				return (
 					<MultiSelectMenu className="wide"
 						items={ possible_values }
-						checkedItems={ value }
+						defaultValue={ value }
 						key={ id }
 						id={ id }
 						asTags

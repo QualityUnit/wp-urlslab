@@ -98,6 +98,13 @@ $status: (
 		color: inherit;
 	}
 
+	&-description {
+		font-size: 0.6875rem;
+		margin-top: 0.25em;
+		margin-bottom: 0;
+		color: $grey-darker;
+	}
+
 	&-label {
 		font-weight: $font-weight-semi;
 		font-size: 0.8125rem;

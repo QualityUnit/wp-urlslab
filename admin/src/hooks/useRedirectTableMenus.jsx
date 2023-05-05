@@ -35,6 +35,7 @@ export default function useRedirectTableMenus() {
 		replace_url: __( 'Redirect to' ),
 		redirect_code: __( 'HTTP code' ),
 		is_logged: __( 'Is logged in' ),
+		labels: __( 'Tags' ),
 		capabilities: __( 'Capabilities' ),
 		roles: __( 'Roles' ),
 		browser: __( 'Browser' ),

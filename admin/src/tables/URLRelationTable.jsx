@@ -22,7 +22,7 @@ export default function URLRelationTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, rowToInsert, setInsertRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const header = {
 		src_url_name: __( 'Source URL' ),
@@ -30,10 +30,10 @@ export default function URLRelationTable( { slug } ) {
 		pos: __( 'Position' ),
 	};
 
-	const inserterCells = {
-		src_url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.src_url_name } onChange={ ( val ) => setInsertRow( { ...rowToInsert, src_url_name: val } ) } required />,
-		dest_url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.dest_url_name } onChange={ ( val ) => setInsertRow( { ...rowToInsert, dest_url_name: val } ) } required />,
-		pos: <InputField liveUpdate type="number" defaultValue="0" min="0" max="255" label={ header.pos } onChange={ ( val ) => setInsertRow( { ...rowToInsert, pos: val } ) } required />,
+	const rowEditorCells = {
+		src_url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.src_url_name } onChange={ ( val ) => setEditorRow( { ...rowToEdit, src_url_name: val } ) } required />,
+		dest_url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.dest_url_name } onChange={ ( val ) => setEditorRow( { ...rowToEdit, dest_url_name: val } ) } required />,
+		pos: <InputField liveUpdate type="number" defaultValue="0" min="0" max="255" label={ header.pos } onChange={ ( val ) => setEditorRow( { ...rowToEdit, pos: val } ) } required />,
 	};
 
 	const columns = [
@@ -63,8 +63,8 @@ export default function URLRelationTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.pos }</SortBy>,
 			size: 80,
 		} ),
-		columnHelper.accessor( 'delete', {
-			className: 'deleteRow',
+		columnHelper.accessor( 'editRow', {
+			className: 'editRow',
 			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, optionalSelector: 'dest_url_id' } ) } />,
 			header: null,
@@ -85,15 +85,15 @@ export default function URLRelationTable( { slug } ) {
 				onDeleteSelected={ () => deleteSelectedRows( 'dest_url_id' ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onUpdateRow={ ( val ) => {
-					setInsertRow();
+					setEditorRow();
 					if ( val === 'rowInserted' ) {
-						setInsertRow( val );
+						setEditorRow( val );
 						setTimeout( () => {
-							setInsertRow();
+							setEditorRow();
 						}, 3000 );
 					}
 				} }
-				insertOptions={ { inserterCells, title: 'Add related article', data, slug, url, paginationId, rowToInsert } }
+				rowEditorOptions={ { rowEditorCells, title: 'Add related article', data, slug, url, paginationId, rowToEdit } }
 				exportOptions={ {
 					slug,
 					url,
@@ -112,7 +112,7 @@ export default function URLRelationTable( { slug } ) {
 					? <Tooltip center>{ __( 'Item has been deleted.' ) }</Tooltip>
 					: null
 				}
-				{ ( rowToInsert === 'rowInserted' )
+				{ ( rowToEdit === 'rowInserted' )
 					? <Tooltip center>{ __( 'Item has been added.' ) }</Tooltip>
 					: null
 				}

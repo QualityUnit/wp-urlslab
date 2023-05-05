@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useContext, useCallback } from 'react';
+import { Suspense, useEffect, useContext, useCallback, useRef } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { postFetch } from '../api/fetching';
@@ -18,6 +18,7 @@ import Button from '../elements/Button';
 export default function Header( { pageTitle } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
+	const didMountRef = useRef( false );
 
 	const { headerTopHeight, setHeaderTopHeight } = useContext( HeaderHeightContext );
 
@@ -34,14 +35,16 @@ export default function Header( { pageTitle } ) {
 			return await queryClient.fetchQuery( {
 				queryKey: [ 'credits' ],
 				queryFn: async () => {
-					const credits = await postFetch( `billing/credits` );
+					const credits = await postFetch( `billing/credits`, { rows_per_page: 50 } );
 					return credits.json();
 				},
 				refetchOnWindowFocus: false,
 			} );
 		}
-
-		getCredits();
+		if ( ! didMountRef.current ) {
+			getCredits();
+		}
+		didMountRef.current = true;
 	}, [ ] );
 
 	const credits = queryClient.getQueryData( [ 'credits' ] )?.credits;

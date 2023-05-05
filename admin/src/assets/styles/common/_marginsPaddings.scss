@@ -21,6 +21,10 @@ $marginSide: (
 }
 
 @each $size, $val in $sizes {
+	.m-#{$size}[class] {
+		margin: $val;
+	}
+
 	.mt-#{$size}[class] {
 		margin-top: $val;
 	}
@@ -37,26 +41,34 @@ $marginSide: (
 		margin-left: $val;
 	}
 
+	.p-#{$size}[class] {
+		padding: $val;
+	}
+
 	.pt-#{$size}[class] {
-		margin-top: $val;
+		padding-top: $val;
 	}
 
 	.pr-#{$size}[class] {
-		margin-right: $val;
+		padding-right: $val;
 	}
 
 	.pb-#{$size}[class] {
-		margin-bottom: $val;
+		padding-bottom: $val;
 	}
 
 	.pl-#{$size}[class] {
-		margin-left: $val;
+		padding-left: $val;
 	}
 }
 
 @media (min-width: $breakpoint-tablet) {
 
 	@each $size, $val in $sizes {
+		.m-#{$size}-tablet[class] {
+			margin: $val;
+		}
+
 		.mt-#{$size}-tablet[class] {
 			margin-top: $val;
 		}
@@ -73,20 +85,20 @@ $marginSide: (
 			margin-left: $val;
 		}
 
-		.pt-#{$size}-tablet[class] {
-			margin-top: $val;
+		.p-#{$size}-tablet[class] {
+			padding: $val;
 		}
 
 		.pr-#{$size}-tablet[class] {
-			margin-right: $val;
+			padding-right: $val;
 		}
 
 		.pb-#{$size}-tablet[class] {
-			margin-bottom: $val;
+			padding-bottom: $val;
 		}
 
 		.pl-#{$size}-tablet[class] {
-			margin-left: $val;
+			padding-left: $val;
 		}
 	}
 }
@@ -94,6 +106,9 @@ $marginSide: (
 @media (min-width: $breakpoint-tablet-landscape) {
 
 	@each $size, $val in $sizes {
+		.m-#{$size}-tablet-landscape[class] {
+			margin: $val;
+		}
 		.mt-#{$size}-tablet-landscape[class] {
 			margin-top: $val;
 		}
@@ -110,38 +125,24 @@ $marginSide: (
 			margin-left: $val;
 		}
 
+		.p-#{$size}-tablet-landscape[class] {
+			padding: $val;
+		}
+
 		.pt-#{$size}-tablet-landscape[class] {
-			margin-top: $val;
+			padding-top: $val;
 		}
 
 		.pr-#{$size}-tablet-landscape[class] {
-			margin-right: $val;
+			padding-right: $val;
 		}
 
 		.pb-#{$size}-tablet-landscape[class] {
-			margin-bottom: $val;
+			padding-bottom: $val;
 		}
 
 		.pl-#{$size}-tablet-landscape[class] {
-			margin-left: $val;
+			padding-left: $val;
 		}
-	}
-}
-
-@each $size, $val in $sizes {
-	.pt-#{$size}[class] {
-		padding-top: $val;
-	}
-
-	.pr-#{$size}[class] {
-		padding-right: $val;
-	}
-
-	.pb-#{$size}[class] {
-		padding-bottom: $val;
-	}
-
-	.pl-#{$size}[class] {
-		padding-left: $val;
 	}
 }
