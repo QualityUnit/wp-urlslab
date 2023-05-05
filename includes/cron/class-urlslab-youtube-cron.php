@@ -50,11 +50,13 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 			$microdata = $this->get_youtube_microdata( $youtube_obj );
 			if ( $microdata ) {
 				$youtube_obj->set_microdata( $microdata );
+			} else {
+				return false;
 			}
 		}
 		if ( ! strlen( $youtube_obj->get_captions() ) ) {
 			try {
-				$captions = $this->get_youtube_captions( $youtube_obj, $old_status );
+				$captions = $this->get_youtube_captions( $youtube_obj );
 				if ( strlen( $captions ) > 0 ) {
 					$youtube_obj->set_captions( $captions );
 				} else if ( false === $captions ) {
