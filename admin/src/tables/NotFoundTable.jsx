@@ -151,7 +151,7 @@ export default function NotFoundTable( { slug } ) {
 				noInsert
 				activatePanel={ activePanel }
 				insertOptions={ {
-					inserterCells, title: 'Create redirect from this',
+					inserterCells, title: 'Create redirect',
 					data, slug: 'redirects', url: '', paginationId: 'redirect_id', rowToInsert,
 				} }
 				exportOptions={ {

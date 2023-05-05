@@ -28,7 +28,7 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 				'SELECT * FROM ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' WHERE status = %s OR (status=%s AND status_changed < %s) ORDER BY status_changed DESC LIMIT 1', // phpcs:ignore
 				Urlslab_Youtube_Row::STATUS_NEW,
 				Urlslab_Youtube_Row::STATUS_PROCESSING,
-				Urlslab_Data::get_now( time() - 36000 )
+				Urlslab_Data::get_now( time() - 3600 )
 			),
 			ARRAY_A
 		);
@@ -41,16 +41,25 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 			return true;
 		}
 
-		$old_status = $youtube_obj->get_status();
-
 		$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_PROCESSING );
 		$youtube_obj->update();
 
 		if ( ! strlen( $youtube_obj->get_microdata() ) ) {
-			$microdata = $this->get_youtube_microdata( $youtube_obj );
-			if ( $microdata ) {
-				$youtube_obj->set_microdata( $microdata );
-			} else {
+			try {
+				$microdata = $this->get_youtube_microdata( $youtube_obj );
+				if ( strelen( $microdata ) ) {
+					$youtube_obj->set_microdata( $microdata );
+					$obj_microdata = json_decode( $microdata, true );
+					if ( ! is_array( $obj_microdata ) || ! isset( $obj_microdata['items'] ) || ! isset( $obj_microdata['items'][0] ) ) {
+						$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_DISABLED );
+						$youtube_obj->update();
+
+						return true;
+					}
+				}
+			} catch ( \OpenAPI\Client\ApiException $e ) {
+				return false;
+			} catch ( Exception $e ) {
 				return false;
 			}
 		}
@@ -66,38 +75,22 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 					return true;
 				}
 			} catch ( \OpenAPI\Client\ApiException $e ) {
-				$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_NEW );
-				$youtube_obj->update();
-
 				return false;
 			}
 		}
 		if ( strlen( $youtube_obj->get_captions() ) && strlen( $youtube_obj->get_microdata() ) ) {
 			$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_AVAILABLE );
-		} else {
-			if ( Urlslab_Youtube_Row::STATUS_PROCESSING !== $old_status ) {
-				$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_PROCESSING );
-			} else {
-				$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_DISABLED );
-			}
 		}
 		$youtube_obj->update();
 
-		// something went wrong, wait with next processing
-		return false;
+		return true;
 	}
 
 
 	private function get_youtube_microdata( Urlslab_Youtube_Row $youtube_obj ) {
-		try {
-			$response = $this->content_client->getYTMicrodata( $youtube_obj->get_video_id() );
+		$response = $this->content_client->getYTMicrodata( $youtube_obj->get_video_id() );
 
-			return $response->getRawData();
-		} catch ( Exception $e ) {
-			return false;
-		}
-
-		return false;
+		return $response->getRawData();
 	}
 
 	private function init_client(): bool {
