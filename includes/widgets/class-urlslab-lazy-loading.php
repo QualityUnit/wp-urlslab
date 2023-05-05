@@ -408,7 +408,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$yt_elements = $xpath->query( "//*[@data-ytid and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
 		foreach ( $yt_elements as $yt_element ) {
 			$ytid = $yt_element->getAttribute( 'data-ytid' );
-			if ( isset( $video_objects[ $ytid ] ) && $video_objects[ $ytid ]->is_active() ) {
+			if ( isset( $video_objects[ $ytid ] ) && $video_objects[ $ytid ]->has_microdata() ) {
 				$this->append_video_schema( $document, $yt_element, $video_objects[ $ytid ] );
 			}
 		}

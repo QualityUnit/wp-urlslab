@@ -279,6 +279,18 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 							$atts['video_duration'] = $obj_video->get_duration();
 						}
 						break;
+					case 'video_channel_title':
+						$obj_video = $this->get_video_obj( $atts['videoid'] );
+						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
+							$atts['video_channel_title'] = $obj_video->get_channel_title();
+						}
+						break;
+					case 'video_tags':
+						$obj_video = $this->get_video_obj( $atts['videoid'] );
+						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
+							$atts['video_tags'] = $obj_video->get_video_tags();
+						}
+						break;
 					case 'page_url':
 						$atts['page_url'] = $this->get_current_page_url()->get_url_with_protocol();
 						break;
