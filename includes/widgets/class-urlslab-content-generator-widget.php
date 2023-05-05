@@ -244,6 +244,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			$this->get_template_variables( $obj->get_prompt() ),
 			$this->get_template_variables( $obj->get_semantic_context() ),
 			$this->get_template_variables( $obj->get_default_value() ),
+			$this->get_template_variables( $obj->get_template() ),
 			$this->get_template_variables( $obj->get_url_filter() )
 		);
 		foreach ( $required_variables as $variable ) {
