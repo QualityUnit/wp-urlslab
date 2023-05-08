@@ -60,6 +60,7 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
         'domain_id' => 'string',
         'url_id' => 'string',
         'url' => 'string',
+        'redirected_to' => 'string',
         'summary' => 'string',
         'summary_status' => 'string'
     ];
@@ -75,6 +76,7 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
         'domain_id' => null,
         'url_id' => null,
         'url' => null,
+        'redirected_to' => null,
         'summary' => null,
         'summary_status' => null
     ];
@@ -88,6 +90,7 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
         'domain_id' => false,
 		'url_id' => false,
 		'url' => false,
+		'redirected_to' => true,
 		'summary' => true,
 		'summary_status' => false
     ];
@@ -181,6 +184,7 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
         'domain_id' => 'domainId',
         'url_id' => 'urlId',
         'url' => 'url',
+        'redirected_to' => 'redirectedTo',
         'summary' => 'summary',
         'summary_status' => 'summaryStatus'
     ];
@@ -194,6 +198,7 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
         'domain_id' => 'setDomainId',
         'url_id' => 'setUrlId',
         'url' => 'setUrl',
+        'redirected_to' => 'setRedirectedTo',
         'summary' => 'setSummary',
         'summary_status' => 'setSummaryStatus'
     ];
@@ -207,6 +212,7 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
         'domain_id' => 'getDomainId',
         'url_id' => 'getUrlId',
         'url' => 'getUrl',
+        'redirected_to' => 'getRedirectedTo',
         'summary' => 'getSummary',
         'summary_status' => 'getSummaryStatus'
     ];
@@ -254,6 +260,7 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
 
     public const SUMMARY_STATUS_ERROR = 'ERROR';
     public const SUMMARY_STATUS_PENDING = 'PENDING';
+    public const SUMMARY_STATUS_REDIRECTED = 'REDIRECTED';
     public const SUMMARY_STATUS_BLOCKED = 'BLOCKED';
     public const SUMMARY_STATUS_UPDATING = 'UPDATING';
     public const SUMMARY_STATUS_AVAILABLE = 'AVAILABLE';
@@ -268,6 +275,7 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
         return [
             self::SUMMARY_STATUS_ERROR,
             self::SUMMARY_STATUS_PENDING,
+            self::SUMMARY_STATUS_REDIRECTED,
             self::SUMMARY_STATUS_BLOCKED,
             self::SUMMARY_STATUS_UPDATING,
             self::SUMMARY_STATUS_AVAILABLE,
@@ -292,6 +300,7 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
         $this->setIfExists('domain_id', $data ?? [], null);
         $this->setIfExists('url_id', $data ?? [], null);
         $this->setIfExists('url', $data ?? [], null);
+        $this->setIfExists('redirected_to', $data ?? [], null);
         $this->setIfExists('summary', $data ?? [], null);
         $this->setIfExists('summary_status', $data ?? [], null);
     }
@@ -436,6 +445,40 @@ class DomainDataRetrievalSummaryResponse implements ModelInterface, ArrayAccess,
             throw new \InvalidArgumentException('non-nullable url cannot be null');
         }
         $this->container['url'] = $url;
+
+        return $this;
+    }
+
+    /**
+     * Gets redirected_to
+     *
+     * @return string|null
+     */
+    public function getRedirectedTo()
+    {
+        return $this->container['redirected_to'];
+    }
+
+    /**
+     * Sets redirected_to
+     *
+     * @param string|null $redirected_to redirected_to
+     *
+     * @return self
+     */
+    public function setRedirectedTo($redirected_to)
+    {
+        if (is_null($redirected_to)) {
+            array_push($this->openAPINullablesSetToNull, 'redirected_to');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('redirected_to', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
+        }
+        $this->container['redirected_to'] = $redirected_to;
 
         return $this;
     }

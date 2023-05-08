@@ -60,6 +60,7 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
         'domain_id' => 'string',
         'url_id' => 'string',
         'url' => 'string',
+        'redirected_to' => 'string',
         'screenshot_id' => 'int',
         'url_title' => 'string',
         'url_meta_description' => 'string',
@@ -77,6 +78,7 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
         'domain_id' => null,
         'url_id' => null,
         'url' => null,
+        'redirected_to' => null,
         'screenshot_id' => 'int64',
         'url_title' => null,
         'url_meta_description' => null,
@@ -92,6 +94,7 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
         'domain_id' => false,
 		'url_id' => false,
 		'url' => false,
+		'redirected_to' => true,
 		'screenshot_id' => true,
 		'url_title' => true,
 		'url_meta_description' => true,
@@ -187,6 +190,7 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
         'domain_id' => 'domainId',
         'url_id' => 'urlId',
         'url' => 'url',
+        'redirected_to' => 'redirectedTo',
         'screenshot_id' => 'screenshotID',
         'url_title' => 'urlTitle',
         'url_meta_description' => 'urlMetaDescription',
@@ -202,6 +206,7 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
         'domain_id' => 'setDomainId',
         'url_id' => 'setUrlId',
         'url' => 'setUrl',
+        'redirected_to' => 'setRedirectedTo',
         'screenshot_id' => 'setScreenshotId',
         'url_title' => 'setUrlTitle',
         'url_meta_description' => 'setUrlMetaDescription',
@@ -217,6 +222,7 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
         'domain_id' => 'getDomainId',
         'url_id' => 'getUrlId',
         'url' => 'getUrl',
+        'redirected_to' => 'getRedirectedTo',
         'screenshot_id' => 'getScreenshotId',
         'url_title' => 'getUrlTitle',
         'url_meta_description' => 'getUrlMetaDescription',
@@ -266,6 +272,7 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
 
     public const SCREENSHOT_STATUS_ERROR = 'ERROR';
     public const SCREENSHOT_STATUS_PENDING = 'PENDING';
+    public const SCREENSHOT_STATUS_REDIRECTED = 'REDIRECTED';
     public const SCREENSHOT_STATUS_BLOCKED = 'BLOCKED';
     public const SCREENSHOT_STATUS_UPDATING = 'UPDATING';
     public const SCREENSHOT_STATUS_AVAILABLE = 'AVAILABLE';
@@ -280,6 +287,7 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
         return [
             self::SCREENSHOT_STATUS_ERROR,
             self::SCREENSHOT_STATUS_PENDING,
+            self::SCREENSHOT_STATUS_REDIRECTED,
             self::SCREENSHOT_STATUS_BLOCKED,
             self::SCREENSHOT_STATUS_UPDATING,
             self::SCREENSHOT_STATUS_AVAILABLE,
@@ -304,6 +312,7 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
         $this->setIfExists('domain_id', $data ?? [], null);
         $this->setIfExists('url_id', $data ?? [], null);
         $this->setIfExists('url', $data ?? [], null);
+        $this->setIfExists('redirected_to', $data ?? [], null);
         $this->setIfExists('screenshot_id', $data ?? [], null);
         $this->setIfExists('url_title', $data ?? [], null);
         $this->setIfExists('url_meta_description', $data ?? [], null);
@@ -450,6 +459,40 @@ class DomainDataRetrievalScreenshotResponse implements ModelInterface, ArrayAcce
             throw new \InvalidArgumentException('non-nullable url cannot be null');
         }
         $this->container['url'] = $url;
+
+        return $this;
+    }
+
+    /**
+     * Gets redirected_to
+     *
+     * @return string|null
+     */
+    public function getRedirectedTo()
+    {
+        return $this->container['redirected_to'];
+    }
+
+    /**
+     * Sets redirected_to
+     *
+     * @param string|null $redirected_to redirected_to
+     *
+     * @return self
+     */
+    public function setRedirectedTo($redirected_to)
+    {
+        if (is_null($redirected_to)) {
+            array_push($this->openAPINullablesSetToNull, 'redirected_to');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('redirected_to', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
+        }
+        $this->container['redirected_to'] = $redirected_to;
 
         return $this;
     }
