@@ -107,6 +107,15 @@ class DomainDataRetrievalSummaryResponseTest extends TestCase
     }
 
     /**
+     * Test attribute "redirected_to"
+     */
+    public function testPropertyRedirectedTo()
+    {
+        // TODO: implement
+        $this->markTestIncomplete('Not implemented');
+    }
+
+    /**
      * Test attribute "summary"
      */
     public function testPropertySummary()
