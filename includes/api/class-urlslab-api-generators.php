@@ -211,7 +211,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 							case 402:
 								return new WP_REST_Response( (object) array( 'translation' => $original_text ), $e->getCode() );
 							default:
-								return new WP_REST_Response( (object) array( 'translation' => '' ), $e->getCode() );
+								return new WP_REST_Response( (object) array( 'translation' => '', 'error' => $e->getMessage() ), $e->getCode() );
 						}
 					}
 				}
