@@ -32,7 +32,7 @@ export default function ExportPanel( { options, filters, header, handlePanel } )
 	};
 
 	return (
-		<div className="urlslab-panel-wrap urlslab-panel-floating fadeInto">
+		<div className="urlslab-panel-wrap urlslab-panel-modal fadeInto">
 			<div className="urlslab-panel">
 				<div className="urlslab-panel-header">
 					<h3>{ __( 'Export data' ) }</h3>
