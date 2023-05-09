@@ -13,7 +13,7 @@ export { default as MultiSelectMenu } from '../elements/MultiSelectMenu';
 export { default as SortBy } from '../elements/TableSortBy';
 export { default as LangMenu } from '../elements/LangMenu';
 export { default as InputField } from '../elements/InputField';
-export { default as TextArea } from '../elements/TextArea';
+export { default as TextArea } from '../elements/Textarea';
 export { default as Checkbox } from '../elements/Checkbox';
 export { default as MenuInput } from '../elements/MenuInput';
 export { default as Button } from '../elements/Button';
