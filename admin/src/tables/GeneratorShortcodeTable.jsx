@@ -92,7 +92,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 
 	const rowEditorCells = {
 		shortcode_type: <SingleSelectMenu autoClose description="Example of description text"
-			items={ shortcodeTypeTypes } name="shortcode_type" defaultValue={ ( 'S' ) } onChange={ ( val ) => setEditorRow( { ...rowToEdit, shortcode_type: val } ) }>{ header.shortcode_type }</SingleSelectMenu>,
+			items={ shortcodeTypeTypes } name="shortcode_type" defaultValue="S" onChange={ ( val ) => setEditorRow( { ...rowToEdit, shortcode_type: val } ) }>{ header.shortcode_type }</SingleSelectMenu>,
 		prompt: <TextArea rows="5" description="Example of description text"
 			liveUpdate defaultValue="" label={ header.prompt } onChange={ ( val ) => setEditorRow( { ...rowToEdit, prompt: val } ) } required />,
 		semantic_context: <InputField liveUpdate description="Example of description text"
