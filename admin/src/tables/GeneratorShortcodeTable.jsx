@@ -93,7 +93,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 	const supported_variables_description = __( 'Supported variables: {{page_title}}, {{domain}}, {{language_code}}, {{language}}. In case videoid attribute is set, following variables are available: {{video_captions}}, {{video_title}}, {{video_description}}, {{video_published_at}}, {{video_duration}}, {{video_channel_title}}, {{video_tags}}. Custom attributes can be passed from shortcode as well in form {{your_custom_attribute_name}}' );
 
 	const rowEditorCells = {
-		shortcode_type: <SingleSelectMenu autoClose description={ __('In case of video context type, Semantic search query should contain youtube videoid.') }
+		shortcode_type: <SingleSelectMenu autoClose description={ __('In case of video context type, Semantic search query should contain YouTube videoid or YoutTube video url.') }
 			items={ shortcodeTypeTypes } name="shortcode_type" defaultValue={ ( 'S' ) } onChange={ ( val ) => setEditorRow( { ...rowToEdit, shortcode_type: val } ) }>{ header.shortcode_type }</SingleSelectMenu>,
 		prompt: <TextArea rows="5" description={ ( supported_variables_description) }
 			liveUpdate defaultValue="" label={ header.prompt } onChange={ ( val ) => setEditorRow( { ...rowToEdit, prompt: val } ) } required />,
@@ -101,7 +101,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			defaultValue="" label={ header.semantic_context } onChange={ ( val ) => setEditorRow( { ...rowToEdit, semantic_context: val } ) } />,
 		url_filter: <InputField liveUpdate defaultValue="" label={ header.url_filter } onChange={ ( val ) => setEditorRow( { ...rowToEdit, url_filter: val } ) } />,
 		default_value: <InputField liveUpdate defaultValue="" label={ header.default_value } onChange={ ( val ) => setEditorRow( { ...rowToEdit, default_value: val } ) } />,
-		template: <TextArea rows="5"  liveUpdate description={ ( supported_variables_description) } defaultValue="" label={ header.template } onChange={ ( val ) => setEditorRow( { ...rowToEdit, template: val } ) } required />,
+		template: <TextArea rows="5"  liveUpdate description={ ( supported_variables_description + __(' Value of generated text can be accessed in template by variable {{value}} or if generator generated json {{json_value.attribute_name}}') ) } defaultValue="" label={ header.template } onChange={ ( val ) => setEditorRow( { ...rowToEdit, template: val } ) } required />,
 		model: <SingleSelectMenu autoClose items={ modelTypes } name="model" defaultValue={ ( 'gpt-3.5-turbo' ) } onChange={ ( val ) => setEditorRow( { ...rowToEdit, model: val } ) }>{ header.model }</SingleSelectMenu>,
 	};
 	const columns = [

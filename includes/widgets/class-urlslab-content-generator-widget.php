@@ -320,7 +320,19 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		return $atts;
 	}
 
+
+	function extract_youtube_id($url) {
+		$pattern = '/^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/user\/[^\/]+\/u\/[^\/]+\/[0-9]+\/[^\/]+\/(?!.*\/u\/[0-9]+\/)[^\/]+\/))([\w-]{10,12})(?:$|&|\?)/';
+		preg_match($pattern, $url, $matches);
+
+		return isset($matches[1]) ? $matches[1] : false;
+	}
+
 	private function get_video_obj( $videoid ): Urlslab_Youtube_Row {
+		if ( false !== strpos( $videoid, 'http' ) ) {
+			$videoid = $this->extract_youtube_id( $videoid );
+		}
+
 		if ( ! isset( self::$video_cache[ $videoid ] ) ) {
 			self::$video_cache[ $videoid ] = new Urlslab_Youtube_Row( array( 'videoid' => $videoid ) );
 			if ( ! self::$video_cache[ $videoid ]->load() ) {
