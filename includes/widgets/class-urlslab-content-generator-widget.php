@@ -321,11 +321,11 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 	}
 
 
-	function extract_youtube_id($url) {
+	function extract_youtube_id( $url ) {
 		$pattern = '/^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/user\/[^\/]+\/u\/[^\/]+\/[0-9]+\/[^\/]+\/(?!.*\/u\/[0-9]+\/)[^\/]+\/))([\w-]{10,12})(?:$|&|\?)/';
-		preg_match($pattern, $url, $matches);
+		preg_match( $pattern, $url, $matches );
 
-		return isset($matches[1]) ? $matches[1] : false;
+		return isset( $matches[1] ) ? $matches[1] : false;
 	}
 
 	private function get_video_obj( $videoid ): Urlslab_Youtube_Row {
