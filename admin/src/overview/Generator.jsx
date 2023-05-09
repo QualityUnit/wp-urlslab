@@ -18,6 +18,11 @@ export default function GeneratorOverview() {
 				<li>language - {'\u007B\u007B'}language{'\u007D\u007D'} variable can be used in prompt, url filter or template</li>
 				<li>video_captions - {'\u007B\u007B'}video_captions{'\u007D\u007D'} variable can be used if variable videoid is set in attributes of shortcode</li>
 				<li>video_title - {'\u007B\u007B'}video_title{'\u007D\u007D'} variable can be used if variable videoid is set in attributes of shortcode</li>
+				<li>video_description - {'\u007B\u007B'}video_description{'\u007D\u007D'} variable can be used if variable videoid is set in attributes of shortcode</li>
+				<li>video_published_at - {'\u007B\u007B'}video_published_at{'\u007D\u007D'} variable can be used if variable videoid is set in attributes of shortcode</li>
+				<li>video_duration - {'\u007B\u007B'}video_duration{'\u007D\u007D'} variable can be used if variable videoid is set in attributes of shortcode</li>
+				<li>video_channel_title - {'\u007B\u007B'}video_channel_title{'\u007D\u007D'} variable can be used if variable videoid is set in attributes of shortcode</li>
+				<li>video_tags - {'\u007B\u007B'}video_tags{'\u007D\u007D'} variable can be used if variable videoid is set in attributes of shortcode</li>
 				if you want to use any other variable in the HTML template or prompt, you can use it as {'\u007B\u007B'}variable_name{'\u007D\u007D'} and add this as attribute to shortcode
 			</ul>
 		</>

@@ -242,6 +242,7 @@ class DomainDataRetrievalVideoCaptionResponse implements ModelInterface, ArrayAc
 
     public const STATUS_ERROR = 'ERROR';
     public const STATUS_PENDING = 'PENDING';
+    public const STATUS_REDIRECTED = 'REDIRECTED';
     public const STATUS_BLOCKED = 'BLOCKED';
     public const STATUS_UPDATING = 'UPDATING';
     public const STATUS_AVAILABLE = 'AVAILABLE';
@@ -256,6 +257,7 @@ class DomainDataRetrievalVideoCaptionResponse implements ModelInterface, ArrayAc
         return [
             self::STATUS_ERROR,
             self::STATUS_PENDING,
+            self::STATUS_REDIRECTED,
             self::STATUS_BLOCKED,
             self::STATUS_UPDATING,
             self::STATUS_AVAILABLE,

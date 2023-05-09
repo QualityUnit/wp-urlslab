@@ -7,6 +7,7 @@ Name | Type | Description | Notes
 **domain_id** | **string** |  |
 **url_id** | **string** |  |
 **url** | **string** |  |
+**redirected_to** | **string** |  | [optional]
 **summary** | **string** |  | [optional]
 **summary_status** | **string** |  |
 

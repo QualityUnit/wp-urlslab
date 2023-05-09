@@ -5,7 +5,6 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 	public const STATUS_AVAILABLE = 'A';
 	public const STATUS_PROCESSING = 'P';
 	public const STATUS_DISABLED = 'D';
-	private $microdata_obj;
 
 	public function __construct( array $video = array(), $loaded_from_db = false ) {
 		$this->set_video_id( $video['videoid'] ?? '', $loaded_from_db );
@@ -13,9 +12,6 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 		$this->set_captions( $video['captions'] ?? '', $loaded_from_db );
 		$this->set_status( $video['status'] ?? self::STATUS_NEW, $loaded_from_db );
 		$this->set_status_changed( $video['status_changed'] ?? self::get_now(), $loaded_from_db );
-		if ( strlen( $this->get_microdata() ) ) {
-			$this->microdata_obj = json_decode( $this->get_microdata() );
-		}
 	}
 
 	public function get_video_id() {
@@ -53,7 +49,29 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 	}
 
 	public function get_channel_title() {
-		return $this->microdata_obj->items[0]->snippet->channelTitle;
+		$microdata = $this->get_microdata_obj();
+		if ( is_array( $microdata ) && isset( $microdata['items'][0]['snippet']['channelTitle'] ) ) {
+			return $microdata['items'][0]['snippet']['channelTitle'];
+		}
+
+		return '';
+	}
+
+	public function get_video_tags() {
+		$microdata = $this->get_microdata_obj();
+		if ( is_array( $microdata ) && isset( $microdata['items'][0]['snippet']['tags'] ) ) {
+			if ( is_array( $microdata['items'][0]['snippet']['tags'] ) ) {
+				return implode( ', ', $microdata['items'][0]['snippet']['tags'] );
+			}
+		}
+
+		return '';
+	}
+
+	public function get_microdata_obj() {
+		if ( strlen( $this->get_microdata() ) ) {
+			return json_decode( $this->get_microdata(), true );
+		}
 	}
 
 	public function set_video_id( $video_id, $loaded_from_db = false ) {
@@ -62,7 +80,6 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 
 	public function set_microdata( $microdata, $loaded_from_db = false ) {
 		$this->set( 'microdata', $microdata, $loaded_from_db );
-		$this->microdata_obj = json_decode( $microdata );
 	}
 
 	public function set_captions( $captions, $loaded_from_db = false ) {
@@ -82,52 +99,68 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 	}
 
 	public function get_title() {
-		if ( is_object( $this->microdata_obj ) && property_exists( $this->microdata_obj, 'items' ) && property_exists( $this->microdata_obj->items[0], 'snippet' ) ) {
-			return $this->microdata_obj->items[0]->snippet->title;
+		$microdata = $this->get_microdata_obj();
+		if ( is_array( $microdata ) && isset( $microdata['items'][0]['snippet']['title'] ) ) {
+			return $microdata['items'][0]['snippet']['title'];
 		}
 
 		if ( strlen( $this->get_channel_title() ) ) {
 			return $this->get_channel_title();
 		}
 
-		return 'Youtube video';
+		return '';
 	}
 
 	public function get_description() {
-		if ( ! empty( $this->microdata_obj->items[0]->snippet->description ) ) {
-			return $this->microdata_obj->items[0]->snippet->description;
+		$microdata = $this->get_microdata_obj();
+		if ( is_array( $microdata ) && isset( $microdata['items'][0]['snippet']['description'] ) ) {
+			return $microdata['items'][0]['snippet']['description'];
 		}
 
-		return 'Topic: ' . $this->get_title();
+		return '';
 	}
 
 	public function get_published_at() {
-		return $this->microdata_obj->items[0]->snippet->publishedAt;
+		$microdata = $this->get_microdata_obj();
+		if ( is_array( $microdata ) && isset( $microdata['items'][0]['snippet']['publishedAt'] ) ) {
+			return $microdata['items'][0]['snippet']['publishedAt'];
+		}
+
+		return '';
 	}
 
 	public function get_duration() {
-		if ( ! empty( $this->microdata_obj->items[0]->snippet->duration ) ) {
-			return $this->microdata_obj->items[0]->snippet->duration;
+		$microdata = $this->get_microdata_obj();
+		if ( is_array( $microdata ) && isset( $microdata['items'][0]['snippet']['duration'] ) ) {
+			return $microdata['items'][0]['snippet']['duration'];
 		}
-		if ( ! empty( $this->microdata_obj->items[0]->contentDetails->duration ) ) {
-			return $this->microdata_obj->items[0]->contentDetails->duration;
+
+		if ( is_array( $microdata ) && isset( $microdata['items'][0]['contentDetails']['duration'] ) ) {
+			return $microdata['items'][0]['contentDetails']['duration'];
 		}
 
 		return 'PT60s';
 	}
 
 	public function get_thumbnail_url() {
-		if ( ! empty( $this->microdata_obj->items[0]->snippet->thumbnails->maxres->url ) ) {
-			return $this->microdata_obj->items[0]->snippet->thumbnails->maxres->url;
+		$microdata = $this->get_microdata_obj();
+		if ( empty( $microdata ) || ! is_array( $microdata ) ) {
+			return '';
 		}
-		if ( ! empty( $this->microdata_obj->items[0]->snippet->thumbnails->standard->url ) ) {
-			return $this->microdata_obj->items[0]->snippet->thumbnails->standard->url;
+		if ( isset( $microdata['items'][0]['thumbnails']['maxres']['url'] ) ) {
+			return $microdata['items'][0]['thumbnails']['maxres']['url'];
 		}
-		if ( ! empty( $this->microdata_obj->items[0]->snippet->thumbnails->high->url ) ) {
-			return $this->microdata_obj->items[0]->snippet->thumbnails->high->url;
+		if ( isset( $microdata['items'][0]['thumbnails']['standard']['url'] ) ) {
+			return $microdata['items'][0]['thumbnails']['standard']['url'];
 		}
-		if ( ! empty( $this->microdata_obj->items[0]->snippet->thumbnails->default->url ) ) {
-			return $this->microdata_obj->items[0]->snippet->thumbnails->default->url;
+		if ( isset( $microdata['items'][0]['thumbnails']['high']['url'] ) ) {
+			return $microdata['items'][0]['thumbnails']['high']['url'];
+		}
+		if ( isset( $microdata['items'][0]['thumbnails']['high']['url'] ) ) {
+			return $microdata['items'][0]['thumbnails']['high']['url'];
+		}
+		if ( isset( $microdata['items'][0]['thumbnails']['default']['url'] ) ) {
+			return $microdata['items'][0]['thumbnails']['default']['url'];
 		}
 
 		return '';
@@ -151,7 +184,11 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 		);
 	}
 
-	public function is_active():bool {
+	public function is_active(): bool {
 		return self::STATUS_AVAILABLE == $this->get_status();
+	}
+
+	public function has_microdata(): bool {
+		return strlen( $this->get_title() ) > 0;
 	}
 }
