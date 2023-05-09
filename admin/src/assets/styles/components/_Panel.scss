@@ -79,13 +79,17 @@
 
 		.urlslab-panel {
 			padding: 1.5em;
-			padding-right: 1em;
 		}
 
 		@media (min-width: $breakpoint-tablet-landscape) {
 			margin: 0;
+
+			.urlslab-panel {
+				padding: 1.375em 1.875em;
+			}
 		}
 	}
+
 
 	&-close {
 
@@ -119,9 +123,8 @@
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		padding: 0 1em 0.75em 1.5em;
+		padding: 0 1.5em 0.75em;
 		margin-left: -1.5em;
-		margin-right: -1em;
 		border-bottom: 1px solid $grey-light;
 
 		p {
@@ -137,19 +140,16 @@
 	&-wrap {
 		margin: 1.5em;
 
-		@media (min-width: $breakpoint-tablet) {
-
-			.urlslab-panel {
-				padding: 1.375em 2.25em;
-			}
-		}
-
 		@media (min-width: $breakpoint-tablet-landscape) {
 			width: 35.625em;
 			margin: 6.25em auto auto;
 
 			&.wide {
 				width: 48em;
+			}
+
+			&.ultrawide {
+				width: 57.5em;
 			}
 		}
 	}
@@ -180,5 +180,22 @@
 
 	@media (min-width: $breakpoint-tablet) {
 		padding: 1.875em 4em;
+
+		&-content {
+			display: flex;
+			flex-wrap: wrap;
+
+			&__item {
+				width: 48.25%;
+
+				&:nth-last-of-type(odd) {
+					margin-right: auto;
+				}
+
+				.urlslab-MultiSelectMenu {
+					max-width: none;
+				}
+			}
+		}
 	}
 }

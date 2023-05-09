@@ -77,33 +77,51 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 			}
 
 			// // Updating whole row via edit panel
-			// const newPagesArray = data?.pages.map( ( page ) =>
+			const paginateArray = data?.pages;
+			let newPagesArray = [];
+			if ( paginateArray ) {
+				newPagesArray = paginateArray.map( ( page ) =>
 
-			// 	page.map( ( row ) => {
+					page.map( ( row ) => {
+						if ( row[ paginationId ] === editedRow[ paginationId ] ) {
+							return editedRow;
+						}
+						return row;
+					}
+					),
+				) ?? [];
+				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => ( {
+					pages: newPagesArray,
+					pageParams: origData.pageParams,
+				} ) );
+			}
+
+			// if ( ! paginateArray && data ) {
+			// 	newPagesArray = data?.map( ( row ) => {
 			// 		if ( row[ paginationId ] === editedRow[ paginationId ] ) {
-			// 			row = editedRow;
-			// 			return row;
+			// 			return editedRow;
 			// 		}
 			// 		return row;
+			// 	} ) ?? [];
+			// 	console.log( newPagesArray );
+			// 	queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => {
+			// 		console.log( origData );
+			// 		return origData;
 			// 	}
-			// 	),
-			// ) ?? [];
-
-			// queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => ( {
-			// 	pages: newPagesArray,
-			// 	pageParams: origData.pageParams,
-			// } ) );
+			// 	);
+			// }
 
 			const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow );
 			return { response, editedRow };
 		},
 		onSuccess: ( { response, editedRow } ) => {
 			const { ok } = response;
+			if ( Object.keys( editedRow ).length ) {
+				setEditorRowRes( response );
+				setActivePanel();
+			}
 			if ( ok ) {
 				queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
-				if ( editedRow ) {
-					setEditorRowRes( response );
-				}
 			}
 		},
 	} );
@@ -114,7 +132,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 			setActivePanel( 'rowEditor' );
 			return false;
 		}
-		updateRowData.mutate( { rowToEdit, newVal, cell, customEndpoint, changeField, optionalSelector } );
+		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, optionalSelector } );
 	};
 
 	const saveEditedRow = ( { editedRow } ) => {

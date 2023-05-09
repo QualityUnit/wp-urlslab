@@ -23,11 +23,11 @@ export default function LangMenu( { noAll, multiSelect, isFilter, children, defa
 
 	if ( ! langData[ defaultValue ] ) {
 		langData[ defaultValue ] = langName( defaultValue );
-		queryClient.setQueryData( [ 'languages' ], sortLangs( langData ) );
+		// queryClient.setQueryData( [ 'languages' ], sortLangs( langData ) );
 		queryClient.invalidateQueries( [ 'languages' ] );
 	}
 
-	const langs = sortLangs( langData );
+	// const langs = sortLangs( langData );
 
 	const handleSelected = ( lang ) => {
 		if ( onChange ) {
@@ -37,10 +37,10 @@ export default function LangMenu( { noAll, multiSelect, isFilter, children, defa
 
 	return (
 		<>
-			{ langs && ! multiSelect
+			{ langData && ! multiSelect
 				? <SingleSelectMenu
 					autoClose={ autoClose }
-					items={ langs }
+					items={ langData }
 					isFilter={ isFilter }
 					name="languages"
 					defaultAccept={ defaultAccept }
@@ -52,9 +52,9 @@ export default function LangMenu( { noAll, multiSelect, isFilter, children, defa
 				: ! multiSelect && <InputField defaultValue={ defaultValue } onChange={ ( lang ) => handleSelected( lang ) } />
 			}
 			{
-				langs && multiSelect &&
+				langData && multiSelect &&
 				<MultiSelectMenu
-					items={ langs }
+					items={ langData }
 					isFilter={ isFilter }
 					defaultValue={ [ defaultValue ].flat() }
 					onChange={ ( lang ) => handleSelected( lang ) }

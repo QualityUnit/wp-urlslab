@@ -2774,11 +2774,13 @@ button.urlslab-button > svg:last-child:not(:first-child),
 }
 .urlslab-panel-modal[class] .urlslab-panel {
   padding: 1.5em;
-  padding-right: 1em;
 }
 @media (min-width: 1024px) {
   .urlslab-panel-modal[class] {
     margin: 0;
+  }
+  .urlslab-panel-modal[class] .urlslab-panel {
+    padding: 1.375em 1.875em;
   }
 }
 .urlslab-panel-close {
@@ -2820,9 +2822,8 @@ button.urlslab-button > svg:last-child:not(:first-child),
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  padding: 0 1em 0.75em 1.5em;
+  padding: 0 1.5em 0.75em;
   margin-left: -1.5em;
-  margin-right: -1em;
   border-bottom: 1px solid #e4e5e9;
 }
 .urlslab-panel-header p {
@@ -2837,11 +2838,6 @@ button.urlslab-button > svg:last-child:not(:first-child),
 .urlslab-panel-wrap {
   margin: 1.5em;
 }
-@media (min-width: 768px) {
-  .urlslab-panel-wrap .urlslab-panel {
-    padding: 1.375em 2.25em;
-  }
-}
 @media (min-width: 1024px) {
   .urlslab-panel-wrap {
     width: 35.625em;
@@ -2849,6 +2845,9 @@ button.urlslab-button > svg:last-child:not(:first-child),
   }
   .urlslab-panel-wrap.wide {
     width: 48em;
+  }
+  .urlslab-panel-wrap.ultrawide {
+    width: 57.5em;
   }
 }
 .urlslab-panel-section {
@@ -2873,6 +2872,22 @@ button.urlslab-button > svg:last-child:not(:first-child),
 @media (min-width: 768px) {
   .urlslab-panel {
     padding: 1.875em 4em;
+  }
+  .urlslab-panel-content {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+  }
+  .urlslab-panel-content__item {
+    width: 48.25%;
+  }
+  .urlslab-panel-content__item:nth-last-of-type(odd) {
+    margin-right: auto;
+  }
+  .urlslab-panel-content__item .urlslab-MultiSelectMenu {
+    max-width: none;
   }
 }
 
