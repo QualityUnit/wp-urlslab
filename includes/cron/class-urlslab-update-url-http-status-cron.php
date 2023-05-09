@@ -212,7 +212,11 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 		$document->strictErrorChecking = false; // phpcs:ignore
 		$libxml_previous_state         = libxml_use_internal_errors( true );
 
-		$document->loadHTML( mb_convert_encoding( $this->get_html_from_tag( $tag_name, $file_name ), 'HTML-ENTITIES', 'utf-8' ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE | LIBXML_NOWARNING );
+		$html_text = $this->get_html_from_tag( $tag_name, $file_name );
+		if ( empty( $html_text ) ) {
+			return '';
+		}
+		$document->loadHTML( mb_convert_encoding( $html_text, 'HTML-ENTITIES', 'utf-8' ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE | LIBXML_NOWARNING );
 		libxml_clear_errors();
 		libxml_use_internal_errors( $libxml_previous_state );
 
