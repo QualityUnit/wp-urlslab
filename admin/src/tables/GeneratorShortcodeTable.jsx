@@ -95,7 +95,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 
 	const rowEditorCells = {
 		shortcode_type: <SingleSelectMenu autoClose description={ __( 'In case of video context type, Semantic search query should contain YouTube videoid or YoutTube video url.' ) }
-			items={ shortcodeTypeTypes } name="shortcode_type" defaultValue={ ( 'S' ) } onChange={ ( val ) => setEditorRow( { ...rowToEdit, shortcode_type: val } ) }>{ header.shortcode_type }</SingleSelectMenu>,
+			items={ shortcodeTypeTypes } name="shortcode_type" defaultValue="S" onChange={ ( val ) => setEditorRow( { ...rowToEdit, shortcode_type: val } ) }>{ header.shortcode_type }</SingleSelectMenu>,
 		prompt: <TextArea rows="5" description={ ( supported_variables_description ) }
 			liveUpdate defaultValue="" label={ header.prompt } onChange={ ( val ) => setEditorRow( { ...rowToEdit, prompt: val } ) } required />,
 		semantic_context: <InputField liveUpdate description={ ( supported_variables_description + ' ' + __( 'In case of video context type, Semantic search query should contain youtube videoid: {{videoid}}.' ) ) }
