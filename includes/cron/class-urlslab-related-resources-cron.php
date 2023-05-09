@@ -115,13 +115,16 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 
 			$url_objects       = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_urls( $schedule_urls );
 			$related_resources = array();
+			$pos = 1;
 			foreach ( $url_objects as $dest_url_obj ) {
 				$related_resources[] = new Urlslab_Url_Relation_Row(
 					array(
 						'src_url_id'  => $url->get_url_id(),
 						'dest_url_id' => $dest_url_obj->get_url_id(),
+						'pos'         => $pos,
 					)
 				);
+				$pos ++;
 			}
 
 			global $wpdb;

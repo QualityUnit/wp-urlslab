@@ -85,7 +85,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 			$request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
 			$prompt = new DomainDataRetrievalAugmentPrompt();
 
-			if ( isset( $attributes['videoid'] ) ) {
+			if ( Urlslab_Generator_Shortcode_Row::TYPE_VIDEO === $row_shortcode->get_shortcode_type() ) {
 				$prompt->setPromptTemplate( $command );
 				$prompt->setMetadataVars( array() );
 				$request->setPrompt( $prompt );
