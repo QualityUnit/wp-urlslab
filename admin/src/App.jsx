@@ -54,7 +54,7 @@ export default function App() {
 			} );
 
 			/* Creating all endpoints query object in advance
-			to check for required import CSV fields */
+			to check for allowed+required import/insert/edit CSV fields */
 			queryClient.prefetchQuery( {
 				queryKey: [ 'routes' ],
 				queryFn: async () => await fetchData(),

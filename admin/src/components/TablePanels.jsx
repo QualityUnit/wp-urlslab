@@ -1,6 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 
-import InsertRowPanel from './InsertRowPanel';
+import EditRowPanel from './EditRowPanel';
 import ExportPanel from './ExportPanel';
 import ImportPanel from './ImportPanel';
 import DangerPanel from './DangerPanel';
@@ -8,7 +8,7 @@ import DetailsPanel from './DetailsPanel';
 import { ReactComponent as Trash } from '../assets/images/icons/icon-trash.svg';
 
 export default function TablePanels( { props } ) {
-	const { header, slug, filters, initialRow, detailsOptions, insertOptions, exportOptions, activePanel, handlePanel } = props;
+	const { header, slug, filters, initialRow, detailsOptions, rowEditorOptions, exportOptions, activePanel, handlePanel } = props;
 	const { __ } = useI18n();
 	return (
 		<>
@@ -32,8 +32,13 @@ export default function TablePanels( { props } ) {
 				/>
 			}
 			{
-				activePanel === 'addrow' &&
-				<InsertRowPanel insertOptions={ insertOptions } handlePanel={ handlePanel } />
+				activePanel === 'rowInserter' &&
+				<EditRowPanel rowEditorOptions={ rowEditorOptions } handlePanel={ handlePanel } />
+			}
+
+			{
+				activePanel === 'rowEditor' &&
+				<EditRowPanel rowEditorOptions={ { editorMode: true, ...rowEditorOptions } } handlePanel={ handlePanel } />
 			}
 
 			{

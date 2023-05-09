@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import useChangeRow from '../hooks/useChangeRow';
 import useTableUpdater from '../hooks/useTableUpdater';
 
-import { InputField, Loader, Tag, Trash, useInfiniteFetch } from '../lib/tableImports';
+import { Edit, InputField, Loader, MultiSelectMenu, Tag, Trash, useInfiniteFetch } from '../lib/tableImports';
 
 import ColorPicker from '../components/ColorPicker';
 import ModuleViewHeaderBottom from '../components/ModuleViewHeaderBottom';
@@ -13,14 +13,14 @@ import Checkbox from '../elements/Checkbox';
 import Tooltip from '../elements/Tooltip';
 
 import '../assets/styles/components/_ModuleViewHeader.scss';
-import FilterMenu from '../elements/FilterMenu';
 import hexToHSL from '../lib/hexToHSL';
+import IconButton from '../elements/IconButton';
 
 export default function TagsLabels( ) {
 	// const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const paginationId = 'label_id';
 	const slug = 'label';
-	const { table, setTable, rowToInsert, setInsertRow, filters, sorting } = useTableUpdater( { slug } );
+	const { table, setTable, filters, sorting } = useTableUpdater( { slug } );
 	const url = { filters, sorting };
 	const queryClient = useQueryClient();
 
@@ -36,17 +36,17 @@ export default function TagsLabels( ) {
 		isSuccess,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId }, 500 );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { row, selectedRows, rowToEdit, setEditorRow, activePanel, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const header = {
 		name: 'Title',
 		modules: 'Allowed in tables',
 	};
 
-	const inserterCells = {
-		name: <InputField liveUpdate defaultValue="" label={ header.name } onChange={ ( val ) => setInsertRow( { ...rowToInsert, name: val } ) } required />,
-		bgcolor: <ColorPicker defaultValue="" label="Background color" onChange={ ( val ) => setInsertRow( { ...rowToInsert, bgcolor: val } ) } />,
-		modules: <FilterMenu liveUpdate asTags id="modules" items={ possibleModules } checkedItems={ [] } onChange={ ( val ) => setInsertRow( { ...rowToInsert, modules: val } ) }>{ header.modules }</FilterMenu>,
+	const rowEditorCells = {
+		name: <InputField liveUpdate defaultValue="" label={ header.name } onChange={ ( val ) => setEditorRow( { ...rowToEdit, name: val } ) } required />,
+		bgcolor: <ColorPicker defaultValue="" label="Background color" onChange={ ( val ) => setEditorRow( { ...rowToEdit, bgcolor: val } ) } />,
+		modules: <MultiSelectMenu liveUpdate asTags id="modules" items={ possibleModules } defaultValue={ [] } onChange={ ( val ) => setEditorRow( { ...rowToEdit, modules: val } ) }>{ header.modules }</MultiSelectMenu>,
 	};
 
 	const columns = [
@@ -66,27 +66,47 @@ export default function TagsLabels( ) {
 		columnHelper.accessor( 'name', {
 			className: 'nolimit',
 			cell: ( cell ) => {
-				const tag = cell.row.original;
-				const { lightness } = hexToHSL( tag.bgcolor );
-				return <Tag fullSize className={ lightness < 70 ? 'dark' : '' } style={ { backgroundColor: cell.row.original.bgcolor } }>{ cell.getValue() }</Tag>;
+				const tag = cell?.row?.original;
+				const { lightness } = tag && hexToHSL( tag.bgcolor );
+				return <Tag fullSize className={ lightness < 70 ? 'dark' : '' } style={ { backgroundColor: tag?.bgcolor } }>{ cell.getValue() }</Tag>;
 			},
 			header: 'Tags',
 			size: 150,
 		} ),
 		columnHelper.accessor( 'modules', {
 			className: 'nolimit',
-			cell: ( cell ) => <FilterMenu items={ possibleModules } asTags id="modules" checkedItems={ ( cell?.getValue()[ 0 ] && cell?.getValue() ) || [] }
+			cell: ( cell ) => <MultiSelectMenu items={ possibleModules } asTags id="modules" defaultValue={ ( cell.getValue() && cell.getValue()[ 0 ] ) || '' }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) }
 			/>,
 			header: header.modules,
 			size: 150,
 		} ),
 
-		columnHelper.accessor( 'delete', {
-			className: 'deleteRow',
-			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
+		columnHelper.accessor( 'editRow', {
+			className: 'editRow',
+			cell: ( cell ) => {
+				return (
+					<div className="flex">
+						<IconButton
+							onClick={ () => updateRow( { cell } ) }
+							tooltipClass="align-left xxxl"
+							tooltip={ __( 'Edit row' ) }
+						>
+							<Edit />
+						</IconButton>
+						<IconButton
+							className="ml-s"
+							onClick={ () => deleteRow( { cell } ) }
+							tooltipClass="align-left xxxl"
+							tooltip={ __( 'Delete row' ) }
+						>
+							<Trash />
+						</IconButton>
+					</div>
+				);
+			},
 			header: null,
+			size: 60,
 		} ),
 	];
 
@@ -108,15 +128,16 @@ export default function TagsLabels( ) {
 				noFiltering
 				noCount
 				onUpdateRows={ ( val ) => {
-					setInsertRow();
+					setEditorRow();
 					if ( val === 'rowInserted' ) {
-						setInsertRow( val );
+						setEditorRow( val );
 						setTimeout( () => {
-							setInsertRow();
+							setEditorRow();
 						}, 3000 );
 					}
 				} }
-				insertOptions={ { inserterCells, title: 'Add new tag', data, slug, url, paginationId, rowToInsert } }
+				activatePanel={ activePanel }
+				rowEditorOptions={ { rowEditorCells, title: 'Add new tag', data, slug, url, paginationId, rowToEdit } }
 			/>
 			<Table className="fadeInto"
 				slug={ slug }
@@ -128,7 +149,7 @@ export default function TagsLabels( ) {
 					? <Tooltip center>{ `Tag “${ row.name }”` } { __( 'has been deleted.' ) }</Tooltip>
 					: null
 				}
-				{ ( rowToInsert === 'rowInserted' )
+				{ ( rowToEdit === 'rowInserted' )
 					? <Tooltip center>{ __( 'Tag has been added.' ) }</Tooltip>
 					: null
 				}

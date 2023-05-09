@@ -7,7 +7,9 @@ import filtersArray from '../lib/filtersArray';
 export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const queryClient = useQueryClient();
 	const [ rowValue, setRow ] = useState();
-	const [ insertRowResult, setInsertRowRes ] = useState( false );
+	const [ rowToEdit, setEditorRow ] = useState( {} );
+	const [ insertRowResult, setEditorRowRes ] = useState( false );
+	const [ activePanel, setActivePanel ] = useState();
 	const [ selectedRows, setSelectedRows ] = useState( [] );
 	const [ responseCounter, setResponseCounter ] = useState( 0 );
 
@@ -25,20 +27,98 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	};
 
 	const insertNewRow = useMutation( {
-		mutationFn: async ( { rowToInsert } ) => {
-			const response = await postFetch( `${ slug }/create`, rowToInsert );
+		mutationFn: async ( ) => {
+			const response = await postFetch( `${ slug }/create`, rowToEdit );
 			return { response };
 		},
 		onSuccess: async ( { response } ) => {
 			const { ok } = await response;
 			if ( ok ) {
 				queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
-				setInsertRowRes( response );
+				setEditorRowRes( response );
 			}
 		},
 	} );
-	const insertRow = ( { rowToInsert } ) => {
-		insertNewRow.mutate( { rowToInsert } );
+	const insertRow = ( ) => {
+		insertNewRow.mutate( { rowToEdit } );
+	};
+
+	const updateRowData = useMutation( {
+		mutationFn: async ( options ) => {
+			const { editedRow, newVal, cell, customEndpoint, changeField, optionalSelector } = options;
+
+			// Updating one cell value only
+			if ( newVal ) {
+				const cellId = cell.column.id;
+				const newPagesArray = data?.pages.map( ( page ) =>
+
+					page.map( ( row ) => {
+						if ( row[ paginationId ] === getRowId( cell ) ) {
+							row[ cellId ] = newVal;
+							return row;
+						}
+						return row;
+					}
+					),
+				) ?? [];
+
+				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => ( {
+					pages: newPagesArray,
+					pageParams: origData.pageParams,
+				} ) );
+
+				// Called from another field, ie in Generator status
+				if ( changeField ) {
+					const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ changeField ]: newVal } );
+					return response;
+				}
+				const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ cellId ]: newVal } );
+				return response;
+			}
+
+			// // Updating whole row via edit panel
+			// const newPagesArray = data?.pages.map( ( page ) =>
+
+			// 	page.map( ( row ) => {
+			// 		if ( row[ paginationId ] === editedRow[ paginationId ] ) {
+			// 			row = editedRow;
+			// 			return row;
+			// 		}
+			// 		return row;
+			// 	}
+			// 	),
+			// ) ?? [];
+
+			// queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => ( {
+			// 	pages: newPagesArray,
+			// 	pageParams: origData.pageParams,
+			// } ) );
+
+			const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow );
+			return { response, editedRow };
+		},
+		onSuccess: ( { response, editedRow } ) => {
+			const { ok } = response;
+			if ( ok ) {
+				queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
+				if ( editedRow ) {
+					setEditorRowRes( response );
+				}
+			}
+		},
+	} );
+
+	const updateRow = ( { newVal, cell, customEndpoint, changeField, optionalSelector } ) => {
+		if ( ! newVal ) { // Editing whole row = parameters are preset
+			setEditorRow( cell.row.original );
+			setActivePanel( 'rowEditor' );
+			return false;
+		}
+		updateRowData.mutate( { rowToEdit, newVal, cell, customEndpoint, changeField, optionalSelector } );
+	};
+
+	const saveEditedRow = ( { rowToEdit: editedRow } ) => {
+		updateRowData.mutate( { editedRow } );
 	};
 
 	const processDeletedPages = useCallback( ( cell ) => {
@@ -96,45 +176,6 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 		} );
 	};
 
-	const updateRowData = useMutation( {
-		mutationFn: async ( options ) => {
-			const { newVal, cell, customEndpoint, changeField, optionalSelector } = options;
-			const cellId = cell.column.id;
-
-			const newPagesArray = data?.pages.map( ( page ) =>
-
-				page.map( ( row ) => {
-					if ( row[ paginationId ] === getRowId( cell ) ) {
-						row[ cell.column.id ] = newVal;
-						return row;
-					}
-					return row;
-				}
-				),
-			) ?? [];
-
-			queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => ( {
-				pages: newPagesArray,
-				pageParams: origData.pageParams,
-			} ) );
-			if ( changeField ) {
-				const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ changeField ]: newVal } );
-				return response;
-			}
-			const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ cellId ]: newVal } );
-			return response;
-		},
-		onSuccess: ( response ) => {
-			const { ok } = response;
-			if ( ok ) {
-				queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
-			}
-		},
-	} );
-	const updateRow = ( { newVal, cell, customEndpoint, changeField, optionalSelector } ) => {
-		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, optionalSelector } );
-	};
-
 	const selectRow = ( isSelected, cell ) => {
 		cell.row.toggleSelected();
 		if ( ! isSelected ) {
@@ -145,5 +186,5 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 		}
 	};
 
-	return { row: rowValue, selectedRows, insertRowResult, insertRow, selectRow, deleteRow, deleteSelectedRows, updateRow };
+	return { row: rowValue, selectedRows, insertRowResult, insertRow, rowToEdit, setEditorRow, activePanel, setActivePanel, selectRow, deleteRow, deleteSelectedRows, updateRow, saveEditedRow };
 }

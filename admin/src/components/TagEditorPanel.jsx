@@ -3,7 +3,7 @@ import { useMemo, useEffect, useState, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import Button from '../elements/Button';
-import FilterMenu from '../elements/FilterMenu';
+import MultiSelectMenu from '../elements/MultiSelectMenu';
 import InputField from '../elements/InputField';
 
 import '../assets/styles/components/_FloatingPanel.scss';

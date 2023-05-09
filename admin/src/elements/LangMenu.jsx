@@ -3,11 +3,11 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import { langName } from '../lib/helpers';
 
-import SortMenu from '../elements/SortMenu';
+import SingleSelectMenu from './SingleSelectMenu';
 import InputField from './InputField';
-import FilterMenu from './FilterMenu';
+import MultiSelectMenu from './MultiSelectMenu';
 
-export default function LangMenu( { noAll, multiSelect, isFilter, children, defaultAccept, onChange, checkedId, autoClose } ) {
+export default function LangMenu( { noAll, multiSelect, isFilter, children, defaultAccept, onChange, defaultValue, autoClose } ) {
 	const queryClient = useQueryClient();
 	const langData = queryClient.getQueryData( [ 'languages' ] );
 
@@ -21,8 +21,8 @@ export default function LangMenu( { noAll, multiSelect, isFilter, children, defa
 		delete langData.all;
 	}
 
-	if ( ! langData[ checkedId ] ) {
-		langData[ checkedId ] = langName( checkedId );
+	if ( ! langData[ defaultValue ] ) {
+		langData[ defaultValue ] = langName( defaultValue );
 		queryClient.setQueryData( [ 'languages' ], sortLangs( langData ) );
 		queryClient.invalidateQueries( [ 'languages' ] );
 	}
@@ -38,25 +38,25 @@ export default function LangMenu( { noAll, multiSelect, isFilter, children, defa
 	return (
 		<>
 			{ langs && ! multiSelect
-				? <SortMenu
+				? <SingleSelectMenu
 					autoClose={ autoClose }
 					items={ langs }
 					isFilter={ isFilter }
 					name="languages"
 					defaultAccept={ defaultAccept }
-					checkedId={ checkedId }
+					defaultValue={ defaultValue }
 					onChange={ ( lang ) => handleSelected( lang ) }
 				>
 					{ children }
-				</SortMenu>
-				: ! multiSelect && <InputField defaultValue={ checkedId } onChange={ ( lang ) => handleSelected( lang ) } />
+				</SingleSelectMenu>
+				: ! multiSelect && <InputField defaultValue={ defaultValue } onChange={ ( lang ) => handleSelected( lang ) } />
 			}
 			{
 				langs && multiSelect &&
-				<FilterMenu
+				<MultiSelectMenu
 					items={ langs }
 					isFilter={ isFilter }
-					checkedItems={ [ checkedId ].flat() }
+					defaultValue={ [ defaultValue ].flat() }
 					onChange={ ( lang ) => handleSelected( lang ) }
 				/>
 			}

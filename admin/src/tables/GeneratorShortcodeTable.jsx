@@ -5,29 +5,25 @@ import {
 	Trash,
 	ProgressBar,
 	SortBy,
+	TextArea,
 	InputField,
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
 	DateTimeFormat,
-	SortMenu, LangMenu,
+	SingleSelectMenu,
 } from '../lib/tableImports';
 
 import IconButton from '../elements/IconButton';
 import { ReactComponent as AcceptIcon } from '../assets/images/icons/icon-activate.svg';
 import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
-import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-cron-refresh.svg';
-
-import { langName } from '../lib/helpers';
-
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
-import {useState} from "react";
 
 export default function GeneratorShortcodeTable( { slug } ) {
 	const paginationId = 'shortcode_id';
-	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( 'generator/shortcode' );
+	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( 'generator/shortcode' );
 
 	const url = { filters, sorting };
 
@@ -64,11 +60,11 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, paginationId, filters, sorting } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const statusTypes = {
 		A: __( 'Active' ),
-		D: __(  'Disabled' ),
+		D: __( 'Disabled' ),
 	};
 	const modelTypes = {
 		'gpt-3.5-turbo': __( 'Gpt 3.5 Turbo' ),
@@ -76,8 +72,8 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		'text-davinci-003': __( 'Text Davinci 003' ),
 	};
 	const shortcodeTypeTypes = {
-		'S': __( 'Semantic search' ),
-		'V': __( 'Video context' ),
+		S: __( 'Semantic search' ),
+		V: __( 'Video context' ),
 	};
 
 	const header = {
@@ -94,14 +90,17 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		usage_count: __( 'Usage' ),
 	};
 
-	const inserterCells = {
-		shortcode_type: <SortMenu autoClose items={ shortcodeTypeTypes } name="shortcode_type" checkedId={ ( 'S' ) } onChange={ ( val ) => setInsertRow( { ...rowToInsert, shortcode_type: val } ) }>{ header.shortcode_type }</SortMenu>,
-		prompt: <InputField liveUpdate defaultValue="" label={ header.prompt } onChange={ ( val ) => setInsertRow( { ...rowToInsert, prompt: val } ) } required />,
-		semantic_context: <InputField liveUpdate defaultValue="" label={ header.semantic_context } onChange={ ( val ) => setInsertRow( { ...rowToInsert, semantic_context: val } ) } />,
-		url_filter: <InputField liveUpdate defaultValue="" label={ header.url_filter } onChange={ ( val ) => setInsertRow( { ...rowToInsert, url_filter: val } ) } />,
-		default_value: <InputField liveUpdate defaultValue="" label={ header.default_value } onChange={ ( val ) => setInsertRow( { ...rowToInsert, default_value: val } ) } />,
-		template: <InputField liveUpdate defaultValue="" label={ header.template } onChange={ ( val ) => setInsertRow( { ...rowToInsert, template: val } ) } />,
-		model: <SortMenu autoClose items={ modelTypes } name="model" checkedId={ ( 'gpt-3.5-turbo' ) } onChange={ ( val ) => setInsertRow( { ...rowToInsert, model: val } ) }>{ header.model }</SortMenu>,
+	const rowEditorCells = {
+		shortcode_type: <SingleSelectMenu autoClose description="Example of description text"
+			items={ shortcodeTypeTypes } name="shortcode_type" defaultValue={ ( 'S' ) } onChange={ ( val ) => setEditorRow( { ...rowToEdit, shortcode_type: val } ) }>{ header.shortcode_type }</SingleSelectMenu>,
+		prompt: <TextArea rows="5" description="Example of description text"
+			liveUpdate defaultValue="" label={ header.prompt } onChange={ ( val ) => setEditorRow( { ...rowToEdit, prompt: val } ) } required />,
+		semantic_context: <InputField liveUpdate description="Example of description text"
+			defaultValue="" label={ header.semantic_context } onChange={ ( val ) => setEditorRow( { ...rowToEdit, semantic_context: val } ) } />,
+		url_filter: <InputField liveUpdate defaultValue="" label={ header.url_filter } onChange={ ( val ) => setEditorRow( { ...rowToEdit, url_filter: val } ) } />,
+		default_value: <InputField liveUpdate defaultValue="" label={ header.default_value } onChange={ ( val ) => setEditorRow( { ...rowToEdit, default_value: val } ) } />,
+		template: <InputField liveUpdate defaultValue="" label={ header.template } onChange={ ( val ) => setEditorRow( { ...rowToEdit, template: val } ) } />,
+		model: <SingleSelectMenu autoClose items={ modelTypes } name="model" defaultValue={ ( 'gpt-3.5-turbo' ) } onChange={ ( val ) => setEditorRow( { ...rowToEdit, model: val } ) }>{ header.model }</SingleSelectMenu>,
 	};
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -173,8 +172,8 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			header: null,
 			size: 70,
 		} ),
-		columnHelper.accessor( 'delete', {
-			className: 'deleteRow',
+		columnHelper.accessor( 'editRow', {
+			className: 'editRow',
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
@@ -194,16 +193,16 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onClearRow={ ( clear ) => {
-					setInsertRow();
-					if ( clear === 'rowInserted' ) {
-						setInsertRow( clear );
+				onUpdateRow={ ( val ) => {
+					setEditorRow();
+					if ( val === 'rowInserted' ) {
+						setEditorRow( val );
 						setTimeout( () => {
-							setInsertRow();
+							setEditorRow();
 						}, 3000 );
 					}
 				} }
-				insertOptions={ { inserterCells, title: 'Add generator', data, slug, url, paginationId, rowToInsert } }
+				rowEditorOptions={ { rowEditorCells, title: 'Add generator', data, slug, url, paginationId, rowToEdit } }
 				exportOptions={ {
 					slug,
 					url,
@@ -223,7 +222,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 					? <Tooltip center>{ __( 'Item has been deleted.' ) }</Tooltip>
 					: null
 				}
-				{ ( rowToInsert === 'rowInserted' )
+				{ ( rowToEdit === 'rowInserted' )
 					? <Tooltip center>{ __( 'Shortcode has been added.' ) }</Tooltip>
 					: null
 				}

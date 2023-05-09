@@ -86,7 +86,7 @@ export default function DetailsPanel( { options, handlePanel } ) {
 	}
 
 	return (
-		<div className="urlslab-panel-wrap wide urlslab-panel-floating fadeInto">
+		<div className="urlslab-panel-wrap wide urlslab-panel-modal fadeInto">
 			<div className="urlslab-panel Details">
 				<div className="urlslab-panel-header">
 					<h3>{ title }</h3>

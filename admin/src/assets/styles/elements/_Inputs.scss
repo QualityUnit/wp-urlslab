@@ -85,6 +85,10 @@ $status: (
 	color: $grey-medium;
 	transition: all 0.2s;
 
+	textarea {
+		resize: none;
+	}
+
 	.urlslab-table tbody & {
 		border-color: transparent !important;
 
@@ -96,6 +100,13 @@ $status: (
 	.urlslab-table & {
 		font-size: inherit;
 		color: inherit;
+	}
+
+	&-description {
+		font-size: 0.6875rem;
+		margin-top: 0.25em;
+		margin-bottom: 0;
+		color: $grey-darker;
 	}
 
 	&-label {

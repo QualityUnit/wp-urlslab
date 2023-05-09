@@ -1,15 +1,16 @@
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, InputField, SortMenu, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, InputField, SingleSelectMenu, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, Edit, TagsMenu,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
+import IconButton from '../elements/IconButton';
 
 export default function RedirectsTable( { slug } ) {
 	const paginationId = 'redirect_id';
 
-	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 
 	const url = { filters, sorting };
 
@@ -25,24 +26,24 @@ export default function RedirectsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { redirectTypes, matchTypes, logginTypes, notFoundTypes, header } = useRedirectTableMenus();
 
-	const inserterCells = {
-		match_type: <SortMenu defaultAccept autoClose items={ matchTypes } name="match_type" checkedId="E" onChange={ ( val ) => setInsertRow( { ...rowToInsert, match_type: val } ) }>{ header.match_type }</SortMenu>,
-		match_url: <InputField type="url" liveUpdate defaultValue="" label={ header.match_url } onChange={ ( val ) => setInsertRow( { ...rowToInsert, match_url: val } ) } required />,
-		replace_url: <InputField type="url" liveUpdate defaultValue="" label={ header.replace_url } onChange={ ( val ) => setInsertRow( { ...rowToInsert, replace_url: val } ) } required />,
-		redirect_code: <SortMenu autoClose items={ redirectTypes } name="redirect_code" checkedId="301" onChange={ ( val ) => setInsertRow( { ...rowToInsert, redirect_code: val } ) }>{ header.redirect_code }</SortMenu>,
-		is_logged: <SortMenu autoClose items={ logginTypes } name="is_logged" checkedId="A" onChange={ ( val ) => setInsertRow( { ...rowToInsert, is_logged: val } ) }>{ header.is_logged }</SortMenu>,
-		headers: <InputField liveUpdate defaultValue="" label={ header.headers } onChange={ ( val ) => setInsertRow( { ...rowToInsert, headers: val } ) } />,
-		cookie: <InputField liveUpdate defaultValue="" label={ header.cookie } onChange={ ( val ) => setInsertRow( { ...rowToInsert, cookie: val } ) } />,
-		params: <InputField liveUpdate defaultValue="" label={ header.params } onChange={ ( val ) => setInsertRow( { ...rowToInsert, capabilities: val } ) } />,
-		capabilities: <InputField liveUpdate defaultValue="" label={ header.capabilities } onChange={ ( val ) => setInsertRow( { ...rowToInsert, capabilities: val } ) } />,
-		ip: <InputField liveUpdate defaultValue="" label={ header.ip } onChange={ ( val ) => setInsertRow( { ...rowToInsert, ip: val } ) } />,
-		roles: <InputField liveUpdate defaultValue="" label={ header.roles } onChange={ ( val ) => setInsertRow( { ...rowToInsert, roles: val } ) } />,
-		browser: <InputField liveUpdate defaultValue="" label={ header.browser } onChange={ ( val ) => setInsertRow( { ...rowToInsert, browser: val } ) } />,
-		if_not_found: <SortMenu autoClose items={ notFoundTypes } name="if_not_found" checkedId="A" onChange={ ( val ) => setInsertRow( { ...rowToInsert, if_not_found: val } ) }>{ header.if_not_found }</SortMenu>,
+	const rowEditorCells = {
+		match_type: <SingleSelectMenu defaultAccept autoClose items={ matchTypes } name="match_type" defaultValue="E" onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_type: val } ) }>{ header.match_type }</SingleSelectMenu>,
+		match_url: <InputField type="url" liveUpdate defaultValue="" label={ header.match_url } onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_url: val } ) } required />,
+		replace_url: <InputField type="url" liveUpdate defaultValue="" label={ header.replace_url } onChange={ ( val ) => setEditorRow( { ...rowToEdit, replace_url: val } ) } required />,
+		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" defaultValue="301" onChange={ ( val ) => setEditorRow( { ...rowToEdit, redirect_code: val } ) }>{ header.redirect_code }</SingleSelectMenu>,
+		is_logged: <SingleSelectMenu autoClose items={ logginTypes } name="is_logged" defaultValue="A" onChange={ ( val ) => setEditorRow( { ...rowToEdit, is_logged: val } ) }>{ header.is_logged }</SingleSelectMenu>,
+		headers: <InputField liveUpdate defaultValue="" label={ header.headers } onChange={ ( val ) => setEditorRow( { ...rowToEdit, headers: val } ) } />,
+		cookie: <InputField liveUpdate defaultValue="" label={ header.cookie } onChange={ ( val ) => setEditorRow( { ...rowToEdit, cookie: val } ) } />,
+		params: <InputField liveUpdate defaultValue="" label={ header.params } onChange={ ( val ) => setEditorRow( { ...rowToEdit, capabilities: val } ) } />,
+		capabilities: <InputField liveUpdate defaultValue="" label={ header.capabilities } onChange={ ( val ) => setEditorRow( { ...rowToEdit, capabilities: val } ) } />,
+		ip: <InputField liveUpdate defaultValue="" label={ header.ip } onChange={ ( val ) => setEditorRow( { ...rowToEdit, ip: val } ) } />,
+		roles: <InputField liveUpdate defaultValue="" label={ header.roles } onChange={ ( val ) => setEditorRow( { ...rowToEdit, roles: val } ) } />,
+		browser: <InputField liveUpdate defaultValue="" label={ header.browser } onChange={ ( val ) => setEditorRow( { ...rowToEdit, browser: val } ) } />,
+		if_not_found: <SingleSelectMenu autoClose items={ notFoundTypes } name="if_not_found" defaultValue="A" onChange={ ( val ) => setEditorRow( { ...rowToEdit, if_not_found: val } ) }>{ header.if_not_found }</SingleSelectMenu>,
 	};
 
 	const columns = [
@@ -56,7 +57,7 @@ export default function RedirectsTable( { slug } ) {
 		columnHelper.accessor( 'match_type', {
 			filterValMenu: matchTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SortMenu items={ matchTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu items={ matchTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.match_type }</SortBy>,
 			size: 80,
 		} ),
@@ -75,23 +76,29 @@ export default function RedirectsTable( { slug } ) {
 		columnHelper.accessor( 'redirect_code', {
 			filterValMenu: redirectTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SortMenu items={ redirectTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu items={ redirectTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.redirect_code }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'if_not_found', {
 			filterValMenu: notFoundTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SortMenu items={ notFoundTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu items={ notFoundTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.if_not_found }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'is_logged', {
 			filterValMenu: logginTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SortMenu items={ logginTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu items={ logginTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.is_logged }</SortBy>,
 			size: 100,
+		} ),
+		columnHelper.accessor( 'labels', {
+			className: 'nolimit',
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: header.labels,
+			size: 160,
 		} ),
 		columnHelper.accessor( 'capabilities', {
 			className: 'nolimit',
@@ -140,11 +147,31 @@ export default function RedirectsTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.cnt }</SortBy>,
 			size: 100,
 		} ),
-		columnHelper.accessor( 'delete', {
-			className: 'deleteRow',
-			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
+		columnHelper.accessor( 'editRow', {
+			className: 'editRow',
+			cell: ( cell ) => {
+				return (
+					<div className="flex">
+						<IconButton
+							onClick={ () => updateRow( { cell } ) }
+							tooltipClass="align-left xxxl"
+							tooltip={ __( 'Edit row' ) }
+						>
+							<Edit />
+						</IconButton>
+						<IconButton
+							className="ml-s"
+							onClick={ () => deleteRow( { cell } ) }
+							tooltipClass="align-left xxxl"
+							tooltip={ __( 'Delete row' ) }
+						>
+							<Trash />
+						</IconButton>
+					</div>
+				);
+			},
 			header: () => null,
+			size: 60,
 		} ),
 	];
 
@@ -161,16 +188,16 @@ export default function RedirectsTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onClearRow={ ( clear ) => {
-					setInsertRow();
-					if ( clear === 'rowInserted' ) {
-						setInsertRow( clear );
+				onUpdateRow={ ( val ) => {
+					setEditorRow();
+					if ( val === 'rowInserted' ) {
+						setEditorRow( val );
 						setTimeout( () => {
-							setInsertRow();
+							setEditorRow();
 						}, 3000 );
 					}
 				} }
-				insertOptions={ { inserterCells, title: 'Add redirect', data, slug, url, paginationId, rowToInsert } }
+				rowEditorOptions={ { rowEditorCells, title: 'Add redirect', data, slug, url, paginationId, rowToEdit } }
 				exportOptions={ {
 					slug,
 					url,
@@ -189,7 +216,7 @@ export default function RedirectsTable( { slug } ) {
 					? <Tooltip center>{ `${ header.str_search } “${ row.str_search }”` } { __( 'has been deleted.' ) }</Tooltip>
 					: null
 				}
-				{ ( rowToInsert === 'rowInserted' )
+				{ ( rowToEdit === 'rowInserted' )
 					? <Tooltip center>{ __( 'Redirect rule has been added.' ) }</Tooltip>
 					: null
 				}

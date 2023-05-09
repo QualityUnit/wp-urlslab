@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, LinkIcon, Trash, SortMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, LinkIcon, Trash, SingleSelectMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -57,6 +57,7 @@ export default function LinkManagerTable( { slug } ) {
 		url_meta_description: __( 'Description' ),
 		url_summary: __( 'Summary' ),
 		http_status: __( 'Status' ),
+		labels: __( 'Tags' ),
 		// sum_status: __( 'Summary Status' ),
 		// update_sum_date: __( 'Summary Updated' ),
 		url_links_count: __( 'Outgoing links count' ),
@@ -78,7 +79,7 @@ export default function LinkManagerTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_name }</SortBy>,
-			size: 200,
+			size: 150,
 		} ),
 		columnHelper.accessor( 'url_title', {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
@@ -88,17 +89,17 @@ export default function LinkManagerTable( { slug } ) {
 		columnHelper.accessor( 'url_h1', {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
 			header: header.url_h1,
-			size: 150,
+			size: 100,
 		} ),
 		columnHelper?.accessor( 'url_meta_description', {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_meta_description }</SortBy>,
-			size: 150,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'url_summary', {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_summary }</SortBy>,
-			size: 150,
+			size: 100,
 		} ),
 		columnHelper?.accessor( 'http_status', {
 			filterValMenu: httpStatusTypes,
@@ -109,10 +110,10 @@ export default function LinkManagerTable( { slug } ) {
 		columnHelper.accessor( 'visibility', {
 			filterValMenu: visibilityTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SortMenu
+			cell: ( cell ) => <SingleSelectMenu
 				items={ visibilityTypes }
 				name={ cell.column.id }
-				checkedId={ cell.getValue() }
+				defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.visibility }</SortBy>,
 			size: 100,
@@ -122,6 +123,12 @@ export default function LinkManagerTable( { slug } ) {
 			cell: ( cell ) => urlTypes[ cell.getValue() ],
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_type }</SortBy>,
 			size: 80,
+		} ),
+		columnHelper.accessor( 'labels', {
+			className: 'nolimit',
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: header.labels,
+			size: 160,
 		} ),
 		columnHelper.accessor( 'update_http_date', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
@@ -158,8 +165,8 @@ export default function LinkManagerTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_usage_count }</SortBy>,
 			size: 140,
 		} ),
-		columnHelper.accessor( 'delete', {
-			className: 'deleteRow',
+		columnHelper.accessor( 'editRow', {
+			className: 'editRow',
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),

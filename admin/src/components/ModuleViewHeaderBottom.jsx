@@ -24,7 +24,7 @@ import Button from '../elements/Button';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import IconButton from '../elements/IconButton';
 
-export default function ModuleViewHeaderBottom( { slug, noColumnsMenu, noFiltering, noImport, noInsert, noExport, noCount, noDelete, header, table, insertOptions, activatePanel, detailsOptions, exportOptions, selectedRows, onFilter, onDeleteSelected, onClearRow } ) {
+export default function ModuleViewHeaderBottom( { slug, noColumnsMenu, noFiltering, noImport, noInsert, noExport, noCount, noDelete, header, table, rowEditorOptions, activatePanel, detailsOptions, exportOptions, selectedRows, onFilter, onDeleteSelected, onUpdateRow } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const didMountRef = useRef( false );
@@ -121,8 +121,8 @@ export default function ModuleViewHeaderBottom( { slug, noColumnsMenu, noFilteri
 			}
 		}
 
-		if ( onClearRow ) {
-			onClearRow( key );
+		if ( onUpdateRow ) {
+			onUpdateRow( key );
 		}
 	};
 
@@ -141,8 +141,8 @@ export default function ModuleViewHeaderBottom( { slug, noColumnsMenu, noFilteri
 					{ ! noDelete && selectedRows?.length > 0 &&
 						<Button className="mr-s" onClick={ () => handlePanel( 'deleteSelected' ) }><Trash />{ __( 'Delete selected' ) }</Button>
 					}
-					{ insertOptions && ! noInsert &&
-						<Button className="active" onClick={ () => handlePanel( 'addrow' ) }><PlusIcon />{ insertOptions.title }</Button>
+					{ rowEditorOptions && ! noInsert &&
+						<Button className="active" onClick={ () => handlePanel( 'rowInserter' ) }><PlusIcon />{ rowEditorOptions.title }</Button>
 					}
 
 					{
@@ -192,7 +192,7 @@ export default function ModuleViewHeaderBottom( { slug, noColumnsMenu, noFilteri
 
 			</div>
 
-			<TablePanels props={ { header, slug, filters, initialRow, detailsOptions, insertOptions, exportOptions, activePanel, handlePanel } } />
+			<TablePanels props={ { header, slug, filters, initialRow, detailsOptions, rowEditorOptions, exportOptions, activePanel, handlePanel } } />
 		</>
 	);
 }

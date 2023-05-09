@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef } from 'react';
 
 import InputField from './InputField';
-import '../assets/styles/elements/_FilterMenu.scss';
+import '../assets/styles/elements/_MultiSelectMenu.scss';
 import '../assets/styles/elements/_RangeSlider.scss';
 
 export default function MenuInput( {
@@ -37,9 +37,9 @@ export default function MenuInput( {
 	};
 
 	return (
-		<div className={ `urlslab-FilterMenu ${ className || '' }` } style={ style } ref={ ref }>
+		<div className={ `urlslab-MultiSelectMenu ${ className || '' }` } style={ style } ref={ ref }>
 			<div
-				className={ `urlslab-FilterMenu__title ${ isActive ? 'active' : '' }` }
+				className={ `urlslab-MultiSelectMenu__title ${ isActive ? 'active' : '' }` }
 				onClick={ handleMenu }
 				onKeyUp={ ( event ) => handleMenu( event ) }
 				role="button"
@@ -47,9 +47,9 @@ export default function MenuInput( {
 			>
 				{ children }
 			</div>
-			<div className={ `urlslab-FilterMenu__items menuInput ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
-				<div className="urlslab-FilterMenu__items--inn">
-					<div className="label menuInput urlslab-FilterMenu__item">
+			<div className={ `urlslab-MultiSelectMenu__items menuInput ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
+				<div className="urlslab-MultiSelectMenu__items--inn">
+					<div className="label menuInput urlslab-MultiSelectMenu__item">
 						<InputField type="search" defaultValue={ inputValue } placeholder={ placeholder } onChange={ ( val ) => {
 							setInputValue( val ); handleClickOutside( val );
 						} } />

@@ -1,14 +1,15 @@
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SortMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SingleSelectMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, Edit,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
+import IconButton from '../elements/IconButton';
 
 export default function SearchReplaceTable( { slug } ) {
 	const paginationId = 'id';
 
-	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 
 	const url = { filters, sorting };
 
@@ -24,7 +25,7 @@ export default function SearchReplaceTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const searchTypes = {
 		T: __( 'Plain text' ),
@@ -35,14 +36,15 @@ export default function SearchReplaceTable( { slug } ) {
 		str_search: __( 'Search string (old)' ),
 		str_replace: __( 'Replace string (new)' ),
 		search_type: __( 'Search type' ),
+		labels: __( 'Tags' ),
 		url_filter: 'URL filter',
 	};
 
-	const inserterCells = {
-		str_search: <InputField liveUpdate type="url" defaultValue="" label={ header.str_search } onChange={ ( val ) => setInsertRow( { ...rowToInsert, str_search: val } ) } required />,
-		str_replace: <InputField liveUpdate type="url" defaultValue="" label={ header.str_replace } onChange={ ( val ) => setInsertRow( { ...rowToInsert, str_replace: val } ) } required />,
-		search_type: <SortMenu autoClose items={ searchTypes } name="search_type" checkedId="T" onChange={ ( val ) => setInsertRow( { ...rowToInsert, search_type: val } ) }>{ header.search_type }</SortMenu>,
-		url_filter: <InputField liveUpdate defaultValue="" label={ header.url_filter } onChange={ ( val ) => setInsertRow( { ...rowToInsert, url_filter: val } ) } />,
+	const rowEditorCells = {
+		str_search: <InputField liveUpdate type="url" defaultValue="" label={ header.str_search } onChange={ ( val ) => setEditorRow( { ...rowToEdit, str_search: val } ) } required />,
+		str_replace: <InputField liveUpdate type="url" defaultValue="" label={ header.str_replace } onChange={ ( val ) => setEditorRow( { ...rowToEdit, str_replace: val } ) } required />,
+		search_type: <SingleSelectMenu autoClose items={ searchTypes } name="search_type" defaultValue="T" onChange={ ( val ) => setEditorRow( { ...rowToEdit, search_type: val } ) }>{ header.search_type }</SingleSelectMenu>,
+		url_filter: <InputField liveUpdate defaultValue="" label={ header.url_filter } onChange={ ( val ) => setEditorRow( { ...rowToEdit, url_filter: val } ) } />,
 	};
 
 	const columns = [
@@ -57,20 +59,26 @@ export default function SearchReplaceTable( { slug } ) {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.str_search }</SortBy>,
-			size: 300,
+			size: 220,
 		} ),
 		columnHelper.accessor( 'str_replace', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.str_replace }</SortBy>,
-			size: 300,
+			size: 220,
 		} ),
 		columnHelper.accessor( 'search_type', {
 			filterValMenu: searchTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SortMenu items={ searchTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu items={ searchTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.search_type }</SortBy>,
 			size: 100,
+		} ),
+		columnHelper.accessor( 'labels', {
+			className: 'nolimit',
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: header.labels,
+			size: 160,
 		} ),
 		columnHelper.accessor( 'url_filter', {
 			className: 'nolimit',
@@ -78,11 +86,31 @@ export default function SearchReplaceTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_filter }</SortBy>,
 			size: 100,
 		} ),
-		columnHelper.accessor( 'delete', {
-			className: 'deleteRow',
-			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
+		columnHelper.accessor( 'editRow', {
+			className: 'editRow',
+			cell: ( cell ) => {
+				return (
+					<div className="flex">
+						<IconButton
+							onClick={ () => updateRow( { cell } ) }
+							tooltipClass="align-left xxxl"
+							tooltip={ __( 'Edit row' ) }
+						>
+							<Edit />
+						</IconButton>
+						<IconButton
+							className="ml-s"
+							onClick={ () => deleteRow( { cell } ) }
+							tooltipClass="align-left xxxl"
+							tooltip={ __( 'Delete row' ) }
+						>
+							<Trash />
+						</IconButton>
+					</div>
+				);
+			},
 			header: () => null,
+			size: 60,
 		} ),
 	];
 
@@ -99,16 +127,16 @@ export default function SearchReplaceTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onClearRow={ ( clear ) => {
-					setInsertRow();
-					if ( clear === 'rowInserted' ) {
-						setInsertRow( clear );
+				onUpdateRow={ ( val ) => {
+					setEditorRow();
+					if ( val === 'rowInserted' ) {
+						setEditorRow( val );
 						setTimeout( () => {
-							setInsertRow();
+							setEditorRow();
 						}, 3000 );
 					}
 				} }
-				insertOptions={ { inserterCells, title: 'Add replacement', data, slug, url, paginationId, rowToInsert } }
+				rowEditorOptions={ { rowEditorCells, title: 'Add replacement', data, slug, url, paginationId, rowToEdit } }
 				exportOptions={ {
 					slug,
 					url,
@@ -126,7 +154,7 @@ export default function SearchReplaceTable( { slug } ) {
 					? <Tooltip center>{ `${ header.str_search } “${ row.str_search }”` } { __( 'has been deleted.' ) }</Tooltip>
 					: null
 				}
-				{ ( rowToInsert === 'rowInserted' )
+				{ ( rowToEdit === 'rowInserted' )
 					? <Tooltip center>{ __( 'Search & Replace rule has been added.' ) }</Tooltip>
 					: null
 				}

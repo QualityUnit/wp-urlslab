@@ -6,7 +6,7 @@ import { stringOp, dateOp, numericOp, menuOp, langOp, booleanTypes } from '../li
 import { useFilter } from '../hooks/filteringSorting';
 
 import Button from '../elements/Button';
-import SortMenu from '../elements/SortMenu';
+import SingleSelectMenu from '../elements/SingleSelectMenu';
 import InputField from '../elements/InputField';
 import RangeInputs from '../elements/RangeInputs';
 import LangMenu from '../elements/LangMenu';
@@ -90,18 +90,18 @@ export default function TableFilterPanel( { props, onEdit } ) {
 				<strong>{ __( 'Edit filter' ) }{ key ? ` ${ header[ key ] }` : '' }</strong>
 			</div>
 			<div className="flex mt-m mb-m flex-align-center">
-				<SortMenu
+				<SingleSelectMenu
 					className="mr-s"
 					items={ key ? header : possiblefilters }
 					name="filters"
-					checkedId={ key || Object.keys( possiblefilters )[ 0 ] }
+					defaultValue={ key || Object.keys( possiblefilters )[ 0 ] }
 					defaultAccept
 					autoClose
 					disabled={ key ? true : false }
 					onChange={ handleKeyChange }
 				/>
 				{ ( state.filterObj.keyType && ( filters[ key ]?.op || state.filterObj.filterOp ) ) &&
-					<SortMenu
+					<SingleSelectMenu
 						className="ml-s"
 						key={ filters[ key ]?.op || state.filterObj.filterOp }
 						items={
@@ -115,34 +115,34 @@ export default function TableFilterPanel( { props, onEdit } ) {
 						name="filter_ops"
 						defaultAccept
 						autoClose
-						checkedId={ filters[ key ]?.op || state.filterObj.filterOp }
+						defaultValue={ filters[ key ]?.op || state.filterObj.filterOp }
 						onChange={ ( op ) => dispatch( { type: 'setFilterOp', op } ) }
 					/>
 				}
 			</div>
 			<div>
 				{ state.filterObj.keyType === 'lang' &&
-					<LangMenu autoClose multiSelect={ state.filterObj.filterOp === 'IN' } checkedId={ filters[ key ]?.val || 'all' } defaultAccept onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
+					<LangMenu autoClose multiSelect={ state.filterObj.filterOp === 'IN' } defaultValue={ filters[ key ]?.val || 'all' } defaultAccept onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
 				}
 				{
 					state.filterObj.keyType === 'menu' &&
-					<SortMenu
+					<SingleSelectMenu
 						items={ filterValMenu }
 						name="menu_vals"
 						defaultAccept
 						autoClose
-						checkedId={ filters[ key ]?.val || Object.keys( filterValMenu )[ 0 ] }
+						defaultValue={ filters[ key ]?.val || Object.keys( filterValMenu )[ 0 ] }
 						onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) }
 					/>
 				}
 				{
 					state.filterObj.keyType === 'boolean' &&
-					<SortMenu
+					<SingleSelectMenu
 						items={ booleanTypes }
 						name="boolean_vals"
 						defaultAccept
 						autoClose
-						checkedId={ filters[ key ]?.val || Object.keys( booleanTypes )[ 0 ] }
+						defaultValue={ filters[ key ]?.val || Object.keys( booleanTypes )[ 0 ] }
 						onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) }
 					/>
 				}

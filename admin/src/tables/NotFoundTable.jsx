@@ -1,7 +1,7 @@
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SortMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SingleSelectMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -12,11 +12,10 @@ import BrowserIcon from '../elements/BrowserIcon';
 import { ReactComponent as PlusIcon } from '../assets/images/icons/icon-plus.svg';
 
 export default function NotFoundTable( { slug } ) {
-	const [ activePanel, setActivePanel ] = useState();
 	const paginationId = 'url_id';
 	const matchUrlField = useRef();
 
-	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 
 	const defaultSorting = sorting.length ? sorting : [ { key: 'updated', dir: 'DESC', op: '<' } ];
 
@@ -34,23 +33,23 @@ export default function NotFoundTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
+	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { redirectTypes, matchTypes, header: redirectHeader } = useRedirectTableMenus();
 
 	const addRedirect = useCallback( ( { cell } ) => {
 		const { url: defaultMatchUrl } = cell.row.original;
 		matchUrlField.current = defaultMatchUrl;
-		setInsertRow( { match_type: 'E', redirect_code: '301', match_url: defaultMatchUrl } );
+		setEditorRow( { match_type: 'E', redirect_code: '301', match_url: defaultMatchUrl } );
 
-		setActivePanel( 'addrow' );
-	}, [ setInsertRow ] );
+		setActivePanel( 'rowInserter' );
+	}, [ setEditorRow ] );
 
-	const inserterCells = {
-		match_type: <SortMenu autoClose items={ matchTypes } name="match_type" checkedId="E" onChange={ ( val ) => setInsertRow( { ...rowToInsert, match_type: val } ) }>{ redirectHeader.match_type }</SortMenu>,
+	const rowEditorCells = {
+		match_type: <SingleSelectMenu autoClose items={ matchTypes } name="match_type" defaultValue="E" onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_type: val } ) }>{ redirectHeader.match_type }</SingleSelectMenu>,
 		match_url: <InputField type="url" disabled ref={ matchUrlField } defaultValue={ matchUrlField.current } label={ redirectHeader.match_url } />,
-		replace_url: <InputField type="url" liveUpdate defaultValue="" label={ redirectHeader.replace_url } onChange={ ( val ) => setInsertRow( { ...rowToInsert, replace_url: val } ) } required />,
-		redirect_code: <SortMenu autoClose items={ redirectTypes } name="redirect_code" checkedId="301" onChange={ ( val ) => setInsertRow( { ...rowToInsert, redirect_code: val } ) }>{ redirectHeader.redirect_code }</SortMenu>,
+		replace_url: <InputField type="url" liveUpdate defaultValue="" label={ redirectHeader.replace_url } onChange={ ( val ) => setEditorRow( { ...rowToEdit, replace_url: val } ) } required />,
+		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" defaultValue="301" onChange={ ( val ) => setEditorRow( { ...rowToEdit, redirect_code: val } ) }>{ redirectHeader.redirect_code }</SingleSelectMenu>,
 	};
 
 	const header = {
@@ -72,7 +71,7 @@ export default function NotFoundTable( { slug } ) {
 		columnHelper.accessor( 'url', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url }</SortBy>,
-			minSize: 300,
+			minSize: 200,
 		} ),
 		columnHelper.accessor( 'cnt', {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.cnt }</SortBy>,
@@ -86,12 +85,18 @@ export default function NotFoundTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.updated }</SortBy>,
 			minSize: 100,
 		} ),
+		columnHelper.accessor( 'labels', {
+			className: 'nolimit',
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: header.labels,
+			size: 160,
+		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.agent, {
 			id: 'agent',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <BrowserIcon uaString={ cell.getValue() } />,
 			header: __( 'User Agent' ),
-			size: 150,
+			size: 120,
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.referer, {
 			id: 'referer',
@@ -100,7 +105,7 @@ export default function NotFoundTable( { slug } ) {
 				return cell.getValue();
 			},
 			header: __( 'Referer' ),
-			size: 120,
+			size: 100,
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.ip, {
 			id: 'ip',
@@ -116,8 +121,8 @@ export default function NotFoundTable( { slug } ) {
 			cell: ( cell ) => <PlusIcon onClick={ () => addRedirect( { cell } ) } />,
 			header: null,
 		} ),
-		columnHelper.accessor( 'delete', {
-			className: 'deleteRow',
+		columnHelper.accessor( 'editRow', {
+			className: 'editRow',
 			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
@@ -137,22 +142,22 @@ export default function NotFoundTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onClearRow={ ( clear ) => {
+				onUpdateRow={ ( val ) => {
 					setActivePanel();
-					setInsertRow();
-					if ( clear === 'rowInserted' ) {
-						setInsertRow( clear );
+					setEditorRow();
+					if ( val === 'rowInserted' ) {
+						setEditorRow( val );
 						setTimeout( () => {
-							setInsertRow( );
+							setEditorRow( );
 						}, 3000 );
 					}
 				} }
 				noImport
 				noInsert
 				activatePanel={ activePanel }
-				insertOptions={ {
-					inserterCells, title: 'Create redirect',
-					data, slug: 'redirects', url: '', paginationId: 'redirect_id', rowToInsert,
+				rowEditorOptions={ {
+					rowEditorCells, title: 'Create redirect from this',
+					data, slug: 'redirects', url: '', paginationId: 'redirect_id', rowToEdit,
 				} }
 				exportOptions={ {
 					slug,
@@ -171,7 +176,7 @@ export default function NotFoundTable( { slug } ) {
 					? <Tooltip center>{ `${ header.url } “${ row.url }”` } { __( 'has been deleted.' ) }</Tooltip>
 					: null
 				}
-				{ ( rowToInsert === 'rowInserted' )
+				{ ( rowToEdit === 'rowInserted' )
 					? <Tooltip center>{ __( 'Redirect rule has been added.' ) }</Tooltip>
 					: null
 				}

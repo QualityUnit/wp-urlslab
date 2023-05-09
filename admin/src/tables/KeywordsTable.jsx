@@ -1,16 +1,16 @@
 /* eslint-disable indent */
 import { useState } from 'react';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, SortMenu, Tag, LangMenu, InputField, Checkbox, LinkIcon, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, TagsMenu, SortBy, SingleSelectMenu, Tag, LangMenu, InputField, Checkbox, LinkIcon, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, Edit,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
-import TagsMenu from '../elements/TagsMenu';
+import IconButton from '../elements/IconButton';
 
 export default function KeywordsTable( { slug } ) {
 	const paginationId = 'kw_id';
-	const { table, setTable, rowToInsert, setInsertRow, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const url = { filters, sorting };
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
@@ -26,7 +26,7 @@ export default function KeywordsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const keywordTypes = {
 		M: __( 'Manual' ),
@@ -46,13 +46,13 @@ export default function KeywordsTable( { slug } ) {
 		urlFilter: __( 'URL filter' ),
 	};
 
-	const inserterCells = {
-		keyword: <InputField liveUpdate defaultValue="" label={ header.keyword } onChange={ ( val ) => setInsertRow( { ...rowToInsert, keyword: val } ) } required />,
-		urlLink: <InputField liveUpdate type="url" defaultValue="" label={ header.urlLink } onChange={ ( val ) => setInsertRow( { ...rowToInsert, urlLink: val } ) } required />,
-		kwType: <SortMenu autoClose items={ keywordTypes } name="kwType" checkedId="M" onChange={ ( val ) => setInsertRow( { ...rowToInsert, kwType: val } ) }>{ header.kwType }</SortMenu>,
-		kw_priority: <InputField liveUpdate type="number" defaultValue="0" min="0" max="255" label={ header.kw_priority } onChange={ ( val ) => setInsertRow( { ...rowToInsert, kw_priority: val } ) } />,
-		lang: <LangMenu autoClose checkedId="all" onChange={ ( val ) => setInsertRow( { ...rowToInsert, lang: val } ) }>{ __( 'Language' ) }</LangMenu>,
-		urlFilter: <InputField liveUpdate defaultValue="" label={ header.urlFilter } onChange={ ( val ) => setInsertRow( { ...rowToInsert, urlFilter: val } ) } />,
+	const rowEditorCells = {
+		keyword: <InputField liveUpdate defaultValue="" label={ header.keyword } onChange={ ( val ) => setEditorRow( { ...rowToEdit, keyword: val } ) } required disabledOnEdit />,
+		urlLink: <InputField liveUpdate type="url" defaultValue="" label={ header.urlLink } onChange={ ( val ) => setEditorRow( { ...rowToEdit, urlLink: val } ) } required disabledOnEdit />,
+		kwType: <SingleSelectMenu autoClose items={ keywordTypes } name="kwType" defaultValue="M" onChange={ ( val ) => setEditorRow( { ...rowToEdit, kwType: val } ) }>{ header.kwType }</SingleSelectMenu>,
+		kw_priority: <InputField liveUpdate type="number" defaultValue="0" min="0" max="255" label={ header.kw_priority } onChange={ ( val ) => setEditorRow( { ...rowToEdit, kw_priority: val } ) } />,
+		lang: <LangMenu autoClose defaultValue="all" onChange={ ( val ) => setEditorRow( { ...rowToEdit, lang: val } ) }>{ __( 'Language' ) }</LangMenu>,
+		urlFilter: <InputField liveUpdate defaultValue="" label={ header.urlFilter } onChange={ ( val ) => setEditorRow( { ...rowToEdit, urlFilter: val } ) } />,
 	};
 
 	const columns = [
@@ -80,15 +80,15 @@ export default function KeywordsTable( { slug } ) {
 		columnHelper.accessor( 'kwType', {
 			filterValMenu: keywordTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SortMenu items={ keywordTypes } name={ cell.column.id } checkedId={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu items={ keywordTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.kwType }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu tags={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.labels,
-			size: 180,
+			size: 160,
 		} ),
 		columnHelper.accessor( 'kw_length', {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.kw_length }</SortBy>,
@@ -103,11 +103,11 @@ export default function KeywordsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'lang', {
 			className: 'nolimit',
-			cell: ( cell ) => <LangMenu checkedId={ cell?.getValue() }
+			cell: ( cell ) => <LangMenu defaultValue={ cell?.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) }
 			/>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.lang }</SortBy>,
-			size: 165,
+			size: 145,
 		} ),
 		columnHelper.accessor( 'kw_usage_count', {
 			cell: ( cell ) => <div className="flex flex-align-center">
@@ -131,11 +131,31 @@ export default function KeywordsTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.urlFilter }</SortBy>,
 			size: 100,
 		} ),
-		columnHelper.accessor( 'delete', {
-			className: 'deleteRow',
-			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
+		columnHelper.accessor( 'editRow', {
+			className: 'editRow',
+			cell: ( cell ) => {
+				return (
+					<div className="flex">
+						<IconButton
+						onClick={ () => updateRow( { cell } ) }
+						tooltipClass="align-left xxxl"
+						tooltip={ __( 'Edit row' ) }
+					>
+							<Edit />
+						</IconButton>
+						<IconButton
+						className="ml-s"
+						onClick={ () => deleteRow( { cell } ) }
+						tooltipClass="align-left xxxl"
+						tooltip={ __( 'Delete row' ) }
+					>
+							<Trash />
+						</IconButton>
+					</div>
+				);
+			},
 			header: null,
+			size: 60,
 		} ),
 	];
 
@@ -152,17 +172,18 @@ export default function KeywordsTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onClearRow={ ( clear ) => {
-					setInsertRow();
-					if ( clear === 'rowInserted' ) {
-						setInsertRow( clear );
+				onUpdateRow={ ( val ) => {
+					setEditorRow();
+					if ( val === 'rowInserted' ) {
+						setEditorRow( val );
 						setTimeout( () => {
-							setInsertRow();
+							setEditorRow();
 						}, 3000 );
 					}
 				} }
 				detailsOptions={ detailsOptions }
-				insertOptions={ { inserterCells, title: 'Add keyword', data, slug, url, paginationId, rowToInsert } }
+				activatePanel={ activePanel }
+				rowEditorOptions={ { rowEditorCells, title: 'Add keyword', data, slug, url, paginationId, rowToEdit } }
 				exportOptions={ {
 					slug,
 					url,
@@ -179,7 +200,7 @@ export default function KeywordsTable( { slug } ) {
 					? <Tooltip center>{ `${ header.keyword } “${ row.keyword }”` } { __( 'has been deleted.' ) }</Tooltip>
 						: null
 				}
-				{ ( rowToInsert === 'rowInserted' )
+				{ ( rowToEdit === 'rowInserted' )
 					? <Tooltip center>{ __( 'Keyword has been added.' ) }</Tooltip>
 					: null
 				}

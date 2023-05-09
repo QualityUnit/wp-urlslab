@@ -9,7 +9,7 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	InputField, SortMenu,
+	InputField, SingleSelectMenu,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -17,7 +17,7 @@ import useChangeRow from '../hooks/useChangeRow';
 
 export default function SchedulesTable( { slug } ) {
 	const paginationId = 'schedule_id';
-	const { table, setTable, rowToInsert, setInsertRow, filters, sorting, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, filters, sorting, sortBy } = useTableUpdater( { slug } );
 
 	const url = { filters, sorting };
 
@@ -33,7 +33,7 @@ export default function SchedulesTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
+	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
 
 	const followLinksTypes = {
 		FOLLOW_ALL_LINKS: __( 'Follow all links' ),
@@ -71,15 +71,15 @@ export default function SchedulesTable( { slug } ) {
 		scan_frequency: __( 'Scan frequency' ),
 		scan_speed_per_minute: __( 'Scan speed (Pages/min)' ),
 	};
-	const inserterCells = {
-		urls: <InputField liveUpdate defaultValue="" label={ header.urls } onChange={ ( val ) => setInsertRow( { ...rowToInsert, urls: val } ) } required />,
-		analyze_text: <SortMenu autoClose items={ analyzeTextTypes } name="analyze_text" checkedId="1" onChange={ ( val ) => setInsertRow( { ...rowToInsert, analyze_text: val } ) }>{ header.analyze_text }</SortMenu>,
-		follow_links: <SortMenu autoClose items={ followLinksTypes } name="follow_links" checkedId={ ( 'FOLLOW_ALL_LINKS' ) } onChange={ ( val ) => setInsertRow( { ...rowToInsert, follow_links: val } ) }>{ header.follow_links }</SortMenu>,
-		process_all_sitemaps: <SortMenu autoClose items={ processSitemapsTypes } name="follow_links" checkedId="1" onChange={ ( val ) => setInsertRow( { ...rowToInsert, process_all_sitemaps: val } ) }>{ header.process_all_sitemaps }</SortMenu>,
-		custom_sitemaps: <InputField liveUpdate defaultValue="" label={ header.custom_sitemaps } onChange={ ( val ) => setInsertRow( { ...rowToInsert, custom_sitemaps: val } ) } />,
-		take_screenshot: <SortMenu autoClose items={ takeScreenshotsTypes } name="follow_links" checkedId="1" onChange={ ( val ) => setInsertRow( { ...rowToInsert, take_screenshot: val } ) }>{ header.take_screenshot }</SortMenu>,
-		scan_frequency: <SortMenu autoClose items={ scanFrequencyTypes } name="follow_links" checkedId={ 'ONE_TIME' } onChange={ ( val ) => setInsertRow( { ...rowToInsert, scan_frequency: val } ) }>{ header.scan_frequency }</SortMenu>,
-		scan_speed_per_minute: <InputField liveUpdate defaultValue="20" label={ header.scan_speed_per_minute } onChange={ ( val ) => setInsertRow( { ...rowToInsert, scan_speed_per_minute: val } ) } />,
+	const rowEditorCells = {
+		urls: <InputField liveUpdate defaultValue="" label={ header.urls } onChange={ ( val ) => setEditorRow( { ...rowToEdit, urls: val } ) } required />,
+		analyze_text: <SingleSelectMenu autoClose items={ analyzeTextTypes } name="analyze_text" defaultValue="1" onChange={ ( val ) => setEditorRow( { ...rowToEdit, analyze_text: val } ) }>{ header.analyze_text }</SingleSelectMenu>,
+		follow_links: <SingleSelectMenu autoClose items={ followLinksTypes } name="follow_links" defaultValue={ ( 'FOLLOW_ALL_LINKS' ) } onChange={ ( val ) => setEditorRow( { ...rowToEdit, follow_links: val } ) }>{ header.follow_links }</SingleSelectMenu>,
+		process_all_sitemaps: <SingleSelectMenu autoClose items={ processSitemapsTypes } name="follow_links" defaultValue="1" onChange={ ( val ) => setEditorRow( { ...rowToEdit, process_all_sitemaps: val } ) }>{ header.process_all_sitemaps }</SingleSelectMenu>,
+		custom_sitemaps: <InputField liveUpdate defaultValue="" label={ header.custom_sitemaps } onChange={ ( val ) => setEditorRow( { ...rowToEdit, custom_sitemaps: val } ) } />,
+		take_screenshot: <SingleSelectMenu autoClose items={ takeScreenshotsTypes } name="follow_links" defaultValue="1" onChange={ ( val ) => setEditorRow( { ...rowToEdit, take_screenshot: val } ) }>{ header.take_screenshot }</SingleSelectMenu>,
+		scan_frequency: <SingleSelectMenu autoClose items={ scanFrequencyTypes } name="follow_links" defaultValue={ 'ONE_TIME' } onChange={ ( val ) => setEditorRow( { ...rowToEdit, scan_frequency: val } ) }>{ header.scan_frequency }</SingleSelectMenu>,
+		scan_speed_per_minute: <InputField liveUpdate defaultValue="20" label={ header.scan_speed_per_minute } onChange={ ( val ) => setEditorRow( { ...rowToEdit, scan_speed_per_minute: val } ) } />,
 	};
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -134,8 +134,8 @@ export default function SchedulesTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.custom_sitemaps }</SortBy>,
 			size: 300,
 		} ),
-		columnHelper.accessor( 'delete', {
-			className: 'deleteRow',
+		columnHelper.accessor( 'editRow', {
+			className: 'editRow',
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
@@ -157,16 +157,16 @@ export default function SchedulesTable( { slug } ) {
 				noDelete
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
-				onClearRow={ ( clear ) => {
-					setInsertRow();
-					if ( clear === 'rowInserted' ) {
-						setInsertRow( clear );
+				onUpdateRow={ ( val ) => {
+					setEditorRow();
+					if ( val === 'rowInserted' ) {
+						setEditorRow( val );
 						setTimeout( () => {
-							setInsertRow();
+							setEditorRow();
 						}, 3000 );
 					}
 				} }
-				insertOptions={ { inserterCells, title: 'Add schedule', data, slug, url, paginationId, rowToInsert } }
+				rowEditorOptions={ { rowEditorCells, title: 'Add schedule', data, slug, url, paginationId, rowToEdit } }
 			/>
 			<Table className="noHeightLimit fadeInto"
 				slug={ slug }
@@ -178,7 +178,7 @@ export default function SchedulesTable( { slug } ) {
 					? <Tooltip center>{ `${ header.url_name } “${ row.url_name }”` } has been deleted.</Tooltip>
 					: null
 				}
-				{ ( rowToInsert === 'rowInserted' )
+				{ ( rowToEdit === 'rowInserted' )
 					? <Tooltip center>{ __( 'Keyword has been added.' ) }</Tooltip>
 					: null
 				}
