@@ -62,7 +62,13 @@ class Urlslab_File_Cache {
 
 				return false;
 			}
-			$content = unserialize( file_get_contents( $file ), array( 'allowed_classes' => $allowed_classes ) );
+			$file_content = file_get_contents( $file );
+			if ( false === $file_content ) {
+				$found = false;
+
+				return false;
+			}
+			$content = unserialize( $file_content, array( 'allowed_classes' => $allowed_classes ) );
 		}
 
 		if ( 0 !== $content['expiration'] && time() > $content['expiration'] ) {
