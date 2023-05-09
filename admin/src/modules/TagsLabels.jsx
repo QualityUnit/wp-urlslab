@@ -11,10 +11,10 @@ import ModuleViewHeaderBottom from '../components/ModuleViewHeaderBottom';
 import Table from '../components/TableComponent';
 import Checkbox from '../elements/Checkbox';
 import Tooltip from '../elements/Tooltip';
+import IconButton from '../elements/IconButton';
 
 import '../assets/styles/components/_ModuleViewHeader.scss';
 import hexToHSL from '../lib/hexToHSL';
-import IconButton from '../elements/IconButton';
 
 export default function TagsLabels( ) {
 	// const columnHelper = useMemo( () => createColumnHelper(), [] );

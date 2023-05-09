@@ -12,8 +12,9 @@ import hexToHSL from '../lib/hexToHSL';
 import Tag from './Tag';
 import '../assets/styles/elements/_TagsMenu.scss';
 import Tooltip from './Tooltip';
+import IconButton from './IconButton';
 
-export default function TagsMenu( { defaultValue: tags, slug, onChange } ) {
+export default function TagsMenu( { label, description, defaultValue: tags, slug, hasActivator, onChange } ) {
 	const { __ } = useI18n();
 	const tagsMenuWrap = useRef();
 	const tagsMenu = useRef();
@@ -116,9 +117,9 @@ export default function TagsMenu( { defaultValue: tags, slug, onChange } ) {
 	}
 
 	function CustomTag( { classNames, tag, ...tagProps } ) {
-		const { label_id, className, bgcolor, label } = tag;
-		return <Tag fullSize={ tagsMenuActive } shape={ ! tagsMenuActive && 'circle' } onDelete={ () => tagsMenuActive && onDelete( tag ) } key={ label_id } className={ `${ classNames.tag } ${ className }` } { ...tagProps } style={ { backgroundColor: bgcolor, cursor: tagsMenuActive ? 'default' : 'pointer' } }>
-			{ tagsMenuActive ? label : label.charAt( 0 ) }
+		const { label_id, className, bgcolor } = tag;
+		return <Tag fullSize={ hasActivator || tagsMenuActive } shape={ ! hasActivator && ! tagsMenuActive && 'circle' } onDelete={ () => tagsMenuActive && onDelete( tag ) } key={ label_id } className={ `${ classNames.tag } ${ className }` } { ...tagProps } style={ { backgroundColor: bgcolor, cursor: tagsMenuActive ? 'default' : 'pointer' } }>
+			{ hasActivator || tagsMenuActive ? tag.label : tag.label.charAt( 0 ) }
 		</Tag>;
 	}
 
@@ -144,21 +145,29 @@ export default function TagsMenu( { defaultValue: tags, slug, onChange } ) {
 	}
 
 	return (
-		<div onClick={ openTagsMenu } className={ `urlslab-tagsmenu ${ tagsMenuActive === true && 'active' }` } ref={ tagsMenuWrap }>
-			{ ! tagsMenuActive === true && <Tooltip className="showOnHover">{ __( 'Click to Add/remove tags' ) }</Tooltip> }
-			<ReactTags
-				ref={ tagsMenu }
-				activateFirstOption={ true }
-				selected={ selected }
-				allowNew
-				placeholderText="Search…"
-				suggestions={ availableTags }
-				onDelete={ onDelete }
-				onAdd={ onAdd }
-				renderInput={ CustomInput }
-				renderTag={ CustomTag }
-				renderOption={ CustomOption }
-			/>
+		<div className="urlslab-TagsMenu-wrapper pos-relative">
+			{ label && <div className="urlslab-TagsMenu-label">{ label }</div> }
+			<div onClick={ ! hasActivator && openTagsMenu } className={ `urlslab-TagsMenu ${ ! hasActivator ? 'noActivator' : '' } ${ tagsMenuActive ? 'active' : '' }` } ref={ tagsMenuWrap }>
+				{ ! hasActivator && ! tagsMenuActive === true && <Tooltip className="showOnHover">{ __( 'Click to Add/remove tags' ) }</Tooltip> }
+				<ReactTags
+					ref={ tagsMenu }
+					activateFirstOption={ true }
+					selected={ selected }
+					allowNew
+					placeholderText="Search…"
+					suggestions={ availableTags }
+					onDelete={ onDelete }
+					onAdd={ onAdd }
+					renderInput={ CustomInput }
+					renderTag={ CustomTag }
+					renderOption={ CustomOption }
+				/>
+				{
+					hasActivator &&
+					<IconButton onClick={ openTagsMenu } className="urlslab-TagsMenu-activator" tooltip="Add new tag">+</IconButton>
+				}
+			</div>
 		</div>
+
 	);
 }

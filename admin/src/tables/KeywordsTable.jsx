@@ -53,6 +53,7 @@ export default function KeywordsTable( { slug } ) {
 		kw_priority: <InputField liveUpdate type="number" defaultValue="0" min="0" max="255" label={ header.kw_priority } onChange={ ( val ) => setEditorRow( { ...rowToEdit, kw_priority: val } ) } />,
 		lang: <LangMenu autoClose defaultValue="all" onChange={ ( val ) => setEditorRow( { ...rowToEdit, lang: val } ) }>{ __( 'Language' ) }</LangMenu>,
 		urlFilter: <InputField liveUpdate defaultValue="" label={ header.urlFilter } onChange={ ( val ) => setEditorRow( { ...rowToEdit, urlFilter: val } ) } />,
+		labels: <TagsMenu hasActivator label={ __( 'All tags for this row:' ) } slug={ slug } onChange={ ( val ) => setEditorRow( { ...rowToEdit, labels: val } ) } />,
 	};
 
 	const columns = [

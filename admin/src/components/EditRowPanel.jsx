@@ -62,7 +62,7 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 	}
 
 	return (
-		<div className="urlslab-panel-wrap urlslab-panel-modal fadeInto">
+		<div className="urlslab-panel-wrap urlslab-panel-modal ultrawide fadeInto">
 			<div className="urlslab-panel">
 				<div className="urlslab-panel-header">
 					<h3>{ editorMode ? 'Edit row' : title }</h3>
@@ -71,23 +71,23 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 					</button>
 					<p>{ text }</p>
 				</div>
-				<div className="mt-l">
+				<div className="mt-l urlslab-panel-content">
 					{
 						cellsFinal && Object.entries( cellsFinal ).map( ( [ cellId, cell ] ) => {
-							return <div className="mb-l" key={ cellId }>
+							return <div className="mb-l urlslab-panel-content__item" key={ cellId }>
 								{ cell }
 							</div>;
 						} )
 					}
-					<div className="flex">
-						<Button className="ma-left simple" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
-						<Button active disabled={ ! enableAddButton.current } onClick={ handleEdit }>
-							{ editorMode
-								? __( 'Save changes' )
-								: title
-							}
-						</Button>
-					</div>
+				</div>
+				<div className="flex ">
+					<Button className="ma-left simple" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
+					<Button active disabled={ ! enableAddButton.current } onClick={ handleEdit }>
+						{ editorMode
+							? __( 'Save changes' )
+							: title
+						}
+					</Button>
 				</div>
 			</div>
 		</div>

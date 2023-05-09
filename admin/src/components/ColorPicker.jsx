@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { HexColorPicker } from 'react-colorful';
 
