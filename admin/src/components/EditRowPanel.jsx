@@ -49,10 +49,10 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 
 	function handleEdit() {
 		if ( editorMode ) {
-			saveEditedRow( { rowToEdit } );
+			saveEditedRow( { editedRow: rowToEdit } );
 			return false;
 		}
-		insertRow( { rowToEdit } );
+		insertRow( { editedRow: rowToEdit } );
 	}
 
 	if ( insertRowResult?.ok ) {

@@ -27,8 +27,8 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	};
 
 	const insertNewRow = useMutation( {
-		mutationFn: async ( ) => {
-			const response = await postFetch( `${ slug }/create`, rowToEdit );
+		mutationFn: async ( { editedRow } ) => {
+			const response = await postFetch( `${ slug }/create`, editedRow );
 			return { response };
 		},
 		onSuccess: async ( { response } ) => {
@@ -39,8 +39,8 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 			}
 		},
 	} );
-	const insertRow = ( ) => {
-		insertNewRow.mutate( { rowToEdit } );
+	const insertRow = ( { editedRow } ) => {
+		insertNewRow.mutate( { editedRow } );
 	};
 
 	const updateRowData = useMutation( {
@@ -117,7 +117,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 		updateRowData.mutate( { rowToEdit, newVal, cell, customEndpoint, changeField, optionalSelector } );
 	};
 
-	const saveEditedRow = ( { rowToEdit: editedRow } ) => {
+	const saveEditedRow = ( { editedRow } ) => {
 		updateRowData.mutate( { editedRow } );
 	};
 
