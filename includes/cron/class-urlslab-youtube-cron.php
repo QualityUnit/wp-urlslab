@@ -47,7 +47,7 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 		if ( ! strlen( $youtube_obj->get_microdata() ) ) {
 			try {
 				$microdata = $this->get_youtube_microdata( $youtube_obj );
-				if ( strelen( $microdata ) ) {
+				if ( strlen( $microdata ) ) {
 					$youtube_obj->set_microdata( $microdata );
 					$obj_microdata = json_decode( $microdata, true );
 					if ( ! is_array( $obj_microdata ) || ! isset( $obj_microdata['items'] ) || ! isset( $obj_microdata['items'][0] ) ) {

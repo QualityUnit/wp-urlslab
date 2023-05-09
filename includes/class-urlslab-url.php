@@ -9,6 +9,7 @@ class Urlslab_Url {
 	private static $domain_blacklists
 		= array(
 			'google.com',
+			'example.com',
 			'facebook.com',
 			'instagram.com',
 			'linkedin.com',
@@ -16,6 +17,31 @@ class Urlslab_Url {
 			'localhost',
 			'liveagent.local',
 			'wa.me',
+			'pinterest.com',
+			'tumblr.com',
+			'snapchat.com',
+			'reddit.com',
+			'vimeo.com',
+			'flickr.com',
+			'whatsapp.com',
+			'telegram.org',
+			'tiktok.com',
+			'weibo.com',
+			'line.me',
+			'vk.com',
+			'odnoklassniki.ru',
+			'baidu.com',
+			'yandex.com',
+			'ebay.com',
+			'alibaba.com',
+			'taobao.com',
+			'wordpress.com',
+			'waybackmachine.org',
+			'archive.org',
+			'yahoo.com',
+			'bing.com',
+			'duckduckgo.com',
+			'ask.com',
 		);
 	private const SKIP_QUERY_PARAMS_REGEXP = '/^(utm_[a-zA-Z0-9]*|_gl|_ga.*|gclid|fbclid|fb_[a-zA-Z0-9]*|msclkid|zenid|lons1|appns|lpcid|mm_src|muid|phpsessid|jsessionid|aspsessionid|doing_wp_cron|sid|pk_vid|source)$/';
 
@@ -110,9 +136,6 @@ class Urlslab_Url {
 				$this->is_same_domain_url = true;
 			} else {
 				$this->is_same_domain_url = false;
-				if ( $this->is_url_blacklisted() ) {
-					throw new Exception( 'domain not supported' );
-				}
 			}
 		}
 
