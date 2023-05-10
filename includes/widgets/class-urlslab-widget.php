@@ -405,7 +405,7 @@ abstract class Urlslab_Widget {
 				$language_name = get_bloginfo( 'language' );
 			}
 		} else {
-			$language_name = get_bloginfo("language");
+			$language_name = get_bloginfo( 'language' );
 		}
 
 		return $language_name;
