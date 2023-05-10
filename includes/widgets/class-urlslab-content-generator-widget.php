@@ -237,10 +237,11 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		return array();
 	}
 
-	private function get_att_values( Urlslab_Generator_Shortcode_Row $obj, $atts = array(), $content = null, $tag = '' ): array {
+	public function get_att_values( Urlslab_Generator_Shortcode_Row $obj, $atts = array(), $required_variables = array() ): array {
 		$atts = array_change_key_case( (array) $atts );
 
 		$required_variables = array_merge(
+			$required_variables,
 			$this->get_template_variables( $obj->get_prompt() ),
 			$this->get_template_variables( $obj->get_semantic_context() ),
 			$this->get_template_variables( $obj->get_default_value() ),
@@ -345,6 +346,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 
 	public function get_template_value( string $template, array $attributes ): string {
 		$variables = $this->get_template_variables( $template );
+
 		foreach ( $variables as $variable ) {
 			$var = explode( '.', $variable );
 			if ( isset( $attributes[ $var[0] ] ) ) {

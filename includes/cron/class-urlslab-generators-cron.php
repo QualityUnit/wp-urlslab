@@ -35,8 +35,6 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 
 		global $wpdb;
 
-		//TODO - load just generators with short code enabled and exiwsting (INNER JOIN shortcodes and results)
-
 		$query_data   = array();
 		$query_data[] = Urlslab_Generator_Shortcode_Row::STATUS_ACTIVE;
 		$query_data[] = Urlslab_Generator_Result_Row::STATUS_NEW;
@@ -63,17 +61,13 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 		}
 
 		$row_obj = new Urlslab_Generator_Result_Row( $url_row );
+		$row_obj->set_result( '' );
 		$row_obj->set_status( Urlslab_Generator_Result_Row::STATUS_PENDING );
 		$row_obj->update();
 
 		$row_shortcode = new Urlslab_Generator_Shortcode_Row( $url_row );
 
 		$attributes = (array) json_decode( $row_obj->get_prompt_variables() );
-		$command    = $widget->get_template_value(
-			'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Generator_Result_Row::DO_NOT_KNOW . "!\n" . $row_shortcode->get_prompt() .
-			"\n\n--VIDEO CAPTIONS:\n{{video_captions}}\n--VIDEO CAPTIONS END\nANSWER:",
-			$attributes
-		);
 
 		try {
 			$request = new DomainDataRetrievalAugmentRequest();
@@ -86,11 +80,29 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 			$prompt = new DomainDataRetrievalAugmentPrompt();
 
 			if ( Urlslab_Generator_Shortcode_Row::TYPE_VIDEO === $row_shortcode->get_shortcode_type() ) {
+				$attributes = $widget->get_att_values( $row_shortcode, $attributes, array( 'video_captions' ) );
+				if ( ! isset( $attributes['video_captions'] ) ) {
+					$row_obj->set_result( 'Video captions not available' );
+					$row_obj->set_status( Urlslab_Generator_Result_Row::STATUS_DISABLED );
+					$row_obj->update();
+					return true;
+				}
+				$command    = $widget->get_template_value(
+					'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Generator_Result_Row::DO_NOT_KNOW . "!\n" . $row_shortcode->get_prompt() .
+					"\n\n--VIDEO CAPTIONS:\n{{video_captions}}\n--VIDEO CAPTIONS END\nANSWER:",
+					$attributes
+				);
 				$prompt->setPromptTemplate( $command );
 				$prompt->setMetadataVars( array() );
 				$request->setPrompt( $prompt );
 				$response = $this->content_client->memoryLessAugment( $request, 'false', 'true', 'true', 'false' );
 			} else {
+				$attributes = $widget->get_att_values( $row_shortcode, $attributes );
+				$command    = $widget->get_template_value(
+					'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Generator_Result_Row::DO_NOT_KNOW . "!\n" . $row_shortcode->get_prompt() .
+					'ANSWER:',
+					$attributes
+				);
 				$prompt->setPromptTemplate( "Additional information to your memory:\n--\n{context}\n----\n" . $command );
 				$prompt->setDocumentTemplate( "--\n{text}\n--" );
 				$prompt->setMetadataVars( array( 'text' ) );
@@ -120,13 +132,12 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 				$row_obj->set_status( Urlslab_Generator_Result_Row::STATUS_WAITING_APPROVAL );
 			}
 
-			if ( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_AUTOAPPROVE ) ) {
-				$row_obj->set_status( Urlslab_Generator_Result_Row::STATUS_ACTIVE );
-			} else {
-				$row_obj->set_status( Urlslab_Generator_Result_Row::STATUS_WAITING_APPROVAL );
+			$row_obj->set_result( $response->getResponse() );
+
+			if ( false !== strpos( $row_obj->get_result(), Urlslab_Generator_Result_Row::DO_NOT_KNOW ) ) {
+				$row_obj->set_status( Urlslab_Generator_Result_Row::STATUS_DISABLED );
 			}
 
-			$row_obj->set_result( $response->getResponse() );
 			$row_obj->update();
 		} catch ( ApiException $e ) {
 			switch ( $e->getCode() ) {
