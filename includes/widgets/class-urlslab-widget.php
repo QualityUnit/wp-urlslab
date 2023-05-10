@@ -384,15 +384,11 @@ abstract class Urlslab_Widget {
 	protected function get_current_language_code() {
 		global $sitepress, $polylang;
 
-		if ( ! empty( $sitepress ) && is_object( $sitepress )
-			 && method_exists( $sitepress, 'get_active_languages' )
-		) {
+		if ( ! empty( $sitepress ) && is_object( $sitepress ) && method_exists( $sitepress, 'get_active_languages' ) ) {
 			return apply_filters( 'wpml_current_language', null );
 		}
 
-		if ( ! empty( $polylang ) && function_exists( 'pll_current_language' )
-			 && strlen( pll_current_language() )
-		) {
+		if ( ! empty( $polylang ) && function_exists( 'pll_current_language' ) && strlen( pll_current_language() ) ) {
 			return pll_current_language();
 		}
 
@@ -406,7 +402,7 @@ abstract class Urlslab_Widget {
 			if ( isset( $languages[ $lang_code ]['translated_name'] ) ) {
 				$language_name = $languages[ $lang_code ]['translated_name'];
 			} else {
-				$language_name = get_bloginfo("language");
+				$language_name = get_bloginfo( 'language' );
 			}
 		} else {
 			$language_name = get_bloginfo("language");
