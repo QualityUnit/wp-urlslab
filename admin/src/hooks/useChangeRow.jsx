@@ -116,12 +116,12 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 		},
 		onSuccess: ( { response, editedRow } ) => {
 			const { ok } = response;
-			if ( Object.keys( editedRow ).length ) {
-				setEditorRowRes( response );
-				setActivePanel();
-			}
 			if ( ok ) {
 				queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
+				if ( editedRow ) {
+					setEditorRowRes( response );
+					setActivePanel();
+				}
 			}
 		},
 	} );

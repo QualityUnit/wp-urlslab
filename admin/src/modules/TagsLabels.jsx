@@ -137,7 +137,7 @@ export default function TagsLabels( ) {
 					}
 				} }
 				activatePanel={ activePanel }
-				rowEditorOptions={ { rowEditorCells, title: 'Add new tag', data, slug, url, paginationId, rowToEdit } }
+				rowEditorOptions={ { rowEditorCells, notWide: true, title: 'Create new tag', data, slug, url, paginationId, rowToEdit } }
 			/>
 			<Table className="fadeInto"
 				slug={ slug }
