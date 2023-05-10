@@ -103,6 +103,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 			)
 		);
 
+		register_rest_route( self::NAMESPACE, $base . '/validate_s3', $this->get_route_validate_s3() );
 		register_rest_route( self::NAMESPACE, $base . '/(?P<fileid>[0-9a-zA-Z]+)/urls', $this->get_route_file_urls() );
 		register_rest_route( self::NAMESPACE, $base . '/(?P<fileid>[0-9a-zA-Z]+)/urls/count', $this->get_count_route( $this->get_route_file_urls() ) );
 	}
@@ -201,6 +202,14 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		$this->on_items_updated();
 
 		return new WP_REST_Response( __( 'Deleted' ), 200 );
+	}
+
+	public function validate_s3( WP_REST_Request $request ) {
+		if  ( Urlslab_Driver::get_driver(Urlslab_Driver::DRIVER_S3)->is_connected() ) {
+			return new WP_REST_Response( __( 'S3 connected' ), 200 );
+		} else {
+			return new WP_REST_Response( __( 'S3 not connected' ), 500 );
+		}
 	}
 
 	public function get_row_object( $params = array() ): Urlslab_Data {
@@ -302,5 +311,22 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		$sql->add_sorting( $columns, $request );
 
 		return $sql;
+	}
+
+	public function validate_s3_permissions_check( $request ) {
+		return current_user_can( 'administrator' ) || current_user_can( 'manage_options' );
+	}
+
+	private function get_route_validate_s3() {
+		return array(
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'validate_s3' ),
+				'permission_callback' => array(
+					$this,
+					'validate_s3_permissions_check',
+				),
+			),
+		);
 	}
 }
