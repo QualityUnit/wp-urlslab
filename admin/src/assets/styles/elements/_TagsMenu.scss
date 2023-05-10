@@ -35,13 +35,17 @@
 		margin-left: 0.5em;
 		background-color: $grey-dark !important;
 
+		.active & {
+			display: none;
+		}
+
 		&::after {
 
 			@include triangle(0.8125em, $grey-dark, "right");
 			position: absolute;
-			left: 81.5%;
+			left: 85.5%;
 			top: -1px;
-			transform: scaleX(0.75);
+			transform: scaleX(0.7);
 			content: "";
 		}
 	}
@@ -54,6 +58,14 @@
 			display: flex;
 			flex-wrap: wrap;
 			margin: 0;
+
+			&-item {
+				margin-bottom: 0;
+
+				+ li {
+					margin-left: 0.25em;
+				}
+			}
 		}
 
 		&__combobox {
@@ -151,10 +163,6 @@
 
 				&-item {
 					margin-bottom: 0.25em;
-
-					+li {
-						margin-left: 0.25em;
-					}
 				}
 			}
 		}

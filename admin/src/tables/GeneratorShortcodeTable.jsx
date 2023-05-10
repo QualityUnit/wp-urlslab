@@ -215,7 +215,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onUpdateRow={ ( val ) => {
 					setEditorRow();
-					if ( val === 'rowInserted' ) {
+					if ( val === 'rowInserted' || val === 'rowChanged' ) {
 						setEditorRow( val );
 						setTimeout( () => {
 							setEditorRow();
@@ -241,6 +241,10 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			>
 				{ row
 					? <Tooltip center>{ __( 'Item has been deleted.' ) }</Tooltip>
+					: null
+				}
+				{ ( rowToEdit === 'rowChanged' )
+					? <Tooltip center>{ __( 'Shortcode has been changed.' ) }</Tooltip>
 					: null
 				}
 				{ ( rowToEdit === 'rowInserted' )

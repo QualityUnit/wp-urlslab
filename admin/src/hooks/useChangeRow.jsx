@@ -114,8 +114,8 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 		},
 		onSuccess: ( { response, editedRow } ) => {
 			const { ok } = response;
+			queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
 			if ( ok ) {
-				queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
 				if ( editedRow ) {
 					setEditorRowRes( response );
 					setActivePanel();

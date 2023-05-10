@@ -25,7 +25,7 @@ export default function DangerPanel( { title, text, button, handlePanel, action 
 				</div>
 				<p>{ text }</p>
 				<div className="flex">
-					<Button className="ma-left simple" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
+					<Button className="ma-left" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
 					<Button className="ml-s danger" onClick={ () => hidePanel( action ) }>{ button }</Button>
 				</div>
 			</div>

@@ -139,7 +139,7 @@ export default function DetailsPanel( { options, handlePanel } ) {
 						</div>
 					</div>
 					<div className="flex">
-						<Button className="ma-left simple" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
+						<Button className="ma-left" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
 					</div>
 				</div>
 			</div>

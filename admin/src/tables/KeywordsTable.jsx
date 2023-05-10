@@ -171,7 +171,8 @@ export default function KeywordsTable( { slug } ) {
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onUpdateRow={ ( val ) => {
 					setEditorRow();
-					if ( val === 'rowInserted' ) {
+					console.log( val );
+					if ( val === 'rowInserted' || val === 'rowChanged' ) {
 						setEditorRow( val );
 						setTimeout( () => {
 							setEditorRow();
@@ -196,6 +197,10 @@ export default function KeywordsTable( { slug } ) {
 				{ row
 					? <Tooltip center>{ `${ header.keyword } “${ row.keyword }”` } { __( 'has been deleted.' ) }</Tooltip>
 						: null
+				}
+				{ ( rowToEdit === 'rowChanged' )
+					? <Tooltip center>{ __( 'Keyword has been changed.' ) }</Tooltip>
+					: null
 				}
 				{ ( rowToEdit === 'rowInserted' )
 					? <Tooltip center>{ __( 'Keyword has been added.' ) }</Tooltip>

@@ -58,7 +58,7 @@ export default function ExportPanel( { options, filters, header, handlePanel } )
 						: null
 					}
 					<div className="flex">
-						<Button className="ma-left simple" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
+						<Button className="ma-left" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
 						{ activefilters?.length > 0 &&
 						<ExportCSVButton className="ml-s" options={ options } withfilters onClick={ handleExportStatus } />
 						}

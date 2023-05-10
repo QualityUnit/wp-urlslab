@@ -176,7 +176,7 @@ export default function ImportPanel( { props, handlePanel } ) {
 									{ acceptedFile &&
 									<button className="removeFile flex flex-align-center" { ...getRemoveFileProps() }>{ acceptedFile.name } <CloseIcon /></button>
 									}
-									<Button className="ml-s simple" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
+									<Button className="mr-s" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
 
 									<Button { ...getRootProps() } active>
 										<ImportIcon />

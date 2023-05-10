@@ -38,10 +38,9 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 
 	function hidePanel( response ) {
 		handleClose();
-		setEditMode( );
 		enableAddButton.current = false;
 		if ( handlePanel && ! response ) {
-			handlePanel( 'clearRow' );
+			handlePanel( 'updateRow' );
 		}
 		if ( handlePanel && response ) {
 			handlePanel( response );
@@ -50,6 +49,9 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 
 	function handleEdit() {
 		if ( editMode ) {
+			setTimeout( () => {
+				hidePanel( 'rowChanged' );
+			}, 100 );
 			saveEditedRow( { editedRow: rowToEdit } );
 			return false;
 		}
@@ -58,7 +60,9 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 
 	if ( insertRowResult?.ok ) {
 		setTimeout( () => {
-			hidePanel( 'rowInserted' );
+			if ( ! editMode ) {
+				hidePanel( 'rowInserted' );
+			}
 		}, 100 );
 	}
 
@@ -82,7 +86,7 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 					}
 				</div>
 				<div className="flex ">
-					<Button className="ma-left simple" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
+					<Button className="ma-left mr-s" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
 					<Button active disabled={ ! enableAddButton.current } onClick={ handleEdit }>
 						{ editMode
 							? __( 'Save changes' )
