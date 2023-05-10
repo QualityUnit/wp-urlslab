@@ -6,7 +6,6 @@ import useTableUpdater from '../hooks/useTableUpdater';
 export default function ContentCacheTable( { slug } ) {
 	const paginationId = 'cache_crc32';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-	const url = { filters, sorting };
 
 	const {
 		__,

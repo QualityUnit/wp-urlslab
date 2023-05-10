@@ -145,7 +145,7 @@ export default function NotFoundTable( { slug } ) {
 				onUpdateRow={ ( val ) => {
 					setActivePanel();
 					setEditorRow();
-					if ( val === 'rowInserted' ) {
+					if ( val === 'rowInserted' || val === 'rowChanged' ) {
 						setEditorRow( val );
 						setTimeout( () => {
 							setEditorRow( );

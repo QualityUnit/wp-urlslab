@@ -118,7 +118,7 @@ export default function TagsMenu( { label, description, defaultValue: tags, slug
 
 	function CustomTag( { classNames, tag, ...tagProps } ) {
 		const { label_id, className, bgcolor } = tag;
-		return <Tag fullSize={ hasActivator || tagsMenuActive } shape={ ! hasActivator && ! tagsMenuActive && 'circle' } onDelete={ () => tagsMenuActive && onDelete( tag ) } key={ label_id } className={ `${ classNames.tag } ${ className }` } { ...tagProps } style={ { backgroundColor: bgcolor, cursor: tagsMenuActive ? 'default' : 'pointer' } }>
+		return <Tag fullSize={ hasActivator || tagsMenuActive } shape={ ! hasActivator && ! tagsMenuActive && 'circle' } onDelete={ tagsMenuActive ? () => onDelete( tag ) : false } key={ label_id } className={ `${ classNames.tag } ${ className }` } { ...tagProps } style={ { backgroundColor: bgcolor, cursor: tagsMenuActive ? 'default' : 'pointer' } }>
 			{ hasActivator || tagsMenuActive ? tag.label : tag.label.charAt( 0 ) }
 		</Tag>;
 	}
@@ -164,7 +164,13 @@ export default function TagsMenu( { label, description, defaultValue: tags, slug
 				/>
 				{
 					hasActivator &&
-					<IconButton onClick={ openTagsMenu } className="urlslab-TagsMenu-activator" tooltip="Add new tag">+</IconButton>
+					<IconButton onClick={ openTagsMenu }
+						className="urlslab-TagsMenu-activator"
+						tooltip="Add new tag"
+						tooltipStyle={ { width: '10em' } }
+					>
+						+
+					</IconButton>
 				}
 			</div>
 

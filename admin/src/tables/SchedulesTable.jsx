@@ -159,7 +159,7 @@ export default function SchedulesTable( { slug } ) {
 				onDeleteSelected={ deleteSelectedRows }
 				onUpdateRow={ ( val ) => {
 					setEditorRow();
-					if ( val === 'rowInserted' ) {
+					if ( val === 'rowInserted' || val === 'rowChanged' ) {
 						setEditorRow( val );
 						setTimeout( () => {
 							setEditorRow();
@@ -178,8 +178,12 @@ export default function SchedulesTable( { slug } ) {
 					? <Tooltip center>{ `${ header.url_name } “${ row.url_name }”` } has been deleted.</Tooltip>
 					: null
 				}
+				{ ( rowToEdit === 'rowChanged' )
+					? <Tooltip center>{ __( 'Schedule has been changed.' ) }</Tooltip>
+					: null
+				}
 				{ ( rowToEdit === 'rowInserted' )
-					? <Tooltip center>{ __( 'Keyword has been added.' ) }</Tooltip>
+					? <Tooltip center>{ __( 'Schedule has been added.' ) }</Tooltip>
 					: null
 				}
 				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />

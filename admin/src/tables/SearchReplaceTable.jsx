@@ -129,7 +129,7 @@ export default function SearchReplaceTable( { slug } ) {
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onUpdateRow={ ( val ) => {
 					setEditorRow();
-					if ( val === 'rowInserted' ) {
+					if ( val === 'rowInserted' || val === 'rowChanged' ) {
 						setEditorRow( val );
 						setTimeout( () => {
 							setEditorRow();
@@ -152,6 +152,10 @@ export default function SearchReplaceTable( { slug } ) {
 			>
 				{ row
 					? <Tooltip center>{ `${ header.str_search } “${ row.str_search }”` } { __( 'has been deleted.' ) }</Tooltip>
+					: null
+				}
+				{ ( rowToEdit === 'rowChanged' )
+					? <Tooltip center>{ __( 'Search & Replace rule has been changed.' ) }</Tooltip>
 					: null
 				}
 				{ ( rowToEdit === 'rowInserted' )

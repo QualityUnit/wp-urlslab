@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import useChangeRow from '../hooks/useChangeRow';
@@ -16,19 +16,19 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 	const requiredFields = rowEditorCells && Object.keys( rowEditorCells ).filter( ( cell ) => rowEditorCells[ cell ].props.required === true );
 
 	let cellsFinal = { ...rowEditorCells };
+	const [ editMode, setEditMode ] = useState( rowToEdit && editorMode );
 
 	// Checking if all required fields are filled in rowToEdit object
-	if ( rowToEdit && ! rowToEdit[ paginationId ] ) {
+	if ( rowToEdit ) {
 		enableAddButton.current = requiredFields?.every( ( key ) => Object.keys( rowToEdit ).includes( key ) );
 	}
 	if ( ! rowToEdit ) {
 		enableAddButton.current = false;
 	}
 
-	if ( editorMode ) {
+	if ( editMode ) {
 		enableAddButton.current = true;
 		Object.entries( cellsFinal ).map( ( [ cellId, cell ] ) => {
-			// console.log( { defaultValue: rowToEdit[ cellId ] } );
 			const cellProps = cell.props;
 
 			cellsFinal = { ...cellsFinal, [ cellId ]: ( { ...cell, props: { ...cellProps, defaultValue: rowToEdit[ cellId ], disabled: cellProps.disabledOnEdit } } ) };
@@ -40,7 +40,7 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 		handleClose();
 		enableAddButton.current = false;
 		if ( handlePanel && ! response ) {
-			handlePanel( 'clearRow' );
+			handlePanel( 'updateRow' );
 		}
 		if ( handlePanel && response ) {
 			handlePanel( response );
@@ -48,7 +48,10 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 	}
 
 	function handleEdit() {
-		if ( editorMode ) {
+		if ( editMode ) {
+			setTimeout( () => {
+				hidePanel( 'rowChanged' );
+			}, 100 );
 			saveEditedRow( { editedRow: rowToEdit } );
 			return false;
 		}
@@ -57,7 +60,9 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 
 	if ( insertRowResult?.ok ) {
 		setTimeout( () => {
-			hidePanel( 'rowInserted' );
+			if ( ! editMode ) {
+				hidePanel( 'rowInserted' );
+			}
 		}, 100 );
 	}
 
@@ -65,7 +70,7 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 		<div className={ `urlslab-panel-wrap urlslab-panel-modal ${ ! notWide ? 'ultrawide' : '' } fadeInto` }>
 			<div className="urlslab-panel">
 				<div className="urlslab-panel-header">
-					<h3>{ editorMode ? 'Edit row' : title }</h3>
+					<h3>{ editMode ? 'Edit row' : title }</h3>
 					<button className="urlslab-panel-close" onClick={ hidePanel }>
 						<CloseIcon />
 					</button>
@@ -74,16 +79,16 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 				<div className="mt-l urlslab-panel-content">
 					{
 						cellsFinal && Object.entries( cellsFinal ).map( ( [ cellId, cell ] ) => {
-							return <div className="mb-l urlslab-panel-content__item" key={ cellId }>
+							return <div className={ `mb-l urlslab-panel-content__item ${ cell.props.hidden ? 'hidden' : '' }` } key={ cellId }>
 								{ cell }
 							</div>;
 						} )
 					}
 				</div>
 				<div className="flex ">
-					<Button className="ma-left simple" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
+					<Button className="ma-left mr-s" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
 					<Button active disabled={ ! enableAddButton.current } onClick={ handleEdit }>
-						{ editorMode
+						{ editMode
 							? __( 'Save changes' )
 							: title
 						}

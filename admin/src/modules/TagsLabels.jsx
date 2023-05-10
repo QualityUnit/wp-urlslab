@@ -129,7 +129,7 @@ export default function TagsLabels( ) {
 				noCount
 				onUpdateRows={ ( val ) => {
 					setEditorRow();
-					if ( val === 'rowInserted' ) {
+					if ( val === 'rowInserted' || val === 'rowChanged' ) {
 						setEditorRow( val );
 						setTimeout( () => {
 							setEditorRow();
@@ -147,6 +147,10 @@ export default function TagsLabels( ) {
 			>
 				{ row
 					? <Tooltip center>{ `Tag “${ row.name }”` } { __( 'has been deleted.' ) }</Tooltip>
+					: null
+				}
+				{ ( rowToEdit === 'rowChanged' )
+					? <Tooltip center>{ __( 'Tag has been changed.' ) }</Tooltip>
 					: null
 				}
 				{ ( rowToEdit === 'rowInserted' )

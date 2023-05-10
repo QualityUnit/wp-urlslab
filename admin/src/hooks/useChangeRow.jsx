@@ -96,28 +96,26 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 				} ) );
 			}
 
-			// if ( ! paginateArray && data ) {
-			// 	newPagesArray = data?.map( ( row ) => {
-			// 		if ( row[ paginationId ] === editedRow[ paginationId ] ) {
-			// 			return editedRow;
-			// 		}
-			// 		return row;
-			// 	} ) ?? [];
-			// 	console.log( newPagesArray );
-			// 	queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => {
-			// 		console.log( origData );
-			// 		return origData;
-			// 	}
-			// 	);
-			// }
+			if ( ! paginateArray && data ) {
+				newPagesArray = data?.map( ( row ) => {
+					if ( row[ paginationId ] === editedRow[ paginationId ] ) {
+						return editedRow;
+					}
+					return row;
+				} ) ?? [];
+				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => {
+					return origData;
+				}
+				);
+			}
 
 			const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow );
 			return { response, editedRow };
 		},
 		onSuccess: ( { response, editedRow } ) => {
 			const { ok } = response;
+			queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
 			if ( ok ) {
-				queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
 				if ( editedRow ) {
 					setEditorRowRes( response );
 					setActivePanel();
