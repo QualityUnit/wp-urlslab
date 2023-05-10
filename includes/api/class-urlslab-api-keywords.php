@@ -504,7 +504,10 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		return array( 'kwType', 'kw_priority', 'lang', 'urlFilter', 'labels' );
 	}
 
+
 	public function get_kw_mapping( WP_REST_Request $request ) {
+		$this->add_request_filter( $request, array( 'kw_id', 'dest_url_id' ) );
+
 		$rows = $this->get_kw_mapping_sql( $request )->get_results();
 
 		if ( ! is_array( $rows ) ) {

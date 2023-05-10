@@ -441,6 +441,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	}
 
 	public function get_url_usage( WP_REST_Request $request ) {
+		$this->add_request_filter( $request, array( 'dest_url_id', 'src_url_id' ) );
 		$rows = $this->get_url_usage_sql( $request )->get_results();
 		if ( ! is_array( $rows ) ) {
 			return new WP_Error(
@@ -509,6 +510,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	}
 
 	public function get_screenshot_usage( WP_REST_Request $request ) {
+		$this->add_request_filter( $request, array( 'screenshot_url_id' ) );
+
 		$rows = $this->get_screenshot_usage_sql( $request )->get_results();
 		if ( ! is_array( $rows ) ) {
 			return new WP_Error(

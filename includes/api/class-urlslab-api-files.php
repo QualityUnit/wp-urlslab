@@ -136,6 +136,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 	}
 
 	public function get_file_urls( WP_REST_Request $request ) {
+		$this->add_request_filter( $request, array( 'fileid' ) );
 		$rows = $this->get_file_urls_sql( $request )->get_results();
 		if ( ! is_array( $rows ) ) {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
