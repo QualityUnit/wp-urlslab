@@ -143,7 +143,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		}
 
 
-		$atts = $this->get_att_values( $obj, $atts, $content, $tag );
+		$atts = $this->get_att_values( $obj, $atts );
 
 		if ( $this->is_edit_mode() ) {
 			return $this->get_placeholder_html( $atts );

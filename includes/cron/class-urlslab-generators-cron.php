@@ -81,7 +81,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 
 			if ( Urlslab_Generator_Shortcode_Row::TYPE_VIDEO === $row_shortcode->get_shortcode_type() ) {
 				$attributes = $widget->get_att_values( $row_shortcode, $attributes, array( 'video_captions' ) );
-				if ( ! isset( $attributes['video_captions'] ) ) {
+				if ( ! isset( $attributes['video_captions'] ) || empty( $attributes['video_captions'] ) ) {
 					$row_obj->set_result( 'Video captions not available' );
 					$row_obj->set_status( Urlslab_Generator_Result_Row::STATUS_DISABLED );
 					$row_obj->update();
