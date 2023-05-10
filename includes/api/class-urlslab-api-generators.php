@@ -296,7 +296,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	}
 
 	public function get_generator_urls( WP_REST_Request $request ) {
-		$this->add_request_filter($request, array('shortcode_id', 'hash_id'));
+		$this->add_request_filter( $request, array( 'shortcode_id', 'hash_id' ) );
 
 		$rows = $this->get_generator_urls_sql( $request )->get_results();
 		if ( ! is_array( $rows ) ) {
