@@ -400,18 +400,16 @@ abstract class Urlslab_Widget {
 	}
 
 	protected function get_current_language_name() {
-		$lang_code = $this->get_current_language_code();
-
 		if ( function_exists( 'wpml_get_active_languages_filter' ) ) {
 			$languages = wpml_get_active_languages_filter( '', array( 'skip_missing' => 0 ) );
-
+			$lang_code = $this->get_current_language_code();
 			if ( isset( $languages[ $lang_code ]['translated_name'] ) ) {
 				$language_name = $languages[ $lang_code ]['translated_name'];
 			} else {
-				$language_name = $lang_code;
+				$language_name = get_bloginfo("language");
 			}
 		} else {
-			$language_name = $lang_code;
+			$language_name = get_bloginfo("language");
 		}
 
 		return $language_name;
