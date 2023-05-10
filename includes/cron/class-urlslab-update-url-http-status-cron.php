@@ -149,14 +149,17 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 							$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
 							$document->encoding            = 'utf-8';
 							$document->strictErrorChecking = false; // phpcs:ignore
-							$document->loadHTML( mb_convert_encoding( $this->get_html_from_tag( 'head', $page_content_file_name ), 'HTML-ENTITIES', 'utf-8' ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE | LIBXML_NOWARNING );
-							$xpath            = new DOMXPath( $document );
-							$metadescriptions = $xpath->evaluate( '//meta[@name="description"]/@content' );
-							if ( $metadescriptions->length > 0 ) {
-								$url->set_url_meta_description( $xpath->evaluate( '//meta[@name="description"]/@content' )->item( 0 )->value );
-							}
-							if ( empty( $url->get_url_meta_description() ) ) {
-								$url->set_url_meta_description( Urlslab_Url_Row::VALUE_EMPTY );
+							$html_text = $this->get_html_from_tag( 'head', $page_content_file_name );
+							if ( strlen( $html_text ) ) {
+								$document->loadHTML( mb_convert_encoding( $html_text, 'HTML-ENTITIES', 'utf-8' ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE | LIBXML_NOWARNING );
+								$xpath = new DOMXPath( $document );
+								$metadescriptions = $xpath->evaluate( '//meta[@name="description"]/@content' );
+								if ( $metadescriptions->length > 0 ) {
+									$url->set_url_meta_description( $xpath->evaluate( '//meta[@name="description"]/@content' )->item( 0 )->value );
+								}
+								if ( empty( $url->get_url_meta_description() ) ) {
+									$url->set_url_meta_description( Urlslab_Url_Row::VALUE_EMPTY );
+								}
 							}
 						} catch ( Exception $e ) {
 						}

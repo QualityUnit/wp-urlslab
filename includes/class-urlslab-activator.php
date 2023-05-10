@@ -173,7 +173,7 @@ class Urlslab_Activator {
 			'2.18.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_YOUTUBE_CACHE_TABLE . " ADD COLUMN captions TEXT" ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_YOUTUBE_CACHE_TABLE . " ADD COLUMN captions longtext" ); // phpcs:ignore
 			}
 		);
 
@@ -197,7 +197,17 @@ class Urlslab_Activator {
 			}
 		);
 
-
+		self::update_step(
+			'2.21.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_YOUTUBE_CACHE_TABLE . " MODIFY captions LONGTEXT" ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_YOUTUBE_CACHE_TABLE . " MODIFY microdata LONGTEXT" ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_CSS_CACHE_TABLE . " MODIFY css_content LONGTEXT" ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " MODIFY template LONGTEXT" ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_ERROR_LOG_TABLE . " MODIFY errorLog LONGTEXT" ); // phpcs:ignore
+			}
+		);
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -322,7 +332,7 @@ class Urlslab_Activator {
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
 							id int UNSIGNED NOT NULL AUTO_INCREMENT,
-							errorLog text NOT NULL,
+							errorLog longtext NOT NULL,
 							PRIMARY KEY  (id)) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -411,8 +421,8 @@ class Urlslab_Activator {
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
 								videoid varchar(32) NOT NULL,
-								microdata text,
-								captions text,
+								microdata longtext,
+								captions longtext,
 								status_changed datetime NULL,
 								status char(1) NOT NULL, -- P: processing, A: Available, N: New, D - disabled
 								PRIMARY KEY  (videoid)
@@ -462,7 +472,7 @@ class Urlslab_Activator {
 		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
 						url_id bigint,
 						url text,
-						css_content mediumtext,
+						css_content longtext,
 						status char(1) DEFAULT 'N',
 						status_changed datetime NULL,
 						filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
@@ -537,7 +547,7 @@ class Urlslab_Activator {
 						prompt TEXT,
 						default_value TEXT,
 						url_filter TEXT,
-						template TEXT,
+						template longtext,
 						status CHAR(1) NOT NULL DEFAULT 'N',
 						shortcode_type CHAR(1) NOT NULL DEFAULT 'S',
 						model VARCHAR(100),
