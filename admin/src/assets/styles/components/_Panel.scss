@@ -98,7 +98,7 @@
 		align-items: center;
 		justify-content: center;
 		border-radius: 50%;
-		background-color: $grey-light;
+		background-color: $grey-light !important;
 		margin-left: auto;
 
 		svg {
@@ -106,6 +106,10 @@
 			@include square(0.75em);
 			flex: 0 0 auto;
 			fill: $grey-darker;
+		}
+
+		@media (min-width: $breakpoint-tablet) {
+			margin-right: 1em;
 		}
 	}
 
@@ -134,6 +138,7 @@
 		@media (min-width: $breakpoint-tablet) {
 			padding: 0 1em 0.75em 2.25em;
 			margin-left: -2.25em;
+			margin-right: -2em;
 		}
 	}
 

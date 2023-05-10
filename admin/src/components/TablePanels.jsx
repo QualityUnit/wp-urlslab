@@ -37,7 +37,7 @@ export default function TablePanels( { props } ) {
 			}
 
 			{
-				activePanel === 'rowEditor' &&
+				activePanel === 'rowEditor' && rowEditorOptions.rowToEdit &&
 				<EditRowPanel rowEditorOptions={ { editorMode: true, ...rowEditorOptions } } handlePanel={ handlePanel } />
 			}
 

@@ -28,6 +28,24 @@
 		color: $grey-darker;
 	}
 
+	&-activator {
+		position: relative;
+		padding: 0 0.5em !important;
+		color: $white;
+		margin-left: 0.5em;
+		background-color: $grey-dark !important;
+
+		&::after {
+
+			@include triangle(0.8125em, $grey-dark, "right");
+			position: absolute;
+			left: 81.5%;
+			top: -1px;
+			transform: scaleX(0.75);
+			content: "";
+		}
+	}
+
 	.react-tags {
 
 		&__list {

@@ -20,6 +20,10 @@
 		}
 	}
 
+	.hidden {
+		display: none;
+	}
+
 	button {
 
 		@include appearance;
