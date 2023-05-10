@@ -167,6 +167,8 @@ export default function TagsMenu( { label, description, defaultValue: tags, slug
 					<IconButton onClick={ openTagsMenu } className="urlslab-TagsMenu-activator" tooltip="Add new tag">+</IconButton>
 				}
 			</div>
+
+			{ description && <p className="urlslab-TagsMenu-description">{ description }</p> }
 		</div>
 
 	);

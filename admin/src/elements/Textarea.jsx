@@ -35,11 +35,6 @@ export default function TextArea( { defaultValue, autoFocus, placeholder, liveUp
 						handleValLive( event );
 					} }
 					onBlur={ ( event ) => handleVal( event ) }
-					onKeyDown={ ( event ) => {
-						if ( event.key === 'Enter' || event.keyCode === 9 ) {
-							event.target.blur();
-						}
-					} }
 					placeholder={ placeholder }
 					readOnly={ readonly }
 					disabled={ disabled ? 'disabled' : '' }

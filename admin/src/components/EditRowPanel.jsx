@@ -10,7 +10,7 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 	const enableAddButton = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
 
-	const { editorMode, rowEditorCells, title, text, data, slug, url, paginationId, rowToEdit } = rowEditorOptions || {};
+	const { editorMode, rowEditorCells, notWide, title, text, data, slug, url, paginationId, rowToEdit } = rowEditorOptions || {};
 	const flattenedData = data?.pages?.flatMap( ( page ) => page ?? [] );
 	const { insertRowResult, insertRow, saveEditedRow } = useChangeRow( { data: flattenedData, url, slug, paginationId } );
 	const requiredFields = rowEditorCells && Object.keys( rowEditorCells ).filter( ( cell ) => rowEditorCells[ cell ].props.required === true );
@@ -62,7 +62,7 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 	}
 
 	return (
-		<div className="urlslab-panel-wrap urlslab-panel-modal ultrawide fadeInto">
+		<div className={ `urlslab-panel-wrap urlslab-panel-modal ${ ! notWide ? 'ultrawide' : '' } fadeInto` }>
 			<div className="urlslab-panel">
 				<div className="urlslab-panel-header">
 					<h3>{ editorMode ? 'Edit row' : title }</h3>

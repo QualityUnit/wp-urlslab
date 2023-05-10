@@ -4,7 +4,7 @@ import { useInView } from 'react-intersection-observer';
 import { useVirtual } from 'react-virtual';
 import { useI18n } from '@wordpress/react-i18n';
 
-import { fetchData } from '../api/fetching';
+import { postFetch } from '../api/fetching';
 import useCloseModal from '../hooks/useCloseModal';
 import Button from '../elements/Button';
 import ProgressBar from '../elements/ProgressBar';
@@ -25,15 +25,30 @@ export default function DetailsPanel( { options, handlePanel } ) {
 		hasNextPage,
 		fetchNextPage } = useInfiniteQuery( {
 		queryKey: [ slug, url ],
-		queryFn: ( { pageParam = '' } ) => {
-			return fetchData( `${ slug }/${ url }` + getParamsChar() + `from_${ listId }=${ pageParam !== undefined && pageParam }&rows_per_page=${ maxRows }` );
+		queryFn: async ( { pageParam = '' } ) => {
+			const { lastRowId } = pageParam;
+			const response = await postFetch( `${ slug }/${ url }`, {
+				sorting: [ { col: listId, dir: 'ASC' } ],
+				filters: lastRowId
+					? [
+						{
+							cond: 'OR',
+							filters: [
+								{ cond: 'AND', filters: [ { col: listId, op: '>', val: lastRowId } ] },
+							],
+						},
+					]
+					: [ ],
+				rows_per_page: maxRows,
+			} );
+			return response.json();
 		},
 		getNextPageParam: ( allRows ) => {
 			if ( allRows.length < maxRows ) {
 				return undefined;
 			}
 			const lastRowId = allRows[ allRows?.length - 1 ][ listId ] ?? undefined;
-			return lastRowId;
+			return { lastRowId };
 		},
 		keepPreviousData: true,
 		refetchOnWindowFocus: false,
