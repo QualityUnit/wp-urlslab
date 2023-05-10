@@ -81,7 +81,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 
 			if ( Urlslab_Generator_Shortcode_Row::TYPE_VIDEO === $row_shortcode->get_shortcode_type() ) {
 				$attributes = $widget->get_att_values( $row_shortcode, $attributes, array( 'video_captions' ) );
-				if ( ! isset( $attributes['video_captions'] ) ) {
+				if ( ! isset( $attributes['video_captions'] ) || empty( $attributes['video_captions'] ) ) {
 					$row_obj->set_result( 'Video captions not available' );
 					$row_obj->set_status( Urlslab_Generator_Result_Row::STATUS_DISABLED );
 					$row_obj->update();
@@ -110,6 +110,9 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 
 				$filter = new DomainDataRetrievalContentQuery();
 				$filter->setLimit( 5 );
+				$ignore_query = 'false';
+				$custom_context = 'false';
+				$context_mandatory = 'true';
 				if ( strlen( $row_obj->get_semantic_context() ) ) {
 					$request->setAugmentCommand( $row_obj->get_semantic_context() );
 					if ( strlen( $row_obj->get_url_filter() ) ) {
@@ -117,12 +120,16 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 					} else {
 						$filter->setAdditionalQuery( (object) array( 'match' => (object) array( 'metadata.url' => $widget->get_current_page_url()->get_domain_name() ) ) );
 					}
-				} else {
+				} else if ( strlen( $row_obj->get_url_filter() ) ) {
+					$ignore_query = 'true';
 					$filter->setUrls( array( $row_obj->get_url_filter() ) );
+				} else {
+					$custom_context = 'true';
+					$context_mandatory = 'false';
 				}
 				$request->setFilter( $filter );
 
-				$response = $this->content_client->memoryLessAugment( $request, 'false', strlen( $row_obj->get_semantic_context() ) ? 'false' : 'true' );
+				$response = $this->content_client->memoryLessAugment( $request, 'false', $ignore_query, $custom_context, $context_mandatory );
 			}
 
 

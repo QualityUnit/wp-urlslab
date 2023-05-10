@@ -113,6 +113,10 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			} } />,
 			header: null,
 		} ),
+		columnHelper.accessor( 'shortcode_id', {
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.shortcode_id }</SortBy>,
+			size: 20,
+		} ),
 		columnHelper.accessor( 'shortcode_type', {
 			filterValMenu: shortcodeTypeTypes,
 			className: 'nolimit',
