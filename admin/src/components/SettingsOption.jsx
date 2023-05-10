@@ -22,7 +22,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 	const [ status, setStatus ] = useState( );
 
 	const handleApiCall = async () => {
-		renderTooltip( { status: 'activeApiCall', message: 'Job is running…' } );
+		renderTooltip( { status: 'activeApiCall', message: 'Executing…' } );
 		const result = await fetchData( value );
 		if ( result ) {
 			renderTooltip( { status: 'successApiCall', message: result } );
@@ -31,7 +31,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 			}, 3000 );
 			return false;
 		}
-		renderTooltip( { status: 'errorApiCall', message: 'Error occured' } );
+		renderTooltip( { status: 'errorApiCall', message: 'Failed' } );
 		setTimeout( () => {
 			renderTooltip();
 		}, 3000 );
