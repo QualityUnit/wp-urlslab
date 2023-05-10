@@ -280,4 +280,24 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 
 		return $columns;
 	}
+
+
+	protected function add_request_filter( WP_REST_Request $request, array $filter_params ) {
+		$body = $request->get_json_params();
+		if ( ! is_array( $body['filters'] ) ) {
+			$body['filters'] = array();
+		}
+
+		foreach ( $filter_params as $filter_param ) {
+			if ( $request->has_param( $filter_param ) ) {
+				$body['filters'][] = array(
+					'col' => $filter_param,
+					'op'  => '=',
+					'val' => $request->get_param( $filter_param ),
+				);
+			}
+		}
+
+		$request->set_body( json_encode( $body ) );
+	}
 }

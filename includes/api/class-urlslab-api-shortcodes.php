@@ -217,6 +217,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 	}
 
 	public function get_generator_urls( WP_REST_Request $request ) {
+		$this->add_request_filter( $request, array( 'shortcode_id' ) );
 		$rows = $this->get_generator_urls_sql( $request )->get_results();
 		if ( ! is_array( $rows ) ) {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
