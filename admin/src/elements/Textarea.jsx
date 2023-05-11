@@ -19,7 +19,7 @@ export default function TextArea( { defaultValue, autoFocus, placeholder, liveUp
 	};
 
 	return (
-		<label className={ `urlslab-inputField-wrap ${ className || '' } ${ labelInline ? 'inline' : '' }` } style={ style }>
+		<label className={ `urlslab-inputField-wrap ${ className || '' } ${ labelInline ? 'inline' : '' } ${ val ? 'has-value' : '' }` } style={ style }>
 			{ label
 				? <span className="urlslab-inputField-label">{ label }</span>
 				: null
