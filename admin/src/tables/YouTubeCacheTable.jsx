@@ -43,6 +43,7 @@ export default function YouTubeCacheTable( { slug } ) {
 		captions: __( 'Captions' ),
 		published: __( 'Published' ),
 		usage_count: __( 'Usage' ),
+		microdata: __( 'Youtube Microdata JSON' ),
 	};
 
 	const columns = [
@@ -119,7 +120,6 @@ export default function YouTubeCacheTable( { slug } ) {
 				slug={ slug }
 				header={ header }
 				table={ table }
-				noImport
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
@@ -128,7 +128,7 @@ export default function YouTubeCacheTable( { slug } ) {
 					slug,
 					url,
 					paginationId,
-					deleteCSVCols: [ paginationId, 'dest_url_id' ],
+					deleteCSVCols: [ 'usage_count' ],
 				} }
 			/>
 			<Table className="fadeInto"

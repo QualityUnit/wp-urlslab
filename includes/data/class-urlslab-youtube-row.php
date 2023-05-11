@@ -28,7 +28,7 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 
 	public function get_captions_as_text() {
 
-		$lines  = explode( "\n", $this->get( 'captions' ) );
+		$lines  = explode( "\n", $this->get_captions() );
 		$output = '';
 
 		foreach ( $lines as $line ) {
@@ -163,7 +163,7 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 			return $microdata['items'][0]['thumbnails']['default']['url'];
 		}
 
-		return '';
+		return 'https://i.ytimg.com/vi/' . $this->get_video_id() . '/hqdefault.jpg';
 	}
 
 	public function get_table_name(): string {

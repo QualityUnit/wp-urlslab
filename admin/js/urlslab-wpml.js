@@ -4,7 +4,7 @@ jQuery(document).ready(function ($) {
             var self = this;
             self.setTranslation("Translating...");
 
-            fetch(wpApiSettings.root + 'urlslab/v1/content-generator/translate', {
+            fetch(wpApiSettings.root + 'urlslab/v1/generator/translate', {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
