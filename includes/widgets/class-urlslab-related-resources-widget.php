@@ -163,7 +163,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	private function render_shortcode_header( array $urlslab_atts ): string {
-		wp_enqueue_style( 'urlslab-related-resources', plugin_dir_url( URLSLAB_PLUGIN_DIR . 'public/build/css/urlslab_youtube_loader.css' ) . 'urlslab_related_resources.css', false, false );
+		wp_enqueue_style( 'urlslab-related-resources', plugin_dir_url( URLSLAB_PLUGIN_DIR . 'public/build/css/urlslab_youtube_loader.css' ) . 'urlslab_related_resources.css', false, URLSLAB_VERSION );
 		$css_class = 'urlslab-rel-res-items';
 		if ( ! empty( $urlslab_atts['show-image'] ) ) {
 			$css_class .= ' urlslab-rel-res-items-with-image';
