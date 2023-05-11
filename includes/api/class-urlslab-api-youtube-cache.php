@@ -119,7 +119,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => array( $this, 'create_item' ),
 			'args'                => array(
-				'videoid'  => array(
+				'videoid'   => array(
 					'required'          => true,
 					'validate_callback' => function( $param ) {
 						return is_string( $param ) && strlen( $param );
@@ -131,16 +131,16 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 						return is_string( $param ) && strlen( $param );
 					},
 				),
-				'captions' => array(
+				'captions'  => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return is_string( $param ) && strlen( $param );
 					},
 				),
-				'status' => array(
+				'status'    => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
-						switch ($param) {
+						switch ( $param ) {
 							case Urlslab_Youtube_Row::STATUS_NEW:
 							case Urlslab_Youtube_Row::STATUS_AVAILABLE:
 							case Urlslab_Youtube_Row::STATUS_DISABLED:
@@ -182,6 +182,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 		if ( 'import' == $request->get_param( 'videoid' ) ) {
 			return $this->import_items( $request );
 		}
+
 		return parent::update_item( $request );
 	}
 
