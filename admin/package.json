@@ -46,6 +46,7 @@
     "sharp": "^0.32.0",
     "stylelint": "^14.2",
     "svgo": "^3.0.2",
+    "tinymce": "^6",
     "ua-parser-js": "^1.0.35",
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-fonts": "^0.7.0",
