@@ -163,7 +163,7 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 			return $microdata['items'][0]['thumbnails']['default']['url'];
 		}
 
-		return '';
+		return 'https://i.ytimg.com/vi/' . $this->get_video_id() . '/hqdefault.jpg';
 	}
 
 	public function get_table_name(): string {
