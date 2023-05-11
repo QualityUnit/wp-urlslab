@@ -24,7 +24,7 @@ import Button from '../elements/Button';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import IconButton from '../elements/IconButton';
 
-export default function ModuleViewHeaderBottom( { slug, noColumnsMenu, noFiltering, noImport, noInsert, noExport, noCount, noDelete, header, table, rowEditorOptions, activatePanel, detailsOptions, exportOptions, selectedRows, onFilter, onDeleteSelected, onUpdateRow } ) {
+export default function ModuleViewHeaderBottom( { slug, noColumnsMenu, noFiltering, hideActions, noImport, noInsert, noExport, noCount, noDelete, header, table, rowEditorOptions, activatePanel, detailsOptions, exportOptions, selectedRows, onFilter, onDeleteSelected, onUpdateRow } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const didMountRef = useRef( false );
@@ -161,7 +161,7 @@ export default function ModuleViewHeaderBottom( { slug, noColumnsMenu, noFilteri
 
 					<div className="ma-left flex flex-align-center">
 						<Counter />
-						{ ( ! noImport && ! noExport && ! noDelete ) &&
+						{ ! hideActions &&
 							<TableActionsMenu onAction={ handlePanel } options={ { noImport, noExport, noDelete } } />
 						}
 

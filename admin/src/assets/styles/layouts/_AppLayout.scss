@@ -1,6 +1,10 @@
 @use "../common/mixins" as *;
 @use "../common/variables" as *;
 
+.tox.tox-tinymce-aux[class] {
+	z-index: 10000 !important;
+}
+
 .urlslab-app {
 	overflow-x: hidden;
 	min-height: calc(100vh - 32px);

@@ -41,7 +41,7 @@
 
 		&::after {
 
-			@include triangle(0.8125em, $grey-dark, "right");
+			@include triangle(1.625em, $grey-dark, "right");
 			position: absolute;
 			left: 85.5%;
 			top: -1px;

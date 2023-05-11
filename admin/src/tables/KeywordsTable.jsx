@@ -171,7 +171,6 @@ export default function KeywordsTable( { slug } ) {
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onUpdateRow={ ( val ) => {
 					setEditorRow();
-					console.log( val );
 					if ( val === 'rowInserted' || val === 'rowChanged' ) {
 						setEditorRow( val );
 						setTimeout( () => {
