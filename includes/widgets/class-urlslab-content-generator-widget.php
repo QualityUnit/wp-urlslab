@@ -81,13 +81,21 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			   ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() );
 	}
 
-	private function get_placeholder_html( array $atts ): string {
+	public function get_placeholder_html( array $atts ): string {
 		$html_attributes = array();
 		foreach ( $atts as $id => $val ) {
 			$html_attributes[] = '<b>' . esc_html( $id ) . '</b>="<i>' . esc_html( $val ) . '</i>"';
 		}
 
 		return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">[<b>urlslab-generator</b> ' . implode( ', ', $html_attributes ) . ']</div>';
+	}
+	public function get_placeholder_txt( array $atts ): string {
+		$html_attributes = array();
+		foreach ( $atts as $id => $val ) {
+			$html_attributes[] = $id . '="' . $val . '"';
+		}
+
+		return '[urlslab-generator ' . implode( ', ', $html_attributes ) . ']';
 	}
 
 	public function get_shortcode_content(

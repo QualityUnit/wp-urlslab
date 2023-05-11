@@ -34,7 +34,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 								}
 							},
 						),
-						'shortcode_type'           => array(
+						'shortcode_type'   => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
@@ -141,8 +141,14 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
 		foreach ( $rows as $row ) {
 			$row->shortcode_id = (int) $row->shortcode_id;
+			$atts = array( 'id' => $row->shortcode_id );
+			if ( Urlslab_Generator_Shortcode_Row::TYPE_VIDEO === $row->shortcode_type ) {
+				$atts['videoid'] = 'your youtube video id';
+			}
+			$row->shortcode    = $widget->get_placeholder_txt( $atts );
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -266,7 +272,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 						}
 					},
 				),
-				'shortcode_type'           => array(
+				'shortcode_type'   => array(
 					'required'          => true,
 					'default'           => Urlslab_Generator_Shortcode_Row::TYPE_SEMANTIC_SEARCH_CONTEXT,
 					'validate_callback' => function( $param ) {
