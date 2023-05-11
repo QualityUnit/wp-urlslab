@@ -89,6 +89,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 
 		return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">[<b>urlslab-generator</b> ' . implode( ', ', $html_attributes ) . ']</div>';
 	}
+
 	public function get_placeholder_txt( array $atts ): string {
 		$html_attributes = array();
 		foreach ( $atts as $id => $val ) {
@@ -262,7 +263,13 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 					case 'video_captions':
 						$obj_video = $this->get_video_obj( $atts['videoid'] );
 						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
-							$atts['video_captions'] = $obj_video->get_captions_as_text();
+							$atts['video_captions'] = $obj_video->get_captions();
+						}
+						break;
+					case 'video_captions_text':
+						$obj_video = $this->get_video_obj( $atts['videoid'] );
+						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
+							$atts['video_captions_text'] = $obj_video->get_captions_as_text();
 						}
 						break;
 					case 'video_title':
@@ -360,12 +367,12 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			if ( isset( $attributes[ $var[0] ] ) ) {
 				if ( isset( $var[1] ) ) {
 					if ( isset( $attributes[ $var[0] ][ $var[1] ] ) ) {
-						$template = str_replace( '{{' . $variable . '}}', $attributes[ $var[0] ][ $var[1] ], $template );
+						$template = str_replace( '{{' . $variable . '}}', $this->render_template_variable_value( $attributes[ $var[0] ][ $var[1] ] ), $template );
 					} else {
 						$template = str_replace( '{{' . $variable . '}}', '', $template );
 					}
 				} else {
-					$template = str_replace( '{{' . $variable . '}}', $attributes[ $variable ], $template );
+					$template = str_replace( '{{' . $variable . '}}', $this->render_template_variable_value( $attributes[ $variable ] ), $template );
 				}
 			} else {
 				$template = str_replace( '{{' . $variable . '}}', '', $template );
@@ -373,6 +380,22 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		}
 
 		return $template;
+	}
+
+	private function render_template_variable_value( $value ) {
+		if ( is_array( $value ) && ! empty( $value ) ) {
+			$rendered_value = '<ul>';
+			foreach ( $value as $item ) {
+				$rendered_value .= '<li>' . $item . '</li>';
+			}
+			$rendered_value .= '</ul>';
+
+			return $rendered_value;
+		} else if ( empty( $value ) ) {
+			return '';
+		}
+
+		return str_replace( "\n", '<br/>', $value );
 	}
 
 	public

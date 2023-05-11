@@ -80,8 +80,8 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 			$prompt = new DomainDataRetrievalAugmentPrompt();
 
 			if ( Urlslab_Generator_Shortcode_Row::TYPE_VIDEO === $row_shortcode->get_shortcode_type() ) {
-				$attributes = $widget->get_att_values( $row_shortcode, $attributes, array( 'video_captions' ) );
-				if ( ! isset( $attributes['video_captions'] ) || empty( $attributes['video_captions'] ) ) {
+				$attributes = $widget->get_att_values( $row_shortcode, $attributes, array( 'video_captions_text' ) );
+				if ( ! isset( $attributes['video_captions_text'] ) || empty( $attributes['video_captions_text'] ) ) {
 					$row_obj->set_result( 'Video captions not available' );
 					$row_obj->set_status( Urlslab_Generator_Result_Row::STATUS_DISABLED );
 					$row_obj->update();
@@ -89,7 +89,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 				}
 				$command    = $widget->get_template_value(
 					'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Generator_Result_Row::DO_NOT_KNOW . "!\n" . $row_shortcode->get_prompt() .
-					"\n\n--VIDEO CAPTIONS:\n{{video_captions}}\n--VIDEO CAPTIONS END\nANSWER:",
+					"\n\n--VIDEO CAPTIONS:\n{{video_captions_text}}\n--VIDEO CAPTIONS END\nANSWER:",
 					$attributes
 				);
 				$prompt->setPromptTemplate( $command );
