@@ -65,8 +65,6 @@ export default function YouTubeCacheTable( { slug } ) {
 		columnHelper?.accessor( ( cell ) => getJson( `${ cell?.microdata }` )?.items[ 0 ]?.snippet, {
 			id: 'thumb',
 			className: 'thumbnail',
-			tooltip: ( image ) =>
-				<Tooltip><img src={ image.getValue()?.thumbnails?.high?.url } alt={ image?.getValue()?.title } /></Tooltip>,
 			cell: ( image ) =>
 				<img src={ image?.getValue()?.thumbnails?.high?.url }
 					alt={ image?.getValue()?.title } />,
