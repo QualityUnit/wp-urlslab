@@ -53,9 +53,7 @@ export default function ContentCacheTable( { slug } ) {
 				slug={ slug }
 				header={ header }
 				table={ table }
-				noDelete
-				noExport
-				noImport
+				hideActions
 				onFilter={ ( filter ) => setFilters( filter ) }
 			/>
 			<Table className="fadeInto" columns={ columns }
