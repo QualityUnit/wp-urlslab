@@ -124,7 +124,6 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 				$this->validate_item( $row_obj );
 				$rows[] = $this->before_import( $row_obj );
 			} catch ( Exception $e ) {
-				return new WP_Error( 'error', __( 'Validation failed: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 			}
 		}
 

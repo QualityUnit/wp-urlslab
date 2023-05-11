@@ -91,10 +91,11 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		date_changed: __( 'Last change' ),
 		model: __( 'Model' ),
 		template: __( 'HTML template' ),
+		shortcode: __( 'Shortcode' ),
 		usage_count: __( 'Usage' ),
 	};
 
-	const supported_variables_description = __( 'Supported variables: {{page_title}}, {{page_url}}, {{domain}}, {{language_code}}, {{language}}. In case videoid attribute is set, following variables are available: {{video_captions}}, {{video_title}}, {{video_description}}, {{video_published_at}}, {{video_duration}}, {{video_channel_title}}, {{video_tags}}. Custom attributes can be passed from shortcode as well in form {{your_custom_attribute_name}}' );
+	const supported_variables_description = __( 'Supported variables: {{page_title}}, {{page_url}}, {{domain}}, {{language_code}}, {{language}}. In case videoid attribute is set, following variables are available: {{video_captions}}, {{video_captions_text}}, {{video_title}}, {{video_description}}, {{video_published_at}}, {{video_duration}}, {{video_channel_title}}, {{video_tags}}. Custom attributes can be passed from shortcode as well in form {{your_custom_attribute_name}}' );
 
 	const rowEditorCells = {
 		shortcode_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'In case of video context type, Semantic search query should contain YouTube videoid or YoutTube video url.' ) }
@@ -105,7 +106,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			defaultValue="" label={ header.semantic_context } onChange={ ( val ) => setEditorRow( { ...rowToEdit, semantic_context: val } ) } hidden={ rowToEdit?.shortcode_type === 'V' } />,
 		url_filter: <InputField liveUpdate defaultValue="" description={ __( 'Recommended variables: {{page_url}} if you need to generate data from current url. {{domain}} if you need to generate data from any semanticaly relevant page in your domain. Fixed url if you need to generate data from fixed url (e.g. http://wikipedia.com/anything). {{custom_url_attribute_name}} if you pass your custom attribute to shortcode in html template.' ) } label={ header.url_filter } onChange={ ( val ) => setEditorRow( { ...rowToEdit, url_filter: val } ) } hidden={ rowToEdit?.shortcode_type === 'V' } />,
 		default_value: <InputField liveUpdate description={ __( 'Put here the text, which shoould be displayed in shortcode until Urlslab generates text from your prompt. Leave empty if you do not want to display shortcode until the text is generated' ) } defaultValue="" label={ header.default_value } onChange={ ( val ) => setEditorRow( { ...rowToEdit, default_value: val } ) } />,
-		template: <Editor description={ ( supported_variables_description + __( ' Value of generated text can be accessed in template by variable {{value}} or if generator generated json {{json_value.attribute_name}}' ) ) } defaultValue="" label={ header.template } onChange={ ( val ) => setEditorRow( { ...rowToEdit, template: val } ) } required />,
+		template: <Editor description={ ( supported_variables_description + __( ' Value of generated text can be accessed in template by variable {{value}} or if generator generated json {{json_value.attribute_name}}' ) ) } defaultValue="{{value}}" label={ header.template } onChange={ ( val ) => setEditorRow( { ...rowToEdit, template: val } ) } required />,
 		model: <SingleSelectMenu defaultAccept autoClose items={ modelTypes } name="model" defaultValue={ ( 'gpt-3.5-turbo' ) } onChange={ ( val ) => setEditorRow( { ...rowToEdit, model: val } ) }>{ header.model }</SingleSelectMenu>,
 	};
 	const columns = [
@@ -115,6 +116,10 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				selectRow( val, cell );
 			} } />,
 			header: null,
+		} ),
+		columnHelper.accessor( 'shortcode_id', {
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.shortcode_id }</SortBy>,
+			size: 20,
 		} ),
 		columnHelper.accessor( 'shortcode_type', {
 			filterValMenu: shortcodeTypeTypes,
@@ -166,6 +171,11 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'usage_count', {
 			header: header.usage_count,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'shortcode', {
+			header: header.shortcode,
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'actions', {
@@ -231,7 +241,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 					slug,
 					url,
 					paginationId,
-					deleteCSVCols: [ paginationId, 'shortcode_id' ],
+					deleteCSVCols: [ paginationId ],
 				} }
 			/>
 			<Table className="fadeInto"

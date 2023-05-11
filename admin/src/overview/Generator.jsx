@@ -16,7 +16,8 @@ export default function GeneratorOverview() {
 				<li>domain - {'\u007B\u007B'}domain{'\u007D\u007D'} variable can be used in prompt, url filter or template</li>
 				<li>language_code - {'\u007B\u007B'}language_code{'\u007D\u007D'} variable can be used in prompt, url filter or template</li>
 				<li>language - {'\u007B\u007B'}language{'\u007D\u007D'} variable can be used in prompt, url filter or template</li>
-				<li>video_captions - {'\u007B\u007B'}video_captions{'\u007D\u007D'} variable can be used if variable videoid is set in attributes of shortcode</li>
+				<li>video_captions - {'\u007B\u007B'}video_captions{'\u007D\u007D'} Video captions with time stamps, variable can be used if variable videoid is set in attributes of shortcode</li>
+				<li>video_captions_text - {'\u007B\u007B'}video_captions{'\u007D\u007D'} variable can be used if variable videoid is set in attributes of shortcode</li>
 				<li>video_title - {'\u007B\u007B'}video_title{'\u007D\u007D'} variable can be used if variable videoid is set in attributes of shortcode</li>
 				<li>video_description - {'\u007B\u007B'}video_description{'\u007D\u007D'} variable can be used if variable videoid is set in attributes of shortcode</li>
 				<li>video_published_at - {'\u007B\u007B'}video_published_at{'\u007D\u007D'} variable can be used if variable videoid is set in attributes of shortcode</li>

@@ -81,13 +81,22 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			   ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() );
 	}
 
-	private function get_placeholder_html( array $atts ): string {
+	public function get_placeholder_html( array $atts ): string {
 		$html_attributes = array();
 		foreach ( $atts as $id => $val ) {
 			$html_attributes[] = '<b>' . esc_html( $id ) . '</b>="<i>' . esc_html( $val ) . '</i>"';
 		}
 
 		return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">[<b>urlslab-generator</b> ' . implode( ', ', $html_attributes ) . ']</div>';
+	}
+
+	public function get_placeholder_txt( array $atts ): string {
+		$html_attributes = array();
+		foreach ( $atts as $id => $val ) {
+			$html_attributes[] = $id . '="' . $val . '"';
+		}
+
+		return '[urlslab-generator ' . implode( ', ', $html_attributes ) . ']';
 	}
 
 	public function get_shortcode_content(
@@ -119,7 +128,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 					return '';
 				}
 				$video = $this->get_video_obj( $atts['videoid'] );
-				if ( ! $video->is_loaded_from_db() || ! $video->is_active() ) {
+				if ( empty( $video->get_video_id() ) ) {
 					return '';
 				}
 			}
@@ -143,7 +152,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		}
 
 
-		$atts = $this->get_att_values( $obj, $atts, $content, $tag );
+		$atts = $this->get_att_values( $obj, $atts );
 
 		if ( $this->is_edit_mode() ) {
 			return $this->get_placeholder_html( $atts );
@@ -254,7 +263,13 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 					case 'video_captions':
 						$obj_video = $this->get_video_obj( $atts['videoid'] );
 						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
-							$atts['video_captions'] = $obj_video->get_captions_as_text();
+							$atts['video_captions'] = $obj_video->get_captions();
+						}
+						break;
+					case 'video_captions_text':
+						$obj_video = $this->get_video_obj( $atts['videoid'] );
+						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
+							$atts['video_captions_text'] = $obj_video->get_captions_as_text();
 						}
 						break;
 					case 'video_title':
@@ -321,22 +336,12 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		return $atts;
 	}
 
-
-	function extract_youtube_id( $url ) {
-		$pattern = '/^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/user\/[^\/]+\/u\/[^\/]+\/[0-9]+\/[^\/]+\/(?!.*\/u\/[0-9]+\/)[^\/]+\/))([\w-]{10,12})(?:$|&|\?)/';
-		preg_match( $pattern, $url, $matches );
-
-		return isset( $matches[1] ) ? $matches[1] : false;
-	}
-
 	private function get_video_obj( $videoid ): Urlslab_Youtube_Row {
-		if ( false !== strpos( $videoid, 'http' ) ) {
-			$videoid = $this->extract_youtube_id( $videoid );
-		}
+		$videoid = Urlslab_Youtube_Row::parse_video_id( $videoid );
 
 		if ( ! isset( self::$video_cache[ $videoid ] ) ) {
 			self::$video_cache[ $videoid ] = new Urlslab_Youtube_Row( array( 'videoid' => $videoid ) );
-			if ( ! self::$video_cache[ $videoid ]->load() ) {
+			if ( ! self::$video_cache[ $videoid ]->load() && strlen( $videoid ) ) {
 				self::$video_cache[ $videoid ]->insert();
 			}
 		}
@@ -352,12 +357,12 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			if ( isset( $attributes[ $var[0] ] ) ) {
 				if ( isset( $var[1] ) ) {
 					if ( isset( $attributes[ $var[0] ][ $var[1] ] ) ) {
-						$template = str_replace( '{{' . $variable . '}}', $attributes[ $var[0] ][ $var[1] ], $template );
+						$template = str_replace( '{{' . $variable . '}}', $this->render_template_variable_value( $attributes[ $var[0] ][ $var[1] ] ), $template );
 					} else {
 						$template = str_replace( '{{' . $variable . '}}', '', $template );
 					}
 				} else {
-					$template = str_replace( '{{' . $variable . '}}', $attributes[ $variable ], $template );
+					$template = str_replace( '{{' . $variable . '}}', $this->render_template_variable_value( $attributes[ $variable ] ), $template );
 				}
 			} else {
 				$template = str_replace( '{{' . $variable . '}}', '', $template );
@@ -365,6 +370,22 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		}
 
 		return $template;
+	}
+
+	private function render_template_variable_value( $value ) {
+		if ( is_array( $value ) && ! empty( $value ) ) {
+			$rendered_value = '<ul>';
+			foreach ( $value as $item ) {
+				$rendered_value .= '<li>' . $item . '</li>';
+			}
+			$rendered_value .= '</ul>';
+
+			return $rendered_value;
+		} else if ( empty( $value ) ) {
+			return '';
+		}
+
+		return str_replace( "\n", '<br/>', $value );
 	}
 
 	public

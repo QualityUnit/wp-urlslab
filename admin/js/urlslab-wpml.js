@@ -4,7 +4,7 @@
 			const self = this;
 			self.setTranslation( 'Translating...' );
 
-			fetch( window.wpApiSettings.root + 'urlslab/v1/content-generator/translate', {
+			fetch( window.wpApiSettings.root + 'urlslab/v1/generator/translate', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -30,3 +30,4 @@
 		};
 	}
 }() );
+

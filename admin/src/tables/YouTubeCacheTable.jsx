@@ -43,7 +43,16 @@ export default function YouTubeCacheTable( { slug } ) {
 		captions: __( 'Captions' ),
 		published: __( 'Published' ),
 		usage_count: __( 'Usage' ),
+		microdata: __( 'Youtube Microdata JSON' ),
 	};
+
+	const getJson = (param) => {
+		try {
+			return JSON.parse(param);
+		} catch (e) {
+			return null;
+		}
+	}
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -53,11 +62,9 @@ export default function YouTubeCacheTable( { slug } ) {
 			} } />,
 			header: null,
 		} ),
-		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.microdata }` )?.items[ 0 ]?.snippet, {
+		columnHelper?.accessor( ( cell ) => getJson( `${ cell?.microdata }` )?.items[ 0 ]?.snippet, {
 			id: 'thumb',
 			className: 'thumbnail',
-			tooltip: ( image ) =>
-				<Tooltip><img src={ image.getValue()?.thumbnails?.high?.url } alt={ image?.getValue()?.title } /></Tooltip>,
 			cell: ( image ) =>
 				<img src={ image?.getValue()?.thumbnails?.high?.url }
 					alt={ image?.getValue()?.title } />,
@@ -79,7 +86,7 @@ export default function YouTubeCacheTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.status }</SortBy>,
 			size: 100,
 		} ),
-		columnHelper?.accessor( ( cell ) => [ cell?.videoid, JSON.parse( `${ cell?.microdata }` )?.items[ 0 ]?.snippet?.title ], {
+		columnHelper?.accessor( ( cell ) => [ cell?.videoid, getJson( `${ cell?.microdata }` )?.items[ 0 ]?.snippet?.title ], {
 			id: 'title',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue()[ 1 ] }</Tooltip>,
 			cell: ( val ) => <a href={ `https://youtu.be/${ val?.getValue()[ 0 ] }` } target="_blank" rel="noreferrer">{ val?.getValue()[ 1 ] }</a>,
@@ -119,7 +126,6 @@ export default function YouTubeCacheTable( { slug } ) {
 				slug={ slug }
 				header={ header }
 				table={ table }
-				noImport
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
@@ -128,7 +134,7 @@ export default function YouTubeCacheTable( { slug } ) {
 					slug,
 					url,
 					paginationId,
-					deleteCSVCols: [ paginationId, 'dest_url_id' ],
+					deleteCSVCols: [ 'usage_count' ],
 				} }
 			/>
 			<Table className="fadeInto"

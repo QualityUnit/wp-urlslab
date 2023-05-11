@@ -770,6 +770,9 @@ table td *:hover > .urlslab-tooltip {
 [id=urlslab-root] a:not(.urlslab-button):hover {
   color: #2570ed;
 }
+[id=urlslab-root] .hidden {
+  display: none;
+}
 [id=urlslab-root] button {
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -2796,7 +2799,7 @@ button.urlslab-button > svg:last-child:not(:first-child),
       -ms-flex-pack: center;
           justify-content: center;
   border-radius: 50%;
-  background-color: #e4e5e9;
+  background-color: #e4e5e9 !important;
   margin-left: auto;
 }
 .urlslab-panel-close svg {
@@ -2806,6 +2809,11 @@ button.urlslab-button > svg:last-child:not(:first-child),
       -ms-flex: 0 0 auto;
           flex: 0 0 auto;
   fill: #65676b;
+}
+@media (min-width: 768px) {
+  .urlslab-panel-close {
+    margin-right: 1em;
+  }
 }
 .urlslab-panel .removeFile svg {
   width: 1em;
@@ -2833,6 +2841,7 @@ button.urlslab-button > svg:last-child:not(:first-child),
   .urlslab-panel-header {
     padding: 0 1em 0.75em 2.25em;
     margin-left: -2.25em;
+    margin-right: -2em;
   }
 }
 .urlslab-panel-wrap {

@@ -343,7 +343,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$iframe_elements = $xpath->query( "//iframe[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
 		foreach ( $iframe_elements as $element ) {
 			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) && $element->hasAttribute( 'src' ) ) {
-				$ytid = $this->get_youtube_videoid( $element->getAttribute( 'src' ) );
+				$ytid = Urlslab_Youtube_Row::parse_video_id( $element->getAttribute( 'src' ) );
 				if ( $ytid ) {
 					$youtube_ids[ $ytid ] = $ytid;
 				}
@@ -356,7 +356,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) && $element->hasAttribute( 'data-settings' ) ) {
 				$json = json_decode( $element->getAttribute( 'data-settings' ) );
 				if ( is_object( $json ) && property_exists( $json, 'youtube_url' ) ) {
-					$ytid = $this->get_youtube_videoid( $json->youtube_url );
+					$ytid = Urlslab_Youtube_Row::parse_video_id( $json->youtube_url );
 					if ( $ytid ) {
 						$youtube_ids[ $ytid ] = $ytid;
 					}
@@ -384,7 +384,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		// replace iframe with placeholder
 		foreach ( $iframe_elements as $element ) {
 			if ( $element->hasAttribute( 'src' ) ) {
-				$ytid = $this->get_youtube_videoid( $element->getAttribute( 'src' ) );
+				$ytid = Urlslab_Youtube_Row::parse_video_id( $element->getAttribute( 'src' ) );
 				if ( $ytid ) {
 					$this->replace_youtube_element_with_placeholder( $document, $element, $video_objects, $ytid );
 				}
@@ -396,7 +396,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			if ( $element->hasAttribute( 'data-settings' ) ) {
 				$json = json_decode( $element->getAttribute( 'data-settings' ) );
 				if ( is_object( $json ) && property_exists( $json, 'youtube_url' ) ) {
-					$ytid = $this->get_youtube_videoid( $json->youtube_url );
+					$ytid = Urlslab_Youtube_Row::parse_video_id( $json->youtube_url );
 					if ( $ytid ) {
 						$this->emhance_elementor_element_with_placeholder( $document, $element, $video_objects, $ytid );
 					}
@@ -424,14 +424,6 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			}
 
 			return 'DOMElement' == get_class( $dom_element->parentNode ) && $this->has_parent_node( $dom_element->parentNode, $tag_name );
-		}
-
-		return false;
-	}
-
-	private function get_youtube_videoid( $url ) {
-		if ( preg_match( "/^(?:http(?:s)?:\\/\\/)?(?:www\\.)?(?:m\\.)?(?:youtu\\.be\\/|youtube\\.com\\/(?:(?:watch)?\\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user|shorts)\\/))([^\\?&\"'>]+)/", $url, $matches ) ) {
-			return $matches[1];
 		}
 
 		return false;

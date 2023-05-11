@@ -510,6 +510,17 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			null,
 			's3'
 		);
+		$this->add_option_definition(
+			'btn_validate_s3',
+			'file/validate_s3',
+			false,
+			__( 'Validate S3 connection' ),
+			__( 'Validate, if connection to S3 is working' ),
+			self::OPTION_TYPE_BUTTON_API_CALL,
+			false,
+			null,
+			's3'
+		);
 
 		$this->add_options_form_section( 'img_opt', __( 'Image Optimisation Settings' ), __( 'Modern image types such as WebP and Avif are crucial to speeding up website loading. However, we can offer many other features that can help speed up your website even more.' ) );
 
