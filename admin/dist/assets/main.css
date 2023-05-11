@@ -2900,6 +2900,10 @@ button.urlslab-button > svg:last-child:not(:first-child),
   }
 }
 
+.tox.tox-tinymce-aux[class] {
+  z-index: 10000 !important;
+}
+
 .urlslab-app {
   overflow-x: hidden;
   min-height: calc(100vh - 32px);
