@@ -7,11 +7,22 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 	public const STATUS_DISABLED = 'D';
 
 	public function __construct( array $video = array(), $loaded_from_db = false ) {
-		$this->set_video_id( $video['videoid'] ?? '', $loaded_from_db );
+		$this->set_video_id( self::parse_video_id( $video['videoid'] ) ?? '', $loaded_from_db );
 		$this->set_microdata( $video['microdata'] ?? null, $loaded_from_db );
 		$this->set_captions( $video['captions'] ?? '', $loaded_from_db );
 		$this->set_status( $video['status'] ?? self::STATUS_NEW, $loaded_from_db );
 		$this->set_status_changed( $video['status_changed'] ?? self::get_now(), $loaded_from_db );
+	}
+
+	public static function parse_video_id( $video_id ) {
+		if ( false !== strpos( $video_id, 'http' ) ) {
+			$pattern = '/^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/user\/[^\/]+\/u\/[^\/]+\/[0-9]+\/[^\/]+\/(?!.*\/u\/[0-9]+\/)[^\/]+\/))([\w-]{10,12})(?:$|&|\?)/';
+			preg_match( $pattern, $video_id, $matches );
+
+			return isset( $matches[1] ) ? $matches[1] : false;
+		}
+
+		return $video_id;
 	}
 
 	public function get_video_id() {
