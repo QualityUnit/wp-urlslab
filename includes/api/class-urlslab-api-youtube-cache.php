@@ -186,6 +186,13 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 		return parent::update_item( $request );
 	}
 
+	protected function validate_item( Urlslab_Data $row ) {
+		parent::validate_item( $row );
+		if ( empty( $row->get_public( 'videoid' ) ) ) {
+			throw new Exception( __( 'Invalid videoid', 'urlslab' ) );
+		}
+	}
+
 	public function delete_all_items( WP_REST_Request $request ) {
 		global $wpdb;
 

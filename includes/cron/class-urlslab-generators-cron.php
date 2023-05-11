@@ -83,11 +83,12 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 				$attributes = $widget->get_att_values( $row_shortcode, $attributes, array( 'video_captions_text' ) );
 				if ( ! isset( $attributes['video_captions_text'] ) || empty( $attributes['video_captions_text'] ) ) {
 					$row_obj->set_result( 'Video captions not available' );
-					$row_obj->set_status( Urlslab_Generator_Result_Row::STATUS_DISABLED );
+					$row_obj->set_status( Urlslab_Generator_Result_Row::STATUS_PENDING );
 					$row_obj->update();
+
 					return true;
 				}
-				$command    = $widget->get_template_value(
+				$command = $widget->get_template_value(
 					'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Generator_Result_Row::DO_NOT_KNOW . "!\n" . $row_shortcode->get_prompt() .
 					"\n\n--VIDEO CAPTIONS:\n{{video_captions_text}}\n--VIDEO CAPTIONS END\nANSWER:",
 					$attributes
@@ -110,8 +111,8 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 
 				$filter = new DomainDataRetrievalContentQuery();
 				$filter->setLimit( 5 );
-				$ignore_query = 'false';
-				$custom_context = 'false';
+				$ignore_query      = 'false';
+				$custom_context    = 'false';
 				$context_mandatory = 'true';
 				if ( strlen( $row_obj->get_semantic_context() ) ) {
 					$request->setAugmentCommand( $row_obj->get_semantic_context() );
@@ -124,7 +125,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 					$ignore_query = 'true';
 					$filter->setUrls( array( $row_obj->get_url_filter() ) );
 				} else {
-					$custom_context = 'true';
+					$custom_context    = 'true';
 					$context_mandatory = 'false';
 				}
 				$request->setFilter( $filter );

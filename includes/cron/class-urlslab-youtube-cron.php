@@ -28,7 +28,7 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 				'SELECT * FROM ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' WHERE status = %s OR (status=%s AND status_changed < %s) ORDER BY status_changed DESC LIMIT 1', // phpcs:ignore
 				Urlslab_Youtube_Row::STATUS_NEW,
 				Urlslab_Youtube_Row::STATUS_PROCESSING,
-				Urlslab_Data::get_now( time() - 9000 )
+				Urlslab_Data::get_now( time() - 3600 )
 			),
 			ARRAY_A
 		);
