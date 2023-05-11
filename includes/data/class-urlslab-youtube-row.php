@@ -57,15 +57,15 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 		return '';
 	}
 
-	public function get_video_tags() {
+	public function get_video_tags(): array {
 		$microdata = $this->get_microdata_obj();
 		if ( is_array( $microdata ) && isset( $microdata['items'][0]['snippet']['tags'] ) ) {
 			if ( is_array( $microdata['items'][0]['snippet']['tags'] ) ) {
-				return implode( ', ', $microdata['items'][0]['snippet']['tags'] );
+				return $microdata['items'][0]['snippet']['tags'];
 			}
 		}
 
-		return '';
+		return array();
 	}
 
 	public function get_microdata_obj() {

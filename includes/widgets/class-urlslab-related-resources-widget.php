@@ -129,21 +129,19 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			$current_url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $current_url );
 			if ( $current_url_obj ) {
 				$current_url_obj->request_rel_schedule();
-			}
-
-			if ( ! empty( $result ) && is_array( $result ) ) {
-				$content  .= $this->render_shortcode_header( $urlslab_atts );
-				$strategy = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Link_Enhancer::SLUG )->get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY );
-				foreach ( $urls as $url ) {
-					if ( $current_url_obj->get_url_id() != $url->get_url_id() ) {
-						$url_obj     = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url );
-						if ( $url_obj ) {
-							$content .= $this->render_shortcode_item( $url_obj, $urlslab_atts, $strategy );
+				if ( ! empty( $result ) && is_array( $result ) ) {
+					$content  .= $this->render_shortcode_header( $urlslab_atts );
+					$strategy = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Link_Enhancer::SLUG )->get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY );
+					foreach ( $urls as $url ) {
+						if ( $current_url_obj->get_url_id() != $url->get_url_id() ) {
+							$url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url );
+							if ( $url_obj ) {
+								$content .= $this->render_shortcode_item( $url_obj, $urlslab_atts, $strategy );
+							}
 						}
 					}
+					$content .= $this->render_shortcode_footer();
 				}
-
-				$content .= $this->render_shortcode_footer();
 			}
 		} catch ( Exception $e ) {
 		}
