@@ -119,7 +119,6 @@ export default function YouTubeCacheTable( { slug } ) {
 				slug={ slug }
 				header={ header }
 				table={ table }
-				noImport
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
@@ -128,7 +127,7 @@ export default function YouTubeCacheTable( { slug } ) {
 					slug,
 					url,
 					paginationId,
-					deleteCSVCols: [ paginationId, 'dest_url_id' ],
+					deleteCSVCols: [ ],
 				} }
 			/>
 			<Table className="fadeInto"

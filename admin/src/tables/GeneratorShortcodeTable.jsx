@@ -238,7 +238,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 					slug,
 					url,
 					paginationId,
-					deleteCSVCols: [ paginationId, 'shortcode_id' ],
+					deleteCSVCols: [ paginationId ],
 				} }
 			/>
 			<Table className="fadeInto"

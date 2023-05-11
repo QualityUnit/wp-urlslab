@@ -28,7 +28,7 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 
 	public function get_captions_as_text() {
 
-		$lines  = explode( "\n", $this->get( 'captions' ) );
+		$lines  = explode( "\n", $this->get_captions() );
 		$output = '';
 
 		foreach ( $lines as $line ) {
