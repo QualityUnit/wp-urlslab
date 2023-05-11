@@ -15,7 +15,6 @@ class Urlslab_Url {
 			'linkedin.com',
 			'twitter.com',
 			'localhost',
-			'liveagent.local',
 			'wa.me',
 			'pinterest.com',
 			'tumblr.com',

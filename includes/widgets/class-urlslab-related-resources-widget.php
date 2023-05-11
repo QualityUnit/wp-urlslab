@@ -200,17 +200,24 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			}
 
 			return '<div class="urlslab-rel-res-item">' .
-				   '<a href="' . esc_url( $url_obj->get_url()->get_url_with_protocol() ) . '"' .
-				   ' title="' . esc_attr( $url_obj->get_summary_text( $strategy ) ) . '"' .
-				   ( $url_obj->get_url()->is_same_domain_url() ? '' : ' target="_blank"' ) .
-				   '>' .
-				   $this->render_screenshot( $url_obj, $urlslab_atts, $strategy ) .
-				   '<div class="urlslab-rel-res-item-text"><p class="urlslab-rel-res-item-title">' . esc_html( $title ) . '</p>' .
-				   ( ! empty( $summary_text ) ? '<p  class="urlslab-rel-res-item-summary">' . esc_html( $summary_text ) . '</p>' : '' ) .
-				   '<svg class="urlslab-rel-res-item-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32"><path d="m17.856 17.056-12.16 12.16a1.507 1.507 0 0 1-2.112 0l-1.44-1.408a1.546 1.546 0 0 1 0-2.144L11.776 16 2.144 6.336c-.576-.608-.576-1.536 0-2.112l1.44-1.44a1.507 1.507 0 0 1 2.112 0l12.16 12.16a1.507 1.507 0 0 1 0 2.112z"/></svg>' .
-				   '</div>' .
-				   '</a>' .
-				   '</div>';
+					$this->render_screenshot( $url_obj, $urlslab_atts, $strategy ) .
+					'<div class="urlslab-rel-res-item-text"><p class="urlslab-rel-res-item-title">' .
+					'<a href="' . esc_url( $url_obj->get_url()->get_url_with_protocol() ) . '"' .
+					' title="' . esc_attr( $url_obj->get_summary_text( $strategy ) ) . '"' .
+					( $url_obj->get_url()->is_same_domain_url() ? '' : ' target="_blank"' ) .
+					'>' .
+					esc_html( $title ) .
+					'</a>' .
+					'</p>' .
+					( ! empty( $summary_text ) ? '<p  class="urlslab-rel-res-item-summary">' . esc_html( $summary_text ) . '</p>' : '' ) .
+					'<a href="' . esc_url( $url_obj->get_url()->get_url_with_protocol() ) . '"' .
+					' title="' . esc_attr( $url_obj->get_summary_text( $strategy ) ) . '" class="urlslab-rel-res-item-arrow"' .
+					( $url_obj->get_url()->is_same_domain_url() ? '' : ' target="_blank"' ) .
+					'>' .
+					'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32"><path d="m17.856 17.056-12.16 12.16a1.507 1.507 0 0 1-2.112 0l-1.44-1.408a1.546 1.546 0 0 1 0-2.144L11.776 16 2.144 6.336c-.576-.608-.576-1.536 0-2.112l1.44-1.44a1.507 1.507 0 0 1 2.112 0l12.16 12.16a1.507 1.507 0 0 1 0 2.112z"/></svg>' .
+					'</a>' .
+					'</div>' .
+					'</div>';
 		} catch ( Exception $e ) {
 			//in case of invalid link
 			return '';
@@ -221,10 +228,24 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		if ( ! empty( $urlslab_atts['show-image'] ) ) {
 			$img_url = $url->get_screenshot_url( $urlslab_atts['image-size'], true );
 			if ( ! empty( $img_url ) ) {
-				return '<div class="urlslab-rel-res-item-screenshot"><img alt="' . esc_attr( $url->get_summary_text( $strategy ) ) . '" src="' . $img_url . '"></div>';
+				return '<div class="urlslab-rel-res-item-screenshot">' .
+						'<a href="' . esc_url( $url->get_url()->get_url_with_protocol() ) . '"' .
+						' title="' . esc_attr( $url->get_summary_text( $strategy ) ) . '"' .
+						( $url->get_url()->is_same_domain_url() ? '' : ' target="_blank"' ) .
+						'>' .
+						'<img alt="' . esc_attr( $url->get_summary_text( $strategy ) ) . '" src="' . $img_url . '">' .
+						'</a>' .
+						'</div>';
 			} else {
 				if ( ! empty( $urlslab_atts['default-image'] ) ) {
-					return '<div class="urlslab-rel-res-item-screenshot urlslab-rel-res-item-default-image"><img src="' . $urlslab_atts['default-image'] . '"></div>';
+					return '<div class="urlslab-rel-res-item-screenshot urlslab-rel-res-item-default-image">' .
+							'<a href="' . esc_url( $url->get_url()->get_url_with_protocol() ) . '"' .
+							' title="' . esc_attr( $url->get_summary_text( $strategy ) ) . '"' .
+							( $url->get_url()->is_same_domain_url() ? '' : ' target="_blank"' ) .
+							'>' .
+							'<img src="' . $urlslab_atts['default-image'] . '">' .
+							'</a>' .
+							'</div>';
 				}
 			}
 		}
