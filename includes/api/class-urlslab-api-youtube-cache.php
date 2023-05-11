@@ -21,7 +21,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 					),
 					'args'                => array(
 						'status' => array(
-							'required'          => true,
+							'required'          => false,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
 									case Urlslab_Youtube_Row::STATUS_NEW:
@@ -99,6 +99,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 
 		register_rest_route( self::NAMESPACE, $base . '/(?P<videoid>[0-9a-zA-Z_\-]+)/urls', $this->get_route_video_urls() );
 		register_rest_route( self::NAMESPACE, $base . '/(?P<videoid>[0-9a-zA-Z_\-]+)/urls/count', $this->get_count_route( $this->get_route_video_urls() ) );
+		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
 	}
 
 	public function get_row_object( $params = array() ): Urlslab_Data {
@@ -108,6 +109,56 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 	public function get_editable_columns(): array {
 		return array( 'status' );
 	}
+
+
+	/**
+	 * @return array[]
+	 */
+	public function get_route_create_item(): array {
+		return array(
+			'methods'             => WP_REST_Server::CREATABLE,
+			'callback'            => array( $this, 'create_item' ),
+			'args'                => array(
+				'videoid'  => array(
+					'required'          => true,
+					'validate_callback' => function( $param ) {
+						return is_string( $param ) && strlen( $param );
+					},
+				),
+				'microdata' => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return is_string( $param ) && strlen( $param );
+					},
+				),
+				'captions' => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return is_string( $param ) && strlen( $param );
+					},
+				),
+				'status' => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						switch ($param) {
+							case Urlslab_Youtube_Row::STATUS_NEW:
+							case Urlslab_Youtube_Row::STATUS_AVAILABLE:
+							case Urlslab_Youtube_Row::STATUS_DISABLED:
+								return true;
+							default:
+								return false;
+						}
+					},
+				),
+
+			),
+			'permission_callback' => array(
+				$this,
+				'create_item_permissions_check',
+			),
+		);
+	}
+
 
 	/**
 	 * @param WP_REST_Request $request
@@ -120,6 +171,18 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 		}
 
 		return parent::delete_item( $request );
+	}
+
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function update_item( $request ) {
+		if ( 'import' == $request->get_param( 'videoid' ) ) {
+			return $this->import_items( $request );
+		}
+		return parent::update_item( $request );
 	}
 
 	public function delete_all_items( WP_REST_Request $request ) {
