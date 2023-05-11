@@ -10,29 +10,19 @@
 }
 
 .urlslab-rel-res-item {
+  display: flex;
   width: 100%;
+  flex-flow: nowrap;
+  align-items: center;
   margin-top: 0.75em;
+  padding: 1em;
+  background-color: #f9f9fa;
+  border-radius: 0.75em;
+  text-decoration: none !important;
+  transition: background-color 0.3s ease;
 
   &:first-of-type {
     margin-top: 0;
-  }
-
-  a {
-    display: flex;
-    flex-flow: nowrap;
-    align-items: center;
-    padding: 1em;
-    background-color: #f9f9fa;
-    border-radius: 0.75em;
-    text-decoration: none !important;
-    transition: background-color 0.3s ease;
-  }
-
-  &:hover {
-
-    a {
-      background-color: #e4e5e9;
-    }
   }
 
   &-screenshot {
@@ -60,7 +50,7 @@
     width: 1em;
     height: 1.5em;
     fill: #050505 !important;
-    position: absolute;
+    position: absolute !important;
     right: 0;
     top: 50%;
     transform: translate(-50%, -50%);
@@ -74,6 +64,10 @@
     margin: 0 !important;
     max-height: 1.5em;
     overflow: hidden;
+
+    a {
+      text-decoration: none;
+    }
   }
 
   &-summary {
