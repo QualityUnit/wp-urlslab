@@ -41,7 +41,6 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 		);
 
 
-
 		register_rest_route(
 			self::NAMESPACE,
 			$base . '/(?P<videoid>[0-9a-zA-Z_\-]+)',
@@ -116,9 +115,10 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function delete_item( $request ) {
-		if ('delete-all' === $request->get_param( 'videoid' ) ) {
+		if ( 'delete-all' === $request->get_param( 'videoid' ) ) {
 			return $this->delete_all_items( $request );
 		}
+
 		return parent::delete_item( $request );
 	}
 
