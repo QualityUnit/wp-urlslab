@@ -162,7 +162,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			array(
 				'shortcode_id'     => $atts['id'],
 				'semantic_context' => $this->get_template_value( $obj->get_semantic_context(), $atts ),
-				'prompt_variables' => json_encode( $atts ),
+				'prompt_variables' => json_encode( $this->unset_computed_variables( $atts ) ),
 				'url_filter'       => $this->get_template_value( $obj->get_url_filter(), $atts ),
 			),
 			false
@@ -179,10 +179,10 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			$obj_result->set_status( Urlslab_Generator_Result_Row::STATUS_NEW );
 			$obj_result->insert_all( array( $obj_result ), true );
 		}
+		$this->track_usage( $obj_result );
 
 
 		if ( ! empty( $value ) ) {
-			$this->track_usage( $obj_result );
 
 			if ( empty( $atts['template'] ) && empty( trim( $obj->get_template() ) ) ) {
 				return $value;
@@ -543,5 +543,18 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		$generator_url->set_shortcode_id( $obj->get_shortcode_id() );
 		$generator_url->set_hash_id( $obj->get_hash_id() );
 		$generator_url->insert_all( array( $generator_url ), true );
+	}
+
+	private function unset_computed_variables( array $atts ) {
+		unset( $atts['video_captions'] );
+		unset( $atts['video_captions_text'] );
+		unset( $atts['video_title'] );
+		unset( $atts['video_description'] );
+		unset( $atts['video_published_at'] );
+		unset( $atts['video_duration'] );
+		unset( $atts['video_channel_title'] );
+		unset( $atts['video_tags'] );
+
+		return $atts;
 	}
 }
