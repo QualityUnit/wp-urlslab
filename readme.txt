@@ -78,6 +78,10 @@ The content is coming soon.
 
 == Changelog ==
 
+= 2.21.7 - 2023-05-12 =
+
+* Fix import of YT videos
+
 = 2.21.6 - 2023-05-12 =
 
 * Experience a smoother user journey with our under-the-hood enhancements.
