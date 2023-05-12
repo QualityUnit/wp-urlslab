@@ -96,7 +96,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			$html_attributes[] = $id . '="' . $val . '"';
 		}
 
-		return '[urlslab-generator ' . implode( ', ', $html_attributes ) . ']';
+		return '[urlslab-generator ' . implode( ' ', $html_attributes ) . ']';
 	}
 
 	public function get_shortcode_content(
