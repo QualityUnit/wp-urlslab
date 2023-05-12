@@ -43,7 +43,7 @@ export default function NotFoundTable( { slug } ) {
 		setEditorRow( { match_type: 'E', redirect_code: '301', match_url: defaultMatchUrl } );
 
 		setActivePanel( 'rowInserter' );
-	}, [ setEditorRow ] );
+	}, [ ] );
 
 	const rowEditorCells = {
 		match_type: <SingleSelectMenu autoClose items={ matchTypes } name="match_type" defaultValue="E" onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_type: val } ) }>{ redirectHeader.match_type }</SingleSelectMenu>,
@@ -143,9 +143,9 @@ export default function NotFoundTable( { slug } ) {
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onUpdateRow={ ( val ) => {
-					setActivePanel();
+					// setActivePanel();
 					setEditorRow();
-					if ( val === 'rowInserted' || val === 'rowChanged' ) {
+					if ( val === 'rowInserted' ) {
 						setEditorRow( val );
 						setTimeout( () => {
 							setEditorRow( );

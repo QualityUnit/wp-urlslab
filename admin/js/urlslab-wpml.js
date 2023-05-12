@@ -1,7 +1,8 @@
-( function() {
+JQuery( function( $ ) {
 	if ( typeof window.WPML_TM !== 'undefined' && typeof window.WPML_TM.editorJobFieldView !== 'undefined' ) {
 		window.WPML_TM.editorJobFieldView.prototype.copyField = function() {
 			const self = this;
+			console.log( 'gule' );
 			self.setTranslation( 'Translating...' );
 
 			fetch( window.wpApiSettings.root + 'urlslab/v1/generator/translate', {
@@ -29,5 +30,5 @@
 			} );
 		};
 	}
-}() );
+} )();
 

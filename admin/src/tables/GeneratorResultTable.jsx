@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-	useInfiniteFetch, Tooltip, Checkbox, Trash, ProgressBar, SortBy, InputField, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, LinkIcon,
+	useInfiniteFetch, Tooltip, Checkbox, Trash, ProgressBar, SortBy, InputField, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, LinkIcon, TagsMenu,
 } from '../lib/tableImports';
 
 import IconButton from '../elements/IconButton';
@@ -75,6 +75,7 @@ export default function GeneratorResultTable( { slug } ) {
 		semantic_context: __( 'Semantic search query' ),
 		url_filter: __( 'URL filter' ),
 		lang: __( 'Language' ),
+		labels: __( 'Tags' ),
 		prompt_variables: __( 'Input data' ),
 		status: __( 'Status' ),
 		date_changed: __( 'Last change' ),
@@ -114,6 +115,12 @@ export default function GeneratorResultTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.lang }</SortBy>,
 			size: 100,
 		} ),
+		columnHelper.accessor( 'labels', {
+			className: 'nolimit',
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: header.labels,
+			size: 160,
+		} ),
 		columnHelper.accessor( 'result', {
 			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
@@ -138,7 +145,7 @@ export default function GeneratorResultTable( { slug } ) {
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
 					<button className="ml-s" onClick={ () => setDetailsOptions( {
-						title: `Shortcode used on these URLs`, slug, url: `${ cell.row.original.shortcode_id }/${ cell.row.original.hash_id }`, showKeys: [ 'url_name', 'created' ], listId: 'url_id',
+						title: `Shortcode used on these URLs`, slug, url: `${ cell.row.original.shortcode_id }/${ cell.row.original.hash_id }/urls`, showKeys: [ 'url_name', 'created' ], listId: 'url_id',
 					} ) }>
 						<LinkIcon />
 						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
