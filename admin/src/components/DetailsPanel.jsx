@@ -8,8 +8,8 @@ import { postFetch } from '../api/fetching';
 import useCloseModal from '../hooks/useCloseModal';
 import Button from '../elements/Button';
 import ProgressBar from '../elements/ProgressBar';
+import DateTimeFormat from '../elements/DateTimeFormat';
 import Loader from './Loader';
-import { getParamsChar } from '../lib/helpers';
 
 export default function DetailsPanel( { options, handlePanel } ) {
 	const maxRows = 150;
@@ -20,6 +20,16 @@ export default function DetailsPanel( { options, handlePanel } ) {
 	const tbody = [];
 
 	const { title, text, slug, url, showKeys, listId } = options;
+
+	const parseDate = ( row, key ) => {
+		const dateKeys = [ 'created' ]; // Insert other keys with date, ie. 'modified' if needed
+		dateKeys.map( ( val ) => {
+			if ( key.includes( val ) ) {
+				return <DateTimeFormat datetime={ row[ key ] } key={ row[ key ] } />;
+			}
+			return null;
+		} );
+	};
 
 	const { isSuccess, data, isFetchingNextPage,
 		hasNextPage,
@@ -80,6 +90,9 @@ export default function DetailsPanel( { options, handlePanel } ) {
 					return <td className="pr-m pos-relative" key={ row[ key ] }>
 						<div className="limit">
 							{ key.includes( 'url' ) ? <a href={ row[ key ] } target="_blank" rel="noreferrer">{ row[ key ] }</a> : row[ key ] }
+							{
+								parseDate( row, key )
+							}
 						</div>
 					</td>;
 				} ) }

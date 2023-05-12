@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import {
-	useInfiniteFetch, Tooltip, Checkbox, Trash, ProgressBar, SortBy, InputField, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat,
+	useInfiniteFetch, Tooltip, Checkbox, Trash, ProgressBar, SortBy, InputField, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, LinkIcon, TagsMenu,
 } from '../lib/tableImports';
 
 import IconButton from '../elements/IconButton';
@@ -15,6 +16,7 @@ import useChangeRow from '../hooks/useChangeRow';
 export default function GeneratorResultTable( { slug } ) {
 	const paginationId = 'hash_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( 'generator/result' );
+	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
 	const url = { filters, sorting };
 
@@ -72,6 +74,8 @@ export default function GeneratorResultTable( { slug } ) {
 		command: __( 'Command' ),
 		semantic_context: __( 'Semantic search query' ),
 		url_filter: __( 'URL filter' ),
+		lang: __( 'Language' ),
+		labels: __( 'Tags' ),
 		prompt_variables: __( 'Input data' ),
 		status: __( 'Status' ),
 		date_changed: __( 'Last change' ),
@@ -111,6 +115,12 @@ export default function GeneratorResultTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.lang }</SortBy>,
 			size: 100,
 		} ),
+		columnHelper.accessor( 'labels', {
+			className: 'nolimit',
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: header.labels,
+			size: 160,
+		} ),
 		columnHelper.accessor( 'result', {
 			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
@@ -131,6 +141,17 @@ export default function GeneratorResultTable( { slug } ) {
 			size: 100,
 		} ),
 		columnHelper.accessor( 'usage_count', {
+			cell: ( cell ) => <div className="flex flex-align-center">
+				{ cell?.getValue() }
+				{ cell?.getValue() > 0 &&
+					<button className="ml-s" onClick={ () => setDetailsOptions( {
+						title: `Shortcode used on these URLs`, slug, url: `${ cell.row.original.shortcode_id }/${ cell.row.original.hash_id }/urls`, showKeys: [ 'url_name', 'created' ], listId: 'url_id',
+					} ) }>
+						<LinkIcon />
+						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
+					</button>
+				}
+			</div>,
 			header: header.usage_count,
 			size: 100,
 		} ),
@@ -161,6 +182,7 @@ export default function GeneratorResultTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
+				detailsOptions={ detailsOptions }
 				exportOptions={ {
 					slug,
 					url,
