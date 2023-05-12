@@ -90,10 +90,12 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 				}
 				$command = $widget->get_template_value(
 					'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Generator_Result_Row::DO_NOT_KNOW . "!\n" . $row_shortcode->get_prompt() .
-					"\n\n--VIDEO CAPTIONS:\n{{video_captions_text}}\n--VIDEO CAPTIONS END\nANSWER:",
+					"\n\n--VIDEO CAPTIONS:\n{context}\n--VIDEO CAPTIONS END\nANSWER:",
 					$attributes
 				);
 				$prompt->setPromptTemplate( $command );
+				$prompt->setDocumentTemplate( $widget->get_template_value( "{{video_captions_text}}", $attributes ) );
+
 				$prompt->setMetadataVars( array() );
 				$request->setPrompt( $prompt );
 				$response = $this->content_client->memoryLessAugment( $request, 'false', 'true', 'true', 'false' );
