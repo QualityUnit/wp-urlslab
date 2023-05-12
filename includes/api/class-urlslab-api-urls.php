@@ -548,8 +548,16 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			. ' u ON s.src_url_id = u.url_id'
 		); // phpcs:ignore
 
-		$this->add_filters( $sql );
-		$this->add_sorting( $sql );
+		$columns = $this->prepare_columns(
+			array(
+				'screenshot_url_id'   => '%d',
+				'src_url_id'    => '%d',
+				'src_url_name'  => '%s',
+			)
+		);
+
+		$sql->add_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
 
 		return $sql;
 	}
