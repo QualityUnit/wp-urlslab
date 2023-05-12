@@ -199,7 +199,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				}
 			}
 
-			return '<div class="urlslab-rel-res-item">' .
+			return '<div class="urlslab-rel-res-item urlslab-skip-keywords">' .
 					$this->render_screenshot( $url_obj, $urlslab_atts, $strategy ) .
 					'<div class="urlslab-rel-res-item-text"><p class="urlslab-rel-res-item-title">' .
 					'<a href="' . esc_url( $url_obj->get_url()->get_url_with_protocol() ) . '"' .
