@@ -4,8 +4,6 @@ window.addEventListener( 'load', () => {
 		const copyAllBtn = document.querySelector( '.wpml-translation-header .button-copy-all' );
 		const translateAllBtn = document.createElement( 'button' );
 		const allRows = document.querySelectorAll( '.wpml-form-row' );
-		let rowIndex = 0;
-		let ended = false;
 
 		translateAllBtn.innerText = 'Translate all empty';
 		translateAllBtn.addEventListener( 'click', copyTranslate );
@@ -31,6 +29,7 @@ window.addEventListener( 'load', () => {
 			const wpmlRow = event.target.closest( '.wpml-form-row' );
 			const isTranslating = 'Translating...';
 			const rowsTotal = allRows.length;
+			let rowIndex = 0;
 
 			if ( wpmlRow ) {
 				const origFieldValue = wpmlRow.querySelector( '.original_value' ).value;
@@ -46,20 +45,22 @@ window.addEventListener( 'load', () => {
 				const origFieldValue = row.querySelector( '.original_value' ).value;
 				const translationField = row.querySelector( '.translated_value' );
 
-				// if ( ! translationField.value ) {
-				translationField.value = isTranslating;
-				const response = translate( origFieldValue, translationField );
+				if ( ! translationField.value ) {
+					translationField.value = isTranslating;
+					const response = await translate( origFieldValue, translationField );
+					console.log( response );
 
-				if ( index === rowsTotal - 1 ) {
-					ended = true;
-				}
+					if ( index === rowsTotal - 1 ) {
+						return false;
+					}
 
-				if ( response && index < rowsTotal && ! ended ) {
-					rowIndex += 1;
-					await batchTranslate( rowIndex );
+					if ( response && index < rowsTotal ) {
+						rowIndex += 1;
+						await batchTranslate( rowIndex );
+					}
+					return response;
 				}
-				return response;
-				// }
+				rowIndex += 1;
 			}
 
 			batchTranslate( rowIndex );
@@ -86,8 +87,10 @@ window.addEventListener( 'load', () => {
 				throw new Error( 'Translation request failed' );
 			} ).then( ( data ) => {
 				targetField.value = data.translation;
-			} ).catch( ( ) => {
+				return data;
+			} ).catch( ( error ) => {
 				targetField.value = origVal;
+				return error;
 			} );
 		}
 	}
