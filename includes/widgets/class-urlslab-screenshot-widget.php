@@ -120,16 +120,16 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 						$screenshot_url = $urlslab_atts['default-image'];
 					}
 
-					if ( empty( $screenshot_url ) ) {
-						return ' <!-- URLSLAB processing '
-							   . $urlslab_atts['url'] . ' -->';
-					}
-
 					// track screenshot usage
 					$scr_url = new Urlslab_Screenshot_Url_Row();
 					$scr_url->set_src_url_id( $this->get_current_page_url()->get_url_id() );
 					$scr_url->set_screenshot_url_id( $url_data->get_url_id() );
 					$scr_url->insert_all( array( $scr_url ), true );
+
+					if ( empty( $screenshot_url ) ) {
+						return ' <!-- URLSLAB processing '
+							   . $urlslab_atts['url'] . ' -->';
+					}
 
 					return $this->render_shortcode(
 						$urlslab_atts['url'],
