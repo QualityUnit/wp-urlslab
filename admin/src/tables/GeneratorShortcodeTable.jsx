@@ -64,8 +64,6 @@ export default function GeneratorShortcodeTable( { slug } ) {
 
 	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	console.log( rowToEdit );
-
 	const statusTypes = {
 		A: __( 'Active' ),
 		D: __( 'Disabled' ),

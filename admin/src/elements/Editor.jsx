@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Editor as TinyMCE } from '@tinymce/tinymce-react';
 
 import 'tinymce/tinymce';
@@ -45,25 +45,19 @@ import 'tinymce/plugins/table';
 // import 'tinymce/plugins/visualchars';
 // import 'tinymce/plugins/wordcount';
 
-// importing plugin resources
-import 'tinymce/plugins/emoticons/js/emojis';
-
-import { delay } from '../lib/helpers';
 import '../assets/styles/elements/_Inputs.scss';
 
 export default function Editor( { defaultValue, className, style, label, description, onChange } ) {
 	const editorRef = useRef( null );
-	const [ val, setVal ] = useState( defaultValue || '' );
+	const [ val, setVal ] = useState( defaultValue ?? '' );
+	useEffect( () => setVal( defaultValue ?? '' ), [ defaultValue ] );
 
-	const handleVal = useCallback( ( value ) => {
-		if ( onChange && ( defaultValue !== val || ! val ) ) {
-			onChange( value );
+	const handleVal = useCallback( ( input ) => {
+		if ( onChange && ( defaultValue !== input || ! input ) ) {
+			setVal( input );
+			onChange( input );
 		}
-	}, [ onChange, defaultValue, val ] );
-
-	const handleValLive = ( value ) => {
-		delay( () => handleVal( value ), 800 )();
-	};
+	}, [ onChange, defaultValue ] );
 
 	return (
 		<div className={ `urlslab-inputField-wrap ${ className || '' }` } style={ style }>
@@ -75,10 +69,8 @@ export default function Editor( { defaultValue, className, style, label, descrip
 
 			<TinyMCE
 				onInit={ ( evt, editor ) => editorRef.current = editor }
-				initialValue={ defaultValue }
-				onEditorChange={ ( input ) => {
-					setVal( input ); handleValLive( input );
-				} }
+				value={ val }
+				onEditorChange={ ( input ) => handleVal( input ) }
 				init={ {
 					skin: false,
 					content_css: false,
