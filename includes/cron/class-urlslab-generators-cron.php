@@ -94,7 +94,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 					$attributes
 				);
 				$prompt->setPromptTemplate( $command );
-				$prompt->setDocumentTemplate( $widget->get_template_value( "{{video_captions_text}}", $attributes ) );
+				$prompt->setDocumentTemplate( $widget->get_template_value( '{{video_captions_text}}', $attributes ) );
 
 				$prompt->setMetadataVars( array() );
 				$request->setPrompt( $prompt );
