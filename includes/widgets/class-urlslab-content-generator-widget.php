@@ -68,36 +68,6 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		return array( self::LABEL_PAID, self::LABEL_BETA );
 	}
 
-	private function is_edit_mode(): bool {
-		$arr_modes = array(
-			'trash',
-			'auto-draft',
-			'inherit',
-		);
-
-		return isset( $_REQUEST['elementor-preview'] ) ||
-			   ( isset( $_REQUEST['action'] ) && false !== strpos( $_REQUEST['action'], 'elementor' ) ) ||
-			   in_array( get_post_status(), $arr_modes ) ||
-			   ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() );
-	}
-
-	public function get_placeholder_html( array $atts ): string {
-		$html_attributes = array();
-		foreach ( $atts as $id => $val ) {
-			$html_attributes[] = '<b>' . esc_html( $id ) . '</b>="<i>' . esc_html( $val ) . '</i>"';
-		}
-
-		return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">[<b>urlslab-generator</b> ' . implode( ', ', $html_attributes ) . ']</div>';
-	}
-
-	public function get_placeholder_txt( array $atts ): string {
-		$html_attributes = array();
-		foreach ( $atts as $id => $val ) {
-			$html_attributes[] = $id . '="' . $val . '"';
-		}
-
-		return '[urlslab-generator ' . implode( ' ', $html_attributes ) . ']';
-	}
 
 	public function get_shortcode_content(
 		$atts = array(),
@@ -108,7 +78,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			if ( $this->is_edit_mode() ) {
 				$atts['STATUS'] = 'Missing shortcode ID attribute!!!';
 
-				return $this->get_placeholder_html( $atts );
+				return $this->get_placeholder_html( $atts, self::SLUG );
 			}
 
 			return '';
@@ -122,12 +92,12 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 					if ( $this->is_edit_mode() ) {
 						$atts['STATUS'] = 'videoid attribute is missing in shortcode';
 
-						return $this->get_placeholder_html( $atts );
+						return $this->get_placeholder_html( $atts, self::SLUG );
 					}
 
 					return '';
 				}
-				$video = $this->get_video_obj( $atts['videoid'] );
+				$video = Urlslab_Youtube_Row::get_video_obj( $atts['videoid'] );
 				if ( empty( $video->get_video_id() ) ) {
 					return '';
 				}
@@ -136,7 +106,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 				if ( $this->is_edit_mode() ) {
 					$atts['STATUS'] = 'NOT ACTIVE!!!!';
 
-					return $this->get_placeholder_html( $atts );
+					return $this->get_placeholder_html( $atts, self::SLUG );
 				}
 
 				return '';
@@ -145,7 +115,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			if ( $this->is_edit_mode() ) {
 				$atts['STATUS'] = 'Short code with given ID does NOT exists!!!';
 
-				return $this->get_placeholder_html( $atts );
+				return $this->get_placeholder_html( $atts, self::SLUG );
 			}
 
 			return '';
@@ -155,7 +125,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		$atts = $this->get_att_values( $obj, $atts );
 
 		if ( $this->is_edit_mode() ) {
-			return $this->get_placeholder_html( $atts );
+			return $this->get_placeholder_html( $atts, self::SLUG );
 		}
 
 		$obj_result = new Urlslab_Generator_Result_Row(
@@ -261,49 +231,49 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			if ( ! isset( $atts[ $variable ] ) ) {
 				switch ( $variable ) {
 					case 'video_captions':
-						$obj_video = $this->get_video_obj( $atts['videoid'] );
+						$obj_video = Urlslab_Youtube_Row::get_video_obj( $atts['videoid'] );
 						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
 							$atts['video_captions'] = $obj_video->get_captions();
 						}
 						break;
 					case 'video_captions_text':
-						$obj_video = $this->get_video_obj( $atts['videoid'] );
+						$obj_video = Urlslab_Youtube_Row::get_video_obj( $atts['videoid'] );
 						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
 							$atts['video_captions_text'] = $obj_video->get_captions_as_text();
 						}
 						break;
 					case 'video_title':
-						$obj_video = $this->get_video_obj( $atts['videoid'] );
+						$obj_video = Urlslab_Youtube_Row::get_video_obj( $atts['videoid'] );
 						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
 							$atts['video_title'] = $obj_video->get_title();
 						}
 						break;
 					case 'video_description':
-						$obj_video = $this->get_video_obj( $atts['videoid'] );
+						$obj_video = Urlslab_Youtube_Row::get_video_obj( $atts['videoid'] );
 						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
 							$atts['video_description'] = $obj_video->get_description();
 						}
 						break;
 					case 'video_published_at':
-						$obj_video = $this->get_video_obj( $atts['videoid'] );
+						$obj_video = Urlslab_Youtube_Row::get_video_obj( $atts['videoid'] );
 						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
 							$atts['video_published_at'] = $obj_video->get_published_at();
 						}
 						break;
 					case 'video_duration':
-						$obj_video = $this->get_video_obj( $atts['videoid'] );
+						$obj_video = Urlslab_Youtube_Row::get_video_obj( $atts['videoid'] );
 						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
 							$atts['video_duration'] = $obj_video->get_duration();
 						}
 						break;
 					case 'video_channel_title':
-						$obj_video = $this->get_video_obj( $atts['videoid'] );
+						$obj_video = Urlslab_Youtube_Row::get_video_obj( $atts['videoid'] );
 						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
 							$atts['video_channel_title'] = $obj_video->get_channel_title();
 						}
 						break;
 					case 'video_tags':
-						$obj_video = $this->get_video_obj( $atts['videoid'] );
+						$obj_video = Urlslab_Youtube_Row::get_video_obj( $atts['videoid'] );
 						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
 							$atts['video_tags'] = $obj_video->get_video_tags();
 						}
@@ -334,19 +304,6 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		}
 
 		return $atts;
-	}
-
-	private function get_video_obj( $videoid ): Urlslab_Youtube_Row {
-		$videoid = Urlslab_Youtube_Row::parse_video_id( $videoid );
-
-		if ( ! isset( self::$video_cache[ $videoid ] ) ) {
-			self::$video_cache[ $videoid ] = new Urlslab_Youtube_Row( array( 'videoid' => $videoid ) );
-			if ( ! self::$video_cache[ $videoid ]->load() && strlen( $videoid ) ) {
-				self::$video_cache[ $videoid ]->insert();
-			}
-		}
-
-		return self::$video_cache[ $videoid ];
 	}
 
 	public function get_template_value( string $template, array $attributes ): string {

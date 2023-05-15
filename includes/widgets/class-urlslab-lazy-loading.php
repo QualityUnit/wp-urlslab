@@ -6,6 +6,8 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-content-cache-ro
 class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	public const SLUG = 'urlslab-lazy-loading';
 
+	public const SHORTCODE_VIDEO = 'urlslab-video';
+
 	// Lazy Loading settings
 	public const SETTING_NAME_IMG_LAZY_LOADING = 'urlslab_img_lazy';
 	public const SETTING_NAME_IMG_LAZY_LOADING_WITH_PLACEHOLDER = 'urlslab_img_lazy_placeholder';
@@ -30,7 +32,34 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_content', $this, 'the_content', 10 );
+
+		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'hook_callback', 10, 0 );
 	}
+
+
+	public function hook_callback() {
+		add_shortcode( self::SHORTCODE_VIDEO, array( $this, 'get_video_shortcode_content' ) );
+	}
+
+
+	public function get_video_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
+		if ( ! isset( $atts['videoid'] ) || empty( $atts['videoid'] ) ) {
+			if ( $this->is_edit_mode() ) {
+				$atts['STATUS'] = 'Missing shortcode videoid attribute!!!';
+
+				return $this->get_placeholder_html( $atts, self::SHORTCODE_VIDEO );
+			}
+
+			return '';
+		}
+
+		if ( $this->is_edit_mode() ) {
+			return $this->get_placeholder_html( $atts, self::SHORTCODE_VIDEO );
+		}
+
+		return urlslab_video_data( $atts['videoid'], $atts['atttribute'] );
+	}
+
 
 	public function get_widget_slug(): string {
 		return Urlslab_Lazy_Loading::SLUG;
@@ -737,4 +766,33 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		}
 		$row->insert_all( $objects, true );
 	}
+}
+
+function urlslab_video_data( $videoid, $attribute_name ) {
+	try {
+		$obj_video = Urlslab_Youtube_Row::get_video_obj( $videoid );
+		switch ( $attribute_name ) {
+			case 'title':
+				return $obj_video->get_title();
+			case 'description':
+				return $obj_video->get_description();
+			case 'thumbnail_url':
+				return $obj_video->get_thumbnail_url();
+			case 'published_at':
+				return $obj_video->get_published_at();
+			case 'duration':
+				return $obj_video->get_duration();
+			case 'captions':
+				return $obj_video->get_captions();
+			case 'captions_text':
+				return $obj_video->get_captions_as_text();
+			case 'channel_title':
+				return $obj_video->get_channel_title();
+			default:
+				return '';
+		}
+	} catch ( Exception $e ) {
+	}
+
+	return '';
 }
