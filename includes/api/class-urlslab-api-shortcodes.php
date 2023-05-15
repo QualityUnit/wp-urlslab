@@ -148,7 +148,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 			if ( Urlslab_Generator_Shortcode_Row::TYPE_VIDEO === $row->shortcode_type ) {
 				$atts['videoid'] = 'your youtube video id';
 			}
-			$row->shortcode    = $widget->get_placeholder_txt( $atts );
+			$row->shortcode    = $widget->get_placeholder_txt( $atts, Urlslab_Content_Generator_Widget::SLUG );
 		}
 
 		return new WP_REST_Response( $rows, 200 );
