@@ -57,7 +57,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			return $this->get_placeholder_html( $atts, self::SHORTCODE_VIDEO );
 		}
 
-		return urlslab_video_data( $atts['videoid'], $atts['attribute'] );
+		return urlslab_video_attribute( $atts['videoid'], $atts['attribute'] );
 	}
 
 
@@ -768,7 +768,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 }
 
-function urlslab_video_data( $videoid, $attribute_name ) {
+function urlslab_video_attribute( $videoid, $attribute_name ) {
 	try {
 		$obj_video = Urlslab_Youtube_Row::get_video_obj( $videoid );
 		switch ( $attribute_name ) {
@@ -795,4 +795,9 @@ function urlslab_video_data( $videoid, $attribute_name ) {
 	}
 
 	return '';
+}
+
+function urlslab_video_attributes( $videoid ): array {
+	$obj_video = Urlslab_Youtube_Row::get_video_obj( $videoid );
+	return $obj_video->as_array();
 }
