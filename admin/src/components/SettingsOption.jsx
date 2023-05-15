@@ -112,6 +112,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 			case 'number':
 				return (
 					<InputField
+						key={ id }
 						type={ type }
 						label={ title }
 						placeholder={ placeholder && ! value }
@@ -123,6 +124,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 				return (
 					<Button
 						active
+						key={ id }
 						onClick={ handleApiCall }
 					>
 						{ title }
@@ -132,6 +134,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 				return (
 					<Switch
 						className="option flex"
+						key={ id }
 						label={ title }
 						checked={ value }
 						onChange={ ( inputValue ) => handleChange.mutate( inputValue ) }
@@ -144,6 +147,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 						<DatePicker
 							className="urlslab-input xl"
 							selected={ date }
+							key={ id }
 							dateFormat="dd. MMMM yyyy, HH:mm"
 							timeFormat="HH:mm"
 							showTimeSelect
