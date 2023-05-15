@@ -88,15 +88,15 @@ export default function TagsMenu( { label, description, defaultValue: tags, slug
 			}
 
 			const newTagToInsert = { name: newTag.label, bgcolor: '#EDEFF3' };
+			setSelected( ( selectedTags ) => [ ...selectedTags, { ...newTagToInsert, value: newTag.label, label: newTagToInsert.name } ] );
 			const response = await postFetch( `label/create`, newTagToInsert );
 			const { ok } = await response;
 			if ( ok ) {
 				let returnedTag = await response.json();
 				returnedTag = { value: returnedTag.label_id, label: returnedTag.name, ...returnedTag };
-				setSelected( ( selectedTags ) => [ ...selectedTags, returnedTag ] );
+				onChange( `${ selectedToString }${ returnedTag.label_id }|` );
 			}
-			onChange( selectedToString );
-		}, [] );
+		}, [ onChange, selectedToString ] );
 
 	const onDelete = useCallback(
 		( tag ) => {
