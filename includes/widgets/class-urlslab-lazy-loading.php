@@ -57,7 +57,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			return $this->get_placeholder_html( $atts, self::SHORTCODE_VIDEO );
 		}
 
-		return urlslab_video_data( $atts['videoid'], $atts['atttribute'] );
+		return urlslab_video_data( $atts['videoid'], $atts['attribute'] );
 	}
 
 
