@@ -9,6 +9,18 @@ window.addEventListener( 'load', () => {
 		translateAllBtn.addEventListener( 'click', copyTranslate );
 		copyAllBtn.after( translateAllBtn );
 
+		function showError() {
+			// Stops translating on error
+			const errorMessage = document.createElement( 'div' );
+			errorMessage.innerText = 'Translation failed!';
+			errorMessage.style.cssText = 'position: fixed; z-index: 10000; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2em; border-radius: 1em; background-color: red; color: white; padding: 0.5em 1em;';
+			document.body.appendChild( errorMessage );
+			setTimeout( () => {
+				errorMessage.remove();
+			}, 3000 );
+		}
+
+		// Creating separate Translate buttons
 		copyBtns.forEach( ( btn ) => {
 			const parent = btn.parentNode;
 			const btnsWrapper = document.createElement( 'div' );
@@ -25,48 +37,92 @@ window.addEventListener( 'load', () => {
 			btnsWrapper.appendChild( btn );
 		} );
 
+		// Function to get original field (or tinyMCE editor) and return target field
+		function rowSetter( row ) {
+			const orig = row.querySelector( '.original_value' );
+			const isTranslating = 'Translating...';
+
+			let origFieldValue = orig.value;
+			let tinymceOrigId;
+			let tinymceTransId;
+			let tinymceTransIdValue;
+			let isTranslated = false;
+
+			if ( orig.classList.contains( 'mce_editor_origin' ) ) {
+				tinymceOrigId = orig.querySelector( 'textarea.original_value' ).getAttribute( 'name' );
+				origFieldValue = window.tinyMCE.get( tinymceOrigId ).getContent();
+				tinymceTransId = tinymceOrigId.replace( '_original', '' );
+				tinymceTransIdValue = window.tinyMCE.get( tinymceTransId ).getContent( );
+
+				if ( tinymceTransIdValue ) {
+					isTranslated = true;
+				}
+
+				if ( ! isTranslated ) {
+					window.tinyMCE.get( tinymceTransId ).setContent( isTranslating );
+				}
+
+				return { origFieldValue, translateField: tinymceTransId, type: 'tinymce', isTranslated };
+			}
+
+			const translateField = row.querySelector( '.translated_value' );
+
+			if ( translateField.value ) {
+				isTranslated = true;
+			}
+
+			if ( ! isTranslated ) {
+				translateField.value = isTranslating;
+			}
+
+			return { origFieldValue: orig.value, translateField, isTranslated };
+		}
+
 		function copyTranslate( event ) {
 			const wpmlRow = event.target.closest( '.wpml-form-row' );
-			const isTranslating = 'Translating...';
 			const rowsTotal = allRows.length;
 			let rowIndex = 0;
 
-			if ( wpmlRow ) {
-				const origFieldValue = wpmlRow.querySelector( '.original_value' ).value;
-				const translationField = wpmlRow.querySelector( '.translated_value' );
-				translationField.value = isTranslating;
-
-				translate( origFieldValue, translationField );
-				return false;
-			}
-
-			async function batchTranslate( index ) {
-				const row = allRows[ index ];
-				const origFieldValue = row.querySelector( '.original_value' ).value;
-				const translationField = row.querySelector( '.translated_value' );
-
-				if ( ! translationField.value ) {
-					translationField.value = isTranslating;
-					const response = await translate( origFieldValue, translationField );
-					console.log( response );
-
-					if ( index === rowsTotal - 1 ) {
-						return false;
-					}
-
-					if ( response && index < rowsTotal ) {
-						rowIndex += 1;
-						await batchTranslate( rowIndex );
+			if ( wpmlRow ) { // Single row translation
+				const { origFieldValue, translateField, type } = rowSetter( wpmlRow );
+				async function translateOneRow() {
+					const response = await translate( { origFieldValue, translateField, type } );
+					if ( ! response ) {
+						showError();
 					}
 					return response;
 				}
-				rowIndex += 1;
+
+				translateOneRow();
+			}
+
+			// Function for translating all fields
+			async function batchTranslate( index ) {
+				if ( index === rowsTotal - 1 ) {
+					// Stops translating when on the end
+					return false;
+				}
+				const row = allRows[ index ];
+				const { origFieldValue, translateField, type, isTranslated } = rowSetter( row );
+
+				let response = { translation: true };
+				if ( ! isTranslated ) { // Do not translated filled fields
+					response = await translate( { origFieldValue, translateField, type } );
+				}
+				if ( response?.translation ) { // Continue if got response with translation
+					rowIndex += 1;
+					await batchTranslate( rowIndex );
+					return response;
+				}
+				showError();
+				return false;
 			}
 
 			batchTranslate( rowIndex );
 		}
 
-		async function translate( origVal, targetField ) {
+		// Fetching function that returns translation from ChatGPT
+		async function translate( { origFieldValue, translateField, type } ) {
 			return await fetch( window.wpApiSettings.root + 'urlslab/v1/generator/translate', {
 				method: 'POST',
 				headers: {
@@ -77,19 +133,23 @@ window.addEventListener( 'load', () => {
 				body: JSON.stringify( {
 					source_lang: window.WpmlTmEditorModel.languages.source_lang,
 					target_lang: window.WpmlTmEditorModel.languages.target_lang,
-					original_text: origVal,
+					original_text: origFieldValue,
 				} ),
 				credentials: 'include',
 			} ).then( ( response ) => {
-				if ( response.status ) {
+				if ( response.ok ) {
 					return response.json();
 				}
-				throw new Error( 'Translation request failed' );
+				// throw new Error( 'Translation request failed' );
+				return false;
 			} ).then( ( data ) => {
-				targetField.value = data.translation;
+				if ( type && type === 'tinymce' ) {
+					window.tinyMCE.get( translateField ).setContent( data?.translation || '' );
+					return data;
+				}
+				translateField.value = data?.translation || '';
 				return data;
 			} ).catch( ( error ) => {
-				targetField.value = origVal;
 				return error;
 			} );
 		}
