@@ -87,6 +87,11 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 		$domains[ $url->get_domain_name() ] = $url->get_domain_name();
 
 		$query->setDomains( array_keys( $domains ) );
+		$must_array = array( (object) array( 'term' => (object) array( 'metadata.chunk_id' => (object) array( 'value' => 1 ) ) ) );
+		if ( $widget->get_option( Urlslab_Related_Resources_Widget::SETTING_NAME_LAST_SEEN ) > 0 ) {
+			$must_array[] = (object) array( 'range' => (object) array( 'metadata.lastSeen' => (object) array( 'gte' => time() - $widget->get_option( Urlslab_Related_Resources_Widget::SETTING_NAME_LAST_SEEN ) ) ) );
+		}
+		$query->setAdditionalQuery( (object) array( 'bool' => (object) array( 'must' => $must_array ) ) );
 		$request->setFilter( $query );
 
 		try {
@@ -115,7 +120,7 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 
 			$url_objects       = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_urls( $schedule_urls );
 			$related_resources = array();
-			$pos = 1;
+			$pos               = 1;
 			foreach ( $url_objects as $dest_url_obj ) {
 				$related_resources[] = new Urlslab_Url_Relation_Row(
 					array(
