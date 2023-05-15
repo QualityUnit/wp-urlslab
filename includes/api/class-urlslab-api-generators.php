@@ -193,11 +193,11 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 					$prompt_text .= "\nTRANSLATION should have similar length as INPUT TEXT";
 					$prompt_text .= "\nTRANSLATE $source_lang INPUT TEXT to $target_lang";
-					$prompt_text .= "\n---- INPUT TEXT:\n" . $original_text;
-					$prompt_text .= "\n---- END OF INPUT TEXT";
+					$prompt_text .= "\n---- INPUT TEXT:\n{context}\n---- END OF INPUT TEXT";
 					$prompt_text .= "\nTRANSLATION of INPUT TEXT to $target_lang:";
 
 					$prompt->setPromptTemplate( $prompt_text );
+					$prompt->setDocumentTemplate( $original_text );
 					$prompt->setMetadataVars( array() );
 					$request->setPrompt( $prompt );
 
