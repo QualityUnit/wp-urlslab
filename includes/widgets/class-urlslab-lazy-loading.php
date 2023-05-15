@@ -798,6 +798,11 @@ function urlslab_video_attribute( $videoid, $attribute_name ) {
 }
 
 function urlslab_video_attributes( $videoid ): array {
-	$obj_video = Urlslab_Youtube_Row::get_video_obj( $videoid );
-	return $obj_video->as_array();
+	try {
+		$obj_video = Urlslab_Youtube_Row::get_video_obj( $videoid );
+
+		return $obj_video->as_array();
+	} catch ( Exception $e ) {
+		return array();
+	}
 }
