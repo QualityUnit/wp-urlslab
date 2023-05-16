@@ -5,20 +5,12 @@ window.addEventListener( 'load', () => {
 		const translateAllBtn = document.createElement( 'button' );
 		const allRows = document.querySelectorAll( '.wpml-form-row' );
 
-		translateAllBtn.innerText = 'Translate all empty';
-		translateAllBtn.addEventListener( 'click', copyTranslate );
-		copyAllBtn.after( translateAllBtn );
+		const rowsTotal = allRows.length;
+		let rowIndex = 0;
 
-		function showError() {
-			// Stops translating on error
-			const errorMessage = document.createElement( 'div' );
-			errorMessage.innerText = 'Translation failed!';
-			errorMessage.style.cssText = 'position: fixed; z-index: 10000; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2em; border-radius: 1em; background-color: red; color: white; padding: 0.5em 1em;';
-			document.body.appendChild( errorMessage );
-			setTimeout( () => {
-				errorMessage.remove();
-			}, 3000 );
-		}
+		translateAllBtn.innerText = 'Translate all empty';
+		translateAllBtn.addEventListener( 'click', batchTranslate( rowIndex ) );
+		copyAllBtn.after( translateAllBtn );
 
 		// Creating separate Translate buttons
 		copyBtns.forEach( ( btn ) => {
@@ -30,12 +22,23 @@ window.addEventListener( 'load', () => {
 			btnsWrapper.style.cssText = 'display: inline-flex; flex-direction: column;';
 
 			btnTranslate.innerText = 'Translate';
-			btnTranslate.addEventListener( 'click', copyTranslate );
+			btnTranslate.addEventListener( 'click', singleTranslate );
 
 			btnsWrapper.appendChild( btnTranslate );
 			parent.insertBefore( btnsWrapper, btn );
 			btnsWrapper.appendChild( btn );
 		} );
+
+		function showError() {
+			// Stops translating on error
+			const errorMessage = document.createElement( 'div' );
+			errorMessage.innerText = 'Translation failed!';
+			errorMessage.style.cssText = 'position: fixed; z-index: 10000; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2em; border-radius: 1em; background-color: red; color: white; padding: 0.5em 1em;';
+			document.body.appendChild( errorMessage );
+			setTimeout( () => {
+				errorMessage.remove();
+			}, 3000 );
+		}
 
 		// Function to get original field (or tinyMCE editor) and return target field
 		function rowSetter( row ) {
@@ -52,7 +55,7 @@ window.addEventListener( 'load', () => {
 				tinymceOrigId = orig.querySelector( 'textarea.original_value' ).getAttribute( 'name' );
 				origFieldValue = window.tinyMCE.get( tinymceOrigId ).getContent();
 				tinymceTransId = tinymceOrigId.replace( '_original', '' );
-				tinymceTransIdValue = window.tinyMCE.get( tinymceTransId ).getContent( );
+				tinymceTransIdValue = window.tinyMCE.get( tinymceTransId ).getContent();
 
 				if ( tinymceTransIdValue ) {
 					isTranslated = true;
@@ -78,47 +81,39 @@ window.addEventListener( 'load', () => {
 			return { origFieldValue: orig.value, translateField, isTranslated };
 		}
 
-		function copyTranslate( event ) {
+		async function singleTranslate( event ) {
 			const wpmlRow = event.target.closest( '.wpml-form-row' );
-			const rowsTotal = allRows.length;
-			let rowIndex = 0;
 
 			if ( wpmlRow ) { // Single row translation
 				const { origFieldValue, translateField, type } = rowSetter( wpmlRow );
-				async function translateOneRow() {
-					const response = await translate( { origFieldValue, translateField, type } );
-					if ( ! response ) {
-						showError();
-					}
-					return response;
+				const response = await translate( { origFieldValue, translateField, type } );
+				if ( ! response ) {
+					showError();
 				}
-
-				translateOneRow();
+				return response;
 			}
+		}
 
-			// Function for translating all fields
-			async function batchTranslate( index ) {
-				if ( index === rowsTotal - 1 ) {
-					// Stops translating when on the end
-					return false;
-				}
-				const row = allRows[ index ];
-				const { origFieldValue, translateField, type, isTranslated } = rowSetter( row );
-
-				let response = { translation: true };
-				if ( ! isTranslated ) { // Do not translated filled fields
-					response = await translate( { origFieldValue, translateField, type } );
-				}
-				if ( response?.translation ) { // Continue if got response with translation
-					rowIndex += 1;
-					await batchTranslate( rowIndex );
-					return response;
-				}
-				showError();
+		// Function for translating all fields
+		async function batchTranslate( index ) {
+			if ( index === rowsTotal - 1 ) {
+				// Stops translating when on the end
 				return false;
 			}
+			const row = allRows[ index ];
+			const { origFieldValue, translateField, type, isTranslated } = rowSetter( row );
 
-			batchTranslate( rowIndex );
+			let response = { translation: true };
+			if ( ! isTranslated ) { // Do not translated filled fields
+				response = await translate( { origFieldValue, translateField, type } );
+			}
+			if ( response?.translation ) { // Continue if got response with translation
+				rowIndex += 1;
+				await batchTranslate( rowIndex );
+				return response;
+			}
+			showError();
+			return false;
 		}
 
 		// Fetching function that returns translation from ChatGPT
