@@ -145,7 +145,7 @@ export default function TagsMenu( { label, description, defaultValue: tags, slug
 	}
 
 	return (
-		<div className="urlslab-TagsMenu-wrapper pos-relative">
+		<div className={ `urlslab-TagsMenu-wrapper pos-relative ${ tagsMenuActive ? 'active' : '' }` }>
 			{ label && <div className="urlslab-TagsMenu-label">{ label }</div> }
 			<div onClick={ ! hasActivator && openTagsMenu } className={ `urlslab-TagsMenu ${ ! hasActivator ? 'noActivator' : '' } ${ tagsMenuActive ? 'active' : '' }` } ref={ tagsMenuWrap }>
 				{ ! hasActivator && ! tagsMenuActive === true && <Tooltip className="showOnHover">{ __( 'Click to Add/remove tags' ) }</Tooltip> }

@@ -16,8 +16,11 @@
 	display: flex;
 	align-items: center;
 	font-size: 1rem;
-	z-index: 999;
 	cursor: pointer;
+
+	&.active {
+		z-index: 999;
+	}
 
 	&-label {
 		font-weight: $font-weight-semi;
