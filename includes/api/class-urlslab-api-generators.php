@@ -303,9 +303,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 		foreach ( $rows as $row ) {
-			$row->shortcode_id = (int) $row->shortcode_id; // phpcs:ignore
 			$row->url_id       = (int) $row->url_id; // phpcs:ignore
-			$row->hash_id      = (int) $row->hash_id; // phpcs:ignore
 		}
 
 		return new WP_REST_Response( $rows, 200 );
