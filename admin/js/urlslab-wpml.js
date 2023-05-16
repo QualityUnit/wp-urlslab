@@ -9,7 +9,7 @@ window.addEventListener( 'load', () => {
 		let rowIndex = 0;
 
 		translateAllBtn.innerText = 'Translate all empty';
-		translateAllBtn.addEventListener( 'click', batchTranslate( rowIndex ) );
+		translateAllBtn.addEventListener( 'click', () => batchTranslate( rowIndex ) );
 		copyAllBtn.after( translateAllBtn );
 
 		// Creating separate Translate buttons
@@ -43,6 +43,7 @@ window.addEventListener( 'load', () => {
 		// Function to get original field (or tinyMCE editor) and return target field
 		function rowSetter( row ) {
 			const orig = row.querySelector( '.original_value' );
+			const isCompleteCheckbox = row.querySelector( '.field_translation_complete input' );
 			const isTranslating = 'Translating...';
 
 			let origFieldValue = orig.value;
@@ -65,7 +66,7 @@ window.addEventListener( 'load', () => {
 					window.tinyMCE.get( tinymceTransId ).setContent( isTranslating );
 				}
 
-				return { origFieldValue, translateField: tinymceTransId, type: 'tinymce', isTranslated };
+				return { origFieldValue, translateField: tinymceTransId, type: 'tinymce', isTranslated, isCompleteCheckbox };
 			}
 
 			const translateField = row.querySelector( '.translated_value' );
@@ -78,15 +79,15 @@ window.addEventListener( 'load', () => {
 				translateField.value = isTranslating;
 			}
 
-			return { origFieldValue: orig.value, translateField, isTranslated };
+			return { origFieldValue: orig.value, translateField, isTranslated, isCompleteCheckbox };
 		}
 
 		async function singleTranslate( event ) {
 			const wpmlRow = event.target.closest( '.wpml-form-row' );
 
 			if ( wpmlRow ) { // Single row translation
-				const { origFieldValue, translateField, type } = rowSetter( wpmlRow );
-				const response = await translate( { origFieldValue, translateField, type } );
+				const { origFieldValue, translateField, type, isCompleteCheckbox } = rowSetter( wpmlRow );
+				const response = await translate( { origFieldValue, translateField, type, isCompleteCheckbox } );
 				if ( ! response ) {
 					showError();
 				}
@@ -101,11 +102,12 @@ window.addEventListener( 'load', () => {
 				return false;
 			}
 			const row = allRows[ index ];
-			const { origFieldValue, translateField, type, isTranslated } = rowSetter( row );
+
+			const { origFieldValue, translateField, type, isTranslated, isCompleteCheckbox } = rowSetter( row );
 
 			let response = { translation: true };
 			if ( ! isTranslated ) { // Do not translated filled fields
-				response = await translate( { origFieldValue, translateField, type } );
+				response = await translate( { origFieldValue, translateField, type, isCompleteCheckbox } );
 			}
 			if ( response?.translation ) { // Continue if got response with translation
 				rowIndex += 1;
@@ -117,7 +119,7 @@ window.addEventListener( 'load', () => {
 		}
 
 		// Fetching function that returns translation from ChatGPT
-		async function translate( { origFieldValue, translateField, type } ) {
+		async function translate( { origFieldValue, translateField, type, isCompleteCheckbox } ) {
 			return await fetch( window.wpApiSettings.root + 'urlslab/v1/generator/translate', {
 				method: 'POST',
 				headers: {
@@ -143,6 +145,9 @@ window.addEventListener( 'load', () => {
 					return data;
 				}
 				translateField.value = data?.translation || '';
+				if ( data?.translation ) {
+					isCompleteCheckbox.disabled = false;
+				}
 				return data;
 			} ).catch( ( error ) => {
 				return error;

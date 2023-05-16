@@ -70,16 +70,16 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 				// Called from another field, ie in Generator status
 				if ( changeField ) {
 					const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ changeField ]: newVal } );
-					return response;
+					return { response };
 				}
 				const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ cellId ]: newVal } );
-				return response;
+				return { response };
 			}
 
-			// // Updating whole row via edit panel
+			// // // Updating whole row via edit panel
 			const paginateArray = data?.pages;
 			let newPagesArray = [];
-			if ( paginateArray ) {
+			if ( paginateArray && editedRow ) {
 				newPagesArray = paginateArray.map( ( page ) =>
 
 					page.map( ( row ) => {
@@ -96,7 +96,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 				} ) );
 			}
 
-			if ( ! paginateArray && data ) {
+			if ( ! paginateArray && data && editedRow ) {
 				newPagesArray = data?.map( ( row ) => {
 					if ( row[ paginationId ] === editedRow[ paginationId ] ) {
 						return editedRow;
@@ -105,21 +105,20 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 				} ) ?? [];
 				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => {
 					return origData;
-				}
-				);
-			}
+				} );
 
-			const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow );
-			return { response, editedRow };
+				const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow );
+				return { response, editedRow };
+			}
 		},
 		onSuccess: ( { response, editedRow } ) => {
 			const { ok } = response;
-			queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
 			if ( ok ) {
 				if ( editedRow ) {
 					setEditorRowRes( response );
 					setActivePanel();
 				}
+				queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
 			}
 		},
 	} );
@@ -127,7 +126,6 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const updateRow = ( { newVal, cell, customEndpoint, changeField, optionalSelector } ) => {
 		if ( ! newVal ) { // Editing whole row = parameters are preset
 			setEditorRow( cell.row.original );
-			setActivePanel( 'rowEditor' );
 			return false;
 		}
 		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, optionalSelector } );

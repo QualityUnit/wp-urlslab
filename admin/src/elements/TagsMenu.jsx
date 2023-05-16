@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useMemo, useCallback, useState, useRef } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { ReactTags } from 'react-tag-autocomplete';
 import { useI18n } from '@wordpress/react-i18n/';
 
@@ -16,6 +16,7 @@ import IconButton from './IconButton';
 
 export default function TagsMenu( { label, description, defaultValue: tags, slug, hasActivator, onChange } ) {
 	const { __ } = useI18n();
+	const queryClient = useQueryClient();
 	const tagsMenuWrap = useRef();
 	const tagsMenu = useRef();
 	const [ tagsMenuActive, setTagsMenu ] = useState( false );
@@ -94,6 +95,7 @@ export default function TagsMenu( { label, description, defaultValue: tags, slug
 			if ( ok ) {
 				let returnedTag = await response.json();
 				returnedTag = { value: returnedTag.label_id, label: returnedTag.name, ...returnedTag };
+				queryClient.invalidateQueries( [ 'label', 'menu' ] );
 				onChange( `${ selectedToString }${ returnedTag.label_id }|` );
 			}
 		}, [ onChange, selectedToString ] );
@@ -145,7 +147,7 @@ export default function TagsMenu( { label, description, defaultValue: tags, slug
 	}
 
 	return (
-		<div className="urlslab-TagsMenu-wrapper pos-relative">
+		<div className={ `urlslab-TagsMenu-wrapper pos-relative ${ tagsMenuActive ? 'active' : '' }` }>
 			{ label && <div className="urlslab-TagsMenu-label">{ label }</div> }
 			<div onClick={ ! hasActivator && openTagsMenu } className={ `urlslab-TagsMenu ${ ! hasActivator ? 'noActivator' : '' } ${ tagsMenuActive ? 'active' : '' }` } ref={ tagsMenuWrap }>
 				{ ! hasActivator && ! tagsMenuActive === true && <Tooltip className="showOnHover">{ __( 'Click to Add/remove tags' ) }</Tooltip> }

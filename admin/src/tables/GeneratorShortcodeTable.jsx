@@ -62,7 +62,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, paginationId, filters, sorting } );
 
-	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const statusTypes = {
 		A: __( 'Active' ),
@@ -188,7 +188,10 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				return (
 					<div className="flex">
 						<IconButton
-							onClick={ () => updateRow( { cell } ) }
+							onClick={ () => {
+								setActivePanel( 'rowEditor' );
+								updateRow( { cell } );
+							} }
 							tooltipClass="align-left xxxl"
 							tooltip={ __( 'Edit row' ) }
 						>
@@ -225,8 +228,10 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onUpdateRow={ ( val ) => {
+					setActivePanel();
 					setEditorRow();
 					if ( val === 'rowInserted' || val === 'rowChanged' ) {
+						setActivePanel();
 						setEditorRow( val );
 						setTimeout( () => {
 							setEditorRow();

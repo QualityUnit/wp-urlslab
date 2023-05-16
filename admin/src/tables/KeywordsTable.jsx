@@ -26,7 +26,7 @@ export default function KeywordsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const keywordTypes = {
 		M: __( 'Manual' ),
@@ -49,7 +49,7 @@ export default function KeywordsTable( { slug } ) {
 	const rowEditorCells = {
 		keyword: <InputField liveUpdate defaultValue="" label={ header.keyword } onChange={ ( val ) => setEditorRow( { ...rowToEdit, keyword: val } ) } required disabledOnEdit />,
 		urlLink: <InputField liveUpdate type="url" defaultValue="" label={ header.urlLink } onChange={ ( val ) => setEditorRow( { ...rowToEdit, urlLink: val } ) } required disabledOnEdit />,
-		kwType: <SingleSelectMenu autoClose items={ keywordTypes } name="kwType" defaultValue="M" onChange={ ( val ) => setEditorRow( { ...rowToEdit, kwType: val } ) }>{ header.kwType }</SingleSelectMenu>,
+		kwType: <SingleSelectMenu defaultAccept autoClose items={ keywordTypes } name="kwType" defaultValue="M" onChange={ ( val ) => setEditorRow( { ...rowToEdit, kwType: val } ) }>{ header.kwType }</SingleSelectMenu>,
 		kw_priority: <InputField liveUpdate type="number" defaultValue="0" min="0" max="255" label={ header.kw_priority } onChange={ ( val ) => setEditorRow( { ...rowToEdit, kw_priority: val } ) } />,
 		lang: <LangMenu autoClose defaultValue="all" onChange={ ( val ) => setEditorRow( { ...rowToEdit, lang: val } ) }>{ __( 'Language' ) }</LangMenu>,
 		urlFilter: <InputField liveUpdate defaultValue="" label={ header.urlFilter } onChange={ ( val ) => setEditorRow( { ...rowToEdit, urlFilter: val } ) } />,
@@ -134,7 +134,10 @@ export default function KeywordsTable( { slug } ) {
 				return (
 					<div className="flex">
 						<IconButton
-						onClick={ () => updateRow( { cell } ) }
+						onClick={ () => {
+							setActivePanel( 'rowEditor' );
+							updateRow( { cell } );
+						} }
 						tooltipClass="align-left xxxl"
 						tooltip={ __( 'Edit row' ) }
 					>

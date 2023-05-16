@@ -43,7 +43,7 @@ export default function NotFoundTable( { slug } ) {
 		setEditorRow( { match_type: 'E', redirect_code: '301', match_url: defaultMatchUrl } );
 
 		setActivePanel( 'rowInserter' );
-	}, [ ] );
+	}, [ setActivePanel, setEditorRow ] );
 
 	const rowEditorCells = {
 		match_type: <SingleSelectMenu autoClose items={ matchTypes } name="match_type" defaultValue="E" onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_type: val } ) }>{ redirectHeader.match_type }</SingleSelectMenu>,
@@ -143,9 +143,10 @@ export default function NotFoundTable( { slug } ) {
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onUpdateRow={ ( val ) => {
-					// setActivePanel();
+					setActivePanel();
 					setEditorRow();
 					if ( val === 'rowInserted' ) {
+						setActivePanel();
 						setEditorRow( val );
 						setTimeout( () => {
 							setEditorRow( );
@@ -157,7 +158,7 @@ export default function NotFoundTable( { slug } ) {
 				activatePanel={ activePanel }
 				rowEditorOptions={ {
 					rowEditorCells, title: 'Create redirect from this',
-					data, slug: 'redirects', url: '', paginationId: 'redirect_id', rowToEdit,
+					data, slug: 'redirects', url, paginationId: 'redirect_id', rowToEdit,
 				} }
 				exportOptions={ {
 					slug,

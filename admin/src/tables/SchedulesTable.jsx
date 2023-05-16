@@ -15,6 +15,8 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 
+import '../assets/styles/components/_ModuleViewHeader.scss';
+
 export default function SchedulesTable( { slug } ) {
 	const paginationId = 'schedule_id';
 	const { table, setTable, filters, sorting, sortBy } = useTableUpdater( { slug } );
@@ -33,7 +35,7 @@ export default function SchedulesTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
+	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
 
 	const followLinksTypes = {
 		FOLLOW_ALL_LINKS: __( 'Follow all links' ),
@@ -73,12 +75,12 @@ export default function SchedulesTable( { slug } ) {
 	};
 	const rowEditorCells = {
 		urls: <InputField liveUpdate defaultValue="" label={ header.urls } onChange={ ( val ) => setEditorRow( { ...rowToEdit, urls: val } ) } required />,
-		analyze_text: <SingleSelectMenu autoClose items={ analyzeTextTypes } name="analyze_text" defaultValue="1" onChange={ ( val ) => setEditorRow( { ...rowToEdit, analyze_text: val } ) }>{ header.analyze_text }</SingleSelectMenu>,
-		follow_links: <SingleSelectMenu autoClose items={ followLinksTypes } name="follow_links" defaultValue={ ( 'FOLLOW_ALL_LINKS' ) } onChange={ ( val ) => setEditorRow( { ...rowToEdit, follow_links: val } ) }>{ header.follow_links }</SingleSelectMenu>,
-		process_all_sitemaps: <SingleSelectMenu autoClose items={ processSitemapsTypes } name="follow_links" defaultValue="1" onChange={ ( val ) => setEditorRow( { ...rowToEdit, process_all_sitemaps: val } ) }>{ header.process_all_sitemaps }</SingleSelectMenu>,
+		analyze_text: <SingleSelectMenu defaultAccept autoClose items={ analyzeTextTypes } name="analyze_text" defaultValue="1" onChange={ ( val ) => setEditorRow( { ...rowToEdit, analyze_text: val } ) }>{ header.analyze_text }</SingleSelectMenu>,
+		follow_links: <SingleSelectMenu defaultAccept autoClose items={ followLinksTypes } name="follow_links" defaultValue={ 'FOLLOW_ALL_LINKS' } onChange={ ( val ) => setEditorRow( { ...rowToEdit, follow_links: val } ) }>{ header.follow_links }</SingleSelectMenu>,
+		process_all_sitemaps: <SingleSelectMenu defaultAccept autoClose items={ processSitemapsTypes } name="process_all" defaultValue="1" onChange={ ( val ) => setEditorRow( { ...rowToEdit, process_all_sitemaps: val } ) }>{ header.process_all_sitemaps }</SingleSelectMenu>,
 		custom_sitemaps: <InputField liveUpdate defaultValue="" label={ header.custom_sitemaps } onChange={ ( val ) => setEditorRow( { ...rowToEdit, custom_sitemaps: val } ) } />,
-		take_screenshot: <SingleSelectMenu autoClose items={ takeScreenshotsTypes } name="follow_links" defaultValue="1" onChange={ ( val ) => setEditorRow( { ...rowToEdit, take_screenshot: val } ) }>{ header.take_screenshot }</SingleSelectMenu>,
-		scan_frequency: <SingleSelectMenu autoClose items={ scanFrequencyTypes } name="follow_links" defaultValue={ 'ONE_TIME' } onChange={ ( val ) => setEditorRow( { ...rowToEdit, scan_frequency: val } ) }>{ header.scan_frequency }</SingleSelectMenu>,
+		take_screenshot: <SingleSelectMenu defaultAccept autoClose items={ takeScreenshotsTypes } name="take_screenshot" defaultValue="1" onChange={ ( val ) => setEditorRow( { ...rowToEdit, take_screenshot: val } ) }>{ header.take_screenshot }</SingleSelectMenu>,
+		scan_frequency: <SingleSelectMenu defaultAccept autoClose items={ scanFrequencyTypes } name="scan_frequency" defaultValue={ 'ONE_TIME' } onChange={ ( val ) => setEditorRow( { ...rowToEdit, scan_frequency: val } ) }>{ header.scan_frequency }</SingleSelectMenu>,
 		scan_speed_per_minute: <InputField liveUpdate defaultValue="20" label={ header.scan_speed_per_minute } onChange={ ( val ) => setEditorRow( { ...rowToEdit, scan_speed_per_minute: val } ) } />,
 	};
 	const columns = [
@@ -99,7 +101,7 @@ export default function SchedulesTable( { slug } ) {
 		columnHelper?.accessor( 'analyze_text', {
 			cell: ( cell ) => <Checkbox readOnly className="readOnly" checked={ cell.getValue() } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.analyze_text }</SortBy>,
-			size: 100,
+			size: 120,
 		} ),
 		columnHelper?.accessor( 'follow_links', {
 			filterValMenu: followLinksTypes,
@@ -128,16 +130,16 @@ export default function SchedulesTable( { slug } ) {
 			size: 90,
 		} ),
 		columnHelper?.accessor( 'custom_sitemaps', {
-			className: 'nolimit',
 			cell: ( array ) => array?.getValue().map( ( sitemap ) => <><a href={ sitemap } target="_blank" rel="noreferrer" key={ sitemap }>{ sitemap }</a>, </>,
 			),
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.custom_sitemaps }</SortBy>,
-			size: 300,
+			size: 200,
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
+			size: 60,
 		} ),
 	];
 
@@ -158,14 +160,17 @@ export default function SchedulesTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onUpdateRow={ ( val ) => {
+					setActivePanel();
 					setEditorRow();
 					if ( val === 'rowInserted' || val === 'rowChanged' ) {
+						setActivePanel();
 						setEditorRow( val );
 						setTimeout( () => {
 							setEditorRow();
 						}, 3000 );
 					}
 				} }
+				activatePanel={ activePanel }
 				rowEditorOptions={ { rowEditorCells, title: 'Add schedule', data, slug, url, paginationId, rowToEdit } }
 			/>
 			<Table className="noHeightLimit fadeInto"
