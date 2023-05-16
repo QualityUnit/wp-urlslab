@@ -244,4 +244,11 @@ class Urlslab_Url {
 		return $this->url_components['host'] ?? '';
 	}
 
+	public function get_extension() {
+		if (isset($this->url_components['path'])) {
+			return pathinfo($this->url_components['path'], PATHINFO_EXTENSION);
+		}
+		return '';
+	}
+
 }

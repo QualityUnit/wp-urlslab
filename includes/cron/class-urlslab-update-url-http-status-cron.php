@@ -86,7 +86,11 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 		if ( 300 < $first_response_code && 399 > $first_response_code ) {
 			/** @var WP_HTTP_Requests_Response $http_response */
 			$http_response = $response['http_response'];
-			$url           = $this->get_final_redirect_url( $http_response->get_response_object()->url );
+			if ( $url !== $http_response->get_response_object()->url ) {
+				$url = $this->get_final_redirect_url( $http_response->get_response_object()->url );
+			} else {
+				$url = $http_response->get_response_object()->url;
+			}
 		}
 
 		return (object) array(
@@ -115,7 +119,7 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 				}
 			}
 
-			if ( Urlslab_Url_Row::HTTP_STATUS_OK <= $status_obj->code && 400 > $status_obj->code && $final_url->get_url_id() == $url->get_url_id() ) {
+			if ( Urlslab_Url_Row::HTTP_STATUS_OK <= $status_obj->code && 400 > $status_obj->code && $final_url->get_url_id() == $url->get_url_id() && $this->is_html_extension( $url->get_url()->get_extension() ) ) {
 				$page_content_file_name = download_url( $url->get_url()->get_url_with_protocol() );
 
 				if ( is_wp_error( $page_content_file_name ) ) {
@@ -224,5 +228,44 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 		libxml_use_internal_errors( $libxml_previous_state );
 
 		return $document->textContent; //phpcs:ignore
+	}
+
+	private function is_html_extension( $extension ): bool {
+		switch ( strtolower( $extension ) ) {
+			case 'jpeg':
+			case 'jpg':
+			case 'gif':
+			case 'webp':
+			case 'png':
+			case 'svg':
+			case 'pdf':
+			case 'doc':
+			case 'docx':
+			case 'xls':
+			case 'xlsx':
+			case 'ppt':
+			case 'pptx':
+			case 'txt':
+			case 'rtf':
+			case 'zip':
+			case 'rar':
+			case '7z':
+			case 'tar':
+			case 'gz':
+			case 'mp3':
+			case 'wav':
+			case 'ogg':
+			case 'mp4':
+			case 'avi':
+			case 'mov':
+			case 'wmv':
+			case 'css':
+			case 'js':
+			case 'json':
+			case 'xml':
+				return false;
+			default:
+				return true;
+		}
 	}
 }
