@@ -78,6 +78,10 @@ The content is coming soon.
 
 == Changelog ==
 
+= 2.21.15 - 2023-05-16 =
+
+* Experience a smoother user journey with our under-the-hood enhancements.
+
 = 2.21.14 - 2023-05-16 =
 
 * Experience a smoother user journey with our under-the-hood enhancements.
@@ -155,125 +159,5 @@ The content is coming soon.
 * Experience a smoother user journey with our under-the-hood enhancements.
 
 = 2.20.0 - 2023-05-08 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.19.0 - 2023-05-08 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.18.0 - 2023-05-08 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.17.0 - 2023-05-08 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.16.3 - 2023-04-27 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.16.2 - 2023-04-27 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.16.1 - 2023-04-26 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.16.0 - 2023-04-26 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.15.2 - 2023-04-25 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.15.1 - 2023-04-25 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.15.0 - 2023-04-24 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.14.0 - 2023-04-24 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.13.7 - 2023-04-21 =
-
-* Images in related articles not visible
-
-= 2.13.6 - 2023-04-21 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.13.5 - 2023-04-20 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.13.4 - 2023-04-20 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.13.3 - 2023-04-19 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.13.2 - 2023-04-19 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.13.1 - 2023-04-19 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.13.0 - 2023-04-19 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.12.1 - 2023-04-18 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.12.0 - 2023-04-17 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.11.4 - 2023-04-17 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.11.3 - 2023-04-16 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.11.2 - 2023-04-14 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.11.1 - 2023-04-14 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.11.0 - 2023-04-14 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.10.8 - 2023-04-14 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.10.7 - 2023-04-13 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.10.6 - 2023-04-13 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.10.5 - 2023-04-12 =
 
 * Experience a smoother user journey with our under-the-hood enhancements.
