@@ -105,12 +105,11 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 				} ) ?? [];
 				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => {
 					return origData;
-				}
-				);
-			}
+				} );
 
-			const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow );
-			return { response, editedRow };
+				const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow );
+				return { response, editedRow };
+			}
 		},
 		onSuccess: ( { response, editedRow } ) => {
 			const { ok } = response;
@@ -127,7 +126,6 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const updateRow = ( { newVal, cell, customEndpoint, changeField, optionalSelector } ) => {
 		if ( ! newVal ) { // Editing whole row = parameters are preset
 			setEditorRow( cell.row.original );
-			setActivePanel( 'rowEditor' );
 			return false;
 		}
 		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, optionalSelector } );

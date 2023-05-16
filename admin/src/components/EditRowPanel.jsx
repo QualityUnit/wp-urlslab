@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useMemo, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import useChangeRow from '../hooks/useChangeRow';
@@ -17,6 +17,19 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 
 	let cellsFinal = { ...rowEditorCells };
 	const [ editMode, setEditMode ] = useState( rowToEdit && editorMode );
+
+	const rowToEditWithDefaults = useMemo( () => {
+		let defaults = { ...rowToEdit };
+		Object.entries( rowEditorCells ).map( ( [ cellId, cell ] ) => {
+			const cellProps = cell.props;
+
+			if ( ! defaults[ cellId ] ) {
+				defaults = { ...defaults, [ cellId ]: cellProps.defaultValue };
+			}
+			return false;
+		} );
+		return defaults;
+	}, [ rowEditorCells, rowToEdit ] );
 
 	// Checking if all required fields are filled in rowToEdit object
 	if ( rowToEdit ) {
@@ -40,7 +53,7 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 		handleClose();
 		enableAddButton.current = false;
 		if ( handlePanel && ! response ) {
-			handlePanel( 'updateRow' );
+			handlePanel( );
 		}
 		if ( handlePanel && response ) {
 			handlePanel( response );
@@ -55,7 +68,7 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 			saveEditedRow( { editedRow: rowToEdit } );
 			return false;
 		}
-		insertRow( { editedRow: rowToEdit } );
+		insertRow( { editedRow: rowToEditWithDefaults } );
 	}
 
 	if ( insertRowResult?.ok ) {

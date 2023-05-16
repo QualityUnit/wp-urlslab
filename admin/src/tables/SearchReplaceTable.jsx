@@ -5,6 +5,7 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import IconButton from '../elements/IconButton';
+import { active } from 'd3';
 
 export default function SearchReplaceTable( { slug } ) {
 	const paginationId = 'id';
@@ -25,7 +26,7 @@ export default function SearchReplaceTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const searchTypes = {
 		T: __( 'Plain text' ),
@@ -43,7 +44,7 @@ export default function SearchReplaceTable( { slug } ) {
 	const rowEditorCells = {
 		str_search: <InputField liveUpdate type="url" defaultValue="" label={ header.str_search } onChange={ ( val ) => setEditorRow( { ...rowToEdit, str_search: val } ) } required />,
 		str_replace: <InputField liveUpdate type="url" defaultValue="" label={ header.str_replace } onChange={ ( val ) => setEditorRow( { ...rowToEdit, str_replace: val } ) } required />,
-		search_type: <SingleSelectMenu autoClose items={ searchTypes } name="search_type" defaultValue="T" onChange={ ( val ) => setEditorRow( { ...rowToEdit, search_type: val } ) }>{ header.search_type }</SingleSelectMenu>,
+		search_type: <SingleSelectMenu defaultAccept autoClose items={ searchTypes } name="search_type" defaultValue="T" onChange={ ( val ) => setEditorRow( { ...rowToEdit, search_type: val } ) }>{ header.search_type }</SingleSelectMenu>,
 		url_filter: <InputField liveUpdate defaultValue="" label={ header.url_filter } onChange={ ( val ) => setEditorRow( { ...rowToEdit, url_filter: val } ) } />,
 	};
 
@@ -92,7 +93,10 @@ export default function SearchReplaceTable( { slug } ) {
 				return (
 					<div className="flex">
 						<IconButton
-							onClick={ () => updateRow( { cell } ) }
+							onClick={ () => {
+								setActivePanel( 'rowEditor' );
+								updateRow( { cell } );
+							} }
 							tooltipClass="align-left xxxl"
 							tooltip={ __( 'Edit row' ) }
 						>
@@ -128,14 +132,17 @@ export default function SearchReplaceTable( { slug } ) {
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onUpdateRow={ ( val ) => {
+					setActivePanel();
 					setEditorRow();
 					if ( val === 'rowInserted' || val === 'rowChanged' ) {
+						setActivePanel();
 						setEditorRow( val );
 						setTimeout( () => {
 							setEditorRow();
 						}, 3000 );
 					}
 				} }
+				activatePanel={ activePanel }
 				rowEditorOptions={ { rowEditorCells, title: 'Add replacement', data, slug, url, paginationId, rowToEdit } }
 				exportOptions={ {
 					slug,

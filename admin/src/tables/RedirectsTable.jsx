@@ -26,7 +26,7 @@ export default function RedirectsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { redirectTypes, matchTypes, logginTypes, notFoundTypes, header } = useRedirectTableMenus();
 
@@ -153,7 +153,10 @@ export default function RedirectsTable( { slug } ) {
 				return (
 					<div className="flex">
 						<IconButton
-							onClick={ () => updateRow( { cell } ) }
+							onClick={ () => {
+								setActivePanel( 'rowEditor' );
+								updateRow( { cell } );
+							} }
 							tooltipClass="align-left xxxl"
 							tooltip={ __( 'Edit row' ) }
 						>
@@ -189,14 +192,17 @@ export default function RedirectsTable( { slug } ) {
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onUpdateRow={ ( val ) => {
+					setActivePanel();
 					setEditorRow();
 					if ( val === 'rowInserted' || val === 'rowChanged' ) {
+						setActivePanel();
 						setEditorRow( val );
 						setTimeout( () => {
 							setEditorRow();
 						}, 3000 );
 					}
 				} }
+				activatePanel={ activePanel }
 				rowEditorOptions={ { rowEditorCells, title: 'Add redirect', data, slug, url, paginationId, rowToEdit } }
 				exportOptions={ {
 					slug,

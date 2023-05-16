@@ -3,13 +3,6 @@
 
 .urlslab-TagsMenu {
 
-	&-wrapper {
-
-		td & {
-			height: 35px;
-		}
-	}
-
 	@include square(100%);
 	position: absolute;
 	top: 0;
@@ -18,8 +11,11 @@
 	font-size: 1rem;
 	cursor: pointer;
 
-	&.active {
-		z-index: 999;
+	&-wrapper {
+
+		td & {
+			height: 35px;
+		}
 	}
 
 	&-label {
