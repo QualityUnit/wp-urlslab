@@ -128,6 +128,59 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 
 	}
 
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function delete_item( $request ) {
+		global $wpdb;
+
+		$delete_params                 = array();
+		$delete_params['shortcode_id'] = $request->get_param( 'shortcode_id' );
+
+		if ( false === $wpdb->delete( URLSLAB_GENERATOR_SHORTCODES_TABLE, $delete_params ) ) {
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
+		}
+
+		if ( false === $wpdb->delete( URLSLAB_GENERATOR_RESULTS_TABLE, $delete_params ) ) {
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
+		}
+
+		if ( false === $wpdb->delete( URLSLAB_GENERATOR_URLS_TABLE, $delete_params ) ) {
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
+		}
+
+		$this->on_items_updated();
+
+		return new WP_REST_Response( __( 'Deleted' ), 200 );
+	}
+
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function delete_all_items( WP_REST_Request $request ) {
+		global $wpdb;
+
+		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE ) ) ) { // phpcs:ignore
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
+		}
+
+		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_GENERATOR_RESULTS_TABLE ) ) ) { // phpcs:ignore
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
+		}
+
+		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_GENERATOR_URLS_TABLE ) ) ) { // phpcs:ignore
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
+		}
+
+		$this->on_items_updated();
+
+		return new WP_REST_Response( __( 'Truncated' ), 200 );
+	}
+
 
 	/**
 	 * @param WP_REST_Request $request
@@ -144,11 +197,11 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
 		foreach ( $rows as $row ) {
 			$row->shortcode_id = (int) $row->shortcode_id;
-			$atts = array( 'id' => $row->shortcode_id );
+			$atts              = array( 'id' => $row->shortcode_id );
 			if ( Urlslab_Generator_Shortcode_Row::TYPE_VIDEO === $row->shortcode_type ) {
 				$atts['videoid'] = 'your youtube video id';
 			}
-			$row->shortcode    = $widget->get_placeholder_txt( $atts );
+			$row->shortcode = $widget->get_placeholder_txt( $atts, Urlslab_Content_Generator_Widget::SLUG );
 		}
 
 		return new WP_REST_Response( $rows, 200 );

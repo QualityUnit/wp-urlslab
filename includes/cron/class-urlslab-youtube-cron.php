@@ -63,11 +63,11 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 		if ( ! strlen( $youtube_obj->get_captions() ) ) {
 			try {
 				$captions = $this->get_youtube_captions( $youtube_obj );
-				if ( strlen( $captions ) > 0 ) {
+				$youtube_obj->set_captions( '' );
+				if ( strlen( $captions ) > 10 ) {
 					$youtube_obj->set_captions( $captions );
 				} else if ( false === $captions ) {
 					if ( strlen( $youtube_obj->get_microdata() ) ) {
-						$youtube_obj->set_captions( '' );
 						$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_AVAILABLE );
 					} else {
 						$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_DISABLED );

@@ -56,7 +56,7 @@ window.addEventListener( 'load', () => {
 				tinymceOrigId = orig.querySelector( 'textarea.original_value' ).getAttribute( 'name' );
 				origFieldValue = window.tinyMCE.get( tinymceOrigId ).getContent();
 				tinymceTransId = tinymceOrigId.replace( '_original', '' );
-				tinymceTransIdValue = window.tinyMCE.get( tinymceTransId ).getContent( );
+				tinymceTransIdValue = window.tinyMCE.get( tinymceTransId ).getContent();
 
 				if ( tinymceTransIdValue ) {
 					isTranslated = true;
@@ -102,6 +102,7 @@ window.addEventListener( 'load', () => {
 				return false;
 			}
 			const row = allRows[ index ];
+
 			const { origFieldValue, translateField, type, isTranslated, isCompleteCheckbox } = rowSetter( row );
 
 			let response = { translation: true };

@@ -5,6 +5,7 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 	public const STATUS_AVAILABLE = 'A';
 	public const STATUS_PROCESSING = 'P';
 	public const STATUS_DISABLED = 'D';
+	private static array $video_cache = array();
 
 	public function __construct( array $video = array(), $loaded_from_db = false ) {
 		if ( isset( $video['videoid'] ) ) {
@@ -205,5 +206,19 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 
 	public function has_microdata(): bool {
 		return strlen( $this->get_title() ) > 0;
+	}
+
+
+	public static function get_video_obj( $videoid ): Urlslab_Youtube_Row {
+		$videoid = self::parse_video_id( $videoid );
+
+		if ( ! isset( self::$video_cache[ $videoid ] ) ) {
+			self::$video_cache[ $videoid ] = new Urlslab_Youtube_Row( array( 'videoid' => $videoid ) );
+			if ( ! self::$video_cache[ $videoid ]->load() && strlen( $videoid ) ) {
+				self::$video_cache[ $videoid ]->insert();
+			}
+		}
+
+		return self::$video_cache[ $videoid ];
 	}
 }

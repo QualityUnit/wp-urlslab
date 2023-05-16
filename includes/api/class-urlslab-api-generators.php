@@ -125,6 +125,50 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 	}
 
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function delete_item( $request ) {
+		global $wpdb;
+
+		$delete_params            = array();
+		$delete_params['hash_id'] = $request->get_param( 'hash_id' );
+
+		if ( false === $wpdb->delete( URLSLAB_GENERATOR_RESULTS_TABLE, $delete_params ) ) {
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
+		}
+
+		if ( false === $wpdb->delete( URLSLAB_GENERATOR_URLS_TABLE, $delete_params ) ) {
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
+		}
+
+		$this->on_items_updated();
+
+		return new WP_REST_Response( __( 'Deleted' ), 200 );
+	}
+
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function delete_all_items( WP_REST_Request $request ) {
+		global $wpdb;
+
+		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_GENERATOR_RESULTS_TABLE ) ) ) { // phpcs:ignore
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
+		}
+
+		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_GENERATOR_URLS_TABLE ) ) ) { // phpcs:ignore
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
+		}
+
+		$this->on_items_updated();
+
+		return new WP_REST_Response( __( 'Truncated' ), 200 );
+	}
 
 	public function translate_permissions_check( WP_REST_Request $request ) {
 		return current_user_can( 'activate_plugins' ) || current_user_can( self::CAPABILITY_TRANSLATE );
@@ -193,11 +237,11 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 					$prompt_text .= "\nTRANSLATION should have similar length as INPUT TEXT";
 					$prompt_text .= "\nTRANSLATE $source_lang INPUT TEXT to $target_lang";
-					$prompt_text .= "\n---- INPUT TEXT:\n" . $original_text;
-					$prompt_text .= "\n---- END OF INPUT TEXT";
+					$prompt_text .= "\n---- INPUT TEXT:\n{context}\n---- END OF INPUT TEXT";
 					$prompt_text .= "\nTRANSLATION of INPUT TEXT to $target_lang:";
 
 					$prompt->setPromptTemplate( $prompt_text );
+					$prompt->setDocumentTemplate( $original_text );
 					$prompt->setMetadataVars( array() );
 					$request->setPrompt( $prompt );
 
@@ -303,9 +347,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 		foreach ( $rows as $row ) {
-			$row->shortcode_id = (int) $row->shortcode_id; // phpcs:ignore
 			$row->url_id       = (int) $row->url_id; // phpcs:ignore
-			$row->hash_id      = (int) $row->hash_id; // phpcs:ignore
 		}
 
 		return new WP_REST_Response( $rows, 200 );

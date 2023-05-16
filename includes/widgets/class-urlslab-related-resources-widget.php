@@ -6,7 +6,6 @@ use Elementor\Plugin;
 
 class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	public const SLUG = 'urlslab-related-resources';
-	const SETTING_NAME_DOMAINS = 'urlslab-relres-domains';
 	private static $posts = array();
 
 	public const SETTING_NAME_SYNC_URLSLAB = 'urlslab-relres-sync-urlslab';
@@ -18,6 +17,8 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	public const SETTING_NAME_SHOW_SUMMARY = 'urlslab-relres-show-sum';
 	public const SETTING_NAME_DEFAULT_IMAGE_URL = 'urlslab-relres-def-img';
 	public const SETTING_NAME_AUTOINCLUDE_POST_TYPES = 'urlslab-relres-autoinc-post-types';
+	const SETTING_NAME_DOMAINS = 'urlslab-relres-domains';
+	const SETTING_NAME_LAST_SEEN = 'urlslab-relres-last-seen';
 
 	public function get_widget_labels(): array {
 		return array( self::LABEL_PAID, self::LABEL_BETA );
@@ -200,24 +201,24 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			}
 
 			return '<div class="urlslab-rel-res-item urlslab-skip-keywords">' .
-					$this->render_screenshot( $url_obj, $urlslab_atts, $strategy ) .
-					'<div class="urlslab-rel-res-item-text"><p class="urlslab-rel-res-item-title">' .
-					'<a href="' . esc_url( $url_obj->get_url()->get_url_with_protocol() ) . '"' .
-					' title="' . esc_attr( $url_obj->get_summary_text( $strategy ) ) . '"' .
-					( $url_obj->get_url()->is_same_domain_url() ? '' : ' target="_blank"' ) .
-					'>' .
-					esc_html( $title ) .
-					'</a>' .
-					'</p>' .
-					( ! empty( $summary_text ) ? '<p  class="urlslab-rel-res-item-summary">' . esc_html( $summary_text ) . '</p>' : '' ) .
-					'<a href="' . esc_url( $url_obj->get_url()->get_url_with_protocol() ) . '"' .
-					' title="' . esc_attr( $url_obj->get_summary_text( $strategy ) ) . '" class="urlslab-rel-res-item-arrow"' .
-					( $url_obj->get_url()->is_same_domain_url() ? '' : ' target="_blank"' ) .
-					'>' .
-					'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32"><path d="m17.856 17.056-12.16 12.16a1.507 1.507 0 0 1-2.112 0l-1.44-1.408a1.546 1.546 0 0 1 0-2.144L11.776 16 2.144 6.336c-.576-.608-.576-1.536 0-2.112l1.44-1.44a1.507 1.507 0 0 1 2.112 0l12.16 12.16a1.507 1.507 0 0 1 0 2.112z"/></svg>' .
-					'</a>' .
-					'</div>' .
-					'</div>';
+				   $this->render_screenshot( $url_obj, $urlslab_atts, $strategy ) .
+				   '<div class="urlslab-rel-res-item-text"><p class="urlslab-rel-res-item-title">' .
+				   '<a href="' . esc_url( $url_obj->get_url()->get_url_with_protocol() ) . '"' .
+				   ' title="' . esc_attr( $url_obj->get_summary_text( $strategy ) ) . '"' .
+				   ( $url_obj->get_url()->is_same_domain_url() ? '' : ' target="_blank"' ) .
+				   '>' .
+				   esc_html( $title ) .
+				   '</a>' .
+				   '</p>' .
+				   ( ! empty( $summary_text ) ? '<p  class="urlslab-rel-res-item-summary">' . esc_html( $summary_text ) . '</p>' : '' ) .
+				   '<a href="' . esc_url( $url_obj->get_url()->get_url_with_protocol() ) . '"' .
+				   ' title="' . esc_attr( $url_obj->get_summary_text( $strategy ) ) . '" class="urlslab-rel-res-item-arrow"' .
+				   ( $url_obj->get_url()->is_same_domain_url() ? '' : ' target="_blank"' ) .
+				   '>' .
+				   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32"><path d="m17.856 17.056-12.16 12.16a1.507 1.507 0 0 1-2.112 0l-1.44-1.408a1.546 1.546 0 0 1 0-2.144L11.776 16 2.144 6.336c-.576-.608-.576-1.536 0-2.112l1.44-1.44a1.507 1.507 0 0 1 2.112 0l12.16 12.16a1.507 1.507 0 0 1 0 2.112z"/></svg>' .
+				   '</a>' .
+				   '</div>' .
+				   '</div>';
 		} catch ( Exception $e ) {
 			//in case of invalid link
 			return '';
@@ -229,23 +230,23 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			$img_url = $url->get_screenshot_url( $urlslab_atts['image-size'], true );
 			if ( ! empty( $img_url ) ) {
 				return '<div class="urlslab-rel-res-item-screenshot">' .
-						'<a href="' . esc_url( $url->get_url()->get_url_with_protocol() ) . '"' .
-						' title="' . esc_attr( $url->get_summary_text( $strategy ) ) . '"' .
-						( $url->get_url()->is_same_domain_url() ? '' : ' target="_blank"' ) .
-						'>' .
-						'<img alt="' . esc_attr( $url->get_summary_text( $strategy ) ) . '" src="' . $img_url . '">' .
-						'</a>' .
-						'</div>';
+					   '<a href="' . esc_url( $url->get_url()->get_url_with_protocol() ) . '"' .
+					   ' title="' . esc_attr( $url->get_summary_text( $strategy ) ) . '"' .
+					   ( $url->get_url()->is_same_domain_url() ? '' : ' target="_blank"' ) .
+					   '>' .
+					   '<img alt="' . esc_attr( $url->get_summary_text( $strategy ) ) . '" src="' . $img_url . '">' .
+					   '</a>' .
+					   '</div>';
 			} else {
 				if ( ! empty( $urlslab_atts['default-image'] ) ) {
 					return '<div class="urlslab-rel-res-item-screenshot urlslab-rel-res-item-default-image">' .
-							'<a href="' . esc_url( $url->get_url()->get_url_with_protocol() ) . '"' .
-							' title="' . esc_attr( $url->get_summary_text( $strategy ) ) . '"' .
-							( $url->get_url()->is_same_domain_url() ? '' : ' target="_blank"' ) .
-							'>' .
-							'<img src="' . $urlslab_atts['default-image'] . '">' .
-							'</a>' .
-							'</div>';
+						   '<a href="' . esc_url( $url->get_url()->get_url_with_protocol() ) . '"' .
+						   ' title="' . esc_attr( $url->get_summary_text( $strategy ) ) . '"' .
+						   ( $url->get_url()->is_same_domain_url() ? '' : ' target="_blank"' ) .
+						   '>' .
+						   '<img src="' . $urlslab_atts['default-image'] . '">' .
+						   '</a>' .
+						   '</div>';
 				}
 			}
 		}
@@ -305,6 +306,28 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 				7257600          => __( 'Quarterly' ),
 				31556926         => __( 'Yearly' ),
 				self::FREQ_NEVER => __( 'Never' ),
+			),
+			function( $value ) {
+				return is_numeric( $value ) && 0 < $value;
+			},
+			'sync'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_LAST_SEEN,
+			0,
+			false,
+			__( 'Include URLs seen in the last few days' ),
+			__( 'Include in result just urls seen by urlslab service in defined interval from now. If you delete any page from the website and urlslba vill not process it certain amount of time, we will not include it in related articles list. Your domains should be periodically scheduled in urlslab, otherwise setting this limit will not return values. We recommend to use Any time as value if you don\'t scan web periodically' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				86400    => __( 'last 24 hours' ),
+				604800   => __( '7 days' ),
+				1209600  => __( '14 days' ),
+				2419200  => __( '30 days' ),
+				4838400  => __( '60 days' ),
+				7257600  => __( '90 days' ),
+				31556926 => __( 'last year' ),
+				0        => __( 'Any time - include even deleted urls' ),
 			),
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;

@@ -103,7 +103,7 @@ class Urlslab_Url {
 		}
 
 		if ( ! is_array( $parsed_url ) ) {
-			$this->url_components = array( 'path' => '' );
+			$this->url_components     = array( 'path' => '' );
 			$this->urlslab_parsed_url = '';
 
 			return;
@@ -121,7 +121,7 @@ class Urlslab_Url {
 
 		$current_site_host = strtolower( parse_url( get_site_url(), PHP_URL_HOST ) );
 		if ( ! isset( $this->url_components['host'] ) ) {
-			$this->is_same_domain_url = true;
+			$this->is_same_domain_url     = true;
 			$this->url_components['host'] = $current_site_host;
 			if ( substr( $this->url_components['path'], 0, 2 ) == './' ) {
 				$this->url_components['path'] = substr( $this->url_components['path'], 2 );
@@ -242,6 +242,14 @@ class Urlslab_Url {
 
 	public function get_domain_name(): string {
 		return $this->url_components['host'] ?? '';
+	}
+
+	public function get_extension() {
+		if ( isset( $this->url_components['path'] ) ) {
+			return pathinfo( $this->url_components['path'], PATHINFO_EXTENSION );
+		}
+
+		return '';
 	}
 
 }

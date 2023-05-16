@@ -86,7 +86,11 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 		if ( 300 < $first_response_code && 399 > $first_response_code ) {
 			/** @var WP_HTTP_Requests_Response $http_response */
 			$http_response = $response['http_response'];
-			$url           = $this->get_final_redirect_url( $http_response->get_response_object()->url );
+			if ( $url !== $http_response->get_response_object()->url ) {
+				$url = $this->get_final_redirect_url( $http_response->get_response_object()->url );
+			} else {
+				$url = $http_response->get_response_object()->url;
+			}
 		}
 
 		return (object) array(
@@ -115,7 +119,7 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 				}
 			}
 
-			if ( Urlslab_Url_Row::HTTP_STATUS_OK <= $status_obj->code && 400 > $status_obj->code && $final_url->get_url_id() == $url->get_url_id() ) {
+			if ( Urlslab_Url_Row::HTTP_STATUS_OK <= $status_obj->code && 400 > $status_obj->code && $final_url->get_url_id() == $url->get_url_id() && $this->is_html_extension( $url->get_url()->get_extension() ) ) {
 				$page_content_file_name = download_url( $url->get_url()->get_url_with_protocol() );
 
 				if ( is_wp_error( $page_content_file_name ) ) {
@@ -149,10 +153,10 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 							$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
 							$document->encoding            = 'utf-8';
 							$document->strictErrorChecking = false; // phpcs:ignore
-							$html_text = $this->get_html_from_tag( 'head', $page_content_file_name );
+							$html_text                     = $this->get_html_from_tag( 'head', $page_content_file_name );
 							if ( strlen( $html_text ) ) {
-								$document->loadHTML( mb_convert_encoding( $html_text, 'HTML-ENTITIES', 'utf-8' ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE | LIBXML_NOWARNING );
-								$xpath = new DOMXPath( $document );
+								@$document->loadHTML( mb_convert_encoding( $html_text, 'HTML-ENTITIES', 'utf-8' ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE | LIBXML_NOWARNING );
+								$xpath            = new DOMXPath( $document );
 								$metadescriptions = $xpath->evaluate( '//meta[@name="description"]/@content' );
 								if ( $metadescriptions->length > 0 ) {
 									$url->set_url_meta_description( $xpath->evaluate( '//meta[@name="description"]/@content' )->item( 0 )->value );
@@ -224,5 +228,44 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 		libxml_use_internal_errors( $libxml_previous_state );
 
 		return $document->textContent; //phpcs:ignore
+	}
+
+	private function is_html_extension( $extension ): bool {
+		switch ( strtolower( $extension ) ) {
+			case 'jpeg':
+			case 'jpg':
+			case 'gif':
+			case 'webp':
+			case 'png':
+			case 'svg':
+			case 'pdf':
+			case 'doc':
+			case 'docx':
+			case 'xls':
+			case 'xlsx':
+			case 'ppt':
+			case 'pptx':
+			case 'txt':
+			case 'rtf':
+			case 'zip':
+			case 'rar':
+			case '7z':
+			case 'tar':
+			case 'gz':
+			case 'mp3':
+			case 'wav':
+			case 'ogg':
+			case 'mp4':
+			case 'avi':
+			case 'mov':
+			case 'wmv':
+			case 'css':
+			case 'js':
+			case 'json':
+			case 'xml':
+				return false;
+			default:
+				return true;
+		}
 	}
 }

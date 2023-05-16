@@ -446,4 +446,36 @@ abstract class Urlslab_Widget {
 			delete_option( $option_id );
 		}
 	}
+
+	protected function is_edit_mode(): bool {
+		$arr_modes = array(
+			'trash',
+			'auto-draft',
+			'inherit',
+		);
+
+		return isset( $_REQUEST['elementor-preview'] ) ||
+			   ( isset( $_REQUEST['action'] ) && false !== strpos( $_REQUEST['action'], 'elementor' ) ) ||
+			   in_array( get_post_status(), $arr_modes ) ||
+			   ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() );
+	}
+
+
+	public function get_placeholder_html( array $atts, $shortcode_name ): string {
+		$html_attributes = array();
+		foreach ( $atts as $id => $val ) {
+			$html_attributes[] = '<b>' . esc_html( $id ) . '</b>="<i>' . esc_html( $val ) . '</i>"';
+		}
+
+		return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">[<b>' . $shortcode_name . '</b> ' . implode( ', ', $html_attributes ) . ']</div>';
+	}
+
+	public function get_placeholder_txt( array $atts, $shortcode_name ): string {
+		$html_attributes = array();
+		foreach ( $atts as $id => $val ) {
+			$html_attributes[] = $id . '="' . $val . '"';
+		}
+
+		return '[' . $shortcode_name . ' ' . implode( ' ', $html_attributes ) . ']';
+	}
 }
