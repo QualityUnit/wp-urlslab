@@ -59,6 +59,18 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 								return 250 > strlen( $param );
 							},
 						),
+						'urlLink'   => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return strlen( $param );
+							},
+						),
+						'keyword'   => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return strlen( $param );
+							},
+						),
 						'labels'      => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
@@ -369,6 +381,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( 'kw_id', 'v', 'kw_id' );
+		$sql->add_select_column( 'kw_hash', 'v', 'kw_hash' );
 		$sql->add_select_column( 'keyword', 'v', 'keyword' );
 		$sql->add_select_column( 'kw_priority', 'v', 'kw_priority' );
 		$sql->add_select_column( 'kw_length', 'v', 'kw_length' );
@@ -405,30 +418,12 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		$delete_params          = array();
 		$delete_params['kw_id'] = $request->get_param( 'kw_id' );
 
-		if (
-			false === $wpdb->delete(
-				URLSLAB_KEYWORDS_TABLE,
-				$delete_params
-			)
-		) {
-			return new WP_Error(
-				'error',
-				__( 'Failed to delete', 'urlslab' ),
-				array( 'status' => 500 )
-			);
+		if ( false === $wpdb->delete( URLSLAB_KEYWORDS_TABLE, $delete_params ) ) {
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
 		}
 
-		if (
-			false === $wpdb->delete(
-				URLSLAB_KEYWORDS_MAP_TABLE,
-				$delete_params
-			)
-		) {
-			return new WP_Error(
-				'error',
-				__( 'Failed to delete', 'urlslab' ),
-				array( 'status' => 500 )
-			);
+		if ( false === $wpdb->delete( URLSLAB_KEYWORDS_MAP_TABLE, $delete_params ) ) {
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
 		}
 		$this->on_items_updated();
 
@@ -445,19 +440,11 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		global $wpdb;
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_KEYWORDS_TABLE ) ) ) { // phpcs:ignore
-			return new WP_Error(
-				'error',
-				__( 'Failed to delete', 'urlslab' ),
-				array( 'status' => 500 )
-			);
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
 		}
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_KEYWORDS_MAP_TABLE ) ) ) { // phpcs:ignore
-			return new WP_Error(
-				'error',
-				__( 'Failed to delete', 'urlslab' ),
-				array( 'status' => 500 )
-			);
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
 		}
 		$this->on_items_updated();
 
@@ -472,9 +459,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			$obj = $this->get_row_object( (array) $row );
 
 			try {
-				$schedule_urls[ $obj->get_url_link() ] = new Urlslab_Url(
-					$obj->get_url_link()
-				);
+				$schedule_urls[ $obj->get_url_link() ] = new Urlslab_Url( $obj->get_url_link() );
 				$rows[]                                = $obj;
 			} catch ( Exception $e ) {
 			}
@@ -501,7 +486,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	}
 
 	public function get_editable_columns(): array {
-		return array( 'kwType', 'kw_priority', 'lang', 'urlFilter', 'labels' );
+		return array( 'kwType', 'kw_priority', 'lang', 'urlFilter', 'labels', 'urlLink', 'keyword' );
 	}
 
 
@@ -511,11 +496,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		$rows = $this->get_kw_mapping_sql( $request )->get_results();
 
 		if ( ! is_array( $rows ) ) {
-			return new WP_Error(
-				'error',
-				__( 'Failed to get items', 'urlslab' ),
-				array( 'status' => 400 )
-			);
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $row ) {
@@ -556,9 +537,6 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	}
 
 	public function get_kw_mapping_count( WP_REST_Request $request ) {
-		return new WP_REST_Response(
-			$this->get_kw_mapping_sql( $request )->get_count(),
-			200
-		);
+		return new WP_REST_Response( $this->get_kw_mapping_sql( $request )->get_count(), 200 );
 	}
 }

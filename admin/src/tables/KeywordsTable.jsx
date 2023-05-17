@@ -47,8 +47,8 @@ export default function KeywordsTable( { slug } ) {
 	};
 
 	const rowEditorCells = {
-		keyword: <InputField liveUpdate defaultValue="" label={ header.keyword } onChange={ ( val ) => setEditorRow( { ...rowToEdit, keyword: val } ) } required disabledOnEdit />,
-		urlLink: <InputField liveUpdate type="url" defaultValue="" label={ header.urlLink } onChange={ ( val ) => setEditorRow( { ...rowToEdit, urlLink: val } ) } required disabledOnEdit />,
+		keyword: <InputField liveUpdate defaultValue="" label={ header.keyword } onChange={ ( val ) => setEditorRow( { ...rowToEdit, keyword: val } ) } required />,
+		urlLink: <InputField liveUpdate type="url" defaultValue="" label={ header.urlLink } onChange={ ( val ) => setEditorRow( { ...rowToEdit, urlLink: val } ) } required />,
 		kwType: <SingleSelectMenu defaultAccept autoClose items={ keywordTypes } name="kwType" defaultValue="M" onChange={ ( val ) => setEditorRow( { ...rowToEdit, kwType: val } ) }>{ header.kwType }</SingleSelectMenu>,
 		kw_priority: <InputField liveUpdate type="number" defaultValue="0" min="0" max="255" label={ header.kw_priority } onChange={ ( val ) => setEditorRow( { ...rowToEdit, kw_priority: val } ) } />,
 		lang: <LangMenu autoClose defaultValue="all" onChange={ ( val ) => setEditorRow( { ...rowToEdit, lang: val } ) }>{ __( 'Language' ) }</LangMenu>,

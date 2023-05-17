@@ -208,6 +208,17 @@ class Urlslab_Activator {
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_ERROR_LOG_TABLE . " MODIFY errorLog LONGTEXT" ); // phpcs:ignore
 			}
 		);
+		self::update_step(
+			'2.22.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'TRUNCATE ' . URLSLAB_KEYWORDS_MAP_TABLE ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_KEYWORDS_TABLE . ' RENAME old_kw_table_name' ); // phpcs:ignore
+				self::init_keywords_tables();
+				$wpdb->query( 'INSERT INTO ' . URLSLAB_KEYWORDS_TABLE . ' (kw_hash, keyword, urlLink, kw_priority, kw_length, lang, urlFilter, kwType, labels) SELECT kw_id, keyword, urlLink, kw_priority, kw_length, lang, urlFilter, kwType, labels FROM old_kw_table_name' ); // phpcs:ignore
+				$wpdb->query( 'DROP TABLE IF EXISTS old_kw_table_name' ); // phpcs:ignore
+			}
+		);
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -295,7 +306,8 @@ class Urlslab_Activator {
 		$table_name      = URLSLAB_KEYWORDS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
-							kw_id bigint NOT NULL,
+							kw_id int NOT NULL AUTO_INCREMENT,
+							kw_hash bigint NOT NULL,
 							keyword varchar(250) NOT NULL,
 							urlLink varchar(500) NOT NULL,
 							kw_priority TINYINT UNSIGNED NOT NULL DEFAULT 10,
@@ -306,6 +318,7 @@ class Urlslab_Activator {
 							labels VARCHAR(255) NOT NULL DEFAULT '',
 							PRIMARY KEY  (kw_id),
 							INDEX  idx_keywords (keyword),
+							UNIQUE INDEX idx_hash (kw_hash),
 							INDEX idx_sorting (lang, kw_priority, kw_length)) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
