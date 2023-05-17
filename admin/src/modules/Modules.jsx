@@ -9,17 +9,17 @@ export default function Modules( { modules, activePage } ) {
 	}
 
 	const labelsList = {
-		paid: { name: 'Paid service', color: '#75E9DB' },
+		paid: { name: 'Paid service', color: '#00c996' },
 		free: { name: 'Free' },
-		experimental: { name: 'Experimental', color: '#ff492b' },
-		beta: { name: 'Beta', color: '#2570ED' },
+		experimental: { name: 'Experimental', color: '#ff8875' },
+		beta: { name: 'Beta', color: '#75a9ff' },
 		alpha: { name: 'Alpha' },
 		expert: { name: 'Expert' },
 		seo: { name: 'SEO', color: '#D4C5F9' },
 		cron: { name: 'Cron' },
 		performance: { name: 'Performance', color: '#65B5FF' },
 		tools: { name: 'Tools', color: '#FFD189' },
-		ai: { name: 'AI', color: '#F86767' },
+		ai: { name: 'AI', color: '#ff7a7a' },
 	};
 
 	return (

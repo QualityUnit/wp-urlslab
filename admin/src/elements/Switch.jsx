@@ -4,7 +4,7 @@ import { ReactComponent as Plus } from '../assets/images/icons/icon-checkmark.sv
 import { ReactComponent as Minus } from '../assets/images/icons/icon-minus.svg';
 import '../assets/styles/elements/_Switch.scss';
 
-export default function Switch( { id, textAfter, className, style, secondary, onChange, group, checked, label, labelOff } ) {
+export default function Switch( { id, textAfter, className, style, secondary, onChange, group, checked } ) {
 	const [ isChecked, setChecked ] = useState( checked ? true : false );
 	const handleOnChange = ( event ) => {
 		if ( onChange ) {
@@ -29,12 +29,6 @@ export default function Switch( { id, textAfter, className, style, secondary, on
 					<Plus className="on" />
 				</span>
 			</div>
-			<span className="urlslab-switch-text">
-				{ ! isChecked
-					? label
-					: labelOff || label
-				}
-			</span>
 		</label>
 	);
 }

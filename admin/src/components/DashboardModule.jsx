@@ -45,18 +45,13 @@ export default function DashboardModule( { moduleId, title, children, isActive, 
 					: null
 				}
 
+				{ /* TODO: add click for managing module */ }
 				<h3 className="urlslab-dashboardmodule-title">{ title }</h3>
-
-				{ labels.includes( 'beta' ) &&
-				<Tag className="midSize c-white bg-primary-color">BETA</Tag>
-				}
 
 				<Switch
 					secondary
 					onChange={ () => handleSwitch.mutate() }
 					className="urlslab-dashboardmodule-switch ma-left"
-					label={ __( 'Activate' ) }
-					labelOff={ __( 'Deactivate' ) }
 					checked={ isActive }
 				/>
 			</div>
@@ -67,16 +62,9 @@ export default function DashboardModule( { moduleId, title, children, isActive, 
 				<div className="urlslab-dashboardmodule-tags">
 					{ labels.map( ( tag ) => {
 						const { name, color } = labelsList[ tag ];
-						return tag !== 'beta' &&
-						<Tag key={ tag } className={ `midSize smallText mr-s ${ ! color && 'bg-grey-lighter' }` } style={ color && { backgroundColor: color } }>{ name }</Tag>;
+						return <Tag key={ tag } className={ `midSize mr-s ${ ! color && 'bg-grey-lighter' }` } style={ color && { backgroundColor: color } }>{ name }</Tag>;
 					} ) }
 				</div>
-				}
-				{ isActive
-					? <button className="urlslab-learnMore ma-top c-black" onClick={ () => handleActive( moduleId ) }>
-						{ __( 'Manage plugin' ) } <ArrowIcon />
-					</button>
-					: null
 				}
 			</div>
 		</div>

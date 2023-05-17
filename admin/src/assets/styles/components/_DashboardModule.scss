@@ -45,7 +45,7 @@
 	}
 
 	&-tags {
-		margin: 1.5em 0;
+		margin: 1.5em 0 0;
 	}
 
 	&-switch {
@@ -54,7 +54,7 @@
 	}
 
 	&-title[class] {
-		font-size: 1rem;
+		font-size: 1.15rem;
 		font-weight: $font-weight-semi;
 	}
 
@@ -65,7 +65,7 @@
 		height: 100%;
 
 		p {
-			font-size: inherit;
+			font-size: 14px;
 			margin: 0;
 		}
 	}
