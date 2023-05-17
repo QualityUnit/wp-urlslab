@@ -75,7 +75,7 @@ export default function MainMenu( { activeModule, modules, activePage, module } 
 						</button>
 					</li>
 					<li className="urlslab-mainmenu-item submenu">
-						<ul className="urlslab-mainmenu-submenu" style={ { '--activeModules': activeModules.length } }>
+						<ul className="urlslab-mainmenu-submenu" style={ { '--activeModules': activeModules.length + 1 } }>
 							<li key="urlslab-modules"
 								className={ `urlslab-mainmenu-item ${ activator( 'urlslab-modules' ) }` }>
 								<button
