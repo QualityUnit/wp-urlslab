@@ -29,7 +29,7 @@ export default function DashboardModule( { moduleId, title, children, isActive, 
 		}
 	};
 
-	const imagePath = new URL( `../assets/images/modules/${ moduleId }.png`, import.meta.url ).pathname;
+	const imagePath = new URL( `../assets/images/modules/${ moduleId }.svg`, import.meta.url ).pathname;
 
 	return (
 		<div className={ `urlslab-dashboardmodule ${ handleSwitch.isLoading ? 'activating' : '' } ${ isActive ? 'active' : '' }` }>
@@ -48,8 +48,8 @@ export default function DashboardModule( { moduleId, title, children, isActive, 
 				secondary
 				onChange={ () => handleSwitch.mutate( ) }
 				className="urlslab-dashboardmodule-switch"
-				label={ __( 'Activate module' ) }
-				labelOff={ __( 'Deactivate module' ) }
+				label={ __( 'Activate' ) }
+				labelOff={ __( 'Deactivate' ) }
 				checked={ isActive }
 			/>
 			<div className="urlslab-dashboardmodule-main flex-tablet flex-align-center">
@@ -63,7 +63,7 @@ export default function DashboardModule( { moduleId, title, children, isActive, 
 					<p>{ children }</p>
 					{ isActive
 						? <button className="urlslab-learnMore" onClick={ () => handleActive( moduleId ) }>
-							{ __( 'Manage module' ) } <ArrowIcon />
+							{ __( 'Manage plugin' ) } <ArrowIcon />
 						</button>
 						: null
 					}
