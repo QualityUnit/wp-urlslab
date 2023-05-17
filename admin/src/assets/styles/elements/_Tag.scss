@@ -24,6 +24,16 @@
 		border-radius: 1.125em;
 	}
 
+	&.midSize {
+		font-weight: 600;
+		padding: 0.25em 1.35em;
+		border-radius: 1.125em;
+	}
+
+	&.smallText {
+		font-size: 0.625rem;
+	}
+
 	&.dark {
 		color: $white;
 	}
