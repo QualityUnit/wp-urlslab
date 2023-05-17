@@ -65,7 +65,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 	}
 
 	public function get_widget_labels(): array {
-		return array( self::LABEL_AI, self::LABEL_PAID, self::LABEL_BETA );
+		return array( self::LABEL_BETA, self::LABEL_AI, self::LABEL_PAID );
 	}
 
 
