@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import useCloseModal from '../hooks/useCloseModal';
@@ -11,10 +11,13 @@ export default function ExportPanel( { options, filters, header, handlePanel } )
 	const { __ } = useI18n();
 	const activefilters = filters ? Object.keys( filters ) : null;
 	const [ exportStatus, setExportStatus ] = useState();
+	const stopExport = useRef( false );
 
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
 
 	const hidePanel = ( operation ) => {
+		stopExport.current = true;
+
 		handleClose();
 		if ( handlePanel ) {
 			handlePanel( operation );
@@ -60,11 +63,11 @@ export default function ExportPanel( { options, filters, header, handlePanel } )
 					<div className="flex">
 						<Button className="ma-left" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
 						{ activefilters?.length > 0 &&
-						<ExportCSVButton className="ml-s" options={ options } withfilters onClick={ handleExportStatus } />
+						<ExportCSVButton className="ml-s" options={ { ...options, stopExport } } withfilters onClick={ handleExportStatus } />
 						}
 						<ExportCSVButton
 							className="ml-s"
-							options={ options } onClick={ handleExportStatus }
+							options={ { ...options, stopExport } } onClick={ handleExportStatus }
 						/>
 					</div>
 				</div>

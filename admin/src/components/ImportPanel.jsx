@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCSVReader } from 'react-papaparse';
@@ -20,6 +20,7 @@ export default function ImportPanel( { props, handlePanel } ) {
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
 	const { handleType } = useFilter( { slug, header, initialRow } );
 	let importCounter = 0;
+	const stopImport = useRef( false );
 
 	// Function to generate required/optional headers for CSV import
 	const csvFields = useMemo( () => {
@@ -66,6 +67,8 @@ export default function ImportPanel( { props, handlePanel } ) {
 	}, [ queryClient, slug, header ] );
 
 	const hidePanel = ( operation ) => {
+		stopImport.current = true;
+
 		handleClose();
 		if ( handlePanel ) {
 			handlePanel( operation );
@@ -92,7 +95,7 @@ export default function ImportPanel( { props, handlePanel } ) {
 
 	const importData = useMutation( {
 		mutationFn: async ( results ) => {
-			await importCsv( `${ slug }/import`, results.data, handleImportStatus );
+			await importCsv( { slug: `${ slug }/import`, dataArray: results.data, result: handleImportStatus, stopImport } );
 		},
 	} );
 	return (

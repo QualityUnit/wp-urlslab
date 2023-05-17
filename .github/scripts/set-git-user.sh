@@ -3,5 +3,5 @@
 set -eo pipefail
 
 echo "Set GIT User"
-git config user.name ${MAINTAIN_USERNAME}
-git config user.email ${MAINTAIN_EMAIL}
+git config user.name ${WEB_CICD_USERNAME}
+git config user.email ${WEB_CICD_MAIL}
