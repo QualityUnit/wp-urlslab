@@ -47,7 +47,7 @@ export default function NotFoundTable( { slug } ) {
 
 	const rowEditorCells = {
 		match_type: <SingleSelectMenu autoClose items={ matchTypes } name="match_type" defaultValue="E" onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_type: val } ) }>{ redirectHeader.match_type }</SingleSelectMenu>,
-		match_url: <InputField type="url" disabled ref={ matchUrlField } defaultValue={ matchUrlField.current } label={ redirectHeader.match_url } />,
+		match_url: <InputField type="url" liveUpdate ref={ matchUrlField } defaultValue={ matchUrlField.current } label={ redirectHeader.match_url } />,
 		replace_url: <InputField type="url" liveUpdate defaultValue="" label={ redirectHeader.replace_url } onChange={ ( val ) => setEditorRow( { ...rowToEdit, replace_url: val } ) } required />,
 		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" defaultValue="301" onChange={ ( val ) => setEditorRow( { ...rowToEdit, redirect_code: val } ) }>{ redirectHeader.redirect_code }</SingleSelectMenu>,
 	};
