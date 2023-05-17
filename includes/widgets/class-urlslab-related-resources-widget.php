@@ -21,7 +21,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	const SETTING_NAME_LAST_SEEN = 'urlslab-relres-last-seen';
 
 	public function get_widget_labels(): array {
-		return array( self::LABEL_PAID, self::LABEL_BETA );
+		return array( self::LABEL_SEO, self::LABEL_FREE, self::LABEL_PAID );
 	}
 
 

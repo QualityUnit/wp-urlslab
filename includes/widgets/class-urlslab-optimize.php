@@ -39,7 +39,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 	}
 
 	public function get_widget_labels(): array {
-		return array( self::LABEL_FREE );
+		return array( self::LABEL_PERFORMANCE, self::LABEL_FREE );
 	}
 
 	public function is_api_key_required(): bool {

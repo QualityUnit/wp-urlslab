@@ -21,6 +21,9 @@ abstract class Urlslab_Widget {
 	public const LABEL_ALPHA = 'alpha';
 	public const LABEL_EXPERT = 'expert';
 	public const LABEL_SEO = 'seo';
+	public const LABEL_PERFORMANCE = 'performance';
+	public const LABEL_TOOLS = 'tools';
+	public const LABEL_AI = 'ai';
 	public const LABEL_CRON = 'cron';
 
 

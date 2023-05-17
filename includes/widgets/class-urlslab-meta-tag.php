@@ -53,7 +53,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	}
 
 	public function get_widget_labels(): array {
-		return array( self::LABEL_PAID );
+		return array( self::LABEL_SEO, self::LABEL_FREE, self::LABEL_PAID );
 	}
 
 	public function theContentHook( DOMDocument $document ) {

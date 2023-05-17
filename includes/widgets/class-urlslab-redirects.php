@@ -13,7 +13,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 	const SETTING_NAME_MIN_404_COUNT = 'urlslab_redir_min_404_count';
 
 	public function get_widget_labels(): array {
-		return array( self::LABEL_FREE );
+		return array( self::LABEL_TOOLS, self::LABEL_FREE );
 	}
 
 	public static function delete_cache() {

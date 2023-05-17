@@ -30,7 +30,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	public function get_widget_labels(): array {
-		return array( self::LABEL_PAID );
+		return array( self::LABEL_SEO, self::LABEL_FREE, self::LABEL_PAID );
 	}
 
 	public function post_updated( $post_id, $post, $post_before ) {

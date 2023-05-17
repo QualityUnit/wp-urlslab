@@ -20,7 +20,7 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 	}
 
 	public function get_widget_labels(): array {
-		return array( self::LABEL_FREE );
+		return array( self::LABEL_PERFORMANCE, self::LABEL_FREE );
 	}
 
 	public function get_widget_slug(): string {

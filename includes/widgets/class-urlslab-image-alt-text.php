@@ -26,7 +26,7 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	}
 
 	public function get_widget_labels(): array {
-		return array( self::LABEL_FREE );
+		return array( self::LABEL_SEO, self::LABEL_FREE );
 	}
 
 	public function theContentHook( DOMDocument $document ) {

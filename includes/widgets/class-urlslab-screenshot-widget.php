@@ -13,7 +13,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	public const SCHEDULE_NEVER = 'N';
 
 	public function get_widget_labels(): array {
-		return array( self::LABEL_PAID );
+		return array( self::LABEL_TOOLS, self::LABEL_PAID );
 	}
 
 

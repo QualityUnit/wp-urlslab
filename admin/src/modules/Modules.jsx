@@ -19,6 +19,7 @@ export default function Modules( { modules, activePage } ) {
 		cron: { name: 'Cron' },
 		performance: { name: 'Performance', color: '#65B5FF' },
 		tools: { name: 'Tools', color: '#FFD189' },
+		ai: { name: 'AI', color: '#F86767' },
 	};
 
 	return (

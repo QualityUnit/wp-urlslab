@@ -74,7 +74,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	public function get_widget_labels(): array {
-		return array( self::LABEL_FREE );
+		return array( self::LABEL_PERFORMANCE, self::LABEL_FREE );
 	}
 
 	public function the_content( DOMDocument $document ) {

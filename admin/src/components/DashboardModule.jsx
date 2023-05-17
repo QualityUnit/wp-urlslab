@@ -47,8 +47,8 @@ export default function DashboardModule( { moduleId, title, children, isActive, 
 
 				<h3 className="urlslab-dashboardmodule-title">{ title }</h3>
 
-				{ labelsList.beta &&
-					<Tag className="midSize c-white bg-primary-color">BETA</Tag>
+				{ labels.includes( 'beta' ) &&
+				<Tag className="midSize c-white bg-primary-color">BETA</Tag>
 				}
 
 				<Switch

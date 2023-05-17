@@ -69,7 +69,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	public function get_widget_labels(): array {
-		return array( self::LABEL_FREE );
+		return array( self::LABEL_SEO, self::LABEL_FREE );
 	}
 
 	protected function add_options() {

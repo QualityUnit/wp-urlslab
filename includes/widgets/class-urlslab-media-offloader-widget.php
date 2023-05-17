@@ -112,7 +112,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	public function get_widget_labels(): array {
-		return array( self::LABEL_FREE );
+		return array( self::LABEL_PERFORMANCE, self::LABEL_FREE );
 	}
 
 	public function wp_handle_upload( $file, $overrides = false, $time = null ) {
