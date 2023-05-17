@@ -1,5 +1,5 @@
 import { postFetch } from './fetching';
-export default async function importCsv( slug, dataArray, result ) {
+export default async function importCsv( { slug, dataArray, result, stopImport } ) {
 	const dataChunks = ( ) => {
 		const chunkSize = 1000; // 1000 rows per fetch request
 		const chunkArray = [];
@@ -20,7 +20,11 @@ export default async function importCsv( slug, dataArray, result ) {
 		}
 	};
 
-	async function continueImport( index, returnResult ) {
+	async function continueImport( index, returnResult, ) {
+		if ( stopImport.current ) {
+			return false;
+		}
+
 		const chunk = dataChunks().data[ index ];
 		const response = await postFetch( slug, { rows: chunk } );
 		if ( index === chunksLength - 1 ) {
