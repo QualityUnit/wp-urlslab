@@ -89,7 +89,10 @@ class Urlslab_Api_Settings extends Urlslab_Api_Base {
 
 		foreach ( $widget->get_option_sections() as $section ) {
 			foreach ( $widget->get_options( $section['id'] ) as $option ) {
-				$option['value']                     = $widget->get_option( $option['id'] );
+				$option['value'] = $widget->get_option( $option['id'] );
+				if ( Urlslab_Widget::OPTION_TYPE_PASSWORD == $option['type'] && strlen( $option['value'] ) > 0 ) {
+					$option['value'] = Urlslab_Widget::PASSWORD_PLACEHOLDER;
+				}
 				$section['options'][ $option['id'] ] = (object) $option;
 			}
 			$sections[] = (object) $section;
