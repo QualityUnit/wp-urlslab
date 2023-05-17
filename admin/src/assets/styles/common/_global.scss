@@ -2,6 +2,7 @@
 @use "mixins" as *;
 
 [id="urlslab-root"] {
+	background-color: $grey-lighter;
 	font-family: Poppins, sans-serif;
 	font-size: 16px;
 
@@ -71,7 +72,11 @@
 	.urlslab-learnMore {
 		display: flex;
 		align-items: center;
-		color: $grey-dark;
+		font-size: 0.8125rem;
+		font-weight: $font-weight-semi;
+		text-decoration: underline;
+		color: $black;
+		padding: 0;
 		cursor: pointer;
 		transition: all 0.2s;
 

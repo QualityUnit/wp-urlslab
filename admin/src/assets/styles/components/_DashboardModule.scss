@@ -2,17 +2,20 @@
 @use "../common/variables" as *;
 
 .urlslab-dashboardmodule {
+	display: flex;
+	flex-direction: column;
 	position: relative;
 	padding: 1.5em;
 	background-color: $white;
 	border-radius: $br-10;
-	box-shadow: $box-shadow-small;
+	filter: $box-shadow-small;
 	transition: all $transitionTime;
 	overflow: hidden;
 
 	@media (hover: hover) {
 
 		&:hover {
+			filter: none;
 			box-shadow: 0 0 0 2px $primary-color;
 		}
 	}
@@ -35,38 +38,14 @@
 		}
 	}
 
-	&-api {
-		position: relative;
-		display: inline-flex;
-		align-items: center;
-		font-size: 0.75rem;
-		font-weight: $font-weight-semi;
-		background-color: $desaturated-blue;
-		border-radius: 6px 1.5em 1.5em 0;
-		box-shadow: $box-shadow-small;
+	&-top {
+		border-bottom: 1px solid $grey-light;
+		margin: 0 -2.25em 1.5em;
+		padding: 0 2.25em 1.5em;
+	}
 
-		&::after {
-
-			@include triangle(1.25em, #6583B7, right);
-			position: absolute;
-			transform: rotate(-45deg);
-			top: calc(100% - 0.5em);
-			left: 0.15em;
-			content: "";
-		}
-
-		svg {
-
-			@include square(1.666em);
-			margin-right: 0.5em;
-		}
-
-		@media (min-width: $breakpoint-tablet) {
-			position: absolute;
-			top: 2.5em;
-			left: -1em;
-			padding: 1em 2em;
-		}
+	&-tags {
+		margin: 1.5em 0;
 	}
 
 	&-switch {
@@ -74,31 +53,31 @@
 		justify-content: flex-end;
 	}
 
-	&-main {
-		flex-wrap: wrap;
-	}
-
-	&-title {
+	&-title[class] {
+		font-size: 1rem;
 		font-weight: $font-weight-semi;
-		margin: 1.5em 0 0;
-		width: 100%;
 	}
 
 	&-content {
-		font-size: 0.875rem;
+		display: flex;
+		flex-direction: column;
+		font-size: 0.75rem;
+		height: 100%;
 
 		p {
 			font-size: inherit;
-			margin: 0 0 1em;
+			margin: 0;
 		}
 	}
 
-	&-image {
-		order: 1;
+
+	&-icon {
+
+		@include square(2.125em);
 		filter: saturate(0);
 	}
 
-	&.active &-image {
+	&.active &-icon {
 		filter: saturate(1);
 	}
 
@@ -107,38 +86,21 @@
 		margin: 0.4em;
 		width: calc(50% - 0.8em);
 
-		&-content {
-			width: 54.6%;
+		&-icon {
+			margin-right: 1em;
 		}
 
-		&-image {
-			width: 42%;
-			margin-left: auto;
+		&-top {
+
+			.urlslab-tag {
+				margin-left: 0.75em;
+			}
 		}
 
-
-		.urlslab-switch-text {
-			font-size: 0.8125rem;
-		}
-
-		.urlslab-dashboardmodule-title {
-			font-size: 1.1rem;
-		}
 	}
 
 	@media (min-width: 1680px) {
 		width: calc(33.3% - 0.8em);
 		max-width: 31.25em;
-	}
-
-	@media (min-width: 1800px) {
-
-		.urlslab-switch-text {
-			font-size: 1rem;
-		}
-
-		.urlslab-dashboardmodule-title {
-			font-size: 1.3rem;
-		}
 	}
 }
