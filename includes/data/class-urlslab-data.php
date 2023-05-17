@@ -52,7 +52,8 @@ abstract class Urlslab_Data {
 		}
 
 		global $wpdb;
-		if ( $wpdb->update( $this->get_table_name(), $update_data, $where, $format, $where_format ) ) {
+		$update_result = $wpdb->update( $this->get_table_name(), $update_data, $where, $format, $where_format );
+		if ( $update_result ) {
 			$this->changed = array();
 			$this->set_loaded_from_db();
 
@@ -174,7 +175,8 @@ abstract class Urlslab_Data {
 		}
 
 		foreach ( $row as $key => $value ) {
-			$this->set( $key, $value, false );
+			unset( $this->changed[ $key ] );
+			$this->set( $key, $value, true );
 		}
 		$this->set_loaded_from_db();
 

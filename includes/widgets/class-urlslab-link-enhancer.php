@@ -470,10 +470,10 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 										$result[ $url_obj->get_url_id() ]->update();
 									}
 
-									$dom_elem->setAttribute(
-										'title',
-										$result[ $url_obj->get_url_id() ]->get_summary_text( $strategy ),
-									);
+									$new_title = $result[ $url_obj->get_url_id() ]->get_summary_text( $strategy );
+									if ( strlen( $new_title ) ) {
+										$dom_elem->setAttribute( 'title', $new_title );
+									}
 								}
 							}
 						}
