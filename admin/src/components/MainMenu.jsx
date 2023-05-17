@@ -63,38 +63,28 @@ export default function MainMenu( { activeModule, modules, activePage, module } 
 				</div>
 			</button>
 			<div className="urlslab-mainmenu-main flex">
-				<ul className="urlslab-mainmenu-icons">
-					<li className={ `urlslab-mainmenu-item ${ activator( 'urlslab-modules' ) }` }>
-						<button
-							className="urlslab-mainmenu-btn has-icon"
-							onClick={ () => handleActive( 'urlslab-modules' ) }>
-							<ModulesIcon className="" />
-							<span>{ __( 'Modules' ) }</span>
-						</button>
-					</li>
-					<li className={ `urlslab-mainmenu-item settings ${ activator( 'urlslab-settings' ) }` }>
-						<button
-							className="urlslab-mainmenu-btn has-icon"
-							onClick={ () => handleActive( 'urlslab-settings' ) }>
-							<SettingsIcon />
-							<span>{ __( 'Settings' ) }</span>
-						</button>
-					</li>
-					<li className="urlslab-mainmenu-item">&nbsp;</li>
-				</ul>
-
 				<ul className="urlslab-mainmenu-menu">
-					<li key="urlslab-modules"
-						className={ `urlslab-mainmenu-item ${ activator( 'urlslab-modules' ) }` }>
+					<li key="urlslab-modules-main"
+						className={ `urlslab-mainmenu-item urlslab-modules has-icon ${ activator( 'urlslab-modules' ) }` }>
 						<button
 							type="button"
 							className="urlslab-mainmenu-btn has-icon"
 							onClick={ () => handleActive( 'urlslab-modules' ) }>
+							<ModulesIcon />
 							<span>{ __( 'Modules' ) }</span>
 						</button>
 					</li>
 					<li className="urlslab-mainmenu-item submenu">
 						<ul className="urlslab-mainmenu-submenu" style={ { '--activeModules': activeModules.length } }>
+							<li key="urlslab-modules"
+								className={ `urlslab-mainmenu-item ${ activator( 'urlslab-modules' ) }` }>
+								<button
+									type="button"
+									className="urlslab-mainmenu-btn"
+									onClick={ () => handleActive( 'urlslab-modules' ) }>
+									<span>{ __( 'All modules' ) }</span>
+								</button>
+							</li>
 							{ modules.length
 								? modules.map( ( modul ) => {
 									return (
@@ -115,19 +105,30 @@ export default function MainMenu( { activeModule, modules, activePage, module } 
 						</ul>
 					</li>
 
-					<li key="urlslab-settings"
-						className={ `urlslab-mainmenu-item ${ activator( 'urlslab-settings' ) }` }>
+					<li key="urlslab-settings-main"
+						className={ `urlslab-mainmenu-item urlslab-settings has-icon ${ activator( 'urlslab-settings' ) }` }>
 						<button
 							type="button"
 							className="urlslab-mainmenu-btn has-icon"
 							onClick={ () => handleActive( 'urlslab-settings' ) }>
+							<SettingsIcon />
 							<span>{ __( 'Settings' ) }</span>
 						</button>
 					</li>
-					<li key="urlslab-schedule"
-						className={ `urlslab-mainmenu-item submenu ${ activator( 'urlslab-schedule' ) }` }>
+
+					<li className="urlslab-mainmenu-item submenu">
 						<ul className="urlslab-mainmenu-submenu">
-							<li className={ `urlslab-mainmenu-item` }>
+							<li key="urlslab-settings"
+								className={ `urlslab-mainmenu-item ${ activator( 'urlslab-settings' ) }` }>
+								<button
+									type="button"
+									className="urlslab-mainmenu-btn"
+									onClick={ () => handleActive( 'urlslab-settings' ) }>
+									<span>{ __( 'General settings' ) }</span>
+								</button>
+							</li>
+							<li key="urlslab-schedule"
+								className={ `urlslab-mainmenu-item ${ activator( 'urlslab-schedule' ) }` }>
 								<button
 									type="button"
 									className="urlslab-mainmenu-btn"
@@ -135,12 +136,8 @@ export default function MainMenu( { activeModule, modules, activePage, module } 
 									<span>{ __( 'Schedules' ) }</span>
 								</button>
 							</li>
-						</ul>
-					</li>
-					<li key="TagsLabels"
-						className={ `urlslab-mainmenu-item submenu ${ activator( 'TagsLabels' ) }` }>
-						<ul className="urlslab-mainmenu-submenu">
-							<li className={ `urlslab-mainmenu-item` }>
+							<li key="TagsLabels"
+								className={ `urlslab-mainmenu-item ${ activator( 'TagsLabels' ) }` }>
 								<button
 									type="button"
 									className="urlslab-mainmenu-btn"

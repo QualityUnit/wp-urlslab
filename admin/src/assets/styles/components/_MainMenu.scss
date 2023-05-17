@@ -31,17 +31,8 @@
 	max-width: $iconsMenuWidth;
 	transition: all $transitionTime 0.2s;
 
-	&::after {
-		transform: translateX(-100%);
-		transition: all $transitionTime 0.2s;
-	}
-
 	&.open {
 		max-width: $mainMenuWidth;
-
-		&::after {
-			transform: translateX(0);
-		}
 	}
 
 	&-title[class] {
@@ -80,8 +71,9 @@
 		}
 	}
 
-	&-icons,
 	&-menu {
+		position: relative;
+		z-index: 1;
 		margin: 0;
 		flex: 1 0 auto;
 
@@ -99,79 +91,22 @@
 			padding-right: 2.1666em;
 
 			&.has-icon {
+				display: flex;
+				align-items: center;
 				font-size: 0.8125rem;
 				padding-top: 1.45em;
 				padding-bottom: 1.45em;
-			}
-		}
-	}
 
-	&-icons {
 
-		@extend %menuBg;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		width: $iconsMenuWidth;
+				svg {
 
-		&::after {
-			width: $iconsMenuWidth;
-		}
-
-		svg {
-
-			@include square(1.75em);
-			position: absolute;
-			display: block;
-			fill: rgba($white, 60%);
-			transform: translateZ(0);
-			transition: all $transitionTime;
-		}
-
-		li {
-			display: block;
-			width: 100%;
-
-			&.settings {
-				margin-top: auto;
-				margin-bottom: 0.65em;
-			}
-
-			&.active svg {
-				fill: rgba($white, 100%);
-			}
-		}
-
-		button[class] {
-			position: relative;
-			justify-content: center;
-			padding-left: 0;
-			padding-right: 0;
-			width: 100%;
-
-			span {
-				visibility: hidden;
-				text-overflow: -99999px;
-			}
-		}
-	}
-
-	&-menu {
-		position: relative;
-		z-index: 1;
-		transform: translateX(-100%);
-		transition: all $transitionTime 0.2s;
-
-		li {
-			opacity: 0;
-			transition: all $transitionTime 0.2s;
-		}
-
-		.open & {
-			transform: translateX(0);
-
-			li {
-				opacity: 1;
+					@include square(1.55em);
+					display: block;
+					fill: $white;
+					margin: auto 1.65em;
+					transform: translateZ(0);
+					transition: all $transitionTime;
+				}
 			}
 		}
 	}
@@ -181,9 +116,6 @@
 		overflow: hidden;
 		transition: all $transitionTime 0.5s;
 		background-color: $submenu-graphite;
-
-		width: calc(100% + $iconsMenuWidth);
-		margin-left: -$iconsMenuWidth;
 
 		.open & {
 			max-height: calc(var(--activeModules) * 2.5em);
@@ -221,7 +153,7 @@
 			height: 100%;
 			right: 0;
 			left: -$iconsMenuWidth;
-			background-color: color.scale($mainmenu-graphite, $lightness: 16%);
+			background-color: $white;
 			transition: all $transitionTime;
 			opacity: 0;
 
@@ -230,14 +162,10 @@
 			}
 		}
 
-		// .open .urlslab-mainmenu-icons & {
-		// 	pointer-events: none;
-		// }
-
 		@media (hover: hover) {
 
 			&:not(.active):not(.submenu):hover::before {
-				opacity: 1;
+				opacity: 0.15;
 			}
 		}
 	}
