@@ -2892,7 +2892,7 @@ button.urlslab-button > svg:last-child:not(:first-child),
   .urlslab-panel-content__item {
     width: 48.25%;
   }
-  .urlslab-panel-content__item:nth-last-of-type(odd) {
+  .urlslab-panel-content__item:nth-of-type(odd) {
     margin-right: auto;
   }
   .urlslab-panel-content__item .urlslab-MultiSelectMenu {

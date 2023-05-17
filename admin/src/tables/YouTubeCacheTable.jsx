@@ -5,6 +5,10 @@ import {
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
+import IconButton from "../elements/IconButton";
+import { ReactComponent as AcceptIcon } from '../assets/images/icons/icon-activate.svg';
+import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
+import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-cron-refresh.svg';
 
 export default function YouTubeCacheTable( { slug } ) {
 	const paginationId = 'videoid';
@@ -26,7 +30,34 @@ export default function YouTubeCacheTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
+	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+
+	const ActionButton = ( { cell, onClick } ) => {
+		const { status } = cell?.row?.original;
+
+		return (
+			<div className="flex flex-align-center flex-justify-end">
+				{
+					( status === 'W' || status === 'D' ) &&
+					<IconButton className="mr-s c-saturated-green" tooltip={ __( 'Accept' ) } tooltipClass="align-left" onClick={ () => onClick( 'A' ) }>
+						<AcceptIcon />
+					</IconButton>
+				}
+				{
+					( status === 'P' || status === 'W' || status === 'A' || status === 'N' ) &&
+					<IconButton className="mr-s c-saturated-red" tooltip={ __( 'Decline' ) } tooltipClass="align-left" onClick={ () => onClick( 'D' ) }>
+						<DisableIcon />
+					</IconButton>
+				}
+				{
+					( status === 'A' || status === 'D' || status === 'P' ) &&
+					<IconButton className="mr-s" tooltip={ __( 'Regenerate' ) } tooltipClass="align-left" onClick={ () => onClick( 'N' ) }>
+						<RefreshIcon />
+					</IconButton>
+				}
+			</div>
+		);
+	};
 
 	const statusTypes = {
 		N: __( 'New' ),
@@ -108,12 +139,20 @@ export default function YouTubeCacheTable( { slug } ) {
 			header: header.usage_count,
 			size: 80,
 		} ),
+		columnHelper.accessor( 'actions', {
+			className: 'actions hoverize nolimit',
+			cell: ( cell ) => <ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />,
+			header: null,
+			size: 70,
+		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
+
+
 	];
 
 	if ( status === 'loading' ) {

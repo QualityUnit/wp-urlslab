@@ -32,7 +32,7 @@ export default function GeneratorResultTable( { slug } ) {
 					</IconButton>
 				}
 				{
-					( status === 'P' || status === 'W' || status === 'A' ) &&
+					( status === 'P' || status === 'W' || status === 'A' || status === 'N' ) &&
 					<IconButton className="mr-s c-saturated-red" tooltip={ __( 'Decline' ) } tooltipClass="align-left" onClick={ () => onClick( 'D' ) }>
 						<DisableIcon />
 					</IconButton>
