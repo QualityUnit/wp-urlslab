@@ -10,8 +10,12 @@ let totalItems = 1;
 let jsonData = { status: 'loading', data: [] };
 
 export async function exportCSV( options, result ) {
-	const { slug, url, paginationId, perPage = 9999, deleteCSVCols } = options;
+	const { slug, url, paginationId, perPage = 9999, deleteCSVCols, stopExport } = options;
 	const { filters: userFilters } = url;
+
+	if ( stopExport.current ) {
+		return false;
+	}
 	const response = await postFetch( slug, {
 		sorting: [ { col: paginationId, dir: 'ASC' } ],
 		filters: lastRowId
