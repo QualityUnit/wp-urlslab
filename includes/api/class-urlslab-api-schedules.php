@@ -60,7 +60,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 							'required'          => false,
 							'default'           => false,
 							'validate_callback' => function( $param ) {
-								return is_bool( $param );
+								return is_bool( $param ) || is_numeric( $param );
 							},
 						),
 						'custom_sitemaps'       => array(
@@ -76,21 +76,21 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 							'validate_callback' => function( $param ) {
 								$conf = new DomainScheduleScheduleConf();
 
-								return in_array( $param, array_keys( $conf->getLinkFollowingStrategyAllowableValues() ) );
+								return in_array( $param, $conf->getLinkFollowingStrategyAllowableValues() );
 							},
 						),
 						'take_screenshot'       => array(
 							'required'          => false,
 							'default'           => false,
 							'validate_callback' => function( $param ) {
-								return is_bool( $param );
+								return is_bool( $param ) || is_numeric( $param );
 							},
 						),
 						'analyze_text'          => array(
 							'required'          => false,
 							'default'           => false,
 							'validate_callback' => function( $param ) {
-								return is_bool( $param );
+								return is_bool( $param ) || is_numeric( $param );
 							},
 						),
 						'scan_speed_per_minute' => array(
