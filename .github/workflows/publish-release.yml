@@ -1,7 +1,7 @@
 # Inspired by Elementor Releasing Pipeline https://github.com/elementor/elementor
 name: Publish Release Version
 
-# Environmental Variables: MAINTAIN_TOKEN (PAT), MAINTAIN_USERNAME (GitHub Bot Username), MAINTAIN_EMAIL (GitHub Bot E-mail)
+# Environmental Variables: WEB_CICD_PAT (PAT), WEB_CICD_USERNAME (GitHub Bot Username), WEB_CICD_MAIL (GitHub Bot E-mail)
 on:
   workflow_dispatch:
     inputs:
@@ -34,7 +34,7 @@ jobs:
       - name: Checkout Main Branch
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.MAINTAIN_TOKEN }}
+          token: ${{ secrets.WEB_CICD_PAT }}
           ref: main
 
       - name: Setup PHP 8.0
@@ -99,8 +99,8 @@ jobs:
       - name: Push New Version with Build Files
         env:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
-          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
-          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
+          WEB_CICD_MAIL: ${{ secrets.WEB_CICD_MAIL }}
+          WEB_CICD_USERNAME: ${{ secrets.WEB_CICD_USERNAME }}
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/update-version-files.sh"
           bash "${GITHUB_WORKSPACE}/.github/scripts/build-files.sh"
@@ -113,8 +113,8 @@ jobs:
 
       - name: Create Tag
         env:
-          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
-          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
+          WEB_CICD_MAIL: ${{ secrets.WEB_CICD_MAIL }}
+          WEB_CICD_USERNAME: ${{ secrets.WEB_CICD_USERNAME }}
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/create-git-tag.sh"
 
@@ -152,7 +152,7 @@ jobs:
           files: urlslab-*.zip
           body_path: temp-changelog-from-readme.txt
         env:
-          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.WEB_CICD_PAT }}
 
   deploy:
     name: Deploy
@@ -163,7 +163,7 @@ jobs:
       - name: Checkout Main Branch
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.MAINTAIN_TOKEN }}
+          token: ${{ secrets.WEB_CICD_PAT }}
           ref: main
 
       - name: Setup Node.js 16.x
@@ -184,7 +184,7 @@ jobs:
           workflow: update-urlslab.yml
           repo: QualityUnit/liveagent-wp
           ref: dev
-          token: ${{ secrets.CICD_PAT }}
+          token: ${{ secrets.WEB_CICD_PAT }}
           wait-for-completion-interval: 5s
           inputs: '{
                   "repository":"liveagent-wp",
@@ -198,7 +198,7 @@ jobs:
           workflow: update-urlslab.yml
           repo: QualityUnit/postaffiliatepro-wp
           ref: main
-          token: ${{ secrets.CICD_PAT }}
+          token: ${{ secrets.WEB_CICD_PAT }}
           wait-for-completion-interval: 5s
           inputs: '{
                   "repository":"postaffiliatepro-wp",
@@ -212,7 +212,7 @@ jobs:
           workflow: update-urlslab.yml
           repo: QualityUnit/urlslab-wp
           ref: main
-          token: ${{ secrets.CICD_PAT }}
+          token: ${{ secrets.WEB_CICD_PAT }}
           wait-for-completion-interval: 5s
           inputs: '{
                   "repository":"urlslab-wp",

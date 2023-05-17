@@ -12,4 +12,4 @@ jobs:
         with:
           config_path: .github/labeler.yml
         env:
-          GITHUB_TOKEN: "${{ secrets.GH_PAT }}"
+          GITHUB_TOKEN: "${{ secrets.WEB_CICD_PAT }}"
