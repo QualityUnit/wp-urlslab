@@ -87,6 +87,9 @@ window.addEventListener( 'load', () => {
 
 			if ( wpmlRow ) { // Single row translation
 				const { origFieldValue, translateField, type, isCompleteCheckbox } = rowSetter( wpmlRow );
+				if ( origFieldValue === '' ) {
+					return '';
+				}
 				const response = await translate( { origFieldValue, translateField, type, isCompleteCheckbox } );
 				if ( ! response ) {
 					showError();
@@ -107,9 +110,13 @@ window.addEventListener( 'load', () => {
 
 			let response = { translation: true };
 			if ( ! isTranslated ) { // Do not translated filled fields
-				response = await translate( { origFieldValue, translateField, type, isCompleteCheckbox } );
+				if ( origFieldValue == '' ) {
+					response = '';
+				} else {
+					response = await translate({origFieldValue, translateField, type, isCompleteCheckbox});
+				}
 			}
-			if ( response?.translation ) { // Continue if got response with translation
+			if ( response?.translation || response?.translation === '') { // Continue if got response with translation
 				rowIndex += 1;
 				await batchTranslate( rowIndex );
 				return response;
