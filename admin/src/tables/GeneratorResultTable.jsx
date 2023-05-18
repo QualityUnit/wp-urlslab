@@ -8,8 +8,6 @@ import { ReactComponent as AcceptIcon } from '../assets/images/icons/icon-activa
 import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
 import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-cron-refresh.svg';
 
-import { langName } from '../lib/helpers';
-
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 
@@ -74,7 +72,6 @@ export default function GeneratorResultTable( { slug } ) {
 		command: __( 'Command' ),
 		semantic_context: __( 'Semantic context' ),
 		url_filter: __( 'URL filter' ),
-		lang: __( 'Language' ),
 		labels: __( 'Tags' ),
 		prompt_variables: __( 'Input data' ),
 		status: __( 'Status' ),
@@ -109,11 +106,6 @@ export default function GeneratorResultTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_filter }</SortBy>,
 			size: 150,
-		} ),
-		columnHelper.accessor( 'lang', {
-			cell: ( cell ) => langName( cell?.getValue() ),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.lang }</SortBy>,
-			size: 70,
 		} ),
 		columnHelper.accessor( 'result', {
 			className: 'nolimit',
