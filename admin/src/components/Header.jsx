@@ -66,7 +66,7 @@ export default function Header( { pageTitle } ) {
 							</small>
 					}
 
-					<Button className="mr-m" active href="https://www.urlslab.com/dashboard/credits/">{ __( 'Buy credits' ) }</Button>
+					<Button className="mr-m" active href="https://www.urlslab.com/dashboard/">{ __( 'Buy credits' ) }</Button>
 
 					<CronRunner />
 
