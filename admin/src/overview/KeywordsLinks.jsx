@@ -1,6 +1,3 @@
-import image1 from '../assets/images/overview/image-1.jpg';
-import image2 from '../assets/images/overview/image-2.jpg';
-
 export default function KeywordLinksOverview( ) {
 	return (
 		<>

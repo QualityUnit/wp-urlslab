@@ -41,7 +41,14 @@ class Urlslab_Api_Billing extends Urlslab_Api_Base {
 		try {
 			$credit_events = $this->get_client()->getCreditEvents();
 
-			return new WP_REST_Response( $credit_events, 200 );
+			$events = $credit_events->getEvents();
+			foreach ( $events as $id => $event ) {
+				$event->setOperationDate( date( 'Y-m-d H:i:s', $event->getOperationDate() ) ); //phpcs:ignore
+				$url_obj = new Urlslab_Url( $event->getUrl(), true );
+				$event->setUrl( $url_obj->get_url_with_protocol() );
+			}
+
+			return new WP_REST_Response( $events, 200 );
 		} catch ( Throwable $e ) {
 			new WP_REST_Response( $e->getMessage(), 500 );
 		}
