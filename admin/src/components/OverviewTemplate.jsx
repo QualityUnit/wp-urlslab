@@ -27,7 +27,7 @@ export default function Overview( { moduleId, children } ) {
 			</div>
 			}
 			<div className="urlslab-overview-content">
-				{ moduleData?.title && <h3> moduleData?.title </h3> }
+				{ moduleData?.title && <h3> { moduleData?.title } </h3> }
 				{ children }
 			</div>
 		</div>
