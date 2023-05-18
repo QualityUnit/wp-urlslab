@@ -79,10 +79,10 @@ export default function GeneratorShortcodeTable( { slug } ) {
 	};
 
 	const header = {
-		shortcode_id: __( 'Id' ),
-		shortcode_type: __( 'Generator Type' ),
+		shortcode_id: __( 'ID' ),
+		shortcode_type: __( 'Type' ),
 		prompt: __( 'Prompt' ),
-		semantic_context: __( 'Semantic search query' ),
+		semantic_context: __( 'Semantic context' ),
 		url_filter: __( 'URL filter' ),
 		default_value: __( 'Default value' ),
 		status: __( 'Status' ),
@@ -117,64 +117,64 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'shortcode_id', {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.shortcode_id }</SortBy>,
-			size: 20,
+			size: 45,
 		} ),
 		columnHelper.accessor( 'shortcode_type', {
 			filterValMenu: shortcodeTypeTypes,
 			className: 'nolimit',
 			cell: ( cell ) => shortcodeTypeTypes[ cell.getValue() ],
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.shortcode_type }</SortBy>,
-			size: 150,
+			size: 115,
 		} ),
 		columnHelper.accessor( 'prompt', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.prompt }</SortBy>,
-			size: 180,
+			size: 200,
 		} ),
 		columnHelper.accessor( 'semantic_context', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.semantic_context }</SortBy>,
-			size: 180,
-		} ),
-		columnHelper.accessor( 'default_value', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.default_value }</SortBy>,
-			size: 180,
+			size: 150,
 		} ),
 		columnHelper.accessor( 'url_filter', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_filter }</SortBy>,
-			size: 180,
+			size: 150,
+		} ),
+		columnHelper.accessor( 'default_value', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.default_value }</SortBy>,
+			size: 150,
 		} ),
 		columnHelper.accessor( 'template', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.template }</SortBy>,
-			size: 180,
+			size: 200,
 		} ),
 		columnHelper.accessor( 'model', {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.model }</SortBy>,
-			size: 180,
+			size: 80,
 		} ),
 		columnHelper.accessor( 'status', {
 			filterValMenu: statusTypes,
 			className: 'nolimit',
 			cell: ( cell ) => statusTypes[ cell.getValue() ],
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.status }</SortBy>,
-			size: 150,
+			size: 80,
 		} ),
 		columnHelper.accessor( 'date_changed', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.date_changed }</SortBy>,
-			size: 100,
-		} ),
-		columnHelper.accessor( 'usage_count', {
-			header: header.usage_count,
-			size: 100,
+			size: 115,
 		} ),
 		columnHelper.accessor( 'shortcode', {
 			header: header.shortcode,
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			size: 100,
+			size: 250,
+		} ),
+		columnHelper.accessor( 'usage_count', {
+			header: header.usage_count,
+			size: 60,
 		} ),
 		columnHelper.accessor( 'actions', {
 			className: 'actions hoverize nolimit',
@@ -239,7 +239,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 					}
 				} }
 				activatePanel={ activePanel }
-				rowEditorOptions={ { rowEditorCells, title: 'Add generator', data, slug, url, paginationId, rowToEdit } }
+				rowEditorOptions={ { rowEditorCells, title: 'Add shortcode', data, slug, url, paginationId, rowToEdit } }
 				exportOptions={ {
 					slug,
 					url,

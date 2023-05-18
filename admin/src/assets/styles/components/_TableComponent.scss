@@ -249,6 +249,12 @@ $cellHeight: 3.5em;
 		}
 	}
 
+	.video-thumbnail {
+		width: auto !important;
+		height: 60px;
+		border-radius: 0.625rem;
+	}
+
 	// &-head {
 
 	// }

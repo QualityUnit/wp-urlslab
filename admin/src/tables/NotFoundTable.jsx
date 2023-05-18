@@ -57,6 +57,7 @@ export default function NotFoundTable( { slug } ) {
 		cnt: __( 'Visits' ),
 		created: __( 'First visit' ),
 		updated: 'Last visit',
+		labels: 'Tags',
 		request_data: 'User agent',
 	};
 
@@ -79,24 +80,11 @@ export default function NotFoundTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'created', {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.created }</SortBy>,
-			minSize: 100,
+			minSize: 80,
 		} ),
 		columnHelper.accessor( 'updated', {
 			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.updated }</SortBy>,
-			minSize: 100,
-		} ),
-		columnHelper.accessor( 'labels', {
-			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.labels,
-			size: 160,
-		} ),
-		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.agent, {
-			id: 'agent',
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <BrowserIcon uaString={ cell.getValue() } />,
-			header: __( 'User Agent' ),
-			size: 120,
+			minSize: 80,
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.referer, {
 			id: 'referer',
@@ -114,6 +102,19 @@ export default function NotFoundTable( { slug } ) {
 			},
 			header: 'IP address',
 			size: 100,
+		} ),
+		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.agent, {
+			id: 'agent',
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => <BrowserIcon uaString={ cell.getValue() } />,
+			header: __( 'User Agent' ),
+			size: 100,
+		} ),
+		columnHelper.accessor( 'labels', {
+			className: 'nolimit',
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: header.labels,
+			size: 150,
 		} ),
 		columnHelper.accessor( 'addRedirect', {
 			className: 'hoverize',
