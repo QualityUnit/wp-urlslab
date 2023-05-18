@@ -52,6 +52,8 @@ export default function DashboardModule( { moduleId, title, children, isActive, 
 					secondary
 					onChange={ () => handleSwitch.mutate() }
 					className="urlslab-dashboardmodule-switch ma-left"
+					label={ '' }
+					labelOff={ '' }
 					checked={ isActive }
 				/>
 			</div>
