@@ -84,19 +84,19 @@ export default function Modules( { modules, activePage } ) {
 				<SearchField liveUpdate autoFocus onChange={ ( input ) => handleFiltering( { input, type: 'search' } ) } placeholder={ __( 'Search' ) } />
 				<span className="ml-l mr-s fs-xm">{ __( 'Filters' ) }:</span>
 				<MultiSelectMenu id="categories" onChange={ ( input ) => handleFiltering( { input, type: 'categories' } ) }
-					className="mr-m" isFilter
+					className="mr-s" isFilter
 					items={ categoriesList }
 					defaultValue={ Object.keys( categoriesList ) }>
 					{ __( 'Categories' ) }
 				</MultiSelectMenu>
 				<MultiSelectMenu id="status" onChange={ ( input ) => handleFiltering( { input, type: 'status' } ) }
-					className="mr-m" isFilter
+					className="mr-s" isFilter
 					items={ statusList }
 					defaultValue={ Object.keys( statusList ) }>
 					{ __( 'Status' ) }
 				</MultiSelectMenu>
 				<MultiSelectMenu id="pricing" onChange={ ( input ) => handleFiltering( { input, type: 'pricing' } ) }
-					className="mr-m" isFilter
+					className="mr-s" isFilter
 					items={ pricingList }
 					defaultValue={ Object.keys( pricingList ) }>
 					{ __( 'Pricing' ) }
