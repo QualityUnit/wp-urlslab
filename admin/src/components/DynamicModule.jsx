@@ -17,7 +17,7 @@ export default function DynamicModule( { modules, moduleId, activePage } ) {
 				<Suspense fallback={ <Loader /> }>
 					<div className="urlslab-DynamicModule-inn fadeInto">
 						<Module modules={ modules }
-							activePage={ ( module ) => activePage( module ) }
+							activePage={ activePage }
 							settingId="general"
 							moduleId={ moduleId }
 						/>

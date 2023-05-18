@@ -20,6 +20,10 @@
 		box-shadow: none;
 	}
 
+	&.has-value {
+		color: $black;
+	}
+
 	svg {
 
 		@include square(1.25em);
@@ -34,7 +38,7 @@
 		background-color: $grey-light;
 
 		@include input-placeholder {
-			color: currentcolor;
+			color: $grey-dark;
 			font-size: 0.875rem;
 			transition: all 0.2s;
 			opacity: 1;

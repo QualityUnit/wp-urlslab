@@ -44,5 +44,5 @@ export default function hexToHSL( H ) {
 	s = +( s * 100 ).toFixed( 1 );
 	l = +( l * 100 ).toFixed( 1 );
 
-	return { hsl: 'hsl(' + h + ',' + s + '%,' + l + '%)', lightness: l };
+	return { hsl: 'hsl(' + h + ',' + s + '%,' + l + '%)', hue: h, saturation: s, lightness: l };
 }

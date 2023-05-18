@@ -6,7 +6,6 @@ import Switch from '../elements/Switch';
 import Tag from '../elements/Tag';
 
 import { setModule } from '../api/fetching';
-import { ReactComponent as ArrowIcon } from '../assets/images/icons/icon-arrow.svg';
 import '../assets/styles/components/_DashboardModule.scss';
 import '../assets/styles/elements/_Button.scss';
 
@@ -45,8 +44,11 @@ export default function DashboardModule( { moduleId, title, children, isActive, 
 					: null
 				}
 
-				{ /* TODO: add click for managing module */ }
-				<h3 className="urlslab-dashboardmodule-title">{ title }</h3>
+				<h3 className="urlslab-dashboardmodule-title">
+					<button className={ `${ isActive ? 'active' : '' }` } onClick={ isActive ? () => handleActive( moduleId ) : null }>
+						{ title }
+					</button>
+				</h3>
 
 				<Switch
 					secondary
@@ -64,7 +66,7 @@ export default function DashboardModule( { moduleId, title, children, isActive, 
 				<div className="urlslab-dashboardmodule-tags">
 					{ labels.map( ( tag ) => {
 						const { name, color } = labelsList[ tag ];
-						return <Tag key={ tag } className={ `midSize mr-s ${ ! color && 'bg-grey-lighter' }` } style={ color && { backgroundColor: color } }>{ name }</Tag>;
+						return <Tag key={ tag } autoTextColor={ color } className={ `midSize mr-s ${ ! color && 'bg-grey-lighter' }` } style={ color && { backgroundColor: color } }>{ name }</Tag>;
 					} ) }
 				</div>
 				}
