@@ -14,6 +14,7 @@ export default function ScreenshotTable( { slug } ) {
 
 	const url = { filters, sorting };
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
+	const [ tooltipUrl, setTooltipUrl ] = useState( );
 
 	const {
 		__,
@@ -56,8 +57,14 @@ export default function ScreenshotTable( { slug } ) {
 			header: null,
 		} ),
 		columnHelper?.accessor( 'screenshot_url', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			tooltip: ( cell ) => {
+				if ( tooltipUrl === cell.getValue() ) {
+					return <Tooltip><img src={ cell.getValue() } alt="url" /></Tooltip>;
+				}
+				return false;
+			},
+			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
+			cell: ( cell ) => <a onMouseOver={ () => setTooltipUrl( cell.getValue() ) } onMouseLeave={ () => setTooltipUrl() } href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.screenshot_url }</SortBy>,
 			size: 150,
 		} ),
