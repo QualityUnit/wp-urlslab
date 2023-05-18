@@ -203,7 +203,7 @@ export default function RedirectsTable( { slug } ) {
 					}
 				} }
 				activatePanel={ activePanel }
-				rowEditorOptions={ { rowEditorCells, title: 'Add redirect', data, slug, url, paginationId, rowToEdit } }
+				rowEditorOptions={ { rowEditorCells, title: 'Add New Redirect', data, slug, url, paginationId, rowToEdit } }
 				exportOptions={ {
 					slug,
 					url,
