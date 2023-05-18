@@ -505,13 +505,13 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			$schema->setAttribute( 'itemscope', false );
 			$schema->setAttribute( 'itemtype', 'https://schema.org/VideoObject' );
 			$schema->setAttribute( 'itemprop', 'video' );
-			$this->append_meta_attribute( $document, $schema, 'name', $youtube_obj->get_title() );
-			$this->append_meta_attribute( $document, $schema, 'description', $youtube_obj->get_description() );
+			$this->append_meta_attribute( $document, $schema, 'name', empty( $youtube_obj->get_title() ) ? __( 'Youtube Video' ) : $youtube_obj->get_title() );
+			$this->append_meta_attribute( $document, $schema, 'description', empty( trim( $youtube_obj->get_description() ) ) ? __( 'Video about: ' ) . $youtube_obj->get_title() : $youtube_obj->get_description() );
 			$this->append_meta_attribute( $document, $schema, 'thumbnailUrl', $youtube_obj->get_thumbnail_url(), 'link' );
 			$this->append_meta_attribute( $document, $schema, 'contentUrl', 'https://www.youtube.com/watch?v=' . $youtube_obj->get_video_id(), 'link' );
 			$this->append_meta_attribute( $document, $schema, 'embedUrl', 'https://www.youtube.com/embed/' . $youtube_obj->get_video_id(), 'link' );
-			$this->append_meta_attribute( $document, $schema, 'duration', $youtube_obj->get_duration() );
-			$this->append_meta_attribute( $document, $schema, 'uploadDate', $youtube_obj->get_published_at() );
+			$this->append_meta_attribute( $document, $schema, 'duration', empty( $youtube_obj->get_duration() ) ? 'PT90s' : $youtube_obj->get_duration() );
+			$this->append_meta_attribute( $document, $schema, 'uploadDate', empty( $youtube_obj->get_published_at() ) ? date( 'Y-m-d\TH:i:s\Z', strtotime( '-10 days' ) ) : $youtube_obj->get_published_at() );	// phpcs:ignore
 			$youtube_loader->appendChild( $schema );
 		}
 	}

@@ -155,7 +155,7 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 			return $microdata['items'][0]['contentDetails']['duration'];
 		}
 
-		return 'PT60s';
+		return '';
 	}
 
 	public function get_thumbnail_url() {
