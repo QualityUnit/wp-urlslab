@@ -22,6 +22,11 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 	public const DOWNLOAD_URL_PATH = 'urlslab-content/';
 	const SETTING_NAME_ATTACH_GENERATOR_ID = 'urlslab_attach_generator_id';
+	const PAGE_CACHE_GROUP = 'urlslab-page';
+	/**
+	 * @var true
+	 */
+	private static bool $cache_started = false;
 
 	private $lazy_load_youtube_css = false;
 
@@ -31,11 +36,12 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	private $content_docs = array();
 
 	public function init_widget() {
+		Urlslab_Loader::get_instance()->add_action( 'wp_headers', $this, 'page_cache_headers', PHP_INT_MAX, 1 );
+		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $this, 'page_cache_start', PHP_INT_MAX, 0 );
+		Urlslab_Loader::get_instance()->add_action( 'shutdown', $this, 'page_cache_save', 0, 0 );
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_content', $this, 'the_content', 10 );
-
 		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'hook_callback', 10, 0 );
 	}
-
 
 	public function hook_callback() {
 		add_shortcode( self::SHORTCODE_VIDEO, array( $this, 'get_video_shortcode_content' ) );
@@ -519,7 +525,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			$this->append_meta_attribute( $document, $schema, 'contentUrl', 'https://www.youtube.com/watch?v=' . $youtube_obj->get_video_id(), 'link' );
 			$this->append_meta_attribute( $document, $schema, 'embedUrl', 'https://www.youtube.com/embed/' . $youtube_obj->get_video_id(), 'link' );
 			$this->append_meta_attribute( $document, $schema, 'duration', empty( $youtube_obj->get_duration() ) ? 'PT90s' : $youtube_obj->get_duration() );
-			$this->append_meta_attribute( $document, $schema, 'uploadDate', empty( $youtube_obj->get_published_at() ) ? date( 'Y-m-d\TH:i:s\Z', strtotime( '-10 days' ) ) : $youtube_obj->get_published_at() );	// phpcs:ignore
+			$this->append_meta_attribute( $document, $schema, 'uploadDate', empty( $youtube_obj->get_published_at() ) ? date( 'Y-m-d\TH:i:s\Z', strtotime( '-10 days' ) ) : $youtube_obj->get_published_at() );    // phpcs:ignore
 			$youtube_loader->appendChild( $schema );
 		}
 	}
@@ -761,9 +767,6 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		if ( ! $this->get_option( self::SETTING_NAME_YOUTUBE_TRACK_USAGE ) ) {
 			return;
 		}
-
-		//TODO here we can make more complicated tracking in the future (first load data and than apply just changes)
-
 		$objects = array();
 		$url_id  = $this->get_current_page_url()->get_url_id();
 		foreach ( $youtube_ids as $youtube_id ) {
@@ -773,6 +776,46 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			$objects[] = $row;
 		}
 		$row->insert_all( $objects, true );
+	}
+
+
+	public function page_cache_headers( $headers ) {
+		if ( is_user_logged_in() ) {
+			return $headers;
+		}
+		if ( Urlslab_File_Cache::get_instance()->exists( $_SERVER['REQUEST_URI'], self::PAGE_CACHE_GROUP ) ) {
+			$headers['X-URLSLAB-CACHE-HIT'] = 'Y';
+		}
+		$headers['Cache-Control'] = 'public, max-age=31536000';
+		$headers['Expires']       = gmdate( 'D, d M Y H:i:s', time() + 31536000 ) . ' GMT';
+		$headers['Pragma']        = 'public';
+
+		return $headers;
+	}
+
+
+	public function page_cache_start() {
+		if ( is_user_logged_in() ) {
+			return;
+		}
+		if ( Urlslab_File_Cache::get_instance()->exists( $_SERVER['REQUEST_URI'], self::PAGE_CACHE_GROUP ) ) {
+			$content = Urlslab_File_Cache::get_instance()->get( $_SERVER['REQUEST_URI'], self::PAGE_CACHE_GROUP, $found );
+			if ( strlen( $content ) > 0 ) {
+				echo $content; // phpcs:ignore
+				exit;
+			}
+		}
+		ob_start();
+		self::$cache_started = true;
+
+	}
+
+	public function page_cache_save() {
+		if ( ! self::$cache_started ) {
+			return;
+		}
+		Urlslab_File_Cache::get_instance()->set( $_SERVER['REQUEST_URI'], ob_get_contents(), self::PAGE_CACHE_GROUP, 30 );
+		ob_end_flush();
 	}
 }
 
