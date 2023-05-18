@@ -72,7 +72,7 @@ export default function GeneratorResultTable( { slug } ) {
 	const header = {
 		shortcode_id: __( 'Shortcode ID' ),
 		command: __( 'Command' ),
-		semantic_context: __( 'Semantic search query' ),
+		semantic_context: __( 'Semantic context' ),
 		url_filter: __( 'URL filter' ),
 		lang: __( 'Language' ),
 		labels: __( 'Tags' ),
@@ -93,52 +93,46 @@ export default function GeneratorResultTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'shortcode_id', {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.shortcode_id }</SortBy>,
-			size: 30,
-		} ),
-		columnHelper.accessor( 'semantic_context', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.semantic_context }</SortBy>,
-			size: 180,
-		} ),
-		columnHelper.accessor( 'url_filter', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_filter }</SortBy>,
-			size: 180,
+			size: 80,
 		} ),
 		columnHelper.accessor( 'prompt_variables', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.prompt_variables }</SortBy>,
-			size: 180,
+			size: 200,
+		} ),
+		columnHelper.accessor( 'semantic_context', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.semantic_context }</SortBy>,
+			size: 150,
+		} ),
+		columnHelper.accessor( 'url_filter', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_filter }</SortBy>,
+			size: 150,
 		} ),
 		columnHelper.accessor( 'lang', {
 			cell: ( cell ) => langName( cell?.getValue() ),
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.lang }</SortBy>,
-			size: 100,
-		} ),
-		columnHelper.accessor( 'labels', {
-			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.labels,
-			size: 160,
+			size: 70,
 		} ),
 		columnHelper.accessor( 'result', {
 			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.result }</SortBy>,
-			size: 180,
+			size: 200,
 		} ),
 		columnHelper.accessor( 'status', {
 			filterValMenu: statusTypes,
 			className: 'nolimit',
 			cell: ( cell ) => statusTypes[ cell.getValue() ],
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.status }</SortBy>,
-			size: 150,
+			size: 60,
 		} ),
 		columnHelper.accessor( 'date_changed', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.date_changed }</SortBy>,
-			size: 100,
+			size: 115,
 		} ),
 		columnHelper.accessor( 'usage_count', {
 			cell: ( cell ) => <div className="flex flex-align-center">
@@ -153,7 +147,13 @@ export default function GeneratorResultTable( { slug } ) {
 				}
 			</div>,
 			header: header.usage_count,
-			size: 100,
+			size: 60,
+		} ),
+		columnHelper.accessor( 'labels', {
+			className: 'nolimit',
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: header.labels,
+			size: 150,
 		} ),
 		columnHelper.accessor( 'actions', {
 			className: 'actions hoverize nolimit',

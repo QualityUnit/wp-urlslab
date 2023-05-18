@@ -14,6 +14,7 @@ export default function ScreenshotTable( { slug } ) {
 
 	const url = { filters, sorting };
 	const [ detailsOptions, setDetailsOptions ] = useState( null );
+	const [ tooltipUrl, setTooltipUrl ] = useState( );
 
 	const {
 		__,
@@ -44,6 +45,7 @@ export default function ScreenshotTable( { slug } ) {
 		scr_status: __( 'Status' ),
 		screenshot_usage_count: __( 'Usage' ),
 		update_scr_date: __( 'Last change' ),
+		labels: __( 'Tags' ),
 	};
 
 	const columns = [
@@ -54,18 +56,15 @@ export default function ScreenshotTable( { slug } ) {
 			} } />,
 			header: null,
 		} ),
-		columnHelper?.accessor( 'screenshot_url_carousel_thumbnail', {
-			className: 'thumbnail',
-			cell: ( image ) => <ImageThumbnail src={ image?.getValue() }
-				alt={ image.row.original.url_name }
-				thumb={ image?.getValue() }
-				href={ image.row.original.screenshot_url } />,
-			header: __( 'Thumbnail' ),
-			size: 80,
-		} ),
 		columnHelper?.accessor( 'screenshot_url', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			tooltip: ( cell ) => {
+				if ( tooltipUrl === cell.getValue() ) {
+					return <Tooltip><img src={ cell.getValue() } alt="url" /></Tooltip>;
+				}
+				return false;
+			},
+			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
+			cell: ( cell ) => <a onMouseOver={ () => setTooltipUrl( cell.getValue() ) } onMouseLeave={ () => setTooltipUrl() } href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.screenshot_url }</SortBy>,
 			size: 150,
 		} ),
@@ -73,7 +72,7 @@ export default function ScreenshotTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_name }</SortBy>,
-			size: 150,
+			size: 200,
 		} ),
 		columnHelper.accessor( 'url_title', {
 			className: 'nolimit',
@@ -87,31 +86,31 @@ export default function ScreenshotTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.scr_status }</SortBy>,
 			size: 80,
 		} ),
-		columnHelper.accessor( 'labels', {
-			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.labels,
-			size: 160,
+		columnHelper.accessor( 'update_scr_date', {
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.update_scr_date }</SortBy>,
+			size: 115,
 		} ),
 		columnHelper?.accessor( 'screenshot_usage_count', {
 			cell: ( cell ) => <div className="flex flex-align-center">
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
-					<button className="ml-s" onClick={ () => setDetailsOptions( {
-						title: `Screenshot used on these URLs`, slug, url: `${ cell.row.original.url_id }/linked-from`, showKeys: [ 'src_url_name' ], listId: 'src_url_id',
-					} ) }>
-						<LinkIcon />
-						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
-					</button>
+						<button className="ml-s" onClick={ () => setDetailsOptions( {
+							title: `Screenshot used on these URLs`, slug, url: `${ cell.row.original.url_id }/linked-from`, showKeys: [ 'src_url_name' ], listId: 'src_url_id',
+						} ) }>
+							<LinkIcon />
+							<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
+						</button>
 				}
 			</div>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.screenshot_usage_count }</SortBy>,
-			size: 80,
+			size: 60,
 		} ),
-		columnHelper.accessor( 'update_scr_date', {
-			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.update_scr_date }</SortBy>,
-			size: 140,
+		columnHelper.accessor( 'labels', {
+			className: 'nolimit',
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: header.labels,
+			size: 150,
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',

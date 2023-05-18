@@ -51,6 +51,12 @@ export default function CSSCacheTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url }</SortBy>,
 			size: 450,
 		} ),
+		columnHelper?.accessor( 'filesize', {
+			unit: 'kB',
+			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.filesize }</SortBy>,
+			size: 80,
+		} ),
 		columnHelper?.accessor( 'status', {
 			filterValMenu: statusTypes,
 			cell: ( cell ) => statusTypes[ cell.getValue() ],
@@ -60,13 +66,7 @@ export default function CSSCacheTable( { slug } ) {
 		columnHelper?.accessor( 'status_changed', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.status_changed }</SortBy>,
-			size: 100,
-		} ),
-		columnHelper?.accessor( 'filesize', {
-			unit: 'kB',
-			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.filesize }</SortBy>,
-			size: 100,
+			size: 115,
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',

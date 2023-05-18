@@ -69,31 +69,20 @@ export default function KeywordsTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.keyword }</SortBy>,
-			minSize: 150,
+			minSize: 200,
 		} ),
 		columnHelper.accessor( 'urlLink', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.urlLink }</SortBy>,
 			enableResizing: false,
-			size: 350,
+			size: 200,
 		} ),
-		columnHelper.accessor( 'kwType', {
-			filterValMenu: keywordTypes,
+		columnHelper.accessor( 'lang', {
 			className: 'nolimit',
-			cell: ( cell ) => keywordTypes[ cell.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.kwType }</SortBy>,
+			cell: ( cell ) => <LangMenu defaultValue={ cell?.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.lang }</SortBy>,
 			size: 100,
-		} ),
-		columnHelper.accessor( 'labels', {
-			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.labels,
-			size: 160,
-		} ),
-		columnHelper.accessor( 'kw_length', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.kw_length }</SortBy>,
-			size: 80,
 		} ),
 		columnHelper.accessor( 'kw_priority', {
 			className: 'nolimit',
@@ -101,13 +90,22 @@ export default function KeywordsTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.kw_priority }</SortBy>,
 			size: 80,
 		} ),
-		columnHelper.accessor( 'lang', {
+		columnHelper.accessor( 'urlFilter', {
 			className: 'nolimit',
-			cell: ( cell ) => <LangMenu defaultValue={ cell?.getValue() }
-				onChange={ ( newVal ) => updateRow( { newVal, cell } ) }
-			/>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.lang }</SortBy>,
-			size: 145,
+			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.urlFilter }</SortBy>,
+			size: 150,
+		} ),
+		columnHelper.accessor( 'kw_length', {
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.kw_length }</SortBy>,
+			size: 80,
+		} ),
+		columnHelper.accessor( 'kwType', {
+			filterValMenu: keywordTypes,
+			className: 'nolimit',
+			cell: ( cell ) => keywordTypes[ cell.getValue() ],
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.kwType }</SortBy>,
+			size: 80,
 		} ),
 		columnHelper.accessor( 'kw_usage_count', {
 			cell: ( cell ) => <div className="flex flex-align-center">
@@ -122,13 +120,13 @@ export default function KeywordsTable( { slug } ) {
 				}
 			</div>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.kw_usage_count }</SortBy>,
-			size: 70,
+			size: 80,
 		} ),
-		columnHelper.accessor( 'urlFilter', {
+		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.urlFilter }</SortBy>,
-			size: 100,
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: header.labels,
+			size: 150,
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',

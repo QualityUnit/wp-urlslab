@@ -26,20 +26,20 @@ export default function ContentCacheTable( { slug } ) {
 	};
 
 	const columns = [
-		columnHelper.accessor( 'date_changed', {
-			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.date_changed }</SortBy>,
-			size: 100,
+		columnHelper.accessor( 'cache_content', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.cache_content }</SortBy>,
+			size: 300,
 		} ),
 		columnHelper.accessor( 'cache_len', {
 			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.cache_len }</SortBy>,
-			size: 100,
+			size: 80,
 		} ),
-		columnHelper.accessor( 'cache_content', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.cache_content }</SortBy>,
-			size: 500,
+		columnHelper.accessor( 'date_changed', {
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.date_changed }</SortBy>,
+			size: 115,
 		} ),
 	];
 

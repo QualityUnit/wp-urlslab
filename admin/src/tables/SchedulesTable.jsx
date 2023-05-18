@@ -65,13 +65,13 @@ export default function SchedulesTable( { slug } ) {
 
 	const header = {
 		urls: __( 'URLs' ),
-		analyze_text: __( 'Analyze text' ),
+		analyze_text: __( 'Analyse text' ),
 		follow_links: __( 'Follow links' ),
 		process_all_sitemaps: __( 'Process all sitemaps' ),
-		take_screenshot: __( 'Take screenshot' ),
+		take_screenshot: __( 'Take screenshots' ),
 		custom_sitemaps: __( 'Sitemaps' ),
 		scan_frequency: __( 'Scan frequency' ),
-		scan_speed_per_minute: __( 'Scan speed (Pages/min)' ),
+		scan_speed_per_minute: __( 'Scan speed (pages per minute)' ),
 	};
 	const rowEditorCells = {
 		urls: <InputField liveUpdate defaultValue="" label={ header.urls } onChange={ ( val ) => setEditorRow( { ...rowToEdit, urls: val } ) } required />,
@@ -98,20 +98,31 @@ export default function SchedulesTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.urls }</SortBy>,
 			size: 300,
 		} ),
-		columnHelper?.accessor( 'analyze_text', {
-			cell: ( cell ) => <Checkbox readOnly className="readOnly" checked={ cell.getValue() } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.analyze_text }</SortBy>,
-			size: 120,
-		} ),
 		columnHelper?.accessor( 'follow_links', {
 			filterValMenu: followLinksTypes,
 			cell: ( cell ) => followLinksTypes[ cell?.getValue() ],
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.follow_links }</SortBy>,
-			size: 150,
+			size: 100,
+		} ),
+		columnHelper?.accessor( 'analyze_text', {
+			cell: ( cell ) => <Checkbox readOnly className="readOnly" checked={ cell.getValue() } />,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.analyze_text }</SortBy>,
+			size: 90,
+		} ),
+		columnHelper?.accessor( 'take_screenshot', {
+			cell: ( cell ) => <Checkbox readOnly className="readOnly" checked={ cell.getValue() } />,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.take_screenshot }</SortBy>,
+			size: 90,
 		} ),
 		columnHelper?.accessor( 'process_all_sitemaps', {
 			cell: ( cell ) => <Checkbox readOnly className="readOnly" checked={ cell.getValue() } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.process_all_sitemaps }</SortBy>,
+			size: 90,
+		} ),
+		columnHelper?.accessor( 'custom_sitemaps', {
+			cell: ( array ) => array?.getValue().map( ( sitemap ) => <><a href={ sitemap } target="_blank" rel="noreferrer" key={ sitemap }>{ sitemap }</a>, </>,
+			),
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.custom_sitemaps }</SortBy>,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'scan_frequency', {
@@ -122,18 +133,7 @@ export default function SchedulesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'scan_speed_per_minute', {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.scan_speed_per_minute }</SortBy>,
-			size: 120,
-		} ),
-		columnHelper?.accessor( 'take_screenshot', {
-			cell: ( cell ) => <Checkbox readOnly className="readOnly" checked={ cell.getValue() } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.take_screenshot }</SortBy>,
 			size: 90,
-		} ),
-		columnHelper?.accessor( 'custom_sitemaps', {
-			cell: ( array ) => array?.getValue().map( ( sitemap ) => <><a href={ sitemap } target="_blank" rel="noreferrer" key={ sitemap }>{ sitemap }</a>, </>,
-			),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.custom_sitemaps }</SortBy>,
-			size: 200,
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',

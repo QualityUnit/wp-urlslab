@@ -39,8 +39,8 @@ export default function TagsLabels( ) {
 	const { row, selectedRows, rowToEdit, setEditorRow, activePanel, setActivePanel, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const header = {
-		name: 'Title',
-		modules: 'Allowed in tables',
+		name: 'Name',
+		modules: 'Allowed',
 	};
 
 	const rowEditorCells = {
@@ -70,7 +70,7 @@ export default function TagsLabels( ) {
 				const { lightness } = tag && hexToHSL( tag.bgcolor );
 				return <Tag fullSize className={ lightness < 70 ? 'dark' : '' } style={ { backgroundColor: tag?.bgcolor } }>{ cell.getValue() }</Tag>;
 			},
-			header: 'Tags',
+			header: 'Tag',
 			size: 150,
 		} ),
 		columnHelper.accessor( 'modules', {

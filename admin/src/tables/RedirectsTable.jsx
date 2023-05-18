@@ -71,7 +71,7 @@ export default function RedirectsTable( { slug } ) {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.replace_url }</SortBy>,
-			size: 100,
+			size: 200,
 		} ),
 		columnHelper.accessor( 'redirect_code', {
 			filterValMenu: redirectTypes,
@@ -93,12 +93,6 @@ export default function RedirectsTable( { slug } ) {
 			cell: ( cell ) => <SingleSelectMenu items={ logginTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.is_logged }</SortBy>,
 			size: 100,
-		} ),
-		columnHelper.accessor( 'labels', {
-			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.labels,
-			size: 160,
 		} ),
 		columnHelper.accessor( 'capabilities', {
 			className: 'nolimit',
@@ -146,6 +140,12 @@ export default function RedirectsTable( { slug } ) {
 		columnHelper.accessor( 'cnt', {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.cnt }</SortBy>,
 			size: 100,
+		} ),
+		columnHelper.accessor( 'labels', {
+			className: 'nolimit',
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: header.labels,
+			size: 160,
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',

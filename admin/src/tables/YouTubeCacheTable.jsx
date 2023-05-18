@@ -97,8 +97,7 @@ export default function YouTubeCacheTable( { slug } ) {
 			id: 'thumb',
 			className: 'thumbnail',
 			cell: ( image ) =>
-				<img src={ image?.getValue()?.thumbnails?.high?.url }
-					alt={ image?.getValue()?.title } />,
+				<img src={ image?.getValue()?.thumbnails?.high?.url } className="video-thumbnail" alt={ image?.getValue()?.title } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.thumb }</SortBy>,
 			size: 80,
 		} ),
@@ -106,23 +105,23 @@ export default function YouTubeCacheTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.videoid }</SortBy>,
 			size: 80,
 		} ),
-		columnHelper?.accessor( 'captions', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.captions }</SortBy>,
-			size: 80,
-		} ),
-		columnHelper?.accessor( 'status', {
-			filterValMenu: statusTypes,
-			cell: ( cell ) => statusTypes[ cell.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.status }</SortBy>,
-			size: 100,
-		} ),
 		columnHelper?.accessor( ( cell ) => [ cell?.videoid, getJson( `${ cell?.microdata }` )?.items[ 0 ]?.snippet?.title ], {
 			id: 'title',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue()[ 1 ] }</Tooltip>,
 			cell: ( val ) => <a href={ `https://youtu.be/${ val?.getValue()[ 0 ] }` } target="_blank" rel="noreferrer">{ val?.getValue()[ 1 ] }</a>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.title }</SortBy>,
-			size: 450,
+			size: 200,
+		} ),
+		columnHelper?.accessor( 'captions', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.captions }</SortBy>,
+			size: 150,
+		} ),
+		columnHelper?.accessor( 'status', {
+			filterValMenu: statusTypes,
+			cell: ( cell ) => statusTypes[ cell.getValue() ],
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.status }</SortBy>,
+			size: 80,
 		} ),
 		columnHelper?.accessor( 'usage_count', {
 			cell: ( cell ) => <div className="flex flex-align-center">
@@ -137,7 +136,7 @@ export default function YouTubeCacheTable( { slug } ) {
 				}
 			</div>,
 			header: header.usage_count,
-			size: 80,
+			size: 60,
 		} ),
 		columnHelper.accessor( 'actions', {
 			className: 'actions hoverize nolimit',

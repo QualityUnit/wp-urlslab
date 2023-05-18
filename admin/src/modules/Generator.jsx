@@ -15,7 +15,7 @@ export default function Generator( { moduleId } ) {
 	const GeneratorShortcodeTable = lazy( () => import( `../tables/GeneratorShortcodeTable.jsx` ) );
 	const tableMenu = new Map( [
 		[ 'shortcode', __( 'Shortcodes' ) ],
-		[ 'result', __( 'AI Generated Results' ) ],
+		[ 'result', __( 'Results' ) ],
 	] );
 
 	return (
