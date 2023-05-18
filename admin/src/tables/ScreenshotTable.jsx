@@ -39,7 +39,7 @@ export default function ScreenshotTable( { slug } ) {
 	};
 
 	const header = {
-		screenshot_url: __( 'Screenshot URL' ),
+		screenshot_url_thumbnail: __( 'Screenshot URL' ),
 		url_name: __( 'Destination URL' ),
 		url_title: __( 'Title' ),
 		scr_status: __( 'Status' ),
@@ -56,7 +56,7 @@ export default function ScreenshotTable( { slug } ) {
 			} } />,
 			header: null,
 		} ),
-		columnHelper?.accessor( 'screenshot_url', {
+		columnHelper?.accessor( 'screenshot_url_thumbnail', {
 			tooltip: ( cell ) => {
 				if ( tooltipUrl === cell.getValue() ) {
 					return <Tooltip><img src={ cell.getValue() } alt="url" /></Tooltip>;
@@ -65,7 +65,7 @@ export default function ScreenshotTable( { slug } ) {
 			},
 			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
 			cell: ( cell ) => <a onMouseOver={ () => setTooltipUrl( cell.getValue() ) } onMouseLeave={ () => setTooltipUrl() } href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.screenshot_url }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.screenshot_url_thumbnail }</SortBy>,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'url_name', {
