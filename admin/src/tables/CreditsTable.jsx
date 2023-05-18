@@ -4,6 +4,7 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
+	ProgressBar,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -23,6 +24,9 @@ export default function CreditsTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetching,
+		isFetchingNextPage,
+		hasNextPage,
+		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
 	const header = {
@@ -32,6 +36,7 @@ export default function CreditsTable( { slug } ) {
 		operationDate: __( 'Timestamp' ),
 		url: __( 'URL' ),
 	};
+
 	const columns = [
 		columnHelper.accessor( 'id', {
 			header: header.id,
@@ -76,7 +81,11 @@ export default function CreditsTable( { slug } ) {
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
-				<TooltipSortingFiltering props={ { isFetching } } />
+				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
+				<div ref={ ref }>
+					{ isFetchingNextPage ? '' : hasNextPage }
+					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
+				</div>
 			</Table>
 		</>
 	);
