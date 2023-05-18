@@ -69,11 +69,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 	}
 
 
-	public function get_shortcode_content(
-		$atts = array(),
-		$content = null,
-		$tag = ''
-	): string {
+	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
 		if ( ! isset( $atts['id'] ) || empty( $atts['id'] ) ) {
 			if ( $this->is_edit_mode() ) {
 				$atts['STATUS'] = 'Missing shortcode ID attribute!!!';

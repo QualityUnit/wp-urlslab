@@ -47,40 +47,14 @@ class Urlslab_File_Cache {
 	 * @return false|mixed
 	 */
 	public function get( $key, $group = '', &$found = null, $allowed_classes = false ) {
-		if ( ! $this->is_active() ) {
-			$found = false;
+		if ( $this->exists( $key, $group, $allowed_classes ) ) {
+			$found = true;
 
-			return false;
+			return $this->mem_cache[ $group ][ $key ]['data'];
 		}
+		$found = false;
 
-		if ( isset( $this->mem_cache[ $group ][ $key ] ) ) {
-			$content = $this->mem_cache[ $group ][ $key ];
-		} else {
-			$file = $this->cache_path . md5( $key ) . '_' . $group . '.cache';
-			if ( ! file_exists( $file ) ) {
-				$found = false;
-
-				return false;
-			}
-			$file_content = file_get_contents( $file );
-			if ( false === $file_content ) {
-				$found = false;
-
-				return false;
-			}
-			$content = unserialize( $file_content, array( 'allowed_classes' => $allowed_classes ) );
-		}
-
-		if ( ! is_array( $content ) || ( 0 !== $content['expiration'] && time() > $content['expiration'] ) ) {
-			@unlink( $file );
-			$found = false;
-
-			return false;
-		}
-
-		$found = true;
-
-		return $content['data'];
+		return false;
 	}
 
 	public function delete( $key, $group = '' ) {
@@ -106,5 +80,42 @@ class Urlslab_File_Cache {
 		foreach ( $files as $file ) {
 			@unlink( $file );
 		}
+	}
+
+	public function exists( string $key, string $group = '', $allowed_classes = false ): bool {
+		if ( ! $this->is_active() ) {
+			return false;
+		}
+
+		if ( isset( $this->mem_cache[ $group ][ $key ] ) ) {
+			if ( ! is_array( $this->mem_cache[ $group ][ $key ] ) || ( 0 !== $this->mem_cache[ $group ][ $key ]['expiration'] && time() > $this->mem_cache[ $group ][ $key ]['expiration'] ) ) {
+				$this->delete( $key, $group );
+
+				return false;
+			}
+
+			return true;
+		}
+
+		$file = $this->cache_path . md5( $key ) . '_' . $group . '.cache';
+		if ( ! file_exists( $file ) ) {
+
+			return false;
+		}
+		$file_content = file_get_contents( $file );
+		if ( false === $file_content ) {
+
+			return false;
+		}
+		$content = unserialize( $file_content, array( 'allowed_classes' => $allowed_classes ) );
+
+		if ( ! is_array( $content ) || ( 0 !== $content['expiration'] && time() > $content['expiration'] ) ) {
+			$this->delete( $key, $group );
+
+			return false;
+		}
+		$this->mem_cache[ $group ][ $key ] = $content;
+
+		return true;
 	}
 }
