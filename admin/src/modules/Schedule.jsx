@@ -1,12 +1,11 @@
-import {Suspense, lazy, useState} from 'react';
-import ModuleViewHeader from "../components/ModuleViewHeader";
-import Overview from "../components/OverviewTemplate";
-import SchedulesOverview from "../overview/Schedules";
-import CreditsTable from "../tables/CreditsTable";
+import { Suspense, lazy, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
+import Overview from '../components/OverviewTemplate';
+import SchedulesOverview from '../overview/Schedules';
+import ModuleViewHeader from '../components/ModuleViewHeader';
 
-export default function Schedule(  { moduleId } ) {
+export default function Schedule( { moduleId } ) {
 	const slug = 'schedule';
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
@@ -20,13 +19,16 @@ export default function Schedule(  { moduleId } ) {
 
 	return (
 		<div className="urlslab-tableView">
-			<ModuleViewHeader moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+			<ModuleViewHeader
+				moduleMenu={ tableMenu }
+				noSettings
+				activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{ activeSection === 'overview' &&
 				<Overview moduleId={ moduleId }>
 					<SchedulesOverview />
 				</Overview>
 			}
-			{ activeSection === 'schedule' &&
+			{ activeSection === slug &&
 				<div className="urlslab-tableView">
 					<Suspense>
 						<SchedulesTable slug={ slug } />
@@ -36,7 +38,7 @@ export default function Schedule(  { moduleId } ) {
 			{
 				activeSection === 'credits' &&
 				<Suspense>
-					<CreditsTable slug={ 'billing/credits/events' } />
+					<CreditsTable slug="billing/credits/events" />
 				</Suspense>
 			}
 		</div>

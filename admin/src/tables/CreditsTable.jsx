@@ -1,19 +1,12 @@
 import {
 	useInfiniteFetch,
-	ProgressBar,
-	SortBy,
-	Tooltip,
-	Trash,
-	Checkbox,
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	InputField, SingleSelectMenu,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
-import useChangeRow from '../hooks/useChangeRow';
 
 import '../assets/styles/components/_ModuleViewHeader.scss';
 
@@ -21,7 +14,7 @@ export default function CreditsTable( { slug } ) {
 	const paginationId = 'id';
 	const { table, setTable, filters, sorting } = useTableUpdater( { slug } );
 
-	const url = {  };
+	const url = { filters, sorting };
 
 	const {
 		__,
@@ -41,23 +34,23 @@ export default function CreditsTable( { slug } ) {
 	};
 	const columns = [
 		columnHelper.accessor( 'id', {
-			header: ( th ) => { header.id },
+			header: header.id,
 			size: 90,
 		} ),
 		columnHelper.accessor( 'creditType', {
-			header: ( th ) => { header.creditType },
+			header: header.creditType,
 			size: 90,
 		} ),
 		columnHelper.accessor( 'creditOperation', {
-			header: ( th ) => { header.creditOperation },
+			header: header.creditOperation,
 			size: 90,
 		} ),
 		columnHelper.accessor( 'operationDate', {
-			header: ( th ) => { header.operationDate },
+			header: header.operationDate,
 			size: 90,
 		} ),
 		columnHelper.accessor( 'url', {
-			header: ( th ) => { header.url },
+			header: header.url,
 			size: 90,
 		} ),
 	];

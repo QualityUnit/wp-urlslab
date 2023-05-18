@@ -6,7 +6,6 @@ import Switch from '../elements/Switch';
 import Tag from '../elements/Tag';
 
 import { setModule } from '../api/fetching';
-import { ReactComponent as ArrowIcon } from '../assets/images/icons/icon-arrow.svg';
 import '../assets/styles/components/_DashboardModule.scss';
 import '../assets/styles/elements/_Button.scss';
 
