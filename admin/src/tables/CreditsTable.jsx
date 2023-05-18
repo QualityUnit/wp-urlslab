@@ -4,7 +4,7 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	ProgressBar,
+	ProgressBar, Tooltip, SortBy,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -40,23 +40,25 @@ export default function CreditsTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'id', {
 			header: header.id,
-			size: 90,
+			size: 60,
 		} ),
 		columnHelper.accessor( 'creditType', {
 			header: header.creditType,
-			size: 90,
+			size: 30,
 		} ),
 		columnHelper.accessor( 'creditOperation', {
 			header: header.creditOperation,
-			size: 90,
+			size: 30,
 		} ),
 		columnHelper.accessor( 'operationDate', {
 			header: header.operationDate,
-			size: 90,
+			size: 30,
 		} ),
 		columnHelper.accessor( 'url', {
-			header: header.url,
-			size: 90,
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			header: ( th ) => { header.url },
+			size: 200,
 		} ),
 	];
 
