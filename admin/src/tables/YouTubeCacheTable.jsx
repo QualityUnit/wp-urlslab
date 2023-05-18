@@ -5,7 +5,7 @@ import {
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
-import IconButton from "../elements/IconButton";
+import IconButton from '../elements/IconButton';
 import { ReactComponent as AcceptIcon } from '../assets/images/icons/icon-activate.svg';
 import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
 import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-cron-refresh.svg';
@@ -33,24 +33,24 @@ export default function YouTubeCacheTable( { slug } ) {
 	const { row, selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const ActionButton = ( { cell, onClick } ) => {
-		const { status } = cell?.row?.original;
+		const { status: videoStatus } = cell?.row?.original;
 
 		return (
 			<div className="flex flex-align-center flex-justify-end">
 				{
-					( status === 'W' || status === 'D' ) &&
+					( videoStatus === 'W' || videoStatus === 'D' ) &&
 					<IconButton className="mr-s c-saturated-green" tooltip={ __( 'Accept' ) } tooltipClass="align-left" onClick={ () => onClick( 'A' ) }>
 						<AcceptIcon />
 					</IconButton>
 				}
 				{
-					( status === 'P' || status === 'W' || status === 'A' || status === 'N' ) &&
+					( videoStatus === 'P' || videoStatus === 'W' || videoStatus === 'A' || videoStatus === 'N' ) &&
 					<IconButton className="mr-s c-saturated-red" tooltip={ __( 'Decline' ) } tooltipClass="align-left" onClick={ () => onClick( 'D' ) }>
 						<DisableIcon />
 					</IconButton>
 				}
 				{
-					( status === 'A' || status === 'D' || status === 'P' ) &&
+					( videoStatus === 'A' || videoStatus === 'D' || videoStatus === 'P' ) &&
 					<IconButton className="mr-s" tooltip={ __( 'Regenerate' ) } tooltipClass="align-left" onClick={ () => onClick( 'N' ) }>
 						<RefreshIcon />
 					</IconButton>
@@ -77,13 +77,13 @@ export default function YouTubeCacheTable( { slug } ) {
 		microdata: __( 'Youtube Microdata JSON' ),
 	};
 
-	const getJson = (param) => {
+	const getJson = ( param ) => {
 		try {
-			return JSON.parse(param);
-		} catch (e) {
+			return JSON.parse( param );
+		} catch ( e ) {
 			return null;
 		}
-	}
+	};
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -150,7 +150,6 @@ export default function YouTubeCacheTable( { slug } ) {
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
 			header: null,
 		} ),
-
 
 	];
 

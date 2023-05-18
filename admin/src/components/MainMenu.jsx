@@ -28,18 +28,21 @@ export default function MainMenu( { activeModule, modules, activePage, module } 
 		}
 	};
 
-	const handleActive = ( mod ) => {
-		setActive( mod );
-		if ( activePage ) {
-			activePage( mod );
-		}
-	};
-
 	const activator = ( moduleId ) => {
+		if ( ! moduleId ) {
+			return '';
+		}
 		if ( moduleId === activeId || moduleId === activeModule ) {
 			return 'active';
 		}
-		return '';
+	};
+
+	const handleActive = ( mod ) => {
+		setActive( mod );
+
+		if ( activePage ) {
+			activePage( mod );
+		}
 	};
 
 	useEffect( () => {

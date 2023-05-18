@@ -55,7 +55,6 @@ export default function LangMenu( { noAll, multiSelect, isFilter, children, defa
 				langData && multiSelect &&
 				<MultiSelectMenu
 					items={ langData }
-					isFilter={ isFilter }
 					defaultValue={ [ defaultValue ].flat() }
 					onChange={ ( lang ) => handleSelected( lang ) }
 				/>

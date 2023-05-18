@@ -133,7 +133,7 @@ export default function App() {
 				<Suspense>
 					<MainMenu
 						modules={ ! fetchedModules || Object.values( fetchedModules ) }
-						activePage={ ( selectedModule ) => handleModulePage( selectedModule ) }
+						activePage={ handleModulePage }
 						activeModule={ module }
 					/>
 				</Suspense>
@@ -146,7 +146,7 @@ export default function App() {
 					<DynamicModule
 						modules={ ! fetchedModules || Object.values( fetchedModules ) }
 						moduleId={ module }
-						activePage={ ( selectedModule ) => handleModulePage( selectedModule ) }
+						activePage={ handleModulePage }
 					/>
 				</div>
 			</HeaderHeightContext.Provider>

@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, useRef } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
@@ -56,7 +57,7 @@ export default function MultiSelectMenu( {
 	return (
 		<>
 			<div className={ `urlslab-MultiSelectMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref } id={ id }>
-				{ children ? <div className="urlslab-inputField-label" dangerouslySetInnerHTML={ { __html: children } } /> : null }
+				{ ! isFilter && children ? <div className="urlslab-inputField-label" dangerouslySetInnerHTML={ { __html: children } } /> : null }
 				<div
 					className={ `urlslab-MultiSelectMenu__title ${ isFilter ? 'isFilter' : '' } ${ isActive ? 'active' : '' }` }
 					onClick={ handleMenu }
@@ -64,12 +65,17 @@ export default function MultiSelectMenu( {
 					role="button"
 					tabIndex={ 0 }
 				>
-					<span>
-						{ asTags //if has asTags prop, shows selected items in menu title instead of counter
-							? checked?.map( ( itemId ) => `${ items[ itemId ] }, ` )
-							: `${ checked?.length } ${ __( 'items selected' ) }`
-						}
-					</span>
+					{
+						! isFilter
+							? <span>
+								{ asTags //if has asTags prop, shows selected items in menu title instead of counter
+									? checked?.map( ( itemId ) => `${ items[ itemId ] }, ` )
+									: `${ checked?.length } ${ __( 'items selected' ) }`
+								}
+							</span>
+							: null
+					}
+					<span dangerouslySetInnerHTML={ { __html: isFilter ? children : items[ checked ] } } />
 				</div>
 				<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
 					<div className={ `urlslab-MultiSelectMenu__items--inn ${ items?.length > 8 ? 'has-scrollbar' : '' }` }>
