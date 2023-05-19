@@ -53,11 +53,11 @@ export default function CronRunner() {
 			{ ! state.cronRunning
 				? <span>
 					<CronIcon className="urlslab-cronrunner-icon" />
-					<Tooltip className="showOnHover align-left xxxl">{ __( 'Speed Up the Cron Execution' ) }</Tooltip>
+					<Tooltip className="showOnHover align-left xxxl">{ __( 'Speed Up Tasks Execution' ) }</Tooltip>
 				</span>
 				: <span className="c-saturated-red">
 					<StopIcon className="urlslab-cronrunner-icon" />
-					<Tooltip className="showOnHover align-left xxxl">{ __( 'Stop Cron Execution' ) }</Tooltip>
+					<Tooltip className="showOnHover align-left xxxl">{ __( 'Stop Tasks Execution' ) }</Tooltip>
 				</span>
 			}
 
