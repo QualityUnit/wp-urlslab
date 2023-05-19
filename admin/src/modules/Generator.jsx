@@ -1,11 +1,8 @@
 import { useState, Suspense, lazy } from 'react';
 
-import Overview from '../components/OverviewTemplate';
 import GeneratorOverview from '../overview/Generator';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 import { useI18n } from '@wordpress/react-i18n';
-import GeneratorResultTable from '../tables/GeneratorResultTable';
-import GeneratorShortcodeTable from '../tables/GeneratorShortcodeTable';
 
 export default function Generator( { moduleId } ) {
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
@@ -20,12 +17,11 @@ export default function Generator( { moduleId } ) {
 
 	return (
 		<div className="urlslab-tableView">
-			<ModuleViewHeader moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+			<ModuleViewHeader moduleId={ moduleId }
+				moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{
 				activeSection === 'overview' &&
-				<Overview moduleId={ moduleId }>
-					<GeneratorOverview />
-				</Overview>
+				<GeneratorOverview moduleId={ moduleId } />
 			}
 			{
 				activeSection === 'shortcode' &&

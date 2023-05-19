@@ -1,7 +1,6 @@
 import { useState, Suspense, lazy } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import Overview from '../components/OverviewTemplate';
 import MediaOffloaderOverview from '../overview/MediaOffloader';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
@@ -19,11 +18,10 @@ export default function MediaOffloader( { moduleId } ) {
 
 	return (
 		<div className="urlslab-tableView">
-			<ModuleViewHeader moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+			<ModuleViewHeader moduleId={ moduleId }
+				moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{ activeSection === 'overview' &&
-				<Overview moduleId={ moduleId }>
-					<MediaOffloaderOverview />
-				</Overview>
+			<MediaOffloaderOverview moduleId={ moduleId } />
 			}
 			{
 				activeSection === slug &&

@@ -51,7 +51,7 @@ export default function ScreenshotTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
+			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
 				selectRow( val, cell );
 			} } />,
 			header: null,
@@ -95,12 +95,12 @@ export default function ScreenshotTable( { slug } ) {
 			cell: ( cell ) => <div className="flex flex-align-center">
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
-						<button className="ml-s" onClick={ () => setDetailsOptions( {
-							title: `Screenshot used on these URLs`, slug, url: `${ cell.row.original.url_id }/linked-from`, showKeys: [ 'src_url_name' ], listId: 'src_url_id',
-						} ) }>
-							<LinkIcon />
-							<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
-						</button>
+				<button className="ml-s" onClick={ () => setDetailsOptions( {
+					title: `Screenshot used on these URLs`, slug, url: `${ cell.row.original.url_id }/linked-from`, showKeys: [ 'src_url_name' ], listId: 'src_url_id',
+				} ) }>
+					<LinkIcon />
+					<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
+				</button>
 				}
 			</div>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.screenshot_usage_count }</SortBy>,

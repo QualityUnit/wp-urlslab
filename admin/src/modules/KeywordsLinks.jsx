@@ -1,7 +1,5 @@
 import { useState, Suspense, lazy } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import Overview from '../components/OverviewTemplate';
 import KeywordLinksOverview from '../overview/KeywordsLinks';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
@@ -26,9 +24,7 @@ export default function KeywordLinks( { moduleId } ) {
 				activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 
 			{ activeSection === 'overview' &&
-			<Overview moduleId={ moduleId }>
-				<KeywordLinksOverview />
-			</Overview>
+			<KeywordLinksOverview moduleId={ moduleId } />
 			}
 			{
 				activeSection === slug &&

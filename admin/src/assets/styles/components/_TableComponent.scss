@@ -101,7 +101,7 @@ $cellHeight: 3.5em;
 		position: sticky;
 		top: 0;
 		z-index: 555;
-		background-color: #f0f0f1;
+		background-color: $grey-lighter;
 		color: $grey-darker;
 
 		th {

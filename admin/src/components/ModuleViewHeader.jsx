@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
+import { get } from 'idb-keyval';
 
 import SimpleButton from '../elements/SimpleButton';
 
 import '../assets/styles/components/_ModuleViewHeader.scss';
 
-export default function ModuleViewHeader( { moduleMenu, activeMenu, noSettings } ) {
+export default function ModuleViewHeader( { moduleId, moduleMenu, activeMenu, noSettings } ) {
 	const { __ } = useI18n();
 	const [ active, setActive ] = useState( 'overview' );
 
@@ -27,6 +28,18 @@ export default function ModuleViewHeader( { moduleMenu, activeMenu, noSettings }
 		}
 		return '';
 	};
+
+	const getOverviewVisibility = useCallback( async () => {
+		const { hideOverview } = await get( moduleId ) ?? false;
+
+		if ( hideOverview && moduleMenu ) {
+			handleMenu( Array.from( moduleMenu )[ 0 ][ 0 ] );
+		}
+	}, [ ] );
+
+	useEffect( () => {
+		getOverviewVisibility();
+	}, [ ] );
 
 	return (
 

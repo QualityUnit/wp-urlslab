@@ -1,7 +1,6 @@
 import { useState, Suspense, lazy } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import Overview from '../components/OverviewTemplate';
 import SearchAndReplaceOverview from '../overview/SearchAndReplace';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
@@ -24,9 +23,7 @@ export default function SearchAndReplace( { moduleId } ) {
 				activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{
 				activeSection === 'overview' &&
-				<Overview moduleId={ moduleId }>
-					<SearchAndReplaceOverview />
-				</Overview>
+				<SearchAndReplaceOverview moduleId={ moduleId } />
 			}
 			{
 				activeSection === slug &&

@@ -86,7 +86,7 @@ export default function SchedulesTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
+			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
 				selectRow( val, cell );
 			} } />,
 			header: null,
@@ -105,17 +105,17 @@ export default function SchedulesTable( { slug } ) {
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'analyze_text', {
-			cell: ( cell ) => <Checkbox readOnly className="readOnly" checked={ cell.getValue() } />,
+			cell: ( cell ) => <Checkbox readOnly className="readOnly" defaultValue={ cell.getValue() } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.analyze_text }</SortBy>,
 			size: 90,
 		} ),
 		columnHelper?.accessor( 'take_screenshot', {
-			cell: ( cell ) => <Checkbox readOnly className="readOnly" checked={ cell.getValue() } />,
+			cell: ( cell ) => <Checkbox readOnly className="readOnly" defaultValue={ cell.getValue() } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.take_screenshot }</SortBy>,
 			size: 90,
 		} ),
 		columnHelper?.accessor( 'process_all_sitemaps', {
-			cell: ( cell ) => <Checkbox readOnly className="readOnly" checked={ cell.getValue() } />,
+			cell: ( cell ) => <Checkbox readOnly className="readOnly" defaultValue={ cell.getValue() } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.process_all_sitemaps }</SortBy>,
 			size: 90,
 		} ),

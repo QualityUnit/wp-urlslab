@@ -81,7 +81,7 @@ export default function SortMenu( {
 									id={ id }
 									onChange={ () => checkedCheckbox( id ) }
 									name={ name }
-									checked={ id === checked }
+									defaultValue={ id === checked }
 									radial
 								>
 									{ value }

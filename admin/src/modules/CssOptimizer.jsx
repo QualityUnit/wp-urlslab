@@ -1,7 +1,6 @@
 import { useState, Suspense, lazy } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import Overview from '../components/OverviewTemplate';
 import CssOptimizerOverview from '../overview/CssOptimizer';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
@@ -18,12 +17,11 @@ export default function CssOptimizer( { moduleId } ) {
 
 	return (
 		<div className="urlslab-tableView">
-			<ModuleViewHeader moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+			<ModuleViewHeader moduleId={ moduleId }
+				moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{
 				activeSection === 'overview' &&
-				<Overview moduleId={ moduleId }>
-					<CssOptimizerOverview />
-				</Overview>
+				<CssOptimizerOverview moduleId={ moduleId } />
 			}
 			<Suspense>
 				{

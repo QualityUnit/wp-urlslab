@@ -418,8 +418,8 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			self::SETTING_NAME_TRACK_USAGE,
 			true,
 			false,
-			__( 'Track Usage of generators' ),
-			__( 'Track usage of generated text, Keep up to date list of urls, where was generated text used during last page view.' ),
+			__( 'Track Usage of Generated Texts' ),
+			__( 'Monitor text usage and track the URLs where the generated content is used during last page view.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -429,13 +429,13 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			self::SETTING_NAME_GENERATOR_MODEL,
 			\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
 			false,
-			__( 'Content Generator AI model' ),
-			__( 'Choose quality of model, which we will use for Content Generator widget. Difference between models is not just the quality, but also proce (GPT4 is 10x more expensive as other models).' ),
+			__( 'Used AI Model' ),
+			__( 'Choose an AI model for Content Generator. Keep in mind that certain models may have higher efficiency but also come at a higher cost.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4            => __( 'GPT 4' ),
-				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO    => __( 'GPT 3.5 Turbo' ),
-				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 => __( 'GPT Davinci 003' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4            => __( 'OpenAI GPT 4' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO    => __( 'OpenAI GPT 3.5 Turbo' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 => __( 'OpenAI GPT Davinci 003' ),
 			),
 			function( $value ) {
 				return \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $value ||
@@ -454,11 +454,11 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_TRANSLATE,
+			true,
 			false,
-			false,
-			__( 'Use our auto-translating feature with copy buttons ' ),
+			__( 'Auto-translating for WPML Classic Translation Editor' ),
 			__(
-				'Translation will be generated upon clicking "Copy from Original" or "Copy All Fields from Original," ensuring accurate preservation of HTML structure. The original functionality of those buttons will be replaced!'
+				'Leverage auto-translation in WPML\'s Classic Translation Editor to efficiently minimize time spent translating and ensuring accurate preservation of HTML structure.'
 			),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -469,13 +469,13 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			self::SETTING_NAME_TRANSLATE_MODEL,
 			\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
 			false,
-			__( 'Translation model' ),
-			__( 'Choose quality of model used for translation task in WPML editor. Difference between models is not just the quality, but also proce (GPT4 is 10x more expensive as other models).' ),
+			__( 'Used AI Model for Translations' ),
+			__( 'Select an AI model for translation purposes. Keep in mind that certain models may have higher efficiency but also come at a higher cost.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4            => __( 'GPT 4' ),
-				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO    => __( 'GPT 3.5 Turbo' ),
-				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 => __( 'GPT Davinci 003' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4            => __( 'OpenAI GPT 4' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO    => __( 'OpenAI GPT 3.5 Turbo' ),
+				\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 => __( 'OpenAI GPT Davinci 003' ),
 			),
 			function( $value ) {
 				return \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $value ||
