@@ -34,16 +34,9 @@ export default function CacheRulesTable( { slug } ) {
 		R: 'Regexp',
 	} );
 
-	const logginTypes = Object.freeze( {
-		Y: 'Logged in',
-		N: 'Not logged',
-		A: 'Any',
-	} );
-
 	const header = Object.freeze( {
 		match_type: __( 'Match type' ),
 		match_url: __( 'URL' ),
-		is_logged: __( 'Is logged in' ),
 		is_active: __( 'Is active' ),
 		labels: __( 'Tags' ),
 		browser: __( 'Browser' ),
@@ -60,7 +53,6 @@ export default function CacheRulesTable( { slug } ) {
 		match_type: <SingleSelectMenu defaultAccept autoClose items={ matchTypes } name="match_type" defaultValue="A" onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_type: val } ) }>{ header.match_type }</SingleSelectMenu>,
 		match_url: <InputField type="url" liveUpdate label={ header.match_url } onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_url: val } ) } required />,
 		cache_ttl: <InputField liveUpdate defaultValue="3600" label={ header.cache_ttl } onChange={ ( val ) => setEditorRow( { ...rowToEdit, headers: val } ) } />,
-		is_logged: <SingleSelectMenu autoClose items={ logginTypes } name="is_logged" defaultValue="N" onChange={ ( val ) => setEditorRow( { ...rowToEdit, is_logged: val } ) }>{ header.is_logged }</SingleSelectMenu>,
 		headers: <InputField liveUpdate label={ header.headers } onChange={ ( val ) => setEditorRow( { ...rowToEdit, headers: val } ) } />,
 		cookie: <InputField liveUpdate label={ header.cookie } onChange={ ( val ) => setEditorRow( { ...rowToEdit, cookie: val } ) } />,
 		params: <InputField liveUpdate label={ header.params } onChange={ ( val ) => setEditorRow( { ...rowToEdit, capabilities: val } ) } />,
@@ -90,13 +82,6 @@ export default function CacheRulesTable( { slug } ) {
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.match_url }</SortBy>,
 			size: 200,
-		} ),
-		columnHelper.accessor( 'is_logged', {
-			filterValMenu: logginTypes,
-			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu items={ logginTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.is_logged }</SortBy>,
-			size: 100,
 		} ),
 		columnHelper.accessor( 'is_active', {
 			className: 'nolimit',

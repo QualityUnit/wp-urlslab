@@ -6,9 +6,6 @@ class Urlslab_Cache_Rule_Row extends Urlslab_Data {
 	public const MATCH_TYPE_SUBSTRING = 'S';
 	public const MATCH_TYPE_REGEXP = 'R';
 
-	public const LOGIN_STATUS_LOGIN_REQUIRED = 'Y';
-	public const LOGIN_STATUS_NOT_LOGGED_IN = 'N';
-	public const LOGIN_STATUS_ANY = 'A';
 	public const ACTIVE_YES = 'Y';
 	public const ACTIVE_NO = 'N';
 
@@ -19,7 +16,6 @@ class Urlslab_Cache_Rule_Row extends Urlslab_Data {
 		$this->set_rule_id( $cache_rule['rule_id'] ?? 0, $loaded_from_db );
 		$this->set_match_type( $cache_rule['match_type'] ?? self::MATCH_TYPE_SUBSTRING, $loaded_from_db );
 		$this->set_match_url( $cache_rule['match_url'] ?? '', $loaded_from_db );
-		$this->set_is_logged( empty( $cache_rule['is_logged'] ) ? self::LOGIN_STATUS_NOT_LOGGED_IN : $cache_rule['is_logged'], $loaded_from_db );
 		$this->set_is_active( empty( $cache_rule['is_active'] ) ? self::ACTIVE_NO : $cache_rule['is_active'], $loaded_from_db );
 		$this->set_browser( $cache_rule['browser'] ?? '', $loaded_from_db );
 		$this->set_cookie( $cache_rule['cookie'] ?? '', $loaded_from_db );
@@ -65,14 +61,6 @@ class Urlslab_Cache_Rule_Row extends Urlslab_Data {
 
 	public function set_match_url( string $match_url, bool $loaded_from_db = false ): void {
 		$this->set( 'match_url', $match_url, $loaded_from_db );
-	}
-
-	public function get_is_logged(): string {
-		return $this->get( 'is_logged' );
-	}
-
-	public function set_is_logged( string $is_logged, bool $loaded_from_db = false ): void {
-		$this->set( 'is_logged', $is_logged, $loaded_from_db );
 	}
 
 	public function get_is_active(): string {
@@ -172,7 +160,6 @@ class Urlslab_Cache_Rule_Row extends Urlslab_Data {
 			'rule_id'    => '%d',
 			'match_type' => '%s',
 			'match_url'  => '%s',
-			'is_logged'  => '%s',
 			'is_active'  => '%s',
 			'cookie'     => '%s',
 			'browser'    => '%s',

@@ -38,7 +38,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 	}
 
 	private function is_cache_enabled(): bool {
-		return isset( $_SERVER['REQUEST_URI'] ) && $this->get_option( self::SETTING_NAME_PAGE_CACHING ) && Urlslab_File_Cache::get_instance()->is_active();
+		return ! is_user_logged_in() && isset( $_SERVER['REQUEST_URI'] ) && $this->get_option( self::SETTING_NAME_PAGE_CACHING ) && Urlslab_File_Cache::get_instance()->is_active();
 	}
 
 	private function start_rule(): bool {
@@ -58,6 +58,10 @@ class Urlslab_Cache extends Urlslab_Widget {
 		return false;
 	}
 
+	private function get_page_cache_key() {
+		return $_SERVER['REQUEST_URI'];
+	}
+
 	public function page_cache_headers( $headers ) {
 		if ( ! $this->is_cache_enabled() || ! $this->start_rule() ) {
 			self::$cache_enabled = false;
@@ -65,7 +69,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			return $headers;
 		}
 		self::$cache_enabled = true;
-		if ( Urlslab_File_Cache::get_instance()->exists( $_SERVER['REQUEST_URI'], self::PAGE_CACHE_GROUP ) ) {
+		if ( Urlslab_File_Cache::get_instance()->exists( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP ) ) {
 			$headers['X-URLSLAB-CACHE-HIT'] = 'Y';
 		}
 		$headers['Cache-Control'] = 'public, max-age=' . self::$active_rule->get_cache_ttl();
@@ -80,8 +84,8 @@ class Urlslab_Cache extends Urlslab_Widget {
 		if ( ! self::$cache_enabled ) {
 			return;
 		}
-		if ( Urlslab_File_Cache::get_instance()->exists( $_SERVER['REQUEST_URI'], self::PAGE_CACHE_GROUP, array( 'Urlslab_Cache_Rule_Row' ), self::$active_rule->get_valid_from() ) ) {
-			$content = Urlslab_File_Cache::get_instance()->get( $_SERVER['REQUEST_URI'], self::PAGE_CACHE_GROUP, $found );
+		if ( Urlslab_File_Cache::get_instance()->exists( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, array( 'Urlslab_Cache_Rule_Row' ), self::$active_rule->get_valid_from() ) ) {
+			$content = Urlslab_File_Cache::get_instance()->get( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, $found );
 			if ( strlen( $content ) > 0 ) {
 				echo $content; // phpcs:ignore
 				exit;
@@ -95,7 +99,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 		if ( ! self::$cache_started ) {
 			return;
 		}
-		Urlslab_File_Cache::get_instance()->set( $_SERVER['REQUEST_URI'], ob_get_contents(), self::PAGE_CACHE_GROUP, self::$active_rule->get_cache_ttl() );
+		Urlslab_File_Cache::get_instance()->set( $this->get_page_cache_key(), ob_get_contents(), self::PAGE_CACHE_GROUP, self::$active_rule->get_cache_ttl() );
 		ob_end_flush();
 	}
 
@@ -185,23 +189,6 @@ class Urlslab_Cache extends Urlslab_Widget {
 
 			default:
 				return false;
-		}
-
-		switch ( $rule->get_is_logged() ) {
-			case Urlslab_Cache_Rule_Row::LOGIN_STATUS_LOGIN_REQUIRED:
-				if ( ! is_user_logged_in() ) {
-					return false;
-				}
-				break;
-			case Urlslab_Cache_Rule_Row::LOGIN_STATUS_NOT_LOGGED_IN:
-				if ( is_user_logged_in() ) {
-					return false;
-				}
-				break;
-			case Urlslab_Cache_Rule_Row::LOGIN_STATUS_ANY:
-				break;
-
-			default:
 		}
 
 		if ( ! empty( $rule->get_ip() ) ) {

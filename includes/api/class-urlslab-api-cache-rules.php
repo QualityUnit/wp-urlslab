@@ -34,12 +34,6 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 								return is_string( $param );
 							},
 						),
-						'is_logged'  => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Cache_Rule_Row::LOGIN_STATUS_ANY == $param || Urlslab_Cache_Rule_Row::LOGIN_STATUS_LOGIN_REQUIRED == $param || Urlslab_Cache_Rule_Row::LOGIN_STATUS_NOT_LOGGED_IN == $param;
-							},
-						),
 						'is_active'  => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
@@ -190,12 +184,6 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 						return is_string( $param );
 					},
 				),
-				'is_logged'  => array(
-					'required'          => false,
-					'validate_callback' => function( $param ) {
-						return Urlslab_Cache_Rule_Row::LOGIN_STATUS_ANY == $param || Urlslab_Cache_Rule_Row::LOGIN_STATUS_LOGIN_REQUIRED == $param || Urlslab_Cache_Rule_Row::LOGIN_STATUS_NOT_LOGGED_IN == $param;
-					},
-				),
 				'is_active'  => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
@@ -295,7 +283,6 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		return array(
 			'match_type',
 			'match_url',
-			'is_logged',
 			'is_active',
 			'ip',
 			'browser',
