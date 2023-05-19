@@ -219,6 +219,12 @@ class Urlslab_Activator {
 				$wpdb->query( 'DROP TABLE IF EXISTS old_kw_table_name' ); // phpcs:ignore
 			}
 		);
+		self::update_step(
+			'2.23.0',
+			function() {
+				self::init_cache_rules_table();
+			}
+		);
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -247,6 +253,7 @@ class Urlslab_Activator {
 		self::init_generator_shortcodes_table();
 		self::init_generator_results_table();
 		self::init_generator_urls_table();
+		self::init_cache_rules_table();
 	}
 
 	private static function init_urls_tables() {
@@ -659,6 +666,32 @@ class Urlslab_Activator {
 						labels VARCHAR(255) NOT NULL DEFAULT '',
 						PRIMARY KEY (redirect_id),
 						UNIQUE INDEX idx_uniq_hash (row_hash)
+        ) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+	private static function init_cache_rules_table() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$table_name = URLSLAB_CACHE_RULES_TABLE;
+		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
+						rule_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+						match_type CHAR(1) DEFAULT 'S',
+						match_url VARCHAR(2000),
+						is_logged CHAR(1) DEFAULT 'N',
+						is_active CHAR(1) DEFAULT 'A',
+						browser VARCHAR(500),
+						cookie VARCHAR(500),
+						headers VARCHAR(500),
+						params VARCHAR(500),
+						ip VARCHAR(500),
+						rule_order smallint,
+						valid_from INT UNSIGNED,
+						cache_ttl INT UNSIGNED,
+						labels VARCHAR(255) NOT NULL DEFAULT '',
+						PRIMARY KEY (rule_id)
         ) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

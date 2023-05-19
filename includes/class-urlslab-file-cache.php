@@ -33,6 +33,7 @@ class Urlslab_File_Cache {
 		$content                           = array(
 			'data'       => $data,
 			'expiration' => $expiration > 0 ? ( time() + (int) $expiration ) : 0,
+			'created'    => time(),
 		);
 		$this->mem_cache[ $group ][ $key ] = $content;
 		@file_put_contents( $file, serialize( $content ) );
@@ -46,8 +47,8 @@ class Urlslab_File_Cache {
 	 *
 	 * @return false|mixed
 	 */
-	public function get( $key, $group = '', &$found = null, $allowed_classes = false ) {
-		if ( $this->exists( $key, $group, $allowed_classes ) ) {
+	public function get( $key, $group = '', &$found = null, $allowed_classes = false, $valid_from = 0 ) {
+		if ( $this->exists( $key, $group, $allowed_classes, $valid_from ) ) {
 			$found = true;
 
 			return $this->mem_cache[ $group ][ $key ]['data'];
@@ -82,13 +83,13 @@ class Urlslab_File_Cache {
 		}
 	}
 
-	public function exists( string $key, string $group = '', $allowed_classes = false ): bool {
+	public function exists( string $key, string $group = '', $allowed_classes = false, $valid_from = 0 ): bool {
 		if ( ! $this->is_active() ) {
 			return false;
 		}
 
 		if ( isset( $this->mem_cache[ $group ][ $key ] ) ) {
-			if ( ! is_array( $this->mem_cache[ $group ][ $key ] ) || ( 0 !== $this->mem_cache[ $group ][ $key ]['expiration'] && time() > $this->mem_cache[ $group ][ $key ]['expiration'] ) ) {
+			if ( $this->is_content_invalid( $this->mem_cache[ $group ][ $key ], $valid_from ) ) {
 				$this->delete( $key, $group );
 
 				return false;
@@ -109,7 +110,7 @@ class Urlslab_File_Cache {
 		}
 		$content = unserialize( $file_content, array( 'allowed_classes' => $allowed_classes ) );
 
-		if ( ! is_array( $content ) || ( 0 !== $content['expiration'] && time() > $content['expiration'] ) ) {
+		if ( $this->is_content_invalid( $content, $valid_from ) ) {
 			$this->delete( $key, $group );
 
 			return false;
@@ -117,5 +118,20 @@ class Urlslab_File_Cache {
 		$this->mem_cache[ $group ][ $key ] = $content;
 
 		return true;
+	}
+
+	private function is_content_invalid( $content, $valid_from ) {
+		return ! is_array( $content ) ||
+			   (
+				   0 !== $content['expiration'] &&
+				   time() > $content['expiration']
+			   ) ||
+			   (
+				   $valid_from > 0 &&
+				   (
+					   ! isset( $content['created'] ) ||
+					   $content['created'] < $valid_from
+				   )
+			   );
 	}
 }
