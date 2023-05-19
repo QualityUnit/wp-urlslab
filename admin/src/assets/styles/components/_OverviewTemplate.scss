@@ -66,6 +66,22 @@
 
 		ul {
 			font-size: 0.825rem;
+
+			li {
+				position: relative;
+				padding-left: 2em;
+
+				&::before {
+
+					@include square(1.385em);
+					position: absolute;
+					top: -0.125em;
+					left: 0;
+					background: url(../../images/list-checkbox.svg) center center no-repeat;
+					background-size: contain;
+					content: "";
+				}
+			}
 		}
 
 		table {

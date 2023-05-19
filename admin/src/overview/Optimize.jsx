@@ -8,7 +8,7 @@ export default function OptimizeOverview( { moduleId } ) {
 	const [ section, setSection ] = useState( 'about' );
 
 	return (
-		<Overview moduleId={ moduleId } section={ ( val ) => setSection( val ) }>
+		<Overview moduleId={ moduleId } noCheckbox section={ ( val ) => setSection( val ) }>
 			{
 				section === 'about' &&
 				<section>
