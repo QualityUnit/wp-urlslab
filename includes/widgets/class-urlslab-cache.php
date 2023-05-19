@@ -63,9 +63,10 @@ class Urlslab_Cache extends Urlslab_Widget {
 	}
 
 	private function get_page_cache_key() {
-		if (empty(self::$page_cache_key)	) {
+		if ( empty( self::$page_cache_key ) ) {
 			self::$page_cache_key = md5( $this->get_current_page_url()->get_url() . json_encode( $_REQUEST ) );
 		}
+
 		return self::$page_cache_key;
 	}
 
