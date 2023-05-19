@@ -1,6 +1,5 @@
 import { useState, Suspense, lazy } from 'react';
 
-import Overview from '../components/OverviewTemplate';
 import ImageAltAttributeOverview from '../overview/ImageAltAttribute';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
@@ -15,9 +14,7 @@ export default function ImageAltAttribute( { moduleId } ) {
 				activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{
 				activeSection === 'overview' &&
-				<Overview moduleId={ moduleId }>
-					<ImageAltAttributeOverview />
-				</Overview>
+					<ImageAltAttributeOverview moduleId={ moduleId } />
 			}
 			{
 				activeSection === 'settings' &&

@@ -10,7 +10,7 @@ import FaqIcon from '../assets/images/icons/icon-overview-faq.svg';
 import Checkbox from '../elements/Checkbox';
 import '../assets/styles/components/_OverviewTemplate.scss';
 
-export default function Overview( { moduleId, title, customSections, section, children } ) {
+export default function Overview( { moduleId, noCheckbox, title, customSections, section, children } ) {
 	const { __ } = useI18n();
 	const [ active, setActive ] = useState( 'about' );
 	const [ overViewVisible, setOverviewVisibility ] = useState( );
@@ -29,9 +29,11 @@ export default function Overview( { moduleId, title, customSections, section, ch
 	};
 
 	const overViewVisibility = useCallback( async () => {
-		const { hideOverview } = await get( moduleId ) || { hideOverview: false };
-		setOverviewVisibility( hideOverview );
-	}, [ moduleId ] );
+		if ( ! noCheckbox ) {
+			const { hideOverview } = await get( moduleId ) || { hideOverview: false };
+			setOverviewVisibility( hideOverview );
+		}
+	}, [ moduleId, noCheckbox ] );
 
 	useEffect( () => {
 		overViewVisibility();
@@ -39,7 +41,10 @@ export default function Overview( { moduleId, title, customSections, section, ch
 
 	return (
 		<div className="urlslab-overview">
-			<Checkbox className="mb-m" smallText key={ overViewVisible } defaultValue={ overViewVisible } onChange={ handleOverviewVisibility }>{ __( 'Do not display the overview when opening the module' ) }</Checkbox>
+			{
+				! noCheckbox &&
+				<Checkbox className="mb-m" smallText key={ overViewVisible } defaultValue={ overViewVisible } onChange={ handleOverviewVisibility }>{ __( 'Do not display the overview when opening the module' ) }</Checkbox>
+			}
 			<div className="urlslab-panel flex-tablet fadeInto">
 				<ul className="urlslab-overview-menu">
 					<li className={ `urlslab-overview-menuItem ${ active === 'about' ? 'active' : '' }` }><button onClick={ () => handleMenu( 'about' ) }>

@@ -1,8 +1,6 @@
 import { useState, Suspense, lazy } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
-import Overview from '../components/OverviewTemplate';
 import RedirectsOverview from '../overview/Redirects';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
@@ -24,9 +22,7 @@ export default function Redirects( { moduleId } ) {
 			<ModuleViewHeader moduleId={ moduleId }
 				moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{ activeSection === 'overview' &&
-				<Overview moduleId={ moduleId }>
-					<RedirectsOverview />
-				</Overview>
+			<RedirectsOverview moduleId={ moduleId } />
 			}
 			{
 				activeSection === 'redirects' &&

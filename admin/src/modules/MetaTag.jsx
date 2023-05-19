@@ -1,7 +1,6 @@
 import { useState, Suspense, lazy } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import Overview from '../components/OverviewTemplate';
 import MetaTagOverview from '../overview/MetaTag';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
@@ -23,9 +22,7 @@ export default function MetaTag( { moduleId } ) {
 				moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{
 				activeSection === 'overview' &&
-				<Overview moduleId={ moduleId }>
-					<MetaTagOverview />
-				</Overview>
+				<MetaTagOverview moduleId={ moduleId } />
 			}
 			{
 				activeSection === slug &&
