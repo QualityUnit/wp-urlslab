@@ -1,7 +1,6 @@
 import { useState, Suspense, lazy } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import Overview from '../components/OverviewTemplate';
 import ScreenShotOverview from '../overview/Screenshot';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
@@ -21,9 +20,7 @@ export default function Screenshot( { moduleId } ) {
 			<ModuleViewHeader moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{
 				activeSection === 'overview' &&
-				<Overview moduleId={ moduleId }>
-					<ScreenShotOverview />
-				</Overview>
+					<ScreenShotOverview moduleId={ moduleId } />
 			}
 			{
 				activeSection === 'screenshot' &&

@@ -9,7 +9,7 @@ import cronReducer from '../lib/cronReducer';
 import NotificationsPanel from './NotificationsPanel';
 import Tooltip from '../elements/Tooltip';
 
-import { ReactComponent as CronIcon } from '../assets/images/icons/icon-cron-refresh.svg';
+import { ReactComponent as CronIcon } from '../assets/images/icons/icon-cron-speedup.svg';
 import { ReactComponent as StopIcon } from '../assets/images/icons/icon-cron-stop.svg';
 
 import '../assets/styles/components/_CronRunner.scss';

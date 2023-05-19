@@ -6,7 +6,7 @@ import {
 import IconButton from '../elements/IconButton';
 import { ReactComponent as AcceptIcon } from '../assets/images/icons/icon-activate.svg';
 import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
-import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-cron-refresh.svg';
+import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refresh.svg';
 
 import { langName } from '../lib/helpers';
 
