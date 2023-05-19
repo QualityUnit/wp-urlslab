@@ -10,7 +10,7 @@ import FaqIcon from '../assets/images/icons/icon-overview-faq.svg';
 import Checkbox from '../elements/Checkbox';
 import '../assets/styles/components/_OverviewTemplate.scss';
 
-export default function Overview( { moduleId, noCheckbox, title, customSections, section, children } ) {
+export default function Overview( { moduleId, noFAQ, noIntegrate, noCheckbox, title, customSections, section, children } ) {
 	const { __ } = useI18n();
 	const [ active, setActive ] = useState( 'about' );
 	const [ overViewVisible, setOverviewVisibility ] = useState( );
@@ -53,12 +53,15 @@ export default function Overview( { moduleId, noCheckbox, title, customSections,
 						</span>
 						{ __( 'About module' ) }</button>
 					</li>
-					<li className={ `urlslab-overview-menuItem ${ active === 'integrate' ? 'active' : '' }` }><button onClick={ () => handleMenu( 'integrate' ) }>
-						<span className="urlslab-overview-menuIcon">
-							<img src={ IntegrateIcon } alt={ __( 'How to integrate' ) } />
-						</span>
-						{ __( 'How to integrate' ) }</button>
-					</li>
+					{
+						! noIntegrate &&
+						<li className={ `urlslab-overview-menuItem ${ active === 'integrate' ? 'active' : '' }` }><button onClick={ () => handleMenu( 'integrate' ) }>
+							<span className="urlslab-overview-menuIcon">
+								<img src={ IntegrateIcon } alt={ __( 'How to integrate' ) } />
+							</span>
+							{ __( 'How to integrate' ) }</button>
+						</li>
+					}
 					{ customSections?.length > 0 &&
 					customSections.map( ( sect ) => {
 						const { id, title: sectionTitle, icon } = sect;
@@ -72,12 +75,15 @@ export default function Overview( { moduleId, noCheckbox, title, customSections,
 						</button></li>;
 					} )
 					}
-					<li className={ `urlslab-overview-menuItem ${ active === 'faq' ? 'active' : '' }` }><button onClick={ () => handleMenu( 'faq' ) }>
-						<span className="urlslab-overview-menuIcon">
-							<img src={ FaqIcon } alt={ __( 'FAQ' ) } />
-						</span>
-						{ __( 'FAQ' ) }</button>
-					</li>
+					{
+						! noFAQ &&
+						<li className={ `urlslab-overview-menuItem ${ active === 'faq' ? 'active' : '' }` }><button onClick={ () => handleMenu( 'faq' ) }>
+							<span className="urlslab-overview-menuIcon">
+								<img src={ FaqIcon } alt={ __( 'FAQ' ) } />
+							</span>
+							{ __( 'FAQ' ) }</button>
+						</li>
+					}
 				</ul>
 				<div className="urlslab-overview-content">
 					{ title
