@@ -330,6 +330,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		if ( 'import' == $request->get_param( 'rule_id' ) ) {
 			return $this->import_items( $request );
 		}
+		$request->set_param( 'valid_from', time() );
 
 		return parent::update_item( $request );
 	}
