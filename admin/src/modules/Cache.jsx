@@ -1,8 +1,8 @@
 import { useState, Suspense, lazy } from 'react';
 import Overview from '../components/OverviewTemplate';
 import ModuleViewHeader from '../components/ModuleViewHeader';
-import CacheOverview from "../overview/Cache";
-import {useI18n} from "@wordpress/react-i18n";
+import CacheOverview from '../overview/Cache';
+import { useI18n } from '@wordpress/react-i18n';
 
 export default function Cache( { moduleId } ) {
 	const { __ } = useI18n();
