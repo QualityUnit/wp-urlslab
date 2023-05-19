@@ -16,7 +16,7 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 	const requiredFields = rowEditorCells && Object.keys( rowEditorCells ).filter( ( cell ) => rowEditorCells[ cell ].props.required === true );
 
 	let cellsFinal = { ...rowEditorCells };
-	const [ editMode, setEditMode ] = useState( rowToEdit && editorMode );
+	const [ editMode ] = useState( rowToEdit && editorMode );
 
 	const rowToEditWithDefaults = useMemo( () => {
 		let defaults = { ...rowToEdit };
