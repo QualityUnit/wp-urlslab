@@ -59,7 +59,7 @@ export default function CacheRulesTable( { slug } ) {
 		ip: <InputField liveUpdate label={ header.ip } defaultValue="" onChange={ ( val ) => setEditorRow( { ...rowToEdit, ip: val } ) } />,
 		browser: <InputField liveUpdate label={ header.browser } defaultValue="" onChange={ ( val ) => setEditorRow( { ...rowToEdit, browser: val } ) } />,
 		rule_order: <InputField liveUpdate defaultValue="10" label={ header.rule_order } onChange={ ( val ) => setEditorRow( { ...rowToEdit, headers: val } ) } />,
-		is_active: <Checkbox defaultValue onChange={ ( val ) => setEditorRow( { ...rowToEdit, is_active: val } ) }>{ header.is_active }</Checkbox>,
+		is_active: <Checkbox defaultValue={ true } onChange={ ( val ) => setEditorRow( { ...rowToEdit, is_active: val } ) }>{ header.is_active }</Checkbox>,
 	};
 
 	const columns = [
