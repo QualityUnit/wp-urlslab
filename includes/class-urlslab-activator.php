@@ -680,7 +680,6 @@ class Urlslab_Activator {
 						rule_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 						match_type CHAR(1) DEFAULT 'S',
 						match_url VARCHAR(2000),
-						is_logged CHAR(1) DEFAULT 'N',
 						is_active CHAR(1) DEFAULT 'A',
 						browser VARCHAR(500),
 						cookie VARCHAR(500),
