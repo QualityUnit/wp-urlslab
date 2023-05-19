@@ -10,6 +10,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 	private static bool $cache_started = false;
 	private static bool $cache_enabled = false;
 	private static Urlslab_Cache_Rule_Row $active_rule;
+	private static string $page_cache_key = '';
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -42,9 +43,12 @@ class Urlslab_Cache extends Urlslab_Widget {
 	}
 
 	private function start_rule(): bool {
+		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+			return false;
+		}
 		try {
 			$rules = $this->get_cache_rules();
-			$url   = new Urlslab_Url( $_SERVER['REQUEST_URI'] );
+			$url   = $this->get_current_page_url();
 			foreach ( $rules as $rule ) {
 				if ( $this->is_match( $rule, $url ) ) {
 					self::$active_rule = $rule;
@@ -59,7 +63,10 @@ class Urlslab_Cache extends Urlslab_Widget {
 	}
 
 	private function get_page_cache_key() {
-		return $_SERVER['REQUEST_URI'];
+		if (empty(self::$page_cache_key)	) {
+			self::$page_cache_key = md5( $this->get_current_page_url()->get_url() . json_encode( $_REQUEST ) );
+		}
+		return self::$page_cache_key;
 	}
 
 	public function page_cache_headers( $headers ) {
@@ -69,7 +76,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			return $headers;
 		}
 		self::$cache_enabled = true;
-		if ( Urlslab_File_Cache::get_instance()->exists( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP ) ) {
+		if ( Urlslab_File_Cache::get_instance()->exists( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, array( 'Urlslab_Cache_Rule_Row' ), self::$active_rule->get_valid_from() ) ) {
 			$headers['X-URLSLAB-CACHE-HIT'] = 'Y';
 		}
 		$headers['Cache-Control'] = 'public, max-age=' . self::$active_rule->get_cache_ttl();
@@ -85,7 +92,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			return;
 		}
 		if ( Urlslab_File_Cache::get_instance()->exists( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, array( 'Urlslab_Cache_Rule_Row' ), self::$active_rule->get_valid_from() ) ) {
-			$content = Urlslab_File_Cache::get_instance()->get( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, $found );
+			$content = Urlslab_File_Cache::get_instance()->get( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, $found, array( 'Urlslab_Cache_Rule_Row' ), self::$active_rule->get_valid_from() );
 			if ( strlen( $content ) > 0 ) {
 				echo $content; // phpcs:ignore
 				exit;
