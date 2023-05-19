@@ -190,7 +190,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			self::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL,
 			\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME,
 			false,
-			__( 'Synchronization Frequency of Screenshots with URLsLab service' ),
+			__( 'Synchronisation Frequency of Screenshots with URLsLab service' ),
 			__( 'Choose how often should URLsLab retake screenshot of url. Each screenshot costs some credits, so choose this value visely. To take the screenshot just once will fit to majority of cases.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(

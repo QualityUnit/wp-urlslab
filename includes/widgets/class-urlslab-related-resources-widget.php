@@ -280,7 +280,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'sync', __( 'URLsLab Synchronization' ), __( 'Module can work independent of URLsLab service, but you will need to upload relations between URLs manually. If you choose automatic syncing, URLsLAb will generate relations for you and update them regullary as your content change.' ) );
+		$this->add_options_form_section( 'sync', __( 'URLsLab Synchronisation' ), __( 'Module can work independent of URLsLab service, but you will need to upload relations between URLs manually. If you choose automatic syncing, URLsLAb will generate relations for you and update them regullary as your content change.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_SYNC_URLSLAB,
 			false,

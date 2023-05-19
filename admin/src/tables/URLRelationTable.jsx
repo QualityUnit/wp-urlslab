@@ -93,7 +93,7 @@ export default function URLRelationTable( { slug } ) {
 						}, 3000 );
 					}
 				} }
-				rowEditorOptions={ { rowEditorCells, title: 'Add related article', data, slug, url, paginationId, rowToEdit } }
+				rowEditorOptions={ { rowEditorCells, title: 'Add New Related Article', data, slug, url, paginationId, rowToEdit } }
 				exportOptions={ {
 					slug,
 					url,

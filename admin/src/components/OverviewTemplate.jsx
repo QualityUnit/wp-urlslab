@@ -40,6 +40,7 @@ export default function Overview( { moduleId, noFAQ, noIntegrate, noCheckbox, ti
 	}, [ overViewVisibility ] );
 
 	return (
+
 		<div className="urlslab-overview">
 			{
 				! noCheckbox &&

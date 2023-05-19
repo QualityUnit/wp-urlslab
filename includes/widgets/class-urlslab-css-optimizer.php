@@ -28,7 +28,7 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'CSS Optimizer' );
+		return __( 'CSS Optimiser' );
 	}
 
 	public function get_widget_description(): string {

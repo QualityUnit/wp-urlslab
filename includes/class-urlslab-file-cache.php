@@ -71,7 +71,7 @@ class Urlslab_File_Cache {
 			$content = unserialize( $file_content, array( 'allowed_classes' => $allowed_classes ) );
 		}
 
-		if ( 0 !== $content['expiration'] && time() > $content['expiration'] ) {
+		if ( ! is_array( $content ) || ( 0 !== $content['expiration'] && time() > $content['expiration'] ) ) {
 			@unlink( $file );
 			$found = false;
 

@@ -4,7 +4,7 @@ Tags: seo, ai, gpt, performance
 Requires at least: 6.0
 Tested up to: 6.1
 Requires PHP: 7.4
-Stable tag: 2.22.5
+Stable tag: 2.22.8
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,18 @@ If your website breaks after activating or updating a plugin, first deactivate t
 The content is coming soon.
 
 == Changelog ==
+
+= 2.22.8 - 2023-05-18 =
+
+* Experience a smoother user journey with our under-the-hood enhancements.
+
+= 2.22.7 - 2023-05-18 =
+
+* Experience a smoother user journey with our under-the-hood enhancements.
+
+= 2.22.6 - 2023-05-18 =
+
+* Experience a smoother user journey with our under-the-hood enhancements.
 
 = 2.22.5 - 2023-05-18 =
 

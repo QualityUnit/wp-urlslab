@@ -31,7 +31,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Database Optimizer' );
+		return __( 'Database Optimiser' );
 	}
 
 	public function get_widget_description(): string {

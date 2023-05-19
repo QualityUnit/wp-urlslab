@@ -143,7 +143,7 @@ export default function SearchReplaceTable( { slug } ) {
 					}
 				} }
 				activatePanel={ activePanel }
-				rowEditorOptions={ { rowEditorCells, title: 'Add replacement', data, slug, url, paginationId, rowToEdit } }
+				rowEditorOptions={ { rowEditorCells, title: 'Add New Replacement', data, slug, url, paginationId, rowToEdit } }
 				exportOptions={ {
 					slug,
 					url,

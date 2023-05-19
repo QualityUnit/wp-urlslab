@@ -5,6 +5,7 @@ import image2 from '../assets/images/overview/image-2.jpg';
 
 export default function LinkEnhancerOverview( { moduleId } ) {
 	const [ section, setSection ] = useState( 'about' );
+
 	return (
 		<Overview moduleId={ moduleId } section={ ( val ) => setSection( val ) }>
 			{

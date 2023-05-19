@@ -239,7 +239,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 					}
 				} }
 				activatePanel={ activePanel }
-				rowEditorOptions={ { rowEditorCells, title: 'Add shortcode', data, slug, url, paginationId, rowToEdit } }
+				rowEditorOptions={ { rowEditorCells, title: 'Add New Shortcode', data, slug, url, paginationId, rowToEdit } }
 				exportOptions={ {
 					slug,
 					url,

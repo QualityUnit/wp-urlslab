@@ -6,7 +6,7 @@ import image2 from '../assets/images/overview/image-2.jpg';
 
 export default function ImageAltAttributeOverview( { moduleId } ) {
 	const [ section, setSection ] = useState( 'about' );
-
+  
 	return (
 		<Overview moduleId={ moduleId } noCheckbox section={ ( val ) => setSection( val ) }>
 			{

@@ -52,19 +52,19 @@ class Urlslab_Available_Widgets {
 
 		$this->available_widgets = array(
 			$urlslab_general->get_widget_slug()            => $urlslab_general,
-			$urlslab_generator->get_widget_slug()          => $urlslab_generator,
-			$urlslab_screenshot->get_widget_slug()         => $urlslab_screenshot,
-			$urlslab_related_resources->get_widget_slug()  => $urlslab_related_resources,
 			$urlslab_link_enhancer->get_widget_slug()      => $urlslab_link_enhancer,
 			$urlslab_keyword_links->get_widget_slug()      => $urlslab_keyword_links,
-			$urlslab_image_alt_text->get_widget_slug()     => $urlslab_image_alt_text,
+			$urlslab_generator->get_widget_slug()          => $urlslab_generator,
 			$urlslab_og_meta_tag->get_widget_slug()        => $urlslab_og_meta_tag,
+			$urlslab_related_resources->get_widget_slug()  => $urlslab_related_resources,
 			$urlslab_media_offloader->get_widget_slug()    => $urlslab_media_offloader,
+			$urlslab_screenshot->get_widget_slug()         => $urlslab_screenshot,
+			$urlslab_image_alt_text->get_widget_slug()     => $urlslab_image_alt_text,
+			$urlslab_redirects->get_widget_slug()          => $urlslab_redirects,
 			$urlslab_lazy_loading->get_widget_slug()       => $urlslab_lazy_loading,
 			$urlslab_css_optimizer->get_widget_slug()      => $urlslab_css_optimizer,
-			$urlslab_optimize->get_widget_slug()           => $urlslab_optimize,
 			$urlslab_search_and_replace->get_widget_slug() => $urlslab_search_and_replace,
-			$urlslab_redirects->get_widget_slug()          => $urlslab_redirects,
+			$urlslab_optimize->get_widget_slug()           => $urlslab_optimize,
 		);
 	}
 

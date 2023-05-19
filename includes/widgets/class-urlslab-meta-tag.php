@@ -49,7 +49,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Make your content go further by adding Meta Tags and maximize its shareability on all social media platforms.' );
+		return __( 'Make your content go further by adding Meta Tags and maximize its shareability on all social media platforms' );
 	}
 
 	public function get_widget_labels(): array {
