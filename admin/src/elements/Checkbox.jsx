@@ -2,7 +2,7 @@ import { useState } from 'react';
 import '../assets/styles/elements/_Checkbox.scss';
 
 export default function Checkbox( { checked, readOnly, radial, name, className, onChange, textBefore, children } ) {
-	const [ isChecked, setChecked ] = useState( checked ? true : false );
+	const [ isChecked, setChecked ] = useState( checked );
 	const handleOnChange = ( event ) => {
 		if ( onChange && ! readOnly ) {
 			onChange( event.target.checked );
@@ -14,7 +14,7 @@ export default function Checkbox( { checked, readOnly, radial, name, className, 
 	return (
 		<label className={ `urlslab-checkbox ${ className || '' } ${ textBefore ? 'textBefore' : '' } ${ radial ? 'radial' : '' }` }>
 			<input
-				className={ `urlslab-checkbox-input ${ checked ? 'checked' : '' }` }
+				className={ `urlslab-checkbox-input ${ isChecked ? 'checked' : '' }` }
 				type={ name ? 'radio' : 'checkbox' }
 				name={ name || '' }
 				defaultChecked={ isChecked }
