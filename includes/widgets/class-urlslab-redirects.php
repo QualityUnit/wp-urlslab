@@ -27,9 +27,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 				wp_cache_delete( 'redirects_404_logged', self::CACHE_GROUP );
 			}
 		}
-		if ( Urlslab_File_Cache::get_instance()->is_active() ) {
-			Urlslab_File_Cache::get_instance()->clear( self::CACHE_GROUP );
-		}
+		Urlslab_File_Cache::get_instance()->clear( self::CACHE_GROUP );
 	}
 
 	public function init_widget() {
@@ -544,34 +542,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 		}
 	}
 
-	private function get_visitor_ip(): string {
-		if ( getenv( 'HTTP_CF_CONNECTING_IP' ) ) {
-			return getenv( 'HTTP_CF_CONNECTING_IP' );
-		}
-		if ( getenv( 'HTTP_CLIENT_IP' ) ) {
-			return getenv( 'HTTP_CLIENT_IP' );
-		}
-		if ( getenv( 'HTTP_X_FORWARDED_FOR' ) ) {
-			return getenv( 'HTTP_X_FORWARDED_FOR' );
-		}
-		if ( getenv( 'HTTP_X_FORWARDED' ) ) {
-			return getenv( 'HTTP_X_FORWARDED' );
-		}
-		if ( getenv( 'HTTP_FORWARDED_FOR' ) ) {
-			return getenv( 'HTTP_FORWARDED_FOR' );
-		}
-		if ( getenv( 'HTTP_FORWARDED' ) ) {
-			return getenv( 'HTTP_FORWARDED' );
-		}
-		if ( getenv( 'HTTP_X_REAL_IP' ) ) {
-			return getenv( 'HTTP_X_REAL_IP' );
-		}
-		if ( getenv( 'REMOTE_ADDR' ) ) {
-			return getenv( 'REMOTE_ADDR' );
-		}
 
-		return '';
-	}
 
 	private function default_image_redirect() {
 		if (
