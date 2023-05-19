@@ -778,8 +778,8 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		if ( Urlslab_File_Cache::get_instance()->exists( $_SERVER['REQUEST_URI'], self::PAGE_CACHE_GROUP ) ) {
 			$headers['X-URLSLAB-CACHE-HIT'] = 'Y';
 		}
-		$headers['Cache-Control'] = 'public, max-age=31536000';
-		$headers['Expires']       = gmdate( 'D, d M Y H:i:s', time() + 31536000 ) . ' GMT';
+		$headers['Cache-Control'] = 'public, max-age=10';
+		$headers['Expires']       = gmdate( 'D, d M Y H:i:s', time() + 10 ) . ' GMT';
 		$headers['Pragma']        = 'public';
 
 		return $headers;
@@ -806,7 +806,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		if ( ! self::$cache_started ) {
 			return;
 		}
-		Urlslab_File_Cache::get_instance()->set( $_SERVER['REQUEST_URI'], ob_get_contents(), self::PAGE_CACHE_GROUP, 30 );
+		Urlslab_File_Cache::get_instance()->set( $_SERVER['REQUEST_URI'], ob_get_contents(), self::PAGE_CACHE_GROUP, 10 );
 		ob_end_flush();
 	}
 }

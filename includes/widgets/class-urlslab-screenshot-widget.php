@@ -18,27 +18,12 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 
 
 	public function init_widget() {
-		Urlslab_Loader::get_instance()->add_action(
-			'init',
-			$this,
-			'hook_callback',
-			10,
-			0
-		);
-		Urlslab_Loader::get_instance()->add_action(
-			'widgets_init',
-			$this,
-			'init_wp_widget',
-			10,
-			0
-		);
+		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'hook_callback', 10, 0 );
+		Urlslab_Loader::get_instance()->add_action( 'widgets_init', $this, 'init_wp_widget', 10, 0 );
 	}
 
 	public function hook_callback() {
-		add_shortcode(
-			$this->get_widget_slug(),
-			array( $this, 'get_shortcode_content' )
-		);
+		add_shortcode( $this->get_widget_slug(), array( $this, 'get_shortcode_content' ) );
 	}
 
 	public function get_widget_slug(): string {
