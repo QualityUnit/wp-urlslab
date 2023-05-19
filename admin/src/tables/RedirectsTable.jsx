@@ -38,7 +38,7 @@ export default function RedirectsTable( { slug } ) {
 		is_logged: <SingleSelectMenu autoClose items={ logginTypes } name="is_logged" defaultValue="A" onChange={ ( val ) => setEditorRow( { ...rowToEdit, is_logged: val } ) }>{ header.is_logged }</SingleSelectMenu>,
 		headers: <InputField liveUpdate defaultValue="" label={ header.headers } onChange={ ( val ) => setEditorRow( { ...rowToEdit, headers: val } ) } />,
 		cookie: <InputField liveUpdate defaultValue="" label={ header.cookie } onChange={ ( val ) => setEditorRow( { ...rowToEdit, cookie: val } ) } />,
-		params: <InputField liveUpdate defaultValue="" label={ header.params } onChange={ ( val ) => setEditorRow( { ...rowToEdit, capabilities: val } ) } />,
+		params: <InputField liveUpdate defaultValue="" label={ header.params } onChange={ ( val ) => setEditorRow( { ...rowToEdit, params: val } ) } />,
 		capabilities: <InputField liveUpdate defaultValue="" label={ header.capabilities } onChange={ ( val ) => setEditorRow( { ...rowToEdit, capabilities: val } ) } />,
 		ip: <InputField liveUpdate defaultValue="" label={ header.ip } onChange={ ( val ) => setEditorRow( { ...rowToEdit, ip: val } ) } />,
 		roles: <InputField liveUpdate defaultValue="" label={ header.roles } onChange={ ( val ) => setEditorRow( { ...rowToEdit, roles: val } ) } />,
