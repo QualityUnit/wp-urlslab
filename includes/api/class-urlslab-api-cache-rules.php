@@ -37,7 +37,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 						'is_active'  => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return Urlslab_Cache_Rule_Row::ACTIVE_YES == $param || Urlslab_Cache_Rule_Row::ACTIVE_NO == $param;
+								return is_bool( $param ) || Urlslab_Cache_Rule_Row::ACTIVE_YES == $param || Urlslab_Cache_Rule_Row::ACTIVE_NO == $param;
 							},
 						),
 						'ip'         => array(
@@ -187,7 +187,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 				'is_active'  => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
-						return Urlslab_Cache_Rule_Row::ACTIVE_YES == $param || Urlslab_Cache_Rule_Row::ACTIVE_NO == $param;
+						return is_bool( $param ) || Urlslab_Cache_Rule_Row::ACTIVE_YES == $param || Urlslab_Cache_Rule_Row::ACTIVE_NO == $param;
 					},
 				),
 				'ip'         => array(

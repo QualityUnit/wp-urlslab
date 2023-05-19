@@ -28,6 +28,13 @@ class Urlslab_Cache_Rule_Row extends Urlslab_Data {
 		$this->set_labels( $cache_rule['labels'] ?? '', $loaded_from_db );
 	}
 
+	public function as_array(): array {
+		$values              = parent::as_array();
+		$values['is_active'] = self::ACTIVE_YES === $this->get_is_active();
+
+		return $values;
+	}
+
 	protected function set( $name, $value, $loaded_from_db ) {
 		if ( 'is_active' === $name ) {
 			if ( $value && self::ACTIVE_NO !== $value ) {
