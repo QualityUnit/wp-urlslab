@@ -426,8 +426,6 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		}
 
 		Urlslab_File_Cache::get_instance()->set( $key, $data, self::CACHE_GROUP, $expire );
-
-		return;
 	}
 
 	private function findTextDOMElements( DOMNode $dom, DOMDocument $document ) {

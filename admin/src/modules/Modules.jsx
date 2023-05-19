@@ -12,6 +12,7 @@ export default function Modules( { modules, activePage } ) {
 
 	const labelsList = {
 		paid: { name: 'Paid service', color: '#00c996' },
+		expert: { name: 'Experts', color: '#ffc996' },
 		free: { name: 'Free' },
 		// experimental: { name: 'Experimental', color: '#ff8875' },
 		beta: { name: 'Beta', color: '#75a9ff' },
