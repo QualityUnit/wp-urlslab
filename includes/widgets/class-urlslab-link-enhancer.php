@@ -131,7 +131,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			true,
 			true,
 			__( 'Enhance Links with Text Fragment' ),
-			__( 'Add Text fragments to the links on the website. It will help with internal SEO, and it will scroll visitors to the exact paragraph which is related to the link. If you want to skip certain links, add the `urlslab-skip-fragment` class name to the link or sections with links. Example: <code>https://www.urlslab.com/pricing#:~:text=Plans</code>' ),
+			__( 'Add Text fragments to the links on the website. It will help with internal SEO, and it will scroll visitors to the exact paragraph which is related to the link. If you want to skip certain links, add the `urlslab-skip-fragment` class name to the link or sections with links.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -164,41 +164,6 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			'validation'
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_MARK_AS_VALID_CURRENT_URL,
-			true,
-			true,
-			__( 'Mark as valid URL processed by WP' ),
-			__( 'If we find any URL, which is not validated yet, but Wordpress just served this url, we will mark it as valid. This will speed up the process of HTTP status validation, but doesn\' guarantee, that HTTP status is OK. Response could fail on the other stage of your infrastructure.' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'validation'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_REMOVE_LINKS,
-			true,
-			true,
-			__( 'Hide Links marked as hidden' ),
-			__( 'Hide all links in HTML content marked manually by administrator in Link Managers as hidden' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'validation'
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_REPLACE_3XX_LINKS,
-			false,
-			true,
-			__( 'Replace 3XX Links with destination url' ),
-			__( 'In case content contains link to any URL with 3XX redirect, replace this link with URL evaluated as destination URL' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'validation'
-		);
-
-		$this->add_option_definition(
 			self::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_INTERVAL,
 			2419200,
 			false,
@@ -217,6 +182,39 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'validation',
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_MARK_AS_VALID_CURRENT_URL,
+			true,
+			true,
+			__( 'Mark URLs processed by WordPress as valid' ),
+			__( 'When an unvalidated URL is served by WordPress, we\'ll mark it as valid, expediting the HTTP status validation process. However, this doesn\'t ensure a successful HTTP status, as the response could fail at another stage in your infrastructure.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'validation'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_REMOVE_LINKS,
+			true,
+			true,
+			__( 'Hide Links marked as hidden' ),
+			__( 'Hide all links in HTML content marked manually by administrator in Link Managers as hidden' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'validation'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_REPLACE_3XX_LINKS,
+			true,
+			true,
+			__( 'Replace redirected links to their target URLs' ),
+			__( 'Replace any content links featuring redirects with their resolved destination URLs.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'validation'
 		);
 
 		$this->add_option_definition(
@@ -246,7 +244,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		$this->add_options_form_section( 'scheduling', __( 'Scheduling Settings' ), __( 'Boost your page\'s content quality with AI-powered summarizations by URLsLab service for all URLs on your site. Enhance link titles and meta descriptions, providing visitors a clear preview of the information awaiting them on the destination page.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_INTERNAL_LINKS,
-			true,
+			false,
 			true,
 			__( 'Schedule All Internal Links' ),
 			__( 'When a new internal link is detected, it\'s automatically scheduled for AI-powered summarization by URLsLab service, enriching both link titles and meta description tags. Integrating summaries into your website may take a few days, as the duration depends on the volume of data being processed.' ),

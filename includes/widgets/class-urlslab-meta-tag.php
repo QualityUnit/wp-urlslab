@@ -252,16 +252,16 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			'og'
 		);
 
-		$this->add_options_form_section( 'twitter', __( 'Twitter Card' ), __( 'Card properties are simple key-value pairs, each defined in an HTML meta tag as seen above. The combined collection of properties defines the overall card experience on Twitter, and each card type supports and requires a specific set of properties.' ) );
+		$this->add_options_form_section( 'twitter', __( 'Twitter Card Meta Tags Settings' ), __( 'Elevate your content\'s social media presence with Twitter Card meta tags, providing rich previews that captivate users and increase shareability.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_TWITTER,
 			self::ADD_VALUE,
 			true,
-			__( 'Twitter Meta Tags' ),
-			__( 'Choose how will handle plugin existing Twitter meta tag values' ),
+			__( 'Twitter Card Meta Tags' ),
+			__( 'Add or replace the current or missing Twitter Card meta tags by edited version from the manager.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				self::NO_CHANGE_VALUE => __( 'Not used' ),
+				self::NO_CHANGE_VALUE => __( 'No action' ),
 				self::ADD_VALUE       => __( 'Add if missing' ),
 				self::REPLACE_VALUE   => __( 'Replace the current values' ),
 			),
@@ -283,12 +283,12 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			self::SETTING_NAME_CARD_TYPE,
 			self::TWITTER_CARD_SUMMARY_LARGE_IMAGE,
 			true,
-			__( 'Twitter Card' ),
-			__( 'Choose the default style for twitter:card meta field value.' ),
+			__( 'Twitter Card Type' ),
+			__( 'Select a default style for the "twitter:card" meta field value.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				self::TWITTER_CARD_SUMMARY             => __( 'Summary' ),
-				self::TWITTER_CARD_SUMMARY_LARGE_IMAGE => __( 'Summary and large image' ),
+				self::TWITTER_CARD_SUMMARY_LARGE_IMAGE => __( 'Summary with Large Image' ),
 				self::TWITTER_CARD_APP                 => __( 'App' ),
 				self::TWITTER_CARD_PLAYER              => __( 'Player' ),
 			),
@@ -309,10 +309,10 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_TW_HANLDE,
-			'@urlslab',
+			'',
 			true,
 			__( 'Twitter Username' ),
-			__( '@username for the website used in the card footer. Choose your Twitter username. @urlslab value is just an example. Size of twitter username should be max 15 characters long.' ),
+			__( 'Enter default Twitter username starting with the "@" symbol.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {
@@ -323,10 +323,10 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_TW_CREATOR,
-			'@urlslab',
+			'',
 			true,
 			__( 'Twitter Creator' ),
-			__( '@username for the content creator / author. Choose your Twitter username. @urlslab value is just an example. Size of twitter username should be max 15 characters long.' ),
+			__( 'Enter default Twitter Creator username starting with the "@" symbol.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {
@@ -340,7 +340,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			'',
 			true,
 			__( 'Twitter Player' ),
-			__( 'HTTPS URL of player iframe. Used with player card. Leave empty if you do not know what is this value.' ),
+			__( 'Enter player iframe URL (HTTPS only) for Player Card use. Leave blank if unsure.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {
@@ -351,10 +351,10 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_TW_PLAYER_WIDTH,
-			800,
+			'',
 			true,
 			__( 'Twitter Player Width' ),
-			__( 'Width of Twitter Player iframe in pixels' ),
+			__( 'Enter Twitter Player iframe width in pixels.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {
@@ -364,10 +364,10 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_TW_PLAYER_HEIGHT,
-			600,
+			'',
 			true,
 			__( 'Twitter Player Height' ),
-			__( 'Height of Twitter Player iframe in pixels' ),
+			__( 'Enter Twitter Player iframe height in pixels.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {
@@ -379,8 +379,8 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			self::SETTING_NAME_TW_IPHONE_NAME,
 			'',
 			true,
-			__( 'Name of your iPhone app' ),
-			__( 'Name of your iPhone app in Apple app store. Used with app card.' ),
+			__( 'iPhone App Name' ),
+			__( 'Enter your iPhone app\'s name in the Apple App Store, applicable for App Card usage.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {
@@ -392,8 +392,8 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			self::SETTING_NAME_TW_IPHONE_ID,
 			'',
 			true,
-			__( 'App ID in the iTunes App Store' ),
-			__( 'Your app ID in the iTunes App Store (Note: NOT your bundle ID). Used with app card.' ),
+			__( 'iPhone App ID in the Apple App Store' ),
+			__( 'Enter your iPhone App ID in the Apple App Store, applicable for App Card usage.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {
@@ -405,8 +405,8 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			self::SETTING_NAME_TW_IPHONE_URL,
 			'',
 			true,
-			__( 'Your app’s custom URL scheme' ),
-			__( 'Your app’s custom URL scheme (you must include ”://” after your scheme name). Used with app card.' ),
+			__( 'iPhone App\'s Custom URL Scheme' ),
+			__( 'Enter your iPhone app\'s custom URL Scheme, applicable for App Card usage.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {
@@ -418,8 +418,8 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			self::SETTING_NAME_TW_IPAD_NAME,
 			'',
 			true,
-			__( 'Name of your iPad app' ),
-			__( 'Name of your iPad app in Apple app store. Used with app card.' ),
+			__( 'iPad App Name' ),
+			__( 'Enter your iPad app\'s name in the Apple App Store, applicable for App Card usage.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {
@@ -431,8 +431,8 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			self::SETTING_NAME_TW_IPAD_ID,
 			'',
 			true,
-			__( 'iPad App ID in the iTunes App Store' ),
-			__( 'Your app ID in the iTunes App Store optimized for iPads (Note: NOT your bundle ID). Used with app card.' ),
+			__( 'iPad App ID in the Apple App Store' ),
+			__( 'Enter your iPad App ID in the Apple App Store, applicable for App Card usage.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {
@@ -444,8 +444,8 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			self::SETTING_NAME_TW_IPAD_URL,
 			'',
 			true,
-			__( 'Your iPad app’s custom URL scheme' ),
-			__( 'Your app’s custom URL scheme (you must include ”://” after your scheme name). Used with app card.' ),
+			__( 'iPad App\'s Custom URL Scheme' ),
+			__( 'Enter your iPad app\'s custom URL Scheme, applicable for App Card usage.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {
@@ -457,8 +457,8 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			self::SETTING_NAME_TW_GOOGLEPLAY_NAME,
 			'',
 			true,
-			__( 'Name of your Android app' ),
-			__( 'Name of your Android app in Google Play store. Used with app card.' ),
+			__( 'Android App Name' ),
+			__( 'Enter your Android app\'s name in the Google Play Store, applicable for App Card usage.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {
@@ -471,7 +471,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			'',
 			true,
 			__( 'App ID in the Google Play Store' ),
-			__( 'Your app ID in the Google Play Store' ),
+			__( 'Enter your Android App ID in the Google Play Store, applicable for App Card usage.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {
@@ -483,8 +483,8 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			self::SETTING_NAME_TW_GOOGLEPLAY_URL,
 			'',
 			true,
-			__( 'Custom Android URL scheme' ),
-			__( 'Your app’s custom URL scheme for Android app' ),
+			__( 'Android App\'s Custom URL Scheme' ),
+			__( 'Enter your Android app\'s custom URL Scheme, applicable for App Card usage.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {
