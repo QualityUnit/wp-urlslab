@@ -51,13 +51,13 @@ export default function CacheRulesTable( { slug } ) {
 
 	const rowEditorCells = {
 		match_type: <SingleSelectMenu defaultAccept autoClose items={ matchTypes } name="match_type" defaultValue="A" onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_type: val } ) }>{ header.match_type }</SingleSelectMenu>,
-		match_url: <InputField type="url" liveUpdate label={ header.match_url } onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_url: val } ) } required />,
+		match_url: <InputField type="url" liveUpdate defaultValue="" label={ header.match_url } onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_url: val } ) } required />,
 		cache_ttl: <InputField liveUpdate defaultValue="3600" label={ header.cache_ttl } onChange={ ( val ) => setEditorRow( { ...rowToEdit, headers: val } ) } />,
-		headers: <InputField liveUpdate label={ header.headers } onChange={ ( val ) => setEditorRow( { ...rowToEdit, headers: val } ) } />,
-		cookie: <InputField liveUpdate label={ header.cookie } onChange={ ( val ) => setEditorRow( { ...rowToEdit, cookie: val } ) } />,
-		params: <InputField liveUpdate label={ header.params } onChange={ ( val ) => setEditorRow( { ...rowToEdit, capabilities: val } ) } />,
-		ip: <InputField liveUpdate label={ header.ip } onChange={ ( val ) => setEditorRow( { ...rowToEdit, ip: val } ) } />,
-		browser: <InputField liveUpdate label={ header.browser } onChange={ ( val ) => setEditorRow( { ...rowToEdit, browser: val } ) } />,
+		headers: <InputField liveUpdate label={ header.headers } defaultValue="" onChange={ ( val ) => setEditorRow( { ...rowToEdit, headers: val } ) } />,
+		cookie: <InputField liveUpdate label={ header.cookie } defaultValue="" onChange={ ( val ) => setEditorRow( { ...rowToEdit, cookie: val } ) } />,
+		params: <InputField liveUpdate label={ header.params } defaultValue="" onChange={ ( val ) => setEditorRow( { ...rowToEdit, capabilities: val } ) } />,
+		ip: <InputField liveUpdate label={ header.ip } defaultValue="" onChange={ ( val ) => setEditorRow( { ...rowToEdit, ip: val } ) } />,
+		browser: <InputField liveUpdate label={ header.browser } defaultValue="" onChange={ ( val ) => setEditorRow( { ...rowToEdit, browser: val } ) } />,
 		rule_order: <InputField liveUpdate defaultValue="10" label={ header.rule_order } onChange={ ( val ) => setEditorRow( { ...rowToEdit, headers: val } ) } />,
 		is_active: <Checkbox checked onChange={ ( val ) => setEditorRow( { ...rowToEdit, is_active: val } ) }>{ header.is_active }</Checkbox>,
 	};
