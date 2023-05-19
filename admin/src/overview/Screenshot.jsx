@@ -1,12 +1,23 @@
-import Overview, { setSection } from '../components/OverviewTemplate';
+import { useState } from 'react';
+import Overview from '../components/OverviewTemplate';
 
 import image1 from '../assets/images/overview/liveagent_screenshot.jpeg';
+import editIcon from '../assets/images/icons/icon-edit.svg';
 
 export default function ScreenShotOverview( { moduleId } ) {
+	const [ section, setSection ] = useState( 'about' );
+
+	// Custom sections here – will be before FAQ in the menu. Add into customSections prop (not required)
+
+	const sections = [
+		{ id: 'section1', title: 'My Section', icon: editIcon },
+	];
+
 	return (
-		<Overview moduleId={ moduleId } section={ setSection }>
+		// has also property title for custom title like <Overview moduleId=xxx title="my title"
+		<Overview moduleId={ moduleId } customSections={ sections } section={ ( val ) => setSection( val ) }>
 			{
-				setSection() === 'about' &&
+				section === 'about' &&
 				<section>
 					<p>Screenshots are a great way to grab an audience's attention and make your content more appealing. With this module, you can easily add automatically generated screenshots via a shortcode into the content. It will not only save you time but will also give your content a professional look.</p>
 					<p>Using the Screenshots module can be especially useful for websites with many pages, where manually taking screenshots for each one can be time-consuming. With the module, you can quickly generate screenshots for each page.</p>
@@ -15,7 +26,7 @@ export default function ScreenShotOverview( { moduleId } ) {
 			}
 
 			{
-				setSection() === 'integrate' &&
+				section === 'integrate' &&
 				<section>
 					<h4>How to use the feature?</h4>
 					<p>It's almost effortless and will only take a maximum of five minutes. All you have to do is add a shortcode to your theme template, and the module will take care of the rest for you.</p>

@@ -11,7 +11,8 @@ export default function ImageAltAttribute( { moduleId } ) {
 
 	return (
 		<div className="urlslab-tableView">
-			<ModuleViewHeader activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+			<ModuleViewHeader moduleId={ moduleId }
+				activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{
 				activeSection === 'overview' &&
 				<Overview moduleId={ moduleId }>

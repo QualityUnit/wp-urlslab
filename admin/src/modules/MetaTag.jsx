@@ -19,7 +19,8 @@ export default function MetaTag( { moduleId } ) {
 
 	return (
 		<div className="urlslab-tableView">
-			<ModuleViewHeader moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+			<ModuleViewHeader moduleId={ moduleId }
+				moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{
 				activeSection === 'overview' &&
 				<Overview moduleId={ moduleId }>

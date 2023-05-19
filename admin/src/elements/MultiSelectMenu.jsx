@@ -86,7 +86,7 @@ export default function MultiSelectMenu( {
 									key={ itemId }
 									id={ itemId }
 									onChange={ ( isChecked ) => checkedCheckbox( itemId, isChecked ) }
-									checked={ checked?.includes( itemId ) }
+									defaultValue={ checked?.includes( itemId ) }
 								>
 									{ value }
 								</Checkbox>

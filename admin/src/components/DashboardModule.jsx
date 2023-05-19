@@ -56,7 +56,7 @@ export default function DashboardModule( { moduleId, title, children, isActive, 
 					className="urlslab-dashboardmodule-switch ma-left"
 					label={ '' }
 					labelOff={ '' }
-					checked={ isActive }
+					defaultValue={ isActive }
 				/>
 			</div>
 

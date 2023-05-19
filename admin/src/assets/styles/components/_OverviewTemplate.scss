@@ -1,43 +1,61 @@
+/* stylelint-disable no-descending-specificity */
 @use "../common/variables" as *;
 @use "../common/mixins" as *;
 
 .urlslab-overview {
+	max-width: 57.5em;
+	margin: 3em auto 1.5em;
 
-	&.urlslab-panel {
-		display: flex;
-		flex-direction: column;
-		max-width: 57.5em;
-		margin: 3em auto 1.5em;
-		height: calc(100vh - var(--headerTopHeight) - var(--headerMenuHeight) - 6.5em);
+	.urlslab-panel {
+		padding: 1.5em;
+		min-height: calc(100vh - var(--headerTopHeight) - var(--headerMenuHeight) - 8.5em);
 	}
 
-	table {
-		border-collapse: collapse;
-		width: 100%;
-		border-bottom: 1em;
 
-		th,
-		td {
-			white-space: normal;
+	&-menu[class] {
+		margin-top: 0;
+		font-size: 0.8125rem;
+		font-weight: 600;
+
+		.urlslab-overview {
+
+			&-menuItem {
+				display: block;
+				border-radius: $br-10;
+				padding: 0.5em;
+
+				&.active {
+					background-color: $grey-lightest;
+				}
+
+				button {
+					display: flex;
+					align-items: center;
+					text-align: left;
+					width: 100%;
+				}
+			}
+
+			&-menuIcon {
+
+				@include square(2.77em);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex: 0 0 auto;
+				margin-right: 0.5em;
+				border-radius: 50%;
+				background-color: $grey-light;
+
+				img {
+					display: block;
+					width: 1.26em;
+				}
+			}
 		}
 	}
 
-	&-apiKey {
-		align-items: center;
-		position: relative;
-		padding: inherit;
-		margin-left: -1.5em;
-		margin-right: -1.5em;
-		background-color: $grey-lightest;
-		border-radius: $br-10 $br-10 0 0;
-	}
-
-	&-content {
-
-		@include scrollbar();
-		margin-top: 1.5em;
-		margin-bottom: 3em;
-		overflow-y: auto;
+	&-content[class] {
 
 		img,
 		picture,
@@ -45,48 +63,72 @@
 			max-width: 100%;
 			margin: 1.5em auto;
 		}
-	}
 
-	ul {
-		font-size: 0.825rem;
+		ul {
+			font-size: 0.825rem;
+		}
+
+		table {
+			border-collapse: collapse;
+			border: none;
+			border-radius: $br-10 $br-10 0 0;
+			overflow: hidden;
+			width: 100%;
+			margin-bottom: 1.5em;
+
+			th,
+			td {
+				padding: 0.5em;
+				border: none;
+				text-align: center !important;
+				white-space: normal;
+			}
+
+			tr {
+
+				&:nth-of-type(even) {
+					background-color: $grey-lightest;
+				}
+			}
+
+			th {
+				background-color: $grey-light;
+				font-weight: 600;
+				font-size: 0.875rem;
+				height: auto !important;
+
+				+th {
+					border-left: 1px solid $grey-medium;
+				}
+			}
+
+			td {
+				font-size: 0.8125rem;
+
+				+td {
+					border-left: 1px dashed $grey-light;
+				}
+			}
+
+		}
 	}
 
 	@media (min-width: $breakpoint-tablet) {
 
-		&-apiKey {
-			margin-left: -4em;
-			margin-right: -4em;
+		&-menu {
+			width: 25%;
+			margin-right: 1.5rem;
+		}
 
-			&__content {
-				width: 75%;
-				margin-right: auto;
-			}
+		&-content {
+			width: calc(75% - 1.5rem);
 		}
 	}
 
 	@media (min-width: $breakpoint-desktop-box) {
-		$padding: 11.25em;
-
-		&.urlslab-panel {
-			padding: 0;
-		}
-
-		&-apiKey {
-			margin: 0;
-			padding: 3.125em $padding;
-		}
 
 		&-content {
-			margin-left: 0.25em;
-			margin-right: 0.25em;
-			padding: 0 $padding;
-		}
-
-		.apiIcon {
-			position: absolute;
-			top: 50%;
-			transform: translateY(-50%);
-			left: 3.5em;
+			padding-right: 4rem;
 		}
 	}
 }
