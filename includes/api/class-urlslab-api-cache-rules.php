@@ -269,6 +269,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 			$row->cache_ttl  = (int) $row->cache_ttl;
 			$row->rule_order = (int) $row->rule_order;
 			$row->valid_from = (int) $row->valid_from;
+			$row->is_active  = Urlslab_Cache_Rule_Row::ACTIVE_YES === $row->is_active ? true : false;
 		}
 
 		return new WP_REST_Response( $rows, 200 );

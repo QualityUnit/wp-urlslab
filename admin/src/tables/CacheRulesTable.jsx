@@ -59,7 +59,7 @@ export default function CacheRulesTable( { slug } ) {
 		ip: <InputField liveUpdate label={ header.ip } onChange={ ( val ) => setEditorRow( { ...rowToEdit, ip: val } ) } />,
 		browser: <InputField liveUpdatelabel={ header.browser } onChange={ ( val ) => setEditorRow( { ...rowToEdit, browser: val } ) } />,
 		rule_order: <InputField liveUpdate defaultValue="10" label={ header.rule_order } onChange={ ( val ) => setEditorRow( { ...rowToEdit, headers: val } ) } />,
-		is_active: <Checkbox name="is_active" checked={ true } onChange={ ( val ) => setEditorRow( { ...rowToEdit, is_active: val } ) }>{ header.is_active }</Checkbox>,
+		is_active: <Checkbox name="is_active" onChange={ ( val ) => setEditorRow( { ...rowToEdit, is_active: val } ) }>{ header.is_active }</Checkbox>,
 	};
 
 	const columns = [
@@ -85,7 +85,7 @@ export default function CacheRulesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'is_active', {
 			className: 'nolimit',
-			cell: ( cell ) => <Checkbox name={ cell.column.id } checked={ 'Y' == cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <Checkbox name={ cell.column.id } checked={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.is_active }</SortBy>,
 			size: 100,
 		} ),
