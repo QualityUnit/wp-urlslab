@@ -113,7 +113,7 @@ export default function ColumnsMenu( {
 								key={ column.id }
 								id={ column.id }
 								onChange={ ( isChecked ) => checkedCheckbox( column, isChecked ) }
-								checked={ ! Object.keys( hiddenCols ).includes( column.id ) }
+								defaultValue={ ! Object.keys( hiddenCols ).includes( column.id ) }
 							>
 								{ columns[ column.id ] }
 							</Checkbox>

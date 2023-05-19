@@ -1,8 +1,6 @@
 import { useState, Suspense, lazy } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
-import Overview from '../components/OverviewTemplate';
 import RelatedResourcesOverview from '../overview/RelatedResources';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
@@ -20,11 +18,10 @@ export default function RelatedResources( { moduleId } ) {
 
 	return (
 		<div className="urlslab-tableView">
-			<ModuleViewHeader moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+			<ModuleViewHeader moduleId={ moduleId }
+				moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{ activeSection === 'overview' &&
-				<Overview moduleId={ moduleId }>
-					<RelatedResourcesOverview />
-				</Overview>
+			<RelatedResourcesOverview moduleId={ moduleId } />
 			}
 			{
 				activeSection === 'url-relation' &&

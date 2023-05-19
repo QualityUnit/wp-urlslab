@@ -1,6 +1,5 @@
 import { useState, Suspense, lazy } from 'react';
 
-import Overview from '../components/OverviewTemplate';
 import OptimizeOverview from '../overview/Optimize';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
@@ -11,12 +10,11 @@ export default function Optimize( { moduleId } ) {
 
 	return (
 		<div className="urlslab-tableView">
-			<ModuleViewHeader activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+			<ModuleViewHeader moduleId={ moduleId }
+				activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{
 				activeSection === 'overview' &&
-				<Overview moduleId={ moduleId }>
-					<OptimizeOverview />
-				</Overview>
+				<OptimizeOverview moduleId={ moduleId } />
 			}
 			{
 				activeSection === 'settings' &&

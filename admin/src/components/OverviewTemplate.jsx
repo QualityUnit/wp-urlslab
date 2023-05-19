@@ -1,34 +1,98 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { useCallback, useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
+import { useQueryClient } from '@tanstack/react-query';
+import { get, update } from 'idb-keyval';
 
-import useCheckApiKey from '../hooks/useCheckApiKey';
+import AboutIcon from '../assets/images/icons/icon-overview-about.svg';
+import IntegrateIcon from '../assets/images/icons/icon-overview-integrate.svg';
+import FaqIcon from '../assets/images/icons/icon-overview-faq.svg';
 
-import { ReactComponent as ApiIcon } from '../assets/images/api-exclamation.svg';
-import Button from '../elements/Button';
-
+import Checkbox from '../elements/Checkbox';
 import '../assets/styles/components/_OverviewTemplate.scss';
 
-export default function Overview( { moduleId, children } ) {
+export default function Overview( { moduleId, noFAQ, noIntegrate, noCheckbox, title, customSections, section, children } ) {
 	const { __ } = useI18n();
-	const { settingsLoaded, apiKeySet } = useCheckApiKey();
+	const [ active, setActive ] = useState( 'about' );
+	const [ overViewVisible, setOverviewVisibility ] = useState( );
 	const queryClient = useQueryClient();
 	const moduleData = queryClient.getQueryData( [ 'modules' ] )[ moduleId ];
 
+	const handleMenu = ( val ) => {
+		setActive( val );
+		section( val );
+	};
+
+	const handleOverviewVisibility = ( state ) => {
+		update( moduleId, ( dbData ) => {
+			return { ...dbData, hideOverview: state };
+		} );
+	};
+
+	const overViewVisibility = useCallback( async () => {
+		if ( ! noCheckbox ) {
+			const { hideOverview } = await get( moduleId ) || { hideOverview: false };
+			setOverviewVisibility( hideOverview );
+		}
+	}, [ moduleId, noCheckbox ] );
+
+	useEffect( () => {
+		overViewVisibility();
+	}, [ overViewVisibility ] );
+
 	return (
-		<div className="urlslab-overview urlslab-panel fadeInto">
-			{ settingsLoaded && apiKeySet === false && moduleData?.apikey &&
-			<div className="urlslab-overview-apiKey flex-tablet">
-				<div className="apiIcon xxl"><ApiIcon /></div>
-				<div className="urlslab-overview-apiKey__content">
-					<h3>{ __( 'The module requires URLsLab service' ) }</h3>
-					<p>{ __( 'With URLsLab service, you can unlock the full potential of the module and reap the benefits of automation. Save yourself hours of tedious work and get accurate results - it\'s the smart way to automate data processing!' ) }</p>
-				</div>
-				<Button href="https://www.urlslab.com" target="_blank" active>{ __( 'Get the API Key' ) }</Button>
-			</div>
+
+		<div className="urlslab-overview">
+			{
+				! noCheckbox &&
+				<Checkbox className="mb-m" smallText key={ overViewVisible } defaultValue={ overViewVisible } onChange={ handleOverviewVisibility }>{ __( 'Do not display the overview when opening the module' ) }</Checkbox>
 			}
-			<div className="urlslab-overview-content">
-				{ moduleData?.title && <h3> { moduleData?.title } </h3> }
-				{ children }
+			<div className="urlslab-panel flex-tablet fadeInto">
+				<ul className="urlslab-overview-menu">
+					<li className={ `urlslab-overview-menuItem ${ active === 'about' ? 'active' : '' }` }><button onClick={ () => handleMenu( 'about' ) }>
+						<span className="urlslab-overview-menuIcon">
+							<img src={ AboutIcon } alt={ __( 'About' ) } />
+						</span>
+						{ __( 'About module' ) }</button>
+					</li>
+					{
+						! noIntegrate &&
+						<li className={ `urlslab-overview-menuItem ${ active === 'integrate' ? 'active' : '' }` }><button onClick={ () => handleMenu( 'integrate' ) }>
+							<span className="urlslab-overview-menuIcon">
+								<img src={ IntegrateIcon } alt={ __( 'How to integrate' ) } />
+							</span>
+							{ __( 'How to integrate' ) }</button>
+						</li>
+					}
+					{ customSections?.length > 0 &&
+					customSections.map( ( sect ) => {
+						const { id, title: sectionTitle, icon } = sect;
+						return <li className={ `urlslab-overview-menuItem ${ active === id ? 'active' : '' }` } key={ id }><button onClick={ () => handleMenu( id ) }>
+							{ icon &&
+								<span className="urlslab-overview-menuIcon">
+									<img src={ icon } alt={ sectionTitle } />
+								</span>
+							}
+							{ sectionTitle }
+						</button></li>;
+					} )
+					}
+					{
+						! noFAQ &&
+						<li className={ `urlslab-overview-menuItem ${ active === 'faq' ? 'active' : '' }` }><button onClick={ () => handleMenu( 'faq' ) }>
+							<span className="urlslab-overview-menuIcon">
+								<img src={ FaqIcon } alt={ __( 'FAQ' ) } />
+							</span>
+							{ __( 'FAQ' ) }</button>
+						</li>
+					}
+				</ul>
+				<div className="urlslab-overview-content">
+					{ title
+						? <h3> { title } </h3>
+						: moduleData?.title !== false && <h3> { moduleData.title } </h3>
+					}
+					{ children }
+				</div>
 			</div>
 		</div>
 	);

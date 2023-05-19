@@ -136,7 +136,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 						className="option flex"
 						key={ id }
 						label={ title }
-						checked={ value }
+						defaultValue={ value }
 						onChange={ ( inputValue ) => handleChange.mutate( inputValue ) }
 					/>
 				);
