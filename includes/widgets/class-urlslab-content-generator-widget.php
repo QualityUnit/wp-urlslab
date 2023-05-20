@@ -342,7 +342,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			return '';
 		}
 
-		return str_replace( "\n", '<br/>', $value );
+		return nl2br( $value );
 	}
 
 	public
