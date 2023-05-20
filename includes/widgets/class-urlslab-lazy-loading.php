@@ -57,6 +57,14 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			return $this->get_placeholder_html( $atts, self::SHORTCODE_VIDEO );
 		}
 
+		if ( isset( $atts['nl2br'] ) ) {
+			$atts['nl2br'] = filter_var( $atts['nl2br'], FILTER_VALIDATE_BOOLEAN );
+		} else {
+			$atts['nl2br'] = false;
+		}
+		if ( $atts['nl2br'] ) {
+			return nl2br( urlslab_video_attribute( $atts['videoid'], $atts['attribute'] ) );
+		}
 		return urlslab_video_attribute( $atts['videoid'], $atts['attribute'] );
 	}
 
