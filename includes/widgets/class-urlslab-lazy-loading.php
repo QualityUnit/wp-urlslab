@@ -58,7 +58,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		}
 
 		if ( isset( $atts['nl2br'] ) ) {
-			$atts['nl2br'] = filter_var($atts['nl2br'], FILTER_VALIDATE_BOOLEAN);
+			$atts['nl2br'] = filter_var( $atts['nl2br'], FILTER_VALIDATE_BOOLEAN );
 		} else {
 			$atts['nl2br'] = false;
 		}
