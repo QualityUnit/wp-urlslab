@@ -336,8 +336,8 @@ abstract class Urlslab_Widget {
 					|| ( false !== strpos( $dom->getAttribute( 'class' ), 'urlslab-skip-all' ) ) );
 	}
 
-	public function get_current_page_url(): Urlslab_Url {
-		if ( is_object( self::$current_page_url ) ) {
+	public function get_current_page_url( bool $use_post_id = true ): Urlslab_Url {
+		if ( $use_post_id && is_object( self::$current_page_url ) ) {
 			return self::$current_page_url;
 		}
 
@@ -346,27 +346,29 @@ abstract class Urlslab_Widget {
 			if ( ! empty( $cat ) ) {
 				try {
 					self::$current_page_url = new Urlslab_Url( $cat, true );
+
+					return self::$current_page_url;
 				} catch ( Exception $e ) {
 				}
 			}
 		}
-		if ( empty( self::$current_page_url ) && get_the_ID() ) {
+		if ( $use_post_id && get_the_ID() ) {
 			try {
 				self::$current_page_url = new Urlslab_Url(
 					get_permalink( get_the_ID() ),
 					true
 				);
+
+				return self::$current_page_url;
 			} catch ( Exception $e ) {
 			}
 		}
-		if ( empty( self::$current_page_url ) ) {
-			global $wp;
-			$current_url = home_url( add_query_arg( array(), $wp->request ) );
 
-			try {
-				self::$current_page_url = new Urlslab_Url( $current_url, true );
-			} catch ( Exception $e ) {
-			}
+		global $wp;
+		$current_url = home_url( add_query_arg( array(), $wp->request ) );
+		try {
+			self::$current_page_url = new Urlslab_Url( $current_url, true );
+		} catch ( Exception $e ) {
 		}
 
 		return self::$current_page_url;

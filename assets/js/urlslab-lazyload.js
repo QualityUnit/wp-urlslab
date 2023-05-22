@@ -198,17 +198,24 @@ const urlslabLazyLoad = () => {
 	}
 };
 
+
 const urlslabPreload = () => {
+	const preloadedLinks = new Set();
 
 	const preloadLink = ( element ) => {
-		console.log(element);
 		if (element.tagName == 'A' && (element.hasAttribute( 'scroll-preload' ) || element.hasAttribute('onover-preload'))) {
 			element.removeAttribute('scroll-preload');
 			element.removeAttribute('onover-preload');
+			const urlObj = new URL(element.getAttribute("href"));
+			urlObj.hash = '';
+
+			if (preloadedLinks.has(urlObj.toString())) {
+				return;
+			}
 			const xhr = new XMLHttpRequest();
-			xhr.open("GET", element.getAttribute("href"), true);
+			xhr.open("GET", urlObj.toString(), true);
 			xhr.send(null);
-			return;
+			preloadedLinks.add(urlObj.toString());
 		}
 	};
 
@@ -221,7 +228,7 @@ const urlslabPreload = () => {
 						(entry) => {
 							if (entry.isIntersecting) {
 								preloadLink(entry.target);
-								mediaObserver.unobserve(entry.target);
+								linkObserver.unobserve(entry.target);
 							}
 						}
 					);
