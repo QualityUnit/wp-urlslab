@@ -158,7 +158,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			self::SCHEDULE_SHORTCODE,
 			false,
 			__( 'Schedule Screenshot' ),
-			__( 'Choose URL types for which we will process screenshots' ),
+			__( 'Choose URL types for which we will process screenshots.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				self::SCHEDULE_NEVER         => __( 'Never' ),
@@ -176,7 +176,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 			\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME,
 			false,
 			__( 'Synchronisation Frequency of Screenshots with URLsLab service' ),
-			__( 'Choose how often should URLsLab retake screenshot of url. Each screenshot costs some credits, so choose this value visely. To take the screenshot just once will fit to majority of cases.' ),
+			__( 'Select the frequency at which URLsLab captures screenshots of a URL. Since each screenshot consumes credits, choose wisely. A single capture may suffice for most scenarios.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_NO_SCHEDULE => __( 'Never' ),

@@ -63,7 +63,6 @@ export default function LinkManagerTable( { slug } ) {
 		url_links_count: __( 'Outgoing links count' ),
 		url_usage_count: __( 'Incoming links count' ),
 		visibility: __( 'Visibility' ),
-		url_type: __( 'URL type' ),
 		update_http_date: __( 'Last change' ),
 	};
 
@@ -100,12 +99,6 @@ export default function LinkManagerTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_summary }</SortBy>,
 			size: 200,
-		} ),
-		columnHelper.accessor( 'url_type', {
-			filterValMenu: urlTypes,
-			cell: ( cell ) => urlTypes[ cell.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_type }</SortBy>,
-			size: 80,
 		} ),
 		columnHelper?.accessor( 'http_status', {
 			filterValMenu: httpStatusTypes,

@@ -161,15 +161,15 @@ class Urlslab_Redirects extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'ai_redirects',
 			__( 'AI Redirecting' ),
-			__( 'If url is requested multiple times and leads to error 404 Not Found, we will create automatic redirect by AI and will redirect visitor next time to the best metching url. Matching missing URL with the content is done on background by cron. It can take few days until the best matching URL is found. You should always manually validate if the automatic redirect is correct.' )
+			__( 'Upon multiple 404 errors from a URL request, our AI automatically redirects visitors to the closest matching URL. This background process done by cron, this process may take a few days. Always verify the generated redirect for accuracy.' )
 		);
 
 		$this->add_option_definition(
 			self::SETTING_NAME_AI_REDIRECTS,
 			false,
 			false,
-			__( 'Calculate Redirect' ),
-			__( 'Calculate from not found url the best matching URL found in your domain and save it as new redirect.' ),
+			__( 'Calculate Redirects' ),
+			__( 'Automatically generate redirects by calculating the best matching URL found in your domain for a requested URL that cannot be found.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -180,8 +180,8 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			self::SETTING_NAME_MIN_404_COUNT,
 			100,
 			false,
-			__( 'Min 404 occurences' ),
-			__( 'Define minimum number of occurences of 404 error to create redirect. If number of occurences is lower, redirect will not be created. Calculation of each redirect cost some credits, therefore it is wise to define reasonable limit. We try to compute redirect just for 404 url, which happen in the last hour.' ),
+			__( 'Minimal 404 Error Occurrences' ),
+			__( 'Set the minimum 404 error occurrences required to create a redirect. If below this threshold, no redirect will be generated.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {

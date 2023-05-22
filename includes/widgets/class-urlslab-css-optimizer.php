@@ -90,7 +90,7 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'main', __( 'CSS Optimizer Settings' ), __( 'Optimizing external resources like CSS files is key to ensuring a fast website. Setting up a size limit and expiration date for those files helps maximize the website\'s performance and loading speed. These settings can significantly reduce the amount of time needed for a page to load and enhance the user experience.' ) );
+		$this->add_options_form_section( 'main', __( 'CSS Optimiser Settings' ), __( 'Optimising external resources like CSS files is key to ensuring a fast website. Setting up a size limit and expiration date for those files helps maximize the website\'s performance and loading speed. These settings can significantly reduce the amount of time needed for a page to load and enhance the user experience.' ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_CSS_MAX_SIZE,

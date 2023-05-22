@@ -222,7 +222,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			true,
 			true,
 			__( 'Replace non-SEO Friendly Links' ),
-			__( 'Replace all non-SEO friendly links with their optimized version, which search engines prefer. We currently only support replacing `page_id` links. If you wish to ignore certain links, add the `urlslab-skip-page_id` class name to the link or any elements containing the links.' ),
+			__( 'Replace all non-SEO friendly links with their optimised version, which search engines prefer. We currently only support replacing `page_id` links. If you wish to ignore certain links, add the `urlslab-skip-page_id` class name to the link or any elements containing the links.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,

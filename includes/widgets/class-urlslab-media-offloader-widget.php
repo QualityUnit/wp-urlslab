@@ -638,7 +638,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			0,
 			true,
 			__( 'Skip Loading Image on the Small Devices' ),
-			__( 'Skip loading of images into the browser if the window size is smaller than the defined width. The feature optimizes the amount of transferred data for small devices. To apply this functionality, add the class name `urlslab-min-width-[number]` on the image or any parent element. Example: `urlslab-min-width-768` will load the picture only if the window is wider or equal to 768 pixels.' ),
+			__( 'Skip loading of images into the browser if the window size is smaller than the defined width. The feature optimises the amount of transferred data for small devices. To apply this functionality, add the class name `urlslab-min-width-[number]` on the image or any parent element. Example: `urlslab-min-width-768` will load the picture only if the window is wider or equal to 768 pixels.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,

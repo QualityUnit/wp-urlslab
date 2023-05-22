@@ -60,7 +60,7 @@ class Urlslab_Api_Optimize extends Urlslab_Api_Base {
 	public function optimize( WP_REST_Request $request ) {
 		try {
 			if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Optimize::SLUG ) ) {
-				return new WP_Error( 'exception', __( 'Optimization module disabled', 'urlslab' ) );
+				return new WP_Error( 'exception', __( 'Optimisation module disabled', 'urlslab' ) );
 			}
 			$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Optimize::SLUG );
 

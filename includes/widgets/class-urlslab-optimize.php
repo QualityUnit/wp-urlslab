@@ -35,7 +35,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Boost the performance of your website by automating database optimization in the background' );
+		return __( 'Boost the performance of your website by automating database optimisation in the background' );
 	}
 
 	public function get_widget_labels(): array {
@@ -47,14 +47,14 @@ class Urlslab_Optimize extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'frequency', __( 'Frequency' ), __( 'Regular optimization will help keep your database performing efficiently and prevent data bloat.' ) );
+		$this->add_options_form_section( 'frequency', __( 'Frequency' ), __( 'Regular optimisation will help keep your database performing efficiently and prevent data bloat.' ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_OPTIMIZATION_FREQUENCY,
 			604800,
 			false,
 			__( 'Background Optimisation Frequency' ),
-			__( 'Define how often we should optimize the database in the background.' ),
+			__( 'Define how often we should optimise the database in the background.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				86400   => __( 'Daily' ),

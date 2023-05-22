@@ -280,13 +280,13 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'sync', __( 'URLsLab Synchronisation' ), __( 'Module can work independent of URLsLab service, but you will need to upload relations between URLs manually. If you choose automatic syncing, URLsLAb will generate relations for you and update them regullary as your content change.' ) );
+		$this->add_options_form_section( 'sync', __( 'URLsLab Synchronisation' ), __( 'Module can work independent of URLsLab service, but you will need to upload relations between URLs manually. If you choose automatic syncing, URLsLab will generate relations for you and update them regullary as your content change.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_SYNC_URLSLAB,
 			false,
 			false,
-			__( 'Load data from URLsLab' ),
-			__( 'Automatically load data from URLsLab and update them with defined interval. This feature require URLsLab API key.' ),
+			__( 'Automatic syncing from URLsLab' ),
+			__( 'Automatically load data from URLsLab service and update them with defined interval.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -296,8 +296,8 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			self::SETTING_NAME_SYNC_FREQ,
 			2419200,
 			false,
-			__( 'Update Data Frequency' ),
-			__( 'Define how often we should sync relation data with the URLsLab database in the background. New relations will be updated independently on this setting.' ),
+			__( 'Synchronisation Data Frequency' ),
+			__( 'Define how often we should sync relation data with the URLsLab database in the background. Note that new relations will update irrespective of this setting.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				86400            => __( 'Daily' ),
@@ -316,18 +316,18 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			self::SETTING_NAME_LAST_SEEN,
 			0,
 			false,
-			__( 'Include URLs seen in the last few days' ),
-			__( 'Include in result just urls seen by urlslab service in defined interval from now. If you delete any page from the website and urlslba vill not process it certain amount of time, we will not include it in related articles list. Your domains should be periodically scheduled in urlslab, otherwise setting this limit will not return values. We recommend to use Any time as value if you don\'t scan web periodically' ),
+			__( 'Include Recently Viewed URLs' ),
+			__( 'Display only URLs analysed by URLsLab service within a specific timeframe. Deleted pages not indexed in time won\'t appear in related articles. Schedule domains regularly, if not, use "Any time" to ensure results.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				86400    => __( 'last 24 hours' ),
+				86400    => __( 'Last 24 hours' ),
 				604800   => __( '7 days' ),
 				1209600  => __( '14 days' ),
 				2419200  => __( '30 days' ),
 				4838400  => __( '60 days' ),
 				7257600  => __( '90 days' ),
-				31556926 => __( 'last year' ),
-				0        => __( 'Any time - include even deleted urls' ),
+				31556926 => __( 'Last year' ),
+				0        => __( 'Any time - including even deleted URLs' ),
 			),
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
@@ -339,7 +339,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			false,
 			false,
 			__( 'Additional Domains' ),
-			__( 'Comma separated list of domains to consider when searching for related articles. By default is searched just same domain of evaluated link. e.g. if link is www.liveagent.com/pricing/, plugin will search just in domain liveagent.com for similar pages. Do not forget to schedule domains in your list to be scanned by urlslab. Otherwise we will not find any relation from your domain.' ),
+			__( 'Specify a list of comma-separated domains to search for Related articles. By default, only the same domain as the evaluated link is searched. Ensure domains are scheduled for scanning by URLsLab service to find relevant results.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $param ) {
@@ -421,10 +421,10 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			__( 'Define the default image size for screenshots used in your Related Articles. While capturing screenshots may take a few days, you can easily set a default image URL.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL  => __( 'Carousel Thumbnail (200px x 112px)' ),
-				Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL            => __( 'Carousel (1358px x 642px)' ),
-				Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL => __( 'Full Thumbnail (200px x dynamic height)' ),
-				Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE           => __( 'Full (1358px x dynamic height)' ),
+				Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL  => __( 'Top Part Thumbnail (200px x 112px)' ),
+				Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL            => __( 'Top Part (1358px x 642px)' ),
+				Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL => __( 'Full Page Thumbnail (200px x dynamic height)' ),
+				Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE           => __( 'Full Page (1358px x dynamic height)' ),
 			),
 			function( $value ) {
 				switch ( $value ) {
