@@ -198,6 +198,64 @@ const urlslabLazyLoad = () => {
 	}
 };
 
+const urlslabPreload = () => {
+
+	const preloadLink = ( element ) => {
+		console.log(element);
+		if (element.tagName == 'A' && (element.hasAttribute( 'scroll-preload' ) || element.hasAttribute('onover-preload'))) {
+			element.removeAttribute('scroll-preload');
+			element.removeAttribute('onover-preload');
+			const xhr = new XMLHttpRequest();
+			xhr.open("GET", element.getAttribute("href"), true);
+			xhr.send(null);
+			return;
+		}
+	};
+
+	if ( 'IntersectionObserver' in window ) {
+		const preload_links = document.querySelectorAll('a[scroll-preload]');
+		if (preload_links.length > 0) {
+			const linkObserver = new IntersectionObserver(
+				(entries) => {
+					entries.forEach(
+						(entry) => {
+							if (entry.isIntersecting) {
+								preloadLink(entry.target);
+								mediaObserver.unobserve(entry.target);
+							}
+						}
+					);
+				},
+				{ rootMargin: '250px' }
+			);
+
+			preload_links.forEach(
+				(linkObject) => {
+					linkObserver.observe(linkObject);
+				}
+			);
+		}
+	}
+	const preload_links = document.querySelectorAll('a[onover-preload]');
+	if (preload_links.length > 0) {
+		preload_links.forEach(
+			(linkObject) => {
+				const existingOnMouseover = linkObject.onmouseover;
+				// Add the new mouseover event listener
+				linkObject.addEventListener("mouseover", (event) => {
+					// Call preloadLink
+					preloadLink(linkObject);
+					if (existingOnMouseover) {
+						existingOnMouseover.call(linkObject, event);
+					}
+				});
+			}
+		);
+	}
+};
+
+
 ( () => {
 	urlslabLazyLoad();
+	urlslabPreload();
 } )();
