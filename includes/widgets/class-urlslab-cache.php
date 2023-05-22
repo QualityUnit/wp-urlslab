@@ -136,6 +136,17 @@ class Urlslab_Cache extends Urlslab_Widget {
 			null,
 			'page'
 		);
+		$this->add_option_definition(
+			'btn_invalidate_cache',
+			'cache-rules/invalidate',
+			false,
+			__( 'Invalidate Cache' ),
+			__( 'Invalidate all cache files on disk. Files will not be deleted, but set as invalid. Once the page is visited again, cache file will be regenerated.' ),
+			self::OPTION_TYPE_BUTTON_API_CALL,
+			false,
+			null,
+			'page'
+		);
 	}
 
 	/**

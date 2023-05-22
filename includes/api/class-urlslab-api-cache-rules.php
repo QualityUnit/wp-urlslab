@@ -114,6 +114,21 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 				),
 			)
 		);
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/invalidate',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'invalidate_cache' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
+					'args'                => array(),
+				),
+			)
+		);
 
 		register_rest_route(
 			self::NAMESPACE,
@@ -351,4 +366,15 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		);
 	}
 
+	public function invalidate_cache( WP_REST_Request $request ) {
+		global $wpdb;
+
+		if ( false === $wpdb->query( $wpdb->prepare( 'UPDATE ' . sanitize_key( URLSLAB_CACHE_RULES_TABLE ) . ' SET valid_from=%d ', time() ) ) ) { // phpcs:ignore
+			return new WP_Error( 'error', __( 'Failed to invalidate cache', 'urlslab' ), array( 'status' => 400 ) );
+		}
+
+		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Cache::SLUG )->update_option( Urlslab_Cache::SETTING_NAME_RULES_VALID_FROM, time() );
+
+		return new WP_REST_Response( __( 'Cache invalidated' ), 200 );
+	}
 }
