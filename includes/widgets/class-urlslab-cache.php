@@ -9,6 +9,8 @@ class Urlslab_Cache extends Urlslab_Widget {
 	const RULES_CACHE_KEY = 'rules';
 	const SETTING_NAME_ON_OVER_PRELOADING = 'urlslab-cache-over-preload';
 	const SETTING_NAME_ON_SCROLL_PRELOADING = 'urlslab-cache-scroll-preload';
+	const SETTING_NAME_DNS_PREFETCH = 'urlslab-cache-dns-prefetch';
+	const SETTING_NAME_PREFETCH = 'urlslab-cache-prefetch';
 	private static bool $cache_started = false;
 	private static bool $cache_enabled = false;
 	private static Urlslab_Cache_Rule_Row $active_rule;
@@ -39,6 +41,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $this, 'page_cache_start', PHP_INT_MAX, 0 );
 		Urlslab_Loader::get_instance()->add_action( 'shutdown', $this, 'page_cache_save', 0, 0 );
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_content', $this, 'content_hook', 15 );
+		Urlslab_Loader::get_instance()->add_action( 'wp_resource_hints', $this, 'resource_hints', 15, 2 );
 	}
 
 	private function is_cache_enabled(): bool {
@@ -72,6 +75,33 @@ class Urlslab_Cache extends Urlslab_Widget {
 
 		return self::$page_cache_key;
 	}
+
+
+	function resource_hints( $hints, $relation_type ) {
+		if ( ! self::$cache_enabled ) {
+			return $hints;
+		}
+
+		if ( 'dns-prefetch' === $relation_type && strlen( trim( $this->get_option( self::SETTING_NAME_DNS_PREFETCH ) ) ) ) {
+			$dns_hints = explode( ',', $this->get_option( self::SETTING_NAME_DNS_PREFETCH ) );
+			foreach ( $dns_hints as $dns_hint ) {
+				if ( strlen( trim( $dns_hint ) ) ) {
+					$hints[] = trim( $dns_hint );
+				}
+			}
+		}
+		if ( 'prefetch' === $relation_type && strlen( trim( $this->get_option( self::SETTING_NAME_PREFETCH ) ) ) ) {
+			$url_hints = explode( ',', $this->get_option( self::SETTING_NAME_PREFETCH ) );
+			foreach ( $url_hints as $url_hint ) {
+				if ( strlen( trim( $url_hint ) ) ) {
+					$hints[] = trim( $url_hint );
+				}
+			}
+		}
+
+		return $hints;
+	}
+
 
 	public function page_cache_headers( $headers ) {
 		if ( ! $this->is_cache_enabled() || ! $this->start_rule() ) {
@@ -151,7 +181,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			'page'
 		);
 
-		$this->add_options_form_section( 'preload', __( 'Link Preloader' ), __( 'Improve your website\'s user experience with the Link Preloader plugin! By leveraging the power of link preloading, this plugin aims to enhance the perceived load time of your site\'s pages, making navigation faster and smoother for your site visitors.' ) );
+		$this->add_options_form_section( 'preload', __( 'Link Preloader' ), __( 'Link preloading is a performance optimization technique that works by assuming which links the user is likely to click, then downloading the content of those links. If the user decides to click on one of the links, then the page will be rendered instantly as the content has already been downloaded.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_ON_OVER_PRELOADING,
 			false,
@@ -173,6 +203,30 @@ class Urlslab_Cache extends Urlslab_Widget {
 			false,
 			null,
 			'preload'
+		);
+
+		$this->add_options_form_section( 'prefetch', __( 'Browser Prefetch' ), __( 'Prefetching is when content is downloaded in the background, this is based on the assumption that the content will likely be requested, enabling the content to load instantly if and when the user requests it. The content is downloaded and cached for anticipated future use without the user making an explicit request for it.' ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_DNS_PREFETCH,
+			'',
+			true,
+			__( 'DNS Prefetch' ),
+			__( 'Define comma separated list of domains to prefetch DNS in each page e.g. fonts.google.com (applied just for not logged in users)' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			null,
+			'prefetch'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_PREFETCH,
+			'',
+			true,
+			__( 'Prefetch Content' ),
+			__( 'Define comma separated list of URLs to prefetch in each page (applied just for not logged in users).' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			null,
+			'prefetch'
 		);
 	}
 
@@ -385,5 +439,4 @@ class Urlslab_Cache extends Urlslab_Widget {
 			}
 		}
 	}
-
 }
