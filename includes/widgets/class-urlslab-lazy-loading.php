@@ -22,7 +22,6 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 	public const DOWNLOAD_URL_PATH = 'urlslab-content/';
 	const SETTING_NAME_ATTACH_GENERATOR_ID = 'urlslab_attach_generator_id';
-
 	private $lazy_load_youtube_css = false;
 
 	/**
@@ -32,10 +31,8 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_content', $this, 'the_content', 10 );
-
 		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'hook_callback', 10, 0 );
 	}
-
 
 	public function hook_callback() {
 		add_shortcode( self::SHORTCODE_VIDEO, array( $this, 'get_video_shortcode_content' ) );
@@ -519,7 +516,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			$this->append_meta_attribute( $document, $schema, 'contentUrl', 'https://www.youtube.com/watch?v=' . $youtube_obj->get_video_id(), 'link' );
 			$this->append_meta_attribute( $document, $schema, 'embedUrl', 'https://www.youtube.com/embed/' . $youtube_obj->get_video_id(), 'link' );
 			$this->append_meta_attribute( $document, $schema, 'duration', empty( $youtube_obj->get_duration() ) ? 'PT90s' : $youtube_obj->get_duration() );
-			$this->append_meta_attribute( $document, $schema, 'uploadDate', empty( $youtube_obj->get_published_at() ) ? date( 'Y-m-d\TH:i:s\Z', strtotime( '-10 days' ) ) : $youtube_obj->get_published_at() );	// phpcs:ignore
+			$this->append_meta_attribute( $document, $schema, 'uploadDate', empty( $youtube_obj->get_published_at() ) ? date( 'Y-m-d\TH:i:s\Z', strtotime( '-10 days' ) ) : $youtube_obj->get_published_at() );    // phpcs:ignore
 			$youtube_loader->appendChild( $schema );
 		}
 	}
@@ -761,9 +758,6 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		if ( ! $this->get_option( self::SETTING_NAME_YOUTUBE_TRACK_USAGE ) ) {
 			return;
 		}
-
-		//TODO here we can make more complicated tracking in the future (first load data and than apply just changes)
-
 		$objects = array();
 		$url_id  = $this->get_current_page_url()->get_url_id();
 		foreach ( $youtube_ids as $youtube_id ) {
@@ -774,6 +768,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		}
 		$row->insert_all( $objects, true );
 	}
+
 }
 
 function urlslab_video_attribute( $videoid, $attribute_name ) {

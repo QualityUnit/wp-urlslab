@@ -364,6 +364,7 @@ class Urlslab {
 
 		// data
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-data.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-cache-rule-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-generator-shortcode-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-generator-url-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-generator-result-row.php';

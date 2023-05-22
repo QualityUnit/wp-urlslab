@@ -58,7 +58,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 			if ( $row->load() ) {
 				$json_params = $request->get_json_params();
 				foreach ( $this->get_editable_columns() as $column ) {
-					if ( isset( $json_params[ $column ] ) && $json_params[ $column ] != $row->get_public( $column ) ) {
+					if ( isset( $json_params[ $column ] ) && $json_params[ $column ] !== $row->get_public( $column ) ) {
 						$row->set_public( $column, $json_params[ $column ] );
 					}
 				}

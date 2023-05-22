@@ -142,6 +142,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 						'src_url_id'  => $src_url_obj->get_url_id(),
 						'dest_url_id' => $dest_url_obj->get_url_id(),
 						'pos'         => $arr_row['pos'],
+						'created_date' => Urlslab_Data::get_now(),
 					)
 				);
 				$rows[] = $obj;
@@ -235,9 +236,10 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 
 			$obj = $this->get_row_object(
 				array(
-					'src_url_id'  => $src_url_obj->get_url_id(),
-					'dest_url_id' => $dest_url_obj->get_url_id(),
-					'pos'         => $request->get_param( 'pos' ),
+					'src_url_id'   => $src_url_obj->get_url_id(),
+					'dest_url_id'  => $dest_url_obj->get_url_id(),
+					'pos'          => $request->get_param( 'pos' ),
+					'created_date' => Urlslab_Data::get_now(),
 				)
 			);
 
@@ -261,6 +263,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		$sql->add_select_column( 'src_url_id' );
 		$sql->add_select_column( 'dest_url_id' );
 		$sql->add_select_column( 'pos' );
+		$sql->add_select_column( 'created_date' );
 		$sql->add_select_column( 'url_name', 'u_src', 'src_url_name' );
 		$sql->add_select_column( 'url_name', 'u_dest', 'dest_url_name' );
 		$sql->add_from( URLSLAB_RELATED_RESOURCE_TABLE . ' r LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u_src ON u_src.url_id = r.src_url_id LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u_dest ON u_dest.url_id = r.dest_url_id ' );

@@ -7,6 +7,9 @@ class Urlslab_Api_Router {
 		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-languages.php';
 		( new Urlslab_Api_Languages() )->register_routes();
 
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-cache-rules.php';
+		( new Urlslab_Api_Cache_Rules() )->register_routes();
+
 		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-modules.php';
 		( new Urlslab_Api_Modules() )->register_routes();
 

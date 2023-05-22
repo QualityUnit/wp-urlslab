@@ -27,19 +27,11 @@ class Urlslab_Redirects extends Urlslab_Widget {
 				wp_cache_delete( 'redirects_404_logged', self::CACHE_GROUP );
 			}
 		}
-		if ( Urlslab_File_Cache::get_instance()->is_active() ) {
-			Urlslab_File_Cache::get_instance()->clear( self::CACHE_GROUP );
-		}
+		Urlslab_File_Cache::get_instance()->clear( self::CACHE_GROUP );
 	}
 
 	public function init_widget() {
-		Urlslab_Loader::get_instance()->add_filter(
-			'template_redirect',
-			$this,
-			'template_redirect',
-			PHP_INT_MAX,
-			0
-		);
+		Urlslab_Loader::get_instance()->add_filter( 'template_redirect', $this, 'template_redirect', PHP_INT_MAX, 0 );
 	}
 
 	public function get_widget_slug(): string {
@@ -209,11 +201,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 				foreach ( $redirects as $redirect ) {
 					if ( $this->is_match( $redirect, $url ) ) {
 						$redirect->increase_cnt();
-						wp_redirect(
-							$redirect->get_replace_url(),
-							$redirect->get_redirect_code(),
-							'URLsLab'
-						);
+						wp_redirect( $redirect->get_replace_url(), $redirect->get_redirect_code(), 'URLsLab' );
 
 						exit;
 					}
@@ -234,34 +222,17 @@ class Urlslab_Redirects extends Urlslab_Widget {
 	 */
 	private function get_redirects(): array {
 		if ( wp_using_ext_object_cache() ) {
-			$redirects = wp_cache_get(
-				$this->get_cache_key(),
-				self::CACHE_GROUP
-			);
+			$redirects = wp_cache_get( $this->get_cache_key(), self::CACHE_GROUP );
 			if ( false === $redirects ) {
 				$redirects = $this->get_redirects_from_db();
-				wp_cache_set(
-					$this->get_cache_key(),
-					$redirects,
-					self::CACHE_GROUP,
-					3600
-				);
+				wp_cache_set( $this->get_cache_key(), $redirects, self::CACHE_GROUP, 3600 );
 			}
 		} else {
 			if ( Urlslab_File_Cache::get_instance()->is_active() ) {
-				$redirects = Urlslab_File_Cache::get_instance()->get(
-					$this->get_cache_key(),
-					self::CACHE_GROUP,
-					$found,
-					array( 'Urlslab_Redirect_Row' )
-				);
+				$redirects = Urlslab_File_Cache::get_instance()->get( $this->get_cache_key(), self::CACHE_GROUP, $found, array( 'Urlslab_Redirect_Row' ) );
 				if ( false === $redirects ) {
 					$redirects = $this->get_redirects_from_db();
-					Urlslab_File_Cache::get_instance()->set(
-						$this->get_cache_key(),
-						$redirects,
-						self::CACHE_GROUP
-					);
+					Urlslab_File_Cache::get_instance()->set( $this->get_cache_key(), $redirects, self::CACHE_GROUP );
 				}
 			} else {
 				$redirects = $this->get_redirects_from_db();
@@ -272,8 +243,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 	}
 
 	private function get_cache_key() {
-		return 'redirects' . ( is_404() ? '_404' : '' ) . ( is_user_logged_in()
-				? '_logged' : '' );
+		return 'redirects' . ( is_404() ? '_404' : '' ) . ( is_user_logged_in() ? '_logged' : '' );
 	}
 
 	/**
@@ -572,34 +542,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 		}
 	}
 
-	private function get_visitor_ip(): string {
-		if ( getenv( 'HTTP_CF_CONNECTING_IP' ) ) {
-			return getenv( 'HTTP_CF_CONNECTING_IP' );
-		}
-		if ( getenv( 'HTTP_CLIENT_IP' ) ) {
-			return getenv( 'HTTP_CLIENT_IP' );
-		}
-		if ( getenv( 'HTTP_X_FORWARDED_FOR' ) ) {
-			return getenv( 'HTTP_X_FORWARDED_FOR' );
-		}
-		if ( getenv( 'HTTP_X_FORWARDED' ) ) {
-			return getenv( 'HTTP_X_FORWARDED' );
-		}
-		if ( getenv( 'HTTP_FORWARDED_FOR' ) ) {
-			return getenv( 'HTTP_FORWARDED_FOR' );
-		}
-		if ( getenv( 'HTTP_FORWARDED' ) ) {
-			return getenv( 'HTTP_FORWARDED' );
-		}
-		if ( getenv( 'HTTP_X_REAL_IP' ) ) {
-			return getenv( 'HTTP_X_REAL_IP' );
-		}
-		if ( getenv( 'REMOTE_ADDR' ) ) {
-			return getenv( 'REMOTE_ADDR' );
-		}
 
-		return '';
-	}
 
 	private function default_image_redirect() {
 		if (

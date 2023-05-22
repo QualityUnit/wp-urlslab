@@ -33,6 +33,7 @@ class Urlslab_File_Cache {
 		$content                           = array(
 			'data'       => $data,
 			'expiration' => $expiration > 0 ? ( time() + (int) $expiration ) : 0,
+			'created'    => time(),
 		);
 		$this->mem_cache[ $group ][ $key ] = $content;
 		@file_put_contents( $file, serialize( $content ) );
@@ -46,41 +47,15 @@ class Urlslab_File_Cache {
 	 *
 	 * @return false|mixed
 	 */
-	public function get( $key, $group = '', &$found = null, $allowed_classes = false ) {
-		if ( ! $this->is_active() ) {
-			$found = false;
+	public function get( $key, $group = '', &$found = null, $allowed_classes = false, $valid_from = 0 ) {
+		if ( $this->exists( $key, $group, $allowed_classes, $valid_from ) ) {
+			$found = true;
 
-			return false;
+			return $this->mem_cache[ $group ][ $key ]['data'];
 		}
+		$found = false;
 
-		if ( isset( $this->mem_cache[ $group ][ $key ] ) ) {
-			$content = $this->mem_cache[ $group ][ $key ];
-		} else {
-			$file = $this->cache_path . md5( $key ) . '_' . $group . '.cache';
-			if ( ! file_exists( $file ) ) {
-				$found = false;
-
-				return false;
-			}
-			$file_content = file_get_contents( $file );
-			if ( false === $file_content ) {
-				$found = false;
-
-				return false;
-			}
-			$content = unserialize( $file_content, array( 'allowed_classes' => $allowed_classes ) );
-		}
-
-		if ( ! is_array( $content ) || ( 0 !== $content['expiration'] && time() > $content['expiration'] ) ) {
-			@unlink( $file );
-			$found = false;
-
-			return false;
-		}
-
-		$found = true;
-
-		return $content['data'];
+		return false;
 	}
 
 	public function delete( $key, $group = '' ) {
@@ -106,5 +81,57 @@ class Urlslab_File_Cache {
 		foreach ( $files as $file ) {
 			@unlink( $file );
 		}
+	}
+
+	public function exists( string $key, string $group = '', $allowed_classes = false, $valid_from = 0 ): bool {
+		if ( ! $this->is_active() ) {
+			return false;
+		}
+
+		if ( isset( $this->mem_cache[ $group ][ $key ] ) ) {
+			if ( $this->is_content_invalid( $this->mem_cache[ $group ][ $key ], $valid_from ) ) {
+				$this->delete( $key, $group );
+
+				return false;
+			}
+
+			return true;
+		}
+
+		$file = $this->cache_path . md5( $key ) . '_' . $group . '.cache';
+		if ( ! file_exists( $file ) ) {
+
+			return false;
+		}
+		$file_content = file_get_contents( $file );
+		if ( false === $file_content ) {
+
+			return false;
+		}
+		$content = unserialize( $file_content, array( 'allowed_classes' => $allowed_classes ) );
+
+		if ( $this->is_content_invalid( $content, $valid_from ) ) {
+			$this->delete( $key, $group );
+
+			return false;
+		}
+		$this->mem_cache[ $group ][ $key ] = $content;
+
+		return true;
+	}
+
+	private function is_content_invalid( $content, $valid_from ) {
+		return ! is_array( $content ) ||
+			   (
+				   0 !== $content['expiration'] &&
+				   time() > $content['expiration']
+			   ) ||
+			   (
+				   $valid_from > 0 &&
+				   (
+					   ! isset( $content['created'] ) ||
+					   $content['created'] < $valid_from
+				   )
+			   );
 	}
 }

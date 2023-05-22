@@ -8,6 +8,7 @@ class Urlslab_Url_Relation_Row extends Urlslab_Data {
 		$this->set_src_url_id( $url['src_url_id'] ?? 0, $loaded_from_db );
 		$this->set_dest_url_id( $url['dest_url_id'] ?? 0, $loaded_from_db );
 		$this->set_pos( $url['pos'] ?? 0, $loaded_from_db );
+		$this->set_created_date( $url['created_date'] ?? Urlslab_Data::get_now(), $loaded_from_db );
 	}
 
 	public function get_src_url_id(): int {
@@ -34,6 +35,14 @@ class Urlslab_Url_Relation_Row extends Urlslab_Data {
 		$this->set( 'pos', $pos, $loaded_from_db );
 	}
 
+	public function get_created_date(): string {
+		return $this->get( 'created_date' );
+	}
+
+	public function set_created_date( string $created_date, $loaded_from_db = false ): void {
+		$this->set( 'created_date', $created_date, $loaded_from_db );
+	}
+
 	public function get_table_name(): string {
 		return URLSLAB_RELATED_RESOURCE_TABLE;
 	}
@@ -44,9 +53,10 @@ class Urlslab_Url_Relation_Row extends Urlslab_Data {
 
 	public function get_columns(): array {
 		return array(
-			'src_url_id'  => '%d',
-			'dest_url_id' => '%d',
-			'pos'         => '%d',
+			'src_url_id'   => '%d',
+			'dest_url_id'  => '%d',
+			'pos'          => '%d',
+			'created_date' => '%s',
 		);
 	}
 }

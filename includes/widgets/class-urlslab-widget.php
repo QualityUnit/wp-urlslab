@@ -13,6 +13,7 @@ abstract class Urlslab_Widget {
 	public const OPTION_TYPE_DATETIME = 'datetime';
 	public const OPTION_TYPE_MULTI_CHECKBOX = 'multicheck';
 	public const OPTION_TYPE_NUMBER = 'number';
+	public const OPTION_TYPE_HIDDEN = 'hidden';
 
 	public const LABEL_PAID = 'paid';
 	public const LABEL_FREE = 'free';
@@ -472,5 +473,34 @@ abstract class Urlslab_Widget {
 		}
 
 		return '[' . $shortcode_name . ' ' . implode( ' ', $html_attributes ) . ']';
+	}
+
+	protected function get_visitor_ip(): string {
+		if ( getenv( 'HTTP_CF_CONNECTING_IP' ) ) {
+			return getenv( 'HTTP_CF_CONNECTING_IP' );
+		}
+		if ( getenv( 'HTTP_CLIENT_IP' ) ) {
+			return getenv( 'HTTP_CLIENT_IP' );
+		}
+		if ( getenv( 'HTTP_X_FORWARDED_FOR' ) ) {
+			return getenv( 'HTTP_X_FORWARDED_FOR' );
+		}
+		if ( getenv( 'HTTP_X_FORWARDED' ) ) {
+			return getenv( 'HTTP_X_FORWARDED' );
+		}
+		if ( getenv( 'HTTP_FORWARDED_FOR' ) ) {
+			return getenv( 'HTTP_FORWARDED_FOR' );
+		}
+		if ( getenv( 'HTTP_FORWARDED' ) ) {
+			return getenv( 'HTTP_FORWARDED' );
+		}
+		if ( getenv( 'HTTP_X_REAL_IP' ) ) {
+			return getenv( 'HTTP_X_REAL_IP' );
+		}
+		if ( getenv( 'REMOTE_ADDR' ) ) {
+			return getenv( 'REMOTE_ADDR' );
+		}
+
+		return '';
 	}
 }

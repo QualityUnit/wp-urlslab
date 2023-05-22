@@ -4,11 +4,10 @@ import {
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
-import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
 import IconButton from '../elements/IconButton';
 
-export default function RedirectsTable( { slug } ) {
-	const paginationId = 'redirect_id';
+export default function CacheRulesTable( { slug } ) {
+	const paginationId = 'rule_id';
 
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 
@@ -28,28 +27,45 @@ export default function RedirectsTable( { slug } ) {
 
 	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	const { redirectTypes, matchTypes, logginTypes, notFoundTypes, header } = useRedirectTableMenus();
+	const matchTypes = Object.freeze( {
+		A: 'All Pages',
+		E: 'Exact match',
+		S: 'Contains',
+		R: 'Regexp',
+	} );
+
+	const header = Object.freeze( {
+		match_type: __( 'Match type' ),
+		match_url: __( 'URL' ),
+		is_active: __( 'Is active' ),
+		labels: __( 'Tags' ),
+		browser: __( 'Browser' ),
+		cookie: __( 'Cookies' ),
+		headers: __( 'Request headers' ),
+		params: __( 'Request parameters' ),
+		ip: __( 'Visitor IP' ),
+		valid_from: __( 'Cache Valid From' ),
+		rule_order: __( 'Order' ),
+		cache_ttl: __( 'Cache Validity' ),
+	} );
 
 	const rowEditorCells = {
-		match_type: <SingleSelectMenu defaultAccept autoClose items={ matchTypes } name="match_type" defaultValue="E" onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_type: val } ) }>{ header.match_type }</SingleSelectMenu>,
+		match_type: <SingleSelectMenu defaultAccept autoClose items={ matchTypes } name="match_type" defaultValue="A" onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_type: val } ) }>{ header.match_type }</SingleSelectMenu>,
 		match_url: <InputField type="url" liveUpdate defaultValue="" label={ header.match_url } onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_url: val } ) } required />,
-		replace_url: <InputField type="url" liveUpdate defaultValue="" label={ header.replace_url } onChange={ ( val ) => setEditorRow( { ...rowToEdit, replace_url: val } ) } required />,
-		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" defaultValue="301" onChange={ ( val ) => setEditorRow( { ...rowToEdit, redirect_code: val } ) }>{ header.redirect_code }</SingleSelectMenu>,
-		is_logged: <SingleSelectMenu autoClose items={ logginTypes } name="is_logged" defaultValue="A" onChange={ ( val ) => setEditorRow( { ...rowToEdit, is_logged: val } ) }>{ header.is_logged }</SingleSelectMenu>,
-		headers: <InputField liveUpdate defaultValue="" label={ header.headers } onChange={ ( val ) => setEditorRow( { ...rowToEdit, headers: val } ) } />,
-		cookie: <InputField liveUpdate defaultValue="" label={ header.cookie } onChange={ ( val ) => setEditorRow( { ...rowToEdit, cookie: val } ) } />,
-		params: <InputField liveUpdate defaultValue="" label={ header.params } onChange={ ( val ) => setEditorRow( { ...rowToEdit, params: val } ) } />,
-		capabilities: <InputField liveUpdate defaultValue="" label={ header.capabilities } onChange={ ( val ) => setEditorRow( { ...rowToEdit, capabilities: val } ) } />,
-		ip: <InputField liveUpdate defaultValue="" label={ header.ip } onChange={ ( val ) => setEditorRow( { ...rowToEdit, ip: val } ) } />,
-		roles: <InputField liveUpdate defaultValue="" label={ header.roles } onChange={ ( val ) => setEditorRow( { ...rowToEdit, roles: val } ) } />,
-		browser: <InputField liveUpdate defaultValue="" label={ header.browser } onChange={ ( val ) => setEditorRow( { ...rowToEdit, browser: val } ) } />,
-		if_not_found: <SingleSelectMenu autoClose items={ notFoundTypes } name="if_not_found" defaultValue="A" onChange={ ( val ) => setEditorRow( { ...rowToEdit, if_not_found: val } ) }>{ header.if_not_found }</SingleSelectMenu>,
+		cache_ttl: <InputField liveUpdate defaultValue="3600" label={ header.cache_ttl } onChange={ ( val ) => setEditorRow( { ...rowToEdit, cache_ttl: val } ) } />,
+		headers: <InputField liveUpdate label={ header.headers } defaultValue="" onChange={ ( val ) => setEditorRow( { ...rowToEdit, headers: val } ) } />,
+		cookie: <InputField liveUpdate label={ header.cookie } defaultValue="" onChange={ ( val ) => setEditorRow( { ...rowToEdit, cookie: val } ) } />,
+		params: <InputField liveUpdate label={ header.params } defaultValue="" onChange={ ( val ) => setEditorRow( { ...rowToEdit, params: val } ) } />,
+		ip: <InputField liveUpdate label={ header.ip } defaultValue="" onChange={ ( val ) => setEditorRow( { ...rowToEdit, ip: val } ) } />,
+		browser: <InputField liveUpdate label={ header.browser } defaultValue="" onChange={ ( val ) => setEditorRow( { ...rowToEdit, browser: val } ) } />,
+		rule_order: <InputField liveUpdate defaultValue="10" label={ header.rule_order } onChange={ ( val ) => setEditorRow( { ...rowToEdit, rule_order: val } ) } />,
+		is_active: <Checkbox defaultValue={ true } onChange={ ( val ) => setEditorRow( { ...rowToEdit, is_active: val } ) }>{ header.is_active }</Checkbox>,
 	};
 
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
+			cell: ( cell ) => <Checkbox checked={ cell.row.getIsSelected() } onChange={ ( val ) => {
 				selectRow( val, cell );
 			} } />,
 			header: null,
@@ -67,39 +83,11 @@ export default function RedirectsTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.match_url }</SortBy>,
 			size: 200,
 		} ),
-		columnHelper.accessor( 'replace_url', {
+		columnHelper.accessor( 'is_active', {
 			className: 'nolimit',
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.replace_url }</SortBy>,
-			size: 200,
-		} ),
-		columnHelper.accessor( 'redirect_code', {
-			filterValMenu: redirectTypes,
-			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu items={ redirectTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.redirect_code }</SortBy>,
+			cell: ( cell ) => <Checkbox defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.is_active }</SortBy>,
 			size: 100,
-		} ),
-		columnHelper.accessor( 'if_not_found', {
-			filterValMenu: notFoundTypes,
-			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu items={ notFoundTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.if_not_found }</SortBy>,
-			size: 100,
-		} ),
-		columnHelper.accessor( 'is_logged', {
-			filterValMenu: logginTypes,
-			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu items={ logginTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.is_logged }</SortBy>,
-			size: 100,
-		} ),
-		columnHelper.accessor( 'capabilities', {
-			className: 'nolimit',
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.capabilities }</SortBy>,
-			size: 100,
-			show: false,
 		} ),
 		columnHelper.accessor( 'ip', {
 			className: 'nolimit',
@@ -107,10 +95,6 @@ export default function RedirectsTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.ip }</SortBy>,
 			size: 100,
 			show: false,
-		} ),
-		columnHelper.accessor( 'roles', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.roles }</SortBy>,
-			size: 100,
 		} ),
 		columnHelper.accessor( 'browser', {
 			className: 'nolimit',
@@ -137,9 +121,13 @@ export default function RedirectsTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.params }</SortBy>,
 			size: 100,
 		} ),
-		columnHelper.accessor( 'cnt', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.cnt }</SortBy>,
-			size: 100,
+		columnHelper.accessor( 'rule_order', {
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.rule_order }</SortBy>,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'cache_ttl', {
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.cache_ttl }</SortBy>,
+			size: 30,
 		} ),
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
@@ -203,7 +191,7 @@ export default function RedirectsTable( { slug } ) {
 					}
 				} }
 				activatePanel={ activePanel }
-				rowEditorOptions={ { rowEditorCells, title: 'Add New Redirect', data, slug, url, paginationId, rowToEdit } }
+				rowEditorOptions={ { rowEditorCells, title: 'Add New Cache Rule', data, slug, url, paginationId, rowToEdit } }
 				exportOptions={ {
 					slug,
 					url,
@@ -214,7 +202,7 @@ export default function RedirectsTable( { slug } ) {
 			<Table className="fadeInto"
 				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
-				initialState={ { columnVisibility: { roles: false, headers: false, params: false, capabilities: false, ip: false, if_not_found: false, browser: false, cookie: false } } }
+				initialState={ { columnVisibility: { headers: false, params: false, ip: false, browser: false, cookie: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
@@ -223,11 +211,11 @@ export default function RedirectsTable( { slug } ) {
 					: null
 				}
 				{ ( rowToEdit === 'rowChanged' )
-					? <Tooltip center>{ __( 'Redirect rule has been changed.' ) }</Tooltip>
+					? <Tooltip center>{ __( 'Rule has been changed.' ) }</Tooltip>
 					: null
 				}
 				{ ( rowToEdit === 'rowInserted' )
-					? <Tooltip center>{ __( 'Redirect rule has been added.' ) }</Tooltip>
+					? <Tooltip center>{ __( 'Rule has been added.' ) }</Tooltip>
 					: null
 				}
 				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
