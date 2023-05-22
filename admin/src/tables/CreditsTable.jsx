@@ -4,7 +4,7 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	ProgressBar, Tooltip, SortBy,
+	ProgressBar, Tooltip, SortBy, DateTimeFormat,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -13,9 +13,7 @@ import '../assets/styles/components/_ModuleViewHeader.scss';
 
 export default function CreditsTable( { slug } ) {
 	const paginationId = 'id';
-	const { table, setTable, filters, sorting } = useTableUpdater( { slug } );
-
-	const url = { filters, sorting };
+	const { table, setTable, filters, sorting, sortBy } = useTableUpdater( { slug } );
 
 	const {
 		__,
@@ -39,25 +37,26 @@ export default function CreditsTable( { slug } ) {
 
 	const columns = [
 		columnHelper.accessor( 'id', {
-			header: header.id,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.id }</SortBy>,
 			size: 60,
 		} ),
 		columnHelper.accessor( 'creditType', {
-			header: header.creditType,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.creditType }</SortBy>,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'creditOperation', {
-			header: header.creditOperation,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.creditOperation }</SortBy>,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'operationDate', {
-			header: header.operationDate,
-			size: 30,
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.operationDate }</SortBy>,
+			size: 60,
 		} ),
 		columnHelper.accessor( 'url', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: ( th ) => { header.url },
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url }</SortBy>,
 			size: 200,
 		} ),
 	];

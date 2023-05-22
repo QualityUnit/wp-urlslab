@@ -1,4 +1,5 @@
 import { useRef, useCallback, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SingleSelectMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu,
@@ -14,6 +15,7 @@ import { ReactComponent as PlusIcon } from '../assets/images/icons/icon-plus.svg
 export default function NotFoundTable( { slug } ) {
 	const paginationId = 'url_id';
 	const matchUrlField = useRef();
+	const queryClient = useQueryClient();
 
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 
@@ -148,7 +150,9 @@ export default function NotFoundTable( { slug } ) {
 				onUpdateRow={ ( val ) => {
 					setActivePanel();
 					setEditorRow();
+
 					if ( val === 'rowInserted' ) {
+						queryClient.invalidateQueries( [ 'redirects' ], { refetchType: 'all' } );
 						setActivePanel();
 						setEditorRow( val );
 						setTimeout( () => {
