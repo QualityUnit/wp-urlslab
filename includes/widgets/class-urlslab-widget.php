@@ -237,12 +237,7 @@ abstract class Urlslab_Widget {
 
 		switch ( $this->options[ $option_id ]['type'] ) {
 			case self::OPTION_TYPE_CHECKBOX:
-				if ( $value || ( 1 === $value ) || ( 'true' === $value ) ) {
-					$value = true;
-				} else {
-					$value = false;
-				}
-
+				$value = filter_var( $value, FILTER_VALIDATE_BOOLEAN );
 				break;
 
 			case self::OPTION_TYPE_MULTI_CHECKBOX:

@@ -7,6 +7,8 @@ class Urlslab_Cache extends Urlslab_Widget {
 	const CACHE_RULES_GROUP = 'cache-rules';
 	const SETTING_NAME_RULES_VALID_FROM = 'urlslab-cache-rules-valid-from';
 	const RULES_CACHE_KEY = 'rules';
+	const SETTING_NAME_ON_OVER_PRELOADING = 'urlslab-cache-over-preload';
+	const SETTING_NAME_ON_SCROLL_PRELOADING = 'urlslab-cache-scroll-preload';
 	private static bool $cache_started = false;
 	private static bool $cache_enabled = false;
 	private static Urlslab_Cache_Rule_Row $active_rule;
@@ -36,6 +38,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 		Urlslab_Loader::get_instance()->add_action( 'wp_headers', $this, 'page_cache_headers', PHP_INT_MAX, 1 );
 		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $this, 'page_cache_start', PHP_INT_MAX, 0 );
 		Urlslab_Loader::get_instance()->add_action( 'shutdown', $this, 'page_cache_save', 0, 0 );
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_content', $this, 'content_hook', 15 );
 	}
 
 	private function is_cache_enabled(): bool {
@@ -64,7 +67,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 
 	private function get_page_cache_key() {
 		if ( empty( self::$page_cache_key ) ) {
-			self::$page_cache_key = md5( $this->get_current_page_url()->get_url() . json_encode( $_REQUEST ) );
+			self::$page_cache_key = $this->get_current_page_url()->get_url() . json_encode( $_REQUEST ) . self::$active_rule->get_rule_id();
 		}
 
 		return self::$page_cache_key;
@@ -146,6 +149,30 @@ class Urlslab_Cache extends Urlslab_Widget {
 			false,
 			null,
 			'page'
+		);
+
+		$this->add_options_form_section( 'preload', __( 'Link Preloader' ), __( 'Improve your website\'s user experience with the Link Preloader plugin! By leveraging the power of link preloading, this plugin aims to enhance the perceived load time of your site\'s pages, making navigation faster and smoother for your site visitors.' ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_ON_OVER_PRELOADING,
+			false,
+			true,
+			__( 'Link Preloading - On Over ' ),
+			__( 'When a user hovers over a link on your website, the Link Preloader plugin will intelligently start downloading the linked page in the background. When the user clicks on the link, the preloaded page will be displayed instantly, making your site feel incredibly responsive and snappy.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'preload'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_ON_SCROLL_PRELOADING,
+			false,
+			true,
+			__( 'Link Preloading - On Page Scroll' ),
+			__( 'As a user scrolls down on your website, the Link Preloader plugin will start downloading every link visible in visitor\'s browser. When the user clicks on the link, the preloaded page will be displayed instantly, making your site feel incredibly responsive and snappy. This methond generates much more traffic as preloading based on onOver event.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'preload'
 		);
 	}
 
@@ -319,6 +346,44 @@ class Urlslab_Cache extends Urlslab_Widget {
 		}
 
 		return true;
+	}
+
+	public function content_hook( DOMDocument $document ) {
+		if ( ! $this->is_cache_enabled() ) {
+			return;
+		}
+		$on_scroll_preload = $this->get_option( self::SETTING_NAME_ON_SCROLL_PRELOADING );
+		if ( $on_scroll_preload || $this->get_option( self::SETTING_NAME_ON_OVER_PRELOADING ) ) {
+
+			try {
+				$xpath    = new DOMXPath( $document );
+				$elements = $xpath->query( "//a[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-preloading')])]" );
+
+				if ( $elements instanceof DOMNodeList ) {
+					foreach ( $elements as $dom_element ) {
+						// skip processing if A tag contains attribute "urlslab-skip-all" or urlslab-skip-preloading
+						if ( $this->is_skip_elemenet( $dom_element, 'preloading' ) ) {
+							continue;
+						}
+
+						if ( ! empty( trim( $dom_element->getAttribute( 'href' ) ) ) ) {
+							try {
+								$url = new Urlslab_Url( $dom_element->getAttribute( 'href' ) );
+								if ( $url->get_domain_name() == $this->get_current_page_url()->get_domain_name() && $url->get_url_id() !== $this->get_current_page_url()->get_url_id() ) {
+									if ( $on_scroll_preload ) {
+										$dom_element->setAttribute( 'scroll-preload', '1' );
+									} else {
+										$dom_element->setAttribute( 'onover-preload', '1' );
+									}
+								}
+							} catch ( Exception $e ) {
+							}
+						}
+					}
+				}
+			} catch ( Exception $e ) {
+			}
+		}
 	}
 
 }

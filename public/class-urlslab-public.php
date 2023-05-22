@@ -67,13 +67,15 @@ class Urlslab_Public {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( 'urlslab-media-offloader' ) ) {
+		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Media_Offloader_Widget::SLUG ) || Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Cache::SLUG ) ) {
 			add_action(
 				'wp_footer',
 				function() {
 					wp_enqueue_script( 'urlslab', plugin_dir_url( __FILE__ ) . 'build/js/urlslab-lazyload.js', array( 'jquery' ), URLSLAB_VERSION, true );
 				}
 			);
+		}
+		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( 'urlslab-media-offloader' ) ) {
 			add_filter(
 				'script_loader_tag',
 				function( $tag, $handle ) {
