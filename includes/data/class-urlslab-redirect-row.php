@@ -216,7 +216,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 	}
 
 	protected function before_insert() {
-		$this->set_row_hash( $this->get_row_hash() );    //refresh hash
+		$this->set_row_hash( 0 );    //refresh hash
 		parent::before_insert();
 	}
 }
