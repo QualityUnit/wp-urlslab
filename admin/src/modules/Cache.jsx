@@ -1,5 +1,4 @@
 import { useState, Suspense, lazy } from 'react';
-import Overview from '../components/OverviewTemplate';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 import CacheOverview from '../overview/Cache';
 import { useI18n } from '@wordpress/react-i18n';
@@ -19,9 +18,7 @@ export default function Cache( { moduleId } ) {
 			<ModuleViewHeader moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{
 				activeSection === 'overview' &&
-				<Overview moduleId={ moduleId }>
-					<CacheOverview />
-				</Overview>
+				<CacheOverview moduleId={ moduleId } />
 			}
 			{
 				activeSection === 'cache-rules' &&

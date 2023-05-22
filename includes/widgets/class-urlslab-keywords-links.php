@@ -73,7 +73,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'main', __( 'Keywords and Monitoring' ), __( 'This plugin automatically tracks the usage of keywords on your website as the page is displayed and provides the right keyword datasets to help you optimize your internal link structure for maximum results.' ) );
+		$this->add_options_form_section( 'main', __( 'Keywords and Monitoring' ), __( 'This plugin automatically tracks the usage of keywords on your website as the page is displayed and provides the right keyword datasets to help you optimise your internal link structure for maximum results.' ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_KW_MAP,
@@ -153,7 +153,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			100,
 			true,
 			__( 'Maximum Links in a Page' ),
-			__( 'The maximum number of links that exist on a page for automatic and manual links together.' ),
+			__( 'Maximum number of links that exist on a page for automatic and manual links together.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -167,7 +167,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			50,
 			true,
 			__( 'Maximum Automatic Links in a Page' ),
-			__( 'The maximum number of links to be generated in a whole page.' ),
+			__( 'Maximum number of links to be generated in a whole page.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -181,7 +181,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			10,
 			true,
 			__( 'Maximum Automatic Links per Paragraph' ),
-			__( 'The maximum number of links to be created in a paragraph.' ),
+			__( 'Maximum number of links to be created in a paragraph.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {

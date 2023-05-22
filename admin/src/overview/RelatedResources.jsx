@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import Overview from '../components/OverviewTemplate';
 
-import image1 from '../assets/images/overview/related_resources.jpeg';
-import image2 from '../assets/images/overview/related_resources_complex.png';
-
 export default function RelatedResourcesOverview( { moduleId } ) {
 	const [ section, setSection ] = useState( 'about' );
 
@@ -12,6 +9,7 @@ export default function RelatedResourcesOverview( { moduleId } ) {
 			{
 				section === 'about' &&
 				<section>
+					<h4>About the module</h4>
 					<p>Internal link structure is a crucial SEO element of a successful website. It can increase website visibility, cater to visitors' needs, and boost your internal link-building. One of the best ways to create an effective internal link structure is by creating pairs of related pages, known as content clusters. This will provide additional interesting content to visitors and improve your rankings in the search engine results pages.</p>
 					<p>When creating related pages, it is essential to ensure they are interconnected in terms of topics and keywords. Fortunately, the AI-powered URLsLab service can help to compute the best pairs of pages with zero effort.</p>
 					<p>Ultimately, a properly planned internal link structure will enable search engines to crawl your website and increase its visibility easily. This will lead to more organic traffic and help your website achieve success. With the help of the URLsLab service, creating an effective internal link structure is extremely simple.</p>
@@ -89,12 +87,17 @@ export default function RelatedResourcesOverview( { moduleId } ) {
 
 					<p><strong>Simple Form</strong></p>
 					<code>[urlslab-related-resources]</code>
-					<img src={ image1 } alt="Related Resources Simple Version" />
 
 					<p><strong>Complex Form</strong></p>
 					<code>[urlslab-related-resources url="https://www.liveagent.com" related-count="4" show-image="true" show-summary="true"]</code>
-					<img src={ image2 } alt="Related Resources Complex Version" />
 				</section>
+			}
+			{
+				section === 'faq' &&
+					<section>
+						<h4>FAQ</h4>
+						<p>Available soon.</p>
+					</section>
 			}
 		</Overview>
 	);

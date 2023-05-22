@@ -86,7 +86,7 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 			array( self::SOURCE_FIGCAPTION, self::SOURCE_LINK, self::SOURCE_H ),
 			true,
 			__( 'Alt Text Source' ),
-			__( 'Select the right algorithm to compute optimal Alt text for images across the website.' ),
+			__( 'Choose the text source for the Alt attribute, which includes a fallback mechanism. In case the selected source is inaccessible, the system will seamlessly switch to an alternative option.' ),
 			self::OPTION_TYPE_MULTI_CHECKBOX,
 			array(
 				self::SOURCE_FIGCAPTION => __( 'Image Caption' ),

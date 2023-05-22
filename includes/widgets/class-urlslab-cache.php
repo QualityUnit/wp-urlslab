@@ -17,11 +17,11 @@ class Urlslab_Cache extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Caching' );
+		return __( 'Cache' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Increase speed of page loading with simple caching of content to disk.' );
+		return __( 'Enhance page loading speed by enabling efficient caching of content, ensuring seamless user experience without compromising on performance.' );
 	}
 
 	public function get_widget_labels(): array {
@@ -112,14 +112,14 @@ class Urlslab_Cache extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'page', __( 'Page Caching' ), __( 'Speedup loading of your wordpress page with caching whole content to disk and servering content certain time from disk cache. Cached are just pages generated for not logged in users!' ) );
+		$this->add_options_form_section( 'page', __( 'Page Caching' ), __( 'Page caching is an efficient way to drastically improve page speed by storing a webpage copy, allowing subsequent requests to be served from cache. This eliminates resource-heavy server processing, reducing latency and expediting page load times for a seamless user experience.' ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_PAGE_CACHING,
 			false,
 			true,
-			__( 'Page content caching' ),
-			__( 'Activate page caching to disk based on the defined caching rules. Create at least one cache rule to activate cache.' ),
+			__( 'Page Content Caching' ),
+			__( 'Enable disk-based page caching according to specified caching rules. To activate cache, ensure a minimum of one cache rule is created. ' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -140,8 +140,8 @@ class Urlslab_Cache extends Urlslab_Widget {
 			'btn_invalidate_cache',
 			'cache-rules/invalidate',
 			false,
-			__( 'Invalidate Cache' ),
-			__( 'Invalidate all cache files on disk. Files will not be deleted, but set as invalid. Once the page is visited again, cache file will be regenerated.' ),
+			__( 'Clear Cache' ),
+			__( 'Clear all existing cache files from disk. Upon revisiting the page, cache files will be automatically regenerated.' ),
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
 			null,
