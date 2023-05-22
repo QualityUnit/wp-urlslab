@@ -82,8 +82,8 @@ export default function ModuleViewHeaderBottom( { slug, noColumnsMenu, noFilteri
 	const { data: rowCount, isFetching } = useQuery( {
 		queryKey: [ slug, `count`, filtersArray( filters ) ],
 		queryFn: async () => {
-			const count = await postFetch( `${ slug }/count`, { filters: filtersArray( filters ) } );
 			if ( ! noCount ) {
+				const count = await postFetch( `${ slug }/count`, { filters: filtersArray( filters ) } );
 				return count.json();
 			}
 		},

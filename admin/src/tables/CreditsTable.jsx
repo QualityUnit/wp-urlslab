@@ -15,8 +15,6 @@ export default function CreditsTable( { slug } ) {
 	const paginationId = 'id';
 	const { table, setTable, filters, sorting } = useTableUpdater( { slug } );
 
-	const url = { filters, sorting };
-
 	const {
 		__,
 		columnHelper,
@@ -57,7 +55,9 @@ export default function CreditsTable( { slug } ) {
 		columnHelper.accessor( 'url', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: ( th ) => { header.url },
+			header: ( th ) => {
+				header.url;
+			},
 			size: 200,
 		} ),
 	];
