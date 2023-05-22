@@ -124,9 +124,10 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 			foreach ( $url_objects as $dest_url_obj ) {
 				$related_resources[] = new Urlslab_Url_Relation_Row(
 					array(
-						'src_url_id'  => $url->get_url_id(),
-						'dest_url_id' => $dest_url_obj->get_url_id(),
-						'pos'         => $pos,
+						'src_url_id'   => $url->get_url_id(),
+						'dest_url_id'  => $dest_url_obj->get_url_id(),
+						'pos'          => $pos,
+						'created_date' => Urlslab_Data::get_now(),
 					)
 				);
 				$pos ++;

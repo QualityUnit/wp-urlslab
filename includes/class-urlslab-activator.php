@@ -225,6 +225,14 @@ class Urlslab_Activator {
 				self::init_cache_rules_table();
 			}
 		);
+		self::update_step(
+			'2.24.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_RELATED_RESOURCE_TABLE . " ADD COLUMN created_date DATETIME" ); // phpcs:ignore
+				$wpdb->query( 'UPDATE ' . URLSLAB_RELATED_RESOURCE_TABLE . " SET created_date = now()" ); // phpcs:ignore
+			}
+		);
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -340,6 +348,7 @@ class Urlslab_Activator {
 							src_url_id bigint NOT NULL,
 							dest_url_id bigint NOT NULL,
 							pos tinyint unsigned default 10,
+							created_date DATETIME,
 							PRIMARY KEY  (src_url_id,dest_url_id)) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

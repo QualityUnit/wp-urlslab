@@ -28,6 +28,7 @@ export default function URLRelationTable( { slug } ) {
 		src_url_name: __( 'Source URL' ),
 		dest_url_name: __( 'Destination URL' ),
 		pos: __( 'Position' ),
+		created_date: __( 'Updated' ),
 	};
 
 	const rowEditorCells = {
@@ -61,7 +62,12 @@ export default function URLRelationTable( { slug } ) {
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell, optionalSelector: 'dest_url_id' } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.pos }</SortBy>,
-			size: 60,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'created_date', {
+			className: 'nolimit',
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.created_date }</SortBy>,
+			size: 30,
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
