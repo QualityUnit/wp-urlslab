@@ -1,7 +1,6 @@
 import { Suspense, lazy, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import Overview from '../components/OverviewTemplate';
 import SchedulesOverview from '../overview/Schedules';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
@@ -24,9 +23,7 @@ export default function Schedule( { moduleId } ) {
 				noSettings
 				activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{ activeSection === 'overview' &&
-				<Overview moduleId={ moduleId }>
-					<SchedulesOverview />
-				</Overview>
+			<SchedulesOverview moduleId={ moduleId } />
 			}
 			{ activeSection === slug &&
 				<div className="urlslab-tableView">

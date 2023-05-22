@@ -89,7 +89,7 @@ export default function Overview( { moduleId, noFAQ, noIntegrate, noCheckbox, ti
 				<div className="urlslab-overview-content">
 					{ title
 						? <h3> { title } </h3>
-						: moduleData?.title !== false && <h3> { moduleData.title } </h3>
+						: moduleData?.title && <h3> { moduleData.title } </h3>
 					}
 					{ children }
 				</div>
