@@ -90,7 +90,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 		}
 
 		if ( 'dns-prefetch' === $relation_type && strlen( trim( $this->get_option( self::SETTING_NAME_DNS_PREFETCH ) ) ) ) {
-			$dns_hints = explode( ',', $this->get_option( self::SETTING_NAME_DNS_PREFETCH ) );
+			$dns_hints = preg_split( '/(,|\n|\t)\s*/', $this->get_option( self::SETTING_NAME_DNS_PREFETCH ) );
 			foreach ( $dns_hints as $dns_hint ) {
 				if ( strlen( trim( $dns_hint ) ) ) {
 					$hints[] = trim( $dns_hint );
@@ -98,7 +98,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			}
 		}
 		if ( 'prefetch' === $relation_type && strlen( trim( $this->get_option( self::SETTING_NAME_PREFETCH ) ) ) ) {
-			$url_hints = explode( ',', $this->get_option( self::SETTING_NAME_PREFETCH ) );
+			$url_hints = preg_split( '/(,|\n|\t)\s*/', $this->get_option( self::SETTING_NAME_PREFETCH ) );
 			foreach ( $url_hints as $url_hint ) {
 				if ( strlen( trim( $url_hint ) ) ) {
 					$hints[] = trim( $url_hint );
@@ -229,8 +229,8 @@ class Urlslab_Cache extends Urlslab_Widget {
 			'',
 			true,
 			__( 'DNS Prefetch' ),
-			__( 'Define comma separated list of domains to prefetch DNS in each page e.g. fonts.google.com (applied just for not logged in users)' ),
-			self::OPTION_TYPE_TEXT,
+			__( 'Define list of domains to prefetch DNS in each page e.g. fonts.google.com (applied just for not logged in users).' ),
+			self::OPTION_TYPE_TEXTAREA,
 			false,
 			null,
 			'prefetch'
@@ -240,8 +240,8 @@ class Urlslab_Cache extends Urlslab_Widget {
 			'',
 			true,
 			__( 'Prefetch Content' ),
-			__( 'Define comma separated list of URLs to prefetch in each page (applied just for not logged in users).' ),
-			self::OPTION_TYPE_TEXT,
+			__( 'List of URLs to prefetch in each page (applied just for not logged in users).' ),
+			self::OPTION_TYPE_TEXTAREA,
 			false,
 			null,
 			'prefetch'
@@ -325,8 +325,8 @@ class Urlslab_Cache extends Urlslab_Widget {
 			'/*',
 			false,
 			__( 'Patterns to drop' ),
-			__( 'Comma separated list of patterns to drop. Use value /* if all objects in cache should be dropped. Example: /blog/*,/pricing/ if you want to drop cache for all your blog posts and pricing page in one invalidation request.' ),
-			self::OPTION_TYPE_TEXT,
+			__( 'List of patterns to drop. Use value /* if all objects in cache should be dropped. Example: /blog/*,/pricing/ if you want to drop cache for all your blog posts and pricing page in one invalidation request.' ),
+			self::OPTION_TYPE_TEXTAREA,
 			false,
 			null,
 			'drop-cloudfront'
@@ -406,11 +406,11 @@ class Urlslab_Cache extends Urlslab_Widget {
 		}
 
 		if ( ! empty( $rule->get_ip() ) ) {
-			$ips         = explode( ',', $rule->get_ip() );
+			$ips         = preg_split( '/(,|\n|\t)\s*/', $rule->get_ip() );
 			$visitor_ips = $this->get_visitor_ip();
 			if ( ! empty( $visitor_ips ) ) {
 				$has_ip      = false;
-				$visitor_ips = explode( ',', $visitor_ips );
+				$visitor_ips = preg_split( '/(,|\n|\t)\s*/', $visitor_ips );
 				$visitor_ip  = trim( $visitor_ips[0] );
 				foreach ( $ips as $ip_pattern ) {
 					if ( ! str_contains( $ip_pattern, '/' ) ) {
@@ -433,7 +433,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 		}
 
 		if ( ! empty( $rule->get_browser() ) && isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
-			$browsers = explode( ',', strtolower( $rule->get_browser() ) );
+			$browsers = preg_split( '/(,|\n|\t)\s*/', strtolower( $rule->get_browser() ) );
 			if ( ! empty( $browsers ) ) {
 				$has_browser = false;
 				$agent       = strtolower( $_SERVER['HTTP_USER_AGENT'] ); // phpcs:ignore
@@ -451,7 +451,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 		}
 
 		if ( ! empty( $rule->get_cookie() ) ) {
-			$cookies = explode( ',', $rule->get_cookie() );
+			$cookies = preg_split( '/(,|\n|\t)\s*/', $rule->get_cookie() );
 			if ( ! empty( $cookies ) ) {
 				$has_cookie = false;
 				if ( ! empty( $_COOKIE ) ) {
@@ -472,7 +472,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 		}
 
 		if ( ! empty( $rule->get_headers() ) ) {
-			$headers = explode( ',', $rule->get_headers() );
+			$headers = preg_split( '/(,|\n|\t)\s*/', $rule->get_headers() );
 			if ( ! empty( $headers ) ) {
 				$has_header = false;
 				if ( ! empty( $_SERVER ) ) {
@@ -493,7 +493,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 		}
 
 		if ( ! empty( $rule->get_params() ) ) {
-			$params = explode( ',', $rule->get_params() );
+			$params = preg_split( '/(,|\n|\t)\s*/', $rule->get_params() );
 			if ( ! empty( $params ) ) {
 				$has_param = false;
 				if ( ! empty( $_REQUEST ) ) {

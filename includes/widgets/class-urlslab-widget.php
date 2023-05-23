@@ -6,6 +6,7 @@ abstract class Urlslab_Widget {
 	public const OPTION_TYPE_CHECKBOX = 'checkbox';
 	public const OPTION_TYPE_BUTTON_API_CALL = 'api_button';
 	public const OPTION_TYPE_TEXT = 'text';
+	public const OPTION_TYPE_TEXTAREA = 'textarea';
 	public const OPTION_TYPE_PASSWORD = 'password';
 	public const PASSWORD_PLACEHOLDER = '********';
 

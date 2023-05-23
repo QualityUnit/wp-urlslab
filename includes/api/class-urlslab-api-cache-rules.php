@@ -446,7 +446,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		}
 
 		$pattern_paths = array();
-		$paths         = explode( ',', $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_PATTERN_DROP ) );
+		$paths         = preg_split( '/(,|\n|\t)\s*/', $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_PATTERN_DROP ) );
 		foreach ( $paths as $path ) {
 			$path = trim( $path );
 			if ( strlen( $path ) > 0 ) {

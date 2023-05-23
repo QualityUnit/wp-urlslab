@@ -315,8 +315,8 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			false,
 			true,
 			__( 'List of CSS Class Names to Lazy Load' ),
-			__( 'Comma-separated class names of sections or elements, which can be lazy loaded.' ),
-			self::OPTION_TYPE_TEXT,
+			__( 'Class names of sections or elements, which can be lazy loaded.' ),
+			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {
 				return is_string( $value );
@@ -688,7 +688,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		}
 		$this->content_docs = array();
 
-		$classnames     = explode( ',', $this->get_option( self::SETTING_NAME_CONTENT_LAZY_CLASSES ) );
+		$classnames     = preg_split( '/(,|\n|\t)\s*/', $this->get_option( self::SETTING_NAME_CONTENT_LAZY_CLASSES ) );
 		$str_classnames = array();
 		foreach ( $classnames as $class ) {
 			$class = trim( $class );
