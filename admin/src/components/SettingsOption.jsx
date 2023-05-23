@@ -59,7 +59,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 
 				return false;
 			}
-			queryClient.invalidateQueries( [ 'settings', settingId ], { refetchType: 'all' } );
+			queryClient.invalidateQueries( [ 'settings', settingId ] );
 			setStatus( 'error' );
 			renderTooltip( 'error' );
 			setTimeout( () => {
@@ -113,7 +113,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 			case 'number':
 				return (
 					<InputField
-						key={ id }
+						key={ value }
 						type={ type }
 						label={ title }
 						placeholder={ placeholder && ! value }
@@ -124,7 +124,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 			case 'textarea':
 				return (
 					<TextArea
-						key={ id }
+						key={ value }
 						type={ type }
 						label={ title }
 						placeholder={ placeholder && ! value }
@@ -136,7 +136,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 				return (
 					<Button
 						active
-						key={ id }
+						key={ value }
 						onClick={ handleApiCall }
 					>
 						{ title }
@@ -146,7 +146,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 				return (
 					<Switch
 						className="option flex"
-						key={ id }
+						key={ value }
 						label={ title }
 						defaultValue={ value }
 						onChange={ ( inputValue ) => handleChange.mutate( inputValue ) }
@@ -159,7 +159,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 						<DatePicker
 							className="urlslab-input xl"
 							selected={ date }
-							key={ id }
+							key={ value }
 							dateFormat="dd. MMMM yyyy, HH:mm"
 							timeFormat="HH:mm"
 							showTimeSelect
@@ -171,7 +171,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 				);
 			case 'listbox':
 				return (
-					<SingleSelectMenu key={ id } className="wide" name={ id } items={ possible_values } defaultValue={ value } autoClose onChange={ ( selectedId ) => handleChange.mutate( selectedId ) }>
+					<SingleSelectMenu key={ value } className="wide" name={ id } items={ possible_values } defaultValue={ value } autoClose onChange={ ( selectedId ) => handleChange.mutate( selectedId ) }>
 						{ title }
 					</SingleSelectMenu>
 				);
@@ -180,7 +180,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 					<MultiSelectMenu className="wide"
 						items={ possible_values }
 						defaultValue={ value }
-						key={ id }
+						key={ value }
 						id={ id }
 						asTags
 						onChange={ ( selectedItems ) => handleChange.mutate( selectedItems ) }>
