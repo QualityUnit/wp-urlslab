@@ -11,6 +11,13 @@ class Urlslab_Cache extends Urlslab_Widget {
 	const SETTING_NAME_ON_SCROLL_PRELOADING = 'urlslab-cache-scroll-preload';
 	const SETTING_NAME_DNS_PREFETCH = 'urlslab-cache-dns-prefetch';
 	const SETTING_NAME_PREFETCH = 'urlslab-cache-prefetch';
+	const SETTING_NAME_CLOUDFRONT_ACCESS_KEY = 'urlslab-cloudfront-access-key';
+	const SETTING_NAME_CLOUDFRONT_SECRET = 'urlslab-cloudfront-secret';
+	const SETTING_NAME_CLOUDFRONT_REGION = 'urlslab-cloudfront-region';
+	const SETTING_NAME_CLOUDFRONT_PATTERN_DROP = 'urlslab-cloudfront-pattern-drop';
+	const SETTING_NAME_CLOUDFRONT_DISTRIBUTION_ID = 'urlslab-cloudfront-distribution-id';
+	const SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS = 'urlslab-cloudfront-distributions';
+	const SETTING_NAME_PAGE_INVALIDATE_ON_SAVE = 'urlslab-cache-pg-save-inv';
 	private static bool $cache_started = false;
 	private static bool $cache_enabled = false;
 	private static Urlslab_Cache_Rule_Row $active_rule;
@@ -103,6 +110,15 @@ class Urlslab_Cache extends Urlslab_Widget {
 	}
 
 
+	private function get_cache_valid_from() {
+		$post_time = get_the_modified_time( 'U' );
+		if ( $post_time ) {
+			return max( self::$active_rule->get_valid_from(), $post_time );
+		}
+
+		return self::$active_rule->get_valid_from();
+	}
+
 	public function page_cache_headers( $headers ) {
 		if ( ! $this->is_cache_enabled() || ! $this->start_rule() ) {
 			self::$cache_enabled = false;
@@ -110,8 +126,10 @@ class Urlslab_Cache extends Urlslab_Widget {
 			return $headers;
 		}
 		self::$cache_enabled = true;
-		if ( Urlslab_File_Cache::get_instance()->exists( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, array( 'Urlslab_Cache_Rule_Row' ), self::$active_rule->get_valid_from() ) ) {
-			$headers['X-URLSLAB-CACHE-HIT'] = 'Y';
+		if ( Urlslab_File_Cache::get_instance()->exists( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, array( 'Urlslab_Cache_Rule_Row' ), $this->get_cache_valid_from() ) ) {
+			$headers['X-URLSLAB-CACHE'] = 'hit';
+		} else {
+			$headers['X-URLSLAB-CACHE'] = 'miss';
 		}
 		$headers['Cache-Control'] = 'public, max-age=' . self::$active_rule->get_cache_ttl();
 		$headers['Expires']       = gmdate( 'D, d M Y H:i:s', time() + self::$active_rule->get_cache_ttl() ) . ' GMT';
@@ -125,8 +143,8 @@ class Urlslab_Cache extends Urlslab_Widget {
 		if ( ! self::$cache_enabled ) {
 			return;
 		}
-		if ( Urlslab_File_Cache::get_instance()->exists( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, array( 'Urlslab_Cache_Rule_Row' ), self::$active_rule->get_valid_from() ) ) {
-			$content = Urlslab_File_Cache::get_instance()->get( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, $found, array( 'Urlslab_Cache_Rule_Row' ), self::$active_rule->get_valid_from() );
+		if ( Urlslab_File_Cache::get_instance()->exists( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, array( 'Urlslab_Cache_Rule_Row' ), $this->get_cache_valid_from() ) ) {
+			$content = Urlslab_File_Cache::get_instance()->get( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, $found, array( 'Urlslab_Cache_Rule_Row' ), $this->get_cache_valid_from() );
 			if ( strlen( $content ) > 0 ) {
 				echo $content; // phpcs:ignore
 				exit;
@@ -173,8 +191,8 @@ class Urlslab_Cache extends Urlslab_Widget {
 			'btn_invalidate_cache',
 			'cache-rules/invalidate',
 			false,
-			__( 'Clear Cache' ),
-			__( 'Clear all existing cache files from disk. Upon revisiting the page, cache files will be automatically regenerated.' ),
+			__( 'Invalidate Cache' ),
+			__( 'Invalidate all existing cache files on disk. Upon revisiting the page, cache files will be automatically regenerated.' ),
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
 			null,
@@ -227,6 +245,102 @@ class Urlslab_Cache extends Urlslab_Widget {
 			false,
 			null,
 			'prefetch'
+		);
+		$this->add_options_form_section( 'cloudfront', __( 'CloudFront integration' ), __( 'Amazon CloudFront is a web service that speeds up distribution of your static and dynamic web content, such as .html, .css, .js, and image files, to your users. Moreover, Amazon may limit the requests depending on the CloudFront pricing tier you are using. Be mindful of the number of invalidations you perform, as a high number of them may incur additional costs.' ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_CLOUDFRONT_ACCESS_KEY,
+			'',
+			false,
+			__( 'Cloudfront Access Key' ),
+			__( 'Leave empty if the AWS Access Key should be loaded from the environment variable.' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			null,
+			'cloudfront'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_CLOUDFRONT_SECRET,
+			'',
+			false,
+			__( 'Cloudfront Key Secret' ),
+			__( 'Leave empty if AWS Secret Key should be loaded from environment variable.' ),
+			self::OPTION_TYPE_PASSWORD,
+			false,
+			null,
+			'cloudfront'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_CLOUDFRONT_REGION,
+			'',
+			false,
+			__( 'Cloudfront Region' ),
+			'Select the correct region where your Cloudfront is hosted.',
+			self::OPTION_TYPE_TEXT,
+			false,
+			null,
+			'cloudfront'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS,
+			array(),
+			false,
+			__( 'Cloudfront Distributions' ),
+			'Array of cloudfront distribitiopns updated on validation',
+			self::OPTION_TYPE_HIDDEN,
+			false,
+			null,
+			'cloudfront'
+		);
+		$this->add_option_definition(
+			'btn_cloudfront_validate',
+			'cache-rules/validate-cloudfront',
+			false,
+			__( 'Validate connection' ),
+			__( 'Validate connection to Cloudfront with your current settings.' ),
+			self::OPTION_TYPE_BUTTON_API_CALL,
+			false,
+			null,
+			'cloudfront'
+		);
+
+
+		$this->add_options_form_section( 'drop-cloudfront', __( 'Drop CloudFront cache' ), __( 'The Invalidation allows us to remove object(s) from the Cloudfront cache before it expires. It allows you to remove a specific object from cache as well use supported wildcard character to remove multiple objects. You can also remove all the objects from cache by using “/*” parameters to invalidation requests. It can take significant amount of time to drop cache objects based on size of your website cache.' ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_CLOUDFRONT_DISTRIBUTION_ID,
+			'',
+			false,
+			__( 'Distribution ID' ),
+			'Select Cloudfront distribution id. To update available values validate connection.',
+			self::OPTION_TYPE_LISTBOX,
+			function() {
+				return array();
+			},
+			null,
+			'drop-cloudfront'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CLOUDFRONT_PATTERN_DROP,
+			'/*',
+			false,
+			__( 'Patterns to drop' ),
+			__( 'Comma separated list of patterns to drop. Use value /* if all objects in cache should be dropped. Example: /blog/*,/pricing/ if you want to drop cache for all your blog posts and pricing page in one invalidation request.' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			null,
+			'drop-cloudfront'
+		);
+		$this->add_option_definition(
+			'btn_cloudfront_cache',
+			'cache-rules/drop-cloudfront',
+			false,
+			__( 'Clear Cloudfront Cache' ),
+			__( 'Drop all objects in CloudFront cache matching defined patterns defined in pattern field.' ),
+			self::OPTION_TYPE_BUTTON_API_CALL,
+			false,
+			null,
+			'drop-cloudfront'
 		);
 	}
 

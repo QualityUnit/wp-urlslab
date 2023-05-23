@@ -2,6 +2,7 @@
 
 class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 	const SLUG = 'cache-rules';
+	private \Aws\CloudFront\CloudFrontClient $cloudfront;
 
 	public function register_routes() {
 		$base = '/' . self::SLUG;
@@ -132,6 +133,37 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
+			$base . '/validate-cloudfront',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'validate_cloudfront' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
+					'args'                => array(),
+				),
+			)
+		);
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/drop-cloudfront',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'drop_cloudfront' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
+					'args'                => array(),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
 			$base . '/(?P<rule_id>[0-9]+)',
 			array(
 				array(
@@ -172,7 +204,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 	}
 
 	public function update_item_permissions_check( $request ) {
-		return current_user_can( 'activate_plugins' ) || current_user_can( self::CAPABILITY_ADMINISTRATION );
+		return current_user_can( 'activate_plugins' ) || current_user_can( self::CAPABILITY_ADMINISTRATION ) || current_user_can( 'administrator' );
 	}
 
 	public function delete_item_permissions_check( $request ) {
@@ -376,5 +408,110 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Cache::SLUG )->update_option( Urlslab_Cache::SETTING_NAME_RULES_VALID_FROM, time() );
 
 		return new WP_REST_Response( __( 'Cache invalidated' ), 200 );
+	}
+
+	public function validate_cloudfront( WP_REST_Request $request ) {
+		if ( ! $this->init_cloudfront_client() ) {
+			return new WP_Error( 'error', __( 'Cloudfront is not configured', 'urlslab' ), array( 'status' => 400 ) );
+		}
+		try {
+			$widget            = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Cache::SLUG );
+			$arr_distributions = array();
+			$distributions     = $this->cloudfront->listDistributions();
+			if ( count( $distributions ) > 0 ) {
+				foreach ( $distributions['DistributionList']['Items'] as $distribution ) {
+					$uri = '';
+					if ( isset( $result['@metadata']['effectiveUri'] ) ) {
+						$uri = ' ' . $result['@metadata']['effectiveUri'];
+					}
+					$arr_distributions[ $distribution['Id'] ] = $distribution['Id'] . $uri . ' (' . $distribution['Status'] . ')';
+				}
+			}
+			$widget->update_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS, $arr_distributions );
+		} catch ( Aws\Exception\AwsException $e ) {
+			return new WP_Error( 'error', __( 'Failed to connect to Cloudfront: ' ) . $e->getMessage(), array( 'status' => 400 ) );
+		}
+
+		return new WP_REST_Response( __( 'Connected to Cloudfront' ), 200 );
+	}
+
+	public function drop_cloudfront( WP_REST_Request $request ) {
+		if ( ! $this->init_cloudfront_client() ) {
+			return new WP_Error( 'error', __( 'Cloudfront is not configured yet', 'urlslab' ), array( 'status' => 400 ) );
+		}
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Cache::SLUG );
+
+		if ( empty( $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_DISTRIBUTION_ID ) ) ) {
+			return new WP_Error( 'error', __( 'Distribution ID is not set', 'urlslab' ), array( 'status' => 400 ) );
+		}
+
+		$pattern_paths = array();
+		$paths         = explode( ',', $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_PATTERN_DROP ) );
+		foreach ( $paths as $path ) {
+			$path = trim( $path );
+			if ( strlen( $path ) > 0 ) {
+				$pattern_paths[] = $path;
+			}
+		}
+		if ( empty( $pattern_paths ) ) {
+			return new WP_Error( 'error', __( 'Pattern is not set. If you want to drop all cache objects, use as pattern value: /*', 'urlslab' ), array( 'status' => 400 ) );
+		}
+
+		try {
+			$result = $this->cloudfront->createInvalidation(
+				array(
+					'DistributionId'    => $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_DISTRIBUTION_ID ),
+					'InvalidationBatch' => array(
+						'CallerReference' => time() . '-' . $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_DISTRIBUTION_ID ) . '-urlslab-invalidation',
+						'Paths'           => array(
+							'Quantity' => count( $pattern_paths ),
+							'Items'    => $pattern_paths,
+						),
+					),
+				)
+			);
+
+		} catch ( Aws\Exception\AwsException $e ) {
+			return new WP_Error( 'error', __( 'Failed to drop cache: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
+		}
+
+		return new WP_REST_Response( __( 'Cache dropped' ), 200 );
+	}
+
+	private function init_cloudfront_client(): bool {
+		if ( ! empty( $this->cloudfront ) ) {
+			return true;
+		}
+
+		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Cache::SLUG ) ) {
+			return false;
+		}
+
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Cache::SLUG );
+		if ( ! strlen( $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_REGION ) ) ) {
+			return false;
+		}
+
+		try {
+			// Create an instance of the AWS SDK for PHP client.
+			$configuration = array(
+				'version' => 'latest',
+				'region'  => $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_REGION ),
+			);
+
+			if ( strlen( $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_ACCESS_KEY ) ) && strlen( $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_SECRET ) ) ) {
+				$configuration['credentials'] = array(
+					'key'    => $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_ACCESS_KEY ),
+					'secret' => $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_SECRET ),
+				);
+			}
+
+			$this->cloudfront = new Aws\CloudFront\CloudFrontClient( $configuration );
+
+		} catch ( Aws\Exception\AwsException $e ) {
+			return false;
+		}
+
+		return true;
 	}
 }
