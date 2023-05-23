@@ -7,6 +7,7 @@ import { setSettings } from '../api/settings';
 import { parseURL } from '../lib/helpers';
 import DatePicker from 'react-datepicker';
 import InputField from '../elements/InputField';
+import TextArea from '../elements/Textarea';
 import Switch from '../elements/Switch';
 import SingleSelectMenu from '../elements/SingleSelectMenu';
 import MultiSelectMenu from '../elements/MultiSelectMenu';
@@ -58,7 +59,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 
 				return false;
 			}
-			queryClient.invalidateQueries( [ 'settings', settingId ] );
+			queryClient.invalidateQueries( [ 'settings', settingId ], { refetchType: 'all' } );
 			setStatus( 'error' );
 			renderTooltip( 'error' );
 			setTimeout( () => {
@@ -112,6 +113,17 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 			case 'number':
 				return (
 					<InputField
+						key={ id }
+						type={ type }
+						label={ title }
+						placeholder={ placeholder && ! value }
+						defaultValue={ value }
+						onChange={ ( inputValue ) => handleChange.mutate( inputValue ) }
+					/>
+				);
+			case 'textarea':
+				return (
+					<TextArea
 						key={ id }
 						type={ type }
 						label={ title }
