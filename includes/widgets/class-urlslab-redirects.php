@@ -358,11 +358,11 @@ class Urlslab_Redirects extends Urlslab_Widget {
 
 
 		if ( ! empty( $redirect->get_ip() ) ) {
-			$ips         = explode( ',', $redirect->get_ip() );
+			$ips         = preg_split( '/(,|\n|\t)\s*/', $redirect->get_ip() );
 			$visitor_ips = $this->get_visitor_ip();
 			if ( ! empty( $visitor_ips ) ) {
 				$has_ip      = false;
-				$visitor_ips = explode( ',', $visitor_ips );
+				$visitor_ips = preg_split( '/(,|\n|\t)\s*/', $visitor_ips );
 				$visitor_ip  = trim( $visitor_ips[0] );
 				foreach ( $ips as $ip_pattern ) {
 					if ( false === strpos( $ip_pattern, '/' ) ) {
@@ -386,7 +386,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 
 
 		if ( ! empty( $redirect->get_capabilities() ) ) {
-			$capabilities = explode( ',', $redirect->get_capabilities() );
+			$capabilities = preg_split( '/(,|\n|\t)\s*/', $redirect->get_capabilities() );
 			if ( ! empty( $capabilities ) ) {
 				$has_cap = false;
 				foreach ( $capabilities as $capability ) {
@@ -404,7 +404,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 
 		if ( ! empty( $redirect->get_roles() ) ) {
 			$user  = wp_get_current_user();
-			$roles = explode( ',', $redirect->get_roles() );
+			$roles = preg_split( '/(,|\n|\t)\s*/', $redirect->get_roles() );
 			if ( ! empty( $roles ) ) {
 				$has_role = false;
 				foreach ( $roles as $role ) {
@@ -423,7 +423,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 		if ( ! empty( $redirect->get_browser() )
 			 && isset( $_SERVER['HTTP_USER_AGENT'] )
 		) {
-			$browsers = explode( ',', strtolower( $redirect->get_browser() ) );
+			$browsers = preg_split( '/(,|\n|\t)\s*/', strtolower( $redirect->get_browser() ) );
 			if ( ! empty( $browsers ) ) {
 				$has_browser = false;
 				$agent       = strtolower( $_SERVER['HTTP_USER_AGENT'] ); // phpcs:ignore
@@ -441,7 +441,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 		}
 
 		if ( ! empty( $redirect->get_cookie() ) ) {
-			$cookies = explode( ',', $redirect->get_cookie() );
+			$cookies = preg_split( '/(,|\n|\t)\s*/', $redirect->get_cookie() );
 			if ( ! empty( $cookies ) ) {
 				$has_cookie = false;
 				if ( ! empty( $_COOKIE ) ) {
@@ -462,7 +462,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 		}
 
 		if ( ! empty( $redirect->get_headers() ) ) {
-			$headers = explode( ',', $redirect->get_headers() );
+			$headers = preg_split( '/(,|\n|\t)\s*/', $redirect->get_headers() );
 			if ( ! empty( $headers ) ) {
 				$has_header = false;
 				if ( ! empty( $_SERVER ) ) {
@@ -483,7 +483,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 		}
 
 		if ( ! empty( $redirect->get_params() ) ) {
-			$params = explode( ',', $redirect->get_params() );
+			$params = preg_split( '/(,|\n|\t)\s*/', $redirect->get_params() );
 			if ( ! empty( $params ) ) {
 				$has_param = false;
 				if ( ! empty( $_REQUEST ) ) {

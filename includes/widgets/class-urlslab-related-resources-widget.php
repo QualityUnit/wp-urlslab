@@ -339,8 +339,8 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			false,
 			false,
 			__( 'Additional Domains' ),
-			__( 'Specify a list of comma-separated domains to search for Related articles. By default, only the same domain as the evaluated link is searched. Ensure domains are scheduled for scanning by URLsLab service to find relevant results.' ),
-			self::OPTION_TYPE_TEXT,
+			__( 'Specify a list of domains to search for Related articles. By default, only the same domain as the evaluated link is searched. Ensure domains are scheduled for scanning by URLsLab service to find relevant results.' ),
+			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $param ) {
 				return is_string( $param );

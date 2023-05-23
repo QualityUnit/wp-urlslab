@@ -74,8 +74,8 @@ class ComposerStaticInit83a869ee30bba2345152bbf6f75bc3c4
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -759,6 +759,8 @@ class ComposerStaticInit83a869ee30bba2345152bbf6f75bc3c4
         'Aws\\MediaConvert\\MediaConvertClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/MediaConvert/MediaConvertClient.php',
         'Aws\\MediaLive\\Exception\\MediaLiveException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/MediaLive/Exception/MediaLiveException.php',
         'Aws\\MediaLive\\MediaLiveClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/MediaLive/MediaLiveClient.php',
+        'Aws\\MediaPackageV2\\Exception\\MediaPackageV2Exception' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/MediaPackageV2/Exception/MediaPackageV2Exception.php',
+        'Aws\\MediaPackageV2\\MediaPackageV2Client' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/MediaPackageV2/MediaPackageV2Client.php',
         'Aws\\MediaPackageVod\\Exception\\MediaPackageVodException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/MediaPackageVod/Exception/MediaPackageVodException.php',
         'Aws\\MediaPackageVod\\MediaPackageVodClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/MediaPackageVod/MediaPackageVodClient.php',
         'Aws\\MediaPackage\\Exception\\MediaPackageException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/MediaPackage/Exception/MediaPackageException.php',

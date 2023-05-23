@@ -158,7 +158,7 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 		$domains     = array();
 		$str_domains = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Related_Resources_Widget::SLUG )->get_option( Urlslab_Related_Resources_Widget::SETTING_NAME_DOMAINS );
 		if ( ! empty( $str_domains ) ) {
-			$arr_domains = explode( ',', $str_domains );
+			$arr_domains = preg_split( '/(,|\n|\t)\s*/', $str_domains );
 			foreach ( $arr_domains as $domain ) {
 				$domain = trim( $domain );
 				if ( strlen( $domain ) ) {
