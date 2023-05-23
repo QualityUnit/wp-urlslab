@@ -251,7 +251,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_CLOUDFRONT_ACCESS_KEY,
 			'',
 			false,
-			__( 'Cloudfront Access Key' ),
+			__( 'CloudFront Access Key' ),
 			__( 'Leave empty if the AWS Access Key should be loaded from the environment variable.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -263,7 +263,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_CLOUDFRONT_SECRET,
 			'',
 			false,
-			__( 'Cloudfront Key Secret' ),
+			__( 'CloudFront Key Secret' ),
 			__( 'Leave empty if AWS Secret Key should be loaded from environment variable.' ),
 			self::OPTION_TYPE_PASSWORD,
 			false,
@@ -275,8 +275,8 @@ class Urlslab_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_CLOUDFRONT_REGION,
 			'',
 			false,
-			__( 'Cloudfront Region' ),
-			'Select the correct region where your Cloudfront is hosted.',
+			__( 'CloudFront Region' ),
+			'Select the correct region where your CloudFront is hosted.',
 			self::OPTION_TYPE_LISTBOX,
 			Urlslab_Driver_S3::AWS_REGIONS,
 			null,
@@ -286,7 +286,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS,
 			array(),
 			false,
-			__( 'Cloudfront Distributions' ),
+			__( 'CloudFront Distributions' ),
 			'Array of cloudfront distribitiopns updated on validation',
 			self::OPTION_TYPE_HIDDEN,
 			false,
@@ -298,7 +298,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			'cache-rules/validate-cloudfront',
 			false,
 			__( 'Validate connection' ),
-			__( 'Validate connection to Cloudfront with your current settings.' ),
+			__( 'Validate connection to CloudFront with your current settings.' ),
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
 			null,
@@ -306,13 +306,13 @@ class Urlslab_Cache extends Urlslab_Widget {
 		);
 
 
-		$this->add_options_form_section( 'drop-cloudfront', __( 'Drop CloudFront cache' ), __( 'The Invalidation allows us to remove object(s) from the Cloudfront cache before it expires. It allows you to remove a specific object from cache as well use supported wildcard character to remove multiple objects. You can also remove all the objects from cache by using “/*” parameters to invalidation requests. It can take significant amount of time to drop cache objects based on size of your website cache.' ) );
+		$this->add_options_form_section( 'drop-cloudfront', __( 'Drop CloudFront cache' ), __( 'The Invalidation allows us to remove object(s) from the CloudFront cache before it expires. It allows you to remove a specific object from cache as well use supported wildcard character to remove multiple objects. You can also remove all the objects from cache by using “/*” parameters to invalidation requests. It can take significant amount of time to drop cache objects based on size of your website cache.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_CLOUDFRONT_DISTRIBUTION_ID,
 			'',
 			false,
 			__( 'Distribution ID' ),
-			'Select Cloudfront distribution id. To update available values validate connection.',
+			'Select CloudFront distribution id. To update available values validate connection.',
 			self::OPTION_TYPE_LISTBOX,
 			function() {
 				return array();
@@ -335,7 +335,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			'btn_cloudfront_cache',
 			'cache-rules/drop-cloudfront',
 			false,
-			__( 'Clear Cloudfront Cache' ),
+			__( 'Clear CloudFront Cache' ),
 			__( 'Drop all objects in CloudFront cache matching defined patterns defined in pattern field.' ),
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
