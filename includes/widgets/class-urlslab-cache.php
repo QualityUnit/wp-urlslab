@@ -275,7 +275,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_CLOUDFRONT_REGION,
 			'',
 			false,
-			__( 'Cloudfront Region' ),
+			__( 'CloudFront Region' ),
 			'Select the correct region where your CloudFront is hosted.',
 			self::OPTION_TYPE_LISTBOX,
 			Urlslab_Driver_S3::AWS_REGIONS,
@@ -306,7 +306,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 		);
 
 
-		$this->add_options_form_section( 'drop-cloudfront', __( 'CloudFront Invalidation' ), __( 'Invalidation enables the removal of Cloudfront cache objects before expiration. It supports targeted removal of specific objects, wildcard characters for multiple objects, or "/*" parameters for clearing the entire cache. The process duration may vary depending on the website cache size.' ) );
+		$this->add_options_form_section( 'drop-cloudfront', __( 'CloudFront Invalidation' ), __( 'Invalidation enables the removal of CloudFront cache objects before expiration. It supports targeted removal of specific objects, wildcard characters for multiple objects, or "/*" parameters for clearing the entire cache. The process duration may vary depending on the website cache size.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_CLOUDFRONT_DISTRIBUTION_ID,
 			'',
