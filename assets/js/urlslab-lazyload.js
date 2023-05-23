@@ -203,19 +203,25 @@ const urlslabPreload = () => {
 	const preloadedLinks = new Set();
 
 	const preloadLink = ( element ) => {
-		if (element.tagName == 'A' && (element.hasAttribute( 'scroll-preload' ) || element.hasAttribute('onover-preload'))) {
-			element.removeAttribute('scroll-preload');
-			element.removeAttribute('onover-preload');
-			const urlObj = new URL(element.getAttribute("href"));
-			urlObj.hash = '';
+		if (element.tagName == 'A' && element.hasAttribute("href") && (element.hasAttribute( 'scroll-preload' ) || element.hasAttribute('onover-preload'))) {
+			try {
+				element.removeAttribute('scroll-preload');
+				element.removeAttribute('onover-preload');
 
-			if (preloadedLinks.has(urlObj.toString())) {
-				return;
+				const anchor = document.createElement("a");
+				anchor.href = element.getAttribute("href");
+				const urlObj = new URL(anchor.href);
+				urlObj.hash = '';
+
+				if (preloadedLinks.has(urlObj.toString())) {
+					return;
+				}
+				const xhr = new XMLHttpRequest();
+				xhr.open("GET", urlObj.toString(), true);
+				xhr.send(null);
+				preloadedLinks.add(urlObj.toString());
+			} catch (e) {
 			}
-			const xhr = new XMLHttpRequest();
-			xhr.open("GET", urlObj.toString(), true);
-			xhr.send(null);
-			preloadedLinks.add(urlObj.toString());
 		}
 	};
 
