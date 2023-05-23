@@ -277,8 +277,8 @@ class Urlslab_Cache extends Urlslab_Widget {
 			false,
 			__( 'Cloudfront Region' ),
 			'Select the correct region where your Cloudfront is hosted.',
-			self::OPTION_TYPE_TEXT,
-			false,
+			self::OPTION_TYPE_LISTBOX,
+			Urlslab_Driver_S3::AWS_REGIONS,
 			null,
 			'cloudfront'
 		);
