@@ -412,7 +412,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 
 	public function validate_cloudfront( WP_REST_Request $request ) {
 		if ( ! $this->init_cloudfront_client() ) {
-			return new WP_Error( 'error', __( 'Cloudfront is not configured', 'urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'CloudFront is not configured', 'urlslab' ), array( 'status' => 400 ) );
 		}
 		try {
 			$widget            = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Cache::SLUG );
@@ -429,15 +429,15 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 			}
 			$widget->update_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS, $arr_distributions );
 		} catch ( Aws\Exception\AwsException $e ) {
-			return new WP_Error( 'error', __( 'Failed to connect to Cloudfront: ' ) . $e->getMessage(), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to connect to CloudFront: ' ) . $e->getMessage(), array( 'status' => 400 ) );
 		}
 
-		return new WP_REST_Response( __( 'Connected to Cloudfront' ), 200 );
+		return new WP_REST_Response( __( 'Connected to CloudFront' ), 200 );
 	}
 
 	public function drop_cloudfront( WP_REST_Request $request ) {
 		if ( ! $this->init_cloudfront_client() ) {
-			return new WP_Error( 'error', __( 'Cloudfront is not configured yet', 'urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'CloudFront is not configured yet', 'urlslab' ), array( 'status' => 400 ) );
 		}
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Cache::SLUG );
 
