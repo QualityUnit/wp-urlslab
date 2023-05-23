@@ -199,13 +199,13 @@ class Urlslab_Cache extends Urlslab_Widget {
 			'page'
 		);
 
-		$this->add_options_form_section( 'preload', __( 'Link Preloader' ), __( 'Link preloading is a performance optimization technique that works by assuming which links the user is likely to click, then downloading the content of those links. If the user decides to click on one of the links, then the page will be rendered instantly as the content has already been downloaded.' ) );
+		$this->add_options_form_section( 'preload', __( 'Link Preloading' ), __( 'Link preloading is a sophisticated performance optimization method that intelligently predicts user navigation by preloading content associated with probable links, facilitating immediate page rendering upon click. This technique bolsters user experience by reducing latency and expediting seamless page transitions.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_ON_OVER_PRELOADING,
 			false,
 			true,
-			__( 'Link Preloading - On Over ' ),
-			__( 'When a user hovers over a link on your website, the Link Preloader plugin will intelligently start downloading the linked page in the background. When the user clicks on the link, the preloaded page will be displayed instantly, making your site feel incredibly responsive and snappy.' ),
+			__( 'Link Preloading - On Hover ' ),
+			__( 'When users hover over a link, the linked page begins downloading in the background. Upon clicking, the preloaded page instantly displays, enhancing website performance and user experience.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -215,21 +215,21 @@ class Urlslab_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_ON_SCROLL_PRELOADING,
 			false,
 			true,
-			__( 'Link Preloading - On Page Scroll' ),
-			__( 'As a user scrolls down on your website, the Link Preloader plugin will start downloading every link visible in visitor\'s browser. When the user clicks on the link, the preloaded page will be displayed instantly, making your site feel incredibly responsive and snappy. This methond generates much more traffic as preloading based on onOver event.' ),
+			__( 'Link Preloading - During Page Scroll' ),
+			__( 'When users scroll, the browser efficiently preloads visible links, ensuring instant display upon clicking and enhancing site responsiveness. This method increases traffic compared to the on hover method preloading.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
 			'preload'
 		);
 
-		$this->add_options_form_section( 'prefetch', __( 'Browser Prefetch' ), __( 'Prefetching is when content is downloaded in the background, this is based on the assumption that the content will likely be requested, enabling the content to load instantly if and when the user requests it. The content is downloaded and cached for anticipated future use without the user making an explicit request for it.' ) );
+		$this->add_options_form_section( 'prefetch', __( 'Browser Prefetch' ), __( 'Prefetching is a process that proactively downloads and caches content in the background, based on the likelihood of user requests. This enables seamless and instantaneous content loading when needed, improving user experience by reducing wait times, all without requiring an explicit request from the user.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DNS_PREFETCH,
 			'',
 			true,
 			__( 'DNS Prefetch' ),
-			__( 'Define list of domains to prefetch DNS in each page e.g. fonts.google.com (applied just for not logged in users).' ),
+			__( 'Specify a list of domains for DNS prefetching on each page, such as fonts.google.com. This setting is applied only for non-logged-in users.' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			null,
@@ -240,13 +240,13 @@ class Urlslab_Cache extends Urlslab_Widget {
 			'',
 			true,
 			__( 'Prefetch Content' ),
-			__( 'List of URLs to prefetch in each page (applied just for not logged in users).' ),
+			__( 'Specify a list of URLs for prefetching on each page. This setting is applied only for non-logged-in users.' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			null,
 			'prefetch'
 		);
-		$this->add_options_form_section( 'cloudfront', __( 'CloudFront integration' ), __( 'Amazon CloudFront is a web service that speeds up distribution of your static and dynamic web content, such as .html, .css, .js, and image files, to your users. Moreover, Amazon may limit the requests depending on the CloudFront pricing tier you are using. Be mindful of the number of invalidations you perform, as a high number of them may incur additional costs.' ) );
+		$this->add_options_form_section( 'cloudfront', __( 'CloudFront Integration' ), __( 'Amazon CloudFront is a web service that accelerates the delivery of your static and dynamic web content, including .html, .css, .js, and image files, ensuring a seamless experience for users.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_CLOUDFRONT_ACCESS_KEY,
 			'',
@@ -264,7 +264,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			'',
 			false,
 			__( 'CloudFront Key Secret' ),
-			__( 'Leave empty if AWS Secret Key should be loaded from environment variable.' ),
+			__( 'Leave empty if the AWS Secret Key should be loaded from the environment variable.' ),
 			self::OPTION_TYPE_PASSWORD,
 			false,
 			null,
@@ -275,7 +275,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_CLOUDFRONT_REGION,
 			'',
 			false,
-			__( 'CloudFront Region' ),
+			__( 'Cloudfront Region' ),
 			'Select the correct region where your CloudFront is hosted.',
 			self::OPTION_TYPE_LISTBOX,
 			Urlslab_Driver_S3::AWS_REGIONS,
@@ -287,7 +287,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			array(),
 			false,
 			__( 'CloudFront Distributions' ),
-			'Array of cloudfront distribitiopns updated on validation',
+			'Array of CloudFront distributions that are automatically updated upon successful validation.',
 			self::OPTION_TYPE_HIDDEN,
 			false,
 			null,
@@ -297,8 +297,8 @@ class Urlslab_Cache extends Urlslab_Widget {
 			'btn_cloudfront_validate',
 			'cache-rules/validate-cloudfront',
 			false,
-			__( 'Validate connection' ),
-			__( 'Validate connection to CloudFront with your current settings.' ),
+			__( 'Validate Connection' ),
+			__( 'Validate, if connection to CloudFront is working.' ),
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
 			null,
@@ -306,13 +306,13 @@ class Urlslab_Cache extends Urlslab_Widget {
 		);
 
 
-		$this->add_options_form_section( 'drop-cloudfront', __( 'Drop CloudFront cache' ), __( 'The Invalidation allows us to remove object(s) from the CloudFront cache before it expires. It allows you to remove a specific object from cache as well use supported wildcard character to remove multiple objects. You can also remove all the objects from cache by using “/*” parameters to invalidation requests. It can take significant amount of time to drop cache objects based on size of your website cache.' ) );
+		$this->add_options_form_section( 'drop-cloudfront', __( 'CloudFront Invalidation' ), __( 'Invalidation enables the removal of Cloudfront cache objects before expiration. It supports targeted removal of specific objects, wildcard characters for multiple objects, or "/*" parameters for clearing the entire cache. The process duration may vary depending on the website cache size.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_CLOUDFRONT_DISTRIBUTION_ID,
 			'',
 			false,
 			__( 'Distribution ID' ),
-			'Select CloudFront distribution id. To update available values validate connection.',
+			__( 'Select a CloudFront Distribution ID from the available options. Update the available selection by validating the connection.' ),
 			self::OPTION_TYPE_LISTBOX,
 			function() {
 				return array();
@@ -324,8 +324,8 @@ class Urlslab_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_CLOUDFRONT_PATTERN_DROP,
 			'/*',
 			false,
-			__( 'Patterns to drop' ),
-			__( 'List of patterns to drop. Use value /* if all objects in cache should be dropped. Example: /blog/*,/pricing/ if you want to drop cache for all your blog posts and pricing page in one invalidation request.' ),
+			__( 'Object Paths to Drop' ),
+			__( 'Define object paths to invalidate cache. Use "/*" to clear all objects or list specific paths e.g., /blog/*, /pricing/.' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			null,
@@ -335,8 +335,8 @@ class Urlslab_Cache extends Urlslab_Widget {
 			'btn_cloudfront_cache',
 			'cache-rules/drop-cloudfront',
 			false,
-			__( 'Clear CloudFront Cache' ),
-			__( 'Drop all objects in CloudFront cache matching defined patterns defined in pattern field.' ),
+			__( 'Invalidate CloudFront Cache' ),
+			__( 'Invalidate all objects from the CloudFront cache that match the specified patterns defined above.' ),
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
 			null,

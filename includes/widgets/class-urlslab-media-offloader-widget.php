@@ -515,7 +515,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			'file/validate_s3',
 			false,
 			__( 'Validate S3 connection' ),
-			__( 'Validate, if connection to S3 is working' ),
+			__( 'Validate, if connection to S3 is working.' ),
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
 			null,
