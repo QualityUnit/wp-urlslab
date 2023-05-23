@@ -95,10 +95,10 @@ export default function TagsMenu( { label, description, defaultValue: tags, slug
 			if ( ok ) {
 				let returnedTag = await response.json();
 				returnedTag = { value: returnedTag.label_id, label: returnedTag.name, ...returnedTag };
-				queryClient.invalidateQueries( [ 'label', 'menu' ] );
+				queryClient.invalidateQueries( [ 'label', 'menu' ], { refetchType: 'all' } );
 				onChange( `${ selectedToString }${ returnedTag.label_id }|` );
 			}
-		}, [ onChange, selectedToString ] );
+		}, [ onChange, selectedToString, queryClient ] );
 
 	const onDelete = useCallback(
 		( tag ) => {

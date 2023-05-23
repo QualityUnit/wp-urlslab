@@ -29,7 +29,7 @@ class Urlslab_Api_Languages extends Urlslab_Api_Base {
 	 */
 	public function get_items( $request ) {
 		try {
-			$languages          = apply_filters( 'wpml_active_languages', null, 'skip_missing=0&orderby=code' );
+			$languages          = apply_filters( 'wpml_active_languages', null, 'skip_missing=0&orderby=code&order=desc' );
 			$response_languages = array(
 				(object) array(
 					'code' => 'all',
@@ -46,6 +46,9 @@ class Urlslab_Api_Languages extends Urlslab_Api_Base {
 					$response_languages[] = (object) array(
 						'code' => $language['code'],
 						'name' => $language['translated_name'],
+						'active' => $language['active'],
+						'domain' => $language['url'],
+						'basedomain' => basename( $language['url'] ),
 					);
 				}
 			}

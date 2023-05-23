@@ -1,0 +1,49 @@
+@use "../common/variables" as *;
+@use "../common/mixins" as *;
+
+.urlslab-suggestInput {
+
+	&-suggestions {
+		top: calc(100% + 1px);
+		left: 0;
+		border-radius: $br-10;
+		background-color: $white;
+		width: calc(100% + 5em);
+		padding: 1em 1.45em;
+		filter: $box-shadow-small;
+
+		&--inn {
+
+			@include scrollbar;
+			max-height: 19em;
+			overflow-y: scroll;
+			position: relative;
+			margin-left: -1.45em;
+			margin-right: -1.45em;
+		}
+
+		li {
+			display: block;
+			width: 100%;
+			padding: 0.5em 0;
+			margin-bottom: 0;
+			color: $grey-dark;
+
+			button {
+				display: block;
+				width: 100%;
+				text-align: left;
+				padding: 0;
+				color: currentcolor;
+			}
+
+			@media (hover: hover) {
+
+				&:hover {
+					background-color: $primary-color;
+					color: $white;
+				}
+			}
+		}
+	}
+}
