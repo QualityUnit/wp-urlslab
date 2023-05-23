@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { delay } from '../lib/helpers';
 import '../assets/styles/elements/_Inputs.scss';
 
-export default function InputField( { defaultValue, autoFocus, placeholder, message, liveUpdate, className, type, readonly, disabled, label, description, labelInline, onChange, onFocus, children, style } ) {
+export default function InputField( { defaultValue, isLoading, autoFocus, placeholder, message, liveUpdate, className, type, readonly, disabled, label, description, labelInline, onChange, onFocus, onKeyUp, children, style } ) {
 	const [ val, setVal ] = useState( defaultValue || '' );
 	const [ valid, setValid ] = useState( false );
 	const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
@@ -40,7 +40,7 @@ export default function InputField( { defaultValue, autoFocus, placeholder, mess
 				? <span className="urlslab-inputField-label">{ label }</span>
 				: null
 			}
-			<div className={ `urlslab-inputField ${ children ? 'has-svg' : '' }` } >
+			<div className={ `urlslab-inputField ${ children ? 'has-svg' : '' } ${ isLoading ? 'loading' : '' }` } >
 				{ children }
 				<input
 					className="urlslab-input input__text"
@@ -58,6 +58,7 @@ export default function InputField( { defaultValue, autoFocus, placeholder, mess
 							event.target.blur();
 						}
 					} }
+					onKeyUp={ onKeyUp }
 					placeholder={ placeholder }
 					readOnly={ readonly }
 					disabled={ disabled ? 'disabled' : '' }

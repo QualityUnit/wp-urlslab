@@ -26,7 +26,24 @@
 			display: block;
 			width: 100%;
 			padding: 0.5em 0;
-			margin-bottom: 0.25em;
+			margin-bottom: 0;
+			color: $grey-dark;
+
+			button {
+				display: block;
+				width: 100%;
+				text-align: left;
+				padding: 0;
+				color: currentcolor;
+			}
+
+			@media (hover: hover) {
+
+				&:hover {
+					background-color: $primary-color;
+					color: $white;
+				}
+			}
 		}
 	}
 }

@@ -85,6 +85,20 @@ $status: (
 	color: $grey-medium;
 	transition: all 0.2s;
 
+	&.loading {
+
+		&::before {
+
+			@include square(1em);
+			position: absolute;
+			right: 0.5em;
+			background: url(../../images/icons/icon-loading-input.svg) center center no-repeat;
+			background-size: contain;
+			animation: 0.75s rotate linear infinite;
+			content: "";
+		}
+	}
+
 	textarea {
 		resize: none;
 	}
