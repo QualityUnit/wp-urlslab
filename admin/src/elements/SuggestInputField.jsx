@@ -14,16 +14,16 @@ export default function SuggestInputField( props ) {
 	const ref = useRef();
 	const didMountRef = useRef( false );
 	const [ index, setIndex ] = useState( 0 );
-	const [ input, setInput ] = useState( replaceChars( suggestInput ) );
+	const [ input, setInput ] = useState( suggestInput.includes( 'http' ) ? replaceChars( suggestInput ) : '' );
 	const [ suggestion, setSuggestion ] = useState( );
 	const [ suggestionsList, setSuggestionsList ] = useState( [] );
 	const [ suggestionsVisible, showSuggestions ] = useState( );
-	const activeDomain = suggestInput;
+	const activeDomain = suggestInput.includes( 'http' ) ? suggestInput : '';
 	let baseDomain = activeDomain.replace( /(https?:\/\/)?([^\.]+?\.)?([^\/]+?\..+?)\/.+$/, '$3' );
-
-	if ( baseDomain.includes( '.local' ) ) {
-		baseDomain = baseDomain.replace( '.local', '.com' );
+	if ( input?.includes( 'http' ) ) {
+		baseDomain = input?.replace( /(https?:\/\/)?(www\.)?(.+?)$/, '$3' );
 	}
+	baseDomain = baseDomain.replace( '.local', '.com' );
 
 	const suggestedDomains = useMemo( () => [
 		activeDomain.replace( /(https?:\/\/)([^\.]+?\.)?([^\/]+?\...+?\/).+$/, `$1${ ! activeDomain.includes( '.local' ) ? 'www.' : '' }$3` ),
@@ -32,8 +32,13 @@ export default function SuggestInputField( props ) {
 
 	const handleTyping = ( val, type ) => {
 		// const value = val.target.value || val;
+
 		if ( type ) {
-			setInput( val );
+			delay( () => {
+				if ( val !== input ) {
+					setInput( val );
+				}
+			}, 1000 )();
 			return false;
 		}
 		setSuggestion( val );
@@ -61,8 +66,12 @@ export default function SuggestInputField( props ) {
 		queryKey: [ input ],
 		queryFn: async () => {
 			if ( input ) {
-				const result = await postFetch( 'keyword/suggest', { count: maxItems || 5, keyword: input, domain: domain || baseDomain } );
-				return result.json();
+				const result = await postFetch( 'keyword/suggest', {
+					count: maxItems || 10, keyword: ! suggestInput.includes( 'http' ) ? replaceChars( suggestInput ) : replaceChars( input ), domain: baseDomain } );
+				if ( result.ok ) {
+					return result.json();
+				}
+				return [];
 			}
 		},
 		refetchOnWindowFocus: false,
@@ -111,8 +120,8 @@ export default function SuggestInputField( props ) {
 	}, [ data, suggestion, suggestionsVisible ] );
 
 	return (
-		<div className="urlslab-suggestInput pos-relative" ref={ ref }>
-			<InputField { ...props } key={ suggestion } defaultValue={ suggestion } isLoading={ isLoading } onChange={ ( event ) => delay( () => handleTyping( event, true ), 3000 )() } onFocus={ () => {
+		<div className="urlslab-suggestInput pos-relative" key={ suggestInput } ref={ ref }>
+			<InputField { ...props } key={ suggestion ? suggestion : suggestionsList[ 0 ] } defaultValue={ suggestion ? suggestion : suggestionsList[ 0 ] } isLoading={ isLoading } onChange={ ( event ) => handleTyping( event, true ) } onFocus={ () => {
 				setIndex( 0 ); showSuggestions( true );
 			} } />
 			{
@@ -123,8 +132,8 @@ export default function SuggestInputField( props ) {
 						{
 							suggestionsList && suggestionsList.length > 0 &&
 							suggestionsList.map( ( suggest ) => {
-								return <li key={ suggest }><button onClick={ () => {
-									handleTyping( suggest ); showSuggestions( false );
+								return suggest && <li key={ suggest }><button onClick={ () => {
+									setSuggestion( suggest ); showSuggestions( false );
 								} }>{ suggest }</button></li>;
 							} )
 						}
