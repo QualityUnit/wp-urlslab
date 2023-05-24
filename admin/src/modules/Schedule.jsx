@@ -19,6 +19,7 @@ export default function Schedule( { moduleId } ) {
 	return (
 		<div className="urlslab-tableView">
 			<ModuleViewHeader
+				moduleId={ moduleId }
 				moduleMenu={ tableMenu }
 				noSettings
 				activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
