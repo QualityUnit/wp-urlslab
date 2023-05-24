@@ -37,7 +37,7 @@ class Urlslab_Cache_Rule_Row extends Urlslab_Data {
 
 	protected function set( $name, $value, $loaded_from_db ) {
 		if ( 'is_active' === $name ) {
-			if ( $value && self::ACTIVE_NO !== $value ) {
+			if ( is_bool( $value ) && $value || self::ACTIVE_YES === $value ) {
 				$value = self::ACTIVE_YES;
 			} else {
 				$value = self::ACTIVE_NO;
@@ -46,6 +46,7 @@ class Urlslab_Cache_Rule_Row extends Urlslab_Data {
 
 		return parent::set( $name, $value, $loaded_from_db );
 	}
+
 	public function get_rule_id(): int {
 		return $this->get( 'rule_id' );
 	}

@@ -233,6 +233,12 @@ class Urlslab_Activator {
 				$wpdb->query( 'UPDATE ' . URLSLAB_RELATED_RESOURCE_TABLE . " SET created_date = now()" ); // phpcs:ignore
 			}
 		);
+		self::update_step(
+			'2.25.0',
+			function() {
+				self::init_custom_html_rules_table();
+			}
+		);
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -262,6 +268,7 @@ class Urlslab_Activator {
 		self::init_generator_results_table();
 		self::init_generator_urls_table();
 		self::init_cache_rules_table();
+		self::init_custom_html_rules_table();
 	}
 
 	private static function init_urls_tables() {
@@ -699,6 +706,41 @@ class Urlslab_Activator {
 						valid_from INT UNSIGNED,
 						cache_ttl INT UNSIGNED,
 						labels VARCHAR(255) NOT NULL DEFAULT '',
+						PRIMARY KEY (rule_id)
+        ) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+
+	private static function init_custom_html_rules_table() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$table_name = URLSLAB_CUSTOM_HTML_RULES_TABLE;
+		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
+						rule_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+						name VARCHAR(100),
+						match_type CHAR(1) DEFAULT 'S',
+						match_url VARCHAR(500),
+						match_browser VARCHAR(500),
+						match_cookie VARCHAR(500),
+						match_headers VARCHAR(500),
+						match_params VARCHAR(500),
+						match_ip VARCHAR(500),
+						is_logged CHAR(1) DEFAULT 'A',
+						match_capabilities VARCHAR(2000),
+						match_roles VARCHAR(1000),
+						match_posttypes VARCHAR(1000),
+						rule_order smallint,
+						labels VARCHAR(255) NOT NULL DEFAULT '',
+						is_active CHAR(1) DEFAULT 'Y',
+						add_http_headers MEDIUMTEXT,
+						add_start_headers MEDIUMTEXT,
+						add_end_headers MEDIUMTEXT,
+						add_start_body MEDIUMTEXT,
+						add_end_body MEDIUMTEXT,
 						PRIMARY KEY (rule_id)
         ) {$charset_collate};";
 

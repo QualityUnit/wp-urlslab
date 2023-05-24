@@ -316,7 +316,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 			$row->cache_ttl  = (int) $row->cache_ttl;
 			$row->rule_order = (int) $row->rule_order;
 			$row->valid_from = (int) $row->valid_from;
-			$row->is_active  = Urlslab_Cache_Rule_Row::ACTIVE_YES === $row->is_active ? true : false;
+			$row->is_active  = Urlslab_Cache_Rule_Row::ACTIVE_YES === $row->is_active;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -406,6 +406,8 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		}
 
 		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Cache::SLUG )->update_option( Urlslab_Cache::SETTING_NAME_RULES_VALID_FROM, time() );
+		Urlslab_File_Cache::get_instance()->clear( Urlslab_Cache::CACHE_RULES_GROUP );
+		Urlslab_File_Cache::get_instance()->clear( Urlslab_Cache::PAGE_CACHE_GROUP );
 
 		return new WP_REST_Response( __( 'Cache invalidated' ), 200 );
 	}

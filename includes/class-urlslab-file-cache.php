@@ -70,7 +70,7 @@ class Urlslab_File_Cache {
 	}
 
 	public function clear( $group = '' ) {
-		$this->mem_cache[ $group ] = array();
+		unset( $this->mem_cache[ $group ] );
 		if ( ! $this->is_active() ) {
 			return;
 		}

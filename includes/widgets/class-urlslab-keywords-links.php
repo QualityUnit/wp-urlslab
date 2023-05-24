@@ -271,6 +271,9 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	public function theContentHook( DOMDocument $document ) {
+		if ( is_admin() ) {
+			return;
+		}
 		$this->initLinkCounts( $document );
 		$this->init_keywords_cache( strtolower( $document->textContent ) );
 

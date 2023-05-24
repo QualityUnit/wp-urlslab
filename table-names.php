@@ -29,4 +29,5 @@ define( 'URLSLAB_CONTENT_GENERATOR_URLS_TABLE', $wpdb->prefix . 'urlslab_content
 define( 'URLSLAB_NOT_FOUND_LOG_TABLE', $wpdb->prefix . 'urlslab_log_notfound' );
 define( 'URLSLAB_REDIRECTS_TABLE', $wpdb->prefix . 'urlslab_redirects' );
 define( 'URLSLAB_CACHE_RULES_TABLE', $wpdb->prefix . 'urlslab_cache_rules' );
+define( 'URLSLAB_CUSTOM_HTML_RULES_TABLE', $wpdb->prefix . 'urlslab_custom_html_rules' );
 define( 'URLSLAB_LABELS_TABLE', $wpdb->prefix . 'urlslab_labels' );

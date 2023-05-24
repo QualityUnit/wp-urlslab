@@ -52,7 +52,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 	}
 
 	private function is_cache_enabled(): bool {
-		return ! is_user_logged_in() && isset( $_SERVER['REQUEST_URI'] ) && $this->get_option( self::SETTING_NAME_PAGE_CACHING ) && Urlslab_File_Cache::get_instance()->is_active();
+		return ! is_admin() && ! is_user_logged_in() && isset( $_SERVER['REQUEST_URI'] ) && $this->get_option( self::SETTING_NAME_PAGE_CACHING ) && Urlslab_File_Cache::get_instance()->is_active();
 	}
 
 	private function start_rule(): bool {

@@ -66,6 +66,9 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	public function theContentHook( DOMDocument $document ) {
+		if ( is_admin() ) {
+			return;
+		}
 		$this->validateCurrentPageUrl();
 		$this->addIdToHTags( $document );
 		$this->fixPageIdLinks( $document );

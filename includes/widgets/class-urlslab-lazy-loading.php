@@ -83,6 +83,9 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	public function the_content( DOMDocument $document ) {
+		if ( is_admin() ) {
+			return;
+		}
 		if ( $this->get_option( self::SETTING_NAME_CONTENT_LAZY_LOADING ) ) {
 			$this->content_lazy_loading( $document );
 		}

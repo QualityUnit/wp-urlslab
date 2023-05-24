@@ -62,6 +62,9 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	public function the_content_filter( $content ) {
+		if ( is_admin() ) {
+			return $content;
+		}
 		$shortcode_content = '';
 		if ( $this->get_option( self::SETTING_NAME_AUTOINCLUDE_TO_CONTENT ) ) {
 			$post_types = $this->get_option( self::SETTING_NAME_AUTOINCLUDE_POST_TYPES );

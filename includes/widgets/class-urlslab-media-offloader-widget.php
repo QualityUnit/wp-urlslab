@@ -140,6 +140,9 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	public function the_content( DOMDocument $document ) {
+		if ( is_admin() ) {
+			return;
+		}
 		$this->process_offloading( $document );
 		if ( $this->get_option( self::SETTING_NAME_IMG_MIN_WIDTH ) ) {
 			$this->process_min_width( $document );
