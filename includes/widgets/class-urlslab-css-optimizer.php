@@ -36,6 +36,9 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 	}
 
 	public function theContentHook( DOMDocument $document ) {
+		if ( is_admin() ) {
+			return;
+		}
 		try {
 			$xpath     = new DOMXPath( $document );
 			$css_links = $xpath->query( "//link[@rel='stylesheet' and (@type='text/css' or not(@type)) and @href ]" );

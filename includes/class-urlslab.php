@@ -23,6 +23,7 @@
  */
 class Urlslab {
 	public const URLSLAB_INFO_URL = 'https://raw.githubusercontent.com/QualityUnit/wp-urlslab/main/info.json';
+	private static $buffer_started = false;
 
 	/**
 	 * The unique identifier of this plugin.
@@ -86,44 +87,91 @@ class Urlslab {
 		update_option( 'urlslab', $option );
 	}
 
-	public function buffer_head_start() {
+	public function buffer_start( $content ) {
+		if ( self::$buffer_started || is_admin() ) {
+			return;
+		}
 		ob_start(
 			array(
 				$this,
-				'urlslab_head_content_check',
+				'urlslab_content_check',
 			),
 			0,
 			PHP_OUTPUT_HANDLER_FLUSHABLE | PHP_OUTPUT_HANDLER_REMOVABLE
 		);
-	}
+		self::$buffer_started = true;
 
-	public function buffer_content_start() {
-		ob_start(
-			array(
-				$this,
-				'urlslab_content',
-			),
-			0,
-			PHP_OUTPUT_HANDLER_FLUSHABLE | PHP_OUTPUT_HANDLER_REMOVABLE
-		);
+		return $content;
 	}
 
 	public function buffer_end() {
-		ob_end_flush();
+		if ( self::$buffer_started ) {
+			ob_end_flush();
+		}
 	}
 
-	public function urlslab_head_content_check( $content ) {
+	public function urlslab_content_check( $content ) {
+		if ( is_admin() ) {
+			return $content;
+		}
+
 		if ( false !== strpos( strtolower( substr( $content, 0, 30 ) ), '<head>' ) ) {
-			if ( preg_match( '|(.*?)(<head>.*?</head>)(.*?)|imus', $content, $matches ) ) {
-				return $matches[1] . $this->urlslab_head_content( '<html>' . $matches[2] . '<body></body></html>' ) . $matches[3];
+			if ( preg_match( '|(.*?)<head>(.*?)</head>(.*)|imus', $content, $matches ) ) {
+				$content = $matches[1] . $this->urlslab_head_content( $matches[2] ) . $matches[3];
+			}
+		}
+		if ( false !== strpos( $content, '<body' ) ) {
+			if ( preg_match( '|(.*?)<body(.*?)>(.*?)</body>(.*)|imus', $content, $matches ) ) {
+				$content = $matches[1] . $this->urlslab_content( $matches[3], $matches[2] ) . $matches[4];
 			}
 		}
 
 		return $content;
 	}
 
-	public function urlslab_content( $content ) {
-		if ( empty( $content ) || 200 !== http_response_code() ) {
+
+	private function urlslab_head_content( $content ) {
+		if ( empty( $content ) ) {
+			return $content;    // nothing to process
+		}
+
+		$content = apply_filters( 'urlslab_head_content_raw', $content );
+
+		if ( ! has_action( 'urlslab_head_content' ) ) {
+			return '<head>' . $content . '</head>';
+		}
+
+		$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
+		$document->encoding            = get_bloginfo( 'charset' );
+		$document->strictErrorChecking = false; // phpcs:ignore
+		$libxml_previous_state         = libxml_use_internal_errors( true );
+
+		try {
+			$document->loadHTML(
+				mb_convert_encoding( '<html><head>' . $content . '</head><body></body></html>', 'HTML-ENTITIES', get_bloginfo( 'charset' ) ),
+				LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE
+			);
+
+			foreach ( libxml_get_errors() as $error ) {
+				if ( false !== strpos( $error->message, 'Unexpected' ) || false !== strpos( $error->message, 'misplaced' ) ) {
+					return '<head>' . $content . '</head>';
+				}
+			}
+
+			libxml_clear_errors();
+			libxml_use_internal_errors( $libxml_previous_state );
+
+			do_action( 'urlslab_head_content', $document );
+
+			return $document->saveHTML( $document->getElementsByTagName( 'head' )[0] );
+		} catch ( Exception $e ) {
+			return '<head>' . $content . '</head>';
+		}
+	}
+
+
+	public function urlslab_content( $content, $body_attributes ) {
+		if ( empty( $content ) ) {
 			return $content;    // nothing to process
 		}
 
@@ -137,20 +185,21 @@ class Urlslab {
 
 			try {
 				$document->loadHTML(
-					mb_convert_encoding( $content, 'HTML-ENTITIES', get_bloginfo( 'charset' ) ),
+					mb_convert_encoding( '<html><head></head><body' . $body_attributes . '>' . $content . '</body></html>', 'HTML-ENTITIES', get_bloginfo( 'charset' ) ),
 					LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE
 				);
+
 				libxml_clear_errors();
 				libxml_use_internal_errors( $libxml_previous_state );
 
 				do_action( 'urlslab_content', $document );
 
-				return $document->saveHTML();
+				return $document->saveHTML( $document->getElementsByTagName( 'body' )[0] );
 			} catch ( Exception $e ) {
 			}
 		}
 
-		return $content;
+		return '<body' . $body_attributes . '>' . $content . '</body>';
 	}
 
 	/**
@@ -382,6 +431,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-not-found-log-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-redirect-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-label-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-custom-html-row.php';
 
 		// additional
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
@@ -460,49 +510,11 @@ class Urlslab {
 		Urlslab_Loader::get_instance()->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $plugin_public, 'download_offloaded_file', PHP_INT_MIN );
 
-		Urlslab_Loader::get_instance()->add_action( 'wp_before_load_template', $this, 'buffer_head_start', PHP_INT_MIN );
-		Urlslab_Loader::get_instance()->add_action( 'wp_after_load_template', $this, 'buffer_end', PHP_INT_MAX );
-
-		// body content
-		Urlslab_Loader::get_instance()->add_action( 'wp_body_open', $this, 'buffer_content_start', PHP_INT_MAX );
-		Urlslab_Loader::get_instance()->add_action( 'wp_footer', $this, 'buffer_end', PHP_INT_MIN );
+		Urlslab_Loader::get_instance()->add_filter( 'language_attributes', $this, 'buffer_start', PHP_INT_MAX );
+		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $this, 'buffer_start', PHP_INT_MAX );
+		Urlslab_Loader::get_instance()->add_action( 'shutdown', $this, 'buffer_end', PHP_INT_MIN );
 
 		$this->init_activated_widgets();
-	}
-
-	private function urlslab_head_content( $content ) {
-		if ( empty( $content ) || ! has_action( 'urlslab_head_content' ) ) {
-			return $content;    // nothing to process
-		}
-
-		$content = apply_filters( 'urlslab_head_content_raw', $content );
-
-		$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
-		$document->encoding            = get_bloginfo( 'charset' );
-		$document->strictErrorChecking = false; // phpcs:ignore
-		$libxml_previous_state         = libxml_use_internal_errors( true );
-
-		try {
-			$document->loadHTML(
-				mb_convert_encoding( $content, 'HTML-ENTITIES', get_bloginfo( 'charset' ) ),
-				LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE
-			);
-
-			foreach ( libxml_get_errors() as $error ) {
-				if ( false !== strpos( $error->message, 'Unexpected' ) || false !== strpos( $error->message, 'misplaced' ) ) {
-					return $content;
-				}
-			}
-
-			libxml_clear_errors();
-			libxml_use_internal_errors( $libxml_previous_state );
-
-			do_action( 'urlslab_head_content', $document );
-
-			return $document->saveHTML( $document->getElementsByTagName( 'head' )[0] );
-		} catch ( Exception $e ) {
-			return $content;
-		}
 	}
 
 	private function init_activated_widgets() {

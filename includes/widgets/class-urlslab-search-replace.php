@@ -30,6 +30,9 @@ class Urlslab_Search_Replace extends Urlslab_Widget {
 	}
 
 	public function theContentRawHook( $content ) {
+		if ( is_admin() ) {
+			return $content;
+		}
 		foreach ( $this->get_rules() as $rule ) {
 			switch ( $rule->get_search_type() ) {
 				case Urlslab_Search_Replace_Row::TYPE_REGEXP:
