@@ -246,7 +246,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			null,
 			'prefetch'
 		);
-		$this->add_options_form_section( 'cloudfront', __( 'CloudFront Integration' ), __( 'Amazon CloudFront is a web service that accelerates the delivery of your static and dynamic web content, including .html, .css, .js, and image files, ensuring a seamless experience for users.' ) );
+		$this->add_options_form_section( 'cloudfront', __( 'CloudFront Integration' ), __( 'Amazon CloudFront is a web service that accelerates the delivery of your static and dynamic web content, including .html, .css, .js, and image files, ensuring a seamless experience for users. The IAM role must be granted permissions to list distributions and invalidate objects.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_CLOUDFRONT_ACCESS_KEY,
 			'',
