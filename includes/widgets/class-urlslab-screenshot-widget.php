@@ -187,7 +187,9 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 				\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_YEARLY      => __( 'Yearly' ),
 			),
 			function( $value ) {
-				return is_numeric( $value ) && 0 < $value;
+				$obj = new \OpenAPI\Client\Model\DomainDataRetrievalDataRequest();
+
+				return in_array( $value, $obj->getRenewFrequencyAllowableValues() );
 			},
 			'schedule',
 		);
