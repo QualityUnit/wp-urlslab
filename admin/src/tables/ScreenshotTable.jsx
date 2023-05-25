@@ -5,7 +5,6 @@ import {
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
-import ImageThumbnail from '../elements/ImageThumbnail';
 
 export default function ScreenshotTable( { slug } ) {
 	const paginationId = 'url_id';

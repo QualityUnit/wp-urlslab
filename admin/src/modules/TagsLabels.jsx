@@ -117,6 +117,10 @@ export default function TagsLabels( ) {
 		return <Loader />;
 	}
 
+	if ( row ) {
+		queryClient.invalidateQueries( [ 'label' ] );
+	}
+
 	return (
 		<div className="urlslab-tableView">
 			<ModuleViewHeaderBottom
@@ -130,7 +134,7 @@ export default function TagsLabels( ) {
 				noImport
 				noFiltering
 				noCount
-				onUpdates={ ( val ) => {
+				onUpdate={ ( val ) => {
 					setActivePanel();
 					setEditorRow();
 					if ( val === 'rowInserted' || val === 'rowChanged' ) {
