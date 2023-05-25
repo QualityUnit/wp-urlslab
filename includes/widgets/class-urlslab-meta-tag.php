@@ -37,7 +37,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	public const SETTING_NAME_TW_GOOGLEPLAY_URL = 'urlslab_tw_googleplay_url';
 
 	public function init_widget() {
-		Urlslab_Loader::get_instance()->add_action( 'urlslab_head_content', $this, 'theContentHook' );
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_head_content', $this, 'content_hook' );
 	}
 
 	public function get_widget_slug(): string {
@@ -56,7 +56,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 		return array( self::LABEL_SEO, self::LABEL_FREE, self::LABEL_PAID );
 	}
 
-	public function theContentHook( DOMDocument $document ) {
+	public function content_hook( DOMDocument $document ) {
 		if ( is_admin() || is_404() || is_user_logged_in() ) {
 			return;
 		}

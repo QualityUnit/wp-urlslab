@@ -10,7 +10,7 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	public const SOURCE_LINK = 'L';
 
 	public function init_widget() {
-		Urlslab_Loader::get_instance()->add_action( 'urlslab_content', $this, 'theContentHook', 13 );
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook', 13 );
 	}
 
 	public function get_widget_slug(): string {
@@ -29,7 +29,7 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 		return array( self::LABEL_SEO, self::LABEL_FREE );
 	}
 
-	public function theContentHook( DOMDocument $document ) {
+	public function content_hook( DOMDocument $document ) {
 		if ( is_admin() || empty( $this->get_option( self::SETTING_NAME_ALT_TAG_SOURCE ) ) ) {
 			return;
 		}

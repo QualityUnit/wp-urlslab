@@ -26,7 +26,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'post_updated', $this, 'post_updated', 10, 3 );
-		Urlslab_Loader::get_instance()->add_action( 'urlslab_content', $this, 'theContentHook', 12 );
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook', 12 );
 	}
 
 	public function get_widget_labels(): array {
@@ -65,7 +65,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		return __( 'Monitor and maintain all internal and external links on your website' );
 	}
 
-	public function theContentHook( DOMDocument $document ) {
+	public function content_hook( DOMDocument $document ) {
 		if ( is_admin() ) {
 			return;
 		}
