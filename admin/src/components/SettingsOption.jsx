@@ -50,6 +50,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 			const { ok } = response;
 
 			if ( ok ) {
+				queryClient.invalidateQueries( [ 'settings', settingId ] );
 				setStatus( 'success' );
 				renderTooltip( 'success' );
 				setTimeout( () => {
@@ -59,7 +60,6 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 
 				return false;
 			}
-			queryClient.invalidateQueries( [ 'settings', settingId ] );
 			setStatus( 'error' );
 			renderTooltip( 'error' );
 			setTimeout( () => {

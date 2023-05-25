@@ -95,7 +95,7 @@ export default function TagsMenu( { label, description, defaultValue: tags, slug
 			if ( ok ) {
 				let returnedTag = await response.json();
 				returnedTag = { value: returnedTag.label_id, label: returnedTag.name, ...returnedTag };
-				queryClient.invalidateQueries( [ 'label', 'menu' ], { refetchType: 'all' } );
+				queryClient.invalidateQueries( [ 'label' ], { refetchType: 'all' } );
 				onChange( `${ selectedToString }${ returnedTag.label_id }|` );
 			}
 		}, [ onChange, selectedToString, queryClient ] );
