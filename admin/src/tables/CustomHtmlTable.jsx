@@ -77,7 +77,7 @@ export default function CustomHtmlTable( { slug } ) {
 	};
 
 	const rowEditorCells = {
-		name: <InputField liveUpdate type="text" defaultValue="" label={ header.name } onChange={ ( val ) => setEditorRow( { ...rowToEdit, name: val } ) } required />,
+		name: <InputField liveUpdate type="text" defaultValue="" label={ header.name } onChange={ ( val ) => setEditorRow( { ...rowToEdit, name: val } ) } />,
 
 		match_type: <SingleSelectMenu defaultAccept autoClose items={ matchTypes } name="match_type" defaultValue="E"
 									  description={ __( 'Select when should be applied the rule' ) }
@@ -85,7 +85,7 @@ export default function CustomHtmlTable( { slug } ) {
 
 		match_url: <InputField type="url" autoFocus liveUpdate defaultValue="" label={ header.match_url }
 							   description={ __( 'Match URL with this value based on the selected type of rule' ) }
-							   onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_url: val } ) } required />,
+							   onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_url: val } ) } />,
 
 		match_headers: <InputField liveUpdate defaultValue="" label={ header.match_headers }
 								   description={ __( 'If you need to inject custom HTML to page if request contains specific HTTP header sent from browser. Comma separated list of headers to check. (Example 1: check if any header exists: MY-HEADER-NAME1, HEADER2), (Example 2: check if header has specific value: MY-HEADER-NAME1=value1, HEADER2=value2)' ) }
@@ -121,25 +121,25 @@ export default function CustomHtmlTable( { slug } ) {
 
 		add_http_headers: <TextArea rows="5" liveUpdate defaultValue="" label={ header.add_http_headers }
 									description={ __( 'Add custom HTTP headers sent from server to browser. Separate headers by new lines, header name and value by `=`. (e.g. X-URLSLAB-HEADER=value)' ) }
-									onChange={ ( val ) => setEditorRow( { ...rowToEdit, add_http_headers: val } ) } required />,
+									onChange={ ( val ) => setEditorRow( { ...rowToEdit, add_http_headers: val } ) } />,
 
 		add_start_headers: <TextArea rows="5" liveUpdate defaultValue="" label={ header.add_start_headers }
 									 description={ __( 'Value will be inserted right after <head> tag.' ) }
-									 onChange={ ( val ) => setEditorRow( { ...rowToEdit, add_start_headers: val } ) } required />,
+									 onChange={ ( val ) => setEditorRow( { ...rowToEdit, add_start_headers: val } ) } />,
 
 		add_end_headers: <TextArea rows="5" liveUpdate defaultValue="" label={ header.add_end_headers }
 								   description={ __( 'Value will be inserted right before </head> tag.' ) }
-								   onChange={ ( val ) => setEditorRow( { ...rowToEdit, add_end_headers: val } ) } required />,
+								   onChange={ ( val ) => setEditorRow( { ...rowToEdit, add_end_headers: val } ) } />,
 
 		add_start_body: <TextArea rows="5" liveUpdate defaultValue="" label={ header.add_start_body }
 								  description={ __( 'Value will be inserted right after <body> tag (beginning of html page).' ) }
-								  onChange={ ( val ) => setEditorRow( { ...rowToEdit, add_start_body: val } ) } required />,
+								  onChange={ ( val ) => setEditorRow( { ...rowToEdit, add_start_body: val } ) } />,
 
 		add_end_body: <TextArea rows="5" liveUpdate defaultValue="" label={ header.add_end_body }
 								description={ __( 'Value will be inserted right before </body> tag (end of html page).' ) }
-								onChange={ ( val ) => setEditorRow( { ...rowToEdit, add_end_body: val } ) } required />,
+								onChange={ ( val ) => setEditorRow( { ...rowToEdit, add_end_body: val } ) } />,
 
-		rule_order: <InputField liveUpdate type="text" defaultValue="" label={ header.rule_order } onChange={ ( val ) => setEditorRow( { ...rowToEdit, rule_order: val } ) } required />,
+		rule_order: <InputField liveUpdate type="text" defaultValue="10" label={ header.rule_order } onChange={ ( val ) => setEditorRow( { ...rowToEdit, rule_order: val } ) } />,
 
 		is_active: <Checkbox defaultValue={ true } onChange={ ( val ) => setEditorRow( { ...rowToEdit, is_active: val } ) }>{ header.is_active }</Checkbox>,
 	};
