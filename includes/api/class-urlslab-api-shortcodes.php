@@ -199,7 +199,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 			$row->shortcode_id = (int) $row->shortcode_id;
 			$atts              = array( 'id' => $row->shortcode_id );
 			if ( Urlslab_Generator_Shortcode_Row::TYPE_VIDEO === $row->shortcode_type ) {
-				$atts['videoid'] = 'your youtube video id';
+				$atts['videoid'] = 'youtube_video_id';
 			}
 			$row->shortcode = $widget->get_placeholder_txt( $atts, Urlslab_Content_Generator_Widget::SLUG );
 		}
@@ -212,7 +212,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 	}
 
 	public function get_editable_columns(): array {
-		return array( 'semantic_context', 'prompt', 'default_value', 'url_filter', 'status', 'model', 'template' );
+		return array( 'semantic_context', 'prompt', 'default_value', 'url_filter', 'status', 'model', 'template', 'shortcode_type' );
 	}
 
 	/**
