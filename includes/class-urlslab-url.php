@@ -219,6 +219,10 @@ class Urlslab_Url {
 		return $this->url_components['scheme'] . ( strpos( $this->url_components['scheme'], '://' ) ? '' : '://' ) . $this->get_url();
 	}
 
+	public function get_url_with_protocol_relative() {
+		return '//' . $this->get_url();
+	}
+
 	public static function add_current_page_protocol( $url ): string {
 		if ( str_starts_with( $url, 'http' ) ) {
 			return $url;

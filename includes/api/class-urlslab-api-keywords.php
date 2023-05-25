@@ -59,13 +59,13 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 								return 250 > strlen( $param );
 							},
 						),
-						'urlLink'   => array(
+						'urlLink'     => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return strlen( $param );
 							},
 						),
-						'keyword'   => array(
+						'keyword'     => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return strlen( $param );
@@ -254,10 +254,10 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 						return is_string( $param ) && strlen( $param );
 					},
 				),
-				'domain'  => array(
-					'required'          => true,
+				'url'     => array(
+					'required'          => false,
 					'validate_callback' => function( $param ) {
-						return is_string( $param ) && strlen( $param );
+						return is_string( $param );
 					},
 				),
 				'count'   => array(
@@ -293,24 +293,57 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			$content_client = new \OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), $config );
 
 
-			$request = new \OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsRequest();
-			$request->setQuery( $api_request->get_param( 'keyword' ) );
+			$request       = new \OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsRequest();
+			$replace_chars = array(
+				'/',
+				'-',
+				'_',
+				':',
+				'.',
+				'https',
+				'http',
+			);
+			$request->setQuery( trim( str_replace( $replace_chars, ' ', $api_request->get_param( 'keyword' ) ) ) );
 			$request->setChunkLimit( 1 );
 			$request->setRenewFrequency( \OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsRequest::RENEW_FREQUENCY_ONE_TIME );
 
 			$query = new \OpenAPI\Client\Model\DomainDataRetrievalContentQuery();
 			$query->setLimit( $max_count * 3 );
-			$query->setAdditionalQuery( (object) array( 'term' => (object) array( 'metadata.chunk_id' => (object) array( 'value' => 1 ) ) ) );
+
+			$query_must_conditions   = array();
+			$query_must_conditions[] = (object) array( 'term' => (object) array( 'metadata.chunk_id' => (object) array( 'value' => 1 ) ) );
+
+			if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Related_Resources_Widget::SLUG )->get_option( Urlslab_Related_Resources_Widget::SETTING_NAME_LAST_SEEN ) ) {
+				$query_must_conditions[] = (object) array( 'range' => (object) array( 'metadata.lastSeen' => (object) array( 'gte' => time() - Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Related_Resources_Widget::SLUG )->get_option( Urlslab_Related_Resources_Widget::SETTING_NAME_LAST_SEEN ) ) ) );
+			}
 
 			$domains = array();
-			if ( $api_request->get_param( 'domain' ) ) {
-				$domains[ $api_request->get_param( 'domain' ) ] = $api_request->get_param( 'domain' );
+			if ( $api_request->get_param( 'url' ) ) {
+				if ( str_starts_with( $api_request->get_param( 'url' ), 'http' ) ) {
+					try {
+						$url_obj = new Urlslab_Url( $api_request->get_param( 'url' ) );
+						if ( $url_obj->is_url_valid() ) {
+							$domain                  = $url_obj->get_domain_name();
+							$domains[ $domain ]      = $domain;
+							$query_must_conditions[] = (object) array( 'match' => (object) array( 'metadata.url' => $url_obj->get_url() ) );
+						} else {
+							$query_must_conditions[] = (object) array( 'match' => (object) array( 'metadata.url' => $api_request->get_param( 'url' ) ) );
+						}
+					} catch ( Exception $e ) {
+						$query_must_conditions[] = (object) array( 'match' => (object) array( 'metadata.url' => $api_request->get_param( 'url' ) ) );
+					}
+				} else {
+					$query_must_conditions[] = (object) array( 'match' => (object) array( 'metadata.url' => $api_request->get_param( 'url' ) ) );
+				}
 			} else {
 				$domain             = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_current_page_url()->get_domain_name();
 				$domains[ $domain ] = $domain;
 			}
+			$query->setAdditionalQuery( (object) array( 'bool' => (object) array( 'must' => $query_must_conditions ) ) );
 
-			$query->setDomains( array_keys( $domains ) );
+			if ( ! empty( $domains ) ) {
+				$query->setDomains( array_keys( $domains ) );
+			}
 			$request->setFilter( $query );
 
 			$response  = $content_client->getRelatedUrls( $request );
@@ -318,7 +351,11 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			foreach ( $response->getUrls() as $chunk ) {
 				foreach ( $chunk as $dest_url ) {
 					if ( count( $dest_urls ) < $max_count ) {
-						$dest_urls[ $dest_url ] = $dest_url;
+						try {
+							$dest_url_obj                                                 = new Urlslab_Url( $dest_url, true );
+							$dest_urls[ $dest_url_obj->get_url_with_protocol_relative() ] = 1;
+						} catch ( Exception $e ) {
+						}
 					}
 				}
 			}

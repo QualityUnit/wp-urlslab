@@ -15,11 +15,13 @@ export const renameModule = ( moduleId ) => {
 
 // Delay some function (ie. onChange, onKeyUp)…
 // Usage delay(()=> some.function, time in ms)();
+let delayTimer = 0;
 export const delay = ( fn, ms ) => {
-	let timer = 0;
 	return function( ...args ) {
-		clearTimeout( timer );
-		timer = setTimeout( fn.bind( this, ...args ), ms || 0 );
+		if (delayTimer) {
+			clearTimeout( delayTimer );
+		}
+		delayTimer = setTimeout( fn.bind( this, ...args ), ms || 0 );
 	};
 };
 

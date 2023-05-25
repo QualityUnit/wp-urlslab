@@ -504,16 +504,16 @@ class Urlslab {
 	 * @since    1.0.0
 	 */
 	private function define_public_hooks() {
-		$plugin_public = new Urlslab_Public( $this->get_urlslab(), $this->get_version() );
-
-		Urlslab_Loader::get_instance()->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		Urlslab_Loader::get_instance()->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $plugin_public, 'download_offloaded_file', PHP_INT_MIN );
-
-		Urlslab_Loader::get_instance()->add_filter( 'language_attributes', $this, 'buffer_start', PHP_INT_MAX );
-		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $this, 'buffer_start', PHP_INT_MAX );
-		Urlslab_Loader::get_instance()->add_action( 'shutdown', $this, 'buffer_end', PHP_INT_MIN );
-
+		if ( ! defined( 'DOING_AJAX' ) && ! wp_installing() ) {
+			$plugin_public = new Urlslab_Public( $this->get_urlslab(), $this->get_version() );
+			Urlslab_Loader::get_instance()->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
+			Urlslab_Loader::get_instance()->add_action( 'template_redirect', $plugin_public, 'download_offloaded_file', PHP_INT_MIN );
+			if ( ! defined( 'WP_ADMIN' ) ) {
+				Urlslab_Loader::get_instance()->add_filter( 'language_attributes', $this, 'buffer_start', PHP_INT_MAX );
+				Urlslab_Loader::get_instance()->add_action( 'template_redirect', $this, 'buffer_start', PHP_INT_MAX );
+				Urlslab_Loader::get_instance()->add_action( 'shutdown', $this, 'buffer_end', PHP_INT_MIN );
+			}
+		}
 		$this->init_activated_widgets();
 	}
 
