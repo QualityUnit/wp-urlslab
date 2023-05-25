@@ -35,7 +35,7 @@ export default function RedirectsTable( { slug } ) {
 		match_url: <InputField type="url" autoFocus liveUpdate defaultValue="" label={ header.match_url }
 							   description={ __( 'Match browser URL with this value based on the selected type of rule' ) }
 							   onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_url: val } ) } required />,
-		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' } liveUpdate defaultValue=""
+		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' } liveUpdate defaultValue={ window.location.origin }
 										description={ __( 'Redirect user to this URL if browser URL matched and also match all other conditions' ) }
 										label={ header.replace_url } onChange={ ( val ) => setEditorRow( { ...rowToEdit, replace_url: val } ) } required />,
 		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" defaultValue="301"
@@ -64,6 +64,7 @@ export default function RedirectsTable( { slug } ) {
 							 description={ __( 'Redirect just visitors with specific browser. Comma separated list of browser names or any string from User-Agent. (e.g. Chrome, Safari)' ) }
 							 onChange={ ( val ) => setEditorRow( { ...rowToEdit, browser: val } ) } />,
 		if_not_found: <SingleSelectMenu autoClose items={ notFoundTypes } name="if_not_found" defaultValue="A" onChange={ ( val ) => setEditorRow( { ...rowToEdit, if_not_found: val } ) }>{ header.if_not_found }</SingleSelectMenu>,
+		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setEditorRow( { ...rowToEdit, labels: val } ) } />,
 	};
 
 	const columns = [

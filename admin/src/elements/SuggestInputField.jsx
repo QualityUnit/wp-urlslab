@@ -14,64 +14,59 @@ export default function SuggestInputField( props ) {
 	const ref = useRef();
 	const inputRef = useRef();
 	const [ index, setIndex ] = useState( );
-	const [ input, setInput ] = useState( replaceChars( suggestInput ) );
-	const [ suggestion, setSuggestion ] = useState( defaultValue );
+	const [ input, setInput ] = useState( inputRef.current );
+	const [ suggestion, setSuggestion ] = useState( input ? input : defaultValue );
 	const [ suggestionsList, setSuggestionsList ] = useState( [] );
 	const [ suggestionsVisible, showSuggestions ] = useState( );
 	const descriptionHeight = useRef();
 	let suggestionsPanel;
-	const activeDomain = suggestInput.includes( 'http' ) ? suggestInput : '';
-	let baseDomain = activeDomain?.replace( /(https?:\/\/)?([^\.]+?\.)?([^\/]+?\..+?)\/.+$/, '$3' );
-	if ( input?.includes( 'http' ) ) {
-		baseDomain = input?.replace( /(https?:\/\/)?(www\.)?(.+?)$/, '$3' );
-	}
-	baseDomain = baseDomain?.replace( '.local', '.com' );
 
 	const suggestedDomains = useMemo( () => {
-		if ( activeDomain ) {
-			return [
-				activeDomain?.replace( /(https?:\/\/)([^\.]+?\.)?([^\/]+?\...+?\/).+$/, `$1${ ! activeDomain.includes( '.local' ) ? 'www.' : '' }$3` ),
-				activeDomain?.replace( /(https?:\/\/).+/, `$1${ baseDomain }` ),
-			];
+		if ( input ) {
+			return [ input ];
 		}
 		return [];
-	}, [ activeDomain, baseDomain ] );
+	}, [ input ] );
+
+	const scrollTo = () => {
+		if ( index || index === 0 ) {
+			suggestionsPanel.scrollTop = suggestionsPanel.querySelectorAll('li')[index].offsetTop - suggestionsPanel.offsetTop;
+		}
+	};
 
 	const handleTyping = ( val, type ) => {
-		inputRef.current = val;
-
-		if ( type !== 'keyup' ) {
-			onChange( val );
-		}
-
-		//on keyup, start the countdown
-		if ( type === 'keyup' && ! disabledKeys[ val.keyCode ] ) {
-			const value = val.target.value;
-
-			delay( () => {
-				if ( value === inputRef.current ) {
-					setInput( value );
-				}
-			}, 2000 )();
+		if ( ! type || ! val ) {
 			return false;
 		}
 
 		// arrow up/down button should select next/previous list element
-		const scrollTo = () => {
-			suggestionsPanel.scrollTop = suggestionsPanel.querySelectorAll( 'li' )[ index ].offsetTop - suggestionsPanel.offsetTop;
-		};
-		if ( val.keyCode === 38 && index > 0 ) {
-			setIndex( ( i ) => i - 1 );
+		if ( val.keyCode === 38 ) {
+			if ( index > 0) {
+				setIndex((i) => i - 1);
+				scrollTo();
+			}
+			return false;
+		} else if ( val.keyCode === 40 ) {
+			if (index < suggestionsList.length - 1) {
+				setIndex( ( i ) => i + 1 );
+			} else {
+				setIndex( 0 );
+			}
 			scrollTo();
-		}
-		if ( val.keyCode === 40 && ! index ) {
-			setIndex( 0 );
-		}
-		if ( val.keyCode === 40 && index < suggestionsList.length - 1 ) {
-			setIndex( ( i ) => i + 1 );
-			scrollTo();
+			return false;
+		} else {
+			inputRef.current = val;
+			if (type === 'onchange') {
+				onChange(val);
+			} else {
+				delay( () => {
+					setInput( val.target.value );
+				}, 800 )();
+			}
+			return false;
 		}
 	};
+
 
 	const handleEnter = ( ) => {
 		showSuggestions( false );
@@ -81,13 +76,16 @@ export default function SuggestInputField( props ) {
 		}
 	};
 
+
+
 	const { data, isLoading } = useQuery( {
 		queryKey: [ input ],
 		queryFn: async () => {
 			if ( input ) {
 				const result = await postFetch( 'keyword/suggest', {
-					count: maxItems || 10, keyword: ! suggestInput?.includes( 'http' ) ? suggestInput : replaceChars( input ), domain: baseDomain } );
+					count: maxItems || 15, keyword: suggestInput , url: input } );
 				if ( result.ok ) {
+					showSuggestions( true );
 					return result.json();
 				}
 				return [];
@@ -95,11 +93,6 @@ export default function SuggestInputField( props ) {
 		},
 		refetchOnWindowFocus: false,
 	} );
-
-	function replaceChars( inputVal ) {
-		const valToReplace = inputVal.replace( /^(https?:\/\/)[^\/]+?\//, '' );
-		return valToReplace.replaceAll( /[\/\|\-_\*\+:\!,;&\?=\%]/g, ' ' );
-	}
 
 	if ( suggestionsVisible ) {
 		function preventDefault( e ) {
@@ -139,7 +132,7 @@ export default function SuggestInputField( props ) {
 
 	return (
 		<div className="urlslab-suggestInput pos-relative" key={ suggestInput } ref={ ref } style={ { zIndex: suggestionsVisible ? '10' : '0' } }>
-			<InputField { ...props } key={ suggestion } defaultValue={ suggestion } isLoading={ isLoading } onChange={ ( event ) => handleTyping( event ) } onKeyDown={ ( event ) => {
+			<InputField { ...props } key={ suggestion } defaultValue={ suggestion } isLoading={ isLoading } onChange={ ( event ) => handleTyping( event, 'onchange' ) } onKeyDown={ ( event ) => {
 				if ( event.key === 'Enter' ) {
 					handleEnter( event );
 				}
@@ -154,7 +147,7 @@ export default function SuggestInputField( props ) {
 						{
 							suggestionsList.map( ( suggest, id ) => {
 								return suggest && <li key={ suggest } className={ id === index ? 'active' : '' } ><button onClick={ () => {
-									handleTyping( suggest ); setSuggestion( suggest ); showSuggestions( false );
+									handleTyping( suggest, 'onchange' ); setSuggestion( suggest ); showSuggestions( false );
 								} }
 								>{ suggest }</button></li>;
 							} )

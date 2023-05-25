@@ -43,8 +43,14 @@ export default function NotFoundTable( { slug } ) {
 
 	const addRedirect = useCallback( ( { cell } ) => {
 		const { url: defaultMatchUrl } = cell.row.original;
+		let replaceUrl = new URL(window.location.href);
+		try {
+			replaceUrl = new URL(defaultMatchUrl);
+		} catch(e){
+		}
 		matchUrlField.current = defaultMatchUrl;
-		setEditorRow( { match_type: 'E', redirect_code: '301', match_url: defaultMatchUrl } );
+
+		setEditorRow( { match_type: 'E', redirect_code: '301', match_url: defaultMatchUrl, replace_url: replaceUrl.protocol + replaceUrl.hostname} );
 
 		setActivePanel( 'rowInserter' );
 	}, [ setActivePanel, setEditorRow ] );
@@ -52,8 +58,9 @@ export default function NotFoundTable( { slug } ) {
 	const rowEditorCells = {
 		match_type: <SingleSelectMenu autoClose items={ matchTypes } name="match_type" defaultValue="E" onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_type: val } ) }>{ redirectHeader.match_type }</SingleSelectMenu>,
 		match_url: <InputField type="url" liveUpdate ref={ matchUrlField } defaultValue={ matchUrlField.current } label={ redirectHeader.match_url } onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_url: val } ) } />,
-		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' } autoFocus liveUpdate defaultValue="" label={ redirectHeader.replace_url } onChange={ ( val ) => setEditorRow( { ...rowToEdit, replace_url: val } ) } required />,
+		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' } autoFocus liveUpdate defaultValue={ ( window.location.origin ) } label={ redirectHeader.replace_url } onChange={ ( val ) => setEditorRow( { ...rowToEdit, replace_url: val } ) } required />,
 		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" defaultValue="301" onChange={ ( val ) => setEditorRow( { ...rowToEdit, redirect_code: val } ) }>{ redirectHeader.redirect_code }</SingleSelectMenu>,
+		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setEditorRow( { ...rowToEdit, labels: val } ) } />,
 	};
 
 	const header = {
