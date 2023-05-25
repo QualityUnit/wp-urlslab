@@ -157,13 +157,13 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'default_html', __( 'Custom HTML - All pages' ), __( 'Default rule applied to all pages of your website to customize HTML. If you need to enhance just some pages with custom HTML based on custom conditions, use rules. DANGER: Make sure your custom code is correct. Invalid HTML can corrupt your website!' ) );
+		$this->add_options_form_section( 'default_html', __( 'Custom HTML Applied on All Pages' ), __( 'Default rules is automatically applied to every page. For page-specific, use custom rules with appropriate conditions. CAUTION: Ensure accurate HTML code to prevent website corruption.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_HEAD_START,
 			'',
 			true,
-			__( 'Beginning of HTML Head' ),
-			__( 'Add custom HTML to the beginning of <HEAD> tag. Your code will be added to all pages right after <head> tag.' ),
+			__( 'After `<head>`' ),
+			__( 'Custom HTML code inserted immediately after the opening `&lt;head>` tag, applicable to all pages.' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {
@@ -175,8 +175,8 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 			self::SETTING_NAME_HEAD_END,
 			'',
 			true,
-			__( 'End of HTML Head' ),
-			__( 'Add custom HTML to the end of <HEAD> tag. Your code will be added to head tag on all pages before </head> tag.' ),
+			__( 'Before `</head>`' ),
+			__( 'Custom HTML code inserted immediately before the closing `&lt;/head>` tag, applicable to all pages.' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {
@@ -188,8 +188,8 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 			self::SETTING_NAME_BODY_START,
 			'',
 			true,
-			__( 'Beggining of HTML Body' ),
-			__( 'Add custom HTML to the beginning of <BODY> tag. Your code will be added to all pages right after <body> tag.' ),
+			__( 'After `<body>`' ),
+			__( 'Custom HTML code inserted immediately after the opening `&lt;body>` tag, applicable to all pages.' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {
@@ -201,8 +201,8 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 			self::SETTING_NAME_BODY_END,
 			'',
 			true,
-			__( 'End of HTML Body' ),
-			__( 'Add custom HTML to the end of <BODY> tag. Your code will be added to body tag on all pages before </body> tag.' ),
+			__( 'Before `</body>`' ),
+			__( 'Custom HTML code inserted immediately before the closing `&lt;/body>` tag, applicable to all pages.' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {
@@ -215,7 +215,7 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 			'',
 			true,
 			__( 'Custom HTTP Headers' ),
-			__( 'Add custom HTTP headers into server response. Example: X-URLSLAB-CUSTOM-HEADER=custom_value' ),
+			__( 'Insert custom HTTP headers in server response. Example: `X-URLSLAB-CUSTOM-HEADER=custom_value`.' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {

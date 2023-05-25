@@ -179,7 +179,7 @@ export default function CustomHtmlTable( { slug } ) {
 					}
 				} }
 				activatePanel={ activePanel }
-				rowEditorOptions={ { rowEditorCells, title: 'Add New Replacement', data, slug, url, paginationId, rowToEdit } }
+				rowEditorOptions={ { rowEditorCells, title: 'Add Custom HTML', data, slug, url, paginationId, rowToEdit } }
 				exportOptions={ {
 					slug,
 					url,
