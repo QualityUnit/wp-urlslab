@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { delay } from '../lib/helpers';
 import '../assets/styles/elements/_Inputs.scss';
 
-export default function InputField( { defaultValue, isLoading, autoFocus, placeholder, message, liveUpdate, className, type, readonly, disabled, label, description, labelInline, onChange, onFocus, onKeyUp, children, style } ) {
+export default function InputField( { defaultValue, isLoading, autoFocus, placeholder, message, liveUpdate, className, type, readonly, disabled, label, description, labelInline, onChange, onKeyDown, onBlur, onFocus, onKeyUp, children, style } ) {
 	const [ val, setVal ] = useState( defaultValue || '' );
 	const [ valid, setValid ] = useState( false );
 	const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
@@ -52,10 +52,17 @@ export default function InputField( { defaultValue, isLoading, autoFocus, placeh
 						handleValLive( event );
 					} }
 					onFocus={ onFocus && onFocus }
-					onBlur={ ( event ) => handleVal( event ) }
+					onBlur={ ( event ) => {
+						handleVal( event ); if ( onBlur ) {
+							onBlur( event );
+						}
+					} }
 					onKeyDown={ ( event ) => {
 						if ( event.key === 'Enter' || event.keyCode === 9 ) {
 							event.target.blur();
+						}
+						if ( onKeyDown ) {
+							onKeyDown( event );
 						}
 					} }
 					onKeyUp={ onKeyUp }

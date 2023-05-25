@@ -36,7 +36,9 @@ export default function Overview( { moduleId, noFAQ, noIntegrate, noCheckbox, ti
 	}, [ moduleId, noCheckbox ] );
 
 	useEffect( () => {
-		overViewVisibility();
+		if ( moduleId ) {
+			overViewVisibility();
+		}
 	}, [ overViewVisibility ] );
 
 	return (

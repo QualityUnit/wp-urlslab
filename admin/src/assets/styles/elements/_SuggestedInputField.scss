@@ -2,18 +2,17 @@
 @use "../common/mixins" as *;
 
 .urlslab-suggestInput {
-	z-index: 10;
 
 	&-suggestions {
 		top: calc(100% + 1px);
 		left: 0;
 		border-radius: $br-10;
 		background-color: $white;
-		width: calc(100% + 5em);
+		width: 100%;
 		padding: 1em 1.45em;
 		filter: $box-shadow-small;
 
-		&--inn {
+		&-inn {
 
 			@include scrollbar;
 			max-height: 19em;
@@ -26,16 +25,22 @@
 		li {
 			display: block;
 			width: 100%;
-			padding: 0.5em 0;
+			padding: 0.5em 1.45em;
 			margin-bottom: 0;
 			color: $grey-dark;
 
 			button {
 				display: block;
 				width: 100%;
+				line-height: 1.25;
 				text-align: left;
 				padding: 0;
 				color: currentcolor;
+			}
+
+			&.active {
+				background-color: $primary-color;
+				color: $white;
 			}
 
 			@media (hover: hover) {

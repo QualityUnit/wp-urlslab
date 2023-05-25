@@ -33,12 +33,12 @@ export default function TablePanels( { props } ) {
 			}
 			{
 				activePanel === 'rowInserter' &&
-				<EditRowPanel rowEditorOptions={ rowEditorOptions } handlePanel={ handlePanel } />
+				<EditRowPanel key={ rowEditorOptions } rowEditorOptions={ { editorMode: false, ...rowEditorOptions } } handlePanel={ handlePanel } />
 			}
 
 			{
 				activePanel === 'rowEditor' && typeof rowEditorOptions.rowToEdit === 'object' &&
-				<EditRowPanel rowEditorOptions={ { editorMode: true, ...rowEditorOptions } } handlePanel={ handlePanel } />
+				<EditRowPanel key={ rowEditorOptions } rowEditorOptions={ { editorMode: true, ...rowEditorOptions } } handlePanel={ handlePanel } />
 			}
 
 			{

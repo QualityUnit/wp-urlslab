@@ -30,9 +30,9 @@ export default function ModuleViewHeader( { moduleId, moduleMenu, activeMenu, no
 	};
 
 	const getOverviewVisibility = useCallback( async () => {
-		const { hideOverview } = await get( moduleId ) ?? false;
+		const moduleData = moduleId && await get( moduleId );
 
-		if ( hideOverview && moduleMenu ) {
+		if ( moduleData?.hideOverview && moduleMenu ) {
 			handleMenu( Array.from( moduleMenu )[ 0 ][ 0 ] );
 		}
 	}, [ ] );

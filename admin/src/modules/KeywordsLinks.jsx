@@ -20,6 +20,7 @@ export default function KeywordLinks( { moduleId } ) {
 	return (
 		<div className="urlslab-tableView">
 			<ModuleViewHeader
+				moduleId={ moduleId }
 				moduleMenu={ tableMenu }
 				activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 

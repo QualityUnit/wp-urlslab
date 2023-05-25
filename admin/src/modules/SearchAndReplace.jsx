@@ -18,6 +18,7 @@ export default function SearchAndReplace( { moduleId } ) {
 	return (
 		<div className="urlslab-tableView">
 			<ModuleViewHeader
+				moduleId={ moduleId }
 				noSettings
 				moduleMenu={ tableMenu }
 				activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
