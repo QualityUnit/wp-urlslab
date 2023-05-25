@@ -36,7 +36,7 @@ export default function CacheRulesTable( { slug } ) {
 
 	const header = Object.freeze( {
 		match_type: __( 'Match type' ),
-		match_url: __( 'URL' ),
+		match_url: __( 'Match URL' ),
 		is_active: __( 'Is active' ),
 		labels: __( 'Tags' ),
 		browser: __( 'Browser' ),
@@ -50,15 +50,40 @@ export default function CacheRulesTable( { slug } ) {
 	} );
 
 	const rowEditorCells = {
-		match_type: <SingleSelectMenu defaultAccept autoClose items={ matchTypes } name="match_type" defaultValue="A" onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_type: val } ) }>{ header.match_type }</SingleSelectMenu>,
-		match_url: <InputField type="url" liveUpdate defaultValue="" label={ header.match_url } onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_url: val } ) } required />,
-		cache_ttl: <InputField liveUpdate defaultValue="3600" label={ header.cache_ttl } onChange={ ( val ) => setEditorRow( { ...rowToEdit, cache_ttl: val } ) } />,
-		headers: <InputField liveUpdate label={ header.headers } defaultValue="" onChange={ ( val ) => setEditorRow( { ...rowToEdit, headers: val } ) } />,
-		cookie: <InputField liveUpdate label={ header.cookie } defaultValue="" onChange={ ( val ) => setEditorRow( { ...rowToEdit, cookie: val } ) } />,
-		params: <InputField liveUpdate label={ header.params } defaultValue="" onChange={ ( val ) => setEditorRow( { ...rowToEdit, params: val } ) } />,
-		ip: <InputField liveUpdate label={ header.ip } defaultValue="" onChange={ ( val ) => setEditorRow( { ...rowToEdit, ip: val } ) } />,
-		browser: <InputField liveUpdate label={ header.browser } defaultValue="" onChange={ ( val ) => setEditorRow( { ...rowToEdit, browser: val } ) } />,
+		match_type: <SingleSelectMenu defaultAccept autoClose items={ matchTypes } name="match_type" defaultValue="A"
+									  description={ __( 'Select when should be applied the rule' ) }
+									  onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_type: val } ) }>{ header.match_type }</SingleSelectMenu>,
+
+		match_url: <InputField type="url" hidden={ rowToEdit?.match_type === 'A' } liveUpdate defaultValue=""
+							   description={ __( 'Match browser URL with this value based on the selected type of rule' ) }
+							   label={ header.match_url } onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_url: val } ) } required />,
+
+		cache_ttl: <InputField liveUpdate defaultValue="3600" label={ header.cache_ttl }
+							   description={ __( 'Cache will be valid defined number of seconds (time to live). Same value will be used for cache headers sent to browser' ) }
+							   onChange={ ( val ) => setEditorRow( { ...rowToEdit, cache_ttl: val } ) } />,
+
+		headers: <InputField liveUpdate label={ header.headers } defaultValue=""
+							 description={ __( 'Use only if you need to cache page just for requests with specific HTTP header sent from browser. Comma separated list of headers to check. (Example 1: check if any header exists: MY-HEADER-NAME1, HEADER2), (Example 2: check if header has specific value: MY-HEADER-NAME1=value1, HEADER2=value2)' ) }
+							 onChange={ ( val ) => setEditorRow( { ...rowToEdit, headers: val } ) } />,
+
+		cookie: <InputField liveUpdate label={ header.cookie } defaultValue=""
+							description={ __( 'Use only if you need to cache page just for requests with specific Cookie sent from browser. Comma separated list of cookies to check. (Example 1: check if any cookie exists: COOKIE_NAME_1, COOKIE_NAME_2), (Example 2: check if cookie has specific value: COOKIE-NAME=value)' ) }
+							onChange={ ( val ) => setEditorRow( { ...rowToEdit, cookie: val } ) } />,
+
+		params: <InputField liveUpdate label={ header.params } defaultValue=""
+							description={ __( 'Use only if you need to cache page just for requests with specific GET or POST parameter. Comma separated list of parameters to check. (Example 1: check if any parameter exists: query_param1, post_param_name2), (Example 2: check if request parameter has specific value: param1=value)' ) }
+							onChange={ ( val ) => setEditorRow( { ...rowToEdit, params: val } ) } />,
+
+		ip: <InputField liveUpdate label={ header.ip } defaultValue=""
+						description={ __( 'Cache just requests from specific IP address or subnet. Comma separated list of IP addresses or subnets. (e.g., 172.120.0.*, 192.168.0.0/24)' ) }
+						onChange={ ( val ) => setEditorRow( { ...rowToEdit, ip: val } ) } />,
+
+		browser: <InputField liveUpdate label={ header.browser } defaultValue=""
+							 description={ __( 'Cache just requests from specific browser names. Comma separated list of browser names or any string from User-Agent. (e.g. Chrome, Safari)' ) }
+							 onChange={ ( val ) => setEditorRow( { ...rowToEdit, browser: val } ) } />,
+
 		rule_order: <InputField liveUpdate defaultValue="10" label={ header.rule_order } onChange={ ( val ) => setEditorRow( { ...rowToEdit, rule_order: val } ) } />,
+
 		is_active: <Checkbox defaultValue={ true } onChange={ ( val ) => setEditorRow( { ...rowToEdit, is_active: val } ) }>{ header.is_active }</Checkbox>,
 	};
 
