@@ -226,7 +226,7 @@ export default function CustomHtmlTable( { slug } ) {
 					}
 				} }
 				activatePanel={ activePanel }
-				rowEditorOptions={ { rowEditorCells, title: __('Inject Custom HTML'), data, slug, url, paginationId, rowToEdit } }
+				rowEditorOptions={ { rowEditorCells, title: __('Add Custom HTML'), data, slug, url, paginationId, rowToEdit } }
 				exportOptions={ {
 					slug,
 					url,
