@@ -43,7 +43,7 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 	}
 
 	public function get_widget_labels(): array {
-		return array( self::LABEL_TOOLS, self::LABEL_FREE, self::LABEL_EXPERT );
+		return array( self::LABEL_TOOLS, self::LABEL_FREE );
 	}
 
 	public function get_widget_description(): string {
