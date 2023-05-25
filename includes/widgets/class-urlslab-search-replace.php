@@ -9,7 +9,7 @@ class Urlslab_Search_Replace extends Urlslab_Widget {
 	private $loaded = false;
 
 	public function init_widget() {
-		Urlslab_Loader::get_instance()->add_filter( 'urlslab_raw_content', $this, 'theContentRawHook', 1 );
+		Urlslab_Loader::get_instance()->add_filter( 'urlslab_raw_content', $this, 'content_raw_hook', 1 );
 	}
 
 	public function get_widget_slug(): string {
@@ -28,7 +28,7 @@ class Urlslab_Search_Replace extends Urlslab_Widget {
 		return __( 'Powerful tools that can automatically replace incorrect URLs and content on the fly' );
 	}
 
-	public function theContentRawHook( $content ) {
+	public function content_raw_hook( $content ) {
 		if ( is_admin() ) {
 			return $content;
 		}
