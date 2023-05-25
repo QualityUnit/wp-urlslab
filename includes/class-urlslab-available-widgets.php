@@ -69,8 +69,8 @@ class Urlslab_Available_Widgets {
 			$urlslab_lazy_loading->get_widget_slug()       => $urlslab_lazy_loading,
 			$urlslab_css_optimizer->get_widget_slug()      => $urlslab_css_optimizer,
 			$urlslab_search_and_replace->get_widget_slug() => $urlslab_search_and_replace,
-			$urlslab_optimize->get_widget_slug()           => $urlslab_optimize,
 			$urlslab_custom_html->get_widget_slug()        => $urlslab_custom_html,
+			$urlslab_optimize->get_widget_slug()           => $urlslab_optimize,
 		);
 	}
 
