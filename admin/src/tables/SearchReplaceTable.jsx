@@ -42,10 +42,21 @@ export default function SearchReplaceTable( { slug } ) {
 	};
 
 	const rowEditorCells = {
-		str_search: <InputField liveUpdate type="url" defaultValue="" label={ header.str_search } onChange={ ( val ) => setEditorRow( { ...rowToEdit, str_search: val } ) } required />,
-		str_replace: <InputField liveUpdate type="url" defaultValue="" label={ header.str_replace } onChange={ ( val ) => setEditorRow( { ...rowToEdit, str_replace: val } ) } required />,
-		search_type: <SingleSelectMenu defaultAccept autoClose items={ searchTypes } name="search_type" defaultValue="T" onChange={ ( val ) => setEditorRow( { ...rowToEdit, search_type: val } ) }>{ header.search_type }</SingleSelectMenu>,
-		url_filter: <InputField liveUpdate defaultValue="" label={ header.url_filter } onChange={ ( val ) => setEditorRow( { ...rowToEdit, url_filter: val } ) } />,
+		search_type: <SingleSelectMenu defaultAccept autoClose items={ searchTypes } name="search_type" defaultValue="T"
+									   description={ __( 'Choose how will be matched string in the HTML page. Possible options is exact match and regular expression.' ) }
+									   onChange={ ( val ) => setEditorRow( { ...rowToEdit, search_type: val } ) }>{ header.search_type }</SingleSelectMenu>,
+
+		str_search: <InputField liveUpdate type="url" defaultValue="" label={ header.str_search }
+								description={ __( 'Input string or regular expression to replace in the HTML' ) }
+								onChange={ ( val ) => setEditorRow( { ...rowToEdit, str_search: val } ) } required />,
+
+		str_replace: <InputField liveUpdate type="url" defaultValue="" label={ header.str_replace }
+								 description={ __( 'Value will replace match string' ) }
+								 onChange={ ( val ) => setEditorRow( { ...rowToEdit, str_replace: val } ) } required />,
+
+		url_filter: <InputField liveUpdate defaultValue=".*" label={ header.url_filter }
+								description={ __( 'Regullar expression to match browser URL of page, where should be replacement applied. To replace text in all pages, use value `.*`' ) }
+								onChange={ ( val ) => setEditorRow( { ...rowToEdit, url_filter: val } ) } />,
 	};
 
 	const columns = [
