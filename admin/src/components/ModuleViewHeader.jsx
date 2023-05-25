@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import { get } from 'idb-keyval';
+import { update, get } from 'idb-keyval';
 
 import SimpleButton from '../elements/SimpleButton';
 
@@ -15,8 +15,17 @@ export default function ModuleViewHeader( { moduleId, moduleMenu, activeMenu, no
 		[ 'settings', __( 'Settings' ) ],
 	] );
 
-	const handleMenu = ( menukey ) => {
+	const rememberActiveMenu = ( state ) => {
+		update( moduleId, ( dbData ) => {
+			return { ...dbData, activeMenu: state };
+		} );
+	};
+
+	const handleMenu = ( menukey, returning ) => {
 		setActive( menukey );
+		if ( ! returning ) {
+			rememberActiveMenu( menukey );
+		}
 		if ( activeMenu ) {
 			activeMenu( menukey );
 		}
@@ -29,16 +38,16 @@ export default function ModuleViewHeader( { moduleId, moduleMenu, activeMenu, no
 		return '';
 	};
 
-	const getOverviewVisibility = useCallback( async () => {
+	const getActiveMenu = useCallback( async () => {
 		const moduleData = moduleId && await get( moduleId );
 
-		if ( moduleData?.hideOverview && moduleMenu ) {
-			handleMenu( Array.from( moduleMenu )[ 0 ][ 0 ] );
+		if ( moduleData?.activeMenu ) {
+			handleMenu( moduleData?.activeMenu, true );
 		}
 	}, [ ] );
 
 	useEffect( () => {
-		getOverviewVisibility();
+		getActiveMenu();
 	}, [ ] );
 
 	return (

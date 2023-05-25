@@ -80,44 +80,44 @@ export default function CustomHtmlTable( { slug } ) {
 		name: <InputField liveUpdate type="text" defaultValue="" label={ header.name } onChange={ ( val ) => setEditorRow( { ...rowToEdit, name: val } ) } />,
 
 		match_type: <SingleSelectMenu defaultAccept autoClose items={ matchTypes } name="match_type" defaultValue="E"
-									  description={ __( 'Select when should be applied the rule' ) }
-									  onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_type: val } ) }>{ header.match_type }</SingleSelectMenu>,
+			description={ __( 'Select when should be applied the rule' ) }
+			onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_type: val } ) }>{ header.match_type }</SingleSelectMenu>,
 
 		match_url: <InputField type="url" autoFocus liveUpdate defaultValue="" label={ header.match_url }
-							   description={ __( 'Match URL with this value based on the selected type of rule' ) }
+							   description={ __( 'Match browser URL with this value based on the selected type of rule' ) }
 							   onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_url: val } ) } />,
 
 		match_headers: <InputField liveUpdate defaultValue="" label={ header.match_headers }
-								   description={ __( 'If you need to inject custom HTML to page if request contains specific HTTP header sent from browser. Comma separated list of headers to check. (Example 1: check if any header exists: MY-HEADER-NAME1, HEADER2), (Example 2: check if header has specific value: MY-HEADER-NAME1=value1, HEADER2=value2)' ) }
-								   onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_headers: val } ) } />,
+			description={ __( 'If you need to inject custom HTML to page if request contains specific HTTP header sent from browser. Comma separated list of headers to check. (Example 1: check if any header exists: MY-HEADER-NAME1, HEADER2), (Example 2: check if header has specific value: MY-HEADER-NAME1=value1, HEADER2=value2)' ) }
+			onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_headers: val } ) } />,
 
 		match_cookie: <InputField liveUpdate defaultValue="" label={ header.match_cookie }
-								  description={ __( 'If you need to inject custom HTML to page for requests with specific Cookie sent from browser. Comma separated list of cookies to check. (Example 1: check if any cookie exists: COOKIE_NAME_1, COOKIE_NAME_2), (Example 2: check if cookie has specific value: COOKIE-NAME=value)' ) }
-								  onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_cookie: val } ) } />,
+			description={ __( 'If you need to inject custom HTML to page for requests with specific Cookie sent from browser. Comma separated list of cookies to check. (Example 1: check if any cookie exists: COOKIE_NAME_1, COOKIE_NAME_2), (Example 2: check if cookie has specific value: COOKIE-NAME=value)' ) }
+			onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_cookie: val } ) } />,
 
 		match_params: <InputField liveUpdate defaultValue="" label={ header.match_params }
-								  description={ __( 'If you need to inject custom HTML to page just if request has specific GET or POST parameter. Comma separated list of parameters to check. (Example 1: check if any parameter exists: query_param1, post_param_name2), (Example 2: check if request parameter has specific value: param1=value)' ) }
-								  onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_params: val } ) } />,
+			description={ __( 'If you need to inject custom HTML to page just if request has specific GET or POST parameter. Comma separated list of parameters to check. (Example 1: check if any parameter exists: query_param1, post_param_name2), (Example 2: check if request parameter has specific value: param1=value)' ) }
+			onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_params: val } ) } />,
 
 		match_capabilities: <InputField liveUpdate defaultValue="" label={ header.match_capabilities }
-										description={ __( 'If you need to inject custom HTML to page for user with special WordPress capability. Comma separated list of capabilities.' ) }
-										onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_capabilities: val } ) } />,
+			description={ __( 'If you need to inject custom HTML to page for user with special WordPress capability. Comma separated list of capabilities.' ) }
+			onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_capabilities: val } ) } />,
 
 		match_ip: <InputField liveUpdate defaultValue="" label={ header.match_ip }
-							  description={ __( 'Inject Custom HTML just for users from specific IP address or subnet. Comma separated list of IP addresses or subnets. (e.g., 172.120.0.*, 192.168.0.0/24)' ) }
-							  onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_ip: val } ) } />,
+			description={ __( 'Inject Custom HTML just for users from specific IP address or subnet. Comma separated list of IP addresses or subnets. (e.g., 172.120.0.*, 192.168.0.0/24)' ) }
+			onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_ip: val } ) } />,
 
 		match_roles: <InputField liveUpdate defaultValue="" label={ header.match_roles }
-								 description={ __( 'If you need to inject custom HTML to page just for user with special WordPress role. Comma separated list of roles.' ) }
-								 onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_roles: val } ) } />,
+			description={ __( 'If you need to inject custom HTML to page just for user with special WordPress role. Comma separated list of roles.' ) }
+			onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_roles: val } ) } />,
 
 		match_browser: <InputField liveUpdate defaultValue="" label={ header.match_browser }
-								   description={ __( 'If you need to inject custom HTML to page just for specific browser names. Comma separated list of browser names or any string from User-Agent. (e.g. Chrome, Safari)' ) }
-								   onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_browser: val } ) } />,
+			description={ __( 'If you need to inject custom HTML to page just for specific browser names. Comma separated list of browser names or any string from User-Agent. (e.g. Chrome, Safari)' ) }
+			onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_browser: val } ) } />,
 
 		is_logged: <SingleSelectMenu autoClose items={ logginTypes } name="is_logged" defaultValue="A"
-									 description={ __( 'Apply rule just for users with selected login status.' ) }
-									 onChange={ ( val ) => setEditorRow( { ...rowToEdit, is_logged: val } ) }>{ header.is_logged }</SingleSelectMenu>,
+			description={ __( 'Apply rule just for users with selected login status.' ) }
+			onChange={ ( val ) => setEditorRow( { ...rowToEdit, is_logged: val } ) }>{ header.is_logged }</SingleSelectMenu>,
 
 		add_http_headers: <TextArea rows="5" liveUpdate defaultValue="" label={ header.add_http_headers }
 									description={ __( 'Add custom HTTP headers sent from server to browser. Separate headers by new lines, header name and value by `=`. (e.g. X-URLSLAB-HEADER=value)' ) }
@@ -216,7 +216,7 @@ export default function CustomHtmlTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onUpdateRow={ ( val ) => {
+				onUpdate={ ( val ) => {
 					setActivePanel();
 					setEditorRow();
 					if ( val === 'rowInserted' || val === 'rowChanged' ) {
@@ -228,7 +228,7 @@ export default function CustomHtmlTable( { slug } ) {
 					}
 				} }
 				activatePanel={ activePanel }
-				rowEditorOptions={ { rowEditorCells, title: __('Add Custom HTML'), data, slug, url, paginationId, rowToEdit } }
+				rowEditorOptions={ { rowEditorCells, title: __( 'Add Custom HTML' ), data, slug, url, paginationId, rowToEdit } }
 				exportOptions={ {
 					slug,
 					url,

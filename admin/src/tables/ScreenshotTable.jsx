@@ -5,7 +5,6 @@ import {
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
-import ImageThumbnail from '../elements/ImageThumbnail';
 
 export default function ScreenshotTable( { slug } ) {
 	const paginationId = 'url_id';
@@ -131,9 +130,10 @@ export default function ScreenshotTable( { slug } ) {
 				header={ header }
 				table={ table }
 				selectedRows={ selectedRows }
+				noImport
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				noImport
+				onUpdate={ () => setDetailsOptions() }
 				detailsOptions={ detailsOptions }
 				exportOptions={ {
 					slug,

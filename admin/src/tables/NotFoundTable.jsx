@@ -154,7 +154,7 @@ export default function NotFoundTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onUpdateRow={ ( val ) => {
+				onUpdate={ ( val ) => {
 					setActivePanel();
 					setEditorRow();
 

@@ -8,7 +8,7 @@ import InputField from './InputField';
 import '../assets/styles/elements/_SuggestedInputField.scss';
 
 export default function SuggestInputField( props ) {
-	const { defaultValue, suggestInput, maxItems, onChange } = props;
+	const { defaultValue, suggestInput, maxItems, description, onChange } = props;
 	const { __ } = useI18n();
 	const disabledKeys = { 38: 1, 40: 1 };
 	const ref = useRef();
@@ -18,6 +18,7 @@ export default function SuggestInputField( props ) {
 	const [ suggestion, setSuggestion ] = useState( input ? input : defaultValue );
 	const [ suggestionsList, setSuggestionsList ] = useState( [] );
 	const [ suggestionsVisible, showSuggestions ] = useState( );
+	const descriptionHeight = useRef();
 	let suggestionsPanel;
 
 	const suggestedDomains = useMemo( () => {
@@ -111,6 +112,7 @@ export default function SuggestInputField( props ) {
 	}
 
 	useEffect( () => {
+		descriptionHeight.current = description && ref.current.querySelector( '.urlslab-inputField-description' ).getBoundingClientRect().height;
 		setSuggestionsList( () => {
 			if ( data?.length ) {
 				return [ ...suggestedDomains, ...data ];
@@ -139,7 +141,7 @@ export default function SuggestInputField( props ) {
 			} } />
 			{
 				suggestionsVisible && suggestionsList?.length > 0 &&
-				<div className="urlslab-suggestInput-suggestions pos-absolute fadeInto" >
+				<div className="urlslab-suggestInput-suggestions pos-absolute fadeInto" style={ descriptionHeight.current && { top: `calc(100% - ${ descriptionHeight.current + 3 }px)` } }>
 					<strong className="fs-s">{ __( 'Suggested' ) }:</strong>
 					<ul className="urlslab-suggestInput-suggestions-inn fs-s">
 						{

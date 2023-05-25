@@ -90,7 +90,7 @@ export default function URLRelationTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ () => deleteSelectedRows( 'dest_url_id' ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onUpdateRow={ ( val ) => {
+				onUpdate={ ( val ) => {
 					setEditorRow();
 					if ( val === 'rowInserted' || val === 'rowChanged' ) {
 						setEditorRow( val );

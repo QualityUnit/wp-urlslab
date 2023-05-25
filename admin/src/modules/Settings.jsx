@@ -31,15 +31,12 @@ export default function Settings( { className, settingId } ) {
 		},
 		refetchOnWindowFocus: false,
 	} );
-	let settings = useMemo( () => {
-		return data;
-	}, [ data ] );
 
 	if ( status === 'loading' ) {
 		return <Loader />;
 	}
 
-	settings = Object.values( data );
+	const settings = data ? Object.values( data ) : [];
 
 	const renderStatus = () => {
 		let currentStatus = tooltipStatus;
