@@ -43,6 +43,7 @@ export default function CustomHtmlTable( { slug } ) {
 	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const matchTypes = Object.freeze( {
+		A: 'All pages',
 		E: 'Exact match',
 		S: 'Contains',
 		R: 'Regexp',
@@ -83,7 +84,7 @@ export default function CustomHtmlTable( { slug } ) {
 			description={ __( 'Select when should be applied the rule' ) }
 			onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_type: val } ) }>{ header.match_type }</SingleSelectMenu>,
 
-		match_url: <InputField type="url" autoFocus liveUpdate defaultValue="" label={ header.match_url }
+		match_url: <InputField type="url" autoFocus liveUpdate defaultValue="" label={ header.match_url } hidden={ rowToEdit?.match_type === 'A' }
 							   description={ __( 'Match browser URL with this value based on the selected type of rule' ) }
 							   onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_url: val } ) } />,
 

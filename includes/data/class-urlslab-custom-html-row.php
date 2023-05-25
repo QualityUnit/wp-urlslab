@@ -1,6 +1,7 @@
 <?php
 
 class Urlslab_Custom_Html_Row extends Urlslab_Data {
+	public const MATCH_TYPE_ALL = 'A';
 	public const MATCH_TYPE_EXACT = 'E';
 	public const MATCH_TYPE_SUBSTRING = 'S';
 	public const MATCH_TYPE_REGEXP = 'R';
@@ -18,7 +19,7 @@ class Urlslab_Custom_Html_Row extends Urlslab_Data {
 	public function __construct( array $custom_html = array(), $loaded_from_db = true ) {
 		$this->set_rule_id( $custom_html['rule_id'] ?? 0, $loaded_from_db );
 		$this->set_name( $custom_html['name'] ?? '', $loaded_from_db );
-		$this->set_match_type( $custom_html['match_type'] ?? self::MATCH_TYPE_SUBSTRING, $loaded_from_db );
+		$this->set_match_type( $custom_html['match_type'] ?? self::MATCH_TYPE_ALL, $loaded_from_db );
 		$this->set_match_url( $custom_html['match_url'] ?? '', $loaded_from_db );
 		$this->set_match_browser( $custom_html['match_browser'] ?? '', $loaded_from_db );
 		$this->set_match_cookie( $custom_html['match_cookie'] ?? '', $loaded_from_db );
@@ -209,7 +210,7 @@ class Urlslab_Custom_Html_Row extends Urlslab_Data {
 
 	protected function set( $name, $value, $loaded_from_db ) {
 		if ( 'is_active' === $name ) {
-			if ( is_bool( $value ) && $value || self::ACTIVE_YES === $value ) {
+			if ( is_bool( $value ) && $value || self::ACTIVE_YES === $value || 'true' === $value ) {
 				$value = self::ACTIVE_YES;
 			} else {
 				$value = self::ACTIVE_NO;

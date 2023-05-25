@@ -31,7 +31,7 @@ class Urlslab_Api_Custom_Html extends Urlslab_Api_Table {
 						'match_type'         => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return Urlslab_Custom_Html_Row::MATCH_TYPE_SUBSTRING == $param || Urlslab_Custom_Html_Row::MATCH_TYPE_EXACT == $param || Urlslab_Custom_Html_Row::MATCH_TYPE_REGEXP == $param;
+								return Urlslab_Custom_Html_Row::MATCH_TYPE_ALL == $param || Urlslab_Custom_Html_Row::MATCH_TYPE_SUBSTRING == $param || Urlslab_Custom_Html_Row::MATCH_TYPE_EXACT == $param || Urlslab_Custom_Html_Row::MATCH_TYPE_REGEXP == $param;
 							},
 						),
 						'match_url'          => array(
@@ -227,7 +227,7 @@ class Urlslab_Api_Custom_Html extends Urlslab_Api_Table {
 				'match_type'         => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
-						return Urlslab_Custom_Html_Row::MATCH_TYPE_SUBSTRING == $param || Urlslab_Custom_Html_Row::MATCH_TYPE_EXACT == $param || Urlslab_Custom_Html_Row::MATCH_TYPE_REGEXP == $param;
+						return Urlslab_Custom_Html_Row::MATCH_TYPE_ALL == $param || Urlslab_Custom_Html_Row::MATCH_TYPE_SUBSTRING == $param || Urlslab_Custom_Html_Row::MATCH_TYPE_EXACT == $param || Urlslab_Custom_Html_Row::MATCH_TYPE_REGEXP == $param;
 					},
 				),
 				'match_url'          => array(
