@@ -69,7 +69,7 @@ export default function KeywordsTable( { slug } ) {
 							   description={ __( 'Optionaly you can allow to place keyword just on some URLs matching regular expression. Use value.* to match all URLs' ) }
 							   label={ header.urlFilter } onChange={ ( val ) => setEditorRow( { ...rowToEdit, urlFilter: val } ) } />,
 
-		labels: <TagsMenu hasActivator label={ __( 'All tags for this row:' ) } slug={ slug } onChange={ ( val ) => setEditorRow( { ...rowToEdit, labels: val } ) } />,
+		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setEditorRow( { ...rowToEdit, labels: val } ) } />,
 	};
 
 	const columns = [

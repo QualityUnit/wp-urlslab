@@ -57,6 +57,8 @@ export default function SearchReplaceTable( { slug } ) {
 		url_filter: <InputField liveUpdate defaultValue=".*" label={ header.url_filter }
 								description={ __( 'Regullar expression to match browser URL of page, where should be replacement applied. To replace text in all pages, use value `.*`' ) }
 								onChange={ ( val ) => setEditorRow( { ...rowToEdit, url_filter: val } ) } />,
+
+		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setEditorRow( { ...rowToEdit, labels: val } ) } />,
 	};
 
 	const columns = [

@@ -64,6 +64,7 @@ export default function RedirectsTable( { slug } ) {
 							 description={ __( 'Redirect just visitors with specific browser. Comma separated list of browser names or any string from User-Agent. (e.g. Chrome, Safari)' ) }
 							 onChange={ ( val ) => setEditorRow( { ...rowToEdit, browser: val } ) } />,
 		if_not_found: <SingleSelectMenu autoClose items={ notFoundTypes } name="if_not_found" defaultValue="A" onChange={ ( val ) => setEditorRow( { ...rowToEdit, if_not_found: val } ) }>{ header.if_not_found }</SingleSelectMenu>,
+		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setEditorRow( { ...rowToEdit, labels: val } ) } />,
 	};
 
 	const columns = [
