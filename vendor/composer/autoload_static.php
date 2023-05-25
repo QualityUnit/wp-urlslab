@@ -1356,7 +1356,6 @@ class ComposerStaticInit83a869ee30bba2345152bbf6f75bc3c4
         'OpenAPI\\Client\\Urlslab\\DocsApi' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Urlslab/DocsApi.php',
         'OpenAPI\\Client\\Urlslab\\PublicAssetsApi' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Urlslab/PublicAssetsApi.php',
         'OpenAPI\\Client\\Urlslab\\ScheduleApi' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Urlslab/ScheduleApi.php',
-        'OpenAPI\\Client\\Urlslab\\ScreenshotApi' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Urlslab/ScreenshotApi.php',
         'OpenAPI\\Client\\Urlslab\\SnapshotApi' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Urlslab/SnapshotApi.php',
         'OpenAPI\\Client\\Urlslab\\SummaryApi' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Urlslab/SummaryApi.php',
         'OpenAPI\\Client\\Urlslab\\VideoApi' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Urlslab/VideoApi.php',

@@ -11,7 +11,7 @@ docs/Api/CreditsApi.md
 docs/Api/DocsApi.md
 docs/Api/PublicAssetsApi.md
 docs/Api/ScheduleApi.md
-docs/Api/ScreenshotApi.md
+docs/Api/SnapshotApi.md
 docs/Api/SummaryApi.md
 docs/Api/VideoApi.md
 docs/Model/DomainAcknowledged.md
@@ -25,6 +25,7 @@ docs/Model/DomainDataRetrievalRelatedUrlsResponse.md
 docs/Model/DomainDataRetrievalScreenshotResponse.md
 docs/Model/DomainDataRetrievalSourceResponse.md
 docs/Model/DomainDataRetrievalSummaryResponse.md
+docs/Model/DomainDataRetrievalUrlSnapshotResponse.md
 docs/Model/DomainDataRetrievalVideoCaptionResponse.md
 docs/Model/DomainDataRetrievalVideoResponse.md
 docs/Model/DomainDocsDocIndexRequest.md
@@ -53,6 +54,7 @@ lib/Model/DomainDataRetrievalRelatedUrlsResponse.php
 lib/Model/DomainDataRetrievalScreenshotResponse.php
 lib/Model/DomainDataRetrievalSourceResponse.php
 lib/Model/DomainDataRetrievalSummaryResponse.php
+lib/Model/DomainDataRetrievalUrlSnapshotResponse.php
 lib/Model/DomainDataRetrievalVideoCaptionResponse.php
 lib/Model/DomainDataRetrievalVideoResponse.php
 lib/Model/DomainDocsDocIndexRequest.php
@@ -75,7 +77,7 @@ lib/Urlslab/CreditsApi.php
 lib/Urlslab/DocsApi.php
 lib/Urlslab/PublicAssetsApi.php
 lib/Urlslab/ScheduleApi.php
-lib/Urlslab/ScreenshotApi.php
+lib/Urlslab/SnapshotApi.php
 lib/Urlslab/SummaryApi.php
 lib/Urlslab/VideoApi.php
 phpunit.xml.dist
@@ -86,7 +88,7 @@ test/Api/CreditsApiTest.php
 test/Api/DocsApiTest.php
 test/Api/PublicAssetsApiTest.php
 test/Api/ScheduleApiTest.php
-test/Api/ScreenshotApiTest.php
+test/Api/SnapshotApiTest.php
 test/Api/SummaryApiTest.php
 test/Api/VideoApiTest.php
 test/Model/DomainAcknowledgedTest.php
@@ -100,6 +102,7 @@ test/Model/DomainDataRetrievalRelatedUrlsResponseTest.php
 test/Model/DomainDataRetrievalScreenshotResponseTest.php
 test/Model/DomainDataRetrievalSourceResponseTest.php
 test/Model/DomainDataRetrievalSummaryResponseTest.php
+test/Model/DomainDataRetrievalUrlSnapshotResponseTest.php
 test/Model/DomainDataRetrievalVideoCaptionResponseTest.php
 test/Model/DomainDataRetrievalVideoResponseTest.php
 test/Model/DomainDocsDocIndexRequestTest.php
