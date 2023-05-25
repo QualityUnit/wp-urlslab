@@ -188,8 +188,9 @@ export default function KeywordsTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onUpdateRow={ ( val ) => {
+				onUpdate={ ( val ) => {
 					setEditorRow();
+					setDetailsOptions();
 					if ( val === 'rowInserted' || val === 'rowChanged' ) {
 						setEditorRow( val );
 						setTimeout( () => {

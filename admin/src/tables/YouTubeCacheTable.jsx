@@ -166,6 +166,7 @@ export default function YouTubeCacheTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
+				onUpdate={ () => setDetailsOptions() }
 				detailsOptions={ detailsOptions }
 				exportOptions={ {
 					slug,
