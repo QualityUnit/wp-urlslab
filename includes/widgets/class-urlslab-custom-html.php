@@ -47,7 +47,7 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Add custom HTML to your website. Easily integrate your page with external tools or modify page content with few simple clicks.' );
+		return __( 'Elevate your website using our seamless integration hub for tools like GTM, while effortlessly tailoring content to your unique requirements.' );
 	}
 
 	public function custom_headers( $headers ) {
