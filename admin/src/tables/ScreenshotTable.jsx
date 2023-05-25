@@ -131,9 +131,10 @@ export default function ScreenshotTable( { slug } ) {
 				header={ header }
 				table={ table }
 				selectedRows={ selectedRows }
+				noImport
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				noImport
+				onUpdate={ () => setDetailsOptions() }
 				detailsOptions={ detailsOptions }
 				exportOptions={ {
 					slug,

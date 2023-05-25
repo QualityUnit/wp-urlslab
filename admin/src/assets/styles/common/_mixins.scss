@@ -87,6 +87,19 @@
 	left: $left;
 }
 
+@mixin smallLoader($position: absolute) {
+	&::before {
+
+		@include square(1em);
+		position: $position;
+		right: 0.5em;
+		background: url(../../images/icons/icon-loading-input.svg) center center no-repeat;
+		background-size: contain;
+		animation: 0.75s rotate linear infinite;
+		content: "";
+	}
+}
+
 @mixin progressbar() {
 	@content;
 

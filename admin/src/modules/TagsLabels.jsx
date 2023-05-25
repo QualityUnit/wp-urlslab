@@ -130,7 +130,7 @@ export default function TagsLabels( ) {
 				noImport
 				noFiltering
 				noCount
-				onUpdateRows={ ( val ) => {
+				onUpdates={ ( val ) => {
 					setActivePanel();
 					setEditorRow();
 					if ( val === 'rowInserted' || val === 'rowChanged' ) {

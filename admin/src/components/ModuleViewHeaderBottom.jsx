@@ -24,12 +24,14 @@ import Button from '../elements/Button';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import IconButton from '../elements/IconButton';
 
-export default function ModuleViewHeaderBottom( { slug, noColumnsMenu, noFiltering, hideActions, noImport, noInsert, noExport, noCount, noDelete, header, table, rowEditorOptions, activatePanel, detailsOptions, exportOptions, selectedRows, onFilter, onDeleteSelected, onUpdateRow } ) {
+export default function ModuleViewHeaderBottom( props ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const didMountRef = useRef( false );
 	const panelPopover = useRef();
 	const { headerBottomHeight, setHeaderBottomHeight } = useContext( HeaderHeightContext );
+
+	const { slug, noColumnsMenu, noFiltering, hideActions, noImport, noInsert, noExport, noCount, noDelete, header, table, rowEditorOptions, activatePanel, detailsOptions, exportOptions, selectedRows, onFilter, onDeleteSelected, onUpdate } = props;
 
 	const handleHeaderHeight = useCallback( ( elem ) => {
 		const bottomHeight = elem?.getBoundingClientRect().height;
@@ -62,6 +64,39 @@ export default function ModuleViewHeaderBottom( { slug, noColumnsMenu, noFilteri
 			dispatch( { type: 'toggleEditFilter', editFilter: false } );
 		}
 	}, [ handleSaveFilter, filters, dispatch, onFilter ] );
+
+	const handleDeleteAll = useMutation( {
+		mutationFn: () => {
+			return deleteAll( slug );
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries( [ slug ] );
+		},
+	} );
+
+	const handlePanel = ( key ) => {
+		setActivePanel( key );
+
+		if ( key === 'delete-all' ) {
+			handleDeleteAll.mutate();
+		}
+		if ( key === 'delete-selected' ) {
+			if ( onDeleteSelected ) {
+				onDeleteSelected();
+			}
+		}
+
+		if ( onUpdate ) {
+			onUpdate( key );
+		}
+	};
+
+	const handleRefresh = () => {
+		queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ? sorting : [] ] );
+		if ( ! noCount ) {
+			queryClient.invalidateQueries( [ slug, 'count', filtersArray( filters ) ] );
+		}
+	};
 
 	useEffect( () => {
 		handleHeaderHeight();
@@ -99,39 +134,6 @@ export default function ModuleViewHeaderBottom( { slug, noColumnsMenu, noFilteri
 			</small>
 		);
 	} );
-
-	const handleDeleteAll = useMutation( {
-		mutationFn: () => {
-			return deleteAll( slug );
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries( [ slug ] );
-		},
-	} );
-
-	const handlePanel = ( key ) => {
-		setActivePanel( key );
-
-		if ( key === 'delete-all' ) {
-			handleDeleteAll.mutate();
-		}
-		if ( key === 'delete-selected' ) {
-			if ( onDeleteSelected ) {
-				onDeleteSelected();
-			}
-		}
-
-		if ( onUpdateRow ) {
-			onUpdateRow( key );
-		}
-	};
-
-	const handleRefresh = () => {
-		queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ? sorting : [] ] );
-		if ( ! noCount ) {
-			queryClient.invalidateQueries( [ slug, 'count', filtersArray( filters ) ] );
-		}
-	};
 
 	return (
 		<>

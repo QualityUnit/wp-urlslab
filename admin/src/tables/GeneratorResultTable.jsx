@@ -174,6 +174,7 @@ export default function GeneratorResultTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
+				onUpdate={ () => setDetailsOptions() }
 				detailsOptions={ detailsOptions }
 				exportOptions={ {
 					slug,

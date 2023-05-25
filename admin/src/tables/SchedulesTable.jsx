@@ -159,7 +159,7 @@ export default function SchedulesTable( { slug } ) {
 				noDelete
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
-				onUpdateRow={ ( val ) => {
+				onUpdate={ ( val ) => {
 					setActivePanel();
 					setEditorRow();
 					if ( val === 'rowInserted' || val === 'rowChanged' ) {

@@ -204,7 +204,7 @@ export default function CacheRulesTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onUpdateRow={ ( val ) => {
+				onUpdate={ ( val ) => {
 					setActivePanel();
 					setEditorRow();
 					if ( val === 'rowInserted' || val === 'rowChanged' ) {
