@@ -245,6 +245,8 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 
 	public function is_match( Urlslab_Custom_Html_Row $rule, Urlslab_Url $url ) {
 		switch ( $rule->get_match_type() ) {
+			case Urlslab_Custom_Html_Row::MATCH_TYPE_ALL:
+				break;
 			case Urlslab_Custom_Html_Row::MATCH_TYPE_EXACT:
 				if ( $rule->get_match_url() != $url->get_url_with_protocol() ) {
 					return false;
