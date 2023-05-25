@@ -47,7 +47,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 		Urlslab_Loader::get_instance()->add_action( 'wp_headers', $this, 'page_cache_headers', PHP_INT_MAX, 1 );
 		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $this, 'page_cache_start', PHP_INT_MAX, 0 );
 		Urlslab_Loader::get_instance()->add_action( 'shutdown', $this, 'page_cache_save', 0, 0 );
-		Urlslab_Loader::get_instance()->add_action( 'urlslab_content', $this, 'content_hook', 15 );
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook', 15 );
 		Urlslab_Loader::get_instance()->add_action( 'wp_resource_hints', $this, 'resource_hints', 15, 2 );
 	}
 

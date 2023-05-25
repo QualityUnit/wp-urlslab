@@ -111,22 +111,24 @@ class Urlslab {
 	}
 
 	public function urlslab_content_check( $content ) {
-		if ( is_admin() ) {
+		if ( wp_is_maintenance_mode() || wp_is_recovery_mode() || empty( $content ) ) {
 			return $content;
 		}
 
-		if ( false !== strpos( strtolower( substr( $content, 0, 30 ) ), '<head>' ) ) {
-			if ( preg_match( '|(.*?)<head>(.*?)</head>(.*)|imus', $content, $matches ) ) {
-				$content = $matches[1] . $this->urlslab_head_content( $matches[2] ) . $matches[3];
+		if ( ! is_admin() && ! wp_is_xml_request() && ! wp_is_json_request() ) {
+			if ( false !== strpos( strtolower( substr( $content, 0, 30 ) ), '<head>' ) ) {
+				if ( preg_match( '|(.*?)<head>(.*?)</head>(.*)|imus', $content, $matches ) ) {
+					$content = $matches[1] . $this->urlslab_head_content( $matches[2] ) . $matches[3];
+				}
 			}
-		}
-		if ( false !== strpos( $content, '<body' ) ) {
-			if ( preg_match( '|(.*?)<body(.*?)>(.*?)</body>(.*)|imus', $content, $matches ) ) {
-				$content = $matches[1] . $this->urlslab_content( $matches[3], $matches[2] ) . $matches[4];
+			if ( false !== strpos( $content, '<body' ) ) {
+				if ( preg_match( '|(.*?)<body(.*?)>(.*?)</body>(.*)|imus', $content, $matches ) ) {
+					$content = $matches[1] . $this->urlslab_body_content( $matches[3], $matches[2] ) . $matches[4];
+				}
 			}
 		}
 
-		return $content;
+		return apply_filters( 'urlslab_raw_content', $content );
 	}
 
 
@@ -170,14 +172,14 @@ class Urlslab {
 	}
 
 
-	public function urlslab_content( $content, $body_attributes ) {
+	public function urlslab_body_content( $content, $body_attributes ) {
 		if ( empty( $content ) ) {
 			return $content;    // nothing to process
 		}
 
-		$content = apply_filters( 'urlslab_content_raw', $content );
+		$content = apply_filters( 'urlslab_raw_body_content', $content );
 
-		if ( has_action( 'urlslab_content' ) ) {
+		if ( has_action( 'urlslab_body_content' ) ) {
 			$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
 			$document->encoding            = get_bloginfo( 'charset' );
 			$document->strictErrorChecking = false; // phpcs:ignore
@@ -192,7 +194,7 @@ class Urlslab {
 				libxml_clear_errors();
 				libxml_use_internal_errors( $libxml_previous_state );
 
-				do_action( 'urlslab_content', $document );
+				do_action( 'urlslab_body_content', $document );
 
 				return $document->saveHTML( $document->getElementsByTagName( 'body' )[0] );
 			} catch ( Exception $e ) {
@@ -509,6 +511,7 @@ class Urlslab {
 			Urlslab_Loader::get_instance()->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 			Urlslab_Loader::get_instance()->add_action( 'template_redirect', $plugin_public, 'download_offloaded_file', PHP_INT_MIN );
 			if ( ! defined( 'WP_ADMIN' ) ) {
+				Urlslab_Loader::get_instance()->add_action( 'wp_loaded', $this, 'buffer_start', PHP_INT_MAX );
 				Urlslab_Loader::get_instance()->add_filter( 'language_attributes', $this, 'buffer_start', PHP_INT_MAX );
 				Urlslab_Loader::get_instance()->add_action( 'template_redirect', $this, 'buffer_start', PHP_INT_MAX );
 				Urlslab_Loader::get_instance()->add_action( 'shutdown', $this, 'buffer_end', PHP_INT_MIN );

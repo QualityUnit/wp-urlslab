@@ -53,7 +53,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	private array $remove_nodes = array();
 
 	public function init_widget() {
-		Urlslab_Loader::get_instance()->add_action( 'urlslab_content', $this, 'theContentHook', 11 );
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook', 11 );
 	}
 
 	public function get_widget_slug(): string {
@@ -270,7 +270,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		);
 	}
 
-	public function theContentHook( DOMDocument $document ) {
+	public function content_hook( DOMDocument $document ) {
 		if ( is_admin() ) {
 			return;
 		}

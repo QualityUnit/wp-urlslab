@@ -15,8 +15,8 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 	public function __construct() {}
 
 	public function init_widget() {
-		Urlslab_Loader::get_instance()->add_action( 'urlslab_content', $this, 'theContentHook', 100 );
-		Urlslab_Loader::get_instance()->add_action( 'urlslab_head_content', $this, 'theContentHook' );
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook', 100 );
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_head_content', $this, 'content_hook' );
 	}
 
 	public function get_widget_labels(): array {
@@ -35,7 +35,7 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 		return __( 'Improve page performance and reduce content-blocker requests using inline CSS instead of external CSS files' );
 	}
 
-	public function theContentHook( DOMDocument $document ) {
+	public function content_hook( DOMDocument $document ) {
 		if ( is_admin() ) {
 			return;
 		}

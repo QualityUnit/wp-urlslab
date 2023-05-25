@@ -30,7 +30,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	private $content_docs = array();
 
 	public function init_widget() {
-		Urlslab_Loader::get_instance()->add_action( 'urlslab_content', $this, 'the_content', 10 );
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'the_content', 10 );
 		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'hook_callback', 10, 0 );
 	}
 

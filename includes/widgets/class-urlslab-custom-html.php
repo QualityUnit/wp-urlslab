@@ -26,7 +26,7 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_filter( 'urlslab_head_content_raw', $this, 'raw_head_content', 1 );
-		Urlslab_Loader::get_instance()->add_filter( 'urlslab_content_raw', $this, 'raw_body_content', 1 );
+		Urlslab_Loader::get_instance()->add_filter( 'urlslab_raw_body_content', $this, 'raw_body_content', 1 );
 		Urlslab_Loader::get_instance()->add_action( 'wp_headers', $this, 'custom_headers', PHP_INT_MAX, 1 );
 	}
 
