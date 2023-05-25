@@ -114,8 +114,9 @@ class Urlslab {
 		if ( wp_is_maintenance_mode() || wp_is_recovery_mode() || empty( $content ) ) {
 			return $content;
 		}
+		global $pagenow;
 
-		if ( ! is_admin() && ! wp_is_xml_request() && ! wp_is_json_request() ) {
+		if ( ! is_admin() && ! wp_is_xml_request() && ! wp_is_json_request() && 'wp-login.php' !== $pagenow ) {
 			if ( false !== strpos( strtolower( substr( $content, 0, 30 ) ), '<head>' ) ) {
 				if ( preg_match( '|(.*?)<head>(.*?)</head>(.*)|imus', $content, $matches ) ) {
 					$content = $matches[1] . $this->urlslab_head_content( $matches[2] ) . $matches[3];
