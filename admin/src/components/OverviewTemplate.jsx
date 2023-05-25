@@ -13,7 +13,7 @@ import '../assets/styles/components/_OverviewTemplate.scss';
 export default function Overview( { moduleId, noFAQ, noIntegrate, noCheckbox, title, customSections, section, children } ) {
 	const { __ } = useI18n();
 	const [ active, setActive ] = useState( 'about' );
-	const [ overViewVisible, setOverviewVisibility ] = useState( );
+	const [ overViewVisible, setOverviewVisibility ] = useState( false );
 	const queryClient = useQueryClient();
 	const moduleData = queryClient.getQueryData( [ 'modules' ] )[ moduleId ];
 
