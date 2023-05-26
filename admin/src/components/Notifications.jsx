@@ -18,13 +18,13 @@ export default function Notifications() {
 	}
 
 	return (
-		<div key={ notifications } className="urlslab-notifications">
+		notificationsCount &&
+		<div className="urlslab-notifications">
 			{
-				notificationsCount &&
-					Object.entries( notifications ).map( ( [ module, data ] ) => {
-						return <NotificationsPanel key={ module } { ...data } />;
-					}
-					)
+				Object.entries( notifications ).map( ( [ module, data ] ) => {
+					return <NotificationsPanel key={ module } { ...data } />;
+				}
+				)
 			}
 		</div>
 	);
