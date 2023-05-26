@@ -275,6 +275,28 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		);
 	}
 
+	private function search_local_wp_db( $search_query, $count ) {
+		$args = array(
+			's'              => $search_query,
+			'post_type'      => array( 'post', 'page' ),
+			'post_status'    => 'publish',
+			'posts_per_page' => $count,
+		);
+
+		$query = new WP_Query( $args );
+		if ( $query->have_posts() ) {
+			$result_posts = array();
+			while ( $query->have_posts() ) {
+				$query->the_post();
+				$result_posts[] = get_permalink();
+			}
+			wp_reset_postdata();
+
+			return new WP_REST_Response( $result_posts, 200 );
+		}
+
+		return new WP_REST_Response( array(), 200 );
+	}
 
 	/**
 	 * @param WP_REST_Request $request
@@ -282,28 +304,32 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function suggest_urls( $api_request ) {
+		$replace_chars = array(
+			'/',
+			'-',
+			'_',
+			':',
+			'.',
+			'https',
+			'http',
+		);
+
+		$search_query = trim( str_replace( $replace_chars, ' ', $api_request->get_param( 'keyword' ) ) );
+		$max_count    = (int) $api_request->get_param( 'count' );
+
 		try {
 			if ( ! strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) ) ) {
-				return new WP_REST_Response( __( 'Urlslab API key not set', 'urlslab' ), 500 );
+				throw new Exception( 'API key is not set' );
 			}
 
-			$max_count = (int) $api_request->get_param( 'count' );
 
 			$config         = \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) );
 			$content_client = new \OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), $config );
 
 
-			$request       = new \OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsRequest();
-			$replace_chars = array(
-				'/',
-				'-',
-				'_',
-				':',
-				'.',
-				'https',
-				'http',
-			);
-			$request->setQuery( trim( str_replace( $replace_chars, ' ', $api_request->get_param( 'keyword' ) ) ) );
+			$request = new \OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsRequest();
+
+			$request->setQuery( $search_query );
 			$request->setChunkLimit( 1 );
 			$request->setRenewFrequency( \OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsRequest::RENEW_FREQUENCY_ONE_TIME );
 
@@ -360,18 +386,14 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 				}
 			}
 
-
-			return new WP_REST_Response( array_keys( $dest_urls ), 200 );
-		} catch ( \OpenAPI\Client\ApiException $e ) {
-			switch ( $e->getCode() ) {
-				case 429:
-					return new WP_REST_Response( __( 'Too many requests', 'urlslab' ), $e->getCode() );
-				default:
-					return new WP_REST_Response( __( 'Urlslab API error', 'urlslab' ), $e->getCode() );
+			if ( ! empty( $dest_urls ) ) {
+				return new WP_REST_Response( array_keys( $dest_urls ), 200 );
 			}
 		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Insert failed', 'urlslab' ), array( 'status' => 500 ) );
 		}
+
+		// fallback to local db
+		return $this->search_local_wp_db( $search_query, $max_count );
 	}
 
 	/**
