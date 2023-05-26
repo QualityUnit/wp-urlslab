@@ -50,7 +50,7 @@ export default function KeywordsTable( { slug } ) {
 		keyword: <InputField autoFocus liveUpdate defaultValue="" label={ header.keyword } onChange={ ( val ) => setEditorRow( { ...rowToEdit, keyword: val } ) }
 							description={ __( 'Just exact match of keyword will be replaced with link' ) } />,
 
-		urlLink: <SuggestInputField suggestInput={ rowToEdit?.keyword || '' } liveUpdate defaultValue={ ( rowToEdit?.urlLink ? rowToEdit?.urlLink : window.location.origin ) } label={ header.urlLink } onChange={ ( val ) => setEditorRow( { ...rowToEdit, urlLink: val } ) }
+		urlLink: <SuggestInputField suggestInput={ rowToEdit?.keyword || '' } liveUpdate defaultValue={ ( rowToEdit?.urlLink ? rowToEdit?.urlLink : window.location.origin ) } label={ header.urlLink } onChange={ ( val ) => setEditorRow( { ...rowToEdit, urlLink: val } ) } required
 									description={ __( 'Destination URL for link' ) } />,
 
 		kwType: <SingleSelectMenu defaultAccept autoClose items={ keywordTypes } name="kwType" defaultValue="M"

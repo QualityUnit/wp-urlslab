@@ -32,6 +32,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 		mutationFn: async ( { editedRow } ) => {
 			setNotification( slug, { message: 'Adding row…', status: 'info' } );
 			const response = await postFetch( `${ slug }/create`, editedRow );
+			setNotification( slug, { message: 'Adding row…', status: 'info' } );
 			return { response };
 		},
 		onSuccess: async ( { response } ) => {
