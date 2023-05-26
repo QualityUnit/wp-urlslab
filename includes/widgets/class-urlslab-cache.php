@@ -315,6 +315,10 @@ class Urlslab_Cache extends Urlslab_Widget {
 			__( 'Select a CloudFront Distribution ID from the available options. Update the available selection by validating the connection.' ),
 			self::OPTION_TYPE_LISTBOX,
 			function() {
+				if ( is_array( $this->get_option( self::SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS ) ) ) {
+					return $this->get_option( self::SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS );
+				}
+
 				return array();
 			},
 			null,

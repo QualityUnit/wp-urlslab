@@ -423,10 +423,10 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 			if ( count( $distributions ) > 0 ) {
 				foreach ( $distributions['DistributionList']['Items'] as $distribution ) {
 					$uri = '';
-					if ( isset( $result['@metadata']['effectiveUri'] ) ) {
-						$uri = ' ' . $result['@metadata']['effectiveUri'];
+					if (is_array($distribution['Aliases']['Items'])) {
+						$uri = ' ' . implode( ', ', $distribution['Aliases']['Items'] );
 					}
-					$arr_distributions[ $distribution['Id'] ] = $distribution['Id'] . $uri . ' (' . $distribution['Status'] . ')';
+					$arr_distributions[ $distribution['Id'] ] = $distribution['Id'] . ' (' . $distribution['Status'] . ')' . $uri;
 				}
 			}
 			$widget->update_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS, $arr_distributions );
@@ -477,7 +477,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to drop cache: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 		}
 
-		return new WP_REST_Response( __( 'Cache dropped' ), 200 );
+		return new WP_REST_Response( __( 'Cache invalidation scheduled' ), 200 );
 	}
 
 	private function init_cloudfront_client(): bool {
