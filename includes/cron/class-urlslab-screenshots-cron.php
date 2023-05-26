@@ -112,7 +112,7 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 		$request->setRenewFrequency( $widget->get_option( Urlslab_Screenshot_Widget::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL ) );
 
 		try {
-			$urlslab_screenshots = $this->client->getSnapshots($request);
+			$urlslab_screenshots = $this->client->getSnapshots( $request );
 		} catch ( Exception $e ) {
 			$urlslab_screenshots = array();
 		}
