@@ -2,19 +2,25 @@
 @use "../common/variables" as *;
 
 .urlslab-notifications-panel[class] {
-	display: none;
-	position: absolute;
-	z-index: 10;
-	top: 100%;
-	right: 0;
-	min-width: 17.5em;
-	padding: 2em;
-	border: none;
-	box-shadow: none;
-	margin: 0;
+	position: relative;
+	width: 30.8em;
+	padding: 1.5em 2em;
+	margin: 0.77em 0 0;
+	font-size: 0.8125rem;
+	background-color: rgba($white, 0.6);
+	border-radius: $br-6;
+	pointer-events: all;
+	overflow: hidden;
+	backdrop-filter: blur(5px);
+	filter: drop-shadow(0 4px 12px rgba(111, 111, 111, 0.4));
 
-	&.active {
-		display: block;
+	&::before {
+		content: "";
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 0.77em;
+		height: 100%;
 	}
 
 	&.dark {
@@ -22,9 +28,25 @@
 		color: $white;
 	}
 
+	&.info[class] {
+
+		&::before {
+			background-color: $primary-color;
+		}
+	}
+
+	&.success[class] {
+
+		&::before {
+			background-color: $saturated-green;
+		}
+	}
+
 	&.error[class] {
-		background-color: $saturated-red;
-		color: $white;
+
+		&::before {
+			background-color: $saturated-red;
+		}
 	}
 
 	&.wide {

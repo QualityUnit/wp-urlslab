@@ -3,6 +3,7 @@ import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { deleteRow as del } from '../api/deleteTableData';
 import { postFetch } from '../api/fetching';
 import filtersArray from '../lib/filtersArray';
+import useNotifications from '../hooks/useNotifications';
 
 export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const queryClient = useQueryClient();
@@ -14,6 +15,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const [ responseCounter, setResponseCounter ] = useState( 0 );
 
 	const { filters, sorting } = url;
+	const { setNotification } = useNotifications();
 
 	const getRowId = useCallback( ( cell, optionalSelector ) => {
 		if ( optionalSelector ) {
@@ -29,13 +31,19 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const insertNewRow = useMutation( {
 		mutationFn: async ( { editedRow } ) => {
 			const response = await postFetch( `${ slug }/create`, editedRow );
+			setNotification( slug, { message: 'Adding row…', status: 'info' } );
 			return { response };
 		},
 		onSuccess: async ( { response } ) => {
 			const { ok } = await response;
 			if ( ok ) {
 				queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
+				setNotification( slug, { message: 'Row has been added', status: 'success' } );
 				setEditorRowRes( response );
+			}
+
+			if ( ! ok ) {
+				setNotification( slug, { message: 'Adding row failed', status: 'error' } );
 			}
 		},
 	} );
@@ -46,6 +54,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const updateRowData = useMutation( {
 		mutationFn: async ( options ) => {
 			const { editedRow, newVal, cell, customEndpoint, changeField, optionalSelector } = options;
+			setNotification( slug, { message: 'Updating row…', status: 'info' } );
 
 			// Updating one cell value only
 			if ( newVal ) {
@@ -118,7 +127,11 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 					setEditorRowRes( response );
 					setActivePanel();
 				}
+				setNotification( slug, { message: 'Row has been updated', status: 'success' } );
 				queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
+			}
+			if ( ! ok ) {
+				setNotification( slug, { message: 'Updating row failed', status: 'error' } );
 			}
 		},
 	} );

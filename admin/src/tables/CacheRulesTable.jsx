@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, InputField, SingleSelectMenu, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, Edit, TagsMenu,
+	useInfiniteFetch, ProgressBar, SortBy, Checkbox, InputField, SingleSelectMenu, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, Edit, TagsMenu,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -25,7 +25,7 @@ export default function CacheRulesTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const matchTypes = Object.freeze( {
 		A: 'All Pages',
@@ -206,16 +206,9 @@ export default function CacheRulesTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onUpdate={ ( val ) => {
+				onUpdate={ ( ) => {
 					setActivePanel();
 					setEditorRow();
-					if ( val === 'rowInserted' || val === 'rowChanged' ) {
-						setActivePanel();
-						setEditorRow( val );
-						setTimeout( () => {
-							setEditorRow();
-						}, 3000 );
-					}
 				} }
 				activatePanel={ activePanel }
 				rowEditorOptions={ { rowEditorCells, title: 'Add New Cache Rule', data, slug, url, paginationId, rowToEdit } }
@@ -233,18 +226,6 @@ export default function CacheRulesTable( { slug } ) {
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
-				{ row
-					? <Tooltip center>{ `${ header.str_search } “${ row.str_search }”` } { __( 'has been deleted.' ) }</Tooltip>
-					: null
-				}
-				{ ( rowToEdit === 'rowChanged' )
-					? <Tooltip center>{ __( 'Rule has been changed.' ) }</Tooltip>
-					: null
-				}
-				{ ( rowToEdit === 'rowInserted' )
-					? <Tooltip center>{ __( 'Rule has been added.' ) }</Tooltip>
-					: null
-				}
 				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }

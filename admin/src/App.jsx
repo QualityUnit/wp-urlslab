@@ -11,6 +11,7 @@ import { fetchLangs } from './api/fetchLangs';
 import HeaderHeightContext from './lib/headerHeightContext';
 import hexToHSL from './lib/hexToHSL';
 
+import Notifications from './components/Notifications';
 import MainMenu from './components/MainMenu';
 import DynamicModule from './components/DynamicModule';
 import Header from './components/Header';
@@ -150,7 +151,7 @@ export default function App() {
 					/>
 				</div>
 			</HeaderHeightContext.Provider>
-
+			<Notifications />
 		</div>
 	);
 }

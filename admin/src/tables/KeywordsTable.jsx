@@ -26,7 +26,7 @@ export default function KeywordsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const keywordTypes = {
 		M: __( 'Manual' ),
@@ -51,7 +51,7 @@ export default function KeywordsTable( { slug } ) {
 							description={ __( 'Just exact match of keyword will be replaced with link' ) } />,
 
 		urlLink: <SuggestInputField suggestInput={ rowToEdit?.keyword || '' } liveUpdate defaultValue={ ( rowToEdit?.urlLink ? rowToEdit?.urlLink : window.location.origin ) } label={ header.urlLink } onChange={ ( val ) => setEditorRow( { ...rowToEdit, urlLink: val } ) } required
-									description={ __( 'Destination URL for link' ) }/>,
+									description={ __( 'Destination URL for link' ) } />,
 
 		kwType: <SingleSelectMenu defaultAccept autoClose items={ keywordTypes } name="kwType" defaultValue="M"
 								description={ __( 'Link type is used in case you decide to replace in HTML just some types of links (see Settings)' ) }
@@ -188,16 +188,10 @@ export default function KeywordsTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onUpdate={ ( val ) => {
+				onUpdate={ ( ) => {
 					setEditorRow();
 					setActivePanel();
 					setDetailsOptions();
-					if ( val === 'rowInserted' || val === 'rowChanged' ) {
-						setEditorRow( val );
-						setTimeout( () => {
-							setEditorRow();
-						}, 3000 );
-					}
 				} }
 				detailsOptions={ detailsOptions }
 				activatePanel={ activePanel }
@@ -214,18 +208,6 @@ export default function KeywordsTable( { slug } ) {
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
-				{ row
-					? <Tooltip center>{ `${ header.keyword } “${ row.keyword }”` } { __( 'has been deleted.' ) }</Tooltip>
-						: null
-				}
-				{ ( rowToEdit === 'rowChanged' )
-					? <Tooltip center>{ __( 'Keyword has been changed.' ) }</Tooltip>
-					: null
-				}
-				{ ( rowToEdit === 'rowInserted' )
-					? <Tooltip center>{ __( 'Keyword has been added.' ) }</Tooltip>
-					: null
-				}
 				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }

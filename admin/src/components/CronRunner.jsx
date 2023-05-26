@@ -6,7 +6,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { cronAll } from '../api/cron';
 import cronReducer from '../lib/cronReducer';
 
-import NotificationsPanel from './NotificationsPanel';
+// import NotificationsPanel from './NotificationsPanel';
 import Tooltip from '../elements/Tooltip';
 
 import { ReactComponent as CronIcon } from '../assets/images/icons/icon-cron-speedup.svg';
@@ -37,16 +37,16 @@ export default function CronRunner() {
 		setTimeout( handleCronRunner, 60000 );
 	}
 
-	useEffect( () => {
-		if ( state.cronTasksResult?.length ) {
-			dispatch( { type: 'setCronPanelError', cronPanelError: false } );
-			dispatch( { type: 'setCronPanelActive', cronPanelActive: true } );
-			setTimeout( () => {
-				dispatch( { type: 'setCronPanelActive', cronPanelActive: false } );
-				dispatch( { type: 'setCronTasks', cronTasksResult: [] } );
-			}, 4000 );
-		}
-	}, [ state.cronPanelActive, state.cronTasksResult ] );
+	// useEffect( () => {
+	// 	if ( state.cronTasksResult?.length ) {
+	// 		dispatch( { type: 'setCronPanelError', cronPanelError: false } );
+	// 		dispatch( { type: 'setCronPanelActive', cronPanelActive: true } );
+	// 		setTimeout( () => {
+	// 			dispatch( { type: 'setCronPanelActive', cronPanelActive: false } );
+	// 			dispatch( { type: 'setCronTasks', cronTasksResult: [] } );
+	// 		}, 4000 );
+	// 	}
+	// }, [ state.cronPanelActive, state.cronTasksResult ] );
 
 	return (
 		<button className="urlslab-cronrunner pos-relative small" onClick={ handleCronRunner }>
@@ -60,13 +60,13 @@ export default function CronRunner() {
 					<Tooltip className="showOnHover align-left xxxl">{ __( 'Stop Tasks Execution' ) }</Tooltip>
 				</span>
 			}
-
+			{ /*
 			<NotificationsPanel className={ `${ state.cronPanelError ? 'error' : 'dark' } wide` } active={ ( state.cronTasksResult?.length > 0 && state.cronPanelActive ) || state.cronPanelError }>
 				{ ! state.cronPanelError
 					? state.cronTasksResult?.map( ( task ) => <div className="message" key={ task.task }>{ task.description }</div> )
 					: <div className="message" key="cronError">{ __( 'Error has occured. Will run again in 1 min.' ) }</div>
 				}
-			</NotificationsPanel>
+			</NotificationsPanel> */ }
 		</button>
 	);
 }

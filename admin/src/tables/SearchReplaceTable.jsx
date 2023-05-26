@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SingleSelectMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, Edit,
+	useInfiniteFetch, ProgressBar, SortBy, SingleSelectMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, Edit,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -26,7 +26,7 @@ export default function SearchReplaceTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const searchTypes = {
 		T: __( 'Plain text' ),
@@ -43,20 +43,20 @@ export default function SearchReplaceTable( { slug } ) {
 
 	const rowEditorCells = {
 		search_type: <SingleSelectMenu defaultAccept autoClose items={ searchTypes } name="search_type" defaultValue="T"
-									   description={ __( 'Choose how will be matched string in the HTML page. Possible options is exact match and regular expression.' ) }
-									   onChange={ ( val ) => setEditorRow( { ...rowToEdit, search_type: val } ) }>{ header.search_type }</SingleSelectMenu>,
+			description={ __( 'Choose how will be matched string in the HTML page. Possible options is exact match and regular expression.' ) }
+			onChange={ ( val ) => setEditorRow( { ...rowToEdit, search_type: val } ) }>{ header.search_type }</SingleSelectMenu>,
 
 		str_search: <InputField liveUpdate type="url" defaultValue="" label={ header.str_search }
-								description={ __( 'Input string or regular expression to replace in the HTML' ) }
-								onChange={ ( val ) => setEditorRow( { ...rowToEdit, str_search: val } ) } required />,
+			description={ __( 'Input string or regular expression to replace in the HTML' ) }
+			onChange={ ( val ) => setEditorRow( { ...rowToEdit, str_search: val } ) } required />,
 
 		str_replace: <InputField liveUpdate type="url" defaultValue="" label={ header.str_replace }
-								 description={ __( 'Value will replace match string' ) }
-								 onChange={ ( val ) => setEditorRow( { ...rowToEdit, str_replace: val } ) } required />,
+			description={ __( 'Value will replace match string' ) }
+			onChange={ ( val ) => setEditorRow( { ...rowToEdit, str_replace: val } ) } required />,
 
 		url_filter: <InputField liveUpdate defaultValue=".*" label={ header.url_filter }
-								description={ __( 'Regullar expression to match browser URL of page, where should be replacement applied. To replace text in all pages, use value `.*`' ) }
-								onChange={ ( val ) => setEditorRow( { ...rowToEdit, url_filter: val } ) } />,
+			description={ __( 'Regullar expression to match browser URL of page, where should be replacement applied. To replace text in all pages, use value `.*`' ) }
+			onChange={ ( val ) => setEditorRow( { ...rowToEdit, url_filter: val } ) } />,
 
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setEditorRow( { ...rowToEdit, labels: val } ) } />,
 	};
@@ -144,16 +144,9 @@ export default function SearchReplaceTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onUpdate={ ( val ) => {
+				onUpdate={ ( ) => {
 					setActivePanel();
 					setEditorRow();
-					if ( val === 'rowInserted' || val === 'rowChanged' ) {
-						setActivePanel();
-						setEditorRow( val );
-						setTimeout( () => {
-							setEditorRow();
-						}, 3000 );
-					}
 				} }
 				activatePanel={ activePanel }
 				rowEditorOptions={ { rowEditorCells, title: 'Add New Replacement', data, slug, url, paginationId, rowToEdit } }
@@ -170,18 +163,6 @@ export default function SearchReplaceTable( { slug } ) {
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
-				{ row
-					? <Tooltip center>{ `${ header.str_search } “${ row.str_search }”` } { __( 'has been deleted.' ) }</Tooltip>
-					: null
-				}
-				{ ( rowToEdit === 'rowChanged' )
-					? <Tooltip center>{ __( 'Search & Replace rule has been changed.' ) }</Tooltip>
-					: null
-				}
-				{ ( rowToEdit === 'rowInserted' )
-					? <Tooltip center>{ __( 'Search & Replace rule has been added.' ) }</Tooltip>
-					: null
-				}
 				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }

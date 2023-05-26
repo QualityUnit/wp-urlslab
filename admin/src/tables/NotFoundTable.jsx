@@ -35,7 +35,7 @@ export default function NotFoundTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
 
-	const { row, selectedRows, selectRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectedRows, selectRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const [ rowToEdit, setEditorRow ] = useState( {} ); // setting row state here due to updating value on rerender, causing sending wrong values from addRedirect function
 
@@ -43,26 +43,26 @@ export default function NotFoundTable( { slug } ) {
 
 	const addRedirect = useCallback( ( { cell } ) => {
 		const { url: defaultMatchUrl } = cell.row.original;
-		let replaceUrl = new URL(window.location.href);
+		let replaceUrl = new URL( window.location.href );
 		try {
-			replaceUrl = new URL(defaultMatchUrl);
-		} catch(e){
+			replaceUrl = new URL( defaultMatchUrl );
+		} catch ( e ) {
 		}
 		matchUrlField.current = defaultMatchUrl;
 
-		setEditorRow( { match_type: 'E', redirect_code: '301', match_url: defaultMatchUrl, replace_url: replaceUrl.protocol + replaceUrl.hostname} );
+		setEditorRow( { match_type: 'E', redirect_code: '301', match_url: defaultMatchUrl, replace_url: replaceUrl.protocol + replaceUrl.hostname } );
 
 		setActivePanel( 'rowInserter' );
 	}, [ setActivePanel, setEditorRow ] );
 
-	const getUrlDomain = ( url ) => {
+	const getUrlDomain = ( urlVar ) => {
 		try {
-			let url_obj = new URL( url );
+			const url_obj = new URL( urlVar );
 			return url_obj.protocol + '//' + url_obj.hostname;
 		} catch ( e ) {
-			return url;
+			return urlVar;
 		}
-	}
+	};
 
 	const rowEditorCells = {
 		match_type: <SingleSelectMenu autoClose items={ matchTypes } name="match_type" defaultValue="E" onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_type: val } ) }>{ redirectHeader.match_type }</SingleSelectMenu>,
@@ -169,11 +169,6 @@ export default function NotFoundTable( { slug } ) {
 
 					if ( val === 'rowInserted' ) {
 						queryClient.invalidateQueries( [ 'redirects' ], { refetchType: 'all' } );
-						setActivePanel();
-						setEditorRow( val );
-						setTimeout( () => {
-							setEditorRow( );
-						}, 3000 );
 					}
 				} }
 				noImport
@@ -196,14 +191,6 @@ export default function NotFoundTable( { slug } ) {
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
-				{ row
-					? <Tooltip center>{ `${ header.url } “${ row.url }”` } { __( 'has been deleted.' ) }</Tooltip>
-					: null
-				}
-				{ ( rowToEdit === 'rowInserted' )
-					? <Tooltip center>{ __( 'Redirect rule has been added.' ) }</Tooltip>
-					: null
-				}
 				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
