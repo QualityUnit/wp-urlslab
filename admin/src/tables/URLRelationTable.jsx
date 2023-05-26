@@ -72,7 +72,7 @@ export default function URLRelationTable( { slug } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, optionalSelector: 'dest_url_id' } ) } />,
+			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, optionalSelector: 'dest_url_id', id: 'src_url_name' } ) } />,
 			header: null,
 		} ),
 	];
@@ -88,12 +88,12 @@ export default function URLRelationTable( { slug } ) {
 				header={ header }
 				table={ table }
 				selectedRows={ selectedRows }
-				onDeleteSelected={ () => deleteSelectedRows( 'dest_url_id' ) }
+				onDeleteSelected={ () => deleteSelectedRows( { optionalSelector: 'dest_url_id', id: 'src_url_name' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onUpdate={ ( ) => {
 					setEditorRow();
 				} }
-				rowEditorOptions={ { rowEditorCells, title: 'Add New Related Article', data, slug, url, paginationId, rowToEdit } }
+				rowEditorOptions={ { rowEditorCells, title: 'Add New Related Article', data, slug, url, paginationId, rowToEdit, id: 'src_url_name' } }
 				exportOptions={ {
 					slug,
 					url,

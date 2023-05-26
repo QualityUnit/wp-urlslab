@@ -180,7 +180,7 @@ export default function CustomHtmlTable( { slug } ) {
 						<IconButton
 							onClick={ () => {
 								setActivePanel( 'rowEditor' );
-								updateRow( { cell } );
+								updateRow( { cell, id: 'name' } );
 							} }
 							tooltipClass="align-left xxxl"
 							tooltip={ __( 'Edit row' ) }
@@ -189,7 +189,7 @@ export default function CustomHtmlTable( { slug } ) {
 						</IconButton>
 						<IconButton
 							className="ml-s"
-							onClick={ () => deleteRow( { cell } ) }
+							onClick={ () => deleteRow( { cell, id: 'name' } ) }
 							tooltipClass="align-left xxxl"
 							tooltip={ __( 'Delete row' ) }
 						>
@@ -221,7 +221,7 @@ export default function CustomHtmlTable( { slug } ) {
 					setEditorRow();
 				} }
 				activatePanel={ activePanel }
-				rowEditorOptions={ { rowEditorCells, title: __( 'Add Custom HTML' ), data, slug, url, paginationId, rowToEdit } }
+				rowEditorOptions={ { rowEditorCells, title: __( 'Add Custom HTML' ), data, slug, url, paginationId, rowToEdit, id: 'name' } }
 				exportOptions={ {
 					slug,
 					url,

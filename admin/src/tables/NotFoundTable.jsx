@@ -145,7 +145,7 @@ export default function NotFoundTable( { slug } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
+			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, id: 'url' } ) } />,
 			header: null,
 		} ),
 	];
@@ -161,7 +161,7 @@ export default function NotFoundTable( { slug } ) {
 				header={ header }
 				table={ table }
 				selectedRows={ selectedRows }
-				onDeleteSelected={ deleteSelectedRows }
+				onDeleteSelected={ () => deleteSelectedRows( { id: 'url' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onUpdate={ ( val ) => {
 					setActivePanel();
@@ -176,7 +176,7 @@ export default function NotFoundTable( { slug } ) {
 				activatePanel={ activePanel }
 				rowEditorOptions={ {
 					rowEditorCells, title: 'Create redirect from this',
-					data, slug: 'redirects', url, paginationId: 'redirect_id', rowToEdit,
+					data, slug: 'redirects', url, paginationId: 'redirect_id', rowToEdit, id: 'url',
 				} }
 				exportOptions={ {
 					slug,

@@ -154,7 +154,7 @@ export default function CacheRulesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'cache_ttl', {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.cache_ttl }</SortBy>,
-			size: 30,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',

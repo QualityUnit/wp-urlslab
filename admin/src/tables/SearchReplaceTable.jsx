@@ -108,7 +108,7 @@ export default function SearchReplaceTable( { slug } ) {
 						<IconButton
 							onClick={ () => {
 								setActivePanel( 'rowEditor' );
-								updateRow( { cell } );
+								updateRow( { cell, id: 'str_search' } );
 							} }
 							tooltipClass="align-left xxxl"
 							tooltip={ __( 'Edit row' ) }
@@ -117,7 +117,7 @@ export default function SearchReplaceTable( { slug } ) {
 						</IconButton>
 						<IconButton
 							className="ml-s"
-							onClick={ () => deleteRow( { cell } ) }
+							onClick={ () => deleteRow( { cell, id: 'str_search' } ) }
 							tooltipClass="align-left xxxl"
 							tooltip={ __( 'Delete row' ) }
 						>
@@ -142,14 +142,14 @@ export default function SearchReplaceTable( { slug } ) {
 				header={ header }
 				table={ table }
 				selectedRows={ selectedRows }
-				onDeleteSelected={ deleteSelectedRows }
+				onDeleteSelected={ () => deleteSelectedRows( { id: 'str_search' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onUpdate={ ( ) => {
 					setActivePanel();
 					setEditorRow();
 				} }
 				activatePanel={ activePanel }
-				rowEditorOptions={ { rowEditorCells, title: 'Add New Replacement', data, slug, url, paginationId, rowToEdit } }
+				rowEditorOptions={ { rowEditorCells, title: 'Add New Replacement', data, slug, url, paginationId, rowToEdit, id: 'str_search' } }
 				exportOptions={ {
 					slug,
 					url,

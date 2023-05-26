@@ -136,7 +136,7 @@ export default function SchedulesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
+			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, id: 'urls' } ) } />,
 			header: null,
 			size: 60,
 		} ),
@@ -157,13 +157,13 @@ export default function SchedulesTable( { slug } ) {
 				noExport
 				noDelete
 				selectedRows={ selectedRows }
-				onDeleteSelected={ deleteSelectedRows }
+				onDeleteSelected={ () => deleteSelectedRows( { id: 'urls' } ) }
 				onUpdate={ ( ) => {
 					setActivePanel();
 					setEditorRow();
 				} }
 				activatePanel={ activePanel }
-				rowEditorOptions={ { rowEditorCells, title: 'Add schedule', data, slug, url, paginationId, rowToEdit } }
+				rowEditorOptions={ { rowEditorCells, title: 'Add schedule', data, slug, url, paginationId, rowToEdit, id: 'urls' } }
 			/>
 			<Table className="noHeightLimit fadeInto"
 				slug={ slug }

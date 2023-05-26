@@ -1,20 +1,14 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
 
 import { fetchSettings } from '../api/settings';
 import Loader from '../components/Loader';
 import SettingsOption from '../components/SettingsOption';
 
-import Tooltip from '../elements/Tooltip';
-
 import '../assets/styles/layouts/_Settings.scss';
 
 export default function Settings( { className, settingId } ) {
-	const { __ } = useI18n();
 	const queryClient = useQueryClient();
-	const [ tooltipStatus, setTooltipStatus ] = useState();
 
 	const handleClick = ( event ) => {
 		document.querySelectorAll( '.urlslab-settingsPanel-section' ).forEach( ( section ) => section.classList.remove( 'active' ) );
@@ -38,34 +32,8 @@ export default function Settings( { className, settingId } ) {
 
 	const settings = data ? Object.values( data ) : [];
 
-	const renderStatus = () => {
-		let currentStatus = tooltipStatus;
-		let message;
-		if ( typeof tooltipStatus === 'object' ) {
-			currentStatus = tooltipStatus.status;
-			message = tooltipStatus.message;
-		}
-		switch ( currentStatus ) {
-			case 'active':
-				return <Tooltip className="fixedBottom">{ __( 'Updating…' ) }</Tooltip>;
-			case 'success':
-				return <Tooltip className="fixedBottom successStatus">{ __( 'Setting updated' ) }</Tooltip>;
-			case 'error':
-				return <Tooltip className="fixedBottom errorStatus">{ __( 'Setting update failed' ) }</Tooltip>;
-			case 'activeApiCall':
-				return <Tooltip className="fixedBottom">{ message }</Tooltip>;
-			case 'successApiCall':
-				return <Tooltip className="fixedBottom successStatus">{ message }</Tooltip>;
-			case 'errorApiCall':
-				return <Tooltip className="fixedBottom errorStatus">{ message }</Tooltip>;
-			default:
-				break;
-		}
-	};
-
 	return (
 		<>
-			{ renderStatus() }
 			{ Object.values( settings ).map( ( section ) => {
 				return (
 					section.options
@@ -80,7 +48,7 @@ export default function Settings( { className, settingId } ) {
 									{
 										Object.values( section.options ).map( ( option ) => {
 											return (
-												<SettingsOption settingId={ settingId } option={ option } key={ option.id } renderTooltip={ ( tooltipstatus ) => setTooltipStatus( tooltipstatus ) } />
+												<SettingsOption settingId={ settingId } option={ option } key={ option.id } />
 											);
 										} )
 									}

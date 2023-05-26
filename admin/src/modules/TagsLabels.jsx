@@ -10,7 +10,6 @@ import ColorPicker from '../components/ColorPicker';
 import ModuleViewHeaderBottom from '../components/ModuleViewHeaderBottom';
 import Table from '../components/TableComponent';
 import Checkbox from '../elements/Checkbox';
-import Tooltip from '../elements/Tooltip';
 import IconButton from '../elements/IconButton';
 
 import '../assets/styles/components/_ModuleViewHeader.scss';
@@ -90,7 +89,7 @@ export default function TagsLabels( ) {
 						<IconButton
 							onClick={ () => {
 								setActivePanel( 'rowEditor' );
-								updateRow( { cell } );
+								updateRow( { cell, id: 'name' } );
 							} }
 							tooltipClass="align-left xxxl"
 							tooltip={ __( 'Edit row' ) }
@@ -99,7 +98,7 @@ export default function TagsLabels( ) {
 						</IconButton>
 						<IconButton
 							className="ml-s"
-							onClick={ () => deleteRow( { cell } ) }
+							onClick={ () => deleteRow( { cell, id: 'name' } ) }
 							tooltipClass="align-left xxxl"
 							tooltip={ __( 'Delete row' ) }
 						>
@@ -134,18 +133,12 @@ export default function TagsLabels( ) {
 				noImport
 				noFiltering
 				noCount
-				onUpdate={ ( val ) => {
+				onUpdate={ ( ) => {
 					setActivePanel();
 					setEditorRow();
-					if ( val === 'rowInserted' || val === 'rowChanged' ) {
-						setEditorRow( val );
-						setTimeout( () => {
-							setEditorRow();
-						}, 3000 );
-					}
 				} }
 				activatePanel={ activePanel }
-				rowEditorOptions={ { rowEditorCells, notWide: true, title: 'Create new tag', data, slug, url, paginationId, rowToEdit } }
+				rowEditorOptions={ { rowEditorCells, notWide: true, title: 'Create new tag', data, slug, url, paginationId, rowToEdit, id: 'name' } }
 			/>
 			<Table className="fadeInto"
 				slug={ slug }
@@ -153,18 +146,6 @@ export default function TagsLabels( ) {
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
-				{ row
-					? <Tooltip center>{ `Tag “${ row.name }”` } { __( 'has been deleted.' ) }</Tooltip>
-					: null
-				}
-				{ ( rowToEdit === 'rowChanged' )
-					? <Tooltip center>{ __( 'Tag has been changed.' ) }</Tooltip>
-					: null
-				}
-				{ ( rowToEdit === 'rowInserted' )
-					? <Tooltip center>{ __( 'Tag has been added.' ) }</Tooltip>
-					: null
-				}
 			</Table>
 		</div>
 	);

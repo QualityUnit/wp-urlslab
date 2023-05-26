@@ -114,7 +114,7 @@ export default function ScreenshotTable( { slug } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
+			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, id: 'url_title' } ) } />,
 			header: null,
 		} ),
 	];
@@ -131,7 +131,7 @@ export default function ScreenshotTable( { slug } ) {
 				table={ table }
 				selectedRows={ selectedRows }
 				noImport
-				onDeleteSelected={ deleteSelectedRows }
+				onDeleteSelected={ () => deleteSelectedRows( { id: 'url_title' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onUpdate={ () => setDetailsOptions() }
 				detailsOptions={ detailsOptions }

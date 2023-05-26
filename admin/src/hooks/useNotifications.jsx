@@ -1,21 +1,22 @@
 import { useQueryClient } from '@tanstack/react-query';
 
-let notificationsTimer = 0;
 export default function useNotifications() {
+	const notificationsTimer = {};
 	const queryClient = useQueryClient();
 
-	const setNotification = ( slug, dataObj ) => {
+	const setNotification = ( id, dataObj ) => {
+		notificationsTimer[ id ] = 0;
 		queryClient.setQueryData( [ 'notifications' ], ( data ) => {
-			return { ...data, [ slug ]: dataObj };
+			return { ...data, [ id ]: dataObj };
 		} );
 
 		queryClient.invalidateQueries( [ 'notifications' ], { refetchType: 'all' } );
-		clearTimeout( notificationsTimer );
+		clearTimeout( notificationsTimer[ id ] );
 
-		notificationsTimer = setTimeout( () => {
+		notificationsTimer[ id ] = setTimeout( () => {
 			queryClient.setQueryData( [ 'notifications' ], ( data ) => {
 				const dataCopy = { ...data };
-				delete dataCopy[ slug ];
+				delete dataCopy[ id ];
 				return dataCopy;
 			} );
 			queryClient.invalidateQueries( [ 'notifications' ] );

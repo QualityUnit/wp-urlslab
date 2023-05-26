@@ -83,32 +83,32 @@ export default function KeywordsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'keyword', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.keyword }</SortBy>,
 			minSize: 200,
 		} ),
 		columnHelper.accessor( 'urlLink', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.urlLink }</SortBy>,
 			enableResizing: false,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'lang', {
 			className: 'nolimit',
-			cell: ( cell ) => <LangMenu defaultValue={ cell?.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <LangMenu defaultValue={ cell?.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.lang }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'kw_priority', {
 			className: 'nolimit',
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.kw_priority }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'urlFilter', {
 			className: 'nolimit',
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.urlFilter }</SortBy>,
 			size: 150,
 		} ),
@@ -140,7 +140,7 @@ export default function KeywordsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
 			header: header.labels,
 			size: 150,
 		} ),
@@ -152,7 +152,7 @@ export default function KeywordsTable( { slug } ) {
 						<IconButton
 						onClick={ () => {
 							setActivePanel( 'rowEditor' );
-							updateRow( { cell } );
+								updateRow( { cell, id: 'keyword' } );
 						} }
 						tooltipClass="align-left xxxl"
 						tooltip={ __( 'Edit row' ) }
@@ -161,7 +161,7 @@ export default function KeywordsTable( { slug } ) {
 						</IconButton>
 						<IconButton
 						className="ml-s"
-						onClick={ () => deleteRow( { cell } ) }
+							onClick={ () => deleteRow( { cell, id: 'keyword' } ) }
 						tooltipClass="align-left xxxl"
 						tooltip={ __( 'Delete row' ) }
 					>
@@ -186,7 +186,7 @@ export default function KeywordsTable( { slug } ) {
 				header={ header }
 				table={ table }
 				selectedRows={ selectedRows }
-				onDeleteSelected={ deleteSelectedRows }
+				onDeleteSelected={ () => deleteSelectedRows( { id: 'keyword' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onUpdate={ ( ) => {
 					setEditorRow();
@@ -195,7 +195,7 @@ export default function KeywordsTable( { slug } ) {
 				} }
 				detailsOptions={ detailsOptions }
 				activatePanel={ activePanel }
-				rowEditorOptions={ { rowEditorCells, title: 'Add New Keyword', data, slug, url, paginationId, rowToEdit } }
+				rowEditorOptions={ { rowEditorCells, title: 'Add New Keyword', data, slug, url, paginationId, rowToEdit, id: 'keyword' } }
 				exportOptions={ {
 					slug,
 					url,

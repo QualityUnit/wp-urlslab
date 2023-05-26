@@ -14,7 +14,7 @@ import MultiSelectMenu from '../elements/MultiSelectMenu';
 import Button from '../elements/Button';
 
 import '../assets/styles/components/datepicker/datepicker.scss';
-import { fetchData } from '../api/fetching';
+import { getFetch } from '../api/fetching';
 import useNotifications from '../hooks/useNotifications';
 
 export default function SettingsOption( { settingId, option } ) {
@@ -26,13 +26,14 @@ export default function SettingsOption( { settingId, option } ) {
 	const { setNotification } = useNotifications();
 
 	const handleApiCall = async () => {
-		setNotification( id, { message: 'Executing…', status: 'info' } );
-		const result = await fetchData( value );
-		if ( result ) {
-			setNotification( id, { message: result, status: 'success' } );
+		setNotification( id, { message: 'Optimizing…', status: 'info' } );
+		const response = await getFetch( value );
+		const message = await response.json();
+		if ( response.ok ) {
+			setNotification( id, { message, status: 'success' } );
 			return false;
 		}
-		setNotification( id, { message: 'API change Failed', status: 'error' } );
+		setNotification( id, { message, status: 'error' } );
 	};
 
 	const handleChange = useMutation( {

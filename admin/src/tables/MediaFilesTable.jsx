@@ -149,7 +149,7 @@ export default function MediaFilesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
+			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, id: 'filename' } ) } />,
 			header: null,
 		} ),
 	];
@@ -166,7 +166,7 @@ export default function MediaFilesTable( { slug } ) {
 				table={ table }
 				noImport
 				selectedRows={ selectedRows }
-				onDeleteSelected={ deleteSelectedRows }
+				onDeleteSelected={ () => deleteSelectedRows( { id: 'filename' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onUpdate={ () => setDetailsOptions() }
 				detailsOptions={ detailsOptions }
