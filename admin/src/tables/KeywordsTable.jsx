@@ -47,17 +47,17 @@ export default function KeywordsTable( { slug } ) {
 	};
 
 	const rowEditorCells = {
-		keyword: <InputField autoFocus liveUpdate defaultValue="" label={ header.keyword } onChange={ ( val ) => setEditorRow( { ...rowToEdit, keyword: val } ) } required
+		keyword: <InputField autoFocus liveUpdate defaultValue="" label={ header.keyword } onChange={ ( val ) => setEditorRow( { ...rowToEdit, keyword: val } ) }
 							description={ __( 'Just exact match of keyword will be replaced with link' ) } />,
 
-		urlLink: <SuggestInputField suggestInput={ rowToEdit?.keyword || '' } liveUpdate defaultValue={ ( rowToEdit?.urlLink ? rowToEdit?.urlLink : window.location.origin ) } label={ header.urlLink } onChange={ ( val ) => setEditorRow( { ...rowToEdit, urlLink: val } ) } required
+		urlLink: <SuggestInputField suggestInput={ rowToEdit?.keyword || '' } liveUpdate defaultValue={ ( rowToEdit?.urlLink ? rowToEdit?.urlLink : window.location.origin ) } label={ header.urlLink } onChange={ ( val ) => setEditorRow( { ...rowToEdit, urlLink: val } ) }
 									description={ __( 'Destination URL for link' ) } />,
 
 		kwType: <SingleSelectMenu defaultAccept autoClose items={ keywordTypes } name="kwType" defaultValue="M"
 								description={ __( 'Link type is used in case you decide to replace in HTML just some types of links (see Settings)' ) }
 								onChange={ ( val ) => setEditorRow( { ...rowToEdit, kwType: val } ) }>{ header.kwType }</SingleSelectMenu>,
 
-		kw_priority: <InputField liveUpdate type="number" defaultValue="0" min="0" max="255" label={ header.kw_priority }
+		kw_priority: <InputField liveUpdate type="number" defaultValue="10" min="0" max="255" label={ header.kw_priority }
 								description={ __( 'Lower number means higher priority. Enter value in range: 0 - 255' ) }
 								onChange={ ( val ) => setEditorRow( { ...rowToEdit, kw_priority: val } ) } />,
 
