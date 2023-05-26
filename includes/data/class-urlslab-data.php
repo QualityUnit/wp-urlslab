@@ -71,6 +71,11 @@ abstract class Urlslab_Data {
 		$insert_data = array();
 		$format      = array();
 		$this->before_insert();
+
+		if ( false === $this->validate_row() ) {
+			return false;
+		}
+
 		foreach ( $this->get_columns() as $key => $column_format ) {
 			$insert_data[ $key ] = $this->data[ $key ];
 			$format[ $key ]      = $column_format;
@@ -117,6 +122,9 @@ abstract class Urlslab_Data {
 
 		foreach ( $rows as $row ) {
 			$row->before_insert();
+			if ( false === $row->validate_row() ) {
+				continue;
+			}
 			$row_data = array();
 			foreach ( $this->get_columns() as $column => $format ) {
 				$row_data[] = $row->get( $column );
@@ -247,5 +255,9 @@ abstract class Urlslab_Data {
 
 	public function set_loaded_from_db( bool $loaded_from_db = true ) {
 		$this->loaded_from_db = $loaded_from_db;
+	}
+
+	public function validate_row(): bool {
+		return true;
 	}
 }
