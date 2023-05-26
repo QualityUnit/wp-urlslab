@@ -3,12 +3,11 @@
 use OpenAPI\Client\Configuration;
 use OpenAPI\Client\Model\DomainDataRetrievalDataRequest;
 use OpenAPI\Client\Model\DomainDataRetrievalScreenshotResponse;
-use OpenAPI\Client\Urlslab\ScreenshotApi;
 
 require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
 
 class Urlslab_Screenshots_Cron extends Urlslab_Cron {
-	private ScreenshotApi $client;
+	private \OpenAPI\Client\Urlslab\SnapshotApi $client;
 
 	public function get_description(): string {
 		return __( 'Syncing screenshots from URLsLab service to local database', 'urlslab' );
@@ -113,7 +112,7 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 		$request->setRenewFrequency( $widget->get_option( Urlslab_Screenshot_Widget::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL ) );
 
 		try {
-			$urlslab_screenshots = $this->client->getScreenshots( $request );
+			$urlslab_screenshots = $this->client->getSnapshots($request);
 		} catch ( Exception $e ) {
 			$urlslab_screenshots = array();
 		}
@@ -158,7 +157,7 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 			$api_key = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
 			if ( strlen( $api_key ) ) {
 				$config       = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-				$this->client = new ScreenshotApi( new GuzzleHttp\Client(), $config );
+				$this->client = new \OpenAPI\Client\Urlslab\SnapshotApi( new GuzzleHttp\Client(), $config );
 			}
 		}
 
