@@ -10,7 +10,6 @@ export default function useNotifications() {
 			return { ...data, [ id ]: dataObj };
 		} );
 
-		queryClient.invalidateQueries( [ 'notifications' ], { refetchType: 'all' } );
 		clearTimeout( notificationsTimer[ id ] );
 
 		notificationsTimer[ id ] = setTimeout( () => {
@@ -19,7 +18,6 @@ export default function useNotifications() {
 				delete dataCopy[ id ];
 				return dataCopy;
 			} );
-			queryClient.invalidateQueries( [ 'notifications' ] );
 		}, 3000 ); //remove notification after 5 seconds
 	};
 
