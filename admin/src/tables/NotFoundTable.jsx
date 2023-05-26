@@ -55,10 +55,19 @@ export default function NotFoundTable( { slug } ) {
 		setActivePanel( 'rowInserter' );
 	}, [ setActivePanel, setEditorRow ] );
 
+	const getUrlDomain = ( url ) => {
+		try {
+			let url_obj = new URL( url );
+			return url_obj.protocol + '//' + url_obj.hostname;
+		} catch ( e ) {
+			return url;
+		}
+	}
+
 	const rowEditorCells = {
 		match_type: <SingleSelectMenu autoClose items={ matchTypes } name="match_type" defaultValue="E" onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_type: val } ) }>{ redirectHeader.match_type }</SingleSelectMenu>,
 		match_url: <InputField type="url" liveUpdate ref={ matchUrlField } defaultValue={ matchUrlField.current } label={ redirectHeader.match_url } onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_url: val } ) } />,
-		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' } autoFocus liveUpdate defaultValue={ ( window.location.origin ) } label={ redirectHeader.replace_url } onChange={ ( val ) => setEditorRow( { ...rowToEdit, replace_url: val } ) } required />,
+		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' } autoFocus liveUpdate defaultValue={ ( rowToEdit?.match_url ? getUrlDomain( rowToEdit?.match_url ) : window.location.origin ) } label={ redirectHeader.replace_url } onChange={ ( val ) => setEditorRow( { ...rowToEdit, replace_url: val } ) } required />,
 		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" defaultValue="301" onChange={ ( val ) => setEditorRow( { ...rowToEdit, redirect_code: val } ) }>{ redirectHeader.redirect_code }</SingleSelectMenu>,
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setEditorRow( { ...rowToEdit, labels: val } ) } />,
 	};
