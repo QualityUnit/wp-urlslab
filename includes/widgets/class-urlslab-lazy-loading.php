@@ -40,9 +40,9 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 
 	public function get_video_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
-		if ( ! isset( $atts['videoid'] ) || empty( $atts['videoid'] ) ) {
+		if ( ! preg_match( '/^[a-zA-Z0-9_-]+$/', $atts['videoid'] ) ) {
 			if ( $this->is_edit_mode() ) {
-				$atts['STATUS'] = 'Missing shortcode videoid attribute!!!';
+				$atts['STATUS'] = __( 'Invalid videoid attribute!' );
 
 				return $this->get_placeholder_html( $atts, self::SHORTCODE_VIDEO );
 			}

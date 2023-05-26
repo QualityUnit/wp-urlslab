@@ -182,6 +182,14 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 		return 'https://i.ytimg.com/vi/' . $this->get_video_id() . '/hqdefault.jpg';
 	}
 
+	protected function before_insert() {
+		parent::before_insert();
+		if ( 1 !== preg_match( '/^[0-9a-zA-Z_\-]+$/', $this->get_video_id() ) ) {
+			$this->set_status( self::STATUS_DISABLED );
+		}
+	}
+
+
 	public function get_table_name(): string {
 		return URLSLAB_YOUTUBE_CACHE_TABLE;
 	}

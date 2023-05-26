@@ -84,9 +84,9 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 
 		if ( $obj->is_loaded_from_db() ) {
 			if ( Urlslab_Generator_Shortcode_Row::TYPE_VIDEO == $obj->get_shortcode_type() ) {
-				if ( empty( $atts['videoid'] ) ) {
+				if ( ! preg_match( '/^[a-zA-Z0-9_-]+$/', $atts['videoid'] ) ) {
 					if ( $this->is_edit_mode() ) {
-						$atts['STATUS'] = 'videoid attribute is missing in shortcode';
+						$atts['STATUS'] = __( 'Invalid videoid attribute!' );
 
 						return $this->get_placeholder_html( $atts, self::SLUG );
 					}
