@@ -12,7 +12,7 @@ export default function Notifications() {
 		refetchOnWindowFocus: false,
 	} );
 
-	let notificationsCount = null;
+	let notificationsCount;
 	if ( notifications ) {
 		notificationsCount = Object.keys( notifications )?.length > 0;
 	}
