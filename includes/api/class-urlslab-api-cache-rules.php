@@ -423,7 +423,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 			if ( count( $distributions ) > 0 ) {
 				foreach ( $distributions['DistributionList']['Items'] as $distribution ) {
 					$uri = '';
-					if (is_array($distribution['Aliases']['Items'])) {
+					if ( is_array( $distribution['Aliases']['Items'] ) ) {
 						$uri = ' ' . implode( ', ', $distribution['Aliases']['Items'] );
 					}
 					$arr_distributions[ $distribution['Id'] ] = $distribution['Id'] . ' (' . $distribution['Status'] . ')' . $uri;
