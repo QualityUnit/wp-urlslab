@@ -53,7 +53,8 @@
     "vite-plugin-image-optimizer": "^1.1.2",
     "vite-plugin-svgr": "^2.4.0",
     "vite-react-jsx": "^1.1.2",
-    "yarn": "^1.22.19"
+    "yarn": "^1.22.19",
+    "zustand": "^4.3.8"
   },
   "devDependencies": {
     "@browser-logos/brave": "^3.0.13",

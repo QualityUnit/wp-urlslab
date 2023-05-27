@@ -1,25 +1,28 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { create } from 'zustand';
 
-export default function useNotifications() {
+const useNotifications = create( ( ) => ( {
+	notifications: {},
+} ) );
+
+export default useNotifications;
+
+export function setNotification( id, dataObj ) {
 	const notificationsTimer = {};
-	const queryClient = useQueryClient();
+	notificationsTimer[ id ] = 0;
 
-	const setNotification = ( id, dataObj ) => {
-		notificationsTimer[ id ] = 0;
-		queryClient.setQueryData( [ 'notifications' ], ( data ) => {
-			return { ...data, [ id ]: dataObj };
+	useNotifications.setState( ( state ) => ( {
+		notifications: { ...state.notifications, [ id ]: dataObj },
+	} )	);
+
+	clearTimeout( notificationsTimer[ id ] );
+
+	notificationsTimer[ id ] = setTimeout( () => {
+		useNotifications.setState( ( state ) => {
+			const dataCopy = { ...state.notifications };
+			delete dataCopy[ id ];
+			return {
+				notifications: dataCopy,
+			};
 		} );
-
-		clearTimeout( notificationsTimer[ id ] );
-
-		notificationsTimer[ id ] = setTimeout( () => {
-			queryClient.setQueryData( [ 'notifications' ], ( data ) => {
-				const dataCopy = { ...data };
-				delete dataCopy[ id ];
-				return dataCopy;
-			} );
-		}, 3000 ); //remove notification after 5 seconds
-	};
-
-	return { setNotification };
+	}, 3000 ); //remove notification after 5 seconds
 }

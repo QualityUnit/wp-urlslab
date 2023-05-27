@@ -89,7 +89,7 @@ export default function KeywordsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'urlLink', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.urlLink }</SortBy>,
 			enableResizing: false,
 			size: 200,
