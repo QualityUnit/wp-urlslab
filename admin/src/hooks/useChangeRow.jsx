@@ -7,7 +7,6 @@ import { setNotification } from '../hooks/useNotifications';
 
 export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const queryClient = useQueryClient();
-	const [ rowValue, setRow ] = useState();
 	const [ rowToEdit, setEditorRow ] = useState( {} );
 	const [ insertRowResult, setEditorRowRes ] = useState( false );
 	const [ activePanel, setActivePanel ] = useState();
@@ -22,10 +21,6 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 		}
 		return cell.row.original[ paginationId ];
 	}, [ paginationId ] );
-
-	const getRow = ( cell ) => {
-		return cell.row.original;
-	};
 
 	const insertNewRow = useMutation( {
 		mutationFn: async ( { editedRow } ) => {
@@ -170,12 +165,6 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 				pageParams: origData.pageParams,
 			} ) );
 
-			if ( ! selectedRows.length ) {
-				setRow( getRow( cell ) );
-				setTimeout( () => {
-					setRow();
-				}, 3000 );
-			}
 			const response = await del( `${ slug }/${ getRowId( cell, optionalSelector ) }` );
 			return { response, id: cell.row.original[ id ] };
 		},
