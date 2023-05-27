@@ -15,15 +15,13 @@ import Button from '../elements/Button';
 
 import '../assets/styles/components/datepicker/datepicker.scss';
 import { getFetch } from '../api/fetching';
-import useNotifications from '../hooks/useNotifications';
+import { setNotification } from '../hooks/useNotifications';
 
 export default function SettingsOption( { settingId, option } ) {
 	const queryClient = useQueryClient();
 	const { id, type, title, description, placeholder, value, possible_values } = option;
 	const [ date, setDate ] = useState( type !== 'datetime' || new Date( value ) );
 	const [ status, setStatus ] = useState( );
-
-	const { setNotification } = useNotifications();
 
 	const handleApiCall = async () => {
 		setNotification( id, { message: 'Optimizing…', status: 'info' } );

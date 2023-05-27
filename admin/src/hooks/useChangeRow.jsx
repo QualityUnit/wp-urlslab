@@ -3,7 +3,7 @@ import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { deleteRow as del } from '../api/deleteTableData';
 import { postFetch } from '../api/fetching';
 import filtersArray from '../lib/filtersArray';
-import useNotifications from '../hooks/useNotifications';
+import { setNotification } from '../hooks/useNotifications';
 
 export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const queryClient = useQueryClient();
@@ -15,7 +15,6 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const [ responseCounter, setResponseCounter ] = useState( 0 );
 
 	const { filters, sorting } = url;
-	const { setNotification } = useNotifications();
 
 	const getRowId = useCallback( ( cell, optionalSelector ) => {
 		if ( optionalSelector ) {

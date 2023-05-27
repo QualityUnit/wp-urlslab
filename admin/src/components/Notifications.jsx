@@ -1,16 +1,10 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import useNotifications from '../hooks/useNotifications';
 
 import '../assets/styles/components/_Notifications.scss';
 import NotificationsPanel from './NotificationsPanel';
 
 export default function Notifications() {
-	const queryClient = useQueryClient();
-	const { data: notifications } = useQuery( {
-		queryKey: [ 'notifications' ],
-		queryFn: () => queryClient.getQueryData( [ 'notifications' ] ),
-		initialData: {},
-		refetchOnWindowFocus: false,
-	} );
+	const notifications = useNotifications( ( state ) => state.notifications );
 
 	let notificationsCount;
 	if ( notifications ) {
