@@ -35,7 +35,7 @@ export default function TagsLabels( ) {
 		isSuccess,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId }, 500 );
 
-	const { row, selectedRows, rowToEdit, setEditorRow, activePanel, setActivePanel, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectedRows, rowToEdit, setEditorRow, activePanel, setActivePanel, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const header = {
 		name: 'Name',
@@ -116,9 +116,9 @@ export default function TagsLabels( ) {
 		return <Loader />;
 	}
 
-	if ( row ) {
-		queryClient.invalidateQueries( [ 'label' ] );
-	}
+	// if ( row ) {
+	// 	queryClient.invalidateQueries( [ 'label' ] );
+	// }
 
 	return (
 		<div className="urlslab-tableView">

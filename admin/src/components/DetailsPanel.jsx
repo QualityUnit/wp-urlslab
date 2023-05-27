@@ -6,20 +6,22 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import { postFetch } from '../api/fetching';
 import useCloseModal from '../hooks/useCloseModal';
+import useTablePanels from '../hooks/useTablePanels';
 import Button from '../elements/Button';
 import ProgressBar from '../elements/ProgressBar';
 import DateTimeFormat from '../elements/DateTimeFormat';
 import Loader from './Loader';
 
-export default function DetailsPanel( { options, handlePanel } ) {
+export default function DetailsPanel( ) {
 	const maxRows = 150;
 	const { __ } = useI18n();
 	const { ref, inView } = useInView();
 	const tableContainerRef = useRef();
-	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
+	const { CloseIcon, handleClose } = useCloseModal( );
+	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
+	const { slug, detailsOptions } = useTablePanels( ( state ) => state.options );
+	const { title, text, url, showKeys, listId } = detailsOptions;
 	const tbody = [];
-
-	const { title, text, slug, url, showKeys, listId } = options;
 
 	const parseDate = ( row, key ) => {
 		const dateKeys = [ 'created' ]; // Insert other keys with date, ie. 'modified' if needed
@@ -108,9 +110,7 @@ export default function DetailsPanel( { options, handlePanel } ) {
 
 	function hidePanel() {
 		handleClose();
-		if ( handlePanel ) {
-			handlePanel();
-		}
+		activatePanel();
 	}
 
 	return (

@@ -1,8 +1,10 @@
 import { create } from 'zustand';
 
 const useTablePanels = create( ( set ) => ( {
-	panel: {},
-	setPanel: ( panelOptions ) => set( () => ( { panel: panelOptions } ) ),
+	activePanel: undefined,
+	options: {},
+	activatePanel: ( activePanel ) => set( () => ( { activePanel } ) ),
+	setOptions: ( options ) => set( () => ( { options } ) ),
 } ) );
 
 export default useTablePanels;

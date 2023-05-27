@@ -168,7 +168,7 @@ export function useFilter( { slug, header, initialRow } ) {
 		queryClient.setQueryData( [ slug, 'filters' ], { filters: state.filters, possiblefilters: possiblefilters.current } );
 	}
 
-	return { filters: state.filters, possiblefilters: possiblefilters.current, filteringState: state.filteringState, addFilter, removefilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter };
+	return { filters: state.filters || {}, possiblefilters: possiblefilters.current, filteringState: state.filteringState, addFilter, removefilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter };
 }
 
 /* SORTING HOOK */

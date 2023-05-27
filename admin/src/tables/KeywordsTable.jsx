@@ -1,18 +1,18 @@
 /* eslint-disable indent */
-import { useState } from 'react';
+import { useEffect } from 'react';
 import {
 	useInfiniteFetch, ProgressBar, TagsMenu, SortBy, SingleSelectMenu, LangMenu, InputField, Checkbox, LinkIcon, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, Edit, SuggestInputField,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
+import useTablePanels from '../hooks/useTablePanels';
 import IconButton from '../elements/IconButton';
 
 export default function KeywordsTable( { slug } ) {
 	const paginationId = 'kw_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const url = { filters, sorting };
-	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
 	const {
 		__,
@@ -26,7 +26,10 @@ export default function KeywordsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+
+	const { activatePanel, setOptions } = useTablePanels();
+	const options = useTablePanels( ( state ) => state.options );
 
 	const keywordTypes = {
 		M: __( 'Manual' ),
@@ -47,30 +50,40 @@ export default function KeywordsTable( { slug } ) {
 	};
 
 	const rowEditorCells = {
-		keyword: <InputField autoFocus liveUpdate defaultValue="" label={ header.keyword } onChange={ ( val ) => setEditorRow( { ...rowToEdit, keyword: val } ) }
+		keyword: <InputField autoFocus liveUpdate defaultValue="" label={ header.keyword } onChange={ ( val ) => setOptions( { ...options, rowToEdit: { ...options.rowToEdit, keyword: val } } ) }
 							description={ __( 'Just exact match of keyword will be replaced with link' ) } />,
 
-		urlLink: <SuggestInputField suggestInput={ rowToEdit?.keyword || '' } liveUpdate defaultValue={ ( rowToEdit?.urlLink ? rowToEdit?.urlLink : window.location.origin ) } label={ header.urlLink } onChange={ ( val ) => setEditorRow( { ...rowToEdit, urlLink: val } ) } required
+		urlLink: <SuggestInputField suggestInput={ options.rowToEdit?.keyword || '' } liveUpdate defaultValue={ ( options.rowToEdit?.urlLink ? options.rowToEdit?.urlLink : window.location.origin ) } label={ header.urlLink } onChange={ ( val ) => setOptions( { ...options, rowToEdit: { ...options.rowToEdit, urlLink: val } } ) } required
 									description={ __( 'Destination URL for link' ) } />,
 
 		kwType: <SingleSelectMenu defaultAccept autoClose items={ keywordTypes } name="kwType" defaultValue="M"
 								description={ __( 'Link type is used in case you decide to replace in HTML just some types of links (see Settings)' ) }
-								onChange={ ( val ) => setEditorRow( { ...rowToEdit, kwType: val } ) }>{ header.kwType }</SingleSelectMenu>,
+			onChange={ ( val ) => setOptions( { ...options, rowToEdit: { ...options.rowToEdit, kwType: val } } ) }>{ header.kwType }</SingleSelectMenu>,
 
 		kw_priority: <InputField liveUpdate type="number" defaultValue="10" min="0" max="255" label={ header.kw_priority }
 								description={ __( 'Lower number means higher priority. Enter value in range: 0 - 255' ) }
-								onChange={ ( val ) => setEditorRow( { ...rowToEdit, kw_priority: val } ) } />,
+			onChange={ ( val ) => setOptions( { ...options, rowToEdit: { ...options.rowToEdit, kw_priority: val } } ) } />,
 
 		lang: <LangMenu autoClose defaultValue="all"
 						description={ __( 'Keyword will be applied just on page with selected language. Useful just for multilingual websites.' ) }
-						onChange={ ( val ) => setEditorRow( { ...rowToEdit, lang: val } ) }>{ __( 'Language' ) }</LangMenu>,
+			onChange={ ( val ) => setOptions( { ...options, rowToEdit: { ...options.rowToEdit, lang: val } } ) }>{ __( 'Language' ) }</LangMenu>,
 
 		urlFilter: <InputField liveUpdate defaultValue=".*"
 								description={ __( 'Optionaly you can allow to place keyword just on some URLs matching regular expression. Use value.* to match all URLs' ) }
-								label={ header.urlFilter } onChange={ ( val ) => setEditorRow( { ...rowToEdit, urlFilter: val } ) } />,
+			label={ header.urlFilter } onChange={ ( val ) => setOptions( { ...options, rowToEdit: { ...options.rowToEdit, urlFilter: val } } ) } />,
 
-		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setEditorRow( { ...rowToEdit, labels: val } ) } />,
+		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setOptions( { ...options, rowToEdit: { ...options.rowToEdit, labels: val } } ) } />,
 	};
+
+	useEffect( () => {
+		if ( data ) {
+			setOptions( {
+				header, data, slug, paginationId, url,
+				rowEditorOptions: { rowEditorCells, title: 'Add New Keyword', id: 'keyword' },
+				deleteCSVCols: [ paginationId, 'dest_url_id' ],
+			} );
+		}
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -127,9 +140,12 @@ export default function KeywordsTable( { slug } ) {
 			cell: ( cell ) => <div className="flex flex-align-center">
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
-					<button className="ml-s" onClick={ () => setDetailsOptions( {
-						title: `Keyword “${
-							cell.row.original.keyword }” used on these URLs`, slug, url: `${ cell.row.original.kw_id }/${ cell.row.original.dest_url_id }`, showKeys: [ 'link_type', 'url_name' ], listId: 'url_id' } ) }>
+					<button className="ml-s" onClick={ () => {
+							setOptions( { ...options, detailsOptions: {
+							title: `Keyword “${ cell.row.original.keyword }” used on these URLs`, url: `${ cell.row.original.kw_id }/${ cell.row.original.dest_url_id }`, showKeys: [ 'link_type', 'url_name' ], listId: 'url_id',
+						} } );
+						activatePanel( 'details' );
+					} }>
 						<LinkIcon />
 						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
 					</button>
@@ -150,20 +166,20 @@ export default function KeywordsTable( { slug } ) {
 				return (
 					<div className="flex">
 						<IconButton
-						onClick={ () => {
-							setActivePanel( 'rowEditor' );
+							onClick={ () => {
 								updateRow( { cell, id: 'keyword' } );
-						} }
-						tooltipClass="align-left xxxl"
-						tooltip={ __( 'Edit row' ) }
-					>
+								activatePanel( 'rowEditor' );
+							} }
+							tooltipClass="align-left xxxl"
+							tooltip={ __( 'Edit row' ) }
+						>
 							<Edit />
 						</IconButton>
 						<IconButton
-						className="ml-s"
+							className="ml-s"
 							onClick={ () => deleteRow( { cell, id: 'keyword' } ) }
-						tooltipClass="align-left xxxl"
-						tooltip={ __( 'Delete row' ) }
+							tooltipClass="align-left xxxl"
+							tooltip={ __( 'Delete row' ) }
 					>
 							<Trash />
 						</IconButton>
@@ -188,20 +204,6 @@ export default function KeywordsTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ () => deleteSelectedRows( { id: 'keyword' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onUpdate={ ( ) => {
-					setEditorRow();
-					setActivePanel();
-					setDetailsOptions();
-				} }
-				detailsOptions={ detailsOptions }
-				activatePanel={ activePanel }
-				rowEditorOptions={ { rowEditorCells, title: 'Add New Keyword', data, slug, url, paginationId, rowToEdit, id: 'keyword' } }
-				exportOptions={ {
-					slug,
-					url,
-					paginationId,
-					deleteCSVCols: [ paginationId, 'dest_url_id' ],
-				} }
 			/>
 			<Table className="fadeInto"
 				slug={ slug }
