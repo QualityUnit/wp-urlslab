@@ -18,8 +18,7 @@ export default function DetailsPanel( ) {
 	const { ref, inView } = useInView();
 	const tableContainerRef = useRef();
 	const { CloseIcon, handleClose } = useCloseModal( );
-	const { slug, detailsOptions } = useTablePanels( ( state ) => state.options );
-	const { title, text, url, showKeys, listId } = detailsOptions;
+	const { title, text, slug, url, showKeys, listId } = useTablePanels( ( state ) => state.options.detailsOptions );
 	const tbody = [];
 
 	const parseDate = ( row, key ) => {
