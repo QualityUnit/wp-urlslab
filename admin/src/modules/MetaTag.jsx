@@ -4,6 +4,9 @@ import { useI18n } from '@wordpress/react-i18n';
 import MetaTagOverview from '../overview/MetaTag';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
+const MetaTagsTable = lazy( () => import( `../tables/MetaTagsTable.jsx` ) );
+const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
+
 export default function MetaTag( { moduleId } ) {
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
@@ -12,9 +15,6 @@ export default function MetaTag( { moduleId } ) {
 	const tableMenu = new Map( [
 		[ slug, __( 'Meta tags' ) ],
 	] );
-
-	const MetaTagsTable = lazy( () => import( `../tables/MetaTagsTable.jsx` ) );
-	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
 
 	return (
 		<div className="urlslab-tableView">

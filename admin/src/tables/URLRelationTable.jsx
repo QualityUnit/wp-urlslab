@@ -4,6 +4,7 @@ import {
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
+import useTablePanels from '../hooks/useTablePanels';
 
 export default function URLRelationTable( { slug } ) {
 	const paginationId = 'src_url_id';
@@ -22,7 +23,10 @@ export default function URLRelationTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectedRows, selectRow, rowToEdit, setEditorRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const header = {
 		src_url_name: __( 'Source URL' ),
@@ -32,9 +36,9 @@ export default function URLRelationTable( { slug } ) {
 	};
 
 	const rowEditorCells = {
-		src_url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.src_url_name } onChange={ ( val ) => setEditorRow( { ...rowToEdit, src_url_name: val } ) } required />,
-		dest_url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.dest_url_name } onChange={ ( val ) => setEditorRow( { ...rowToEdit, dest_url_name: val } ) } required />,
-		pos: <InputField liveUpdate type="number" defaultValue="0" min="0" max="255" label={ header.pos } onChange={ ( val ) => setEditorRow( { ...rowToEdit, pos: val } ) } required />,
+		src_url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.src_url_name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, src_url_name: val } ) } required />,
+		dest_url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.dest_url_name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, dest_url_name: val } ) } required />,
+		pos: <InputField liveUpdate type="number" defaultValue="0" min="0" max="255" label={ header.pos } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, pos: val } ) } required />,
 	};
 
 	const columns = [
@@ -84,21 +88,11 @@ export default function URLRelationTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				slug={ slug }
-				header={ header }
 				table={ table }
 				selectedRows={ selectedRows }
 				onDeleteSelected={ () => deleteSelectedRows( { optionalSelector: 'dest_url_id', id: 'src_url_name' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onUpdate={ ( ) => {
-					setEditorRow();
-				} }
-				rowEditorOptions={ { rowEditorCells, title: 'Add New Related Article', data, slug, url, paginationId, rowToEdit, id: 'src_url_name' } }
-				exportOptions={ {
-					slug,
-					url,
-					paginationId,
-					deleteCSVCols: [ paginationId, 'dest_url_id' ],
+				options={ { header, rowEditorCells, title: 'Add New Related Article', data, slug, url, paginationId, rowToEdit, id: 'src_url_name', deleteCSVCols: [ paginationId, 'dest_url_id' ],
 				} }
 			/>
 

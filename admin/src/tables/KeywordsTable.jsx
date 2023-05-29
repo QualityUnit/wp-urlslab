@@ -1,5 +1,4 @@
 /* eslint-disable indent */
-import { useEffect } from 'react';
 import {
 	useInfiniteFetch, ProgressBar, TagsMenu, SortBy, SingleSelectMenu, LangMenu, InputField, Checkbox, LinkIcon, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, Edit, SuggestInputField,
 } from '../lib/tableImports';
@@ -28,8 +27,9 @@ export default function KeywordsTable( { slug } ) {
 
 	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	const { activatePanel, setOptions } = useTablePanels();
+	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
 	const options = useTablePanels( ( state ) => state.options );
+	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const keywordTypes = {
 		M: __( 'Manual' ),
@@ -50,40 +50,30 @@ export default function KeywordsTable( { slug } ) {
 	};
 
 	const rowEditorCells = {
-		keyword: <InputField autoFocus liveUpdate defaultValue="" label={ header.keyword } onChange={ ( val ) => setOptions( { ...options, rowToEdit: { ...options.rowToEdit, keyword: val } } ) }
+		keyword: <InputField autoFocus liveUpdate defaultValue="" label={ header.keyword } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, keyword: val } ) }
 							description={ __( 'Just exact match of keyword will be replaced with link' ) } />,
 
-		urlLink: <SuggestInputField suggestInput={ options.rowToEdit?.keyword || '' } liveUpdate defaultValue={ ( options.rowToEdit?.urlLink ? options.rowToEdit?.urlLink : window.location.origin ) } label={ header.urlLink } onChange={ ( val ) => setOptions( { ...options, rowToEdit: { ...options.rowToEdit, urlLink: val } } ) } required
+		urlLink: <SuggestInputField suggestInput={ rowToEdit?.keyword || '' } liveUpdate defaultValue={ ( rowToEdit?.urlLink ? rowToEdit?.urlLink : window.location.origin ) } label={ header.urlLink } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, urlLink: val } ) } required
 									description={ __( 'Destination URL for link' ) } />,
 
 		kwType: <SingleSelectMenu defaultAccept autoClose items={ keywordTypes } name="kwType" defaultValue="M"
 								description={ __( 'Link type is used in case you decide to replace in HTML just some types of links (see Settings)' ) }
-			onChange={ ( val ) => setOptions( { ...options, rowToEdit: { ...options.rowToEdit, kwType: val } } ) }>{ header.kwType }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, kwType: val } ) }>{ header.kwType }</SingleSelectMenu>,
 
 		kw_priority: <InputField liveUpdate type="number" defaultValue="10" min="0" max="255" label={ header.kw_priority }
 								description={ __( 'Lower number means higher priority. Enter value in range: 0 - 255' ) }
-			onChange={ ( val ) => setOptions( { ...options, rowToEdit: { ...options.rowToEdit, kw_priority: val } } ) } />,
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, kw_priority: val } ) } />,
 
 		lang: <LangMenu autoClose defaultValue="all"
 						description={ __( 'Keyword will be applied just on page with selected language. Useful just for multilingual websites.' ) }
-			onChange={ ( val ) => setOptions( { ...options, rowToEdit: { ...options.rowToEdit, lang: val } } ) }>{ __( 'Language' ) }</LangMenu>,
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, lang: val } ) }>{ __( 'Language' ) }</LangMenu>,
 
 		urlFilter: <InputField liveUpdate defaultValue=".*"
 								description={ __( 'Optionaly you can allow to place keyword just on some URLs matching regular expression. Use value.* to match all URLs' ) }
-			label={ header.urlFilter } onChange={ ( val ) => setOptions( { ...options, rowToEdit: { ...options.rowToEdit, urlFilter: val } } ) } />,
+			label={ header.urlFilter } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, urlFilter: val } ) } />,
 
-		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setOptions( { ...options, rowToEdit: { ...options.rowToEdit, labels: val } } ) } />,
+		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
-
-	useEffect( () => {
-		if ( data ) {
-			setOptions( {
-				header, data, slug, paginationId, url,
-				rowEditorOptions: { rowEditorCells, title: 'Add New Keyword', id: 'keyword' },
-				deleteCSVCols: [ paginationId, 'dest_url_id' ],
-			} );
-		}
-	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -198,12 +188,16 @@ export default function KeywordsTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				slug={ slug }
-				header={ header }
 				table={ table }
 				selectedRows={ selectedRows }
 				onDeleteSelected={ () => deleteSelectedRows( { id: 'keyword' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
+				options={ { header, data, slug, paginationId, url,
+					title: 'Add New Keyword', id: 'keyword',
+					rowToEdit,
+					rowEditorCells,
+					deleteCSVCols: [ paginationId, 'dest_url_id' ] }
+				}
 			/>
 			<Table className="fadeInto"
 				slug={ slug }

@@ -18,7 +18,6 @@ export default function DetailsPanel( ) {
 	const { ref, inView } = useInView();
 	const tableContainerRef = useRef();
 	const { CloseIcon, handleClose } = useCloseModal( );
-	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const { slug, detailsOptions } = useTablePanels( ( state ) => state.options );
 	const { title, text, url, showKeys, listId } = detailsOptions;
 	const tbody = [];
@@ -108,17 +107,12 @@ export default function DetailsPanel( ) {
 		}
 	}, [ inView, fetchNextPage ] );
 
-	function hidePanel() {
-		handleClose();
-		activatePanel();
-	}
-
 	return (
 		<div className="urlslab-panel-wrap wide urlslab-panel-modal fadeInto">
 			<div className="urlslab-panel Details">
 				<div className="urlslab-panel-header">
 					<h3>{ title }</h3>
-					<button className="urlslab-panel-close" onClick={ hidePanel }>
+					<button className="urlslab-panel-close" onClick={ handleClose }>
 						<CloseIcon />
 					</button>
 					<p>{ text }</p>
@@ -152,7 +146,7 @@ export default function DetailsPanel( ) {
 						</div>
 					</div>
 					<div className="flex">
-						<Button className="ma-left" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
+						<Button className="ma-left" onClick={ handleClose }>{ __( 'Cancel' ) }</Button>
 					</div>
 				</div>
 			</div>

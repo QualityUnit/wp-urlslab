@@ -7,11 +7,7 @@ import useTablePanels from './useTablePanels';
 
 export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const queryClient = useQueryClient();
-	const [ rowValue, setRow ] = useState();
-	const { options, setOptions } = useTablePanels();
-	const [ rowToEdit, setEditorRow ] = useState( {} );
-	const [ insertRowResult, setEditorRowRes ] = useState( false );
-	const [ activePanel, setActivePanel ] = useState();
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const [ selectedRows, setSelectedRows ] = useState( [] );
 	const [ responseCounter, setResponseCounter ] = useState( 0 );
 
@@ -24,10 +20,6 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 		return cell.row.original[ paginationId ];
 	}, [ paginationId ] );
 
-	const getRow = ( cell ) => {
-		return cell.row.original;
-	};
-
 	const insertNewRow = useMutation( {
 		mutationFn: async ( { editedRow } ) => {
 			const response = await postFetch( `${ slug }/create`, editedRow );
@@ -37,7 +29,6 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 			const { ok } = await response;
 			if ( ok ) {
 				queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
-				setEditorRowRes( response );
 			}
 		},
 	} );
@@ -113,13 +104,9 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 				return { response, editedRow };
 			}
 		},
-		onSuccess: ( { response, editedRow } ) => {
+		onSuccess: ( { response } ) => {
 			const { ok } = response;
 			if ( ok ) {
-				if ( editedRow ) {
-					setEditorRowRes( response );
-					setActivePanel();
-				}
 				queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
 			}
 		},
@@ -127,7 +114,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 
 	const updateRow = ( { newVal, cell, customEndpoint, changeField, optionalSelector } ) => {
 		if ( ! newVal ) { // Editing whole row = parameters are preset
-			setOptions( { ...options, rowToEdit: cell.row.original } );
+			setRowToEdit( cell.row.original );
 			return false;
 		}
 		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, optionalSelector } );
@@ -155,12 +142,6 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 				pageParams: origData.pageParams,
 			} ) );
 
-			if ( ! selectedRows.length ) {
-				setRow( getRow( cell ) );
-				setTimeout( () => {
-					setRow();
-				}, 3000 );
-			}
 			const response = await del( `${ slug }/${ getRowId( cell, optionalSelector ) }` );
 			return { response };
 		},
@@ -202,5 +183,5 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 		}
 	};
 
-	return { row: rowValue, selectedRows, insertRowResult, insertRow, rowToEdit, setEditorRow, activePanel, setActivePanel, selectRow, deleteRow, deleteSelectedRows, updateRow, saveEditedRow };
+	return { selectedRows, insertRow, selectRow, deleteRow, deleteSelectedRows, updateRow, saveEditedRow };
 }

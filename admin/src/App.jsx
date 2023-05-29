@@ -8,7 +8,6 @@ import { getFetch, postFetch } from './api/fetching';
 import { fetchSettings } from './api/settings';
 import { fetchLangs } from './api/fetchLangs';
 
-import HeaderHeightContext from './lib/headerHeightContext';
 import hexToHSL from './lib/hexToHSL';
 
 import Notifications from './components/Notifications';
@@ -23,9 +22,6 @@ export default function App() {
 	const queryClient = useQueryClient();
 	const [ module, setModule ] = useState( 'urlslab-modules' );
 	const [ prefetch, setPrefetch ] = useState( true );
-	const [ headerTopHeight, setHeaderTopHeight ] = useState( 58 );
-	const [ headerBottomHeight, setHeaderBottomHeight ] = useState( 51.5 );
-	const value = { headerTopHeight, setHeaderTopHeight, headerBottomHeight, setHeaderBottomHeight };
 
 	useEffect( () => {
 		if ( prefetch ) {
@@ -152,18 +148,15 @@ export default function App() {
 					/>
 				</Suspense>
 			}
-			{ /* </Suspense> */ }
-			<HeaderHeightContext.Provider value={ value }>
-				<div className="urlslab-app-main">
-					<Header pageTitle={ ! pageTitle || pageTitle } />
+			<div className="urlslab-app-main">
+				<Header pageTitle={ ! pageTitle || pageTitle } />
 
-					<DynamicModule
-						modules={ ! fetchedModules || Object.values( fetchedModules ) }
-						moduleId={ module }
-						activePage={ handleModulePage }
-					/>
-				</div>
-			</HeaderHeightContext.Provider>
+				<DynamicModule
+					modules={ ! fetchedModules || Object.values( fetchedModules ) }
+					moduleId={ module }
+					activePage={ handleModulePage }
+				/>
+			</div>
 			<Notifications />
 		</div>
 	);

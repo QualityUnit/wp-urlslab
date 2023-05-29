@@ -1,15 +1,16 @@
-import { memo, useEffect, useRef, useCallback, useState, useContext } from 'react';
+import { memo, useEffect, useRef, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 
 import { postFetch } from '../api/fetching';
 import { deleteAll } from '../api/deleteTableData';
-import HeaderHeightContext from '../lib/headerHeightContext';
 import filtersArray from '../lib/filtersArray';
 
 import { useFilter } from '../hooks/filteringSorting';
 import useResizeObserver from '../hooks/useResizeObserver';
+import useHeaderHeight from '../hooks/useHeaderHeight';
 import useClickOutside from '../hooks/useClickOutside';
+import useTablePanels from '../hooks/useTablePanels';
 
 import { ReactComponent as Trash } from '../assets/images/icons/icon-trash.svg';
 import { ReactComponent as PlusIcon } from '../assets/images/icons/icon-plus.svg';
@@ -29,9 +30,13 @@ export default function ModuleViewHeaderBottom( props ) {
 	const queryClient = useQueryClient();
 	const didMountRef = useRef( false );
 	const panelPopover = useRef();
-	const { headerBottomHeight, setHeaderBottomHeight } = useContext( HeaderHeightContext );
+	const headerBottomHeight = useHeaderHeight( ( state ) => state.headerBottomHeight );
+	const setHeaderBottomHeight = useHeaderHeight( ( state ) => state.setHeaderBottomHeight );
 
-	const { slug, noColumnsMenu, noFiltering, hideActions, noImport, noInsert, noExport, noCount, noDelete, header, table, rowEditorOptions, activatePanel, detailsOptions, exportOptions, selectedRows, onFilter, onDeleteSelected, onUpdate } = props;
+	const { noColumnsMenu, noFiltering, hideActions, noImport, noInsert, noExport, noCount, noDelete, table, selectedRows, onFilter, onDeleteSelected, onUpdate, options } = props;
+	const { header, slug, title } = options;
+
+	const { activatePanel } = useTablePanels();
 
 	const handleHeaderHeight = useCallback( ( elem ) => {
 		const bottomHeight = elem?.getBoundingClientRect().height;
@@ -41,8 +46,6 @@ export default function ModuleViewHeaderBottom( props ) {
 	}, [ headerBottomHeight, setHeaderBottomHeight ] );
 
 	const headerBottom = useResizeObserver( handleHeaderHeight );
-
-	const [ activePanel, setActivePanel ] = useState( );
 
 	const initialRow = table?.getRowModel().rows[ 0 ];
 
@@ -75,7 +78,7 @@ export default function ModuleViewHeaderBottom( props ) {
 	} );
 
 	const handlePanel = ( key ) => {
-		setActivePanel( key );
+		activatePanel( key );
 
 		if ( key === 'delete-all' ) {
 			handleDeleteAll.mutate();
@@ -99,20 +102,13 @@ export default function ModuleViewHeaderBottom( props ) {
 	};
 
 	useEffect( () => {
-		handleHeaderHeight();
+		// handleHeaderHeight();
 
 		if ( onFilter && didMountRef.current ) {
 			onFilter( filters );
 		}
 		didMountRef.current = true;
-
-		if ( activatePanel ) {
-			setActivePanel( activatePanel );
-		}
-		if ( detailsOptions ) {
-			setActivePanel( 'details' );
-		}
-	}, [ slug, activatePanel, detailsOptions, filters, onFilter ] );
+	}, [ slug, filters, onFilter ] );
 
 	const { data: rowCount, isFetching } = useQuery( {
 		queryKey: [ slug, `count`, filtersArray( filters ) ],
@@ -143,8 +139,8 @@ export default function ModuleViewHeaderBottom( props ) {
 					{ ! noDelete && selectedRows?.length > 0 &&
 						<Button className="mr-s" onClick={ () => handlePanel( 'deleteSelected' ) }><Trash />{ __( 'Delete selected' ) }</Button>
 					}
-					{ rowEditorOptions && ! noInsert &&
-						<Button className="active" onClick={ () => handlePanel( 'rowInserter' ) }><PlusIcon />{ rowEditorOptions.title }</Button>
+					{ title && ! noInsert &&
+						<Button className="active" onClick={ () => handlePanel( 'rowInserter' ) }><PlusIcon />{ title }</Button>
 					}
 
 					{
@@ -155,7 +151,8 @@ export default function ModuleViewHeaderBottom( props ) {
 
 							{ state.editFilter === 'addFilter' && // Our main adding panel (only when Add button clicked)
 							<TableFilterPanel ref={ panelPopover } props={ { slug, header, initialRow, possiblefilters, filters } } onEdit={ ( val ) => {
-								handleHeaderHeight(); handleOnEdit( val );
+								handleHeaderHeight();
+								handleOnEdit( val );
 							} } />
 							}
 						</div>
@@ -187,14 +184,15 @@ export default function ModuleViewHeaderBottom( props ) {
 				{ Object.keys( filters ).length !== 0 &&
 				<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
 					<TableFilter props={ { filters, possiblefilters, state, slug, header, initialRow } } onEdit={ handleOnEdit } onRemove={ ( key ) => {
-						handleHeaderHeight(); handleRemoveFilter( key );
+						handleHeaderHeight();
+						handleRemoveFilter( key );
 					} } />
 				</div>
 				}
 
 			</div>
 
-			<TablePanels props={ { header, slug, filters, initialRow, detailsOptions, rowEditorOptions, exportOptions, activePanel, handlePanel } } />
+			<TablePanels props={ { options, initialRow, handlePanel } } />
 		</>
 	);
 }

@@ -7,7 +7,9 @@ import Button from '../elements/Button';
 import ExportCSVButton from '../elements/ExportCSVButton';
 import ProgressBar from '../elements/ProgressBar';
 
-export default function ExportPanel( { options, filters, header, handlePanel } ) {
+export default function ExportPanel( props ) {
+	const { slug, header, handlePanel } = props;
+	const { filters } = slug;
 	const { __ } = useI18n();
 	const activefilters = filters ? Object.keys( filters ) : null;
 	const [ exportStatus, setExportStatus ] = useState();
@@ -63,11 +65,11 @@ export default function ExportPanel( { options, filters, header, handlePanel } )
 					<div className="flex">
 						<Button className="ma-left" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
 						{ activefilters?.length > 0 &&
-						<ExportCSVButton className="ml-s" options={ { ...options, stopExport } } withfilters onClick={ handleExportStatus } />
+						<ExportCSVButton className="ml-s" options={ { ...props, stopExport } } withfilters onClick={ handleExportStatus } />
 						}
 						<ExportCSVButton
 							className="ml-s"
-							options={ { ...options, stopExport } } onClick={ handleExportStatus }
+							options={ { ...props, stopExport } } onClick={ handleExportStatus }
 						/>
 					</div>
 				</div>

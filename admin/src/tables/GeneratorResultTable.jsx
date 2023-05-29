@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
 	useInfiniteFetch, Tooltip, Checkbox, Trash, ProgressBar, SortBy, InputField, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, LinkIcon, TagsMenu,
 } from '../lib/tableImports';
@@ -10,11 +9,11 @@ import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refre
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
+import useTablePanels from '../hooks/useTablePanels';
 
 export default function GeneratorResultTable( { slug } ) {
 	const paginationId = 'hash_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( 'generator/result' );
-	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
 	const url = { filters, sorting };
 
@@ -58,6 +57,9 @@ export default function GeneratorResultTable( { slug } ) {
 	} = useInfiniteFetch( { key: slug, url, paginationId, filters, sorting } );
 
 	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+
+	const { activatePanel, setOptions } = useTablePanels();
+	const options = useTablePanels( ( state ) => state.options );
 
 	const statusTypes = {
 		A: 'Active',
@@ -130,9 +132,12 @@ export default function GeneratorResultTable( { slug } ) {
 			cell: ( cell ) => <div className="flex flex-align-center">
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
-					<button className="ml-s" onClick={ () => setDetailsOptions( {
-						title: `Shortcode used on these URLs`, slug, url: `${ cell.row.original.shortcode_id }/${ cell.row.original.hash_id }/urls`, showKeys: [ 'url_name', 'created' ], listId: 'url_id',
-					} ) }>
+					<button className="ml-s" onClick={ () => {
+						setOptions( { ...options, detailsOptions: {
+							title: `Shortcode used on these URLs`, slug, url: `${ cell.row.original.shortcode_id }/${ cell.row.original.hash_id }/urls`, showKeys: [ 'url_name', 'created' ], listId: 'url_id',
+						} } );
+						activatePanel( 'details' );
+					} }>
 						<LinkIcon />
 						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
 					</button>
@@ -167,16 +172,14 @@ export default function GeneratorResultTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				slug={ slug }
-				header={ header }
 				table={ table }
 				noImport
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onUpdate={ () => setDetailsOptions() }
-				detailsOptions={ detailsOptions }
-				exportOptions={ {
+				options={ {
+					header,
+					data,
 					slug,
 					url,
 					paginationId,

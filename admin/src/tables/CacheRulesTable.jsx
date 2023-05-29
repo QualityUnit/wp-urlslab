@@ -4,6 +4,7 @@ import {
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
+import useTablePanels from '../hooks/useTablePanels';
 import IconButton from '../elements/IconButton';
 
 export default function CacheRulesTable( { slug } ) {
@@ -25,7 +26,10 @@ export default function CacheRulesTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+
+	const { activatePanel, setRowToEdit } = useTablePanels();
+	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const matchTypes = Object.freeze( {
 		A: 'All Pages',
@@ -52,41 +56,41 @@ export default function CacheRulesTable( { slug } ) {
 	const rowEditorCells = {
 		match_type: <SingleSelectMenu defaultAccept autoClose items={ matchTypes } name="match_type" defaultValue="A"
 			description={ __( 'Select when should be applied the rule' ) }
-			onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_type: val } ) }>{ header.match_type }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_type: val } ) }>{ header.match_type }</SingleSelectMenu>,
 
 		match_url: <InputField type="url" hidden={ rowToEdit?.match_type === 'A' } liveUpdate defaultValue=""
 			description={ __( 'Match browser URL with this value based on the selected type of rule' ) }
-			label={ header.match_url } onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_url: val } ) } required />,
+			label={ header.match_url } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_url: val } ) } required />,
 
 		cache_ttl: <InputField liveUpdate defaultValue="3600" label={ header.cache_ttl }
 			description={ __( 'Cache will be valid defined number of seconds (time to live). Same value will be used for cache headers sent to browser' ) }
-			onChange={ ( val ) => setEditorRow( { ...rowToEdit, cache_ttl: val } ) } />,
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, cache_ttl: val } ) } />,
 
 		headers: <InputField liveUpdate label={ header.headers } defaultValue=""
 			description={ __( 'Use only if you need to cache page just for requests with specific HTTP header sent from browser. Comma separated list of headers to check. (Example 1: check if any header exists: MY-HEADER-NAME1, HEADER2), (Example 2: check if header has specific value: MY-HEADER-NAME1=value1, HEADER2=value2)' ) }
-			onChange={ ( val ) => setEditorRow( { ...rowToEdit, headers: val } ) } />,
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, headers: val } ) } />,
 
 		cookie: <InputField liveUpdate label={ header.cookie } defaultValue=""
 			description={ __( 'Use only if you need to cache page just for requests with specific Cookie sent from browser. Comma separated list of cookies to check. (Example 1: check if any cookie exists: COOKIE_NAME_1, COOKIE_NAME_2), (Example 2: check if cookie has specific value: COOKIE-NAME=value)' ) }
-			onChange={ ( val ) => setEditorRow( { ...rowToEdit, cookie: val } ) } />,
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, cookie: val } ) } />,
 
 		params: <InputField liveUpdate label={ header.params } defaultValue=""
 			description={ __( 'Use only if you need to cache page just for requests with specific GET or POST parameter. Comma separated list of parameters to check. (Example 1: check if any parameter exists: query_param1, post_param_name2), (Example 2: check if request parameter has specific value: param1=value)' ) }
-			onChange={ ( val ) => setEditorRow( { ...rowToEdit, params: val } ) } />,
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, params: val } ) } />,
 
 		ip: <InputField liveUpdate label={ header.ip } defaultValue=""
 			description={ __( 'Cache just requests from specific IP address or subnet. Comma separated list of IP addresses or subnets. (e.g., 172.120.0.*, 192.168.0.0/24)' ) }
-			onChange={ ( val ) => setEditorRow( { ...rowToEdit, ip: val } ) } />,
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, ip: val } ) } />,
 
 		browser: <InputField liveUpdate label={ header.browser } defaultValue=""
 			description={ __( 'Cache just requests from specific browser names. Comma separated list of browser names or any string from User-Agent. (e.g. Chrome, Safari)' ) }
-			onChange={ ( val ) => setEditorRow( { ...rowToEdit, browser: val } ) } />,
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, browser: val } ) } />,
 
-		rule_order: <InputField liveUpdate defaultValue="10" label={ header.rule_order } onChange={ ( val ) => setEditorRow( { ...rowToEdit, rule_order: val } ) } />,
+		rule_order: <InputField liveUpdate defaultValue="10" label={ header.rule_order } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, rule_order: val } ) } />,
 
-		is_active: <Checkbox defaultValue={ true } onChange={ ( val ) => setEditorRow( { ...rowToEdit, is_active: val } ) }>{ header.is_active }</Checkbox>,
+		is_active: <Checkbox defaultValue={ true } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, is_active: val } ) }>{ header.is_active }</Checkbox>,
 
-		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setEditorRow( { ...rowToEdit, labels: val } ) } />,
+		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
 	const columns = [
@@ -169,8 +173,8 @@ export default function CacheRulesTable( { slug } ) {
 					<div className="flex">
 						<IconButton
 							onClick={ () => {
-								setActivePanel( 'rowEditor' );
 								updateRow( { cell } );
+								activatePanel( 'rowEditor' );
 							} }
 							tooltipClass="align-left xxxl"
 							tooltip={ __( 'Edit row' ) }
@@ -200,24 +204,12 @@ export default function CacheRulesTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				slug={ slug }
-				header={ header }
 				table={ table }
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onUpdate={ ( ) => {
-					setActivePanel();
-					setEditorRow();
-				} }
-				activatePanel={ activePanel }
-				rowEditorOptions={ { rowEditorCells, title: 'Add New Cache Rule', data, slug, url, paginationId, rowToEdit } }
-				exportOptions={ {
-					slug,
-					url,
-					paginationId,
-					deleteCSVCols: [ paginationId ],
-				} }
+				options={ {
+					header, rowEditorCells, title: 'Add New Cache Rule', data, slug, url, paginationId, rowToEdit, deleteCSVCols: [ paginationId ] } }
 			/>
 			<Table className="fadeInto"
 				slug={ slug }

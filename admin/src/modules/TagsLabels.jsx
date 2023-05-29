@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import useChangeRow from '../hooks/useChangeRow';
 import useTableUpdater from '../hooks/useTableUpdater';
+import useTablePanels from '../hooks/useTablePanels';
 
 import { Edit, InputField, Loader, MultiSelectMenu, Tag, Trash, useInfiniteFetch } from '../lib/tableImports';
 
@@ -35,7 +36,10 @@ export default function TagsLabels( ) {
 		isSuccess,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId }, 500 );
 
-	const { selectedRows, rowToEdit, setEditorRow, activePanel, setActivePanel, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+
+	const { activatePanel, setRowToEdit } = useTablePanels();
+	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const header = {
 		name: 'Name',
@@ -43,9 +47,9 @@ export default function TagsLabels( ) {
 	};
 
 	const rowEditorCells = {
-		name: <InputField liveUpdate defaultValue="" label={ header.name } onChange={ ( val ) => setEditorRow( { ...rowToEdit, name: val } ) } required />,
-		bgcolor: <ColorPicker defaultValue="" label="Background color" onChange={ ( val ) => setEditorRow( { ...rowToEdit, bgcolor: val } ) } />,
-		modules: <MultiSelectMenu liveUpdate asTags id="modules" items={ possibleModules } defaultValue={ [] } onChange={ ( val ) => setEditorRow( { ...rowToEdit, modules: val } ) }>{ header.modules }</MultiSelectMenu>,
+		name: <InputField liveUpdate defaultValue="" label={ header.name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, name: val } ) } required />,
+		bgcolor: <ColorPicker defaultValue="" label="Background color" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, bgcolor: val } ) } />,
+		modules: <MultiSelectMenu liveUpdate asTags id="modules" items={ possibleModules } defaultValue={ [] } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, modules: val } ) }>{ header.modules }</MultiSelectMenu>,
 	};
 
 	const columns = [
@@ -88,8 +92,8 @@ export default function TagsLabels( ) {
 					<div className="flex">
 						<IconButton
 							onClick={ () => {
-								setActivePanel( 'rowEditor' );
 								updateRow( { cell, id: 'name' } );
+								activatePanel( 'rowEditor' );
 							} }
 							tooltipClass="align-left xxxl"
 							tooltip={ __( 'Edit row' ) }
@@ -123,8 +127,6 @@ export default function TagsLabels( ) {
 	return (
 		<div className="urlslab-tableView">
 			<ModuleViewHeaderBottom
-				slug={ slug }
-				header={ header }
 				table={ table }
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
@@ -133,12 +135,7 @@ export default function TagsLabels( ) {
 				noImport
 				noFiltering
 				noCount
-				onUpdate={ ( ) => {
-					setActivePanel();
-					setEditorRow();
-				} }
-				activatePanel={ activePanel }
-				rowEditorOptions={ { rowEditorCells, notWide: true, title: 'Create new tag', data, slug, url, paginationId, rowToEdit, id: 'name' } }
+				options={ { header, rowEditorCells, notWide: true, title: 'Create new tag', data, slug, url, paginationId, rowToEdit, id: 'name' } }
 			/>
 			<Table className="fadeInto"
 				slug={ slug }

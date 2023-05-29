@@ -1,10 +1,11 @@
-import { useState } from 'react';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Trash, Loader, LinkIcon, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
+import useTablePanels from '../hooks/useTablePanels';
+
 import IconButton from '../elements/IconButton';
 import { ReactComponent as AcceptIcon } from '../assets/images/icons/icon-activate.svg';
 import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
@@ -15,8 +16,6 @@ export default function YouTubeCacheTable( { slug } ) {
 
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const url = { filters, sorting };
-
-	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
 	const {
 		__,
@@ -31,6 +30,9 @@ export default function YouTubeCacheTable( { slug } ) {
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
 	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+
+	const { activatePanel, setOptions } = useTablePanels();
+	const options = useTablePanels( ( state ) => state.options );
 
 	const ActionButton = ( { cell, onClick } ) => {
 		const { status: videoStatus } = cell?.row?.original;
@@ -127,9 +129,12 @@ export default function YouTubeCacheTable( { slug } ) {
 			cell: ( cell ) => <div className="flex flex-align-center">
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
-					<button className="ml-s" onClick={ () => setDetailsOptions( {
-						title: `Video ID “${ cell.row.original.videoid }” is used on these URLs`, text: `Video title: ${ cell.row._valuesCache.title[ 1 ] }`, slug, url: `${ cell.row.original.videoid }/urls`, showKeys: [ 'url_name' ], listId: 'url_id',
-					} ) }>
+					<button className="ml-s" onClick={ () => {
+						setOptions( { ...options, detailsOptions: {
+							title: `Video ID “${ cell.row.original.videoid }” is used on these URLs`, text: `Video title: ${ cell.row._valuesCache.title[ 1 ] }`, slug, url: `${ cell.row.original.videoid }/urls`, showKeys: [ 'url_name' ], listId: 'url_id',
+						} } );
+						activatePanel( 'details' );
+					} }>
 						<LinkIcon />
 						<Tooltip className="align-left">{ __( 'Show URLs where used' ) }</Tooltip>
 					</button>
@@ -160,15 +165,13 @@ export default function YouTubeCacheTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				slug={ slug }
-				header={ header }
 				table={ table }
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onUpdate={ () => setDetailsOptions() }
-				detailsOptions={ detailsOptions }
-				exportOptions={ {
+				options={ {
+					header,
+					data,
 					slug,
 					url,
 					paginationId,

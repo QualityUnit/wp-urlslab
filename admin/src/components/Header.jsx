@@ -1,10 +1,10 @@
-import { Suspense, useContext, useCallback, useEffect, useState } from 'react';
+import { Suspense, useCallback, useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { postFetch } from '../api/fetching';
 import useResizeObserver from '../hooks/useResizeObserver';
-import HeaderHeightContext from '../lib/headerHeightContext';
+import useHeaderHeight from '../hooks/useHeaderHeight';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import NoAPIkey from './NoAPIkey';
@@ -18,7 +18,8 @@ import Button from '../elements/Button';
 export default function Header( { pageTitle } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
-	const { headerTopHeight, setHeaderTopHeight } = useContext( HeaderHeightContext );
+	const headerTopHeight = useHeaderHeight( ( state ) => state.headerTopHeight );
+	const setHeaderTopHeight = useHeaderHeight( ( state ) => state.setHeaderTopHeight );
 	const [ credits, setCredits ] = useState();
 
 	const handleHeaderHeight = useCallback( ( elem ) => {

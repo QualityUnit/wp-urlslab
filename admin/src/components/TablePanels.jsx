@@ -1,5 +1,7 @@
 import { useI18n } from '@wordpress/react-i18n';
 
+import useTablePanels from '../hooks/useTablePanels';
+
 import EditRowPanel from './EditRowPanel';
 import ExportPanel from './ExportPanel';
 import ImportPanel from './ImportPanel';
@@ -8,7 +10,8 @@ import DetailsPanel from './DetailsPanel';
 import { ReactComponent as Trash } from '../assets/images/icons/icon-trash.svg';
 
 export default function TablePanels( { props } ) {
-	const { header, slug, filters, initialRow, detailsOptions, rowEditorOptions, exportOptions, activePanel, handlePanel } = props;
+	const { options, initialRow, handlePanel } = props;
+	const { activePanel } = useTablePanels();
 	const { __ } = useI18n();
 	return (
 		<>
@@ -33,29 +36,27 @@ export default function TablePanels( { props } ) {
 			}
 			{
 				activePanel === 'rowInserter' &&
-				<EditRowPanel key={ rowEditorOptions } rowEditorOptions={ { editorMode: false, ...rowEditorOptions } } handlePanel={ handlePanel } />
+				<EditRowPanel { ...options } handlePanel={ handlePanel } />
 			}
 
 			{
-				activePanel === 'rowEditor' && typeof rowEditorOptions.rowToEdit === 'object' &&
-				<EditRowPanel key={ rowEditorOptions } rowEditorOptions={ { editorMode: true, ...rowEditorOptions } } handlePanel={ handlePanel } />
+				activePanel === 'rowEditor' &&
+				<EditRowPanel editorMode { ...options } handlePanel={ handlePanel } />
 			}
 
 			{
 				activePanel === 'export' &&
-				<ExportPanel options={ exportOptions }
-					filters={ filters }
-					header={ header }
+				<ExportPanel { ...options }
 					handlePanel={ handlePanel }
 				/>
 			}
 			{
 				activePanel === 'import' &&
-				<ImportPanel props={ { slug, header, initialRow } } handlePanel={ handlePanel } />
+				<ImportPanel options={ { ...options, initialRow } } handlePanel={ handlePanel } />
 			}
 			{
 				activePanel === 'details' &&
-				<DetailsPanel options={ detailsOptions } handlePanel={ handlePanel } />
+				<DetailsPanel handlePanel={ handlePanel } />
 			}
 		</>
 	);

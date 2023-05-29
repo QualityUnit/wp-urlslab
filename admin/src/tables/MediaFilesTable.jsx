@@ -5,6 +5,7 @@ import {
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
+import useTablePanels from '../hooks/useTablePanels';
 
 export default function MediaFilesTable( { slug } ) {
 	const paginationId = 'fileid';
@@ -12,7 +13,6 @@ export default function MediaFilesTable( { slug } ) {
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const url = { filters, sorting };
 
-	const [ detailsOptions, setDetailsOptions ] = useState( null );
 	const [ tooltipUrl, setTooltipUrl ] = useState( );
 
 	const {
@@ -28,6 +28,9 @@ export default function MediaFilesTable( { slug } ) {
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
 	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+
+	const { activatePanel, setOptions } = useTablePanels();
+	const options = useTablePanels( ( state ) => state.options );
 
 	const driverTypes = {
 		D: 'Database',
@@ -130,9 +133,13 @@ export default function MediaFilesTable( { slug } ) {
 			cell: ( cell ) => <div className="flex flex-align-center">
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
-					<button className="ml-s" onClick={ () => setDetailsOptions( {
-						title: `Files used on these URLs`, slug, url: `${ cell.row.original.fileid }/urls`, showKeys: [ 'url_name' ], listId: 'url_id',
-					} ) }>
+					<button className="ml-s" onClick={ () => {
+						setOptions( { ...options, detailsOptions: {
+							title: `Files used on these URLs`, slug, url: `${ cell.row.original.fileid }/urls`, showKeys: [ 'url_name' ], listId: 'url_id',
+						} } );
+						activatePanel( 'details' );
+					}
+					}>
 						<LinkIcon />
 						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
 					</button>
@@ -161,17 +168,15 @@ export default function MediaFilesTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				slug={ slug }
-				header={ header }
 				table={ table }
 				noImport
 				selectedRows={ selectedRows }
 				onDeleteSelected={ () => deleteSelectedRows( { id: 'filename' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onUpdate={ () => setDetailsOptions() }
-				detailsOptions={ detailsOptions }
-				exportOptions={ {
+				options={ {
+					header,
 					slug,
+					data,
 					url,
 					paginationId,
 					deleteCSVCols: [ paginationId, 'fileid', 'filehash' ],
