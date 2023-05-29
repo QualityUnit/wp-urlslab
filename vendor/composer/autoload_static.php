@@ -74,8 +74,8 @@ class ComposerStaticInit83a869ee30bba2345152bbf6f75bc3c4
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -1333,6 +1333,7 @@ class ComposerStaticInit83a869ee30bba2345152bbf6f75bc3c4
         'OpenAPI\\Client\\Model\\DomainDataRetrievalScreenshotResponse' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainDataRetrievalScreenshotResponse.php',
         'OpenAPI\\Client\\Model\\DomainDataRetrievalSourceResponse' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainDataRetrievalSourceResponse.php',
         'OpenAPI\\Client\\Model\\DomainDataRetrievalSummaryResponse' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainDataRetrievalSummaryResponse.php',
+        'OpenAPI\\Client\\Model\\DomainDataRetrievalUrlSnapshotMultiResponse' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainDataRetrievalUrlSnapshotMultiResponse.php',
         'OpenAPI\\Client\\Model\\DomainDataRetrievalUrlSnapshotResponse' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainDataRetrievalUrlSnapshotResponse.php',
         'OpenAPI\\Client\\Model\\DomainDataRetrievalVideoCaptionResponse' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainDataRetrievalVideoCaptionResponse.php',
         'OpenAPI\\Client\\Model\\DomainDataRetrievalVideoResponse' => __DIR__ . '/..' . '/urlslab/urlslab-php-sdk/lib/Model/DomainDataRetrievalVideoResponse.php',
