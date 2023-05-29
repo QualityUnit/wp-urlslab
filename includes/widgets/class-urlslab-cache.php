@@ -63,7 +63,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 
 		if ( $this->get_option( self::SETTING_NAME_FORCE_SHORT_TTL ) ) {
 			$last_modified = get_the_modified_time( 'U' );
-			if ( $last_modified > time() - 60 * 60 * 24 ) {
+			if ( is_numeric( $last_modified ) && $last_modified && $last_modified > time() - 60 * 60 * 24 ) {
 				self::$active_rule = new Urlslab_Cache_Rule_Row(
 					array(
 						'match_type' => Urlslab_Cache_Rule_Row::MATCH_TYPE_ALL_PAGES,
