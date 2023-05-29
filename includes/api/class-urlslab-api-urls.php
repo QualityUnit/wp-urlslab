@@ -490,12 +490,24 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		try {
 			$config    = \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) );
 			$client    = new \OpenAPI\Client\Urlslab\SnapshotApi( new GuzzleHttp\Client(), $config );
-			$snapshots = $client->getSnapshotsHistory( $url_obj->get_url()->get_url() );
+			$snapshots = $client->getSnapshotsHistory( $url_obj->get_url()->get_url(), null, 100 );
 
 			$rows = array();
 
-			foreach ( $snapshots as $snapshot ) {
-				$rows[] = $snapshot;
+			foreach ( $snapshots->getSnapshots() as $snapshot ) {
+				$row = array();
+				$row['last_seen'] = $snapshot->getSnapshotId();
+				$row['url'] = $snapshot->getUrl();
+				$row['url_id'] = $snapshot->getUrlId();
+				$row['is_changed'] = $snapshot->getIsChanged();
+				$row['domain_id'] = $snapshot->getDomainId();
+				$row['requests'] = $snapshot->getNumberOfSubRequests();
+				$row['load_duration'] = $snapshot->getPageLoadDuration();
+				$row['page_size'] = $snapshot->getPageSize();
+				$row['last_changed'] = $snapshot->getScreenshotKey();
+				$row['word_count'] = $snapshot->getWordCount();
+				$row['status_code'] = $snapshot->getStatusCode();
+				$rows[] = (object) $row;
 			}
 
 			return new WP_REST_Response( $rows, 200 );
