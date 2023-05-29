@@ -4,7 +4,7 @@ import * as d3 from 'd3';
 import { interpolateRainbow } from 'd3-scale-chromatic';
 import cloud from 'd3-cloud';
 
-import { fetchData } from '../api/fetching';
+import { getFetch } from '../api/fetching';
 
 import '../assets/styles/components/_OverviewTemplate.scss';
 import { getParamsChar } from '../lib/helpers';
@@ -18,9 +18,14 @@ const D3WordCloud = ( { slug } ) => {
 
 	const { data } = useQuery( {
 		queryKey: [ slug, 'wordcloud' ],
-		queryFn: () => fetchData( `${ slug }` + getParamsChar() + `filter_kw_usage_count=%7B%22op%22%3A%22%3E%22%2C%22val%22%3A0%7D${ filters !== undefined ? filters : '' }&sort_column=kw_usage_count&sort_direction=DESC&rows_per_page=1000` ).then( ( chartData ) => {
-			return chartData;
-		} ),
+		queryFn: () => {
+			const response = getFetch( `${ slug }` + getParamsChar() + `filter_kw_usage_count=%7B%22op%22%3A%22%3E%22%2C%22val%22%3A0%7D${ filters !== undefined ? filters : '' }&sort_column=kw_usage_count&sort_direction=DESC&rows_per_page=1000` ).then( ( chartData ) => {
+				return chartData;
+			} );
+			if ( response.ok ) {
+				return response.json();
+			}
+		},
 		refetchOnWindowFocus: false,
 	} );
 

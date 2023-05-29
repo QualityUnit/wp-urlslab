@@ -1,4 +1,4 @@
-import { Suspense, useContext, useMemo, useCallback, useEffect, useState } from 'react';
+import { Suspense, useContext, useCallback, useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -72,9 +72,8 @@ export default function Header( { pageTitle } ) {
 
 					<CronRunner />
 
-					{ /* <Notifications /> */ }
 				</div>
-				<NoAPIkey />
+				{ /* <NoAPIkey /> */ }
 			</header>
 		</Suspense>
 	);

@@ -1,5 +1,5 @@
 /* global wpApiSettings */
-export async function fetchData( slug ) {
+export async function getFetch( slug ) {
 	try {
 		const result = await fetch( wpApiSettings.root + `urlslab/v1${ slug ? `/${ slug }` : '' }`, {
 			method: 'GET',
@@ -10,10 +10,7 @@ export async function fetchData( slug ) {
 			},
 			credentials: 'include',
 		} );
-		if ( result.ok ) {
-			return await result.json();
-		}
-		return undefined;
+		return result;
 	} catch ( error ) {
 		return false;
 	}

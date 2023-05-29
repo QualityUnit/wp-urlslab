@@ -2,7 +2,6 @@ import {
 	useInfiniteFetch,
 	ProgressBar,
 	SortBy,
-	Tooltip,
 	Trash,
 	Checkbox,
 	Loader,
@@ -35,7 +34,7 @@ export default function SchedulesTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
 
 	const followLinksTypes = {
 		FOLLOW_ALL_LINKS: __( 'Follow all links' ),
@@ -137,7 +136,7 @@ export default function SchedulesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
+			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, id: 'urls' } ) } />,
 			header: null,
 			size: 60,
 		} ),
@@ -158,20 +157,13 @@ export default function SchedulesTable( { slug } ) {
 				noExport
 				noDelete
 				selectedRows={ selectedRows }
-				onDeleteSelected={ deleteSelectedRows }
-				onUpdate={ ( val ) => {
+				onDeleteSelected={ () => deleteSelectedRows( { id: 'urls' } ) }
+				onUpdate={ ( ) => {
 					setActivePanel();
 					setEditorRow();
-					if ( val === 'rowInserted' || val === 'rowChanged' ) {
-						setActivePanel();
-						setEditorRow( val );
-						setTimeout( () => {
-							setEditorRow();
-						}, 3000 );
-					}
 				} }
 				activatePanel={ activePanel }
-				rowEditorOptions={ { rowEditorCells, title: 'Add schedule', data, slug, url, paginationId, rowToEdit } }
+				rowEditorOptions={ { rowEditorCells, title: 'Add schedule', data, slug, url, paginationId, rowToEdit, id: 'urls' } }
 			/>
 			<Table className="noHeightLimit fadeInto"
 				slug={ slug }
@@ -179,18 +171,6 @@ export default function SchedulesTable( { slug } ) {
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
-				{ row
-					? <Tooltip center>{ `${ header.url_name } “${ row.url_name }”` } has been deleted.</Tooltip>
-					: null
-				}
-				{ ( rowToEdit === 'rowChanged' )
-					? <Tooltip center>{ __( 'Schedule has been changed.' ) }</Tooltip>
-					: null
-				}
-				{ ( rowToEdit === 'rowInserted' )
-					? <Tooltip center>{ __( 'Schedule has been added.' ) }</Tooltip>
-					: null
-				}
 				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }

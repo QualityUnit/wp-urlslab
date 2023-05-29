@@ -14,34 +14,30 @@ import MultiSelectMenu from '../elements/MultiSelectMenu';
 import Button from '../elements/Button';
 
 import '../assets/styles/components/datepicker/datepicker.scss';
-import { fetchData } from '../api/fetching';
+import { getFetch } from '../api/fetching';
+import { setNotification } from '../hooks/useNotifications';
 
-export default function SettingsOption( { settingId, option, renderTooltip } ) {
+export default function SettingsOption( { settingId, option } ) {
 	const queryClient = useQueryClient();
 	const { id, type, title, description, placeholder, value, possible_values } = option;
 	const [ date, setDate ] = useState( type !== 'datetime' || new Date( value ) );
 	const [ status, setStatus ] = useState( );
 
 	const handleApiCall = async () => {
-		renderTooltip( { status: 'activeApiCall', message: 'Executing…' } );
-		const result = await fetchData( value );
-		if ( result ) {
-			renderTooltip( { status: 'successApiCall', message: result } );
-			setTimeout( () => {
-				renderTooltip();
-			}, 3000 );
+		setNotification( id, { message: 'Optimizing…', status: 'info' } );
+		const response = await getFetch( value );
+		const message = await response.json();
+		if ( response.ok ) {
+			setNotification( id, { message, status: 'success' } );
 			return false;
 		}
-		renderTooltip( { status: 'errorApiCall', message: 'Failed' } );
-		setTimeout( () => {
-			renderTooltip();
-		}, 3000 );
+		setNotification( id, { message, status: 'error' } );
 	};
 
 	const handleChange = useMutation( {
 		mutationFn: async ( changeValue ) => {
 			setStatus( 'active' );
-			renderTooltip( 'active' );
+			setNotification( id, { message: `Changing setting ${ title }…`, status: 'info' } );
 			const response = await setSettings( `${ settingId }/${ id }`, {
 				value: changeValue } );
 			return { response };
@@ -52,20 +48,11 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 			if ( ok ) {
 				queryClient.invalidateQueries( [ 'settings', settingId ] );
 				setStatus( 'success' );
-				renderTooltip( 'success' );
-				setTimeout( () => {
-					setStatus();
-					renderTooltip();
-				}, 3000 );
-
+				setNotification( id, { message: `Setting ${ title } changed!`, status: 'success' } );
 				return false;
 			}
 			setStatus( 'error' );
-			renderTooltip( 'error' );
-			setTimeout( () => {
-				setStatus();
-				renderTooltip();
-			}, 3000 );
+			setNotification( id, { message: `Changing setting ${ title } failed`, status: 'error' } );
 		},
 	} );
 
@@ -78,7 +65,7 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 	const handleDate = useMutation( {
 		mutationFn: async ( ) => {
 			setStatus( 'active' );
-			renderTooltip( 'active' );
+			setNotification( id, { message: `Changing date for ${ title }…`, status: 'info' } );
 
 			const response = await setSettings( `${ settingId }/${ id }`, {
 				value: processDate().toISOString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ),
@@ -89,20 +76,12 @@ export default function SettingsOption( { settingId, option, renderTooltip } ) {
 			const { ok } = response;
 			if ( ok ) {
 				setStatus( 'success' );
-				renderTooltip( 'success' );
+				setNotification( id, { message: `Setting date for ${ title } changed!`, status: 'success' } );
 				queryClient.invalidateQueries( [ 'settings', settingId ] );
-				setTimeout( () => {
-					setStatus();
-					renderTooltip();
-				}, 3000 );
 				return false;
 			}
 			setStatus( 'error' );
-			renderTooltip( 'error' );
-			setTimeout( () => {
-				setStatus();
-				renderTooltip();
-			}, 3000 );
+			setNotification( id, { message: `Changing date for ${ title } failed`, status: 'error' } );
 		},
 	} );
 

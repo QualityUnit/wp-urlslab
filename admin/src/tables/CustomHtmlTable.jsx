@@ -2,7 +2,6 @@ import {
 	useInfiniteFetch,
 	ProgressBar,
 	SortBy,
-	Tooltip,
 	SingleSelectMenu,
 	InputField,
 	Checkbox,
@@ -13,7 +12,7 @@ import {
 	TooltipSortingFiltering,
 	TagsMenu,
 	Edit,
-	SuggestInputField, TextArea,
+	TextArea,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -40,7 +39,7 @@ export default function CustomHtmlTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { row, selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const matchTypes = Object.freeze( {
 		A: 'All pages',
@@ -85,8 +84,8 @@ export default function CustomHtmlTable( { slug } ) {
 			onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_type: val } ) }>{ header.match_type }</SingleSelectMenu>,
 
 		match_url: <InputField type="url" autoFocus liveUpdate defaultValue="" label={ header.match_url } hidden={ rowToEdit?.match_type === 'A' }
-							   description={ __( 'Match browser URL with this value based on the selected type of rule' ) }
-							   onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_url: val } ) } />,
+			description={ __( 'Match browser URL with this value based on the selected type of rule' ) }
+			onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_url: val } ) } />,
 
 		match_headers: <InputField liveUpdate defaultValue="" label={ header.match_headers }
 			description={ __( 'If you need to inject custom HTML to page if request contains specific HTTP header sent from browser. Comma separated list of headers to check. (Example 1: check if any header exists: MY-HEADER-NAME1, HEADER2), (Example 2: check if header has specific value: MY-HEADER-NAME1=value1, HEADER2=value2)' ) }
@@ -121,24 +120,24 @@ export default function CustomHtmlTable( { slug } ) {
 			onChange={ ( val ) => setEditorRow( { ...rowToEdit, is_logged: val } ) }>{ header.is_logged }</SingleSelectMenu>,
 
 		add_http_headers: <TextArea rows="5" liveUpdate defaultValue="" label={ header.add_http_headers }
-									description={ __( 'Add custom HTTP headers sent from server to browser. Separate headers by new lines, header name and value by `=`. (e.g. X-URLSLAB-HEADER=value)' ) }
-									onChange={ ( val ) => setEditorRow( { ...rowToEdit, add_http_headers: val } ) } />,
+			description={ __( 'Add custom HTTP headers sent from server to browser. Separate headers by new lines, header name and value by `=`. (e.g. X-URLSLAB-HEADER=value)' ) }
+			onChange={ ( val ) => setEditorRow( { ...rowToEdit, add_http_headers: val } ) } />,
 
 		add_start_headers: <TextArea rows="5" liveUpdate defaultValue="" label={ header.add_start_headers }
-									 description={ __( 'Value will be inserted right after <head> tag.' ) }
-									 onChange={ ( val ) => setEditorRow( { ...rowToEdit, add_start_headers: val } ) } />,
+			description={ __( 'Value will be inserted right after <head> tag.' ) }
+			onChange={ ( val ) => setEditorRow( { ...rowToEdit, add_start_headers: val } ) } />,
 
 		add_end_headers: <TextArea rows="5" liveUpdate defaultValue="" label={ header.add_end_headers }
-								   description={ __( 'Value will be inserted right before </head> tag.' ) }
-								   onChange={ ( val ) => setEditorRow( { ...rowToEdit, add_end_headers: val } ) } />,
+			description={ __( 'Value will be inserted right before </head> tag.' ) }
+			onChange={ ( val ) => setEditorRow( { ...rowToEdit, add_end_headers: val } ) } />,
 
 		add_start_body: <TextArea rows="5" liveUpdate defaultValue="" label={ header.add_start_body }
-								  description={ __( 'Value will be inserted right after <body> tag (beginning of html page).' ) }
-								  onChange={ ( val ) => setEditorRow( { ...rowToEdit, add_start_body: val } ) } />,
+			description={ __( 'Value will be inserted right after <body> tag (beginning of html page).' ) }
+			onChange={ ( val ) => setEditorRow( { ...rowToEdit, add_start_body: val } ) } />,
 
 		add_end_body: <TextArea rows="5" liveUpdate defaultValue="" label={ header.add_end_body }
-								description={ __( 'Value will be inserted right before </body> tag (end of html page).' ) }
-								onChange={ ( val ) => setEditorRow( { ...rowToEdit, add_end_body: val } ) } />,
+			description={ __( 'Value will be inserted right before </body> tag (end of html page).' ) }
+			onChange={ ( val ) => setEditorRow( { ...rowToEdit, add_end_body: val } ) } />,
 
 		rule_order: <InputField liveUpdate type="text" defaultValue="10" label={ header.rule_order } onChange={ ( val ) => setEditorRow( { ...rowToEdit, rule_order: val } ) } />,
 
@@ -181,7 +180,7 @@ export default function CustomHtmlTable( { slug } ) {
 						<IconButton
 							onClick={ () => {
 								setActivePanel( 'rowEditor' );
-								updateRow( { cell } );
+								updateRow( { cell, id: 'name' } );
 							} }
 							tooltipClass="align-left xxxl"
 							tooltip={ __( 'Edit row' ) }
@@ -190,7 +189,7 @@ export default function CustomHtmlTable( { slug } ) {
 						</IconButton>
 						<IconButton
 							className="ml-s"
-							onClick={ () => deleteRow( { cell } ) }
+							onClick={ () => deleteRow( { cell, id: 'name' } ) }
 							tooltipClass="align-left xxxl"
 							tooltip={ __( 'Delete row' ) }
 						>
@@ -217,19 +216,12 @@ export default function CustomHtmlTable( { slug } ) {
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onUpdate={ ( val ) => {
+				onUpdate={ ( ) => {
 					setActivePanel();
 					setEditorRow();
-					if ( val === 'rowInserted' || val === 'rowChanged' ) {
-						setActivePanel();
-						setEditorRow( val );
-						setTimeout( () => {
-							setEditorRow();
-						}, 3000 );
-					}
 				} }
 				activatePanel={ activePanel }
-				rowEditorOptions={ { rowEditorCells, title: __( 'Add Custom HTML' ), data, slug, url, paginationId, rowToEdit } }
+				rowEditorOptions={ { rowEditorCells, title: __( 'Add Custom HTML' ), data, slug, url, paginationId, rowToEdit, id: 'name' } }
 				exportOptions={ {
 					slug,
 					url,
@@ -243,18 +235,6 @@ export default function CustomHtmlTable( { slug } ) {
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
-				{ row
-					? <Tooltip center>{ `${ header.name } “${ row.name }”` } { __( 'has been deleted.' ) }</Tooltip>
-					: null
-				}
-				{ ( rowToEdit === 'rowChanged' )
-					? <Tooltip center>{ __( 'Rule has been changed.' ) }</Tooltip>
-					: null
-				}
-				{ ( rowToEdit === 'rowInserted' )
-					? <Tooltip center>{ __( 'Rule has been added.' ) }</Tooltip>
-					: null
-				}
 				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }

@@ -10,9 +10,9 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 	const enableAddButton = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
 
-	const { editorMode, rowEditorCells, notWide, title, text, data, slug, url, paginationId, rowToEdit } = rowEditorOptions || {};
+	const { editorMode, rowEditorCells, notWide, title, text, data, slug, url, paginationId, rowToEdit, id } = rowEditorOptions || {};
 	const flattenedData = data?.pages?.flatMap( ( page ) => page ?? [] );
-	const { insertRowResult, insertRow, saveEditedRow } = useChangeRow( { data: flattenedData, url, slug, paginationId } );
+	const { insertRow, saveEditedRow } = useChangeRow( { data: flattenedData, url, slug, paginationId } );
 	const requiredFields = rowEditorCells && Object.keys( rowEditorCells ).filter( ( cell ) => rowEditorCells[ cell ].props.required === true );
 
 	let cellsFinal = { ...rowEditorCells };
@@ -62,21 +62,12 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 
 	function handleEdit() {
 		if ( editMode ) {
-			setTimeout( () => {
-				hidePanel( 'rowChanged' );
-			}, 100 );
-			saveEditedRow( { editedRow: rowToEdit } );
+			hidePanel( 'rowChanged' );
+			saveEditedRow( { editedRow: rowToEdit, id } );
 			return false;
 		}
 		insertRow( { editedRow: rowToEditWithDefaults } );
-	}
-
-	if ( insertRowResult?.ok ) {
-		setTimeout( () => {
-			if ( ! editMode ) {
-				hidePanel( 'rowInserted' );
-			}
-		}, 100 );
+		hidePanel( 'rowInserted' );
 	}
 
 	return (

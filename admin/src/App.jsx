@@ -4,13 +4,14 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import { update } from 'idb-keyval';
 
-import { fetchData, postFetch } from './api/fetching';
+import { getFetch, postFetch } from './api/fetching';
 import { fetchSettings } from './api/settings';
 import { fetchLangs } from './api/fetchLangs';
 
 import HeaderHeightContext from './lib/headerHeightContext';
 import hexToHSL from './lib/hexToHSL';
 
+import Notifications from './components/Notifications';
 import MainMenu from './components/MainMenu';
 import DynamicModule from './components/DynamicModule';
 import Header from './components/Header';
@@ -57,7 +58,12 @@ export default function App() {
 			to check for allowed+required import/insert/edit CSV fields */
 			queryClient.prefetchQuery( {
 				queryKey: [ 'routes' ],
-				queryFn: async () => await fetchData(),
+				queryFn: async () => {
+					const response = await getFetch();
+					if ( response.ok ) {
+						return response.json();
+					}
+				},
 				refetchOnWindowFocus: false,
 			} );
 
@@ -82,7 +88,12 @@ export default function App() {
 			// Creating Tags/Labels query object in advance
 			queryClient.prefetchQuery( {
 				queryKey: [ 'label', 'modules' ],
-				queryFn: async () => await fetchData( 'label/modules' ),
+				queryFn: async () => {
+					const response = await getFetch( 'label/modules' );
+					if ( response.ok ) {
+						return response.json();
+					}
+				},
 				refetchOnWindowFocus: false,
 			} );
 
@@ -94,7 +105,10 @@ export default function App() {
 		queryKey: [ 'modules' ],
 		queryFn: async () => {
 			if ( prefetch ) {
-				return await fetchData( 'module' ).then( ( ModuleData ) => ModuleData );
+				const response = await getFetch( 'module' ).then( ( ModuleData ) => ModuleData );
+				if ( response.ok ) {
+					return response.json();
+				}
 			}
 		},
 		refetchOnWindowFocus: false,
@@ -150,7 +164,7 @@ export default function App() {
 					/>
 				</div>
 			</HeaderHeightContext.Provider>
-
+			<Notifications />
 		</div>
 	);
 }
