@@ -342,6 +342,16 @@ abstract class Urlslab_Widget {
 			return self::$current_page_url;
 		}
 
+
+		if ( ! is_object( self::$current_page_url ) && wp_get_canonical_url() ) {
+			try {
+				self::$current_page_url = new Urlslab_Url( wp_get_canonical_url(), true );
+
+				return self::$current_page_url;
+			} catch ( Exception $e ) {
+			}
+		}
+
 		if ( is_category() ) {
 			$cat = get_category_link( get_query_var( 'cat' ) );
 			if ( ! empty( $cat ) ) {
