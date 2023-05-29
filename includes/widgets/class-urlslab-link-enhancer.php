@@ -89,7 +89,11 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 			if ( $this->get_option( self::SETTING_NAME_MARK_AS_VALID_CURRENT_URL ) ) {
 				if ( Urlslab_Url_Row::HTTP_STATUS_NOT_PROCESSED == $currentUrl->get_http_status() ) {
-					$currentUrl->set_http_status( Urlslab_Url_Row::HTTP_STATUS_OK );
+					if ( is_404() ) {
+						$currentUrl->set_http_status( 404 );
+					} else {
+						$currentUrl->set_http_status( Urlslab_Url_Row::HTTP_STATUS_OK );
+					}
 				}
 			}
 
