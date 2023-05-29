@@ -1,8 +1,7 @@
-import { memo, useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 
-import { postFetch } from '../api/fetching';
 import { deleteAll } from '../api/deleteTableData';
 import filtersArray from '../lib/filtersArray';
 
@@ -19,6 +18,7 @@ import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refre
 import TableFilter from './TableFilter';
 import TableFilterPanel from './TableFilterPanel';
 import TablePanels from './TablePanels';
+import RowCounter from './RowCounter';
 
 import ColumnsMenu from '../elements/ColumnsMenu';
 import Button from '../elements/Button';
@@ -102,34 +102,13 @@ export default function ModuleViewHeaderBottom( props ) {
 	};
 
 	useEffect( () => {
-		// handleHeaderHeight();
+		handleHeaderHeight();
 
 		if ( onFilter && didMountRef.current ) {
 			onFilter( filters );
 		}
 		didMountRef.current = true;
 	}, [ slug, filters, onFilter ] );
-
-	const { data: rowCount, isFetching } = useQuery( {
-		queryKey: [ slug, `count`, filtersArray( filters ) ],
-		queryFn: async () => {
-			if ( ! noCount ) {
-				const count = await postFetch( `${ slug }/count`, { filters: filtersArray( filters ) } );
-				return count.json();
-			}
-		},
-		refetchOnWindowFocus: false,
-	} );
-
-	const Counter = memo( () => {
-		return (
-			! noCount && ! isFetching && rowCount &&
-			<small className="urlslab-rowcount fadeInto flex flex-align-center">
-				{ __( 'Rows: ' ) }
-				<strong className="ml-s">{ rowCount }</strong>
-			</small>
-		);
-	} );
 
 	return (
 		<>
@@ -159,7 +138,9 @@ export default function ModuleViewHeaderBottom( props ) {
 					}
 
 					<div className="ma-left flex flex-align-center">
-						<Counter />
+						{ ! noCount &&
+						<RowCounter filter={ filters } slug={ slug } />
+						}
 						{ ! hideActions &&
 							<TableActionsMenu onAction={ handlePanel } options={ { noImport, noExport, noDelete } } />
 						}
