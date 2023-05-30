@@ -4,6 +4,7 @@ import { deleteRow as del } from '../api/deleteTableData';
 import { postFetch } from '../api/fetching';
 import filtersArray from '../lib/filtersArray';
 import useTablePanels from './useTablePanels';
+import { setNotification } from './useNotifications';
 
 export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const queryClient = useQueryClient();
@@ -22,6 +23,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 
 	const insertNewRow = useMutation( {
 		mutationFn: async ( { editedRow } ) => {
+			setNotification( slug, { message: 'Adding row…', status: 'info' } );
 			const response = await postFetch( `${ slug }/create`, editedRow );
 			return { response };
 		},
@@ -29,7 +31,10 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 			const { ok } = await response;
 			if ( ok ) {
 				queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
+				setNotification( slug, { message: 'Row has been added', status: 'success' } );
+				return false;
 			}
+			setNotification( slug, { message: 'Adding row failed', status: 'error' } );
 		},
 	} );
 	const insertRow = ( { editedRow } ) => {
@@ -38,10 +43,11 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 
 	const updateRowData = useMutation( {
 		mutationFn: async ( opts ) => {
-			const { editedRow, newVal, cell, customEndpoint, changeField, optionalSelector } = opts;
+			const { editedRow, newVal, cell, customEndpoint, changeField, optionalSelector, id } = opts;
 
 			// Updating one cell value only
 			if ( newVal ) {
+				setNotification( slug, { message: `Updating row${ id ? ' “' + cell.row.original[ id ] + '”' : '' }…`, status: 'info' } );
 				const cellId = cell.column.id;
 				const newPagesArray = data?.pages.map( ( page ) =>
 
@@ -63,16 +69,17 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 				// Called from another field, ie in Generator status
 				if ( changeField ) {
 					const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ changeField ]: newVal } );
-					return { response };
+					return { response, id: cell.row.original[ id ] };
 				}
 				const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ cellId ]: newVal } );
-				return { response };
+				return { response, id: cell.row.original[ id ] };
 			}
 
 			// // // Updating whole row via edit panel
 			const paginateArray = data?.pages;
 			let newPagesArray = [];
 			if ( paginateArray && editedRow ) {
+				setNotification( slug, { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
 				newPagesArray = paginateArray.map( ( page ) =>
 
 					page.map( ( row ) => {
@@ -90,6 +97,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 			}
 
 			if ( ! paginateArray && data && editedRow ) {
+				setNotification( slug, { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
 				newPagesArray = data?.map( ( row ) => {
 					if ( row[ paginationId ] === editedRow[ paginationId ] ) {
 						return editedRow;
@@ -101,27 +109,28 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 				} );
 
 				const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow );
-				return { response, editedRow };
+				return { response, editedRow, id: editedRow[ id ] };
 			}
 		},
-		onSuccess: ( { response } ) => {
+		onSuccess: ( { response, id } ) => {
 			const { ok } = response;
 			if ( ok ) {
+				setNotification( slug, { message: `Row${ id ? ' “' + id + '”' : '' } has been updated`, status: 'success' } );
 				queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
 			}
 		},
 	} );
 
-	const updateRow = ( { newVal, cell, customEndpoint, changeField, optionalSelector } ) => {
+	const updateRow = ( { newVal, cell, customEndpoint, changeField, optionalSelector, id } ) => {
 		if ( ! newVal ) { // Editing whole row = parameters are preset
 			setRowToEdit( cell.row.original );
 			return false;
 		}
-		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, optionalSelector } );
+		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, optionalSelector, id } );
 	};
 
-	const saveEditedRow = ( { editedRow } ) => {
-		updateRowData.mutate( { editedRow } );
+	const saveEditedRow = ( { editedRow, id } ) => {
+		updateRowData.mutate( { editedRow, id } );
 	};
 
 	const processDeletedPages = useCallback( ( cell ) => {
@@ -135,7 +144,10 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 
 	const deleteSelectedRow = useMutation( {
 		mutationFn: async ( opts ) => {
-			const { deletedPagesArray, cell, optionalSelector } = opts;
+			const { deletedPagesArray, cell, optionalSelector, id } = opts;
+			setNotification( slug, {
+				message: `Deleting row${ id ? ' “' + cell.row.original[ id ] + '”' : '' }…`, status: 'info',
+			} );
 
 			queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => ( {
 				pages: deletedPagesArray,
@@ -143,11 +155,12 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 			} ) );
 
 			const response = await del( `${ slug }/${ getRowId( cell, optionalSelector ) }` );
-			return { response };
+			return { response, id: cell.row.original[ id ] };
 		},
-		onSuccess: async ( { response } ) => {
+		onSuccess: async ( { response, id } ) => {
 			const { ok } = response;
 			if ( ok ) {
+				setNotification( slug, { message: `Row${ id ? ' “' + id + '”' : '' } has been deleted`, status: 'success' } );
 				setResponseCounter( responseCounter - 1 );
 			}
 
@@ -155,20 +168,24 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 				await queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
 				await queryClient.invalidateQueries( [ slug, 'count' ] );
 			}
+
+			if ( ! ok ) {
+				setNotification( slug, { message: `Deleting row${ id ? ' “' + id + '”' : '' } failed`, status: 'error' } );
+			}
 		},
 	} );
 
-	const deleteRow = useCallback( ( { cell, optionalSelector } ) => {
+	const deleteRow = useCallback( ( { cell, optionalSelector, id } ) => {
 		setResponseCounter( 1 );
-		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), cell, optionalSelector } );
+		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), cell, optionalSelector, id } );
 	}, [ processDeletedPages, deleteSelectedRow ] );
 
-	const deleteSelectedRows = async ( optionalSelector ) => {
+	const deleteSelectedRows = async ( optionalSelector, id ) => {
 		// Multiple rows delete
 		setResponseCounter( selectedRows.length );
 
 		selectedRows.map( ( cell ) => {
-			deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), cell, optionalSelector } );
+			deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), cell, optionalSelector, id } );
 			return false;
 		} );
 	};
