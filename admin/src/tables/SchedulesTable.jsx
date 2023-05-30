@@ -87,55 +87,48 @@ export default function SchedulesTable( { slug } ) {
 		scan_speed_per_minute: <InputField liveUpdate defaultValue="20" label={ header.scan_speed_per_minute } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, scan_speed_per_minute: val } ) } />,
 	};
 	const columns = [
-		columnHelper.accessor( 'check', {
-			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
-				selectRow( val, cell );
-			} } />,
-			header: null,
-		} ),
 		columnHelper?.accessor( 'urls', {
 			className: 'nolimit',
 			cell: ( array ) => array?.getValue().map( ( link ) => <><a href={ link } target="_blank" rel="noreferrer" key={ link }>{ link }</a>, </>,
 			),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.urls }</SortBy>,
+			header: ( th ) => header.urls,
 			size: 300,
 		} ),
 		columnHelper?.accessor( 'follow_links', {
 			filterValMenu: followLinksTypes,
 			cell: ( cell ) => followLinksTypes[ cell?.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.follow_links }</SortBy>,
+			header: ( th ) => header.follow_links,
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'analyze_text', {
 			cell: ( cell ) => <Checkbox readOnly className="readOnly" defaultValue={ cell.getValue() } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.analyze_text }</SortBy>,
+			header: ( th ) => header.analyze_text,
 			size: 90,
 		} ),
 		columnHelper?.accessor( 'take_screenshot', {
 			cell: ( cell ) => <Checkbox readOnly className="readOnly" defaultValue={ cell.getValue() } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.take_screenshot }</SortBy>,
+			header: ( th ) => header.take_screenshot,
 			size: 90,
 		} ),
 		columnHelper?.accessor( 'process_all_sitemaps', {
 			cell: ( cell ) => <Checkbox readOnly className="readOnly" defaultValue={ cell.getValue() } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.process_all_sitemaps }</SortBy>,
+			header: ( th ) => header.process_all_sitemaps,
 			size: 90,
 		} ),
 		columnHelper?.accessor( 'custom_sitemaps', {
 			cell: ( array ) => array?.getValue().map( ( sitemap ) => <><a href={ sitemap } target="_blank" rel="noreferrer" key={ sitemap }>{ sitemap }</a>, </>,
 			),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.custom_sitemaps }</SortBy>,
+			header: ( th ) => header.custom_sitemaps,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'scan_frequency', {
 			filterValMenu: scanFrequencyTypes,
 			cell: ( cell ) => scanFrequencyTypes[ cell?.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.scan_frequency }</SortBy>,
+			header: ( th ) => header.scan_frequency,
 			size: 90,
 		} ),
 		columnHelper.accessor( 'scan_speed_per_minute', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.scan_speed_per_minute }</SortBy>,
+			header: ( th ) => header.scan_speed_per_minute,
 			size: 90,
 		} ),
 		columnHelper.accessor( 'editRow', {
@@ -157,6 +150,7 @@ export default function SchedulesTable( { slug } ) {
 				noFiltering
 				noCount
 				noExport
+				noImport
 				noDelete
 				selectedRows={ selectedRows }
 				onDeleteSelected={ () => deleteSelectedRows( { id: 'urls' } ) }
@@ -169,10 +163,6 @@ export default function SchedulesTable( { slug } ) {
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
 				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
-				<div ref={ ref }>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div>
 			</Table>
 		</>
 	);

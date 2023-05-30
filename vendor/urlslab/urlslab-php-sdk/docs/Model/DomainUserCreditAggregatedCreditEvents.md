@@ -5,6 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **group_bucket_title** | **string** |  |
+**credit_type** | **string** |  |
 **events** | **int** |  |
 **credits** | **int** |  |
 

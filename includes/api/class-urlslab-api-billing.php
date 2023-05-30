@@ -31,6 +31,7 @@ class Urlslab_Api_Billing extends Urlslab_Api_Base {
 		try {
 			$credit = $this->get_client()->getLastCreditStatus();
 			Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, $credit->getCredits() );
+
 			return new WP_REST_Response( $credit, 200 );
 		} catch ( Throwable $e ) {
 			new WP_REST_Response( $e->getMessage(), 500 );
@@ -39,7 +40,7 @@ class Urlslab_Api_Billing extends Urlslab_Api_Base {
 
 	public function get_credit_events( WP_REST_Request $request ) {
 		try {
-			$credit_events = $this->get_client()->getCreditEvents();
+			$credit_events = $this->get_client()->getCreditEvents( 500 );
 
 			$events = $credit_events->getEvents();
 			foreach ( $events as $id => $event ) {
@@ -62,9 +63,12 @@ class Urlslab_Api_Billing extends Urlslab_Api_Base {
 
 	public function get_credit_aggregation( WP_REST_Request $request ) {
 		try {
-			$credit_aggregation = $this->get_client()->getCreditEventsAggregation();
+			$credit_aggregations = $this->get_client()->getCreditEventsAggregation();
+			foreach ( $credit_aggregations->getData() as $id => $credit_aggregation ) {
+				$credit_aggregation->setGroupBucketTitle( date( 'Y-m-d', strtotime( $credit_aggregation->getGroupBucketTitle() ) ) ); //phpcs:ignore
+			}
 
-			return new WP_REST_Response( $credit_aggregation, 200 );
+			return new WP_REST_Response( $credit_aggregations->getData(), 200 );
 		} catch ( Throwable $e ) {
 			new WP_REST_Response( $e->getMessage(), 500 );
 		}

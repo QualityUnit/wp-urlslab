@@ -1097,12 +1097,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/QualityUnit/urlslab-php-client.git",
-                "reference": "1a14f229997c6a567890727841760e8f493c4b2d"
+                "reference": "23164cc2444c21ca83b702a187cc61683808ff32"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/QualityUnit/urlslab-php-client/zipball/1a14f229997c6a567890727841760e8f493c4b2d",
-                "reference": "1a14f229997c6a567890727841760e8f493c4b2d",
+                "url": "https://api.github.com/repos/QualityUnit/urlslab-php-client/zipball/23164cc2444c21ca83b702a187cc61683808ff32",
+                "reference": "23164cc2444c21ca83b702a187cc61683808ff32",
                 "shasum": ""
             },
             "require": {
@@ -1149,7 +1149,7 @@
                 "issues": "https://github.com/QualityUnit/urlslab-php-client/issues",
                 "source": "https://github.com/QualityUnit/urlslab-php-client/tree/main"
             },
-            "time": "2023-05-29T06:42:48+00:00"
+            "time": "2023-05-30T08:21:20+00:00"
         }
     ],
     "packages-dev": [

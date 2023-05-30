@@ -73,7 +73,7 @@ try {
 ## `getSnapshotsHistory()`
 
 ```php
-getSnapshotsHistory($url, $last_id, $limit, $body): \OpenAPI\Client\Model\DomainDataRetrievalUrlSnapshotMultiResponse
+getSnapshotsHistory($url, $last_id, $last_timestamp, $limit, $body): \OpenAPI\Client\Model\DomainDataRetrievalUrlSnapshotMultiResponse
 ```
 
 Get history of snapshot of url
@@ -101,11 +101,12 @@ $apiInstance = new OpenAPI\Client\Api\SnapshotApi(
 );
 $url = 'url_example'; // string | Url to get the history of snapshots
 $last_id = 'last_id_example'; // string | lastId of event
+$last_timestamp = 'last_timestamp_example'; // string | lastTimestamp of event
 $limit = 56; // int | limit of events
 $body = 'body_example'; // string
 
 try {
-    $result = $apiInstance->getSnapshotsHistory($url, $last_id, $limit, $body);
+    $result = $apiInstance->getSnapshotsHistory($url, $last_id, $last_timestamp, $limit, $body);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling SnapshotApi->getSnapshotsHistory: ', $e->getMessage(), PHP_EOL;
@@ -118,6 +119,7 @@ try {
 | ------------- | ------------- | ------------- | ------------- |
 | **url** | **string**| Url to get the history of snapshots | |
 | **last_id** | **string**| lastId of event | [optional] |
+| **last_timestamp** | **string**| lastTimestamp of event | [optional] |
 | **limit** | **int**| limit of events | [optional] |
 | **body** | **string**|  | [optional] |
 
