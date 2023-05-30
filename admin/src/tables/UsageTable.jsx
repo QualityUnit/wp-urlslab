@@ -11,7 +11,7 @@ import useTableUpdater from '../hooks/useTableUpdater';
 
 import '../assets/styles/components/_ModuleViewHeader.scss';
 
-export default function CreditsTable( { slug } ) {
+export default function UsageTable( { slug } ) {
 	const paginationId = 'id';
 	const { table, setTable, filters, sorting, sortBy } = useTableUpdater( { slug } );
 
@@ -28,36 +28,28 @@ export default function CreditsTable( { slug } ) {
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
 	const header = {
-		id: __( 'Transaction Id' ),
+		groupBucketTitle: __( 'Date' ),
 		creditType: __( 'Type' ),
-		creditOperation: __( 'Operation' ),
-		operationDate: __( 'Timestamp' ),
-		url: __( 'URL' ),
+		events: __( 'Count' ),
+		credits: __( 'Usage' ),
 	};
 
 	const columns = [
-		columnHelper.accessor( 'id', {
-			header: ( th ) => header.id,
-			size: 60,
-		} ),
-		columnHelper.accessor( 'operationDate', {
-			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => header.operationDate,
-			size: 100,
+		columnHelper.accessor( 'groupBucketTitle', {
+			header: ( th ) => header.groupBucketTitle,
+			size: 80,
 		} ),
 		columnHelper.accessor( 'creditType', {
 			header: ( th ) => header.creditType,
-			size: 30,
+			size: 80,
 		} ),
-		columnHelper.accessor( 'creditOperation', {
-			header: ( th ) => header.creditOperation,
-			size: 30,
+		columnHelper.accessor( 'events', {
+			header: ( th ) => header.events,
+			size: 60,
 		} ),
-		columnHelper.accessor( 'url', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: ( th ) => header.url,
-			size: 200,
+		columnHelper.accessor( 'credits', {
+			header: ( th ) => header.credits,
+			size: 60,
 		} ),
 	];
 
@@ -81,8 +73,8 @@ export default function CreditsTable( { slug } ) {
 				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
-				initialState={ { columnVisibility: { id: false } } }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				initialState={ { columnVisibility: { events: false } } }
 			>
 				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
 			</Table>

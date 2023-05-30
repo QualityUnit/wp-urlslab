@@ -10,10 +10,12 @@ export default function Schedule( { moduleId } ) {
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 	const SchedulesTable = lazy( () => import( `../tables/SchedulesTable.jsx` ) );
 	const CreditsTable = lazy( () => import( `../tables/CreditsTable.jsx` ) );
+	const UsageTable = lazy( () => import( `../tables/UsageTable.jsx` ) );
 
 	const tableMenu = new Map( [
 		[ slug, __( 'Schedules' ) ],
-		[ 'credits', __( 'Recent Credits' ) ],
+		[ 'usage', __( 'Daily Usage' ) ],
+		[ 'credits', __( 'Recent Transactions' ) ],
 	] );
 
 	return (
@@ -32,6 +34,12 @@ export default function Schedule( { moduleId } ) {
 						<SchedulesTable slug={ slug } />
 					</Suspense>
 				</div>
+			}
+			{
+				activeSection === 'usage' &&
+				<Suspense>
+					<UsageTable slug="billing/credits/aggregation" />
+				</Suspense>
 			}
 			{
 				activeSection === 'credits' &&
