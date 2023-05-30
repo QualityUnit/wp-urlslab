@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 
 import { renameModule } from '../lib/helpers';
 import useHeaderHeight from '../hooks/useHeaderHeight';
@@ -9,8 +9,19 @@ import '../assets/styles/layouts/_DynamicModule.scss';
 export default function DynamicModule( { modules, moduleId, activePage } ) {
 	const importPath = import( `../modules/${ renameModule( moduleId ) }.jsx` );
 	const Module = lazy( () => importPath );
+
 	const headerTopHeight = useHeaderHeight( ( state ) => state.headerTopHeight );
 	const headerBottomHeight = useHeaderHeight( ( state ) => state.headerBottomHeight );
+
+	const [ hasMounted, setHasMounted ] = useState( false );
+
+	useEffect( () => {
+		setHasMounted( true );
+	}, [] );
+
+	if ( ! hasMounted ) {
+		return null;
+	}
 
 	return (
 		<div className="urlslab-DynamicModule" style={ { '--headerTopHeight': `${ headerTopHeight }px`, '--headerMenuHeight': '52px', '--headerBottomHeight': `${ headerBottomHeight }px` } }

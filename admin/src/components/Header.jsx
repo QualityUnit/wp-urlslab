@@ -1,6 +1,5 @@
-import { Suspense, useCallback } from 'react';
+import { memo, Suspense, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import { useQueryClient } from '@tanstack/react-query';
 
 import useResizeObserver from '../hooks/useResizeObserver';
 import useHeaderHeight from '../hooks/useHeaderHeight';
@@ -14,9 +13,8 @@ import Tag from '../elements/Tag';
 import { ReactComponent as Logo } from '../assets/images/urlslab-logo.svg';
 import Button from '../elements/Button';
 
-export default function Header( { pageTitle } ) {
+function Header( { pageTitle } ) {
 	const { __ } = useI18n();
-	const queryClient = useQueryClient();
 	const headerTopHeight = useHeaderHeight( ( state ) => state.headerTopHeight );
 	const setHeaderTopHeight = useHeaderHeight( ( state ) => state.setHeaderTopHeight );
 
@@ -49,3 +47,5 @@ export default function Header( { pageTitle } ) {
 		</Suspense>
 	);
 }
+
+export default memo( Header );

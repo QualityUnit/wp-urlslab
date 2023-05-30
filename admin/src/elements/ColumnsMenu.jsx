@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { memo, useEffect, useState, useRef, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { get, update } from 'idb-keyval';
@@ -12,8 +12,7 @@ import { ReactComponent as ColumnsIcon } from '../assets/images/icons/icon-colum
 import '../assets/styles/elements/_MultiSelectMenu.scss';
 import '../assets/styles/elements/_ColumnsMenu.scss';
 
-export default function ColumnsMenu( {
-	id, className, slug, table, columns, style } ) {
+function ColumnsMenu( { id, className, slug, table, columns, style } ) {
 	const { __ } = useI18n();
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
@@ -125,3 +124,5 @@ export default function ColumnsMenu( {
 		</div>
 	);
 }
+
+export default memo( ColumnsMenu );

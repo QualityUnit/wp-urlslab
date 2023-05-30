@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { memo, useEffect, useRef, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 
@@ -25,7 +25,7 @@ import Button from '../elements/Button';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import IconButton from '../elements/IconButton';
 
-export default function ModuleViewHeaderBottom( props ) {
+export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hideActions, noImport, noInsert, noExport, noCount, noDelete, table, selectedRows, onFilter, onDeleteSelected, onUpdate, options } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const didMountRef = useRef( false );
@@ -33,7 +33,6 @@ export default function ModuleViewHeaderBottom( props ) {
 	const headerBottomHeight = useHeaderHeight( ( state ) => state.headerBottomHeight );
 	const setHeaderBottomHeight = useHeaderHeight( ( state ) => state.setHeaderBottomHeight );
 
-	const { noColumnsMenu, noFiltering, hideActions, noImport, noInsert, noExport, noCount, noDelete, table, selectedRows, onFilter, onDeleteSelected, onUpdate, options } = props;
 	const { header, slug, title } = options;
 
 	const { activatePanel } = useTablePanels();
