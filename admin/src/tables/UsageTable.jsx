@@ -4,7 +4,7 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	ProgressBar, Tooltip, SortBy, DateTimeFormat,
+	ProgressBar,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -14,6 +14,7 @@ import '../assets/styles/components/_ModuleViewHeader.scss';
 export default function UsageTable( { slug } ) {
 	const paginationId = 'id';
 	const { table, setTable, filters, sorting, sortBy } = useTableUpdater( { slug } );
+	const url = { filters, sorting };
 
 	const {
 		__,
@@ -37,19 +38,19 @@ export default function UsageTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'groupBucketTitle', {
 			header: ( th ) => header.groupBucketTitle,
-			size: 80,
+			size: 200,
 		} ),
 		columnHelper.accessor( 'creditType', {
 			header: ( th ) => header.creditType,
-			size: 80,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'events', {
 			header: ( th ) => header.events,
-			size: 60,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'credits', {
 			header: ( th ) => header.credits,
-			size: 60,
+			size: 100,
 		} ),
 	];
 
@@ -60,14 +61,13 @@ export default function UsageTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				slug={ slug }
-				header={ header }
 				table={ table }
 				noFiltering
 				noCount
 				noExport
 				noImport
 				noDelete
+				options={ { header, data, slug, paginationId, url } }
 			/>
 			<Table className="noHeightLimit fadeInto"
 				slug={ slug }
@@ -77,6 +77,10 @@ export default function UsageTable( { slug } ) {
 				initialState={ { columnVisibility: { events: false } } }
 			>
 				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
+				<div ref={ ref }>
+					{ isFetchingNextPage ? '' : hasNextPage }
+					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
+				</div>
 			</Table>
 		</>
 	);
