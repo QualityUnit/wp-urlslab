@@ -28,7 +28,7 @@ class Urlslab_Summaries_Cron extends Urlslab_Cron {
 			Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Link_Enhancer::SLUG )
 			&& Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Link_Enhancer::SLUG )->get_option( Urlslab_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS )
 		) {
-			$query_data[] = Urlslab_Url_Row::HTTP_STATUS_OK;
+			$query_data[]          = Urlslab_Url_Row::HTTP_STATUS_OK;
 			$sql_where_http_status = ' http_status = %d AND';
 		} else {
 			$sql_where_http_status = '';
@@ -52,7 +52,7 @@ class Urlslab_Summaries_Cron extends Urlslab_Cron {
 			return false;
 		}
 
-		$data = array();
+		$data   = array();
 		$data[] = Urlslab_Data::get_now();
 		$data[] = Urlslab_Url_Row::SUM_STATUS_PENDING;
 
@@ -64,8 +64,8 @@ class Urlslab_Summaries_Cron extends Urlslab_Cron {
 			$row_obj = new Urlslab_Url_Row( $row );
 			if ( $row_obj->get_url()->is_url_valid() ) {
 				$url_objects[] = $row_obj;
-				$data[] = $row['url_id'];
-				$url_names[] = $row['url_name'];
+				$data[]        = $row['url_id'];
+				$url_names[]   = $row['url_name'];
 			} else {
 				$row_obj->set_sum_status( Urlslab_Url_Row::SCR_STATUS_ERROR );
 				$row_obj->update();
@@ -107,18 +107,21 @@ class Urlslab_Summaries_Cron extends Urlslab_Cron {
 				}
 			}
 		} catch ( ApiException $e ) {
+			if ( 402 === $e->getCode() ) {
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+
+				return false;
+			}
 		}
 
 		return $some_urls_updated;    // 100 URLs per execution is enought if there was no url updated
 	}
 
 	private function init_client(): bool {
-		if ( empty( $this->client ) ) {
-			$api_key = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
-			if ( strlen( $api_key ) ) {
-				$config = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-				$this->client = new SummaryApi( new GuzzleHttp\Client(), $config );
-			}
+		if ( empty( $this->client ) && Urlslab_General::is_urlslab_active() ) {
+			$api_key      = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
+			$config       = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
+			$this->client = new SummaryApi( new GuzzleHttp\Client(), $config );
 		}
 
 		return ! empty( $this->client );

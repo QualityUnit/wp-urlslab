@@ -30,7 +30,7 @@ class Urlslab_Api_Billing extends Urlslab_Api_Base {
 	public function get_credits( WP_REST_Request $request ) {
 		try {
 			$credit = $this->get_client()->getLastCreditStatus();
-
+			Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, $credit->getCredits() );
 			return new WP_REST_Response( $credit, 200 );
 		} catch ( Throwable $e ) {
 			new WP_REST_Response( $e->getMessage(), 500 );
