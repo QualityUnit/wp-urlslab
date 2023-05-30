@@ -1,5 +1,4 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { get } from 'idb-keyval';
 
 import { renameModule } from '../lib/helpers';
 import useHeaderHeight from '../hooks/useHeaderHeight';
@@ -8,11 +7,6 @@ import useMainMenu from '../hooks/useMainMenu';
 import ErrorBoundary from './ErrorBoundary';
 import Loader from './Loader';
 import '../assets/styles/layouts/_DynamicModule.scss';
-
-// const Module = ( props ) => {
-
-// 	return <ReturnModule { ...props } />;
-// };
 
 export default function DynamicModule( { modules } ) {
 	const { activePage } = useMainMenu();
