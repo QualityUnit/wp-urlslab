@@ -1,8 +1,9 @@
-import { memo, Suspense, useCallback } from 'react';
+import { memo, Suspense, useCallback, useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import useResizeObserver from '../hooks/useResizeObserver';
 import useHeaderHeight from '../hooks/useHeaderHeight';
+import useMainMenu from '../hooks/useMainMenu';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import NoAPIkey from './NoAPIkey';
@@ -13,8 +14,10 @@ import Tag from '../elements/Tag';
 import { ReactComponent as Logo } from '../assets/images/urlslab-logo.svg';
 import Button from '../elements/Button';
 
-function Header( { pageTitle } ) {
+function Header( { fetchedModules } ) {
 	const { __ } = useI18n();
+	const { activePage } = useMainMenu();
+	const [ pageTitle, setTitle ] = useState( __( 'Modules' ) );
 	const headerTopHeight = useHeaderHeight( ( state ) => state.headerTopHeight );
 	const setHeaderTopHeight = useHeaderHeight( ( state ) => state.setHeaderTopHeight );
 
@@ -25,6 +28,24 @@ function Header( { pageTitle } ) {
 		}
 	}, [ headerTopHeight, setHeaderTopHeight ] );
 	const headerTop = useResizeObserver( handleHeaderHeight );
+
+	useEffect( () => {
+		if ( activePage && activePage === 'urlslab-modules' ) {
+			setTitle( __( 'Modules' ) );
+		}
+		if ( activePage && activePage === 'urlslab-settings' ) {
+			setTitle( __( 'Settings' ) );
+		}
+		if ( activePage && activePage === 'urlslab-schedule' ) {
+			setTitle( __( 'Schedules' ) );
+		}
+		if ( activePage && activePage === 'TagsLabels' ) {
+			setTitle( __( 'Tags' ) );
+		}
+		if ( activePage && activePage !== 'urlslab-modules' && activePage !== 'urlslab-settings' && activePage !== 'urlslab-schedule' && activePage !== 'TagsLabels' ) {
+			setTitle( fetchedModules[ activePage ].title );
+		}
+	}, [ __, activePage, fetchedModules, setTitle ] );
 
 	return (
 		<Suspense>

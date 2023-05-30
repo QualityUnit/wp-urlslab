@@ -1,15 +1,21 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
+import { get } from 'idb-keyval';
 
 import { renameModule } from '../lib/helpers';
 import useHeaderHeight from '../hooks/useHeaderHeight';
+import useMainMenu from '../hooks/useMainMenu';
+
 import ErrorBoundary from './ErrorBoundary';
 import Loader from './Loader';
 import '../assets/styles/layouts/_DynamicModule.scss';
 
-export default function DynamicModule( { modules, moduleId, activePage } ) {
-	const importPath = import( `../modules/${ renameModule( moduleId ) }.jsx` );
-	const Module = lazy( () => importPath );
+// const Module = ( props ) => {
 
+// 	return <ReturnModule { ...props } />;
+// };
+
+export default function DynamicModule( { modules } ) {
+	const { activePage } = useMainMenu();
 	const headerTopHeight = useHeaderHeight( ( state ) => state.headerTopHeight );
 	const headerBottomHeight = useHeaderHeight( ( state ) => state.headerBottomHeight );
 
@@ -19,9 +25,11 @@ export default function DynamicModule( { modules, moduleId, activePage } ) {
 		setHasMounted( true );
 	}, [] );
 
-	if ( ! hasMounted ) {
+	if ( ! hasMounted || ! activePage ) {
 		return null;
 	}
+
+	const Module = lazy( () => import( `../modules/${ renameModule( activePage ) }.jsx` ) );
 
 	return (
 		<div className="urlslab-DynamicModule" style={ { '--headerTopHeight': `${ headerTopHeight }px`, '--headerMenuHeight': '52px', '--headerBottomHeight': `${ headerBottomHeight }px` } }
@@ -30,9 +38,8 @@ export default function DynamicModule( { modules, moduleId, activePage } ) {
 				<Suspense fallback={ <Loader /> }>
 					<div className="urlslab-DynamicModule-inn fadeInto">
 						<Module modules={ modules }
-							activePage={ activePage }
 							settingId="general"
-							moduleId={ moduleId }
+							moduleId={ activePage }
 						/>
 					</div>
 				</Suspense>

@@ -3,6 +3,8 @@ import { useI18n } from '@wordpress/react-i18n';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useMutation } from '@tanstack/react-query';
+import useMainMenu from '../hooks/useMainMenu';
+
 import Switch from '../elements/Switch';
 import Tag from '../elements/Tag';
 
@@ -10,9 +12,10 @@ import { setModule } from '../api/fetching';
 import '../assets/styles/components/_DashboardModule.scss';
 import '../assets/styles/elements/_Button.scss';
 
-function DashboardModule( { moduleId, title, children, isActive, tags, activePage } ) {
+function DashboardModule( { moduleId, title, children, isActive, tags } ) {
 	const { __ } = useI18n();
 	const [ active, setActive ] = useState( isActive );
+	const { setActivePage } = useMainMenu();
 
 	const handleSwitch = useMutation( {
 		mutationFn: async () => {
@@ -27,12 +30,6 @@ function DashboardModule( { moduleId, title, children, isActive, tags, activePag
 			setActive( isActive );
 		},
 	} );
-
-	const handleActive = ( module ) => {
-		if ( activePage ) {
-			activePage( module );
-		}
-	};
 
 	const iconPath = new URL( `../assets/images/modules/${ moduleId }.svg`, import.meta.url ).pathname;
 
@@ -51,7 +48,7 @@ function DashboardModule( { moduleId, title, children, isActive, tags, activePag
 				}
 
 				<h3 className="urlslab-dashboardmodule-title">
-					<button className={ `${ active ? 'active' : '' }` } onClick={ active ? () => handleActive( moduleId ) : null }>
+					<button className={ `${ active ? 'active' : '' }` } onClick={ active ? () => setActivePage( moduleId ) : null }>
 						{ title }
 					</button>
 				</h3>

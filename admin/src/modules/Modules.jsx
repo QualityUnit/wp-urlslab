@@ -5,7 +5,7 @@ import DashboardModule from '../components/DashboardModule';
 import SearchField from '../elements/SearchField';
 import MultiSelectMenu from '../elements/MultiSelectMenu';
 
-export default function Modules( { modules, activePage } ) {
+export default function Modules( { modules } ) {
 	const { __ } = useI18n();
 	const { settingsLoaded, apiKeySet } = useCheckApiKey();
 	const [ filterBy, setFilterBy ] = useState( {} );
@@ -116,7 +116,6 @@ export default function Modules( { modules, activePage } ) {
 								isActive={ active }
 								title={ title }
 								tags={ { labels, labelsList } }
-								activePage={ activePage }
 							>
 								{ description }
 							</DashboardModule>
