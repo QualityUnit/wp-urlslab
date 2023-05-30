@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.271.1",
+            "version": "3.271.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "707552cfb1fa37e8e501d2c70afa9bc2e61104c0"
+                "reference": "f481134d37b8303fa2e82ca7fe2a3124144057f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/707552cfb1fa37e8e501d2c70afa9bc2e61104c0",
-                "reference": "707552cfb1fa37e8e501d2c70afa9bc2e61104c0",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/f481134d37b8303fa2e82ca7fe2a3124144057f6",
+                "reference": "f481134d37b8303fa2e82ca7fe2a3124144057f6",
                 "shasum": ""
             },
             "require": {
@@ -151,9 +151,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.271.1"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.271.3"
             },
-            "time": "2023-05-24T18:20:35+00:00"
+            "time": "2023-05-26T18:20:00+00:00"
         },
         {
             "name": "composer/installers",
@@ -1097,12 +1097,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/QualityUnit/urlslab-php-client.git",
-                "reference": "c361a000fe14cadc554bfcd2b12315c32b570807"
+                "reference": "1a14f229997c6a567890727841760e8f493c4b2d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/QualityUnit/urlslab-php-client/zipball/c361a000fe14cadc554bfcd2b12315c32b570807",
-                "reference": "c361a000fe14cadc554bfcd2b12315c32b570807",
+                "url": "https://api.github.com/repos/QualityUnit/urlslab-php-client/zipball/1a14f229997c6a567890727841760e8f493c4b2d",
+                "reference": "1a14f229997c6a567890727841760e8f493c4b2d",
                 "shasum": ""
             },
             "require": {
@@ -1149,7 +1149,7 @@
                 "issues": "https://github.com/QualityUnit/urlslab-php-client/issues",
                 "source": "https://github.com/QualityUnit/urlslab-php-client/tree/main"
             },
-            "time": "2023-05-25T06:24:41+00:00"
+            "time": "2023-05-29T06:42:48+00:00"
         }
     ],
     "packages-dev": [
@@ -1286,12 +1286,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "2d9146bd69addfbd99652930a825c8ba7b8ea13c"
+                "reference": "2d73bad6cb1c8cda0ab4e4208f4ee2d70e472879"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/2d9146bd69addfbd99652930a825c8ba7b8ea13c",
-                "reference": "2d9146bd69addfbd99652930a825c8ba7b8ea13c",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/2d73bad6cb1c8cda0ab4e4208f4ee2d70e472879",
+                "reference": "2d73bad6cb1c8cda0ab4e4208f4ee2d70e472879",
                 "shasum": ""
             },
             "conflict": {
@@ -1367,7 +1367,7 @@
                 "contao/core-bundle": "<4.9.40|>=4.10,<4.11.7|>=4.13,<4.13.21|>=5.1,<5.1.4|= 4.10.0",
                 "contao/listing-bundle": ">=4,<4.4.8",
                 "contao/managed-edition": "<=1.5",
-                "craftcms/cms": "<=3.8.3|>=4,<4.4.6|>= 4.0.0-RC1, < 4.3.7|>= 4.0.0-RC1, < 4.2.1",
+                "craftcms/cms": ">= 4.0.0-RC1, <= 4.4.5|>= 4.0.0-RC1, <= 4.4.6|<=3.8.5|>=4,<4.4.6|>= 4.0.0-RC1, < 4.4.6|>= 4.0.0-RC1, < 4.3.7|>= 4.0.0-RC1, < 4.2.1",
                 "croogo/croogo": "<3.0.7",
                 "cuyz/valinor": "<0.12",
                 "czproject/git-php": "<4.0.3",
@@ -1886,7 +1886,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-05-22T21:04:18+00:00"
+            "time": "2023-05-26T14:04:17+00:00"
         },
         {
             "name": "sirbrillig/phpcs-variable-analysis",

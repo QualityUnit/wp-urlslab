@@ -50,12 +50,10 @@ class Urlslab_Redirects_Cron extends Urlslab_Cron {
 	}
 
 	private function init_content_client(): bool {
-		if ( empty( $this->content_client ) ) {
-			$api_key = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
-			if ( strlen( $api_key ) ) {
-				$config               = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-				$this->content_client = new ContentApi( new GuzzleHttp\Client(), $config );
-			}
+		if ( empty( $this->content_client ) && Urlslab_General::is_urlslab_active() ) {
+			$api_key              = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
+			$config               = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
+			$this->content_client = new ContentApi( new GuzzleHttp\Client(), $config );
 		}
 
 		return ! empty( $this->content_client );
@@ -88,6 +86,9 @@ class Urlslab_Redirects_Cron extends Urlslab_Cron {
 			}
 		} catch ( ApiException $e ) {
 			switch ( $e->getCode() ) {
+				case 402:
+					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+					//continue
 				case 429:
 					$url->set_status( Urlslab_Not_Found_Log_Row::STATUS_NEW );
 					$url->update();

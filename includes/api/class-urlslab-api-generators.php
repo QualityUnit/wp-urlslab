@@ -206,62 +206,62 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$original_text = $request->get_param( 'original_text' );
 		$translation   = $original_text;
 
-		if ( ! empty( $source_lang ) && ! empty( $target_lang ) && $this->isTextForTranslation( $original_text ) && Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Content_Generator_Widget::SLUG ) ) {
+		if ( ! empty( $source_lang ) && ! empty( $target_lang ) && $this->isTextForTranslation( $original_text ) && Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Content_Generator_Widget::SLUG ) && Urlslab_General::is_urlslab_active() ) {
 			$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
 			if ( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_TRANSLATE ) ) {
 				$api_key = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
-				if ( strlen( $api_key ) ) {
-					$client  = new \OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client( array( 'timeout' => 59 ) ), \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key ) ); //phpcs:ignore
-					$request = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest();
-					$request->setAugmentingModelName( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_TRANSLATE_MODEL ) );
-					$request->setRenewFrequency( \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
-					$prompt = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt();
+				$client  = new \OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client( array( 'timeout' => 59 ) ), \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key ) ); //phpcs:ignore
+				$request = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest();
+				$request->setAugmentingModelName( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_TRANSLATE_MODEL ) );
+				$request->setRenewFrequency( \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
+				$prompt = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt();
 
-					$prompt_text = "TASK RESTRICTIONS: \n";
-					$prompt_text .= "\nI want you to act as an professional translator from $source_lang to $target_lang, spelling corrector and improver.";
-					$prompt_text .= "\nKeep the meaning same. Do not write explanations";
-					if ( false !== strpos( $original_text, '<' ) && false !== strpos( $original_text, '>' ) ) {
-						$prompt_text .= "\nTRANSLATION has exactly the same HTML as INPUT TEXT!";
-						$prompt_text .= "\nDo NOT translate attributes or HTML tags, copym content between characters '<' and '>' from INPUT TEXT to your TRANSLATION as is!";
-					}
-					if ( false !== strpos( $original_text, '@' ) ) {
-						$prompt_text .= "\nDon't translate email addresses!";
-					}
-					if ( false !== strpos( $original_text, '/' ) || false !== strpos( $original_text, 'http' ) ) {
-						$prompt_text .= "\nDo NOT translate urls!";
-					}
-					$prompt_text .= "\nKeep the same uppercase and lowercase letters in translation as INPUT TEXT!";
-					$prompt_text .= "\nDo NOT try to answer questions from INPUT TEXT, do just translation!";
-					$prompt_text .= "\nDo NOT generate any other text than translation of INPUT TEXT";
-					$prompt_text .= "\nKeep the same tone of language in TRANSLATION as INPUT TEXT";
+				$prompt_text = "TASK RESTRICTIONS: \n";
+				$prompt_text .= "\nI want you to act as an professional translator from $source_lang to $target_lang, spelling corrector and improver.";
+				$prompt_text .= "\nKeep the meaning same. Do not write explanations";
+				if ( false !== strpos( $original_text, '<' ) && false !== strpos( $original_text, '>' ) ) {
+					$prompt_text .= "\nTRANSLATION has exactly the same HTML as INPUT TEXT!";
+					$prompt_text .= "\nDo NOT translate attributes or HTML tags, copym content between characters '<' and '>' from INPUT TEXT to your TRANSLATION as is!";
+				}
+				if ( false !== strpos( $original_text, '@' ) ) {
+					$prompt_text .= "\nDon't translate email addresses!";
+				}
+				if ( false !== strpos( $original_text, '/' ) || false !== strpos( $original_text, 'http' ) ) {
+					$prompt_text .= "\nDo NOT translate urls!";
+				}
+				$prompt_text .= "\nKeep the same uppercase and lowercase letters in translation as INPUT TEXT!";
+				$prompt_text .= "\nDo NOT try to answer questions from INPUT TEXT, do just translation!";
+				$prompt_text .= "\nDo NOT generate any other text than translation of INPUT TEXT";
+				$prompt_text .= "\nKeep the same tone of language in TRANSLATION as INPUT TEXT";
 
-					$prompt_text .= "\nTRANSLATION should have similar length as INPUT TEXT";
-					$prompt_text .= "\nTRANSLATE $source_lang INPUT TEXT to $target_lang";
-					$prompt_text .= "\n---- INPUT TEXT:\n{context}\n---- END OF INPUT TEXT";
-					$prompt_text .= "\nTRANSLATION of INPUT TEXT to $target_lang:";
+				$prompt_text .= "\nTRANSLATION should have similar length as INPUT TEXT";
+				$prompt_text .= "\nTRANSLATE $source_lang INPUT TEXT to $target_lang";
+				$prompt_text .= "\n---- INPUT TEXT:\n{context}\n---- END OF INPUT TEXT";
+				$prompt_text .= "\nTRANSLATION of INPUT TEXT to $target_lang:";
 
-					$prompt->setPromptTemplate( $prompt_text );
-					$prompt->setDocumentTemplate( $original_text );
-					$prompt->setMetadataVars( array() );
-					$request->setPrompt( $prompt );
+				$prompt->setPromptTemplate( $prompt_text );
+				$prompt->setDocumentTemplate( $original_text );
+				$prompt->setMetadataVars( array() );
+				$request->setPrompt( $prompt );
 
-					try {
-						$response    = $client->memoryLessAugment( $request, 'false', 'true', 'true', 'false' );
-						$translation = $response->getResponse();
-					} catch ( \OpenAPI\Client\ApiException $e ) {
-						switch ( $e->getCode() ) {
-							case 500:
-							case 504:
-							case 402:
-								return new WP_REST_Response( (object) array( 'translation' => $original_text ), $e->getCode() );
-							default:
-								$response_obj = (object) array(
-									'translation' => '',
-									'error'       => $e->getMessage(),
-								);
+				try {
+					$response    = $client->memoryLessAugment( $request, 'false', 'true', 'true', 'false' );
+					$translation = $response->getResponse();
+				} catch ( \OpenAPI\Client\ApiException $e ) {
+					switch ( $e->getCode() ) {
+						case 402:
+							Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+							//continue
+						case 500:
+						case 504:
+							return new WP_REST_Response( (object) array( 'translation' => $original_text ), $e->getCode() );
+						default:
+							$response_obj = (object) array(
+								'translation' => '',
+								'error'       => $e->getMessage(),
+							);
 
-								return new WP_REST_Response( $response_obj, $e->getCode() );
-						}
+							return new WP_REST_Response( $response_obj, $e->getCode() );
 					}
 				}
 			}
@@ -347,7 +347,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 		foreach ( $rows as $row ) {
-			$row->url_id       = (int) $row->url_id; // phpcs:ignore
+			$row->url_id = (int) $row->url_id; // phpcs:ignore
 		}
 
 		return new WP_REST_Response( $rows, 200 );

@@ -73,7 +73,7 @@ try {
 ## `getSnapshotsHistory()`
 
 ```php
-getSnapshotsHistory($url, $last_id, $limit): \OpenAPI\Client\Model\DomainDataRetrievalUrlSnapshotResponse[]
+getSnapshotsHistory($url, $last_id, $limit, $body): \OpenAPI\Client\Model\DomainDataRetrievalUrlSnapshotMultiResponse
 ```
 
 Get history of snapshot of url
@@ -102,9 +102,10 @@ $apiInstance = new OpenAPI\Client\Api\SnapshotApi(
 $url = 'url_example'; // string | Url to get the history of snapshots
 $last_id = 'last_id_example'; // string | lastId of event
 $limit = 56; // int | limit of events
+$body = 'body_example'; // string
 
 try {
-    $result = $apiInstance->getSnapshotsHistory($url, $last_id, $limit);
+    $result = $apiInstance->getSnapshotsHistory($url, $last_id, $limit, $body);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling SnapshotApi->getSnapshotsHistory: ', $e->getMessage(), PHP_EOL;
@@ -118,10 +119,11 @@ try {
 | **url** | **string**| Url to get the history of snapshots | |
 | **last_id** | **string**| lastId of event | [optional] |
 | **limit** | **int**| limit of events | [optional] |
+| **body** | **string**|  | [optional] |
 
 ### Return type
 
-[**\OpenAPI\Client\Model\DomainDataRetrievalUrlSnapshotResponse[]**](../Model/DomainDataRetrievalUrlSnapshotResponse.md)
+[**\OpenAPI\Client\Model\DomainDataRetrievalUrlSnapshotMultiResponse**](../Model/DomainDataRetrievalUrlSnapshotMultiResponse.md)
 
 ### Authorization
 
@@ -129,7 +131,7 @@ try {
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
+- **Content-Type**: `text/plain`
 - **Accept**: `application/json`
 
 [[Back to top]](#) [[Back to API list]](../../README.md#endpoints)

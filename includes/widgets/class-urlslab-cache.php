@@ -17,7 +17,8 @@ class Urlslab_Cache extends Urlslab_Widget {
 	const SETTING_NAME_CLOUDFRONT_PATTERN_DROP = 'urlslab-cloudfront-pattern-drop';
 	const SETTING_NAME_CLOUDFRONT_DISTRIBUTION_ID = 'urlslab-cloudfront-distribution-id';
 	const SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS = 'urlslab-cloudfront-distributions';
-	const SETTING_NAME_PAGE_INVALIDATE_ON_SAVE = 'urlslab-cache-pg-save-inv';
+	const SETTING_NAME_DEFAULT_CACHE_TTL = 'urlslab-cache-default-ttl';
+	const SETTING_NAME_FORCE_SHORT_TTL = 'urlslab-cache-force-short-ttl';
 	private static bool $cache_started = false;
 	private static bool $cache_enabled = false;
 	private static Urlslab_Cache_Rule_Row $active_rule;
@@ -59,6 +60,23 @@ class Urlslab_Cache extends Urlslab_Widget {
 		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
 			return false;
 		}
+
+		if ( $this->get_option( self::SETTING_NAME_FORCE_SHORT_TTL ) ) {
+			$last_modified = get_the_modified_time( 'U' );
+			if ( is_numeric( $last_modified ) && $last_modified && $last_modified > time() - 60 * 60 * 24 ) {
+				self::$active_rule = new Urlslab_Cache_Rule_Row(
+					array(
+						'match_type' => Urlslab_Cache_Rule_Row::MATCH_TYPE_ALL_PAGES,
+						'is_active'  => Urlslab_Cache_Rule_Row::ACTIVE_YES,
+						'cache_ttl'  => $this->get_option( self::SETTING_NAME_FORCE_SHORT_TTL ),
+						'valid_from' => time() - $this->get_option( self::SETTING_NAME_FORCE_SHORT_TTL ) - 5,
+					)
+				);
+
+				return true;
+			}
+		}
+
 		try {
 			$rules = $this->get_cache_rules();
 			$url   = $this->get_current_page_url();
@@ -70,6 +88,19 @@ class Urlslab_Cache extends Urlslab_Widget {
 				}
 			}
 		} catch ( Exception $e ) {
+		}
+
+		if ( $this->get_option( self::SETTING_NAME_DEFAULT_CACHE_TTL ) > 0 ) {
+			self::$active_rule = new Urlslab_Cache_Rule_Row(
+				array(
+					'match_type' => Urlslab_Cache_Rule_Row::MATCH_TYPE_ALL_PAGES,
+					'is_active'  => Urlslab_Cache_Rule_Row::ACTIVE_YES,
+					'cache_ttl'  => $this->get_option( self::SETTING_NAME_DEFAULT_CACHE_TTL ),
+					'valid_from' => time() - $this->get_option( self::SETTING_NAME_DEFAULT_CACHE_TTL ) - 5,
+				)
+			);
+
+			return true;
 		}
 
 		return false;
@@ -176,6 +207,34 @@ class Urlslab_Cache extends Urlslab_Widget {
 			null,
 			'page'
 		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_DEFAULT_CACHE_TTL,
+			3600,
+			true,
+			__( 'Default cache validity (TTL)' ),
+			__( 'If no cache rule is applied, you can define default time to live for cache object. If it is set to 0, we don\'t add the cache header' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $param ) {
+				return is_numeric( $param ) || empty( $param );
+			},
+			'page'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_FORCE_SHORT_TTL,
+			900,
+			true,
+			__( 'Force short cache life for new/modified content (Seconds)' ),
+			__( 'Common way how to release the post is to publish it and than modify content in many iterations until it is perfect. This option allows you to set time to live for cache objects of recently (last 24h) modified post. If set to 0 or empty, setting is not applied. Setting overwrites other cache rules.' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $param ) {
+				return is_numeric( $param ) || empty( $param );
+			},
+			'page'
+		);
+
 		$this->add_option_definition(
 			self::SETTING_NAME_RULES_VALID_FROM,
 			0,

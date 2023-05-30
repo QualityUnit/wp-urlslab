@@ -318,8 +318,8 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		$max_count    = (int) $api_request->get_param( 'count' );
 
 		try {
-			if ( ! strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) ) ) {
-				throw new Exception( 'API key is not set' );
+			if ( ! Urlslab_General::is_urlslab_active() ) {
+				throw new Exception( 'API key is not set or no credits.' );
 			}
 
 

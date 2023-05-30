@@ -75,7 +75,7 @@ class SnapshotApi
             'application/json',
         ],
         'getSnapshotsHistory' => [
-            'application/json',
+            'text/plain',
         ],
     ];
 
@@ -420,15 +420,16 @@ class SnapshotApi
      * @param  string $url Url to get the history of snapshots (required)
      * @param  string $last_id lastId of event (optional)
      * @param  int $limit limit of events (optional)
+     * @param  string $body body (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSnapshotsHistory'] to see the possible values for this operation
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return \OpenAPI\Client\Model\DomainDataRetrievalUrlSnapshotResponse[]
+     * @return \OpenAPI\Client\Model\DomainDataRetrievalUrlSnapshotMultiResponse
      */
-    public function getSnapshotsHistory($url, $last_id = null, $limit = null, string $contentType = self::contentTypes['getSnapshotsHistory'][0])
+    public function getSnapshotsHistory($url, $last_id = null, $limit = null, $body = null, string $contentType = self::contentTypes['getSnapshotsHistory'][0])
     {
-        list($response) = $this->getSnapshotsHistoryWithHttpInfo($url, $last_id, $limit, $contentType);
+        list($response) = $this->getSnapshotsHistoryWithHttpInfo($url, $last_id, $limit, $body, $contentType);
         return $response;
     }
 
@@ -440,15 +441,16 @@ class SnapshotApi
      * @param  string $url Url to get the history of snapshots (required)
      * @param  string $last_id lastId of event (optional)
      * @param  int $limit limit of events (optional)
+     * @param  string $body (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSnapshotsHistory'] to see the possible values for this operation
      *
      * @throws \OpenAPI\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
-     * @return array of \OpenAPI\Client\Model\DomainDataRetrievalUrlSnapshotResponse[], HTTP status code, HTTP response headers (array of strings)
+     * @return array of \OpenAPI\Client\Model\DomainDataRetrievalUrlSnapshotMultiResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getSnapshotsHistoryWithHttpInfo($url, $last_id = null, $limit = null, string $contentType = self::contentTypes['getSnapshotsHistory'][0])
+    public function getSnapshotsHistoryWithHttpInfo($url, $last_id = null, $limit = null, $body = null, string $contentType = self::contentTypes['getSnapshotsHistory'][0])
     {
-        $request = $this->getSnapshotsHistoryRequest($url, $last_id, $limit, $contentType);
+        $request = $this->getSnapshotsHistoryRequest($url, $last_id, $limit, $body, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -487,23 +489,23 @@ class SnapshotApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\OpenAPI\Client\Model\DomainDataRetrievalUrlSnapshotResponse[]' === '\SplFileObject') {
+                    if ('\OpenAPI\Client\Model\DomainDataRetrievalUrlSnapshotMultiResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\OpenAPI\Client\Model\DomainDataRetrievalUrlSnapshotResponse[]' !== 'string') {
+                        if ('\OpenAPI\Client\Model\DomainDataRetrievalUrlSnapshotMultiResponse' !== 'string') {
                             $content = json_decode($content);
                         }
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\OpenAPI\Client\Model\DomainDataRetrievalUrlSnapshotResponse[]', []),
+                        ObjectSerializer::deserialize($content, '\OpenAPI\Client\Model\DomainDataRetrievalUrlSnapshotMultiResponse', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
             }
 
-            $returnType = '\OpenAPI\Client\Model\DomainDataRetrievalUrlSnapshotResponse[]';
+            $returnType = '\OpenAPI\Client\Model\DomainDataRetrievalUrlSnapshotMultiResponse';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -524,7 +526,7 @@ class SnapshotApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\OpenAPI\Client\Model\DomainDataRetrievalUrlSnapshotResponse[]',
+                        '\OpenAPI\Client\Model\DomainDataRetrievalUrlSnapshotMultiResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -542,14 +544,15 @@ class SnapshotApi
      * @param  string $url Url to get the history of snapshots (required)
      * @param  string $last_id lastId of event (optional)
      * @param  int $limit limit of events (optional)
+     * @param  string $body (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSnapshotsHistory'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getSnapshotsHistoryAsync($url, $last_id = null, $limit = null, string $contentType = self::contentTypes['getSnapshotsHistory'][0])
+    public function getSnapshotsHistoryAsync($url, $last_id = null, $limit = null, $body = null, string $contentType = self::contentTypes['getSnapshotsHistory'][0])
     {
-        return $this->getSnapshotsHistoryAsyncWithHttpInfo($url, $last_id, $limit, $contentType)
+        return $this->getSnapshotsHistoryAsyncWithHttpInfo($url, $last_id, $limit, $body, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -565,15 +568,16 @@ class SnapshotApi
      * @param  string $url Url to get the history of snapshots (required)
      * @param  string $last_id lastId of event (optional)
      * @param  int $limit limit of events (optional)
+     * @param  string $body (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSnapshotsHistory'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getSnapshotsHistoryAsyncWithHttpInfo($url, $last_id = null, $limit = null, string $contentType = self::contentTypes['getSnapshotsHistory'][0])
+    public function getSnapshotsHistoryAsyncWithHttpInfo($url, $last_id = null, $limit = null, $body = null, string $contentType = self::contentTypes['getSnapshotsHistory'][0])
     {
-        $returnType = '\OpenAPI\Client\Model\DomainDataRetrievalUrlSnapshotResponse[]';
-        $request = $this->getSnapshotsHistoryRequest($url, $last_id, $limit, $contentType);
+        $returnType = '\OpenAPI\Client\Model\DomainDataRetrievalUrlSnapshotMultiResponse';
+        $request = $this->getSnapshotsHistoryRequest($url, $last_id, $limit, $body, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -617,12 +621,13 @@ class SnapshotApi
      * @param  string $url Url to get the history of snapshots (required)
      * @param  string $last_id lastId of event (optional)
      * @param  int $limit limit of events (optional)
+     * @param  string $body (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getSnapshotsHistory'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getSnapshotsHistoryRequest($url, $last_id = null, $limit = null, string $contentType = self::contentTypes['getSnapshotsHistory'][0])
+    public function getSnapshotsHistoryRequest($url, $last_id = null, $limit = null, $body = null, string $contentType = self::contentTypes['getSnapshotsHistory'][0])
     {
 
         // verify the required parameter 'url' is set
@@ -631,6 +636,7 @@ class SnapshotApi
                 'Missing the required parameter $url when calling getSnapshotsHistory'
             );
         }
+
 
 
 
@@ -680,7 +686,14 @@ class SnapshotApi
         );
 
         // for model (json/xml)
-        if (count($formParams) > 0) {
+        if (isset($body)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($body));
+            } else {
+                $httpBody = $body;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
