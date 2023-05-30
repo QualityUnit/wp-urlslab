@@ -474,8 +474,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	}
 
 	public function get_url_changes( WP_REST_Request $request ) {
-		if ( ! strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) ) ) {
-			return new WP_Error( 'error', __( 'Api key not configured', 'urlslab' ), array( 'status' => 400 ) );
+		if ( ! Urlslab_General::is_urlslab_active() ) {
+			return new WP_Error( 'error', __( 'Api key not set or no credits', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		$url_obj = new Urlslab_Url_Row( array( 'url_id' => $request->get_param( 'url_id' ) ) );
@@ -495,19 +495,19 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			$rows = array();
 
 			foreach ( $snapshots->getSnapshots() as $snapshot ) {
-				$row = array();
-				$row['last_seen'] = $snapshot->getSnapshotId();
-				$row['url'] = $snapshot->getUrl();
-				$row['url_id'] = $snapshot->getUrlId();
-				$row['is_changed'] = $snapshot->getIsChanged();
-				$row['domain_id'] = $snapshot->getDomainId();
-				$row['requests'] = $snapshot->getNumberOfSubRequests();
+				$row                  = array();
+				$row['last_seen']     = $snapshot->getSnapshotId();
+				$row['url']           = $snapshot->getUrl();
+				$row['url_id']        = $snapshot->getUrlId();
+				$row['is_changed']    = $snapshot->getIsChanged();
+				$row['domain_id']     = $snapshot->getDomainId();
+				$row['requests']      = $snapshot->getNumberOfSubRequests();
 				$row['load_duration'] = $snapshot->getPageLoadDuration();
-				$row['page_size'] = $snapshot->getPageSize();
-				$row['last_changed'] = $snapshot->getScreenshotKey();
-				$row['word_count'] = $snapshot->getWordCount();
-				$row['status_code'] = $snapshot->getStatusCode();
-				$rows[] = (object) $row;
+				$row['page_size']     = $snapshot->getPageSize();
+				$row['last_changed']  = $snapshot->getScreenshotKey();
+				$row['word_count']    = $snapshot->getWordCount();
+				$row['status_code']   = $snapshot->getStatusCode();
+				$rows[]               = (object) $row;
 			}
 
 			return new WP_REST_Response( $rows, 200 );

@@ -55,6 +55,10 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 					$youtube_obj->update();
 				}
 			} catch ( \OpenAPI\Client\ApiException $e ) {
+				if ( 402 === $e->getCode() ) {
+					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+				}
+
 				return false;
 			} catch ( Exception $e ) {
 				return false;
@@ -77,6 +81,10 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 					return true;
 				}
 			} catch ( \OpenAPI\Client\ApiException $e ) {
+				if ( 402 === $e->getCode() ) {
+					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+				}
+
 				return false;
 			}
 		}
@@ -96,11 +104,8 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 	}
 
 	private function init_client(): bool {
-		if ( ! empty( $this->content_client ) ) {
-			return true;
-		}
-		$api_key = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
-		if ( strlen( $api_key ) ) {
+		if ( empty( $this->content_client ) && Urlslab_General::is_urlslab_active() ) {
+			$api_key              = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
 			$config               = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
 			$this->content_client = new \OpenAPI\Client\Urlslab\VideoApi( new GuzzleHttp\Client(), $config );
 		}

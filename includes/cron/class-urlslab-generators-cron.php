@@ -173,6 +173,13 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 						break;
 					}
 				case 402:
+					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+					$row_obj->set_status( Urlslab_Generator_Result_Row::STATUS_PENDING );
+					$row_obj->set_result( 'No credits, retrying later...' );
+					$row_obj->update();
+
+					return false;
+
 				default:
 					$row_obj->set_status( Urlslab_Generator_Result_Row::STATUS_DISABLED );
 					$row_obj->set_result( $e->getMessage() );
@@ -186,8 +193,8 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 	}
 
 	private function init_client(): bool {
-		$api_key = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
-		if ( strlen( $api_key ) ) {
+		if ( empty( $this->content_client ) && Urlslab_General::is_urlslab_active() ) {
+			$api_key              = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
 			$config               = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
 			$this->content_client = new ContentApi( new GuzzleHttp\Client(), $config );
 		}

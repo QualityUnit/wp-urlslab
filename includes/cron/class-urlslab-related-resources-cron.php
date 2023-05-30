@@ -49,13 +49,10 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 	}
 
 	private function init_content_client(): bool {
-		if ( empty( $this->content_client ) ) {
-			$api_key = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
-			if ( strlen( $api_key ) ) {
-				$config
-									  = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-				$this->content_client = new ContentApi( new GuzzleHttp\Client(), $config );
-			}
+		if ( empty( $this->content_client ) && Urlslab_General::is_urlslab_active() ) {
+			$api_key              = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
+			$config               = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
+			$this->content_client = new ContentApi( new GuzzleHttp\Client(), $config );
 		}
 
 		return ! empty( $this->content_client );
@@ -145,6 +142,13 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 					$url->update();
 
 					return true;
+
+				case 402:
+					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+					$url->set_rel_schedule( Urlslab_Url_Row::REL_SCHEDULE_NEW );
+					$url->update();
+
+					return false;
 
 				default:
 					return false;
