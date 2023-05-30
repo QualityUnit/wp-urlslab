@@ -50,11 +50,9 @@ export default function ContentCacheTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				slug={ slug }
-				header={ header }
 				table={ table }
-				hideActions
 				onFilter={ ( filter ) => setFilters( filter ) }
+				options={ { header, slug, data, paginationId } }
 			/>
 			<Table className="fadeInto" columns={ columns }
 				slug={ slug }

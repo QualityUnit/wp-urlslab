@@ -82,14 +82,13 @@ export default function CSSCacheTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				slug={ slug }
-				header={ header }
 				table={ table }
 				noExport
 				noImport
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
+				options={ { header, slug, data, paginationId, url } }
 			/>
 			<Table className="fadeInto" columns={ columns }
 				slug={ slug }

@@ -5,6 +5,7 @@ import {
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
+import useTablePanels from '../hooks/useTablePanels';
 
 export default function ScreenshotTable( { slug } ) {
 	const paginationId = 'url_id';
@@ -12,7 +13,6 @@ export default function ScreenshotTable( { slug } ) {
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 
 	const url = { filters, sorting };
-	const [ detailsOptions, setDetailsOptions ] = useState( null );
 	const [ tooltipUrl, setTooltipUrl ] = useState( );
 
 	const {
@@ -28,6 +28,9 @@ export default function ScreenshotTable( { slug } ) {
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
 	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+
+	const { activatePanel, setOptions } = useTablePanels();
+	const options = useTablePanels( ( state ) => state.options );
 
 	const scrStatusTypes = {
 		N: __( 'Waiting' ),
@@ -94,12 +97,15 @@ export default function ScreenshotTable( { slug } ) {
 			cell: ( cell ) => <div className="flex flex-align-center">
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
-				<button className="ml-s" onClick={ () => setDetailsOptions( {
-					title: `Screenshot used on these URLs`, slug, url: `${ cell.row.original.url_id }/linked-from`, showKeys: [ 'src_url_name' ], listId: 'src_url_id',
-				} ) }>
-					<LinkIcon />
-					<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
-				</button>
+					<button className="ml-s" onClick={ () => {
+						setOptions( { ...options, detailsOptions: {
+							title: `Screenshot used on these URLs`, slug, url: `${ cell.row.original.url_id }/linked-from`, showKeys: [ 'src_url_name' ], listId: 'src_url_id',
+						} } );
+						activatePanel( 'details' );
+					} }>
+						<LinkIcon />
+						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
+					</button>
 				}
 			</div>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.screenshot_usage_count }</SortBy>,
@@ -126,16 +132,14 @@ export default function ScreenshotTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				slug={ slug }
-				header={ header }
 				table={ table }
 				selectedRows={ selectedRows }
 				noImport
 				onDeleteSelected={ () => deleteSelectedRows( { id: 'url_title' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onUpdate={ () => setDetailsOptions() }
-				detailsOptions={ detailsOptions }
-				exportOptions={ {
+				options={ {
+					header,
+					data,
 					slug,
 					url,
 					paginationId,

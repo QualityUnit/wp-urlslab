@@ -22,6 +22,7 @@ import { ReactComponent as AcceptIcon } from '../assets/images/icons/icon-activa
 import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
+import useTablePanels from '../hooks/useTablePanels';
 
 export default function GeneratorShortcodeTable( { slug } ) {
 	const paginationId = 'shortcode_id';
@@ -62,7 +63,10 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, paginationId, filters, sorting } );
 
-	const { selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+
+	const { activatePanel, setRowToEdit } = useTablePanels();
+	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const statusTypes = {
 		A: __( 'Active' ),
@@ -97,21 +101,21 @@ export default function GeneratorShortcodeTable( { slug } ) {
 
 	const rowEditorCells = {
 		shortcode_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'In case of video context type, Semantic search query should contain YouTube videoid or YoutTube video url.' ) }
-			items={ shortcodeTypeTypes } name="shortcode_type" defaultValue="S" onChange={ ( val ) => setEditorRow( { ...rowToEdit, shortcode_type: val } ) }>{ header.shortcode_type }</SingleSelectMenu>,
+			items={ shortcodeTypeTypes } name="shortcode_type" defaultValue="S" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, shortcode_type: val } ) }>{ header.shortcode_type }</SingleSelectMenu>,
 
 		prompt: <TextArea rows="5" description={ ( supported_variables_description ) }
-			liveUpdate defaultValue="" label={ header.prompt } onChange={ ( val ) => setEditorRow( { ...rowToEdit, prompt: val } ) } />,
+			liveUpdate defaultValue="" label={ header.prompt } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, prompt: val } ) } />,
 
 		semantic_context: <InputField liveUpdate description={ ( supported_variables_description + ' ' + __( 'In case of video context type, Semantic search query should contain youtube videoid: {{videoid}}.' ) ) }
-			defaultValue="" label={ header.semantic_context } onChange={ ( val ) => setEditorRow( { ...rowToEdit, semantic_context: val } ) } hidden={ rowToEdit?.shortcode_type === 'V' } />,
+			defaultValue="" label={ header.semantic_context } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, semantic_context: val } ) } hidden={ rowToEdit?.shortcode_type === 'V' } />,
 
-		url_filter: <InputField liveUpdate defaultValue="" description={ __( 'Recommended variables: {{page_url}} if you need to generate data from current url. {{domain}} if you need to generate data from any semanticaly relevant page in your domain. Fixed url if you need to generate data from fixed url (e.g. http://wikipedia.com/anything). {{custom_url_attribute_name}} if you pass your custom attribute to shortcode in html template.' ) } label={ header.url_filter } onChange={ ( val ) => setEditorRow( { ...rowToEdit, url_filter: val } ) } hidden={ rowToEdit?.shortcode_type === 'V' } />,
+		url_filter: <InputField liveUpdate defaultValue="" description={ __( 'Recommended variables: {{page_url}} if you need to generate data from current url. {{domain}} if you need to generate data from any semanticaly relevant page in your domain. Fixed url if you need to generate data from fixed url (e.g. http://wikipedia.com/anything). {{custom_url_attribute_name}} if you pass your custom attribute to shortcode in html template.' ) } label={ header.url_filter } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_filter: val } ) } hidden={ rowToEdit?.shortcode_type === 'V' } />,
 
-		default_value: <InputField liveUpdate description={ __( 'Put here the text, which shoould be displayed in shortcode until Urlslab generates text from your prompt. Leave empty if you do not want to display shortcode until the text is generated' ) } defaultValue="" label={ header.default_value } onChange={ ( val ) => setEditorRow( { ...rowToEdit, default_value: val } ) } />,
+		default_value: <InputField liveUpdate description={ __( 'Put here the text, which shoould be displayed in shortcode until Urlslab generates text from your prompt. Leave empty if you do not want to display shortcode until the text is generated' ) } defaultValue="" label={ header.default_value } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, default_value: val } ) } />,
 
-		template: <Editor description={ ( supported_variables_description + __( ' Value of generated text can be accessed in template by variable {{value}} or if generator generated json {{json_value.attribute_name}}' ) ) } defaultValue="{{value}}" label={ header.template } onChange={ ( val ) => setEditorRow( { ...rowToEdit, template: val } ) } />,
+		template: <Editor description={ ( supported_variables_description + __( ' Value of generated text can be accessed in template by variable {{value}} or if generator generated json {{json_value.attribute_name}}' ) ) } defaultValue="{{value}}" label={ header.template } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, template: val } ) } />,
 
-		model: <SingleSelectMenu defaultAccept autoClose items={ modelTypes } name="model" defaultValue={ ( 'gpt-3.5-turbo' ) } onChange={ ( val ) => setEditorRow( { ...rowToEdit, model: val } ) }>{ header.model }</SingleSelectMenu>,
+		model: <SingleSelectMenu defaultAccept autoClose items={ modelTypes } name="model" defaultValue={ ( 'gpt-3.5-turbo' ) } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, model: val } ) }>{ header.model }</SingleSelectMenu>,
 	};
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -195,8 +199,8 @@ export default function GeneratorShortcodeTable( { slug } ) {
 					<div className="flex">
 						<IconButton
 							onClick={ () => {
-								setActivePanel( 'rowEditor' );
 								updateRow( { cell } );
+								activatePanel( 'rowEditor' );
 							} }
 							tooltipClass="align-left xxxl"
 							tooltip={ __( 'Edit row' ) }
@@ -226,25 +230,12 @@ export default function GeneratorShortcodeTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				slug={ slug }
-				header={ header }
 				table={ table }
 				noImport
 				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onUpdate={ ( ) => {
-					setActivePanel();
-					setEditorRow();
-				} }
-				activatePanel={ activePanel }
-				rowEditorOptions={ { rowEditorCells, title: 'Add New Shortcode', data, slug, url, paginationId, rowToEdit } }
-				exportOptions={ {
-					slug,
-					url,
-					paginationId,
-					deleteCSVCols: [ paginationId ],
-				} }
+				options={ { header, rowEditorCells, rowToEdit, title: 'Add New Shortcode', data, slug, url, paginationId, deleteCSVCols: [ paginationId ] } }
 			/>
 			<Table className="fadeInto"
 				slug={ slug }

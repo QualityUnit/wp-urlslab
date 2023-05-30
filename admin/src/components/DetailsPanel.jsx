@@ -6,20 +6,20 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import { postFetch } from '../api/fetching';
 import useCloseModal from '../hooks/useCloseModal';
+import useTablePanels from '../hooks/useTablePanels';
 import Button from '../elements/Button';
 import ProgressBar from '../elements/ProgressBar';
 import DateTimeFormat from '../elements/DateTimeFormat';
 import Loader from './Loader';
 
-export default function DetailsPanel( { options, handlePanel } ) {
+export default function DetailsPanel( ) {
 	const maxRows = 150;
 	const { __ } = useI18n();
 	const { ref, inView } = useInView();
 	const tableContainerRef = useRef();
-	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
+	const { CloseIcon, handleClose } = useCloseModal( );
+	const { title, text, slug, url, showKeys, listId } = useTablePanels( ( state ) => state.options.detailsOptions );
 	const tbody = [];
-
-	const { title, text, slug, url, showKeys, listId } = options;
 
 	const parseDate = ( row, key ) => {
 		const dateKeys = [ 'created' ]; // Insert other keys with date, ie. 'modified' if needed
@@ -106,19 +106,12 @@ export default function DetailsPanel( { options, handlePanel } ) {
 		}
 	}, [ inView, fetchNextPage ] );
 
-	function hidePanel() {
-		handleClose();
-		if ( handlePanel ) {
-			handlePanel();
-		}
-	}
-
 	return (
 		<div className="urlslab-panel-wrap wide urlslab-panel-modal fadeInto">
 			<div className="urlslab-panel Details">
 				<div className="urlslab-panel-header">
 					<h3>{ title }</h3>
-					<button className="urlslab-panel-close" onClick={ hidePanel }>
+					<button className="urlslab-panel-close" onClick={ handleClose }>
 						<CloseIcon />
 					</button>
 					<p>{ text }</p>
@@ -152,7 +145,7 @@ export default function DetailsPanel( { options, handlePanel } ) {
 						</div>
 					</div>
 					<div className="flex">
-						<Button className="ma-left" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
+						<Button className="ma-left" onClick={ handleClose }>{ __( 'Cancel' ) }</Button>
 					</div>
 				</div>
 			</div>

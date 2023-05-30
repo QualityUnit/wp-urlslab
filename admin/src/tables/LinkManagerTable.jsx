@@ -1,17 +1,15 @@
-import { useState } from 'react';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, LinkIcon, Trash, SingleSelectMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
+import useTablePanels from '../hooks/useTablePanels';
 
 export default function LinkManagerTable( { slug } ) {
 	const paginationId = 'url_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const url = { filters, sorting };
-
-	const [ detailsOptions, setDetailsOptions ] = useState( null );
 
 	const {
 		__,
@@ -26,6 +24,9 @@ export default function LinkManagerTable( { slug } ) {
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
 	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+
+	const { activatePanel, setOptions } = useTablePanels();
+	const options = useTablePanels( ( state ) => state.options );
 
 	const httpStatusTypes = {
 		'-2': __( 'Processing' ),
@@ -126,9 +127,13 @@ export default function LinkManagerTable( { slug } ) {
 			cell: ( cell ) => <div className="flex flex-align-center">
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
-					<button className="ml-s" onClick={ () => setDetailsOptions( {
-						title: `Outgoing Links`, text: `From: ${ cell.row.original.url_name }`, slug, url: `${ cell.row.original.url_id }/links`, showKeys: [ 'dest_url_name' ], listId: 'dest_url_id',
-					} ) }>
+					<button className="ml-s" onClick={ () => {
+						setOptions( {
+							...options, detailsOptions: {
+								title: `Outgoing Links`, text: `From: ${ cell.row.original.url_name }`, slug, url: `${ cell.row.original.url_id }/links`, showKeys: [ 'dest_url_name' ], listId: 'dest_url_id',
+							} } );
+						activatePanel( 'details' );
+					} }>
 						<LinkIcon />
 						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
 					</button>
@@ -141,9 +146,14 @@ export default function LinkManagerTable( { slug } ) {
 			cell: ( cell ) => <div className="flex flex-align-center">
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
-					<button className="ml-s" onClick={ () => setDetailsOptions( {
-						title: `Link found in following pages`, text: `Link: ${ cell.row.original.url_name }`, slug, url: `${ cell.row.original.url_id }/linked-from`, showKeys: [ 'src_url_name' ], listId: 'src_url_id',
-					} ) }>
+					<button className="ml-s" onClick={ () => {
+						setOptions( {
+							...options, detailsOptions: {
+								title: `Link found in following pages`, text: `Link: ${ cell.row.original.url_name }`, slug, url: `${ cell.row.original.url_id }/linked-from`, showKeys: [ 'src_url_name' ], listId: 'src_url_id',
+							} } );
+						activatePanel( 'details' );
+					}
+					}>
 						<LinkIcon />
 						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
 					</button>
@@ -172,21 +182,13 @@ export default function LinkManagerTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				slug={ slug }
-				header={ header }
 				table={ table }
 				noImport
 				selectedRows={ selectedRows }
 				onDeleteSelected={ () => deleteSelectedRows( { id: 'url_name' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onUpdate={ () => {
-					setDetailsOptions();
-				} }
-				detailsOptions={ detailsOptions }
-				exportOptions={ {
-					slug,
-					url,
-					paginationId,
+				options={ {
+					header, data, slug, paginationId, url,
 					deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
 					perPage: 1000,
 				} }

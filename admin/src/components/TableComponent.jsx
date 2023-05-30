@@ -112,7 +112,7 @@ export default function Table( { slug, resizable, children, className, columns, 
 
 	return (
 		<div className="urlslab-table-container" ref={ tableContainerRef } style={ {
-			width: resizable ? `${ containerWidth }px` : 'auto',
+			width: `${ containerWidth }px`,
 			'--tableContainerWidth': `${ containerWidth }px`,
 		} }>
 			{ containerWidth

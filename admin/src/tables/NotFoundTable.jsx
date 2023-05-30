@@ -1,4 +1,4 @@
-import { useRef, useCallback, useState } from 'react';
+import { useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import {
@@ -8,6 +8,7 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
+import useTablePanels from '../hooks/useTablePanels';
 
 import BrowserIcon from '../elements/BrowserIcon';
 import { ReactComponent as PlusIcon } from '../assets/images/icons/icon-plus.svg';
@@ -35,9 +36,10 @@ export default function NotFoundTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
 
-	const { selectedRows, selectRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	const [ rowToEdit, setEditorRow ] = useState( {} ); // setting row state here due to updating value on rerender, causing sending wrong values from addRedirect function
+	const { activatePanel, setRowToEdit } = useTablePanels();
+	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const { redirectTypes, matchTypes, header: redirectHeader } = useRedirectTableMenus();
 
@@ -50,10 +52,10 @@ export default function NotFoundTable( { slug } ) {
 		}
 		matchUrlField.current = defaultMatchUrl;
 
-		setEditorRow( { match_type: 'E', redirect_code: '301', match_url: defaultMatchUrl, replace_url: replaceUrl.protocol + replaceUrl.hostname } );
+		setRowToEdit( { match_type: 'E', redirect_code: '301', match_url: defaultMatchUrl, replace_url: replaceUrl.protocol + replaceUrl.hostname } );
 
-		setActivePanel( 'rowInserter' );
-	}, [ setActivePanel, setEditorRow ] );
+		activatePanel( 'rowInserter' );
+	}, [ activatePanel, setRowToEdit ] );
 
 	const getUrlDomain = ( urlVar ) => {
 		try {
@@ -65,11 +67,11 @@ export default function NotFoundTable( { slug } ) {
 	};
 
 	const rowEditorCells = {
-		match_type: <SingleSelectMenu autoClose items={ matchTypes } name="match_type" defaultValue="E" onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_type: val } ) }>{ redirectHeader.match_type }</SingleSelectMenu>,
-		match_url: <InputField type="url" liveUpdate ref={ matchUrlField } defaultValue={ matchUrlField.current } label={ redirectHeader.match_url } onChange={ ( val ) => setEditorRow( { ...rowToEdit, match_url: val } ) } />,
-		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' } autoFocus liveUpdate defaultValue={ ( rowToEdit?.match_url ? getUrlDomain( rowToEdit?.match_url ) : window.location.origin ) } label={ redirectHeader.replace_url } onChange={ ( val ) => setEditorRow( { ...rowToEdit, replace_url: val } ) } required />,
-		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" defaultValue="301" onChange={ ( val ) => setEditorRow( { ...rowToEdit, redirect_code: val } ) }>{ redirectHeader.redirect_code }</SingleSelectMenu>,
-		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setEditorRow( { ...rowToEdit, labels: val } ) } />,
+		match_type: <SingleSelectMenu autoClose items={ matchTypes } name="match_type" defaultValue="E" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_type: val } ) }>{ redirectHeader.match_type }</SingleSelectMenu>,
+		match_url: <InputField type="url" liveUpdate ref={ matchUrlField } defaultValue={ matchUrlField.current } label={ redirectHeader.match_url } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_url: val } ) } />,
+		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' } autoFocus liveUpdate defaultValue={ ( rowToEdit?.match_url ? getUrlDomain( rowToEdit?.match_url ) : window.location.origin ) } label={ redirectHeader.replace_url } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, replace_url: val } ) } required />,
+		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" defaultValue="301" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, redirect_code: val } ) }>{ redirectHeader.redirect_code }</SingleSelectMenu>,
+		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
 	const header = {
@@ -157,31 +159,21 @@ export default function NotFoundTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				slug={ slug }
-				header={ header }
 				table={ table }
 				selectedRows={ selectedRows }
 				onDeleteSelected={ () => deleteSelectedRows( { id: 'url' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onUpdate={ ( val ) => {
-					setActivePanel();
-					setEditorRow();
-
 					if ( val === 'rowInserted' ) {
 						queryClient.invalidateQueries( [ 'redirects' ], { refetchType: 'all' } );
 					}
 				} }
 				noImport
 				noInsert
-				activatePanel={ activePanel }
-				rowEditorOptions={ {
+				options={ {
+					header,
 					rowEditorCells, title: 'Create redirect from this',
 					data, slug: 'redirects', url, paginationId: 'redirect_id', rowToEdit, id: 'url',
-				} }
-				exportOptions={ {
-					slug,
-					url,
-					paginationId,
 					deleteCSVCols: [ paginationId, 'dest_url_id' ],
 				} }
 			/>

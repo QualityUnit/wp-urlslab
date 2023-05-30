@@ -1,15 +1,18 @@
-import { useState, useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { get, set, del } from 'idb-keyval';
 import { useI18n } from '@wordpress/react-i18n';
+import useMainMenu from '../hooks/useMainMenu';
+
 import { ReactComponent as MenuArrow } from '../assets/images/arrow-simple.svg';
 import { ReactComponent as ModulesIcon } from '../assets/images/menu-icon-modules.svg';
 import { ReactComponent as SettingsIcon } from '../assets/images/menu-icon-settings.svg';
 import '../assets/styles/components/_MainMenu.scss';
 
-export default function MainMenu( { activeModule, modules, activePage, module } ) {
+export default function MainMenu( { modules } ) {
 	const { __ } = useI18n();
 	const mainmenu = useRef();
-	const [ activeId, setActive ] = useState( module || 'urlslab-modules' );
+
+	const { setActivePage, getActivePage, activePage } = useMainMenu();
 
 	const activeModules = modules?.length ? modules.filter( ( mod ) => mod.active ) : [];
 
@@ -32,26 +35,18 @@ export default function MainMenu( { activeModule, modules, activePage, module } 
 		if ( ! moduleId ) {
 			return '';
 		}
-		if ( moduleId === activeId || moduleId === activeModule ) {
+		if ( moduleId === activePage ) {
 			return 'active';
 		}
 	};
 
-	const handleActive = ( mod ) => {
-		setActive( mod );
-
-		if ( activePage ) {
-			activePage( mod );
-		}
-	};
-
 	useEffect( () => {
+		getActivePage();
 		get( 'urlslab-mainmenu' ).then( ( val ) => {
 			if ( val === 'open' || window.matchMedia( '(min-width: 1600px)' ).matches ) {
 				mainmenu.current.classList.add( 'open' );
 			}
-		}
-		);
+		} );
 	} );
 
 	return (
@@ -72,7 +67,7 @@ export default function MainMenu( { activeModule, modules, activePage, module } 
 						<button
 							type="button"
 							className="urlslab-mainmenu-btn has-icon"
-							onClick={ () => handleActive( 'urlslab-modules' ) }>
+							onClick={ () => setActivePage( 'urlslab-modules' ) }>
 							<ModulesIcon />
 							<span>{ __( 'Modules' ) }</span>
 						</button>
@@ -84,7 +79,7 @@ export default function MainMenu( { activeModule, modules, activePage, module } 
 								<button
 									type="button"
 									className="urlslab-mainmenu-btn"
-									onClick={ () => handleActive( 'urlslab-modules' ) }>
+									onClick={ () => setActivePage( 'urlslab-modules' ) }>
 									<span>{ __( 'All modules' ) }</span>
 								</button>
 							</li>
@@ -96,7 +91,7 @@ export default function MainMenu( { activeModule, modules, activePage, module } 
 												<button
 													type="button"
 													className="urlslab-mainmenu-btn"
-													onClick={ () => handleActive( modul.id ) }>
+													onClick={ () => setActivePage( modul.id ) }>
 													<span>{ modul.title }</span>
 												</button>
 											</li>
@@ -113,7 +108,7 @@ export default function MainMenu( { activeModule, modules, activePage, module } 
 						<button
 							type="button"
 							className="urlslab-mainmenu-btn has-icon"
-							onClick={ () => handleActive( 'urlslab-settings' ) }>
+							onClick={ () => setActivePage( 'urlslab-settings' ) }>
 							<SettingsIcon />
 							<span>{ __( 'Settings' ) }</span>
 						</button>
@@ -126,7 +121,7 @@ export default function MainMenu( { activeModule, modules, activePage, module } 
 								<button
 									type="button"
 									className="urlslab-mainmenu-btn"
-									onClick={ () => handleActive( 'urlslab-settings' ) }>
+									onClick={ () => setActivePage( 'urlslab-settings' ) }>
 									<span>{ __( 'General settings' ) }</span>
 								</button>
 							</li>
@@ -135,7 +130,7 @@ export default function MainMenu( { activeModule, modules, activePage, module } 
 								<button
 									type="button"
 									className="urlslab-mainmenu-btn"
-									onClick={ () => handleActive( 'urlslab-schedule' ) }>
+									onClick={ () => setActivePage( 'urlslab-schedule' ) }>
 									<span>{ __( 'Schedules' ) }</span>
 								</button>
 							</li>
@@ -144,7 +139,7 @@ export default function MainMenu( { activeModule, modules, activePage, module } 
 								<button
 									type="button"
 									className="urlslab-mainmenu-btn"
-									onClick={ () => handleActive( 'TagsLabels' ) }>
+									onClick={ () => setActivePage( 'TagsLabels' ) }>
 									<span>{ __( 'Tags' ) }</span>
 								</button>
 							</li>

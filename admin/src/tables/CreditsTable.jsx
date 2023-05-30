@@ -68,13 +68,12 @@ export default function CreditsTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				slug={ slug }
-				header={ header }
 				table={ table }
 				noFiltering
 				noCount
 				noExport
 				noDelete
+				options={ { header, slug, data, paginationId } }
 			/>
 			<Table className="noHeightLimit fadeInto"
 				slug={ slug }

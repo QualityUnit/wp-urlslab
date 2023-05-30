@@ -1,22 +1,22 @@
-import { useRef, useMemo, useState } from 'react';
+import { useMemo, useRef } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import useChangeRow from '../hooks/useChangeRow';
 import useCloseModal from '../hooks/useCloseModal';
+
 import Button from '../elements/Button';
 
-export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
+export default function EditRowPanel( props ) {
+	const { editorMode, rowEditorCells, rowToEdit, notWide, data, slug, paginationId, title, text, id, handlePanel } = props;
 	const { __ } = useI18n();
 	const enableAddButton = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
-
-	const { editorMode, rowEditorCells, notWide, title, text, data, slug, url, paginationId, rowToEdit, id } = rowEditorOptions || {};
 	const flattenedData = data?.pages?.flatMap( ( page ) => page ?? [] );
-	const { insertRow, saveEditedRow } = useChangeRow( { data: flattenedData, url, slug, paginationId } );
-	const requiredFields = rowEditorCells && Object.keys( rowEditorCells ).filter( ( cell ) => rowEditorCells[ cell ].props.required === true );
+	const { insertRow, saveEditedRow } = useChangeRow( { data: flattenedData, url: { filters: {}, sortBy: [] }, slug, paginationId } );
+
+	const requiredFields = rowEditorCells && Object.keys( rowEditorCells ).filter( ( cell ) => rowEditorCells[ cell ]?.props.required === true );
 
 	let cellsFinal = { ...rowEditorCells };
-	const [ editMode ] = useState( rowToEdit && editorMode );
 
 	const rowToEditWithDefaults = useMemo( () => {
 		let defaults = { ...rowToEdit };
@@ -39,7 +39,7 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 		enableAddButton.current = false;
 	}
 
-	if ( editMode ) {
+	if ( editorMode ) {
 		enableAddButton.current = true;
 		Object.entries( cellsFinal ).map( ( [ cellId, cell ] ) => {
 			const cellProps = cell.props;
@@ -61,7 +61,7 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 	}
 
 	function handleEdit() {
-		if ( editMode ) {
+		if ( editorMode ) {
 			hidePanel( 'rowChanged' );
 			saveEditedRow( { editedRow: rowToEdit, id } );
 			return false;
@@ -74,7 +74,7 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 		<div className={ `urlslab-panel-wrap urlslab-panel-modal ${ ! notWide ? 'ultrawide' : '' } fadeInto` }>
 			<div className="urlslab-panel">
 				<div className="urlslab-panel-header">
-					<h3>{ editMode ? 'Edit row' : title }</h3>
+					<h3>{ editorMode ? 'Edit row' : title }</h3>
 					<button className="urlslab-panel-close" onClick={ hidePanel }>
 						<CloseIcon />
 					</button>
@@ -92,7 +92,7 @@ export default function EditRowPanel( { rowEditorOptions, handlePanel } ) {
 				<div className="flex ">
 					<Button className="ma-left mr-s" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
 					<Button active disabled={ ! enableAddButton.current } onClick={ handleEdit }>
-						{ editMode
+						{ editorMode
 							? __( 'Save changes' )
 							: title
 						}

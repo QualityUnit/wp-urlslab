@@ -1,25 +1,25 @@
-import { Suspense, useContext, useCallback, useEffect, useState } from 'react';
+import { memo, Suspense, useCallback, useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { postFetch } from '../api/fetching';
 import useResizeObserver from '../hooks/useResizeObserver';
-import HeaderHeightContext from '../lib/headerHeightContext';
+import useHeaderHeight from '../hooks/useHeaderHeight';
+import useMainMenu from '../hooks/useMainMenu';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import NoAPIkey from './NoAPIkey';
 import CronRunner from './CronRunner';
+import Credits from './Credits';
 import Tag from '../elements/Tag';
 
-import { ReactComponent as Loader } from '../assets/images/icons/icon-loading-input.svg';
 import { ReactComponent as Logo } from '../assets/images/urlslab-logo.svg';
 import Button from '../elements/Button';
 
-export default function Header( { pageTitle } ) {
+function Header( { fetchedModules } ) {
 	const { __ } = useI18n();
-	const queryClient = useQueryClient();
-	const { headerTopHeight, setHeaderTopHeight } = useContext( HeaderHeightContext );
-	const [ credits, setCredits ] = useState();
+	const { activePage } = useMainMenu();
+	const [ pageTitle, setTitle ] = useState( __( 'Modules' ) );
+	const headerTopHeight = useHeaderHeight( ( state ) => state.headerTopHeight );
+	const setHeaderTopHeight = useHeaderHeight( ( state ) => state.setHeaderTopHeight );
 
 	const handleHeaderHeight = useCallback( ( elem ) => {
 		const headerHeight = elem?.getBoundingClientRect().height;
@@ -29,20 +29,23 @@ export default function Header( { pageTitle } ) {
 	}, [ headerTopHeight, setHeaderTopHeight ] );
 	const headerTop = useResizeObserver( handleHeaderHeight );
 
-	const { data, isFetching } = useQuery( {
-		queryKey: [ 'credits' ],
-		queryFn: async () => {
-			const result = await postFetch( `billing/credits`, { rows_per_page: 50 } );
-			return result.json();
-		},
-		refetchOnWindowFocus: false,
-		retry: 1,
-		refetchInterval: 60 * 60 * 1000, // refresh every hour
-	} );
-
 	useEffect( () => {
-		setCredits( () => data?.credits );
-	}, [ data ] );
+		if ( activePage && activePage === 'urlslab-modules' ) {
+			setTitle( __( 'Modules' ) );
+		}
+		if ( activePage && activePage === 'urlslab-settings' ) {
+			setTitle( __( 'Settings' ) );
+		}
+		if ( activePage && activePage === 'urlslab-schedule' ) {
+			setTitle( __( 'Schedules' ) );
+		}
+		if ( activePage && activePage === 'TagsLabels' ) {
+			setTitle( __( 'Tags' ) );
+		}
+		if ( activePage && activePage !== 'urlslab-modules' && activePage !== 'urlslab-settings' && activePage !== 'urlslab-schedule' && activePage !== 'TagsLabels' ) {
+			setTitle( fetchedModules[ activePage ].title );
+		}
+	}, [ __, activePage, fetchedModules, setTitle ] );
 
 	return (
 		<Suspense>
@@ -53,20 +56,7 @@ export default function Header( { pageTitle } ) {
 					<span className="urlslab-header-slash">/</span>
 					<h1 className="urlslab-header-title ma-right">{ pageTitle }</h1>
 
-					{
-						credits &&
-							<small className="fadeInto flex flex-align-center mr-m">
-								{ __( 'Remaining credits: ' ) }
-								<strong className="ml-s">
-									<button className={ `urlslab-header-credits no-margin no-padding` } onClick={ () => queryClient.invalidateQueries( [ 'credits' ] ) }>
-										{ isFetching &&
-											<Loader className="mr-xs" />
-										}
-										{ credits }
-									</button>
-								</strong>
-							</small>
-					}
+					<Credits />
 
 					<Button className="mr-m" active href="https://www.urlslab.com/dashboard/" target="_blank">{ __( 'Buy credits' ) }</Button>
 
@@ -78,3 +68,5 @@ export default function Header( { pageTitle } ) {
 		</Suspense>
 	);
 }
+
+export default memo( Header );

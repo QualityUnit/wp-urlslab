@@ -1,25 +1,45 @@
-import { lazy, Suspense, useContext } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
+import { get } from 'idb-keyval';
 
 import { renameModule } from '../lib/helpers';
-import HeaderHeightContext from '../lib/headerHeightContext';
+import useHeaderHeight from '../hooks/useHeaderHeight';
+import useMainMenu from '../hooks/useMainMenu';
+
 import ErrorBoundary from './ErrorBoundary';
 import Loader from './Loader';
 import '../assets/styles/layouts/_DynamicModule.scss';
 
-export default function DynamicModule( { modules, moduleId, activePage } ) {
-	const importPath = import( `../modules/${ renameModule( moduleId ) }.jsx` );
-	const Module = lazy( () => importPath );
-	const { headerTopHeight, headerBottomHeight } = useContext( HeaderHeightContext );
+// const Module = ( props ) => {
+
+// 	return <ReturnModule { ...props } />;
+// };
+
+export default function DynamicModule( { modules } ) {
+	const { activePage } = useMainMenu();
+	const headerTopHeight = useHeaderHeight( ( state ) => state.headerTopHeight );
+	const headerBottomHeight = useHeaderHeight( ( state ) => state.headerBottomHeight );
+
+	const [ hasMounted, setHasMounted ] = useState( false );
+
+	useEffect( () => {
+		setHasMounted( true );
+	}, [] );
+
+	if ( ! hasMounted || ! activePage ) {
+		return null;
+	}
+
+	const Module = lazy( () => import( `../modules/${ renameModule( activePage ) }.jsx` ) );
 
 	return (
-		<div className="urlslab-DynamicModule" style={ { '--headerTopHeight': `${ headerTopHeight }px`, '--headerMenuHeight': '52px', '--headerBottomHeight': `${ headerBottomHeight }px` } }>
+		<div className="urlslab-DynamicModule" style={ { '--headerTopHeight': `${ headerTopHeight }px`, '--headerMenuHeight': '52px', '--headerBottomHeight': `${ headerBottomHeight }px` } }
+		>
 			<ErrorBoundary>
 				<Suspense fallback={ <Loader /> }>
 					<div className="urlslab-DynamicModule-inn fadeInto">
 						<Module modules={ modules }
-							activePage={ activePage }
 							settingId="general"
-							moduleId={ moduleId }
+							moduleId={ activePage }
 						/>
 					</div>
 				</Suspense>

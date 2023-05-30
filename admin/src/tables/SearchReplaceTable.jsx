@@ -4,6 +4,7 @@ import {
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
+import useTablePanels from '../hooks/useTablePanels';
 import IconButton from '../elements/IconButton';
 import { active } from 'd3';
 
@@ -26,7 +27,10 @@ export default function SearchReplaceTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectedRows, selectRow, rowToEdit, setEditorRow, activePanel, setActivePanel, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+
+	const { activatePanel, setRowToEdit } = useTablePanels();
+	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const searchTypes = {
 		T: __( 'Plain text' ),
@@ -44,21 +48,21 @@ export default function SearchReplaceTable( { slug } ) {
 	const rowEditorCells = {
 		search_type: <SingleSelectMenu defaultAccept autoClose items={ searchTypes } name="search_type" defaultValue="T"
 			description={ __( 'Choose how will be matched string in the HTML page. Possible options is exact match and regular expression.' ) }
-			onChange={ ( val ) => setEditorRow( { ...rowToEdit, search_type: val } ) }>{ header.search_type }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, search_type: val } ) }>{ header.search_type }</SingleSelectMenu>,
 
 		str_search: <InputField liveUpdate type="url" defaultValue="" label={ header.str_search }
 			description={ __( 'Input string or regular expression to replace in the HTML' ) }
-			onChange={ ( val ) => setEditorRow( { ...rowToEdit, str_search: val } ) } required />,
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, str_search: val } ) } required />,
 
 		str_replace: <InputField liveUpdate type="url" defaultValue="" label={ header.str_replace }
 			description={ __( 'Value will replace match string' ) }
-			onChange={ ( val ) => setEditorRow( { ...rowToEdit, str_replace: val } ) } required />,
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, str_replace: val } ) } required />,
 
 		url_filter: <InputField liveUpdate defaultValue=".*" label={ header.url_filter }
 			description={ __( 'Regullar expression to match browser URL of page, where should be replacement applied. To replace text in all pages, use value `.*`' ) }
-			onChange={ ( val ) => setEditorRow( { ...rowToEdit, url_filter: val } ) } />,
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_filter: val } ) } />,
 
-		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setEditorRow( { ...rowToEdit, labels: val } ) } />,
+		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
 	const columns = [
@@ -107,8 +111,8 @@ export default function SearchReplaceTable( { slug } ) {
 					<div className="flex">
 						<IconButton
 							onClick={ () => {
-								setActivePanel( 'rowEditor' );
 								updateRow( { cell, id: 'str_search' } );
+								activatePanel( 'rowEditor' );
 							} }
 							tooltipClass="align-left xxxl"
 							tooltip={ __( 'Edit row' ) }
@@ -138,24 +142,11 @@ export default function SearchReplaceTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				slug={ slug }
-				header={ header }
 				table={ table }
 				selectedRows={ selectedRows }
 				onDeleteSelected={ () => deleteSelectedRows( { id: 'str_search' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onUpdate={ ( ) => {
-					setActivePanel();
-					setEditorRow();
-				} }
-				activatePanel={ activePanel }
-				rowEditorOptions={ { rowEditorCells, title: 'Add New Replacement', data, slug, url, paginationId, rowToEdit, id: 'str_search' } }
-				exportOptions={ {
-					slug,
-					url,
-					paginationId,
-					deleteCSVCols: [ paginationId, 'dest_url_id' ],
-				} }
+				options={ { header, rowEditorCells, title: 'Add New Replacement', data, slug, url, paginationId, rowToEdit, id: 'str_search', deleteCSVCols: [ paginationId, 'dest_url_id' ] } }
 			/>
 			<Table className="fadeInto"
 				slug={ slug }
