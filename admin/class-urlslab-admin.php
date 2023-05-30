@@ -58,6 +58,13 @@ class Urlslab_Admin {
 		$this->urlslab = $urlslab;
 		$this->version = $version;
 		$this->urlslab_menu_factory = Urlslab_Page_Factory::get_instance();
+
+		// list of modules available on editor pages
+		$this->editor_modules = array( 
+			'ai_content_assistant', 
+		);
+
+		add_filter( 'script_loader_tag', array( $this, 'script_loader_tag' ), 10, 3 );
 	}
 
 	/**
@@ -65,11 +72,10 @@ class Urlslab_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-
 	public function enqueue_react_settings() {
 		if ( isset( $_GET['page'] ) && str_contains( $_GET['page'], 'urlslab' ) ) {
 			$maincss = glob( plugin_dir_path( __FILE__ ) . 'dist/assets/main-*.css' );
-			$mainjs = glob( plugin_dir_path( __FILE__ ) . 'dist/*.js' );
+			$mainjs = glob( plugin_dir_path( __FILE__ ) . 'dist/main-*.js' );
 
 			wp_enqueue_style( $this->urlslab . '-main', plugin_dir_url( __FILE__ ) . 'dist/assets/' . basename( $maincss[0] ), false, $this->version );
 
@@ -89,21 +95,36 @@ class Urlslab_Admin {
 					true
 				);
 			}
+		}
+	}
 
-			add_filter(
-				'script_loader_tag',
-				function ( $tag, $handle ) {
-					// if not your script, do nothing and return original $tag
-					if ( $this->urlslab . '-main' !== $handle ) {
-						return $tag;
-					}
+	/**
+	 * Register block editor assets.
+	 *
+	 * @since    1.0.0
+	 */
+	public function enqueue_block_editor_assets() {
+		
+		//wp_enqueue_style( $this->urlslab . '-main', plugin_dir_url( __FILE__ ) . 'dist/assets/' . basename( $maincss[0] ), false, $this->version );
+		
+		foreach ( $this->editor_modules as $module_name ) {
+			$jsfile = glob( plugin_dir_path( __FILE__ ) . `dist/{$module_name}-*.js` );
 
-					// change the script tag by adding type="module" and return it.
-					return str_replace( ' src', ' type="module" src', $tag );
-				},
-				10,
-				3
-			);
+			if ( ! empty( $jsfile ) ) {
+				wp_enqueue_script(
+					`{$this->urlslab}-{$module_name}`,
+					plugin_dir_url( __FILE__ ) . 'dist/' . basename( $jsfile[0] ),
+					array(
+						'react',
+						'react-dom',
+						'wp-api-fetch',
+						'wp-element',
+						'wp-i18n',
+					),
+					$this->version,
+					true
+				);
+			}
 		}
 	}
 
@@ -188,4 +209,12 @@ class Urlslab_Admin {
 		$this->urlslab_menu_factory->init_on_page_loads( $page_slug, $action, $component );
 	}
 
+	function script_loader_tag( $tag, $handle, $src ) {
+		$handles = array_merge( array( 'main' ), $this->editor_modules );
+		// if script is our module, update type attribute
+		if ( strpos( $handle, $this->urlslab ) === 0 && in_array( str_replace( "{$this->urlslab}-", '', $handle ), $handles ) ) {
+			return str_replace( ' src', ' type="module" src', $tag );
+		}
+		return $tag;
+	}
 }

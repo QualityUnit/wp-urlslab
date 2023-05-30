@@ -84,7 +84,15 @@
   position: absolute;
   top: -0.125em;
   left: 0;
+<<<<<<< HEAD:admin/dist/assets/OverviewTemplate-vqw3w5p1iw.css
   background: url(./list-checkbox-vqw3w5p1iw.svg) center center no-repeat;
+=======
+<<<<<<<< HEAD:admin/dist/assets/OverviewTemplate-txs3jaim6w.css
+  background: url(./list-checkbox-txs3jaim6w.svg) center center no-repeat;
+========
+  background: url(./list-checkbox-myg4akepfo.svg) center center no-repeat;
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/OverviewTemplate-myg4akepfo.css
+>>>>>>> 37911432 (initial build):admin/dist/assets/OverviewTemplate-txs3jaim6w.css
   background-size: contain;
   content: "";
 }

@@ -1,3 +1,4 @@
+<<<<<<< HEAD:admin/dist/assets/SearchReplaceTable-vqw3w5p1iw.js
 import { R as React, L as Loader } from "../main-vqw3w5p1iw.js";
 import { a as useTableUpdater, b as useInfiniteFetch, c as useChangeRow, d as useTablePanels, e as SortBy, I as IconButton, S as SvgIconTrash, M as ModuleViewHeaderBottom, T as Table, P as ProgressBar } from "./ModuleViewHeaderBottom-vqw3w5p1iw.js";
 import { T as TagsMenu } from "./TagsMenu-vqw3w5p1iw.js";
@@ -6,6 +7,28 @@ import { C as Checkbox } from "./MultiSelectMenu-vqw3w5p1iw.js";
 import { S as SortMenu, I as InputField } from "./datepicker-vqw3w5p1iw.js";
 import { S as SvgIconEdit } from "./icon-edit-vqw3w5p1iw.js";
 import "./transform-vqw3w5p1iw.js";
+=======
+<<<<<<<< HEAD:admin/dist/assets/SearchReplaceTable-txs3jaim6w.js
+import { R as React, L as Loader } from "../main-txs3jaim6w.js";
+import { a as useTableUpdater, b as useInfiniteFetch, c as useChangeRow, d as useTablePanels, e as SortBy, I as IconButton, S as SvgIconTrash, M as ModuleViewHeaderBottom, T as Table, P as ProgressBar } from "./ModuleViewHeaderBottom-txs3jaim6w.js";
+import { T as TagsMenu } from "./TagsMenu-txs3jaim6w.js";
+import { T as TooltipSortingFiltering } from "./Tooltip_SortingFiltering-txs3jaim6w.js";
+import { C as Checkbox } from "./MultiSelectMenu-txs3jaim6w.js";
+import { S as SortMenu, I as InputField } from "./datepicker-txs3jaim6w.js";
+import { S as SvgIconEdit } from "./icon-edit-txs3jaim6w.js";
+import "./transform-txs3jaim6w.js";
+========
+import { R as React } from "./index-myg4akepfo.js";
+import { a as useTableUpdater, b as useInfiniteFetch, c as useChangeRow, d as SortBy, I as IconButton, S as SvgIconTrash, M as ModuleViewHeaderBottom, T as Table, P as ProgressBar } from "./ModuleViewHeaderBottom-myg4akepfo.js";
+import { L as Loader } from "../main-myg4akepfo.js";
+import { T as TagsMenu } from "./TagsMenu-myg4akepfo.js";
+import { T as TooltipSortingFiltering } from "./Tooltip_SortingFiltering-myg4akepfo.js";
+import { C as Checkbox } from "./MultiSelectMenu-myg4akepfo.js";
+import { S as SortMenu, I as InputField } from "./datepicker-myg4akepfo.js";
+import { S as SvgIconEdit } from "./icon-edit-myg4akepfo.js";
+import "./transform-myg4akepfo.js";
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/SearchReplaceTable-myg4akepfo.js
+>>>>>>> 37911432 (initial build):admin/dist/assets/SearchReplaceTable-txs3jaim6w.js
 function SearchReplaceTable({ slug }) {
   var _a;
   const paginationId = "id";

@@ -1,4 +1,12 @@
+<<<<<<< HEAD:admin/dist/assets/icon-disable-vqw3w5p1iw.js
 import { r as reactExports } from "../main-vqw3w5p1iw.js";
+=======
+<<<<<<<< HEAD:admin/dist/assets/icon-disable-txs3jaim6w.js
+import { r as reactExports } from "../main-txs3jaim6w.js";
+========
+import { r as reactExports } from "./index-myg4akepfo.js";
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/icon-disable-myg4akepfo.js
+>>>>>>> 37911432 (initial build):admin/dist/assets/icon-disable-txs3jaim6w.js
 const SvgIconActivate = (props) => /* @__PURE__ */ reactExports.createElement("svg", { width: "100%", height: "100%", viewBox: "0 0 48 48", xmlns: "http://www.w3.org/2000/svg", xmlnsXlink: "http://www.w3.org/1999/xlink", xmlSpace: "preserve", "xmlns:serif": "http://www.serif.com/", style: {
   fillRule: "evenodd",
   clipRule: "evenodd",

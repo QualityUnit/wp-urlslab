@@ -1,6 +1,19 @@
+<<<<<<< HEAD:admin/dist/assets/SuggestInputField-vqw3w5p1iw.js
 import { u as useI18n, r as reactExports, i as useQuery, R as React, d as delay, H as postFetch } from "../main-vqw3w5p1iw.js";
 import { I as InputField } from "./datepicker-vqw3w5p1iw.js";
 import "./ModuleViewHeaderBottom-vqw3w5p1iw.js";
+=======
+<<<<<<<< HEAD:admin/dist/assets/SuggestInputField-txs3jaim6w.js
+import { u as useI18n, r as reactExports, i as useQuery, R as React, d as delay, H as postFetch } from "../main-txs3jaim6w.js";
+import { I as InputField } from "./datepicker-txs3jaim6w.js";
+import "./ModuleViewHeaderBottom-txs3jaim6w.js";
+========
+import { r as reactExports, R as React } from "./index-myg4akepfo.js";
+import { u as useI18n, h as useQuery, d as delay, D as postFetch } from "../main-myg4akepfo.js";
+import { I as InputField } from "./datepicker-myg4akepfo.js";
+import "./ModuleViewHeaderBottom-myg4akepfo.js";
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/SuggestInputField-myg4akepfo.js
+>>>>>>> 37911432 (initial build):admin/dist/assets/SuggestInputField-txs3jaim6w.js
 function SuggestInputField(props) {
   const { defaultValue, suggestInput, maxItems, description, onChange } = props;
   const { __ } = useI18n();

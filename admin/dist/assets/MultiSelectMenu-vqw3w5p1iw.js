@@ -1,4 +1,13 @@
+<<<<<<< HEAD:admin/dist/assets/MultiSelectMenu-vqw3w5p1iw.js
 import { S as Subscribable, o as shallowEqualObjects, q as getDefaultState, t as notifyManager, v as parseMutationArgs, a as useQueryClient, r as reactExports, w as useSyncExternalStore, x as shouldThrowError, R as React, u as useI18n } from "../main-vqw3w5p1iw.js";
+=======
+<<<<<<<< HEAD:admin/dist/assets/MultiSelectMenu-txs3jaim6w.js
+import { S as Subscribable, o as shallowEqualObjects, q as getDefaultState, t as notifyManager, v as parseMutationArgs, a as useQueryClient, r as reactExports, w as useSyncExternalStore, x as shouldThrowError, R as React, u as useI18n } from "../main-txs3jaim6w.js";
+========
+import { r as reactExports, R as React } from "./index-myg4akepfo.js";
+import { S as Subscribable, m as shallowEqualObjects, n as getDefaultState, o as notifyManager, q as parseMutationArgs, a as useQueryClient, r as useSyncExternalStore, t as shouldThrowError, u as useI18n } from "../main-myg4akepfo.js";
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/MultiSelectMenu-myg4akepfo.js
+>>>>>>> 37911432 (initial build):admin/dist/assets/MultiSelectMenu-txs3jaim6w.js
 class MutationObserver extends Subscribable {
   constructor(client, options) {
     super();

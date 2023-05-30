@@ -1,6 +1,19 @@
+<<<<<<< HEAD:admin/dist/assets/ModuleViewHeaderBottom-vqw3w5p1iw.js
 import { Q as QueryObserver, A as infiniteQueryBehavior, C as hasNextPage, D as hasPreviousPage, E as parseQueryArgs, F as useBaseQuery, G as create, a as useQueryClient, r as reactExports, e as setNotification, H as postFetch, u as useI18n, m as getAugmentedNamespace, I as commonjsGlobal, R as React, l as Tooltip, J as langName, g as get$3, B as Button, K as SvgIconClose, L as Loader, i as useQuery, c as update, M as useHeaderHeight, N as useResizeObserver } from "../main-vqw3w5p1iw.js";
 import { S as SortMenu, I as InputField, H as Ht } from "./datepicker-vqw3w5p1iw.js";
 import { u as useMutation, M as MultiSelectMenu, C as Checkbox } from "./MultiSelectMenu-vqw3w5p1iw.js";
+=======
+<<<<<<<< HEAD:admin/dist/assets/ModuleViewHeaderBottom-txs3jaim6w.js
+import { Q as QueryObserver, A as infiniteQueryBehavior, C as hasNextPage, D as hasPreviousPage, E as parseQueryArgs, F as useBaseQuery, G as create, a as useQueryClient, r as reactExports, e as setNotification, H as postFetch, u as useI18n, m as getAugmentedNamespace, I as commonjsGlobal, R as React, l as Tooltip, J as langName, g as get$3, B as Button, K as SvgIconClose, L as Loader, i as useQuery, c as update, M as useHeaderHeight, N as useResizeObserver } from "../main-txs3jaim6w.js";
+import { S as SortMenu, I as InputField, H as Ht } from "./datepicker-txs3jaim6w.js";
+import { u as useMutation, M as MultiSelectMenu, C as Checkbox } from "./MultiSelectMenu-txs3jaim6w.js";
+========
+import { r as reactExports, a as getAugmentedNamespace, c as commonjsGlobal, R as React } from "./index-myg4akepfo.js";
+import { Q as QueryObserver, x as infiniteQueryBehavior, y as hasNextPage, z as hasPreviousPage, A as parseQueryArgs, C as useBaseQuery, a as useQueryClient, c as setNotification, D as postFetch, u as useI18n, k as Tooltip, E as langName, g as get$3, B as Button, F as SvgIconClose, L as Loader, b as update, H as HeaderHeightContext, G as useResizeObserver, h as useQuery } from "../main-myg4akepfo.js";
+import { S as SortMenu, I as InputField, H as Ht } from "./datepicker-myg4akepfo.js";
+import { u as useMutation, M as MultiSelectMenu, C as Checkbox } from "./MultiSelectMenu-myg4akepfo.js";
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/ModuleViewHeaderBottom-myg4akepfo.js
+>>>>>>> 37911432 (initial build):admin/dist/assets/ModuleViewHeaderBottom-txs3jaim6w.js
 class InfiniteQueryObserver extends QueryObserver {
   // Type override
   // Type override

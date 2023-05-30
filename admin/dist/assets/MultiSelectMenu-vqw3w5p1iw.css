@@ -204,7 +204,15 @@
   height: 1em;
   position: absolute;
   right: 0.5em;
+<<<<<<< HEAD:admin/dist/assets/MultiSelectMenu-vqw3w5p1iw.css
   background: url(./icon-loading-input-vqw3w5p1iw.svg) center center no-repeat;
+=======
+<<<<<<<< HEAD:admin/dist/assets/MultiSelectMenu-txs3jaim6w.css
+  background: url(./icon-loading-input-txs3jaim6w.svg) center center no-repeat;
+========
+  background: url(./icon-loading-input-myg4akepfo.svg) center center no-repeat;
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/MultiSelectMenu-myg4akepfo.css
+>>>>>>> 37911432 (initial build):admin/dist/assets/MultiSelectMenu-txs3jaim6w.css
   background-size: contain;
   -webkit-animation: 0.75s rotate linear infinite;
           animation: 0.75s rotate linear infinite;
@@ -397,7 +405,15 @@
   -webkit-box-flex: 0;
       -ms-flex: 0 0 auto;
           flex: 0 0 auto;
+<<<<<<< HEAD:admin/dist/assets/MultiSelectMenu-vqw3w5p1iw.css
   background: url(./checkbox-inactive-vqw3w5p1iw.svg) center center no-repeat;
+=======
+<<<<<<<< HEAD:admin/dist/assets/MultiSelectMenu-txs3jaim6w.css
+  background: url(./checkbox-inactive-txs3jaim6w.svg) center center no-repeat;
+========
+  background: url(./checkbox-inactive-myg4akepfo.svg) center center no-repeat;
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/MultiSelectMenu-myg4akepfo.css
+>>>>>>> 37911432 (initial build):admin/dist/assets/MultiSelectMenu-txs3jaim6w.css
   background-size: contain;
 }
 .radial .urlslab-checkbox-box {
@@ -410,7 +426,15 @@
   display: none !important;
 }
 .urlslab-checkbox-input:checked + .urlslab-checkbox-box, .urlslab-checkbox-input.checked + .urlslab-checkbox-box {
+<<<<<<< HEAD:admin/dist/assets/MultiSelectMenu-vqw3w5p1iw.css
   background-image: url(./checkbox-active-vqw3w5p1iw.svg);
+=======
+<<<<<<<< HEAD:admin/dist/assets/MultiSelectMenu-txs3jaim6w.css
+  background-image: url(./checkbox-active-txs3jaim6w.svg);
+========
+  background-image: url(./checkbox-active-myg4akepfo.svg);
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/MultiSelectMenu-myg4akepfo.css
+>>>>>>> 37911432 (initial build):admin/dist/assets/MultiSelectMenu-txs3jaim6w.css
   -webkit-box-shadow: none;
           box-shadow: none;
 }
@@ -669,7 +693,15 @@
   height: 1em;
   position: absolute;
   right: 0.5em;
+<<<<<<< HEAD:admin/dist/assets/MultiSelectMenu-vqw3w5p1iw.css
   background: url(./icon-loading-input-vqw3w5p1iw.svg) center center no-repeat;
+=======
+<<<<<<<< HEAD:admin/dist/assets/MultiSelectMenu-txs3jaim6w.css
+  background: url(./icon-loading-input-txs3jaim6w.svg) center center no-repeat;
+========
+  background: url(./icon-loading-input-myg4akepfo.svg) center center no-repeat;
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/MultiSelectMenu-myg4akepfo.css
+>>>>>>> 37911432 (initial build):admin/dist/assets/MultiSelectMenu-txs3jaim6w.css
   background-size: contain;
   -webkit-animation: 0.75s rotate linear infinite;
           animation: 0.75s rotate linear infinite;

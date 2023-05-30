@@ -1,5 +1,16 @@
+<<<<<<< HEAD:admin/dist/assets/TagsMenu-vqw3w5p1iw.js
 import { u as useI18n, a as useQueryClient, r as reactExports, i as useQuery, H as postFetch, R as React, l as Tooltip, T as Tag, k as hexToHSL } from "../main-vqw3w5p1iw.js";
 import { u as useClickOutside, R as ReactTagsWithRef, I as IconButton } from "./ModuleViewHeaderBottom-vqw3w5p1iw.js";
+=======
+<<<<<<<< HEAD:admin/dist/assets/TagsMenu-txs3jaim6w.js
+import { u as useI18n, a as useQueryClient, r as reactExports, i as useQuery, H as postFetch, R as React, l as Tooltip, T as Tag, k as hexToHSL } from "../main-txs3jaim6w.js";
+import { u as useClickOutside, R as ReactTagsWithRef, I as IconButton } from "./ModuleViewHeaderBottom-txs3jaim6w.js";
+========
+import { r as reactExports, R as React } from "./index-myg4akepfo.js";
+import { u as useClickOutside, R as ReactTagsWithRef, I as IconButton } from "./ModuleViewHeaderBottom-myg4akepfo.js";
+import { u as useI18n, a as useQueryClient, h as useQuery, D as postFetch, k as Tooltip, T as Tag, j as hexToHSL } from "../main-myg4akepfo.js";
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/TagsMenu-myg4akepfo.js
+>>>>>>> 37911432 (initial build):admin/dist/assets/TagsMenu-txs3jaim6w.js
 function TagsMenu({ label, description, defaultValue: tags, slug, hasActivator, onChange }) {
   const { __ } = useI18n();
   const queryClient = useQueryClient();

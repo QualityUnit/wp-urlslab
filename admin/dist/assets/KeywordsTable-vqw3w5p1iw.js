@@ -1,3 +1,4 @@
+<<<<<<< HEAD:admin/dist/assets/KeywordsTable-vqw3w5p1iw.js
 import { R as React, l as Tooltip, L as Loader } from "../main-vqw3w5p1iw.js";
 import { a as useTableUpdater, b as useInfiniteFetch, c as useChangeRow, d as useTablePanels, L as LangMenu, e as SortBy, I as IconButton, S as SvgIconTrash, M as ModuleViewHeaderBottom, T as Table, P as ProgressBar } from "./ModuleViewHeaderBottom-vqw3w5p1iw.js";
 import { T as TagsMenu } from "./TagsMenu-vqw3w5p1iw.js";
@@ -7,6 +8,30 @@ import { I as InputField, S as SortMenu } from "./datepicker-vqw3w5p1iw.js";
 import { S as SuggestInputField } from "./SuggestInputField-vqw3w5p1iw.js";
 import { S as SvgIconEdit } from "./icon-edit-vqw3w5p1iw.js";
 import { S as SvgIconLink } from "./icon-link-vqw3w5p1iw.js";
+=======
+<<<<<<<< HEAD:admin/dist/assets/KeywordsTable-txs3jaim6w.js
+import { R as React, l as Tooltip, L as Loader } from "../main-txs3jaim6w.js";
+import { a as useTableUpdater, b as useInfiniteFetch, c as useChangeRow, d as useTablePanels, L as LangMenu, e as SortBy, I as IconButton, S as SvgIconTrash, M as ModuleViewHeaderBottom, T as Table, P as ProgressBar } from "./ModuleViewHeaderBottom-txs3jaim6w.js";
+import { T as TagsMenu } from "./TagsMenu-txs3jaim6w.js";
+import { T as TooltipSortingFiltering } from "./Tooltip_SortingFiltering-txs3jaim6w.js";
+import { C as Checkbox } from "./MultiSelectMenu-txs3jaim6w.js";
+import { I as InputField, S as SortMenu } from "./datepicker-txs3jaim6w.js";
+import { S as SuggestInputField } from "./SuggestInputField-txs3jaim6w.js";
+import { S as SvgIconEdit } from "./icon-edit-txs3jaim6w.js";
+import { S as SvgIconLink } from "./icon-link-txs3jaim6w.js";
+========
+import { r as reactExports, R as React } from "./index-myg4akepfo.js";
+import { a as useTableUpdater, b as useInfiniteFetch, c as useChangeRow, L as LangMenu, d as SortBy, I as IconButton, S as SvgIconTrash, M as ModuleViewHeaderBottom, T as Table, P as ProgressBar } from "./ModuleViewHeaderBottom-myg4akepfo.js";
+import { k as Tooltip, L as Loader } from "../main-myg4akepfo.js";
+import { T as TagsMenu } from "./TagsMenu-myg4akepfo.js";
+import { T as TooltipSortingFiltering } from "./Tooltip_SortingFiltering-myg4akepfo.js";
+import { C as Checkbox } from "./MultiSelectMenu-myg4akepfo.js";
+import { I as InputField, S as SortMenu } from "./datepicker-myg4akepfo.js";
+import { S as SuggestInputField } from "./SuggestInputField-myg4akepfo.js";
+import { S as SvgIconEdit } from "./icon-edit-myg4akepfo.js";
+import { S as SvgIconLink } from "./icon-link-myg4akepfo.js";
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/KeywordsTable-myg4akepfo.js
+>>>>>>> 37911432 (initial build):admin/dist/assets/KeywordsTable-txs3jaim6w.js
 function KeywordsTable({ slug }) {
   var _a;
   const paginationId = "kw_id";

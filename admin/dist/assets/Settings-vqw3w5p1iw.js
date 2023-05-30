@@ -1,8 +1,25 @@
+<<<<<<< HEAD:admin/dist/assets/Settings-vqw3w5p1iw.js
 import { a as useQueryClient, r as reactExports, R as React, p as parseURL, B as Button, e as setNotification, f as getFetch, h as setSettings, i as useQuery, L as Loader, j as fetchSettings } from "../main-vqw3w5p1iw.js";
 import { S as SortMenu, H as Ht, I as InputField } from "./datepicker-vqw3w5p1iw.js";
 import { T as TextArea } from "./Textarea-vqw3w5p1iw.js";
 import { S as Switch } from "./Switch-vqw3w5p1iw.js";
 import { u as useMutation, M as MultiSelectMenu } from "./MultiSelectMenu-vqw3w5p1iw.js";
+=======
+<<<<<<<< HEAD:admin/dist/assets/Settings-txs3jaim6w.js
+import { a as useQueryClient, r as reactExports, R as React, p as parseURL, B as Button, e as setNotification, f as getFetch, h as setSettings, i as useQuery, L as Loader, j as fetchSettings } from "../main-txs3jaim6w.js";
+import { S as SortMenu, H as Ht, I as InputField } from "./datepicker-txs3jaim6w.js";
+import { T as TextArea } from "./Textarea-txs3jaim6w.js";
+import { S as Switch } from "./Switch-txs3jaim6w.js";
+import { u as useMutation, M as MultiSelectMenu } from "./MultiSelectMenu-txs3jaim6w.js";
+========
+import { r as reactExports, R as React } from "./index-myg4akepfo.js";
+import { a as useQueryClient, p as parseURL, B as Button, c as setNotification, e as getFetch, f as setSettings, h as useQuery, L as Loader, i as fetchSettings } from "../main-myg4akepfo.js";
+import { S as SortMenu, H as Ht, I as InputField } from "./datepicker-myg4akepfo.js";
+import { T as TextArea } from "./Textarea-myg4akepfo.js";
+import { S as Switch } from "./Switch-myg4akepfo.js";
+import { u as useMutation, M as MultiSelectMenu } from "./MultiSelectMenu-myg4akepfo.js";
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/Settings-myg4akepfo.js
+>>>>>>> 37911432 (initial build):admin/dist/assets/Settings-txs3jaim6w.js
 function SettingsOption({ settingId, option }) {
   const queryClient = useQueryClient();
   const { id, type, title, description, placeholder, value, possible_values } = option;
