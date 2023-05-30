@@ -88,6 +88,7 @@ class Urlslab_Redirects_Cron extends Urlslab_Cron {
 			switch ( $e->getCode() ) {
 				case 402:
 					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+					//continue
 				case 429:
 					$url->set_status( Urlslab_Not_Found_Log_Row::STATUS_NEW );
 					$url->update();
