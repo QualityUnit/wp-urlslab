@@ -1,4 +1,12 @@
+<<<<<<< HEAD:admin/dist/assets/Switch-vqw3w5p1iw.js
 import { r as reactExports, R as React } from "../main-vqw3w5p1iw.js";
+=======
+<<<<<<<< HEAD:admin/dist/assets/Switch-txs3jaim6w.js
+import { r as reactExports, R as React } from "../main-txs3jaim6w.js";
+========
+import { r as reactExports, R as React } from "./index-myg4akepfo.js";
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/Switch-myg4akepfo.js
+>>>>>>> 37911432 (initial build):admin/dist/assets/Switch-txs3jaim6w.js
 const SvgIconCheckmark = (props) => /* @__PURE__ */ reactExports.createElement("svg", { width: "100%", height: "100%", viewBox: "0 0 10 10", xmlns: "http://www.w3.org/2000/svg", xmlnsXlink: "http://www.w3.org/1999/xlink", xmlSpace: "preserve", "xmlns:serif": "http://www.serif.com/", style: {
   fillRule: "evenodd",
   clipRule: "evenodd",

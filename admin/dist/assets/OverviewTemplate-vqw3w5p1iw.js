@@ -1,4 +1,13 @@
+<<<<<<< HEAD:admin/dist/assets/OverviewTemplate-vqw3w5p1iw.js
 import { R as React, u as useI18n, r as reactExports, g as get, c as update, a as useQueryClient } from "../main-vqw3w5p1iw.js";
+=======
+<<<<<<<< HEAD:admin/dist/assets/OverviewTemplate-txs3jaim6w.js
+import { R as React, u as useI18n, r as reactExports, g as get, c as update, a as useQueryClient } from "../main-txs3jaim6w.js";
+========
+import { R as React, r as reactExports } from "./index-myg4akepfo.js";
+import { u as useI18n, g as get, b as update, a as useQueryClient } from "../main-myg4akepfo.js";
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/OverviewTemplate-myg4akepfo.js
+>>>>>>> 37911432 (initial build):admin/dist/assets/OverviewTemplate-txs3jaim6w.js
 /* empty css                              */const _SimpleButton = "";
 function SimpleButton({ onClick, className, children }) {
   return /* @__PURE__ */ React.createElement(
@@ -75,9 +84,21 @@ function ModuleViewHeader({ moduleId, moduleMenu, activeMenu, noSettings }) {
     menuItems.get("settings")
   )));
 }
+<<<<<<< HEAD:admin/dist/assets/OverviewTemplate-vqw3w5p1iw.js
 const AboutIcon = "" + new URL("icon-overview-about-vqw3w5p1iw.svg", import.meta.url).href;
 const IntegrateIcon = "" + new URL("icon-overview-integrate-vqw3w5p1iw.svg", import.meta.url).href;
 const FaqIcon = "" + new URL("icon-overview-faq-vqw3w5p1iw.svg", import.meta.url).href;
+=======
+<<<<<<<< HEAD:admin/dist/assets/OverviewTemplate-txs3jaim6w.js
+const AboutIcon = "" + new URL("icon-overview-about-txs3jaim6w.svg", import.meta.url).href;
+const IntegrateIcon = "" + new URL("icon-overview-integrate-txs3jaim6w.svg", import.meta.url).href;
+const FaqIcon = "" + new URL("icon-overview-faq-txs3jaim6w.svg", import.meta.url).href;
+========
+const AboutIcon = "" + new URL("icon-overview-about-myg4akepfo.svg", import.meta.url).href;
+const IntegrateIcon = "" + new URL("icon-overview-integrate-myg4akepfo.svg", import.meta.url).href;
+const FaqIcon = "" + new URL("icon-overview-faq-myg4akepfo.svg", import.meta.url).href;
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/OverviewTemplate-myg4akepfo.js
+>>>>>>> 37911432 (initial build):admin/dist/assets/OverviewTemplate-txs3jaim6w.js
 const _OverviewTemplate = "";
 function Overview({ moduleId, noFAQ, noIntegrate, title, customSections, section, children }) {
   const { __ } = useI18n();

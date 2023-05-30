@@ -1,8 +1,25 @@
+<<<<<<< HEAD:admin/dist/assets/TagsLabels-vqw3w5p1iw.js
 import { R as React, r as reactExports, u as useI18n, B as Button, a as useQueryClient, k as hexToHSL, T as Tag, L as Loader } from "../main-vqw3w5p1iw.js";
 import { u as useClickOutside, a as useTableUpdater, b as useInfiniteFetch, c as useChangeRow, d as useTablePanels, I as IconButton, S as SvgIconTrash, M as ModuleViewHeaderBottom, T as Table } from "./ModuleViewHeaderBottom-vqw3w5p1iw.js";
 import { C as Checkbox, M as MultiSelectMenu } from "./MultiSelectMenu-vqw3w5p1iw.js";
 import { I as InputField } from "./datepicker-vqw3w5p1iw.js";
 import { S as SvgIconEdit } from "./icon-edit-vqw3w5p1iw.js";
+=======
+<<<<<<<< HEAD:admin/dist/assets/TagsLabels-txs3jaim6w.js
+import { R as React, r as reactExports, u as useI18n, B as Button, a as useQueryClient, k as hexToHSL, T as Tag, L as Loader } from "../main-txs3jaim6w.js";
+import { u as useClickOutside, a as useTableUpdater, b as useInfiniteFetch, c as useChangeRow, d as useTablePanels, I as IconButton, S as SvgIconTrash, M as ModuleViewHeaderBottom, T as Table } from "./ModuleViewHeaderBottom-txs3jaim6w.js";
+import { C as Checkbox, M as MultiSelectMenu } from "./MultiSelectMenu-txs3jaim6w.js";
+import { I as InputField } from "./datepicker-txs3jaim6w.js";
+import { S as SvgIconEdit } from "./icon-edit-txs3jaim6w.js";
+========
+import { R as React, r as reactExports } from "./index-myg4akepfo.js";
+import { u as useClickOutside, a as useTableUpdater, b as useInfiniteFetch, c as useChangeRow, I as IconButton, S as SvgIconTrash, M as ModuleViewHeaderBottom, T as Table } from "./ModuleViewHeaderBottom-myg4akepfo.js";
+import { u as useI18n, B as Button, a as useQueryClient, j as hexToHSL, T as Tag, L as Loader } from "../main-myg4akepfo.js";
+import { C as Checkbox, M as MultiSelectMenu } from "./MultiSelectMenu-myg4akepfo.js";
+import { I as InputField } from "./datepicker-myg4akepfo.js";
+import { S as SvgIconEdit } from "./icon-edit-myg4akepfo.js";
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/TagsLabels-myg4akepfo.js
+>>>>>>> 37911432 (initial build):admin/dist/assets/TagsLabels-txs3jaim6w.js
 /* empty css                              */function u() {
   return (u = Object.assign || function(e) {
     for (var r = 1; r < arguments.length; r++) {

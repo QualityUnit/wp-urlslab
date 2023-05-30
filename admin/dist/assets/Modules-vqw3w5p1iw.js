@@ -1,6 +1,19 @@
+<<<<<<< HEAD:admin/dist/assets/Modules-vqw3w5p1iw.js
 import { a as useQueryClient, r as reactExports, g as get, u as useI18n, b as useMainMenu, R as React, T as Tag, s as setModule, d as delay } from "../main-vqw3w5p1iw.js";
 import { S as Switch } from "./Switch-vqw3w5p1iw.js";
 import { u as useMutation, M as MultiSelectMenu } from "./MultiSelectMenu-vqw3w5p1iw.js";
+=======
+<<<<<<<< HEAD:admin/dist/assets/Modules-txs3jaim6w.js
+import { a as useQueryClient, r as reactExports, g as get, u as useI18n, b as useMainMenu, R as React, T as Tag, s as setModule, d as delay } from "../main-txs3jaim6w.js";
+import { S as Switch } from "./Switch-txs3jaim6w.js";
+import { u as useMutation, M as MultiSelectMenu } from "./MultiSelectMenu-txs3jaim6w.js";
+========
+import { r as reactExports, R as React } from "./index-myg4akepfo.js";
+import { a as useQueryClient, g as get, u as useI18n, T as Tag, s as setModule, d as delay } from "../main-myg4akepfo.js";
+import { S as Switch } from "./Switch-myg4akepfo.js";
+import { u as useMutation, M as MultiSelectMenu } from "./MultiSelectMenu-myg4akepfo.js";
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/Modules-myg4akepfo.js
+>>>>>>> 37911432 (initial build):admin/dist/assets/Modules-txs3jaim6w.js
 function useCheckApiKey() {
   const queryClient = useQueryClient();
   const settingsLoaded = queryClient.getQueryData(["general"]);
@@ -14,6 +27,7 @@ function useCheckApiKey() {
   });
   return { settingsLoaded, apiKeySet };
 }
+<<<<<<< HEAD:admin/dist/assets/Modules-vqw3w5p1iw.js
 const __vite_glob_0_0 = "" + new URL("optimize-vqw3w5p1iw.svg", import.meta.url).href;
 const __vite_glob_0_1 = "" + new URL("redirects-vqw3w5p1iw.svg", import.meta.url).href;
 const __vite_glob_0_2 = "" + new URL("urlslab-cache-vqw3w5p1iw.svg", import.meta.url).href;
@@ -29,6 +43,41 @@ const __vite_glob_0_11 = "" + new URL("urlslab-meta-tag-vqw3w5p1iw.svg", import.
 const __vite_glob_0_12 = "" + new URL("urlslab-related-resources-vqw3w5p1iw.svg", import.meta.url).href;
 const __vite_glob_0_13 = "" + new URL("urlslab-screenshot-vqw3w5p1iw.svg", import.meta.url).href;
 const __vite_glob_0_14 = "" + new URL("urlslab-custom-html-vqw3w5p1iw.svg", import.meta.url).href;
+=======
+<<<<<<<< HEAD:admin/dist/assets/Modules-txs3jaim6w.js
+const __vite_glob_0_0 = "" + new URL("optimize-txs3jaim6w.svg", import.meta.url).href;
+const __vite_glob_0_1 = "" + new URL("redirects-txs3jaim6w.svg", import.meta.url).href;
+const __vite_glob_0_2 = "" + new URL("urlslab-cache-txs3jaim6w.svg", import.meta.url).href;
+const __vite_glob_0_3 = "" + new URL("urlslab-css-optimizer-txs3jaim6w.svg", import.meta.url).href;
+const __vite_glob_0_4 = "" + new URL("urlslab-custom-html-txs3jaim6w.svg", import.meta.url).href;
+const __vite_glob_0_5 = "" + new URL("urlslab-generator-txs3jaim6w.svg", import.meta.url).href;
+const __vite_glob_0_6 = "" + new URL("urlslab-image-alt-attribute-txs3jaim6w.svg", import.meta.url).href;
+const __vite_glob_0_7 = "" + new URL("urlslab-keywords-links-txs3jaim6w.svg", import.meta.url).href;
+const __vite_glob_0_8 = "" + new URL("urlslab-cache-txs3jaim6w.svg", import.meta.url).href;
+const __vite_glob_0_9 = "" + new URL("urlslab-link-enhancer-txs3jaim6w.svg", import.meta.url).href;
+const __vite_glob_0_10 = "" + new URL("urlslab-media-offloader-txs3jaim6w.svg", import.meta.url).href;
+const __vite_glob_0_11 = "" + new URL("urlslab-meta-tag-txs3jaim6w.svg", import.meta.url).href;
+const __vite_glob_0_12 = "" + new URL("urlslab-related-resources-txs3jaim6w.svg", import.meta.url).href;
+const __vite_glob_0_13 = "" + new URL("urlslab-screenshot-txs3jaim6w.svg", import.meta.url).href;
+const __vite_glob_0_14 = "" + new URL("urlslab-custom-html-txs3jaim6w.svg", import.meta.url).href;
+========
+const __vite_glob_0_0 = "" + new URL("optimize-myg4akepfo.svg", import.meta.url).href;
+const __vite_glob_0_1 = "" + new URL("redirects-myg4akepfo.svg", import.meta.url).href;
+const __vite_glob_0_2 = "" + new URL("urlslab-cache-myg4akepfo.svg", import.meta.url).href;
+const __vite_glob_0_3 = "" + new URL("urlslab-css-optimizer-myg4akepfo.svg", import.meta.url).href;
+const __vite_glob_0_4 = "" + new URL("urlslab-custom-html-myg4akepfo.svg", import.meta.url).href;
+const __vite_glob_0_5 = "" + new URL("urlslab-generator-myg4akepfo.svg", import.meta.url).href;
+const __vite_glob_0_6 = "" + new URL("urlslab-image-alt-attribute-myg4akepfo.svg", import.meta.url).href;
+const __vite_glob_0_7 = "" + new URL("urlslab-keywords-links-myg4akepfo.svg", import.meta.url).href;
+const __vite_glob_0_8 = "" + new URL("urlslab-cache-myg4akepfo.svg", import.meta.url).href;
+const __vite_glob_0_9 = "" + new URL("urlslab-link-enhancer-myg4akepfo.svg", import.meta.url).href;
+const __vite_glob_0_10 = "" + new URL("urlslab-media-offloader-myg4akepfo.svg", import.meta.url).href;
+const __vite_glob_0_11 = "" + new URL("urlslab-meta-tag-myg4akepfo.svg", import.meta.url).href;
+const __vite_glob_0_12 = "" + new URL("urlslab-related-resources-myg4akepfo.svg", import.meta.url).href;
+const __vite_glob_0_13 = "" + new URL("urlslab-screenshot-myg4akepfo.svg", import.meta.url).href;
+const __vite_glob_0_14 = "" + new URL("urlslab-custom-html-myg4akepfo.svg", import.meta.url).href;
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/Modules-myg4akepfo.js
+>>>>>>> 37911432 (initial build):admin/dist/assets/Modules-txs3jaim6w.js
 const _DashboardModule = "";
 function DashboardModule({ moduleId, title, children, isActive, tags }) {
   const { __ } = useI18n();

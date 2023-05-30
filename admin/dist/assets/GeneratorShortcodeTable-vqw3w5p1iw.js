@@ -1,3 +1,4 @@
+<<<<<<< HEAD:admin/dist/assets/GeneratorShortcodeTable-vqw3w5p1iw.js
 import { r as reactExports, R as React, l as Tooltip, L as Loader } from "../main-vqw3w5p1iw.js";
 import { E as Editor$1, a as useTableUpdater, b as useInfiniteFetch, c as useChangeRow, d as useTablePanels, e as SortBy, D as DateTimeFormat, I as IconButton, S as SvgIconTrash, M as ModuleViewHeaderBottom, T as Table, P as ProgressBar } from "./ModuleViewHeaderBottom-vqw3w5p1iw.js";
 import { T as TooltipSortingFiltering } from "./Tooltip_SortingFiltering-vqw3w5p1iw.js";
@@ -6,6 +7,28 @@ import { S as SortMenu, I as InputField } from "./datepicker-vqw3w5p1iw.js";
 import { T as TextArea } from "./Textarea-vqw3w5p1iw.js";
 import { S as SvgIconEdit } from "./icon-edit-vqw3w5p1iw.js";
 import { S as SvgIconActivate, a as SvgIconDisable } from "./icon-disable-vqw3w5p1iw.js";
+=======
+<<<<<<<< HEAD:admin/dist/assets/GeneratorShortcodeTable-txs3jaim6w.js
+import { r as reactExports, R as React, l as Tooltip, L as Loader } from "../main-txs3jaim6w.js";
+import { E as Editor$1, a as useTableUpdater, b as useInfiniteFetch, c as useChangeRow, d as useTablePanels, e as SortBy, D as DateTimeFormat, I as IconButton, S as SvgIconTrash, M as ModuleViewHeaderBottom, T as Table, P as ProgressBar } from "./ModuleViewHeaderBottom-txs3jaim6w.js";
+import { T as TooltipSortingFiltering } from "./Tooltip_SortingFiltering-txs3jaim6w.js";
+import { C as Checkbox } from "./MultiSelectMenu-txs3jaim6w.js";
+import { S as SortMenu, I as InputField } from "./datepicker-txs3jaim6w.js";
+import { T as TextArea } from "./Textarea-txs3jaim6w.js";
+import { S as SvgIconEdit } from "./icon-edit-txs3jaim6w.js";
+import { S as SvgIconActivate, a as SvgIconDisable } from "./icon-disable-txs3jaim6w.js";
+========
+import { r as reactExports, R as React } from "./index-myg4akepfo.js";
+import { E as Editor$1, a as useTableUpdater, b as useInfiniteFetch, c as useChangeRow, d as SortBy, D as DateTimeFormat, I as IconButton, S as SvgIconTrash, M as ModuleViewHeaderBottom, T as Table, P as ProgressBar } from "./ModuleViewHeaderBottom-myg4akepfo.js";
+import { k as Tooltip, L as Loader } from "../main-myg4akepfo.js";
+import { T as TooltipSortingFiltering } from "./Tooltip_SortingFiltering-myg4akepfo.js";
+import { C as Checkbox } from "./MultiSelectMenu-myg4akepfo.js";
+import { S as SortMenu, I as InputField } from "./datepicker-myg4akepfo.js";
+import { T as TextArea } from "./Textarea-myg4akepfo.js";
+import { S as SvgIconEdit } from "./icon-edit-myg4akepfo.js";
+import { S as SvgIconActivate, a as SvgIconDisable } from "./icon-disable-myg4akepfo.js";
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/GeneratorShortcodeTable-myg4akepfo.js
+>>>>>>> 37911432 (initial build):admin/dist/assets/GeneratorShortcodeTable-txs3jaim6w.js
 function Editor({ defaultValue, className, style, label, description, onChange }) {
   const editorRef = reactExports.useRef(null);
   const [val, setVal] = reactExports.useState(defaultValue ?? "");

@@ -39,6 +39,7 @@ export default defineConfig( {
 		rollupOptions: {
 			input: {
 				main: './src/main.jsx',
+				ai_content_assistant: './modules/ai-content-assistant/main.jsx',
 			},
 			output: {
 				// this gets rid of the hash on main.css

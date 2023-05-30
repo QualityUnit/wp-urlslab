@@ -1,4 +1,13 @@
+<<<<<<< HEAD:admin/dist/assets/useRedirectTableMenus-vqw3w5p1iw.js
 import { u as useI18n } from "../main-vqw3w5p1iw.js";
+=======
+<<<<<<<< HEAD:admin/dist/assets/useRedirectTableMenus-txs3jaim6w.js
+import { u as useI18n } from "../main-txs3jaim6w.js";
+========
+import "./index-myg4akepfo.js";
+import { u as useI18n } from "../main-myg4akepfo.js";
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/useRedirectTableMenus-myg4akepfo.js
+>>>>>>> 37911432 (initial build):admin/dist/assets/useRedirectTableMenus-txs3jaim6w.js
 function useRedirectTableMenus() {
   const { __ } = useI18n();
   const redirectTypes = Object.freeze({
