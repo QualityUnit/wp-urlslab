@@ -78,9 +78,13 @@ The content is coming soon.
 
 == Changelog ==
 
+= 2.25.14 - 2023-05-30 =
+
+* Experience a smoother user journey with our under-the-hood enhancements.
+
 = 2.25.13 - 2023-05-29 =
 
-* Force shorter cache for recentrly modified pages.
+* Experience a smoother user journey with our under-the-hood enhancements.
 
 = 2.25.12 - 2023-05-29 =
 
