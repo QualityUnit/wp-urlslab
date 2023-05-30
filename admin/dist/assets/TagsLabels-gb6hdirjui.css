@@ -1,0 +1,71 @@
+/* stylelint-disable */
+.urlslab-colorPicker {
+  position: relative;
+  z-index: 10;
+}
+.urlslab-colorPicker-activator {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  position: relative;
+  border: 1px solid currentcolor !important;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  padding: 0.35em 1em;
+  color: #ced0d4;
+}
+.urlslab-colorPicker .react-colorful {
+  width: 100%;
+  height: auto;
+}
+.urlslab-colorPicker .react-colorful__saturation {
+  border-radius: 0.5rem;
+  height: 8.2em;
+}
+.urlslab-colorPicker .react-colorful__hue {
+  margin-top: 0.6em;
+  height: 10px;
+  border-radius: 8px;
+}
+.urlslab-colorPicker .react-colorful__pointer {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.urlslab-colorPicker-panel {
+  width: 17em;
+}
+.urlslab-colorPicker-swatches {
+  display: grid;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  grid-template: repeat(3, 1.6666rem)/repeat(9, 1.6666rem);
+  margin-top: 0.5em;
+}
+.urlslab-colorPicker-swatches .urlslab-colorPicker-swatch__btn {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  border-radius: 2px;
+  padding: 0;
+}
+.urlslab-colorPicker-swatches .urlslab-colorPicker-swatch__btn.active {
+  border: 1px solid #bec2c9;
+}
+.urlslab-colorPicker-swatches .urlslab-colorPicker-swatch__btn .urlslab-colorPicker-swatch {
+  margin: auto;
+}
+.urlslab-colorPicker .urlslab-colorPicker-swatch {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 2px;
+}
