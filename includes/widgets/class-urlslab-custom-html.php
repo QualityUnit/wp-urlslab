@@ -148,7 +148,7 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 		}
 
 		foreach ( self::$rules as $id => $rule ) {
-			if ( ! $this->is_match( $rule, $this->get_current_page_url() ) ) {
+			if ( ! $this->is_match( $rule, Urlslab_Widget::get_current_page_url() ) ) {
 				unset( self::$rules[ $id ] );
 			}
 		}

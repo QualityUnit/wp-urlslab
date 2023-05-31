@@ -337,7 +337,7 @@ abstract class Urlslab_Widget {
 					|| ( false !== strpos( $dom->getAttribute( 'class' ), 'urlslab-skip-all' ) ) );
 	}
 
-	public function get_current_page_url( bool $use_post_id = true ): Urlslab_Url {
+	public static function get_current_page_url( bool $use_post_id = true ): Urlslab_Url {
 		if ( $use_post_id && is_object( self::$current_page_url ) ) {
 			return self::$current_page_url;
 		}

@@ -53,7 +53,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 	}
 
 	private function is_cache_enabled(): bool {
-		return ! is_admin() && ! is_user_logged_in() && isset( $_SERVER['REQUEST_URI'] ) && $this->get_option( self::SETTING_NAME_PAGE_CACHING ) && Urlslab_File_Cache::get_instance()->is_active();
+		return ! is_admin() && ! is_user_logged_in() && isset( $_SERVER['REQUEST_URI'] ) && ! is_404() && $this->get_option( self::SETTING_NAME_PAGE_CACHING ) && Urlslab_File_Cache::get_instance()->is_active();
 	}
 
 	private function start_rule(): bool {
@@ -79,7 +79,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 
 		try {
 			$rules = $this->get_cache_rules();
-			$url   = $this->get_current_page_url();
+			$url   = Urlslab_Widget::get_current_page_url();
 			foreach ( $rules as $rule ) {
 				if ( $this->is_match( $rule, $url ) ) {
 					self::$active_rule = $rule;
@@ -600,7 +600,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 						if ( ! empty( trim( $dom_element->getAttribute( 'href' ) ) ) ) {
 							try {
 								$url = new Urlslab_Url( $dom_element->getAttribute( 'href' ) );
-								if ( $url->get_domain_name() == $this->get_current_page_url()->get_domain_name() && $url->get_url_id() !== $this->get_current_page_url()->get_url_id() ) {
+								if ( $url->get_domain_name() == Urlslab_Widget::get_current_page_url()->get_domain_name() && $url->get_url_id() !== Urlslab_Widget::get_current_page_url()->get_url_id() ) {
 									if ( $on_scroll_preload ) {
 										$dom_element->setAttribute( 'scroll-preload', '1' );
 									} else {
