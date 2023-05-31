@@ -1,0 +1,1022 @@
+/* stylelint-disable */ /* stylelint-disable no-descending-specificity */
+.urlslab-input.input__text, .urlslab-input[type=text], .urlslab-input[type=email], .urlslab-input[type=password], .urlslab-input[type=url], .urlslab-input[type=number], .urlslab-input[type=search],
+.urlslab-textarea.input__text,
+.urlslab-textarea[type=text],
+.urlslab-textarea[type=email],
+.urlslab-textarea[type=password],
+.urlslab-textarea[type=url],
+.urlslab-textarea[type=number],
+.urlslab-textarea[type=search] {
+  outline: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  border: none;
+  border-radius: 6px;
+  padding: 0.35em 1em;
+  margin: 0;
+  font-size: 0.8125em;
+  font-weight: 400;
+  width: 100%;
+  color: currentcolor;
+  -webkit-transition: all 0.2s;
+  -o-transition: all 0.2s;
+  transition: all 0.2s;
+  background-color: #fff;
+}
+.urlslab-table .urlslab-input.input__text, .urlslab-table .urlslab-input[type=text], .urlslab-table .urlslab-input[type=email], .urlslab-table .urlslab-input[type=password], .urlslab-table .urlslab-input[type=url], .urlslab-table .urlslab-input[type=number], .urlslab-table .urlslab-input[type=search],
+.urlslab-table .urlslab-textarea.input__text,
+.urlslab-table .urlslab-textarea[type=text],
+.urlslab-table .urlslab-textarea[type=email],
+.urlslab-table .urlslab-textarea[type=password],
+.urlslab-table .urlslab-textarea[type=url],
+.urlslab-table .urlslab-textarea[type=number],
+.urlslab-table .urlslab-textarea[type=search] {
+  -o-text-overflow: ellipsis;
+     text-overflow: ellipsis;
+  width: 100%;
+  background-color: transparent;
+  font-size: inherit;
+}
+.urlslab-table .urlslab-input.input__text:focus, .urlslab-table .urlslab-input[type=text]:focus, .urlslab-table .urlslab-input[type=email]:focus, .urlslab-table .urlslab-input[type=password]:focus, .urlslab-table .urlslab-input[type=url]:focus, .urlslab-table .urlslab-input[type=number]:focus, .urlslab-table .urlslab-input[type=search]:focus,
+.urlslab-table .urlslab-textarea.input__text:focus,
+.urlslab-table .urlslab-textarea[type=text]:focus,
+.urlslab-table .urlslab-textarea[type=email]:focus,
+.urlslab-table .urlslab-textarea[type=password]:focus,
+.urlslab-table .urlslab-textarea[type=url]:focus,
+.urlslab-table .urlslab-textarea[type=number]:focus,
+.urlslab-table .urlslab-textarea[type=search]:focus {
+  background-color: #fff;
+}
+.urlslab-input.input__text.xl, .urlslab-input[type=text].xl, .urlslab-input[type=email].xl, .urlslab-input[type=password].xl, .urlslab-input[type=url].xl, .urlslab-input[type=number].xl, .urlslab-input[type=search].xl,
+.urlslab-textarea.input__text.xl,
+.urlslab-textarea[type=text].xl,
+.urlslab-textarea[type=email].xl,
+.urlslab-textarea[type=password].xl,
+.urlslab-textarea[type=url].xl,
+.urlslab-textarea[type=number].xl,
+.urlslab-textarea[type=search].xl {
+  width: 15em;
+}
+.urlslab-input.input__text:focus, .urlslab-input[type=text]:focus, .urlslab-input[type=email]:focus, .urlslab-input[type=password]:focus, .urlslab-input[type=url]:focus, .urlslab-input[type=number]:focus, .urlslab-input[type=search]:focus,
+.urlslab-textarea.input__text:focus,
+.urlslab-textarea[type=text]:focus,
+.urlslab-textarea[type=email]:focus,
+.urlslab-textarea[type=password]:focus,
+.urlslab-textarea[type=url]:focus,
+.urlslab-textarea[type=number]:focus,
+.urlslab-textarea[type=search]:focus {
+  outline: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  border-color: transparent;
+}
+.urlslab-input.input__text[disabled], .urlslab-input[type=text][disabled], .urlslab-input[type=email][disabled], .urlslab-input[type=password][disabled], .urlslab-input[type=url][disabled], .urlslab-input[type=number][disabled], .urlslab-input[type=search][disabled],
+.urlslab-textarea.input__text[disabled],
+.urlslab-textarea[type=text][disabled],
+.urlslab-textarea[type=email][disabled],
+.urlslab-textarea[type=password][disabled],
+.urlslab-textarea[type=url][disabled],
+.urlslab-textarea[type=number][disabled],
+.urlslab-textarea[type=search][disabled] {
+  background-color: #f5f5f7;
+  color: #8c9097;
+  cursor: not-allowed;
+}
+.urlslab-input.input__text::-moz-placeholder, .urlslab-input[type=text]::-moz-placeholder, .urlslab-input[type=email]::-moz-placeholder, .urlslab-input[type=password]::-moz-placeholder, .urlslab-input[type=url]::-moz-placeholder, .urlslab-input[type=number]::-moz-placeholder, .urlslab-input[type=search]::-moz-placeholder,
+.urlslab-textarea.input__text::-moz-placeholder,
+.urlslab-textarea[type=text]::-moz-placeholder,
+.urlslab-textarea[type=email]::-moz-placeholder,
+.urlslab-textarea[type=password]::-moz-placeholder,
+.urlslab-textarea[type=url]::-moz-placeholder,
+.urlslab-textarea[type=number]::-moz-placeholder,
+.urlslab-textarea[type=search]::-moz-placeholder {
+  color: currentcolor;
+  font-size: 1em;
+  -moz-transition: all 0.2s;
+  transition: all 0.2s;
+  opacity: 1;
+}
+.urlslab-input.input__text:-ms-input-placeholder, .urlslab-input.input__text::-ms-input-placeholder, .urlslab-input[type=text]:-ms-input-placeholder, .urlslab-input[type=text]::-ms-input-placeholder, .urlslab-input[type=email]:-ms-input-placeholder, .urlslab-input[type=email]::-ms-input-placeholder, .urlslab-input[type=password]:-ms-input-placeholder, .urlslab-input[type=password]::-ms-input-placeholder, .urlslab-input[type=url]:-ms-input-placeholder, .urlslab-input[type=url]::-ms-input-placeholder, .urlslab-input[type=number]:-ms-input-placeholder, .urlslab-input[type=number]::-ms-input-placeholder, .urlslab-input[type=search]:-ms-input-placeholder, .urlslab-input[type=search]::-ms-input-placeholder,
+.urlslab-textarea.input__text:-ms-input-placeholder,
+.urlslab-textarea.input__text::-ms-input-placeholder,
+.urlslab-textarea[type=text]:-ms-input-placeholder,
+.urlslab-textarea[type=text]::-ms-input-placeholder,
+.urlslab-textarea[type=email]:-ms-input-placeholder,
+.urlslab-textarea[type=email]::-ms-input-placeholder,
+.urlslab-textarea[type=password]:-ms-input-placeholder,
+.urlslab-textarea[type=password]::-ms-input-placeholder,
+.urlslab-textarea[type=url]:-ms-input-placeholder,
+.urlslab-textarea[type=url]::-ms-input-placeholder,
+.urlslab-textarea[type=number]:-ms-input-placeholder,
+.urlslab-textarea[type=number]::-ms-input-placeholder,
+.urlslab-textarea[type=search]:-ms-input-placeholder,
+.urlslab-textarea[type=search]::-ms-input-placeholder {
+  color: currentcolor;
+  font-size: 1em;
+  -ms-transition: all 0.2s;
+  transition: all 0.2s;
+  opacity: 1;
+}
+.urlslab-input.input__text::-webkit-input-placeholder, .urlslab-input[type=text]::-webkit-input-placeholder, .urlslab-input[type=email]::-webkit-input-placeholder, .urlslab-input[type=password]::-webkit-input-placeholder, .urlslab-input[type=url]::-webkit-input-placeholder, .urlslab-input[type=number]::-webkit-input-placeholder, .urlslab-input[type=search]::-webkit-input-placeholder,
+.urlslab-textarea.input__text::-webkit-input-placeholder,
+.urlslab-textarea[type=text]::-webkit-input-placeholder,
+.urlslab-textarea[type=email]::-webkit-input-placeholder,
+.urlslab-textarea[type=password]::-webkit-input-placeholder,
+.urlslab-textarea[type=url]::-webkit-input-placeholder,
+.urlslab-textarea[type=number]::-webkit-input-placeholder,
+.urlslab-textarea[type=search]::-webkit-input-placeholder {
+  color: currentcolor;
+  font-size: 1em;
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
+  opacity: 1;
+}
+.urlslab-input.input__text::-webkit-input-placeholder, .urlslab-input[type=text]::-webkit-input-placeholder, .urlslab-input[type=email]::-webkit-input-placeholder, .urlslab-input[type=password]::-webkit-input-placeholder, .urlslab-input[type=url]::-webkit-input-placeholder, .urlslab-input[type=number]::-webkit-input-placeholder, .urlslab-input[type=search]::-webkit-input-placeholder, .urlslab-textarea.input__text::-webkit-input-placeholder, .urlslab-textarea[type=text]::-webkit-input-placeholder, .urlslab-textarea[type=email]::-webkit-input-placeholder, .urlslab-textarea[type=password]::-webkit-input-placeholder, .urlslab-textarea[type=url]::-webkit-input-placeholder, .urlslab-textarea[type=number]::-webkit-input-placeholder, .urlslab-textarea[type=search]::-webkit-input-placeholder {
+  color: currentcolor;
+  font-size: 1em;
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
+  opacity: 1;
+}
+.urlslab-input.input__text::-moz-placeholder, .urlslab-input[type=text]::-moz-placeholder, .urlslab-input[type=email]::-moz-placeholder, .urlslab-input[type=password]::-moz-placeholder, .urlslab-input[type=url]::-moz-placeholder, .urlslab-input[type=number]::-moz-placeholder, .urlslab-input[type=search]::-moz-placeholder, .urlslab-textarea.input__text::-moz-placeholder, .urlslab-textarea[type=text]::-moz-placeholder, .urlslab-textarea[type=email]::-moz-placeholder, .urlslab-textarea[type=password]::-moz-placeholder, .urlslab-textarea[type=url]::-moz-placeholder, .urlslab-textarea[type=number]::-moz-placeholder, .urlslab-textarea[type=search]::-moz-placeholder {
+  color: currentcolor;
+  font-size: 1em;
+  -moz-transition: all 0.2s;
+  transition: all 0.2s;
+  opacity: 1;
+}
+.urlslab-input.input__text:-ms-input-placeholder, .urlslab-input[type=text]:-ms-input-placeholder, .urlslab-input[type=email]:-ms-input-placeholder, .urlslab-input[type=password]:-ms-input-placeholder, .urlslab-input[type=url]:-ms-input-placeholder, .urlslab-input[type=number]:-ms-input-placeholder, .urlslab-input[type=search]:-ms-input-placeholder, .urlslab-textarea.input__text:-ms-input-placeholder, .urlslab-textarea[type=text]:-ms-input-placeholder, .urlslab-textarea[type=email]:-ms-input-placeholder, .urlslab-textarea[type=password]:-ms-input-placeholder, .urlslab-textarea[type=url]:-ms-input-placeholder, .urlslab-textarea[type=number]:-ms-input-placeholder, .urlslab-textarea[type=search]:-ms-input-placeholder {
+  color: currentcolor;
+  font-size: 1em;
+  -ms-transition: all 0.2s;
+  transition: all 0.2s;
+  opacity: 1;
+}
+.urlslab-input.input__text::-ms-input-placeholder, .urlslab-input[type=text]::-ms-input-placeholder, .urlslab-input[type=email]::-ms-input-placeholder, .urlslab-input[type=password]::-ms-input-placeholder, .urlslab-input[type=url]::-ms-input-placeholder, .urlslab-input[type=number]::-ms-input-placeholder, .urlslab-input[type=search]::-ms-input-placeholder, .urlslab-textarea.input__text::-ms-input-placeholder, .urlslab-textarea[type=text]::-ms-input-placeholder, .urlslab-textarea[type=email]::-ms-input-placeholder, .urlslab-textarea[type=password]::-ms-input-placeholder, .urlslab-textarea[type=url]::-ms-input-placeholder, .urlslab-textarea[type=number]::-ms-input-placeholder, .urlslab-textarea[type=search]::-ms-input-placeholder {
+  color: currentcolor;
+  font-size: 1em;
+  -ms-transition: all 0.2s;
+  transition: all 0.2s;
+  opacity: 1;
+}
+.urlslab-input.input__text::placeholder, .urlslab-input[type=text]::placeholder, .urlslab-input[type=email]::placeholder, .urlslab-input[type=password]::placeholder, .urlslab-input[type=url]::placeholder, .urlslab-input[type=number]::placeholder, .urlslab-input[type=search]::placeholder,
+.urlslab-textarea.input__text::placeholder,
+.urlslab-textarea[type=text]::placeholder,
+.urlslab-textarea[type=email]::placeholder,
+.urlslab-textarea[type=password]::placeholder,
+.urlslab-textarea[type=url]::placeholder,
+.urlslab-textarea[type=number]::placeholder,
+.urlslab-textarea[type=search]::placeholder {
+  color: currentcolor;
+  font-size: 1em;
+  -webkit-transition: all 0.2s;
+  -o-transition: all 0.2s;
+  transition: all 0.2s;
+  opacity: 1;
+}
+.urlslab-input[type=checkbox], .urlslab-input[type=radio],
+.urlslab-textarea[type=checkbox],
+.urlslab-textarea[type=radio] {
+  display: none;
+}
+
+.urlslab-inputField {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  position: relative;
+  border: 1px solid currentcolor;
+  border-radius: 6px;
+  font-size: 1em;
+  color: #ced0d4;
+  -webkit-transition: all 0.2s;
+  -o-transition: all 0.2s;
+  transition: all 0.2s;
+}
+.urlslab-inputField:focus-within {
+  z-index: 10;
+}
+.urlslab-inputField.loading::before {
+  width: 1em;
+  height: 1em;
+  position: absolute;
+  right: 0.5em;
+  background: url(./icon-loading-input-yv7e1z8gbu.svg) center center no-repeat;
+  background-size: contain;
+  -webkit-animation: 0.75s rotate linear infinite;
+          animation: 0.75s rotate linear infinite;
+  content: "";
+}
+.urlslab-inputField textarea {
+  resize: none;
+}
+.urlslab-table tbody .urlslab-inputField {
+  border-color: transparent !important;
+}
+.urlslab-table tbody .urlslab-inputField:hover {
+  border-color: #ced0d4 !important;
+}
+.urlslab-table .urlslab-inputField {
+  font-size: inherit;
+  color: inherit;
+}
+.urlslab-inputField-description {
+  font-size: 0.6875rem;
+  margin-top: 0.25em;
+  margin-bottom: 0;
+  color: #65676b;
+}
+.urlslab-inputField-label {
+  font-weight: 600;
+  font-size: 0.8125rem;
+}
+.urlslab-inputField.dark-text {
+  color: #050505;
+  border-color: #ced0d4;
+}
+.urlslab-inputField[data-unit] {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.urlslab-inputField[data-unit]::before {
+  content: attr(data-unit);
+  color: #8c9097;
+  font-weight: 400;
+  font-size: 0.8125rem;
+  margin-left: 0.5em;
+}
+.urlslab-inputField[data-unit] input {
+  text-align: right;
+}
+.urlslab-inputField-wrap {
+  display: block;
+  width: 100%;
+}
+.urlslab-table tbody .urlslab-inputField-wrap {
+  position: relative;
+  left: -1em;
+}
+.urlslab-inputField-wrap.inline {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+.urlslab-inputField-wrap.inline .urlslab-inputField-label {
+  margin-right: 0.5em;
+}
+.urlslab-inputField-wrap.has-value .urlslab-inputField {
+  color: #050505;
+  border-color: #ced0d4;
+}
+.urlslab-inputField-wrap.has-value .urlslab-inputField-message {
+  font-size: 0.75rem;
+  font-weight: 400;
+  padding: 0.5em 1em;
+  margin: 0.5em 0;
+  border-radius: 4px;
+  width: 100%;
+}
+.urlslab-inputField-wrap.success[class] .urlslab-inputField {
+  color: #07b65d;
+  border-color: currentcolor;
+  -webkit-box-shadow: 0 0 0 1px currentcolor;
+          box-shadow: 0 0 0 1px currentcolor;
+}
+.urlslab-inputField-wrap.success[class] .urlslab-inputField-message {
+  color: #07b65d;
+  background-color: #daf4e7;
+}
+.urlslab-inputField-wrap.warning[class] .urlslab-inputField {
+  color: #ffb928;
+  border-color: currentcolor;
+  -webkit-box-shadow: 0 0 0 1px currentcolor;
+          box-shadow: 0 0 0 1px currentcolor;
+}
+.urlslab-inputField-wrap.warning[class] .urlslab-inputField-message {
+  color: #ffb928;
+  background-color: #fff5df;
+}
+.urlslab-inputField-wrap.error[class] .urlslab-inputField {
+  color: #ff492b;
+  border-color: currentcolor;
+  -webkit-box-shadow: 0 0 0 1px currentcolor;
+          box-shadow: 0 0 0 1px currentcolor;
+}
+.urlslab-inputField-wrap.error[class] .urlslab-inputField-message {
+  color: #ff492b;
+  background-color: #ffe4df;
+}
+.urlslab-inputField-wrap.info[class] .urlslab-inputField {
+  color: #46a6ff;
+  border-color: currentcolor;
+  -webkit-box-shadow: 0 0 0 1px currentcolor;
+          box-shadow: 0 0 0 1px currentcolor;
+}
+.urlslab-inputField-wrap.info[class] .urlslab-inputField-message {
+  color: #46a6ff;
+  background-color: #e3f2ff;
+}
+.urlslab-inputField.has-svg input:not([type=search]) {
+  padding: 1.25em 1em 1.25em 3.5em;
+}
+.urlslab-inputField::before {
+  color: currentcolor;
+}
+.urlslab-inputField:focus-within {
+  color: #050505;
+  border-color: #2570ed;
+  -webkit-box-shadow: 0 0 0 1px #2570ed;
+          box-shadow: 0 0 0 1px #2570ed;
+}
+.urlslab-inputField:focus-within::before {
+  color: currentcolor;
+}
+.urlslab-inputField:focus-within svg {
+  fill: currentcolor;
+}
+.urlslab-inputField:focus-within input::-moz-placeholder {
+  opacity: 0.25;
+}
+.urlslab-inputField:focus-within input:-ms-input-placeholder, .urlslab-inputField:focus-within input::-ms-input-placeholder {
+  opacity: 0.25;
+}
+.urlslab-inputField:focus-within input::-webkit-input-placeholder {
+  opacity: 0.25;
+}
+.urlslab-inputField:focus-within input::-moz-placeholder {
+  opacity: 0.25;
+}
+.urlslab-inputField:focus-within input:-ms-input-placeholder {
+  opacity: 0.25;
+}
+.urlslab-inputField:focus-within input::-ms-input-placeholder {
+  opacity: 0.25;
+}
+.urlslab-inputField:focus-within input::placeholder {
+  opacity: 0.25;
+}
+.urlslab-inputField svg {
+  position: absolute;
+  height: 1.5em;
+  left: 0.85em;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+          transform: translateY(-50%);
+  fill: #ced0d4;
+}/* stylelint-disable */
+.urlslab-checkbox {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -ms-flex-line-pack: center;
+      align-content: center;
+  cursor: pointer;
+}
+.urlslab-checkbox.readOnly {
+  cursor: default;
+}
+.urlslab-checkbox-box {
+  width: 1rem;
+  height: 1rem;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 auto;
+          flex: 0 0 auto;
+  background: url(./checkbox-inactive-yv7e1z8gbu.svg) center center no-repeat;
+  background-size: contain;
+}
+.radial .urlslab-checkbox-box {
+  border-radius: 50%;
+  background: none;
+  -webkit-box-shadow: inset 0 0 0 1px #ced0d4;
+          box-shadow: inset 0 0 0 1px #ced0d4;
+}
+.urlslab-checkbox-input {
+  display: none !important;
+}
+.urlslab-checkbox-input:checked + .urlslab-checkbox-box, .urlslab-checkbox-input.checked + .urlslab-checkbox-box {
+  background-image: url(./checkbox-active-yv7e1z8gbu.svg);
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+.urlslab-checkbox-text {
+  margin-left: 0.5em;
+}
+.textBefore .urlslab-checkbox-text {
+  -webkit-box-ordinal-group: 0;
+      -ms-flex-order: -1;
+          order: -1;
+  margin-left: 0;
+  margin-right: 0.5em;
+}/* stylelint-disable */ /* stylelint-disable selector-class-pattern, no-descending-specificity */
+.urlslab-MultiSelectMenu__title::after {
+  height: 0;
+  width: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 0.375em;
+  border-top-color: #050505;
+  display: block;
+  position: relative;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 auto;
+          flex: 0 0 auto;
+  content: "";
+  -webkit-transition: all 0.2s;
+  -o-transition: all 0.2s;
+  transition: all 0.2s;
+  -webkit-transform: scaleY(1);
+      -ms-transform: scaleY(1);
+          transform: scaleY(1);
+  margin-left: auto;
+  top: 0.15em;
+  cursor: pointer;
+}
+.menu-active.urlslab-MultiSelectMenu__title::after, .active.urlslab-MultiSelectMenu__title::after, .urlslab-FilterMenu.active .urlslab-MultiSelectMenu__title::after {
+  -webkit-transform: scaleY(-1);
+      -ms-transform: scaleY(-1);
+          transform: scaleY(-1);
+  top: -0.15em;
+}
+@media (max-width: 1024px) {
+  .urlslab-MultiSelectMenu__title {
+    -webkit-transform: scale(0.75);
+        -ms-transform: scale(0.75);
+            transform: scale(0.75);
+    -webkit-filter: brightness(0.5);
+            filter: brightness(0.5);
+  }
+}
+
+/* stylelint-disable no-descending-specificity */
+.urlslab-input.input__text, .urlslab-input[type=text], .urlslab-input[type=email], .urlslab-input[type=password], .urlslab-input[type=url], .urlslab-input[type=number], .urlslab-input[type=search],
+.urlslab-textarea.input__text,
+.urlslab-textarea[type=text],
+.urlslab-textarea[type=email],
+.urlslab-textarea[type=password],
+.urlslab-textarea[type=url],
+.urlslab-textarea[type=number],
+.urlslab-textarea[type=search] {
+  outline: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  border: none;
+  border-radius: 6px;
+  padding: 0.35em 1em;
+  margin: 0;
+  font-size: 0.8125em;
+  font-weight: 400;
+  width: 100%;
+  color: currentcolor;
+  -webkit-transition: all 0.2s;
+  -o-transition: all 0.2s;
+  transition: all 0.2s;
+  background-color: #fff;
+}
+.urlslab-table .urlslab-input.input__text, .urlslab-table .urlslab-input[type=text], .urlslab-table .urlslab-input[type=email], .urlslab-table .urlslab-input[type=password], .urlslab-table .urlslab-input[type=url], .urlslab-table .urlslab-input[type=number], .urlslab-table .urlslab-input[type=search],
+.urlslab-table .urlslab-textarea.input__text,
+.urlslab-table .urlslab-textarea[type=text],
+.urlslab-table .urlslab-textarea[type=email],
+.urlslab-table .urlslab-textarea[type=password],
+.urlslab-table .urlslab-textarea[type=url],
+.urlslab-table .urlslab-textarea[type=number],
+.urlslab-table .urlslab-textarea[type=search] {
+  -o-text-overflow: ellipsis;
+     text-overflow: ellipsis;
+  width: 100%;
+  background-color: transparent;
+  font-size: inherit;
+}
+.urlslab-table .urlslab-input.input__text:focus, .urlslab-table .urlslab-input[type=text]:focus, .urlslab-table .urlslab-input[type=email]:focus, .urlslab-table .urlslab-input[type=password]:focus, .urlslab-table .urlslab-input[type=url]:focus, .urlslab-table .urlslab-input[type=number]:focus, .urlslab-table .urlslab-input[type=search]:focus,
+.urlslab-table .urlslab-textarea.input__text:focus,
+.urlslab-table .urlslab-textarea[type=text]:focus,
+.urlslab-table .urlslab-textarea[type=email]:focus,
+.urlslab-table .urlslab-textarea[type=password]:focus,
+.urlslab-table .urlslab-textarea[type=url]:focus,
+.urlslab-table .urlslab-textarea[type=number]:focus,
+.urlslab-table .urlslab-textarea[type=search]:focus {
+  background-color: #fff;
+}
+.urlslab-input.input__text.xl, .urlslab-input[type=text].xl, .urlslab-input[type=email].xl, .urlslab-input[type=password].xl, .urlslab-input[type=url].xl, .urlslab-input[type=number].xl, .urlslab-input[type=search].xl,
+.urlslab-textarea.input__text.xl,
+.urlslab-textarea[type=text].xl,
+.urlslab-textarea[type=email].xl,
+.urlslab-textarea[type=password].xl,
+.urlslab-textarea[type=url].xl,
+.urlslab-textarea[type=number].xl,
+.urlslab-textarea[type=search].xl {
+  width: 15em;
+}
+.urlslab-input.input__text:focus, .urlslab-input[type=text]:focus, .urlslab-input[type=email]:focus, .urlslab-input[type=password]:focus, .urlslab-input[type=url]:focus, .urlslab-input[type=number]:focus, .urlslab-input[type=search]:focus,
+.urlslab-textarea.input__text:focus,
+.urlslab-textarea[type=text]:focus,
+.urlslab-textarea[type=email]:focus,
+.urlslab-textarea[type=password]:focus,
+.urlslab-textarea[type=url]:focus,
+.urlslab-textarea[type=number]:focus,
+.urlslab-textarea[type=search]:focus {
+  outline: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  border-color: transparent;
+}
+.urlslab-input.input__text[disabled], .urlslab-input[type=text][disabled], .urlslab-input[type=email][disabled], .urlslab-input[type=password][disabled], .urlslab-input[type=url][disabled], .urlslab-input[type=number][disabled], .urlslab-input[type=search][disabled],
+.urlslab-textarea.input__text[disabled],
+.urlslab-textarea[type=text][disabled],
+.urlslab-textarea[type=email][disabled],
+.urlslab-textarea[type=password][disabled],
+.urlslab-textarea[type=url][disabled],
+.urlslab-textarea[type=number][disabled],
+.urlslab-textarea[type=search][disabled] {
+  background-color: #f5f5f7;
+  color: #8c9097;
+  cursor: not-allowed;
+}
+.urlslab-input.input__text::-moz-placeholder, .urlslab-input[type=text]::-moz-placeholder, .urlslab-input[type=email]::-moz-placeholder, .urlslab-input[type=password]::-moz-placeholder, .urlslab-input[type=url]::-moz-placeholder, .urlslab-input[type=number]::-moz-placeholder, .urlslab-input[type=search]::-moz-placeholder,
+.urlslab-textarea.input__text::-moz-placeholder,
+.urlslab-textarea[type=text]::-moz-placeholder,
+.urlslab-textarea[type=email]::-moz-placeholder,
+.urlslab-textarea[type=password]::-moz-placeholder,
+.urlslab-textarea[type=url]::-moz-placeholder,
+.urlslab-textarea[type=number]::-moz-placeholder,
+.urlslab-textarea[type=search]::-moz-placeholder {
+  color: currentcolor;
+  font-size: 1em;
+  -moz-transition: all 0.2s;
+  transition: all 0.2s;
+  opacity: 1;
+}
+.urlslab-input.input__text:-ms-input-placeholder, .urlslab-input.input__text::-ms-input-placeholder, .urlslab-input[type=text]:-ms-input-placeholder, .urlslab-input[type=text]::-ms-input-placeholder, .urlslab-input[type=email]:-ms-input-placeholder, .urlslab-input[type=email]::-ms-input-placeholder, .urlslab-input[type=password]:-ms-input-placeholder, .urlslab-input[type=password]::-ms-input-placeholder, .urlslab-input[type=url]:-ms-input-placeholder, .urlslab-input[type=url]::-ms-input-placeholder, .urlslab-input[type=number]:-ms-input-placeholder, .urlslab-input[type=number]::-ms-input-placeholder, .urlslab-input[type=search]:-ms-input-placeholder, .urlslab-input[type=search]::-ms-input-placeholder,
+.urlslab-textarea.input__text:-ms-input-placeholder,
+.urlslab-textarea.input__text::-ms-input-placeholder,
+.urlslab-textarea[type=text]:-ms-input-placeholder,
+.urlslab-textarea[type=text]::-ms-input-placeholder,
+.urlslab-textarea[type=email]:-ms-input-placeholder,
+.urlslab-textarea[type=email]::-ms-input-placeholder,
+.urlslab-textarea[type=password]:-ms-input-placeholder,
+.urlslab-textarea[type=password]::-ms-input-placeholder,
+.urlslab-textarea[type=url]:-ms-input-placeholder,
+.urlslab-textarea[type=url]::-ms-input-placeholder,
+.urlslab-textarea[type=number]:-ms-input-placeholder,
+.urlslab-textarea[type=number]::-ms-input-placeholder,
+.urlslab-textarea[type=search]:-ms-input-placeholder,
+.urlslab-textarea[type=search]::-ms-input-placeholder {
+  color: currentcolor;
+  font-size: 1em;
+  -ms-transition: all 0.2s;
+  transition: all 0.2s;
+  opacity: 1;
+}
+.urlslab-input.input__text::-webkit-input-placeholder, .urlslab-input[type=text]::-webkit-input-placeholder, .urlslab-input[type=email]::-webkit-input-placeholder, .urlslab-input[type=password]::-webkit-input-placeholder, .urlslab-input[type=url]::-webkit-input-placeholder, .urlslab-input[type=number]::-webkit-input-placeholder, .urlslab-input[type=search]::-webkit-input-placeholder,
+.urlslab-textarea.input__text::-webkit-input-placeholder,
+.urlslab-textarea[type=text]::-webkit-input-placeholder,
+.urlslab-textarea[type=email]::-webkit-input-placeholder,
+.urlslab-textarea[type=password]::-webkit-input-placeholder,
+.urlslab-textarea[type=url]::-webkit-input-placeholder,
+.urlslab-textarea[type=number]::-webkit-input-placeholder,
+.urlslab-textarea[type=search]::-webkit-input-placeholder {
+  color: currentcolor;
+  font-size: 1em;
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
+  opacity: 1;
+}
+.urlslab-input.input__text::-webkit-input-placeholder, .urlslab-input[type=text]::-webkit-input-placeholder, .urlslab-input[type=email]::-webkit-input-placeholder, .urlslab-input[type=password]::-webkit-input-placeholder, .urlslab-input[type=url]::-webkit-input-placeholder, .urlslab-input[type=number]::-webkit-input-placeholder, .urlslab-input[type=search]::-webkit-input-placeholder, .urlslab-textarea.input__text::-webkit-input-placeholder, .urlslab-textarea[type=text]::-webkit-input-placeholder, .urlslab-textarea[type=email]::-webkit-input-placeholder, .urlslab-textarea[type=password]::-webkit-input-placeholder, .urlslab-textarea[type=url]::-webkit-input-placeholder, .urlslab-textarea[type=number]::-webkit-input-placeholder, .urlslab-textarea[type=search]::-webkit-input-placeholder {
+  color: currentcolor;
+  font-size: 1em;
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
+  opacity: 1;
+}
+.urlslab-input.input__text::-moz-placeholder, .urlslab-input[type=text]::-moz-placeholder, .urlslab-input[type=email]::-moz-placeholder, .urlslab-input[type=password]::-moz-placeholder, .urlslab-input[type=url]::-moz-placeholder, .urlslab-input[type=number]::-moz-placeholder, .urlslab-input[type=search]::-moz-placeholder, .urlslab-textarea.input__text::-moz-placeholder, .urlslab-textarea[type=text]::-moz-placeholder, .urlslab-textarea[type=email]::-moz-placeholder, .urlslab-textarea[type=password]::-moz-placeholder, .urlslab-textarea[type=url]::-moz-placeholder, .urlslab-textarea[type=number]::-moz-placeholder, .urlslab-textarea[type=search]::-moz-placeholder {
+  color: currentcolor;
+  font-size: 1em;
+  -moz-transition: all 0.2s;
+  transition: all 0.2s;
+  opacity: 1;
+}
+.urlslab-input.input__text:-ms-input-placeholder, .urlslab-input[type=text]:-ms-input-placeholder, .urlslab-input[type=email]:-ms-input-placeholder, .urlslab-input[type=password]:-ms-input-placeholder, .urlslab-input[type=url]:-ms-input-placeholder, .urlslab-input[type=number]:-ms-input-placeholder, .urlslab-input[type=search]:-ms-input-placeholder, .urlslab-textarea.input__text:-ms-input-placeholder, .urlslab-textarea[type=text]:-ms-input-placeholder, .urlslab-textarea[type=email]:-ms-input-placeholder, .urlslab-textarea[type=password]:-ms-input-placeholder, .urlslab-textarea[type=url]:-ms-input-placeholder, .urlslab-textarea[type=number]:-ms-input-placeholder, .urlslab-textarea[type=search]:-ms-input-placeholder {
+  color: currentcolor;
+  font-size: 1em;
+  -ms-transition: all 0.2s;
+  transition: all 0.2s;
+  opacity: 1;
+}
+.urlslab-input.input__text::-ms-input-placeholder, .urlslab-input[type=text]::-ms-input-placeholder, .urlslab-input[type=email]::-ms-input-placeholder, .urlslab-input[type=password]::-ms-input-placeholder, .urlslab-input[type=url]::-ms-input-placeholder, .urlslab-input[type=number]::-ms-input-placeholder, .urlslab-input[type=search]::-ms-input-placeholder, .urlslab-textarea.input__text::-ms-input-placeholder, .urlslab-textarea[type=text]::-ms-input-placeholder, .urlslab-textarea[type=email]::-ms-input-placeholder, .urlslab-textarea[type=password]::-ms-input-placeholder, .urlslab-textarea[type=url]::-ms-input-placeholder, .urlslab-textarea[type=number]::-ms-input-placeholder, .urlslab-textarea[type=search]::-ms-input-placeholder {
+  color: currentcolor;
+  font-size: 1em;
+  -ms-transition: all 0.2s;
+  transition: all 0.2s;
+  opacity: 1;
+}
+.urlslab-input.input__text::placeholder, .urlslab-input[type=text]::placeholder, .urlslab-input[type=email]::placeholder, .urlslab-input[type=password]::placeholder, .urlslab-input[type=url]::placeholder, .urlslab-input[type=number]::placeholder, .urlslab-input[type=search]::placeholder,
+.urlslab-textarea.input__text::placeholder,
+.urlslab-textarea[type=text]::placeholder,
+.urlslab-textarea[type=email]::placeholder,
+.urlslab-textarea[type=password]::placeholder,
+.urlslab-textarea[type=url]::placeholder,
+.urlslab-textarea[type=number]::placeholder,
+.urlslab-textarea[type=search]::placeholder {
+  color: currentcolor;
+  font-size: 1em;
+  -webkit-transition: all 0.2s;
+  -o-transition: all 0.2s;
+  transition: all 0.2s;
+  opacity: 1;
+}
+.urlslab-input[type=checkbox], .urlslab-input[type=radio],
+.urlslab-textarea[type=checkbox],
+.urlslab-textarea[type=radio] {
+  display: none;
+}
+
+.urlslab-inputField {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  position: relative;
+  border: 1px solid currentcolor;
+  border-radius: 6px;
+  font-size: 1em;
+  color: #ced0d4;
+  -webkit-transition: all 0.2s;
+  -o-transition: all 0.2s;
+  transition: all 0.2s;
+}
+.urlslab-inputField:focus-within {
+  z-index: 10;
+}
+.urlslab-inputField.loading::before {
+  width: 1em;
+  height: 1em;
+  position: absolute;
+  right: 0.5em;
+  background: url(./icon-loading-input-yv7e1z8gbu.svg) center center no-repeat;
+  background-size: contain;
+  -webkit-animation: 0.75s rotate linear infinite;
+          animation: 0.75s rotate linear infinite;
+  content: "";
+}
+.urlslab-inputField textarea {
+  resize: none;
+}
+.urlslab-table tbody .urlslab-inputField {
+  border-color: transparent !important;
+}
+.urlslab-table tbody .urlslab-inputField:hover {
+  border-color: #ced0d4 !important;
+}
+.urlslab-table .urlslab-inputField {
+  font-size: inherit;
+  color: inherit;
+}
+.urlslab-inputField-description {
+  font-size: 0.6875rem;
+  margin-top: 0.25em;
+  margin-bottom: 0;
+  color: #65676b;
+}
+.urlslab-inputField-label {
+  font-weight: 600;
+  font-size: 0.8125rem;
+}
+.urlslab-inputField.dark-text {
+  color: #050505;
+  border-color: #ced0d4;
+}
+.urlslab-inputField[data-unit] {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.urlslab-inputField[data-unit]::before {
+  content: attr(data-unit);
+  color: #8c9097;
+  font-weight: 400;
+  font-size: 0.8125rem;
+  margin-left: 0.5em;
+}
+.urlslab-inputField[data-unit] input {
+  text-align: right;
+}
+.urlslab-inputField-wrap {
+  display: block;
+  width: 100%;
+}
+.urlslab-table tbody .urlslab-inputField-wrap {
+  position: relative;
+  left: -1em;
+}
+.urlslab-inputField-wrap.inline {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+.urlslab-inputField-wrap.inline .urlslab-inputField-label {
+  margin-right: 0.5em;
+}
+.urlslab-inputField-wrap.has-value .urlslab-inputField {
+  color: #050505;
+  border-color: #ced0d4;
+}
+.urlslab-inputField-wrap.has-value .urlslab-inputField-message {
+  font-size: 0.75rem;
+  font-weight: 400;
+  padding: 0.5em 1em;
+  margin: 0.5em 0;
+  border-radius: 4px;
+  width: 100%;
+}
+.urlslab-inputField-wrap.success[class] .urlslab-inputField {
+  color: #07b65d;
+  border-color: currentcolor;
+  -webkit-box-shadow: 0 0 0 1px currentcolor;
+          box-shadow: 0 0 0 1px currentcolor;
+}
+.urlslab-inputField-wrap.success[class] .urlslab-inputField-message {
+  color: #07b65d;
+  background-color: #daf4e7;
+}
+.urlslab-inputField-wrap.warning[class] .urlslab-inputField {
+  color: #ffb928;
+  border-color: currentcolor;
+  -webkit-box-shadow: 0 0 0 1px currentcolor;
+          box-shadow: 0 0 0 1px currentcolor;
+}
+.urlslab-inputField-wrap.warning[class] .urlslab-inputField-message {
+  color: #ffb928;
+  background-color: #fff5df;
+}
+.urlslab-inputField-wrap.error[class] .urlslab-inputField {
+  color: #ff492b;
+  border-color: currentcolor;
+  -webkit-box-shadow: 0 0 0 1px currentcolor;
+          box-shadow: 0 0 0 1px currentcolor;
+}
+.urlslab-inputField-wrap.error[class] .urlslab-inputField-message {
+  color: #ff492b;
+  background-color: #ffe4df;
+}
+.urlslab-inputField-wrap.info[class] .urlslab-inputField {
+  color: #46a6ff;
+  border-color: currentcolor;
+  -webkit-box-shadow: 0 0 0 1px currentcolor;
+          box-shadow: 0 0 0 1px currentcolor;
+}
+.urlslab-inputField-wrap.info[class] .urlslab-inputField-message {
+  color: #46a6ff;
+  background-color: #e3f2ff;
+}
+.urlslab-inputField.has-svg input:not([type=search]) {
+  padding: 1.25em 1em 1.25em 3.5em;
+}
+.urlslab-inputField::before {
+  color: currentcolor;
+}
+.urlslab-inputField:focus-within {
+  color: #050505;
+  border-color: #2570ed;
+  -webkit-box-shadow: 0 0 0 1px #2570ed;
+          box-shadow: 0 0 0 1px #2570ed;
+}
+.urlslab-inputField:focus-within::before {
+  color: currentcolor;
+}
+.urlslab-inputField:focus-within svg {
+  fill: currentcolor;
+}
+.urlslab-inputField:focus-within input::-moz-placeholder {
+  opacity: 0.25;
+}
+.urlslab-inputField:focus-within input:-ms-input-placeholder, .urlslab-inputField:focus-within input::-ms-input-placeholder {
+  opacity: 0.25;
+}
+.urlslab-inputField:focus-within input::-webkit-input-placeholder {
+  opacity: 0.25;
+}
+.urlslab-inputField:focus-within input::-moz-placeholder {
+  opacity: 0.25;
+}
+.urlslab-inputField:focus-within input:-ms-input-placeholder {
+  opacity: 0.25;
+}
+.urlslab-inputField:focus-within input::-ms-input-placeholder {
+  opacity: 0.25;
+}
+.urlslab-inputField:focus-within input::placeholder {
+  opacity: 0.25;
+}
+.urlslab-inputField svg {
+  position: absolute;
+  height: 1.5em;
+  left: 0.85em;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+          transform: translateY(-50%);
+  fill: #ced0d4;
+}
+
+/* stylelint-disable selector-class-pattern, no-descending-specificity */
+.urlslab-MultiSelectMenu {
+  position: relative;
+  z-index: 2;
+  max-width: 12em;
+  font-size: 0.8125em;
+  font-family: OpenSans, sans-serif;
+  font-weight: 400;
+}
+.urlslab-table .urlslab-MultiSelectMenu {
+  max-width: none;
+  font-size: inherit;
+}
+.urlslab-MultiSelectMenu.disabled .urlslab-MultiSelectMenu__title {
+  color: #65676b;
+  cursor: default;
+}
+.urlslab-MultiSelectMenu.disabled .urlslab-MultiSelectMenu__title::after {
+  border: none;
+}
+@media (hover: hover) {
+  .urlslab-MultiSelectMenu.disabled .urlslab-MultiSelectMenu__title:hover {
+    color: #65676b;
+    border-color: #ced0d4;
+  }
+}
+.urlslab-MultiSelectMenu.active {
+  z-index: 3;
+}
+.urlslab-MultiSelectMenu.wide {
+  max-width: none;
+}
+.urlslab-MultiSelectMenu__title {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  line-height: 1.2;
+  border: 1px solid #ced0d4;
+  border-radius: 6px;
+  background-color: #fff;
+  padding: 0.7em 1em;
+  -webkit-transition: all 0.2s;
+  -o-transition: all 0.2s;
+  transition: all 0.2s;
+  min-width: 10em;
+  height: 2.8461em;
+  cursor: pointer;
+}
+.urlslab-MultiSelectMenu__title span {
+  display: block;
+  text-align: left;
+  -o-text-overflow: ellipsis;
+     text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  width: calc(100% - 1.5em);
+}
+.urlslab-table tr:not(.urlslab-rowInserter) .urlslab-MultiSelectMenu__title {
+  background-color: transparent;
+  min-width: auto;
+}
+.urlslab-table tr:not(.urlslab-rowInserter) th .urlslab-MultiSelectMenu__title {
+  padding-left: 0;
+  border: none;
+}
+.urlslab-table tr:not(.urlslab-rowInserter) th .urlslab-MultiSelectMenu__title::after {
+  margin-left: 1em;
+}
+.urlslab-MultiSelectMenu__title svg {
+  margin-right: 0.5em;
+}
+.urlslab-MultiSelectMenu__title.active {
+  color: #2570ed;
+  border-color: currentcolor;
+}
+@media (hover: hover) {
+  .urlslab-MultiSelectMenu__title:hover {
+    color: #2570ed;
+    border-color: currentcolor;
+  }
+  .urlslab-MultiSelectMenu__title.active:hover {
+    color: #050505;
+    border-color: #e4e5e9;
+  }
+}
+.urlslab-MultiSelectMenu__items {
+  position: absolute;
+  top: calc(100% + 1px);
+  left: 0;
+  display: none;
+  opacity: 0;
+  border-radius: 6px;
+  background-color: #fff;
+  width: calc(100% + 5em);
+  padding: 1em 1.45em;
+  -webkit-transition: opacity 0.1s;
+  -o-transition: opacity 0.1s;
+  transition: opacity 0.1s;
+  -webkit-filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.16));
+          filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.16));
+}
+.menu-left .urlslab-MultiSelectMenu__items {
+  left: auto;
+  right: 0;
+}
+.urlslab-MultiSelectMenu__items.menuInput {
+  min-width: 15em;
+  max-width: 25em;
+}
+.wide .urlslab-MultiSelectMenu__items {
+  left: 0;
+  width: 100%;
+}
+.urlslab-MultiSelectMenu__items--inn {
+  scrollbar-width: 6px;
+  scrollbar-color: #bec2c9 transparent;
+  max-height: 19em;
+  overflow-y: scroll;
+  position: relative;
+  margin-left: -1.45em;
+  margin-right: -1.45em;
+}
+.urlslab-MultiSelectMenu__items--inn::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+.urlslab-MultiSelectMenu__items--inn::-webkit-scrollbar-thumb {
+  background-color: #bec2c9;
+  border-radius: 0.625rem;
+  height: 5em;
+}
+.urlslab-MultiSelectMenu__items--inn::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.urlslab-MultiSelectMenu__items--inn > *[class] {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-line-pack: center;
+      align-content: center;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  width: 100%;
+  padding: 0.5em 1em;
+  margin-bottom: 0.25em;
+}
+.menu-left .urlslab-MultiSelectMenu__items--inn {
+  margin-right: -1.25em;
+}
+.urlslab-MultiSelectMenu__items.active {
+  display: block;
+}
+.urlslab-MultiSelectMenu__items.visible {
+  opacity: 1;
+}
+.urlslab-MultiSelectMenu label.urlslab-MultiSelectMenu__item *,
+.urlslab-MultiSelectMenu .label.urlslab-MultiSelectMenu__item * {
+  font-weight: inherit;
+}
+.urlslab-MultiSelectMenu label.urlslab-MultiSelectMenu__item strong,
+.urlslab-MultiSelectMenu .label.urlslab-MultiSelectMenu__item strong {
+  font-weight: 600;
+}
+.urlslab-MultiSelectMenu label.urlslab-MultiSelectMenu__item:last-of-type,
+.urlslab-MultiSelectMenu .label.urlslab-MultiSelectMenu__item:last-of-type {
+  margin-bottom: 0;
+}
+@media (hover: hover) {
+  .urlslab-MultiSelectMenu label.urlslab-MultiSelectMenu__item:not(.menuInput):hover,
+  .urlslab-MultiSelectMenu .label.urlslab-MultiSelectMenu__item:not(.menuInput):hover {
+    background-color: #f5f5f7;
+  }
+}
