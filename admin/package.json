@@ -84,7 +84,9 @@
   "scripts": {
     "dev": "vite",
     "watch": "vite build --watch",
-    "build": "vite build",
+    "watch:ai-assistant": "cd ./modules/ai_content_assistant/ && vite build --watch",
+    "build:ai-assistant": "cd ./modules/ai_content_assistant/ && vite build",
+    "build": "vite build && npm run build:ai-assistant",
     "preview": "vite preview"
   }
 }

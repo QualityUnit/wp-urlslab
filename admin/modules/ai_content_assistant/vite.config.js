@@ -35,14 +35,13 @@ export default defineConfig( {
 		port: 1337,
 	},
 	build: {
+		outDir: 'build',
 		minify: false,
 		rollupOptions: {
 			input: {
-				main: './src/main.jsx',
-				//'ai_content_assistant/main': './modules/ai-content-assistant/main.jsx',
+				main: './main.jsx',
 			},
 			output: {
-				// this gets rid of the hash on main.css
 				entryFileNames: `[name]-${ hash }.js`,
 				chunkFileNames: `assets/[name]-${ hash }.js`,
 				assetFileNames: `assets/[name]-${ hash }.[ext]`,

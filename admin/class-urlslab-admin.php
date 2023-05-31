@@ -76,7 +76,7 @@ class Urlslab_Admin {
 		if ( isset( $_GET['page'] ) && str_contains( $_GET['page'], 'urlslab' ) ) {
 			$maincss = glob( plugin_dir_path( __FILE__ ) . 'dist/assets/main-*.css' );
 			$mainjs = glob( plugin_dir_path( __FILE__ ) . 'dist/main-*.js' );
-
+			
 			wp_enqueue_style( $this->urlslab . '-main', plugin_dir_url( __FILE__ ) . 'dist/assets/' . basename( $maincss[0] ), false, $this->version );
 
 
@@ -105,15 +105,21 @@ class Urlslab_Admin {
 	 */
 	public function enqueue_block_editor_assets() {
 		
-		//wp_enqueue_style( $this->urlslab . '-main', plugin_dir_url( __FILE__ ) . 'dist/assets/' . basename( $maincss[0] ), false, $this->version );
 		
 		foreach ( $this->editor_modules as $module_name ) {
-			$jsfile = glob( plugin_dir_path( __FILE__ ) . `dist/{$module_name}-*.js` );
-
+			$rootpath = "modules/{$module_name}/build/";
+			$handle = "{$this->urlslab}-{$module_name}";
+			$cssfile = glob( plugin_dir_path( __FILE__ ) . $rootpath . 'assets/main-*.css' );
+			$jsfile = glob( plugin_dir_path( __FILE__ ) . $rootpath . '/main-*.js' );
+			
+			if ( ! empty( $cssfile ) ) {
+				wp_enqueue_style( $handle, plugin_dir_url( __FILE__ ) . $rootpath . 'assets/' . basename( $cssfile[0] ), false, $this->version );
+			}
+			
 			if ( ! empty( $jsfile ) ) {
 				wp_enqueue_script(
-					`{$this->urlslab}-{$module_name}`,
-					plugin_dir_url( __FILE__ ) . 'dist/' . basename( $jsfile[0] ),
+					$handle,
+					plugin_dir_url( __FILE__ ) . "modules/{$module_name}/build/" . basename( $jsfile[0] ),
 					array(
 						'react',
 						'react-dom',
