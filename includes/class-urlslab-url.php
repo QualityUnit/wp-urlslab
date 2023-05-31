@@ -64,7 +64,7 @@ class Urlslab_Url {
 	}
 
 	public function is_current_404(): bool {
-		return is_404() && $this->get_url_id() == Urlslab_Widget::get_current_page_url()->get_url_id();
+		return is_404() && $this->get_url_id() === Urlslab_Widget::get_current_page_url()->get_url_id();
 	}
 
 	public function is_wp_admin_url(): bool {
