@@ -65,6 +65,7 @@
   "scripts": {
     "build:admin": "cd ./admin/ && yarn && yarn build",
     "build": "webpack --mode=production && yarn build:admin",
+    "build:main": "webpack --mode=production",
     "watch": "webpack --mode=development --watch",
     "bundle": "yarn install && npm run watch",
     "dev": "webpack serve --config configuration/webpack.dev.config.js --mode=development",

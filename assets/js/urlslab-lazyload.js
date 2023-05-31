@@ -134,8 +134,7 @@ const urlslabLazyLoad = () => {
 
 	const loadYouTube = ( yt ) => {
 		if ( ! yt.hasAttribute('urlslab-active') ) {
-			yt.setAttribute('urlslab-active', true);
-
+			yt.setAttribute('urlslab-active', true);			
 			const videoID = yt.dataset.ytid;
 
 			if( videoID ) {
@@ -156,7 +155,7 @@ const urlslabLazyLoad = () => {
 					iframe.setAttribute('height', yt.getAttribute('height'))
 				}
 	
-				yt.insertAdjacentElement( "afterbegin", iframe )
+				yt.querySelector('.youtube_urlslab_loader--wrapper').insertAdjacentElement( "afterbegin", iframe )
 				setTimeout( () => {
 					yt.classList.add( "active" )
 				}, 200 )

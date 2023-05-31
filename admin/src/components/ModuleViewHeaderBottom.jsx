@@ -94,7 +94,11 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 	};
 
 	const handleRefresh = () => {
+		const key = [ slug, filtersArray( filters ), sorting ? sorting : [] ];
 		queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ? sorting : [] ] );
+		// if ( queryClient.isFetching( { queryKey: key } ) ) {
+		// 	console.log( key );
+		// }
 		if ( ! noCount ) {
 			queryClient.invalidateQueries( [ slug, 'count', filtersArray( filters ) ] );
 		}

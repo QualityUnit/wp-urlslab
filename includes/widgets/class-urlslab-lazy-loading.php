@@ -581,6 +581,31 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$youtube_loader->setAttribute( 'class', 'youtube_urlslab_loader youtube_urlslab_loader--elementor' );
 		$youtube_loader->setAttribute( 'data-ytid', $ytid );
 
+		$channel = urlslab_video_attribute( $ytid, 'channel_title' );
+		$duration = convertDuration( urlslab_video_attribute( $ytid, 'duration' ) );
+		$date = urlslab_video_attribute( $ytid, 'published_at' );
+		$date_formatted = date_i18n( get_option( 'date_format' ), strtotime( $date ) );
+
+		$youtube_title = $document->createElement( 'strong', urlslab_video_attribute( $ytid, 'title' ) . ' | ' . $channel );
+		$youtube_title->setAttribute( 'class', 'youtube_urlslab_loader--title' );
+
+		$youtube_bottom = $document->createElement( 'div' );
+		$youtube_bottom->setAttribute( 'class', 'youtube_urlslab_loader--bottom' );
+		$youtube_channel = $document->createElement( 'strong', $channel );
+		$youtube_duration = $document->createElement( 'strong', $duration );
+		$youtube_duration->setAttribute( 'class', 'youtube_urlslab_loader--duration' );
+		$youtube_published = $document->createElement( 'time', $date_formatted );
+		$youtube_published->setAttribute( 'datetime', $date );
+
+		$youtube_bottom->appendChild( $youtube_channel );
+		$youtube_bottom->appendChild( $youtube_published );
+
+		$youtube_img_wrapper = $document->createElement( 'div' );
+		$youtube_img_wrapper->setAttribute( 'class', 'youtube_urlslab_loader--wrapper' );
+
+		$youtube_img_wrapper->appendChild( $youtube_title );
+		$youtube_img_wrapper->appendChild( $youtube_duration );
+
 		$youtube_img = $document->createElement( 'img' );
 		$youtube_img->setAttribute( 'class', 'youtube_urlslab_loader--img' );
 		$youtube_img->setAttribute( 'data-src', 'https://i.ytimg.com/vi/' . $ytid . '/hqdefault.jpg' );
@@ -588,7 +613,9 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			$youtube_img->setAttribute( 'alt', 'Youtube video: ' . $video_objects[ $ytid ]->get_title() );
 		}
 		$youtube_img->setAttribute( 'urlslab-lazy', 'yes' );
-		$youtube_loader->appendChild( $youtube_img );
+		$youtube_img_wrapper->appendChild( $youtube_img );
+		$youtube_loader->appendChild( $youtube_img_wrapper );
+		$youtube_loader->appendChild( $youtube_bottom );
 
 		$xpath = new DOMXPath( $document );
 		$child = $xpath->query( "//div[@data-id='" . $element->getAttribute( 'data-id' ) . "']//div[contains(@class, 'elementor-video')]" );
@@ -616,6 +643,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	private function replace_youtube_element_with_placeholder( DOMDocument $document, DOMElement $element, $video_objects, $ytid ): bool {
+
 		$youtube_loader = $document->createElement( 'div' );
 		$youtube_loader->setAttribute( 'class', 'youtube_urlslab_loader' );
 		$youtube_loader->setAttribute( 'data-ytid', $ytid );
@@ -626,6 +654,31 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			$youtube_loader->setAttribute( 'height', $element->getAttribute( 'height' ) );
 		}
 
+		$channel = urlslab_video_attribute( $ytid, 'channel_title' );
+		$duration = convertDuration( urlslab_video_attribute( $ytid, 'duration' ) );
+		$date = urlslab_video_attribute( $ytid, 'published_at' );
+		$date_formatted = date_i18n( get_option( 'date_format' ), strtotime( $date ) );
+
+		$youtube_title = $document->createElement( 'strong', urlslab_video_attribute( $ytid, 'title' ) . ' | ' . $channel );
+		$youtube_title->setAttribute( 'class', 'youtube_urlslab_loader--title' );
+
+		$youtube_bottom = $document->createElement( 'div' );
+		$youtube_bottom->setAttribute( 'class', 'youtube_urlslab_loader--bottom' );
+		$youtube_channel = $document->createElement( 'strong', $channel );
+		$youtube_duration = $document->createElement( 'strong', $duration );
+		$youtube_duration->setAttribute( 'class', 'youtube_urlslab_loader--duration' );
+		$youtube_published = $document->createElement( 'time', $date_formatted );
+		$youtube_published->setAttribute( 'datetime', $date );
+
+		$youtube_bottom->appendChild( $youtube_channel );
+		$youtube_bottom->appendChild( $youtube_published );
+
+		$youtube_img_wrapper = $document->createElement( 'div' );
+		$youtube_img_wrapper->setAttribute( 'class', 'youtube_urlslab_loader--wrapper' );
+
+		$youtube_img_wrapper->appendChild( $youtube_title );
+		$youtube_img_wrapper->appendChild( $youtube_duration );
+
 		$youtube_img = $document->createElement( 'img' );
 		$youtube_img->setAttribute( 'class', 'youtube_urlslab_loader--img' );
 		$youtube_img->setAttribute( 'data-src', 'https://i.ytimg.com/vi/' . $ytid . '/hqdefault.jpg' );
@@ -634,7 +687,9 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		}
 		$youtube_img->setAttribute( 'urlslab-lazy', 'yes' );
 
-		$youtube_loader->appendChild( $youtube_img );
+		$youtube_img_wrapper->appendChild( $youtube_img );
+		$youtube_loader->appendChild( $youtube_img_wrapper );
+		$youtube_loader->appendChild( $youtube_bottom );
 
 		if ( is_numeric( $this->get_option( self::SETTING_NAME_ATTACH_GENERATOR_ID ) ) && $this->get_option( self::SETTING_NAME_ATTACH_GENERATOR_ID ) > 0 ) {
 			$shortcode = do_shortcode( '[urlslab-generator id="' . ( (int) $this->get_option( self::SETTING_NAME_ATTACH_GENERATOR_ID ) ) . '" videoid="' . $ytid . '"]' );
@@ -812,3 +867,24 @@ function urlslab_video_attributes( $videoid ): array {
 		return array();
 	}
 }
+
+function convertDuration( $videoid ) {
+		$videoid = str_replace( ['P','T'],'',$videoid );
+		foreach ( ['D','H','M','S'] as $a ) {
+				$pos = strpos( $videoid, $a );
+				if ( $pos !== false ) ${ $a } = substr( $videoid, 0, $pos ); else { ${ $a } = 0; continue; }
+				$videoid = substr( $videoid, $pos + 1 );
+		}
+		if ( $D > 0 ) {
+				$M = str_pad( $M, 2, '0', STR_PAD_LEFT );
+				$S = str_pad( $S, 2, '0',STR_PAD_LEFT );
+				return ( $H + ( 24 * $D ) ) . ":$M:$S"; // add days to hours
+		} elseif ( $H > 0 ) {
+				$M = str_pad( $M, 2, '0', STR_PAD_LEFT );
+				$S = str_pad( $S, 2, '0', STR_PAD_LEFT );
+				return "$H:$M:$S";
+		} else {
+				$S = str_pad( $S, 2, '0', STR_PAD_LEFT );
+				return "$M:$S";
+		}
+};
