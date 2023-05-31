@@ -81,7 +81,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 		return shortcode_atts(
 			array(
-				'url'           => $this->get_current_page_url()->get_url_with_protocol(),
+				'url'           => Urlslab_Widget::get_current_page_url()->get_url_with_protocol(),
 				'related-count' => $this->get_option( self::SETTING_NAME_ARTICLES_COUNT ),
 				'show-image'    => $this->get_option( self::SETTING_NAME_SHOW_IMAGE ),
 				'image-size'    => $this->get_option( self::SETTING_NAME_IMAGE_SIZE ),

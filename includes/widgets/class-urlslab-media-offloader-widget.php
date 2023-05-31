@@ -721,7 +721,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		if ( $this->get_option( self::SETTING_NAME_LOG_IMAGES ) ) {
 			global $wpdb;
 
-			$urlid   = $this->get_current_page_url()->get_url_id();
+			$urlid   = Urlslab_Widget::get_current_page_url()->get_url_id();
 			$results = $wpdb->get_results(
 				$wpdb->prepare(
 					'SELECT fileid FROM ' . URLSLAB_FILE_URLS_TABLE . ' WHERE url_id = %d', // phpcs:ignore
@@ -761,7 +761,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 				);
 
 				try {
-					Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $this->get_current_page_url() );
+					Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( Urlslab_Widget::get_current_page_url() );
 				} catch ( Exception $e ) {
 				}
 			}

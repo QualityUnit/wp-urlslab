@@ -60,11 +60,15 @@ class Urlslab_Url {
 	 * @return bool
 	 */
 	public function is_url_valid(): bool {
-		if ( empty( $this->urlslab_parsed_url ) ) {
-			return false;
-		}
+		return ! empty( $this->urlslab_parsed_url ) && ! $this->is_current_404();
+	}
 
-		return true;
+	public function is_current_404(): bool {
+		return is_404() && $this->get_url_id() === Urlslab_Widget::get_current_page_url()->get_url_id();
+	}
+
+	public function is_wp_admin_url(): bool {
+		return strpos( $this->url_components['path'], '/wp-admin/' ) !== false || strpos( $this->url_components['path'], '/wp-login.php' ) !== false;
 	}
 
 	public function is_url_blacklisted(): bool {

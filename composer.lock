@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.271.3",
+            "version": "3.271.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "f481134d37b8303fa2e82ca7fe2a3124144057f6"
+                "reference": "bc19179c5f070b3d7ca7fe8a87eaeda1464b94e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/f481134d37b8303fa2e82ca7fe2a3124144057f6",
-                "reference": "f481134d37b8303fa2e82ca7fe2a3124144057f6",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/bc19179c5f070b3d7ca7fe8a87eaeda1464b94e5",
+                "reference": "bc19179c5f070b3d7ca7fe8a87eaeda1464b94e5",
                 "shasum": ""
             },
             "require": {
@@ -151,9 +151,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.271.3"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.271.4"
             },
-            "time": "2023-05-26T18:20:00+00:00"
+            "time": "2023-05-30T18:21:41+00:00"
         },
         {
             "name": "composer/installers",
@@ -1286,12 +1286,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "2d73bad6cb1c8cda0ab4e4208f4ee2d70e472879"
+                "reference": "d40baa1c4204055d04a5a9b5ad39c95b189ef889"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/2d73bad6cb1c8cda0ab4e4208f4ee2d70e472879",
-                "reference": "2d73bad6cb1c8cda0ab4e4208f4ee2d70e472879",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/d40baa1c4204055d04a5a9b5ad39c95b189ef889",
+                "reference": "d40baa1c4204055d04a5a9b5ad39c95b189ef889",
                 "shasum": ""
             },
             "conflict": {
@@ -1387,7 +1387,7 @@
                 "doctrine/mongodb-odm": ">=1,<1.0.2",
                 "doctrine/mongodb-odm-bundle": ">=2,<3.0.1",
                 "doctrine/orm": ">=2,<2.4.8|>=2.5,<2.5.1|>=2.8.3,<2.8.4",
-                "dolibarr/dolibarr": "<16|>=16.0.1,<16.0.3|= 12.0.5|>= 3.3.beta1, < 13.0.2",
+                "dolibarr/dolibarr": "<17.0.1|= 12.0.5|>= 3.3.beta1, < 13.0.2",
                 "dompdf/dompdf": "<2.0.2|= 2.0.2",
                 "drupal/core": ">=7,<7.96|>=8,<9.4.14|>=9.5,<9.5.8|>=10,<10.0.8",
                 "drupal/drupal": ">=7,<7.80|>=8,<8.9.16|>=9,<9.1.12|>=9.2,<9.2.4",
@@ -1886,7 +1886,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-05-26T14:04:17+00:00"
+            "time": "2023-05-30T21:04:11+00:00"
         },
         {
             "name": "sirbrillig/phpcs-variable-analysis",

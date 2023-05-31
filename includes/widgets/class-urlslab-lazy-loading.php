@@ -62,6 +62,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		if ( $atts['nl2br'] ) {
 			return nl2br( urlslab_video_attribute( $atts['videoid'], $atts['attribute'] ) );
 		}
+
 		return urlslab_video_attribute( $atts['videoid'], $atts['attribute'] );
 	}
 
@@ -83,7 +84,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	public function the_content( DOMDocument $document ) {
-		if ( is_admin() ) {
+		if ( is_admin() || is_404() ) {
 			return;
 		}
 		if ( $this->get_option( self::SETTING_NAME_CONTENT_LAZY_LOADING ) ) {
@@ -762,7 +763,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			return;
 		}
 		$objects = array();
-		$url_id  = $this->get_current_page_url()->get_url_id();
+		$url_id  = Urlslab_Widget::get_current_page_url()->get_url_id();
 		foreach ( $youtube_ids as $youtube_id ) {
 			$row = new Urlslab_Youtube_Url_Row();
 			$row->set_videoid( $youtube_id );

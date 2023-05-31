@@ -30,7 +30,7 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	}
 
 	public function content_hook( DOMDocument $document ) {
-		if ( is_admin() || empty( $this->get_option( self::SETTING_NAME_ALT_TAG_SOURCE ) ) ) {
+		if ( is_admin() || is_404() || empty( $this->get_option( self::SETTING_NAME_ALT_TAG_SOURCE ) ) ) {
 			return;
 		}
 
