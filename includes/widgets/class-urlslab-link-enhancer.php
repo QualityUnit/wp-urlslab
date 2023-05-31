@@ -537,3 +537,39 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		}
 	}
 }
+
+
+function urlslab_url_attribute( $attribute_name, $url = false ) {
+	try {
+		if ( $url ) {
+			$url_obj = new Urlslab_Url( $url, true );
+		} else {
+			$url_obj = Urlslab_Widget::get_current_page_url();
+		}
+		$url_row = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url_obj );
+
+		if ( $url_row ) {
+			return $url_row->get_public( $attribute_name );
+		}
+	} catch ( Exception $e ) {
+	}
+
+	return '';
+}
+
+function urlslab_url_attributes( $url = false ): array {
+	try {
+		if ( $url ) {
+			$url_obj = new Urlslab_Url( $url, true );
+		} else {
+			$url_obj = Urlslab_Widget::get_current_page_url();
+		}
+		$url_row = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url_obj );
+
+		if ( $url_row ) {
+			return $url_row->as_array();
+		}
+	} catch ( Exception $e ) {
+		return array();
+	}
+}
