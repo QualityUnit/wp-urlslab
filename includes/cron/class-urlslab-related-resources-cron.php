@@ -85,7 +85,7 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 
 		$query->setDomains( array_keys( $domains ) );
 		$must_array = array( (object) array( 'term' => (object) array( 'metadata.chunk_id' => (object) array( 'value' => 1 ) ) ) );
-		if ( $widget->get_option( Urlslab_Related_Resources_Widget::SETTING_NAME_LAST_SEEN ) ) {
+		if ( $widget->get_option( Urlslab_Related_Resources_Widget::SETTING_NAME_LAST_SEEN ) > 0 ) {
 			$must_array[] = (object) array( 'range' => (object) array( 'metadata.lastSeen' => (object) array( 'gte' => time() - $widget->get_option( Urlslab_Related_Resources_Widget::SETTING_NAME_LAST_SEEN ) ) ) );
 		}
 		$query->setAdditionalQuery( (object) array( 'bool' => (object) array( 'must' => $must_array ) ) );
