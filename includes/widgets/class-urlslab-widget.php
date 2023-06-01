@@ -337,22 +337,19 @@ abstract class Urlslab_Widget {
 					|| ( false !== strpos( $dom->getAttribute( 'class' ), 'urlslab-skip-all' ) ) );
 	}
 
-	public static function get_current_page_url( bool $use_post_id = true ): Urlslab_Url {
-		if ( $use_post_id && is_object( self::$current_page_url ) ) {
+	public static function get_current_page_url(): Urlslab_Url {
+		if ( is_object( self::$current_page_url ) ) {
 			return self::$current_page_url;
 		}
 
-
-		if ( ! is_object( self::$current_page_url ) && wp_get_canonical_url() ) {
+		if ( ! is_object( self::$current_page_url ) && is_singular() && wp_get_canonical_url() ) {
 			try {
 				self::$current_page_url = new Urlslab_Url( wp_get_canonical_url(), true );
 
 				return self::$current_page_url;
 			} catch ( Exception $e ) {
 			}
-		}
-
-		if ( is_category() ) {
+		} else if ( is_category() ) {
 			$cat = get_category_link( get_query_var( 'cat' ) );
 			if ( ! empty( $cat ) ) {
 				try {
@@ -362,24 +359,12 @@ abstract class Urlslab_Widget {
 				} catch ( Exception $e ) {
 				}
 			}
-		}
-		if ( $use_post_id && get_the_ID() ) {
+		} else {
+			global $wp;
 			try {
-				self::$current_page_url = new Urlslab_Url(
-					get_permalink( get_the_ID() ),
-					true
-				);
-
-				return self::$current_page_url;
+				self::$current_page_url = new Urlslab_Url( home_url( add_query_arg( array(), $wp->request ) ), true );
 			} catch ( Exception $e ) {
 			}
-		}
-
-		global $wp;
-		$current_url = home_url( add_query_arg( array(), $wp->request ) );
-		try {
-			self::$current_page_url = new Urlslab_Url( $current_url, true );
-		} catch ( Exception $e ) {
 		}
 
 		return self::$current_page_url;
