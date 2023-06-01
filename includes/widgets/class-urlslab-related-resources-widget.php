@@ -120,7 +120,6 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		$content      = '';
 
 		try {
-			$content     .= '<!-- urlslab-related-resources ' . wp_get_canonical_url() . ' -->';
 			$current_url = new Urlslab_Url( $urlslab_atts['url'] );
 			$result      = $this->load_related_urls( $current_url->get_url_id(), $urlslab_atts['related-count'] );
 

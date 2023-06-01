@@ -108,7 +108,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 
 	private function get_page_cache_key() {
 		if ( empty( self::$page_cache_key ) ) {
-			self::$page_cache_key = $this->get_current_page_url( false )->get_url() . json_encode( $_REQUEST ) . self::$active_rule->get_rule_id();
+			self::$page_cache_key = $this->get_current_page_url()->get_url() . json_encode( $_REQUEST ) . self::$active_rule->get_rule_id();
 		}
 
 		return self::$page_cache_key;
