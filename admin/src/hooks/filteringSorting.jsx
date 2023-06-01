@@ -49,7 +49,7 @@ export function useFilter( { slug, header, initialRow } ) {
 	// Checks the type (string or number) of the filter key
 	const handleType = ( key, sendCellOptions ) => {
 		const testDate = /^[0-9]{4}-[0-9]{2}-[0-9]{2} ?[0-9]{2}:/g;
-		const cell = initialRow?.getVisibleCells().find( ( cellItem ) => cellItem.column.id === key );
+		const cell = initialRow?.getAllCells().find( ( cellItem ) => cellItem.column.id === key );
 		const cellValue = initialRow?.original[ key ];
 
 		const cellfilterValMenu = cell?.column.columnDef.filterValMenu;

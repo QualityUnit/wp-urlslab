@@ -21,6 +21,10 @@
 			z-index: 3;
 		}
 
+		.refresh-icon.refreshing svg {
+			animation: 0.75s rotate linear infinite;
+		}
+
 		.urlslab-SortMenu {
 			min-width: 13em;
 			max-width: none;

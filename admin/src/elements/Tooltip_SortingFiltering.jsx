@@ -7,7 +7,7 @@ export default function TooltipSortingFiltering( { props } ) {
 	const { isFetching, sorting, filters } = props;
 
 	return (
-		isFetching && ( sorting?.length || filters?.length )
+		isFetching && ( sorting?.length || ( filters && Object.keys( filters ).length ) )
 			? <Tooltip center>
 				<Loader>
 					{ __( 'Filtering & Sorting…' ) }<br />
