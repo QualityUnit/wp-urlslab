@@ -117,12 +117,12 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		}
 
 		$urlslab_atts = $this->get_attribute_values( $atts, $content, $tag );
-		$content = '';
+		$content      = '';
 
 		try {
 			$current_url = new Urlslab_Url( $urlslab_atts['url'], true );
-			$content .= '<!-- urlslab-related-resources ' . $current_url->get_url_id() . ' -->';
-			$result  = $this->load_related_urls( $current_url->get_url_id(), $urlslab_atts['related-count'] );
+			$content     .= '<!-- urlslab-related-resources ' . $current_url->get_url_id() . ' -->';
+			$result      = $this->load_related_urls( $current_url->get_url_id(), $urlslab_atts['related-count'] );
 
 			$urls = array( $current_url );
 			foreach ( $result as $row ) {
