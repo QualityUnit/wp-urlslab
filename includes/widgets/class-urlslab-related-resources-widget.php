@@ -117,16 +117,16 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		}
 
 		$urlslab_atts = $this->get_attribute_values( $atts, $content, $tag );
+		$content = '';
 
 		try {
-			$current_url = new Urlslab_Url( $urlslab_atts['url'] );
-
+			$current_url = new Urlslab_Url( $urlslab_atts['url'], true );
+			$content .= '<!-- urlslab-related-resources ' . $current_url->get_url_id() . ' -->';
 			$result  = $this->load_related_urls( $current_url->get_url_id(), $urlslab_atts['related-count'] );
-			$content = '';
 
 			$urls = array( $current_url );
 			foreach ( $result as $row ) {
-				$urls[] = new Urlslab_Url( Urlslab_Url::add_current_page_protocol( $row['url_name'] ) );
+				$urls[] = new Urlslab_Url( $row['url_name'], true );
 			}
 			//store url objects to cache
 			Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_urls( $urls );
