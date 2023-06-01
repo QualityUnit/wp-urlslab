@@ -7,6 +7,13 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { postFetch } from '../api/fetching';
 import filtersArray from '../lib/filtersArray';
 
+import { create } from 'zustand';
+
+export const fetchingStore = create( ( set ) => ( {
+	fetchingStatus: false,
+	setFetchingStatus: () => set( ( state ) => ( { fetchingStatus: ! state.fetchingStatus } ) ),
+} ) );
+
 export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const { __ } = useI18n();
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
@@ -68,6 +75,12 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		isFetchingNextPage,
 		hasNextPage,
 		fetchNextPage } = query;
+
+	const setFetchingStatus = fetchingStore( ( state ) => state.setFetchingStatus );
+
+	if ( ! isFetching ) {
+		setFetchingStatus();
+	}
 
 	useEffect( () => {
 		if ( inView ) {
