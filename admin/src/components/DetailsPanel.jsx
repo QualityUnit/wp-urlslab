@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef, useState } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import { useVirtual } from 'react-virtual';
@@ -9,17 +9,36 @@ import useCloseModal from '../hooks/useCloseModal';
 import useTablePanels from '../hooks/useTablePanels';
 import Button from '../elements/Button';
 import ProgressBar from '../elements/ProgressBar';
+import ExportCSVButton from '../elements/ExportCSVButton';
 import DateTimeFormat from '../elements/DateTimeFormat';
 import Loader from './Loader';
 
-export default function DetailsPanel( ) {
+export default function DetailsPanel( props ) {
 	const maxRows = 150;
 	const { __ } = useI18n();
 	const { ref, inView } = useInView();
 	const tableContainerRef = useRef();
+	const [ exportStatus, setExportStatus ] = useState();
+	const stopExport = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( );
 	const { title, text, slug, url, showKeys, listId } = useTablePanels( ( state ) => state.options.detailsOptions );
 	const tbody = [];
+
+	const hidePanel = () => {
+		stopExport.current = true;
+
+		handleClose();
+	};
+
+	const handleExportStatus = ( val ) => {
+		setExportStatus( val );
+		if ( val === 100 ) {
+			setTimeout( () => {
+				setExportStatus();
+				handleClose();
+			}, 1000 );
+		}
+	};
 
 	const parseDate = ( row, key ) => {
 		const dateKeys = [ 'created' ]; // Insert other keys with date, ie. 'modified' if needed
@@ -111,7 +130,7 @@ export default function DetailsPanel( ) {
 			<div className="urlslab-panel Details">
 				<div className="urlslab-panel-header">
 					<h3>{ title }</h3>
-					<button className="urlslab-panel-close" onClick={ handleClose }>
+					<button className="urlslab-panel-close" onClick={ hidePanel }>
 						<CloseIcon />
 					</button>
 					<p>{ text }</p>
@@ -144,8 +163,18 @@ export default function DetailsPanel( ) {
 							<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
 						</div>
 					</div>
-					<div className="flex">
-						<Button className="ma-left" onClick={ handleClose }>{ __( 'Cancel' ) }</Button>
+					<div className="mt-l">
+						{ exportStatus
+							? <ProgressBar className="mb-m" notification="Exporting…" value={ exportStatus } />
+							: null
+						}
+						<div className="flex mt-m">
+							<Button className="ma-left" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
+							<ExportCSVButton
+								className="ml-s"
+								options={ { slug: `${ slug }/${ url }`, url, paginationId: listId, stopExport } } onClick={ handleExportStatus }
+							/>
+						</div>
 					</div>
 				</div>
 			</div>
