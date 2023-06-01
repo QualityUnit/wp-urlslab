@@ -66,7 +66,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	public function content_hook( DOMDocument $document ) {
-		if ( is_admin() ) {
+		if ( is_admin() || is_404() ) {
 			return;
 		}
 		$this->validateCurrentPageUrl();
@@ -81,7 +81,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	public function validateCurrentPageUrl(): void {
-		$currentUrl = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $this->get_current_page_url() );
+		$currentUrl = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( Urlslab_Widget::get_current_page_url() );
 		if ( null !== $currentUrl ) {
 			if ( Urlslab_Url_Row::URL_TYPE_EXTERNAL == $currentUrl->get_url_type() ) {
 				$currentUrl->set_url_type( Urlslab_Url_Row::URL_TYPE_INTERNAL );
@@ -330,7 +330,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			return;
 		}
 
-		$srcUrlId = $this->get_current_page_url()->get_url_id();
+		$srcUrlId = Urlslab_Widget::get_current_page_url()->get_url_id();
 
 		global $wpdb;
 		$results = $wpdb->get_results(
@@ -420,7 +420,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			if ( ! empty( $link_elements ) ) {
 				$result = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_urls(
 					array_merge(
-						array( $this->get_current_page_url() ),
+						array( Urlslab_Widget::get_current_page_url() ),
 						array_map( fn( $elem ): Urlslab_Url => $elem[1], $link_elements )
 					)
 				);
@@ -535,5 +535,41 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 				}
 			}
 		}
+	}
+}
+
+
+function urlslab_url_attribute( $attribute_name, $url = false ) {
+	try {
+		if ( $url ) {
+			$url_obj = new Urlslab_Url( $url, true );
+		} else {
+			$url_obj = Urlslab_Widget::get_current_page_url();
+		}
+		$url_row = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url_obj );
+
+		if ( $url_row ) {
+			return $url_row->get_public( $attribute_name );
+		}
+	} catch ( Exception $e ) {
+	}
+
+	return '';
+}
+
+function urlslab_url_attributes( $url = false ): array {
+	try {
+		if ( $url ) {
+			$url_obj = new Urlslab_Url( $url, true );
+		} else {
+			$url_obj = Urlslab_Widget::get_current_page_url();
+		}
+		$url_row = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url_obj );
+
+		if ( $url_row ) {
+			return $url_row->as_array();
+		}
+	} catch ( Exception $e ) {
+		return array();
 	}
 }

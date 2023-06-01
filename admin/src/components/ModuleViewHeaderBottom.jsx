@@ -24,14 +24,17 @@ import ColumnsMenu from '../elements/ColumnsMenu';
 import Button from '../elements/Button';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import IconButton from '../elements/IconButton';
+import { fetchingStore } from '../hooks/useInfiniteFetch';
 
 export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hideActions, noImport, noInsert, noExport, noCount, noDelete, table, selectedRows, onFilter, onDeleteSelected, onUpdate, options } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const didMountRef = useRef( false );
+	const refresh = useRef( false );
 	const panelPopover = useRef();
 	const headerBottomHeight = useHeaderHeight( ( state ) => state.headerBottomHeight );
 	const setHeaderBottomHeight = useHeaderHeight( ( state ) => state.setHeaderBottomHeight );
+	const fetchingStatus = fetchingStore( ( state ) => state.fetchingStatus );
 
 	const { header, slug, title } = options;
 
@@ -96,22 +99,25 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 	const handleRefresh = () => {
 		const key = [ slug, filtersArray( filters ), sorting ? sorting : [] ];
 		queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ? sorting : [] ] );
-		// if ( queryClient.isFetching( { queryKey: key } ) ) {
-		// 	console.log( key );
-		// }
+
 		if ( ! noCount ) {
 			queryClient.invalidateQueries( [ slug, 'count', filtersArray( filters ) ] );
 		}
+		refresh.current = true;
 	};
 
 	useEffect( () => {
 		handleHeaderHeight();
 
+		if ( ! fetchingStatus ) {
+			refresh.current = false;
+		}
+
 		if ( onFilter && didMountRef.current ) {
 			onFilter( filters );
 		}
 		didMountRef.current = true;
-	}, [ slug, filters, onFilter ] );
+	}, [ fetchingStatus, slug, filters, onFilter ] );
 
 	return (
 		<>
@@ -142,7 +148,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 
 					<div className="ma-left flex flex-align-center">
 						{ ! noCount &&
-						<RowCounter filter={ filters } slug={ slug } />
+						<RowCounter filters={ filters } slug={ slug } />
 						}
 						{ ! hideActions &&
 							<TableActionsMenu onAction={ handlePanel } options={ { noImport, noExport, noDelete } } />
@@ -159,7 +165,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 							/>
 						}
 
-						<IconButton className="ml-m" tooltip={ __( 'Refresh table' ) } tooltipClass="align-left-0" onClick={ handleRefresh }>
+						<IconButton ref={ refresh } className={ `ml-m refresh-icon ${ refresh.current ? 'refreshing' : '' }` } tooltip={ __( 'Refresh table' ) } tooltipClass="align-left-0" onClick={ handleRefresh }>
 							<RefreshIcon />
 						</IconButton>
 

@@ -38,16 +38,18 @@ class Urlslab_Url_Data_Fetcher {
 			return $results;
 		}
 
-		$valid_urls = array();
+		$valid_urls  = array();
 		$broken_urls = array();
 		foreach ( $urls as $url ) {
 			if ( isset( $this->urls_cache[ $url->get_url_id() ] ) ) {
 				$results[ $url->get_url_id() ] = $this->urls_cache[ $url->get_url_id() ];
 			} else {
-				if ( $url->is_url_valid() && ! $url->is_url_blacklisted() ) {
-					$valid_urls[ $url->get_url_id() ] = $url;
-				} else {
-					$broken_urls[] = $url;
+				if ( ! $url->is_current_404() && ! $url->is_wp_admin_url() ) {
+					if ( $url->is_url_valid() && ! $url->is_url_blacklisted() ) {
+						$valid_urls[ $url->get_url_id() ] = $url;
+					} else {
+						$broken_urls[] = $url;
+					}
 				}
 			}
 		}
@@ -56,7 +58,7 @@ class Urlslab_Url_Data_Fetcher {
 		$table = URLSLAB_URLS_TABLE;
 
 		if ( ! empty( $valid_urls ) ) {
-			$placeholders = implode( ', ', array_fill( 0, count( $valid_urls ), '%d' ) );
+			$placeholders  = implode( ', ', array_fill( 0, count( $valid_urls ), '%d' ) );
 			$query_results = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT * FROM {$table} WHERE url_id IN ({$placeholders})", // phpcs:ignore
@@ -69,7 +71,7 @@ class Urlslab_Url_Data_Fetcher {
 		if ( ! empty( $query_results ) ) {
 			foreach ( $query_results as $res ) {
 				try {
-					$results[ $res['url_id'] ] = new Urlslab_Url_Row( $res );
+					$results[ $res['url_id'] ]          = new Urlslab_Url_Row( $res );
 					$this->urls_cache[ $res['url_id'] ] = $results[ $res['url_id'] ];
 					unset( $valid_urls[ $res['url_id'] ] );
 				} catch ( Exception $e ) {

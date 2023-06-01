@@ -36,7 +36,7 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 	}
 
 	public function content_hook( DOMDocument $document ) {
-		if ( is_admin() ) {
+		if ( is_admin() || is_404() ) {
 			return;
 		}
 		try {
