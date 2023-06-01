@@ -62,6 +62,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		if ( $atts['nl2br'] ) {
 			return nl2br( urlslab_video_attribute( $atts['videoid'], $atts['attribute'] ) );
 		}
+
 		return urlslab_video_attribute( $atts['videoid'], $atts['attribute'] );
 	}
 
@@ -581,9 +582,9 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$youtube_loader->setAttribute( 'class', 'youtube_urlslab_loader youtube_urlslab_loader--elementor' );
 		$youtube_loader->setAttribute( 'data-ytid', $ytid );
 
-		$channel = urlslab_video_attribute( $ytid, 'channel_title' );
-		$duration = convertDuration( urlslab_video_attribute( $ytid, 'duration' ) );
-		$date = urlslab_video_attribute( $ytid, 'published_at' );
+		$channel        = urlslab_video_attribute( $ytid, 'channel_title' );
+		$duration       = $this->duration_to_time( urlslab_video_attribute( $ytid, 'duration' ) );
+		$date           = urlslab_video_attribute( $ytid, 'published_at' );
 		$date_formatted = date_i18n( get_option( 'date_format' ), strtotime( $date ) );
 
 		$youtube_title = $document->createElement( 'strong', urlslab_video_attribute( $ytid, 'title' ) . ' | ' . $channel );
@@ -591,7 +592,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 		$youtube_bottom = $document->createElement( 'div' );
 		$youtube_bottom->setAttribute( 'class', 'youtube_urlslab_loader--bottom' );
-		$youtube_channel = $document->createElement( 'strong', $channel );
+		$youtube_channel  = $document->createElement( 'strong', $channel );
 		$youtube_duration = $document->createElement( 'strong', $duration );
 		$youtube_duration->setAttribute( 'class', 'youtube_urlslab_loader--duration' );
 		$youtube_published = $document->createElement( 'time', $date_formatted );
@@ -654,9 +655,9 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			$youtube_loader->setAttribute( 'height', $element->getAttribute( 'height' ) );
 		}
 
-		$channel = urlslab_video_attribute( $ytid, 'channel_title' );
-		$duration = convertDuration( urlslab_video_attribute( $ytid, 'duration' ) );
-		$date = urlslab_video_attribute( $ytid, 'published_at' );
+		$channel        = urlslab_video_attribute( $ytid, 'channel_title' );
+		$duration       = $this->duration_to_time( urlslab_video_attribute( $ytid, 'duration' ) );
+		$date           = urlslab_video_attribute( $ytid, 'published_at' );
 		$date_formatted = date_i18n( get_option( 'date_format' ), strtotime( $date ) );
 
 		$youtube_title = $document->createElement( 'strong', urlslab_video_attribute( $ytid, 'title' ) . ' | ' . $channel );
@@ -664,7 +665,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 		$youtube_bottom = $document->createElement( 'div' );
 		$youtube_bottom->setAttribute( 'class', 'youtube_urlslab_loader--bottom' );
-		$youtube_channel = $document->createElement( 'strong', $channel );
+		$youtube_channel  = $document->createElement( 'strong', $channel );
 		$youtube_duration = $document->createElement( 'strong', $duration );
 		$youtube_duration->setAttribute( 'class', 'youtube_urlslab_loader--duration' );
 		$youtube_published = $document->createElement( 'time', $date_formatted );
@@ -827,6 +828,16 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$row->insert_all( $objects, true );
 	}
 
+
+	function duration_to_time( $youtube_time ) {
+		if ( $youtube_time ) {
+			$start = new DateTime( '@0' ); // Unix epoch
+			$start->add( new DateInterval( $youtube_time ) );
+			$youtube_time = ltrim( ltrim( $start->format( 'H:i:s' ), '0' ), ':' );
+		}
+
+		return $youtube_time;
+	}
 }
 
 function urlslab_video_attribute( $videoid, $attribute_name ) {
@@ -867,24 +878,3 @@ function urlslab_video_attributes( $videoid ): array {
 		return array();
 	}
 }
-
-function convertDuration( $videoid ) {
-		$videoid = str_replace( ['P','T'],'',$videoid );
-		foreach ( ['D','H','M','S'] as $a ) {
-				$pos = strpos( $videoid, $a );
-				if ( $pos !== false ) ${ $a } = substr( $videoid, 0, $pos ); else { ${ $a } = 0; continue; }
-				$videoid = substr( $videoid, $pos + 1 );
-		}
-		if ( $D > 0 ) {
-				$M = str_pad( $M, 2, '0', STR_PAD_LEFT );
-				$S = str_pad( $S, 2, '0',STR_PAD_LEFT );
-				return ( $H + ( 24 * $D ) ) . ":$M:$S"; // add days to hours
-		} elseif ( $H > 0 ) {
-				$M = str_pad( $M, 2, '0', STR_PAD_LEFT );
-				$S = str_pad( $S, 2, '0', STR_PAD_LEFT );
-				return "$H:$M:$S";
-		} else {
-				$S = str_pad( $S, 2, '0', STR_PAD_LEFT );
-				return "$M:$S";
-		}
-};
