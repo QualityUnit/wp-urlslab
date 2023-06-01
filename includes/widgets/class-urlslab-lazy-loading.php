@@ -498,11 +498,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 				$placeholders[] = '(%s,%s,%s)';
 				array_push( $values, $videoid, Urlslab_Youtube_Row::STATUS_NEW, $now );
 
-				$videos[ $videoid ] = new Urlslab_Youtube_Row( array(
-					'videoid'        => $videoid,
-					'status'         => Urlslab_Youtube_Row::STATUS_NEW,
-					'status_changed' => $now,
-				), false );
+				$videos[ $videoid ] = new Urlslab_Youtube_Row( array( 'videoid' => $videoid ), false );
 			}
 		}
 		if ( ! empty( $placeholders ) ) {
