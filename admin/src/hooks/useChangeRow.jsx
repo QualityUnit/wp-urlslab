@@ -180,7 +180,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), cell, optionalSelector, id } );
 	}, [ processDeletedPages, deleteSelectedRow ] );
 
-	const deleteSelectedRows = async ( optionalSelector, id ) => {
+	const deleteSelectedRows = async ( { optionalSelector, id } ) => {
 		// Multiple rows delete
 		setResponseCounter( selectedRows.length );
 
