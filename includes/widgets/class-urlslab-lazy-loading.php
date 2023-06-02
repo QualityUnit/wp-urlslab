@@ -785,14 +785,14 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	 * @throws DOMException
 	 */
 	private function create_yt_video_dom( DOMDocument $document, Urlslab_Youtube_Row $yt_object, DOMElement $youtube_loader ): void {
-		$youtube_title = $document->createElement( 'strong', $yt_object->get_title() . ' | ' . $yt_object->get_channel_title() );
+		$youtube_title = $document->createElement( 'strong', htmlspecialchars( $yt_object->get_title() . ' | ' . $yt_object->get_channel_title() ) );
 		$youtube_title->setAttribute( 'class', 'youtube_urlslab_loader--title' );
 
 		$youtube_bottom = $document->createElement( 'div' );
 		$youtube_bottom->setAttribute( 'class', 'youtube_urlslab_loader--bottom' );
 		$youtube_img_wrapper = $document->createElement( 'div' );
 		$youtube_img_wrapper->setAttribute( 'class', 'youtube_urlslab_loader--wrapper' );
-		$youtube_channel  = $document->createElement( 'strong', $yt_object->get_channel_title() );
+		$youtube_channel  = $document->createElement( 'strong', htmlspecialchars( $yt_object->get_channel_title() ) );
 		$youtube_duration = $document->createElement( 'strong', $this->duration_to_time( $yt_object->get_duration() ) );
 		$youtube_duration->setAttribute( 'class', 'youtube_urlslab_loader--duration' );
 		$youtube_published = $document->createElement( 'time', date_i18n( get_option( 'date_format' ), strtotime( $yt_object->get_published_at() ) ) );
