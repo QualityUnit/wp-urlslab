@@ -125,7 +125,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 				<div className="urlslab-moduleView-headerBottom__top flex flex-align-center">
 
 					{ ! noDelete && selectedRows?.length > 0 &&
-						<Button className="mr-s" onClick={ () => handlePanel( 'deleteSelected' ) }><Trash />{ __( 'Delete selected' ) }</Button>
+						<Button danger className="mr-s" onClick={ () => handlePanel( 'deleteSelected' ) }><Trash />{ __( 'Delete selected' ) }</Button>
 					}
 					{ title && ! noInsert &&
 						<Button className="active" onClick={ () => handlePanel( 'rowInserter' ) }><PlusIcon />{ title }</Button>
