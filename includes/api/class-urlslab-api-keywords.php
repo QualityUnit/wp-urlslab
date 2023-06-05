@@ -588,6 +588,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'm' );
 		$columns = array_merge( $columns, $this->prepare_columns( array( 'url_name' => '%s' ), 'u' ) );
+		$columns = array_merge( $columns, $this->prepare_columns( array( 'url_id' => '%d' ), 'm' ) );
 
 		$sql->add_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
