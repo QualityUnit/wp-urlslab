@@ -2,9 +2,11 @@ import { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.s
 import useTablePanels from './useTablePanels';
 
 export default function useCloseModal( ) {
-	const { activatePanel } = useTablePanels();
+	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 
 	const handleClose = ( operationVal ) => {
+		setRowToEdit( {} );
 		activatePanel();
 		document.querySelector( '#urlslab-root' ).classList.remove( 'dark' );
 		return operationVal;
