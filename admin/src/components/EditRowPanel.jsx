@@ -18,6 +18,8 @@ export default function EditRowPanel( props ) {
 
 	let cellsFinal = { ...rowEditorCells };
 
+	console.log( rowToEdit );
+
 	const rowToEditWithDefaults = useMemo( () => {
 		let defaults = { ...rowToEdit };
 		Object.entries( rowEditorCells ).map( ( [ cellId, cell ] ) => {
