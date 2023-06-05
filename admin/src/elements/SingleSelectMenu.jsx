@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Checkbox from './Checkbox';
 
 import '../assets/styles/elements/_MultiSelectMenu.scss';
