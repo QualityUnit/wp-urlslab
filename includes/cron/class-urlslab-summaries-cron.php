@@ -83,6 +83,7 @@ class Urlslab_Summaries_Cron extends Urlslab_Cron {
 			$urlslab_summaries = $this->client->getSummary( $request );
 			foreach ( $urlslab_summaries as $id => $summary ) {
 				switch ( $summary->getSummaryStatus() ) {
+					case DomainDataRetrievalSummaryResponse::SUMMARY_STATUS_REDIRECTED:
 					case DomainDataRetrievalSummaryResponse::SUMMARY_STATUS_BLOCKED:
 						$url_objects[ $id ]->set_sum_status( Urlslab_Url_Row::SUM_STATUS_ERROR );
 						$url_objects[ $id ]->update();
