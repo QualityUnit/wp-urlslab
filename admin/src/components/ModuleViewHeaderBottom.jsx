@@ -38,7 +38,6 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 
 	const { header, slug, title } = options;
 
-	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 
 	const handleHeaderHeight = useCallback( ( elem ) => {
@@ -81,7 +80,6 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 	} );
 
 	const handlePanel = ( key ) => {
-		setRowToEdit( {} );
 		activatePanel( key );
 
 		if ( key === 'delete-all' ) {

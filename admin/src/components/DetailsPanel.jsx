@@ -13,7 +13,7 @@ import ExportCSVButton from '../elements/ExportCSVButton';
 import DateTimeFormat from '../elements/DateTimeFormat';
 import Loader from './Loader';
 
-export default function DetailsPanel( props ) {
+export default function DetailsPanel( ) {
 	const maxRows = 150;
 	const { __ } = useI18n();
 	const { ref, inView } = useInView();

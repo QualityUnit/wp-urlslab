@@ -11,8 +11,8 @@ import { ReactComponent as ImportIcon } from '../assets/images/icons/icon-import
 import Button from '../elements/Button';
 import ProgressBar from '../elements/ProgressBar';
 
-export default function ImportPanel( { props, handlePanel } ) {
-	const { slug, header, initialRow } = props;
+export default function ImportPanel( { options, handlePanel } ) {
+	const { slug, header, initialRow } = options;
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const { CSVReader } = useCSVReader();

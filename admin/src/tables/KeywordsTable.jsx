@@ -50,7 +50,7 @@ export default function KeywordsTable( { slug } ) {
 	};
 
 	const rowEditorCells = {
-		keyword: <InputField autoFocus liveUpdate defaultValue="" label={ header.keyword } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, keyword: val } ) }
+		keyword: <InputField autoFocus liveUpdate defaultValue="" label={ header.keyword } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, keyword: val } ) } required
 							description={ __( 'Just exact match of keyword will be replaced with link' ) } />,
 
 		urlLink: <SuggestInputField suggestInput={ rowToEdit?.keyword || '' } liveUpdate defaultValue={ ( rowToEdit?.urlLink ? rowToEdit?.urlLink : window.location.origin ) } label={ header.urlLink } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, urlLink: val } ) } required
@@ -132,7 +132,7 @@ export default function KeywordsTable( { slug } ) {
 				{ cell?.getValue() > 0 &&
 					<button className="ml-s" onClick={ () => {
 							setOptions( { ...options, detailsOptions: {
-							title: `Keyword “${ cell.row.original.keyword }” used on these URLs`, url: `${ cell.row.original.kw_id }/${ cell.row.original.dest_url_id }`, showKeys: [ 'link_type', 'url_name' ], listId: 'url_id',
+							title: `Keyword “${ cell.row.original.keyword }” used on these URLs`, slug, url: `${ cell.row.original.kw_id }/${ cell.row.original.dest_url_id }`, showKeys: [ 'link_type', 'url_name' ], listId: 'url_id',
 						} } );
 						activatePanel( 'details' );
 					} }>

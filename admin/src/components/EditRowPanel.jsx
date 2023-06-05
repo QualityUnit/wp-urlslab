@@ -23,7 +23,7 @@ export default function EditRowPanel( props ) {
 		Object.entries( rowEditorCells ).map( ( [ cellId, cell ] ) => {
 			const cellProps = cell.props;
 
-			if ( ! defaults[ cellId ] ) {
+			if ( ! defaults[ cellId ] && cellProps.defaultValue ) {
 				defaults = { ...defaults, [ cellId ]: cellProps.defaultValue };
 			}
 			return false;
@@ -32,10 +32,10 @@ export default function EditRowPanel( props ) {
 	}, [ rowEditorCells, rowToEdit ] );
 
 	// Checking if all required fields are filled in rowToEdit object
-	if ( rowToEdit ) {
-		enableAddButton.current = requiredFields?.every( ( key ) => Object.keys( rowToEdit ).includes( key ) );
+	if ( Object.keys( rowToEditWithDefaults ).length ) {
+		enableAddButton.current = requiredFields?.every( ( key ) => Object.keys( rowToEditWithDefaults ).includes( key ) );
 	}
-	if ( ! rowToEdit ) {
+	if ( ! Object.keys( rowToEdit ).length ) {
 		enableAddButton.current = false;
 	}
 
