@@ -120,6 +120,7 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 		$some_urls_updated = false;
 		foreach ( $urlslab_screenshots as $id => $screenshot ) {
 			switch ( $screenshot->getScreenshotStatus() ) {
+				case DomainDataRetrievalScreenshotResponse::SCREENSHOT_STATUS_REDIRECTED:
 				case DomainDataRetrievalScreenshotResponse::SCREENSHOT_STATUS_BLOCKED:
 					$url_objects[ $id ]->set_scr_status( Urlslab_Url_Row::SCR_STATUS_ERROR );
 					$url_objects[ $id ]->update();
