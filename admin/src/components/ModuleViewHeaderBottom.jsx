@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 
@@ -38,7 +38,8 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 
 	const { header, slug, title } = options;
 
-	const { activatePanel } = useTablePanels();
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 
 	const handleHeaderHeight = useCallback( ( elem ) => {
 		const bottomHeight = elem?.getBoundingClientRect().height;
@@ -80,6 +81,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 	} );
 
 	const handlePanel = ( key ) => {
+		setRowToEdit( {} );
 		activatePanel( key );
 
 		if ( key === 'delete-all' ) {
@@ -97,7 +99,6 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 	};
 
 	const handleRefresh = () => {
-		const key = [ slug, filtersArray( filters ), sorting ? sorting : [] ];
 		queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ? sorting : [] ] );
 
 		if ( ! noCount ) {
