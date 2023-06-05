@@ -60,7 +60,7 @@ class DomainUserCreditAggregatedCreditEvents implements ModelInterface, ArrayAcc
         'group_bucket_title' => 'string',
         'credit_type' => 'string',
         'events' => 'int',
-        'credits' => 'int'
+        'credits' => 'float'
     ];
 
     /**
@@ -74,7 +74,7 @@ class DomainUserCreditAggregatedCreditEvents implements ModelInterface, ArrayAcc
         'group_bucket_title' => null,
         'credit_type' => null,
         'events' => 'int64',
-        'credits' => 'int64'
+        'credits' => 'double'
     ];
 
     /**
@@ -452,7 +452,7 @@ class DomainUserCreditAggregatedCreditEvents implements ModelInterface, ArrayAcc
     /**
      * Gets credits
      *
-     * @return int
+     * @return float
      */
     public function getCredits()
     {
@@ -462,7 +462,7 @@ class DomainUserCreditAggregatedCreditEvents implements ModelInterface, ArrayAcc
     /**
      * Sets credits
      *
-     * @param int $credits credits
+     * @param float $credits credits
      *
      * @return self
      */

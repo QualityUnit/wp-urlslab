@@ -60,7 +60,7 @@ class DomainUserCreditCreditEvent implements ModelInterface, ArrayAccess, \JsonS
         'id' => 'string',
         'url' => 'string',
         'operation_date' => 'int',
-        'credit_operation' => 'int',
+        'credit_operation' => 'float',
         'credit_type' => 'string'
     ];
 
@@ -75,7 +75,7 @@ class DomainUserCreditCreditEvent implements ModelInterface, ArrayAccess, \JsonS
         'id' => null,
         'url' => null,
         'operation_date' => 'int64',
-        'credit_operation' => 'int64',
+        'credit_operation' => 'double',
         'credit_type' => null
     ];
 
@@ -420,7 +420,7 @@ class DomainUserCreditCreditEvent implements ModelInterface, ArrayAccess, \JsonS
     /**
      * Gets credit_operation
      *
-     * @return int
+     * @return float
      */
     public function getCreditOperation()
     {
@@ -430,7 +430,7 @@ class DomainUserCreditCreditEvent implements ModelInterface, ArrayAccess, \JsonS
     /**
      * Sets credit_operation
      *
-     * @param int $credit_operation credit_operation
+     * @param float $credit_operation credit_operation
      *
      * @return self
      */

@@ -80,7 +80,7 @@ try {
 ## `getCreditEventsAggregation()`
 
 ```php
-getCreditEventsAggregation($agg, $from, $body): \OpenAPI\Client\Model\DomainUserCreditAggregatedCreditResponse
+getCreditEventsAggregation($agg, $from, $limit, $body): \OpenAPI\Client\Model\DomainUserCreditAggregatedCreditResponse
 ```
 
 Fetching aggregated credit events
@@ -108,10 +108,11 @@ $apiInstance = new OpenAPI\Client\Api\CreditsApi(
 );
 $agg = 'day'; // string
 $from = 56; // int
+$limit = 50; // int
 $body = 'body_example'; // string
 
 try {
-    $result = $apiInstance->getCreditEventsAggregation($agg, $from, $body);
+    $result = $apiInstance->getCreditEventsAggregation($agg, $from, $limit, $body);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling CreditsApi->getCreditEventsAggregation: ', $e->getMessage(), PHP_EOL;
@@ -124,6 +125,7 @@ try {
 | ------------- | ------------- | ------------- | ------------- |
 | **agg** | **string**|  | [optional] [default to &#39;day&#39;] |
 | **from** | **int**|  | [optional] |
+| **limit** | **int**|  | [optional] [default to 50] |
 | **body** | **string**|  | [optional] |
 
 ### Return type

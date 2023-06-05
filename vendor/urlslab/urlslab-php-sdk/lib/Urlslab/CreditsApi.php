@@ -461,6 +461,7 @@ class CreditsApi
      *
      * @param  string $agg agg (optional, default to 'day')
      * @param  int $from from (optional)
+     * @param  int $limit limit (optional, default to 50)
      * @param  string $body body (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getCreditEventsAggregation'] to see the possible values for this operation
      *
@@ -468,9 +469,9 @@ class CreditsApi
      * @throws \InvalidArgumentException
      * @return \OpenAPI\Client\Model\DomainUserCreditAggregatedCreditResponse
      */
-    public function getCreditEventsAggregation($agg = 'day', $from = null, $body = null, string $contentType = self::contentTypes['getCreditEventsAggregation'][0])
+    public function getCreditEventsAggregation($agg = 'day', $from = null, $limit = 50, $body = null, string $contentType = self::contentTypes['getCreditEventsAggregation'][0])
     {
-        list($response) = $this->getCreditEventsAggregationWithHttpInfo($agg, $from, $body, $contentType);
+        list($response) = $this->getCreditEventsAggregationWithHttpInfo($agg, $from, $limit, $body, $contentType);
         return $response;
     }
 
@@ -481,6 +482,7 @@ class CreditsApi
      *
      * @param  string $agg (optional, default to 'day')
      * @param  int $from (optional)
+     * @param  int $limit (optional, default to 50)
      * @param  string $body (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getCreditEventsAggregation'] to see the possible values for this operation
      *
@@ -488,9 +490,9 @@ class CreditsApi
      * @throws \InvalidArgumentException
      * @return array of \OpenAPI\Client\Model\DomainUserCreditAggregatedCreditResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getCreditEventsAggregationWithHttpInfo($agg = 'day', $from = null, $body = null, string $contentType = self::contentTypes['getCreditEventsAggregation'][0])
+    public function getCreditEventsAggregationWithHttpInfo($agg = 'day', $from = null, $limit = 50, $body = null, string $contentType = self::contentTypes['getCreditEventsAggregation'][0])
     {
-        $request = $this->getCreditEventsAggregationRequest($agg, $from, $body, $contentType);
+        $request = $this->getCreditEventsAggregationRequest($agg, $from, $limit, $body, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -583,15 +585,16 @@ class CreditsApi
      *
      * @param  string $agg (optional, default to 'day')
      * @param  int $from (optional)
+     * @param  int $limit (optional, default to 50)
      * @param  string $body (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getCreditEventsAggregation'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getCreditEventsAggregationAsync($agg = 'day', $from = null, $body = null, string $contentType = self::contentTypes['getCreditEventsAggregation'][0])
+    public function getCreditEventsAggregationAsync($agg = 'day', $from = null, $limit = 50, $body = null, string $contentType = self::contentTypes['getCreditEventsAggregation'][0])
     {
-        return $this->getCreditEventsAggregationAsyncWithHttpInfo($agg, $from, $body, $contentType)
+        return $this->getCreditEventsAggregationAsyncWithHttpInfo($agg, $from, $limit, $body, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -606,16 +609,17 @@ class CreditsApi
      *
      * @param  string $agg (optional, default to 'day')
      * @param  int $from (optional)
+     * @param  int $limit (optional, default to 50)
      * @param  string $body (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getCreditEventsAggregation'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getCreditEventsAggregationAsyncWithHttpInfo($agg = 'day', $from = null, $body = null, string $contentType = self::contentTypes['getCreditEventsAggregation'][0])
+    public function getCreditEventsAggregationAsyncWithHttpInfo($agg = 'day', $from = null, $limit = 50, $body = null, string $contentType = self::contentTypes['getCreditEventsAggregation'][0])
     {
         $returnType = '\OpenAPI\Client\Model\DomainUserCreditAggregatedCreditResponse';
-        $request = $this->getCreditEventsAggregationRequest($agg, $from, $body, $contentType);
+        $request = $this->getCreditEventsAggregationRequest($agg, $from, $limit, $body, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -658,14 +662,16 @@ class CreditsApi
      *
      * @param  string $agg (optional, default to 'day')
      * @param  int $from (optional)
+     * @param  int $limit (optional, default to 50)
      * @param  string $body (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getCreditEventsAggregation'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getCreditEventsAggregationRequest($agg = 'day', $from = null, $body = null, string $contentType = self::contentTypes['getCreditEventsAggregation'][0])
+    public function getCreditEventsAggregationRequest($agg = 'day', $from = null, $limit = 50, $body = null, string $contentType = self::contentTypes['getCreditEventsAggregation'][0])
     {
+
 
 
 
@@ -691,6 +697,15 @@ class CreditsApi
         $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
             $from,
             'from', // param base name
+            'integer', // openApiType
+            'form', // style
+            true, // explode
+            false // required
+        ) ?? []);
+        // query params
+        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+            $limit,
+            'limit', // param base name
             'integer', // openApiType
             'form', // style
             true, // explode
