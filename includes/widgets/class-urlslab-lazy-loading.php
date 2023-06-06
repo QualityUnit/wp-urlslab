@@ -132,19 +132,29 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 	public static function output_content() {
 		global $_SERVER;
-		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
-			return 'Path to file not detected.';
+
+
+		if ( isset( $_GET['action'] ) && self::DOWNLOAD_URL_PATH === $_GET['action'] && isset( $_GET['hash'] ) ) {
+			$filename = $_GET['hash'];
+		} else {
+			if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+				return 'Path to file not detected.';
+			}
+
+			$path = pathinfo( $_SERVER['REQUEST_URI'] );
+			if ( isset( $path['filename'] ) ) {
+				$filename = $path['filename'];
+			}
 		}
 
-		$path = pathinfo( $_SERVER['REQUEST_URI'] );
 
-		if ( ! isset( $path['filename'] ) || false === strpos( $path['filename'], '_' ) ) {
+		if ( empty( $filename ) || false === strpos( $filename, '_' ) ) {
 			status_header( 404 );
 
 			exit( 'Not found' );
 		}
 
-		list( $hash, $size ) = explode( '_', $path['filename'] );
+		list( $hash, $size ) = explode( '_', $filename );
 		if ( ! is_numeric( $hash ) || ! is_numeric( $size ) || empty( $size ) || empty( $hash ) ) {
 			status_header( 404 );
 

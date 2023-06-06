@@ -63,7 +63,11 @@ const urlslabLazyLoad = () => {
 		if (element.tagName == 'DIV' && element.hasAttribute( 'lazy_hash' )) {
 			element.classList.add("urlslab-loading");
 			const xhr = new XMLHttpRequest();
-			xhr.open("GET", "/urlslab-content/" + element.getAttribute('lazy_hash'), true);
+			if (!permalinks.is_supported) {
+				xhr.open("GET", "?action=urlslab-content/&hash=" + element.getAttribute('lazy_hash'), true);
+			} else {
+				xhr.open("GET", "/urlslab-content/" + element.getAttribute('lazy_hash'), true);
+			}
 			xhr.onload = (e) => {
 				if (xhr.readyState === 4) {
 					if (xhr.status === 200) {
