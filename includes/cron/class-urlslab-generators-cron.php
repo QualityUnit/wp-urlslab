@@ -121,7 +121,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 					if ( strlen( $row_obj->get_url_filter() ) ) {
 						$filter->setAdditionalQuery( (object) array( 'match' => (object) array( 'metadata.url' => $row_obj->get_url_filter() ) ) );
 					} else {
-						$filter->setAdditionalQuery( (object) array( 'match' => (object) array( 'metadata.url' => $widget->get_current_page_url()->get_domain_name() ) ) );
+						$filter->setAdditionalQuery( (object) array( 'match' => (object) array( 'metadata.url' => Urlslab_Url::get_current_page_url()->get_domain_name() ) ) );
 					}
 				} else if ( strlen( $row_obj->get_url_filter() ) ) {
 					$ignore_query = 'true';

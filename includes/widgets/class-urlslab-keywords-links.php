@@ -311,7 +311,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 									$urlObj = new Urlslab_Url( $href );
 									if (
 										$urlObj->is_url_valid()
-										&& Urlslab_Widget::get_current_page_url()->get_url_id() != $urlObj->get_url_id()
+										&& Urlslab_Url::get_current_page_url()->get_url_id() != $urlObj->get_url_id()
 									) {
 										$this->page_keywords[ $link_text ]['urls'][ $urlObj->get_url_id() ] = array(
 											'obj' => $urlObj,
@@ -385,7 +385,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			}
 		}
 		$this->keywords_cache = array();
-		$currentUrl           = Urlslab_Widget::get_current_page_url()->get_url_with_protocol();
+		$currentUrl           = Urlslab_Url::get_current_page_url()->get_url_with_protocol();
 
 		foreach ( $results as $row ) {
 			if ( empty( $row['keyword'] ) ) {
@@ -401,7 +401,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			) {
 				try {
 					$kwUrl = new Urlslab_Url( $row['urlLink'] );
-					if ( Urlslab_Widget::get_current_page_url()->get_url_id() != $kwUrl->get_url_id() ) {
+					if ( Urlslab_Url::get_current_page_url()->get_url_id() != $kwUrl->get_url_id() ) {
 						$this->keywords_cache[ $row['kw_id'] ] = array(
 							'kw'  => strtolower( $row['keyword'] ),
 							'url' => $row['urlLink'],
@@ -645,7 +645,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			return;
 		}
 
-		$srcUrlId = Urlslab_Widget::get_current_page_url()->get_url_id();
+		$srcUrlId = Urlslab_Url::get_current_page_url()->get_url_id();
 
 		global $wpdb;
 		$results = $wpdb->get_results(

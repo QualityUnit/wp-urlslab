@@ -362,7 +362,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 					$query_must_conditions[] = (object) array( 'match' => (object) array( 'metadata.url' => $api_request->get_param( 'url' ) ) );
 				}
 			} else {
-				$domain             = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_current_page_url()->get_domain_name();
+				$domain             = Urlslab_Url::get_current_page_url()->get_domain_name();
 				$domains[ $domain ] = $domain;
 			}
 			$query->setAdditionalQuery( (object) array( 'bool' => (object) array( 'must' => $query_must_conditions ) ) );

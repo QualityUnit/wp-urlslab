@@ -5,6 +5,8 @@ class Urlslab_Url {
 	private string $urlslab_parsed_url;
 	private bool $is_same_domain_url = false;
 	private $url_id = null;
+	private static $current_page_url;
+
 	private array $url_components = array();
 	private static $domain_blacklists
 		= array(
@@ -42,7 +44,28 @@ class Urlslab_Url {
 			'duckduckgo.com',
 			'ask.com',
 		);
-	private const SKIP_QUERY_PARAMS_REGEXP = '/^(utm_[a-zA-Z0-9]*|_gl|_ga.*|gclid|fbclid|fb_[a-zA-Z0-9]*|msclkid|zenid|lons1|appns|lpcid|mm_src|muid|phpsessid|jsessionid|aspsessionid|doing_wp_cron|sid|pk_vid|source)$/';
+	private const BLACKLISTED_QUERY_PARAMS = array(
+		'utm_[a-zA-Z0-9]*',
+		'_gl',
+		'_ga.*',
+		'gclid',
+		'fbclid',
+		'fb_[a-zA-Z0-9]*',
+		'msclkid',
+		'zenid',
+		'lons1',
+		'appns',
+		'lpcid',
+		'mm_src',
+		'muid',
+		'phpsessid',
+		'jsessionid',
+		'aspsessionid',
+		'doing_wp_cron',
+		'sid',
+		'pk_vid',
+		'source',
+	);
 
 	/**
 	 * @param string $url
@@ -64,7 +87,7 @@ class Urlslab_Url {
 	}
 
 	public function is_current_404(): bool {
-		return is_404() && $this->get_url_id() === Urlslab_Widget::get_current_page_url()->get_url_id();
+		return is_404() && $this->get_url_id() === Urlslab_Url::get_current_page_url()->get_url_id();
 	}
 
 	public function is_wp_admin_url(): bool {
@@ -148,11 +171,7 @@ class Urlslab_Url {
 		if ( isset( $this->url_components['query'] ) ) {
 			parse_str( $this->url_components['query'], $query_params );
 			if ( is_array( $query_params ) ) {
-				foreach ( $query_params as $param_name => $param_value ) {
-					if ( preg_match( self::SKIP_QUERY_PARAMS_REGEXP, $param_name ) ) {
-						unset( $query_params[ $param_name ] );
-					}
-				}
+				$query_params = self::get_clean_params( $query_params );
 				if ( ! empty( $query_params ) ) {
 					$this->url_components['query'] = http_build_query( $query_params );
 				} else {
@@ -165,6 +184,21 @@ class Urlslab_Url {
 		}
 		$this->urlslab_parsed_url = $url;
 	}
+
+	private static function get_clean_params( $params ): array {
+		if ( ! is_array( $params ) ) {
+			return array();
+		}
+		$regexp = '/^(' . implode( '|', self::BLACKLISTED_QUERY_PARAMS ) . ')$/';
+		foreach ( $params as $param_name => $param_value ) {
+			if ( preg_match( $regexp, $param_name ) ) {
+				unset( $params[ $param_name ] );
+			}
+		}
+
+		return $params;
+	}
+
 
 	private function resolve_path( $path ) {
 		if ( false === strpos( $path, './' ) ) {
@@ -258,6 +292,39 @@ class Urlslab_Url {
 		}
 
 		return '';
+	}
+
+	public static function get_current_page_url(): Urlslab_Url {
+		if ( is_object( self::$current_page_url ) ) {
+			return self::$current_page_url;
+		}
+
+		if ( ! is_object( self::$current_page_url ) && is_singular() && wp_get_canonical_url() ) {
+			try {
+				self::$current_page_url = new Urlslab_Url( wp_get_canonical_url(), true );
+
+				return self::$current_page_url;
+			} catch ( Exception $e ) {
+			}
+		} else if ( is_category() ) {
+			$cat = get_category_link( get_query_var( 'cat' ) );
+			if ( ! empty( $cat ) ) {
+				try {
+					self::$current_page_url = new Urlslab_Url( $cat, true );
+
+					return self::$current_page_url;
+				} catch ( Exception $e ) {
+				}
+			}
+		} else {
+			global $wp;
+			try {
+				self::$current_page_url = new Urlslab_Url( home_url( add_query_arg( self::get_clean_params( $wp->query_vars ), $wp->request ) ), true );
+			} catch ( Exception $e ) {
+			}
+		}
+
+		return self::$current_page_url;
 	}
 
 }
