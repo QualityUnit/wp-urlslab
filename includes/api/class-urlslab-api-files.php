@@ -29,6 +29,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 									case Urlslab_Driver::STATUS_ACTIVE:
 									case Urlslab_Driver::STATUS_PENDING:
 									case Urlslab_Driver::STATUS_ERROR:
+									case Urlslab_Driver::STATUS_NOT_PROCESSING:
 										return true;
 
 									default:
@@ -62,7 +63,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 						'driver' => array(
 							'required'          => true,
 							'validate_callback' => function( $param ) {
-								return Urlslab_Driver::DRIVER_DB === $param || Urlslab_Driver::DRIVER_LOCAL_FILE === $param || Urlslab_Driver::DRIVER_S3 === $param;
+								return in_array( $param, Urlslab_Driver::DRIVERS );
 							},
 						),
 					),
@@ -213,6 +214,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 			}
 		} catch ( Exception $e ) {
 		}
+
 		return new WP_REST_Response( __( 'S3 not connected' ), 500 );
 	}
 

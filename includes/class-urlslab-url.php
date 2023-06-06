@@ -66,6 +66,7 @@ class Urlslab_Url {
 		'pk_vid',
 		'source',
 	);
+	private array $query_params = array();
 
 	/**
 	 * @param string $url
@@ -167,13 +168,15 @@ class Urlslab_Url {
 
 		$this->url_components['path'] = $this->resolve_path( $this->url_components['path'] );
 
-		$url = $this->url_components['host'] . ( $this->url_components['path'] ?? '' );
+		$url                = $this->url_components['host'] . ( $this->url_components['path'] ?? '' );
+		$this->query_params = array();
 		if ( isset( $this->url_components['query'] ) ) {
 			parse_str( $this->url_components['query'], $query_params );
 			if ( is_array( $query_params ) ) {
 				$query_params = self::get_clean_params( $query_params );
 				if ( ! empty( $query_params ) ) {
 					$this->url_components['query'] = http_build_query( $query_params );
+					$this->query_params            = $query_params;
 				} else {
 					unset( $this->url_components['query'] );
 				}
@@ -327,4 +330,15 @@ class Urlslab_Url {
 		return self::$current_page_url;
 	}
 
+	public function get_filename() {
+		if ( isset( $this->url_components['path'] ) ) {
+			return pathinfo( $this->url_components['path'], PATHINFO_FILENAME );
+		}
+
+		return $this->get_url_id();
+	}
+
+	public function get_query_params(): array {
+		return $this->query_params;
+	}
 }

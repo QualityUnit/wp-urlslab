@@ -72,6 +72,7 @@ class Urlslab_Public {
 				'wp_footer',
 				function() {
 					wp_enqueue_script( 'urlslab', plugin_dir_url( __FILE__ ) . 'build/js/urlslab-lazyload.js', array( 'jquery' ), URLSLAB_VERSION, true );
+					wp_localize_script( 'urlslab', 'permalinks', array( 'is_supported' => ! empty( get_option( 'permalink_structure' ) ) ) );
 				}
 			);
 		}
@@ -92,14 +93,18 @@ class Urlslab_Public {
 	}
 
 	public function download_offloaded_file() {
-		if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], Urlslab_Driver::DOWNLOAD_URL_PATH ) !== false ) {
+		if ( isset( $_GET['action'] ) && Urlslab_Driver::DOWNLOAD_URL_PATH === $_GET['action'] ) {
 			Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-media-offloader' )->output_content();
 			exit();
-		} else {
-			if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], Urlslab_Lazy_Loading::DOWNLOAD_URL_PATH ) !== false ) {
-				Urlslab_Lazy_Loading::output_content();
-				exit();
-			}
+		} else if ( isset( $_GET['action'] ) && Urlslab_Lazy_Loading::DOWNLOAD_URL_PATH === $_GET['action'] ) {
+			Urlslab_Lazy_Loading::output_content();
+			exit();
+		} else if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], Urlslab_Driver::DOWNLOAD_URL_PATH ) !== false ) {
+			Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-media-offloader' )->output_content();
+			exit();
+		} else if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], Urlslab_Lazy_Loading::DOWNLOAD_URL_PATH ) !== false ) {
+			Urlslab_Lazy_Loading::output_content();
+			exit();
 		}
 	}
 
