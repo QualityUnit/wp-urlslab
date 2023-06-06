@@ -50,7 +50,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$this->set_final_url_id( $url['final_url_id'] ?? $this->get_url_id(), $loaded_from_db );
 		$this->set_url_name( $url['url_name'] ?? '', $loaded_from_db );
 		$this->set_scr_status( $url['scr_status'] ?? '', $loaded_from_db );
-		$this->set_sum_status( $url['sum_status'] ?? self::SUM_STATUS_NEW, $loaded_from_db );
+		$this->set_sum_status( $url['sum_status'] ?? '', $loaded_from_db );
 		$this->set_http_status( $url['http_status'] ?? self::HTTP_STATUS_NOT_PROCESSED, $loaded_from_db );
 		$this->set_urlslab_domain_id( $url['urlslab_domain_id'] ?? '', $loaded_from_db );
 		$this->set_urlslab_url_id( $url['urlslab_url_id'] ?? '', $loaded_from_db );
@@ -330,15 +330,24 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	}
 
 
-	public function get_summary_text( $strategy, $schedule = true ): string {
+	public function get_summary_text( $strategy ): string {
 		switch ( $strategy ) {
 			case Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY:
 				if ( ! empty( trim( $this->get_url_summary() ) ) ) {
 					return trim( $this->get_url_summary() );
 				}
-				if ( $schedule && empty( $this->get_sum_status() ) ) {
-					$this->set_sum_status( self::SUM_STATUS_NEW );
-					$this->update();
+				if ( empty( $this->get_sum_status() ) ) {
+					$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Link_Enhancer::SLUG );
+					if (
+						$widget &&
+						(
+							$this->is_internal() && $widget->get_option( Urlslab_Link_Enhancer::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_INTERNAL_LINKS ) ||
+							! $this->is_internal() && $widget->get_option( Urlslab_Link_Enhancer::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_EXTERNAL_LINKS )
+						)
+					) {
+						$this->set_sum_status( self::SUM_STATUS_NEW );
+						$this->update();
+					}
 				} //continue to next option
 			case Urlslab_Link_Enhancer::DESC_TEXT_META_DESCRIPTION:
 				if ( ! empty( trim( $this->get_url_meta_description() ) ) ) {
@@ -486,7 +495,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	 *
 	 * @return void
 	 */
-	public function insert_urls( $urls, $scr_status = false, $sum_status = self::SUM_STATUS_NEW, $http_status = self::HTTP_STATUS_NOT_PROCESSED, $rel_schedule = self::REL_NOT_REQUESTED_SCHEDULE ): bool {
+	public function insert_urls( $urls, $scr_status = false, $sum_status = '', $http_status = self::HTTP_STATUS_NOT_PROCESSED, $rel_schedule = self::REL_NOT_REQUESTED_SCHEDULE ): bool {
 		if ( empty( $urls ) ) {
 			return true;
 		}

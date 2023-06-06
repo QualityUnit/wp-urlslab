@@ -21,15 +21,13 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 		global $wpdb;
 
 		$query_data = array();
-
+		$sql_where_http_status = '';
 		if (
 			Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Link_Enhancer::SLUG )
 			&& Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Link_Enhancer::SLUG )->get_option( Urlslab_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS )
 		) {
 			$query_data[]          = Urlslab_Url_Row::HTTP_STATUS_OK;
 			$sql_where_http_status = ' http_status = %d AND';
-		} else {
-			$sql_where_http_status = '';
 		}
 
 		$query_data[]    = Urlslab_Url_Row::SCR_STATUS_NEW;
