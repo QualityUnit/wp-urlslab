@@ -66,7 +66,7 @@ export default function ScreenshotTable( { slug } ) {
 			},
 			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
 			cell: ( cell ) => <a onMouseOver={ () => setTooltipUrl( cell.getValue() ) } onMouseLeave={ () => setTooltipUrl() } href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: 'Screenshot URL',
+			header: __( 'Screenshot URL' ),
 			size: 150,
 		} ),
 		columnHelper.accessor( 'url_name', {
