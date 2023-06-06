@@ -151,7 +151,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	public function process_min_width( DOMDocument $document ) {
 		$xpath        = new DOMXPath( $document );
-		$dom_elements = $xpath->query( "//img[ancestor-or-self::*[contains(@class, '" . self::URLSLAB_MIN_WIDTH . "') and not(contains(@class, 'urlslab-skip-all')) and not(starts-with(@src, 'data:'))]]" );
+		$dom_elements = $xpath->query( "//img[ancestor-or-self::*[contains(@class, '" . self::URLSLAB_MIN_WIDTH . "') and not(contains(@class, 'urlslab-skip-all')) and not(starts-with(@src, 'data:')) and not(ancestor::*[@id='wpadminbar'])]]" );
 		foreach ( $dom_elements as $img_element ) {
 			$this->add_min_width_to_img( $document, $img_element );
 		}
@@ -169,7 +169,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			// *********************************
 			foreach ( Urlslab_Lazy_Loading::get_supported_media() as $tag_name => $tag_attributes ) {
 				$xpath        = new DOMXPath( $document );
-				$dom_elements = $xpath->query( '//' . $tag_name . "[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-offload')])]" );
+				$dom_elements = $xpath->query( '//' . $tag_name . "[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-offload')]) and not(ancestor::*[@id='wpadminbar'])]" );
 
 				if ( empty( $dom_elements ) ) {
 					continue;
@@ -198,7 +198,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 			// search urls in style attributes
 			$xpath           = new DOMXPath( $document );
-			$styled_elements = $xpath->query( "//*[contains(@style, 'url') and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-offload')])]" );
+			$styled_elements = $xpath->query( "//*[contains(@style, 'url') and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-offload')]) and not(ancestor::*[@id='wpadminbar'])]" );
 			foreach ( $styled_elements as $styled_element ) {
 				if ( ! $this->is_skip_elemenet( $styled_element, 'offload' ) && preg_match_all( '/url\((.*?)\)/', $styled_element->getAttribute( 'style' ), $matches ) ) {
 					foreach ( $matches[1] as $matched_url ) {

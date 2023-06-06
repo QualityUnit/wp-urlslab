@@ -296,7 +296,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$this->page_keywords                    = array();
 		$cnt                                    = 0;
 		$xpath                                  = new DOMXPath( $document );
-		$table_data                             = $xpath->query( "//a[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-keywords')])]|//*[substring-after(name(), 'h') > 0 and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-keywords')])]" );
+		$table_data                             = $xpath->query( "//a[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-keywords')]) and not(ancestor::*[@id='wpadminbar'])]|//*[substring-after(name(), 'h') > 0 and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-keywords')])]" );
 		$hasLinksBeforeH1                       = false;
 		$hadHAlready                            = false;
 		foreach ( $table_data as $element ) {

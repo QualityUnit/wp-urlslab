@@ -351,7 +351,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 	private function add_images_lazy_loading( DOMDocument $document ) {
 		$xpath        = new DOMXPath( $document );
-		$dom_elements = $xpath->query( "//img[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')]) and not(starts-with(@src, 'data:'))]" );
+		$dom_elements = $xpath->query( "//img[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')]) and not(starts-with(@src, 'data:')) and not(ancestor::*[@id='wpadminbar'])]" );
 		foreach ( $dom_elements as $element ) {
 			$has_lazy_loading_attr = false;
 			foreach ( self::get_supported_media()['img'] as $valid_attr ) {
@@ -367,7 +367,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			}
 		}
 		$xpath        = new DOMXPath( $document );
-		$dom_elements = $xpath->query( "//source[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
+		$dom_elements = $xpath->query( "//source[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')]) and not(ancestor::*[@id='wpadminbar'])]" );
 		foreach ( $dom_elements as $element ) {
 			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) ) {
 				$this->add_source_lazy_loading( $element );
@@ -377,7 +377,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 	private function remove_default_wp_img_lazy_loading( DOMDocument $document ) {
 		$xpath        = new DOMXPath( $document );
-		$dom_elements = $xpath->query( "//img[@loading='lazy' and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-nolazy')])]" );
+		$dom_elements = $xpath->query( "//img[@loading='lazy' and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-nolazy')]) and not(ancestor::*[@id='wpadminbar'])]" );
 		foreach ( $dom_elements as $element ) {
 			$element->removeAttribute( 'loading' );
 		}
@@ -734,7 +734,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		}
 
 		$xpath    = new DOMXPath( $document );
-		$elements = $xpath->query( '//*[not(@urlslab_lazy_small) and (' . $classes . ") and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
+		$elements = $xpath->query( '//*[not(@urlslab_lazy_small) and (' . $classes . ") and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])] and not(ancestor::*[@id='wpadminbar'])" );
 		foreach ( $elements as $dom_elem ) {
 			$element_html     = $document->saveHTML( $dom_elem );
 			$element_html_len = strlen( $element_html );

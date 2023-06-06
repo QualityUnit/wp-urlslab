@@ -279,7 +279,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		}
 
 		$xpath     = new DOMXPath( $document );
-		$link_data = $xpath->query( "//a[contains(@href, '?page_id=') and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-page_id')])]" );
+		$link_data = $xpath->query( "//a[contains(@href, '?page_id=') and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-page_id')]) and not(ancestor::*[@id='wpadminbar'])]" );
 
 		foreach ( $link_data as $link_element ) {
 			try {
@@ -397,7 +397,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	private function processTitleAttribute( DOMDocument $document ): void {
 		try {
 			$xpath    = new DOMXPath( $document );
-			$elements = $xpath->query( "//a[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-title')])]" );
+			$elements = $xpath->query( "//a[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-title')]) and not(ancestor::*[@id='wpadminbar'])]" );
 
 			$link_elements = array();
 			if ( $elements instanceof DOMNodeList ) {
@@ -493,7 +493,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		if ( $this->get_option( self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS ) ) {
 			$used_ids = array();
 			$xpath    = new DOMXPath( $document );
-			$headers  = $xpath->query( "//*[substring-after(name(), 'h') > 0 and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-keywords')])]" );
+			$headers  = $xpath->query( "//*[substring-after(name(), 'h') > 0 and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-keywords')]) and not(ancestor::*[@id='wpadminbar'])]" );
 			foreach ( $headers as $header_element ) {
 				if ( ! $header_element->hasAttribute( 'id' ) ) {
 					$id = strtolower( trim( $header_element->nodeValue ) );
@@ -512,7 +512,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			return;
 		}
 		$xpath    = new DOMXPath( $document );
-		$elements = $xpath->query( "//a[@href and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-fragment')])]" );
+		$elements = $xpath->query( "//a[@href and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-fragment')]) and not(ancestor::*[@id='wpadminbar'])]" );
 		foreach ( $elements as $dom_elem ) {
 			if ( strlen( $dom_elem->getAttribute( 'href' ) ) && false === strpos( $dom_elem->getAttribute( 'href' ), '#' ) ) {
 				$fragment_text = '';
