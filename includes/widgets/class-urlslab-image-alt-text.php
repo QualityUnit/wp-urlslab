@@ -36,7 +36,7 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 
 		try {
 			$xpath = new DOMXPath( $document );
-			$table_data = $xpath->query( "//img[(not(@alt) or @alt='') and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-img-alt')])]|//*[substring-after(name(), 'h') > 0]" );
+			$table_data = $xpath->query( "//img[(not(@alt) or @alt='') and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-img-alt')]) and not(ancestor::*[@id='wpadminbar'])]|//*[substring-after(name(), 'h') > 0]" );
 			$last_title = get_the_title();
 
 			if ( ! empty( $table_data ) ) {

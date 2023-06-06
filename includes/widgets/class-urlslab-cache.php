@@ -588,7 +588,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 
 			try {
 				$xpath    = new DOMXPath( $document );
-				$elements = $xpath->query( "//a[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-preloading')])]" );
+				$elements = $xpath->query( "//a[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-preloading')]) and not(ancestor::*[@id='wpadminbar'])]" );
 
 				if ( $elements instanceof DOMNodeList ) {
 					foreach ( $elements as $dom_element ) {
