@@ -41,7 +41,6 @@ export default function ScreenshotTable( { slug } ) {
 	};
 
 	const header = {
-		screenshot_url_thumbnail: __( 'Screenshot URL' ),
 		url_name: __( 'Destination URL' ),
 		url_title: __( 'Title' ),
 		scr_status: __( 'Status' ),
@@ -67,7 +66,7 @@ export default function ScreenshotTable( { slug } ) {
 			},
 			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
 			cell: ( cell ) => <a onMouseOver={ () => setTooltipUrl( cell.getValue() ) } onMouseLeave={ () => setTooltipUrl() } href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: ( th ) => header.screenshot_url_thumbnail,
+			header: 'Screenshot URL',
 			size: 150,
 		} ),
 		columnHelper.accessor( 'url_name', {
