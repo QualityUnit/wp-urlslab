@@ -330,14 +330,16 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	}
 
 
-	public function get_summary_text(
-		$strategy
-	): string {
+	public function get_summary_text( $strategy, $schedule = true ): string {
 		switch ( $strategy ) {
 			case Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY:
 				if ( ! empty( trim( $this->get_url_summary() ) ) ) {
 					return trim( $this->get_url_summary() );
 				} //continue to next option
+				if ( $schedule && empty( $this->get_sum_status() ) ) {
+					$this->set_sum_status( self::SUM_STATUS_NEW );
+					$this->update();
+				}
 			case Urlslab_Link_Enhancer::DESC_TEXT_META_DESCRIPTION:
 				if ( ! empty( trim( $this->get_url_meta_description() ) ) ) {
 					return trim( $this->get_url_meta_description() );
