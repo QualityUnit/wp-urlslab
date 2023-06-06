@@ -67,7 +67,7 @@ export default function ScreenshotTable( { slug } ) {
 			},
 			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
 			cell: ( cell ) => <a onMouseOver={ () => setTooltipUrl( cell.getValue() ) } onMouseLeave={ () => setTooltipUrl() } href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.screenshot_url_thumbnail }</SortBy>,
+			header: ( th ) => header.screenshot_url_thumbnail,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'url_name', {
