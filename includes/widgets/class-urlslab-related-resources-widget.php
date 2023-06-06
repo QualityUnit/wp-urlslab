@@ -66,7 +66,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			return $content;
 		}
 		$shortcode_content = '';
-		if ( $this->get_option( self::SETTING_NAME_AUTOINCLUDE_TO_CONTENT ) ) {
+		if ( $this->get_option( self::SETTING_NAME_AUTOINCLUDE_TO_CONTENT ) && is_singular() ) {
 			$post_types = $this->get_option( self::SETTING_NAME_AUTOINCLUDE_POST_TYPES );
 			if ( empty( $post_types ) || in_array( get_post_type(), explode( ',', $post_types ) ) ) {
 				$shortcode_content = $this->get_shortcode_content();
