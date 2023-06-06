@@ -57,7 +57,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	}
 
 	public function content_hook( DOMDocument $document ) {
-		if ( is_admin() || is_404() || is_user_logged_in() ) {
+		if ( is_admin() || is_404() || is_user_logged_in() || is_attachment() ) {
 			return;
 		}
 		try {
