@@ -48,7 +48,7 @@ abstract class Urlslab_Driver {
 	}
 
 	public static function transfer_file_to_storage( Urlslab_File_Row $file, string $dest_driver ): bool {
-		$result   = false;
+		$result = false;
 		if ( ! function_exists( 'wp_tempnam' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
@@ -107,8 +107,12 @@ abstract class Urlslab_Driver {
 	abstract public function is_connected();
 
 	public function get_url( Urlslab_File_Row $file ) {
-		//URL to standard proxy script
-		return site_url( self::DOWNLOAD_URL_PATH . urlencode( $file->get_fileid() ) . '/' . urlencode( $file->get_filename() ) );
+		if ( ! empty( get_option( 'permalink_structure' ) ) ) {
+			//URL to standard proxy script
+			return site_url( self::DOWNLOAD_URL_PATH . urlencode( $file->get_fileid() ) . '/' . urlencode( $file->get_filename() ) );
+		}
+
+		return site_url( '?action=' . urlencode( self::DOWNLOAD_URL_PATH ) . '&fileid=' . urlencode( $file->get_fileid() ) . '&filename=' . urlencode( $file->get_filename() ) );
 	}
 
 	public function upload_content( Urlslab_File_Row $file ) {
@@ -151,8 +155,8 @@ abstract class Urlslab_Driver {
 			$file->get_file_pointer()->insert();
 		} else {
 			$result = true;
-			if (!strlen($file->get_local_file())) {
-				$this->set_local_file_name($file);
+			if ( ! strlen( $file->get_local_file() ) ) {
+				$this->set_local_file_name( $file );
 			}
 		}
 
@@ -285,6 +289,5 @@ abstract class Urlslab_Driver {
 		return false;
 	}
 
-	protected function set_local_file_name( Urlslab_File_Row $file ) {
-	}
+	protected function set_local_file_name( Urlslab_File_Row $file ) {}
 }

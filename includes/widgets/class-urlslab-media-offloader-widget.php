@@ -268,12 +268,17 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 	public function output_content() {
 		global $_SERVER;
-		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
-			return 'Path to file not detected.';
+
+		if ( isset( $_GET['action'] ) && isset( $_GET['fileid'] ) && Urlslab_Driver::DOWNLOAD_URL_PATH === $_GET['action'] ) {
+			$fileid = $_GET['fileid'];
+		} else {
+			if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+				return 'Path to file not detected.';
+			}
+			$path   = pathinfo( $_SERVER['REQUEST_URI'] );
+			$dirs   = explode( '/', $path['dirname'] );
+			$fileid = array_pop( $dirs );
 		}
-		$path   = pathinfo( $_SERVER['REQUEST_URI'] );
-		$dirs   = explode( '/', $path['dirname'] );
-		$fileid = array_pop( $dirs );
 
 		$file = Urlslab_File_Row::get_file( $fileid );
 
@@ -1069,9 +1074,9 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 
 		foreach ( $urls as $fileid => $url ) {
 			try {
-				$url_obj = new Urlslab_Url( $url );
-					$placeholders[] = '(%s,%s,%s,%s,%s)';
-					array_push( $values, $fileid, $url, $this->parent_urls[ $fileid ] ?? '', ( ( $url_obj->is_same_domain_url() && $save_internal ) || $save_external ) ? Urlslab_Driver::STATUS_NEW : Urlslab_Driver::STATUS_NOT_PROCESSING, $now );
+				$url_obj        = new Urlslab_Url( $url );
+				$placeholders[] = '(%s,%s,%s,%s,%s)';
+				array_push( $values, $fileid, $url, $this->parent_urls[ $fileid ] ?? '', ( ( $url_obj->is_same_domain_url() && $save_internal ) || $save_external ) ? Urlslab_Driver::STATUS_NEW : Urlslab_Driver::STATUS_NOT_PROCESSING, $now );
 			} catch ( Exception $e ) {
 			}
 		}

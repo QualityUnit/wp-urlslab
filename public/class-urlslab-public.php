@@ -92,15 +92,18 @@ class Urlslab_Public {
 	}
 
 	public function download_offloaded_file() {
+		if ( isset( $_GET['action'] ) && Urlslab_Driver::DOWNLOAD_URL_PATH === $_GET['action'] ) {
+			Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-media-offloader' )->output_content();
+			exit();
+		}
 		if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], Urlslab_Driver::DOWNLOAD_URL_PATH ) !== false ) {
 			Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-media-offloader' )->output_content();
 			exit();
-		} else {
-			if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], Urlslab_Lazy_Loading::DOWNLOAD_URL_PATH ) !== false ) {
-				Urlslab_Lazy_Loading::output_content();
-				exit();
-			}
+		} else if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], Urlslab_Lazy_Loading::DOWNLOAD_URL_PATH ) !== false ) {
+			Urlslab_Lazy_Loading::output_content();
+			exit();
 		}
+
 	}
 
 }
