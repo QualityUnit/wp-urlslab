@@ -8,10 +8,9 @@ import ExportCSVButton from '../elements/ExportCSVButton';
 import ProgressBar from '../elements/ProgressBar';
 
 export default function ExportPanel( props ) {
-	const { slug, header, handlePanel } = props;
-	const { filters } = slug;
+	const { url, header, handlePanel } = props;
 	const { __ } = useI18n();
-	const activefilters = filters ? Object.keys( filters ) : null;
+	const activefilters = url?.filters ? Object.keys( url?.filters ) : null;
 	const [ exportStatus, setExportStatus ] = useState();
 	const stopExport = useRef( false );
 
