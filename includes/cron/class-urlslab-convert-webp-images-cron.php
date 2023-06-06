@@ -69,6 +69,9 @@ class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 		$file->update();
 
 		// create local image file
+		if ( ! function_exists( 'wp_tempnam' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
 		$original_image_filename = wp_tempnam();
 		if ( $file->get_file_pointer()->get_driver_object()->save_to_file( $file, $original_image_filename ) ) {
 			$new_file = $this->convert_image_format( $file, $original_image_filename, 'webp' );

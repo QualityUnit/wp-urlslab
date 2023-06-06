@@ -1070,10 +1070,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		foreach ( $urls as $fileid => $url ) {
 			try {
 				$url_obj = new Urlslab_Url( $url );
-				if ( ( $url_obj->is_same_domain_url() && $save_internal ) || $save_external ) {
 					$placeholders[] = '(%s,%s,%s,%s,%s)';
-					array_push( $values, $fileid, $url, $this->parent_urls[ $fileid ] ?? '', Urlslab_Driver::STATUS_NEW, $now );
-				}
+					array_push( $values, $fileid, $url, $this->parent_urls[ $fileid ] ?? '', ( ( $url_obj->is_same_domain_url() && $save_internal ) || $save_external ) ? Urlslab_Driver::STATUS_NEW : Urlslab_Driver::STATUS_NOT_PROCESSING, $now );
 			} catch ( Exception $e ) {
 			}
 		}

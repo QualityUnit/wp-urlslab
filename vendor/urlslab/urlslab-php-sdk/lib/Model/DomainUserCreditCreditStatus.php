@@ -57,7 +57,7 @@ class DomainUserCreditCreditStatus implements ModelInterface, ArrayAccess, \Json
       * @var string[]
       */
     protected static $openAPITypes = [
-        'credits' => 'int'
+        'credits' => 'float'
     ];
 
     /**
@@ -68,7 +68,7 @@ class DomainUserCreditCreditStatus implements ModelInterface, ArrayAccess, \Json
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'credits' => 'int64'
+        'credits' => 'double'
     ];
 
     /**
@@ -295,7 +295,7 @@ class DomainUserCreditCreditStatus implements ModelInterface, ArrayAccess, \Json
     /**
      * Gets credits
      *
-     * @return int
+     * @return float
      */
     public function getCredits()
     {
@@ -305,7 +305,7 @@ class DomainUserCreditCreditStatus implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets credits
      *
-     * @param int $credits credits
+     * @param float $credits credits
      *
      * @return self
      */

@@ -59,6 +59,9 @@ abstract class Urlslab_Convert_Images_Cron extends Urlslab_Cron {
 
 			default:
 		}
+		if ( ! function_exists( 'wp_tempnam' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
 		$tmp_name = wp_tempnam();
 		if ( ! $image->writeImage( $tmp_name ) ) {
 			unlink( $tmp_name );
@@ -108,6 +111,9 @@ abstract class Urlslab_Convert_Images_Cron extends Urlslab_Cron {
 			}
 		}
 
+		if ( ! function_exists( 'wp_tempnam' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
 		$tmp_name = wp_tempnam();
 
 		switch ( $new_format ) {

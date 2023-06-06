@@ -13,10 +13,17 @@ abstract class Urlslab_Driver {
 	public const STATUS_PENDING = 'P';
 	public const STATUS_NEW = 'N';
 	public const STATUS_ERROR = 'E';
+	public const STATUS_NOT_PROCESSING = 'X';
 
 	public const DOWNLOAD_URL_PATH = 'urlslab-download/';
 
 	private static $driver_cache = array();
+
+	public const DRIVERS = array(
+		self::DRIVER_DB,
+		self::DRIVER_LOCAL_FILE,
+		self::DRIVER_S3,
+	);
 
 	public static function get_driver( $driver ): Urlslab_Driver {
 		if ( isset( self::$driver_cache[ $driver ] ) ) {
@@ -42,6 +49,9 @@ abstract class Urlslab_Driver {
 
 	public static function transfer_file_to_storage( Urlslab_File_Row $file, string $dest_driver ): bool {
 		$result   = false;
+		if ( ! function_exists( 'wp_tempnam' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
 		$tmp_name = wp_tempnam();
 		if (
 			$file->get_file_pointer()->get_driver_object()->save_to_file( $file, $tmp_name )
@@ -141,6 +151,9 @@ abstract class Urlslab_Driver {
 			$file->get_file_pointer()->insert();
 		} else {
 			$result = true;
+			if (!strlen($file->get_local_file())) {
+				$this->set_local_file_name($file);
+			}
 		}
 
 		if ( $delete_file ) {
@@ -227,6 +240,9 @@ abstract class Urlslab_Driver {
 		}
 		$dst = imagecreatetruecolor( $newwidth, $newheight );
 		imagecopyresampled( $dst, $src, 0, 0, 0, 0, $newwidth, $newheight, $width, $height );
+		if ( ! function_exists( 'wp_tempnam' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
 		$tmp_name = wp_tempnam();
 		switch ( $img_info['mime'] ) {
 			case 'image/png':
@@ -267,5 +283,8 @@ abstract class Urlslab_Driver {
 		}
 
 		return false;
+	}
+
+	protected function set_local_file_name( Urlslab_File_Row $file ) {
 	}
 }

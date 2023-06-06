@@ -16,14 +16,6 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 
 	public function upload_content( Urlslab_File_Row $file ) {
 		if ( strlen( $file->get_local_file() ) && file_exists( $file->get_local_file() ) ) {
-			if ( $file->get_local_file() == $this->get_upload_file_name( $file ) ) {
-				return true;    // we have local file on disk already, no need to save it to storage
-			}
-			// make copy of file in our own upload dir
-			if ( ! copy( $file->get_local_file(), $this->get_upload_file_name( $file ) ) ) {
-				return false;
-			}
-
 			return true;
 		}
 
@@ -37,24 +29,22 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 		}
 
 		$new_file = $this->get_upload_file_name( $file );
+		$file->set_local_file( $new_file );
 
-		global $wpdb;
-		if ( file_exists( $new_file ) ) {
-			// # synchronising DB with file data
-			$wpdb->update( URLSLAB_FILES_TABLE, array( 'local_file' => $new_file ), array( 'fileid' => $file->get_fileid() ) );
-
-			return true;
+		if ( ! file_exists( $new_file ) ) {
+			if ( ! copy( $local_file_name, $new_file ) ) {
+				return false;
+			}
 		}
-
-		if ( ! copy( $local_file_name, $new_file ) ) {
-			return false;
-		}
-
-		// set new local file name
-		$wpdb->update( URLSLAB_FILES_TABLE, array( 'local_file' => $new_file ), array( 'fileid' => $file->get_fileid() ) );
+		$file->update();
 
 		return true;
 	}
+
+	protected function set_local_file_name( Urlslab_File_Row $file ) {
+		$file->set_local_file( $this->get_upload_file_name( $file ) );
+	}
+
 
 	public function output_file_content( Urlslab_File_Row $file ) {
 		if ( ! file_exists( $file->get_local_file() ) ) {
@@ -81,7 +71,19 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 	}
 
 	public function get_url( Urlslab_File_Row $file ) {
-		return wp_get_upload_dir()['baseurl'] . $this->get_file_dir( $file ) . $file->get_filename();
+		if ( $file->get_filestatus() == Urlslab_Driver::STATUS_ACTIVE && file_exists( $file->get_local_file() ) ) {
+
+			$upload_dir = wp_upload_dir();
+
+			if ( false !== strpos( $file->get_local_file(), $upload_dir['basedir'] ) ) {
+				return $upload_dir['baseurl'] . substr( $file->get_local_file(), strlen( $upload_dir['basedir'] ) );
+			}
+
+
+			return $file->get_local_file();
+		}
+
+		return $file->get_url();
 	}
 
 	public function is_connected() {
@@ -98,8 +100,6 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 
 	public function delete_content( Urlslab_File_Row $file_pointer ): bool {
 		return true;
-		// we will not delete files from disk yet
-		// return unlink( $file->get_local_file() );
 	}
 
 	public function get_driver_code(): string {
@@ -111,10 +111,32 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 	}
 
 	private function get_upload_dir( Urlslab_File_Row $file ) {
-		return wp_upload_dir()['basedir'] . $this->get_file_dir( $file );
+		$upload_dir = wp_upload_dir();
+
+		if ( false !== strpos( $file->get_url(), $upload_dir['baseurl'] ) ) {
+			return $upload_dir['basedir'] . substr( substr( $file->get_url(), strlen( $upload_dir['baseurl'] ) ), 0, - strlen( $file->get_filename() ) );
+		}
+
+		return $upload_dir['path'];
 	}
 
-	private function get_upload_file_name( Urlslab_File_Row $file ) {
-		return $this->get_upload_dir( $file ) . $file->get_filename();
+	public function get_upload_file_name( Urlslab_File_Row $file ) {
+
+		$upload_dir = wp_upload_dir();
+		if ( false !== strpos( $file->get_file_url(), $upload_dir['baseurl'] ) ) {
+			$relative_path = str_replace( $upload_dir['baseurl'], '', $file->get_file_url() );
+			$file_path     = $upload_dir['basedir'] . $relative_path;
+		} else {
+			$url = new Urlslab_Url( $file->get_file_url() );
+
+			$file_name = $url->get_filename();
+			if ( ! empty( $url->get_query_params() ) ) {
+				$file_name = $url->get_url_id() . '_' . $file_name;
+			}
+			$file_path = $upload_dir['path'] . '/' . $file_name;
+		}
+
+		return $file_path;
 	}
+
 }
