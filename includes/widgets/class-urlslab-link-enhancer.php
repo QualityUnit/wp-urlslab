@@ -464,17 +464,6 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 							} else {
 								// enhance title if url has no title
 								if ( empty( $dom_elem->getAttribute( 'title' ) ) ) {
-									if (
-										empty( $result[ $url_obj->get_url_id() ]->get_sum_status() ) &&
-										(
-											$result[ $url_obj->get_url_id() ]->is_internal() && $this->get_option( self::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_INTERNAL_LINKS )
-											|| ! $result[ $url_obj->get_url_id() ]->is_internal() && $this->get_option( self::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_EXTERNAL_LINKS )
-										)
-									) {
-										$result[ $url_obj->get_url_id() ]->set_sum_status( Urlslab_Url_Row::SUM_STATUS_NEW );
-										$result[ $url_obj->get_url_id() ]->update();
-									}
-
 									$new_title = $result[ $url_obj->get_url_id() ]->get_summary_text( $strategy );
 									if ( strlen( $new_title ) ) {
 										$dom_elem->setAttribute( 'title', $new_title );
