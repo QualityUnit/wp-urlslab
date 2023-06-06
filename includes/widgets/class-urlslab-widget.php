@@ -28,9 +28,6 @@ abstract class Urlslab_Widget {
 	public const LABEL_AI = 'ai';
 	public const LABEL_CRON = 'cron';
 
-
-	private static $current_page_url;
-
 	private $options = false;
 	private $option_sections = array();
 
@@ -335,39 +332,6 @@ abstract class Urlslab_Widget {
 			   && ( ( ! empty( $custom_widget_skip )
 					  && false !== strpos( $dom->getAttribute( 'class' ), 'urlslab-skip-' . $custom_widget_skip ) )
 					|| ( false !== strpos( $dom->getAttribute( 'class' ), 'urlslab-skip-all' ) ) );
-	}
-
-	public static function get_current_page_url(): Urlslab_Url {
-		if ( is_object( self::$current_page_url ) ) {
-			return self::$current_page_url;
-		}
-
-		if ( ! is_object( self::$current_page_url ) && is_singular() && wp_get_canonical_url() ) {
-			try {
-				self::$current_page_url = new Urlslab_Url( wp_get_canonical_url(), true );
-
-				return self::$current_page_url;
-			} catch ( Exception $e ) {
-			}
-		} else if ( is_category() ) {
-			$cat = get_category_link( get_query_var( 'cat' ) );
-			if ( ! empty( $cat ) ) {
-				try {
-					self::$current_page_url = new Urlslab_Url( $cat, true );
-
-					return self::$current_page_url;
-				} catch ( Exception $e ) {
-				}
-			}
-		} else {
-			global $wp;
-			try {
-				self::$current_page_url = new Urlslab_Url( home_url( add_query_arg( array(), $wp->request ) ), true );
-			} catch ( Exception $e ) {
-			}
-		}
-
-		return self::$current_page_url;
 	}
 
 	protected function get_current_language_code() {

@@ -275,10 +275,10 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 						}
 						break;
 					case 'page_url':
-						$atts['page_url'] = Urlslab_Widget::get_current_page_url()->get_url_with_protocol();
+						$atts['page_url'] = Urlslab_Url::get_current_page_url()->get_url_with_protocol();
 						break;
 					case 'page_title':
-						$current_url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( Urlslab_Widget::get_current_page_url() );
+						$current_url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( Urlslab_Url::get_current_page_url() );
 						if ( ! empty( $current_url_obj ) ) {
 							$atts['page_title'] = $current_url_obj->get_summary_text( Urlslab_Link_Enhancer::DESC_TEXT_TITLE );
 						}
@@ -287,7 +287,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 						}
 						break;
 					case 'domain':
-						$atts['domain'] = Urlslab_Widget::get_current_page_url()->get_domain_name();
+						$atts['domain'] = Urlslab_Url::get_current_page_url()->get_domain_name();
 						break;
 					case 'language_code':
 						$atts['language_code'] = $this->get_current_language_code();
@@ -492,7 +492,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		}
 		// track screenshot usage
 		$generator_url = new Urlslab_Generator_Url_Row();
-		$generator_url->set_url_id( Urlslab_Widget::get_current_page_url()->get_url_id() );
+		$generator_url->set_url_id( Urlslab_Url::get_current_page_url()->get_url_id() );
 		$generator_url->set_shortcode_id( $obj->get_shortcode_id() );
 		$generator_url->set_hash_id( $obj->get_hash_id() );
 		$generator_url->insert_all( array( $generator_url ), true );

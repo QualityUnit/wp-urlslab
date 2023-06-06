@@ -81,7 +81,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	public function validateCurrentPageUrl(): void {
-		$currentUrl = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( Urlslab_Widget::get_current_page_url() );
+		$currentUrl = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( Urlslab_Url::get_current_page_url() );
 		if ( null !== $currentUrl ) {
 			if ( Urlslab_Url_Row::URL_TYPE_EXTERNAL == $currentUrl->get_url_type() ) {
 				$currentUrl->set_url_type( Urlslab_Url_Row::URL_TYPE_INTERNAL );
@@ -330,7 +330,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			return;
 		}
 
-		$srcUrlId = Urlslab_Widget::get_current_page_url()->get_url_id();
+		$srcUrlId = Urlslab_Url::get_current_page_url()->get_url_id();
 
 		global $wpdb;
 		$results = $wpdb->get_results(
@@ -420,7 +420,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			if ( ! empty( $link_elements ) ) {
 				$result = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_urls(
 					array_merge(
-						array( Urlslab_Widget::get_current_page_url() ),
+						array( Urlslab_Url::get_current_page_url() ),
 						array_map( fn( $elem ): Urlslab_Url => $elem[1], $link_elements )
 					)
 				);
@@ -544,7 +544,7 @@ function urlslab_url_attribute( $attribute_name, $url = false ) {
 		if ( $url ) {
 			$url_obj = new Urlslab_Url( $url, true );
 		} else {
-			$url_obj = Urlslab_Widget::get_current_page_url();
+			$url_obj = Urlslab_Url::get_current_page_url();
 		}
 		$url_row = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url_obj );
 
@@ -562,7 +562,7 @@ function urlslab_url_attributes( $url = false ): array {
 		if ( $url ) {
 			$url_obj = new Urlslab_Url( $url, true );
 		} else {
-			$url_obj = Urlslab_Widget::get_current_page_url();
+			$url_obj = Urlslab_Url::get_current_page_url();
 		}
 		$url_row = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url_obj );
 

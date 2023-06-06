@@ -754,7 +754,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			return;
 		}
 		$objects = array();
-		$url_id  = Urlslab_Widget::get_current_page_url()->get_url_id();
+		$url_id  = Urlslab_Url::get_current_page_url()->get_url_id();
 		foreach ( $youtube_ids as $youtube_id ) {
 			$row = new Urlslab_Youtube_Url_Row();
 			$row->set_videoid( $youtube_id );
