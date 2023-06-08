@@ -69,7 +69,15 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 					$css->set_filesize( filesize( $page_content_file_name ) );
 				} else {
 					$css->set_status( Urlslab_CSS_Cache_Row::STATUS_ACTIVE );
-					$css->set_css_content( file_get_contents( $page_content_file_name ) );
+
+					// Adjusting the links in the css based on the settings
+					$css_page_content = file_get_contents( $page_content_file_name );
+					if ( $widget->get_option( Urlslab_CSS_Optimizer::SETTING_NAME_CSS_ABSOLUTE_URL_LINKS ) ) {
+						// should change the links to absolute urls
+						$css_page_content = $this->adjustCssUrlLinks( $css_page_content, $css->get_url() );
+					}
+
+					$css->set_css_content( $css_page_content );
 				}
 			}
 		} catch ( Exception $e ) {
@@ -81,5 +89,28 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 		}
 
 		return $css->update();
+	}
+
+	function adjustCssUrlLinks( string $css_content, string $base_url ): string {
+		// Match the URLs inside the CSS content using regex
+		$url_pattern = "/url\(['\"]??(.*?)['\"]??\)/i";
+		preg_match_all( $url_pattern, $css_content, $matched_urls );
+
+		// Extract the unique URLs from the regex matches
+		$relative_urls = array_unique( $matched_urls[1] );
+
+		// Iterate through each relative URL, convert it to an absolute URL, and replace it in the CSS content
+		foreach ( $relative_urls as $relative_url ) {
+			// Skip absolute URLs or data URIs
+			if ( preg_match( '/^(https?:\/\/|data:)/', $relative_url ) ) {
+				continue;
+			}
+			// Convert the relative URL to an absolute URL
+			$absolute_url = rtrim( $base_url, '/' ) . '/' . ltrim( $relative_url, '/' );
+
+			// Replace the relative URL with the absolute URL in the CSS content
+			$css_content = str_replace( "url({$relative_url})", "url({$absolute_url})", $css_content );
+		}
+		return $css_content;
 	}
 }
