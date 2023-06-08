@@ -9,6 +9,8 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 	public const SETTING_NAME_CSS_MAX_SIZE = 'urlslab_css_max_size';
 	public const DEFAULT_CSS_MAX_SIZE = 250000;
 
+	public const SETTING_NAME_CSS_ABSOLUTE_URL_LINKS = 'urlslab_css_absolute_url_link';
+
 	public const SETTING_NAME_CSS_CACHE_TTL = 'urlslab_css_ttl';
 	public const DEFAULT_CSS_CACHE_TTL = 604800;
 
@@ -131,6 +133,18 @@ class Urlslab_CSS_Optimizer extends Urlslab_Widget {
 			},
 			'main'
 		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSS_ABSOLUTE_URL_LINKS,
+			true,
+			true,
+			__( 'Change Links to Absolute URLs' ),
+			__( 'Changes all url links in the css to absolute urls. otherwise the original link structure is kept' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'main'
+		);
+
 	}
 
 	private function insert_missing_css_files( array $links, array $css_files ) {
