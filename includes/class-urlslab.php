@@ -191,6 +191,11 @@ class Urlslab {
 					LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE
 				);
 
+				// not continuing if its sitemap
+				if ( $this->is_url_sitemap( Urlslab_Url::get_current_page_url()->get_url_path() ) ) {
+					return $content;
+				}
+
 				libxml_clear_errors();
 				libxml_use_internal_errors( $libxml_previous_state );
 
@@ -202,6 +207,24 @@ class Urlslab {
 		}
 
 		return '<body' . $body_attributes . '>' . $content . '</body>';
+	}
+
+	public function is_url_sitemap( string $url ) {
+		// List regex patterns to match.
+		$patterns = array(
+			'\/sitemap_index\.xml$',
+			'\/([^/]+?)-sitemap([0-9]+)?\.xml$',
+			'\/([a-z]+)?-?sitemap\.xsl$',
+		);
+
+		// Iterate through the patterns and check if any of them match the $url.
+		foreach ( $patterns as $pattern ) {
+			if ( preg_match( '~' . $pattern . '~', $url ) ) {
+				return true; // Pattern matched - URL is a sitemap.
+			}
+		}
+
+		return false; // No matching pattern found - URL is not a sitemap.
 	}
 
 	/**
