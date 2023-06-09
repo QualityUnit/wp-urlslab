@@ -119,7 +119,7 @@ class Urlslab_Cron_Manager {
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-convert-webp-images-cron.php';
 		$cron_job_webp_convert = new Urlslab_Convert_Webp_Images_Cron();
-		if ( $cron_job_webp_convert->is_format_supported() ) {
+		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Media_Offloader_Widget::SLUG ) && $cron_job_webp_convert->is_format_supported() ) {
 			$this->add_cron_task( $cron_job_webp_convert );
 		}
 
