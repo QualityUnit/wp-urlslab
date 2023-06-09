@@ -256,8 +256,12 @@ class Urlslab_Url {
 		return $this->url_components['query'] ?? '';
 	}
 
+	public function get_url_scheme_prefix(): string {
+		return $this->url_components['scheme'] . ( strpos( $this->url_components['scheme'], '://' ) ? '' : '://' );
+	}
+
 	public function get_url_with_protocol() {
-		return $this->url_components['scheme'] . ( strpos( $this->url_components['scheme'], '://' ) ? '' : '://' ) . $this->get_url();
+		return $this->get_url_scheme_prefix() . $this->get_url();
 	}
 
 	public function get_url_with_protocol_relative() {
