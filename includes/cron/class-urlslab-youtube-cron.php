@@ -1,13 +1,16 @@
 <?php
 
-use OpenAPI\Client\Urlslab\ContentApi;
-use OpenAPI\Client\Configuration;
+use Urlslab_Vendor\OpenAPI\Client\ApiException;
+use Urlslab_Vendor\OpenAPI\Client\Configuration;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalVideoCaptionResponse;
+use Urlslab_Vendor\OpenAPI\Client\Urlslab\VideoApi;
+use Urlslab_Vendor\GuzzleHttp;
 
 require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
 
 class Urlslab_Youtube_Cron extends Urlslab_Cron {
 
-	private \OpenAPI\Client\Urlslab\VideoApi $content_client;
+	private VideoApi $content_client;
 
 	public function get_description(): string {
 		return __( 'Loading microdata about scheduled YouTube videos used in your website', 'urlslab' );
@@ -54,7 +57,7 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 					}
 					$youtube_obj->update();
 				}
-			} catch ( \OpenAPI\Client\ApiException $e ) {
+			} catch ( ApiException $e ) {
 				if ( 402 === $e->getCode() ) {
 					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
 				}
@@ -80,7 +83,7 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 
 					return true;
 				}
-			} catch ( \OpenAPI\Client\ApiException $e ) {
+			} catch ( ApiException $e ) {
 				if ( 402 === $e->getCode() ) {
 					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
 				}
@@ -107,7 +110,7 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 		if ( empty( $this->content_client ) && Urlslab_General::is_urlslab_active() ) {
 			$api_key              = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
 			$config               = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-			$this->content_client = new \OpenAPI\Client\Urlslab\VideoApi( new GuzzleHttp\Client(), $config );
+			$this->content_client = new VideoApi( new GuzzleHttp\Client(), $config );
 		}
 
 		return ! empty( $this->content_client );
@@ -117,9 +120,9 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 	private function get_youtube_captions( Urlslab_Youtube_Row $youtube_obj ) {
 		$response = $this->content_client->getYTVidCaption( $youtube_obj->get_video_id() );
 		switch ( $response->getStatus() ) {
-			case \OpenAPI\Client\Model\DomainDataRetrievalVideoCaptionResponse::STATUS_AVAILABLE:
+			case DomainDataRetrievalVideoCaptionResponse::STATUS_AVAILABLE:
 				return $response->getTranscript();
-			case \OpenAPI\Client\Model\DomainDataRetrievalVideoCaptionResponse::STATUS_PENDING:
+			case DomainDataRetrievalVideoCaptionResponse::STATUS_PENDING:
 				return true;
 			default:
 				return false;

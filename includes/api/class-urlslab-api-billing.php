@@ -1,6 +1,8 @@
 <?php
 
-use OpenAPI\Client\Configuration;
+use Urlslab_Vendor\OpenAPI\Client\Configuration;
+use Urlslab_Vendor\GuzzleHttp;
+use Urlslab_Vendor\OpenAPI\Client\Urlslab\CreditsApi;
 
 class Urlslab_Api_Billing extends Urlslab_Api_Base {
 	const SLUG = 'billing';
@@ -75,11 +77,11 @@ class Urlslab_Api_Billing extends Urlslab_Api_Base {
 	}
 
 
-	private function get_client(): \OpenAPI\Client\Urlslab\CreditsApi {
+	private function get_client(): CreditsApi {
 		if ( ! strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) ) ) {
 			throw new Exception( 'Urlslab API key not defined' );
 		}
 
-		return new \OpenAPI\Client\Urlslab\CreditsApi( new GuzzleHttp\Client(), Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) ) );
+		return new CreditsApi( new GuzzleHttp\Client(), Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) ) );
 	}
 }

@@ -410,6 +410,7 @@ class Urlslab {
 	 */
 	private function load_dependencies() {
 		require_once URLSLAB_PLUGIN_DIR . '/vendor/autoload.php';
+		require_once URLSLAB_PLUGIN_DIR . '/vendor_prefixed/autoload.php';
 
 		/**
 		 * The class responsible for orchestrating the actions and filters of the

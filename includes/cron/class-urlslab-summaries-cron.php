@@ -1,10 +1,11 @@
 <?php
 
-use OpenAPI\Client\ApiException;
-use OpenAPI\Client\Configuration;
-use OpenAPI\Client\Model\DomainDataRetrievalDataRequest;
-use OpenAPI\Client\Model\DomainDataRetrievalSummaryResponse;
-use OpenAPI\Client\Urlslab\SummaryApi;
+use Urlslab_Vendor\OpenAPI\Client\ApiException;
+use Urlslab_Vendor\OpenAPI\Client\Configuration;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalDataRequest;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSummaryResponse;
+use Urlslab_Vendor\OpenAPI\Client\Urlslab\SummaryApi;
+use Urlslab_Vendor\GuzzleHttp;
 
 require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
 
