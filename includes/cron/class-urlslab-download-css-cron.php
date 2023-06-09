@@ -74,7 +74,7 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 					$css_page_content = file_get_contents( $page_content_file_name );
 					if ( $widget->get_option( Urlslab_CSS_Optimizer::SETTING_NAME_CSS_ABSOLUTE_URL_LINKS ) ) {
 						// should change the links to absolute urls
-						$css_page_content = $this->adjustCssUrlLinks( $css_page_content, $css->get_url() );
+						$css_page_content = $this->adjustCssUrlLinks( $css_page_content, $css->get_url_object() );
 					}
 
 					$css->set_css_content( $css_page_content );
@@ -91,7 +91,10 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 		return $css->update();
 	}
 
-	function adjustCssUrlLinks( string $css_content, string $base_url ): string {
+	function adjustCssUrlLinks( string $css_content, Urlslab_Url $base_url ): string {
+		// correct css prefix without query param
+		$css_prefix = $base_url->get_url_scheme_prefix() . $base_url->get_domain_name() . $base_url->get_url_path();
+
 		// Match the URLs inside the CSS content using regex
 		$url_pattern = "/url\(['\"]??(.*?)['\"]??\)/i";
 		preg_match_all( $url_pattern, $css_content, $matched_urls );
@@ -106,7 +109,7 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 				continue;
 			}
 			// Convert the relative URL to an absolute URL
-			$absolute_url = rtrim( $base_url, '/' ) . '/' . ltrim( $relative_url, '/' );
+			$absolute_url = rtrim( $css_prefix, '/' ) . '/' . ltrim( $relative_url, '/' );
 
 			// Replace the relative URL with the absolute URL in the CSS content
 			$css_content = str_replace( "url({$relative_url})", "url({$absolute_url})", $css_content );
