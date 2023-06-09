@@ -93,7 +93,8 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 
 	function adjustCssUrlLinks( string $css_content, Urlslab_Url $base_url ): string {
 		// correct css prefix without query param
-		$css_prefix = $base_url->get_url_scheme_prefix() . $base_url->get_domain_name() . $base_url->get_url_path();
+		$truncated_url_path_dirs = preg_replace( '/\/[^\/]*$/', '', $base_url->get_url_path() );
+		$css_prefix = $base_url->get_url_scheme_prefix() . $base_url->get_domain_name() . $truncated_url_path_dirs;
 
 		// Match the URLs inside the CSS content using regex
 		$url_pattern = "/url\(['\"]??(.*?)['\"]??\)/i";
