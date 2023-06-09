@@ -1,5 +1,7 @@
 <?php
 
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
+
 class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 	const SLUG = 'generator/shortcode';
 
@@ -80,9 +82,9 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 						'model'            => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $param ||
-									   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $param ||
-									   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $param;
+								return DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $param ||
+									   DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $param ||
+									   DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $param;
 							},
 						),
 					),
@@ -371,11 +373,11 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 				),
 				'model'            => array(
 					'required'          => false,
-					'default'           => \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
+					'default'           => DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
 					'validate_callback' => function( $param ) {
-						return \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $param ||
-							   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $param ||
-							   \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $param;
+						return DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $param ||
+							   DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $param ||
+							   DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $param;
 					},
 				),
 			),

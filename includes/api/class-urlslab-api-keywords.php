@@ -1,5 +1,11 @@
 <?php
 
+use Urlslab_Vendor\OpenAPI\Client\Configuration;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalContentQuery;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsRequest;
+use Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi;
+use Urlslab_Vendor\GuzzleHttp;
+
 class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	const SLUG = 'keyword';
 
@@ -323,17 +329,17 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			}
 
 
-			$config         = \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) );
-			$content_client = new \OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), $config );
+			$config         = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) );
+			$content_client = new ContentApi( new GuzzleHttp\Client(), $config );
 
 
-			$request = new \OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsRequest();
+			$request = new DomainDataRetrievalRelatedUrlsRequest();
 
 			$request->setQuery( $search_query );
 			$request->setChunkLimit( 1 );
-			$request->setRenewFrequency( \OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsRequest::RENEW_FREQUENCY_ONE_TIME );
+			$request->setRenewFrequency( DomainDataRetrievalRelatedUrlsRequest::RENEW_FREQUENCY_ONE_TIME );
 
-			$query = new \OpenAPI\Client\Model\DomainDataRetrievalContentQuery();
+			$query = new DomainDataRetrievalContentQuery();
 			$query->setLimit( $max_count * 3 );
 
 			$query_must_conditions   = array();

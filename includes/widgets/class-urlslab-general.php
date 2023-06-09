@@ -2,8 +2,9 @@
 
 // phpcs:disable WordPress
 
-use OpenAPI\Client\Configuration;
-use OpenAPI\Client\Urlslab\ApikeyApi;
+use Urlslab_Vendor\OpenAPI\Client\Configuration;
+use Urlslab_Vendor\OpenAPI\Client\Urlslab\ApikeyApi;
+use Urlslab_Vendor\GuzzleHttp;
 
 class Urlslab_General extends Urlslab_Widget {
 	public const SLUG = 'general';

@@ -1,13 +1,15 @@
 <?php
 
-use OpenAPI\Client\Configuration;
-use OpenAPI\Client\Model\DomainDataRetrievalDataRequest;
-use OpenAPI\Client\Model\DomainDataRetrievalScreenshotResponse;
+use Urlslab_Vendor\OpenAPI\Client\Configuration;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalDataRequest;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalScreenshotResponse;
+use Urlslab_Vendor\OpenAPI\Client\Urlslab\SnapshotApi;
+use Urlslab_Vendor\GuzzleHttp;
 
 require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
 
 class Urlslab_Screenshots_Cron extends Urlslab_Cron {
-	private \OpenAPI\Client\Urlslab\SnapshotApi $client;
+	private SnapshotApi $client;
 
 	public function get_description(): string {
 		return __( 'Syncing screenshots from URLsLab service to local database', 'urlslab' );
@@ -34,24 +36,24 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 		$where_status_or = '';
 
 		switch ( $widget->get_option( Urlslab_Screenshot_Widget::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL ) ) {
-			case \OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME:
+			case DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME:
 				break;
-			case \OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_DAILY:
+			case DomainDataRetrievalDataRequest::RENEW_FREQUENCY_DAILY:
 				$where_status_or .= ' OR (scr_status =%s AND update_scr_date < %s)';
 				$query_data[]    = Urlslab_Url_Row::SCR_STATUS_ACTIVE;
 				$query_data[]    = Urlslab_Data::get_now( time() - 86400 );
 				break;
-			case \OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_WEEKLY:
+			case DomainDataRetrievalDataRequest::RENEW_FREQUENCY_WEEKLY:
 				$where_status_or .= ' OR (scr_status =%s AND update_scr_date < %s)';
 				$query_data[]    = Urlslab_Url_Row::SCR_STATUS_ACTIVE;
 				$query_data[]    = Urlslab_Data::get_now( time() - 86400 * 7 );
 				break;
-			case \OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_MONTHLY:
+			case DomainDataRetrievalDataRequest::RENEW_FREQUENCY_MONTHLY:
 				$where_status_or .= ' OR (scr_status =%s AND update_scr_date < %s)';
 				$query_data[]    = Urlslab_Url_Row::SCR_STATUS_ACTIVE;
 				$query_data[]    = Urlslab_Data::get_now( time() - 86400 * 30 );
 				break;
-			case \OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_YEARLY:
+			case DomainDataRetrievalDataRequest::RENEW_FREQUENCY_YEARLY:
 				$where_status_or .= ' OR (scr_status =%s AND update_scr_date < %s)';
 				$query_data[]    = Urlslab_Url_Row::SCR_STATUS_ACTIVE;
 				$query_data[]    = Urlslab_Data::get_now( time() - 86400 * 365 );
@@ -155,7 +157,7 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 		if ( empty( $this->client ) && Urlslab_General::is_urlslab_active() ) {
 			$api_key      = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
 			$config       = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-			$this->client = new \OpenAPI\Client\Urlslab\SnapshotApi( new GuzzleHttp\Client(), $config );
+			$this->client = new SnapshotApi( new GuzzleHttp\Client(), $config );
 		}
 
 		return ! empty( $this->client );
