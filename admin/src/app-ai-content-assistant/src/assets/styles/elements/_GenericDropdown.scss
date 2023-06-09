@@ -1,0 +1,19 @@
+@use "../../../../../assets/styles/elements/MultiSelectMenu" as *;
+
+.urlslab-GenericDropdown {
+    width: 100%;
+
+    .urlslab-MultiSelectMenu__items {
+        padding: 16px 20px;
+    }
+
+    .urlslab-MultiSelectMenu__items--inn {
+        margin: 0;
+
+        &>*[class] {
+            padding: 0;
+            margin: 0;
+        }
+    }
+
+}

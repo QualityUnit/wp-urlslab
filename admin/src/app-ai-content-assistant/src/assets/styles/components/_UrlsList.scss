@@ -1,0 +1,48 @@
+@use "../../../../../assets/styles/common/variables" as *;
+@use "../common/mixins" as *;
+
+.urlslab-urls-list {
+    gap: 8px;
+
+
+
+    &-item {
+        width: 100%;
+
+        &.status-active {
+            .active-icon {
+                @include square(20px);
+                position: relative;
+
+                &:after {
+                    content: "";
+                    @include square(12px);
+                    border-radius: 100%;
+                    background-color: $saturated-green;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                }
+            }
+        }
+
+        &.status-pending {
+            svg {
+                fill: $saturated-red;
+                width: 20px;
+            }
+
+            /* increase left margin by size of missing checkbox */
+            .urlslab-urls-list-label {
+                margin-left: calc(10px + 16px);
+                opacity: 0.5;
+            }
+        }
+
+        .urlslab-urls-list-label {
+            margin-left: 10px;
+            color: $black;
+        }
+    }
+}

@@ -61,8 +61,10 @@ class Urlslab_Admin {
 
 		// list of modules available on editor pages
 		$this->editor_modules = array( 
-			'ai_content_assistant', 
+			'ai-content-assistant', 
 		);
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
+		add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'enqueue_elementor_editor_assets' ) );
 
 		add_filter( 'script_loader_tag', array( $this, 'script_loader_tag' ), 10, 3 );
 	}
@@ -77,8 +79,9 @@ class Urlslab_Admin {
 			$maincss = glob( plugin_dir_path( __FILE__ ) . 'dist/assets/main-*.css' );
 			$mainjs = glob( plugin_dir_path( __FILE__ ) . 'dist/main-*.js' );
 			
-			wp_enqueue_style( $this->urlslab . '-main', plugin_dir_url( __FILE__ ) . 'dist/assets/' . basename( $maincss[0] ), false, $this->version );
-
+			if ( ! empty( $maincss ) ) {
+				wp_enqueue_style( $this->urlslab . '-main', plugin_dir_url( __FILE__ ) . 'dist/assets/' . basename( $maincss[0] ), false, $this->version );
+			}
 
 			if ( ! empty( $mainjs ) ) {
 				wp_enqueue_script(
@@ -104,35 +107,20 @@ class Urlslab_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_block_editor_assets() {
+		$this->enqueue_editors_modules( 'gutenberg' );
 		
 		
-		foreach ( $this->editor_modules as $module_name ) {
-			$rootpath = "modules/{$module_name}/build/";
-			$handle = "{$this->urlslab}-{$module_name}";
-			$cssfile = glob( plugin_dir_path( __FILE__ ) . $rootpath . 'assets/main-*.css' );
-			$jsfile = glob( plugin_dir_path( __FILE__ ) . $rootpath . '/main-*.js' );
-			
-			if ( ! empty( $cssfile ) ) {
-				wp_enqueue_style( $handle, plugin_dir_url( __FILE__ ) . $rootpath . 'assets/' . basename( $cssfile[0] ), false, $this->version );
-			}
-			
-			if ( ! empty( $jsfile ) ) {
-				wp_enqueue_script(
-					$handle,
-					plugin_dir_url( __FILE__ ) . "modules/{$module_name}/build/" . basename( $jsfile[0] ),
-					array(
-						'react',
-						'react-dom',
-						'wp-api-fetch',
-						'wp-element',
-						'wp-i18n',
-					),
-					$this->version,
-					true
-				);
-			}
-		}
 	}
+
+	/**
+	 * Register elementor editor assets.
+	 *
+	 * @since    1.0.0
+	 */
+	public function enqueue_elementor_editor_assets() {
+		$this->enqueue_editors_modules( 'elementor' );
+	}
+	
 
 	public function enqueue_styles() {
 		/**
@@ -222,5 +210,39 @@ class Urlslab_Admin {
 			return str_replace( ' src', ' type="module" src', $tag );
 		}
 		return $tag;
+	}
+	
+	function enqueue_editors_modules( $editor_type ) {
+		foreach ( $this->editor_modules as $module_name ) {
+			$handle = "{$this->urlslab}-{$module_name}";
+			$cssfile = glob( plugin_dir_path( __FILE__ ) . "src/app-{$module_name}/dist/assets/main-*.css" );
+			$jsfile = glob( plugin_dir_path( __FILE__ ) . "src/app-{$module_name}/dist/main-*.js" );
+
+			if ( ! empty( $cssfile ) ) {
+				wp_enqueue_style( $handle, plugin_dir_url( __FILE__ ) . "src/app-{$module_name}/dist/assets/" . basename( $cssfile[0] ), false, $this->version );
+			}
+			
+			if ( ! empty( $jsfile ) ) {
+				wp_enqueue_script(
+					$handle,
+					plugin_dir_url( __FILE__ ) . "src/app-{$module_name}/dist/" . basename( $jsfile[0] ),
+					array(
+						'react',
+						'react-dom',
+						'wp-data',
+						'wp-editor',
+						'wp-dom-ready',
+						'wp-edit-post',
+						'wp-api-fetch',
+						'wp-element',
+						'wp-i18n',
+					),
+					$this->version,
+					true
+				);
+
+				wp_localize_script( $handle, 'scriptData', array( 'editor_type' => $editor_type ) );
+			}
+		}
 	}
 }

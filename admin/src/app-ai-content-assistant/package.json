@@ -1,0 +1,52 @@
+{
+  "author": "URLsLab",
+  "name": "ai-content-assistant",
+  "version": "1.0.0",
+  "description": "AI Content Assistant",
+  "homepage": "https://www.urlslab.com",
+  "browserslist": [
+    "last 3 versions",
+    "> 3%"
+  ],
+  "license": "GPL-2.0-or-later",
+  "private": false,
+  "dependencies": {
+    "@tanstack/react-query": "^4.29.12",
+    "@wordpress/i18n": "^4.34.0",
+    "@wordpress/stylelint-config": "^21.17.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "stylelint": "14.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.1",
+    "@babel/eslint-parser": "^7.21.8",
+    "@types/react": "^18.0.37",
+    "@types/react-dom": "^18.0.11",
+    "@typescript-eslint/eslint-plugin": "^5.59.8",
+    "@typescript-eslint/parser": "^5.59.8",
+    "@vitejs/plugin-react": "^4.0.0",
+    "@wordpress/eslint-plugin": "^14.7.0",
+    "eslint": "^8.41.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "sass": "^1.62.1",
+    "typescript": "5.0.4",
+    "vite": "^4.3.9",
+    "vite-plugin-eslint": "^1.8.1",
+    "vite-plugin-fonts": "^0.7.0",
+    "vite-plugin-image-optimizer": "^1.1.5",
+    "vite-plugin-svgr": "^3.2.0",
+    "vite-react-jsx": "^1.1.2"
+  },
+  "scripts": {
+    "dev": "vite",
+    "watch": "tsc && vite build --watch",
+    "build": "tsc && vite build",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  }
+}

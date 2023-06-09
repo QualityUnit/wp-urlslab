@@ -1,0 +1,64 @@
+<<<<<<< HEAD:admin/dist/assets/LazyLoading-6ohoyviu4u.js
+<<<<<<< HEAD:admin/dist/assets/LazyLoading-myg4akepfo.js
+<<<<<<<< HEAD:admin/dist/assets/LazyLoading-txs3jaim6w.js
+import { r as reactExports, R as React, u as useI18n, _ as __vitePreload } from "../main-txs3jaim6w.js";
+import { O as Overview, M as ModuleViewHeader } from "./OverviewTemplate-txs3jaim6w.js";
+========
+import { u as useI18n, _ as __vitePreload } from "../main-myg4akepfo.js";
+import { r as reactExports, R as React } from "./index-myg4akepfo.js";
+import { O as Overview, M as ModuleViewHeader } from "./OverviewTemplate-myg4akepfo.js";
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/LazyLoading-myg4akepfo.js
+=======
+import { r as reactExports, R as React, u as useI18n, _ as __vitePreload } from "../main-6ohoyviu4u.js";
+import { O as Overview, M as ModuleViewHeader } from "./OverviewTemplate-6ohoyviu4u.js";
+>>>>>>> 18bd270e (custom vite build & watch):admin/dist/assets/LazyLoading-6ohoyviu4u.js
+=======
+import { r as reactExports, R as React, u as useI18n, _ as __vitePreload } from "../main-wnppnrkdix.js";
+import { O as Overview, M as ModuleViewHeader } from "./OverviewTemplate-wnppnrkdix.js";
+>>>>>>> 63c8f541 (feat: add popup content):admin/dist/assets/LazyLoading-wnppnrkdix.js
+/* empty css                              */function LazyLoadingOverview({ moduleId }) {
+  const [section, setSection] = reactExports.useState("about");
+  return /* @__PURE__ */ React.createElement(Overview, { moduleId, section: (val) => setSection(val) }, section === "about" && /* @__PURE__ */ React.createElement("section", null, /* @__PURE__ */ React.createElement("h4", null, "About the module"), /* @__PURE__ */ React.createElement("p", null, "Lazy loading is an essential technique for optimising page performance and reducing page load time. By deferring loading of images, videos, iframes, and large content chunks, you can drastically improve the speed at which pages load. This is especially important for those with slower internet connections, who are more likely to be affected by page loading times."), /* @__PURE__ */ React.createElement("p", null, "The main idea behind lazy loading is to delay loading assets until they are actually needed. This means that instead of loading all assets simultaneously, the browser will only load them when they are visible on the user’s screen. It decreases the amount of data that needs to be transferred and therefore increases page loading speed. It also reduces server load, as the server does not have to process every asset simultaneously.")), section === "integrate" && /* @__PURE__ */ React.createElement("section", null, /* @__PURE__ */ React.createElement("h4", null, "Video data shortcode"), /* @__PURE__ */ React.createElement("code", null, '[urlslab-video videoid="YT-video-ID" attribute="atr_name"]'), /* @__PURE__ */ React.createElement("p", null, "Supported video attribute names: title, description, thumbnail_url, published_at, duration, captions, captions_text, channel_title")), section === "faq" && /* @__PURE__ */ React.createElement("section", null, /* @__PURE__ */ React.createElement("h4", null, "FAQ"), /* @__PURE__ */ React.createElement("p", null, "Available soon.")));
+}
+function LazyLoading({ moduleId }) {
+  const { __ } = useI18n();
+  const [activeSection, setActiveSection] = reactExports.useState("overview");
+  const tableMenu = /* @__PURE__ */ new Map(
+    [
+      ["youtube-cache", __("YouTube Videos")],
+      ["content-cache", __("Content Lazy Loading")]
+    ]
+  );
+<<<<<<< HEAD:admin/dist/assets/LazyLoading-6ohoyviu4u.js
+<<<<<<< HEAD:admin/dist/assets/LazyLoading-myg4akepfo.js
+<<<<<<<< HEAD:admin/dist/assets/LazyLoading-txs3jaim6w.js
+  const SettingsModule = reactExports.lazy(() => __vitePreload(() => import("./Settings-txs3jaim6w.js"), true ? ["./Settings-txs3jaim6w.js","../main-txs3jaim6w.js","./main-txs3jaim6w.css","./datepicker-txs3jaim6w.js","./MultiSelectMenu-txs3jaim6w.js","./MultiSelectMenu-txs3jaim6w.css","./datepicker-txs3jaim6w.css","./Textarea-txs3jaim6w.js","./Switch-txs3jaim6w.js","./Switch-txs3jaim6w.css","./Settings-txs3jaim6w.css"] : void 0, import.meta.url));
+  const YouTubeCacheTable = reactExports.lazy(() => __vitePreload(() => import("./YouTubeCacheTable-txs3jaim6w.js"), true ? ["./YouTubeCacheTable-txs3jaim6w.js","../main-txs3jaim6w.js","./main-txs3jaim6w.css","./ModuleViewHeaderBottom-txs3jaim6w.js","./datepicker-txs3jaim6w.js","./MultiSelectMenu-txs3jaim6w.js","./MultiSelectMenu-txs3jaim6w.css","./datepicker-txs3jaim6w.css","./ModuleViewHeaderBottom-txs3jaim6w.css","./Tooltip_SortingFiltering-txs3jaim6w.js","./icon-link-txs3jaim6w.js","./icon-disable-txs3jaim6w.js"] : void 0, import.meta.url));
+  const ContentCacheTable = reactExports.lazy(() => __vitePreload(() => import("./ContentCacheTable-txs3jaim6w.js"), true ? ["./ContentCacheTable-txs3jaim6w.js","../main-txs3jaim6w.js","./main-txs3jaim6w.css","./ModuleViewHeaderBottom-txs3jaim6w.js","./datepicker-txs3jaim6w.js","./MultiSelectMenu-txs3jaim6w.js","./MultiSelectMenu-txs3jaim6w.css","./datepicker-txs3jaim6w.css","./ModuleViewHeaderBottom-txs3jaim6w.css","./Tooltip_SortingFiltering-txs3jaim6w.js"] : void 0, import.meta.url));
+========
+  const SettingsModule = reactExports.lazy(() => __vitePreload(() => import("./Settings-myg4akepfo.js"), true ? ["./Settings-myg4akepfo.js","./index-myg4akepfo.js","..\\main-myg4akepfo.js","./main-myg4akepfo.css","./datepicker-myg4akepfo.js","./MultiSelectMenu-myg4akepfo.js","./MultiSelectMenu-myg4akepfo.css","./datepicker-myg4akepfo.css","./Textarea-myg4akepfo.js","./Switch-myg4akepfo.js","./Switch-myg4akepfo.css","./Settings-myg4akepfo.css"] : void 0, import.meta.url));
+  const YouTubeCacheTable = reactExports.lazy(() => __vitePreload(() => import("./YouTubeCacheTable-myg4akepfo.js"), true ? ["./YouTubeCacheTable-myg4akepfo.js","./index-myg4akepfo.js","./ModuleViewHeaderBottom-myg4akepfo.js","..\\main-myg4akepfo.js","./main-myg4akepfo.css","./datepicker-myg4akepfo.js","./MultiSelectMenu-myg4akepfo.js","./MultiSelectMenu-myg4akepfo.css","./datepicker-myg4akepfo.css","./ModuleViewHeaderBottom-myg4akepfo.css","./Tooltip_SortingFiltering-myg4akepfo.js","./icon-link-myg4akepfo.js","./icon-disable-myg4akepfo.js"] : void 0, import.meta.url));
+  const ContentCacheTable = reactExports.lazy(() => __vitePreload(() => import("./ContentCacheTable-myg4akepfo.js"), true ? ["./ContentCacheTable-myg4akepfo.js","./index-myg4akepfo.js","./ModuleViewHeaderBottom-myg4akepfo.js","..\\main-myg4akepfo.js","./main-myg4akepfo.css","./datepicker-myg4akepfo.js","./MultiSelectMenu-myg4akepfo.js","./MultiSelectMenu-myg4akepfo.css","./datepicker-myg4akepfo.css","./ModuleViewHeaderBottom-myg4akepfo.css","./Tooltip_SortingFiltering-myg4akepfo.js"] : void 0, import.meta.url));
+>>>>>>>> 9abc1ecf (initial build):admin/dist/assets/LazyLoading-myg4akepfo.js
+=======
+  const SettingsModule = reactExports.lazy(() => __vitePreload(() => import("./Settings-6ohoyviu4u.js"), true ? ["./Settings-6ohoyviu4u.js","..\\main-6ohoyviu4u.js","./main-6ohoyviu4u.css","./datepicker-6ohoyviu4u.js","./MultiSelectMenu-6ohoyviu4u.js","./MultiSelectMenu-6ohoyviu4u.css","./datepicker-6ohoyviu4u.css","./Textarea-6ohoyviu4u.js","./Switch-6ohoyviu4u.js","./Switch-6ohoyviu4u.css","./Settings-6ohoyviu4u.css"] : void 0, import.meta.url));
+  const YouTubeCacheTable = reactExports.lazy(() => __vitePreload(() => import("./YouTubeCacheTable-6ohoyviu4u.js"), true ? ["./YouTubeCacheTable-6ohoyviu4u.js","..\\main-6ohoyviu4u.js","./main-6ohoyviu4u.css","./ModuleViewHeaderBottom-6ohoyviu4u.js","./datepicker-6ohoyviu4u.js","./MultiSelectMenu-6ohoyviu4u.js","./MultiSelectMenu-6ohoyviu4u.css","./datepicker-6ohoyviu4u.css","./ModuleViewHeaderBottom-6ohoyviu4u.css","./Tooltip_SortingFiltering-6ohoyviu4u.js","./icon-link-6ohoyviu4u.js","./icon-disable-6ohoyviu4u.js"] : void 0, import.meta.url));
+  const ContentCacheTable = reactExports.lazy(() => __vitePreload(() => import("./ContentCacheTable-6ohoyviu4u.js"), true ? ["./ContentCacheTable-6ohoyviu4u.js","..\\main-6ohoyviu4u.js","./main-6ohoyviu4u.css","./ModuleViewHeaderBottom-6ohoyviu4u.js","./datepicker-6ohoyviu4u.js","./MultiSelectMenu-6ohoyviu4u.js","./MultiSelectMenu-6ohoyviu4u.css","./datepicker-6ohoyviu4u.css","./ModuleViewHeaderBottom-6ohoyviu4u.css","./Tooltip_SortingFiltering-6ohoyviu4u.js"] : void 0, import.meta.url));
+>>>>>>> 18bd270e (custom vite build & watch):admin/dist/assets/LazyLoading-6ohoyviu4u.js
+=======
+  const SettingsModule = reactExports.lazy(() => __vitePreload(() => import("./Settings-wnppnrkdix.js"), true ? ["./Settings-wnppnrkdix.js","..\\main-wnppnrkdix.js","./main-wnppnrkdix.css","./datepicker-wnppnrkdix.js","./MultiSelectMenu-wnppnrkdix.js","./MultiSelectMenu-wnppnrkdix.css","./datepicker-wnppnrkdix.css","./Textarea-wnppnrkdix.js","./Switch-wnppnrkdix.js","./Switch-wnppnrkdix.css","./Settings-wnppnrkdix.css"] : void 0, import.meta.url));
+  const YouTubeCacheTable = reactExports.lazy(() => __vitePreload(() => import("./YouTubeCacheTable-wnppnrkdix.js"), true ? ["./YouTubeCacheTable-wnppnrkdix.js","..\\main-wnppnrkdix.js","./main-wnppnrkdix.css","./ModuleViewHeaderBottom-wnppnrkdix.js","./datepicker-wnppnrkdix.js","./MultiSelectMenu-wnppnrkdix.js","./MultiSelectMenu-wnppnrkdix.css","./datepicker-wnppnrkdix.css","./ModuleViewHeaderBottom-wnppnrkdix.css","./Tooltip_SortingFiltering-wnppnrkdix.js","./icon-link-wnppnrkdix.js","./icon-disable-wnppnrkdix.js"] : void 0, import.meta.url));
+  const ContentCacheTable = reactExports.lazy(() => __vitePreload(() => import("./ContentCacheTable-wnppnrkdix.js"), true ? ["./ContentCacheTable-wnppnrkdix.js","..\\main-wnppnrkdix.js","./main-wnppnrkdix.css","./ModuleViewHeaderBottom-wnppnrkdix.js","./datepicker-wnppnrkdix.js","./MultiSelectMenu-wnppnrkdix.js","./MultiSelectMenu-wnppnrkdix.css","./datepicker-wnppnrkdix.css","./ModuleViewHeaderBottom-wnppnrkdix.css","./Tooltip_SortingFiltering-wnppnrkdix.js"] : void 0, import.meta.url));
+>>>>>>> 63c8f541 (feat: add popup content):admin/dist/assets/LazyLoading-wnppnrkdix.js
+  return /* @__PURE__ */ React.createElement("div", { className: "urlslab-tableView" }, /* @__PURE__ */ React.createElement(
+    ModuleViewHeader,
+    {
+      moduleId,
+      moduleMenu: tableMenu,
+      activeMenu: (activemenu) => setActiveSection(activemenu)
+    }
+  ), activeSection === "overview" && /* @__PURE__ */ React.createElement(LazyLoadingOverview, { moduleId }), /* @__PURE__ */ React.createElement(reactExports.Suspense, null, activeSection === "youtube-cache" && /* @__PURE__ */ React.createElement(YouTubeCacheTable, { slug: "youtube-cache" }), activeSection === "content-cache" && /* @__PURE__ */ React.createElement(ContentCacheTable, { slug: "content-cache" })), activeSection === "settings" && /* @__PURE__ */ React.createElement(reactExports.Suspense, null, /* @__PURE__ */ React.createElement(SettingsModule, { className: "fadeInto", settingId: moduleId })));
+}
+export {
+  LazyLoading as default
+};
