@@ -1,5 +1,9 @@
 <?php
 
+use Urlslab_Vendor\OpenAPI\Client\Configuration;
+use Urlslab_Vendor\OpenAPI\Client\Urlslab\SnapshotApi;
+use Urlslab_Vendor\GuzzleHttp;
+
 class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	const SLUG = 'url';
 
@@ -488,8 +492,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		}
 
 		try {
-			$config    = \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) );
-			$client    = new \OpenAPI\Client\Urlslab\SnapshotApi( new GuzzleHttp\Client(), $config );
+			$config    = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) );
+			$client    = new SnapshotApi( new GuzzleHttp\Client(), $config );
 			$snapshots = $client->getSnapshotsHistory( $url_obj->get_url()->get_url(), null, 100 );
 
 			$rows = array();

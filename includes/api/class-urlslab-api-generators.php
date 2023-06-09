@@ -1,5 +1,11 @@
 <?php
 
+use Urlslab_Vendor\OpenAPI\Client\Configuration;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
+use Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi;
+use Urlslab_Vendor\GuzzleHttp;
+
 class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	const SLUG = 'generator';
 
@@ -210,11 +216,11 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
 			if ( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_TRANSLATE ) ) {
 				$api_key = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
-				$client  = new \OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client( array( 'timeout' => 59 ) ), \OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key ) ); //phpcs:ignore
-				$request = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest();
+				$client  = new ContentApi( new GuzzleHttp\Client( array( 'timeout' => 59 ) ), Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key ) ); //phpcs:ignore
+				$request = new DomainDataRetrievalAugmentRequest();
 				$request->setAugmentingModelName( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_TRANSLATE_MODEL ) );
-				$request->setRenewFrequency( \OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
-				$prompt = new \OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt();
+				$request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
+				$prompt = new DomainDataRetrievalAugmentPrompt();
 
 				$prompt_text = "TASK RESTRICTIONS: \n";
 				$prompt_text .= "\nI want you to act as an professional translator from $source_lang to $target_lang, spelling corrector and improver.";

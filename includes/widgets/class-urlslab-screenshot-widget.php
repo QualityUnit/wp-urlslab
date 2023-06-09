@@ -1,6 +1,7 @@
 <?php
 
 use Elementor\Plugin;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalDataRequest;
 
 class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 	public const SLUG = 'urlslab-screenshot';
@@ -173,21 +174,21 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL,
-			\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME,
+			DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME,
 			false,
 			__( 'Synchronisation Frequency of Screenshots with URLsLab service' ),
 			__( 'Select the frequency at which URLsLab captures screenshots of a URL. Since each screenshot consumes credits, choose wisely. A single capture may suffice for most scenarios.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_NO_SCHEDULE => __( 'Never' ),
-				\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME    => __( 'Only once' ),
-				\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_DAILY       => __( 'Daily' ),
-				\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_WEEKLY      => __( 'Weekly' ),
-				\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_MONTHLY     => __( 'Monthly' ),
-				\OpenAPI\Client\Model\DomainDataRetrievalDataRequest::RENEW_FREQUENCY_YEARLY      => __( 'Yearly' ),
+				DomainDataRetrievalDataRequest::RENEW_FREQUENCY_NO_SCHEDULE => __( 'Never' ),
+				DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME    => __( 'Only once' ),
+				DomainDataRetrievalDataRequest::RENEW_FREQUENCY_DAILY       => __( 'Daily' ),
+				DomainDataRetrievalDataRequest::RENEW_FREQUENCY_WEEKLY      => __( 'Weekly' ),
+				DomainDataRetrievalDataRequest::RENEW_FREQUENCY_MONTHLY     => __( 'Monthly' ),
+				DomainDataRetrievalDataRequest::RENEW_FREQUENCY_YEARLY      => __( 'Yearly' ),
 			),
 			function( $value ) {
-				$obj = new \OpenAPI\Client\Model\DomainDataRetrievalDataRequest();
+				$obj = new DomainDataRetrievalDataRequest();
 
 				return in_array( $value, $obj->getRenewFrequencyAllowableValues() );
 			},

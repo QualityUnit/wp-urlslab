@@ -1,8 +1,9 @@
 <?php
 
-use OpenAPI\Client\Configuration;
-use OpenAPI\Client\Model\DomainScheduleScheduleConf;
-use OpenAPI\Client\Urlslab\ScheduleApi;
+use Urlslab_Vendor\OpenAPI\Client\Configuration;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainScheduleScheduleConf;
+use Urlslab_Vendor\OpenAPI\Client\Urlslab\ScheduleApi;
+use Urlslab_Vendor\GuzzleHttp;
 
 class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 	const SLUG = 'schedule';
