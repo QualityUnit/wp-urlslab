@@ -15,7 +15,7 @@ export const defaults = {
 	audience: '',
 	tone: '',
 	length: 10,
-	ai_model: '',
+	ai_model: 'gpt-3.5-turbo',
 	semantic_context: {
 		urls: fakeUrls as UrlsList,
 	},

@@ -1,11 +1,8 @@
-import React, { useCallback, useContext, useState } from 'react';
-import { __ } from '@wordpress/i18n';
-import { AppContext } from '../../app/context';
+import React, { useCallback, useState } from 'react';
 import { UrlsList, UrlsListItem } from '../../app/types';
 import { ReactComponent as HourglassIcon } from '../../assets/images/icons/icon-hourglass.svg';
 
 import '../../assets/styles/components/_UrlsList.scss';
-import Tooltip from '../../../../elements/Tooltip';
 
 type UpdateUrlsAction = 'add' | 'remove';
 const UrlsList: React.FC<{ urls: UrlsList }> = ( { urls } ) => {

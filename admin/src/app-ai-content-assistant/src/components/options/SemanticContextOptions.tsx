@@ -8,7 +8,6 @@ const SemanticContextOptions: React.FC = ( ) => {
 		<div className="urlslab-urls-list flex flex-column">
 			<UrlsList urls={ state.semantic_context.urls } />
 		</div>
-
 	);
 };
 
