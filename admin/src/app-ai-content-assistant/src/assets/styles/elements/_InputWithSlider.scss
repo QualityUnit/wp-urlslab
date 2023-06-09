@@ -1,0 +1,11 @@
+@use "../../../../../assets/styles/common/variables" as *;
+@use "../../../../../assets/styles/common/mixins" as *;
+@use "../common/mixins" as *;
+
+
+.urlslab-InputWithSlider {
+    .urlslab-inputField {
+        max-width: 80px;
+        margin-right: 9px;
+    }
+}
