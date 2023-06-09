@@ -75,8 +75,9 @@ const AdvancedSettings: React.FC = () => {
 					onChange={ ( value ) => dispatch( { type: 'ai_model', payload: value } ) }
 					name="ai_model"
 					items={ {
-						item_a: 'Option 1',
-						item_b: 'Option 2',
+						'gpt-3.5-turbo': __( 'Gpt 3.5 Turbo' ),
+						'gpt-4': __( 'Gpt 4' ),
+						'text-davinci-003': __( 'Text Davinci 003' ),
 					} }
 					autoClose
 					description={ __( 'Explanation' ) }
