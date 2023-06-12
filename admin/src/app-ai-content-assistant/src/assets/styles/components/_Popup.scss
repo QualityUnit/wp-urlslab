@@ -25,7 +25,7 @@
         max-height: 90vh;
         background-color: $white;
         transform: translate(-50%, -50%);
-        border-radius: 10px;
+        border-radius: $br-10;
         box-shadow: 0 1px 3px rgba($black-real, 0.16);
         overflow: hidden;
         z-index: 999;
@@ -37,7 +37,6 @@
             background: linear-gradient(139.49deg, rgba(93, 137, 226, 0.41) 7.97%, rgba(219, 107, 215, 0.41) 89.5%);
             opacity: 0.99;
             border-bottom: 1px solid $grey-medium;
-            border-radius: 10px 10px 0 0;
             display: flex;
             flex-direction: row;
             justify-content: space-between;
@@ -62,10 +61,9 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                flex: 0 0 auto;
                 background-color: $white;
-                border-radius: 100%;
                 color: $grey-darker;
+                border-radius: 100%;
 
                 & svg {
                     fill: currentcolor;
@@ -76,10 +74,9 @@
         }
 
         &-content {
-            @include scrollbarWithBg($width: 8px, $background: $grey-light);
+            @include scrollbarWithBg;
             width: 100%;
             padding: 20px 30px;
-            border-radius: 0 0 10px 10px;
             overflow-y: auto;
 
             &-simple-settings {
@@ -108,10 +105,6 @@
                 &__items {
                     max-width: 100%;
                 }
-            }
-
-            & .urlslab-inputField textarea {
-                resize: vertical;
             }
         }
     }
@@ -150,12 +143,15 @@
 
     .urlslab-button.with-arrow {
         @extend %MenuArrow;
-        gap: 8px;
         padding-left: 0;
         padding-right: 0;
 
         &:hover {
             color: inherit;
+        }
+
+        &:after {
+            margin-left: .8125em;
         }
 
         &.flip-arrow {
@@ -199,5 +195,16 @@
         }
     }
 
+    .urlslab-inputField-wrap {
+        &.allow-resize {
+            textarea {
+                resize: vertical;
+            }
+        }
+
+        textarea {
+            @include scrollbarWithBg;
+        }
+    }
 
 }

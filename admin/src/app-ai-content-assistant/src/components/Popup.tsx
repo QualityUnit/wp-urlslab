@@ -9,9 +9,11 @@ import { ReactComponent as StarsIcon } from '../assets/images/icons/icon-stars.s
 import MainSettings from './MainSettings';
 import AdvancedSettings from './AdvancedSettings';
 import { AppContext } from '../app/context';
+import GeneratedResult from './GeneratedResult';
 
 const Popup: React.FC = () => {
 	const [ showAdvancedSettings, setShowAdvancedSettings ] = useState( false );
+
 	const { togglePopup } = useContext( AppContext );
 
 	const toggleAdvancedSettings = useCallback( () => {
@@ -43,6 +45,7 @@ const Popup: React.FC = () => {
 						<ButtonGenerate />
 					</>
 					}
+					<GeneratedResult />
 				</div>
 			</div>
 		</>

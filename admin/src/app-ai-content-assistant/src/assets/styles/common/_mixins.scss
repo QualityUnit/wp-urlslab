@@ -25,7 +25,7 @@
     }
 }
 
-@mixin scrollbarWithBg($width: 6px, $background: transparent) {
+@mixin scrollbarWithBg($width: 8px, $background: $grey-light) {
 
     &::-webkit-scrollbar-track {
         background-color: $background;

@@ -1,48 +1,89 @@
 @use "../../../../../assets/styles/common/variables" as *;
 @use "../common/mixins" as *;
 
-.urlslab-urls-list {
-    gap: 8px;
+.urlslab-UrlsList {
+    padding: 16px 20px;
 
+    &-items {
+        margin-bottom: 10px;
 
+        &-item {
+            width: 100%;
 
-    &-item {
-        width: 100%;
+            &:not(:last-child) {
+                margin-bottom: 8px;
+            }
 
-        &.status-active {
-            .active-icon {
-                @include square(20px);
-                position: relative;
+            &-part-checkbox {
+                width: 100%;
+            }
 
-                &:after {
-                    content: "";
-                    @include square(12px);
-                    border-radius: 100%;
-                    background-color: $saturated-green;
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
+            &-part-icon {
+
+                // show tooltip specifically per design requirement
+                .urlslab-tooltip {
+                    top: 100%;
                 }
             }
-        }
 
-        &.status-pending {
-            svg {
-                fill: $saturated-red;
-                width: 20px;
+            &.status-active {
+                .active-icon {
+                    @include square(20px);
+                    position: relative;
+
+                    &:after {
+                        content: "";
+                        @include square(12px);
+                        border-radius: 100%;
+                        background-color: $saturated-green;
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                    }
+                }
             }
 
-            /* increase left margin by size of missing checkbox */
-            .urlslab-urls-list-label {
-                margin-left: calc(10px + 16px);
-                opacity: 0.5;
+            &.status-pending {
+
+                .pending-icon {
+                    @include square(20px);
+                    position: relative;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    svg {
+                        fill: $saturated-red;
+                        height: 13.54px;
+                    }
+
+                }
+
+                /* increase left margin by size of missing checkbox */
+                .urlslab-UrlsList-label {
+                    margin-left: calc(10px + 16px);
+                    opacity: 0.5;
+                }
+            }
+
+            .urlslab-UrlsList-label {
+                font-size: .8125em;
+                margin-left: 10px;
+                color: $black;
             }
         }
+    }
 
-        .urlslab-urls-list-label {
-            margin-left: 10px;
-            color: $black;
+    &-add {
+        &-inputs-wrapper {
+            .urlslab-inputField-wrap {
+                margin-right: 8px;
+            }
+
+            .urlslab-button {
+                min-width: 89px;
+            }
         }
     }
 }

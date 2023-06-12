@@ -1,5 +1,5 @@
 import { fakeUrls } from './fakeData';
-import { UrlsList } from './types';
+import { UrlsListItem, UrlsList } from './types';
 
 export type ReducerAction = {
     type : keyof typeof defaults,
@@ -24,6 +24,20 @@ export const defaults = {
 export const reducer = ( state: AppState, action: ReducerAction ) => {
 	const { type, payload } = action;
 	console.log( action );
+	if ( type === 'semantic_context' ) {
+		const newValue: UrlsListItem = {
+			id: ( state.semantic_context.urls.length + 1 ).toString(),
+			status: 'pending',
+			url: payload as string,
+		};
+
+		return {
+			...state,
+			semantic_context: {
+				urls: [ ...state.semantic_context.urls, newValue ],
+			},
+		};
+	}
 	return {
 		...state,
 		[ type ]: payload,

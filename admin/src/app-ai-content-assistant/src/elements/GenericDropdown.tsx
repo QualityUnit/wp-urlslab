@@ -33,7 +33,7 @@ const GenericDropdown: React.FC<GenericDropdownType> = ( {
 
 	return (
 		<div className="urlslab-GenericDropdown">
-			<div className={ `urlslab-MultiSelectMenu urlslab-SortMenu ${ isActive ? 'active' : '' }` } ref={ ref }>
+			<div className={ `urlslab-MultiSelectMenu ${ isActive ? 'active' : '' }` } ref={ ref }>
 				<div className="urlslab-inputField-label">{ label }</div>
 				<div
 					className={ `urlslab-MultiSelectMenu__title ${ isActive ? 'active' : '' }` }
@@ -45,7 +45,7 @@ const GenericDropdown: React.FC<GenericDropdownType> = ( {
 					<span>{ innerLabel }</span>
 				</div>
 				<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
-					<div className="urlslab-MultiSelectMenu__items--inn">
+					<div className="urlslab-MultiSelectMenu__items-inner-wrapper">
 						{ children }
 					</div>
 				</div>

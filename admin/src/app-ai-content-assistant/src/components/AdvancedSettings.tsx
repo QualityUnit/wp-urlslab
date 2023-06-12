@@ -22,7 +22,7 @@ const AdvancedSettings: React.FC = () => {
 					} }
 					autoClose
 					description={ __( 'Explanation' ) }
-					tooltipLabel={ { label: __( 'Language' ), tooltip: __( 'tooltip text' ) } }
+					tooltipLabel={ { label: __( 'Language' ), tooltip: __( 'tooltip text' ), noWrapText: true } }
 				></SingleSelectMenu>
 			</div>
 
@@ -37,7 +37,7 @@ const AdvancedSettings: React.FC = () => {
 					} }
 					autoClose
 					description={ __( 'Explanation' ) }
-					tooltipLabel={ { label: __( 'Audience' ), tooltip: __( 'tooltip text' ) } }
+					tooltipLabel={ { label: __( 'Audience' ), tooltip: __( 'tooltip text' ), noWrapText: true } }
 				></SingleSelectMenu>
 			</div>
 
@@ -52,21 +52,8 @@ const AdvancedSettings: React.FC = () => {
 					} }
 					autoClose
 					description={ __( 'Explanation' ) }
-					tooltipLabel={ { label: __( 'Tone' ), tooltip: __( 'tooltip text' ) } }
+					tooltipLabel={ { label: __( 'Tone' ), tooltip: __( 'tooltip text' ), noWrapText: true } }
 				></SingleSelectMenu>
-			</div>
-
-			<div className="urlslab-half-columns-col">
-				<InputWithSlider
-					label={ __( 'Length' ) }
-					description={ __( 'Explanation' ) }
-					value={ state.length }
-					max={ 800 }
-					step={ 10 }
-					onChange={ ( event ) => {
-						dispatch( { type: 'length', payload: event.target.value } );
-					} } />
-
 			</div>
 
 			<div className="urlslab-half-columns-col">
@@ -75,13 +62,14 @@ const AdvancedSettings: React.FC = () => {
 					onChange={ ( value ) => dispatch( { type: 'ai_model', payload: value } ) }
 					name="ai_model"
 					items={ {
-						'gpt-3.5-turbo': __( 'Gpt 3.5 Turbo' ),
-						'gpt-4': __( 'Gpt 4' ),
-						'text-davinci-003': __( 'Text Davinci 003' ),
+						// do not translate product names
+						'gpt-3.5-turbo': 'Open AI Gpt 3.5 Turbo',
+						'gpt-4': 'Open AI Gpt 4',
+						'text-davinci-003': 'Open AI Text Davinci 003',
 					} }
 					autoClose
 					description={ __( 'Explanation' ) }
-					tooltipLabel={ { label: __( 'AI model' ), tooltip: __( 'tooltip text' ) } }
+					tooltipLabel={ { label: __( 'AI model' ), tooltip: __( 'tooltip text' ), noWrapText: true } }
 				></SingleSelectMenu>
 			</div>
 		</div>
