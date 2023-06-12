@@ -1,5 +1,9 @@
 FROM wordpress:apache
-WORKDIR /usr/src/wordpress
+WORKDIR /var/www
+
+RUN rm -rf html
+RUN cp -R /usr/src/wordpress ./
+
 
 # Install XDebug
 # We can uncomment the code and rebuild the image and container if it is necessary
