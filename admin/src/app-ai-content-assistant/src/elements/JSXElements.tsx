@@ -9,6 +9,7 @@ import JSXSingleSelectMenu from '../../../elements/SingleSelectMenu';
 import JSXTextArea from '../../../elements/Textarea';
 import JSXInputField from '../../../elements/InputField';
 import JSXCheckbox from '../../../elements/Checkbox';
+import JSXTooltip from '../../../elements/Tooltip';
 
 import { InfoTooltipIcon } from './InfoTooltipIcon';
 
@@ -29,6 +30,7 @@ type SingleSelectMenuType = Partial<{
 	tooltipLabel: {
 		tooltip: string,
 		label: string
+		noWrapText?: boolean
 	}
 }> & React.PropsWithChildren
 
@@ -40,7 +42,7 @@ export const SingleSelectMenu: React.FC<SingleSelectMenuType > = React.memo( ( {
 			{ tooltipLabel
 				? <div className="urlslab-tooltipLabel flex flex-align-center">
 					<span className="urlslab-inputField-label">{ tooltipLabel.label }</span>
-					<InfoTooltipIcon text={ tooltipLabel.tooltip } />
+					<InfoTooltipIcon text={ tooltipLabel.tooltip } noWrapText />
 				</div>
 				: null
 			}
@@ -49,6 +51,20 @@ export const SingleSelectMenu: React.FC<SingleSelectMenuType > = React.memo( ( {
 	);
 } );
 SingleSelectMenu.displayName = 'SingleSelectMenu';
+
+type TooltipType = Partial<{
+	active: boolean
+	center: boolean
+	className: string
+	style: React.CSSProperties
+	width: string
+}> & React.PropsWithChildren
+export const Tooltip:React.FC<TooltipType> = React.memo( ( {
+	active, center, className, width, style, children,
+}: TooltipType ) => {
+	return <JSXTooltip active={ active } center={ center } className={ className } style={ { ...style, ...( width && { width } ) } }>{ children }</JSXTooltip>;
+} );
+Tooltip.displayName = 'Tooltip';
 
 type CheckboxType = Partial<{
 	defaultValue: boolean
@@ -98,19 +114,21 @@ type TextAreaType = Partial<{
 	description: string
 	labelInline: boolean
 	onChange: ( value: string ) => void
-	style:string
+	style: React.CSSProperties
 	rows: number
+	allowResize: boolean
 }> & React.PropsWithChildren
 
 export const TextArea: React.FC<TextAreaType> = React.memo( ( {
-	children, defaultValue = undefined, autoFocus = undefined, placeholder = undefined, liveUpdate = undefined, className = undefined, readonly = undefined, disabled = undefined, label = undefined, description = undefined, labelInline = undefined, onChange = undefined, style = undefined, rows = undefined,
+	allowResize, children, defaultValue = undefined, autoFocus = undefined, placeholder = undefined, liveUpdate = undefined, className = undefined, readonly = undefined, disabled = undefined, label = undefined, description = undefined, labelInline = undefined, onChange = undefined, style = undefined, rows = undefined,
 }: TextAreaType ) => {
-	return <JSXTextArea defaultValue={ defaultValue } autoFocus={ autoFocus } placeholder={ placeholder } liveUpdate={ liveUpdate } className={ className } readonly={ readonly } disabled={ disabled } label={ label } description={ description } labelInline={ labelInline } onChange={ onChange } style={ style } rows={ rows }>{ children }</JSXTextArea>;
+	const classes = allowResize ? `${ className } allow-resize` : className;
+	return <JSXTextArea defaultValue={ defaultValue } autoFocus={ autoFocus } placeholder={ placeholder } liveUpdate={ liveUpdate } className={ classes } readonly={ readonly } disabled={ disabled } label={ label } description={ description } labelInline={ labelInline } onChange={ onChange } style={ style } rows={ rows }>{ children }</JSXTextArea>;
 } );
 TextArea.displayName = 'TextArea';
 
 type InputFieldType = Partial<{
-	type: 'text' | 'email' | 'number'
+	type: 'text' | 'email' | 'number' | 'url'
 	defaultValue: number | string
 	isLoading: boolean
 	autoFocus: boolean
@@ -123,7 +141,7 @@ type InputFieldType = Partial<{
 	label: string
 	description: string
 	labelInline: boolean
-	onChange: ( event: React.ChangeEvent<HTMLInputElement> ) => void
+	onChange: ( value: string | number ) => void // follow type by source jsx element where onChange manipulate with direct value instead of event
 	onKeyDown: ( event: KeyboardEvent ) => void
 	onKeyUp: ( event: KeyboardEvent ) => void
 	onBlur: ( event: FocusEvent ) => void

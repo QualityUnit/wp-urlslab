@@ -22,7 +22,7 @@ export const fakeUrls =
 	},
 	{
 		id: '5',
-		url: 'https://www.google.http://liveagent.local/wp/wp-admin/post.php?post=2&action=edit',
+		url: 'http://liveagent.local/wp/wp-admin/post.php?post=2&action=edit',
 		status: 'pending',
 	},
 ];

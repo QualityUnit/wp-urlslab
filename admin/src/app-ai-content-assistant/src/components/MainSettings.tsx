@@ -4,12 +4,12 @@ import { __ } from '@wordpress/i18n';
 import { SingleSelectMenu, TextArea } from '../elements/JSXElements';
 import { AppContext } from '../app/context';
 import GenericDropdown from '../elements/GenericDropdown';
-import SemanticContextOptions from './options/SemanticContextOptions';
+import UrlsList from './options/UrlsList';
 
 const MainSettings: React.FC = () => {
 	const { state, dispatch } = useContext( AppContext );
 	return (
-		<div className="urlslab-popup-content-main-settings flex flex-column flex-justify-center flex-align-center">
+		<div className="urlslab-popup-content-main-settings flex flex-column">
 
 			<div className="urlslab-popup-content-option-wrapper">
 				<SingleSelectMenu
@@ -32,6 +32,7 @@ const MainSettings: React.FC = () => {
 					placeholder={ __( 'Type here' ) }
 					defaultValue={ state.prompt }
 					onChange={ ( value ) => dispatch( { type: 'prompt', payload: value } ) }
+					allowResize
 				/>
 			</div>
 			<div className="urlslab-popup-content-option-wrapper">
@@ -40,8 +41,7 @@ const MainSettings: React.FC = () => {
 					innerLabel={ __( 'Select or add url' ) }
 					description={ __( 'Explanation of what semnatic means' ) }
 				>
-					<SemanticContextOptions />
-
+					<UrlsList urls={ state.semantic_context.urls } />
 				</GenericDropdown>
 			</div>
 		</div>
