@@ -44,28 +44,7 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 		$youtube_obj->update();
 
 		if ( ! strlen( $youtube_obj->get_microdata() ) ) {
-			try {
-				$microdata = $this->get_youtube_microdata( $youtube_obj );
-				if ( strlen( $microdata ) ) {
-					$youtube_obj->set_microdata( $microdata );
-					$obj_microdata = json_decode( $microdata, true );
-					if ( ! is_array( $obj_microdata ) || ! isset( $obj_microdata['items'] ) || ! isset( $obj_microdata['items'][0] ) ) {
-						$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_DISABLED );
-						$youtube_obj->update();
 
-						return true;
-					}
-					$youtube_obj->update();
-				}
-			} catch ( ApiException $e ) {
-				if ( 402 === $e->getCode() ) {
-					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
-				}
-
-				return false;
-			} catch ( Exception $e ) {
-				return false;
-			}
 		}
 		if ( ! strlen( $youtube_obj->get_captions() ) ) {
 			try {

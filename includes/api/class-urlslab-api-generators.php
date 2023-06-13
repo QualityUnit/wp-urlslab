@@ -105,6 +105,53 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			)
 		);
 
+		register_rest_route(
+			self::NAMESPACE,
+			'/' . self::SLUG . '/yt-complete',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'get_youtube_augmentation' ),
+					'permission_callback' => array(
+						$this,
+						'augment_permission_check',
+					),
+					'args'                => array(
+						'user_prompt'           => array(
+							'required'          => true,
+							'validate_callback' => function ( $param ) {
+								return is_string( $param );
+							},
+						),
+						'yt_id'          => array(
+							'required'          => true,
+							'validate_callback' => function ( $param ) {
+								return is_string( $param );
+							},
+						),
+						'tone'             => array(
+							'required'          => false,
+							'validate_callback' => function ( $param ) {
+								return is_string( $param );
+							},
+						),
+						'model'             => array(
+							'required'          => false,
+							'validate_callback' => function ( $param ) {
+								return is_string( $param );
+							},
+						),
+						'lang'             => array(
+							'required'          => false,
+							'validate_callback' => function ( $param ) {
+								return is_string( $param );
+							},
+						),
+					),
+				),
+			)
+		);
+
 		$base = '/' . self::SLUG . '/result';
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
@@ -450,6 +497,50 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		}
 
 		return new WP_REST_Response( (object) array( 'completion' => $completion ), 200 );
+	}
+
+	public function get_youtube_augmentation( WP_REST_Request $request ) {
+		$user_prompt = $request->get_param( 'user_prompt' );
+		$aug_tone = $request->get_param( 'tone' );
+		$aug_lang = $request->get_param( 'lang' );
+		$aug_model = $request->get_param( 'model' );
+		$yt_id = $request->get_param( 'yt_id' );
+
+		$aug_request = new DomainDataRetrievalAugmentRequest();
+
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
+		if ( empty( $aug_model ) ) {
+			$aug_model = $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_GENERATOR_MODEL );
+		}
+		$aug_request->setAugmentingModelName( $aug_model );
+
+		$attributes = $widget->get_att_values( $row_shortcode, $attributes, array( 'video_captions_text' ) );
+		if ( ! isset( $attributes['video_captions_text'] ) || empty( $attributes['video_captions_text'] ) ) {
+			$row_obj->set_result( 'Video captions not available' );
+			$row_obj->set_status( Urlslab_Generator_Result_Row::STATUS_PENDING );
+			$row_obj->update();
+
+			return true;
+		}
+		$command = $widget->get_template_value(
+			'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Generator_Result_Row::DO_NOT_KNOW . "!\n" . $row_shortcode->get_prompt() .
+			"\n\n--VIDEO CAPTIONS:\n{context}\n--VIDEO CAPTIONS END\nANSWER:",
+			$attributes
+		);
+		$prompt->setPromptTemplate( $command );
+		$prompt->setDocumentTemplate( $widget->get_template_value( '{{video_captions_text}}', $attributes ) );
+
+		$prompt->setMetadataVars( array() );
+		$request->setPrompt( $prompt );
+		$response = Urlslab_Augment_Helper::get_instance()->augment( $request );
+
+
+
+	}
+
+	private function get_youtube_microdata( string $yt_id ) {
+		$response = $this->content_client->getYTMicrodata( $youtube_obj->get_video_id() );
+		return $response->getRawData();
 	}
 
 	public function get_row_object( $params = array() ): Urlslab_Data {
