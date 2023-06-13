@@ -1,9 +1,9 @@
 FROM wordpress:apache
-WORKDIR /var/www
+WORKDIR /usr/src/wordpress
 
-RUN rm -rf html
-RUN cp -R /usr/src/wordpress ./
-
+RUN set -eux; \
+	find /etc/apache2 -name '*.conf' -type f -exec sed -ri -e "s!/var/www/html!$PWD!g" -e "s!Directory /var/www/!Directory $PWD!g" '{}' +; \
+	cp -s wp-config-docker.php wp-config.php
 
 # Install XDebug
 # We can uncomment the code and rebuild the image and container if it is necessary
