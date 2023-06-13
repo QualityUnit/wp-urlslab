@@ -779,6 +779,7 @@ class Urlslab_Activator {
 			Urlslab_Api_Base::CAPABILITY_DELETE         => true,
 			Urlslab_Api_Base::CAPABILITY_ADMINISTRATION => true,
 			Urlslab_Api_Base::CAPABILITY_TRANSLATE      => true,
+			Urlslab_Api_Base::CAPABILITY_AUGMENT        => true,
 		);
 		add_role( Urlslab_Api_Base::URLSLAB_ROLE_ADMIN, __( 'Urlslab Administrator' ), $admin_capabilities );//phpcs:ignore
 
@@ -787,6 +788,7 @@ class Urlslab_Activator {
 			Urlslab_Api_Base::CAPABILITY_WRITE     => true,
 			Urlslab_Api_Base::CAPABILITY_DELETE    => true,
 			Urlslab_Api_Base::CAPABILITY_TRANSLATE => true,
+			Urlslab_Api_Base::CAPABILITY_AUGMENT   => true,
 		);
 		add_role( Urlslab_Api_Base::URLSLAB_ROLE_EDITOR, __( 'Urlslab Editor' ), $editor_capabilities );//phpcs:ignore
 	}

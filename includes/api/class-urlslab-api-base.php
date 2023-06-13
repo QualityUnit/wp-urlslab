@@ -8,6 +8,7 @@ abstract class Urlslab_Api_Base extends WP_REST_Controller {
 	public const CAPABILITY_WRITE = 'urlslab_write';
 	public const CAPABILITY_DELETE = 'urlslab_delete';
 	public const CAPABILITY_TRANSLATE = 'urlslab_translate';
+	public const CAPABILITY_AUGMENT = 'urlslab_augment';
 
 	public const URLSLAB_ROLE_ADMIN = 'urlslab_admin';
 	public const URLSLAB_ROLE_EDITOR = 'urlslab_editor';
