@@ -99,7 +99,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 
 				$prompt->setMetadataVars( array() );
 				$request->setPrompt( $prompt );
-				$response = $this->content_client->memoryLessAugment( $request, 'false', 'true', 'true', 'false' );
+				$response = Urlslab_Augment_Helper::get_instance()->augment( $request );
 			} else {
 				$attributes = $widget->get_att_values( $row_shortcode, $attributes );
 				$command    = $widget->get_template_value(
@@ -114,26 +114,20 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 
 				$filter = new DomainDataRetrievalContentQuery();
 				$filter->setLimit( 5 );
-				$ignore_query      = 'false';
-				$custom_context    = 'false';
-				$context_mandatory = 'true';
+
+				if ( strlen( $row_obj->get_url_filter() ) ) {
+					$filter->setUrls( array( $row_obj->get_url_filter() ) );
+				}
+
 				if ( strlen( $row_obj->get_semantic_context() ) ) {
 					$request->setAugmentCommand( $row_obj->get_semantic_context() );
-					if ( strlen( $row_obj->get_url_filter() ) ) {
-						$filter->setAdditionalQuery( (object) array( 'match' => (object) array( 'metadata.url' => $row_obj->get_url_filter() ) ) );
-					} else {
-						$filter->setAdditionalQuery( (object) array( 'match' => (object) array( 'metadata.url' => Urlslab_Url::get_current_page_url()->get_domain_name() ) ) );
+					if ( ! strlen( $row_obj->get_url_filter() ) ) {
+						$filter->setUrls( array( Urlslab_Url::get_current_page_url()->get_domain_name() ) );
 					}
-				} else if ( strlen( $row_obj->get_url_filter() ) ) {
-					$ignore_query = 'true';
-					$filter->setUrls( array( $row_obj->get_url_filter() ) );
-				} else {
-					$custom_context    = 'true';
-					$context_mandatory = 'false';
 				}
 				$request->setFilter( $filter );
 
-				$response = $this->content_client->memoryLessAugment( $request, 'false', $ignore_query, $custom_context, $context_mandatory );
+				$response = Urlslab_Augment_Helper::get_instance()->augment( $request );
 			}
 
 

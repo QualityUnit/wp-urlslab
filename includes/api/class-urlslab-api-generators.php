@@ -4,6 +4,7 @@ use Urlslab_Vendor\GuzzleHttp;
 use Urlslab_Vendor\OpenAPI\Client\Configuration;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalContentQuery;
 use Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi;
 
 class Urlslab_Api_Generators extends Urlslab_Api_Table {
@@ -47,7 +48,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			'/' . self::SLUG . '/completion',
+			'/' . self::SLUG . '/complete',
 			array(
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
@@ -57,13 +58,19 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 						'augment_permission_check',
 					),
 					'args'                => array(
-						'prompt'           => array(
+						'user_prompt'           => array(
 							'required'          => true,
 							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'tone'             => array(
+							'required'          => false,
+							'validate_callback' => function ( $param ) {
+								return is_string( $param );
+							},
+						),
+						'model'             => array(
 							'required'          => false,
 							'validate_callback' => function ( $param ) {
 								return is_string( $param );
@@ -272,8 +279,6 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		if ( ! empty( $source_lang ) && ! empty( $target_lang ) && $this->isTextForTranslation( $original_text ) && Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Content_Generator_Widget::SLUG ) && Urlslab_General::is_urlslab_active() ) {
 			$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
 			if ( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_TRANSLATE ) ) {
-				$api_key = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
-				$client  = new ContentApi( new GuzzleHttp\Client( array( 'timeout' => 59 ) ), Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key ) ); //phpcs:ignore
 				$request = new DomainDataRetrievalAugmentRequest();
 				$request->setAugmentingModelName( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_TRANSLATE_MODEL ) );
 				$request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
@@ -308,9 +313,9 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 				$request->setPrompt( $prompt );
 
 				try {
-					$response    = $client->memoryLessAugment( $request, 'false', 'true', 'true', 'false' );
+					$response    = Urlslab_Augment_Helper::get_instance()->augment( $request );
 					$translation = $response->getResponse();
-				} catch ( \OpenAPI\Client\ApiException $e ) {
+				} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
 					switch ( $e->getCode() ) {
 						case 402:
 							Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
@@ -335,7 +340,116 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	}
 
 	public function get_instant_augmentation( $request ) {
+		$user_prompt = $request->get_param( 'user_prompt' );
+		$aug_tone = $request->get_param( 'tone' );
+		$aug_lang = $request->get_param( 'lang' );
+		$aug_model = $request->get_param( 'model' );
+		$semantic_context = $request->get_param( 'semantic_context' );
+		$url_filter = $request->get_param( 'url_filter' );
+		$domain_filter = $request->get_param( 'domain_filter' );
+		$completion = '';
 
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
+		if ( empty( $aug_model ) ) {
+			$aug_model = $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_GENERATOR_MODEL );
+		}
+
+		if ( ! empty( $user_prompt ) ) {
+			$augment_request = new DomainDataRetrievalAugmentRequest();
+			$augment_request->setAugmentingModelName( $aug_model );
+
+			$user_prompt .= "\n you are a knowledgeable assistant. you are tasked to answer any given prompt based on your knowledge";
+			$user_prompt .= "\n whether it would based on the given COTNEXT or based on the your own trained data with natural completion";
+			$user_prompt .= "\n your OUTPUT should be as natural as possible and meet the TASK_RESTRICTION requirement";
+			$user_prompt .= "\nTASK_RESTRICTIONS: ";
+			if ( strlen( $aug_tone ) ) {
+				$user_prompt .= "\nTONE OF OUTPUT: $aug_tone";
+			}
+
+			if ( strlen( $aug_lang ) ) {
+				$user_prompt .= "\nLANGUAGE OF OUTPUT: $aug_lang";
+			} else {
+				$user_prompt .= "\nLANGUAGE OF OUTPUT: the same language as INPUT TEXT";
+			}
+
+			if ( ( $semantic_context && strlen( $semantic_context ) ) ||
+				( $url_filter && count( $url_filter ) ) ||
+				( $domain_filter && count( $domain_filter ) ) ) {
+				$user_prompt .= "\n Try to generate the output based on the given context";
+				$user_prompt .= "\n If the context is not provided, still try to generate an output as best as you can with you're own knowledge";
+				$user_prompt .= "\n CONTEXT: ";
+				$user_prompt .= "\n{context}";
+
+
+				if ( ( $url_filter && count( $url_filter ) ) ||
+					( $domain_filter && count( $domain_filter ) ) ) {
+					$filter = new DomainDataRetrievalContentQuery();
+					$filter->setLimit( 5 );
+					$filter->setDomains( $domain_filter );
+					$filter->setUrls( $url_filter );
+
+					$augment_request->setFilter( $filter );
+				}
+
+				if ( strlen( $semantic_context ) ) {
+					$augment_request->setAugmentCommand( $semantic_context );
+				}           
+			}
+			$user_prompt .= "\nOUTPUT: ";
+
+			$prompt = new DomainDataRetrievalAugmentPrompt();
+			$prompt->setPromptTemplate( $user_prompt );
+			$prompt->setDocumentTemplate( "--\n{text}\n--" );
+			$prompt->setMetadataVars( array( 'text' ) );
+			$augment_request->setPrompt( $prompt );
+
+			$augment_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
+
+			try {
+				$response = Urlslab_Augment_Helper::get_instance()->augment( $augment_request );
+				$completion = $response->getResponse();
+			} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
+				switch ( $e->getCode() ) {
+					case 402:
+						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+						return new WP_REST_Response(
+							(object) array(
+								'completion' => '',
+								'message' => 'not enough credits',
+							),
+							402 
+						);
+						//continue
+					case 500:
+					case 504:
+						return new WP_REST_Response(
+							(object) array(
+								'completion' => '',
+								'message' => 'something wen\'nt wrong, try again later',
+							),
+							$e->getCode() 
+						);
+
+					case 404:
+						return new WP_REST_Response(
+							(object) array(
+								'completion' => '',
+								'message' => 'Given context data has\'t been indexed yet',
+							),
+							$e->getCode() 
+						);
+					default:
+						$response_obj = (object) array(
+							'completion' => '',
+							'error'       => $e->getMessage(),
+						);
+
+						return new WP_REST_Response( $response_obj, $e->getCode() );
+				}
+			}
+		}
+
+		return new WP_REST_Response( (object) array( 'completion' => $completion ), 200 );
 	}
 
 	public function get_row_object( $params = array() ): Urlslab_Data {
