@@ -21,7 +21,7 @@ services:
       - "8000:80"
     restart: always
     volumes:
-      - ../../:/var/www/html/wp-content/plugins/urlslab
+      - ../../:/usr/src/wordpress/wp-content/plugins/urlslab
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: wordpress
