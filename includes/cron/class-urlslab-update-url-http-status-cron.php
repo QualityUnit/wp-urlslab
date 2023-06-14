@@ -192,19 +192,19 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 		$tag_ended   = false;
 		if ( $handle ) {
 			while ( ( $line = fgets( $handle ) ) !== false ) {
-				if ( ! $tag_started && preg_match( '/<' . $tag_name . '[^>]*?>(.*)/i', $line, $matches ) ) {
+				if ( ! $tag_started && preg_match( '/<' . $tag_name . '[^>]*?>(.*)/is', $line, $matches ) ) {
 					$tag_started = true;
 					$line        = $matches[1];
 				}
-				if ( $tag_started && preg_match( '/(.*)<\/' . $tag_name . '/i', $line, $matches ) ) {
-					$tag_ended = true;
-					$line      = $matches[1];
-				}
 				if ( $tag_started ) {
-					$html .= $line;
-				}
-				if ( $tag_ended ) {
-					break;
+					$closing_tag_pos = strpos( $line, '</' . $tag_name . '>' );
+					if ( false !== $closing_tag_pos ) {
+						$line = substr( $line, 0, $closing_tag_pos );
+						$html .= $line;
+						break;
+					} else {
+						$html .= $line;
+					}
 				}
 			}
 			fclose( $handle );
