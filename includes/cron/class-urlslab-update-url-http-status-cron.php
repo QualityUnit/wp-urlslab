@@ -107,17 +107,8 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 			$final_url  = new Urlslab_Url( $status_obj->url, true );
 			$url->set_final_url_id( $final_url->get_url_id() );
 
-			if ( 300 < $status_obj->code && 399 > $status_obj->code && $final_url->get_url_id() == $url->get_url_id() ) {
-				$url->set_http_status( Urlslab_Url_Row::HTTP_STATUS_OK );    //if the url is same as original, then it is OK and not redirect
-			} else if ( 429 == $status_obj->code ) {
-				$url->set_http_status( Urlslab_Url_Row::HTTP_STATUS_PENDING );    //rate limit hit, process later
-			} else {
-				$url->set_http_status( $status_obj->code );
-				if ( 300 < $status_obj->code && 399 > $status_obj->code ) {
-					$url_row_obj = new Urlslab_Url_Row();
-					$url_row_obj->insert_urls( array( $final_url ) );
-				}
-			}
+			// setting the url in pending state
+			$url->set_http_status( Urlslab_Url_Row::HTTP_STATUS_PENDING );
 
 			if ( Urlslab_Url_Row::HTTP_STATUS_OK <= $status_obj->code && 400 > $status_obj->code && $final_url->get_url_id() == $url->get_url_id() && $this->is_html_extension( $url->get_url()->get_extension() ) ) {
 				$page_content_file_name = download_url( $url->get_url()->get_url_with_protocol() );
@@ -175,6 +166,18 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 				$url->set_url_h1( Urlslab_Url_Row::VALUE_EMPTY );
 				$url->set_url_meta_description( Urlslab_Url_Row::VALUE_EMPTY );
 			}
+
+			if ( 300 < $status_obj->code && 399 > $status_obj->code && $final_url->get_url_id() == $url->get_url_id() ) {
+				$url->set_http_status( Urlslab_Url_Row::HTTP_STATUS_OK );    //if the url is same as original, then it is OK and not redirect
+			} else if ( 429 == $status_obj->code ) {
+				$url->set_http_status( Urlslab_Url_Row::HTTP_STATUS_PENDING );    //rate limit hit, process later
+			} else {
+				$url->set_http_status( $status_obj->code );
+				if ( 300 < $status_obj->code && 399 > $status_obj->code ) {
+					$url_row_obj = new Urlslab_Url_Row();
+					$url_row_obj->insert_urls( array( $final_url ) );
+				}
+			}       
 		} catch ( Exception $e ) {
 			$url->set_url_title( Urlslab_Url_Row::VALUE_EMPTY );
 			$url->set_url_h1( Urlslab_Url_Row::VALUE_EMPTY );
