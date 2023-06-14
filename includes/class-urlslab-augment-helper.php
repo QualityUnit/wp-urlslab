@@ -44,8 +44,8 @@ class Urlslab_Augment_Helper {
 		}
 
 		if ( ! $request->getFilter() ||
-			( count( $request->getFilter()->getDomains() ) == 0 &&
-				count( $request->getFilter()->getUrls() ) == 0 ) ) {
+			( $request->getFilter()->getDomains() && count( $request->getFilter()->getDomains() ) == 0 &&
+				$request->getFilter()->getUrls() && count( $request->getFilter()->getUrls() ) == 0 ) ) {
 			if ( ! strlen( $request->getAugmentCommand() ) ) {
 				$custom_context = 'true';
 				$context_mandatory = 'false';

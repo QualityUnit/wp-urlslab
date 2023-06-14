@@ -432,9 +432,14 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 					( $domain_filter && count( $domain_filter ) ) ) {
 					$filter = new DomainDataRetrievalContentQuery();
 					$filter->setLimit( 5 );
-					$filter->setDomains( $domain_filter );
-					$filter->setUrls( $url_filter );
 
+					if ( $url_filter && count( $url_filter ) ) {
+						$filter->setUrls( $url_filter );
+					}
+
+					if ( $domain_filter && count( $domain_filter ) ) {
+						$filter->setDomains( $domain_filter );
+					}
 					$augment_request->setFilter( $filter );
 				}
 
