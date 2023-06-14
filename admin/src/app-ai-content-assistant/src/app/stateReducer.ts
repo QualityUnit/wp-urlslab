@@ -11,7 +11,7 @@ export const defaults = {
 	template: '',
 	prompt: '',
 	generated_text: '',
-	language: '',
+	language: 'en',
 	audience: '',
 	tone: '',
 	length: 10,

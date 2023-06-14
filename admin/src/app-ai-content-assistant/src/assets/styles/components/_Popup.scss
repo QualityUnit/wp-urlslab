@@ -4,10 +4,7 @@
 
 [id="urlslab-ai-content-assistant"] {
     .urlslab-page-overlay {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: fixed;
+        position: absolute;
         top: 0;
         left: 0;
         width: 100%;
@@ -17,14 +14,14 @@
     }
 
     .urlslab-popup {
-        position: fixed;
+        position: absolute;
         top: 50%;
         left: 50%;
+        transform: translate(-50%, -50%);
         width: 100%;
         max-width: 548px;
         max-height: 90vh;
         background-color: $white;
-        transform: translate(-50%, -50%);
         border-radius: $br-10;
         box-shadow: 0 1px 3px rgba($black-real, 0.16);
         overflow: hidden;
@@ -207,4 +204,21 @@
         }
     }
 
+
+    // inherit default user agent stylesheet in Elementor editor
+    // Gutenberg inherits font styles for default form elements from their form.css file
+    input,
+    select,
+    textarea,
+    button {
+        font-family: inherit;
+        font-size: inherit;
+        font-weight: inherit;
+    }
+
+    // exactly this value is added by WP in admin
+    // added here to keep consistent design between gutenberg and elementor editors
+    textarea {
+        line-height: 1.42857143;
+    }
 }

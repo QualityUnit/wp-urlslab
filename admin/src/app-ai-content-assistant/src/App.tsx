@@ -1,15 +1,15 @@
-import { useCallback, useReducer, useState } from 'react';
-import { ReactComponent as StarsIcon } from './assets/images/icons/icon-stars.svg';
-import { __ } from '@wordpress/i18n';
-import { Button } from './elements/JSXElements';
-import Popup from './components/Popup';
+import React, { useCallback, useReducer, useState, useMemo } from 'react';
 
 import { AppContext } from './app/context';
 import { defaults, reducer } from './app/stateReducer';
+import { useEditorListener } from './app/hooks';
+
+import PopupToggleButton from './components/PopupToggleButton';
+import Popup from './components/Popup';
 
 import './assets/styles/style.scss';
 
-const App:React.FC = () => {
+const App: React.FC = () => {
 	const [ openedPopup, setOpenedPopup ] = useState( false );
 	const [ state, dispatch ] = useReducer( reducer, defaults );
 
@@ -17,14 +17,16 @@ const App:React.FC = () => {
 		setOpenedPopup( ! openedPopup );
 	}, [ openedPopup ] );
 
+	useEditorListener(
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		useMemo( () => <PopupToggleButton action={ togglePopup } />, [] ),
+	);
+
 	return (
-		<div className="ml-sm mr-sm" >
-			<Button className="" onClick={ togglePopup } active ><StarsIcon />{ __( 'AI Content Assistant' ) }</Button>
-			<AppContext.Provider value={ { state, dispatch, togglePopup } }>
-				{ openedPopup && <Popup /> }
-			</AppContext.Provider>
-		</div>
+		<AppContext.Provider value={ { state, dispatch, togglePopup } }>
+			{ openedPopup && <Popup /> }
+		</AppContext.Provider>
 	);
 };
 
-export default App;
+export default React.memo( App );

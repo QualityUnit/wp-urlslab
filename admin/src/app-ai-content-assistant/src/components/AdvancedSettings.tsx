@@ -3,7 +3,13 @@ import { __ } from '@wordpress/i18n';
 
 import { SingleSelectMenu } from '../elements/JSXElements';
 import { AppContext } from '../app/context';
-import InputWithSlider from '../elements/InputWithSlider';
+
+const tempLanguages = {
+	en: 'English (United States)',
+	es: 'Spanish',
+	'pt-br': 'Portuguese (Brazil)',
+	de: 'German',
+};
 
 const AdvancedSettings: React.FC = () => {
 	const { state, dispatch } = useContext( AppContext );
@@ -12,14 +18,9 @@ const AdvancedSettings: React.FC = () => {
 			<div className="urlslab-half-columns-col">
 				<SingleSelectMenu
 					defaultValue={ state.language }
-					onChange={ ( value ) => dispatch( { type: 'semantic_context', payload: value } ) }
+					onChange={ ( value ) => dispatch( { type: 'language', payload: value } ) }
 					name="semantic_context"
-					items={ {
-						item_a: 'Language 1',
-						item_b: 'Language 2',
-						item_c: 'Language 3',
-						item_d: 'Language 4',
-					} }
+					items={ tempLanguages }
 					autoClose
 					description={ __( 'Explanation' ) }
 					tooltipLabel={ { label: __( 'Language' ), tooltip: __( 'tooltip text' ), noWrapText: true } }

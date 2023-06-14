@@ -236,6 +236,8 @@ class Urlslab_Admin {
 						'wp-api-fetch',
 						'wp-element',
 						'wp-i18n',
+						'wp-blocks',
+						'wp-components',
 					),
 					$this->version,
 					true

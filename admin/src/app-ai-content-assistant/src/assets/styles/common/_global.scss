@@ -1,9 +1,13 @@
 @use "../../../../../assets/styles/common/variables" as *;
 @use "mixins" as *;
 
-[id="urlslab-ai-content-assistant"] {
+[id="urlslab-ai-content-assistant"],
+[id="urlslab-ai-content-assistant-button-wrapper"] {
 	font-family: Poppins, sans-serif;
 	font-size: 16px;
+	line-height: 20px;
+	/*reset editors colors*/
+	color: $black;
 
 	*,
 	::before,
