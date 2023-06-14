@@ -10,8 +10,6 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
 
 class Urlslab_Youtube_Cron extends Urlslab_Cron {
 
-	private VideoApi $content_client;
-
 	public function get_description(): string {
 		return __( 'Loading microdata about scheduled YouTube videos used in your website', 'urlslab' );
 	}
@@ -21,7 +19,7 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 			return false;
 		}
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Lazy_Loading::SLUG );
-		if ( ! $widget->get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_LAZY_LOADING ) || ! $this->init_client() ) {
+		if ( ! $widget->get_option( Urlslab_Lazy_Loading::SETTING_NAME_YOUTUBE_LAZY_LOADING ) ) {
 			return false;
 		}
 
@@ -43,89 +41,29 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 		$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_PROCESSING );
 		$youtube_obj->update();
 
-		if ( ! strlen( $youtube_obj->get_microdata() ) ) {
-			try {
-				$microdata = $this->get_youtube_microdata( $youtube_obj );
-				if ( strlen( $microdata ) ) {
-					$youtube_obj->set_microdata( $microdata );
-					$obj_microdata = json_decode( $microdata, true );
-					if ( ! is_array( $obj_microdata ) || ! isset( $obj_microdata['items'] ) || ! isset( $obj_microdata['items'][0] ) ) {
-						$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_DISABLED );
-						$youtube_obj->update();
-
-						return true;
-					}
-					$youtube_obj->update();
-				}
-			} catch ( ApiException $e ) {
-				if ( 402 === $e->getCode() ) {
-					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
-				}
-
-				return false;
-			} catch ( Exception $e ) {
-				return false;
+		try {
+			if ( ! strlen( $youtube_obj->get_microdata() ) ) {
+				Urlslab_Yt_Helper::get_instance()->process_yt_microdata( $youtube_obj );
 			}
-		}
-		if ( ! strlen( $youtube_obj->get_captions() ) ) {
-			try {
-				$captions = $this->get_youtube_captions( $youtube_obj );
-				$youtube_obj->set_captions( '' );
-				if ( strlen( $captions ) > 10 ) {
-					$youtube_obj->set_captions( $captions );
-				} else if ( false === $captions ) {
-					if ( strlen( $youtube_obj->get_microdata() ) ) {
-						$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_AVAILABLE );
-					} else {
-						$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_DISABLED );
-					}
-					$youtube_obj->update();
-
-					return true;
-				}
-			} catch ( ApiException $e ) {
-				if ( 402 === $e->getCode() ) {
-					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
-				}
-
-				return false;
+			if ( ! strlen( $youtube_obj->get_captions() ) ) {
+				Urlslab_Yt_Helper::get_instance()->process_yt_captions( $youtube_obj );
 			}
-		}
-		if ( strlen( $youtube_obj->get_captions() ) && strlen( $youtube_obj->get_microdata() ) ) {
-			$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_AVAILABLE );
-		}
-		$youtube_obj->update();
+			if ( strlen( $youtube_obj->get_captions() ) && strlen( $youtube_obj->get_microdata() ) ) {
+				$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_AVAILABLE );
+			}
+			$youtube_obj->update();
 
-		return true;
-	}
+			return true;
+		} catch ( ApiException $e ) {
+			if ( 402 === $e->getCode() ) {
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+			}
 
-
-	private function get_youtube_microdata( Urlslab_Youtube_Row $youtube_obj ) {
-		$response = $this->content_client->getYTMicrodata( $youtube_obj->get_video_id() );
-
-		return $response->getRawData();
-	}
-
-	private function init_client(): bool {
-		if ( empty( $this->content_client ) && Urlslab_General::is_urlslab_active() ) {
-			$api_key              = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
-			$config               = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-			$this->content_client = new VideoApi( new GuzzleHttp\Client(), $config );
+			return false;
+		} catch ( Exception $e ) {
+			return false;
 		}
 
-		return ! empty( $this->content_client );
 	}
 
-
-	private function get_youtube_captions( Urlslab_Youtube_Row $youtube_obj ) {
-		$response = $this->content_client->getYTVidCaption( $youtube_obj->get_video_id() );
-		switch ( $response->getStatus() ) {
-			case DomainDataRetrievalVideoCaptionResponse::STATUS_AVAILABLE:
-				return $response->getTranscript();
-			case DomainDataRetrievalVideoCaptionResponse::STATUS_PENDING:
-				return true;
-			default:
-				return false;
-		}
-	}
 }

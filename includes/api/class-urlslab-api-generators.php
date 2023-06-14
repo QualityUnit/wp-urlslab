@@ -105,6 +105,53 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			)
 		);
 
+		register_rest_route(
+			self::NAMESPACE,
+			'/' . self::SLUG . '/yt-complete',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'get_youtube_augmentation' ),
+					'permission_callback' => array(
+						$this,
+						'augment_permission_check',
+					),
+					'args'                => array(
+						'user_prompt'           => array(
+							'required'          => true,
+							'validate_callback' => function ( $param ) {
+								return is_string( $param );
+							},
+						),
+						'yt_id'          => array(
+							'required'          => true,
+							'validate_callback' => function ( $param ) {
+								return is_string( $param );
+							},
+						),
+						'tone'             => array(
+							'required'          => false,
+							'validate_callback' => function ( $param ) {
+								return is_string( $param );
+							},
+						),
+						'model'             => array(
+							'required'          => false,
+							'validate_callback' => function ( $param ) {
+								return is_string( $param );
+							},
+						),
+						'lang'             => array(
+							'required'          => false,
+							'validate_callback' => function ( $param ) {
+								return is_string( $param );
+							},
+						),
+					),
+				),
+			)
+		);
+
 		$base = '/' . self::SLUG . '/result';
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
@@ -450,6 +497,88 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		}
 
 		return new WP_REST_Response( (object) array( 'completion' => $completion ), 200 );
+	}
+
+	public function get_youtube_augmentation( WP_REST_Request $request ) {
+		$user_prompt = $request->get_param( 'user_prompt' );
+		$aug_tone = $request->get_param( 'tone' );
+		$aug_lang = $request->get_param( 'lang' );
+		$aug_model = $request->get_param( 'model' );
+		$yt_id = $request->get_param( 'yt_id' );
+
+
+		if ( empty( $yt_id ) || empty( $user_prompt ) ) {
+			return new WP_REST_Response(
+				(object) array(
+					'completion' => '',
+					'message' => 'missing required parameters',
+				),
+				400
+			);
+		}
+
+		$yt_data = Urlslab_Yt_Helper::get_instance()->get_yt_data( $yt_id );
+
+		if ( ! $yt_data ) {
+			return new WP_REST_Response(
+				(object) array(
+					'completion' => '',
+					'message' => 'youtube data cannot be fetched',
+				),
+				404
+			);
+		}
+
+		$aug_request = new DomainDataRetrievalAugmentRequest();
+
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
+		if ( empty( $aug_model ) ) {
+			$aug_model = $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_GENERATOR_MODEL );
+		}
+		$aug_request->setAugmentingModelName( $aug_model );
+
+		if ( empty( $yt_data->get_captions() ) ) {
+			return new WP_REST_Response(
+				(object) array(
+					'completion' => '',
+					'message' => 'youtube Caption is Empty',
+				),
+				404
+			);
+		}
+
+		$prompt = new DomainDataRetrievalAugmentPrompt();
+
+		if ( empty( $aug_lang ) ) {
+			$aug_lang = 'The same language as VIDEO CAPTIONS';
+		}
+
+		$command = 'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Generator_Result_Row::DO_NOT_KNOW . "!\n" . $user_prompt .
+			"\nOUTPUT Language should be in: $aug_lang ";
+
+		if ( ! empty( $aug_tone ) ) {
+			$command .= "\nOUTPUT TONE: $aug_tone";
+		}
+
+		$command .= "\n\n--VIDEO CAPTIONS:\n{context}\n--VIDEO CAPTIONS END\nOUTPUT:";
+		$prompt->setPromptTemplate( $command );
+		$prompt->setDocumentTemplate( $yt_data->get_captions() );
+		$prompt->setMetadataVars( array() );
+
+		$aug_request->setPrompt( $prompt );
+		$aug_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
+		try {
+			$response = Urlslab_Augment_Helper::get_instance()->augment( $aug_request );
+			return new WP_REST_Response( (object) array( 'completion' => $response->getResponse() ), 200 );
+		} catch ( Exception $e ) {
+			return new WP_REST_Response(
+				(object) array(
+					'completion' => '',
+					'message' => $e->getMessage(),
+				),
+				500
+			);
+		}
 	}
 
 	public function get_row_object( $params = array() ): Urlslab_Data {
