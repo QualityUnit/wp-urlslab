@@ -52,7 +52,7 @@ function Header( { fetchedModules } ) {
 			<header ref={ headerTop } className="urlslab-header">
 				<div className="flex flex-align-center">
 					<Logo className="urlslab-header-logo" />
-					<Tag className="bg-saturated-orange c-white ml-s">beta</Tag>
+					<Tag className="bg-saturated-orange c-white ml-s">developer beta</Tag>
 					<span className="urlslab-header-slash">/</span>
 					<h1 className="urlslab-header-title ma-right">{ pageTitle }</h1>
 
