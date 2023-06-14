@@ -506,6 +506,29 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$aug_model = $request->get_param( 'model' );
 		$yt_id = $request->get_param( 'yt_id' );
 
+
+		if ( empty( $yt_id ) || empty( $user_prompt ) ) {
+			return new WP_REST_Response(
+				(object) array(
+					'completion' => '',
+					'message' => 'missing required parameters',
+				),
+				400
+			);
+		}
+
+		$yt_data = Urlslab_Yt_Helper::get_instance()->get_yt_data( $yt_id );
+
+		if ( ! $yt_data ) {
+			return new WP_REST_Response(
+				(object) array(
+					'completion' => '',
+					'message' => 'youtube data cannot be fetched',
+				),
+				404
+			);
+		}
+
 		$aug_request = new DomainDataRetrievalAugmentRequest();
 
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
@@ -514,33 +537,48 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		}
 		$aug_request->setAugmentingModelName( $aug_model );
 
-		$attributes = $widget->get_att_values( $row_shortcode, $attributes, array( 'video_captions_text' ) );
-		if ( ! isset( $attributes['video_captions_text'] ) || empty( $attributes['video_captions_text'] ) ) {
-			$row_obj->set_result( 'Video captions not available' );
-			$row_obj->set_status( Urlslab_Generator_Result_Row::STATUS_PENDING );
-			$row_obj->update();
-
-			return true;
+		if ( empty( $yt_data->get_captions() ) ) {
+			return new WP_REST_Response(
+				(object) array(
+					'completion' => '',
+					'message' => 'youtube Caption is Empty',
+				),
+				404
+			);
 		}
-		$command = $widget->get_template_value(
-			'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Generator_Result_Row::DO_NOT_KNOW . "!\n" . $row_shortcode->get_prompt() .
-			"\n\n--VIDEO CAPTIONS:\n{context}\n--VIDEO CAPTIONS END\nANSWER:",
-			$attributes
-		);
+
+		$prompt = new DomainDataRetrievalAugmentPrompt();
+
+		if ( empty( $aug_lang ) ) {
+			$aug_lang = 'The same language as VIDEO CAPTIONS';
+		}
+
+		$command = 'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Generator_Result_Row::DO_NOT_KNOW . "!\n" . $user_prompt .
+			"\nOUTPUT Language should be in: $aug_lang ";
+
+		if ( ! empty( $aug_tone ) ) {
+			$command .= "\nOUTPUT TONE: $aug_tone";
+		}
+
+		$command .= "\n\n--VIDEO CAPTIONS:\n{context}\n--VIDEO CAPTIONS END\nOUTPUT:";
 		$prompt->setPromptTemplate( $command );
-		$prompt->setDocumentTemplate( $widget->get_template_value( '{{video_captions_text}}', $attributes ) );
-
+		$prompt->setDocumentTemplate( $yt_data->get_captions() );
 		$prompt->setMetadataVars( array() );
-		$request->setPrompt( $prompt );
-		$response = Urlslab_Augment_Helper::get_instance()->augment( $request );
 
-
-
-	}
-
-	private function get_youtube_microdata( string $yt_id ) {
-		$response = $this->content_client->getYTMicrodata( $youtube_obj->get_video_id() );
-		return $response->getRawData();
+		$aug_request->setPrompt( $prompt );
+		$aug_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
+		try {
+			$response = Urlslab_Augment_Helper::get_instance()->augment( $aug_request );
+			return new WP_REST_Response( (object) array( 'completion' => $response->getResponse() ), 200 );
+		} catch ( Exception $e ) {
+			return new WP_REST_Response(
+				(object) array(
+					'completion' => '',
+					'message' => $e->getMessage(),
+				),
+				500
+			);
+		}
 	}
 
 	public function get_row_object( $params = array() ): Urlslab_Data {
