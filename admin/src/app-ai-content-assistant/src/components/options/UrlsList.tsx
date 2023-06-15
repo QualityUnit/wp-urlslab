@@ -6,7 +6,6 @@ import { __ } from '@wordpress/i18n';
 import { Button, InputField, Tooltip } from '../../elements/JSXElements';
 
 import { AppContext } from '../../app/context';
-import { isValidUrl } from '../../app/helpers';
 import { InfoTooltipIcon } from '../../elements/InfoTooltipIcon';
 
 import '../../assets/styles/components/_UrlsList.scss';
@@ -44,6 +43,7 @@ const UrlsList: React.FC<{ urls: UrlsList }> = ( { urls } ) => {
 								}
 
 							</div>
+							{ /* we'll use status in later plugin update
 							<div className="urlslab-UrlsList-item-part-icon flex flex-align-center flex-justify-center">
 								{ item.status === 'active' && <div className="active-icon"></div> }
 								{ item.status === 'pending' &&
@@ -53,6 +53,7 @@ const UrlsList: React.FC<{ urls: UrlsList }> = ( { urls } ) => {
 								</div>
 								}
 							</div>
+							*/ }
 						</div>
 					);
 				} ) }
@@ -69,7 +70,7 @@ const AddNewUrl: React.FC = React.memo( () => {
 	const { dispatch } = useContext( AppContext );
 
 	const addUrl = useCallback( ( url: string ) => {
-		if ( url !== '' && isValidUrl( url ) ) {
+		if ( url !== '' ) {
 			dispatch( { type: 'semantic_context', payload: url } );
 			setNewUrl( '' );
 		}

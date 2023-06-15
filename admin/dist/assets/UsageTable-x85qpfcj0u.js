@@ -1,8 +1,8 @@
-import { R as React, L as Loader } from "../main-vqw3w5p1iw.js";
-import { a as useTableUpdater, b as useInfiniteFetch, M as ModuleViewHeaderBottom, T as Table, P as ProgressBar } from "./ModuleViewHeaderBottom-vqw3w5p1iw.js";
-import { T as TooltipSortingFiltering } from "./Tooltip_SortingFiltering-vqw3w5p1iw.js";
-import "./MultiSelectMenu-vqw3w5p1iw.js";
-import "./datepicker-vqw3w5p1iw.js";
+import { R as React, L as Loader } from "../main-x85qpfcj0u.js";
+import { a as useTableUpdater, b as useInfiniteFetch, M as ModuleViewHeaderBottom, T as Table, P as ProgressBar } from "./ModuleViewHeaderBottom-x85qpfcj0u.js";
+import { T as TooltipSortingFiltering } from "./Tooltip_SortingFiltering-x85qpfcj0u.js";
+import "./MultiSelectMenu-x85qpfcj0u.js";
+import "./datepicker-x85qpfcj0u.js";
 /* empty css                              */function UsageTable({ slug }) {
   var _a;
   const paginationId = "id";

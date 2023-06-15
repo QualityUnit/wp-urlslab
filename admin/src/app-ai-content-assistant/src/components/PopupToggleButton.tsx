@@ -5,7 +5,7 @@ import { ReactComponent as StarsIcon } from '../assets/images/icons/icon-stars.s
 import { Button } from '../elements/JSXElements';
 
 const PopupToggleButton: React.FC<{ action: () => void }> = ( { action } ) => {
-	return <Button className="" onClick={ action } active ><StarsIcon />{ __( 'AI Content Assistant' ) }</Button>;
+	return <Button className="app-toggle" onClick={ action } active ><StarsIcon />{ __( 'AI Content Assistant' ) }</Button>;
 };
 
 export default React.memo( PopupToggleButton );

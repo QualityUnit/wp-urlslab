@@ -10,7 +10,7 @@ const MainSettings: React.FC = () => {
 	const { state, dispatch } = useContext( AppContext );
 	return (
 		<div className="urlslab-popup-content-main-settings flex flex-column">
-			{ /* // Will be used soon.
+			{ /* // Will be used soon in further release.
 			<div className="urlslab-popup-content-option-wrapper">
 				<SingleSelectMenu
 					defaultValue={ state.template }
@@ -41,7 +41,7 @@ const MainSettings: React.FC = () => {
 				<GenericDropdown
 					label={ __( 'Semantic context' ) }
 					innerLabel={ __( 'Select or add url' ) }
-					description={ __( 'Explanation of what semnatic means' ) }
+					description={ __( 'Explanation of what semantic means' ) }
 				>
 					<UrlsList urls={ state.semantic_context.urls } />
 				</GenericDropdown>

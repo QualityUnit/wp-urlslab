@@ -1,4 +1,3 @@
-import { fakeUrls } from './fakeData';
 import { UrlsListItem, UrlsList } from './types';
 
 export type ReducerAction = {
@@ -10,24 +9,27 @@ export type AppState = typeof defaults;
 export const defaults = {
 	template: '',
 	prompt: '',
-	generated_text: '',
 	language: 'en',
 	audience: '',
 	tone: '',
 	length: 10,
 	ai_model: 'gpt-3.5-turbo',
 	semantic_context: {
-		urls: fakeUrls as UrlsList,
+		urls: [] as UrlsList,
+	},
+	generatedResults: {
+		text: '',
+		loading: false,
+		opened: false, // this allow us to keep results opened once the complete endpoint return some value, we cannot depend on empty result text as text can be edited/removed by user in textarea
 	},
 };
 
 export const reducer = ( state: AppState, action: ReducerAction ) => {
 	const { type, payload } = action;
-	console.log( action );
 	if ( type === 'semantic_context' ) {
 		const newValue: UrlsListItem = {
 			id: ( state.semantic_context.urls.length + 1 ).toString(),
-			status: 'pending',
+			status: 'active', // we'll use 'pending' status in further release of plugin
 			url: payload as string,
 		};
 

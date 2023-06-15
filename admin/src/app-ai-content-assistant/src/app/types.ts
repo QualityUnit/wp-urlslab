@@ -9,3 +9,8 @@ export interface UrlsListItem {
 }
 
 export type UrlsList = UrlsListItem[]
+
+export type GeneratorAction = {
+  type: 'fix_grammar' | 'make_longer' | 'make_shorter'
+  text: string,
+}

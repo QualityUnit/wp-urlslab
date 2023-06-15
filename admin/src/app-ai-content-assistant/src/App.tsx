@@ -17,10 +17,9 @@ const App: React.FC = () => {
 		setOpenedPopup( ! openedPopup );
 	}, [ openedPopup ] );
 
-	useEditorListener(
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		useMemo( () => <PopupToggleButton action={ togglePopup } />, [] ),
-	);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const Button = useMemo( () => <PopupToggleButton action={ togglePopup } />, [] );
+	useEditorListener( Button );
 
 	return (
 		<AppContext.Provider value={ { state, dispatch, togglePopup } }>
