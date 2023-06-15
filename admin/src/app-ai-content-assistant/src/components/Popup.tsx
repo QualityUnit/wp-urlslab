@@ -10,15 +10,22 @@ import MainSettings from './MainSettings';
 import AdvancedSettings from './AdvancedSettings';
 import { AppContext } from '../app/context';
 import GeneratedResult from './GeneratedResult';
+import { generateResult } from '../app/api';
+
+declare const wpApiSettings: any;
 
 const Popup: React.FC = () => {
 	const [ showAdvancedSettings, setShowAdvancedSettings ] = useState( false );
 
-	const { togglePopup } = useContext( AppContext );
+	const { state, togglePopup } = useContext( AppContext );
 
 	const toggleAdvancedSettings = useCallback( () => {
 		setShowAdvancedSettings( ! showAdvancedSettings );
 	}, [ showAdvancedSettings ] );
+
+	const generate = () => {
+		generateResult( state );
+	};
 
 	return (
 		<>
@@ -38,11 +45,11 @@ const Popup: React.FC = () => {
 					<MainSettings />
 					<div className="flex flex-justify-space-between">
 						<Button className={ `simple underline with-arrow ${ showAdvancedSettings ? 'flip-arrow' : '' }` } onClick={ toggleAdvancedSettings }>{ __( 'Advanced settings' ) }</Button>
-						{ ! showAdvancedSettings && <ButtonGenerate /> }
+						{ ! showAdvancedSettings && <ButtonGenerate action={ generate } /> }
 					</div>
 					{ showAdvancedSettings && <>
 						<AdvancedSettings />
-						<ButtonGenerate />
+						<ButtonGenerate action={ generate } />
 					</>
 					}
 					<GeneratedResult />
@@ -52,8 +59,17 @@ const Popup: React.FC = () => {
 	);
 };
 
-const ButtonGenerate: React.FC = () => {
-	return <Button className="icon-right" onClick={ () => console.log( 'generate' ) } active >{ __( 'Generate text' ) }<StarsIcon width="17px" height="18px" /></Button>;
+const ButtonGenerate: React.FC<{action: () => void}> = ( { action } ) => {
+	const { state } = useContext( AppContext );
+	return <Button
+		className="icon-right"
+		onClick={ action }
+		active={ state.prompt.trim() !== '' }
+		disabled={ state.prompt.trim() === '' }
+	>
+		{ __( 'Generate text' ) }
+		<StarsIcon />
+	</Button>;
 };
 
 export default React.memo( Popup );

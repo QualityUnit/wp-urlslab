@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { SingleSelectMenu, TextArea } from '../elements/JSXElements';
+import { TextArea } from '../elements/JSXElements';
 import { AppContext } from '../app/context';
 import GenericDropdown from '../elements/GenericDropdown';
 import UrlsList from './options/UrlsList';
@@ -10,7 +10,7 @@ const MainSettings: React.FC = () => {
 	const { state, dispatch } = useContext( AppContext );
 	return (
 		<div className="urlslab-popup-content-main-settings flex flex-column">
-
+			{ /* // Will be used soon.
 			<div className="urlslab-popup-content-option-wrapper">
 				<SingleSelectMenu
 					defaultValue={ state.template }
@@ -25,6 +25,7 @@ const MainSettings: React.FC = () => {
 					{ __( 'Template' ) }
 				</SingleSelectMenu>
 			</div>
+			*/ }
 			<div className="urlslab-popup-content-option-wrapper">
 				<TextArea
 					label={ __( 'Prompt' ) }
@@ -32,6 +33,7 @@ const MainSettings: React.FC = () => {
 					placeholder={ __( 'Type here' ) }
 					defaultValue={ state.prompt }
 					onChange={ ( value ) => dispatch( { type: 'prompt', payload: value } ) }
+					liveUpdate
 					allowResize
 				/>
 			</div>
