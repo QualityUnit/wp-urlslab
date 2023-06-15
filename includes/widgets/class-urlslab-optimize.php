@@ -95,7 +95,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_REVISIONS_NEXT_PROCESSING,
-			Urlslab_Data::get_now(),
+			time(),
 			false,
 			__( 'Next Planned Cleanup of Revisions' ),
 			__( 'Select when the next automatic background deleting of all old revisions should happen. It can be used if you need to use it earlier than usual or if you need to postpone the action to a specific time.' ),
@@ -143,7 +143,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_AUTODRAFTS_NEXT_PROCESSING,
-			Urlslab_Data::get_now(),
+			time(),
 			false,
 			__( 'Next Planned Cleanup of Auto-Drafts' ),
 			__( 'Select when the next automatic background deleting of all old auto-drafts should happen. It can be used if you need to use it earlier than usual or if you need to postpone the action to a specific time.' ),
@@ -191,7 +191,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_TRASHED_NEXT_PROCESSING,
-			Urlslab_Data::get_now(),
+			time(),
 			false,
 			__( 'Next Planned Cleanup of Trashed Posts' ),
 			__( 'Select when the next automatic background deleting of all old trashed posts should happen. It can be used if you need to use it earlier than usual or if you need to postpone the action to a specific time.' ),
@@ -226,7 +226,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_TRANSIENT_EXPIRED_NEXT_PROCESSING,
-			Urlslab_Data::get_now(),
+			time(),
 			false,
 			__( 'Next Planned Cleanup of Expired Transient Options' ),
 			__( 'Select when the next automatic background deleting of all expired transient options should happen. It can be used if you need to use it earlier than usual or if you need to postpone the action to a specific time.' ),
@@ -259,7 +259,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_ALL_TRANSIENT_NEXT_PROCESSING,
-			Urlslab_Data::get_now(),
+			time(),
 			false,
 			__( 'Next Planned Cleanup of All Transient Options' ),
 			__( 'Select when the next automatic background deleting of all transient options should happen. It can be used if you need to use it earlier than usual or if you need to postpone the action to a specific time.' ),
@@ -283,7 +283,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_ORPHANED_RELATIONSHIP_DATA_NEXT_PROCESSING,
-			Urlslab_Data::get_now(),
+			time(),
 			false,
 			__( 'Next Planned Cleanup of Orphaned Relationship Data' ),
 			__( 'Select when the next automatic background deleting of all orphaned relationship data should happen. It can be used if you need to use it earlier than usual or if you need to postpone the action to a specific time.' ),
@@ -318,7 +318,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_ORPHANED_COMMENT_META_NEXT_PROCESSING,
-			Urlslab_Data::get_now(),
+			time(),
 			false,
 			__( 'Next Planned Cleanup of Orphaned Comment Meta Data' ),
 			__( 'Select when the next automatic background deleting of all orphaned comment meta data should happen. It can be used if you need to use it earlier than usual or if you need to postpone the action to a specific time.' ),

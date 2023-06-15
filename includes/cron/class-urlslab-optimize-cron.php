@@ -54,7 +54,7 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 
 		if (
 			$this->widget->get_option( Urlslab_Optimize::SETTING_NAME_DEL_REVISIONS )
-			&& strtotime( $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_REVISIONS_NEXT_PROCESSING ) ) < time()
+			&& $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_REVISIONS_NEXT_PROCESSING ) < time()
 		) {
 			$ret = $this->widget->optimize_revisions();
 			if ( Urlslab_Optimize::DELETE_LIMIT === $ret ) {
@@ -67,7 +67,7 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 
 		if (
 			$this->widget->get_option( Urlslab_Optimize::SETTING_NAME_DEL_AUTODRAFTS )
-			&& strtotime( $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_AUTODRAFTS_NEXT_PROCESSING ) ) < time()
+			&& $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_AUTODRAFTS_NEXT_PROCESSING ) < time()
 		) {
 			$ret = $this->widget->optimize_auto_drafts();
 			if ( Urlslab_Optimize::DELETE_LIMIT === $ret ) {
@@ -80,7 +80,7 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 
 		if (
 			$this->widget->get_option( Urlslab_Optimize::SETTING_NAME_DEL_TRASHED )
-			&& strtotime( $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_TRASHED_NEXT_PROCESSING ) ) < time()
+			&& $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_TRASHED_NEXT_PROCESSING ) < time()
 		) {
 			$ret = $this->widget->optimize_trashed();
 			if ( Urlslab_Optimize::DELETE_LIMIT === $ret ) {
@@ -93,7 +93,7 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 
 		if (
 			$this->widget->get_option( Urlslab_Optimize::SETTING_NAME_DEL_ALL_TRANSIENT )
-			&& strtotime( $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_ALL_TRANSIENT_NEXT_PROCESSING ) ) < time()
+			&& $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_ALL_TRANSIENT_NEXT_PROCESSING ) < time()
 		) {
 			$ret = $this->widget->optimize_all_transient();
 			if ( Urlslab_Optimize::DELETE_LIMIT === $ret ) {
@@ -107,7 +107,7 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 
 		if (
 			$this->widget->get_option( Urlslab_Optimize::SETTING_NAME_DEL_TRANSIENT_EXPIRED )
-			&& strtotime( $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_TRANSIENT_EXPIRED_NEXT_PROCESSING ) ) < time()
+			&& $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_TRANSIENT_EXPIRED_NEXT_PROCESSING ) < time()
 		) {
 			$ret = $this->widget->optimize_expired_transient();
 			if ( Urlslab_Optimize::DELETE_LIMIT === $ret ) {
@@ -120,7 +120,7 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 
 		if (
 			$this->widget->get_option( Urlslab_Optimize::SETTING_NAME_DEL_ORPHANED_RELATIONSHIP_DATA )
-			&& strtotime( $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_ORPHANED_RELATIONSHIP_DATA_NEXT_PROCESSING ) ) < time()
+			&& $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_ORPHANED_RELATIONSHIP_DATA_NEXT_PROCESSING ) < time()
 		) {
 			$ret = $this->widget->optimize_orphaned_rel_data();
 			if ( Urlslab_Optimize::DELETE_LIMIT === $ret ) {
@@ -133,7 +133,7 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 
 		if (
 			$this->widget->get_option( Urlslab_Optimize::SETTING_NAME_DEL_ORPHANED_COMMENT_META )
-			&& strtotime( $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_ORPHANED_COMMENT_META_NEXT_PROCESSING ) ) < time()
+			&& $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_ORPHANED_COMMENT_META_NEXT_PROCESSING ) < time()
 		) {
 			$ret = $this->widget->optimize_orphaned_comment_metadata();
 			if ( Urlslab_Optimize::DELETE_LIMIT === $ret ) {
@@ -148,7 +148,7 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 	}
 
 	private function extend_timestamp_option( $option_name ) {
-		$this->widget->update_option( $option_name, Urlslab_Data::get_now( time() + $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_OPTIMIZATION_FREQUENCY ) ) );
+		$this->widget->update_option( $option_name, time() + $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_OPTIMIZATION_FREQUENCY ) );
 	}
 
 
