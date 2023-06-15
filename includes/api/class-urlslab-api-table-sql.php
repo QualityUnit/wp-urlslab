@@ -79,13 +79,13 @@ class Urlslab_Api_Table_Sql {
 		global $wpdb;
 		$this->init_table_limit();
 
-		return $wpdb->get_results( $this->get_query(), OBJECT ); // phpcs:ignore
+        return $wpdb->get_results( $this->get_query(), OBJECT ); // phpcs:ignore
 	}
 
 	public function get_count(): int {
 		global $wpdb;
 
-		$results = $wpdb->get_results( $this->get_count_select()->get_query(), OBJECT ); // phpcs:ignore
+        $results = $wpdb->get_results( $this->get_count_select()->get_query(), OBJECT ); // phpcs:ignore
 
 		if ( empty( $results ) ) {
 			return 0;
@@ -150,13 +150,13 @@ class Urlslab_Api_Table_Sql {
 		global $wpdb;
 
 		return $wpdb->prepare(
-			'SELECT ' . implode( ',', $this->select_sql ) . // phpcs:ignore
-			' FROM ' . implode( ' ', $this->from_sql ) . // phpcs:ignore
-			( ! empty( $this->where_sql ) ? ' WHERE ' . implode( ' ', $this->where_sql ) : '' ) . // phpcs:ignore
-			( ! empty( $this->group_by_sql ) ? ' GROUP BY ' . implode( ',', $this->group_by_sql ) : '' ) . // phpcs:ignore
-			( ! empty( $this->having_sql ) ? ' HAVING ' . implode( ' ', $this->having_sql ) : '' ) . // phpcs:ignore
-			( ! empty( $this->order_sql ) ? ' ORDER BY ' . implode( ',', $this->order_sql ) : '' ) . // phpcs:ignore
-			( strlen( $this->limit_sql ) ? ' LIMIT ' . $this->limit_sql : '' ), // phpcs:ignore
+            'SELECT ' . implode( ',', $this->select_sql ) . // phpcs:ignore
+            ' FROM ' . implode( ' ', $this->from_sql ) . // phpcs:ignore
+            ( ! empty( $this->where_sql ) ? ' WHERE ' . implode( ' ', $this->where_sql ) : '' ) . // phpcs:ignore
+            ( ! empty( $this->group_by_sql ) ? ' GROUP BY ' . implode( ',', $this->group_by_sql ) : '' ) . // phpcs:ignore
+            ( ! empty( $this->having_sql ) ? ' HAVING ' . implode( ' ', $this->having_sql ) : '' ) . // phpcs:ignore
+            ( ! empty( $this->order_sql ) ? ' ORDER BY ' . implode( ',', $this->order_sql ) : '' ) . // phpcs:ignore
+            ( strlen( $this->limit_sql ) ? ' LIMIT ' . $this->limit_sql : '' ), // phpcs:ignore
 			$this->query_data
 		);
 	}
