@@ -53,59 +53,11 @@ class Urlslab_Summaries_Cron extends Urlslab_Cron {
 			return false;
 		}
 
-		$data   = array();
-		$data[] = Urlslab_Data::get_now();
-		$data[] = Urlslab_Url_Row::SUM_STATUS_PENDING;
-
-		$url_names = array();
-
-		$url_objects = array();
-
-		foreach ( $url_rows as $row ) {
-			$row_obj = new Urlslab_Url_Row( $row );
-			if ( $row_obj->get_url()->is_url_valid() ) {
-				$url_objects[] = $row_obj;
-				$data[]        = $row['url_id'];
-				$url_names[]   = $row['url_name'];
-			} else {
-				$row_obj->set_sum_status( Urlslab_Url_Row::SCR_STATUS_ERROR );
-				$row_obj->update();
-			}
-		}
-
-		$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' SET update_sum_date=%s, sum_status=%s WHERE url_id IN (' . implode( ',', array_fill( 0, count( $url_rows ), '%d' ) ) . ')', $data ) ); // phpcs:ignore
-
-		$some_urls_updated = false;
-
 		try {
-			$request = new DomainDataRetrievalDataRequest();
-			$request->setUrls( $url_names );
-			$request->setRenewFrequency( DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME );
-			$urlslab_summaries = $this->client->getSummary( $request );
-			foreach ( $urlslab_summaries as $id => $summary ) {
-				switch ( $summary->getSummaryStatus() ) {
-					case DomainDataRetrievalSummaryResponse::SUMMARY_STATUS_REDIRECTED:
-					case DomainDataRetrievalSummaryResponse::SUMMARY_STATUS_BLOCKED:
-						$url_objects[ $id ]->set_sum_status( Urlslab_Url_Row::SUM_STATUS_ERROR );
-						$url_objects[ $id ]->update();
-
-						break;
-
-					case DomainDataRetrievalSummaryResponse::SUMMARY_STATUS_AVAILABLE:
-						$url_objects[ $id ]->set_urlslab_domain_id( $summary->getDomainId() );
-						$url_objects[ $id ]->set_urlslab_url_id( $summary->getUrlId() );
-						$url_objects[ $id ]->set_urlslab_sum_timestamp( time() );       // TODO: api has no info when was summary generated?
-						$url_objects[ $id ]->set_url_summary( $summary->getSummary() ); // TODO: api has no info when was summary generated?
-						$url_objects[ $id ]->set_sum_status( Urlslab_Url_Row::SUM_STATUS_ACTIVE );
-						$url_objects[ $id ]->update();
-						$some_urls_updated = true;
-
-						break;
-
-					case DomainDataRetrievalSummaryResponse::SUMMARY_STATUS_PENDING:
-					case DomainDataRetrievalSummaryResponse::SUMMARY_STATUS_UPDATING:
-					default:
-						// we will leave object in the status pending
+			$rsp = Urlslab_Summaries_Helper::get_instance()->fetch_summaries( $url_rows );
+			foreach ( $rsp as $summary ) {
+				if ( $summary->getSummaryStatus() == DomainDataRetrievalSummaryResponse::SUMMARY_STATUS_AVAILABLE ) {
+					return true;
 				}
 			}
 		} catch ( ApiException $e ) {
@@ -116,7 +68,7 @@ class Urlslab_Summaries_Cron extends Urlslab_Cron {
 			}
 		}
 
-		return $some_urls_updated;    // 100 URLs per execution is enought if there was no url updated
+		return false;    // 100 URLs per execution is enought if there was no url updated
 	}
 
 	private function init_client(): bool {
