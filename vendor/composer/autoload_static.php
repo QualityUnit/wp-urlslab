@@ -253,8 +253,8 @@ class ComposerStaticInit3a7fa4d5bf40f446244e27d0dd939ed9
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -556,6 +556,8 @@ class ComposerStaticInit3a7fa4d5bf40f446244e27d0dd939ed9
         'Aws\\CodeGuruProfiler\\Exception\\CodeGuruProfilerException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/CodeGuruProfiler/Exception/CodeGuruProfilerException.php',
         'Aws\\CodeGuruReviewer\\CodeGuruReviewerClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/CodeGuruReviewer/CodeGuruReviewerClient.php',
         'Aws\\CodeGuruReviewer\\Exception\\CodeGuruReviewerException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/CodeGuruReviewer/Exception/CodeGuruReviewerException.php',
+        'Aws\\CodeGuruSecurity\\CodeGuruSecurityClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/CodeGuruSecurity/CodeGuruSecurityClient.php',
+        'Aws\\CodeGuruSecurity\\Exception\\CodeGuruSecurityException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/CodeGuruSecurity/Exception/CodeGuruSecurityException.php',
         'Aws\\CodePipeline\\CodePipelineClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/CodePipeline/CodePipelineClient.php',
         'Aws\\CodePipeline\\Exception\\CodePipelineException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/CodePipeline/Exception/CodePipelineException.php',
         'Aws\\CodeStarNotifications\\CodeStarNotificationsClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/CodeStarNotifications/CodeStarNotificationsClient.php',
@@ -1291,6 +1293,8 @@ class ComposerStaticInit3a7fa4d5bf40f446244e27d0dd939ed9
         'Aws\\Translate\\TranslateClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/Translate/TranslateClient.php',
         'Aws\\VPCLattice\\Exception\\VPCLatticeException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/VPCLattice/Exception/VPCLatticeException.php',
         'Aws\\VPCLattice\\VPCLatticeClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/VPCLattice/VPCLatticeClient.php',
+        'Aws\\VerifiedPermissions\\Exception\\VerifiedPermissionsException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/VerifiedPermissions/Exception/VerifiedPermissionsException.php',
+        'Aws\\VerifiedPermissions\\VerifiedPermissionsClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/VerifiedPermissions/VerifiedPermissionsClient.php',
         'Aws\\VoiceID\\Exception\\VoiceIDException' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/VoiceID/Exception/VoiceIDException.php',
         'Aws\\VoiceID\\VoiceIDClient' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/VoiceID/VoiceIDClient.php',
         'Aws\\WAFV2\\Exception\\WAFV2Exception' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/WAFV2/Exception/WAFV2Exception.php',
