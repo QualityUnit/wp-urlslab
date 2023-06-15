@@ -64,12 +64,14 @@ const GeneratedResult: React.FC = () => {
 				</Button>
 			</div>
 			<div className="urlslab-GeneratedResult-submit-section flex flex-justify-end">
+				{ /* // Will be used soon.
 				<Button
 					className=""
-					onClick={ () => console.log( 'generate' ) }
+					onClick={ () => {} }
 				>
 					{ __( 'Save settings as new template' ) }
 				</Button>
+				*/ }
 				<Button
 					className=""
 					onClick={ addIntoEditor }
