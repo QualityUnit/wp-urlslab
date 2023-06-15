@@ -102,6 +102,9 @@ class Urlslab_Api_Settings extends Urlslab_Api_Base {
 							$option['value'] = time();
 						}                   
 					}
+					if ( Urlslab_Widget::OPTION_TYPE_CHECKBOX == $option['type'] ) {
+						$option['value'] = (bool) $widget->get_option( $option['id'] );
+					}
 					$section['options'][ $option['id'] ] = (object) $option;
 				}
 			}
