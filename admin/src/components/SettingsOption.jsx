@@ -20,7 +20,11 @@ import { setNotification } from '../hooks/useNotifications';
 export default function SettingsOption( { settingId, option } ) {
 	const queryClient = useQueryClient();
 	const { id, type, title, description, placeholder, value, possible_values } = option;
-	const [ date, setDate ] = useState( type !== 'datetime' || new Date( value ) );
+
+	// just for backwards compatibility
+	const dateValue = typeof value === 'string' ? new Date( value ) : new Date( value * 1000 );
+
+	const [ date, setDate ] = useState( type !== 'datetime' || dateValue );
 	const [ status, setStatus ] = useState( );
 
 	const handleApiCall = async () => {
@@ -56,19 +60,13 @@ export default function SettingsOption( { settingId, option } ) {
 		},
 	} );
 
-	const processDate = ( ) => {
-		const thisDate = new Date( date );
-		const currentDate = new Date( thisDate.getTime() - ( thisDate.getTimezoneOffset() * 60000 ) );
-		return currentDate;
-	};
-
 	const handleDate = useMutation( {
 		mutationFn: async ( ) => {
 			setStatus( 'active' );
 			setNotification( id, { message: `Changing date for ${ title }…`, status: 'info' } );
 
 			const response = await setSettings( `${ settingId }/${ id }`, {
-				value: processDate().toISOString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ),
+				value: date.getTime() / 1000,
 			} );
 			return { response };
 		},

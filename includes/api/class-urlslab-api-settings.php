@@ -94,6 +94,14 @@ class Urlslab_Api_Settings extends Urlslab_Api_Base {
 					if ( Urlslab_Widget::OPTION_TYPE_PASSWORD == $option['type'] && strlen( $option['value'] ) > 0 ) {
 						$option['value'] = Urlslab_Widget::PASSWORD_PLACEHOLDER;
 					}
+					if ( Urlslab_Widget::OPTION_TYPE_DATETIME == $option['type'] ) {
+						$fetched_val = intval( $widget->get_option( $option['id'] ) );
+						if ( $fetched_val ) {
+							$option['value'] = $fetched_val;
+						} else {
+							$option['value'] = time();
+						}                   
+					}
 					$section['options'][ $option['id'] ] = (object) $option;
 				}
 			}
