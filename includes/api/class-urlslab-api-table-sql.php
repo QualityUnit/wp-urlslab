@@ -24,6 +24,10 @@ class Urlslab_Api_Table_Sql {
 		}
 	}
 
+	public function add_filters_raw( array $columns, array $filters ) {
+		$this->add_filter_array( 'AND', $columns, $filters );
+	}
+
 	public function add_having_filters( array $columns, WP_REST_Request $request ) {
 		if ( isset( $request->get_json_params()['filters'] ) && is_array( $request->get_json_params()['filters'] ) ) {
 			$this->add_having_filter_array( 'AND', $columns, $request->get_json_params()['filters'] );
@@ -92,6 +96,11 @@ class Urlslab_Api_Table_Sql {
 
 	public function add_group_by( string $column, string $table_prefix = '' ) {
 		$this->group_by_sql[] = ( $table_prefix ? esc_sql( $table_prefix ) . '.' : '' ) . esc_sql( $column );
+	}
+
+	public function set_limit( int $limit ) {
+		$this->limit_sql    = '%d';
+		$this->query_data[] = $limit;
 	}
 
 	public function get_request(): WP_REST_Request {
