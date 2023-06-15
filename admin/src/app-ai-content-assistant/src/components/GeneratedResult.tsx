@@ -1,70 +1,97 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { Button, SingleSelectMenu, TextArea } from '../elements/JSXElements';
-import { AppContext } from '../app/context';
-import GenericDropdown from '../elements/GenericDropdown';
-import UrlsList from './options/UrlsList';
+import { Button, TextArea } from '../elements/JSXElements';
 import { ReactComponent as StarsIcon } from '../assets/images/icons/icon-stars.svg';
 import { ReactComponent as ArrowsOuterIcon } from '../assets/images/icons/icon-arrows-direction-outer.svg';
 import { ReactComponent as ArrowsInsideIcon } from '../assets/images/icons/icon-arrows-direction-inside.svg';
-declare const wp: any; // used any type until wordpress provide better typing
-//import { registerBlockType, createBlock } from '@wordpress/blocks';
+
 import '../assets/styles/components/_GeneratedResult.scss';
+import { AppContext } from '../app/context';
+import { runResultsGenerator } from '../app/api';
+import { ScriptData } from '../app/types';
 
-const fakeText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+// declare globals
+declare const scriptData: ScriptData;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare const wp: any; // used any type until wordpress provide better typing
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare const elementor: any; // used any type until wordpress provide better typing
 
-const GeneratedResult: React.FC = () => {
-	const [ text, setText ] = useState( fakeText );
+const GeneratedResult: React.FC<{result: { text: string, loading: boolean}}> = ( { result } ) => {
+	const { state, dispatch, togglePopup } = useContext( AppContext );
+
+	const setText = ( text: string ) => {
+		dispatch( { type: 'generatedResults', payload: { ...state.generatedResults, text } } );
+	};
+
 	const addIntoEditor = () => {
-		/*const block = wp.blocks.createBlock( 'core/paragraph', {
-			content: text,
-		} );*/
-		//const currentBlocks = wp.data.select( 'core/block-editor' ).getBlocks();
-		//wp.data.dispatch( 'core/editor' ).insertBlock( block, 0 );
-
-		const lines = text.split( '\n' );
-		const blocks = lines.map( ( line ) => {
-			return wp.blocks.createBlock( 'core/paragraph', {
-				content: line,
-			} );
-		} );
-		wp.data.dispatch( 'core/block-editor' ).insertBlocks( blocks, 0 );
+		if ( scriptData.editor_type === 'gutenberg' ) {
+			const paragraphs = result.text.split( '\n' );
+			const blocks = paragraphs.reduce( ( reduced, p ) => {
+				if ( p !== '' ) {
+					reduced.push( wp.blocks.createBlock( 'core/paragraph', {
+						content: p,
+					} ) );
+				}
+				return reduced;
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			}, [] as any[] );
+			wp.data.dispatch( 'core/block-editor' ).insertBlocks( blocks, 0 );
+			wp.data.dispatch( 'core/block-editor' ).insertBlock( wp.blocks.createBlock( 'core/paragraph', {
+				content: result.text.replace( /\n/g, '<br>' ),
+			} ), 0 );
+		} else if ( scriptData.editor_type === 'elementor' ) {
+			const view = elementor?.getPanelView().getCurrentPageView();
+			if ( view ) {
+				const editorType = view.model.get( 'settings' ).controls.editor.type;
+				const text = editorType === 'wysiwyg' ? result.text.replace( /\n/g, '<br>' ) : result.text;
+				view.model.setSetting( 'editor', text );
+				view.render();
+			}
+		}
+		togglePopup();
 	};
 
 	return (
 		<div className="urlslab-GeneratedResult flex flex-column">
 			<TextArea
+				key={ result.text } // hotfix to rerender component after next generating :/
 				label={ __( 'Generated text' ) }
 				rows={ 11 }
-				defaultValue={ text }
+				defaultValue={ result.text }
+				disabled={ result.loading }
 				onChange={ ( value ) => setText( value ) }
+				liveUpdate
 			/>
 			<div className="urlslab-GeneratedResult-action-buttons">
 				<Button
 					className=""
-					onClick={ () => console.log( 'generate' ) }
+					onClick={ () => runResultsGenerator( { state, dispatch }, { text: result.text, type: 'fix_grammar' } ) }
+					disabled={ result.loading }
 				>
 					<StarsIcon />
 					{ __( 'Fix spelling & grammar' ) }
 				</Button>
 				<Button
 					className=""
-					onClick={ () => console.log( 'generate' ) }
+					onClick={ () => runResultsGenerator( { state, dispatch }, { text: result.text, type: 'make_longer' } ) }
+					disabled={ result.loading }
 				>
 					<ArrowsOuterIcon />
 					{ __( 'Make it longer' ) }
 				</Button>
 				<Button
 					className=""
-					onClick={ () => console.log( 'generate' ) }
+					onClick={ () => runResultsGenerator( { state, dispatch }, { text: result.text, type: 'make_shorter' } ) }
+					disabled={ result.loading }
 				>
 					<ArrowsInsideIcon />
 					{ __( 'Make it shorter' ) }
 				</Button>
 			</div>
 			<div className="urlslab-GeneratedResult-submit-section flex flex-justify-end">
-				{ /* // Will be used soon.
+				{ /* // Will be used soon in further release.
 				<Button
 					className=""
 					onClick={ () => {} }
@@ -75,7 +102,8 @@ const GeneratedResult: React.FC = () => {
 				<Button
 					className=""
 					onClick={ addIntoEditor }
-					active
+					active={ state.generatedResults.text !== '' }
+					disabled={ state.generatedResults.text === '' }
 				>
 					{ __( 'Use text' ) }
 				</Button>

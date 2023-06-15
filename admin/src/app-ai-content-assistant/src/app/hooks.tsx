@@ -26,10 +26,9 @@ export const useOutsideClick = <T extends HTMLElement>( ref: React.RefObject<T>,
 
 export const useEditorListener = ( Button: JSX.Element ) => {
 	useEffect( () => {
-		console.count( 'useEditorListener' );
 		if ( scriptData.editor_type === 'gutenberg' ) {
 		// subscribe to editor, node for button may
-			wp.data.subscribe( () => {
+			wp?.data.subscribe( () => {
 				const buttonWrapperNode = document.querySelector( `#${ appId }-button-wrapper` );
 				if ( buttonWrapperNode ) {
 					return;
@@ -40,9 +39,9 @@ export const useEditorListener = ( Button: JSX.Element ) => {
 				}
 			} );
 		} else if ( scriptData.editor_type === 'elementor' ) {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			elementor.channels.editor.on( 'section:activated', ( activeSection: string, data: any ) => {
-			// double check if we are in correct widget
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			elementor?.channels.editor.on( 'section:activated', ( activeSection: string, data: any ) => {
+				// double check if we are in correct widget
 				if ( activeSection === 'section_editor' && data.model.attributes.widgetType === 'text-editor' ) {
 					const buttonWrapperNode = document.querySelector( `#${ appId }-button-wrapper` );
 					if ( buttonWrapperNode ) {
@@ -64,3 +63,4 @@ const createButton = ( Button: JSX.Element, referenceNode:HTMLDivElement, before
 	referenceNode.parentNode?.insertBefore( node, before ? referenceNode : referenceNode.nextSibling );
 	ReactDOM.render( Button, node );
 };
+
