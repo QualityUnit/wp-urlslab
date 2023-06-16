@@ -27,7 +27,7 @@
             }
 
             &.status-active {
-                .active-icon {
+                .status-icon {
                     @include square(20px);
                     position: relative;
 
@@ -45,8 +45,7 @@
             }
 
             &.status-pending {
-
-                .pending-icon {
+                .status-icon {
                     @include square(20px);
                     position: relative;
                     display: flex;
@@ -59,8 +58,28 @@
                     }
 
                 }
+            }
 
-                /* increase left margin by size of missing checkbox */
+            &.status-error {
+                .status-icon {
+                    @include square(20px);
+                    position: relative;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    svg {
+                        fill: $dark-saturated-red;
+                        height: 0.7em;
+                    }
+
+                }
+
+            }
+
+            /* increase left margin by size of missing checkbox */
+            &.status-pending,
+            &.status-error {
                 .urlslab-UrlsList-label {
                     margin-left: calc(10px + 16px);
                     opacity: 0.5;

@@ -1,6 +1,6 @@
-import { AppState, ReducerAction } from './stateReducer';
 import { __ } from '@wordpress/i18n';
-import { GeneratorAction } from './types';
+import { AppState, ReducerAction, GeneratorAction, UrlStatus } from './types';
+import { applyGeneratorAction, getUrlStatus } from './helpers';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const wpApiSettings: any;
@@ -11,7 +11,6 @@ export const runResultsGenerator = async (
 ) => {
 	const { state, dispatch } = data;
 	dispatch( { type: 'generatedResults', payload: { ...state.generatedResults, loading: true } } );
-
 	const result = await fetchResult( state, action );
 	if ( result && result.completion ) {
 		dispatch( { type: 'generatedResults', payload: { text: result.completion, loading: false, opened: true } } );
@@ -35,15 +34,13 @@ const fetchResult = async (
 		model: data.ai_model,
 		lang: data.language,
 		semantic_context: '', // example: 'pricing',
-		url_filter: data.semantic_context.urls ? data.semantic_context.urls.map( ( item ) => {
-			return item.url;
-		} ) : [],
+		url_filter: data.url_filter
+			? data.url_filter
+				.filter( ( item ) => item.status === 'active' )
+				.map( ( item ) => item.url )
+			: [],
 		//domain_filters: [], // example [ 'https://liveagent.com' ],
 	};
-
-	if ( ! wpApiSettings ) {
-		return;
-	}
 
 	try {
 		return fetch( wpApiSettings.root + 'urlslab/v1/generator/complete', {
@@ -74,15 +71,36 @@ const fetchResult = async (
 	}
 };
 
-const applyGeneratorAction = ( action: GeneratorAction ) => {
-	switch ( action.type ) {
-	case 'fix_grammar':
-		return `Fix the spelling and grammar of the following TEXT. TEXT: ${ action.text }`;
-	case 'make_longer':
-		return `Make longer following TEXT. TEXT: ${ action.text }`;
-	case 'make_shorter':
-		return `Make shorter following TEXT. TEXT: ${ action.text }`;
-	default:
-		return action.text;
+export const checkAddedUrl = async (
+	url: string,
+	withScheduling: boolean,
+): Promise<UrlStatus | null> => {
+	try {
+		return fetch( wpApiSettings.root + 'urlslab/v1/url/status/summary', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				accept: 'application/json',
+				'X-WP-Nonce': wpApiSettings.nonce,
+			},
+			credentials: 'include',
+			body: JSON.stringify( { url, with_scheduling: withScheduling } ),
+		} ).then( ( response ) => {
+			return response.json();
+		} ).then( ( result ) => {
+			const status = getUrlStatus( result );
+			if ( status === 'pending' ) {
+				return new Promise( ( resolve ) => {
+					setTimeout( () => resolve( checkAddedUrl( url, false ) ), 5000 );
+				} );
+			}
+			return status;
+		} ).catch( ( error ) => {
+			console.error( 'Error:', error );
+			return null;
+		} ) as Promise<UrlStatus | null>;
+	} catch ( error ) {
+		console.error( 'Error:', error );
+		return null;
 	}
 };

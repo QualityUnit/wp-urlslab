@@ -1,18 +1,20 @@
 import React, { ReactComponentElement, useCallback, useContext, useRef, useState } from 'react';
-import { UrlsList, UrlsListItem } from '../../app/types';
+import { UrlStatus, UrlsListItem } from '../../app/types';
 import { ReactComponent as HourglassIcon } from '../../assets/images/icons/icon-hourglass.svg';
+import { ReactComponent as CloseIcon } from '../../assets/images/icons/icon-close.svg';
 import { __ } from '@wordpress/i18n';
 
 import { Button, InputField, Tooltip } from '../../elements/JSXElements';
 
 import { AppContext } from '../../app/context';
 import { InfoTooltipIcon } from '../../elements/InfoTooltipIcon';
+import { checkAddedUrl } from '../../app/api';
 
 import '../../assets/styles/components/_UrlsList.scss';
 
 type UpdateUrlsAction = 'add' | 'remove';
 
-const UrlsList: React.FC<{ urls: UrlsList }> = ( { urls } ) => {
+const UrlsList: React.FC<{ urls: UrlsListItem[] }> = ( { urls } ) => {
 	const [ selectedUrls, setSelectedUrls ] = useState<string[]>( [] );
 
 	const updateSelectedUrls = useCallback( ( action: UpdateUrlsAction, id: string ) => {
@@ -37,23 +39,27 @@ const UrlsList: React.FC<{ urls: UrlsList }> = ( { urls } ) => {
 					return (
 						<div className={ `urlslab-UrlsList-items-item flex flex-justify-space-between flex-align-center status-${ item.status }` } key={ `urls-list-item-${ item.id }` }>
 							<div className="urlslab-UrlsList-item-part-checkbox">
-								{ item.status === 'pending'
-									? <div className="urlslab-UrlsList-label">{ item.url }</div>
-									: <UrlCheckbox item={ item } checked={ checked } updateSelectedUrls={ updateSelectedUrls } />
+								{ item.status === 'active'
+									? <UrlCheckbox item={ item } checked={ checked } updateSelectedUrls={ updateSelectedUrls } />
+									: <div className="urlslab-UrlsList-label">{ item.url }</div>
 								}
 
 							</div>
-							{ /* we'll use status in later plugin update
 							<div className="urlslab-UrlsList-item-part-icon flex flex-align-center flex-justify-center">
-								{ item.status === 'active' && <div className="active-icon"></div> }
+								{ item.status === 'active' && <div className="status-icon"></div> }
 								{ item.status === 'pending' &&
-								<div className="pending-icon">
+								<div className="status-icon">
 									<HourglassIcon />
 									<Tooltip className="showOnHover align-left-0" width="8.5em">{ __( 'URL is waiting to be loaded' ) }</Tooltip>
 								</div>
 								}
+								{ item.status === 'error' &&
+								<div className="status-icon">
+									<CloseIcon />
+									<Tooltip className="showOnHover align-left-0" width="8.5em">{ __( 'URL cannot be fetched' ) }</Tooltip>
+								</div>
+								}
 							</div>
-							*/ }
 						</div>
 					);
 				} ) }
@@ -69,12 +75,16 @@ const AddNewUrl: React.FC = React.memo( () => {
 	const [ newUrl, setNewUrl ] = useState<string>( '' );
 	const { dispatch } = useContext( AppContext );
 
-	const addUrl = useCallback( ( url: string ) => {
+	const addUrl = async ( url: string ) => {
 		if ( url !== '' ) {
-			dispatch( { type: 'semantic_context', payload: url } );
+			dispatch( { type: 'url_filter', payload: { url, status: 'pending' } } );
 			setNewUrl( '' );
+			const currentStatus: UrlStatus | null = await checkAddedUrl( url, true );
+			if ( currentStatus !== null ) {
+				dispatch( { type: 'url_filter', payload: { url, status: currentStatus } } );
+			}
 		}
-	}, [ dispatch ] );
+	};
 
 	return <div className="urlslab-UrlsList-add" >
 		<div className="urlslab-tooltipLabel flex flex-align-center">
