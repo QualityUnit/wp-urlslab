@@ -8,7 +8,7 @@ export type UrlStatus = 'active' | 'pending' | 'error'
 export type AppState = typeof defaults;
 export type ReducerAction = {
   type : keyof typeof defaults,
-  payload: string | number | GeneratedResult | Omit<UrlsListItem, 'id'>
+  payload: string | number | GeneratedResult | Omit<UrlsListItem, 'id'> | string[]
 }
 
 export interface UrlsListItem {

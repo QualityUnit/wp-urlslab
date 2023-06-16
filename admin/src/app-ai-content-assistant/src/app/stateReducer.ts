@@ -7,8 +7,10 @@ export const defaults = {
 	audience: '',
 	tone: '',
 	length: 10,
+	semantic_context: '',
 	ai_model: 'gpt-3.5-turbo',
 	url_filter: [] as UrlsListItem[],
+	selected_urls: [] as string[],
 	generatedResults: {
 		text: '',
 		loading: false,

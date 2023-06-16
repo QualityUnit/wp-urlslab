@@ -19,7 +19,7 @@ const AdvancedSettings: React.FC = () => {
 				<SingleSelectMenu
 					defaultValue={ state.language }
 					onChange={ ( value ) => dispatch( { type: 'language', payload: value } ) }
-					name="semantic_context"
+					name="language"
 					items={ tempLanguages }
 					autoClose
 					description={ __( 'Explanation' ) }
