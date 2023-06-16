@@ -26,7 +26,7 @@ const AdvancedSettings: React.FC = () => {
 					tooltipLabel={ { label: __( 'Language' ), tooltip: __( 'tooltip text' ), noWrapText: true } }
 				></SingleSelectMenu>
 			</div>
-
+			{ /* will be used in next release
 			<div className="urlslab-half-columns-col">
 				<SingleSelectMenu
 					defaultValue={ state.audience }
@@ -56,7 +56,7 @@ const AdvancedSettings: React.FC = () => {
 					tooltipLabel={ { label: __( 'Tone' ), tooltip: __( 'tooltip text' ), noWrapText: true } }
 				></SingleSelectMenu>
 			</div>
-
+			*/ }
 			<div className="urlslab-half-columns-col">
 				<SingleSelectMenu
 					defaultValue={ state.ai_model }
