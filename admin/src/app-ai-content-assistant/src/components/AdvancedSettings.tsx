@@ -22,9 +22,9 @@ const AdvancedSettings: React.FC = () => {
 					name="language"
 					items={ tempLanguages }
 					autoClose
-					description={ __( 'Explanation' ) }
-					tooltipLabel={ { label: __( 'Language' ), tooltip: __( 'tooltip text' ), noWrapText: true } }
-				></SingleSelectMenu>
+					description={ __( 'Select language of AI model response.' ) }
+					//tooltipLabel={ { label: __( 'Language' ), tooltip: __( 'AI Model generate response in selected language.' ), noWrapText: true } }
+				>{ __( 'Language' ) }</SingleSelectMenu>
 			</div>
 			{ /* will be used in next release
 			<div className="urlslab-half-columns-col">
@@ -69,9 +69,9 @@ const AdvancedSettings: React.FC = () => {
 						'text-davinci-003': 'Open AI Text Davinci 003',
 					} }
 					autoClose
-					description={ __( 'Explanation' ) }
-					tooltipLabel={ { label: __( 'AI model' ), tooltip: __( 'tooltip text' ), noWrapText: true } }
-				></SingleSelectMenu>
+					description={ __( 'Choose the appropriate model to achieve desired result.' ) }
+					//tooltipLabel={ { label: __( 'AI model' ), tooltip: __( 'tooltip text' ), noWrapText: true } }
+				>{ __( 'AI model' ) }</SingleSelectMenu>
 			</div>
 		</div>
 	);

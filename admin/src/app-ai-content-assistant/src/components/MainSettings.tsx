@@ -29,7 +29,7 @@ const MainSettings: React.FC = () => {
 			<div className="urlslab-popup-content-option-wrapper">
 				<TextArea
 					label={ __( 'Prompt' ) }
-					description={ __( 'Explanation' ) }
+					description={ __( 'Clear instruction or question to guide the model\'s response.' ) }
 					placeholder={ __( 'Type here' ) }
 					defaultValue={ state.prompt }
 					onChange={ ( value ) => dispatch( { type: 'prompt', payload: value } ) }
@@ -40,7 +40,7 @@ const MainSettings: React.FC = () => {
 			<div className="urlslab-popup-content-option-wrapper">
 				<InputField
 					label={ __( 'Semantic context' ) }
-					description={ __( 'Explanation' ) }
+					description={ __( 'Include relevant context for more accurate response filtered from urls in Url filter.' ) }
 					placeholder={ __( 'Type here' ) }
 					defaultValue={ state.semantic_context }
 					onChange={ ( value ) => dispatch( { type: 'semantic_context', payload: value } ) }
@@ -50,8 +50,8 @@ const MainSettings: React.FC = () => {
 			<div className="urlslab-popup-content-option-wrapper">
 				<GenericDropdown
 					label={ __( 'Url filter' ) }
-					innerLabel={ __( 'Select or add url' ) }
-					description={ __( 'Explanation of what url filter means' ) }
+					innerLabel={ __( 'Select or add urls' ) }
+					description={ __( 'Select or add urls to fetch data from.' ) }
 				>
 					<UrlsList urls={ state.url_filter } />
 				</GenericDropdown>
