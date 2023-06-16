@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { Button, TextArea } from '../elements/JSXElements';

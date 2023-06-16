@@ -1,10 +1,4 @@
-import { UrlsListItem, UrlsList } from './types';
-
-export type ReducerAction = {
-    type : keyof typeof defaults,
-    payload: ( typeof defaults )[keyof typeof defaults]
-}
-export type AppState = typeof defaults;
+import { UrlsListItem, AppState, ReducerAction } from './types';
 
 export const defaults = {
 	template: '',
@@ -14,9 +8,7 @@ export const defaults = {
 	tone: '',
 	length: 10,
 	ai_model: 'gpt-3.5-turbo',
-	semantic_context: {
-		urls: [] as UrlsList,
-	},
+	url_filter: [] as UrlsListItem[],
 	generatedResults: {
 		text: '',
 		loading: false,
@@ -26,18 +18,28 @@ export const defaults = {
 
 export const reducer = ( state: AppState, action: ReducerAction ) => {
 	const { type, payload } = action;
-	if ( type === 'semantic_context' ) {
-		const newValue: UrlsListItem = {
-			id: ( state.semantic_context.urls.length + 1 ).toString(),
-			status: 'active', // we'll use 'pending' status in further release of plugin
-			url: payload as string,
-		};
+	if ( type === 'url_filter' && typeof payload === 'object' && 'status' in payload ) {
+		if ( payload.status === 'pending' ) {
+			return {
+				...state,
+				url_filter: [
+					...state.url_filter,
+					{
+						id: ( state.url_filter.length + 1 ).toString(),
+						status: 'pending',
+						url: payload.url as string,
+					},
+				],
+			};
+		}
 
 		return {
 			...state,
-			semantic_context: {
-				urls: [ ...state.semantic_context.urls, newValue ],
-			},
+			url_filter: state.url_filter.map( ( item ) => {
+				return item.url === payload.url
+					? { ...item, status: payload.status }
+					: item;
+			} ),
 		};
 	}
 	return {

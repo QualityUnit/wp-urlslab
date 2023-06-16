@@ -39,11 +39,11 @@ const MainSettings: React.FC = () => {
 			</div>
 			<div className="urlslab-popup-content-option-wrapper">
 				<GenericDropdown
-					label={ __( 'Semantic context' ) }
+					label={ __( 'Url filter' ) }
 					innerLabel={ __( 'Select or add url' ) }
-					description={ __( 'Explanation of what semantic means' ) }
+					description={ __( 'Explanation of what url filter means' ) }
 				>
-					<UrlsList urls={ state.semantic_context.urls } />
+					<UrlsList urls={ state.url_filter } />
 				</GenericDropdown>
 			</div>
 		</div>
