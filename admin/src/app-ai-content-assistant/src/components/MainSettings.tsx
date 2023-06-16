@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { TextArea } from '../elements/JSXElements';
+import { InputField, TextArea } from '../elements/JSXElements';
 import { AppContext } from '../app/context';
 import GenericDropdown from '../elements/GenericDropdown';
 import UrlsList from './options/UrlsList';
@@ -29,12 +29,22 @@ const MainSettings: React.FC = () => {
 			<div className="urlslab-popup-content-option-wrapper">
 				<TextArea
 					label={ __( 'Prompt' ) }
-					description={ __( 'Maximum number of times' ) }
+					description={ __( 'Explanation' ) }
 					placeholder={ __( 'Type here' ) }
 					defaultValue={ state.prompt }
 					onChange={ ( value ) => dispatch( { type: 'prompt', payload: value } ) }
 					liveUpdate
 					allowResize
+				/>
+			</div>
+			<div className="urlslab-popup-content-option-wrapper">
+				<InputField
+					label={ __( 'Semantic context' ) }
+					description={ __( 'Explanation' ) }
+					placeholder={ __( 'Type here' ) }
+					defaultValue={ state.semantic_context }
+					onChange={ ( value ) => dispatch( { type: 'semantic_context', payload: value } ) }
+					liveUpdate
 				/>
 			</div>
 			<div className="urlslab-popup-content-option-wrapper">

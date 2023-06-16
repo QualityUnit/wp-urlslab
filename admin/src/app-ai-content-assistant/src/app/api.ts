@@ -33,12 +33,8 @@ const fetchResult = async (
 		tone: data.tone,
 		model: data.ai_model,
 		lang: data.language,
-		semantic_context: '', // example: 'pricing',
-		url_filter: data.url_filter
-			? data.url_filter
-				.filter( ( item ) => item.status === 'active' )
-				.map( ( item ) => item.url )
-			: [],
+		semantic_context: data.semantic_context,
+		url_filter: data.selected_urls,
 		//domain_filters: [], // example [ 'https://liveagent.com' ],
 	};
 

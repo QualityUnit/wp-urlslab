@@ -15,27 +15,23 @@ import '../../assets/styles/components/_UrlsList.scss';
 type UpdateUrlsAction = 'add' | 'remove';
 
 const UrlsList: React.FC<{ urls: UrlsListItem[] }> = ( { urls } ) => {
-	const [ selectedUrls, setSelectedUrls ] = useState<string[]>( [] );
-
-	const updateSelectedUrls = useCallback( ( action: UpdateUrlsAction, id: string ) => {
-		switch ( action ) {
-		case 'add':
-			setSelectedUrls( [ ...selectedUrls, id ] );
-			break;
-		case 'remove':
-			setSelectedUrls( selectedUrls.filter( ( currentId ) => currentId !== id ) );
-			break;
-		default:
-			break;
-		}
-	}, [ selectedUrls ] );
+	const { state, dispatch } = useContext( AppContext );
+	console.log( state.selected_urls );
+	const updateSelectedUrls = useCallback( ( action: UpdateUrlsAction, url: string ) => {
+		dispatch( {
+			type: 'selected_urls',
+			payload: action === 'add'
+				? [ ...state.selected_urls, url ]
+				: state.selected_urls.filter( ( item ) => item !== url ),
+		} );
+	}, [ dispatch, state.selected_urls ] );
 
 	return (
 		<div className="urlslab-UrlsList">
 			{ urls.length > 0 &&
 			<div className="urlslab-UrlsList-items flex flex-column">
 				{ urls.map( ( item ) => {
-					const checked = selectedUrls.includes( item.id );
+					const checked = state.selected_urls.includes( item.url );
 					return (
 						<div className={ `urlslab-UrlsList-items-item flex flex-justify-space-between flex-align-center status-${ item.status }` } key={ `urls-list-item-${ item.id }` }>
 							<div className="urlslab-UrlsList-item-part-checkbox">
@@ -111,7 +107,7 @@ AddNewUrl.displayName = 'AddNewUrl';
 type UrlCheckboxType = {
 	item: UrlsListItem,
 	checked: boolean,
-	updateSelectedUrls: ( action: UpdateUrlsAction, id: string ) => void
+	updateSelectedUrls: ( action: UpdateUrlsAction, url: string ) => void
 }
 const UrlCheckbox:React.FC<UrlCheckboxType> = React.memo( ( { item, checked, updateSelectedUrls }:UrlCheckboxType ) => {
 	return (
@@ -121,7 +117,7 @@ const UrlCheckbox:React.FC<UrlCheckboxType> = React.memo( ( { item, checked, upd
 				type="checkbox"
 				name={ `urls-item-${ item.id }` }
 				defaultChecked={ checked }
-				onChange={ ( event ) => updateSelectedUrls( event.currentTarget.checked ? 'add' : 'remove', item.id ) }
+				onChange={ ( event ) => updateSelectedUrls( event.currentTarget.checked ? 'add' : 'remove', item.url ) }
 			/>
 			<div className="urlslab-checkbox-box"></div>
 			<div className="urlslab-UrlsList-label">{ item.url }</div>

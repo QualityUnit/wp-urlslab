@@ -27,17 +27,6 @@ const GeneratedResult: React.FC<{result: { text: string, loading: boolean}}> = (
 
 	const addIntoEditor = () => {
 		if ( scriptData.editor_type === 'gutenberg' ) {
-			const paragraphs = result.text.split( '\n' );
-			const blocks = paragraphs.reduce( ( reduced, p ) => {
-				if ( p !== '' ) {
-					reduced.push( wp.blocks.createBlock( 'core/paragraph', {
-						content: p,
-					} ) );
-				}
-				return reduced;
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			}, [] as any[] );
-			wp.data.dispatch( 'core/block-editor' ).insertBlocks( blocks, 0 );
 			wp.data.dispatch( 'core/block-editor' ).insertBlock( wp.blocks.createBlock( 'core/paragraph', {
 				content: result.text.replace( /\n/g, '<br>' ),
 			} ), 0 );
