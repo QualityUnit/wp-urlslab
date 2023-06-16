@@ -1,4 +1,3 @@
-
 import { GeneratorAction, UrlStatus, UrlsListItem } from './types';
 
 export const applyGeneratorAction = ( action: GeneratorAction ) => {

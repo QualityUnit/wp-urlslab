@@ -1,3 +1,4 @@
+import { Reducer } from 'react';
 import { UrlsListItem, AppState, ReducerAction } from './types';
 
 export const defaults = {
@@ -18,21 +19,23 @@ export const defaults = {
 	},
 };
 
-export const reducer = ( state: AppState, action: ReducerAction ) => {
+export const reducer:Reducer<AppState, ReducerAction> = ( state, action ) => {
 	const { type, payload } = action;
 	if ( type === 'url_filter' && typeof payload === 'object' && 'status' in payload ) {
 		if ( payload.status === 'pending' ) {
-			return {
-				...state,
-				url_filter: [
-					...state.url_filter,
-					{
-						id: ( state.url_filter.length + 1 ).toString(),
-						status: 'pending',
-						url: payload.url as string,
-					},
-				],
-			};
+			return state.url_filter.filter( ( item ) => item.url === payload.url ).length !== 0
+				? state
+				: {
+					...state,
+					url_filter: [
+						...state.url_filter,
+						{
+							id: ( state.url_filter.length + 1 ).toString(),
+							status: 'pending',
+							url: payload.url as string,
+						},
+					],
+				};
 		}
 
 		return {
