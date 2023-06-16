@@ -1,15 +1,15 @@
-import React, { useCallback, useContext, useRef, useState } from 'react';
-import { ReactComponent as AiGeneratorIcon } from '../assets/images/icons/urlslab-generator.svg';
-import { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.svg';
+import React, { useCallback, useContext, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { Button } from '../elements/JSXElements';
+import { ReactComponent as AiGeneratorIcon } from '../assets/images/icons/urlslab-generator.svg';
+import { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.svg';
 import { ReactComponent as StarsIcon } from '../assets/images/icons/icon-stars.svg';
 import { ReactComponent as LoadingIcon } from '../assets/images/icons/icon-loading.svg';
+import { Button } from '../elements/JSXElements';
 import MainSettings from './MainSettings';
 import AdvancedSettings from './AdvancedSettings';
-import { AppContext } from '../app/context';
 import GeneratedResult from './GeneratedResult';
+import { AppContext } from '../app/context';
 import { runResultsGenerator } from '../app/api';
 
 import '../assets/styles/components/_Popup.scss';

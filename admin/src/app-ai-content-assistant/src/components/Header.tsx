@@ -1,7 +1,7 @@
 import React from 'react';
+import { __ } from '@wordpress/i18n';
 import { ReactComponent as AiGeneratorIcon } from '../assets/images/icons/urlslab-generator.svg';
 import { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.svg';
-import { __ } from '@wordpress/i18n';
 
 const Header: React.FC<{setOpenedPopup: React.Dispatch<React.SetStateAction<boolean>>}> = ( { setOpenedPopup } ) => {
 	return (

@@ -1,14 +1,13 @@
-import React, { ReactComponentElement, useCallback, useContext, useRef, useState } from 'react';
-import { UrlStatus, UrlsListItem } from '../../app/types';
-import { ReactComponent as HourglassIcon } from '../../assets/images/icons/icon-hourglass.svg';
-import { ReactComponent as CloseIcon } from '../../assets/images/icons/icon-close.svg';
+import React, { useCallback, useContext, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 
+import { ReactComponent as HourglassIcon } from '../../assets/images/icons/icon-hourglass.svg';
+import { ReactComponent as CloseIcon } from '../../assets/images/icons/icon-close.svg';
 import { Button, InputField, Tooltip } from '../../elements/JSXElements';
-
 import { AppContext } from '../../app/context';
 import { InfoTooltipIcon } from '../../elements/InfoTooltipIcon';
 import { checkAddedUrl } from '../../app/api';
+import { UrlStatus, UrlsListItem } from '../../app/types';
 
 import '../../assets/styles/components/_UrlsList.scss';
 
@@ -16,7 +15,7 @@ type UpdateUrlsAction = 'add' | 'remove';
 
 const UrlsList: React.FC<{ urls: UrlsListItem[] }> = ( { urls } ) => {
 	const { state, dispatch } = useContext( AppContext );
-	console.log( state.selected_urls );
+
 	const updateSelectedUrls = useCallback( ( action: UpdateUrlsAction, url: string ) => {
 		dispatch( {
 			type: 'selected_urls',

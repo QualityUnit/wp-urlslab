@@ -1,15 +1,15 @@
 import React, { useContext } from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { Button, TextArea } from '../elements/JSXElements';
 import { ReactComponent as StarsIcon } from '../assets/images/icons/icon-stars.svg';
 import { ReactComponent as ArrowsOuterIcon } from '../assets/images/icons/icon-arrows-direction-outer.svg';
 import { ReactComponent as ArrowsInsideIcon } from '../assets/images/icons/icon-arrows-direction-inside.svg';
-
-import '../assets/styles/components/_GeneratedResult.scss';
+import { Button, TextArea } from '../elements/JSXElements';
 import { AppContext } from '../app/context';
 import { runResultsGenerator } from '../app/api';
 import { ScriptData } from '../app/types';
+
+import '../assets/styles/components/_GeneratedResult.scss';
 
 // declare globals
 declare const scriptData: ScriptData;
