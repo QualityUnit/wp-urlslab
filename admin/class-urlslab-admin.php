@@ -232,12 +232,8 @@ class Urlslab_Admin {
 						'wp-data',
 						'wp-editor',
 						'wp-dom-ready',
-						'wp-edit-post',
-						'wp-api-fetch',
-						'wp-element',
 						'wp-i18n',
 						'wp-blocks',
-						'wp-components',
 					),
 					$this->version,
 					true
