@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { InputField, TextArea } from '../elements/JSXElements';
 import { AppContext } from '../app/context';
 import GenericDropdown from '../elements/GenericDropdown';
-import UrlsList from './options/UrlsList';
+import UrlsList from './UrlsList';
 
 const MainSettings: React.FC = () => {
 	const { state, dispatch } = useContext( AppContext );

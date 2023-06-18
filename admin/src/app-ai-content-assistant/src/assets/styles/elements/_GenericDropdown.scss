@@ -1,5 +1,5 @@
 @use "../../../../../assets/styles/elements/MultiSelectMenu" as *;
-@use "../common/mixins" as*;
+@use "../common/mixins" as *;
 
 .urlslab-GenericDropdown {
     width: 100%;
@@ -9,7 +9,7 @@
     .urlslab-MultiSelectMenu__items {
         padding: 0;
 
-        //show round courners for inner scroller
+        //show round corners for inner scroller
         overflow: hidden;
     }
 
@@ -29,6 +29,4 @@
             box-shadow: none;
         }
     }
-
-
 }
