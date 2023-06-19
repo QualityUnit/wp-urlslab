@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import { delay } from '../lib/helpers';
 import '../assets/styles/elements/_Inputs.scss';
 
 export default function InputField( { defaultValue, isLoading, autoFocus, placeholder, message, liveUpdate, className, type, readonly, disabled, label, description, labelInline, onChange, onKeyDown, onBlur, onFocus, onKeyUp, children, style } ) {
@@ -12,12 +11,6 @@ export default function InputField( { defaultValue, isLoading, autoFocus, placeh
 			onChange( type === 'number' ? event.target.valueAsNumber : event.target.value );
 		}
 	}, [ onChange, type, defaultValue, val ] );
-
-	const handleValLive = ( event ) => {
-		if ( liveUpdate ) {
-			delay( () => handleVal( event ), 800 )();
-		}
-	};
 
 	const valueStatus = () => {
 		if ( val ) {
@@ -42,34 +35,57 @@ export default function InputField( { defaultValue, isLoading, autoFocus, placeh
 			}
 			<div className={ `urlslab-inputField ${ children ? 'has-svg' : '' } ${ isLoading ? 'loading' : '' }` } >
 				{ children }
-				<input
-					className="urlslab-input input__text"
-					type={ type || 'text' }
-					defaultValue={ val }
-					autoFocus={ autoFocus }
-					onChange={ ( event ) => {
-						setVal( event.target.value );
-						handleValLive( event );
-					} }
-					onFocus={ onFocus && onFocus }
-					onBlur={ ( event ) => {
-						handleVal( event ); if ( onBlur ) {
-							onBlur( event );
-						}
-					} }
-					onKeyDown={ ( event ) => {
-						if ( event.key === 'Enter' || event.keyCode === 9 ) {
-							event.target.blur();
-						}
-						if ( onKeyDown ) {
-							onKeyDown( event );
-						}
-					} }
-					onKeyUp={ onKeyUp }
-					placeholder={ placeholder }
-					readOnly={ readonly }
-					disabled={ disabled ? 'disabled' : '' }
-				/>
+				{
+					liveUpdate
+						? <input
+							className="urlslab-input input__text"
+							type={ type || 'text' }
+							defaultValue={ val }
+							autoFocus={ autoFocus }
+							onChange={ ( event ) => {
+								setVal( event.target.value );
+								handleVal( event );
+							} }
+							onBlur={ ( event ) => {
+								handleVal( event ); if ( onBlur ) {
+									onBlur( event );
+								}
+							} }
+							onFocus={ onFocus && onFocus }
+							onKeyUp={ onKeyUp }
+							placeholder={ placeholder }
+							readOnly={ readonly }
+							disabled={ disabled ? 'disabled' : '' }
+						/>
+						: <input
+							className="urlslab-input input__text"
+							type={ type || 'text' }
+							defaultValue={ val }
+							autoFocus={ autoFocus }
+							onChange={ ( event ) => {
+								setVal( event.target.value );
+							} }
+							onFocus={ onFocus && onFocus }
+							onBlur={ ( event ) => {
+								handleVal( event ); if ( onBlur ) {
+									onBlur( event );
+								}
+							} }
+							onKeyDown={ ( event ) => {
+								if ( event.key === 'Enter' || event.keyCode === 9 ) {
+									event.target.blur();
+								}
+								if ( onKeyDown ) {
+									onKeyDown( event );
+								}
+							} }
+							onKeyUp={ onKeyUp }
+							placeholder={ placeholder }
+							readOnly={ readonly }
+							disabled={ disabled ? 'disabled' : '' }
+						/>
+				}
+
 			</div>
 			{ description && <p className="urlslab-inputField-description">{ description }</p> }
 			{
