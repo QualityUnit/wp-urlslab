@@ -51,6 +51,8 @@ vendor/*
 !vendor/aws/aws-sdk-php/*
 !vendor/aws/aws-sdk-php/src/*
 !vendor/aws/aws-sdk-php/src/CloudFront/
+!vendor/aws/aws-sdk-php/src/S3/
+!vendor/aws/aws-sdk-php/src/Exception/
 !vendor/symfony/
 !vendor/ralouphie/
 !vendor/mtdowling/
