@@ -47,8 +47,12 @@ cache
 # Vendor
 vendor/*
 !vendor/autoload.php
-!vendor/aws/
-!vendor/urlslab/
+!vendor/aws/aws-crt-php/
+!vendor/aws/aws-sdk-php/*
+!vendor/aws/aws-sdk-php/src/*
+!vendor/aws/aws-sdk-php/src/CloudFront/
+!vendor/aws/aws-sdk-php/src/S3/
+!vendor/aws/aws-sdk-php/src/Exception/
 !vendor/symfony/
 !vendor/ralouphie/
 !vendor/mtdowling/
