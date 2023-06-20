@@ -1,0 +1,38 @@
+[id="urlslab-ai-content-assistant"],
+[id="urlslab-ai-content-assistant-button-wrapper"] {
+	.urlslab-loading-spinner {
+		transform-origin: center;
+		animation: urlslabSpin1 2s linear infinite
+	}
+
+	.urlslab-loading-spinner circle {
+		stroke-linecap: round;
+		animation: urlslabSpin2 1.5s ease-in-out infinite
+	}
+
+
+}
+
+@keyframes urlslabSpin1 {
+	100% {
+		transform: rotate(360deg)
+	}
+}
+
+@keyframes urlslabSpin2 {
+	0% {
+		stroke-dasharray: 0 150;
+		stroke-dashoffset: 0
+	}
+
+	47.5% {
+		stroke-dasharray: 42 150;
+		stroke-dashoffset: -16
+	}
+
+	95%,
+	100% {
+		stroke-dasharray: 42 150;
+		stroke-dashoffset: -59
+	}
+}

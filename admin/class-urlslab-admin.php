@@ -58,6 +58,15 @@ class Urlslab_Admin {
 		$this->urlslab = $urlslab;
 		$this->version = $version;
 		$this->urlslab_menu_factory = Urlslab_Page_Factory::get_instance();
+
+		// list of modules available on editor pages
+		$this->editor_modules = array( 
+			'ai-content-assistant', 
+		);
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
+		add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'enqueue_elementor_editor_assets' ) );
+
+		add_filter( 'script_loader_tag', array( $this, 'script_loader_tag' ), 10, 3 );
 	}
 
 	/**
@@ -65,14 +74,14 @@ class Urlslab_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-
 	public function enqueue_react_settings() {
 		if ( isset( $_GET['page'] ) && str_contains( $_GET['page'], 'urlslab' ) ) {
 			$maincss = glob( plugin_dir_path( __FILE__ ) . 'dist/assets/main-*.css' );
-			$mainjs = glob( plugin_dir_path( __FILE__ ) . 'dist/*.js' );
-
-			wp_enqueue_style( $this->urlslab . '-main', plugin_dir_url( __FILE__ ) . 'dist/assets/' . basename( $maincss[0] ), false, $this->version );
-
+			$mainjs = glob( plugin_dir_path( __FILE__ ) . 'dist/main-*.js' );
+			
+			if ( ! empty( $maincss ) ) {
+				wp_enqueue_style( $this->urlslab . '-main', plugin_dir_url( __FILE__ ) . 'dist/assets/' . basename( $maincss[0] ), false, $this->version );
+			}
 
 			if ( ! empty( $mainjs ) ) {
 				wp_enqueue_script(
@@ -89,23 +98,29 @@ class Urlslab_Admin {
 					true
 				);
 			}
-
-			add_filter(
-				'script_loader_tag',
-				function ( $tag, $handle ) {
-					// if not your script, do nothing and return original $tag
-					if ( $this->urlslab . '-main' !== $handle ) {
-						return $tag;
-					}
-
-					// change the script tag by adding type="module" and return it.
-					return str_replace( ' src', ' type="module" src', $tag );
-				},
-				10,
-				3
-			);
 		}
 	}
+
+	/**
+	 * Register block editor assets.
+	 *
+	 * @since    1.0.0
+	 */
+	public function enqueue_block_editor_assets() {
+		$this->enqueue_editors_modules( 'gutenberg' );
+		
+		
+	}
+
+	/**
+	 * Register elementor editor assets.
+	 *
+	 * @since    1.0.0
+	 */
+	public function enqueue_elementor_editor_assets() {
+		$this->enqueue_editors_modules( 'elementor' );
+	}
+	
 
 	public function enqueue_styles() {
 		/**
@@ -188,4 +203,44 @@ class Urlslab_Admin {
 		$this->urlslab_menu_factory->init_on_page_loads( $page_slug, $action, $component );
 	}
 
+	function script_loader_tag( $tag, $handle, $src ) {
+		$handles = array_merge( array( 'main' ), $this->editor_modules );
+		// if script is our module, update type attribute
+		if ( strpos( $handle, $this->urlslab ) === 0 && in_array( str_replace( "{$this->urlslab}-", '', $handle ), $handles ) ) {
+			return str_replace( ' src', ' type="module" src', $tag );
+		}
+		return $tag;
+	}
+	
+	function enqueue_editors_modules( $editor_type ) {
+		foreach ( $this->editor_modules as $module_name ) {
+			$handle = "{$this->urlslab}-{$module_name}";
+			$cssfile = glob( plugin_dir_path( __FILE__ ) . "src/app-{$module_name}/dist/assets/main-*.css" );
+			$jsfile = glob( plugin_dir_path( __FILE__ ) . "src/app-{$module_name}/dist/main-*.js" );
+
+			if ( ! empty( $cssfile ) ) {
+				wp_enqueue_style( $handle, plugin_dir_url( __FILE__ ) . "src/app-{$module_name}/dist/assets/" . basename( $cssfile[0] ), false, $this->version );
+			}
+			
+			if ( ! empty( $jsfile ) ) {
+				wp_enqueue_script(
+					$handle,
+					plugin_dir_url( __FILE__ ) . "src/app-{$module_name}/dist/" . basename( $jsfile[0] ),
+					array(
+						'react',
+						'react-dom',
+						'wp-data',
+						'wp-editor',
+						'wp-dom-ready',
+						'wp-i18n',
+						'wp-blocks',
+					),
+					$this->version,
+					true
+				);
+
+				wp_localize_script( $handle, 'scriptData', array( 'editor_type' => $editor_type ) );
+			}
+		}
+	}
 }

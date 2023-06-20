@@ -1,0 +1,71 @@
+{
+    "root": true,
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "plugin:@wordpress/eslint-plugin/recommended-with-formatting",
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "plugin:import/react",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:react-hooks/recommended",
+        "plugin:react/jsx-runtime"
+    ],
+    "overrides": [],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react",
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "no-console": "off",
+        "indent": [
+            "error",
+            "tab"
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        /*"semi": [
+            "error",
+            "always"
+        ],*/
+        "jsx-a11y/label-has-associated-control": 0,
+        "camelcase": "off",
+        "jsx-a11y/no-autofocus": 0,
+        "import/no-extraneous-dependencies": 0,
+        "react/jsx-indent-props": 0,
+        "react/no-unescaped-entities": 0,
+        "no-bitwise": [
+            "error",
+            {
+                "allow": [
+                    "~"
+                ]
+            }
+        ]
+    },
+    "settings": {
+        "import/resolver": {
+            "node": {
+                "extensions": [
+                    ".js",
+                    ".jsx",
+                    ".ts",
+                    ".tsx"
+                ]
+            }
+        }
+    }
+}

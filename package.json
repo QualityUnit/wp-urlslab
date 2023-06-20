@@ -63,13 +63,14 @@
     "webpack-merge": "^5"
   },
   "scripts": {
+    "build:admin/ai-content-assistant": "cd ./admin/src/app-ai-content-assistant && yarn && yarn build",
     "build:admin": "cd ./admin/ && yarn && yarn build",
-    "build": "webpack --mode=production && yarn build:admin",
+    "build": "webpack --mode=production && yarn build:admin && yarn build:admin/ai-content-assistant",
     "build:main": "webpack --mode=production",
     "watch": "webpack --mode=development --watch",
     "bundle": "yarn install && npm run watch",
     "dev": "webpack serve --config configuration/webpack.dev.config.js --mode=development",
-    "production": "webpack --mode=production && yarn build:admin",
+    "production": "webpack --mode=production && yarn build:admin && yarn build:admin/ai-content-assistant",
     "lint:sass": "sass-lint -v -q",
     "lint:js": "eslint --ext .js src/js/"
   }
