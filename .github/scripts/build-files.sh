@@ -28,7 +28,7 @@ cd ../../../
 find . -type d -name 'docs' -exec rm -r {} \; || true
 
 # removing codesniffer
-rm -rf squizlabs automattic bin dealerdirect fidry humbug nikic sirbrillig webmozart wp-coding-standards urlslab
+rm -rf squizlabs automattic bin dealerdirect fidry humbug nikic sirbrillig webmozart wp-coding-standards
 cd composer
 rm -rf installers autoload_classmap.php autoload_files.php autoload_namespaces.php autoload_psr4.php installed.json installed.php InstalledVersions.php
 cd ../../
