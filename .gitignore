@@ -47,3 +47,6 @@ cache
 # Vendor
 vendor
 vendor/*
+
+# dist
+admin/dist/*
