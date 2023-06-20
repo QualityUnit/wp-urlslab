@@ -7,7 +7,7 @@ export default function Button( {
 		href
 			? (
 				<a
-					className={ `urlslab-button ${ className || '' } ${ active && 'active' } ${ danger && 'danger' }` }
+					className={ `urlslab-button ${ className || '' } ${ active ? 'active' : '' } ${ danger ? 'danger' : '' }` }
 					href={ href }
 					disabled={ disabled }
 					onClick={ onClick || null }
@@ -18,7 +18,7 @@ export default function Button( {
 			)
 			: (
 				<button
-					className={ `urlslab-button ${ className || '' } ${ active && 'active' } ${ danger && 'danger' }` }
+					className={ `urlslab-button ${ className || '' } ${ active ? 'active' : '' } ${ danger ? 'danger' : '' }` }
 					type={ type || 'button' }
 					disabled={ disabled }
 					onClick={ onClick || null }

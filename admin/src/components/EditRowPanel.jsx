@@ -3,6 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import useChangeRow from '../hooks/useChangeRow';
 import useCloseModal from '../hooks/useCloseModal';
+import useTablePanels from '../hooks/useTablePanels';
 
 import Button from '../elements/Button';
 import UnifiedPanelMenu from './UnifiedPanelMenu';
@@ -12,6 +13,7 @@ export default function EditRowPanel( props ) {
 	const { __ } = useI18n();
 	const enableAddButton = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
+	const { options } = useTablePanels();
 	const flattenedData = data?.pages?.flatMap( ( page ) => page ?? [] );
 	const { insertRow, saveEditedRow } = useChangeRow( { data: flattenedData, url: { filters: {}, sortBy: [] }, slug, paginationId } );
 
@@ -79,10 +81,10 @@ export default function EditRowPanel( props ) {
 					<button className="urlslab-panel-close" onClick={ hidePanel }>
 						<CloseIcon />
 					</button>
-					{ editorMode && <UnifiedPanelMenu /> }
+					{ editorMode && options.length > 0 && <UnifiedPanelMenu /> }
 				</div>
 				<div className="mt-l urlslab-panel-content">
-					{ text && <p className="fs-normal">{ text }</p> }
+					{ text && <p className="fs-m">{ text }</p> }
 					{
 						cellsFinal && Object.entries( cellsFinal ).map( ( [ cellId, cell ] ) => {
 							return <div className={ `mb-l urlslab-panel-content__item ${ cell.props.hidden ? 'hidden' : '' }` } key={ cellId }>

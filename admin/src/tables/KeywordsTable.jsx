@@ -34,7 +34,8 @@ export default function KeywordsTable( { slug } ) {
 		setOptions( [] );
 		setRowToEdit( {} );
 		updateRow( { cell, id: 'keyword' } );
-		if ( cell?.getValue() > 0 ) {
+
+		if ( cell?.row.original.kw_usage_count > 0 ) {
 			setOptions( [ {
 				detailsOptions: {
 					title: `Keyword “${ cell.row.original.keyword }” usage`, text: `Keyword “${ cell.row.original.keyword }” used on these URLs`, slug, url: `${ cell.row.original.kw_id }/${ cell.row.original.dest_url_id }`, showKeys: [ 'link_type', 'url_name' ], listId: 'url_id',

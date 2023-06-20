@@ -8,38 +8,8 @@
 	padding: 1.5em;
 	filter: $box-shadow-small;
 
-	ul,
-	table {
+	ul {
 		font-size: 0.75rem;
-	}
-
-	table {
-		width: 100%;
-
-		thead {
-			position: sticky;
-			top: 0;
-			z-index: 1;
-			background-color: $white;
-		}
-
-		th,
-		td {
-			text-align: left;
-			height: 1.5em;
-
-			.limit {
-				white-space: nowrap;
-				text-overflow: ellipsis;
-				max-width: 100%;
-			}
-
-			a {
-				white-space: nowrap;
-				text-overflow: ellipsis;
-				max-width: 100%;
-			}
-		}
 	}
 
 	&.Details {
@@ -50,15 +20,11 @@
 			display: flex;
 			flex-direction: column;
 			overflow: hidden auto;
-			height: 20em;
+			background-color: $grey-lighter;
+			max-height: 20em;
 
-			th,
-			td {
-				text-align: left;
-				height: 1.5em;
-				white-space: nowrap;
-				text-overflow: ellipsis;
-				max-width: 100%;
+			thead {
+				background-color: $grey-lighter;
 			}
 
 			.urlslab-progressBar-wrapper {
@@ -79,6 +45,32 @@
 
 		.urlslab-panel {
 			padding: 1.5em;
+
+
+			&.Details {
+				padding: 1.5em 0;
+
+				.urlslab-panel-close {
+					margin-right: 0;
+				}
+
+				.urlslab-panel-header {
+					padding: 0 1.5em;
+					margin: 0;
+				}
+
+				.padded {
+					padding: 0 1.5rem;
+				}
+
+				.table-container {
+					padding: 0 1.5em 1.5em;
+
+					table {
+						margin-top: 1.5em;
+					}
+				}
+			}
 		}
 
 		@media (min-width: $breakpoint-tablet-landscape) {
@@ -86,6 +78,26 @@
 
 			.urlslab-panel {
 				padding: 1.375em 1.875em;
+
+				&.Details {
+					padding: 1.375em 0;
+
+					.urlslab-panel-header {
+						padding: 0 1.875em;
+					}
+
+					.padded {
+						padding: 0 1.875rem;
+					}
+
+					.table-container {
+						padding: 0 1.875em 1.375em;
+
+						table {
+							margin-top: 1.375em;
+						}
+					}
+				}
 			}
 		}
 	}
