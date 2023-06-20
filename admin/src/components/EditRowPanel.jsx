@@ -5,6 +5,7 @@ import useChangeRow from '../hooks/useChangeRow';
 import useCloseModal from '../hooks/useCloseModal';
 
 import Button from '../elements/Button';
+import UnifiedPanelMenu from './UnifiedPanelMenu';
 
 export default function EditRowPanel( props ) {
 	const { editorMode, rowEditorCells, rowToEdit, notWide, data, slug, paginationId, title, text, id, handlePanel } = props;
@@ -78,9 +79,10 @@ export default function EditRowPanel( props ) {
 					<button className="urlslab-panel-close" onClick={ hidePanel }>
 						<CloseIcon />
 					</button>
-					<p>{ text }</p>
+					{ editorMode && <UnifiedPanelMenu /> }
 				</div>
 				<div className="mt-l urlslab-panel-content">
+					{ text && <p className="fs-normal">{ text }</p> }
 					{
 						cellsFinal && Object.entries( cellsFinal ).map( ( [ cellId, cell ] ) => {
 							return <div className={ `mb-l urlslab-panel-content__item ${ cell.props.hidden ? 'hidden' : '' }` } key={ cellId }>

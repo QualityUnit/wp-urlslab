@@ -12,8 +12,9 @@ import ProgressBar from '../elements/ProgressBar';
 import ExportCSVButton from '../elements/ExportCSVButton';
 import DateTimeFormat from '../elements/DateTimeFormat';
 import Loader from './Loader';
+import UnifiedPanelMenu from './UnifiedPanelMenu';
 
-export default function DetailsPanel( ) {
+export default function DetailsPanel( { optionsId } ) {
 	const maxRows = 150;
 	const { __ } = useI18n();
 	const { ref, inView } = useInView();
@@ -21,7 +22,7 @@ export default function DetailsPanel( ) {
 	const [ exportStatus, setExportStatus ] = useState();
 	const stopExport = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( );
-	const { title, text, slug, url, showKeys, listId } = useTablePanels( ( state ) => state.options.detailsOptions );
+	const { title, text, slug, url, showKeys, listId } = useTablePanels( ( state ) => state.options[ optionsId ].detailsOptions );
 	const tbody = [];
 
 	const hidePanel = () => {
@@ -133,9 +134,10 @@ export default function DetailsPanel( ) {
 					<button className="urlslab-panel-close" onClick={ hidePanel }>
 						<CloseIcon />
 					</button>
-					<p>{ text }</p>
+					<UnifiedPanelMenu />
 				</div>
-				<div className="mt-l">
+				<div className="mt-l urlslab-panel-content">
+					{ text && <p className="fs-normal">{ text }</p> }
 					<div className="table-container" ref={ tableContainerRef }>
 						{ isSuccess && data
 							? <table>

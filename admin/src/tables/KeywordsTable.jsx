@@ -28,8 +28,20 @@ export default function KeywordsTable( { slug } ) {
 	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
-	const options = useTablePanels( ( state ) => state.options );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+
+	const setUnifiedPanel = ( cell ) => {
+		setOptions( [] );
+		setRowToEdit( {} );
+		updateRow( { cell, id: 'keyword' } );
+		if ( cell?.getValue() > 0 ) {
+			setOptions( [ {
+				detailsOptions: {
+					title: `Keyword “${ cell.row.original.keyword }” usage`, text: `Keyword “${ cell.row.original.keyword }” used on these URLs`, slug, url: `${ cell.row.original.kw_id }/${ cell.row.original.dest_url_id }`, showKeys: [ 'link_type', 'url_name' ], listId: 'url_id',
+				},
+			} ] );
+		}
+	};
 
 	const keywordTypes = {
 		M: __( 'Manual' ),
@@ -131,10 +143,8 @@ export default function KeywordsTable( { slug } ) {
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
 					<button className="ml-s" onClick={ () => {
-							setOptions( { ...options, detailsOptions: {
-							title: `Keyword “${ cell.row.original.keyword }” used on these URLs`, slug, url: `${ cell.row.original.kw_id }/${ cell.row.original.dest_url_id }`, showKeys: [ 'link_type', 'url_name' ], listId: 'url_id',
-						} } );
-						activatePanel( 'details' );
+						setUnifiedPanel( cell );
+						activatePanel( 0 );
 					} }>
 						<LinkIcon />
 						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
@@ -157,7 +167,7 @@ export default function KeywordsTable( { slug } ) {
 					<div className="flex">
 						<IconButton
 							onClick={ () => {
-								updateRow( { cell, id: 'keyword' } );
+								setUnifiedPanel( cell );
 								activatePanel( 'rowEditor' );
 							} }
 							tooltipClass="align-left xxxl"

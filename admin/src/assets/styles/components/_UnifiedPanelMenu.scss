@@ -1,0 +1,52 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+
+.urlslab-unifiedPanelMenu {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	margin-top: auto;
+	margin-bottom: 0;
+
+	li {
+		position: relative;
+		color: $grey-dark;
+		margin-bottom: 0;
+		font-size: 0.8125rem;
+
+		&:first-of-type {
+
+			button {
+				padding-left: 0;
+			}
+		}
+
+		&::after {
+			content: "";
+			position: absolute;
+			width: 100%;
+			height: 3px;
+			top: 100%;
+			left: 0;
+			transform: scaleX(0);
+			transform-origin: center;
+			background-color: $primary-color;
+		}
+
+		button {
+			color: currentcolor;
+			font-weight: 600;
+			padding: 1em 2em;
+		}
+	}
+
+	.active {
+		pointer-events: none;
+		color: $primary-color;
+
+		&::after {
+			transform: scaleX(1);
+		}
+	}
+}

@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 const useTablePanels = create( ( set ) => ( {
 	activePanel: undefined,
-	options: {},
+	options: [],
 	rowToEdit: {},
 	activatePanel: ( activePanel ) => set( () => ( { activePanel } ) ),
 	setOptions: ( options ) => set( ( { options } ) ),
