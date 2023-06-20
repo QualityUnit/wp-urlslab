@@ -45,26 +45,8 @@ cache
 /urlslab-wordpress-plugin.iml
 
 # Vendor
+vendor
 vendor/*
-!vendor/autoload.php
-!vendor/aws/aws-crt-php/
-!vendor/aws/aws-sdk-php/*
-!vendor/aws/aws-sdk-php/src/*
-!vendor/aws/aws-sdk-php/src/CloudFront/
-!vendor/aws/aws-sdk-php/src/S3/
-!vendor/aws/aws-sdk-php/src/Exception/
-!vendor/symfony/
-!vendor/ralouphie/
-!vendor/mtdowling/
-!vendor/guzzlehttp/
-!vendor/oscarotero/
-!vendor/psr/
-!vendor/composer/
-vendor/composer/installers/
-vendor/composer/autoload_classmap.php
-vendor/composer/autoload_files.php
-vendor/composer/autoload_namespaces.php
-vendor/composer/autoload_psr4.php
-vendor/composer/installed.json
-vendor/composer/installed.php
-vendor/composer/InstalledVersions.php
+
+# dist
+admin/dist/*

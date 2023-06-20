@@ -796,10 +796,14 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	 */
 	private function create_yt_video_dom( DOMDocument $document, Urlslab_Youtube_Row $yt_object, DOMElement $youtube_loader ): void {
 		$youtube_title = $document->createElement( 'strong', htmlspecialchars( $yt_object->get_title() . ' | ' . $yt_object->get_channel_title() ) );
+		$youtube_title_bottom = $document->createElement( 'h3', htmlspecialchars( $yt_object->get_title() . ' | ' . $yt_object->get_channel_title() ) );
 		$youtube_title->setAttribute( 'class', 'youtube_urlslab_loader--title' );
+		$youtube_title_bottom->setAttribute( 'class', 'youtube_urlslab_loader--titleBottom' );
 
 		$youtube_bottom = $document->createElement( 'div' );
 		$youtube_bottom->setAttribute( 'class', 'youtube_urlslab_loader--bottom' );
+		$youtube_wrapper_inn = $document->createElement( 'div' );
+		$youtube_wrapper_inn->setAttribute( 'class', 'youtube_urlslab_loader--inn' );
 		$youtube_img_wrapper = $document->createElement( 'div' );
 		$youtube_img_wrapper->setAttribute( 'class', 'youtube_urlslab_loader--wrapper' );
 		$youtube_channel  = $document->createElement( 'strong', htmlspecialchars( $yt_object->get_channel_title() ) );
@@ -820,8 +824,9 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		}
 		$youtube_img->setAttribute( 'urlslab-lazy', 'yes' );
 		$youtube_img_wrapper->appendChild( $youtube_img );
-		$youtube_loader->appendChild( $youtube_img_wrapper );
-		$youtube_loader->appendChild( $youtube_bottom );
+		$youtube_wrapper_inn->appendChild( $youtube_img_wrapper );
+		$youtube_wrapper_inn->appendChild( $youtube_bottom );
+		$youtube_loader->appendChild( $youtube_wrapper_inn );
 
 		if ( is_numeric( $this->get_option( self::SETTING_NAME_ATTACH_GENERATOR_ID ) ) && $this->get_option( self::SETTING_NAME_ATTACH_GENERATOR_ID ) > 0 ) {
 			$shortcode = do_shortcode( '[urlslab-generator id="' . ( (int) $this->get_option( self::SETTING_NAME_ATTACH_GENERATOR_ID ) ) . '" videoid="' . $yt_object->get_video_id() . '"]' );
