@@ -58,8 +58,20 @@ export default function GeneratorResultTable( { slug } ) {
 
 	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	const { activatePanel, setOptions } = useTablePanels();
-	const options = useTablePanels( ( state ) => state.options );
+	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
+	const setUnifiedPanel = ( cell ) => {
+		const origCell = cell?.row.original;
+		setOptions( [] );
+		setRowToEdit( {} );
+
+		if ( origCell.usage_count > 0 ) {
+			setOptions( [ {
+				detailsOptions: {
+					title: `Shortcode used on these URLs`, slug, url: `${ origCell.shortcode_id }/${ origCell.hash_id }/urls`, showKeys: [ { name: 'url_name' }, { name: 'created' } ], listId: 'url_id',
+				},
+			} ] );
+		}
+	};
 
 	const statusTypes = {
 		A: 'Active',
@@ -133,10 +145,8 @@ export default function GeneratorResultTable( { slug } ) {
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
 					<button className="ml-s" onClick={ () => {
-						setOptions( { ...options, detailsOptions: {
-							title: `Shortcode used on these URLs`, slug, url: `${ cell.row.original.shortcode_id }/${ cell.row.original.hash_id }/urls`, showKeys: [ 'url_name', 'created' ], listId: 'url_id',
-						} } );
-						activatePanel( 'details' );
+						setUnifiedPanel( cell );
+						activatePanel( 0 );
 					} }>
 						<LinkIcon />
 						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>

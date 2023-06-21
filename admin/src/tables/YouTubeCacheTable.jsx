@@ -31,8 +31,21 @@ export default function YouTubeCacheTable( { slug } ) {
 
 	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	const { activatePanel, setOptions } = useTablePanels();
-	const options = useTablePanels( ( state ) => state.options );
+	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
+
+	const setUnifiedPanel = ( cell ) => {
+		const origCell = cell?.row.original;
+		setOptions( [] );
+		setRowToEdit( {} );
+
+		if ( origCell.usage_count > 0 ) {
+			setOptions( [ {
+				detailsOptions: {
+					title: `Video ID “${ origCell.videoid }” is used on these URLs`, text: `Video title: ${ cell.row._valuesCache.title[ 1 ] }`, slug, url: `${ origCell.videoid }/urls`, showKeys: [ { name: 'url_name' } ], listId: 'url_id',
+				},
+			} ] );
+		}
+	};
 
 	const ActionButton = ( { cell, onClick } ) => {
 		const { status: videoStatus } = cell?.row?.original;
@@ -130,10 +143,8 @@ export default function YouTubeCacheTable( { slug } ) {
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
 					<button className="ml-s" onClick={ () => {
-						setOptions( { ...options, detailsOptions: {
-							title: `Video ID “${ cell.row.original.videoid }” is used on these URLs`, text: `Video title: ${ cell.row._valuesCache.title[ 1 ] }`, slug, url: `${ cell.row.original.videoid }/urls`, showKeys: [ 'url_name' ], listId: 'url_id',
-						} } );
-						activatePanel( 'details' );
+						setUnifiedPanel( cell );
+						activatePanel( 0 );
 					} }>
 						<LinkIcon />
 						<Tooltip className="align-left">{ __( 'Show URLs where used' ) }</Tooltip>

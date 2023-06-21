@@ -28,8 +28,13 @@ export default function CacheRulesTable( { slug } ) {
 
 	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	const { activatePanel, setRowToEdit } = useTablePanels();
+	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+	const setUnifiedPanel = ( cell ) => {
+		setOptions( [] );
+		setRowToEdit( {} );
+		updateRow( { cell } );
+	};
 
 	const matchTypes = Object.freeze( {
 		A: 'All Pages',
@@ -173,7 +178,7 @@ export default function CacheRulesTable( { slug } ) {
 					<div className="flex">
 						<IconButton
 							onClick={ () => {
-								updateRow( { cell } );
+								setUnifiedPanel( cell );
 								activatePanel( 'rowEditor' );
 							} }
 							tooltipClass="align-left xxxl"

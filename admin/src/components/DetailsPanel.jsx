@@ -15,7 +15,7 @@ import Loader from './Loader';
 import UnifiedPanelMenu from './UnifiedPanelMenu';
 import '../assets/styles/components/_TableComponent.scss';
 
-export default function DetailsPanel( { optionsId } ) {
+export default function DetailsPanel( ) {
 	const maxRows = 150;
 	const { __ } = useI18n();
 	const { ref, inView } = useInView();
@@ -23,7 +23,11 @@ export default function DetailsPanel( { optionsId } ) {
 	const [ exportStatus, setExportStatus ] = useState();
 	const stopExport = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( );
-	const { options, rowToEdit } = useTablePanels( );
+	const { activePanel, options, rowToEdit } = useTablePanels( );
+	let optionsId = 0;
+	if ( options.length > 1 ) {
+		optionsId = activePanel;
+	}
 	const { title, text, slug, url, showKeys, listId } = useTablePanels( ( state ) => state.options[ optionsId ].detailsOptions );
 	const tbody = [];
 
@@ -109,11 +113,12 @@ export default function DetailsPanel( { optionsId } ) {
 		tbody.push(
 			<tr key={ row[ listId ] } className="">
 				{ showKeys.map( ( key ) => {
-					return <td className="pr-m pos-relative" key={ row[ key ] }>
+					const { name } = key;
+					return <td className="pr-m pos-relative" key={ row[ name ] }>
 						<div className="limit">
-							{ key.includes( 'url' ) ? <a href={ row[ key ] } target="_blank" rel="noreferrer">{ row[ key ] }</a> : row[ key ] }
+							{ name.includes( 'url' ) ? <a href={ row[ name ] } target="_blank" rel="noreferrer">{ row[ name ] }</a> : row[ name ] }
 							{
-								parseDate( row, key )
+								parseDate( row, name )
 							}
 						</div>
 					</td>;
@@ -144,7 +149,7 @@ export default function DetailsPanel( { optionsId } ) {
 						{ isSuccess && data
 							? <table className="urlslab-table">
 								<thead>
-									<tr >{ showKeys.map( ( key ) => <th className="pr-m" key={ key }>{ key.charAt( 0 ).toUpperCase() + key.slice( 1 ).replaceAll( '_', ' ' ) }</th> ) }</tr>
+									<tr >{ showKeys.map( ( key ) => <th className="pr-m" style={ key.size && { width: `${ key.size }%` } } key={ key.name }>{ key.name.charAt( 0 ).toUpperCase() + key.name.slice( 1 ).replaceAll( '_', ' ' ) }</th> ) }</tr>
 								</thead>
 								<tbody>
 									{ paddingTop > 0 && (

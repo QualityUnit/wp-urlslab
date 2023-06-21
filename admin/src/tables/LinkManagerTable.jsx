@@ -25,8 +25,32 @@ export default function LinkManagerTable( { slug } ) {
 
 	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	const { activatePanel, setOptions } = useTablePanels();
-	const options = useTablePanels( ( state ) => state.options );
+	const { activatePanel, options, setOptions, setRowToEdit } = useTablePanels();
+
+	const setUnifiedPanel = ( cell ) => {
+		const origCell = cell?.row.original;
+		setOptions( [] );
+		setRowToEdit( {} );
+
+		if ( origCell.url_links_count > 0 ) {
+			setOptions( [ ...options,
+				{
+					detailsOptions: {
+						title: `Outgoing Links`, text: `From: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/links`, showKeys: [ { name: 'dest_url_name' } ], listId: 'dest_url_id',
+					},
+				},
+			] );
+		}
+		if ( origCell.url_usage_count > 0 ) {
+			setOptions( [ ...options,
+				{
+					detailsOptions: {
+						title: `Link found in following pages`, text: `Link: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: 'src_url_name' } ], listId: 'src_url_id',
+					},
+				},
+			] );
+		}
+	};
 
 	const httpStatusTypes = {
 		'-2': __( 'Processing' ),
@@ -128,11 +152,8 @@ export default function LinkManagerTable( { slug } ) {
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
 					<button className="ml-s" onClick={ () => {
-						setOptions( {
-							...options, detailsOptions: {
-								title: `Outgoing Links`, text: `From: ${ cell.row.original.url_name }`, slug, url: `${ cell.row.original.url_id }/links`, showKeys: [ 'dest_url_name' ], listId: 'dest_url_id',
-							} } );
-						activatePanel( 'details' );
+						setUnifiedPanel( cell );
+						// activatePanel( 0 );
 					} }>
 						<LinkIcon />
 						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
@@ -147,13 +168,9 @@ export default function LinkManagerTable( { slug } ) {
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
 					<button className="ml-s" onClick={ () => {
-						setOptions( {
-							...options, detailsOptions: {
-								title: `Link found in following pages`, text: `Link: ${ cell.row.original.url_name }`, slug, url: `${ cell.row.original.url_id }/linked-from`, showKeys: [ 'src_url_name' ], listId: 'src_url_id',
-							} } );
-						activatePanel( 'details' );
-					}
-					}>
+						setUnifiedPanel( cell );
+						activatePanel( 1 );
+					} }>
 						<LinkIcon />
 						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
 					</button>
