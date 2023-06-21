@@ -14,6 +14,10 @@
 
 	&.Details {
 
+		.urlslab-panel-content {
+			display: block;
+		}
+
 		.table-container {
 
 			@include scrollbar;

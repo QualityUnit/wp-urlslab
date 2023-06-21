@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef, useState } from 'react';
+import { memo, useEffect, useCallback, useRef, useState } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import { useVirtual } from 'react-virtual';
@@ -15,7 +15,7 @@ import Loader from './Loader';
 import UnifiedPanelMenu from './UnifiedPanelMenu';
 import '../assets/styles/components/_TableComponent.scss';
 
-export default function DetailsPanel( ) {
+function DetailsPanel( ) {
 	const maxRows = 150;
 	const { __ } = useI18n();
 	const { ref, inView } = useInView();
@@ -190,3 +190,5 @@ export default function DetailsPanel( ) {
 		</div>
 	);
 }
+
+export default memo( DetailsPanel );

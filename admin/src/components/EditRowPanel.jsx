@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { memo, useMemo, useRef } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import useChangeRow from '../hooks/useChangeRow';
@@ -8,11 +8,11 @@ import useTablePanels from '../hooks/useTablePanels';
 import Button from '../elements/Button';
 import UnifiedPanelMenu from './UnifiedPanelMenu';
 
-export default function EditRowPanel( props ) {
+function EditRowPanel( props ) {
 	const { editorMode, rowEditorCells, rowToEdit, notWide, data, slug, paginationId, title, text, id, handlePanel } = props;
 	const { __ } = useI18n();
 	const enableAddButton = useRef( false );
-	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
+	const { CloseIcon, handleClose } = useCloseModal( );
 	const { options } = useTablePanels();
 	const flattenedData = data?.pages?.flatMap( ( page ) => page ?? [] );
 	const { insertRow, saveEditedRow } = useChangeRow( { data: flattenedData, url: { filters: {}, sortBy: [] }, slug, paginationId } );
@@ -106,3 +106,5 @@ export default function EditRowPanel( props ) {
 		</div>
 	);
 }
+
+export default memo( EditRowPanel );

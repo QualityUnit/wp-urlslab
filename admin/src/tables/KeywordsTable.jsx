@@ -7,6 +7,7 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import IconButton from '../elements/IconButton';
+import { useCallback } from 'react';
 
 export default function KeywordsTable( { slug } ) {
 	const paginationId = 'kw_id';
@@ -30,7 +31,7 @@ export default function KeywordsTable( { slug } ) {
 	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
-	const setUnifiedPanel = ( cell ) => {
+	const setUnifiedPanel = useCallback( ( cell ) => {
 		const origCell = cell?.row.original;
 		setOptions( [] );
 		setRowToEdit( {} );
@@ -43,7 +44,7 @@ export default function KeywordsTable( { slug } ) {
 				},
 			} ] );
 		}
-	};
+	}, [ setOptions, setRowToEdit, slug, updateRow ] );
 
 	const keywordTypes = {
 		M: __( 'Manual' ),

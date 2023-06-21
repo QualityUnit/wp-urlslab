@@ -25,31 +25,25 @@ export default function LinkManagerTable( { slug } ) {
 
 	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	const { activatePanel, options, setOptions, setRowToEdit } = useTablePanels();
+	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
 
 	const setUnifiedPanel = ( cell ) => {
 		const origCell = cell?.row.original;
 		setOptions( [] );
 		setRowToEdit( {} );
 
-		if ( origCell.url_links_count > 0 ) {
-			setOptions( [ ...options,
+		setOptions( [ origCell.url_links_count > 0 &&
 				{
 					detailsOptions: {
 						title: `Outgoing Links`, text: `From: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/links`, showKeys: [ { name: 'dest_url_name' } ], listId: 'dest_url_id',
 					},
 				},
-			] );
-		}
-		if ( origCell.url_usage_count > 0 ) {
-			setOptions( [ ...options,
-				{
-					detailsOptions: {
-						title: `Link found in following pages`, text: `Link: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: 'src_url_name' } ], listId: 'src_url_id',
-					},
-				},
-			] );
-		}
+		origCell.url_usage_count > 0 && {
+			detailsOptions: {
+				title: `Link found in following pages`, text: `Link: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: 'src_url_name' } ], listId: 'src_url_id',
+			},
+		},
+		] );
 	};
 
 	const httpStatusTypes = {
@@ -153,7 +147,7 @@ export default function LinkManagerTable( { slug } ) {
 				{ cell?.getValue() > 0 &&
 					<button className="ml-s" onClick={ () => {
 						setUnifiedPanel( cell );
-						// activatePanel( 0 );
+						activatePanel( 0 );
 					} }>
 						<LinkIcon />
 						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { memo, useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import useCloseModal from '../hooks/useCloseModal';
@@ -7,7 +7,7 @@ import Button from '../elements/Button';
 import ExportCSVButton from '../elements/ExportCSVButton';
 import ProgressBar from '../elements/ProgressBar';
 
-export default function ExportPanel( props ) {
+function ExportPanel( props ) {
 	const { url, header, handlePanel } = props;
 	const { __ } = useI18n();
 	const activefilters = url?.filters ? Object.keys( url?.filters ) : null;
@@ -76,3 +76,5 @@ export default function ExportPanel( props ) {
 		</div>
 	);
 }
+
+export default memo( ExportPanel );

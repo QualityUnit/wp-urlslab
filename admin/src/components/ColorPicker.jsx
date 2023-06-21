@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { memo, useState, useCallback, useRef } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { HexColorPicker } from 'react-colorful';
 
@@ -11,7 +11,7 @@ import '../assets/styles/components/_ColorPicker.scss';
 import '../assets/styles/components/_FloatingPanel.scss';
 import '../assets/styles/elements/_Inputs.scss';
 
-export default function ColorPicker( { defaultValue, label, className, onChange } ) {
+function ColorPicker( { defaultValue, label, className, onChange } ) {
 	const { __ } = useI18n();
 	const defaultColors = [ '#F44E3B', '#FE9200', '#FCDC00', '#DBDF00', '#A4DD00', '#68CCCA', '#73D8FF', '#AEA1FF', '#FDA1FF', '#D33115', '#E27300', '#FCC400', '#B0BC00', '#68BC00', '#16A5A5', '#009CE0', '#7B64FF', '#FA28FF', '#9F0500', '#C45100', '#FB9E00', '#808900', '#194D33', '#0C797D', '#0062B1', '#653294', '#AB149E' ];
 	const startColor = defaultValue || defaultColors[ 0 ];
@@ -74,3 +74,4 @@ export default function ColorPicker( { defaultValue, label, className, onChange 
 		</div>
 	);
 }
+export default memo( ColorPicker );
