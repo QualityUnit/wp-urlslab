@@ -121,6 +121,18 @@ $status: (
 	&-label {
 		font-weight: $font-weight-semi;
 		font-size: 0.8125rem;
+
+		&.required {
+			color: $black;
+
+			&::after {
+				display: inline;
+				margin-left: 0.1em;
+				font-size: 1.25em;
+				content: "*";
+				color: $saturated-red;
+			}
+		}
 	}
 
 	&.dark-text {
@@ -146,6 +158,7 @@ $status: (
 	}
 
 	&-wrap {
+		position: relative;
 		display: block;
 		width: 100%;
 

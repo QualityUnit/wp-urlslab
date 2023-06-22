@@ -77,9 +77,9 @@ function DetailsPanel( ) {
 					: [ ],
 				rows_per_page: maxRows,
 			} );
-			return response.json();
+			return { allRows: await response.json(), url };
 		},
-		getNextPageParam: ( allRows ) => {
+		getNextPageParam: ( { allRows } ) => {
 			if ( allRows.length < maxRows ) {
 				return undefined;
 			}
@@ -92,7 +92,7 @@ function DetailsPanel( ) {
 		staleTime: Infinity,
 	} );
 
-	const rows = data?.pages?.flatMap( ( page ) => page ?? [] );
+	const rows = data?.pages?.flatMap( ( page ) => page.allRows ?? [] );
 
 	const rowVirtualizer = useVirtual( {
 		parentRef: tableContainerRef,
@@ -110,21 +110,23 @@ function DetailsPanel( ) {
 
 	for ( const virtualRow of virtualRows ) {
 		const row = rows[ virtualRow?.index ];
-		tbody.push(
-			<tr key={ row[ listId ] } className="">
-				{ showKeys.map( ( key ) => {
-					const { name } = key;
-					return <td className="pr-m pos-relative" key={ row[ name ] }>
-						<div className="limit">
-							{ name.includes( 'url' ) ? <a href={ row[ name ] } target="_blank" rel="noreferrer">{ row[ name ] }</a> : row[ name ] }
-							{
-								parseDate( row, name )
-							}
-						</div>
-					</td>;
-				} ) }
-			</tr>
-		);
+		if ( data?.pages[ 0 ].url === url ) {
+			tbody.push(
+				<tr key={ row[ listId ] } className="">
+					{ showKeys.map( ( key ) => {
+						const { name } = key;
+						return <td className="pr-m pos-relative" key={ row[ name ] }>
+							<div className="limit">
+								{ name.includes( 'url' ) ? <a href={ row[ name ] } target="_blank" rel="noreferrer">{ row[ name ] }</a> : row[ name ] }
+								{
+									parseDate( row, name )
+								}
+							</div>
+						</td>;
+					} ) }
+				</tr>
+			);
+		}
 	}
 
 	useEffect( () => {

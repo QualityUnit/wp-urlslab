@@ -14,7 +14,7 @@ import '../assets/styles/elements/_TagsMenu.scss';
 import Tooltip from './Tooltip';
 import IconButton from './IconButton';
 
-export default function TagsMenu( { label, description, defaultValue: tags, slug, hasActivator, onChange } ) {
+export default function TagsMenu( { label, description, required, defaultValue: tags, slug, hasActivator, onChange } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const tagsMenuWrap = useRef();
@@ -148,7 +148,7 @@ export default function TagsMenu( { label, description, defaultValue: tags, slug
 
 	return (
 		<div className={ `urlslab-TagsMenu-wrapper pos-relative ${ tagsMenuActive ? 'active' : '' }` }>
-			{ label && <div className="urlslab-TagsMenu-label">{ label }</div> }
+			{ label && <div className={ `urlslab-TagsMenu-label ${ required ? 'required' : '' }` }>{ label }</div> }
 			<div onClick={ ! hasActivator && openTagsMenu } className={ `urlslab-TagsMenu ${ ! hasActivator ? 'noActivator' : '' } ${ tagsMenuActive ? 'active' : '' }` } ref={ tagsMenuWrap }>
 				{ ! hasActivator && ! tagsMenuActive === true && <Tooltip className="showOnHover">{ __( 'Click to Add/remove tags' ) }</Tooltip> }
 				<ReactTags

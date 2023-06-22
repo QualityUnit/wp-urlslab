@@ -4,7 +4,7 @@ import Checkbox from './Checkbox';
 import '../assets/styles/elements/_MultiSelectMenu.scss';
 
 export default function SortMenu( {
-	className, name, style, children, items, description, defaultValue, defaultAccept, autoClose, disabled, isFilter, onChange,
+	className, name, style, children, items, description, defaultValue, required, defaultAccept, autoClose, disabled, isFilter, onChange,
 } ) {
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
@@ -48,7 +48,7 @@ export default function SortMenu( {
 	return (
 		<>
 			<div className={ `urlslab-MultiSelectMenu urlslab-SortMenu ${ disabled && 'disabled' } ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref }>
-				{ ! isFilter && children ? <div className="urlslab-inputField-label" dangerouslySetInnerHTML={ { __html: children } } /> : null }
+				{ ! isFilter && children ? <div className={ `urlslab-inputField-label ${ required ? 'required' : '' }` } dangerouslySetInnerHTML={ { __html: children } } /> : null }
 				<div
 					className={ `urlslab-MultiSelectMenu__title ${ isFilter ? 'isFilter' : '' } ${ isActive ? 'active' : '' }` }
 					onClick={ ! disabled && handleMenu }
