@@ -403,27 +403,11 @@ class Urlslab_Url_Row extends Urlslab_Data {
 			return '';
 		}
 
-		switch ( $screenshot_type ) {
-			case self::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL:
-				$path = 'https://api.urlslab.com/v1/public/screenshot/thumbnail/fullpage/%s/%s/%s';
-				break;
-			case self::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL:
-				$path = 'https://api.urlslab.com/v1/public/screenshot/thumbnail/carousel/%s/%s/%s';
-				break;
-			case self::SCREENSHOT_TYPE_FULL_PAGE:
-				$path = 'https://api.urlslab.com/v1/public/screenshot/fullpage/%s/%s/%s';
-				break;
-			case self::SCREENSHOT_TYPE_CAROUSEL:
-			default:
-				$path = 'https://api.urlslab.com/v1/public/screenshot/carousel/%s/%s/%s';
-				break;
-		}
-
-		return sprintf(
-			$path,
+		return urlslab_get_screenshot_image_url(
 			$this->get_urlslab_domain_id(),
 			$this->get_urlslab_url_id(),
-			$this->get_urlslab_scr_timestamp()
+			$this->get_urlslab_scr_timestamp(),
+			$screenshot_type
 		);
 	}
 
