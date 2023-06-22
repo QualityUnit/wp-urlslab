@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, Tooltip, Checkbox, Trash, ProgressBar, SortBy, InputField, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, LinkIcon, TagsMenu,
+	useInfiniteFetch, Tooltip, Checkbox, Trash, ProgressBar, SortBy, InputField, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, LinkIcon, TagsMenu, Edit, SingleSelectMenu, TextArea,
 } from '../lib/tableImports';
 
 import IconButton from '../elements/IconButton';
@@ -10,6 +10,7 @@ import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refre
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
+import { useCallback } from 'react';
 
 export default function GeneratorResultTable( { slug } ) {
 	const paginationId = 'hash_id';
@@ -59,10 +60,13 @@ export default function GeneratorResultTable( { slug } ) {
 	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
-	const setUnifiedPanel = ( cell ) => {
+	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+
+	const setUnifiedPanel = useCallback( ( cell ) => {
 		const origCell = cell?.row.original;
 		setOptions( [] );
 		setRowToEdit( {} );
+		updateRow( { cell } );
 
 		if ( origCell.usage_count > 0 ) {
 			setOptions( [ {
@@ -71,7 +75,7 @@ export default function GeneratorResultTable( { slug } ) {
 				},
 			} ] );
 		}
-	};
+	}, [ setOptions, setRowToEdit, slug ] );
 
 	const statusTypes = {
 		A: 'Active',
@@ -92,6 +96,14 @@ export default function GeneratorResultTable( { slug } ) {
 		date_changed: __( 'Last change' ),
 		result: __( 'Result' ),
 		usage_count: __( 'Usage' ),
+	};
+
+	const rowEditorCells = {
+		status: <SingleSelectMenu autoClose defaultAccept description=""
+			items={ statusTypes } name="statusTypes" defaultValue="W" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, status: val } ) }>{ header.status }</SingleSelectMenu>,
+
+		result: <TextArea rows="5" description=""
+			liveUpdate defaultValue="" label={ header.result } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, result: val } ) } />,
 	};
 
 	const columns = [
@@ -124,7 +136,6 @@ export default function GeneratorResultTable( { slug } ) {
 		columnHelper.accessor( 'result', {
 			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.result }</SortBy>,
 			size: 200,
 		} ),
@@ -170,8 +181,32 @@ export default function GeneratorResultTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell } ) } />,
+			cell: ( cell ) => {
+				return (
+					<div className="flex">
+						<IconButton
+							onClick={ () => {
+								setUnifiedPanel( cell );
+								activatePanel( 'rowEditor' );
+							} }
+							tooltipClass="align-left xxxl"
+							tooltip={ __( 'Edit row' ) }
+						>
+							<Edit />
+						</IconButton>
+						<IconButton
+							className="ml-s"
+							onClick={ () => deleteRow( { cell } ) }
+							tooltipClass="align-left xxxl"
+							tooltip={ __( 'Delete row' ) }
+						>
+							<Trash />
+						</IconButton>
+					</div>
+				);
+			},
 			header: null,
+			size: 60,
 		} ),
 	];
 
@@ -193,6 +228,8 @@ export default function GeneratorResultTable( { slug } ) {
 					slug,
 					url,
 					paginationId,
+					rowToEdit,
+					rowEditorCells,
 					deleteCSVCols: [ paginationId, 'hash_id' ],
 				} }
 			/>
