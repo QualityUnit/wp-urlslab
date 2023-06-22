@@ -4,14 +4,16 @@ import { useI18n } from '@wordpress/react-i18n';
 import Button from './Button';
 
 import '../assets/styles/elements/_MultiSelectMenu.scss';
+import useTablePanels from '../hooks/useTablePanels';
 
-export default function TableActionsMenu( { options, onAction } ) {
+export default function TableActionsMenu( { options } ) {
 	const { noImport, noExport, noDelete } = options;
 	const { __ } = useI18n();
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
 	const ref = useRef();
 	const didMountRef = useRef( false );
+	const { activatePanel } = useTablePanels();
 
 	const handleMenu = () => {
 		setActive( ! isActive );
@@ -38,14 +40,14 @@ export default function TableActionsMenu( { options, onAction } ) {
 			<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
 				<div className="urlslab-MultiSelectMenu__items--inn">
 					{ ! noImport &&
-					<Button className="simple" onClick={ () => onAction( 'import' ) }>{ __( 'Import CSV' ) }</Button>
+						<Button className="simple" onClick={ () => activatePanel( 'import' ) }>{ __( 'Import CSV' ) }</Button>
 					}
 					{
 						! noExport &&
-						<Button className="simple" onClick={ () => onAction( 'export' ) }>{ __( 'Export CSV' ) }</Button>
+						<Button className="simple" onClick={ () => activatePanel( 'export' ) }>{ __( 'Export CSV' ) }</Button>
 					}
 					{ ! noDelete &&
-					<Button className="simple" onClick={ () => onAction( 'deleteall' ) }>{ __( 'Delete All' ) }</Button>
+					<Button className="simple" onClick={ () => activatePanel( 'deleteall' ) }>{ __( 'Delete All' ) }</Button>
 					}
 				</div>
 			</div>

@@ -1,9 +1,10 @@
+import { memo } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import useCloseModal from '../hooks/useCloseModal';
 import Button from '../elements/Button';
 
-export default function DangerPanel( { title, text, button, handlePanel, action } ) {
+function DangerPanel( { title, text, button, handlePanel, action } ) {
 	const { __ } = useI18n();
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
 
@@ -32,3 +33,5 @@ export default function DangerPanel( { title, text, button, handlePanel, action 
 		</div>
 	);
 }
+
+export default memo( DangerPanel );

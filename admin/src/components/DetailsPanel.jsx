@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef, useState } from 'react';
+import { memo, useEffect, useCallback, useRef, useState } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import { useVirtual } from 'react-virtual';
@@ -12,8 +12,10 @@ import ProgressBar from '../elements/ProgressBar';
 import ExportCSVButton from '../elements/ExportCSVButton';
 import DateTimeFormat from '../elements/DateTimeFormat';
 import Loader from './Loader';
+import UnifiedPanelMenu from './UnifiedPanelMenu';
+import '../assets/styles/components/_TableComponent.scss';
 
-export default function DetailsPanel( ) {
+function DetailsPanel( ) {
 	const maxRows = 150;
 	const { __ } = useI18n();
 	const { ref, inView } = useInView();
@@ -21,7 +23,12 @@ export default function DetailsPanel( ) {
 	const [ exportStatus, setExportStatus ] = useState();
 	const stopExport = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( );
-	const { title, text, slug, url, showKeys, listId } = useTablePanels( ( state ) => state.options.detailsOptions );
+	const { activePanel, options, rowToEdit } = useTablePanels( );
+	let optionsId = 0;
+	if ( options.length > 1 ) {
+		optionsId = activePanel;
+	}
+	const { title, text, slug, url, showKeys, listId } = useTablePanels( ( state ) => state.options[ optionsId ].detailsOptions );
 	const tbody = [];
 
 	const hidePanel = () => {
@@ -106,11 +113,12 @@ export default function DetailsPanel( ) {
 		tbody.push(
 			<tr key={ row[ listId ] } className="">
 				{ showKeys.map( ( key ) => {
-					return <td className="pr-m pos-relative" key={ row[ key ] }>
+					const { name } = key;
+					return <td className="pr-m pos-relative" key={ row[ name ] }>
 						<div className="limit">
-							{ key.includes( 'url' ) ? <a href={ row[ key ] } target="_blank" rel="noreferrer">{ row[ key ] }</a> : row[ key ] }
+							{ name.includes( 'url' ) ? <a href={ row[ name ] } target="_blank" rel="noreferrer">{ row[ name ] }</a> : row[ name ] }
 							{
-								parseDate( row, key )
+								parseDate( row, name )
 							}
 						</div>
 					</td>;
@@ -126,21 +134,22 @@ export default function DetailsPanel( ) {
 	}, [ inView, fetchNextPage ] );
 
 	return (
-		<div className="urlslab-panel-wrap wide urlslab-panel-modal fadeInto">
+		<div className="urlslab-panel-wrap wide urlslab-panel-modal ultrawide fadeInto">
 			<div className="urlslab-panel Details">
 				<div className="urlslab-panel-header">
 					<h3>{ title }</h3>
 					<button className="urlslab-panel-close" onClick={ hidePanel }>
 						<CloseIcon />
 					</button>
-					<p>{ text }</p>
+					{ ( options.length > 1 || Object.keys( rowToEdit ).length > 0 ) && <UnifiedPanelMenu /> }
 				</div>
-				<div className="mt-l">
+				<div className="urlslab-panel-content">
+					{ text && <p className="fs-m padded">{ text }</p> }
 					<div className="table-container" ref={ tableContainerRef }>
 						{ isSuccess && data
-							? <table>
+							? <table className="urlslab-table">
 								<thead>
-									<tr >{ showKeys.map( ( key ) => <th className="pr-m" key={ key }>{ key.charAt( 0 ).toUpperCase() + key.slice( 1 ).replaceAll( '_', ' ' ) }</th> ) }</tr>
+									<tr >{ showKeys.map( ( key ) => <th className="pr-m" style={ key.size && { width: `${ key.size }%` } } key={ key.name }>{ key.name.charAt( 0 ).toUpperCase() + key.name.slice( 1 ).replaceAll( '_', ' ' ) }</th> ) }</tr>
 								</thead>
 								<tbody>
 									{ paddingTop > 0 && (
@@ -168,16 +177,18 @@ export default function DetailsPanel( ) {
 							? <ProgressBar className="mb-m" notification="Exporting…" value={ exportStatus } />
 							: null
 						}
-						<div className="flex mt-m">
-							<Button className="ma-left" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
-							<ExportCSVButton
-								className="ml-s"
-								options={ { slug: `${ slug }/${ url }`, url, paginationId: listId, stopExport } } onClick={ handleExportStatus }
-							/>
-						</div>
+					</div>
+					<div className="flex mt-m ma-left padded">
+						<Button className="ma-left" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
+						<ExportCSVButton
+							className="ml-s"
+							options={ { slug: `${ slug }/${ url }`, url, paginationId: listId, stopExport } } onClick={ handleExportStatus }
+						/>
 					</div>
 				</div>
 			</div>
 		</div>
 	);
 }
+
+export default memo( DetailsPanel );

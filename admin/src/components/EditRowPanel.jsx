@@ -1,16 +1,19 @@
-import { useMemo, useRef } from 'react';
+import { memo, useMemo, useRef } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import useChangeRow from '../hooks/useChangeRow';
 import useCloseModal from '../hooks/useCloseModal';
+import useTablePanels from '../hooks/useTablePanels';
 
 import Button from '../elements/Button';
+import UnifiedPanelMenu from './UnifiedPanelMenu';
 
-export default function EditRowPanel( props ) {
+function EditRowPanel( props ) {
 	const { editorMode, rowEditorCells, rowToEdit, notWide, data, slug, paginationId, title, text, id, handlePanel } = props;
 	const { __ } = useI18n();
 	const enableAddButton = useRef( false );
-	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
+	const { CloseIcon, handleClose } = useCloseModal( );
+	const { options } = useTablePanels();
 	const flattenedData = data?.pages?.flatMap( ( page ) => page ?? [] );
 	const { insertRow, saveEditedRow } = useChangeRow( { data: flattenedData, url: { filters: {}, sortBy: [] }, slug, paginationId } );
 
@@ -78,9 +81,10 @@ export default function EditRowPanel( props ) {
 					<button className="urlslab-panel-close" onClick={ hidePanel }>
 						<CloseIcon />
 					</button>
-					<p>{ text }</p>
+					{ editorMode && options.length > 0 && <UnifiedPanelMenu /> }
 				</div>
 				<div className="mt-l urlslab-panel-content">
+					{ text && <p className="fs-m">{ text }</p> }
 					{
 						cellsFinal && Object.entries( cellsFinal ).map( ( [ cellId, cell ] ) => {
 							return <div className={ `mb-l urlslab-panel-content__item ${ cell.props.hidden ? 'hidden' : '' }` } key={ cellId }>
@@ -102,3 +106,5 @@ export default function EditRowPanel( props ) {
 		</div>
 	);
 }
+
+export default memo( EditRowPanel );

@@ -7,6 +7,7 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import IconButton from '../elements/IconButton';
+import { useCallback } from 'react';
 
 export default function KeywordsTable( { slug } ) {
 	const paginationId = 'kw_id';
@@ -28,8 +29,22 @@ export default function KeywordsTable( { slug } ) {
 	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
-	const options = useTablePanels( ( state ) => state.options );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+
+	const setUnifiedPanel = useCallback( ( cell ) => {
+		const origCell = cell?.row.original;
+		setOptions( [] );
+		setRowToEdit( {} );
+		updateRow( { cell, id: 'keyword' } );
+
+		if ( origCell.kw_usage_count > 0 ) {
+			setOptions( [ {
+				detailsOptions: {
+					title: `Keyword “${ origCell.keyword }” usage`, text: `Keyword “${ origCell.keyword }” used on these URLs`, slug, url: `${ origCell.kw_id }/${ origCell.dest_url_id }`, showKeys: [ { name: 'link_type', size: 30 }, { name: 'url_name' } ], listId: 'url_id',
+				},
+			} ] );
+		}
+	}, [ setOptions, setRowToEdit, slug, updateRow ] );
 
 	const keywordTypes = {
 		M: __( 'Manual' ),
@@ -131,10 +146,8 @@ export default function KeywordsTable( { slug } ) {
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
 					<button className="ml-s" onClick={ () => {
-							setOptions( { ...options, detailsOptions: {
-							title: `Keyword “${ cell.row.original.keyword }” used on these URLs`, slug, url: `${ cell.row.original.kw_id }/${ cell.row.original.dest_url_id }`, showKeys: [ 'link_type', 'url_name' ], listId: 'url_id',
-						} } );
-						activatePanel( 'details' );
+						setUnifiedPanel( cell );
+						activatePanel( 0 );
 					} }>
 						<LinkIcon />
 						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
@@ -157,7 +170,7 @@ export default function KeywordsTable( { slug } ) {
 					<div className="flex">
 						<IconButton
 							onClick={ () => {
-								updateRow( { cell, id: 'keyword' } );
+								setUnifiedPanel( cell );
 								activatePanel( 'rowEditor' );
 							} }
 							tooltipClass="align-left xxxl"

@@ -29,8 +29,21 @@ export default function ScreenshotTable( { slug } ) {
 
 	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	const { activatePanel, setOptions } = useTablePanels();
-	const options = useTablePanels( ( state ) => state.options );
+	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
+
+	const setUnifiedPanel = ( cell ) => {
+		const origCell = cell?.row.original;
+		setOptions( [] );
+		setRowToEdit( {} );
+
+		if ( origCell.screenshot_usage_count > 0 ) {
+			setOptions( [ {
+				detailsOptions: {
+					title: `Screenshot used on these URLs`, slug, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: 'src_url_name' } ], listId: 'src_url_id',
+				},
+			} ] );
+		}
+	};
 
 	const scrStatusTypes = {
 		N: __( 'Waiting' ),
@@ -97,10 +110,8 @@ export default function ScreenshotTable( { slug } ) {
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
 					<button className="ml-s" onClick={ () => {
-						setOptions( { ...options, detailsOptions: {
-							title: `Screenshot used on these URLs`, slug, url: `${ cell.row.original.url_id }/linked-from`, showKeys: [ 'src_url_name' ], listId: 'src_url_id',
-						} } );
-						activatePanel( 'details' );
+						setUnifiedPanel( cell );
+						activatePanel( 0 );
 					} }>
 						<LinkIcon />
 						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>

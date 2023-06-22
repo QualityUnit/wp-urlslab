@@ -80,8 +80,6 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 	} );
 
 	const handlePanel = ( key ) => {
-		activatePanel( key );
-
 		if ( key === 'delete-all' ) {
 			handleDeleteAll.mutate();
 		}
@@ -124,10 +122,10 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 				<div className="urlslab-moduleView-headerBottom__top flex flex-align-center">
 
 					{ ! noDelete && selectedRows?.length > 0 &&
-						<Button danger className="mr-s" onClick={ () => handlePanel( 'deleteSelected' ) }><Trash />{ __( 'Delete selected' ) }</Button>
+						<Button danger className="mr-s" onClick={ () => activatePanel( 'deleteSelected' ) }><Trash />{ __( 'Delete selected' ) }</Button>
 					}
 					{ title && ! noInsert &&
-						<Button className="active" onClick={ () => handlePanel( 'rowInserter' ) }><PlusIcon />{ title }</Button>
+						<Button className="active" onClick={ () => activatePanel( 'rowInserter' ) }><PlusIcon />{ title }</Button>
 					}
 
 					{
@@ -150,7 +148,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 						<RowCounter filters={ filters } slug={ slug } />
 						}
 						{ ! hideActions &&
-							<TableActionsMenu onAction={ handlePanel } options={ { noImport, noExport, noDelete } } />
+							<TableActionsMenu options={ { noImport, noExport, noDelete } } />
 						}
 
 						{

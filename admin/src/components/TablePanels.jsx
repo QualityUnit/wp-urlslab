@@ -35,16 +35,6 @@ export default function TablePanels( { props } ) {
 				/>
 			}
 			{
-				activePanel === 'rowInserter' &&
-				<EditRowPanel { ...options } handlePanel={ handlePanel } />
-			}
-
-			{
-				activePanel === 'rowEditor' &&
-				<EditRowPanel editorMode { ...options } handlePanel={ handlePanel } />
-			}
-
-			{
 				activePanel === 'export' &&
 				<ExportPanel { ...options }
 					handlePanel={ handlePanel }
@@ -55,8 +45,17 @@ export default function TablePanels( { props } ) {
 				<ImportPanel options={ { ...options, initialRow } } handlePanel={ handlePanel } />
 			}
 			{
-				activePanel === 'details' &&
-				<DetailsPanel handlePanel={ handlePanel } />
+				activePanel === 'rowInserter' &&
+					<EditRowPanel { ...options } handlePanel={ handlePanel } />
+			}
+
+			{
+				activePanel === 'rowEditor' &&
+				<EditRowPanel editorMode { ...options } handlePanel={ handlePanel } />
+			}
+			{
+				typeof activePanel === 'number' &&
+				<DetailsPanel />
 			}
 		</>
 	);

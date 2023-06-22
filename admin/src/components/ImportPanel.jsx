@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { memo, useMemo, useRef, useState } from 'react';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCSVReader } from 'react-papaparse';
@@ -11,7 +11,7 @@ import { ReactComponent as ImportIcon } from '../assets/images/icons/icon-import
 import Button from '../elements/Button';
 import ProgressBar from '../elements/ProgressBar';
 
-export default function ImportPanel( { options, handlePanel } ) {
+function ImportPanel( { options, handlePanel } ) {
 	const { slug, header, initialRow } = options;
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
@@ -200,3 +200,5 @@ export default function ImportPanel( { options, handlePanel } ) {
 		</div>
 	);
 }
+
+export default memo( ImportPanel );
