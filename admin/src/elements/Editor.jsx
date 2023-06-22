@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Editor as TinyMCE } from '@tinymce/tinymce-react';
+import { useI18n } from '@wordpress/react-i18n';
 
 import 'tinymce/tinymce';
 // DOM model
@@ -46,9 +47,11 @@ import 'tinymce/plugins/table';
 // import 'tinymce/plugins/wordcount';
 
 import '../assets/styles/elements/_Inputs.scss';
+import Tooltip from './Tooltip';
 
-export default function Editor( { defaultValue, className, style, label, description, onChange } ) {
+export default function Editor( { defaultValue, className, style, label, description, required, onChange } ) {
 	const editorRef = useRef( null );
+	const { __ } = useI18n();
 	const [ val, setVal ] = useState( defaultValue ?? '' );
 	useEffect( () => setVal( defaultValue ?? '' ), [ defaultValue ] );
 
@@ -63,7 +66,7 @@ export default function Editor( { defaultValue, className, style, label, descrip
 		<div className={ `urlslab-inputField-wrap ${ className || '' }` } style={ style }>
 			{
 				label
-					? <span className="urlslab-inputField-label">{ label }</span>
+					? <span className={ `urlslab-inputField-label ${ required ? 'required' : '' }` }>{ label }</span>
 					: null
 			}
 
@@ -84,6 +87,7 @@ export default function Editor( { defaultValue, className, style, label, descrip
 					content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
 				} }
 			/>
+			{ required && <Tooltip className="showOnHover">{ __( 'Required field' ) }</Tooltip> }
 			{ description && <p className="urlslab-inputField-description">{ description }</p> }
 		</div>
 	);

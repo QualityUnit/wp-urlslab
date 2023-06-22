@@ -7,7 +7,7 @@ import Checkbox from './Checkbox';
 import '../assets/styles/elements/_MultiSelectMenu.scss';
 
 export default function MultiSelectMenu( {
-	id, className, asTags, style, children, items, description, defaultValue, isFilter, onChange } ) {
+	id, className, asTags, style, children, items, description, required, defaultValue, isFilter, onChange } ) {
 	let checkedNow = defaultValue || [];
 
 	if ( defaultValue && typeof defaultValue === 'string' ) {
@@ -57,7 +57,7 @@ export default function MultiSelectMenu( {
 	return (
 		<>
 			<div className={ `urlslab-MultiSelectMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref } id={ id }>
-				{ ! isFilter && children ? <div className="urlslab-inputField-label" dangerouslySetInnerHTML={ { __html: children } } /> : null }
+				{ ! isFilter && children ? <div className={ `urlslab-inputField-label ${ required ? 'required' : '' }` } dangerouslySetInnerHTML={ { __html: children } } /> : null }
 				<div
 					className={ `urlslab-MultiSelectMenu__title ${ isFilter ? 'isFilter' : '' } ${ isActive ? 'active' : '' }` }
 					onClick={ handleMenu }

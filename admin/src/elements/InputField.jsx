@@ -1,7 +1,10 @@
+import { useI18n } from '@wordpress/react-i18n';
 import { useState, useCallback } from 'react';
 import '../assets/styles/elements/_Inputs.scss';
+import Tooltip from './Tooltip';
 
-export default function InputField( { defaultValue, isLoading, autoFocus, placeholder, message, liveUpdate, className, type, readonly, disabled, label, description, labelInline, onChange, onKeyDown, onBlur, onFocus, onKeyUp, children, style } ) {
+export default function InputField( { defaultValue, isLoading, autoFocus, placeholder, message, liveUpdate, className, type, readonly, disabled, label, description, labelInline, onChange, onKeyDown, onBlur, onFocus, onKeyUp, children, required, style } ) {
+	const { __ } = useI18n();
 	const [ val, setVal ] = useState( defaultValue || '' );
 	const [ valid, setValid ] = useState( false );
 	const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
@@ -30,7 +33,7 @@ export default function InputField( { defaultValue, isLoading, autoFocus, placeh
 	return (
 		<label className={ `urlslab-inputField-wrap ${ className || '' } ${ labelInline ? 'inline' : '' } ${ valueStatus() }` } style={ style }>
 			{ label
-				? <span className="urlslab-inputField-label">{ label }</span>
+				? <span className={ `urlslab-inputField-label ${ required ? 'required' : '' }` }>{ label }</span>
 				: null
 			}
 			<div className={ `urlslab-inputField ${ children ? 'has-svg' : '' } ${ isLoading ? 'loading' : '' }` } >
@@ -85,7 +88,7 @@ export default function InputField( { defaultValue, isLoading, autoFocus, placeh
 							disabled={ disabled ? 'disabled' : '' }
 						/>
 				}
-
+				{ required && <Tooltip className="showOnHover">{ __( 'Required field' ) }</Tooltip> }
 			</div>
 			{ description && <p className="urlslab-inputField-description">{ description }</p> }
 			{

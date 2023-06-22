@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useI18n } from '@wordpress/react-i18n/';
 
 import { postFetch } from '../api/fetching';
 import { delay } from '../lib/helpers';
@@ -8,8 +7,7 @@ import InputField from './InputField';
 import '../assets/styles/elements/_SuggestedInputField.scss';
 
 export default function SuggestInputField( props ) {
-	const { defaultValue, suggestInput, maxItems, description, onChange } = props;
-	const { __ } = useI18n();
+	const { defaultValue, suggestInput, maxItems, description, required, onChange } = props;
 	const disabledKeys = { 38: 1, 40: 1 };
 	const ref = useRef();
 	const inputRef = useRef();
@@ -30,7 +28,7 @@ export default function SuggestInputField( props ) {
 
 	const scrollTo = () => {
 		if ( index || index === 0 ) {
-			suggestionsPanel.scrollTop = suggestionsPanel.querySelectorAll('li')[index].offsetTop - suggestionsPanel.offsetTop;
+			suggestionsPanel.scrollTop = suggestionsPanel.querySelectorAll( 'li' )[ index ].offsetTop - suggestionsPanel.offsetTop;
 		}
 	};
 
@@ -41,32 +39,30 @@ export default function SuggestInputField( props ) {
 
 		// arrow up/down button should select next/previous list element
 		if ( val.keyCode === 38 ) {
-			if ( index > 0) {
-				setIndex((i) => i - 1);
+			if ( index > 0 ) {
+				setIndex( ( i ) => i - 1 );
 				scrollTo();
 			}
 			return false;
 		} else if ( val.keyCode === 40 ) {
-			if (index < suggestionsList.length - 1) {
+			if ( index < suggestionsList.length - 1 ) {
 				setIndex( ( i ) => i + 1 );
 			} else {
 				setIndex( 0 );
 			}
 			scrollTo();
 			return false;
-		} else {
-			inputRef.current = val;
-			if (type === 'onchange') {
-				onChange(val);
-			} else {
-				delay( () => {
-					setInput( val.target.value );
-				}, 800 )();
-			}
-			return false;
 		}
+		inputRef.current = val;
+		if ( type === 'onchange' ) {
+			onChange( val );
+		} else {
+			delay( () => {
+				setInput( val.target.value );
+			}, 800 )();
+		}
+		return false;
 	};
-
 
 	const handleEnter = ( ) => {
 		showSuggestions( false );
@@ -76,14 +72,12 @@ export default function SuggestInputField( props ) {
 		}
 	};
 
-
-
 	const { data, isLoading } = useQuery( {
 		queryKey: [ input ],
 		queryFn: async () => {
 			if ( input ) {
 				const result = await postFetch( 'keyword/suggest', {
-					count: maxItems || 15, keyword: suggestInput , url: input } );
+					count: maxItems || 15, keyword: suggestInput, url: input } );
 				if ( result.ok ) {
 					showSuggestions( true );
 					return result.json();
@@ -138,7 +132,7 @@ export default function SuggestInputField( props ) {
 				}
 			} } onKeyUp={ ( event ) => handleTyping( event, 'keyup' ) } onFocus={ () => {
 				setIndex( ); showSuggestions( true );
-			} } />
+			} } required={ required } />
 			{
 				suggestionsVisible && suggestionsList?.length > 0 &&
 				<div className="urlslab-suggestInput-suggestions pos-absolute fadeInto" style={ descriptionHeight.current && { top: `calc(100% - ${ descriptionHeight.current + 3 }px)` } }>

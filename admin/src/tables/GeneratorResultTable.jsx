@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, Tooltip, Checkbox, Trash, ProgressBar, SortBy, InputField, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, LinkIcon, TagsMenu, Edit, SingleSelectMenu, TextArea,
+	useInfiniteFetch, Tooltip, Checkbox, Trash, ProgressBar, SortBy, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, LinkIcon, TagsMenu, Edit, SingleSelectMenu, TextArea,
 } from '../lib/tableImports';
 
 import IconButton from '../elements/IconButton';
@@ -116,7 +116,7 @@ export default function GeneratorResultTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'shortcode_id', {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.shortcode_id }</SortBy>,
-			size: 80,
+			size: 50,
 		} ),
 		columnHelper.accessor( 'prompt_variables', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
@@ -134,10 +134,9 @@ export default function GeneratorResultTable( { slug } ) {
 			size: 150,
 		} ),
 		columnHelper.accessor( 'result', {
-			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.result }</SortBy>,
-			size: 200,
+			size: 220,
 		} ),
 		columnHelper.accessor( 'status', {
 			filterValMenu: statusTypes,

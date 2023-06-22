@@ -24,6 +24,7 @@ type SingleSelectMenuType = Partial<{
 	defaultValue: string,
 	defaultAccept: boolean
 	autoClose: boolean
+	required: boolean
 	disabled: boolean
 	isFilter: boolean
 	onChange: ( value: string ) => void,
@@ -35,18 +36,18 @@ type SingleSelectMenuType = Partial<{
 }> & React.PropsWithChildren
 
 export const SingleSelectMenu: React.FC<SingleSelectMenuType > = React.memo( ( {
-	tooltipLabel, children, className = undefined, name = undefined, style = undefined, items = undefined, description = undefined, defaultValue = undefined, defaultAccept = undefined, autoClose = undefined, disabled = undefined, isFilter = undefined, onChange = undefined,
+	tooltipLabel, children, className = undefined, name = undefined, style = undefined, items = undefined, description = undefined, defaultValue = undefined, defaultAccept = undefined, autoClose = undefined, disabled = undefined, isFilter = undefined, required = undefined, onChange = undefined,
 }:SingleSelectMenuType ) => {
 	return (
 		<>
 			{ tooltipLabel
 				? <div className="urlslab-tooltipLabel flex flex-align-center">
-					<span className="urlslab-inputField-label">{ tooltipLabel.label }</span>
+					<span className={ `urlslab-inputField-label ${ required ? 'required' : '' }` }>{ tooltipLabel.label }</span>
 					<InfoTooltipIcon text={ tooltipLabel.tooltip } noWrapText />
 				</div>
 				: null
 			}
-			<JSXSingleSelectMenu className={ className } name={ name } style={ style } items={ items } description={ description } defaultValue={ defaultValue } defaultAccept={ defaultAccept } autoClose={ autoClose } disabled={ disabled } isFilter={ isFilter } onChange={ onChange }>{ tooltipLabel ? null : children }</JSXSingleSelectMenu>
+			<JSXSingleSelectMenu className={ className } name={ name } style={ style } items={ items } description={ description } defaultValue={ defaultValue } defaultAccept={ defaultAccept } autoClose={ autoClose } disabled={ disabled } isFilter={ isFilter } required={ required } onChange={ onChange }>{ tooltipLabel ? null : children }</JSXSingleSelectMenu>
 		</>
 	);
 } );
@@ -110,6 +111,7 @@ type TextAreaType = Partial<{
 	className: string
 	readonly: boolean
 	disabled: boolean
+	required: boolean
 	label: string
 	description: string
 	labelInline: boolean
@@ -120,10 +122,10 @@ type TextAreaType = Partial<{
 }> & React.PropsWithChildren
 
 export const TextArea: React.FC<TextAreaType> = React.memo( ( {
-	allowResize, children, defaultValue = undefined, autoFocus = undefined, placeholder = undefined, liveUpdate = undefined, className = undefined, readonly = undefined, disabled = undefined, label = undefined, description = undefined, labelInline = undefined, onChange = undefined, style = undefined, rows = undefined,
+	allowResize, children, defaultValue = undefined, autoFocus = undefined, placeholder = undefined, liveUpdate = undefined, className = undefined, readonly = undefined, disabled = undefined, label = undefined, description = undefined, labelInline = undefined, required = undefined, onChange = undefined, style = undefined, rows = undefined,
 }: TextAreaType ) => {
 	const classes = allowResize ? `${ className } allow-resize` : className;
-	return <JSXTextArea defaultValue={ defaultValue } autoFocus={ autoFocus } placeholder={ placeholder } liveUpdate={ liveUpdate } className={ classes } readonly={ readonly } disabled={ disabled } label={ label } description={ description } labelInline={ labelInline } onChange={ onChange } style={ style } rows={ rows }>{ children }</JSXTextArea>;
+	return <JSXTextArea defaultValue={ defaultValue } autoFocus={ autoFocus } placeholder={ placeholder } liveUpdate={ liveUpdate } className={ classes } readonly={ readonly } disabled={ disabled } label={ label } description={ description } labelInline={ labelInline } required={ required } onChange={ onChange } style={ style } rows={ rows }>{ children }</JSXTextArea>;
 } );
 TextArea.displayName = 'TextArea';
 
@@ -138,6 +140,7 @@ type InputFieldType = Partial<{
 	className: string
 	readonly: boolean
 	disabled: boolean
+	required: boolean
 	label: string
 	description: string
 	labelInline: boolean
@@ -150,7 +153,7 @@ type InputFieldType = Partial<{
 }> & React.PropsWithChildren
 
 export const InputField: React.FC<InputFieldType> = React.memo( (
-	{ defaultValue = undefined, isLoading = undefined, autoFocus = undefined, placeholder = undefined, message = undefined, liveUpdate = undefined, className = undefined, type = undefined, readonly = undefined, disabled = undefined, label = undefined, description = undefined, labelInline = undefined, onChange = undefined, onKeyDown = undefined, onBlur = undefined, onFocus = undefined, onKeyUp = undefined, children = undefined, style = undefined }: InputFieldType,
+	{ defaultValue = undefined, isLoading = undefined, autoFocus = undefined, placeholder = undefined, message = undefined, liveUpdate = undefined, className = undefined, type = undefined, required = undefined, readonly = undefined, disabled = undefined, label = undefined, description = undefined, labelInline = undefined, onChange = undefined, onKeyDown = undefined, onBlur = undefined, onFocus = undefined, onKeyUp = undefined, children = undefined, style = undefined }: InputFieldType,
 ) => {
 	return <JSXInputField
 		defaultValue={ defaultValue }
@@ -171,6 +174,7 @@ export const InputField: React.FC<InputFieldType> = React.memo( (
 		onBlur={ onBlur }
 		onFocus={ onFocus }
 		onKeyUp={ onKeyUp }
+		required={ required }
 		style={ style }>{ children }</JSXInputField>;
 } );
 InputField.displayName = 'InputField';
