@@ -11,4 +11,23 @@
 	.urlslab-table-container {
 		margin: 0;
 	}
+
+	.recharts-responsive-container {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+	}
+
+	.urlslab-chart-legend {
+		display: inline-flex;
+		border-radius: $br-6;
+		overflow: hidden;
+
+		li {
+			color: $white;
+			padding: 1em;
+			margin: 0;
+			font-size: 0.8125rem;
+		}
+	}
 }

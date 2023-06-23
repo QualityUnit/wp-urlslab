@@ -2,6 +2,8 @@ import { memo, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useI18n } from '@wordpress/react-i18n';
+import { date, getSettings } from '@wordpress/date';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 import { postFetch } from '../api/fetching';
 import useCloseModal from '../hooks/useCloseModal';
@@ -41,10 +43,36 @@ function ChangesPanel() {
 		page_size: __( 'Page size' ),
 	};
 
+	const chart = {
+		status_code: '#118AF7',
+		load_duration: '#B44B85',
+		word_count: '#FFB928',
+		requests: '#48C6CE',
+		page_size: '#9154CE',
+	};
+
+	const renderLegend = ( props ) => {
+		const { payload } = props;
+		// console.log( props );
+
+		return (
+			<ul className="urlslab-chart-legend flex-align-center">
+				{
+					payload.map( ( entry, index ) => (
+						<li key={ `item-${ index }` } style={ { backgroundColor: entry.color } }>
+							<input type="checkbox" value={ entry.payload.hide } onClick={ () => ! entry.payload.hide } />
+							{ entry.value }
+						</li>
+					) )
+				}
+			</ul>
+		);
+	};
+
 	const columns = [
 		columnHelper.accessor( 'screenshot', {
 			id: 'thumb',
-			className: 'checkbox thumbnail',
+			className: 'nolimit thumbnail',
 			cell: ( cell ) => <img src={ cell?.getValue().thumbnail } className="video-thumbnail" alt={ title } />,
 			header: () => header.screenshot,
 			size: 120,
@@ -93,6 +121,20 @@ function ChangesPanel() {
 		} ),
 	];
 
+	const renderTooltip = ( props ) => {
+		const { dataKey, value } = props;
+
+		if ( dataKey === 'page_size' ) {
+			return `${ parseFloat( value / 1024 / 1024 ).toFixed( 2 ) }\u00A0MB`;
+		}
+
+		if ( dataKey === 'load_duration' ) {
+			return `${ parseFloat( value / 1000 ).toFixed( 2 ) }\u00A0s`;
+		}
+
+		return value;
+	};
+
 	return (
 		<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
 			<div className="urlslab-panel urlslab-changesPanel customPadding">
@@ -101,6 +143,36 @@ function ChangesPanel() {
 					<button className="urlslab-panel-close" onClick={ hidePanel }>
 						<CloseIcon />
 					</button>
+				</div>
+				<div style={ { position: 'relative', width: '100%', height: 0, paddingBottom: '21.5%' } }>
+					<ResponsiveContainer width="100%" height="100%">
+						<LineChart
+							width={ 1400 }
+							height={ 300 }
+							data={ data }
+							margin={ {
+								top: 24,
+								left: 24,
+								right: 24,
+								bottom: 0,
+							} }
+						>
+							<CartesianGrid />
+							<XAxis dataKey="last_seen" reversed={ true } tickFormatter={ ( val ) => date( getSettings().formats.date, val * 1000 ) } />
+							<Tooltip
+								formatter={ ( value, name, props ) => renderTooltip( props ) }
+								labelFormatter={ ( val ) => date( getSettings().formats.date, val * 1000 ) } />
+							<Legend content={ renderLegend } align="left" verticalAlign="top" />
+							{
+								Object.entries( chart ).map( ( [ key, color ] ) => {
+									return <>
+										<YAxis hide={ true } yAxisId={ key } domain={ [ 'dataMin', 'dataMax' ] } scale={ key === 'load_duration' ? 'time' : 'auto' } />
+										<Line type="natural" key={ key } name={ header[ key ] } hide={ key === 'status_code' } yAxisId={ key } dataKey={ key } stroke={ color } strokeWidth={ 4 } />
+									</>;
+								} )
+							}
+						</LineChart>
+					</ResponsiveContainer>
 				</div>
 				<div className="mt-l table-container">
 					<Table
