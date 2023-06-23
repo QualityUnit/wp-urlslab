@@ -47,16 +47,17 @@ function ChangesPanel() {
 			className: 'checkbox thumbnail',
 			cell: ( cell ) => <img src={ cell?.getValue().thumbnail } className="video-thumbnail" alt={ title } />,
 			header: () => header.screenshot,
+			size: 120,
 		} ),
 		columnHelper.accessor( 'last_seen', {
 			cell: ( cell ) => <DateTimeFormat datetime={ cell.getValue() } />,
 			header: () => header.last_seen,
-			size: 100,
+			size: 80,
 		} ),
 		columnHelper.accessor( 'last_changed', {
 			cell: ( cell ) => <DateTimeFormat datetime={ cell.getValue() } />,
 			header: () => header.last_changed,
-			size: 100,
+			size: 80,
 		} ),
 		columnHelper.accessor( 'status_code', {
 			cell: ( cell ) => {
@@ -79,7 +80,7 @@ function ChangesPanel() {
 		} ),
 		columnHelper.accessor( 'word_count', {
 			header: () => header.word_count,
-			size: 150,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'requests', {
 			header: () => header.requests,
@@ -94,14 +95,14 @@ function ChangesPanel() {
 
 	return (
 		<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
-			<div className="urlslab-panel urlslab-changesPanel">
+			<div className="urlslab-panel urlslab-changesPanel customPadding">
 				<div className="urlslab-panel-header">
 					<h3>{ title }</h3>
 					<button className="urlslab-panel-close" onClick={ hidePanel }>
 						<CloseIcon />
 					</button>
 				</div>
-				<div className="mt-l">
+				<div className="mt-l table-container">
 					<Table
 						slug={ slug }
 						columns={ columns }
