@@ -302,9 +302,9 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 						if ( Urlslab_CSS_Cache_Row::STATUS_ACTIVE == $css_object->get_status() ) {
 							$remove_elements[]                                        = $link_object;
 							$merged_css_files[ $link_object->getAttribute( 'href' ) ] = $css_object;
-						}
-						if ( null === $first_node ) {
-							$first_node = $link_object;
+							if ( null === $first_node ) {
+								$first_node = $link_object;
+							}
 						}
 					}
 				}
