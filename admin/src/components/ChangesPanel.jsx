@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useI18n } from '@wordpress/react-i18n';
@@ -16,6 +16,7 @@ import DateTimeFormat from '../elements/DateTimeFormat';
 function ChangesPanel() {
 	const { __ } = useI18n();
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
+	const [ lineVisibility, setLineVisibility ] = useState( {} );
 	const { CloseIcon, handleClose } = useCloseModal();
 	const { title, slug } = useTablePanels( ( state ) => state.options.changesPanel );
 
@@ -53,20 +54,42 @@ function ChangesPanel() {
 
 	const renderLegend = ( props ) => {
 		const { payload } = props;
-		// console.log( props );
+		console.log( payload );
 
 		return (
 			<ul className="urlslab-chart-legend flex-align-center">
 				{
-					payload.map( ( entry, index ) => (
-						<li key={ `item-${ index }` } style={ { backgroundColor: entry.color } }>
-							<input type="checkbox" checked={ entry.payload.hide } onClick={ () => ! entry.payload.hide } />
-							{ entry.value }
-						</li>
-					) )
+					payload.map( ( entry, index ) => {
+						const { dataKey, color, inactive, value } = entry;
+						if ( dataKey === 'status_code' ) {
+							return null;
+						}
+						return <li key={ `item-${ index }` } style={ { backgroundColor: color } }>
+							<input type="checkbox" defaultChecked={ lineVisibility[ dataKey ] || true }
+								onClick={ ( event ) => setLineVisibility( ( obj ) => {
+									return { [ dataKey ]: ( ! obj[ dataKey ] || false ), ...obj };
+								} ) }
+							/>
+							{ value }
+						</li>;
+					} )
 				}
 			</ul>
 		);
+	};
+
+	const renderTooltip = ( props ) => {
+		const { dataKey, value } = props;
+
+		if ( dataKey === 'page_size' ) {
+			return `${ parseFloat( value / 1024 / 1024 ).toFixed( 2 ) }\u00A0MB`;
+		}
+
+		if ( dataKey === 'load_duration' ) {
+			return `${ parseFloat( value / 1000 ).toFixed( 2 ) }\u00A0s`;
+		}
+
+		return value;
 	};
 
 	const columns = [
@@ -121,20 +144,6 @@ function ChangesPanel() {
 		} ),
 	];
 
-	const renderTooltip = ( props ) => {
-		const { dataKey, value } = props;
-
-		if ( dataKey === 'page_size' ) {
-			return `${ parseFloat( value / 1024 / 1024 ).toFixed( 2 ) }\u00A0MB`;
-		}
-
-		if ( dataKey === 'load_duration' ) {
-			return `${ parseFloat( value / 1000 ).toFixed( 2 ) }\u00A0s`;
-		}
-
-		return value;
-	};
-
 	return (
 		<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
 			<div className="urlslab-panel urlslab-changesPanel customPadding">
@@ -167,7 +176,7 @@ function ChangesPanel() {
 								Object.entries( chart ).map( ( [ key, color ] ) => {
 									return <>
 										<YAxis hide={ true } yAxisId={ key } domain={ [ 'dataMin', 'dataMax' ] } scale={ key === 'load_duration' ? 'time' : 'auto' } />
-										<Line type="monotone" key={ key } name={ header[ key ] } hide={ key === 'status_code' } yAxisId={ key } dataKey={ key } stroke={ color } strokeWidth={ 4 } />
+										<Line type="monotone" key={ key } name={ header[ key ] } hide={ key === 'status_code' || lineVisibility[ key ] } yAxisId={ key } dataKey={ key } stroke={ color } strokeWidth={ 4 } />
 									</>;
 								} )
 							}
