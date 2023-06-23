@@ -97,11 +97,9 @@ export default function App() {
 	const { data } = useQuery( {
 		queryKey: [ 'modules' ],
 		queryFn: async () => {
-			if ( prefetch ) {
-				const response = await getFetch( 'module' ).then( ( ModuleData ) => ModuleData );
-				if ( response.ok ) {
-					return response.json();
-				}
+			const response = await getFetch( 'module' ).then( ( ModuleData ) => ModuleData );
+			if ( response.ok ) {
+				return response.json();
 			}
 		},
 		refetchOnWindowFocus: false,

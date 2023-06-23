@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, LinkIcon, Trash, SingleSelectMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, LinkIcon, Trash, SingleSelectMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, Button,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -178,6 +178,19 @@ export default function LinkManagerTable( { slug } ) {
 			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.labels,
 			size: 160,
+		} ),
+		columnHelper.accessor( 'changesPanel', {
+			className: 'changesPanel',
+			cell: ( cell ) => <Button onClick={ () => {
+				setOptions( { changesPanel: { title: cell.row.original.url_name, slug: `url/${ cell.row.original.url_id }/changes` } } );
+				activatePanel( 'changesPanel' );
+			} }
+			className="small active"
+			>
+				{ __( 'Show changes' ) }
+			</Button>,
+			header: null,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',

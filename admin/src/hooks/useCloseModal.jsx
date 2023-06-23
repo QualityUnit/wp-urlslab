@@ -15,8 +15,6 @@ export default function useCloseModal( ) {
 		return operationVal;
 	};
 
-	console.log( activePanel );
-
 	window.addEventListener( 'keyup', ( event ) => {
 		if ( event.key === 'Escape' ) {
 			handleClose( );

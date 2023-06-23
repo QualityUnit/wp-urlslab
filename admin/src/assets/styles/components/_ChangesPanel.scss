@@ -1,0 +1,10 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-changesPanel {
+
+	&-wrap {
+		width: 75%;
+		max-width: 92em;
+	}
+}
