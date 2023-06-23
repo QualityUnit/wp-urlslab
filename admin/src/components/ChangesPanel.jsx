@@ -60,7 +60,7 @@ function ChangesPanel() {
 				{
 					payload.map( ( entry, index ) => (
 						<li key={ `item-${ index }` } style={ { backgroundColor: entry.color } }>
-							<input type="checkbox" value={ entry.payload.hide } onClick={ () => ! entry.payload.hide } />
+							<input type="checkbox" checked={ entry.payload.hide } onClick={ () => ! entry.payload.hide } />
 							{ entry.value }
 						</li>
 					) )
@@ -167,7 +167,7 @@ function ChangesPanel() {
 								Object.entries( chart ).map( ( [ key, color ] ) => {
 									return <>
 										<YAxis hide={ true } yAxisId={ key } domain={ [ 'dataMin', 'dataMax' ] } scale={ key === 'load_duration' ? 'time' : 'auto' } />
-										<Line type="natural" key={ key } name={ header[ key ] } hide={ key === 'status_code' } yAxisId={ key } dataKey={ key } stroke={ color } strokeWidth={ 4 } />
+										<Line type="monotone" key={ key } name={ header[ key ] } hide={ key === 'status_code' } yAxisId={ key } dataKey={ key } stroke={ color } strokeWidth={ 4 } />
 									</>;
 								} )
 							}
