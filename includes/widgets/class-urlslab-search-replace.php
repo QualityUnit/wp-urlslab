@@ -9,7 +9,7 @@ class Urlslab_Search_Replace extends Urlslab_Widget {
 	private $loaded = false;
 
 	public function init_widget() {
-		Urlslab_Loader::get_instance()->add_filter( 'urlslab_raw_content', $this, 'content_raw_hook', 1 );
+		Urlslab_Loader::get_instance()->add_filter( 'urlslab_raw_content_after', $this, 'content_raw_hook', 1 );
 	}
 
 	public function get_widget_slug(): string {
