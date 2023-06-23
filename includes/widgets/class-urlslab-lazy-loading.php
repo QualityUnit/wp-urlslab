@@ -22,6 +22,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 	public const DOWNLOAD_URL_PATH = 'urlslab-content/';
 	const SETTING_NAME_ATTACH_GENERATOR_ID = 'urlslab_attach_generator_id';
+	const SETTING_NAME_HTML_MINIFICATION = 'urlslab_html_minification';
 	private $lazy_load_youtube_css = false;
 
 	/**
@@ -32,6 +33,39 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'the_content', 10 );
 		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'hook_callback', 10, 0 );
+
+		Urlslab_Loader::get_instance()->add_filter( 'urlslab_raw_content_before', $this, 'minify_content', 0 );
+	}
+
+	public function minify_content( $content ) {
+		if ( ! $this->get_option( self::SETTING_NAME_HTML_MINIFICATION ) ) {
+			return $content;
+		}
+		$htmlMin = new \voku\helper\HtmlMin();
+		$htmlMin->doOptimizeViaHtmlDomParser();
+		$htmlMin->doRemoveComments();
+		$htmlMin->doSumUpWhitespace();
+		$htmlMin->doRemoveWhitespaceAroundTags();
+		$htmlMin->doOptimizeAttributes();
+		$htmlMin->doRemoveHttpPrefixFromAttributes();
+		$htmlMin->doRemoveHttpsPrefixFromAttributes();
+		$htmlMin->doKeepHttpAndHttpsPrefixOnExternalAttributes();
+		$htmlMin->doRemoveDefaultAttributes();
+		$htmlMin->doRemoveDeprecatedAnchorName();
+		$htmlMin->doRemoveDeprecatedScriptCharsetAttribute();
+		$htmlMin->doRemoveDeprecatedTypeFromScriptTag();
+		$htmlMin->doRemoveDeprecatedTypeFromStylesheetLink();
+		$htmlMin->doRemoveDeprecatedTypeFromStyleAndLinkTag();
+		$htmlMin->doRemoveDefaultTypeFromButton();
+		$htmlMin->doRemoveEmptyAttributes();
+		$htmlMin->doRemoveValueFromEmptyInput();
+		$htmlMin->doSortCssClassNames();
+		$htmlMin->doSortHtmlAttributes();
+		$htmlMin->doRemoveSpacesBetweenTags();
+		$htmlMin->doRemoveOmittedQuotes();
+		$htmlMin->doRemoveOmittedHtmlTags();
+
+		return $htmlMin->minify( $content );
 	}
 
 	public function hook_callback() {
@@ -337,6 +371,25 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			},
 			'content'
 		);
+
+		$this->add_options_form_section(
+			'minify',
+			__( 'Content minification' ),
+			__( 'Minification process removes from HTML, CSS or JS content uneccessary spaces or comments to save network traffic' ),
+			array( self::LABEL_EXPERT )
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_HTML_MINIFICATION,
+			false,
+			true,
+			__( 'HTML Minification' ),
+			__( 'Minify HTML source by removing extra whitespaces, comments and other unneeded characters without breaking the content structure. As a result pages become smaller in size and load faster. It will also prepare the HTML for better gzip results, by re-ranging (sort alphabetical) attributes and css-class-names.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'minify'
+		);
+
 	}
 
 	private function add_videos_lazy_loading( DOMDocument $document ) {
@@ -795,7 +848,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	 * @throws DOMException
 	 */
 	private function create_yt_video_dom( DOMDocument $document, Urlslab_Youtube_Row $yt_object, DOMElement $youtube_loader ): void {
-		$youtube_title = $document->createElement( 'strong', htmlspecialchars( $yt_object->get_title() . ' | ' . $yt_object->get_channel_title() ) );
+		$youtube_title        = $document->createElement( 'strong', htmlspecialchars( $yt_object->get_title() . ' | ' . $yt_object->get_channel_title() ) );
 		$youtube_title_bottom = $document->createElement( 'h3', htmlspecialchars( $yt_object->get_title() . ' | ' . $yt_object->get_channel_title() ) );
 		$youtube_title->setAttribute( 'class', 'youtube_urlslab_loader--title' );
 		$youtube_title_bottom->setAttribute( 'class', 'youtube_urlslab_loader--titleBottom' );
