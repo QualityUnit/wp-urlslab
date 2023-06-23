@@ -8,7 +8,13 @@ require_once ABSPATH . 'wp-admin/includes/file.php';
 
 class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 	public function cron_exec( $max_execution_time = self::MAX_RUN_TIME ): bool {
-		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_CSS_Optimizer::SLUG ) ) {
+		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Html_Optimizer::SLUG ) ) {
+			return false;
+		}
+
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Html_Optimizer::SLUG );
+
+		if ( ! $widget->get_option( Urlslab_Html_Optimizer::SETTING_NAME_CSS_PROCESSING ) ) {
 			return false;
 		}
 
@@ -19,7 +25,7 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 				array(
 					Urlslab_CSS_Cache_Row::STATUS_DISABLED,
 					Urlslab_CSS_Cache_Row::STATUS_ACTIVE,
-					Urlslab_CSS_Cache_Row::get_now( time() - Urlslab_User_Widget::get_instance()->get_widget( Urlslab_CSS_Optimizer::SLUG )->get_option( Urlslab_CSS_Optimizer::SETTING_NAME_CSS_CACHE_TTL ) ),
+					Urlslab_CSS_Cache_Row::get_now( time() - $widget->get_option( Urlslab_Html_Optimizer::SETTING_NAME_CSS_CACHE_TTL ) ),
 				),
 			)
 		);
@@ -63,22 +69,21 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 				$css->set_status( Urlslab_CSS_Cache_Row::STATUS_DISABLED );
 				$css->set_css_content( '' );
 			} else {
-				$widget = Urlslab_Available_Widgets::get_instance()->get_widget( Urlslab_CSS_Optimizer::SLUG );
-				if ( $widget->get_option( Urlslab_CSS_Optimizer::SETTING_NAME_CSS_MAX_SIZE ) < filesize( $page_content_file_name ) ) {
-					$css->set_status( Urlslab_CSS_Cache_Row::STATUS_DISABLED );
-					$css->set_filesize( filesize( $page_content_file_name ) );
-				} else {
-					$css->set_status( Urlslab_CSS_Cache_Row::STATUS_ACTIVE );
+				/** @var Urlslab_Html_Optimizer $widget */
+				$widget = Urlslab_Available_Widgets::get_instance()->get_widget( Urlslab_Html_Optimizer::SLUG );
 
-					// Adjusting the links in the css based on the settings
-					$css_page_content = file_get_contents( $page_content_file_name );
-					if ( $widget->get_option( Urlslab_CSS_Optimizer::SETTING_NAME_CSS_ABSOLUTE_URL_LINKS ) ) {
-						// should change the links to absolute urls
-						$css_page_content = $this->adjustCssUrlLinks( $css_page_content, $css->get_url_object() );
-					}
+				$css->set_status( Urlslab_CSS_Cache_Row::STATUS_ACTIVE );
 
-					$css->set_css_content( $css_page_content );
+				// Adjusting the links in the css based on the settings
+				$css_page_content = file_get_contents( $page_content_file_name );
+				$css_page_content = $this->adjustCssUrlLinks( $css_page_content, $css->get_url_object() );
+				if ( $widget->get_option( Urlslab_Html_Optimizer::SETTING_NAME_CSS_MINIFICATION ) ) {
+					$minifier = new \MatthiasMullie\Minify\CSS( $css_page_content );
+					$minifier->setMaxImportSize( 0 );
+					$css_page_content = $minifier->minify();
 				}
+
+				$css->set_css_content( $css_page_content );
 			}
 		} catch ( Exception $e ) {
 			$css->set_status( Urlslab_CSS_Cache_Row::STATUS_DISABLED );
@@ -94,27 +99,25 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 	function adjustCssUrlLinks( string $css_content, Urlslab_Url $base_url ): string {
 		// correct css prefix without query param
 		$truncated_url_path_dirs = preg_replace( '/\/[^\/]*$/', '', $base_url->get_url_path() );
-		$css_prefix = $base_url->get_url_scheme_prefix() . $base_url->get_domain_name() . $truncated_url_path_dirs;
+		$css_prefix              = $base_url->get_url_scheme_prefix() . $base_url->get_domain_name() . $truncated_url_path_dirs;
 
 		// Match the URLs inside the CSS content using regex
-		$url_pattern = "/url\(['\"]??(.*?)['\"]??\)/i";
+		$url_pattern = "/url\\(['\"]{0,1}(.*?)['\"]{0,1}\\)/i";
 		preg_match_all( $url_pattern, $css_content, $matched_urls );
 
-		// Extract the unique URLs from the regex matches
-		$relative_urls = array_unique( $matched_urls[1] );
-
 		// Iterate through each relative URL, convert it to an absolute URL, and replace it in the CSS content
-		foreach ( $relative_urls as $relative_url ) {
+		for ( $i = 0; $i < count( $matched_urls[0] ); $i ++ ) {
 			// Skip absolute URLs or data URIs
-			if ( preg_match( '/^(https?:\/\/|data:)/', $relative_url ) ) {
+			if ( preg_match( '/^(https?:\/\/|data:)/', $matched_urls[1][ $i ] ) ) {
 				continue;
 			}
 			// Convert the relative URL to an absolute URL
-			$absolute_url = rtrim( $css_prefix, '/' ) . '/' . ltrim( $relative_url, '/' );
+			$absolute_url = rtrim( $css_prefix, '/' ) . '/' . ltrim( $matched_urls[1][ $i ], '/' );
 
 			// Replace the relative URL with the absolute URL in the CSS content
-			$css_content = str_replace( "url({$relative_url})", "url({$absolute_url})", $css_content );
+			$css_content = str_replace( $matched_urls[0][ $i ], "url({$absolute_url})", $css_content );
 		}
+
 		return $css_content;
 	}
 }

@@ -22,7 +22,6 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 	public const DOWNLOAD_URL_PATH = 'urlslab-content/';
 	const SETTING_NAME_ATTACH_GENERATOR_ID = 'urlslab_attach_generator_id';
-	const SETTING_NAME_HTML_MINIFICATION = 'urlslab_html_minification';
 	private $lazy_load_youtube_css = false;
 
 	/**
@@ -33,40 +32,8 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'the_content', 10 );
 		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'hook_callback', 10, 0 );
-
-		Urlslab_Loader::get_instance()->add_filter( 'urlslab_raw_content_before', $this, 'minify_content', 0 );
 	}
 
-	public function minify_content( $content ) {
-		if ( ! $this->get_option( self::SETTING_NAME_HTML_MINIFICATION ) ) {
-			return $content;
-		}
-		$htmlMin = new \voku\helper\HtmlMin();
-		$htmlMin->doOptimizeViaHtmlDomParser();
-		$htmlMin->doRemoveComments();
-		$htmlMin->doSumUpWhitespace();
-		$htmlMin->doRemoveWhitespaceAroundTags();
-		$htmlMin->doOptimizeAttributes();
-		$htmlMin->doRemoveHttpPrefixFromAttributes();
-		$htmlMin->doRemoveHttpsPrefixFromAttributes();
-		$htmlMin->doKeepHttpAndHttpsPrefixOnExternalAttributes();
-		$htmlMin->doRemoveDefaultAttributes();
-		$htmlMin->doRemoveDeprecatedAnchorName();
-		$htmlMin->doRemoveDeprecatedScriptCharsetAttribute();
-		$htmlMin->doRemoveDeprecatedTypeFromScriptTag();
-		$htmlMin->doRemoveDeprecatedTypeFromStylesheetLink();
-		$htmlMin->doRemoveDeprecatedTypeFromStyleAndLinkTag();
-		$htmlMin->doRemoveDefaultTypeFromButton();
-		$htmlMin->doRemoveEmptyAttributes();
-		$htmlMin->doRemoveValueFromEmptyInput();
-		$htmlMin->doSortCssClassNames();
-		$htmlMin->doSortHtmlAttributes();
-		$htmlMin->doRemoveSpacesBetweenTags();
-		$htmlMin->doRemoveOmittedQuotes();
-		$htmlMin->doRemoveOmittedHtmlTags();
-
-		return $htmlMin->minify( $content );
-	}
 
 	public function hook_callback() {
 		add_shortcode( self::SHORTCODE_VIDEO, array( $this, 'get_video_shortcode_content' ) );
@@ -370,24 +337,6 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 				return is_string( $value );
 			},
 			'content'
-		);
-
-		$this->add_options_form_section(
-			'minify',
-			__( 'Content minification' ),
-			__( 'Minification process removes from HTML, CSS or JS content uneccessary spaces or comments to save network traffic' ),
-			array( self::LABEL_EXPERT )
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_HTML_MINIFICATION,
-			false,
-			true,
-			__( 'HTML Minification' ),
-			__( 'Minify HTML source by removing extra whitespaces, comments and other unneeded characters without breaking the content structure. As a result pages become smaller in size and load faster. It will also prepare the HTML for better gzip results, by re-ranging (sort alphabetical) attributes and css-class-names.' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'minify'
 		);
 
 	}
@@ -775,6 +724,12 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			}
 
 			if ( ! empty( $this->content_docs ) ) {
+				/** @var Urlslab_Html_Optimizer $widget */
+				$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Html_Optimizer::SLUG );
+				foreach ( $this->content_docs as $doc ) {
+					$doc->set_cache_content( $widget->minify_content( $doc->get_cache_content() ) );
+				}
+
 				$obj = new Urlslab_Content_Cache_Row();
 				$obj->insert_all( $this->content_docs, true );
 			}
@@ -793,7 +748,8 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			$element_html_len = strlen( $element_html );
 			if ( $element_html_len > $this->get_option( self::SETTING_NAME_CONTENT_LAZY_MIN_CACHE_SIZE ) ) {
 				$lazy_element = $document->createElement( 'div' );
-				$obj          = new Urlslab_Content_Cache_Row(
+
+				$obj = new Urlslab_Content_Cache_Row(
 					array(
 						'cache_len'     => $element_html_len,
 						'cache_content' => $element_html,
