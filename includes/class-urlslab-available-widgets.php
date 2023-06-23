@@ -32,7 +32,7 @@ class Urlslab_Available_Widgets {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-keywords-links.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-image-alt-text.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-meta-tag.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-css-optimizer.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-html-optimizer.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-search-replace.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-redirects.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-custom-html.php';
@@ -49,7 +49,7 @@ class Urlslab_Available_Widgets {
 		$urlslab_og_meta_tag        = new Urlslab_Meta_Tag();
 		$urlslab_media_offloader    = new Urlslab_Media_Offloader_Widget();
 		$urlslab_lazy_loading       = new Urlslab_Lazy_Loading();
-		$urlslab_css_optimizer      = new Urlslab_CSS_Optimizer();
+		$urlslab_optimizer          = new Urlslab_Html_Optimizer();
 		$urlslab_search_and_replace = new Urlslab_Search_Replace();
 		$urlslab_redirects          = new Urlslab_Redirects();
 		$urlslab_custom_html        = new Urlslab_Custom_HTML();
@@ -67,7 +67,7 @@ class Urlslab_Available_Widgets {
 			$urlslab_redirects->get_widget_slug()          => $urlslab_redirects,
 			$urlslab_cache->get_widget_slug()              => $urlslab_cache,
 			$urlslab_lazy_loading->get_widget_slug()       => $urlslab_lazy_loading,
-			$urlslab_css_optimizer->get_widget_slug()      => $urlslab_css_optimizer,
+			$urlslab_optimizer->get_widget_slug()          => $urlslab_optimizer,
 			$urlslab_search_and_replace->get_widget_slug() => $urlslab_search_and_replace,
 			$urlslab_custom_html->get_widget_slug()        => $urlslab_custom_html,
 			$urlslab_optimize->get_widget_slug()           => $urlslab_optimize,

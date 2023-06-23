@@ -116,8 +116,6 @@ class Urlslab {
 			return $content;
 		}
 
-		$content = apply_filters( 'urlslab_raw_content_before', $content );
-
 		if ( false !== strpos( strtolower( substr( $content, 0, 300 ) ), '<head>' ) ) {
 			if ( preg_match( '|(.*?)<head>(.*?)</head>(.*)|imus', $content, $matches ) ) {
 				$content = $matches[1] . $this->urlslab_head_content( $matches[2] ) . $matches[3];
@@ -130,7 +128,7 @@ class Urlslab {
 			}
 		}
 
-		return apply_filters( 'urlslab_raw_content_after', $content );
+		return apply_filters( 'urlslab_raw_content', $content );
 	}
 
 
