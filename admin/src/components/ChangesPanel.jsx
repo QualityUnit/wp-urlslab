@@ -101,12 +101,12 @@ function ChangesPanel() {
 			size: 120,
 		} ),
 		columnHelper.accessor( 'last_seen', {
-			cell: ( cell ) => <DateTimeFormat datetime={ cell.getValue() } />,
+			cell: ( cell ) => <DateTimeFormat datetime={ cell.getValue() * 1000 } />,
 			header: () => header.last_seen,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'last_changed', {
-			cell: ( cell ) => <DateTimeFormat datetime={ cell.getValue() } />,
+			cell: ( cell ) => <DateTimeFormat datetime={ cell.getValue() * 1000 } />,
 			header: () => header.last_changed,
 			size: 80,
 		} ),
