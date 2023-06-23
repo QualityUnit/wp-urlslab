@@ -17,6 +17,21 @@ import '../assets/styles/components/datepicker/datepicker.scss';
 import { getFetch } from '../api/fetching';
 import { setNotification } from '../hooks/useNotifications';
 
+// apply callback action for options after successful save
+const useSuccessEditCallback = ( optionId, deps = {} ) => {
+	const { queryClient } = deps;
+	switch ( optionId ) {
+		case 'urlslab-api-key':
+			return queryClient
+				? () => {
+					queryClient.invalidateQueries( [ 'credits' ] );
+				}
+				: null;
+		default:
+			return null;
+	}
+};
+
 export default function SettingsOption( { settingId, option } ) {
 	const queryClient = useQueryClient();
 	const { id, type, title, description, placeholder, value, possible_values } = option;
@@ -26,6 +41,8 @@ export default function SettingsOption( { settingId, option } ) {
 
 	const [ date, setDate ] = useState( type !== 'datetime' || dateValue );
 	const [ status, setStatus ] = useState( );
+
+	const successEditCallback = useSuccessEditCallback( id, { queryClient } );
 
 	const handleApiCall = async () => {
 		setNotification( id, { message: 'Optimizing…', status: 'info' } );
@@ -50,6 +67,9 @@ export default function SettingsOption( { settingId, option } ) {
 			const { ok } = response;
 
 			if ( ok ) {
+				if ( successEditCallback && typeof successEditCallback === 'function' ) {
+					successEditCallback();
+				}
 				queryClient.invalidateQueries( [ 'settings', settingId ] );
 				setStatus( 'success' );
 				setNotification( id, { message: `Setting ${ title } changed!`, status: 'success' } );
@@ -73,6 +93,9 @@ export default function SettingsOption( { settingId, option } ) {
 		onSuccess: async ( { response } ) => {
 			const { ok } = response;
 			if ( ok ) {
+				if ( successEditCallback && typeof successEditCallback === 'function' ) {
+					successEditCallback();
+				}
 				setStatus( 'success' );
 				setNotification( id, { message: `Setting date for ${ title } changed!`, status: 'success' } );
 				queryClient.invalidateQueries( [ 'settings', settingId ] );
