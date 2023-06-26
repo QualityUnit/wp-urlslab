@@ -41,6 +41,12 @@ export default defineConfig( {
 				main: './src/main.jsx',
 				//'ai_content_assistant/main': './modules/ai-content-assistant/main.jsx',
 			},
+			onwarn( warning, warn ) {
+				if ( warning.code === 'MODULE_LEVEL_DIRECTIVE' ) {
+					return;
+				}
+				warn( warning );
+			},
 			output: {
 				// this gets rid of the hash on main.css
 				entryFileNames: `[name]-${ hash }.js`,

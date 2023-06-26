@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, LinkIcon, Trash, SingleSelectMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, Button,
 } from '../lib/tableImports';
@@ -7,9 +9,14 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
 export default function LinkManagerTable( { slug } ) {
+	const queryClient = useQueryClient();
 	const paginationId = 'url_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const url = { filters, sorting };
+
+	const schedules = useMemo( () => {
+		return queryClient.getQueryData( [ 'schedule', 'urls' ] );
+	}, [ queryClient ] );
 
 	const {
 		__,
@@ -26,6 +33,16 @@ export default function LinkManagerTable( { slug } ) {
 	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
+
+	const showChanges = ( cell ) => {
+		const { http_status, url_name } = cell?.row?.original;
+		const domain = url_name.replace( /^(https?:\/\/)([^\/]+)(\/.+?)?$/g, '$2' );
+		if ( http_status > 299 || http_status <= 0 || ! schedules.includes( domain ) ) {
+			return false;
+		}
+
+		return true;
+	};
 
 	const setUnifiedPanel = ( cell ) => {
 		const origCell = cell?.row.original;
@@ -181,7 +198,8 @@ export default function LinkManagerTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'changesPanel', {
 			className: 'changesPanel',
-			cell: ( cell ) => <Button onClick={ () => {
+			cell: ( cell ) => showChanges( cell ) &&
+			<Button onClick={ () => {
 				setOptions( { changesPanel: { title: cell.row.original.url_name, slug: `url/${ cell.row.original.url_id }/changes` } } );
 				activatePanel( 'changesPanel' );
 			} }

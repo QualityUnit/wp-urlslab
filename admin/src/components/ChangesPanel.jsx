@@ -54,13 +54,12 @@ function ChangesPanel() {
 
 	const renderLegend = ( props ) => {
 		const { payload } = props;
-		console.log( payload );
 
 		return (
 			<ul className="urlslab-chart-legend flex-align-center">
 				{
 					payload.map( ( entry, index ) => {
-						const { dataKey, color, inactive, value } = entry;
+						const { dataKey, color, name, inactive, value } = entry;
 						if ( dataKey === 'status_code' ) {
 							return null;
 						}
@@ -81,6 +80,17 @@ function ChangesPanel() {
 	const renderTooltip = ( props ) => {
 		const { dataKey, value } = props;
 
+		if ( dataKey === 'status_code' ) {
+			const status = value;
+			if ( status >= 200 && status <= 299 ) {
+				return <span className="c-saturated-green">OK</span>;
+			}
+			if ( status >= 300 && status <= 399 ) {
+				return <span className="c-saturated-orange">Redirect</span>;
+			}
+			return <span className="c-saturated-red">{ status }</span>;
+		}
+
 		if ( dataKey === 'page_size' ) {
 			return `${ parseFloat( value / 1024 / 1024 ).toFixed( 2 ) }\u00A0MB`;
 		}
@@ -92,11 +102,25 @@ function ChangesPanel() {
 		return value;
 	};
 
+	const XAxisTick = ( props ) => {
+		const { x, y, payload } = props;
+
+		return (
+			<g transform={ `translate(${ x },${ y })` }>
+				<text x={ 0 } y={ 0 } dy={ 16 } textAnchor="end" fill="#050505" fontSize={ 13 }>
+					{ date( getSettings().formats.date, payload.value * 1000 ) }
+				</text>
+			</g>
+		);
+	};
+
 	const columns = [
 		columnHelper.accessor( 'screenshot', {
 			id: 'thumb',
 			className: 'nolimit thumbnail',
-			cell: ( cell ) => <img src={ cell?.getValue().thumbnail } className="video-thumbnail" alt={ title } />,
+			cell: ( cell ) => <span>
+				<img src={ cell?.getValue().thumbnail } alt={ title } />
+			</span>,
 			header: () => header.screenshot,
 			size: 120,
 		} ),
@@ -144,6 +168,8 @@ function ChangesPanel() {
 		} ),
 	];
 
+	const chartData = isSuccess && [ ...data ]?.reverse();
+
 	return (
 		<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
 			<div className="urlslab-panel urlslab-changesPanel customPadding">
@@ -153,12 +179,13 @@ function ChangesPanel() {
 						<CloseIcon />
 					</button>
 				</div>
+				{ chartData &&
 				<div style={ { position: 'relative', width: '100%', height: 0, paddingBottom: '21.5%' } }>
 					<ResponsiveContainer width="100%" height="100%">
 						<LineChart
 							width={ 1400 }
 							height={ 300 }
-							data={ data }
+							data={ chartData }
 							margin={ {
 								top: 24,
 								left: 24,
@@ -167,22 +194,30 @@ function ChangesPanel() {
 							} }
 						>
 							<CartesianGrid />
-							<XAxis dataKey="last_seen" reversed={ true } tickFormatter={ ( val ) => date( getSettings().formats.date, val * 1000 ) } />
+							<XAxis dataKey="last_seen" includeHidden={ true } tick={ <XAxisTick /> } />
 							<Tooltip
+								active={ true }
 								formatter={ ( value, name, props ) => renderTooltip( props ) }
-								labelFormatter={ ( val ) => date( getSettings().formats.date, val * 1000 ) } />
+								labelFormatter={ ( val ) => (
+									<div className="flex flex-align-center">
+										{ date( getSettings().formats.date, val * 1000 ) }
+										<span className="ma-left">{ date( getSettings().formats.time, val ) }</span>
+									</div>
+								) }
+							/>
 							<Legend content={ renderLegend } align="left" verticalAlign="top" />
 							{
 								Object.entries( chart ).map( ( [ key, color ] ) => {
 									return <>
 										<YAxis hide={ true } yAxisId={ key } domain={ [ 'dataMin', 'dataMax' ] } scale={ key === 'load_duration' ? 'time' : 'auto' } />
-										<Line type="monotone" key={ key } name={ header[ key ] } hide={ key === 'status_code' || lineVisibility[ key ] } yAxisId={ key } dataKey={ key } stroke={ color } strokeWidth={ 4 } />
+										<Line type="monotone" key={ key } name={ `${ header[ key ] } ${ key === 'status_code' || lineVisibility[ key ] ? 'hidden' : '' }` } yAxisId={ key } dataKey={ key } stroke={ color } strokeWidth={ 4 } activeDot={ key === 'status_code' || lineVisibility[ key ] ? false : { stroke: '#fff', fill: color, strokeWidth: 4, r: 10 } } />
 									</>;
 								} )
 							}
 						</LineChart>
 					</ResponsiveContainer>
 				</div>
+				}
 				<div className="mt-l table-container">
 					<Table
 						slug={ slug }

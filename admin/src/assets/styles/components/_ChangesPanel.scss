@@ -21,6 +21,8 @@
 	.urlslab-chart-legend {
 		display: inline-flex;
 		border-radius: $br-6;
+		margin: 0;
+		margin-bottom: 2em;
 		overflow: hidden;
 
 		li {
@@ -28,6 +30,31 @@
 			padding: 1em;
 			margin: 0;
 			font-size: 0.8125rem;
+		}
+	}
+
+	.recharts-default-tooltip {
+		padding: 1.25rem !important;
+		border: none !important;
+		border-radius: $br-10;
+		filter: drop-shadow(0 0 6px rgba($black, 0.16));
+	}
+
+	.recharts-tooltip {
+
+		&-label {
+			margin-bottom: 0.625rem !important;
+			padding-bottom: 0.625rem;
+			border-bottom: 1px solid $grey-light;
+		}
+
+		&-item-list {
+
+			li {
+				margin: 0;
+				padding-top: 0 !important;
+				padding-bottom: 0 !important;
+			}
 		}
 	}
 }
