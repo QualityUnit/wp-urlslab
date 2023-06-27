@@ -1236,6 +1236,13 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
+"@img-comparison-slider/react@^8.0.0":
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/@img-comparison-slider/react/-/react-8.0.0.tgz#88e63e9bf3c56c40616c7e462b0b2c072f8810fc"
+  integrity sha512-hUnpGaN2MT8LJytTYcrik13bahog0MY/eJ42TBBY02F6SZknyUB1im0lUb99TuUX9H9wDMcvW3zqTtOElrB6vQ==
+  dependencies:
+    img-comparison-slider "~8.0.0"
+
 "@jridgewell/gen-mapping@^0.1.0":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@jridgewell/gen-mapping/-/gen-mapping-0.1.1.tgz#e5d2e450306a9491e3bd77e323e38d7aff315996"
@@ -3699,6 +3706,11 @@ ignore@^5.2.0, ignore@^5.2.1:
   version "5.2.4"
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.2.4.tgz#a291c0c6178ff1b960befe47fcdec301674a6324"
   integrity sha512-MAb38BcSbH0eHNBxn7ql2NH/kX33OkB3lZ1BNdh7ENeRChHTYsTvWrMubiIAMNS2llXEEgZ1MUOBtXChP3kaFQ==
+
+img-comparison-slider@~8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/img-comparison-slider/-/img-comparison-slider-8.0.0.tgz#85d2e96234e3216615ec9a4aa06dd07b81c4a97c"
+  integrity sha512-ZOKkdN/+W/U/2LFEwrZuxRVbIwQK1GyEKhTETfsy55/bmBoNfM81MnQsc1j81Q50dkwTKjuecicsnp3O7lBRqQ==
 
 immutable@^4.0.0:
   version "4.3.0"

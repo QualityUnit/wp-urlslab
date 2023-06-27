@@ -12,7 +12,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const [ selectedRows, setSelectedRows ] = useState( [] );
 	const [ responseCounter, setResponseCounter ] = useState( 0 );
 
-	const { filters, sorting } = url;
+	const { filters, sorting } = url || {};
 
 	const getRowId = useCallback( ( cell, optionalSelector ) => {
 		if ( optionalSelector ) {

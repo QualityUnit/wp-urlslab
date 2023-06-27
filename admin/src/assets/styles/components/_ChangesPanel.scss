@@ -12,6 +12,27 @@
 		margin: 0;
 	}
 
+	.thumbnail {
+
+		&-check,
+		&-button {
+			position: absolute;
+			left: 0;
+			top: 50%;
+			transform: translateY(-50%);
+		}
+
+		&-check {
+			z-index: 2;
+			left: 0.5em;
+		}
+
+		&-button {
+			z-index: 1;
+			padding: 0.15em 0.75em 0.15em 2em;
+		}
+	}
+
 	.recharts-responsive-container {
 		position: absolute;
 		width: 100%;

@@ -5,7 +5,6 @@ export default function useCloseModal( ) {
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const setOptions = useTablePanels( ( state ) => state.setOptions );
-	const activePanel = useTablePanels( ( state ) => state.activePanel );
 
 	const handleClose = ( operationVal ) => {
 		setRowToEdit( {} );

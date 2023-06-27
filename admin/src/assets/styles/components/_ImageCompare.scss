@@ -1,0 +1,38 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-ImageCompare {
+
+
+	@include posZero;
+	position: fixed;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: $black-real;
+	z-index: 100002;
+	color: $white;
+
+	.urlslab-panel-close {
+		position: absolute;
+		top: 2em;
+		right: 3em;
+	}
+
+	img-comparison-slider {
+		outline: none;
+		--divider-width: 4px !important;
+		--divider-color: #000 !important;
+		--default-handle-color: #000 !important;
+		--default-handle-opacity: 1;
+	}
+
+	&-wrapper {
+
+		@include square(80%);
+		display: flex;
+		align-items: flex-start;
+		justify-content: center;
+		overflow: hidden;
+	}
+}

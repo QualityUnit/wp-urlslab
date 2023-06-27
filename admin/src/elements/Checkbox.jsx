@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import '../assets/styles/elements/_Checkbox.scss';
 
-export default function Checkbox( { defaultValue, smallText, readOnly, radial, name, className, onChange, textBefore, children } ) {
+export default function Checkbox( { defaultValue, smallText, readOnly, radial, name, className, onChange, textBefore, children, disabled } ) {
 	const [ isChecked, setChecked ] = useState( defaultValue ? true : false );
 
 	const handleOnChange = ( ) => {
 		if ( onChange && ! readOnly ) {
-			onChange( ! isChecked );
+			onChange( isChecked );
 		}
 		if ( ! readOnly ) {
 			setChecked( ( state ) => ! state );
@@ -20,6 +20,7 @@ export default function Checkbox( { defaultValue, smallText, readOnly, radial, n
 				type={ name ? 'radio' : 'checkbox' }
 				name={ name || '' }
 				defaultChecked={ isChecked }
+				disabled={ disabled ? 'disabled' : '' }
 				onChange={ ( event ) => handleOnChange( event ) }
 			/>
 			<div className="urlslab-checkbox-box"></div>
