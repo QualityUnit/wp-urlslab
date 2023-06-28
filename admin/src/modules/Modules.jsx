@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import useCheckApiKey from '../hooks/useCheckApiKey';
 import DashboardModule from '../components/DashboardModule';
 import SearchField from '../elements/SearchField';
 import MultiSelectMenu from '../elements/MultiSelectMenu';
 
-export default function Modules( { modules } ) {
+function Modules( { modules } ) {
 	const { __ } = useI18n();
 	const { settingsLoaded, apiKeySet } = useCheckApiKey();
 	const [ filterBy, setFilterBy ] = useState( {} );
@@ -128,3 +128,5 @@ export default function Modules( { modules } ) {
 		</>
 	);
 }
+
+export default memo( Modules );

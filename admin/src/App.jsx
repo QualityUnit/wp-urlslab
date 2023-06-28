@@ -121,7 +121,9 @@ export default function App() {
 		refetchOnWindowFocus: false,
 	} );
 
-	const fetchedModules = data;
+	const fetchedModules = useMemo( () => {
+		return data;
+	}, [ data ] );
 
 	return (
 		<div className="urlslab-app flex">
