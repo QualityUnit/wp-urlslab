@@ -14,8 +14,24 @@
 
 	.thumbnail {
 
+		&-wrapper {
+			border-radius: $br-6;
+			border: 2px solid rgba($primary-color, 0);
+
+			&.selected {
+				border: 2px solid rgba($primary-color, 1);
+			}
+		}
+
+		&-selected-info {
+			border-radius: $br-6;
+			color: $primary-color;
+			background-color: $desaturated-blue;
+		}
+
 		&-check,
-		&-button {
+		&-button,
+		&-selected-info {
 			position: absolute;
 			left: 0;
 			top: 50%;
@@ -27,7 +43,9 @@
 			left: 0.5em;
 		}
 
-		&-button {
+		&-button,
+		&-selected-info {
+			font-weight: 600;
 			z-index: 1;
 			padding: 0.15em 0.75em 0.15em 2em;
 		}
@@ -56,6 +74,7 @@
 
 	.recharts-default-tooltip {
 		padding: 1.25rem !important;
+		background-color: $white;
 		border: none !important;
 		border-radius: $br-10;
 		filter: drop-shadow(0 0 6px rgba($black, 0.16));
@@ -70,6 +89,7 @@
 		}
 
 		&-item-list {
+			margin: 0;
 
 			li {
 				margin: 0;

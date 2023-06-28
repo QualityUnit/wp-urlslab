@@ -48,8 +48,6 @@ function ChangesPanel() {
 		page_size: __( 'Page size' ),
 	};
 
-	console.log( selectedRows );
-
 	const columns = [
 		columnHelper.accessor( 'screenshot', {
 			id: 'thumb',
@@ -58,17 +56,20 @@ function ChangesPanel() {
 				const isSelected = cell.row.getIsSelected();
 				return <div className="pos-relative pl-m">
 					<Checkbox className="thumbnail-check" defaultValue={ isSelected } onChange={ ( val ) => {
-						selectRow( ! val, cell );
+						selectRow( val, cell );
 					} }
 					disabled={ selectedRows.length >= 2 && ! isSelected }
 					/>
 					{ selectedRows.length === 2 && isSelected && cell.row.id === selectedRows[ 1 ].row.id &&
 					<Button active className="thumbnail-button" onClick={ () => useTablePanels.setState( { imageCompare: true } ) }>
-						Show diff
+						Show diff 2/2
 					</Button>
 					}
-					<span className="thumbnail-wrapper" style={ { maxWidth: '3.75rem' } }>
+					<span className={ `thumbnail-wrapper ${ isSelected ? 'selected' : '' }` } style={ { maxWidth: '3.75rem' } }>
 						<img src={ cell?.getValue().thumbnail } alt={ title } />
+						{ isSelected && cell.row.id === selectedRows[ 0 ].row.id &&
+							<span className="thumbnail-selected-info fs-xm">1/2</span>
+						}
 					</span>
 				</div>;
 			},

@@ -16,24 +16,23 @@ const Chart = ( { data, header } ) => {
 		page_size: '#9154CE',
 	};
 
-	const renderLegend = useCallback( ( props ) => {
-		const { payload } = props;
-
+	const renderLegend = useCallback( ( { payload } ) => {
 		return (
 			<ul className="urlslab-chart-legend flex-align-center">
 				{
 					payload.map( ( entry, index ) => {
-						const { dataKey, color, name, inactive, value } = entry;
+						const { dataKey, color, value } = entry;
 						if ( dataKey === 'status_code' ) {
 							return null;
 						}
 						return <li key={ `item-${ index }` } style={ { backgroundColor: color } }>
-							<label onClick={ ( event ) => setLineVisibility( ( obj ) => {
-								const val = lineVisibility[ dataKey ];
-								// console.log( val );
-
-								return { [ dataKey ]: ! val, ...obj };
-							} ) }>
+							<label
+								onClick={ ( ) => {
+									setLineVisibility( ( obj ) => {
+										return { ...obj, [ dataKey ]: ! obj[ dataKey ] };
+									} );
+								} }
+							>
 								<input type="checkbox" defaultChecked={ ! lineVisibility[ dataKey ] } />
 								{ value }
 							</label>
@@ -44,31 +43,54 @@ const Chart = ( { data, header } ) => {
 		);
 	}, [ lineVisibility ] );
 
-	// console.log( lineVisibility );
+	const renderTooltip = ( { active, label, payload } ) => {
+		if ( active && payload && payload.length ) {
+			return (
 
-	const renderTooltip = ( props ) => {
-		const { dataKey, value } = props;
+				<div className="recharts-default-tooltip">
+					<div className="recharts-tooltip-label fs-xm flex flex-align-center">
+						{ date( getSettings().formats.date, label * 1000 ) }
+						<span className="ma-left">{ date( getSettings().formats.time, label ).replace( /: /, ':' ) }</span>
+					</div>
+					<ul className="recharts-tooltip-item-list">
+						{ payload.map( ( entry ) => {
+							const { dataKey, color, name, value } = entry;
+							return ( <li key={ dataKey } style={ { color: `${ color }` } }>
+								{ `${ name.replace( / ?hidden/, '' ) }: ` }
+								{ dataKey !== 'status_code' && dataKey !== 'page_size' && dataKey !== 'load_duration' &&
+										value
+								}
 
-		if ( dataKey === 'status_code' ) {
-			const status = value;
-			if ( status >= 200 && status <= 299 ) {
-				return <span className="c-saturated-green">OK</span>;
-			}
-			if ( status >= 300 && status <= 399 ) {
-				return <span className="c-saturated-orange">Redirect</span>;
-			}
-			return <span className="c-saturated-red">{ status }</span>;
+								{ dataKey === 'status_code' &&
+									<>
+										{
+											value >= 200 && value <= 299 &&
+											<span className="c-saturated-green">OK</span>
+										}
+										{
+											value >= 300 && value <= 399 &&
+											<span className="c-saturated-orange">Redirect</span>
+										}
+										{ ( value >= 400 || value < 0 ) &&
+										<span className="c-saturated-red">{ value }</span>
+										}
+									</>
+								}
+								{
+									dataKey === 'page_size' &&
+									`${ parseFloat( value / 1024 / 1024 ).toFixed( 2 ) }\u00A0MB`
+								}
+
+								{ dataKey === 'load_duration' &&
+									`${ parseFloat( value / 1000 ).toFixed( 2 ) }\u00A0s`
+								}
+							</li> );
+						} )
+						}
+					</ul>
+				</div>
+			);
 		}
-
-		if ( dataKey === 'page_size' ) {
-			return `${ parseFloat( value / 1024 / 1024 ).toFixed( 2 ) }\u00A0MB`;
-		}
-
-		if ( dataKey === 'load_duration' ) {
-			return `${ parseFloat( value / 1000 ).toFixed( 2 ) }\u00A0s`;
-		}
-
-		return value;
 	};
 
 	const XAxisTick = ( props ) => {
@@ -98,16 +120,7 @@ const Chart = ( { data, header } ) => {
 			>
 				<CartesianGrid />
 				<XAxis dataKey="last_seen" includeHidden={ true } tick={ <XAxisTick /> } />
-				<Tooltip
-					active={ true }
-					formatter={ ( value, name, props ) => renderTooltip( props ) }
-					labelFormatter={ ( val ) => (
-						<div className="flex flex-align-center">
-							{ date( getSettings().formats.date, val * 1000 ) }
-							<span className="ma-left">{ date( getSettings().formats.time, val ).replace( /: /, ':' ) }</span>
-						</div>
-					) }
-				/>
+				<Tooltip content={ renderTooltip } />
 				<Legend content={ renderLegend } align="left" verticalAlign="top" />
 				{
 					Object.entries( chart ).map( ( [ key, color ] ) => {

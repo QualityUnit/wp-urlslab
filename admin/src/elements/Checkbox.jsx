@@ -6,7 +6,7 @@ export default function Checkbox( { defaultValue, smallText, readOnly, radial, n
 
 	const handleOnChange = ( ) => {
 		if ( onChange && ! readOnly ) {
-			onChange( isChecked );
+			onChange( ! isChecked );
 		}
 		if ( ! readOnly ) {
 			setChecked( ( state ) => ! state );

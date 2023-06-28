@@ -21,18 +21,44 @@
 
 	img-comparison-slider {
 		outline: none;
-		--divider-width: 4px !important;
-		--divider-color: #000 !important;
-		--default-handle-color: #000 !important;
-		--default-handle-opacity: 1;
+		--divider-width: 4px;
+		--divider-color: #000;
+		--default-handle-color: #000;
+		--default-handle-opacity: 0;
+		--default-handle-width: 100px;
+
+		.default-handle path {
+			stroke-width: 4px;
+		}
+
+		figure {
+			margin: 0;
+		}
+
+		figcaption {
+			position: absolute;
+			top: 1em;
+			left: 1em;
+			padding: 0.5em;
+			line-height: 100%;
+			color: $black;
+			background-color: rgba($white, 0.8);
+		}
+
+		[slot="second"] figcaption {
+			left: auto;
+			right: 1em;
+			text-align: right;
+		}
 	}
 
 	&-wrapper {
 
-		@include square(80%);
+		@include scrollbar;
+		height: 80%;
 		display: flex;
 		align-items: flex-start;
 		justify-content: center;
-		overflow: hidden;
+		overflow: hidden auto;
 	}
 }
