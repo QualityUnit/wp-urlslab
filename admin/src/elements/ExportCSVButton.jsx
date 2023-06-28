@@ -21,7 +21,7 @@ export default function ExportCSVButton( { options, className, withfilters, onCl
 						header: true }
 					);
 
-					fileDownload( csv, `${ options.slug }.csv` );
+					fileDownload( csv, `${ options.altSlug ? options.altSlug : options.slug }.csv` );
 				}
 			} );
 		}
@@ -35,7 +35,7 @@ export default function ExportCSVButton( { options, className, withfilters, onCl
 					}
 					);
 
-					fileDownload( csv, `${ options.slug }.csv` );
+					fileDownload( csv, `${ options.altSlug ? options.altSlug : options.slug }.csv` );
 				}
 			} );
 		}

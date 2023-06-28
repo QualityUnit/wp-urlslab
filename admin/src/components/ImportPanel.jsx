@@ -76,6 +76,9 @@ function ImportPanel( { options, handlePanel } ) {
 	};
 
 	const handleImportStatus = ( val ) => {
+		if ( ! val ) {
+			setImportStatus( 1 );
+		}
 		setImportStatus( val );
 
 		if ( importCounter === 0 ) {

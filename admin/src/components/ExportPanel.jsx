@@ -26,6 +26,9 @@ function ExportPanel( props ) {
 	};
 
 	const handleExportStatus = ( val ) => {
+		if ( ! val ) {
+			setExportStatus( 1 );
+		}
 		setExportStatus( val );
 		if ( val === 100 ) {
 			setTimeout( () => {
