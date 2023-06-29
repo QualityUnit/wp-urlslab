@@ -13,6 +13,7 @@ export default function ExportCSVButton( { options, className, withfilters, onCl
 	const { __ } = useI18n();
 
 	function handleExport() {
+		onClick( 1 );
 		if ( withfilters ) {
 			exportCSV( options, ( status ) => onClick( status ) ).then( ( response ) => {
 				if ( onClick && response.status === 'done' ) {
