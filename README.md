@@ -11,3 +11,9 @@ Maximize your content's shareability with the Meta Tags Manager, allowing you to
 URLsLab doesn't stop there – with the CSS Optimizer, inline CSS is used to improve page performance and reduce content-blocker requests. Keep your website running smoothly with the Database Optimizer, which automates database optimization in the background. Finally, the Search and Replace module offers powerful tools to automatically correct incorrect URLs and content on the fly.
 
 Unlock your website's full potential with URLsLab – the ultimate WordPress plugin for boosting performance and SEO with minimal effort.
+
+# Dev Contribution
+To build the plugin, for wp-content/plugins, run the following commands: 
+```
+bash ./.github/scripts/build-files-dev.sh
+```
