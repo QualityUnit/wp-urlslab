@@ -15,6 +15,10 @@
 			"type": "number",
 			"default": 6
 		},
+		"showSummary": {
+			"type": "boolean",
+			"default": true
+		},
 		"showImage": {
 			"type": "boolean",
 			"default": true
@@ -22,10 +26,6 @@
 		"imageSize": {
 			"type": "string",
 			"default": "carousel-thumbnail"
-		},
-		"showSummary": {
-			"type": "boolean",
-			"default": true
 		},
 		"defaultImage": {
 			"type": "string",

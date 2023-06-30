@@ -39,13 +39,23 @@ const Edit = ( { attributes, setAttributes } ) => {
 						onChange={ ( val ) => setAttributes( { alt: val } ) }
 					/>
 
-					width
+					<TextControl
+						label={ __( 'Width', 'urlslab' ) }
+						help={ __( 'Insert valid value including unit. e.g. 100%', 'urlslab' ) }
+						value={ attributes.width }
+						onChange={ ( val ) => setAttributes( { width: val } ) }
+					/>
 
-					height
+					<TextControl
+						label={ __( 'Height', 'urlslab' ) }
+						help={ __( 'Insert valid value including unit. e.g. 100%', 'urlslab' ) }
+						value={ attributes.height }
+						onChange={ ( val ) => setAttributes( { height: val } ) }
+					/>
 
 					<MediaUpload
 						label={ __( 'Default image', 'urlslab' ) }
-						help={ __( 'The URL of the default image in case we don\'t yet have the screenshot.', 'urlslab' ) }
+						help={ __( 'The URL of default image in case we don\'t have the screenshot yet.', 'urlslab' ) }
 						url={ attributes.defaultImage }
 						actionCallback={ ( val ) => setAttributes( { defaultImage: val } ) }
 					/>

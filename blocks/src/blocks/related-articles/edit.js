@@ -28,7 +28,7 @@ const Edit = ( { attributes, setAttributes } ) => {
 				>
 					<TextControl
 						label={ __( 'Articles count', 'urlslab' ) }
-						help={ __( 'Number of displayed related articles', 'urlslab' ) }
+						help={ __( 'Number of displayed related articles.', 'urlslab' ) }
 						type="number"
 						min={ 0 }
 						value={ attributes.relatedCount }
