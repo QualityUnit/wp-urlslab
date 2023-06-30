@@ -37,7 +37,7 @@ export default function LinkManagerTable( { slug } ) {
 	const showChanges = ( cell ) => {
 		const { http_status, url_name } = cell?.row?.original;
 		const domain = url_name.replace( /^(https?:\/\/)([^\/]+)(\/.+?)?$/g, '$2' );
-		if ( http_status > 299 || http_status <= 0 || ! schedules.includes( domain ) ) {
+		if ( http_status > 299 || http_status <= 0 || ! schedules?.includes( domain ) ) {
 			return false;
 		}
 
