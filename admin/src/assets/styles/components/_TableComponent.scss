@@ -212,7 +212,8 @@ $cellHeight: 3.5em;
 
 	.thumbnail {
 
-		a {
+		a,
+		.thumbnail-wrapper {
 			display: block;
 			object-fit: cover;
 			object-position: center top;

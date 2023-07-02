@@ -7,7 +7,7 @@ export default function DateTimeFormat( { datetime } ) {
 	return (
 		<>
 			{ dateFormatted }<br />
-			<span className="c-grey-darker">{ time }</span>
+			<span className="c-grey-darker">{ time.replace( /: /, ':' ) }</span>
 		</>
 	);
 }

@@ -78,6 +78,22 @@ export default function App() {
 				refetchOnWindowFocus: false,
 			} );
 
+			// Creating Schedules query object in advance
+			queryClient.prefetchQuery( {
+				queryKey: [ 'schedule', 'urls' ],
+				queryFn: async () => {
+					const schedules = await postFetch( 'schedule', { rows_per_page: 50 } );
+					const schedulesArray = await schedules.json();
+					const scheduleUrls = [];
+					schedulesArray.flatMap( ( schedule ) => {
+						scheduleUrls.push( ...schedule.urls );
+						return false;
+					} );
+					return [ ... new Set( scheduleUrls ) ];
+				},
+				refetchOnWindowFocus: false,
+			} );
+
 			// Creating Tags/Labels query object in advance
 			queryClient.prefetchQuery( {
 				queryKey: [ 'label', 'modules' ],
@@ -97,18 +113,15 @@ export default function App() {
 	const { data } = useQuery( {
 		queryKey: [ 'modules' ],
 		queryFn: async () => {
-			if ( prefetch ) {
-				const response = await getFetch( 'module' ).then( ( ModuleData ) => ModuleData );
-				if ( response.ok ) {
-					return response.json();
-				}
+			const response = await getFetch( 'module' ).then( ( ModuleData ) => ModuleData );
+			if ( response.ok ) {
+				return response.json();
 			}
 		},
 		refetchOnWindowFocus: false,
 	} );
 
 	const fetchedModules = useMemo( () => {
-		delete data?.general;
 		return data;
 	}, [ data ] );
 

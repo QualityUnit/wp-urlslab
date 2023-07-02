@@ -5,7 +5,6 @@ export default function useCloseModal( ) {
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const setOptions = useTablePanels( ( state ) => state.setOptions );
-	const activePanel = useTablePanels( ( state ) => state.activePanel );
 
 	const handleClose = ( operationVal ) => {
 		setRowToEdit( {} );
@@ -14,8 +13,6 @@ export default function useCloseModal( ) {
 		document.querySelector( '#urlslab-root' ).classList.remove( 'dark' );
 		return operationVal;
 	};
-
-	console.log( activePanel );
 
 	window.addEventListener( 'keyup', ( event ) => {
 		if ( event.key === 'Escape' ) {

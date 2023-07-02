@@ -86,7 +86,7 @@ export default function MainMenu( { modules } ) {
 							{ modules.length
 								? modules.map( ( modul ) => {
 									return (
-										modul.active
+										modul.id !== 'general' && modul.active
 											? <li key={ modul.id } className={ `urlslab-mainmenu-item ${ activator( modul.id ) }` }>
 												<button
 													type="button"

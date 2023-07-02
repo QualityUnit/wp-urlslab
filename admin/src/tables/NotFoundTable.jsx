@@ -173,7 +173,7 @@ export default function NotFoundTable( { slug } ) {
 				options={ {
 					header,
 					rowEditorCells, title: 'Create redirect from this',
-					data, slug: 'redirects', url, paginationId: 'redirect_id', rowToEdit, id: 'url',
+					data, slug: 'redirects', altSlug: slug, url, altPaginationId: paginationId, paginationId: 'redirect_id', rowToEdit, id: 'url',
 					deleteCSVCols: [ paginationId, 'dest_url_id' ],
 				} }
 			/>

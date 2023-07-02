@@ -12,7 +12,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const [ selectedRows, setSelectedRows ] = useState( [] );
 	const [ responseCounter, setResponseCounter ] = useState( 0 );
 
-	const { filters, sorting } = url;
+	const { filters, sorting } = url || {};
 
 	const getRowId = useCallback( ( cell, optionalSelector ) => {
 		if ( optionalSelector ) {
@@ -22,28 +22,33 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	}, [ paginationId ] );
 
 	const insertNewRow = useMutation( {
-		mutationFn: async ( { editedRow } ) => {
+		mutationFn: async ( { editedRow, updateAll } ) => {
 			setNotification( slug, { message: 'Adding row…', status: 'info' } );
 			const response = await postFetch( `${ slug }/create`, editedRow );
-			return { response };
+			return { response, updateAll };
 		},
-		onSuccess: async ( { response } ) => {
+		onSuccess: async ( { response, updateAll } ) => {
 			const { ok } = await response;
 			if ( ok ) {
-				queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
+				if ( updateAll ) {
+					queryClient.invalidateQueries( [ slug ] );
+				}
+				if ( ! updateAll ) {
+					queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
+				}
 				setNotification( slug, { message: 'Row has been added', status: 'success' } );
 				return false;
 			}
 			setNotification( slug, { message: 'Adding row failed', status: 'error' } );
 		},
 	} );
-	const insertRow = ( { editedRow } ) => {
-		insertNewRow.mutate( { editedRow } );
+	const insertRow = ( { editedRow, updateAll } ) => {
+		insertNewRow.mutate( { editedRow, updateAll } );
 	};
 
 	const updateRowData = useMutation( {
 		mutationFn: async ( opts ) => {
-			const { editedRow, newVal, cell, customEndpoint, changeField, optionalSelector, id } = opts;
+			const { editedRow, newVal, cell, customEndpoint, changeField, optionalSelector, id, updateAll } = opts;
 
 			// Updating one cell value only
 			if ( newVal ) {
@@ -112,25 +117,30 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 				return { response, editedRow, id: editedRow[ id ] };
 			}
 		},
-		onSuccess: ( { response, id } ) => {
+		onSuccess: ( { response, id, updateAll } ) => {
 			const { ok } = response;
 			if ( ok ) {
 				setNotification( slug, { message: `Row${ id ? ' “' + id + '”' : '' } has been updated`, status: 'success' } );
-				queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
+				if ( ! updateAll ) {
+					queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
+				}
+				if ( updateAll ) {
+					queryClient.invalidateQueries( [ slug ] );
+				}
 			}
 		},
 	} );
 
-	const updateRow = ( { newVal, cell, customEndpoint, changeField, optionalSelector, id } ) => {
+	const updateRow = ( { newVal, cell, customEndpoint, changeField, optionalSelector, id, updateAll } ) => {
 		if ( ! newVal ) { // Editing whole row = parameters are preset
 			setRowToEdit( cell.row.original );
 			return false;
 		}
-		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, optionalSelector, id } );
+		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, optionalSelector, id, updateAll } );
 	};
 
-	const saveEditedRow = ( { editedRow, id } ) => {
-		updateRowData.mutate( { editedRow, id } );
+	const saveEditedRow = ( { editedRow, id, updateAll } ) => {
+		updateRowData.mutate( { editedRow, id, updateAll } );
 	};
 
 	const processDeletedPages = useCallback( ( cell ) => {
@@ -144,7 +154,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 
 	const deleteSelectedRow = useMutation( {
 		mutationFn: async ( opts ) => {
-			const { deletedPagesArray, cell, optionalSelector, id } = opts;
+			const { deletedPagesArray, cell, optionalSelector, id, updateAll } = opts;
 			setNotification( slug, {
 				message: `Deleting row${ id ? ' “' + cell.row.original[ id ] + '”' : '' }…`, status: 'info',
 			} );
@@ -155,9 +165,9 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 			} ) );
 
 			const response = await del( `${ slug }/${ getRowId( cell, optionalSelector ) }` );
-			return { response, id: cell.row.original[ id ] };
+			return { response, id: cell.row.original[ id ], updateAll };
 		},
-		onSuccess: async ( { response, id } ) => {
+		onSuccess: async ( { response, id, updateAll } ) => {
 			const { ok } = response;
 			if ( ok ) {
 				setNotification( slug, { message: `Row${ id ? ' “' + id + '”' : '' } has been deleted`, status: 'success' } );
@@ -165,7 +175,12 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 			}
 
 			if ( responseCounter === 0 || responseCounter === 1 ) {
-				await queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
+				if ( ! updateAll ) {
+					await queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
+				}
+				if ( updateAll ) {
+					await queryClient.invalidateQueries( [ slug ] );
+				}
 				await queryClient.invalidateQueries( [ slug, 'count' ] );
 			}
 
@@ -175,9 +190,9 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 		},
 	} );
 
-	const deleteRow = useCallback( ( { cell, optionalSelector, id } ) => {
+	const deleteRow = useCallback( ( { cell, optionalSelector, id, updateAll } ) => {
 		setResponseCounter( 1 );
-		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), cell, optionalSelector, id } );
+		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), cell, optionalSelector, id, updateAll } );
 	}, [ processDeletedPages, deleteSelectedRow ] );
 
 	const deleteSelectedRows = async ( { optionalSelector, id } ) => {
@@ -193,7 +208,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const selectRow = ( isSelected, cell ) => {
 		cell.row.toggleSelected();
 		if ( ! isSelected ) {
-			setSelectedRows( selectedRows.filter( ( item ) => item !== cell ) );
+			setSelectedRows( selectedRows.filter( ( item ) => item.row.id !== cell.row.id ) );
 		}
 		if ( isSelected ) {
 			setSelectedRows( selectedRows.concat( cell ) );
