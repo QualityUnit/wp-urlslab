@@ -29,7 +29,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Cache' );
+		return __( 'Page Cache' );
 	}
 
 	public function get_widget_description(): string {
