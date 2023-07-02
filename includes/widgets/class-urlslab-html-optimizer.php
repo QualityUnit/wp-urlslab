@@ -17,6 +17,8 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 	const SETTING_NAME_JS_PROCESSING = 'urlslab_js_processing';
 	const SETTING_NAME_CSS_MERGE = 'urlslab_css_merge';
 	const SETTING_NAME_JS_MERGE = 'urlslab_js_merge';
+	const CSS_CACHE_GROUP = 'css_cache';
+	const SETTING_NAME_CSS_CACHE_VALID_FROM = 'urlslab_css_cache_valid_from';
 
 	public function __construct() {}
 
@@ -50,8 +52,6 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 
 		$this->css_processing( $document );
 	}
-
-	public static function update_settings( array $new_settings ) {}
 
 	public function is_api_key_required(): bool {
 		return false;
@@ -113,7 +113,17 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			},
 			'css'
 		);
-
+		$this->add_option_definition(
+			self::SETTING_NAME_CSS_CACHE_VALID_FROM,
+			0,
+			true,
+			__( 'CSS Cache valid from' ),
+			__( 'CSS Cache valid from' ),
+			self::OPTION_TYPE_HIDDEN,
+			false,
+			null,
+			'css'
+		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSS_MAX_SIZE,
 			0,
@@ -339,10 +349,10 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 
 		if ( ! empty( get_option( 'permalink_structure' ) ) ) {
 			//URL to standard proxy script
-			return site_url( self::DOWNLOAD_CSS_URL_PATH . urlencode( implode( '_', $ids ) ) . '.css' );
+			return site_url( self::DOWNLOAD_CSS_URL_PATH . urlencode( implode( '_', $ids ) ) . '.css?ver=' . $this->get_option( self::SETTING_NAME_CSS_CACHE_VALID_FROM ) );
 		}
 
-		return site_url( '?action=' . urlencode( self::DOWNLOAD_CSS_URL_PATH ) . '&css=' . urlencode( implode( '_', $ids ) ) );
+		return site_url( '?action=' . urlencode( self::DOWNLOAD_CSS_URL_PATH ) . '&css=' . urlencode( implode( '_', $ids ) ) . '&ver=' . $this->get_option( self::SETTING_NAME_CSS_CACHE_VALID_FROM ) );
 	}
 
 	public function output_css() {
@@ -360,7 +370,33 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		}
 
 		@set_time_limit( 0 );
+		$expires_offset = $this->get_option( self::SETTING_NAME_CSS_CACHE_TTL );
 
+		if ( Urlslab_File_Cache::get_instance()->exists( $css, self::CSS_CACHE_GROUP, false, $this->get_option( self::SETTING_NAME_CSS_CACHE_VALID_FROM ) ) ) {
+			$css_content = Urlslab_File_Cache::get_instance()->get( $css, self::CSS_CACHE_GROUP );
+		} else {
+			$css_content = $this->get_css_content( $css );
+			Urlslab_File_Cache::get_instance()->set( $css, $css_content, self::CSS_CACHE_GROUP, $expires_offset );
+		}
+
+		status_header( 200 );
+		header( 'Content-Type: text/css; charset=utf-8' );
+		header( 'Content-Transfer-Encoding: binary' );
+		header( 'Pragma: public' );
+
+		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
+		header( "Cache-Control: public, max-age=$expires_offset" );
+		header( 'Content-length: ' . strlen( $css_content ) );
+
+		echo $css_content;
+	}
+
+	/**
+	 * @param mixed $css
+	 *
+	 * @return string
+	 */
+	private function get_css_content( string $css ): string {
 		$css_content = '';
 		$css_files   = explode( '_', $css );
 		foreach ( $css_files as $css_file ) {
@@ -375,16 +411,6 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			}
 		}
 
-		status_header( 200 );
-		header( 'Content-Type: text/css; charset=utf-8' );
-		header( 'Content-Transfer-Encoding: binary' );
-		header( 'Pragma: public' );
-
-		$expires_offset = $this->get_option( self::SETTING_NAME_CSS_CACHE_TTL );
-		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
-		header( "Cache-Control: public, max-age=$expires_offset" );
-		header( 'Content-length: ' . strlen( $css_content ) );
-
-		echo $css_content;
+		return $css_content;
 	}
 }
