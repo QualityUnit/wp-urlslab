@@ -78,6 +78,10 @@ The content is coming soon.
 
 == Changelog ==
 
+= 2.25.43 - 2023-07-03 =
+
+* Experience a smoother user journey with our under-the-hood enhancements.
+
 = 2.25.42 - 2023-06-20 =
 
 * Experience a smoother user journey with our under-the-hood enhancements.
