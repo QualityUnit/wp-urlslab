@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useI18n } from '@wordpress/react-i18n';
@@ -21,6 +21,7 @@ function ChangesPanel() {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { CloseIcon, handleClose } = useCloseModal();
 	const { title, slug } = useTablePanels( ( state ) => state.options.changesPanel );
+	const { dataFetched, setDataFetched } = useState();
 
 	const { selectedRows, selectRow } = useChangeRow( {} );
 
@@ -32,7 +33,13 @@ function ChangesPanel() {
 		queryKey: [ slug ],
 		queryFn: async () => {
 			const result = await postFetch( slug );
-			return result.json();
+			if ( result.ok ) {
+				setDataFetched( true );
+				return result.json();
+			}
+
+			setDataFetched( false );
+			return [];
 		},
 		refetchOnWindowFocus: false,
 	} );
@@ -125,28 +132,48 @@ function ChangesPanel() {
 	return (
 		<>
 			{ selectedRows.length === 2 &&
-			<ImageCompare selectedRows={ selectedRows } />
+				<ImageCompare selectedRows={ selectedRows } />
 			}
-			<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
-				<div className="urlslab-panel urlslab-changesPanel customPadding">
-					<div className="urlslab-panel-header">
-						<h3>{ title }</h3>
-						<button className="urlslab-panel-close" onClick={ hidePanel }>
-							<CloseIcon />
-						</button>
-					</div>
-					{ chartData &&
-						<Chart data={ chartData } header={ header } />
-					}
-					<div className="mt-l table-container">
-						<Table
-							slug={ slug }
-							columns={ columns }
-							data={ isSuccess && data }
-						/>
+
+			{ isSuccess && dataFetched && (
+				<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
+					<div className="urlslab-panel urlslab-changesPanel customPadding">
+						<div className="urlslab-panel-header">
+							<h3>{ title }</h3>
+							<button className="urlslab-panel-close" onClick={ hidePanel }>
+								<CloseIcon />
+							</button>
+						</div>
+						{ chartData &&
+							<Chart data={ chartData } header={ header } />
+						}
+						<div className="mt-l table-container">
+							<Table
+								slug={ slug }
+								columns={ columns }
+								data={ isSuccess && data }
+							/>
+						</div>
 					</div>
 				</div>
-			</div>
+			) }
+
+			{ ( ! isSuccess || ! dataFetched ) && (
+				<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
+					<div className="urlslab-panel urlslab-changesPanel customPadding">
+						<div className="urlslab-panel-header">
+							<h3>{ title }</h3>
+							<button className="urlslab-panel-close" onClick={ hidePanel }>
+								<CloseIcon />
+							</button>
+						</div>
+						<div className="p-l">
+							No Data found for this url. try to schedule this url to get data.
+						</div>
+					</div>
+				</div>
+			) }
+
 		</>
 	);
 }
