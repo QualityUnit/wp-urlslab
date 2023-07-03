@@ -564,7 +564,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 
 		try {
 			$xpath    = new DOMXPath( $document );
-			$js_links = $xpath->query( "//script[@src]" );
+			$js_links = $xpath->query( '//script[@src]' );
 			$links    = array();
 			foreach ( $js_links as $link_object ) {
 				if ( ! isset( $links[ $link_object->getAttribute( 'src' ) ] ) ) {

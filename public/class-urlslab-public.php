@@ -102,7 +102,7 @@ class Urlslab_Public {
 					return true;
 				default:
 			}
-		} elseif (isset( $_SERVER['REQUEST_URI'] )) {
+		} else if ( isset( $_SERVER['REQUEST_URI'] ) ) {
 			return strpos( $_SERVER['REQUEST_URI'], Urlslab_Driver::DOWNLOAD_URL_PATH ) !== false ||
 				   strpos( $_SERVER['REQUEST_URI'], Urlslab_Lazy_Loading::DOWNLOAD_URL_PATH ) !== false ||
 				   strpos( $_SERVER['REQUEST_URI'], Urlslab_Html_Optimizer::DOWNLOAD_CSS_URL_PATH ) !== false ||
