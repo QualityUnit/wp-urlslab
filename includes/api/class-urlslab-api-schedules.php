@@ -206,7 +206,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 				$schedule->setLinkFollowingStrategy( DomainScheduleScheduleConf::LINK_FOLLOWING_STRATEGY_NO_LINK );
 			}
 
-			if ( $request->has_param( 'custom_sitemaps' ) && strlen( trim( $request->get_param( 'custom_sitemaps' ) ) ) > 0 ) {
+			if ( $request->has_param( 'custom_sitemaps' ) && ! empty( $request->get_param( 'custom_sitemaps' ) ) ) {
 				if ( ! is_array( $request->get_param( 'custom_sitemaps' ) ) ) {
 					$sitemaps = preg_split( '/(,|\n|\t)\s*/', $request->get_param( 'custom_sitemaps' ) );
 				} else {
