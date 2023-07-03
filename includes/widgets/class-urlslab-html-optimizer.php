@@ -142,8 +142,8 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSS_MINIFICATION,
-			false,
-			false,
+			true,
+			true,
 			__( 'CSS Minification' ),
 			__( 'Minify CSS files by removing whitespaces, stripping comments, combines files (incl. @import statements and small assets in CSS files), and optimizes/shortens a few common programming patterns.' ),
 			self::OPTION_TYPE_CHECKBOX,
@@ -179,8 +179,8 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_JS_MINIFICATION,
-			false,
-			false,
+			true,
+			true,
 			__( 'JS Minification' ),
 			__( 'Minify JS files by removing whitespaces, stripping comments, combines files and optimizes/shortens a few common programming patterns.' ),
 			self::OPTION_TYPE_CHECKBOX,
@@ -399,6 +399,16 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 					$new_elm->setAttribute( 'href', $this->get_merge_css_url( $merged_css_files ) );
 					$first_node->parentNode->insertBefore( $new_elm, $first_node );
 				}
+			} else if ( $this->get_option( self::SETTING_NAME_CSS_MINIFICATION ) ) {
+				foreach ( $css_links as $link_object ) {
+					if ( ! $link_object->hasAttribute( 'urlslab-old' ) && isset( $links[ $link_object->getAttribute( 'href' ) ], $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ] ) ) {
+						$css_object = $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ];
+						if ( Urlslab_CSS_Cache_Row::STATUS_ACTIVE == $css_object->get_status() ) {
+							$link_object->setAttribute( 'href', $this->get_merge_css_url( array( $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ] ) ) );
+						}
+					}
+				}
+
 			}
 
 			foreach ( $remove_elements as $element ) {
@@ -617,6 +627,16 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 					$new_elm->setAttribute( 'src', $this->get_merge_js_url( $merged_js_files ) );
 					$last_node->parentNode->insertBefore( $new_elm, $last_node );
 				}
+			} else if ( $this->get_option( self::SETTING_NAME_JS_MINIFICATION ) ) {
+				foreach ( $js_links as $link_object ) {
+					if ( ! $link_object->hasAttribute( 'urlslab-old' ) && isset( $links[ $link_object->getAttribute( 'src' ) ], $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ] ) ) {
+						$js_object = $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ];
+						if ( Urlslab_JS_Cache_Row::STATUS_ACTIVE == $js_object->get_status() ) {
+							$link_object->setAttribute( 'src', $this->get_merge_js_url( array( $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ] ) ) );
+						}
+					}
+				}
+
 			}
 
 			foreach ( $remove_elements as $element ) {
