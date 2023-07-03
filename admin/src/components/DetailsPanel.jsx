@@ -24,11 +24,8 @@ function DetailsPanel( ) {
 	const stopExport = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( );
 	const { activePanel, options, rowToEdit } = useTablePanels( );
-	let optionsId = 0;
-	if ( options.length > 1 ) {
-		optionsId = activePanel;
-	}
-	const { title, text, slug, url, showKeys, listId } = useTablePanels( ( state ) => state.options[ optionsId ].detailsOptions );
+
+	const { title, text, slug, url, showKeys, listId } = useTablePanels( ( state ) => state.options[ activePanel ].detailsOptions );
 	const tbody = [];
 
 	const hidePanel = () => {
@@ -143,7 +140,7 @@ function DetailsPanel( ) {
 					<button className="urlslab-panel-close" onClick={ hidePanel }>
 						<CloseIcon />
 					</button>
-					{ ( options.length > 1 || Object.keys( rowToEdit ).length > 0 ) && <UnifiedPanelMenu /> }
+					{ ( [ ...options ].filter( ( n ) => n ).length > 1 || Object.keys( rowToEdit ).length > 0 ) && <UnifiedPanelMenu /> }
 				</div>
 				<div className="urlslab-panel-content">
 					{ text && <p className="fs-m padded">{ text }</p> }
