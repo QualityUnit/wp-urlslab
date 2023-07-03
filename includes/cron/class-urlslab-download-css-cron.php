@@ -60,6 +60,7 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 	}
 
 	private function download( Urlslab_CSS_Cache_Row $css ) {
+		$page_content_file_name = null;
 		try {
 			$page_content_file_name = download_url( $css->get_url_object()->get_url_with_protocol() );
 			if ( is_wp_error( $page_content_file_name ) || empty( $page_content_file_name ) || ! file_exists( $page_content_file_name ) || 0 == filesize( $page_content_file_name ) ) {
@@ -103,7 +104,7 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 		preg_match_all( $url_pattern, $css_content, $matched_urls );
 
 		// Iterate through each relative URL, convert it to an absolute URL, and replace it in the CSS content
-		for ( $i = 0; $i < count( $matched_urls[0] ); $i ++ ) {
+		for ( $i = 0 ; $i < count( $matched_urls[0] ) ; $i ++ ) {
 			// Skip absolute URLs or data URIs
 			if ( preg_match( '/^(https?:\/\/|data:)/', $matched_urls[1][ $i ] ) ) {
 				continue;
