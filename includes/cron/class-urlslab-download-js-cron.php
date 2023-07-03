@@ -63,6 +63,7 @@ class Urlslab_Download_JS_Cron extends Urlslab_Cron {
 	}
 
 	private function download( Urlslab_JS_Cache_Row $js ) {
+		$page_content_file_name = null;
 		try {
 			$page_content_file_name = download_url( $js->get_url_object()->get_url_with_protocol() );
 			if ( is_wp_error( $page_content_file_name ) || empty( $page_content_file_name ) || ! file_exists( $page_content_file_name ) || 0 == filesize( $page_content_file_name ) ) {
