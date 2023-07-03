@@ -45,6 +45,7 @@ class Urlslab_Gutenberg_Block {
 		);
 		
 		Urlslab_Blocks::enqueue( "urlslab-{$this->slug}-block", "/build/{$this->slug}.js", $deps );
+		Urlslab_Blocks::enqueue( 'urlslab-components-editor', '/build/components.css' );
 
 		if ( method_exists( $this, 'frontend_vars' ) ) {
 			Urlslab_Blocks::localize( "urlslab-{$this->slug}-block", '_urlslab_' . str_replace( '-', '_', $this->slug ) . '_block_vars', $this->frontend_vars() );
