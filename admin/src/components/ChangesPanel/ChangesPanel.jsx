@@ -21,7 +21,8 @@ function ChangesPanel() {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { CloseIcon, handleClose } = useCloseModal();
 	const { title, slug } = useTablePanels( ( state ) => state.options.changesPanel );
-	const { dataFetched, setDataFetched } = useState();
+	const [ dataFetched, setDataFetched ] = useState( false );
+	const [ loading, setLoading ] = useState( true );
 
 	const { selectedRows, selectRow } = useChangeRow( {} );
 
@@ -35,10 +36,11 @@ function ChangesPanel() {
 			const result = await postFetch( slug );
 			if ( result.ok ) {
 				setDataFetched( true );
+				setLoading( false );
 				return result.json();
 			}
-
 			setDataFetched( false );
+			setLoading( false );
 			return [];
 		},
 		refetchOnWindowFocus: false,
@@ -135,7 +137,7 @@ function ChangesPanel() {
 				<ImageCompare selectedRows={ selectedRows } />
 			}
 
-			{ isSuccess && dataFetched && (
+			{ ! loading && dataFetched && (
 				<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
 					<div className="urlslab-panel urlslab-changesPanel customPadding">
 						<div className="urlslab-panel-header">
@@ -158,7 +160,7 @@ function ChangesPanel() {
 				</div>
 			) }
 
-			{ ( ! isSuccess || ! dataFetched ) && (
+			{ ! loading && ! dataFetched && (
 				<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
 					<div className="urlslab-panel urlslab-changesPanel customPadding">
 						<div className="urlslab-panel-header">
