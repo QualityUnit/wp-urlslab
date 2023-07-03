@@ -16,9 +16,14 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	public const SETTING_NAME_IMAGE_SIZE = 'urlslab-relres-img-size';
 	public const SETTING_NAME_SHOW_SUMMARY = 'urlslab-relres-show-sum';
 	public const SETTING_NAME_DEFAULT_IMAGE_URL = 'urlslab-relres-def-img';
+	public const SETTING_NAME_DESIGN_TYPE = 'urlslab-relres-design-type';
 	public const SETTING_NAME_AUTOINCLUDE_POST_TYPES = 'urlslab-relres-autoinc-post-types';
 	const SETTING_NAME_DOMAINS = 'urlslab-relres-domains';
 	const SETTING_NAME_LAST_SEEN = 'urlslab-relres-last-seen';
+
+	// type - design
+	public const DESIGN_TYPE_DEFAULT = 'default';
+	public const DESIGN_TYPE_PLAIN = 'plain'; 
 
 	public function get_widget_labels(): array {
 		return array( self::LABEL_SEO, self::LABEL_FREE, self::LABEL_PAID );
@@ -166,8 +171,11 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	private function render_shortcode_header( array $urlslab_atts ): string {
-		wp_enqueue_style( 'urlslab-related-resources', plugin_dir_url( URLSLAB_PLUGIN_DIR . 'public/build/css/urlslab_youtube_loader.css' ) . 'urlslab_related_resources.css', false, URLSLAB_VERSION );
-		$css_class = 'urlslab-rel-res-items';
+		$design_type = $this->get_option( self::SETTING_NAME_DESIGN_TYPE );
+		if ( $design_type === 'default' ) {
+			wp_enqueue_style( 'urlslab-related-resources', plugin_dir_url( URLSLAB_PLUGIN_DIR . 'public/build/css/urlslab_youtube_loader.css' ) . 'urlslab_related_resources.css', false, URLSLAB_VERSION );
+		}
+		$css_class = "urlslab-rel-res-items urlslab-rel-res-design-${design_type}";
 		if ( ! empty( $urlslab_atts['show-image'] ) ) {
 			$css_class .= ' urlslab-rel-res-items-with-image';
 		}
@@ -462,6 +470,20 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			false,
 			null,
 			'widget'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_DESIGN_TYPE,
+			self::DESIGN_TYPE_DEFAULT,
+			false,
+			__( 'Design Type' ),
+			__( 'Select frontend design type. Using the plain design you are responsible for own custom css styling.' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				self::DESIGN_TYPE_DEFAULT 	=> __( 'Default' ),
+				self::DESIGN_TYPE_PLAIN		=> __( 'Plain' ),
+			),
+			null,
+			'widget',
 		);
 	}
 }
