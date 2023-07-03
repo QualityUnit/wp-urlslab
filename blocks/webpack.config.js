@@ -25,4 +25,11 @@ availableBlocks.forEach( ( element ) => {
 	}
 } );
 
-module.exports = [ ...buildData ];
+const componentsConfig = {
+	...defaultConfig,
+	entry: {
+		components: path.join( __dirname, `src/components/components.scss` ),
+	},
+};
+
+module.exports = [ ...buildData, componentsConfig ];
