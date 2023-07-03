@@ -112,7 +112,7 @@ class Urlslab {
 
 	public function urlslab_content_check( $content ) {
 		global $pagenow;
-		if ( wp_is_maintenance_mode() || wp_is_recovery_mode() || empty( $content ) || is_admin() || wp_is_xml_request() || wp_is_json_request() || 'wp-login.php' === $pagenow || 'admin-ajax.php' === $pagenow ) {
+		if ( wp_is_maintenance_mode() || wp_is_recovery_mode() || empty( $content ) || is_admin() || wp_is_xml_request() || wp_is_json_request() || 'wp-login.php' === $pagenow || 'admin-ajax.php' === $pagenow || Urlslab_Public::is_download_request() ) {
 			return $content;
 		}
 
@@ -123,7 +123,7 @@ class Urlslab {
 		}
 
 		if ( false !== strpos( $content, '<body' ) ) {
-			if ( preg_match( '|(.*?)<body(.*?)>(.*?)</body>(.*)|imus', $content, $matches ) ) {
+			if ( preg_match( '|(.*?)<body(.*?)>(.*?)</body>(.*?)|imus', $content, $matches ) ) {
 				$content = $matches[1] . $this->urlslab_body_content( $matches[3], $matches[2] ) . $matches[4];
 			}
 		}
@@ -543,7 +543,7 @@ class Urlslab {
 			Urlslab_Loader::get_instance()->add_action( 'template_redirect', $plugin_public, 'download_offloaded_file', PHP_INT_MIN );
 			if ( ! defined( 'WP_ADMIN' ) ) {
 				Urlslab_Loader::get_instance()->add_action( 'wp_loaded', $this, 'buffer_start', PHP_INT_MAX );
-				Urlslab_Loader::get_instance()->add_filter( 'language_attributes', $this, 'buffer_start', PHP_INT_MAX );
+				Urlslab_Loader::get_instance()->add_action( 'wp_before_load_template', $this, 'buffer_start', PHP_INT_MAX );
 				Urlslab_Loader::get_instance()->add_action( 'template_redirect', $this, 'buffer_start', PHP_INT_MAX );
 				Urlslab_Loader::get_instance()->add_action( 'shutdown', $this, 'buffer_end', PHP_INT_MIN );
 			}

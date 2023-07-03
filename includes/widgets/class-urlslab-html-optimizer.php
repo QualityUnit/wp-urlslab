@@ -27,7 +27,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 	public function __construct() {}
 
 	public function init_widget() {
-		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook', 100 );
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook', 1000 );
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_head_content', $this, 'content_hook' );
 		Urlslab_Loader::get_instance()->add_filter( 'urlslab_raw_content', $this, 'minify_content', 0 );
 	}
@@ -49,11 +49,9 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 	}
 
 	public function content_hook( DOMDocument $document ) {
-		if ( is_admin() || is_404() ) {
+		if ( is_404() ) {
 			return;
 		}
-
-
 		$this->css_processing( $document );
 		$this->js_processing( $document );
 	}
@@ -537,6 +535,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 				$css_content .= $css_object->get_css_content() . "\n\n";
 			}
 		}
+
 		return $css_content;
 	}
 
@@ -554,81 +553,79 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 				$js_content .= $js_object->get_js_content() . "\n\n";
 			}
 		}
+
 		return $js_content;
 	}
 
-		private
-		function js_processing( DOMDocument $document ) {
-			if ( ! $this->get_option( self::SETTING_NAME_JS_PROCESSING ) ) {
-				return;
+	private function js_processing( DOMDocument $document ) {
+		if ( ! $this->get_option( self::SETTING_NAME_JS_PROCESSING ) ) {
+			return;
+		}
+
+		try {
+			$xpath    = new DOMXPath( $document );
+			$js_links = $xpath->query( "//script[@src]" );
+			$links    = array();
+			foreach ( $js_links as $link_object ) {
+				if ( ! isset( $links[ $link_object->getAttribute( 'src' ) ] ) ) {
+					try {
+						$url = new Urlslab_Url( $link_object->getAttribute( 'src' ) );
+						if ( $url->is_same_domain_url() ) {
+							$links[ $link_object->getAttribute( 'src' ) ] = $url->get_url_id();
+						}
+					} catch ( Exception $e ) {
+					}
+				}
 			}
 
-			try {
-				$xpath    = new DOMXPath( $document );
-				$js_links = $xpath->query( "//script[@src]" );
-				$links    = array();
+			$js_files = Urlslab_JS_Cache_Row::get_js_files( $links );
+
+			$remove_elements = array();
+			if ( $this->get_option( self::SETTING_NAME_JS_MAX_SIZE ) > 0 ) {
 				foreach ( $js_links as $link_object ) {
-					if ( ! isset( $links[ $link_object->getAttribute( 'src' ) ] ) ) {
-						try {
-							$url = new Urlslab_Url( $link_object->getAttribute( 'src' ) );
-							if ( $url->is_same_domain_url() ) {
-								$links[ $link_object->getAttribute( 'src' ) ] = $url->get_url_id();
+					if ( isset( $links[ $link_object->getAttribute( 'src' ) ], $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ] ) ) {
+						$js_object = $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ];
+						if ( Urlslab_JS_Cache_Row::STATUS_ACTIVE == $js_object->get_status() && $this->get_option( self::SETTING_NAME_JS_MAX_SIZE ) > $js_object->get_filesize() ) {
+							$new_elm = $document->createElement( 'script', $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ]->get_js_content() );
+							if ( $link_object->hasAttribute( 'id' ) ) {
+								$new_elm->setAttribute( 'id', $link_object->getAttribute( 'id' ) );
 							}
-						} catch ( Exception $e ) {
+							$link_object->setAttribute( 'urlslab-old', 'should-remove' );
+							$new_elm->setAttribute( 'urlslab-js', '1' );
+							$link_object->parentNode->insertBefore( $new_elm, $link_object );
+							$remove_elements[] = $link_object;
 						}
 					}
 				}
-
-				$js_files = Urlslab_JS_Cache_Row::get_js_files( $links );
-
-				$remove_elements = array();
-				if ( $this->get_option( self::SETTING_NAME_JS_MAX_SIZE ) > 0 ) {
-					foreach ( $js_links as $link_object ) {
-						if ( isset( $links[ $link_object->getAttribute( 'src' ) ], $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ] ) ) {
-							$js_object = $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ];
-							if ( Urlslab_JS_Cache_Row::STATUS_ACTIVE == $js_object->get_status() && $this->get_option( self::SETTING_NAME_JS_MAX_SIZE ) > $js_object->get_filesize() ) {
-								$new_elm = $document->createElement( 'script', $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ]->get_js_content() );
-								if ( $link_object->hasAttribute( 'id' ) ) {
-									$new_elm->setAttribute( 'id', $link_object->getAttribute( 'id' ) );
-								}
-								$link_object->setAttribute( 'urlslab-old', 'should-remove' );
-								$new_elm->setAttribute( 'urlslab-js', '1' );
-								$link_object->parentNode->insertBefore( $new_elm, $link_object );
-								$remove_elements[] = $link_object;
-							}
-						}
-					}
-				}
-
-				if ( $this->get_option( self::SETTING_NAME_JS_MERGE ) ) {
-					$merged_js_files = array();
-					$last_node       = null;
-					foreach ( $js_links as $link_object ) {
-						if ( ! $link_object->hasAttribute( 'urlslab-old' ) && isset( $links[ $link_object->getAttribute( 'src' ) ], $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ] ) ) {
-							$js_object = $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ];
-							if ( Urlslab_JS_Cache_Row::STATUS_ACTIVE == $js_object->get_status() ) {
-								$remove_elements[]                                      = $link_object;
-								$merged_js_files[ $link_object->getAttribute( 'src' ) ] = $js_object;
-								$last_node                                              = $link_object;
-							}
-						}
-					}
-					if ( ! empty( $merged_js_files ) && null !== $last_node ) {
-						$new_elm = $document->createElement( 'script' );
-						$new_elm->setAttribute( 'src', $this->get_merge_js_url( $merged_js_files ) );
-						$last_node->parentNode->insertBefore( $new_elm, $last_node );
-					}
-				}
-
-				foreach ( $remove_elements as $element ) {
-					$element->parentNode->removeChild( $element );
-				}
-
-				$this->insert_missing_js_files( $links, $js_files );
-
-			} catch ( Exception $e ) {
 			}
 
+			if ( $this->get_option( self::SETTING_NAME_JS_MERGE ) ) {
+				$merged_js_files = array();
+				$last_node       = null;
+				foreach ( $js_links as $link_object ) {
+					if ( ! $link_object->hasAttribute( 'urlslab-old' ) && isset( $links[ $link_object->getAttribute( 'src' ) ], $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ] ) ) {
+						$js_object = $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ];
+						if ( Urlslab_JS_Cache_Row::STATUS_ACTIVE == $js_object->get_status() ) {
+							$remove_elements[]                                      = $link_object;
+							$merged_js_files[ $link_object->getAttribute( 'src' ) ] = $js_object;
+							$last_node                                              = $link_object;
+						}
+					}
+				}
+				if ( ! empty( $merged_js_files ) && null !== $last_node ) {
+					$new_elm = $document->createElement( 'script' );
+					$new_elm->setAttribute( 'src', $this->get_merge_js_url( $merged_js_files ) );
+					$last_node->parentNode->insertBefore( $new_elm, $last_node );
+				}
+			}
 
+			foreach ( $remove_elements as $element ) {
+				$element->parentNode->removeChild( $element );
+			}
+
+			$this->insert_missing_js_files( $links, $js_files );
+
+		} catch ( Exception $e ) {
 		}
 	}
+}

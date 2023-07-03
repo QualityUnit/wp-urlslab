@@ -92,6 +92,26 @@ class Urlslab_Public {
 		}
 	}
 
+	public static function is_download_request() {
+		if ( isset( $_GET['action'] ) ) {
+			switch ( $_GET['action'] ) {
+				case Urlslab_Driver::DOWNLOAD_URL_PATH:
+				case Urlslab_Lazy_Loading::DOWNLOAD_URL_PATH:
+				case Urlslab_Html_Optimizer::DOWNLOAD_CSS_URL_PATH:
+				case Urlslab_Html_Optimizer::DOWNLOAD_JS_URL_PATH:
+					return true;
+				default:
+			}
+		} elseif (isset( $_SERVER['REQUEST_URI'] )) {
+			return strpos( $_SERVER['REQUEST_URI'], Urlslab_Driver::DOWNLOAD_URL_PATH ) !== false ||
+				   strpos( $_SERVER['REQUEST_URI'], Urlslab_Lazy_Loading::DOWNLOAD_URL_PATH ) !== false ||
+				   strpos( $_SERVER['REQUEST_URI'], Urlslab_Html_Optimizer::DOWNLOAD_CSS_URL_PATH ) !== false ||
+				   strpos( $_SERVER['REQUEST_URI'], Urlslab_Html_Optimizer::DOWNLOAD_JS_URL_PATH ) !== false;
+		}
+
+		return false;
+	}
+
 	public function download_offloaded_file() {
 		if ( isset( $_GET['action'] ) && Urlslab_Driver::DOWNLOAD_URL_PATH === $_GET['action'] ) {
 			Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-media-offloader' )->output_content();
