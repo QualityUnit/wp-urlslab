@@ -87,6 +87,9 @@ class Urlslab_Cron_Manager {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-download-css-cron.php';
 		$this->add_cron_task( new Urlslab_Download_CSS_Cron() );
 
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-download-js-cron.php';
+		$this->add_cron_task( new Urlslab_Download_JS_Cron() );
+
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-screenshots-cron.php';
 		$this->add_cron_task( new Urlslab_Screenshots_Cron() );
 

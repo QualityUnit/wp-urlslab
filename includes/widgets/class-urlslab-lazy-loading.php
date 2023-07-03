@@ -724,10 +724,12 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			}
 
 			if ( ! empty( $this->content_docs ) ) {
-				/** @var Urlslab_Html_Optimizer $widget */
-				$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Html_Optimizer::SLUG );
-				foreach ( $this->content_docs as $doc ) {
-					$doc->set_cache_content( $widget->minify_content( $doc->get_cache_content() ) );
+				if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Html_Optimizer::SLUG ) ) {
+					/** @var Urlslab_Html_Optimizer $widget */
+					$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Html_Optimizer::SLUG );
+					foreach ( $this->content_docs as $doc ) {
+						$doc->set_cache_content( $widget->minify_content( $doc->get_cache_content() ) );
+					}
 				}
 
 				$obj = new Urlslab_Content_Cache_Row();

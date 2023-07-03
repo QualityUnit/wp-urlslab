@@ -942,7 +942,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			$found_urls = array_merge( $this->replace_attributes( $dom_element ), $found_urls );
 		} else {
 			// this is simple img tag
-			$lazy_loading = false;
+			$lazy_loading   = false;
+			$img_url_object = null;
 			if ( ! empty( $dom_element->getAttribute( 'src' ) ) && ! str_starts_with( $dom_element->getAttribute( 'src' ), 'data:' ) ) {
 				$img_url_object = new Urlslab_File_Row( array( 'url' => $dom_element->getAttribute( 'src' ) ), false );
 			} else {

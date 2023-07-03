@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Overview from '../components/OverviewTemplate';
 
-export default function CssOptimizerOverview( { moduleId } ) {
+export default function HtmlOptimizerOverview( { moduleId } ) {
 	const [ section, setSection ] = useState( 'about' );
 
 	return (
