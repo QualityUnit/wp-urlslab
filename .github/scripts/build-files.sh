@@ -21,9 +21,9 @@ echo "Remove Redundant libs"
 cd vendor/aws/aws-sdk-php/src
 
 # removing redundant aws libs
-find . -mindepth 1 -maxdepth 1 -type d ! -name 'CloudFront' ! -name 'S3' ! -name 'Exception' ! -name 'data' ! -name 'Credentials' ! -name 'Api' ! -name 'Signature' ! -name 'DefaultsMode'  ! -name 'Endpoint' ! -name 'EndpointDiscovery' ! -name 'EndpointV2' ! -name 'Token' ! -name 'Retry' ! -name 'ClientSideMonitoring' ! -name 'Handler' ! -name 'Arn' ! -name 'Multipart' -exec rm -r {} \;
+find . -mindepth 1 -maxdepth 1 -type d ! -name 'Configuration' ! -name 'CloudFront' ! -name 'S3' ! -name 'Exception' ! -name 'data' ! -name 'Credentials' ! -name 'Api' ! -name 'Signature' ! -name 'DefaultsMode'  ! -name 'Endpoint' ! -name 'EndpointDiscovery' ! -name 'EndpointV2' ! -name 'Token' ! -name 'Retry' ! -name 'ClientSideMonitoring' ! -name 'Handler' ! -name 'Arn' ! -name 'Multipart' -exec rm -r {} \;
 cd ./data
-find . -mindepth 1 -maxdepth 1 -type d ! -name 'cloudfront' ! -name 's3' ! -name 's3control' ! -name 's3outposts' -exec rm -r {} \;
+find . -mindepth 1 -maxdepth 1 -type d ! -name 'configuration' ! -name 'cloudfront' ! -name 's3' ! -name 's3control' ! -name 's3outposts' -exec rm -r {} \;
 cd ../../../../
 
 # removing */docs/*
