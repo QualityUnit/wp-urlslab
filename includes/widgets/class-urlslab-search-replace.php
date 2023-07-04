@@ -69,9 +69,9 @@ class Urlslab_Search_Replace extends Urlslab_Widget {
 						continue;
 					}
 					if (
-						$row['login_status'] === Urlslab_Search_Replace_Row::LOGIN_STATUS_ALL ||
-						$is_logged && $row['login_status'] === Urlslab_Search_Replace_Row::LOGIN_STATUS_LOGGED_IN ||
-						! $is_logged && $row['login_status'] === Urlslab_Search_Replace_Row::LOGIN_STATUS_LOGGED_IN
+						Urlslab_Search_Replace_Row::LOGIN_STATUS_ALL === $row['login_status'] ||
+						$is_logged && Urlslab_Search_Replace_Row::LOGIN_STATUS_LOGGED_IN === $row['login_status'] ||
+						! $is_logged && Urlslab_Search_Replace_Row::LOGIN_STATUS_LOGGED_IN === $row['login_status']
 					) {
 						$obj_search                           = new Urlslab_Search_Replace_Row( $row );
 						$this->rules[ $obj_search->get_id() ] = $obj_search;
