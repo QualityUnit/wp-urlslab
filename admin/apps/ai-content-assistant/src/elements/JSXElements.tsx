@@ -4,12 +4,12 @@
  */
 
 import React from 'react';
-import JSXButton from '../../../elements/Button';
-import JSXSingleSelectMenu from '../../../elements/SingleSelectMenu';
-import JSXTextArea from '../../../elements/Textarea';
-import JSXInputField from '../../../elements/InputField';
-import JSXCheckbox from '../../../elements/Checkbox';
-import JSXTooltip from '../../../elements/Tooltip';
+import JSXButton from '../../../../src/elements/Button';
+import JSXSingleSelectMenu from '../../../../src/elements/SingleSelectMenu';
+import JSXTextArea from '../../../../src/elements/Textarea';
+import JSXInputField from '../../../../src/elements/InputField';
+import JSXCheckbox from '../../../../src/elements/Checkbox';
+import JSXTooltip from '../../../../src/elements/Tooltip';
 
 import { InfoTooltipIcon } from './InfoTooltipIcon';
 
@@ -82,7 +82,7 @@ type CheckboxType = Partial<{
 export const Checkbox: React.FC<CheckboxType> = React.memo( ( {
 	defaultValue = undefined, smallText = undefined, disabled = undefined, readOnly = undefined, radial = undefined, name = undefined, className = undefined, onChange = undefined, textBefore = undefined, children,
 }: CheckboxType ) => {
-	return <JSXCheckbox defaultValue={defaultValue} smallText={smallText} disabled={ disabled } readOnly={ readOnly } radial={ radial } name={ name } className={ className } onChange={ onChange } textBefore={ textBefore }>{ children }</JSXCheckbox>;
+	return <JSXCheckbox defaultValue={ defaultValue } smallText={ smallText } disabled={ disabled } readOnly={ readOnly } radial={ radial } name={ name } className={ className } onChange={ onChange } textBefore={ textBefore }>{ children }</JSXCheckbox>;
 } );
 Checkbox.displayName = 'Checkbox';
 
