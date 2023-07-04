@@ -301,31 +301,35 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		if ( empty( $content ) || ! $this->get_option( self::SETTING_NAME_HTML_MINIFICATION ) ) {
 			return $content;
 		}
-		$htmlMin = new \voku\helper\HtmlMin();
-		$htmlMin->doOptimizeViaHtmlDomParser();
-		$htmlMin->doRemoveComments();
-		$htmlMin->doSumUpWhitespace();
-		$htmlMin->doRemoveWhitespaceAroundTags();
-		$htmlMin->doOptimizeAttributes();
-		$htmlMin->doRemoveHttpPrefixFromAttributes();
-		$htmlMin->doRemoveHttpsPrefixFromAttributes();
-		$htmlMin->doKeepHttpAndHttpsPrefixOnExternalAttributes();
-		$htmlMin->doRemoveDefaultAttributes();
-		$htmlMin->doRemoveDeprecatedAnchorName();
-		$htmlMin->doRemoveDeprecatedScriptCharsetAttribute();
-		$htmlMin->doRemoveDeprecatedTypeFromScriptTag();
-		$htmlMin->doRemoveDeprecatedTypeFromStylesheetLink();
-		$htmlMin->doRemoveDeprecatedTypeFromStyleAndLinkTag();
-		$htmlMin->doRemoveDefaultTypeFromButton();
-		$htmlMin->doRemoveEmptyAttributes();
-		$htmlMin->doRemoveValueFromEmptyInput();
-		$htmlMin->doSortCssClassNames();
-		$htmlMin->doSortHtmlAttributes();
-		$htmlMin->doRemoveSpacesBetweenTags();
-		$htmlMin->doRemoveOmittedQuotes();
-		$htmlMin->doRemoveOmittedHtmlTags();
+		try {
+			$htmlMin = new \voku\helper\HtmlMin();
+			$htmlMin->doOptimizeViaHtmlDomParser();
+			$htmlMin->doRemoveComments();
+			$htmlMin->doSumUpWhitespace();
+			$htmlMin->doRemoveWhitespaceAroundTags();
+			$htmlMin->doOptimizeAttributes();
+			$htmlMin->doRemoveHttpPrefixFromAttributes();
+			$htmlMin->doRemoveHttpsPrefixFromAttributes();
+			$htmlMin->doKeepHttpAndHttpsPrefixOnExternalAttributes();
+			$htmlMin->doRemoveDefaultAttributes();
+			$htmlMin->doRemoveDeprecatedAnchorName();
+			$htmlMin->doRemoveDeprecatedScriptCharsetAttribute();
+			$htmlMin->doRemoveDeprecatedTypeFromScriptTag();
+			$htmlMin->doRemoveDeprecatedTypeFromStylesheetLink();
+			$htmlMin->doRemoveDeprecatedTypeFromStyleAndLinkTag();
+			$htmlMin->doRemoveDefaultTypeFromButton();
+			$htmlMin->doRemoveEmptyAttributes();
+			$htmlMin->doRemoveValueFromEmptyInput();
+			$htmlMin->doSortCssClassNames();
+			$htmlMin->doSortHtmlAttributes();
+			$htmlMin->doRemoveSpacesBetweenTags();
+			$htmlMin->doRemoveOmittedQuotes();
+			$htmlMin->doRemoveOmittedHtmlTags();
 
-		return $htmlMin->minify( $content );
+			return $htmlMin->minify( $content );
+		} catch ( \Exception $e ) {
+			return $content;
+		}
 	}
 
 	/**
