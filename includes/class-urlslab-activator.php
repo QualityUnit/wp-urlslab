@@ -245,6 +245,15 @@ class Urlslab_Activator {
 				self::init_js_cache_tables();
 			}
 		);
+
+		self::update_step(
+			'2.27.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SEARCH_AND_REPLACE_TABLE . " ADD COLUMN login_status CHAR(1) NOT NULL DEFAULT 'A'" ); // phpcs:ignore
+			}
+		);
+
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -574,6 +583,7 @@ class Urlslab_Activator {
 						str_search TEXT,
 						str_replace TEXT,
 						search_type CHAR(1) NOT NULL DEFAULT 'T',
+						login_status CHAR(1) NOT NULL DEFAULT 'A',
 						url_filter VARCHAR(255) NOT NULL DEFAULT '.*',
 						labels VARCHAR(255) NOT NULL DEFAULT '',
 						PRIMARY KEY (id)

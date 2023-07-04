@@ -4,6 +4,10 @@ class Urlslab_Search_Replace_Row extends Urlslab_Data {
 	public const TYPE_PLAIN_TEXT = 'T';
 	public const TYPE_REGEXP = 'R';
 
+	public const LOGIN_STATUS_LOGGED_IN = 'L';
+	public const LOGIN_STATUS_LOGGED_OUT = 'O';
+	public const LOGIN_STATUS_ALL = 'A';
+
 	public function __construct( array $row_data = array(), $loaded_from_db = false ) {
 		$this->set_id( $row_data['id'] ?? 0, $loaded_from_db );
 		$this->set_str_search( $row_data['str_search'] ?? '', $loaded_from_db );
@@ -11,6 +15,7 @@ class Urlslab_Search_Replace_Row extends Urlslab_Data {
 		$this->set_search_type( $row_data['search_type'] ?? self::TYPE_PLAIN_TEXT, $loaded_from_db );
 		$this->set_url_filter( $row_data['url_filter'] ?? '', $loaded_from_db );
 		$this->set_labels( $row_data['labels'] ?? '', $loaded_from_db );
+		$this->set_login_status( $row_data['login_status'] ?? self::LOGIN_STATUS_ALL, $loaded_from_db );
 	}
 
 	public function get_id(): int {
@@ -37,6 +42,10 @@ class Urlslab_Search_Replace_Row extends Urlslab_Data {
 		return $this->get( 'labels' );
 	}
 
+	public function get_login_status(): string {
+		return $this->get( 'login_status' );
+	}
+
 	public function set_id( int $id, $loaded_from_db = false ): void {
 		$this->set( 'id', $id, $loaded_from_db );
 	}
@@ -61,6 +70,10 @@ class Urlslab_Search_Replace_Row extends Urlslab_Data {
 		$this->set( 'labels', $labels, $loaded_from_db );
 	}
 
+	public function set_login_status( string $login_status, $loaded_from_db = false ): void {
+		$this->set( 'login_status', $login_status, $loaded_from_db );
+	}
+
 	public function get_table_name(): string {
 		return URLSLAB_SEARCH_AND_REPLACE_TABLE;
 	}
@@ -79,6 +92,7 @@ class Urlslab_Search_Replace_Row extends Urlslab_Data {
 			'str_search'  => '%s',
 			'str_replace' => '%s',
 			'search_type' => '%s',
+			'login_status' => '%s',
 			'url_filter'  => '%s',
 			'labels'  => '%s',
 		);
