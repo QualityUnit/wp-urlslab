@@ -249,6 +249,7 @@ class Urlslab {
 		$this->define_public_hooks();
 		$this->define_backend_hooks();
 		$this->define_api_hooks();
+		$this->init_blocks();
 
 		Urlslab_Loader::get_instance()->run();
 	}
@@ -478,6 +479,9 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-admin-subpage.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-dashboard-page.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-api-router.php';
+
+		// editor blocks
+		require_once URLSLAB_PLUGIN_DIR . '/blocks/class-urlslab-blocks.php';
 	}
 
 	/**
@@ -587,5 +591,9 @@ class Urlslab {
 				( new Urlslab_Api_Router() )->register_routes();
 			}
 		);
+	}
+
+	private function init_blocks() {
+		Urlslab_Blocks::run();
 	}
 }

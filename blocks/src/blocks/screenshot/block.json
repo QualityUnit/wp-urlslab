@@ -1,0 +1,38 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "urlslab-blocks/screenshot",
+	"title": "Screenshot",
+	"description": "Shows screenshot of page on defined url.",
+	"category": "urlslab-blocks",
+	"textdomain": "urlslab",
+	"attributes": {
+		"url": {
+			"type": "string",
+			"default": ""
+		},
+		"screenshotType": {
+			"type": "string",
+			"default": "carousel"
+		},
+		"alt": {
+			"type": "string",
+			"default": ""
+		},
+		"width": {
+			"type": "string",
+			"default": "100%"
+		},
+		"height": {
+			"type": "string",
+			"default": "100%"
+		},
+		"defaultImage": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"editorScript": "urlslab-screenshot-block",
+	"editorStyle": "urlslab-screenshot-editor",
+	"style": "urlslab-screenshot-block-style"
+}
