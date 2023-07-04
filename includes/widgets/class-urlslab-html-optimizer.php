@@ -279,7 +279,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		$now          = Urlslab_Data::get_now();
 
 		foreach ( $links as $url => $urld_id ) {
-			if ( ! isset( $js_files[ $urld_id ] ) ) {
+			if ( ! isset( $js_files[ $urld_id ] ) && ! $this->is_blacklisted_url( $url ) ) {
 				$placeholders[] = '(%d,%s,%s,%s)';
 				array_push(
 					$values,
@@ -571,6 +571,10 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		return $js_content;
 	}
 
+	private function is_blacklisted_url( string $url ): bool {
+		return false !== strpos( $url, 'wordfence_syncAttackData' );
+	}
+
 	private function js_processing( DOMDocument $document ) {
 		if ( ! $this->get_option( self::SETTING_NAME_JS_PROCESSING ) ) {
 			return;
@@ -581,7 +585,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			$js_links = $xpath->query( '//script[@src]' );
 			$links    = array();
 			foreach ( $js_links as $link_object ) {
-				if ( ! isset( $links[ $link_object->getAttribute( 'src' ) ] ) ) {
+				if ( ! isset( $links[ $link_object->getAttribute( 'src' ) ] ) && ! $this->is_blacklisted_url( $link_object->getAttribute( 'src' ) ) ) {
 					try {
 						$url = new Urlslab_Url( $link_object->getAttribute( 'src' ) );
 						if ( $url->is_same_domain_url() ) {
