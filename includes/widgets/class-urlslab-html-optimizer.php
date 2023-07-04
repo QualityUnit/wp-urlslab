@@ -298,7 +298,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 	}
 
 	public function minify_content( $content ) {
-		if ( empty( $content ) || ! $this->get_option( self::SETTING_NAME_HTML_MINIFICATION ) ) {
+		if ( empty( $content ) || ! $this->get_option( self::SETTING_NAME_HTML_MINIFICATION ) || false === strpos( $content, '<html' ) ) {
 			return $content;
 		}
 		try {
