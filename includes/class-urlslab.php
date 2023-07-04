@@ -112,7 +112,18 @@ class Urlslab {
 
 	public function urlslab_content_check( $content ) {
 		global $pagenow;
-		if ( wp_is_maintenance_mode() || wp_is_recovery_mode() || empty( $content ) || is_admin() || wp_is_xml_request() || wp_is_json_request() || 'wp-login.php' === $pagenow || 'admin-ajax.php' === $pagenow || Urlslab_Public::is_download_request() ) {
+		if (
+			empty( $content ) ||
+			( false === str_starts_with( $content, '<!DOCTYPE html>' ) && false === str_starts_with( $content, '<!doctype html>' ) && false === str_starts_with( $content, '<html' ) ) ||
+			wp_is_maintenance_mode() ||
+			wp_is_recovery_mode() ||
+			is_admin() ||
+			wp_is_xml_request() ||
+			wp_is_json_request() ||
+			'wp-login.php' === $pagenow ||
+			'admin-ajax.php' === $pagenow ||
+			Urlslab_Public::is_download_request()
+		) {
 			return $content;
 		}
 
