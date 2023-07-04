@@ -52,6 +52,20 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 								}
 							},
 						),
+						'login_status' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								switch ( $param ) {
+									case Urlslab_Search_Replace_Row::LOGIN_STATUS_ALL:
+									case Urlslab_Search_Replace_Row::LOGIN_STATUS_LOGGED_IN:
+									case Urlslab_Search_Replace_Row::LOGIN_STATUS_LOGGED_OUT:
+										return true;
+
+									default:
+										return false;
+								}
+							},
+						),
 						'labels'      => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
@@ -153,6 +167,20 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 						}
 					},
 				),
+				'login_status' => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						switch ( $param ) {
+							case Urlslab_Search_Replace_Row::LOGIN_STATUS_ALL:
+							case Urlslab_Search_Replace_Row::LOGIN_STATUS_LOGGED_IN:
+							case Urlslab_Search_Replace_Row::LOGIN_STATUS_LOGGED_OUT:
+								return true;
+
+							default:
+								return false;
+						}
+					},
+				),
 				'urlFilter'   => array(
 					'required'          => false,
 					'default'           => '.*',
@@ -183,6 +211,7 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 			'str_search',
 			'str_replace',
 			'search_type',
+			'login_status',
 			'url_filter',
 			'labels',
 		);
