@@ -60,22 +60,33 @@ class Urlslab_Search_Replace extends Urlslab_Widget {
 	private function get_rules(): array {
 		if ( ! $this->loaded ) {
 			global $wpdb;
-			$is_logged = is_user_logged_in();
 			try {
 				$results     = $wpdb->get_results( 'SELECT * FROM ' . URLSLAB_SEARCH_AND_REPLACE_TABLE, 'ARRAY_A' ); // phpcs:ignore
 				$current_url = Urlslab_Url::get_current_page_url()->get_url();
+				$is_logged   = is_user_logged_in();
 				foreach ( $results as $row ) {
-					if ( '.*' !== $row['url_filter'] && ! preg_match( '/' . preg_quote( $row['url_filter'], '/' ) . '/uim', $current_url ) ) {
+					$obj_search = new Urlslab_Search_Replace_Row( $row );
+
+					if ( '.*' !== $obj_search->get_url_filter() && ! preg_match( '/' . preg_quote( $obj_search->get_url_filter(), '/' ) . '/uim', $current_url ) ) {
 						continue;
 					}
-					if (
-						Urlslab_Search_Replace_Row::LOGIN_STATUS_ALL === $row['login_status'] ||
-						$is_logged && Urlslab_Search_Replace_Row::LOGIN_STATUS_LOGGED_IN === $row['login_status'] ||
-						! $is_logged && Urlslab_Search_Replace_Row::LOGIN_STATUS_LOGGED_IN === $row['login_status']
-					) {
-						$obj_search                           = new Urlslab_Search_Replace_Row( $row );
-						$this->rules[ $obj_search->get_id() ] = $obj_search;
+
+					switch ( $obj_search->get_login_status() ) {
+						case Urlslab_Search_Replace_Row::LOGIN_STATUS_LOGGED_IN:
+							if ( ! $is_logged ) {
+								continue 2;
+							}
+							break;
+						case Urlslab_Search_Replace_Row::LOGIN_STATUS_LOGGED_OUT:
+							if ( $is_logged ) {
+								continue 2;
+							}
+							break;
+						case Urlslab_Search_Replace_Row::LOGIN_STATUS_ALL: //continue to default
+						default:
+							break;
 					}
+					$this->rules[ $obj_search->get_id() ] = $obj_search;
 				}
 			} catch ( Exception $e ) {
 			}
