@@ -23,6 +23,13 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 	const SETTING_NAME_JS_MAX_SIZE = 'urlslab_js_max_size';
 	const SETTING_NAME_JS_CACHE_TTL = 'urlslab_js_ttl';
 	const JS_CACHE_GROUP = 'js_cache';
+	const SETTING_NAME_HTML_MINIFICATION_REMOVE_COMMENTS = 'urlslab_htmlmin_remove_comments';
+	const SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES = 'urlslab_htmlmin_attributes';
+	const SETTING_NAME_HTML_MINIFICATION_WHITESPACES = 'urlslab_htmlmin_whitespaces';
+	const SETTING_NAME_HTML_MINIFICATION_DEPRECATED = 'urlslab_htmlmin_deprecated';
+	const SETTING_NAME_HTML_MINIFICATION_SORT = 'urlslab_htmlmin_sort';
+	const SETTING_NAME_HTML_MINIFICATION_REMOVE_HTTP_PREFIX = 'urlslab_htmlmin_remove_http_prefix';
+	const SETTING_NAME_HTML_MINIFICATION_REMOVE_OMITTED = 'urlslab_htmlmin_remove_omitted';
 
 	public function __construct() {}
 
@@ -41,7 +48,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'JS & CSS Optimisation' );
+		return __( 'Html Minification' );
 	}
 
 	public function get_widget_description(): string {
@@ -63,8 +70,8 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 	protected function add_options() {
 		$this->add_options_form_section(
 			'minify',
-			__( 'Content minification' ),
-			__( 'Minification process removes from HTML content uneccessary spaces or comments to save network traffic' ),
+			__( 'HTML minification' ),
+			__( 'Minification process removes from HTML content of page uneccessary spaces or comments to save network traffic' ),
 			array( self::LABEL_EXPERT )
 		);
 		$this->add_option_definition(
@@ -73,6 +80,83 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			true,
 			__( 'HTML Minification' ),
 			__( 'Minify HTML source by removing extra whitespaces, comments and other unneeded characters without breaking the content structure. As a result pages become smaller in size and load faster. It will also prepare the HTML for better gzip results, by re-ranging (sort alphabetical) attributes and css-class-names.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'minify'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_HTML_MINIFICATION_REMOVE_COMMENTS,
+			true,
+			true,
+			__( 'Remove comments' ),
+			__( 'Remove comments from HTML. Most of the time are comments not used and generate just extra network traffic with each request.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'minify'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES,
+			true,
+			true,
+			__( 'Optimize Attributes' ),
+			__( 'Remove attributes with default value, remove attributes with empty value. Optimize attributes.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'minify'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_HTML_MINIFICATION_WHITESPACES,
+			true,
+			true,
+			__( 'Optimize Whitespaces' ),
+			__( 'Remove spaces between or around tags, sum up multiple spaces.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'minify'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_HTML_MINIFICATION_DEPRECATED,
+			true,
+			true,
+			__( 'Remove deprecated' ),
+			__( 'Remove deprecated anchor names, script characterset, type from script tags, ype from stylesheet lins.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'minify'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_HTML_MINIFICATION_SORT,
+			true,
+			true,
+			__( 'Sort classes and attributes' ),
+			__( 'If multiple tags use the same order of class names or attributes, gzip can reach better compression as for unsorted strings.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'minify'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_HTML_MINIFICATION_REMOVE_HTTP_PREFIX,
+			true,
+			true,
+			__( 'Remove http(s) prefix from attributes' ),
+			__( 'Make links shorter by removing protocol and using relative protocol from current page.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'minify'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_HTML_MINIFICATION_REMOVE_OMITTED,
+			true,
+			true,
+			__( 'Remove omitted' ),
+			__( 'Remove omitted quotes and HTML tags.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -304,27 +388,27 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		try {
 			$htmlMin = new \voku\helper\HtmlMin();
 			$htmlMin->doOptimizeViaHtmlDomParser();
-			$htmlMin->doRemoveComments();
-			$htmlMin->doSumUpWhitespace();
-			$htmlMin->doRemoveWhitespaceAroundTags();
-			$htmlMin->doOptimizeAttributes();
-			$htmlMin->doRemoveHttpPrefixFromAttributes();
-			$htmlMin->doRemoveHttpsPrefixFromAttributes();
-			$htmlMin->doKeepHttpAndHttpsPrefixOnExternalAttributes();
-			$htmlMin->doRemoveDefaultAttributes();
-			$htmlMin->doRemoveDeprecatedAnchorName();
-			$htmlMin->doRemoveDeprecatedScriptCharsetAttribute();
-			$htmlMin->doRemoveDeprecatedTypeFromScriptTag();
-			$htmlMin->doRemoveDeprecatedTypeFromStylesheetLink();
-			$htmlMin->doRemoveDeprecatedTypeFromStyleAndLinkTag();
-			$htmlMin->doRemoveDefaultTypeFromButton();
-			$htmlMin->doRemoveEmptyAttributes();
-			$htmlMin->doRemoveValueFromEmptyInput();
-			$htmlMin->doSortCssClassNames();
-			$htmlMin->doSortHtmlAttributes();
-			$htmlMin->doRemoveSpacesBetweenTags();
-			$htmlMin->doRemoveOmittedQuotes();
-			$htmlMin->doRemoveOmittedHtmlTags();
+			$htmlMin->doRemoveComments( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_REMOVE_COMMENTS ) );
+			$htmlMin->doSumUpWhitespace( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_WHITESPACES ) );
+			$htmlMin->doRemoveWhitespaceAroundTags( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_WHITESPACES ) );
+			$htmlMin->doOptimizeAttributes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES ) );
+			$htmlMin->doRemoveHttpPrefixFromAttributes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_REMOVE_HTTP_PREFIX ) );
+			$htmlMin->doRemoveHttpsPrefixFromAttributes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_REMOVE_HTTP_PREFIX ) );
+			$htmlMin->doKeepHttpAndHttpsPrefixOnExternalAttributes( true );
+			$htmlMin->doRemoveDefaultAttributes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES ) );
+			$htmlMin->doRemoveDeprecatedAnchorName( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_DEPRECATED ) );
+			$htmlMin->doRemoveDeprecatedScriptCharsetAttribute( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_DEPRECATED ) );
+			$htmlMin->doRemoveDeprecatedTypeFromScriptTag( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_DEPRECATED ) );
+			$htmlMin->doRemoveDeprecatedTypeFromStylesheetLink( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_DEPRECATED ) );
+			$htmlMin->doRemoveDeprecatedTypeFromStyleAndLinkTag( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_DEPRECATED ) );
+			$htmlMin->doRemoveDefaultTypeFromButton( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES ) );
+			$htmlMin->doRemoveEmptyAttributes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES ) );
+			$htmlMin->doRemoveValueFromEmptyInput( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES ) );
+			$htmlMin->doSortCssClassNames( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_SORT ) );
+			$htmlMin->doSortHtmlAttributes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_SORT ) );
+			$htmlMin->doRemoveSpacesBetweenTags( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_WHITESPACES ) );
+			$htmlMin->doRemoveOmittedQuotes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_REMOVE_OMITTED ) );
+			$htmlMin->doRemoveOmittedHtmlTags( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_REMOVE_OMITTED ) );
 
 			return $htmlMin->minify( $content );
 		} catch ( \Exception $e ) {
