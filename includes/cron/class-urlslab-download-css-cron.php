@@ -103,8 +103,7 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 		preg_match_all( $url_pattern, $css_content, $matched_urls );
 
 		// Iterate through each relative URL, convert it to an absolute URL, and replace it in the CSS content
-		for ( $i = 0 ; $i < count( $matched_urls[0] ) ; $i ++ ) {
-			// Skip absolute URLs or data URIs
+		for ( $i = 0; $i < count( $matched_urls[0] ); $i ++ ) {
 			if ( preg_match( '/^(https?:\/\/|data:)/', $matched_urls[1][ $i ] ) ) {
 				continue;
 			}
