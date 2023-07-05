@@ -33,7 +33,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 	}
 
 	public function get_widget_labels(): array {
-		return array( self::LABEL_PERFORMANCE, self::LABEL_FREE );
+		return array( self::LABEL_BETA, self::LABEL_PERFORMANCE, self::LABEL_FREE );
 	}
 
 	public function get_widget_slug(): string {
@@ -41,11 +41,11 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Js & Css Optimization' );
+		return __( 'JS & CSS Optimisation' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Improve page performance and reduce content-blocker requests using inline CSS instead of external CSS files and minification' );
+		return __( 'Improve page performance and reduce content-blocker requests using inline JS and CSS instead of external files and minification' );
 	}
 
 	public function content_hook( DOMDocument $document ) {
@@ -69,7 +69,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_HTML_MINIFICATION,
-			false,
+			true,
 			true,
 			__( 'HTML Minification' ),
 			__( 'Minify HTML source by removing extra whitespaces, comments and other unneeded characters without breaking the content structure. As a result pages become smaller in size and load faster. It will also prepare the HTML for better gzip results, by re-ranging (sort alphabetical) attributes and css-class-names.' ),
@@ -83,7 +83,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		$this->add_options_form_section( 'css', __( 'CSS' ), __( 'Optimising resources like CSS files is key to ensuring a fast website. Setting up a size limit and expiration date for those files helps maximize the website\'s performance and loading speed. These settings can significantly reduce the amount of time needed for a page to load and enhance the user experience.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_CSS_PROCESSING,
-			false,
+			true,
 			true,
 			__( 'Process CSS files' ),
 			__( 'Downloads CSS files to local database and optimize them.' ),
@@ -168,7 +168,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_JS_PROCESSING,
-			false,
+			true,
 			true,
 			__( 'Javascript Processing' ),
 			__( 'Download JS files to database and do next processing like minification, merging, etc.' ),
