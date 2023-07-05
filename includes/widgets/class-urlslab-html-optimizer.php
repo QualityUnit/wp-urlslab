@@ -473,8 +473,8 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 					if ( ! $link_object->hasAttribute( 'urlslab-old' ) && isset( $links[ $link_object->getAttribute( 'href' ) ], $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ] ) ) {
 						$css_object = $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ];
 						if ( Urlslab_CSS_Cache_Row::STATUS_ACTIVE == $css_object->get_status() ) {
-							$remove_elements[]                                        = $link_object;
-							$merged_css_files[ $link_object->getAttribute( 'href' ) ] = $css_object;
+							$remove_elements[]  = $link_object;
+							$merged_css_files[] = $css_object;
 							if ( null === $first_node ) {
 								$first_node = $link_object;
 							}
@@ -628,9 +628,9 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		$css_content = '';
 		$css_files   = explode( '_', $css );
 		$css_objects = Urlslab_CSS_Cache_Row::get_css_files( $css_files );
-		foreach ( $css_objects as $css_object ) {
-			if ( Urlslab_CSS_Cache_Row::STATUS_ACTIVE == $css_object->get_status() ) {
-				$css_content .= $css_object->get_css_content() . "\n\n";
+		foreach ( $css_files as $css_file_id ) {
+			if ( isset( $css_objects[ $css_file_id ] ) && Urlslab_CSS_Cache_Row::STATUS_ACTIVE == $css_objects[ $css_file_id ]->get_status() ) {
+				$css_content .= $css_objects[ $css_file_id ]->get_css_content() . "\n\n";
 			}
 		}
 
@@ -646,9 +646,9 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		$js_content = '';
 		$js_files   = explode( '_', $js );
 		$js_objects = Urlslab_JS_Cache_Row::get_js_files( $js_files );
-		foreach ( $js_objects as $js_object ) {
-			if ( Urlslab_JS_Cache_Row::STATUS_ACTIVE == $js_object->get_status() ) {
-				$js_content .= $js_object->get_js_content() . "\n\n";
+		foreach ( $js_files as $js_file_id ) {
+			if ( isset( $js_objects[ $js_file_id ] ) && Urlslab_JS_Cache_Row::STATUS_ACTIVE == $js_objects[ $js_file_id ]->get_status() ) {
+				$js_content .= $js_objects[ $js_file_id ]->get_js_content() . "\n\n";
 			}
 		}
 
@@ -708,9 +708,9 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 					if ( ! $link_object->hasAttribute( 'urlslab-old' ) && isset( $links[ $link_object->getAttribute( 'src' ) ], $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ] ) ) {
 						$js_object = $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ];
 						if ( Urlslab_JS_Cache_Row::STATUS_ACTIVE == $js_object->get_status() ) {
-							$remove_elements[]                                      = $link_object;
-							$merged_js_files[ $link_object->getAttribute( 'src' ) ] = $js_object;
-							$last_node                                              = $link_object;
+							$remove_elements[] = $link_object;
+							$merged_js_files[] = $js_object;
+							$last_node         = $link_object;
 						}
 					}
 				}
