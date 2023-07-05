@@ -345,4 +345,8 @@ class Urlslab_Url {
 	public function get_query_params(): array {
 		return $this->query_params;
 	}
+
+	public function get_protocol() {
+		return $this->url_components['scheme'] ?? '';
+	}
 }
