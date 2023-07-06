@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useI18n } from '@wordpress/react-i18n';
@@ -22,8 +22,6 @@ function ChangesPanel() {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { CloseIcon, handleClose } = useCloseModal();
 	const { title, slug } = useTablePanels( ( state ) => state.options.changesPanel );
-	const [ dataFetched, setDataFetched ] = useState( false );
-	const [ loading, setLoading ] = useState( true );
 
 	const { selectedRows, selectRow } = useChangeRow( {} );
 
@@ -41,18 +39,26 @@ function ChangesPanel() {
 		}
 	} );
 
-	const { data, isSuccess } = useQuery( {
+	const tableResult = useQuery( {
 		queryKey: [ slug ],
 		queryFn: async () => {
-			const result = await postFetch( slug );
+			const result = await postFetch( slug, { only_changed: true } );
 			if ( result.ok ) {
-				setDataFetched( true );
-				setLoading( false );
-				return result.json();
+				return await result.json();
 			}
-			setDataFetched( false );
-			setLoading( false );
 			return [];
+		},
+		refetchOnWindowFocus: false,
+	} );
+
+	const chartResult = useQuery( {
+		queryKey: [ slug, 'chart' ],
+		queryFn: async () => {
+			const res = await postFetch( slug );
+			if ( res.ok ) {
+				const returningData = await res.json();
+				return returningData.reverse();
+			}
 		},
 		refetchOnWindowFocus: false,
 	} );
@@ -138,7 +144,7 @@ function ChangesPanel() {
 		} ),
 	];
 
-	const chartData = isSuccess && [ ...data ]?.reverse();
+	// const chartData = isSuccess && [ ...data ]?.reverse();
 
 	return (
 		<>
@@ -146,7 +152,7 @@ function ChangesPanel() {
 				<ImageCompare selectedRows={ selectedRows } />
 			}
 
-			{ ! loading && dataFetched && (
+			{ tableResult.isSuccess && (
 				<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
 					<div className="urlslab-panel urlslab-changesPanel customPadding">
 						<div className="urlslab-panel-header">
@@ -160,21 +166,21 @@ function ChangesPanel() {
 								<CloseIcon />
 							</button>
 						</div>
-						{ chartData &&
-							<Chart data={ chartData } header={ header } />
+						{ chartResult.isSuccess &&
+							<Chart data={ chartResult.data } header={ header } />
 						}
 						<div className="mt-l table-container">
 							<Table
 								slug={ slug }
 								columns={ columns }
-								data={ isSuccess && data }
+								data={ tableResult.isSuccess && tableResult.data }
 							/>
 						</div>
 					</div>
 				</div>
 			) }
 
-			{ ! loading && ! dataFetched && (
+			{ ! tableResult.isLoading && ! tableResult.isSuccess && (
 				<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
 					<div className="urlslab-panel urlslab-changesPanel customPadding">
 						<div className="urlslab-panel-header">
