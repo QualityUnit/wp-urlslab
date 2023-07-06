@@ -1,4 +1,4 @@
-import { memo, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useI18n } from '@wordpress/react-i18n';
@@ -15,6 +15,7 @@ import Checkbox from '../../elements/Checkbox';
 import Chart from './Chart';
 import ImageCompare from '../ImageCompare';
 import Button from '../../elements/Button';
+import { ReactComponent as IconAnchor } from '../../assets/images/icons/icon-anchor.svg';
 
 function ChangesPanel() {
 	const { __ } = useI18n();
@@ -29,6 +30,16 @@ function ChangesPanel() {
 	function hidePanel() {
 		handleClose();
 	}
+
+	const handleSelection = useCallback( ( isSeleted, cell ) => {
+		selectRow( isSeleted, cell );
+	}, [ selectRow, selectedRows ] );
+
+	useEffect( () => {
+		if ( selectedRows.length > 2 ) {
+			selectRow( false, selectedRows[ 0 ] );
+		}
+	} );
 
 	const { data, isSuccess } = useQuery( {
 		queryKey: [ slug ],
@@ -63,11 +74,9 @@ function ChangesPanel() {
 			className: 'nolimit thumbnail',
 			cell: ( cell ) => {
 				const isSelected = cell.row.getIsSelected();
+
 				return <div className="pos-relative pl-m">
-					<Checkbox className="thumbnail-check" defaultValue={ isSelected } onChange={ ( val ) => {
-						selectRow( val, cell );
-					} }
-					disabled={ selectedRows.length >= 2 && ! isSelected }
+					<Checkbox className="thumbnail-check" defaultValue={ isSelected } onChange={ ( val ) => handleSelection( val, cell ) }
 					/>
 					{ selectedRows.length === 2 && isSelected && cell.row.id === selectedRows[ 1 ].row.id &&
 					<Button active className="thumbnail-button" onClick={ () => useTablePanels.setState( { imageCompare: true } ) }>
@@ -141,7 +150,12 @@ function ChangesPanel() {
 				<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
 					<div className="urlslab-panel urlslab-changesPanel customPadding">
 						<div className="urlslab-panel-header">
-							<h3>{ title }</h3>
+							<h3>
+								<a href={ title } target="_blank" rel="noreferrer">
+									{ title }
+									<IconAnchor />
+								</a>
+							</h3>
 							<button className="urlslab-panel-close" onClick={ hidePanel }>
 								<CloseIcon />
 							</button>

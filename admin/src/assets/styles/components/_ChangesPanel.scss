@@ -15,11 +15,12 @@
 	.thumbnail {
 
 		&-wrapper {
-			border-radius: $br-6;
-			border: 2px solid rgba($primary-color, 0);
+			border-radius: 4px;
+			border: 1px solid $grey-medium;
+
 
 			&.selected {
-				border: 2px solid rgba($primary-color, 1);
+				border: 2px solid $primary-color;
 			}
 		}
 

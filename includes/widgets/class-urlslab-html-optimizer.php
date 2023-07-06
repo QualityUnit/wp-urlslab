@@ -23,6 +23,13 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 	const SETTING_NAME_JS_MAX_SIZE = 'urlslab_js_max_size';
 	const SETTING_NAME_JS_CACHE_TTL = 'urlslab_js_ttl';
 	const JS_CACHE_GROUP = 'js_cache';
+	const SETTING_NAME_HTML_MINIFICATION_REMOVE_COMMENTS = 'urlslab_htmlmin_remove_comments';
+	const SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES = 'urlslab_htmlmin_attributes';
+	const SETTING_NAME_HTML_MINIFICATION_WHITESPACES = 'urlslab_htmlmin_whitespaces';
+	const SETTING_NAME_HTML_MINIFICATION_DEPRECATED = 'urlslab_htmlmin_deprecated';
+	const SETTING_NAME_HTML_MINIFICATION_SORT = 'urlslab_htmlmin_sort';
+	const SETTING_NAME_HTML_MINIFICATION_REMOVE_HTTP_PREFIX = 'urlslab_htmlmin_remove_http_prefix';
+	const SETTING_NAME_HTML_MINIFICATION_REMOVE_OMITTED = 'urlslab_htmlmin_remove_omitted';
 
 	public function __construct() {}
 
@@ -33,7 +40,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 	}
 
 	public function get_widget_labels(): array {
-		return array( self::LABEL_PERFORMANCE, self::LABEL_FREE );
+		return array( self::LABEL_BETA, self::LABEL_PERFORMANCE, self::LABEL_FREE );
 	}
 
 	public function get_widget_slug(): string {
@@ -41,11 +48,11 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Js & Css Optimization' );
+		return __( 'Html Minification' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Improve page performance and reduce content-blocker requests using inline CSS instead of external CSS files and minification' );
+		return __( 'Improve page performance and reduce content-blocker requests using inline JS and CSS instead of external files and minification' );
 	}
 
 	public function content_hook( DOMDocument $document ) {
@@ -63,16 +70,93 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 	protected function add_options() {
 		$this->add_options_form_section(
 			'minify',
-			__( 'Content minification' ),
-			__( 'Minification process removes from HTML content uneccessary spaces or comments to save network traffic' ),
+			__( 'HTML minification' ),
+			__( 'Minification process removes from HTML content of page uneccessary spaces or comments to save network traffic' ),
 			array( self::LABEL_EXPERT )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_HTML_MINIFICATION,
-			false,
+			true,
 			true,
 			__( 'HTML Minification' ),
 			__( 'Minify HTML source by removing extra whitespaces, comments and other unneeded characters without breaking the content structure. As a result pages become smaller in size and load faster. It will also prepare the HTML for better gzip results, by re-ranging (sort alphabetical) attributes and css-class-names.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'minify'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_HTML_MINIFICATION_REMOVE_COMMENTS,
+			true,
+			true,
+			__( 'Remove comments' ),
+			__( 'Remove comments from HTML. Most of the time are comments not used and generate just extra network traffic with each request.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'minify'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES,
+			true,
+			true,
+			__( 'Optimize Attributes' ),
+			__( 'Remove attributes with default value, remove attributes with empty value. Optimize attributes.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'minify'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_HTML_MINIFICATION_WHITESPACES,
+			true,
+			true,
+			__( 'Optimize Whitespaces' ),
+			__( 'Remove spaces between or around tags, sum up multiple spaces.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'minify'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_HTML_MINIFICATION_DEPRECATED,
+			true,
+			true,
+			__( 'Remove deprecated' ),
+			__( 'Remove deprecated anchor names, script characterset, type from script tags, ype from stylesheet lins.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'minify'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_HTML_MINIFICATION_SORT,
+			true,
+			true,
+			__( 'Sort classes and attributes' ),
+			__( 'If multiple tags use the same order of class names or attributes, gzip can reach better compression as for unsorted strings.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'minify'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_HTML_MINIFICATION_REMOVE_HTTP_PREFIX,
+			true,
+			true,
+			__( 'Remove http(s) prefix from attributes' ),
+			__( 'Make links shorter by removing protocol and using relative protocol from current page.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'minify'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_HTML_MINIFICATION_REMOVE_OMITTED,
+			true,
+			true,
+			__( 'Remove omitted' ),
+			__( 'Remove omitted quotes and HTML tags.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -83,7 +167,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		$this->add_options_form_section( 'css', __( 'CSS' ), __( 'Optimising resources like CSS files is key to ensuring a fast website. Setting up a size limit and expiration date for those files helps maximize the website\'s performance and loading speed. These settings can significantly reduce the amount of time needed for a page to load and enhance the user experience.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_CSS_PROCESSING,
-			false,
+			true,
 			true,
 			__( 'Process CSS files' ),
 			__( 'Downloads CSS files to local database and optimize them.' ),
@@ -168,7 +252,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_JS_PROCESSING,
-			false,
+			true,
 			true,
 			__( 'Javascript Processing' ),
 			__( 'Download JS files to database and do next processing like minification, merging, etc.' ),
@@ -279,7 +363,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		$now          = Urlslab_Data::get_now();
 
 		foreach ( $links as $url => $urld_id ) {
-			if ( ! isset( $js_files[ $urld_id ] ) ) {
+			if ( ! isset( $js_files[ $urld_id ] ) && ! $this->is_blacklisted_url( $url ) ) {
 				$placeholders[] = '(%d,%s,%s,%s)';
 				array_push(
 					$values,
@@ -298,34 +382,38 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 	}
 
 	public function minify_content( $content ) {
-		if ( empty( $content ) || ! $this->get_option( self::SETTING_NAME_HTML_MINIFICATION ) ) {
+		if ( empty( $content ) || ! $this->get_option( self::SETTING_NAME_HTML_MINIFICATION ) || false === strpos( $content, '<html' ) ) {
 			return $content;
 		}
-		$htmlMin = new \voku\helper\HtmlMin();
-		$htmlMin->doOptimizeViaHtmlDomParser();
-		$htmlMin->doRemoveComments();
-		$htmlMin->doSumUpWhitespace();
-		$htmlMin->doRemoveWhitespaceAroundTags();
-		$htmlMin->doOptimizeAttributes();
-		$htmlMin->doRemoveHttpPrefixFromAttributes();
-		$htmlMin->doRemoveHttpsPrefixFromAttributes();
-		$htmlMin->doKeepHttpAndHttpsPrefixOnExternalAttributes();
-		$htmlMin->doRemoveDefaultAttributes();
-		$htmlMin->doRemoveDeprecatedAnchorName();
-		$htmlMin->doRemoveDeprecatedScriptCharsetAttribute();
-		$htmlMin->doRemoveDeprecatedTypeFromScriptTag();
-		$htmlMin->doRemoveDeprecatedTypeFromStylesheetLink();
-		$htmlMin->doRemoveDeprecatedTypeFromStyleAndLinkTag();
-		$htmlMin->doRemoveDefaultTypeFromButton();
-		$htmlMin->doRemoveEmptyAttributes();
-		$htmlMin->doRemoveValueFromEmptyInput();
-		$htmlMin->doSortCssClassNames();
-		$htmlMin->doSortHtmlAttributes();
-		$htmlMin->doRemoveSpacesBetweenTags();
-		$htmlMin->doRemoveOmittedQuotes();
-		$htmlMin->doRemoveOmittedHtmlTags();
+		try {
+			$htmlMin = new \voku\helper\HtmlMin();
+			$htmlMin->doOptimizeViaHtmlDomParser();
+			$htmlMin->doRemoveComments( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_REMOVE_COMMENTS ) );
+			$htmlMin->doSumUpWhitespace( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_WHITESPACES ) );
+			$htmlMin->doRemoveWhitespaceAroundTags( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_WHITESPACES ) );
+			$htmlMin->doOptimizeAttributes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES ) );
+			$htmlMin->doRemoveHttpPrefixFromAttributes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_REMOVE_HTTP_PREFIX ) );
+			$htmlMin->doRemoveHttpsPrefixFromAttributes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_REMOVE_HTTP_PREFIX ) );
+			$htmlMin->doKeepHttpAndHttpsPrefixOnExternalAttributes( true );
+			$htmlMin->doRemoveDefaultAttributes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES ) );
+			$htmlMin->doRemoveDeprecatedAnchorName( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_DEPRECATED ) );
+			$htmlMin->doRemoveDeprecatedScriptCharsetAttribute( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_DEPRECATED ) );
+			$htmlMin->doRemoveDeprecatedTypeFromScriptTag( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_DEPRECATED ) );
+			$htmlMin->doRemoveDeprecatedTypeFromStylesheetLink( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_DEPRECATED ) );
+			$htmlMin->doRemoveDeprecatedTypeFromStyleAndLinkTag( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_DEPRECATED ) );
+			$htmlMin->doRemoveDefaultTypeFromButton( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES ) );
+			$htmlMin->doRemoveEmptyAttributes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES ) );
+			$htmlMin->doRemoveValueFromEmptyInput( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES ) );
+			$htmlMin->doSortCssClassNames( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_SORT ) );
+			$htmlMin->doSortHtmlAttributes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_SORT ) );
+			$htmlMin->doRemoveSpacesBetweenTags( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_WHITESPACES ) );
+			$htmlMin->doRemoveOmittedQuotes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_REMOVE_OMITTED ) );
+			$htmlMin->doRemoveOmittedHtmlTags( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_REMOVE_OMITTED ) );
 
-		return $htmlMin->minify( $content );
+			return $htmlMin->minify( $content );
+		} catch ( \Exception $e ) {
+			return $content;
+		}
 	}
 
 	/**
@@ -385,8 +473,8 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 					if ( ! $link_object->hasAttribute( 'urlslab-old' ) && isset( $links[ $link_object->getAttribute( 'href' ) ], $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ] ) ) {
 						$css_object = $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ];
 						if ( Urlslab_CSS_Cache_Row::STATUS_ACTIVE == $css_object->get_status() ) {
-							$remove_elements[]                                        = $link_object;
-							$merged_css_files[ $link_object->getAttribute( 'href' ) ] = $css_object;
+							$remove_elements[]  = $link_object;
+							$merged_css_files[] = $css_object;
 							if ( null === $first_node ) {
 								$first_node = $link_object;
 							}
@@ -540,9 +628,9 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		$css_content = '';
 		$css_files   = explode( '_', $css );
 		$css_objects = Urlslab_CSS_Cache_Row::get_css_files( $css_files );
-		foreach ( $css_objects as $css_object ) {
-			if ( Urlslab_CSS_Cache_Row::STATUS_ACTIVE == $css_object->get_status() ) {
-				$css_content .= $css_object->get_css_content() . "\n\n";
+		foreach ( $css_files as $css_file_id ) {
+			if ( isset( $css_objects[ $css_file_id ] ) && Urlslab_CSS_Cache_Row::STATUS_ACTIVE == $css_objects[ $css_file_id ]->get_status() ) {
+				$css_content .= $css_objects[ $css_file_id ]->get_css_content() . "\n\n";
 			}
 		}
 
@@ -558,13 +646,17 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		$js_content = '';
 		$js_files   = explode( '_', $js );
 		$js_objects = Urlslab_JS_Cache_Row::get_js_files( $js_files );
-		foreach ( $js_objects as $js_object ) {
-			if ( Urlslab_JS_Cache_Row::STATUS_ACTIVE == $js_object->get_status() ) {
-				$js_content .= $js_object->get_js_content() . "\n\n";
+		foreach ( $js_files as $js_file_id ) {
+			if ( isset( $js_objects[ $js_file_id ] ) && Urlslab_JS_Cache_Row::STATUS_ACTIVE == $js_objects[ $js_file_id ]->get_status() ) {
+				$js_content .= $js_objects[ $js_file_id ]->get_js_content() . "\n\n";
 			}
 		}
 
 		return $js_content;
+	}
+
+	private function is_blacklisted_url( string $url ): bool {
+		return false !== strpos( $url, 'wordfence_syncAttackData' );
 	}
 
 	private function js_processing( DOMDocument $document ) {
@@ -577,7 +669,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			$js_links = $xpath->query( '//script[@src]' );
 			$links    = array();
 			foreach ( $js_links as $link_object ) {
-				if ( ! isset( $links[ $link_object->getAttribute( 'src' ) ] ) ) {
+				if ( ! isset( $links[ $link_object->getAttribute( 'src' ) ] ) && ! $this->is_blacklisted_url( $link_object->getAttribute( 'src' ) ) ) {
 					try {
 						$url = new Urlslab_Url( $link_object->getAttribute( 'src' ) );
 						if ( $url->is_same_domain_url() ) {
@@ -616,9 +708,9 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 					if ( ! $link_object->hasAttribute( 'urlslab-old' ) && isset( $links[ $link_object->getAttribute( 'src' ) ], $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ] ) ) {
 						$js_object = $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ];
 						if ( Urlslab_JS_Cache_Row::STATUS_ACTIVE == $js_object->get_status() ) {
-							$remove_elements[]                                      = $link_object;
-							$merged_js_files[ $link_object->getAttribute( 'src' ) ] = $js_object;
-							$last_node                                              = $link_object;
+							$remove_elements[] = $link_object;
+							$merged_js_files[] = $js_object;
+							$last_node         = $link_object;
 						}
 					}
 				}
@@ -647,5 +739,22 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 
 		} catch ( Exception $e ) {
 		}
+	}
+
+	public function update_option( $option_id, $value ): bool {
+		switch ( $option_id ) {
+			case self::SETTING_NAME_JS_MINIFICATION:
+			case self::SETTING_NAME_JS_MERGE:
+				$this->update_option( self::SETTING_NAME_JS_CACHE_VALID_FROM, time() );
+				break;
+			case self::SETTING_NAME_CSS_MINIFICATION:
+			case self::SETTING_NAME_CSS_MERGE:
+				$this->update_option( self::SETTING_NAME_CSS_CACHE_VALID_FROM, time() );
+				break;
+			default:
+				break;
+		}
+
+		return parent::update_option( $option_id, $value );
 	}
 }

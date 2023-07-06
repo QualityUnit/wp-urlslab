@@ -23,6 +23,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	public const SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_INTERNAL_LINKS = 'urlslab_auto_sum_int_links';
 	public const SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_EXTERNAL_LINKS = 'urlslab_auto_sum_ext_links';
 	const SETTING_NAME_REPLACE_3XX_LINKS = 'urlslab_replace_3xx_links';
+	const SETTING_NAME_FIX_PROTOCOL = 'urlslab_fix_protocol';
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'post_updated', $this, 'post_updated', 10, 3 );
@@ -71,6 +72,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		}
 		$this->validateCurrentPageUrl();
 		$this->addIdToHTags( $document );
+		$this->fixProtocol( $document );
 		$this->fixPageIdLinks( $document );
 		$this->processTitleAttribute( $document );
 		$this->processLinkFragments( $document );
@@ -242,6 +244,17 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			true,
 			__( 'Hide Invalid non-SEO Friendly Links' ),
 			__( /* @lang text */ "Hide all links with an invalid `page_id` in the website's content." ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'validation'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_FIX_PROTOCOL,
+			true,
+			true,
+			__( 'Fix protocol' ),
+			__( 'Unify protocol of all links to the same protocol as is used by currently displayed page. e.g. on page with https:// you want to have also all links with https:// protocol if the link domain is the same as current page domain.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -521,6 +534,29 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 					} catch ( Exception $e ) {
 						// noop, just skip link
 					}
+				}
+			}
+		}
+	}
+
+	private function fixProtocol( DOMDocument $document ) {
+		if ( ! $this->get_option( self::SETTING_NAME_FIX_PROTOCOL ) ) {
+			return;
+		}
+		$xpath    = new DOMXPath( $document );
+		$elements = $xpath->query( "//a[@href and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-protocol-fix')])]" );
+
+		$current_page = Urlslab_Url::get_current_page_url();
+
+		foreach ( $elements as $dom_elem ) {
+			if ( strlen( $dom_elem->getAttribute( 'href' ) ) && str_starts_with( $dom_elem->getAttribute( 'href' ), 'http' ) ) {
+				try {
+					$url = new Urlslab_Url( $dom_elem->getAttribute( 'href' ) );
+					if ( $url->is_url_valid() && $url->is_same_domain_url() && $current_page->get_protocol() !== $url->get_protocol() ) {
+						$dom_elem->setAttribute( 'href', Urlslab_Url::add_current_page_protocol( $url->get_url() ) );
+					}
+				} catch ( Exception $e ) {
+					// noop, just skip link
 				}
 			}
 		}

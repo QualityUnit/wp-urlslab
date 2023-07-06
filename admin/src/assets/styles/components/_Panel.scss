@@ -26,7 +26,7 @@
 			flex-direction: column;
 			overflow: hidden auto;
 			background-color: $grey-lighter;
-			max-height: 20em;
+			max-height: calc(100vh - 49em);
 
 			thead {
 				background-color: $grey-lighter;
@@ -39,9 +39,12 @@
 	}
 
 	&-modal[class] {
-
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		justify-content: center;
 		position: absolute;
-		top: 15%;
+		top: 0;
 		left: calc(50% + 80px); //WP Admin menu half width of 160px
 		transform: translateX(-50%);
 		overflow-x: hidden;
@@ -63,6 +66,24 @@
 				.urlslab-panel-header {
 					padding: 0 1.5em;
 					margin: 0;
+
+					h3 {
+						font-size: 1.125rem;
+						width: calc(100% - 3em);
+
+						a {
+							display: flex;
+							align-items: center;
+						}
+
+						svg {
+							position: relative;
+							top: -0.075em;
+							flex: 0 0 1.5em;
+							margin-left: 0.5em;
+							fill: currentcolor;
+						}
+					}
 				}
 
 				.padded {
@@ -71,6 +92,10 @@
 
 				.table-container {
 					padding: 0 1.5em 1.5em;
+
+					.urlslab-table-container {
+						height: auto !important;
+					}
 
 					table {
 						margin-top: 1.5em;
