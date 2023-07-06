@@ -740,4 +740,21 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		} catch ( Exception $e ) {
 		}
 	}
+
+	public function update_option( $option_id, $value ): bool {
+		switch ( $option_id ) {
+			case self::SETTING_NAME_JS_MINIFICATION:
+			case self::SETTING_NAME_JS_MERGE:
+				$this->update_option( self::SETTING_NAME_JS_CACHE_VALID_FROM, time() );
+				break;
+			case self::SETTING_NAME_CSS_MINIFICATION:
+			case self::SETTING_NAME_CSS_MERGE:
+				$this->update_option( self::SETTING_NAME_CSS_CACHE_VALID_FROM, time() );
+				break;
+			default:
+				break;
+		}
+
+		return parent::update_option( $option_id, $value );
+	}
 }
