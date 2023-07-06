@@ -220,7 +220,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 
 			<div className="Buttons mt-m flex flex-align-center">
 				<Button className="ma-left simple wide" onClick={ () => handleOnEdit( false ) }>{ __( 'Cancel' ) }</Button>
-				<Button active className="wide" disabled={ state.filterObj.filterVal ? false : true } onClick={ () => handleOnEdit( state.filterObj ) }>{ __( 'Save' ) }</Button>
+				<Button active className="wide" disabled={ ( state.filterObj.filterVal || state.filterObj.filterVal === 0 ) ? false : true } onClick={ () => handleOnEdit( state.filterObj ) }>{ __( 'Save' ) }</Button>
 			</div>
 		</div>
 	);

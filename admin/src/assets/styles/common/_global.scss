@@ -1,6 +1,14 @@
 @use "variables" as *;
 @use "mixins" as *;
 
+body {
+
+	&.noscroll {
+		max-height: 100vh;
+		overflow: hidden;
+	}
+}
+
 [id="urlslab-root"] {
 	background-color: $grey-lighter;
 	font-family: Poppins, sans-serif;
@@ -44,7 +52,7 @@
 			content: "";
 			position: absolute;
 			z-index: 9998;
-			background-color: $black-real;
+			background-color: #24292f;
 			opacity: 0.6;
 			transition: opacity $transitionTime;
 		}

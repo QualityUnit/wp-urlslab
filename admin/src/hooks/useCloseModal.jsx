@@ -11,6 +11,7 @@ export default function useCloseModal( ) {
 		setOptions( [] );
 		activatePanel( undefined );
 		document.querySelector( '#urlslab-root' ).classList.remove( 'dark' );
+		document.querySelector( 'body' ).classList.remove( 'noscroll' );
 		return operationVal;
 	};
 
@@ -20,6 +21,7 @@ export default function useCloseModal( ) {
 		}
 	} );
 	document.querySelector( '#urlslab-root' ).classList.add( 'dark' );
+	document.querySelector( 'body' ).classList.add( 'noscroll' );
 
 	return { CloseIcon, handleClose };
 }
