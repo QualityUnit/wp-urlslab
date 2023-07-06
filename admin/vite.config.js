@@ -35,6 +35,7 @@ export default defineConfig( {
 		port: 1337,
 	},
 	build: {
+		watch: false,
 		minify: false,
 		rollupOptions: {
 			input: {

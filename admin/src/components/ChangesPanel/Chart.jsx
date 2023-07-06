@@ -3,7 +3,7 @@
 
 import { memo, useCallback, useState } from 'react';
 import { date, getSettings } from '@wordpress/date';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { AreaChart, LineChart, Area, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const Chart = ( { data, header } ) => {
 	const [ lineVisibility, setLineVisibility ] = useState( {} );
@@ -107,7 +107,7 @@ const Chart = ( { data, header } ) => {
 
 	return <div style={ { position: 'relative', width: '100%', height: 0, paddingBottom: '21.5%' } }>
 		<ResponsiveContainer width="100%" height="100%">
-			<LineChart
+			<AreaChart
 				width={ 1400 }
 				height={ 300 }
 				data={ data }
@@ -118,6 +118,16 @@ const Chart = ( { data, header } ) => {
 					bottom: 0,
 				} }
 			>
+				<defs>
+					{
+						Object.entries( chart ).map( ( [ key, color ] ) => {
+							return <linearGradient key={ `fill${ key }` } id={ `fill-${ key }` } x1="0" y1="0" x2="0" y2="1">
+								<stop offset="5%" stopColor={ color } stopOpacity={ 0.2 } />
+								<stop offset="95%" stopColor="#fff" stopOpacity={ 0 } />
+							</linearGradient>;
+						} )
+					}
+				</defs>
 				<CartesianGrid />
 				<XAxis dataKey="last_seen" includeHidden={ true } tick={ <XAxisTick /> } />
 				<Tooltip content={ renderTooltip } />
@@ -126,11 +136,11 @@ const Chart = ( { data, header } ) => {
 					Object.entries( chart ).map( ( [ key, color ] ) => {
 						return <>
 							<YAxis hide={ true } yAxisId={ key } domain={ [ 'dataMin', 'dataMax' ] } scale={ key === 'load_duration' ? 'time' : 'auto' } />
-							<Line type="monotone" key={ key } name={ `${ header[ key ] } ${ key === 'status_code' ? 'hidden' : '' }` } yAxisId={ key } hide={ lineVisibility[ key ] } dataKey={ key } stroke={ color } strokeWidth={ 4 } activeDot={ key === 'status_code' || lineVisibility[ key ] ? false : { stroke: '#fff', fill: color, strokeWidth: 4, r: 10 } } />
+							<Area type="monotone" key={ key } name={ `${ header[ key ] } ${ key === 'status_code' ? 'hidden' : '' }` } yAxisId={ key } hide={ lineVisibility[ key ] } dataKey={ key } stroke={ color } strokeWidth={ 4 } fill={ `url(#fill-${ key })` } dot={ false } activeDot={ key === 'status_code' || lineVisibility[ key ] ? false : { stroke: '#fff', fill: color, strokeWidth: 4, r: 10 } } />
 						</>;
 					} )
 				}
-			</LineChart>
+			</AreaChart>
 		</ResponsiveContainer>
 	</div>;
 };
