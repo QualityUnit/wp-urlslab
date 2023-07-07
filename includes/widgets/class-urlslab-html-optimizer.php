@@ -16,7 +16,6 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 	const SETTING_NAME_CSS_PROCESSING = 'urlslab_css_processing';
 	const SETTING_NAME_JS_PROCESSING = 'urlslab_js_processing';
 	const SETTING_NAME_CSS_MERGE = 'urlslab_css_merge';
-	const SETTING_NAME_JS_MERGE = 'urlslab_js_merge';
 	const CSS_CACHE_GROUP = 'css_cache';
 	const SETTING_NAME_CSS_CACHE_VALID_FROM = 'urlslab_css_cache_valid_from';
 	const SETTING_NAME_JS_CACHE_VALID_FROM = 'urlslab_js_cache_valid_from';
@@ -267,17 +266,6 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			true,
 			__( 'JS Minification' ),
 			__( 'Minify JS files by removing whitespaces, stripping comments, combines files and optimizes/shortens a few common programming patterns.' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'js'
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_JS_MERGE,
-			false,
-			true,
-			__( 'Merge Javascript files' ),
-			__( 'Merge all Javascript files used in page to one file' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -701,25 +689,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 				}
 			}
 
-			if ( $this->get_option( self::SETTING_NAME_JS_MERGE ) ) {
-				$merged_js_files = array();
-				$last_node       = null;
-				foreach ( $js_links as $link_object ) {
-					if ( ! $link_object->hasAttribute( 'urlslab-old' ) && isset( $links[ $link_object->getAttribute( 'src' ) ], $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ] ) ) {
-						$js_object = $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ];
-						if ( Urlslab_JS_Cache_Row::STATUS_ACTIVE == $js_object->get_status() ) {
-							$remove_elements[] = $link_object;
-							$merged_js_files[] = $js_object;
-							$last_node         = $link_object;
-						}
-					}
-				}
-				if ( ! empty( $merged_js_files ) && null !== $last_node ) {
-					$new_elm = $document->createElement( 'script' );
-					$new_elm->setAttribute( 'src', $this->get_merge_js_url( $merged_js_files ) );
-					$last_node->parentNode->insertBefore( $new_elm, $last_node );
-				}
-			} else if ( $this->get_option( self::SETTING_NAME_JS_MINIFICATION ) ) {
+			if ( $this->get_option( self::SETTING_NAME_JS_MINIFICATION ) ) {
 				foreach ( $js_links as $link_object ) {
 					if ( ! $link_object->hasAttribute( 'urlslab-old' ) && isset( $links[ $link_object->getAttribute( 'src' ) ], $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ] ) ) {
 						$js_object = $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ];
@@ -744,7 +714,6 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 	public function update_option( $option_id, $value ): bool {
 		switch ( $option_id ) {
 			case self::SETTING_NAME_JS_MINIFICATION:
-			case self::SETTING_NAME_JS_MERGE:
 				$this->update_option( self::SETTING_NAME_JS_CACHE_VALID_FROM, time() );
 				break;
 			case self::SETTING_NAME_CSS_MINIFICATION:
