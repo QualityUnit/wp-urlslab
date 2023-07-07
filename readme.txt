@@ -78,9 +78,13 @@ The content is coming soon.
 
 == Changelog ==
 
+= 2.27.7 - 2023-07-07 =
+
+* Experience a smoother user journey with our under-the-hood enhancements.
+
 = 2.27.6 - 2023-07-05 =
 
-* Fixed merging of css and js files.
+* Experience a smoother user journey with our under-the-hood enhancements.
 
 = 2.27.5 - 2023-07-05 =
 
