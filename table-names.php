@@ -32,3 +32,5 @@ define( 'URLSLAB_REDIRECTS_TABLE', $wpdb->prefix . 'urlslab_redirects' );
 define( 'URLSLAB_CACHE_RULES_TABLE', $wpdb->prefix . 'urlslab_cache_rules' );
 define( 'URLSLAB_CUSTOM_HTML_RULES_TABLE', $wpdb->prefix . 'urlslab_custom_html_rules' );
 define( 'URLSLAB_LABELS_TABLE', $wpdb->prefix . 'urlslab_labels' );
+define( 'URLSLAB_FAQS_TABLE', $wpdb->prefix . 'urlslab_faqs' );
+define( 'URLSLAB_FAQ_URLS_TABLE', $wpdb->prefix . 'urlslab_faq_urls' );

@@ -36,6 +36,7 @@ class Urlslab_Available_Widgets {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-search-replace.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-redirects.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-custom-html.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-faq.php';
 
 		$urlslab_cache              = new Urlslab_Cache();
 		$urlslab_general            = new Urlslab_General();
@@ -53,6 +54,7 @@ class Urlslab_Available_Widgets {
 		$urlslab_search_and_replace = new Urlslab_Search_Replace();
 		$urlslab_redirects          = new Urlslab_Redirects();
 		$urlslab_custom_html        = new Urlslab_Custom_HTML();
+		$urlslab_faq        = new Urlslab_Faq();
 
 		$this->available_widgets = array(
 			$urlslab_general->get_widget_slug()            => $urlslab_general,
@@ -71,6 +73,7 @@ class Urlslab_Available_Widgets {
 			$urlslab_search_and_replace->get_widget_slug() => $urlslab_search_and_replace,
 			$urlslab_custom_html->get_widget_slug()        => $urlslab_custom_html,
 			$urlslab_optimize->get_widget_slug()           => $urlslab_optimize,
+			$urlslab_faq->get_widget_slug()           => $urlslab_faq,
 		);
 	}
 
