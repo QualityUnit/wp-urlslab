@@ -16,120 +16,117 @@ import Header from './components/Header';
 
 import './assets/styles/style.scss';
 
+import { useSelectableItems } from './hooks/useSelectableItems';
+
 export default function App() {
-	const queryClient = useQueryClient();
-	const [ prefetch, setPrefetch ] = useState( true );
+  const queryClient = useQueryClient();
+  const [prefetch, setPrefetch] = useState(true);
 
-	useEffect( () => {
-		if ( prefetch ) {
-			update( 'apiKeySet', () => true );
-			// Checking if API is set in advance
-			async function getApiKey() {
-				const generalData = await queryClient.fetchQuery( {
-					queryKey: [ 'general' ],
-					queryFn: () => fetchSettings( 'general' ).then( ( data ) => data ),
-					refetchOnWindowFocus: false,
-				} );
+  useEffect(() => {
+    if (prefetch) {
+      update('apiKeySet', () => true);
+      // Checking if API is set in advance
+      async function getApiKey() {
+        const generalData = await queryClient.fetchQuery({
+          queryKey: ['general'],
+          queryFn: () => fetchSettings('general').then((data) => data),
+          refetchOnWindowFocus: false,
+        });
 
-				const isApiObject = generalData?.filter( ( dataset ) => dataset.id === 'api' )[ 0 ];
-				const hasApiKey = isApiObject?.options[ 'urlslab-api-key' ].value;
+        const isApiObject = generalData?.filter((dataset) => dataset.id === 'api')[0];
+        const hasApiKey = isApiObject?.options['urlslab-api-key'].value;
 
-				if ( ! hasApiKey ) {
-					update( 'apiKeySet', ( ) => false );
-				}
-			}
-			getApiKey();
+        if (!hasApiKey) {
+          update('apiKeySet', () => false);
+        }
+      }
+      getApiKey();
 
-			// Creating languages query object in advance
-			queryClient.prefetchQuery( {
-				queryKey: [ 'languages' ],
-				queryFn: async () => await fetchLangs(),
-				refetchOnWindowFocus: false,
-			} );
+      // Creating languages query object in advance
+      queryClient.prefetchQuery({
+        queryKey: ['languages'],
+        queryFn: async () => await fetchLangs(),
+        refetchOnWindowFocus: false,
+      });
 
-			/* Creating all endpoints query object in advance
+      /* Creating all endpoints query object in advance
 			to check for allowed+required import/insert/edit CSV fields */
-			queryClient.prefetchQuery( {
-				queryKey: [ 'routes' ],
-				queryFn: async () => {
-					const response = await getFetch();
-					if ( response.ok ) {
-						return response.json();
-					}
-				},
-				refetchOnWindowFocus: false,
-			} );
+      queryClient.prefetchQuery({
+        queryKey: ['routes'],
+        queryFn: async () => {
+          const response = await getFetch();
+          if (response.ok) {
+            return response.json();
+          }
+        },
+        refetchOnWindowFocus: false,
+      });
 
-			// Creating Tags/Labels query object in advance
-			queryClient.prefetchQuery( {
-				queryKey: [ 'label', 'menu' ],
-				queryFn: async () => {
-					const tags = await postFetch( 'label', { rows_per_page: 500 } );
-					const tagsArray = await tags.json();
-					tagsArray?.map( ( tag ) => {
-						const { lightness } = hexToHSL( tag.bgcolor );
-						if ( lightness < 70 ) {
-							return tag.className = 'dark';
-						}
-						return tag;
-					} );
-					return tagsArray;
-				},
-				refetchOnWindowFocus: false,
-			} );
+      // Creating Tags/Labels query object in advance
+      queryClient.prefetchQuery({
+        queryKey: ['label', 'menu'],
+        queryFn: async () => {
+          const tags = await postFetch('label', { rows_per_page: 500 });
+          const tagsArray = await tags.json();
+          tagsArray?.map((tag) => {
+            const { lightness } = hexToHSL(tag.bgcolor);
+            if (lightness < 70) {
+              return (tag.className = 'dark');
+            }
+            return tag;
+          });
+          return tagsArray;
+        },
+        refetchOnWindowFocus: false,
+      });
 
-			// Creating Tags/Labels query object in advance
-			queryClient.prefetchQuery( {
-				queryKey: [ 'label', 'modules' ],
-				queryFn: async () => {
-					const response = await getFetch( 'label/modules' );
-					if ( response.ok ) {
-						return response.json();
-					}
-				},
-				refetchOnWindowFocus: false,
-			} );
+      // Creating Tags/Labels query object in advance
+      queryClient.prefetchQuery({
+        queryKey: ['label', 'modules'],
+        queryFn: async () => {
+          const response = await getFetch('label/modules');
+          if (response.ok) {
+            return response.json();
+          }
+        },
+        refetchOnWindowFocus: false,
+      });
 
-			setPrefetch( false );
-		}
-	}, [] );
+      setPrefetch(false);
+    }
+  }, []);
 
-	const { data } = useQuery( {
-		queryKey: [ 'modules' ],
-		queryFn: async () => {
-			if ( prefetch ) {
-				const response = await getFetch( 'module' ).then( ( ModuleData ) => ModuleData );
-				if ( response.ok ) {
-					return response.json();
-				}
-			}
-		},
-		refetchOnWindowFocus: false,
-	} );
+  const { data } = useQuery({
+    queryKey: ['modules'],
+    queryFn: async () => {
+      if (prefetch) {
+        const response = await getFetch('module').then((ModuleData) => ModuleData);
+        if (response.ok) {
+          return response.json();
+        }
+      }
+    },
+    refetchOnWindowFocus: false,
+  });
 
-	const fetchedModules = useMemo( () => {
-		delete data?.general;
-		return data;
-	}, [ data ] );
+  const fetchedModules = useMemo(() => {
+    delete data?.general;
+    return data;
+  }, [data]);
 
-	return (
-		<div className="urlslab-app flex">
-			{
-				fetchedModules &&
-				<Suspense>
-					<MainMenu
-						modules={ ! fetchedModules || Object.values( fetchedModules ) }
-					/>
-				</Suspense>
-			}
-			<div className="urlslab-app-main">
-				<Header fetchedModules={ fetchedModules } />
+  return (
+    <div className="urlslab-app flex">
+      {fetchedModules && (
+        <Suspense>
+          <MainMenu modules={!fetchedModules || Object.values(fetchedModules)} />
+        </Suspense>
+      )}
 
-				<DynamicModule
-					modules={ ! fetchedModules || Object.values( fetchedModules ) }
-				/>
-			</div>
-			<Notifications />
-		</div>
-	);
+      <div className="urlslab-app-main">
+        <Header fetchedModules={fetchedModules} />
+        <DynamicModule modules={!fetchedModules || Object.values(fetchedModules)} />
+      </div>
+      <Notifications />
+    </div>
+  );
 }
