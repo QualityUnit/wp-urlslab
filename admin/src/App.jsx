@@ -137,10 +137,14 @@ export default function App() {
 			}
 			<div className="urlslab-app-main">
 				<Header fetchedModules={ fetchedModules } />
-
-				<DynamicModule
-					modules={ ! fetchedModules || Object.values( fetchedModules ) }
-				/>
+				{
+					fetchedModules &&
+					<Suspense>
+						<DynamicModule
+							modules={ ! fetchedModules || Object.values( fetchedModules ) }
+						/>
+					</Suspense>
+				}
 			</div>
 			<Notifications />
 		</div>
