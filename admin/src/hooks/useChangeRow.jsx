@@ -13,7 +13,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const [ table, setTable ] = useState( );
 	const [ selectedRows, setSelectedRows ] = useState( [] );
 
-	const { filters, sorting } = url || {};
+	const { filters, sorting = [] } = url || {};
 
 	useEffect( () => {
 		if ( table && ! table.getSelectedRowModel().flatRows.length ) {
@@ -100,8 +100,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 							return editedRow;
 						}
 						return row;
-					}
-					),
+					} ),
 				) ?? [];
 				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => ( {
 					pages: newPagesArray,
@@ -207,23 +206,27 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 
 	const deleteSelectedRows = async ( { optionalSelector, id } ) => {
 		// Multiple rows delete
-		const selectedRows = table?.getSelectedRowModel().flatRows || [];
+		const selectedRowsInTable = table?.getSelectedRowModel().flatRows || [];
 		table?.toggleAllPageRowsSelected( false );
-		setResponseCounter( selectedRows?.length );
+		setResponseCounter( selectedRowsInTable?.length );
 
-		selectedRows.map( ( row ) => {
+		selectedRowsInTable.map( ( row ) => {
 			deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( row ), cell: row, optionalSelector, id } );
 			return false;
 		} );
 	};
 
-	const selectRows = ( tableElem ) => {
-		if ( tableElem ) {
+	const selectRows = ( tableElem, remove = false ) => {
+		if ( tableElem && ! remove ) {
 			setTable( tableElem?.table );
 			setSelectedRows( selectedRows.concat( tableElem ) );
 			return false;
 		}
-		setSelectedRows( selectedRows.filter( ( item ) => item.row.id !== tableElem.row.id ) );
+		if ( remove ) {
+			setTable( tableElem?.table );
+			setSelectedRows( selectedRows.filter( ( item ) => item.row.id !== tableElem.row.id ) );
+			return false;
+		}
 		setTable();
 	};
 

@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useI18n } from '@wordpress/react-i18n';
@@ -25,18 +25,16 @@ function ChangesPanel() {
 	const { title, slug } = useTablePanels( ( state ) => state.options.changesPanel );
 	const { selectedRows, selectRows } = useChangeRow( {} );
 
-	console.log( selectedRows );
-
 	function hidePanel() {
 		handleClose();
 	}
 
 	useEffect( () => {
-		if ( selectedRows && selectedRows.length > 2 ) {
-			selectedRows[ 0 ].row.toggleSelected( false );
-			// setSelectedRows( cell.table?.getSelectedRowModel().flatRows );
+		if ( selectedRows.length > 2 ) {
+			selectedRows[ 0 ].row.toggleSelected();
+			selectRows( selectedRows[ 0 ], true );
 		}
-	}, [ selectedRows ] );
+	}, [ selectedRows, selectRows ] );
 
 	const { data, isSuccess } = useQuery( {
 		queryKey: [ slug ],
@@ -73,7 +71,11 @@ function ChangesPanel() {
 				return <div className="pos-relative pl-m">
 					<Checkbox className="thumbnail-check" defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
 						cell.row.toggleSelected();
-						selectRows( val ? cell : undefined );
+						if ( ! val ) {
+							selectRows( cell, true );
+							return false;
+						}
+						selectRows( cell );
 					} } />
 					{ selectedRows && selectedRows?.length === 2 && isSelected && cell.row.id === selectedRows[ 1 ].row.id &&
 					<Button active className="thumbnail-button" onClick={ () => useTablePanels.setState( { imageCompare: true } ) }>
@@ -139,9 +141,9 @@ function ChangesPanel() {
 
 	return (
 		<>
-			{ /* { selectedRows && selectedRows?.length === 2 &&
+			{ selectedRows && selectedRows?.length === 2 &&
 				<ImageCompare selectedRows={ selectedRows } />
-			} */ }
+			}
 			<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
 				<div className="urlslab-panel urlslab-changesPanel customPadding">
 					<div className="urlslab-panel-header">
