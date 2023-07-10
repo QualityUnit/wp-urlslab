@@ -1,0 +1,30 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-diff {
+
+  &-button {
+
+    display: block;
+    font-size: 0.8rem;
+    font-weight: $font-weight-bold;
+    transition: all $transitionTime;
+    background-color: $grey-dark !important;
+    padding: 0.4rem;
+    color: $white;
+    border-radius: 5px;
+    position: absolute;
+    top: 26px;
+    left: 0;
+    z-index: 2;
+
+    @media (hover: hover) {
+
+      &:hover {
+        background-color: $grey-darker !important;
+      }
+    }
+  }
+
+
+}

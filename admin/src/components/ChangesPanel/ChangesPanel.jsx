@@ -17,6 +17,7 @@ import ImageCompare from '../ImageCompare';
 import Button from '../../elements/Button';
 import { ReactComponent as IconAnchor } from '../../assets/images/icons/icon-anchor.svg';
 import Tooltip from '../../elements/Tooltip';
+import DiffButton from '../../elements/DiffButton';
 
 function ChangesPanel() {
 	const { __ } = useI18n();
@@ -146,6 +147,23 @@ function ChangesPanel() {
 		columnHelper.accessor( 'page_size', {
 			cell: ( cell ) => `${ parseFloat( cell.getValue() / 1024 / 1024 ).toFixed( 2 ) }\u00A0MB`,
 			header: () => header.page_size,
+			size: 150,
+		} ),
+		columnHelper.display( {
+			id: 'diff_actions',
+			cell: ( cell ) => {
+				if ( tableResult.data.length > 1 && cell.row.index < tableResult.data.length - 1 ) {
+					return <DiffButton
+						onClick={ () => {
+							handleSelection( true, cell );
+							handleSelection( true, cell.table.getRow( cell.row.index + 1 ).getAllCells()[ 0 ] );
+							useTablePanels.setState( { imageCompare: true } );
+						} }
+					>{ __( 'Show Difference' ) }</DiffButton>;
+				}
+
+				return '';
+			},
 			size: 150,
 		} ),
 	];
