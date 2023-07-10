@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.275.3",
+            "version": "3.275.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "bbdf8e8d5df0b44ee83d5a751f316fc9f9dd2849"
+                "reference": "d46961b82e857f77059c0c78160719ecb26f6cc6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/bbdf8e8d5df0b44ee83d5a751f316fc9f9dd2849",
-                "reference": "bbdf8e8d5df0b44ee83d5a751f316fc9f9dd2849",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d46961b82e857f77059c0c78160719ecb26f6cc6",
+                "reference": "d46961b82e857f77059c0c78160719ecb26f6cc6",
                 "shasum": ""
             },
             "require": {
@@ -151,9 +151,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.275.3"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.275.5"
             },
-            "time": "2023-07-05T18:22:08+00:00"
+            "time": "2023-07-07T18:20:11+00:00"
         },
         {
             "name": "composer/installers",
@@ -1370,12 +1370,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/QualityUnit/urlslab-php-client.git",
-                "reference": "9da1a53a88793c7d1679a34a3ef0b8f561cdfe61"
+                "reference": "211540c31f0ae702f66d3c5e929245aca3c0a90a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/QualityUnit/urlslab-php-client/zipball/9da1a53a88793c7d1679a34a3ef0b8f561cdfe61",
-                "reference": "9da1a53a88793c7d1679a34a3ef0b8f561cdfe61",
+                "url": "https://api.github.com/repos/QualityUnit/urlslab-php-client/zipball/211540c31f0ae702f66d3c5e929245aca3c0a90a",
+                "reference": "211540c31f0ae702f66d3c5e929245aca3c0a90a",
                 "shasum": ""
             },
             "require": {
@@ -1422,7 +1422,7 @@
                 "issues": "https://github.com/QualityUnit/urlslab-php-client/issues",
                 "source": "https://github.com/QualityUnit/urlslab-php-client/tree/main"
             },
-            "time": "2023-07-06T15:13:37+00:00"
+            "time": "2023-06-22T15:05:32+00:00"
         },
         {
             "name": "voku/html-min",
@@ -2147,12 +2147,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "6ea60363203786a5dd5617c28e933280bb61f78b"
+                "reference": "885786b30f50e83a88941df2062d68de623599fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/6ea60363203786a5dd5617c28e933280bb61f78b",
-                "reference": "6ea60363203786a5dd5617c28e933280bb61f78b",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/885786b30f50e83a88941df2062d68de623599fd",
+                "reference": "885786b30f50e83a88941df2062d68de623599fd",
                 "shasum": ""
             },
             "conflict": {
@@ -2450,7 +2450,6 @@
                 "opencart/opencart": "<=3.0.3.7",
                 "openid/php-openid": "<2.3",
                 "openmage/magento-lts": "<19.4.22|>=20,<20.0.19",
-                "opensource-workshop/connect-cms": "<1.7.2|>=2,<2.3.2",
                 "orchid/platform": ">=9,<9.4.4",
                 "oro/commerce": ">=4.1,<5.0.6",
                 "oro/crm": ">=1.7,<1.7.4|>=3.1,<4.1.17|>=4.2,<4.2.7",
@@ -2756,7 +2755,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-07-05T23:04:23+00:00"
+            "time": "2023-06-30T21:04:19+00:00"
         },
         {
             "name": "sirbrillig/phpcs-variable-analysis",

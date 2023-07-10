@@ -16,6 +16,7 @@ import Chart from './Chart';
 import ImageCompare from '../ImageCompare';
 import Button from '../../elements/Button';
 import { ReactComponent as IconAnchor } from '../../assets/images/icons/icon-anchor.svg';
+import Tooltip from '../../elements/Tooltip';
 
 function ChangesPanel() {
 	const { __ } = useI18n();
@@ -31,7 +32,7 @@ function ChangesPanel() {
 
 	const handleSelection = useCallback( ( isSeleted, cell ) => {
 		selectRow( isSeleted, cell );
-	}, [ selectRow, selectedRows ] );
+	}, [ selectRow ] );
 
 	useEffect( () => {
 		if ( selectedRows.length > 2 ) {
@@ -78,6 +79,11 @@ function ChangesPanel() {
 		columnHelper.accessor( 'screenshot', {
 			id: 'thumb',
 			className: 'nolimit thumbnail',
+			tooltip: ( cell ) => <Tooltip className="withImage">
+				<div className="imageWrapper">
+					<img src={ cell?.getValue().thumbnail } alt="url" />
+				</div>
+			</Tooltip>,
 			cell: ( cell ) => {
 				const isSelected = cell.row.getIsSelected();
 
