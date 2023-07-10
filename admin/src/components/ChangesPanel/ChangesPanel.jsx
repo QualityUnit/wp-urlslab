@@ -175,7 +175,7 @@ function ChangesPanel() {
 						{ chartResult.isSuccess &&
 							<Chart data={ chartResult.data } header={ header } />
 						}
-						<div className="mt-l table-container">
+						<div className="mt-l table-container" style={ { position: 'relative', top: 0, left: 0, zIndex: 1 } }>
 							<Table
 								slug={ slug }
 								columns={ columns }

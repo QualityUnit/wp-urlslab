@@ -3,7 +3,18 @@
 
 import { memo, useCallback, useState } from 'react';
 import { date, getSettings } from '@wordpress/date';
-import { AreaChart, LineChart, Area, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+	AreaChart,
+	LineChart,
+	Area,
+	Line,
+	XAxis,
+	YAxis,
+	CartesianGrid,
+	Tooltip,
+	Legend,
+	ResponsiveContainer,
+} from 'recharts';
 
 const Chart = ( { data, header } ) => {
 	const [ lineVisibility, setLineVisibility ] = useState( {} );
@@ -27,7 +38,7 @@ const Chart = ( { data, header } ) => {
 						}
 						return <li key={ `item-${ index }` } style={ { backgroundColor: color } }>
 							<label
-								onClick={ ( ) => {
+								onClick={ () => {
 									setLineVisibility( ( obj ) => {
 										return { ...obj, [ dataKey ]: ! obj[ dataKey ] };
 									} );
@@ -58,36 +69,43 @@ const Chart = ( { data, header } ) => {
 							return ( <li key={ dataKey } style={ { color: `${ color }` } }>
 								{ `${ name.replace( / ?hidden/, '' ) }: ` }
 								{ dataKey !== 'status_code' && dataKey !== 'page_size' && dataKey !== 'load_duration' &&
-										value
+                                    value
 								}
 
 								{ dataKey === 'status_code' &&
-									<>
-										{
-											value >= 200 && value <= 299 &&
-											<span className="c-saturated-green">OK</span>
-										}
-										{
-											value >= 300 && value <= 399 &&
-											<span className="c-saturated-orange">Redirect</span>
-										}
-										{ ( value >= 400 || value < 0 ) &&
-										<span className="c-saturated-red">{ value }</span>
-										}
-									</>
+								<>
+									{
+										value >= 200 && value <= 299 &&
+										<span className="c-saturated-green">OK</span>
+									}
+									{
+										value >= 300 && value <= 399 &&
+										<span className="c-saturated-orange">Redirect</span>
+									}
+									{ ( value >= 400 || value < 0 ) &&
+									<span className="c-saturated-red">{ value }</span>
+									}
+								</>
 								}
 								{
 									dataKey === 'page_size' &&
-									`${ parseFloat( value / 1024 / 1024 ).toFixed( 2 ) }\u00A0MB`
+                                    `${ parseFloat( value / 1024 / 1024 ).toFixed( 2 ) }\u00A0MB`
 								}
 
 								{ dataKey === 'load_duration' &&
-									`${ parseFloat( value / 1000 ).toFixed( 2 ) }\u00A0s`
+                                    `${ parseFloat( value / 1000 ).toFixed( 2 ) }\u00A0s`
 								}
 							</li> );
 						} )
 						}
 					</ul>
+					<div>
+						<span className="urlslab-tooltip-thumbnail" style={ { maxWidth: '15rem' } }>
+							{
+								payload[ 0 ].payload.screenshot && <img src={ payload[ 0 ].payload.screenshot.thumbnail } alt="thumbnail" />
+							}
+						</span>
+					</div>
 				</div>
 			);
 		}
@@ -117,6 +135,7 @@ const Chart = ( { data, header } ) => {
 					right: 24,
 					bottom: 0,
 				} }
+				style={ { position: 'absolute', top: 0, left: 0, zIndex: 5 } }
 			>
 				<defs>
 					{
@@ -135,8 +154,18 @@ const Chart = ( { data, header } ) => {
 				{
 					Object.entries( chart ).map( ( [ key, color ] ) => {
 						return <>
-							<YAxis hide={ true } yAxisId={ key } domain={ [ 'dataMin', 'dataMax' ] } scale={ key === 'load_duration' ? 'time' : 'auto' } />
-							<Area type="monotone" key={ key } name={ `${ header[ key ] } ${ key === 'status_code' ? 'hidden' : '' }` } yAxisId={ key } hide={ lineVisibility[ key ] } dataKey={ key } stroke={ color } strokeWidth={ 4 } fill={ `url(#fill-${ key })` } dot={ false } activeDot={ key === 'status_code' || lineVisibility[ key ] ? false : { stroke: '#fff', fill: color, strokeWidth: 4, r: 10 } } />
+							<YAxis hide={ true } yAxisId={ key } domain={ [ 'dataMin', 'dataMax' ] }
+								scale={ key === 'load_duration' ? 'time' : 'auto' } />
+							<Area type="monotone" key={ key }
+								name={ `${ header[ key ] } ${ key === 'status_code' ? 'hidden' : '' }` } yAxisId={ key }
+								hide={ lineVisibility[ key ] } dataKey={ key } stroke={ color } strokeWidth={ 4 }
+								fill={ `url(#fill-${ key })` } dot={ false }
+								activeDot={ key === 'status_code' || lineVisibility[ key ] ? false : {
+									stroke: '#fff',
+									fill: color,
+									strokeWidth: 4,
+									r: 10,
+								} } />
 						</>;
 					} )
 				}

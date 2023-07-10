@@ -99,4 +99,14 @@
 			}
 		}
 	}
+
+	.urlslab-tooltip-thumbnail {
+		margin-top: 0.625rem;
+		display: block;
+		object-fit: cover;
+		border-radius: 10px;
+		height: 10rem;
+		border: 1px solid $grey-medium;
+		overflow: hidden;
+	}
 }
