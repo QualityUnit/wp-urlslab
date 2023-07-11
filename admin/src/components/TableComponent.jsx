@@ -1,11 +1,15 @@
 /* eslint-disable indent */
-import { useRef, useCallback, useState, useEffect } from 'react';
-import { get } from 'idb-keyval';
-import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { useRef, useCallback, useState, useEffect } from "react";
+import { get } from "idb-keyval";
+import {
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 
-import { useVirtual } from 'react-virtual';
+import { useVirtual } from "react-virtual";
 
-import '../assets/styles/components/_TableComponent.scss';
+import "../assets/styles/components/_TableComponent.scss";
 
 export default function Table({
   slug,
@@ -18,14 +22,21 @@ export default function Table({
   returnTable,
   getRowExtraProps,
 }) {
-  const [rowSelection, setRowSelection] = useState({});
+  const [rowSelection, setRowSelection] = useState({ 0: true });
   const [containerWidth, setContainerWidth] = useState();
-  const [columnVisibility, setColumnVisibility] = useState(initialState?.columnVisibility || {});
+  const [columnVisibility, setColumnVisibility] = useState(
+    initialState?.columnVisibility || {}
+  );
   const tableContainerRef = useRef();
+
+ 
 
   const getColumnState = useCallback(() => {
     get(slug).then(async (dbData) => {
-      if (dbData?.columnVisibility && Object.keys(dbData?.columnVisibility).length) {
+      if (
+        dbData?.columnVisibility &&
+        Object.keys(dbData?.columnVisibility).length
+      ) {
         await setColumnVisibility(dbData?.columnVisibility);
       }
     });
@@ -36,16 +47,18 @@ export default function Table({
 
     setContainerWidth(tableContainerRef.current?.clientWidth);
     const menuWidth =
-      document.querySelector('.urlslab-mainmenu').clientWidth + document.querySelector('#adminmenuwrap').clientWidth;
+      document.querySelector(".urlslab-mainmenu").clientWidth +
+      document.querySelector("#adminmenuwrap").clientWidth;
 
     const resizeWatcher = new ResizeObserver(([entry]) => {
       if (entry.borderBoxSize && tableContainerRef.current) {
-        tableContainerRef.current.style.width = `${document.querySelector('#wpadminbar').clientWidth - menuWidth - 54
-          }px`;
+        tableContainerRef.current.style.width = `${
+          document.querySelector("#wpadminbar").clientWidth - menuWidth - 54
+        }px`;
       }
     });
 
-    resizeWatcher.observe(document.querySelector('#wpadminbar'));
+    resizeWatcher.observe(document.querySelector("#wpadminbar"));
   }, [getColumnState, setContainerWidth]);
 
   const table = useReactTable({
@@ -55,12 +68,14 @@ export default function Table({
       minSize: resizable ? 80 : 24,
       size: resizable ? 100 : 24,
     },
-    initialState,
+    initialState: {
+      rowSelection: { 0: true },
+    },
     state: {
       rowSelection,
       columnVisibility,
     },
-    columnResizeMode: 'onChange',
+    columnResizeMode: "onChange",
     enableRowSelection: true,
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
@@ -74,7 +89,7 @@ export default function Table({
   const tbody = [];
 
   const { rows } = table?.getRowModel();
-
+  
   const rowVirtualizer = useVirtual({
     parentRef: tableContainerRef,
     size: rows?.length,
@@ -83,12 +98,19 @@ export default function Table({
 
   const { virtualItems: virtualRows, totalSize } = rowVirtualizer;
   const paddingTop = virtualRows?.length > 0 ? virtualRows?.[0]?.start || 0 : 0;
-  const paddingBottom = virtualRows?.length > 0 ? totalSize - (virtualRows?.[virtualRows.length - 1]?.end || 0) : 0;
+  const paddingBottom =
+    virtualRows?.length > 0
+      ? totalSize - (virtualRows?.[virtualRows.length - 1]?.end || 0)
+      : 0;
 
   for (const virtualRow of virtualRows) {
     const row = rows[virtualRow?.index];
     tbody.push(
-      <tr key={row.id} className={row.getIsSelected() ? 'selected' : ''} {...getRowExtraProps?.(row, rows)}>
+      <tr
+        key={row.id}
+        className={row.getIsSelected() ? "selected" : ""}
+        {...getRowExtraProps?.(row, rows)}
+      >
         {row.getVisibleCells().map((cell) => {
           const tooltip = cell.column.columnDef.tooltip;
 
@@ -98,11 +120,16 @@ export default function Table({
                 key={cell.id}
                 className={cell.column.columnDef.className}
                 style={{
-                  width: cell.column.getSize() !== 0 && resizable ? cell.column.getSize() : undefined,
+                  width:
+                    cell.column.getSize() !== 0 && resizable
+                      ? cell.column.getSize()
+                      : undefined,
                 }}
               >
                 {tooltip ? flexRender(tooltip, cell.getContext()) : null}
-                <div className="limit">{flexRender(cell.column.columnDef.cell, cell.getContext())}</div>
+                <div className="limit">
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </div>
               </td>
             )
           );
@@ -114,18 +141,18 @@ export default function Table({
   return (
     <div
       className="urlslab-table-container"
-    // ref={tableContainerRef}
-    // style={{
-    //   width: `${containerWidth}px`,
-    //   '--tableContainerWidth': `${containerWidth}px`,
-    // }}
+      // ref={tableContainerRef}
+      // style={{
+      //   width: `${containerWidth}px`,
+      //   '--tableContainerWidth': `${containerWidth}px`,
+      // }}
     >
       {/* {containerWidth ? ( */}
       <table
-        className={`urlslab-table ${className} ${resizable ? 'resizable' : ''}`}
-      // style={{
-      //   width: table.getCenterTotalSize(),
-      // }}
+        className={`urlslab-table ${className} ${resizable ? "resizable" : ""}`}
+        // style={{
+        //   width: table.getCenterTotalSize(),
+        // }}
       >
         <thead className="urlslab-table-head">
           {table.getHeaderGroups().map((headerGroup) => (
@@ -135,18 +162,26 @@ export default function Table({
                   key={header.id}
                   className={header.column.columnDef.className}
                   style={{
-                    position: resizable ? 'absolute' : 'relative',
-                    left: resizable ? header.getStart() : '0',
-                    width: header.getSize() !== 0 ? header.getSize() : '',
+                    position: resizable ? "absolute" : "relative",
+                    left: resizable ? header.getStart() : "0",
+                    width: header.getSize() !== 0 ? header.getSize() : "",
                   }}
                 >
-                  {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                  {resizable && header.column.columnDef.enableResizing !== false ? (
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                  {resizable &&
+                  header.column.columnDef.enableResizing !== false ? (
                     <div
                       {...{
                         onMouseDown: header.getResizeHandler(),
                         onTouchStart: header.getResizeHandler(),
-                        className: `resizer ${header.column.getIsResizing() ? 'isResizing' : ''}`,
+                        className: `resizer ${
+                          header.column.getIsResizing() ? "isResizing" : ""
+                        }`,
                       }}
                     />
                   ) : null}
