@@ -50,6 +50,10 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			$this->get_widget_slug(),
 			array( $this, 'get_shortcode_content' )
 		);
+        add_shortcode(
+            'urlslab-youtube-video',
+            array( $this, 'get_video_shortcode_content' )
+        );
 	}
 
 	public function get_widget_slug(): string {
@@ -195,6 +199,10 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			return '';
 		}
 	}
+
+    public function get_video_shortcode_content( $atts = array(), $content = null, $tag = '' ) {
+
+    }
 
 	private function get_shortcode_row( int $shortcode_id ): Urlslab_Generator_Shortcode_Row {
 		if ( ! isset( self::$shortcodes_cache[ $shortcode_id ] ) ) {
