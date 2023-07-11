@@ -53,10 +53,16 @@
 	}
 
 	&-wrapper {
-		width: 30%;
+		@include scrollbar;
+		height: 80%;
 		display: flex;
 		align-items: flex-start;
 		justify-content: center;
 		cursor: col-resize;
+	}
+
+	&-img {
+		height: 100%;
+		width: 30%;
 	}
 }
