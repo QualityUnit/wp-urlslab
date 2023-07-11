@@ -1,13 +1,14 @@
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import { ReactComponent as DollarIcon } from '../../assets/images/icons/icon-dollar.svg';
-import { ReactComponent as ArrowIcon } from '../../assets/images/icons/icon-arrow.svg';
 
-import Button from '../../elements/Button';
-import { setNotification } from '../../hooks/useNotifications';
 import { setSettings } from '../../api/settings';
+import { setNotification } from '../../hooks/useNotifications';
 import useOnboarding from '../../hooks/useOnboarding';
 import InputField from '../../elements/InputField';
+import Button from '../../elements/Button';
+
+import { ReactComponent as DollarIcon } from '../../assets/images/icons/icon-dollar.svg';
+import { ReactComponent as ArrowIcon } from '../../assets/images/icons/icon-arrow.svg';
 
 const StepApiKey = ( { apiSetting } ) => {
 	const { __ } = useI18n();
@@ -59,7 +60,7 @@ const StepApiKey = ( { apiSetting } ) => {
 					type="password"
 					defaultValue={ data.api_key }
 					onChange={ ( val ) => setApiKey( val ) }
-					liveUpdate
+					liveUpdate //allow us to enable submit button immediately after api key paste
 				/>
 
 				<div className="urlslab-onboarding-content-settings-footer flex flex-align-center flex-justify-space-between">
@@ -67,7 +68,7 @@ const StepApiKey = ( { apiSetting } ) => {
 						{ __( 'I don\'t have API Key.' ) }&nbsp;<Button className="simple underline" href="https://www.urlslab.com/" target="_blank">{ __( 'Get API Key' ) }</Button>
 					</div>
 					<Button
-						className="active icon-right"
+						className="active"
 						onClick={ () => submitData() }
 						disabled={ ! data.api_key || updating }
 					>
@@ -81,4 +82,4 @@ const StepApiKey = ( { apiSetting } ) => {
 	);
 };
 
-export default StepApiKey;
+export default React.memo( StepApiKey );

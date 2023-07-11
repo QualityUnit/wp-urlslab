@@ -3,9 +3,6 @@
 @forward "./Settings";
 @forward "../elements/Inputs";
 
-$small-wrapper: 500px;
-$large-wrapper: 920px;
-
 .urlslab-onboarding {
 
 	&-header {
@@ -73,11 +70,11 @@ $large-wrapper: 920px;
 			margin: 0 auto;
 
 			&.small-wrapper {
-				max-width: $small-wrapper;
+				max-width: 500px;
 			}
 
 			&.large-wrapper {
-				max-width: $large-wrapper;
+				max-width: 920px;
 			}
 		}
 

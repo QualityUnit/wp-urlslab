@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
-import { ReactComponent as Logo } from '../assets/images/urlslab-logo.svg';
-import useOnboarding from '../hooks/useOnboarding';
-import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
+import { useI18n } from '@wordpress/react-i18n';
+
+import useOnboarding from '../hooks/useOnboarding';
+import { ReactComponent as Logo } from '../assets/images/urlslab-logo.svg';
 
 const Header = () => {
 	const { __ } = useI18n();
@@ -42,7 +43,6 @@ const HeaderStep = React.memo( ( { label, index, active, completed } ) => {
 				active ? 'state-active' : null,
 				completed && ! active ? 'state-completed' : null,
 			] ) }
-			onKeyUp={ null }
 		>
 			<div className="step-item-icon flex flex-align-center flex-justify-center">{ `0${ index + 1 }` }</div>
 			<div className="step-item-label">{ label }</div>

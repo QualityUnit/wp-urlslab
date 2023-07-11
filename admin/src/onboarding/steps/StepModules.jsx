@@ -1,9 +1,11 @@
+import React from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import { ReactComponent as ArrowIcon } from '../../assets/images/icons/icon-arrow.svg';
 
-import Button from '../../elements/Button';
 import useOnboarding from '../../hooks/useOnboarding';
 import DashboardModule from '../../components/DashboardModule';
+import Button from '../../elements/Button';
+
+import { ReactComponent as ArrowIcon } from '../../assets/images/icons/icon-arrow.svg';
 
 const StepModules = ( { modules } ) => {
 	const { __ } = useI18n();
@@ -36,7 +38,7 @@ const StepModules = ( { modules } ) => {
 
 				<div className="urlslab-onboarding-content-settings-footer flex flex-justify-end">
 					<Button
-						className="active icon-right"
+						className="active"
 						onClick={ () => setActiveOnboarding( false ) }
 					>
 						<span>{ __( 'Finish and go to plugin' ) }</span>
@@ -49,4 +51,4 @@ const StepModules = ( { modules } ) => {
 	);
 };
 
-export default StepModules;
+export default React.memo( StepModules );

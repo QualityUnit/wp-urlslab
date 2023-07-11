@@ -1,15 +1,17 @@
 import React, { useCallback, useState } from 'react';
+import classNames from 'classnames';
 import { useI18n } from '@wordpress/react-i18n';
-import { ReactComponent as ArrowIcon } from '../../assets/images/icons/icon-arrow.svg';
 
-import Button from '../../elements/Button';
 import { setNotification } from '../../hooks/useNotifications';
+import { postFetch } from '../../api/fetching';
 import useOnboarding from '../../hooks/useOnboarding';
+
+import TextArea from '../../elements/Textarea';
+import Button from '../../elements/Button';
 import InputField from '../../elements/InputField';
 import SingleSelectMenu from '../../elements/SingleSelectMenu';
-import classNames from 'classnames';
-import TextArea from '../../elements/Textarea';
-import { postFetch } from '../../api/fetching';
+
+import { ReactComponent as ArrowIcon } from '../../assets/images/icons/icon-arrow.svg';
 
 const StepSchedule = () => {
 	const { __ } = useI18n();
@@ -207,7 +209,7 @@ const StepSchedule = () => {
 const SubmitButton = React.memo( ( { data, updating, submitData } ) => {
 	const { __ } = useI18n();
 	return <Button
-		className="active icon-right"
+		className="active"
 		onClick={ () => submitData() }
 		disabled={ data.urls === '' || updating }
 	>
@@ -216,4 +218,4 @@ const SubmitButton = React.memo( ( { data, updating, submitData } ) => {
 	</Button>;
 } );
 
-export default StepSchedule;
+export default React.memo( StepSchedule );

@@ -1,14 +1,14 @@
-import { useEffect, useMemo, useState } from 'react';
-
-import '../assets/styles/layouts/_Onboarding.scss';
-import StepApiKey from './steps/StepApiKey';
-import useCheckApiKey from '../hooks/useCheckApiKey';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
-import Loader from '../components/Loader';
+import useCheckApiKey from '../hooks/useCheckApiKey';
 import useOnboarding from '../hooks/useOnboarding';
+
+import Loader from '../components/Loader';
+import StepApiKey from './steps/StepApiKey';
 import StepSchedule from './steps/StepSchedule';
 import StepModules from './steps/StepModules';
+
 const Content = () => {
 	const queryClient = useQueryClient();
 	const { settingsLoaded } = useCheckApiKey();
@@ -42,4 +42,4 @@ const Content = () => {
 	);
 };
 
-export default Content;
+export default React.memo( Content );
