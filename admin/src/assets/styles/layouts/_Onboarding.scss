@@ -15,7 +15,18 @@
 			left: 25px;
 		}
 
+		@media (max-width: $breakpoint-tablet-landscape) {
+			flex-direction: column;
+
+			&-logo {
+				position: relative !important;
+				left: initial;
+				margin-bottom: 20px;
+			}
+		}
+
 		&-steps {
+
 			.step-item {
 				font-weight: $font-weight-semi;
 
@@ -58,12 +69,21 @@
 
 
 			}
+
+			@media (max-width: $breakpoint-mobile) {
+				flex-wrap: wrap;
+				justify-content: center;
+
+				.step-item {
+					margin-bottom: 10px;
+				}
+			}
 		}
 	}
 
 
 	&-content {
-		margin-bottom: 40px;
+		margin: 0 20px 40px;
 
 		&-wrapper {
 			width: 100%;
