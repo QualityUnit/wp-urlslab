@@ -21,18 +21,13 @@ const StepModules = ( { modules } ) => {
 
 				<div className="urlslab-onboarding-content-settings-modules">
 					{ modules.map( ( module ) => {
-						const { id, active, title, description } = module;
 						return (
 							module.id !== 'general'
 								? <DashboardModule
-									key={ id }
-									moduleId={ id }
-									isActive={ active }
-									title={ title }
+									key={ module.id }
+									module={ module }
 									isOnboardingItem
-								>
-									{ description }
-								</DashboardModule>
+								/>
 								: null
 						);
 					} )
