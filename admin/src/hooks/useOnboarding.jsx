@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 const useOnboardingStore = create( ( set ) => ( {
 	version: 1,
-	activeOnboarding: null,
+	activeOnboarding: null, // keep temporary default value "null", allows us to recognize between loading and final known state when deciding if app or onboarding will be shown.
 	steps: [
 		{
 			key: 'api_key',
