@@ -360,6 +360,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 					// No errors, proceed accessing $data
 					$yt_data->set_topics( $output->topics );
 					$yt_data->set_summarization( $output->summarization );
+					$yt_data->set_last_ai_generation_attempt( current_time( 'mysql' ) );
 					$yt_data->insert();
 					return new WP_REST_Response( (object) array( 'message' => 'successfully fetched youtube data' ), 200 );
 
