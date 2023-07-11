@@ -53,12 +53,10 @@
 	}
 
 	&-wrapper {
-
-		@include scrollbar;
-		height: 80%;
+		width: 30%;
 		display: flex;
 		align-items: flex-start;
 		justify-content: center;
-		overflow: hidden auto;
+		cursor: col-resize;
 	}
 }
