@@ -13,6 +13,7 @@ import Notifications from './components/Notifications';
 import MainMenu from './components/MainMenu';
 import DynamicModule from './components/DynamicModule';
 import Header from './components/Header';
+import Loader from './components/Loader';
 
 import Onboarding from './onboarding/Onboarding';
 import useOnboarding from './hooks/useOnboarding';
@@ -133,6 +134,12 @@ export default function App() {
 
 	return (
 		<div className="urlslab-app flex">
+			{ /*
+				Temporary solution.
+				Make sure to show app OR onboarding only when exact state is known.
+				It prevents to incorrectly show app or onboarding for a while, until correct state is known between multiple rerenders.
+			*/ }
+			{ activeOnboarding === null && <Loader /> }
 			{ activeOnboarding === true && <Onboarding /> }
 			{ activeOnboarding === false &&
 			<>
