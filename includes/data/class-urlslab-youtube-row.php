@@ -15,6 +15,9 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 		}
 		$this->set_microdata( $video['microdata'] ?? null, $loaded_from_db );
 		$this->set_captions( $video['captions'] ?? '', $loaded_from_db );
+		$this->set_summarization( $video['summarization'] ?? '', $loaded_from_db );
+		$this->set_topics( $video['topics'] ?? '', $loaded_from_db );
+		$this->set_last_ai_generation_attempt( $video['last_ai_generation_attempt'] ?? null, $loaded_from_db );
 		$this->set_status( $video['status'] ?? self::STATUS_NEW, $loaded_from_db );
 		$this->set_status_changed( $video['status_changed'] ?? self::get_now(), $loaded_from_db );
 	}
@@ -60,6 +63,18 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 		return $this->get( 'status' );
 	}
 
+	public function get_video_summary() {
+		return $this->get( 'summarization' );
+	}
+
+	public function get_topics() {
+		return $this->get( 'topics' );
+	}
+
+	public function get_last_ai_generation_attempt() {
+		return $this->get( 'last_ai_generation_attempt' );
+	}
+
 	public function get_status_changed() {
 		return $this->get( 'status_changed' );
 	}
@@ -101,6 +116,20 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 	public function set_captions( $captions, $loaded_from_db = false ) {
 		$this->set( 'captions', $captions, $loaded_from_db );
 		$this->captions_obj = json_decode( $captions );
+	}
+
+	public function set_summarization( $summarization, $loaded_from_db = false ) {
+		$this->set( 'summarization', $summarization, $loaded_from_db );
+	}
+
+	public function set_topics( $topics, $loaded_from_db = false ) {
+		if ( is_array( $topics ) ) {
+			$this->set( 'topics', implode( ',', $topics ), $loaded_from_db );
+		}
+	}
+
+	public function set_last_ai_generation_attempt( $last_ai_generation_attempt, $loaded_from_db = false ) {
+		$this->set( 'last_ai_generation_attempt', $last_ai_generation_attempt, $loaded_from_db );
 	}
 
 	public function set_status( $status, $loaded_from_db = false ) {
@@ -205,6 +234,9 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 			'captions'       => '%s',
 			'status'         => '%s',
 			'status_changed' => '%s',
+			'summarization'  => '%s',
+			'topics'         => '%s',
+			'last_ai_generation_attempt' => '%s',
 		);
 	}
 

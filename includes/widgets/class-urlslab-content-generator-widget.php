@@ -50,10 +50,10 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			$this->get_widget_slug(),
 			array( $this, 'get_shortcode_content' )
 		);
-        add_shortcode(
-            'urlslab-youtube-video',
-            array( $this, 'get_video_shortcode_content' )
-        );
+		add_shortcode(
+			'urlslab-youtube-video',
+			array( $this, 'get_video_shortcode_content' )
+		);
 	}
 
 	public function get_widget_slug(): string {
@@ -200,9 +200,69 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		}
 	}
 
-    public function get_video_shortcode_content( $atts = array(), $content = null, $tag = '' ) {
+	public function get_video_shortcode_content( $atts = array(), $content = null, $tag = '' ) {
+		if ( empty( $atts['yt-id'] ) ) {
+			if ( $this->is_edit_mode() ) {
+				$atts['STATUS'] = 'Missing shortcode ID attribute!!!';
 
-    }
+				return $this->get_placeholder_html( $atts, self::SLUG );
+			}
+
+			return '';
+		}
+
+		# getting the YT Video Data
+		$video_obj = Urlslab_Youtube_Row::get_video_obj( $atts['videoid'] );
+		if ( $video_obj->is_active() ) {
+			# Should Display
+
+			#Initializing variables
+			$show_summarization = true;
+			$show_video = true;
+			$show_topics = false;
+			$transcript_type = 'NO_TRANSCRIPT';
+			$language = get_locale();
+
+			# setting values
+			if ( ! empty( $atts['show_summarization'] ) && 'false' == $atts['show_summarization'] ) {
+				$show_summarization = false;
+			}
+
+			if ( ! empty( $atts['show_video'] ) && 'false' == $atts['show_video'] ) {
+				$show_video = false;
+			}
+
+			if ( ! empty( $atts['show_topics'] ) && 'true' == $atts['show_topics']) {
+				$show_topics = true;
+			}
+
+			if ( ! empty( $atts['transcript_type'] ) && in_array( $atts['transcript_type'], array( 'TRANSCRIPT', 'TRANSCRIPT_TEXT' ) ) ) {
+				$transcript_type = $atts['transcript_type'];
+			}
+
+			if ( ! empty( $atts['language'] ) ) {
+				$language = $atts['language'];
+			}
+
+			# Checking if the video has needed data
+			if ( should_fetch_additional_data( $video_obj, $show_summarization, $show_topics ) ) {
+				# Should still generate output
+				// Assuming $lastAttempt is in a format that can be converted to a DateTime object
+				$lastAttemptTime = new DateTime( $video_obj->get_last_ai_generation_attempt() );
+				$currentTime = new DateTime();
+
+				if ( $currentTime->diff( $lastAttemptTime )->h > 2 ) {
+					# should retry generating the summary
+
+				} else {
+					return '';
+				}           
+			}       
+		}
+
+		return '';
+
+	}
 
 	private function get_shortcode_row( int $shortcode_id ): Urlslab_Generator_Shortcode_Row {
 		if ( ! isset( self::$shortcodes_cache[ $shortcode_id ] ) ) {

@@ -475,6 +475,9 @@ class Urlslab_Activator {
 								videoid varchar(32) NOT NULL,
 								microdata longtext,
 								captions longtext,
+                                summarization TEXT,
+                                topics TEXT,
+                                last_ai_generation_attempt datetime,
 								status_changed datetime NULL,
 								status char(1) NOT NULL, -- P: processing, A: Available, N: New, D - disabled
 								PRIMARY KEY  (videoid)

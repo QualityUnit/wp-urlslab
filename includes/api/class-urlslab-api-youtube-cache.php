@@ -96,6 +96,50 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 			)
 		);
 
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/generate-yt-data/(?P<videoid>[0-9a-zA-Z_\-]+)',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'generate_yt_data' ),
+					'permission_callback' => array(
+						$this,
+						'get_items_permissions_check',
+					),
+					'args'                => array(
+						'show_summarization' => array(
+							'required'          => true,
+							'default'          => true,
+							'validate_callback' => function( $param ) {
+								return is_bool( $param );
+							},
+						),
+						'show_topics' => array(
+							'required'          => true,
+							'default'          => false,
+							'validate_callback' => function( $param ) {
+								return is_bool( $param );
+							},
+						),
+						'model' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+						'language' => array(
+							'required'          => false,
+							'default'          => get_locale(),
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+					),
+				),
+			)
+		);
+
 
 		register_rest_route( self::NAMESPACE, $base . '/(?P<videoid>[0-9a-zA-Z_\-]+)/urls', $this->get_route_video_urls() );
 		register_rest_route( self::NAMESPACE, $base . '/(?P<videoid>[0-9a-zA-Z_\-]+)/urls/count', $this->get_count_route( $this->get_route_video_urls() ) );
@@ -279,6 +323,78 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 		$sql->add_sorting( $columns, $request );
 
 		return $sql;
+	}
+
+	public function generate_yt_data( $request ) {
+		$yt_id = $request->get_param( 'video_id' );
+		$show_topics = $request->get_param( 'show_topics' );
+		$show_summarization = $request->get_param( 'show_summarization' );
+		$aug_model = $request->get_param( 'model' );
+		$language = $request->get_param( 'language' );
+
+		if ( empty( $yt_id ) || empty( $generate_additional_data ) ) {
+			return new WP_REST_Response(
+				(object) array(
+					'message' => 'missing required parameters',
+				),
+				400
+			);
+		}
+
+		$yt_data = Urlslab_Yt_Helper::get_instance()->get_yt_data( $yt_id );
+
+		if ( ! $yt_data ) {
+			return new WP_REST_Response(
+				(object) array(
+					'message' => 'youtube data cannot be fetched',
+				),
+				404
+			);
+		}
+
+		if ( Urlslab_Yt_Helper::get_instance()->should_fetch_additional_data( $yt_data, $show_topics, $show_summarization ) ) {
+			try {
+				$response = Urlslab_Yt_Helper::get_instance()->augment_yt_data( $yt_data, $aug_model, $this->get_default_yt_data_prompt( $language ) );
+				$output = json_decode( $response );
+				if ( json_last_error() == JSON_ERROR_NONE ) {
+					// No errors, proceed accessing $data
+					$yt_data->set_topics( $output->topics );
+					$yt_data->set_summarization( $output->summarization );
+					$yt_data->insert();
+					return new WP_REST_Response( (object) array( 'message' => 'successfully fetched youtube data' ), 200 );
+
+				} else {
+					return new WP_REST_Response(
+						(object) array(
+							'message' => 'Invalid JSON as output of model',
+						),
+						500
+					);
+
+				}
+
+				return new WP_REST_Response( (object) array( 'message' => 'successfully fetched youtube data' ), 200 );
+			} catch ( Exception $e ) {
+				return new WP_REST_Response(
+					(object) array(
+						'message' => $e->getMessage(),
+					),
+					500
+				);
+			}
+		}
+
+		return new WP_REST_Response(
+			(object) array(
+				'message' => 'successfully fetched youtube data',
+			),
+			200
+		);
+
+	}
+
+	private function get_default_yt_data_prompt( $language ) {
+		return "TASK: You are marketing specialist writing text for web page localized into $language. Analyze video captions and generate summary of video and 3 main topics discussed in video. Output summary and topics just in $language. OUTPUT FORMAT JSON: { \"video_summary\":\"300 words long summary of video in $language\", \"discussed_topics\": [\"topic1\", \"topic2\", \"topic3\"], \"language_code\": \"$language\" } ";
 	}
 
 	/**

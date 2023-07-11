@@ -4,6 +4,9 @@ use Urlslab_Vendor\OpenAPI\Client\ApiException;
 use Urlslab_Vendor\OpenAPI\Client\Configuration;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalVideoCaptionResponse;
 use Urlslab_Vendor\OpenAPI\Client\Urlslab\VideoApi;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalContentQuery;
 use Urlslab_Vendor\GuzzleHttp;
 
 class Urlslab_Yt_Helper {
@@ -122,6 +125,32 @@ class Urlslab_Yt_Helper {
 
 			return true;
 		}
+	}
+
+	public function should_fetch_additional_data( Urlslab_Youtube_Row $youtube_obj, $show_topics, $show_summarization ) {
+		return empty( $youtube_obj->get_video_summary() ) && ( $show_topics || $show_summarization );
+	}
+
+	public function augment_yt_data( Urlslab_Youtube_Row $youtube_obj, $model, $prompt ) {
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
+		if ( empty( $model ) ) {
+			$aug_model = $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_GENERATOR_MODEL );
+		} else {
+			$aug_model = $model;
+		}
+
+
+		$aug_request = new DomainDataRetrievalAugmentRequest();
+		$aug_request->setAugmentingModelName( $aug_model );
+
+		if ( empty( $youtube_obj->get_captions() ) ) {
+			throw new Exception( 'No captions available' );
+		}
+
+		$aug_request->setPrompt( $prompt );
+		$aug_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
+		$response = Urlslab_Augment_Helper::get_instance()->augment( $aug_request );
+		return $response->getResponse();
 	}
 
 	private function get_urlslab_youtube_captions( Urlslab_Youtube_Row $youtube_obj ) {

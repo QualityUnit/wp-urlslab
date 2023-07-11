@@ -534,13 +534,6 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			);
 		}
 
-		$aug_request = new DomainDataRetrievalAugmentRequest();
-
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
-		if ( empty( $aug_model ) ) {
-			$aug_model = $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_GENERATOR_MODEL );
-		}
-		$aug_request->setAugmentingModelName( $aug_model );
 
 		if ( empty( $yt_data->get_captions() ) ) {
 			return new WP_REST_Response(
@@ -570,11 +563,9 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$prompt->setDocumentTemplate( $yt_data->get_captions() );
 		$prompt->setMetadataVars( array() );
 
-		$aug_request->setPrompt( $prompt );
-		$aug_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
 		try {
-			$response = Urlslab_Augment_Helper::get_instance()->augment( $aug_request );
-			return new WP_REST_Response( (object) array( 'completion' => $response->getResponse() ), 200 );
+			$response = Urlslab_Yt_Helper::get_instance()->augment_yt_data( $yt_data, $aug_model, $prompt );
+			return new WP_REST_Response( (object) array( 'completion' => $response ), 200 );
 		} catch ( Exception $e ) {
 			return new WP_REST_Response(
 				(object) array(
