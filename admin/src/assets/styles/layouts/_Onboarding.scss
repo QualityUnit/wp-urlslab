@@ -1,0 +1,248 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+@forward "./Settings";
+@forward "../elements/Inputs";
+
+$small-wrapper: 500px;
+$large-wrapper: 920px;
+
+.urlslab-onboarding {
+
+	&-header {
+		width: 100%;
+		padding: 16px 25px;
+		margin-bottom: 40px;
+		background-color: $white;
+
+		&-logo {
+			left: 25px;
+		}
+
+		&-steps {
+			.step-item {
+				font-weight: $font-weight-semi;
+
+				&:not(:last-child) {
+					margin-right: 26px;
+				}
+
+				&-icon {
+
+					@include square(40px);
+
+					font-size: 16px;
+					color: #b0b4bb;
+					border: 1px solid currentColor;
+					margin-right: 9px;
+					border-radius: 100%;
+					transition: all $transitionTime;
+				}
+
+				&-label {
+					font-size: 13px;
+
+				}
+
+				&.state-active {
+					.step-item-icon {
+						color: $saturated-green;
+						background-color: $desaturated-green;
+						border: 0;
+					}
+				}
+
+				&.state-completed {
+					.step-item-icon {
+						color: $white;
+						background-color: $saturated-green;
+						border: 0;
+					}
+				}
+
+
+			}
+		}
+	}
+
+
+	&-content {
+		margin-bottom: 40px;
+
+		&-wrapper {
+			width: 100%;
+			margin: 0 auto;
+
+			&.small-wrapper {
+				max-width: $small-wrapper;
+			}
+
+			&.large-wrapper {
+				max-width: $large-wrapper;
+			}
+		}
+
+		&-heading {
+			color: $black;
+			text-align: center;
+			margin-bottom: 32px;
+
+			.heading-title {
+				font-size: 24px;
+				font-weight: $font-weight-semi;
+			}
+
+			.heading-description {
+				font-size: 13px;
+				font-weight: $font-weight-normal;
+			}
+		}
+
+		&-settings {
+			@include scrollbarWithBg;
+			color: $black;
+			background-color: $white;
+			border-radius: $br-10;
+			filter: $box-shadow-small;
+			overflow: hidden;
+			padding: 20px 30px;
+
+			&-footer {
+				margin-top: 20px;
+
+				.footer-text {
+					font-size: 13px;
+
+					a.urlslab-button.simple {
+						padding: 0;
+					}
+				}
+			}
+
+			.urlslab-main-settings {
+				margin-bottom: 16px;
+			}
+
+			.urlslab-advanced-settings-toggle {
+				margin-top: 20px;
+			}
+
+			.urlslab-advanced-settings {
+				margin-top: 20px;
+			}
+		}
+
+		// Customize styling for specific step
+		.step-modules {
+			.urlslab-onboarding-content-settings {
+				padding: 0;
+				max-height: 60vh;
+				overflow-y: auto;
+
+				&-footer {
+					margin: 0;
+					padding: 20px 30px;
+					position: sticky;
+					bottom: 0;
+					width: 100%;
+					background: $white;
+					border-top: 1px solid $grey-light;
+					z-index: 2;
+				}
+
+				.urlslab-dashboardmodule {
+					padding: 20px 30px 25px;
+					margin: 0;
+					width: 100%;
+					box-shadow: none;
+					filter: none;
+					border-radius: 0;
+
+					&:not(:last-child) {
+						border-bottom: 1px solid $grey-light;
+					}
+
+					&:hover {
+						box-shadow: none;
+					}
+
+					&-top {
+						border-bottom: 0;
+						margin: 0 0 20px;
+						padding: 0;
+					}
+
+					&-title[class] {
+						font-size: 16px;
+					}
+
+					&-content {
+						p {
+							font-size: 12px;
+						}
+					}
+
+					.urlslab-switch-text {
+						font-size: 14px;
+						line-height: 16px;
+					}
+				}
+			}
+
+
+		}
+
+		.urlslab-onboarding-success-wrapper {
+			font-size: 13px;
+			font-weight: $font-weight-semi;
+			color: $white;
+			background-color: $saturated-green;
+			padding: 5px 15px;
+			margin-bottom: 20px;
+			border-radius: 100px;
+
+			svg {
+				@include square(24px);
+
+				path {
+					fill: currentColor
+				}
+			}
+		}
+
+		.urlslab-half-columns {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			width: 100%;
+
+			&-col {
+				width: 50%;
+				margin-bottom: 16px;
+
+				&:first-child {
+					padding-right: 15px;
+				}
+
+				&:last-child {
+					padding-left: 15px;
+				}
+
+				&>* {
+					width: 100%;
+					max-width: 100%;
+				}
+			}
+
+			@media (max-width: $breakpoint-mobile) {
+				flex-direction: column;
+
+				&-col {
+					width: 100%;
+				}
+			}
+
+		}
+
+	}
+}
