@@ -1,0 +1,49 @@
+{
+	"root": true,
+	"env": {
+		"worker": true,
+		"es6": true
+	},
+	"globals": {
+		"ResizeObserver": false,
+		"sessionStorage": false
+	},
+	"parser": "@babel/eslint-parser",
+	"parserOptions": {
+		"requireConfigFile": false
+	},
+	"extends": [
+		"plugin:@wordpress/eslint-plugin/recommended-with-formatting",
+		"plugin:import/react",
+		"plugin:react-hooks/recommended",
+		"plugin:react/jsx-runtime"
+	],
+	"rules": {
+		"jsx-a11y/label-has-associated-control": 0,
+		"camelcase": "off",
+		"jsx-a11y/no-autofocus": 0,
+		"import/no-extraneous-dependencies": 0,
+		"react/jsx-indent-props": 0,
+		"react/no-unescaped-entities": 0,
+		"no-bitwise": [
+			"error",
+			{
+				"allow": [
+					"~"
+				]
+			}
+		]
+	},
+	"settings": {
+		"import/resolver": {
+			"node": {
+				"extensions": [
+					".js",
+					".jsx",
+					".ts",
+					".tsx"
+				]
+			}
+		}
+	}
+}

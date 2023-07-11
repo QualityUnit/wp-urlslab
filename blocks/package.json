@@ -1,0 +1,47 @@
+{
+  "name": "qu-urlslab-blocks",
+  "version": "1.0.0",
+  "description": "",
+  "author": "URLsLab",
+  "browserslist": [
+    "last 3 versions",
+    "> 3%"
+  ],
+  "license": "GPL-2.0-or-later",
+  "private": false,
+  "scripts": {
+    "watch": "wp-scripts start",
+    "build": "wp-scripts build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.5",
+    "@babel/eslint-parser": "^7.21.8",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-transform-react-jsx": "^7.22.5",
+    "@babel/preset-env": "^7.22.5",
+    "@babel/preset-react": "^7.22.5",
+    "@wordpress/block-editor": "^12.3.0",
+    "@wordpress/blocks": "^12.12.0",
+    "@wordpress/components": "^25.1.0",
+    "@wordpress/eslint-plugin": "^14.7.0",
+    "@wordpress/i18n": "^4.36.0",
+    "@wordpress/scripts": "^26.6.0",
+    "@wordpress/stylelint-config": "^21.19.0",
+    "babel-loader": "^9.1.2",
+    "classnames": "^2.3.2",
+    "eslint": "^8.41.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "sass": "^1.62.1",
+    "stylelint": "^15.9.0",
+    "webpack": "^5.88.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {}
+}

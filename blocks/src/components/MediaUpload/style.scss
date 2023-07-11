@@ -1,0 +1,21 @@
+.urlslab-media-upload {
+
+	&-controls {
+		.image-preview {
+			margin-bottom: 8px;
+
+			img {
+				display: block;
+
+				&:hover {
+					cursor: pointer;
+				}
+			}
+		}
+
+		.buttons-wrapper {
+			display: flex;
+			gap: 8px;
+		}
+	}
+}

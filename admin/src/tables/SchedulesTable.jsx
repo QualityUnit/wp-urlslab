@@ -154,7 +154,7 @@ export default function SchedulesTable( { slug } ) {
 				noDelete
 				selectedRows={ selectedRows }
 				onDeleteSelected={ () => deleteSelectedRows( { id: 'urls' } ) }
-				options={ { header, rowEditorCells, title: 'Add schedule', data, slug, url, paginationId, rowToEdit, id: 'urls' } }
+				options={ { header, rowEditorCells, title: 'Add schedule', data, slug, url, paginationId, rowToEdit, id: 'urls', updateAll: true } }
 			/>
 			<Table className="noHeightLimit fadeInto"
 				slug={ slug }

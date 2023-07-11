@@ -97,7 +97,7 @@ export default function MainMenu({ modules }) {
 
               {modules.length
                 ? modules.map((modul) => {
-                    return modul.active ? (
+                    return modul.id !== 'general' && modul.active ? (
                       <li key={modul.id} className={`urlslab-mainmenu-item ${activator(modul.id)}`}>
                         <button type="button" className="urlslab-mainmenu-btn" onClick={() => setActivePage(modul.id)}>
                           <span>{modul.title}</span>

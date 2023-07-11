@@ -4,7 +4,10 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-convert-images-c
 
 class Urlslab_Convert_Webp_Images_Cron extends Urlslab_Convert_Images_Cron {
 	public function is_format_supported() {
-		if ( ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG )->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE ) ) {
+		if (
+			! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Media_Offloader_Widget::SLUG ) ||
+			! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG )->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_USE_WEBP_ALTERNATIVE )
+		) {
 			return false;
 		}
 

@@ -1,9 +1,6 @@
 <?php
 
 require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
-
-require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-css-cache-row.php';
-
 require_once ABSPATH . 'wp-admin/includes/file.php';
 
 class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
@@ -63,6 +60,7 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 	}
 
 	private function download( Urlslab_CSS_Cache_Row $css ) {
+		$page_content_file_name = null;
 		try {
 			$page_content_file_name = download_url( $css->get_url_object()->get_url_with_protocol() );
 			if ( is_wp_error( $page_content_file_name ) || empty( $page_content_file_name ) || ! file_exists( $page_content_file_name ) || 0 == filesize( $page_content_file_name ) ) {
@@ -96,10 +94,9 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 		return $css->update();
 	}
 
-	function adjustCssUrlLinks( string $css_content, Urlslab_Url $base_url ): string {
+	private function adjustCssUrlLinks( string $css_content, Urlslab_Url $base_url ): string {
 		// correct css prefix without query param
-		$truncated_url_path_dirs = preg_replace( '/\/[^\/]*$/', '', $base_url->get_url_path() );
-		$css_prefix              = $base_url->get_url_scheme_prefix() . $base_url->get_domain_name() . $truncated_url_path_dirs;
+		$truncated_url_path_dirs = dirname( $base_url->get_url_path() );
 
 		// Match the URLs inside the CSS content using regex
 		$url_pattern = "/url\\(['\"]{0,1}(.*?)['\"]{0,1}\\)/i";
@@ -107,17 +104,37 @@ class Urlslab_Download_CSS_Cron extends Urlslab_Cron {
 
 		// Iterate through each relative URL, convert it to an absolute URL, and replace it in the CSS content
 		for ( $i = 0; $i < count( $matched_urls[0] ); $i ++ ) {
-			// Skip absolute URLs or data URIs
 			if ( preg_match( '/^(https?:\/\/|data:)/', $matched_urls[1][ $i ] ) ) {
 				continue;
 			}
 			// Convert the relative URL to an absolute URL
-			$absolute_url = rtrim( $css_prefix, '/' ) . '/' . ltrim( $matched_urls[1][ $i ], '/' );
+			if ( '/' === $matched_urls[1][ $i ][0] ) {
+				$absolute_url = $base_url->get_url_scheme_prefix() . $base_url->get_domain_name() . $matched_urls[1][ $i ];
+			} else {
+				$absolute_url = $base_url->get_url_scheme_prefix() . $base_url->get_domain_name() . '/' . $this->normalize_path( $truncated_url_path_dirs . '/' . $matched_urls[1][ $i ] );
+			}
 
 			// Replace the relative URL with the absolute URL in the CSS content
 			$css_content = str_replace( $matched_urls[0][ $i ], "url({$absolute_url})", $css_content );
 		}
 
 		return $css_content;
+	}
+
+	private function normalize_path( $path ) {
+		$parts     = array_filter( explode( '/', $path ), 'strlen' );
+		$absolutes = array();
+		foreach ( $parts as $part ) {
+			if ( '.' == $part ) {
+				continue;
+			}
+			if ( '..' == $part ) {
+				array_pop( $absolutes );
+			} else {
+				$absolutes[] = $part;
+			}
+		}
+
+		return implode( '/', $absolutes );
 	}
 }

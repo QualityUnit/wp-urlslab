@@ -112,7 +112,18 @@ class Urlslab {
 
 	public function urlslab_content_check( $content ) {
 		global $pagenow;
-		if ( wp_is_maintenance_mode() || wp_is_recovery_mode() || empty( $content ) || is_admin() || wp_is_xml_request() || wp_is_json_request() || 'wp-login.php' === $pagenow || 'admin-ajax.php' === $pagenow ) {
+		if (
+			empty( $content ) ||
+			( false === str_starts_with( $content, '<!DOCTYPE html>' ) && false === str_starts_with( $content, '<!doctype html>' ) && false === str_starts_with( $content, '<html' ) ) ||
+			wp_is_maintenance_mode() ||
+			wp_is_recovery_mode() ||
+			is_admin() ||
+			wp_is_xml_request() ||
+			wp_is_json_request() ||
+			'wp-login.php' === $pagenow ||
+			'admin-ajax.php' === $pagenow ||
+			Urlslab_Public::is_download_request()
+		) {
 			return $content;
 		}
 
@@ -123,7 +134,7 @@ class Urlslab {
 		}
 
 		if ( false !== strpos( $content, '<body' ) ) {
-			if ( preg_match( '|(.*?)<body(.*?)>(.*?)</body>(.*)|imus', $content, $matches ) ) {
+			if ( preg_match( '|(.*?)<body(.*?)>(.*?)</body>(.*?)|imus', $content, $matches ) ) {
 				$content = $matches[1] . $this->urlslab_body_content( $matches[3], $matches[2] ) . $matches[4];
 			}
 		}
@@ -249,6 +260,7 @@ class Urlslab {
 		$this->define_public_hooks();
 		$this->define_backend_hooks();
 		$this->define_api_hooks();
+		$this->init_blocks();
 
 		Urlslab_Loader::get_instance()->run();
 	}
@@ -458,6 +470,8 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-redirect-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-label-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-custom-html-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-js-cache-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-css-cache-row.php';
 
 		// additional
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
@@ -476,6 +490,9 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-admin-subpage.php';
 		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-dashboard-page.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-api-router.php';
+
+		// editor blocks
+		require_once URLSLAB_PLUGIN_DIR . '/blocks/class-urlslab-blocks.php';
 	}
 
 	/**
@@ -541,7 +558,7 @@ class Urlslab {
 			Urlslab_Loader::get_instance()->add_action( 'template_redirect', $plugin_public, 'download_offloaded_file', PHP_INT_MIN );
 			if ( ! defined( 'WP_ADMIN' ) ) {
 				Urlslab_Loader::get_instance()->add_action( 'wp_loaded', $this, 'buffer_start', PHP_INT_MAX );
-				Urlslab_Loader::get_instance()->add_filter( 'language_attributes', $this, 'buffer_start', PHP_INT_MAX );
+				Urlslab_Loader::get_instance()->add_action( 'wp_before_load_template', $this, 'buffer_start', PHP_INT_MAX );
 				Urlslab_Loader::get_instance()->add_action( 'template_redirect', $this, 'buffer_start', PHP_INT_MAX );
 				Urlslab_Loader::get_instance()->add_action( 'shutdown', $this, 'buffer_end', PHP_INT_MIN );
 			}
@@ -585,5 +602,9 @@ class Urlslab {
 				( new Urlslab_Api_Router() )->register_routes();
 			}
 		);
+	}
+
+	private function init_blocks() {
+		Urlslab_Blocks::run();
 	}
 }

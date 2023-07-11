@@ -239,6 +239,21 @@ class Urlslab_Activator {
 				self::init_custom_html_rules_table();
 			}
 		);
+		self::update_step(
+			'2.26.0',
+			function() {
+				self::init_js_cache_tables();
+			}
+		);
+
+		self::update_step(
+			'2.27.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SEARCH_AND_REPLACE_TABLE . " ADD COLUMN login_status CHAR(1) NOT NULL DEFAULT 'A'" ); // phpcs:ignore
+			}
+		);
+
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -258,6 +273,7 @@ class Urlslab_Activator {
 		self::init_youtube_urls_tables();
 		self::init_keywords_map_table();
 		self::init_css_cache_tables();
+		self::init_js_cache_tables();
 		self::init_content_cache_tables();
 		self::init_search_replace_tables();
 		self::init_screenshot_urls_table();
@@ -519,6 +535,25 @@ class Urlslab_Activator {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 	}
+	private static function init_js_cache_tables() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$table_name = URLSLAB_JS_CACHE_TABLE;
+		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
+						url_id bigint,
+						url text,
+						js_content longtext,
+						status char(1) DEFAULT 'N',
+						status_changed datetime NULL,
+						filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
+						PRIMARY KEY (url_id),
+						INDEX idx_changed (status_changed)
+		) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
 
 	private static function init_content_cache_tables() {
 		global $wpdb;
@@ -548,6 +583,7 @@ class Urlslab_Activator {
 						str_search TEXT,
 						str_replace TEXT,
 						search_type CHAR(1) NOT NULL DEFAULT 'T',
+						login_status CHAR(1) NOT NULL DEFAULT 'A',
 						url_filter VARCHAR(255) NOT NULL DEFAULT '.*',
 						labels VARCHAR(255) NOT NULL DEFAULT '',
 						PRIMARY KEY (id)

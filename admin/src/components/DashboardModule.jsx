@@ -2,7 +2,7 @@ import { memo, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import useMainMenu from '../hooks/useMainMenu';
 
 import Switch from '../elements/Switch';
@@ -16,6 +16,7 @@ function DashboardModule( { moduleId, title, children, isActive, tags } ) {
 	const { __ } = useI18n();
 	const [ active, setActive ] = useState( isActive );
 	const { setActivePage } = useMainMenu();
+	const queryClient = useQueryClient();
 
 	const handleSwitch = useMutation( {
 		mutationFn: async () => {
@@ -25,6 +26,12 @@ function DashboardModule( { moduleId, title, children, isActive, tags } ) {
 		onSuccess: ( { response } ) => {
 			if ( response.ok ) {
 				setActive( ! active );
+				queryClient.setQueryData( [ 'modules' ], ( data ) => {
+					return {
+						...data, [ moduleId ]: { ...data[ moduleId ], active: ! active },
+					};
+				} );
+				queryClient.invalidateQueries( [ 'modules' ] );
 				return false;
 			}
 			setActive( isActive );

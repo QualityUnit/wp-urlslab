@@ -19,7 +19,6 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import IconButton from '../elements/IconButton';
-import { active } from 'd3';
 
 export default function CustomHtmlTable( { slug } ) {
 	const paginationId = 'rule_id';
