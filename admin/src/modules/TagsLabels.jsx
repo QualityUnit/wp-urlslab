@@ -49,7 +49,7 @@ export default function TagsLabels( ) {
 	const rowEditorCells = {
 		name: <InputField liveUpdate defaultValue="" label={ header.name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, name: val } ) } required />,
 		bgcolor: <ColorPicker defaultValue="" label="Background color" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, bgcolor: val } ) } />,
-		modules: <MultiSelectMenu liveUpdate asTags id="modules" items={ possibleModules } defaultValue={ [] } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, modules: val } ) }>{ header.modules }</MultiSelectMenu>,
+		modules: <MultiSelectMenu liveUpdate id="modules" asTags items={ possibleModules } defaultValue={ [] } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, modules: val } ) }>{ header.modules }</MultiSelectMenu>,
 	};
 
 	const columns = [
@@ -82,7 +82,7 @@ export default function TagsLabels( ) {
 		} ),
 		columnHelper.accessor( 'modules', {
 			className: 'nolimit',
-			cell: ( cell ) => <MultiSelectMenu items={ possibleModules } asTags id="modules" defaultValue={ ( cell.getValue() && cell.getValue()[ 0 ] ) || '' }
+			cell: ( cell ) => <MultiSelectMenu items={ possibleModules } asTags id="modules" defaultValue={ cell.getValue() || '' }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) }
 			/>,
 			header: header.modules,
@@ -93,13 +93,14 @@ export default function TagsLabels( ) {
 			className: 'editRow',
 			cell: ( cell ) => {
 				return (
-					<div className="flex">
+					<div className="flex mr-s">
 						<IconButton
+							className="ma-left"
 							onClick={ () => {
 								updateRow( { cell, id: 'name' } );
 								activatePanel( 'rowEditor' );
 							} }
-							tooltipClass="align-left xxxl"
+							tooltipClass="align-left-0"
 							tooltip={ __( 'Edit row' ) }
 						>
 							<Edit />
@@ -107,7 +108,7 @@ export default function TagsLabels( ) {
 						<IconButton
 							className="ml-s"
 							onClick={ () => deleteRow( { cell, id: 'name' } ) }
-							tooltipClass="align-left xxxl"
+							tooltipClass="align-left-0"
 							tooltip={ __( 'Delete row' ) }
 						>
 							<Trash />

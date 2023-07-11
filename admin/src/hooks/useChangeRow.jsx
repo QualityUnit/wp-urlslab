@@ -9,9 +9,9 @@ import { setNotification } from './useNotifications';
 export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const queryClient = useQueryClient();
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
-	const [ responseCounter, setResponseCounter ] = useState( 0 );
 	const [ table, setTable ] = useState( );
 	const [ selectedRows, setSelectedRows ] = useState( [] );
+	let rowIndex = 0;
 
 	const { filters, sorting = [] } = url || {};
 
@@ -121,7 +121,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 				} );
 
 				const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow );
-				return { response, editedRow, id: editedRow[ id ] };
+				return { response, editedRow, id: editedRow[ id ], updateAll };
 			}
 		},
 		onSuccess: ( { response, id, updateAll } ) => {
@@ -175,22 +175,22 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 			const response = await del( `${ slug }/${ getRowId( cell, optionalSelector ) }` );
 			return { response, id: row.original[ id ], updateAll };
 		},
-		onSuccess: async ( { response, id, updateAll } ) => {
+		onSuccess: ( { response, id, updateAll } ) => {
 			const { ok } = response;
 			if ( ok ) {
 				setNotification( slug, { message: `Row${ id ? ' “' + id + '”' : '' } has been deleted`, status: 'success' } );
-				setResponseCounter( responseCounter - 1 );
+				rowIndex += 1;
 			}
 
-			if ( responseCounter === 0 || responseCounter === 1 ) {
+			if ( rowIndex === 1 ) {
 				setTable();
 				if ( ! updateAll ) {
-					await queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
+					queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
+					queryClient.invalidateQueries( [ slug, 'count' ] );
+					return false;
 				}
-				if ( updateAll ) {
-					await queryClient.invalidateQueries( [ slug ] );
-				}
-				await queryClient.invalidateQueries( [ slug, 'count' ] );
+				queryClient.invalidateQueries( [ slug ] );
+				queryClient.invalidateQueries( [ slug, 'count' ] );
 			}
 
 			if ( ! ok ) {
@@ -200,7 +200,6 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	} );
 
 	const deleteRow = useCallback( ( { cell, optionalSelector, id, updateAll } ) => {
-		setResponseCounter( 1 );
 		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), cell, optionalSelector, id, updateAll } );
 	}, [ processDeletedPages, deleteSelectedRow ] );
 
@@ -208,7 +207,6 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 		// Multiple rows delete
 		const selectedRowsInTable = table?.getSelectedRowModel().flatRows || [];
 		table?.toggleAllPageRowsSelected( false );
-		setResponseCounter( selectedRowsInTable?.length );
 
 		selectedRowsInTable.map( ( row ) => {
 			deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( row ), cell: row, optionalSelector, id } );
