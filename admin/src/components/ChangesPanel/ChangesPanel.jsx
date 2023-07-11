@@ -155,8 +155,8 @@ function ChangesPanel() {
 				if ( tableResult.data.length > 1 && cell.row.index < tableResult.data.length - 1 ) {
 					return <DiffButton
 						onClick={ () => {
-							handleSelection( true, cell );
-							handleSelection( true, cell.table.getRow( cell.row.index + 1 ).getAllCells()[ 0 ] );
+							selectRow( true, cell.row.getAllCells()[ 0 ].getContext() );
+							selectRow( true, cell.table.getRow( cell.row.index + 1 ).getAllCells()[ 0 ].getContext() );
 							useTablePanels.setState( { imageCompare: true } );
 						} }
 					>{ __( 'Show Difference' ) }</DiffButton>;

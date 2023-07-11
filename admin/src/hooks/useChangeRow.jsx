@@ -211,7 +211,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 			setSelectedRows( selectedRows.filter( ( item ) => item.row.id !== cell.row.id ) );
 			return false;
 		}
-		setSelectedRows( selectedRows.concat( cell ) );
+		setSelectedRows( ( prevSelectedRows ) => [ ...prevSelectedRows, cell ] );
 	};
 
 	return { selectedRows, insertRow, selectRow, deleteRow, deleteSelectedRows, updateRow, saveEditedRow };
