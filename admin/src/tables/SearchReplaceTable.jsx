@@ -27,7 +27,7 @@ export default function SearchReplaceTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -79,10 +79,14 @@ export default function SearchReplaceTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
-				selectRow( val, cell );
+			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+				cell.row.toggleSelected();
+				selectRows( cell );
 			} } />,
-			header: null,
+			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
+				head.table.toggleAllPageRowsSelected( val );
+				selectRows( val ? head : undefined );
+			} } />,
 		} ),
 		columnHelper.accessor( 'str_search', {
 			className: 'nolimit',
@@ -161,7 +165,6 @@ export default function SearchReplaceTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				table={ table }
-				selectedRows={ selectedRows }
 				onDeleteSelected={ () => deleteSelectedRows( { id: 'str_search' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ { header, rowEditorCells, title: 'Add New Replacement', data, slug, url, paginationId, rowToEdit, id: 'str_search', deleteCSVCols: [ paginationId, 'dest_url_id' ] } }

@@ -8,7 +8,7 @@ export const urlRegex = /^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,})
   */
 export const renameModule = ( moduleId ) => {
 	if ( moduleId ) {
-		const name = moduleId.replace( 'urlslab', '' );
+		const name = moduleId?.replace( 'urlslab', '' );
 		return name.replace( /-(\w)|^(\w)/g, ( char ) => char.replace( '-', '' ).toUpperCase() );
 	}
 };
@@ -18,7 +18,7 @@ export const renameModule = ( moduleId ) => {
 let delayTimer = 0;
 export const delay = ( fn, ms ) => {
 	return function( ...args ) {
-		if (delayTimer) {
+		if ( delayTimer ) {
 			clearTimeout( delayTimer );
 		}
 		delayTimer = setTimeout( fn.bind( this, ...args ), ms || 0 );

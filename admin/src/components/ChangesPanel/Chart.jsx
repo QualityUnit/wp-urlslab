@@ -3,7 +3,7 @@
 
 import { memo, useCallback, useState } from 'react';
 import { date, getSettings } from '@wordpress/date';
-import { AreaChart, LineChart, Area, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const Chart = ( { data, header } ) => {
 	const [ lineVisibility, setLineVisibility ] = useState( {} );
