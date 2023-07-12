@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo, useEffect } from 'react';
+import { memo, useMemo, useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useI18n } from '@wordpress/react-i18n';
@@ -25,21 +25,28 @@ function ChangesPanel() {
 	const { CloseIcon, handleClose } = useCloseModal();
 	const { title, slug } = useTablePanels( ( state ) => state.options.changesPanel );
 
-	const { selectedRows, selectRow } = useChangeRow( {} );
+	const { selectedRows, selectRows, clearRows } = useChangeRow( {} );
+	const [ consecutiveSelects, setConsecutiveSelects ] = useState( [] );
 
 	function hidePanel() {
 		handleClose();
 	}
 
-	const handleSelection = useCallback( ( isSeleted, cell ) => {
-		selectRow( isSeleted, cell );
-	}, [ selectRow ] );
-
 	useEffect( () => {
-		if ( selectedRows.length > 2 ) {
-			selectRow( false, selectedRows[ 0 ] );
+		if ( consecutiveSelects && selectedRows.length === 0 && consecutiveSelects.length === 2 ) {
+			consecutiveSelects[ 0 ].row.toggleSelected();
+			selectRows( consecutiveSelects[ 0 ] );
+			consecutiveSelects[ 1 ].row.toggleSelected();
+			selectRows( consecutiveSelects[ 1 ] );
+			setConsecutiveSelects( [] );
+			useTablePanels.setState( { imageCompare: true } );
 		}
-	}, [ selectedRows, selectRow ] );
+
+		if ( selectedRows.length > 2 ) {
+			selectedRows[ 0 ].row.toggleSelected();
+			selectRows( selectedRows[ 0 ], true );
+		}
+	}, [ selectedRows, selectRows ] );
 
 	const tableResult = useQuery( {
 		queryKey: [ slug ],
@@ -89,9 +96,15 @@ function ChangesPanel() {
 				const isSelected = cell.row.getIsSelected();
 
 				return <div className="pos-relative pl-m">
-					<Checkbox className="thumbnail-check" defaultValue={ isSelected } onChange={ ( val ) => handleSelection( val, cell ) }
-					/>
-					{ selectedRows.length === 2 && isSelected && cell.row.id === selectedRows[ 1 ].row.id &&
+					<Checkbox className="thumbnail-check" defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
+						cell.row.toggleSelected();
+						if ( ! val ) {
+							selectRows( cell, true );
+							return false;
+						}
+						selectRows( cell );
+					} } />
+					{ selectedRows && selectedRows?.length === 2 && isSelected && cell.row.id === selectedRows[ 1 ].row.id &&
 					<Button active className="thumbnail-button" onClick={ () => useTablePanels.setState( { imageCompare: true } ) }>
 						Show diff 2/2
 					</Button>
@@ -155,9 +168,15 @@ function ChangesPanel() {
 				if ( tableResult.data.length > 1 && cell.row.index < tableResult.data.length - 1 ) {
 					return <DiffButton
 						onClick={ () => {
-							selectRow( true, cell.row.getAllCells()[ 0 ].getContext() );
-							selectRow( true, cell.table.getRow( cell.row.index + 1 ).getAllCells()[ 0 ].getContext() );
-							useTablePanels.setState( { imageCompare: true } );
+							// removing selected rows
+							setConsecutiveSelects( [
+								cell.row.getAllCells()[ 0 ].getContext(),
+								cell.table.getRow( cell.row.index + 1 ).getAllCells()[ 0 ].getContext(),
+							] );
+							selectedRows.forEach( ( row ) => {
+								row.row.toggleSelected();
+							} );
+							clearRows();
 						} }
 					>{ __( 'Show Difference' ) }</DiffButton>;
 				}

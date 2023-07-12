@@ -229,5 +229,9 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 		setTable();
 	};
 
-	return { selectedRows, insertRow, selectRows, deleteRow, deleteSelectedRows, updateRow, saveEditedRow };
+	const clearRows = () => {
+		setSelectedRows( [ ] );
+	};
+
+	return { selectedRows, insertRow, selectRows, deleteRow, clearRows, deleteSelectedRows, updateRow, saveEditedRow };
 }
