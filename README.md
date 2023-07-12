@@ -1,4 +1,4 @@
-# Elevate your WordPress site with URLsLab - boost SEO and performance with minimal effort (BETA)
+# Elevate your WordPress site with URLsLab - boost SEO and performance with minimal effort (Developer BETA)
 
 Introducing URLsLab, a powerful and versatile WordPress plugin designed to optimize your website's performance and SEO. With a suite of innovative modules, URLsLab automates various tasks and improvements, ensuring your website stands out in the digital landscape.
 
