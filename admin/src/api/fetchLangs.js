@@ -1,11 +1,11 @@
 /* global wpApiSettings */
 
-import { langName } from '../lib/helpers';
+import { getParamsChar, langName } from '../lib/helpers';
 
 export async function fetchLangs( ) {
 	const langPairs = {};
 	try {
-		const response = await fetch( wpApiSettings.root + 'urlslab/v1/language', {
+		const response = await fetch( wpApiSettings.root + 'urlslab/v1/language' + getParamsChar() + 'rows_per_page=1000', {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
