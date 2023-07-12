@@ -50,7 +50,7 @@ const StepApiKey = ( { apiSetting } ) => {
 				<div className="flex flex-justify-center">
 					<div className="urlslab-onboarding-success-wrapper flex flex-align-center flex-justify-center">
 						<DollarIcon />
-						{ __( 'Apply API key and receive 5 dollars for free (451 requests)' ) }
+						{ __( 'With API key you receive 5 dollars in credits for free' ) }
 					</div>
 				</div>
 
@@ -65,7 +65,7 @@ const StepApiKey = ( { apiSetting } ) => {
 
 				<div className="urlslab-onboarding-content-settings-footer flex flex-align-center flex-justify-space-between">
 					<div className="footer-text">
-						{ __( 'I don\'t have API Key.' ) }&nbsp;<Button className="simple underline" href="https://www.urlslab.com/" target="_blank">{ __( 'Get API Key' ) }</Button>
+						{ __( 'I don\'t have API Key.' ) }&nbsp;<Button className="simple underline" href="https://www.urlslab.com/login/" target="_blank">{ __( 'Get API Key' ) }</Button>
 					</div>
 					<Button
 						className="active"

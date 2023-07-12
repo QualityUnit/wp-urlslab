@@ -49,8 +49,8 @@ const StepSchedule = () => {
 		<div className={ `urlslab-onboarding-content-wrapper large-wrapper fadeInto step-${ activeStep }` }>
 
 			<div className="urlslab-onboarding-content-heading">
-				<h1 className="heading-title">{ __( 'Set schedule details' ) }</h1>
-				<p className="heading-description">Lorem Ipsum is simply dummy text of the printing and typesetting industry</p>
+				<h1 className="heading-title">{ __( 'Schedule your own domain' ) }</h1>
+				<p className="heading-description">The scheduling of the domain is a critical part of the plugin. To fully harness all the features, we initially need to scan and index your website.</p>
 			</div>
 
 			<div className="urlslab-onboarding-content-settings">
