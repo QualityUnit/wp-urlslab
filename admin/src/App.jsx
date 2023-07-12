@@ -20,6 +20,17 @@ export default function App() {
 	const queryClient = useQueryClient();
 	const [ prefetch, setPrefetch ] = useState( true );
 
+	const { data } = useQuery( {
+		queryKey: [ 'modules' ],
+		queryFn: async () => {
+			const response = await getFetch( 'module' ).then( ( ModuleData ) => ModuleData );
+			if ( response.ok ) {
+				return response.json();
+			}
+		},
+		refetchOnWindowFocus: false,
+	} );
+
 	useEffect( () => {
 		if ( prefetch ) {
 			update( 'apiKeySet', () => true );
@@ -27,7 +38,7 @@ export default function App() {
 			async function getApiKey() {
 				const generalData = await queryClient.fetchQuery( {
 					queryKey: [ 'general' ],
-					queryFn: () => fetchSettings( 'general' ).then( ( data ) => data ),
+					queryFn: () => fetchSettings( 'general' ).then( ( result ) => result ),
 					refetchOnWindowFocus: false,
 				} );
 
@@ -110,17 +121,6 @@ export default function App() {
 		}
 	}, [] );
 
-	const { data } = useQuery( {
-		queryKey: [ 'modules' ],
-		queryFn: async () => {
-			const response = await getFetch( 'module' ).then( ( ModuleData ) => ModuleData );
-			if ( response.ok ) {
-				return response.json();
-			}
-		},
-		refetchOnWindowFocus: false,
-	} );
-
 	const fetchedModules = useMemo( () => {
 		return data;
 	}, [ data ] );
@@ -137,10 +137,14 @@ export default function App() {
 			}
 			<div className="urlslab-app-main">
 				<Header fetchedModules={ fetchedModules } />
-
-				<DynamicModule
-					modules={ ! fetchedModules || Object.values( fetchedModules ) }
-				/>
+				{
+					fetchedModules &&
+					<Suspense>
+						<DynamicModule
+							modules={ ! fetchedModules || Object.values( fetchedModules ) }
+						/>
+					</Suspense>
+				}
 			</div>
 			<Notifications />
 		</div>

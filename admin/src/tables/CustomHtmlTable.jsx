@@ -39,7 +39,7 @@ export default function CustomHtmlTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -152,10 +152,14 @@ export default function CustomHtmlTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
-				selectRow( val, cell );
+			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+				cell.row.toggleSelected();
+				selectRows( cell );
 			} } />,
-			header: null,
+			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
+				head.table.toggleAllPageRowsSelected( val );
+				selectRows( val ? head : undefined );
+			} } />,
 		} ),
 		columnHelper.accessor( 'name', {
 			className: 'nolimit',
@@ -214,7 +218,6 @@ export default function CustomHtmlTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				table={ table }
-				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ { header, rowEditorCells, rowToEdit, data, slug, url, paginationId, title: __( 'Add Custom HTML' ), id: 'name', deleteCSVCols: [ paginationId, 'dest_url_id' ]	} }

@@ -39,7 +39,7 @@ function ChangesPanel() {
 		if ( selectedRows.length > 2 ) {
 			selectRow( false, selectedRows[ 0 ] );
 		}
-	} );
+	}, [ selectedRows, selectRow ] );
 
 	const tableResult = useQuery( {
 		queryKey: [ slug ],
@@ -98,7 +98,7 @@ function ChangesPanel() {
 					}
 					<span className={ `thumbnail-wrapper ${ isSelected ? 'selected' : '' }` } style={ { maxWidth: '3.75rem' } }>
 						<img src={ cell?.getValue().thumbnail } alt={ title } />
-						{ isSelected && cell.row.id === selectedRows[ 0 ].row.id &&
+						{ isSelected && selectedRows?.length && cell.row.id === selectedRows[ 0 ].row.id &&
 							<span className="thumbnail-selected-info fs-xm">1/2</span>
 						}
 					</span>
@@ -172,8 +172,8 @@ function ChangesPanel() {
 
 	return (
 		<>
-			{ selectedRows.length === 2 &&
-				<ImageCompare selectedRows={ selectedRows } />
+			{ selectedRows && selectedRows?.length === 2 &&
+			<ImageCompare selectedRows={ selectedRows } />
 			}
 
 			{ tableResult.isSuccess && (
