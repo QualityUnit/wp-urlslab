@@ -12,30 +12,27 @@ import { ReactComponent as ArrowIcon } from '../../assets/images/icons/icon-arro
 
 const StepApiKey = ( { apiSetting } ) => {
 	const { __ } = useI18n();
-	const { activeStep, setNextStep } = useOnboarding();
-	const [ data, setData ] = useState( { api_key: apiSetting.options[ 'urlslab-api-key' ].value } );
+	const { activeStep, setNextStep, userData, setApiKey } = useOnboarding();
 	const [ updating, setUpdating ] = useState( false );
+	const [ userApiKey, setUserApiKey ] = useState( userData.apiKey );
 
 	const apiOption = apiSetting.options[ 'urlslab-api-key' ];
-
-	const setApiKey = useCallback( ( api_key ) => {
-		setData( { api_key } );
-	}, [] );
 
 	const submitData = useCallback( async () => {
 		setUpdating( true );
 		setNotification( 'onboarding-apikey-step', { message: __( 'Saving API key…' ), status: 'info' } );
 
-		const response = await setSettings( `general/${ apiOption.id }`, { value: data.api_key } );
+		const response = await setSettings( `general/${ apiOption.id }`, { value: userApiKey } );
 		if ( response.ok ) {
 			setNotification( 'onboarding-apikey-step', { message: __( 'API key successfully saved!' ), status: 'success' } );
+			setApiKey( userApiKey );
 			setNextStep();
 		} else {
 			setNotification( 'onboarding-apikey-step', { message: __( 'API key saving failed.' ), status: 'error' } );
 		}
 
 		setUpdating( false );
-	}, [ data, __, setNextStep, apiOption.id ] );
+	}, [ userApiKey, apiOption.id, __, setNextStep, setApiKey ] );
 
 	return (
 		<div className={ `urlslab-onboarding-content-wrapper small-wrapper fadeInto step-${ activeStep }` }>
@@ -58,8 +55,8 @@ const StepApiKey = ( { apiSetting } ) => {
 					label={ __( 'API Key' ) }
 					description={ __( 'Connect the website and URLsLab service with an API Key.' ) }
 					type="password"
-					defaultValue={ data.api_key }
-					onChange={ ( val ) => setApiKey( val ) }
+					defaultValue={ userApiKey }
+					onChange={ ( val ) => setUserApiKey( val ) }
 					liveUpdate //allow us to enable submit button immediately after api key paste
 				/>
 
@@ -70,7 +67,7 @@ const StepApiKey = ( { apiSetting } ) => {
 					<Button
 						className="active"
 						onClick={ () => submitData() }
-						disabled={ ! data.api_key || updating }
+						disabled={ ! userApiKey || updating }
 					>
 						<span>{ __( 'Apply and next' ) }</span>
 						<ArrowIcon />

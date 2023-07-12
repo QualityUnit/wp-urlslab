@@ -24,6 +24,7 @@ const Header = () => {
 				{ steps.map( ( step, index ) =>
 					<HeaderStep
 						key={ step.key }
+						stepId={ step.key }
 						label={ labels[ step.key ] }
 						index={ index }
 						active={ step.key === activeStep }
@@ -35,7 +36,8 @@ const Header = () => {
 	);
 };
 
-const HeaderStep = React.memo( ( { label, index, active, completed } ) => {
+const HeaderStep = React.memo( ( { stepId, label, index, active, completed } ) => {
+	const { setActiveStep } = useOnboarding();
 	return (
 		<div
 			className={ classNames( [
@@ -43,6 +45,13 @@ const HeaderStep = React.memo( ( { label, index, active, completed } ) => {
 				active ? 'state-active' : null,
 				completed && ! active ? 'state-completed' : null,
 			] ) }
+			onKeyUp={ null }
+			onClick={ completed && ! active
+				? () => {
+					setActiveStep( stepId );
+				}
+				: null
+			}
 		>
 			<div className="step-item-icon flex flex-align-center flex-justify-center">{ `0${ index + 1 }` }</div>
 			<div className="step-item-label">{ label }</div>

@@ -12,7 +12,7 @@ import StepModules from './steps/StepModules';
 const Content = () => {
 	const queryClient = useQueryClient();
 	const { settingsLoaded } = useCheckApiKey();
-	const { activeStep } = useOnboarding();
+	const { activeStep, setApiKey } = useOnboarding();
 
 	// wait while we have loaded all necessary data
 	const [ dataLoaded, setDataLoaded ] = useState( false );
@@ -24,9 +24,11 @@ const Content = () => {
 
 	useEffect( () => {
 		if ( modules && apiSetting ) {
+			//set initial api key value, if onboarding is forced to show in future again
+			setApiKey( apiSetting.options[ 'urlslab-api-key' ].value );
 			setDataLoaded( true );
 		}
-	}, [ modules, apiSetting ] );
+	}, [ modules, apiSetting, setApiKey ] );
 
 	return (
 		<div className="urlslab-onboarding-content">

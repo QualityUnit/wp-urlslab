@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
+import { setNotification } from '../../hooks/useNotifications';
+import { postFetch } from '../../api/fetching';
 import useOnboarding from '../../hooks/useOnboarding';
 import DashboardModule from '../../components/DashboardModule';
 import Button from '../../elements/Button';
@@ -9,7 +11,23 @@ import { ReactComponent as ArrowIcon } from '../../assets/images/icons/icon-arro
 
 const StepModules = ( { modules } ) => {
 	const { __ } = useI18n();
-	const { activeStep, setActiveOnboarding } = useOnboarding();
+	const [ updating, setUpdating ] = useState( false );
+	const { activeStep, userData, setActiveOnboarding } = useOnboarding();
+
+	const submitData = useCallback( async () => {
+		setUpdating( true );
+		setNotification( 'onboarding-modules-step', { message: __( 'Saving data…' ), status: 'info' } );
+
+		const response = await postFetch( `schedule/create`, userData.scheduleData );
+		if ( response.ok ) {
+			setNotification( 'onboarding-modules-step', { message: __( 'Data successfully saved!' ), status: 'success' } );
+			setActiveOnboarding( false );
+		} else {
+			setNotification( 'onboarding-modules-step', { message: __( 'Data saving failed.' ), status: 'error' } );
+		}
+
+		setUpdating( false );
+	}, [ userData.scheduleData, __, setActiveOnboarding ] );
 
 	return (
 		<div className={ `urlslab-onboarding-content-wrapper small-wrapper fadeInto step-${ activeStep }` }>
@@ -39,7 +57,8 @@ const StepModules = ( { modules } ) => {
 				<div className="urlslab-onboarding-content-settings-footer flex flex-justify-end">
 					<Button
 						className="active"
-						onClick={ () => setActiveOnboarding( false ) }
+						onClick={ () => submitData() }
+						disabled={ updating }
 					>
 						<span>{ __( 'Finish and go to plugin' ) }</span>
 						<ArrowIcon />
