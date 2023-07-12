@@ -210,54 +210,89 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 
 			return '';
 		}
+		$atts = shortcode_atts(
+			array(
+				'videoid' => '',
+				'show_video' => 'true',
+				'show_summarization' => 'true',
+				'show_topics' => 'false',
+				'language' => get_locale(),
+				'transcript_type' => 'NO_TRANSCRIPT',
+			),
+			$atts,
+			'urlslab-youtube-video'
+		);
+
 
 		# getting the YT Video Data
+		$yt_helper = Urlslab_Yt_Helper::get_instance();
 		$video_obj = Urlslab_Youtube_Row::get_video_obj( $atts['videoid'] );
 		if ( $video_obj->is_active() ) {
 			# Should Display
 
 			#Initializing variables
 			$show_summarization = true;
-			$show_video = true;
 			$show_topics = false;
-			$transcript_type = 'NO_TRANSCRIPT';
 			$language = get_locale();
 
 			# setting values
-			if ( ! empty( $atts['show_summarization'] ) && 'false' == $atts['show_summarization'] ) {
+			if ( 'false' == $atts['show_summarization'] ) {
 				$show_summarization = false;
 			}
 
-			if ( ! empty( $atts['show_video'] ) && 'false' == $atts['show_video'] ) {
-				$show_video = false;
-			}
-
-			if ( ! empty( $atts['show_topics'] ) && 'true' == $atts['show_topics']) {
+			if ( 'true' == $atts['show_topics'] ) {
 				$show_topics = true;
 			}
 
-			if ( ! empty( $atts['transcript_type'] ) && in_array( $atts['transcript_type'], array( 'TRANSCRIPT', 'TRANSCRIPT_TEXT' ) ) ) {
-				$transcript_type = $atts['transcript_type'];
-			}
-
-			if ( ! empty( $atts['language'] ) ) {
-				$language = $atts['language'];
-			}
-
 			# Checking if the video has needed data
-			if ( should_fetch_additional_data( $video_obj, $show_summarization, $show_topics ) ) {
+			if ( $yt_helper->should_fetch_additional_data( $video_obj, $show_summarization, $show_topics ) ) {
 				# Should still generate output
 				// Assuming $lastAttempt is in a format that can be converted to a DateTime object
-				$lastAttemptTime = new DateTime( $video_obj->get_last_ai_generation_attempt() );
-				$currentTime = new DateTime();
+				$last_attempt_time = new DateTime( $video_obj->get_last_ai_generation_attempt() );
+				$current_time = new DateTime();
 
-				if ( $currentTime->diff( $lastAttemptTime )->h > 2 ) {
+				if ( $current_time->diff( $last_attempt_time )->h > 2 ) {
 					# should retry generating the summary
-
+					$video_obj->set_last_ai_generation_attempt( current_time( 'mysql' ) );
+					$video_obj->update();
+					try {
+						$response = $yt_helper->augment_yt_data( $video_obj, '', $yt_helper->get_default_yt_data_prompt( $language ) );
+						$output = json_decode( $response );
+						if ( json_last_error() == JSON_ERROR_NONE ) {
+							// No errors, proceed accessing $data
+							$video_obj->set_topics( $output->topics );
+							$video_obj->set_summarization( $output->summarization );
+							$video_obj->update();
+						} else {
+							return '';
+						}
+					} catch ( Exception $e ) {
+						return '';
+					}               
 				} else {
 					return '';
 				}           
-			}       
+			}
+
+			// data available
+			// initializing atts with all needed variables
+			$atts = array_merge( $atts, $video_obj->as_array() );
+			$atts['caption_text'] = $video_obj->get_captions_as_text();
+			$atts['duration'] = $video_obj->get_duration();
+			$atts['thumbnail_url'] = $video_obj->get_thumbnail_url();
+			$atts['title'] = $video_obj->get_title();
+			$atts['video_tags'] = $video_obj->get_video_tags();
+			$atts['channel_title'] = $video_obj->get_channel_title();
+			// Start the output buffer.
+			ob_start();
+
+			// Load the template.
+			include( URLSLAB_PLUGIN_DIR . 'public/templates/youtube-result.php' );
+
+			// Get the result and clean the output buffer.
+			$content = ob_get_clean();
+
+			return $content;
 		}
 
 		return '';

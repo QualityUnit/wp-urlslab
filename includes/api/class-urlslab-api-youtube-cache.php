@@ -341,7 +341,8 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 			);
 		}
 
-		$yt_data = Urlslab_Yt_Helper::get_instance()->get_yt_data( $yt_id );
+        $yt_helper = Urlslab_Yt_Helper::get_instance();
+        $yt_data = $yt_helper->get_yt_data( $yt_id );
 
 		if ( ! $yt_data ) {
 			return new WP_REST_Response(
@@ -351,17 +352,18 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 				404
 			);
 		}
+		$yt_data->set_last_ai_generation_attempt( current_time( 'mysql' ) );
+		$yt_data->update();
 
-		if ( Urlslab_Yt_Helper::get_instance()->should_fetch_additional_data( $yt_data, $show_topics, $show_summarization ) ) {
+		if ( $yt_helper->should_fetch_additional_data( $yt_data, $show_topics, $show_summarization ) ) {
 			try {
-				$response = Urlslab_Yt_Helper::get_instance()->augment_yt_data( $yt_data, $aug_model, $this->get_default_yt_data_prompt( $language ) );
+				$response = $yt_helper->augment_yt_data( $yt_data, $aug_model, $yt_helper->get_default_yt_data_prompt( $language ) );
 				$output = json_decode( $response );
 				if ( json_last_error() == JSON_ERROR_NONE ) {
 					// No errors, proceed accessing $data
 					$yt_data->set_topics( $output->topics );
 					$yt_data->set_summarization( $output->summarization );
-					$yt_data->set_last_ai_generation_attempt( current_time( 'mysql' ) );
-					$yt_data->insert();
+					$yt_data->update();
 					return new WP_REST_Response( (object) array( 'message' => 'successfully fetched youtube data' ), 200 );
 
 				} else {
@@ -392,10 +394,6 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 			200
 		);
 
-	}
-
-	private function get_default_yt_data_prompt( $language ) {
-		return "TASK: You are marketing specialist writing text for web page localized into $language. Analyze video captions and generate summary of video and 3 main topics discussed in video. Output summary and topics just in $language. OUTPUT FORMAT JSON: { \"video_summary\":\"300 words long summary of video in $language\", \"discussed_topics\": [\"topic1\", \"topic2\", \"topic3\"], \"language_code\": \"$language\" } ";
 	}
 
 	/**

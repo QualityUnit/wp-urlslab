@@ -131,6 +131,10 @@ class Urlslab_Yt_Helper {
 		return empty( $youtube_obj->get_video_summary() ) && ( $show_topics || $show_summarization );
 	}
 
+	public function get_default_yt_data_prompt( $language ): string {
+		return "TASK: You are marketing specialist writing text for web page localized into $language. Analyze video captions and generate summary of video and 3 main topics discussed in video. Output summary and topics just in $language. OUTPUT FORMAT JSON: { \"video_summary\":\"300 words long summary of video in $language\", \"discussed_topics\": [\"topic1\", \"topic2\", \"topic3\"], \"language_code\": \"$language\" } ";
+	}
+
 	public function augment_yt_data( Urlslab_Youtube_Row $youtube_obj, $model, $prompt ) {
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
 		if ( empty( $model ) ) {
