@@ -341,8 +341,8 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 			);
 		}
 
-        $yt_helper = Urlslab_Yt_Helper::get_instance();
-        $yt_data = $yt_helper->get_yt_data( $yt_id );
+		$yt_helper = Urlslab_Yt_Helper::get_instance();
+		$yt_data = $yt_helper->get_yt_data( $yt_id );
 
 		if ( ! $yt_data ) {
 			return new WP_REST_Response(
