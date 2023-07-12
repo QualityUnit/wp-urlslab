@@ -21,8 +21,9 @@ function ColorPicker( { defaultValue, label, className, onChange } ) {
 	const [ isActive, setActive ] = useState( false );
 
 	const close = useCallback( () => {
-		setColor( startColor ); setActive( false );
-	}, [] );
+		setActive( false );
+		setColor( startColor );
+	}, [ startColor ] );
 	useClickOutside( panelPopover, close );
 
 	const handleColor = ( val ) => {
