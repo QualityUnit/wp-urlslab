@@ -6,7 +6,6 @@ use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalVideoCaptionResponse;
 use Urlslab_Vendor\OpenAPI\Client\Urlslab\VideoApi;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalContentQuery;
 use Urlslab_Vendor\GuzzleHttp;
 
 class Urlslab_Yt_Helper {
@@ -135,7 +134,7 @@ class Urlslab_Yt_Helper {
 		return "TASK: You are marketing specialist writing text for web page localized into $language. Analyze video captions and generate summary of video and 3 main topics discussed in video. Output summary and topics just in $language. OUTPUT FORMAT JSON: { \"video_summary\":\"300 words long summary of video in $language\", \"discussed_topics\": [\"topic1\", \"topic2\", \"topic3\"], \"language_code\": \"$language\" } ";
 	}
 
-	public function augment_yt_data( Urlslab_Youtube_Row $youtube_obj, $model, $prompt ) {
+	public function augment_yt_data( Urlslab_Youtube_Row $youtube_obj, $model, $prompt_text ) {
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
 		if ( empty( $model ) ) {
 			$aug_model = $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_GENERATOR_MODEL );
@@ -150,6 +149,11 @@ class Urlslab_Yt_Helper {
 		if ( empty( $youtube_obj->get_captions() ) ) {
 			throw new Exception( 'No captions available' );
 		}
+
+		$prompt = new DomainDataRetrievalAugmentPrompt();
+		$prompt->setPromptTemplate( $prompt_text );
+		$prompt->setDocumentTemplate( $youtube_obj->get_captions_as_text() );
+		$prompt->setMetadataVars( array() );
 
 		$aug_request->setPrompt( $prompt );
 		$aug_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );

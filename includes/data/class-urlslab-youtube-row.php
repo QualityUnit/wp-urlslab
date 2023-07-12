@@ -68,7 +68,7 @@ class Urlslab_Youtube_Row extends Urlslab_Data {
 	}
 
 	public function get_topics() {
-		return $this->get( 'topics' );
+		return explode( ',', $this->get( 'topics' ) );
 	}
 
 	public function get_last_ai_generation_attempt() {

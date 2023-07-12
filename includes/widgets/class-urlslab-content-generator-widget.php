@@ -201,7 +201,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 	}
 
 	public function get_video_shortcode_content( $atts = array(), $content = null, $tag = '' ) {
-		if ( empty( $atts['yt-id'] ) ) {
+		if ( empty( $atts['videoid'] ) ) {
 			if ( $this->is_edit_mode() ) {
 				$atts['STATUS'] = 'Missing shortcode ID attribute!!!';
 
@@ -248,10 +248,15 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			if ( $yt_helper->should_fetch_additional_data( $video_obj, $show_summarization, $show_topics ) ) {
 				# Should still generate output
 				// Assuming $lastAttempt is in a format that can be converted to a DateTime object
-				$last_attempt_time = new DateTime( $video_obj->get_last_ai_generation_attempt() );
-				$current_time = new DateTime();
+				$process = true;
+				if ( $video_obj->get_last_ai_generation_attempt() ) {
+					$last_attempt_time = new DateTime( $video_obj->get_last_ai_generation_attempt() );
+					$current_time = new DateTime();
+					$diff = $current_time->diff( $last_attempt_time );
+					$process = ( $diff->days * 24 ) + $diff->h > 2;
+				}
 
-				if ( $current_time->diff( $last_attempt_time )->h > 2 ) {
+				if ( $process ) {
 					# should retry generating the summary
 					$video_obj->set_last_ai_generation_attempt( current_time( 'mysql' ) );
 					$video_obj->update();
@@ -260,8 +265,8 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 						$output = json_decode( $response );
 						if ( json_last_error() == JSON_ERROR_NONE ) {
 							// No errors, proceed accessing $data
-							$video_obj->set_topics( $output->topics );
-							$video_obj->set_summarization( $output->summarization );
+							$video_obj->set_topics( $output->discussed_topics );
+							$video_obj->set_summarization( $output->video_summary );
 							$video_obj->update();
 						} else {
 							return '';
@@ -278,6 +283,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			// initializing atts with all needed variables
 			$atts = array_merge( $atts, $video_obj->as_array() );
 			$atts['caption_text'] = $video_obj->get_captions_as_text();
+			$atts['topics'] = $video_obj->get_topics();
 			$atts['duration'] = $video_obj->get_duration();
 			$atts['thumbnail_url'] = $video_obj->get_thumbnail_url();
 			$atts['title'] = $video_obj->get_title();
@@ -295,6 +301,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			return $content;
 		}
 
+		$video_obj->insert();
 		return '';
 
 	}

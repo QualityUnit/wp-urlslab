@@ -254,6 +254,16 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.28.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' ADD COLUMN summarization TEXT' ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' ADD COLUMN topics TEXT' ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' ADD COLUMN last_ai_generation_attempt DATETIME' ); // phpcs:ignore
+			}
+		);
+
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
