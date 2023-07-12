@@ -16,7 +16,7 @@ const StepModules = ( { modules } ) => {
 
 			<div className="urlslab-onboarding-content-heading">
 				<h1 className="heading-title">{ __( 'Select modules' ) }</h1>
-				<p className="heading-description">Select the ideal modules for your needs. We advise utilizing all of them to optimize the SEO and performance of your website to the fullest.</p>
+				<p className="heading-description">{ __( 'Select the ideal modules for your needs. We advise utilizing all of them to optimize the SEO and performance of your website to the fullest.' ) }</p>
 			</div>
 
 			<div className="urlslab-onboarding-content-settings">
