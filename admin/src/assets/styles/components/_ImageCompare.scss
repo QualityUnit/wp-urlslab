@@ -6,17 +6,34 @@
 
 	@include posZero;
 	position: fixed;
-	display: flex;
-	align-items: center;
-	justify-content: center;
 	background-color: $black-real;
 	z-index: 100002;
 	color: $white;
 
-	.urlslab-panel-close {
-		position: absolute;
-		top: 2em;
-		right: 3em;
+	&-top-control {
+		padding: 2rem;
+		border: 1px solid red;
+		width: 100%;
+	}
+
+	&-panel {
+		width: 100%;
+		border: 1px solid green;
+		display: flex;
+		justify-content: center;
+	}
+
+	.urlslab-panel-close-container {
+		width: 100%;
+		display: flex;
+		border: 1px solid blue;
+		justify-content: flex-end;
+
+		&-btn {
+			cursor: pointer;
+			color: #fff;
+		}
+
 	}
 
 	img-comparison-slider {
@@ -53,16 +70,12 @@
 	}
 
 	&-wrapper {
-		@include scrollbar;
-		height: 80%;
 		display: flex;
 		align-items: flex-start;
-		justify-content: center;
 		cursor: col-resize;
 	}
 
 	&-img {
-		height: 100%;
-		width: 30%;
+		width: 100%;
 	}
 }
