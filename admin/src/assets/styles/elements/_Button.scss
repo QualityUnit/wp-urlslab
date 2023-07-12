@@ -62,7 +62,7 @@ button.urlslab-button,
 		color: $white;
 
 		&[disabled] {
-			background-color: $lighter-blue;
+			background-color: $disabled-blue;
 		}
 
 		.urlslab-loader {
@@ -150,7 +150,7 @@ button.urlslab-button,
 
 		&[disabled]:hover {
 			background-color: $grey-lighter;
-			cursor: default;
+			cursor: not-allowed;
 		}
 
 		&.simple:hover {
@@ -166,7 +166,8 @@ button.urlslab-button,
 			}
 
 			&[disabled]:hover {
-				background-color: $lighter-blue;
+				background-color: $disabled-blue;
+				cursor: not-allowed;
 			}
 		}
 
