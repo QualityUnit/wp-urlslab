@@ -14,7 +14,10 @@ import MainMenu from './components/MainMenu';
 import DynamicModule from './components/DynamicModule';
 import Header from './components/Header';
 
+
 import './assets/styles/style.scss';
+
+import { useSelectableItems } from './hooks/useSelectableItems';
 
 export default function App() {
 	const queryClient = useQueryClient();
@@ -42,52 +45,52 @@ export default function App() {
 					refetchOnWindowFocus: false,
 				} );
 
-				const isApiObject = generalData?.filter( ( dataset ) => dataset.id === 'api' )[ 0 ];
-				const hasApiKey = isApiObject?.options[ 'urlslab-api-key' ].value;
+        const isApiObject = generalData?.filter((dataset) => dataset.id === 'api')[0];
+        const hasApiKey = isApiObject?.options['urlslab-api-key'].value;
 
-				if ( ! hasApiKey ) {
-					update( 'apiKeySet', ( ) => false );
-				}
-			}
-			getApiKey();
+        if (!hasApiKey) {
+          update('apiKeySet', () => false);
+        }
+      }
+      getApiKey();
 
-			// Creating languages query object in advance
-			queryClient.prefetchQuery( {
-				queryKey: [ 'languages' ],
-				queryFn: async () => await fetchLangs(),
-				refetchOnWindowFocus: false,
-			} );
+      // Creating languages query object in advance
+      queryClient.prefetchQuery({
+        queryKey: ['languages'],
+        queryFn: async () => await fetchLangs(),
+        refetchOnWindowFocus: false,
+      });
 
-			/* Creating all endpoints query object in advance
+      /* Creating all endpoints query object in advance
 			to check for allowed+required import/insert/edit CSV fields */
-			queryClient.prefetchQuery( {
-				queryKey: [ 'routes' ],
-				queryFn: async () => {
-					const response = await getFetch();
-					if ( response.ok ) {
-						return response.json();
-					}
-				},
-				refetchOnWindowFocus: false,
-			} );
+      queryClient.prefetchQuery({
+        queryKey: ['routes'],
+        queryFn: async () => {
+          const response = await getFetch();
+          if (response.ok) {
+            return response.json();
+          }
+        },
+        refetchOnWindowFocus: false,
+      });
 
-			// Creating Tags/Labels query object in advance
-			queryClient.prefetchQuery( {
-				queryKey: [ 'label', 'menu' ],
-				queryFn: async () => {
-					const tags = await postFetch( 'label', { rows_per_page: 500 } );
-					const tagsArray = await tags.json();
-					tagsArray?.map( ( tag ) => {
-						const { lightness } = hexToHSL( tag.bgcolor );
-						if ( lightness < 70 ) {
-							return tag.className = 'dark';
-						}
-						return tag;
-					} );
-					return tagsArray;
-				},
-				refetchOnWindowFocus: false,
-			} );
+      // Creating Tags/Labels query object in advance
+      queryClient.prefetchQuery({
+        queryKey: ['label', 'menu'],
+        queryFn: async () => {
+          const tags = await postFetch('label', { rows_per_page: 500 });
+          const tagsArray = await tags.json();
+          tagsArray?.map((tag) => {
+            const { lightness } = hexToHSL(tag.bgcolor);
+            if (lightness < 70) {
+              return (tag.className = 'dark');
+            }
+            return tag;
+          });
+          return tagsArray;
+        },
+        refetchOnWindowFocus: false,
+      });
 
 			// Creating Schedules query object in advance
 			queryClient.prefetchQuery( {
@@ -105,17 +108,17 @@ export default function App() {
 				refetchOnWindowFocus: false,
 			} );
 
-			// Creating Tags/Labels query object in advance
-			queryClient.prefetchQuery( {
-				queryKey: [ 'label', 'modules' ],
-				queryFn: async () => {
-					const response = await getFetch( 'label/modules' );
-					if ( response.ok ) {
-						return response.json();
-					}
-				},
-				refetchOnWindowFocus: false,
-			} );
+      // Creating Tags/Labels query object in advance
+      queryClient.prefetchQuery({
+        queryKey: ['label', 'modules'],
+        queryFn: async () => {
+          const response = await getFetch('label/modules');
+          if (response.ok) {
+            return response.json();
+          }
+        },
+        refetchOnWindowFocus: false,
+      });
 
 			setPrefetch( false );
 		}

@@ -85,7 +85,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "watch": "vite build --watch",
+    "watch":"vite build --watch",
+    "watch:custom": "vite build --emptyOutDir --watch --config vite.config.development.js",
     "build": "vite build",
     "preview": "vite preview"
   }
