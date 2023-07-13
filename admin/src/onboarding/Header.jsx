@@ -18,7 +18,7 @@ const Header = () => {
 	}, [ __ ] );
 
 	return (
-		<div className="urlslab-onboarding-header flex flex-align-center flex-justify-center pos-relative">
+		<div className="urlslab-onboarding-header flex flex-align-center flex-justify-center pos-relative mb-xxl">
 			<Logo className="urlslab-onboarding-header-logo pos-absolute" />
 			<div className="urlslab-onboarding-header-steps flex flex-align-center">
 				{ steps.map( ( step, index ) =>
@@ -53,8 +53,8 @@ const HeaderStep = React.memo( ( { stepId, label, index, active, completed } ) =
 				: null
 			}
 		>
-			<div className="step-item-icon flex flex-align-center flex-justify-center">{ `0${ index + 1 }` }</div>
-			<div className="step-item-label">{ label }</div>
+			<div className="step-item-icon flex flex-align-center flex-justify-center fs-normal">{ `0${ index + 1 }` }</div>
+			<div className="step-item-label fs-xm">{ label }</div>
 		</div>
 	);
 } );

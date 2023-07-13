@@ -47,7 +47,7 @@ const StepApiKey = ( { apiSetting } ) => {
 				<div className="flex flex-justify-center">
 					<div className="urlslab-onboarding-success-wrapper flex flex-align-center flex-justify-center">
 						<DollarIcon />
-						{ __( 'With API key you receive 5 dollars in credits for free' ) }
+						<span>{ __( 'With API key you receive 5 dollars in credits for free' ) }</span>
 					</div>
 				</div>
 
