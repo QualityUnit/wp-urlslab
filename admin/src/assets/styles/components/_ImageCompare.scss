@@ -50,6 +50,11 @@
 			&-item.active {
 				background-color: $black-real;
 			}
+
+			&-option {
+				display: flex;
+				align-items: center;
+			}
 		}
 
 		&-date {
@@ -130,11 +135,13 @@
 		flex-direction: column;
 		justify-content: flex-start;
 		cursor: col-resize;
+		transition: width 0.2s;
 	}
 
 	&-slider-container {
 		@include scrollbar;
-		height: 100%;
+		height: calc(100vh - 100px - 24px);
+		overflow: hidden auto;
 	}
 
 	&-img {

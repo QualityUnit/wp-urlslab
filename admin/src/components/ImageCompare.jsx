@@ -4,12 +4,22 @@ import { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.s
 import { ReactComponent as AdjacentScreenIcon } from '../assets/images/icons/icon-adjacent-screen.svg';
 import { ReactComponent as OverlayScreenIcon } from '../assets/images/icons/icon-overlay-no-diff.svg';
 import { ReactComponent as OverlayWithDiffIcon } from '../assets/images/icons/icon-overlay-with-diff.svg';
+import { ReactComponent as SearchIcon } from '../assets/images/icons/icon-search-white.svg';
+import { ReactComponent as SearchZoomInIcon } from '../assets/images/icons/icon-search-zoom-in.svg';
+import { ReactComponent as SearchZoomOutIcon } from '../assets/images/icons/icon-search-zoom-out.svg';
 import useTablePanels from '../hooks/useTablePanels';
 import '../assets/styles/components/_ImageCompare.scss';
 import SingleSelectMenu from '../elements/SingleSelectMenu';
 import { date, getSettings } from '@wordpress/date';
 
 const ImageCompare = ( { selectedRows, allChanges } ) => {
+	const zoomingOptions = {
+		0: 'Choose zoom level',
+		20: '20%',
+		30: '30%',
+		40: '40%',
+		50: '50%',
+	};
 	const dropdownItems = allChanges.reduce( ( acc, item ) => {
 		const dateFormatted = date( getSettings().formats.date, item.last_changed * 1000 );
 		const time = date( getSettings().formats.time, item.last_changed * 1000 );
@@ -23,6 +33,8 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 	const [ rightImageKey, setRightImageKey ] = useState( selectedRows[ 1 ].row.original.last_changed * 1000 );
 	const [ wrapperWidth, setWrapperWidth ] = useState( 0 );
 	const [ activeScreen, setActiveScreen ] = useState( 'overlay' ); // ['overlay', 'overlayWithDiff', 'adjacent']
+	const [ zoom, setZoom ] = useState( 0 );
+	const [ baseWrapperWidth, setBaseWrapperWidth ] = useState( 0 );
 	const imageCompare = useTablePanels( ( state ) => state.imageCompare );
 
 	const hideImageCompare = () => {
@@ -53,7 +65,28 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 		return false;
 	};
 
-	const calculateWrapperWidth = () => {
+	const handleZoomChange = ( newZoom ) => {
+		console.log( 'newZoom', newZoom );
+		const baseZoom = Math.round( ( baseWrapperWidth / window.innerWidth ) * 100 );
+
+		if ( newZoom <= baseZoom ) {
+			setWrapperWidth( baseWrapperWidth );
+			setZoom( baseZoom );
+			return;
+		}
+
+		if ( newZoom > 50 ) {
+			setWrapperWidth( window.innerWidth / 2 );
+			setZoom( 50 );
+			return;
+		}
+
+		const newWidth = ( newZoom / 100 ) * window.innerWidth;
+		setWrapperWidth( newWidth );
+		setZoom( newZoom );
+	};
+
+	const calculateWrapperInitialWidth = () => {
 		// eslint-disable-next-line no-undef
 		const image1Elem = new Image();
 		// eslint-disable-next-line no-undef
@@ -79,7 +112,9 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 	useEffect( () => {
 		const calculateWidth = async () => {
 			try {
-				const width = await calculateWrapperWidth();
+				const width = await calculateWrapperInitialWidth();
+				setZoom( Math.round( ( width / window.innerWidth ) * 100 ) );
+				setBaseWrapperWidth( width );
 				setWrapperWidth( width );
 			} catch ( error ) {}
 		};
@@ -140,8 +175,32 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 
 					</div>
 				</div>
-				<div className="urlslab-ImageCompare-top-control-zoom">
+				<div className="urlslab-ImageCompare-top-control-screens">
+					<div className={ `urlslab-ImageCompare-top-control-screens-item` }>
+						<div><SearchIcon /></div>
+						<div>{ zoom }%</div>
+					</div>
+					<button className={ `urlslab-ImageCompare-top-control-screens-item` }
+						onClick={ () => handleZoomChange( zoom + 10 ) }>
+						<div><SearchZoomInIcon /></div>
+						<div>Zoom In</div>
+					</button>
+					<button className={ `urlslab-ImageCompare-top-control-screens-item` }
+						onClick={ () => handleZoomChange( zoom - 10 ) }>
+						<div><SearchZoomOutIcon /></div>
+						<div>Zoom Out</div>
+					</button>
+					<div className="urlslab-ImageCompare-top-control-screens-option">
+						<SingleSelectMenu
+							items={ zoomingOptions }
+							dark={ true }
+							name="image_comparator_zoom_options"
+							autoClose
+							defaultValue="0"
+							onChange={ ( val ) => handleZoomChange( Number( val ) ) }
+						/>
 
+					</div>
 				</div>
 			</div>
 			<div className="urlslab-ImageCompare-panel">
