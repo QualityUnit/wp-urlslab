@@ -2,6 +2,9 @@ import { memo, useEffect, useState } from 'react';
 import { ImgComparisonSlider } from '@img-comparison-slider/react';
 import DateTimeFormat from '../elements/DateTimeFormat';
 import { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.svg';
+import { ReactComponent as AdjacentScreenIcon } from '../assets/images/icons/icon-adjacent-screen.svg';
+import { ReactComponent as OverlayScreenIcon } from '../assets/images/icons/icon-overlay-no-diff.svg';
+import { ReactComponent as OverlayWithDiffIcon } from '../assets/images/icons/icon-overlay-with-diff.svg';
 import useTablePanels from '../hooks/useTablePanels';
 import '../assets/styles/components/_ImageCompare.scss';
 
@@ -11,6 +14,7 @@ const ImageCompare = ( { selectedRows } ) => {
 	const image2 = selectedRows[ 1 ].cell.getValue().full;
 	const image2Date = selectedRows[ 1 ].row.original.last_seen * 1000;
 	const [ wrapperWidth, setWrapperWidth ] = useState( 0 );
+	const [ activeScreen, setActiveScreen ] = useState( 'overlay' ); // ['overlay', 'overlayWithDiff', 'adjacent']
 	const imageCompare = useTablePanels( ( state ) => state.imageCompare );
 
 	const hideImageCompare = () => {
@@ -26,7 +30,8 @@ const ImageCompare = ( { selectedRows } ) => {
 			image1Elem.onload = () => {
 				image2Elem.onload = () => {
 					const maxHeight = Math.max( image1Elem.height, image2Elem.height );
-					const wrapperW = window.innerHeight * Math.max( image1Elem.width, image2Elem.width ) / maxHeight;
+					const height = window.innerHeight - 24 - 100; // reducing the close button height and top control height
+					const wrapperW = height * Math.max( image1Elem.width, image2Elem.width ) / maxHeight;
 					resolve( wrapperW );
 				};
 				image2Elem.onerror = reject;
@@ -51,21 +56,47 @@ const ImageCompare = ( { selectedRows } ) => {
 		calculateWidth();
 	}, [] );
 
+	const handleScreenChange = ( screen ) => {
+		setActiveScreen( screen );
+	};
+
 	return (
 		imageCompare && wrapperWidth > 0 &&
 		<div className="urlslab-ImageCompare">
 			<div className="urlslab-ImageCompare-top-control">
-				here will be the controls
+				<div className="urlslab-ImageCompare-top-control-screens">
+					<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'overlay' ? 'active' : '' }` }
+						onClick={ () => handleScreenChange( 'overlay' ) }>
+						<div><OverlayScreenIcon /></div>
+						<div>Overlay Without diff</div>
+					</button>
+					<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'overlayWithDiff' ? 'active' : '' }` }
+						onClick={ () => handleScreenChange( 'overlayWithDiff' ) }>
+						<div><OverlayWithDiffIcon /></div>
+						<div>Overlay With diff</div>
+					</button>
+					<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'adjacent' ? 'active' : '' }` }
+						 onClick={ () => handleScreenChange( 'adjacent' ) }>
+						<div><AdjacentScreenIcon /></div>
+						<div>Adjacent With diff</div>
+					</button>
+				</div>
+				<div className="urlslab-ImageCompare-top-control-date">
+
+				</div>
+				<div className="urlslab-ImageCompare-top-control-zoom">
+
+				</div>
 			</div>
 			<div className="urlslab-ImageCompare-panel">
 				<div className="urlslab-ImageCompare-wrapper" style={ { width: wrapperWidth } }>
 
-					<div className="urlslab-panel-close-container" style={ { width: wrapperWidth } }>
+					<div className="urlslab-panel-close-container">
 						<button className="urlslab-panel-close-container-btn" onClick={ hideImageCompare }>
-							<CloseIcon style={ { color: "#fff" }} />
+							<CloseIcon />
 						</button>
 					</div>
-					<div style={ { width: wrapperWidth } }>
+					<div className="urlslab-ImageCompare-slider-container">
 						<ImgComparisonSlider value="50" hover={ false }>
 							<figure slot="first">
 								<img src={ image1 } alt="" className="urlslab-ImageCompare-img" />

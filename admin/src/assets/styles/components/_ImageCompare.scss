@@ -6,14 +6,51 @@
 
 	@include posZero;
 	position: fixed;
-	background-color: $black-real;
+	background-color: $black-transparent;
 	z-index: 100002;
 	color: $white;
 
 	&-top-control {
-		padding: 2rem;
+		display: flex;
+		justify-content: space-between;
+		padding: 0.6rem;
 		border: 1px solid red;
 		width: 100%;
+		height: 100px;
+
+		&-screens {
+			display: flex;
+			justify-content: flex-start;
+
+			&-item {
+				cursor: pointer;
+				max-width: 160px;
+				height: 100%;
+				padding: 0.5rem;
+				border-radius: 10px;
+				display: flex;
+				justify-content: center;
+				align-content: space-between;
+				flex-direction: column;
+				margin-right: 1rem;
+				color: $white;
+
+				div {
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					font-size: 0.8rem;
+				}
+
+				div:last-child {
+					margin-top: 0.5rem;
+				}
+			}
+
+			&-item.active {
+				background-color: $black-real;
+			}
+		}
 	}
 
 	&-panel {
@@ -26,12 +63,16 @@
 	.urlslab-panel-close-container {
 		width: 100%;
 		display: flex;
-		border: 1px solid blue;
 		justify-content: flex-end;
 
 		&-btn {
 			cursor: pointer;
-			color: #fff;
+			width: 24px;
+			height: 24px;
+
+			svg {
+				fill: $white;
+			}
 		}
 
 	}
@@ -71,8 +112,14 @@
 
 	&-wrapper {
 		display: flex;
-		align-items: flex-start;
+		flex-direction: column;
+		justify-content: flex-start;
 		cursor: col-resize;
+	}
+
+	&-slider-container {
+		@include scrollbar;
+		height: 100%;
 	}
 
 	&-img {
