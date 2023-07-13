@@ -28,6 +28,7 @@ type SingleSelectMenuType = Partial<{
 	disabled: boolean
 	isFilter: boolean
 	onChange: ( value: string ) => void,
+	dark: boolean,
 	tooltipLabel: {
 		tooltip: string,
 		label: string
@@ -36,7 +37,7 @@ type SingleSelectMenuType = Partial<{
 }> & React.PropsWithChildren
 
 export const SingleSelectMenu: React.FC<SingleSelectMenuType > = React.memo( ( {
-	tooltipLabel, children, className = undefined, name = undefined, style = undefined, items = undefined, description = undefined, defaultValue = undefined, defaultAccept = undefined, autoClose = undefined, disabled = undefined, isFilter = undefined, required = undefined, onChange = undefined,
+	tooltipLabel, children, className = undefined, name = undefined, style = undefined, items = undefined, description = undefined, defaultValue = undefined, defaultAccept = undefined, autoClose = undefined, disabled = undefined, isFilter = undefined, required = undefined, onChange = undefined, dark = undefined,
 }:SingleSelectMenuType ) => {
 	return (
 		<>
@@ -47,7 +48,7 @@ export const SingleSelectMenu: React.FC<SingleSelectMenuType > = React.memo( ( {
 				</div>
 				: null
 			}
-			<JSXSingleSelectMenu className={ className } name={ name } style={ style } items={ items } description={ description } defaultValue={ defaultValue } defaultAccept={ defaultAccept } autoClose={ autoClose } disabled={ disabled } isFilter={ isFilter } required={ required } onChange={ onChange }>{ tooltipLabel ? null : children }</JSXSingleSelectMenu>
+			<JSXSingleSelectMenu className={ className } name={ name } style={ style } items={ items } description={ description } defaultValue={ defaultValue } defaultAccept={ defaultAccept } autoClose={ autoClose } disabled={ disabled } isFilter={ isFilter } required={ required } onChange={ onChange } dark={ dark }>{ tooltipLabel ? null : children }</JSXSingleSelectMenu>
 		</>
 	);
 } );
@@ -82,7 +83,7 @@ type CheckboxType = Partial<{
 export const Checkbox: React.FC<CheckboxType> = React.memo( ( {
 	defaultValue = undefined, smallText = undefined, disabled = undefined, readOnly = undefined, radial = undefined, name = undefined, className = undefined, onChange = undefined, textBefore = undefined, children,
 }: CheckboxType ) => {
-	return <JSXCheckbox defaultValue={defaultValue} smallText={smallText} disabled={ disabled } readOnly={ readOnly } radial={ radial } name={ name } className={ className } onChange={ onChange } textBefore={ textBefore }>{ children }</JSXCheckbox>;
+	return <JSXCheckbox defaultValue={ defaultValue } smallText={ smallText } disabled={ disabled } readOnly={ readOnly } radial={ radial } name={ name } className={ className } onChange={ onChange } textBefore={ textBefore }>{ children }</JSXCheckbox>;
 } );
 Checkbox.displayName = 'Checkbox';
 

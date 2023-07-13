@@ -1,6 +1,5 @@
 import { memo, useEffect, useState } from 'react';
 import { ImgComparisonSlider } from '@img-comparison-slider/react';
-import DateTimeFormat from '../elements/DateTimeFormat';
 import { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.svg';
 import { ReactComponent as AdjacentScreenIcon } from '../assets/images/icons/icon-adjacent-screen.svg';
 import { ReactComponent as OverlayScreenIcon } from '../assets/images/icons/icon-overlay-no-diff.svg';
@@ -8,7 +7,7 @@ import { ReactComponent as OverlayWithDiffIcon } from '../assets/images/icons/ic
 import useTablePanels from '../hooks/useTablePanels';
 import '../assets/styles/components/_ImageCompare.scss';
 import SingleSelectMenu from '../elements/SingleSelectMenu';
-import {date, getSettings} from "@wordpress/date";
+import { date, getSettings } from '@wordpress/date';
 
 const ImageCompare = ( { selectedRows, allChanges } ) => {
 	const dropdownItems = allChanges.reduce( ( acc, item ) => {
@@ -28,6 +27,30 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 
 	const hideImageCompare = () => {
 		useTablePanels.setState( { imageCompare: false } );
+	};
+
+	const handleImageChange = ( newImage, isLeft ) => {
+		if ( isLeft ) {
+			if ( newImage === leftImage ) {
+				return false;
+			}
+
+			setLeftImage( allChanges.filter( ( change ) => change.last_changed * 1000 === Number( newImage ) )[ 0 ].screenshot.full );
+			setLeftImageKey( newImage );
+			return true;
+		}
+
+		if ( rightImage ) {
+			if ( newImage === rightImage ) {
+				return false;
+			}
+
+			setRightImage( allChanges.filter( ( change ) => change.last_changed * 1000 === Number( newImage ) )[ 0 ].screenshot.full );
+			setRightImageKey( newImage );
+			return true;
+		}
+
+		return false;
 	};
 
 	const calculateWrapperWidth = () => {
@@ -62,7 +85,7 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 		};
 
 		calculateWidth();
-	}, [leftImage, rightImage] );
+	}, [ leftImage, rightImage ] );
 
 	const handleScreenChange = ( screen ) => {
 		setActiveScreen( screen );
@@ -93,19 +116,28 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 					<div>
 						<span>Left Screen</span>
 						<SingleSelectMenu
-							items={ Object.fromEntries(
-								Object.entries( dropdownItems ).filter( ( [ key ] ) => key !== leftImageKey )
-							) }
+							items={ dropdownItems }
 							dark={ true }
+							style={ { maxWidth: '15em' } }
 							name="image_comparator_options"
 							autoClose
 							defaultValue={ leftImageKey }
-							onChange={ ( val ) => console.log('changed') }
+							onChange={ ( val ) => handleImageChange( val, true ) }
 						/>
 
 					</div>
 					<div>
 						<span>Right Screen</span>
+						<SingleSelectMenu
+							items={ dropdownItems }
+							dark={ true }
+							style={ { maxWidth: '15em' } }
+							name="image_comparator_options"
+							autoClose
+							defaultValue={ rightImageKey }
+							onChange={ ( val ) => handleImageChange( val, false ) }
+						/>
+
 					</div>
 				</div>
 				<div className="urlslab-ImageCompare-top-control-zoom">

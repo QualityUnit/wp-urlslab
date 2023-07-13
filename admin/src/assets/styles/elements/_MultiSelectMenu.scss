@@ -58,12 +58,6 @@
 		height: 2.8461em;
 		cursor: pointer;
 
-		&.dark {
-			background-color: $black-real;
-			color: $white;
-			border-color: $white;
-		}
-
 		span {
 			display: block;
 			text-align: left;
@@ -112,6 +106,31 @@
 				border-color: $grey-light;
 			}
 		}
+
+		&.dark {
+			background-color: $black-real;
+			color: $white;
+			border-color: $white;
+
+			@media (hover: hover) {
+
+				&:hover {
+					color: currentcolor;
+					border-color: currentcolor;
+				}
+
+				&.active:hover {
+					color: currentcolor;
+					border-color: currentcolor;
+				}
+			}
+
+			&::after {
+				border-top-color: $white;
+			}
+
+		}
+
 	}
 
 	&__items {
@@ -172,6 +191,25 @@
 		&.visible {
 			opacity: 1;
 		}
+
+		&.dark {
+			background-color: $black-real;
+			color: $white;
+			border-color: $white;
+
+			@media (hover: hover) {
+
+				&:hover {
+					color: currentcolor;
+					border-color: currentcolor;
+				}
+
+				&.active:hover {
+					color: currentcolor;
+					border-color: currentcolor;
+				}
+			}
+		}
 	}
 
 	label,
@@ -199,6 +237,20 @@
 						background-color: $grey-lightest;
 					}
 				}
+			}
+
+			&.dark {
+
+				&:not(.menuInput) {
+
+					@media (hover: hover) {
+
+						&:hover {
+							background-color: $primary-color;
+						}
+					}
+				}
+
 			}
 		}
 	}
