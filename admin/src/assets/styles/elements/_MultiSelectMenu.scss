@@ -58,6 +58,12 @@
 		height: 2.8461em;
 		cursor: pointer;
 
+		&.dark {
+			background-color: $black-real;
+			color: $white;
+			border-color: $white;
+		}
+
 		span {
 			display: block;
 			text-align: left;

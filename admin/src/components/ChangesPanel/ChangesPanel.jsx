@@ -187,12 +187,10 @@ function ChangesPanel() {
 		} ),
 	];
 
-	// const chartData = isSuccess && [ ...data ]?.reverse();
-
 	return (
 		<>
-			{ selectedRows && selectedRows?.length === 2 &&
-			<ImageCompare selectedRows={ selectedRows } />
+			{ selectedRows && selectedRows?.length === 2 && tableResult.isSuccess &&
+			<ImageCompare selectedRows={ selectedRows } allChanges={ tableResult.data } />
 			}
 
 			{ tableResult.isSuccess && (

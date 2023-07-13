@@ -7,12 +7,21 @@ import { ReactComponent as OverlayScreenIcon } from '../assets/images/icons/icon
 import { ReactComponent as OverlayWithDiffIcon } from '../assets/images/icons/icon-overlay-with-diff.svg';
 import useTablePanels from '../hooks/useTablePanels';
 import '../assets/styles/components/_ImageCompare.scss';
+import SingleSelectMenu from '../elements/SingleSelectMenu';
+import {date, getSettings} from "@wordpress/date";
 
-const ImageCompare = ( { selectedRows } ) => {
-	const image1 = selectedRows[ 0 ].cell.getValue().full;
-	const image1Date = selectedRows[ 0 ].row.original.last_seen * 1000;
-	const image2 = selectedRows[ 1 ].cell.getValue().full;
-	const image2Date = selectedRows[ 1 ].row.original.last_seen * 1000;
+const ImageCompare = ( { selectedRows, allChanges } ) => {
+	const dropdownItems = allChanges.reduce( ( acc, item ) => {
+		const dateFormatted = date( getSettings().formats.date, item.last_changed * 1000 );
+		const time = date( getSettings().formats.time, item.last_changed * 1000 );
+
+		acc[ item.last_changed * 1000 ] = dateFormatted + ' ' + time.replace( /: /, ':' );
+		return acc;
+	}, {} );
+	const [ leftImage, setLeftImage ] = useState( selectedRows[ 0 ].cell.getValue().full );
+	const [ leftImageKey, setLeftImageKey ] = useState( selectedRows[ 0 ].row.original.last_changed * 1000 );
+	const [ rightImage, setRightImage ] = useState( selectedRows[ 1 ].cell.getValue().full );
+	const [ rightImageKey, setRightImageKey ] = useState( selectedRows[ 1 ].row.original.last_changed * 1000 );
 	const [ wrapperWidth, setWrapperWidth ] = useState( 0 );
 	const [ activeScreen, setActiveScreen ] = useState( 'overlay' ); // ['overlay', 'overlayWithDiff', 'adjacent']
 	const imageCompare = useTablePanels( ( state ) => state.imageCompare );
@@ -22,7 +31,9 @@ const ImageCompare = ( { selectedRows } ) => {
 	};
 
 	const calculateWrapperWidth = () => {
+		// eslint-disable-next-line no-undef
 		const image1Elem = new Image();
+		// eslint-disable-next-line no-undef
 		const image2Elem = new Image();
 
 		// Load the images and get their heights
@@ -35,10 +46,10 @@ const ImageCompare = ( { selectedRows } ) => {
 					resolve( wrapperW );
 				};
 				image2Elem.onerror = reject;
-				image2Elem.src = image2;
+				image2Elem.src = rightImage;
 			};
 			image1Elem.onerror = reject;
-			image1Elem.src = image1;
+			image1Elem.src = leftImage;
 		} );
 	};
 
@@ -46,15 +57,12 @@ const ImageCompare = ( { selectedRows } ) => {
 		const calculateWidth = async () => {
 			try {
 				const width = await calculateWrapperWidth();
-				console.log( 'width', width );
 				setWrapperWidth( width );
-			} catch ( error ) {
-				console.error( 'Error calculating wrapper width:', error );
-			}
+			} catch ( error ) {}
 		};
 
 		calculateWidth();
-	}, [] );
+	}, [leftImage, rightImage] );
 
 	const handleScreenChange = ( screen ) => {
 		setActiveScreen( screen );
@@ -76,13 +84,29 @@ const ImageCompare = ( { selectedRows } ) => {
 						<div>Overlay With diff</div>
 					</button>
 					<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'adjacent' ? 'active' : '' }` }
-						 onClick={ () => handleScreenChange( 'adjacent' ) }>
+						onClick={ () => handleScreenChange( 'adjacent' ) }>
 						<div><AdjacentScreenIcon /></div>
 						<div>Adjacent With diff</div>
 					</button>
 				</div>
 				<div className="urlslab-ImageCompare-top-control-date">
+					<div>
+						<span>Left Screen</span>
+						<SingleSelectMenu
+							items={ Object.fromEntries(
+								Object.entries( dropdownItems ).filter( ( [ key ] ) => key !== leftImageKey )
+							) }
+							dark={ true }
+							name="image_comparator_options"
+							autoClose
+							defaultValue={ leftImageKey }
+							onChange={ ( val ) => console.log('changed') }
+						/>
 
+					</div>
+					<div>
+						<span>Right Screen</span>
+					</div>
 				</div>
 				<div className="urlslab-ImageCompare-top-control-zoom">
 
@@ -99,10 +123,10 @@ const ImageCompare = ( { selectedRows } ) => {
 					<div className="urlslab-ImageCompare-slider-container">
 						<ImgComparisonSlider value="50" hover={ false }>
 							<figure slot="first">
-								<img src={ image1 } alt="" className="urlslab-ImageCompare-img" />
+								<img src={ leftImage } alt="" className="urlslab-ImageCompare-img" />
 							</figure>
 							<figure slot="second">
-								<img src={ image2 } alt="" className="urlslab-ImageCompare-img" />
+								<img src={ rightImage } alt="" className="urlslab-ImageCompare-img" />
 							</figure>
 						</ImgComparisonSlider>
 					</div>

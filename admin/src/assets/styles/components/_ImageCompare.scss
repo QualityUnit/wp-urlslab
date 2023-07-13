@@ -51,6 +51,22 @@
 				background-color: $black-real;
 			}
 		}
+
+		&-date {
+			display: flex;
+			align-items: center;
+			font-size: 1rem;
+
+			div {
+				border: 1px solid red;
+				margin-right: 0.3em;
+			}
+
+			&-dropdown {
+				background-color: transparent;
+				color: $white;
+			}
+		}
 	}
 
 	&-panel {
