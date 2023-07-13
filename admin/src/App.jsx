@@ -52,9 +52,9 @@ export default function App() {
 				if ( ! hasApiKey ) {
 					setActiveOnboarding( true );
 					update( 'apiKeySet', ( ) => false );
-				} else {
-					setActiveOnboarding( false );
+					return false;
 				}
+				setActiveOnboarding( false );
 			}
 			getApiKey();
 
