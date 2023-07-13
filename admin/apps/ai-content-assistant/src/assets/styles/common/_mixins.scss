@@ -1,9 +1,9 @@
 /* stylelint-disable */
 @use "sass:math";
-@use "../../../../../assets/styles/common/variables" as *;
+@use "../../../../../../src/assets/styles/common/variables" as *;
 
 /* include default mixins, this file contains only app related mixins */
-@import "../../../../../assets/styles/common/mixins";
+@import "../../../../../../src/assets/styles/common/mixins";
 
 @mixin sliderTrack() {
     &::-webkit-slider-runnable-track {

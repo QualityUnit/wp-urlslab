@@ -96,6 +96,10 @@ $status: (
 
 	textarea {
 		resize: none;
+
+		&.allow-resize {
+			resize: vertical;
+		}
 	}
 
 	.urlslab-table tbody & {
@@ -194,7 +198,8 @@ $status: (
 			}
 		}
 
-		@each $state, $value in $status {
+		@each $state,
+		$value in $status {
 			&.#{$state}[class] {
 
 				.urlslab-inputField {
