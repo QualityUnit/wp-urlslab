@@ -24,7 +24,7 @@ const useOnboardingStore = create( ( set ) => ( {
 			analyze_text: '1',
 			follow_links: 'FOLLOW_ALL_LINKS',
 			process_all_sitemaps: '1',
-			scan_frequency: 'ONE_TIME',
+			scan_frequency: 'MONTHLY',
 			scan_speed_per_minute: 20,
 			take_screenshot: '1',
 			custom_sitemaps: '',
@@ -74,4 +74,3 @@ export default function useOnboarding() {
 		setApiKey,
 	};
 }
-
