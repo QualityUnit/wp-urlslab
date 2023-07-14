@@ -13,6 +13,7 @@ import SingleSelectMenu from '../elements/SingleSelectMenu';
 import { date, getSettings } from '@wordpress/date';
 
 const ImageCompare = ( { selectedRows, allChanges } ) => {
+	const SCREENSHOT_WIDTH = 1366;
 	const zoomingOptions = {
 		0: 'Choose zoom level',
 		20: '20%',
@@ -35,6 +36,8 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 	const [ activeScreen, setActiveScreen ] = useState( 'overlay' ); // ['overlay', 'overlayWithDiff', 'adjacent']
 	const [ zoom, setZoom ] = useState( 0 );
 	const [ baseWrapperWidth, setBaseWrapperWidth ] = useState( 0 );
+	const [ isLoading, setIsLoading ] = useState( true );
+	const [ render, setRender ] = useState( true );
 	const imageCompare = useTablePanels( ( state ) => state.imageCompare );
 
 	const hideImageCompare = () => {
@@ -47,6 +50,7 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 				return false;
 			}
 
+			setRender( true );
 			setLeftImage( allChanges.filter( ( change ) => change.last_changed * 1000 === Number( newImage ) )[ 0 ].screenshot.full );
 			setLeftImageKey( newImage );
 			return true;
@@ -57,6 +61,7 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 				return false;
 			}
 
+			setRender( true );
 			setRightImage( allChanges.filter( ( change ) => change.last_changed * 1000 === Number( newImage ) )[ 0 ].screenshot.full );
 			setRightImageKey( newImage );
 			return true;
@@ -66,7 +71,6 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 	};
 
 	const handleZoomChange = ( newZoom ) => {
-		console.log( 'newZoom', newZoom );
 		const baseZoom = Math.round( ( baseWrapperWidth / window.innerWidth ) * 100 );
 
 		if ( newZoom <= baseZoom ) {
@@ -86,36 +90,94 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 		setZoom( newZoom );
 	};
 
-	const calculateWrapperInitialWidth = () => {
+	const prepareImagesHeight = ( imageLeftElem, imageRightElem ) => {
+		imageLeftElem.crossOrigin = 'Anonymous';
+		imageRightElem.crossOrigin = 'Anonymous';
+
+		if ( imageLeftElem.height <= 0 || imageRightElem.height <= 0 ) {
+			return -1;
+		}
+
+		const returningHeight = Math.max( imageLeftElem.height, imageRightElem.height );
+		if ( imageLeftElem.height !== imageRightElem.height ) {
+			const canvas = document.createElement( 'canvas' );
+			const ctx = canvas.getContext( '2d' );
+			if ( imageLeftElem.height < imageRightElem.height ) {
+				canvas.width = imageLeftElem.width;
+				canvas.height = imageRightElem.height;
+				ctx.beginPath();
+				ctx.rect( 0, 0, canvas.width, canvas.height );
+				ctx.fillStyle = 'black';
+				ctx.fill();
+
+				ctx.drawImage( imageLeftElem, 0, 0, imageLeftElem.width, imageLeftElem.height );
+				setLeftImage( canvas.toDataURL( 'image/png' ) );
+			} else {
+				canvas.width = imageRightElem.width;
+				canvas.height = imageLeftElem.height;
+				ctx.beginPath();
+				ctx.rect( 0, 0, canvas.width, canvas.height );
+				ctx.fillStyle = 'black';
+				ctx.fill();
+
+				ctx.drawImage( imageRightElem, 0, 0, imageRightElem.naturalWidth, imageRightElem.naturalHeight );
+				setRightImage( canvas.toDataURL( 'image/png' ) );
+			}
+		}
+
+		return returningHeight;
+	};
+
+	const prepareImages = async () => {
 		// eslint-disable-next-line no-undef
 		const image1Elem = new Image();
 		// eslint-disable-next-line no-undef
 		const image2Elem = new Image();
 
-		// Load the images and get their heights
 		return new Promise( ( resolve, reject ) => {
 			image1Elem.onload = () => {
-				image2Elem.onload = () => {
-					const maxHeight = Math.max( image1Elem.height, image2Elem.height );
-					const height = window.innerHeight - 24 - 100; // reducing the close button height and top control height
-					const wrapperW = height * Math.max( image1Elem.width, image2Elem.width ) / maxHeight;
-					resolve( wrapperW );
-				};
-				image2Elem.onerror = reject;
-				image2Elem.src = rightImage;
+				if ( image2Elem.complete ) {
+					const imageHeight = prepareImagesHeight( image1Elem, image2Elem );
+					if ( imageHeight === -1 ) {
+						return;
+					}
+					resolve( calculateWrapperInitialWidth( imageHeight ) );
+				}
 			};
+			image2Elem.onload = () => {
+				if ( image1Elem.complete ) {
+					const imageHeight = prepareImagesHeight( image1Elem, image2Elem );
+					if ( imageHeight === -1 ) {
+						return;
+					}
+					resolve( calculateWrapperInitialWidth( imageHeight ) );
+				}
+			};
+			image2Elem.onerror = reject;
+			image2Elem.src = rightImage;
 			image1Elem.onerror = reject;
 			image1Elem.src = leftImage;
 		} );
 	};
 
+	const calculateWrapperInitialWidth = ( imageHeight ) => {
+		const height = window.innerHeight - 24 - 100 - 10; // reducing the close button height and top control height
+		return height * SCREENSHOT_WIDTH / imageHeight;
+	};
+
 	useEffect( () => {
+		if ( ! render ) {
+			return;
+		}
+		setIsLoading( true );
 		const calculateWidth = async () => {
 			try {
-				const width = await calculateWrapperInitialWidth();
+				const width = await prepareImages();
 				setZoom( Math.round( ( width / window.innerWidth ) * 100 ) );
 				setBaseWrapperWidth( width );
 				setWrapperWidth( width );
+				setIsLoading( false );
+				setRender( false );
 			} catch ( error ) {}
 		};
 
@@ -212,14 +274,16 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 						</button>
 					</div>
 					<div className="urlslab-ImageCompare-slider-container">
-						<ImgComparisonSlider value="50" hover={ false }>
-							<figure slot="first">
-								<img src={ leftImage } alt="" className="urlslab-ImageCompare-img" />
-							</figure>
-							<figure slot="second">
-								<img src={ rightImage } alt="" className="urlslab-ImageCompare-img" />
-							</figure>
-						</ImgComparisonSlider>
+						{
+							! isLoading && <ImgComparisonSlider value="50" hover={ false }>
+								<figure slot="first">
+									<img src={ leftImage } alt="" className="urlslab-ImageCompare-img" />
+								</figure>
+								<figure slot="second">
+									<img src={ rightImage } alt="" className="urlslab-ImageCompare-img" />
+								</figure>
+							</ImgComparisonSlider>
+						}
 					</div>
 
 				</div>
