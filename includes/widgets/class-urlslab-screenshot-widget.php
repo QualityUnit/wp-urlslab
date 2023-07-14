@@ -174,7 +174,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL,
-			DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME,
+			DomainDataRetrievalDataRequest::RENEW_FREQUENCY_MONTHLY,
 			false,
 			__( 'Synchronisation Frequency of Screenshots with URLsLab service' ),
 			__( 'Select the frequency at which URLsLab captures screenshots of a URL. Since each screenshot consumes credits, choose wisely. A single capture may suffice for most scenarios.' ),

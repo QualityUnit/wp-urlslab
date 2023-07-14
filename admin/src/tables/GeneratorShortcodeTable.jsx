@@ -73,9 +73,9 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		D: __( 'Disabled' ),
 	};
 	const modelTypes = {
-		'gpt-3.5-turbo': __( 'Gpt 3.5 Turbo' ),
-		'gpt-4': __( 'Gpt 4' ),
-		'text-davinci-003': __( 'Text Davinci 003' ),
+		'gpt-3.5-turbo': __( 'OpenAI GPT 3.5 Turbo' ),
+		'gpt-4': __( 'OpenAI GPT 4' ),
+		'text-davinci-003': __( 'OpenAI GPT Davinci 003' ),
 	};
 	const shortcodeTypeTypes = {
 		S: __( 'Semantic search' ),

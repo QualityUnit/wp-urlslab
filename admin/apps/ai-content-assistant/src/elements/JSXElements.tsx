@@ -4,12 +4,12 @@
  */
 
 import React from 'react';
-import JSXButton from '../../../elements/Button';
-import JSXSingleSelectMenu from '../../../elements/SingleSelectMenu';
-import JSXTextArea from '../../../elements/Textarea';
-import JSXInputField from '../../../elements/InputField';
-import JSXCheckbox from '../../../elements/Checkbox';
-import JSXTooltip from '../../../elements/Tooltip';
+import JSXButton from '../../../../src/elements/Button';
+import JSXSingleSelectMenu from '../../../../src/elements/SingleSelectMenu';
+import JSXTextArea from '../../../../src/elements/Textarea';
+import JSXInputField from '../../../../src/elements/InputField';
+import JSXCheckbox from '../../../../src/elements/Checkbox';
+import JSXTooltip from '../../../../src/elements/Tooltip';
 
 import { InfoTooltipIcon } from './InfoTooltipIcon';
 
@@ -126,8 +126,7 @@ type TextAreaType = Partial<{
 export const TextArea: React.FC<TextAreaType> = React.memo( ( {
 	allowResize, children, defaultValue = undefined, autoFocus = undefined, placeholder = undefined, liveUpdate = undefined, className = undefined, readonly = undefined, disabled = undefined, label = undefined, description = undefined, labelInline = undefined, required = undefined, onChange = undefined, style = undefined, rows = undefined,
 }: TextAreaType ) => {
-	const classes = allowResize ? `${ className } allow-resize` : className;
-	return <JSXTextArea defaultValue={ defaultValue } autoFocus={ autoFocus } placeholder={ placeholder } liveUpdate={ liveUpdate } className={ classes } readonly={ readonly } disabled={ disabled } label={ label } description={ description } labelInline={ labelInline } required={ required } onChange={ onChange } style={ style } rows={ rows }>{ children }</JSXTextArea>;
+	return <JSXTextArea defaultValue={ defaultValue } autoFocus={ autoFocus } placeholder={ placeholder } liveUpdate={ liveUpdate } className={ className } readonly={ readonly } disabled={ disabled } label={ label } description={ description } labelInline={ labelInline } required={ required } onChange={ onChange } style={ style } rows={ rows } allowResize={ allowResize }>{ children }</JSXTextArea>;
 } );
 TextArea.displayName = 'TextArea';
 

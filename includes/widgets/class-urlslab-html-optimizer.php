@@ -47,7 +47,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Html Minification' );
+		return __( 'HTML Minification' );
 	}
 
 	public function get_widget_description(): string {

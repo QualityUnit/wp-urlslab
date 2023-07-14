@@ -46,6 +46,6 @@ echo "Build"
 yarn build
 
 echo "Build AI Content Assistant"
-cd ../admin/src/app-ai-content-assistant
+cd ../admin/apps/ai-content-assistant
 yarn
 yarn build

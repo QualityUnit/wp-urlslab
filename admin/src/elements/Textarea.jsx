@@ -5,7 +5,7 @@ import { delay } from '../lib/helpers';
 import '../assets/styles/elements/_Inputs.scss';
 import Tooltip from './Tooltip';
 
-export default function TextArea( { defaultValue, autoFocus, placeholder, liveUpdate, className, readonly, disabled, label, description, required, labelInline, onChange, children, style, rows } ) {
+export default function TextArea( { defaultValue, autoFocus, placeholder, liveUpdate, className, readonly, disabled, label, description, required, labelInline, onChange, children, style, rows, allowResize } ) {
 	const { __ } = useI18n();
 	const [ val, setVal ] = useState( defaultValue || '' );
 
@@ -30,7 +30,7 @@ export default function TextArea( { defaultValue, autoFocus, placeholder, liveUp
 			<div className={ `urlslab-inputField ${ val ? 'valid' : '' }` }>
 				{ children }
 				<textarea
-					className="urlslab-input input__text"
+					className={ `urlslab-input input__text ${ allowResize ? 'allow-resize' : '' }` }
 					defaultValue={ val }
 					autoFocus={ autoFocus }
 					onChange={ ( event ) => {

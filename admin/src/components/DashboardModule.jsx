@@ -13,7 +13,7 @@ import { setModule } from '../api/fetching';
 import '../assets/styles/components/_DashboardModule.scss';
 import '../assets/styles/elements/_Button.scss';
 
-function DashboardModule( { module, labelsList } ) {
+function DashboardModule( { module, labelsList, isOnboardingItem } ) {
 	const { __ } = useI18n();
 	const { id: moduleId, active: isActive, title, description, labels } = module;
 	// const { settingsLoaded, apiKeySet } = useCheckApiKey();
@@ -57,24 +57,27 @@ function DashboardModule( { module, labelsList } ) {
 				}
 
 				<h3 className="urlslab-dashboardmodule-title">
-					<button className={ `${ active ? 'active' : '' }` } onClick={ active ? () => setActivePage( moduleId ) : null }>
-						{ title }
-					</button>
+					{ isOnboardingItem
+						? title
+						: <button className={ `${ active ? 'active' : '' }` } onClick={ active ? () => setActivePage( moduleId ) : null }>
+							{ title }
+						</button>
+					}
 				</h3>
 
 				<Switch
 					secondary
 					onChange={ () => handleSwitch.mutate() }
 					className="urlslab-dashboardmodule-switch ma-left"
-					label={ '' }
-					labelOff={ '' }
+					label={ isOnboardingItem ? __( 'Activate' ) : '' }
+					labelOff={ isOnboardingItem ? __( 'Deactivate' ) : '' }
 					defaultValue={ active }
 				/>
 			</div>
 
 			<div className="urlslab-dashboardmodule-content">
 				<p>{ description }</p>
-				{ labels.length > 0 &&
+				{ labels.length && ! isOnboardingItem > 0 &&
 				<div className="urlslab-dashboardmodule-tags">
 					{ labels.map( ( tag ) => {
 						const { name, color } = labelsList[ tag ];

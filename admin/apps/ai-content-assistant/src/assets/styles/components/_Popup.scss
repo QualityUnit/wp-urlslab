@@ -1,10 +1,10 @@
-@use "../../../../../assets/styles/common/variables" as *;
-@use "../../../../../assets/styles/elements/MenuArrow" as *;
+@use "../../../../../../src/assets/styles/common/variables" as *;
+@use "../../../../../../src/assets/styles/elements/MenuArrow" as *;
 @use "../common/mixins" as *;
 
 [id="urlslab-ai-content-assistant"] {
     .urlslab-page-overlay {
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
         width: 100%;
@@ -14,7 +14,7 @@
     }
 
     .urlslab-popup {
-        position: absolute;
+        position: fixed;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
