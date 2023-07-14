@@ -19,6 +19,7 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import IconButton from '../elements/IconButton';
+import { active } from 'd3';
 
 export default function CustomHtmlTable( { slug } ) {
 	const paginationId = 'rule_id';
@@ -39,7 +40,7 @@ export default function CustomHtmlTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -152,14 +153,10 @@ export default function CustomHtmlTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
-				cell.row.toggleSelected();
-				selectRows( cell );
+			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
+				selectRow( val, cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
-				selectRows( val ? head : undefined );
-			} } />,
+			header: null,
 		} ),
 		columnHelper.accessor( 'name', {
 			className: 'nolimit',
@@ -218,6 +215,7 @@ export default function CustomHtmlTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				table={ table }
+				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ { header, rowEditorCells, rowToEdit, data, slug, url, paginationId, title: __( 'Add Custom HTML' ), id: 'name', deleteCSVCols: [ paginationId, 'dest_url_id' ]	} }

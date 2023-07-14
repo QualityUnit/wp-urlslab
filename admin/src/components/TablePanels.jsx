@@ -8,7 +8,6 @@ import ImportPanel from './ImportPanel';
 import DangerPanel from './DangerPanel';
 import DetailsPanel from './DetailsPanel';
 import { ReactComponent as Trash } from '../assets/images/icons/icon-trash.svg';
-import ChangesPanel from './ChangesPanel/ChangesPanel';
 
 export default function TablePanels( { props } ) {
 	const { options, initialRow, handlePanel } = props;
@@ -57,10 +56,6 @@ export default function TablePanels( { props } ) {
 			{
 				typeof activePanel === 'number' &&
 				<DetailsPanel />
-			}
-			{
-				activePanel === 'changesPanel' &&
-				<ChangesPanel />
 			}
 		</>
 	);

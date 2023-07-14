@@ -14,7 +14,7 @@ export default function KeywordLinks( { moduleId } ) {
 	] );
 
 	const KeywordsTable = lazy( () => import( `../tables/KeywordsTable.jsx` ) );
-	// const D3WordCloud = lazy( () => import( `../d3/D3WordCloud.jsx` ) );
+	const D3WordCloud = lazy( () => import( `../d3/D3WordCloud.jsx` ) );
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
 
 	return (

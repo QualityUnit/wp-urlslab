@@ -27,7 +27,7 @@ export default function MediaFilesTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
 
@@ -77,14 +77,10 @@ export default function MediaFilesTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
-				cell.row.toggleSelected();
-				selectRows( cell );
+			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
+				selectRow( val, cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
-				selectRows( val ? head : undefined );
-			} } />,
+			header: null,
 		} ),
 		columnHelper?.accessor( 'filename', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
@@ -185,6 +181,7 @@ export default function MediaFilesTable( { slug } ) {
 			<ModuleViewHeaderBottom
 				table={ table }
 				noImport
+				selectedRows={ selectedRows }
 				onDeleteSelected={ () => deleteSelectedRows( { id: 'filename' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ {

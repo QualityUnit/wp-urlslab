@@ -23,12 +23,18 @@
     column-gap: 10px;
     align-items: center;
   }
+  .urlslab-edit-container-input{
+    max-width: 360px;
+  }
   .urlslab-actionsbar {
     background-color: #fff;
     padding: 15px 25px;
     display: flex;
     gap: 8px;
     align-items: center;
+  }
+  .urlslab-actionsbar-detail{
+    margin-left: auto;
   }
   .urlslab-selection-details {
     display: flex;
@@ -46,8 +52,23 @@
     overflow-y: scroll;
     @include scrollbar();
   }
+  .urlslab-selected-capabilities-title{
+    margin-bottom: 15px;
+  }
 
   .urlslab-capability-item {
+    border: 1px solid #e4e5e9;
+    padding: 8px 15px;
+    border-radius: 6px;
+    background-color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    width: 30%;
+    &:hover {
+      background-color: #edeff3;
+    }
+  }
+  .urlslab-selected-capability-item {
     border: 1px solid #e4e5e9;
     padding: 8px 15px;
     border-radius: 6px;
@@ -69,6 +90,10 @@
     height: calc(100vh - var(--headerTopHeight) - var(--headerMenuHeight) - var(--headerBottomHeight) - 5em - 205px);
     overflow-y: scroll;
     @include scrollbar();
+  }
+  .urlslab-all-capabilities-header {
+    margin-bottom: 15px;
+    min-width: 100%;
   }
   @media (min-width: $breakpoint-tablet-landscape) {
   }

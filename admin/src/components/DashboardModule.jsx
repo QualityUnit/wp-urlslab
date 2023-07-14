@@ -2,25 +2,20 @@ import { memo, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import useMainMenu from '../hooks/useMainMenu';
 
 import Switch from '../elements/Switch';
 import Tag from '../elements/Tag';
 
-// import useCheckApiKey from '../hooks/useCheckApiKey';
 import { setModule } from '../api/fetching';
 import '../assets/styles/components/_DashboardModule.scss';
 import '../assets/styles/elements/_Button.scss';
 
-function DashboardModule( { module, labelsList } ) {
+function DashboardModule( { moduleId, title, children, isActive, tags } ) {
 	const { __ } = useI18n();
-	const { id: moduleId, active: isActive, title, description, labels } = module;
-	// const { settingsLoaded, apiKeySet } = useCheckApiKey();
-	// const hasApi = settingsLoaded && apiKeySet === false && apikey;
 	const [ active, setActive ] = useState( isActive );
 	const { setActivePage } = useMainMenu();
-	const queryClient = useQueryClient();
 
 	const handleSwitch = useMutation( {
 		mutationFn: async () => {
@@ -30,12 +25,6 @@ function DashboardModule( { module, labelsList } ) {
 		onSuccess: ( { response } ) => {
 			if ( response.ok ) {
 				setActive( ! active );
-				queryClient.setQueryData( [ 'modules' ], ( data ) => {
-					return {
-						...data, [ moduleId ]: { ...data[ moduleId ], active: ! active },
-					};
-				} );
-				queryClient.invalidateQueries( [ 'modules' ] );
 				return false;
 			}
 			setActive( isActive );
@@ -43,6 +32,8 @@ function DashboardModule( { module, labelsList } ) {
 	} );
 
 	const iconPath = new URL( `../assets/images/modules/${ moduleId }.svg`, import.meta.url ).pathname;
+
+	const { labels, labelsList } = tags;
 
 	return (
 		<div className={ `urlslab-dashboardmodule ${ handleSwitch.isLoading ? 'activating' : '' } ${ active ? 'active' : '' }` }>
@@ -73,7 +64,7 @@ function DashboardModule( { module, labelsList } ) {
 			</div>
 
 			<div className="urlslab-dashboardmodule-content">
-				<p>{ description }</p>
+				<p>{ children }</p>
 				{ labels.length > 0 &&
 				<div className="urlslab-dashboardmodule-tags">
 					{ labels.map( ( tag ) => {

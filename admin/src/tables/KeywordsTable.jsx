@@ -26,7 +26,7 @@ export default function KeywordsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -93,14 +93,10 @@ export default function KeywordsTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( ) => {
-				cell.row.toggleSelected();
-				selectRows( cell );
+			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
+				selectRow( val, cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
-				selectRows( val ? head : undefined );
-			} } />,
+			header: () => <Checkbox onChange={ () => console.log( data?.pages ) } />,
 			enableResizing: false,
 		} ),
 		columnHelper.accessor( 'keyword', {
@@ -206,6 +202,7 @@ export default function KeywordsTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				table={ table }
+				selectedRows={ selectedRows }
 				onDeleteSelected={ () => deleteSelectedRows( { id: 'keyword' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ { header, data, slug, paginationId, url,

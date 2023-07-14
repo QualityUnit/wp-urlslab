@@ -13,7 +13,6 @@ export default async function importCsv( { slug, dataArray, result, stopImport }
 	const chunksLength = dataChunks().length;
 	let chunkIndex = 0;
 	let ended = false;
-	result( 1 );
 
 	const onResult = ( resultStatus ) => {
 		if ( result ) {

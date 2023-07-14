@@ -36,7 +36,7 @@ export default function TagsLabels( ) {
 		isSuccess,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId }, 500 );
 
-	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -49,20 +49,16 @@ export default function TagsLabels( ) {
 	const rowEditorCells = {
 		name: <InputField liveUpdate defaultValue="" label={ header.name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, name: val } ) } required />,
 		bgcolor: <ColorPicker defaultValue="" label="Background color" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, bgcolor: val } ) } />,
-		modules: <MultiSelectMenu liveUpdate id="modules" asTags items={ possibleModules } defaultValue={ [] } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, modules: val } ) }>{ header.modules }</MultiSelectMenu>,
+		modules: <MultiSelectMenu liveUpdate asTags id="modules" items={ possibleModules } defaultValue={ [] } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, modules: val } ) }>{ header.modules }</MultiSelectMenu>,
 	};
 
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
-				cell.row.toggleSelected();
-				selectRows( cell );
+			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
+				selectRow( val, cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
-				selectRows( val ? head : undefined );
-			} } />,
+			header: () => <Checkbox onChange={ () => console.log( '' ) } />,
 			enableResizing: false,
 		} ),
 		columnHelper.accessor( 'name', {
@@ -82,7 +78,7 @@ export default function TagsLabels( ) {
 		} ),
 		columnHelper.accessor( 'modules', {
 			className: 'nolimit',
-			cell: ( cell ) => <MultiSelectMenu items={ possibleModules } asTags id="modules" defaultValue={ cell.getValue() || '' }
+			cell: ( cell ) => <MultiSelectMenu items={ possibleModules } asTags id="modules" defaultValue={ ( cell.getValue() && cell.getValue()[ 0 ] ) || '' }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) }
 			/>,
 			header: header.modules,
@@ -93,14 +89,13 @@ export default function TagsLabels( ) {
 			className: 'editRow',
 			cell: ( cell ) => {
 				return (
-					<div className="flex mr-s">
+					<div className="flex">
 						<IconButton
-							className="ma-left"
 							onClick={ () => {
 								updateRow( { cell, id: 'name' } );
 								activatePanel( 'rowEditor' );
 							} }
-							tooltipClass="align-left-0"
+							tooltipClass="align-left xxxl"
 							tooltip={ __( 'Edit row' ) }
 						>
 							<Edit />
@@ -108,7 +103,7 @@ export default function TagsLabels( ) {
 						<IconButton
 							className="ml-s"
 							onClick={ () => deleteRow( { cell, id: 'name' } ) }
-							tooltipClass="align-left-0"
+							tooltipClass="align-left xxxl"
 							tooltip={ __( 'Delete row' ) }
 						>
 							<Trash />
@@ -133,6 +128,7 @@ export default function TagsLabels( ) {
 		<div className="urlslab-tableView">
 			<ModuleViewHeaderBottom
 				table={ table }
+				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				noColumnsMenu
 				noExport

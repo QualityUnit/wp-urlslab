@@ -65,10 +65,6 @@
 			white-space: nowrap;
 			overflow: hidden;
 			width: calc(100% - 1.5em);
-
-			+ span {
-				display: none;
-			}
 		}
 
 		.urlslab-table tr:not(.urlslab-rowInserter) & {
