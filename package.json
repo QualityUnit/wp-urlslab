@@ -25,7 +25,8 @@
     "image-minimizer-webpack-plugin": "^3",
     "stylelint": "^15",
     "url-loader": "^4",
-    "vite": "^4"
+    "vite": "^4",
+    "worker-loader": "^3.0.8"
   },
   "devDependencies": {
     "@babel/core": "^7",
