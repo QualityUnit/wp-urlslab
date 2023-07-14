@@ -6,7 +6,7 @@ export default function AllCapabilities( props ) {
 	const { __ } = useI18n();
 	return (
 		<div className="urlslab-all-capabilities">
-			<p className="urlslab-all-capabilities-header">{ __( 'All capabilities' ) }</p>
+			<h5 className="urlslab-all-capabilities-header">{ __( 'All capabilities' ) }</h5>
 			{ data.map( ( item, index ) => (
 				<div key={ index } className="urlslab-capability-item" >
 					<Checkbox>{ item.capabilityName }</Checkbox>
