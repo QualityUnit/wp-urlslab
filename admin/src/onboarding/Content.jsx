@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 
 import useCheckApiKey from '../hooks/useCheckApiKey';
 import useOnboarding from '../hooks/useOnboarding';
+import useModulesQuery from '../hooks/useModulesQuery';
 
 import Loader from '../components/Loader';
 import StepApiKey from './steps/StepApiKey';
@@ -10,14 +10,13 @@ import StepSchedule from './steps/StepSchedule';
 import StepModules from './steps/StepModules';
 
 const Content = () => {
-	const queryClient = useQueryClient();
 	const { settingsLoaded } = useCheckApiKey();
 	const { activeStep, setApiKey } = useOnboarding();
 
 	// wait while we have loaded all necessary data
 	const [ dataLoaded, setDataLoaded ] = useState( false );
+	const { data: modules } = useModulesQuery();
 
-	const modules = queryClient.getQueryData( [ 'modules' ] );
 	const apiSetting = useMemo( () => {
 		return settingsLoaded?.filter( ( data ) => data.id === 'api' )?.[ 0 ];
 	}, [ settingsLoaded ] );

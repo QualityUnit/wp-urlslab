@@ -4,6 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { setNotification } from '../../hooks/useNotifications';
 import { postFetch } from '../../api/fetching';
 import useOnboarding from '../../hooks/useOnboarding';
+import useCreditsQuery from '../../hooks/useCreditsQuery';
 import DashboardModule from '../../components/DashboardModule';
 import Button from '../../elements/Button';
 
@@ -13,8 +14,16 @@ const StepModules = ( { modules } ) => {
 	const { __ } = useI18n();
 	const [ updating, setUpdating ] = useState( false );
 	const { activeStep, userData, setActiveOnboarding } = useOnboarding();
+	const { data: creditsData } = useCreditsQuery();
+
+	const lowCredits = creditsData && parseFloat( creditsData.credits ) <= 0;
 
 	const submitData = useCallback( async () => {
+		if ( lowCredits ) {
+			setActiveOnboarding( false );
+			return false;
+		}
+
 		setUpdating( true );
 		setNotification( 'onboarding-modules-step', { message: __( 'Saving data…' ), status: 'info' } );
 
@@ -27,7 +36,7 @@ const StepModules = ( { modules } ) => {
 		}
 
 		setUpdating( false );
-	}, [ userData.scheduleData, __, setActiveOnboarding ] );
+	}, [ lowCredits, userData.scheduleData, __, setActiveOnboarding ] );
 
 	return (
 		<div className={ `urlslab-onboarding-content-wrapper small-wrapper fadeInto step-${ activeStep }` }>

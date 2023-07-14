@@ -55,6 +55,13 @@ button.urlslab-button,
 
 	&.simple {
 		background-color: transparent;
+
+		// override default wp styling on anchor focus
+		&:focus {
+			color: $black;
+			box-shadow: none;
+			outline: 0;
+		}
 	}
 
 	&.active {

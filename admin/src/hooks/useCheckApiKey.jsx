@@ -1,19 +1,23 @@
-import { useEffect, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import { get } from 'idb-keyval';
+import { useRef } from 'react';
+import useStartupQuery from './useStartupQuery';
 
 export default function useCheckApiKey() {
-	const queryClient = useQueryClient();
-	const settingsLoaded = queryClient.getQueryData( [ 'general' ] );
-	const [ apiKeySet, setHasApiKey ] = useState();
+	const { data: settingsLoaded, isSuccess } = useStartupQuery();
 
-	useEffect( () => {
-		get( 'apiKeySet' ).then( ( val ) => {
-			if ( val === false ) {
-				setHasApiKey( false );
-			}
-		} );
-	} );
+	// api key undefined by default, we are waiting for loaded data
+	const apiKeySet = useRef();
+	if ( isSuccess && settingsLoaded ) {
+		apiKeySet.current = checkForApiKey( settingsLoaded );
+	}
 
-	return { settingsLoaded, apiKeySet };
+	return { settingsLoaded, apiKeySet: apiKeySet.current };
 }
+
+const checkForApiKey = ( generalData ) => {
+	const isApiObject = generalData.filter( ( dataset ) => dataset.id === 'api' )[ 0 ];
+	const apiKeyValue = isApiObject.options[ 'urlslab-api-key' ].value;
+	if ( apiKeyValue ) {
+		return true;
+	}
+	return false;
+};
