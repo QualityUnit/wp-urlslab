@@ -214,9 +214,6 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 
 			const leftImgRef = leftImageRef.current;
 			const rightImgRef = rightImageRef.current;
-			console.log( adjacentImageRef.current );
-			console.log( overlayBeforeImageRef.current );
-			console.log( overlayAfterImageRef.current );
 			const adjImgRef = adjacentImageRef.current;
 			const overlayBeforeImgRef = overlayBeforeImageRef.current;
 			const overlayAfterImgRef = overlayAfterImageRef.current;
@@ -245,10 +242,6 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 					setDiffLoading( false );
 				} );
 
-				worker.addEventListener( 'error', ( e ) =>
-					console.error( `Error from worker: ${ e.message }` )
-				);
-
 				const imagesData = getImagesData();
 
 				worker.postMessage( [
@@ -268,7 +261,6 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 	};
 
 	const getImagesData = () => {
-
 		const leftImageCanvas = document.createElement( 'canvas' );
 		leftImageCanvas.width = SCREENSHOT_WIDTH;
 		leftImageCanvas.height = leftImageRef.current.naturalHeight;
