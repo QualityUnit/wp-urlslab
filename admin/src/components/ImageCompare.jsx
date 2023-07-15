@@ -37,7 +37,6 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 	const [ activeScreen, setActiveScreen ] = useState( 'overlay' ); // ['overlay', 'overlayWithDiff', 'adjacent']
 	const [ zoom, setZoom ] = useState( 0 );
 	const [ baseWrapperWidth, setBaseWrapperWidth ] = useState( 0 );
-	const [ isLoading, setIsLoading ] = useState( true );
 	const [ render, setRender ] = useState( true );
 	const [ diffStarted, startDiff ] = useState( false );
 	const [ diffLoading, setDiffLoading ] = useState( false );
@@ -181,14 +180,12 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 		if ( ! render ) {
 			return;
 		}
-		setIsLoading( true );
 		const calculateWidth = async () => {
 			try {
 				const width = await prepareImages();
 				setZoom( Math.round( ( width / window.innerWidth ) * 100 ) );
 				setBaseWrapperWidth( width );
 				setWrapperWidth( width );
-				setIsLoading( false );
 				setRender( false );
 			} catch ( error ) {}
 		};
