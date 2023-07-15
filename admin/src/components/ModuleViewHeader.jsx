@@ -72,12 +72,12 @@ export default function ModuleViewHeader( { moduleId, moduleMenu, activeMenu, no
 					: null
 				}
 				{ ! noSettings &&
-					<SimpleButton key={ 'settings' }
-						className={ activator( 'settings' ) }
-						onClick={ () => handleMenu( 'settings' ) }
-					>
-						{ menuItems.get( 'settings' ) }
-					</SimpleButton>
+				<SimpleButton key={ 'settings' }
+                    	className={ activator( 'settings' ) }
+                    	onClick={ () => handleMenu( 'settings' ) }
+				>
+					{ menuItems.get( 'settings' ) }
+				</SimpleButton>
 				}
 			</div>
 		</div>

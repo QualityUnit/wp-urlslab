@@ -16,23 +16,23 @@ import { InfoTooltipIcon } from './InfoTooltipIcon';
 // Customized SingleSelectMenu element, with ability to use also tooltip react component in label.
 // Default component inserts label text using "dangerouslySetInnerHTML" what disallow us to use another components in label.
 type SingleSelectMenuType = Partial<{
-	className: string
-	name: string
-	style: string,
-	items: {[key:string]: string}
-	description: string
-	defaultValue: string,
-	defaultAccept: boolean
-	autoClose: boolean
-	required: boolean
-	disabled: boolean
-	isFilter: boolean
-	onChange: ( value: string ) => void,
-	tooltipLabel: {
-		tooltip: string,
-		label: string
-		noWrapText?: boolean
-	}
+    className: string
+    name: string
+    style: string,
+    items: {[key:string]: string}
+    description: string
+    defaultValue: string,
+    defaultAccept: boolean
+    autoClose: boolean
+    required: boolean
+    disabled: boolean
+    isFilter: boolean
+    onChange: ( value: string ) => void,
+    tooltipLabel: {
+        tooltip: string,
+        label: string
+        noWrapText?: boolean
+    }
 }> & React.PropsWithChildren
 
 export const SingleSelectMenu: React.FC<SingleSelectMenuType > = React.memo( ( {
@@ -54,11 +54,11 @@ export const SingleSelectMenu: React.FC<SingleSelectMenuType > = React.memo( ( {
 SingleSelectMenu.displayName = 'SingleSelectMenu';
 
 type TooltipType = Partial<{
-	active: boolean
-	center: boolean
-	className: string
-	style: React.CSSProperties
-	width: string
+    active: boolean
+    center: boolean
+    className: string
+    style: React.CSSProperties
+    width: string
 }> & React.PropsWithChildren
 export const Tooltip:React.FC<TooltipType> = React.memo( ( {
 	active, center, className, width, style, children,
@@ -68,14 +68,14 @@ export const Tooltip:React.FC<TooltipType> = React.memo( ( {
 Tooltip.displayName = 'Tooltip';
 
 type CheckboxType = Partial<{
-	defaultValue: boolean
-	textBefore: boolean
-	smallText: boolean
-	readOnly: boolean
-	radial: boolean
-	name: string
-	className: string
-	onChange: ( isChecked: boolean ) => void
+    defaultValue: boolean
+    textBefore: boolean
+    smallText: boolean
+    readOnly: boolean
+    radial: boolean
+    name: string
+    className: string
+    onChange: ( isChecked: boolean ) => void
 }> & React.PropsWithChildren
 
 export const Checkbox: React.FC<CheckboxType> = React.memo( ( {
@@ -86,14 +86,14 @@ export const Checkbox: React.FC<CheckboxType> = React.memo( ( {
 Checkbox.displayName = 'Checkbox';
 
 type ButtonType = Partial<{
-	className: string
-	type: 'button' | 'submit' | 'reset'
-	active: boolean
-	danger: boolean
-	disabled: boolean
-	href: string
-	onClick: () => void
-	target: string
+    className: string
+    type: 'button' | 'submit' | 'reset'
+    active: boolean
+    danger: boolean
+    disabled: boolean
+    href: string
+    onClick: () => void
+    target: string
 }> & React.PropsWithChildren
 
 export const Button: React.FC<ButtonType> = React.memo( ( {
@@ -104,21 +104,21 @@ export const Button: React.FC<ButtonType> = React.memo( ( {
 Button.displayName = 'Button';
 
 type TextAreaType = Partial<{
-	defaultValue: string
-	autoFocus: boolean
-	placeholder: string
-	liveUpdate: boolean
-	className: string
-	readonly: boolean
-	disabled: boolean
-	required: boolean
-	label: string
-	description: string
-	labelInline: boolean
-	onChange: ( value: string ) => void
-	style: React.CSSProperties
-	rows: number
-	allowResize: boolean
+    defaultValue: string
+    autoFocus: boolean
+    placeholder: string
+    liveUpdate: boolean
+    className: string
+    readonly: boolean
+    disabled: boolean
+    required: boolean
+    label: string
+    description: string
+    labelInline: boolean
+    onChange: ( value: string ) => void
+    style: React.CSSProperties
+    rows: number
+    allowResize: boolean
 }> & React.PropsWithChildren
 
 export const TextArea: React.FC<TextAreaType> = React.memo( ( {
@@ -130,26 +130,26 @@ export const TextArea: React.FC<TextAreaType> = React.memo( ( {
 TextArea.displayName = 'TextArea';
 
 type InputFieldType = Partial<{
-	type: 'text' | 'email' | 'number' | 'url'
-	defaultValue: number | string
-	isLoading: boolean
-	autoFocus: boolean
-	placeholder: string
-	message: string
-	liveUpdate: boolean
-	className: string
-	readonly: boolean
-	disabled: boolean
-	required: boolean
-	label: string
-	description: string
-	labelInline: boolean
-	onChange: ( value: string | number ) => void // follow type by source jsx element where onChange manipulate with direct value instead of event
-	onKeyDown: ( event: KeyboardEvent ) => void
-	onKeyUp: ( event: KeyboardEvent ) => void
-	onBlur: ( event: FocusEvent ) => void
-	onFocus: ( event: FocusEvent ) => void
-	style: string
+    type: 'text' | 'email' | 'number' | 'url'
+    defaultValue: number | string
+    isLoading: boolean
+    autoFocus: boolean
+    placeholder: string
+    message: string
+    liveUpdate: boolean
+    className: string
+    readonly: boolean
+    disabled: boolean
+    required: boolean
+    label: string
+    description: string
+    labelInline: boolean
+    onChange: ( value: string | number ) => void // follow type by source jsx element where onChange manipulate with direct value instead of event
+    onKeyDown: ( event: KeyboardEvent ) => void
+    onKeyUp: ( event: KeyboardEvent ) => void
+    onBlur: ( event: FocusEvent ) => void
+    onFocus: ( event: FocusEvent ) => void
+    style: string
 }> & React.PropsWithChildren
 
 export const InputField: React.FC<InputFieldType> = React.memo( (

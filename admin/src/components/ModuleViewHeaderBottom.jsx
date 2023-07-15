@@ -122,10 +122,10 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 				<div className="urlslab-moduleView-headerBottom__top flex flex-align-center">
 
 					{ ! noDelete && selectedRows?.length > 0 &&
-						<Button danger className="mr-s" onClick={ () => activatePanel( 'deleteSelected' ) }><Trash />{ __( 'Delete selected' ) }</Button>
+					<Button danger className="mr-s" onClick={ () => activatePanel( 'deleteSelected' ) }><Trash />{ __( 'Delete selected' ) }</Button>
 					}
 					{ title && ! noInsert &&
-						<Button className="active" onClick={ () => activatePanel( 'rowInserter' ) }><PlusIcon />{ title }</Button>
+					<Button className="active" onClick={ () => activatePanel( 'rowInserter' ) }><PlusIcon />{ title }</Button>
 					}
 
 					{
@@ -136,10 +136,10 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 
 							{ state.editFilter === 'addFilter' && // Our main adding panel (only when Add button clicked)
 							<TableFilterPanel ref={ panelPopover } props={ { slug, header, initialRow, possiblefilters, filters } } onEdit={ ( val ) => {
-								handleHeaderHeight();
-								handleOnEdit( val );
+                                	handleHeaderHeight();
+                                	handleOnEdit( val );
 							} } />
-							}
+                        	}
 						</div>
 					}
 
@@ -148,17 +148,17 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 						<RowCounter filters={ filters } slug={ slug } />
 						}
 						{ ! hideActions &&
-							<TableActionsMenu options={ { noImport, noExport, noDelete } } />
+						<TableActionsMenu options={ { noImport, noExport, noDelete } } />
 						}
 
 						{
 							table && ! noColumnsMenu &&
 							<ColumnsMenu
-								className="menu-left ml-m"
-								id="visibleColumns"
-								slug={ slug }
-								table={ table }
-								columns={ header }
+                            	className="menu-left ml-m"
+                            	id="visibleColumns"
+                            	slug={ slug }
+                            	table={ table }
+                            	columns={ header }
 							/>
 						}
 
@@ -171,9 +171,9 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 				{ Object.keys( filters ).length !== 0 &&
 				<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
 					<TableFilter props={ { filters, possiblefilters, state, slug, header, initialRow } } onEdit={ handleOnEdit } onRemove={ ( key ) => {
-						handleHeaderHeight();
-						handleRemoveFilter( key );
-					} } />
+                    		handleHeaderHeight();
+                    		handleRemoveFilter( key );
+                    	} } />
 				</div>
 				}
 

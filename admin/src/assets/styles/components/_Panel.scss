@@ -2,223 +2,223 @@
 @use "../common/variables" as *;
 
 .urlslab-panel {
-	background-color: $white;
-	border-radius: $br-10;
-	color: $black;
-	padding: 1.5em;
-	filter: $box-shadow-small;
+    background-color: $white;
+    border-radius: $br-10;
+    color: $black;
+    padding: 1.5em;
+    filter: $box-shadow-small;
 
-	ul {
-		font-size: 0.75rem;
-	}
+    ul {
+        font-size: 0.75rem;
+    }
 
-	&.Details {
+    &.Details {
 
-		.urlslab-panel-content {
-			display: block;
-		}
+        .urlslab-panel-content {
+            display: block;
+        }
 
-		.table-container {
+        .table-container {
 
-			@include scrollbar;
-			display: flex;
-			flex-direction: column;
-			overflow: hidden auto;
-			background-color: $grey-lighter;
-			max-height: 20em;
+            @include scrollbar;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden auto;
+            background-color: $grey-lighter;
+            max-height: 20em;
 
-			thead {
-				background-color: $grey-lighter;
-			}
+            thead {
+                background-color: $grey-lighter;
+            }
 
-			.urlslab-progressBar-wrapper {
-				margin-top: auto;
-			}
-		}
-	}
+            .urlslab-progressBar-wrapper {
+                margin-top: auto;
+            }
+        }
+    }
 
-	&-modal[class] {
+    &-modal[class] {
 
-		position: absolute;
-		top: 15%;
-		left: calc(50% + 80px); //WP Admin menu half width of 160px
-		transform: translateX(-50%);
-		overflow-x: hidden;
-		height: 100vh;
-		z-index: 9999;
+        position: absolute;
+        top: 15%;
+        left: calc(50% + 80px); //WP Admin menu half width of 160px
+        transform: translateX(-50%);
+        overflow-x: hidden;
+        height: 100vh;
+        z-index: 9999;
 
-		.urlslab-panel {
-			padding: 1.5em;
-
-
-			&.Details {
-				padding: 1.5em 0;
-
-				.urlslab-panel-close {
-					margin-right: 0;
-				}
-
-				.urlslab-panel-header {
-					padding: 0 1.5em;
-					margin: 0;
-				}
-
-				.padded {
-					padding: 0 1.5rem;
-				}
-
-				.table-container {
-					padding: 0 1.5em 1.5em;
-
-					table {
-						margin-top: 1.5em;
-					}
-				}
-			}
-		}
-
-		@media (min-width: $breakpoint-tablet-landscape) {
-			margin: 0;
-
-			.urlslab-panel {
-				padding: 1.375em 1.875em;
-
-				&.Details {
-					padding: 1.375em 0;
-
-					.urlslab-panel-header {
-						padding: 0 1.875em;
-					}
-
-					.padded {
-						padding: 0 1.875rem;
-					}
-
-					.table-container {
-						padding: 0 1.875em 1.375em;
-
-						table {
-							margin-top: 1.375em;
-						}
-					}
-				}
-			}
-		}
-	}
+        .urlslab-panel {
+            padding: 1.5em;
 
 
-	&-close {
+            &.Details {
+                padding: 1.5em 0;
 
-		@include square(2.25em);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border-radius: 50%;
-		background-color: $grey-light !important;
-		margin-left: auto;
-		margin-bottom: 1.5em;
+                .urlslab-panel-close {
+                    margin-right: 0;
+                }
 
-		svg {
+                .urlslab-panel-header {
+                    padding: 0 1.5em;
+                    margin: 0;
+                }
 
-			@include square(0.75em);
-			flex: 0 0 auto;
-			fill: $grey-darker;
-		}
+                .padded {
+                    padding: 0 1.5rem;
+                }
 
-		@media (min-width: $breakpoint-tablet) {
-			margin-right: 1em;
-		}
-	}
+                .table-container {
+                    padding: 0 1.5em 1.5em;
 
-	.removeFile {
+                    table {
+                        margin-top: 1.5em;
+                    }
+                }
+            }
+        }
 
-		svg {
+        @media (min-width: $breakpoint-tablet-landscape) {
+            margin: 0;
 
-			@include square(1em);
-			margin-left: 0.5em;
-		}
-	}
+            .urlslab-panel {
+                padding: 1.375em 1.875em;
 
-	&-header {
-		position: relative;
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		padding: 0 1.5em 0;
-		margin-left: -1.5em;
-		border-bottom: 1px solid $grey-light;
+                &.Details {
+                    padding: 1.375em 0;
 
-		h3 {
-			margin-bottom: 0.75em;
-		}
+                    .urlslab-panel-header {
+                        padding: 0 1.875em;
+                    }
 
-		@media (min-width: $breakpoint-tablet) {
-			padding: 0 1em 0 2.25em;
-			margin-left: -2.25em;
-			margin-right: -2em;
-		}
-	}
+                    .padded {
+                        padding: 0 1.875rem;
+                    }
 
-	&-wrap {
-		margin: 1.5em;
+                    .table-container {
+                        padding: 0 1.875em 1.375em;
 
-		@media (min-width: $breakpoint-tablet-landscape) {
-			width: 35.625em;
-			margin: 6.25em auto auto;
+                        table {
+                            margin-top: 1.375em;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-			&.wide {
-				width: 48em;
-			}
 
-			&.ultrawide {
-				width: 57.5em;
-			}
-		}
-	}
+    &-close {
 
-	&-section {
-		padding: 1.5em;
-		margin: 1.375em -1.5em;
-		background-color: $grey-lightest;
-		border-bottom: 1px solid $grey-light;
+        @include square(2.25em);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background-color: $grey-light !important;
+        margin-left: auto;
+        margin-bottom: 1.5em;
 
-		p {
-			font-size: 0.75rem;
-		}
+        svg {
 
-		ul {
+            @include square(0.75em);
+            flex: 0 0 auto;
+            fill: $grey-darker;
+        }
 
-			li {
-				font-style: italic;
-				margin-bottom: 0.25em;
-			}
-		}
+        @media (min-width: $breakpoint-tablet) {
+            margin-right: 1em;
+        }
+    }
 
-		@media (min-width: $breakpoint-tablet) {
-			padding: 1.375em 2.25em;
-			margin: 1.375em -2.25em;
-		}
-	}
+    .removeFile {
 
-	@media (min-width: $breakpoint-tablet) {
-		padding: 1.875em 4em;
+        svg {
 
-		&-content {
-			display: flex;
-			flex-wrap: wrap;
-			background-color: $white;
+            @include square(1em);
+            margin-left: 0.5em;
+        }
+    }
 
-			&__item {
-				width: 48.25%;
+    &-header {
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        padding: 0 1.5em 0;
+        margin-left: -1.5em;
+        border-bottom: 1px solid $grey-light;
 
-				&:nth-of-type(odd) {
-					margin-right: auto;
-				}
+        h3 {
+            margin-bottom: 0.75em;
+        }
 
-				.urlslab-MultiSelectMenu {
-					max-width: none;
-				}
-			}
-		}
-	}
+        @media (min-width: $breakpoint-tablet) {
+            padding: 0 1em 0 2.25em;
+            margin-left: -2.25em;
+            margin-right: -2em;
+        }
+    }
+
+    &-wrap {
+        margin: 1.5em;
+
+        @media (min-width: $breakpoint-tablet-landscape) {
+            width: 35.625em;
+            margin: 6.25em auto auto;
+
+            &.wide {
+                width: 48em;
+            }
+
+            &.ultrawide {
+                width: 57.5em;
+            }
+        }
+    }
+
+    &-section {
+        padding: 1.5em;
+        margin: 1.375em -1.5em;
+        background-color: $grey-lightest;
+        border-bottom: 1px solid $grey-light;
+
+        p {
+            font-size: 0.75rem;
+        }
+
+        ul {
+
+            li {
+                font-style: italic;
+                margin-bottom: 0.25em;
+            }
+        }
+
+        @media (min-width: $breakpoint-tablet) {
+            padding: 1.375em 2.25em;
+            margin: 1.375em -2.25em;
+        }
+    }
+
+    @media (min-width: $breakpoint-tablet) {
+        padding: 1.875em 4em;
+
+        &-content {
+            display: flex;
+            flex-wrap: wrap;
+            background-color: $white;
+
+            &__item {
+                width: 48.25%;
+
+                &:nth-of-type(odd) {
+                    margin-right: auto;
+                }
+
+                .urlslab-MultiSelectMenu {
+                    max-width: none;
+                }
+            }
+        }
+    }
 }

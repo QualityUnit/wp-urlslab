@@ -101,119 +101,119 @@ export default function TableFilterPanel( { props, onEdit } ) {
 					onChange={ handleKeyChange }
 				/>
 				{ ( state.filterObj.keyType && ( filters[ key ]?.op || state.filterObj.filterOp ) ) &&
-					<SingleSelectMenu
-						className="ml-s"
-						key={ filters[ key ]?.op || state.filterObj.filterOp }
-						items={
-							( state.filterObj.keyType === 'date' && dateOp ) ||
-							( state.filterObj.keyType === 'number' && numericOp ) ||
-							( state.filterObj.keyType === 'string' && stringOp ) ||
-							( state.filterObj.keyType === 'lang' && langOp ) ||
-							( state.filterObj.keyType === 'menu' && menuOp ) ||
-							( state.filterObj.keyType === 'boolean' && menuOp )
-						}
-						name="filter_ops"
-						defaultAccept
-						autoClose
-						defaultValue={ filters[ key ]?.op || state.filterObj.filterOp }
-						onChange={ ( op ) => dispatch( { type: 'setFilterOp', op } ) }
-					/>
+				<SingleSelectMenu
+                    	className="ml-s"
+                    	key={ filters[ key ]?.op || state.filterObj.filterOp }
+                    	items={
+                    		( state.filterObj.keyType === 'date' && dateOp ) ||
+                            ( state.filterObj.keyType === 'number' && numericOp ) ||
+                            ( state.filterObj.keyType === 'string' && stringOp ) ||
+                            ( state.filterObj.keyType === 'lang' && langOp ) ||
+                            ( state.filterObj.keyType === 'menu' && menuOp ) ||
+                            ( state.filterObj.keyType === 'boolean' && menuOp )
+                    	}
+                    	name="filter_ops"
+                    	defaultAccept
+                    	autoClose
+                    	defaultValue={ filters[ key ]?.op || state.filterObj.filterOp }
+                    	onChange={ ( op ) => dispatch( { type: 'setFilterOp', op } ) }
+				/>
 				}
 			</div>
 			<div>
 				{ state.filterObj.keyType === 'lang' &&
-					<LangMenu autoClose multiSelect={ state.filterObj.filterOp === 'IN' } defaultValue={ filters[ key ]?.val || 'all' } defaultAccept onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
+				<LangMenu autoClose multiSelect={ state.filterObj.filterOp === 'IN' } defaultValue={ filters[ key ]?.val || 'all' } defaultAccept onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
 				}
 				{
 					state.filterObj.keyType === 'menu' &&
 					<SingleSelectMenu
-						items={ filterValMenu }
-						name="menu_vals"
-						defaultAccept
-						autoClose
-						defaultValue={ filters[ key ]?.val || Object.keys( filterValMenu )[ 0 ] }
-						onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) }
+                    	items={ filterValMenu }
+                    	name="menu_vals"
+                    	defaultAccept
+                    	autoClose
+                    	defaultValue={ filters[ key ]?.val || Object.keys( filterValMenu )[ 0 ] }
+                    	onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) }
 					/>
 				}
 				{
 					state.filterObj.keyType === 'boolean' &&
 					<SingleSelectMenu
-						items={ booleanTypes }
-						name="boolean_vals"
-						defaultAccept
-						autoClose
-						defaultValue={ filters[ key ]?.val || Object.keys( booleanTypes )[ 0 ] }
-						onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) }
+                    	items={ booleanTypes }
+                    	name="boolean_vals"
+                    	defaultAccept
+                    	autoClose
+                    	defaultValue={ filters[ key ]?.val || Object.keys( booleanTypes )[ 0 ] }
+                    	onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) }
 					/>
 				}
 				{ state.filterObj.keyType === 'string' && notBetween &&
-					<InputField liveUpdate autoFocus defaultValue={ filters[ key ]?.val } placeholder={ state.filterObj.filterOp === 'IN' ? 'enter ie. 0,10,15,20' : 'Enter search term' } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
+				<InputField liveUpdate autoFocus defaultValue={ filters[ key ]?.val } placeholder={ state.filterObj.filterOp === 'IN' ? 'enter ie. 0,10,15,20' : 'Enter search term' } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
 				}
 				{ state.filterObj.keyType === 'number' && notBetween &&
-					<InputField type="number" liveUpdate autoFocus defaultValue={ cellUnit === 'kB' ? filters[ key ]?.val / 1024 : filters[ key ]?.val } placeholder={ state.filterObj.filterOp === 'IN' ? 'enter ie. 0,10,15,20' : `Enter size ${ cellUnit && 'in ' + cellUnit }` } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val: cellUnit === 'kB' ? val * 1024 : val } ) } />
+				<InputField type="number" liveUpdate autoFocus defaultValue={ cellUnit === 'kB' ? filters[ key ]?.val / 1024 : filters[ key ]?.val } placeholder={ state.filterObj.filterOp === 'IN' ? 'enter ie. 0,10,15,20' : `Enter size ${ cellUnit && 'in ' + cellUnit }` } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val: cellUnit === 'kB' ? val * 1024 : val } ) } />
 				}
 
 				{ state.filterObj.keyType === 'date' && notBetween && // Datepicker not between
-					<div className="urlslab-inputField-datetime">
-						<DatePicker
-							className="urlslab-input"
-							selected={ date }
-							dateFormat="dd. MMMM yyyy, HH:mm"
-							timeFormat="HH:mm"
-							showTimeSelect
-							onChange={ ( val ) => {
-								setDate( new Date( val ) );
-								dispatch( { type: 'setFilterVal', val: val.toISOString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } );
-							} }
-						/>
-					</div>
+				<div className="urlslab-inputField-datetime">
+					<DatePicker
+                    		className="urlslab-input"
+                    		selected={ date }
+                    		dateFormat="dd. MMMM yyyy, HH:mm"
+                    		timeFormat="HH:mm"
+                    		showTimeSelect
+                    		onChange={ ( val ) => {
+                    			setDate( new Date( val ) );
+                    			dispatch( { type: 'setFilterVal', val: val.toISOString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } );
+                    		} }
+                    	/>
+				</div>
 				}
 				{ state.filterObj.keyType === 'date' && ! notBetween && // Datepicker between range
-					<div className="urlslab-datetime-range">
+				<div className="urlslab-datetime-range">
 
-						<div className="urlslab-inputField-datetime">
-							<DatePicker
-								className="urlslab-input"
-								selected={ startDate }
-								dateFormat="dd. MMMM yyyy, HH:mm"
-								timeFormat="HH:mm"
-								showTimeSelect
-								selectsStart
-								startDate={ startDate }
-								endDate={ endDate }
-								maxDate={ endDate }
-								onChange={ ( val ) => {
-									setStartDate( new Date( val ) );
-									dispatch( { type: 'setFilterVal', val: { ...state.filterObj.filterVal, min: val.toISOString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } } );
-								} }
-							/>
-						</div>
-						—
-						<div className="urlslab-inputField-datetime">
-							<DatePicker
-								className="urlslab-input"
-								selected={ endDate }
-								dateFormat="dd. MMMM yyyy, HH:mm"
-								timeFormat="HH:mm"
-								selectsEnd
-								showTimeSelect
-								startDate={ startDate }
-								endDate={ endDate }
-								minDate={ startDate }
-								onChange={ ( val ) => {
-									setEndDate( new Date( val ) );
-									dispatch( { type: 'setFilterVal', val: { ...state.filterObj.filterVal, max: val.toISOString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } } );
-								} }
-							/>
-						</div>
+					<div className="urlslab-inputField-datetime">
+						<DatePicker
+                    			className="urlslab-input"
+                    			selected={ startDate }
+                    			dateFormat="dd. MMMM yyyy, HH:mm"
+                    			timeFormat="HH:mm"
+                    			showTimeSelect
+                    			selectsStart
+                    			startDate={ startDate }
+                    			endDate={ endDate }
+                    			maxDate={ endDate }
+                    			onChange={ ( val ) => {
+                    				setStartDate( new Date( val ) );
+                    				dispatch( { type: 'setFilterVal', val: { ...state.filterObj.filterVal, min: val.toISOString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } } );
+                    			} }
+                    		/>
 					</div>
+					—
+					<div className="urlslab-inputField-datetime">
+						<DatePicker
+                    			className="urlslab-input"
+                    			selected={ endDate }
+                    			dateFormat="dd. MMMM yyyy, HH:mm"
+                    			timeFormat="HH:mm"
+                    			selectsEnd
+                    			showTimeSelect
+                    			startDate={ startDate }
+                    			endDate={ endDate }
+                    			minDate={ startDate }
+                    			onChange={ ( val ) => {
+                    				setEndDate( new Date( val ) );
+                    				dispatch( { type: 'setFilterVal', val: { ...state.filterObj.filterVal, max: val.toISOString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } } );
+                    			} }
+                    		/>
+					</div>
+				</div>
 				}
 				{ state.filterObj.keyType === 'number' && ! notBetween &&
 				<RangeInputs liveUpdate
-					unit={ cellUnit }
-					defaultMin={ filters[ key ]?.val.min }
-					defaultMax={ filters[ key ]?.val.max }
-					onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) }
+                    	unit={ cellUnit }
+                    	defaultMin={ filters[ key ]?.val.min }
+                    	defaultMax={ filters[ key ]?.val.max }
+                    	onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) }
 				/>
 				}
 			</div>

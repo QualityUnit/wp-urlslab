@@ -20,8 +20,7 @@ export default function TablePanels( { props } ) {
 				<DangerPanel title={ __( 'Delete All?' ) }
 					text={ __( 'Are you sure you want to delete all rows? Deleting rows will remove them from all modules where this table occurs.' ) }
 					button={ <><Trash />{ __( 'Delete All' ) }</> }
-					handlePanel={ handlePanel }
-					action="delete-all"
+					handlePanel={ handlePanel } action="delete-all"
 				/>
 			}
 
@@ -46,7 +45,7 @@ export default function TablePanels( { props } ) {
 			}
 			{
 				activePanel === 'rowInserter' &&
-					<EditRowPanel { ...options } handlePanel={ handlePanel } />
+				<EditRowPanel { ...options } handlePanel={ handlePanel } />
 			}
 
 			{
