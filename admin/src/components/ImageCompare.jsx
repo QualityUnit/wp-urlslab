@@ -488,7 +488,7 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 							/>
 						}
 
-						{ diffLoading && <Loader /> }
+						{ diffLoading && <Loader className="dark" /> }
 
 					</div>
 
