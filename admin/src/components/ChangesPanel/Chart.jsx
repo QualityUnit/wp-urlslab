@@ -15,6 +15,7 @@ import {
 	Legend,
 	ResponsiveContainer,
 } from 'recharts';
+import DateRangeButton from '../../elements/DateRangeButton';
 
 const Chart = ( { data, header } ) => {
 	const [ lineVisibility, setLineVisibility ] = useState( {} );
@@ -29,28 +30,32 @@ const Chart = ( { data, header } ) => {
 
 	const renderLegend = useCallback( ( { payload } ) => {
 		return (
-			<ul className="urlslab-chart-legend flex-align-center">
-				{
-					payload.map( ( entry, index ) => {
-						const { dataKey, color, value } = entry;
-						if ( dataKey === 'status_code' ) {
-							return null;
-						}
-						return <li key={ `item-${ index }` } style={ { backgroundColor: color } }>
-							<label
-								onClick={ () => {
-									setLineVisibility( ( obj ) => {
-										return { ...obj, [ dataKey ]: ! obj[ dataKey ] };
-									} );
-								} }
-							>
-								<input type="checkbox" defaultChecked={ ! lineVisibility[ dataKey ] } />
-								{ value }
-							</label>
-						</li>;
-					} )
-				}
-			</ul>
+			<div className="urlslab-chart-legend-wrapper">
+				<ul className="urlslab-chart-legend flex-align-center">
+					{
+						payload.map( ( entry, index ) => {
+							const { dataKey, color, value } = entry;
+							if ( dataKey === 'status_code' ) {
+								return null;
+							}
+							return <li key={ `item-${ index }` } style={ { backgroundColor: color } }>
+								<label
+									onClick={ () => {
+										setLineVisibility( ( obj ) => {
+											return { ...obj, [ dataKey ]: ! obj[ dataKey ] };
+										} );
+									} }
+								>
+									<input type="checkbox" defaultChecked={ ! lineVisibility[ dataKey ] } />
+									{ value }
+								</label>
+							</li>;
+						} )
+					}
+				</ul>
+
+				<DateRangeButton handleSelect={ () => console.log( 'sth selected from date' ) } />
+			</div>
 		);
 	}, [ lineVisibility ] );
 

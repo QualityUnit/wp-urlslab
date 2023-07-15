@@ -58,6 +58,13 @@
 		height: 100%;
 	}
 
+	.urlslab-chart-legend-wrapper {
+		display: flex;
+        justify-content: space-between;
+		height: 4rem;
+		width: 100%;
+	}
+
 	.urlslab-chart-legend {
 		display: inline-flex;
 		border-radius: $br-6;
