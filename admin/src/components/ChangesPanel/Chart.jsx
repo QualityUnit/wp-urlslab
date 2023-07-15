@@ -17,7 +17,7 @@ import {
 } from 'recharts';
 import DateRangeButton from '../../elements/DateRangeButton';
 
-const Chart = ( { data, header } ) => {
+const Chart = ( { data, header, useChangesChartDate } ) => {
 	const [ lineVisibility, setLineVisibility ] = useState( {} );
 
 	const chart = {
@@ -54,7 +54,10 @@ const Chart = ( { data, header } ) => {
 					}
 				</ul>
 
-				<DateRangeButton handleSelect={ () => console.log( 'sth selected from date' ) } />
+				<DateRangeButton startDate={ useChangesChartDate.startDate * 1000 } endDate={ useChangesChartDate.endDate * 1000 } handleSelect={ ( ranges ) => {
+					useChangesChartDate.setStartDate( Math.floor( ranges.startDate / 1000 ) );
+					useChangesChartDate.setEndDate( Math.floor( ranges.endDate / 1000 ) );
+				} } />
 			</div>
 		);
 	}, [ lineVisibility ] );

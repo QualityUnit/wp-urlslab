@@ -12,33 +12,43 @@ function DateRangeButton( { startDate, endDate, className, handleSelect } ) {
 		return date( getSettings().formats.date, datetime );
 	};
 
-	const [ range, setRange ] = useState( {
-		startDate: startDate || new Date().setDate( new Date().getDate() - 7 ),
-		endDate: endDate || new Date(),
+	const [ range, setRange ] = useState( [ {
+		startDate: new Date( startDate ),
+		endDate: new Date( endDate ),
 		key: 'selection',
-	} );
+	} ] );
+	const [ buttonText, setButtonText ] = useState( dateToString( startDate ) + ' - ' + dateToString( endDate ) );
 	const [ showCalendar, setShowCalendar ] = useState( false );
 
 	const toggleCalendar = () => {
 		setShowCalendar( ! showCalendar );
 	};
-	const onSelect = ( ranges ) => {
-		setRange( ranges.selection );
-		handleSelect( ranges.selection );
+	const onSelect = ( newRange ) => {
+		setRange( [ newRange.selection ] );
+		setButtonText( dateToString( newRange.selection.startDate ) + ' - ' + dateToString( newRange.selection.endDate ) );
+		handleSelect( newRange.selection );
 	};
 
 	return (
 		<div className="urlslab-date-range-picker">
+
+			{ range.startDate }
+
 			<Button onClick={ toggleCalendar }>
-				{ dateToString( range.startDate ) + ' - ' + dateToString( range.endDate ) }
+				{ buttonText }
 			</Button>
 
 			{
 				showCalendar && <div className="urlslab-date-range-picker-calendar">
 					<DateRangePicker
+						showSelectionPreview={ true }
+						moveRangeOnFirstSelection={ false }
 						className={ className }
-						ranges={ [ range ] }
+						ranges={ range }
+						months={ 2 }
+						direction="horizontal"
 						onChange={ onSelect }
+						maxDate={ new Date() }
 					/>
 				</div>
 			}

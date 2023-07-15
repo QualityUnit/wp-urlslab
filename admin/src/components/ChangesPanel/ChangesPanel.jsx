@@ -18,6 +18,7 @@ import Button from '../../elements/Button';
 import { ReactComponent as IconAnchor } from '../../assets/images/icons/icon-anchor.svg';
 import Tooltip from '../../elements/Tooltip';
 import DiffButton from '../../elements/DiffButton';
+import useChangesChartDate from '../../hooks/useChangesChartDate';
 
 function ChangesPanel() {
 	const { __ } = useI18n();
@@ -26,6 +27,7 @@ function ChangesPanel() {
 	const { title, slug } = useTablePanels( ( state ) => state.options.changesPanel );
 
 	const { selectedRows, selectRows, clearRows } = useChangeRow( {} );
+	const chartDateState = useChangesChartDate();
 	const [ consecutiveSelects, setConsecutiveSelects ] = useState( [] );
 
 	function hidePanel() {
@@ -61,9 +63,12 @@ function ChangesPanel() {
 	} );
 
 	const chartResult = useQuery( {
-		queryKey: [ slug, 'chart' ],
+		queryKey: [ slug, 'chart', chartDateState.startDate, chartDateState.endDate ],
 		queryFn: async () => {
-			const res = await postFetch( slug );
+			const res = await postFetch( slug, {
+				start_date: chartDateState.startDate,
+				end_date: chartDateState.endDate,
+			} );
 			if ( res.ok ) {
 				const returningData = await res.json();
 				return returningData.reverse();
@@ -208,7 +213,7 @@ function ChangesPanel() {
 							</button>
 						</div>
 						{ chartResult.isSuccess &&
-							<Chart data={ chartResult.data } header={ header } />
+							<Chart data={ chartResult.data } header={ header } useChangesChartDate={ chartDateState } />
 						}
 						<div className="mt-l table-container" style={ { position: 'relative', top: 0, left: 0, zIndex: 1 } }>
 							<Table

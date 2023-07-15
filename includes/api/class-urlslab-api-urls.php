@@ -261,12 +261,24 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 								return is_bool( $param );
 							},
 						),
+						'start_date' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param );
+							},
+						),
+						'end_date' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param );
+							},
+						),
 					)
 				),
-				'permission_callback' => array(
-					$this,
-					'get_items_permissions_check',
-				),
+			),
+			'permission_callback' => array(
+				$this,
+				'get_items_permissions_check',
 			),
 		);
 	}
@@ -544,7 +556,14 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			if ( $request->get_param( 'only_changed' ) ) {
 				$only_changed = 'true';
 			}
-			$snapshots = $client->getSnapshotsHistory( $url_obj->get_url()->get_url(), null, null, $only_changed, 500 );
+			$snapshots = $client->getSnapshotsHistory(
+				$url_obj->get_url()->get_url(),
+				null,
+				$request->get_param( 'start_date' ),
+				$request->get_param( 'end_date' ),
+				$only_changed,
+				500
+			);
 
 			$rows = array();
 
