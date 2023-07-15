@@ -10,7 +10,7 @@ export default function Checkbox({
   className,
   onChange,
   textBefore,
-  children, disabled,
+  children,
 }) {
   const [isChecked, setChecked] = useState(defaultValue ? true : false);
 
@@ -31,8 +31,6 @@ export default function Checkbox({
         type={name ? 'radio' : 'checkbox'}
         name={name || ''}
         defaultChecked={isChecked}
-        
-				disabled={ disabled ? 'disabled' : '' }
         onChange={(event) => handleOnChange(event)}
       />
       <div className="urlslab-checkbox-box"></div>

@@ -10,9 +10,7 @@ let totalItems = 1;
 let jsonData = { status: 'loading', data: [] };
 
 export async function exportCSV( options, result ) {
-	const { altSlug, altPaginationId, url, perPage = 9999, deleteCSVCols, stopExport } = options;
-	const slug = altSlug ? altSlug : options.slug;
-	const paginationId = altPaginationId ? altPaginationId : options.paginationId;
+	const { slug, url, paginationId, perPage = 9999, deleteCSVCols, stopExport } = options;
 	const { filters: userFilters } = url;
 
 	if ( stopExport.current ) {

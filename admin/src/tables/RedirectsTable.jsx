@@ -28,7 +28,7 @@ export default function RedirectsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -75,14 +75,10 @@ export default function RedirectsTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
-				cell.row.toggleSelected();
-				selectRows( cell );
+			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
+				selectRow( val, cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
-				selectRows( val ? head : undefined );
-			} } />,
+			header: null,
 		} ),
 		columnHelper.accessor( 'match_type', {
 			filterValMenu: matchTypes,
@@ -216,6 +212,7 @@ export default function RedirectsTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				table={ table }
+				selectedRows={ selectedRows }
 				onDeleteSelected={ () => deleteSelectedRows( { id: 'match_url' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ {

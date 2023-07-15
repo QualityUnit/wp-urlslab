@@ -27,7 +27,7 @@ export default function SearchReplaceTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -37,17 +37,10 @@ export default function SearchReplaceTable( { slug } ) {
 		R: __( 'Regular expression' ),
 	};
 
-	const loginStatuses = {
-		A: __( 'All' ),
-		L: __( 'Logged in only' ),
-		O: __( 'Anonym visitors only' ),
-	};
-
 	const header = {
 		str_search: __( 'Search string (old)' ),
 		str_replace: __( 'Replace string (new)' ),
 		search_type: __( 'Search type' ),
-		login_status: __( 'Login status' ),
 		labels: __( 'Tags' ),
 		url_filter: 'URL filter',
 	};
@@ -69,24 +62,16 @@ export default function SearchReplaceTable( { slug } ) {
 			description={ __( 'Regullar expression to match browser URL of page, where should be replacement applied. To replace text in all pages, use value `.*`' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_filter: val } ) } />,
 
-		login_status: <SingleSelectMenu defaultAccept autoClose items={ loginStatuses } name="login_status" defaultValue="A"
-			description={ __( 'Apply rule based on the login status of visitor or user' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, login_status: val } ) }>{ header.login_status }</SingleSelectMenu>,
-
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
-				cell.row.toggleSelected();
-				selectRows( cell );
+			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
+				selectRow( val, cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
-				selectRows( val ? head : undefined );
-			} } />,
+			header: null,
 		} ),
 		columnHelper.accessor( 'str_search', {
 			className: 'nolimit',
@@ -105,13 +90,6 @@ export default function SearchReplaceTable( { slug } ) {
 			className: 'nolimit',
 			cell: ( cell ) => <SingleSelectMenu items={ searchTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.search_type }</SortBy>,
-			size: 80,
-		} ),
-		columnHelper.accessor( 'login_status', {
-			filterValMenu: loginStatuses,
-			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu items={ loginStatuses } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.login_status }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'url_filter', {
@@ -165,6 +143,7 @@ export default function SearchReplaceTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				table={ table }
+				selectedRows={ selectedRows }
 				onDeleteSelected={ () => deleteSelectedRows( { id: 'str_search' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ { header, rowEditorCells, title: 'Add New Replacement', data, slug, url, paginationId, rowToEdit, id: 'str_search', deleteCSVCols: [ paginationId, 'dest_url_id' ] } }

@@ -1,11 +1,13 @@
-import { memo, useState } from 'react';
+import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
+import useCheckApiKey from '../hooks/useCheckApiKey';
 import DashboardModule from '../components/DashboardModule';
 import SearchField from '../elements/SearchField';
 import MultiSelectMenu from '../elements/MultiSelectMenu';
 
-function Modules( { modules } ) {
+export default function Modules( { modules } ) {
 	const { __ } = useI18n();
+	const { settingsLoaded, apiKeySet } = useCheckApiKey();
 	const [ filterBy, setFilterBy ] = useState( {} );
 
 	const labelsList = {
@@ -58,7 +60,7 @@ function Modules( { modules } ) {
 	};
 
 	const filter = ( module ) => {
-		const { active, labels } = module;
+		const { apikey, active, labels } = module;
 		const title = module.title.toLowerCase();
 		const description = module.description.toLowerCase();
 		const { search, categories, status, pricing } = filterBy;
@@ -104,9 +106,20 @@ function Modules( { modules } ) {
 
 			<div className="urlslab-modules flex-tablet-landscape flex-wrap">
 				{ modules.map( ( module ) => {
+					const { id, apikey, active, title, description, labels } = module;
 					return (
 						module.id !== 'general' && filter( module )
-							? <DashboardModule key={ module.id } module={ module } labelsList={ labelsList } />
+							? <DashboardModule
+								key={ id }
+								moduleId={ id }
+								hasApi={ settingsLoaded && apiKeySet === false && apikey }
+								isActive={ active }
+								title={ title }
+								tags={ { labels, labelsList } }
+							>
+								{ description }
+							</DashboardModule>
+						// )
 							: null
 					);
 				} )
@@ -115,5 +128,3 @@ function Modules( { modules } ) {
 		</>
 	);
 }
-
-export default memo( Modules );

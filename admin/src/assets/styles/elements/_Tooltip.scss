@@ -62,25 +62,6 @@
 		width: 300%;
 	}
 
-	&.withImage {
-		overflow: hidden;
-		max-height: 13em;
-		padding: 0.35em;
-
-		.imageWrapper {
-			height: auto;
-			overflow: hidden;
-			object-fit: cover;
-			border-radius: $br-10;
-		}
-
-		img {
-
-			@include square(100%);
-			margin: 0;
-		}
-	}
-
 	img,
 	.img,
 	picture {

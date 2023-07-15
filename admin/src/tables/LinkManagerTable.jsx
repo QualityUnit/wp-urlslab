@@ -1,7 +1,5 @@
-import { useMemo } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, LinkIcon, Trash, SingleSelectMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, Button,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, LinkIcon, Trash, SingleSelectMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -9,14 +7,9 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
 export default function LinkManagerTable( { slug } ) {
-	const queryClient = useQueryClient();
 	const paginationId = 'url_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const url = { filters, sorting };
-
-	const schedules = useMemo( () => {
-		return queryClient.getQueryData( [ 'schedule', 'urls' ] );
-	}, [ queryClient ] );
 
 	const {
 		__,
@@ -30,19 +23,9 @@ export default function LinkManagerTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
-
-	const showChanges = ( cell ) => {
-		const { http_status, url_name } = cell?.row?.original;
-		const domain = url_name.replace( /^(https?:\/\/)([^\/]+)(\/.+?)?$/g, '$2' );
-		if ( http_status > 299 || http_status <= 0 || ! schedules?.includes( domain ) ) {
-			return false;
-		}
-
-		return true;
-	};
 
 	const setUnifiedPanel = ( cell ) => {
 		const origCell = cell?.row.original;
@@ -105,14 +88,10 @@ export default function LinkManagerTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
-				cell.row.toggleSelected();
-				selectRows( cell );
+			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
+				selectRow( val, cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
-				selectRows( val ? head : undefined );
-			} } />,
+			header: null,
 		} ),
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
@@ -200,20 +179,6 @@ export default function LinkManagerTable( { slug } ) {
 			header: header.labels,
 			size: 160,
 		} ),
-		columnHelper.accessor( 'changesPanel', {
-			className: 'changesPanel',
-			cell: ( cell ) => showChanges( cell ) &&
-			<Button onClick={ () => {
-				setOptions( { changesPanel: { title: cell.row.original.url_name, slug: `url/${ cell.row.original.url_id }/changes` } } );
-				activatePanel( 'changesPanel' );
-			} }
-			className="small active"
-			>
-				{ __( 'Show changes' ) }
-			</Button>,
-			header: null,
-			size: 100,
-		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, id: 'url_name' } ) } />,
@@ -230,6 +195,7 @@ export default function LinkManagerTable( { slug } ) {
 			<ModuleViewHeaderBottom
 				table={ table }
 				noImport
+				selectedRows={ selectedRows }
 				onDeleteSelected={ () => deleteSelectedRows( { id: 'url_name' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ {

@@ -14,11 +14,8 @@ export default function UnifiedPanelMenu( ) {
 			}
 			{ options.length > 0 &&
 					options.map( ( option, index ) => {
-						if ( option ) {
-							const { title } = option.detailsOptions;
-							return <li key={ title } className={ `${ activePanel === index ? 'active' : '' }` }><button onClick={ () => activatePanel( index ) }>{ title }</button></li>;
-						}
-						return null;
+						const { title } = option.detailsOptions;
+						return <li key={ title } className={ `${ activePanel === index ? 'active' : '' }` }><button onClick={ () => activatePanel( index ) }>{ title }</button></li>;
 					} )
 			}
 		</ul>

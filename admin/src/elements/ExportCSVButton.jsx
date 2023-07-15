@@ -13,7 +13,6 @@ export default function ExportCSVButton( { options, className, withfilters, onCl
 	const { __ } = useI18n();
 
 	function handleExport() {
-		onClick( 1 );
 		if ( withfilters ) {
 			exportCSV( options, ( status ) => onClick( status ) ).then( ( response ) => {
 				if ( onClick && response.status === 'done' ) {
@@ -22,7 +21,7 @@ export default function ExportCSVButton( { options, className, withfilters, onCl
 						header: true }
 					);
 
-					fileDownload( csv, `${ options.altSlug ? options.altSlug : options.slug }.csv` );
+					fileDownload( csv, `${ options.slug }.csv` );
 				}
 			} );
 		}
@@ -36,7 +35,7 @@ export default function ExportCSVButton( { options, className, withfilters, onCl
 					}
 					);
 
-					fileDownload( csv, `${ options.altSlug ? options.altSlug : options.slug }.csv` );
+					fileDownload( csv, `${ options.slug }.csv` );
 				}
 			} );
 		}
