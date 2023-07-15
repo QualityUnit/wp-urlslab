@@ -43,6 +43,7 @@ function DateRangeButton( { startDate, endDate, className, handleSelect } ) {
 					<DateRangePicker
 						showSelectionPreview={ true }
 						moveRangeOnFirstSelection={ false }
+						retainEndDateOnFirstSelection={ true }
 						className={ className }
 						ranges={ range }
 						months={ 2 }
