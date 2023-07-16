@@ -1,136 +1,136 @@
 /* stylelint-disable */
-@use 'sass:math';
-@use 'variables' as *;
+@use "sass:math";
+@use "variables" as *;
 
 @mixin appearance($appearance: none) {
-    -webkit-appearance: $appearance;
-    -moz-appearance: $appearance;
-    -ms-appearance: $appearance;
-    -o-appearance: $appearance;
-    appearance: $appearance;
+        -webkit-appearance: $appearance;
+        -moz-appearance: $appearance;
+        -ms-appearance: $appearance;
+        -o-appearance: $appearance;
+        appearance: $appearance;
 }
 
 @mixin square($size: 1.5em, $important: '') {
-    width: $size #{$important};
-    height: $size #{$important};
+        width: $size #{$important};
+        height: $size #{$important};
 }
 
 @mixin triangle($size, $color, $direction) {
-    height: 0;
-    width: 0;
-    border-color: transparent;
-    border-style: solid;
-    border-width: math.div($size, 2);
+        height: 0;
+        width: 0;
+        border-color: transparent;
+        border-style: solid;
+        border-width: math.div($size, 2);
 
-    @if $direction == up {
-        border-bottom-color: $color;
-    } @else if $direction == right {
-        border-left-color: $color;
-    } @else if $direction == down {
-        border-top-color: $color;
-    } @else if $direction == left {
-        border-right-color: $color;
-    }
+        @if $direction == up {
+                border-bottom-color: $color;
+        } @else if $direction == right {
+                border-left-color: $color;
+        } @else if $direction == down {
+                border-top-color: $color;
+        } @else if $direction == left {
+                border-right-color: $color;
+        }
 }
 
 //Mixin for Placeholder input attribute, like input type="search" HTML5 element
 
 @mixin input-placeholder {
-    &:-moz-placeholder {
-        @content;
-    }
+        &:-moz-placeholder {
+                @content;
+        }
 
-    &::-moz-placeholder {
-        @content;
-    }
+        &::-moz-placeholder {
+                @content;
+        }
 
-    &:-ms-input-placeholder,
-    &::-ms-input-placeholder {
-        @content;
-    }
+        &:-ms-input-placeholder,
+        &::-ms-input-placeholder {
+                @content;
+        }
 
-    &::-webkit-input-placeholder {
-        @content;
-    }
+        &::-webkit-input-placeholder {
+                @content;
+        }
 
-    &::placeholder {
-        @content;
-    }
+        &::placeholder {
+                @content;
+        }
 }
 
 ///Absolutely centers blocks or elements to center of page
 
 @mixin absoluteCenter() {
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
 }
 
 ///Complete left to right, top to bottom
 ///stretching of absolutely positioned element
 
 @mixin posZero() {
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
 }
 
 //Custom position of absolutely positioned element,
 //if only 1 variable set, all others are set the same
 
 @mixin posCustom($top: 0, $right: $top, $bottom: $top, $left: $top) {
-    top: $top;
-    right: $right;
-    bottom: $bottom;
-    left: $left;
+        top: $top;
+        right: $right;
+        bottom: $bottom;
+        left: $left;
 }
 
 @mixin smallLoader($position: absolute) {
-    &::before {
-        @include square(1em);
-        position: $position;
-        right: 0.5em;
-        background: url(../../images/icons/icon-loading-input.svg) center center no-repeat;
-        background-size: contain;
-        animation: 0.75s rotate linear infinite;
-        content: '';
-    }
+        &::before {
+                @include square(1em);
+                position: $position;
+                right: 0.5em;
+                background: url(../../images/icons/icon-loading-input.svg) center center no-repeat;
+                background-size: contain;
+                animation: 0.75s rotate linear infinite;
+                content: '';
+        }
 }
 
 @mixin progressbar() {
-    @content;
-
-    &::-webkit-progress-bar {
         @content;
-    }
+
+        &::-webkit-progress-bar {
+                @content;
+        }
 }
 
 @mixin progressbarValue() {
-    &::-webkit-progress-value {
-        @content;
-    }
-    &::-moz-progress-bar {
-        @content;
-    }
+        &::-webkit-progress-value {
+                @content;
+        }
+        &::-moz-progress-bar {
+                @content;
+        }
 }
 
 @mixin scrollbar($width: 6px) {
-    &::-webkit-scrollbar-track {
-        background-color: transparent;
-    }
+        &::-webkit-scrollbar-track {
+                background-color: transparent;
+        }
 
-    &::-webkit-scrollbar-thumb {
-        background-color: $grey-medium-lighter;
-        border-radius: $br-10;
-        height: 5em;
-    }
+        &::-webkit-scrollbar-thumb {
+                background-color: $grey-medium-lighter;
+                border-radius: $br-10;
+                height: 5em;
+        }
 
-    &::-webkit-scrollbar {
-        height: $width;
-        width: $width;
-    }
+        &::-webkit-scrollbar {
+                height: $width;
+                width: $width;
+        }
 
-    scrollbar-width: $width;
-    scrollbar-color: $grey-medium-lighter transparent;
+        scrollbar-width: $width;
+        scrollbar-color: $grey-medium-lighter transparent;
 }
