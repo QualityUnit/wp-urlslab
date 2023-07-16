@@ -32,6 +32,10 @@ module.exports = {
         use: [{loader:'file-loader', options: {name: 'css/[name].css'}},'extract-loader','css-loader','postcss-loader', 'sass-loader'],
       },
       {
+        test: /\.worker\.js$/,
+        use: { loader: "worker-loader" },
+      },
+      {
         test: /\.(png|gif|jpg|jpeg|svg)$/,
         use: [
           {

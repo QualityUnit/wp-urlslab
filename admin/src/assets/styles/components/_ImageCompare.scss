@@ -6,17 +6,94 @@
 
 	@include posZero;
 	position: fixed;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background-color: $black-real;
+	background-color: $black-transparent;
 	z-index: 100002;
 	color: $white;
 
-	.urlslab-panel-close {
-		position: absolute;
-		top: 2em;
-		right: 3em;
+	&-top-control {
+		display: flex;
+		justify-content: space-between;
+		padding: 0.6rem;
+		width: 100%;
+		height: 100px;
+
+		&-screens {
+			display: flex;
+			justify-content: flex-start;
+
+			&-item {
+				cursor: pointer;
+				max-width: 160px;
+				height: 100%;
+				padding: 0.5rem;
+				border-radius: 10px;
+				display: flex;
+				justify-content: center;
+				align-content: space-between;
+				flex-direction: column;
+				margin-right: 1rem;
+				color: $white;
+
+				div {
+					width: 100%;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					font-size: 0.8rem;
+				}
+
+				div:last-child {
+					margin-top: 0.5rem;
+				}
+			}
+
+			&-item.active {
+				background-color: $black-real;
+			}
+
+			&-option {
+				display: flex;
+				align-items: center;
+			}
+		}
+
+		&-date {
+			display: flex;
+			align-items: center;
+			font-size: 1rem;
+
+			div {
+				margin-right: 0.3em;
+			}
+
+			&-dropdown {
+				background-color: transparent;
+				color: $white;
+			}
+		}
+	}
+
+	&-panel {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+	}
+
+	.urlslab-panel-close-container {
+		width: 100%;
+		display: flex;
+		justify-content: flex-end;
+
+		&-btn {
+			cursor: pointer;
+			width: 24px;
+			height: 24px;
+
+			svg {
+				fill: $white;
+			}
+		}
+
 	}
 
 	img-comparison-slider {
@@ -53,12 +130,24 @@
 	}
 
 	&-wrapper {
-
-		@include scrollbar;
-		height: 80%;
 		display: flex;
-		align-items: flex-start;
-		justify-content: center;
+		flex-direction: column;
+		justify-content: flex-start;
+		cursor: col-resize;
+		transition: width 0.2s;
+	}
+
+	&-slider-container {
+		@include scrollbar;
+		height: calc(100vh - 100px - 24px);
 		overflow: hidden auto;
+	}
+
+	&-img {
+		width: 100%;
+
+		&.hidden {
+			display: none;
+		}
 	}
 }

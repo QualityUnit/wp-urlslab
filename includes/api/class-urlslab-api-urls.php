@@ -251,11 +251,34 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'get_url_changes' ),
-				'args'                => $this->get_table_arguments(),
-				'permission_callback' => array(
-					$this,
-					'get_items_permissions_check',
+				'args'                => array_merge(
+					$this->get_table_arguments(),
+					array(
+						'only_changed' => array(
+							'required'          => false,
+							'default'           => false,
+							'validate_callback' => function( $param ) {
+								return is_bool( $param );
+							},
+						),
+						'start_date' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param );
+							},
+						),
+						'end_date' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param );
+							},
+						),
+					)
 				),
+			),
+			'permission_callback' => array(
+				$this,
+				'get_items_permissions_check',
 			),
 		);
 	}
@@ -529,7 +552,18 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		try {
 			$config    = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) );
 			$client    = new SnapshotApi( new GuzzleHttp\Client(), $config );
-			$snapshots = $client->getSnapshotsHistory( $url_obj->get_url()->get_url(), null, 100 );
+			$only_changed = null;
+			if ( $request->get_param( 'only_changed' ) ) {
+				$only_changed = 'true';
+			}
+			$snapshots = $client->getSnapshotsHistory(
+				$url_obj->get_url()->get_url(),
+				null,
+				$request->get_param( 'start_date' ),
+				$request->get_param( 'end_date' ),
+				$only_changed,
+				500
+			);
 
 			$rows = array();
 

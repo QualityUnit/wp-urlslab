@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, LinkIcon, Trash, SingleSelectMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, Button,
 } from '../lib/tableImports';
@@ -9,14 +7,9 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
 export default function LinkManagerTable( { slug } ) {
-	const queryClient = useQueryClient();
 	const paginationId = 'url_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const url = { filters, sorting };
-
-	const schedules = useMemo( () => {
-		return queryClient.getQueryData( [ 'schedule', 'urls' ] );
-	}, [ queryClient ] );
 
 	const {
 		__,
@@ -35,13 +28,12 @@ export default function LinkManagerTable( { slug } ) {
 	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
 
 	const showChanges = ( cell ) => {
-		const { http_status, url_name } = cell?.row?.original;
-		const domain = url_name.replace( /^(https?:\/\/)([^\/]+)(\/.+?)?$/g, '$2' );
-		if ( http_status > 299 || http_status <= 0 || ! schedules?.includes( domain ) ) {
+		const { http_status, urlslab_scr_timestamp, urlslab_sum_timestamp } = cell?.row?.original;
+		if ( http_status > 299 || http_status <= 0 ) {
 			return false;
 		}
 
-		return true;
+		return urlslab_scr_timestamp !== 0 || urlslab_sum_timestamp !== 0;
 	};
 
 	const setUnifiedPanel = ( cell ) => {

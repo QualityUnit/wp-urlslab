@@ -100,7 +100,8 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 							return editedRow;
 						}
 						return row;
-					} ),
+					}
+					),
 				) ?? [];
 				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => ( {
 					pages: newPagesArray,
@@ -121,7 +122,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 				} );
 
 				const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow );
-				return { response, editedRow, id: editedRow[ id ], updateAll };
+				return { response, editedRow, id: editedRow[ id ] };
 			}
 		},
 		onSuccess: ( { response, id, updateAll } ) => {
@@ -217,7 +218,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const selectRows = ( tableElem, remove = false ) => {
 		if ( tableElem && ! remove ) {
 			setTable( tableElem?.table );
-			setSelectedRows( selectedRows.concat( tableElem ) );
+			setSelectedRows( ( prevSelectedRows ) => [ ...prevSelectedRows, tableElem ] );
 			return false;
 		}
 		if ( remove ) {
@@ -228,5 +229,9 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 		setTable();
 	};
 
-	return { selectedRows, insertRow, selectRows, deleteRow, deleteSelectedRows, updateRow, saveEditedRow };
+	const clearRows = () => {
+		setSelectedRows( [ ] );
+	};
+
+	return { selectedRows, insertRow, selectRows, deleteRow, clearRows, deleteSelectedRows, updateRow, saveEditedRow };
 }

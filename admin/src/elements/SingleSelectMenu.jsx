@@ -4,7 +4,7 @@ import Checkbox from './Checkbox';
 import '../assets/styles/elements/_MultiSelectMenu.scss';
 
 export default function SortMenu( {
-	className, name, style, children, items, description, defaultValue, required, defaultAccept, autoClose, disabled, isFilter, onChange,
+	className, name, style, children, items, description, defaultValue, required, defaultAccept, autoClose, disabled, isFilter, onChange, dark,
 } ) {
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
@@ -50,7 +50,7 @@ export default function SortMenu( {
 			<div className={ `urlslab-MultiSelectMenu urlslab-SortMenu ${ disabled && 'disabled' } ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref }>
 				{ ! isFilter && children ? <div className={ `urlslab-inputField-label ${ required ? 'required' : '' }` } dangerouslySetInnerHTML={ { __html: children } } /> : null }
 				<div
-					className={ `urlslab-MultiSelectMenu__title ${ isFilter ? 'isFilter' : '' } ${ isActive ? 'active' : '' }` }
+					className={ `urlslab-MultiSelectMenu__title ${ isFilter ? 'isFilter' : '' } ${ isActive ? 'active' : '' } ${ dark ? 'dark' : '' }` }
 					onClick={ ! disabled && handleMenu }
 					onKeyUp={ ( event ) => {
 						if ( ! disabled ) {
@@ -62,12 +62,12 @@ export default function SortMenu( {
 				>
 					<span dangerouslySetInnerHTML={ { __html: isFilter ? children : items[ checked ] } } />
 				</div>
-				<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
+				<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' } ${ dark ? 'dark' : '' }` }>
 					<div className={ `urlslab-MultiSelectMenu__items--inn ${ Object.values( items ).length > 8 ? 'has-scrollbar' : '' }` }>
 						{ Object.entries( items ).map( ( [ id, value ] ) => {
 							return (
 								<Checkbox
-									className="urlslab-MultiSelectMenu__item"
+									className={ `urlslab-MultiSelectMenu__item ${ dark ? 'dark' : '' }` }
 									key={ id }
 									id={ id }
 									onChange={ () => checkedCheckbox( id ) }
