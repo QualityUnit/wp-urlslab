@@ -376,17 +376,17 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 					<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'overlay' ? 'active' : '' }` }
 						onClick={ () => handleScreenChange( 'overlay' ) }>
 						<div><OverlayScreenIcon /></div>
-						<div>Overlay Without diff</div>
+						<div>Overlay</div>
 					</button>
 					<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'overlayWithDiff' ? 'active' : '' }` }
 						onClick={ () => handleScreenChange( 'overlayWithDiff' ) }>
 						<div><OverlayWithDiffIcon /></div>
-						<div>Overlay With diff</div>
+						<div>Diff</div>
 					</button>
 					<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'adjacent' ? 'active' : '' }` }
 						onClick={ () => handleScreenChange( 'adjacent' ) }>
 						<div><AdjacentScreenIcon /></div>
-						<div>Adjacent With diff</div>
+						<div>Side by Side</div>
 					</button>
 				</div>
 				<div className="urlslab-ImageCompare-top-control-date">
