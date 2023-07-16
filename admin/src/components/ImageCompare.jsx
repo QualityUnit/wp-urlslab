@@ -1,46 +1,499 @@
-import { memo } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { ImgComparisonSlider } from '@img-comparison-slider/react';
-import DateTimeFormat from '../elements/DateTimeFormat';
 import { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.svg';
+import { ReactComponent as AdjacentScreenIcon } from '../assets/images/icons/icon-adjacent-screen.svg';
+import { ReactComponent as OverlayScreenIcon } from '../assets/images/icons/icon-overlay-no-diff.svg';
+import { ReactComponent as OverlayWithDiffIcon } from '../assets/images/icons/icon-overlay-with-diff.svg';
+import { ReactComponent as SearchIcon } from '../assets/images/icons/icon-search-white.svg';
+import { ReactComponent as SearchZoomInIcon } from '../assets/images/icons/icon-search-zoom-in.svg';
+import { ReactComponent as SearchZoomOutIcon } from '../assets/images/icons/icon-search-zoom-out.svg';
 import useTablePanels from '../hooks/useTablePanels';
 import '../assets/styles/components/_ImageCompare.scss';
+import SingleSelectMenu from '../elements/SingleSelectMenu';
+import { date, getSettings } from '@wordpress/date';
+import Loader from './Loader';
 
-const ImageCompare = ( { selectedRows } ) => {
-	const image1 = selectedRows[ 0 ].cell.getValue().full;
-	const image1Date = selectedRows[ 0 ].row.original.last_seen * 1000;
-	const image2 = selectedRows[ 1 ].cell.getValue().full;
-	const image2Date = selectedRows[ 1 ].row.original.last_seen * 1000;
+const ImageCompare = ( { selectedRows, allChanges } ) => {
+	const SCREENSHOT_WIDTH = 1366;
+	const zoomingOptions = {
+		0: 'Choose zoom level',
+		20: '20%',
+		30: '30%',
+		40: '40%',
+		50: '50%',
+	};
+	const dropdownItems = allChanges.reduce( ( acc, item ) => {
+		const dateFormatted = date( getSettings().formats.date, item.last_changed * 1000 );
+		const time = date( getSettings().formats.time, item.last_changed * 1000 );
+
+		acc[ item.last_changed * 1000 ] = dateFormatted + ' ' + time.replace( /: /, ':' );
+		return acc;
+	}, {} );
+	const [ leftImage, setLeftImage ] = useState( selectedRows[ 0 ].cell.getValue().full );
+	const [ leftImageKey, setLeftImageKey ] = useState( selectedRows[ 0 ].row.original.last_changed * 1000 );
+	const [ rightImage, setRightImage ] = useState( selectedRows[ 1 ].cell.getValue().full );
+	const [ rightImageKey, setRightImageKey ] = useState( selectedRows[ 1 ].row.original.last_changed * 1000 );
+	const [ wrapperWidth, setWrapperWidth ] = useState( 0 );
+	const [ activeScreen, setActiveScreen ] = useState( 'overlay' ); // ['overlay', 'overlayWithDiff', 'adjacent']
+	const [ zoom, setZoom ] = useState( 0 );
+	const [ baseWrapperWidth, setBaseWrapperWidth ] = useState( 0 );
+	const [ render, setRender ] = useState( true );
+	const [ diffStarted, startDiff ] = useState( false );
+	const [ diffLoading, setDiffLoading ] = useState( false );
+	const leftImageRef = useRef( null );
+	const rightImageRef = useRef( null );
+	const adjacentImageRef = useRef( null );
+	const overlayBeforeImageRef = useRef( null );
+	const overlayAfterImageRef = useRef( null );
 	const imageCompare = useTablePanels( ( state ) => state.imageCompare );
 
 	const hideImageCompare = () => {
 		useTablePanels.setState( { imageCompare: false } );
 	};
 
-	return (
-		imageCompare &&
-		<div className="urlslab-ImageCompare">
-			<button className="urlslab-panel-close" onClick={ hideImageCompare }>
-				<CloseIcon />
-			</button>
-			{
-				<div className="urlslab-ImageCompare-wrapper">
-
-					<ImgComparisonSlider value="50" hover={ false }>
-						<figure slot="first">
-							<img src={ image1 } alt="" className="urlslab-ImageCompare-img" />
-							<figcaption>
-								<DateTimeFormat datetime={ image1Date } />
-							</figcaption>
-						</figure>
-						<figure slot="second">
-							<img src={ image2 } alt="" className="urlslab-ImageCompare-img" />
-							<figcaption>
-								<DateTimeFormat datetime={ image2Date } />
-							</figcaption>
-						</figure>
-					</ImgComparisonSlider>
-				</div>
+	const handleImageChange = ( newImage, isLeft ) => {
+		if ( isLeft ) {
+			if ( newImage === leftImage ) {
+				return false;
 			}
+
+			setRender( true );
+			startDiff( false );
+			setDiffLoading( false );
+			setLeftImage( allChanges.filter( ( change ) => change.last_changed * 1000 === Number( newImage ) )[ 0 ].screenshot.full );
+			setLeftImageKey( newImage );
+			return true;
+		}
+
+		if ( rightImage ) {
+			if ( newImage === rightImage ) {
+				return false;
+			}
+
+			setRender( true );
+			startDiff( false );
+			setDiffLoading( false );
+			setRightImage( allChanges.filter( ( change ) => change.last_changed * 1000 === Number( newImage ) )[ 0 ].screenshot.full );
+			setRightImageKey( newImage );
+			return true;
+		}
+
+		return false;
+	};
+
+	const handleZoomChange = ( newZoom ) => {
+		const baseZoom = Math.round( ( baseWrapperWidth / window.innerWidth ) * 100 );
+
+		if ( newZoom <= baseZoom ) {
+			setWrapperWidth( baseWrapperWidth );
+			setZoom( baseZoom );
+			return;
+		}
+
+		if ( newZoom > 50 ) {
+			setWrapperWidth( window.innerWidth / 2 );
+			setZoom( 50 );
+			return;
+		}
+
+		const newWidth = ( newZoom / 100 ) * window.innerWidth;
+		setWrapperWidth( newWidth );
+		setZoom( newZoom );
+	};
+
+	const prepareImagesHeight = ( imageLeftElem, imageRightElem ) => {
+		imageLeftElem.crossOrigin = 'Anonymous';
+		imageRightElem.crossOrigin = 'Anonymous';
+
+		if ( imageLeftElem.height <= 0 || imageRightElem.height <= 0 ) {
+			return -1;
+		}
+
+		const returningHeight = Math.max( imageLeftElem.height, imageRightElem.height );
+		if ( imageLeftElem.height !== imageRightElem.height ) {
+			const canvas = document.createElement( 'canvas' );
+			const ctx = canvas.getContext( '2d' );
+			if ( imageLeftElem.height < imageRightElem.height ) {
+				canvas.width = imageLeftElem.width;
+				canvas.height = imageRightElem.height;
+				ctx.beginPath();
+				ctx.rect( 0, 0, canvas.width, canvas.height );
+				ctx.fillStyle = 'black';
+				ctx.fill();
+
+				ctx.drawImage( imageLeftElem, 0, 0, imageLeftElem.width, imageLeftElem.height );
+				setLeftImage( canvas.toDataURL( 'image/png' ) );
+			} else {
+				canvas.width = imageRightElem.width;
+				canvas.height = imageLeftElem.height;
+				ctx.beginPath();
+				ctx.rect( 0, 0, canvas.width, canvas.height );
+				ctx.fillStyle = 'black';
+				ctx.fill();
+
+				ctx.drawImage( imageRightElem, 0, 0, imageRightElem.naturalWidth, imageRightElem.naturalHeight );
+				setRightImage( canvas.toDataURL( 'image/png' ) );
+			}
+		}
+
+		return returningHeight;
+	};
+
+	const prepareImages = async () => {
+		// eslint-disable-next-line no-undef
+		const image1Elem = new Image();
+		// eslint-disable-next-line no-undef
+		const image2Elem = new Image();
+
+		return new Promise( ( resolve, reject ) => {
+			image1Elem.onload = () => {
+				if ( image2Elem.complete ) {
+					const imageHeight = prepareImagesHeight( image1Elem, image2Elem );
+					if ( imageHeight === -1 ) {
+						return;
+					}
+					resolve( calculateWrapperInitialWidth( imageHeight ) );
+				}
+			};
+			image2Elem.onload = () => {
+				if ( image1Elem.complete ) {
+					const imageHeight = prepareImagesHeight( image1Elem, image2Elem );
+					if ( imageHeight === -1 ) {
+						return;
+					}
+					resolve( calculateWrapperInitialWidth( imageHeight ) );
+				}
+			};
+			image2Elem.onerror = reject;
+			image2Elem.src = rightImage;
+			image1Elem.onerror = reject;
+			image1Elem.src = leftImage;
+		} );
+	};
+
+	const calculateWrapperInitialWidth = ( imageHeight ) => {
+		const height = window.innerHeight - 24 - 100 - 10; // reducing the close button height and top control height
+		return height * SCREENSHOT_WIDTH / imageHeight;
+	};
+
+	useEffect( () => {
+		if ( ! render ) {
+			return;
+		}
+		const calculateWidth = async () => {
+			try {
+				const width = await prepareImages();
+				setZoom( Math.round( ( width / window.innerWidth ) * 100 ) );
+				setBaseWrapperWidth( width );
+				setWrapperWidth( width );
+				setRender( false );
+			} catch ( error ) {}
+		};
+
+		calculateWidth();
+	}, [ leftImage, rightImage ] );
+
+	const handleDiffStart = () => {
+		if ( ! diffStarted ) {
+			startDiff( true );
+			setDiffLoading( true );
+
+			// initialize canvas
+			const canvasAdjacent = document.createElement( 'canvas' );
+			const ctxAdjacent = canvasAdjacent.getContext( '2d' );
+
+			const canvasOverlayBefore = document.createElement( 'canvas' );
+			const ctxOverlayBefore = canvasOverlayBefore.getContext( '2d' );
+
+			const canvasOverlayAfter = document.createElement( 'canvas' );
+			const ctxOverlayAfter = canvasOverlayAfter.getContext( '2d' );
+			initializeCanvas( canvasAdjacent, ctxAdjacent, canvasOverlayBefore, ctxOverlayBefore, canvasOverlayAfter, ctxOverlayAfter );
+
+			const leftImgRef = leftImageRef.current;
+			const rightImgRef = rightImageRef.current;
+			const adjImgRef = adjacentImageRef.current;
+			const overlayBeforeImgRef = overlayBeforeImageRef.current;
+			const overlayAfterImgRef = overlayAfterImageRef.current;
+			adjImgRef.crossOrigin = 'anonymous';
+			overlayBeforeImgRef.crossOrigin = 'anonymous';
+			overlayAfterImgRef.crossOrigin = 'anonymous';
+
+			let worker;
+			if ( window.Worker ) {
+				worker = new Worker( new URL( '../comparator/diffComparator.worker.js', import.meta.url ) );
+				worker.addEventListener( 'message', function( e ) {
+					const added = e.data[ 0 ];
+					const deleted = e.data[ 1 ];
+					const modified = e.data[ 2 ];
+
+					createAdjacentImage( added, deleted, modified, ctxAdjacent, leftImgRef, rightImgRef );
+					createOverlayImageAfter( added, modified, ctxOverlayAfter, rightImgRef );
+					createOverlayImageBefore( deleted, modified, ctxOverlayBefore, leftImgRef );
+
+					adjImgRef.crossOrigin = 'anonymous';
+					overlayBeforeImgRef.crossOrigin = 'anonymous';
+					overlayAfterImgRef.crossOrigin = 'anonymous';
+					adjImgRef.src = canvasAdjacent.toDataURL( 'image/png' );
+					overlayBeforeImgRef.src = canvasOverlayAfter.toDataURL( 'image/png' );
+					overlayAfterImgRef.src = canvasOverlayBefore.toDataURL( 'image/png' );
+					setDiffLoading( false );
+				} );
+
+				const imagesData = getImagesData();
+
+				worker.postMessage( [
+					{
+						src: imagesData[ 0 ].data,
+						width: SCREENSHOT_WIDTH,
+						height: leftImageRef.current.naturalHeight,
+					},
+					{
+						src: imagesData[ 1 ].data,
+						width: SCREENSHOT_WIDTH,
+						height: rightImageRef.current.naturalHeight,
+					} ]
+				);
+			}
+		}
+	};
+
+	const getImagesData = () => {
+		const leftImageCanvas = document.createElement( 'canvas' );
+		leftImageCanvas.width = SCREENSHOT_WIDTH;
+		leftImageCanvas.height = leftImageRef.current.naturalHeight;
+
+		const leftImageCtx = leftImageCanvas.getContext( '2d' );
+		const rightImageCanvas = document.createElement( 'canvas' );
+		rightImageCanvas.width = SCREENSHOT_WIDTH;
+		rightImageCanvas.height = rightImageRef.current.naturalHeight;
+
+		const rightImageCtx = rightImageCanvas.getContext( '2d' );
+
+		leftImageCtx.drawImage( leftImageRef.current, 0, 0 );
+		rightImageCtx.drawImage( rightImageRef.current, 0, 0 );
+
+		return [
+			leftImageCtx.getImageData( 0, 0, SCREENSHOT_WIDTH, leftImageRef.current.naturalHeight ),
+			rightImageCtx.getImageData( 0, 0, SCREENSHOT_WIDTH, rightImageRef.current.naturalHeight ),
+		];
+	};
+
+	const initializeCanvas = ( cAdjacent, ctxAdjacent, cOverlayBefore, ctxOverlayBefore, cOverlayAfter, ctxOverlayAfter ) => {
+		cAdjacent.width = ( 2 * SCREENSHOT_WIDTH ) + 50;
+		cAdjacent.height = leftImageRef.current.naturalHeight;
+
+		cOverlayBefore.width = rightImageRef.current.naturalWidth;
+		cOverlayBefore.height = rightImageRef.current.naturalHeight;
+
+		cOverlayAfter.width = leftImageRef.current.naturalWidth;
+		cOverlayAfter.height = leftImageRef.current.naturalHeight;
+
+		ctxAdjacent.beginPath();
+		ctxAdjacent.rect( 0, 0, cAdjacent.width, cAdjacent.height );
+		ctxAdjacent.fillStyle = 'black';
+		ctxAdjacent.fill();
+
+		ctxOverlayBefore.beginPath();
+		ctxOverlayBefore.rect( 0, 0, cOverlayBefore.width, cOverlayBefore.height );
+		ctxOverlayBefore.fillStyle = 'black';
+		ctxOverlayBefore.fill();
+
+		ctxOverlayAfter.beginPath();
+		ctxOverlayAfter.rect( 0, 0, cOverlayAfter.width, cOverlayAfter.height );
+		ctxOverlayAfter.fillStyle = 'black';
+		ctxOverlayAfter.fill();
+	};
+
+	const createAdjacentImage = ( added, deleted, modified, ctx, leftImgRef, rightImgRef ) => {
+		ctx.drawImage( leftImgRef, 0, 0 );
+		ctx.drawImage( rightImgRef, SCREENSHOT_WIDTH + 50, 0 );
+
+		deleted.forEach( ( idx ) => {
+			ctx.beginPath();
+			ctx.fillStyle = 'rgba(255, 0, 0, 0.2)';
+			ctx.fillRect( 0, idx, SCREENSHOT_WIDTH, 1 );
+		} );
+		added.forEach( ( idx ) => {
+			ctx.beginPath();
+			ctx.fillStyle = 'rgba(0, 255, 0, 0.2)';
+			ctx.fillRect( SCREENSHOT_WIDTH + 50, idx, SCREENSHOT_WIDTH, 1 );
+		} );
+		modified.forEach( ( idx ) => {
+			ctx.beginPath();
+			ctx.fillStyle = 'rgba(0, 0, 255, 0.2)';
+			ctx.fillRect( 0, idx.beforeIndex, SCREENSHOT_WIDTH, 1 );
+			ctx.fillRect( SCREENSHOT_WIDTH + 50, idx.afterIndex, SCREENSHOT_WIDTH, 1 );
+			ctx.beginPath();
+			ctx.moveTo( SCREENSHOT_WIDTH, idx.beforeIndex );
+			ctx.lineTo( SCREENSHOT_WIDTH + 50, idx.afterIndex );
+			ctx.strokeStyle = '#fff';
+			ctx.stroke();
+		} );
+	};
+
+	const createOverlayImageAfter = ( added, modified, ctx, rightImgRef ) => {
+		ctx.drawImage( rightImgRef, 0, 0 );
+
+		added.forEach( ( idx ) => {
+			ctx.beginPath();
+			ctx.fillStyle = 'rgba(0, 255, 0, 0.2)';
+			ctx.fillRect( 0, idx, SCREENSHOT_WIDTH, 1 );
+		} );
+		modified.forEach( ( idx ) => {
+			ctx.beginPath();
+			ctx.fillStyle = 'rgba(0, 0, 255, 0.2)';
+			ctx.fillRect( 0, idx.afterIndex, SCREENSHOT_WIDTH, 1 );
+		} );
+	};
+
+	const createOverlayImageBefore = ( deleted, modified, ctx, leftImgRef ) => {
+		ctx.drawImage( leftImgRef, 0, 0 );
+
+		deleted.forEach( ( idx ) => {
+			ctx.beginPath();
+			ctx.fillStyle = 'rgba(255, 0, 0, 0.2)';
+			ctx.fillRect( 0, idx, SCREENSHOT_WIDTH, 1 );
+		} );
+		modified.forEach( ( idx ) => {
+			ctx.beginPath();
+			ctx.fillStyle = 'rgba(0, 0, 255, 0.2)';
+			ctx.fillRect( 0, idx.beforeIndex, SCREENSHOT_WIDTH, 1 );
+		} );
+	};
+
+	const handleScreenChange = ( screen ) => {
+		setActiveScreen( screen );
+		if ( screen === 'overlayWithDiff' || screen === 'adjacent' ) {
+			handleDiffStart();
+		}
+	};
+
+	return (
+		imageCompare && wrapperWidth > 0 &&
+		<div className="urlslab-ImageCompare">
+			<div className="urlslab-ImageCompare-top-control">
+				<div className="urlslab-ImageCompare-top-control-screens">
+					<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'overlay' ? 'active' : '' }` }
+						onClick={ () => handleScreenChange( 'overlay' ) }>
+						<div><OverlayScreenIcon /></div>
+						<div>Overlay Without diff</div>
+					</button>
+					<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'overlayWithDiff' ? 'active' : '' }` }
+						onClick={ () => handleScreenChange( 'overlayWithDiff' ) }>
+						<div><OverlayWithDiffIcon /></div>
+						<div>Overlay With diff</div>
+					</button>
+					<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'adjacent' ? 'active' : '' }` }
+						onClick={ () => handleScreenChange( 'adjacent' ) }>
+						<div><AdjacentScreenIcon /></div>
+						<div>Adjacent With diff</div>
+					</button>
+				</div>
+				<div className="urlslab-ImageCompare-top-control-date">
+					<div>
+						<span>Left Screen</span>
+						<SingleSelectMenu
+							items={ dropdownItems }
+							dark={ true }
+							style={ { maxWidth: '15em' } }
+							name="image_comparator_options"
+							autoClose
+							defaultValue={ leftImageKey }
+							onChange={ ( val ) => handleImageChange( val, true ) }
+						/>
+
+					</div>
+					<div>
+						<span>Right Screen</span>
+						<SingleSelectMenu
+							items={ dropdownItems }
+							dark={ true }
+							style={ { maxWidth: '15em' } }
+							name="image_comparator_options"
+							autoClose
+							defaultValue={ rightImageKey }
+							onChange={ ( val ) => handleImageChange( val, false ) }
+						/>
+
+					</div>
+				</div>
+				<div className="urlslab-ImageCompare-top-control-screens">
+					<div className={ `urlslab-ImageCompare-top-control-screens-item` }>
+						<div><SearchIcon /></div>
+						<div>{ zoom }%</div>
+					</div>
+					<button className={ `urlslab-ImageCompare-top-control-screens-item` }
+						onClick={ () => handleZoomChange( zoom + 10 ) }>
+						<div><SearchZoomInIcon /></div>
+						<div>Zoom In</div>
+					</button>
+					<button className={ `urlslab-ImageCompare-top-control-screens-item` }
+						onClick={ () => handleZoomChange( zoom - 10 ) }>
+						<div><SearchZoomOutIcon /></div>
+						<div>Zoom Out</div>
+					</button>
+					<div className="urlslab-ImageCompare-top-control-screens-option">
+						<SingleSelectMenu
+							items={ zoomingOptions }
+							dark={ true }
+							name="image_comparator_zoom_options"
+							autoClose
+							defaultValue="0"
+							onChange={ ( val ) => handleZoomChange( Number( val ) ) }
+						/>
+
+					</div>
+				</div>
+			</div>
+			<div className="urlslab-ImageCompare-panel">
+				<div className="urlslab-ImageCompare-wrapper" style={ { width: wrapperWidth } }>
+
+					<div className="urlslab-panel-close-container">
+						<button className="urlslab-panel-close-container-btn" onClick={ hideImageCompare }>
+							<CloseIcon />
+						</button>
+					</div>
+					<div className="urlslab-ImageCompare-slider-container">
+						{
+							<div className={ ! diffLoading && activeScreen === 'overlay' ? '' : 'hidden' }>
+								<ImgComparisonSlider value="50" hover={ false }>
+									<figure slot="first">
+										<img ref={ leftImageRef } src={ leftImage } crossOrigin="Anonymous" alt="" className="urlslab-ImageCompare-img" />
+									</figure>
+									<figure slot="second">
+										<img ref={ rightImageRef } src={ rightImage } crossOrigin="Anonymous" alt="" className="urlslab-ImageCompare-img" />
+									</figure>
+								</ImgComparisonSlider>
+							</div>
+						}
+
+						{
+							<div className={ ! diffLoading && activeScreen === 'overlayWithDiff' ? '' : 'hidden' }>
+								<ImgComparisonSlider value="50" hover={ false }>
+									<figure slot="first">
+										<img ref={ overlayBeforeImageRef } alt="left-diff-overlay" className="urlslab-ImageCompare-img" />
+									</figure>
+									<figure slot="second">
+										<img ref={ overlayAfterImageRef } alt="right-diff-overlay" className="urlslab-ImageCompare-img" />
+									</figure>
+								</ImgComparisonSlider>
+							</div>
+						}
+
+						{
+							<img
+								ref={ adjacentImageRef }
+								alt="adjacent screen"
+								className={ `urlslab-ImageCompare-img ${ ! diffLoading && activeScreen === 'adjacent' ? '' : 'hidden' }` }
+							/>
+						}
+
+						{ diffLoading && <Loader className="dark" /> }
+
+					</div>
+
+				</div>
+			</div>
 		</div>
 	);
 };

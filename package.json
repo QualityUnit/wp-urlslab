@@ -1,7 +1,7 @@
 {
   "author": "URLsLab",
   "name": "urlslab",
-  "version": "2.27.6",
+  "version": "2.27.9",
   "description": "URLsLab Plugin",
   "homepage": "https://www.urlslab.com",
   "browserslist": [
@@ -19,13 +19,16 @@
     "d3": "^7.8.5",
     "d3-cloud": "^1.2.5",
     "d3-scale-chromatic": "^3.0.0",
+    "date-fns": "^2.30.0",
     "extract-loader": "^5",
     "file-loader": "^6",
     "gulp": "^4",
     "image-minimizer-webpack-plugin": "^3",
+    "react-date-range": "^1.4.0",
     "stylelint": "^15",
     "url-loader": "^4",
-    "vite": "^4"
+    "vite": "^4",
+    "worker-loader": "^3.0.8"
   },
   "devDependencies": {
     "@babel/core": "^7",
@@ -63,15 +66,16 @@
     "webpack-merge": "^5"
   },
   "scripts": {
-    "build:admin/ai-content-assistant": "cd ./admin/src/app-ai-content-assistant && yarn && yarn build",
+    "build:ai-content-assistant": "cd ./admin/apps/ai-content-assistant && yarn && yarn build",
+    "build:apps": "yarn build:ai-content-assistant",
     "build:admin": "cd ./admin/ && yarn && yarn build",
     "build:blocks": "cd ./blocks/ && yarn && yarn build",
-    "build": "webpack --mode=production && yarn build:admin && yarn build:blocks && yarn build:admin/ai-content-assistant",
+    "build": "webpack --mode=production && yarn build:admin && yarn build:blocks && yarn build:apps",
     "build:main": "webpack --mode=production",
     "watch": "webpack --mode=development --watch",
     "bundle": "yarn install && npm run watch",
     "dev": "webpack serve --config configuration/webpack.dev.config.js --mode=development",
-    "production": "webpack --mode=production && yarn build:admin && yarn build:blocks && yarn build:admin/ai-content-assistant",
+    "production": "webpack --mode=production && yarn build:admin && yarn build:blocks && yarn build:apps",
     "lint:sass": "sass-lint -v -q",
     "lint:js": "eslint --ext .js src/js/"
   }

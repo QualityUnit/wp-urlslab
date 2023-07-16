@@ -148,8 +148,16 @@ body {
 			justify-content: flex-end;
 		}
 
+		&-justify-space-between {
+			justify-content: space-between;
+		}
+
 		&-wrap {
 			flex-wrap: wrap;
+		}
+
+		&-column {
+			flex-direction: column;
 		}
 
 		@media (min-width: $breakpoint-tablet) {

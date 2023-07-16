@@ -1,3 +1,5 @@
+/* stylelint-disable selector-class-pattern, no-descending-specificity */
+
 @use "../common/mixins" as *;
 @use "../common/variables" as *;
 
@@ -26,7 +28,7 @@
 			flex-direction: column;
 			overflow: hidden auto;
 			background-color: $grey-lighter;
-			max-height: calc(100vh - 49em);
+			max-height: 40vh;
 
 			thead {
 				background-color: $grey-lighter;
@@ -35,6 +37,10 @@
 			.urlslab-progressBar-wrapper {
 				margin-top: auto;
 			}
+		}
+
+		.urlslab-table-container {
+			width: 100% !important;
 		}
 	}
 
@@ -133,7 +139,6 @@
 			}
 		}
 	}
-
 
 	&-close {
 

@@ -26,7 +26,7 @@ import TableActionsMenu from '../elements/TableActionsMenu';
 import IconButton from '../elements/IconButton';
 import { fetchingStore } from '../hooks/useInfiniteFetch';
 
-export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hideActions, noImport, noInsert, noExport, noCount, noDelete, table, selectedRows, onFilter, onDeleteSelected, onUpdate, options } ) {
+export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hideActions, noImport, noInsert, noExport, noCount, noDelete, table, onFilter, onDeleteSelected, onUpdate, options } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const didMountRef = useRef( false );
@@ -49,6 +49,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 
 	const headerBottom = useResizeObserver( handleHeaderHeight );
 
+	const selectedRows = table?.getState().rowSelection;
 	const initialRow = table?.getRowModel().rows[ 0 ];
 
 	const { filters, possiblefilters, state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( { slug, header, initialRow } );
@@ -121,7 +122,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 			<div ref={ headerBottom } className="urlslab-moduleView-headerBottom">
 				<div className="urlslab-moduleView-headerBottom__top flex flex-align-center">
 
-					{ ! noDelete && selectedRows?.length > 0 &&
+					{ ! noDelete && selectedRows && Object.keys( selectedRows ).length > 0 &&
 						<Button danger className="mr-s" onClick={ () => activatePanel( 'deleteSelected' ) }><Trash />{ __( 'Delete selected' ) }</Button>
 					}
 					{ title && ! noInsert &&

@@ -1,0 +1,16 @@
+
+.urlslab-date-range-picker {
+
+  position: relative;
+  top: 0;
+  right: 0;
+
+  &-calendar {
+    position: absolute;
+    top: 2em;
+    right: 0;
+    z-index: 100000;
+  }
+
+
+}

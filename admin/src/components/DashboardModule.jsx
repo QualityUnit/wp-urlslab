@@ -8,12 +8,16 @@ import useMainMenu from '../hooks/useMainMenu';
 import Switch from '../elements/Switch';
 import Tag from '../elements/Tag';
 
+// import useCheckApiKey from '../hooks/useCheckApiKey';
 import { setModule } from '../api/fetching';
 import '../assets/styles/components/_DashboardModule.scss';
 import '../assets/styles/elements/_Button.scss';
 
-function DashboardModule( { moduleId, title, children, isActive, tags } ) {
+function DashboardModule( { module, labelsList, isOnboardingItem } ) {
 	const { __ } = useI18n();
+	const { id: moduleId, active: isActive, title, description, labels } = module;
+	// const { settingsLoaded, apiKeySet } = useCheckApiKey();
+	// const hasApi = settingsLoaded && apiKeySet === false && apikey;
 	const [ active, setActive ] = useState( isActive );
 	const { setActivePage } = useMainMenu();
 	const queryClient = useQueryClient();
@@ -40,8 +44,6 @@ function DashboardModule( { moduleId, title, children, isActive, tags } ) {
 
 	const iconPath = new URL( `../assets/images/modules/${ moduleId }.svg`, import.meta.url ).pathname;
 
-	const { labels, labelsList } = tags;
-
 	return (
 		<div className={ `urlslab-dashboardmodule ${ handleSwitch.isLoading ? 'activating' : '' } ${ active ? 'active' : '' }` }>
 			{ handleSwitch.isLoading
@@ -55,24 +57,27 @@ function DashboardModule( { moduleId, title, children, isActive, tags } ) {
 				}
 
 				<h3 className="urlslab-dashboardmodule-title">
-					<button className={ `${ active ? 'active' : '' }` } onClick={ active ? () => setActivePage( moduleId ) : null }>
-						{ title }
-					</button>
+					{ isOnboardingItem
+						? title
+						: <button className={ `${ active ? 'active' : '' }` } onClick={ active ? () => setActivePage( moduleId ) : null }>
+							{ title }
+						</button>
+					}
 				</h3>
 
 				<Switch
 					secondary
 					onChange={ () => handleSwitch.mutate() }
 					className="urlslab-dashboardmodule-switch ma-left"
-					label={ '' }
-					labelOff={ '' }
+					label={ isOnboardingItem ? __( 'Activate' ) : '' }
+					labelOff={ isOnboardingItem ? __( 'Deactivate' ) : '' }
 					defaultValue={ active }
 				/>
 			</div>
 
 			<div className="urlslab-dashboardmodule-content">
-				<p>{ children }</p>
-				{ labels.length > 0 &&
+				<p>{ description }</p>
+				{ labels.length && ! isOnboardingItem > 0 &&
 				<div className="urlslab-dashboardmodule-tags">
 					{ labels.map( ( tag ) => {
 						const { name, color } = labelsList[ tag ];

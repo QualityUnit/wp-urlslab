@@ -27,7 +27,7 @@ export default function ScreenshotTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
 
@@ -65,10 +65,14 @@ export default function ScreenshotTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
-				selectRow( val, cell );
+			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+				cell.row.toggleSelected();
+				selectRows( cell );
 			} } />,
-			header: null,
+			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
+				head.table.toggleAllPageRowsSelected( val );
+				selectRows( val ? head : undefined );
+			} } />,
 		} ),
 		columnHelper?.accessor( 'screenshot_url_thumbnail', {
 			tooltip: ( cell ) => {
@@ -143,7 +147,6 @@ export default function ScreenshotTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				table={ table }
-				selectedRows={ selectedRows }
 				noImport
 				onDeleteSelected={ () => deleteSelectedRows( { id: 'url_title' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }

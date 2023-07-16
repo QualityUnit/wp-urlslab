@@ -1,0 +1,60 @@
+import { memo, useState } from 'react';
+
+import 'react-date-range/dist/styles.css'; // main style file
+import 'react-date-range/dist/theme/default.css';
+import { DateRangePicker } from 'react-date-range';
+import Button from './Button';
+import { date, getSettings } from '@wordpress/date'; // theme css file
+import '../assets/styles/components/_DateRangePicker.scss';
+
+function DateRangeButton( { startDate, endDate, className, handleSelect } ) {
+	const dateToString = ( datetime ) => {
+		return date( getSettings().formats.date, datetime );
+	};
+
+	const [ range, setRange ] = useState( [ {
+		startDate: new Date( startDate ),
+		endDate: new Date( endDate ),
+		key: 'selection',
+	} ] );
+	const [ buttonText, setButtonText ] = useState( dateToString( startDate ) + ' - ' + dateToString( endDate ) );
+	const [ showCalendar, setShowCalendar ] = useState( false );
+
+	const toggleCalendar = () => {
+		setShowCalendar( ! showCalendar );
+	};
+	const onSelect = ( newRange ) => {
+		setRange( [ newRange.selection ] );
+		setButtonText( dateToString( newRange.selection.startDate ) + ' - ' + dateToString( newRange.selection.endDate ) );
+		handleSelect( newRange.selection );
+	};
+
+	return (
+		<div className="urlslab-date-range-picker">
+
+			{ range.startDate }
+
+			<Button onClick={ toggleCalendar }>
+				{ buttonText }
+			</Button>
+
+			{
+				showCalendar && <div className="urlslab-date-range-picker-calendar">
+					<DateRangePicker
+						showSelectionPreview={ true }
+						moveRangeOnFirstSelection={ false }
+						retainEndDateOnFirstSelection={ true }
+						className={ className }
+						ranges={ range }
+						months={ 2 }
+						direction="horizontal"
+						onChange={ onSelect }
+						maxDate={ new Date() }
+					/>
+				</div>
+			}
+
+		</div>
+	);
+}
+export default memo( DateRangeButton );

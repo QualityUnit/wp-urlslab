@@ -1,0 +1,32 @@
+@use "../../../../../../src/assets/styles/elements/MultiSelectMenu" as *;
+@use "../common/mixins" as *;
+
+.urlslab-GenericDropdown {
+    width: 100%;
+
+    // reset styling of some inner components
+    // to be able to use custom spacing of inner components following prepared design
+    .urlslab-MultiSelectMenu__items {
+        padding: 0;
+
+        //show round corners for inner scroller
+        overflow: hidden;
+    }
+
+    // this is replacement of .urlslab-MultiSelectMenu__items--inn tag that have strong styling of inner components
+    // we need to use plain wrapper here, not styled only for one column list of items
+    .urlslab-MultiSelectMenu__items-inner-wrapper {
+        @include scrollbarWithBg;
+        max-height: 19em;
+        overflow-y: auto;
+        position: relative;
+        // reset font size to show correctly nested components with their "em" units
+        font-size: 1rem;
+    }
+
+    .urlslab-inputField {
+        &:focus-within {
+            box-shadow: none;
+        }
+    }
+}

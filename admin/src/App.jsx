@@ -13,12 +13,28 @@ import Notifications from './components/Notifications';
 import MainMenu from './components/MainMenu';
 import DynamicModule from './components/DynamicModule';
 import Header from './components/Header';
+import Loader from './components/Loader';
+
+import Onboarding from './onboarding/Onboarding';
+import useOnboarding from './hooks/useOnboarding';
 
 import './assets/styles/style.scss';
 
 export default function App() {
 	const queryClient = useQueryClient();
 	const [ prefetch, setPrefetch ] = useState( true );
+	const { activeOnboarding, setActiveOnboarding } = useOnboarding( );
+
+	const { data } = useQuery( {
+		queryKey: [ 'modules' ],
+		queryFn: async () => {
+			const response = await getFetch( 'module' ).then( ( ModuleData ) => ModuleData );
+			if ( response.ok ) {
+				return response.json();
+			}
+		},
+		refetchOnWindowFocus: false,
+	} );
 
 	useEffect( () => {
 		if ( prefetch ) {
@@ -27,16 +43,18 @@ export default function App() {
 			async function getApiKey() {
 				const generalData = await queryClient.fetchQuery( {
 					queryKey: [ 'general' ],
-					queryFn: () => fetchSettings( 'general' ).then( ( data ) => data ),
+					queryFn: () => fetchSettings( 'general' ).then( ( result ) => result ),
 					refetchOnWindowFocus: false,
 				} );
 
 				const isApiObject = generalData?.filter( ( dataset ) => dataset.id === 'api' )[ 0 ];
 				const hasApiKey = isApiObject?.options[ 'urlslab-api-key' ].value;
-
 				if ( ! hasApiKey ) {
+					setActiveOnboarding( true );
 					update( 'apiKeySet', ( ) => false );
+					return false;
 				}
+				setActiveOnboarding( false );
 			}
 			getApiKey();
 
@@ -110,38 +128,43 @@ export default function App() {
 		}
 	}, [] );
 
-	const { data } = useQuery( {
-		queryKey: [ 'modules' ],
-		queryFn: async () => {
-			const response = await getFetch( 'module' ).then( ( ModuleData ) => ModuleData );
-			if ( response.ok ) {
-				return response.json();
-			}
-		},
-		refetchOnWindowFocus: false,
-	} );
-
 	const fetchedModules = useMemo( () => {
 		return data;
 	}, [ data ] );
 
 	return (
 		<div className="urlslab-app flex">
-			{
-				fetchedModules &&
-				<Suspense>
-					<MainMenu
-						modules={ ! fetchedModules || Object.values( fetchedModules ) }
-					/>
-				</Suspense>
-			}
-			<div className="urlslab-app-main">
-				<Header fetchedModules={ fetchedModules } />
+			{ /*
+				Temporary solution.
+				Make sure to show app OR onboarding only when exact state is known.
+				It prevents to incorrectly show app or onboarding for a while, until correct state is known between multiple rerenders.
+			*/ }
+			{ activeOnboarding === null && <Loader /> }
+			{ activeOnboarding === true && <Onboarding /> }
+			{ activeOnboarding === false &&
+			<>
+				{
+					fetchedModules &&
+						<Suspense>
+							<MainMenu
+								modules={ ! fetchedModules || Object.values( fetchedModules ) }
+							/>
+						</Suspense>
+				}
+				<div className="urlslab-app-main">
+					<Header fetchedModules={ fetchedModules } />
+					{
+						fetchedModules &&
+						<Suspense>
+							<DynamicModule
+								modules={ ! fetchedModules || Object.values( fetchedModules ) }
+							/>
+						</Suspense>
+					}
+				</div>
 
-				<DynamicModule
-					modules={ ! fetchedModules || Object.values( fetchedModules ) }
-				/>
-			</div>
+			</>
+			}
 			<Notifications />
 		</div>
 	);

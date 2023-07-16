@@ -1,0 +1,261 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+@forward "./Settings";
+@forward "../elements/Inputs";
+
+.urlslab-onboarding {
+
+	&-header {
+		width: 100%;
+		padding: 1em 1.5625em;
+		background-color: $white;
+
+		&-logo {
+			left: 1.5625em;
+		}
+
+		@media (max-width: $breakpoint-tablet-landscape) {
+			flex-direction: column;
+
+			&-logo {
+				position: relative !important;
+				left: initial;
+				margin-bottom: 1.25em;
+			}
+		}
+
+		&-steps {
+
+			.step-item {
+				font-weight: $font-weight-semi;
+
+				&:not(:last-child) {
+					margin-right: 1.625em;
+				}
+
+				&-icon {
+
+					@include square(2.5em);
+
+					color: #b0b4bb;
+					border: 1px solid currentColor;
+					margin-right: 0.5625em;
+					border-radius: 100%;
+					transition: all $transitionTime;
+				}
+
+				&.state-active {
+					.step-item-icon {
+						color: $saturated-green;
+						background-color: $desaturated-green;
+						border: 0;
+					}
+				}
+
+				&.state-completed {
+					&:hover {
+						cursor: pointer;
+					}
+
+					.step-item-icon {
+						color: $white;
+						background-color: $saturated-green;
+						border: 0;
+					}
+				}
+
+
+			}
+
+			@media (max-width: $breakpoint-mobile) {
+				flex-wrap: wrap;
+				justify-content: center;
+
+				.step-item {
+					margin-bottom: 0.625em;
+				}
+			}
+		}
+	}
+
+	&-content {
+		margin: 0 1.25em 2.5em;
+
+		&-wrapper {
+			margin: 0 auto;
+
+			&.small-wrapper {
+				max-width: 31.25em;
+			}
+
+			&.large-wrapper {
+				max-width: 57.5em;
+			}
+		}
+
+		&-heading {
+			color: $black;
+			text-align: center;
+			margin-bottom: 2em;
+
+			.heading-title {
+				font-size: 1.5rem;
+				font-weight: $font-weight-semi;
+			}
+
+			.heading-description {
+				font-size: 0.8125rem;
+				font-weight: $font-weight-normal;
+			}
+		}
+
+		&-settings {
+			color: $black;
+			background-color: $white;
+			border-radius: $br-10;
+			filter: $box-shadow-small;
+			padding: 1.25em 1.875em;
+
+			&-footer {
+				margin-top: 1.25em;
+
+				.footer-text {
+					font-size: 0.8125rem;
+
+					a.urlslab-button.simple {
+						padding: 0;
+					}
+				}
+			}
+
+			.urlslab-main-settings {
+				margin-bottom: 1em;
+			}
+
+			.urlslab-advanced-settings-toggle {
+				margin-top: 1.25em;
+			}
+
+			.urlslab-advanced-settings {
+				margin-top: 1.25em;
+			}
+		}
+
+		// Customize styling for specific step
+		.step-modules {
+			.urlslab-onboarding-content-settings {
+				padding: 0;
+				overflow-y: auto;
+
+				&-footer {
+					margin: 0;
+					padding: 1.25em 1.875em;
+					background: $white;
+					border-top: 1px solid $grey-light;
+				}
+
+				&-modules {
+					@include scrollbarWithBg;
+					max-height: 32.8125em;
+					overflow-y: auto;
+
+					.urlslab-dashboardmodule {
+						padding: 1.25em 1.875em 1.5625em;
+						margin: 0;
+						width: 100%;
+						box-shadow: none;
+						filter: none;
+						border-radius: 0;
+
+						&:not(:last-child) {
+							border-bottom: 1px solid $grey-light;
+						}
+
+						&:hover {
+							box-shadow: none;
+						}
+
+						&-top {
+							border-bottom: 0;
+							margin: 0 0 1.25em;
+							padding: 0;
+						}
+
+						&-title[class] {
+							font-size: 1rem;
+						}
+
+						&-content {
+							p {
+								font-size: 0.75rem;
+							}
+						}
+
+						.urlslab-switch-text {
+							font-size: 0.875rem;
+							line-height: 1rem;
+						}
+					}
+				}
+			}
+
+
+		}
+
+		.urlslab-onboarding-success-wrapper {
+			color: $white;
+			background-color: $saturated-green;
+			padding: 0.3125em 0.9375em;
+			margin-bottom: 1.25em;
+			border-radius: 6.25em;
+
+			&>span {
+				font-size: 0.8125rem;
+				font-weight: $font-weight-semi;
+			}
+
+			svg {
+				@include square(1.5em);
+
+				path {
+					fill: currentColor
+				}
+			}
+		}
+
+		.urlslab-half-columns {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			width: 100%;
+
+			&-col {
+				width: 50%;
+				margin-bottom: 1em;
+
+				&:first-child {
+					padding-right: 0.9375em;
+				}
+
+				&:last-child {
+					padding-left: 0.9375em;
+				}
+
+				&>* {
+					width: 100%;
+					max-width: 100%;
+				}
+			}
+
+			@media (max-width: $breakpoint-mobile) {
+				flex-direction: column;
+
+				&-col {
+					width: 100%;
+				}
+			}
+
+		}
+
+	}
+}

@@ -35,7 +35,7 @@ export default function SchedulesTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
+	const { deleteRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -83,7 +83,7 @@ export default function SchedulesTable( { slug } ) {
 		process_all_sitemaps: <SingleSelectMenu defaultAccept autoClose items={ processSitemapsTypes } name="process_all" defaultValue="1" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, process_all_sitemaps: val } ) }>{ header.process_all_sitemaps }</SingleSelectMenu>,
 		custom_sitemaps: <InputField liveUpdate defaultValue="" label={ header.custom_sitemaps } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, custom_sitemaps: val } ) } />,
 		take_screenshot: <SingleSelectMenu defaultAccept autoClose items={ takeScreenshotsTypes } name="take_screenshot" defaultValue="1" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, take_screenshot: val } ) }>{ header.take_screenshot }</SingleSelectMenu>,
-		scan_frequency: <SingleSelectMenu defaultAccept autoClose items={ scanFrequencyTypes } name="scan_frequency" defaultValue={ 'ONE_TIME' } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, scan_frequency: val } ) }>{ header.scan_frequency }</SingleSelectMenu>,
+		scan_frequency: <SingleSelectMenu defaultAccept autoClose items={ scanFrequencyTypes } name="scan_frequency" defaultValue={ 'MONTHLY' } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, scan_frequency: val } ) }>{ header.scan_frequency }</SingleSelectMenu>,
 		scan_speed_per_minute: <InputField liveUpdate defaultValue="20" label={ header.scan_speed_per_minute } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, scan_speed_per_minute: val } ) } />,
 	};
 	const columns = [
@@ -152,8 +152,6 @@ export default function SchedulesTable( { slug } ) {
 				noExport
 				noImport
 				noDelete
-				selectedRows={ selectedRows }
-				onDeleteSelected={ () => deleteSelectedRows( { id: 'urls' } ) }
 				options={ { header, rowEditorCells, title: 'Add schedule', data, slug, url, paginationId, rowToEdit, id: 'urls', updateAll: true } }
 			/>
 			<Table className="noHeightLimit fadeInto"

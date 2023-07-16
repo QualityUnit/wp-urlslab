@@ -63,7 +63,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, paginationId, filters, sorting } );
 
-	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -73,9 +73,9 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		D: __( 'Disabled' ),
 	};
 	const modelTypes = {
-		'gpt-3.5-turbo': __( 'Gpt 3.5 Turbo' ),
-		'gpt-4': __( 'Gpt 4' ),
-		'text-davinci-003': __( 'Text Davinci 003' ),
+		'gpt-3.5-turbo': __( 'OpenAI GPT 3.5 Turbo' ),
+		'gpt-4': __( 'OpenAI GPT 4' ),
+		'text-davinci-003': __( 'OpenAI GPT Davinci 003' ),
 	};
 	const shortcodeTypeTypes = {
 		S: __( 'Semantic search' ),
@@ -120,10 +120,14 @@ export default function GeneratorShortcodeTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
-				selectRow( val, cell );
+			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+				cell.row.toggleSelected();
+				selectRows( cell );
 			} } />,
-			header: null,
+			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
+				head.table.toggleAllPageRowsSelected( val );
+				selectRows( val ? head : undefined );
+			} } />,
 		} ),
 		columnHelper.accessor( 'shortcode_id', {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.shortcode_id }</SortBy>,
@@ -232,7 +236,6 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			<ModuleViewHeaderBottom
 				table={ table }
 				noImport
-				selectedRows={ selectedRows }
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ { header, rowEditorCells, rowToEdit, title: 'Add New Shortcode', data, slug, url, paginationId, deleteCSVCols: [ paginationId ] } }
