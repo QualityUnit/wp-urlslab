@@ -36,8 +36,8 @@ type SingleSelectMenuType = Partial<{
 }> & React.PropsWithChildren
 
 export const SingleSelectMenu: React.FC<SingleSelectMenuType > = React.memo( ( {
-	tooltipLabel, children, className = undefined, name = undefined, style = undefined, items = undefined, description = undefined, defaultValue = undefined, defaultAccept = undefined, autoClose = undefined, disabled = undefined, isFilter = undefined, required = undefined, onChange = undefined,
-}:SingleSelectMenuType ) => {
+																				   tooltipLabel, children, className = undefined, name = undefined, style = undefined, items = undefined, description = undefined, defaultValue = undefined, defaultAccept = undefined, autoClose = undefined, disabled = undefined, isFilter = undefined, required = undefined, onChange = undefined,
+																			   }:SingleSelectMenuType ) => {
 	return (
 		<>
 			{ tooltipLabel
@@ -61,8 +61,8 @@ type TooltipType = Partial<{
 	width: string
 }> & React.PropsWithChildren
 export const Tooltip:React.FC<TooltipType> = React.memo( ( {
-	active, center, className, width, style, children,
-}: TooltipType ) => {
+															   active, center, className, width, style, children,
+														   }: TooltipType ) => {
 	return <JSXTooltip active={ active } center={ center } className={ className } style={ { ...style, ...( width && { width } ) } }>{ children }</JSXTooltip>;
 } );
 Tooltip.displayName = 'Tooltip';
@@ -80,8 +80,8 @@ type CheckboxType = Partial<{
 }> & React.PropsWithChildren
 
 export const Checkbox: React.FC<CheckboxType> = React.memo( ( {
-	defaultValue = undefined, smallText = undefined, disabled = undefined, readOnly = undefined, radial = undefined, name = undefined, className = undefined, onChange = undefined, textBefore = undefined, children,
-}: CheckboxType ) => {
+																  defaultValue = undefined, smallText = undefined, disabled = undefined, readOnly = undefined, radial = undefined, name = undefined, className = undefined, onChange = undefined, textBefore = undefined, children,
+															  }: CheckboxType ) => {
 	return <JSXCheckbox defaultValue={ defaultValue } smallText={ smallText } disabled={ disabled } readOnly={ readOnly } radial={ radial } name={ name } className={ className } onChange={ onChange } textBefore={ textBefore }>{ children }</JSXCheckbox>;
 } );
 Checkbox.displayName = 'Checkbox';
@@ -98,8 +98,8 @@ type ButtonType = Partial<{
 }> & React.PropsWithChildren
 
 export const Button: React.FC<ButtonType> = React.memo( ( {
-	children, active = undefined, danger = undefined, type = undefined, className = undefined, disabled = undefined, onClick = undefined, href = undefined, target = undefined,
-}:ButtonType ) => {
+															  children, active = undefined, danger = undefined, type = undefined, className = undefined, disabled = undefined, onClick = undefined, href = undefined, target = undefined,
+														  }:ButtonType ) => {
 	return <JSXButton active={ active } danger={ danger } type={ type } className={ className } disabled={ disabled } onClick={ onClick } href={ href } target={ target }>{ children }</JSXButton>;
 } );
 Button.displayName = 'Button';
@@ -123,7 +123,8 @@ type TextAreaType = Partial<{
 }> & React.PropsWithChildren
 
 export const TextArea: React.FC<TextAreaType> = React.memo( ( {
-	allowResize, children, defaultValue = undefined, autoFocus = undefined, placeholder = undefined, liveUpdate = undefined, className = undefined, readonly = undefined, disabled = undefined, label = undefined, description = undefined, labelInline = undefined, required = undefined, onChange = undefined, style = undefined, rows = undefined }: TextAreaType ) => {
+																  allowResize, children, defaultValue = undefined, autoFocus = undefined, placeholder = undefined, liveUpdate = undefined, className = undefined, readonly = undefined, disabled = undefined, label = undefined, description = undefined, labelInline = undefined, required = undefined, onChange = undefined, style = undefined, rows = undefined,
+															  }: TextAreaType ) => {
 	return <JSXTextArea defaultValue={ defaultValue } autoFocus={ autoFocus } placeholder={ placeholder } liveUpdate={ liveUpdate } className={ className } readonly={ readonly } disabled={ disabled } label={ label } description={ description } labelInline={ labelInline } required={ required } onChange={ onChange } style={ style } rows={ rows } allowResize={ allowResize }>{ children }</JSXTextArea>;
 } );
 TextArea.displayName = 'TextArea';
