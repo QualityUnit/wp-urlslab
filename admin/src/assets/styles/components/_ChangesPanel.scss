@@ -1,0 +1,102 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-changesPanel {
+
+    &-wrap {
+        width: 75%;
+        max-width: 92em;
+    }
+
+    .urlslab-table-container {
+        margin: 0;
+    }
+
+    .thumbnail {
+
+        &-wrapper {
+            border-radius: 4px;
+            border: 1px solid $grey-medium;
+
+
+            &.selected {
+                border: 2px solid $primary-color;
+            }
+        }
+
+        &-selected-info {
+            border-radius: $br-6;
+            color: $primary-color;
+            background-color: $desaturated-blue;
+        }
+
+        &-check,
+        &-button,
+        &-selected-info {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        &-check {
+            z-index: 2;
+            left: 0.5em;
+        }
+
+        &-button,
+        &-selected-info {
+            font-weight: 600;
+            z-index: 1;
+            padding: 0.15em 0.75em 0.15em 2em;
+        }
+    }
+
+    .recharts-responsive-container {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+    .urlslab-chart-legend {
+        display: inline-flex;
+        border-radius: $br-6;
+        margin: 0;
+        margin-bottom: 2em;
+        overflow: hidden;
+
+        li {
+            color: $white;
+            padding: 1em;
+            margin: 0;
+            font-size: 0.8125rem;
+        }
+    }
+
+    .recharts-default-tooltip {
+        padding: 1.25rem !important;
+        background-color: $white;
+        border: none !important;
+        border-radius: $br-10;
+        filter: drop-shadow(0 0 6px rgba($black, 0.16));
+    }
+
+    .recharts-tooltip {
+
+        &-label {
+            margin-bottom: 0.625rem !important;
+            padding-bottom: 0.625rem;
+            border-bottom: 1px solid $grey-light;
+        }
+
+        &-item-list {
+            margin: 0;
+
+            li {
+                margin: 0;
+                padding-top: 0 !important;
+                padding-bottom: 0 !important;
+            }
+        }
+    }
+}
