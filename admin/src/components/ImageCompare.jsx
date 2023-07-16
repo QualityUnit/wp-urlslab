@@ -4,7 +4,6 @@ import { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.s
 import { ReactComponent as AdjacentScreenIcon } from '../assets/images/icons/icon-adjacent-screen.svg';
 import { ReactComponent as OverlayScreenIcon } from '../assets/images/icons/icon-overlay-no-diff.svg';
 import { ReactComponent as OverlayWithDiffIcon } from '../assets/images/icons/icon-overlay-with-diff.svg';
-import { ReactComponent as SearchIcon } from '../assets/images/icons/icon-search-white.svg';
 import { ReactComponent as SearchZoomInIcon } from '../assets/images/icons/icon-search-zoom-in.svg';
 import { ReactComponent as SearchZoomOutIcon } from '../assets/images/icons/icon-search-zoom-out.svg';
 import useTablePanels from '../hooks/useTablePanels';
@@ -15,13 +14,6 @@ import Loader from './Loader';
 
 const ImageCompare = ( { selectedRows, allChanges } ) => {
 	const SCREENSHOT_WIDTH = 1366;
-	const zoomingOptions = {
-		0: 'Choose zoom level',
-		20: '20%',
-		30: '30%',
-		40: '40%',
-		50: '50%',
-	};
 	const dropdownItems = allChanges.reduce( ( acc, item ) => {
 		const dateFormatted = date( getSettings().formats.date, item.last_changed * 1000 );
 		const time = date( getSettings().formats.time, item.last_changed * 1000 );
@@ -172,7 +164,7 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 	};
 
 	const calculateWrapperInitialWidth = ( imageHeight ) => {
-		const height = window.innerHeight - 24 - 100 - 10; // reducing the close button height and top control height
+		const height = window.innerHeight - 24 - 100; // reducing the close button height and top control height
 		return height * SCREENSHOT_WIDTH / imageHeight;
 	};
 
@@ -418,41 +410,26 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 					</div>
 				</div>
 				<div className="urlslab-ImageCompare-top-control-screens">
-					<div className={ `urlslab-ImageCompare-top-control-screens-item` }>
-						<div><SearchIcon /></div>
-						<div>{ zoom }%</div>
-					</div>
 					<button className={ `urlslab-ImageCompare-top-control-screens-item` }
 						onClick={ () => handleZoomChange( zoom + 10 ) }>
 						<div><SearchZoomInIcon /></div>
-						<div>Zoom In</div>
+						<div>{ zoom }%</div>
 					</button>
 					<button className={ `urlslab-ImageCompare-top-control-screens-item` }
 						onClick={ () => handleZoomChange( zoom - 10 ) }>
 						<div><SearchZoomOutIcon /></div>
-						<div>Zoom Out</div>
+						<div>{ zoom }%</div>
 					</button>
-					<div className="urlslab-ImageCompare-top-control-screens-option">
-						<SingleSelectMenu
-							items={ zoomingOptions }
-							dark={ true }
-							name="image_comparator_zoom_options"
-							autoClose
-							defaultValue="0"
-							onChange={ ( val ) => handleZoomChange( Number( val ) ) }
-						/>
-
+					<div className="urlslab-panel-close-container">
+						<button className="urlslab-panel-close-container-btn" onClick={ hideImageCompare }>
+							<CloseIcon />
+						</button>
 					</div>
 				</div>
 			</div>
 			<div className="urlslab-ImageCompare-panel">
 				<div className="urlslab-ImageCompare-wrapper" style={ { width: wrapperWidth } }>
 
-					<div className="urlslab-panel-close-container">
-						<button className="urlslab-panel-close-container-btn" onClick={ hideImageCompare }>
-							<CloseIcon />
-						</button>
-					</div>
 					<div className="urlslab-ImageCompare-slider-container">
 						{
 							<div className={ ! diffLoading && activeScreen === 'overlay' ? '' : 'hidden' }>
