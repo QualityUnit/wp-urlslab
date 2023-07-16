@@ -62,19 +62,19 @@ const Chart = ( { data, header } ) => {
 								}
 
 								{ dataKey === 'status_code' &&
-								<>
-									{
-                                    		value >= 200 && value <= 299 &&
-                                            <span className="c-saturated-green">OK</span>
-                                    	}
-									{
-                                    		value >= 300 && value <= 399 &&
-                                            <span className="c-saturated-orange">Redirect</span>
-                                    	}
-									{ ( value >= 400 || value < 0 ) &&
-									<span className="c-saturated-red">{ value }</span>
-                                    	}
-								</>
+									<>
+										{
+											value >= 200 && value <= 299 &&
+											<span className="c-saturated-green">OK</span>
+										}
+										{
+											value >= 300 && value <= 399 &&
+											<span className="c-saturated-orange">Redirect</span>
+										}
+										{ ( value >= 400 || value < 0 ) &&
+											<span className="c-saturated-red">{ value }</span>
+										}
+									</>
 								}
 								{
 									dataKey === 'page_size' &&
