@@ -22,13 +22,19 @@
 	border-style: solid;
 	border-width: math.div($size, 2);
 
-	@if $direction == up {
+	@if $direction ==up {
 		border-bottom-color: $color;
-	} @else if $direction == right {
+	}
+
+	@else if $direction ==right {
 		border-left-color: $color;
-	} @else if $direction == down {
+	}
+
+	@else if $direction ==down {
 		border-top-color: $color;
-	} @else if $direction == left {
+	}
+
+	@else if $direction ==left {
 		border-right-color: $color;
 	}
 }
@@ -112,12 +118,13 @@
 	&::-webkit-progress-value {
 		@content;
 	}
+
 	&::-moz-progress-bar {
 		@content;
 	}
 }
 
-@mixin scrollbar($width:6px) {
+@mixin scrollbar($width: 6px) {
 
 	&::-webkit-scrollbar-track {
 		background-color: transparent;
@@ -136,4 +143,44 @@
 
 	scrollbar-width: $width;
 	scrollbar-color: $grey-medium-lighter transparent;
+}
+
+@mixin scrollbarWithBg($width: 8px, $background: $grey-light) {
+
+	&::-webkit-scrollbar-track {
+		background-color: $background;
+		border-top-right-radius: inherit;
+		border-bottom-right-radius: inherit;
+
+		@if $background ==transparent {
+			padding: 0 calc($width / 2)
+		}
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: $grey-medium-lighter;
+		border-radius: $br-10;
+		height: 5em;
+
+		@if $background !=transparent {
+			border: calc($width/2) solid transparent;
+			background-clip: padding-box;
+		}
+	}
+
+	&::-webkit-scrollbar {
+		height: $width;
+
+		@if $background !=transparent {
+			width: calc($width * 2);
+			scrollbar-width: calc($width * 2);
+		}
+
+		@else {
+			width: $width;
+			scrollbar-width: $width;
+		}
+
+		scrollbar-color: $grey-medium-lighter transparent;
+	}
 }

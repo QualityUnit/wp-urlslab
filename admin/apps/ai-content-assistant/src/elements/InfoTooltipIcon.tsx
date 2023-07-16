@@ -1,5 +1,5 @@
 import React from 'react';
-import JSXIconButton from '../../../elements/IconButton';
+import JSXIconButton from '../../../../src/elements/IconButton';
 import { ReactComponent as InfoIcon } from '../assets/images/icons/icon-info.svg';
 
 type InfoTooltipIconType = {

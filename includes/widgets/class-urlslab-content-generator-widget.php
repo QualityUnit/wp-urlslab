@@ -486,7 +486,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_REFRESH_INTERVAL,
-			self::FREQ_NEVER,
+			7257600,
 			false,
 			__( 'Content Refresh Interval (paid)' ),
 			__(

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useI18n } from '@wordpress/react-i18n';
 
 import { postFetch } from '../api/fetching';
 import { delay } from '../lib/helpers';
@@ -7,6 +8,7 @@ import InputField from './InputField';
 import '../assets/styles/elements/_SuggestedInputField.scss';
 
 export default function SuggestInputField( props ) {
+	const { __ } = useI18n();
 	const { defaultValue, suggestInput, maxItems, description, required, onChange } = props;
 	const disabledKeys = { 38: 1, 40: 1 };
 	const ref = useRef();

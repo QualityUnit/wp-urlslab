@@ -1,6 +1,7 @@
 /* stylelint-disable selector-class-pattern, no-descending-specificity */
 @use "../common/mixins" as *;
 @use "../common/variables" as *;
+@use "../elements/MenuArrow" as *;
 
 button.urlslab-button,
 .urlslab-button {
@@ -61,7 +62,7 @@ button.urlslab-button,
 		color: $white;
 
 		&[disabled] {
-			background-color: $lighter-blue;
+			background-color: $disabled-blue;
 		}
 
 		.urlslab-loader {
@@ -94,6 +95,27 @@ button.urlslab-button,
 		}
 	}
 
+	&.with-arrow {
+		@extend %MenuArrow;
+		padding-left: 0;
+		padding-right: 0;
+
+		&.simple:hover {
+			color: inherit;
+		}
+
+		&:after {
+			margin-left: .8125em;
+		}
+
+		&.flip-arrow {
+			&::after {
+				transform: scaleY(-1);
+				top: -0.15em;
+			}
+		}
+	}
+
 	svg {
 
 		@include square(1.5em);
@@ -108,7 +130,7 @@ button.urlslab-button,
 		}
 	}
 
-	> svg {
+	>svg {
 
 		margin-right: 0.5em;
 
@@ -128,7 +150,7 @@ button.urlslab-button,
 
 		&[disabled]:hover {
 			background-color: $grey-lighter;
-			cursor: default;
+			cursor: not-allowed;
 		}
 
 		&.simple:hover {
@@ -144,7 +166,8 @@ button.urlslab-button,
 			}
 
 			&[disabled]:hover {
-				background-color: $lighter-blue;
+				background-color: $disabled-blue;
+				cursor: not-allowed;
 			}
 		}
 

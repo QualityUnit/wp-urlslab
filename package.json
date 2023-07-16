@@ -1,7 +1,7 @@
 {
   "author": "URLsLab",
   "name": "urlslab",
-  "version": "2.27.7",
+  "version": "2.27.9",
   "description": "URLsLab Plugin",
   "homepage": "https://www.urlslab.com",
   "browserslist": [
@@ -63,15 +63,16 @@
     "webpack-merge": "^5"
   },
   "scripts": {
-    "build:admin/ai-content-assistant": "cd ./admin/src/app-ai-content-assistant && yarn && yarn build",
+    "build:ai-content-assistant": "cd ./admin/apps/ai-content-assistant && yarn && yarn build",
+    "build:apps": "yarn build:ai-content-assistant",
     "build:admin": "cd ./admin/ && yarn && yarn build",
     "build:blocks": "cd ./blocks/ && yarn && yarn build",
-    "build": "webpack --mode=production && yarn build:admin && yarn build:blocks && yarn build:admin/ai-content-assistant",
+    "build": "webpack --mode=production && yarn build:admin && yarn build:blocks && yarn build:apps",
     "build:main": "webpack --mode=production",
     "watch": "webpack --mode=development --watch",
     "bundle": "yarn install && npm run watch",
     "dev": "webpack serve --config configuration/webpack.dev.config.js --mode=development",
-    "production": "webpack --mode=production && yarn build:admin && yarn build:blocks && yarn build:admin/ai-content-assistant",
+    "production": "webpack --mode=production && yarn build:admin && yarn build:blocks && yarn build:apps",
     "lint:sass": "sass-lint -v -q",
     "lint:js": "eslint --ext .js src/js/"
   }

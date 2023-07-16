@@ -1,0 +1,11 @@
+@use "../../../../../src/assets/styles/common/variables" as *;
+@use "common/mixins" as *;
+
+@forward "common/global";
+@forward "common/loading_spinner";
+@forward "../../../../../src/assets/styles/common/marginsPaddings";
+@forward "../../../../../src/assets/styles/common/typography";
+@forward "../../../../../src/assets/styles/common/colorClasses";
+@forward "../../../../../src/assets/styles/elements/Button";
+@forward "../../../../../src/assets/styles/elements/Inputs";
+@forward "elements/Slider";
