@@ -11,7 +11,7 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<id>[0-9]+)',
+			$base . '/(?P<faq_id>[0-9]+)',
 			array(
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
@@ -85,7 +85,7 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<id>[0-9]+)',
+			$base . '/(?P<faq_id>[0-9]+)',
 			array(
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,

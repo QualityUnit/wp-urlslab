@@ -1,7 +1,7 @@
 import { useState, Suspense, lazy } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import RedirectsOverview from '../overview/Redirects';
+import FaqsOverview from '../overview/Faqs';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
 export default function Faq( { moduleId } ) {
@@ -20,7 +20,7 @@ export default function Faq( { moduleId } ) {
 			<ModuleViewHeader moduleId={ moduleId }
 				moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{ activeSection === 'overview' &&
-			<RedirectsOverview moduleId={ moduleId } />
+			<FaqsOverview moduleId={ moduleId } />
 			}
 			{
 				activeSection === 'faq' &&
