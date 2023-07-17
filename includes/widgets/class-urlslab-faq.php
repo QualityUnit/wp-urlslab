@@ -1,10 +1,15 @@
 <?php
 
+use YusufKandemir\MicrodataParser\Microdata;
+use YusufKandemir\MicrodataParser\MicrodataDOMDocument;
+use YusufKandemir\MicrodataParser\MicrodataParser;
+
 class Urlslab_Faq extends Urlslab_Widget {
 	public const SLUG = 'faq';
 	const SETTING_NAME_AUTOINCLUDE_TO_CONTENT = 'urlslab-faq-autoinc';
 	const SETTING_NAME_AUTOINCLUDE_POST_TYPES = 'urlslab-faq-autoinc-types';
 	const SETTING_NAME_FAQ_COUNT = 'urlslab-faq-count';
+	const SETTING_NAME_IMPORT_FAQ_FROM_CONTENT = 'urlslab-faq-import-from-content';
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -34,7 +39,54 @@ class Urlslab_Faq extends Urlslab_Widget {
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'hook_callback', 10, 0 );
 		Urlslab_Loader::get_instance()->add_filter( 'the_content', $this, 'the_content_filter' );
+		Urlslab_Loader::get_instance()->add_filter( 'urlslab_raw_body_content', $this, 'raw_body_content', 1 );
 	}
+
+
+	public function raw_body_content( $content ) {
+		if ( is_404() || ! $this->get_option( self::SETTING_NAME_IMPORT_FAQ_FROM_CONTENT ) ) {
+			return $content;
+		}
+
+		$dom = new MicrodataDOMDocument( '1.0', get_bloginfo( 'charset' ));
+		$dom->encoding = get_bloginfo( 'charset' );
+		@$dom->loadHTML(mb_convert_encoding( $content, 'HTML-ENTITIES', get_bloginfo( 'charset' ) ),LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE );
+
+		$microdata_parser = new MicrodataParser($dom);
+
+		$microdata = $microdata_parser->toObject();
+		foreach ( $microdata->items as $item ) {
+			if ( 'https://schema.org/FAQPage' === $item->type[0] ) {
+				foreach ( $item->properties->mainEntity as $position => $entity ) {
+					if ( 'https://schema.org/Question' === $entity->type[0] ) {
+						$question = $entity->properties->name[0];
+						foreach ( $entity->properties->acceptedAnswer as $answer ) {
+							if ( 'https://schema.org/Answer' === $answer->type[0] ) {
+								$answer_text = $answer->properties->text[0];
+								$faq_id      = $this->add_unique_faq( $question, $answer_text );
+								if ( $faq_id ) {
+									$faq_url = new Urlslab_Faq_Url_Row();
+									$faq_url->set_faq_id( $faq_id );
+									$faq_url->set_url_id( Urlslab_Url::get_current_page_url()->get_url_id() );
+									$faq_url->set_sorting( $position + 1 );
+									if ( $faq_url->insert() ) {
+										$current_url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( Urlslab_Url::get_current_page_url() );
+										if ( Urlslab_Url_Row::FAQ_STATUS_ACTIVE !== $current_url_obj->get_faq_status() ) {
+											$current_url_obj->set_faq_status( Urlslab_Url_Row::FAQ_STATUS_ACTIVE );
+											$current_url_obj->update();
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return $content;
+	}
+
 
 	public function the_content_filter( $content ) {
 		if ( is_admin() ) {
@@ -178,10 +230,25 @@ class Urlslab_Faq extends Urlslab_Widget {
 			'widget'
 		);
 
+		$this->add_options_form_section( 'import', __( 'FAQ Import' ), __( 'Automatically import FAQ items from existing content based on the Schema.org items' ), array(
+			self::LABEL_EXPERT,
+			self::LABEL_EXPERIMENTAL,
+		) );
+		$this->add_option_definition(
+			self::SETTING_NAME_IMPORT_FAQ_FROM_CONTENT,
+			false,
+			true,
+			__( 'Import all FAQ items from content' ),
+			__( 'Automatically import FAQ items and assign them to current canonical URL from schema.org items. This option is recommened to use just limited time until you import existing items to UrlsLab tables and than switch off. Imported works on the fly during page load. Import can slow down the page load, therefore use it just for limited amount of time.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'import'
+		);
 	}
 
 	private function render_shortcode_header( array $urlslab_atts ): string {
-		return '<div class="Urlslab-Faq" itemscope="" itemtype="https://schema.org/FAQPage"><h2 id="faq">' . __( 'Frequently asked questions' ) . '</h2>';
+		return '<div class="Urlslab-Faq urlslab-skip-faq" itemscope="" itemtype="https://schema.org/FAQPage"><h2 id="faq">' . __( 'Frequently asked questions' ) . '</h2>';
 	}
 
 	private function render_shortcode_footer(): string {
@@ -194,6 +261,28 @@ class Urlslab_Faq extends Urlslab_Widget {
 		$content .= '<div class="Urlslab-Faq__outer-wrapper" itemprop="acceptedAnswer" itemscope="" itemtype="https://schema.org/Answer"><div class="Urlslab-Faq__inner-wrapper" itemprop="text">' . wp_kses_post( $faq_row->get_answer() ) . '</div></div></div>';
 
 		return $content;
+	}
+
+	private function add_unique_faq( $question, $answer_text ): int {
+
+		global $wpdb;
+		$lang   = $this->get_current_language_code();
+		$result = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_FAQS_TABLE . ' WHERE question = %s and (language=%s OR language=%s)', $question, 'all', $lang ), ARRAY_A );
+		foreach ( $result as $row ) {
+			$faq = new Urlslab_Faq_Row( $row );
+			if ( $faq->get_answer() === $answer_text && $faq->get_question() === $question ) {
+				return $faq->get_faq_id();
+			}
+		}
+
+		$faq_row = new Urlslab_Faq_Row();
+		$faq_row->set_question( $question );
+		$faq_row->set_answer( $answer_text );
+		$faq_row->set_language( $lang );
+		$faq_row->set_status( Urlslab_Faq_Row::STATUS_ACTIVE );
+		$faq_row->insert();
+
+		return $faq_row->get_faq_id();
 	}
 
 }

@@ -267,6 +267,13 @@ class Urlslab_Activator {
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN update_faq_date DATETIME, ADD COLUMN faq_status char(1) NOT NULL DEFAULT ''" ); // phpcs:ignore
 			}
 		);
+		self::update_step(
+			'2.28.2',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_FAQS_TABLE . ' ADD INDEX idx_questions (question(255))' ); // phpcs:ignore
+			}
+		);
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -552,6 +559,7 @@ class Urlslab_Activator {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 	}
+
 	private static function init_js_cache_tables() {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
@@ -740,6 +748,7 @@ class Urlslab_Activator {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 	}
+
 	private static function init_cache_rules_table() {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
@@ -802,7 +811,6 @@ class Urlslab_Activator {
 	}
 
 
-
 	private static function init_faqs_table() {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
@@ -816,7 +824,8 @@ class Urlslab_Activator {
 						updated DATETIME,
 						status char(1) DEFAULT 'N',
 						labels VARCHAR(255) NOT NULL DEFAULT '',
-						PRIMARY KEY (faq_id)
+						PRIMARY KEY (faq_id),
+						INDEX idx_questions (question(255)),
         ) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

@@ -217,4 +217,21 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 			),
 		);
 	}
+
+	public function delete_all_items( WP_REST_Request $request ) {
+		global $wpdb;
+
+		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . sanitize_key( $this->get_row_object()->get_table_name() ) ) ) ) { // phpcs:ignore
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
+		}
+
+		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . sanitize_key( URLSLAB_FAQ_URLS_TABLE ) ) ) ) { // phpcs:ignore
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
+		}
+
+		$this->on_items_updated();
+
+		return new WP_REST_Response( __( 'Truncated' ), 200 );
+	}
+
 }
