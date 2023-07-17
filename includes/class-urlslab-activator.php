@@ -254,6 +254,14 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.28.0',
+			function() {
+				global $wpdb;
+                $wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " ADD COLUMN shortcode_name VARCHAR(255) NOT NULL DEFAULT ''" ); // phpcs:ignore
+			}
+		);
+
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -615,6 +623,7 @@ class Urlslab_Activator {
 		$table_name = URLSLAB_GENERATOR_SHORTCODES_TABLE;
 		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
 						shortcode_id int UNSIGNED NOT NULL AUTO_INCREMENT,
+						shortcode_name VARCHAR(255) NOT NULL DEFAULT '',
 						semantic_context TEXT,
 						prompt TEXT,
 						default_value TEXT,

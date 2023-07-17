@@ -84,6 +84,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 
 	const header = {
 		shortcode_id: __( 'ID' ),
+		shortcode_name: __( 'Name' ),
 		shortcode_type: __( 'Type' ),
 		prompt: __( 'Prompt' ),
 		semantic_context: __( 'Semantic context' ),
@@ -100,6 +101,8 @@ export default function GeneratorShortcodeTable( { slug } ) {
 	const supported_variables_description = __( 'Supported variables: {{page_title}}, {{page_url}}, {{domain}}, {{language_code}}, {{language}}. In case videoid attribute is set, following variables are available: {{video_captions}}, {{video_captions_text}}, {{video_title}}, {{video_description}}, {{video_published_at}}, {{video_duration}}, {{video_channel_title}}, {{video_tags}}. Custom attributes can be passed from shortcode as well in form {{your_custom_attribute_name}}' );
 
 	const rowEditorCells = {
+		shortcode_name: <InputField liveUpdate defaultValue="" description={ __( 'The name of the shortcode to refer to in future' ) } label={ header.shortcode_name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, shortcode_name: val } ) } />,
+
 		shortcode_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'In case of video context type, Semantic search query should contain YouTube videoid or YoutTube video url.' ) }
 			items={ shortcodeTypeTypes } name="shortcode_type" defaultValue="S" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, shortcode_type: val } ) }>{ header.shortcode_type }</SingleSelectMenu>,
 
@@ -132,6 +135,11 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		columnHelper.accessor( 'shortcode_id', {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.shortcode_id }</SortBy>,
 			size: 45,
+		} ),
+		columnHelper.accessor( 'shortcode_name', {
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.shortcode_name }</SortBy>,
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'shortcode_type', {
 			filterValMenu: shortcodeTypeTypes,
