@@ -12,13 +12,21 @@ class Urlslab_Faq_Row extends Urlslab_Data {
 	 * @param mixed $loaded_from_db
 	 */
 	public function __construct( array $faq = array(), $loaded_from_db = true ) {
-		$this->set_faq_id( $faq['faq_id'] ?? 0, $loaded_from_db );
+		$this->set_faq_id( (int) ( $faq['faq_id'] ?? 0 ), $loaded_from_db );
 		$this->set_question( $faq['question'] ?? '', $loaded_from_db );
 		$this->set_answer( $faq['answer'] ?? '', $loaded_from_db );
-		$this->set_language( $faq['language'] ?? '', $loaded_from_db );
-		$this->set_updated( $faq['updated'] ?? self::get_now(), $loaded_from_db );
-		$this->set_status( $faq['status'] ?? (empty($this->get_answer()) ? self::STATUS_EMPTY : self::STATUS_NEW), $loaded_from_db );
+		$this->set_language( $faq['language'] ?? 'all', $loaded_from_db );
+		$this->set_updated( empty( $faq['updated'] ) ? self::get_now() : $faq['updated'], $loaded_from_db );
 		$this->set_labels( $faq['labels'] ?? '', $loaded_from_db );
+		if ( empty( $faq['status'] ) ) {
+			if ( strlen( $this->get_answer() ) ) {
+				$this->set_status( self::STATUS_NEW, $loaded_from_db );
+			} else {
+				$this->set_status( self::STATUS_EMPTY, $loaded_from_db );
+			}
+		} else {
+			$this->set_status( $faq['status'], $loaded_from_db );
+		}
 	}
 
 	public function get_faq_id(): int {
@@ -49,27 +57,27 @@ class Urlslab_Faq_Row extends Urlslab_Data {
 		return $this->get( 'labels' );
 	}
 
-	public function set_faq_id( int $faq_id, $loaded_from_db = false  ) {
+	public function set_faq_id( int $faq_id, $loaded_from_db = false ) {
 		$this->set( 'faq_id', $faq_id, $loaded_from_db );
 	}
 
-	public function set_question( string $question, $loaded_from_db = false  ) {
+	public function set_question( string $question, $loaded_from_db = false ) {
 		$this->set( 'question', $question, $loaded_from_db );
 	}
 
-	public function set_answer( string $answer, $loaded_from_db = false  ) {
+	public function set_answer( string $answer, $loaded_from_db = false ) {
 		$this->set( 'answer', $answer, $loaded_from_db );
 	}
 
-	public function set_language( string $language, $loaded_from_db = false  ) {
+	public function set_language( string $language, $loaded_from_db = false ) {
 		$this->set( 'language', $language, $loaded_from_db );
 	}
 
-	public function set_updated( string $updated, $loaded_from_db = false  ) {
+	public function set_updated( string $updated, $loaded_from_db = false ) {
 		$this->set( 'updated', $updated, $loaded_from_db );
 	}
 
-	public function set_status( string $status, $loaded_from_db = false  ) {
+	public function set_status( string $status, $loaded_from_db = false ) {
 		$this->set( 'status', $status, $loaded_from_db );
 	}
 

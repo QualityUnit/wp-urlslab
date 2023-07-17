@@ -259,4 +259,11 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 
 		return new WP_REST_Response( __( 'Deleted' ), 200 );
 	}
+
+	protected function validate_item( Urlslab_Data $row ) {
+		parent::validate_item( $row );
+		if ( ! strlen( $row->get_public( 'question' ) ) ) {
+			throw new Exception( __( 'Question is required', 'urlslab' ) );
+		}
+	}
 }
