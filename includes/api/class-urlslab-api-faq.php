@@ -21,25 +21,25 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 						'update_item_permissions_check',
 					),
 					'args'                => array(
-						'question'  => array(
+						'question' => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
-						'answer' => array(
+						'answer'   => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
-						'language'  => array(
+						'language' => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
-						'status' => array(
+						'status'   => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
@@ -56,7 +56,7 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 								}
 							},
 						),
-						'labels'      => array(
+						'labels'   => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
@@ -131,25 +131,25 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => array( $this, 'create_item' ),
 			'args'                => array(
-				'question'  => array(
+				'question' => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
 					},
 				),
-				'answer' => array(
+				'answer'   => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
 					},
 				),
-				'language'  => array(
+				'language' => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
 					},
 				),
-				'status' => array(
+				'status'   => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						switch ( $param ) {
@@ -166,7 +166,7 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 						}
 					},
 				),
-				'labels'      => array(
+				'labels'   => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
@@ -234,4 +234,29 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 		return new WP_REST_Response( __( 'Truncated' ), 200 );
 	}
 
+
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function delete_item( $request ) {
+		global $wpdb;
+
+		$delete_params = array();
+		foreach ( $this->get_row_object()->get_primary_columns() as $primary_column ) {
+			$delete_params[ $primary_column ] = $request->get_param( $primary_column );
+		}
+
+		if ( false === $wpdb->delete( $this->get_row_object()->get_table_name(), $delete_params ) ) {
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
+		}
+		$faqUrl = new Urlslab_Faq_Url_Row();
+		if ( false === $wpdb->delete( $faqUrl->get_table_name(), array( 'faq_id' => $delete_params['faq_id'] ) ) ) {
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
+		}
+		$this->on_items_updated();
+
+		return new WP_REST_Response( __( 'Deleted' ), 200 );
+	}
 }
