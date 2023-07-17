@@ -10,10 +10,12 @@ export default function Faq( { moduleId } ) {
 
 	const tableMenu = new Map( [
 		[ 'faq', __( 'FAQs' ) ],
+		[ 'faqurls', __( 'URL Assignment' ) ],
 	] );
 
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
 	const FaqsTable = lazy( () => import( `../tables/FaqsTable.jsx` ) );
+	const FaqUrlsTable = lazy( () => import( `../tables/FaqUrlsTable.jsx` ) );
 
 	return (
 		<div className="urlslab-tableView">
@@ -26,6 +28,12 @@ export default function Faq( { moduleId } ) {
 				activeSection === 'faq' &&
 					<Suspense>
 						<FaqsTable slug={ 'faq' } />
+					</Suspense>
+			}
+			{
+				activeSection === 'faqurls' &&
+					<Suspense>
+						<FaqUrlsTable slug={ 'faqurls' } />
 					</Suspense>
 			}
 			{

@@ -122,7 +122,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 
 			try {
 				$this->validate_item( $row_obj );
-				$rows[] = $this->before_import( $row_obj );
+				$rows[] = $this->before_import( $row_obj, $row );
 			} catch ( Exception $e ) {
 			}
 		}
@@ -263,7 +263,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		throw new Exception( 'Missing implementation' );
 	}
 
-	protected function before_import( Urlslab_Data $row_obj ): Urlslab_Data {
+	protected function before_import( Urlslab_Data $row_obj, array $row ): Urlslab_Data {
 		return $row_obj;
 	}
 

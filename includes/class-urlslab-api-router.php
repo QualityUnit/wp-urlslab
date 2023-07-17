@@ -61,6 +61,9 @@ class Urlslab_Api_Router {
 		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-faq.php';
 		( new Urlslab_Api_Faq() )->register_routes();
 
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-faq-urls.php';
+		( new Urlslab_Api_Faq_Urls() )->register_routes();
+
 		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-schedules.php';
 		( new Urlslab_Api_Schedules() )->register_routes();
 
