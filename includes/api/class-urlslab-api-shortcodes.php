@@ -220,7 +220,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 	}
 
 	public function get_editable_columns(): array {
-		return array( 'semantic_context', 'prompt', 'default_value', 'url_filter', 'status', 'model', 'template', 'shortcode_type' );
+		return array( 'shortcode_name', 'semantic_context', 'prompt', 'default_value', 'url_filter', 'status', 'model', 'template', 'shortcode_type' );
 	}
 
 	/**
