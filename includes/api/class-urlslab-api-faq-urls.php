@@ -124,6 +124,16 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 		);
 	}
 
+	public function create_item( $request ) {
+		try {
+			$url = new Urlslab_Url( $request->get_param( 'url_name' ), true );
+			$request->set_param( 'url_id', $url->get_url_id() );
+		} catch ( Exception $e ) {
+		}
+
+		return parent::create_item( $request );
+	}
+
 	public function get_row_object( $params = array() ): Urlslab_Data {
 		return new Urlslab_Faq_Url_Row( $params );
 	}
@@ -181,7 +191,7 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 
 	public function before_import( Urlslab_Data $row_obj, array $row ): Urlslab_Data {
 		try {
-			$url = new Urlslab_Url( $row['url_name'] );
+			$url = new Urlslab_Url( $row['url_name'], true );
 			$row_obj->set_public( 'url_id', $url->get_url_id() );
 		} catch ( Exception $e ) {
 		}

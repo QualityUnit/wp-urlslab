@@ -94,7 +94,9 @@ export default function FaqUrlsTable( { slug } ) {
 	];
 
 	const rowEditorCells = {
-		sorting: <InputField liveUpdate defaultValue="" label={ header.sorting }
+		url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.url_name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_name: val } ) } required />,
+		faq_id: <InputField liveUpdate defaultValue="" label={ header.faq_id } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, faq_id: val } ) } required />,
+		sorting: <InputField liveUpdate defaultValue="10" label={ header.sorting }
 							  description={ __( 'Order of the FAQ in the list (Number 0 - 255).' ) }
 							  onChange={ ( val ) => setRowToEdit( { ...rowToEdit, sorting: val } ) } required />,
 	};
