@@ -32,7 +32,7 @@ class Urlslab_Faq extends Urlslab_Widget {
 	}
 
 	public function hook_callback() {
-		add_shortcode( $this->get_widget_slug(), array( $this, 'get_shortcode_content', ) );
+		add_shortcode( $this->get_widget_slug(), array( $this, 'get_shortcode_content' ) );
 	}
 
 
@@ -48,11 +48,11 @@ class Urlslab_Faq extends Urlslab_Widget {
 			return $content;
 		}
 
-		$dom = new MicrodataDOMDocument( '1.0', get_bloginfo( 'charset' ));
+		$dom           = new MicrodataDOMDocument( '1.0', get_bloginfo( 'charset' ) );
 		$dom->encoding = get_bloginfo( 'charset' );
-		@$dom->loadHTML(mb_convert_encoding( $content, 'HTML-ENTITIES', get_bloginfo( 'charset' ) ),LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE );
+		@$dom->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', get_bloginfo( 'charset' ) ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE );
 
-		$microdata_parser = new MicrodataParser($dom);
+		$microdata_parser = new MicrodataParser( $dom );
 
 		$microdata = $microdata_parser->toObject();
 		foreach ( $microdata->items as $item ) {
@@ -230,10 +230,15 @@ class Urlslab_Faq extends Urlslab_Widget {
 			'widget'
 		);
 
-		$this->add_options_form_section( 'import', __( 'FAQ Import' ), __( 'Automatically import FAQ items from existing content based on the Schema.org items' ), array(
-			self::LABEL_EXPERT,
-			self::LABEL_EXPERIMENTAL,
-		) );
+		$this->add_options_form_section(
+			'import',
+			__( 'FAQ Import' ),
+			__( 'Automatically import FAQ items from existing content based on the Schema.org items' ),
+			array(
+				self::LABEL_EXPERT,
+				self::LABEL_EXPERIMENTAL,
+			)
+		);
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_FAQ_FROM_CONTENT,
 			false,
@@ -267,7 +272,7 @@ class Urlslab_Faq extends Urlslab_Widget {
 
 		global $wpdb;
 		$lang   = $this->get_current_language_code();
-		$result = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_FAQS_TABLE . ' WHERE question = %s and (language=%s OR language=%s)', $question, 'all', $lang ), ARRAY_A );
+		$result = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_FAQS_TABLE . ' WHERE question = %s and (language=%s OR language=%s)', $question, 'all', $lang ), ARRAY_A ); // phpcs:ignore
 		foreach ( $result as $row ) {
 			$faq = new Urlslab_Faq_Row( $row );
 			if ( $faq->get_answer() === $answer_text && $faq->get_question() === $question ) {

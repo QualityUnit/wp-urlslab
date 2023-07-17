@@ -23,15 +23,15 @@ class Urlslab_Faq_Url_Row extends Urlslab_Data {
 		return $this->get( 'sorting' );
 	}
 
-	public function set_faq_id( int $faq_id, $loaded_from_db = false  ) {
+	public function set_faq_id( int $faq_id, $loaded_from_db = false ) {
 		$this->set( 'faq_id', $faq_id, $loaded_from_db );
 	}
 
-	public function set_url_id( int $url_id, $loaded_from_db = false  ) {
+	public function set_url_id( int $url_id, $loaded_from_db = false ) {
 		$this->set( 'url_id', $url_id, $loaded_from_db );
 	}
 
-	public function set_sorting( int $sorting, $loaded_from_db = false  ) {
+	public function set_sorting( int $sorting, $loaded_from_db = false ) {
 		$this->set( 'sorting', $sorting, $loaded_from_db );
 	}
 
@@ -49,9 +49,9 @@ class Urlslab_Faq_Url_Row extends Urlslab_Data {
 
 	public function get_columns(): array {
 		return array(
-			'faq_id'   => '%d',
-			'url_id' => '%d',
-			'sorting'   => '%d',
+			'faq_id'  => '%d',
+			'url_id'  => '%d',
+			'sorting' => '%d',
 		);
 	}
 }

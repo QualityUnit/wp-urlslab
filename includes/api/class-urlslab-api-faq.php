@@ -251,8 +251,8 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 		if ( false === $wpdb->delete( $this->get_row_object()->get_table_name(), $delete_params ) ) {
 			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
-		$faqUrl = new Urlslab_Faq_Url_Row();
-		if ( false === $wpdb->delete( $faqUrl->get_table_name(), array( 'faq_id' => $delete_params['faq_id'] ) ) ) {
+		$faq_url = new Urlslab_Faq_Url_Row();
+		if ( false === $wpdb->delete( $faq_url->get_table_name(), array( 'faq_id' => $delete_params['faq_id'] ) ) ) {
 			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
 		$this->on_items_updated();
