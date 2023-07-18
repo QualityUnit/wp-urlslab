@@ -25,7 +25,7 @@ class Urlslab_Generator_Shortcode_Row extends Urlslab_Data {
 	}
 
 	public function get_shortcode_name(): string {
-		return this->get( 'shortcode_name' );
+		return $this->get( 'shortcode_name' );
 	}
 
 	public function set_shortcode_id( int $shortcode_id, $loaded_from_db = false ): void {
