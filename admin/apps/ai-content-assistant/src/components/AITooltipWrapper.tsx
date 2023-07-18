@@ -7,9 +7,10 @@ const { Fragment, useState, useRef, useEffect } = wp.element;
 
 interface AITooltipWrapperProps {
 	children: React.ReactNode;
+	openPopup: ( open: boolean ) => void;
 }
 
-export const AITooltipWrapper = ( { children }: AITooltipWrapperProps ) => {
+export const AITooltipWrapper = ( { children, openPopup }: AITooltipWrapperProps ) => {
 	const [ selectedText, setSelectedText ] = useState( '' );
 	const [ coords, setCoords ] = useState( { x: 0, y: 0 } );
 	const tooltipRef = useRef( null );
@@ -41,7 +42,7 @@ export const AITooltipWrapper = ( { children }: AITooltipWrapperProps ) => {
 			<div onMouseUp={ handleMouseUp }>
 				{ children }
 				{ selectedText &&
-					<AITooltip selected={ selectedText } x={ coords.x } y={ coords.y } ref={ tooltipRef } />
+					<AITooltip setShowPopup={ openPopup } x={ coords.x } y={ coords.y } ref={ tooltipRef } />
 				}
 			</div>
 		</Fragment>

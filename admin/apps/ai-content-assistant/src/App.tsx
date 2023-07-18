@@ -1,4 +1,4 @@
-import React, { useCallback, useReducer, useState, useMemo } from 'react';
+import React, { useCallback, useMemo, useReducer, useState } from 'react';
 
 import { AppContext } from './app/context';
 import { defaults, reducer } from './app/stateReducer';
@@ -8,6 +8,7 @@ import PopupToggleButton from './components/PopupToggleButton';
 import Popup from './components/Popup';
 
 import './assets/styles/style.scss';
+import { addWPBlockFilters } from './app/wpFilters.tsx';
 
 const App: React.FC = () => {
 	const [ openedPopup, setOpenedPopup ] = useState( false );
@@ -20,6 +21,7 @@ const App: React.FC = () => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const Button = useMemo( () => <PopupToggleButton action={ togglePopup } />, [] );
 	useEditorListener( Button );
+	addWPBlockFilters( setOpenedPopup );
 
 	return (
 		<AppContext.Provider value={ { state, dispatch, togglePopup } }>

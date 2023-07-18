@@ -7,12 +7,12 @@ import { forwardRef } from '@wordpress/element';
 declare const wp: any; // used any type until wordpress provide better typing
 
 interface AITooltipProps {
-	selected: string,
+	setShowPopup: ( show: boolean ) => void,
 	x: number;
 	y: number;
 }
 
-export const AITooltip = forwardRef<HTMLDivElement, AITooltipProps>( ( { selected, x, y }, ref ) => {
+export const AITooltip = forwardRef<HTMLDivElement, AITooltipProps>( ( { setShowPopup, x, y }, ref ) => {
 	const style = {
 		left: `${ x }px`,
 		top: `${ y - 40 }px`,
@@ -20,8 +20,12 @@ export const AITooltip = forwardRef<HTMLDivElement, AITooltipProps>( ( { selecte
 		zIndex: 9999,
 	};
 
+	const handleClick = () => {
+		setShowPopup( true );
+	};
+
 	return <div ref={ ref }>
-		<Button className="ai-tooltip" style={ style }>
+		<Button className="ai-tooltip" style={ style } onClick={ handleClick }>
 			<StarsIcon />
 		</Button>
 	</div>;
