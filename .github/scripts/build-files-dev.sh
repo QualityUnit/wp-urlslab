@@ -25,8 +25,3 @@ yarn
 
 echo "Build"
 yarn build
-
-echo "Build AI Content Assistant"
-cd ../admin/apps/ai-content-assistant
-yarn
-yarn build

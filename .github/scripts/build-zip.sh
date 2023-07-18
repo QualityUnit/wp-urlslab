@@ -20,7 +20,9 @@ for file in *; do
     fi
 done
 
-mv ./urlslab/temp-changelog-from-readme.txt ./temp-changelog-from-readme.txt
+if test -f "./urlslab/temp-changelog-from-readme.txt"; then
+    mv ./urlslab/temp-changelog-from-readme.txt ./temp-changelog-from-readme.txt
+fi
 
 zip -r $PLUGIN_ZIP_FILENAME ./urlslab/ -x "*.zip"
 echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
