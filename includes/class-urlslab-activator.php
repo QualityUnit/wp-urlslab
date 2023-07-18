@@ -253,6 +253,27 @@ class Urlslab_Activator {
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SEARCH_AND_REPLACE_TABLE . " ADD COLUMN login_status CHAR(1) NOT NULL DEFAULT 'A'" ); // phpcs:ignore
 			}
 		);
+		self::update_step(
+			'2.28.0',
+			function() {
+				self::init_faqs_table();
+				self::init_faq_urls_table();
+			}
+		);
+		self::update_step(
+			'2.28.1',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN update_faq_date DATETIME, ADD COLUMN faq_status char(1) NOT NULL DEFAULT ''" ); // phpcs:ignore
+			}
+		);
+		self::update_step(
+			'2.28.2',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_FAQS_TABLE . ' ADD INDEX idx_questions (question(255))' ); // phpcs:ignore
+			}
+		);
 
 		self::update_step(
 			'2.29.0',
@@ -294,6 +315,8 @@ class Urlslab_Activator {
 		self::init_generator_urls_table();
 		self::init_cache_rules_table();
 		self::init_custom_html_rules_table();
+		self::init_faqs_table();
+		self::init_faq_urls_table();
 	}
 
 	private static function init_urls_tables() {
@@ -307,7 +330,9 @@ class Urlslab_Activator {
 			scr_status char(1) NOT NULL,
 			sum_status char(1) NOT NULL,
 			http_status SMALLINT DEFAULT -1, -- -1: not checked, 200: ok, 3xx: redirect, 4xx: client error, 5xx: server error
+			faq_status char(1) NOT NULL DEFAULT '', -- W: waiting data, A: Active, D: Disabled, E: Error, empty - not sheduling
 			update_scr_date DATETIME,
+			update_faq_date DATETIME,
 			update_sum_date DATETIME,
 			update_http_date DATETIME,
 			urlslab_domain_id char(16),
@@ -322,7 +347,7 @@ class Urlslab_Activator {
 			url_type char(1) NOT NULL DEFAULT 'I', -- I: Internal, E: external
 			rel_schedule char(1) NOT NULL DEFAULT '', -- N: New, S: Scheduled, E: Error, empty - not sheduling
 			rel_updated DATETIME,
-      labels VARCHAR(255) NOT NULL DEFAULT '',
+      		labels VARCHAR(255) NOT NULL DEFAULT '',
 			PRIMARY KEY  (url_id),
 			INDEX idx_final_url_id (final_url_id),
 			INDEX idx_scr_changed (update_scr_date, scr_status),
@@ -544,6 +569,7 @@ class Urlslab_Activator {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 	}
+
 	private static function init_js_cache_tables() {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
@@ -733,6 +759,7 @@ class Urlslab_Activator {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 	}
+
 	private static function init_cache_rules_table() {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
@@ -788,6 +815,44 @@ class Urlslab_Activator {
 						add_start_body MEDIUMTEXT,
 						add_end_body MEDIUMTEXT,
 						PRIMARY KEY (rule_id)
+        ) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+
+	private static function init_faqs_table() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$table_name = URLSLAB_FAQS_TABLE;
+		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
+						faq_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+						question VARCHAR(500),
+						answer LONGTEXT,
+						language varchar(10),
+						updated DATETIME,
+						status char(1) DEFAULT 'N',
+						labels VARCHAR(255) NOT NULL DEFAULT '',
+						PRIMARY KEY (faq_id),
+						INDEX idx_questions (question(255)),
+        ) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_faq_urls_table() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$table_name = URLSLAB_FAQ_URLS_TABLE;
+		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
+						faq_id INT UNSIGNED NOT NULL,
+						url_id bigint NOT NULL,
+						sorting smallint default 10,
+						PRIMARY KEY (faq_id, url_id)
         ) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
