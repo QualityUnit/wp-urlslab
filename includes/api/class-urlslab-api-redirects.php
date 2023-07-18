@@ -353,9 +353,9 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 		);
 	}
 
-	public function before_import( Urlslab_Data $row_obj ): Urlslab_Data {
+	public function before_import( Urlslab_Data $row_obj, array $row ): Urlslab_Data {
 		$row_obj->set_public( 'cnt', 0 );
 
-		return parent::before_import( $row_obj );
+		return parent::before_import( $row_obj, $row );
 	}
 }

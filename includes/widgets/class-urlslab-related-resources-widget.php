@@ -23,7 +23,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 
 	// type - design
 	public const DESIGN_TYPE_DEFAULT = 'default';
-	public const DESIGN_TYPE_PLAIN = 'plain'; 
+	public const DESIGN_TYPE_PLAIN = 'plain';
 
 	public function get_widget_labels(): array {
 		return array( self::LABEL_SEO, self::LABEL_FREE, self::LABEL_PAID );
@@ -36,13 +36,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	public function hook_callback() {
-		add_shortcode(
-			$this->get_widget_slug(),
-			array(
-				$this,
-				'get_shortcode_content',
-			)
-		);
+		add_shortcode( $this->get_widget_slug(), array( $this, 'get_shortcode_content', ) );
 	}
 
 	/**
@@ -479,8 +473,8 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			__( 'Select frontend design type. Using the plain design you are responsible for own custom css styling.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				self::DESIGN_TYPE_DEFAULT 	=> __( 'Default' ),
-				self::DESIGN_TYPE_PLAIN		=> __( 'Plain' ),
+				self::DESIGN_TYPE_DEFAULT => __( 'Default' ),
+				self::DESIGN_TYPE_PLAIN   => __( 'Plain' ),
 			),
 			null,
 			'widget',

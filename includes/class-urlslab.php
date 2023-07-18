@@ -472,6 +472,8 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-custom-html-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-js-cache-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-css-cache-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-faq-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-faq-url-row.php';
 
 		// additional
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
