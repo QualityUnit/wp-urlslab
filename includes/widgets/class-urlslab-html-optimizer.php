@@ -390,7 +390,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			$htmlMin->doSumUpWhitespace( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_WHITESPACES ) );
 			$htmlMin->doRemoveWhitespaceAroundTags( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_WHITESPACES ) );
 			$htmlMin->doOptimizeAttributes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES ) );
-			$htmlMin->doKeepHttpAndHttpsPrefixOnExternalAttributes(true);
+			$htmlMin->doKeepHttpAndHttpsPrefixOnExternalAttributes( true );
 			if ( $is_head ) {
 				$htmlMin->doRemoveHttpPrefixFromAttributes( false );
 				$htmlMin->doRemoveHttpsPrefixFromAttributes( false );
