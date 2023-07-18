@@ -472,7 +472,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 					),
 				)
 			);
-
+			$this->invalidate_cache( $request );
 		} catch ( Aws\Exception\AwsException $e ) {
 			return new WP_Error( 'error', __( 'Failed to drop cache: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 		}
