@@ -836,7 +836,7 @@ class Urlslab_Activator {
 						status char(1) DEFAULT 'N',
 						labels VARCHAR(255) NOT NULL DEFAULT '',
 						PRIMARY KEY (faq_id),
-						INDEX idx_questions (question(255)),
+						INDEX idx_questions (question(255))
         ) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
