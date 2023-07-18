@@ -61,7 +61,7 @@ class Urlslab_Admin {
 
 		// list of modules available on editor pages
 		$this->editor_modules = array( 
-			'ai-content-assistant', 
+			'ai-content-assistant',
 		);
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
 		add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'enqueue_elementor_editor_assets' ) );
@@ -234,6 +234,8 @@ class Urlslab_Admin {
 						'wp-editor',
 						'wp-dom-ready',
 						'wp-i18n',
+						'wp-element',
+						'wp-components',
 						'wp-blocks',
 					),
 					null, // do not include versioning for react apps, is unnecessary and cause problems with lazy loaded components

@@ -1,0 +1,7 @@
+/* include default mixins, this file contains only app related mixins */
+@import "../../../../../../src/assets/styles/common/mixins";
+@use "../../../../../../src/assets/styles/common/variables" as *;
+
+.ai-tooltip {
+    background: linear-gradient(139.49deg, rgba(93, 137, 226, 0.41) 7.97%, rgba(219, 107, 215, 0.41) 89.5%);
+}
