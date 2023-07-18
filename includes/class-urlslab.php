@@ -129,13 +129,13 @@ class Urlslab {
 
 		if ( false !== strpos( strtolower( substr( $content, 0, 300 ) ), '<head>' ) ) {
 			if ( preg_match( '|(.*?)<head>(.*?)</head>(.*)|imus', $content, $matches ) ) {
-				$content = $matches[1] . $this->urlslab_head_content( $matches[2] ) . $matches[3];
+				$content = $matches[1] . apply_filters( 'urlslab_raw_head_content_final', $this->urlslab_head_content( $matches[2] ) ) . $matches[3];
 			}
 		}
 
 		if ( false !== strpos( $content, '<body' ) ) {
 			if ( preg_match( '|(.*?)<body(.*?)>(.*?)</body>(.*?)|imus', $content, $matches ) ) {
-				$content = $matches[1] . $this->urlslab_body_content( $matches[3], $matches[2] ) . $matches[4];
+				$content = $matches[1] . apply_filters( 'urlslab_raw_body_content_final', $this->urlslab_body_content( $matches[3], $matches[2] ) ) . $matches[4];
 			}
 		}
 

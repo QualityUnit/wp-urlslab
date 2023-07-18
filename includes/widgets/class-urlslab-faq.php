@@ -48,13 +48,18 @@ class Urlslab_Faq extends Urlslab_Widget {
 			return $content;
 		}
 
-		$dom           = new MicrodataDOMDocument( '1.0', get_bloginfo( 'charset' ) );
-		$dom->encoding = get_bloginfo( 'charset' );
-		@$dom->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', get_bloginfo( 'charset' ) ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE );
+		$dom                      = new MicrodataDOMDocument( '1.0', get_bloginfo( 'charset' ) );
+		$dom->encoding            = get_bloginfo( 'charset' );
+		$dom->strictErrorChecking = false; // phpcs:ignore
+		$libxml_previous_state    = libxml_use_internal_errors( true );
+		$dom->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', get_bloginfo( 'charset' ) ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE );
 
 		$microdata_parser = new MicrodataParser( $dom );
 
 		$microdata = $microdata_parser->toObject();
+		libxml_clear_errors();
+		libxml_use_internal_errors( $libxml_previous_state );
+
 		foreach ( $microdata->items as $item ) {
 			if ( 'https://schema.org/FAQPage' === $item->type[0] ) {
 				foreach ( $item->properties->mainEntity as $position => $entity ) {
