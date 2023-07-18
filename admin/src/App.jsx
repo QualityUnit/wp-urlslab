@@ -16,22 +16,9 @@ import Header from './components/Header';
 
 import './assets/styles/style.scss';
 
-import { useSelectableItems } from './hooks/useSelectableItems';
-
 export default function App() {
 	const queryClient = useQueryClient();
 	const [ prefetch, setPrefetch ] = useState( true );
-
-	const { data } = useQuery( {
-		queryKey: [ 'modules' ],
-		queryFn: async () => {
-			const response = await getFetch( 'module' ).then( ( ModuleData ) => ModuleData );
-			if ( response.ok ) {
-				return response.json();
-			}
-		},
-		refetchOnWindowFocus: false,
-	} );
 
 	useEffect( () => {
 		if ( prefetch ) {
@@ -40,7 +27,7 @@ export default function App() {
 			async function getApiKey() {
 				const generalData = await queryClient.fetchQuery( {
 					queryKey: [ 'general' ],
-					queryFn: () => fetchSettings( 'general' ).then( ( result ) => result ),
+					queryFn: () => fetchSettings( 'general' ).then( ( data ) => data ),
 					refetchOnWindowFocus: false,
 				} );
 
@@ -48,7 +35,7 @@ export default function App() {
 				const hasApiKey = isApiObject?.options[ 'urlslab-api-key' ].value;
 
 				if ( ! hasApiKey ) {
-					update( 'apiKeySet', () => false );
+					update( 'apiKeySet', ( ) => false );
 				}
 			}
 			getApiKey();
@@ -61,7 +48,7 @@ export default function App() {
 			} );
 
 			/* Creating all endpoints query object in advance
-                  to check for allowed+required import/insert/edit CSV fields */
+			to check for allowed+required import/insert/edit CSV fields */
 			queryClient.prefetchQuery( {
 				queryKey: [ 'routes' ],
 				queryFn: async () => {
@@ -82,27 +69,11 @@ export default function App() {
 					tagsArray?.map( ( tag ) => {
 						const { lightness } = hexToHSL( tag.bgcolor );
 						if ( lightness < 70 ) {
-							return ( tag.className = 'dark' );
+							return tag.className = 'dark';
 						}
 						return tag;
 					} );
 					return tagsArray;
-				},
-				refetchOnWindowFocus: false,
-			} );
-
-			// Creating Schedules query object in advance
-			queryClient.prefetchQuery( {
-				queryKey: [ 'schedule', 'urls' ],
-				queryFn: async () => {
-					const schedules = await postFetch( 'schedule', { rows_per_page: 50 } );
-					const schedulesArray = await schedules.json();
-					const scheduleUrls = [];
-					schedulesArray.flatMap( ( schedule ) => {
-						scheduleUrls.push( ...schedule.urls );
-						return false;
-					} );
-					return [ ... new Set( scheduleUrls ) ];
 				},
 				refetchOnWindowFocus: false,
 			} );
@@ -123,7 +94,21 @@ export default function App() {
 		}
 	}, [] );
 
+	const { data } = useQuery( {
+		queryKey: [ 'modules' ],
+		queryFn: async () => {
+			if ( prefetch ) {
+				const response = await getFetch( 'module' ).then( ( ModuleData ) => ModuleData );
+				if ( response.ok ) {
+					return response.json();
+				}
+			}
+		},
+		refetchOnWindowFocus: false,
+	} );
+
 	const fetchedModules = useMemo( () => {
+		delete data?.general;
 		return data;
 	}, [ data ] );
 
@@ -133,20 +118,16 @@ export default function App() {
 				fetchedModules &&
 				<Suspense>
 					<MainMenu
-                		modules={ ! fetchedModules || Object.values( fetchedModules ) }
-                	/>
+						modules={ ! fetchedModules || Object.values( fetchedModules ) }
+					/>
 				</Suspense>
 			}
 			<div className="urlslab-app-main">
 				<Header fetchedModules={ fetchedModules } />
-				{
-					fetchedModules &&
-					<Suspense>
-						<DynamicModule
-                    		modules={ ! fetchedModules || Object.values( fetchedModules ) }
-                    	/>
-					</Suspense>
-				}
+
+				<DynamicModule
+					modules={ ! fetchedModules || Object.values( fetchedModules ) }
+				/>
 			</div>
 			<Notifications />
 		</div>
