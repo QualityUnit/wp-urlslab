@@ -270,9 +270,9 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 				global $wpdb;
 				$rows       = array();
 				$rows[0]    = __( 'No generator is attached to YouTube videos' );
-				$generators = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . ' WHERE shortcode_type = %s', Urlslab_Generator_Shortcode_Row::TYPE_VIDEO ), ARRAY_A ); // phpcs:ignore
+				$generators = $wpdb->get_results( $wpdb->prepare( 'SELECT shortcode_id, shortcode_name FROM ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . ' WHERE shortcode_type = %s', Urlslab_Generator_Shortcode_Row::TYPE_VIDEO ), ARRAY_A ); // phpcs:ignore
 				foreach ( $generators as $generator ) {
-					$rows[ $generator['shortcode_id'] ] = '[ ' . $generator['shortcode_id'] . ' ] ' . substr( $generator['prompt'], 0, 60 ) . '...';
+					$rows[ $generator['shortcode_id'] ] = $generator['shortcode_name'];
 				}
 
 				return $rows;

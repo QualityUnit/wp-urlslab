@@ -255,10 +255,11 @@ class Urlslab_Activator {
 		);
 
 		self::update_step(
-			'2.28.0',
+			'2.29.0',
 			function() {
 				global $wpdb;
                 $wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " ADD COLUMN shortcode_name VARCHAR(255) NOT NULL DEFAULT ''" ); // phpcs:ignore
+                $wpdb->query( 'UPDATE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " SET shortcode_name = SUBSTRING(prompt, 0, 100)" ); // phpcs:ignore
 			}
 		);
 
