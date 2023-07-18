@@ -128,6 +128,7 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 		try {
 			$url = new Urlslab_Url( $request->get_param( 'url_name' ), true );
 			$request->set_param( 'url_id', $url->get_url_id() );
+			Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url );
 		} catch ( Exception $e ) {
 		}
 
@@ -193,6 +194,7 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 		try {
 			$url = new Urlslab_Url( $row['url_name'], true );
 			$row_obj->set_public( 'url_id', $url->get_url_id() );
+			Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url );
 		} catch ( Exception $e ) {
 		}
 
