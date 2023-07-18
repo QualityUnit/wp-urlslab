@@ -274,6 +274,16 @@ class Urlslab_Activator {
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_FAQS_TABLE . ' ADD INDEX idx_questions (question(255))' ); // phpcs:ignore
 			}
 		);
+
+		self::update_step(
+			'2.29.0',
+			function() {
+				global $wpdb;
+                $wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " ADD COLUMN shortcode_name VARCHAR(100) NOT NULL DEFAULT ''" ); // phpcs:ignore
+                $wpdb->query( 'UPDATE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " SET shortcode_name = SUBSTRING(prompt, 0, 100)" ); // phpcs:ignore
+			}
+		);
+
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -640,6 +650,7 @@ class Urlslab_Activator {
 		$table_name = URLSLAB_GENERATOR_SHORTCODES_TABLE;
 		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
 						shortcode_id int UNSIGNED NOT NULL AUTO_INCREMENT,
+						shortcode_name VARCHAR(100) NOT NULL DEFAULT '',
 						semantic_context TEXT,
 						prompt TEXT,
 						default_value TEXT,
