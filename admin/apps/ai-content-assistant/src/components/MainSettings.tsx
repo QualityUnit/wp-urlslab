@@ -1,13 +1,17 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { InputField, TextArea } from '../elements/JSXElements';
 import { AppContext } from '../app/context';
 import GenericDropdown from '../elements/GenericDropdown';
 import UrlsList from './UrlsList';
+import PromptTemplateList from './PromptTemplateList.tsx';
+import { PromptTemplateListItem } from '../app/types.ts';
+import promptTemplates from '../app/data/promptTemplates.json';
 
 const MainSettings: React.FC = () => {
 	const { state, dispatch } = useContext( AppContext );
+
 	return (
 		<div className="urlslab-popup-content-main-settings flex flex-column">
 			{ /* // Will be used soon in further release.
@@ -40,6 +44,15 @@ const MainSettings: React.FC = () => {
 					/>
 				</div>
 			}
+			<div className="urlslab-popup-content-option-wrapper">
+				<GenericDropdown
+					label={ __( 'Prompt Template' ) }
+					innerLabel={ __( 'Select a Prompt Template' ) }
+					description={ __( 'Select a predefined Prompt Template to use' ) }
+				>
+					{ promptTemplates.length > 0 && <PromptTemplateList promptTemplates={ promptTemplates as PromptTemplateListItem[] } /> }
+				</GenericDropdown>
+			</div>
 			<div className="urlslab-popup-content-option-wrapper">
 				<TextArea
 					label={ __( 'Prompt' ) }

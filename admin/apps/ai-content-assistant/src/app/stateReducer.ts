@@ -3,6 +3,7 @@ import { AppState, ReducerAction, UrlsListItem } from './types';
 
 export const defaults = {
 	inputText: '',
+	promptTemplate: '',
 	template: '',
 	prompt: '',
 	language: 'en',

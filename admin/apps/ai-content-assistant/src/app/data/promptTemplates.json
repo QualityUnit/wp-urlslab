@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "name": "Generate a longer text",
+    "promptTemplate": "Elaborate on the given text: {input_text}"
+  },
+  {
+    "id": 2,
+    "name": "Summarize the text",
+    "promptTemplate": "Summarize the given text: {input_text}"
+  }
+]

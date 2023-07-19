@@ -17,6 +17,12 @@ export interface UrlsListItem {
   status: UrlStatus
 }
 
+export interface PromptTemplateListItem {
+  id: number
+  name: string
+  promptTemplate: string
+}
+
 export type GeneratorAction = {
   type: 'fix_grammar' | 'make_longer' | 'make_shorter'
   text: string,
