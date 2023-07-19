@@ -33,6 +33,21 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 		}
 
 		$url = new Urlslab_Url_Row( $url_row );
+
+		if ( ! $url->get_url()->is_url_valid() ) {
+			$url->set_http_status( Urlslab_Url_Row::HTTP_STATUS_CLIENT_ERROR );
+			$url->update();
+
+			return true;
+		}
+
+		if ( $url->get_url()->is_url_blacklisted() ) {
+			$url->set_http_status( Urlslab_Url_Row::HTTP_STATUS_OK );
+			$url->update();
+
+			return true;
+		}
+
 		if ( ! strlen( trim( $url->get_url_title() ) ) ) {
 			$url->set_url_title( Urlslab_Url_Row::VALUE_EMPTY );
 		}
