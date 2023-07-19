@@ -14,7 +14,7 @@ interface AITooltipProps {
 
 export const AITooltip = forwardRef<HTMLDivElement, AITooltipProps>( ( { setShowPopup, x, y }, ref ) => {
 	const style = {
-		left: `${ x }px`,
+		left: `${ x - 60 }px`,
 		top: `${ y - 40 }px`,
 		position: 'fixed' as const,
 		zIndex: 9999,

@@ -3,24 +3,26 @@ import { AITooltip } from './AITooltip.tsx';
 
 declare const wp: any; // used any type until wordpress provide better typing
 
-const { Fragment, useState, useRef, useEffect } = wp.element;
+const { Fragment, useState, useRef, useEffect, memo } = wp.element;
 
 interface AITooltipWrapperProps {
 	children: React.ReactNode;
 	openPopup: ( open: boolean ) => void;
-	setInputText: ( text: string ) => void;
+	setText: any;
 }
 
-export const AITooltipWrapper = ( { children, openPopup, setInputText }: AITooltipWrapperProps ) => {
-	const [ coords, setCoords ] = useState( { x: 0, y: 0 } );
+const AITooltipWrapper = ( { children, openPopup, setText }: AITooltipWrapperProps ) => {
+	console.log( 'AITooltipWrapper', setText );
 	const tooltipRef = useRef( null );
-	const { selectedText, setSelectedText } = useState( '' );
+	const blockContainerElement = useRef( null );
+	const [ coords, setCoords ] = useState( { x: 0, y: 0 } );
+	const [ selectedText, setSelectedText ] = useState( '' );
 
 	useEffect( () => {
 		// function to check if clicked on outside of tooltip
 		function handleClickOutside( event: globalThis.MouseEvent ) {
 			if ( tooltipRef.current && ! tooltipRef.current.contains( event.target ) ) {
-				setInputText( '' );
+				setSelectedText( '' );
 			}
 		}
 
@@ -34,14 +36,15 @@ export const AITooltipWrapper = ( { children, openPopup, setInputText }: AIToolt
 
 	const handleMouseUp = ( e: React.MouseEvent ) => {
 		const selected = window.getSelection()?.toString() || '';
-		setInputText( selected );
+		console.log( 'selected', selected );
 		setSelectedText( selected );
-		setCoords( { x: e.clientX, y: e.clientY } );
+		setText( selected );
+		setCoords( { x: blockContainerElement.current.getBoundingClientRect().x, y: e.clientY } );
 	};
 
 	return (
 		<Fragment>
-			<div onMouseUp={ handleMouseUp }>
+			<div ref={ blockContainerElement } onMouseUp={ handleMouseUp }>
 				{ children }
 				{ selectedText &&
 					<AITooltip setShowPopup={ openPopup } x={ coords.x } y={ coords.y } ref={ tooltipRef } />
@@ -50,3 +53,5 @@ export const AITooltipWrapper = ( { children, openPopup, setInputText }: AIToolt
 		</Fragment>
 	);
 };
+
+export default memo( AITooltipWrapper );

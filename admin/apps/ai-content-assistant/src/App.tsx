@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useReducer, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 
 import { AppContext } from './app/context';
 import { defaults, reducer } from './app/stateReducer';
@@ -15,6 +15,7 @@ const App: React.FC = () => {
 	const [ state, dispatch ] = useReducer( reducer, defaults );
 
 	const dispatchInputText = ( text: string ) => {
+		console.log( 'dispatchInputText', text );
 		dispatch( { type: 'inputText', payload: text } );
 	};
 
@@ -25,7 +26,14 @@ const App: React.FC = () => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const Button = useMemo( () => <PopupToggleButton action={ togglePopup } />, [] );
 	useEditorListener( Button );
-	addWPBlockFilters( setOpenedPopup, dispatchInputText );
+
+	useEffect( () => {
+		const createHooks = () => {
+			addWPBlockFilters( setOpenedPopup, dispatchInputText );
+		};
+		createHooks();
+		return () => {};
+	}, [] );
 
 	return (
 		<AppContext.Provider value={ { state, dispatch, togglePopup } }>
