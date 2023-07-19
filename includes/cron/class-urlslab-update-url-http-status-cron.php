@@ -159,7 +159,7 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 							//process lang attribute
 							$fp = fopen( $page_content_file_name, 'r' );
 							if ( $fp ) {
-								$html_tag = fread( $fp, 300 );
+								$html_tag = fread( $fp, 1000 );
 								fclose( $fp );
 
 								if ( strlen( $html_tag ) ) {
@@ -188,6 +188,13 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 								}
 								if ( empty( $url->get_url_meta_description() ) ) {
 									$url->set_url_meta_description( Urlslab_Url_Row::VALUE_EMPTY );
+								}
+								if ( empty( $url->get_url_lang() ) || Urlslab_Url_Row::VALUE_EMPTY == $url->get_url_lang() ) {
+									$xpath     = new DOMXPath( $document );
+									$languages = $xpath->evaluate( '//meta[@http-equiv="Content-Language"]/@content' );
+									if ( $languages->length > 0 ) {
+										$url->set_url_lang( $languages->item( 0 )->value );
+									}
 								}
 							}
 						} catch ( Exception $e ) {
