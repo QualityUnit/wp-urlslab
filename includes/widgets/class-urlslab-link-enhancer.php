@@ -24,6 +24,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	public const SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_EXTERNAL_LINKS = 'urlslab_auto_sum_ext_links';
 	const SETTING_NAME_REPLACE_3XX_LINKS = 'urlslab_replace_3xx_links';
 	const SETTING_NAME_FIX_PROTOCOL = 'urlslab_fix_protocol';
+	const SETTING_NAME_ADD_HREFLANG = 'urlslab_add_hreflang';
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'post_updated', $this, 'post_updated', 10, 3 );
@@ -151,6 +152,17 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			true,
 			__( 'Enhance Links with Text Fragment' ),
 			__( 'Add Text fragments to the links on the website. It will help with internal SEO, and it will scroll visitors to the exact paragraph which is related to the link. If you want to skip certain links, add the `urlslab-skip-fragment` class name to the link or sections with links.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'main'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_ADD_HREFLANG,
+			true,
+			true,
+			__( 'Enhance Links with hreflang attribute' ),
+			__( 'Once is destination page of link analyzed and it contains lang attribute, extend each link with hreflang attribute to tell google what is destination page language. It is one of the SEO optimizations steps.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -491,6 +503,11 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 									if ( strlen( $new_title ) ) {
 										$dom_elem->setAttribute( 'title', $new_title );
 									}
+								}
+
+								//add hreflang attribute
+								if ( empty( $dom_elem->getAttribute( 'hreflang' ) ) && $this->get_option( self::SETTING_NAME_ADD_HREFLANG ) && ! empty( $result[ $url_obj->get_url_id() ]->get_url_lang() ) && Urlslab_Url_Row::VALUE_EMPTY !== $result[ $url_obj->get_url_id() ]->get_url_lang() ) {
+									$dom_elem->setAttribute( 'hreflang', $result[ $url_obj->get_url_id() ]->get_url_lang() );
 								}
 							}
 						}

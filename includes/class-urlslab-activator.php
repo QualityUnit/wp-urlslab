@@ -283,6 +283,13 @@ class Urlslab_Activator {
                 $wpdb->query( 'UPDATE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " SET shortcode_name = SUBSTRING(prompt, 0, 100)" ); // phpcs:ignore
 			}
 		);
+		self::update_step(
+			'2.30.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD COLUMN url_lang VARCHAR(15)' ); // phpcs:ignore
+			}
+		);
 
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -340,6 +347,7 @@ class Urlslab_Activator {
 			urlslab_scr_timestamp bigint,
 			urlslab_sum_timestamp bigint,
 			url_title	  text,
+			url_lang varchar(15),
 			url_h1	  text,
 			url_meta_description text,
 			url_summary			text,

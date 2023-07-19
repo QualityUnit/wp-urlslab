@@ -70,6 +70,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$this->set_update_http_date( $url['update_http_date'] ?? Urlslab_Data::get_now(), $loaded_from_db );
 		$this->set_url_title( $url['url_title'] ?? '', $loaded_from_db );
 		$this->set_url_h1( $url['url_h1'] ?? '', $loaded_from_db );
+		$this->set_url_lang( $url['url_lang'] ?? '', $loaded_from_db );
 		$this->set_url_meta_description( $url['url_meta_description'] ?? '', $loaded_from_db );
 		$this->set_url_summary( $url['url_summary'] ?? '', $loaded_from_db );
 		$this->set_visibility( $url['visibility'] ?? self::VISIBILITY_VISIBLE, $loaded_from_db );
@@ -122,6 +123,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 			'urlslab_sum_timestamp' => '%d',
 			'url_title'             => '%s',
 			'url_h1'                => '%s',
+			'url_lang'              => '%s',
 			'url_meta_description'  => '%s',
 			'url_summary'           => '%s',
 			'visibility'            => '%s',
@@ -206,6 +208,10 @@ class Urlslab_Url_Row extends Urlslab_Data {
 
 	public function get_url_h1(): string {
 		return $this->get( 'url_h1' );
+	}
+
+	public function get_url_lang(): string {
+		return $this->get( 'url_lang' );
 	}
 
 	public function get_url_meta_description(): string {
@@ -316,6 +322,10 @@ class Urlslab_Url_Row extends Urlslab_Data {
 
 	public function set_url_h1( string $url_h1, $loaded_from_db = false ): void {
 		$this->set( 'url_h1', $url_h1, $loaded_from_db );
+	}
+
+	public function set_url_lang( string $url_lang, $loaded_from_db = false ): void {
+		$this->set( 'url_lang', $url_lang, $loaded_from_db );
 	}
 
 
