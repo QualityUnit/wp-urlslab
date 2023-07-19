@@ -290,6 +290,14 @@ class Urlslab_Activator {
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD COLUMN url_lang VARCHAR(15)' ); // phpcs:ignore
 			}
 		);
+		self::update_step(
+			'2.31.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD COLUMN url_priority TINYINT UNSIGNED NOT NULL DEFAULT 30' ); // phpcs:ignore
+				$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . " SET url_priority = 1+10*(LENGTH(TRIM('/' FROM url_name)) - LENGTH(REPLACE(TRIM('/' FROM url_name), '/', '')))" ); // phpcs:ignore
+			}
+		);
 
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -351,6 +359,7 @@ class Urlslab_Activator {
 			url_h1	  text,
 			url_meta_description text,
 			url_summary			text,
+			url_priority TINYINT UNSIGNED NOT NULL DEFAULT 30,
 			visibility char(1) NOT NULL DEFAULT 'V', -- V: visible, H: hidden
 			url_type char(1) NOT NULL DEFAULT 'I', -- I: Internal, E: external
 			rel_schedule char(1) NOT NULL DEFAULT '', -- N: New, S: Scheduled, E: Error, empty - not sheduling

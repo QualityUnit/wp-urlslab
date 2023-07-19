@@ -1,5 +1,20 @@
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, LinkIcon, Trash, SingleSelectMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, Button,
+	useInfiniteFetch,
+	ProgressBar,
+	SortBy,
+	Tooltip,
+	LinkIcon,
+	Trash,
+	SingleSelectMenu,
+	Checkbox,
+	Loader,
+	Table,
+	ModuleViewHeaderBottom,
+	TooltipSortingFiltering,
+	DateTimeFormat,
+	TagsMenu,
+	Button,
+	InputField,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -85,6 +100,7 @@ export default function LinkManagerTable( { slug } ) {
 		url_lang: __( 'Language' ),
 		url_meta_description: __( 'Description' ),
 		url_summary: __( 'Summary' ),
+		url_priority: __( 'SEO priority' ),
 		http_status: __( 'Status' ),
 		labels: __( 'Tags' ),
 		url_links_count: __( 'Outgoing links count' ),
@@ -130,6 +146,12 @@ export default function LinkManagerTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_summary }</SortBy>,
 			size: 200,
+		} ),
+		columnHelper.accessor( 'url_priority', {
+			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_priority }</SortBy>,
+			size: 30,
 		} ),
 		columnHelper?.accessor( 'http_status', {
 			filterValMenu: httpStatusTypes,
