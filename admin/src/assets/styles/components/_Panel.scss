@@ -209,6 +209,14 @@
 		}
 	}
 
+	&-content {
+
+		@include scrollbar;
+		max-height: 70vh;
+		margin-bottom: 1.5em;
+		overflow-y: scroll;
+	}
+
 	&-section {
 		padding: 1.5em;
 		margin: 1.375em -1.5em;
