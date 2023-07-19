@@ -141,6 +141,22 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 								$url->set_url_h1( Urlslab_Url_Row::VALUE_EMPTY );
 							}
 
+							//process lang attribute
+							$fp = fopen( $page_content_file_name, 'r' );
+							if ( $fp ) {
+								$html_tag = fread( $fp, 300 );
+								fclose( $fp );
+
+								if ( strlen( $html_tag ) ) {
+									if ( preg_match( '/<html[^>]+lang=([^\s>]+)/i', $html_tag, $match ) ) {
+										$url->set_url_lang( trim( $match[1], '"\' ' ) );
+									} else {
+										$url->set_url_lang( Urlslab_Url_Row::VALUE_EMPTY );
+									}
+								}
+							}
+
+
 							$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
 							$document->encoding            = 'utf-8';
 							$document->strictErrorChecking = false; // phpcs:ignore
