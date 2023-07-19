@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 const useOnboardingStore = create( ( set ) => ( {
-	activeOnboarding: null, // keep temporary default value "null", allows us to recognize between loading and final known state when deciding if app or onboarding will be shown.
+	activeOnboarding: true,
 	activeStep: 'api_key',
 	steps: [
 		{
@@ -22,7 +22,7 @@ const useOnboardingStore = create( ( set ) => ( {
 		scheduleData: {
 			urls: document.location.origin,
 			analyze_text: '1',
-			follow_links: 'FOLLOW_ALL_LINKS',
+			follow_links: 'FOLLOW_NO_LINK',
 			process_all_sitemaps: '1',
 			scan_frequency: 'MONTHLY',
 			scan_speed_per_minute: 20,

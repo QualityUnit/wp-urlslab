@@ -3,11 +3,12 @@ import classNames from 'classnames';
 import { useI18n } from '@wordpress/react-i18n';
 
 import useOnboarding from '../hooks/useOnboarding';
+import Credits from '../components/Credits';
 import { ReactComponent as Logo } from '../assets/images/urlslab-logo.svg';
 
 const Header = () => {
 	const { __ } = useI18n();
-	const { steps, activeStep } = useOnboarding();
+	const { steps, activeStep, userData } = useOnboarding();
 
 	const labels = useMemo( () => {
 		return {
@@ -32,6 +33,11 @@ const Header = () => {
 					/>
 				) }
 			</div>
+			{ userData.apiKey &&
+				<div className="urlslab-onboarding-header-credits pos-absolute">
+					<Credits />
+				</div>
+			}
 		</div>
 	);
 };
@@ -59,5 +65,5 @@ const HeaderStep = React.memo( ( { stepId, label, index, active, completed } ) =
 	);
 } );
 
-export default React.memo( Header );
+export default Header;
 

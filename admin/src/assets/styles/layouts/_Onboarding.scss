@@ -3,6 +3,10 @@
 @forward "./Settings";
 @forward "../elements/Inputs";
 
+// temporary colors from Figma for not implemented notification components
+$notification-bg: #FFEFEC;
+$notification-color: #F72F49;
+
 .urlslab-onboarding {
 
 	&-header {
@@ -14,13 +18,24 @@
 			left: 1.5625em;
 		}
 
+		&-credits {
+			right: 1.5625em;
+
+			&>small {
+				margin-right: 0;
+			}
+		}
+
 		@media (max-width: $breakpoint-tablet-landscape) {
 			flex-direction: column;
 
-			&-logo {
+			&>* {
 				position: relative !important;
 				left: initial;
-				margin-bottom: 1.25em;
+
+				&:not(:last-child) {
+					margin-bottom: 1.25em;
+				}
 			}
 		}
 
@@ -139,6 +154,8 @@
 			.urlslab-advanced-settings {
 				margin-top: 1.25em;
 			}
+
+
 		}
 
 		// Customize styling for specific step
@@ -257,5 +274,31 @@
 
 		}
 
+		.urlslab-onboarding-nocredits-message {
+			color: $notification-color;
+			background-color: $notification-bg;
+			padding: 1em 1.5em;
+			border-radius: $br-10;
+			filter: $box-shadow-small;
+
+			svg {
+				@include square(2em);
+				margin-right: 0.5em;
+
+				path {
+					fill: $saturated-red;
+				}
+			}
+
+			.urlslab-button.simple {
+				padding: 0 1.5em;
+			}
+		}
+
+	}
+
+	// temporary fix for component font
+	.urlslab-MultiSelectMenu {
+		font-family: Poppins, sans-serif;
 	}
 }

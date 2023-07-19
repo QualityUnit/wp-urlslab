@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { setSettings } from '../../api/settings';
 import { setNotification } from '../../hooks/useNotifications';
@@ -12,6 +13,7 @@ import { ReactComponent as ArrowIcon } from '../../assets/images/icons/icon-arro
 
 const StepApiKey = ( { apiSetting } ) => {
 	const { __ } = useI18n();
+	const queryClient = useQueryClient();
 	const { activeStep, setNextStep, userData, setApiKey } = useOnboarding();
 	const [ updating, setUpdating ] = useState( false );
 	const [ userApiKey, setUserApiKey ] = useState( userData.apiKey );
@@ -26,13 +28,14 @@ const StepApiKey = ( { apiSetting } ) => {
 		if ( response.ok ) {
 			setNotification( 'onboarding-apikey-step', { message: __( 'API key successfully saved!' ), status: 'success' } );
 			setApiKey( userApiKey );
+			queryClient.invalidateQueries( [ 'credits' ] );
 			setNextStep();
 		} else {
 			setNotification( 'onboarding-apikey-step', { message: __( 'API key saving failed.' ), status: 'error' } );
 		}
 
 		setUpdating( false );
-	}, [ userApiKey, apiOption.id, __, setNextStep, setApiKey ] );
+	}, [ userApiKey, apiOption.id, __, setNextStep, setApiKey, queryClient ] );
 
 	return (
 		<div className={ `urlslab-onboarding-content-wrapper small-wrapper fadeInto step-${ activeStep }` }>

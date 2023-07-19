@@ -1,10 +1,8 @@
 import { useMemo, useState, Suspense, useEffect } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { update } from 'idb-keyval';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { getFetch, postFetch } from './api/fetching';
-import { fetchSettings } from './api/settings';
 import { fetchLangs } from './api/fetchLangs';
 
 import hexToHSL from './lib/hexToHSL';
@@ -14,50 +12,46 @@ import MainMenu from './components/MainMenu';
 import DynamicModule from './components/DynamicModule';
 import Header from './components/Header';
 import Loader from './components/Loader';
-
 import Onboarding from './onboarding/Onboarding';
+
 import useOnboarding from './hooks/useOnboarding';
+import useCheckApiKey from './hooks/useCheckApiKey';
+import useGeneralQuery from './queries/useGeneralQuery';
+import useModulesQuery from './queries/useModulesQuery';
 
 import './assets/styles/style.scss';
 
 export default function App() {
+	const { activeOnboarding } = useOnboarding( );
+	const { isFetching, isSuccess } = useGeneralQuery();
+	const { apiKeySet } = useCheckApiKey();
+
+	useModulesQuery();
+
+	return (
+		<div className="urlslab-app flex">
+			{ isFetching && <Loader /> }
+			{ isSuccess &&
+				<>
+					{ ( apiKeySet === false && activeOnboarding )
+						? <Onboarding />
+						: <MainApp />
+					}
+					<Notifications />
+				</>
+			}
+		</div>
+	);
+}
+
+const MainApp = () => {
 	const queryClient = useQueryClient();
 	const [ prefetch, setPrefetch ] = useState( true );
-	const { activeOnboarding, setActiveOnboarding } = useOnboarding( );
 
-	const { data } = useQuery( {
-		queryKey: [ 'modules' ],
-		queryFn: async () => {
-			const response = await getFetch( 'module' ).then( ( ModuleData ) => ModuleData );
-			if ( response.ok ) {
-				return response.json();
-			}
-		},
-		refetchOnWindowFocus: false,
-	} );
+	const { data } = useModulesQuery();
 
 	useEffect( () => {
 		if ( prefetch ) {
-			update( 'apiKeySet', () => true );
-			// Checking if API is set in advance
-			async function getApiKey() {
-				const generalData = await queryClient.fetchQuery( {
-					queryKey: [ 'general' ],
-					queryFn: () => fetchSettings( 'general' ).then( ( result ) => result ),
-					refetchOnWindowFocus: false,
-				} );
-
-				const isApiObject = generalData?.filter( ( dataset ) => dataset.id === 'api' )[ 0 ];
-				const hasApiKey = isApiObject?.options[ 'urlslab-api-key' ].value;
-				if ( ! hasApiKey ) {
-					setActiveOnboarding( true );
-					update( 'apiKeySet', ( ) => false );
-					return false;
-				}
-				setActiveOnboarding( false );
-			}
-			getApiKey();
-
 			// Creating languages query object in advance
 			queryClient.prefetchQuery( {
 				queryKey: [ 'languages' ],
@@ -96,22 +90,6 @@ export default function App() {
 				refetchOnWindowFocus: false,
 			} );
 
-			// Creating Schedules query object in advance
-			queryClient.prefetchQuery( {
-				queryKey: [ 'schedule', 'urls' ],
-				queryFn: async () => {
-					const schedules = await postFetch( 'schedule', { rows_per_page: 50 } );
-					const schedulesArray = await schedules.json();
-					const scheduleUrls = [];
-					schedulesArray.flatMap( ( schedule ) => {
-						scheduleUrls.push( ...schedule.urls );
-						return false;
-					} );
-					return [ ... new Set( scheduleUrls ) ];
-				},
-				refetchOnWindowFocus: false,
-			} );
-
 			// Creating Tags/Labels query object in advance
 			queryClient.prefetchQuery( {
 				queryKey: [ 'label', 'modules' ],
@@ -133,39 +111,25 @@ export default function App() {
 	}, [ data ] );
 
 	return (
-		<div className="urlslab-app flex">
-			{ /*
-				Temporary solution.
-				Make sure to show app OR onboarding only when exact state is known.
-				It prevents to incorrectly show app or onboarding for a while, until correct state is known between multiple rerenders.
-			*/ }
-			{ activeOnboarding === null && <Loader /> }
-			{ activeOnboarding === true && <Onboarding /> }
-			{ activeOnboarding === false &&
-			<>
+		<>
+			{ fetchedModules &&
+				<Suspense>
+					<MainMenu
+						modules={ ! fetchedModules || Object.values( fetchedModules ) }
+					/>
+				</Suspense>
+			}
+			<div className="urlslab-app-main">
+				<Header fetchedModules={ fetchedModules } />
 				{
 					fetchedModules &&
-						<Suspense>
-							<MainMenu
-								modules={ ! fetchedModules || Object.values( fetchedModules ) }
-							/>
-						</Suspense>
-				}
-				<div className="urlslab-app-main">
-					<Header fetchedModules={ fetchedModules } />
-					{
-						fetchedModules &&
 						<Suspense>
 							<DynamicModule
 								modules={ ! fetchedModules || Object.values( fetchedModules ) }
 							/>
 						</Suspense>
-					}
-				</div>
-
-			</>
-			}
-			<Notifications />
-		</div>
+				}
+			</div>
+		</>
 	);
-}
+};
