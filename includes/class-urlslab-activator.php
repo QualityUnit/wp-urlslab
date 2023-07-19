@@ -298,6 +298,13 @@ class Urlslab_Activator {
 				$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . " SET url_priority = 1+10*(LENGTH(TRIM('/' FROM url_name)) - LENGTH(REPLACE(TRIM('/' FROM url_name), '/', '')))" ); // phpcs:ignore
 			}
 		);
+		self::update_step(
+			'2.32.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_RELATED_RESOURCE_TABLE . " ADD COLUMN is_locked char(1) NOT NULL DEFAULT 'N'" ); // phpcs:ignore
+			}
+		);
 
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -422,6 +429,7 @@ class Urlslab_Activator {
 							src_url_id bigint NOT NULL,
 							dest_url_id bigint NOT NULL,
 							pos tinyint unsigned default 10,
+							is_locked char(1) NOT NULL DEFAULT 'N', -- Y: locked, N: not locked
 							created_date DATETIME,
 							PRIMARY KEY  (src_url_id,dest_url_id)) {$charset_collate};";
 

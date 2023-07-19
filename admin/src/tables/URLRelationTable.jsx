@@ -32,6 +32,7 @@ export default function URLRelationTable( { slug } ) {
 		src_url_name: __( 'Source URL' ),
 		dest_url_name: __( 'Destination URL' ),
 		pos: __( 'Position' ),
+		is_locked: __( 'Locked' ),
 		created_date: __( 'Updated' ),
 	};
 
@@ -39,6 +40,7 @@ export default function URLRelationTable( { slug } ) {
 		src_url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.src_url_name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, src_url_name: val } ) } required />,
 		dest_url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.dest_url_name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, dest_url_name: val } ) } required />,
 		pos: <InputField liveUpdate type="number" defaultValue="0" min="0" max="255" label={ header.pos } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, pos: val } ) } required />,
+		is_locked: <Checkbox defaultValue={ false } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, is_locked: val } ) }>{ header.is_locked }</Checkbox>,
 	};
 
 	const columns = [
@@ -70,6 +72,12 @@ export default function URLRelationTable( { slug } ) {
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell, optionalSelector: 'dest_url_id' } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.pos }</SortBy>,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'is_locked', {
+			className: 'nolimit',
+			cell: ( cell ) => <Checkbox defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, optionalSelector: 'dest_url_id' } ) } />,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.is_locked }</SortBy>,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'created_date', {

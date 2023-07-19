@@ -202,8 +202,8 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 		);
 	}
 
-	public function get_row_object( $params = array() ): Urlslab_Data {
-		return new Urlslab_Search_Replace_Row( $params );
+	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
+		return new Urlslab_Search_Replace_Row( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {

@@ -400,8 +400,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		return $sql;
 	}
 
-	public function get_row_object( $params = array() ): Urlslab_Data {
-		return new Urlslab_Url_Row( $params );
+	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
+		return new Urlslab_Url_Row( $params, $loaded_from_db );
 	}
 
 	protected function get_custom_columns() {

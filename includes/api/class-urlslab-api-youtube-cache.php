@@ -102,8 +102,8 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
 	}
 
-	public function get_row_object( $params = array() ): Urlslab_Data {
-		return new Urlslab_Youtube_Row( $params );
+	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
+		return new Urlslab_Youtube_Row( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {
