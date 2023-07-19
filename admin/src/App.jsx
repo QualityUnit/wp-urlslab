@@ -12,18 +12,18 @@ import MainMenu from './components/MainMenu';
 import DynamicModule from './components/DynamicModule';
 import Header from './components/Header';
 import Loader from './components/Loader';
-
 import Onboarding from './onboarding/Onboarding';
+
 import useOnboarding from './hooks/useOnboarding';
+import useCheckApiKey from './hooks/useCheckApiKey';
+import useGeneralQuery from './queries/useGeneralQuery';
+import useModulesQuery from './queries/useModulesQuery';
 
 import './assets/styles/style.scss';
-import useStartupQuery from './hooks/useStartupQuery';
-import useCheckApiKey from './hooks/useCheckApiKey';
-import useModulesQuery from './hooks/useModulesQuery';
 
 export default function App() {
 	const { activeOnboarding } = useOnboarding( );
-	const { isFetching, isSuccess } = useStartupQuery();
+	const { isFetching, isSuccess } = useGeneralQuery();
 	const { apiKeySet } = useCheckApiKey();
 
 	useModulesQuery();
@@ -86,22 +86,6 @@ const MainApp = () => {
 						return tag;
 					} );
 					return tagsArray;
-				},
-				refetchOnWindowFocus: false,
-			} );
-
-			// Creating Schedules query object in advance
-			queryClient.prefetchQuery( {
-				queryKey: [ 'schedule', 'urls' ],
-				queryFn: async () => {
-					const schedules = await postFetch( 'schedule', { rows_per_page: 50 } );
-					const schedulesArray = await schedules.json();
-					const scheduleUrls = [];
-					schedulesArray.flatMap( ( schedule ) => {
-						scheduleUrls.push( ...schedule.urls );
-						return false;
-					} );
-					return [ ... new Set( scheduleUrls ) ];
 				},
 				refetchOnWindowFocus: false,
 			} );

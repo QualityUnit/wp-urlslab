@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import useCheckApiKey from '../hooks/useCheckApiKey';
 import useOnboarding from '../hooks/useOnboarding';
-import useModulesQuery from '../hooks/useModulesQuery';
+import useModulesQuery from '../queries/useModulesQuery';
 
 import Loader from '../components/Loader';
 import StepApiKey from './steps/StepApiKey';

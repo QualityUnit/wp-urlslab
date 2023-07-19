@@ -296,4 +296,9 @@ $notification-color: #F72F49;
 		}
 
 	}
+
+	// temporary fix for component font
+	.urlslab-MultiSelectMenu {
+		font-family: Poppins, sans-serif;
+	}
 }

@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
-import useCreditsQuery from '../hooks/useCreditsQuery';
+import useCreditsQuery from '../queries/useCreditsQuery';
 import { ReactComponent as Loader } from '../assets/images/icons/icon-loading-input.svg';
 
 const Credits = ( () => {

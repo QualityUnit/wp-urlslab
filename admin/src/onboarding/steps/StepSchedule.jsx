@@ -3,17 +3,16 @@ import classNames from 'classnames';
 import { useI18n } from '@wordpress/react-i18n';
 
 import useOnboarding from '../../hooks/useOnboarding';
+import useCreditsQuery from '../../queries/useCreditsQuery';
 
 import TextArea from '../../elements/Textarea';
 import Button from '../../elements/Button';
 import InputField from '../../elements/InputField';
 import SingleSelectMenu from '../../elements/SingleSelectMenu';
+import Loader from '../../components/Loader';
 
 import { ReactComponent as ArrowIcon } from '../../assets/images/icons/icon-arrow.svg';
 import { ReactComponent as ErrorIcon } from '../../assets/images/icons/icon-error.svg';
-
-import useCreditsQuery from '../../hooks/useCreditsQuery';
-import Loader from '../../components/Loader';
 
 const StepSchedule = () => {
 	const { __ } = useI18n();
@@ -160,14 +159,14 @@ const StepSchedule = () => {
 													defaultAccept
 													autoClose
 												>
-													{ __( 'URLs' ) }
+													{ __( 'Sitemaps' ) }
 												</SingleSelectMenu>
 											</div>
 											<div className="urlslab-half-columns-col">
 												<TextArea
 													key={ scheduleData.custom_sitemaps }
 													defaultValue={ scheduleData.custom_sitemaps }
-													label={ __( 'Sitemaps' ) }
+													label={ __( 'Custom sitemaps' ) }
 													rows={ 3 }
 													onChange={ ( val ) => setScheduleData( { ...scheduleData, custom_sitemaps: val } ) }
 													allowResize

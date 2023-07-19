@@ -1,8 +1,8 @@
 import { useRef } from 'react';
-import useStartupQuery from './useStartupQuery';
+import useGeneralQuery from '../queries/useGeneralQuery';
 
 export default function useCheckApiKey() {
-	const { data: settingsLoaded, isSuccess } = useStartupQuery();
+	const { data: settingsLoaded, isSuccess } = useGeneralQuery();
 
 	// api key undefined by default, we are waiting for loaded data
 	const apiKeySet = useRef();
