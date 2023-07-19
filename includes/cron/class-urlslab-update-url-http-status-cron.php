@@ -195,8 +195,6 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 									if ( $languages->length > 0 ) {
 										$url->set_url_lang( $languages->item( 0 )->value );
 									}
-
-
 								}
 							}
 						} catch ( Exception $e ) {
