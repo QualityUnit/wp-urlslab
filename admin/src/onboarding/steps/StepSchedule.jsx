@@ -228,5 +228,5 @@ const NoCreditsNotification = React.memo( () => {
 		</>
 	);
 } );
-//export default React.memo( StepSchedule );
-export default StepSchedule;
+
+export default React.memo( StepSchedule );
