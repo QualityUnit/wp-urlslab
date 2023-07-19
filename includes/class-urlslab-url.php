@@ -124,7 +124,9 @@ class Urlslab_Url {
 		if ( preg_match( '/^(bitcoin|ftp|ftps|geo|im|irc|ircs|magnet|mailto|matrix|mms|news|nntp|openpgp4fpr|sftp|sip|sms|smsto|ssh|tel|urn|webcal|wtai|xmpp):/', $input_url ) ) {
 			throw new Exception( 'protocol handlers as url not supported' );
 		}
-
+		if ( str_starts_with( $input_url, 'javascript:' ) ) {
+			throw new Exception( 'javascript as url not supported' );
+		}
 		$parsed_url = parse_url( $input_url );
 		if ( ! $parsed_url ) {
 			throw new Exception( 'url not valid' );
