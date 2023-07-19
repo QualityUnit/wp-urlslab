@@ -3,9 +3,14 @@ import { PromptTemplateListItem } from '../app/types.ts';
 import { AppContext } from '../app/context.ts';
 import '../assets/styles/components/_SingleChoiceDropdown.scss';
 
-const PromptTemplateList: React.FC<{ promptTemplates: PromptTemplateListItem[] }> = ( { promptTemplates } ) => {
+interface PromptTemplateListProps {
+	promptTemplates: PromptTemplateListItem[];
+	toggleActiveState: () => void;
+}
+
+const PromptTemplateList: React.FC<PromptTemplateListProps> = ( { promptTemplates, toggleActiveState } ) => {
 	const { state, dispatch } = useContext( AppContext );
-	const promptTemplateList = [ ...promptTemplates, { id: 0, name: 'No Prompt Template', promptTemplate: '' } ];
+	const promptTemplateList = [ { id: 0, name: 'No Prompt Template', promptTemplate: '' }, ...promptTemplates ];
 
 	const updatePromptTemplate = useCallback( ( promptTemplate: PromptTemplateListItem ) => {
 		console.log( promptTemplate );
@@ -13,6 +18,7 @@ const PromptTemplateList: React.FC<{ promptTemplates: PromptTemplateListItem[] }
 			type: 'promptTemplate',
 			payload: promptTemplate.promptTemplate,
 		} );
+		toggleActiveState();
 	}, [ dispatch ] );
 
 	return (

@@ -7,14 +7,16 @@ type GenericDropdownType = {
 	label?: string
 	innerLabel?: string
 	description?: string
+	activeState: [boolean, ( active: boolean ) => void]
 } & React.PropsWithChildren
 const GenericDropdown: React.FC<GenericDropdownType> = ( {
 	label,
 	innerLabel,
 	description,
+	activeState,
 	children,
 }: GenericDropdownType ) => {
-	const [ isActive, setActive ] = useState( false );
+	const [ isActive, setActive ] = activeState;
 	const [ isVisible, setVisible ] = useState( false );
 	const ref = createRef<HTMLDivElement>();
 

@@ -11,6 +11,8 @@ import promptTemplates from '../app/data/promptTemplates.json';
 
 const MainSettings: React.FC = () => {
 	const { state, dispatch } = useContext( AppContext );
+	const promptTemplateActiveState = useState( false );
+	const urlFilterActiveState = useState( false );
 
 	return (
 		<div className="urlslab-popup-content-main-settings flex flex-column">
@@ -49,8 +51,19 @@ const MainSettings: React.FC = () => {
 					label={ __( 'Prompt Template' ) }
 					innerLabel={ __( 'Select a Prompt Template' ) }
 					description={ __( 'Select a predefined Prompt Template to use' ) }
+					activeState={ promptTemplateActiveState }
 				>
-					{ promptTemplates.length > 0 && <PromptTemplateList promptTemplates={ promptTemplates as PromptTemplateListItem[] } /> }
+					{ promptTemplates.length > 0 && <PromptTemplateList
+						promptTemplates={ promptTemplates as PromptTemplateListItem[] }
+						toggleActiveState={ () => {
+							console.log( 'toggleActiveState' );
+							console.log( promptTemplateActiveState[ 1 ] );
+							console.log( promptTemplateActiveState[ 0 ] );
+							promptTemplateActiveState[ 1 ]( true )
+							console.log( promptTemplateActiveState[ 0 ] );
+							promptTemplateActiveState[ 1 ]( ! promptTemplateActiveState[ 0 ] )
+						}}
+					/> }
 				</GenericDropdown>
 			</div>
 			<div className="urlslab-popup-content-option-wrapper">
@@ -79,6 +92,7 @@ const MainSettings: React.FC = () => {
 					label={ __( 'Url filter' ) }
 					innerLabel={ __( 'Select or add urls' ) }
 					description={ __( 'Select or add urls to fetch data from.' ) }
+					activeState={ urlFilterActiveState }
 				>
 					<UrlsList urls={ state.url_filter } />
 				</GenericDropdown>
