@@ -9,14 +9,14 @@ import Popup from './components/Popup';
 
 import './assets/styles/style.scss';
 import { addWPBlockFilters } from './app/wpFilters.tsx';
+import { PrefillData } from './app/types.ts';
 
 const App: React.FC = () => {
 	const [ openedPopup, setOpenedPopup ] = useState( false );
 	const [ state, dispatch ] = useReducer( reducer, defaults );
 
-	const dispatchInputText = ( text: string ) => {
-		console.log( 'dispatchInputText', text );
-		dispatch( { type: 'inputText', payload: text } );
+	const dispatchPrefillData = ( prefillData: PrefillData ) => {
+		dispatch( { type: 'inputText', payload: prefillData.inputText } );
 	};
 
 	const togglePopup = useCallback( () => {
@@ -29,7 +29,7 @@ const App: React.FC = () => {
 
 	useEffect( () => {
 		const createHooks = () => {
-			addWPBlockFilters( setOpenedPopup, dispatchInputText );
+			addWPBlockFilters( setOpenedPopup, dispatchPrefillData );
 		};
 		createHooks();
 		return () => {};

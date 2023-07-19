@@ -27,3 +27,7 @@ type GeneratedResult = {
   loading: boolean,
   opened: boolean
 }
+
+export interface PrefillData {
+  inputText: string
+}
