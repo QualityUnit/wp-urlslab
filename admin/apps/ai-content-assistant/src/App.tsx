@@ -14,6 +14,10 @@ const App: React.FC = () => {
 	const [ openedPopup, setOpenedPopup ] = useState( false );
 	const [ state, dispatch ] = useReducer( reducer, defaults );
 
+	const dispatchInputText = ( text: string ) => {
+		dispatch( { type: 'inputText', payload: text } );
+	};
+
 	const togglePopup = useCallback( () => {
 		setOpenedPopup( ! openedPopup );
 	}, [ openedPopup ] );
@@ -21,7 +25,7 @@ const App: React.FC = () => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const Button = useMemo( () => <PopupToggleButton action={ togglePopup } />, [] );
 	useEditorListener( Button );
-	addWPBlockFilters( setOpenedPopup );
+	addWPBlockFilters( setOpenedPopup, dispatchInputText );
 
 	return (
 		<AppContext.Provider value={ { state, dispatch, togglePopup } }>

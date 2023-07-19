@@ -8,18 +8,19 @@ const { Fragment, useState, useRef, useEffect } = wp.element;
 interface AITooltipWrapperProps {
 	children: React.ReactNode;
 	openPopup: ( open: boolean ) => void;
+	setInputText: ( text: string ) => void;
 }
 
-export const AITooltipWrapper = ( { children, openPopup }: AITooltipWrapperProps ) => {
-	const [ selectedText, setSelectedText ] = useState( '' );
+export const AITooltipWrapper = ( { children, openPopup, setInputText }: AITooltipWrapperProps ) => {
 	const [ coords, setCoords ] = useState( { x: 0, y: 0 } );
 	const tooltipRef = useRef( null );
+	const { selectedText, setSelectedText } = useState( '' );
 
 	useEffect( () => {
 		// function to check if clicked on outside of tooltip
 		function handleClickOutside( event: globalThis.MouseEvent ) {
 			if ( tooltipRef.current && ! tooltipRef.current.contains( event.target ) ) {
-				setSelectedText( '' );
+				setInputText( '' );
 			}
 		}
 
@@ -32,7 +33,8 @@ export const AITooltipWrapper = ( { children, openPopup }: AITooltipWrapperProps
 	}, [] );
 
 	const handleMouseUp = ( e: React.MouseEvent ) => {
-		const selected = window.getSelection()?.toString();
+		const selected = window.getSelection()?.toString() || '';
+		setInputText( selected );
 		setSelectedText( selected );
 		setCoords( { x: e.clientX, y: e.clientY } );
 	};

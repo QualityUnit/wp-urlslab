@@ -3,7 +3,7 @@ import { AITooltipWrapper } from '../components/AITooltipWrapper.tsx';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const wp: any; // used any type until wordpress provide better typing
 
-export const addWPBlockFilters = ( setOpenedTooltipPopup: ( open: boolean ) => void ) => {
+export const addWPBlockFilters = ( setOpenedTooltipPopup: ( open: boolean ) => void, setInputText: ( text: string ) => void ) => {
 	// adding Block Edit Hook
 	wp?.hooks.addFilter(
 		'editor.BlockEdit',
@@ -13,7 +13,7 @@ export const addWPBlockFilters = ( setOpenedTooltipPopup: ( open: boolean ) => v
 				if ( props.name === 'core/paragraph' ) {
 					return (
 						<>
-							<AITooltipWrapper openPopup={ setOpenedTooltipPopup }>
+							<AITooltipWrapper openPopup={ setOpenedTooltipPopup } setInputText={ setInputText }>
 								<BlockEdit { ...props } />
 							</AITooltipWrapper>
 						</>

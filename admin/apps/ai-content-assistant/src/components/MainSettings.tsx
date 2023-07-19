@@ -26,6 +26,20 @@ const MainSettings: React.FC = () => {
 				</SingleSelectMenu>
 			</div>
 			*/ }
+			{
+				state.inputText &&
+				<div className="urlslab-popup-content-option-wrapper">
+					<TextArea
+						label={ __( 'Input Text' ) }
+						description={ __( 'Text to modify or enhance with your prompt' ) }
+						placeholder={ __( 'Type here' ) }
+						defaultValue={ state.inputText }
+						readonly={ true }
+						liveUpdate
+						allowResize
+					/>
+				</div>
+			}
 			<div className="urlslab-popup-content-option-wrapper">
 				<TextArea
 					label={ __( 'Prompt' ) }

@@ -1,7 +1,8 @@
 import { Reducer } from 'react';
-import { UrlsListItem, AppState, ReducerAction } from './types';
+import { AppState, ReducerAction, UrlsListItem } from './types';
 
 export const defaults = {
+	inputText: '',
 	template: '',
 	prompt: '',
 	language: 'en',
