@@ -1,5 +1,5 @@
-@use 'sass:color';
-@use '../../common/variables' as *;
+@use "sass:color";
+@use "../../common/variables" as *;
 
 $datepicker__background-color: $grey-lightest;
 $datepicker__border-color: $grey-medium-lighter;
@@ -13,7 +13,7 @@ $datepicker__navigation-disabled-color: $grey-medium;
 $datepicker__border-radius: 0.3rem;
 $datepicker__day-margin: 0.166rem;
 $datepicker__font-size: 0.8rem;
-$datepicker__font-family: Poppins, sans-serif;
+$datepicker__font-family: "Poppins", sans-serif;
 $datepicker__item-size: 1.7rem;
 $datepicker__margin: 0.4rem;
 $datepicker__navigation-button-size: 32px;

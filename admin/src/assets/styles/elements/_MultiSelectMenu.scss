@@ -22,8 +22,7 @@
 		color: $grey-darker;
 		cursor: default;
 
-		&::after {
-			//menu arrow
+		&::after { //menu arrow
 			border: none;
 		}
 
@@ -67,7 +66,7 @@
 			overflow: hidden;
 			width: calc(100% - 1.5em);
 
-			+span {
+			+ span {
 				display: none;
 			}
 		}
@@ -171,7 +170,7 @@
 			margin-left: -1.45em;
 			margin-right: -1.45em;
 
-			>*[class] {
+			> *[class] {
 				display: flex;
 				align-content: center;
 				justify-content: flex-start;

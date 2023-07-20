@@ -690,8 +690,7 @@ value-keyword-case */
 		line-height: 1;
 	}
 
-	@media (max-width: 400px),
-	(max-height: 550px) {
+	@media (max-width: 400px), (max-height: 550px) {
 
 		.react-datepicker__day-name,
 		.react-datepicker__day,
