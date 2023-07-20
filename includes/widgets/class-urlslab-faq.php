@@ -68,7 +68,7 @@ class Urlslab_Faq extends Urlslab_Widget {
 						foreach ( $entity->properties->acceptedAnswer as $answer ) {
 							if ( 'https://schema.org/Answer' === $answer->type[0] ) {
 								$answer_text = $answer->properties->text[0];
-								$faq_id      = $this->add_unique_faq( $question, $answer_text );
+								$faq_id      = $this->add_unique_faq( trim( $question ), trim( $answer_text ) );
 								if ( $faq_id ) {
 									$faq_url = new Urlslab_Faq_Url_Row();
 									$faq_url->set_faq_id( $faq_id );
@@ -274,6 +274,9 @@ class Urlslab_Faq extends Urlslab_Widget {
 	}
 
 	private function add_unique_faq( $question, $answer_text ): int {
+		if ( empty( $question ) || empty( $answer_text ) ) {
+			return 0;
+		}
 
 		global $wpdb;
 		$lang   = $this->get_current_language_code();
