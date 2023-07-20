@@ -3,6 +3,7 @@ import { useLocation, Link } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 import { get, set, del } from 'idb-keyval';
 
+import { renameModule } from '../lib/helpers';
 import useModulesQuery from '../queries/useModulesQuery';
 
 import { ReactComponent as MenuArrow } from '../assets/images/arrow-simple.svg';
@@ -37,7 +38,7 @@ export default function MainMenu() {
 	};
 
 	const activator = ( activateRoute ) => {
-		if ( activateRoute === route ) {
+		if ( '/' + activateRoute === route ) {
 			return 'active';
 		}
 		return '';
@@ -65,7 +66,7 @@ export default function MainMenu() {
 		<div className="urlslab-mainmenu-main flex">
 			<ul className="urlslab-mainmenu-menu">
 				<li key="urlslab-modules-main"
-					className={ `urlslab-mainmenu-item urlslab-modules has-icon ${ activator( '/' ) }` }>
+					className={ `urlslab-mainmenu-item urlslab-modules has-icon ${ activator( '' ) }` }>
 					<Link
 						to="/"
 						className="urlslab-mainmenu-btn has-icon"
@@ -78,7 +79,7 @@ export default function MainMenu() {
 				<li className="urlslab-mainmenu-item submenu">
 					<ul className="urlslab-mainmenu-submenu" style={ { '--activeModules': activeModules.length + 1 } }>
 						<li key="urlslab-modules"
-							className={ `urlslab-mainmenu-item ${ activator( '/' ) }` }>
+							className={ `urlslab-mainmenu-item ${ activator( '' ) }` }>
 							<Link
 								to="/"
 								className="urlslab-mainmenu-btn"
@@ -88,11 +89,12 @@ export default function MainMenu() {
 						</li>
 						{ loadedModules.length
 							? loadedModules.map( ( module ) => {
+								const moduleName = renameModule( module.id );
 								return (
 									module.id !== 'general' && module.active
-										? <li key={ module.id } className={ `urlslab-mainmenu-item ${ activator( '/' + module.id ) }` }>
+										? <li key={ module.id } className={ `urlslab-mainmenu-item ${ activator( moduleName ) }` }>
 											<Link
-												to={ module.id }
+												to={ moduleName }
 												className="urlslab-mainmenu-btn"
 											>
 												<span>{ module.title }</span>
@@ -107,9 +109,9 @@ export default function MainMenu() {
 				</li>
 
 				<li key="urlslab-settings-main"
-					className={ `urlslab-mainmenu-item urlslab-settings has-icon ${ activator( '/settings' ) }` }>
+					className={ `urlslab-mainmenu-item urlslab-settings has-icon ${ activator( 'Settings' ) }` }>
 					<Link
-						to="settings"
+						to="Settings"
 						className="urlslab-mainmenu-btn has-icon"
 					>
 						<SettingsIcon />
@@ -120,25 +122,25 @@ export default function MainMenu() {
 				<li className="urlslab-mainmenu-item submenu">
 					<ul className="urlslab-mainmenu-submenu">
 						<li key="urlslab-settings"
-							className={ `urlslab-mainmenu-item ${ activator( '/settings' ) }` }>
+							className={ `urlslab-mainmenu-item ${ activator( 'Settings' ) }` }>
 							<Link
-								to="settings"
+								to="Settings"
 								className="urlslab-mainmenu-btn"
 							>
 								<span>{ __( 'General settings' ) }</span>
 							</Link>
 						</li>
 						<li key="urlslab-schedule"
-							className={ `urlslab-mainmenu-item ${ activator( '/schedule' ) }` }>
+							className={ `urlslab-mainmenu-item ${ activator( 'Schedule' ) }` }>
 							<Link
-								to="schedule"
+								to="Schedule"
 								className="urlslab-mainmenu-btn"
 							>
 								<span>{ __( 'Schedules' ) }</span>
 							</Link>
 						</li>
 						<li key="TagsLabels"
-							className={ `urlslab-mainmenu-item ${ activator( '/TagsLabels' ) }` }>
+							className={ `urlslab-mainmenu-item ${ activator( 'TagsLabels' ) }` }>
 							<Link
 								to="TagsLabels"
 								className="urlslab-mainmenu-btn"

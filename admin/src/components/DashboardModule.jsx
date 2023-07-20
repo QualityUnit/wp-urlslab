@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { setModule } from '../api/fetching';
+import { renameModule } from '../lib/helpers';
 
 import Switch from '../elements/Switch';
 import Tag from '../elements/Tag';
@@ -50,7 +51,7 @@ function DashboardModule( { module, labelsList, isOnboardingItem } ) {
 					{ ( isOnboardingItem || ! isActive )
 						? title
 						: <Link
-							to={ moduleId }
+							to={ renameModule( moduleId ) }
 							className="active"
 						>
 							{ title }
