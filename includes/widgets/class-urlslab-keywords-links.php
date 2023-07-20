@@ -535,11 +535,13 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				// if we reached maximum number of replacements with this url, skip next processing and remove all keywords pointing to this url
 				if ( $this->url_page_replacement_counts[ $kwRow['url'] ] > $this->get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ) ) {
 					$keywords = $this->removeKeywordUrl( $keywords, false, $kwRow['url'] );
+
 					return;
 				}
 
-				if ($this->urlandkw_page_replacement_counts[ $kw_id ] > $this->get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL ) ) {
+				if ( $this->urlandkw_page_replacement_counts[ $kw_id ] > $this->get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL ) ) {
 					unset( $keywords[ $kw_id ] );
+
 					return;
 				}
 
