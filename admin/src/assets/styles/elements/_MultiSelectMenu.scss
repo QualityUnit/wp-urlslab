@@ -146,6 +146,10 @@
 		transition: opacity 0.1s;
 		filter: $box-shadow-small;
 
+		.urlslab-panel-modal & {
+			width: calc(100% + 0.5em);
+		}
+
 		.menu-left & {
 			left: auto;
 			right: 0;
