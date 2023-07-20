@@ -1,4 +1,4 @@
-importScripts( 'https://cdn.jsdelivr.net/npm/xxhashjs@0.2.2/build/xxhash.min.js' );
+importScripts( '../jslib/xxhash.min.js' );
 
 self.addEventListener( 'message', function( e ) {
 	const image1 = e.data[ 0 ];
