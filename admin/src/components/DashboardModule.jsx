@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { memo } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -16,38 +16,31 @@ import '../assets/styles/elements/_Button.scss';
 function DashboardModule( { module, labelsList, isOnboardingItem } ) {
 	const { __ } = useI18n();
 	const { id: moduleId, active: isActive, title, description, labels } = module;
-	// const { settingsLoaded, apiKeySet } = useCheckApiKey();
-	// const hasApi = settingsLoaded && apiKeySet === false && apikey;
-	const [ active, setActive ] = useState( isActive );
 	const { setActivePage } = useMainMenu();
 	const queryClient = useQueryClient();
-
 	const handleSwitch = useMutation( {
 		mutationFn: async () => {
-			const response = await setModule( moduleId, { active: ! active } );
+			const response = await setModule( moduleId, { active: ! isActive } );
 			return { response };
 		},
 		onSuccess: ( { response } ) => {
 			if ( response.ok ) {
-				setActive( ! active );
 				queryClient.setQueryData( [ 'modules' ], ( data ) => {
 					return {
-						...data, [ moduleId ]: { ...data[ moduleId ], active: ! active },
+						...data, [ moduleId ]: { ...data[ moduleId ], active: ! isActive },
 					};
 				} );
-				queryClient.invalidateQueries( [ 'modules' ] );
 				return false;
 			}
-			setActive( isActive );
 		},
 	} );
 
 	const iconPath = new URL( `../assets/images/modules/${ moduleId }.svg`, import.meta.url ).pathname;
 
 	return (
-		<div className={ `urlslab-dashboardmodule ${ handleSwitch.isLoading ? 'activating' : '' } ${ active ? 'active' : '' }` }>
+		<div className={ `urlslab-dashboardmodule ${ handleSwitch.isLoading ? 'activating' : '' } ${ isActive ? 'active' : '' }` }>
 			{ handleSwitch.isLoading
-				? <div className="urlslab-dashboardmodule-activating">{ active ? __( 'Deactivating…' ) : __( 'Activating…' ) }</div>
+				? <div className="urlslab-dashboardmodule-activating">{ isActive ? __( 'Deactivating…' ) : __( 'Activating…' ) }</div>
 				: ''
 			}
 			<div className="urlslab-dashboardmodule-top flex-tablet flex-align-center">
@@ -59,7 +52,7 @@ function DashboardModule( { module, labelsList, isOnboardingItem } ) {
 				<h3 className="urlslab-dashboardmodule-title">
 					{ isOnboardingItem
 						? title
-						: <button className={ `${ active ? 'active' : '' }` } onClick={ active ? () => setActivePage( moduleId ) : null }>
+						: <button className={ `${ isActive ? 'active' : '' }` } onClick={ isActive ? () => setActivePage( moduleId ) : null }>
 							{ title }
 						</button>
 					}
@@ -71,7 +64,7 @@ function DashboardModule( { module, labelsList, isOnboardingItem } ) {
 					className="urlslab-dashboardmodule-switch ma-left"
 					label={ isOnboardingItem ? __( 'Activate' ) : '' }
 					labelOff={ isOnboardingItem ? __( 'Deactivate' ) : '' }
-					defaultValue={ active }
+					defaultValue={ isActive }
 				/>
 			</div>
 
