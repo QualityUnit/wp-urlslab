@@ -180,8 +180,8 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 		);
 	}
 
-	public function get_row_object( $params = array() ): Urlslab_Data {
-		return new Urlslab_Faq_Row( $params );
+	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
+		return new Urlslab_Faq_Row( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {

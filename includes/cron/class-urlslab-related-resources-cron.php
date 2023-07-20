@@ -125,6 +125,7 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 						'src_url_id'   => $url->get_url_id(),
 						'dest_url_id'  => $dest_url_obj->get_url_id(),
 						'pos'          => $pos,
+						'is_locked'    => Urlslab_Url_Relation_Row::IS_LOCKED_NO,
 						'created_date' => Urlslab_Data::get_now(),
 					)
 				);
@@ -132,7 +133,13 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 			}
 
 			global $wpdb;
-			$wpdb->delete( URLSLAB_RELATED_RESOURCE_TABLE, array( 'src_url_id' => $url->get_url_id() ) );
+			$wpdb->delete(
+				URLSLAB_RELATED_RESOURCE_TABLE,
+				array(
+					'src_url_id' => $url->get_url_id(),
+					'is_locked'  => Urlslab_Url_Relation_Row::IS_LOCKED_NO,
+				)
+			);
 
 			( new Urlslab_Url_Relation_Row() )->insert_all( $related_resources, true );
 		} catch ( ApiException $e ) {

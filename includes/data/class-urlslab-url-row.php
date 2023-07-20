@@ -56,6 +56,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$this->set_url_id( $url['url_id'] ?? 0, $loaded_from_db );
 		$this->set_final_url_id( $url['final_url_id'] ?? $this->get_url_id(), $loaded_from_db );
 		$this->set_url_name( $url['url_name'] ?? '', $loaded_from_db );
+		$this->set_url_priority( $url['url_priority'] ?? $this->compute_default_url_priority(), $loaded_from_db );
 		$this->set_scr_status( $url['scr_status'] ?? '', $loaded_from_db );
 		$this->set_faq_status( $url['faq_status'] ?? self::FAQ_STATUS_NOT_USED, $loaded_from_db );
 		$this->set_sum_status( $url['sum_status'] ?? '', $loaded_from_db );
@@ -126,6 +127,7 @@ class Urlslab_Url_Row extends Urlslab_Data {
 			'url_lang'              => '%s',
 			'url_meta_description'  => '%s',
 			'url_summary'           => '%s',
+			'url_priority'          => '%d',
 			'visibility'            => '%s',
 			'url_type'              => '%s',
 			'rel_schedule'          => '%s',
@@ -160,6 +162,14 @@ class Urlslab_Url_Row extends Urlslab_Data {
 
 	public function get_http_status(): int {
 		return $this->get( 'http_status' );
+	}
+
+	public function get_url_priority(): int {
+		return $this->get( 'url_priority' );
+	}
+
+	public function set_url_priority( int $url_priority, bool $loaded_from_db = false ): void {
+		$this->set( 'url_priority', $url_priority, $loaded_from_db );
 	}
 
 	public function is_http_redirect(): bool {
@@ -564,5 +574,18 @@ class Urlslab_Url_Row extends Urlslab_Data {
 			$this->set_faq_status( Urlslab_Url_Row::FAQ_STATUS_NEW );
 			$this->update();
 		}
+	}
+
+	private function compute_default_url_priority(): int {
+		$priority = 30;
+		if ( strlen( $this->get_url_name() ) ) {
+			$path     = trim( $this->get_url()->get_url_path(), '/' );
+			$priority = strlen( $path ) - strlen( str_replace( '/', '', $path ) );
+			if ( 0 === $priority ) {
+				$priority = 1;
+			}
+		}
+
+		return $priority;
 	}
 }

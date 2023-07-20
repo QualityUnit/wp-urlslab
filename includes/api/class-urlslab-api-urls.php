@@ -121,6 +121,12 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 								return is_string( $param );
 							},
 						),
+						'url_priority'          => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param );
+							},
+						),
 						'labels'               => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
@@ -336,6 +342,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			$row->urlslab_scr_timestamp = (int) $row->urlslab_scr_timestamp;
 			$row->urlslab_sum_timestamp = (int) $row->urlslab_sum_timestamp;
 			$row->url_id                = (int) $row->url_id;
+			$row->url_priority                = (int) $row->url_priority;
 
 			$recordset[] = $row;
 		}
@@ -393,8 +400,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		return $sql;
 	}
 
-	public function get_row_object( $params = array() ): Urlslab_Data {
-		return new Urlslab_Url_Row( $params );
+	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
+		return new Urlslab_Url_Row( $params, $loaded_from_db );
 	}
 
 	protected function get_custom_columns() {
@@ -520,6 +527,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			'url_h1',
 			'url_meta_description',
 			'url_summary',
+			'url_priority',
 			'labels',
 		);
 	}
