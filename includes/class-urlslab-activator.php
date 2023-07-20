@@ -917,7 +917,7 @@ class Urlslab_Activator {
 			Urlslab_Api_Base::CAPABILITY_TRANSLATE      => true,
 			Urlslab_Api_Base::CAPABILITY_AUGMENT        => true,
 		);
-		add_role( Urlslab_Api_Base::URLSLAB_ROLE_ADMIN, __( 'Urlslab Administrator' ), $admin_capabilities );//phpcs:ignore
+		add_role( Urlslab_Api_Base::URLSLAB_ROLE_ADMIN, __( 'URLsLab Administrator' ), $admin_capabilities );//phpcs:ignore
 
 		$editor_capabilities = array(
 			Urlslab_Api_Base::CAPABILITY_READ      => true,
@@ -926,6 +926,6 @@ class Urlslab_Activator {
 			Urlslab_Api_Base::CAPABILITY_TRANSLATE => true,
 			Urlslab_Api_Base::CAPABILITY_AUGMENT   => true,
 		);
-		add_role( Urlslab_Api_Base::URLSLAB_ROLE_EDITOR, __( 'Urlslab Editor' ), $editor_capabilities );//phpcs:ignore
+		add_role( Urlslab_Api_Base::URLSLAB_ROLE_EDITOR, __( 'URLsLab Editor' ), $editor_capabilities );//phpcs:ignore
 	}
 }
