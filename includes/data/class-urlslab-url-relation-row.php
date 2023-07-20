@@ -51,8 +51,19 @@ class Urlslab_Url_Relation_Row extends Urlslab_Data {
 		$this->set( 'created_date', $created_date, $loaded_from_db );
 	}
 
-	public function set_is_locked( string $is_locked, $loaded_from_db = false ): void {
+	public function set_is_locked( $is_locked, $loaded_from_db = false ): void {
+		if ( is_bool( $is_locked ) ) {
+			$is_locked = $is_locked ? self::IS_LOCKED_YES : self::IS_LOCKED_NO;
+		}
 		$this->set( 'is_locked', self::IS_LOCKED_YES === $is_locked ? self::IS_LOCKED_YES : self::IS_LOCKED_NO, $loaded_from_db );
+	}
+
+	protected function set( $name, $value, $loaded_from_db ) {
+		if ( 'is_locked' === $name && is_bool( $value ) ) {
+			$value = $value ? self::IS_LOCKED_YES : self::IS_LOCKED_NO;
+		}
+
+		return parent::set( $name, $value, $loaded_from_db );
 	}
 
 	public function get_table_name(): string {
@@ -69,7 +80,7 @@ class Urlslab_Url_Relation_Row extends Urlslab_Data {
 			'dest_url_id'  => '%d',
 			'pos'          => '%d',
 			'created_date' => '%s',
-			'is_locked' => '%s',
+			'is_locked'    => '%s',
 		);
 	}
 }

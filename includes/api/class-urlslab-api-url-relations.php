@@ -160,7 +160,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		}
 
 		$url_row_obj = new Urlslab_Url_Row();
-		if ( ! $url_row_obj->insert_urls( $schedule_urls, '', Urlslab_Url_Row::SUM_STATUS_NEW, Urlslab_Url_Row::HTTP_STATUS_NOT_PROCESSED, Urlslab_Url_Row::REL_AVAILABLE ) ) {
+		if ( ! $url_row_obj->insert_urls( $schedule_urls, Urlslab_Url_Row::SCR_STATUS_NEW, Urlslab_Url_Row::SUM_STATUS_NEW, Urlslab_Url_Row::HTTP_STATUS_NOT_PROCESSED, Urlslab_Url_Row::REL_AVAILABLE ) ) {
 			return new WP_REST_Response( 'Import failed.', 500 );
 		}
 
@@ -179,7 +179,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 	}
 
 	public function get_editable_columns(): array {
-		return array( 'pos' );
+		return array( 'pos', 'is_locked' );
 	}
 
 	/**
@@ -220,7 +220,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 				'pos'           => array(
 					'required'          => true,
 					'validate_callback' => function( $param ) {
-						return is_int( $param );
+						return is_numeric( $param );
 					},
 				),
 				'is_locked'     => array(
@@ -264,6 +264,11 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 				$this->validate_item( $obj );
 			} catch ( Exception $e ) {
 				return new WP_Error( 'error', __( 'Validation failed: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
+			}
+
+			$url_row_obj = new Urlslab_Url_Row();
+			if ( ! $url_row_obj->insert_urls( $schedule_urls, Urlslab_Url_Row::SCR_STATUS_NEW, Urlslab_Url_Row::SUM_STATUS_NEW, Urlslab_Url_Row::HTTP_STATUS_NOT_PROCESSED, Urlslab_Url_Row::REL_AVAILABLE ) ) {
+				return new WP_REST_Response( 'Failed to create item', 500 );
 			}
 
 			$obj->insert();
