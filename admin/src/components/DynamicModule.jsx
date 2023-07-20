@@ -8,7 +8,7 @@ import ErrorBoundary from './ErrorBoundary';
 import Loader from './Loader';
 import '../assets/styles/layouts/_DynamicModule.scss';
 
-export default function DynamicModule( { modules } ) {
+export default function DynamicModule() {
 	const { activePage } = useMainMenu();
 	const headerTopHeight = useHeaderHeight( ( state ) => state.headerTopHeight );
 	const headerBottomHeight = useHeaderHeight( ( state ) => state.headerBottomHeight );
@@ -31,7 +31,8 @@ export default function DynamicModule( { modules } ) {
 			<ErrorBoundary>
 				<Suspense fallback={ <Loader /> }>
 					<div className="urlslab-DynamicModule-inn fadeInto">
-						<Module modules={ modules }
+						{ /* no need to pass modules to all dynamically loaded components, just Modules component uses fetched modules via props, we'll load it via query*/ }
+						<Module
 							settingId="general"
 							moduleId={ activePage }
 						/>

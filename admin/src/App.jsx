@@ -1,5 +1,4 @@
-import { useMemo, useState, Suspense, useEffect } from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
+import { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { getFetch, postFetch } from './api/fetching';
@@ -17,7 +16,7 @@ import Onboarding from './onboarding/Onboarding';
 import useOnboarding from './hooks/useOnboarding';
 import useCheckApiKey from './hooks/useCheckApiKey';
 import useGeneralQuery from './queries/useGeneralQuery';
-import useModulesQuery from './queries/useModulesQuery';
+import { useModulesQueryPrefetch } from './queries/useModulesQuery';
 
 import './assets/styles/style.scss';
 
@@ -26,7 +25,7 @@ export default function App() {
 	const { isFetching, isSuccess } = useGeneralQuery();
 	const { apiKeySet } = useCheckApiKey();
 
-	useModulesQuery();
+	useModulesQueryPrefetch();
 
 	return (
 		<div className="urlslab-app flex">
@@ -47,8 +46,6 @@ export default function App() {
 const MainApp = () => {
 	const queryClient = useQueryClient();
 	const [ prefetch, setPrefetch ] = useState( true );
-
-	const { data } = useModulesQuery();
 
 	useEffect( () => {
 		if ( prefetch ) {
@@ -104,31 +101,14 @@ const MainApp = () => {
 
 			setPrefetch( false );
 		}
-	}, [] );
-
-	const fetchedModules = useMemo( () => {
-		return data;
-	}, [ data ] );
+	}, [ prefetch, queryClient ] );
 
 	return (
 		<>
-			{ fetchedModules &&
-				<Suspense>
-					<MainMenu
-						modules={ ! fetchedModules || Object.values( fetchedModules ) }
-					/>
-				</Suspense>
-			}
+			<MainMenu />
 			<div className="urlslab-app-main">
-				<Header fetchedModules={ fetchedModules } />
-				{
-					fetchedModules &&
-						<Suspense>
-							<DynamicModule
-								modules={ ! fetchedModules || Object.values( fetchedModules ) }
-							/>
-						</Suspense>
-				}
+				<Header />
+				<DynamicModule />
 			</div>
 		</>
 	);
