@@ -15,7 +15,7 @@ export default function Checkbox( { defaultValue, smallText, readOnly, radial, n
 	return (
 		<label className={ `urlslab-checkbox ${ className || '' } ${ textBefore ? 'textBefore' : '' } ${ radial ? 'radial' : '' }` }>
 			<input
-				className={ `urlslab-checkbox-input ${ defaultValue ? 'checked' : '' }` }
+				className={ `urlslab-checkbox-input ${ isChecked ? 'checked' : '' }` }
 
 				type={ name ? 'radio' : 'checkbox' }
 				name={ name || '' }
