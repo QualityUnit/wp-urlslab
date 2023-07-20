@@ -37,32 +37,33 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 	public function post_updated( $post_id, $post, $post_before ) {
 		$url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( new Urlslab_Url( get_permalink( $post_id ) ) );
-
-		if ( $post->post_title != $post_before->post_title ) {
-			$url_obj->set_url_title( $post->post_title );
-		}
-		$desc = get_post_meta( $post_id );
-		if ( isset( $desc['_yoast_wpseo_metadesc'][0] ) ) {
-			$url_obj->set_url_meta_description( $desc['_yoast_wpseo_metadesc'][0] );
-		}
-
-		if ( $post->post_status !== $post_before->post_status ) {
-			if ( 'publish' === $post->post_status ) {
-				$url_obj->set_http_status( Urlslab_Url_Row::HTTP_STATUS_OK );
-			} else {
-				$url_obj->set_http_status( Urlslab_Url_Row::HTTP_STATUS_CLIENT_ERROR );
+		if ( $url_obj ) {
+			if ( $post->post_title != $post_before->post_title ) {
+				$url_obj->set_url_title( $post->post_title );
 			}
-		}
+			$desc = get_post_meta( $post_id );
+			if ( isset( $desc['_yoast_wpseo_metadesc'][0] ) ) {
+				$url_obj->set_url_meta_description( $desc['_yoast_wpseo_metadesc'][0] );
+			}
 
-		//request update of screenshot
-		if ( Urlslab_Url_Row::SCR_STATUS_ACTIVE === $url_obj->get_scr_status() ) {
-			$url_obj->set_scr_status( Urlslab_Url_Row::SCR_STATUS_NEW );
-		}
-		if ( Urlslab_Url_Row::SUM_STATUS_ACTIVE === $url_obj->get_sum_status() ) {
-			$url_obj->set_sum_status( Urlslab_Url_Row::SUM_STATUS_NEW );
-		}
+			if ( $post->post_status !== $post_before->post_status ) {
+				if ( 'publish' === $post->post_status ) {
+					$url_obj->set_http_status( Urlslab_Url_Row::HTTP_STATUS_OK );
+				} else {
+					$url_obj->set_http_status( Urlslab_Url_Row::HTTP_STATUS_CLIENT_ERROR );
+				}
+			}
 
-		$url_obj->update();
+			//request update of screenshot
+			if ( Urlslab_Url_Row::SCR_STATUS_ACTIVE === $url_obj->get_scr_status() ) {
+				$url_obj->set_scr_status( Urlslab_Url_Row::SCR_STATUS_NEW );
+			}
+			if ( Urlslab_Url_Row::SUM_STATUS_ACTIVE === $url_obj->get_sum_status() ) {
+				$url_obj->set_sum_status( Urlslab_Url_Row::SUM_STATUS_NEW );
+			}
+
+			$url_obj->update();
+		}
 	}
 
 	public function get_widget_slug(): string {

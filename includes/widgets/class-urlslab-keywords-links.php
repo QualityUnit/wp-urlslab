@@ -486,7 +486,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		}
 	}
 
-	private function replaceKeywordWithLinks( DOMText $node, DOMDocument $document, array $keywords, int $position_start, $position_end, $min_text_len, $max_paragraph_density_links ) {
+	private function replaceKeywordWithLinks( DOMText $node, DOMDocument $document, array $keywords, int $position_start, int $position_end, $min_text_len, $max_paragraph_density_links ) {
 		if (
 			$this->cnt_paragraph_link_replacements >= $max_paragraph_density_links
 			|| $this->cnt_page_links > $this->get_option( self::SETTING_NAME_MAX_LINKS_ON_PAGE )
@@ -519,7 +519,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				} else {
 					$this->url_page_replacement_counts[ $kwRow['url'] ] = 1;
 				}
-				if ( isset( $this->url_page_replacement_counts[ $kw_id ] ) ) {
+				if ( isset( $this->urlandkw_page_replacement_counts[ $kw_id ] ) ) {
 					++ $this->urlandkw_page_replacement_counts[ $kw_id ];
 				} else {
 					$this->urlandkw_page_replacement_counts[ $kw_id ] = 1;
@@ -535,7 +535,11 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				// if we reached maximum number of replacements with this url, skip next processing and remove all keywords pointing to this url
 				if ( $this->url_page_replacement_counts[ $kwRow['url'] ] > $this->get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ) ) {
 					$keywords = $this->removeKeywordUrl( $keywords, false, $kwRow['url'] );
+					return;
+				}
 
+				if ($this->urlandkw_page_replacement_counts[ $kw_id ] > $this->get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL ) ) {
+					unset( $keywords[ $kw_id ] );
 					return;
 				}
 

@@ -388,7 +388,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			$htmlMin->doOptimizeViaHtmlDomParser();
 			$htmlMin->doRemoveComments( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_REMOVE_COMMENTS ) );
 			$htmlMin->doSumUpWhitespace( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_WHITESPACES ) );
-			$htmlMin->doRemoveWhitespaceAroundTags( $is_head && $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_WHITESPACES ) );
+			$htmlMin->doRemoveWhitespaceAroundTags( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_WHITESPACES ) );
 			$htmlMin->doOptimizeAttributes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES ) );
 			$htmlMin->doKeepHttpAndHttpsPrefixOnExternalAttributes( true );
 			if ( $is_head ) {
@@ -410,7 +410,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			$htmlMin->doRemoveValueFromEmptyInput( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES ) );
 			$htmlMin->doSortCssClassNames( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_SORT ) );
 			$htmlMin->doSortHtmlAttributes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_SORT ) );
-			$htmlMin->doRemoveSpacesBetweenTags( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_WHITESPACES ) );
+			$htmlMin->doRemoveSpacesBetweenTags( $is_head && $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_WHITESPACES ) );
 			$htmlMin->doRemoveOmittedQuotes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_REMOVE_OMITTED ) );
 			$htmlMin->doRemoveOmittedHtmlTags( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_REMOVE_OMITTED ) );
 
