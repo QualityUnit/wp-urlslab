@@ -4,6 +4,7 @@ import { Outlet } from 'react-router-dom';
 import useHeaderHeight from '../hooks/useHeaderHeight';
 import useDisabledModuleRedirect from '../hooks/useDisabledModuleRedirect';
 import useOnloadRedirect from '../hooks/useOnloadRedirect';
+import useModuleDataByRoute from '../hooks/useModuleDataByRoute';
 
 import ErrorBoundary from './ErrorBoundary';
 import Loader from './Loader';
@@ -14,6 +15,8 @@ const DynamicModule = () => {
 	useOnloadRedirect();
 	useDisabledModuleRedirect();
 
+	const { id: moduleId } = useModuleDataByRoute();
+
 	const headerTopHeight = useHeaderHeight( ( state ) => state.headerTopHeight );
 	const headerBottomHeight = useHeaderHeight( ( state ) => state.headerBottomHeight );
 
@@ -22,7 +25,8 @@ const DynamicModule = () => {
 			<ErrorBoundary>
 				<Suspense fallback={ <Loader /> }>
 					<div className="urlslab-DynamicModule-inn fadeInto">
-						<Outlet />
+						{ /* Outlet component displays component defined as 'element' object node in each route */ }
+						<Outlet context={ { moduleId } } />
 					</div>
 				</Suspense>
 			</ErrorBoundary>

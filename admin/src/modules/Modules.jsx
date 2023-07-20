@@ -1,11 +1,11 @@
 import { memo, useMemo, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
-import useModulesQuery from '../queries/useModulesQuery';
+import useModulesQuery from '../../queries/useModulesQuery';
 
-import DashboardModule from '../components/DashboardModule';
-import SearchField from '../elements/SearchField';
-import MultiSelectMenu from '../elements/MultiSelectMenu';
+import DashboardModule from '../../components/DashboardModule';
+import SearchField from '../../elements/SearchField';
+import MultiSelectMenu from '../../elements/MultiSelectMenu';
 
 function Modules() {
 	const { __ } = useI18n();
