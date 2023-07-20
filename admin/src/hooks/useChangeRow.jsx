@@ -56,10 +56,10 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 
 	const updateRowData = useMutation( {
 		mutationFn: async ( opts ) => {
-			const { editedRow, newVal, cell, customEndpoint, changeField, optionalSelector, id, updateAll } = opts;
+			const { editedRow, newVal, cell, customEndpoint, changeField, optionalSelector, id } = opts;
 
 			// Updating one cell value only
-			if ( newVal ) {
+			if ( newVal !== undefined ) {
 				setNotification( slug, { message: `Updating row${ id ? ' “' + cell.row.original[ id ] + '”' : '' }…`, status: 'info' } );
 				const cellId = cell.column.id;
 				const newPagesArray = data?.pages.map( ( page ) =>
@@ -140,7 +140,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	} );
 
 	const updateRow = ( { newVal, cell, customEndpoint, changeField, optionalSelector, id, updateAll } ) => {
-		if ( ! newVal ) { // Editing whole row = parameters are preset
+		if ( newVal === undefined ) { // Editing whole row = parameters are preset
 			setRowToEdit( cell.row.original );
 			return false;
 		}
