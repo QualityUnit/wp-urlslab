@@ -100,7 +100,7 @@ export default function LinkManagerTable( { slug } ) {
 		url_lang: __( 'Language' ),
 		url_meta_description: __( 'Description' ),
 		url_summary: __( 'Summary' ),
-		url_priority: __( 'SEO priority' ),
+		url_priority: __( 'SEO Rank' ),
 		http_status: __( 'Status' ),
 		labels: __( 'Tags' ),
 		url_links_count: __( 'Outgoing links count' ),
@@ -149,7 +149,7 @@ export default function LinkManagerTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'url_priority', {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() } min="0" max="100" onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_priority }</SortBy>,
 			size: 30,
 		} ),

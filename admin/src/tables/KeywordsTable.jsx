@@ -58,7 +58,7 @@ export default function KeywordsTable( { slug } ) {
 		kwType: __( 'Type' ),
 		labels: __( 'Tags' ),
 		kw_length: __( 'Length' ),
-		kw_priority: __( 'Priority' ),
+		kw_priority: __( 'SEO Rank' ),
 		kw_usage_count: __( 'Usage' ),
 		lang: __( 'Language' ),
 		urlFilter: __( 'URL filter' ),
@@ -75,8 +75,8 @@ export default function KeywordsTable( { slug } ) {
 								description={ __( 'Link type is used in case you decide to replace in HTML just some types of links (see Settings)' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, kwType: val } ) }>{ header.kwType }</SingleSelectMenu>,
 
-		kw_priority: <InputField liveUpdate type="number" defaultValue="10" min="0" max="255" label={ header.kw_priority }
-								description={ __( 'Lower number means higher priority. Enter value in range: 0 - 255' ) }
+		kw_priority: <InputField liveUpdate type="number" defaultValue="10" min="0" max="100" label={ header.kw_priority }
+								description={ __( 'Lower number means higher priority. Enter value in range: 0 - 100' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, kw_priority: val } ) } />,
 
 		lang: <LangMenu autoClose defaultValue="all"

@@ -305,6 +305,16 @@ class Urlslab_Activator {
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_RELATED_RESOURCE_TABLE . " ADD COLUMN is_locked char(1) NOT NULL DEFAULT 'N'" ); // phpcs:ignore
 			}
 		);
+		self::update_step(
+			'2.33.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'UPDATE ' . URLSLAB_RELATED_RESOURCE_TABLE . " SET pos = 100 WHERE pos > 100" ); // phpcs:ignore
+				$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . " SET url_priority = 100 WHERE url_priority > 100" ); // phpcs:ignore
+				$wpdb->query( 'UPDATE ' . URLSLAB_FAQ_URLS_TABLE . " SET sorting = 100 WHERE sorting > 100" ); // phpcs:ignore
+				$wpdb->query( 'UPDATE ' . URLSLAB_KEYWORDS_TABLE . " SET kw_priority = 100 WHERE kw_priority > 100" ); // phpcs:ignore
+			}
+		);
 
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -876,7 +886,7 @@ class Urlslab_Activator {
 		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
 						faq_id INT UNSIGNED NOT NULL,
 						url_id bigint NOT NULL,
-						sorting smallint default 10,
+						sorting TINYINT UNSIGNED NOT NULL DEFAULT 1,
 						PRIMARY KEY (faq_id, url_id)
         ) {$charset_collate};";
 
