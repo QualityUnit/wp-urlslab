@@ -25,7 +25,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 						'pos'       => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return is_numeric( $param );
+								return is_numeric( $param ) && 0 <= $param && 100 >= $param;
 							},
 						),
 						'is_locked' => array(
@@ -220,7 +220,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 				'pos'           => array(
 					'required'          => true,
 					'validate_callback' => function( $param ) {
-						return is_numeric( $param );
+						return is_numeric( $param ) && 0 <= $param && 100 >= $param;
 					},
 				),
 				'is_locked'     => array(

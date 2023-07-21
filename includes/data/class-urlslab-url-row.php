@@ -586,6 +586,10 @@ class Urlslab_Url_Row extends Urlslab_Data {
 			}
 		}
 
+		if ( 100 < $priority ) {
+			$priority = 100;
+		}
+
 		return $priority;
 	}
 }

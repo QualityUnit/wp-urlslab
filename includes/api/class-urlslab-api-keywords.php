@@ -50,7 +50,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 						'kw_priority' => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return is_numeric( $param );
+								return is_numeric( $param ) && 0 <= $param && 100 >= $param;
 							},
 						),
 						'lang'        => array(
@@ -215,7 +215,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 					'required'          => false,
 					'default'           => 10,
 					'validate_callback' => function( $param ) {
-						return is_numeric( $param );
+						return is_numeric( $param ) && 0 <= $param && 100 >= $param;
 					},
 				),
 				'lang'        => array(
