@@ -120,6 +120,9 @@ class Urlslab_Cron_Manager {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-related-resources-cron.php';
 		$this->add_cron_task( new Urlslab_Related_Resources_Cron() );
 
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-serp.php';
+		$this->add_cron_task( new Urlslab_Serp_Cron() );
+
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-convert-webp-images-cron.php';
 		$cron_job_webp_convert = new Urlslab_Convert_Webp_Images_Cron();
 		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Media_Offloader_Widget::SLUG ) && $cron_job_webp_convert->is_format_supported() ) {

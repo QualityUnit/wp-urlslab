@@ -9,7 +9,7 @@ import useTablePanels from '../hooks/useTablePanels';
 import IconButton from '../elements/IconButton';
 import { useCallback } from 'react';
 
-export default function KeywordsTable( { slug } ) {
+export default function SerpQueriesTable( { slug } ) {
 	const paginationId = 'kw_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const url = { filters, sorting };

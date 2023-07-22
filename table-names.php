@@ -34,3 +34,8 @@ define( 'URLSLAB_CUSTOM_HTML_RULES_TABLE', $wpdb->prefix . 'urlslab_custom_html_
 define( 'URLSLAB_LABELS_TABLE', $wpdb->prefix . 'urlslab_labels' );
 define( 'URLSLAB_FAQS_TABLE', $wpdb->prefix . 'urlslab_faqs' );
 define( 'URLSLAB_FAQ_URLS_TABLE', $wpdb->prefix . 'urlslab_faq_urls' );
+
+//SERP
+define( 'URLSLAB_SERP_QUERIES_TABLE', $wpdb->prefix . 'urlslab_serp_queries' );
+define( 'URLSLAB_SERP_URLS_TABLE', $wpdb->prefix . 'urlslab_serp_urls' );
+define( 'URLSLAB_SERP_POSITIONS_TABLE', $wpdb->prefix . 'urlslab_serp_positions' );

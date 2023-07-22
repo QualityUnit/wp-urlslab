@@ -154,16 +154,21 @@ abstract class Urlslab_Data {
 		return $result;
 	}
 
-	public function load(): bool {
+	public function load( $load_by_columns = array() ): bool {
 		global $wpdb;
 
-		if ( empty( $this->get_primary_columns() ) ) {
+		if ( empty( $this->get_primary_columns() ) && empty($load_by_columns) ) {
 			return false;
 		}
 
 		$where      = array();
 		$where_data = array();
-		foreach ( $this->get_primary_columns() as $key ) {
+
+		if (empty($load_by_columns)) {
+			$load_by_columns = $this->get_primary_columns();
+		}
+
+		foreach ( $load_by_columns as $key ) {
 			$where[]            = $key . '=' . $this->get_column_format( $key );
 			$where_data[ $key ] = $this->data[ $key ];
 		}
