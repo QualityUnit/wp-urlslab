@@ -959,6 +959,7 @@ class Urlslab_Activator {
 		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
 							query_id bigint NOT NULL,
 							lang varchar(10) NOT NULL,
+							country varchar(10) NOT NULL,
 							query VARCHAR(255) NOT NULL,
 							updated DATETIME NOT NULL,
 							status char(1) DEFAULT '',

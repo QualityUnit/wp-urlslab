@@ -84,8 +84,7 @@ class Urlslab_Serp_Url_Row extends Urlslab_Data {
 
 	private function compute_domain_id() {
 		$url = new Urlslab_Url( $this->get_url_name(), true );
-		$url = new Urlslab_Url( $url->get_domain_name(), true );
 
-		return $url->get_url_id();
+		return $url->get_domain_id();
 	}
 }

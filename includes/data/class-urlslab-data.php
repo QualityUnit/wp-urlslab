@@ -157,14 +157,14 @@ abstract class Urlslab_Data {
 	public function load( $load_by_columns = array() ): bool {
 		global $wpdb;
 
-		if ( empty( $this->get_primary_columns() ) && empty($load_by_columns) ) {
+		if ( empty( $this->get_primary_columns() ) && empty( $load_by_columns ) ) {
 			return false;
 		}
 
 		$where      = array();
 		$where_data = array();
 
-		if (empty($load_by_columns)) {
+		if ( empty( $load_by_columns ) ) {
 			$load_by_columns = $this->get_primary_columns();
 		}
 

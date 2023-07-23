@@ -10,7 +10,7 @@ export default function Serp( { moduleId } ) {
 	const slug = 'serp';
 
 	const tableMenu = new Map( [
-		[ slug, __( 'Queries' ) ],
+		[ 'serp-queries', __( 'Queries' ) ],
 	] );
 
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
@@ -27,9 +27,9 @@ export default function Serp( { moduleId } ) {
 				<SerpOverview moduleId={ moduleId } />
 			}
 			{
-				activeSection === slug &&
+				activeSection === 'serp-queries' &&
 				<Suspense>
-					<SerpQueriesTable slug={ slug } />
+					<SerpQueriesTable slug={ 'serp-queries' } />
 				</Suspense>
 			}
 			{

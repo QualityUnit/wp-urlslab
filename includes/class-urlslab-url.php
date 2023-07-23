@@ -295,6 +295,11 @@ class Urlslab_Url {
 		return $this->url_components['host'] ?? '';
 	}
 
+	public function get_domain_id() {
+		$url = new Urlslab_Url( $this->get_domain_name() );
+		return $url->get_url_id();
+	}
+
 	public function get_extension() {
 		if ( isset( $this->url_components['path'] ) ) {
 			return pathinfo( $this->url_components['path'], PATHINFO_EXTENSION );

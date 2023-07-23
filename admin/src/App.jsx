@@ -58,6 +58,12 @@ const MainApp = () => {
 				queryFn: async () => await fetchLangs(),
 				refetchOnWindowFocus: false,
 			} );
+			// Creating countries query object in advance
+			queryClient.prefetchQuery( {
+				queryKey: [ 'countries' ],
+				queryFn: async () => await fetchCountries(),
+				refetchOnWindowFocus: false,
+			} );
 
 			/* Creating all endpoints query object in advance
 			to check for allowed+required import/insert/edit CSV fields */
