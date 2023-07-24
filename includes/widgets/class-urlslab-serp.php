@@ -8,9 +8,10 @@ class Urlslab_Serp extends Urlslab_Widget {
 	const SETTING_NAME_IMPORT_FAQS = 'urlslab-import-faqs';
 	const SETTING_NAME_IMPORT_RELATED_QUERIES = 'urlslab-import-rel-queries';
 	const SETTING_NAME_SYNC_FREQ = 'urlslab-serp-sync-freq';
-	const SETTING_NAME_IMPORT_RELATED_QUERIES_DOMAINS = 'urlslab-import-rel-q-domains';
 	const SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION = 'urlslab-import-rel-q-position';
 	const SETTING_NAME_IMPORT_LIMIT = 'urlslab-import-limit';
+	const SETTING_NAME_SERP_COMPETITOR_DOMAINS = 'urlslab-serp-comp-domains';
+	const SETTING_NAME_SERP_MY_DOMAINS = 'urlslab-serp-my-domains';
 
 	public function init_widget() {}
 
@@ -73,11 +74,22 @@ class Urlslab_Serp extends Urlslab_Widget {
 
 		$this->add_options_form_section( 'import', __( 'Import SERP queries' ), __( 'Specify how new queries are imported from SERP results. Make sure you select reasonable amount of domains and other limits, because this feature can eat your credits fast.' ) );
 		$this->add_option_definition(
-			self::SETTING_NAME_IMPORT_RELATED_QUERIES_DOMAINS,
+			self::SETTING_NAME_SERP_MY_DOMAINS,
 			'',
 			false,
-			__( 'Filter SERP results by Domain' ),
-			__( 'Comma or new line separated list of domains. Recommendation: Include not just your own domains, but also all domains of your direct competitors. It will help you to discover new keywords and FAQs you should include into your website content. If none of these domains ranks in top 100 for specific query, query is marked as Invalid/Error - means it is not relevant query to your business.' ),
+			__( 'My Domains' ),
+			__( 'Comma or new line separated list of my domains. If none of domains ranks in top 100 for specific query, query is marked as Skipped - means it is not relevant query to your business.' ),
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			null,
+			'import'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_SERP_COMPETITOR_DOMAINS,
+			'',
+			false,
+			__( 'Competitor Domains' ),
+			__( 'Comma or new line separated list of domains. Recommendation: Include all domains of your direct competitors. It will help you to discover new keywords and FAQs you should include into your website content. If none of these domains ranks in top 100 for specific query, query is marked as Skipped - means it is not relevant query to your business.' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			null,

@@ -41,7 +41,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 			$this->serp_client = new \Urlslab_Vendor\OpenAPI\Client\Urlslab\SerpApi( new GuzzleHttp\Client(), $config );
 
 			$widget        = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG );
-			$str_domains   = $widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES_DOMAINS );
+			$str_domains   = $widget->get_option( Urlslab_Serp::SETTING_NAME_SERP_MY_DOMAINS ) . ',' . $widget->get_option( Urlslab_Serp::SETTING_NAME_SERP_COMPETITOR_DOMAINS );
 			$arr_domains   = preg_split( '/(,|\n|\t)\s*/', $str_domains );
 			$this->domains = array();
 			foreach ( $arr_domains as $domain ) {
@@ -206,7 +206,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 		} catch ( ApiException $e ) {
 			$query->set_status( Urlslab_Serp_Query_Row::STATUS_ERROR );
 
-			if ( in_array( $e->getCode(), array( 402, 429 ) ) ) {
+			if ( in_array( $e->getCode(), array( 402, 429, 504 ) ) ) {
 				$query->set_status( Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED );
 			}
 
