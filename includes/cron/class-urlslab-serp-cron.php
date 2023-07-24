@@ -137,25 +137,28 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 						$has_monitored_domain = true;
 					}
 
-					$url         = new Urlslab_Serp_Url_Row(
-						array(
-							'url_name'        => $organic_result->link,
-							'url_title'       => $organic_result->title,
-							'url_description' => $organic_result->snippet,
-							'url_id'          => $url_obj->get_url_id(),
-							'domain_id'       => $url_obj->get_domain_id(),
-						)
-					);
-					$urls[]      = $url;
-					$positions[] = new Urlslab_Serp_Position_Row(
-						array(
-							'position' => $organic_result->position,
-							'query_id' => $query->get_query_id(),
-							'url_id'   => $url->get_url_id(),
-						)
-					);
+					if ( 10 >= $organic_result->position || $this->domains[ $url_obj->get_domain_id() ] ) {
+						$url         = new Urlslab_Serp_Url_Row(
+							array(
+								'url_name'        => $organic_result->link,
+								'url_title'       => $organic_result->title,
+								'url_description' => $organic_result->snippet,
+								'url_id'          => $url_obj->get_url_id(),
+								'domain_id'       => $url_obj->get_domain_id(),
+							)
+						);
+						$urls[]      = $url;
+						$positions[] = new Urlslab_Serp_Position_Row(
+							array(
+								'position' => $organic_result->position,
+								'query_id' => $query->get_query_id(),
+								'url_id'   => $url->get_url_id(),
+							)
+						);
+					}
 				}
 			}
+
 
 			if ( $has_monitored_domain ) {
 				if ( ! empty( $urls ) ) {

@@ -44,7 +44,7 @@ export default function SerpQueriesTable( { slug } ) {
 		'P': __( 'Processing' ),
 		'A': __( 'Processed' ),
 		'E': __( 'Failed' ),
-		'S': __( 'Skipped' ),
+		'S': __( 'Irrelevant' ),
 	};
 
 	const header = {

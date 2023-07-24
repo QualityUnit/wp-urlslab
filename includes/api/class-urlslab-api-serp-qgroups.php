@@ -52,18 +52,25 @@ class Urlslab_Api_Serp_Qgroups extends Urlslab_Api_Table {
 						'update_item_permissions_check',
 					),
 					'args'                => array(
-						'max_serp_position'  => array(
+						'max_serp_position'     => array(
 							'required'          => false,
-							'default'           => 50,
+							'default'           => 10,
 							'validate_callback' => function( $param ) {
-								return is_numeric( $param ) && 0 < $param && 100 >= $param;
+								return is_numeric( $param ) && 0 < $param && 20 >= $param;
 							},
 						),
-						'min_url_occurences' => array(
+						'min_url_occurences'    => array(
+							'required'          => false,
+							'default'           => 4,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param ) && 0 < $param && 10 >= $param;
+							},
+						),
+						'min_queries_per_group' => array(
 							'required'          => false,
 							'default'           => 3,
 							'validate_callback' => function( $param ) {
-								return is_numeric( $param ) && 0 < $param && 100 >= $param;
+								return is_numeric( $param ) && 1 < $param;
 							},
 						),
 					),
@@ -98,18 +105,20 @@ class Urlslab_Api_Serp_Qgroups extends Urlslab_Api_Table {
 									COUNT(*) as cnt 
 								FROM ' . $wpdb->quote_identifier( URLSLAB_SERP_POSITIONS_TABLE ) . ' a ' . // phpcs:ignore
 				'INNER JOIN ' . $wpdb->quote_identifier( URLSLAB_SERP_POSITIONS_TABLE ) . // phpcs:ignore
-				' b ON a.url_id=b.url_id AND a.position<%d AND b.position<%d AND a.query_id <> b.query_id 
+				' b ON a.url_id=b.url_id AND a.position<=%d AND b.position<=%d AND a.query_id <> b.query_id 
 								GROUP BY a.query_id, b.query_id 
-								HAVING cnt > %d 
+								HAVING cnt >= %d 
 							) x
 						INNER JOIN ' . $wpdb->quote_identifier( URLSLAB_SERP_QUERIES_TABLE ) . // phpcs:ignore
-				' q ON q.query_id = x.query_id
+				' q ON q.query_id = x.query_id AND q.status <> %s
 						GROUP BY cluster
-						HAVING kw_cnt > 1
+						HAVING kw_cnt >= %d
 						) r',
 				$request->get_param( 'max_serp_position' ),
 				$request->get_param( 'max_serp_position' ),
-				$request->get_param( 'min_url_occurences' )
+				$request->get_param( 'min_url_occurences' ),
+				Urlslab_Serp_Query_Row::STATUS_SKIPPED,
+				$request->get_param( 'min_queries_per_group' )
 			),
 			ARRAY_A
 		);
