@@ -6,260 +6,261 @@ $cellHeight: 3.5em;
 
 .urlslab-table {
 
-    border-collapse: collapse;
-    border-spacing: 0;
-    background-color: $white;
-    font-family: Poppins, sans-serif;
-    font-size: 0.75rem;
-    line-height: 1.3;
-    transform: translateZ(1px);
-    width: 100%;
+	border-collapse: collapse;
+	border-spacing: 0;
+	background-color: $white;
+	font-family: Poppins, sans-serif;
+	font-size: 0.75rem;
+	line-height: 1.3;
+	transform: translateZ(1px);
+	width: 100%;
 
-    &:not(.resizable) {
-        table-layout: fixed;
-        width: calc(100% - 1px) !important;
-    }
+	&:not(.resizable) {
+		table-layout: fixed;
+		width: calc(100% - 1px) !important;
+	}
 
-    &-container {
+	&-container {
 
-        @include scrollbar();
-        height: calc(100vh - var(--headerTopHeight) - var(--headerMenuHeight) - var(--headerBottomHeight) - 5em);
-        margin: 1.5em;
-        padding-bottom: 1.5em;
-        overflow: auto;
-    }
+		@include scrollbar();
+		height: calc(100vh - var(--headerTopHeight) - var(--headerMenuHeight) - var(--headerBottomHeight) - 5em);
+		margin: 1.5em;
+		padding-bottom: 1.5em;
+		overflow: auto;
+	}
 
-    .resizer {
-        position: absolute;
-        right: -2px;
-        top: 0;
-        height: 100%;
-        width: 4px;
-        background-color: $grey-medium-lighter;
-        cursor: col-resize;
-        user-select: none;
-        touch-action: none;
-        transition: all $transitionTime;
+	.resizer {
+		position: absolute;
+		right: -2px;
+		top: 0;
+		height: 100%;
+		width: 4px;
+		background-color: $grey-medium-lighter;
+		cursor: col-resize;
+		user-select: none;
+		touch-action: none;
+		transition: all $transitionTime;
 
-        &.isResizing {
-            background-color: $lighter-blue;
-            opacity: 1;
-        }
-    }
+		&.isResizing {
+			background-color: $lighter-blue;
+			opacity: 1;
+		}
+	}
 
-    @media (hover: hover) {
+	@media (hover: hover) {
 
-        .resizer {
-            opacity: 0;
-        }
+		.resizer {
+			opacity: 0;
+		}
 
-        *:hover > .resizer {
-            opacity: 1;
-        }
-    }
+		*:hover > .resizer {
+			opacity: 1;
+		}
+	}
 
-    th,
-    td {
-        position: relative;
-        text-align: left;
-        font-weight: $font-weight-normal;
-        padding: 0.25em;
-        padding-left: 1em;
+	th,
+	td {
+		position: relative;
+		text-align: left;
+		font-weight: $font-weight-normal;
+		padding: 0.25em;
+		padding-left: 1em;
 
-        svg {
+		svg {
 
-            @include square(1.5em);
-            display: block;
-            margin-right: 0;
-            fill: $grey-dark;
-        }
+			@include square(1.5em);
+			display: block;
+			margin-right: 0;
+			fill: $grey-dark;
+		}
 
-        .browserIcon {
-            width: 2em;
-        }
-    }
+		.browserIcon {
+			width: 2em;
+		}
+	}
 
-    td {
-        height: $cellHeight;
-    }
+	td {
+		height: $cellHeight;
+	}
 
-    &.resizable {
+	&.resizable {
 
-        th,
-        td {
-            display: flex;
-            align-items: center;
-            height: $cellHeight;
+		th,
+		td {
+			display: flex;
+			align-items: center;
+			height: $cellHeight;
 
-            > *:not(.resizer):not(img):not(.img):not(picture) {
-                width: 100%;
-            }
-        }
-    }
+			> *:not(.resizer):not(img):not(.img):not(picture) {
+				width: 100%;
+			}
+		}
+	}
 
-    thead {
-        position: sticky;
-        top: 0;
-        z-index: 555;
-        background-color: $grey-lighter;
-        color: $grey-darker;
+	thead {
+		position: sticky;
+		top: 0;
+		z-index: 555;
+		background-color: $grey-lighter;
+		color: $grey-darker;
 
-        th {
-            position: relative;
-            padding-bottom: 1em;
+		th {
+			position: relative;
+			padding-bottom: 1em;
 
-            .urlslab-inputField-datetime {
+			.urlslab-inputField-datetime {
 
-                .react-datepicker__input-container,
-                input {
-                    border: none;
-                    padding-left: 0;
-                    padding-right: 0;
-                    background-color: transparent;
-                    font-size: 0.75rem;
-                }
-            }
-        }
-    }
+				.react-datepicker__input-container,
+				input {
+					border: none;
+					padding-left: 0;
+					padding-right: 0;
+					background-color: transparent;
+					font-size: 0.75rem;
+				}
+			}
+		}
+	}
 
-    tbody {
-        border: 1px solid $grey-light;
-    }
+	tbody {
+		border: 1px solid $grey-light;
+	}
 
-    &.resizable tr {
-        height: $cellHeight;
-    }
+	&.resizable tr {
+		height: $cellHeight;
+	}
 
-    tr {
-        position: relative;
-        border-bottom: 1px solid $grey-light;
+	tr {
+		position: relative;
+		border-bottom: 1px solid $grey-light;
 
-        &:last-of-type {
-            border-bottom: 0;
-        }
+		&:last-of-type {
+			border-bottom: 0;
+		}
 
-        &.selected {
-            background-color: $desaturated-blue;
-        }
+		&.selected {
+			background-color: $desaturated-blue;
+		}
 
-        @media (hover: hover) {
+		@media (hover: hover) {
 
-            &:not(.urlslab-table-head-row):hover {
-                background-color: $grey-lightest;
-            }
-        }
-    }
+			&:not(.urlslab-table-head-row):hover {
+				background-color: $grey-lightest;
+			}
+		}
+	}
 
-    *:not(.nolimit) > .limit {
-        display: block;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-    }
+	*:not(.nolimit) > .limit {
+		display: block;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+	}
 
-    .checkbox {
-        width: 2.5em !important;
+	.checkbox {
+		width: 2.5em !important;
 
-        &:not(th) {
-            padding: 0;
-            padding-left: 1em;
-        }
-    }
+		&:not(th) {
+			padding: 0;
+			padding-left: 1em;
+		}
+	}
 
-    td.editRow,
-    td.hoverize {
-        opacity: 0;
-        padding: 0;
-        transition: opacity $transitionTime;
-        cursor: pointer;
+	td.editRow,
+	td.hoverize {
+		opacity: 0;
+		padding: 0;
+		transition: opacity $transitionTime;
+		cursor: pointer;
 
-        &.actions {
-            cursor: default;
-        }
+		&.actions {
+			cursor: default;
+		}
 
-        .limit {
-            overflow: visible;
-            text-overflow: unset;
-        }
-    }
+		.limit {
+			overflow: visible;
+			text-overflow: unset;
+		}
+	}
 
-    tr:hover {
+	tr:hover {
 
-        td.editRow,
-        td.hoverize {
-            opacity: 1;
-        }
-    }
+		td.editRow,
+		td.hoverize {
+			opacity: 1;
+		}
+	}
 
-    @media (max-width: $breakpoint-desktop-box) {
+	@media (max-width: $breakpoint-desktop-box) {
 
-        .editRow[class] {
-            width: 2.5em !important;
-        }
+		.editRow[class] {
+			width: 2.5em !important;
+		}
 
-        td.editRow {
-            position: absolute !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            left: calc(var(--tableContainerWidth) - 3em) !important;
-            padding: 0 0.5em;
-            background-color: $white;
-            z-index: 2;
-        }
-    }
+		td.editRow {
+			position: absolute !important;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			height: 100%;
+			left: calc(var(--tableContainerWidth) - 3em) !important;
+			padding: 0 0.5em;
+			background-color: $white;
+			z-index: 2;
+		}
+	}
 
-    .thumbnail {
+	.thumbnail {
 
-        a {
-            display: block;
-            object-fit: cover;
-            object-position: center top;
-            overflow: hidden;
-            height: 3em;
-        }
+		a,
+		.thumbnail-wrapper {
+			display: block;
+			object-fit: cover;
+			object-position: center top;
+			overflow: hidden;
+			height: 3em;
+		}
 
-        picture,
-        img,
-        .img {
+		picture,
+		img,
+		.img {
 
-            width: 100%;
-        }
-    }
+			width: 100%;
+		}
+	}
 
-    .youtube-status {
-        text-align: center;
+	.youtube-status {
+		text-align: center;
 
-        &-bullet {
+		&-bullet {
 
-            @include square(8px);
-            display: block;
-            border-radius: 50%;
-            overflow: hidden;
-            text-indent: -9999px;
+			@include square(8px);
+			display: block;
+			border-radius: 50%;
+			overflow: hidden;
+			text-indent: -9999px;
 
-            &-A {
-                background-color: $saturated-green;
-            }
+			&-A {
+				background-color: $saturated-green;
+			}
 
-            &-D {
-                background-color: $saturated-red;
-            }
-        }
-    }
+			&-D {
+				background-color: $saturated-red;
+			}
+		}
+	}
 
-    .video-thumbnail {
-        width: auto !important;
-        height: 60px;
-        border-radius: 0.625rem;
-    }
+	.video-thumbnail {
+		width: auto !important;
+		height: 60px;
+		border-radius: 0.625rem;
+	}
 
-    // &-head {
+	// &-head {
 
-    // }
+	// }
 
-    // &-body {
+	// &-body {
 
-    // }
+	// }
 }

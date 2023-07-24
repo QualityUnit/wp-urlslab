@@ -35,11 +35,17 @@ export default defineConfig( {
 		port: 1337,
 	},
 	build: {
+		watch: false,
 		minify: false,
 		rollupOptions: {
 			input: {
 				main: './src/main.jsx',
-				//'ai_content_assistant/main': './modules/ai-content-assistant/main.jsx',
+			},
+			onwarn( warning, warn ) {
+				if ( warning.code === 'MODULE_LEVEL_DIRECTIVE' ) {
+					return;
+				}
+				warn( warning );
 			},
 			output: {
 				// this gets rid of the hash on main.css

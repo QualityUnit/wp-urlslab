@@ -19,19 +19,14 @@ function Header( { fetchedModules } ) {
 	const { activePage } = useMainMenu();
 	const [ pageTitle, setTitle ] = useState( __( 'Modules' ) );
 	const headerTopHeight = useHeaderHeight( ( state ) => state.headerTopHeight );
-	const setHeaderTopHeight = useHeaderHeight(
-		( state ) => state.setHeaderTopHeight
-	);
+	const setHeaderTopHeight = useHeaderHeight( ( state ) => state.setHeaderTopHeight );
 
-	const handleHeaderHeight = useCallback(
-		( elem ) => {
-			const headerHeight = elem?.getBoundingClientRect().height;
-			if ( headerHeight && headerHeight !== headerTopHeight ) {
-				setHeaderTopHeight( headerHeight );
-			}
-		},
-		[ headerTopHeight, setHeaderTopHeight ]
-	);
+	const handleHeaderHeight = useCallback( ( elem ) => {
+		const headerHeight = elem?.getBoundingClientRect().height;
+		if ( headerHeight && headerHeight !== headerTopHeight ) {
+			setHeaderTopHeight( headerHeight );
+		}
+	}, [ headerTopHeight, setHeaderTopHeight ] );
 	const headerTop = useResizeObserver( handleHeaderHeight );
 
 	useEffect( () => {
@@ -50,14 +45,7 @@ function Header( { fetchedModules } ) {
 		if ( activePage && activePage === 'TagsLabels' ) {
 			setTitle( __( 'Tags' ) );
 		}
-		if (
-			activePage &&
-            activePage !== 'urlslab-modules' &&
-            activePage !== 'urlslab-settings' &&
-            activePage !== 'urlslab-schedule' &&
-            activePage !== 'urlslab-roles' &&
-            activePage !== 'TagsLabels'
-		) {
+		if ( activePage && activePage !== 'urlslab-modules' && activePage !== 'urlslab-settings' && activePage !== 'urlslab-schedule' && activePage !== 'TagsLabels' ) {
 			setTitle( fetchedModules[ activePage ].title );
 		}
 	}, [ __, activePage, fetchedModules, setTitle ] );
@@ -73,16 +61,10 @@ function Header( { fetchedModules } ) {
 
 					<Credits />
 
-					<Button
-						className="mr-m"
-						active
-						href="https://www.urlslab.com/dashboard/"
-						target="_blank"
-					>
-						{ __( 'Buy credits' ) }
-					</Button>
+					<Button className="mr-m" active href="https://www.urlslab.com/dashboard/" target="_blank">{ __( 'Buy credits' ) }</Button>
 
 					<CronRunner />
+
 				</div>
 				{ /* <NoAPIkey /> */ }
 			</header>

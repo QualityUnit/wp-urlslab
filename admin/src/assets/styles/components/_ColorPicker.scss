@@ -2,71 +2,72 @@
 @use "../common/variables" as *;
 
 .urlslab-colorPicker {
-    position: relative;
-    z-index: 10;
+	position: relative;
+	z-index: 10;
 
-    &-activator {
-        display: flex;
-        align-items: center;
-        position: relative;
-        border: 1px solid currentcolor !important;
-        border-radius: 6px;
-        font-size: 0.8125rem;
-        padding: 0.35em 1em;
-        color: $grey-medium;
-    }
+	&-activator {
+		display: flex;
+		align-items: center;
+		position: relative;
+		border: 1px solid currentcolor !important;
+		border-radius: 6px;
+		font-size: 0.8125rem;
+		padding: 0.35em 1em;
+		color: $grey-medium;
+	}
 
-    .react-colorful {
-        width: 100%;
-        height: auto;
+	.react-colorful {
+		width: 100%;
+		height: auto;
 
-        &__saturation {
-            border-radius: 0.5rem;
-            height: 8.2em;
-        }
+		&__saturation {
+			border-radius: 0.5rem;
+			height: 8.2em;
+		}
 
-        &__hue {
-            margin-top: 0.6em;
-            height: 10px;
-            border-radius: 8px;
-        }
+		&__hue {
+			margin-top: 0.6em;
+			height: 10px;
+			border-radius: 8px;
+		}
 
-        &__pointer {
+		&__pointer {
 
-            @include square(1.25rem);
-        }
-    }
+			@include square(1.25rem);
+		}
+	}
 
-    &-panel {
-        width: 17em;
-    }
+	&-panel {
+		width: 17em;
+		transform: translateZ(1px);
+	}
 
-    &-swatches {
-        display: grid;
-        align-items: center;
-        grid-template: repeat(3, 1.6666rem) / repeat(9, 1.6666rem);
-        margin-top: 0.5em;
+	&-swatches {
+		display: grid;
+		align-items: center;
+		grid-template: repeat(3, 1.6666rem) / repeat(9, 1.6666rem);
+		margin-top: 0.5em;
 
-        .urlslab-colorPicker-swatch__btn {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 2px;
-            padding: 0;
+		.urlslab-colorPicker-swatch__btn {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			border-radius: 2px;
+			padding: 0;
 
-            &.active {
-                border: 1px solid $grey-medium-lighter;
-            }
+			&.active {
+				border: 1px solid $grey-medium-lighter;
+			}
 
-            .urlslab-colorPicker-swatch {
-                margin: auto;
-            }
-        }
-    }
+			.urlslab-colorPicker-swatch {
+				margin: auto;
+			}
+		}
+	}
 
-    .urlslab-colorPicker-swatch {
+	.urlslab-colorPicker-swatch {
 
-        @include square(1.25rem);
-        border-radius: 2px;
-    }
+		@include square(1.25rem);
+		border-radius: 2px;
+	}
 }
