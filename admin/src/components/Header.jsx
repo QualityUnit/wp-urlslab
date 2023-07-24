@@ -45,7 +45,7 @@ function Header( { fetchedModules } ) {
 		if ( activePage && activePage === 'TagsLabels' ) {
 			setTitle( __( 'Tags' ) );
 		}
-		if ( activePage && activePage !== 'urlslab-modules' && activePage !== 'urlslab-settings' && activePage !== 'urlslab-schedule' && activePage !== 'TagsLabels' ) {
+		if ( activePage && activePage !== 'urlslab-modules' && activePage !== 'urlslab-settings' && activePage !== 'urlslab-roles' && activePage !== 'urlslab-schedule' && activePage !== 'TagsLabels' ) {
 			setTitle( fetchedModules[ activePage ].title );
 		}
 	}, [ __, activePage, fetchedModules, setTitle ] );
