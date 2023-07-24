@@ -8,11 +8,13 @@ require_once ABSPATH . 'wp-admin/includes/file.php';
 
 use Urlslab_Vendor\OpenAPI\Client\Configuration;
 use Urlslab_Vendor\GuzzleHttp;
+use Urlslab_Vendor\OpenAPI\Client\ApiException;
 
 class Urlslab_Serp_Cron extends Urlslab_Cron {
 	private \Urlslab_Vendor\OpenAPI\Client\Urlslab\SerpApi $serp_client;
 	private $has_rows = true;
 	private $domains = array();
+	private $serp_queries_count = - 1;
 
 	public function cron_exec( $max_execution_time = self::MAX_RUN_TIME ): bool {
 		if ( ! $this->has_rows || ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Serp::SLUG ) ) {
@@ -52,7 +54,6 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 					}
 				}
 			}
-
 		}
 
 		return ! empty( $this->serp_client );
@@ -116,21 +117,25 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 		$request->setCountry( $query->get_country() );
 		$request->setAllResults( true );
 		$request->setNotOlderThan( $widget->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ) );
+		$has_monitored_domain = false;
+		$urls                 = array();
+		$positions            = array();
 
 		try {
 			$serp_response = $this->serp_client->search( $request );
+			$organic       = $serp_response->getOrganicResults();
 
-			$organic              = $serp_response->getOrganicResults();
-			$has_monitored_domain = false;
-			if ( ! empty( $organic ) ) {
-				$urls      = array();
-				$positions = array();
+			if ( empty( $organic ) ) {
+				$query->set_status( Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED );
+				$query->update();
+
+				return false;
+			} else {
 				foreach ( $organic as $organic_result ) {
 					$url_obj = new Urlslab_Url( $organic_result->link, true );
 					if ( isset( $this->domains[ $url_obj->get_domain_id() ] ) && $organic_result->position <= $widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION ) ) {
 						$has_monitored_domain = true;
 					}
-
 
 					$url         = new Urlslab_Serp_Url_Row(
 						array(
@@ -150,25 +155,20 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 						)
 					);
 				}
+			}
+
+			if ( $has_monitored_domain ) {
 				if ( ! empty( $urls ) ) {
 					$urls[0]->insert_all( $urls, true );
 				}
 				if ( ! empty( $positions ) ) {
 					$positions[0]->insert_all( $positions, true );
 				}
-			}
-
-			if ( $has_monitored_domain ) {
 
 				$fqs = $serp_response->getFaqs();
 				if ( ! empty( $fqs ) && $widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_FAQS ) ) {
 					foreach ( $fqs as $faq ) {
-
-						$faq_row = new Urlslab_Faq_Row(
-							array(
-								'question' => $faq->question,
-							)
-						);
+						$faq_row = new Urlslab_Faq_Row( array( 'question' => $faq->question ), false );
 						if ( $faq_row->load( array( 'question' ) ) ) {
 							continue;
 						}
@@ -178,7 +178,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 				}
 
 				$related = $serp_response->getRelatedSearches();
-				if ( ! empty( $related ) && $widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES ) && ( $has_monitored_domain || empty( $this->domains ) ) ) {
+				if ( ! empty( $related ) && $widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES ) && $this->get_serp_queries_count() <= $widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_LIMIT ) ) {
 					$queries = array();
 					foreach ( $related as $related_search ) {
 						$queries[] = new Urlslab_Serp_Query_Row(
@@ -200,16 +200,34 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 			if ( $has_monitored_domain ) {
 				$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );
 			} else {
-				$query->set_status( Urlslab_Serp_Query_Row::STATUS_ERROR );
+				$query->set_status( Urlslab_Serp_Query_Row::STATUS_SKIPPED );
 			}
 			$query->update();
-		} catch ( Exception $e ) {
+		} catch ( ApiException $e ) {
 			$query->set_status( Urlslab_Serp_Query_Row::STATUS_ERROR );
+
+			if ( in_array( $e->getCode(), array( 402, 429 ) ) ) {
+				$query->set_status( Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED );
+			}
+
+			if ( 402 === $e->getCode() ) {
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+			}
+
 			$query->update();
 
 			return false;
 		}
 
 		return true;
+	}
+
+	private function get_serp_queries_count(): int {
+		global $wpdb;
+		if ( 0 > $this->serp_queries_count ) {
+			$this->serp_queries_count = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . URLSLAB_SERP_QUERIES_TABLE ); // phpcs:ignore
+		}
+
+		return $this->serp_queries_count;
 	}
 }

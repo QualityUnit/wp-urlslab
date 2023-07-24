@@ -10,6 +10,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 	const SETTING_NAME_SYNC_FREQ = 'urlslab-serp-sync-freq';
 	const SETTING_NAME_IMPORT_RELATED_QUERIES_DOMAINS = 'urlslab-import-rel-q-domains';
 	const SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION = 'urlslab-import-rel-q-position';
+	const SETTING_NAME_IMPORT_LIMIT = 'urlslab-import-limit';
 
 	public function init_widget() {}
 
@@ -70,13 +71,13 @@ class Urlslab_Serp extends Urlslab_Widget {
 		);
 
 
-		$this->add_options_form_section( 'import', __( 'Import' ), __( 'Specify how new queries and FAQs are imported from SERP results. Make sure you select reasonable amount of domains and other limits, because this feature can eat your credits fast.' ) );
+		$this->add_options_form_section( 'import', __( 'Import SERP queries' ), __( 'Specify how new queries are imported from SERP results. Make sure you select reasonable amount of domains and other limits, because this feature can eat your credits fast.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_RELATED_QUERIES_DOMAINS,
 			'',
 			false,
-			__( 'Your and Direct competitor Domains' ),
-			__( 'Comma or new line separated list of domains. It is wise to include here not just your domains, but also all domains of your direct competitors. Automatically import related queries just in case organic results for current query contains one of specified domains. If it is empty, all related queries are imported - this could lead to eccessive amount of queries.' ),
+			__( 'Filter SERP results by Domain' ),
+			__( 'Comma or new line separated list of domains. Recommendation: Include not just your own domains, but also all domains of your direct competitors. It will help you to discover new keywords and FAQs you should include into your website content. If none of these domains ranks in top 100 for specific query, query is marked as Invalid/Error - means it is not relevant query to your business.' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			null,
@@ -84,28 +85,31 @@ class Urlslab_Serp extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION,
-			30,
+			15,
 			false,
-			__( 'Filter TOP results' ),
-			__( 'Query entities will be processed only in case one of specified domains ranks for keyword in TOP results' ),
+			__( 'Filter TOP X results' ),
+			__( 'Enter number 1 - 100. Reasonable value will be between 5 - 30. Query entities will be processed only in case one of defined domains ranks for keyword in TOP X results. Setting this number lower will improve quality, but higher number will discover more new queries.' ),
 			self::OPTION_TYPE_NUMBER,
+			false,
 			function( $value ) {
 				return is_numeric( $value ) && $value >= 1 && $value <= 100;
 			},
-			null,
 			'import'
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_IMPORT_FAQS,
+			self::SETTING_NAME_IMPORT_LIMIT,
+			300,
 			false,
+			__( 'Limit queries' ),
+			__( 'Cease importing new queries once the total number in your database reaches the limit. This acts as a safeguard against excessive costs, as the volume of imported queries can escalate quickly.' ),
+			self::OPTION_TYPE_NUMBER,
 			false,
-			__( 'Import FAQs' ),
-			__( 'Import FAQS for analyzed keywords automatically and store them to Frequently Asked Questions module.' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
+			function( $value ) {
+				return is_numeric( $value ) && 1 <= $value;
+			},
 			'import'
 		);
+
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_RELATED_QUERIES,
 			false,
@@ -116,6 +120,19 @@ class Urlslab_Serp extends Urlslab_Widget {
 			false,
 			null,
 			'import'
+		);
+
+		$this->add_options_form_section( 'import_faq', __( 'Import Frequently Asked Questions' ), __( 'URLsLab can automatically import FAQ entries from SERP results' ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_IMPORT_FAQS,
+			false,
+			false,
+			__( 'Import FAQs' ),
+			__( 'Import FAQS for analyzed keywords automatically and store them to Frequently Asked Questions module.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'import_faq'
 		);
 	}
 }

@@ -39,13 +39,6 @@ export const langName = ( langcode ) => {
 	return null;
 };
 
-export const countryName = ( countrycode ) => {
-	const country = new Intl.DisplayNames( [ 'us' ], { type: 'country' } );
-	if ( countrycode ) {
-		return country.of( countrycode );
-	}
-	return null;
-};
 
 export const nameOf = ( obj, key ) => {
 	const res = {};

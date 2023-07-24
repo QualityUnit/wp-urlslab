@@ -44,6 +44,7 @@ export default function SerpQueriesTable( { slug } ) {
 		'P': __( 'Processing' ),
 		'A': __( 'Processed' ),
 		'E': __( 'Failed' ),
+		'S': __( 'Skipped' ),
 	};
 
 	const header = {
@@ -61,8 +62,6 @@ export default function SerpQueriesTable( { slug } ) {
 						onChange={ ( val ) => setRowToEdit( { ...rowToEdit, lang: val } ) }>{ header.lang }</LangMenu>,
 		country: <CountryMenu autoClose defaultValue="us"
 						onChange={ ( val ) => setRowToEdit( { ...rowToEdit, country: val } ) }>{ header.country }</CountryMenu>,
-		status: <SingleSelectMenu defaultAccept autoClose items={ statuses } name="status" defaultValue=""
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, status: val } ) }>{ header.status }</SingleSelectMenu>,
 	};
 
 	const columns = [
