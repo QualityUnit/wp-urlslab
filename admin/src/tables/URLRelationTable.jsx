@@ -23,7 +23,7 @@ export default function URLRelationTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -46,10 +46,14 @@ export default function URLRelationTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
-				selectRow( val, cell );
+			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+				cell.row.toggleSelected();
+				selectRows( cell );
 			} } />,
-			header: null,
+			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
+				head.table.toggleAllPageRowsSelected( val );
+				selectRows( val ? head : undefined );
+			} } />,
 		} ),
 		columnHelper.accessor( 'src_url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
@@ -97,7 +101,6 @@ export default function URLRelationTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				table={ table }
-				selectedRows={ selectedRows }
 				onDeleteSelected={ () => deleteSelectedRows( { optionalSelector: 'dest_url_id', id: 'src_url_name' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ { header, rowEditorCells, title: 'Add New Related Article', data, slug, url, paginationId, rowToEdit, id: 'src_url_name', deleteCSVCols: [ paginationId, 'dest_url_id' ],

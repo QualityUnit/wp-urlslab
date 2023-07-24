@@ -35,7 +35,7 @@ export default function SchedulesTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectedRows, selectRow, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
+	const { deleteRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -152,9 +152,7 @@ export default function SchedulesTable( { slug } ) {
 				noExport
 				noImport
 				noDelete
-				selectedRows={ selectedRows }
-				onDeleteSelected={ () => deleteSelectedRows( { id: 'urls' } ) }
-				options={ { header, rowEditorCells, title: 'Add schedule', data, slug, url, paginationId, rowToEdit, id: 'urls' } }
+				options={ { header, rowEditorCells, title: 'Add schedule', data, slug, url, paginationId, rowToEdit, id: 'urls', updateAll: true } }
 			/>
 			<Table className="noHeightLimit fadeInto"
 				slug={ slug }

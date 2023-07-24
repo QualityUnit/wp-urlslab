@@ -36,7 +36,7 @@ export default function NotFoundTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
 
-	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -86,10 +86,14 @@ export default function NotFoundTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
-				selectRow( val, cell );
+			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+				cell.row.toggleSelected();
+				selectRows( cell );
 			} } />,
-			header: null,
+			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
+				head.table.toggleAllPageRowsSelected( val );
+				selectRows( val ? head : undefined );
+			} } />,
 		} ),
 		columnHelper.accessor( 'url', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
@@ -173,7 +177,7 @@ export default function NotFoundTable( { slug } ) {
 				options={ {
 					header,
 					rowEditorCells, title: 'Create redirect from this',
-					data, slug: 'redirects', url, paginationId: 'redirect_id', rowToEdit, id: 'url',
+					data, slug: 'redirects', altSlug: slug, url, altPaginationId: paginationId, paginationId: 'redirect_id', rowToEdit, id: 'url',
 					deleteCSVCols: [ paginationId, 'dest_url_id' ],
 				} }
 			/>
