@@ -164,7 +164,6 @@ export default function NotFoundTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				table={ table }
-				selectedRows={ selectedRows }
 				onDeleteSelected={ () => deleteSelectedRows( { id: 'url' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				onUpdate={ ( val ) => {
