@@ -6,7 +6,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	public const ROWS_PER_PAGE = 30;
 	public const MAX_ROWS_PER_PAGE = 10000;
 
-	abstract public function get_row_object( $params = array() ): Urlslab_Data;
+	abstract public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data;
 
 	abstract public function get_editable_columns(): array;
 
@@ -17,7 +17,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	 */
 	public function create_item( $request ) {
 		try {
-			$row = $this->get_row_object();
+			$row = $this->get_row_object( array(), false );
 			foreach ( $row->get_columns() as $column => $format ) {
 				if ( $request->has_param( $column ) ) {
 					$row->set_public( $column, $request->get_param( $column ) );
@@ -118,11 +118,11 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		$rows = array();
 
 		foreach ( $request->get_json_params()['rows'] as $row ) {
-			$row_obj = $this->get_row_object( (array) $row );
+			$row_obj = $this->get_row_object( (array) $row, false );
 
 			try {
 				$this->validate_item( $row_obj );
-				$rows[] = $this->before_import( $row_obj );
+				$rows[] = $this->before_import( $row_obj, $row );
 			} catch ( Exception $e ) {
 			}
 		}
@@ -263,7 +263,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		throw new Exception( 'Missing implementation' );
 	}
 
-	protected function before_import( Urlslab_Data $row_obj ): Urlslab_Data {
+	protected function before_import( Urlslab_Data $row_obj, array $row ): Urlslab_Data {
 		return $row_obj;
 	}
 

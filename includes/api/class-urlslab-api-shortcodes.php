@@ -49,6 +49,12 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 								}
 							},
 						),
+						'shortcode_name' => array(
+							'required'          => true,
+							'validate_callback' => function( $param ) {
+								return is_string( $param ) && strlen( $param ) <= 255 && strlen( $param ) > 0;
+							},
+						),
 						'semantic_context' => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
@@ -209,12 +215,12 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 		return new WP_REST_Response( $rows, 200 );
 	}
 
-	public function get_row_object( $params = array() ): Urlslab_Data {
-		return new Urlslab_Generator_Shortcode_Row( $params );
+	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
+		return new Urlslab_Generator_Shortcode_Row( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {
-		return array( 'semantic_context', 'prompt', 'default_value', 'url_filter', 'status', 'model', 'template', 'shortcode_type' );
+		return array( 'shortcode_name', 'semantic_context', 'prompt', 'default_value', 'url_filter', 'status', 'model', 'template', 'shortcode_type' );
 	}
 
 	/**

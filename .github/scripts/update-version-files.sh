@@ -9,4 +9,3 @@ fi
 
 sed -i -E "s/Version: .*/Version: ${PACKAGE_VERSION}/g" urlslab.php
 sed -i -E "s/URLSLAB_VERSION', '.*'/URLSLAB_VERSION', '${PACKAGE_VERSION}'/g" urlslab.php
-sed -i -E "s/Stable tag: .*/Stable tag: ${PACKAGE_VERSION}/g" readme.txt

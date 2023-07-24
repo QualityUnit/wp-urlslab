@@ -124,13 +124,14 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 			Urlslab_Api_Screenshots::SLUG => __( 'Screenshots', 'urlslab' ),
 			Urlslab_Api_Search_Replace::SLUG => __( 'Search & Replace', 'urlslab' ),
 			Urlslab_Api_Urls::SLUG => __( 'Links Manager', 'urlslab' ),
+			Urlslab_Api_Faq::SLUG => __( 'Faq', 'urlslab' ),
 		);
 
 		return new WP_REST_Response( $rows, 200 );
 	}
 
-	public function get_row_object( $params = array() ): Urlslab_Data {
-		return new Urlslab_Label_Row( $params );
+	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
+		return new Urlslab_Label_Row( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {

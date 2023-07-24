@@ -35,7 +35,8 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook', 1000 );
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_head_content', $this, 'content_hook' );
-		Urlslab_Loader::get_instance()->add_filter( 'urlslab_raw_content', $this, 'minify_content', 0 );
+		Urlslab_Loader::get_instance()->add_filter( 'urlslab_raw_head_content_final', $this, 'minify_head_content', 0 );
+		Urlslab_Loader::get_instance()->add_filter( 'urlslab_raw_body_content_final', $this, 'minify_body_content', 0 );
 	}
 
 	public function get_widget_labels(): array {
@@ -47,7 +48,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Html Minification' );
+		return __( 'HTML Minification' );
 	}
 
 	public function get_widget_description(): string {
@@ -369,8 +370,17 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		}
 	}
 
-	public function minify_content( $content ) {
-		if ( empty( $content ) || ! $this->get_option( self::SETTING_NAME_HTML_MINIFICATION ) || false === strpos( $content, '<html' ) ) {
+	public function minify_head_content( $content ) {
+		return $this->minify_content( $content, true );
+	}
+
+	public function minify_body_content( $content ) {
+		return $this->minify_content( $content );
+	}
+
+
+	public function minify_content( $content, bool $is_head = false ) {
+		if ( empty( $content ) || is_404() || ! $this->get_option( self::SETTING_NAME_HTML_MINIFICATION ) ) {
 			return $content;
 		}
 		try {
@@ -380,8 +390,14 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			$htmlMin->doSumUpWhitespace( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_WHITESPACES ) );
 			$htmlMin->doRemoveWhitespaceAroundTags( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_WHITESPACES ) );
 			$htmlMin->doOptimizeAttributes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES ) );
-			$htmlMin->doRemoveHttpPrefixFromAttributes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_REMOVE_HTTP_PREFIX ) );
-			$htmlMin->doRemoveHttpsPrefixFromAttributes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_REMOVE_HTTP_PREFIX ) );
+			$htmlMin->doKeepHttpAndHttpsPrefixOnExternalAttributes( true );
+			if ( $is_head ) {
+				$htmlMin->doRemoveHttpPrefixFromAttributes( false );
+				$htmlMin->doRemoveHttpsPrefixFromAttributes( false );
+			} else {
+				$htmlMin->doRemoveHttpPrefixFromAttributes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_REMOVE_HTTP_PREFIX ) );
+				$htmlMin->doRemoveHttpsPrefixFromAttributes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_REMOVE_HTTP_PREFIX ) );
+			}
 			$htmlMin->doKeepHttpAndHttpsPrefixOnExternalAttributes( true );
 			$htmlMin->doRemoveDefaultAttributes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES ) );
 			$htmlMin->doRemoveDeprecatedAnchorName( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_DEPRECATED ) );
@@ -394,7 +410,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			$htmlMin->doRemoveValueFromEmptyInput( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES ) );
 			$htmlMin->doSortCssClassNames( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_SORT ) );
 			$htmlMin->doSortHtmlAttributes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_SORT ) );
-			$htmlMin->doRemoveSpacesBetweenTags( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_WHITESPACES ) );
+			$htmlMin->doRemoveSpacesBetweenTags( $is_head && $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_WHITESPACES ) );
 			$htmlMin->doRemoveOmittedQuotes( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_REMOVE_OMITTED ) );
 			$htmlMin->doRemoveOmittedHtmlTags( $this->get_option( self::SETTING_NAME_HTML_MINIFICATION_REMOVE_OMITTED ) );
 

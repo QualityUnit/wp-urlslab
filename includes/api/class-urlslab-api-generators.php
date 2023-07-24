@@ -129,12 +129,6 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 								return is_string( $param );
 							},
 						),
-						'tone'             => array(
-							'required'          => false,
-							'validate_callback' => function ( $param ) {
-								return is_string( $param );
-							},
-						),
 						'model'             => array(
 							'required'          => false,
 							'validate_callback' => function ( $param ) {
@@ -506,7 +500,6 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 	public function get_youtube_augmentation( WP_REST_Request $request ) {
 		$user_prompt = $request->get_param( 'user_prompt' );
-		$aug_tone = $request->get_param( 'tone' );
 		$aug_lang = $request->get_param( 'lang' );
 		$aug_model = $request->get_param( 'model' );
 		$yt_id = $request->get_param( 'yt_id' );
@@ -561,10 +554,6 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$command = 'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Generator_Result_Row::DO_NOT_KNOW . "!\n" . $user_prompt .
 			"\nOUTPUT Language should be in: $aug_lang ";
 
-		if ( ! empty( $aug_tone ) ) {
-			$command .= "\nOUTPUT TONE: $aug_tone";
-		}
-
 		$command .= "\n\n--VIDEO CAPTIONS:\n{context}\n--VIDEO CAPTIONS END\nOUTPUT:";
 		$prompt->setPromptTemplate( $command );
 		$prompt->setDocumentTemplate( $yt_data->get_captions() );
@@ -586,8 +575,8 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		}
 	}
 
-	public function get_row_object( $params = array() ): Urlslab_Data {
-		return new Urlslab_Generator_Result_Row( $params );
+	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
+		return new Urlslab_Generator_Result_Row( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {

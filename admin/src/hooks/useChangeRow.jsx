@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { deleteRow as del } from '../api/deleteTableData';
 import { postFetch } from '../api/fetching';
@@ -9,36 +9,49 @@ import { setNotification } from './useNotifications';
 export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const queryClient = useQueryClient();
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const [ table, setTable ] = useState( );
 	const [ selectedRows, setSelectedRows ] = useState( [] );
-	const [ responseCounter, setResponseCounter ] = useState( 0 );
+	let rowIndex = 0;
 
-	const { filters, sorting } = url;
+	const { filters, sorting = [] } = url || {};
 
-	const getRowId = useCallback( ( cell, optionalSelector ) => {
-		if ( optionalSelector ) {
-			return `${ cell.row.original[ paginationId ] }/${ cell.row.original[ optionalSelector ] }`;
+	useEffect( () => {
+		if ( table && ! table.getSelectedRowModel().flatRows.length ) {
+			setTable();
 		}
-		return cell.row.original[ paginationId ];
+	}, [ table ] );
+
+	const getRowId = useCallback( ( tableElem, optionalSelector ) => {
+		const row = tableElem.row || tableElem;
+		if ( optionalSelector ) {
+			return `${ row.original[ paginationId ] }/${ row.original[ optionalSelector ] }`;
+		}
+		return row.original[ paginationId ];
 	}, [ paginationId ] );
 
 	const insertNewRow = useMutation( {
-		mutationFn: async ( { editedRow } ) => {
+		mutationFn: async ( { editedRow, updateAll } ) => {
 			setNotification( slug, { message: 'Adding row…', status: 'info' } );
 			const response = await postFetch( `${ slug }/create`, editedRow );
-			return { response };
+			return { response, updateAll };
 		},
-		onSuccess: async ( { response } ) => {
+		onSuccess: async ( { response, updateAll } ) => {
 			const { ok } = await response;
 			if ( ok ) {
-				queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
+				if ( updateAll ) {
+					queryClient.invalidateQueries( [ slug ] );
+				}
+				if ( ! updateAll ) {
+					queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
+				}
 				setNotification( slug, { message: 'Row has been added', status: 'success' } );
 				return false;
 			}
 			setNotification( slug, { message: 'Adding row failed', status: 'error' } );
 		},
 	} );
-	const insertRow = ( { editedRow } ) => {
-		insertNewRow.mutate( { editedRow } );
+	const insertRow = ( { editedRow, updateAll } ) => {
+		insertNewRow.mutate( { editedRow, updateAll } );
 	};
 
 	const updateRowData = useMutation( {
@@ -46,7 +59,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 			const { editedRow, newVal, cell, customEndpoint, changeField, optionalSelector, id } = opts;
 
 			// Updating one cell value only
-			if ( newVal ) {
+			if ( newVal !== undefined ) {
 				setNotification( slug, { message: `Updating row${ id ? ' “' + cell.row.original[ id ] + '”' : '' }…`, status: 'info' } );
 				const cellId = cell.column.id;
 				const newPagesArray = data?.pages.map( ( page ) =>
@@ -112,41 +125,47 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 				return { response, editedRow, id: editedRow[ id ] };
 			}
 		},
-		onSuccess: ( { response, id } ) => {
+		onSuccess: ( { response, id, updateAll } ) => {
 			const { ok } = response;
 			if ( ok ) {
 				setNotification( slug, { message: `Row${ id ? ' “' + id + '”' : '' } has been updated`, status: 'success' } );
-				queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
+				if ( ! updateAll ) {
+					queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
+				}
+				if ( updateAll ) {
+					queryClient.invalidateQueries( [ slug ] );
+				}
 			}
 		},
 	} );
 
-	const updateRow = ( { newVal, cell, customEndpoint, changeField, optionalSelector, id } ) => {
-		if ( ! newVal ) { // Editing whole row = parameters are preset
+	const updateRow = ( { newVal, cell, customEndpoint, changeField, optionalSelector, id, updateAll } ) => {
+		if ( newVal === undefined ) { // Editing whole row = parameters are preset
 			setRowToEdit( cell.row.original );
 			return false;
 		}
-		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, optionalSelector, id } );
+		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, optionalSelector, id, updateAll } );
 	};
 
-	const saveEditedRow = ( { editedRow, id } ) => {
-		updateRowData.mutate( { editedRow, id } );
+	const saveEditedRow = ( { editedRow, id, updateAll } ) => {
+		updateRowData.mutate( { editedRow, id, updateAll } );
 	};
 
-	const processDeletedPages = useCallback( ( cell ) => {
+	const processDeletedPages = useCallback( ( tableElem ) => {
 		let deletedPagesArray = data?.pages;
-		if ( cell.row.getIsSelected() ) {
-			cell.row.toggleSelected();
-		}
-		setSelectedRows( [] );
-		return deletedPagesArray = deletedPagesArray.map( ( page ) => page.filter( ( row ) => row[ paginationId ] !== getRowId( cell ) ) ) ?? [];
+
+		deletedPagesArray = deletedPagesArray.map( ( page ) => page.filter( ( row ) => row[ paginationId ] !== getRowId( tableElem ) ) ) ?? [];
+
+		return deletedPagesArray;
 	}, [ data?.pages, getRowId, paginationId ] );
 
 	const deleteSelectedRow = useMutation( {
 		mutationFn: async ( opts ) => {
-			const { deletedPagesArray, cell, optionalSelector, id } = opts;
+			const { deletedPagesArray, cell, optionalSelector, id, updateAll } = opts;
+			const row = cell.row || cell;
+
 			setNotification( slug, {
-				message: `Deleting row${ id ? ' “' + cell.row.original[ id ] + '”' : '' }…`, status: 'info',
+				message: `Deleting row${ id ? ' “' + row.original[ id ] + '”' : '' }…`, status: 'info',
 			} );
 
 			queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => ( {
@@ -155,18 +174,24 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 			} ) );
 
 			const response = await del( `${ slug }/${ getRowId( cell, optionalSelector ) }` );
-			return { response, id: cell.row.original[ id ] };
+			return { response, id: row.original[ id ], updateAll };
 		},
-		onSuccess: async ( { response, id } ) => {
+		onSuccess: ( { response, id, updateAll } ) => {
 			const { ok } = response;
 			if ( ok ) {
 				setNotification( slug, { message: `Row${ id ? ' “' + id + '”' : '' } has been deleted`, status: 'success' } );
-				setResponseCounter( responseCounter - 1 );
+				rowIndex += 1;
 			}
 
-			if ( responseCounter === 0 || responseCounter === 1 ) {
-				await queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
-				await queryClient.invalidateQueries( [ slug, 'count' ] );
+			if ( rowIndex === 1 ) {
+				setTable();
+				if ( ! updateAll ) {
+					queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
+					queryClient.invalidateQueries( [ slug, 'count' ] );
+					return false;
+				}
+				queryClient.invalidateQueries( [ slug ] );
+				queryClient.invalidateQueries( [ slug, 'count' ] );
 			}
 
 			if ( ! ok ) {
@@ -175,30 +200,38 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 		},
 	} );
 
-	const deleteRow = useCallback( ( { cell, optionalSelector, id } ) => {
-		setResponseCounter( 1 );
-		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), cell, optionalSelector, id } );
+	const deleteRow = useCallback( ( { cell, optionalSelector, id, updateAll } ) => {
+		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), cell, optionalSelector, id, updateAll } );
 	}, [ processDeletedPages, deleteSelectedRow ] );
 
 	const deleteSelectedRows = async ( { optionalSelector, id } ) => {
 		// Multiple rows delete
-		setResponseCounter( selectedRows.length );
+		const selectedRowsInTable = table?.getSelectedRowModel().flatRows || [];
+		table?.toggleAllPageRowsSelected( false );
 
-		selectedRows.map( ( cell ) => {
-			deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), cell, optionalSelector, id } );
+		selectedRowsInTable.map( ( row ) => {
+			deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( row ), cell: row, optionalSelector, id } );
 			return false;
 		} );
 	};
 
-	const selectRow = ( isSelected, cell ) => {
-		cell.row.toggleSelected();
-		if ( ! isSelected ) {
-			setSelectedRows( selectedRows.filter( ( item ) => item !== cell ) );
+	const selectRows = ( tableElem, remove = false ) => {
+		if ( tableElem && ! remove ) {
+			setTable( tableElem?.table );
+			setSelectedRows( ( prevSelectedRows ) => [ ...prevSelectedRows, tableElem ] );
+			return false;
 		}
-		if ( isSelected ) {
-			setSelectedRows( selectedRows.concat( cell ) );
+		if ( remove ) {
+			setTable( tableElem?.table );
+			setSelectedRows( selectedRows.filter( ( item ) => item.row.id !== tableElem.row.id ) );
+			return false;
 		}
+		setTable();
 	};
 
-	return { selectedRows, insertRow, selectRow, deleteRow, deleteSelectedRows, updateRow, saveEditedRow };
+	const clearRows = () => {
+		setSelectedRows( [ ] );
+	};
+
+	return { selectedRows, insertRow, selectRows, deleteRow, clearRows, deleteSelectedRows, updateRow, saveEditedRow };
 }

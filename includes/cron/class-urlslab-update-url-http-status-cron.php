@@ -33,6 +33,21 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 		}
 
 		$url = new Urlslab_Url_Row( $url_row );
+
+		if ( ! $url->get_url()->is_url_valid() ) {
+			$url->set_http_status( Urlslab_Url_Row::HTTP_STATUS_CLIENT_ERROR );
+			$url->update();
+
+			return true;
+		}
+
+		if ( $url->get_url()->is_url_blacklisted() ) {
+			$url->set_http_status( Urlslab_Url_Row::HTTP_STATUS_OK );
+			$url->update();
+
+			return true;
+		}
+
 		if ( ! strlen( trim( $url->get_url_title() ) ) ) {
 			$url->set_url_title( Urlslab_Url_Row::VALUE_EMPTY );
 		}
@@ -141,12 +156,31 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 								$url->set_url_h1( Urlslab_Url_Row::VALUE_EMPTY );
 							}
 
+							//process lang attribute
+							$fp = fopen( $page_content_file_name, 'r' );
+							if ( $fp ) {
+								$html_tag = fread( $fp, 1000 );
+								fclose( $fp );
+
+								if ( strlen( $html_tag ) ) {
+									if ( preg_match( '/<html[^>]+lang=([^\s>]+)/i', $html_tag, $match ) ) {
+										$url->set_url_lang( trim( $match[1], '"\' ' ) );
+									} else {
+										$url->set_url_lang( Urlslab_Url_Row::VALUE_EMPTY );
+									}
+								}
+							}
+
+
 							$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
 							$document->encoding            = 'utf-8';
 							$document->strictErrorChecking = false; // phpcs:ignore
+							$libxml_previous_state         = libxml_use_internal_errors( true );
 							$html_text                     = $this->get_html_from_tag( 'head', $page_content_file_name );
 							if ( strlen( $html_text ) ) {
-								@$document->loadHTML( mb_convert_encoding( $html_text, 'HTML-ENTITIES', 'utf-8' ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE | LIBXML_NOWARNING );
+								$document->loadHTML( mb_convert_encoding( $html_text, 'HTML-ENTITIES', 'utf-8' ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE | LIBXML_NOWARNING );
+								libxml_clear_errors();
+								libxml_use_internal_errors( $libxml_previous_state );
 								$xpath            = new DOMXPath( $document );
 								$metadescriptions = $xpath->evaluate( '//meta[@name="description"]/@content' );
 								if ( $metadescriptions->length > 0 ) {
@@ -154,6 +188,13 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 								}
 								if ( empty( $url->get_url_meta_description() ) ) {
 									$url->set_url_meta_description( Urlslab_Url_Row::VALUE_EMPTY );
+								}
+								if ( empty( $url->get_url_lang() ) || Urlslab_Url_Row::VALUE_EMPTY == $url->get_url_lang() ) {
+									$xpath     = new DOMXPath( $document );
+									$languages = $xpath->evaluate( '//meta[@http-equiv="Content-Language"]/@content' );
+									if ( $languages->length > 0 ) {
+										$url->set_url_lang( $languages->item( 0 )->value );
+									}
 								}
 							}
 						} catch ( Exception $e ) {
@@ -177,7 +218,7 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 					$url_row_obj = new Urlslab_Url_Row();
 					$url_row_obj->insert_urls( array( $final_url ) );
 				}
-			}       
+			}
 		} catch ( Exception $e ) {
 			$url->set_url_title( Urlslab_Url_Row::VALUE_EMPTY );
 			$url->set_url_h1( Urlslab_Url_Row::VALUE_EMPTY );

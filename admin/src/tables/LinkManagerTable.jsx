@@ -1,5 +1,20 @@
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, LinkIcon, Trash, SingleSelectMenu, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu,
+	useInfiniteFetch,
+	ProgressBar,
+	SortBy,
+	Tooltip,
+	LinkIcon,
+	Trash,
+	SingleSelectMenu,
+	Checkbox,
+	Loader,
+	Table,
+	ModuleViewHeaderBottom,
+	TooltipSortingFiltering,
+	DateTimeFormat,
+	TagsMenu,
+	Button,
+	InputField,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -23,9 +38,18 @@ export default function LinkManagerTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
+
+	const showChanges = ( cell ) => {
+		const { http_status, urlslab_scr_timestamp, urlslab_sum_timestamp } = cell?.row?.original;
+		if ( http_status > 299 || http_status <= 0 ) {
+			return false;
+		}
+
+		return urlslab_scr_timestamp !== 0 || urlslab_sum_timestamp !== 0;
+	};
 
 	const setUnifiedPanel = ( cell ) => {
 		const origCell = cell?.row.original;
@@ -73,12 +97,12 @@ export default function LinkManagerTable( { slug } ) {
 		url_name: __( 'URL' ),
 		url_title: __( 'Title' ),
 		url_h1: __( 'H1' ),
+		url_lang: __( 'Language' ),
 		url_meta_description: __( 'Description' ),
 		url_summary: __( 'Summary' ),
+		url_priority: __( 'SEO Rank' ),
 		http_status: __( 'Status' ),
 		labels: __( 'Tags' ),
-		// sum_status: __( 'Summary Status' ),
-		// update_sum_date: __( 'Summary Updated' ),
 		url_links_count: __( 'Outgoing links count' ),
 		url_usage_count: __( 'Incoming links count' ),
 		visibility: __( 'Visibility' ),
@@ -88,10 +112,14 @@ export default function LinkManagerTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
-				selectRow( val, cell );
+			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+				cell.row.toggleSelected();
+				selectRows( cell );
 			} } />,
-			header: null,
+			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
+				head.table.toggleAllPageRowsSelected( val );
+				selectRows( val ? head : undefined );
+			} } />,
 		} ),
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
@@ -118,6 +146,12 @@ export default function LinkManagerTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_summary }</SortBy>,
 			size: 200,
+		} ),
+		columnHelper.accessor( 'url_priority', {
+			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() } min="0" max="100" onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_priority }</SortBy>,
+			size: 30,
 		} ),
 		columnHelper?.accessor( 'http_status', {
 			filterValMenu: httpStatusTypes,
@@ -173,11 +207,30 @@ export default function LinkManagerTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_usage_count }</SortBy>,
 			size: 70,
 		} ),
+		columnHelper.accessor( 'url_lang', {
+			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
+			header: header.url_lang,
+			size: 30,
+		} ),
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
 			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.labels,
 			size: 160,
+		} ),
+		columnHelper.accessor( 'changesPanel', {
+			className: 'changesPanel',
+			cell: ( cell ) => showChanges( cell ) &&
+			<Button onClick={ () => {
+				setOptions( { changesPanel: { title: cell.row.original.url_name, slug: `url/${ cell.row.original.url_id }/changes` } } );
+				activatePanel( 'changesPanel' );
+			} }
+			className="small active"
+			>
+				{ __( 'Show changes' ) }
+			</Button>,
+			header: null,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
@@ -195,7 +248,6 @@ export default function LinkManagerTable( { slug } ) {
 			<ModuleViewHeaderBottom
 				table={ table }
 				noImport
-				selectedRows={ selectedRows }
 				onDeleteSelected={ () => deleteSelectedRows( { id: 'url_name' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ {

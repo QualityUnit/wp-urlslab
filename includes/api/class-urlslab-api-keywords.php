@@ -50,7 +50,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 						'kw_priority' => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return is_numeric( $param );
+								return is_numeric( $param ) && 0 <= $param && 100 >= $param;
 							},
 						),
 						'lang'        => array(
@@ -215,7 +215,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 					'required'          => false,
 					'default'           => 10,
 					'validate_callback' => function( $param ) {
-						return is_numeric( $param );
+						return is_numeric( $param ) && 0 <= $param && 100 >= $param;
 					},
 				),
 				'lang'        => array(
@@ -521,7 +521,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		$rows          = array();
 
 		foreach ( $request->get_json_params()['rows'] as $row ) {
-			$obj = $this->get_row_object( (array) $row );
+			$obj = $this->get_row_object( (array) $row, false );
 
 			try {
 				$schedule_urls[ $obj->get_url_link() ] = new Urlslab_Url( $obj->get_url_link() );
@@ -546,8 +546,8 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		return new WP_REST_Response( $result, 200 );
 	}
 
-	public function get_row_object( $params = array() ): Urlslab_Data {
-		return new Urlslab_Keyword_Row( $params );
+	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
+		return new Urlslab_Keyword_Row( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {

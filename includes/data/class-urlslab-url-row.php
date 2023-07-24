@@ -17,6 +17,13 @@ class Urlslab_Url_Row extends Urlslab_Data {
 	public const SCR_STATUS_UPDATING = 'U';
 	public const SCR_STATUS_ACTIVE = 'A';
 
+	public const FAQ_STATUS_ERROR = 'E';
+	public const FAQ_STATUS_NEW = 'N';
+	public const FAQ_STATUS_NOT_USED = '';
+	public const FAQ_STATUS_PENDING = 'P';
+	public const FAQ_STATUS_ACTIVE = 'A';
+	public const FAQ_STATUS_DISABLED = 'D';
+
 	public const SUM_STATUS_ERROR = 'E';
 	public const SUM_STATUS_NEW = 'N';
 	public const SUM_STATUS_PENDING = 'P';
@@ -49,7 +56,9 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$this->set_url_id( $url['url_id'] ?? 0, $loaded_from_db );
 		$this->set_final_url_id( $url['final_url_id'] ?? $this->get_url_id(), $loaded_from_db );
 		$this->set_url_name( $url['url_name'] ?? '', $loaded_from_db );
+		$this->set_url_priority( $url['url_priority'] ?? $this->compute_default_url_priority(), $loaded_from_db );
 		$this->set_scr_status( $url['scr_status'] ?? '', $loaded_from_db );
+		$this->set_faq_status( $url['faq_status'] ?? self::FAQ_STATUS_NOT_USED, $loaded_from_db );
 		$this->set_sum_status( $url['sum_status'] ?? '', $loaded_from_db );
 		$this->set_http_status( $url['http_status'] ?? self::HTTP_STATUS_NOT_PROCESSED, $loaded_from_db );
 		$this->set_urlslab_domain_id( $url['urlslab_domain_id'] ?? '', $loaded_from_db );
@@ -58,9 +67,11 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$this->set_urlslab_sum_timestamp( $url['urlslab_sum_timestamp'] ?? 0, $loaded_from_db );
 		$this->set_update_scr_date( $url['update_scr_date'] ?? Urlslab_Data::get_now(), $loaded_from_db );
 		$this->set_update_sum_date( $url['update_sum_date'] ?? Urlslab_Data::get_now(), $loaded_from_db );
+		$this->set_update_faq_date( $url['update_faq_date'] ?? Urlslab_Data::get_now(), $loaded_from_db );
 		$this->set_update_http_date( $url['update_http_date'] ?? Urlslab_Data::get_now(), $loaded_from_db );
 		$this->set_url_title( $url['url_title'] ?? '', $loaded_from_db );
 		$this->set_url_h1( $url['url_h1'] ?? '', $loaded_from_db );
+		$this->set_url_lang( $url['url_lang'] ?? '', $loaded_from_db );
 		$this->set_url_meta_description( $url['url_meta_description'] ?? '', $loaded_from_db );
 		$this->set_url_summary( $url['url_summary'] ?? '', $loaded_from_db );
 		$this->set_visibility( $url['visibility'] ?? self::VISIBILITY_VISIBLE, $loaded_from_db );
@@ -101,18 +112,22 @@ class Urlslab_Url_Row extends Urlslab_Data {
 			'url_name'              => '%s',
 			'scr_status'            => '%s',
 			'sum_status'            => '%s',
+			'faq_status'            => '%s',
 			'http_status'           => '%d',
 			'urlslab_domain_id'     => '%s',
 			'urlslab_url_id'        => '%s',
 			'update_sum_date'       => '%s',
 			'update_scr_date'       => '%s',
+			'update_faq_date'       => '%s',
 			'update_http_date'      => '%s',
 			'urlslab_scr_timestamp' => '%d',
 			'urlslab_sum_timestamp' => '%d',
 			'url_title'             => '%s',
 			'url_h1'                => '%s',
+			'url_lang'              => '%s',
 			'url_meta_description'  => '%s',
 			'url_summary'           => '%s',
+			'url_priority'          => '%d',
 			'visibility'            => '%s',
 			'url_type'              => '%s',
 			'rel_schedule'          => '%s',
@@ -137,12 +152,24 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		return $this->get( 'scr_status' );
 	}
 
+	public function get_faq_status(): string {
+		return $this->get( 'faq_status' );
+	}
+
 	public function get_sum_status(): string {
 		return $this->get( 'sum_status' );
 	}
 
 	public function get_http_status(): int {
 		return $this->get( 'http_status' );
+	}
+
+	public function get_url_priority(): int {
+		return $this->get( 'url_priority' );
+	}
+
+	public function set_url_priority( int $url_priority, bool $loaded_from_db = false ): void {
+		$this->set( 'url_priority', $url_priority, $loaded_from_db );
 	}
 
 	public function is_http_redirect(): bool {
@@ -191,6 +218,10 @@ class Urlslab_Url_Row extends Urlslab_Data {
 
 	public function get_url_h1(): string {
 		return $this->get( 'url_h1' );
+	}
+
+	public function get_url_lang(): string {
+		return $this->get( 'url_lang' );
 	}
 
 	public function get_url_meta_description(): string {
@@ -242,6 +273,13 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		}
 	}
 
+	public function set_faq_status( string $faq_status, $loaded_from_db = false ): void {
+		$this->set( 'faq_status', $faq_status, $loaded_from_db );
+		if ( ! $loaded_from_db ) {
+			$this->set_update_faq_date( self::get_now() );
+		}
+	}
+
 	public function set_sum_status( string $sum_status, $loaded_from_db = false ): void {
 		$this->set( 'sum_status', $sum_status, $loaded_from_db );
 		if ( ! $loaded_from_db ) {
@@ -276,6 +314,10 @@ class Urlslab_Url_Row extends Urlslab_Data {
 		$this->set( 'update_scr_date', $update_scr_date, $loaded_from_db );
 	}
 
+	public function set_update_faq_date( string $update_faq_date, $loaded_from_db = false ): void {
+		$this->set( 'update_faq_date', $update_faq_date, $loaded_from_db );
+	}
+
 	public function set_update_sum_date( string $update_sum_date, $loaded_from_db = false ): void {
 		$this->set( 'update_sum_date', $update_sum_date, $loaded_from_db );
 	}
@@ -290,6 +332,10 @@ class Urlslab_Url_Row extends Urlslab_Data {
 
 	public function set_url_h1( string $url_h1, $loaded_from_db = false ): void {
 		$this->set( 'url_h1', $url_h1, $loaded_from_db );
+	}
+
+	public function set_url_lang( string $url_lang, $loaded_from_db = false ): void {
+		$this->set( 'url_lang', $url_lang, $loaded_from_db );
 	}
 
 
@@ -521,5 +567,29 @@ class Urlslab_Url_Row extends Urlslab_Data {
 
 	public function get_domain_name(): string {
 		return $this->get_url()->get_domain_name();
+	}
+
+	public function request_faq_schedule() {
+		if ( empty( $this->get_faq_status() ) ) {
+			$this->set_faq_status( Urlslab_Url_Row::FAQ_STATUS_NEW );
+			$this->update();
+		}
+	}
+
+	private function compute_default_url_priority(): int {
+		$priority = 30;
+		if ( strlen( $this->get_url_name() ) ) {
+			$path     = trim( $this->get_url()->get_url_path(), '/' );
+			$priority = strlen( $path ) - strlen( str_replace( '/', '', $path ) );
+			if ( 0 === $priority ) {
+				$priority = 1;
+			}
+		}
+
+		if ( 100 < $priority ) {
+			$priority = 100;
+		}
+
+		return $priority;
 	}
 }

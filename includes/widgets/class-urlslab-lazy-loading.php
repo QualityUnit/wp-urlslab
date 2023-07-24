@@ -270,9 +270,9 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 				global $wpdb;
 				$rows       = array();
 				$rows[0]    = __( 'No generator is attached to YouTube videos' );
-				$generators = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . ' WHERE shortcode_type = %s', Urlslab_Generator_Shortcode_Row::TYPE_VIDEO ), ARRAY_A ); // phpcs:ignore
+				$generators = $wpdb->get_results( $wpdb->prepare( 'SELECT shortcode_id, shortcode_name FROM ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . ' WHERE shortcode_type = %s', Urlslab_Generator_Shortcode_Row::TYPE_VIDEO ), ARRAY_A ); // phpcs:ignore
 				foreach ( $generators as $generator ) {
-					$rows[ $generator['shortcode_id'] ] = '[ ' . $generator['shortcode_id'] . ' ] ' . substr( $generator['prompt'], 0, 60 ) . '...';
+					$rows[ $generator['shortcode_id'] ] = $generator['shortcode_name'];
 				}
 
 				return $rows;
@@ -844,8 +844,12 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			if ( strlen( $shortcode ) ) {
 				$youtube_shortcode_node = $document->createElement( 'div' );
 				$youtube_shortcode_node->setAttribute( 'class', 'youtube_urlslab_loader--shortcode' );
-				$dom = new DOMDocument();
+				$dom                      = new DOMDocument();
+				$dom->strictErrorChecking = false; // phpcs:ignore
+				$libxml_previous_state    = libxml_use_internal_errors( true );
 				$dom->loadHTML( '<?xml encoding="utf-8" ?>' . $shortcode, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
+				libxml_clear_errors();
+				libxml_use_internal_errors( $libxml_previous_state );
 
 				foreach ( $dom->childNodes as $childNode ) {
 					$youtube_shortcode_node->appendChild( $document->importNode( $childNode, true ) );

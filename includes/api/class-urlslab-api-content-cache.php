@@ -88,8 +88,8 @@ class Urlslab_Api_Content_Cache extends Urlslab_Api_Table {
 		return $sql;
 	}
 
-	public function get_row_object( $params = array() ): Urlslab_Data {
-		return new Urlslab_Content_Cache_Row( $params );
+	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
+		return new Urlslab_Content_Cache_Row( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {

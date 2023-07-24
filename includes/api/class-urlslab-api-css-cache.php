@@ -96,8 +96,8 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 		return new WP_REST_Response( $rows, 200 );
 	}
 
-	public function get_row_object( $params = array() ): Urlslab_Data {
-		return new Urlslab_CSS_Cache_Row( $params );
+	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
+		return new Urlslab_CSS_Cache_Row( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {

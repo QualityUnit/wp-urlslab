@@ -1,0 +1,36 @@
+@use "../../../../../../src/assets/styles/common/variables" as *;
+@use "../common/mixins" as *;
+
+
+input.urlslab-slider[type="range"] {
+    -webkit-appearance: none;
+    background: $grey-light;
+    background-image: linear-gradient(0deg, $saturated-blue, $saturated-blue);
+    background-repeat: no-repeat;
+    border-radius: 20px;
+    width: 100%;
+    height: 10px;
+    margin: 0.25em 0;
+    cursor: pointer;
+
+    @include sliderTrack {
+        -webkit-appearance: none;
+        box-shadow: none;
+        border: none;
+        background: transparent;
+    }
+
+    @include sliderThumb {
+        -webkit-appearance: none;
+
+        @include square(16px);
+        border-radius: 50%;
+        background: $white;
+        background-image: url("../static/media/icon-slider-thumb.svg");
+        background-position: center;
+        background-size: auto 8px;
+        background-repeat: no-repeat;
+        box-shadow: 0 1px 3px rgba($black-real, 0.3);
+
+    }
+}

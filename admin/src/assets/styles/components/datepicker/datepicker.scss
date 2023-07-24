@@ -133,7 +133,7 @@ value-keyword-case */
 .react-datepicker-year-header {
 	margin-top: 0;
 	color: $datepicker__header-color;
-	font-weight: 700;
+	font-weight: 600;
 	font-size: $datepicker__font-size * 1.18;
 }
 
@@ -200,6 +200,7 @@ value-keyword-case */
 	position: relative;
 	top: -1px;
 	font-size: 20px;
+	line-height: 20px;
 	width: 0;
 
 	&::before {

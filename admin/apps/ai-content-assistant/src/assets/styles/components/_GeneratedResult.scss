@@ -1,0 +1,46 @@
+@use "../../../../../../src/assets/styles/common/variables" as *;
+@use "../common/mixins" as *;
+
+
+$button-bottom-margin: 4px;
+
+[id="urlslab-ai-content-assistant"] {
+    .urlslab-GeneratedResult {
+        margin-top: 25px;
+
+        .urlslab-inputField-label {
+            margin-bottom: 10px;
+        }
+
+        textarea.urlslab-input.input__text {
+            padding: 16px;
+        }
+
+        &-action-buttons {
+            margin: 10px 0 calc(10px - $button-bottom-margin);
+
+            .urlslab-button {
+                font-weight: $font-weight-normal;
+                padding-left: 8px;
+                padding-right: 10px;
+
+                &:not(:last-child) {
+                    margin-right: 8px;
+                }
+
+                svg {
+                    margin-right: 2px;
+                }
+            }
+        }
+
+        &-submit-section {
+            margin-top: 30px;
+            margin-bottom: $button-bottom-margin;
+
+            button:not(:last-child) {
+                margin-right: 8px;
+            }
+        }
+    }
+}

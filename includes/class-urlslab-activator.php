@@ -253,6 +253,68 @@ class Urlslab_Activator {
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SEARCH_AND_REPLACE_TABLE . " ADD COLUMN login_status CHAR(1) NOT NULL DEFAULT 'A'" ); // phpcs:ignore
 			}
 		);
+		self::update_step(
+			'2.28.0',
+			function() {
+				self::init_faqs_table();
+				self::init_faq_urls_table();
+			}
+		);
+		self::update_step(
+			'2.28.1',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN update_faq_date DATETIME, ADD COLUMN faq_status char(1) NOT NULL DEFAULT ''" ); // phpcs:ignore
+			}
+		);
+		self::update_step(
+			'2.28.2',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_FAQS_TABLE . ' ADD INDEX idx_questions (question(255))' ); // phpcs:ignore
+			}
+		);
+
+		self::update_step(
+			'2.29.0',
+			function() {
+				global $wpdb;
+                $wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " ADD COLUMN shortcode_name VARCHAR(100) NOT NULL DEFAULT ''" ); // phpcs:ignore
+                $wpdb->query( 'UPDATE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " SET shortcode_name = SUBSTRING(prompt, 0, 100)" ); // phpcs:ignore
+			}
+		);
+		self::update_step(
+			'2.30.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD COLUMN url_lang VARCHAR(15)' ); // phpcs:ignore
+			}
+		);
+		self::update_step(
+			'2.31.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD COLUMN url_priority TINYINT UNSIGNED NOT NULL DEFAULT 30' ); // phpcs:ignore
+				$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . " SET url_priority = 1+10*(LENGTH(TRIM('/' FROM url_name)) - LENGTH(REPLACE(TRIM('/' FROM url_name), '/', '')))" ); // phpcs:ignore
+			}
+		);
+		self::update_step(
+			'2.32.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_RELATED_RESOURCE_TABLE . " ADD COLUMN is_locked char(1) NOT NULL DEFAULT 'N'" ); // phpcs:ignore
+			}
+		);
+		self::update_step(
+			'2.33.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'UPDATE ' . URLSLAB_RELATED_RESOURCE_TABLE . " SET pos = 100 WHERE pos > 100" ); // phpcs:ignore
+				$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . " SET url_priority = 100 WHERE url_priority > 100" ); // phpcs:ignore
+				$wpdb->query( 'UPDATE ' . URLSLAB_FAQ_URLS_TABLE . " SET sorting = 100 WHERE sorting > 100" ); // phpcs:ignore
+				$wpdb->query( 'UPDATE ' . URLSLAB_KEYWORDS_TABLE . " SET kw_priority = 100 WHERE kw_priority > 100" ); // phpcs:ignore
+			}
+		);
 
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -285,6 +347,8 @@ class Urlslab_Activator {
 		self::init_generator_urls_table();
 		self::init_cache_rules_table();
 		self::init_custom_html_rules_table();
+		self::init_faqs_table();
+		self::init_faq_urls_table();
 	}
 
 	private static function init_urls_tables() {
@@ -298,7 +362,9 @@ class Urlslab_Activator {
 			scr_status char(1) NOT NULL,
 			sum_status char(1) NOT NULL,
 			http_status SMALLINT DEFAULT -1, -- -1: not checked, 200: ok, 3xx: redirect, 4xx: client error, 5xx: server error
+			faq_status char(1) NOT NULL DEFAULT '', -- W: waiting data, A: Active, D: Disabled, E: Error, empty - not sheduling
 			update_scr_date DATETIME,
+			update_faq_date DATETIME,
 			update_sum_date DATETIME,
 			update_http_date DATETIME,
 			urlslab_domain_id char(16),
@@ -306,14 +372,16 @@ class Urlslab_Activator {
 			urlslab_scr_timestamp bigint,
 			urlslab_sum_timestamp bigint,
 			url_title	  text,
+			url_lang varchar(15),
 			url_h1	  text,
 			url_meta_description text,
 			url_summary			text,
+			url_priority TINYINT UNSIGNED NOT NULL DEFAULT 30,
 			visibility char(1) NOT NULL DEFAULT 'V', -- V: visible, H: hidden
 			url_type char(1) NOT NULL DEFAULT 'I', -- I: Internal, E: external
 			rel_schedule char(1) NOT NULL DEFAULT '', -- N: New, S: Scheduled, E: Error, empty - not sheduling
 			rel_updated DATETIME,
-      labels VARCHAR(255) NOT NULL DEFAULT '',
+      		labels VARCHAR(255) NOT NULL DEFAULT '',
 			PRIMARY KEY  (url_id),
 			INDEX idx_final_url_id (final_url_id),
 			INDEX idx_scr_changed (update_scr_date, scr_status),
@@ -371,6 +439,7 @@ class Urlslab_Activator {
 							src_url_id bigint NOT NULL,
 							dest_url_id bigint NOT NULL,
 							pos tinyint unsigned default 10,
+							is_locked char(1) NOT NULL DEFAULT 'N', -- Y: locked, N: not locked
 							created_date DATETIME,
 							PRIMARY KEY  (src_url_id,dest_url_id)) {$charset_collate};";
 
@@ -535,6 +604,7 @@ class Urlslab_Activator {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 	}
+
 	private static function init_js_cache_tables() {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
@@ -615,6 +685,7 @@ class Urlslab_Activator {
 		$table_name = URLSLAB_GENERATOR_SHORTCODES_TABLE;
 		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
 						shortcode_id int UNSIGNED NOT NULL AUTO_INCREMENT,
+						shortcode_name VARCHAR(100) NOT NULL DEFAULT '',
 						semantic_context TEXT,
 						prompt TEXT,
 						default_value TEXT,
@@ -723,6 +794,7 @@ class Urlslab_Activator {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 	}
+
 	private static function init_cache_rules_table() {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
@@ -784,6 +856,44 @@ class Urlslab_Activator {
 		dbDelta( $sql );
 	}
 
+
+	private static function init_faqs_table() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$table_name = URLSLAB_FAQS_TABLE;
+		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
+						faq_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+						question VARCHAR(500),
+						answer LONGTEXT,
+						language varchar(10),
+						updated DATETIME,
+						status char(1) DEFAULT 'N',
+						labels VARCHAR(255) NOT NULL DEFAULT '',
+						PRIMARY KEY (faq_id),
+						INDEX idx_questions (question(255))
+        ) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_faq_urls_table() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$table_name = URLSLAB_FAQ_URLS_TABLE;
+		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
+						faq_id INT UNSIGNED NOT NULL,
+						url_id bigint NOT NULL,
+						sorting TINYINT UNSIGNED NOT NULL DEFAULT 1,
+						PRIMARY KEY (faq_id, url_id)
+        ) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
 	private static function init_labels_table() {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
@@ -817,7 +927,7 @@ class Urlslab_Activator {
 			Urlslab_Api_Base::CAPABILITY_TRANSLATE      => true,
 			Urlslab_Api_Base::CAPABILITY_AUGMENT        => true,
 		);
-		add_role( Urlslab_Api_Base::URLSLAB_ROLE_ADMIN, __( 'Urlslab Administrator' ), $admin_capabilities );//phpcs:ignore
+		add_role( Urlslab_Api_Base::URLSLAB_ROLE_ADMIN, __( 'URLsLab Administrator' ), $admin_capabilities );//phpcs:ignore
 
 		$editor_capabilities = array(
 			Urlslab_Api_Base::CAPABILITY_READ      => true,
@@ -826,6 +936,6 @@ class Urlslab_Activator {
 			Urlslab_Api_Base::CAPABILITY_TRANSLATE => true,
 			Urlslab_Api_Base::CAPABILITY_AUGMENT   => true,
 		);
-		add_role( Urlslab_Api_Base::URLSLAB_ROLE_EDITOR, __( 'Urlslab Editor' ), $editor_capabilities );//phpcs:ignore
+		add_role( Urlslab_Api_Base::URLSLAB_ROLE_EDITOR, __( 'URLsLab Editor' ), $editor_capabilities );//phpcs:ignore
 	}
 }

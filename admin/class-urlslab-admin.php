@@ -215,17 +215,17 @@ class Urlslab_Admin {
 	function enqueue_editors_modules( $editor_type ) {
 		foreach ( $this->editor_modules as $module_name ) {
 			$handle = "{$this->urlslab}-{$module_name}";
-			$cssfile = glob( plugin_dir_path( __FILE__ ) . "src/app-{$module_name}/dist/assets/main-*.css" );
-			$jsfile = glob( plugin_dir_path( __FILE__ ) . "src/app-{$module_name}/dist/main-*.js" );
+			$cssfile = glob( plugin_dir_path( __FILE__ ) . "apps/{$module_name}/dist/assets/main-*.css" );
+			$jsfile = glob( plugin_dir_path( __FILE__ ) . "apps/{$module_name}/dist/main-*.js" );
 
 			if ( ! empty( $cssfile ) ) {
-				wp_enqueue_style( $handle, plugin_dir_url( __FILE__ ) . "src/app-{$module_name}/dist/assets/" . basename( $cssfile[0] ), false, $this->version );
+				wp_enqueue_style( $handle, plugin_dir_url( __FILE__ ) . "apps/{$module_name}/dist/assets/" . basename( $cssfile[0] ), false, $this->version );
 			}
 			
 			if ( ! empty( $jsfile ) ) {
 				wp_enqueue_script(
 					$handle,
-					plugin_dir_url( __FILE__ ) . "src/app-{$module_name}/dist/" . basename( $jsfile[0] ),
+					plugin_dir_url( __FILE__ ) . "apps/{$module_name}/dist/" . basename( $jsfile[0] ),
 					array(
 						'react',
 						'react-dom',

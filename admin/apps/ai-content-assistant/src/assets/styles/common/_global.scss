@@ -1,0 +1,88 @@
+@use "../../../../../../src/assets/styles/common/variables" as *;
+@use "mixins" as *;
+
+[id="urlslab-ai-content-assistant"],
+[id="urlslab-ai-content-assistant-button-wrapper"] {
+	font-family: Poppins, sans-serif;
+	font-size: 16px;
+	line-height: 20px;
+	/*reset editors colors*/
+	color: $black;
+
+	*,
+	::before,
+	::after {
+		box-sizing: border-box;
+	}
+
+	.urlslab-button.app-toggle {
+		margin: 0 8px;
+	}
+
+	.hidden {
+		display: none;
+	}
+
+	button {
+
+		@include appearance;
+		outline: none;
+		border: none;
+		background-color: transparent;
+		cursor: pointer;
+	}
+
+	.pos {
+
+		&-relative {
+			position: relative;
+		}
+
+		&-absolute {
+			position: absolute;
+		}
+
+		&-sticky {
+			position: sticky;
+		}
+
+		&-fixed {
+			position: fixed;
+		}
+	}
+
+	.flex {
+		display: flex;
+
+		&-inline {
+			display: inline-flex;
+		}
+
+		&-align-center {
+			align-items: center;
+			align-content: center;
+		}
+
+		&-justify-center {
+			justify-content: center;
+		}
+
+		&-justify-end {
+			justify-content: flex-end;
+		}
+
+		&-justify-space-between {
+			justify-content: space-between;
+		}
+
+		&-wrap {
+			flex-wrap: wrap;
+		}
+
+		&-column {
+			flex-direction: column;
+		}
+
+	}
+
+}

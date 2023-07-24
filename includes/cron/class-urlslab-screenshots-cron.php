@@ -141,6 +141,9 @@ class Urlslab_Screenshots_Cron extends Urlslab_Cron {
 					break;
 
 				case DomainDataRetrievalScreenshotResponse::SCREENSHOT_STATUS_UPDATING:
+					$url_objects[ $id ]->set_urlslab_domain_id( $screenshot->getDomainId() );
+					$url_objects[ $id ]->set_urlslab_url_id( $screenshot->getUrlId() );
+					$url_objects[ $id ]->set_urlslab_scr_timestamp( $screenshot->getScreenshotId() );
 					$url_objects[ $id ]->set_scr_status( Urlslab_Url_Row::SCR_STATUS_UPDATING );
 					$url_objects[ $id ]->update();
 					break;

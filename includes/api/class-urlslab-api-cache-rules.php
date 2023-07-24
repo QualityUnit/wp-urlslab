@@ -323,8 +323,8 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 	}
 
 
-	public function get_row_object( $params = array() ): Urlslab_Data {
-		return new Urlslab_Cache_Rule_Row( $params );
+	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
+		return new Urlslab_Cache_Rule_Row( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {
@@ -472,7 +472,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 					),
 				)
 			);
-
+			$this->invalidate_cache( $request );
 		} catch ( Aws\Exception\AwsException $e ) {
 			return new WP_Error( 'error', __( 'Failed to drop cache: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 		}

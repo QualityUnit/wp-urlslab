@@ -4,61 +4,151 @@
 .urlslab-ImageCompare {
 
 
-    @include posZero;
-    position: fixed;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: $black-real;
-    z-index: 100002;
-    color: $white;
+	@include posZero;
+	position: fixed;
+	background-color: $black-transparent;
+	z-index: 100002;
+	color: $white;
 
-    .urlslab-panel-close {
-        position: absolute;
-        top: 2em;
-        right: 3em;
-    }
+	&-top-control {
+		display: flex;
+		justify-content: space-between;
+		padding: 0.6rem;
+		width: 100%;
+		height: 100px;
 
-    img-comparison-slider {
-        outline: none;
-        --divider-width: 4px;
-        --divider-color: #000;
-        --default-handle-color: #000;
-        --default-handle-opacity: 0;
-        --default-handle-width: 100px;
+		&-screens {
+			display: flex;
+			justify-content: flex-start;
 
-        .default-handle path {
-            stroke-width: 4px;
-        }
+			&-item {
+				cursor: pointer;
+				max-width: 160px;
+				height: 100%;
+				padding: 0.5rem;
+				border-radius: 10px;
+				display: flex;
+				justify-content: center;
+				align-content: space-between;
+				flex-direction: column;
+				margin-right: 1rem;
+				color: $white;
 
-        figure {
-            margin: 0;
-        }
+				div {
+					width: 100%;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					font-size: 0.8rem;
+				}
 
-        figcaption {
-            position: absolute;
-            top: 1em;
-            left: 1em;
-            padding: 0.5em;
-            line-height: 100%;
-            color: $black;
-            background-color: rgba($white, 0.8);
-        }
+				div:last-child {
+					margin-top: 0.5rem;
+				}
+			}
 
-        [slot="second"] figcaption {
-            left: auto;
-            right: 1em;
-            text-align: right;
-        }
-    }
+			&-item.active {
+				background-color: $black-real;
+			}
 
-    &-wrapper {
+			&-option {
+				display: flex;
+				align-items: center;
+			}
+		}
 
-        @include scrollbar;
-        height: 80%;
-        display: flex;
-        align-items: flex-start;
-        justify-content: center;
-        overflow: hidden auto;
-    }
+		&-date {
+			display: flex;
+			align-items: center;
+			font-size: 1rem;
+
+			div {
+				margin-right: 0.3em;
+			}
+
+			&-dropdown {
+				background-color: transparent;
+				color: $white;
+			}
+		}
+	}
+
+	&-panel {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+	}
+
+	.urlslab-panel-close-container {
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		&-btn {
+			cursor: pointer;
+			width: 30px;
+			height: 30px;
+
+			svg {
+				fill: $white;
+			}
+		}
+
+	}
+
+	img-comparison-slider {
+		outline: none;
+		--divider-width: 4px;
+		--divider-color: #000;
+		--default-handle-color: #000;
+		--default-handle-opacity: 0;
+		--default-handle-width: 100px;
+
+		.default-handle path {
+			stroke-width: 4px;
+		}
+
+		figure {
+			margin: 0;
+		}
+
+		figcaption {
+			position: absolute;
+			top: 1em;
+			left: 1em;
+			padding: 0.5em;
+			line-height: 100%;
+			color: $black;
+			background-color: rgba($white, 0.8);
+		}
+
+		[slot="second"] figcaption {
+			left: auto;
+			right: 1em;
+			text-align: right;
+		}
+	}
+
+	&-wrapper {
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		cursor: col-resize;
+		transition: width 0.2s;
+	}
+
+	&-slider-container {
+		@include scrollbar;
+		height: calc(100vh - 100px);
+		overflow: hidden auto;
+	}
+
+	&-img {
+		width: 100%;
+
+		&.hidden {
+			display: none;
+		}
+	}
 }

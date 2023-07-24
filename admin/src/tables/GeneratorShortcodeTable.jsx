@@ -73,9 +73,9 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		D: __( 'Disabled' ),
 	};
 	const modelTypes = {
-		'gpt-3.5-turbo': __( 'Gpt 3.5 Turbo' ),
-		'gpt-4': __( 'Gpt 4' ),
-		'text-davinci-003': __( 'Text Davinci 003' ),
+		'gpt-3.5-turbo': __( 'OpenAI GPT 3.5 Turbo' ),
+		'gpt-4': __( 'OpenAI GPT 4' ),
+		'text-davinci-003': __( 'OpenAI GPT Davinci 003' ),
 	};
 	const shortcodeTypeTypes = {
 		S: __( 'Semantic search' ),
@@ -84,6 +84,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 
 	const header = {
 		shortcode_id: __( 'ID' ),
+		shortcode_name: __( 'Name' ),
 		shortcode_type: __( 'Type' ),
 		prompt: __( 'Prompt' ),
 		semantic_context: __( 'Semantic context' ),
@@ -100,20 +101,22 @@ export default function GeneratorShortcodeTable( { slug } ) {
 	const supported_variables_description = __( 'Supported variables: {{page_title}}, {{page_url}}, {{domain}}, {{language_code}}, {{language}}. In case videoid attribute is set, following variables are available: {{video_captions}}, {{video_captions_text}}, {{video_title}}, {{video_description}}, {{video_published_at}}, {{video_duration}}, {{video_channel_title}}, {{video_tags}}. Custom attributes can be passed from shortcode as well in form {{your_custom_attribute_name}}' );
 
 	const rowEditorCells = {
+		shortcode_name: <InputField liveUpdate defaultValue="" description={ __( 'The name of the shortcode to refer to in future' ) } label={ header.shortcode_name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, shortcode_name: val } ) } required />,
+
 		shortcode_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'In case of video context type, Semantic search query should contain YouTube videoid or YoutTube video url.' ) }
 			items={ shortcodeTypeTypes } name="shortcode_type" defaultValue="S" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, shortcode_type: val } ) }>{ header.shortcode_type }</SingleSelectMenu>,
 
 		prompt: <TextArea rows="5" description={ ( supported_variables_description ) }
-			liveUpdate defaultValue="" label={ header.prompt } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, prompt: val } ) } />,
+			liveUpdate defaultValue="" label={ header.prompt } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, prompt: val } ) } required />,
 
 		semantic_context: <InputField liveUpdate description={ ( supported_variables_description + ' ' + __( 'In case of video context type, Semantic search query should contain youtube videoid: {{videoid}}.' ) ) }
 			defaultValue="" label={ header.semantic_context } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, semantic_context: val } ) } hidden={ rowToEdit?.shortcode_type === 'V' } />,
 
 		url_filter: <InputField liveUpdate defaultValue="" description={ __( 'Recommended variables: {{page_url}} if you need to generate data from current url. {{domain}} if you need to generate data from any semanticaly relevant page in your domain. Fixed url if you need to generate data from fixed url (e.g. http://wikipedia.com/anything). {{custom_url_attribute_name}} if you pass your custom attribute to shortcode in html template.' ) } label={ header.url_filter } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_filter: val } ) } hidden={ rowToEdit?.shortcode_type === 'V' } />,
 
-		default_value: <InputField liveUpdate description={ __( 'Put here the text, which should be displayed in shortcode until Urlslab generates text from your prompt. Leave empty if you do not want to display shortcode until the text is generated' ) } defaultValue="" label={ header.default_value } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, default_value: val } ) } />,
+		default_value: <InputField liveUpdate description={ __( 'Put here the text, which should be displayed in shortcode until URLsLab generates text from your prompt. Leave empty if you do not want to display shortcode until the text is generated' ) } defaultValue="" label={ header.default_value } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, default_value: val } ) } />,
 
-		template: <Editor description={ ( supported_variables_description + __( ' Value of generated text can be accessed in template by variable {{value}} or if generator generated json {{json_value.attribute_name}}' ) ) } defaultValue="{{value}}" label={ header.template } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, template: val } ) } />,
+		template: <Editor description={ ( supported_variables_description + __( ' Value of generated text can be accessed in template by variable {{value}} or if generator generated json {{json_value.attribute_name}}' ) ) } defaultValue="{{value}}" label={ header.template } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, template: val } ) } required />,
 
 		model: <SingleSelectMenu defaultAccept autoClose items={ modelTypes } name="model" defaultValue={ ( 'gpt-3.5-turbo' ) } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, model: val } ) }>{ header.model }</SingleSelectMenu>,
 	};
@@ -128,6 +131,11 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		columnHelper.accessor( 'shortcode_id', {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.shortcode_id }</SortBy>,
 			size: 45,
+		} ),
+		columnHelper.accessor( 'shortcode_name', {
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.shortcode_name }</SortBy>,
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'shortcode_type', {
 			filterValMenu: shortcodeTypeTypes,

@@ -4,7 +4,7 @@ Tags: seo, ai, gpt, performance
 Requires at least: 6.0
 Tested up to: 6.1
 Requires PHP: 7.4
-Stable tag: 2.27.7
+Stable tag: 2.27.9
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,6 +78,22 @@ The content is coming soon.
 
 == Changelog ==
 
+= 2.32.1 - 2023-07-21 =
+
+* Experience a smoother user journey with our under-the-hood enhancements.
+
+= 2.32.0 - 2023-07-20 =
+
+* Experience a smoother user journey with our under-the-hood enhancements.
+
+= 2.27.9 - 2023-07-13 =
+
+* Experience a smoother user journey with our under-the-hood enhancements.
+
+= 2.27.8 - 2023-07-13 =
+
+* Experience a smoother user journey with our under-the-hood enhancements.
+
 = 2.27.7 - 2023-07-07 =
 
 * Experience a smoother user journey with our under-the-hood enhancements.
@@ -127,329 +143,5 @@ The content is coming soon.
 * Experience a smoother user journey with our under-the-hood enhancements.
 
 = 2.26.0 - 2023-07-03 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.43 - 2023-07-03 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.42 - 2023-06-20 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.41 - 2023-06-20 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.40 - 2023-06-20 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.39 - 2023-06-20 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.38 - 2023-06-20 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.37 - 2023-06-20 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.36 - 2023-06-20 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.35 - 2023-06-19 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.34 - 2023-06-14 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.33 - 2023-06-14 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.32 - 2023-06-13 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.31 - 2023-06-09 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.30 - 2023-06-09 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.29 - 2023-06-09 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.28 - 2023-06-08 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.27 - 2023-06-08 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.26 - 2023-06-06 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.25 - 2023-06-05 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.24 - 2023-06-02 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.23 - 2023-06-01 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.22 - 2023-06-01 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.21 - 2023-06-01 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.20 - 2023-06-01 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.19 - 2023-06-01 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.18 - 2023-05-31 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.17 - 2023-05-31 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.16 - 2023-05-30 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.15 - 2023-05-30 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.14 - 2023-05-30 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.13 - 2023-05-29 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.12 - 2023-05-29 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.11 - 2023-05-26 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.10 - 2023-05-26 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.9 - 2023-05-26 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.8 - 2023-05-26 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.7 - 2023-05-26 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.6 - 2023-05-26 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.5 - 2023-05-25 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.4 - 2023-05-25 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.3 - 2023-05-25 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.2 - 2023-05-25 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.1 - 2023-05-25 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.25.0 - 2023-05-24 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.24.3 - 2023-05-23 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.24.2 - 2023-05-23 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.24.1 - 2023-05-22 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.24.0 - 2023-05-22 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.23.0 - 2023-05-22 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.22.9 - 2023-05-19 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.22.8 - 2023-05-18 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.22.7 - 2023-05-18 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.22.6 - 2023-05-18 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.22.5 - 2023-05-18 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.22.4 - 2023-05-18 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.22.3 - 2023-05-17 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.22.2 - 2023-05-17 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.22.1 - 2023-05-17 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.22.0 - 2023-05-17 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.21.16 - 2023-05-17 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.21.15 - 2023-05-16 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.21.14 - 2023-05-16 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.21.13 - 2023-05-16 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.21.12 - 2023-05-16 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.21.11 - 2023-05-15 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.21.10 - 2023-05-15 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.21.9 - 2023-05-12 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.21.8 - 2023-05-12 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.21.7 - 2023-05-12 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.21.6 - 2023-05-12 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.21.5 - 2023-05-11 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.21.4 - 2023-05-11 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.21.3 - 2023-05-11 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.21.2 - 2023-05-11 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.21.1 - 2023-05-10 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.21.0 - 2023-05-10 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.20.4 - 2023-05-10 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.20.3 - 2023-05-09 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.20.2 - 2023-05-09 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.20.1 - 2023-05-09 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.20.0 - 2023-05-08 =
 
 * Experience a smoother user journey with our under-the-hood enhancements.

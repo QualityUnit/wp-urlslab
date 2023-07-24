@@ -24,8 +24,16 @@ class Urlslab_Generator_Shortcode_Row extends Urlslab_Data {
 		return $this->get( 'shortcode_id' );
 	}
 
+	public function get_shortcode_name(): string {
+		return $this->get( 'shortcode_name' );
+	}
+
 	public function set_shortcode_id( int $shortcode_id, $loaded_from_db = false ): void {
 		$this->set( 'shortcode_id', $shortcode_id, $loaded_from_db );
+	}
+
+	public function set_shortcode_name( string $shortcode_name, $loaded_from_db = false ): void {
+		$this->set( 'shortcode_name', $shortcode_name, $loaded_from_db );
 	}
 
 	public function get_semantic_context(): string {
@@ -112,6 +120,7 @@ class Urlslab_Generator_Shortcode_Row extends Urlslab_Data {
 	public function get_columns(): array {
 		return array(
 			'shortcode_id'     => '%d',
+			'shortcode_name'   => '%s',
 			'semantic_context' => '%s',
 			'prompt'           => '%s',
 			'default_value'    => '%s',

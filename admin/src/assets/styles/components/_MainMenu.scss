@@ -33,6 +33,7 @@
 
 	&.open {
 		max-width: $mainMenuWidth;
+		width: 100%;
 	}
 
 	&-title[class] {
@@ -77,7 +78,7 @@
 		margin: 0;
 		flex: 1 0 auto;
 
-		> * {
+		>* {
 			position: relative;
 			z-index: 1;
 		}

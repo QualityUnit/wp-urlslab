@@ -8,7 +8,7 @@ if [[ -z "$PACKAGE_VERSION" ]]; then
 fi
 
 rm -rf *.zip .git .github node_modules docker yarn.lock webpack.config.js postcss.config.js phpcs.xml package.json Makefile composer.lock composer.json commitlint.config.js .stylelintrc .gitignore .eslintrc .eslintignore
-rm -rf admin/node_modules admin/.eslintignore admin/.eslintrc admin/.stylelintrc admin/index.html admin/package.json admin/vite.config.js admin/yarn.lock admin/src/app-ai-content-assistant/node_modules admin/src/app-ai-content-assistant/.eslintignore admin/src/app-ai-content-assistant/.eslintrc admin/src/app-ai-content-assistant/.gitignore admin/src/app-ai-content-assistant/.stylelintrc admin/src/app-ai-content-assistant/index.html admin/src/app-ai-content-assistant/package.json admin/src/app-ai-content-assistant/tsconfig.json admin/src/app-ai-content-assistant/tsconfig.node.json admin/src/app-ai-content-assistant/vite.config.ts admin/src/app-ai-content-assistant/yarn.lock
+rm -rf admin/node_modules admin/.eslintignore admin/.eslintrc admin/.stylelintrc admin/index.html admin/package.json admin/vite.config.js admin/yarn.lock admin/apps/ai-content-assistant/node_modules admin/apps/ai-content-assistant/.eslintignore admin/apps/ai-content-assistant/.eslintrc admin/apps/ai-content-assistant/.gitignore admin/apps/ai-content-assistant/.stylelintrc admin/apps/ai-content-assistant/index.html admin/apps/ai-content-assistant/package.json admin/apps/ai-content-assistant/tsconfig.json admin/apps/ai-content-assistant/tsconfig.node.json admin/apps/ai-content-assistant/vite.config.ts admin/apps/ai-content-assistant/yarn.lock
 rm -rf blocks/node_modules
 
 PLUGIN_ZIP_FILENAME="urlslab-${PACKAGE_VERSION}.zip"
@@ -20,7 +20,9 @@ for file in *; do
     fi
 done
 
-mv ./urlslab/temp-changelog-from-readme.txt ./temp-changelog-from-readme.txt
+if test -f "./urlslab/temp-changelog-from-readme.txt"; then
+    mv ./urlslab/temp-changelog-from-readme.txt ./temp-changelog-from-readme.txt
+fi
 
 zip -r $PLUGIN_ZIP_FILENAME ./urlslab/ -x "*.zip"
 echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV

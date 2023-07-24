@@ -486,7 +486,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		}
 	}
 
-	private function replaceKeywordWithLinks( DOMText $node, DOMDocument $document, array $keywords, int $position_start, $position_end, $min_text_len, $max_paragraph_density_links ) {
+	private function replaceKeywordWithLinks( DOMText $node, DOMDocument $document, array $keywords, int $position_start, int $position_end, $min_text_len, $max_paragraph_density_links ) {
 		if (
 			$this->cnt_paragraph_link_replacements >= $max_paragraph_density_links
 			|| $this->cnt_page_links > $this->get_option( self::SETTING_NAME_MAX_LINKS_ON_PAGE )
@@ -504,8 +504,29 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$node_value = substr( strtolower( $node->nodeValue ), $position_start, $possible_value_len );
 
 		foreach ( $keywords as $kw_id => $kwRow ) {
+			if ( ! isset( $keywords[ $kw_id ] ) ) {
+				continue;
+			}
 			if ( preg_match( '/\b(' . preg_quote( $kwRow['kw'], '/' ) . ')\b/', $node_value, $matches, PREG_OFFSET_CAPTURE ) ) {
 				$pos = $matches[1][1] + $position_start;
+
+				//check if space around link is sufficient
+				if (
+					(
+						null !== $node->previousSibling &&
+						'a' === $node->previousSibling->nodeName &&
+						$pos < $this->get_option( self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK )
+					) ||
+					(
+						null !== $node->nextSibling &&
+						'a' === $node->nextSibling->nodeName &&
+						strlen( $node->nodeValue ) - $pos - strlen( $matches[1][0] ) < $this->get_option( self::SETTING_NAME_MIN_CHARS_TO_NEXT_LINK )
+					)
+				) {
+					//there is link already too close to place, where we want to add link, skip this keyword
+					continue;
+				}
+
 				++ $this->cnt_page_links;
 				++ $this->cnt_page_link_replacements;
 				++ $this->cnt_paragraph_link_replacements;
@@ -519,7 +540,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				} else {
 					$this->url_page_replacement_counts[ $kwRow['url'] ] = 1;
 				}
-				if ( isset( $this->url_page_replacement_counts[ $kw_id ] ) ) {
+				if ( isset( $this->urlandkw_page_replacement_counts[ $kw_id ] ) ) {
 					++ $this->urlandkw_page_replacement_counts[ $kw_id ];
 				} else {
 					$this->urlandkw_page_replacement_counts[ $kw_id ] = 1;
@@ -535,6 +556,12 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				// if we reached maximum number of replacements with this url, skip next processing and remove all keywords pointing to this url
 				if ( $this->url_page_replacement_counts[ $kwRow['url'] ] > $this->get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_URL ) ) {
 					$keywords = $this->removeKeywordUrl( $keywords, false, $kwRow['url'] );
+
+					return;
+				}
+
+				if ( $this->urlandkw_page_replacement_counts[ $kw_id ] > $this->get_option( self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL ) ) {
+					unset( $keywords[ $kw_id ] );
 
 					return;
 				}
