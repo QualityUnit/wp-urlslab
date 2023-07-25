@@ -124,7 +124,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_SERP_COMPETITOR_DOMAINS,
 			'',
 			false,
-			__( 'Competitor Domains' ),
+			__( 'Direct Competitor Domains' ),
 			__( 'Comma or new line separated list of domains. Recommendation: Include all domains of your direct competitors. It will help you to discover new keywords and FAQs you should include into your website content. If none of these domains ranks in top 100 for specific query, query is marked as Skipped - means it is not relevant query to your business.' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
