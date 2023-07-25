@@ -61,7 +61,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Keywords Manager' );
+		return __( 'Link Building' );
 	}
 
 	public function get_widget_description(): string {

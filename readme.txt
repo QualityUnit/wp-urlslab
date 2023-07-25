@@ -18,7 +18,7 @@ Introducing URLsLab, a powerful and versatile WordPress plugin designed to optim
 
 URLsLab's Screenshots module enhances the visual appeal of your content by generating screenshots automatically. This, combined with the Related Articles module, strengthens your onsite SEO and internal link structure by creating content clusters, making it easier for search engines to understand and rank your website.
 
-Take control of your internal and external links with the Links Manager module, while the Keywords Manager boosts your internal link building, ensuring your content ranks higher in search results. The Image SEO module automatically adds descriptive alt texts to your website's images, further improving your site's search engine optimization.
+Take control of your internal and external links with the URL Monitoring module, while the Link building module boosts your internal link building, ensuring your content ranks higher in search results. The Image SEO module automatically adds descriptive alt texts to your website's images, further improving your site's search engine optimization.
 
 Maximize your content's shareability with the Meta Tags Manager, allowing you to add custom meta tags for improved visibility on social media platforms. Enhance your website's performance with the Media Manager, which offers automatic image enhancement and offloading to the cloud or a database. Optimize page loading times with the Lazy Loading module, which defers loading of large content chunks, images, videos, and iframes.
 

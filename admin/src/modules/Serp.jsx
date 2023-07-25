@@ -1,31 +1,35 @@
 import { useState, Suspense, lazy } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import LinkEnhancerOverview from '../overview/LinkEnhancer';
+import SerpOverview from '../overview/Serp';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
-export default function LinkEnhancer( { moduleId } ) {
+export default function Serp( { moduleId } ) {
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
+	const slug = 'serp';
 
 	const tableMenu = new Map( [
-		[ 'url', __( 'URLs' ) ],
+		[ 'serp-queries', __( 'Queries' ) ],
 	] );
 
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
-	const LinkManagerTable = lazy( () => import( `../tables/LinkManagerTable.jsx` ) );
+	const SerpQueriesTable = lazy( () => import( `../tables/SerpQueriesTable.jsx` ) );
 
 	return (
 		<div className="urlslab-tableView">
-			<ModuleViewHeader moduleId={ moduleId }
-				moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
-			{ activeSection === 'overview' &&
-				<LinkEnhancerOverview moduleId={ moduleId } />
+			<ModuleViewHeader
+				moduleId={ moduleId }
+				moduleMenu={ tableMenu }
+				activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+			{
+				activeSection === 'overview' &&
+				<SerpOverview moduleId={ moduleId } />
 			}
 			{
-				activeSection === 'url' &&
+				activeSection === 'serp-queries' &&
 				<Suspense>
-					<LinkManagerTable slug="url" />
+					<SerpQueriesTable slug={ 'serp-queries' } />
 				</Suspense>
 			}
 			{

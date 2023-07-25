@@ -87,5 +87,11 @@ class Urlslab_Api_Router {
 
 		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-custom-html.php';
 		( new Urlslab_Api_Custom_Html() )->register_routes();
+
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-serp-queries.php';
+		( new Urlslab_Api_Serp_Queries() )->register_routes();
+
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-serp-qgroups.php';
+		( new Urlslab_Api_Serp_Qgroups() )->register_routes();
 	}
 }

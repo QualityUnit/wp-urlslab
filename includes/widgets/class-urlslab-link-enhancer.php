@@ -71,7 +71,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Links Manager' );
+		return __( 'URL Monitoring' );
 	}
 
 	public function get_widget_description(): string {

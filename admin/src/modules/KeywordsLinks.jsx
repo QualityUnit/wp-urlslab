@@ -9,12 +9,10 @@ export default function KeywordLinks( { moduleId } ) {
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 
 	const tableMenu = new Map( [
-		[ slug, __( 'Keywords' ) ],
-		// [ 'd3-chart', __( 'Word Cloud' ) ],
+		[ slug, __( 'Links' ) ],
 	] );
 
 	const KeywordsTable = lazy( () => import( `../tables/KeywordsTable.jsx` ) );
-	// const D3WordCloud = lazy( () => import( `../d3/D3WordCloud.jsx` ) );
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
 
 	return (
@@ -33,12 +31,6 @@ export default function KeywordLinks( { moduleId } ) {
 					<KeywordsTable slug={ slug } />
 				</Suspense>
 			}
-			{ /* {
-				activeSection === 'd3-chart' &&
-				<Suspense>
-					<D3WordCloud slug={ slug } />
-				</Suspense>
-			} */ }
 			{
 				activeSection === 'settings' &&
 					<Suspense>

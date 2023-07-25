@@ -10,6 +10,7 @@ import SingleSelectMenu from '../elements/SingleSelectMenu';
 import InputField from '../elements/InputField';
 import RangeInputs from '../elements/RangeInputs';
 import LangMenu from '../elements/LangMenu';
+import CountryMenu from '../elements/CountryMenu';
 import DatePicker from 'react-datepicker';
 
 import '../assets/styles/components/_FloatingPanel.scss';
@@ -123,6 +124,9 @@ export default function TableFilterPanel( { props, onEdit } ) {
 			<div>
 				{ state.filterObj.keyType === 'lang' &&
 					<LangMenu autoClose multiSelect={ state.filterObj.filterOp === 'IN' } defaultValue={ filters[ key ]?.val || 'all' } defaultAccept onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
+				}
+				{ state.filterObj.keyType === 'country' &&
+					<CountryMenu autoClose multiSelect={ state.filterObj.filterOp === 'IN' } defaultValue={ filters[ key ]?.val } defaultAccept onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
 				}
 				{
 					state.filterObj.keyType === 'menu' &&

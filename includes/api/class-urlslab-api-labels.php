@@ -123,7 +123,7 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 			Urlslab_Api_Redirects::SLUG => __( 'Redirects', 'urlslab' ),
 			Urlslab_Api_Screenshots::SLUG => __( 'Screenshots', 'urlslab' ),
 			Urlslab_Api_Search_Replace::SLUG => __( 'Search & Replace', 'urlslab' ),
-			Urlslab_Api_Urls::SLUG => __( 'Links Manager', 'urlslab' ),
+			Urlslab_Api_Urls::SLUG => __( 'URL Monitoring', 'urlslab' ),
 			Urlslab_Api_Faq::SLUG => __( 'Faq', 'urlslab' ),
 		);
 

@@ -315,6 +315,27 @@ class Urlslab_Activator {
 				$wpdb->query( 'UPDATE ' . URLSLAB_KEYWORDS_TABLE . " SET kw_priority = 100 WHERE kw_priority > 100" ); // phpcs:ignore
 			}
 		);
+		self::update_step(
+			'2.34.0',
+			function() {
+				self::init_serp_queries_table();
+				self::init_serp_urls_table();
+				self::init_serp_positions_table();
+			}
+		);
+		self::update_step(
+			'2.35.0',
+			function() {
+				self::init_serp_query_groups_table();
+				self::init_serp_query_group_queries_table();
+			}
+		);
+		self::update_step(
+			'2.36.0',
+			function() {
+				self::init_serp_domains_table();
+			}
+		);
 
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -349,6 +370,13 @@ class Urlslab_Activator {
 		self::init_custom_html_rules_table();
 		self::init_faqs_table();
 		self::init_faq_urls_table();
+
+		self::init_serp_queries_table();
+		self::init_serp_urls_table();
+		self::init_serp_positions_table();
+		self::init_serp_query_groups_table();
+		self::init_serp_query_group_queries_table();
+		self::init_serp_domains_table();
 	}
 
 	private static function init_urls_tables() {
@@ -938,4 +966,106 @@ class Urlslab_Activator {
 		);
 		add_role( Urlslab_Api_Base::URLSLAB_ROLE_EDITOR, __( 'URLsLab Editor' ), $editor_capabilities );//phpcs:ignore
 	}
+
+
+	private static function init_serp_queries_table() {
+		global $wpdb;
+		$table_name      = URLSLAB_SERP_QUERIES_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
+							query_id bigint NOT NULL,
+							lang varchar(10) NOT NULL,
+							country varchar(10) NOT NULL,
+							query VARCHAR(255) NOT NULL,
+							updated DATETIME NOT NULL,
+							status char(1) DEFAULT '',
+							PRIMARY KEY  (query_id),
+							INDEX idx_query (query),
+							INDEX idx_update (updated)
+							) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_serp_urls_table() {
+		global $wpdb;
+		$table_name      = URLSLAB_SERP_URLS_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
+							url_id bigint NOT NULL,
+							domain_id bigint NOT NULL,
+							url_name varchar(2048) NOT NULL,
+							url_title VARCHAR(255) NOT NULL,
+							url_description VARCHAR(255) NOT NULL,
+							PRIMARY KEY  (url_id),
+							INDEX idx_domain (domain_id)
+							) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+
+	private static function init_serp_domains_table() {
+		global $wpdb;
+		$table_name      = URLSLAB_SERP_DOMAINS_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
+							domain_id bigint NOT NULL,
+							domain_name varchar(500) NOT NULL,
+							PRIMARY KEY  (domain_id)
+							) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_serp_positions_table() {
+		global $wpdb;
+		$table_name      = URLSLAB_SERP_POSITIONS_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
+							query_id bigint NOT NULL,
+							url_id bigint NOT NULL,
+							domain_id bigint NOT NULL,
+							updated DATETIME NOT NULL,
+							position TINYINT UNSIGNED NOT NULL,
+							PRIMARY KEY  (query_id, url_id),
+							INDEX idx_urls (url_id)
+							) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_serp_query_groups_table() {
+		global $wpdb;
+		$table_name      = URLSLAB_SERP_QGROUPS_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
+							qgroup_id bigint NOT NULL,
+							short_name VARCHAR(255) NOT NULL,
+							name TEXT,
+							PRIMARY KEY  (qgroup_id)
+							) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+	private static function init_serp_query_group_queries_table() {
+		global $wpdb;
+		$table_name      = URLSLAB_SERP_QGROUP_QUERIES_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
+							qgroup_id bigint NOT NULL,
+							query_id bigint NOT NULL,
+							PRIMARY KEY  (qgroup_id, query_id)
+							) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+
 }
