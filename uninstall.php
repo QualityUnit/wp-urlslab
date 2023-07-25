@@ -37,6 +37,7 @@ $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_GENERATOR_URLS_TABLE ); // phpcs
 //SERP
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_POSITIONS_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_URLS_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_DOMAINS_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_QUERIES_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_QGROUP_QUERIES_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_QGROUPS_TABLE ); // phpcs:ignore

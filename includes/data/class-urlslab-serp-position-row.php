@@ -8,6 +8,7 @@ class Urlslab_Serp_Position_Row extends Urlslab_Data {
 	public function __construct( array $url = array(), $loaded_from_db = true ) {
 		$this->set_query_id( $url['query_id'] ?? 0, $loaded_from_db );
 		$this->set_url_id( $url['url_id'] ?? 0, $loaded_from_db );
+		$this->set_domain_id( $url['domain_id'] ?? 0, $loaded_from_db );
 		$this->set_updated( $url['updated'] ?? self::get_now(), $loaded_from_db );
 		$this->set_position( $url['position'] ?? 1, $loaded_from_db );
 	}
@@ -37,6 +38,10 @@ class Urlslab_Serp_Position_Row extends Urlslab_Data {
 		$this->set( 'url_id', $url_id, $loaded_from_db );
 	}
 
+	public function set_domain_id( int $domain_id, $loaded_from_db = false ): void {
+		$this->set( 'domain_id', $domain_id, $loaded_from_db );
+	}
+
 	public function set_updated( string $updated, $loaded_from_db = false ): void {
 		$this->set( 'updated', $updated, $loaded_from_db );
 	}
@@ -61,6 +66,7 @@ class Urlslab_Serp_Position_Row extends Urlslab_Data {
 		return array(
 			'query_id' => '%d',
 			'url_id'   => '%d',
+			'domain_id'   => '%d',
 			'updated'  => '%s',
 			'position' => '%d',
 		);

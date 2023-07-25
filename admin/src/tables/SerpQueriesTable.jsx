@@ -8,6 +8,7 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import IconButton from '../elements/IconButton';
 import { useCallback } from 'react';
+import {countriesList, nameOf} from "../lib/helpers";
 
 export default function SerpQueriesTable( { slug } ) {
 	const paginationId = 'query_id';
@@ -39,7 +40,7 @@ export default function SerpQueriesTable( { slug } ) {
 	}, [ setOptions, setRowToEdit, slug, updateRow ] );
 
 	const statuses = {
-		'': __( 'Not processed' ),
+		'X': __( 'Not processed' ),
 		'N': __( 'Not approved' ),
 		'P': __( 'Processing' ),
 		'A': __( 'Processed' ),
@@ -85,13 +86,18 @@ export default function SerpQueriesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'lang', {
 			className: 'nolimit',
-			cell: ( cell ) => <LangMenu defaultValue={ cell?.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'query' } ) } />,
+			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.lang }</SortBy>,
 			size: 50,
 		} ),
 		columnHelper.accessor( 'country', {
 			className: 'nolimit',
-			cell: ( cell ) => <CountryMenu defaultValue={ cell?.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'query' } ) } />,
+			cell: ( cell ) => {
+				if (countriesList[ cell.getValue() ]) {
+					return countriesList[ cell.getValue() ];
+				}
+				return cell.getValue();
+				},
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.country }</SortBy>,
 			size: 50,
 		} ),
@@ -112,16 +118,6 @@ export default function SerpQueriesTable( { slug } ) {
 			cell: ( cell ) => {
 				return (
 					<div className="flex">
-						<IconButton
-							onClick={ () => {
-								setUnifiedPanel( cell );
-								activatePanel( 'rowEditor' );
-							} }
-							tooltipClass="align-left xxxl"
-							tooltip={ __( 'Edit' ) }
-						>
-							<Edit />
-						</IconButton>
 						<IconButton
 							className="ml-s"
 							onClick={ () => deleteRow( { cell, id: 'query' } ) }

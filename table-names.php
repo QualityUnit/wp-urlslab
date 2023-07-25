@@ -38,6 +38,7 @@ define( 'URLSLAB_FAQ_URLS_TABLE', $wpdb->prefix . 'urlslab_faq_urls' );
 //SERP
 define( 'URLSLAB_SERP_QUERIES_TABLE', $wpdb->prefix . 'urlslab_serp_queries' );
 define( 'URLSLAB_SERP_URLS_TABLE', $wpdb->prefix . 'urlslab_serp_urls' );
+define( 'URLSLAB_SERP_DOMAINS_TABLE', $wpdb->prefix . 'urlslab_serp_domains' );
 define( 'URLSLAB_SERP_POSITIONS_TABLE', $wpdb->prefix . 'urlslab_serp_positions' );
 define( 'URLSLAB_SERP_QGROUPS_TABLE', $wpdb->prefix . 'urlslab_serp_qgroups' );
 define( 'URLSLAB_SERP_QGROUP_QUERIES_TABLE', $wpdb->prefix . 'urlslab_serp_qgroup_queries' );

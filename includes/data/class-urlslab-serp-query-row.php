@@ -1,7 +1,7 @@
 <?php
 
 class Urlslab_Serp_Query_Row extends Urlslab_Data {
-	public const STATUS_NOT_PROCESSED = '';
+	public const STATUS_NOT_PROCESSED = 'X';
 	public const STATUS_NOT_APPROVED = 'N';
 	public const STATUS_PROCESSING = 'P';
 	public const STATUS_PROCESSED = 'A';

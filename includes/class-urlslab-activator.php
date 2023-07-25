@@ -330,6 +330,12 @@ class Urlslab_Activator {
 				self::init_serp_query_group_queries_table();
 			}
 		);
+		self::update_step(
+			'2.36.0',
+			function() {
+				self::init_serp_domains_table();
+			}
+		);
 
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -370,6 +376,7 @@ class Urlslab_Activator {
 		self::init_serp_positions_table();
 		self::init_serp_query_groups_table();
 		self::init_serp_query_group_queries_table();
+		self::init_serp_domains_table();
 	}
 
 	private static function init_urls_tables() {
@@ -999,6 +1006,21 @@ class Urlslab_Activator {
 		dbDelta( $sql );
 	}
 
+
+	private static function init_serp_domains_table() {
+		global $wpdb;
+		$table_name      = URLSLAB_SERP_DOMAINS_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
+							domain_id bigint NOT NULL,
+							domain_name varchar(500) NOT NULL,
+							PRIMARY KEY  (domain_id)
+							) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
 	private static function init_serp_positions_table() {
 		global $wpdb;
 		$table_name      = URLSLAB_SERP_POSITIONS_TABLE;
@@ -1006,9 +1028,11 @@ class Urlslab_Activator {
 		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
 							query_id bigint NOT NULL,
 							url_id bigint NOT NULL,
+							domain_id bigint NOT NULL,
 							updated DATETIME NOT NULL,
 							position TINYINT UNSIGNED NOT NULL,
-							PRIMARY KEY  (query_id, url_id)
+							PRIMARY KEY  (query_id, url_id),
+							INDEX idx_urls (url_id)
 							) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
