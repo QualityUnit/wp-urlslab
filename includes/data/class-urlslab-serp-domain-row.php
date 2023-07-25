@@ -40,14 +40,18 @@ class Urlslab_Serp_Domain_Row extends Urlslab_Data {
 
 	public function get_columns(): array {
 		return array(
-			'domain_id'       => '%d',
-			'domain_name'        => '%s',
+			'domain_id'   => '%d',
+			'domain_name' => '%s',
 		);
 	}
 
 	private function compute_domain_id() {
-		$url = new Urlslab_Url( $this->get_domain_name(), true );
+		try {
+			$url = new Urlslab_Url( $this->get_domain_name(), true );
 
-		return $url->get_domain_id();
+			return $url->get_domain_id();
+		} catch ( Exception $e ) {
+			return 0;
+		}
 	}
 }
