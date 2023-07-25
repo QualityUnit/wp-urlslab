@@ -367,7 +367,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			array(
 				Urlslab_Driver::DRIVER_DB         => __( 'Database' ),
 				Urlslab_Driver::DRIVER_LOCAL_FILE => __( 'Local File System' ),
-				Urlslab_Driver::DRIVER_S3         => __( 'Cloud - AWS S3' ),
+//TODO S3				Urlslab_Driver::DRIVER_S3         => __( 'Cloud - AWS S3' ),
 			),
 			null,
 			'offloading'
@@ -433,17 +433,17 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			'offloading'
 		);
 
-		$this->add_option_definition(
-			self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3,
-			self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_S3,
-			false,
-			__( 'Transfer Media From S3 to the Default Driver' ),
-			__( 'Transfer all media stored in AWS S3 storage to the current default driver on the background.' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'offloading'
-		);
+//		$this->add_option_definition(
+//			self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3,
+//			self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_S3,
+//			false,
+//			__( 'Transfer Media From S3 to the Default Driver' ),
+//			__( 'Transfer all media stored in AWS S3 storage to the current default driver on the background.' ),
+//			self::OPTION_TYPE_CHECKBOX,
+//			false,
+//			null,
+//			'offloading'
+//		);
 
 		$this->add_option_definition(
 			self::SETTING_NAME_DELETE_AFTER_TRANSFER,
@@ -457,78 +457,78 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			'offloading'
 		);
 
-		$this->add_options_form_section( 's3', __( 'AWS S3 Storage Driver Settings' ), 'AWS S3 offers a great way to store your data with ease. You can create an S3 bucket in the AWS Console and store your data securely. This section is the right place where you can set up everything necessary to start using AWS S3 storage on your website. You can even use environmental variables if you don\'t want to store credentials in the database.' );
-		// S3 settings
-		$this->add_option_definition(
-			self::SETTING_NAME_S3_ACCESS_KEY,
-			'',
-			true,
-			__( 'AWS S3 Access Key' ),
-			__( 'Leave empty if the AWS Access Key should be loaded from the environment variable `AWS_KEY`.' ),
-			self::OPTION_TYPE_TEXT,
-			false,
-			null,
-			's3'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_S3_SECRET,
-			'',
-			true,
-			__( 'AWS S3 Key Secret' ),
-			__( 'Leave empty if AWS Secret Key should be loaded from environment variable `AWS_SECRET`.' ),
-			self::OPTION_TYPE_PASSWORD,
-			false,
-			null,
-			's3'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_S3_REGION,
-			'',
-			true,
-			__( 'AWS S3 Region' ),
-			'Select the correct region where your object storage is hosted.',
-			self::OPTION_TYPE_LISTBOX,
-			Urlslab_Driver_S3::AWS_REGIONS,
-			null,
-			's3'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_S3_BUCKET,
-			'',
-			true,
-			__( 'AWS S3 Bucket' ),
-			__( 'The bucket name where the media will be hosted.' ),
-			self::OPTION_TYPE_TEXT,
-			false,
-			null,
-			's3'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_S3_URL_PREFIX,
-			'',
-			true,
-			__( 'AWS S3 URL Prefix' ),
-			__( 'The CDN domain will be used for offloaded media. Leave empty if the CDN is not configured.' ),
-			self::OPTION_TYPE_TEXT,
-			false,
-			null,
-			's3'
-		);
-		$this->add_option_definition(
-			'btn_validate_s3',
-			'file/validate_s3',
-			false,
-			__( 'Validate S3 connection' ),
-			__( 'Validate, if connection to S3 is working.' ),
-			self::OPTION_TYPE_BUTTON_API_CALL,
-			false,
-			null,
-			's3'
-		);
+//		$this->add_options_form_section( 's3', __( 'AWS S3 Storage Driver Settings' ), 'AWS S3 offers a great way to store your data with ease. You can create an S3 bucket in the AWS Console and store your data securely. This section is the right place where you can set up everything necessary to start using AWS S3 storage on your website. You can even use environmental variables if you don\'t want to store credentials in the database.' );
+//		// S3 settings
+//		$this->add_option_definition(
+//			self::SETTING_NAME_S3_ACCESS_KEY,
+//			'',
+//			true,
+//			__( 'AWS S3 Access Key' ),
+//			__( 'Leave empty if the AWS Access Key should be loaded from the environment variable `AWS_KEY`.' ),
+//			self::OPTION_TYPE_TEXT,
+//			false,
+//			null,
+//			's3'
+//		);
+//
+//		$this->add_option_definition(
+//			self::SETTING_NAME_S3_SECRET,
+//			'',
+//			true,
+//			__( 'AWS S3 Key Secret' ),
+//			__( 'Leave empty if AWS Secret Key should be loaded from environment variable `AWS_SECRET`.' ),
+//			self::OPTION_TYPE_PASSWORD,
+//			false,
+//			null,
+//			's3'
+//		);
+//
+//		$this->add_option_definition(
+//			self::SETTING_NAME_S3_REGION,
+//			'',
+//			true,
+//			__( 'AWS S3 Region' ),
+//			'Select the correct region where your object storage is hosted.',
+//			self::OPTION_TYPE_LISTBOX,
+//			Urlslab_Driver_S3::AWS_REGIONS,
+//			null,
+//			's3'
+//		);
+//
+//		$this->add_option_definition(
+//			self::SETTING_NAME_S3_BUCKET,
+//			'',
+//			true,
+//			__( 'AWS S3 Bucket' ),
+//			__( 'The bucket name where the media will be hosted.' ),
+//			self::OPTION_TYPE_TEXT,
+//			false,
+//			null,
+//			's3'
+//		);
+//
+//		$this->add_option_definition(
+//			self::SETTING_NAME_S3_URL_PREFIX,
+//			'',
+//			true,
+//			__( 'AWS S3 URL Prefix' ),
+//			__( 'The CDN domain will be used for offloaded media. Leave empty if the CDN is not configured.' ),
+//			self::OPTION_TYPE_TEXT,
+//			false,
+//			null,
+//			's3'
+//		);
+//		$this->add_option_definition(
+//			'btn_validate_s3',
+//			'file/validate_s3',
+//			false,
+//			__( 'Validate S3 connection' ),
+//			__( 'Validate, if connection to S3 is working.' ),
+//			self::OPTION_TYPE_BUTTON_API_CALL,
+//			false,
+//			null,
+//			's3'
+//		);
 
 		$this->add_options_form_section( 'img_opt', __( 'Image Optimisation Settings' ), __( 'Modern image types such as WebP and Avif are crucial to speeding up website loading. However, we can offer many other features that can help speed up your website even more.' ) );
 

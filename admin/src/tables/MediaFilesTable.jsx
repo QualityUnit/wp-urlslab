@@ -48,7 +48,7 @@ export default function MediaFilesTable( { slug } ) {
 	const driverTypes = {
 		D: 'Database',
 		F: 'Local file',
-		S: 'Amazon S3',
+//TODO S3		S: 'Amazon S3',
 	};
 
 	const statusTypes = {
