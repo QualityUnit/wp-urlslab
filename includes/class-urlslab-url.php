@@ -296,7 +296,8 @@ class Urlslab_Url {
 	}
 
 	public function get_domain_id() {
-		$url = new Urlslab_Url( $this->get_domain_name() );
+		$url = new Urlslab_Url( $this->get_domain_name(), true );
+
 		return $url->get_url_id();
 	}
 

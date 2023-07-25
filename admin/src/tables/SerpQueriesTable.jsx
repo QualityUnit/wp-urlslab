@@ -54,6 +54,8 @@ export default function SerpQueriesTable( { slug } ) {
 		country: __( 'Country' ),
 		updated: __( 'Updated' ),
 		status: __( 'Status' ),
+		best_position: __( 'Position' ),
+		url_name: __( 'Ranked URL' ),
 	};
 
 	const rowEditorCells = {
@@ -111,6 +113,18 @@ export default function SerpQueriesTable( { slug } ) {
 			className: 'nolimit',
 			cell: ( cell ) => statuses[ cell.getValue() ],
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.status }</SortBy>,
+			size: 80,
+		} ),
+		columnHelper.accessor( 'best_position', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.best_position }</SortBy>,
+			size: 80,
+		} ),
+		columnHelper.accessor( 'url_name', {
+			className: 'nolimit',
+			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_name }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'editRow', {

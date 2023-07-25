@@ -13,6 +13,9 @@ class Urlslab_Serp extends Urlslab_Widget {
 	const SETTING_NAME_SERP_COMPETITOR_DOMAINS = 'urlslab-serp-comp-domains';
 	const SETTING_NAME_SERP_MY_DOMAINS = 'urlslab-serp-my-domains';
 
+	private $competitor_domains = array();
+	private $my_domains = array();
+
 	public function init_widget() {}
 
 	public function get_widget_slug(): string {
@@ -33,6 +36,39 @@ class Urlslab_Serp extends Urlslab_Widget {
 
 	public function is_api_key_required(): bool {
 		return true;
+	}
+
+	private function get_domains_from_string( string $str_domains ): array {
+		$arr_domains = preg_split( '/(,|\n|\t)\s*/', $str_domains );
+		$domains     = array();
+		foreach ( $arr_domains as $domain ) {
+			$domain = trim( $domain );
+			if ( strlen( $domain ) ) {
+				try {
+					$domain_url                              = new Urlslab_Url( $domain, true );
+					$domains[ $domain_url->get_domain_id() ] = $domain_url->get_domain_name();
+				} catch ( Exception $e ) {
+				}
+			}
+		}
+
+		return $domains;
+	}
+
+	public function get_competitor_domains(): array {
+		if ( empty( $this->competitor_domains ) ) {
+			$this->competitor_domains = $this->get_domains_from_string( $this->get_option( Urlslab_Serp::SETTING_NAME_SERP_COMPETITOR_DOMAINS ) );
+		}
+
+		return $this->competitor_domains;
+	}
+
+	public function get_my_domains(): array {
+		if ( empty( $this->my_domains ) ) {
+			$this->my_domains = $this->get_domains_from_string( $this->get_option( Urlslab_Serp::SETTING_NAME_SERP_MY_DOMAINS ) );
+		}
+
+		return $this->my_domains;
 	}
 
 	protected function add_options() {
@@ -132,7 +168,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 			false,
 			null,
 			'import',
-			array(self::LABEL_EXPERT)
+			array( self::LABEL_EXPERT )
 		);
 
 		$this->add_options_form_section( 'import_faq', __( 'Import Frequently Asked Questions' ), __( 'URLsLab can automatically import FAQ entries from SERP results' ) );

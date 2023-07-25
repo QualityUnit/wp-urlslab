@@ -39,21 +39,8 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 			$api_key           = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
 			$config            = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
 			$this->serp_client = new \Urlslab_Vendor\OpenAPI\Client\Urlslab\SerpApi( new GuzzleHttp\Client(), $config );
-
-			$widget        = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG );
-			$str_domains   = $widget->get_option( Urlslab_Serp::SETTING_NAME_SERP_MY_DOMAINS ) . ',' . $widget->get_option( Urlslab_Serp::SETTING_NAME_SERP_COMPETITOR_DOMAINS );
-			$arr_domains   = preg_split( '/(,|\n|\t)\s*/', $str_domains );
-			$this->domains = array();
-			foreach ( $arr_domains as $domain ) {
-				$domain = trim( $domain );
-				if ( strlen( $domain ) ) {
-					try {
-						$domain_url                                    = new Urlslab_Url( $domain, true );
-						$this->domains[ $domain_url->get_domain_id() ] = $domain_url->get_domain_name();
-					} catch ( Exception $e ) {
-					}
-				}
-			}
+			$widget            = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG );
+			$this->domains     = array_replace( $widget->get_my_domains(), $widget->get_competitor_domains() );
 		}
 
 		return ! empty( $this->serp_client );
@@ -160,10 +147,10 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 
 						$positions[] = new Urlslab_Serp_Position_Row(
 							array(
-								'position' => $organic_result->position,
-								'query_id' => $query->get_query_id(),
-								'url_id'   => $url->get_url_id(),
-								'domain_id'   => $url->get_domain_id(),
+								'position'  => $organic_result->position,
+								'query_id'  => $query->get_query_id(),
+								'url_id'    => $url->get_url_id(),
+								'domain_id' => $url->get_domain_id(),
 							)
 						);
 					}

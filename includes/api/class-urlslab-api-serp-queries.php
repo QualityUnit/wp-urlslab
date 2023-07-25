@@ -108,7 +108,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => array( $this, 'create_item' ),
 			'args'                => array(
-				'status' => array(
+				'status'  => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return
@@ -124,19 +124,19 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 							);
 					},
 				),
-				'query'  => array(
+				'query'   => array(
 					'required'          => true,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
 					},
 				),
-				'lang'   => array(
+				'lang'    => array(
 					'required'          => true,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
 					},
 				),
-				'country'   => array(
+				'country' => array(
 					'required'          => true,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
@@ -163,7 +163,8 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->query_id = (int) $row->query_id;
+			$row->query_id      = (int) $row->query_id;
+			$row->best_position = (int) $row->best_position;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -180,11 +181,35 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
-		$sql->add_select_column( '*' );
-		$sql->add_from( $this->get_row_object()->get_table_name() );
+		foreach ( array_keys( $this->get_row_object()->get_columns() ) as $column ) {
+			$sql->add_select_column( $column, 'q' );
+		}
+		$sql->add_select_column( 'MIN(position)', false, 'best_position' );
+		$sql->add_select_column( 'url_name' );
 
-		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
-		$sql->add_filters( $columns, $request );
+		$sql->add_from( $this->get_row_object()->get_table_name() . ' q' );
+		/**
+		 * @var Urlslab_Serp $widget
+		 */
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG );
+		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON q.query_id = p.query_id AND p.domain_id IN (' . implode( ',', array_keys( $widget->get_my_domains() ) ) . ')' );
+
+		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON p.url_id=u.url_id' );
+
+		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'q' );
+		$columns = array_merge(
+			$columns,
+			$this->prepare_columns(
+				array(
+					'best_position' => '%d',
+					'url_name'      => '%s',
+				)
+			)
+		);
+
+		$sql->add_group_by( 'query_id', 'q' );
+		$sql->add_having_filters( $columns, $request );
+
 		$sql->add_sorting( $columns, $request );
 
 		return $sql;
