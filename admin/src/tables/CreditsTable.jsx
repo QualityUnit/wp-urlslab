@@ -32,7 +32,7 @@ export default function CreditsTable( { slug } ) {
 		creditType: __( 'Type' ),
 		creditOperation: __( 'Operation' ),
 		operationDate: __( 'Timestamp' ),
-		url: __( 'URL' ),
+		context: __( 'Data' ),
 	};
 
 	const columns = [
@@ -47,16 +47,16 @@ export default function CreditsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'creditType', {
 			header: ( th ) => header.creditType,
-			size: 30,
+			size: 60,
 		} ),
 		columnHelper.accessor( 'creditOperation', {
 			header: ( th ) => header.creditOperation,
 			size: 30,
 		} ),
-		columnHelper.accessor( 'url', {
+		columnHelper.accessor( 'context', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: ( th ) => header.url,
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => header.context,
 			size: 200,
 		} ),
 	];
