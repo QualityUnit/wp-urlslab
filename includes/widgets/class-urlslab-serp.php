@@ -127,11 +127,12 @@ class Urlslab_Serp extends Urlslab_Widget {
 			false,
 			false,
 			__( 'Import Related Queries' ),
-			__( 'Automatically build list of queries by importing Related Searches from Google Results for monitored queries' ),
+			__( 'Automatically build list of queries by importing Related Searches from Google Results for monitored queries. IMPORTANT: by activating this option you agree with processing of huge amount of SERP api requests leading to extra costs for evaluation of each relevant query.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'import'
+			'import',
+			array(self::LABEL_EXPERT)
 		);
 
 		$this->add_options_form_section( 'import_faq', __( 'Import Frequently Asked Questions' ), __( 'URLsLab can automatically import FAQ entries from SERP results' ) );
