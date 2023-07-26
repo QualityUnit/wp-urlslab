@@ -85,11 +85,11 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<faq_id>[0-9]+)',
+			$base . '/delete',
 			array(
 				array(
-					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'delete_item' ),
+					'methods'             => WP_REST_Server::ALLMETHODS,
+					'callback'            => array( $this, 'delete_items' ),
 					'permission_callback' => array(
 						$this,
 						'delete_item_permissions_check',
@@ -235,29 +235,13 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 	}
 
 
-	/**
-	 * @param WP_REST_Request $request
-	 *
-	 * @return WP_Error|WP_REST_Response
-	 */
-	public function delete_item( $request ) {
+	protected function after_row_deleted( array $row ) {
 		global $wpdb;
-
-		$delete_params = array();
-		foreach ( $this->get_row_object()->get_primary_columns() as $primary_column ) {
-			$delete_params[ $primary_column ] = $request->get_param( $primary_column );
-		}
-
-		if ( false === $wpdb->delete( $this->get_row_object()->get_table_name(), $delete_params ) ) {
-			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
-		}
 		$faq_url = new Urlslab_Faq_Url_Row();
-		if ( false === $wpdb->delete( $faq_url->get_table_name(), array( 'faq_id' => $delete_params['faq_id'] ) ) ) {
+		if ( false === $wpdb->delete( $faq_url->get_table_name(), array( 'faq_id' => $row['faq_id'] ) ) ) {
 			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
-		$this->on_items_updated();
-
-		return new WP_REST_Response( __( 'Deleted' ), 200 );
+		parent::after_row_deleted( $row );
 	}
 
 	protected function validate_item( Urlslab_Data $row ) {

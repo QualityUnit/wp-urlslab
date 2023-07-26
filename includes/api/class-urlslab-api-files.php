@@ -90,11 +90,11 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<fileid>[0-9a-zA-Z]+)',
+			$base . '/delete',
 			array(
 				array(
-					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'delete_item' ),
+					'methods'             => WP_REST_Server::ALLMETHODS,
+					'callback'            => array( $this, 'delete_items' ),
 					'permission_callback' => array(
 						$this,
 						'delete_item_permissions_check',
@@ -104,7 +104,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 			)
 		);
 
-		register_rest_route( self::NAMESPACE, $base . '/validate_s3', $this->get_route_validate_s3() );
+		//register_rest_route( self::NAMESPACE, $base . '/validate_s3', $this->get_route_validate_s3() );
 		register_rest_route( self::NAMESPACE, $base . '/(?P<fileid>[0-9a-zA-Z]+)/urls', $this->get_route_file_urls() );
 		register_rest_route( self::NAMESPACE, $base . '/(?P<fileid>[0-9a-zA-Z]+)/urls/count', $this->get_count_route( $this->get_route_file_urls() ) );
 	}
@@ -154,26 +154,12 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		return new WP_REST_Response( $this->get_file_urls_sql( $request )->get_count(), 200 );
 	}
 
-	/**
-	 * @param WP_REST_Request $request
-	 *
-	 * @return WP_Error|WP_REST_Response
-	 */
-	public function delete_item( $request ) {
+	protected function after_row_deleted( array $row ) {
 		global $wpdb;
-
-		$delete_params           = array();
-		$delete_params['fileid'] = $request->get_param( 'fileid' );
-
-		if ( false === $wpdb->delete( URLSLAB_FILES_TABLE, $delete_params ) ) {
+		if ( false === $wpdb->delete( URLSLAB_FILE_URLS_TABLE, array( 'fileid' => $row['fileid'] ) ) ) {
 			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
 		}
-		if ( false === $wpdb->delete( URLSLAB_FILE_URLS_TABLE, $delete_params ) ) {
-			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
-		}
-		$this->on_items_updated();
-
-		return new WP_REST_Response( __( 'Deleted' ), 200 );
+		parent::after_row_deleted( $row );
 	}
 
 	public function transfer_item( WP_REST_Request $request ) {
