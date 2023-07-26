@@ -17,16 +17,17 @@ export async function deleteAll( slug ) {
 	}
 }
 
-export async function deleteRow( slug ) {
+export async function deleteRow( slug, objArray ) {
 	try {
-		const result = await fetch( wpApiSettings.root + `urlslab/v1${ slug ? `/${ slug }` : '' }`, {
-			method: 'DELETE',
+		const result = await fetch( wpApiSettings.root + `urlslab/v1${ slug ? `/${ slug }/delete` : '' }`, {
+			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 				accept: 'application/json',
 				'X-WP-Nonce': window.wpApiSettings.nonce,
 			},
 			credentials: 'include',
+			body: JSON.stringify( objArray ),
 		} );
 		return result;
 	} catch ( error ) {

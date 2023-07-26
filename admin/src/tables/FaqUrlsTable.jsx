@@ -2,7 +2,6 @@ import {
 	useInfiniteFetch,
 	ProgressBar,
 	SortBy,
-	SingleSelectMenu,
 	InputField,
 	Checkbox,
 	Trash,
@@ -10,16 +9,14 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	TagsMenu,
-	Edit,
-	Editor, LangMenu, DateTimeFormat, Tooltip,
+	Tooltip,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-import IconButton from '../elements/IconButton';
-import { active } from 'd3';
+// import IconButton from '../elements/IconButton';
+// import { active } from 'd3';
 
 export default function FaqUrlsTable( { slug } ) {
 	const paginationId = 'faq_id';
@@ -43,7 +40,7 @@ export default function FaqUrlsTable( { slug } ) {
 
 	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	const { activatePanel, setRowToEdit } = useTablePanels();
+	const { setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const header = {
@@ -52,7 +49,6 @@ export default function FaqUrlsTable( { slug } ) {
 		question: __( 'Question' ),
 		sorting: __( 'SEO Rank' ),
 	};
-
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -81,7 +77,7 @@ export default function FaqUrlsTable( { slug } ) {
 		columnHelper.accessor( 'sorting', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() } min="0" max="100"
-										  onChange={ ( newVal ) => updateRow( { newVal, cell, optionalSelector: 'url_id' } ) } />,
+				onChange={ ( newVal ) => updateRow( { newVal, cell, optionalSelector: 'url_id' } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.sorting }</SortBy>,
 			size: 80,
 		} ),
@@ -97,8 +93,8 @@ export default function FaqUrlsTable( { slug } ) {
 		url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.url_name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_name: val } ) } required />,
 		faq_id: <InputField liveUpdate defaultValue="" label={ header.faq_id } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, faq_id: val } ) } required />,
 		sorting: <InputField liveUpdate type="number" defaultValue="10" label={ header.sorting } min="0" max="100"
-							  description={ __( 'Order of the FAQ in the list (Number 0 - 100).' ) }
-							  onChange={ ( val ) => setRowToEdit( { ...rowToEdit, sorting: val } ) } required />,
+			description={ __( 'Order of the FAQ in the list (Number 0 - 100).' ) }
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, sorting: val } ) } required />,
 	};
 
 	if ( status === 'loading' ) {
