@@ -10,11 +10,6 @@ class Urlslab_Serp extends Urlslab_Widget {
 	const SETTING_NAME_SYNC_FREQ = 'urlslab-serp-sync-freq';
 	const SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION = 'urlslab-import-rel-q-position';
 	const SETTING_NAME_IMPORT_LIMIT = 'urlslab-import-limit';
-	const SETTING_NAME_SERP_COMPETITOR_DOMAINS = 'urlslab-serp-comp-domains';
-	const SETTING_NAME_SERP_MY_DOMAINS = 'urlslab-serp-my-domains';
-
-	private $competitor_domains = array();
-	private $my_domains = array();
 
 	public function init_widget() {}
 
@@ -36,39 +31,6 @@ class Urlslab_Serp extends Urlslab_Widget {
 
 	public function is_api_key_required(): bool {
 		return true;
-	}
-
-	private function get_domains_from_string( string $str_domains ): array {
-		$arr_domains = preg_split( '/(,|\n|\t)\s*/', $str_domains );
-		$domains     = array();
-		foreach ( $arr_domains as $domain ) {
-			$domain = trim( $domain );
-			if ( strlen( $domain ) ) {
-				try {
-					$domain_url                              = new Urlslab_Url( $domain, true );
-					$domains[ $domain_url->get_domain_id() ] = $domain_url->get_domain_name();
-				} catch ( Exception $e ) {
-				}
-			}
-		}
-
-		return $domains;
-	}
-
-	public function get_competitor_domains(): array {
-		if ( empty( $this->competitor_domains ) ) {
-			$this->competitor_domains = $this->get_domains_from_string( $this->get_option( Urlslab_Serp::SETTING_NAME_SERP_COMPETITOR_DOMAINS ) );
-		}
-
-		return $this->competitor_domains;
-	}
-
-	public function get_my_domains(): array {
-		if ( empty( $this->my_domains ) ) {
-			$this->my_domains = $this->get_domains_from_string( $this->get_option( Urlslab_Serp::SETTING_NAME_SERP_MY_DOMAINS ) );
-		}
-
-		return $this->my_domains;
 	}
 
 	protected function add_options() {
@@ -109,28 +71,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 
 
 		$this->add_options_form_section( 'import', __( 'Import SERP queries' ), __( 'Specify how new queries are imported from SERP results. Make sure you select reasonable amount of domains and other limits, because this feature can eat your credits fast.' ) );
-		$this->add_option_definition(
-			self::SETTING_NAME_SERP_MY_DOMAINS,
-			'',
-			false,
-			__( 'My Domains' ),
-			__( 'Comma or new line separated list of my domains. If none of domains ranks in top 100 for specific query, query is marked as Skipped - means it is not relevant query to your business.' ),
-			self::OPTION_TYPE_TEXTAREA,
-			false,
-			null,
-			'import'
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_SERP_COMPETITOR_DOMAINS,
-			'',
-			false,
-			__( 'Direct Competitor Domains' ),
-			__( 'Comma or new line separated list of domains. Recommendation: Include all domains of your direct competitors. It will help you to discover new keywords and FAQs you should include into your website content. If none of these domains ranks in top 100 for specific query, query is marked as Skipped - means it is not relevant query to your business.' ),
-			self::OPTION_TYPE_TEXTAREA,
-			false,
-			null,
-			'import'
-		);
+
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION,
 			15,

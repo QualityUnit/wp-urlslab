@@ -279,8 +279,8 @@ class Urlslab_Activator {
 			'2.29.0',
 			function() {
 				global $wpdb;
-                $wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " ADD COLUMN shortcode_name VARCHAR(100) NOT NULL DEFAULT ''" ); // phpcs:ignore
-                $wpdb->query( 'UPDATE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " SET shortcode_name = SUBSTRING(prompt, 0, 100)" ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " ADD COLUMN shortcode_name VARCHAR(100) NOT NULL DEFAULT ''" ); // phpcs:ignore
+				$wpdb->query( 'UPDATE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " SET shortcode_name = SUBSTRING(prompt, 0, 100)" ); // phpcs:ignore
 			}
 		);
 		self::update_step(
@@ -331,9 +331,19 @@ class Urlslab_Activator {
 			}
 		);
 		self::update_step(
-			'2.36.0',
+			'2.37.0',
 			function() {
+				global $wpdb;
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_DOMAINS_TABLE ); // phpcs:ignore
 				self::init_serp_domains_table();
+			}
+		);
+		self::update_step(
+			'2.38.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_QUERIES_TABLE ); // phpcs:ignore
+				self::init_serp_queries_table();
 			}
 		);
 
@@ -978,7 +988,8 @@ class Urlslab_Activator {
 							country varchar(10) NOT NULL,
 							query VARCHAR(255) NOT NULL,
 							updated DATETIME NOT NULL,
-							status char(1) DEFAULT '',
+							status char(1) DEFAULT 'X',
+							type char(1) DEFAULT 'S',
 							PRIMARY KEY  (query_id),
 							INDEX idx_query (query),
 							INDEX idx_update (updated)
@@ -1014,6 +1025,7 @@ class Urlslab_Activator {
 		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
 							domain_id bigint NOT NULL,
 							domain_name varchar(500) NOT NULL,
+							domain_type char(1) NOT NULL DEFAULT 'X',
 							PRIMARY KEY  (domain_id)
 							) {$charset_collate};";
 
@@ -1053,6 +1065,7 @@ class Urlslab_Activator {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 	}
+
 	private static function init_serp_query_group_queries_table() {
 		global $wpdb;
 		$table_name      = URLSLAB_SERP_QGROUP_QUERIES_TABLE;

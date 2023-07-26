@@ -32,7 +32,6 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 										array(
 											Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
 											Urlslab_Serp_Query_Row::STATUS_PROCESSED,
-											Urlslab_Serp_Query_Row::STATUS_NOT_APPROVED,
 											Urlslab_Serp_Query_Row::STATUS_ERROR,
 										)
 									);
@@ -118,7 +117,6 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 								array(
 									Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
 									Urlslab_Serp_Query_Row::STATUS_PROCESSED,
-									Urlslab_Serp_Query_Row::STATUS_NOT_APPROVED,
 									Urlslab_Serp_Query_Row::STATUS_ERROR,
 								)
 							);
@@ -179,6 +177,45 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		return array( 'status' );
 	}
 
+
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function create_item( $request ) {
+		try {
+			$row = $this->get_row_object( array(), false );
+			foreach ( $row->get_columns() as $column => $format ) {
+				if ( $request->has_param( $column ) ) {
+					$row->set_public( $column, $request->get_param( $column ) );
+				}
+			}
+
+			try {
+				$this->validate_item( $row );
+			} catch ( Exception $e ) {
+				return new WP_Error( 'error', __( 'Validation failed: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
+			}
+
+			$row->set_type( Urlslab_Serp_Query_Row::TYPE_USER );
+
+			$queries = preg_split( '/\r\n|\r|\n/', $row->get_query() );
+			foreach ( $queries as $query ) {
+				$query = trim( $query );
+				if ( ! empty( $query ) ) {
+					$row->set_query( $query );
+					$row->insert();
+					$this->on_items_updated( array( $row ) );
+				}
+			}
+
+			return new WP_REST_Response( $row->as_array(), 200 );
+		} catch ( Exception $e ) {
+			return new WP_Error( 'exception', __( 'Insert failed', 'urlslab' ), array( 'status' => 500 ) );
+		}
+	}
+
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		foreach ( array_keys( $this->get_row_object()->get_columns() ) as $column ) {
@@ -188,12 +225,11 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$sql->add_select_column( 'url_name' );
 
 		$sql->add_from( $this->get_row_object()->get_table_name() . ' q' );
-		/**
-		 * @var Urlslab_Serp $widget
-		 */
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG );
-		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON q.query_id = p.query_id AND p.domain_id IN (' . implode( ',', array_keys( $widget->get_my_domains() ) ) . ')' );
-
+		$my_domains = Urlslab_Serp_Domain_Row::get_my_domains();
+		if ( empty( $my_domains ) ) {
+			$my_domains = array( - 1 => '' ); //left join needs at least one row in condition
+		}
+		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON q.query_id = p.query_id AND p.domain_id IN (' . implode( ',', array_keys( $my_domains ) ) . ')' );
 		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON p.url_id=u.url_id' );
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'q' );
@@ -234,9 +270,6 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_SERP_URLS_TABLE ) ) ) { // phpcs:ignore
-			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
-		}
-		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_SERP_DOMAINS_TABLE ) ) ) { // phpcs:ignore
 			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_SERP_QGROUP_QUERIES_TABLE ) ) ) { // phpcs:ignore

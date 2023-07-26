@@ -13,16 +13,16 @@ use Urlslab_Vendor\OpenAPI\Client\ApiException;
 class Urlslab_Serp_Cron extends Urlslab_Cron {
 	private \Urlslab_Vendor\OpenAPI\Client\Urlslab\SerpApi $serp_client;
 	private $has_rows = true;
-	private $domains = array();
 	private $serp_queries_count = - 1;
+	private ?Urlslab_Serp $widget;
 
 	public function cron_exec( $max_execution_time = self::MAX_RUN_TIME ): bool {
 		if ( ! $this->has_rows || ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Serp::SLUG ) ) {
 			return false;
 		}
 
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG );
-		if ( ! $widget->get_option( Urlslab_Serp::SETTING_NAME_SERP_API ) ) {
+		$this->widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG );
+		if ( ! $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SERP_API ) ) {
 			return false;
 		}
 
@@ -39,8 +39,6 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 			$api_key           = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
 			$config            = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
 			$this->serp_client = new \Urlslab_Vendor\OpenAPI\Client\Urlslab\SerpApi( new GuzzleHttp\Client(), $config );
-			$widget            = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG );
-			$this->domains     = array_replace( $widget->get_my_domains(), $widget->get_competitor_domains() );
 		}
 
 		return ! empty( $this->serp_client );
@@ -57,9 +55,8 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 			return false;
 		}
 
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG );
 
-		switch ( $widget->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ) ) {
+		switch ( $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ) ) {
 			case Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY:
 				$update_delay = 86400;
 				break;
@@ -103,7 +100,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 		$request->setLocale( $query->get_lang() );
 		$request->setCountry( $query->get_country() );
 		$request->setAllResults( true );
-		$request->setNotOlderThan( $widget->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ) );
+		$request->setNotOlderThan( $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ) );
 		$has_monitored_domain = false;
 		$urls                 = array();
 		$domains              = array();
@@ -121,11 +118,11 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 			} else {
 				foreach ( $organic as $organic_result ) {
 					$url_obj = new Urlslab_Url( $organic_result->link, true );
-					if ( isset( $this->domains[ $url_obj->get_domain_id() ] ) && $organic_result->position <= $widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION ) ) {
+					if ( isset( Urlslab_Serp_Domain_Row::get_monitored_domains()[ $url_obj->get_domain_id() ] ) && $organic_result->position <= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION ) ) {
 						$has_monitored_domain = true;
 					}
 
-					if ( 10 >= $organic_result->position || $this->domains[ $url_obj->get_domain_id() ] ) {
+					if ( 10 >= $organic_result->position || Urlslab_Serp_Domain_Row::get_monitored_domains()[ $url_obj->get_domain_id() ] ) {
 						$url    = new Urlslab_Serp_Url_Row(
 							array(
 								'url_name'        => $organic_result->link,
@@ -157,8 +154,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 				}
 			}
 
-
-			if ( $has_monitored_domain ) {
+			if ( $has_monitored_domain || Urlslab_Serp_Query_Row::TYPE_USER === $query->get_type() || empty( Urlslab_Serp_Domain_Row::get_monitored_domains() ) ) {
 				if ( ! empty( $urls ) ) {
 					$urls[0]->insert_all( $urls, true );
 				}
@@ -170,7 +166,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 				}
 
 				$fqs = $serp_response->getFaqs();
-				if ( ! empty( $fqs ) && $widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_FAQS ) ) {
+				if ( ! empty( $fqs ) && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_FAQS ) ) {
 					foreach ( $fqs as $faq ) {
 						$faq_row = new Urlslab_Faq_Row( array( 'question' => $faq->question ), false );
 						if ( $faq_row->load( array( 'question' ) ) ) {
@@ -182,7 +178,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 				}
 
 				$related = $serp_response->getRelatedSearches();
-				if ( ! empty( $related ) && $widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES ) && $this->get_serp_queries_count() <= $widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_LIMIT ) ) {
+				if ( ! empty( $related ) && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES ) && $this->get_serp_queries_count() <= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_LIMIT ) ) {
 					$queries = array();
 					foreach ( $related as $related_search ) {
 						$queries[] = new Urlslab_Serp_Query_Row(
@@ -191,6 +187,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 								'lang'    => $query->get_lang(),
 								'country' => $query->get_country(),
 								'status'  => Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
+								'type'    => Urlslab_Serp_Query_Row::TYPE_SYSTEM,
 							)
 						);
 					}
@@ -200,8 +197,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 				}
 			}
 
-			$query = new Urlslab_Serp_Query_Row( $row );
-			if ( $has_monitored_domain ) {
+			if ( $has_monitored_domain || Urlslab_Serp_Query_Row::TYPE_USER === $query->get_type() ) {
 				$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );
 			} else {
 				$query->set_status( Urlslab_Serp_Query_Row::STATUS_SKIPPED );
