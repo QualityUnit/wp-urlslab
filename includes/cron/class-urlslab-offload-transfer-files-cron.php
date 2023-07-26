@@ -12,21 +12,21 @@ class Urlslab_Offload_Transfer_Files_Cron extends Urlslab_Cron {
 			return false;
 		}
 
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG );
+		$widget             = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG );
 		$latest_file_driver = $widget->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_NEW_FILE_DRIVER );
-		$data = array( $latest_file_driver );
-		$placeholders = array();
+		$data               = array( $latest_file_driver );
+		$placeholders       = array();
 
 		if ( $widget->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_DB ) ) {
-			$data[] = Urlslab_Driver::DRIVER_DB;
+			$data[]         = Urlslab_Driver::DRIVER_DB;
 			$placeholders[] = '%s';
 		}
-		if ( $widget->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ) ) {
-			$data[] = Urlslab_Driver::DRIVER_S3;
-			$placeholders[] = '%s';
-		}
+		//		if ( $widget->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ) ) {
+		//			$data[] = Urlslab_Driver::DRIVER_S3;
+		//			$placeholders[] = '%s';
+		//		}
 		if ( $widget->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ) ) {
-			$data[] = Urlslab_Driver::DRIVER_LOCAL_FILE;
+			$data[]         = Urlslab_Driver::DRIVER_LOCAL_FILE;
 			$placeholders[] = '%s';
 		}
 
