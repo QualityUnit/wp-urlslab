@@ -151,35 +151,66 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 		updateRowData.mutate( { editedRow, id, updateAll } );
 	};
 
-	const processDeletedPages = useCallback( ( tableElem ) => {
+	// Remove rows from loaded table for optimistic update used in setQueryData
+	const processDeletedPages = useCallback( ( rowData ) => {
 		let deletedPagesArray = data?.pages;
 
-		deletedPagesArray = deletedPagesArray.map( ( page ) => page.filter( ( row ) => row[ paginationId ] !== getRowId( tableElem ) ) ) ?? [];
+		if ( ! Array.isArray( rowData ) ) {
+			deletedPagesArray = deletedPagesArray.map( ( page ) => page.filter( ( row ) => row[ paginationId ] !== getRowId( rowData ) ) ) ?? [];
+
+			return deletedPagesArray;
+		}
+
+		rowData.forEach( ( singleRow ) => {
+			deletedPagesArray = deletedPagesArray.map( ( page ) => page.filter( ( row ) => row[ paginationId ] !== getRowId( singleRow ) ) ) ?? [];
+		} );
 
 		return deletedPagesArray;
 	}, [ data?.pages, getRowId, paginationId ] );
 
+	//Main mutate function handling deleting, optimistic updates and error/success notifications
 	const deleteSelectedRow = useMutation( {
 		mutationFn: async ( opts ) => {
-			const { deletedPagesArray, cell, optionalSelector, id, updateAll } = opts;
-			const row = cell.row || cell;
+			const { deletedPagesArray, rowData, optionalSelector, id, updateAll } = opts;
+			let idArray = [];
 
-			setNotification( slug, {
-				message: `Deleting row${ id ? ' “' + row.original[ id ] + '”' : '' }…`, status: 'info',
-			} );
-
+			// Optimistic update of table to immediately delete rows before delete request passed in database
 			queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => ( {
 				pages: deletedPagesArray,
 				pageParams: origData.pageParams,
 			} ) );
 
-			const response = await del( `${ slug }/${ getRowId( cell, optionalSelector ) }` );
-			return { response, id: row.original[ id ], updateAll };
+			// Single row delete
+			if ( ! Array.isArray( rowData ) ) {
+				const row = rowData.row || rowData;
+
+				// Shows notification for single row to delete
+				setNotification( slug, {
+					message: `Deleting row${ id ? ' “' + row.original[ id ] + '”' : '' }…`, status: 'info',
+				} );
+
+				// sending only one object in array for single row
+				const response = await del( slug, [ { id: row.original[ paginationId ], optId: row.original[ optionalSelector ] } ] ); // Sends array of ONE  row  as object with ID and optional ID to slug/delete endpoint
+				return { response, id: row.original[ id ], updateAll };
+			}
+
+			// Multiple rows delete
+			rowData.forEach( ( singleRow ) => {
+				idArray = [ ...idArray, { id: singleRow.original[ paginationId ], optId: singleRow.original[ optionalSelector ] } ];
+			} );
+
+			setNotification( slug, {
+				message: `Deleting multiple rows…`, status: 'info',
+			} );
+
+			const response = await del( slug, idArray ); // Sends array of object of row IDs and optional IDs to slug/delete endpoint
+			return { response, updateAll };
 		},
 		onSuccess: ( { response, id, updateAll } ) => {
 			const { ok } = response;
 			if ( ok ) {
-				setNotification( slug, { message: `Row${ id ? ' “' + id + '”' : '' } has been deleted`, status: 'success' } );
+				//If id present, single row sentence (Row Id has been deleted) else show Rows have been deleted
+				setNotification( slug, { message: `${ id ? 'Row “' + id + '” has' : 'Rows have' } been deleted`, status: 'success' } );
 				rowIndex += 1;
 			}
 
@@ -195,26 +226,26 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 			}
 
 			if ( ! ok ) {
-				setNotification( slug, { message: `Deleting row${ id ? ' “' + id + '”' : '' } failed`, status: 'error' } );
+				//If id present, single row sentence (Deleting row Id failed) else show Deleting of some rows failed
+				setNotification( slug, { message: `Deleting ${ id ? 'row “' + id + '”' : 'of some rows' } failed`, status: 'error' } );
 			}
 		},
 	} );
 
-	const deleteRow = useCallback( ( { cell, optionalSelector, id, updateAll } ) => {
-		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), cell, optionalSelector, id, updateAll } );
-	}, [ processDeletedPages, deleteSelectedRow ] );
+	// Single row delete call used from table
+	const deleteRow = ( { cell, optionalSelector, id, updateAll } ) => {
+		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), rowData: cell, optionalSelector, id, updateAll } );
+	};
 
-	const deleteSelectedRows = async ( { optionalSelector, id } ) => {
-		// Multiple rows delete
+	// Multiple rows delete used from table
+	const deleteSelectedRows = ( { optionalSelector, id } ) => {
 		const selectedRowsInTable = table?.getSelectedRowModel().flatRows || [];
 		table?.toggleAllPageRowsSelected( false );
 
-		selectedRowsInTable.map( ( row ) => {
-			deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( row ), cell: row, optionalSelector, id } );
-			return false;
-		} );
+		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( selectedRowsInTable ), rowData: selectedRowsInTable, optionalSelector, id } );
 	};
 
+	// Function for row selection from table
 	const selectRows = ( tableElem, remove = false ) => {
 		if ( tableElem && ! remove ) {
 			setTable( tableElem?.table );

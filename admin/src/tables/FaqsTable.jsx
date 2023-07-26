@@ -19,7 +19,7 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import IconButton from '../elements/IconButton';
-import { active } from 'd3';
+// import { active } from 'd3';
 
 export default function FaqsTable( { slug } ) {
 	const paginationId = 'faq_id';
@@ -72,8 +72,8 @@ export default function FaqsTable( { slug } ) {
 		answer: <Editor description={ ( __( 'Answer to the question' ) ) } defaultValue="" label={ header.answer } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, answer: val } ) } />,
 
 		language: <LangMenu autoClose defaultValue="all"
-						description={ __( 'Select language' ) }
-						onChange={ ( val ) => setRowToEdit( { ...rowToEdit, language: val } ) }>{ header.language }</LangMenu>,
+			description={ __( 'Select language' ) }
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, language: val } ) }>{ header.language }</LangMenu>,
 
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 
