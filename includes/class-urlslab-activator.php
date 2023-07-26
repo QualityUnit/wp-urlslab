@@ -1044,7 +1044,8 @@ class Urlslab_Activator {
 							updated DATETIME NOT NULL,
 							position TINYINT UNSIGNED NOT NULL,
 							PRIMARY KEY  (query_id, url_id),
-							INDEX idx_urls (url_id)
+							INDEX idx_urls (url_id),
+							INDEX idx_domains (domain_id)
 							) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
