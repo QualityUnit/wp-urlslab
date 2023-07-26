@@ -94,7 +94,7 @@ class Urlslab_Admin {
 						'wp-element',
 						'wp-i18n',
 					),
-					$this->version,
+					null, // do not include versioning for react apps, is unnecessary and cause problems with lazy loaded components
 					true
 				);
 			}
@@ -235,7 +235,7 @@ class Urlslab_Admin {
 						'wp-i18n',
 						'wp-blocks',
 					),
-					$this->version,
+					null, // do not include versioning for react apps, is unnecessary and cause problems with lazy loaded components
 					true
 				);
 
