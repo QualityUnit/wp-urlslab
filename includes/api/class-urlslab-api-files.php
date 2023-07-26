@@ -207,14 +207,14 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 
 	public function validate_s3( WP_REST_Request $request ) {
 		/** @var Urlslab_Driver_S3 $driver */
-//TODO S3
-//		$driver = Urlslab_Driver::get_driver( Urlslab_Driver::DRIVER_S3 );
-//		try {
-//			if ( $driver->is_connected() ) {
-//				return new WP_REST_Response( __( 'S3 connected' ), 200 );
-//			}
-//		} catch ( Exception $e ) {
-//		}
+		//TODO S3
+		//		$driver = Urlslab_Driver::get_driver( Urlslab_Driver::DRIVER_S3 );
+		//		try {
+		//			if ( $driver->is_connected() ) {
+		//				return new WP_REST_Response( __( 'S3 connected' ), 200 );
+		//			}
+		//		} catch ( Exception $e ) {
+		//		}
 
 		return new WP_REST_Response( __( 'S3 not connected' ), 500 );
 	}
