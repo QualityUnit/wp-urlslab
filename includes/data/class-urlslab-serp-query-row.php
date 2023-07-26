@@ -2,11 +2,13 @@
 
 class Urlslab_Serp_Query_Row extends Urlslab_Data {
 	public const STATUS_NOT_PROCESSED = 'X';
-	public const STATUS_NOT_APPROVED = 'N';
 	public const STATUS_PROCESSING = 'P';
 	public const STATUS_PROCESSED = 'A';
 	public const STATUS_ERROR = 'E';
 	public const STATUS_SKIPPED = 'S';
+
+	public const TYPE_USER = 'U';
+	public const TYPE_SYSTEM = 'S';
 
 	/**
 	 * @param mixed $loaded_from_db
@@ -17,6 +19,7 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 		$this->set_query( $query['query'] ?? '', $loaded_from_db );
 		$this->set_updated( $query['updated'] ?? self::get_now(), $loaded_from_db );
 		$this->set_status( $query['status'] ?? self::STATUS_NOT_PROCESSED, $loaded_from_db );
+		$this->set( 'type', $query['type'] ?? self::TYPE_SYSTEM, $loaded_from_db );
 		$this->set_query_id( $query['query_id'] ?? $this->compute_query_id(), $loaded_from_db );
 	}
 
@@ -43,6 +46,10 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 
 	public function get_status(): string {
 		return $this->get( 'status' );
+	}
+
+	public function get_type(): string {
+		return $this->get( 'type' );
 	}
 
 	public function set_query_id( int $query_id, $loaded_from_db = false ): void {
@@ -72,6 +79,10 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 		}
 	}
 
+	public function set_type( string $type, $loaded_from_db = false ): void {
+		$this->set( 'type', $type, $loaded_from_db );
+	}
+
 	public function get_table_name(): string {
 		return URLSLAB_SERP_QUERIES_TABLE;
 	}
@@ -92,6 +103,7 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 			'query'    => '%s',
 			'updated'  => '%s',
 			'status'   => '%s',
+			'type'   => '%s',
 		);
 	}
 

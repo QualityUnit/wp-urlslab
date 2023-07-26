@@ -1,6 +1,14 @@
 /* eslint-disable indent */
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch,
+	ProgressBar,
+	SortBy,
+	Loader,
+	Tooltip,
+	Table,
+	ModuleViewHeaderBottom,
+	TooltipSortingFiltering,
+	SingleSelectMenu,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -38,8 +46,15 @@ export default function SerpTopDomainsTable( { slug } ) {
 		updateRow( { cell, id: 'keyword' } );
 	}, [ setOptions, setRowToEdit, slug, updateRow ] );
 
+	const domainTypes = {
+		X: __('Other'),
+		M: __('My Domain'),
+		C: __('Competitor')
+	};
+
 	const header = {
 		domain_name: __( 'Domain' ),
+		domain_type: __( 'Type' ),
 		top_10_cnt: __( 'Top 10 URLs' ),
 		top_100_cnt: __( 'Top 100 URLs' ),
 		avg_pos: __( 'Average Position' ),
@@ -52,6 +67,15 @@ export default function SerpTopDomainsTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.domain_name }</SortBy>,
 			minSize: 200,
 		} ),
+
+		columnHelper.accessor( 'domain_type', {
+			filterValMenu: domainTypes,
+			className: 'nolimit',
+			cell: ( cell ) => <SingleSelectMenu items={ domainTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.domain_type }</SortBy>,
+			size: 80,
+		} ),
+
 		columnHelper.accessor( 'top_10_cnt', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
