@@ -77,7 +77,7 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		global $wpdb;
-		$has_positions = $wpdb->get_row( 'SELECT * FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' LIMIT 1' );
+		$has_positions = $wpdb->get_row( 'SELECT * FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' LIMIT 1' ); // phpcs:ignore
 
 
 		$sql = new Urlslab_Api_Table_Sql( $request );
