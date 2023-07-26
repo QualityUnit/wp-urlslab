@@ -49,7 +49,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 								}
 							},
 						),
-						'shortcode_name' => array(
+						'shortcode_name'   => array(
 							'required'          => true,
 							'validate_callback' => function( $param ) {
 								return is_string( $param ) && strlen( $param ) <= 255 && strlen( $param ) > 0;
@@ -117,11 +117,11 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<shortcode_id>[0-9]+)',
+			$base . '/delete',
 			array(
 				array(
-					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'delete_item' ),
+					'methods'             => WP_REST_Server::ALLMETHODS,
+					'callback'            => array( $this, 'delete_items' ),
 					'permission_callback' => array(
 						$this,
 						'delete_item_permissions_check',
@@ -136,32 +136,29 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 
 	}
 
-	/**
-	 * @param WP_REST_Request $request
-	 *
-	 * @return WP_Error|WP_REST_Response
-	 */
-	public function delete_item( $request ) {
+	protected function delete_row( array $row ): bool {
 		global $wpdb;
 
+		if ( ! isset( $row['shortcode_id'] ) ) {
+			return false;
+		}
+
 		$delete_params                 = array();
-		$delete_params['shortcode_id'] = $request->get_param( 'shortcode_id' );
+		$delete_params['shortcode_id'] = $row['shortcode_id'];
 
 		if ( false === $wpdb->delete( URLSLAB_GENERATOR_SHORTCODES_TABLE, $delete_params ) ) {
-			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
+			return false;
 		}
 
 		if ( false === $wpdb->delete( URLSLAB_GENERATOR_RESULTS_TABLE, $delete_params ) ) {
-			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
+			return false;
 		}
 
 		if ( false === $wpdb->delete( URLSLAB_GENERATOR_URLS_TABLE, $delete_params ) ) {
-			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
+			return false;
 		}
 
-		$this->on_items_updated();
-
-		return new WP_REST_Response( __( 'Deleted' ), 200 );
+		return true;
 	}
 
 	/**
@@ -220,7 +217,17 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 	}
 
 	public function get_editable_columns(): array {
-		return array( 'shortcode_name', 'semantic_context', 'prompt', 'default_value', 'url_filter', 'status', 'model', 'template', 'shortcode_type' );
+		return array(
+			'shortcode_name',
+			'semantic_context',
+			'prompt',
+			'default_value',
+			'url_filter',
+			'status',
+			'model',
+			'template',
+			'shortcode_type',
+		);
 	}
 
 	/**

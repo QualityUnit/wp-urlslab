@@ -37,7 +37,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 						),
 						'original_text' => array(
 							'required'          => true,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
@@ -58,45 +58,45 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 						'augment_permission_check',
 					),
 					'args'                => array(
-						'user_prompt'           => array(
+						'user_prompt'      => array(
 							'required'          => true,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
 						'tone'             => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
-						'model'             => array(
+						'model'            => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
 						'lang'             => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
 						'semantic_context' => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
 						'url_filter'       => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_array( $param );
 							},
 						),
 						'domain_filter'    => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_array( $param );
 							},
 						),
@@ -117,27 +117,27 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 						'augment_permission_check',
 					),
 					'args'                => array(
-						'user_prompt'           => array(
+						'user_prompt' => array(
 							'required'          => true,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
-						'yt_id'          => array(
+						'yt_id'       => array(
 							'required'          => true,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
-						'model'             => array(
+						'model'       => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
-						'lang'             => array(
+						'lang'        => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
@@ -213,11 +213,11 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<hash_id>[0-9]+)',
+			$base . '/delete',
 			array(
 				array(
-					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'delete_item' ),
+					'methods'             => WP_REST_Server::ALLMETHODS,
+					'callback'            => array( $this, 'delete_items' ),
 					'permission_callback' => array(
 						$this,
 						'delete_item_permissions_check',
@@ -232,26 +232,36 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 	}
 
+
+	protected function delete_row( array $row ): bool {
+		global $wpdb;
+
+		if ( ! isset( $row['hash_id'] ) ) {
+			return false;
+		}
+
+		$delete_params            = array();
+		$delete_params['hash_id'] = $row['hash_id'];
+
+		if ( false === $wpdb->delete( URLSLAB_GENERATOR_RESULTS_TABLE, $delete_params ) ) {
+			return false;
+		}
+
+		if ( false === $wpdb->delete( URLSLAB_GENERATOR_URLS_TABLE, $delete_params ) ) {
+			return false;
+		}
+
+		$this->on_items_updated();
+
+		return true;
+	}
+
 	/**
 	 * @param WP_REST_Request $request
 	 *
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function delete_item( $request ) {
-		global $wpdb;
-
-		$delete_params            = array();
-		$delete_params['hash_id'] = $request->get_param( 'hash_id' );
-
-		if ( false === $wpdb->delete( URLSLAB_GENERATOR_RESULTS_TABLE, $delete_params ) ) {
-			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
-		}
-
-		if ( false === $wpdb->delete( URLSLAB_GENERATOR_URLS_TABLE, $delete_params ) ) {
-			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
-		}
-
-		$this->on_items_updated();
 
 		return new WP_REST_Response( __( 'Deleted' ), 200 );
 	}
@@ -359,8 +369,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 				} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
 					switch ( $e->getCode() ) {
 						case 402:
-							Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
-							//continue
+							Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 ); //continue
 						case 500:
 						case 504:
 							return new WP_REST_Response( (object) array( 'translation' => $original_text ), $e->getCode() );
@@ -381,14 +390,14 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	}
 
 	public function get_instant_augmentation( $request ) {
-		$user_prompt = $request->get_param( 'user_prompt' );
-		$aug_tone = $request->get_param( 'tone' );
-		$aug_lang = $request->get_param( 'lang' );
-		$aug_model = $request->get_param( 'model' );
+		$user_prompt      = $request->get_param( 'user_prompt' );
+		$aug_tone         = $request->get_param( 'tone' );
+		$aug_lang         = $request->get_param( 'lang' );
+		$aug_model        = $request->get_param( 'model' );
 		$semantic_context = $request->get_param( 'semantic_context' );
-		$url_filter = $request->get_param( 'url_filter' );
-		$domain_filter = $request->get_param( 'domain_filter' );
-		$completion = '';
+		$url_filter       = $request->get_param( 'url_filter' );
+		$domain_filter    = $request->get_param( 'domain_filter' );
+		$completion       = '';
 
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
 		if ( empty( $aug_model ) ) {
@@ -413,17 +422,21 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 				$user_prompt .= "\nLANGUAGE OF OUTPUT: the same language as INPUT TEXT";
 			}
 
-			if ( ( $semantic_context && strlen( $semantic_context ) ) ||
+			if (
+				( $semantic_context && strlen( $semantic_context ) ) ||
 				( $url_filter && count( $url_filter ) ) ||
-				( $domain_filter && count( $domain_filter ) ) ) {
+				( $domain_filter && count( $domain_filter ) )
+			) {
 				$user_prompt .= "\n Try to generate the output based on the given context";
 				$user_prompt .= "\n If the context is not provided, still try to generate an output as best as you can with you're own knowledge";
 				$user_prompt .= "\n CONTEXT: ";
 				$user_prompt .= "\n{context}";
 
 
-				if ( ( $url_filter && count( $url_filter ) ) ||
-					( $domain_filter && count( $domain_filter ) ) ) {
+				if (
+					( $url_filter && count( $url_filter ) ) ||
+					( $domain_filter && count( $domain_filter ) )
+				) {
 					$filter = new DomainDataRetrievalContentQuery();
 					$filter->setLimit( 5 );
 
@@ -439,7 +452,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 				if ( strlen( $semantic_context ) ) {
 					$augment_request->setAugmentCommand( $semantic_context );
-				}           
+				}
 			}
 			$user_prompt .= "\nOUTPUT: ";
 
@@ -452,42 +465,43 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			$augment_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
 
 			try {
-				$response = Urlslab_Augment_Helper::get_instance()->augment( $augment_request );
+				$response   = Urlslab_Augment_Helper::get_instance()->augment( $augment_request );
 				$completion = $response->getResponse();
 			} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
 				switch ( $e->getCode() ) {
 					case 402:
 						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+
 						return new WP_REST_Response(
 							(object) array(
 								'completion' => '',
-								'message' => 'not enough credits',
+								'message'    => 'not enough credits',
 							),
-							402 
+							402
 						);
-						//continue
+					//continue
 					case 500:
 					case 504:
 						return new WP_REST_Response(
 							(object) array(
 								'completion' => '',
-								'message' => 'something wen\'nt wrong, try again later',
+								'message'    => 'something wen\'nt wrong, try again later',
 							),
-							$e->getCode() 
+							$e->getCode()
 						);
 
 					case 404:
 						return new WP_REST_Response(
 							(object) array(
 								'completion' => '',
-								'message' => 'Given context data has\'t been indexed yet',
+								'message'    => 'Given context data has\'t been indexed yet',
 							),
-							$e->getCode() 
+							$e->getCode()
 						);
 					default:
 						$response_obj = (object) array(
 							'completion' => '',
-							'error'       => $e->getMessage(),
+							'error'      => $e->getMessage(),
 						);
 
 						return new WP_REST_Response( $response_obj, $e->getCode() );
@@ -500,16 +514,16 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 	public function get_youtube_augmentation( WP_REST_Request $request ) {
 		$user_prompt = $request->get_param( 'user_prompt' );
-		$aug_lang = $request->get_param( 'lang' );
-		$aug_model = $request->get_param( 'model' );
-		$yt_id = $request->get_param( 'yt_id' );
+		$aug_lang    = $request->get_param( 'lang' );
+		$aug_model   = $request->get_param( 'model' );
+		$yt_id       = $request->get_param( 'yt_id' );
 
 
 		if ( empty( $yt_id ) || empty( $user_prompt ) ) {
 			return new WP_REST_Response(
 				(object) array(
 					'completion' => '',
-					'message' => 'missing required parameters',
+					'message'    => 'missing required parameters',
 				),
 				400
 			);
@@ -521,7 +535,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			return new WP_REST_Response(
 				(object) array(
 					'completion' => '',
-					'message' => 'youtube data cannot be fetched',
+					'message'    => 'youtube data cannot be fetched',
 				),
 				404
 			);
@@ -539,7 +553,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			return new WP_REST_Response(
 				(object) array(
 					'completion' => '',
-					'message' => 'youtube Caption is Empty',
+					'message'    => 'youtube Caption is Empty',
 				),
 				404
 			);
@@ -552,7 +566,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		}
 
 		$command = 'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Generator_Result_Row::DO_NOT_KNOW . "!\n" . $user_prompt .
-			"\nOUTPUT Language should be in: $aug_lang ";
+				   "\nOUTPUT Language should be in: $aug_lang ";
 
 		$command .= "\n\n--VIDEO CAPTIONS:\n{context}\n--VIDEO CAPTIONS END\nOUTPUT:";
 		$prompt->setPromptTemplate( $command );
@@ -563,12 +577,13 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$aug_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
 		try {
 			$response = Urlslab_Augment_Helper::get_instance()->augment( $aug_request );
+
 			return new WP_REST_Response( (object) array( 'completion' => $response->getResponse() ), 200 );
 		} catch ( Exception $e ) {
 			return new WP_REST_Response(
 				(object) array(
 					'completion' => '',
-					'message' => $e->getMessage(),
+					'message'    => $e->getMessage(),
 				),
 				500
 			);

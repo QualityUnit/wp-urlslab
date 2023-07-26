@@ -62,11 +62,11 @@ class Urlslab_Api_Screenshots extends Urlslab_Api_Urls {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$this->base . '/(?P<url_id>[0-9]+)',
+			$this->base . '/delete',
 			array(
 				array(
-					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'delete_item' ),
+					'methods'             => WP_REST_Server::ALLMETHODS,
+					'callback'            => array( $this, 'delete_items' ),
 					'permission_callback' => array(
 						$this,
 						'delete_item_permissions_check',

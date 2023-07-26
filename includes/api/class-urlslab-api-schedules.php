@@ -122,11 +122,11 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<schedule_id>[0-9a-zA-Z\\-]+)',
+			$base . '/delete',
 			array(
 				array(
-					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'delete_item' ),
+					'methods'             => WP_REST_Server::ALLMETHODS,
+					'callback'            => array( $this, 'delete_items' ),
 					'permission_callback' => array(
 						$this,
 						'delete_item_permissions_check',
@@ -258,15 +258,31 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 	 *
 	 * @return WP_Error|WP_REST_Response
 	 */
-	public function delete_item( $request ) {
+	public function delete_items( $request ) {
 		try {
-			$this->get_client()->deleteSchedule( $request->get_param( 'schedule_id' ) );
 
-			return new WP_REST_Response( 'Deleted', 200 );
+			$rows = $request->get_json_params()['rows'];
+
+			if ( empty( $request->get_param( 'rows' ) ) || ! is_array( $request->get_param( 'rows' ) ) ) {
+				return new WP_Error( 'error', __( 'No rows to delete', 'urlslab' ), array( 'status' => 400 ) );
+			}
+
+			$deleted_rows = array();
+			foreach ( $rows as $row ) {
+				if ( isset( $row['schedule_id'] ) ) {
+					$this->get_client()->deleteSchedule( $row['schedule_id'] );
+					$deleted_rows[] = true;
+				} else {
+					$deleted_rows[] = false;
+				}
+			}
+
+			return new WP_REST_Response( $deleted_rows, 200 );
 		} catch ( Throwable $e ) {
 			return new WP_Error( 'error', $e->getMessage() );
 		}
 	}
+
 
 	private function get_client() {
 		if ( ! Urlslab_General::is_urlslab_active() ) {

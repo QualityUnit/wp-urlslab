@@ -43,11 +43,11 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<videoid>[0-9a-zA-Z_\-]+)',
+			$base . '/delete',
 			array(
 				array(
-					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'delete_item' ),
+					'methods'             => WP_REST_Server::ALLMETHODS,
+					'callback'            => array( $this, 'delete_items' ),
 					'permission_callback' => array(
 						$this,
 						'delete_item_permissions_check',
@@ -157,20 +157,6 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 				'create_item_permissions_check',
 			),
 		);
-	}
-
-
-	/**
-	 * @param WP_REST_Request $request
-	 *
-	 * @return WP_Error|WP_REST_Response
-	 */
-	public function delete_item( $request ) {
-		if ( 'delete-all' === $request->get_param( 'videoid' ) ) {
-			return $this->delete_all_items( $request );
-		}
-
-		return parent::delete_item( $request );
 	}
 
 	/**

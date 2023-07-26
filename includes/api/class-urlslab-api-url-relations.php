@@ -80,11 +80,11 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<src_url_id>[0-9]+)/(?P<dest_url_id>[0-9]+)',
+			$base . '/delete',
 			array(
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'delete_item' ),
+					'callback'            => array( $this, 'delete_items' ),
 					'permission_callback' => array(
 						$this,
 						'delete_item_permissions_check',
