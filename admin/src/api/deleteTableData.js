@@ -27,7 +27,7 @@ export async function deleteRow( slug, objArray ) {
 				'X-WP-Nonce': window.wpApiSettings.nonce,
 			},
 			credentials: 'include',
-			body: JSON.stringify( objArray ),
+			body: JSON.stringify( { rows: objArray } ),
 		} );
 		return result;
 	} catch ( error ) {

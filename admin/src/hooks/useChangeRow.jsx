@@ -190,13 +190,13 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 				} );
 
 				// sending only one object in array for single row
-				const response = await del( slug, [ { id: row.original[ paginationId ], optId: row.original[ optionalSelector ] } ] ); // Sends array of ONE  row  as object with ID and optional ID to slug/delete endpoint
+				const response = await del( slug, [ { [ paginationId ]: row.original[ paginationId ], [ optionalSelector ]: row.original[ optionalSelector ] } ] ); // Sends array of ONE  row  as object with ID and optional ID to slug/delete endpoint
 				return { response, id: row.original[ id ], updateAll };
 			}
 
 			// Multiple rows delete
 			rowData.forEach( ( singleRow ) => {
-				idArray = [ ...idArray, { id: singleRow.original[ paginationId ], optId: singleRow.original[ optionalSelector ] } ];
+				idArray = [ ...idArray, { [ paginationId ]: singleRow.original[ paginationId ], [ optionalSelector ]: singleRow.original[ optionalSelector ] } ];
 			} );
 
 			setNotification( slug, {
@@ -208,6 +208,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 		},
 		onSuccess: ( { response, id, updateAll } ) => {
 			const { ok } = response;
+
 			if ( ok ) {
 				//If id present, single row sentence (Row Id has been deleted) else show Rows have been deleted
 				setNotification( slug, { message: `${ id ? 'Row “' + id + '” has' : 'Rows have' } been deleted`, status: 'success' } );
