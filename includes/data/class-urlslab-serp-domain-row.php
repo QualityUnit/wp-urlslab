@@ -14,8 +14,8 @@ class Urlslab_Serp_Domain_Row extends Urlslab_Data {
 	 */
 	public function __construct( array $domain = array(), $loaded_from_db = true ) {
 		$this->set_domain_name( $domain['domain_name'] ?? '', $loaded_from_db );
-		$this->set_domain_id( $domain['domain_id'] ?? $this->compute_domain_id(), $loaded_from_db );
 		$this->set_domain_type( $domain['domain_type'] ?? self::TYPE_OTHER, $loaded_from_db );
+		$this->set_domain_id( $domain['domain_id'] ?? $this->compute_domain_id(), $loaded_from_db );
 	}
 
 	public function get_domain_id(): int {
@@ -36,6 +36,9 @@ class Urlslab_Serp_Domain_Row extends Urlslab_Data {
 
 	public function set_domain_name( string $domain_name, $loaded_from_db = false ): void {
 		$this->set( 'domain_name', $domain_name, $loaded_from_db );
+		if ( ! $loaded_from_db ) {
+			$this->set_domain_id( $this->compute_domain_id() );
+		}
 	}
 
 	public function set_domain_type( string $domain_type, $loaded_from_db = false ): void {
@@ -63,6 +66,9 @@ class Urlslab_Serp_Domain_Row extends Urlslab_Data {
 	}
 
 	private function compute_domain_id() {
+		if ( empty( $this->get_domain_name() ) ) {
+			return 0;
+		}
 		try {
 			$url = new Urlslab_Url( $this->get_domain_name(), true );
 

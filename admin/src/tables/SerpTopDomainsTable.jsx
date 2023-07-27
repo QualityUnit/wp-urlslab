@@ -8,13 +8,14 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	SingleSelectMenu,
+	SingleSelectMenu, InputField, Editor, LangMenu, TagsMenu,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
+import TextArea from "../elements/Textarea";
 
 export default function SerpTopDomainsTable( { slug } ) {
 	const paginationId = 'domain_id';
@@ -51,6 +52,10 @@ export default function SerpTopDomainsTable( { slug } ) {
 		M: __('My Domain'),
 		C: __('Competitor')
 	};
+	const newDomainTypes = {
+		M: __('My Domain'),
+		C: __('Competitor')
+	};
 
 	const header = {
 		domain_name: __( 'Domain' ),
@@ -58,6 +63,12 @@ export default function SerpTopDomainsTable( { slug } ) {
 		top_10_cnt: __( 'Top 10 URLs' ),
 		top_100_cnt: __( 'Top 100 URLs' ),
 		avg_pos: __( 'Average Position' ),
+	};
+
+	const rowEditorCells = {
+		domain_name: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Add Domains' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { ...rowToEdit, domain_name: val } ) } required  description={ __( 'Domain names separated by new line' ) } />,
+		domain_type: <SingleSelectMenu defaultAccept autoClose items={ newDomainTypes } name="domain_type" defaultValue="M"
+									   onChange={ ( val ) => setRowToEdit( { ...rowToEdit, domain_type: val } ) }>{ header.domain_type }</SingleSelectMenu>,
 	};
 
 	const columns = [
@@ -105,10 +116,8 @@ export default function SerpTopDomainsTable( { slug } ) {
 			<ModuleViewHeaderBottom
 				table={ table }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				noImport
 				noDelete
-				noInsert
-				options={ { header, data, slug, paginationId, url, id: 'domain_name',
+				options={ { header, data, slug, paginationId, url, id: 'domain_name', title: 'Add Domains', rowToEdit, rowEditorCells,
 					deleteCSVCols: [ paginationId, 'domain_id' ] }
 				}
 			/>
