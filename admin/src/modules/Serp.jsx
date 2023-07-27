@@ -3,7 +3,6 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import SerpOverview from '../overview/Serp';
 import ModuleViewHeader from '../components/ModuleViewHeader';
-import SerpTopDomainsTable from "../tables/SerpTopDomainsTable";
 
 export default function Serp( { moduleId } ) {
 	const { __ } = useI18n();
@@ -13,10 +12,12 @@ export default function Serp( { moduleId } ) {
 	const tableMenu = new Map( [
 		[ 'serp-domains', __( 'Domains' ) ],
 		[ 'serp-queries', __( 'Queries' ) ],
+		[ 'serp-urls', __( 'URLs' ) ],
 	] );
 
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
 	const SerpQueriesTable = lazy( () => import( `../tables/SerpQueriesTable.jsx` ) );
+	const SerpUrlsTable = lazy( () => import( `../tables/SerpUrlsTable.jsx` ) );
 	const SerpTopDomainsTable = lazy( () => import( `../tables/SerpTopDomainsTable.jsx` ) );
 
 	return (
@@ -39,6 +40,12 @@ export default function Serp( { moduleId } ) {
 				activeSection === 'serp-queries' &&
 				<Suspense>
 					<SerpQueriesTable slug={ 'serp-queries' } />
+				</Suspense>
+			}
+			{
+				activeSection === 'serp-urls' &&
+				<Suspense>
+					<SerpUrlsTable slug={ 'serp-urls' } />
 				</Suspense>
 			}
 			{

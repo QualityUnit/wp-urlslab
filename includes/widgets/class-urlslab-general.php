@@ -36,7 +36,7 @@ class Urlslab_General extends Urlslab_Widget {
 			'',
 			true,
 			__( 'URLsLab API Key' ),
-			__( 'Connect the website and URLsLab service with an API Key. Get your API Key on www.urlslab.com.' ),
+			__( 'Connect the website and URLsLab service with an API Key. Get your API Key on https://www.urlslab.com.' ),
 			self::OPTION_TYPE_PASSWORD,
 			false,
 			function( $value ) {
