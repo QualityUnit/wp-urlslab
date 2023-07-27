@@ -185,7 +185,7 @@ export default function MediaFilesTable( { slug } ) {
 			<ModuleViewHeaderBottom
 				table={ table }
 				noImport
-				onDeleteSelected={ () => deleteSelectedRows( { id: 'filename' } ) }
+				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ {
 					header,

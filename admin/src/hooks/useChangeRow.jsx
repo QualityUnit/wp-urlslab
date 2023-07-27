@@ -239,7 +239,8 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	};
 
 	// Multiple rows delete used from table
-	const deleteSelectedRows = ( { optionalSelector, id } ) => {
+	const deleteSelectedRows = ( options ) => {
+		const { optionalSelector, id } = options || {};
 		const selectedRowsInTable = table?.getSelectedRowModel().flatRows || [];
 		table?.toggleAllPageRowsSelected( false );
 

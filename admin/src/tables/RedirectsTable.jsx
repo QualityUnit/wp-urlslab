@@ -216,7 +216,7 @@ export default function RedirectsTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				table={ table }
-				onDeleteSelected={ () => deleteSelectedRows( { id: 'match_url' } ) }
+				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ {
 					header,

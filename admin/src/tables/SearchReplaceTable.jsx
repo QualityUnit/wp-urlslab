@@ -165,7 +165,7 @@ export default function SearchReplaceTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				table={ table }
-				onDeleteSelected={ () => deleteSelectedRows( { id: 'str_search' } ) }
+				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ { header, rowEditorCells, title: 'Add New Replacement', data, slug, url, paginationId, rowToEdit, id: 'str_search', deleteCSVCols: [ paginationId, 'dest_url_id' ] } }
 			/>

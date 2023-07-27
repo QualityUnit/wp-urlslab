@@ -148,7 +148,7 @@ export default function ScreenshotTable( { slug } ) {
 			<ModuleViewHeaderBottom
 				table={ table }
 				noImport
-				onDeleteSelected={ () => deleteSelectedRows( { id: 'url_title' } ) }
+				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ {
 					header,

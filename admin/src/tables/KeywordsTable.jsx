@@ -206,7 +206,7 @@ export default function KeywordsTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				table={ table }
-				onDeleteSelected={ () => deleteSelectedRows( { id: 'keyword' } ) }
+				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ { header, data, slug, paginationId, url,
 					title: __( 'Add New Link' ), id: 'keyword',
