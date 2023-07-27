@@ -13,6 +13,39 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
+			$base . '/delete-all',
+			array(
+				array(
+					'methods'             => WP_REST_Server::DELETABLE,
+					'callback'            => array( $this, 'delete_all_items' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
+					'args'                => array(),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/delete',
+			array(
+				array(
+					'methods'             => WP_REST_Server::ALLMETHODS,
+					'callback'            => array( $this, 'delete_items' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
+					'args'                => array(),
+				),
+			)
+		);
+
+
+		register_rest_route(
+			self::NAMESPACE,
 			$base . '/(?P<shortcode_id>[0-9]+)',
 			array(
 				array(
@@ -94,39 +127,6 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 							},
 						),
 					),
-				),
-			)
-		);
-
-
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/delete-all',
-			array(
-				array(
-					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'delete_all_items' ),
-					'permission_callback' => array(
-						$this,
-						'delete_item_permissions_check',
-					),
-					'args'                => array(),
-				),
-			)
-		);
-
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/delete',
-			array(
-				array(
-					'methods'             => WP_REST_Server::ALLMETHODS,
-					'callback'            => array( $this, 'delete_items' ),
-					'permission_callback' => array(
-						$this,
-						'delete_item_permissions_check',
-					),
-					'args'                => array(),
 				),
 			)
 		);

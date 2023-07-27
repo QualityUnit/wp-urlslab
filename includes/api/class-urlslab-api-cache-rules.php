@@ -13,95 +13,6 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<rule_id>[0-9]+)',
-			array(
-				array(
-					'methods'             => WP_REST_Server::EDITABLE,
-					'callback'            => array( $this, 'update_item' ),
-					'permission_callback' => array(
-						$this,
-						'update_item_permissions_check',
-					),
-					'args'                => array(
-						'match_type' => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return Urlslab_Cache_Rule_Row::MATCH_TYPE_SUBSTRING == $param || Urlslab_Cache_Rule_Row::MATCH_TYPE_EXACT == $param || Urlslab_Cache_Rule_Row::MATCH_TYPE_REGEXP == $param || Urlslab_Cache_Rule_Row::MATCH_TYPE_ALL_PAGES == $param;
-							},
-						),
-						'match_url'  => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return is_string( $param );
-							},
-						),
-						'is_active'  => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return is_bool( $param ) || Urlslab_Cache_Rule_Row::ACTIVE_YES == $param || Urlslab_Cache_Rule_Row::ACTIVE_NO == $param;
-							},
-						),
-						'ip'         => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return is_string( $param );
-							},
-						),
-						'browser'    => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return is_string( $param );
-							},
-						),
-						'cookie'     => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return is_string( $param );
-							},
-						),
-						'headers'    => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return is_string( $param );
-							},
-						),
-						'params'     => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return is_string( $param );
-							},
-						),
-						'labels'     => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return is_string( $param );
-							},
-						),
-						'valid_from' => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return is_numeric( $param );
-							},
-						),
-						'rule_order' => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return is_numeric( $param );
-							},
-						),
-						'cache_ttl'  => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return is_numeric( $param );
-							},
-						),
-					),
-				),
-			)
-		);
-
-		register_rest_route(
-			self::NAMESPACE,
 			$base . '/delete-all',
 			array(
 				array(
@@ -194,6 +105,95 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 							'required'          => true,
 							'validate_callback' => function( $param ) {
 								return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
+							},
+						),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/(?P<rule_id>[0-9]+)',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'update_item' ),
+					'permission_callback' => array(
+						$this,
+						'update_item_permissions_check',
+					),
+					'args'                => array(
+						'match_type' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Cache_Rule_Row::MATCH_TYPE_SUBSTRING == $param || Urlslab_Cache_Rule_Row::MATCH_TYPE_EXACT == $param || Urlslab_Cache_Rule_Row::MATCH_TYPE_REGEXP == $param || Urlslab_Cache_Rule_Row::MATCH_TYPE_ALL_PAGES == $param;
+							},
+						),
+						'match_url'  => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+						'is_active'  => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_bool( $param ) || Urlslab_Cache_Rule_Row::ACTIVE_YES == $param || Urlslab_Cache_Rule_Row::ACTIVE_NO == $param;
+							},
+						),
+						'ip'         => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+						'browser'    => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+						'cookie'     => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+						'headers'    => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+						'params'     => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+						'labels'     => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+						'valid_from' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param );
+							},
+						),
+						'rule_order' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param );
+							},
+						),
+						'cache_ttl'  => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param );
 							},
 						),
 					),

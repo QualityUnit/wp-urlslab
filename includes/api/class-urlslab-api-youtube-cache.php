@@ -8,38 +8,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
 
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/(?P<videoid>[0-9a-zA-Z_\-]+)',
-			array(
-				array(
-					'methods'             => WP_REST_Server::EDITABLE,
-					'callback'            => array( $this, 'update_item' ),
-					'permission_callback' => array(
-						$this,
-						'update_item_permissions_check',
-					),
-					'args'                => array(
-						'status' => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								switch ( $param ) {
-									case Urlslab_Youtube_Row::STATUS_NEW:
-									case Urlslab_Youtube_Row::STATUS_DISABLED:
-									case Urlslab_Youtube_Row::STATUS_AVAILABLE:
-									case Urlslab_Youtube_Row::STATUS_PROCESSING:
-										return true;
-
-									default:
-										return false;
-								}
-							},
-						),
-					),
-				),
-			)
-		);
-
+		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
 
 		register_rest_route(
 			self::NAMESPACE,
@@ -96,10 +65,40 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 			)
 		);
 
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/(?P<videoid>[0-9a-zA-Z_\-]+)',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'update_item' ),
+					'permission_callback' => array(
+						$this,
+						'update_item_permissions_check',
+					),
+					'args'                => array(
+						'status' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								switch ( $param ) {
+									case Urlslab_Youtube_Row::STATUS_NEW:
+									case Urlslab_Youtube_Row::STATUS_DISABLED:
+									case Urlslab_Youtube_Row::STATUS_AVAILABLE:
+									case Urlslab_Youtube_Row::STATUS_PROCESSING:
+										return true;
+
+									default:
+										return false;
+								}
+							},
+						),
+					),
+				),
+			)
+		);
 
 		register_rest_route( self::NAMESPACE, $base . '/(?P<videoid>[0-9a-zA-Z_\-]+)/urls', $this->get_route_video_urls() );
 		register_rest_route( self::NAMESPACE, $base . '/(?P<videoid>[0-9a-zA-Z_\-]+)/urls/count', $this->get_count_route( $this->get_route_video_urls() ) );
-		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
 	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {

@@ -23,6 +23,61 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
+			$base . '/delete-all',
+			array(
+				array(
+					'methods'             => WP_REST_Server::DELETABLE,
+					'callback'            => array( $this, 'delete_all_items' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
+					'args'                => array(),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/delete',
+			array(
+				array(
+					'methods'             => WP_REST_Server::ALLMETHODS,
+					'callback'            => array( $this, 'delete_items' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
+					'args'                => array(),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/import',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'import_items' ),
+					'permission_callback' => array(
+						$this,
+						'update_item_permissions_check',
+					),
+					'args'                => array(
+						'rows' => array(
+							'required'          => true,
+							'validate_callback' => function( $param ) {
+								return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
+							},
+						),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
 			$base . '/(?P<kw_id>[0-9]+)',
 			array(
 				array(
@@ -90,38 +145,6 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/delete-all',
-			array(
-				array(
-					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'delete_all_items' ),
-					'permission_callback' => array(
-						$this,
-						'delete_item_permissions_check',
-					),
-					'args'                => array(),
-				),
-			)
-		);
-
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/delete',
-			array(
-				array(
-					'methods'             => WP_REST_Server::ALLMETHODS,
-					'callback'            => array( $this, 'delete_items' ),
-					'permission_callback' => array(
-						$this,
-						'delete_item_permissions_check',
-					),
-					'args'                => array(),
-				),
-			)
-		);
-
-		register_rest_route(
-			self::NAMESPACE,
 			$base . '/(?P<kw_id>[0-9]+)/(?P<dest_url_id>[0-9]+)',
 			$this->get_route_get_kw_mapping()
 		);
@@ -129,29 +152,6 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			self::NAMESPACE,
 			$base . '/(?P<kw_id>[0-9]+)/(?P<dest_url_id>[0-9]+)/count',
 			$this->get_count_route( $this->get_route_get_kw_mapping() )
-		);
-
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/import',
-			array(
-				array(
-					'methods'             => WP_REST_Server::EDITABLE,
-					'callback'            => array( $this, 'import_items' ),
-					'permission_callback' => array(
-						$this,
-						'update_item_permissions_check',
-					),
-					'args'                => array(
-						'rows' => array(
-							'required'          => true,
-							'validate_callback' => function( $param ) {
-								return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
-							},
-						),
-					),
-				),
-			)
 		);
 	}
 
