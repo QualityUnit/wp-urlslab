@@ -77,14 +77,29 @@ class Urlslab_Serp_Url_Row extends Urlslab_Data {
 	}
 
 	private function compute_url_id(): int {
-		$url = new Urlslab_Url( $this->get_url_name(), true );
+		if ( empty( $this->get_url_name() ) ) {
+			return 0;
+		}
 
-		return $url->get_url_id();
+		try {
+			$url = new Urlslab_Url( $this->get_url_name(), true );
+
+			return $url->get_url_id();
+		} catch ( Exception $e ) {
+			return 0;
+		}
 	}
 
 	private function compute_domain_id() {
-		$url = new Urlslab_Url( $this->get_url_name(), true );
+		if ( empty( $this->get_url_name() ) ) {
+			return 0;
+		}
+		try {
+			$url = new Urlslab_Url( $this->get_url_name(), true );
 
-		return $url->get_domain_id();
+			return $url->get_domain_id();
+		} catch ( Exception $e ) {
+			return 0;
+		}
 	}
 }
