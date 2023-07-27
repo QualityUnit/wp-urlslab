@@ -23,6 +23,61 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
+			$base . '/delete-all',
+			array(
+				array(
+					'methods'             => WP_REST_Server::DELETABLE,
+					'callback'            => array( $this, 'delete_all_items' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
+					'args'                => array(),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/delete',
+			array(
+				array(
+					'methods'             => WP_REST_Server::ALLMETHODS,
+					'callback'            => array( $this, 'delete_items' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
+					'args'                => array(),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/import',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'import_items' ),
+					'permission_callback' => array(
+						$this,
+						'update_item_permissions_check',
+					),
+					'args'                => array(
+						'rows' => array(
+							'required'          => true,
+							'validate_callback' => function( $param ) {
+								return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
+							},
+						),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
 			$base . '/(?P<kw_id>[0-9]+)',
 			array(
 				array(
@@ -90,38 +145,6 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/delete-all',
-			array(
-				array(
-					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'delete_all_items' ),
-					'permission_callback' => array(
-						$this,
-						'delete_item_permissions_check',
-					),
-					'args'                => array(),
-				),
-			)
-		);
-
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/(?P<kw_id>[0-9]+)',
-			array(
-				array(
-					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'delete_item' ),
-					'permission_callback' => array(
-						$this,
-						'delete_item_permissions_check',
-					),
-					'args'                => array(),
-				),
-			)
-		);
-
-		register_rest_route(
-			self::NAMESPACE,
 			$base . '/(?P<kw_id>[0-9]+)/(?P<dest_url_id>[0-9]+)',
 			$this->get_route_get_kw_mapping()
 		);
@@ -129,29 +152,6 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			self::NAMESPACE,
 			$base . '/(?P<kw_id>[0-9]+)/(?P<dest_url_id>[0-9]+)/count',
 			$this->get_count_route( $this->get_route_get_kw_mapping() )
-		);
-
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/import',
-			array(
-				array(
-					'methods'             => WP_REST_Server::EDITABLE,
-					'callback'            => array( $this, 'import_items' ),
-					'permission_callback' => array(
-						$this,
-						'update_item_permissions_check',
-					),
-					'args'                => array(
-						'rows' => array(
-							'required'          => true,
-							'validate_callback' => function( $param ) {
-								return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
-							},
-						),
-					),
-				),
-			)
 		);
 	}
 
@@ -473,26 +473,18 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		return $sql;
 	}
 
-	/**
-	 * @param WP_REST_Request $request
-	 *
-	 * @return WP_Error|WP_REST_Response
-	 */
-	public function delete_item( $request ) {
+
+	protected function after_row_deleted( array $row ) {
 		global $wpdb;
-		$delete_params          = array();
-		$delete_params['kw_id'] = $request->get_param( 'kw_id' );
 
-		if ( false === $wpdb->delete( URLSLAB_KEYWORDS_TABLE, $delete_params ) ) {
-			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
+		if ( isset( $row['kw_id'] ) ) {
+			$delete_params          = array();
+			$delete_params['kw_id'] = $row['kw_id'];
+
+			$wpdb->delete( URLSLAB_KEYWORDS_TABLE, $delete_params );
+			$wpdb->delete( URLSLAB_KEYWORDS_MAP_TABLE, $delete_params );
 		}
-
-		if ( false === $wpdb->delete( URLSLAB_KEYWORDS_MAP_TABLE, $delete_params ) ) {
-			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
-		}
-		$this->on_items_updated();
-
-		return new WP_REST_Response( __( 'Deleted' ), 200 );
+		parent::after_row_deleted( $row );
 	}
 
 	protected function on_items_updated( array $row = array() ) {

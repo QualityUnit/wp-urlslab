@@ -10,6 +10,12 @@ export function setNotification( id, dataObj ) {
 	const notificationsTimer = {};
 	notificationsTimer[ id ] = 0;
 
+	/*
+		dataObj is an object in form {message: 'Some message', status: 'success'}:
+		message: 'message to show in notification',
+		status: 'info'/'success'/'error' (info – blue ribbon, success – green, error – red)
+	*/
+
 	useNotifications.setState( ( state ) => ( {
 		notifications: { ...state.notifications, [ id ]: dataObj },
 	} )	);

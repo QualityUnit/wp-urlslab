@@ -86,20 +86,20 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	 *
 	 * @return WP_Error|WP_REST_Response
 	 */
-	public function delete_item( $request ) {
-		global $wpdb;
+	public function delete_items( $request ) {
+		$rows = $request->get_json_params()['rows'];
 
-		$delete_params = array();
-		foreach ( $this->get_row_object()->get_primary_columns() as $primary_column ) {
-			$delete_params[ $primary_column ] = $request->get_param( $primary_column );
+		if ( empty( $request->get_param( 'rows' ) ) || ! is_array( $request->get_param( 'rows' ) ) ) {
+			return new WP_Error( 'error', __( 'No rows to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
-		if ( false === $wpdb->delete( $this->get_row_object()->get_table_name(), $delete_params ) ) {
-			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
+		$deleted_rows = array();
+		foreach ( $rows as $row ) {
+			$deleted_rows[] = $this->delete_row( (array) $row );
 		}
 		$this->on_items_updated();
 
-		return new WP_REST_Response( __( 'Deleted' ), 200 );
+		return new WP_REST_Response( $deleted_rows, 200 );
 	}
 
 	public function delete_all_items( WP_REST_Request $request ) {
@@ -298,5 +298,28 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		}
 
 		$request->set_body( json_encode( $body ) );
+	}
+
+	protected function after_row_deleted( array $row ) {}
+
+	protected function delete_row( array $row ): bool {
+		global $wpdb;
+		$delete_params = array();
+		foreach ( $this->get_row_object()->get_primary_columns() as $primary_column ) {
+			if ( isset( $row[ $primary_column ] ) ) {
+				$delete_params[ $primary_column ] = $row[ $primary_column ];
+			} else {
+				return false;
+			}
+		}
+
+
+		if ( false === $wpdb->delete( $this->get_row_object()->get_table_name(), $delete_params ) ) {
+			return false;
+		}
+
+		$this->after_row_deleted( $row );
+
+		return true;
 	}
 }

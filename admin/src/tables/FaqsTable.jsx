@@ -19,7 +19,7 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import IconButton from '../elements/IconButton';
-import { active } from 'd3';
+// import { active } from 'd3';
 
 export default function FaqsTable( { slug } ) {
 	const paginationId = 'faq_id';
@@ -40,7 +40,7 @@ export default function FaqsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectedRows, selectRow, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -72,8 +72,8 @@ export default function FaqsTable( { slug } ) {
 		answer: <Editor description={ ( __( 'Answer to the question' ) ) } defaultValue="" label={ header.answer } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, answer: val } ) } />,
 
 		language: <LangMenu autoClose defaultValue="all"
-						description={ __( 'Select language' ) }
-						onChange={ ( val ) => setRowToEdit( { ...rowToEdit, language: val } ) }>{ header.language }</LangMenu>,
+			description={ __( 'Select language' ) }
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, language: val } ) }>{ header.language }</LangMenu>,
 
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 
@@ -83,10 +83,14 @@ export default function FaqsTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
-				selectRow( val, cell );
+			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+				cell.row.toggleSelected();
+				selectRows( cell );
 			} } />,
-			header: null,
+			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
+				head.table.toggleAllPageRowsSelected( val );
+				selectRows( val ? head : undefined );
+			} } />,
 		} ),
 		columnHelper.accessor( 'faq_id', {
 			className: 'nolimit',
@@ -156,10 +160,14 @@ export default function FaqsTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				table={ table }
-				selectedRows={ selectedRows }
-				onDeleteSelected={ () => deleteSelectedRows( { id: 'faq_id' } ) }
+				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ { header, rowEditorCells, title: 'Add New FAQ', data, slug, url, paginationId, rowToEdit, id: 'faq_id' } }
+				options={ { header, data, slug, url, paginationId,
+					title: 'Add New FAQ',
+					rowEditorCells,
+					rowToEdit,
+					id: 'faq_id',
+				} }
 			/>
 			<Table className="fadeInto"
 				slug={ slug }

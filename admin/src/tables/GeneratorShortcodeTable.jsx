@@ -246,7 +246,11 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				noImport
 				onDeleteSelected={ deleteSelectedRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ { header, rowEditorCells, rowToEdit, title: 'Add New Shortcode', data, slug, url, paginationId, deleteCSVCols: [ paginationId ] } }
+				options={ { header, data, slug, url, paginationId,
+					rowEditorCells, rowToEdit,
+					title: 'Add New Shortcode',
+					deleteCSVCols: [ paginationId ],
+				} }
 			/>
 			<Table className="fadeInto"
 				slug={ slug }

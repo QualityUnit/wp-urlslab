@@ -52,6 +52,38 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 
 		register_rest_route(
 			self::NAMESPACE,
+			$base . '/capability',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_capabilities' ),
+					'permission_callback' => array(
+						$this,
+						'get_items_permissions_check',
+					),
+					'args'                => array(),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/user',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_users' ),
+					'permission_callback' => array(
+						$this,
+						'get_items_permissions_check',
+					),
+					'args'                => array(),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
 			$base . '/role/(?P<role_id>[a-z0-9_]+)',
 			array(
 				array(
@@ -84,38 +116,6 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 							},
 						),
 					),
-				),
-			)
-		);
-
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/capability',
-			array(
-				array(
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_capabilities' ),
-					'permission_callback' => array(
-						$this,
-						'get_items_permissions_check',
-					),
-					'args'                => array(),
-				),
-			)
-		);
-
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/user',
-			array(
-				array(
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_users' ),
-					'permission_callback' => array(
-						$this,
-						'get_items_permissions_check',
-					),
-					'args'                => array(),
 				),
 			)
 		);
