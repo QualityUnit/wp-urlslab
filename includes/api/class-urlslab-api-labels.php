@@ -28,11 +28,11 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<label_id>[0-9]+)',
+			$base . '/delete',
 			array(
 				array(
-					'methods'             => WP_REST_Server::EDITABLE,
-					'callback'            => array( $this, 'update_item' ),
+					'methods'             => WP_REST_Server::ALLMETHODS,
+					'callback'            => array( $this, 'delete_items' ),
 					'permission_callback' => array(
 						$this,
 						'delete_item_permissions_check',
@@ -41,13 +41,14 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 				),
 			)
 		);
+
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/delete',
+			$base . '/(?P<label_id>[0-9]+)',
 			array(
 				array(
-					'methods'             => WP_REST_Server::ALLMETHODS,
-					'callback'            => array( $this, 'delete_items' ),
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'update_item' ),
 					'permission_callback' => array(
 						$this,
 						'delete_item_permissions_check',

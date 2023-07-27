@@ -152,6 +152,38 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
+			$base . '/delete-all',
+			array(
+				array(
+					'methods'             => WP_REST_Server::DELETABLE,
+					'callback'            => array( $this, 'delete_all_items' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
+					'args'                => array(),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/delete',
+			array(
+				array(
+					'methods'             => WP_REST_Server::ALLMETHODS,
+					'callback'            => array( $this, 'delete_items' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
+					'args'                => array(),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
 			$base . '/(?P<hash_id>[0-9]+)',
 			array(
 				array(
@@ -194,42 +226,8 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			)
 		);
 
-
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/delete-all',
-			array(
-				array(
-					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'delete_all_items' ),
-					'permission_callback' => array(
-						$this,
-						'delete_item_permissions_check',
-					),
-					'args'                => array(),
-				),
-			)
-		);
-
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/delete',
-			array(
-				array(
-					'methods'             => WP_REST_Server::ALLMETHODS,
-					'callback'            => array( $this, 'delete_items' ),
-					'permission_callback' => array(
-						$this,
-						'delete_item_permissions_check',
-					),
-					'args'                => array(),
-				),
-			)
-		);
-
 		register_rest_route( self::NAMESPACE, $base . '/(?P<shortcode_id>[0-9]+)/(?P<hash_id>[0-9]+)/urls', $this->get_route_generator_urls() );
 		register_rest_route( self::NAMESPACE, $base . '/(?P<shortcode_id>[0-9]+)/(?P<hash_id>[0-9]+)/urls/count', $this->get_count_route( $this->get_route_generator_urls() ) );
-
 	}
 
 

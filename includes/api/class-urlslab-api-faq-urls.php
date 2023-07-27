@@ -11,30 +11,6 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<faq_id>[0-9]+)/(?P<url_id>[0-9]+)',
-			array(
-				array(
-					'methods'             => WP_REST_Server::EDITABLE,
-					'callback'            => array( $this, 'update_item' ),
-					'permission_callback' => array(
-						$this,
-						'update_item_permissions_check',
-					),
-					'args'                => array(
-						'sorting' => array(
-							'required'          => false,
-							'default'           => 10,
-							'validate_callback' => function( $param ) {
-								return is_numeric( $param ) && 0 >= $param && 100 <= $param;
-							},
-						),
-					),
-				),
-			)
-		);
-
-		register_rest_route(
-			self::NAMESPACE,
 			$base . '/delete-all',
 			array(
 				array(
@@ -81,6 +57,30 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 							'required'          => true,
 							'validate_callback' => function( $param ) {
 								return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
+							},
+						),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/(?P<faq_id>[0-9]+)/(?P<url_id>[0-9]+)',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'update_item' ),
+					'permission_callback' => array(
+						$this,
+						'update_item_permissions_check',
+					),
+					'args'                => array(
+						'sorting' => array(
+							'required'          => false,
+							'default'           => 10,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param ) && 0 >= $param && 100 <= $param;
 							},
 						),
 					),
