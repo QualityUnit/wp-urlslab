@@ -18,6 +18,7 @@ class Urlslab_Url {
 			'twitter.com',
 			'localhost',
 			'wa.me',
+			'm.me',
 			'pinterest.com',
 			'tumblr.com',
 			'snapchat.com',
@@ -96,9 +97,9 @@ class Urlslab_Url {
 	}
 
 	public function is_url_blacklisted(): bool {
-		$host = strtolower( $this->url_components['host'] );
+		$host = trim( str_replace( 'www', '', strtolower( $this->url_components['host'] ) ), '.' );
 		foreach ( self::$domain_blacklists as $domain_blacklist ) {
-			if ( str_contains( $host, $domain_blacklist ) ) {
+			if ( str_starts_with( $host, $domain_blacklist ) ) {
 				return true;
 			}
 		}
