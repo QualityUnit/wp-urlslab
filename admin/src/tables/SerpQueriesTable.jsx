@@ -85,8 +85,8 @@ export default function SerpQueriesTable( { slug } ) {
 		updated: __( 'Updated' ),
 		status: __( 'Status' ),
 		type: __( 'Type' ),
-		best_position: __( 'Position' ),
-		url_name: __( 'Ranked URL' ),
+		best_position: __( 'My Position' ),
+		url_name: __( 'My URL' ),
 	};
 
 	const rowEditorCells = {
