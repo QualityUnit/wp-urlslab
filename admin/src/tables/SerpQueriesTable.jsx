@@ -1,6 +1,6 @@
 /* eslint-disable indent */
 import {
-	useInfiniteFetch, ProgressBar, SortBy, SingleSelectMenu, CountryMenu, LangMenu, InputField, Checkbox, LinkIcon, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, Edit, SuggestInputField,
+	useInfiniteFetch, ProgressBar, SortBy, Checkbox, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -8,7 +8,6 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import IconButton from '../elements/IconButton';
 import React, { useCallback } from 'react';
-import {countriesList, langName} from "../lib/helpers";
 import TextArea from "../elements/Textarea";
 import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
 import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refresh.svg';
@@ -81,8 +80,6 @@ export default function SerpQueriesTable( { slug } ) {
 
 	const header = {
 		query: __( 'Query' ),
-		lang: __( 'Language' ),
-		country: __( 'Country' ),
 		updated: __( 'Updated' ),
 		status: __( 'Status' ),
 		type: __( 'Type' ),
@@ -95,8 +92,6 @@ export default function SerpQueriesTable( { slug } ) {
 
 	const rowEditorCells = {
 		query: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { ...rowToEdit, query: val } ) } required  description={ __( 'SERP queries separated by new line' ) } />,
-		lang: <LangMenu autoClose defaultValue="en"	onChange={ ( val ) => setRowToEdit( { ...rowToEdit, lang: val } ) }>{ header.lang }</LangMenu>,
-		country: <CountryMenu autoClose defaultValue="us" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, country: val } ) }>{ header.country }</CountryMenu>,
 	};
 
 	const columns = [
@@ -117,23 +112,6 @@ export default function SerpQueriesTable( { slug } ) {
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.query }</SortBy>,
 			minSize: 200,
-		} ),
-		columnHelper.accessor( 'lang', {
-			className: 'nolimit',
-			cell: ( cell ) => langName( cell.getValue() ),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.lang }</SortBy>,
-			size: 50,
-		} ),
-		columnHelper.accessor( 'country', {
-			className: 'nolimit',
-			cell: ( cell ) => {
-				if (countriesList[ cell.getValue() ]) {
-					return countriesList[ cell.getValue() ];
-				}
-				return cell.getValue();
-				},
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.country }</SortBy>,
-			size: 50,
 		} ),
 		columnHelper.accessor( 'updated', {
 			className: 'nolimit',

@@ -112,8 +112,6 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 
 		$request = new Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest();
 		$request->setSerpQuery( $query->get_query() );
-		$request->setLocale( $query->get_lang() );
-		$request->setCountry( $query->get_country() );
 		$request->setAllResults( true );
 		$request->setNotOlderThan( $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ) );
 		$has_monitored_domain = false;
@@ -199,8 +197,6 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 						$queries[] = new Urlslab_Serp_Query_Row(
 							array(
 								'query'   => strtolower( trim( $related_search->query ) ),
-								'lang'    => $query->get_lang(),
-								'country' => $query->get_country(),
 								'status'  => Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
 								'type'    => Urlslab_Serp_Query_Row::TYPE_SYSTEM,
 							)
