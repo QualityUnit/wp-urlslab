@@ -87,6 +87,11 @@ class Urlslab_Gsc_Cron extends Urlslab_Cron {
 			$urls      = array();
 			$domains   = array();
 			foreach ( $rows as $row ) {
+
+				if (100 < $row->getPosition()) {
+					continue;
+				}
+
 				$key = $row->getKey();
 
 				$url    = new Urlslab_Url( $key[1], true );

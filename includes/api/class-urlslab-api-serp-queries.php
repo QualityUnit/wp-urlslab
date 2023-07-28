@@ -150,7 +150,10 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 		foreach ( $rows as $row ) {
 			$row->query_id      = (int) $row->query_id;
-			$row->best_position = (int) $row->best_position;
+			$row->position = (float) $row->position;
+			$row->ctr = (float) $row->ctr;
+			$row->clicks = (int) $row->clicks;
+			$row->impressions = (int) $row->impressions;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -257,6 +260,9 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	public function delete_all_items( WP_REST_Request $request ) {
 		global $wpdb;
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_SERP_POSITIONS_TABLE ) ) ) { // phpcs:ignore
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
+		}
+		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_GSC_POSITIONS_TABLE ) ) ) { // phpcs:ignore
 			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_SERP_URLS_TABLE ) ) ) { // phpcs:ignore

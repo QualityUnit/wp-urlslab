@@ -95,10 +95,10 @@ class Urlslab_Gsc_Position_Row extends Urlslab_Data {
 			'url_id'   => '%d',
 			'domain_id'   => '%d',
 			'updated'  => '%s',
-			'position' => '%d',
+			'position' => '%f',
 			'clicks' => '%d',
 			'impressions' => '%d',
-			'ctr' => '%d',
+			'ctr' => '%f',
 		);
 	}
 }
