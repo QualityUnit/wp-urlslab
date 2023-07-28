@@ -364,6 +364,14 @@ class Urlslab_Activator {
 				self::init_gsc_sites_table();
 			}
 		);
+		self::update_step(
+			'2.42.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_QUERIES_TABLE ); // phpcs:ignore
+				self::init_serp_queries_table();
+			}
+		);
 
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -1003,8 +1011,6 @@ class Urlslab_Activator {
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
 							query_id bigint NOT NULL,
-							lang varchar(10) NOT NULL,
-							country varchar(10) NOT NULL,
 							query VARCHAR(255) NOT NULL,
 							updated DATETIME NOT NULL,
 							status char(1) DEFAULT 'X',

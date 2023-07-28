@@ -128,18 +128,6 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 						return is_string( $param );
 					},
 				),
-				'lang'    => array(
-					'required'          => true,
-					'validate_callback' => function( $param ) {
-						return is_string( $param );
-					},
-				),
-				'country' => array(
-					'required'          => true,
-					'validate_callback' => function( $param ) {
-						return is_string( $param );
-					},
-				),
 			),
 			'permission_callback' => array(
 				$this,

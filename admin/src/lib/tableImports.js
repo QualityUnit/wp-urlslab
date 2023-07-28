@@ -12,7 +12,6 @@ export { default as SingleSelectMenu } from '../elements/SingleSelectMenu';
 export { default as MultiSelectMenu } from '../elements/MultiSelectMenu';
 export { default as SortBy } from '../elements/TableSortBy';
 export { default as LangMenu } from '../elements/LangMenu';
-export { default as CountryMenu } from '../elements/CountryMenu';
 export { default as InputField } from '../elements/InputField';
 export { default as SuggestInputField } from '../elements/SuggestInputField';
 export { default as TextArea } from '../elements/Textarea';

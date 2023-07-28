@@ -99,21 +99,18 @@ class Urlslab_Gsc_Cron extends Urlslab_Cron {
 					false
 				);
 
-				$domain                           = new Urlslab_Serp_Domain_Row(
+				$domain                            = new Urlslab_Serp_Domain_Row(
 					array(
 						'domain_id'   => $url->get_domain_id(),
 						'domain_name' => $url->get_domain_name(),
 					),
 					false
 				);
-				$domains[ $url->get_domain_id() ] = $domain;
-
+				$domains[ $url->get_domain_id() ]  = $domain;
 				$query                             = new Urlslab_Serp_Query_Row(
 					array(
 						'query'   => $key[0],
-						'lang'    => 'en',    //TODO
 						'type'    => Urlslab_Serp_Query_Row::TYPE_GSC,
-						'country' => 'us', //TODO
 					),
 					false
 				);
@@ -170,4 +167,5 @@ class Urlslab_Gsc_Cron extends Urlslab_Cron {
 
 		return true;
 	}
+
 }
