@@ -1370,12 +1370,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/QualityUnit/urlslab-php-client.git",
-                "reference": "636c46e8625eddfd138a26b4f268a394ed59ff50"
+                "reference": "a81f68a144e9d801b09b13dba0cb0aec8660241d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/QualityUnit/urlslab-php-client/zipball/636c46e8625eddfd138a26b4f268a394ed59ff50",
-                "reference": "636c46e8625eddfd138a26b4f268a394ed59ff50",
+                "url": "https://api.github.com/repos/QualityUnit/urlslab-php-client/zipball/a81f68a144e9d801b09b13dba0cb0aec8660241d",
+                "reference": "a81f68a144e9d801b09b13dba0cb0aec8660241d",
                 "shasum": ""
             },
             "require": {
@@ -1422,7 +1422,7 @@
                 "issues": "https://github.com/QualityUnit/urlslab-php-client/issues",
                 "source": "https://github.com/QualityUnit/urlslab-php-client/tree/main"
             },
-            "time": "2023-07-25T12:09:13+00:00"
+            "time": "2023-07-28T09:58:54+00:00"
         },
         {
             "name": "voku/html-min",

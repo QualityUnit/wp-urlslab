@@ -74,10 +74,25 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 				break;
 		}
 
+		$types = explode( ',', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG )->get_option( Urlslab_Serp::SETTING_NAME_QUERY_TYPES ) );
+		foreach ( $types as $id => $type ) {
+			if ( isset( Urlslab_Serp::get_available_query_types()[ $type ] ) ) {
+				$types[ $id ] = "'" . $type . "'";
+			} else {
+				unset( $types[ $id ] );
+			}
+		}
+		if ( empty( $types ) ) {
+			$this->has_rows = false;
+
+			return false;
+		}
+		$types = implode( ',', $types );
+
 		global $wpdb;
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE `status` = %s OR (status = %s AND updated < %s ) ORDER BY updated LIMIT 1', // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND `status` = %s OR (status = %s AND updated < %s ) ORDER BY updated LIMIT 1', // phpcs:ignore
 				Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
 				Urlslab_Serp_Query_Row::STATUS_PROCESSED,
 				Urlslab_Data::get_now( time() - $update_delay )
