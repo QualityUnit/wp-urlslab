@@ -4,17 +4,19 @@ import { useI18n } from '@wordpress/react-i18n';
 import RelatedResourcesOverview from '../overview/RelatedResources';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
-export default function RelatedResources( { moduleId } ) {
+const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
+const URLRelationTable = lazy( () => import( `../tables/URLRelationTable.jsx` ) );
+
+export default function RelatedResources() {
 	const { __ } = useI18n();
 	const slug = 'url-relation';
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 
+	const moduleId = 'urlslab-related-resources';
+
 	const tableMenu = new Map( [
 		[ 'url-relation', __( 'Related Articles' ) ],
 	] );
-
-	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
-	const URLRelationTable = lazy( () => import( `../tables/URLRelationTable.jsx` ) );
 
 	return (
 		<div className="urlslab-tableView">

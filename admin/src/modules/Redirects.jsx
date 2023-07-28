@@ -4,18 +4,20 @@ import { useI18n } from '@wordpress/react-i18n';
 import RedirectsOverview from '../overview/Redirects';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
-export default function Redirects( { moduleId } ) {
+const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
+const NotFoundTable = lazy( () => import( `../tables/NotFoundTable.jsx` ) );
+const RedirectsTable = lazy( () => import( `../tables/RedirectsTable.jsx` ) );
+
+export default function Redirects() {
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
+
+	const moduleId = 'redirects';
 
 	const tableMenu = new Map( [
 		[ 'redirects', __( 'Redirects' ) ],
 		[ 'notfound', __( '404 Monitor' ) ],
 	] );
-
-	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
-	const NotFoundTable = lazy( () => import( `../tables/NotFoundTable.jsx` ) );
-	const RedirectsTable = lazy( () => import( `../tables/RedirectsTable.jsx` ) );
 
 	return (
 		<div className="urlslab-tableView">

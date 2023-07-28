@@ -2,18 +2,20 @@ import { useState, Suspense, lazy } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import ModuleViewHeader from '../components/ModuleViewHeader';
-import CustomHtmlOverview from "../overview/CustomHtml";
+import CustomHtmlOverview from '../overview/CustomHtml';
 
-export default function CustomHtml( { moduleId } ) {
+const CustomHtmlTable = lazy( () => import( `../tables/CustomHtmlTable.jsx` ) );
+const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
+
+export default function CustomHtml() {
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
+
+	const moduleId = 'urlslab-custom-html';
 
 	const tableMenu = new Map( [
 		[ 'custom-html', __( 'Custom HTML' ) ],
 	] );
-
-	const CustomHtmlTable = lazy( () => import( `../tables/CustomHtmlTable.jsx` ) );
-	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
 
 	return (
 		<div className="urlslab-tableView">
@@ -27,7 +29,7 @@ export default function CustomHtml( { moduleId } ) {
 			{
 				activeSection === 'custom-html' &&
 				<Suspense>
-					<CustomHtmlTable slug='custom-html' />
+					<CustomHtmlTable slug="custom-html" />
 				</Suspense>
 			}
 			{

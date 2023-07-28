@@ -22,7 +22,7 @@ const Content = () => {
 	}, [ settingsLoaded ] );
 
 	useEffect( () => {
-		if ( modules && apiSetting ) {
+		if ( modules && Object.values( modules ).length && apiSetting ) {
 			//set initial api key value, if onboarding is forced to show in future again
 			setApiKey( apiSetting.options[ 'urlslab-api-key' ].value );
 			setDataLoaded( true );

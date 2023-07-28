@@ -1,22 +1,19 @@
 import { memo } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import useMainMenu from '../hooks/useMainMenu';
+import { setModule } from '../api/fetching';
 
 import Switch from '../elements/Switch';
 import Tag from '../elements/Tag';
 
-// import useCheckApiKey from '../hooks/useCheckApiKey';
-import { setModule } from '../api/fetching';
 import '../assets/styles/components/_DashboardModule.scss';
 import '../assets/styles/elements/_Button.scss';
 
 function DashboardModule( { module, labelsList, isOnboardingItem } ) {
 	const { __ } = useI18n();
 	const { id: moduleId, active: isActive, title, description, labels } = module;
-	const { setActivePage } = useMainMenu();
 	const queryClient = useQueryClient();
 	const handleSwitch = useMutation( {
 		mutationFn: async () => {
@@ -50,11 +47,14 @@ function DashboardModule( { module, labelsList, isOnboardingItem } ) {
 				}
 
 				<h3 className="urlslab-dashboardmodule-title">
-					{ isOnboardingItem
+					{ ( isOnboardingItem || ! isActive )
 						? title
-						: <button className={ `${ isActive ? 'active' : '' }` } onClick={ isActive ? () => setActivePage( moduleId ) : null }>
+						: <Link
+							to={ moduleId }
+							className="active"
+						>
 							{ title }
-						</button>
+						</Link>
 					}
 				</h3>
 

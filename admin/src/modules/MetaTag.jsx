@@ -7,10 +7,12 @@ import ModuleViewHeader from '../components/ModuleViewHeader';
 const MetaTagsTable = lazy( () => import( `../tables/MetaTagsTable.jsx` ) );
 const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
 
-export default function MetaTag( { moduleId } ) {
+export default function MetaTag() {
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 	const slug = 'metatag';
+
+	const moduleId = 'urlslab-meta-tag';
 
 	const tableMenu = new Map( [
 		[ slug, __( 'Meta tags' ) ],

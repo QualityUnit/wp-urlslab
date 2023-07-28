@@ -4,16 +4,18 @@ import { useI18n } from '@wordpress/react-i18n';
 import SearchAndReplaceOverview from '../overview/SearchAndReplace';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
-export default function SearchAndReplace( { moduleId } ) {
+const SearchReplaceTable = lazy( () => import( `../tables/SearchReplaceTable.jsx` ) );
+
+export default function SearchAndReplace() {
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 	const slug = 'search-replace';
 
+	const moduleId = 'urlslab-search-and-replace';
+
 	const tableMenu = new Map( [
 		[ slug, __( 'Replacements' ) ],
 	] );
-
-	const SearchReplaceTable = lazy( () => import( `../tables/SearchReplaceTable.jsx` ) );
 
 	return (
 		<div className="urlslab-tableView">

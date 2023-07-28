@@ -4,18 +4,20 @@ import { useI18n } from '@wordpress/react-i18n';
 import FaqsOverview from '../overview/Faqs';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
-export default function Faq( { moduleId } ) {
+const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
+const FaqsTable = lazy( () => import( `../tables/FaqsTable.jsx` ) );
+const FaqUrlsTable = lazy( () => import( `../tables/FaqUrlsTable.jsx` ) );
+
+export default function Faq() {
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
+
+	const moduleId = 'faq';
 
 	const tableMenu = new Map( [
 		[ 'faq', __( 'FAQs' ) ],
 		[ 'faqurls', __( 'URL Assignment' ) ],
 	] );
-
-	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
-	const FaqsTable = lazy( () => import( `../tables/FaqsTable.jsx` ) );
-	const FaqUrlsTable = lazy( () => import( `../tables/FaqUrlsTable.jsx` ) );
 
 	return (
 		<div className="urlslab-tableView">
