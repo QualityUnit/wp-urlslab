@@ -4,10 +4,10 @@ import { useI18n } from '@wordpress/react-i18n';
 import SerpOverview from '../overview/Serp';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
-export default function Serp( { moduleId } ) {
+export default function Serp() {
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
-	const slug = 'serp';
+	const moduleId = 'serp';
 
 	const tableMenu = new Map( [
 		[ 'serp-domains', __( 'Domains' ) ],

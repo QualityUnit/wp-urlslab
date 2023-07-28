@@ -19,6 +19,7 @@ const Redirects 		= lazy( () => import( '../modules/Redirects' ) );
 const RelatedResources 	= lazy( () => import( '../modules/RelatedResources' ) );
 const Screenshot 		= lazy( () => import( '../modules/Screenshot' ) );
 const SearchAndReplace 	= lazy( () => import( '../modules/SearchAndReplace' ) );
+const Serp 				= lazy( () => import( '../modules/Serp' ) );
 
 const Settings 			= lazy( () => import( '../modules/Settings' ) );
 const Schedule 			= lazy( () => import( '../modules/Schedule' ) );
@@ -97,6 +98,10 @@ const routes = [
 	{
 		path: 'urlslab-search-and-replace',
 		element: <SearchAndReplace />,
+	},
+	{
+		path: 'serp',
+		element: <Serp />,
 	},
 
 	// settings routes
