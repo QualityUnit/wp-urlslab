@@ -8,14 +8,12 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	SingleSelectMenu, InputField, Editor, LangMenu, TagsMenu,
+	SingleSelectMenu, TextArea,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-import React, { useCallback } from 'react';
-import TextArea from "../elements/Textarea";
 
 export default function SerpTopDomainsTable( { slug } ) {
 	const paginationId = 'domain_id';
@@ -35,26 +33,19 @@ export default function SerpTopDomainsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
 
-	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
+	const { setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
-	const setUnifiedPanel = useCallback( ( cell ) => {
-		const origCell = cell?.row.original;
-		setOptions( [] );
-		setRowToEdit( {} );
-		updateRow( { cell, id: 'keyword' } );
-	}, [ setOptions, setRowToEdit, slug, updateRow ] );
-
 	const domainTypes = {
-		X: __('Other'),
-		M: __('My Domain'),
-		C: __('Competitor')
+		X: __( 'Other' ),
+		M: __( 'My Domain' ),
+		C: __( 'Competitor' ),
 	};
 	const newDomainTypes = {
-		M: __('My Domain'),
-		C: __('Competitor')
+		M: __( 'My Domain' ),
+		C: __( 'Competitor' ),
 	};
 
 	const header = {
@@ -66,9 +57,8 @@ export default function SerpTopDomainsTable( { slug } ) {
 	};
 
 	const rowEditorCells = {
-		domain_name: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Add Domains' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { ...rowToEdit, domain_name: val } ) } required  description={ __( 'Domain names separated by new line' ) } />,
-		domain_type: <SingleSelectMenu defaultAccept autoClose items={ newDomainTypes } name="domain_type" defaultValue="M"
-									   onChange={ ( val ) => setRowToEdit( { ...rowToEdit, domain_type: val } ) }>{ header.domain_type }</SingleSelectMenu>,
+		domain_name: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Add Domains' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { ...rowToEdit, domain_name: val } ) } required description={ __( 'Domain names separated by new line' ) } />,
+		domain_type: <SingleSelectMenu defaultAccept autoClose items={ newDomainTypes } name="domain_type" defaultValue="M" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, domain_type: val } ) }>{ header.domain_type }</SingleSelectMenu>,
 	};
 
 	const columns = [

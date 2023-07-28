@@ -149,7 +149,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 						<RowCounter filters={ filters } slug={ slug } />
 						}
 						{ ! hideActions &&
-							<TableActionsMenu options={ { noImport, noExport, noDelete } } />
+							<TableActionsMenu options={ { noImport, noExport, noDelete, filters } } />
 						}
 
 						{

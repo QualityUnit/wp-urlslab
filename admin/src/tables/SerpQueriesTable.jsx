@@ -1,15 +1,14 @@
 /* eslint-disable indent */
 import {
-	useInfiniteFetch, ProgressBar, SortBy, SingleSelectMenu, CountryMenu, LangMenu, InputField, Checkbox, LinkIcon, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, Edit, SuggestInputField,
+	useInfiniteFetch, ProgressBar, SortBy, CountryMenu, LangMenu, Checkbox, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TextArea,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
+import { countriesList } from '../lib/helpers';
+
 import IconButton from '../elements/IconButton';
-import React, { useCallback } from 'react';
-import { countriesList } from "../lib/helpers";
-import TextArea from "../elements/Textarea";
 import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
 import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refresh.svg';
 
@@ -32,31 +31,22 @@ export default function SerpQueriesTable( { slug } ) {
 
 	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
+	const { setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
-	const setUnifiedPanel = useCallback( ( cell ) => {
-		const origCell = cell?.row.original;
-		setOptions( [] );
-		setRowToEdit( {} );
-		updateRow( { cell, id: 'keyword' } );
-	}, [ setOptions, setRowToEdit, slug, updateRow ] );
-
-
-
 	const ActionButton = ( { cell, onClick } ) => {
-		const { status } = cell?.row?.original;
+		const { status: serpStatus } = cell?.row?.original;
 
 		return (
 			<div className="flex flex-align-center flex-justify-end">
 				{
-					( status !== 'E' && status !== 'P' ) &&
+					( serpStatus !== 'E' && serpStatus !== 'P' ) &&
 					<IconButton className="mr-s c-saturated-red" tooltip={ __( 'Disable' ) } tooltipClass="align-left" onClick={ () => onClick( 'E' ) }>
 						<DisableIcon />
 					</IconButton>
 				}
 				{
-					( status !== 'P' ) &&
+					( serpStatus !== 'P' ) &&
 					<IconButton className="mr-s" tooltip={ __( 'Process again' ) } tooltipClass="align-left" onClick={ () => onClick( 'X' ) }>
 						<RefreshIcon />
 					</IconButton>
@@ -66,17 +56,17 @@ export default function SerpQueriesTable( { slug } ) {
 	};
 
 	const statuses = {
-		'X': __( 'Not processed' ),
-		'P': __( 'Processing' ),
-		'A': __( 'Processed' ),
-		'E': __( 'Disabled' ),
-		'S': __( 'Irrelevant' ),
+		X: __( 'Not processed' ),
+		P: __( 'Processing' ),
+		A: __( 'Processed' ),
+		E: __( 'Disabled' ),
+		S: __( 'Irrelevant' ),
 	};
 
 	const types = {
 		U: __( 'User' ),
 		S: __( 'Suggested' ),
-	}
+	};
 
 	const header = {
 		query: __( 'Query' ),
@@ -90,7 +80,7 @@ export default function SerpQueriesTable( { slug } ) {
 	};
 
 	const rowEditorCells = {
-		query: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { ...rowToEdit, query: val } ) } required  description={ __( 'SERP queries separated by new line' ) } />,
+		query: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { ...rowToEdit, query: val } ) } required description={ __( 'SERP queries separated by new line' ) } />,
 		lang: <LangMenu autoClose defaultValue="en"	onChange={ ( val ) => setRowToEdit( { ...rowToEdit, lang: val } ) }>{ header.lang }</LangMenu>,
 		country: <CountryMenu autoClose defaultValue="us" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, country: val } ) }>{ header.country }</CountryMenu>,
 	};
@@ -123,7 +113,7 @@ export default function SerpQueriesTable( { slug } ) {
 		columnHelper.accessor( 'country', {
 			className: 'nolimit',
 			cell: ( cell ) => {
-				if (countriesList[ cell.getValue() ]) {
+				if ( countriesList[ cell.getValue() ] ) {
 					return countriesList[ cell.getValue() ];
 				}
 				return cell.getValue();

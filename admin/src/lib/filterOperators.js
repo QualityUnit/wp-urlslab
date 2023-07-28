@@ -71,3 +71,12 @@ export default function filterArgs( currentFilters ) {
 
 	return filters;
 }
+
+export const operatorTypes = {
+	date: dateOp,
+	number: numericOp,
+	string: stringOp,
+	lang: langOp,
+	menu: menuOp,
+	boolean: menuOp,
+};

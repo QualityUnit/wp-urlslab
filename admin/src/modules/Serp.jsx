@@ -7,7 +7,6 @@ import ModuleViewHeader from '../components/ModuleViewHeader';
 export default function Serp( { moduleId } ) {
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
-	const slug = 'serp';
 
 	const tableMenu = new Map( [
 		[ 'serp-domains', __( 'Domains' ) ],
