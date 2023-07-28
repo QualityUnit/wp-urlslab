@@ -20,7 +20,7 @@ function DeleteFilteredPanel( props ) {
 	const [ deleteStatus, setDeleteStatus ] = useState();
 	const stopFetching = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
-	const { deleteMultipleRows } = useChangeRow( { data, url, slug, paginationId } );
+	const { deleteMultipleRows } = useChangeRow( { data, url, slug, header, paginationId, removeAllFiltered: true } );
 
 	const hidePanel = ( operation ) => {
 		stopFetching.current = true;
@@ -42,6 +42,7 @@ function DeleteFilteredPanel( props ) {
 	};
 
 	const handleDelete = () => {
+		handleDeleteStatus( 1 );
 		fetchDataForProcessing( { ...props, stopFetching }, ( status ) => handleDeleteStatus( status ) ).then( ( response ) => {
 			if ( response.status === 'done' ) {
 				const { data: rowsToDelete } = response;

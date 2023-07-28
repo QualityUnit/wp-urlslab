@@ -5,8 +5,9 @@ import { postFetch } from '../api/fetching';
 import filtersArray from '../lib/filtersArray';
 import useTablePanels from './useTablePanels';
 import { setNotification } from './useNotifications';
+import { useFilter } from './filteringSorting';
 
-export default function useChangeRow( { data, url, slug, paginationId } ) {
+export default function useChangeRow( { data, url, slug, header, paginationId, removeAllFiltered } ) {
 	const queryClient = useQueryClient();
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const [ table, setTable ] = useState( );
@@ -14,6 +15,9 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	let rowIndex = 0;
 
 	const { filters, sorting = [] } = url || {};
+	const activefilters = filters ? Object.keys( filters ) : null;
+
+	const { handleRemoveFilter } = useFilter( { slug, header } );
 
 	useEffect( () => {
 		if ( table && ! table.getSelectedRowModel().flatRows.length ) {
@@ -214,6 +218,10 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 				//If id present, single row sentence (Row Id has been deleted) else show Rows have been deleted
 				setNotification( slug, { message: `${ id ? 'Row “' + id + '” has' : 'Rows have' } been deleted`, status: 'success' } );
 				rowIndex += 1;
+
+				if ( removeAllFiltered ) {
+					handleRemoveFilter( activefilters );
+				}
 			}
 
 			if ( rowIndex === 1 ) {
