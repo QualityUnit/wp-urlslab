@@ -2,20 +2,20 @@ import { postFetch } from './fetching';
 import filtersArray from '../lib/filtersArray';
 
 let lastRowId = '';
-let dataForCSV = [];
+let dataForProcessing = [];
 let responseData = [];
 let ended = false;
 let totalItems = 1;
 
 let jsonData = { status: 'loading', data: [] };
 
-export async function exportCSV( options, result ) {
-	const { altSlug, altPaginationId, url, perPage = 9999, deleteCSVCols, stopExport } = options;
+export async function fetchDataForProcessing( options, result ) {
+	const { altSlug, altPaginationId, url, perPage = 9999, deleteCSVCols, stopFetching } = options;
 	const slug = altSlug ? altSlug : options.slug;
 	const paginationId = altPaginationId ? altPaginationId : options.paginationId;
 	const { filters: userFilters } = url;
 
-	if ( stopExport.current ) {
+	if ( stopFetching.current ) {
 		return false;
 	}
 	const response = await postFetch( slug, {
@@ -41,13 +41,13 @@ export async function exportCSV( options, result ) {
 		totalItems = await totalItemsRes.json();
 	}
 
-	const prevDataLength = dataForCSV.length;
-	dataForCSV.push( ...responseData ); // Adds downloaded results to array
+	const prevDataLength = dataForProcessing.length;
+	dataForProcessing.push( ...responseData ); // Adds downloaded results to array
 
-	if ( responseData.length < perPage ) { // Ends export
+	if ( responseData.length < perPage ) { // Ends processing
 		ended = true;
 		if ( deleteCSVCols?.length ) { // Clean the CSV from unwanted columns
-			for ( const obj of dataForCSV ) {
+			for ( const obj of dataForProcessing ) {
 				for ( const field of deleteCSVCols ) {
 					delete obj[ field ];
 				}
@@ -58,18 +58,18 @@ export async function exportCSV( options, result ) {
 	if ( ended ) {
 		result( 100 ); // sends result 100 % to notifications
 		// Start cleanup
-		jsonData = { status: 'done', data: dataForCSV };
+		jsonData = { status: 'done', data: dataForProcessing };
 		lastRowId = '';
-		dataForCSV = [];
+		dataForProcessing = [];
 		ended = false;
 		// End cleanup
 		return jsonData;
 	}
 
-	if ( totalItems && dataForCSV.length && ( dataForCSV.length > prevDataLength ) ) { // continue fetching by pagination
-		lastRowId = dataForCSV[ dataForCSV?.length - 1 ][ paginationId ]; // gets last row ID to continue
-		result( `${ Math.round( dataForCSV.length / totalItems * 100 ) }` ); // sends result callback to notifications
-		await exportCSV( options, result ); // recursive export if prev data are not shorter than max. perPage
+	if ( totalItems && dataForProcessing.length && ( dataForProcessing.length > prevDataLength ) ) { // continue fetching by pagination
+		lastRowId = dataForProcessing[ dataForProcessing?.length - 1 ][ paginationId ]; // gets last row ID to continue
+		result( `${ Math.round( dataForProcessing.length / totalItems * 100 ) }` ); // sends result callback to notifications
+		await fetchDataForProcessing( options, result ); // recursive processing if prev data are not shorter than max. perPage
 	}
 
 	return jsonData;

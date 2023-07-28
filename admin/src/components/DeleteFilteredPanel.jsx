@@ -1,6 +1,7 @@
 import { memo, useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
+import { fetchDataForProcessing } from '../api/fetchDataForProcessing';
 import useCloseModal from '../hooks/useCloseModal';
 import { operatorTypes } from '../lib/filterOperators';
 import { langName } from '../lib/helpers';
@@ -14,11 +15,11 @@ function DeleteFilteredPanel( props ) {
 	const { filters } = url;
 	const activefilters = filters ? Object.keys( filters ) : null;
 	const [ deleteStatus, setDeleteStatus ] = useState();
-	const stopDelete = useRef( false );
+	const stopFetching = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
 
 	const hidePanel = ( operation ) => {
-		stopDelete.current = true;
+		stopFetching.current = true;
 
 		handleClose();
 		if ( handlePanel ) {
@@ -34,6 +35,15 @@ function DeleteFilteredPanel( props ) {
 				hidePanel();
 			}, 1000 );
 		}
+	};
+
+	const handleDelete = () => {
+		delete props.deleteCSVCols;
+		fetchDataForProcessing( { ...props, stopFetching }, ( status ) => handleDeleteStatus( status ) ).then( ( response ) => {
+			if ( response.status === 'done' ) {
+				console.log( response.data );
+			}
+		} );
 	};
 
 	return (
@@ -86,7 +96,7 @@ function DeleteFilteredPanel( props ) {
 					}
 					<div className="flex">
 						<Button className="ma-left" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
-						<Button className="ml-s danger" options={ { ...props, stopDelete } } onClick={ handleDeleteStatus }>
+						<Button className="ml-s danger" options={ { ...props, stopFetching } } onClick={ handleDelete }>
 							{ __( 'Delete All Filtered' ) }
 						</Button>
 					</div>
