@@ -8,7 +8,7 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import IconButton from '../elements/IconButton';
 import React, { useCallback } from 'react';
-import { countriesList } from "../lib/helpers";
+import {countriesList, langName} from "../lib/helpers";
 import TextArea from "../elements/Textarea";
 import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
 import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refresh.svg';
@@ -116,7 +116,7 @@ export default function SerpQueriesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'lang', {
 			className: 'nolimit',
-			cell: ( cell ) => cell.getValue(),
+			cell: ( cell ) => langName( cell.getValue() ),
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.lang }</SortBy>,
 			size: 50,
 		} ),

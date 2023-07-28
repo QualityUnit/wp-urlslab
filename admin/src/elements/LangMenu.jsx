@@ -23,11 +23,8 @@ export default function LangMenu( { noAll, multiSelect, isFilter, children, defa
 
 	if ( ! langData[ defaultValue ] ) {
 		langData[ defaultValue ] = langName( defaultValue );
-		// queryClient.setQueryData( [ 'languages' ], sortLangs( langData ) );
 		queryClient.invalidateQueries( [ 'languages' ] );
 	}
-
-	// const langs = sortLangs( langData );
 
 	const handleSelected = ( lang ) => {
 		if ( onChange ) {
