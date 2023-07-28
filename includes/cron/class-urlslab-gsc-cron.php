@@ -48,7 +48,7 @@ class Urlslab_Gsc_Cron extends Urlslab_Cron {
 	protected function execute(): bool {
 		global $wpdb;
 
-		$site_row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_GSC_SITES_TABLE . ' WHERE date_to < %s ORDER BY updated ASC LIMIT 1', gmdate( 'Y-m-d' ) ), ARRAY_A );
+		$site_row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_GSC_SITES_TABLE . ' WHERE date_to < %s ORDER BY updated ASC LIMIT 1', gmdate( 'Y-m-d' ) ), ARRAY_A ); // phpcs:ignore
 		if ( empty( $site_row ) ) {
 			$this->has_rows = false;
 
@@ -57,8 +57,8 @@ class Urlslab_Gsc_Cron extends Urlslab_Cron {
 
 		$site = new Urlslab_Gsc_Site_Row( $site_row );
 		$site->set_updated( Urlslab_Gsc_Site_Row::get_now() );
-		if ( $site->get_date_to() !== gmdate( 'Y-m-d', strtotime( "-1 days" ) ) ) {
-			$site->set_date_to( gmdate( 'Y-m-d', strtotime( "-1 days" ) ) );
+		if ( $site->get_date_to() !== gmdate( 'Y-m-d', strtotime( '-1 days' ) ) ) {
+			$site->set_date_to( gmdate( 'Y-m-d', strtotime( '-1 days' ) ) );
 			$site->set_row_offset( 0 );
 		} else {
 			$site->set_row_offset( $site->get_row_offset() + self::MAX_ROWS );
@@ -70,8 +70,8 @@ class Urlslab_Gsc_Cron extends Urlslab_Cron {
 		$request->setRowLimit( self::MAX_ROWS );
 		$request->setOffset( $site->get_row_offset() );
 		$request->setSiteUrl( $site->get_site_name() );
-		$request->setStartDate( gmdate( 'Y-m-d', strtotime( "-31 days" ) ) );
-		$request->setEndDate( gmdate( 'Y-m-d', strtotime( "-1 days" ) ) );
+		$request->setStartDate( gmdate( 'Y-m-d', strtotime( '-31 days' ) ) );
+		$request->setEndDate( gmdate( 'Y-m-d', strtotime( '-1 days' ) ) );
 		try {
 			$results = $this->analytics_client->getTopKeywords( $request );
 			$rows    = $results->getRows();
