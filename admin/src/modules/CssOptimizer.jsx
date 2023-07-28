@@ -4,18 +4,20 @@ import { useI18n } from '@wordpress/react-i18n';
 import HtmlOptimizerOverview from '../overview/HtmlOptimizer';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
-export default function CssOptimizer({ moduleId } ) {
+const CSSCacheTable = lazy( () => import( `../tables/CSSCacheTable.jsx` ) );
+const JSCacheTable = lazy( () => import( `../tables/JSCacheTable.jsx` ) );
+const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
+
+export default function CssOptimizer() {
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
+
+	const moduleId = 'urlslab-css-optimizer';
 
 	const tableMenu = new Map( [
 		[ 'css-cache', __( 'Cached CSS Files' ) ],
 		[ 'js-cache', __( 'Cached JS Files' ) ],
 	] );
-
-	const CSSCacheTable = lazy( () => import( `../tables/CSSCacheTable.jsx` ) );
-	const JSCacheTable = lazy( () => import( `../tables/JSCacheTable.jsx` ) );
-	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
 
 	return (
 		<div className="urlslab-tableView">

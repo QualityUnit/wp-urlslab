@@ -1,9 +1,11 @@
 import { memo, useMemo, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
+
+import useModulesQuery from '../queries/useModulesQuery';
+
 import DashboardModule from '../components/DashboardModule';
 import SearchField from '../elements/SearchField';
 import MultiSelectMenu from '../elements/MultiSelectMenu';
-import useModulesQuery from '../queries/useModulesQuery';
 
 function Modules() {
 	const { __ } = useI18n();
@@ -13,17 +15,17 @@ function Modules() {
 	const labelsList = useMemo( () => {
 		return {
 			paid: { name: __( 'Paid service' ), color: '#00c996' },
-			// expert: { name: __( 'Experts', color: '#ffc996' },
 			free: { name: __( 'Free' ) },
-			// experimental: { name: __( 'Experimental'), color: '#ff8875' },
 			beta: { name: __( 'Beta' ), color: '#75a9ff' },
-			// alpha: { name: __( 'Alpha') },
-			// expert: { name: __( 'Expert') },
 			seo: { name: __( 'SEO' ), color: '#D4C5F9' },
-			// cron: { name: __( 'Cron') },
 			performance: { name: __( 'Performance' ), color: '#65B5FF' },
 			tools: { name: __( 'Tools' ), color: '#FFD189' },
 			ai: { name: __( 'AI' ), color: '#ff7a7a' },
+			// expert: { name: __( 'Experts', color: '#ffc996' },
+			// experimental: { name: __( 'Experimental'), color: '#ff8875' },
+			// alpha: { name: __( 'Alpha') },
+			// expert: { name: __( 'Expert') },
+			// cron: { name: __( 'Cron') },
 		};
 	}, [ __ ] );
 
@@ -46,10 +48,6 @@ function Modules() {
 		free: labelsList.free.name,
 		paid: labelsList.paid.name,
 	};
-
-	if ( modules && modules.length === 0 ) {
-		return;
-	}
 
 	const handleFiltering = ( { input, type } ) => {
 		let inputValue = input;
@@ -82,7 +80,7 @@ function Modules() {
 		return false;
 	};
 
-	return ( isSuccessModules &&
+	return ( ( isSuccessModules && modules && Object.values( modules ).length ) &&
 		<>
 			<div className="urlslab-subheader flex flex-align-center">
 				<SearchField liveUpdate autoFocus onChange={ ( input ) => handleFiltering( { input, type: 'search' } ) } placeholder={ __( 'Search' ) } />

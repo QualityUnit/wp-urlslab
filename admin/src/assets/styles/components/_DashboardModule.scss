@@ -56,16 +56,16 @@
 	&-title[class] {
 		font-size: 1.15rem;
 		font-weight: $font-weight-semi;
+		cursor: default;
 
-		button.active {
+		a {
+			text-decoration: none;
 
-			@media (hover: hover) {
-
-				&:hover {
-					color: $primary-color;
-				}
+			&:not(.active):hover {
+				color: inherit;
 			}
 		}
+
 	}
 
 	&-content {

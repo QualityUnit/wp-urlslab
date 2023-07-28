@@ -13,6 +13,7 @@
 	font-size: 1em;
 
 	&.dark {
+
 		circle {
 			fill: $white;
 		}
@@ -41,6 +42,10 @@
 		.urlslab-loader-text {
 			display: none;
 		}
+	}
+
+	&.fullscreen {
+		height: 100vh;
 	}
 
 	.urlslab-tooltip & {

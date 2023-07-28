@@ -27,6 +27,12 @@ body {
 		&:hover {
 			color: $primary-color;
 		}
+
+		// override default wp styling on anchor focus
+		&:focus {
+			box-shadow: none;
+			outline: 0;
+		}
 	}
 
 	.hidden,

@@ -1,23 +1,24 @@
 import { useRef, useEffect, useMemo } from 'react';
-import { get, set, del } from 'idb-keyval';
+import { useLocation, Link } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
-import useMainMenu from '../hooks/useMainMenu';
+import { get, set, del } from 'idb-keyval';
+
+import useModulesQuery from '../queries/useModulesQuery';
 
 import { ReactComponent as MenuArrow } from '../assets/images/arrow-simple.svg';
 import { ReactComponent as ModulesIcon } from '../assets/images/menu-icon-modules.svg';
 import { ReactComponent as SettingsIcon } from '../assets/images/menu-icon-settings.svg';
+
 import '../assets/styles/components/_MainMenu.scss';
-import useModulesQuery from '../queries/useModulesQuery';
 
 export default function MainMenu() {
 	const { __ } = useI18n();
 	const mainmenu = useRef();
+	const route = useLocation().pathname;
 
-	const { setActivePage, getActivePage, activePage } = useMainMenu();
+	const { data: modules = {}, isSuccess: isSuccessModules } = useModulesQuery();
 
-	const { data: modules, isSuccess: isSuccessModules } = useModulesQuery();
-
-	const loadedModules = Object.values( modules ? modules : {} );
+	const loadedModules = Object.values( modules );
 	const activeModules = useMemo( () => loadedModules.length ? loadedModules.filter( ( mod ) => mod.active ) : [], [ loadedModules ] );
 
 	const handleMainMenu = ( ) => {
@@ -35,17 +36,14 @@ export default function MainMenu() {
 		}
 	};
 
-	const activator = ( moduleId ) => {
-		if ( ! moduleId ) {
-			return '';
-		}
-		if ( moduleId === activePage ) {
+	const activator = ( activateRoute ) => {
+		if ( activateRoute === route ) {
 			return 'active';
 		}
+		return '';
 	};
 
 	useEffect( () => {
-		getActivePage();
 		get( 'urlslab-mainmenu' ).then( ( val ) => {
 			if ( val === 'open' || window.matchMedia( '(min-width: 1600px)' ).matches ) {
 				mainmenu.current?.classList.add( 'open' );
@@ -67,85 +65,86 @@ export default function MainMenu() {
 		<div className="urlslab-mainmenu-main flex">
 			<ul className="urlslab-mainmenu-menu">
 				<li key="urlslab-modules-main"
-					className={ `urlslab-mainmenu-item urlslab-modules has-icon ${ activator( 'urlslab-modules' ) }` }>
-					<button
-						type="button"
+					className={ `urlslab-mainmenu-item urlslab-modules has-icon ${ activator( '/' ) }` }>
+					<Link
+						to="/"
 						className="urlslab-mainmenu-btn has-icon"
-						onClick={ () => setActivePage( 'urlslab-modules' ) }>
+					>
 						<ModulesIcon />
 						<span>{ __( 'Modules' ) }</span>
-					</button>
+					</Link>
+
 				</li>
 				<li className="urlslab-mainmenu-item submenu">
 					<ul className="urlslab-mainmenu-submenu" style={ { '--activeModules': activeModules.length + 1 } }>
 						<li key="urlslab-modules"
-							className={ `urlslab-mainmenu-item ${ activator( 'urlslab-modules' ) }` }>
-							<button
-								type="button"
+							className={ `urlslab-mainmenu-item ${ activator( '/' ) }` }>
+							<Link
+								to="/"
 								className="urlslab-mainmenu-btn"
-								onClick={ () => setActivePage( 'urlslab-modules' ) }>
-								<span>{ __( 'All modules' ) }</span>
-							</button>
+							>
+								{ __( 'All modules' ) }
+							</Link>
 						</li>
 						{ loadedModules.length
-							? loadedModules.map( ( modul ) => {
+							? loadedModules.map( ( module ) => {
 								return (
-									modul.id !== 'general' && modul.active
-										? <li key={ modul.id } className={ `urlslab-mainmenu-item ${ activator( modul.id ) }` }>
-											<button
-												type="button"
+									module.id !== 'general' && module.active
+										? <li key={ module.id } className={ `urlslab-mainmenu-item ${ activator( '/' + module.id ) }` }>
+											<Link
+												to={ module.id }
 												className="urlslab-mainmenu-btn"
-												onClick={ () => setActivePage( modul.id ) }>
-												<span>{ modul.title }</span>
-											</button>
+											>
+												<span>{ module.title }</span>
+											</Link>
 										</li>
 										: ''
 								);
 							} )
-							: 'xxx'
+							: ''
 						}
 					</ul>
 				</li>
 
 				<li key="urlslab-settings-main"
-					className={ `urlslab-mainmenu-item urlslab-settings has-icon ${ activator( 'urlslab-settings' ) }` }>
-					<button
-						type="button"
+					className={ `urlslab-mainmenu-item urlslab-settings has-icon ${ activator( '/settings' ) }` }>
+					<Link
+						to="settings"
 						className="urlslab-mainmenu-btn has-icon"
-						onClick={ () => setActivePage( 'urlslab-settings' ) }>
+					>
 						<SettingsIcon />
 						<span>{ __( 'Settings' ) }</span>
-					</button>
+					</Link>
 				</li>
 
 				<li className="urlslab-mainmenu-item submenu">
 					<ul className="urlslab-mainmenu-submenu">
 						<li key="urlslab-settings"
-							className={ `urlslab-mainmenu-item ${ activator( 'urlslab-settings' ) }` }>
-							<button
-								type="button"
+							className={ `urlslab-mainmenu-item ${ activator( '/settings' ) }` }>
+							<Link
+								to="settings"
 								className="urlslab-mainmenu-btn"
-								onClick={ () => setActivePage( 'urlslab-settings' ) }>
+							>
 								<span>{ __( 'General settings' ) }</span>
-							</button>
+							</Link>
 						</li>
 						<li key="urlslab-schedule"
-							className={ `urlslab-mainmenu-item ${ activator( 'urlslab-schedule' ) }` }>
-							<button
-								type="button"
+							className={ `urlslab-mainmenu-item ${ activator( '/schedule' ) }` }>
+							<Link
+								to="schedule"
 								className="urlslab-mainmenu-btn"
-								onClick={ () => setActivePage( 'urlslab-schedule' ) }>
+							>
 								<span>{ __( 'Schedules' ) }</span>
-							</button>
+							</Link>
 						</li>
 						<li key="TagsLabels"
-							className={ `urlslab-mainmenu-item ${ activator( 'TagsLabels' ) }` }>
-							<button
-								type="button"
+							className={ `urlslab-mainmenu-item ${ activator( '/TagsLabels' ) }` }>
+							<Link
+								to="TagsLabels"
 								className="urlslab-mainmenu-btn"
-								onClick={ () => setActivePage( 'TagsLabels' ) }>
+							>
 								<span>{ __( 'Tags' ) }</span>
-							</button>
+							</Link>
 						</li>
 					</ul>
 				</li>

@@ -4,16 +4,18 @@ import { useI18n } from '@wordpress/react-i18n';
 import ScreenShotOverview from '../overview/Screenshot';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
-export default function Screenshot( { moduleId } ) {
+const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
+const ScreenshotTable = lazy( () => import( `../tables/ScreenshotTable.jsx` ) );
+
+export default function Screenshot() {
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
+
+	const moduleId = 'urlslab-screenshot';
 
 	const tableMenu = new Map( [
 		[ 'screenshot', __( 'Screenshots' ) ],
 	] );
-
-	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
-	const ScreenshotTable = lazy( () => import( `../tables/ScreenshotTable.jsx` ) );
 
 	return (
 		<div className="urlslab-tableView">

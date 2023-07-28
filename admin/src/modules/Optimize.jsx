@@ -3,10 +3,12 @@ import { useState, Suspense, lazy } from 'react';
 import OptimizeOverview from '../overview/Optimize';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
-export default function Optimize( { moduleId } ) {
+const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
+
+export default function Optimize() {
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 
-	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
+	const moduleId = 'optimize';
 
 	return (
 		<div className="urlslab-tableView">

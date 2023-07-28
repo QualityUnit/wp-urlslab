@@ -1,19 +1,18 @@
-import Notifications from './components/Notifications';
-import MainMenu from './components/MainMenu';
-import DynamicModule from './components/DynamicModule';
-import Header from './components/Header';
-import Loader from './components/Loader';
-import Onboarding from './onboarding/Onboarding';
+import { RouterProvider } from 'react-router-dom';
 
 import useOnboarding from './hooks/useOnboarding';
 import useCheckApiKey from './hooks/useCheckApiKey';
 import useGeneralQuery from './queries/useGeneralQuery';
 import { useModulesQueryPrefetch } from './queries/useModulesQuery';
 
-import './assets/styles/style.scss';
-import usePrefetchQueries from './queries/usePrefetchQueries';
+import Notifications from './components/Notifications';
+import Loader from './components/Loader';
+import Onboarding from './onboarding/Onboarding';
+import { router } from './app/router';
 
-export default function App() {
+import './assets/styles/style.scss';
+
+const App = () => {
 	const { activeOnboarding } = useOnboarding( );
 	const { isFetching, isSuccess } = useGeneralQuery();
 	const { apiKeySet } = useCheckApiKey();
@@ -22,30 +21,18 @@ export default function App() {
 
 	return (
 		<div className="urlslab-app flex">
-			{ isFetching && <Loader /> }
+			{ isFetching && <Loader isFullscreen /> }
 			{ isSuccess &&
 				<>
 					{ ( apiKeySet === false && activeOnboarding )
 						? <Onboarding />
-						: <MainApp />
+						: <RouterProvider router={ router } />
 					}
 					<Notifications />
 				</>
 			}
 		</div>
 	);
-}
-
-const MainApp = () => {
-	usePrefetchQueries();
-
-	return (
-		<>
-			<MainMenu />
-			<div className="urlslab-app-main">
-				<Header />
-				<DynamicModule />
-			</div>
-		</>
-	);
 };
+
+export default App;

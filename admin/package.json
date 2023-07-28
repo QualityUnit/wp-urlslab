@@ -41,6 +41,7 @@
     "react-dom": "^18.2.0",
     "react-intersection-observer": "^9.4.1",
     "react-papaparse": "^4.1.0",
+    "react-router-dom": "^6.14.2",
     "react-tag-autocomplete": "^7.0.0-rc.6",
     "react-virtual": "^2.10.4",
     "recharts": "^2.7.2",
