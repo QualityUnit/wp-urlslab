@@ -59,10 +59,10 @@ class Urlslab_Gsc_Site_Row extends Urlslab_Data {
 
 	public function get_columns(): array {
 		return array(
-			'site_name' => '%s',
-			'updated'  => '%s',
+			'site_name'  => '%s',
+			'updated'    => '%s',
 			'row_offset' => '%d',
-			'date_to'=> '%s',
+			'date_to'    => '%s',
 		);
 	}
 }
