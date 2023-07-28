@@ -345,6 +345,23 @@ class Urlslab_Activator {
 				global $wpdb;
 				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_QGROUP_QUERIES_TABLE ); // phpcs:ignore
 				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_QGROUPS_TABLE ); // phpcs:ignore
+				self::init_gsc_positions_table();
+			}
+		);
+		self::update_step(
+			'2.40.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_QGROUP_QUERIES_TABLE ); // phpcs:ignore
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_QGROUPS_TABLE ); // phpcs:ignore
+				self::init_gsc_positions_table();
+			}
+		);
+
+		self::update_step(
+			'2.41.0',
+			function() {
+				self::init_gsc_sites_table();
 			}
 		);
 
@@ -385,9 +402,9 @@ class Urlslab_Activator {
 		self::init_serp_queries_table();
 		self::init_serp_urls_table();
 		self::init_serp_positions_table();
-		self::init_serp_query_groups_table();
-		self::init_serp_query_group_queries_table();
 		self::init_serp_domains_table();
+		self::init_gsc_positions_table();
+		self::init_gsc_sites_table();
 	}
 
 	private static function init_urls_tables() {
@@ -951,7 +968,8 @@ class Urlslab_Activator {
 	}
 
 	private static function update_step( string $version, callable $executable ) {
-		if ( version_compare( get_option( URLSLAB_VERSION_SETTING, '1.0.0' ), $version, '<' ) ) {
+		$existing_version = explode( '-', get_option( URLSLAB_VERSION_SETTING, '1.0.0' ) );
+		if ( version_compare( $existing_version[0], $version, '<' ) ) {
 			call_user_func( $executable );
 			update_option( URLSLAB_VERSION_SETTING, $version );
 		}
@@ -1049,6 +1067,44 @@ class Urlslab_Activator {
 							INDEX idx_domains (domain_id)
 							) {$charset_collate};";
 
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+
+	private static function init_gsc_positions_table() {
+		global $wpdb;
+		$table_name      = URLSLAB_GSC_POSITIONS_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
+							query_id bigint NOT NULL,
+							url_id bigint NOT NULL,
+							domain_id bigint NOT NULL,
+							updated DATETIME NOT NULL,
+							position FLOAT UNSIGNED NOT NULL,
+							clicks INT UNSIGNED NOT NULL,
+							impressions INT UNSIGNED NOT NULL,
+							ctr FLOAT UNSIGNED NOT NULL,
+							PRIMARY KEY  (query_id, url_id),
+							INDEX idx_urls (url_id),
+							INDEX idx_domains (domain_id)
+							) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_gsc_sites_table() {
+		global $wpdb;
+		$table_name      = URLSLAB_GSC_SITES_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
+							site_name varchar(250) NOT NULL,
+							updated DATETIME,
+							date_to DATE,
+							row_offset INT UNSIGNED NOT NULL,
+							PRIMARY KEY  (site_name)
+							) {$charset_collate};";
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 	}

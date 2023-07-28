@@ -75,7 +75,8 @@ export default function SerpQueriesTable( { slug } ) {
 
 	const types = {
 		U: __( 'User' ),
-		S: __( 'Suggested' ),
+		C: __( 'Search Console' ),
+		S: __( 'Google Suggestion' ),
 	}
 
 	const header = {
@@ -85,7 +86,10 @@ export default function SerpQueriesTable( { slug } ) {
 		updated: __( 'Updated' ),
 		status: __( 'Status' ),
 		type: __( 'Type' ),
-		best_position: __( 'My Position' ),
+		position: __( 'Position' ),
+		clicks: __( 'Clicks' ),
+		impressions: __( 'Impressions' ),
+		ctr: __( 'ctr' ),
 		url_name: __( 'My URL' ),
 	};
 
@@ -150,10 +154,28 @@ export default function SerpQueriesTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.type }</SortBy>,
 			size: 80,
 		} ),
-		columnHelper.accessor( 'best_position', {
+		columnHelper.accessor( 'position', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.best_position }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.position }</SortBy>,
+			size: 80,
+		} ),
+		columnHelper.accessor( 'clicks', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.clicks }</SortBy>,
+			size: 80,
+		} ),
+		columnHelper.accessor( 'impressions', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.impressions }</SortBy>,
+			size: 80,
+		} ),
+		columnHelper.accessor( 'ctr', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.ctr }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'url_name', {

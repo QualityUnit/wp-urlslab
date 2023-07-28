@@ -9,6 +9,7 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 
 	public const TYPE_USER = 'U';
 	public const TYPE_SYSTEM = 'S';
+	public const TYPE_GSC = 'C';
 
 	/**
 	 * @param mixed $loaded_from_db

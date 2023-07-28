@@ -221,15 +221,14 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		foreach ( array_keys( $this->get_row_object()->get_columns() ) as $column ) {
 			$sql->add_select_column( $column, 'q' );
 		}
-		$sql->add_select_column( 'MIN(position)', false, 'best_position' );
+		$sql->add_select_column( 'position' );
+		$sql->add_select_column( 'impressions' );
+		$sql->add_select_column( 'clicks' );
+		$sql->add_select_column( 'ctr' );
 		$sql->add_select_column( 'url_name' );
 
 		$sql->add_from( $this->get_row_object()->get_table_name() . ' q' );
-		$my_domains = Urlslab_Serp_Domain_Row::get_my_domains();
-		if ( empty( $my_domains ) ) {
-			$my_domains = array( - 1 => '' ); //left join needs at least one row in condition
-		}
-		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON q.query_id = p.query_id AND p.domain_id IN (' . implode( ',', array_keys( $my_domains ) ) . ')' );
+		$sql->add_from( 'LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' p ON q.query_id = p.query_id' );
 		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON p.url_id=u.url_id' );
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'q' );
@@ -237,7 +236,10 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$columns,
 			$this->prepare_columns(
 				array(
-					'best_position' => '%d',
+					'position' => '%d',
+					'impressions' => '%d',
+					'clicks' => '%d',
+					'ctr' => '%d',
 					'url_name'      => '%s',
 				)
 			)
