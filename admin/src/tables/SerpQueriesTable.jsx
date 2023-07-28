@@ -29,7 +29,7 @@ export default function SerpQueriesTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -188,7 +188,7 @@ export default function SerpQueriesTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				table={ table }
-				onDeleteSelected={ () => deleteSelectedRows( { id: 'query' } ) }
+				onDeleteSelected={ () => deleteMultipleRows( { id: 'query' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ { header, data, slug, paginationId, url,
 					title: __( 'Add Query' ), id: 'query',

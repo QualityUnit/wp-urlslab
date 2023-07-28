@@ -8,15 +8,19 @@ import { langName } from '../lib/helpers';
 
 import Button from '../elements/Button';
 import ProgressBar from '../elements/ProgressBar';
+import useChangeRow from '../hooks/useChangeRow';
 
 function DeleteFilteredPanel( props ) {
-	const { url, header, handlePanel } = props;
+	delete props.deleteCSVCols;
+
+	const { url, data, slug, paginationId, optionalSelector, header, handlePanel } = props;
 	const { __ } = useI18n();
 	const { filters } = url;
 	const activefilters = filters ? Object.keys( filters ) : null;
 	const [ deleteStatus, setDeleteStatus ] = useState();
 	const stopFetching = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
+	const { deleteMultipleRows } = useChangeRow( { data, url, slug, paginationId } );
 
 	const hidePanel = ( operation ) => {
 		stopFetching.current = true;
@@ -38,10 +42,10 @@ function DeleteFilteredPanel( props ) {
 	};
 
 	const handleDelete = () => {
-		delete props.deleteCSVCols;
 		fetchDataForProcessing( { ...props, stopFetching }, ( status ) => handleDeleteStatus( status ) ).then( ( response ) => {
 			if ( response.status === 'done' ) {
-				console.log( response.data );
+				const { data: rowsToDelete } = response;
+				deleteMultipleRows( { rowsToDelete, optionalSelector } );
 			}
 		} );
 	};

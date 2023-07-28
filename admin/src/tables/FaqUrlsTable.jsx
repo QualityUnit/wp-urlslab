@@ -20,6 +20,7 @@ import useTablePanels from '../hooks/useTablePanels';
 
 export default function FaqUrlsTable( { slug } ) {
 	const paginationId = 'faq_id';
+	const optionalSelector = 'url_id';
 
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const defaultSorting = sorting.length ? sorting : [ { key: 'url_name', dir: 'ASC', op: '>' }, { key: 'sorting', dir: 'ASC', op: '>' } ];
@@ -38,7 +39,7 @@ export default function FaqUrlsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
 
-	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -81,14 +82,14 @@ export default function FaqUrlsTable( { slug } ) {
 		columnHelper.accessor( 'sorting', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() } min="0" max="100"
-				onChange={ ( newVal ) => updateRow( { newVal, cell, optionalSelector: 'url_id' } ) } />,
+				onChange={ ( newVal ) => updateRow( { newVal, cell, optionalSelector } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.sorting }</SortBy>,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, optionalSelector: 'url_id', id: 'faq_id' } ) } />,
+			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, optionalSelector, id: 'faq_id' } ) } />,
 			header: null,
 		} ),
 	];
@@ -109,10 +110,10 @@ export default function FaqUrlsTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				table={ table }
-				onDeleteSelected={ deleteSelectedRows }
+				onDeleteSelected={ deleteMultipleRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				initialState={ { columnVisibility: { sorting: true, faq_id: false, url_name: true, question: true } } }
-				options={ { header, rowEditorCells, title: 'Add New FAQ to URL', data, slug, url, paginationId, rowToEdit, id: 'faq_id', deleteCSVCols: [ 'url_id' ] } }
+				options={ { header, rowEditorCells, title: 'Add New FAQ to URL', data, slug, url, paginationId, optionalSelector, rowToEdit, id: 'faq_id', deleteCSVCols: [ 'url_id' ] } }
 			/>
 			<Table className="fadeInto"
 				slug={ slug }

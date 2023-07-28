@@ -22,11 +22,11 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	}, [ table ] );
 
 	const getRowId = useCallback( ( tableElem, optionalSelector ) => {
-		const row = tableElem.row || tableElem;
+		const row = tableElem.row || tableElem.original || tableElem;
 		if ( optionalSelector ) {
-			return `${ row.original[ paginationId ] }/${ row.original[ optionalSelector ] }`;
+			return `${ row[ paginationId ] }/${ row[ optionalSelector ] }`;
 		}
-		return row.original[ paginationId ];
+		return row[ paginationId ];
 	}, [ paginationId ] );
 
 	const insertNewRow = useMutation( {
@@ -196,7 +196,8 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 
 			// Multiple rows delete
 			rowData.forEach( ( singleRow ) => {
-				idArray = [ ...idArray, { [ paginationId ]: singleRow.original[ paginationId ], [ optionalSelector ]: singleRow.original[ optionalSelector ] } ];
+				const row = singleRow.original || singleRow;
+				idArray = [ ...idArray, { [ paginationId ]: row[ paginationId ], [ optionalSelector ]: row[ optionalSelector ] } ];
 			} );
 
 			setNotification( slug, {
@@ -239,12 +240,18 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	};
 
 	// Multiple rows delete used from table
-	const deleteSelectedRows = ( options ) => {
-		const { optionalSelector, id } = options || {};
-		const selectedRowsInTable = table?.getSelectedRowModel().flatRows || [];
-		table?.toggleAllPageRowsSelected( false );
+	const deleteMultipleRows = ( options ) => {
+		const { optionalSelector, rowsToDelete } = options || {};
 
-		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( selectedRowsInTable ), rowData: selectedRowsInTable, optionalSelector, id } );
+		if ( ! rowsToDelete ) {
+			const selectedRowsInTable = table?.getSelectedRowModel().flatRows || [];
+			table?.toggleAllPageRowsSelected( false );
+
+			deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( selectedRowsInTable ), rowData: selectedRowsInTable, optionalSelector } );
+			return false;
+		}
+
+		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( rowsToDelete ), rowData: rowsToDelete, optionalSelector } );
 	};
 
 	// Function for row selection from table
@@ -266,5 +273,5 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 		setSelectedRows( [ ] );
 	};
 
-	return { selectedRows, insertRow, selectRows, deleteRow, clearRows, deleteSelectedRows, updateRow, saveEditedRow };
+	return { selectedRows, insertRow, selectRows, deleteRow, clearRows, deleteMultipleRows, updateRow, saveEditedRow };
 }
