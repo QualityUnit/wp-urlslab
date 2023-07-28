@@ -1,11 +1,12 @@
 import { useState, Suspense, lazy } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 
 import KeywordLinksOverview from '../overview/KeywordsLinks';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
 const KeywordsTable = lazy( () => import( `../tables/KeywordsTable.jsx` ) );
-const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
+const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 // const D3WordCloud = lazy( () => import( `../d3/D3WordCloud.jsx` ) );
 
 export default function KeywordLinks() {
@@ -13,7 +14,7 @@ export default function KeywordLinks() {
 	const slug = 'keyword';
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 
-	const moduleId = 'urlslab-keywords-links';
+	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
 		[ slug, __( 'Links' ) ],
