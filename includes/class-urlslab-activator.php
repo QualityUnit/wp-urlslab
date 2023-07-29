@@ -320,7 +320,6 @@ class Urlslab_Activator {
 			function() {
 				self::init_serp_queries_table();
 				self::init_serp_urls_table();
-				self::init_serp_positions_table();
 			}
 		);
 		self::update_step(
@@ -409,7 +408,6 @@ class Urlslab_Activator {
 
 		self::init_serp_queries_table();
 		self::init_serp_urls_table();
-		self::init_serp_positions_table();
 		self::init_serp_domains_table();
 		self::init_gsc_positions_table();
 		self::init_gsc_sites_table();
@@ -1057,26 +1055,6 @@ class Urlslab_Activator {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 	}
-
-	private static function init_serp_positions_table() {
-		global $wpdb;
-		$table_name      = URLSLAB_SERP_POSITIONS_TABLE;
-		$charset_collate = $wpdb->get_charset_collate();
-		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
-							query_id bigint NOT NULL,
-							url_id bigint NOT NULL,
-							domain_id bigint NOT NULL,
-							updated DATETIME NOT NULL,
-							position TINYINT UNSIGNED NOT NULL,
-							PRIMARY KEY  (query_id, url_id),
-							INDEX idx_urls (url_id),
-							INDEX idx_domains (domain_id)
-							) {$charset_collate};";
-
-		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		dbDelta( $sql );
-	}
-
 
 	private static function init_gsc_positions_table() {
 		global $wpdb;

@@ -155,7 +155,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 							false
 						);
 
-						$positions[] = new Urlslab_Serp_Position_Row(
+						$positions[] = new Urlslab_Gsc_Position_Row(
 							array(
 								'position'  => $organic_result->position,
 								'query_id'  => $query->get_query_id(),
