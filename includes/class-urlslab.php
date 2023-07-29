@@ -478,9 +478,9 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-serp-query-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-serp-url-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-serp-domain-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-serp-position-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-serp-qgroup-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-serp-qgroup-query-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-gsc-position-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-gsc-site-row.php';
+
 
 		// additional
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';

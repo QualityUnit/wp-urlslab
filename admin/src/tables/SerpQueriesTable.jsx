@@ -1,6 +1,6 @@
 /* eslint-disable indent */
 import {
-	useInfiniteFetch, ProgressBar, SortBy, SingleSelectMenu, CountryMenu, LangMenu, InputField, Checkbox, LinkIcon, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, Edit, SuggestInputField,
+	useInfiniteFetch, ProgressBar, SortBy, Checkbox, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -8,7 +8,6 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import IconButton from '../elements/IconButton';
 import React, { useCallback } from 'react';
-import { countriesList } from "../lib/helpers";
 import TextArea from "../elements/Textarea";
 import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
 import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refresh.svg';
@@ -16,7 +15,9 @@ import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refre
 export default function SerpQueriesTable( { slug } ) {
 	const paginationId = 'query_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-	const url = { filters, sorting };
+
+	const defaultSorting = sorting.length ? sorting : [ { key: 'comp_count', dir: 'DESC', op: '<' } ];
+	const url = { filters, sorting: defaultSorting };
 
 	const {
 		__,
@@ -28,7 +29,7 @@ export default function SerpQueriesTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
+	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
 
 	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
@@ -75,24 +76,27 @@ export default function SerpQueriesTable( { slug } ) {
 
 	const types = {
 		U: __( 'User' ),
-		S: __( 'Suggested' ),
+		C: __( 'Search Console' ),
+		S: __( 'Google Suggestion' ),
 	}
 
 	const header = {
 		query: __( 'Query' ),
-		lang: __( 'Language' ),
-		country: __( 'Country' ),
 		updated: __( 'Updated' ),
 		status: __( 'Status' ),
 		type: __( 'Type' ),
-		best_position: __( 'Position' ),
-		url_name: __( 'Ranked URL' ),
+		my_url_name: __( 'My URL' ),
+		my_position: __( 'My Position' ),
+		my_clicks: __( 'My Clicks' ),
+		my_impressions: __( 'My Impressions' ),
+		my_ctr: __( 'My CTR' ),
+		comp_url_name: __( 'Competitor URL' ),
+		comp_position: __( 'Competitor Position' ),
+		comp_count: __( 'Competitors in Top 10' ),
 	};
 
 	const rowEditorCells = {
 		query: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { ...rowToEdit, query: val } ) } required  description={ __( 'SERP queries separated by new line' ) } />,
-		lang: <LangMenu autoClose defaultValue="en"	onChange={ ( val ) => setRowToEdit( { ...rowToEdit, lang: val } ) }>{ header.lang }</LangMenu>,
-		country: <CountryMenu autoClose defaultValue="us" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, country: val } ) }>{ header.country }</CountryMenu>,
 	};
 
 	const columns = [
@@ -114,27 +118,10 @@ export default function SerpQueriesTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.query }</SortBy>,
 			minSize: 200,
 		} ),
-		columnHelper.accessor( 'lang', {
-			className: 'nolimit',
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.lang }</SortBy>,
-			size: 50,
-		} ),
-		columnHelper.accessor( 'country', {
-			className: 'nolimit',
-			cell: ( cell ) => {
-				if (countriesList[ cell.getValue() ]) {
-					return countriesList[ cell.getValue() ];
-				}
-				return cell.getValue();
-				},
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.country }</SortBy>,
-			size: 50,
-		} ),
 		columnHelper.accessor( 'updated', {
 			className: 'nolimit',
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.updated }</SortBy>,
-			size: 30,
+			size: 60,
 		} ),
 		columnHelper.accessor( 'status', {
 			filterValMenu: statuses,
@@ -150,17 +137,53 @@ export default function SerpQueriesTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.type }</SortBy>,
 			size: 80,
 		} ),
-		columnHelper.accessor( 'best_position', {
+		columnHelper.accessor( 'comp_count', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.best_position }</SortBy>,
-			size: 80,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.comp_count }</SortBy>,
+			size: 30,
 		} ),
-		columnHelper.accessor( 'url_name', {
+		columnHelper.accessor( 'comp_position', {
 			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.comp_position }</SortBy>,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'comp_url_name', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_name }</SortBy>,
-			size: 80,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.comp_url_name }</SortBy>,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'my_position', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_position }</SortBy>,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'my_clicks', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_clicks }</SortBy>,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'my_impressions', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_impressions }</SortBy>,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'my_ctr', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_ctr }</SortBy>,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'my_url_name', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_url_name }</SortBy>,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'actions', {
 			className: 'actions hoverize nolimit',
@@ -200,6 +223,7 @@ export default function SerpQueriesTable( { slug } ) {
 				table={ table }
 				onDeleteSelected={ () => deleteSelectedRows( { id: 'query' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
+				initialState={ { columnVisibility: { updated: false, status: false, type: false } } }
 				options={ { header, data, slug, paginationId, url,
 					title: __( 'Add Query' ), id: 'query',
 					rowToEdit,

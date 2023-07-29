@@ -1,30 +1,126 @@
 /* global wpApiSettings */
-
-import { langName } from '../lib/helpers';
+import {langName} from "../lib/helpers";
 
 export async function fetchLangs( ) {
 	const langPairs = {};
-	try {
-		const response = await fetch( wpApiSettings.root + 'urlslab/v1/language', {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				accept: 'application/json',
-				'X-WP-Nonce': window.wpApiSettings.nonce,
-			},
-			credentials: 'include',
-		} );
+	const langs = [
+		"af",
+		"sq",
+		"am",
+		"ar",
+		"an",
+		"hy",
+		"ast",
+		"az",
+		"eu",
+		"be",
+		"bn",
+		"bs",
+		"br",
+		"bg",
+		"ca",
+		"ckb",
+		"zh",
+		"co",
+		"hr",
+		"cs",
+		"da",
+		"nl",
+		"en",
+		"eo",
+		"et",
+		"fo",
+		"fil",
+		"fi",
+		"fr",
+		"gl",
+		"ka",
+		"de",
+		"el",
+		"gn",
+		"gu",
+		"ha",
+		"he",
+		"hi",
+		"hu",
+		"is",
+		"id",
+		"ia",
+		"ga",
+		"it",
+		"ja",
+		"kn",
+		"kk",
+		"km",
+		"ko",
+		"ku",
+		"ky",
+		"lo",
+		"la",
+		"lv",
+		"ln",
+		"lt",
+		"mk",
+		"ms",
+		"ml",
+		"mt",
+		"mr",
+		"mn",
+		"ne",
+		"no",
+		"nb",
+		"nn",
+		"oc",
+		"or",
+		"om",
+		"ps",
+		"fa",
+		"pl",
+		"pt",
+		"pa",
+		"qu",
+		"ro",
+		"mo",
+		"rm",
+		"ru",
+		"gd",
+		"sr",
+		"sh",
+		"sn",
+		"sd",
+		"si",
+		"sk",
+		"sl",
+		"so",
+		"st",
+		"es",
+		"su",
+		"sw",
+		"sv",
+		"tg",
+		"ta",
+		"tt",
+		"te",
+		"th",
+		"ti",
+		"to",
+		"tr",
+		"tk",
+		"tw",
+		"uk",
+		"ur",
+		"ug",
+		"uz",
+		"vi",
+		"wa",
+		"cy",
+		"fy",
+		"xh",
+		"yi",
+		"yo",
+		"zu"
+	];
 
-		if ( response.ok ) {
-			const langs = await response.json();
-			if ( langs?.length ) {
-				langs.forEach( ( lang ) => {
-					langPairs[ lang.code ] = langName( lang.code );
-				} );
-				return langPairs;
-			}
-		}
-	} catch ( error ) {
-		return false;
-	}
+	langs.forEach( ( lang ) => { langPairs[ lang ] = langName( lang ); } );
+	return langPairs;
 }
