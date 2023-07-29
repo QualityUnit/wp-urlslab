@@ -1105,11 +1105,14 @@ class Urlslab_Activator {
 		$table_name      = URLSLAB_GSC_SITES_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
+							site_id int NOT NULL AUTO_INCREMENT,    
 							site_name varchar(250) NOT NULL,
 							updated DATETIME,
 							date_to DATE,
+							importing char(1) DEFAULT 'N',
 							row_offset INT UNSIGNED NOT NULL,
-							PRIMARY KEY  (site_name)
+							PRIMARY KEY  (site_id),
+							UNIQUE KEY idx_site_name (site_name)
 							) {$charset_collate};";
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );

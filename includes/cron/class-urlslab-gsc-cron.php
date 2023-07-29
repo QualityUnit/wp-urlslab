@@ -48,7 +48,7 @@ class Urlslab_Gsc_Cron extends Urlslab_Cron {
 	protected function execute(): bool {
 		global $wpdb;
 
-		$site_row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_GSC_SITES_TABLE . ' WHERE date_to < %s ORDER BY updated ASC LIMIT 1', gmdate( 'Y-m-d' ) ), ARRAY_A ); // phpcs:ignore
+		$site_row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_GSC_SITES_TABLE . ' WHERE date_to < %s AND importing=%s ORDER BY updated ASC LIMIT 1', gmdate( 'Y-m-d' ), Urlslab_Gsc_Site_Row::IMPORTING_YES ), ARRAY_A ); // phpcs:ignore
 		if ( empty( $site_row ) ) {
 			$this->has_rows = false;
 
@@ -108,6 +108,7 @@ class Urlslab_Gsc_Cron extends Urlslab_Cron {
 					array(
 						'domain_id'   => $url->get_domain_id(),
 						'domain_name' => $url->get_domain_name(),
+						'domain_type' => Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN,
 					),
 					false
 				);
