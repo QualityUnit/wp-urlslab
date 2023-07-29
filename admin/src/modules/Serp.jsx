@@ -11,6 +11,7 @@ export default function Serp( { moduleId } ) {
 
 	const tableMenu = new Map( [
 		[ 'serp-domains', __( 'Domains' ) ],
+		[ 'gsc-sites', __( 'Google Search Console Sites' ) ],
 		[ 'serp-queries', __( 'Queries' ) ],
 		[ 'serp-urls', __( 'URLs' ) ],
 	] );
@@ -19,6 +20,7 @@ export default function Serp( { moduleId } ) {
 	const SerpQueriesTable = lazy( () => import( `../tables/SerpQueriesTable.jsx` ) );
 	const SerpUrlsTable = lazy( () => import( `../tables/SerpUrlsTable.jsx` ) );
 	const SerpTopDomainsTable = lazy( () => import( `../tables/SerpTopDomainsTable.jsx` ) );
+	const GscSitesTable = lazy( () => import( `../tables/GscSitesTable.jsx` ) );
 
 	return (
 		<div className="urlslab-tableView">
@@ -29,6 +31,12 @@ export default function Serp( { moduleId } ) {
 			{
 				activeSection === 'overview' &&
 				<SerpOverview moduleId={ moduleId } />
+			}
+			{
+				activeSection === 'gsc-sites' &&
+				<Suspense>
+					<GscSitesTable slug={ 'gsc-sites' } />
+				</Suspense>
 			}
 			{
 				activeSection === 'serp-domains' &&
