@@ -172,7 +172,14 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 					$urls[0]->insert_all( $urls, true );
 				}
 				if ( ! empty( $positions ) ) {
-					$positions[0]->insert_all( $positions, true );
+					$positions[0]->insert_all(
+						$positions,
+						false,
+						array(
+							'position',
+							'updated',
+						)
+					);
 				}
 				if ( ! empty( $domains ) ) {
 					$domains[0]->insert_all( $domains, true );
@@ -196,9 +203,9 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 					foreach ( $related as $related_search ) {
 						$queries[] = new Urlslab_Serp_Query_Row(
 							array(
-								'query'   => strtolower( trim( $related_search->query ) ),
-								'status'  => Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
-								'type'    => Urlslab_Serp_Query_Row::TYPE_SYSTEM,
+								'query'  => strtolower( trim( $related_search->query ) ),
+								'status' => Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
+								'type'   => Urlslab_Serp_Query_Row::TYPE_SYSTEM,
 							)
 						);
 					}

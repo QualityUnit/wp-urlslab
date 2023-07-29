@@ -15,7 +15,9 @@ import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refre
 export default function SerpQueriesTable( { slug } ) {
 	const paginationId = 'query_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-	const url = { filters, sorting };
+
+	const defaultSorting = sorting.length ? sorting : [ { key: 'comp_count', dir: 'DESC', op: '<' } ];
+	const url = { filters, sorting: defaultSorting };
 
 	const {
 		__,
@@ -27,7 +29,7 @@ export default function SerpQueriesTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
+	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
 
 	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
@@ -83,11 +85,14 @@ export default function SerpQueriesTable( { slug } ) {
 		updated: __( 'Updated' ),
 		status: __( 'Status' ),
 		type: __( 'Type' ),
-		position: __( 'Position' ),
-		clicks: __( 'Clicks' ),
-		impressions: __( 'Impressions' ),
-		ctr: __( 'ctr' ),
-		url_name: __( 'My URL' ),
+		my_url_name: __( 'My URL' ),
+		my_position: __( 'My Position' ),
+		my_clicks: __( 'My Clicks' ),
+		my_impressions: __( 'My Impressions' ),
+		my_ctr: __( 'My CTR' ),
+		comp_url_name: __( 'Competitor URL' ),
+		comp_position: __( 'Competitor Position' ),
+		comp_count: __( 'Competitors in Top 10' ),
 	};
 
 	const rowEditorCells = {
@@ -116,7 +121,7 @@ export default function SerpQueriesTable( { slug } ) {
 		columnHelper.accessor( 'updated', {
 			className: 'nolimit',
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.updated }</SortBy>,
-			size: 30,
+			size: 60,
 		} ),
 		columnHelper.accessor( 'status', {
 			filterValMenu: statuses,
@@ -132,35 +137,53 @@ export default function SerpQueriesTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.type }</SortBy>,
 			size: 80,
 		} ),
-		columnHelper.accessor( 'position', {
+		columnHelper.accessor( 'comp_count', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.position }</SortBy>,
-			size: 80,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.comp_count }</SortBy>,
+			size: 30,
 		} ),
-		columnHelper.accessor( 'clicks', {
+		columnHelper.accessor( 'comp_position', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.clicks }</SortBy>,
-			size: 80,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.comp_position }</SortBy>,
+			size: 30,
 		} ),
-		columnHelper.accessor( 'impressions', {
-			className: 'nolimit',
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.impressions }</SortBy>,
-			size: 80,
-		} ),
-		columnHelper.accessor( 'ctr', {
-			className: 'nolimit',
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.ctr }</SortBy>,
-			size: 80,
-		} ),
-		columnHelper.accessor( 'url_name', {
-			className: 'nolimit',
+		columnHelper.accessor( 'comp_url_name', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_name }</SortBy>,
-			size: 80,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.comp_url_name }</SortBy>,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'my_position', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_position }</SortBy>,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'my_clicks', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_clicks }</SortBy>,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'my_impressions', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_impressions }</SortBy>,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'my_ctr', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_ctr }</SortBy>,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'my_url_name', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_url_name }</SortBy>,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'actions', {
 			className: 'actions hoverize nolimit',
@@ -200,6 +223,7 @@ export default function SerpQueriesTable( { slug } ) {
 				table={ table }
 				onDeleteSelected={ () => deleteSelectedRows( { id: 'query' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
+				initialState={ { columnVisibility: { updated: false, status: false, type: false } } }
 				options={ { header, data, slug, paginationId, url,
 					title: __( 'Add Query' ), id: 'query',
 					rowToEdit,

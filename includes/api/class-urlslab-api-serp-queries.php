@@ -107,7 +107,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => array( $this, 'create_item' ),
 			'args'                => array(
-				'status'  => array(
+				'status' => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return
@@ -122,7 +122,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 							);
 					},
 				),
-				'query'   => array(
+				'query'  => array(
 					'required'          => true,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
@@ -149,11 +149,27 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->query_id      = (int) $row->query_id;
-			$row->position = (float) $row->position;
-			$row->ctr = (float) $row->ctr;
-			$row->clicks = (int) $row->clicks;
-			$row->impressions = (int) $row->impressions;
+			$row->query_id       = (int) $row->query_id;
+			$row->my_position    = round( (float) $row->my_position, 1 );
+			$row->my_ctr         = round( (float) $row->my_ctr, 2 );
+			$row->my_clicks      = (int) $row->my_clicks;
+			$row->my_impressions = (int) $row->my_impressions;
+			$row->comp_position  = (int) $row->comp_position;
+			$row->comp_count     = (int) $row->comp_count;
+			try {
+				if ( ! empty( $row->my_url_name ) ) {
+					$url              = new Urlslab_Url( $row->my_url_name, true );
+					$row->my_url_name = $url->get_url_with_protocol();
+				}
+			} catch ( Exception $e ) {
+			}
+			try {
+				if ( ! empty( $row->comp_url_name ) ) {
+					$url                = new Urlslab_Url( $row->comp_url_name, true );
+					$row->comp_url_name = $url->get_url_with_protocol();
+				}
+			} catch ( Exception $e ) {
+			}
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -212,26 +228,37 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		foreach ( array_keys( $this->get_row_object()->get_columns() ) as $column ) {
 			$sql->add_select_column( $column, 'q' );
 		}
-		$sql->add_select_column( 'position' );
-		$sql->add_select_column( 'impressions' );
-		$sql->add_select_column( 'clicks' );
-		$sql->add_select_column( 'ctr' );
-		$sql->add_select_column( 'url_name' );
+		$sql->add_select_column( 'position', 'p', 'my_position' );
+		$sql->add_select_column( 'impressions', 'p', 'my_impressions' );
+		$sql->add_select_column( 'clicks', 'p', 'my_clicks' );
+		$sql->add_select_column( 'ctr', 'p', 'my_ctr' );
+		$sql->add_select_column( 'url_name', 'u', 'my_url_name' );
+
+		$sql->add_select_column( 'MIN(cp.position)', false, 'comp_position' );
+		$sql->add_select_column( 'COUNT(DISTINCT cp.domain_id)', false, 'comp_count' );
+		$sql->add_select_column( 'url_name', 'cu', 'comp_url_name' );
 
 		$sql->add_from( $this->get_row_object()->get_table_name() . ' q' );
-		$sql->add_from( 'LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' p ON q.query_id = p.query_id' );
+		$sql->add_from( 'LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' p ON q.query_id = p.query_id AND p.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_my_domains() ) ) . ')' );
 		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON p.url_id=u.url_id' );
+
+		$sql->add_from( 'LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' cp ON q.query_id = cp.query_id AND cp.position<11 AND cp.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_competitor_domains() ) ) . ')' );
+		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' cu ON cp.url_id=cu.url_id' );
+
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'q' );
 		$columns = array_merge(
 			$columns,
 			$this->prepare_columns(
 				array(
-					'position' => '%d',
-					'impressions' => '%d',
-					'clicks' => '%d',
-					'ctr' => '%d',
-					'url_name'      => '%s',
+					'my_position'    => '%d',
+					'comp_position'  => '%d',
+					'comp_count'     => '%d',
+					'my_impressions' => '%d',
+					'my_clicks'      => '%d',
+					'my_ctr'         => '%d',
+					'my_url_name'    => '%s',
+					'comp_url_name'  => '%s',
 				)
 			)
 		);
