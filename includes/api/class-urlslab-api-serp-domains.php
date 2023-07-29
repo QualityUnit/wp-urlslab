@@ -153,7 +153,7 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		global $wpdb;
-		$positions_count = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . URLSLAB_SERP_POSITIONS_TABLE ); // phpcs:ignore
+		$positions_count = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . URLSLAB_GSC_POSITIONS_TABLE ); // phpcs:ignore
 
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		foreach ( array_keys( $this->get_row_object()->get_columns() ) as $column ) {
@@ -166,17 +166,17 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 			$sql->add_select_column( '0', false, 'top_100_cnt' );
 			$sql->add_select_column( '0', false, 'top_10_cnt' );
 			$sql->add_select_column( '0', false, 'avg_pos' );
-			$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON d.domain_id = p.domain_id' );
+			$sql->add_from( 'LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' p ON d.domain_id = p.domain_id' );
 		} else if ( 1000 < $positions_count ) {
 			$sql->add_select_column( 'SUM(CASE WHEN position <= 100 THEN 1 ELSE 0 END)', false, 'top_100_cnt' );
 			$sql->add_select_column( 'SUM(CASE WHEN position <= 10 THEN 1 ELSE 0 END)', false, 'top_10_cnt' );
 			$sql->add_select_column( 'AVG(position)', false, 'avg_pos' );
-			$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON d.domain_id = p.domain_id' );
+			$sql->add_from( 'INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' p ON d.domain_id = p.domain_id' );
 		} else {
 			$sql->add_select_column( 'SUM(CASE WHEN position <= 100 THEN 1 ELSE 0 END)', false, 'top_100_cnt' );
 			$sql->add_select_column( 'SUM(CASE WHEN position <= 10 THEN 1 ELSE 0 END)', false, 'top_10_cnt' );
 			$sql->add_select_column( 'AVG(position)', false, 'avg_pos' );
-			$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON d.domain_id = p.domain_id' );
+			$sql->add_from( 'LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' p ON d.domain_id = p.domain_id' );
 		}
 
 

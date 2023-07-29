@@ -55,7 +55,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		$sql->add_select_column( 'domain_type', 'd' );
 
 		$sql->add_from( $this->get_row_object()->get_table_name() . ' u' );
-		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON u.url_id = p.url_id' );
+		$sql->add_from( 'INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' p ON u.url_id = p.url_id' );
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = p.query_id' );
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_DOMAINS_TABLE . ' d ON u.domain_id = d.domain_id' );
 
