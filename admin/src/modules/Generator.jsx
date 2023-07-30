@@ -3,6 +3,7 @@ import { useState, Suspense, lazy } from 'react';
 import GeneratorOverview from '../overview/Generator';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 import { useI18n } from '@wordpress/react-i18n';
+import ContentGeneratorPanel from '../components/generator/ContentGeneratorPanel';
 
 export default function Generator( { moduleId } ) {
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
@@ -11,6 +12,7 @@ export default function Generator( { moduleId } ) {
 	const GeneratorResultTable = lazy( () => import( `../tables/GeneratorResultTable.jsx` ) );
 	const GeneratorShortcodeTable = lazy( () => import( `../tables/GeneratorShortcodeTable.jsx` ) );
 	const tableMenu = new Map( [
+		[ 'generator', __( 'Generator' ) ],
 		[ 'shortcode', __( 'Shortcodes' ) ],
 		[ 'result', __( 'Results' ) ],
 	] );
@@ -22,6 +24,10 @@ export default function Generator( { moduleId } ) {
 			{
 				activeSection === 'overview' &&
 				<GeneratorOverview moduleId={ moduleId } />
+			}
+			{
+				activeSection === 'generator' &&
+				<ContentGeneratorPanel />
 			}
 			{
 				activeSection === 'shortcode' &&

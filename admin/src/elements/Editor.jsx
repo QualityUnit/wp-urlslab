@@ -79,6 +79,7 @@ export default function Editor( { defaultValue, className, style, label, descrip
 					content_css: false,
 					height: 400,
 					menubar: false,
+					entity_encoding: 'raw',
 					plugins: [
 						'advlist', 'autolink', 'lists', 'link', 'image', 'anchor', 'media', 'table', 'code',
 					],
