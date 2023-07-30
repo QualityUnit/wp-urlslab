@@ -59,10 +59,9 @@ export default function SerpUrlsTable( { slug } ) {
 		url_description: __( 'Description' ),
 		domain_type: __( 'Domain Type' ),
 		best_position: __( 'Best Position' ),
-		top10_queries: __( 'Top 10 Queries' ),
 		top10_queries_cnt: __( 'Top 10' ),
 		queries_cnt: __( 'Top 100' ),
-		queries: __( 'Queries' ),
+		queries: __( 'Top Queries' ),
 	};
 
 
@@ -104,12 +103,6 @@ export default function SerpUrlsTable( { slug } ) {
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.top10_queries_cnt }</SortBy>,
 			minSize: 50,
-		} ),
-		columnHelper.accessor( 'top10_queries', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.top10_queries }</SortBy>,
-			minSize: 200,
 		} ),
 		columnHelper.accessor( 'queries_cnt', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
