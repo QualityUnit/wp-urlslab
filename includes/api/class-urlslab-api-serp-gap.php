@@ -64,10 +64,10 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		// serp domain table sql join
 		$serp_domain_table_join = ' d ON p.position < 11 AND d.domain_id=p.domain_id';
 		$gsc_domain_table_join  = ' mp ON mp.query_id = q.query_id';
-		if ( !empty(Urlslab_Serp_Domain_Row::get_competitor_domains())) {
+		if ( ! empty( Urlslab_Serp_Domain_Row::get_competitor_domains() ) ) {
 			$serp_domain_table_join .= ' AND d.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_competitor_domains() ) ) . ')';
 		}
-		if (!empty(Urlslab_Serp_Domain_Row::get_my_domains())) {
+		if ( ! empty( Urlslab_Serp_Domain_Row::get_my_domains() ) ) {
 			$gsc_domain_table_join .= ' AND mp.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_my_domains() ) ) . ')';
 		}
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_DOMAINS_TABLE . $serp_domain_table_join );
