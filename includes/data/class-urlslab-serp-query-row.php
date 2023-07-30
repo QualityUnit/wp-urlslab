@@ -8,7 +8,7 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 	public const STATUS_SKIPPED = 'S';
 
 	public const TYPE_USER = 'U';
-	public const TYPE_SYSTEM = 'S';
+	public const TYPE_SERP_RELATED = 'S';
 	public const TYPE_GSC = 'C';
 
 	/**
@@ -18,7 +18,7 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 		$this->set_query( $query['query'] ?? '', $loaded_from_db );
 		$this->set_updated( $query['updated'] ?? self::get_now(), $loaded_from_db );
 		$this->set_status( $query['status'] ?? self::STATUS_NOT_PROCESSED, $loaded_from_db );
-		$this->set( 'type', $query['type'] ?? self::TYPE_SYSTEM, $loaded_from_db );
+		$this->set( 'type', $query['type'] ?? self::TYPE_SERP_RELATED, $loaded_from_db );
 		$this->set_query_id( $query['query_id'] ?? $this->compute_query_id(), $loaded_from_db );
 	}
 

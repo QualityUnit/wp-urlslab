@@ -134,7 +134,7 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 
 		foreach ( $rows as $row ) {
 			$row->domain_id   = (int) $row->domain_id;
-			$row->avg_pos     = (float) $row->avg_pos;
+			$row->avg_pos     = round( (float) $row->avg_pos, 1 );
 			$row->top_10_cnt  = (int) $row->top_10_cnt;
 			$row->top_100_cnt = (int) $row->top_100_cnt;
 		}

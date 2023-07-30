@@ -198,14 +198,14 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 				}
 
 				$related = $serp_response->getRelatedSearches();
-				if ( ! empty( $related ) && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES ) && $this->get_serp_queries_count() <= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_LIMIT ) ) {
+				if ( ! empty( $related ) && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES ) && $this->get_serp_queries_count() <= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SERP_IMPORT_LIMIT ) ) {
 					$queries = array();
 					foreach ( $related as $related_search ) {
 						$queries[] = new Urlslab_Serp_Query_Row(
 							array(
 								'query'  => strtolower( trim( $related_search->query ) ),
 								'status' => Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
-								'type'   => Urlslab_Serp_Query_Row::TYPE_SYSTEM,
+								'type'   => Urlslab_Serp_Query_Row::TYPE_SERP_RELATED,
 							)
 						);
 					}
@@ -243,7 +243,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 	private function get_serp_queries_count(): int {
 		global $wpdb;
 		if ( 0 > $this->serp_queries_count ) {
-			$this->serp_queries_count = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . URLSLAB_SERP_QUERIES_TABLE ); // phpcs:ignore
+			$this->serp_queries_count = $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type=%s', Urlslab_Serp_Query_Row::TYPE_SERP_RELATED ) ); // phpcs:ignore
 		}
 
 		return $this->serp_queries_count;
