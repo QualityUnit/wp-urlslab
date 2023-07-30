@@ -61,10 +61,22 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 
 		$sql->add_from( URLSLAB_GSC_POSITIONS_TABLE . ' p' );
 
-		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_DOMAINS_TABLE . ' d ON p.position < 11 AND d.domain_id=p.domain_id AND d.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_competitor_domains() ) ) . ')' );
+		// serp domain table sql join
+		$serp_domain_table_join = ' d ON p.position < 11 AND d.domain_id=p.domain_id';
+		$gsc_domain_table_join  = ' mp ON mp.query_id = q.query_id';
+		if ( !empty(Urlslab_Serp_Domain_Row::get_competitor_domains())) {
+			$serp_domain_table_join .= ' AND d.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_competitor_domains() ) ) . ')';
+		}
+		if (!empty(Urlslab_Serp_Domain_Row::get_my_domains())) {
+			$gsc_domain_table_join .= ' AND mp.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_my_domains() ) ) . ')';
+		}
+		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_DOMAINS_TABLE . $serp_domain_table_join );
 		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = p.query_id' );
 
-		$sql->add_from( 'LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' mp ON mp.query_id = q.query_id AND mp.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_my_domains() ) ) . ')' );
+
+		// GSC Position sql join
+
+		$sql->add_from( 'LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . $gsc_domain_table_join );
 		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' mu ON mp.url_id=mu.url_id' );
 
 

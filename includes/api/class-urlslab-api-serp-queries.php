@@ -238,11 +238,20 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$sql->add_select_column( 'COUNT(DISTINCT cp.domain_id)', false, 'comp_count' );
 		$sql->add_select_column( 'url_name', 'cu', 'comp_url_name' );
 
+		$first_gsc_join = ' p ON q.query_id = p.query_id';
+		$second_gsc_join  = ' cp ON q.query_id = cp.query_id AND cp.position<11';
+		if ( ! empty( Urlslab_Serp_Domain_Row::get_my_domains() ) ) {
+			$first_gsc_join .= ' AND p.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_my_domains() ) ) . ')';
+		}
+		if ( ! empty( Urlslab_Serp_Domain_Row::get_competitor_domains() ) ) {
+			$second_gsc_join .= ' AND cp.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_competitor_domains() ) ) . ')';
+		}
+
 		$sql->add_from( $this->get_row_object()->get_table_name() . ' q' );
-		$sql->add_from( 'LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' p ON q.query_id = p.query_id AND p.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_my_domains() ) ) . ')' );
+		$sql->add_from( 'LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . $first_gsc_join );
 		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON p.url_id=u.url_id' );
 
-		$sql->add_from( 'LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' cp ON q.query_id = cp.query_id AND cp.position<11 AND cp.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_competitor_domains() ) ) . ')' );
+		$sql->add_from( 'LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . $second_gsc_join );
 		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' cu ON cp.url_id=cu.url_id' );
 
 
