@@ -52,9 +52,8 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		}
 		$sql->add_select_column( 'MIN(position)', false, 'best_position' );
 		$sql->add_select_column( 'COUNT(*)', false, 'queries_cnt' );
-		$sql->add_select_column( 'GROUP_CONCAT((CASE WHEN position <= 10 THEN query ELSE null END)  order by position DESC LIMIT 20)', false, 'top10_queries' );
 		$sql->add_select_column( 'SUM(CASE WHEN position <= 10 THEN 1 ELSE 0 END)', false, 'top10_queries_cnt' );
-		$sql->add_select_column( 'GROUP_CONCAT(query order by position DESC LIMIT 20)', false, 'queries' );
+		$sql->add_select_column( 'GROUP_CONCAT(query order by position LIMIT 20)', false, 'queries' );
 		$sql->add_select_column( 'domain_type', 'd' );
 
 		$sql->add_from( $this->get_row_object()->get_table_name() . ' u' );
@@ -70,7 +69,6 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 					'best_position'     => '%d',
 					'queries_cnt'       => '%d',
 					'top10_queries_cnt' => '%d',
-					'top10_queries'     => '%s',
 					'queries'           => '%s',
 					'domain_type'       => '%s',
 				)
