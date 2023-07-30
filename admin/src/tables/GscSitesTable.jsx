@@ -49,8 +49,8 @@ export default function GscSitesTable( { slug } ) {
 	const header = {
 		site_name: __( 'Google Search Console Site' ),
 		updated: __( 'Last Import' ),
-		date_to: __( 'Imported Date' ),
-		row_offset: __( 'Last Import Position' ),
+		date_to: __( 'Import Date' ),
+		row_offset: __( 'Last Position' ),
 		importing: __( 'Active Import' ),
 	};
 

@@ -1015,6 +1015,7 @@ class Urlslab_Activator {
 							type char(1) DEFAULT 'S',
 							PRIMARY KEY  (query_id),
 							INDEX idx_query (query),
+							INDEX idx_type (type),
 							INDEX idx_update (updated)
 							) {$charset_collate};";
 

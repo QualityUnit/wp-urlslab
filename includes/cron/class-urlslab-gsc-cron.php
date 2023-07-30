@@ -55,6 +55,8 @@ class Urlslab_Gsc_Cron extends Urlslab_Cron {
 			return false;
 		}
 
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG );
+
 		$site = new Urlslab_Gsc_Site_Row( $site_row );
 		$site->set_updated( Urlslab_Gsc_Site_Row::get_now() );
 		if ( $site->get_date_to() !== gmdate( 'Y-m-d', strtotime( '-1 days' ) ) ) {
@@ -75,7 +77,7 @@ class Urlslab_Gsc_Cron extends Urlslab_Cron {
 		try {
 			$results = $this->analytics_client->getTopKeywords( $request );
 			$rows    = $results->getRows();
-			if ( empty( $rows ) || count( $rows ) < self::MAX_ROWS || $site->get_row_offset() > Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG )->get_option( Urlslab_Serp::SETTING_NAME_GSC_LIMIT ) ) {
+			if ( empty( $rows ) || count( $rows ) < self::MAX_ROWS || $site->get_row_offset() > $widget->get_option( Urlslab_Serp::SETTING_NAME_GSC_LIMIT ) ) {
 				$this->has_rows = false;
 				$site->set_date_to( gmdate( 'Y-m-d' ) );
 				$site->set_row_offset( 0 );
@@ -88,7 +90,11 @@ class Urlslab_Gsc_Cron extends Urlslab_Cron {
 			$domains   = array();
 			foreach ( $rows as $row ) {
 
-				if ( 100 < $row->getPosition() ) {
+				if (
+					100 < $row->getPosition() ||
+					$widget->get_option( Urlslab_Serp::SETTING_NAME_GSC_MIN_CLICKS ) > $row->getClicks() ||
+					$widget->get_option( Urlslab_Serp::SETTING_NAME_GSC_MIN_IMPRESSIONS ) > $row->getImpressions()
+				) {
 					continue;
 				}
 
