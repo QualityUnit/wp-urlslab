@@ -11,7 +11,7 @@ fs.readdir( modulesPath, ( err, files ) => {
 	}
 
 	const fileListPath = path.join( __dirname, 'src/app', 'generatedModulesList.json' );
-	const fileList = files.filter( ( file ) => fs.statSync( path.join( modulesPath, file ) ).isFile() );
+	const fileList = files.filter( ( file ) => fs.statSync( path.join( modulesPath, file ) ).isFile() && path.extname( file ) === '.jsx' );
 	const modules = fileList.map( ( filename ) => filename.replace( '.jsx', '' ) );
 
 	fs.writeFileSync( fileListPath, JSON.stringify( modules ), 'utf8' );
