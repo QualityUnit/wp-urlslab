@@ -10,14 +10,18 @@ export default function Serp( { moduleId } ) {
 
 	const tableMenu = new Map( [
 		[ 'serp-domains', __( 'Domains' ) ],
+		[ 'gsc-sites', __( 'Google Search Console Sites' ) ],
 		[ 'serp-queries', __( 'Queries' ) ],
 		[ 'serp-urls', __( 'URLs' ) ],
+		[ 'serp-gap', __( 'Content Gap' ) ],
 	] );
 
 	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
 	const SerpQueriesTable = lazy( () => import( `../tables/SerpQueriesTable.jsx` ) );
 	const SerpUrlsTable = lazy( () => import( `../tables/SerpUrlsTable.jsx` ) );
 	const SerpTopDomainsTable = lazy( () => import( `../tables/SerpTopDomainsTable.jsx` ) );
+	const GscSitesTable = lazy( () => import( `../tables/GscSitesTable.jsx` ) );
+	const SerpGapTable = lazy( () => import( `../tables/SerpGapTable.jsx` ) );
 
 	return (
 		<div className="urlslab-tableView">
@@ -28,6 +32,12 @@ export default function Serp( { moduleId } ) {
 			{
 				activeSection === 'overview' &&
 				<SerpOverview moduleId={ moduleId } />
+			}
+			{
+				activeSection === 'gsc-sites' &&
+				<Suspense>
+					<GscSitesTable slug={ 'gsc-sites' } />
+				</Suspense>
 			}
 			{
 				activeSection === 'serp-domains' &&
@@ -45,6 +55,12 @@ export default function Serp( { moduleId } ) {
 				activeSection === 'serp-urls' &&
 				<Suspense>
 					<SerpUrlsTable slug={ 'serp-urls' } />
+				</Suspense>
+			}
+			{
+				activeSection === 'serp-gap' &&
+				<Suspense>
+					<SerpGapTable slug={ 'serp-gap' } />
 				</Suspense>
 			}
 			{

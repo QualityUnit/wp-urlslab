@@ -64,7 +64,7 @@ export default function SerpTopDomainsTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'domain_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer"><strong>{ cell.getValue() }</strong></a>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.domain_name }</SortBy>,
 			minSize: 200,
 		} ),

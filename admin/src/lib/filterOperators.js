@@ -5,8 +5,8 @@ export const numericOp = {
 	IN: 'is one of',
 	NOTIN: 'is not one of',
 	BETWEEN: 'is between',
-	'>': 'is larger than',
-	'<': 'is smaller than',
+	'>': 'is more than',
+	'<': 'is less than',
 };
 
 export const dateOp = {

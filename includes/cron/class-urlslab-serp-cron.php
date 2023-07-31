@@ -74,10 +74,25 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 				break;
 		}
 
+		$types = explode( ',', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG )->get_option( Urlslab_Serp::SETTING_NAME_QUERY_TYPES ) );
+		foreach ( $types as $id => $type ) {
+			if ( isset( Urlslab_Serp::get_available_query_types()[ $type ] ) ) {
+				$types[ $id ] = "'" . $type . "'";
+			} else {
+				unset( $types[ $id ] );
+			}
+		}
+		if ( empty( $types ) ) {
+			$this->has_rows = false;
+
+			return false;
+		}
+		$types = implode( ',', $types );
+
 		global $wpdb;
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE `status` = %s OR (status = %s AND updated < %s ) ORDER BY updated LIMIT 1', // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND `status` = %s OR (status = %s AND updated < %s ) ORDER BY updated LIMIT 1', // phpcs:ignore
 				Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
 				Urlslab_Serp_Query_Row::STATUS_PROCESSED,
 				Urlslab_Data::get_now( time() - $update_delay )
@@ -97,8 +112,6 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 
 		$request = new Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest();
 		$request->setSerpQuery( $query->get_query() );
-		$request->setLocale( $query->get_lang() );
-		$request->setCountry( $query->get_country() );
 		$request->setAllResults( true );
 		$request->setNotOlderThan( $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ) );
 		$has_monitored_domain = false;
@@ -142,7 +155,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 							false
 						);
 
-						$positions[] = new Urlslab_Serp_Position_Row(
+						$positions[] = new Urlslab_Gsc_Position_Row(
 							array(
 								'position'  => $organic_result->position,
 								'query_id'  => $query->get_query_id(),
@@ -159,7 +172,14 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 					$urls[0]->insert_all( $urls, true );
 				}
 				if ( ! empty( $positions ) ) {
-					$positions[0]->insert_all( $positions, true );
+					$positions[0]->insert_all(
+						$positions,
+						false,
+						array(
+							'position',
+							'updated',
+						)
+					);
 				}
 				if ( ! empty( $domains ) ) {
 					$domains[0]->insert_all( $domains, true );
@@ -178,16 +198,14 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 				}
 
 				$related = $serp_response->getRelatedSearches();
-				if ( ! empty( $related ) && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES ) && $this->get_serp_queries_count() <= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_LIMIT ) ) {
+				if ( ! empty( $related ) && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES ) && $this->get_serp_queries_count() <= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SERP_IMPORT_LIMIT ) ) {
 					$queries = array();
 					foreach ( $related as $related_search ) {
 						$queries[] = new Urlslab_Serp_Query_Row(
 							array(
-								'query'   => strtolower( trim( $related_search->query ) ),
-								'lang'    => $query->get_lang(),
-								'country' => $query->get_country(),
-								'status'  => Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
-								'type'    => Urlslab_Serp_Query_Row::TYPE_SYSTEM,
+								'query'  => strtolower( trim( $related_search->query ) ),
+								'status' => Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
+								'type'   => Urlslab_Serp_Query_Row::TYPE_SERP_RELATED,
 							)
 						);
 					}
@@ -225,7 +243,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 	private function get_serp_queries_count(): int {
 		global $wpdb;
 		if ( 0 > $this->serp_queries_count ) {
-			$this->serp_queries_count = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . URLSLAB_SERP_QUERIES_TABLE ); // phpcs:ignore
+			$this->serp_queries_count = $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type=%s', Urlslab_Serp_Query_Row::TYPE_SERP_RELATED ) ); // phpcs:ignore
 		}
 
 		return $this->serp_queries_count;

@@ -11,7 +11,7 @@ class Urlslab_General extends Urlslab_Widget {
 
 	public const SETTING_NAME_URLSLAB_API_KEY = 'urlslab-api-key';
 	public const SETTING_NAME_SUMMARIZATION_REFRESH_INTERVAL = 'urlslab-refresh-sum';
-	const SETTING_NAME_URLSLAB_CREDITS = 'urlslab-credits';
+	public const SETTING_NAME_URLSLAB_CREDITS = 'urlslab-credits';
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
