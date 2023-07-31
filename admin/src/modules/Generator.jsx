@@ -1,10 +1,11 @@
 import { useState, Suspense, lazy } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 
 import GeneratorOverview from '../overview/Generator';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
-const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
+const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 const GeneratorResultTable = lazy( () => import( `../tables/GeneratorResultTable.jsx` ) );
 const GeneratorShortcodeTable = lazy( () => import( `../tables/GeneratorShortcodeTable.jsx` ) );
 
@@ -12,7 +13,7 @@ export default function Generator() {
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 	const { __ } = useI18n();
 
-	const moduleId = 'urlslab-generator';
+	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
 		[ 'shortcode', __( 'Shortcodes' ) ],

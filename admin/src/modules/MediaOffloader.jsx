@@ -1,10 +1,11 @@
 import { useState, Suspense, lazy } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 
 import MediaOffloaderOverview from '../overview/MediaOffloader';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
-const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
+const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 const MediaFilesTable = lazy( () => import( `../tables/MediaFilesTable.jsx` ) );
 
 export default function MediaOffloader() {
@@ -12,7 +13,7 @@ export default function MediaOffloader() {
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 	const slug = 'file';
 
-	const moduleId = 'urlslab-media-offloader';
+	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
 		[ slug, __( 'Media Files' ) ],

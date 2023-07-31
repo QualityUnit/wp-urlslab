@@ -1,10 +1,11 @@
 import { useState, Suspense, lazy } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 
 import RedirectsOverview from '../overview/Redirects';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
-const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
+const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 const NotFoundTable = lazy( () => import( `../tables/NotFoundTable.jsx` ) );
 const RedirectsTable = lazy( () => import( `../tables/RedirectsTable.jsx` ) );
 
@@ -12,7 +13,7 @@ export default function Redirects() {
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 
-	const moduleId = 'redirects';
+	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
 		[ 'redirects', __( 'Redirects' ) ],

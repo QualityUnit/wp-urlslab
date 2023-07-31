@@ -1,17 +1,18 @@
 import { useState, Suspense, lazy } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 
 import ModuleViewHeader from '../components/ModuleViewHeader';
 import CustomHtmlOverview from '../overview/CustomHtml';
 
 const CustomHtmlTable = lazy( () => import( `../tables/CustomHtmlTable.jsx` ) );
-const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
+const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 
 export default function CustomHtml() {
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 
-	const moduleId = 'urlslab-custom-html';
+	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
 		[ 'custom-html', __( 'Custom HTML' ) ],

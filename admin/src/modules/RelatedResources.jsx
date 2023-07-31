@@ -1,10 +1,11 @@
 import { useState, Suspense, lazy } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 
 import RelatedResourcesOverview from '../overview/RelatedResources';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
-const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
+const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 const URLRelationTable = lazy( () => import( `../tables/URLRelationTable.jsx` ) );
 
 export default function RelatedResources() {
@@ -12,7 +13,7 @@ export default function RelatedResources() {
 	const slug = 'url-relation';
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 
-	const moduleId = 'urlslab-related-resources';
+	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
 		[ 'url-relation', __( 'Related Articles' ) ],
