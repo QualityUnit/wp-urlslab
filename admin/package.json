@@ -33,6 +33,7 @@
     "d3": "^7.8.2",
     "d3-cloud": "^1.2.5",
     "encoding": "^0.1.13",
+    "fs": "^0.0.1-security",
     "idb-keyval": "^6.2.0",
     "js-file-download": "^0.4.12",
     "react": "^18.2.0",
@@ -86,6 +87,7 @@
     "vite": "^4"
   },
   "scripts": {
+    "prebuild": "node generateModulesList.js",
     "dev": "vite",
     "watch": "vite build --watch",
     "build": "vite build",
