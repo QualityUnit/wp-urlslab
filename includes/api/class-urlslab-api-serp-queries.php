@@ -1,5 +1,7 @@
 <?php
 
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest;
+
 class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	const SLUG = 'serp-queries';
 
@@ -56,7 +58,31 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 					'args'                => array(
 						'query' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
+								return
+									is_string( $param );
+							},
+						),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/query/top-urls',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'get_top_urls' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
+					'args'                => array(
+						'query' => array(
+							'required'          => true,
+							'validate_callback' => function ( $param ) {
 								return
 									is_string( $param );
 							},
@@ -220,16 +246,24 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 		if ( empty( $query ) ) {
 			// if it doesn't exist, we'll make a SERP call
-			$serp_res = $this->make_serp_request( $request->get_param( 'query' ) );
-			return new WP_REST_Response( array(), 200 );
+			$serp_res = $this->make_serp_request( $query );
+			$related  = $serp_res->getRelatedSearches();
+			$queries  = array();
+			if ( ! empty( $related ) ) {
+				foreach ( $related as $related_search ) {
+					$queries[] = $related_search->query;
+				}
+			}
+
+			return new WP_REST_Response( $queries, 200 );
 
 		} else {
 			// if exists, we find the cluster that it belongs to
 			$sql = new Urlslab_Api_Table_Sql( $request );
 			$sql->add_select_column( 'b.query' );
 			$sql->add_from( URLSLAB_GSC_POSITIONS_TABLE . ' a' );
-			$sql->add_from( 'INNER JOIN' . URLSLAB_GSC_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND a.position<10 AND b.position<10' );
-			$sql->add_from( 'INNER JOIN' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id' );
+			$sql->add_from( 'INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND a.position<10 AND b.position<10' );
+			$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id' );
 			$sql->add_from( ' WHERE a.query_id = ' . $query->get_query_id() );
 			$sql->add_group_by( 'a.query_id, b.query_id' );
 
@@ -240,16 +274,79 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			}
 
 			if ( empty( $rows ) ) {
-				$serp_res = $this->make_serp_request( $request->get_param( 'query' ) );
-				return new WP_REST_Response( array(), 200 );
-			}
-		}
+				$serp_res = $this->make_serp_request( $query );
+				$related  = $serp_res->getRelatedSearches();
+				$queries  = array();
+				if ( ! empty( $related ) ) {
+					foreach ( $related as $related_search ) {
+						$queries[] = $related_search->query;
+					}
+				}
 
+				return new WP_REST_Response( $queries, 200 );
+			}
+
+			return new WP_REST_Response( $rows, 200 );
+		}
+	}
+
+	public function get_top_urls( $request ) {
+		// First Trying to get the query from DB
+		$query = new Urlslab_Serp_Query_Row(
+			array(
+				'query' => $request->get_param( 'query' ),
+				'type'  => Urlslab_Serp_Query_Row::TYPE_GSC,
+			),
+			true
+		);
+
+		if ( empty( $query ) ) {
+			// if it doesn't exist, we'll make a SERP call
+			$serp_res        = $this->make_serp_request( $request->get_param( 'query' ) );
+			$organic_results = $serp_res->getOrganicResults();
+			$urls            = array();
+			if ( ! empty( $organic_results ) ) {
+				foreach ( $organic_results as $organic_result ) {
+					$urls[] = array(
+						'url_name'        => $organic_result->link,
+						'url_title'       => $organic_result->title,
+						'url_description' => $organic_result->snippet,
+					);
+				}
+			}
+
+			return new WP_REST_Response( $urls, 200 );
+
+		} else {
+			// if exists, we find the top urls
+			$sql = new Urlslab_Api_Table_Sql( $request );
+			$sql->add_select_column( 'u.url_name' );
+			$sql->add_select_column( 'u.url_title' );
+			$sql->add_select_column( 'u.url_description' );
+			$sql->add_from( URLSLAB_GSC_POSITIONS_TABLE . ' a' );
+			$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.query_id = a.query_id' );
+			$sql->add_from( 'WHERE a.query_id=' . $query->get_query_id() );
+			$sql->add_order( 'a.position' );
+
+			$rows = $sql->get_results();
+
+			if ( is_wp_error( $rows ) ) {
+				return new WP_Error( 'error', __( 'Failed to get related keywords', 'urlslab' ), array( 'status' => 400 ) );
+			}
+
+			if ( empty( $rows ) ) {
+				$serp_res = $this->make_serp_request( $request->get_param( 'query' ) );
+
+				return new WP_REST_Response( $serp_res, 200 );
+			}
+
+			return new WP_REST_Response( $rows, 200 );
+		}
 
 	}
 
-	public function make_serp_request( $request ) {
-
+	public function make_serp_request( Urlslab_Serp_Query_Row $query ) {
+		return Urlslab_Serp_Helper::get_instance()->search_serp( $query, DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY );
 	}
 
 
