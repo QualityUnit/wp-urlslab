@@ -1,19 +1,20 @@
 import { Suspense, lazy, useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 
-import SchedulesOverview from '../overview/Schedules';
-import ModuleViewHeader from '../components/ModuleViewHeader';
+import SchedulesOverview from '../../overview/Schedules';
+import ModuleViewHeader from '../../components/ModuleViewHeader';
 
-const SchedulesTable = lazy( () => import( `../tables/SchedulesTable.jsx` ) );
-const CreditsTable = lazy( () => import( `../tables/CreditsTable.jsx` ) );
-const UsageTable = lazy( () => import( `../tables/UsageTable.jsx` ) );
+const SchedulesTable = lazy( () => import( `../../tables/SchedulesTable.jsx` ) );
+const CreditsTable = lazy( () => import( `../../tables/CreditsTable.jsx` ) );
+const UsageTable = lazy( () => import( `../../tables/UsageTable.jsx` ) );
 
 export default function Schedule() {
 	const slug = 'schedule';
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 
-	const moduleId = 'urlslab-schedule';
+	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
 		[ slug, __( 'Schedules' ) ],

@@ -1,4 +1,5 @@
 import { useState, Suspense, lazy } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 
 import SearchAndReplaceOverview from '../overview/SearchAndReplace';
@@ -11,7 +12,7 @@ export default function SearchAndReplace() {
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 	const slug = 'search-replace';
 
-	const moduleId = 'urlslab-search-and-replace';
+	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
 		[ slug, __( 'Replacements' ) ],

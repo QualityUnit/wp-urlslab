@@ -1,10 +1,11 @@
 import { useState, Suspense, lazy } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 
 import LazyLoadingOverview from '../overview/LazyLoading';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
-const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
+const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 const YouTubeCacheTable = lazy( () => import( `../tables/YouTubeCacheTable.jsx` ) );
 const ContentCacheTable = lazy( () => import( `../tables/ContentCacheTable.jsx` ) );
 
@@ -12,7 +13,7 @@ export default function LazyLoading() {
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 
-	const moduleId = 'urlslab-lazy-loading';
+	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
 		[ 'youtube-cache', __( 'YouTube Videos' ) ],

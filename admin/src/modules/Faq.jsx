@@ -1,10 +1,11 @@
 import { useState, Suspense, lazy } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 
 import FaqsOverview from '../overview/Faqs';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
-const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
+const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 const FaqsTable = lazy( () => import( `../tables/FaqsTable.jsx` ) );
 const FaqUrlsTable = lazy( () => import( `../tables/FaqUrlsTable.jsx` ) );
 
@@ -12,7 +13,7 @@ export default function Faq() {
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 
-	const moduleId = 'faq';
+	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
 		[ 'faq', __( 'FAQs' ) ],

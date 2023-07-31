@@ -5,27 +5,26 @@
 import { useLocation } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 
-import useModulesQuery from '../queries/useModulesQuery';
+import useModuleDataByRoute from './useModuleDataByRoute';
 
 const usePageTitle = () => {
 	const { __ } = useI18n();
-	const { data: modules } = useModulesQuery();
 	const location = useLocation();
-	const route = location.pathname;
+	const { title } = useModuleDataByRoute();
 
-	switch ( route ) {
+	// routes are not case sensitive, compare route in lowercase to make sure to use correct title for route /Settings and /settigns too
+	switch ( location.pathname.toLowerCase() ) {
 		case '/':
 			return __( 'Modules' );
 		case '/settings':
 			return __( 'Settings' );
 		case '/schedule':
 			return __( 'Schedules' );
-		case '/TagsLabels':
+		case '/tagslabels':
 			return __( 'Tags' );
 		default:
 			// last chance, it's module or unexisting route that leads to root route
-			const moduleId = route.charAt( 0 ) === '/' ? route.slice( 1 ) : route;
-			return modules && modules[ moduleId ] ? modules[ moduleId ].title : __( 'Modules' );
+			return title || __( 'Modules' );
 	}
 };
 

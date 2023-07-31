@@ -1,17 +1,18 @@
 import { useState, Suspense, lazy } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 
 import ScreenShotOverview from '../overview/Screenshot';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
-const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
+const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 const ScreenshotTable = lazy( () => import( `../tables/ScreenshotTable.jsx` ) );
 
 export default function Screenshot() {
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 
-	const moduleId = 'urlslab-screenshot';
+	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
 		[ 'screenshot', __( 'Screenshots' ) ],
