@@ -2,7 +2,7 @@ import { useState, Suspense, lazy } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import ModuleViewHeader from '../components/ModuleViewHeader';
-import CustomHtmlOverview from "../overview/CustomHtml";
+import CustomHtmlOverview from '../overview/CustomHtml';
 
 export default function CustomHtml( { moduleId } ) {
 	const { __ } = useI18n();
@@ -18,6 +18,7 @@ export default function CustomHtml( { moduleId } ) {
 	return (
 		<div className="urlslab-tableView">
 			<ModuleViewHeader
+				moduleId={ moduleId }
 				moduleMenu={ tableMenu }
 				activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{
@@ -27,7 +28,7 @@ export default function CustomHtml( { moduleId } ) {
 			{
 				activeSection === 'custom-html' &&
 				<Suspense>
-					<CustomHtmlTable slug='custom-html' />
+					<CustomHtmlTable slug="custom-html" />
 				</Suspense>
 			}
 			{
