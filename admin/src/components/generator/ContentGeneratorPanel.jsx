@@ -6,6 +6,7 @@ import Button from '../../elements/Button';
 import Loader from '../Loader';
 import promptTemplates from '../../data/promptTemplates.json';
 import TextAreaEditable from '../../elements/TextAreaEditable';
+import EditableList from '../../elements/EditableList';
 
 function ContentGeneratorPanel() {
 	const { __ } = useI18n();
@@ -16,6 +17,8 @@ function ContentGeneratorPanel() {
 		acc[ key ] = value.name;
 		return acc;
 	}, {} );
+	const [ urlsList, setUrlsList ] = useState( [] );
+	const [ keywordsList, setKeywordsList ] = useState( [] );
 	const [ selectedPromptTemplate, setSelectedPromptTemplate ] = useState( '0' );
 	const [ promptVal, setPromptVal ] = useState( '' );
 
@@ -115,7 +118,35 @@ function ContentGeneratorPanel() {
 				</div>
 
 				{
-					generationData.contextType && generationData.contextType === contextTypes.KEYWORD_CONTEXT && (
+					dataSource && dataSource === 'URL_CONTEXT' && (
+						<div className="urlslab-content-gen-panel-control-item">
+							<EditableList
+								label="URL to use"
+								placeholder="URLs to use..."
+								itemList={ urlsList }
+								addItemCallback={ ( item ) => setUrlsList( [ ...urlsList, item ] ) }
+								removeItemCallback={ ( removingItem ) =>
+									setUrlsList( urlsList.filter( ( item ) => item !== removingItem ) )
+								}
+							/>
+						</div>
+					)
+				}
+
+				{
+					dataSource && dataSource === 'DOMAIN_CONTEXT' && (
+						<div className="urlslab-content-gen-panel-control-item">
+							<EditableList
+								itemList={ [] }
+								addItemCallback={ ( item ) => setUrlsList( [ ...urlsList, item ] ) }
+								removeItemCallback={ ( removingItem ) => setUrlsList( urlsList.filter( ( item ) => item !== removingItem ) ) }
+							/>
+						</div>
+					)
+				}
+
+				{
+					dataSource && dataSource === 'SERP_CONTEXT' && (
 						<div className="urlslab-content-gen-panel-control-item">
 							<InputField
 								liveUpdate
