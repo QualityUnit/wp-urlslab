@@ -44,6 +44,30 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
+			$base . '/query/related-queries',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'get_related_queries' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
+					'args'                => array(
+						'query' => array(
+							'required'          => true,
+							'validate_callback' => function( $param ) {
+								return
+									is_string( $param );
+							},
+						),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
 			$base . '/delete-all',
 			array(
 				array(
@@ -182,6 +206,50 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 	public function get_editable_columns(): array {
 		return array( 'status' );
+	}
+
+	public function get_related_queries( $request ) {
+		// First Trying to get the query from DB
+		$query                             = new Urlslab_Serp_Query_Row(
+			array(
+				'query' => $request->get_param( 'query' ),
+				'type'  => Urlslab_Serp_Query_Row::TYPE_GSC,
+			),
+			true
+		);
+
+		if ( empty( $query ) ) {
+			// if it doesn't exist, we'll make a SERP call
+			$serp_res = $this->make_serp_request( $request->get_param( 'query' ) );
+			return new WP_REST_Response( array(), 200 );
+
+		} else {
+			// if exists, we find the cluster that it belongs to
+			$sql = new Urlslab_Api_Table_Sql( $request );
+			$sql->add_select_column( 'b.query' );
+			$sql->add_from( URLSLAB_GSC_POSITIONS_TABLE . ' a' );
+			$sql->add_from( 'INNER JOIN' . URLSLAB_GSC_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND a.position<10 AND b.position<10' );
+			$sql->add_from( 'INNER JOIN' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id' );
+			$sql->add_from( ' WHERE a.query_id = ' . $query->get_query_id() );
+			$sql->add_group_by( 'a.query_id, b.query_id' );
+
+			$rows = $sql->get_results();
+
+			if ( is_wp_error( $rows ) ) {
+				return new WP_Error( 'error', __( 'Failed to get related keywords', 'urlslab' ), array( 'status' => 400 ) );
+			}
+
+			if ( empty( $rows ) ) {
+				$serp_res = $this->make_serp_request( $request->get_param( 'query' ) );
+				return new WP_REST_Response( array(), 200 );
+			}
+		}
+
+
+	}
+
+	public function make_serp_request( $request ) {
+
 	}
 
 

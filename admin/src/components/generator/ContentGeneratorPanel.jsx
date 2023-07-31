@@ -2,12 +2,11 @@ import { useI18n } from '@wordpress/react-i18n';
 import { memo, useState } from 'react';
 import '../../assets/styles/components/_ContentGeneratorPanel.scss';
 import { Editor, InputField, SingleSelectMenu, SuggestInputField } from '../../lib/tableImports';
-import Button from '../../elements/Button';
 import Loader from '../Loader';
 import promptTemplates from '../../data/promptTemplates.json';
 import TextAreaEditable from '../../elements/TextAreaEditable';
 import EditableList from '../../elements/EditableList';
-import {postFetch} from "../../api/fetching";
+import { postFetch } from '../../api/fetching';
 
 function ContentGeneratorPanel() {
 	const { __ } = useI18n();
@@ -161,14 +160,16 @@ function ContentGeneratorPanel() {
 				{
 					dataSource && dataSource === 'SERP_CONTEXT' && (
 						<div className="urlslab-content-gen-panel-control-item">
-							<InputField
-								liveUpdate
-								defaultValue=""
-								description={ __( 'The Primary Keyword you are targeting' ) }
-								label={ __( 'Keyword to use' ) }
-								onChange={ ( val ) => setGenerationData( { ...generationData, topic: val } ) }
-							/>
-							<Button active>Find Relevant Keywords</Button>
+							<div className="urlslab-content-gen-panel-control-item-container">
+								<EditableList
+									placeholder="Keyword to use..."
+									itemList={ keywordsList }
+									addItemCallback={ ( item ) => setKeywordsList( [ ...keywordsList, item ] ) }
+									removeItemCallback={ ( removingItem ) =>
+										setKeywordsList( keywordsList.filter( ( item ) => item !== removingItem ) )
+									}
+								/>
+							</div>
 						</div>
 					)
 				}
