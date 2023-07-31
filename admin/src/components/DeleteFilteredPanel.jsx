@@ -9,7 +9,6 @@ import { langName } from '../lib/helpers';
 import Button from '../elements/Button';
 import ProgressBar from '../elements/ProgressBar';
 import useChangeRow from '../hooks/useChangeRow';
-import { useFilter } from '../hooks/filteringSorting';
 
 function DeleteFilteredPanel( props ) {
 	delete props.deleteCSVCols;
