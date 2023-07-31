@@ -14,7 +14,28 @@
         padding: 1em;
 
         &-item {
+            display: flex;
+            justify-content: flex-start;
             margin-top: 2em;
+
+            &-desc {
+                padding: 1em;
+                display: flex;
+                justify-content: center;
+                border: 1px solid $grey-light;
+                border-radius: 5px;
+                align-content: center;
+                width: 70%;
+            }
+
+            &-selector {
+                display: flex;
+                width: 30%;
+                align-items: center;
+                justify-content: center;
+            }
+
+
         }
 
         @media (max-width: $breakpoint-tablet) {
