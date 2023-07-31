@@ -5,9 +5,8 @@ import { postFetch } from '../api/fetching';
 import filtersArray from '../lib/filtersArray';
 import useTablePanels from './useTablePanels';
 import { setNotification } from './useNotifications';
-import { useFilter } from './filteringSorting';
 
-export default function useChangeRow( { data, url, slug, header, paginationId, removeAllFiltered } ) {
+export default function useChangeRow( { data, url, slug, paginationId } ) {
 	const queryClient = useQueryClient();
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const [ table, setTable ] = useState( );
@@ -15,9 +14,6 @@ export default function useChangeRow( { data, url, slug, header, paginationId, r
 	let rowIndex = 0;
 
 	const { filters, sorting = [] } = url || {};
-	const activefilters = filters ? Object.keys( filters ) : null;
-
-	const { handleRemoveFilter } = useFilter( { slug, header } );
 
 	useEffect( () => {
 		if ( table && ! table.getSelectedRowModel().flatRows.length ) {
@@ -218,10 +214,6 @@ export default function useChangeRow( { data, url, slug, header, paginationId, r
 				//If id present, single row sentence (Row Id has been deleted) else show Rows have been deleted
 				setNotification( slug, { message: `${ id ? 'Row “' + id + '” has' : 'Rows have' } been deleted`, status: 'success' } );
 				rowIndex += 1;
-
-				if ( removeAllFiltered ) {
-					handleRemoveFilter( activefilters );
-				}
 			}
 
 			if ( rowIndex === 1 ) {
@@ -249,17 +241,17 @@ export default function useChangeRow( { data, url, slug, header, paginationId, r
 
 	// Multiple rows delete used from table
 	const deleteMultipleRows = ( options ) => {
-		const { optionalSelector, rowsToDelete } = options || {};
+		const { optionalSelector, rowsToDelete, updateAll } = options || {};
 
 		if ( ! rowsToDelete ) {
 			const selectedRowsInTable = table?.getSelectedRowModel().flatRows || [];
 			table?.toggleAllPageRowsSelected( false );
 
-			deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( selectedRowsInTable ), rowData: selectedRowsInTable, optionalSelector } );
+			deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( selectedRowsInTable ), rowData: selectedRowsInTable, optionalSelector, updateAll } );
 			return false;
 		}
 
-		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( rowsToDelete ), rowData: rowsToDelete, optionalSelector } );
+		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( rowsToDelete ), rowData: rowsToDelete, optionalSelector, updateAll } );
 	};
 
 	// Function for row selection from table

@@ -89,6 +89,9 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 				onDeleteSelected();
 			}
 		}
+		if ( key === 'delete-filtered' ) {
+			handleRemoveFilter( Object.keys( filters ) );
+		}
 
 		if ( onUpdate ) {
 			onUpdate( key );

@@ -9,6 +9,7 @@ import { langName } from '../lib/helpers';
 import Button from '../elements/Button';
 import ProgressBar from '../elements/ProgressBar';
 import useChangeRow from '../hooks/useChangeRow';
+import { useFilter } from '../hooks/filteringSorting';
 
 function DeleteFilteredPanel( props ) {
 	delete props.deleteCSVCols;
@@ -20,7 +21,7 @@ function DeleteFilteredPanel( props ) {
 	const [ deleteStatus, setDeleteStatus ] = useState();
 	const stopFetching = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
-	const { deleteMultipleRows } = useChangeRow( { data, url, slug, header, paginationId, removeAllFiltered: true } );
+	const { deleteMultipleRows } = useChangeRow( { data, url, slug, header, paginationId } );
 
 	const hidePanel = ( operation ) => {
 		stopFetching.current = true;
@@ -36,8 +37,8 @@ function DeleteFilteredPanel( props ) {
 		if ( val === 100 ) {
 			setTimeout( () => {
 				setDeleteStatus();
-				hidePanel();
-			}, 1000 );
+				hidePanel( 'delete-filtered' );
+			}, 100 );
 		}
 	};
 
@@ -46,7 +47,7 @@ function DeleteFilteredPanel( props ) {
 		fetchDataForProcessing( { ...props, stopFetching }, ( status ) => handleDeleteStatus( status ) ).then( ( response ) => {
 			if ( response.status === 'done' ) {
 				const { data: rowsToDelete } = response;
-				deleteMultipleRows( { rowsToDelete, optionalSelector } );
+				deleteMultipleRows( { rowsToDelete, optionalSelector, updateAll: true } );
 			}
 		} );
 	};
@@ -67,12 +68,11 @@ function DeleteFilteredPanel( props ) {
 						<ul className="columns-2">
 							{ activefilters.map( ( key ) => {
 								return (
-									<li key={ key }>
-										{ header[ key ] }:
-										<span className="regular flex flex-align-center">
-											<span className="fs-xs">{ operatorTypes[ filters[ key ]?.keyType ][ filters[ key ]?.op ] }</span>
-										&nbsp;
-											“<span className="limit-20">
+									<li key={ key } className="flex flex-align-center">
+										{ header[ key ] }:&nbsp;
+										<span className="regular normal fs-xs flex flex-align-center">
+											<span>{ operatorTypes[ filters[ key ]?.keyType ][ filters[ key ]?.op ] }</span>
+											&nbsp;“<span className="limit-20">
 												{ filters[ key ]?.op === 'BETWEEN' &&
 													`min: ${ filters[ key ]?.val.min }, max: ${ filters[ key ]?.val.max }`
 												}
