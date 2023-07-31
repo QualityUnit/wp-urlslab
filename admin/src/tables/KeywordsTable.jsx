@@ -8,6 +8,7 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import IconButton from '../elements/IconButton';
 import { useCallback } from 'react';
+import { postFetch } from '../api/fetching';
 
 export default function KeywordsTable( { slug } ) {
 	const paginationId = 'kw_id';
@@ -68,7 +69,19 @@ export default function KeywordsTable( { slug } ) {
 		keyword: <InputField autoFocus liveUpdate defaultValue="" label={ header.keyword } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, keyword: val } ) } required
 							description={ __( 'Just exact match of keyword will be replaced with link' ) } />,
 
-		urlLink: <SuggestInputField suggestInput={ rowToEdit?.keyword || '' } liveUpdate defaultValue={ ( rowToEdit?.urlLink ? rowToEdit?.urlLink : window.location.origin ) } label={ header.urlLink } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, urlLink: val } ) } required
+		urlLink: <SuggestInputField suggestInput={ rowToEdit?.keyword || '' }
+									liveUpdate
+									defaultValue={ ( rowToEdit?.urlLink ? rowToEdit?.urlLink : window.location.origin ) }
+									label={ header.urlLink }
+									onChange={ ( val ) => setRowToEdit( { ...rowToEdit, urlLink: val } ) }
+									required
+									postFetchRequest={ async ( val ) => {
+										return await postFetch( 'keyword/suggest', {
+											count: val.count,
+											keyword: rowToEdit?.keyword || '',
+											url: val.input,
+										} );
+									} }
 									description={ __( 'Destination URL for link' ) } />,
 
 		kwType: <SingleSelectMenu defaultAccept autoClose items={ keywordTypes } name="kwType" defaultValue="M"

@@ -1,12 +1,13 @@
 import { useI18n } from '@wordpress/react-i18n';
 import { memo, useState } from 'react';
 import '../../assets/styles/components/_ContentGeneratorPanel.scss';
-import { Editor, InputField, SingleSelectMenu } from '../../lib/tableImports';
+import { Editor, InputField, SingleSelectMenu, SuggestInputField } from '../../lib/tableImports';
 import Button from '../../elements/Button';
 import Loader from '../Loader';
 import promptTemplates from '../../data/promptTemplates.json';
 import TextAreaEditable from '../../elements/TextAreaEditable';
 import EditableList from '../../elements/EditableList';
+import {postFetch} from "../../api/fetching";
 
 function ContentGeneratorPanel() {
 	const { __ } = useI18n();
@@ -19,6 +20,7 @@ function ContentGeneratorPanel() {
 	}, {} );
 	const [ urlsList, setUrlsList ] = useState( [] );
 	const [ keywordsList, setKeywordsList ] = useState( [] );
+	const [ domain, setDomain ] = useState( '' );
 	const [ selectedPromptTemplate, setSelectedPromptTemplate ] = useState( '0' );
 	const [ promptVal, setPromptVal ] = useState( '' );
 
@@ -120,15 +122,16 @@ function ContentGeneratorPanel() {
 				{
 					dataSource && dataSource === 'URL_CONTEXT' && (
 						<div className="urlslab-content-gen-panel-control-item">
-							<EditableList
-								label="URL to use"
-								placeholder="URLs to use..."
-								itemList={ urlsList }
-								addItemCallback={ ( item ) => setUrlsList( [ ...urlsList, item ] ) }
-								removeItemCallback={ ( removingItem ) =>
-									setUrlsList( urlsList.filter( ( item ) => item !== removingItem ) )
-								}
-							/>
+							<div className="urlslab-content-gen-panel-control-item-container">
+								<EditableList
+									placeholder="URLs to use..."
+									itemList={ urlsList }
+									addItemCallback={ ( item ) => setUrlsList( [ ...urlsList, item ] ) }
+									removeItemCallback={ ( removingItem ) =>
+										setUrlsList( urlsList.filter( ( item ) => item !== removingItem ) )
+									}
+								/>
+							</div>
 						</div>
 					)
 				}
@@ -136,11 +139,21 @@ function ContentGeneratorPanel() {
 				{
 					dataSource && dataSource === 'DOMAIN_CONTEXT' && (
 						<div className="urlslab-content-gen-panel-control-item">
-							<EditableList
-								itemList={ [] }
-								addItemCallback={ ( item ) => setUrlsList( [ ...urlsList, item ] ) }
-								removeItemCallback={ ( removingItem ) => setUrlsList( urlsList.filter( ( item ) => item !== removingItem ) ) }
-							/>
+							<div className="urlslab-content-gen-panel-control-item-container">
+								<SuggestInputField
+									suggestInput=""
+									liveUpdate
+									onChange={ ( val ) => setDomain( val ) }
+									required
+									description={ __( 'Domain to use' ) }
+									postFetchRequest={ async ( val ) => {
+										return await postFetch( 'schedule/suggest', {
+											count: val.count,
+											url: val.input,
+										} );
+									} }
+								/>
+							</div>
 						</div>
 					)
 				}

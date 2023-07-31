@@ -8,6 +8,7 @@ import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
 import useTablePanels from '../hooks/useTablePanels';
 
 import IconButton from '../elements/IconButton';
+import { postFetch } from '../api/fetching';
 
 export default function RedirectsTable( { slug } ) {
 	const paginationId = 'redirect_id';
@@ -42,7 +43,15 @@ export default function RedirectsTable( { slug } ) {
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_url: val } ) } required />,
 		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' } liveUpdate defaultValue={ window.location.origin }
 			description={ __( 'Redirect user to this URL if browser URL matched and also match all other conditions' ) }
-			label={ header.replace_url } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, replace_url: val } ) } required />,
+			label={ header.replace_url } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, replace_url: val } ) } required
+			postFetchRequest={ async ( val ) => {
+				return await postFetch( 'keyword/suggest', {
+					count: val.count,
+					keyword: rowToEdit?.keyword || '',
+					url: val.input,
+				} );
+			} }
+		/>,
 		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" defaultValue="301"
 			description={ __( 'HTTP Status code to use when redirecting visitor' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, redirect_code: val } ) }>{ header.redirect_code }</SingleSelectMenu>,

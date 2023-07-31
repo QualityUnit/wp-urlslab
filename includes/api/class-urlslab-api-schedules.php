@@ -28,6 +28,28 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 		);
 		register_rest_route(
 			self::NAMESPACE,
+			$base . '/suggest',
+			array(
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'get_item_suggestions' ),
+					'args'                => array(
+						'url' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param ) && strlen( $param );
+							},
+						),
+					),
+					'permission_callback' => array(
+						$this,
+						'get_items_permissions_check',
+					),
+				),
+			)
+		);
+		register_rest_route(
+			self::NAMESPACE,
 			$base . '/create',
 			array(
 				array(
@@ -177,6 +199,25 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 			return new WP_Error( 'error', $e->getMessage() );
 		}
 	}
+
+	public function get_item_suggestions( $request ) {
+		$url = $request->get_param( 'url' );
+		if ( empty( $url ) ) {
+			$url = null;
+		}
+
+		try {
+			$result = array();
+			foreach ( $this->get_client()->listSchedules( $url ) as $schedule ) {
+				$result[] = $schedule->getScheduleConf()->getUrls();
+			}
+
+			return new WP_REST_Response( $result, 200 );
+		} catch ( Throwable $e ) {
+			return new WP_Error( 'error', $e->getMessage() );
+		}
+	}
+
 
 	/**
 	 * @param WP_REST_Request $request
