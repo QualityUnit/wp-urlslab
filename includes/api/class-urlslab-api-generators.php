@@ -4,6 +4,7 @@ use Urlslab_Vendor\GuzzleHttp;
 use Urlslab_Vendor\OpenAPI\Client\Configuration;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalContentQuery;
 use Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi;
 
@@ -36,6 +37,47 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 							},
 						),
 						'original_text' => array(
+							'required'          => true,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			'/' . self::SLUG . '/content/generate',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'get_url_context_augmentation' ),
+					'permission_callback' => array(
+						$this,
+						'augment_permission_check',
+					),
+					'args' => array(
+						'urls' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_array( $param );
+							},
+						),
+						'domains' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_array( $param );
+							},
+						),
+						'prompt' => array(
+							'required'          => true,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+						'model' => array(
 							'required'          => true,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
@@ -385,6 +427,39 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 
 		return new WP_REST_Response( (object) array( 'translation' => $translation ), 200 );
+	}
+
+	public function get_url_context_augmentation( $request ) {
+		$urls = $request->get_param( 'urls' );
+		$domains = $request->get_param( 'domains' );
+		$prompt      = $request->get_param( 'prompt' );
+		$aug_model        = $request->get_param( 'model' );
+
+		if (! empty($domains) && ! empty($urls)) {
+			return new WP_Error( 'invalid_request', 'domains and urls can\'t be both filled', array( 'status' => 400 ) );
+		}
+
+		if ( ! empty( $urls ) && strpos( $prompt, '{context}' ) ) {
+			return new WP_Error( 'invalid_request', 'Invalid request', array( 'status' => 400 ) );
+		}
+
+		$config         = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) );
+		$api_client = new Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi();
+
+
+		if ( ! empty( $urls ) ) {
+			// either keywords context or url context
+			$augment_request = new DomainDataRetrievalAugmentRequestWithURLContext();
+			$augment_request->setUrls( $urls );
+			$augment_request->setPrompt( $prompt );
+			$augment_request->setModeName( $aug_model );
+			$augment_request->setGenerationStrategy( generation_strategy: 'map_reduce' );
+			$augment_request->setTopKChunks( 3 );
+		}
+
+		if (! empty($domain))
+
+
 	}
 
 	public function get_instant_augmentation( $request ) {

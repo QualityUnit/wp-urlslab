@@ -6,7 +6,7 @@ import Loader from '../Loader';
 import promptTemplates from '../../data/promptTemplates.json';
 import TextAreaEditable from '../../elements/TextAreaEditable';
 import EditableList from '../../elements/EditableList';
-import { getFetch, postFetch } from '../../api/fetching';
+import { postFetch } from '../../api/fetching';
 import Button from '../../elements/Button';
 import Checkbox from '../../elements/Checkbox';
 
@@ -25,6 +25,29 @@ function ContentGeneratorPanel() {
 	const [ domain, setDomain ] = useState( '' );
 	const [ selectedPromptTemplate, setSelectedPromptTemplate ] = useState( '0' );
 	const [ promptVal, setPromptVal ] = useState( '' );
+	const [ isGenerating, setIsGenerating ] = useState( false );
+	const [ generatedContent, setGeneratedContent ] = useState( '' );
+
+	const contextTypes = {
+		NO_CONTEXT: 'No Data Source',
+		URL_CONTEXT: 'URL Data Source',
+		DOMAIN_CONTEXT: 'Domain Data Source',
+		SERP_CONTEXT: 'Google Search Source',
+	};
+
+	const contextTypesDescription = {
+		NO_CONTEXT: __( 'If no data source is selected, the content will be generated solely based on the prompts you provide. No additional context or supplemental data will be implemented in the creation process.' ),
+		URL_CONTEXT: __( 'When using a URL as the data Source, the generated content will be influenced by the information found in the chosen URL(s). This allows the text to be as relevant as possible to the content on your selected page(s).' ),
+		DOMAIN_CONTEXT: __( 'Using a domain as the data source means the text will be based on data collected from pages across your entire domain. To use this feature, you\'ll need to add your domain to the domain section.' ),
+		SERP_CONTEXT: __( 'Opting for a Google Search means that the content generated will focus on the Primary Keyword, similar keywords, and Search Engine Results Page (SERP) data. We collect information from top websites linked to your keyword to create original and relevant content.' ),
+	};
+
+	const contextTypePromptPlaceholder = {
+		NO_CONTEXT: __( 'Your prompt to be used for generating text…' ),
+		URL_CONTEXT: __( 'The prompt to be used for generating text from each url…' ),
+		DOMAIN_CONTEXT: __( 'The prompt to be used to generate text from relevant content in your whole domain…' ),
+		SERP_CONTEXT: __( 'The prompt to be used to generate text from top SERP Results targeting your keyword…' ),
+	};
 
 	// handling keyword input
 	const [ typingTimeout, setTypingTimeout ] = useState( 0 );
@@ -53,26 +76,10 @@ function ContentGeneratorPanel() {
 		);
 	};
 
-	const contextTypes = {
-		NO_CONTEXT: 'No Data Source',
-		URL_CONTEXT: 'URL Data Source',
-		DOMAIN_CONTEXT: 'Domain Data Source',
-		SERP_CONTEXT: 'Google Search Source',
-	};
+	const handleGenerateContent = async () => {
+		setIsGenerating( true );
 
-	const contextTypesDescription = {
-		NO_CONTEXT: __( 'If no data source is selected, the content will be generated solely based on the prompts you provide. No additional context or supplemental data will be implemented in the creation process.' ),
-		URL_CONTEXT: __( 'When using a URL as the data Source, the generated content will be influenced by the information found in the chosen URL(s). This allows the text to be as relevant as possible to the content on your selected page(s).' ),
-		DOMAIN_CONTEXT: __( 'Using a domain as the data source means the text will be based on data collected from pages across your entire domain. To use this feature, you\'ll need to add your domain to the domain section.' ),
-		SERP_CONTEXT: __( 'Opting for a Google Search means that the content generated will focus on the Primary Keyword, similar keywords, and Search Engine Results Page (SERP) data. We collect information from top websites linked to your keyword to create original and relevant content.' ),
-	};
-
-	const contextTypePromptPlaceholder = {
-		NO_CONTEXT: __( 'Your prompt to be used for generating text…' ),
-		URL_CONTEXT: __( 'The prompt to be used for generating text from each url…' ),
-		DOMAIN_CONTEXT: __( 'The prompt to be used to generate text from relevant content in your whole domain…' ),
-		SERP_CONTEXT: __( 'The prompt to be used to generate text from top SERP Results targeting your keyword…' ),
-	};
+	}
 
 	const handlePromptChange = ( value ) => {
 		setPromptVal( value );
@@ -82,11 +89,6 @@ function ContentGeneratorPanel() {
 	const handlePromptTemplateChange = ( id ) => {
 		setSelectedPromptTemplate( id );
 		setPromptVal( promptTemplates[ id ].promptTemplate );
-	};
-
-	const handleFetchRelatedKeywords = async ( query ) => {
-		const { data } = await postFetch( 'serp-queries/query/related-queries', { query } );
-		setKeywordsList( [ ...keywordsList, ...data ] );
 	};
 
 	const handleCheckboxCheck = ( checked, index ) => {
@@ -264,6 +266,14 @@ function ContentGeneratorPanel() {
 						required
 						placeholder={ contextTypePromptPlaceholder[ dataSource ] }
 						description={ __( 'Prompt to be used while generating content' ) } />
+				</div>
+
+				<div className="urlslab-content-gen-panel-control-item">
+					<Button active>
+						{
+							isGenerating ? ( <Loader /> ) : __( 'Generate Text' )
+						}
+					</Button>
 				</div>
 
 			</div>
