@@ -56,7 +56,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		$sql->add_select_column( 'SUM(mp.impressions)', false, 'my_impressions' );
 		$sql->add_select_column( 'SUM(mp.clicks)', false, 'my_clicks' );
 		$sql->add_select_column( 'AVG(mp.ctr)', false, 'my_ctr' );
-		$sql->add_select_column( 'GROUP_CONCAT(mu.url_name ORDER BY mp.clicks, mp.impressions, mp.position)', false, 'my_url_name' );
+		$sql->add_select_column( 'GROUP_CONCAT(DISTINCT mu.url_name ORDER BY mp.clicks, mp.impressions, mp.position)', false, 'my_url_name' );
 
 
 		$sql->add_from( URLSLAB_GSC_POSITIONS_TABLE . ' p' );
