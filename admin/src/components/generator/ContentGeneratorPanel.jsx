@@ -19,7 +19,7 @@ function ContentGeneratorPanel() {
 		acc[ key ] = value.name;
 		return acc;
 	}, {} );
-	const [ ]
+	const [ step, setStep ] = useState( 0 );
 	const [ urlsList, setUrlsList ] = useState( [] );
 	const [ keywordsList, setKeywordsList ] = useState( [] );
 	const [ domain, setDomain ] = useState( '' );
@@ -62,10 +62,6 @@ function ContentGeneratorPanel() {
 		setKeywordsList( [ ...keywordsList, ...data ] );
 	};
 
-	const handleStepChange = ( step ) => {
-
-	}
-
 	return (
 		<div className="urlslab-content-gen-panel">
 			<div className="urlslab-content-gen-panel-control">
@@ -76,6 +72,7 @@ function ContentGeneratorPanel() {
 						expandIcon={ <ExpandMoreIcon /> }
 						aria-controls="panel1a-content"
 						id="panel1a-header"
+						expanded={ step === 0 }
 					>
 						<Typography>Pick Keyword</Typography>
 					</AccordionSummary>
@@ -90,6 +87,7 @@ function ContentGeneratorPanel() {
 						expandIcon={ <ExpandMoreIcon /> }
 						aria-controls="panel1a-content"
 						id="panel1a-header"
+						expanded={ step === 1 }
 					>
 						<Typography>Pick Data Source</Typography>
 					</AccordionSummary>
@@ -104,6 +102,7 @@ function ContentGeneratorPanel() {
 						expandIcon={ <ExpandMoreIcon /> }
 						aria-controls="panel1a-content"
 						id="panel1a-header"
+						expanded={ step === 2 }
 					>
 						<Typography>Write Prompt</Typography>
 					</AccordionSummary>

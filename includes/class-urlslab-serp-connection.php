@@ -4,12 +4,12 @@ use Urlslab_Vendor\GuzzleHttp;
 use Urlslab_Vendor\OpenAPI\Client\Configuration;
 use Urlslab_Vendor\OpenAPI\Client\Urlslab\SerpApi;
 
-class Urlslab_Serp_Connetion {
+class Urlslab_Serp_Connection {
 
-	private static Urlslab_Serp_Connetion $instance;
+	private static Urlslab_Serp_Connection $instance;
 	private static SerpApi $serp_client;
 
-	public static function get_instance(): Urlslab_Serp_Connetion {
+	public static function get_instance(): Urlslab_Serp_Connection {
 		if ( empty( self::$instance ) ) {
 			if ( self::init_client() ) {
 				self::$instance = new self();

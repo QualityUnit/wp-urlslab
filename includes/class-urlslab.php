@@ -473,7 +473,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-js-cache-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-css-cache-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-faq-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-faq-url-0.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-faq-url-row.php';
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-serp-query-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-serp-url-row.php';
@@ -488,7 +488,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-augment-helper.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-yt-helper.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-serp-helper.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-serp-connection.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-summaries-helper.php';
 
 		// widgets

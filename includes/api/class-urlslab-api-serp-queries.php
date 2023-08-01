@@ -439,7 +439,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	}
 
 	private function get_serp_results( $query ): WP_REST_Response {
-		$serp_res        = Urlslab_Serp_Connetion::get_instance()->search_serp( $query, DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY );
+		$serp_res        = Urlslab_Serp_Connection::get_instance()->search_serp( $query, DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY );
 		$organic_results = $serp_res->getOrganicResults();
 		$urls            = array();
 		if ( ! empty( $organic_results ) ) {
