@@ -1,32 +1,39 @@
-import { memo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
-import DashboardModule from '../components/DashboardModule';
-import SearchField from '../elements/SearchField';
-import MultiSelectMenu from '../elements/MultiSelectMenu';
 
-function Modules( { modules } ) {
+import useModulesQuery from '../../queries/useModulesQuery';
+
+import DashboardModule from '../../components/DashboardModule';
+import SearchField from '../../elements/SearchField';
+import MultiSelectMenu from '../../elements/MultiSelectMenu';
+
+function Modules() {
 	const { __ } = useI18n();
 	const [ filterBy, setFilterBy ] = useState( {} );
+	const { data: modules, isSuccess: isSuccessModules } = useModulesQuery();
 
-	const labelsList = {
-		paid: { name: 'Paid service', color: '#00c996' },
-		// expert: { name: 'Experts', color: '#ffc996' },
-		free: { name: 'Free' },
-		// experimental: { name: 'Experimental', color: '#ff8875' },
-		beta: { name: 'Beta', color: '#75a9ff' },
-		// alpha: { name: 'Alpha' },
-		// expert: { name: 'Expert' },
-		seo: { name: 'SEO', color: '#D4C5F9' },
-		// cron: { name: 'Cron' },
-		performance: { name: 'Performance', color: '#65B5FF' },
-		tools: { name: 'Tools', color: '#FFD189' },
-		ai: { name: 'AI', color: '#ff7a7a' },
-	};
+	const labelsList = useMemo( () => {
+		return {
+			paid: { name: __( 'Paid service' ), color: '#00c996' },
+			free: { name: __( 'Free' ) },
+			beta: { name: __( 'Beta' ), color: '#75a9ff' },
+			seo: { name: __( 'SEO' ), color: '#D4C5F9' },
+			performance: { name: __( 'Performance' ), color: '#65B5FF' },
+			tools: { name: __( 'Tools' ), color: '#FFD189' },
+			ai: { name: __( 'AI' ), color: '#ff7a7a' },
+			// expert: { name: __( 'Experts', color: '#ffc996' },
+			// experimental: { name: __( 'Experimental'), color: '#ff8875' },
+			// alpha: { name: __( 'Alpha') },
+			// expert: { name: __( 'Expert') },
+			// cron: { name: __( 'Cron') },
+		};
+	}, [ __ ] );
 
 	const statusList = {
-		active: 'Active modules',
-		inactive: 'Inactive modules',
+		active: __( 'Active modules' ),
+		inactive: __( 'Inactive modules' ),
 	};
+
 	let categoriesList = {};
 
 	Object.entries( { ...labelsList } ).map( ( [ key, val ] ) => {
@@ -41,10 +48,6 @@ function Modules( { modules } ) {
 		free: labelsList.free.name,
 		paid: labelsList.paid.name,
 	};
-
-	if ( ! modules.length ) {
-		return;
-	}
 
 	const handleFiltering = ( { input, type } ) => {
 		let inputValue = input;
@@ -77,7 +80,7 @@ function Modules( { modules } ) {
 		return false;
 	};
 
-	return (
+	return ( ( isSuccessModules && modules && Object.values( modules ).length ) &&
 		<>
 			<div className="urlslab-subheader flex flex-align-center">
 				<SearchField liveUpdate autoFocus onChange={ ( input ) => handleFiltering( { input, type: 'search' } ) } placeholder={ __( 'Search' ) } />
@@ -103,7 +106,7 @@ function Modules( { modules } ) {
 			</div>
 
 			<div className="urlslab-modules flex-tablet-landscape flex-wrap">
-				{ modules.map( ( module ) => {
+				{ Object.values( modules ).map( ( module ) => {
 					return (
 						module.id !== 'general' && filter( module )
 							? <DashboardModule key={ module.id } module={ module } labelsList={ labelsList } />

@@ -1,12 +1,11 @@
 /* eslint-disable indent */
 import {
-	useInfiniteFetch, ProgressBar, SortBy, CountryMenu, LangMenu, Checkbox, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TextArea,
+	useInfiniteFetch, ProgressBar, SortBy, Checkbox, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TextArea,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-import { countriesList } from '../lib/helpers';
 
 import IconButton from '../elements/IconButton';
 import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
@@ -70,7 +69,7 @@ export default function SerpQueriesTable( { slug } ) {
 		C: __( 'Search Console' ),
 		S: __( 'Google Suggestion' ),
 		F: __( 'Google FAQ' ),
-	}
+	};
 
 	const header = {
 		query: __( 'Query' ),
@@ -88,7 +87,7 @@ export default function SerpQueriesTable( { slug } ) {
 	};
 
 	const rowEditorCells = {
-		query: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { ...rowToEdit, query: val } ) } required  description={ __( 'SERP queries separated by new line' ) } />,
+		query: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { ...rowToEdit, query: val } ) } required description={ __( 'SERP queries separated by new line' ) } />,
 	};
 
 	const columns = [

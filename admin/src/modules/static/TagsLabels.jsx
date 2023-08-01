@@ -1,20 +1,20 @@
 import { useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
-import useChangeRow from '../hooks/useChangeRow';
-import useTableUpdater from '../hooks/useTableUpdater';
-import useTablePanels from '../hooks/useTablePanels';
+import useChangeRow from '../../hooks/useChangeRow';
+import useTableUpdater from '../../hooks/useTableUpdater';
+import useTablePanels from '../../hooks/useTablePanels';
 
-import { Edit, InputField, Loader, MultiSelectMenu, Tag, Trash, useInfiniteFetch } from '../lib/tableImports';
+import { Edit, InputField, Loader, MultiSelectMenu, Tag, Trash, useInfiniteFetch } from '../../lib/tableImports';
 
-import ColorPicker from '../components/ColorPicker';
-import ModuleViewHeaderBottom from '../components/ModuleViewHeaderBottom';
-import Table from '../components/TableComponent';
-import Checkbox from '../elements/Checkbox';
-import IconButton from '../elements/IconButton';
+import ColorPicker from '../../components/ColorPicker';
+import ModuleViewHeaderBottom from '../../components/ModuleViewHeaderBottom';
+import Table from '../../components/TableComponent';
+import Checkbox from '../../elements/Checkbox';
+import IconButton from '../../elements/IconButton';
+import hexToHSL from '../../lib/hexToHSL';
 
-import '../assets/styles/components/_ModuleViewHeader.scss';
-import hexToHSL from '../lib/hexToHSL';
+import '../../assets/styles/components/_ModuleViewHeader.scss';
 
 export default function TagsLabels( ) {
 	// const columnHelper = useMemo( () => createColumnHelper(), [] );
@@ -125,10 +125,6 @@ export default function TagsLabels( ) {
 		return <Loader />;
 	}
 
-	// if ( row ) {
-	// 	queryClient.invalidateQueries( [ 'label' ] );
-	// }
-
 	return (
 		<div className="urlslab-tableView">
 			<ModuleViewHeaderBottom
@@ -139,7 +135,7 @@ export default function TagsLabels( ) {
 				noImport
 				noFiltering
 				noCount
-				options={ { header, rowEditorCells, notWide: true, title: 'Create new tag', data, slug, url, paginationId, rowToEdit, id: 'name' } }
+				options={ { header, rowEditorCells, noScrollbar: true, notWide: true, title: 'Create new tag', data, slug, url, paginationId, rowToEdit, id: 'name' } }
 			/>
 			<Table className="fadeInto"
 				slug={ slug }
