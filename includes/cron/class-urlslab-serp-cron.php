@@ -114,7 +114,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 		$request->setSerpQuery( $query->get_query() );
 		$request->setAllResults( true );
 		$request->setNotOlderThan( $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ) );
-		$has_monitored_domain = false;
+		$has_monitored_domain = 0;
 		$urls                 = array();
 		$domains              = array();
 		$positions            = array();
@@ -132,7 +132,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 				foreach ( $organic as $organic_result ) {
 					$url_obj = new Urlslab_Url( $organic_result->link, true );
 					if ( isset( Urlslab_Serp_Domain_Row::get_monitored_domains()[ $url_obj->get_domain_id() ] ) && $organic_result->position <= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION ) ) {
-						$has_monitored_domain = true;
+						$has_monitored_domain ++;
 					}
 
 					if ( 10 >= $organic_result->position || Urlslab_Serp_Domain_Row::get_monitored_domains()[ $url_obj->get_domain_id() ] ) {
@@ -167,7 +167,11 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 				}
 			}
 
-			if ( $has_monitored_domain || Urlslab_Serp_Query_Row::TYPE_USER === $query->get_type() || empty( Urlslab_Serp_Domain_Row::get_monitored_domains() ) ) {
+			if (
+				$has_monitored_domain >= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IRRELEVANT_QUERY_LIMIT ) ||
+				Urlslab_Serp_Query_Row::TYPE_USER === $query->get_type() ||
+				count( Urlslab_Serp_Domain_Row::get_monitored_domains() ) < $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IRRELEVANT_QUERY_LIMIT )
+			) {
 				if ( ! empty( $urls ) ) {
 					$urls[0]->insert_all( $urls, true );
 				}
@@ -184,41 +188,20 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 				if ( ! empty( $domains ) ) {
 					$domains[0]->insert_all( $domains, true );
 				}
+				$this->discoverNewQueries( $serp_response );
 
-				$fqs = $serp_response->getFaqs();
-				if ( ! empty( $fqs ) && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_FAQS ) ) {
-					foreach ( $fqs as $faq ) {
-						$faq_row = new Urlslab_Faq_Row( array( 'question' => $faq->question ), false );
-						if ( $faq_row->load( array( 'question' ) ) ) {
-							continue;
-						}
+				$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );
+
+				if ( Urlslab_Serp_Query_Row::TYPE_SERP_FAQ === $query->get_type() && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_FAQS ) ) {
+					//if the question is relevant FAQ, add it to the FAQ table
+					$faq_row = new Urlslab_Faq_Row( array( 'question' => $query->get_query() ), false );
+					if ( ! $faq_row->load( array( 'question' ) ) ) {
 						$faq_row->set_status( Urlslab_Faq_Row::STATUS_EMPTY );
 						$faq_row->insert();
 					}
 				}
-
-				$related = $serp_response->getRelatedSearches();
-				if ( ! empty( $related ) && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES ) && $this->get_serp_queries_count() <= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SERP_IMPORT_LIMIT ) ) {
-					$queries = array();
-					foreach ( $related as $related_search ) {
-						$queries[] = new Urlslab_Serp_Query_Row(
-							array(
-								'query'  => strtolower( trim( $related_search->query ) ),
-								'status' => Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
-								'type'   => Urlslab_Serp_Query_Row::TYPE_SERP_RELATED,
-							)
-						);
-					}
-					if ( ! empty( $queries ) ) {
-						$queries[0]->insert_all( $queries, true );
-					}
-				}
-			}
-
-			if ( $has_monitored_domain || Urlslab_Serp_Query_Row::TYPE_USER === $query->get_type() ) {
-				$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );
 			} else {
-				$query->set_status( Urlslab_Serp_Query_Row::STATUS_SKIPPED );
+				$query->set_status( Urlslab_Serp_Query_Row::STATUS_SKIPPED ); //irrelevant query
 			}
 			$query->update();
 		} catch ( ApiException $e ) {
@@ -243,9 +226,47 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 	private function get_serp_queries_count(): int {
 		global $wpdb;
 		if ( 0 > $this->serp_queries_count ) {
-			$this->serp_queries_count = $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type=%s', Urlslab_Serp_Query_Row::TYPE_SERP_RELATED ) ); // phpcs:ignore
+			$this->serp_queries_count = $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type=%s OR type=%s', Urlslab_Serp_Query_Row::TYPE_SERP_RELATED, Urlslab_Serp_Query_Row::TYPE_SERP_FAQ ) ); // phpcs:ignore
 		}
 
 		return $this->serp_queries_count;
+	}
+
+	/**
+	 * @param $serp_response
+	 *
+	 * @return void
+	 */
+	private function discoverNewQueries( $serp_response ): void {
+		//Discover new queries
+		$fqs     = $serp_response->getFaqs();
+		$queries = array();
+		if ( ! empty( $fqs ) && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_FAQS_AS_QUERY ) ) {
+			foreach ( $fqs as $faq ) {
+				$queries[] = new Urlslab_Serp_Query_Row(
+					array(
+						'query'  => strtolower( trim( $faq->question ) ),
+						'status' => Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
+						'type'   => Urlslab_Serp_Query_Row::TYPE_SERP_FAQ,
+					)
+				);
+			}
+		}
+
+		$related = $serp_response->getRelatedSearches();
+		if ( ! empty( $related ) && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES ) && $this->get_serp_queries_count() <= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SERP_IMPORT_LIMIT ) ) {
+			foreach ( $related as $related_search ) {
+				$queries[] = new Urlslab_Serp_Query_Row(
+					array(
+						'query'  => strtolower( trim( $related_search->query ) ),
+						'status' => Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
+						'type'   => Urlslab_Serp_Query_Row::TYPE_SERP_RELATED,
+					)
+				);
+			}
+		}
+		if ( ! empty( $queries ) ) {
+			$queries[0]->insert_all( $queries, true );
+		}
 	}
 }

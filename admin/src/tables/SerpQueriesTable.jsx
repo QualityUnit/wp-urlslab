@@ -69,6 +69,7 @@ export default function SerpQueriesTable( { slug } ) {
 		U: __( 'User' ),
 		C: __( 'Search Console' ),
 		S: __( 'Google Suggestion' ),
+		F: __( 'Google FAQ' ),
 	}
 
 	const header = {
