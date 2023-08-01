@@ -7,7 +7,8 @@ import promptTemplates from '../../data/promptTemplates.json';
 import TextAreaEditable from '../../elements/TextAreaEditable';
 import EditableList from '../../elements/EditableList';
 import { postFetch } from '../../api/fetching';
-import Button from '../../elements/Button';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Accordion, AccordionDetails, AccordionSummary, Typography } from '@mui/material';
 
 function ContentGeneratorPanel() {
 	const { __ } = useI18n();
@@ -18,6 +19,7 @@ function ContentGeneratorPanel() {
 		acc[ key ] = value.name;
 		return acc;
 	}, {} );
+	const [ ]
 	const [ urlsList, setUrlsList ] = useState( [] );
 	const [ keywordsList, setKeywordsList ] = useState( [] );
 	const [ domain, setDomain ] = useState( '' );
@@ -60,10 +62,58 @@ function ContentGeneratorPanel() {
 		setKeywordsList( [ ...keywordsList, ...data ] );
 	};
 
+	const handleStepChange = ( step ) => {
+
+	}
+
 	return (
 		<div className="urlslab-content-gen-panel">
 			<div className="urlslab-content-gen-panel-control">
 				<h2>Content Generator</h2>
+
+				<Accordion>
+					<AccordionSummary
+						expandIcon={ <ExpandMoreIcon /> }
+						aria-controls="panel1a-content"
+						id="panel1a-header"
+					>
+						<Typography>Pick Keyword</Typography>
+					</AccordionSummary>
+					<AccordionDetails>
+						<Typography>
+							pick Keyword
+						</Typography>
+					</AccordionDetails>
+				</Accordion>
+				<Accordion>
+					<AccordionSummary
+						expandIcon={ <ExpandMoreIcon /> }
+						aria-controls="panel1a-content"
+						id="panel1a-header"
+					>
+						<Typography>Pick Data Source</Typography>
+					</AccordionSummary>
+					<AccordionDetails>
+						<Typography>
+							pick Data Source
+						</Typography>
+					</AccordionDetails>
+				</Accordion>
+				<Accordion>
+					<AccordionSummary
+						expandIcon={ <ExpandMoreIcon /> }
+						aria-controls="panel1a-content"
+						id="panel1a-header"
+					>
+						<Typography>Write Prompt</Typography>
+					</AccordionSummary>
+					<AccordionDetails>
+						<Typography>
+							Write Prompt
+						</Typography>
+					</AccordionDetails>
+				</Accordion>
+
 				<div className="urlslab-content-gen-panel-control-item">
 					<InputField
 						liveUpdate

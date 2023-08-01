@@ -116,7 +116,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 		$positions            = array();
 
 		try {
-			$serp_response = Urlslab_Serp_Helper::get_instance()->search_serp( $query, $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ) );
+			$serp_response = Urlslab_Serp_Connetion::get_instance()->search_serp( $query, $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ) );
 			$organic       = $serp_response->getOrganicResults();
 
 			if ( empty( $organic ) ) {

@@ -8,10 +8,11 @@
 
     &-control {
         width: 40%;
-        background-color: $white;
-        border-radius: 5px;
-        box-shadow: 0 1px 3px rgba($black-real, 0.16);
         padding: 1em;
+
+        h2 {
+            margin-bottom: 1em;
+        }
 
         &-item {
             display: flex;
