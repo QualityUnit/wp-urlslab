@@ -114,7 +114,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 		$request->setSerpQuery( $query->get_query() );
 		$request->setAllResults( true );
 		$request->setNotOlderThan( $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ) );
-		$has_monitored_domain = false;
+		$has_monitored_domain = 0;
 		$urls                 = array();
 		$domains              = array();
 		$positions            = array();
@@ -132,7 +132,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 				foreach ( $organic as $organic_result ) {
 					$url_obj = new Urlslab_Url( $organic_result->link, true );
 					if ( isset( Urlslab_Serp_Domain_Row::get_monitored_domains()[ $url_obj->get_domain_id() ] ) && $organic_result->position <= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION ) ) {
-						$has_monitored_domain = true;
+						$has_monitored_domain ++;
 					}
 
 					if ( 10 >= $organic_result->position || Urlslab_Serp_Domain_Row::get_monitored_domains()[ $url_obj->get_domain_id() ] ) {
@@ -167,7 +167,11 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 				}
 			}
 
-			if ( $has_monitored_domain || Urlslab_Serp_Query_Row::TYPE_USER === $query->get_type() || empty( Urlslab_Serp_Domain_Row::get_monitored_domains() ) ) {
+			if (
+				$has_monitored_domain >= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IRRELEVANT_QUERY_LIMIT ) ||
+				Urlslab_Serp_Query_Row::TYPE_USER === $query->get_type() ||
+				count( Urlslab_Serp_Domain_Row::get_monitored_domains() ) < $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IRRELEVANT_QUERY_LIMIT )
+			) {
 				if ( ! empty( $urls ) ) {
 					$urls[0]->insert_all( $urls, true );
 				}
@@ -213,12 +217,9 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 						$queries[0]->insert_all( $queries, true );
 					}
 				}
-			}
-
-			if ( $has_monitored_domain || Urlslab_Serp_Query_Row::TYPE_USER === $query->get_type() ) {
 				$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );
 			} else {
-				$query->set_status( Urlslab_Serp_Query_Row::STATUS_SKIPPED );
+				$query->set_status( Urlslab_Serp_Query_Row::STATUS_SKIPPED ); //irrelevant query
 			}
 			$query->update();
 		} catch ( ApiException $e ) {

@@ -15,6 +15,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 	const SETTING_NAME_QUERY_TYPES = 'urlslab-query-types';
 	const SETTING_NAME_GSC_MIN_IMPRESSIONS = 'urlslab-gsc-min-impressions';
 	const SETTING_NAME_GSC_MIN_CLICKS = 'urlslab-gsc-min-clicks';
+	const SETTING_NAME_IRRELEVANT_QUERY_LIMIT = 'urlslab-irrelevant-query-limit';
 
 	public static function get_available_query_types() {
 		return array(
@@ -162,15 +163,14 @@ class Urlslab_Serp extends Urlslab_Widget {
 		);
 
 
-
-		$this->add_options_form_section( 'import', __( 'Import SERP queries' ), __( 'Specify how new queries are imported from SERP results. Make sure you select reasonable amount of domains and other limits, because this feature can eat your credits fast.' ) );
+		$this->add_options_form_section( 'import', __( 'Import new SERP queries' ), __( 'Specify how new queries are imported from SERP results. Make sure you select reasonable amount of domains and other limits, because this feature can eat your credits fast.' ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_RELATED_QUERIES,
 			false,
 			false,
 			__( 'Discover and Import Related Queries' ),
-			__( 'Automatically build list of queries by importing Related Searches from Google Results for monitored queries. IMPORTANT: by activating this option you agree with processing of higher amount of SERP api requests leading to extra costs for evaluation of each relevant/irelevant query. Once the keyword is marked as irelevant, it will not be processed again, so the cost will not be high in next recurring updates of SERP positions.' ),
+			__( 'Automatically build list of queries by importing Related Searches from Google Results for monitored queries. IMPORTANT: by activating this option you agree with processing of higher amount of SERP api requests leading to extra costs for evaluation of each relevant/irrelevant query. Once the keyword is marked as irelevant, it will not be processed again, so the cost will not be high in next recurring updates of SERP positions.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -194,12 +194,25 @@ class Urlslab_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION,
 			15,
 			false,
-			__( 'Process Google results up to position' ),
-			__( 'Enter number 1 - 100. Reasonable value will be between 5 - 30. Query entities will be processed only in case one of defined domains ranks for keyword in TOP X results. Setting this number lower will improve quality, but higher number will discover more new queries.' ),
+			__( 'Evaluate competing domains up to position' ),
+			__( 'Enter number 1 - 100. Reasonable value will be between 5 - 50. Query entities will be processed only in case one of competing domains (your domains or competitors) ranks for keyword in TOP X results. Setting this number lower will improve quality, but higher number will discover more new queries.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
 				return is_numeric( $value ) && $value >= 1 && $value <= 100;
+			},
+			'import'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_IRRELEVANT_QUERY_LIMIT,
+			2,
+			false,
+			__( 'Irrelevant query limit' ),
+			__( 'The number pertains to the minimum count of competing domains (including your own), required to rank in top results. If this number is not achieved, the query will be perceived as irrelevant to your business and will no longer be updated. The higher the specified number, the fewer keywords you will discern, but the accuracy of the list will increase. IMPORTANT: Remember to specify domain names of all your competitors, to ensure the proper functioning of this setting.' ),
+			self::OPTION_TYPE_NUMBER,
+			false,
+			function( $value ) {
+				return is_numeric( $value ) && $value >= 1 && $value <= 10;
 			},
 			'import'
 		);
