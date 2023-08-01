@@ -62,6 +62,8 @@ export default function SerpUrlsTable( { slug } ) {
 		top10_queries_cnt: __( 'Top 10' ),
 		queries_cnt: __( 'Top 100' ),
 		queries: __( 'Top Queries' ),
+		my_clicks: __( 'My Clicks' ),
+		my_impressions: __( 'My Impressions' ),
 		match_competitors: __( 'Competitors Intersection' ),
 	};
 
@@ -117,6 +119,16 @@ export default function SerpUrlsTable( { slug } ) {
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.queries }</SortBy>,
 			minSize: 200,
+		} ),
+		columnHelper.accessor( 'my_clicks', {
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.my_clicks }</SortBy>,
+			minSize: 50,
+		} ),
+		columnHelper.accessor( 'my_impressions', {
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.my_impressions }</SortBy>,
+			minSize: 50,
 		} ),
 	];
 
