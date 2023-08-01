@@ -226,18 +226,18 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 	private function get_serp_queries_count(): int {
 		global $wpdb;
 		if ( 0 > $this->serp_queries_count ) {
-			$this->serp_queries_count = $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type=%s', Urlslab_Serp_Query_Row::TYPE_SERP_RELATED ) ); // phpcs:ignore
+			$this->serp_queries_count = $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type=%s OR type=%s', Urlslab_Serp_Query_Row::TYPE_SERP_RELATED, Urlslab_Serp_Query_Row::TYPE_SERP_FAQ ) ); // phpcs:ignore
 		}
 
 		return $this->serp_queries_count;
 	}
 
 	/**
-	 * @param \OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchResponse $serp_response
+	 * @param $serp_response
 	 *
 	 * @return void
 	 */
-	private function discoverNewQueries( \OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchResponse $serp_response ): void {
+	private function discoverNewQueries( $serp_response ): void {
 		//Discover new queries
 		$fqs     = $serp_response->getFaqs();
 		$queries = array();

@@ -23,6 +23,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 			Urlslab_Serp_Query_Row::TYPE_GSC          => __( 'Google Search Console' ),
 			Urlslab_Serp_Query_Row::TYPE_USER         => __( 'Manually created by User' ),
 			Urlslab_Serp_Query_Row::TYPE_SERP_RELATED => __( 'Suggested by Google' ),
+			Urlslab_Serp_Query_Row::TYPE_SERP_FAQ => __( 'FAQ suggested by Google' ),
 		);
 	}
 
