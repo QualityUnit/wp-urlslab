@@ -48,7 +48,7 @@ export default function SortMenu( {
 	return (
 		<>
 			<div className={ `urlslab-MultiSelectMenu urlslab-SortMenu ${ disabled && 'disabled' } ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref }>
-				{ ! isFilter && children ? <div className={ `urlslab-inputField-label flex flex-align-center mb-s ${ required ? 'required' : '' }` }><span dangerouslySetInnerHTML={ { __html: children } } />{ labels }</div> : null }
+				{ ! isFilter && children ? <div className={ `urlslab-inputField-label flex flex-align-center mb-xs ${ required ? 'required' : '' }` }><span dangerouslySetInnerHTML={ { __html: children } } />{ labels }</div> : null }
 				<div
 					className={ `urlslab-MultiSelectMenu__title ${ isFilter ? 'isFilter' : '' } ${ isActive ? 'active' : '' } ${ dark ? 'dark' : '' }` }
 					onClick={ ! disabled && handleMenu }
