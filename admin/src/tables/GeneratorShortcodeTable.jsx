@@ -63,7 +63,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, paginationId, filters, sorting } );
 
-	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -244,7 +244,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			<ModuleViewHeaderBottom
 				table={ table }
 				noImport
-				onDeleteSelected={ deleteSelectedRows }
+				onDeleteSelected={ deleteMultipleRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ { header, data, slug, url, paginationId,
 					rowEditorCells, rowToEdit,

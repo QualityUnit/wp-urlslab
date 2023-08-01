@@ -27,7 +27,7 @@ export default function SearchReplaceTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -165,7 +165,7 @@ export default function SearchReplaceTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				table={ table }
-				onDeleteSelected={ deleteSelectedRows }
+				onDeleteSelected={ deleteMultipleRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ { header, rowEditorCells, title: 'Add New Replacement', data, slug, url, paginationId, rowToEdit, id: 'str_search', deleteCSVCols: [ paginationId, 'dest_url_id' ] } }
 			/>

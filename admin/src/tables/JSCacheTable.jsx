@@ -22,7 +22,7 @@ export default function JSCacheTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectRows, deleteRow, deleteSelectedRows } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, deleteMultipleRows } = useChangeRow( { data, url, slug, paginationId } );
 
 	const statusTypes = {
 		N: __( 'New' ),
@@ -89,7 +89,7 @@ export default function JSCacheTable( { slug } ) {
 				table={ table }
 				noExport
 				noImport
-				onDeleteSelected={ deleteSelectedRows }
+				onDeleteSelected={ deleteMultipleRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ { header, slug, data, paginationId, url } }
 			/>

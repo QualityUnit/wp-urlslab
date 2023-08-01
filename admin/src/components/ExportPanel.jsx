@@ -12,12 +12,12 @@ function ExportPanel( props ) {
 	const { __ } = useI18n();
 	const activefilters = url?.filters ? Object.keys( url?.filters ) : null;
 	const [ exportStatus, setExportStatus ] = useState();
-	const stopExport = useRef( false );
+	const stopFetching = useRef( false );
 
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
 
 	const hidePanel = ( operation ) => {
-		stopExport.current = true;
+		stopFetching.current = true;
 
 		handleClose();
 		if ( handlePanel ) {
@@ -64,11 +64,11 @@ function ExportPanel( props ) {
 					<div className="flex">
 						<Button className="ma-left" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
 						{ activefilters?.length > 0 &&
-						<ExportCSVButton className="ml-s" options={ { ...props, stopExport } } withfilters onClick={ handleExportStatus } />
+							<ExportCSVButton className="ml-s" options={ { ...props, stopFetching } } withfilters onClick={ handleExportStatus } />
 						}
 						<ExportCSVButton
 							className="ml-s"
-							options={ { ...props, stopExport } } onClick={ handleExportStatus }
+							options={ { ...props, stopFetching } } onClick={ handleExportStatus }
 						/>
 					</div>
 				</div>

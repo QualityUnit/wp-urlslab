@@ -2,7 +2,7 @@ import { useCallback, useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { langName } from '../lib/helpers';
-import { dateOp, stringOp, numericOp, langOp, menuOp } from '../lib/filterOperators';
+import { operatorTypes } from '../lib/filterOperators';
 import useClickOutside from '../hooks/useClickOutside';
 
 import Button from '../elements/Button';
@@ -22,15 +22,6 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 		activateEditing();
 	}, [] );
 	useClickOutside( panelPopover, close );
-
-	const operatorTypes = {
-		date: dateOp,
-		number: numericOp,
-		string: stringOp,
-		lang: langOp,
-		menu: menuOp,
-		boolean: menuOp,
-	};
 
 	const handleOnEdit = useCallback( ( val ) => {
 		activateEditing();

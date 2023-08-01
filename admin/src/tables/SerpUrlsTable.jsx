@@ -15,7 +15,7 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import React, { useCallback } from 'react';
-import TextArea from "../elements/Textarea";
+import TextArea from '../elements/Textarea';
 
 export default function SerpUrlsTable( { slug } ) {
 	const paginationId = 'url_id';
@@ -35,7 +35,7 @@ export default function SerpUrlsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
 
-	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -48,9 +48,9 @@ export default function SerpUrlsTable( { slug } ) {
 	}, [ setOptions, setRowToEdit, slug, updateRow ] );
 
 	const domainTypes = {
-		X: __('Other'),
-		M: __('My Domain'),
-		C: __('Competitor')
+		X: __( 'Other' ),
+		M: __( 'My Domain' ),
+		C: __( 'Competitor' ),
 	};
 
 	const header = {
@@ -63,7 +63,6 @@ export default function SerpUrlsTable( { slug } ) {
 		queries_cnt: __( 'Top 100' ),
 		queries: __( 'Top Queries' ),
 	};
-
 
 	const columns = [
 		columnHelper.accessor( 'url_name', {

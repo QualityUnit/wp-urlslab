@@ -1,14 +1,14 @@
 /* eslint-disable indent */
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Checkbox, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, SortBy, CountryMenu, LangMenu, Checkbox, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TextArea,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
+import { countriesList } from '../lib/helpers';
+
 import IconButton from '../elements/IconButton';
-import React, { useCallback } from 'react';
-import TextArea from "../elements/Textarea";
 import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
 import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refresh.svg';
 
@@ -31,33 +31,24 @@ export default function SerpQueriesTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
 
-	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
+	const { setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
-	const setUnifiedPanel = useCallback( ( cell ) => {
-		const origCell = cell?.row.original;
-		setOptions( [] );
-		setRowToEdit( {} );
-		updateRow( { cell, id: 'keyword' } );
-	}, [ setOptions, setRowToEdit, slug, updateRow ] );
-
-
-
 	const ActionButton = ( { cell, onClick } ) => {
-		const { status } = cell?.row?.original;
+		const { status: serpStatus } = cell?.row?.original;
 
 		return (
 			<div className="flex flex-align-center flex-justify-end">
 				{
-					( status !== 'E' && status !== 'P' ) &&
+					( serpStatus !== 'E' && serpStatus !== 'P' ) &&
 					<IconButton className="mr-s c-saturated-red" tooltip={ __( 'Disable' ) } tooltipClass="align-left" onClick={ () => onClick( 'E' ) }>
 						<DisableIcon />
 					</IconButton>
 				}
 				{
-					( status !== 'P' ) &&
+					( serpStatus !== 'P' ) &&
 					<IconButton className="mr-s" tooltip={ __( 'Process again' ) } tooltipClass="align-left" onClick={ () => onClick( 'X' ) }>
 						<RefreshIcon />
 					</IconButton>
@@ -67,11 +58,11 @@ export default function SerpQueriesTable( { slug } ) {
 	};
 
 	const statuses = {
-		'X': __( 'Not processed' ),
-		'P': __( 'Processing' ),
-		'A': __( 'Processed' ),
-		'E': __( 'Disabled' ),
-		'S': __( 'Irrelevant' ),
+		X: __( 'Not processed' ),
+		P: __( 'Processing' ),
+		A: __( 'Processed' ),
+		E: __( 'Disabled' ),
+		S: __( 'Irrelevant' ),
 	};
 
 	const types = {
@@ -221,7 +212,7 @@ export default function SerpQueriesTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				table={ table }
-				onDeleteSelected={ () => deleteSelectedRows( { id: 'query' } ) }
+				onDeleteSelected={ () => deleteMultipleRows( { id: 'query' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				initialState={ { columnVisibility: { updated: false, status: false, type: false } } }
 				options={ { header, data, slug, paginationId, url,

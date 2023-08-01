@@ -22,7 +22,7 @@ export default function LinkManagerTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	// const sumStatusTypes = {
 	// 	N: __( 'Waiting' ),
@@ -140,7 +140,7 @@ export default function LinkManagerTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				table={ table }
-				onDeleteSelected={ deleteSelectedRows }
+				onDeleteSelected={ deleteMultipleRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				noImport
 				options={ {
