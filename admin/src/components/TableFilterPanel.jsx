@@ -209,11 +209,11 @@ export default function TableFilterPanel( { props, onEdit } ) {
 					</div>
 				}
 				{ state.filterObj.keyType === 'number' && ! notBetween &&
-				<RangeInputs liveUpdate
+				<RangeInputs
 					unit={ cellUnit }
 					defaultMin={ filters[ key ]?.val.min }
 					defaultMax={ filters[ key ]?.val.max }
-					onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) }
+					onChange={ ( val ) => dispatch( { type: 'setFilterVal', val: { min: val.min, max: val.max } } ) }
 				/>
 				}
 			</div>
