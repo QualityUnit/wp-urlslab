@@ -27,7 +27,7 @@ export default function MediaFilesTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
 
@@ -48,7 +48,7 @@ export default function MediaFilesTable( { slug } ) {
 	const driverTypes = {
 		D: 'Database',
 		F: 'Local file',
-//TODO S3		S: 'Amazon S3',
+		//TODO S3		S: 'Amazon S3',
 	};
 
 	const statusTypes = {
@@ -185,7 +185,7 @@ export default function MediaFilesTable( { slug } ) {
 			<ModuleViewHeaderBottom
 				table={ table }
 				noImport
-				onDeleteSelected={ deleteSelectedRows }
+				onDeleteSelected={ deleteMultipleRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ {
 					header,

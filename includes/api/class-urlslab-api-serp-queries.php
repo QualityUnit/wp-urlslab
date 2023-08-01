@@ -110,11 +110,11 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<query_id>[0-9]+)',
+			$base . '/delete',
 			array(
 				array(
-					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'delete_item' ),
+					'methods'             => WP_REST_Server::ALLMETHODS,
+					'callback'            => array( $this, 'delete_items' ),
 					'permission_callback' => array(
 						$this,
 						'delete_item_permissions_check',
@@ -140,6 +140,43 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 							'required'          => true,
 							'validate_callback' => function( $param ) {
 								return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
+							},
+						),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/query_cluster',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_query_cluster' ),
+					'permission_callback' => array(
+						$this,
+						'get_items_permissions_check',
+					),
+					'args'                => array(
+						'query'        => array(
+							'required'          => true,
+							'validate_callback' => function( $param ) {
+								return is_string( $param ) && 0 < strlen( $param ) && 255 >= strlen( $param );
+							},
+						),
+						'max_position' => array(
+							'required'          => false,
+							'default'           => 10,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param ) && 1 <= strlen( $param ) && 100 >= strlen( $param );
+							},
+						),
+						'competitors'  => array(
+							'required'          => false,
+							'default'           => 4,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param ) && 1 <= strlen( $param ) && 10 >= strlen( $param );
 							},
 						),
 					),
@@ -187,6 +224,42 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	}
 
 	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_query_cluster( $request ) {
+		$query = new Urlslab_Serp_Query_Row( array( 'query' => $request->get_param( 'query' ) ) );
+		if ( ! $query->load() ) {
+			return new WP_REST_Response( __( 'Query not found' ), 404 );
+		}
+
+		global $wpdb;
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT q.* FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' a' . // phpcs:ignore
+				' INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND a.position<%d AND b.position<%d' . // phpcs:ignore
+				' INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id' . // phpcs:ignore
+				' WHERE a.query_id=%d GROUP BY a.query_id, b.query_id HAVING COUNT(*) > %d',
+				$request->get_param( 'max_position' ),
+				$request->get_param( 'max_position' ),
+				$query->get_query_id(),
+				$request->get_param( 'competitors' )
+			),
+			ARRAY_A
+		);
+
+		$rows = array();
+		foreach ( $results as $result ) {
+			$row    = new Urlslab_Serp_Query_Row( $result );
+			$rows[] = (object) $row->as_array();
+		}
+
+		return new WP_REST_Response( $rows, 200 );
+	}
+
+	/**
+	 *
 	 * @param WP_REST_Request $request
 	 *
 	 * @return WP_Error|WP_REST_Response

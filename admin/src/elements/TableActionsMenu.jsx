@@ -7,13 +7,14 @@ import '../assets/styles/elements/_MultiSelectMenu.scss';
 import useTablePanels from '../hooks/useTablePanels';
 
 export default function TableActionsMenu( { options } ) {
-	const { noImport, noExport, noDelete } = options;
+	const { noImport, noExport, noDelete, filters } = options;
 	const { __ } = useI18n();
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
 	const ref = useRef();
 	const didMountRef = useRef( false );
 	const { activatePanel } = useTablePanels();
+	const activefilters = filters ? Object.keys( filters ) : null;
 
 	const handleMenu = () => {
 		setActive( ! isActive );
@@ -48,6 +49,9 @@ export default function TableActionsMenu( { options } ) {
 					}
 					{ ! noDelete &&
 					<Button className="simple" onClick={ () => activatePanel( 'deleteall' ) }>{ __( 'Delete All' ) }</Button>
+					}
+					{ ! noDelete && activefilters.length > 0 &&
+						<Button className="simple" onClick={ () => activatePanel( 'deleteAllFiltered' ) }>{ __( 'Delete All Filtered' ) }</Button>
 					}
 				</div>
 			</div>

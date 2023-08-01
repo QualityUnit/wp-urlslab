@@ -3,7 +3,7 @@
 import { jsonToCSV } from 'react-papaparse';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import fileDownload from 'js-file-download';
-import { exportCSV } from '../api/exportCsv';
+import { fetchDataForProcessing } from '../api/fetchDataForProcessing';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { ReactComponent as ExportIcon } from '../assets/images/icons/icon-export.svg';
@@ -15,7 +15,7 @@ export default function ExportCSVButton( { options, className, withfilters, onCl
 	function handleExport() {
 		onClick( 1 );
 		if ( withfilters ) {
-			exportCSV( options, ( status ) => onClick( status ) ).then( ( response ) => {
+			fetchDataForProcessing( options, ( status ) => onClick( status ) ).then( ( response ) => {
 				if ( onClick && response.status === 'done' ) {
 					const csv = jsonToCSV( response, {
 						delimiter: ',',
@@ -28,7 +28,7 @@ export default function ExportCSVButton( { options, className, withfilters, onCl
 		}
 		if ( ! withfilters ) {
 			delete options.url.filters;
-			exportCSV( options, ( status ) => onClick( status ) ).then( ( response ) => {
+			fetchDataForProcessing( options, ( status ) => onClick( status ) ).then( ( response ) => {
 				if ( onClick && response.status === 'done' ) {
 					const csv = jsonToCSV( response, {
 						delimiter: ',',

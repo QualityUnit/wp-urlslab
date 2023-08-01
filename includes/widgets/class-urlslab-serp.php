@@ -15,12 +15,15 @@ class Urlslab_Serp extends Urlslab_Widget {
 	const SETTING_NAME_QUERY_TYPES = 'urlslab-query-types';
 	const SETTING_NAME_GSC_MIN_IMPRESSIONS = 'urlslab-gsc-min-impressions';
 	const SETTING_NAME_GSC_MIN_CLICKS = 'urlslab-gsc-min-clicks';
+	const SETTING_NAME_IRRELEVANT_QUERY_LIMIT = 'urlslab-irrelevant-query-limit';
+	const SETTING_NAME_IMPORT_FAQS_AS_QUERY = 'urlslab-import-faqs-as-query';
 
 	public static function get_available_query_types() {
 		return array(
 			Urlslab_Serp_Query_Row::TYPE_GSC          => __( 'Google Search Console' ),
 			Urlslab_Serp_Query_Row::TYPE_USER         => __( 'Manually created by User' ),
 			Urlslab_Serp_Query_Row::TYPE_SERP_RELATED => __( 'Suggested by Google' ),
+			Urlslab_Serp_Query_Row::TYPE_SERP_FAQ => __( 'FAQ suggested by Google' ),
 		);
 	}
 
@@ -162,15 +165,14 @@ class Urlslab_Serp extends Urlslab_Widget {
 		);
 
 
-
-		$this->add_options_form_section( 'import', __( 'Import SERP queries' ), __( 'Specify how new queries are imported from SERP results. Make sure you select reasonable amount of domains and other limits, because this feature can eat your credits fast.' ) );
+		$this->add_options_form_section( 'import', __( 'Import new SERP queries' ), __( 'Specify how new queries are imported from SERP results. Make sure you select reasonable amount of domains and other limits, because this feature can eat your credits fast.' ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_RELATED_QUERIES,
 			false,
 			false,
 			__( 'Discover and Import Related Queries' ),
-			__( 'Automatically build list of queries by importing Related Searches from Google Results for monitored queries. IMPORTANT: by activating this option you agree with processing of higher amount of SERP api requests leading to extra costs for evaluation of each relevant/irelevant query. Once the keyword is marked as irelevant, it will not be processed again, so the cost will not be high in next recurring updates of SERP positions.' ),
+			__( 'Automatically build list of queries by importing Related Searches from Google Results for monitored queries. IMPORTANT: by activating this option you agree with processing of higher amount of SERP api requests leading to extra costs for evaluation of each relevant/irrelevant query. Once the keyword is marked as irelevant, it will not be processed again, so the cost will not be high in next recurring updates of SERP positions.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -194,8 +196,8 @@ class Urlslab_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION,
 			15,
 			false,
-			__( 'Process Google results up to position' ),
-			__( 'Enter number 1 - 100. Reasonable value will be between 5 - 30. Query entities will be processed only in case one of defined domains ranks for keyword in TOP X results. Setting this number lower will improve quality, but higher number will discover more new queries.' ),
+			__( 'Evaluate competing domains up to position' ),
+			__( 'Enter number 1 - 100. Reasonable value will be between 5 - 50. Query entities will be processed only in case one of competing domains (your domains or competitors) ranks for keyword in TOP X results. Setting this number lower will improve quality, but higher number will discover more new queries.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -203,15 +205,39 @@ class Urlslab_Serp extends Urlslab_Widget {
 			},
 			'import'
 		);
+		$this->add_option_definition(
+			self::SETTING_NAME_IRRELEVANT_QUERY_LIMIT,
+			2,
+			false,
+			__( 'Irrelevant query limit' ),
+			__( 'The number pertains to the minimum count of competing domains (including your own), required to rank in top results. If this number is not achieved, the query will be perceived as irrelevant to your business and will no longer be updated. The higher the specified number, the fewer keywords you will discern, but the accuracy of the list will increase. IMPORTANT: Remember to specify domain names of all your competitors, to ensure the proper functioning of this setting.' ),
+			self::OPTION_TYPE_NUMBER,
+			false,
+			function( $value ) {
+				return is_numeric( $value ) && $value >= 1 && $value <= 10;
+			},
+			'import'
+		);
 
 
-		$this->add_options_form_section( 'import_faq', __( 'Import Frequently Asked Questions' ), __( 'URLsLab can automatically import FAQ entries from SERP results' ) );
+		$this->add_options_form_section( 'import_faq', __( 'Import Frequently Asked Questions' ), __( 'URLsLab can automatically import FAQ entries from SERP results and relevant questions to your business can be added into FAQ module. This will help you to build new content in your website.' ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_IMPORT_FAQS_AS_QUERY,
+			true,
+			false,
+			__( 'Import FAQs from SERP Results as new Queries' ),
+			__( 'If active, frequently asked questions from google serp results will be added as new queries. Questions could be source of traffic for your website and it is good to know the position you are ranking for.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'import_faq'
+		);
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_FAQS,
 			true,
 			false,
-			__( 'Import FAQs' ),
-			__( 'Import FAQS for analyzed keywords automatically and store them to Frequently Asked Questions module.' ),
+			__( 'Import FAQs query as Question into FAQ module' ),
+			__( 'Import FAQS for analyzed keywords automatically and store them to Frequently Asked Questions module if the question is relevant query (more competitor domains rank for this question).' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
