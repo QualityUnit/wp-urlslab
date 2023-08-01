@@ -33,11 +33,13 @@ type SingleSelectMenuType = Partial<{
 		tooltip: string,
 		label: string
 		noWrapText?: boolean
-	}
+	},
+	labels: React.ReactElement[] | HTMLElement[]
+
 }> & React.PropsWithChildren
 
 export const SingleSelectMenu: React.FC<SingleSelectMenuType > = React.memo( ( {
-	tooltipLabel, children, className = undefined, name = undefined, style = undefined, items = undefined, description = undefined, defaultValue = undefined, defaultAccept = undefined, autoClose = undefined, disabled = undefined, isFilter = undefined, required = undefined, onChange = undefined, dark = undefined,
+	tooltipLabel, children, className = undefined, name = undefined, style = undefined, items = undefined, description = undefined, defaultValue = undefined, defaultAccept = undefined, autoClose = undefined, disabled = undefined, isFilter = undefined, required = undefined, onChange = undefined, dark = undefined, labels = undefined,
 }:SingleSelectMenuType ) => {
 	return (
 		<>
@@ -48,7 +50,7 @@ export const SingleSelectMenu: React.FC<SingleSelectMenuType > = React.memo( ( {
 				</div>
 				: null
 			}
-			<JSXSingleSelectMenu className={ className } name={ name } style={ style } items={ items } description={ description } defaultValue={ defaultValue } defaultAccept={ defaultAccept } autoClose={ autoClose } disabled={ disabled } isFilter={ isFilter } required={ required } onChange={ onChange } dark={ dark }>{ tooltipLabel ? null : children }</JSXSingleSelectMenu>
+			<JSXSingleSelectMenu className={ className } name={ name } style={ style } items={ items } description={ description } defaultValue={ defaultValue } defaultAccept={ defaultAccept } autoClose={ autoClose } disabled={ disabled } isFilter={ isFilter } required={ required } onChange={ onChange } dark={ dark } labels={ labels }>{ tooltipLabel ? null : children }</JSXSingleSelectMenu>
 		</>
 	);
 } );
