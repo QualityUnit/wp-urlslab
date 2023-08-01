@@ -200,8 +200,8 @@ class Urlslab_Api_Table_Sql {
 
 			case 'BETWEEN':
 				$sql_string = esc_sql( $filter['col'] ) . ' BETWEEN %d AND %d';
-				$data[]     = $filter['min'];
-				$data[]     = $filter['max'];
+				$data[]     = $filter['val']['min'];
+				$data[]     = $filter['val']['max'];
 
 				break;
 
@@ -269,8 +269,8 @@ class Urlslab_Api_Table_Sql {
 
 			case 'BETWEEN':
 				$sql_string = esc_sql( $filter['col'] ) . ' BETWEEN %s AND %s';
-				$data[]     = $filter['min'];
-				$data[]     = $filter['max'];
+				$data[]     = $filter['val']['min'];
+				$data[]     = $filter['val']['max'];
 
 				break;
 

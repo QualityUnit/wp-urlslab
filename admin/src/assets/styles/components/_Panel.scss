@@ -213,10 +213,14 @@
 
 		@include scrollbar;
 		max-height: 30vh;
-		margin-bottom: 1.5em;
+		padding-bottom: 3em;
 		margin-right: -1.5em;
 		padding-right: 1.5em;
 		overflow-y: scroll;
+
+		&.no-scrollbar {
+			overflow-y: visible;
+		}
 
 		@media (min-height: 31.25em) {
 			max-height: 50vh;

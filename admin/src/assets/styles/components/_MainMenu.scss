@@ -83,13 +83,18 @@
 			z-index: 1;
 		}
 
-		button {
+		button,
+		a.urlslab-mainmenu-btn {
 			display: flex;
 			align-items: center;
-			color: currentcolor;
 			width: 100%;
 			padding: 0.5em 0;
 			padding-right: 2.1666em;
+
+			//override default global style of anchor links
+			color: currentcolor !important;
+			font-weight: inherit !important;
+			text-decoration: none;
 
 			&.has-icon {
 				display: flex;
@@ -133,7 +138,8 @@
 		margin-bottom: 0;
 		cursor: pointer;
 
-		button {
+		button,
+		a.urlslab-mainmenu-btn {
 			position: relative;
 			z-index: 1;
 		}
@@ -143,7 +149,8 @@
 			transition: all $transitionTime;
 			cursor: default;
 
-			button {
+			button,
+			a.urlslab-mainmenu-btn {
 				cursor: default;
 			}
 		}

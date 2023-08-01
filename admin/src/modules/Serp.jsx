@@ -1,12 +1,22 @@
 import { useState, Suspense, lazy } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 
 import SerpOverview from '../overview/Serp';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
-export default function Serp( { moduleId } ) {
+const SettingsModule = lazy( () => import( `../modules/static/Settings.jsx` ) );
+const SerpQueriesTable = lazy( () => import( `../tables/SerpQueriesTable.jsx` ) );
+const SerpUrlsTable = lazy( () => import( `../tables/SerpUrlsTable.jsx` ) );
+const SerpTopDomainsTable = lazy( () => import( `../tables/SerpTopDomainsTable.jsx` ) );
+const GscSitesTable = lazy( () => import( `../tables/GscSitesTable.jsx` ) );
+const SerpGapTable = lazy( () => import( `../tables/SerpGapTable.jsx` ) );
+
+export default function Serp() {
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
+
+	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
 		[ 'serp-domains', __( 'Domains' ) ],
@@ -15,13 +25,6 @@ export default function Serp( { moduleId } ) {
 		[ 'serp-urls', __( 'URLs' ) ],
 		[ 'serp-gap', __( 'Content Gap' ) ],
 	] );
-
-	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
-	const SerpQueriesTable = lazy( () => import( `../tables/SerpQueriesTable.jsx` ) );
-	const SerpUrlsTable = lazy( () => import( `../tables/SerpUrlsTable.jsx` ) );
-	const SerpTopDomainsTable = lazy( () => import( `../tables/SerpTopDomainsTable.jsx` ) );
-	const GscSitesTable = lazy( () => import( `../tables/GscSitesTable.jsx` ) );
-	const SerpGapTable = lazy( () => import( `../tables/SerpGapTable.jsx` ) );
 
 	return (
 		<div className="urlslab-tableView">

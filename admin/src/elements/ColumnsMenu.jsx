@@ -102,7 +102,7 @@ function ColumnsMenu( { id, className, slug, table, columns, style } ) {
 			</div>
 			{ isActive &&
 			<div className={ `urlslab-MultiSelectMenu__items urlslab-ColumnsMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
-				<div className="flex urlslab-ColumnsMenu__buttons"><Button className="xl simple" onClick={ () => handleVisibilityAll( 'hideAllCols' ) }>{ __( 'Hide all' ) }</Button><Button className="ma-left xl active" onClick={ () => handleVisibilityAll( 'showAllCols' ) }>{ __( 'Show all' ) }</Button></div>
+				<div className="flex urlslab-ColumnsMenu__buttons"><Button className="simple" onClick={ () => handleVisibilityAll( 'hideAllCols' ) }>{ __( 'Hide all' ) }</Button><Button className="ma-left active" onClick={ () => handleVisibilityAll( 'showAllCols' ) }>{ __( 'Show all' ) }</Button></div>
 				<div className={ `urlslab-MultiSelectMenu__items--inn ${ columns.length > 8 ? 'has-scrollbar' : '' }` }>
 					{ tableColumns?.map( ( column ) => {
 						return (

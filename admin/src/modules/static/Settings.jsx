@@ -1,13 +1,13 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { fetchSettings } from '../api/settings';
-import labelsList from '../lib/labelsList';
-import Loader from '../components/Loader';
-import SettingsOption from '../components/SettingsOption';
+import { fetchSettings } from '../../api/settings';
+import labelsList from '../../lib/labelsList';
+import Loader from '../../components/Loader';
+import SettingsOption from '../../components/SettingsOption';
 
-import '../assets/styles/layouts/_Settings.scss';
-import Tag from '../elements/Tag';
+import '../../assets/styles/layouts/_Settings.scss';
+import Tag from '../../elements/Tag';
 
 export default function Settings( { className, settingId } ) {
 	const queryClient = useQueryClient();

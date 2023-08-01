@@ -1,22 +1,25 @@
 import { useState, Suspense, lazy } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
+
 import LazyLoadingOverview from '../overview/LazyLoading';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
-export default function LazyLoading( { moduleId } ) {
+const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
+const YouTubeCacheTable = lazy( () => import( `../tables/YouTubeCacheTable.jsx` ) );
+const ContentCacheTable = lazy( () => import( `../tables/ContentCacheTable.jsx` ) );
+
+export default function LazyLoading() {
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
+
+	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
 		[ 'youtube-cache', __( 'YouTube Videos' ) ],
 		[ 'content-cache', __( 'Content Lazy Loading' ) ],
 	]
 	);
-
-	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
-	const YouTubeCacheTable = lazy( () => import( `../tables/YouTubeCacheTable.jsx` ) );
-	const ContentCacheTable = lazy( () => import( `../tables/ContentCacheTable.jsx` ) );
 
 	return (
 		<div className="urlslab-tableView">

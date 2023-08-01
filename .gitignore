@@ -50,3 +50,5 @@ vendor/*
 
 # dist
 admin/dist/*
+# generated file
+admin/src/app/generatedModulesList.json

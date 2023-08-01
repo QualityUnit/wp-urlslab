@@ -103,6 +103,7 @@ button.urlslab-button,
 	}
 
 	&.with-arrow {
+
 		@extend %MenuArrow;
 		padding-left: 0;
 		padding-right: 0;
@@ -111,11 +112,12 @@ button.urlslab-button,
 			color: inherit;
 		}
 
-		&:after {
-			margin-left: .8125em;
+		&::after {
+			margin-left: 0.8125em;
 		}
 
 		&.flip-arrow {
+
 			&::after {
 				transform: scaleY(-1);
 				top: -0.15em;
