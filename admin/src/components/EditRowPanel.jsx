@@ -9,7 +9,7 @@ import Button from '../elements/Button';
 import UnifiedPanelMenu from './UnifiedPanelMenu';
 
 function EditRowPanel( props ) {
-	const { editorMode, rowEditorCells, rowToEdit, notWide, data, slug, paginationId, title, text, id, handlePanel } = props;
+	const { editorMode, rowEditorCells, rowToEdit, noScrollbar, notWide, data, slug, paginationId, title, text, id, handlePanel } = props;
 	const { __ } = useI18n();
 	const enableAddButton = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( );
@@ -83,7 +83,7 @@ function EditRowPanel( props ) {
 					</button>
 					{ editorMode && options.length > 0 && <UnifiedPanelMenu /> }
 				</div>
-				<div className="mt-l urlslab-panel-content">
+				<div className={ `mt-l urlslab-panel-content ${ noScrollbar ? 'no-scrollbar' : '' }` }>
 					{ text && <p className="fs-m">{ text }</p> }
 					{
 						cellsFinal && Object.entries( cellsFinal ).map( ( [ cellId, cell ] ) => {

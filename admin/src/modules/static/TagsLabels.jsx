@@ -125,10 +125,6 @@ export default function TagsLabels( ) {
 		return <Loader />;
 	}
 
-	// if ( row ) {
-	// 	queryClient.invalidateQueries( [ 'label' ] );
-	// }
-
 	return (
 		<div className="urlslab-tableView">
 			<ModuleViewHeaderBottom
@@ -139,7 +135,7 @@ export default function TagsLabels( ) {
 				noImport
 				noFiltering
 				noCount
-				options={ { header, rowEditorCells, notWide: true, title: 'Create new tag', data, slug, url, paginationId, rowToEdit, id: 'name' } }
+				options={ { header, rowEditorCells, noScrollbar: true, notWide: true, title: 'Create new tag', data, slug, url, paginationId, rowToEdit, id: 'name' } }
 			/>
 			<Table className="fadeInto"
 				slug={ slug }
