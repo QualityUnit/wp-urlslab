@@ -8,6 +8,7 @@ import TextAreaEditable from '../../elements/TextAreaEditable';
 import EditableList from '../../elements/EditableList';
 import { getFetch, postFetch } from '../../api/fetching';
 import Button from '../../elements/Button';
+import Checkbox from '../../elements/Checkbox';
 
 function ContentGeneratorPanel() {
 	const { __ } = useI18n();
@@ -20,6 +21,7 @@ function ContentGeneratorPanel() {
 	}, {} );
 	const [ urlsList, setUrlsList ] = useState( [] );
 	const [ keywordsList, setKeywordsList ] = useState( [] );
+	const [ serpUrlList, setSerpUrlList ] = useState( [] );
 	const [ domain, setDomain ] = useState( '' );
 	const [ selectedPromptTemplate, setSelectedPromptTemplate ] = useState( '0' );
 	const [ promptVal, setPromptVal ] = useState( '' );
@@ -39,9 +41,14 @@ function ContentGeneratorPanel() {
 				const res = await postFetch( 'serp-queries/query-cluster', { query: val } );
 				if ( res.ok ) {
 					const keywords = await res.json();
-					setKeywordsList( [ ...keywords ] );
+					const queries = keywords.filter( ( keyword ) => keyword.query !== val )
+						.map( ( keyword ) => {
+							return { q: keyword.query, checked: false };
+						} );
+					setKeywordsList( [ { q: val, checked: true }, ...queries ] );
+				} else {
+					setKeywordsList( [ { q: val, checked: true } ] );
 				}
-				return [];
 			}, 600 )
 		);
 	};
@@ -82,6 +89,42 @@ function ContentGeneratorPanel() {
 		setKeywordsList( [ ...keywordsList, ...data ] );
 	};
 
+	const handleCheckboxCheck = ( checked, index ) => {
+		setKeywordsList( keywordsList.map( ( keyword, idx ) => {
+			if ( idx === index ) {
+				return { ...keyword, checked };
+			}
+			return keyword;
+		} ) );
+	};
+
+	const handleSerpUrlCheckboxCheck = ( checked, index ) => {
+		setSerpUrlList( serpUrlList.map( ( url, idx ) => {
+			if ( idx === index ) {
+				return { ...url, checked };
+			}
+			return url;
+		} ) );
+	};
+
+	const handleSerpContextSelected = async ( val ) => {
+		if ( val === 'SERP_CONTEXT' ) {
+			const primaryKeyword = getSelectedKeywords()[ 0 ];
+			const res = await postFetch( 'serp-queries/query/top-urls', { query: primaryKeyword } );
+			if ( res.ok ) {
+				const urls = await res.json();
+				const d = urls.map( ( url ) => {
+					return { ...url, checked: false };
+				} );
+				setSerpUrlList( d );
+			}
+		}
+	};
+
+	const getSelectedKeywords = () => {
+		return keywordsList.filter( ( keyword ) => keyword.checked ).map( ( keyword ) => keyword.q );
+	};
+
 	return (
 		<div className="urlslab-content-gen-panel">
 			<div className="urlslab-content-gen-panel-control">
@@ -97,6 +140,22 @@ function ContentGeneratorPanel() {
 					/>
 				</div>
 
+				{
+					keywordsList.length > 0 && <div className="urlslab-content-gen-panel-control-item-list">
+						{ keywordsList.map( ( keyword, idx ) => {
+							return (
+								<div>
+									<Checkbox
+										defaultValue={ keyword.checked }
+										onChange={ ( checked ) => handleCheckboxCheck( checked, idx ) }
+									/> <span>{ keyword.q }</span>
+								</div>
+							);
+						} )
+						}
+					</div>
+				}
+
 				<div className="urlslab-content-gen-panel-control-item">
 					<div className="urlslab-content-gen-panel-control-item-desc">
 						{ contextTypesDescription[ dataSource ] }
@@ -109,7 +168,10 @@ function ContentGeneratorPanel() {
 							defaultAccept
 							autoClose
 							defaultValue={ dataSource }
-							onChange={ ( val ) => setDataSource( val ) }
+							onChange={ ( val ) => {
+								setDataSource( val );
+								handleSerpContextSelected( val );
+							} }
 						/>
 					</div>
 				</div>
@@ -155,19 +217,19 @@ function ContentGeneratorPanel() {
 
 				{
 					dataSource && dataSource === 'SERP_CONTEXT' && (
-						<div className="urlslab-content-gen-panel-control-item">
-							<div className="urlslab-content-gen-panel-control-item-container">
-								<EditableList
-									placeholder="Keyword to use..."
-									extraButtonText={ __( 'more Keywords' ) }
-									extraButtonCallback={ handleFetchRelatedKeywords }
-									itemList={ keywordsList }
-									addItemCallback={ ( item ) => setKeywordsList( [ ...keywordsList, item ] ) }
-									removeItemCallback={ ( removingItem ) =>
-										setKeywordsList( keywordsList.filter( ( item ) => item !== removingItem ) )
-									}
-								/>
-							</div>
+						<div className="urlslab-content-gen-panel-control-item-list">
+							{
+								serpUrlList.map( ( url, idx ) => {
+									return (
+										<div>
+											<Checkbox
+												defaultValue={ false }
+												onChange={ ( checked ) => handleSerpUrlCheckboxCheck( checked, idx ) }
+											/> <span>{ url.url_name }</span>
+										</div>
+									);
+								} )
+							}
 						</div>
 					)
 				}

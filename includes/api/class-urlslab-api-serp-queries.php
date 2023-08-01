@@ -292,19 +292,19 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		);
 
 		if ( ! $query->load() || Urlslab_Serp_Query_Row::STATUS_SKIPPED === $query->get_status() ) {
-			return $this->get_serp_results( $request->get_param( 'query' ) );
+			return $this->get_serp_results( $query );
 		} else {
 			global $wpdb;
 			$results = $wpdb->get_results(
 				$wpdb->prepare(
-					'SELECT u.* FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE u.query_id=%d ORDER BY u.position LIMIT 10', // phpcs:ignore
+					'SELECT u.* FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d ORDER BY p.position LIMIT 10', // phpcs:ignore
 					$query->get_query_id()
 				),
 				ARRAY_A
 			);
 
 			if ( empty( $results ) ) {
-				return $this->get_serp_results( $request->get_param( 'query' ) );
+				return $this->get_serp_results( $query );
 			}
 
 			$rows = array();
