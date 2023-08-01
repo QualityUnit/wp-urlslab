@@ -204,16 +204,21 @@ export default function SettingsOption( { settingId, option } ) {
 				);
 			case 'listbox':
 				return (
-					<SingleSelectMenu key={ id } className="wide" name={ id } items={ possible_values } defaultValue={ value } autoClose onChange={ ( selectedId ) => handleChange.mutate( selectedId ) }>
-						<>
-							{ title }
-							{
-								labels.map( ( tag ) => {
-									const { name, color: tagColor } = labelsList[ tag ];
-									return <Tag className="outline ml-s" style={ { color: tagColor } } key={ tag }>{ name }</Tag>;
-								} )
-							}
-						</>
+					<SingleSelectMenu key={ id }
+						className="wide"
+						name={ id }
+						items={ possible_values }
+						defaultValue={ value }
+						autoClose
+						onChange={ ( selectedId ) => handleChange.mutate( selectedId ) }
+						labels={
+							labels.map( ( tag ) => {
+								const { name, color: tagColor } = labelsList[ tag ];
+								return <Tag className="outline ml-s" style={ { color: tagColor } } key={ tag }>{ name }</Tag>;
+							} )
+						}
+					>
+						{ title }
 					</SingleSelectMenu>
 				);
 			case 'multicheck':
@@ -224,16 +229,15 @@ export default function SettingsOption( { settingId, option } ) {
 						key={ id }
 						id={ id }
 						asTags
-						onChange={ ( selectedItems ) => handleChange.mutate( selectedItems ) }>
-						<>
-							{ title }
-							{
-								labels.map( ( tag ) => {
-									const { name, color: tagColor } = labelsList[ tag ];
-									return <Tag className="outline ml-s" style={ { color: tagColor } } key={ tag }>{ name }</Tag>;
-								} )
-							}
-						</>
+						onChange={ ( selectedItems ) => handleChange.mutate( selectedItems ) }
+						labels={
+							labels.map( ( tag ) => {
+								const { name, color: tagColor } = labelsList[ tag ];
+								return <Tag className="outline ml-s" style={ { color: tagColor } } key={ tag }>{ name }</Tag>;
+							} )
+						}
+					>
+						{ title }
 					</MultiSelectMenu>
 				);
 			default:

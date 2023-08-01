@@ -115,7 +115,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 			false,
 			null,
 			'serpapi',
-			 array( self::LABEL_EXPERIMENTAL )
+			array( self::LABEL_EXPERIMENTAL )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SYNC_FREQ,
@@ -136,7 +136,8 @@ class Urlslab_Serp extends Urlslab_Widget {
 
 				return in_array( $value, $request->getNotOlderThanAllowableValues() );
 			},
-			'serpapi'
+			'serpapi',
+			array( self::LABEL_EXPERIMENTAL )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_QUERY_TYPES,
