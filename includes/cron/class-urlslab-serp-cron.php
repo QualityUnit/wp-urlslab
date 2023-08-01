@@ -188,36 +188,18 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 				if ( ! empty( $domains ) ) {
 					$domains[0]->insert_all( $domains, true );
 				}
+				$this->discoverNewQueries( $serp_response );
 
-				$fqs = $serp_response->getFaqs();
-				if ( ! empty( $fqs ) && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_FAQS ) ) {
-					foreach ( $fqs as $faq ) {
-						$faq_row = new Urlslab_Faq_Row( array( 'question' => $faq->question ), false );
-						if ( $faq_row->load( array( 'question' ) ) ) {
-							continue;
-						}
+				$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );
+
+				if ( Urlslab_Serp_Query_Row::TYPE_SERP_FAQ === $query->get_type() && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_FAQS ) ) {
+					//if the question is relevant FAQ, add it to the FAQ table
+					$faq_row = new Urlslab_Faq_Row( array( 'question' => $query->get_query() ), false );
+					if ( ! $faq_row->load( array( 'question' ) ) ) {
 						$faq_row->set_status( Urlslab_Faq_Row::STATUS_EMPTY );
 						$faq_row->insert();
 					}
 				}
-
-				$related = $serp_response->getRelatedSearches();
-				if ( ! empty( $related ) && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES ) && $this->get_serp_queries_count() <= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SERP_IMPORT_LIMIT ) ) {
-					$queries = array();
-					foreach ( $related as $related_search ) {
-						$queries[] = new Urlslab_Serp_Query_Row(
-							array(
-								'query'  => strtolower( trim( $related_search->query ) ),
-								'status' => Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
-								'type'   => Urlslab_Serp_Query_Row::TYPE_SERP_RELATED,
-							)
-						);
-					}
-					if ( ! empty( $queries ) ) {
-						$queries[0]->insert_all( $queries, true );
-					}
-				}
-				$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );
 			} else {
 				$query->set_status( Urlslab_Serp_Query_Row::STATUS_SKIPPED ); //irrelevant query
 			}
@@ -248,5 +230,43 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 		}
 
 		return $this->serp_queries_count;
+	}
+
+	/**
+	 * @param \OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchResponse $serp_response
+	 *
+	 * @return void
+	 */
+	private function discoverNewQueries( \OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchResponse $serp_response ): void {
+		//Discover new queries
+		$fqs     = $serp_response->getFaqs();
+		$queries = array();
+		if ( ! empty( $fqs ) && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_FAQS_AS_QUERY ) ) {
+			foreach ( $fqs as $faq ) {
+				$queries[] = new Urlslab_Serp_Query_Row(
+					array(
+						'query'  => strtolower( trim( $faq->question ) ),
+						'status' => Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
+						'type'   => Urlslab_Serp_Query_Row::TYPE_SERP_FAQ,
+					)
+				);
+			}
+		}
+
+		$related = $serp_response->getRelatedSearches();
+		if ( ! empty( $related ) && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES ) && $this->get_serp_queries_count() <= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SERP_IMPORT_LIMIT ) ) {
+			foreach ( $related as $related_search ) {
+				$queries[] = new Urlslab_Serp_Query_Row(
+					array(
+						'query'  => strtolower( trim( $related_search->query ) ),
+						'status' => Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
+						'type'   => Urlslab_Serp_Query_Row::TYPE_SERP_RELATED,
+					)
+				);
+			}
+		}
+		if ( ! empty( $queries ) ) {
+			$queries[0]->insert_all( $queries, true );
+		}
 	}
 }

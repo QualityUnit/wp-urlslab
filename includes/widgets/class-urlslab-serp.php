@@ -16,6 +16,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 	const SETTING_NAME_GSC_MIN_IMPRESSIONS = 'urlslab-gsc-min-impressions';
 	const SETTING_NAME_GSC_MIN_CLICKS = 'urlslab-gsc-min-clicks';
 	const SETTING_NAME_IRRELEVANT_QUERY_LIMIT = 'urlslab-irrelevant-query-limit';
+	const SETTING_NAME_IMPORT_FAQS_AS_QUERY = 'urlslab-import-faqs-as-query';
 
 	public static function get_available_query_types() {
 		return array(
@@ -218,13 +219,24 @@ class Urlslab_Serp extends Urlslab_Widget {
 		);
 
 
-		$this->add_options_form_section( 'import_faq', __( 'Import Frequently Asked Questions' ), __( 'URLsLab can automatically import FAQ entries from SERP results' ) );
+		$this->add_options_form_section( 'import_faq', __( 'Import Frequently Asked Questions' ), __( 'URLsLab can automatically import FAQ entries from SERP results and relevant questions to your business can be added into FAQ module. This will help you to build new content in your website.' ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_IMPORT_FAQS_AS_QUERY,
+			true,
+			false,
+			__( 'Import FAQs from SERP Results as new Queries' ),
+			__( 'If active, frequently asked questions from google serp results will be added as new queries. Questions could be source of traffic for your website and it is good to know the position you are ranking for.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'import_faq'
+		);
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_FAQS,
 			true,
 			false,
-			__( 'Import FAQs' ),
-			__( 'Import FAQS for analyzed keywords automatically and store them to Frequently Asked Questions module.' ),
+			__( 'Import FAQs query as Question into FAQ module' ),
+			__( 'Import FAQS for analyzed keywords automatically and store them to Frequently Asked Questions module if the question is relevant query (more competitor domains rank for this question).' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
