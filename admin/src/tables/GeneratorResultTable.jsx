@@ -57,7 +57,7 @@ export default function GeneratorResultTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, url, paginationId, filters, sorting } );
 
-	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -222,7 +222,7 @@ export default function GeneratorResultTable( { slug } ) {
 			<ModuleViewHeaderBottom
 				table={ table }
 				noImport
-				onDeleteSelected={ deleteSelectedRows }
+				onDeleteSelected={ deleteMultipleRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ {
 					header,

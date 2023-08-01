@@ -6,6 +6,7 @@ import EditRowPanel from './EditRowPanel';
 import ExportPanel from './ExportPanel';
 import ImportPanel from './ImportPanel';
 import DangerPanel from './DangerPanel';
+import DeleteFilteredPanel from './DeleteFilteredPanel';
 import DetailsPanel from './DetailsPanel';
 import { ReactComponent as Trash } from '../assets/images/icons/icon-trash.svg';
 import ChangesPanel from './ChangesPanel/ChangesPanel';
@@ -33,6 +34,13 @@ export default function TablePanels( { props } ) {
 					button={ <><Trash />{ __( 'Delete selected' ) }</> }
 					handlePanel={ handlePanel }
 					action="delete-selected"
+				/>
+			}
+			{
+				activePanel === 'deleteAllFiltered' &&
+				<DeleteFilteredPanel { ...options }
+					handlePanel={ handlePanel }
+					action="delete-filtered"
 				/>
 			}
 			{

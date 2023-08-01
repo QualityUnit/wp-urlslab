@@ -8,6 +8,8 @@ import useTablePanels from '../hooks/useTablePanels';
 
 export default function URLRelationTable( { slug } ) {
 	const paginationId = 'src_url_id';
+	const optionalSelector = 'dest_url_id';
+
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const url = { filters, sorting };
 
@@ -23,7 +25,7 @@ export default function URLRelationTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -70,13 +72,13 @@ export default function URLRelationTable( { slug } ) {
 		columnHelper.accessor( 'pos', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() } min="0" max="100"
-				onChange={ ( newVal ) => updateRow( { newVal, cell, optionalSelector: 'dest_url_id' } ) } />,
+				onChange={ ( newVal ) => updateRow( { newVal, cell, optionalSelector } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.pos }</SortBy>,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'is_locked', {
 			className: 'nolimit',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, optionalSelector: 'dest_url_id' } ) } />,
+			cell: ( cell ) => <Checkbox defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, optionalSelector } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.is_locked }</SortBy>,
 			size: 30,
 		} ),
@@ -88,7 +90,7 @@ export default function URLRelationTable( { slug } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, optionalSelector: 'dest_url_id', id: 'src_url_name' } ) } />,
+			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, optionalSelector, id: 'src_url_name' } ) } />,
 			header: null,
 		} ),
 	];
@@ -101,9 +103,10 @@ export default function URLRelationTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				table={ table }
-				onDeleteSelected={ deleteSelectedRows }
+				onDeleteSelected={ deleteMultipleRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ { header, rowEditorCells, title: 'Add New Related Article', data, slug, url, paginationId, rowToEdit, id: 'src_url_name', deleteCSVCols: [ paginationId, 'dest_url_id' ],
+				options={ {
+					header, rowEditorCells, title: 'Add New Related Article', data, slug, url, paginationId, optionalSelector, rowToEdit, id: 'src_url_name', deleteCSVCols: [ paginationId, 'dest_url_id' ],
 				} }
 			/>
 
