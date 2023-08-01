@@ -50,7 +50,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'google_sgc', __( 'Google Search Console' ), __( 'Integrate your Google Search Console to get most up to date stats about your urls. Visit https://www.urlslab.com/dashboard/ and connect Google Search Console in Integrations menu.' ) );
+		$this->add_options_form_section( 'google_sgc', __( 'Google Search Console' ), __( 'Integrate your Google Search Console to get most up to date stats about your urls. Visit https://www.urlslab.com/dashboard/ and connect Google Search Console in Integrations menu.' ), array( self::LABEL_PAID, self::LABEL_BETA ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_GSC_IMPORT,
 			true,
@@ -104,7 +104,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 		);
 
 
-		$this->add_options_form_section( 'serpapi', __( 'SERP Data' ), __( 'SERP data synchronization helps you to monitor position of competitor websites for specific keywords and analyze content clusters of your website. Thanks to these data we can predict content gaps or other reports to help you with building new content on your website.' ) );
+		$this->add_options_form_section( 'serpapi', __( 'SERP Data' ), __( 'SERP data synchronization helps you to monitor position of competitor websites for specific keywords and analyze content clusters of your website. Thanks to these data we can predict content gaps or other reports to help you with building new content on your website.' ), array( self::LABEL_PAID, self::LABEL_BETA ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_SERP_API,
 			false,
@@ -114,7 +114,8 @@ class Urlslab_Serp extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'serpapi'
+			'serpapi',
+			 array( self::LABEL_EXPERIMENTAL )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SYNC_FREQ,

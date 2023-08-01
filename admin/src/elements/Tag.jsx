@@ -16,11 +16,11 @@ export default function Tag( { props, type, autoTextColor, lightnessTreshold, fu
 
 	return (
 		type === 'button'
-			? <button { ...props } onClick={ onClick } className={ `urlslab-tag ${ fullSize ? 'fullSize' : '' } ${ className ? className : '' } ${ size ? size : '' } ${ shape ? shape : '' } ${ fill && 'fill' }` } style={ { ...style, color: setTextColor() } }>
+			? <button { ...props } onClick={ onClick } className={ `urlslab-tag ${ fullSize ? 'fullSize' : '' } ${ className ? className : '' } ${ size ? size : '' } ${ shape ? shape : '' } ${ fill ? 'fill' : '' }` } style={ { ...style, color: autoTextColor ? setTextColor() : style.color } }>
 				{ children }
 				{ onDelete && <Close onClick={ onDelete } className="urlslab-tag-close" /> }
 			</button>
-			: <span { ...props } className={ `urlslab-tag ${ fullSize ? 'fullSize' : '' } ${ className ? className : '' } ${ size ? size : '' } ${ shape ? shape : '' } ${ fill && 'fill' }` } style={ { ...style, color: setTextColor() } }>
+			: <span { ...props } className={ `urlslab-tag ${ fullSize ? 'fullSize' : '' } ${ className ? className : '' } ${ size ? size : '' } ${ shape ? shape : '' } ${ fill ? 'fill' : '' }` } style={ { ...style, color: autoTextColor ? setTextColor() : style.color } }>
 				{ children }
 				{ onDelete && <Close onClick={ onDelete } className="urlslab-tag-close" /> }
 			</span>

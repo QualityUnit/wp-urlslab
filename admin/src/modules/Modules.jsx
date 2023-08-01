@@ -3,25 +3,11 @@ import { useI18n } from '@wordpress/react-i18n/';
 import DashboardModule from '../components/DashboardModule';
 import SearchField from '../elements/SearchField';
 import MultiSelectMenu from '../elements/MultiSelectMenu';
+import labelsList from '../lib/labelsList';
 
 function Modules( { modules } ) {
 	const { __ } = useI18n();
 	const [ filterBy, setFilterBy ] = useState( {} );
-
-	const labelsList = {
-		paid: { name: 'Paid service', color: '#00c996' },
-		// expert: { name: 'Experts', color: '#ffc996' },
-		free: { name: 'Free' },
-		// experimental: { name: 'Experimental', color: '#ff8875' },
-		beta: { name: 'Beta', color: '#75a9ff' },
-		// alpha: { name: 'Alpha' },
-		// expert: { name: 'Expert' },
-		seo: { name: 'SEO', color: '#D4C5F9' },
-		// cron: { name: 'Cron' },
-		performance: { name: 'Performance', color: '#65B5FF' },
-		tools: { name: 'Tools', color: '#FFD189' },
-		ai: { name: 'AI', color: '#ff7a7a' },
-	};
 
 	const statusList = {
 		active: 'Active modules',
