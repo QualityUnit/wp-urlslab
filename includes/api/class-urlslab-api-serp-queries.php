@@ -239,12 +239,15 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$query                             = new Urlslab_Serp_Query_Row(
 			array(
 				'query' => $request->get_param( 'query' ),
-				'type'  => Urlslab_Serp_Query_Row::TYPE_GSC,
 			),
 			true
 		);
 
-		if ( empty( $query ) ) {
+		if ( $query->get_status() === Urlslab_Serp_Query_Row::STATUS_ERROR || $query->get_status() === Urlslab_Serp_Query_Row::STATUS_PROCESSING ) {
+			return new WP_REST_Response( array(), 200 );
+		}
+
+		if ( $query->get_status() !== Urlslab_Serp_Query_Row::STATUS_PROCESSED ) {
 			// if it doesn't exist, we'll make a SERP call
 			$serp_res = $this->make_serp_request( $query );
 			$related  = $serp_res->getRelatedSearches();
@@ -266,6 +269,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id' );
 			$sql->add_from( ' WHERE a.query_id = ' . $query->get_query_id() );
 			$sql->add_group_by( 'a.query_id, b.query_id' );
+			$sql->add_having_filters();
 
 			$rows = $sql->get_results();
 

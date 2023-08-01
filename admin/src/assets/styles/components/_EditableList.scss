@@ -19,13 +19,14 @@
         justify-content: flex-start;
 
         &-input {
-            width: 70%;
+            width: 60%;
         }
 
         &-btn {
-            width: 30%;
+            width: 40%;
             display: flex;
             padding-left: 1em;
+            justify-content: space-between;
             align-items: center;
         }
     }

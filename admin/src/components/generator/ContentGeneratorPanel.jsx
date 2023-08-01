@@ -7,6 +7,7 @@ import promptTemplates from '../../data/promptTemplates.json';
 import TextAreaEditable from '../../elements/TextAreaEditable';
 import EditableList from '../../elements/EditableList';
 import { postFetch } from '../../api/fetching';
+import Button from '../../elements/Button';
 
 function ContentGeneratorPanel() {
 	const { __ } = useI18n();
@@ -52,6 +53,11 @@ function ContentGeneratorPanel() {
 	const handlePromptTemplateChange = ( id ) => {
 		setSelectedPromptTemplate( id );
 		setPromptVal( promptTemplates[ id ].promptTemplate );
+	};
+
+	const handleFetchRelatedKeywords = async ( query ) => {
+		const { data } = await postFetch( 'serp-queries/query/related-queries', { query } );
+		setKeywordsList( [ ...keywordsList, ...data ] );
 	};
 
 	return (
@@ -163,6 +169,8 @@ function ContentGeneratorPanel() {
 							<div className="urlslab-content-gen-panel-control-item-container">
 								<EditableList
 									placeholder="Keyword to use..."
+									extraButtonText={ __( 'more Keywords' ) }
+									extraButtonCallback={ handleFetchRelatedKeywords }
 									itemList={ keywordsList }
 									addItemCallback={ ( item ) => setKeywordsList( [ ...keywordsList, item ] ) }
 									removeItemCallback={ ( removingItem ) =>

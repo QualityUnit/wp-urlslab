@@ -3,7 +3,7 @@ import InputField from './InputField';
 import { useState } from 'react';
 import '../assets/styles/components/_EditableList.scss';
 
-export default function EditableList( { label, placeholder, itemList, addItemCallback, removeItemCallback } ) {
+export default function EditableList( { label, placeholder, extraButtonText, extraButtonCallback, itemList, addItemCallback, removeItemCallback } ) {
 	const [ newItem, setNewItem ] = useState( '' );
 
 	const handleAddNewItem = () => {
@@ -29,6 +29,9 @@ export default function EditableList( { label, placeholder, itemList, addItemCal
 
 						<div className="urlslab-EditableList-item-btn">
 							<Button onClick={ () => removeItemCallback( item ) } danger>Remove</Button>
+							{ extraButtonText && extraButtonCallback && (
+								<Button className="outline" onClick={ () => extraButtonCallback( item ) }>{ extraButtonText }</Button>
+							) }
 						</div>
 					</div>
 				)

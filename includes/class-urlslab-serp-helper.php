@@ -30,10 +30,6 @@ class Urlslab_Serp_Helper {
 	}
 
 	public function search_serp( Urlslab_Serp_Query_Row $query, string $not_older_than ) {
-		// setting status to processing
-		$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSING );
-		$query->update();
-
 		// preparing needed operators
 		$request = new Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest();
 		$request->setSerpQuery( $query->get_query() );
