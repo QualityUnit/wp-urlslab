@@ -102,7 +102,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$base . '/query_cluster',
 			array(
 				array(
-					'methods'             => WP_REST_Server::ALLMETHODS,
+					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_query_cluster' ),
 					'permission_callback' => array(
 						$this,
