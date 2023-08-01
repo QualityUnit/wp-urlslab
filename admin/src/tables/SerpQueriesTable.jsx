@@ -172,7 +172,7 @@ export default function SerpQueriesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'my_url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_url_name }</SortBy>,
 			size: 100,
 		} ),

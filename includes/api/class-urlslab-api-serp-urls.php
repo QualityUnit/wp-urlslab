@@ -29,6 +29,8 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 			$row->top10_queries_cnt = (int) $row->top10_queries_cnt;
 			$row->best_position     = (int) $row->best_position;
 			$row->match_competitors = (int) $row->match_competitors;
+			$row->my_clicks         = (int) $row->my_clicks;
+			$row->my_impressions    = (int) $row->my_impressions;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -52,9 +54,11 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 			$sql->add_select_column( $column, 'u' );
 		}
 		$sql->add_select_column( 'MIN(p.position)', false, 'best_position' );
+		$sql->add_select_column( 'SUM(p.impressions)', false, 'my_impressions' );
+		$sql->add_select_column( 'SUM(p.clicks)', false, 'my_clicks' );
 		$sql->add_select_column( 'COUNT(*)', false, 'queries_cnt' );
 		$sql->add_select_column( 'SUM(CASE WHEN p.position <= 10 THEN 1 ELSE 0 END)', false, 'top10_queries_cnt' );
-		$sql->add_select_column( 'GROUP_CONCAT(query order by p.position)', false, 'queries' );
+		$sql->add_select_column( 'GROUP_CONCAT(DISTINCT query order by p.position)', false, 'queries' );
 		$sql->add_select_column( 'domain_type', 'd' );
 		$sql->add_select_column( 'COUNT(DISTINCT po.domain_id)', false, 'match_competitors' );
 
@@ -72,7 +76,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 			$this->prepare_columns(
 				array(
 					'best_position'     => '%d',
-					'match_competitors'     => '%d',
+					'match_competitors' => '%d',
 					'queries_cnt'       => '%d',
 					'top10_queries_cnt' => '%d',
 					'queries'           => '%s',
