@@ -6,9 +6,8 @@ import Loader from '../Loader';
 import promptTemplates from '../../data/promptTemplates.json';
 import TextAreaEditable from '../../elements/TextAreaEditable';
 import EditableList from '../../elements/EditableList';
-import { postFetch } from '../../api/fetching';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Typography } from '@mui/material';
+import { getFetch, postFetch } from '../../api/fetching';
+import Button from '../../elements/Button';
 
 function ContentGeneratorPanel() {
 	const { __ } = useI18n();
@@ -19,12 +18,33 @@ function ContentGeneratorPanel() {
 		acc[ key ] = value.name;
 		return acc;
 	}, {} );
-	const [ step, setStep ] = useState( 0 );
 	const [ urlsList, setUrlsList ] = useState( [] );
 	const [ keywordsList, setKeywordsList ] = useState( [] );
 	const [ domain, setDomain ] = useState( '' );
 	const [ selectedPromptTemplate, setSelectedPromptTemplate ] = useState( '0' );
 	const [ promptVal, setPromptVal ] = useState( '' );
+
+	// handling keyword input
+	const [ typingTimeout, setTypingTimeout ] = useState( 0 );
+	const handleChangeKeywordInput = ( val ) => {
+		if ( typingTimeout ) {
+			clearTimeout( typingTimeout );
+		}
+
+		setTypingTimeout(
+			setTimeout( async () => {
+				if ( val === '' ) {
+					return [];
+				}
+				const res = await postFetch( 'serp-queries/query-cluster', { query: val } );
+				if ( res.ok ) {
+					const keywords = await res.json();
+					setKeywordsList( [ ...keywords ] );
+				}
+				return [];
+			}, 600 )
+		);
+	};
 
 	const contextTypes = {
 		NO_CONTEXT: 'No Data Source',
@@ -66,94 +86,15 @@ function ContentGeneratorPanel() {
 		<div className="urlslab-content-gen-panel">
 			<div className="urlslab-content-gen-panel-control">
 				<h2>Content Generator</h2>
-
-				<Accordion>
-					<AccordionSummary
-						expandIcon={ <ExpandMoreIcon /> }
-						aria-controls="panel1a-content"
-						id="panel1a-header"
-						expanded={ step === 0 }
-					>
-						<Typography>Pick Keyword</Typography>
-					</AccordionSummary>
-					<AccordionDetails>
-						<Typography>
-							pick Keyword
-						</Typography>
-					</AccordionDetails>
-				</Accordion>
-				<Accordion>
-					<AccordionSummary
-						expandIcon={ <ExpandMoreIcon /> }
-						aria-controls="panel1a-content"
-						id="panel1a-header"
-						expanded={ step === 1 }
-					>
-						<Typography>Pick Data Source</Typography>
-					</AccordionSummary>
-					<AccordionDetails>
-						<Typography>
-							pick Data Source
-						</Typography>
-					</AccordionDetails>
-				</Accordion>
-				<Accordion>
-					<AccordionSummary
-						expandIcon={ <ExpandMoreIcon /> }
-						aria-controls="panel1a-content"
-						id="panel1a-header"
-						expanded={ step === 2 }
-					>
-						<Typography>Write Prompt</Typography>
-					</AccordionSummary>
-					<AccordionDetails>
-						<Typography>
-							Write Prompt
-						</Typography>
-					</AccordionDetails>
-				</Accordion>
-
 				<div className="urlslab-content-gen-panel-control-item">
 					<InputField
 						liveUpdate
 						defaultValue=""
-						description={ __( 'The Topic you want to generate content about' ) }
-						label={ __( 'Topic' ) }
-						onChange={ ( val ) => setGenerationData( { ...generationData, topic: val } ) }
+						description={ __( 'Keyword to Pick' ) }
+						label={ __( 'Keyword' ) }
+						onChange={ ( val ) => handleChangeKeywordInput( val ) }
 						required
 					/>
-				</div>
-
-				<div className="urlslab-content-gen-panel-control-item">
-					<div className="urlslab-content-gen-panel-control-item-desc">
-						Prompt Template to choose
-					</div>
-
-					<div className="urlslab-content-gen-panel-control-item-selector">
-						<SingleSelectMenu
-							key={ selectedPromptTemplate }
-							items={ promptTemplateSelections }
-							name="context_menu"
-							defaultAccept
-							autoClose
-							defaultValue={ selectedPromptTemplate }
-							onChange={ handlePromptTemplateChange }
-						/>
-					</div>
-				</div>
-
-				<div className="urlslab-content-gen-panel-control-item">
-					<TextAreaEditable
-						liveUpdate
-						val={ promptVal }
-						defaultValue=""
-						label={ __( 'Prompt' ) }
-						rows={ 10 }
-						allowResize
-						onChange={ handlePromptChange }
-						required
-						placeholder={ contextTypePromptPlaceholder[ dataSource ] }
-						description={ __( 'Prompt to be used while generating content' ) } />
 				</div>
 
 				<div className="urlslab-content-gen-panel-control-item">
@@ -230,6 +171,38 @@ function ContentGeneratorPanel() {
 						</div>
 					)
 				}
+
+				<div className="urlslab-content-gen-panel-control-item">
+					<div className="urlslab-content-gen-panel-control-item-desc">
+						Prompt Template to choose
+					</div>
+
+					<div className="urlslab-content-gen-panel-control-item-selector">
+						<SingleSelectMenu
+							key={ selectedPromptTemplate }
+							items={ promptTemplateSelections }
+							name="context_menu"
+							defaultAccept
+							autoClose
+							defaultValue={ selectedPromptTemplate }
+							onChange={ handlePromptTemplateChange }
+						/>
+					</div>
+				</div>
+
+				<div className="urlslab-content-gen-panel-control-item">
+					<TextAreaEditable
+						liveUpdate
+						val={ promptVal }
+						defaultValue=""
+						label={ __( 'Prompt' ) }
+						rows={ 10 }
+						allowResize
+						onChange={ handlePromptChange }
+						required
+						placeholder={ contextTypePromptPlaceholder[ dataSource ] }
+						description={ __( 'Prompt to be used while generating content' ) } />
+				</div>
 
 			</div>
 			<div className="urlslab-content-gen-panel-editor">

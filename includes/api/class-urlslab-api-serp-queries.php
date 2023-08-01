@@ -125,10 +125,10 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/query_cluster',
+			$base . '/query-cluster',
 			array(
 				array(
-					'methods'             => WP_REST_Server::READABLE,
+					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'get_query_cluster' ),
 					'permission_callback' => array(
 						$this,
