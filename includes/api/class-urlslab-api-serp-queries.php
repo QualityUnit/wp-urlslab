@@ -229,7 +229,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$row->my_impressions = (int) $row->my_impressions;
 			$row->comp_position  = (int) $row->comp_position;
 			$row->comp_count     = (int) $row->comp_count;
-			$row->my_url_name    = str_replace( ',', "\n", $row->my_url_name );
+			$row->my_url_name    = str_replace( ',', ", ", $row->my_url_name );
 			try {
 				if ( ! empty( $row->comp_url_name ) ) {
 					$url                = new Urlslab_Url( $row->comp_url_name, true );
