@@ -5,7 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import SerpOverview from '../overview/Serp';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
-const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
+const SettingsModule = lazy( () => import( `../modules/static/Settings.jsx` ) );
 const SerpQueriesTable = lazy( () => import( `../tables/SerpQueriesTable.jsx` ) );
 const SerpUrlsTable = lazy( () => import( `../tables/SerpUrlsTable.jsx` ) );
 const SerpTopDomainsTable = lazy( () => import( `../tables/SerpTopDomainsTable.jsx` ) );
