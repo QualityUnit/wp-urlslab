@@ -135,7 +135,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 						$has_monitored_domain ++;
 					}
 
-					if ( 10 >= $organic_result->position || Urlslab_Serp_Domain_Row::get_monitored_domains()[ $url_obj->get_domain_id() ] ) {
+					if ( 10 >= $organic_result->position || isset( Urlslab_Serp_Domain_Row::get_monitored_domains()[ $url_obj->get_domain_id() ] ) ) {
 						$url    = new Urlslab_Serp_Url_Row(
 							array(
 								'url_name'        => $organic_result->link,
