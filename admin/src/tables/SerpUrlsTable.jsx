@@ -62,6 +62,7 @@ export default function SerpUrlsTable( { slug } ) {
 		top10_queries_cnt: __( 'Top 10' ),
 		queries_cnt: __( 'Top 100' ),
 		queries: __( 'Top Queries' ),
+		match_competitors: __( 'Competitors Intersection' ),
 	};
 
 	const columns = [
@@ -91,20 +92,22 @@ export default function SerpUrlsTable( { slug } ) {
 			size: 80,
 		} ),
 
+		columnHelper.accessor( 'match_competitors', {
+			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.match_competitors }</SortBy>,
+			minSize: 50,
+		} ),
 		columnHelper.accessor( 'best_position', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.best_position }</SortBy>,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'top10_queries_cnt', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.top10_queries_cnt }</SortBy>,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'queries_cnt', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.queries_cnt }</SortBy>,
 			minSize: 50,
