@@ -68,6 +68,7 @@ export default function SerpGapTable( { slug } ) {
 
 	const header = {
 		query: __( 'Query' ),
+		type: __( 'Query Type' ),
 		competitors_count: __( 'KD' ),
 		top_competitors: __( 'Top Competitors' ),
 		my_url_name: __( 'My URL' ),
@@ -77,6 +78,12 @@ export default function SerpGapTable( { slug } ) {
 		my_ctr: __( 'My CTR' ),
 	};
 
+	const types = {
+		U: __( 'User' ),
+		C: __( 'Search Console' ),
+		S: __( 'Google Suggestion' ),
+		F: __( 'Google FAQ' ),
+	}
 
 	const columns = [
 		columnHelper.accessor( 'query', {
@@ -84,6 +91,13 @@ export default function SerpGapTable( { slug } ) {
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.query }</SortBy>,
 			minSize: 200,
+		} ),
+		columnHelper.accessor( 'type', {
+			filterValMenu: types,
+			className: 'nolimit',
+			cell: ( cell ) => types[ cell.getValue() ],
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.type }</SortBy>,
+			size: 80,
 		} ),
 		columnHelper.accessor( 'competitors_count', {
 			className: 'nolimit',

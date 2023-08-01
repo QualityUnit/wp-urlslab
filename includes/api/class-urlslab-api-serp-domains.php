@@ -137,6 +137,11 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 			$row->avg_pos     = round( (float) $row->avg_pos, 1 );
 			$row->top_10_cnt  = (int) $row->top_10_cnt;
 			$row->top_100_cnt = (int) $row->top_100_cnt;
+			try {
+				$url              = new Urlslab_Url( $row->domain_name, true );
+				$row->domain_name = $url->get_url_with_protocol();
+			} catch ( Exception $e ) {
+			}
 		}
 
 		return new WP_REST_Response( $rows, 200 );
