@@ -85,7 +85,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
-				return is_numeric( $value ) && 1 <= $value;
+				return is_numeric( $value ) && 0 <= $value;
 			},
 			'google_sgc'
 		);
@@ -98,7 +98,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
-				return is_numeric( $value ) && 1 <= $value;
+				return is_numeric( $value ) && 0 <= $value;
 			},
 			'google_sgc'
 		);
