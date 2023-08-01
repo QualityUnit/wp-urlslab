@@ -54,7 +54,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		$sql->add_select_column( 'MIN(p.position)', false, 'best_position' );
 		$sql->add_select_column( 'COUNT(*)', false, 'queries_cnt' );
 		$sql->add_select_column( 'SUM(CASE WHEN p.position <= 10 THEN 1 ELSE 0 END)', false, 'top10_queries_cnt' );
-		$sql->add_select_column( 'GROUP_CONCAT(query order by p.position LIMIT 20)', false, 'queries' );
+		$sql->add_select_column( 'GROUP_CONCAT(query order by p.position)', false, 'queries' );
 		$sql->add_select_column( 'domain_type', 'd' );
 		$sql->add_select_column( 'COUNT(DISTINCT po.domain_id)', false, 'match_competitors' );
 
