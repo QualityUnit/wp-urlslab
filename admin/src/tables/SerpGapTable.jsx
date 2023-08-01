@@ -69,7 +69,7 @@ export default function SerpGapTable( { slug } ) {
 	const header = {
 		query: __( 'Query' ),
 		type: __( 'Query Type' ),
-		competitors_count: __( 'KD' ),
+		competitors_count: __( 'Competitors Intersection' ),
 		top_competitors: __( 'Top Competitors' ),
 		my_url_name: __( 'My URL' ),
 		my_position: __( 'My Position' ),
