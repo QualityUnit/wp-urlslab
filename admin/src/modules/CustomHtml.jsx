@@ -21,6 +21,7 @@ export default function CustomHtml() {
 	return (
 		<div className="urlslab-tableView">
 			<ModuleViewHeader
+				moduleId={ moduleId }
 				moduleMenu={ tableMenu }
 				activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
 			{
