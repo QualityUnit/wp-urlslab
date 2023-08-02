@@ -1,5 +1,4 @@
 import { Suspense, lazy, useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 
 import SchedulesOverview from '../../overview/Schedules';
@@ -14,7 +13,8 @@ export default function Schedule() {
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 
-	const { moduleId } = useOutletContext();
+	// define module id statically, this module is not included in api response to get value from query
+	const moduleId = 'urlslab-schedule';
 
 	const tableMenu = new Map( [
 		[ slug, __( 'Schedules' ) ],
