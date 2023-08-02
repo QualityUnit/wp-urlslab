@@ -35,7 +35,7 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 		}
 
 		try {
-			$xpath = new DOMXPath( $document );
+			$xpath      = new DOMXPath( $document );
 			$table_data = $xpath->query( "//img[(not(@alt) or @alt='') and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-img-alt')]) and not(ancestor::*[@id='wpadminbar'])]|//*[substring-after(name(), 'h') > 0]" );
 			$last_title = get_the_title();
 
@@ -80,7 +80,7 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'general', __( 'Alt Text Attribute' ), __( 'Alt text is a must-have for accessibility – it provides a text alternative for those with vision impairment. It also helps search engines understand the image\'s content, improving the chances of the image being indexed correctly and on the right keywords.' ) );
+		$this->add_options_form_section( 'general', __( 'Alt Text Attribute' ), __( 'Alt text is a must-have for accessibility – it provides a text alternative for those with vision impairment. It also helps search engines understand the image\'s content, improving the chances of the image being indexed correctly and on the right keywords.' ), array( self::LABEL_SEO ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_ALT_TAG_SOURCE,
 			array( self::SOURCE_FIGCAPTION, self::SOURCE_LINK, self::SOURCE_H ),
