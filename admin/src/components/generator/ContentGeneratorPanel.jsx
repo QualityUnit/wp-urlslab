@@ -94,7 +94,7 @@ function ContentGeneratorPanel() {
 			}
 
 			if ( dataSource === 'URL_CONTEXT' ) {
-				selectedUrls = [ ...urlsList.filter( ( url ) => url.checked ).map( ( url ) => url.url_name ) ];
+				selectedUrls = [ ...urlsList ];
 			}
 
 			const processIdResponse = await augmentWithURLContext( selectedUrls, promptVal, modelName );
@@ -113,10 +113,8 @@ function ContentGeneratorPanel() {
 								setEditorVal( generationRes.response[ 0 ] );
 								setIsGenerating( false );
 							}
-							console.log( generationRes );
 						}
 					} catch ( error ) {
-						console.error( error );
 						clearInterval( pollForResult );
 						setIsGenerating( false );
 						setErrorGeneration( error.message );
