@@ -20,9 +20,14 @@ export { default as Checkbox } from '../elements/Checkbox';
 export { default as MenuInput } from '../elements/MenuInput';
 export { default as Button } from '../elements/Button';
 export { default as ProgressBar } from '../elements/ProgressBar';
+export { default as IconButton } from '../elements/IconButton';
 export { ReactComponent as Edit } from '../assets/images/icons/icon-edit.svg';
 export { ReactComponent as Trash } from '../assets/images/icons/icon-trash.svg';
 export { ReactComponent as LinkIcon } from '../assets/images/icons/icon-link.svg';
+
+export { ReactComponent as AcceptIcon } from '../assets/images/icons/icon-activate.svg';
+export { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
+export { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refresh.svg';
 
 export { default as Loader } from '../components/Loader';
 

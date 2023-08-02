@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, IconButton, RefreshIcon,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -22,7 +22,22 @@ export default function JSCacheTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectRows, deleteRow, deleteMultipleRows } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+
+	const ActionButton = ( { cell, onClick } ) => {
+		const { status: jsStatus } = cell?.row?.original;
+
+		return (
+			<div className="flex flex-align-center flex-justify-end">
+				{
+					jsStatus !== 'N' &&
+					<IconButton className="mr-s" tooltip={ __( 'Regenerate' ) } tooltipClass="align-left" onClick={ () => onClick( 'N' ) }>
+						<RefreshIcon />
+					</IconButton>
+				}
+			</div>
+		);
+	};
 
 	const statusTypes = {
 		N: __( 'New' ),
@@ -74,7 +89,21 @@ export default function JSCacheTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, id: 'url' } ) } />,
+			cell: ( cell ) => {
+				return (
+					<div className="flex editRow-buttons">
+						<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
+						<IconButton
+							className="ml-s"
+							onClick={ () => deleteRow( { cell, id: 'url' } ) }
+							tooltipClass="align-left"
+							tooltip={ __( 'Delete row' ) }
+						>
+							<Trash />
+						</IconButton>
+					</div>
+				);
+			},
 			header: null,
 		} ),
 	];

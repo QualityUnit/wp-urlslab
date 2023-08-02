@@ -176,22 +176,16 @@ export default function SerpQueriesTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_url_name }</SortBy>,
 			size: 100,
 		} ),
-		columnHelper.accessor( 'actions', {
-			className: 'actions hoverize nolimit',
-			cell: ( cell ) => <ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />,
-			header: null,
-			size: 70,
-		} ),
-
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => {
 				return (
-					<div className="flex">
+					<div className="flex editRow-buttons">
+						<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
 						<IconButton
 							className="ml-s"
 							onClick={ () => deleteRow( { cell, id: 'query' } ) }
-							tooltipClass="align-left xxxl"
+							tooltipClass="align-left"
 							tooltip={ __( 'Delete row' ) }
 					>
 							<Trash />

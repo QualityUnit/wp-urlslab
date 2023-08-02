@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Trash, SingleSelectMenu, LinkIcon, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Trash, SingleSelectMenu, LinkIcon, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, IconButton,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -171,7 +171,20 @@ export default function MediaFilesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, id: 'filename' } ) } />,
+			cell: ( cell ) => {
+				return (
+					<div className="flex editRow-buttons">
+						<IconButton
+							className="ml-s"
+							onClick={ () => deleteRow( { cell, id: 'filename' } ) }
+							tooltipClass="align-left"
+							tooltip={ __( 'Delete row' ) }
+						>
+							<Trash />
+						</IconButton>
+					</div>
+				);
+			},
 			header: null,
 		} ),
 	];

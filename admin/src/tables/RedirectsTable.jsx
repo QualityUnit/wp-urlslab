@@ -181,13 +181,13 @@ export default function RedirectsTable( { slug } ) {
 			className: 'editRow',
 			cell: ( cell ) => {
 				return (
-					<div className="flex">
+					<div className="flex editRow-buttons">
 						<IconButton
 							onClick={ () => {
 								updateRow( { cell, id: 'match_url' } );
 								activatePanel( 'rowEditor' );
 							} }
-							tooltipClass="align-left xxxl"
+							tooltipClass="align-left"
 							tooltip={ __( 'Edit row' ) }
 						>
 							<Edit />
@@ -195,7 +195,7 @@ export default function RedirectsTable( { slug } ) {
 						<IconButton
 							className="ml-s"
 							onClick={ () => deleteRow( { cell, id: 'match_url' } ) }
-							tooltipClass="align-left xxxl"
+							tooltipClass="align-left"
 							tooltip={ __( 'Delete row' ) }
 						>
 							<Trash />

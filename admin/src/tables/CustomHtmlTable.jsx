@@ -183,13 +183,13 @@ export default function CustomHtmlTable( { slug } ) {
 			className: 'editRow',
 			cell: ( cell ) => {
 				return (
-					<div className="flex">
+					<div className="flex editRow-buttons">
 						<IconButton
 							onClick={ () => {
 								updateRow( { cell, id: 'name' } );
 								activatePanel( 'rowEditor' );
 							} }
-							tooltipClass="align-left xxxl"
+							tooltipClass="align-left"
 							tooltip={ __( 'Edit row' ) }
 						>
 							<Edit />
@@ -197,7 +197,7 @@ export default function CustomHtmlTable( { slug } ) {
 						<IconButton
 							className="ml-s"
 							onClick={ () => deleteRow( { cell, id: 'name' } ) }
-							tooltipClass="align-left xxxl"
+							tooltipClass="align-left"
 							tooltip={ __( 'Delete row' ) }
 						>
 							<Trash />

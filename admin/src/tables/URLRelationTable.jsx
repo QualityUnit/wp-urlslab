@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, IconButton,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -89,8 +89,20 @@ export default function URLRelationTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, optionalSelector, id: 'src_url_name' } ) } />,
+			cell: ( cell ) => {
+				return (
+					<div className="flex editRow-buttons">
+						<IconButton
+							className="ml-s"
+							onClick={ () => deleteRow( { cell, optionalSelector, id: 'src_url_name' } ) }
+							tooltipClass="align-left"
+							tooltip={ __( 'Delete row' ) }
+						>
+							<Trash />
+						</IconButton>
+					</div>
+				);
+			},
 			header: null,
 		} ),
 	];

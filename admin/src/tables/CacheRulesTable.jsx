@@ -1,11 +1,10 @@
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Checkbox, InputField, SingleSelectMenu, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, Edit, TagsMenu,
+	useInfiniteFetch, ProgressBar, SortBy, Checkbox, InputField, SingleSelectMenu, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, Edit, TagsMenu, IconButton,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-import IconButton from '../elements/IconButton';
 
 export default function CacheRulesTable( { slug } ) {
 	const paginationId = 'rule_id';
@@ -179,13 +178,13 @@ export default function CacheRulesTable( { slug } ) {
 			className: 'editRow',
 			cell: ( cell ) => {
 				return (
-					<div className="flex">
+					<div className="flex editRow-buttons">
 						<IconButton
 							onClick={ () => {
 								setUnifiedPanel( cell );
 								activatePanel( 'rowEditor' );
 							} }
-							tooltipClass="align-left xxxl"
+							tooltipClass="align-left"
 							tooltip={ __( 'Edit row' ) }
 						>
 							<Edit />
@@ -193,7 +192,7 @@ export default function CacheRulesTable( { slug } ) {
 						<IconButton
 							className="ml-s"
 							onClick={ () => deleteRow( { cell } ) }
-							tooltipClass="align-left xxxl"
+							tooltipClass="align-left"
 							tooltip={ __( 'Delete row' ) }
 						>
 							<Trash />

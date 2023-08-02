@@ -29,38 +29,12 @@ $cellHeight: 3.5em;
 		overflow: auto;
 	}
 
-	.resizer {
-		position: absolute;
-		right: -2px;
-		top: 0;
-		height: 100%;
-		width: 4px;
-		background-color: $grey-medium-lighter;
-		cursor: col-resize;
-		user-select: none;
-		touch-action: none;
-		transition: all $transitionTime;
-
-		&.isResizing {
-			background-color: $lighter-blue;
-			opacity: 1;
-		}
-	}
-
-	@media (hover: hover) {
-
-		.resizer {
-			opacity: 0;
-		}
-
-		*:hover > .resizer {
-			opacity: 1;
-		}
+	th {
+		position: relative;
 	}
 
 	th,
 	td {
-		position: relative;
 		text-align: left;
 		font-weight: $font-weight-normal;
 		padding: 0.25em;
@@ -166,47 +140,41 @@ $cellHeight: 3.5em;
 		}
 	}
 
-	td.editRow,
-	td.hoverize {
-		opacity: 0;
+	td.editRow {
+		position: absolute;
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		width: calc(var(--tableContainerWidth) - 0.5em) !important;
+		left: var(--tableContainerScroll);
 		padding: 0;
-		transition: opacity $transitionTime;
-		cursor: pointer;
+		z-index: 3;
+		pointer-events: none;
 
-		&.actions {
-			cursor: default;
+		.editRow-buttons {
+			transform: translateX(100%) translateZ(1px); // Using translateZ to overcome some WebKit problems
+			transition: transform $transitionTime;
+			border-radius: $br-6 0 0 $br-6;
+			align-items: center;
+			padding: 0 1em;
+			background-color: $white;
+			pointer-events: all;
+			filter: $box-shadow-small;
 		}
 
 		.limit {
+			display: flex;
 			overflow: visible;
 			text-overflow: unset;
+			width: min-content;
+			height: calc(100% - 2px);
 		}
 	}
 
 	tr:hover {
 
-		td.editRow,
-		td.hoverize {
-			opacity: 1;
-		}
-	}
-
-	@media (max-width: $breakpoint-desktop-box) {
-
-		.editRow[class] {
-			width: 2.5em !important;
-		}
-
-		td.editRow {
-			position: absolute !important;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			height: 100%;
-			left: calc(var(--tableContainerWidth) - 3em) !important;
-			padding: 0 0.5em;
-			background-color: $white;
-			z-index: 2;
+		.editRow .editRow-buttons {
+			transform: translateX(0) translateZ(1px);
 		}
 	}
 

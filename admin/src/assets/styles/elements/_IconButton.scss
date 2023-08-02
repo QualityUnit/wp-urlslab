@@ -8,6 +8,10 @@
 	align-items: center;
 	padding: 0;
 
+	.urlslab-tooltip {
+		width: min-content;
+	}
+
 	svg {
 
 		@include square(1.5rem);

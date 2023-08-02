@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Trash, LinkIcon, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Trash, LinkIcon, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, RefreshIcon, IconButton,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -43,6 +43,21 @@ export default function ScreenshotTable( { slug } ) {
 				},
 			} ] );
 		}
+	};
+
+	const ActionButton = ( { cell, onClick } ) => {
+		const { status: scrStatus } = cell?.row?.original;
+
+		return (
+			<div className="flex flex-align-center flex-justify-end">
+				{
+					scrStatus !== 'N' &&
+					<IconButton className="mr-s" tooltip={ __( 'Regenerate' ) } tooltipClass="align-left" onClick={ () => onClick( 'N' ) }>
+						<RefreshIcon />
+					</IconButton>
+				}
+			</div>
+		);
 	};
 
 	const scrStatusTypes = {
@@ -133,8 +148,21 @@ export default function ScreenshotTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, id: 'url_title' } ) } />,
+			cell: ( cell ) => {
+				return (
+					<div className="flex editRow-buttons">
+						<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
+						<IconButton
+							className="ml-s"
+							onClick={ () => deleteRow( { cell, id: 'url_title' } ) }
+							tooltipClass="align-left"
+							tooltip={ __( 'Delete row' ) }
+						>
+							<Trash />
+						</IconButton>
+					</div>
+				);
+			},
 			header: null,
 		} ),
 	];

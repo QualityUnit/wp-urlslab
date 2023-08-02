@@ -9,14 +9,12 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	Tooltip,
+	IconButton,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-// import IconButton from '../elements/IconButton';
-// import { active } from 'd3';
 
 export default function FaqUrlsTable( { slug } ) {
 	const paginationId = 'faq_id';
@@ -88,8 +86,20 @@ export default function FaqUrlsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, optionalSelector, id: 'faq_id' } ) } />,
+			cell: ( cell ) => {
+				return (
+					<div className="flex editRow-buttons">
+						<IconButton
+							className="ml-s"
+							onClick={ () => deleteRow( { cell, optionalSelector, id: 'faq_id' } ) }
+							tooltipClass="align-left"
+							tooltip={ __( 'Delete row' ) }
+						>
+							<Trash />
+						</IconButton>
+					</div>
+				);
+			},
 			header: null,
 		} ),
 	];

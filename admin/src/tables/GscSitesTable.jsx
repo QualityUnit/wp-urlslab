@@ -8,14 +8,12 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	SingleSelectMenu, InputField, Editor, LangMenu, TagsMenu, Checkbox,
+	Checkbox,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-import React, { useCallback } from 'react';
-import TextArea from "../elements/Textarea";
 
 export default function GscSitesTable( { slug } ) {
 	const paginationId = 'site_id';
@@ -34,17 +32,9 @@ export default function GscSitesTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
-	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-
-	const setUnifiedPanel = useCallback( ( cell ) => {
-		const origCell = cell?.row.original;
-		setOptions( [] );
-		setRowToEdit( {} );
-		updateRow( { cell, id: 'keyword' } );
-	}, [ setOptions, setRowToEdit, slug, updateRow ] );
 
 	const header = {
 		site_name: __( 'Google Search Console Site' ),

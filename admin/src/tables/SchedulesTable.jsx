@@ -8,7 +8,7 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	InputField, SingleSelectMenu,
+	InputField, SingleSelectMenu, IconButton,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -133,7 +133,20 @@ export default function SchedulesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, id: 'urls' } ) } />,
+			cell: ( cell ) => {
+				return (
+					<div className="flex editRow-buttons">
+						<IconButton
+							className="ml-s"
+							onClick={ () => deleteRow( { cell, id: 'urls' } ) }
+							tooltipClass="align-left"
+							tooltip={ __( 'Delete row' ) }
+						>
+							<Trash />
+						</IconButton>
+					</div>
+				);
+			},
 			header: null,
 			size: 60,
 		} ),

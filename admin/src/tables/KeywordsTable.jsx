@@ -1,12 +1,11 @@
 /* eslint-disable indent */
 import {
-	useInfiniteFetch, ProgressBar, TagsMenu, SortBy, SingleSelectMenu, LangMenu, InputField, Checkbox, LinkIcon, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, Edit, SuggestInputField,
+	useInfiniteFetch, ProgressBar, TagsMenu, SortBy, SingleSelectMenu, LangMenu, InputField, Checkbox, LinkIcon, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, Edit, SuggestInputField, IconButton,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-import IconButton from '../elements/IconButton';
 import { useCallback } from 'react';
 
 export default function KeywordsTable( { slug } ) {
@@ -171,13 +170,13 @@ export default function KeywordsTable( { slug } ) {
 			className: 'editRow',
 			cell: ( cell ) => {
 				return (
-					<div className="flex">
+					<div className="flex editRow-buttons">
 						<IconButton
 							onClick={ () => {
 								setUnifiedPanel( cell );
 								activatePanel( 'rowEditor' );
 							} }
-							tooltipClass="align-left xxxl"
+							tooltipClass="align-left"
 							tooltip={ __( 'Edit row' ) }
 						>
 							<Edit />
@@ -185,7 +184,7 @@ export default function KeywordsTable( { slug } ) {
 						<IconButton
 							className="ml-s"
 							onClick={ () => deleteRow( { cell, id: 'keyword' } ) }
-							tooltipClass="align-left xxxl"
+							tooltipClass="align-left"
 							tooltip={ __( 'Delete row' ) }
 					>
 							<Trash />

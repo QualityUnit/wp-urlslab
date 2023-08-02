@@ -1,12 +1,11 @@
 import {
-	useInfiniteFetch, ProgressBar, SortBy, SingleSelectMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, Edit,
+	useInfiniteFetch, ProgressBar, SortBy, SingleSelectMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, Edit, IconButton,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-import IconButton from '../elements/IconButton';
-import { active } from 'd3';
+// import { active } from 'd3';
 
 export default function SearchReplaceTable( { slug } ) {
 	const paginationId = 'id';
@@ -130,13 +129,13 @@ export default function SearchReplaceTable( { slug } ) {
 			className: 'editRow',
 			cell: ( cell ) => {
 				return (
-					<div className="flex">
+					<div className="flex editRow-buttons">
 						<IconButton
 							onClick={ () => {
 								updateRow( { cell, id: 'str_search' } );
 								activatePanel( 'rowEditor' );
 							} }
-							tooltipClass="align-left xxxl"
+							tooltipClass="align-left"
 							tooltip={ __( 'Edit row' ) }
 						>
 							<Edit />
@@ -144,7 +143,7 @@ export default function SearchReplaceTable( { slug } ) {
 						<IconButton
 							className="ml-s"
 							onClick={ () => deleteRow( { cell, id: 'str_search' } ) }
-							tooltipClass="align-left xxxl"
+							tooltipClass="align-left"
 							tooltip={ __( 'Delete row' ) }
 						>
 							<Trash />

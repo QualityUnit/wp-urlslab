@@ -15,11 +15,11 @@ import {
 	SingleSelectMenu,
 	Edit,
 	Editor,
+	AcceptIcon,
+	DisableIcon,
+	IconButton,
 } from '../lib/tableImports';
 
-import IconButton from '../elements/IconButton';
-import { ReactComponent as AcceptIcon } from '../assets/images/icons/icon-activate.svg';
-import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
@@ -37,13 +37,17 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			<div className="flex flex-align-center flex-justify-end">
 				{
 					( status === 'D' ) &&
-					<IconButton className="mr-s c-saturated-green" tooltip={ __( 'Activate' ) } tooltipClass="align-left" onClick={ () => onClick( 'A' ) }>
+					<IconButton className="mr-s c-saturated-green"
+						tooltip={ __( 'Activate' ) }
+						tooltipClass="align-left" onClick={ () => onClick( 'A' ) }>
 						<AcceptIcon />
 					</IconButton>
 				}
 				{
 					( status === 'A' ) &&
-					<IconButton className="mr-s c-saturated-red" tooltip={ __( 'Disable' ) } tooltipClass="align-left" onClick={ () => onClick( 'D' ) }>
+					<IconButton className="mr-s c-saturated-red"
+						tooltip={ __( 'Disable' ) }
+						tooltipClass="align-left" onClick={ () => onClick( 'D' ) }>
 						<DisableIcon />
 					</IconButton>
 				}
@@ -198,23 +202,18 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			header: header.usage_count,
 			size: 60,
 		} ),
-		columnHelper.accessor( 'actions', {
-			className: 'actions hoverize nolimit',
-			cell: ( cell ) => <ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />,
-			header: null,
-			size: 70,
-		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => {
 				return (
-					<div className="flex">
+					<div className="flex editRow-buttons">
+						<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
 						<IconButton
 							onClick={ () => {
 								updateRow( { cell } );
 								activatePanel( 'rowEditor' );
 							} }
-							tooltipClass="align-left xxxl"
+							tooltipClass="align-left"
 							tooltip={ __( 'Edit row' ) }
 						>
 							<Edit />
@@ -222,7 +221,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 						<IconButton
 							className="ml-s"
 							onClick={ () => deleteRow( { cell } ) }
-							tooltipClass="align-left xxxl"
+							tooltipClass="align-left"
 							tooltip={ __( 'Delete row' ) }
 						>
 							<Trash />
