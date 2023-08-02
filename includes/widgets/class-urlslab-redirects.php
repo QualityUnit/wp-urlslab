@@ -56,7 +56,8 @@ class Urlslab_Redirects extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'redirecting',
 			__( 'Default Redirects Settings' ),
-			__( 'Effortlessly personalize redirects for 404 error URLs.' )
+			__( 'Effortlessly personalize redirects for 404 error URLs.' ),
+			array( self::LABEL_EXPERT )
 		);
 
 		$this->add_option_definition(
@@ -93,9 +94,8 @@ class Urlslab_Redirects extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'logging',
 			__( 'Logging Settings' ),
-			__(
-				'Effortlessly log all 404 URLs and create efficient redirect rules, while safeguarding your system from potential overload during attacks.'
-			)
+			__( 'Effortlessly log all 404 URLs and create efficient redirect rules, while safeguarding your system from potential overload during attacks.' ),
+			array( self::LABEL_PERFORMANCE )
 		);
 
 		$this->add_option_definition(
@@ -161,7 +161,8 @@ class Urlslab_Redirects extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'ai_redirects',
 			__( 'AI Redirecting' ),
-			__( 'Upon multiple 404 errors from a URL request, our AI automatically redirects visitors to the closest matching URL. This background process done by cron, this process may take a few days. Always verify the generated redirect for accuracy.' )
+			__( 'Upon multiple 404 errors from a URL request, our AI automatically redirects visitors to the closest matching URL. This background process done by cron, this process may take a few days. Always verify the generated redirect for accuracy.' ),
+			array( self::LABEL_PAID )
 		);
 
 		$this->add_option_definition(
@@ -541,7 +542,6 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			}
 		}
 	}
-
 
 
 	private function default_image_redirect() {

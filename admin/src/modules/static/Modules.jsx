@@ -1,7 +1,7 @@
-import { memo, useMemo, useState } from 'react';
+import { memo, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
-
 import useModulesQuery from '../../queries/useModulesQuery';
+import labelsList from '../../lib/labelsList';
 
 import DashboardModule from '../../components/DashboardModule';
 import SearchField from '../../elements/SearchField';
@@ -11,23 +11,6 @@ function Modules() {
 	const { __ } = useI18n();
 	const [ filterBy, setFilterBy ] = useState( {} );
 	const { data: modules, isSuccess: isSuccessModules } = useModulesQuery();
-
-	const labelsList = useMemo( () => {
-		return {
-			paid: { name: __( 'Paid service' ), color: '#00c996' },
-			free: { name: __( 'Free' ) },
-			beta: { name: __( 'Beta' ), color: '#75a9ff' },
-			seo: { name: __( 'SEO' ), color: '#D4C5F9' },
-			performance: { name: __( 'Performance' ), color: '#65B5FF' },
-			tools: { name: __( 'Tools' ), color: '#FFD189' },
-			ai: { name: __( 'AI' ), color: '#ff7a7a' },
-			// expert: { name: __( 'Experts', color: '#ffc996' },
-			// experimental: { name: __( 'Experimental'), color: '#ff8875' },
-			// alpha: { name: __( 'Alpha') },
-			// expert: { name: __( 'Expert') },
-			// cron: { name: __( 'Cron') },
-		};
-	}, [ __ ] );
 
 	const statusList = {
 		active: __( 'Active modules' ),

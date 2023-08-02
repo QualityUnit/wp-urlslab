@@ -8,6 +8,14 @@
 	font-size: 0.75rem;
 	border-radius: 1em;
 
+	&.outline {
+		border: 1px solid currentcolor;
+		text-transform: uppercase;
+	}
+
+	.urlslab-settingsPanel-option & {
+		font-size: 0.65rem;
+	}
 
 	svg.urlslab-tag-close {
 		all: unset;
