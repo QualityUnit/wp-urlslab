@@ -575,7 +575,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		}
 		$dom_element->setAttribute( 'style', 'opacity: 0; transition: opacity .5s;' );
 
-		if ( ! $dom_element->hasAttribute( 'loading' ) ) {
+		if ( ! $dom_element->hasAttribute( 'loading' ) && ! $this->get_option( self::SETTING_NAME_REMOVE_WP_LAZY_LOADING ) ) {
 			$dom_element->setAttribute( 'loading', 'lazy' );
 		}
 		$dom_element->setAttribute( 'urlslab-lazy', 'yes' );
