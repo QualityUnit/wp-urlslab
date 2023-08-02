@@ -23,7 +23,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 			Urlslab_Serp_Query_Row::TYPE_GSC          => __( 'Google Search Console' ),
 			Urlslab_Serp_Query_Row::TYPE_USER         => __( 'Manually created by User' ),
 			Urlslab_Serp_Query_Row::TYPE_SERP_RELATED => __( 'Suggested by Google' ),
-			Urlslab_Serp_Query_Row::TYPE_SERP_FAQ => __( 'FAQ suggested by Google' ),
+			Urlslab_Serp_Query_Row::TYPE_SERP_FAQ     => __( 'FAQ suggested by Google' ),
 		);
 	}
 
@@ -50,7 +50,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'google_sgc', __( 'Google Search Console' ), __( 'Integrate your Google Search Console to get most up to date stats about your urls. Visit https://www.urlslab.com/dashboard/ and connect Google Search Console in Integrations menu.' ), array( self::LABEL_PAID, self::LABEL_BETA ) );
+		$this->add_options_form_section( 'google_sgc', __( 'Google Search Console' ), __( 'Integrate your Google Search Console to get most up to date stats about your urls. Visit https://www.urlslab.com/dashboard/ and connect Google Search Console in Integrations menu.' ), array( self::LABEL_FREE ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_GSC_IMPORT,
 			true,
@@ -61,7 +61,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 			false,
 			null,
 			'google_sgc',
-			array( self::LABEL_EXPERT )
+			array( self::LABEL_SEO )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_GSC_LIMIT,
@@ -74,11 +74,12 @@ class Urlslab_Serp extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && 1 <= $value;
 			},
-			'google_sgc'
+			'google_sgc',
+			array( self::LABEL_PERFORMANCE )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_GSC_MIN_CLICKS,
-			1,
+			0,
 			false,
 			__( 'Min Clicks in 30 days' ),
 			__( 'Import just queries with clicks higher or equal as defined limit. 0 means all queries will be imported even if query had 0 clicks in last 30 days' ),
@@ -87,7 +88,8 @@ class Urlslab_Serp extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
 			},
-			'google_sgc'
+			'google_sgc',
+			array( self::LABEL_PERFORMANCE )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_GSC_MIN_IMPRESSIONS,
@@ -100,11 +102,13 @@ class Urlslab_Serp extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
 			},
-			'google_sgc'
+			'google_sgc',
+			array( self::LABEL_PERFORMANCE )
 		);
 
 
-		$this->add_options_form_section( 'serpapi', __( 'SERP Data' ), __( 'SERP data synchronization helps you to monitor position of competitor websites for specific keywords and analyze content clusters of your website. Thanks to these data we can predict content gaps or other reports to help you with building new content on your website.' ), array( self::LABEL_PAID, self::LABEL_BETA ) );
+		$this->add_options_form_section( 'serpapi', __( 'SERP Data' ), __( 'SERP data synchronization helps you to monitor position of competitor websites for specific keywords and analyze content clusters of your website. Thanks to these data we can predict content gaps or other reports to help you with building new content on your website.' ), array( self::LABEL_PAID ) );
+
 		$this->add_option_definition(
 			self::SETTING_NAME_SERP_API,
 			false,
@@ -115,7 +119,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 			false,
 			null,
 			'serpapi',
-			array( self::LABEL_EXPERIMENTAL )
+			array( self::LABEL_CRON )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SYNC_FREQ,
@@ -137,7 +141,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 				return in_array( $value, $request->getNotOlderThanAllowableValues() );
 			},
 			'serpapi',
-			array( self::LABEL_EXPERIMENTAL )
+			array( self::LABEL_CRON )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_QUERY_TYPES,
@@ -163,15 +167,16 @@ class Urlslab_Serp extends Urlslab_Widget {
 
 				return true;
 			},
-			'serpapi'
+			'serpapi',
+			array( self::LABEL_SEO )
 		);
 
 
-		$this->add_options_form_section( 'import', __( 'Import new SERP queries' ), __( 'Specify how new queries are imported from SERP results. Make sure you select reasonable amount of domains and other limits, because this feature can eat your credits fast.' ) );
+		$this->add_options_form_section( 'import', __( 'Import new SERP queries' ), __( 'Specify how new queries are imported from SERP results. Make sure you select reasonable amount of domains and other limits, because this feature can eat your credits fast.' ), array( self::LABEL_PAID ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_RELATED_QUERIES,
-			false,
+			true,
 			false,
 			__( 'Discover and Import Related Queries' ),
 			__( 'Automatically build list of queries by importing Related Searches from Google Results for monitored queries. IMPORTANT: by activating this option you agree with processing of higher amount of SERP api requests leading to extra costs for evaluation of each relevant/irrelevant query. Once the keyword is marked as irelevant, it will not be processed again, so the cost will not be high in next recurring updates of SERP positions.' ),
@@ -179,33 +184,35 @@ class Urlslab_Serp extends Urlslab_Widget {
 			false,
 			null,
 			'import',
-			array( self::LABEL_EXPERT )
+			array( self::LABEL_PAID )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SERP_IMPORT_LIMIT,
-			300,
+			1000,
 			false,
-			__( 'Stop importing from SERP API related queries if reached limit' ),
-			__( 'Cease importing new related queries once the total number of queries in your database reaches the limit. This acts as a safeguard against excessive costs, as the volume of imported queries can escalate quickly.' ),
+			__( 'Halt related queries import upon limit reach' ),
+			__( 'Cease importing new related queries once the total number of queries in your database reaches the limit. This acts as a safeguard against excessive costs, as the volume of imported queries can escalate quickly. Some websites set this limit to 300000 - 500000 to discover majority of competitor keywords.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
 				return is_numeric( $value ) && 1 <= $value;
 			},
-			'import'
+			'import',
+			array( self::LABEL_PAID, self::LABEL_PERFORMANCE )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION,
-			15,
+			30,
 			false,
 			__( 'Evaluate competing domains up to position' ),
-			__( 'Enter number 1 - 100. Reasonable value will be between 5 - 50. Query entities will be processed only in case one of competing domains (your domains or competitors) ranks for keyword in TOP X results. Setting this number lower will improve quality, but higher number will discover more new queries.' ),
+			__( 'Enter number 1 - 100. Reasonable value is be between 10 - 50 (Default 30). Query entities will be processed only in case one of competing domains (your domains or competitors) ranks up to defined limit in SERP results. Setting this number lower will improve quality, but higher number will discover more new queries.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
 				return is_numeric( $value ) && $value >= 1 && $value <= 100;
 			},
-			'import'
+			'import',
+			array( self::LABEL_EXPERT, self::LABEL_PERFORMANCE )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_IRRELEVANT_QUERY_LIMIT,
@@ -218,7 +225,8 @@ class Urlslab_Serp extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && $value >= 1 && $value <= 10;
 			},
-			'import'
+			'import',
+			array( self::LABEL_EXPERT, self::LABEL_PERFORMANCE )
 		);
 
 
@@ -232,7 +240,8 @@ class Urlslab_Serp extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'import_faq'
+			'import_faq',
+			array( self::LABEL_PAID )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_FAQS,
@@ -243,7 +252,8 @@ class Urlslab_Serp extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'import_faq'
+			'import_faq',
+			array( self::LABEL_SEO, self::LABEL_FREE )
 		);
 	}
 }

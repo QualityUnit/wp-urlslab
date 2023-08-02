@@ -180,7 +180,7 @@ class Urlslab_Faq extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'autoinclude', __( 'Automatic FAQ' ), __( 'We can automatically include FAQs at the end of each content without the need for a WordPress shortcode in custom templates.' ) );
+		$this->add_options_form_section( 'autoinclude', __( 'Automatic FAQ' ), __( 'We can automatically include FAQs at the end of each content without the need for a WordPress shortcode in custom templates.' ), array( self::LABEL_SEO, self::LABEL_FREE ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_AUTOINCLUDE_TO_CONTENT,
 			false,
@@ -190,7 +190,8 @@ class Urlslab_Faq extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'autoinclude'
+			'autoinclude',
+			array( self::LABEL_SEO )
 		);
 
 		$this->add_option_definition(
@@ -232,7 +233,8 @@ class Urlslab_Faq extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
-			'widget'
+			'widget',
+			array( self::LABEL_PERFORMANCE )
 		);
 
 		$this->add_options_form_section(
@@ -253,7 +255,11 @@ class Urlslab_Faq extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'import'
+			'import',
+			array(
+				self::LABEL_EXPERT,
+				self::LABEL_EXPERIMENTAL,
+			)
 		);
 	}
 
