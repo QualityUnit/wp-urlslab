@@ -31,40 +31,6 @@ export default function SerpGapTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
 
-	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
-
-	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-
-	const setUnifiedPanel = useCallback( ( cell ) => {
-		const origCell = cell?.row.original;
-		setOptions( [] );
-		setRowToEdit( {} );
-		updateRow( { cell, id: 'keyword' } );
-	}, [ setOptions, setRowToEdit, slug, updateRow ] );
-
-
-
-	const ActionButton = ( { cell, onClick } ) => {
-		const { status } = cell?.row?.original;
-
-		return (
-			<div className="flex flex-align-center flex-justify-end">
-				{
-					( status !== 'E' && status !== 'P' ) &&
-					<IconButton className="mr-s c-saturated-red" tooltip={ __( 'Disable' ) } tooltipClass="align-left" onClick={ () => onClick( 'E' ) }>
-						<DisableIcon />
-					</IconButton>
-				}
-				{
-					( status !== 'P' ) &&
-					<IconButton className="mr-s" tooltip={ __( 'Process again' ) } tooltipClass="align-left" onClick={ () => onClick( 'X' ) }>
-						<RefreshIcon />
-					</IconButton>
-				}
-			</div>
-		);
-	};
 
 	const header = {
 		query: __( 'Query' ),
@@ -155,9 +121,7 @@ export default function SerpGapTable( { slug } ) {
 				noImport
 				onFilter={ ( filter ) => setFilters( filter ) }
 				initialState={ { columnVisibility: { updated: false, status: false, type: false } } }
-				options={ { header, data, slug, paginationId, url,
-					title: __( 'Add Query' ), id: 'query',
-					rowToEdit,
+				options={ { header, data, slug, paginationId, url, id: 'query',
 					deleteCSVCols: [ paginationId, 'dest_url_id' ] }
 				}
 			/>
