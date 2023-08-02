@@ -33,7 +33,7 @@ export default function InputField( { defaultValue, isLoading, autoFocus, placeh
 	return (
 		<label className={ `urlslab-inputField-wrap ${ className || '' } ${ labelInline ? 'inline' : '' } ${ valueStatus() }` } style={ style }>
 			{ label
-				? <span className={ `urlslab-inputField-label ${ required ? 'required' : '' }` }>{ label }</span>
+				? <span className={ `urlslab-inputField-label flex flex-align-center mb-xs ${ required ? 'required' : '' }` }>{ label }</span>
 				: null
 			}
 			<div className={ `urlslab-inputField ${ children ? 'has-svg' : '' } ${ isLoading ? 'loading' : '' }` } >
