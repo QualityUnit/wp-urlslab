@@ -28,7 +28,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 			$body['filters'] = array();
 		}
 		foreach ( $body['filters'] as $filter ) {
-			if ( 'competitors_count' === $filter['col'] ) {
+			if ( isset( $filter['col'] ) && 'competitors_count' === $filter['col'] ) {
 				$has_filter = true;
 				break;
 			}
@@ -112,7 +112,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 			$row->my_impressions    = (int) $row->my_impressions;
 			$row->competitors_count = (int) $row->competitors_count;
 			$row->top_competitors   = str_replace( ',', ', ', $row->top_competitors );
-			$row->my_url_name = str_replace( ',', ', ', $row->my_url_name );
+			$row->my_url_name       = str_replace( ',', ', ', $row->my_url_name );
 		}
 
 		return new WP_REST_Response( $rows, 200 );
