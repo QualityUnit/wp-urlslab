@@ -3,7 +3,6 @@ import { useMemo, useState, Suspense, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { getFetch, postFetch } from './api/fetching';
-import { fetchLangs } from './api/fetchLangs';
 
 import hexToHSL from './lib/hexToHSL';
 
@@ -52,13 +51,6 @@ const MainApp = () => {
 
 	useEffect( () => {
 		if ( prefetch ) {
-			// Creating languages query object in advance
-			queryClient.prefetchQuery( {
-				queryKey: [ 'languages' ],
-				queryFn: async () => await fetchLangs(),
-				refetchOnWindowFocus: false,
-			} );
-
 			/* Creating all endpoints query object in advance
 			to check for allowed+required import/insert/edit CSV fields */
 			queryClient.prefetchQuery( {

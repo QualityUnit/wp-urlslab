@@ -1,7 +1,7 @@
 /* global wpApiSettings */
 import {langName} from "../lib/helpers";
 
-export async function fetchLangs( ) {
+export function fetchLangs( ) {
 	const langPairs = {};
 	const langs = [
 		"af",
@@ -29,6 +29,7 @@ export async function fetchLangs( ) {
 		"en",
 		"eo",
 		"et",
+		"fa",
 		"fo",
 		"fil",
 		"fi",

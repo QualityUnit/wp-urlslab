@@ -1,7 +1,7 @@
 import { useI18n } from '@wordpress/react-i18n';
-import { memo, useState } from 'react';
+import { memo, useRef, useState } from 'react';
 import '../../assets/styles/components/_ContentGeneratorPanel.scss';
-import { Editor, InputField, SingleSelectMenu, SuggestInputField } from '../../lib/tableImports';
+import { InputField, SingleSelectMenu, SuggestInputField } from '../../lib/tableImports';
 import Loader from '../Loader';
 import promptTemplates from '../../data/promptTemplates.json';
 import TextAreaEditable from '../../elements/TextAreaEditable';
@@ -9,11 +9,16 @@ import EditableList from '../../elements/EditableList';
 import { postFetch } from '../../api/fetching';
 import Button from '../../elements/Button';
 import Checkbox from '../../elements/Checkbox';
+import { augmentWithURLContext, getAugmentProcessResult } from '../../api/generatorApi';
+import { Editor as TinyMCE } from '@tinymce/tinymce-react/lib/cjs/main/ts/components/Editor';
+import { fetchLangs } from '../../api/fetchLangs';
 
 function ContentGeneratorPanel() {
 	const { __ } = useI18n();
-	const [ generationData, setGenerationData ] = useState( {} );
+	const editorRef = useRef( null );
+	const [ editorVal, setEditorVal ] = useState( '' );
 	const [ dataSource, setDataSource ] = useState( 'NO_CONTEXT' );
+	const [ lang, setLang ] = useState( 'en' );
 	const [ editorLoading, setEditorLoading ] = useState( true );
 	const promptTemplateSelections = Object.entries( promptTemplates ).reduce( ( acc, [ key, value ] ) => {
 		acc[ key ] = value.name;
@@ -25,7 +30,9 @@ function ContentGeneratorPanel() {
 	const [ domain, setDomain ] = useState( '' );
 	const [ selectedPromptTemplate, setSelectedPromptTemplate ] = useState( '0' );
 	const [ promptVal, setPromptVal ] = useState( '' );
+	const [ modelName, setModelName ] = useState( 'gpt-3.5-turbo' );
 	const [ isGenerating, setIsGenerating ] = useState( false );
+	const [ errorGeneration, setErrorGeneration ] = useState( '' );
 	const [ generatedContent, setGeneratedContent ] = useState( '' );
 
 	const contextTypes = {
@@ -78,8 +85,54 @@ function ContentGeneratorPanel() {
 
 	const handleGenerateContent = async () => {
 		setIsGenerating( true );
+		try {
+			/// getting he Process ID for Generation
+			let selectedUrls = [];
 
-	}
+			if ( dataSource === 'SERP_CONTEXT' ) {
+				selectedUrls = [ ...serpUrlList.filter( ( url ) => url.checked ).map( ( url ) => url.url_name ) ];
+			}
+
+			if ( dataSource === 'URL_CONTEXT' ) {
+				selectedUrls = [ ...urlsList.filter( ( url ) => url.checked ).map( ( url ) => url.url_name ) ];
+			}
+
+			const processIdResponse = await augmentWithURLContext( selectedUrls, promptVal, modelName );
+			if ( processIdResponse.ok ) {
+				const rsp = await processIdResponse.json();
+				const processId = rsp.processId;
+				// begin pinging (polling) for results
+				const pollForResult = setInterval( async () => {
+					try {
+						const resultResponse = await getAugmentProcessResult( processId );
+						if ( processIdResponse.ok ) {
+							const generationRes = await resultResponse.json();
+							if ( generationRes.status === 'SUCCESS' ) {
+								console.log( generationRes );
+								clearInterval( pollForResult );
+								setEditorVal( generationRes.response[ 0 ] );
+								setIsGenerating( false );
+							}
+							console.log( generationRes );
+						}
+					} catch ( error ) {
+						console.error( error );
+						clearInterval( pollForResult );
+						setIsGenerating( false );
+						setErrorGeneration( error.message );
+					}
+				}, 2000 );
+			} else {
+				setIsGenerating( false );
+				const rsp = await processIdResponse.json();
+				setErrorGeneration( rsp.message );
+			}
+		} catch ( error ) {
+			console.error( error );
+			setIsGenerating( false );
+			setErrorGeneration( error.message );
+		}
+	};
 
 	const handlePromptChange = ( value ) => {
 		setPromptVal( value );
@@ -238,6 +291,24 @@ function ContentGeneratorPanel() {
 
 				<div className="urlslab-content-gen-panel-control-item">
 					<div className="urlslab-content-gen-panel-control-item-desc">
+						Language
+					</div>
+
+					<div className="urlslab-content-gen-panel-control-item-selector">
+						<SingleSelectMenu
+							key={ lang }
+							items={ fetchLangs() }
+							name="lang_menu"
+							defaultAccept
+							autoClose
+							defaultValue={ lang }
+							onChange={ ( val ) => setLang( val ) }
+						/>
+					</div>
+				</div>
+
+				<div className="urlslab-content-gen-panel-control-item">
+					<div className="urlslab-content-gen-panel-control-item-desc">
 						Prompt Template to choose
 					</div>
 
@@ -269,11 +340,31 @@ function ContentGeneratorPanel() {
 				</div>
 
 				<div className="urlslab-content-gen-panel-control-item">
-					<Button active>
+					<SingleSelectMenu
+						key={ modelName }
+						items={ {
+							'gpt-3.5-turbo': 'OpenAI GPT 3.5 Turbo',
+							'gpt-4': 'OpenAI GPT 4',
+							'text-davinci-003': 'OpenAI GPT Davinci 003',
+						} }
+						name="mode_name_menu"
+						defaultAccept
+						autoClose
+						defaultValue={ modelName }
+						onChange={ ( val ) => setModelName( val ) }
+					/>
+				</div>
+
+				<div className="urlslab-content-gen-panel-control-item">
+					<Button active onClick={ handleGenerateContent }>
 						{
 							isGenerating ? ( <Loader /> ) : __( 'Generate Text' )
 						}
 					</Button>
+				</div>
+
+				<div className="urlslab-content-gen-panel-control-item">
+					{ errorGeneration && <div>{ errorGeneration }</div> }
 				</div>
 
 			</div>
@@ -281,8 +372,27 @@ function ContentGeneratorPanel() {
 				{
 					editorLoading && <Loader />
 				}
-				<Editor onChange={ ( val ) => console.log( val ) }
-					initCallback={ () => setEditorLoading( false ) } />
+				<TinyMCE
+					onInit={ ( evt, editor ) => {
+						editorRef.current = editor;
+						setEditorLoading( false );
+					} }
+					value={ editorVal }
+					onEditorChange={ ( input ) => setEditorVal( input ) }
+					init={ {
+						skin: false,
+						content_css: false,
+						height: '80vh',
+						menubar: false,
+						entity_encoding: 'raw',
+						plugins: [
+							'advlist', 'autolink', 'lists', 'link', 'image', 'anchor', 'media', 'table', 'code',
+						],
+						toolbar: [ 'blocks | bold italic forecolor | alignleft aligncenter',
+							'alignright alignjustify | bullist numlist outdent indent | code help' ],
+						content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:20px }',
+					} }
+				/>
 			</div>
 		</div>
 	);

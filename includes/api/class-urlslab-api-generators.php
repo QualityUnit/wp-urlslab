@@ -1,6 +1,7 @@
 <?php
 
 use Urlslab_Vendor\GuzzleHttp;
+use Urlslab_Vendor\OpenAPI\Client\ApiException;
 use Urlslab_Vendor\OpenAPI\Client\Configuration;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
@@ -49,7 +50,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			'/' . self::SLUG . '/content/generate',
+			'/' . self::SLUG . '/augment/with-context/urls',
 			array(
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
@@ -60,12 +61,6 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 					),
 					'args' => array(
 						'urls' => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								return is_array( $param );
-							},
-						),
-						'domains' => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_array( $param );
@@ -431,34 +426,40 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 	public function get_url_context_augmentation( $request ) {
 		$urls = $request->get_param( 'urls' );
-		$domains = $request->get_param( 'domains' );
 		$prompt      = $request->get_param( 'prompt' );
 		$aug_model        = $request->get_param( 'model' );
 
-		if (! empty($domains) && ! empty($urls)) {
-			return new WP_Error( 'invalid_request', 'domains and urls can\'t be both filled', array( 'status' => 400 ) );
+		if ( empty( $urls ) ) {
+			return new WP_Error( 'invalid_request', 'urls should not be empty', array( 'status' => 400 ) );
 		}
 
-		if ( ! empty( $urls ) && strpos( $prompt, '{context}' ) ) {
-			return new WP_Error( 'invalid_request', 'Invalid request', array( 'status' => 400 ) );
+		if ( ! strpos( $prompt, '{context}' ) ) {
+			return new WP_Error( 'invalid_request', '{context} should be in prompt', array( 'status' => 400 ) );
 		}
 
 		$config         = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) );
-		$api_client = new Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi();
+		$api_client = new Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), $config );
 
+		// making request to get the process ID
+		$augment_request = new DomainDataRetrievalAugmentRequestWithURLContext();
+		$augment_request->setUrls( $urls );
+		$augment_request->setPrompt(
+			(object) array(
+				'map_prompt' => 'Summarize the given context: \n CONTEXT: \n {context}',
+				'reduce_prompt' => $prompt,
+				'document_variable_name' => 'context',
+			)
+		);
+		$augment_request->setModeName( $aug_model );
+		$augment_request->setGenerationStrategy( 'map_reduce' );
+		$augment_request->setTopKChunks( 3 );
 
-		if ( ! empty( $urls ) ) {
-			// either keywords context or url context
-			$augment_request = new DomainDataRetrievalAugmentRequestWithURLContext();
-			$augment_request->setUrls( $urls );
-			$augment_request->setPrompt( $prompt );
-			$augment_request->setModeName( $aug_model );
-			$augment_request->setGenerationStrategy( generation_strategy: 'map_reduce' );
-			$augment_request->setTopKChunks( 3 );
+		try {
+			$rsp = $api_client->complexAugmentWithURLContext( $augment_request );
+			return new WP_REST_Response( (object) array( 'processId' => $rsp->getProcessId() ), 200 );
+		} catch ( ApiException $e ) {
+			return new WP_Error( 'invalid_request', $e->getMessage(), array( 'status' => $e->getCode() ) );
 		}
-
-		if (! empty($domain))
-
 
 	}
 
