@@ -28,11 +28,7 @@ const App: React.FC = () => {
 	useEditorListener( Button );
 
 	useEffect( () => {
-		const createHooks = () => {
-			addWPBlockFilters( setOpenedPopup, dispatchPrefillData );
-		};
-		createHooks();
-		return () => {};
+		addWPBlockFilters( setOpenedPopup, dispatchPrefillData );
 	}, [] );
 
 	return (
