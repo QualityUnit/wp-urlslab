@@ -27,23 +27,109 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 					'args'                => array(
 						'source_lang'   => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'target_lang'   => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'original_text' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			'/' . self::SLUG . '/post/create',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'create_post' ),
+					'permission_callback' => array(
+						$this,
+						'augment_permission_check',
+					),
+					'args'                => array(
+						'post_content' => array(
+							'required'          => true,
+							'validate_callback' => function ( $param ) {
+								return is_string( $param ) && ! empty( $param );
+							},
+						),
+						'post_type' => array(
+							'required'          => true,
+							'validate_callback' => function ( $param ) {
+								return is_string( $param ) && ! empty( $param );
+							},
+						),
+						'post_title'   => array(
+							'required'          => true,
+							'validate_callback' => function ( $param ) {
+								return is_string( $param ) && ! empty( $param );
+							},
+						),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			'/' . self::SLUG . '/post/create',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'create_post' ),
+					'permission_callback' => array(
+						$this,
+						'augment_permission_check',
+					),
+					'args'                => array(
+						'post_content' => array(
+							'required'          => true,
+							'validate_callback' => function ( $param ) {
+								return is_string( $param ) && ! empty( $param );
+							},
+						),
+						'post_type' => array(
+							'required'          => true,
+							'validate_callback' => function ( $param ) {
+								return is_string( $param ) && ! empty( $param );
+							},
+						),
+						'post_title'   => array(
+							'required'          => true,
+							'validate_callback' => function ( $param ) {
+								return is_string( $param ) && ! empty( $param );
+							},
+						),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			'/' . self::SLUG . '/post',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_post_types' ),
+					'permission_callback' => array(
+						$this,
+						'augment_permission_check',
+					),
+					'args'                => array(),
 				),
 			)
 		);
@@ -59,22 +145,22 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 						$this,
 						'augment_permission_check',
 					),
-					'args' => array(
-						'urls' => array(
+					'args'                => array(
+						'urls'   => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_array( $param );
 							},
 						),
 						'prompt' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
-						'model' => array(
+						'model'  => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
@@ -97,31 +183,31 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 					'args'                => array(
 						'user_prompt'      => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param ) && ! empty( $param );
 							},
 						),
 						'model'            => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'semantic_context' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'url_filter'       => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_array( $param );
 							},
 						),
 						'domain_filter'    => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_array( $param );
 							},
 						),
@@ -144,43 +230,43 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 					'args'                => array(
 						'user_prompt'      => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'tone'             => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'model'            => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'lang'             => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'semantic_context' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'url_filter'       => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_array( $param );
 							},
 						),
 						'domain_filter'    => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_array( $param );
 							},
 						),
@@ -203,25 +289,25 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 					'args'                => array(
 						'user_prompt' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'yt_id'       => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'model'       => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'lang'        => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
@@ -280,7 +366,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 					'args'                => array(
 						'status' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								switch ( $param ) {
 									case Urlslab_Generator_Result_Row::STATUS_ACTIVE:
 									case Urlslab_Generator_Result_Row::STATUS_DISABLED:
@@ -295,13 +381,13 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 						),
 						'result' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'labels' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
@@ -472,9 +558,9 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	}
 
 	public function get_url_context_augmentation( $request ) {
-		$urls = $request->get_param( 'urls' );
-		$prompt      = $request->get_param( 'prompt' );
-		$aug_model        = $request->get_param( 'model' );
+		$urls      = $request->get_param( 'urls' );
+		$prompt    = $request->get_param( 'prompt' );
+		$aug_model = $request->get_param( 'model' );
 
 		if ( empty( $urls ) ) {
 			return new WP_Error( 'invalid_request', 'urls should not be empty', array( 'status' => 400 ) );
@@ -484,7 +570,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			return new WP_Error( 'invalid_request', '{context} should be in prompt', array( 'status' => 400 ) );
 		}
 
-		$config         = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) );
+		$config     = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) );
 		$api_client = new Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), $config );
 
 		// making request to get the process ID
@@ -492,8 +578,8 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$augment_request->setUrls( $urls );
 		$augment_request->setPrompt(
 			(object) array(
-				'map_prompt' => 'Summarize the given context: \n CONTEXT: \n {context}',
-				'reduce_prompt' => $prompt,
+				'map_prompt'             => 'Summarize the given context: \n CONTEXT: \n {context}',
+				'reduce_prompt'          => $prompt,
 				'document_variable_name' => 'context',
 			)
 		);
@@ -503,6 +589,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 		try {
 			$rsp = $api_client->complexAugmentWithURLContext( $augment_request );
+
 			return new WP_REST_Response( (object) array( 'processId' => $rsp->getProcessId() ), 200 );
 		} catch ( ApiException $e ) {
 			return new WP_Error( 'invalid_request', $e->getMessage(), array( 'status' => $e->getCode() ) );
@@ -784,7 +871,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		}
 
 		$command = 'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Generator_Result_Row::DO_NOT_KNOW . "!\n" . $user_prompt .
-				   "\nOUTPUT Language should be in: $aug_lang ";
+		           "\nOUTPUT Language should be in: $aug_lang ";
 
 		$command .= "\n\n--VIDEO CAPTIONS:\n{context}\n--VIDEO CAPTIONS END\nOUTPUT:";
 		$prompt->setPromptTemplate( $command );
@@ -806,6 +893,27 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 				500
 			);
 		}
+	}
+
+	public function create_post( $request ) {
+		$post_content = $request->get_param( 'post_content' );
+		$post_type = $request->get_param( 'post_type' );
+		$post_title   = $request->get_param( 'post_title' );
+
+		$post_id = wp_insert_post(
+			array(
+				'post_title'   => $post_title,
+				'post_content' => $post_content,
+				'post_status'  => 'draft',
+				'post_type'    => $post_type,
+			)
+		);
+
+		return new WP_REST_Response( (object) array( 'post_id' => $post_id ), 200 );
+	}
+
+	public function get_post_types( $request ) {
+
 	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
@@ -863,7 +971,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 					'rows_per_page' => array(
 						'required'          => true,
 						'default'           => self::ROWS_PER_PAGE,
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_numeric( $param ) && 0 < $param && 1000 > $param;
 						},
 					),

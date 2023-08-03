@@ -12,7 +12,7 @@ import Checkbox from '../../elements/Checkbox';
 import {
 	augmentWithDomainContext,
 	augmentWithoutContext,
-	augmentWithURLContext,
+	augmentWithURLContext, createPost,
 	getAugmentProcessResult
 } from '../../api/generatorApi';
 import { Editor as TinyMCE } from '@tinymce/tinymce-react/lib/cjs/main/ts/components/Editor';
@@ -30,6 +30,8 @@ function ContentGeneratorPanel() {
 		acc[ key ] = value.name;
 		return acc;
 	}, {} );
+	const [ postType, setPostType ] = useState( 'post' );
+	const [ title, setTitle ] = useState( '' );
 	const [ urlsList, setUrlsList ] = useState( [] );
 	const [ keywordsList, setKeywordsList ] = useState( [] );
 	const [ serpUrlList, setSerpUrlList ] = useState( [] );
@@ -100,7 +102,7 @@ function ContentGeneratorPanel() {
 			}
 
 			if ( dataSource === 'DOMAIN_CONTEXT' ) {
-				processIdResponse = await augmentWithDomainContext( domain, promptVal, modelName );
+				processIdResponse = await augmentWithDomainContext( domain, promptVal, modelName, semanticContext );
 			}
 
 			if ( dataSource === 'SERP_CONTEXT' ) {
@@ -202,6 +204,16 @@ function ContentGeneratorPanel() {
 		<div className="urlslab-content-gen-panel">
 			<div className="urlslab-content-gen-panel-control">
 				<h2>Content Generator</h2>
+				<div className="urlslab-content-gen-panel-control-item">
+					<InputField
+						liveUpdate
+						defaultValue=""
+						description={ __( 'Page Title' ) }
+						label={ __( 'Title' ) }
+						onChange={ ( val ) => setTitle( val ) }
+						required
+					/>
+				</div>
 				<div className="urlslab-content-gen-panel-control-item">
 					<InputField
 						liveUpdate
@@ -425,6 +437,15 @@ function ContentGeneratorPanel() {
 						content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:20px }',
 					} }
 				/>
+				{
+					! editorLoading && (
+						<div>
+							<Button onClick={ () => {
+								createPost( editorVal, postType, title );
+							} }>Create Post</Button>
+						</div>
+					)
+				}
 			</div>
 		</div>
 	);

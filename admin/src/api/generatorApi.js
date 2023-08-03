@@ -46,3 +46,14 @@ export async function augmentWithoutContext( prompt, model ) {
 export async function getAugmentProcessResult( processId ) {
 	return await getFetch( `process/complex-augment/${ processId }` );
 }
+
+export async function createPost( postContent, postTitle, postType ) {
+	return await postFetch(
+		'generator/post/create',
+		{
+			post_content: postContent,
+			post_type: postType,
+			post_title: postTitle,
+		}
+	);
+}
