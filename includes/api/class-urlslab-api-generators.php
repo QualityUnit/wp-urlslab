@@ -871,7 +871,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		}
 
 		$command = 'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Generator_Result_Row::DO_NOT_KNOW . "!\n" . $user_prompt .
-		           "\nOUTPUT Language should be in: $aug_lang ";
+				   "\nOUTPUT Language should be in: $aug_lang ";
 
 		$command .= "\n\n--VIDEO CAPTIONS:\n{context}\n--VIDEO CAPTIONS END\nOUTPUT:";
 		$prompt->setPromptTemplate( $command );
