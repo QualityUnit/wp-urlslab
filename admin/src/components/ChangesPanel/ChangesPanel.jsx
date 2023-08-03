@@ -57,11 +57,9 @@ function ChangesPanel() {
 			if ( result.ok ) {
 				return await result.json();
 			}
-			return [];
 		},
 		refetchOnWindowFocus: false,
 	} );
-
 	const chartResult = useQuery( {
 		queryKey: [ slug, 'chart', chartDateState.startDate, chartDateState.endDate ],
 		queryFn: async () => {
@@ -170,7 +168,7 @@ function ChangesPanel() {
 		columnHelper.display( {
 			id: 'diff_actions',
 			cell: ( cell ) => {
-				if ( tableResult.data.length > 1 && cell.row.index < tableResult.data.length - 1 ) {
+				if ( tableResult.isSuccess && tableResult.data.length > 1 && cell.row.index < tableResult.data.length - 1 ) {
 					return <DiffButton
 						onClick={ () => {
 							// removing selected rows
@@ -239,7 +237,7 @@ function ChangesPanel() {
 							</button>
 						</div>
 						<div className="p-l">
-							No Data found for this url. try to schedule this url to get data.
+							{ __( 'No Data found for this url. Try to schedule url to get data.' ) }
 						</div>
 					</div>
 				</div>
