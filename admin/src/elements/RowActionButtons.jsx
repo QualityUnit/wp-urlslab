@@ -3,14 +3,14 @@ import { useI18n } from '@wordpress/react-i18n';
 import useTablePanels from '../hooks/useTablePanels';
 import { Edit, Trash, IconButton } from '../lib/tableImports';
 
-function RowActionButtons( { editable, onUpdate, onDelete, children } ) {
+function RowActionButtons( { onUpdate, onDelete, children } ) {
 	const { __ } = useI18n();
 	const { activatePanel } = useTablePanels();
 
 	return (
 		<div className="flex editRow-buttons">
 			{ children }
-			{ editable &&
+			{ onUpdate &&
 			<IconButton
 				onClick={ () => {
 					onUpdate();

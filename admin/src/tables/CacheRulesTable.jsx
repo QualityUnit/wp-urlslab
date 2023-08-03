@@ -177,7 +177,6 @@ export default function CacheRulesTable( { slug } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
-				editable
 				onUpdate={ () => setUnifiedPanel( cell ) }
 				onDelete={ () => deleteRow( { cell } ) }
 			>

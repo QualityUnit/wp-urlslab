@@ -89,7 +89,6 @@ export default function TagsLabels( ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
-				editable
 				onUpdate={ () => updateRow( { cell, id: 'name' } ) }
 				onDelete={ () => deleteRow( { cell, id: 'name' } ) }
 			>

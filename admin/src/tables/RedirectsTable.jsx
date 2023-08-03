@@ -178,7 +178,6 @@ export default function RedirectsTable( { slug } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
-				editable
 				onUpdate={ () => updateRow( { cell, id: 'match_url' } ) }
 				onDelete={ () => deleteRow( { cell, id: 'match_url' } ) }
 			>

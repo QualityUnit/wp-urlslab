@@ -128,7 +128,6 @@ export default function SearchReplaceTable( { slug } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
-				editable
 				onUpdate={ () => updateRow( { cell, id: 'str_search' } ) }
 				onDelete={ () => deleteRow( { cell, id: 'str_search' } ) }
 			>
