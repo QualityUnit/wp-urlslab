@@ -146,11 +146,15 @@ $cellHeight: 3.5em;
 		display: flex;
 		align-items: center;
 		justify-content: flex-end;
-		width: var(--tableContainerWidth) !important;
+		width: calc(var(--tableContainerWidth) - 0.15em) !important;
 		left: var(--tableContainerScroll);
 		padding: 0;
 		z-index: 3;
 		pointer-events: none;
+
+		.urlslab-table-container.has-scrollbar & {
+			width: calc(var(--tableContainerWidth) - 0.75em) !important;
+		}
 
 		.editRow-buttons {
 			transform: scaleX(0) translateZ(1px); // Using translateZ to overcome some WebKit problems
