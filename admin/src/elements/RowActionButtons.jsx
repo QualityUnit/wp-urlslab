@@ -1,7 +1,9 @@
 import { memo } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import useTablePanels from '../hooks/useTablePanels';
-import { Edit, Trash, IconButton } from '../lib/tableImports';
+import IconButton from '../elements/IconButton';
+import { ReactComponent as Edit } from '../assets/images/icons/icon-edit.svg';
+import { ReactComponent as Trash } from '../assets/images/icons/icon-trash.svg';
 
 function RowActionButtons( { onUpdate, onDelete, children } ) {
 	const { __ } = useI18n();
