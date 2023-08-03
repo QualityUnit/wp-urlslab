@@ -57,7 +57,7 @@ export default function Table( { slug, resizable, children, className, columns, 
 		getColumnState();
 		setContainerWidth( tableContainerRef.current?.clientWidth );
 
-		tableContainerRef.current.style.setProperty( '--tableContainerScroll', '0px' );
+		tableContainerRef.current?.style.setProperty( '--tableContainerScroll', '0px' );
 
 		const menuWidth = document.querySelector( '.urlslab-mainmenu' ).clientWidth + document.querySelector( '#adminmenuwrap' ).clientWidth;
 
@@ -65,12 +65,12 @@ export default function Table( { slug, resizable, children, className, columns, 
 			if ( entry.borderBoxSize && tableContainerRef.current ) {
 				const tableContainerWidth = document.querySelector( '#wpadminbar' ).clientWidth - menuWidth - 54;
 				tableContainerRef.current.style.width = `${ tableContainerWidth }px`;
-				tableContainerRef.current.style.setProperty( '--tableContainerWidth', `${ tableContainerWidth }px` );
+				tableContainerRef.current?.style.setProperty( '--tableContainerWidth', `${ tableContainerWidth }px` );
 			}
 		} );
 
-		tableContainerRef.current.addEventListener( 'scroll', () => {
-			tableContainerRef.current.style.setProperty( '--tableContainerScroll', `${ tableContainerRef.current.scrollLeft }px` );
+		tableContainerRef.current?.addEventListener( 'scroll', () => {
+			tableContainerRef.current?.style.setProperty( '--tableContainerScroll', `${ tableContainerRef.current?.scrollLeft }px` );
 		} );
 
 		resizeWatcher.observe( document.querySelector( '#wpadminbar' ) );
