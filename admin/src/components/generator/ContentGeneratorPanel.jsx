@@ -9,9 +9,15 @@ import EditableList from '../../elements/EditableList';
 import { postFetch } from '../../api/fetching';
 import Button from '../../elements/Button';
 import Checkbox from '../../elements/Checkbox';
-import { augmentWithURLContext, getAugmentProcessResult } from '../../api/generatorApi';
+import {
+	augmentWithDomainContext,
+	augmentWithoutContext,
+	augmentWithURLContext,
+	getAugmentProcessResult
+} from '../../api/generatorApi';
 import { Editor as TinyMCE } from '@tinymce/tinymce-react/lib/cjs/main/ts/components/Editor';
 import { fetchLangs } from '../../api/fetchLangs';
+import { data } from 'autoprefixer';
 
 function ContentGeneratorPanel() {
 	const { __ } = useI18n();
@@ -28,12 +34,12 @@ function ContentGeneratorPanel() {
 	const [ keywordsList, setKeywordsList ] = useState( [] );
 	const [ serpUrlList, setSerpUrlList ] = useState( [] );
 	const [ domain, setDomain ] = useState( '' );
+	const [ semanticContext, setSemanticContext ] = useState( '' );
 	const [ selectedPromptTemplate, setSelectedPromptTemplate ] = useState( '0' );
 	const [ promptVal, setPromptVal ] = useState( '' );
 	const [ modelName, setModelName ] = useState( 'gpt-3.5-turbo' );
 	const [ isGenerating, setIsGenerating ] = useState( false );
 	const [ errorGeneration, setErrorGeneration ] = useState( '' );
-	const [ generatedContent, setGeneratedContent ] = useState( '' );
 
 	const contextTypes = {
 		NO_CONTEXT: 'No Data Source',
@@ -87,17 +93,28 @@ function ContentGeneratorPanel() {
 		setIsGenerating( true );
 		try {
 			/// getting he Process ID for Generation
-			let selectedUrls = [];
+			let processIdResponse;
+
+			if ( dataSource === 'NO_CONTEXT' ) {
+				processIdResponse = await augmentWithoutContext( promptVal, modelName );
+			}
+
+			if ( dataSource === 'DOMAIN_CONTEXT' ) {
+				processIdResponse = await augmentWithDomainContext( domain, promptVal, modelName );
+			}
 
 			if ( dataSource === 'SERP_CONTEXT' ) {
-				selectedUrls = [ ...serpUrlList.filter( ( url ) => url.checked ).map( ( url ) => url.url_name ) ];
+				processIdResponse = await augmentWithURLContext(
+					[ ...serpUrlList.filter( ( url ) => url.checked ).map( ( url ) => url.url_name ) ],
+					promptVal,
+					modelName
+				);
 			}
 
 			if ( dataSource === 'URL_CONTEXT' ) {
-				selectedUrls = [ ...urlsList ];
+				processIdResponse = await augmentWithURLContext( [ ...urlsList ], promptVal, modelName );
 			}
 
-			const processIdResponse = await augmentWithURLContext( selectedUrls, promptVal, modelName );
 			if ( processIdResponse.ok ) {
 				const rsp = await processIdResponse.json();
 				const processId = rsp.processId;
@@ -105,14 +122,18 @@ function ContentGeneratorPanel() {
 				const pollForResult = setInterval( async () => {
 					try {
 						const resultResponse = await getAugmentProcessResult( processId );
+						console.log(resultResponse)
 						if ( processIdResponse.ok ) {
 							const generationRes = await resultResponse.json();
 							if ( generationRes.status === 'SUCCESS' ) {
-								console.log( generationRes );
 								clearInterval( pollForResult );
 								setEditorVal( generationRes.response[ 0 ] );
 								setIsGenerating( false );
 							}
+						} else {
+							clearInterval( pollForResult );
+							setIsGenerating( false );
+							setErrorGeneration( 'Failed to generate result. try again...' );
 						}
 					} catch ( error ) {
 						clearInterval( pollForResult );
@@ -126,7 +147,6 @@ function ContentGeneratorPanel() {
 				setErrorGeneration( rsp.message );
 			}
 		} catch ( error ) {
-			console.error( error );
 			setIsGenerating( false );
 			setErrorGeneration( error.message );
 		}
@@ -248,21 +268,35 @@ function ContentGeneratorPanel() {
 
 				{
 					dataSource && dataSource === 'DOMAIN_CONTEXT' && (
-						<div className="urlslab-content-gen-panel-control-item">
-							<div className="urlslab-content-gen-panel-control-item-container">
-								<SuggestInputField
-									suggestInput=""
-									liveUpdate
-									onChange={ ( val ) => setDomain( val ) }
-									required
-									description={ __( 'Domain to use' ) }
-									postFetchRequest={ async ( val ) => {
-										return await postFetch( 'schedule/suggest', {
-											count: val.count,
-											url: val.input,
-										} );
-									} }
-								/>
+						<div>
+							<div className="urlslab-content-gen-panel-control-item">
+								<div className="urlslab-content-gen-panel-control-item-container">
+									<SuggestInputField
+										suggestInput=""
+										liveUpdate
+										onChange={ ( val ) => setDomain( val ) }
+										required
+										description={ __( 'Domain to use' ) }
+										postFetchRequest={ async ( val ) => {
+											return await postFetch( 'schedule/suggest', {
+												count: val.count,
+												url: val.input,
+											} );
+										} }
+									/>
+								</div>
+							</div>
+							<div className="urlslab-content-gen-panel-control-item">
+								<div className="urlslab-content-gen-panel-control-item-container">
+									<InputField
+										liveUpdate
+										defaultValue=""
+										description={ __( 'What piece of data you are looking for in your domain' ) }
+										label={ __( 'Semantic Context' ) }
+										onChange={ ( val ) => setSemanticContext( val ) }
+										required
+									/>
+								</div>
 							</div>
 						</div>
 					)

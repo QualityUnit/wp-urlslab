@@ -85,6 +85,53 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
+			'/' . self::SLUG . '/augment',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'async_augment' ),
+					'permission_callback' => array(
+						$this,
+						'augment_permission_check',
+					),
+					'args'                => array(
+						'user_prompt'      => array(
+							'required'          => true,
+							'validate_callback' => function( $param ) {
+								return is_string( $param ) && ! empty( $param );
+							},
+						),
+						'model'            => array(
+							'required'          => true,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+						'semantic_context' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+						'url_filter'       => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_array( $param );
+							},
+						),
+						'domain_filter'    => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_array( $param );
+							},
+						),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
 			'/' . self::SLUG . '/complete',
 			array(
 				array(
@@ -460,6 +507,103 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		} catch ( ApiException $e ) {
 			return new WP_Error( 'invalid_request', $e->getMessage(), array( 'status' => $e->getCode() ) );
 		}
+
+	}
+
+
+	public function async_augment( $request ) {
+		$user_prompt      = $request->get_param( 'user_prompt' );
+		$aug_model        = $request->get_param( 'model' );
+		$semantic_context = $request->get_param( 'semantic_context' );
+		$url_filter       = $request->get_param( 'url_filter' );
+		$domain_filter    = $request->get_param( 'domain_filter' );
+
+		if ( ! empty( $user_prompt ) ) {
+			$augment_request = new DomainDataRetrievalAugmentRequest();
+			$augment_request->setAugmentingModelName( $aug_model );
+
+			if (
+				( $semantic_context && strlen( $semantic_context ) ) ||
+				( $url_filter && count( $url_filter ) ) ||
+				( $domain_filter && count( $domain_filter ) )
+			) {
+				if (
+					( $url_filter && count( $url_filter ) ) ||
+					( $domain_filter && count( $domain_filter ) )
+				) {
+					$filter = new DomainDataRetrievalContentQuery();
+					$filter->setLimit( 5 );
+
+					if ( $url_filter && count( $url_filter ) ) {
+						$filter->setUrls( $url_filter );
+					}
+
+					if ( $domain_filter && count( $domain_filter ) ) {
+						$filter->setDomains( $domain_filter );
+					}
+					$augment_request->setFilter( $filter );
+				}
+
+				if ( strlen( $semantic_context ) ) {
+					$augment_request->setAugmentCommand( $semantic_context );
+				}
+			}
+
+			$prompt = new DomainDataRetrievalAugmentPrompt();
+			$prompt->setPromptTemplate( $user_prompt );
+			$prompt->setDocumentTemplate( "--\n{text}\n--" );
+			$prompt->setMetadataVars( array( 'text' ) );
+			$augment_request->setPrompt( $prompt );
+
+			$augment_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
+
+			try {
+				$response   = Urlslab_Augment_Helper::get_instance()->async_augment( $augment_request );
+				$process_id = $response->getProcessId();
+
+			} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
+				switch ( $e->getCode() ) {
+					case 402:
+						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+
+						return new WP_REST_Response(
+							(object) array(
+								'completion' => '',
+								'message'    => 'not enough credits',
+							),
+							402
+						);
+					//continue
+					case 500:
+					case 504:
+						return new WP_REST_Response(
+							(object) array(
+								'completion' => '',
+								'message'    => 'something wen\'nt wrong, try again later',
+							),
+							$e->getCode()
+						);
+
+					case 404:
+						return new WP_REST_Response(
+							(object) array(
+								'completion' => '',
+								'message'    => 'Given context data has\'t been indexed yet',
+							),
+							$e->getCode()
+						);
+					default:
+						$response_obj = (object) array(
+							'completion' => '',
+							'error'      => $e->getMessage(),
+						);
+
+						return new WP_REST_Response( $response_obj, $e->getCode() );
+				}
+			}
+		}
+
+		return new WP_REST_Response( (object) array( 'processId' => $process_id ), 200 );
 
 	}
 

@@ -11,6 +11,38 @@ export async function augmentWithURLContext( urls, prompt, model ) {
 	);
 }
 
+export async function augmentWithDomainContext( domains, prompt, model, semanticContext ) {
+	if ( ! semanticContext ) {
+		return await postFetch(
+			'generator/augment',
+			{
+				domain_filter: domains,
+				user_prompt: prompt,
+				semantic_context: semanticContext,
+				model,
+			}
+		);
+	}
+	return await postFetch(
+		'generator/augment',
+		{
+			domain_filter: domains,
+			user_prompt: prompt,
+			model,
+		}
+	);
+}
+
+export async function augmentWithoutContext( prompt, model ) {
+	return await postFetch(
+		'generator/augment',
+		{
+			user_prompt: prompt,
+			model,
+		}
+	);
+}
+
 export async function getAugmentProcessResult( processId ) {
 	return await getFetch( `process/complex-augment/${ processId }` );
 }
