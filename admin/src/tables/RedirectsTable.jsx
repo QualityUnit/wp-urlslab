@@ -1,13 +1,11 @@
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Checkbox, InputField, SingleSelectMenu, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, Edit, TagsMenu, SuggestInputField,
+	useInfiniteFetch, ProgressBar, SortBy, Checkbox, InputField, SingleSelectMenu, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, SuggestInputField, RowActionButtons,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
 import useTablePanels from '../hooks/useTablePanels';
-
-import IconButton from '../elements/IconButton';
 
 export default function RedirectsTable( { slug } ) {
 	const paginationId = 'redirect_id';
@@ -30,7 +28,7 @@ export default function RedirectsTable( { slug } ) {
 
 	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	const { activatePanel, setRowToEdit } = useTablePanels();
+	const { setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const { redirectTypes, matchTypes, logginTypes, notFoundTypes, header } = useRedirectTableMenus();
@@ -179,30 +177,12 @@ export default function RedirectsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => {
-				return (
-					<div className="flex editRow-buttons">
-						<IconButton
-							onClick={ () => {
-								updateRow( { cell, id: 'match_url' } );
-								activatePanel( 'rowEditor' );
-							} }
-							tooltipClass="align-left"
-							tooltip={ __( 'Edit row' ) }
-						>
-							<Edit />
-						</IconButton>
-						<IconButton
-							className="ml-s"
-							onClick={ () => deleteRow( { cell, id: 'match_url' } ) }
-							tooltipClass="align-left"
-							tooltip={ __( 'Delete row' ) }
-						>
-							<Trash />
-						</IconButton>
-					</div>
-				);
-			},
+			cell: ( cell ) => <RowActionButtons
+				editable
+				onUpdate={ () => updateRow( { cell, id: 'match_url' } ) }
+				onDelete={ () => deleteRow( { cell, id: 'match_url' } ) }
+			>
+			</RowActionButtons>,
 			header: () => null,
 			size: 60,
 		} ),

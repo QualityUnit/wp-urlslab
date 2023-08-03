@@ -5,19 +5,17 @@ import useChangeRow from '../../hooks/useChangeRow';
 import useTableUpdater from '../../hooks/useTableUpdater';
 import useTablePanels from '../../hooks/useTablePanels';
 
-import { Edit, InputField, Loader, MultiSelectMenu, Tag, Trash, useInfiniteFetch } from '../../lib/tableImports';
+import { Loader, InputField, MultiSelectMenu, Tag, useInfiniteFetch, RowActionButtons } from '../../lib/tableImports';
 
 import ColorPicker from '../../components/ColorPicker';
 import ModuleViewHeaderBottom from '../../components/ModuleViewHeaderBottom';
 import Table from '../../components/TableComponent';
 import Checkbox from '../../elements/Checkbox';
-import IconButton from '../../elements/IconButton';
 import hexToHSL from '../../lib/hexToHSL';
 
 import '../../assets/styles/components/_ModuleViewHeader.scss';
 
 export default function TagsLabels( ) {
-	// const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const paginationId = 'label_id';
 	const slug = 'label';
 	const { table, setTable, filters, sorting } = useTableUpdater( { slug } );
@@ -29,7 +27,6 @@ export default function TagsLabels( ) {
 	}, [ queryClient ] );
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,
@@ -38,7 +35,7 @@ export default function TagsLabels( ) {
 
 	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	const { activatePanel, setRowToEdit } = useTablePanels();
+	const { setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const header = {
@@ -91,31 +88,12 @@ export default function TagsLabels( ) {
 
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => {
-				return (
-					<div className="flex mr-s">
-						<IconButton
-							className="ma-left"
-							onClick={ () => {
-								updateRow( { cell, id: 'name' } );
-								activatePanel( 'rowEditor' );
-							} }
-							tooltipClass="align-left-0"
-							tooltip={ __( 'Edit row' ) }
-						>
-							<Edit />
-						</IconButton>
-						<IconButton
-							className="ml-s"
-							onClick={ () => deleteRow( { cell, id: 'name' } ) }
-							tooltipClass="align-left-0"
-							tooltip={ __( 'Delete row' ) }
-						>
-							<Trash />
-						</IconButton>
-					</div>
-				);
-			},
+			cell: ( cell ) => <RowActionButtons
+				editable
+				onUpdate={ () => updateRow( { cell, id: 'name' } ) }
+				onDelete={ () => deleteRow( { cell, id: 'name' } ) }
+			>
+			</RowActionButtons>,
 			header: null,
 			size: 60,
 		} ),

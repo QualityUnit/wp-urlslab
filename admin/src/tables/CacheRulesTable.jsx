@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Checkbox, InputField, SingleSelectMenu, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, Edit, TagsMenu, IconButton,
+	useInfiniteFetch, ProgressBar, SortBy, Checkbox, InputField, SingleSelectMenu, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, RowActionButtons,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -27,7 +27,7 @@ export default function CacheRulesTable( { slug } ) {
 
 	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
+	const { setRowToEdit, setOptions } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 	const setUnifiedPanel = ( cell ) => {
 		setOptions( [] );
@@ -176,30 +176,12 @@ export default function CacheRulesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => {
-				return (
-					<div className="flex editRow-buttons">
-						<IconButton
-							onClick={ () => {
-								setUnifiedPanel( cell );
-								activatePanel( 'rowEditor' );
-							} }
-							tooltipClass="align-left"
-							tooltip={ __( 'Edit row' ) }
-						>
-							<Edit />
-						</IconButton>
-						<IconButton
-							className="ml-s"
-							onClick={ () => deleteRow( { cell } ) }
-							tooltipClass="align-left"
-							tooltip={ __( 'Delete row' ) }
-						>
-							<Trash />
-						</IconButton>
-					</div>
-				);
-			},
+			cell: ( cell ) => <RowActionButtons
+				editable
+				onUpdate={ () => setUnifiedPanel( cell ) }
+				onDelete={ () => deleteRow( { cell } ) }
+			>
+			</RowActionButtons>,
 			header: () => null,
 			size: 60,
 		} ),

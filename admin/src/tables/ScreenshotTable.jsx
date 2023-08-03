@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Trash, LinkIcon, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, RefreshIcon, IconButton,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, LinkIcon, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, RefreshIcon, IconButton, RowActionButtons,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -148,21 +148,11 @@ export default function ScreenshotTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => {
-				return (
-					<div className="flex editRow-buttons">
-						<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
-						<IconButton
-							className="ml-s"
-							onClick={ () => deleteRow( { cell, id: 'url_title' } ) }
-							tooltipClass="align-left"
-							tooltip={ __( 'Delete row' ) }
-						>
-							<Trash />
-						</IconButton>
-					</div>
-				);
-			},
+			cell: ( cell ) => <RowActionButtons
+				onDelete={ () => deleteRow( { cell, id: 'url_title' } ) }
+			>
+				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
+			</RowActionButtons>,
 			header: null,
 		} ),
 	];

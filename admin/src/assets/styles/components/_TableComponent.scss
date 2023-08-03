@@ -145,20 +145,21 @@ $cellHeight: 3.5em;
 		display: flex;
 		align-items: center;
 		justify-content: flex-end;
-		width: calc(var(--tableContainerWidth) - 0.5em) !important;
+		width: var(--tableContainerWidth) !important;
 		left: var(--tableContainerScroll);
 		padding: 0;
 		z-index: 3;
 		pointer-events: none;
 
 		.editRow-buttons {
-			transform: translateX(100%) translateZ(1px); // Using translateZ to overcome some WebKit problems
-			transition: transform $transitionTime;
+			transform: scaleX(0) translateZ(1px); // Using translateZ to overcome some WebKit problems
+			transform-origin: right center;
+			transition: transform $transitionTime 0.1s;
 			border-radius: $br-6 0 0 $br-6;
 			align-items: center;
 			padding: 0 1em;
 			background-color: $white;
-			pointer-events: all;
+			pointer-events: auto;
 			filter: $box-shadow-small;
 		}
 
@@ -173,8 +174,8 @@ $cellHeight: 3.5em;
 
 	tr:hover {
 
-		.editRow .editRow-buttons {
-			transform: translateX(0) translateZ(1px);
+		.editRow-buttons {
+			transform: scaleX(1) translateZ(1px);
 		}
 	}
 

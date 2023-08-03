@@ -2,13 +2,12 @@ import {
 	useInfiniteFetch,
 	ProgressBar,
 	SortBy,
-	Trash,
 	Checkbox,
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	InputField, SingleSelectMenu, IconButton,
+	InputField, SingleSelectMenu, RowActionButtons,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -133,20 +132,10 @@ export default function SchedulesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => {
-				return (
-					<div className="flex editRow-buttons">
-						<IconButton
-							className="ml-s"
-							onClick={ () => deleteRow( { cell, id: 'urls' } ) }
-							tooltipClass="align-left"
-							tooltip={ __( 'Delete row' ) }
-						>
-							<Trash />
-						</IconButton>
-					</div>
-				);
-			},
+			cell: ( cell ) => <RowActionButtons
+				onDelete={ () => deleteRow( { cell, id: 'urls' } ) }
+			>
+			</RowActionButtons>,
 			header: null,
 			size: 60,
 		} ),

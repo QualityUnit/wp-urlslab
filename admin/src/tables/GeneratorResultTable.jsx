@@ -1,5 +1,5 @@
 import {
-	useInfiniteFetch, Tooltip, Checkbox, Trash, ProgressBar, SortBy, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, LinkIcon, TagsMenu, Edit, SingleSelectMenu, TextArea, AcceptIcon, DisableIcon, RefreshIcon, IconButton,
+	useInfiniteFetch, Tooltip, Checkbox, ProgressBar, SortBy, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, LinkIcon, TagsMenu, SingleSelectMenu, TextArea, AcceptIcon, DisableIcon, RefreshIcon, IconButton, RowActionButtons,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -179,31 +179,13 @@ export default function GeneratorResultTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => {
-				return (
-					<div className="flex editRow-buttons">
-						<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
-						<IconButton
-							onClick={ () => {
-								setUnifiedPanel( cell );
-								activatePanel( 'rowEditor' );
-							} }
-							tooltipClass="align-left"
-							tooltip={ __( 'Edit row' ) }
-						>
-							<Edit />
-						</IconButton>
-						<IconButton
-							className="ml-s"
-							onClick={ () => deleteRow( { cell } ) }
-							tooltipClass="align-left"
-							tooltip={ __( 'Delete row' ) }
-						>
-							<Trash />
-						</IconButton>
-					</div>
-				);
-			},
+			cell: ( cell ) => <RowActionButtons
+				editable
+				onUpdate={ () => setUnifiedPanel( cell ) }
+				onDelete={ () => deleteRow( { cell } ) }
+			>
+				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
+			</RowActionButtons>,
 			header: null,
 			size: 60,
 		} ),

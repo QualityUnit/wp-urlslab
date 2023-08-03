@@ -1,6 +1,6 @@
 /* eslint-disable indent */
 import {
-	useInfiniteFetch, ProgressBar, TagsMenu, SortBy, SingleSelectMenu, LangMenu, InputField, Checkbox, LinkIcon, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, Edit, SuggestInputField, IconButton,
+	useInfiniteFetch, ProgressBar, TagsMenu, SortBy, SingleSelectMenu, LangMenu, InputField, Checkbox, LinkIcon, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, SuggestInputField, RowActionButtons,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -168,30 +168,12 @@ export default function KeywordsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => {
-				return (
-					<div className="flex editRow-buttons">
-						<IconButton
-							onClick={ () => {
-								setUnifiedPanel( cell );
-								activatePanel( 'rowEditor' );
-							} }
-							tooltipClass="align-left"
-							tooltip={ __( 'Edit row' ) }
-						>
-							<Edit />
-						</IconButton>
-						<IconButton
-							className="ml-s"
-							onClick={ () => deleteRow( { cell, id: 'keyword' } ) }
-							tooltipClass="align-left"
-							tooltip={ __( 'Delete row' ) }
-					>
-							<Trash />
-						</IconButton>
-					</div>
-				);
-			},
+			cell: ( cell ) => <RowActionButtons
+				editable
+				onUpdate={ () => setUnifiedPanel( cell ) }
+				onDelete={ () => deleteRow( { cell, id: 'url' } ) }
+			>
+			</RowActionButtons>,
 			header: null,
 			size: 60,
 		} ),

@@ -4,7 +4,6 @@ import {
 	SortBy,
 	Tooltip,
 	LinkIcon,
-	Trash,
 	SingleSelectMenu,
 	Checkbox,
 	Loader,
@@ -18,6 +17,7 @@ import {
 	IconButton,
 	RefreshIcon,
 	LangMenu,
+	RowActionButtons,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -233,32 +233,22 @@ export default function LinkManagerTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => {
-				return (
-					<div className="flex editRow-buttons">
-						{
-							showChanges( cell ) &&
-							<Button onClick={ () => {
-								setOptions( { changesPanel: { title: cell.row.original.url_name, slug: `url/${ cell.row.original.url_id }/changes` } } );
-								activatePanel( 'changesPanel' );
-							} }
-							className="mr-s small active"
-							>
-								{ __( 'Show changes' ) }
-							</Button>
-						}
-						<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'http_status', newVal: val, cell } ) } />
-						<IconButton
-							className="ml-s"
-							onClick={ () => deleteRow( { cell, id: 'url_name' } ) }
-							tooltipClass="align-left"
-							tooltip={ __( 'Delete row' ) }
-						>
-							<Trash />
-						</IconButton>
-					</div>
-				);
-			},
+			cell: ( cell ) => <RowActionButtons
+				onDelete={ () => deleteRow( { cell, id: 'url_name' } ) }
+			>
+				{
+					showChanges( cell ) &&
+					<Button onClick={ () => {
+						setOptions( { changesPanel: { title: cell.row.original.url_name, slug: `url/${ cell.row.original.url_id }/changes` } } );
+						activatePanel( 'changesPanel' );
+					} }
+					className="mr-s small active"
+					>
+						{ __( 'Show changes' ) }
+					</Button>
+				}
+				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'http_status', newVal: val, cell } ) } />
+			</RowActionButtons>,
 			header: null,
 		} ),
 	];

@@ -2,7 +2,7 @@ import { useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SingleSelectMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, SuggestInputField, IconButton,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SingleSelectMenu, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, SuggestInputField, RowActionButtons,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -150,20 +150,10 @@ export default function NotFoundTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => {
-				return (
-					<div className="flex editRow-buttons">
-						<IconButton
-							className="ml-s"
-							onClick={ () => deleteRow( { cell, id: 'url' } ) }
-							tooltipClass="align-left"
-							tooltip={ __( 'Delete row' ) }
-						>
-							<Trash />
-						</IconButton>
-					</div>
-				);
-			},
+			cell: ( cell ) => <RowActionButtons
+				onDelete={ () => deleteRow( { cell, id: 'url' } ) }
+			>
+			</RowActionButtons>,
 			header: null,
 		} ),
 	];
