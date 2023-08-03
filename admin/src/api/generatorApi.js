@@ -47,6 +47,10 @@ export async function getAugmentProcessResult( processId ) {
 	return await getFetch( `process/complex-augment/${ processId }` );
 }
 
+export async function getPostTypes() {
+	return await getFetch( `generator/post` );
+}
+
 export async function createPost( postContent, postTitle, postType ) {
 	return await postFetch(
 		'generator/post/create',
@@ -57,3 +61,5 @@ export async function createPost( postContent, postTitle, postType ) {
 		}
 	);
 }
+
+

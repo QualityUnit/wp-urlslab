@@ -1,5 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
-import { memo, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import '../../assets/styles/components/_ContentGeneratorPanel.scss';
 import { InputField, SingleSelectMenu, SuggestInputField } from '../../lib/tableImports';
 import Loader from '../Loader';
@@ -13,7 +13,7 @@ import {
 	augmentWithDomainContext,
 	augmentWithoutContext,
 	augmentWithURLContext, createPost,
-	getAugmentProcessResult
+	getAugmentProcessResult, getPostTypes,
 } from '../../api/generatorApi';
 import { Editor as TinyMCE } from '@tinymce/tinymce-react/lib/cjs/main/ts/components/Editor';
 import { fetchLangs } from '../../api/fetchLangs';
@@ -30,6 +30,7 @@ function ContentGeneratorPanel() {
 		acc[ key ] = value.name;
 		return acc;
 	}, {} );
+	const [ postTypes, setPostTypes ] = useState( {} );
 	const [ postType, setPostType ] = useState( 'post' );
 	const [ title, setTitle ] = useState( '' );
 	const [ urlsList, setUrlsList ] = useState( [] );
@@ -42,6 +43,7 @@ function ContentGeneratorPanel() {
 	const [ modelName, setModelName ] = useState( 'gpt-3.5-turbo' );
 	const [ isGenerating, setIsGenerating ] = useState( false );
 	const [ errorGeneration, setErrorGeneration ] = useState( '' );
+	const [ generatedPostLink, setGeneratedPostLink ] = useState( '' );
 
 	const contextTypes = {
 		NO_CONTEXT: 'No Data Source',
@@ -62,6 +64,20 @@ function ContentGeneratorPanel() {
 		URL_CONTEXT: __( 'The prompt to be used for generating text from each url…' ),
 		DOMAIN_CONTEXT: __( 'The prompt to be used to generate text from relevant content in your whole domain…' ),
 		SERP_CONTEXT: __( 'The prompt to be used to generate text from top SERP Results targeting your keyword…' ),
+	};
+
+	useEffect( () => {
+		getPostTypes().then( async ( res ) => {
+			const rsp = await res.json();
+			setPostTypes( rsp );
+		} );
+	}, [] );
+
+	const handleCreatePost = async () => {
+		createPost( editorVal, title, postType ).then( async ( res ) => {
+			const rsp = await res.json();
+			setGeneratedPostLink( decodeURIComponent( rsp.edit_post_link ) );
+		} );
 	};
 
 	// handling keyword input
@@ -124,7 +140,6 @@ function ContentGeneratorPanel() {
 				const pollForResult = setInterval( async () => {
 					try {
 						const resultResponse = await getAugmentProcessResult( processId );
-						console.log(resultResponse)
 						if ( processIdResponse.ok ) {
 							const generationRes = await resultResponse.json();
 							if ( generationRes.status === 'SUCCESS' ) {
@@ -438,12 +453,26 @@ function ContentGeneratorPanel() {
 					} }
 				/>
 				{
-					! editorLoading && (
+					Object.keys( postTypes ).length !== 0 && ! editorLoading && (
 						<div>
-							<Button onClick={ () => {
-								createPost( editorVal, postType, title );
-							} }>Create Post</Button>
+							<SingleSelectMenu
+								key={ postType }
+								items={ postTypes }
+								name="post_type_menu"
+								defaultAccept
+								autoClose
+								defaultValue={ postType }
+								onChange={ ( val ) => setPostType( val ) }
+							/>
+
+							<Button onClick={ handleCreatePost }>Create Post</Button>
 						</div>
+					)
+				}
+
+				{
+					generatedPostLink !== '' && (
+						<Button href={ generatedPostLink }>Edit Generated Post</Button>
 					)
 				}
 			</div>

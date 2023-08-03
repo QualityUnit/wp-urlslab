@@ -909,11 +909,17 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			)
 		);
 
-		return new WP_REST_Response( (object) array( 'post_id' => $post_id ), 200 );
+		return new WP_REST_Response(
+			(object) array(
+				'post_id' => $post_id,
+				'edit_post_link' => get_edit_post_link( $post_id ),
+			),
+			200 
+		);
 	}
 
 	public function get_post_types( $request ) {
-
+		return Urlslab_Related_Resources_Widget::get_available_post_types();
 	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
