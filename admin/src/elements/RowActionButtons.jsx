@@ -5,17 +5,17 @@ import IconButton from '../elements/IconButton';
 import { ReactComponent as Edit } from '../assets/images/icons/icon-edit.svg';
 import { ReactComponent as Trash } from '../assets/images/icons/icon-trash.svg';
 
-function RowActionButtons( { onUpdate, onDelete, children } ) {
+function RowActionButtons( { onEdit, onDelete, children } ) {
 	const { __ } = useI18n();
 	const { activatePanel } = useTablePanels();
 
 	return (
 		<div className="flex editRow-buttons">
 			{ children }
-			{ onUpdate &&
+			{ onEdit &&
 			<IconButton
 				onClick={ () => {
-					onUpdate();
+					onEdit();
 					activatePanel( 'rowEditor' );
 				} }
 				tooltipClass="align-left"

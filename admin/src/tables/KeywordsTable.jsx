@@ -169,7 +169,7 @@ export default function KeywordsTable( { slug } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
-				onUpdate={ () => setUnifiedPanel( cell ) }
+				onEdit={ () => setUnifiedPanel( cell ) }
 				onDelete={ () => deleteRow( { cell, id: 'url' } ) }
 			>
 			</RowActionButtons>,

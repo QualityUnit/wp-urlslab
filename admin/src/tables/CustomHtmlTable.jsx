@@ -180,7 +180,7 @@ export default function CustomHtmlTable( { slug } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
-				onUpdate={ () => updateRow( { cell, id: 'name' } ) }
+				onEdit={ () => updateRow( { cell, id: 'name' } ) }
 				onDelete={ () => deleteRow( { cell, id: 'name' } ) }
 			>
 			</RowActionButtons>,

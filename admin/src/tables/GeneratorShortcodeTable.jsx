@@ -204,7 +204,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
-				onUpdate={ () => updateRow( { cell } ) }
+				onEdit={ () => updateRow( { cell } ) }
 				onDelete={ () => deleteRow( { cell } ) }
 			>
 				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />

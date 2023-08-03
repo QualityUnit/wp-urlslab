@@ -168,7 +168,7 @@ export default function NotFoundTable( { slug } ) {
 				table={ table }
 				onDeleteSelected={ deleteMultipleRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onUpdate={ ( val ) => {
+				onEdit={ ( val ) => {
 					if ( val === 'rowInserted' ) {
 						queryClient.invalidateQueries( [ 'redirects' ], { refetchType: 'all' } );
 					}

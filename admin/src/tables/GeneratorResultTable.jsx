@@ -180,7 +180,7 @@ export default function GeneratorResultTable( { slug } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
-				onUpdate={ () => setUnifiedPanel( cell ) }
+				onEdit={ () => setUnifiedPanel( cell ) }
 				onDelete={ () => deleteRow( { cell } ) }
 			>
 				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />

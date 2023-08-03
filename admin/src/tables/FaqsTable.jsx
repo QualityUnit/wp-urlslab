@@ -121,7 +121,7 @@ export default function FaqsTable( { slug } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
-				onUpdate={ () => updateRow( { cell, id: 'faq_id' } ) }
+				onEdit={ () => updateRow( { cell, id: 'faq_id' } ) }
 				onDelete={ () => deleteRow( { cell, id: 'faq_id' } ) }
 			>
 			</RowActionButtons>,
