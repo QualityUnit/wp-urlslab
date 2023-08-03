@@ -67,8 +67,6 @@ export default function Table( { slug, resizable, children, className, columns, 
 				tableContainerRef.current.style.width = `${ tableContainerWidth }px`;
 				tableContainerRef.current.style.setProperty( '--tableContainerWidth', `${ tableContainerWidth }px` );
 			}
-
-			checkTableOverflow();
 		} );
 
 		tableContainerRef.current.addEventListener( 'scroll', () => {
