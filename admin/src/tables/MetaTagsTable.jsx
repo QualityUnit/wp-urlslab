@@ -1,11 +1,13 @@
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Trash, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, InputField, DateTimeFormat, TagsMenu,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Trash, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, InputField, DateTimeFormat, TagsMenu, IconButton, RefreshIcon, Edit,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
+import useTablePanels from '../hooks/useTablePanels';
+import { useCallback } from 'react';
 
-export default function LinkManagerTable( { slug } ) {
+export default function MetaTagsManagerTable( { slug } ) {
 	const paginationId = 'url_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const url = { filters, sorting };
@@ -23,6 +25,30 @@ export default function LinkManagerTable( { slug } ) {
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
 	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+
+	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
+	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+
+	const setUnifiedPanel = useCallback( ( cell ) => {
+		setOptions( [] );
+		setRowToEdit( {} );
+		updateRow( { cell } );
+	}, [ setOptions, setRowToEdit, slug ] );
+
+	const ActionButton = ( { cell, onClick } ) => {
+		const { http_status } = cell?.row?.original;
+
+		return (
+			<div className="flex flex-align-center flex-justify-end">
+				{
+					http_status !== '-2' &&
+					<IconButton className="mr-s" tooltip={ __( 'Regenerate' ) } tooltipClass="align-left" onClick={ () => onClick( '-2' ) }>
+						<RefreshIcon />
+					</IconButton>
+				}
+			</div>
+		);
+	};
 
 	// const sumStatusTypes = {
 	// 	N: __( 'Waiting' ),
@@ -60,6 +86,16 @@ export default function LinkManagerTable( { slug } ) {
 		update_http_date: __( 'Last change' ),
 	};
 
+	const rowEditorCells = {
+		url_title: <InputField defaultValue="" label={ header.url_title } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_title: val } ) } />,
+
+		url_meta_description: <InputField defaultValue="" label={ header.url_meta_description } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_meta_description: val } ) } />,
+
+		url_summary: <InputField defaultValue="" label={ header.url_summary } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_summary: val } ) } />,
+
+		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
+	};
+
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
@@ -79,26 +115,17 @@ export default function LinkManagerTable( { slug } ) {
 			size: 200,
 		} ),
 		columnHelper.accessor( 'url_title', {
-			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_title }</SortBy>,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'url_meta_description', {
-			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_meta_description }</SortBy>,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'url_summary', {
-			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_summary }</SortBy>,
 			size: 200,
 		} ),
@@ -127,7 +154,31 @@ export default function LinkManagerTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, id: 'url_name' } ) } />,
+			cell: ( cell ) => {
+				return (
+					<div className="flex editRow-buttons">
+						<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'http_status', newVal: val, cell } ) } />
+						<IconButton
+							onClick={ () => {
+								setUnifiedPanel( cell );
+								activatePanel( 'rowEditor' );
+							} }
+							tooltipClass="align-left"
+							tooltip={ __( 'Edit row' ) }
+						>
+							<Edit />
+						</IconButton>
+						<IconButton
+							className="ml-s"
+							onClick={ () => deleteRow( { cell, id: 'url_name' } ) }
+							tooltipClass="align-left"
+							tooltip={ __( 'Delete row' ) }
+						>
+							<Trash />
+						</IconButton>
+					</div>
+				);
+			},
 			header: null,
 		} ),
 	];
@@ -149,6 +200,8 @@ export default function LinkManagerTable( { slug } ) {
 					data,
 					url,
 					paginationId,
+					rowToEdit,
+					rowEditorCells,
 					deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
 					perPage: 1000,
 				} }

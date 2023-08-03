@@ -5,20 +5,17 @@ import {
 	SingleSelectMenu,
 	InputField,
 	Checkbox,
-	Trash,
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
 	TagsMenu,
-	Edit,
-	Editor, LangMenu, DateTimeFormat,
+	Editor, LangMenu, DateTimeFormat, RowActionButtons,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-import IconButton from '../elements/IconButton';
 // import { active } from 'd3';
 
 export default function FaqsTable( { slug } ) {
@@ -42,7 +39,7 @@ export default function FaqsTable( { slug } ) {
 
 	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	const { activatePanel, setRowToEdit } = useTablePanels();
+	const { setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const statuses = {
@@ -123,30 +120,11 @@ export default function FaqsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => {
-				return (
-					<div className="flex">
-						<IconButton
-							onClick={ () => {
-								updateRow( { cell, id: 'faq_id' } );
-								activatePanel( 'rowEditor' );
-							} }
-							tooltipClass="align-left xxxl"
-							tooltip={ __( 'Edit row' ) }
-						>
-							<Edit />
-						</IconButton>
-						<IconButton
-							className="ml-s"
-							onClick={ () => deleteRow( { cell, id: 'faq_id' } ) }
-							tooltipClass="align-left xxxl"
-							tooltip={ __( 'Delete row' ) }
-						>
-							<Trash />
-						</IconButton>
-					</div>
-				);
-			},
+			cell: ( cell ) => <RowActionButtons
+				onEdit={ () => updateRow( { cell, id: 'faq_id' } ) }
+				onDelete={ () => deleteRow( { cell, id: 'faq_id' } ) }
+			>
+			</RowActionButtons>,
 			header: () => null,
 			size: 60,
 		} ),

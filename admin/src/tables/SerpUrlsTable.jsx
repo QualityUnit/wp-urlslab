@@ -8,14 +8,9 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	SingleSelectMenu, InputField, Editor, LangMenu, TagsMenu,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
-import useChangeRow from '../hooks/useChangeRow';
-import useTablePanels from '../hooks/useTablePanels';
-import React, { useCallback } from 'react';
-import TextArea from '../elements/Textarea';
 
 export default function SerpUrlsTable( { slug } ) {
 	const paginationId = 'url_id';
@@ -34,18 +29,6 @@ export default function SerpUrlsTable( { slug } ) {
 		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
-
-	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
-
-	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-
-	const setUnifiedPanel = useCallback( ( cell ) => {
-		const origCell = cell?.row.original;
-		setOptions( [] );
-		setRowToEdit( {} );
-		updateRow( { cell, id: 'url_name' } );
-	}, [ setOptions, setRowToEdit, slug, updateRow ] );
 
 	const domainTypes = {
 		X: __( 'Other' ),
@@ -144,7 +127,7 @@ export default function SerpUrlsTable( { slug } ) {
 				noDelete
 				noInsert
 				noImport
-				options={ { header, data, slug, paginationId, url, id: 'url_name', title: '', rowToEdit,
+				options={ { header, data, slug, paginationId, url, id: 'url_name', title: '',
 					deleteCSVCols: [ paginationId, 'url_id' ] }
 				}
 			/>

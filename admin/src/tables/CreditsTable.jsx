@@ -4,7 +4,7 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	ProgressBar, Tooltip, SortBy, DateTimeFormat,
+	Tooltip, DateTimeFormat,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -13,7 +13,7 @@ import '../assets/styles/components/_ModuleViewHeader.scss';
 
 export default function CreditsTable( { slug } ) {
 	const paginationId = 'id';
-	const { table, setTable, filters, sorting, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, filters, sorting } = useTableUpdater( { slug } );
 
 	const {
 		__,
@@ -22,9 +22,6 @@ export default function CreditsTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetching,
-		isFetchingNextPage,
-		hasNextPage,
-		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
 	const header = {
@@ -37,26 +34,26 @@ export default function CreditsTable( { slug } ) {
 
 	const columns = [
 		columnHelper.accessor( 'id', {
-			header: ( th ) => header.id,
+			header: header.id,
 			size: 60,
 		} ),
 		columnHelper.accessor( 'operationDate', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => header.operationDate,
+			header: header.operationDate,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'creditType', {
-			header: ( th ) => header.creditType,
+			header: header.creditType,
 			size: 60,
 		} ),
 		columnHelper.accessor( 'creditOperation', {
-			header: ( th ) => header.creditOperation,
+			header: header.creditOperation,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'context', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => header.context,
+			header: header.context,
 			size: 200,
 		} ),
 	];

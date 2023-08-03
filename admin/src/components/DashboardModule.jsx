@@ -33,7 +33,10 @@ function DashboardModule( { module, labelsList, isOnboardingItem } ) {
 		},
 	} );
 
-	const iconPath = new URL( `../assets/images/modules/${ moduleId }.svg`, import.meta.url ).pathname;
+	let iconPath = new URL( `../assets/images/modules/${ moduleId }.svg`, import.meta.url ).pathname;
+	if ( iconPath.includes( 'undefined' ) ) {
+		iconPath = new URL( `../assets/images/modules/urlslab-media-offloader.svg`, import.meta.url ).pathname;
+	}
 
 	return (
 		<div className={ `urlslab-dashboardmodule ${ handleSwitch.isLoading ? 'activating' : '' } ${ isActive ? 'active' : '' }` }>

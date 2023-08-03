@@ -16,6 +16,15 @@ export default function Table( { slug, resizable, children, className, columns, 
 	const [ containerWidth, setContainerWidth ] = useState();
 	const [ columnVisibility, setColumnVisibility ] = useState( initialState?.columnVisibility || {} );
 	const tableContainerRef = useRef();
+	const tableRef = useRef();
+
+	const checkTableOverflow = useCallback( () => {
+		if ( tableContainerRef.current?.clientHeight < tableRef.current?.clientHeight ) {
+			return 'has-scrollbar';
+		}
+
+		return '';
+	}, [] );
 
 	const getColumnState = useCallback( () => {
 		get( slug ).then( async ( dbData ) => {
@@ -24,21 +33,6 @@ export default function Table( { slug, resizable, children, className, columns, 
 			}
 		} );
 	}, [ slug ] );
-
-	useEffect( () => {
-		getColumnState();
-
-		setContainerWidth( tableContainerRef.current?.clientWidth );
-		const menuWidth = document.querySelector( '.urlslab-mainmenu' ).clientWidth + document.querySelector( '#adminmenuwrap' ).clientWidth;
-
-		const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
-			if ( entry.borderBoxSize && tableContainerRef.current ) {
-				tableContainerRef.current.style.width = `${ document.querySelector( '#wpadminbar' ).clientWidth - menuWidth - 54 }px`;
-			}
-		} );
-
-		resizeWatcher.observe( document.querySelector( '#wpadminbar' ) );
-	}, [ getColumnState, setContainerWidth ] );
 
 	const table = useReactTable( {
 		columns,
@@ -58,6 +52,29 @@ export default function Table( { slug, resizable, children, className, columns, 
 		onRowSelectionChange: setRowSelection,
 		getCoreRowModel: getCoreRowModel(),
 	}, );
+
+	useEffect( () => {
+		getColumnState();
+		setContainerWidth( tableContainerRef.current?.clientWidth );
+
+		tableContainerRef.current?.style.setProperty( '--tableContainerScroll', '0px' );
+
+		const menuWidth = document.querySelector( '.urlslab-mainmenu' ).clientWidth + document.querySelector( '#adminmenuwrap' ).clientWidth;
+
+		const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
+			if ( entry.borderBoxSize && tableContainerRef.current ) {
+				const tableContainerWidth = document.querySelector( '#wpadminbar' ).clientWidth - menuWidth - 54;
+				tableContainerRef.current.style.width = `${ tableContainerWidth }px`;
+				tableContainerRef.current?.style.setProperty( '--tableContainerWidth', `${ tableContainerWidth }px` );
+			}
+		} );
+
+		tableContainerRef.current?.addEventListener( 'scroll', () => {
+			tableContainerRef.current?.style.setProperty( '--tableContainerScroll', `${ tableContainerRef.current?.scrollLeft }px` );
+		} );
+
+		resizeWatcher.observe( document.querySelector( '#wpadminbar' ) );
+	}, [ checkTableOverflow, getColumnState, setContainerWidth ] );
 
 	if ( table && returnTable ) {
 		returnTable( table );
@@ -111,12 +128,12 @@ export default function Table( { slug, resizable, children, className, columns, 
 	}
 
 	return (
-		<div className="urlslab-table-container" ref={ tableContainerRef } style={ {
+		<div className={ `urlslab-table-container ${ checkTableOverflow() }` } ref={ tableContainerRef } style={ {
 			width: `${ containerWidth }px`,
 			'--tableContainerWidth': `${ containerWidth }px`,
 		} }>
 			{ containerWidth
-				? <table className={ `urlslab-table ${ className } ${ resizable ? 'resizable' : '' }` } style={ {
+				? <table ref={ tableRef } className={ `urlslab-table ${ className } ${ resizable ? 'resizable' : '' }` } style={ {
 					width: table.getCenterTotalSize(),
 				} }>
 					<thead className="urlslab-table-head">

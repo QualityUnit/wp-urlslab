@@ -4,7 +4,6 @@ import {
 	SortBy,
 	Tooltip,
 	LinkIcon,
-	Trash,
 	SingleSelectMenu,
 	Checkbox,
 	Loader,
@@ -15,6 +14,10 @@ import {
 	TagsMenu,
 	Button,
 	InputField,
+	IconButton,
+	RefreshIcon,
+	LangMenu,
+	RowActionButtons,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -70,6 +73,21 @@ export default function LinkManagerTable( { slug } ) {
 		] );
 	};
 
+	const ActionButton = ( { cell, onClick } ) => {
+		const { http_status } = cell?.row?.original;
+
+		return (
+			<div className="flex flex-align-center flex-justify-end">
+				{
+					http_status !== '-2' &&
+					<IconButton className="mr-s" tooltip={ __( 'Regenerate' ) } tooltipClass="align-left" onClick={ () => onClick( '-2' ) }>
+						<RefreshIcon />
+					</IconButton>
+				}
+			</div>
+		);
+	};
+
 	const httpStatusTypes = {
 		'-2': __( 'Processing' ),
 		'-1': __( 'Waiting' ),
@@ -83,14 +101,10 @@ export default function LinkManagerTable( { slug } ) {
 		500: __( 'Server Error' ),
 		503: __( 'Server Error' ),
 	};
+
 	const visibilityTypes = {
 		V: __( 'Visible' ),
 		H: __( 'Hidden' ),
-	};
-
-	const urlTypes = {
-		I: __( 'Internal' ),
-		E: __( 'External' ),
 	};
 
 	const header = {
@@ -148,10 +162,11 @@ export default function LinkManagerTable( { slug } ) {
 			size: 200,
 		} ),
 		columnHelper.accessor( 'url_priority', {
+			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() } min="0" max="100" onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_priority }</SortBy>,
-			size: 30,
+			size: 80,
 		} ),
 		columnHelper?.accessor( 'http_status', {
 			filterValMenu: httpStatusTypes,
@@ -162,13 +177,9 @@ export default function LinkManagerTable( { slug } ) {
 		columnHelper.accessor( 'visibility', {
 			filterValMenu: visibilityTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu
-				items={ visibilityTypes }
-				name={ cell.column.id }
-				defaultValue={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu defaultAccept autoClose items={ visibilityTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.visibility }</SortBy>,
-			size: 80,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'update_http_date', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
@@ -208,9 +219,11 @@ export default function LinkManagerTable( { slug } ) {
 			size: 70,
 		} ),
 		columnHelper.accessor( 'url_lang', {
+			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => cell?.getValue() && <LangMenu defaultValue={ cell?.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.url_lang,
-			size: 30,
+			size: 70,
 		} ),
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
@@ -218,23 +231,24 @@ export default function LinkManagerTable( { slug } ) {
 			header: header.labels,
 			size: 160,
 		} ),
-		columnHelper.accessor( 'changesPanel', {
-			className: 'changesPanel',
-			cell: ( cell ) => showChanges( cell ) &&
-			<Button onClick={ () => {
-				setOptions( { changesPanel: { title: cell.row.original.url_name, slug: `url/${ cell.row.original.url_id }/changes` } } );
-				activatePanel( 'changesPanel' );
-			} }
-			className="small active"
-			>
-				{ __( 'Show changes' ) }
-			</Button>,
-			header: null,
-			size: 100,
-		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, id: 'url_name' } ) } />,
+			cell: ( cell ) => <RowActionButtons
+				onDelete={ () => deleteRow( { cell, id: 'url_name' } ) }
+			>
+				{
+					showChanges( cell ) &&
+					<Button onClick={ () => {
+						setOptions( { changesPanel: { title: cell.row.original.url_name, slug: `url/${ cell.row.original.url_id }/changes` } } );
+						activatePanel( 'changesPanel' );
+					} }
+					className="mr-s small active"
+					>
+						{ __( 'Show changes' ) }
+					</Button>
+				}
+				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'http_status', newVal: val, cell } ) } />
+			</RowActionButtons>,
 			header: null,
 		} ),
 	];

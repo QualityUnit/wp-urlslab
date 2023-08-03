@@ -1,16 +1,9 @@
 /* eslint-disable indent */
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Checkbox, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, SortBy, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
-import useChangeRow from '../hooks/useChangeRow';
-import useTablePanels from '../hooks/useTablePanels';
-import IconButton from '../elements/IconButton';
-import React, { useCallback } from 'react';
-import TextArea from "../elements/Textarea";
-import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
-import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refresh.svg';
 
 export default function SerpGapTable( { slug } ) {
 	const paginationId = 'query_id';
@@ -31,7 +24,6 @@ export default function SerpGapTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
 
-
 	const header = {
 		query: __( 'Query' ),
 		type: __( 'Query Type' ),
@@ -49,7 +41,7 @@ export default function SerpGapTable( { slug } ) {
 		C: __( 'Search Console' ),
 		S: __( 'Google Suggestion' ),
 		F: __( 'Google FAQ' ),
-	}
+	};
 
 	const columns = [
 		columnHelper.accessor( 'query', {

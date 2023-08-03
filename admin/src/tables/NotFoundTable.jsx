@@ -2,7 +2,7 @@ import { useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SingleSelectMenu, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, SuggestInputField,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SingleSelectMenu, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, SuggestInputField, RowActionButtons,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -150,8 +150,10 @@ export default function NotFoundTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, id: 'url' } ) } />,
+			cell: ( cell ) => <RowActionButtons
+				onDelete={ () => deleteRow( { cell, id: 'url' } ) }
+			>
+			</RowActionButtons>,
 			header: null,
 		} ),
 	];
@@ -166,7 +168,7 @@ export default function NotFoundTable( { slug } ) {
 				table={ table }
 				onDeleteSelected={ deleteMultipleRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				onUpdate={ ( val ) => {
+				onEdit={ ( val ) => {
 					if ( val === 'rowInserted' ) {
 						queryClient.invalidateQueries( [ 'redirects' ], { refetchType: 'all' } );
 					}

@@ -2,7 +2,6 @@ import {
 	useInfiniteFetch,
 	Tooltip,
 	Checkbox,
-	Trash,
 	ProgressBar,
 	SortBy,
 	TextArea,
@@ -13,13 +12,13 @@ import {
 	TooltipSortingFiltering,
 	DateTimeFormat,
 	SingleSelectMenu,
-	Edit,
 	Editor,
+	AcceptIcon,
+	DisableIcon,
+	IconButton,
+	RowActionButtons,
 } from '../lib/tableImports';
 
-import IconButton from '../elements/IconButton';
-import { ReactComponent as AcceptIcon } from '../assets/images/icons/icon-activate.svg';
-import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
@@ -37,13 +36,17 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			<div className="flex flex-align-center flex-justify-end">
 				{
 					( status === 'D' ) &&
-					<IconButton className="mr-s c-saturated-green" tooltip={ __( 'Activate' ) } tooltipClass="align-left" onClick={ () => onClick( 'A' ) }>
+					<IconButton className="mr-s c-saturated-green"
+						tooltip={ __( 'Activate' ) }
+						tooltipClass="align-left" onClick={ () => onClick( 'A' ) }>
 						<AcceptIcon />
 					</IconButton>
 				}
 				{
 					( status === 'A' ) &&
-					<IconButton className="mr-s c-saturated-red" tooltip={ __( 'Disable' ) } tooltipClass="align-left" onClick={ () => onClick( 'D' ) }>
+					<IconButton className="mr-s c-saturated-red"
+						tooltip={ __( 'Disable' ) }
+						tooltipClass="align-left" onClick={ () => onClick( 'D' ) }>
 						<DisableIcon />
 					</IconButton>
 				}
@@ -65,7 +68,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 
 	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	const { activatePanel, setRowToEdit } = useTablePanels();
+	const { setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const statusTypes = {
@@ -198,38 +201,14 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			header: header.usage_count,
 			size: 60,
 		} ),
-		columnHelper.accessor( 'actions', {
-			className: 'actions hoverize nolimit',
-			cell: ( cell ) => <ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />,
-			header: null,
-			size: 70,
-		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => {
-				return (
-					<div className="flex">
-						<IconButton
-							onClick={ () => {
-								updateRow( { cell } );
-								activatePanel( 'rowEditor' );
-							} }
-							tooltipClass="align-left xxxl"
-							tooltip={ __( 'Edit row' ) }
-						>
-							<Edit />
-						</IconButton>
-						<IconButton
-							className="ml-s"
-							onClick={ () => deleteRow( { cell } ) }
-							tooltipClass="align-left xxxl"
-							tooltip={ __( 'Delete row' ) }
-						>
-							<Trash />
-						</IconButton>
-					</div>
-				);
-			},
+			cell: ( cell ) => <RowActionButtons
+				onEdit={ () => updateRow( { cell } ) }
+				onDelete={ () => deleteRow( { cell } ) }
+			>
+				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
+			</RowActionButtons>,
 			header: null,
 			size: 60,
 		} ),
