@@ -42,6 +42,25 @@ const GeneratedResult: React.FC<{result: { text: string, loading: boolean}}> = (
 		togglePopup();
 	};
 
+	const replaceText = () => {
+		if ( scriptData.editor_type === 'gutenberg' ) {
+			const block = wp.data.select( 'core/block-editor' ).getSelectedBlock();
+			const blockContent = block.attributes.content.replace( /&nbsp;/g, '' );
+
+			if ( blockContent.includes( state.inputText ) ) {
+				// we can simply replace text
+				wp.data.dispatch( 'core/block-editor' ).updateBlockAttributes( block.clientId, { content: blockContent.replace( state.inputText, result.text.replace( /\n/g, '<br>' ) ) } );
+			} else {
+				// there are probably html tags inside selected part of content
+				// we need to remove html
+
+				const blockContentWithoutHtml = blockContent.replace( /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g, '' );
+				wp.data.dispatch( 'core/block-editor' ).updateBlockAttributes( block.clientId, { content: blockContentWithoutHtml.replace( state.inputText, result.text.replace( /\n/g, '<br>' ) ) } );
+			}
+		}
+		togglePopup();
+	};
+
 	return (
 		<div className="urlslab-GeneratedResult flex flex-column">
 			<TextArea
@@ -80,21 +99,17 @@ const GeneratedResult: React.FC<{result: { text: string, loading: boolean}}> = (
 				</Button>
 			</div>
 			<div className="urlslab-GeneratedResult-submit-section flex flex-justify-end">
-				{ /* // Will be used soon in further release.
 				<Button
-					className=""
-					onClick={ () => {} }
+					onClick={ replaceText }
 				>
-					{ __( 'Save settings as new template' ) }
+					{ __( 'Change text' ) }
 				</Button>
-				*/ }
 				<Button
-					className=""
 					onClick={ addIntoEditor }
 					active={ state.generatedResults.text !== '' }
 					disabled={ state.generatedResults.text === '' }
 				>
-					{ __( 'Use text' ) }
+					{ __( 'Add text' ) }
 				</Button>
 			</div>
 		</div>

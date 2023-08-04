@@ -6,6 +6,7 @@
 	font-family: Poppins, sans-serif;
 	font-size: 16px;
 	line-height: 20px;
+
 	/*reset editors colors*/
 	color: $black;
 
@@ -85,4 +86,16 @@
 
 	}
 
+}
+
+.components-toolbar-group.urlslab-block-ai-toolbar {
+	background: linear-gradient(139.49deg, rgba(93, 137, 226, 0.41) 7.97%, rgba(219, 107, 215, 0.41) 89.5%);
+
+	button {
+		// override default wp focus styling
+		&:focus::before {
+			box-shadow: none;
+			outline: 0;
+		}
+	}
 }

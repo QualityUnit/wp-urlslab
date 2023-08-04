@@ -1,16 +1,17 @@
 import React, { useCallback, useContext, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { ReactComponent as AiGeneratorIcon } from '../assets/images/icons/urlslab-generator.svg';
-import { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.svg';
-import { ReactComponent as StarsIcon } from '../assets/images/icons/icon-stars.svg';
-import { ReactComponent as LoadingIcon } from '../assets/images/icons/icon-loading.svg';
-import { Button } from '../elements/JSXElements';
+import { AppContext } from '../app/context';
+import { runResultsGenerator } from '../app/api';
+
+import Header from './Header';
 import MainSettings from './MainSettings';
 import AdvancedSettings from './AdvancedSettings';
 import GeneratedResult from './GeneratedResult';
-import { AppContext } from '../app/context';
-import { runResultsGenerator } from '../app/api';
+
+import { Button } from '../elements/JSXElements';
+import { ReactComponent as StarsIcon } from '../assets/images/icons/icon-stars.svg';
+import { ReactComponent as LoadingIcon } from '../assets/images/icons/icon-loading.svg';
 
 import '../assets/styles/components/_Popup.scss';
 
@@ -26,15 +27,7 @@ const Popup: React.FC = () => {
 		<>
 			<div className="urlslab-page-overlay" onClick={ togglePopup } aria-hidden="true"></div>
 			<div className="urlslab-popup flex flex-column flex-justify-center flex-align-center">
-				<div className="urlslab-popup-header flex flex-align-center flex-justify-space-between">
-					<div className="flex flex-align-center">
-						<AiGeneratorIcon className="urlslab-popup-header-icon" />
-						<h3 className="urlslab-popup-header-title">{ __( 'AI Content Assistant' ) }</h3>
-					</div>
-					<button className="urlslab-popup-header-close" onClick={ togglePopup }>
-						<CloseIcon />
-					</button>
-				</div>
+				<Header />
 				<div className="urlslab-popup-content">
 
 					<MainSettings />

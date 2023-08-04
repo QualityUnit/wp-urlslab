@@ -1,224 +1,236 @@
+/* stylelint-disable max-line-length */
 @use "../../../../../../src/assets/styles/common/variables" as *;
 @use "../../../../../../src/assets/styles/elements/MenuArrow" as *;
 @use "../common/mixins" as *;
 
 [id="urlslab-ai-content-assistant"] {
-    .urlslab-page-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba($white, 45%);
-        z-index: 998;
-    }
 
-    .urlslab-popup {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 100%;
-        max-width: 548px;
-        max-height: 90vh;
-        background-color: $white;
-        border-radius: $br-10;
-        box-shadow: 0 1px 3px rgba($black-real, 0.16);
-        overflow: hidden;
-        z-index: 999;
+	.urlslab-page-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba($white, 45%);
+		z-index: 998;
+	}
 
-
-        &-header {
-            width: 100%;
-            padding: 20px 30px;
-            background: linear-gradient(139.49deg, rgba(93, 137, 226, 0.41) 7.97%, rgba(219, 107, 215, 0.41) 89.5%);
-            opacity: 0.99;
-            border-bottom: 1px solid $grey-medium;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-
-            &-icon {
-                margin-right: 16px;
-                width: 27px;
-                height: 27px;
-            }
-
-            &-title {
-                font-family: 'Poppins';
-                font-style: normal;
-                font-weight: $font-weight-semi;
-                font-size: 18px;
-                line-height: 27px;
-            }
-
-            &-close {
-                @include square(2.25em);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background-color: $white;
-                color: $grey-darker;
-                border-radius: 100%;
-
-                & svg {
-                    fill: currentcolor;
-                    width: 0.75em;
-                    height: 0.75em;
-                }
-            }
-        }
-
-        &-content {
-            @include scrollbarWithBg;
-            width: 100%;
-            padding: 20px 30px;
-            overflow-y: auto;
-
-            &-simple-settings {
-                padding: 20px 0px;
-            }
+	.urlslab-popup {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 100%;
+		max-width: 548px;
+		max-height: 90vh;
+		background-color: $white;
+		border-radius: $br-10;
+		box-shadow: 0 1px 3px rgba($black-real, 0.16);
+		overflow: hidden;
+		z-index: 999;
 
 
-            &-option-wrapper {
-                width: 100%;
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                padding-bottom: 10px;
-            }
+		&-header {
+			width: 100%;
+			padding: 20px 30px;
+			background: linear-gradient(139.49deg, rgba(93, 137, 226, 0.41) 7.97%, rgba(219, 107, 215, 0.41) 89.5%);
+			opacity: 0.99;
+			border-bottom: 1px solid $grey-medium;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+
+			&-icon {
+				margin-right: 16px;
+				width: 27px;
+				height: 27px;
+			}
+
+			&-title {
+				//font-family: Poppins;
+				font-style: normal;
+				font-weight: $font-weight-semi;
+				font-size: 18px;
+				line-height: 27px;
+			}
+
+			&-close {
+
+				@include square(2.25em);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background-color: $white;
+				color: $grey-darker;
+				border-radius: 100%;
+
+				svg {
+					fill: currentcolor;
+					width: 0.75em;
+					height: 0.75em;
+				}
+			}
+		}
+
+		&-content {
+
+			@include scrollbarWithBg;
+			width: 100%;
+			padding: 20px 30px;
+			overflow-y: auto;
+
+			&-simple-settings {
+				padding: 20px 0;
+			}
 
 
-
-            & .urlslab-MultiSelectMenu {
-                width: 100%;
-                max-width: none;
-                display: flex;
-                flex-direction: column;
-                /* hot fix for main app override of .urlslab-MultiSelectMenu font family */
-                font-family: inherit;
-
-                &__items {
-                    max-width: 100%;
-                }
-            }
-        }
-    }
-
-    .urlslab-half-columns {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        padding-top: 10px;
-        margin-bottom: 16px;
-
-        &-col {
-            margin-bottom: 16px;
-            max-width: calc(50% - 4.5px);
-            width: 100%;
-        }
-
-        @media (max-width: $breakpoint-mobile) {
-            flex-direction: column;
-
-            &-col {
-                max-width: none;
-            }
-        }
-
-    }
-
-    .urlslab-button.icon-right {
-        & svg {
-            margin-left: 8px;
-            margin-right: 0;
-
-        }
-    }
-
-    .urlslab-button.with-arrow {
-        @extend %MenuArrow;
-        padding-left: 0;
-        padding-right: 0;
-
-        &:hover {
-            color: inherit;
-        }
-
-        &:after {
-            margin-left: .8125em;
-        }
-
-        &.flip-arrow {
-            &::after {
-                transform: scaleY(-1);
-                top: -0.15em;
-            }
-        }
-    }
-
-    .urlslab-inputField-label {
-        margin-bottom: 3px;
-        /* make sure to show margin also on span tag label, fix incosistence of label tag between different elements */
-        display: block;
-    }
-
-    .urlslab-tooltipLabel {
-        margin-bottom: 3px;
-
-        /* disable bottom margin for defaul app label inside tooltip label */
-        .urlslab-inputField-label {
-            margin-bottom: 0;
-        }
-
-        .urlslab-info-tooltip {
-            position: relative;
-            color: $grey-medium-lighter;
-
-            & svg {
-                fill: currentcolor;
-                width: 15px;
-                height: 15px;
-            }
-
-            & .urlslab-tooltip {
-                /* hotfix, override tooltip defaults to meet design */
-                top: 0;
-                left: 100%;
-                margin-left: 5px;
-            }
-        }
-    }
-
-    .urlslab-inputField-wrap {
-        &.allow-resize {
-            textarea {
-                resize: vertical;
-            }
-        }
-
-        textarea {
-            @include scrollbarWithBg;
-        }
-    }
+			&-option-wrapper {
+				width: 100%;
+				display: flex;
+				flex-direction: column;
+				align-items: flex-start;
+				padding-bottom: 10px;
+			}
 
 
-    // inherit default user agent stylesheet in Elementor editor
-    // Gutenberg inherits font styles for default form elements from their form.css file
-    input,
-    select,
-    textarea,
-    button {
-        font-family: inherit;
-        font-size: inherit;
-        font-weight: inherit;
-    }
+			.urlslab-MultiSelectMenu {
+				width: 100%;
+				max-width: none;
+				display: flex;
+				flex-direction: column;
 
-    // exactly this value is added by WP in admin
-    // added here to keep consistent design between gutenberg and elementor editors
-    textarea {
-        line-height: 1.42857143;
-    }
+				/* hot fix for main app override of .urlslab-MultiSelectMenu font family */
+				font-family: inherit;
+
+				&__items {
+					max-width: 100%;
+				}
+			}
+		}
+	}
+
+	.urlslab-half-columns {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		padding-top: 10px;
+		margin-bottom: 16px;
+
+		&-col {
+			margin-bottom: 16px;
+			max-width: calc(50% - 4.5px);
+			width: 100%;
+		}
+
+		@media (max-width: $breakpoint-mobile) {
+			flex-direction: column;
+
+			&-col {
+				max-width: none;
+			}
+		}
+
+	}
+
+	.urlslab-button.icon-right {
+
+		svg {
+			margin-left: 8px;
+			margin-right: 0;
+
+		}
+	}
+
+	.urlslab-button.with-arrow {
+
+		@extend %MenuArrow;
+		padding-left: 0;
+		padding-right: 0;
+
+		&:hover {
+			color: inherit;
+		}
+
+		&::after {
+			margin-left: 0.8125em;
+		}
+
+		&.flip-arrow {
+
+			&::after {
+				transform: scaleY(-1);
+				top: -0.15em;
+			}
+		}
+	}
+
+	.urlslab-inputField-label {
+		margin-bottom: 3px;
+
+		/* make sure to show margin also on span tag label, fix incosistence of label tag between different elements */
+		display: block;
+	}
+
+	.urlslab-tooltipLabel {
+		margin-bottom: 3px;
+
+		/* disable bottom margin for defaul app label inside tooltip label */
+		.urlslab-inputField-label {
+			margin-bottom: 0;
+		}
+
+		.urlslab-info-tooltip {
+			position: relative;
+			color: $grey-medium-lighter;
+
+			svg {
+				fill: currentcolor;
+				width: 15px;
+				height: 15px;
+			}
+
+			.urlslab-tooltip {
+
+				/* hotfix, override tooltip defaults to meet design */
+				top: 0;
+				left: 100%;
+				margin-left: 5px;
+			}
+		}
+	}
+
+	.urlslab-inputField-wrap {
+
+		&.allow-resize {
+
+			textarea {
+				resize: vertical;
+			}
+		}
+
+		textarea {
+
+			@include scrollbarWithBg;
+		}
+	}
+
+
+	// inherit default user agent stylesheet in Elementor editor
+	// Gutenberg inherits font styles for default form elements from their form.css file
+	input,
+	select,
+	textarea,
+	button {
+		font-family: inherit;
+		font-size: inherit;
+		font-weight: inherit;
+	}
+
+	// exactly this value is added by WP in admin
+	// added here to keep consistent design between gutenberg and elementor editors
+	textarea {
+		line-height: 1.42857143;
+	}
 }
