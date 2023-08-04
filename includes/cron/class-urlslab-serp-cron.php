@@ -194,7 +194,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 
 				if ( Urlslab_Serp_Query_Row::TYPE_SERP_FAQ === $query->get_type() && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_FAQS ) ) {
 					//if the question is relevant FAQ, add it to the FAQ table
-					$faq_row = new Urlslab_Faq_Row( array( 'question' => $query->get_query() ), false );
+					$faq_row = new Urlslab_Faq_Row( array( 'question' => ucfirst( $query->get_query() ) ), false );
 					if ( ! $faq_row->load( array( 'question' ) ) ) {
 						$faq_row->set_status( Urlslab_Faq_Row::STATUS_EMPTY );
 						$faq_row->insert();
