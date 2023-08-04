@@ -6,9 +6,9 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-js-cache-row.php
 
 require_once ABSPATH . 'wp-admin/includes/file.php';
 
-use Urlslab_Vendor\OpenAPI\Client\Configuration;
 use Urlslab_Vendor\GuzzleHttp;
 use Urlslab_Vendor\OpenAPI\Client\ApiException;
+use Urlslab_Vendor\OpenAPI\Client\Configuration;
 
 class Urlslab_Serp_Cron extends Urlslab_Cron {
 	private \Urlslab_Vendor\OpenAPI\Client\Urlslab\SerpApi $serp_client;
@@ -110,17 +110,13 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 		$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSING );
 		$query->update();
 
-		$request = new Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest();
-		$request->setSerpQuery( $query->get_query() );
-		$request->setAllResults( true );
-		$request->setNotOlderThan( $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ) );
 		$has_monitored_domain = 0;
 		$urls                 = array();
 		$domains              = array();
 		$positions            = array();
 
 		try {
-			$serp_response = $this->serp_client->search( $request );
+			$serp_response = Urlslab_Serp_Connection::get_instance()->search_serp( $query, $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ) );
 			$organic       = $serp_response->getOrganicResults();
 
 			if ( empty( $organic ) ) {

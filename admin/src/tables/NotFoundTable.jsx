@@ -12,6 +12,7 @@ import useTablePanels from '../hooks/useTablePanels';
 
 import BrowserIcon from '../elements/BrowserIcon';
 import { ReactComponent as PlusIcon } from '../assets/images/icons/icon-plus.svg';
+import { postFetch } from '../api/fetching';
 
 export default function NotFoundTable( { slug } ) {
 	const paginationId = 'url_id';
@@ -69,7 +70,22 @@ export default function NotFoundTable( { slug } ) {
 	const rowEditorCells = {
 		match_type: <SingleSelectMenu autoClose items={ matchTypes } name="match_type" defaultValue="E" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_type: val } ) }>{ redirectHeader.match_type }</SingleSelectMenu>,
 		match_url: <InputField type="url" liveUpdate ref={ matchUrlField } defaultValue={ matchUrlField.current } label={ redirectHeader.match_url } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_url: val } ) } />,
-		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' } autoFocus liveUpdate defaultValue={ ( rowToEdit?.match_url ? getUrlDomain( rowToEdit?.match_url ) : window.location.origin ) } label={ redirectHeader.replace_url } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, replace_url: val } ) } required />,
+		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' }
+			autoFocus
+			liveUpdate
+			defaultValue={ ( rowToEdit?.match_url ? getUrlDomain( rowToEdit?.match_url ) : window.location.origin ) }
+			label={ redirectHeader.replace_url }
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, replace_url: val } ) }
+			required
+			postFetchRequest={ async ( val ) => {
+				postFetch( 'keyword/suggest', {
+					count: val.count,
+					keyword: rowToEdit?.keyword || '',
+					url: val.input,
+				} );
+			} }
+
+		/>,
 		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" defaultValue="301" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, redirect_code: val } ) }>{ redirectHeader.redirect_code }</SingleSelectMenu>,
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};

@@ -4,6 +4,7 @@
 use Urlslab_Vendor\OpenAPI\Client\Configuration;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentResponse;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalStatefulResponse;
 use Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi;
 use Urlslab_Vendor\GuzzleHttp;
 
@@ -61,5 +62,34 @@ class Urlslab_Augment_Helper {
 		);
 
 	}
+
+	public function async_augment( DomainDataRetrievalAugmentRequest $request ): DomainDataRetrievalStatefulResponse {
+		$ignore_query = 'false';
+		$custom_context = 'false';
+		$context_mandatory = 'true';
+
+		if ( ! strlen( $request->getAugmentCommand() ) ) {
+			$ignore_query = 'true';
+		}
+
+		if ( ! $request->getFilter() ||
+			 ( $request->getFilter()->getDomains() && count( $request->getFilter()->getDomains() ) == 0 &&
+			   $request->getFilter()->getUrls() && count( $request->getFilter()->getUrls() ) == 0 ) ) {
+			if ( ! strlen( $request->getAugmentCommand() ) ) {
+				$custom_context = 'true';
+				$context_mandatory = 'false';
+			}
+		}
+
+		return self::$content_client->asyncMemoryLessAugment(
+			$request,
+			'false',
+			$ignore_query,
+			$custom_context,
+			$context_mandatory
+		);
+
+	}
+
 
 }

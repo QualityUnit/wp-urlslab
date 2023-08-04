@@ -4,6 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import GeneratorOverview from '../overview/Generator';
 import ModuleViewHeader from '../components/ModuleViewHeader';
+import ContentGeneratorPanel from '../components/generator/ContentGeneratorPanel';
 
 const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 const GeneratorResultTable = lazy( () => import( `../tables/GeneratorResultTable.jsx` ) );
@@ -16,6 +17,7 @@ export default function Generator() {
 	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
+		[ 'generator', __( 'Generator' ) ],
 		[ 'shortcode', __( 'Shortcodes' ) ],
 		[ 'result', __( 'Results' ) ],
 	] );
@@ -27,6 +29,10 @@ export default function Generator() {
 			{
 				activeSection === 'overview' &&
 				<GeneratorOverview moduleId={ moduleId } />
+			}
+			{
+				activeSection === 'generator' &&
+				<ContentGeneratorPanel />
 			}
 			{
 				activeSection === 'shortcode' &&

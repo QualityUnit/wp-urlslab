@@ -1,5 +1,7 @@
 <?php
 
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest;
+
 class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	const SLUG = 'serp-queries';
 
@@ -24,7 +26,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 					'args'                => array(
 						'status' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return
 									is_string( $param ) &&
 									in_array(
@@ -35,6 +37,30 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 											Urlslab_Serp_Query_Row::STATUS_ERROR,
 										)
 									);
+							},
+						),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/query/top-urls',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'get_top_urls' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
+					'args'                => array(
+						'query' => array(
+							'required'          => true,
+							'validate_callback' => function ( $param ) {
+								return
+									is_string( $param );
 							},
 						),
 					),
@@ -88,7 +114,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 					'args'                => array(
 						'rows' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
 							},
 						),
@@ -99,10 +125,10 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/query_cluster',
+			$base . '/query-cluster',
 			array(
 				array(
-					'methods'             => WP_REST_Server::READABLE,
+					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'get_query_cluster' ),
 					'permission_callback' => array(
 						$this,
@@ -146,7 +172,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			'args'                => array(
 				'status' => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return
 							is_string( $param ) &&
 							in_array(
@@ -161,7 +187,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				),
 				'query'  => array(
 					'required'          => true,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
@@ -251,6 +277,40 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		return array( 'status' );
 	}
 
+	public function get_top_urls( $request ) {
+		// First Trying to get the query from DB
+		$query = new Urlslab_Serp_Query_Row(
+			array(
+				'query' => $request->get_param( 'query' ),
+			)
+		);
+
+		if ( ! $query->load() || Urlslab_Serp_Query_Row::STATUS_SKIPPED === $query->get_status() ) {
+			return $this->get_serp_results( $query );
+		} else {
+			global $wpdb;
+			$results = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT u.* FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d ORDER BY p.position LIMIT 10', // phpcs:ignore
+					$query->get_query_id()
+				),
+				ARRAY_A
+			);
+
+			if ( empty( $results ) ) {
+				return $this->get_serp_results( $query );
+			}
+
+			$rows = array();
+			foreach ( $results as $result ) {
+				$row    = new Urlslab_Serp_Url_Row( $result, true );
+				$rows[] = (object) $row->as_array();
+			}
+
+			return new WP_REST_Response( $rows, 200 );
+		}
+	}
+
 
 	/**
 	 * @param WP_REST_Request $request
@@ -308,11 +368,20 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$sql->add_select_column( 'COUNT(DISTINCT cp.domain_id)', false, 'comp_count' );
 		$sql->add_select_column( 'url_name', 'cu', 'comp_url_name' );
 
+		$first_gsc_join  = ' p ON q.query_id = p.query_id';
+		$second_gsc_join = ' cp ON q.query_id = cp.query_id AND cp.position<11';
+		if ( ! empty( Urlslab_Serp_Domain_Row::get_my_domains() ) ) {
+			$first_gsc_join .= ' AND p.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_my_domains() ) ) . ')';
+		}
+		if ( ! empty( Urlslab_Serp_Domain_Row::get_competitor_domains() ) ) {
+			$second_gsc_join .= ' AND cp.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_competitor_domains() ) ) . ')';
+		}
+
 		$sql->add_from( $this->get_row_object()->get_table_name() . ' q' );
-		$sql->add_from( 'LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' p ON q.query_id = p.query_id AND p.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_my_domains() ) ) . ')' );
+		$sql->add_from( 'LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . $first_gsc_join );
 		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON p.url_id=u.url_id' );
 
-		$sql->add_from( 'LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' cp ON q.query_id = cp.query_id AND cp.position<11 AND cp.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_competitor_domains() ) ) . ')' );
+		$sql->add_from( 'LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . $second_gsc_join );
 		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' cu ON cp.url_id=cu.url_id' );
 
 
@@ -364,6 +433,23 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		}
 
 		return parent::delete_all_items( $request );
+	}
+
+	private function get_serp_results( $query ): WP_REST_Response {
+		$serp_res        = Urlslab_Serp_Connection::get_instance()->search_serp( $query, DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY );
+		$organic_results = $serp_res->getOrganicResults();
+		$urls            = array();
+		if ( ! empty( $organic_results ) ) {
+			foreach ( $organic_results as $organic_result ) {
+				$urls[] = (object) array(
+					'url_name'        => $organic_result->link,
+					'url_title'       => $organic_result->title,
+					'url_description' => $organic_result->snippet,
+				);
+			}
+		}
+
+		return new WP_REST_Response( $urls, 200 );
 	}
 
 }

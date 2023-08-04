@@ -1,0 +1,33 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-EditableList {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    &-items {
+        display: flex;
+        flex-direction: column;
+        width: 80%;
+    }
+
+    &-item {
+        width: 100%;
+        display: flex;
+        margin-top: 1em;
+        justify-content: flex-start;
+
+        &-input {
+            width: 60%;
+        }
+
+        &-btn {
+            width: 40%;
+            display: flex;
+            padding-left: 1em;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
+}
