@@ -1,5 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
-import { memo, useEffect, useRef, useState } from 'react';
+import { memo, useRef, useState } from 'react';
 import '../../assets/styles/components/_ContentGeneratorPanel.scss';
 import { InputField, SingleSelectMenu, SuggestInputField } from '../../lib/tableImports';
 import Loader from '../Loader';
@@ -17,6 +17,7 @@ import {
 } from '../../api/generatorApi';
 import { Editor as TinyMCE } from '@tinymce/tinymce-react/lib/cjs/main/ts/components/Editor';
 import { fetchLangs } from '../../api/fetchLangs';
+import { useQuery } from '@tanstack/react-query';
 
 function ContentGeneratorPanel() {
 	const { __ } = useI18n();
@@ -29,7 +30,6 @@ function ContentGeneratorPanel() {
 		acc[ key ] = value.name;
 		return acc;
 	}, {} );
-	const [ postTypes, setPostTypes ] = useState( {} );
 	const [ postType, setPostType ] = useState( 'post' );
 	const [ title, setTitle ] = useState( '' );
 	const [ urlsList, setUrlsList ] = useState( [] );
@@ -65,18 +65,22 @@ function ContentGeneratorPanel() {
 		SERP_CONTEXT: __( 'The prompt to be used to generate text from top SERP Results targeting your keyword…' ),
 	};
 
-	useEffect( () => {
-		getPostTypes().then( async ( res ) => {
-			const rsp = await res.json();
-			setPostTypes( rsp );
-		} );
-	}, [] );
+	const postTypesData = useQuery( {
+		queryKey: [ 'post_types' ],
+		queryFn: async () => {
+			const result = await getPostTypes();
+			if ( result.ok ) {
+				return await result.json();
+			}
+			return {};
+		},
+		refetchOnWindowFocus: false,
+	} );
 
 	const handleCreatePost = async () => {
-		createPost( editorVal, title, postType ).then( async ( res ) => {
-			const rsp = await res.json();
-			setGeneratedPostLink( decodeURIComponent( rsp.edit_post_link ) );
-		} );
+		const createPostData = await createPost( editorVal, title, postType );
+		const rsp = await createPostData.json();
+		setGeneratedPostLink( rsp.edit_post_link );
 	};
 
 	// handling keyword input
@@ -452,11 +456,11 @@ function ContentGeneratorPanel() {
 					} }
 				/>
 				{
-					Object.keys( postTypes ).length !== 0 && ! editorLoading && (
+					! postTypesData.isLoading && ! editorLoading && Object.keys( postTypesData.data ).length !== 0 && (
 						<div>
 							<SingleSelectMenu
 								key={ postType }
-								items={ postTypes }
+								items={ postTypesData.data }
 								name="post_type_menu"
 								defaultAccept
 								autoClose
