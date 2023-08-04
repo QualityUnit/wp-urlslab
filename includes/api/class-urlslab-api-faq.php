@@ -133,7 +133,7 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 			'callback'            => array( $this, 'create_item' ),
 			'args'                => array(
 				'question' => array(
-					'required'          => false,
+					'required'          => true,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
 					},
