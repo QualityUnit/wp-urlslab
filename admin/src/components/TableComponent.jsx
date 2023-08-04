@@ -9,9 +9,11 @@ import {
 
 import { useVirtual } from 'react-virtual';
 
+import AddNewTableRecord from '../elements/AddNewTableRecord';
+
 import '../assets/styles/components/_TableComponent.scss';
 
-export default function Table( { slug, resizable, children, className, columns, data, initialState, returnTable } ) {
+export default function Table( { title, slug, resizable, children, className, columns, data, initialState, returnTable } ) {
 	const [ rowSelection, setRowSelection ] = useState( {} );
 	const [ containerWidth, setContainerWidth ] = useState();
 	const [ columnVisibility, setColumnVisibility ] = useState( initialState?.columnVisibility || {} );
@@ -127,6 +129,12 @@ export default function Table( { slug, resizable, children, className, columns, 
 		);
 	}
 
+	if ( ! tbody.length ) {
+		return <div className="urlslab-table-fake">
+			<div className="urlslab-table-fake-inn">{ title && <AddNewTableRecord title={ title } /> }</div>
+		</div>;
+	}
+
 	return (
 		<div className={ `urlslab-table-container ${ checkTableOverflow() }` } ref={ tableContainerRef } style={ {
 			width: `${ containerWidth }px`,
@@ -186,7 +194,6 @@ export default function Table( { slug, resizable, children, className, columns, 
 				</table>
 				: null
 			}
-
 			{ children }
 		</div>
 	);

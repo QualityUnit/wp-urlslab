@@ -1,4 +1,5 @@
 /* eslint-disable indent */
+import { useI18n } from '@wordpress/react-i18n';
 import {
 	useInfiniteFetch,
 	ProgressBar,
@@ -16,12 +17,13 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
 export default function GscSitesTable( { slug } ) {
+	const { __ } = useI18n();
+	const title = __( 'Add Domains' );
 	const paginationId = 'site_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const url = { filters, sorting };
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,
@@ -93,7 +95,7 @@ export default function GscSitesTable( { slug } ) {
 				noDelete
 				noInsert
 				noImport
-				options={ { header, data, slug, paginationId, url, id: 'domain_name', title: 'Add Domains', rowToEdit,
+				options={ { header, data, slug, paginationId, title, url, id: 'domain_name', rowToEdit,
 					deleteCSVCols: [ paginationId, 'domain_id' ] }
 				}
 			/>

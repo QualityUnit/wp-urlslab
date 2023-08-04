@@ -1,3 +1,4 @@
+import { useI18n } from '@wordpress/react-i18n/';
 import {
 	useInfiniteFetch, Tooltip, Checkbox, ProgressBar, SortBy, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, LinkIcon, TagsMenu, SingleSelectMenu, TextArea, AcceptIcon, DisableIcon, RefreshIcon, IconButton, RowActionButtons,
 } from '../lib/tableImports';
@@ -8,6 +9,7 @@ import useTablePanels from '../hooks/useTablePanels';
 import { useCallback } from 'react';
 
 export default function GeneratorResultTable( { slug } ) {
+	const { __ } = useI18n();
 	const paginationId = 'hash_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( 'generator/result' );
 
@@ -47,7 +49,6 @@ export default function GeneratorResultTable( { slug } ) {
 	};
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,

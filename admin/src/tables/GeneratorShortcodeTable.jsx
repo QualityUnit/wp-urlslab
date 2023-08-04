@@ -1,3 +1,5 @@
+import { useI18n } from '@wordpress/react-i18n';
+
 import {
 	useInfiniteFetch,
 	Tooltip,
@@ -24,6 +26,8 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
 export default function GeneratorShortcodeTable( { slug } ) {
+	const { __ } = useI18n();
+	const title = __( 'Add New Shortcode' );
 	const paginationId = 'shortcode_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( 'generator/shortcode' );
 
@@ -55,7 +59,6 @@ export default function GeneratorShortcodeTable( { slug } ) {
 	};
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,
@@ -227,11 +230,12 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ { header, data, slug, url, paginationId,
 					rowEditorCells, rowToEdit,
-					title: 'Add New Shortcode',
+					title,
 					deleteCSVCols: [ paginationId ],
 				} }
 			/>
 			<Table className="fadeInto"
+				title={ title }
 				slug={ slug }
 				columns={ columns }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }

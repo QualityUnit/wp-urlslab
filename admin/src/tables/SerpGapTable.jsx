@@ -1,4 +1,5 @@
 /* eslint-disable indent */
+import { useI18n } from '@wordpress/react-i18n';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
@@ -6,6 +7,7 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function SerpGapTable( { slug } ) {
+	const { __ } = useI18n();
 	const paginationId = 'query_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 
@@ -13,7 +15,6 @@ export default function SerpGapTable( { slug } ) {
 	const url = { filters, sorting: defaultSorting };
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,

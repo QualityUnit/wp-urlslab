@@ -1,4 +1,6 @@
 /* eslint-disable indent */
+import { useI18n } from '@wordpress/react-i18n/';
+
 import {
 	useInfiniteFetch, ProgressBar, TagsMenu, SortBy, SingleSelectMenu, LangMenu, InputField, Checkbox, LinkIcon, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, SuggestInputField, RowActionButtons,
 } from '../lib/tableImports';
@@ -9,12 +11,13 @@ import useTablePanels from '../hooks/useTablePanels';
 import { useCallback } from 'react';
 
 export default function KeywordsTable( { slug } ) {
+	const { __ } = useI18n();
+	const title = __( 'Add New Link' );
 	const paginationId = 'kw_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const url = { filters, sorting };
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,
@@ -189,13 +192,15 @@ export default function KeywordsTable( { slug } ) {
 				onDeleteSelected={ deleteMultipleRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ { header, data, slug, paginationId, url,
-					title: __( 'Add New Link' ), id: 'keyword',
+					title,
+					id: 'keyword',
 					rowToEdit,
 					rowEditorCells,
 					deleteCSVCols: [ paginationId, 'dest_url_id' ] }
 				}
 			/>
 			<Table className="fadeInto"
+				title={ title }
 				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
