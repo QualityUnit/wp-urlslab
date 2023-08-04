@@ -22,7 +22,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	}, [ table ] );
 
 	const getRowId = useCallback( ( tableElem, optionalSelector ) => {
-		const row = tableElem.row || tableElem.original || tableElem;
+		const row = tableElem.row?.original || tableElem.original || tableElem;
 		if ( optionalSelector ) {
 			return `${ row[ paginationId ] }/${ row[ optionalSelector ] }`;
 		}

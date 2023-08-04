@@ -1,14 +1,11 @@
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Checkbox, InputField, SingleSelectMenu, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, Edit, TagsMenu, SuggestInputField,
+	useInfiniteFetch, ProgressBar, SortBy, Checkbox, InputField, SingleSelectMenu, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, SuggestInputField, RowActionButtons,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
 import useTablePanels from '../hooks/useTablePanels';
-
-import IconButton from '../elements/IconButton';
-import { postFetch } from '../api/fetching';
 
 export default function RedirectsTable( { slug } ) {
 	const paginationId = 'redirect_id';
@@ -31,7 +28,7 @@ export default function RedirectsTable( { slug } ) {
 
 	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	const { activatePanel, setRowToEdit } = useTablePanels();
+	const { setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const { redirectTypes, matchTypes, logginTypes, notFoundTypes, header } = useRedirectTableMenus();
@@ -43,15 +40,7 @@ export default function RedirectsTable( { slug } ) {
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_url: val } ) } required />,
 		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' } liveUpdate defaultValue={ window.location.origin }
 			description={ __( 'Redirect user to this URL if browser URL matched and also match all other conditions' ) }
-			label={ header.replace_url } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, replace_url: val } ) } required
-			postFetchRequest={ async ( val ) => {
-				return await postFetch( 'keyword/suggest', {
-					count: val.count,
-					keyword: rowToEdit?.keyword || '',
-					url: val.input,
-				} );
-			} }
-		/>,
+			label={ header.replace_url } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, replace_url: val } ) } required />,
 		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" defaultValue="301"
 			description={ __( 'HTTP Status code to use when redirecting visitor' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, redirect_code: val } ) }>{ header.redirect_code }</SingleSelectMenu>,
@@ -188,30 +177,11 @@ export default function RedirectsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => {
-				return (
-					<div className="flex">
-						<IconButton
-							onClick={ () => {
-								updateRow( { cell, id: 'match_url' } );
-								activatePanel( 'rowEditor' );
-							} }
-							tooltipClass="align-left xxxl"
-							tooltip={ __( 'Edit row' ) }
-						>
-							<Edit />
-						</IconButton>
-						<IconButton
-							className="ml-s"
-							onClick={ () => deleteRow( { cell, id: 'match_url' } ) }
-							tooltipClass="align-left xxxl"
-							tooltip={ __( 'Delete row' ) }
-						>
-							<Trash />
-						</IconButton>
-					</div>
-				);
-			},
+			cell: ( cell ) => <RowActionButtons
+				onEdit={ () => updateRow( { cell, id: 'match_url' } ) }
+				onDelete={ () => deleteRow( { cell, id: 'match_url' } ) }
+			>
+			</RowActionButtons>,
 			header: () => null,
 			size: 60,
 		} ),

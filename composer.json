@@ -23,7 +23,7 @@
     "ext-dom": "*",
     "ext-gd": "*",
     "oscarotero/env": "^2.1",
-    "aws/aws-sdk-php": "^3.275",
+    "aws/aws-sdk-php": "^3.277",
     "urlslab/urlslab-php-sdk": "dev-main",
     "voku/html-min": "^4.5",
     "matthiasmullie/minify": "^1.3",

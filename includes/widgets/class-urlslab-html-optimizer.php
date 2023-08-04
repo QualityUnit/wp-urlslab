@@ -72,7 +72,11 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			'minify',
 			__( 'HTML minification' ),
 			__( 'Minification process removes from HTML content of page uneccessary spaces or comments to save network traffic' ),
-			array( self::LABEL_EXPERT )
+			array(
+				self::LABEL_EXPERT,
+				self::LABEL_PERFORMANCE,
+				self::LABEL_FREE,
+			)
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_HTML_MINIFICATION,
@@ -164,7 +168,16 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		);
 
 
-		$this->add_options_form_section( 'css', __( 'CSS' ), __( 'Optimising resources like CSS files is key to ensuring a fast website. Setting up a size limit and expiration date for those files helps maximize the website\'s performance and loading speed. These settings can significantly reduce the amount of time needed for a page to load and enhance the user experience.' ) );
+		$this->add_options_form_section(
+			'css',
+			__( 'CSS' ),
+			__( 'Optimising resources like CSS files is key to ensuring a fast website. Setting up a size limit and expiration date for those files helps maximize the website\'s performance and loading speed. These settings can significantly reduce the amount of time needed for a page to load and enhance the user experience.' ),
+			array(
+				self::LABEL_EXPERT,
+				self::LABEL_PERFORMANCE,
+				self::LABEL_FREE,
+			)
+		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSS_PROCESSING,
 			true,
@@ -248,7 +261,16 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		);
 
 
-		$this->add_options_form_section( 'js', __( 'Javascript' ), __( 'Optimising Javascript files.' ) );
+		$this->add_options_form_section(
+			'js',
+			__( 'Javascript' ),
+			__( 'Optimising Javascript files.' ),
+			array(
+				self::LABEL_EXPERT,
+				self::LABEL_PERFORMANCE,
+				self::LABEL_FREE,
+			)
+		);
 
 		$this->add_option_definition(
 			self::SETTING_NAME_JS_PROCESSING,

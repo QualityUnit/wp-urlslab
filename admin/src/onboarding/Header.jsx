@@ -66,4 +66,3 @@ const HeaderStep = React.memo( ( { stepId, label, index, active, completed } ) =
 } );
 
 export default Header;
-

@@ -1,12 +1,15 @@
 import { useState, Suspense, lazy } from 'react';
+import { useOutletContext } from 'react-router-dom';
 
 import ImageAltAttributeOverview from '../overview/ImageAltAttribute';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 
-export default function ImageAltAttribute( { moduleId } ) {
+const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
+
+export default function ImageAltAttribute() {
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
 
-	const SettingsModule = lazy( () => import( `../modules/Settings.jsx` ) );
+	const { moduleId } = useOutletContext();
 
 	return (
 		<div className="urlslab-tableView">

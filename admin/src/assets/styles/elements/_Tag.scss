@@ -8,6 +8,10 @@
 	font-size: 0.75rem;
 	border-radius: 1em;
 
+	&.outline {
+		border: 1px solid currentcolor;
+		text-transform: uppercase;
+	}
 
 	svg.urlslab-tag-close {
 		all: unset;

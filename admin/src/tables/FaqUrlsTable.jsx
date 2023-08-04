@@ -4,19 +4,16 @@ import {
 	SortBy,
 	InputField,
 	Checkbox,
-	Trash,
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	Tooltip,
+	RowActionButtons,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-// import IconButton from '../elements/IconButton';
-// import { active } from 'd3';
 
 export default function FaqUrlsTable( { slug } ) {
 	const paginationId = 'faq_id';
@@ -88,8 +85,10 @@ export default function FaqUrlsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Delete item' ) }</Tooltip>,
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, optionalSelector, id: 'faq_id' } ) } />,
+			cell: ( cell ) => <RowActionButtons
+				onDelete={ () => deleteRow( { cell, optionalSelector, id: 'faq_id' } ) }
+			>
+			</RowActionButtons>,
 			header: null,
 		} ),
 	];

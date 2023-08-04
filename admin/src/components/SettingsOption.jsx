@@ -4,7 +4,12 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { setSettings } from '../api/settings';
+import { getFetch } from '../api/fetching';
+import { setNotification } from '../hooks/useNotifications';
+
 import { parseURL } from '../lib/helpers';
+import labelsList from '../lib/labelsList';
+
 import DatePicker from 'react-datepicker';
 import InputField from '../elements/InputField';
 import TextArea from '../elements/Textarea';
@@ -12,10 +17,8 @@ import Switch from '../elements/Switch';
 import SingleSelectMenu from '../elements/SingleSelectMenu';
 import MultiSelectMenu from '../elements/MultiSelectMenu';
 import Button from '../elements/Button';
-
+import Tag from '../elements/Tag';
 import '../assets/styles/components/datepicker/datepicker.scss';
-import { getFetch } from '../api/fetching';
-import { setNotification } from '../hooks/useNotifications';
 
 // apply callback action for options after successful save
 const useSuccessEditCallback = ( optionId, deps = {} ) => {
@@ -34,7 +37,7 @@ const useSuccessEditCallback = ( optionId, deps = {} ) => {
 
 export default function SettingsOption( { settingId, option } ) {
 	const queryClient = useQueryClient();
-	const { id, type, title, description, placeholder, value, possible_values } = option;
+	const { id, type, title, description, labels, placeholder, value, possible_values } = option;
 
 	// just for backwards compatibility
 	const dateValue = typeof value === 'string' ? new Date( value ) : new Date( value * 1000 );
@@ -115,7 +118,17 @@ export default function SettingsOption( { settingId, option } ) {
 					<InputField
 						key={ id }
 						type={ type }
-						label={ title }
+						label={
+							<>
+								{ title }
+								{
+									labels.map( ( tag ) => {
+										const { name, color: tagColor } = labelsList[ tag ];
+										return <Tag className="outline ml-s smallText" style={ { color: tagColor } } key={ tag }>{ name }</Tag>;
+									} )
+								}
+							</>
+						}
 						placeholder={ placeholder && ! value }
 						defaultValue={ value }
 						onChange={ ( inputValue ) => handleChange.mutate( inputValue ) }
@@ -126,7 +139,17 @@ export default function SettingsOption( { settingId, option } ) {
 					<TextArea
 						key={ id }
 						type={ type }
-						label={ title }
+						label={
+							<>
+								{ title }
+								{
+									labels.map( ( tag ) => {
+										const { name, color: tagColor } = labelsList[ tag ];
+										return <Tag className="outline ml-s smallText" style={ { color: tagColor } } key={ tag }>{ name }</Tag>;
+									} )
+								}
+							</>
+						}
 						placeholder={ placeholder && ! value }
 						defaultValue={ value }
 						onChange={ ( inputValue ) => handleChange.mutate( inputValue ) }
@@ -147,7 +170,17 @@ export default function SettingsOption( { settingId, option } ) {
 					<Switch
 						className="option flex"
 						key={ id }
-						label={ title }
+						label={
+							<>
+								{ title }
+								{
+									labels.map( ( tag ) => {
+										const { name, color: tagColor } = labelsList[ tag ];
+										return <Tag className="outline ml-s smallText" style={ { color: tagColor } } key={ tag }>{ name }</Tag>;
+									} )
+								}
+							</>
+						}
 						defaultValue={ value }
 						onChange={ ( inputValue ) => handleChange.mutate( inputValue ) }
 					/>
@@ -171,7 +204,20 @@ export default function SettingsOption( { settingId, option } ) {
 				);
 			case 'listbox':
 				return (
-					<SingleSelectMenu key={ id } className="wide" name={ id } items={ possible_values } defaultValue={ value } autoClose onChange={ ( selectedId ) => handleChange.mutate( selectedId ) }>
+					<SingleSelectMenu key={ id }
+						className="wide"
+						name={ id }
+						items={ possible_values }
+						defaultValue={ value }
+						autoClose
+						onChange={ ( selectedId ) => handleChange.mutate( selectedId ) }
+						labels={
+							labels.map( ( tag ) => {
+								const { name, color: tagColor } = labelsList[ tag ];
+								return <Tag className="outline ml-s smallText" style={ { color: tagColor } } key={ tag }>{ name }</Tag>;
+							} )
+						}
+					>
 						{ title }
 					</SingleSelectMenu>
 				);
@@ -183,7 +229,14 @@ export default function SettingsOption( { settingId, option } ) {
 						key={ id }
 						id={ id }
 						asTags
-						onChange={ ( selectedItems ) => handleChange.mutate( selectedItems ) }>
+						onChange={ ( selectedItems ) => handleChange.mutate( selectedItems ) }
+						labels={
+							labels.map( ( tag ) => {
+								const { name, color: tagColor } = labelsList[ tag ];
+								return <Tag className="outline ml-s smallText" style={ { color: tagColor } } key={ tag }>{ name }</Tag>;
+							} )
+						}
+					>
 						{ title }
 					</MultiSelectMenu>
 				);

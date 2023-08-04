@@ -194,7 +194,15 @@ class Urlslab_Cache extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'page', __( 'Page Caching' ), __( 'Page caching is an efficient way to drastically improve page speed by storing a webpage copy, allowing subsequent requests to be served from cache. This eliminates resource-heavy server processing, reducing latency and expediting page load times for a seamless user experience.' ) );
+		$this->add_options_form_section(
+			'page',
+			__( 'Page Caching' ),
+			__( 'Page caching is an efficient way to drastically improve page speed by storing a webpage copy, allowing subsequent requests to be served from cache. This eliminates resource-heavy server processing, reducing latency and expediting page load times for a seamless user experience.' ),
+			array(
+				self::LABEL_PERFORMANCE,
+				self::LABEL_EXPERT,
+			)
+		);
 
 		$this->add_option_definition(
 			self::SETTING_NAME_PAGE_CACHING,
@@ -258,7 +266,15 @@ class Urlslab_Cache extends Urlslab_Widget {
 			'page'
 		);
 
-		$this->add_options_form_section( 'preload', __( 'Link Preloading' ), __( 'Link preloading is a sophisticated performance optimization method that intelligently predicts user navigation by preloading content associated with probable links, facilitating immediate page rendering upon click. This technique bolsters user experience by reducing latency and expediting seamless page transitions.' ) );
+		$this->add_options_form_section(
+			'preload',
+			__( 'Link Preloading' ),
+			__( 'Link preloading is a sophisticated performance optimization method that intelligently predicts user navigation by preloading content associated with probable links, facilitating immediate page rendering upon click. This technique bolsters user experience by reducing latency and expediting seamless page transitions.' ),
+			array(
+				self::LABEL_PERFORMANCE,
+				self::LABEL_EXPERT,
+			)
+		);
 		$this->add_option_definition(
 			self::SETTING_NAME_ON_OVER_PRELOADING,
 			false,
@@ -282,7 +298,15 @@ class Urlslab_Cache extends Urlslab_Widget {
 			'preload'
 		);
 
-		$this->add_options_form_section( 'prefetch', __( 'Browser Prefetch' ), __( 'Prefetching is a process that proactively downloads and caches content in the background, based on the likelihood of user requests. This enables seamless and instantaneous content loading when needed, improving user experience by reducing wait times, all without requiring an explicit request from the user.' ) );
+		$this->add_options_form_section(
+			'prefetch',
+			__( 'Browser Prefetch' ),
+			__( 'Prefetching is a process that proactively downloads and caches content in the background, based on the likelihood of user requests. This enables seamless and instantaneous content loading when needed, improving user experience by reducing wait times, all without requiring an explicit request from the user.' ),
+			array(
+				self::LABEL_PERFORMANCE,
+				self::LABEL_EXPERT,
+			)
+		);
 		$this->add_option_definition(
 			self::SETTING_NAME_DNS_PREFETCH,
 			'',
@@ -365,13 +389,18 @@ class Urlslab_Cache extends Urlslab_Widget {
 		);
 
 
-		$this->add_options_form_section( 'drop-cloudfront', __( 'CloudFront Invalidation' ), __( 'Invalidation enables the removal of CloudFront cache objects before expiration. It supports targeted removal of specific objects, wildcard characters for multiple objects, or "/*" parameters for clearing the entire cache. The process duration may vary depending on the website cache size.' ) );
+		$this->add_options_form_section(
+			'drop-cloudfront',
+			__( 'CloudFront Invalidation' ),
+			__( 'Invalidation enables the removal of CloudFront cache objects before expiration. It supports targeted removal of specific objects, wildcard characters for multiple objects, or "/*" parameters for clearing the entire cache. The process duration may vary depending on the website cache size.' ),
+			array( self::LABEL_EXPERT )
+		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CLOUDFRONT_DISTRIBUTION_ID,
 			'',
 			false,
 			__( 'Distribution ID' ),
-			__( 'Select a CloudFront Distribution ID from the available options. Update the available selection by validating the connection.' ),
+			__( 'Select a CloudFront Distribution ID from the available options. Update the available selection by validating the connection.' ), // phpcs:ignore
 			! empty( $this->get_option( self::SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS ) ) ? self::OPTION_TYPE_LISTBOX : self::OPTION_TYPE_TEXT,
 			function() {
 				if ( is_array( $this->get_option( self::SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS ) ) ) {

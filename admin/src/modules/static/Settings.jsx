@@ -1,11 +1,13 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { fetchSettings } from '../api/settings';
-import Loader from '../components/Loader';
-import SettingsOption from '../components/SettingsOption';
+import { fetchSettings } from '../../api/settings';
+import labelsList from '../../lib/labelsList';
+import Loader from '../../components/Loader';
+import SettingsOption from '../../components/SettingsOption';
 
-import '../assets/styles/layouts/_Settings.scss';
+import '../../assets/styles/layouts/_Settings.scss';
+import Tag from '../../elements/Tag';
 
 export default function Settings( { className, settingId } ) {
 	const queryClient = useQueryClient();
@@ -43,6 +45,10 @@ export default function Settings( { className, settingId } ) {
 								<div className="urlslab-settingsPanel-desc">
 									<h4>{ section.title }</h4>
 									<p>{ section.description }</p>
+									{ section.labels.map( ( tag ) => {
+										const { name, color } = labelsList[ tag ];
+										return <Tag key={ tag } autoTextColor={ color } className={ `midSize mr-s ${ ! color && 'bg-grey-lighter' }` } style={ color && { backgroundColor: color } }>{ name }</Tag>;
+									} ) }
 								</div>
 								<div className="urlslab-settingsPanel-options" >
 									{

@@ -28,7 +28,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 			$body['filters'] = array();
 		}
 		foreach ( $body['filters'] as $filter ) {
-			if ( 'competitors_count' === $filter['col'] ) {
+			if ( isset( $filter['col'] ) && 'competitors_count' === $filter['col'] ) {
 				$has_filter = true;
 				break;
 			}
@@ -53,10 +53,10 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 
 		$sql->add_select_column( 'MIN(mp.position)', false, 'my_position' );
 
-		$sql->add_select_column( 'impressions', 'mp', 'my_impressions' );
-		$sql->add_select_column( 'clicks', 'mp', 'my_clicks' );
-		$sql->add_select_column( 'ctr', 'mp', 'my_ctr' );
-		$sql->add_select_column( 'url_name', 'mu', 'my_url_name' );
+		$sql->add_select_column( 'SUM(mp.impressions)', false, 'my_impressions' );
+		$sql->add_select_column( 'SUM(mp.clicks)', false, 'my_clicks' );
+		$sql->add_select_column( 'AVG(mp.ctr)', false, 'my_ctr' );
+		$sql->add_select_column( 'GROUP_CONCAT(DISTINCT mu.url_name ORDER BY mp.clicks, mp.impressions, mp.position)', false, 'my_url_name' );
 
 
 		$sql->add_from( URLSLAB_GSC_POSITIONS_TABLE . ' p' );
@@ -124,13 +124,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 			$row->my_impressions    = (int) $row->my_impressions;
 			$row->competitors_count = (int) $row->competitors_count;
 			$row->top_competitors   = str_replace( ',', ', ', $row->top_competitors );
-			try {
-				if ( ! empty( $row->my_url_name ) ) {
-					$url              = new Urlslab_Url( $row->my_url_name, true );
-					$row->my_url_name = $url->get_url_with_protocol();
-				}
-			} catch ( Exception $e ) {
-			}
+			$row->my_url_name       = str_replace( ',', ', ', $row->my_url_name );
 		}
 
 		return new WP_REST_Response( $rows, 200 );

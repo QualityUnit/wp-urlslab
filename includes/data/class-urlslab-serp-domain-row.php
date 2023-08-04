@@ -93,6 +93,9 @@ class Urlslab_Serp_Domain_Row extends Urlslab_Data {
 		if ( isset( self::$my_domains[ self::UNDEFINED ] ) ) {
 			self::$my_domains = self::get_domains( self::TYPE_MY_DOMAIN );
 		}
+		if ( empty( self::$my_domains ) ) {
+			self::$my_domains = array( - 2 => '' );
+		}
 
 		return self::$my_domains;
 	}
@@ -101,6 +104,9 @@ class Urlslab_Serp_Domain_Row extends Urlslab_Data {
 		if ( isset( self::$competitor_domains[ self::UNDEFINED ] ) ) {
 			self::$competitor_domains = self::get_domains( self::TYPE_COMPETITOR );
 		}
+		if ( empty( self::$competitor_domains ) ) {
+			self::$competitor_domains = array( - 2 => '' );
+		}
 
 		return self::$competitor_domains;
 	}
@@ -108,6 +114,9 @@ class Urlslab_Serp_Domain_Row extends Urlslab_Data {
 	public static function get_monitored_domains(): array {
 		if ( isset( self::$monitored_domains[ self::UNDEFINED ] ) ) {
 			self::$monitored_domains = self::get_domains( self::TYPE_OTHER, '<>' );
+		}
+		if ( empty( self::$monitored_domains ) ) {
+			self::$monitored_domains = array( - 2 => '' );
 		}
 
 		return self::$monitored_domains;

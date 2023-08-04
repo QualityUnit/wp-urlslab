@@ -7,7 +7,7 @@ import Checkbox from './Checkbox';
 import '../assets/styles/elements/_MultiSelectMenu.scss';
 
 export default function MultiSelectMenu( {
-	id, className, asTags, style, children, items, description, required, defaultValue, isFilter, onChange, dark } ) {
+	id, className, asTags, style, children, items, description, labels, required, defaultValue, isFilter, onChange, dark } ) {
 	let checkedNow = defaultValue || [];
 
 	if ( defaultValue && typeof defaultValue === 'string' ) {
@@ -57,9 +57,9 @@ export default function MultiSelectMenu( {
 	return (
 		<>
 			<div className={ `urlslab-MultiSelectMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref } id={ id }>
-				{ ! isFilter && children ? <div className={ `urlslab-inputField-label ${ required ? 'required' : '' }` } dangerouslySetInnerHTML={ { __html: children } } /> : null }
+				{ ! isFilter && children ? <div className={ `urlslab-inputField-label flex flex-align-center mb-xs ${ required ? 'required' : '' }` } ><span dangerouslySetInnerHTML={ { __html: children } } />{ labels }</div> : null }
 				<div
-					className={ `urlslab-MultiSelectMenu__title ${ isFilter ? 'isFilter' : '' } ${ isActive ? 'active' : '' } ${ dark ? 'dark' : ''}` }
+					className={ `urlslab-MultiSelectMenu__title ${ isFilter ? 'isFilter' : '' } ${ isActive ? 'active' : '' } ${ dark ? 'dark' : '' }` }
 					onClick={ handleMenu }
 					onKeyUp={ ( event ) => handleMenu( event ) }
 					role="button"
@@ -76,8 +76,9 @@ export default function MultiSelectMenu( {
 							: null
 					}
 					<span dangerouslySetInnerHTML={ { __html: isFilter ? children : items[ checked ] } } />
+					{ isFilter && labels }
 				</div>
-				<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' } ${ dark ? 'dark' : ''}` }>
+				<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' } ${ dark ? 'dark' : '' }` }>
 					<div className={ `urlslab-MultiSelectMenu__items--inn ${ items?.length > 8 ? 'has-scrollbar' : '' }` }>
 						{ Object.entries( items ).map( ( [ itemId, value ] ) => {
 							return (

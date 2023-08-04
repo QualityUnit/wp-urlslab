@@ -255,13 +255,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$row->my_impressions = (int) $row->my_impressions;
 			$row->comp_position  = (int) $row->comp_position;
 			$row->comp_count     = (int) $row->comp_count;
-			try {
-				if ( ! empty( $row->my_url_name ) ) {
-					$url              = new Urlslab_Url( $row->my_url_name, true );
-					$row->my_url_name = $url->get_url_with_protocol();
-				}
-			} catch ( Exception $e ) {
-			}
+			$row->my_url_name    = str_replace( ',', ', ', $row->my_url_name );
 			try {
 				if ( ! empty( $row->comp_url_name ) ) {
 					$url                = new Urlslab_Url( $row->comp_url_name, true );
@@ -357,15 +351,18 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	}
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
+		global $wpdb;
+		$wpdb->query( 'SET SESSION group_concat_max_len = 500' );
+
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		foreach ( array_keys( $this->get_row_object()->get_columns() ) as $column ) {
 			$sql->add_select_column( $column, 'q' );
 		}
-		$sql->add_select_column( 'position', 'p', 'my_position' );
-		$sql->add_select_column( 'impressions', 'p', 'my_impressions' );
-		$sql->add_select_column( 'clicks', 'p', 'my_clicks' );
-		$sql->add_select_column( 'ctr', 'p', 'my_ctr' );
-		$sql->add_select_column( 'url_name', 'u', 'my_url_name' );
+		$sql->add_select_column( 'AVG(p.position)', false, 'my_position' );
+		$sql->add_select_column( 'SUM(p.impressions)', false, 'my_impressions' );
+		$sql->add_select_column( 'SUM(p.clicks)', false, 'my_clicks' );
+		$sql->add_select_column( 'AVG(p.ctr)', false, 'my_ctr' );
+		$sql->add_select_column( 'GROUP_CONCAT(DISTINCT u.url_name ORDER BY p.clicks, p.impressions)', false, 'my_url_name' );
 
 		$sql->add_select_column( 'MIN(cp.position)', false, 'comp_position' );
 		$sql->add_select_column( 'COUNT(DISTINCT cp.domain_id)', false, 'comp_count' );

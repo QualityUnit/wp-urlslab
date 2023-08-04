@@ -188,7 +188,14 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'main', __( 'Lazy Loading Settings' ), __( 'Lazy loading is a crucial performance optimisation technique that delays the loading of resources until they are needed. As a result, it saves bandwidth and helps to improve page loading times while ensuring a smooth user experience.' ) );
+		$this->add_options_form_section(
+			'main',
+			__( 'Lazy Loading Settings' ),
+			__( 'Lazy loading is a crucial performance optimisation technique that delays the loading of resources until they are needed. As a result, it saves bandwidth and helps to improve page loading times while ensuring a smooth user experience.' ),
+			array(
+				self::LABEL_PERFORMANCE,
+			)
+		);
 
 		$this->add_option_definition(
 			self::SETTING_NAME_IMG_LAZY_LOADING,
@@ -236,7 +243,15 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			'main'
 		);
 
-		$this->add_options_form_section( 'youtube', __( 'YouTube Settings' ), __( ' Optimise site performance with lazy loading for YouTube videos, monitor usage for insights, and auto-generate captions and summaries to boost SEO.' ) );
+		$this->add_options_form_section(
+			'youtube',
+			__( 'YouTube Settings' ),
+			__( ' Optimise site performance with lazy loading for YouTube videos, monitor usage for insights, and auto-generate captions and summaries to boost SEO.' ),
+			array(
+				self::LABEL_SEO,
+				self::LABEL_PERFORMANCE,
+			)
+		);
 		$this->add_option_definition(
 			self::SETTING_NAME_YOUTUBE_LAZY_LOADING,
 			false,
@@ -575,7 +590,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		}
 		$dom_element->setAttribute( 'style', 'opacity: 0; transition: opacity .5s;' );
 
-		if ( ! $dom_element->hasAttribute( 'loading' ) ) {
+		if ( ! $dom_element->hasAttribute( 'loading' ) && ! $this->get_option( self::SETTING_NAME_REMOVE_WP_LAZY_LOADING ) ) {
 			$dom_element->setAttribute( 'loading', 'lazy' );
 		}
 		$dom_element->setAttribute( 'urlslab-lazy', 'yes' );

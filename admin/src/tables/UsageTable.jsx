@@ -13,7 +13,7 @@ import '../assets/styles/components/_ModuleViewHeader.scss';
 
 export default function UsageTable( { slug } ) {
 	const paginationId = 'id';
-	const { table, setTable, filters, sorting, sortBy } = useTableUpdater( { slug } );
+	const { table, setTable, filters, sorting } = useTableUpdater( { slug } );
 	const url = { filters, sorting };
 
 	const {
@@ -37,19 +37,19 @@ export default function UsageTable( { slug } ) {
 
 	const columns = [
 		columnHelper.accessor( 'groupBucketTitle', {
-			header: ( th ) => header.groupBucketTitle,
+			header: header.groupBucketTitle,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'creditType', {
-			header: ( th ) => header.creditType,
+			header: header.creditType,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'events', {
-			header: ( th ) => header.events,
+			header: header.events,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'credits', {
-			header: ( th ) => header.credits,
+			header: header.credits,
 			size: 100,
 		} ),
 	];

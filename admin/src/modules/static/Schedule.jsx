@@ -1,16 +1,20 @@
 import { Suspense, lazy, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import SchedulesOverview from '../overview/Schedules';
-import ModuleViewHeader from '../components/ModuleViewHeader';
+import SchedulesOverview from '../../overview/Schedules';
+import ModuleViewHeader from '../../components/ModuleViewHeader';
 
-export default function Schedule( { moduleId } ) {
+const SchedulesTable = lazy( () => import( `../../tables/SchedulesTable.jsx` ) );
+const CreditsTable = lazy( () => import( `../../tables/CreditsTable.jsx` ) );
+const UsageTable = lazy( () => import( `../../tables/UsageTable.jsx` ) );
+
+export default function Schedule() {
 	const slug = 'schedule';
 	const { __ } = useI18n();
 	const [ activeSection, setActiveSection ] = useState( 'overview' );
-	const SchedulesTable = lazy( () => import( `../tables/SchedulesTable.jsx` ) );
-	const CreditsTable = lazy( () => import( `../tables/CreditsTable.jsx` ) );
-	const UsageTable = lazy( () => import( `../tables/UsageTable.jsx` ) );
+
+	// define module id statically, this module is not included in api response to get value from query
+	const moduleId = 'urlslab-schedule';
 
 	const tableMenu = new Map( [
 		[ slug, __( 'Schedules' ) ],

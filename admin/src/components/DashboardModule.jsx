@@ -1,53 +1,47 @@
-import { memo, useState } from 'react';
+import { memo } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import useMainMenu from '../hooks/useMainMenu';
+import { setModule } from '../api/fetching';
+import { renameModule } from '../lib/helpers';
 
 import Switch from '../elements/Switch';
 import Tag from '../elements/Tag';
 
-// import useCheckApiKey from '../hooks/useCheckApiKey';
-import { setModule } from '../api/fetching';
 import '../assets/styles/components/_DashboardModule.scss';
 import '../assets/styles/elements/_Button.scss';
 
 function DashboardModule( { module, labelsList, isOnboardingItem } ) {
 	const { __ } = useI18n();
 	const { id: moduleId, active: isActive, title, description, labels } = module;
-	// const { settingsLoaded, apiKeySet } = useCheckApiKey();
-	// const hasApi = settingsLoaded && apiKeySet === false && apikey;
-	const [ active, setActive ] = useState( isActive );
-	const { setActivePage } = useMainMenu();
 	const queryClient = useQueryClient();
-
 	const handleSwitch = useMutation( {
 		mutationFn: async () => {
-			const response = await setModule( moduleId, { active: ! active } );
+			const response = await setModule( moduleId, { active: ! isActive } );
 			return { response };
 		},
 		onSuccess: ( { response } ) => {
 			if ( response.ok ) {
-				setActive( ! active );
 				queryClient.setQueryData( [ 'modules' ], ( data ) => {
 					return {
-						...data, [ moduleId ]: { ...data[ moduleId ], active: ! active },
+						...data, [ moduleId ]: { ...data[ moduleId ], active: ! isActive },
 					};
 				} );
-				queryClient.invalidateQueries( [ 'modules' ] );
 				return false;
 			}
-			setActive( isActive );
 		},
 	} );
 
-	const iconPath = new URL( `../assets/images/modules/${ moduleId }.svg`, import.meta.url ).pathname;
+	let iconPath = new URL( `../assets/images/modules/${ moduleId }.svg`, import.meta.url ).pathname;
+	if ( iconPath.includes( 'undefined' ) ) {
+		iconPath = new URL( `../assets/images/modules/urlslab-media-offloader.svg`, import.meta.url ).pathname;
+	}
 
 	return (
-		<div className={ `urlslab-dashboardmodule ${ handleSwitch.isLoading ? 'activating' : '' } ${ active ? 'active' : '' }` }>
+		<div className={ `urlslab-dashboardmodule ${ handleSwitch.isLoading ? 'activating' : '' } ${ isActive ? 'active' : '' }` }>
 			{ handleSwitch.isLoading
-				? <div className="urlslab-dashboardmodule-activating">{ active ? __( 'Deactivating…' ) : __( 'Activating…' ) }</div>
+				? <div className="urlslab-dashboardmodule-activating">{ isActive ? __( 'Deactivating…' ) : __( 'Activating…' ) }</div>
 				: ''
 			}
 			<div className="urlslab-dashboardmodule-top flex-tablet flex-align-center">
@@ -57,11 +51,14 @@ function DashboardModule( { module, labelsList, isOnboardingItem } ) {
 				}
 
 				<h3 className="urlslab-dashboardmodule-title">
-					{ isOnboardingItem
+					{ ( isOnboardingItem || ! isActive )
 						? title
-						: <button className={ `${ active ? 'active' : '' }` } onClick={ active ? () => setActivePage( moduleId ) : null }>
+						: <Link
+							to={ renameModule( moduleId ) }
+							className="active"
+						>
 							{ title }
-						</button>
+						</Link>
 					}
 				</h3>
 
@@ -71,7 +68,7 @@ function DashboardModule( { module, labelsList, isOnboardingItem } ) {
 					className="urlslab-dashboardmodule-switch ma-left"
 					label={ isOnboardingItem ? __( 'Activate' ) : '' }
 					labelOff={ isOnboardingItem ? __( 'Deactivate' ) : '' }
-					defaultValue={ active }
+					defaultValue={ isActive }
 				/>
 			</div>
 

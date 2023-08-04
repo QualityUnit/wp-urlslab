@@ -1,16 +1,9 @@
 /* eslint-disable indent */
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Checkbox, Trash, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch, ProgressBar, SortBy, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
-import useChangeRow from '../hooks/useChangeRow';
-import useTablePanels from '../hooks/useTablePanels';
-import IconButton from '../elements/IconButton';
-import React, { useCallback } from 'react';
-import TextArea from "../elements/Textarea";
-import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
-import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refresh.svg';
 
 export default function SerpGapTable( { slug } ) {
 	const paginationId = 'query_id';
@@ -31,44 +24,10 @@ export default function SerpGapTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
 
-	const { selectRows, deleteRow, deleteSelectedRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
-
-	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-
-	const setUnifiedPanel = useCallback( ( cell ) => {
-		const origCell = cell?.row.original;
-		setOptions( [] );
-		setRowToEdit( {} );
-		updateRow( { cell, id: 'keyword' } );
-	}, [ setOptions, setRowToEdit, slug, updateRow ] );
-
-
-
-	const ActionButton = ( { cell, onClick } ) => {
-		const { status } = cell?.row?.original;
-
-		return (
-			<div className="flex flex-align-center flex-justify-end">
-				{
-					( status !== 'E' && status !== 'P' ) &&
-					<IconButton className="mr-s c-saturated-red" tooltip={ __( 'Disable' ) } tooltipClass="align-left" onClick={ () => onClick( 'E' ) }>
-						<DisableIcon />
-					</IconButton>
-				}
-				{
-					( status !== 'P' ) &&
-					<IconButton className="mr-s" tooltip={ __( 'Process again' ) } tooltipClass="align-left" onClick={ () => onClick( 'X' ) }>
-						<RefreshIcon />
-					</IconButton>
-				}
-			</div>
-		);
-	};
-
 	const header = {
 		query: __( 'Query' ),
-		competitors_count: __( 'KD' ),
+		type: __( 'Query Type' ),
+		competitors_count: __( 'Competitors Intersection' ),
 		top_competitors: __( 'Top Competitors' ),
 		my_url_name: __( 'My URL' ),
 		my_position: __( 'My Position' ),
@@ -77,6 +36,12 @@ export default function SerpGapTable( { slug } ) {
 		my_ctr: __( 'My CTR' ),
 	};
 
+	const types = {
+		U: __( 'User' ),
+		C: __( 'Search Console' ),
+		S: __( 'Google Suggestion' ),
+		F: __( 'Google FAQ' ),
+	};
 
 	const columns = [
 		columnHelper.accessor( 'query', {
@@ -84,6 +49,13 @@ export default function SerpGapTable( { slug } ) {
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.query }</SortBy>,
 			minSize: 200,
+		} ),
+		columnHelper.accessor( 'type', {
+			filterValMenu: types,
+			className: 'nolimit',
+			cell: ( cell ) => types[ cell.getValue() ],
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.type }</SortBy>,
+			size: 80,
 		} ),
 		columnHelper.accessor( 'competitors_count', {
 			className: 'nolimit',
@@ -122,7 +94,7 @@ export default function SerpGapTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'my_url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_url_name }</SortBy>,
 			size: 100,
 		} ),
@@ -141,9 +113,7 @@ export default function SerpGapTable( { slug } ) {
 				noImport
 				onFilter={ ( filter ) => setFilters( filter ) }
 				initialState={ { columnVisibility: { updated: false, status: false, type: false } } }
-				options={ { header, data, slug, paginationId, url,
-					title: __( 'Add Query' ), id: 'query',
-					rowToEdit,
+				options={ { header, data, slug, paginationId, url, id: 'query',
 					deleteCSVCols: [ paginationId, 'dest_url_id' ] }
 				}
 			/>

@@ -51,10 +51,10 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 								langName( filters?.lang?.val )
 								}
 
-								{ filters[ key ]?.op !== 'BETWEEN' && key !== 'lang' &&
-									filters[ key ]?.filterValMenu
-									? filters[ key ]?.filterValMenu[ filters[ key ]?.val ]
-									: filters[ key ]?.val
+								{ ( filters[ key ]?.op !== 'BETWEEN' && key !== 'lang' ) &&
+									( filters[ key ]?.filterValMenu
+										? filters[ key ]?.filterValMenu[ filters[ key ]?.val ]
+										: filters[ key ]?.val )
 								}
 							</span>”</span>
 						<Tooltip className="showOnHover">{ __( 'Edit filter' ) }</Tooltip>

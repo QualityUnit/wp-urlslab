@@ -8,14 +8,9 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	SingleSelectMenu, InputField, Editor, LangMenu, TagsMenu,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
-import useChangeRow from '../hooks/useChangeRow';
-import useTablePanels from '../hooks/useTablePanels';
-import React, { useCallback } from 'react';
-import TextArea from '../elements/Textarea';
 
 export default function SerpUrlsTable( { slug } ) {
 	const paginationId = 'url_id';
@@ -35,18 +30,6 @@ export default function SerpUrlsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
 
-	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
-
-	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-
-	const setUnifiedPanel = useCallback( ( cell ) => {
-		const origCell = cell?.row.original;
-		setOptions( [] );
-		setRowToEdit( {} );
-		updateRow( { cell, id: 'url_name' } );
-	}, [ setOptions, setRowToEdit, slug, updateRow ] );
-
 	const domainTypes = {
 		X: __( 'Other' ),
 		M: __( 'My Domain' ),
@@ -62,6 +45,9 @@ export default function SerpUrlsTable( { slug } ) {
 		top10_queries_cnt: __( 'Top 10' ),
 		queries_cnt: __( 'Top 100' ),
 		queries: __( 'Top Queries' ),
+		my_clicks: __( 'My Clicks' ),
+		my_impressions: __( 'My Impressions' ),
+		match_competitors: __( 'Competitors Intersection' ),
 	};
 
 	const columns = [
@@ -91,20 +77,22 @@ export default function SerpUrlsTable( { slug } ) {
 			size: 80,
 		} ),
 
+		columnHelper.accessor( 'match_competitors', {
+			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.match_competitors }</SortBy>,
+			minSize: 50,
+		} ),
 		columnHelper.accessor( 'best_position', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.best_position }</SortBy>,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'top10_queries_cnt', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.top10_queries_cnt }</SortBy>,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'queries_cnt', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.queries_cnt }</SortBy>,
 			minSize: 50,
@@ -114,6 +102,16 @@ export default function SerpUrlsTable( { slug } ) {
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.queries }</SortBy>,
 			minSize: 200,
+		} ),
+		columnHelper.accessor( 'my_clicks', {
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.my_clicks }</SortBy>,
+			minSize: 50,
+		} ),
+		columnHelper.accessor( 'my_impressions', {
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.my_impressions }</SortBy>,
+			minSize: 50,
 		} ),
 	];
 
@@ -129,7 +127,7 @@ export default function SerpUrlsTable( { slug } ) {
 				noDelete
 				noInsert
 				noImport
-				options={ { header, data, slug, paginationId, url, id: 'url_name', title: '', rowToEdit,
+				options={ { header, data, slug, paginationId, url, id: 'url_name', title: '',
 					deleteCSVCols: [ paginationId, 'url_id' ] }
 				}
 			/>

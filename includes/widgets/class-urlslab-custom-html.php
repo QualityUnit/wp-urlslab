@@ -157,7 +157,15 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'default_html', __( 'Custom HTML Applied on All Pages' ), __( 'Default rules is automatically applied to every page. For page-specific, use custom rules with appropriate conditions. CAUTION: Ensure accurate HTML code to prevent website corruption.' ) );
+		$this->add_options_form_section(
+			'default_html',
+			__( 'Custom HTML Applied on All Pages' ),
+			__( 'Default rules is automatically applied to every page. For page-specific, use custom rules with appropriate conditions. CAUTION: Ensure accurate HTML code to prevent website corruption.' ),
+			array(
+				self::LABEL_FREE,
+				self::LABEL_EXPERT,
+			)
+		);
 		$this->add_option_definition(
 			self::SETTING_NAME_HEAD_START,
 			'',

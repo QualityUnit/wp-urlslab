@@ -1,18 +1,19 @@
 import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import { useQueryClient } from '@tanstack/react-query';
 
 import AboutIcon from '../assets/images/icons/icon-overview-about.svg';
 import IntegrateIcon from '../assets/images/icons/icon-overview-integrate.svg';
 import FaqIcon from '../assets/images/icons/icon-overview-faq.svg';
+
+import useModulesQuery from '../queries/useModulesQuery';
 
 import '../assets/styles/components/_OverviewTemplate.scss';
 
 export default function Overview( { moduleId, noFAQ, noIntegrate, title, customSections, section, children } ) {
 	const { __ } = useI18n();
 	const [ active, setActive ] = useState( 'about' );
-	const queryClient = useQueryClient();
-	const moduleData = queryClient.getQueryData( [ 'modules' ] )[ moduleId ];
+	const { data: modules } = useModulesQuery();
+	const moduleData = modules ? modules[ moduleId ] : null;
 
 	const handleMenu = ( val ) => {
 		setActive( val );

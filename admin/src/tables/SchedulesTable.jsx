@@ -2,13 +2,12 @@ import {
 	useInfiniteFetch,
 	ProgressBar,
 	SortBy,
-	Trash,
 	Checkbox,
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	InputField, SingleSelectMenu,
+	InputField, SingleSelectMenu, RowActionButtons,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -133,7 +132,10 @@ export default function SchedulesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => <Trash onClick={ () => deleteRow( { cell, id: 'urls' } ) } />,
+			cell: ( cell ) => <RowActionButtons
+				onDelete={ () => deleteRow( { cell, id: 'urls' } ) }
+			>
+			</RowActionButtons>,
 			header: null,
 			size: 60,
 		} ),

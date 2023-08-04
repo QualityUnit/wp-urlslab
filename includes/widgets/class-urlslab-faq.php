@@ -59,26 +59,36 @@ class Urlslab_Faq extends Urlslab_Widget {
 		$microdata = $microdata_parser->toObject();
 		libxml_clear_errors();
 		libxml_use_internal_errors( $libxml_previous_state );
+		if ( property_exists( $microdata, 'items' ) && is_array( $microdata->items ) ) {
+			foreach ( $microdata->items as $item ) {
+				if ( 'https://schema.org/FAQPage' === $item->type[0] ) {
 
-		foreach ( $microdata->items as $item ) {
-			if ( 'https://schema.org/FAQPage' === $item->type[0] ) {
-				foreach ( $item->properties->mainEntity as $position => $entity ) {
-					if ( 'https://schema.org/Question' === $entity->type[0] ) {
-						$question = $entity->properties->name[0];
-						foreach ( $entity->properties->acceptedAnswer as $answer ) {
-							if ( 'https://schema.org/Answer' === $answer->type[0] ) {
-								$answer_text = $answer->properties->text[0];
-								$faq_id      = $this->add_unique_faq( trim( $question ), trim( $answer_text ) );
-								if ( $faq_id ) {
-									$faq_url = new Urlslab_Faq_Url_Row();
-									$faq_url->set_faq_id( $faq_id );
-									$faq_url->set_url_id( Urlslab_Url::get_current_page_url()->get_url_id() );
-									$faq_url->set_sorting( $position + 1 );
-									if ( $faq_url->insert() ) {
-										$current_url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( Urlslab_Url::get_current_page_url() );
-										if ( Urlslab_Url_Row::FAQ_STATUS_ACTIVE !== $current_url_obj->get_faq_status() ) {
-											$current_url_obj->set_faq_status( Urlslab_Url_Row::FAQ_STATUS_ACTIVE );
-											$current_url_obj->update();
+					if ( ! property_exists( $item, 'properties' ) || ! property_exists( $item->properties, 'mainEntity' ) || ! is_array( $item->properties->mainEntity ) ) {
+						continue;
+					}
+					foreach ( $item->properties->mainEntity as $position => $entity ) {
+						if ( isset( $entity->type[0] ) && 'https://schema.org/Question' === $entity->type[0] ) {
+							$question = $entity->properties->name[0];
+
+							if ( empty( $question ) || ! property_exists( $entity->properties, 'acceptedAnswer' ) || ! is_array( $entity->properties->acceptedAnswer ) ) {
+								continue;
+							}
+
+							foreach ( $entity->properties->acceptedAnswer as $answer ) {
+								if ( 'https://schema.org/Answer' === $answer->type[0] ) {
+									$answer_text = $answer->properties->text[0];
+									$faq_id      = $this->add_unique_faq( trim( $question ), trim( $answer_text ) );
+									if ( $faq_id ) {
+										$faq_url = new Urlslab_Faq_Url_Row();
+										$faq_url->set_faq_id( $faq_id );
+										$faq_url->set_url_id( Urlslab_Url::get_current_page_url()->get_url_id() );
+										$faq_url->set_sorting( $position + 1 );
+										if ( $faq_url->insert() ) {
+											$current_url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( Urlslab_Url::get_current_page_url() );
+											if ( Urlslab_Url_Row::FAQ_STATUS_ACTIVE !== $current_url_obj->get_faq_status() ) {
+												$current_url_obj->set_faq_status( Urlslab_Url_Row::FAQ_STATUS_ACTIVE );
+												$current_url_obj->update();
+											}
 										}
 									}
 								}
@@ -180,7 +190,15 @@ class Urlslab_Faq extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'autoinclude', __( 'Automatic FAQ' ), __( 'We can automatically include FAQs at the end of each content without the need for a WordPress shortcode in custom templates.' ) );
+		$this->add_options_form_section(
+			'autoinclude',
+			__( 'Automatic FAQ' ),
+			__( 'We can automatically include FAQs at the end of each content without the need for a WordPress shortcode in custom templates.' ),
+			array(
+				self::LABEL_SEO,
+				self::LABEL_FREE,
+			)
+		);
 		$this->add_option_definition(
 			self::SETTING_NAME_AUTOINCLUDE_TO_CONTENT,
 			false,
@@ -190,7 +208,8 @@ class Urlslab_Faq extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'autoinclude'
+			'autoinclude',
+			array( self::LABEL_SEO )
 		);
 
 		$this->add_option_definition(
@@ -232,7 +251,8 @@ class Urlslab_Faq extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
-			'widget'
+			'widget',
+			array( self::LABEL_PERFORMANCE )
 		);
 
 		$this->add_options_form_section(
@@ -253,7 +273,11 @@ class Urlslab_Faq extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'import'
+			'import',
+			array(
+				self::LABEL_EXPERT,
+				self::LABEL_EXPERIMENTAL,
+			)
 		);
 	}
 
