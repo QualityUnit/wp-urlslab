@@ -912,7 +912,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		return new WP_REST_Response(
 			(object) array(
 				'post_id' => $post_id,
-				'edit_post_link' => get_edit_post_link( $post_id ),
+				'edit_post_link' => html_entity_decode( get_edit_post_link( $post_id ) ),
 			),
 			200 
 		);
