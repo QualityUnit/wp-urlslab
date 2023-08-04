@@ -17,7 +17,6 @@ import {
 } from '../../api/generatorApi';
 import { Editor as TinyMCE } from '@tinymce/tinymce-react/lib/cjs/main/ts/components/Editor';
 import { fetchLangs } from '../../api/fetchLangs';
-import { data } from 'autoprefixer';
 
 function ContentGeneratorPanel() {
 	const { __ } = useI18n();
@@ -244,7 +243,7 @@ function ContentGeneratorPanel() {
 					keywordsList.length > 0 && <div className="urlslab-content-gen-panel-control-item-list">
 						{ keywordsList.map( ( keyword, idx ) => {
 							return (
-								<div>
+								<div key={ keyword.q } >
 									<Checkbox
 										defaultValue={ keyword.checked }
 										onChange={ ( checked ) => handleCheckboxCheck( checked, idx ) }
@@ -335,7 +334,7 @@ function ContentGeneratorPanel() {
 							{
 								serpUrlList.map( ( url, idx ) => {
 									return (
-										<div>
+										<div key={ url.url_name }>
 											<Checkbox
 												defaultValue={ false }
 												onChange={ ( checked ) => handleSerpUrlCheckboxCheck( checked, idx ) }
@@ -465,14 +464,14 @@ function ContentGeneratorPanel() {
 								onChange={ ( val ) => setPostType( val ) }
 							/>
 
-							<Button onClick={ handleCreatePost }>Create Post</Button>
+							<Button onClick={ handleCreatePost }>{ __( 'Create Post' ) }</Button>
 						</div>
 					)
 				}
 
 				{
 					generatedPostLink !== '' && (
-						<Button href={ generatedPostLink }>Edit Generated Post</Button>
+						<Button href={ generatedPostLink }>{ __( 'Edit Generated Post' ) }</Button>
 					)
 				}
 			</div>
