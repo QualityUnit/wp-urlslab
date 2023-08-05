@@ -145,7 +145,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_QUERY_TYPES,
-			array( Urlslab_Serp_Query_Row::TYPE_USER ),
+			Urlslab_Serp_Query_Row::TYPE_USER,
 			false,
 			__( 'Process Query Types' ),
 			__( 'Load SERP data just for selected query types.' ),
