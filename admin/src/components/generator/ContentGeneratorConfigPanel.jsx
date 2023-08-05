@@ -79,7 +79,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 				const d = urls.map( ( url ) => {
 					return { ...url, checked: false };
 				} );
-				dispatch( { type: 'setSerpUrlList', key: d } );
+				dispatch( { type: 'setSerpUrlsList', key: d } );
 			}
 		}
 	};
@@ -91,13 +91,13 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 
 	// handling serpUrlCheckboxCheck
 	const handleSerpUrlCheckboxCheck = ( checked, index ) => {
-		const newList = state.serpUrlList.map( ( url, idx ) => {
+		const newList = state.serpUrlsList.map( ( url, idx ) => {
 			if ( idx === index ) {
 				return { ...url, checked };
 			}
 			return url;
 		} );
-		dispatch( { type: 'setSerpUrlList', newList } );
+		dispatch( { type: 'setSerpUrlsList', key: newList } );
 	};
 
 	// handling generate content
@@ -117,7 +117,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 
 			if ( state.dataSource === 'SERP_CONTEXT' ) {
 				processIdResponse = await augmentWithURLContext(
-					[ ...state.serpUrlList.filter( ( url ) => url.checked ).map( ( url ) => url.url_name ) ],
+					[ ...state.serpUrlsList.filter( ( url ) => url.checked ).map( ( url ) => url.url_name ) ],
 					state.promptVal,
 					state.modelName
 				);
@@ -295,7 +295,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 				state.dataSource && state.dataSource === 'SERP_CONTEXT' && (
 					<div className="urlslab-content-gen-panel-control-item-list">
 						{
-							state.serpUrlList.map( ( url, idx ) => {
+							state.serpUrlsList.map( ( url, idx ) => {
 								return (
 									<div key={ url.url_name }>
 										<Checkbox

@@ -41,10 +41,10 @@ export default function aiGeneratorReducer( state, action ) {
 				...state,
 				semanticContext: action.key,
 			};
-		case 'setSerpUrlList':
+		case 'setSerpUrlsList':
 			return {
 				...state,
-				serpUrlList: action.key,
+				serpUrlsList: action.key,
 			};
 		case 'setTitle':
 			return {
