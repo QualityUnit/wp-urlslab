@@ -49,18 +49,17 @@ import 'tinymce/plugins/table';
 import '../assets/styles/elements/_Inputs.scss';
 import Tooltip from './Tooltip';
 
-export default function Editor( { defaultValue, className, style, label, description, required, onChange, initCallback } ) {
+export default function Editor( { valState, className, style, label, description, required, onChange, initCallback } ) {
 	const editorRef = useRef( null );
 	const { __ } = useI18n();
-	const [ val, setVal ] = useState( defaultValue ?? '' );
-	useEffect( () => setVal( defaultValue ?? '' ), [ defaultValue ] );
+	const [ val, setVal ] = valState;
 
 	const handleVal = useCallback( ( input ) => {
-		if ( onChange && ( defaultValue !== input || ! input ) ) {
+		if ( onChange ) {
 			setVal( input );
 			onChange( input );
 		}
-	}, [ onChange, defaultValue ] );
+	}, [ onChange ] );
 
 	return (
 		<div className={ `urlslab-inputField-wrap ${ className || '' }` } style={ style }>

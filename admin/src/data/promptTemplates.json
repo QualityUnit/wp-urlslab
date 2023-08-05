@@ -10,5 +10,9 @@
   "2": {
     "name": "Summarize the text",
     "promptTemplate": "Summarize the given text: {input_text}"
+  },
+  "3": {
+    "name": "Answer a question",
+    "promptTemplate": "Answer the following question with the given CONTEXT: {primary_keyword} \n CONTEXT: {context}"
   }
 }

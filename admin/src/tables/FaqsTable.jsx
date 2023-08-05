@@ -16,6 +16,9 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
+import {useEffect, useState} from 'react';
+import Button from '../elements/Button';
+import ContentGeneratorConfigPanel from '../components/generator/ContentGeneratorConfigPanel';
 // import { active } from 'd3';
 
 export default function FaqsTable( { slug } ) {
@@ -38,6 +41,8 @@ export default function FaqsTable( { slug } ) {
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
 
 	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const [ showGeneratorPanel, setShowGeneratorPanel ] = useState( false );
+	const textBoxState = useState( '' );
 
 	const { setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -62,11 +67,29 @@ export default function FaqsTable( { slug } ) {
 	};
 
 	const rowEditorCells = {
-		question: <InputField liveUpdate defaultValue="" label={ header.question }
-			description={ __( 'Up to 500 characters.' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, question: val } ) } required />,
+		question: <div>
+			<InputField liveUpdate defaultValue={ rowToEdit.question } label={ header.question }
+				description={ __( 'Up to 500 characters.' ) }
+				onChange={ ( val ) => setRowToEdit( { ...rowToEdit, question: val } ) } required />
+			<Button active onClick={ () => setShowGeneratorPanel( true ) }>{ __( 'Generate Answer' ) }</Button>
+			{
+				showGeneratorPanel && (
+					<ContentGeneratorConfigPanel
+						initialData={ {
+							keywordsList: [ { q: rowToEdit.question, checked: true } ],
+							dataSource: 'SERP_CONTEXT',
+							selectedPromptTemplate: '3',
+						} }
+						onGenerateComplete={ ( val ) => textBoxState[ 1 ]( val ) }
+					/>
+				)
+			}
+		</div>,
 
-		answer: <Editor description={ ( __( 'Answer to the question' ) ) } defaultValue="" label={ header.answer } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, answer: val } ) } />,
+		answer: <Editor description={ ( __( 'Answer to the question' ) ) } valState={ textBoxState } label={ header.answer } onChange={ ( val ) => {
+			setRowToEdit( { ...rowToEdit, answer: val } );
+			textBoxState[ 1 ]( val );
+		} } />,
 
 		language: <LangMenu autoClose defaultValue="all"
 			description={ __( 'Select language' ) }

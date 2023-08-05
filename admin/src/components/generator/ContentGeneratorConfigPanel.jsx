@@ -6,7 +6,7 @@ import { fetchLangs } from '../../api/fetchLangs';
 import TextAreaEditable from '../../elements/TextAreaEditable';
 import Button from '../../elements/Button';
 import Loader from '../Loader';
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import useAIGenerator, {
 	contextTypePromptPlaceholder,
@@ -14,6 +14,7 @@ import useAIGenerator, {
 	contextTypesDescription,
 } from '../../hooks/useAIGenerator';
 import promptTemplates from '../../data/promptTemplates.json';
+import '../../assets/styles/components/_ContentGeneratorPanel.scss';
 import {
 	augmentWithDomainContext,
 	augmentWithoutContext,
@@ -31,6 +32,41 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 		acc[ key ] = value.name;
 		return acc;
 	}, {} );
+
+	//handling the initial loading with preloaded data
+	useEffect( () => {
+		if ( state.dataSource === 'SERP_CONTEXT' &&
+			state.keywordsList.length > 0 &&
+			state.keywordsList[ 0 ].q !== '' &&
+			state.serpUrlsList.length <= 0 ) {
+			handleSerpContextSelected( 'SERP_CONTEXT' );
+		}
+
+		if ( state.selectedPromptTemplate !== '0' ) {
+			dispatch( { type: 'setPromptVal', key: promptTemplates[ state.selectedPromptTemplate ].promptTemplate } );
+		}
+
+		handleGeneratePrompt( promptTemplates[ state.selectedPromptTemplate ].promptTemplate );
+	}, [] );
+
+	// handling generating final prompt based on prompt template variables
+	const handleGeneratePrompt = ( val ) => {
+		let finalPrompt = val;
+		const selectedKeywords = getSelectedKeywords();
+		if ( val.includes( '{keyword}' ) && selectedKeywords.length > 0 ) {
+			finalPrompt = val.replace( '{keyword}', getSelectedKeywords().join( ', ' ) );
+		}
+
+		if ( val.includes( '{primary_keyword}' ) && selectedKeywords.length > 0 ) {
+			finalPrompt = val.replace( '{primary_keyword}', getSelectedKeywords()[ 0 ] );
+		}
+
+		if ( val.includes( '{language}' ) && state.language ) {
+			finalPrompt = val.replace( '{language}', state.language );
+		}
+
+		dispatch( { type: 'setPromptVal', key: finalPrompt } );
+	};
 
 	// handling keyword input, trying to get suggestions
 	const handleChangeKeywordInput = ( val ) => {
@@ -186,7 +222,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 					<div className="urlslab-content-gen-panel-control-item">
 						<InputField
 							liveUpdate
-							defaultValue=""
+							defaultValue={ state.keywordsList.length > 0 ? state.keywordsList[ 0 ].q : '' }
 							description={ __( 'Keyword to Pick' ) }
 							label={ __( 'Keyword' ) }
 							onChange={ ( val ) => handleChangeKeywordInput( val ) }
