@@ -1,3 +1,4 @@
+import { useI18n } from '@wordpress/react-i18n/';
 import {
 	useInfiniteFetch,
 	Loader,
@@ -12,11 +13,11 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import '../assets/styles/components/_ModuleViewHeader.scss';
 
 export default function CreditsTable( { slug } ) {
+	const { __ } = useI18n();
 	const paginationId = 'id';
 	const { table, setTable, filters, sorting } = useTableUpdater( { slug } );
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,

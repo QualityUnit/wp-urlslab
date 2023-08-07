@@ -1,4 +1,5 @@
 import { useRef, useCallback } from 'react';
+import { useI18n } from '@wordpress/react-i18n/';
 import { useQueryClient } from '@tanstack/react-query';
 
 import {
@@ -15,6 +16,7 @@ import { ReactComponent as PlusIcon } from '../assets/images/icons/icon-plus.svg
 import { postFetch } from '../api/fetching';
 
 export default function NotFoundTable( { slug } ) {
+	const { __ } = useI18n();
 	const paginationId = 'url_id';
 	const matchUrlField = useRef();
 	const queryClient = useQueryClient();
@@ -26,7 +28,6 @@ export default function NotFoundTable( { slug } ) {
 	const url = { filters, sorting: defaultSorting };
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,

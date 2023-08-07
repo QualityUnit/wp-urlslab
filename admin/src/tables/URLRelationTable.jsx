@@ -1,5 +1,6 @@
+import { useI18n } from '@wordpress/react-i18n/';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, InputField, Checkbox, Trash, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, IconButton, RowActionButtons,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, RowActionButtons,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -7,6 +8,8 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
 export default function URLRelationTable( { slug } ) {
+	const { __ } = useI18n();
+	const title = __( 'Add New Related Article' );
 	const paginationId = 'src_url_id';
 	const optionalSelector = 'dest_url_id';
 
@@ -14,7 +17,6 @@ export default function URLRelationTable( { slug } ) {
 	const url = { filters, sorting };
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,
@@ -108,11 +110,12 @@ export default function URLRelationTable( { slug } ) {
 				onDeleteSelected={ deleteMultipleRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ {
-					header, rowEditorCells, title: 'Add New Related Article', data, slug, url, paginationId, optionalSelector, rowToEdit, id: 'src_url_name', deleteCSVCols: [ paginationId, 'dest_url_id' ],
+					header, rowEditorCells, title, data, slug, url, paginationId, optionalSelector, rowToEdit, id: 'src_url_name', deleteCSVCols: [ paginationId, 'dest_url_id' ],
 				} }
 			/>
 
 			<Table className="fadeInto"
+				title={ title }
 				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }

@@ -12,7 +12,6 @@ import useClickOutside from '../hooks/useClickOutside';
 import useTablePanels from '../hooks/useTablePanels';
 
 import { ReactComponent as Trash } from '../assets/images/icons/icon-trash.svg';
-import { ReactComponent as PlusIcon } from '../assets/images/icons/icon-plus.svg';
 import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refresh.svg';
 
 import TableFilter from './TableFilter';
@@ -25,6 +24,7 @@ import Button from '../elements/Button';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import IconButton from '../elements/IconButton';
 import { fetchingStore } from '../hooks/useInfiniteFetch';
+import AddNewTableRecord from '../elements/AddNewTableRecord';
 
 export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hideActions, noImport, noInsert, noExport, noCount, noDelete, table, onFilter, onDeleteSelected, onUpdate, options } ) {
 	const { __ } = useI18n();
@@ -129,7 +129,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 						<Button danger className="mr-s" onClick={ () => activatePanel( 'deleteSelected' ) }><Trash />{ __( 'Delete selected' ) }</Button>
 					}
 					{ title && ! noInsert &&
-						<Button className="active" onClick={ () => activatePanel( 'rowInserter' ) }><PlusIcon />{ title }</Button>
+						<AddNewTableRecord title={ title } />
 					}
 
 					{
