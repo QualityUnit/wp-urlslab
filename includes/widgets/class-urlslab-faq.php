@@ -5,7 +5,7 @@ use YusufKandemir\MicrodataParser\MicrodataDOMDocument;
 use YusufKandemir\MicrodataParser\MicrodataParser;
 
 class Urlslab_Faq extends Urlslab_Widget {
-	public const SLUG = 'faq';
+	public const SLUG = 'urlslab-faq';
 	const SETTING_NAME_AUTOINCLUDE_TO_CONTENT = 'urlslab-faq-autoinc';
 	const SETTING_NAME_AUTOINCLUDE_POST_TYPES = 'urlslab-faq-autoinc-types';
 	const SETTING_NAME_FAQ_COUNT = 'urlslab-faq-count';
@@ -143,7 +143,7 @@ class Urlslab_Faq extends Urlslab_Widget {
 					'inherit',
 				)
 			) ||
-			( class_exists( '\Elementor\Plugin' ) && Plugin::$instance->editor->is_edit_mode() )
+			( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() )
 		) {
 			$html_attributes = array();
 			foreach ( $this->get_attribute_values( $atts, $content, $tag ) as $id => $value ) {

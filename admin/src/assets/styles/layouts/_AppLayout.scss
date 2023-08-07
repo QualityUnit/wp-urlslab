@@ -6,24 +6,9 @@
 }
 
 .urlslab-app {
-	overflow-x: hidden;
-	min-height: calc(100vh - 32px);
 
 	&-main {
-		// padding-left: $iconsMenuWidth;
 		flex: auto;
-
-		@media (min-width: $breakpoint-tablet) {
-			transition: padding-left $transitionTime;
-
-			.urlslab-mainmenu + & {
-				padding-left: $iconsMenuWidth;
-			}
-
-			.urlslab-mainmenu.open + & {
-				padding-left: calc($mainMenuWidth - 0.5em);
-			}
-		}
 	}
 }
 // Removes Elementor and other notifications when in URLslab plugin page
@@ -47,7 +32,7 @@
 
 #wpbody {
 	position: static;
-	overflow-x: hidden;
+	// overflow-x: hidden;
 }
 
 // Moves our app padding

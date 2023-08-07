@@ -1,3 +1,5 @@
+import { useI18n } from '@wordpress/react-i18n';
+
 import {
 	useInfiniteFetch,
 	ProgressBar,
@@ -22,6 +24,8 @@ import ContentGeneratorConfigPanel from '../components/generator/ContentGenerato
 // import { active } from 'd3';
 
 export default function FaqsTable( { slug } ) {
+	const { __ } = useI18n();
+	const title = __( 'Add New FAQ' );
 	const paginationId = 'faq_id';
 
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
@@ -29,7 +33,6 @@ export default function FaqsTable( { slug } ) {
 	const url = { filters, sorting };
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,
@@ -164,13 +167,14 @@ export default function FaqsTable( { slug } ) {
 				onDeleteSelected={ deleteMultipleRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ { header, data, slug, url, paginationId,
-					title: 'Add New FAQ',
+					title,
 					rowEditorCells,
 					rowToEdit,
 					id: 'faq_id',
 				} }
 			/>
 			<Table className="fadeInto"
+				title={ title }
 				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }

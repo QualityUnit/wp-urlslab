@@ -89,33 +89,33 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 
 		if ( ! $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SERP_API ) ) {
 			// just selecting not processed ones
-			$row = $wpdb->get_row(
+			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND `status` = %s ORDER BY updated LIMIT 1', // phpcs:ignore
+					'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND `status` = %s ORDER BY updated LIMIT 10', // phpcs:ignore
 					Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
 				),
 				ARRAY_A
 			); // phpcs:ignore
 		} else {
-			$row = $wpdb->get_row(
+			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND `status` = %s OR (status = %s AND updated < %s ) ORDER BY updated LIMIT 1', // phpcs:ignore
+                    'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND `status` = %s OR (status = %s AND updated < %s ) ORDER BY updated LIMIT 10', // phpcs:ignore
 					Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
 					Urlslab_Serp_Query_Row::STATUS_PROCESSED,
 					Urlslab_Data::get_now( time() - $update_delay )
 				),
 				ARRAY_A
-			); // phpcs:ignore
+            ); // phpcs:ignore
 		}
 
 
-		if ( empty( $row ) ) {
+		if ( empty( $rows ) ) {
 			$this->has_rows = false;
 
 			return false;
 		}
 
-		$query = new Urlslab_Serp_Query_Row( $row );
+		$query = new Urlslab_Serp_Query_Row( $rows[ rand( 0, count( $rows ) - 1 ) ] );
 		$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSING );
 		$query->update();
 

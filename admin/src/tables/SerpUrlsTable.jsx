@@ -1,4 +1,6 @@
 /* eslint-disable indent */
+import { useI18n } from '@wordpress/react-i18n/';
+
 import {
 	useInfiniteFetch,
 	ProgressBar,
@@ -13,13 +15,14 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 
 export default function SerpUrlsTable( { slug } ) {
+	const { __ } = useI18n();
+	const title = '';
 	const paginationId = 'url_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const defaultSorting = sorting.length ? sorting : [ { key: 'top10_queries_cnt', dir: 'DESC', op: '<' } ];
 	const url = { filters, sorting: defaultSorting };
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,
@@ -127,7 +130,7 @@ export default function SerpUrlsTable( { slug } ) {
 				noDelete
 				noInsert
 				noImport
-				options={ { header, data, slug, paginationId, url, id: 'url_name', title: '',
+				options={ { header, data, slug, paginationId, title, url, id: 'url_name',
 					deleteCSVCols: [ paginationId, 'url_id' ] }
 				}
 			/>

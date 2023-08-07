@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useI18n } from '@wordpress/react-i18n/';
+
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, LinkIcon, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, RefreshIcon, IconButton, RowActionButtons,
 } from '../lib/tableImports';
@@ -8,6 +10,7 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
 export default function ScreenshotTable( { slug } ) {
+	const { __ } = useI18n();
 	const paginationId = 'url_id';
 
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
@@ -16,7 +19,6 @@ export default function ScreenshotTable( { slug } ) {
 	const [ tooltipUrl, setTooltipUrl ] = useState( );
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,

@@ -1,3 +1,5 @@
+import { useI18n } from '@wordpress/react-i18n/';
+
 import {
 	useInfiniteFetch,
 	ProgressBar,
@@ -17,13 +19,14 @@ import useTablePanels from '../hooks/useTablePanels';
 import '../assets/styles/components/_ModuleViewHeader.scss';
 
 export default function SchedulesTable( { slug } ) {
+	const { __ } = useI18n();
+	const title = 'Add schedule';
 	const paginationId = 'schedule_id';
 	const { table, setTable, filters, sorting, sortBy } = useTableUpdater( { slug } );
 
 	const url = { filters, sorting };
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,
@@ -154,9 +157,10 @@ export default function SchedulesTable( { slug } ) {
 				noExport
 				noImport
 				noDelete
-				options={ { header, rowEditorCells, title: 'Add schedule', data, slug, url, paginationId, rowToEdit, id: 'urls', updateAll: true } }
+				options={ { header, rowEditorCells, data, slug, url, paginationId, title, rowToEdit, id: 'urls', updateAll: true } }
 			/>
 			<Table className="noHeightLimit fadeInto"
+				title={ title }
 				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
