@@ -9,9 +9,11 @@ import {
 
 import { useVirtual } from 'react-virtual';
 
+import AddNewTableRecord from '../elements/AddNewTableRecord';
+
 import '../assets/styles/components/_TableComponent.scss';
 
-export default function Table( { slug, resizable, children, className, columns, data, initialState, returnTable } ) {
+export default function Table( { title, slug, resizable, children, className, columns, data, initialState, returnTable } ) {
 	const [ rowSelection, setRowSelection ] = useState( {} );
 	const [ containerWidth, setContainerWidth ] = useState();
 	const [ columnVisibility, setColumnVisibility ] = useState( initialState?.columnVisibility || {} );
@@ -110,82 +112,84 @@ export default function Table( { slug, resizable, children, className, columns, 
 						cell.column.getIsVisible() &&
 						<td key={ cell.id } className={ cell.column.columnDef.className }
 							style={ {
-							width: cell.column.getSize() !== 0 && resizable
-								? cell.column.getSize()
-								: undefined,
-						} }
-					>
+								width: cell.column.getSize() !== 0 && resizable
+									? cell.column.getSize()
+									: undefined,
+							} }
+						>
 							{ tooltip
-							? flexRender( tooltip, cell.getContext() )
-							: null
-						}
+								? flexRender( tooltip, cell.getContext() )
+								: null
+							}
 							<div className="limit">
 								{ flexRender( cell.column.columnDef.cell, cell.getContext() ) }
 							</div>
 						</td>
 					);
-	} ) }
+				} ) }
 			</tr>
 		);
 	}
 
+	if ( ! data?.length ) {
+		return <div className="urlslab-table-fake">
+			<div className="urlslab-table-fake-inn">{ title && <AddNewTableRecord title={ title } /> }</div>
+		</div>;
+	}
+
 	return (
 		<div className={ `urlslab-table-container ${ checkTableOverflow() }` } ref={ tableContainerRef }>
-			{ containerWidth
-				? <table ref={ tableRef } className={ `urlslab-table ${ className } ${ resizable ? 'resizable' : '' }` } style={ {
-					width: table.getCenterTotalSize(),
-				} }>
-					<thead className="urlslab-table-head">
-						{ table.getHeaderGroups().map( ( headerGroup ) => (
-							<tr className="urlslab-table-head-row" key={ headerGroup.id }>
-								{ headerGroup.headers.map( ( header ) => (
-									<th key={ header.id }
-										className={ header.column.columnDef.className }
-										style={ {
-											position: resizable ? 'absolute' : 'relative',
-											left: resizable ? header.getStart() : '0',
-											width: header.getSize() !== 0 ? header.getSize() : '',
-										} }
-									>
-										{ header.isPlaceholder
-											? null
-											: flexRender(
-												header.column.columnDef.header,
-												header.getContext()
-											) }
-										{ ( resizable && header.column.columnDef.enableResizing !== false )
-											? <div
-												{ ...{
-													onMouseDown: header.getResizeHandler(),
-													onTouchStart: header.getResizeHandler(),
-													className: `resizer ${ header.column.getIsResizing() ? 'isResizing' : ''
-														}`,
-												} }
-											/>
-											: null
-										}
-									</th>
-								) ) }
-							</tr>
-						) ) }
-					</thead>
-					<tbody className="urlslab-table-body" >
-						{ paddingTop > 0 && (
-							<tr>
-								<td style={ { height: `${ paddingTop }px` } } />
-							</tr>
-						) }
-						{ tbody }
-						{ paddingBottom > 0 && (
-							<tr>
-								<td style={ { height: `${ paddingBottom }px` } } />
-							</tr>
-						) }
-					</tbody>
-				</table>
-				: null
-			}
-
+			<table ref={ tableRef } className={ `urlslab-table ${ className } ${ resizable ? 'resizable' : '' }` } style={ {
+				width: table.getCenterTotalSize(),
+			} }>
+				<thead className="urlslab-table-head">
+					{ table.getHeaderGroups().map( ( headerGroup ) => (
+						<tr className="urlslab-table-head-row" key={ headerGroup.id }>
+							{ headerGroup.headers.map( ( header ) => (
+								<th key={ header.id }
+									className={ header.column.columnDef.className }
+									style={ {
+										position: resizable ? 'absolute' : 'relative',
+										left: resizable ? header.getStart() : '0',
+										width: header.getSize() !== 0 ? header.getSize() : '',
+									} }
+								>
+									{ header.isPlaceholder
+										? null
+										: flexRender(
+											header.column.columnDef.header,
+											header.getContext()
+										) }
+									{ ( resizable && header.column.columnDef.enableResizing !== false )
+										? <div
+											{ ...{
+												onMouseDown: header.getResizeHandler(),
+												onTouchStart: header.getResizeHandler(),
+												className: `resizer ${ header.column.getIsResizing() ? 'isResizing' : ''
+													}`,
+											} }
+										/>
+										: null
+									}
+								</th>
+							) ) }
+						</tr>
+					) ) }
+				</thead>
+				<tbody className="urlslab-table-body" >
+					{ paddingTop > 0 && (
+						<tr>
+							<td style={ { height: `${ paddingTop }px` } } />
+						</tr>
+					) }
+					{ tbody }
+					{ paddingBottom > 0 && (
+						<tr>
+							<td style={ { height: `${ paddingBottom }px` } } />
+						</tr>
+					) }
+				</tbody>
+			</table>
 			{ children }
 		</div>
 	);

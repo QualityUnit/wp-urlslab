@@ -1,3 +1,5 @@
+import { useI18n } from '@wordpress/react-i18n/';
+
 import {
 	useInfiniteFetch,
 	ProgressBar,
@@ -16,6 +18,8 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
 export default function FaqUrlsTable( { slug } ) {
+	const { __ } = useI18n();
+	const title = __( 'Add New FAQ to URL' );
 	const paginationId = 'faq_id';
 	const optionalSelector = 'url_id';
 
@@ -25,7 +29,6 @@ export default function FaqUrlsTable( { slug } ) {
 	const url = { filters, sorting: defaultSorting };
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,
@@ -112,9 +115,10 @@ export default function FaqUrlsTable( { slug } ) {
 				onDeleteSelected={ deleteMultipleRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				initialState={ { columnVisibility: { sorting: true, faq_id: false, url_name: true, question: true } } }
-				options={ { header, rowEditorCells, title: 'Add New FAQ to URL', data, slug, url, paginationId, optionalSelector, rowToEdit, id: 'faq_id', deleteCSVCols: [ 'url_id' ] } }
+				options={ { header, rowEditorCells, data, slug, url, paginationId, title, optionalSelector, rowToEdit, id: 'faq_id', deleteCSVCols: [ 'url_id' ] } }
 			/>
 			<Table className="fadeInto"
+				title={ title }
 				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }

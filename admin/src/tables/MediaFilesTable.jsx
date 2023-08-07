@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useI18n } from '@wordpress/react-i18n/';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, SingleSelectMenu, LinkIcon, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, RowActionButtons,
 } from '../lib/tableImports';
@@ -8,6 +9,7 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
 export default function MediaFilesTable( { slug } ) {
+	const { __ } = useI18n();
 	const paginationId = 'fileid';
 
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
@@ -16,7 +18,6 @@ export default function MediaFilesTable( { slug } ) {
 	const [ tooltipUrl, setTooltipUrl ] = useState( );
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,

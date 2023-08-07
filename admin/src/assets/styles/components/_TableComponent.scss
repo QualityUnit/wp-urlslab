@@ -16,6 +16,26 @@ $cellHeight: 3.5em;
 	width: 100%;
 	overflow-x: hidden;
 
+	&-fake {
+		position: relative;
+		width: 37.26%;
+		height: 0;
+		margin: auto;
+		min-height: calc(100vh - var(--headerTopHeight) - var(--headerBottomHeight) - var(--headerMenuHeight) - 8.5em);
+		background: url(../../images/faketable.png) center center no-repeat;
+		background-size: contain;
+
+		&-inn {
+
+			@include posZero;
+			position: absolute;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			z-index: 1;
+		}
+	}
+
 	&:not(.resizable) {
 		table-layout: fixed;
 		width: calc(100% - 1px) !important;

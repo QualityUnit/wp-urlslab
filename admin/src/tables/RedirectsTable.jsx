@@ -1,3 +1,4 @@
+import { useI18n } from '@wordpress/react-i18n/';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Checkbox, InputField, SingleSelectMenu, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, SuggestInputField, RowActionButtons,
 } from '../lib/tableImports';
@@ -8,6 +9,8 @@ import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
 import useTablePanels from '../hooks/useTablePanels';
 
 export default function RedirectsTable( { slug } ) {
+	const { __ } = useI18n();
+	const title = __( 'Add New Redirect' );
 	const paginationId = 'redirect_id';
 
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
@@ -15,7 +18,6 @@ export default function RedirectsTable( { slug } ) {
 	const url = { filters, sorting };
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,
@@ -199,9 +201,10 @@ export default function RedirectsTable( { slug } ) {
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ {
 					header,
-					rowEditorCells, title: 'Add New Redirect', data, slug, url, paginationId, rowToEdit, id: 'match_url', deleteCSVCols: [ paginationId ] } }
+					rowEditorCells, title, data, slug, url, paginationId, rowToEdit, id: 'match_url', deleteCSVCols: [ paginationId ] } }
 			/>
 			<Table className="fadeInto"
+				title={ title }
 				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				initialState={ { columnVisibility: { roles: false, headers: false, params: false, capabilities: false, ip: false, if_not_found: false, browser: false, cookie: false } } }
