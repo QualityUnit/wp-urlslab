@@ -15,7 +15,6 @@ import '../assets/styles/components/_TableComponent.scss';
 
 export default function Table( { title, slug, resizable, children, className, columns, data, initialState, returnTable } ) {
 	const [ rowSelection, setRowSelection ] = useState( {} );
-	const [ containerWidth, setContainerWidth ] = useState();
 	const [ columnVisibility, setColumnVisibility ] = useState( initialState?.columnVisibility || {} );
 	const tableContainerRef = useRef();
 	const tableRef = useRef();
@@ -57,7 +56,6 @@ export default function Table( { title, slug, resizable, children, className, co
 
 	useEffect( () => {
 		getColumnState();
-		setContainerWidth( tableContainerRef.current?.clientWidth );
 
 		const getTableContainerWidth = () => {
 			const tableContainerWidth = document.documentElement.clientWidth - adminMenuWidth - 54;
@@ -78,7 +76,7 @@ export default function Table( { title, slug, resizable, children, className, co
 		} );
 
 		resizeWatcher.observe( document.documentElement );
-	}, [ checkTableOverflow, getColumnState, setContainerWidth ] );
+	}, [ checkTableOverflow, getColumnState ] );
 
 	if ( table && returnTable ) {
 		returnTable( table );
