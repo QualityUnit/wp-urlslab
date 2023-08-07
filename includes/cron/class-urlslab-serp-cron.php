@@ -90,7 +90,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 		$types = implode( ',', $types );
 
 		global $wpdb;
-		$rows = $wpdb->get_row(
+		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND `status` = %s OR (status = %s AND updated < %s ) ORDER BY updated LIMIT 10', // phpcs:ignore
 				Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
@@ -106,8 +106,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 			return false;
 		}
 
-		$row = $rows[ rand( 0, count( $rows ) - 1 ) ];
-		$query = new Urlslab_Serp_Query_Row( $row );
+		$query = new Urlslab_Serp_Query_Row( $rows[ rand( 0, count( $rows ) - 1 ) ] );
 		$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSING );
 		$query->update();
 
