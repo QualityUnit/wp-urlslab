@@ -57,15 +57,17 @@ export default function Table( { slug, resizable, children, className, columns, 
 		getColumnState();
 		setContainerWidth( tableContainerRef.current?.clientWidth );
 
+		const getTableContainerWidth = () => {
+			const tableContainerWidth = document.documentElement.clientWidth - adminMenuWidth - 54;
+			tableContainerRef.current?.style.setProperty( '--tableContainerWidth', `${ tableContainerWidth }px` );
+		};
+
 		tableContainerRef.current?.style.setProperty( '--tableContainerScroll', '0px' );
 
-		const menuWidth = document.querySelector( '.urlslab-mainmenu' ).clientWidth + document.querySelector( '#adminmenuwrap' ).clientWidth;
-
+		const adminMenuWidth = document.querySelector( '#adminmenuwrap' ).clientWidth;
 		const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
 			if ( entry.borderBoxSize && tableContainerRef.current ) {
-				const tableContainerWidth = document.querySelector( '#wpadminbar' ).clientWidth - menuWidth - 54;
-				tableContainerRef.current.style.width = `${ tableContainerWidth }px`;
-				tableContainerRef.current?.style.setProperty( '--tableContainerWidth', `${ tableContainerWidth }px` );
+				getTableContainerWidth();
 			}
 		} );
 
@@ -73,7 +75,7 @@ export default function Table( { slug, resizable, children, className, columns, 
 			tableContainerRef.current?.style.setProperty( '--tableContainerScroll', `${ tableContainerRef.current?.scrollLeft }px` );
 		} );
 
-		resizeWatcher.observe( document.querySelector( '#wpadminbar' ) );
+		resizeWatcher.observe( document.documentElement );
 	}, [ checkTableOverflow, getColumnState, setContainerWidth ] );
 
 	if ( table && returnTable ) {
@@ -128,10 +130,7 @@ export default function Table( { slug, resizable, children, className, columns, 
 	}
 
 	return (
-		<div className={ `urlslab-table-container ${ checkTableOverflow() }` } ref={ tableContainerRef } style={ {
-			width: `${ containerWidth }px`,
-			'--tableContainerWidth': `${ containerWidth }px`,
-		} }>
+		<div className={ `urlslab-table-container ${ checkTableOverflow() }` } ref={ tableContainerRef }>
 			{ containerWidth
 				? <table ref={ tableRef } className={ `urlslab-table ${ className } ${ resizable ? 'resizable' : '' }` } style={ {
 					width: table.getCenterTotalSize(),

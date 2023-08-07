@@ -10,7 +10,7 @@
 		position: absolute;
 		top: 0;
 		left: 0;
-		height: 100%;
+		height: var(--adminmenuHeight);
 		width: 100%;
 		content: "";
 		background-color: $mainmenu-graphite;
@@ -20,20 +20,20 @@
 .urlslab-mainmenu {
 
 	@extend %menuBg;
-	position: fixed;
+	position: sticky;
+	top: 32px;
 	z-index: 5;
 	height: 100%;
 	padding: 1em 0;
 	margin: 0;
 	font-size: 0.75rem;
-	overflow: hidden;
+	flex: 1 0 auto;
 	color: $white;
 	max-width: $iconsMenuWidth;
 	transition: all $transitionTime 0.2s;
 
 	&.open {
 		max-width: $mainMenuWidth;
-		width: 100%;
 	}
 
 	&-title[class] {
@@ -102,13 +102,14 @@
 				font-size: 0.8125rem;
 				padding-top: 1.45em;
 				padding-bottom: 1.45em;
-
+				overflow: hidden;
 
 				svg {
 
 					@include square(1.55em);
 					display: block;
 					fill: $white;
+					flex: 0 0 1.55em;
 					margin: auto 1.65em;
 					transform: translateZ(0);
 					transition: all $transitionTime;
