@@ -1,4 +1,4 @@
-import { memo, useMemo, useRef } from 'react';
+import { memo, useEffect, useMemo, useRef } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import useChangeRow from '../hooks/useChangeRow';
@@ -9,7 +9,7 @@ import Button from '../elements/Button';
 import UnifiedPanelMenu from './UnifiedPanelMenu';
 
 function EditRowPanel( props ) {
-	const { editorMode, rowEditorCells, rowToEdit, noScrollbar, notWide, data, slug, paginationId, title, text, id, handlePanel } = props;
+	const { editorMode, handleOpenPanel, rowEditorCells, rowToEdit, noScrollbar, notWide, data, slug, paginationId, title, text, id, handlePanel } = props;
 	const { __ } = useI18n();
 	const enableAddButton = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( );
@@ -20,6 +20,13 @@ function EditRowPanel( props ) {
 	const requiredFields = rowEditorCells && Object.keys( rowEditorCells ).filter( ( cell ) => rowEditorCells[ cell ]?.props.required === true );
 
 	let cellsFinal = { ...rowEditorCells };
+
+	useEffect( () => {
+		// panel is open
+		if ( handleOpenPanel ) {
+			handleOpenPanel( cellsFinal );
+		}
+	}, [] );
 
 	const rowToEditWithDefaults = useMemo( () => {
 		let defaults = { ...rowToEdit };

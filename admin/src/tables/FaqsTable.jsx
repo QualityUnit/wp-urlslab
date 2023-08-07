@@ -18,7 +18,7 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-import {useEffect, useState} from 'react';
+import { useState } from 'react';
 import Button from '../elements/Button';
 import ContentGeneratorConfigPanel from '../components/generator/ContentGeneratorConfigPanel';
 // import { active } from 'd3';
@@ -69,6 +69,15 @@ export default function FaqsTable( { slug } ) {
 		updated: __( 'Updated' ),
 	};
 
+	const handlePanel = () => {
+		setShowGeneratorPanel( false );
+		textBoxState[ 1 ]( '' );
+	};
+
+	const handleOpenPanel = ( cells ) => {
+		textBoxState[ 1 ]( cells.answer.props.defaultValue );
+	};
+
 	const rowEditorCells = {
 		question: <div>
 			<InputField liveUpdate defaultValue={ rowToEdit.question } label={ header.question }
@@ -89,10 +98,12 @@ export default function FaqsTable( { slug } ) {
 			}
 		</div>,
 
-		answer: <Editor description={ ( __( 'Answer to the question' ) ) } valState={ textBoxState } label={ header.answer } onChange={ ( val ) => {
-			setRowToEdit( { ...rowToEdit, answer: val } );
-			textBoxState[ 1 ]( val );
-		} } />,
+		answer: <Editor
+			description={ ( __( 'Answer to the question' ) ) }
+			valState={ textBoxState } label={ header.answer } onChange={ ( val ) => {
+				setRowToEdit( { ...rowToEdit, answer: val } );
+				textBoxState[ 1 ]( val );
+			} } />,
 
 		language: <LangMenu autoClose defaultValue="all"
 			description={ __( 'Select language' ) }
@@ -170,6 +181,8 @@ export default function FaqsTable( { slug } ) {
 					title,
 					rowEditorCells,
 					rowToEdit,
+					handlePanel,
+					handleOpenPanel,
 					id: 'faq_id',
 				} }
 			/>
