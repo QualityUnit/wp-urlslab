@@ -44,9 +44,10 @@ $cellHeight: 3.5em;
 	&-container {
 
 		@include scrollbar();
-		height: calc(100vh - var(--headerTopHeight) - var(--headerMenuHeight) - var(--headerBottomHeight) - 5em);
 		margin: 1.5em;
 		padding-bottom: 1.5em;
+		height: calc(100vh - var(--headerTopHeight) - var(--headerMenuHeight) - var(--headerBottomHeight) - 5em);
+		width: calc(var(--tableContainerWidth) - var(--urlslabmenuWidth));
 		overflow: auto;
 	}
 
@@ -166,14 +167,14 @@ $cellHeight: 3.5em;
 		display: flex;
 		align-items: center;
 		justify-content: flex-end;
-		width: calc(var(--tableContainerWidth) - 0.15em) !important;
+		width: calc(var(--tableContainerWidth) - var(--urlslabmenuWidth) - 0.15em) !important;
 		left: var(--tableContainerScroll);
 		padding: 0;
 		z-index: 3;
 		pointer-events: none;
 
 		.urlslab-table-container.has-scrollbar & {
-			width: calc(var(--tableContainerWidth) - 0.75em) !important;
+			width: calc(var(--tableContainerWidth) - var(--urlslabmenuWidth) - 0.75em) !important;
 		}
 
 		.editRow-buttons {

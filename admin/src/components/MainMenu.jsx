@@ -22,6 +22,16 @@ export default function MainMenu() {
 	const loadedModules = Object.values( modules );
 	const activeModules = useMemo( () => loadedModules.length ? loadedModules.filter( ( mod ) => mod.active ) : [], [ loadedModules ] );
 
+	const getMenuDimensions = () => {
+		const doc = document.documentElement;
+		const adminmenuHeight = document.querySelector( '#adminmenuback' ).clientHeight;
+		doc.style.setProperty( '--adminmenuHeight', `${ adminmenuHeight }px` );
+		mainmenu?.current?.addEventListener( 'transitionend', () => {
+			const urlslabmenuWidth = mainmenu?.current?.clientWidth;
+			doc.style.setProperty( '--urlslabmenuWidth', `${ urlslabmenuWidth }px` );
+		} );
+	};
+
 	const handleMainMenu = ( ) => {
 		const menuState = mainmenu.current.classList.contains( 'open' );
 		if ( menuState ) {
@@ -35,6 +45,7 @@ export default function MainMenu() {
 				mainmenu.current.classList.add( 'open' );
 			} );
 		}
+		getMenuDimensions();
 	};
 
 	const activator = ( activateRoute ) => {
@@ -45,11 +56,22 @@ export default function MainMenu() {
 	};
 
 	useEffect( () => {
+		getMenuDimensions();
+
 		get( 'urlslab-mainmenu' ).then( ( val ) => {
 			if ( val === 'open' || window.matchMedia( '(min-width: 1600px)' ).matches ) {
 				mainmenu.current?.classList.add( 'open' );
+				getMenuDimensions();
 			}
 		} );
+
+		const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
+			if ( entry.borderBoxSize && mainmenu.current ) {
+				getMenuDimensions();
+			}
+		} );
+
+		resizeWatcher.observe( document.documentElement );
 	} );
 
 	return ( ( isSuccessModules && loadedModules ) &&
@@ -63,7 +85,7 @@ export default function MainMenu() {
 				{ __( 'Menu' ) }
 			</div>
 		</button>
-		<div className="urlslab-mainmenu-main flex">
+		<div className="urlslab-mainmenu-main">
 			<ul className="urlslab-mainmenu-menu">
 				<li key="urlslab-modules-main"
 					className={ `urlslab-mainmenu-item urlslab-modules has-icon ${ activator( '' ) }` }>

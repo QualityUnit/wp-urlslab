@@ -15,7 +15,6 @@ import '../assets/styles/components/_TableComponent.scss';
 
 export default function Table( { title, slug, resizable, children, className, columns, data, initialState, returnTable } ) {
 	const [ rowSelection, setRowSelection ] = useState( {} );
-	const [ containerWidth, setContainerWidth ] = useState();
 	const [ columnVisibility, setColumnVisibility ] = useState( initialState?.columnVisibility || {} );
 	const tableContainerRef = useRef();
 	const tableRef = useRef();
@@ -57,17 +56,18 @@ export default function Table( { title, slug, resizable, children, className, co
 
 	useEffect( () => {
 		getColumnState();
-		setContainerWidth( tableContainerRef.current?.clientWidth );
+
+		const getTableContainerWidth = () => {
+			const tableContainerWidth = document.documentElement.clientWidth - adminMenuWidth - 54;
+			tableContainerRef.current?.style.setProperty( '--tableContainerWidth', `${ tableContainerWidth }px` );
+		};
 
 		tableContainerRef.current?.style.setProperty( '--tableContainerScroll', '0px' );
 
-		const menuWidth = document.querySelector( '.urlslab-mainmenu' ).clientWidth + document.querySelector( '#adminmenuwrap' ).clientWidth;
-
+		const adminMenuWidth = document.querySelector( '#adminmenuwrap' ).clientWidth;
 		const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
 			if ( entry.borderBoxSize && tableContainerRef.current ) {
-				const tableContainerWidth = document.querySelector( '#wpadminbar' ).clientWidth - menuWidth - 54;
-				tableContainerRef.current.style.width = `${ tableContainerWidth }px`;
-				tableContainerRef.current?.style.setProperty( '--tableContainerWidth', `${ tableContainerWidth }px` );
+				getTableContainerWidth();
 			}
 		} );
 
@@ -75,8 +75,8 @@ export default function Table( { title, slug, resizable, children, className, co
 			tableContainerRef.current?.style.setProperty( '--tableContainerScroll', `${ tableContainerRef.current?.scrollLeft }px` );
 		} );
 
-		resizeWatcher.observe( document.querySelector( '#wpadminbar' ) );
-	}, [ checkTableOverflow, getColumnState, setContainerWidth ] );
+		resizeWatcher.observe( document.documentElement );
+	}, [ checkTableOverflow, getColumnState ] );
 
 	if ( table && returnTable ) {
 		returnTable( table );
@@ -136,10 +136,7 @@ export default function Table( { title, slug, resizable, children, className, co
 	}
 
 	return (
-		<div className={ `urlslab-table-container ${ checkTableOverflow() }` } ref={ tableContainerRef } style={ {
-			width: `${ containerWidth }px`,
-			'--tableContainerWidth': `${ containerWidth }px`,
-		} }>
+		<div className={ `urlslab-table-container ${ checkTableOverflow() }` } ref={ tableContainerRef }>
 			<table ref={ tableRef } className={ `urlslab-table ${ className } ${ resizable ? 'resizable' : '' }` } style={ {
 				width: table.getCenterTotalSize(),
 			} }>
