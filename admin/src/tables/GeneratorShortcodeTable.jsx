@@ -33,7 +33,6 @@ export default function GeneratorShortcodeTable( { slug } ) {
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( 'generator/shortcode' );
 
 	const url = { filters, sorting };
-	const [ templateText, setTemplateText ] = useState( '' );
 
 	const ActionButton = ( { cell, onClick } ) => {
 		const { status } = cell?.row?.original;
@@ -124,9 +123,8 @@ export default function GeneratorShortcodeTable( { slug } ) {
 
 		default_value: <InputField liveUpdate description={ __( 'Put here the text, which should be displayed in shortcode until URLsLab generates text from your prompt. Leave empty if you do not want to display shortcode until the text is generated' ) } defaultValue="" label={ header.default_value } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, default_value: val } ) } />,
 
-		template: <Editor description={ ( supported_variables_description + __( ' Value of generated text can be accessed in template by variable {{value}} or if generator generated json {{json_value.attribute_name}}' ) ) } value={ templateText } label={ header.template } onChange={ ( val ) => {
+		template: <Editor description={ ( supported_variables_description + __( ' Value of generated text can be accessed in template by variable {{value}} or if generator generated json {{json_value.attribute_name}}' ) ) } defaultValue="" label={ header.template } onChange={ ( val ) => {
 			setRowToEdit( { ...rowToEdit, template: val } );
-			setTemplateText( val );
 		} } required />,
 
 		model: <SingleSelectMenu defaultAccept autoClose items={ modelTypes } name="model" defaultValue={ ( 'gpt-3.5-turbo' ) } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, model: val } ) }>{ header.model }</SingleSelectMenu>,

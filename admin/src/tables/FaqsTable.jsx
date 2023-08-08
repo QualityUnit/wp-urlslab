@@ -74,15 +74,25 @@ export default function FaqsTable( { slug } ) {
 		setGeneratedContent( '' );
 	};
 
-	const handleOpenPanel = ( cells ) => {
-		setGeneratedContent( cells.answer.props.defaultValue );
-	};
-
 	const rowEditorCells = {
 		question: <div>
 			<InputField liveUpdate defaultValue={ rowToEdit.question } label={ header.question }
 				description={ __( 'Up to 500 characters.' ) }
 				onChange={ ( val ) => setRowToEdit( { ...rowToEdit, question: val } ) } required />
+		</div>,
+
+		answer: <Editor
+			description={ ( __( 'Answer to the question' ) ) }
+			defaultValue={ generatedContent } label={ header.answer } onChange={ ( val ) => {
+				setRowToEdit( { ...rowToEdit, answer: val } );
+				setGeneratedContent( val );
+			} } />,
+
+		language: <LangMenu autoClose defaultValue="all"
+			description={ __( 'Select language' ) }
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, language: val } ) }>{ header.language }</LangMenu>,
+
+		generate: <div>
 			<Button active onClick={ () => setShowGeneratorPanel( true ) }>{ __( 'Generate Answer' ) }</Button>
 			{
 				showGeneratorPanel && (
@@ -99,17 +109,6 @@ export default function FaqsTable( { slug } ) {
 				)
 			}
 		</div>,
-
-		answer: <Editor
-			description={ ( __( 'Answer to the question' ) ) }
-			value={ generatedContent } label={ header.answer } onChange={ ( val ) => {
-				setRowToEdit( { ...rowToEdit, answer: val } );
-				setGeneratedContent( val );
-			} } />,
-
-		language: <LangMenu autoClose defaultValue="all"
-			description={ __( 'Select language' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, language: val } ) }>{ header.language }</LangMenu>,
 
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 
@@ -184,7 +183,6 @@ export default function FaqsTable( { slug } ) {
 					rowEditorCells,
 					rowToEdit,
 					handlePanel,
-					handleOpenPanel,
 					id: 'faq_id',
 				} }
 			/>
