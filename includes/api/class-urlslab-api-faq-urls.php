@@ -159,6 +159,7 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
+		// changing all faq_id to fu.faq_id
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( 'url_name', 'u' );
 		$sql->add_select_column( 'faq_id', 'fu' );
@@ -170,6 +171,12 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_URLS_TABLE . ' as u ON fu.url_id = u.url_id' );
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
+
+		$columns['faq_id']['prefix'] = 'fu';
+		$columns['url_name']['prefix'] = 'u';
+		$columns['question']['prefix'] = 'f';
+		$columns['sorting']['prefix'] = 'fu';
+
 		$sql->add_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
 

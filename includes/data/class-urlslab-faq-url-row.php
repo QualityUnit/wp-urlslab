@@ -52,6 +52,8 @@ class Urlslab_Faq_Url_Row extends Urlslab_Data {
 			'faq_id'  => '%d',
 			'url_id'  => '%d',
 			'sorting' => '%d',
+			'url_name' => '%s',
+            'question' => '%s',
 		);
 	}
 }
