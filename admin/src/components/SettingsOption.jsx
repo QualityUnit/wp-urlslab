@@ -204,7 +204,7 @@ export default function SettingsOption( { settingId, option } ) {
 				);
 			case 'listbox':
 				return (
-					<SingleSelectMenu key={ id }
+					<SingleSelectMenu key={ `${ id }-${ value }` }
 						className="wide"
 						name={ id }
 						items={ possible_values }
