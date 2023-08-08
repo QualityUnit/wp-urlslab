@@ -45,7 +45,7 @@ export default function FaqsTable( { slug } ) {
 
 	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 	const [ showGeneratorPanel, setShowGeneratorPanel ] = useState( false );
-	const textBoxState = useState( '' );
+	const [ generatedContent, setGeneratedContent ] = useState( '' );
 
 	const { setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -71,11 +71,11 @@ export default function FaqsTable( { slug } ) {
 
 	const handlePanel = () => {
 		setShowGeneratorPanel( false );
-		textBoxState[ 1 ]( '' );
+		setGeneratedContent( '' );
 	};
 
 	const handleOpenPanel = ( cells ) => {
-		textBoxState[ 1 ]( cells.answer.props.defaultValue );
+		setGeneratedContent( cells.answer.props.defaultValue );
 	};
 
 	const rowEditorCells = {
@@ -92,7 +92,9 @@ export default function FaqsTable( { slug } ) {
 							dataSource: 'SERP_CONTEXT',
 							selectedPromptTemplate: '3',
 						} }
-						onGenerateComplete={ ( val ) => textBoxState[ 1 ]( val ) }
+						onGenerateComplete={ ( val ) => {
+							setGeneratedContent( val );
+						} }
 					/>
 				)
 			}
@@ -100,9 +102,9 @@ export default function FaqsTable( { slug } ) {
 
 		answer: <Editor
 			description={ ( __( 'Answer to the question' ) ) }
-			valState={ textBoxState } label={ header.answer } onChange={ ( val ) => {
+			value={ generatedContent } label={ header.answer } onChange={ ( val ) => {
 				setRowToEdit( { ...rowToEdit, answer: val } );
-				textBoxState[ 1 ]( val );
+				setGeneratedContent( val );
 			} } />,
 
 		language: <LangMenu autoClose defaultValue="all"

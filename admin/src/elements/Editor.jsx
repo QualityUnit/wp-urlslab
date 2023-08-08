@@ -49,14 +49,12 @@ import 'tinymce/plugins/table';
 import '../assets/styles/elements/_Inputs.scss';
 import Tooltip from './Tooltip';
 
-export default function Editor( { valState, className, style, label, description, required, onChange, initCallback } ) {
+export default function Editor( { value, className, style, label, description, required, onChange, initCallback } ) {
 	const editorRef = useRef( null );
 	const { __ } = useI18n();
-	const [ val, setVal ] = valState;
 
 	const handleVal = useCallback( ( input ) => {
 		if ( onChange ) {
-			setVal( input );
 			onChange( input );
 		}
 	}, [ onChange ] );
@@ -76,7 +74,7 @@ export default function Editor( { valState, className, style, label, description
 						initCallback();
 					}
 				} }
-				value={ val }
+				value={ value }
 				onEditorChange={ ( input ) => handleVal( input ) }
 				init={ {
 					skin: false,
