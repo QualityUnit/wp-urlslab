@@ -53,7 +53,7 @@ class Urlslab_Faq_Url_Row extends Urlslab_Data {
 			'url_id'  => '%d',
 			'sorting' => '%d',
 			'url_name' => '%s',
-            'question' => '%s',
+			'question' => '%s',
 		);
 	}
 }
