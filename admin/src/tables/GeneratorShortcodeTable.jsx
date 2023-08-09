@@ -1,3 +1,4 @@
+import {useState} from "react";
 import { useI18n } from '@wordpress/react-i18n';
 
 import {
@@ -24,7 +25,6 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-import {useState} from "react";
 
 export default function GeneratorShortcodeTable( { slug } ) {
 	const { __ } = useI18n();

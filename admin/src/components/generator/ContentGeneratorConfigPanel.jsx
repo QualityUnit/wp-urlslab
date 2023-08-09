@@ -16,11 +16,12 @@ import useAIGenerator, {
 import promptTemplates from '../../data/promptTemplates.json';
 import '../../assets/styles/components/_ContentGeneratorPanel.scss';
 import {
-	augmentWithDomainContext,
-	augmentWithoutContext,
-	augmentWithURLContext,
-	getAugmentProcessResult,
-} from '../../api/generatorApi';
+	generateContent,
+	getQueryCluster,
+	getTopUrls,
+	handleGeneratePrompt,
+} from '../../lib/aiGeneratorPanel';
+import { getAugmentProcessResult } from '../../api/generatorApi';
 
 function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } ) {
 	const { __ } = useI18n();
@@ -35,40 +36,28 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 
 	//handling the initial loading with preloaded data
 	useEffect( () => {
+		// setting initial state
 		setAIGeneratorConfig( { ...aiGeneratorConfig, ...initialData } );
+
+		const fetchTopUrls = async () => {
+			const topUrls = await getTopUrls( aiGeneratorConfig );
+			setAIGeneratorConfig( { ...aiGeneratorConfig, serpUrlsList: topUrls } );
+		};
 
 		if ( aiGeneratorConfig.dataSource === 'SERP_CONTEXT' &&
 			aiGeneratorConfig.keywordsList.length > 0 &&
 			aiGeneratorConfig.keywordsList[ 0 ].q !== '' &&
 			aiGeneratorConfig.serpUrlsList.length <= 0 ) {
-			handleSerpContextSelected( 'SERP_CONTEXT' );
+			fetchTopUrls();
 		}
 
 		if ( aiGeneratorConfig.selectedPromptTemplate !== '0' ) {
 			setAIGeneratorConfig( { ...aiGeneratorConfig, promptTemplate: promptTemplates[ aiGeneratorConfig.selectedPromptTemplate ].promptTemplate } );
 		}
 
-		handleGeneratePrompt( promptTemplates[ aiGeneratorConfig.selectedPromptTemplate ].promptTemplate );
+		const promptVal = handleGeneratePrompt( aiGeneratorConfig, promptTemplates[ aiGeneratorConfig.selectedPromptTemplate ].promptTemplate );
+		setAIGeneratorConfig( { ...aiGeneratorConfig, promptVal } );
 	}, [] );
-
-	// handling generating final prompt based on prompt template variables
-	const handleGeneratePrompt = ( val ) => {
-		let finalPrompt = val;
-		const selectedKeywords = getSelectedKeywords();
-		if ( val.includes( '{keyword}' ) && selectedKeywords.length > 0 ) {
-			finalPrompt = val.replace( '{keyword}', getSelectedKeywords().join( ', ' ) );
-		}
-
-		if ( val.includes( '{primary_keyword}' ) && selectedKeywords.length > 0 ) {
-			finalPrompt = val.replace( '{primary_keyword}', getSelectedKeywords()[ 0 ] );
-		}
-
-		if ( val.includes( '{language}' ) && aiGeneratorConfig.language ) {
-			finalPrompt = val.replace( '{language}', aiGeneratorConfig.language );
-		}
-
-		setAIGeneratorConfig( { ...aiGeneratorConfig, promptVal: finalPrompt } );
-	};
 
 	// handling keyword input, trying to get suggestions
 	const handleChangeKeywordInput = ( val ) => {
@@ -78,20 +67,8 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 
 		setTypingTimeout(
 			setTimeout( async () => {
-				if ( val === '' ) {
-					return [];
-				}
-				const res = await postFetch( 'serp-queries/query-cluster', { query: val } );
-				if ( res.ok ) {
-					const keywords = await res.json();
-					const queries = keywords.filter( ( keyword ) => keyword.query !== val )
-						.map( ( keyword ) => {
-							return { q: keyword.query, checked: false };
-						} );
-					setAIGeneratorConfig( { ...aiGeneratorConfig, keywordsList: [ { q: val, checked: true }, ...queries ] } );
-				} else {
-					setAIGeneratorConfig( { ...aiGeneratorConfig, keywordsList: [ { q: val, checked: true } ] } );
-				}
+				const queryCluster = await getQueryCluster( val );
+				setAIGeneratorConfig( { ...aiGeneratorConfig, keywordsList: [ { q: val, checked: true }, ...queryCluster ] } );
 			}, 600 )
 		);
 	};
@@ -107,26 +84,6 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 		setAIGeneratorConfig( { ...aiGeneratorConfig, keywordsList: newList } );
 	};
 
-	// handling serp context selection - fetching top serp results
-	const handleSerpContextSelected = async ( val ) => {
-		if ( val === 'SERP_CONTEXT' ) {
-			const primaryKeyword = getSelectedKeywords()[ 0 ];
-			const res = await postFetch( 'serp-queries/query/top-urls', { query: primaryKeyword } );
-			if ( res.ok ) {
-				const urls = await res.json();
-				const urlsWithCheck = urls.map( ( url ) => {
-					return { ...url, checked: false };
-				} );
-				setAIGeneratorConfig( { ...useAIGenerator.getState().aiGeneratorConfig, serpUrlsList: urlsWithCheck } );
-			}
-		}
-	};
-
-	// selected keywords
-	const getSelectedKeywords = () => {
-		return aiGeneratorConfig.keywordsList.filter( ( keyword ) => keyword.checked ).map( ( keyword ) => keyword.q );
-	};
-
 	// handling serpUrlCheckboxCheck
 	const handleSerpUrlCheckboxCheck = ( checked, index ) => {
 		const newList = aiGeneratorConfig.serpUrlsList.map( ( url, idx ) => {
@@ -138,66 +95,47 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 		setAIGeneratorConfig( { ...aiGeneratorConfig, serpUrlsList: newList } );
 	};
 
-	// handling generate content
+	// handling data source selection serp
+	const handleDataSourceSelection = async ( val ) => {
+		setAIGeneratorConfig( { ...aiGeneratorConfig, dataSource: val } );
+		if ( val === 'SERP_CONTEXT' ) {
+			const topUrls = await getTopUrls( aiGeneratorConfig );
+			setAIGeneratorConfig( { ...useAIGenerator.getState().aiGeneratorConfig, serpUrlsList: topUrls } );
+		}
+	};
+
+	// handling prompt template selection
+	const handlePromptTemplateSelection = ( id ) => {
+		setAIGeneratorConfig( { ...aiGeneratorConfig, selectedPromptTemplate: id } );
+		const prompt = handleGeneratePrompt( aiGeneratorConfig, promptTemplates[ id ].promptTemplate );
+		setAIGeneratorConfig( { ...aiGeneratorConfig, promptVal: prompt } );
+	};
+
 	const handleGenerateContent = async () => {
-		setIsGenerating( true );
 		try {
-			/// getting he Process ID for Generation
-			let processIdResponse;
-
-			if ( aiGeneratorConfig.dataSource === 'NO_CONTEXT' ) {
-				processIdResponse = await augmentWithoutContext( aiGeneratorConfig.promptVal, aiGeneratorConfig.modelName );
-			}
-
-			if ( aiGeneratorConfig.dataSource === 'DOMAIN_CONTEXT' ) {
-				processIdResponse = await augmentWithDomainContext( aiGeneratorConfig.domain, aiGeneratorConfig.promptVal, aiGeneratorConfig.modelName, aiGeneratorConfig.semanticContext );
-			}
-
-			if ( aiGeneratorConfig.dataSource === 'SERP_CONTEXT' ) {
-				processIdResponse = await augmentWithURLContext(
-					[ ...aiGeneratorConfig.serpUrlsList.filter( ( url ) => url.checked ).map( ( url ) => url.url_name ) ],
-					aiGeneratorConfig.promptVal,
-					aiGeneratorConfig.modelName
-				);
-			}
-
-			if ( aiGeneratorConfig.dataSource === 'URL_CONTEXT' ) {
-				processIdResponse = await augmentWithURLContext( [ ...aiGeneratorConfig.urlsList ], aiGeneratorConfig.promptVal, aiGeneratorConfig.modelName );
-			}
-
-			if ( processIdResponse.ok ) {
-				const rsp = await processIdResponse.json();
-				const processId = rsp.processId;
-				// begin pinging (polling) for results
-				const pollForResult = setInterval( async () => {
-					try {
-						const resultResponse = await getAugmentProcessResult( processId );
-						if ( processIdResponse.ok ) {
-							const generationRes = await resultResponse.json();
-							if ( generationRes.status === 'SUCCESS' ) {
-								clearInterval( pollForResult );
-								onGenerateComplete( generationRes.response[ 0 ] );
-								setIsGenerating( false );
-							}
-						} else {
+			setIsGenerating( true );
+			const processId = await generateContent( aiGeneratorConfig );
+			const pollForResult = setInterval( async () => {
+				try {
+					const resultResponse = await getAugmentProcessResult( processId );
+					if ( resultResponse.ok ) {
+						const generationRes = await resultResponse.json();
+						if ( generationRes.status === 'SUCCESS' ) {
 							clearInterval( pollForResult );
+							onGenerateComplete( generationRes.response[ 0 ] );
 							setIsGenerating( false );
-							setErrorGeneration( 'Failed to generate result. try again...' );
 						}
-					} catch ( error ) {
-						clearInterval( pollForResult );
-						setIsGenerating( false );
-						setErrorGeneration( error.message );
+					} else {
+						throw new Error( 'Failed to generate result. try again...' );
 					}
-				}, 2000 );
-			} else {
-				setIsGenerating( false );
-				const rsp = await processIdResponse.json();
-				setErrorGeneration( rsp.message );
-			}
-		} catch ( error ) {
+				} catch ( error ) {
+					clearInterval( pollForResult );
+					throw error;
+				}
+			}, 2000 );
+		} catch ( e ) {
+			setErrorGeneration( e.message );
 			setIsGenerating( false );
-			setErrorGeneration( error.message );
 		}
 	};
 
@@ -262,10 +200,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 						defaultAccept
 						autoClose
 						defaultValue={ aiGeneratorConfig.dataSource }
-						onChange={ async ( val ) => {
-							setAIGeneratorConfig( { ...aiGeneratorConfig, dataSource: val } );
-							await handleSerpContextSelected( val );
-						} }
+						onChange={ handleDataSourceSelection }
 					/>
 				</div>
 			</div>
@@ -349,10 +284,6 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 			}
 
 			<div className="urlslab-content-gen-panel-control-item">
-				<div className="urlslab-content-gen-panel-control-item-desc">
-					Language
-				</div>
-
 				<div className="urlslab-content-gen-panel-control-item-selector">
 					<SingleSelectMenu
 						key={ aiGeneratorConfig.lang }
@@ -367,10 +298,6 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 			</div>
 
 			<div className="urlslab-content-gen-panel-control-item">
-				<div className="urlslab-content-gen-panel-control-item-desc">
-					Prompt Template to choose
-				</div>
-
 				<div className="urlslab-content-gen-panel-control-item-selector">
 					<SingleSelectMenu
 						key={ aiGeneratorConfig.selectedPromptTemplate }
@@ -379,11 +306,8 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 						defaultAccept
 						autoClose
 						defaultValue={ aiGeneratorConfig.selectedPromptTemplate }
-						onChange={ ( id ) => {
-							setAIGeneratorConfig( { ...aiGeneratorConfig, selectedPromptTemplate: id } );
-							handleGeneratePrompt( promptTemplates[ id ].promptTemplate );
-						} }
-					/>
+						onChange={ handlePromptTemplateSelection }
+					>{ __( 'Prompt Template' ) }</SingleSelectMenu>
 				</div>
 			</div>
 
@@ -416,7 +340,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 					defaultAccept
 					autoClose
 					defaultValue={ aiGeneratorConfig.modelName }
-					onChange={ ( val ) => setAIGeneratorConfig( { type: 'setModelName', key: val } ) }
+					onChange={ ( val ) => setAIGeneratorConfig( { ...aiGeneratorConfig, modelName: val } ) }
 				/>
 			</div>
 
