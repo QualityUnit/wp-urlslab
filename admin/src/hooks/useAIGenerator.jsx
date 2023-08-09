@@ -1,6 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { useReducer } from 'react';
-import aiGeneratorReducer from '../lib/aiGeneratorReducer';
+import { create } from 'zustand';
 
 const contextTypes = {
 	NO_CONTEXT: 'No Data Source',
@@ -40,10 +39,10 @@ const fallbackData = {
 	mode: 'CREATE_POST', // mode of the generator - CREATE_POST or WITH_INPUT_VAL
 };
 
-export default function useAIGenerator( initialData ) {
-	const [ state, dispatch ] = useReducer( aiGeneratorReducer, { ...fallbackData, ...initialData } );
+const useAIGenerator = create( ( set ) => ( {
+	aiGeneratorConfig: fallbackData,
+	setAIGeneratorConfig: ( aiGeneratorConfig ) => set( { aiGeneratorConfig } ),
+} ) );
 
-	return { state, dispatch };
-}
-
+export default useAIGenerator;
 export { contextTypes, contextTypesDescription, contextTypePromptPlaceholder };
