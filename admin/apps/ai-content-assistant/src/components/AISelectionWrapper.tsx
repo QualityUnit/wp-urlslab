@@ -35,15 +35,29 @@ const AISelectionWrapper: React.FC<AISelectionWrapperProps> = ( { blockProps, ch
 		const selection = getSelection( blockContainerElement.current );
 		selection?.empty();
 		handleSelection( false );
-		dispatch( { type: 'inputText', payload: '' } );
+		dispatch( { type: 'selectionData', payload: { text: '', selectionObject: null } } );
 	}, [ dispatch, handleSelection ] );
 
 	const handleMouseUp = useCallback( () => {
 		const selection = getSelection( blockContainerElement.current );
 		const selectedText = getSelectedText( selection );
 		if ( selectedText ) {
+			const selectionStart = wp.data.select( 'core/block-editor' ).getSelectionStart();
+			const selectionEnd = wp.data.select( 'core/block-editor' ).getSelectionEnd();
 			handleSelection( true );
-			dispatch( { type: 'inputText', payload: selectedText } );
+			dispatch(
+				{
+					type: 'selectionData',
+					payload: {
+						text: selectedText,
+						selectionObject: selection,
+						offset: {
+							start: selectionStart.offset,
+							end: selectionEnd.offset,
+						},
+					},
+				},
+			);
 		}
 	}, [ dispatch, handleSelection ] );
 

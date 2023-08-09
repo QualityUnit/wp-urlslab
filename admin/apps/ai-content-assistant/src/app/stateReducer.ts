@@ -2,7 +2,14 @@ import { Reducer } from 'react';
 import { AppState, ReducerAction, UrlsListItem } from './types';
 
 export const defaults = {
-	inputText: '',
+	selectionData: {
+		text: '',
+		selectionObject: null,
+		offset: {
+			start: 0,
+			end: 0,
+		},
+	},
 	promptTemplate: '',
 	template: '',
 	prompt: '',
@@ -49,6 +56,7 @@ export const reducer:Reducer<AppState, ReducerAction> = ( state, action ) => {
 			} ),
 		};
 	}
+
 	return {
 		...state,
 		[ type ]: payload,

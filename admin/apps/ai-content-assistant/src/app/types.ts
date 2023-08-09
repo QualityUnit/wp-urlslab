@@ -8,7 +8,7 @@ export type UrlStatus = 'active' | 'pending' | 'error'
 export type AppState = typeof defaults;
 export type ReducerAction = {
   type : keyof typeof defaults,
-  payload: string | number | GeneratedResult | Omit<UrlsListItem, 'id'> | string[]
+  payload: string | number | GeneratedResult | Omit<UrlsListItem, 'id'> | string[] | SelectionData
 }
 
 export interface UrlsListItem {
@@ -34,6 +34,11 @@ type GeneratedResult = {
   opened: boolean
 }
 
-export interface PrefillData {
-  inputText: string
+export interface SelectionData {
+  text: string
+  selectionObject?: Selection | null,
+  offset?: {
+    start: number
+    end: number
+  }
 }

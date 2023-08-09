@@ -14,10 +14,6 @@ const App: React.FC = () => {
 	const [ openedPopup, setOpenedPopup ] = useState( false );
 	const [ state, dispatch ] = useReducer( reducer, defaults );
 
-	/*const dispatchPrefillData = ( prefillData: PrefillData ) => {
-		dispatch( { type: 'inputText', payload: prefillData.inputText } );
-	};*/
-
 	const togglePopup = useCallback( () => {
 		setOpenedPopup( ! openedPopup );
 	}, [ openedPopup ] );

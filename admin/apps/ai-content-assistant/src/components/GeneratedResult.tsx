@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { ReactComponent as StarsIcon } from '../assets/images/icons/icon-stars.svg';
@@ -25,7 +25,7 @@ const GeneratedResult: React.FC<{result: { text: string, loading: boolean}}> = (
 		dispatch( { type: 'generatedResults', payload: { ...state.generatedResults, text } } );
 	};
 
-	const addIntoEditor = () => {
+	const addIntoEditor = useCallback( () => {
 		if ( scriptData.editor_type === 'gutenberg' ) {
 			wp.data.dispatch( 'core/block-editor' ).insertBlock( wp.blocks.createBlock( 'core/paragraph', {
 				content: result.text.replace( /\n/g, '<br>' ),
@@ -40,24 +40,28 @@ const GeneratedResult: React.FC<{result: { text: string, loading: boolean}}> = (
 			}
 		}
 		togglePopup();
-	};
+	}, [ result.text, togglePopup ] );
 
 	const replaceText = () => {
 		if ( scriptData.editor_type === 'gutenberg' ) {
 			const block = wp.data.select( 'core/block-editor' ).getSelectedBlock();
-			const blockContent = block.attributes.content.replace( /&nbsp;/g, '' );
+			const blockContent = block.attributes.content;
+			const { offset, selectionObject } = state.selectionData;
 
-			if ( blockContent.includes( state.inputText ) ) {
-				// we can simply replace text
-				wp.data.dispatch( 'core/block-editor' ).updateBlockAttributes( block.clientId, { content: blockContent.replace( state.inputText, result.text.replace( /\n/g, '<br>' ) ) } );
-			} else {
-				// there are probably html tags inside selected part of content
-				// we need to remove html
+			const richTextContent = wp.richText.create( { html: blockContent, range: selectionObject } );
+			const richTextGenerated = wp.richText.create( { html: result.text } );
 
-				const blockContentWithoutHtml = blockContent.replace( /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g, '' );
-				wp.data.dispatch( 'core/block-editor' ).updateBlockAttributes( block.clientId, { content: blockContentWithoutHtml.replace( state.inputText, result.text.replace( /\n/g, '<br>' ) ) } );
-			}
+			const richTextOutput = wp.richText.insert(
+				richTextContent,
+				richTextGenerated,
+				offset.start,
+				offset.end,
+			);
+			const outputHtml = wp.richText.toHTMLString( { value: richTextOutput } );
+
+			wp.data.dispatch( 'core/block-editor' ).updateBlockAttributes( block.clientId, { content: outputHtml } );
 		}
+
 		togglePopup();
 	};
 

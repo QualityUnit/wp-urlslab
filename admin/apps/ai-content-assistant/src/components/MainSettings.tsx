@@ -33,13 +33,13 @@ const MainSettings: React.FC = () => {
 			</div>
 			*/ }
 			{
-				state.inputText &&
+				state.selectionData.text &&
 				<div className="urlslab-popup-content-option-wrapper">
 					<TextArea
 						label={ __( 'Input Text' ) }
 						description={ __( 'Text to modify or enhance with your prompt' ) }
 						placeholder={ __( 'Type here' ) }
-						defaultValue={ state.inputText }
+						defaultValue={ state.selectionData.text }
 						readonly={ true }
 						liveUpdate
 						allowResize
@@ -59,10 +59,10 @@ const MainSettings: React.FC = () => {
 							console.log( 'toggleActiveState' );
 							console.log( promptTemplateActiveState[ 1 ] );
 							console.log( promptTemplateActiveState[ 0 ] );
-							promptTemplateActiveState[ 1 ]( true )
+							promptTemplateActiveState[ 1 ]( true );
 							console.log( promptTemplateActiveState[ 0 ] );
-							promptTemplateActiveState[ 1 ]( ! promptTemplateActiveState[ 0 ] )
-						}}
+							promptTemplateActiveState[ 1 ]( ! promptTemplateActiveState[ 0 ] );
+						} }
 					/> }
 				</GenericDropdown>
 			</div>
