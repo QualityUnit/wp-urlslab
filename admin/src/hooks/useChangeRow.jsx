@@ -121,6 +121,10 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 					return origData;
 				} );
 
+				if ( optionalSelector ) {
+					const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }/${ editedRow[ optionalSelector ] }`, editedRow );
+					return { response, editedRow, id: editedRow[ id ] };
+				}
 				const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow );
 				return { response, editedRow, id: editedRow[ id ] };
 			}
@@ -147,8 +151,8 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, optionalSelector, id, updateAll } );
 	};
 
-	const saveEditedRow = ( { editedRow, id, updateAll } ) => {
-		updateRowData.mutate( { editedRow, id, updateAll } );
+	const saveEditedRow = ( { editedRow, optionalSelector, id, updateAll } ) => {
+		updateRowData.mutate( { editedRow, optionalSelector, id, updateAll } );
 	};
 
 	// Remove rows from loaded table for optimistic update used in setQueryData

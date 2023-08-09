@@ -140,7 +140,7 @@ export default function SchedulesTable( { slug } ) {
 			>
 			</RowActionButtons>,
 			header: null,
-			size: 60,
+			size: 0,
 		} ),
 	];
 

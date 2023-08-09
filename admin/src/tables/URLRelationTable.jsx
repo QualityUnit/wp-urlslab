@@ -96,6 +96,7 @@ export default function URLRelationTable( { slug } ) {
 			>
 			</RowActionButtons>,
 			header: null,
+			size: 0,
 		} ),
 	];
 

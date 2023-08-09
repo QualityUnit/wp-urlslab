@@ -156,6 +156,7 @@ export default function ScreenshotTable( { slug } ) {
 				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
 			</RowActionButtons>,
 			header: null,
+			size: 0,
 		} ),
 	];
 

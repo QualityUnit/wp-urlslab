@@ -172,6 +172,7 @@ export default function NotFoundTable( { slug } ) {
 			>
 			</RowActionButtons>,
 			header: null,
+			size: 0,
 		} ),
 	];
 

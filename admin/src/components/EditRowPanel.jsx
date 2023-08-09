@@ -9,7 +9,7 @@ import Button from '../elements/Button';
 import UnifiedPanelMenu from './UnifiedPanelMenu';
 
 function EditRowPanel( props ) {
-	const { editorMode, rowEditorCells, rowToEdit, noScrollbar, notWide, data, slug, paginationId, title, text, id, handlePanel } = props;
+	const { editorMode, rowEditorCells, rowToEdit, noScrollbar, notWide, data, slug, paginationId, optionalSelector, title, text, id, handlePanel } = props;
 	const { __ } = useI18n();
 	const enableAddButton = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( );
@@ -66,7 +66,7 @@ function EditRowPanel( props ) {
 	function handleEdit() {
 		if ( editorMode ) {
 			hidePanel( 'rowChanged' );
-			saveEditedRow( { editedRow: rowToEdit, id } );
+			saveEditedRow( { editedRow: rowToEdit, optionalSelector, id } );
 			return false;
 		}
 		insertRow( { editedRow: rowToEditWithDefaults } );
