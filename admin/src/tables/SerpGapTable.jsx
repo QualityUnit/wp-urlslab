@@ -75,7 +75,7 @@ export default function SerpGapTable( { slug } ) {
 			cell: ( cell ) => isSuccessModules && modules[ 'urlslab-generator' ].active && ( <Link
 				onClick={ () => handleCreateContent( cell.row.original.query ) }
 				to={ '/' + renameModule( 'urlslab-generator' ) }
-				className="active"
+				className="urlslab-button active small"
 			>
 				{ __( 'Create Content' ) }
 			</Link> ),
