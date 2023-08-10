@@ -187,7 +187,7 @@ export default function GeneratorResultTable( { slug } ) {
 				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
 			</RowActionButtons>,
 			header: null,
-			size: 60,
+			size: 0,
 		} ),
 	];
 

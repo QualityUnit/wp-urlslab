@@ -185,7 +185,7 @@ export default function RedirectsTable( { slug } ) {
 			>
 			</RowActionButtons>,
 			header: () => null,
-			size: 60,
+			size: 0,
 		} ),
 	];
 

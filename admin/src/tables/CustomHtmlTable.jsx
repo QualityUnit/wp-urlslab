@@ -188,7 +188,7 @@ export default function CustomHtmlTable( { slug } ) {
 			>
 			</RowActionButtons>,
 			header: () => null,
-			size: 60,
+			size: 0,
 		} ),
 	];
 

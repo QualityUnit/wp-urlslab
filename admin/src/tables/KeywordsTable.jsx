@@ -190,7 +190,7 @@ export default function KeywordsTable( { slug } ) {
 			>
 			</RowActionButtons>,
 			header: null,
-			size: 60,
+			size: 0,
 		} ),
 	];
 

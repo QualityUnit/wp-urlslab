@@ -252,6 +252,7 @@ export default function LinkManagerTable( { slug } ) {
 				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'http_status', newVal: val, cell } ) } />
 			</RowActionButtons>,
 			header: null,
+			size: 0,
 		} ),
 	];
 

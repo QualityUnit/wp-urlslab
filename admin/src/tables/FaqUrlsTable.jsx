@@ -51,6 +51,14 @@ export default function FaqUrlsTable( { slug } ) {
 		sorting: __( 'SEO Rank' ),
 	};
 
+	const rowEditorCells = {
+		url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.url_name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_name: val } ) } required />,
+		faq_id: <InputField liveUpdate defaultValue="" type="number" label={ header.faq_id } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, faq_id: val } ) } required />,
+		sorting: <InputField liveUpdate type="number" defaultValue="10" label={ header.sorting } min="0" max="100"
+			description={ __( 'Order of the FAQ in the list (Number 0 - 100).' ) }
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, sorting: val } ) } />,
+	};
+
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
@@ -89,20 +97,14 @@ export default function FaqUrlsTable( { slug } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
+				onEdit={ () => updateRow( { cell, optionalSelector, id: 'faq_id' } ) }
 				onDelete={ () => deleteRow( { cell, optionalSelector, id: 'faq_id' } ) }
 			>
 			</RowActionButtons>,
 			header: null,
+			size: 0,
 		} ),
 	];
-
-	const rowEditorCells = {
-		url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.url_name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_name: val } ) } required />,
-		faq_id: <InputField liveUpdate defaultValue="" label={ header.faq_id } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, faq_id: val } ) } required />,
-		sorting: <InputField liveUpdate type="number" defaultValue="10" label={ header.sorting } min="0" max="100"
-			description={ __( 'Order of the FAQ in the list (Number 0 - 100).' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, sorting: val } ) } required />,
-	};
 
 	if ( status === 'loading' ) {
 		return <Loader />;

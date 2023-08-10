@@ -177,6 +177,7 @@ export default function MediaFilesTable( { slug } ) {
 			>
 			</RowActionButtons>,
 			header: null,
+			size: 0,
 		} ),
 	];
 
