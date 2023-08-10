@@ -33,7 +33,7 @@ import 'tinymce/plugins/image';
 // import 'tinymce/plugins/insertdatetime';
 import 'tinymce/plugins/link';
 import 'tinymce/plugins/lists';
-// import 'tinymce/plugins/media';
+import 'tinymce/plugins/media';
 // import 'tinymce/plugins/nonbreaking';
 // import 'tinymce/plugins/pagebreak';
 // import 'tinymce/plugins/preview';
