@@ -53,7 +53,9 @@ export default function Editor( { defaultValue, className, style, label, descrip
 	const editorRef = useRef( null );
 	const { __ } = useI18n();
 	const [ val, setVal ] = useState( defaultValue ?? '' );
-	useEffect( () => setVal( defaultValue ?? '' ), [ defaultValue ] );
+	useEffect( () => {
+		setVal( defaultValue ?? '' );
+	}, [ defaultValue ] );
 
 	const handleVal = useCallback( ( input ) => {
 		if ( onChange && ( defaultValue !== input || ! input ) ) {

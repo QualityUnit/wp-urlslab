@@ -22,6 +22,8 @@
             display: flex;
             justify-content: flex-start;
             margin-top: 2em;
+            flex-direction: column-reverse;
+
 
             &-list {
                 width: 100%;
@@ -43,20 +45,18 @@
             }
 
             &-desc {
-                padding: 1em;
+                width: 100%;
+                padding: 0.25em;
+                font-size: 0.75rem;
                 display: flex;
                 justify-content: center;
-                border: 1px solid $grey-light;
-                border-radius: 5px;
                 align-content: center;
-                width: 70%;
             }
 
             &-selector {
+                width: 100%;
                 display: flex;
-                width: 30%;
                 align-items: center;
-                justify-content: center;
             }
 
 

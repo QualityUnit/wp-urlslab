@@ -96,6 +96,11 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 		if ( onUpdate ) {
 			onUpdate( key );
 		}
+
+		//custom handlePanel
+		if ( options.handlePanel ) {
+			options.handlePanel( key );
+		}
 	};
 
 	const handleRefresh = () => {
