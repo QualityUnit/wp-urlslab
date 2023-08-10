@@ -5,6 +5,7 @@ import {
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
+import Button from '../elements/Button';
 
 export default function SerpGapTable( { slug } ) {
 	const { __ } = useI18n();
@@ -35,6 +36,7 @@ export default function SerpGapTable( { slug } ) {
 		my_clicks: __( 'My Clicks' ),
 		my_impressions: __( 'My Impressions' ),
 		my_ctr: __( 'My CTR' ),
+		create_content: __( 'Create Content' ),
 	};
 
 	const types = {
@@ -50,6 +52,12 @@ export default function SerpGapTable( { slug } ) {
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.query }</SortBy>,
 			minSize: 200,
+		} ),
+		columnHelper.accessor( 'create_content', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: () => <Button className="small" active onClick={ () => console.log( 'clicked' ) }>Create Content</Button>,
+			header: () => header.create_content,
+			minSize: 40,
 		} ),
 		columnHelper.accessor( 'type', {
 			filterValMenu: types,
