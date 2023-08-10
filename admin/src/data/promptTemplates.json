@@ -14,5 +14,9 @@
   "3": {
     "name": "Answer a question",
     "promptTemplate": "Answer the following question with the given CONTEXT: {primary_keyword} \n CONTEXT: {context}"
+  },
+  "4": {
+    "name": "Generate a Blog Post",
+    "promptTemplate": "Generate a Blog post based on the given KEYWORDS and CONTEXT.\n KEYWORD: {keyword} \n CONTEXT: {context}"
   }
 }
