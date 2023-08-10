@@ -17,6 +17,7 @@ function ImportPanel( { options, handlePanel } ) {
 	const queryClient = useQueryClient();
 	const { CSVReader } = useCSVReader();
 	const [ importStatus, setImportStatus ] = useState();
+	const importDisabled = useRef();
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
 	const { handleType } = useFilter( { slug, header, initialRow } );
 	let importCounter = 0;
@@ -87,6 +88,7 @@ function ImportPanel( { options, handlePanel } ) {
 			queryClient.invalidateQueries( [ slug ] );
 			setTimeout( () => {
 				setImportStatus();
+				importDisabled.current = false;
 				hidePanel();
 			}, 1000 );
 		}
@@ -168,6 +170,8 @@ function ImportPanel( { options, handlePanel } ) {
 					}
 					<CSVReader
 						onUploadAccepted={ ( results ) => {
+							setImportStatus( 1 );
+							importDisabled.current = true;
 							importData.mutate( results );
 						} }
 						config={ {
@@ -186,7 +190,7 @@ function ImportPanel( { options, handlePanel } ) {
 									}
 									<Button className="mr-s" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
 
-									<Button { ...getRootProps() } active>
+									<Button ref={ importDisabled } { ...getRootProps() } active disabled={ importDisabled.current }>
 										<ImportIcon />
 										{ __( 'Import CSV' ) }
 									</Button>

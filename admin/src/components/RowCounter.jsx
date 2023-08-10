@@ -7,7 +7,7 @@ import { postFetch } from '../api/fetching';
 
 const Counter = ( ( { filters, slug } ) => {
 	const { __ } = useI18n();
-	const { data: rowCount, isFetching } = useQuery( {
+	const { data: rowCount } = useQuery( {
 		queryKey: [ slug, `count`, filtersArray( filters ) ],
 		queryFn: async () => {
 			const count = await postFetch( `${ slug }/count`, { filters: filtersArray( filters ) } );
@@ -16,7 +16,7 @@ const Counter = ( ( { filters, slug } ) => {
 		refetchOnWindowFocus: false,
 	} );
 	return (
-		! isFetching && rowCount &&
+		rowCount &&
 		<small className="urlslab-rowcount fadeInto flex flex-align-center">
 			{ __( 'Rows: ' ) }
 			<strong className="ml-s">{ rowCount }</strong>
