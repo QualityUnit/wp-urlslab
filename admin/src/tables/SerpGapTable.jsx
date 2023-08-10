@@ -34,6 +34,7 @@ export default function SerpGapTable( { slug } ) {
 		setAIGeneratorConfig( {
 			...aiGeneratorConfig,
 			keywordsList: [ { q: keyword, checked: true } ],
+			serpUrlsList: [],
 			dataSource: 'SERP_CONTEXT',
 			selectedPromptTemplate: '4',
 			title: keyword,
