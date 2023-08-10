@@ -8,12 +8,14 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import { renameModule } from '../lib/helpers';
 import { Link } from 'react-router-dom';
 import useAIGenerator from '../hooks/useAIGenerator';
+import useModulesQuery from '../queries/useModulesQuery';
 
 export default function SerpGapTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'query_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
+	const { data: modules, isSuccess: isSuccessModules } = useModulesQuery();
 
 	const defaultSorting = sorting.length ? sorting : [ { key: 'competitors_count', dir: 'DESC', op: '<' } ];
 	const url = { filters, sorting: defaultSorting };
@@ -70,13 +72,13 @@ export default function SerpGapTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'create_content', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <Link
+			cell: ( cell ) => isSuccessModules && modules[ 'urlslab-generator' ].active && ( <Link
 				onClick={ () => handleCreateContent( cell.row.original.query ) }
 				to={ '/' + renameModule( 'urlslab-generator' ) }
 				className="active"
 			>
 				{ __( 'Create Content' ) }
-			</Link>,
+			</Link> ),
 			header: () => header.create_content,
 			minSize: 40,
 		} ),
