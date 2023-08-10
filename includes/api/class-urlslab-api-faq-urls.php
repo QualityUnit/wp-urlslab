@@ -83,18 +83,6 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 								return is_numeric( $param ) && 0 <= $param && 100 >= $param;
 							},
 						),
-						'faq_id' => array(
-							'required'          => true,
-							'validate_callback' => function( $param ) {
-								return is_numeric( $param ) && 0 < $param;
-							},
-						),
-						'url_id' => array(
-							'required'          => true,
-							'validate_callback' => function( $param ) {
-								return is_numeric( $param );
-							},
-						),
 					),
 				),
 			)
