@@ -320,8 +320,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 					rows={ 10 }
 					allowResize
 					onChange={ ( value ) => {
-						setAIGeneratorConfig( { ...aiGeneratorConfig, promptVal: value } );
-						setAIGeneratorConfig( { ...aiGeneratorConfig, selectedPromptTemplate: '0' } );
+						setAIGeneratorConfig( { ...aiGeneratorConfig, promptVal: value, selectedPromptTemplate: '0' } );
 					} }
 					required
 					placeholder={ contextTypePromptPlaceholder[ aiGeneratorConfig.dataSource ] }
