@@ -16,6 +16,7 @@ module.exports = {
       main: [
       './'+assetsFolder+'/scss/urlslab_related_resources.scss',
       './'+assetsFolder+'/scss/urlslab_youtube_loader.scss',
+      './'+assetsFolder+'/scss/urlslab_faq.scss',
       ],
       'urlslab-lazyload':'./'+assetsFolder+'/js/urlslab-lazyload.js',
   },
