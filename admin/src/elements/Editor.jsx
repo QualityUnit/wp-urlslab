@@ -33,7 +33,7 @@ import 'tinymce/plugins/image';
 // import 'tinymce/plugins/insertdatetime';
 import 'tinymce/plugins/link';
 import 'tinymce/plugins/lists';
-// import 'tinymce/plugins/media';
+import 'tinymce/plugins/media';
 // import 'tinymce/plugins/nonbreaking';
 // import 'tinymce/plugins/pagebreak';
 // import 'tinymce/plugins/preview';
@@ -53,7 +53,9 @@ export default function Editor( { defaultValue, className, style, label, descrip
 	const editorRef = useRef( null );
 	const { __ } = useI18n();
 	const [ val, setVal ] = useState( defaultValue ?? '' );
-	useEffect( () => setVal( defaultValue ?? '' ), [ defaultValue ] );
+	useEffect( () => {
+		setVal( defaultValue ?? '' );
+	}, [ defaultValue ] );
 
 	const handleVal = useCallback( ( input ) => {
 		if ( onChange && ( defaultValue !== input || ! input ) ) {

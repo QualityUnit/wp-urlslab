@@ -1,3 +1,4 @@
+import { useI18n } from '@wordpress/react-i18n/';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, LinkIcon, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, AcceptIcon, DisableIcon, RefreshIcon, IconButton, RowActionButtons,
 } from '../lib/tableImports';
@@ -7,13 +8,13 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
 export default function YouTubeCacheTable( { slug } ) {
+	const { __ } = useI18n();
 	const paginationId = 'videoid';
 
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const url = { filters, sorting };
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,
@@ -167,6 +168,7 @@ export default function YouTubeCacheTable( { slug } ) {
 				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
 			</RowActionButtons>,
 			header: null,
+			size: 0,
 		} ),
 
 	];

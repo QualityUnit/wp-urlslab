@@ -440,12 +440,16 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$organic_results = $serp_res->getOrganicResults();
 		$urls            = array();
 		if ( ! empty( $organic_results ) ) {
+			$count = 0;
 			foreach ( $organic_results as $organic_result ) {
 				$urls[] = (object) array(
 					'url_name'        => $organic_result->link,
 					'url_title'       => $organic_result->title,
 					'url_description' => $organic_result->snippet,
 				);
+				if ( ++$count > 10 ) {
+					break;
+				}
 			}
 		}
 

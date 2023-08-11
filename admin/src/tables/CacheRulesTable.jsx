@@ -1,3 +1,4 @@
+import { useI18n } from '@wordpress/react-i18n/';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Checkbox, InputField, SingleSelectMenu, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, RowActionButtons,
 } from '../lib/tableImports';
@@ -7,6 +8,8 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
 export default function CacheRulesTable( { slug } ) {
+	const { __ } = useI18n();
+	const title = __( 'Add New Cache Rule' );
 	const paginationId = 'rule_id';
 
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
@@ -14,7 +17,6 @@ export default function CacheRulesTable( { slug } ) {
 	const url = { filters, sorting };
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,
@@ -182,7 +184,7 @@ export default function CacheRulesTable( { slug } ) {
 			>
 			</RowActionButtons>,
 			header: () => null,
-			size: 60,
+			size: 0,
 		} ),
 	];
 
@@ -197,9 +199,10 @@ export default function CacheRulesTable( { slug } ) {
 				onDeleteSelected={ deleteMultipleRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ {
-					header, rowEditorCells, title: 'Add New Cache Rule', data, slug, url, paginationId, rowToEdit, deleteCSVCols: [ paginationId ] } }
+					header, rowEditorCells, title, data, slug, url, paginationId, rowToEdit, deleteCSVCols: [ paginationId ] } }
 			/>
 			<Table className="fadeInto"
+				title={ title }
 				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				initialState={ { columnVisibility: { headers: false, params: false, ip: false, browser: false, cookie: false } } }

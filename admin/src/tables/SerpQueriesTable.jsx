@@ -1,4 +1,5 @@
 /* eslint-disable indent */
+import { useI18n } from '@wordpress/react-i18n';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Checkbox, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TextArea, IconButton, RowActionButtons,
 } from '../lib/tableImports';
@@ -11,6 +12,8 @@ import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disab
 import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refresh.svg';
 
 export default function SerpQueriesTable( { slug } ) {
+	const { __ } = useI18n();
+	const title = __( 'Add Query' );
 	const paginationId = 'query_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 
@@ -18,7 +21,6 @@ export default function SerpQueriesTable( { slug } ) {
 	const url = { filters, sorting: defaultSorting };
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,
@@ -183,7 +185,7 @@ export default function SerpQueriesTable( { slug } ) {
 				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
 			</RowActionButtons>,
 			header: null,
-			size: 60,
+			size: 0,
 		} ),
 	];
 
@@ -199,13 +201,14 @@ export default function SerpQueriesTable( { slug } ) {
 				onFilter={ ( filter ) => setFilters( filter ) }
 				initialState={ { columnVisibility: { updated: false, status: false, type: false } } }
 				options={ { header, data, slug, paginationId, url,
-					title: __( 'Add Query' ), id: 'query',
+					title, id: 'query',
 					rowToEdit,
 					rowEditorCells,
 					deleteCSVCols: [ paginationId, 'dest_url_id' ] }
 				}
 			/>
 			<Table className="fadeInto"
+				title={ title }
 				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }

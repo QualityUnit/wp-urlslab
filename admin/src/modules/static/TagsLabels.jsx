@@ -94,7 +94,7 @@ export default function TagsLabels( ) {
 			>
 			</RowActionButtons>,
 			header: null,
-			size: 60,
+			size: 0,
 		} ),
 	];
 

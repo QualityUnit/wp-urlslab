@@ -1,3 +1,5 @@
+import { useI18n } from '@wordpress/react-i18n/';
+
 import {
 	useInfiniteFetch,
 	ProgressBar,
@@ -16,6 +18,8 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
 export default function FaqUrlsTable( { slug } ) {
+	const { __ } = useI18n();
+	const title = __( 'Add New FAQ to URL' );
 	const paginationId = 'faq_id';
 	const optionalSelector = 'url_id';
 
@@ -25,7 +29,6 @@ export default function FaqUrlsTable( { slug } ) {
 	const url = { filters, sorting: defaultSorting };
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,
@@ -46,6 +49,14 @@ export default function FaqUrlsTable( { slug } ) {
 		url_name: __( 'URL' ),
 		question: __( 'Question' ),
 		sorting: __( 'SEO Rank' ),
+	};
+
+	const rowEditorCells = {
+		url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.url_name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_name: val } ) } required />,
+		faq_id: <InputField liveUpdate defaultValue="" type="number" label={ header.faq_id } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, faq_id: val } ) } required />,
+		sorting: <InputField liveUpdate type="number" defaultValue="10" label={ header.sorting } min="0" max="100"
+			description={ __( 'Order of the FAQ in the list (Number 0 - 100).' ) }
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, sorting: val } ) } />,
 	};
 
 	const columns = [
@@ -86,20 +97,14 @@ export default function FaqUrlsTable( { slug } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
+				onEdit={ () => updateRow( { cell, optionalSelector, id: 'faq_id' } ) }
 				onDelete={ () => deleteRow( { cell, optionalSelector, id: 'faq_id' } ) }
 			>
 			</RowActionButtons>,
 			header: null,
+			size: 0,
 		} ),
 	];
-
-	const rowEditorCells = {
-		url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.url_name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_name: val } ) } required />,
-		faq_id: <InputField liveUpdate defaultValue="" label={ header.faq_id } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, faq_id: val } ) } required />,
-		sorting: <InputField liveUpdate type="number" defaultValue="10" label={ header.sorting } min="0" max="100"
-			description={ __( 'Order of the FAQ in the list (Number 0 - 100).' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, sorting: val } ) } required />,
-	};
 
 	if ( status === 'loading' ) {
 		return <Loader />;
@@ -112,9 +117,10 @@ export default function FaqUrlsTable( { slug } ) {
 				onDeleteSelected={ deleteMultipleRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				initialState={ { columnVisibility: { sorting: true, faq_id: false, url_name: true, question: true } } }
-				options={ { header, rowEditorCells, title: 'Add New FAQ to URL', data, slug, url, paginationId, optionalSelector, rowToEdit, id: 'faq_id', deleteCSVCols: [ 'url_id' ] } }
+				options={ { header, rowEditorCells, data, slug, url, paginationId, title, optionalSelector, rowToEdit, id: 'faq_id', deleteCSVCols: [ 'url_id' ] } }
 			/>
 			<Table className="fadeInto"
+				title={ title }
 				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }

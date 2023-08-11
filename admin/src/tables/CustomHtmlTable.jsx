@@ -1,3 +1,5 @@
+import { useI18n } from '@wordpress/react-i18n/';
+
 import {
 	useInfiniteFetch,
 	ProgressBar,
@@ -19,6 +21,8 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
 export default function CustomHtmlTable( { slug } ) {
+	const { __ } = useI18n();
+	const title = __( 'Add Custom HTML' );
 	const paginationId = 'rule_id';
 
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
@@ -26,7 +30,6 @@ export default function CustomHtmlTable( { slug } ) {
 	const url = { filters, sorting };
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,
@@ -185,7 +188,7 @@ export default function CustomHtmlTable( { slug } ) {
 			>
 			</RowActionButtons>,
 			header: () => null,
-			size: 60,
+			size: 0,
 		} ),
 	];
 
@@ -199,9 +202,10 @@ export default function CustomHtmlTable( { slug } ) {
 				table={ table }
 				onDeleteSelected={ deleteMultipleRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ { header, rowEditorCells, rowToEdit, data, slug, url, paginationId, title: __( 'Add Custom HTML' ), id: 'name', deleteCSVCols: [ paginationId, 'dest_url_id' ]	} }
+				options={ { header, rowEditorCells, rowToEdit, data, slug, url, paginationId, title, id: 'name', deleteCSVCols: [ paginationId, 'dest_url_id' ]	} }
 			/>
 			<Table className="fadeInto"
+				title={ title }
 				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }

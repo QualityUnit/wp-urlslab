@@ -80,7 +80,7 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 							'required'          => false,
 							'default'           => 10,
 							'validate_callback' => function( $param ) {
-								return is_numeric( $param ) && 0 >= $param && 100 <= $param;
+								return is_numeric( $param ) && 0 <= $param && 100 >= $param;
 							},
 						),
 					),
@@ -128,7 +128,19 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 		try {
 			$url = new Urlslab_Url( $request->get_param( 'url_name' ), true );
 			$request->set_param( 'url_id', $url->get_url_id() );
-			Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url );
+
+			// changing faq_status for url in urls table
+			$url_object = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url );
+
+			if ( empty( $url_object ) ) {
+				// row has been added. so loading the URL again...
+				$url_object = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url );
+			}
+
+			if ( ! empty( $url_object ) && $url_object->get_faq_status() !== Urlslab_Url_Row::FAQ_STATUS_ACTIVE ) {
+				$url_object->set_faq_status( Urlslab_Url_Row::FAQ_STATUS_ACTIVE );
+				$url_object->update();
+			}
 		} catch ( Exception $e ) {
 		}
 
@@ -147,6 +159,7 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
+		// changing all faq_id to fu.faq_id
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( 'url_name', 'u' );
 		$sql->add_select_column( 'faq_id', 'fu' );
@@ -158,6 +171,12 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_URLS_TABLE . ' as u ON fu.url_id = u.url_id' );
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
+
+		$columns['faq_id']['prefix'] = 'fu';
+		$columns['url_name']['prefix'] = 'u';
+		$columns['question']['prefix'] = 'f';
+		$columns['sorting']['prefix'] = 'fu';
+
 		$sql->add_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
 

@@ -1,5 +1,4 @@
 import { useMemo, useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useInView } from 'react-intersection-observer';
 
@@ -15,7 +14,6 @@ export const fetchingStore = create( ( set ) => ( {
 } ) );
 
 export default function useInfiniteFetch( options, maxRows = 50 ) {
-	const { __ } = useI18n();
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { ref, inView } = useInView();
 	const { key, filters: userFilters, sorting, paginationId } = options;
@@ -89,7 +87,6 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 	}, [ inView, key, fetchNextPage ] );
 
 	return {
-		__,
 		columnHelper,
 		data,
 		status,

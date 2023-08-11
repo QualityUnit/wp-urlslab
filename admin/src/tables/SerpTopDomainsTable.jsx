@@ -1,4 +1,6 @@
 /* eslint-disable indent */
+import { useI18n } from '@wordpress/react-i18n';
+
 import {
 	useInfiniteFetch,
 	ProgressBar,
@@ -16,13 +18,14 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
 export default function SerpTopDomainsTable( { slug } ) {
+	const { __ } = useI18n();
+	const title = __( 'Add Domains' );
 	const paginationId = 'domain_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const defaultSorting = sorting.length ? sorting : [ { key: 'top_10_cnt', dir: 'DESC', op: '<' } ];
 	const url = { filters, sorting: defaultSorting };
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,
@@ -107,11 +110,12 @@ export default function SerpTopDomainsTable( { slug } ) {
 				table={ table }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				noDelete
-				options={ { header, data, slug, paginationId, url, id: 'domain_name', title: 'Add Domains', rowToEdit, rowEditorCells,
+				options={ { header, data, slug, paginationId, title, url, id: 'domain_name', rowToEdit, rowEditorCells,
 					deleteCSVCols: [ paginationId, 'domain_id' ] }
 				}
 			/>
 			<Table className="fadeInto"
+				title={ title }
 				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }

@@ -1,3 +1,5 @@
+import { useI18n } from '@wordpress/react-i18n/';
+
 import {
 	useInfiniteFetch, ProgressBar, SortBy, SingleSelectMenu, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, RowActionButtons,
 } from '../lib/tableImports';
@@ -8,6 +10,8 @@ import useTablePanels from '../hooks/useTablePanels';
 // import { active } from 'd3';
 
 export default function SearchReplaceTable( { slug } ) {
+	const { __ } = useI18n();
+	const title = __( 'Add New Replacement' );
 	const paginationId = 'id';
 
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
@@ -15,7 +19,6 @@ export default function SearchReplaceTable( { slug } ) {
 	const url = { filters, sorting };
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,
@@ -133,7 +136,7 @@ export default function SearchReplaceTable( { slug } ) {
 			>
 			</RowActionButtons>,
 			header: () => null,
-			size: 60,
+			size: 0,
 		} ),
 	];
 
@@ -147,9 +150,10 @@ export default function SearchReplaceTable( { slug } ) {
 				table={ table }
 				onDeleteSelected={ deleteMultipleRows }
 				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ { header, rowEditorCells, title: 'Add New Replacement', data, slug, url, paginationId, rowToEdit, id: 'str_search', deleteCSVCols: [ paginationId, 'dest_url_id' ] } }
+				options={ { header, rowEditorCells, data, slug, url, paginationId, title, rowToEdit, id: 'str_search', deleteCSVCols: [ paginationId, 'dest_url_id' ] } }
 			/>
 			<Table className="fadeInto"
+				title={ title }
 				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }

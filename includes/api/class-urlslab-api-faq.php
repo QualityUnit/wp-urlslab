@@ -200,7 +200,11 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 		$sql->add_select_column( '*' );
 		$sql->add_from( URLSLAB_FAQS_TABLE );
 
-		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
+		$cols = $this->get_row_object()->get_columns();
+		$cols['url_name'] = '%s';
+		$cols['question'] = '%s';
+		$columns = $this->prepare_columns( $cols );
+
 		$sql->add_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
 

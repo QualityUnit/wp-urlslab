@@ -1,3 +1,5 @@
+import { useI18n } from '@wordpress/react-i18n/';
+
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, IconButton, RefreshIcon, RowActionButtons,
 } from '../lib/tableImports';
@@ -6,12 +8,12 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 
 export default function JSCacheTable( { slug } ) {
+	const { __ } = useI18n();
 	const paginationId = 'url_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const url = { filters, sorting };
 
 	const {
-		__,
 		columnHelper,
 		data,
 		status,
@@ -95,6 +97,7 @@ export default function JSCacheTable( { slug } ) {
 				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
 			</RowActionButtons>,
 			header: null,
+			size: 0,
 		} ),
 	];
 
