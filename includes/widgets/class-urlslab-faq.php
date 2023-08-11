@@ -163,7 +163,6 @@ class Urlslab_Faq extends Urlslab_Widget {
 					}
 					$content .= $this->render_shortcode_footer();
 				}
-
 			}
 		} catch ( Exception $e ) {
 		}
