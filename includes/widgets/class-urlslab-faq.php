@@ -83,13 +83,7 @@ class Urlslab_Faq extends Urlslab_Widget {
 										$faq_url->set_faq_id( $faq_id );
 										$faq_url->set_url_id( Urlslab_Url::get_current_page_url()->get_url_id() );
 										$faq_url->set_sorting( $position + 1 );
-										if ( $faq_url->insert() ) {
-											$current_url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( Urlslab_Url::get_current_page_url() );
-											if ( Urlslab_Url_Row::FAQ_STATUS_ACTIVE !== $current_url_obj->get_faq_status() ) {
-												$current_url_obj->set_faq_status( Urlslab_Url_Row::FAQ_STATUS_ACTIVE );
-												$current_url_obj->update();
-											}
-										}
+										$faq_url->insert();
 									}
 								}
 							}
@@ -160,18 +154,14 @@ class Urlslab_Faq extends Urlslab_Widget {
 			$current_url     = new Urlslab_Url( $urlslab_atts['url'] );
 			$current_url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $current_url );
 			if ( $current_url_obj ) {
-				$current_url_obj->request_faq_schedule();
-
-				if ( Urlslab_Url_Row::FAQ_STATUS_ACTIVE === $current_url_obj->get_faq_status() ) {
-					$result = $this->load_faqs( $current_url_obj->get_url_id(), $urlslab_atts['count'] );
-					if ( ! empty( $result ) && is_array( $result ) ) {
-						$content .= $this->render_shortcode_header( $urlslab_atts );
-						foreach ( $result as $faq ) {
-							$faq_row = new Urlslab_Faq_Row( $faq );
-							$content .= $this->render_shortcode_item( $faq_row, $urlslab_atts );
-						}
-						$content .= $this->render_shortcode_footer();
+				$result = $this->load_faqs( $current_url_obj->get_url_id(), $urlslab_atts['count'] );
+				if ( ! empty( $result ) && is_array( $result ) ) {
+					$content .= $this->render_shortcode_header( $urlslab_atts );
+					foreach ( $result as $faq ) {
+						$faq_row = new Urlslab_Faq_Row( $faq );
+						$content .= $this->render_shortcode_item( $faq_row, $urlslab_atts );
 					}
+					$content .= $this->render_shortcode_footer();
 				}
 			}
 		} catch ( Exception $e ) {
