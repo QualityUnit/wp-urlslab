@@ -22,9 +22,11 @@ import {
 	handleGeneratePrompt,
 } from '../../lib/aiGeneratorPanel';
 import { getAugmentProcessResult } from '../../api/generatorApi';
+import useAIModelsQuery from '../../queries/useAIModelsQuery';
 
 function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } ) {
 	const { __ } = useI18n();
+	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
 	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
 	const [ typingTimeout, setTypingTimeout ] = useState( 0 );
 	const [ isGenerating, setIsGenerating ] = useState( false );
@@ -330,11 +332,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 			<div className="urlslab-content-gen-panel-control-item">
 				<SingleSelectMenu
 					key={ aiGeneratorConfig.modelName }
-					items={ {
-						'gpt-3.5-turbo': 'OpenAI GPT 3.5 Turbo',
-						'gpt-4': 'OpenAI GPT 4',
-						'text-davinci-003': 'OpenAI GPT Davinci 003',
-					} }
+					items={ aiModelsSuccess ? aiModels : {} }
 					name="mode_name_menu"
 					defaultAccept
 					autoClose

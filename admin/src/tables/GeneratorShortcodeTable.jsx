@@ -1,4 +1,4 @@
-import {useState} from "react";
+import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import {
@@ -25,9 +25,11 @@ import {
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
+import useAIModelsQuery from '../queries/useAIModelsQuery';
 
 export default function GeneratorShortcodeTable( { slug } ) {
 	const { __ } = useI18n();
+	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
 	const title = __( 'Add New Shortcode' );
 	const paginationId = 'shortcode_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( 'generator/shortcode' );
@@ -127,7 +129,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			setRowToEdit( { ...rowToEdit, template: val } );
 		} } required />,
 
-		model: <SingleSelectMenu defaultAccept autoClose items={ modelTypes } name="model" defaultValue={ ( 'gpt-3.5-turbo' ) } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, model: val } ) }>{ header.model }</SingleSelectMenu>,
+		model: <SingleSelectMenu defaultAccept autoClose items={ aiModelsSuccess ? aiModels : {} } name="model" defaultValue={ ( 'gpt-3.5-turbo' ) } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, model: val } ) }>{ header.model }</SingleSelectMenu>,
 	};
 	const columns = [
 		columnHelper.accessor( 'check', {
