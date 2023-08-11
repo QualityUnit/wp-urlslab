@@ -368,8 +368,7 @@ class Urlslab_Activator {
 			'2.43.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' DROP COLUMN faq_status' ); // phpcs:ignore
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' DROP COLUMN update_faq_date' ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' DROP COLUMN faq_status, DROP COLUMN update_faq_date' ); // phpcs:ignore
 			}
 		);
 
