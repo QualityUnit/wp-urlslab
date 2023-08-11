@@ -134,6 +134,20 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 		);
 	}
 
+	public function create_item( $request ) {
+		try {
+			$url = new Urlslab_Url( $request->get_param( 'url_name' ), true );
+			$request->set_param( 'url_id', $url->get_url_id() );
+
+			// changing adding the url to urls table
+			Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url );
+
+		} catch ( Exception $e ) {
+		}
+
+		return parent::create_item( $request );
+	}
+
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		// changing all faq_id to fu.faq_id
