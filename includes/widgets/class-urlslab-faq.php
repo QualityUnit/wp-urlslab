@@ -157,12 +157,10 @@ class Urlslab_Faq extends Urlslab_Widget {
 				$result = $this->load_faqs( $current_url_obj->get_url_id(), $urlslab_atts['count'] );
 				if ( ! empty( $result ) && is_array( $result ) ) {
 					$content .= $this->render_shortcode_header( $urlslab_atts );
-					$content .= '<ul class="Urlslab-Faq__items">';
 					foreach ( $result as $faq ) {
 						$faq_row = new Urlslab_Faq_Row( $faq );
 						$content .= $this->render_shortcode_item( $faq_row, $urlslab_atts );
 					}
-					$content .= '</ul>';
 					$content .= $this->render_shortcode_footer();
 				}
 
@@ -277,11 +275,11 @@ class Urlslab_Faq extends Urlslab_Widget {
 	private function render_shortcode_header( array $urlslab_atts ): string {
 		wp_enqueue_style( 'urlslab_faq', plugin_dir_url( URLSLAB_PLUGIN_DIR . 'public/build/css/urlslab_faq.css' ) . 'urlslab_faq.css', false, URLSLAB_VERSION );
 
-		return '<div class="Urlslab-Faq urlslab-skip-faq" itemscope="" itemtype="https://schema.org/FAQPage"><h2>' . __( 'Frequently asked questions' ) . '</h2>';
+		return '<div class="Urlslab-Faq urlslab-skip-faq" itemscope="" itemtype="https://schema.org/FAQPage"><h2>' . __( 'Frequently asked questions' ) . '</h2><ul class="Urlslab-Faq__items">';
 	}
 
 	private function render_shortcode_footer(): string {
-		return '</div>';
+		return '</ul></div>';
 	}
 
 	private function render_shortcode_item( Urlslab_Faq_Row $faq_row, array $urlslab_atts ): string {
