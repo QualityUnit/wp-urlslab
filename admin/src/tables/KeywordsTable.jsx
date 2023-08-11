@@ -77,6 +77,7 @@ export default function KeywordsTable( { slug } ) {
 									label={ header.urlLink }
 									onChange={ ( val ) => setRowToEdit( { ...rowToEdit, urlLink: val } ) }
 									required
+									showInputAsSuggestion={ true }
 									postFetchRequest={ async ( val ) => {
 										return await postFetch( 'keyword/suggest', {
 											count: val.count,

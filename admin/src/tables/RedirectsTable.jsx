@@ -40,7 +40,7 @@ export default function RedirectsTable( { slug } ) {
 		match_url: <InputField type="url" autoFocus liveUpdate defaultValue="" label={ header.match_url }
 			description={ __( 'Match browser URL with this value based on the selected type of rule' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_url: val } ) } required />,
-		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' } liveUpdate defaultValue={ window.location.origin }
+		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' } showInputAsSuggestion={ true } liveUpdate defaultValue={ window.location.origin }
 			description={ __( 'Redirect user to this URL if browser URL matched and also match all other conditions' ) }
 			label={ header.replace_url } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, replace_url: val } ) } required />,
 		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" defaultValue="301"

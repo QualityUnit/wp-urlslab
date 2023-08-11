@@ -31,10 +31,6 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 	const [ typingTimeout, setTypingTimeout ] = useState( 0 );
 	const [ isGenerating, setIsGenerating ] = useState( false );
 	const [ errorGeneration, setErrorGeneration ] = useState( '' );
-	const promptTemplateSelections = Object.entries( promptTemplates ).reduce( ( acc, [ key, value ] ) => {
-		acc[ key ] = value.name;
-		return acc;
-	}, {} );
 
 	//handling the initial loading with preloaded data
 	useEffect( () => {
@@ -107,10 +103,11 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 	};
 
 	// handling prompt template selection
-	const handlePromptTemplateSelection = ( id ) => {
-		setAIGeneratorConfig( { ...aiGeneratorConfig, selectedPromptTemplate: id } );
-		const prompt = handleGeneratePrompt( aiGeneratorConfig, promptTemplates[ id ].promptTemplate );
-		setAIGeneratorConfig( { ...aiGeneratorConfig, promptVal: prompt } );
+	const handlePromptTemplateSelection = ( selectedTemplate ) => {
+		if ( selectedTemplate ) {
+			const prompt = handleGeneratePrompt( aiGeneratorConfig, selectedTemplate.prompt_template );
+			setAIGeneratorConfig( { ...aiGeneratorConfig, promptVal: prompt } );
+		}
 	};
 
 	const handleGenerateContent = async () => {
@@ -240,6 +237,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 									liveUpdate
 									onChange={ ( val ) => setAIGeneratorConfig( { ...aiGeneratorConfig, domain: val } ) }
 									required
+									showInputAsSuggestion={ false }
 									description={ __( 'Domain to use' ) }
 									postFetchRequest={ async ( val ) => {
 										return await postFetch( 'schedule/suggest', {
@@ -301,15 +299,20 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 
 			<div className="urlslab-content-gen-panel-control-item">
 				<div className="urlslab-content-gen-panel-control-item-selector">
-					<SingleSelectMenu
-						key={ aiGeneratorConfig.selectedPromptTemplate }
-						items={ promptTemplateSelections }
-						name="context_menu"
-						defaultAccept
-						autoClose
-						defaultValue={ aiGeneratorConfig.selectedPromptTemplate }
-						onChange={ handlePromptTemplateSelection }
-					>{ __( 'Prompt Template' ) }</SingleSelectMenu>
+					<SuggestInputField
+						suggestInput=""
+						liveUpdate
+						onSelect={ handlePromptTemplateSelection }
+						required
+						showInputAsSuggestion={ false }
+						description={ __( 'Prompt Template' ) }
+						postFetchRequest={ async ( val ) => {
+							return await postFetch( 'prompt-template', {
+								template_name: val.input,
+							} );
+						} }
+						convertComplexSuggestion={ ( suggestion ) => suggestion.template_name }
+					/>
 				</div>
 			</div>
 

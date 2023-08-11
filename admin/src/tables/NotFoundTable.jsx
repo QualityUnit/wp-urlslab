@@ -77,7 +77,7 @@ export default function NotFoundTable( { slug } ) {
 			defaultValue={ ( rowToEdit?.match_url ? getUrlDomain( rowToEdit?.match_url ) : window.location.origin ) }
 			label={ redirectHeader.replace_url }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, replace_url: val } ) }
-			required
+			required showInputAsSuggestion={ true }
 			postFetchRequest={ async ( val ) => {
 				postFetch( 'keyword/suggest', {
 					count: val.count,

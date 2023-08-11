@@ -2,13 +2,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 
-import { delay } from '../lib/helpers';
+import { arraysEqual, delay } from '../lib/helpers';
 import InputField from './InputField';
 import '../assets/styles/elements/_SuggestedInputField.scss';
 
 export default function SuggestInputField( props ) {
 	const { __ } = useI18n();
-	const { postFetchRequest, defaultValue, suggestInput, maxItems, description, required, onChange } = props;
+	const { postFetchRequest, showInputAsSuggestion, convertComplexSuggestion, defaultValue, suggestInput, maxItems, description, required, onChange, onSelect } = props;
 	const disabledKeys = { 38: 1, 40: 1 };
 	const ref = useRef();
 	const inputRef = useRef();
@@ -56,7 +56,9 @@ export default function SuggestInputField( props ) {
 		}
 		inputRef.current = val;
 		if ( type === 'onchange' ) {
-			onChange( val );
+			if ( onChange ) {
+				onChange( val );
+			}
 		} else {
 			delay( () => {
 				setInput( val.target.value );
@@ -110,12 +112,20 @@ export default function SuggestInputField( props ) {
 
 	useEffect( () => {
 		descriptionHeight.current = description && ref.current.querySelector( '.urlslab-inputField-description' ).getBoundingClientRect().height;
-		setSuggestionsList( () => {
-			if ( data?.length ) {
-				return [ ...suggestedDomains, ...data ];
+
+		let newSuggestionsList = [];
+		if ( data?.length ) {
+			if ( showInputAsSuggestion ) {
+				newSuggestionsList = [ ...suggestedDomains ];
 			}
-			return [ ...suggestedDomains ];
-		} );
+			newSuggestionsList = [ ...newSuggestionsList, ...data ];
+		} else if ( showInputAsSuggestion ) {
+			newSuggestionsList = [ ...suggestedDomains ];
+		}
+
+		if ( ! arraysEqual( newSuggestionsList, suggestionsList ) ) {
+			setSuggestionsList( newSuggestionsList );
+		}
 
 		// setSuggestion( suggestionsList[ index ] );
 		const handleClickOutside = ( event ) => {
@@ -144,9 +154,14 @@ export default function SuggestInputField( props ) {
 						{
 							suggestionsList.map( ( suggest, id ) => {
 								return suggest && <li key={ suggest } className={ id === index ? 'active' : '' } ><button onClick={ () => {
-									handleTyping( suggest, 'onchange' ); setSuggestion( suggest ); showSuggestions( false );
+									handleTyping( suggest, 'onchange' );
+									setSuggestion( convertComplexSuggestion ? convertComplexSuggestion( suggest ) : suggest );
+									showSuggestions( false );
+									if ( onSelect ) {
+										onSelect( suggest );
+									}
 								} }
-								>{ suggest }</button></li>;
+								>{ convertComplexSuggestion ? convertComplexSuggestion( suggest ) : suggest }</button></li>;
 							} )
 						}
 					</ul>
