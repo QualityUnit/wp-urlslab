@@ -372,7 +372,7 @@ class Urlslab_Activator {
 			}
 		);
 		self::update_step(
-			'2.43.0',
+			'2.44.0',
 			function() {
 				self::init_prompt_template_table();
 			}
