@@ -449,46 +449,47 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			},
 			'generator',
 		);
-
-		$this->add_options_form_section(
-			'wpml',
-			__( 'WPML Translations' ),
-			__(
-				'Effortlessly translate content at scale by connecting to WPML\'s translation editor. Experience automatic translations from the source to the target language as you copy the original text. This feature is working only with WPML Classic Translation Editor.'
-			)
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_TRANSLATE,
-			true,
-			false,
-			__( 'Auto-translating for WPML Classic Translation Editor' ),
-			__(
-				'Leverage auto-translation in WPML\'s Classic Translation Editor to efficiently minimize time spent translating and ensuring accurate preservation of HTML structure.'
-			),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'wpml'
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_TRANSLATE_MODEL,
-			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
-			false,
-			__( 'Used AI Model for Translations' ),
-			__( 'Select an AI model for translation purposes. Keep in mind that certain models may have higher efficiency but also come at a higher cost.' ),
-			self::OPTION_TYPE_LISTBOX,
-			array(
-				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4            => __( 'OpenAI GPT 4' ),
-				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO    => __( 'OpenAI GPT 3.5 Turbo' ),
-				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 => __( 'OpenAI GPT Davinci 003' ),
-			),
-			function( $value ) {
-				return DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $value ||
-					   DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value ||
-					   DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
-			},
-			'wpml',
-		);
+		if ( defined( 'ICL_SITEPRESS_VERSION' ) && defined( 'ICL_LANGUAGE_CODE' ) ) {
+			$this->add_options_form_section(
+				'wpml',
+				__( 'WPML Translations' ),
+				__(
+					'Effortlessly translate content at scale by connecting to WPML\'s translation editor. Experience automatic translations from the source to the target language as you copy the original text. This feature is working only with WPML Classic Translation Editor.'
+				)
+			);
+			$this->add_option_definition(
+				self::SETTING_NAME_TRANSLATE,
+				true,
+				false,
+				__( 'Auto-translating for WPML Classic Translation Editor' ),
+				__(
+					'Leverage auto-translation in WPML\'s Classic Translation Editor to efficiently minimize time spent translating and ensuring accurate preservation of HTML structure.'
+				),
+				self::OPTION_TYPE_CHECKBOX,
+				false,
+				null,
+				'wpml'
+			);
+			$this->add_option_definition(
+				self::SETTING_NAME_TRANSLATE_MODEL,
+				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
+				false,
+				__( 'Used AI Model for Translations' ),
+				__( 'Select an AI model for translation purposes. Keep in mind that certain models may have higher efficiency but also come at a higher cost.' ),
+				self::OPTION_TYPE_LISTBOX,
+				array(
+					DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4            => __( 'OpenAI GPT 4' ),
+					DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO    => __( 'OpenAI GPT 3.5 Turbo' ),
+					DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 => __( 'OpenAI GPT Davinci 003' ),
+				),
+				function ( $value ) {
+					return DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $value
+						   || DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value
+						   || DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
+				},
+				'wpml',
+			);
+		}
 	}
 
 	private function track_usage( Urlslab_Generator_Result_Row $obj ) {
