@@ -35,6 +35,12 @@ class Urlslab_Api_Prompt_Template extends Urlslab_Api_Table {
 							return is_string( $param ) && ! empty( $param );
 						},
 					),
+					'prompt_type' => array(
+						'required'          => false,
+						'validate_callback' => function( $param ) {
+							return is_string( $param ) && ! empty( $param );
+						},
+					),
 				),
 				'permission_callback' => array(
 					$this,
@@ -107,6 +113,12 @@ class Urlslab_Api_Prompt_Template extends Urlslab_Api_Table {
 								return is_string( $param ) && ! empty( $param );
 							},
 						),
+						'prompt_type' => array(
+							'required'          => true,
+							'validate_callback' => function( $param ) {
+								return is_string( $param ) && ! empty( $param );
+							},
+						),
 					),
 				),
 			)
@@ -138,17 +150,6 @@ class Urlslab_Api_Prompt_Template extends Urlslab_Api_Table {
 		return $sql;
 	}
 
-	public function delete_all_items( WP_REST_Request $request ) {
-		global $wpdb;
-		$wpdb->query(
-			$wpdb->prepare(
-				'DELETE * FROM' . URLSLAB_PROMPT_TEMPLATE_TABLE . ' WHERE prompt_type = %s', //phpcs:ignore
-				Urlslab_Prompt_Template_Row::USER_PROMPT_TYPE
-			)
-		);
-		return new WP_REST_Response( array( 'message' => 'All items deleted' ), 200 );
-	}
-
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
 		return new Urlslab_Prompt_Template_Row( $params, $loaded_from_db );
@@ -159,6 +160,7 @@ class Urlslab_Api_Prompt_Template extends Urlslab_Api_Table {
 			'template_name',
 			'model_name',
 			'prompt_template',
+			'prompt_type',
 		);
 	}
 }

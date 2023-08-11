@@ -420,7 +420,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		return new WP_REST_Response(
 			array(
 				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO => 'OpenAI GPT-3.5 Turbo 8K',
-				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO_16K         => 'OpenAI Davinci 0.3 16K',
+				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO_16K         => 'OpenAI GPT-3.5 Turbo 16K',
 				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4         => 'OpenAI GPT 4 8K',
 				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4_32K         => 'OpenAI GPT 4 32K',
 				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003         => 'OpenAI Davinci 0.3',

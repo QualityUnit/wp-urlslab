@@ -821,7 +821,7 @@ class Urlslab_Activator {
 							template_name varchar(100) NOT NULL,    
     						model_name varchar(100) NOT NULL,
     						prompt_template TEXT NOT NULL,
-    						prompt_type char(1) NOT NULL DEFAULT 'U', -- S = System, U = user Custom
+    						prompt_type char(1) NOT NULL DEFAULT 'G', -- S = Summarization Task, A = Question Answering, G = General Task
 							updated DATETIME,
 							PRIMARY KEY  (template_id)
 							) {$charset_collate};";

@@ -48,8 +48,9 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const templateTypes = {
-		S: __( 'System' ),
-		U: __( 'User' ),
+		G: __( 'For General Tasks' ),
+		S: __( 'For Summarization Tasks' ),
+		A: __( 'For Question Answering Tasks' ),
 	};
 
 	const header = {
@@ -73,7 +74,9 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 				setRowToEdit( { ...rowToEdit, prompt_template: val } );
 			} } />,
 
-		model_name: <SingleSelectMenu autoClose defaultAccept description={ __( 'AI Model to use with the template' ) } items={ aiModelsSuccess ? aiModels : {} } defaultValue={ aiModelsSuccess ? Object.keys( aiModels )[ 0 ] : '' } name="model" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, status: val } ) }>{ header.model }</SingleSelectMenu>,
+		model_name: <SingleSelectMenu autoClose defaultAccept description={ __( 'AI Model to use with the template' ) } items={ aiModelsSuccess ? aiModels : {} } defaultValue={ aiModelsSuccess ? Object.keys( aiModels )[ 0 ] : '' } name="model" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, model_name: val } ) }>{ header.model_name }</SingleSelectMenu>,
+
+		prompt_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'The Type of task that the prompt can be used in' ) } items={ templateTypes } defaultValue="G" name="prompt_type" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, prompt_type: val } ) }>{ header.prompt_type }</SingleSelectMenu>,
 	};
 
 	const columns = [
@@ -90,24 +93,24 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'template_name', {
 			className: 'nolimit',
-			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.template_name }</SortBy>,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'prompt_template', {
-			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => cell.getValue(),
 			header: () => header.prompt_template,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'prompt_type', {
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu items={ templateTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => templateTypes[ cell.getValue() ],
 			header: () => header.prompt_type,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'model_name', {
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu items={ aiModelsSuccess ? aiModels : {} } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => aiModels[ cell.getValue() ],
 			header: () => header.model_name,
 			size: 80,
 		} ),
@@ -118,7 +121,7 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => cell.row.original.prompt_type === 'U' && <RowActionButtons
+			cell: ( cell ) => <RowActionButtons
 				onEdit={ () => updateRow( { cell, id: 'template_id' } ) }
 				onDelete={ () => deleteRow( { cell, id: 'template_id' } ) }
 			>

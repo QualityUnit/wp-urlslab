@@ -2,8 +2,9 @@
 
 class Urlslab_Prompt_Template_Row extends Urlslab_Data {
 
-	public const SYSTEM_PROMPT_TYPE = 'S';
-	public const USER_PROMPT_TYPE = 'U';
+	public const GENERAL_TASK_PROMPT_TYPE = 'G';
+	public const SUMMARIZATION_TASK_PROMPT_TYPE = 'S';
+	public const ANSWERING_TASK_PROMPT_TYPE = 'A';
 
 	public function __construct( array $data = array(), $loaded_from_db = true ) {
 		$this->set_template_id( $data['template_id'] ?? 0, $loaded_from_db );
@@ -11,7 +12,7 @@ class Urlslab_Prompt_Template_Row extends Urlslab_Data {
 		$this->set_model_name( $data['model_name'] ?? '', $loaded_from_db );
 		$this->set_prompt_template( $data['prompt_template'] ?? '', $loaded_from_db );
 		$this->set_updated( empty( $data['updated'] ) ? self::get_now() : $data['updated'], $loaded_from_db );
-		$this->set_prompt_type( $data['prompt_type'] ?? self::USER_PROMPT_TYPE, $loaded_from_db );
+		$this->set_prompt_type( $data['prompt_type'] ?? self::GENERAL_TASK_PROMPT_TYPE, $loaded_from_db );
 	}
 
 	public function set_template_id( int $template_id, $loaded_from_db = false ) {
