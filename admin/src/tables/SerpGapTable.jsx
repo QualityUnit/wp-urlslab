@@ -5,11 +5,17 @@ import {
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
+import { renameModule } from '../lib/helpers';
+import { Link } from 'react-router-dom';
+import useAIGenerator from '../hooks/useAIGenerator';
+import useModulesQuery from '../queries/useModulesQuery';
 
 export default function SerpGapTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'query_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
+	const { data: modules, isSuccess: isSuccessModules } = useModulesQuery();
 
 	const defaultSorting = sorting.length ? sorting : [ { key: 'competitors_count', dir: 'DESC', op: '<' } ];
 	const url = { filters, sorting: defaultSorting };
@@ -25,6 +31,18 @@ export default function SerpGapTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
 
+	const handleCreateContent = ( keyword ) => {
+		// setting the correct zustand state
+		setAIGeneratorConfig( {
+			...aiGeneratorConfig,
+			keywordsList: [ { q: keyword, checked: true } ],
+			serpUrlsList: [],
+			dataSource: 'SERP_CONTEXT',
+			selectedPromptTemplate: '4',
+			title: keyword,
+		} );
+	};
+
 	const header = {
 		query: __( 'Query' ),
 		type: __( 'Query Type' ),
@@ -35,6 +53,7 @@ export default function SerpGapTable( { slug } ) {
 		my_clicks: __( 'My Clicks' ),
 		my_impressions: __( 'My Impressions' ),
 		my_ctr: __( 'My CTR' ),
+		create_content: __( '' ),
 	};
 
 	const types = {
@@ -50,6 +69,18 @@ export default function SerpGapTable( { slug } ) {
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.query }</SortBy>,
 			minSize: 200,
+		} ),
+		columnHelper.accessor( 'create_content', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => isSuccessModules && modules[ 'urlslab-generator' ].active && ( <Link
+				onClick={ () => handleCreateContent( cell.row.original.query ) }
+				to={ '/' + renameModule( 'urlslab-generator' ) }
+				className="urlslab-button active small"
+			>
+				{ __( 'Create Content' ) }
+			</Link> ),
+			header: () => header.create_content,
+			minSize: 40,
 		} ),
 		columnHelper.accessor( 'type', {
 			filterValMenu: types,
