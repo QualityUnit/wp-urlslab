@@ -3,6 +3,7 @@
 class Urlslab_Prompt_Template_Row extends Urlslab_Data {
 
 	public const GENERAL_TASK_PROMPT_TYPE = 'G';
+	public const BLOG_CREATION_TASK_PROMPT_TYPE = 'B';
 	public const SUMMARIZATION_TASK_PROMPT_TYPE = 'S';
 	public const ANSWERING_TASK_PROMPT_TYPE = 'A';
 

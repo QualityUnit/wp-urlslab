@@ -21,7 +21,7 @@ class Urlslab_Default_Prompt_Template {
 			'template_name' => 'Blog Creation',
 			'model_name' => DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
 			'prompt_template' => "Create a post based on the given CONTEXT with the topic {topic} and output should be in HTML CONTEXT:\n\nCONTEXT:\n\n{context}\n",
-			'prompt_type' => Urlslab_Prompt_Template_Row::GENERAL_TASK_PROMPT_TYPE,
+			'prompt_type' => Urlslab_Prompt_Template_Row::BLOG_CREATION_TASK_PROMPT_TYPE,
 		),
 	);
 
