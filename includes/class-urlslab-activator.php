@@ -827,6 +827,9 @@ class Urlslab_Activator {
 							) {$charset_collate};";
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
+
+		require_once URLSLAB_PLUGIN_DIR . 'includes/defaults/class-urlslab-default-prompt-template.php';
+		Urlslab_Default_Prompt_Template::populate_prompt_template_table();
 	}
 
 	private static function init_not_found_log_table() {

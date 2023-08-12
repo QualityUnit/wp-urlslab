@@ -110,7 +110,7 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'model_name', {
 			className: 'nolimit',
-			cell: ( cell ) => aiModels[ cell.getValue() ],
+			cell: ( cell ) => aiModelsSuccess && aiModels[ cell.getValue() ],
 			header: () => header.model_name,
 			size: 80,
 		} ),
