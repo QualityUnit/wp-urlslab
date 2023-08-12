@@ -261,13 +261,6 @@ class Urlslab_Activator {
 			}
 		);
 		self::update_step(
-			'2.28.1',
-			function() {
-				global $wpdb;
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN update_faq_date DATETIME, ADD COLUMN faq_status char(1) NOT NULL DEFAULT ''" ); // phpcs:ignore
-			}
-		);
-		self::update_step(
 			'2.28.2',
 			function() {
 				global $wpdb;
@@ -371,6 +364,13 @@ class Urlslab_Activator {
 				self::init_serp_queries_table();
 			}
 		);
+		self::update_step(
+			'2.43.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' DROP COLUMN faq_status, DROP COLUMN update_faq_date' ); // phpcs:ignore
+			}
+		);
 
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -424,9 +424,7 @@ class Urlslab_Activator {
 			scr_status char(1) NOT NULL,
 			sum_status char(1) NOT NULL,
 			http_status SMALLINT DEFAULT -1, -- -1: not checked, 200: ok, 3xx: redirect, 4xx: client error, 5xx: server error
-			faq_status char(1) NOT NULL DEFAULT '', -- W: waiting data, A: Active, D: Disabled, E: Error, empty - not sheduling
 			update_scr_date DATETIME,
-			update_faq_date DATETIME,
 			update_sum_date DATETIME,
 			update_http_date DATETIME,
 			urlslab_domain_id char(16),
