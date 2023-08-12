@@ -4,7 +4,6 @@ import {
 	augmentWithDomainContext,
 	augmentWithoutContext,
 	augmentWithURLContext,
-	getAugmentProcessResult,
 } from '../api/generatorApi';
 
 const handleGeneratePrompt = ( aiGeneratorConfig, val ) => {

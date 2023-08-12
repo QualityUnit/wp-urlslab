@@ -13,7 +13,6 @@ import useAIGenerator, {
 	contextTypes,
 	contextTypesDescription,
 } from '../../hooks/useAIGenerator';
-import promptTemplates from '../../data/promptTemplates.json';
 import '../../assets/styles/components/_ContentGeneratorPanel.scss';
 import {
 	generateContent,
@@ -21,7 +20,7 @@ import {
 	getTopUrls,
 	handleGeneratePrompt,
 } from '../../lib/aiGeneratorPanel';
-import { getAugmentProcessResult } from '../../api/generatorApi';
+import { getAugmentProcessResult, getPromptTemplates } from '../../api/generatorApi';
 import useAIModelsQuery from '../../queries/useAIModelsQuery';
 
 function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } ) {
@@ -31,30 +30,48 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 	const [ typingTimeout, setTypingTimeout ] = useState( 0 );
 	const [ isGenerating, setIsGenerating ] = useState( false );
 	const [ errorGeneration, setErrorGeneration ] = useState( '' );
+	const [ initialTemplate, setInitialTemplate ] = useState( '' );
 
 	//handling the initial loading with preloaded data
 	useEffect( () => {
 		// setting initial state
-		setAIGeneratorConfig( { ...aiGeneratorConfig, ...initialData } );
+		const initialConf = { ...aiGeneratorConfig, ...initialData };
+		setAIGeneratorConfig( initialConf );
 
 		const fetchTopUrls = async () => {
-			const topUrls = await getTopUrls( aiGeneratorConfig );
-			setAIGeneratorConfig( { ...aiGeneratorConfig, serpUrlsList: topUrls } );
+			const topUrls = await getTopUrls( initialConf );
+			setAIGeneratorConfig( { ...useAIGenerator.getState().aiGeneratorConfig, serpUrlsList: topUrls } );
 		};
 
-		if ( aiGeneratorConfig.dataSource === 'SERP_CONTEXT' &&
-			aiGeneratorConfig.keywordsList.length > 0 &&
-			aiGeneratorConfig.keywordsList[ 0 ].q !== '' &&
-			aiGeneratorConfig.serpUrlsList.length <= 0 ) {
+		const getInitialPromptTemplate = async () => {
+			const rsp = await getPromptTemplates( [
+				{
+					col: 'prompt_type',
+					op: 'eq',
+					val: initialConf.initialPromptType,
+				},
+			] );
+
+			if ( rsp.ok ) {
+				const data = await rsp.json();
+				if ( data && data.length > 0 ) {
+					setInitialTemplate( data[ 0 ].template_name );
+					const promptVal = handleGeneratePrompt( initialConf, data[ 0 ].prompt_template );
+					setAIGeneratorConfig( { ...useAIGenerator.getState().aiGeneratorConfig, promptVal } );
+				}
+			}
+		};
+
+		if ( initialConf.dataSource === 'SERP_CONTEXT' &&
+			initialConf.keywordsList.length > 0 &&
+			initialConf.keywordsList[ 0 ].q !== '' &&
+			initialConf.serpUrlsList.length <= 0 ) {
 			fetchTopUrls();
 		}
 
-		if ( aiGeneratorConfig.selectedPromptTemplate !== '0' ) {
-			setAIGeneratorConfig( { ...aiGeneratorConfig, promptTemplate: promptTemplates[ aiGeneratorConfig.selectedPromptTemplate ].promptTemplate } );
+		if ( initialConf.initialPromptType && initialConf !== 'G' ) {
+			getInitialPromptTemplate();
 		}
-
-		const promptVal = handleGeneratePrompt( aiGeneratorConfig, promptTemplates[ aiGeneratorConfig.selectedPromptTemplate ].promptTemplate );
-		setAIGeneratorConfig( { ...aiGeneratorConfig, promptVal } );
 	}, [] );
 
 	// handling keyword input, trying to get suggestions
@@ -161,6 +178,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 					<div className="urlslab-content-gen-panel-control-item">
 						<InputField
 							liveUpdate
+							key={ aiGeneratorConfig.keywordsList }
 							defaultValue={ aiGeneratorConfig.keywordsList.length > 0 ? aiGeneratorConfig.keywordsList[ 0 ].q : '' }
 							description={ __( 'Keyword to Pick' ) }
 							label={ __( 'Keyword' ) }
@@ -300,16 +318,21 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 			<div className="urlslab-content-gen-panel-control-item">
 				<div className="urlslab-content-gen-panel-control-item-selector">
 					<SuggestInputField
-						suggestInput=""
+						defaultValue={ initialTemplate }
+						key={ initialTemplate }
 						liveUpdate
 						onSelect={ handlePromptTemplateSelection }
 						required
 						showInputAsSuggestion={ false }
 						description={ __( 'Prompt Template' ) }
 						postFetchRequest={ async ( val ) => {
-							return await postFetch( 'prompt-template', {
-								template_name: val.input,
-							} );
+							return await getPromptTemplates( [
+								{
+									col: 'template_name',
+									op: 'LIKE',
+									val: val.input,
+								},
+							] );
 						} }
 						convertComplexSuggestion={ ( suggestion ) => suggestion.template_name }
 					/>
@@ -325,7 +348,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 					rows={ 10 }
 					allowResize
 					onChange={ ( value ) => {
-						setAIGeneratorConfig( { ...aiGeneratorConfig, promptVal: value, selectedPromptTemplate: '0' } );
+						setAIGeneratorConfig( { ...aiGeneratorConfig, promptVal: value } );
 					} }
 					required
 					placeholder={ contextTypePromptPlaceholder[ aiGeneratorConfig.dataSource ] }
