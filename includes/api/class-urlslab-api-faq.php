@@ -197,13 +197,13 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
-		foreach ($this->get_row_object()->get_columns() as $column => $type) {
+		foreach ( $this->get_row_object()->get_columns() as $column => $type ) {
 			$sql->add_select_column( $column, 'f' );
 		}
 		$sql->add_select_column( 'COUNT(*)', false, 'urls_count' );
 
 		$sql->add_from( URLSLAB_FAQS_TABLE . ' f' );
-		$sql->add_from('LEFT JOIN ' . URLSLAB_FAQ_URLS_TABLE . ' u ON u.faq_id = f.faq_id');
+		$sql->add_from( 'LEFT JOIN ' . URLSLAB_FAQ_URLS_TABLE . ' u ON u.faq_id = f.faq_id' );
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'f' );
 		$columns = array_merge(
@@ -215,7 +215,7 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 			)
 		);
 
-		$sql->add_group_by('faq_id', 'f');
+		$sql->add_group_by( 'faq_id', 'f' );
 
 		$sql->add_having_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
