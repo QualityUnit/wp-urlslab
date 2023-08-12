@@ -67,6 +67,9 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 
 	}
 
+	public function update_item_permissions_check( $request ) {
+		return parent::update_item_permissions_check( $request ) && current_user_can( self::CAPABILITY_ADMINISTRATION );
+	}
 
 	/**
 	 * @return array[]
