@@ -23,7 +23,7 @@ define( 'URLSLAB_SCREENSHOT_URLS_TABLE', $wpdb->prefix . 'urlslab_screenshot_url
 define( 'URLSLAB_GENERATOR_SHORTCODES_TABLE', $wpdb->prefix . 'urlslab_generator_shortcodes' );
 define( 'URLSLAB_GENERATOR_RESULTS_TABLE', $wpdb->prefix . 'urlslab_generator_results' );
 define( 'URLSLAB_GENERATOR_URLS_TABLE', $wpdb->prefix . 'urlslab_generator_urls' );
-define( 'URLSLAB_PROMPT_TEMPLATE_TABLE', $wpdb->prefix . 'urlslab_prompt_template' );
+define( 'URLSLAB_PROMPT_TEMPLATE_TABLE', $wpdb->prefix . 'urlslab_prompt_templates' );
 
 define( 'URLSLAB_NOT_FOUND_LOG_TABLE', $wpdb->prefix . 'urlslab_log_notfound' );
 define( 'URLSLAB_REDIRECTS_TABLE', $wpdb->prefix . 'urlslab_redirects' );
