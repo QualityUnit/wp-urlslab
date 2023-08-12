@@ -124,29 +124,6 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 		);
 	}
 
-	public function create_item( $request ) {
-		try {
-			$url = new Urlslab_Url( $request->get_param( 'url_name' ), true );
-			$request->set_param( 'url_id', $url->get_url_id() );
-
-			// changing faq_status for url in urls table
-			$url_object = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url );
-
-			if ( empty( $url_object ) ) {
-				// row has been added. so loading the URL again...
-				$url_object = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url );
-			}
-
-			if ( ! empty( $url_object ) && $url_object->get_faq_status() !== Urlslab_Url_Row::FAQ_STATUS_ACTIVE ) {
-				$url_object->set_faq_status( Urlslab_Url_Row::FAQ_STATUS_ACTIVE );
-				$url_object->update();
-			}
-		} catch ( Exception $e ) {
-		}
-
-		return parent::create_item( $request );
-	}
-
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
 		return new Urlslab_Faq_Url_Row( $params, $loaded_from_db );
 	}
@@ -155,6 +132,20 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 		return array(
 			'sorting',
 		);
+	}
+
+	public function create_item( $request ) {
+		try {
+			$url = new Urlslab_Url( $request->get_param( 'url_name' ), true );
+			$request->set_param( 'url_id', $url->get_url_id() );
+
+			// changing adding the url to urls table
+			Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( $url );
+
+		} catch ( Exception $e ) {
+		}
+
+		return parent::create_item( $request );
 	}
 
 

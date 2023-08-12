@@ -63,21 +63,6 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 								}
 							},
 						),
-						'faq_status'           => array(
-							'required'          => false,
-							'validate_callback' => function( $param ) {
-								switch ( $param ) {
-									case Urlslab_Url_Row::FAQ_STATUS_NEW:
-									case Urlslab_Url_Row::FAQ_STATUS_NOT_USED:
-									case Urlslab_Url_Row::FAQ_STATUS_ACTIVE:
-									case Urlslab_Url_Row::FAQ_STATUS_DISABLED:
-										return true;
-
-									default:
-										return false;
-								}
-							},
-						),
 						'http_status'          => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
@@ -484,7 +469,6 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		return array(
 			'scr_status',
 			'sum_status',
-			'faq_status',
 			'http_status',
 			'visibility',
 			'url_title',
