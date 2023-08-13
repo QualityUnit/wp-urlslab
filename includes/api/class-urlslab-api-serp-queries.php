@@ -63,6 +63,14 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 									is_string( $param );
 							},
 						),
+						'domain_type' => array(
+							'required'          => false,
+							'default'           => Urlslab_Serp_Domain_Row::TYPE_OTHER,
+							'validate_callback' => function ( $param ) {
+								return
+									is_string( $param ) && in_array( $param, array( Urlslab_Serp_Domain_Row::TYPE_OTHER, Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN, Urlslab_Serp_Domain_Row::TYPE_COMPETITOR ) );
+							},
+						),
 					),
 				),
 			)
@@ -284,6 +292,14 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				'query' => $request->get_param( 'query' ),
 			)
 		);
+		$domain_type = $request->get_param( 'domain_type' );
+		$whitelist_domains = array();
+		if ( Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN === $domain_type ) {
+			$whitelist_domains = Urlslab_Serp_Domain_Row::get_my_domains();
+		}
+		if ( Urlslab_Serp_Domain_Row::TYPE_COMPETITOR === $domain_type ) {
+			$whitelist_domains = Urlslab_Serp_Domain_Row::get_competitor_domains();
+		}
 
 		if ( ! $query->load() || Urlslab_Serp_Query_Row::STATUS_SKIPPED === $query->get_status() ) {
 			return $this->get_serp_results( $query );
@@ -291,7 +307,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			global $wpdb;
 			$results = $wpdb->get_results(
 				$wpdb->prepare(
-					'SELECT u.* FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d ORDER BY p.position LIMIT 10', // phpcs:ignore
+					'SELECT u.*, p.position as position, p.clicks as clicks, p.impressions as impressions, p.ctr as ctr FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d ORDER BY p.position LIMIT 10', // phpcs:ignore
 					$query->get_query_id()
 				),
 				ARRAY_A
@@ -304,7 +320,12 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$rows = array();
 			foreach ( $results as $result ) {
 				$row    = new Urlslab_Serp_Url_Row( $result, true );
-				$rows[] = (object) $row->as_array();
+				$ret = (object) $row->as_array();
+				$ret->position = (float) $ret->position;
+				$ret->clicks = (int) $ret->clicks;
+				$ret->impressions = (float) $ret->impressions;
+				$ret->ctr = (float) $ret->ctr;
+				$rows[] = $ret;
 			}
 
 			return new WP_REST_Response( $rows, 200 );
