@@ -48,15 +48,15 @@ export default function CacheRulesTable( { slug } ) {
 		match_type: __( 'Match type' ),
 		match_url: __( 'Match URL' ),
 		is_active: __( 'Is active' ),
-		labels: __( 'Tags' ),
+		ip: __( 'Visitor IP' ),
 		browser: __( 'Browser' ),
 		cookie: __( 'Cookies' ),
 		headers: __( 'Request headers' ),
 		params: __( 'Request parameters' ),
-		ip: __( 'Visitor IP' ),
-		valid_from: __( 'Cache Valid From' ),
 		rule_order: __( 'Order' ),
 		cache_ttl: __( 'Cache Validity' ),
+		valid_from: __( 'Cache Valid From' ),
+		labels: __( 'Tags' ),
 	} );
 
 	const rowEditorCells = {

@@ -45,15 +45,15 @@ export default function SerpGapTable( { slug } ) {
 
 	const header = {
 		query: __( 'Query' ),
+		create_content: __( '' ),
 		type: __( 'Query Type' ),
 		competitors_count: __( 'Competitors Intersection' ),
 		top_competitors: __( 'Top Competitors' ),
-		my_url_name: __( 'My URL' ),
 		my_position: __( 'My Position' ),
 		my_clicks: __( 'My Clicks' ),
 		my_impressions: __( 'My Impressions' ),
 		my_ctr: __( 'My CTR' ),
-		create_content: __( '' ),
+		my_url_name: __( 'My URL' ),
 	};
 
 	const types = {

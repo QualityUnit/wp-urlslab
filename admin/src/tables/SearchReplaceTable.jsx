@@ -50,8 +50,8 @@ export default function SearchReplaceTable( { slug } ) {
 		str_replace: __( 'Replace string (new)' ),
 		search_type: __( 'Search type' ),
 		login_status: __( 'Login status' ),
-		labels: __( 'Tags' ),
 		url_filter: 'URL filter',
+		labels: __( 'Tags' ),
 	};
 
 	const rowEditorCells = {

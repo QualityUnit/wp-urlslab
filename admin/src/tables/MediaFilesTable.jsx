@@ -63,16 +63,16 @@ export default function MediaFilesTable( { slug } ) {
 
 	const header = {
 		filename: __( 'File name' ),
-		filetype: __( 'File type' ),
 		url: __( 'Original URL' ),
 		download_url: __( 'Offloaded URL' ),
-		labels: __( 'Tags' ),
+		filetype: __( 'File type' ),
 		filesize: __( 'File size' ),
 		width: __( 'Width' ),
 		height: __( 'Height' ),
-		driver: __( 'Storage driver' ),
 		filestatus: __( 'Status' ),
+		driver: __( 'Storage driver' ),
 		file_usage_count: __( 'Usage' ),
+		labels: __( 'Tags' ),
 	};
 
 	const columns = [
