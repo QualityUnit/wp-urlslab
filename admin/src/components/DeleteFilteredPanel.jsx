@@ -18,6 +18,7 @@ function DeleteFilteredPanel( props ) {
 	const { filters } = url;
 	const activefilters = filters ? Object.keys( filters ) : null;
 	const [ deleteStatus, setDeleteStatus ] = useState();
+	const deleteDisabled = useRef();
 	const stopFetching = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
 	const { deleteMultipleRows } = useChangeRow( { data, url, slug, header, paginationId } );
@@ -33,9 +34,11 @@ function DeleteFilteredPanel( props ) {
 
 	const handleDeleteStatus = ( val ) => {
 		setDeleteStatus( val );
+		deleteDisabled.current = true;
 		if ( val === 100 ) {
 			setTimeout( () => {
 				setDeleteStatus();
+				deleteDisabled.current = false;
 				hidePanel( 'delete-filtered' );
 			}, 100 );
 		}
@@ -100,7 +103,7 @@ function DeleteFilteredPanel( props ) {
 					}
 					<div className="flex">
 						<Button className="ma-left" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
-						<Button className="ml-s danger" options={ { ...props, stopFetching } } onClick={ handleDelete }>
+						<Button ref={ deleteDisabled } className="ml-s danger" disabled={ deleteDisabled.current } options={ { ...props, stopFetching } } onClick={ handleDelete }>
 							{ __( 'Delete All Filtered' ) }
 						</Button>
 					</div>

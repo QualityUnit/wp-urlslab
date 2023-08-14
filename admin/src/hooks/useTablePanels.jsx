@@ -5,9 +5,11 @@ const useTablePanels = create( ( set ) => ( {
 	imageCompare: false,
 	options: [],
 	rowToEdit: {},
+	table: {},
 	activatePanel: ( activePanel ) => set( () => ( { activePanel } ) ),
 	setOptions: ( options ) => set( ( { options } ) ),
 	setRowToEdit: ( rowToEdit ) => set( ( { rowToEdit } ) ),
+	setTable: ( table ) => set( ( { table } ) ),
 } ) );
 
 export default useTablePanels;
