@@ -54,7 +54,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 			$base . '/delete',
 			array(
 				array(
-					'methods'             => WP_REST_Server::DELETABLE,
+					'methods'             => WP_REST_Server::ALLMETHODS,
 					'callback'            => array( $this, 'delete_items' ),
 					'permission_callback' => array(
 						$this,
