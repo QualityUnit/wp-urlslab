@@ -13,6 +13,8 @@
 	max-width: 30em;
 	color: $white;
 	transform: translateZ(0);
+	word-break: break-word;
+	hyphens: auto;
 
 	&.fixedBottom {
 		position: fixed;
@@ -97,6 +99,10 @@
 
 	.urlslab-table-container > & {
 		left: calc(50% + 160px);
+	}
+
+	table th & {
+		width: 12em !important;
 	}
 
 	table td:hover > & {

@@ -3,7 +3,7 @@ import { useI18n } from '@wordpress/react-i18n/';
 import { useQueryClient } from '@tanstack/react-query';
 
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SingleSelectMenu, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, SuggestInputField, RowActionButtons,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SingleSelectMenu, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, SuggestInputField, RowActionButtons, IconButton,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -96,8 +96,8 @@ export default function NotFoundTable( { slug } ) {
 		cnt: __( 'Visits' ),
 		created: __( 'First visit' ),
 		updated: 'Last visit',
-		labels: 'Tags',
 		request_data: 'User agent',
+		labels: 'Tags',
 	};
 
 	const columns = [
@@ -159,17 +159,18 @@ export default function NotFoundTable( { slug } ) {
 			header: header.labels,
 			size: 150,
 		} ),
-		columnHelper.accessor( 'addRedirect', {
-			className: 'hoverize',
-			tooltip: () => <Tooltip className="align-left xxxl">{ __( 'Create redirect from 404' ) }</Tooltip>,
-			cell: ( cell ) => <PlusIcon onClick={ () => addRedirect( { cell } ) } />,
-			header: null,
-		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
 				onDelete={ () => deleteRow( { cell, id: 'url' } ) }
 			>
+				<IconButton
+					tooltip={ __( 'Create redirect from 404' ) }
+					tooltipClass="align-left"
+					onClick={ () => addRedirect( { cell } ) }
+				>
+					<PlusIcon />
+				</IconButton>
 			</RowActionButtons>,
 			header: null,
 			size: 0,

@@ -45,8 +45,8 @@ export default function FaqUrlsTable( { slug } ) {
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const header = {
-		faq_id: __( 'Question ID' ),
 		url_name: __( 'URL' ),
+		faq_id: __( 'Question ID' ),
 		question: __( 'Question' ),
 		sorting: __( 'SEO Rank' ),
 	};

@@ -111,10 +111,14 @@ function DetailsPanel( ) {
 			tbody.push(
 				<tr key={ row[ listId ] } className="">
 					{ showKeys.map( ( key ) => {
-						const { name } = key;
+						const { name, values } = key;
 						return <td className="pr-m pos-relative" key={ row[ name ] }>
 							<div className="limit">
-								{ name.includes( 'url' ) ? <a href={ row[ name ] } target="_blank" rel="noreferrer">{ row[ name ] }</a> : row[ name ] }
+								{ name.includes( 'url' ) && <a href={ row[ name ] } target="_blank" rel="noreferrer">{ row[ name ] }</a> }
+								{ values
+									? values[ row[ name ] ]
+									: row[ name ]
+								}
 								{
 									parseDate( row, name )
 								}

@@ -34,17 +34,17 @@ export default function useRedirectTableMenus() {
 		match_url: __( 'URL' ),
 		replace_url: __( 'Redirect to' ),
 		redirect_code: __( 'HTTP code' ),
+		if_not_found: __( 'Page status' ),
 		is_logged: __( 'Is logged in' ),
-		labels: __( 'Tags' ),
 		capabilities: __( 'Capabilities' ),
+		ip: __( 'Visitor IP' ),
 		roles: __( 'Roles' ),
 		browser: __( 'Browser' ),
 		cookie: __( 'Cookies' ),
 		headers: __( 'Request headers' ),
 		params: __( 'Request parameters' ),
-		ip: __( 'Visitor IP' ),
-		if_not_found: __( 'Page status' ),
 		cnt: __( 'Redirects count' ),
+		labels: __( 'Tags' ),
 	} );
 
 	return { redirectTypes, matchTypes, logginTypes, notFoundTypes, header };

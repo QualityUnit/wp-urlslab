@@ -5,6 +5,16 @@
 	z-index: 10000 !important;
 }
 
+.urlslab-errorPage {
+	flex-direction: column;
+	justify-content: center;
+	height: calc(100vh - 10em);
+
+	&-error {
+		text-align: center;
+	}
+}
+
 .urlslab-app {
 
 	&-main {

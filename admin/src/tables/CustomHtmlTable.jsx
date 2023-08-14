@@ -61,22 +61,6 @@ export default function CustomHtmlTable( { slug } ) {
 	const header = {
 		name: __( 'Rule Name' ),
 		labels: __( 'Tags' ),
-		match_type: __( 'Match type' ),
-		match_url: __( 'Match URL' ),
-		is_logged: __( 'Is logged?' ),
-		match_browser: __( 'Match Browser' ),
-		match_cookie: __( 'Match Cookies' ),
-		match_headers: __( 'Match Request headers' ),
-		match_params: __( 'Match Request parameters' ),
-		match_capabilities: __( 'User has capability' ),
-		match_roles: __( 'User has role' ),
-		match_ip: __( 'Match Visitor IP' ),
-		add_http_headers: __( 'Add HTTP Request headers' ),
-		add_start_headers: __( 'Add after <head> tag' ),
-		add_end_headers: __( 'Add before </head> tag' ),
-		add_start_body: __( 'Add after <body> tag' ),
-		add_end_body: __( 'Add before </body> tag' ),
-		rule_order: __( 'Rule Order' ),
 		is_active: __( 'Active Rule' ),
 	};
 

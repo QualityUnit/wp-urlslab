@@ -50,9 +50,9 @@ export default function CSSCacheTable( { slug } ) {
 
 	const header = {
 		url: __( 'URL' ),
+		filesize: __( 'File size' ),
 		status: __( 'Status' ),
 		status_changed: __( 'Last change' ),
-		filesize: __( 'File size' ),
 	};
 
 	const columns = [
