@@ -119,94 +119,44 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 		$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSING );
 		$query->update();
 
-		$has_monitored_domain = 0;
-		$urls                 = array();
-		$domains              = array();
-		$positions            = array();
-
 		try {
-			$serp_response = Urlslab_Serp_Connection::get_instance()->search_serp( $query, $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ) );
-			$organic       = $serp_response->getOrganicResults();
+			$serp_conn = Urlslab_Serp_Connection::get_instance();
+			$serp_response = $serp_conn->search_serp( $query, $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ) );
+			$serp_data = $serp_conn->extract_serp_data( $query, $serp_response );
 
-			if ( empty( $organic ) ) {
+			if ( is_bool( $serp_data ) && ! $serp_data ) {
 				$query->set_status( Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED );
 				$query->update();
-
-				return false;
 			} else {
-				foreach ( $organic as $organic_result ) {
-					$url_obj = new Urlslab_Url( $organic_result->link, true );
-					if ( isset( Urlslab_Serp_Domain_Row::get_monitored_domains()[ $url_obj->get_domain_id() ] ) && $organic_result->position <= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION ) ) {
-						$has_monitored_domain ++;
+				// valid data
+				$has_monitored_domain = $serp_data['has_monitored_domain'];
+				$urls                 = $serp_data['urls'];
+				$domains              = $serp_data['domains'];
+				$positions            = $serp_data['positions'];
+
+				if (
+					$has_monitored_domain >= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IRRELEVANT_QUERY_LIMIT ) ||
+					Urlslab_Serp_Query_Row::TYPE_USER === $query->get_type() ||
+					count( Urlslab_Serp_Domain_Row::get_monitored_domains() ) < $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IRRELEVANT_QUERY_LIMIT )
+				) {
+
+					$serp_conn->save_extracted_serp_data( $urls, $positions, $domains );
+
+					$this->discoverNewQueries( $serp_response );
+
+					$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );
+
+					if ( Urlslab_Serp_Query_Row::TYPE_SERP_FAQ === $query->get_type() && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_FAQS ) ) {
+						//if the question is relevant FAQ, add it to the FAQ table
+						$faq_row = new Urlslab_Faq_Row( array( 'question' => ucfirst( $query->get_query() ) ), false );
+						if ( ! $faq_row->load( array( 'question' ) ) ) {
+							$faq_row->set_status( Urlslab_Faq_Row::STATUS_EMPTY );
+							$faq_row->insert();
+						}
 					}
-
-					if ( 10 >= $organic_result->position || isset( Urlslab_Serp_Domain_Row::get_monitored_domains()[ $url_obj->get_domain_id() ] ) ) {
-						$url    = new Urlslab_Serp_Url_Row(
-							array(
-								'url_name'        => $organic_result->link,
-								'url_title'       => $organic_result->title,
-								'url_description' => $organic_result->snippet,
-								'url_id'          => $url_obj->get_url_id(),
-								'domain_id'       => $url_obj->get_domain_id(),
-							)
-						);
-						$urls[] = $url;
-
-						$domains[] = new Urlslab_Serp_Domain_Row(
-							array(
-								'domain_id'   => $url->get_domain_id(),
-								'domain_name' => $url_obj->get_domain_name(),
-							),
-							false
-						);
-
-						$positions[] = new Urlslab_Gsc_Position_Row(
-							array(
-								'position'  => $organic_result->position,
-								'query_id'  => $query->get_query_id(),
-								'url_id'    => $url->get_url_id(),
-								'domain_id' => $url->get_domain_id(),
-							)
-						);
-					}
+				} else {
+					$query->set_status( Urlslab_Serp_Query_Row::STATUS_SKIPPED ); //irrelevant query
 				}
-			}
-
-			if (
-				$has_monitored_domain >= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IRRELEVANT_QUERY_LIMIT ) ||
-				Urlslab_Serp_Query_Row::TYPE_USER === $query->get_type() ||
-				count( Urlslab_Serp_Domain_Row::get_monitored_domains() ) < $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IRRELEVANT_QUERY_LIMIT )
-			) {
-				if ( ! empty( $urls ) ) {
-					$urls[0]->insert_all( $urls, true );
-				}
-				if ( ! empty( $positions ) ) {
-					$positions[0]->insert_all(
-						$positions,
-						false,
-						array(
-							'position',
-							'updated',
-						)
-					);
-				}
-				if ( ! empty( $domains ) ) {
-					$domains[0]->insert_all( $domains, true );
-				}
-				$this->discoverNewQueries( $serp_response );
-
-				$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );
-
-				if ( Urlslab_Serp_Query_Row::TYPE_SERP_FAQ === $query->get_type() && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_FAQS ) ) {
-					//if the question is relevant FAQ, add it to the FAQ table
-					$faq_row = new Urlslab_Faq_Row( array( 'question' => ucfirst( $query->get_query() ) ), false );
-					if ( ! $faq_row->load( array( 'question' ) ) ) {
-						$faq_row->set_status( Urlslab_Faq_Row::STATUS_EMPTY );
-						$faq_row->insert();
-					}
-				}
-			} else {
-				$query->set_status( Urlslab_Serp_Query_Row::STATUS_SKIPPED ); //irrelevant query
 			}
 			$query->update();
 		} catch ( ApiException $e ) {

@@ -63,6 +63,14 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 									is_string( $param );
 							},
 						),
+						'limit' => array(
+							'required'          => false,
+							'default'           => 10,
+							'validate_callback' => function ( $param ) {
+								return
+									is_numeric( $param );
+							},
+						),
 						'domain_type' => array(
 							'required'          => false,
 							'default'           => Urlslab_Serp_Domain_Row::TYPE_OTHER,
@@ -293,6 +301,11 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			)
 		);
 		$domain_type = $request->get_param( 'domain_type' );
+		$limit = $request->get_param( 'limit' );
+		if ( $limit > 100 ) {
+			$limit = 100;
+		}
+
 		$whitelist_domains = array();
 		if ( Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN === $domain_type ) {
 			$whitelist_domains = Urlslab_Serp_Domain_Row::get_my_domains();
@@ -305,16 +318,27 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			return $this->get_serp_results( $query );
 		} else {
 			global $wpdb;
-			$results = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT u.*, p.position as position, p.clicks as clicks, p.impressions as impressions, p.ctr as ctr FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d ORDER BY p.position LIMIT 10', // phpcs:ignore
-					$query->get_query_id()
-				),
-				ARRAY_A
-			);
 
-			if ( empty( $results ) ) {
-				return $this->get_serp_results( $query );
+			if ( Urlslab_Serp_Domain_Row::TYPE_OTHER === $domain_type ) {
+				$results = $wpdb->get_results(
+					$wpdb->prepare(
+						'SELECT u.*, p.position as position, p.clicks as clicks, p.impressions as impressions, p.ctr as ctr FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d ORDER BY p.position LIMIT ' . $limit, // phpcs:ignore
+						$query->get_query_id()
+					),
+					ARRAY_A
+				);
+			} else {
+				if ( empty( $whitelist_domains ) ) {
+					return new WP_REST_Response( array(), 200 );
+				}
+
+				$results = $wpdb->get_results(
+					$wpdb->prepare(
+						'SELECT u.*, p.position as position, p.clicks as clicks, p.impressions as impressions, p.ctr as ctr FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d AND p.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_my_domains() ) ) . ') ORDER BY p.position LIMIT ' . $limit, // phpcs:ignore
+						$query->get_query_id()
+					),
+					ARRAY_A
+				);
 			}
 
 			$rows = array();
@@ -457,24 +481,14 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	}
 
 	private function get_serp_results( $query ): WP_REST_Response {
-		$serp_res        = Urlslab_Serp_Connection::get_instance()->search_serp( $query, DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY );
-		$organic_results = $serp_res->getOrganicResults();
-		$urls            = array();
-		if ( ! empty( $organic_results ) ) {
-			$count = 0;
-			foreach ( $organic_results as $organic_result ) {
-				$urls[] = (object) array(
-					'url_name'        => $organic_result->link,
-					'url_title'       => $organic_result->title,
-					'url_description' => $organic_result->snippet,
-				);
-				if ( ++$count > 10 ) {
-					break;
-				}
-			}
-		}
+		$serp_conn = Urlslab_Serp_Connection::get_instance();
+		$serp_res        = $serp_conn->search_serp( $query, DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY );
+		$serp_data = $serp_conn->extract_serp_data( $query, $serp_res );
+		$serp_conn->save_extracted_serp_data( $serp_data['urls'], $serp_data['positions'], $serp_data['domains'] );
+		$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );
+		$query->update();
 
-		return new WP_REST_Response( $urls, 200 );
+		return new WP_REST_Response( $serp_data['urls'], 200 );
 	}
 
 }

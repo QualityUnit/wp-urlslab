@@ -1,7 +1,7 @@
 import { postFetch } from '../api/fetching';
 
-export const getTopUrls = async ( query ) => {
-	const res = await postFetch( 'serp-queries/query/top-urls', { query } );
+export const getTopUrls = async ( query, domain_type, limit ) => {
+	const res = await postFetch( 'serp-queries/query/top-urls', { query, domain_type, limit } );
 	if ( res.ok ) {
 		return await res.json();
 	}
