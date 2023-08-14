@@ -108,7 +108,7 @@ export default function URLRelationTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				table={ table }
-				onDeleteSelected={ deleteMultipleRows }
+				onDeleteSelected={ () => deleteMultipleRows( { optionalSelector: 'dest_url_id' } ) }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				options={ {
 					header, rowEditorCells, title, data, slug, url, paginationId, optionalSelector, rowToEdit, id: 'src_url_name', deleteCSVCols: [ paginationId, 'dest_url_id' ],
