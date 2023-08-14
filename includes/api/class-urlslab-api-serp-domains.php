@@ -52,6 +52,7 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 									case Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN:
 									case Urlslab_Serp_Domain_Row::TYPE_COMPETITOR:
 									case Urlslab_Serp_Domain_Row::TYPE_OTHER:
+									case Urlslab_Serp_Domain_Row::TYPE_IGNORED:
 										return true;
 
 									default:
@@ -85,6 +86,7 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 						switch ( $param ) {
 							case Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN:
 							case Urlslab_Serp_Domain_Row::TYPE_COMPETITOR:
+							case Urlslab_Serp_Domain_Row::TYPE_IGNORED:
 								return true;
 
 							default:

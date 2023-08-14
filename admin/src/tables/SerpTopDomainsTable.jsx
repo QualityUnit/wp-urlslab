@@ -45,10 +45,12 @@ export default function SerpTopDomainsTable( { slug } ) {
 		X: __( 'Other' ),
 		M: __( 'My Domain' ),
 		C: __( 'Competitor' ),
+		I: __( 'Ignored' ),
 	};
 	const newDomainTypes = {
 		M: __( 'My Domain' ),
 		C: __( 'Competitor' ),
+		I: __( 'Ignored' ),
 	};
 
 	const header = {
