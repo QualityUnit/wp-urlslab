@@ -4,6 +4,8 @@ class Urlslab_Serp_Domain_Row extends Urlslab_Data {
 	const TYPE_OTHER = 'X';
 	const TYPE_MY_DOMAIN = 'M';
 	const TYPE_COMPETITOR = 'C';
+
+	const TYPE_IGNORED = 'I';
 	const UNDEFINED = - 1;
 	private static array $my_domains = array( self::UNDEFINED => '' );
 	private static array $competitor_domains = array( self::UNDEFINED => '' );
@@ -78,9 +80,9 @@ class Urlslab_Serp_Domain_Row extends Urlslab_Data {
 		}
 	}
 
-	private static function get_domains( $domain_type, $operator = '=' ): array {
+	private static function get_domains( array $domain_types ): array {
 		global $wpdb;
-		$results = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_SERP_DOMAINS_TABLE . ' WHERE domain_type ' . esc_sql( $operator ) . ' %s', $domain_type ), ARRAY_A ); // phpcs:ignore
+		$results = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_SERP_DOMAINS_TABLE . ' WHERE domain_type IN (' . implode( ',', array_fill( 0, count( $domain_types ), '%s' ) ) . ')', $domain_types ), ARRAY_A ); // phpcs:ignore
 		$domains = array();
 		foreach ( $results as $result ) {
 			$domains[ $result['domain_id'] ] = $result['domain_name'];
@@ -91,7 +93,7 @@ class Urlslab_Serp_Domain_Row extends Urlslab_Data {
 
 	public static function get_my_domains(): array {
 		if ( isset( self::$my_domains[ self::UNDEFINED ] ) ) {
-			self::$my_domains = self::get_domains( self::TYPE_MY_DOMAIN );
+			self::$my_domains = self::get_domains( array( self::TYPE_MY_DOMAIN ) );
 		}
 		if ( empty( self::$my_domains ) ) {
 			self::$my_domains = array( - 2 => '' );
@@ -102,7 +104,7 @@ class Urlslab_Serp_Domain_Row extends Urlslab_Data {
 
 	public static function get_competitor_domains(): array {
 		if ( isset( self::$competitor_domains[ self::UNDEFINED ] ) ) {
-			self::$competitor_domains = self::get_domains( self::TYPE_COMPETITOR );
+			self::$competitor_domains = self::get_domains( array( self::TYPE_COMPETITOR ) );
 		}
 		if ( empty( self::$competitor_domains ) ) {
 			self::$competitor_domains = array( - 2 => '' );
@@ -113,7 +115,7 @@ class Urlslab_Serp_Domain_Row extends Urlslab_Data {
 
 	public static function get_monitored_domains(): array {
 		if ( isset( self::$monitored_domains[ self::UNDEFINED ] ) ) {
-			self::$monitored_domains = self::get_domains( self::TYPE_OTHER, '<>' );
+			self::$monitored_domains = self::get_domains( array( self::TYPE_COMPETITOR, self::TYPE_MY_DOMAIN ) );
 		}
 		if ( empty( self::$monitored_domains ) ) {
 			self::$monitored_domains = array( - 2 => '' );

@@ -52,6 +52,7 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 									case Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN:
 									case Urlslab_Serp_Domain_Row::TYPE_COMPETITOR:
 									case Urlslab_Serp_Domain_Row::TYPE_OTHER:
+									case Urlslab_Serp_Domain_Row::TYPE_IGNORED:
 										return true;
 
 									default:
@@ -67,6 +68,9 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 
 	}
 
+	public function update_item_permissions_check( $request ) {
+		return parent::update_item_permissions_check( $request ) && current_user_can( self::CAPABILITY_ADMINISTRATION );
+	}
 
 	/**
 	 * @return array[]
@@ -82,6 +86,7 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 						switch ( $param ) {
 							case Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN:
 							case Urlslab_Serp_Domain_Row::TYPE_COMPETITOR:
+							case Urlslab_Serp_Domain_Row::TYPE_IGNORED:
 								return true;
 
 							default:

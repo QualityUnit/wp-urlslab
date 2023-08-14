@@ -197,15 +197,27 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
-		$sql->add_select_column( '*' );
-		$sql->add_from( URLSLAB_FAQS_TABLE );
+		foreach ( $this->get_row_object()->get_columns() as $column => $type ) {
+			$sql->add_select_column( $column, 'f' );
+		}
+		$sql->add_select_column( 'COUNT(*)', false, 'urls_count' );
 
-		$cols = $this->get_row_object()->get_columns();
-		$cols['url_name'] = '%s';
-		$cols['question'] = '%s';
-		$columns = $this->prepare_columns( $cols );
+		$sql->add_from( URLSLAB_FAQS_TABLE . ' f' );
+		$sql->add_from( 'LEFT JOIN ' . URLSLAB_FAQ_URLS_TABLE . ' u ON u.faq_id = f.faq_id' );
 
-		$sql->add_filters( $columns, $request );
+		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'f' );
+		$columns = array_merge(
+			$columns,
+			$this->prepare_columns(
+				array(
+					'urls_count' => '%d',
+				)
+			)
+		);
+
+		$sql->add_group_by( 'faq_id', 'f' );
+
+		$sql->add_having_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
 
 		return $sql;

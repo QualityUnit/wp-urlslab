@@ -65,6 +65,7 @@ export default function FaqsTable( { slug } ) {
 		language: __( 'Language' ),
 		labels: __( 'Tags' ),
 		status: __( 'Status' ),
+		urls_count: __( 'Assigned URLs' ),
 		updated: __( 'Updated' ),
 	};
 
@@ -152,6 +153,11 @@ export default function FaqsTable( { slug } ) {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.updated }</SortBy>,
 			size: 80,
+		} ),
+		columnHelper.accessor( 'urls_count', {
+			cell: ( val ) => val.getValue(),
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.urls_count }</SortBy>,
+			size: 40,
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',

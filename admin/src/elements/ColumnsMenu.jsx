@@ -1,7 +1,7 @@
-import { memo, useEffect, useState, useRef, useCallback } from 'react';
+import { memo, useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import { get, update } from 'idb-keyval';
+import { update } from 'idb-keyval';
 
 import Checkbox from './Checkbox';
 import Button from './Button';
@@ -16,21 +16,13 @@ function ColumnsMenu( { id, className, slug, table, columns, style } ) {
 	const { __ } = useI18n();
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
-	const [ hiddenCols, setHiddenCols ] = useState( table?.getState().columnVisibility );
 	const ref = useRef( id );
 
-	const tableColumns = table?.getAllLeafColumns();
-
-	const getColumnState = useCallback( () => {
-		get( slug ).then( async ( dbData ) => {
-			if ( dbData?.columnVisibility && Object.keys( dbData?.columnVisibility ).length ) {
-				await setHiddenCols( dbData?.columnVisibility );
-			}
-		} );
-	}, [ slug ] );
+	const tableColumns = useMemo( () => {
+		return table?.getAllLeafColumns();
+	}, [ table ] );
 
 	useEffect( ( ) => {
-		getColumnState();
 		const handleClickOutside = ( event ) => {
 			if ( ! ref.current?.contains( event.target ) && isActive && ref.current?.id === id ) {
 				setActive( false );
@@ -38,45 +30,30 @@ function ColumnsMenu( { id, className, slug, table, columns, style } ) {
 			}
 		};
 		document.addEventListener( 'click', handleClickOutside, false );
-	}, [ getColumnState, id, isActive ] );
+	}, [ id, isActive ] );
 
-	const checkedCheckbox = ( column, isChecked ) => {
-		const hiddenColsCopy = { ...hiddenCols };
+	const checkedCheckbox = ( column ) => {
 		column.toggleVisibility();
-		if ( isChecked ) {
-			delete hiddenColsCopy[ `${ column.id }` ];
-			setHiddenCols( hiddenColsCopy );
-		}
-		if ( ! isChecked ) {
-			hiddenColsCopy[ column.id ] = false;
-			setHiddenCols( hiddenColsCopy );
-		}
 		update( slug, ( dbData ) => {
-			return { ...dbData, columnVisibility: hiddenColsCopy };
+			return { ...dbData, columnVisibility: table?.getState().columnVisibility };
 		} );
 	};
 
 	const handleVisibilityAll = useCallback( ( action ) => {
-		const columnsArray = table.getAllColumns();
-		const hiddenColsCopy = { ...hiddenCols };
-
-		columnsArray.forEach( ( column ) => {
-			if ( action === 'showAllCols' && ! column.getIsVisible() ) {
-				column.toggleVisibility();
-				delete hiddenColsCopy[ `${ column.id }` ];
-				setHiddenCols( hiddenColsCopy );
-			}
-			if ( action === 'hideAllCols' && column.getIsVisible() ) {
-				column.toggleVisibility();
-				hiddenColsCopy[ column.id ] = false;
-				setHiddenCols( hiddenColsCopy );
-			}
-		} );
-
+		if ( action === 'showAllCols' ) {
+			table.toggleAllColumnsVisible( true );
+		}
+		if ( action === 'hideAllCols' ) {
+			table.toggleAllColumnsVisible( false );
+		}
+		if ( action === 'resetCols' ) {
+			table.resetColumnVisibility();
+		}
+		setActive( ! isActive );
 		update( slug, ( dbData ) => {
-			return { ...dbData, columnVisibility: hiddenColsCopy };
+			return { ...dbData, columnVisibility: table?.getState().columnVisibility };
 		} );
-	}, [ hiddenCols, slug, table ] );
+	}, [ isActive, slug, table ] );
 
 	const handleMenu = () => {
 		setActive( ! isActive );
@@ -101,25 +78,29 @@ function ColumnsMenu( { id, className, slug, table, columns, style } ) {
 				<ColumnsIcon />
 			</div>
 			{ isActive &&
-			<div className={ `urlslab-MultiSelectMenu__items urlslab-ColumnsMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
-				<div className="flex urlslab-ColumnsMenu__buttons"><Button className="simple" onClick={ () => handleVisibilityAll( 'hideAllCols' ) }>{ __( 'Hide all' ) }</Button><Button className="ma-left active" onClick={ () => handleVisibilityAll( 'showAllCols' ) }>{ __( 'Show all' ) }</Button></div>
-				<div className={ `urlslab-MultiSelectMenu__items--inn ${ columns.length > 8 ? 'has-scrollbar' : '' }` }>
-					{ tableColumns?.map( ( column ) => {
-						return (
-							columns[ column.id ] &&
-							<Checkbox
-								className="urlslab-MultiSelectMenu__item urlslab-ColumnsMenu__item"
-								key={ column.id }
-								id={ column.id }
-								onChange={ ( isChecked ) => checkedCheckbox( column, isChecked ) }
-								defaultValue={ ! Object.keys( hiddenCols ).includes( column.id ) }
-							>
-								{ columns[ column.id ] }
-							</Checkbox>
-						);
-					} ) }
+				<div className={ `urlslab-MultiSelectMenu__items urlslab-ColumnsMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
+					<div className="flex flex-wrap urlslab-ColumnsMenu__buttons">
+						<Button className="simple" onClick={ () => handleVisibilityAll( 'hideAllCols' ) }>{ __( 'Hide all' ) }</Button>
+						<Button className="ma-left active" onClick={ () => handleVisibilityAll( 'showAllCols' ) }>{ __( 'Show all' ) }</Button>
+						<Button className="mt-s limit" onClick={ () => handleVisibilityAll( 'resetCols' ) }>{ __( 'Reset columns visibility' ) }</Button>
+					</div>
+					<div className={ `urlslab-MultiSelectMenu__items--inn ${ columns.length > 8 ? 'has-scrollbar' : '' }` }>
+						{ tableColumns?.map( ( column ) => {
+							return (
+								columns[ column.id ] &&
+								<Checkbox
+									className="urlslab-MultiSelectMenu__item urlslab-ColumnsMenu__item"
+									key={ column.id }
+									id={ column.id }
+									onChange={ ( isChecked ) => checkedCheckbox( column, isChecked ) }
+									defaultValue={ column.getIsVisible() }
+								>
+									{ columns[ column.id ] }
+								</Checkbox>
+							);
+						} ) }
+					</div>
 				</div>
-			</div>
 			}
 		</div>
 	);
