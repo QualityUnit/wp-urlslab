@@ -26,8 +26,8 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 	const [ rightImage, setRightImage ] = useState( selectedRows[ 1 ].cell.getValue().full );
 	const [ rightImageKey, setRightImageKey ] = useState( selectedRows[ 1 ].row.original.last_changed * 1000 );
 	const [ wrapperWidth, setWrapperWidth ] = useState( 0 );
-	const [ activeScreen, setActiveScreen ] = useState( 'overlay' ); // ['overlay', 'overlayWithDiff', 'adjacent']
-	const [ zoom, setZoom ] = useState( 0 );
+	const [ activeScreen, setActiveScreen ] = useState( 'overlayWithDiff' ); // ['overlay', 'overlayWithDiff', 'adjacent']
+	const [ zoom, setZoom ] = useState( 50 );
 	const [ baseWrapperWidth, setBaseWrapperWidth ] = useState( 0 );
 	const [ render, setRender ] = useState( true );
 	const [ diffStarted, startDiff ] = useState( false );
