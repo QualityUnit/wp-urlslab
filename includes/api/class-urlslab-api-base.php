@@ -28,4 +28,8 @@ abstract class Urlslab_Api_Base extends WP_REST_Controller {
 	public function delete_item_permissions_check( $request ) {
 		return current_user_can( 'activate_plugins' ) || current_user_can( self::CAPABILITY_DELETE ) || current_user_can( self::CAPABILITY_ADMINISTRATION );
 	}
+
+	public function admin_permission_check( $request ) {
+		return current_user_can( self::CAPABILITY_ADMINISTRATION ) || current_user_can( 'administrator' );
+	}
 }
