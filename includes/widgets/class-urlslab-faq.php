@@ -83,7 +83,7 @@ class Urlslab_Faq extends Urlslab_Widget {
 										$faq_url->set_faq_id( $faq_id );
 										$faq_url->set_url_id( Urlslab_Url::get_current_page_url()->get_url_id() );
 										$faq_url->set_sorting( $position + 1 );
-										$faq_url->insert();
+										$faq_url->insert_all( array( $faq_url ), true );
 									}
 								}
 							}
