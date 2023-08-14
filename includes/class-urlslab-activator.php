@@ -371,6 +371,12 @@ class Urlslab_Activator {
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' DROP COLUMN faq_status, DROP COLUMN update_faq_date' ); // phpcs:ignore
 			}
 		);
+		self::update_step(
+			'2.44.0',
+			function() {
+				self::init_prompt_template_table();
+			}
+		);
 
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -401,6 +407,7 @@ class Urlslab_Activator {
 		self::init_generator_shortcodes_table();
 		self::init_generator_results_table();
 		self::init_generator_urls_table();
+		self::init_prompt_template_table();
 		self::init_cache_rules_table();
 		self::init_custom_html_rules_table();
 		self::init_faqs_table();
@@ -800,6 +807,27 @@ class Urlslab_Activator {
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
+	}
+
+
+	private static function init_prompt_template_table() {
+		global $wpdb;
+		$table_name      = URLSLAB_PROMPT_TEMPLATE_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
+							template_id int UNSIGNED NOT NULL AUTO_INCREMENT,
+							template_name varchar(100) NOT NULL,    
+    						model_name varchar(100) NOT NULL,
+    						prompt_template TEXT NOT NULL,
+    						prompt_type char(1) NOT NULL DEFAULT 'G', -- S = Summarization Task, A = Question Answering, G = General Task
+							updated DATETIME,
+							PRIMARY KEY  (template_id)
+							) {$charset_collate};";
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+
+		require_once URLSLAB_PLUGIN_DIR . 'includes/defaults/class-urlslab-default-prompt-template.php';
+		Urlslab_Default_Prompt_Template::populate_prompt_template_table();
 	}
 
 	private static function init_not_found_log_table() {

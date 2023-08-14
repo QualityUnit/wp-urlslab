@@ -19,9 +19,11 @@ define( 'URLSLAB_CONTENT_CACHE_TABLE', $wpdb->prefix . 'urlslab_content_cache' )
 define( 'URLSLAB_SEARCH_AND_REPLACE_TABLE', $wpdb->prefix . 'urlslab_search_replace' );
 define( 'URLSLAB_SCREENSHOT_URLS_TABLE', $wpdb->prefix . 'urlslab_screenshot_urls' );
 
+// GENERATOR TABLES
 define( 'URLSLAB_GENERATOR_SHORTCODES_TABLE', $wpdb->prefix . 'urlslab_generator_shortcodes' );
 define( 'URLSLAB_GENERATOR_RESULTS_TABLE', $wpdb->prefix . 'urlslab_generator_results' );
 define( 'URLSLAB_GENERATOR_URLS_TABLE', $wpdb->prefix . 'urlslab_generator_urls' );
+define( 'URLSLAB_PROMPT_TEMPLATE_TABLE', $wpdb->prefix . 'urlslab_prompt_templates' );
 
 define( 'URLSLAB_NOT_FOUND_LOG_TABLE', $wpdb->prefix . 'urlslab_log_notfound' );
 define( 'URLSLAB_REDIRECTS_TABLE', $wpdb->prefix . 'urlslab_redirects' );

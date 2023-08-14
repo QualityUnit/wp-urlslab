@@ -15,6 +15,22 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	public function register_routes() {
 		register_rest_route(
 			self::NAMESPACE,
+			'/' . self::SLUG . '/models',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_ai_models' ),
+					'args'                => array(),
+					'permission_callback' => array(
+						$this,
+						'get_items_permissions_check',
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
 			'/' . self::SLUG . '/translate',
 			array(
 				array(
@@ -398,6 +414,19 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 		register_rest_route( self::NAMESPACE, $base . '/(?P<shortcode_id>[0-9]+)/(?P<hash_id>[0-9]+)/urls', $this->get_route_generator_urls() );
 		register_rest_route( self::NAMESPACE, $base . '/(?P<shortcode_id>[0-9]+)/(?P<hash_id>[0-9]+)/urls/count', $this->get_count_route( $this->get_route_generator_urls() ) );
+	}
+
+	function get_ai_models() {
+		return new WP_REST_Response(
+			array(
+				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO => 'OpenAI GPT-3.5 Turbo 8K',
+				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO_16K         => 'OpenAI GPT-3.5 Turbo 16K',
+				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4         => 'OpenAI GPT 4 8K',
+				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4_32K         => 'OpenAI GPT 4 32K',
+				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003         => 'OpenAI Davinci 0.3',
+			),
+			200 
+		);
 	}
 
 

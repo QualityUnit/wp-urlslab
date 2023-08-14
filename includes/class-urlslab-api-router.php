@@ -37,6 +37,9 @@ class Urlslab_Api_Router {
 		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-generators.php';
 		( new Urlslab_Api_Generators() )->register_routes();
 
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-prompt-template.php';
+		( new Urlslab_Api_Prompt_Template() )->register_routes();
+
 		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-shortcodes.php';
 		( new Urlslab_Api_Shortcodes() )->register_routes();
 

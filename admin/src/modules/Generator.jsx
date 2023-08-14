@@ -5,6 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import GeneratorOverview from '../overview/Generator';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 import ContentGeneratorPanel from '../components/generator/ContentGeneratorPanel';
+import GeneratorPromptTemplateTable from '../tables/GeneratorPromptTemplateTable';
 
 const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 const GeneratorResultTable = lazy( () => import( `../tables/GeneratorResultTable.jsx` ) );
@@ -19,6 +20,7 @@ export default function Generator() {
 	const tableMenu = new Map( [
 		[ 'generator', __( 'Generator' ) ],
 		[ 'shortcode', __( 'Shortcodes' ) ],
+		[ 'promptTemplate', __( 'Prompt Templates' ) ],
 		[ 'result', __( 'Results' ) ],
 	] );
 
@@ -38,6 +40,12 @@ export default function Generator() {
 				activeSection === 'shortcode' &&
 				<Suspense>
 					<GeneratorShortcodeTable slug="generator/shortcode" />
+				</Suspense>
+			}
+			{
+				activeSection === 'promptTemplate' &&
+				<Suspense>
+					<GeneratorPromptTemplateTable slug="prompt-template" />
 				</Suspense>
 			}
 			{

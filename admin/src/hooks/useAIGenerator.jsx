@@ -26,7 +26,7 @@ const fallbackData = {
 	inputValue: '', // input value for the generator
 	dataSource: 'NO_CONTEXT', // no datasource context selected by default
 	lang: 'en', // en lang by default
-	selectedPromptTemplate: '0', // no prompt template
+	initialPromptType: 'G', // Initial Prompt Type selected
 	title: '', // title of the created content - only applies in creating new post
 	postType: '', // post type of the created content - only applies in creating new post
 	urlsList: [], // list of urls to generate content from - only applies in URL_CONTEXT dataStore

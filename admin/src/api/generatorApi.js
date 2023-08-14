@@ -47,6 +47,10 @@ export async function getAugmentProcessResult( processId ) {
 	return await getFetch( `process/complex-augment/${ processId }` );
 }
 
+export async function getPromptTemplates( filters ) {
+	return await postFetch( 'prompt-template', { filters } );
+}
+
 export async function getPostTypes() {
 	return await getFetch( `generator/post` );
 }
