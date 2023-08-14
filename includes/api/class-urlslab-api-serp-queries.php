@@ -308,10 +308,10 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 		$whitelist_domains = array();
 		if ( Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN === $domain_type ) {
-			$whitelist_domains = Urlslab_Serp_Domain_Row::get_my_domains();
+			$whitelist_domains = array_keys( Urlslab_Serp_Domain_Row::get_my_domains() );
 		}
 		if ( Urlslab_Serp_Domain_Row::TYPE_COMPETITOR === $domain_type ) {
-			$whitelist_domains = Urlslab_Serp_Domain_Row::get_competitor_domains();
+			$whitelist_domains = array_keys( Urlslab_Serp_Domain_Row::get_competitor_domains() );
 		}
 
 		if ( ! $query->load() || Urlslab_Serp_Query_Row::STATUS_SKIPPED === $query->get_status() ) {
@@ -334,7 +334,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 				$results = $wpdb->get_results(
 					$wpdb->prepare(
-						'SELECT u.*, p.position as position, p.clicks as clicks, p.impressions as impressions, p.ctr as ctr FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d AND p.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_my_domains() ) ) . ') ORDER BY p.position LIMIT ' . $limit, // phpcs:ignore
+						'SELECT u.*, p.position as position, p.clicks as clicks, p.impressions as impressions, p.ctr as ctr FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d AND p.domain_id IN (' . implode( ',', $whitelist_domains ) . ') ORDER BY p.position LIMIT ' . $limit, // phpcs:ignore
 						$query->get_query_id()
 					),
 					ARRAY_A

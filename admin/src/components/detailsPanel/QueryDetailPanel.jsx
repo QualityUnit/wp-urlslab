@@ -176,9 +176,8 @@ function QueryDetailPanel() {
 							data={ competitorUrlsSuccess && competitorUrls }
 						/>
 						}
-						{ myTopUrlsSuccess && myTopUrls.length === 0 && <div className="urlslab-serpPanel-empty-table">
+						{ competitorUrlsSuccess && competitorUrls.length === 0 && <div className="urlslab-serpPanel-empty-table">
 							<p>None of your competitors are ranking for this keyword</p>
-							<Button active onClick={ handleCreatePost }>Create a Post</Button>
 						</div>
 						}
 					</div> }
