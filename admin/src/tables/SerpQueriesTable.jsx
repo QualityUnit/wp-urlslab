@@ -10,6 +10,7 @@ import useTablePanels from '../hooks/useTablePanels';
 
 import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
 import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refresh.svg';
+import Button from '../elements/Button';
 
 export default function SerpQueriesTable( { slug } ) {
 	const { __ } = useI18n();
@@ -33,7 +34,7 @@ export default function SerpQueriesTable( { slug } ) {
 
 	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
 
-	const { setRowToEdit } = useTablePanels();
+	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const ActionButton = ( { cell, onClick } ) => {
@@ -182,6 +183,11 @@ export default function SerpQueriesTable( { slug } ) {
 			cell: ( cell ) => <RowActionButtons
 				onDelete={ () => deleteRow( { cell, id: 'query' } ) }
 			>
+				<Button onClick={ () => {
+					setOptions( { queryDetailPanel: { query: cell.row.original.query, slug: cell.row.original.query.replace( ' ', '-' ) } } );
+					activatePanel( 'queryDetailPanel' );
+				} }
+						className="mr-s small active">{ __( 'Show Detail' ) }</Button>
 				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
 			</RowActionButtons>,
 			header: null,

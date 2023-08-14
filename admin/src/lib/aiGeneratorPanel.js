@@ -4,8 +4,8 @@ import {
 	augmentWithDomainContext,
 	augmentWithoutContext,
 	augmentWithURLContext,
-	getAugmentProcessResult,
 } from '../api/generatorApi';
+import {getQueryClusterKeywords} from "./serpQueries";
 
 const handleGeneratePrompt = ( aiGeneratorConfig, val ) => {
 	let finalPrompt = val;
@@ -28,29 +28,25 @@ const handleGeneratePrompt = ( aiGeneratorConfig, val ) => {
 // handling serp context selection - fetching top serp results
 const getTopUrls = async ( aiGeneratorConfig ) => {
 	const primaryKeyword = getSelectedKeywords( aiGeneratorConfig )[ 0 ];
-	const res = await postFetch( 'serp-queries/query/top-urls', { query: primaryKeyword } );
-	if ( res.ok ) {
-		const urls = await res.json();
-		return urls.map( ( url ) => {
-			return { ...url, checked: false };
-		} );
-	}
+	const urls = await getTopUrls( primaryKeyword );
+	return urls.map( ( url ) => {
+		return { ...url, checked: false };
+	} );
 };
 
 const getQueryCluster = async ( val ) => {
 	if ( val === '' ) {
 		return [];
 	}
-	const res = await postFetch( 'serp-queries/query-cluster', { query: val } );
-	if ( res.ok ) {
-		const keywords = await res.json();
+	try {
+		const keywords = await getQueryClusterKeywords( val );
 		return keywords.filter( ( keyword ) => keyword.query !== val )
 			.map( ( keyword ) => {
 				return { q: keyword.query, checked: false };
 			} );
+	} catch ( error ) {
+		return [];
 	}
-
-	return [];
 };
 
 // handling generate content
