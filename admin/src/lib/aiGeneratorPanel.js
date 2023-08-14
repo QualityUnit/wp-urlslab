@@ -1,11 +1,10 @@
 // handling generating final prompt based on prompt template variables
-import { postFetch } from '../api/fetching';
 import {
 	augmentWithDomainContext,
 	augmentWithoutContext,
 	augmentWithURLContext,
 } from '../api/generatorApi';
-import {getQueryClusterKeywords} from "./serpQueries";
+import { getQueryClusterKeywords, getTopUrls as getTopQueryUrls } from './serpQueries';
 
 const handleGeneratePrompt = ( aiGeneratorConfig, val ) => {
 	let finalPrompt = val;
@@ -28,7 +27,7 @@ const handleGeneratePrompt = ( aiGeneratorConfig, val ) => {
 // handling serp context selection - fetching top serp results
 const getTopUrls = async ( aiGeneratorConfig ) => {
 	const primaryKeyword = getSelectedKeywords( aiGeneratorConfig )[ 0 ];
-	const urls = await getTopUrls( primaryKeyword );
+	const urls = await getTopQueryUrls( primaryKeyword );
 	return urls.map( ( url ) => {
 		return { ...url, checked: false };
 	} );
@@ -78,10 +77,9 @@ const generateContent = async ( aiGeneratorConfig ) => {
 		if ( processIdResponse.ok ) {
 			const rsp = await processIdResponse.json();
 			return rsp.processId;
-		} else {
-			const rsp = await processIdResponse.json();
-			throw new Error( rsp.message );
 		}
+		const rsp = await processIdResponse.json();
+		throw new Error( rsp.message );
 	} catch ( error ) {
 		throw error;
 	}

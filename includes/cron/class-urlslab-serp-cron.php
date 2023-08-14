@@ -122,7 +122,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 		try {
 			$serp_conn = Urlslab_Serp_Connection::get_instance();
 			$serp_response = $serp_conn->search_serp( $query, $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ) );
-			$serp_data = $serp_conn->extract_serp_data( $query, $serp_response );
+			$serp_data = $serp_conn->extract_serp_data( $query, $serp_response, $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION ) );
 
 			if ( is_bool( $serp_data ) && ! $serp_data ) {
 				$query->set_status( Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED );

@@ -40,7 +40,7 @@ class Urlslab_Serp_Connection {
 		return self::$serp_client->search( $request );
 	}
 
-	public function extract_serp_data( Urlslab_Serp_Query_Row $query, DomainDataRetrievalSerpApiSearchResponse $serp_response ) {
+	public function extract_serp_data( Urlslab_Serp_Query_Row $query, DomainDataRetrievalSerpApiSearchResponse $serp_response, int $max_import_pos ) {
 		$has_monitored_domain = 0;
 		$urls                 = array();
 		$domains              = array();
@@ -54,7 +54,7 @@ class Urlslab_Serp_Connection {
 		} else {
 			foreach ( $organic as $organic_result ) {
 				$url_obj = new Urlslab_Url( $organic_result->link, true );
-				if ( isset( Urlslab_Serp_Domain_Row::get_monitored_domains()[ $url_obj->get_domain_id() ] ) && $organic_result->position <= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION ) ) {
+				if ( isset( Urlslab_Serp_Domain_Row::get_monitored_domains()[ $url_obj->get_domain_id() ] ) && $organic_result->position <= $max_import_pos ) {
 					$has_monitored_domain ++;
 				}
 
