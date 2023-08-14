@@ -9,6 +9,8 @@ import { renameModule } from '../lib/helpers';
 import { Link } from 'react-router-dom';
 import useAIGenerator from '../hooks/useAIGenerator';
 import useModulesQuery from '../queries/useModulesQuery';
+import Button from '../elements/Button';
+import useTablePanels from '../hooks/useTablePanels';
 
 export default function SerpGapTable( { slug } ) {
 	const { __ } = useI18n();
@@ -16,6 +18,7 @@ export default function SerpGapTable( { slug } ) {
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
 	const { data: modules, isSuccess: isSuccessModules } = useModulesQuery();
+	const { activatePanel, setOptions } = useTablePanels();
 
 	const defaultSorting = sorting.length ? sorting : [ { key: 'competitors_count', dir: 'DESC', op: '<' } ];
 	const url = { filters, sorting: defaultSorting };
@@ -45,15 +48,15 @@ export default function SerpGapTable( { slug } ) {
 
 	const header = {
 		query: __( 'Query' ),
+		create_content: __( '' ),
 		type: __( 'Query Type' ),
 		competitors_count: __( 'Competitors Intersection' ),
 		top_competitors: __( 'Top Competitors' ),
-		my_url_name: __( 'My URL' ),
 		my_position: __( 'My Position' ),
 		my_clicks: __( 'My Clicks' ),
 		my_impressions: __( 'My Impressions' ),
 		my_ctr: __( 'My CTR' ),
-		create_content: __( '' ),
+		my_url_name: __( 'My URL' ),
 	};
 
 	const types = {
@@ -129,6 +132,15 @@ export default function SerpGapTable( { slug } ) {
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_url_name }</SortBy>,
 			size: 100,
+		} ),
+		columnHelper.accessor( 'create_content', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => <Button onClick={ () => {
+				setOptions( { queryDetailPanel: { query: cell.row.original.query, slug: cell.row.original.query.replace( ' ', '-' ) } } );
+				activatePanel( 'queryDetailPanel' );
+			} } className="small">{ __( 'Show Detail' ) }</Button>,
+			header: () => header.create_content,
+			minSize: 40,
 		} ),
 	];
 

@@ -74,8 +74,8 @@ export default function ScreenshotTable( { slug } ) {
 		url_name: __( 'Destination URL' ),
 		url_title: __( 'Title' ),
 		scr_status: __( 'Status' ),
-		screenshot_usage_count: __( 'Usage' ),
 		update_scr_date: __( 'Last change' ),
+		screenshot_usage_count: __( 'Usage' ),
 		labels: __( 'Tags' ),
 	};
 

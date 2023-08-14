@@ -70,10 +70,10 @@ export default function SchedulesTable( { slug } ) {
 
 	const header = {
 		urls: __( 'URLs' ),
-		analyze_text: __( 'Analyse text' ),
 		follow_links: __( 'Follow links' ),
-		process_all_sitemaps: __( 'Process all sitemaps' ),
+		analyze_text: __( 'Analyse text' ),
 		take_screenshot: __( 'Take screenshots' ),
+		process_all_sitemaps: __( 'Process all sitemaps' ),
 		custom_sitemaps: __( 'Sitemaps' ),
 		scan_frequency: __( 'Scan frequency' ),
 		scan_speed_per_minute: __( 'Scan speed (pages per minute)' ),

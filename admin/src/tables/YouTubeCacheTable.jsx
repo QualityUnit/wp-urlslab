@@ -86,11 +86,11 @@ export default function YouTubeCacheTable( { slug } ) {
 	const header = {
 		thumb: __( 'Thumbnail' ),
 		videoid: __( 'YouTube Video ID' ),
-		status: __( 'Status' ),
 		title: __( 'Title' ),
 		captions: __( 'Captions' ),
-		published: __( 'Published' ),
+		status: __( 'Status' ),
 		usage_count: __( 'Usage' ),
+		published: __( 'Published' ),
 		microdata: __( 'Youtube Microdata JSON' ),
 	};
 

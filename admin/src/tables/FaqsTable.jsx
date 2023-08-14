@@ -62,11 +62,11 @@ export default function FaqsTable( { slug } ) {
 		faq_id: __( 'ID' ),
 		question: __( 'Question' ),
 		answer: __( 'Answer' ),
-		language: __( 'Language' ),
-		labels: __( 'Tags' ),
 		status: __( 'Status' ),
-		urls_count: __( 'Assigned URLs' ),
+		labels: __( 'Tags' ),
 		updated: __( 'Updated' ),
+		urls_count: __( 'Assigned URLs' ),
+		language: __( 'Language' ),
 	};
 
 	const handlePanel = () => {

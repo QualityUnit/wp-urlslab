@@ -113,16 +113,16 @@ export default function LinkManagerTable( { slug } ) {
 		url_name: __( 'URL' ),
 		url_title: __( 'Title' ),
 		url_h1: __( 'H1' ),
-		url_lang: __( 'Language' ),
 		url_meta_description: __( 'Description' ),
 		url_summary: __( 'Summary' ),
 		url_priority: __( 'SEO Rank' ),
 		http_status: __( 'Status' ),
-		labels: __( 'Tags' ),
-		url_links_count: __( 'Outgoing links count' ),
-		url_usage_count: __( 'Incoming links count' ),
 		visibility: __( 'Visibility' ),
 		update_http_date: __( 'Last change' ),
+		url_links_count: __( 'Outgoing links count' ),
+		url_usage_count: __( 'Incoming links count' ),
+		labels: __( 'Tags' ),
+		url_lang: __( 'Language' ),
 	};
 
 	const columns = [

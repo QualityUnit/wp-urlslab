@@ -198,13 +198,13 @@ export function useSorting( { slug } ) {
 			const objFromArr = currentSorting.filter( ( k ) => k.key )[ 0 ];
 			const cleanArr = currentSorting.filter( ( k ) => ! k.key );
 			if ( objFromArr && objFromArr?.dir === 'ASC' ) {
-				return [ { key, dir: 'DESC', op: '<' }, ...cleanArr ];
+				return cleanArr;
 			}
 
 			if ( objFromArr && objFromArr?.dir === 'DESC' ) {
-				return cleanArr;
+				return [ { key, dir: 'ASC', op: '>' }, ...cleanArr ];
 			}
-			return [ { key, dir: 'ASC', op: '>' }, ...currentSorting ];
+			return [ { key, dir: 'DESC', op: '<' }, ...currentSorting ];
 		}
 		);
 		runSorting.current = true;

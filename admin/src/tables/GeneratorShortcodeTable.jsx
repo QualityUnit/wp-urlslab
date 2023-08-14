@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import {
@@ -99,10 +98,10 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		semantic_context: __( 'Semantic context' ),
 		url_filter: __( 'URL filter' ),
 		default_value: __( 'Default value' ),
+		template: __( 'HTML template' ),
+		model: __( 'Model' ),
 		status: __( 'Status' ),
 		date_changed: __( 'Last change' ),
-		model: __( 'Model' ),
-		template: __( 'HTML template' ),
 		shortcode: __( 'Shortcode' ),
 		usage_count: __( 'Usage' ),
 	};
@@ -185,6 +184,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			size: 200,
 		} ),
 		columnHelper.accessor( 'model', {
+			cell: ( cell ) => modelTypes[ cell.getValue() ],
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.model }</SortBy>,
 			size: 80,
 		} ),

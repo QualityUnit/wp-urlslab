@@ -57,6 +57,7 @@ $cellHeight: 3.5em;
 
 	th,
 	td {
+		position: relative;
 		text-align: left;
 		font-weight: $font-weight-normal;
 		padding: 0.25em;

@@ -83,9 +83,9 @@ export default function MetaTagsManagerTable( { slug } ) {
 		url_meta_description: __( 'Description' ),
 		url_summary: __( 'Summary' ),
 		http_status: __( 'Status' ),
-		labels: __( 'Tags' ),
 		rel_schedule: __( 'Schedule' ),
 		update_http_date: __( 'Last change' ),
+		labels: __( 'Tags' ),
 	};
 
 	const rowEditorCells = {

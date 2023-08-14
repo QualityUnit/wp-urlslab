@@ -89,15 +89,15 @@ export default function GeneratorResultTable( { slug } ) {
 
 	const header = {
 		shortcode_id: __( 'Shortcode ID' ),
-		command: __( 'Command' ),
-		semantic_context: __( 'Semantic context' ),
-		url_filter: __( 'URL filter' ),
-		labels: __( 'Tags' ),
 		prompt_variables: __( 'Input data' ),
+		semantic_context: __( 'Semantic context' ),
+		command: __( 'Command' ),
+		url_filter: __( 'URL filter' ),
+		result: __( 'Result' ),
 		status: __( 'Status' ),
 		date_changed: __( 'Last change' ),
-		result: __( 'Result' ),
 		usage_count: __( 'Usage' ),
+		labels: __( 'Tags' ),
 	};
 
 	const rowEditorCells = {

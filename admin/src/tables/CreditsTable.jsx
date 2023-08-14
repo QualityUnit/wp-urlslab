@@ -27,9 +27,9 @@ export default function CreditsTable( { slug } ) {
 
 	const header = {
 		id: __( 'Transaction Id' ),
+		operationDate: __( 'Timestamp' ),
 		creditType: __( 'Type' ),
 		creditOperation: __( 'Operation' ),
-		operationDate: __( 'Timestamp' ),
 		context: __( 'Data' ),
 	};
 
