@@ -63,8 +63,8 @@ class Urlslab_Api_Table_Sql {
 		$this->order_sql[] = esc_sql( $order_column ) . ' ' . ( 'DESC' !== strtoupper( $sort_direction ) ? 'ASC' : 'DESC' );
 	}
 
-	public function add_select_column( $column, $table_prefix = false, $alias = false ) {
-		if ( '*' !== $column ) {
+	public function add_select_column( $column, $table_prefix = false, $alias = false, bool $escape = true ) {
+		if ( '*' !== $column && $escape ) {
 			$column = esc_sql( $column );
 		}
 		$alias              = esc_sql( $alias );
