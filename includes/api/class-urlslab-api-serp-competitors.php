@@ -68,10 +68,10 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->domain_id          = (int) $row->domain_id;
-			$row->cnt_top10_intersections          = (int) $row->cnt_top10_intersections;
-			$row->avg_top10_position          = round((float) $row->avg_top10_position, 1);
-			$row->coverage          = round((float) $row->coverage, 2);
+			$row->domain_id = (int) $row->domain_id;
+			$row->cnt_top10_intersections = (int) $row->cnt_top10_intersections;
+			$row->avg_top10_position = round( (float) $row->avg_top10_position, 1 );
+			$row->coverage = round( (float) $row->coverage, 2 );
 		}
 
 		return new WP_REST_Response( $rows, 200 );
