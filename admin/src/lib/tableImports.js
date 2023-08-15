@@ -30,6 +30,8 @@ export { ReactComponent as AcceptIcon } from '../assets/images/icons/icon-activa
 export { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
 export { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refresh.svg';
 
+export { ReactComponent as CopyIcon } from '../assets/images/icons/icon-copy.svg';
+
 export { default as Loader } from '../components/Loader';
 
 export { default as Table } from '../components/TableComponent';
