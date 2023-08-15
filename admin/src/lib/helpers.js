@@ -25,6 +25,14 @@ export const delay = ( fn, ms ) => {
 	};
 };
 
+export const dateWithTimezone = ( val ) => {
+	const origDate = new Date( val );
+	const diff = origDate.getTimezoneOffset();
+	const correctedDate = new Date( origDate.getTime() - ( diff * 60000 ) ).toISOString();
+
+	return { origDate, correctedDate };
+};
+
 export const parseURL = ( string ) => {
 	if ( string.length ) {
 		return string.replace( urlInTextRegex, '<a href="$1" target="_blank">$1</a>' );

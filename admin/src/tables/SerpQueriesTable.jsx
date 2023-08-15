@@ -1,7 +1,19 @@
 /* eslint-disable indent */
 import { useI18n } from '@wordpress/react-i18n';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Checkbox, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TextArea, IconButton, RowActionButtons,
+	useInfiniteFetch,
+	ProgressBar,
+	SortBy,
+	Checkbox,
+	Loader,
+	Tooltip,
+	Table,
+	ModuleViewHeaderBottom,
+	TooltipSortingFiltering,
+	TextArea,
+	IconButton,
+	RowActionButtons,
+	TagsMenu,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -69,8 +81,8 @@ export default function SerpQueriesTable( { slug } ) {
 	const types = {
 		U: __( 'User' ),
 		C: __( 'Search Console' ),
-		S: __( 'Google Suggestion' ),
-		F: __( 'Google FAQ' ),
+		S: __( 'People also search for' ),
+		F: __( 'People also ask' ),
 	};
 
 	const header = {
@@ -86,10 +98,12 @@ export default function SerpQueriesTable( { slug } ) {
 		my_impressions: __( 'My Impressions' ),
 		my_ctr: __( 'My CTR' ),
 		my_url_name: __( 'My URL' ),
+		labels: __( 'Tags' ),
 	};
 
 	const rowEditorCells = {
 		query: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { ...rowToEdit, query: val } ) } required description={ __( 'SERP queries separated by new line' ) } />,
+		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
 	const columns = [
@@ -129,6 +143,12 @@ export default function SerpQueriesTable( { slug } ) {
 			cell: ( cell ) => types[ cell.getValue() ],
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.type }</SortBy>,
 			size: 80,
+		} ),
+		columnHelper.accessor( 'labels', {
+			className: 'nolimit',
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: header.labels,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'comp_count', {
 			className: 'nolimit',

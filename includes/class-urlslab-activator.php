@@ -377,6 +377,20 @@ class Urlslab_Activator {
 				self::init_prompt_template_table();
 			}
 		);
+		self::update_step(
+			'2.45.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_DOMAINS_TABLE . ' ADD INDEX idx_domain_type (domain_type)' ); // phpcs:ignore
+			}
+		);
+		self::update_step(
+			'2.46.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . " ADD COLUMN labels VARCHAR(255) NOT NULL DEFAULT ''" ); // phpcs:ignore
+			}
+		);
 
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -1039,6 +1053,7 @@ class Urlslab_Activator {
 							updated DATETIME NOT NULL,
 							status char(1) DEFAULT 'X',
 							type char(1) DEFAULT 'S',
+    						labels VARCHAR(255) NOT NULL DEFAULT ''
 							PRIMARY KEY  (query_id),
 							INDEX idx_query (query),
 							INDEX idx_type (type),
@@ -1076,7 +1091,8 @@ class Urlslab_Activator {
 							domain_id bigint NOT NULL,
 							domain_name varchar(500) NOT NULL,
 							domain_type char(1) NOT NULL DEFAULT 'X',
-							PRIMARY KEY  (domain_id)
+							PRIMARY KEY  (domain_id),
+    						INDEX idx_domain_type (domain_type)
 							) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

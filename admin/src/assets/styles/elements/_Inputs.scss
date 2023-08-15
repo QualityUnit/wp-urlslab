@@ -127,6 +127,7 @@ $status: (
 		font-size: 0.8125rem;
 
 		&.required {
+			position: relative;
 			color: $black;
 
 			&::after {
@@ -199,7 +200,7 @@ $status: (
 		}
 
 		@each $state,
-		$value in $status {
+			$value in $status {
 			&.#{$state}[class] {
 
 				.urlslab-inputField {

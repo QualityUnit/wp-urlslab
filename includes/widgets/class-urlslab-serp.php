@@ -22,8 +22,8 @@ class Urlslab_Serp extends Urlslab_Widget {
 		return array(
 			Urlslab_Serp_Query_Row::TYPE_GSC          => __( 'Google Search Console' ),
 			Urlslab_Serp_Query_Row::TYPE_USER         => __( 'Manually created by User' ),
-			Urlslab_Serp_Query_Row::TYPE_SERP_RELATED => __( 'Suggested by Google' ),
-			Urlslab_Serp_Query_Row::TYPE_SERP_FAQ     => __( 'FAQ suggested by Google' ),
+			Urlslab_Serp_Query_Row::TYPE_SERP_RELATED => __( 'People also search for' ),
+			Urlslab_Serp_Query_Row::TYPE_SERP_FAQ     => __( 'People also ask' ),
 		);
 	}
 
@@ -178,13 +178,12 @@ class Urlslab_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_IMPORT_RELATED_QUERIES,
 			true,
 			false,
-			__( 'Discover and Import Related Queries' ),
+			__( 'Import "People also search for" as new query' ),
 			__( 'Automatically build list of queries by importing Related Searches from Google Results for monitored queries. IMPORTANT: by activating this option you agree with processing of higher amount of SERP api requests leading to extra costs for evaluation of each relevant/irrelevant query. Once the keyword is marked as irelevant, it will not be processed again, so the cost will not be high in next recurring updates of SERP positions.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'import',
-			array( self::LABEL_PAID )
+			'import'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SERP_IMPORT_LIMIT,
@@ -198,7 +197,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 				return is_numeric( $value ) && 1 <= $value;
 			},
 			'import',
-			array( self::LABEL_PAID, self::LABEL_PERFORMANCE )
+			array( self::LABEL_PERFORMANCE )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION,
@@ -230,18 +229,17 @@ class Urlslab_Serp extends Urlslab_Widget {
 		);
 
 
-		$this->add_options_form_section( 'import_faq', __( 'Import Frequently Asked Questions' ), __( 'URLsLab can automatically import FAQ entries from SERP results and relevant questions to your business can be added into FAQ module. This will help you to build new content in your website.' ) );
+		$this->add_options_form_section( 'import_faq', __( 'Import Frequently Asked Questions' ), __( 'URLsLab can automatically import FAQ entries from SERP results and relevant questions to your business can be added into FAQ module. This will help you to build new content in your website.' ), array( self::LABEL_PAID ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_FAQS_AS_QUERY,
 			true,
 			false,
-			__( 'Import FAQs from SERP Results as new Queries' ),
+			__( 'Import "People also ask" as new query' ),
 			__( 'If active, frequently asked questions from google serp results will be added as new queries. Questions could be source of traffic for your website and it is good to know the position you are ranking for.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'import_faq',
-			array( self::LABEL_PAID )
+			'import_faq'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_FAQS,

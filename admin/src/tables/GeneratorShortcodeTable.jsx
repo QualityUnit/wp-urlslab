@@ -17,6 +17,7 @@ import {
 	Editor,
 	AcceptIcon,
 	DisableIcon,
+	CopyIcon,
 	IconButton,
 	RowActionButtons,
 } from '../lib/tableImports';
@@ -25,6 +26,7 @@ import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import useAIModelsQuery from '../queries/useAIModelsQuery';
+import copyToClipBoard from '../lib/copyToClipBoard';
 
 export default function GeneratorShortcodeTable( { slug } ) {
 	const { __ } = useI18n();
@@ -201,8 +203,9 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			size: 115,
 		} ),
 		columnHelper.accessor( 'shortcode', {
+			tooltip: ( cell ) => <Tooltip>Click to copy { cell.getValue() } to the clipboard</Tooltip>,
+			cell: ( cell ) => <button className="flex" onClick={ () => copyToClipBoard( cell.getValue() ) }><CopyIcon className="mr-s" />{ cell.getValue() }</button>,
 			header: header.shortcode,
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			size: 250,
 		} ),
 		columnHelper.accessor( 'usage_count', {
@@ -215,6 +218,13 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				onEdit={ () => updateRow( { cell } ) }
 				onDelete={ () => deleteRow( { cell } ) }
 			>
+				<IconButton
+					onClick={ () => copyToClipBoard( cell.row.original.shortcode ) }
+					tooltipClass="align-left"
+					tooltip={ __( 'Copy shortcode to the clipboard' ) }
+				>
+					<CopyIcon className="mr-s" />
+				</IconButton>
 				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
 			</RowActionButtons>,
 			header: null,
