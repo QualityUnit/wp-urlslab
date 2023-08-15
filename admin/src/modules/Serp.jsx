@@ -9,6 +9,7 @@ const SettingsModule = lazy( () => import( `../modules/static/Settings.jsx` ) );
 const SerpQueriesTable = lazy( () => import( `../tables/SerpQueriesTable.jsx` ) );
 const SerpUrlsTable = lazy( () => import( `../tables/SerpUrlsTable.jsx` ) );
 const SerpTopDomainsTable = lazy( () => import( `../tables/SerpTopDomainsTable.jsx` ) );
+const SerpCompetitorsTable = lazy( () => import( `../tables/SerpCompetitorsTable.jsx` ) );
 const GscSitesTable = lazy( () => import( `../tables/GscSitesTable.jsx` ) );
 const SerpGapTable = lazy( () => import( `../tables/SerpGapTable.jsx` ) );
 
@@ -20,6 +21,7 @@ export default function Serp() {
 
 	const tableMenu = new Map( [
 		[ 'serp-domains', __( 'Domains' ) ],
+		[ 'serp-competitors', __( 'Competitors' ) ],
 		[ 'gsc-sites', __( 'Google Search Console Sites' ) ],
 		[ 'serp-queries', __( 'Queries' ) ],
 		[ 'serp-urls', __( 'URLs' ) ],
@@ -46,6 +48,12 @@ export default function Serp() {
 				activeSection === 'serp-domains' &&
 				<Suspense>
 					<SerpTopDomainsTable slug={ 'serp-domains' } />
+				</Suspense>
+			}
+			{
+				activeSection === 'serp-competitors' &&
+				<Suspense>
+					<SerpCompetitorsTable slug={ 'serp-competitors' } />
 				</Suspense>
 			}
 			{
