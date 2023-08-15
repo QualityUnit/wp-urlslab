@@ -22,6 +22,7 @@ import {
 } from '../../lib/aiGeneratorPanel';
 import { getAugmentProcessResult, getPromptTemplates } from '../../api/generatorApi';
 import useAIModelsQuery from '../../queries/useAIModelsQuery';
+import { setNotification } from '../../hooks/useNotifications';
 
 function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } ) {
 	const { __ } = useI18n();
@@ -29,7 +30,6 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
 	const [ typingTimeout, setTypingTimeout ] = useState( 0 );
 	const [ isGenerating, setIsGenerating ] = useState( false );
-	const [ errorGeneration, setErrorGeneration ] = useState( '' );
 	const [ initialTemplate, setInitialTemplate ] = useState( 'Custom' );
 
 	//handling the initial loading with preloaded data
@@ -167,15 +167,20 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 							setIsGenerating( false );
 						}
 					} else {
+						if ( resultResponse.status === 400 ) {
+							const generationRes = await resultResponse.json();
+							throw new Error( generationRes.message );
+						}
 						throw new Error( 'Failed to generate result. try again...' );
 					}
 				} catch ( error ) {
 					clearInterval( pollForResult );
-					throw error;
+					setNotification( 1, { message: error.message, status: 'error' } );
+					setIsGenerating( false );
 				}
 			}, 2000 );
 		} catch ( e ) {
-			setErrorGeneration( e.message );
+			setNotification( 1, { message: e.message, status: 'error' } );
 			setIsGenerating( false );
 		}
 	};
@@ -424,10 +429,6 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 						isGenerating ? ( <Loader /> ) : __( 'Generate Text' )
 					}
 				</Button>
-			</div>
-
-			<div className="urlslab-content-gen-panel-control-item">
-				{ errorGeneration && <div>{ errorGeneration }</div> }
 			</div>
 
 		</div>
