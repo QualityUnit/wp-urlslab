@@ -39,6 +39,12 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 									);
 							},
 						),
+						'labels' => array(
+							'required'          => false,
+							'validate_callback' => function ( $param ) {
+								return is_string( $param );
+							},
+						),
 					),
 				),
 			)
@@ -207,6 +213,12 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 						return is_string( $param );
 					},
 				),
+				'labels' => array(
+					'required'          => false,
+					'validate_callback' => function ( $param ) {
+						return is_string( $param );
+					},
+				),
 			),
 			'permission_callback' => array(
 				$this,
@@ -294,7 +306,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	}
 
 	public function get_editable_columns(): array {
-		return array( 'status' );
+		return array( 'status', 'labels' );
 	}
 
 	public function get_top_urls( $request ) {

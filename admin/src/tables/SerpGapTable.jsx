@@ -1,7 +1,15 @@
 /* eslint-disable indent */
 import { useI18n } from '@wordpress/react-i18n';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering,
+	useInfiniteFetch,
+	ProgressBar,
+	SortBy,
+	Loader,
+	Tooltip,
+	Table,
+	ModuleViewHeaderBottom,
+	TooltipSortingFiltering,
+	TagsMenu,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -57,6 +65,7 @@ export default function SerpGapTable( { slug } ) {
 		my_impressions: __( 'My Impressions' ),
 		my_ctr: __( 'My CTR' ),
 		my_url_name: __( 'My URL' ),
+		labels: __( 'Tags' ),
 	};
 
 	const types = {
@@ -91,6 +100,12 @@ export default function SerpGapTable( { slug } ) {
 			cell: ( cell ) => types[ cell.getValue() ],
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.type }</SortBy>,
 			size: 80,
+		} ),
+		columnHelper.accessor( 'labels', {
+			className: 'nolimit',
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: header.labels,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'competitors_count', {
 			className: 'nolimit',
