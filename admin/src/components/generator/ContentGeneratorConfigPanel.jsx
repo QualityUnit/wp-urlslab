@@ -30,7 +30,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 	const [ typingTimeout, setTypingTimeout ] = useState( 0 );
 	const [ isGenerating, setIsGenerating ] = useState( false );
 	const [ errorGeneration, setErrorGeneration ] = useState( '' );
-	const [ initialTemplate, setInitialTemplate ] = useState( '' );
+	const [ initialTemplate, setInitialTemplate ] = useState( 'Custom' );
 
 	//handling the initial loading with preloaded data
 	useEffect( () => {
@@ -41,6 +41,12 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 		const fetchTopUrls = async () => {
 			const topUrls = await getTopUrls( initialConf );
 			setAIGeneratorConfig( { ...useAIGenerator.getState().aiGeneratorConfig, serpUrlsList: topUrls } );
+		};
+
+		const fetchQueryCluster = async () => {
+			const primaryKeyword = aiGeneratorConfig.keywordsList[ 0 ].q;
+			const queryCluster = await getQueryCluster( primaryKeyword );
+			setAIGeneratorConfig( { ...aiGeneratorConfig, keywordsList: [ { q: primaryKeyword, checked: true }, ...queryCluster ] } );
 		};
 
 		const getInitialPromptTemplate = async () => {
@@ -69,13 +75,22 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 			fetchTopUrls();
 		}
 
-		if ( initialConf.initialPromptType && initialConf !== 'G' ) {
+		if ( initialConf.keywordsList.length > 0 && initialConf.keywordsList[ 0 ].q !== '' ) {
+			fetchQueryCluster();
+		}
+
+		if ( initialConf.initialPromptType && initialConf.initialPromptType !== 'G' ) {
 			getInitialPromptTemplate();
 		}
 	}, [] );
 
 	// handling keyword input, trying to get suggestions
 	const handleChangeKeywordInput = ( val ) => {
+		if ( val === '' ) {
+			setAIGeneratorConfig( { ...aiGeneratorConfig, keywordsList: [] } );
+			return;
+		}
+
 		if ( typingTimeout ) {
 			clearTimeout( typingTimeout );
 		}
@@ -124,7 +139,17 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 		if ( selectedTemplate ) {
 			const prompt = handleGeneratePrompt( aiGeneratorConfig, selectedTemplate.prompt_template );
 			setAIGeneratorConfig( { ...aiGeneratorConfig, promptVal: prompt } );
+			setInitialTemplate( selectedTemplate.template_name );
 		}
+	};
+
+	// handling save prompt template
+	const handleSavePromptTemplate = async () => {
+		if ( ! aiGeneratorConfig.promptVal ) {
+			return;
+		}
+
+		console.log( 'TODO- SAVING PROMPT TEMPLATE' );
 	};
 
 	const handleGenerateContent = async () => {
@@ -167,6 +192,21 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 							description={ __( 'Input Value' ) }
 							label={ __( 'Input Value to use in prompt' ) }
 							onChange={ ( val ) => setAIGeneratorConfig( { ...aiGeneratorConfig, inputValue: val } ) }
+							required
+						/>
+					</div>
+				)
+			}
+
+			{
+				aiGeneratorConfig.mode === 'CREATE_POST' && (
+					<div className="urlslab-content-gen-panel-control-item">
+						<InputField
+							liveUpdate
+							defaultValue=""
+							description={ __( 'Page Title' ) }
+							label={ __( 'Title' ) }
+							onChange={ ( title ) => setAIGeneratorConfig( { ...aiGeneratorConfig, title } ) }
 							required
 						/>
 					</div>
@@ -345,15 +385,26 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 					val={ aiGeneratorConfig.promptVal }
 					defaultValue=""
 					label={ __( 'Prompt' ) }
-					rows={ 10 }
+					rows={ 20 }
 					allowResize
 					onChange={ ( value ) => {
-						setAIGeneratorConfig( { ...aiGeneratorConfig, promptVal: value } );
+						const prompt = handleGeneratePrompt( aiGeneratorConfig, value );
+						setAIGeneratorConfig( { ...aiGeneratorConfig, promptVal: prompt } );
+						if ( initialTemplate !== 'Custom' ) {
+							setInitialTemplate( 'Custom' );
+						}
 					} }
 					required
 					placeholder={ contextTypePromptPlaceholder[ aiGeneratorConfig.dataSource ] }
-					description={ __( 'Prompt to be used while generating content' ) } />
+					description={ __( 'Prompt to be used while generating content. supported variables are {keywords}, {primary_keyword}, {title}, {language}' ) } />
 			</div>
+			{
+				initialTemplate === 'Custom' && aiGeneratorConfig.promptVal !== '' && (
+					<div>
+						<Button onClick={ handleSavePromptTemplate }>{ __( 'Save Template' ) }</Button>
+					</div>
+				)
+			}
 
 			<div className="urlslab-content-gen-panel-control-item">
 				<SingleSelectMenu

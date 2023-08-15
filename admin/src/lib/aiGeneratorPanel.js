@@ -9,16 +9,24 @@ import { getQueryClusterKeywords, getTopUrls as getTopQueryUrls } from './serpQu
 const handleGeneratePrompt = ( aiGeneratorConfig, val ) => {
 	let finalPrompt = val;
 	const selectedKeywords = getSelectedKeywords( aiGeneratorConfig );
-	if ( val.includes( '{keyword}' ) && selectedKeywords.length > 0 ) {
-		finalPrompt = val.replace( '{keyword}', selectedKeywords.join( ', ' ) );
+	if ( val.includes( '{keywords}' ) && selectedKeywords.length > 0 ) {
+		console.log('includes keywords')
+		finalPrompt = val.replace( '{keywords}', selectedKeywords.join( ', ' ) );
 	}
 
 	if ( val.includes( '{primary_keyword}' ) && selectedKeywords.length > 0 ) {
+		console.log('includes primary keywords')
 		finalPrompt = val.replace( '{primary_keyword}', selectedKeywords[ 0 ] );
 	}
 
-	if ( val.includes( '{language}' ) && aiGeneratorConfig.language ) {
-		finalPrompt = val.replace( '{language}', aiGeneratorConfig.language );
+	if ( val.includes( '{language}' ) && aiGeneratorConfig.lang ) {
+		console.log('includes kang')
+		finalPrompt = val.replace( '{language}', aiGeneratorConfig.lang );
+	}
+
+	if ( val.includes( '{title}' ) && aiGeneratorConfig.title ) {
+		console.log('includes title')
+		finalPrompt = val.replace( '{title}', aiGeneratorConfig.title );
 	}
 
 	return finalPrompt;
