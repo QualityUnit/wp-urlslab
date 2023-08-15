@@ -40,7 +40,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Base {
 		try {
 			$rsp = $api_client->getProcessResult( $process_id );
 
-			if ( $rsp->getStatus() !== 'SUCCESS' ) {
+			if ( $rsp->getStatus() === 'ERROR' ) {
 				return new WP_REST_Response(
 					(object) array(
 						'message' => $rsp->getResponse()[0],

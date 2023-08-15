@@ -33,7 +33,7 @@ const fallbackData = {
 	keywordsList: [], // list of keywords to generate content from
 	serpUrlsList: [], // list of urls to generate content from - only applies in SERP_CONTEXT dataStore
 	domain: '', // domain to generate content from - only applies in DOMAIN_CONTEXT dataStore
-	promptVal: '', // The prompt to generate content from
+	promptTemplate: '', // prompt template to generate content from
 	semanticContext: '', // semantic context to for fetching relevant data - only applies in DOMAIN_CONTEXT dataStore
 	modelName: 'gpt-3.5-turbo', // model name to use for generation
 	mode: 'CREATE_POST', // mode of the generator - CREATE_POST or WITH_INPUT_VAL

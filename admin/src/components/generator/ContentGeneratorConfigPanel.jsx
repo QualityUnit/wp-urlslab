@@ -31,6 +31,8 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 	const [ typingTimeout, setTypingTimeout ] = useState( 0 );
 	const [ isGenerating, setIsGenerating ] = useState( false );
 	const [ initialTemplate, setInitialTemplate ] = useState( 'Custom' );
+	const [ showPrompt, setShowPrompt ] = useState( false );
+	const [ promptVal, setPromptVal ] = useState( '' );
 
 	//handling the initial loading with preloaded data
 	useEffect( () => {
@@ -62,8 +64,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 				const data = await rsp.json();
 				if ( data && data.length > 0 ) {
 					setInitialTemplate( data[ 0 ].template_name );
-					const promptVal = handleGeneratePrompt( initialConf, data[ 0 ].prompt_template );
-					setAIGeneratorConfig( { ...useAIGenerator.getState().aiGeneratorConfig, promptVal } );
+					setAIGeneratorConfig( { ...useAIGenerator.getState().aiGeneratorConfig, promptTemplate: data[ 0 ].prompt_template } );
 				}
 			}
 		};
@@ -83,6 +84,10 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 			getInitialPromptTemplate();
 		}
 	}, [] );
+
+	useEffect( () => {
+		setPromptVal( handleGeneratePrompt( aiGeneratorConfig, aiGeneratorConfig.promptTemplate ) );
+	}, [ aiGeneratorConfig.keywordsList, aiGeneratorConfig.title, aiGeneratorConfig.promptTemplate ] );
 
 	// handling keyword input, trying to get suggestions
 	const handleChangeKeywordInput = ( val ) => {
@@ -137,8 +142,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 	// handling prompt template selection
 	const handlePromptTemplateSelection = ( selectedTemplate ) => {
 		if ( selectedTemplate ) {
-			const prompt = handleGeneratePrompt( aiGeneratorConfig, selectedTemplate.prompt_template );
-			setAIGeneratorConfig( { ...aiGeneratorConfig, promptVal: prompt } );
+			setAIGeneratorConfig( { ...aiGeneratorConfig, promptTemplate: selectedTemplate.prompt_template } );
 			setInitialTemplate( selectedTemplate.template_name );
 		}
 	};
@@ -155,7 +159,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 	const handleGenerateContent = async () => {
 		try {
 			setIsGenerating( true );
-			const processId = await generateContent( aiGeneratorConfig );
+			const processId = await generateContent( aiGeneratorConfig, promptVal );
 			const pollForResult = setInterval( async () => {
 				try {
 					const resultResponse = await getAugmentProcessResult( processId );
@@ -387,26 +391,41 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 			<div className="urlslab-content-gen-panel-control-item">
 				<TextAreaEditable
 					liveUpdate
-					val={ aiGeneratorConfig.promptVal }
+					val={ aiGeneratorConfig.promptTemplate }
 					defaultValue=""
-					label={ __( 'Prompt' ) }
-					rows={ 20 }
+					label={ __( 'Prompt Template' ) }
+					rows={ 15 }
 					allowResize
-					onChange={ ( value ) => {
-						const prompt = handleGeneratePrompt( aiGeneratorConfig, value );
-						setAIGeneratorConfig( { ...aiGeneratorConfig, promptVal: prompt } );
+					onChange={ ( promptTemplate ) => {
+						setAIGeneratorConfig( { ...aiGeneratorConfig, promptTemplate } );
 						if ( initialTemplate !== 'Custom' ) {
 							setInitialTemplate( 'Custom' );
 						}
 					} }
 					required
 					placeholder={ contextTypePromptPlaceholder[ aiGeneratorConfig.dataSource ] }
-					description={ __( 'Prompt to be used while generating content. supported variables are {keywords}, {primary_keyword}, {title}, {language}' ) } />
+					description={ __( 'Prompt Template to be used while generating content. supported variables are {keywords}, {primary_keyword}, {title}, {language}' ) } />
+			</div>
+			<div>
+				<Button onClick={ () => setShowPrompt( ! showPrompt ) }>{ showPrompt ? __( 'Close Prompt' ) : __( 'Show Prompt' ) }</Button>
+				{
+					initialTemplate === 'Custom' && aiGeneratorConfig.promptVal !== '' && (
+						<div>
+							<Button onClick={ handleSavePromptTemplate }>{ __( 'Save Template' ) }</Button>
+						</div>
+					)
+				}
 			</div>
 			{
-				initialTemplate === 'Custom' && aiGeneratorConfig.promptVal !== '' && (
-					<div>
-						<Button onClick={ handleSavePromptTemplate }>{ __( 'Save Template' ) }</Button>
+				showPrompt && (
+					<div className="urlslab-content-gen-panel-control-item">
+						<TextAreaEditable
+							liveUpdate
+							val={ promptVal }
+							label={ __( 'Prompt' ) }
+							rows={ 5 }
+							readonly
+							description={ __( 'Prompt to be used' ) } />
 					</div>
 				)
 			}
