@@ -75,7 +75,7 @@ export default function SearchReplaceTable( { slug } ) {
 			description={ __( 'Apply rule based on the login status of visitor or user' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, login_status: val } ) }>{ header.login_status }</SingleSelectMenu>,
 
-		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
+		labels: <TagsMenu hasActivator label={ __( 'All tags for this row:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
 	const columns = [

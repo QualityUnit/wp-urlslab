@@ -6,6 +6,7 @@ import { ReactTags } from 'react-tag-autocomplete';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import useClickOutside from '../hooks/useClickOutside';
+import useTablePanels from '../hooks/useTablePanels';
 import { postFetch } from '../api/fetching';
 import hexToHSL from '../lib/hexToHSL';
 
@@ -13,6 +14,7 @@ import Tag from './Tag';
 import '../assets/styles/elements/_TagsMenu.scss';
 import Tooltip from './Tooltip';
 import IconButton from './IconButton';
+import { ReactComponent as AddTagIcon } from '../assets/images/icons/icon-addTag.svg';
 
 export default function TagsMenu( { label, description, required, defaultValue: tags, slug, hasActivator, onChange } ) {
 	const { __ } = useI18n();
@@ -20,6 +22,7 @@ export default function TagsMenu( { label, description, required, defaultValue: 
 	const tagsMenuWrap = useRef();
 	const tagsMenu = useRef();
 	const [ tagsMenuActive, setTagsMenu ] = useState( false );
+	const setPanelOverflow = useTablePanels( ( state ) => state.setPanelOverflow );
 
 	const assignedTagsArray = tags?.replace( /^\|(.+)\|$/, '$1' ).split( '|' );
 
@@ -68,6 +71,7 @@ export default function TagsMenu( { label, description, required, defaultValue: 
 
 	const close = useCallback( () => {
 		setTagsMenu( false );
+		setPanelOverflow( false );
 		if ( onChange && selectedToString !== tags ) {
 			onChange( selectedToString );
 		}
@@ -77,8 +81,9 @@ export default function TagsMenu( { label, description, required, defaultValue: 
 
 	const openTagsMenu = useCallback( () => {
 		setTagsMenu( true );
+		setPanelOverflow( true );
 		tagsMenu.current.listBox.expand();
-	}, [] );
+	}, [ ] );
 
 	const onAdd = useCallback(
 
@@ -168,10 +173,10 @@ export default function TagsMenu( { label, description, required, defaultValue: 
 					hasActivator &&
 					<IconButton onClick={ openTagsMenu }
 						className="urlslab-TagsMenu-activator"
-						tooltip="Add new tag"
-						tooltipStyle={ { width: '10em' } }
+						tooltip="Add new tags (max. 5)"
+						tooltipStyle={ { width: '15em' } }
 					>
-						+
+						<AddTagIcon />
 					</IconButton>
 				}
 			</div>

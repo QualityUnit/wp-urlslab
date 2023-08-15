@@ -36,23 +36,9 @@
 
 	&-activator {
 		position: relative;
-		padding: 0 0.5em !important;
-		color: $white;
-		margin-left: 0.5em;
-		background-color: $grey-dark !important;
 
 		.active & {
 			display: none;
-		}
-
-		&::after {
-
-			@include triangle(1.625em, $grey-dark, "right");
-			position: absolute;
-			left: 85.5%;
-			top: -1px;
-			transform: scaleX(0.7);
-			content: "";
 		}
 	}
 

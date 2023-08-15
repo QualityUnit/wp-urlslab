@@ -14,6 +14,7 @@ function EditRowPanel( props ) {
 	const enableAddButton = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( );
 	const { options } = useTablePanels();
+	const panelOverflow = useTablePanels( ( state ) => state.panelOverflow );
 	const flattenedData = data?.pages?.flatMap( ( page ) => page ?? [] );
 	const { insertRow, saveEditedRow } = useChangeRow( { data: flattenedData, url: { filters: {}, sortBy: [] }, slug, paginationId } );
 
@@ -26,13 +27,17 @@ function EditRowPanel( props ) {
 		Object.entries( rowEditorCells ).map( ( [ cellId, cell ] ) => {
 			const cellProps = cell.props;
 
+			if ( cellProps.hideOnAdd && ! editorMode ) {
+				delete rowEditorCells[ cellId ];
+			}
+
 			if ( ! defaults[ cellId ] && cellProps.defaultValue ) {
 				defaults = { ...defaults, [ cellId ]: cellProps.defaultValue };
 			}
 			return false;
 		} );
 		return defaults;
-	}, [ rowEditorCells, rowToEdit ] );
+	}, [ editorMode, rowEditorCells, rowToEdit ] );
 
 	// Checking if all required fields are filled in rowToEdit object
 	if ( Object.keys( rowToEditWithDefaults ).length ) {
@@ -83,7 +88,7 @@ function EditRowPanel( props ) {
 					</button>
 					{ editorMode && options.length > 0 && <UnifiedPanelMenu /> }
 				</div>
-				<div className={ `mt-l urlslab-panel-content ${ noScrollbar ? 'no-scrollbar' : '' }` }>
+				<div className={ `mt-l urlslab-panel-content ${ ( noScrollbar || panelOverflow ) ? 'no-scrollbar' : '' }` }>
 					{ text && <p className="fs-m">{ text }</p> }
 					{
 						cellsFinal && Object.entries( cellsFinal ).map( ( [ cellId, cell ] ) => {
