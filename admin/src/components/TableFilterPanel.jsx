@@ -3,6 +3,7 @@ import { useMemo, useEffect, useState, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { stringOp, dateOp, numericOp, menuOp, langOp, booleanTypes } from '../lib/filterOperators';
+import { dateWithTimezone } from '../lib/helpers';
 import { useFilter } from '../hooks/filteringSorting';
 
 import Button from '../elements/Button';
@@ -162,8 +163,9 @@ export default function TableFilterPanel( { props, onEdit } ) {
 							timeFormat="HH:mm"
 							showTimeSelect
 							onChange={ ( val ) => {
-								setDate( new Date( val ) );
-								dispatch( { type: 'setFilterVal', val: val.toISOString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } );
+								const { origDate, correctedDate } = dateWithTimezone( val );
+								setDate( origDate );
+								dispatch( { type: 'setFilterVal', val: correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } );
 							} }
 						/>
 					</div>
@@ -183,8 +185,9 @@ export default function TableFilterPanel( { props, onEdit } ) {
 								endDate={ endDate }
 								maxDate={ endDate }
 								onChange={ ( val ) => {
-									setStartDate( new Date( val ) );
-									dispatch( { type: 'setFilterVal', val: { ...state.filterObj.filterVal, min: val.toISOString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } } );
+									const { origDate, correctedDate } = dateWithTimezone( val );
+									setStartDate( origDate );
+									dispatch( { type: 'setFilterVal', val: { ...state.filterObj.filterVal, min: correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } } );
 								} }
 							/>
 						</div>
@@ -194,15 +197,16 @@ export default function TableFilterPanel( { props, onEdit } ) {
 								className="urlslab-input"
 								selected={ endDate }
 								dateFormat="dd. MMMM yyyy, HH:mm"
-								timeFormat="HH:mm"
+								format="HH:mm"
 								selectsEnd
 								showTimeSelect
 								startDate={ startDate }
 								endDate={ endDate }
 								minDate={ startDate }
 								onChange={ ( val ) => {
-									setEndDate( new Date( val ) );
-									dispatch( { type: 'setFilterVal', val: { ...state.filterObj.filterVal, max: val.toISOString().replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } } );
+									const { origDate, correctedDate } = dateWithTimezone( val );
+									setEndDate( origDate );
+									dispatch( { type: 'setFilterVal', val: { ...state.filterObj.filterVal, max: correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } } );
 								} }
 							/>
 						</div>

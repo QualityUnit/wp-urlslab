@@ -24,7 +24,10 @@ export default function TextArea( { defaultValue, autoFocus, placeholder, liveUp
 	return (
 		<label className={ `urlslab-inputField-wrap ${ className || '' } ${ labelInline ? 'inline' : '' } ${ val ? 'has-value' : '' }` } style={ style }>
 			{ label
-				? <span className={ `urlslab-inputField-label flex flex-align-center mb-xs ${ required ? 'required' : '' }` }>{ label }</span>
+				? <span className={ `urlslab-inputField-label flex flex-align-center mb-xs ${ required ? 'required' : '' }` }>
+					{ label }
+					{ required && <Tooltip className="showOnHover">{ __( 'Required field' ) }</Tooltip> }
+				</span>
 				: null
 			}
 			<div className={ `urlslab-inputField ${ val ? 'valid' : '' }` }>
@@ -43,7 +46,6 @@ export default function TextArea( { defaultValue, autoFocus, placeholder, liveUp
 					disabled={ disabled ? 'disabled' : '' }
 					rows={ rows || 3 }
 				/>
-				{ required && <Tooltip className="showOnHover">{ __( 'Required field' ) }</Tooltip> }
 			</div>
 			{ description && <p className="urlslab-inputField-description">{ description }</p> }
 		</label>

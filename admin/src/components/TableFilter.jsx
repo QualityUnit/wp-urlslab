@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import { langName } from '../lib/helpers';
+import { dateWithTimezone, langName } from '../lib/helpers';
 import { operatorTypes } from '../lib/filterOperators';
 import useClickOutside from '../hooks/useClickOutside';
 
@@ -10,6 +10,7 @@ import { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.s
 
 import TableFilterPanel from './TableFilterPanel';
 import Tooltip from '../elements/Tooltip';
+import DateTimeFormat from '../elements/DateTimeFormat';
 
 export default function TableFilter( { props, onEdit, onRemove } ) {
 	const { __ } = useI18n();
@@ -31,6 +32,12 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 	return (
 		<div className="flex flex-align-center flex-wrap">
 			{ header && activefilters?.map( ( key, index ) => { // Iterating active filters
+				const isDate = filters[ key ]?.keyType === 'date' && true;
+				let filterValue = filters[ key ]?.val;
+				if ( isDate ) {
+					const { correctedDate } = dateWithTimezone( filterValue );
+					filterValue = new Date( correctedDate );
+				}
 				return ( <Button
 					key={ key }
 					active={ editFilter === key ? true : false }
@@ -54,7 +61,8 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 								{ ( filters[ key ]?.op !== 'BETWEEN' && key !== 'lang' ) &&
 									( filters[ key ]?.filterValMenu
 										? filters[ key ]?.filterValMenu[ filters[ key ]?.val ]
-										: filters[ key ]?.val )
+										: ( ! isDate && filters[ key ]?.val ) || ( isDate && <DateTimeFormat oneLine datetime={ filterValue } /> )
+									)
 								}
 							</span>”</span>
 						<Tooltip className="showOnHover">{ __( 'Edit filter' ) }</Tooltip>

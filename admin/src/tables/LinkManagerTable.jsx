@@ -18,13 +18,13 @@ import {
 	InputField,
 	IconButton,
 	RefreshIcon,
-	LangMenu,
 	RowActionButtons,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
+import { langName } from '../lib/helpers';
 
 export default function LinkManagerTable( { slug } ) {
 	const { __ } = useI18n();
@@ -223,7 +223,7 @@ export default function LinkManagerTable( { slug } ) {
 		columnHelper.accessor( 'url_lang', {
 			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => cell?.getValue() && <LangMenu defaultValue={ cell?.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => langName( cell?.getValue() ),
 			header: header.url_lang,
 			size: 70,
 		} ),
