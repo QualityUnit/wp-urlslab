@@ -4,10 +4,10 @@ import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css';
 import { DateRangePicker } from 'react-date-range';
 import Button from './Button';
-import { date, getSettings } from '@wordpress/date'; // theme css file
 import '../assets/styles/components/_DateRangePicker.scss';
 
 function DateRangeButton( { startDate, endDate, className, handleSelect } ) {
+	const { date, getSettings } = window.wp.date;
 	const dateToString = ( datetime ) => {
 		return date( getSettings().formats.date, datetime );
 	};

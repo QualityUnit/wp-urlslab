@@ -2,12 +2,9 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
 import { memo, useCallback, useState } from 'react';
-import { date, getSettings } from '@wordpress/date';
 import {
 	AreaChart,
-	LineChart,
 	Area,
-	Line,
 	XAxis,
 	YAxis,
 	CartesianGrid,
@@ -18,6 +15,7 @@ import {
 import DateRangeButton from '../../elements/DateRangeButton';
 
 const Chart = ( { data, header, useChangesChartDate } ) => {
+	const { date, getSettings } = window.wp.date;
 	const [ lineVisibility, setLineVisibility ] = useState( {} );
 
 	const chart = {

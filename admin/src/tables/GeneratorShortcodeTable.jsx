@@ -186,6 +186,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			size: 200,
 		} ),
 		columnHelper.accessor( 'model', {
+			tooltip: ( cell ) => <Tooltip>{ modelTypes[ cell.getValue() ] }</Tooltip>,
 			cell: ( cell ) => modelTypes[ cell.getValue() ],
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.model }</SortBy>,
 			size: 80,

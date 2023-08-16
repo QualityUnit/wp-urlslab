@@ -1,11 +1,12 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useMemo, useCallback, useState, useRef } from 'react';
+import { useMemo, useCallback, useState, useRef, useEffect } from 'react';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { ReactTags } from 'react-tag-autocomplete';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import useClickOutside from '../hooks/useClickOutside';
+import useTablePanels from '../hooks/useTablePanels';
 import { postFetch } from '../api/fetching';
 import hexToHSL from '../lib/hexToHSL';
 
@@ -13,6 +14,7 @@ import Tag from './Tag';
 import '../assets/styles/elements/_TagsMenu.scss';
 import Tooltip from './Tooltip';
 import IconButton from './IconButton';
+import { ReactComponent as AddTagIcon } from '../assets/images/icons/icon-addTag.svg';
 
 export default function TagsMenu( { label, description, required, defaultValue: tags, slug, hasActivator, onChange } ) {
 	const { __ } = useI18n();
@@ -20,6 +22,7 @@ export default function TagsMenu( { label, description, required, defaultValue: 
 	const tagsMenuWrap = useRef();
 	const tagsMenu = useRef();
 	const [ tagsMenuActive, setTagsMenu ] = useState( false );
+	const setPanelOverflow = useTablePanels( ( state ) => state.setPanelOverflow );
 
 	const assignedTagsArray = tags?.replace( /^\|(.+)\|$/, '$1' ).split( '|' );
 
@@ -68,17 +71,28 @@ export default function TagsMenu( { label, description, required, defaultValue: 
 
 	const close = useCallback( () => {
 		setTagsMenu( false );
+		if ( hasActivator ) {
+			setPanelOverflow( false );
+		}
 		if ( onChange && selectedToString !== tags ) {
 			onChange( selectedToString );
 		}
-	}, [ onChange, selectedToString, tags ] );
+	}, [ onChange, hasActivator, setPanelOverflow, selectedToString, tags ] );
 
 	useClickOutside( tagsMenuWrap, close );
+
+	useEffect( () => {
+		window.addEventListener( 'keyup', ( event ) => {
+			if ( event.key === 'Escape' ) {
+				close();
+			}
+		} );
+	}, [ close ] );
 
 	const openTagsMenu = useCallback( () => {
 		setTagsMenu( true );
 		tagsMenu.current.listBox.expand();
-	}, [] );
+	}, [ ] );
 
 	const onAdd = useCallback(
 
@@ -112,7 +126,7 @@ export default function TagsMenu( { label, description, required, defaultValue: 
 			<>
 				<input className={ classNames.input } style={ { width: inputWidth } } { ...inputProps } />
 				{ selected?.length === 5 &&
-				<div className="fs-s c-saturated-red bg-desaturated-red p-m">{ __( '5 tags is max limit' ) }</div>
+					<div className="fs-s c-saturated-red bg-desaturated-red p-m">{ __( '5 tags is max limit' ) }</div>
 				}
 			</>
 		);
@@ -120,8 +134,8 @@ export default function TagsMenu( { label, description, required, defaultValue: 
 
 	function CustomTag( { classNames, tag, ...tagProps } ) {
 		const { label_id, className, bgcolor } = tag;
-		return <Tag fullSize={ hasActivator || tagsMenuActive } shape={ ! hasActivator && ! tagsMenuActive && 'circle' } onDelete={ tagsMenuActive ? () => onDelete( tag ) : false } key={ label_id } className={ `${ classNames.tag } ${ className }` } { ...tagProps } style={ { backgroundColor: bgcolor, cursor: tagsMenuActive ? 'default' : 'pointer' } }>
-			{ hasActivator || tagsMenuActive ? tag.label : tag.label.charAt( 0 ) }
+		return <Tag fullSize={ hasActivator || tagsMenuActive || ( ! hasActivator && ! tagsMenuActive && selected.length === 1 ) } shape={ ! hasActivator && ! tagsMenuActive && ( selected.length > 1 ) && 'circle' } onDelete={ tagsMenuActive ? () => onDelete( tag ) : false } key={ label_id } className={ `${ classNames.tag } ${ className }` } { ...tagProps } style={ { backgroundColor: bgcolor, cursor: tagsMenuActive ? 'default' : 'pointer' } }>
+			{ hasActivator || tagsMenuActive || ( ! hasActivator && ! tagsMenuActive && selected.length === 1 ) ? tag.label : tag.label.charAt( 0 ) }
 		</Tag>;
 	}
 
@@ -166,12 +180,14 @@ export default function TagsMenu( { label, description, required, defaultValue: 
 				/>
 				{
 					hasActivator &&
-					<IconButton onClick={ openTagsMenu }
-						className="urlslab-TagsMenu-activator"
-						tooltip="Add new tag"
-						tooltipStyle={ { width: '10em' } }
+					<IconButton onClick={ () => {
+						openTagsMenu(); setPanelOverflow( true );
+					} }
+					className="urlslab-TagsMenu-activator"
+					tooltip="Add new tags (max. 5)"
+					tooltipStyle={ { width: '15em' } }
 					>
-						+
+						<AddTagIcon />
 					</IconButton>
 				}
 			</div>

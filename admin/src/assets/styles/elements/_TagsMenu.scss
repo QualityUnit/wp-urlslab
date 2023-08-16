@@ -36,23 +36,9 @@
 
 	&-activator {
 		position: relative;
-		padding: 0 0.5em !important;
-		color: $white;
-		margin-left: 0.5em;
-		background-color: $grey-dark !important;
 
 		.active & {
 			display: none;
-		}
-
-		&::after {
-
-			@include triangle(1.625em, $grey-dark, "right");
-			position: absolute;
-			left: 85.5%;
-			top: -1px;
-			transform: scaleX(0.7);
-			content: "";
 		}
 	}
 
@@ -88,7 +74,7 @@
 				margin: 1.25em 1em 0.5em;
 				font-weight: $font-weight-normal;
 				line-height: 1;
-				padding: 0.35em 0.5em 0.35em 3.5em;
+				padding: 0.35em 0.5em 0.35em 1em;
 				border-radius: 1.5em;
 				border: 1px solid transparent;
 				background-color: $grey-light;
@@ -149,6 +135,10 @@
 		align-items: flex-start;
 		cursor: default;
 
+		td & {
+			right: 100%;
+		}
+
 		.react-tags {
 
 			.urlslab-panel & {
@@ -167,6 +157,10 @@
 				background-color: $white;
 				filter: $box-shadow-small;
 
+				td & {
+					min-width: none;
+				}
+
 				.urlslab-panel & {
 					width: 100% !important;
 					border-radius: $br-6;
@@ -176,6 +170,10 @@
 
 				@media (min-width: $breakpoint-desktop) {
 					width: 33em;
+
+					td & {
+						width: 100%;
+					}
 				}
 
 				&-item {
@@ -184,5 +182,4 @@
 			}
 		}
 	}
-
 }

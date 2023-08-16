@@ -87,8 +87,7 @@ export default function KeywordsTable( { slug } ) {
 									} }
 									description={ __( 'Destination URL for link' ) } />,
 
-		kwType: <SingleSelectMenu defaultAccept autoClose items={ keywordTypes } name="kwType" defaultValue="M"
-								description={ __( 'Link type is used in case you decide to replace in HTML just some types of links (see Settings)' ) }
+		kwType: <SingleSelectMenu defaultAccept hideOnAdd autoClose items={ keywordTypes } name="kwType" defaultValue="M" description={ __( 'Link type is used in case you decide to replace in HTML just some types of links (see Settings)' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, kwType: val } ) }>{ header.kwType }</SingleSelectMenu>,
 
 		kw_priority: <InputField liveUpdate type="number" defaultValue="10" min="0" max="100" label={ header.kw_priority }
@@ -103,7 +102,7 @@ export default function KeywordsTable( { slug } ) {
 								description={ __( 'Optionaly you can allow to place keyword just on some URLs matching regular expression. Use value.* to match all URLs' ) }
 			label={ header.urlFilter } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, urlFilter: val } ) } />,
 
-		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
+		labels: <TagsMenu hasActivator label={ __( 'All tags for this row:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
 	const columns = [
