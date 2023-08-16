@@ -162,8 +162,6 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 
 		foreach ( $rows as $row ) {
 			$row->domain_id   = (int) $row->domain_id;
-			$row->avg_pos     = round( (float) $row->avg_pos, 1 );
-			$row->top_10_cnt  = (int) $row->top_10_cnt;
 			$row->top_100_cnt = (int) $row->top_100_cnt;
 			try {
 				$url              = new Urlslab_Url( $row->domain_name, true );
@@ -197,18 +195,12 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 
 		if ( 0 === $positions_count ) {
 			$sql->add_select_column( '0', false, 'top_100_cnt' );
-			$sql->add_select_column( '0', false, 'top_10_cnt' );
-			$sql->add_select_column( '0', false, 'avg_pos' );
 			$sql->add_from( 'LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' p ON d.domain_id = p.domain_id' );
 		} else if ( 1000 < $positions_count ) {
-			$sql->add_select_column( 'SUM(CASE WHEN position <= 100 THEN 1 ELSE 0 END)', false, 'top_100_cnt' );
-			$sql->add_select_column( 'SUM(CASE WHEN position <= 10 THEN 1 ELSE 0 END)', false, 'top_10_cnt' );
-			$sql->add_select_column( 'AVG(position)', false, 'avg_pos' );
+			$sql->add_select_column( 'COUNT(*)', false, 'top_100_cnt' );
 			$sql->add_from( 'INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' p ON d.domain_id = p.domain_id' );
 		} else {
-			$sql->add_select_column( 'SUM(CASE WHEN position <= 100 THEN 1 ELSE 0 END)', false, 'top_100_cnt' );
-			$sql->add_select_column( 'SUM(CASE WHEN position <= 10 THEN 1 ELSE 0 END)', false, 'top_10_cnt' );
-			$sql->add_select_column( 'AVG(position)', false, 'avg_pos' );
+			$sql->add_select_column( 'COUNT(*)', false, 'top_100_cnt' );
 			$sql->add_from( 'LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' p ON d.domain_id = p.domain_id' );
 		}
 
@@ -219,8 +211,6 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 			$this->prepare_columns(
 				array(
 					'top_100_cnt' => '%d',
-					'top_10_cnt'  => '%d',
-					'avg_pos'     => '%d',
 				)
 			)
 		);
