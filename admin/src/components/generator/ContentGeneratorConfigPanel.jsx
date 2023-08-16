@@ -26,6 +26,7 @@ import { setNotification } from '../../hooks/useNotifications';
 import EditRowPanel from '../EditRowPanel';
 import TextArea from '../../elements/Textarea';
 import useTablePanels from '../../hooks/useTablePanels';
+import usePromptTemplateQuery from '../../queries/usePromptTemplateQuery';
 
 function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } ) {
 	const { __ } = useI18n();
@@ -34,6 +35,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
+	const { data: allPromptTemplates, isSuccess: promptTemplatesSuccess } = usePromptTemplateQuery();
 	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
 	const [ typingTimeout, setTypingTimeout ] = useState( 0 );
 	const [ internalState, setInternalState ] = useState( {
@@ -174,8 +176,12 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 	// handling prompt template selection
 	const handlePromptTemplateSelection = ( selectedTemplate ) => {
 		if ( selectedTemplate ) {
-			setAIGeneratorConfig( { ...aiGeneratorConfig, promptTemplate: selectedTemplate.prompt_template } );
-			setInternalState( { ...internalState, templateName: selectedTemplate.template_name } );
+			if ( selectedTemplate === 'Custom' ) {
+				setInternalState( { ...internalState, templateName: 'Custom' } );
+				return;
+			}
+			setAIGeneratorConfig( { ...aiGeneratorConfig, promptTemplate: allPromptTemplates[ selectedTemplate ].prompt_template } );
+			setInternalState( { ...internalState, templateName: allPromptTemplates[ selectedTemplate ].template_name } );
 		}
 	};
 
@@ -219,6 +225,10 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 			setInternalState( { ...internalState, isGenerating: false } );
 		}
 	};
+
+	if ( ! promptTemplatesSuccess ) {
+		return <Loader />;
+	}
 
 	return (
 		<div>
@@ -391,31 +401,28 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 						autoClose
 						defaultValue={ aiGeneratorConfig.lang }
 						onChange={ ( val ) => setAIGeneratorConfig( { ...aiGeneratorConfig, lang: val } ) }
-					/>
+					>{ __( 'Language' ) }</SingleSelectMenu>
 				</div>
 			</div>
 
 			<div className="urlslab-content-gen-panel-control-item">
 				<div className="urlslab-content-gen-panel-control-item-selector">
-					<SuggestInputField
-						defaultValue={ internalState.templateName }
-						key={ internalState.templateName }
-						liveUpdate
-						onSelect={ handlePromptTemplateSelection }
-						required
-						showInputAsSuggestion={ false }
-						description={ __( 'Prompt Template' ) }
-						postFetchRequest={ async ( val ) => {
-							return await getPromptTemplates( [
-								{
-									col: 'template_name',
-									op: 'LIKE',
-									val: val.input,
-								},
-							] );
-						} }
-						convertComplexSuggestion={ ( suggestion ) => suggestion.template_name }
-					/>
+					{
+						promptTemplatesSuccess && (
+							<SingleSelectMenu
+								autoClose
+								defaultValue={ internalState.templateName }
+								key={ internalState.templateName }
+								items={ { ...Object.keys( allPromptTemplates ).reduce( ( acc, key ) => {
+									acc[ key ] = allPromptTemplates[ key ].template_name;
+									return acc;
+								}, {} ), Custom: 'Custom' } }
+								liveUpdate
+								onChange={ handlePromptTemplateSelection }
+								showInputAsSuggestion={ false }
+							>{ __( 'Choose Prompt Template' ) }</SingleSelectMenu>
+						)
+					}
 				</div>
 			</div>
 
@@ -438,7 +445,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 					description={ __( 'Prompt Template to be used while generating content. supported variables are {keywords}, {primary_keyword}, {title}, {language}' ) } />
 			</div>
 			<div className="urlslab-content-gen-panel-control-multi-btn">
-				<Button onClick={ () => setInternalState( { ...internalState, showPrompt: ! internalState.showPrompt } ) }>{ internalState.showPrompt ? __( 'Close Prompt' ) : __( 'Show Prompt' ) }</Button>
+				<Button onClick={ () => setInternalState( { ...internalState, showPrompt: ! internalState.showPrompt } ) }>{ internalState.showPrompt ? __( 'Hide Prompt' ) : __( 'Show Prompt' ) }</Button>
 				{
 					internalState.templateName === 'Custom' && promptVal !== '' && (
 						<div>
