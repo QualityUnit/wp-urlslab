@@ -50,6 +50,7 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 	const templateTypes = {
 		G: __( 'For General Tasks' ),
 		S: __( 'For Summarization Tasks' ),
+		B: __( 'For Blog Generation' ),
 		A: __( 'For Question Answering Tasks' ),
 	};
 
@@ -68,7 +69,7 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 				onChange={ ( val ) => setRowToEdit( { ...rowToEdit, template_name: val } ) } required />
 		</div>,
 
-		prompt_template: <TextArea liveUpdate
+		prompt_template: <TextArea liveUpdate allowResize rows={ 10 }
 			description={ ( __( 'Prompt Template to use for Generating Text' ) ) }
 			defaultValue="" label={ header.prompt_template } onChange={ ( val ) => {
 				setRowToEdit( { ...rowToEdit, prompt_template: val } );

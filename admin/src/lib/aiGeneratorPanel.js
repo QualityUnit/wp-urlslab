@@ -9,16 +9,20 @@ import { getQueryClusterKeywords, getTopUrls as getTopQueryUrls } from './serpQu
 const handleGeneratePrompt = ( aiGeneratorConfig, val ) => {
 	let finalPrompt = val;
 	const selectedKeywords = getSelectedKeywords( aiGeneratorConfig );
-	if ( val.includes( '{keyword}' ) && selectedKeywords.length > 0 ) {
-		finalPrompt = val.replace( '{keyword}', selectedKeywords.join( ', ' ) );
+	if ( val.includes( '{keywords}' ) && selectedKeywords.length > 0 ) {
+		finalPrompt = val.replace( '{keywords}', selectedKeywords.join( ', ' ) );
 	}
 
 	if ( val.includes( '{primary_keyword}' ) && selectedKeywords.length > 0 ) {
-		finalPrompt = val.replace( '{primary_keyword}', selectedKeywords[ 0 ] );
+		finalPrompt = finalPrompt.replace( '{primary_keyword}', selectedKeywords[ 0 ] );
 	}
 
-	if ( val.includes( '{language}' ) && aiGeneratorConfig.language ) {
-		finalPrompt = val.replace( '{language}', aiGeneratorConfig.language );
+	if ( val.includes( '{language}' ) ) {
+		finalPrompt = finalPrompt.replace( '{language}', aiGeneratorConfig.lang );
+	}
+
+	if ( val.includes( '{title}' ) ) {
+		finalPrompt = finalPrompt.replace( '{title}', aiGeneratorConfig.title );
 	}
 
 	return finalPrompt;
@@ -49,29 +53,29 @@ const getQueryCluster = async ( val ) => {
 };
 
 // handling generate content
-const generateContent = async ( aiGeneratorConfig ) => {
+const generateContent = async ( aiGeneratorConfig, promptVal ) => {
 	try {
 		/// getting he Process ID for Generation
 		let processIdResponse;
 
 		if ( aiGeneratorConfig.dataSource === 'NO_CONTEXT' ) {
-			processIdResponse = await augmentWithoutContext( aiGeneratorConfig.promptVal, aiGeneratorConfig.modelName );
+			processIdResponse = await augmentWithoutContext( promptVal, aiGeneratorConfig.modelName );
 		}
 
 		if ( aiGeneratorConfig.dataSource === 'DOMAIN_CONTEXT' ) {
-			processIdResponse = await augmentWithDomainContext( aiGeneratorConfig.domain, aiGeneratorConfig.promptVal, aiGeneratorConfig.modelName, aiGeneratorConfig.semanticContext );
+			processIdResponse = await augmentWithDomainContext( aiGeneratorConfig.domain, promptVal, aiGeneratorConfig.modelName, aiGeneratorConfig.semanticContext );
 		}
 
 		if ( aiGeneratorConfig.dataSource === 'SERP_CONTEXT' ) {
 			processIdResponse = await augmentWithURLContext(
 				[ ...aiGeneratorConfig.serpUrlsList.filter( ( url ) => url.checked ).map( ( url ) => url.url_name ) ],
-				aiGeneratorConfig.promptVal,
+				promptVal,
 				aiGeneratorConfig.modelName
 			);
 		}
 
 		if ( aiGeneratorConfig.dataSource === 'URL_CONTEXT' ) {
-			processIdResponse = await augmentWithURLContext( [ ...aiGeneratorConfig.urlsList ], aiGeneratorConfig.promptVal, aiGeneratorConfig.modelName );
+			processIdResponse = await augmentWithURLContext( [ ...aiGeneratorConfig.urlsList ], promptVal, aiGeneratorConfig.modelName );
 		}
 
 		if ( processIdResponse.ok ) {

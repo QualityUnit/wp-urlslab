@@ -1,7 +1,7 @@
 import { useI18n } from '@wordpress/react-i18n';
 import { memo, useRef, useState } from 'react';
 import '../../assets/styles/components/_ContentGeneratorPanel.scss';
-import { InputField, SingleSelectMenu } from '../../lib/tableImports';
+import { SingleSelectMenu } from '../../lib/tableImports';
 import Loader from '../Loader';
 import Button from '../../elements/Button';
 import {
@@ -11,6 +11,7 @@ import {
 import { Editor as TinyMCE } from '@tinymce/tinymce-react/lib/cjs/main/ts/components/Editor';
 import { useQuery } from '@tanstack/react-query';
 import ContentGeneratorConfigPanel from './ContentGeneratorConfigPanel';
+import useAIGenerator from '../../hooks/useAIGenerator';
 
 function ContentGeneratorPanel() {
 	const { __ } = useI18n();
@@ -19,7 +20,6 @@ function ContentGeneratorPanel() {
 	const [ editorLoading, setEditorLoading ] = useState( true );
 	const [ postType, setPostType ] = useState( 'post' );
 	const [ generatedPostLink, setGeneratedPostLink ] = useState( '' );
-	const [ title, setTitle ] = useState( '' );
 
 	const postTypesData = useQuery( {
 		queryKey: [ 'post_types' ],
@@ -34,7 +34,7 @@ function ContentGeneratorPanel() {
 	} );
 
 	const handleCreatePost = async () => {
-		const createPostData = await createPost( editorVal, title, postType );
+		const createPostData = await createPost( editorVal, useAIGenerator.getState().aiGeneratorConfig.title, postType );
 		const rsp = await createPostData.json();
 		setGeneratedPostLink( rsp.edit_post_link );
 	};
@@ -43,16 +43,6 @@ function ContentGeneratorPanel() {
 		<div className="urlslab-content-gen-panel">
 			<div className="urlslab-content-gen-panel-control">
 				<h2>Content Generator</h2>
-				<div className="urlslab-content-gen-panel-control-item">
-					<InputField
-						liveUpdate
-						defaultValue=""
-						description={ __( 'Page Title' ) }
-						label={ __( 'Title' ) }
-						onChange={ ( val ) => setTitle( val ) }
-						required
-					/>
-				</div>
 				<ContentGeneratorConfigPanel
 					onGenerateComplete={ ( val ) => setEditorVal( val ) }
 				/>

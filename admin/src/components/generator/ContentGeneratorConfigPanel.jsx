@@ -22,15 +22,49 @@ import {
 } from '../../lib/aiGeneratorPanel';
 import { getAugmentProcessResult, getPromptTemplates } from '../../api/generatorApi';
 import useAIModelsQuery from '../../queries/useAIModelsQuery';
+import { setNotification } from '../../hooks/useNotifications';
+import EditRowPanel from '../EditRowPanel';
+import TextArea from '../../elements/Textarea';
+import useTablePanels from '../../hooks/useTablePanels';
 
 function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } ) {
 	const { __ } = useI18n();
+
+	const { setRowToEdit } = useTablePanels();
+	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+
 	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
 	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
 	const [ typingTimeout, setTypingTimeout ] = useState( 0 );
-	const [ isGenerating, setIsGenerating ] = useState( false );
-	const [ errorGeneration, setErrorGeneration ] = useState( '' );
-	const [ initialTemplate, setInitialTemplate ] = useState( '' );
+	const [ internalState, setInternalState ] = useState( {
+		isGenerating: false,
+		templateName: 'Custom',
+		showPrompt: false,
+		addPromptTemplate: false,
+		promptVal: '',
+	} );
+	const [ promptVal, setPromptVal ] = useState( '' );
+
+	const rowEditorCells = {
+		template_name: <div>
+			<InputField liveUpdate defaultValue={ rowToEdit.template_name } label={ __( 'Template Name' ) }
+				description={ __( 'Up to 255 characters.' ) }
+				onChange={ ( val ) => setRowToEdit( { ...rowToEdit, template_name: val } ) } required />
+		</div>,
+
+		prompt_template: <TextArea liveUpdate allowResize rows={ 10 } description={ ( __( 'Prompt Template to use for Generating Text' ) ) } defaultValue={ aiGeneratorConfig.promptTemplate } label={ __( 'Prompt Template' ) } onChange={ ( val ) => {
+			setRowToEdit( { ...rowToEdit, prompt_template: val } );
+		} } />,
+
+		model_name: <SingleSelectMenu autoClose defaultAccept description={ __( 'AI Model to use with the template' ) } items={ aiModelsSuccess ? aiModels : {} } defaultValue={ aiGeneratorConfig.modelName } name="model" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, model_name: val } ) }>{ __( 'Model' ) }</SingleSelectMenu>,
+
+		prompt_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'The Type of task that the prompt can be used in' ) } items={ {
+			G: __( 'For General Tasks' ),
+			S: __( 'For Summarization Tasks' ),
+			B: __( 'For Blog Generation' ),
+			A: __( 'For Question Answering Tasks' ),
+		} } defaultValue="G" name="prompt_type" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, prompt_type: val } ) }>{ __( 'Prompt Type ' ) }</SingleSelectMenu>,
+	};
 
 	//handling the initial loading with preloaded data
 	useEffect( () => {
@@ -41,6 +75,12 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 		const fetchTopUrls = async () => {
 			const topUrls = await getTopUrls( initialConf );
 			setAIGeneratorConfig( { ...useAIGenerator.getState().aiGeneratorConfig, serpUrlsList: topUrls } );
+		};
+
+		const fetchQueryCluster = async () => {
+			const primaryKeyword = aiGeneratorConfig.keywordsList[ 0 ].q;
+			const queryCluster = await getQueryCluster( primaryKeyword );
+			setAIGeneratorConfig( { ...aiGeneratorConfig, keywordsList: [ { q: primaryKeyword, checked: true }, ...queryCluster ] } );
 		};
 
 		const getInitialPromptTemplate = async () => {
@@ -55,9 +95,8 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 			if ( rsp.ok ) {
 				const data = await rsp.json();
 				if ( data && data.length > 0 ) {
-					setInitialTemplate( data[ 0 ].template_name );
-					const promptVal = handleGeneratePrompt( initialConf, data[ 0 ].prompt_template );
-					setAIGeneratorConfig( { ...useAIGenerator.getState().aiGeneratorConfig, promptVal } );
+					setInternalState( { ...internalState, templateName: data[ 0 ].template_name } );
+					setAIGeneratorConfig( { ...useAIGenerator.getState().aiGeneratorConfig, promptTemplate: data[ 0 ].prompt_template } );
 				}
 			}
 		};
@@ -69,13 +108,26 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 			fetchTopUrls();
 		}
 
-		if ( initialConf.initialPromptType && initialConf !== 'G' ) {
+		if ( initialConf.keywordsList.length > 0 && initialConf.keywordsList[ 0 ].q !== '' ) {
+			fetchQueryCluster();
+		}
+
+		if ( initialConf.initialPromptType && initialConf.initialPromptType !== 'G' ) {
 			getInitialPromptTemplate();
 		}
 	}, [] );
 
+	useEffect( () => {
+		setPromptVal( handleGeneratePrompt( aiGeneratorConfig, aiGeneratorConfig.promptTemplate ) );
+	}, [ aiGeneratorConfig.keywordsList, aiGeneratorConfig.title, aiGeneratorConfig.promptTemplate ] );
+
 	// handling keyword input, trying to get suggestions
 	const handleChangeKeywordInput = ( val ) => {
+		if ( val === '' ) {
+			setAIGeneratorConfig( { ...aiGeneratorConfig, keywordsList: [] } );
+			return;
+		}
+
 		if ( typingTimeout ) {
 			clearTimeout( typingTimeout );
 		}
@@ -122,15 +174,23 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 	// handling prompt template selection
 	const handlePromptTemplateSelection = ( selectedTemplate ) => {
 		if ( selectedTemplate ) {
-			const prompt = handleGeneratePrompt( aiGeneratorConfig, selectedTemplate.prompt_template );
-			setAIGeneratorConfig( { ...aiGeneratorConfig, promptVal: prompt } );
+			setAIGeneratorConfig( { ...aiGeneratorConfig, promptTemplate: selectedTemplate.prompt_template } );
+			setInternalState( { ...internalState, templateName: selectedTemplate.template_name } );
 		}
+	};
+
+	// handling save prompt template
+	const handleSavePromptTemplate = async () => {
+		if ( ! promptVal ) {
+			return;
+		}
+		setInternalState( { ...internalState, addPromptTemplate: true } );
 	};
 
 	const handleGenerateContent = async () => {
 		try {
-			setIsGenerating( true );
-			const processId = await generateContent( aiGeneratorConfig );
+			setInternalState( { ...internalState, isGenerating: true } );
+			const processId = await generateContent( aiGeneratorConfig, promptVal );
 			const pollForResult = setInterval( async () => {
 				try {
 					const resultResponse = await getAugmentProcessResult( processId );
@@ -139,19 +199,24 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 						if ( generationRes.status === 'SUCCESS' ) {
 							clearInterval( pollForResult );
 							onGenerateComplete( generationRes.response[ 0 ] );
-							setIsGenerating( false );
+							setInternalState( { ...internalState, isGenerating: false } );
 						}
 					} else {
+						if ( resultResponse.status === 400 ) {
+							const generationRes = await resultResponse.json();
+							throw new Error( generationRes.message );
+						}
 						throw new Error( 'Failed to generate result. try again...' );
 					}
 				} catch ( error ) {
 					clearInterval( pollForResult );
-					throw error;
+					setNotification( 1, { message: error.message, status: 'error' } );
+					setInternalState( { ...internalState, isGenerating: false } );
 				}
 			}, 2000 );
 		} catch ( e ) {
-			setErrorGeneration( e.message );
-			setIsGenerating( false );
+			setNotification( 1, { message: e.message, status: 'error' } );
+			setInternalState( { ...internalState, isGenerating: false } );
 		}
 	};
 
@@ -167,6 +232,21 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 							description={ __( 'Input Value' ) }
 							label={ __( 'Input Value to use in prompt' ) }
 							onChange={ ( val ) => setAIGeneratorConfig( { ...aiGeneratorConfig, inputValue: val } ) }
+							required
+						/>
+					</div>
+				)
+			}
+
+			{
+				aiGeneratorConfig.mode === 'CREATE_POST' && (
+					<div className="urlslab-content-gen-panel-control-item">
+						<InputField
+							liveUpdate
+							defaultValue=""
+							description={ __( 'Page Title' ) }
+							label={ __( 'Title' ) }
+							onChange={ ( title ) => setAIGeneratorConfig( { ...aiGeneratorConfig, title } ) }
 							required
 						/>
 					</div>
@@ -318,8 +398,8 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 			<div className="urlslab-content-gen-panel-control-item">
 				<div className="urlslab-content-gen-panel-control-item-selector">
 					<SuggestInputField
-						defaultValue={ initialTemplate }
-						key={ initialTemplate }
+						defaultValue={ internalState.templateName }
+						key={ internalState.templateName }
 						liveUpdate
 						onSelect={ handlePromptTemplateSelection }
 						required
@@ -342,18 +422,44 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 			<div className="urlslab-content-gen-panel-control-item">
 				<TextAreaEditable
 					liveUpdate
-					val={ aiGeneratorConfig.promptVal }
+					val={ aiGeneratorConfig.promptTemplate }
 					defaultValue=""
-					label={ __( 'Prompt' ) }
-					rows={ 10 }
+					label={ __( 'Prompt Template' ) }
+					rows={ 15 }
 					allowResize
-					onChange={ ( value ) => {
-						setAIGeneratorConfig( { ...aiGeneratorConfig, promptVal: value } );
+					onChange={ ( promptTemplate ) => {
+						setAIGeneratorConfig( { ...aiGeneratorConfig, promptTemplate } );
+						if ( internalState.templateName !== 'Custom' ) {
+							setInternalState( { ...internalState, templateName: 'Custom' } );
+						}
 					} }
 					required
 					placeholder={ contextTypePromptPlaceholder[ aiGeneratorConfig.dataSource ] }
-					description={ __( 'Prompt to be used while generating content' ) } />
+					description={ __( 'Prompt Template to be used while generating content. supported variables are {keywords}, {primary_keyword}, {title}, {language}' ) } />
 			</div>
+			<div className="urlslab-content-gen-panel-control-multi-btn">
+				<Button onClick={ () => setInternalState( { ...internalState, showPrompt: ! internalState.showPrompt } ) }>{ internalState.showPrompt ? __( 'Close Prompt' ) : __( 'Show Prompt' ) }</Button>
+				{
+					internalState.templateName === 'Custom' && promptVal !== '' && (
+						<div>
+							<Button onClick={ handleSavePromptTemplate }>{ __( 'Save Template' ) }</Button>
+						</div>
+					)
+				}
+			</div>
+			{
+				internalState.showPrompt && (
+					<div className="urlslab-content-gen-panel-control-item">
+						<TextAreaEditable
+							liveUpdate
+							val={ promptVal }
+							label={ __( 'Prompt' ) }
+							rows={ 5 }
+							readonly
+							description={ __( 'Prompt to be used' ) } />
+					</div>
+				)
+			}
 
 			<div className="urlslab-content-gen-panel-control-item">
 				<SingleSelectMenu
@@ -370,14 +476,17 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 			<div className="urlslab-content-gen-panel-control-item">
 				<Button active onClick={ handleGenerateContent }>
 					{
-						isGenerating ? ( <Loader /> ) : __( 'Generate Text' )
+						internalState.isGenerating ? ( <Loader /> ) : __( 'Generate Text' )
 					}
 				</Button>
 			</div>
 
-			<div className="urlslab-content-gen-panel-control-item">
-				{ errorGeneration && <div>{ errorGeneration }</div> }
-			</div>
+			{
+				internalState.addPromptTemplate && (
+					<EditRowPanel slug="prompt-template" rowEditorCells={ rowEditorCells } rowToEdit={ rowToEdit } title="Add Prompt Template" handlePanel={ () => setInternalState( { ...internalState, addPromptTemplate: false } ) }
+					/>
+				)
+			}
 
 		</div>
 	);

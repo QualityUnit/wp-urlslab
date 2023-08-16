@@ -9,7 +9,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import { createColumnHelper } from '@tanstack/react-table';
 import { SingleSelectMenu, Tooltip } from '../../lib/tableImports';
 import '../../assets/styles/components/_SerpPanel.scss';
-import Button from '../../elements/Button';
 import { Link } from 'react-router-dom';
 import { renameModule } from '../../lib/helpers';
 import useAIGenerator from '../../hooks/useAIGenerator';
@@ -126,7 +125,7 @@ function QueryDetailPanel() {
 
 	return (
 		<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
-			<div className="urlslab-panel urlslab-changesPanel customPadding">
+			<div className="urlslab-panel customPadding">
 				<div className="urlslab-panel-header">
 					<h3>{ query }</h3>
 					<button className="urlslab-panel-close" onClick={ handleClose }>

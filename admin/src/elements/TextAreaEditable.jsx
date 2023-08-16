@@ -31,6 +31,7 @@ export default function TextAreaEditable( { defaultValue, val, autoFocus, placeh
 				<textarea
 					className={ `urlslab-input input__text ${ allowResize ? 'allow-resize' : '' }` }
 					defaultValue={ val }
+					value={ val }
 					autoFocus={ autoFocus }
 					onChange={ ( event ) => {
 						onChange( event.target.value );

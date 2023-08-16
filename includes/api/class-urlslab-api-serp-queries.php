@@ -361,10 +361,10 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			foreach ( $results as $result ) {
 				$row    = new Urlslab_Serp_Url_Row( $result, true );
 				$ret = (object) $row->as_array();
-				$ret->position = (float) $ret->position;
-				$ret->clicks = (int) $ret->clicks;
-				$ret->impressions = (float) $ret->impressions;
-				$ret->ctr = (float) $ret->ctr;
+				$ret->position = (float) $result['position'];
+				$ret->clicks = (int) $result['clicks'];
+				$ret->impressions = (float) $result['impressions'];
+				$ret->ctr = (float) $result['ctr'];
 				$rows[] = $ret;
 			}
 

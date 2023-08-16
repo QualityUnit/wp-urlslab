@@ -39,6 +39,15 @@ class Urlslab_Api_Process extends Urlslab_Api_Base {
 		$api_client = new Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), $config );
 		try {
 			$rsp = $api_client->getProcessResult( $process_id );
+
+			if ( $rsp->getStatus() === 'ERROR' ) {
+				return new WP_REST_Response(
+					(object) array(
+						'message' => $rsp->getResponse()[0],
+					),
+					400
+				);
+			}       
 		} catch ( Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
 			return new WP_Error( 'urlslab_process_not_found', __( 'Process not found' ), array( 'status' => 404 ) );
 		}
