@@ -80,7 +80,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 		const fetchQueryCluster = async () => {
 			const primaryKeyword = aiGeneratorConfig.keywordsList[ 0 ].q;
 			const queryCluster = await getQueryCluster( primaryKeyword );
-			setAIGeneratorConfig( { ...aiGeneratorConfig, keywordsList: [ { q: primaryKeyword, checked: true }, ...queryCluster ] } );
+			setAIGeneratorConfig( { ...useAIGenerator.getState().aiGeneratorConfig, keywordsList: [ { q: primaryKeyword, checked: true }, ...queryCluster ] } );
 		};
 
 		const getInitialPromptTemplate = async () => {
