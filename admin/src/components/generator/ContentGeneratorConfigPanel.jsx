@@ -23,16 +23,45 @@ import {
 import { getAugmentProcessResult, getPromptTemplates } from '../../api/generatorApi';
 import useAIModelsQuery from '../../queries/useAIModelsQuery';
 import { setNotification } from '../../hooks/useNotifications';
+import EditRowPanel from '../EditRowPanel';
+import TextArea from '../../elements/Textarea';
+import useTablePanels from '../../hooks/useTablePanels';
 
 function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } ) {
 	const { __ } = useI18n();
+
+	const { setRowToEdit } = useTablePanels();
+	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+
 	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
 	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
 	const [ typingTimeout, setTypingTimeout ] = useState( 0 );
 	const [ isGenerating, setIsGenerating ] = useState( false );
 	const [ initialTemplate, setInitialTemplate ] = useState( 'Custom' );
 	const [ showPrompt, setShowPrompt ] = useState( false );
+	const [ addPromptTemplate, setAddPromptTemplate ] = useState( false );
 	const [ promptVal, setPromptVal ] = useState( '' );
+
+	const rowEditorCells = {
+		template_name: <div>
+			<InputField liveUpdate defaultValue={ rowToEdit.template_name } label={ __( 'Template Name' ) }
+				description={ __( 'Up to 255 characters.' ) }
+				onChange={ ( val ) => setRowToEdit( { ...rowToEdit, template_name: val } ) } required />
+		</div>,
+
+		prompt_template: <TextArea liveUpdate allowResize rows={ 10 } description={ ( __( 'Prompt Template to use for Generating Text' ) ) } defaultValue={ aiGeneratorConfig.promptTemplate } label={ __( 'Prompt Template' ) } onChange={ ( val ) => {
+			setRowToEdit( { ...rowToEdit, prompt_template: val } );
+		} } />,
+
+		model_name: <SingleSelectMenu autoClose defaultAccept description={ __( 'AI Model to use with the template' ) } items={ aiModelsSuccess ? aiModels : {} } defaultValue={ aiGeneratorConfig.modelName } name="model" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, model_name: val } ) }>{ __( 'Model' ) }</SingleSelectMenu>,
+
+		prompt_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'The Type of task that the prompt can be used in' ) } items={ {
+			G: __( 'For General Tasks' ),
+			S: __( 'For Summarization Tasks' ),
+			B: __( 'For Blog Generation' ),
+			A: __( 'For Question Answering Tasks' ),
+		} } defaultValue="G" name="prompt_type" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, prompt_type: val } ) }>{ __( 'Prompt Type ' ) }</SingleSelectMenu>,
+	};
 
 	//handling the initial loading with preloaded data
 	useEffect( () => {
@@ -149,11 +178,10 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 
 	// handling save prompt template
 	const handleSavePromptTemplate = async () => {
-		if ( ! aiGeneratorConfig.promptVal ) {
+		if ( ! promptVal ) {
 			return;
 		}
-
-		console.log( 'TODO- SAVING PROMPT TEMPLATE' );
+		setAddPromptTemplate( true );
 	};
 
 	const handleGenerateContent = async () => {
@@ -406,10 +434,10 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 					placeholder={ contextTypePromptPlaceholder[ aiGeneratorConfig.dataSource ] }
 					description={ __( 'Prompt Template to be used while generating content. supported variables are {keywords}, {primary_keyword}, {title}, {language}' ) } />
 			</div>
-			<div>
+			<div className="urlslab-content-gen-panel-control-multi-btn">
 				<Button onClick={ () => setShowPrompt( ! showPrompt ) }>{ showPrompt ? __( 'Close Prompt' ) : __( 'Show Prompt' ) }</Button>
 				{
-					initialTemplate === 'Custom' && aiGeneratorConfig.promptVal !== '' && (
+					initialTemplate === 'Custom' && promptVal !== '' && (
 						<div>
 							<Button onClick={ handleSavePromptTemplate }>{ __( 'Save Template' ) }</Button>
 						</div>
@@ -449,6 +477,13 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 					}
 				</Button>
 			</div>
+
+			{
+				addPromptTemplate && (
+					<EditRowPanel slug="prompt-template" rowEditorCells={ rowEditorCells } rowToEdit={ rowToEdit } title="Add Prompt Template" handlePanel={ () => setAddPromptTemplate( false ) }
+					/>
+				)
+			}
 
 		</div>
 	);

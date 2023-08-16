@@ -18,6 +18,17 @@
             margin-bottom: 1em;
         }
 
+        &-multi-btn {
+            display: flex;
+            align-items: center;
+            padding: 0.5em;
+            margin-top: 0.4em;
+
+            button {
+                margin-right: 0.5em;
+            }
+        }
+
         &-item {
             display: flex;
             justify-content: flex-start;
