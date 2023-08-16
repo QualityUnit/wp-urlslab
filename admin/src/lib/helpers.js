@@ -40,7 +40,7 @@ export const is12hourFormat = ( ) => {
 	const formattedTime = date( getSettings().formats.time, new Date() );
 	const timeRegex = /(am|pm)/g;
 
-	if ( timeRegex.test( formattedTime ) ) {
+	if ( timeRegex.test( formattedTime.toLowerCase() ) ) {
 		return true;
 	}
 
