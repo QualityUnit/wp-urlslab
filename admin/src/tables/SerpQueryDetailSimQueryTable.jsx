@@ -25,14 +25,14 @@ function SerpQueryDetailSimQueryTable( { query, slug } ) {
 
 	const headers = {
 		query: __( 'Query' ),
-		all_urls: __( 'All URLs' ),
+		comp_urls: __( 'Comp. URLs' ),
 		my_urls: __( 'My URLs' ),
 		my_avg_pos: __( 'Avg. Position' ),
 		my_avg_imp: __( 'Avg. Impressions' ),
 		my_avg_ctr: __( 'Avg. CTR' ),
 		my_avg_clk: __( 'Avg. Clicks' ),
 		my_min_pos: __( 'My Best Position' ),
-		other_pos: __( 'Comp. Avg. Position' ),
+		comp_avg_pos: __( 'Comp. Avg. Position' ),
 	};
 
 	const cols = [
@@ -42,10 +42,10 @@ function SerpQueryDetailSimQueryTable( { query, slug } ) {
 			header: () => headers.query,
 			size: 60,
 		} ),
-		columnHelper.accessor( 'all_urls', {
+		columnHelper.accessor( 'comp_urls', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => cell.getValue(),
-			header: () => headers.all_urls,
+			header: () => headers.comp_urls,
 			size: 60,
 		} ),
 		columnHelper.accessor( 'my_urls', {
@@ -79,9 +79,9 @@ function SerpQueryDetailSimQueryTable( { query, slug } ) {
 			header: () => headers.my_min_pos,
 			size: 20,
 		} ),
-		columnHelper.accessor( 'other_pos', {
+		columnHelper.accessor( 'comp_avg_pos', {
 			cell: ( cell ) => cell.getValue(),
-			header: () => headers.other_pos,
+			header: () => headers.comp_avg_pos,
 			size: 20,
 		} ),
 	];
