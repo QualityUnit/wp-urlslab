@@ -595,8 +595,8 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			return new WP_Error( 'invalid_request', 'urls should not be empty', array( 'status' => 400 ) );
 		}
 
-		if ( ! strpos( $prompt, '{context}' ) ) {
-			return new WP_Error( 'invalid_request', '{context} should be in prompt', array( 'status' => 400 ) );
+		if ( strpos( $prompt, '{context}' ) < 0 ) {
+			return new WP_Error( 'invalid_request', 'Add {context} to the prompt to pull data from source URLs', array( 'status' => 400 ) );
 		}
 
 		$config     = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) );
