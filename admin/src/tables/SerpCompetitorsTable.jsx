@@ -36,13 +36,12 @@ export default function SerpCompetitorsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
 
-
 	const header = {
 		domain_name: __( 'Domain' ),
-
-		cnt_top10_intersections: __( 'Intersections' ),
-		avg_top10_position: __( 'Avg position' ),
-		coverage: __( 'Coverage' ),
+		cnt_top10_intersections: __( 'Top10 Intersections' ),
+		cnt_top100_intersections: __( 'All Intersections' ),
+		avg_position: __( 'Avg Position' ),
+		coverage: __( 'Coverage (%)' ),
 	};
 
 	const columns = [
@@ -52,22 +51,28 @@ export default function SerpCompetitorsTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.domain_name }</SortBy>,
 			minSize: 200,
 		} ),
+		columnHelper.accessor( 'coverage', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.coverage }</SortBy>,
+			minSize: 50,
+		} ),
 		columnHelper.accessor( 'cnt_top10_intersections', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.cnt_top10_intersections }</SortBy>,
 			minSize: 50,
 		} ),
-		columnHelper.accessor( 'avg_top10_position', {
+		columnHelper.accessor( 'cnt_top100_intersections', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.avg_top10_position }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.cnt_top100_intersections }</SortBy>,
 			minSize: 50,
 		} ),
-		columnHelper.accessor( 'coverage', {
+		columnHelper.accessor( 'avg_position', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.coverage }</SortBy>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.avg_position }</SortBy>,
 			minSize: 50,
 		} ),
 	];
@@ -82,11 +87,13 @@ export default function SerpCompetitorsTable( { slug } ) {
 				table={ table }
 				onFilter={ ( filter ) => setFilters( filter ) }
 				noDelete
+				noInsert
+				noCount
+				noImport
 				options={ { header, data, slug, paginationId, title, url, id: 'domain_name' }
 				}
 			/>
 			<Table className="fadeInto"
-				title={ title }
 				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
