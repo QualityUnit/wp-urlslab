@@ -69,7 +69,7 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 				onChange={ ( val ) => setRowToEdit( { ...rowToEdit, template_name: val } ) } required />
 		</div>,
 
-		prompt_template: <TextArea liveUpdate allowResize rows={ 10 }
+		prompt_template: <TextArea liveUpdate allowResize rows={ 15 }
 			description={ ( __( 'Prompt Template to use for Generating Text' ) ) }
 			defaultValue="" label={ header.prompt_template } onChange={ ( val ) => {
 				setRowToEdit( { ...rowToEdit, prompt_template: val } );

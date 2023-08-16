@@ -93,6 +93,7 @@ class Urlslab_Admin {
 						'wp-api-fetch',
 						'wp-element',
 						'wp-i18n',
+						'wp-date',
 					),
 					null, // do not include versioning for react apps, is unnecessary and cause problems with lazy loaded components
 					true
