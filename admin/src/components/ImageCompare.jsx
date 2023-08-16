@@ -9,10 +9,10 @@ import { ReactComponent as SearchZoomOutIcon } from '../assets/images/icons/icon
 import useTablePanels from '../hooks/useTablePanels';
 import '../assets/styles/components/_ImageCompare.scss';
 import SingleSelectMenu from '../elements/SingleSelectMenu';
-import { date, getSettings } from '@wordpress/date';
 import Loader from './Loader';
 
 const ImageCompare = ( { selectedRows, allChanges } ) => {
+	const { date, getSettings } = window.wp.date;
 	const SCREENSHOT_WIDTH = 1366;
 	const dropdownItems = allChanges.reduce( ( acc, item ) => {
 		const dateFormatted = date( getSettings().formats.date, item.last_changed * 1000 );

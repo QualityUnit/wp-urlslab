@@ -115,10 +115,8 @@ function DetailsPanel( ) {
 						return <td className="pr-m pos-relative" key={ row[ name ] }>
 							<div className="limit">
 								{ name.includes( 'url' ) && <a href={ row[ name ] } target="_blank" rel="noreferrer">{ row[ name ] }</a> }
-								{ values
-									? values[ row[ name ] ]
-									: row[ name ]
-								}
+								{ values && values[ row[ name ] ] }
+								{ ! values && ! name.includes( 'url' ) && row[ name ] }
 								{
 									parseDate( row, name )
 								}

@@ -3,7 +3,7 @@ import { useMemo, useEffect, useState, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { stringOp, dateOp, numericOp, menuOp, langOp, booleanTypes } from '../lib/filterOperators';
-import { dateWithTimezone } from '../lib/helpers';
+import { dateWithTimezone, is12hourFormat } from '../lib/helpers';
 import { useFilter } from '../hooks/filteringSorting';
 
 import Button from '../elements/Button';
@@ -159,8 +159,8 @@ export default function TableFilterPanel( { props, onEdit } ) {
 						<DatePicker
 							className="urlslab-input"
 							selected={ date }
-							dateFormat="dd. MMMM yyyy, HH:mm"
-							timeFormat="HH:mm"
+							dateFormat={ `dd. MMMM yyyy, ${ is12hourFormat() ? 'hh:mm a' : 'HH:mm' }` }
+							timeFormat={ `${ is12hourFormat() ? 'hh:mm a' : 'HH:mm' }` }
 							showTimeSelect
 							onChange={ ( val ) => {
 								const { origDate, correctedDate } = dateWithTimezone( val );

@@ -13,7 +13,7 @@
 	max-width: 30em;
 	color: $white;
 	transform: translateZ(0);
-	word-break: break-word;
+	word-break: normal;
 	hyphens: auto;
 
 	&.fixedBottom {
@@ -95,14 +95,15 @@
 	table td & {
 		display: none;
 		top: 85%;
-	}
-
-	.urlslab-table-container > & {
-		left: calc(50% + 160px);
+		word-break: break-word;
 	}
 
 	table th & {
 		width: 12em !important;
+	}
+
+	.urlslab-table-container > & {
+		left: calc(50% + 160px);
 	}
 
 	table td:hover > & {
