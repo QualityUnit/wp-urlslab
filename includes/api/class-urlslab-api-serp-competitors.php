@@ -35,7 +35,7 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 		$sql->add_from( URLSLAB_SERP_DOMAINS_TABLE . ' d' );
 
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . " p ON p.domain_id=d.domain_id AND d.domain_type='" . Urlslab_Serp_Domain_Row::TYPE_COMPETITOR . "'" );
-		$sql->add_from( 'INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . " pm ON pm.query_id=p.query_id AND pm.domain_id IN (SELECT domain_id FROM wp_urlslab_serp_domains WHERE domain_type='" . Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN . "')" );
+		$sql->add_from( 'INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . " pm ON pm.query_id=p.query_id AND pm.domain_id IN (SELECT domain_id FROM " . URLSLAB_SERP_DOMAINS_TABLE . " WHERE domain_type='" . Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN . "')" );
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'd' );
 		$columns = array_merge(
