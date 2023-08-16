@@ -132,7 +132,7 @@ function QueryDetailPanel() {
 						<CloseIcon />
 					</button>
 				</div>
-				<div className="mt-l pl-l pr-l">
+				<div className="urlslab-panel-content mt-l pl-m pr-xl">
 					<div className="urlslab-serpPanel-title">
 						<h4>Top URLs</h4>
 						<SingleSelectMenu defaultAccept autoClose key={ popupTableType } items={ {

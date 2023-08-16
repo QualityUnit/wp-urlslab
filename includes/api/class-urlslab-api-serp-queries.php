@@ -177,6 +177,13 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 								return is_numeric( $param ) && 1 <= strlen( $param ) && 10 >= strlen( $param );
 							},
 						),
+						'with_stats' => array(
+							'required'          => false,
+							'default'           => false,
+							'validate_callback' => function( $param ) {
+								return is_bool( $param );
+							},
+						),
 					),
 				),
 			)
