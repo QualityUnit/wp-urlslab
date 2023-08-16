@@ -22,7 +22,7 @@ export default function SerpTopDomainsTable( { slug } ) {
 	const title = __( 'Add Domains' );
 	const paginationId = 'domain_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-	const defaultSorting = sorting.length ? sorting : [ { key: 'top_10_cnt', dir: 'DESC', op: '<' } ];
+	const defaultSorting = sorting.length ? sorting : [ { key: 'top_100_cnt', dir: 'DESC', op: '<' } ];
 	const url = { filters, sorting: defaultSorting };
 
 	const {
@@ -56,9 +56,7 @@ export default function SerpTopDomainsTable( { slug } ) {
 	const header = {
 		domain_name: __( 'Domain' ),
 		domain_type: __( 'Type' ),
-		top_10_cnt: __( 'Top 10 URLs' ),
-		top_100_cnt: __( 'Top 100 URLs' ),
-		avg_pos: __( 'Average Position' ),
+		top_100_cnt: __( 'Queries' ),
 	};
 
 	const rowEditorCells = {
@@ -82,22 +80,10 @@ export default function SerpTopDomainsTable( { slug } ) {
 			size: 80,
 		} ),
 
-		columnHelper.accessor( 'top_10_cnt', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.top_10_cnt }</SortBy>,
-			minSize: 50,
-		} ),
 		columnHelper.accessor( 'top_100_cnt', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.top_100_cnt }</SortBy>,
-			minSize: 50,
-		} ),
-		columnHelper.accessor( 'avg_pos', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.avg_pos }</SortBy>,
 			minSize: 50,
 		} ),
 	];

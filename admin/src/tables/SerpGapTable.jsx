@@ -168,7 +168,7 @@ export default function SerpGapTable( { slug } ) {
 			<ModuleViewHeaderBottom
 				table={ table }
 				noDelete
-				noAdd
+				noInsert
 				noImport
 				onFilter={ ( filter ) => setFilters( filter ) }
 				initialState={ { columnVisibility: { updated: false, status: false, type: false } } }
