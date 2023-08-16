@@ -36,10 +36,13 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
 	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
 	const [ typingTimeout, setTypingTimeout ] = useState( 0 );
-	const [ isGenerating, setIsGenerating ] = useState( false );
-	const [ initialTemplate, setInitialTemplate ] = useState( 'Custom' );
-	const [ showPrompt, setShowPrompt ] = useState( false );
-	const [ addPromptTemplate, setAddPromptTemplate ] = useState( false );
+	const [ internalState, setInternalState ] = useState( {
+		isGenerating: false,
+		templateName: 'Custom',
+		showPrompt: false,
+		addPromptTemplate: false,
+		promptVal: '',
+	} );
 	const [ promptVal, setPromptVal ] = useState( '' );
 
 	const rowEditorCells = {
@@ -92,7 +95,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 			if ( rsp.ok ) {
 				const data = await rsp.json();
 				if ( data && data.length > 0 ) {
-					setInitialTemplate( data[ 0 ].template_name );
+					setInternalState( { ...internalState, templateName: data[ 0 ].template_name } );
 					setAIGeneratorConfig( { ...useAIGenerator.getState().aiGeneratorConfig, promptTemplate: data[ 0 ].prompt_template } );
 				}
 			}
@@ -172,7 +175,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 	const handlePromptTemplateSelection = ( selectedTemplate ) => {
 		if ( selectedTemplate ) {
 			setAIGeneratorConfig( { ...aiGeneratorConfig, promptTemplate: selectedTemplate.prompt_template } );
-			setInitialTemplate( selectedTemplate.template_name );
+			setInternalState( { ...internalState, templateName: selectedTemplate.template_name } );
 		}
 	};
 
@@ -181,12 +184,12 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 		if ( ! promptVal ) {
 			return;
 		}
-		setAddPromptTemplate( true );
+		setInternalState( { ...internalState, addPromptTemplate: true } );
 	};
 
 	const handleGenerateContent = async () => {
 		try {
-			setIsGenerating( true );
+			setInternalState( { ...internalState, isGenerating: true } );
 			const processId = await generateContent( aiGeneratorConfig, promptVal );
 			const pollForResult = setInterval( async () => {
 				try {
@@ -196,7 +199,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 						if ( generationRes.status === 'SUCCESS' ) {
 							clearInterval( pollForResult );
 							onGenerateComplete( generationRes.response[ 0 ] );
-							setIsGenerating( false );
+							setInternalState( { ...internalState, isGenerating: false } );
 						}
 					} else {
 						if ( resultResponse.status === 400 ) {
@@ -208,12 +211,12 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 				} catch ( error ) {
 					clearInterval( pollForResult );
 					setNotification( 1, { message: error.message, status: 'error' } );
-					setIsGenerating( false );
+					setInternalState( { ...internalState, isGenerating: false } );
 				}
 			}, 2000 );
 		} catch ( e ) {
 			setNotification( 1, { message: e.message, status: 'error' } );
-			setIsGenerating( false );
+			setInternalState( { ...internalState, isGenerating: false } );
 		}
 	};
 
@@ -395,8 +398,8 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 			<div className="urlslab-content-gen-panel-control-item">
 				<div className="urlslab-content-gen-panel-control-item-selector">
 					<SuggestInputField
-						defaultValue={ initialTemplate }
-						key={ initialTemplate }
+						defaultValue={ internalState.templateName }
+						key={ internalState.templateName }
 						liveUpdate
 						onSelect={ handlePromptTemplateSelection }
 						required
@@ -426,8 +429,8 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 					allowResize
 					onChange={ ( promptTemplate ) => {
 						setAIGeneratorConfig( { ...aiGeneratorConfig, promptTemplate } );
-						if ( initialTemplate !== 'Custom' ) {
-							setInitialTemplate( 'Custom' );
+						if ( internalState.templateName !== 'Custom' ) {
+							setInternalState( { ...internalState, templateName: 'Custom' } );
 						}
 					} }
 					required
@@ -435,9 +438,9 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 					description={ __( 'Prompt Template to be used while generating content. supported variables are {keywords}, {primary_keyword}, {title}, {language}' ) } />
 			</div>
 			<div className="urlslab-content-gen-panel-control-multi-btn">
-				<Button onClick={ () => setShowPrompt( ! showPrompt ) }>{ showPrompt ? __( 'Close Prompt' ) : __( 'Show Prompt' ) }</Button>
+				<Button onClick={ () => setInternalState( { ...internalState, showPrompt: ! internalState.showPrompt } ) }>{ internalState.showPrompt ? __( 'Close Prompt' ) : __( 'Show Prompt' ) }</Button>
 				{
-					initialTemplate === 'Custom' && promptVal !== '' && (
+					internalState.templateName === 'Custom' && promptVal !== '' && (
 						<div>
 							<Button onClick={ handleSavePromptTemplate }>{ __( 'Save Template' ) }</Button>
 						</div>
@@ -445,7 +448,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 				}
 			</div>
 			{
-				showPrompt && (
+				internalState.showPrompt && (
 					<div className="urlslab-content-gen-panel-control-item">
 						<TextAreaEditable
 							liveUpdate
@@ -473,14 +476,14 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 			<div className="urlslab-content-gen-panel-control-item">
 				<Button active onClick={ handleGenerateContent }>
 					{
-						isGenerating ? ( <Loader /> ) : __( 'Generate Text' )
+						internalState.isGenerating ? ( <Loader /> ) : __( 'Generate Text' )
 					}
 				</Button>
 			</div>
 
 			{
-				addPromptTemplate && (
-					<EditRowPanel slug="prompt-template" rowEditorCells={ rowEditorCells } rowToEdit={ rowToEdit } title="Add Prompt Template" handlePanel={ () => setAddPromptTemplate( false ) }
+				internalState.addPromptTemplate && (
+					<EditRowPanel slug="prompt-template" rowEditorCells={ rowEditorCells } rowToEdit={ rowToEdit } title="Add Prompt Template" handlePanel={ () => setInternalState( { ...internalState, addPromptTemplate: false } ) }
 					/>
 				)
 			}
