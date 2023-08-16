@@ -177,6 +177,13 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 								return is_numeric( $param ) && 1 <= strlen( $param ) && 10 >= strlen( $param );
 							},
 						),
+						'with_stats' => array(
+							'required'          => false,
+							'default'           => false,
+							'validate_callback' => function( $param ) {
+								return is_bool( $param );
+							},
+						),
 					),
 				),
 			)
@@ -241,14 +248,32 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		if ( ! $query->load() ) {
 			return new WP_REST_Response( __( 'Query not found' ), 404 );
 		}
+		$with_stats = $request->get_param( 'with_stats' );
+
+
+		// Creating the Query
+		if ( $with_stats ) {
+			$sql = "SELECT q.*, GROUP_CONCAT(DISTINCT u.url_name ORDER BY d.position SEPARATOR ',') as all_urls, GROUP_CONCAT(DISTINCT u2.url_name ORDER BY d2.position SEPARATOR ',') as my_urls, AVG(d.position) as other_pos, AVG(d2.position) as my_avg_pos, AVG(d2.impressions) as my_avg_imp, AVG(d2.ctr) as my_avg_ctr, AVG(d2.clicks) as my_avg_clk, min(d2.position) as my_min_pos FROM " . URLSLAB_GSC_POSITIONS_TABLE . ' a';
+		} else {
+			$sql = 'SELECT q.* FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' a';
+		}
+		$sql .= ' INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND a.position<%d AND b.position<%d' .
+				' INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id';
+
+		if ( $request->get_param( 'with_stats' ) ) {
+			$my_domains = implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_my_domains() ) );
+			$sql .= ' INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' c ON b.query_id = c.query_id' .
+					' INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON c.url_id = u.url_id AND u.domain_id NOT IN (' . $my_domains . ')' .
+					' LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u2 ON b.domain_id = u2.domain_id AND u2.domain_id IN (' . $my_domains . ')' .
+					' LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' d ON u.url_id = d.url_id' .
+					' LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' d2 ON u2.url_id = d2.url_id';
+		}
+		$sql .= ' WHERE a.query_id=%d GROUP BY a.query_id, b.query_id HAVING COUNT(*) > %d';
 
 		global $wpdb;
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT q.* FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' a' . // phpcs:ignore
-				' INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND a.position<%d AND b.position<%d' . // phpcs:ignore
-				' INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id' . // phpcs:ignore
-				' WHERE a.query_id=%d GROUP BY a.query_id, b.query_id HAVING COUNT(*) > %d',
+				$sql, // phpcs:ignore
 				$request->get_param( 'max_position' ),
 				$request->get_param( 'max_position' ),
 				$query->get_query_id(),
@@ -260,7 +285,19 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$rows = array();
 		foreach ( $results as $result ) {
 			$row    = new Urlslab_Serp_Query_Row( $result );
-			$rows[] = (object) $row->as_array();
+			$to_add = $row->as_array();
+			if ( $with_stats ) {
+				$to_add['all_urls'] = $result['all_urls'];
+				$to_add['my_urls']  = $result['my_urls'];
+				$to_add['my_avg_pos']  = round( (float) $result['my_avg_pos'], 2 );
+				$to_add['my_avg_imp']  = round( (float) $result['my_avg_imp'], 2 );
+				$to_add['my_avg_ctr']  = round( (float) $result['my_avg_ctr'], 2 );
+				$to_add['my_avg_clk']  = round( (float) $result['my_avg_clk'], 2 );
+				$to_add['my_min_pos']  = round( (float) $result['my_min_pos'], 2 );
+				$to_add['other_pos']  = round( (float) $result['other_pos'], 2 );
+			}
+
+			$rows[] = (object) $to_add;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
