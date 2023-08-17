@@ -1,6 +1,8 @@
 import { useState, useEffect, useReducer, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import filterReducer from '../lib/filterReducer';
+import useTableStore from './useTableStore';
+
 // import filterArgs from '../lib/filterOperators';
 
 const filterObj = {
@@ -11,10 +13,12 @@ const filterObj = {
 	keyType: undefined,
 };
 
-export function useFilter( { slug, header, initialRow } ) {
+export function useFilter( { slug, header } ) {
 	const queryClient = useQueryClient();
 	const runFilter = useRef( false );
 	const possiblefilters = useRef( { ...header } );
+	const initialRow = useTableStore( ( state ) => state.initialRow );
+	const setFilters = useTableStore( ( state ) => state.setFilters );
 	const [ state, dispatch ] = useReducer( filterReducer, { filters: {}, filteringState: undefined, possiblefilters: possiblefilters.current, filterObj, editFilterActive: false } );
 
 	const activefilters = state.filters ? Object.keys( state.filters ) : null;
@@ -33,13 +37,15 @@ export function useFilter( { slug, header, initialRow } ) {
 		if ( state.filteringState?.filters ) {
 			dispatch( {
 				type: 'setFilters', filters: state.filteringState?.filters } );
+			setFilters( state.filteringState?.filters );
 		}
-	}, [ getQueryData, state.possiblefilters, state.filteringState ] );
+	}, [ getQueryData, setFilters, state.possiblefilters, state.filteringState ] );
 
 	/* --- filters ADDING FUNCTIONS --- */
 	function addFilter( key, value ) {
 		if ( value ) {
 			dispatch( { type: 'setFilters', filters: { ...state.filters, [ key ]: value } } );
+			setFilters( { ...state.filters, [ key ]: value } );
 		}
 		if ( ! value ) {
 			removefilters( [ key ] );
@@ -134,6 +140,7 @@ export function useFilter( { slug, header, initialRow } ) {
 		};
 		// Save the current list without removed filter
 		dispatch( { type: 'setFilters', filters: getfilters() } );
+		setFilters( getfilters() );
 	}
 
 	function handleRemoveFilter( keysArray ) {

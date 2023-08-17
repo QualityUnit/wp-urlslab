@@ -13,7 +13,7 @@ import { ReactComponent as Trash } from '../assets/images/icons/icon-trash.svg';
 import ChangesPanel from './ChangesPanel/ChangesPanel';
 
 export default function TablePanels( { props } ) {
-	const { options, initialRow, handlePanel } = props;
+	const { options, handlePanel } = props;
 	const { activePanel } = useTablePanels();
 	const { __ } = useI18n();
 	return (
@@ -52,7 +52,7 @@ export default function TablePanels( { props } ) {
 			}
 			{
 				activePanel === 'import' &&
-				<ImportPanel options={ { ...options, initialRow } } handlePanel={ handlePanel } />
+				<ImportPanel options={ { ...options } } handlePanel={ handlePanel } />
 			}
 			{
 				activePanel === 'rowInserter' &&
